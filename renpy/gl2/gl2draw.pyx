@@ -824,7 +824,7 @@ cdef class GL2Draw:
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
         # Use the context to draw the surface tree.
-        context = GL2DrawingContext(self)
+        context = GL2DrawingContext(self, w, h)
         context.draw(surf, transform)
 
         self.flip()
@@ -939,7 +939,7 @@ cdef class GL2Draw:
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
         # Use the context to draw the surface tree.
-        context = GL2DrawingContext(self)
+        context = GL2DrawingContext(self, 1, 1)
         context.draw(what, transform)
 
         cdef unsigned char pixel[4]
@@ -1129,25 +1129,39 @@ cdef class GL2DrawingContext:
     # The draw object this context is associated with.
     cdef GL2Draw gl2draw
 
-    def __init__(self, GL2Draw draw):
+    # The width and height of what this is drawing to.
+    cdef float width
+    cdef float height
+
+    def __init__(self, GL2Draw draw, width, height):
         self.gl2draw = draw
 
-    def correct_pixel_perfect(self, Matrix transform):
+        self.width = width
+        self.height = height
 
-        # TODO: How to get the drawable width and height? This could vary
-        # during a render-to-texture, etc.
+    cdef Matrix correct_pixel_perfect(self, Matrix transform):
+        """
+        Corrects `transform` so that the (0, 0) pixel is aligned with a
+        drawable pixel.
+        """
 
-        dwidth, dheight = self.gl2draw.drawable_viewport[2:]
-        halfwidth = dwidth / 2.0
-        halfheight = dheight / 2.0
+        cdef float halfwidth
+        cdef float halfheigh
+
+        # This is the equivalent of projecting (0, 0, 0, 1), and getting x and y.
+        cdef float sx = transform.xdw
+        cdef float sy = transform.ydw
+
+        halfwidth = self.width / 2.0
+        halfheight = self.height / 2.0
 
         sx, sy = transform.transform(0, 0)
 
         sx = sx * halfwidth + halfwidth
         sy = sy * halfheight + halfheight
 
-        xoff = round(sx) - sx
-        yoff = round(sy) - sy
+        cdef float xoff = round(sx) - sx
+        cdef float yoff = round(sy) - sy
 
         return Matrix.coffset(xoff / halfwidth, yoff / halfheight, 0) * transform
 
