@@ -209,7 +209,7 @@ init -1500 python:
             return Matrix([ 1, 0, 0, 0,
                             0, 1, 0, 0,
                             0, 0, 1, 0,
-                            0, 0, 0, alpha, ])
+                            0, 0, 0, value, ])
 
 
 
@@ -293,8 +293,8 @@ init -1500 python:
 
             # Return the matrix.
             return Matrix([ (wr - br), 0, 0, br,
-                            0, (wg - bg), 0, 0, bg,
-                            0, 0, (wb - bb), 0, 0, bb,
+                            0, (wg - bg), 0, bg,
+                            0, 0, (wb - bb), bb,
                             0, 0, 0, 1, ])
 
 
