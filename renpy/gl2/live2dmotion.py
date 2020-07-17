@@ -31,7 +31,7 @@ class Linear(object):
         self.duration = x1 - x0
 
         self.y0 = y0
-        self.y1 = y0
+        self.y1 = y1
 
     def get(self, t):
         done = t / self.duration
@@ -47,7 +47,7 @@ class Step(object):
         self.duration = x1 - x0
 
         self.y0 = y0
-        self.y1 = y0
+        self.y1 = y1
 
     def get(self, t):
         return self.y0
@@ -62,7 +62,7 @@ class InvStep(object):
         self.duration = x1 - x0
 
         self.y0 = y0
-        self.y1 = y0
+        self.y1 = y1
 
     def get(self, t):
         return self.y1
