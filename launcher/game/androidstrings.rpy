@@ -44,7 +44,7 @@ init python hide:
     __("No. Size limit of 100 MB on Google Play, but can be distributed through other stores and sideloaded.")
     __("Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)")
     __("Do you want to allow the app to access the Internet?")
-    __("Do you want to automatically update the generated project?")
+    __("Do you want to automatically update the Java source code?")
     __("Yes. This is the best choice for most projects.")
     __("No. This may require manual updates when Ren'Py or the project configuration changes.")
     __("Unknown configuration variable: {}")
