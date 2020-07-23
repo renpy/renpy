@@ -152,8 +152,6 @@ def compile_event(key, keydown):
 
     return rv
 
-if renpy.emscripten:
-    import emscripten, json
 
 # These store a lambda for each compiled key in the system.
 event_cache = { }
@@ -1245,9 +1243,6 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
                 l = len(content)
                 self.set_text([self.prefix, content[0:self.caret_pos].replace("{", "{{"), edit_text, caret,
                                content[self.caret_pos:l].replace("{", "{{"), self.suffix])
-                if renpy.emscripten and renpy.display.touch:
-                    emscripten.run_script(r'''rpw_set_text_input(%s)''' % (
-                        json.dumps(content)))
             else:
                 self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
 
@@ -1317,53 +1312,6 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
         raw_text = None
 
-        def parse_raw_text():
-
-            text = ""
-
-            for c in raw_text:
-
-                # Allow is given
-                if self.allow:
-
-                    # Allow is regex
-                    if isinstance(self.allow, re._pattern_type):
-
-                        # Character doesn't match
-                        if self.allow.search(c) is None:
-                            continue
-
-                    # Allow is string
-                    elif c not in self.allow:
-                        continue
-
-                # Exclude is given
-                if self.exclude:
-
-                    # Exclude is regex
-                    if isinstance(self.exclude, re._pattern_type):
-
-                        # Character matches
-                        if self.exclude.search(c) is not None:
-                            continue
-
-                    # Exclude is string
-                    elif c in self.exclude:
-                        continue
-
-                text += c
-
-            if self.length:
-                remaining = self.length - len(self.content)
-                text = text[:remaining]
-
-            if text:
-
-                content = self.content[0:self.caret_pos] + text + self.content[self.caret_pos:l]
-                self.caret_pos += len(text)
-
-                self.update_text(content, self.editable, check_size=True)
-
         if map_event(ev, "input_backspace"):
 
             if self.content and self.caret_pos > 0:
@@ -1375,11 +1323,6 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             raise renpy.display.core.IgnoreEvent()
 
         elif map_event(ev, "input_enter"):
-
-            if renpy.emscripten and renpy.display.touch:
-                self.content = ''
-                raw_text = emscripten.run_script_string(r'''rpw_grab_text_input()''')
-                parse_raw_text()
 
             content = self.content
 
@@ -1460,7 +1403,50 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
 
         if raw_text is not None:
 
-            parse_raw_text()
+            text = ""
+
+            for c in raw_text:
+
+                # Allow is given
+                if self.allow:
+
+                    # Allow is regex
+                    if isinstance(self.allow, re._pattern_type):
+
+                        # Character doesn't match
+                        if self.allow.search(c) is None:
+                            continue
+
+                    # Allow is string
+                    elif c not in self.allow:
+                        continue
+
+                # Exclude is given
+                if self.exclude:
+
+                    # Exclude is regex
+                    if isinstance(self.exclude, re._pattern_type):
+
+                        # Character matches
+                        if self.exclude.search(c) is not None:
+                            continue
+
+                    # Exclude is string
+                    elif c in self.exclude:
+                        continue
+
+                text += c
+
+            if self.length:
+                remaining = self.length - len(self.content)
+                text = text[:remaining]
+
+            if text:
+
+                content = self.content[0:self.caret_pos] + text + self.content[self.caret_pos:l]
+                self.caret_pos += len(text)
+
+                self.update_text(content, self.editable, check_size=True)
 
             raise renpy.display.core.IgnoreEvent()
 
