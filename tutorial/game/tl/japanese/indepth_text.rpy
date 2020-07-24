@@ -76,7 +76,7 @@ translate japanese after_a_label_22c4339a:
 translate japanese after_a_label_d43417d7:
 
     # e "Sometimes, changing to a bold font looks better than using the {{b} tag."
-    e "{b}タグを使用するよりもフォントを変更した方が見目よくなることもあります。"
+    e "{{b}タグを使用するよりもフォントを変更した方が見目よくなることもあります。"
 
 # game/indepth_text.rpy:71
 translate japanese after_a_label_f24052f9:
