@@ -63,9 +63,9 @@ To return to this virtualenv later, run::
 
     workon renpy
 
-After activating the virtualenv, install cython and future::
+After activating the virtualenv, install cython, future, and six::
 
-    pip install -U cython future
+    pip install -U cython future six
 
 Then, install pygame_sdl2 by running the following commands::
 
