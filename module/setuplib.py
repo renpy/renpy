@@ -327,14 +327,42 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
                 c_fn])
 
             # Fix-up source for static loading
-            if static and (len(split_name) > 1):
+            if static:
+
                 parent_module = '.'.join(split_name[:-1])
                 parent_module_identifier = parent_module.replace('.', '_')
+
                 with open(c_fn, 'r') as f:
                     ccode = f.read()
-                ccode = re.sub('Py_InitModule4\("([^"]+)"', 'Py_InitModule4("' + parent_module + '.\\1"', ccode)
-                ccode = re.sub('^__Pyx_PyMODINIT_FUNC init', '__Pyx_PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Cython 0.28.2
-                ccode = re.sub('^PyMODINIT_FUNC init', 'PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Cython 0.25.2
+
+                if len(split_name) > 1:
+
+                    ccode = re.sub('Py_InitModule4\("([^"]+)"', 'Py_InitModule4("' + parent_module + '.\\1"', ccode) # Py2
+                    ccode = re.sub('(__pyx_moduledef.*?"){}"'.format(re.escape(split_name[-1])), '\\1' + '.'.join(split_name) + '"', ccode, flags=re.DOTALL) # Py3
+                    ccode = re.sub('^__Pyx_PyMODINIT_FUNC init', '__Pyx_PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py2 Cython 0.28+
+                    ccode = re.sub('^__Pyx_PyMODINIT_FUNC PyInit_', '__Pyx_PyMODINIT_FUNC PyInit_' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py3 Cython 0.28+
+                    ccode = re.sub('^PyMODINIT_FUNC init', 'PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py2 Cython 0.25.2
+
+                cname = "_".join(split_name)
+
+                ccode += """
+
+static struct _inittab CNAME_inittab[] = {
+#if PY_MAJOR_VERSION < 3
+    { "PYNAME", initCNAME },
+#else
+    { "PYNAME", PyInit_CNAME },
+#endif
+    { NULL, NULL },
+};
+
+static void CNAME_constructor(void) __attribute__((constructor));
+
+static void CNAME_constructor(void) {
+    PyImport_ExtendInittab(CNAME_inittab);
+}
+""".replace("PYNAME", name).replace("CNAME", cname)
+
                 with open(c_fn, 'w') as f:
                     f.write(ccode)
 
