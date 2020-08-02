@@ -101,6 +101,84 @@ old_config_archives = None
 # A map from lower-case filename to regular-case filename.
 lower_map = { }
 
+# A list containing archive handlers.
+archive_handlers = [ ]
+
+class RPAv3ArchiveHandler(object):
+    """
+    Archive handler handling RPAv3 archives.
+    """
+
+    @staticmethod
+    def get_supported_extensions():
+        return [ ".rpa" ]
+
+    @staticmethod
+    def get_supported_headers():
+        return [ b"RPA-3.0 " ]
+
+    @staticmethod
+    def read_index(infile):
+        l = infile.read(40)
+        offset = int(l[8:24], 16)
+        key = int(l[25:33], 16)
+        infile.seek(offset)
+        index = loads(zlib.decompress(infile.read()))
+
+        # Deobfuscate the index.
+
+        for k in index.keys():
+
+            if len(index[k][0]) == 2:
+                index[k] = [ (offset ^ key, dlen ^ key) for offset, dlen in index[k] ]
+            else:
+                index[k] = [ (offset ^ key, dlen ^ key, start) for offset, dlen, start in index[k] ]
+        return index
+
+archive_handlers.append(RPAv3ArchiveHandler)
+
+class RPAv2ArchiveHandler(object):
+    """
+    Archive handler handling RPAv2 archives.
+    """
+
+    @staticmethod
+    def get_supported_extensions():
+        return [ ".rpa" ]
+
+    @staticmethod
+    def get_supported_headers():
+        return [ b"RPA-2.0 " ]
+
+    @staticmethod
+    def read_index(infile):
+        l = infile.read(24)
+        offset = int(l[8:], 16)
+        infile.seek(offset)
+        index = loads(zlib.decompress(infile.read()))
+        
+        return index
+
+archive_handlers.append(RPAv2ArchiveHandler)
+
+class RPAv1ArchiveHandler(object):
+    """
+    Archive handler handling RPAv1 archives.
+    """
+
+    @staticmethod
+    def get_supported_extensions():
+        return [ ".rpi" ]
+
+    @staticmethod
+    def get_supported_headers():
+        return [ b"\x78\x9c" ]
+
+    @staticmethod
+    def read_index(infile):
+        return loads(zlib.decompress(infile.read()))
+
+archive_handlers.append(RPAv1ArchiveHandler)
 
 def index_archives():
     """
@@ -124,51 +202,44 @@ def index_archives():
     global archives
     archives = [ ]
 
+    max_header_length = 0
+    for handler in archive_handlers:
+        for header in handler.get_supported_headers():
+            header_len = len(header)
+            if header_len > max_header_length:
+                max_header_length = header_len
+
+    archive_extensions = [ ]
+    for handler in archive_handlers:
+        for ext in handler.get_supported_extensions():
+            if not (ext in archive_extensions):
+                archive_extensions.append(ext)
+
     for prefix in renpy.config.archives:
-
-        try:
-            fn = transfn(prefix + ".rpa")
-            f = open(fn, "rb")
-            l = f.readline()
-
-            # 3.0 Branch.
-            if l.startswith(b"RPA-3.0 "):
-                offset = int(l[8:24], 16)
-                key = int(l[25:33], 16)
-                f.seek(offset)
-                index = loads(zlib.decompress(f.read()))
-
-                # Deobfuscate the index.
-
-                for k in index.keys():
-
-                    if len(index[k][0]) == 2:
-                        index[k] = [ (offset ^ key, dlen ^ key) for offset, dlen in index[k] ]
-                    else:
-                        index[k] = [ (offset ^ key, dlen ^ key, start) for offset, dlen, start in index[k] ]
-
-                archives.append((prefix, index))
-
-                f.close()
+        for ext in archive_extensions:
+            fn = None
+            f = None
+            try:
+                fn = transfn(prefix + ext)
+                f = open(fn, "rb")
+            except:
                 continue
-
-            # 2.0 Branch.
-            if l.startswith(b"RPA-2.0 "):
-                offset = int(l[8:], 16)
-                f.seek(offset)
-                index = loads(zlib.decompress(f.read()))
-                archives.append((prefix, index))
-                f.close()
-                continue
-
-            # 1.0 Branch.
+            file_header = f.read(max_header_length)
+            for handler in archive_handlers:
+                try:
+                    archive_handled = False
+                    for header in handler.get_supported_headers():
+                        if file_header.startswith(header):
+                            f.seek(0, 0)
+                            index = handler.read_index(f)
+                            archives.append((prefix + ext, index))
+                            archive_handled = True
+                            break
+                    if archive_handled == True:
+                        break
+                except:
+                    raise
             f.close()
-
-            fn = transfn(prefix + ".rpi")
-            index = loads(zlib.decompress(open(fn, "rb").read()))
-            archives.append((prefix, index))
-        except:
-            raise
 
     for dir, fn in listdirfiles(): # @ReservedAssignment
         lower_map[fn.lower()] = fn
@@ -591,7 +662,7 @@ def load_from_archive(name):
         if not name in index:
             continue
 
-        afn = transfn(prefix + ".rpa")
+        afn = transfn(prefix)
 
         data = [ ]
 
