@@ -225,6 +225,8 @@ def cleardirfiles():
     game_files = [ ]
     common_files = [ ]
 
+# A list of callbacks to fill out the lists above.
+scandirfiles_callbacks = [ ]
 
 def scandirfiles():
     """
@@ -234,7 +236,7 @@ def scandirfiles():
 
     seen = set()
 
-    def add(dn, fn):
+    def add(dn, fn, files, seen):
         if fn in seen:
             return
 
@@ -247,6 +249,14 @@ def scandirfiles():
         files.append((dn, fn))
         seen.add(fn)
         loadable_cache[fn.lower()] = True
+
+    for i in scandirfiles_callbacks:
+        i(add, seen)
+
+def scandirfiles_from_apk(add, seen):
+    """
+    Scans apks and fills out game_files and common_files.
+    """
 
     for apk in apks:
 
@@ -261,28 +271,43 @@ def scandirfiles():
             # to ensure that aapt actually includes every file.
             f = "/".join(i[2:] for i in f.split("/"))
 
-            add(None, f)
+            add(None, f, files, seen)
+
+if renpy.android:
+    scandirfiles_callbacks.append(scandirfiles_from_apk)
+
+def scandirfiles_from_remote_file(add, seen):
+    """
+    Fills out game_files from renpyweb_remote_files.txt.
+    """
 
     # HTML5 remote files
-    if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
-        index_filename = os.path.join(renpy.config.gamedir, 'renpyweb_remote_files.txt')
-        if os.path.exists(index_filename):
-            files = game_files
-            with open(index_filename, 'rb') as remote_index:
-                while True:
-                    f = remote_index.readline()
-                    metadata = remote_index.readline()
-                    if f == '' or metadata == '': # end of file
-                        break
+    index_filename = os.path.join(renpy.config.gamedir, 'renpyweb_remote_files.txt')
+    if os.path.exists(index_filename):
+        files = game_files
+        with open(index_filename, 'rb') as remote_index:
+            while True:
+                f = remote_index.readline()
+                metadata = remote_index.readline()
+                if f == '' or metadata == '': # end of file
+                    break
 
-                    f = f.rstrip("\r\n")
-                    metadata = metadata.rstrip("\r\n")
-                    (entry_type, entry_size) = metadata.split(' ')
-                    if entry_type == 'image':
-                        entry_size = [int(i) for i in entry_size.split(',')]
+                f = f.rstrip("\r\n")
+                metadata = metadata.rstrip("\r\n")
+                (entry_type, entry_size) = metadata.split(' ')
+                if entry_type == 'image':
+                    entry_size = [int(i) for i in entry_size.split(',')]
 
-                    add('/game', f)
-                    remote_files[f] = {'type':entry_type, 'size':entry_size}
+                add('/game', f, files, seen)
+                remote_files[f] = {'type':entry_type, 'size':entry_size}
+
+if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+    scandirfiles_callbacks.append(scandirfiles_from_remote_file)
+
+def scandirfiles_from_filesystem(add, seen):
+    """
+    Scans directories and fills out game_files and common_files.
+    """
 
     for i in renpy.config.searchpath:
 
@@ -293,13 +318,22 @@ def scandirfiles():
 
         i = os.path.join(renpy.config.basedir, i)
         for j in walkdir(i):
-            add(i, j)
+            add(i, j, files, seen)
+
+scandirfiles_callbacks.append(scandirfiles_from_filesystem)
+
+def scandirfiles_from_archives(add, seen):
+    """
+    Scans archives and fills out game_files.
+    """
 
     files = game_files
 
     for _prefix, index in archives:
         for j in index:
-            add(None, j)
+            add(None, j, files, seen)
+
+scandirfiles_callbacks.append(scandirfiles_from_archives)
 
 
 def listdirfiles(common=True):
@@ -485,6 +519,8 @@ if "RENPY_FORCE_SUBFILE" in os.environ:
 
         return SubFile(f, 0, length, '')
 
+# A list of callbacks to open an open python file object of the given type.
+file_open_callbacks = [ ]
 
 def load_core(name):
     """
@@ -493,12 +529,30 @@ def load_core(name):
 
     name = lower_map.get(name.lower(), name)
 
-    if renpy.config.file_open_callback:
-        rv = renpy.config.file_open_callback(name)
+    for i in file_open_callbacks:
+        rv = i(name)
         if rv is not None:
             return rv
 
-    # Look for the file directly.
+    return None
+
+def load_from_file_open_callback(name):
+    """
+    Returns an open python file object of the given type from the file open callback.
+    """
+
+    if renpy.config.file_open_callback:
+        return renpy.config.file_open_callback(name)
+
+    return None
+
+file_open_callbacks.append(load_from_file_open_callback)
+
+def load_from_filesystem(name):
+    """
+    Returns an open python file object of the given type from the filesystem.
+    """
+
     if not renpy.config.force_archives:
         try:
             fn = transfn(name)
@@ -506,7 +560,15 @@ def load_core(name):
         except:
             pass
 
-    # Look for the file in the apk.
+    return None
+
+file_open_callbacks.append(load_from_filesystem)
+
+def load_from_apk(name):
+    """
+    Returns an open python file object of the given type from the apk.
+    """
+
     for apk in apks:
         prefixed_name = "/".join("x-" + i for i in name.split("/"))
 
@@ -515,7 +577,16 @@ def load_core(name):
         except IOError:
             pass
 
-    # Look for it in archive files.
+    return None
+
+if renpy.android:
+    file_open_callbacks.append(load_from_apk)
+
+def load_from_archive(name):
+    """
+    Returns an open python file object of the given type from an archive file.
+    """
+
     for prefix, index in archives:
         if not name in index:
             continue
@@ -549,11 +620,22 @@ def load_core(name):
 
         return rv
 
+    return None
+
+file_open_callbacks.append(load_from_archive)
+
+def load_from_remote_file(name):
+    """
+    Defer loading a file if it has not been downloaded yet but exists on the remote server.
+    """
+
     if remote_files.has_key(name):
         raise DownloadNeeded(relpath=name, rtype=remote_files[name]['type'], size=remote_files[name]['size'])
 
     return None
 
+if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+    file_open_callbacks.append(load_from_remote_file)
 
 def check_name(name):
     """
