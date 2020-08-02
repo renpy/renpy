@@ -26,6 +26,9 @@ import renpy
 import os.path
 from pickle import loads
 import sys
+import marshal
+if sys.version_info[0] == 3:
+    import importlib._bootstrap_external
 import types
 import threading
 import zlib
@@ -750,8 +753,20 @@ class RenpyImporter(object):
             # raise Exception("Could importer-translate %r + %r" % (prefix, fullname))
             return None
 
+        if loadable(fn + ".pyo"):
+            return fn + ".pyo"
+
+        if loadable(fn + ".pyc"):
+            return fn + ".pyc"
+
         if loadable(fn + ".py"):
             return fn + ".py"
+
+        if loadable(fn + "/__init__.pyo"):
+            return fn + "/__init__.pyo"
+
+        if loadable(fn + "/__init__.pyc"):
+            return fn + "/__init__.pyc"
 
         if loadable(fn + "/__init__.py"):
             return fn + "/__init__.py"
@@ -778,24 +793,39 @@ class RenpyImporter(object):
         mod.__file__ = filename
         mod.__loader__ = self
 
+        if filename.endswith("__init__.pyo"):
+            mod.__path__ = [ filename[:-len("__init__.pyo")] ]
+
+        if filename.endswith("__init__.pyc"):
+            mod.__path__ = [ filename[:-len("__init__.pyc")] ]
+
         if filename.endswith("__init__.py"):
             mod.__path__ = [ filename[:-len("__init__.py")] ]
 
-        for encoding in [ "utf-8", "latin-1" ]:
+        f = load(filename)
+        if (sys.version_info[0] == 2 and f.read(4) == b'\x03\xf3\r\n') or (sys.version_info[0] == 3 and f.read(4) == importlib._bootstrap_external.MAGIC_NUMBER):
+            if sys.version_info[0] == 3:
+                f.seek(12)
+            elif sys.version_info[0] == 2:
+                f.seek(8)
+            code = marshal.loads(f.read())
+        else:
+            f.seek(0)
+            for encoding in [ "utf-8", "latin-1" ]:
 
-            try:
+                try:
 
-                source = load(filename).read().decode(encoding)
-                if source and source[0] == u'\ufeff':
-                    source = source[1:]
-                source = source.encode("raw_unicode_escape")
-                source = source.replace(b"\r", b"")
+                    source = f.read().decode(encoding)
+                    if source and source[0] == u'\ufeff':
+                        source = source[1:]
+                    source = source.encode("raw_unicode_escape")
+                    source = source.replace(b"\r", b"")
 
-                code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
-                break
-            except:
-                if encoding == "latin-1":
-                    raise
+                    code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
+                    break
+                except:
+                    if encoding == "latin-1":
+                        raise
 
         exec(code, mod.__dict__)
 
