@@ -29,7 +29,7 @@ init -1600 python:
         screenshot = [ 's', 'alt_K_s', 'alt_shift_K_s' ],
         toggle_afm = [ ],
         toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3' ],
+        game_menu = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
         hide_windows = [ 'mouseup_2', 'h' ],
         launch_editor = [ 'E' ],
         dump_styles = [ ],
