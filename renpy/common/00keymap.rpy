@@ -263,6 +263,13 @@ init -1600 python:
             i += 1
 
         try:
+            dn = os.path.dirname(fn)
+            if not os.path.exists(dn):
+                os.makedirs(dn)
+        except:
+            pass
+
+        try:
             if not renpy.screenshot(fn):
                 renpy.notify(__("Failed to save screenshot as %s.") % fn)
                 return
