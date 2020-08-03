@@ -6,7 +6,7 @@ Preference Variables
 
 Preference variables store the values of Ren'Py preferences. While the value
 of a preference should be set at runtime using the :func:`Preference` action,
-preference variables should be used in conjuction with the default statement
+preference variables should be used in conjunction with the default statement
 to set the default value of a preference.
 
 For example::
@@ -51,6 +51,16 @@ can then change it again.)
     cause rollback to occur. One of "left", "right", or "disable". This is
     the equivalend of the "rollback side" preference when on a mobile
     platform.
+
+.. var:: preferences.language = None
+
+    The language that the player has selected to use when running the game.
+    This is None for the default language or a string containing a language
+    the game is translated to.
+
+    This can be used to set the default language, and can be read to determine
+    the current language. The :func:`Language` action can be used to change
+    the language.
 
 .. var:: preferences.emphasize_audio = False
 
