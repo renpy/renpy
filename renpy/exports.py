@@ -3157,6 +3157,10 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer=None):
     if image_tag is not None:
         image_layer = default_layer(layer, image_tag)
         attrs = (image_tag,) + images.get_attributes(image_layer, image_tag)
+
+        if renpy.config.side_image_requires_attributes and (len(attrs) < 2):
+            return None
+
     else:
         attrs = renpy.store._side_image_attributes
 

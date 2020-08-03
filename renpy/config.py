@@ -1041,6 +1041,9 @@ tts_filter_tags = [ "noalt", "rt", "art" ]
 # to a function that takes the two values and merges them.
 merge_uniforms = { }
 
+# Does the side image required an attribute to be defined?
+side_image_requires_attributes = True
+
 del os
 del collections
 
