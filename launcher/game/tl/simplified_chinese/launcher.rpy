@@ -414,8 +414,8 @@ translate simplified_chinese strings:
     new "Ren'Py 可以为您创建应用程序签名密钥。使用此密钥签名应用将允许其上传到安卓市场和其他应用商店中。\n\n您要创建密钥吗？"
 
     # androidstrings.rpy:67
-    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\n\\You also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
-    new "即将在 android.keystore 文件中创建密钥。\n\n您需要备份此文件。如果该文件丢失，您将无法更新您的应用。\n\n\\您还需要将密钥文件放置到安全的位置。若攻击者获取此文件，就可以假冒您的应用，并窃取用户数据。\n\n您是否会备份 android.keystore 并将其置于安全的位置？"
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    new "即将在 android.keystore 文件中创建密钥。\n\n您需要备份此文件。如果该文件丢失，您将无法更新您的应用。\n\n您还需要将密钥文件放置到安全的位置。若攻击者获取此文件，就可以假冒您的应用，并窃取用户数据。\n\n您是否会备份 android.keystore 并将其置于安全的位置？"
 
     # androidstrings.rpy:68
     old "Please enter your name or the name of your organization."
