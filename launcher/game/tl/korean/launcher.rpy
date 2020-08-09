@@ -413,8 +413,8 @@
     new "애플리케이션 서명 키를 만들 수 있습니다. 이 키를 사용하여 애플리케이션에 서명하면 안드로이드 상점 및 기타 앱 스토어에 배포할 수 있습니다.\n\n키를 만드시겠습니까?"
 
     # androidstrings.rpy:67
-    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\n\\You also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
-    new "android.keystore 파일에 키를 생성할 것입니다.\n\n애플리케이션의 업그레이드에 필요하기 때문에 파일을 반드시 백업하시기 바랍니다.\n\n또한 키를 안전한 곳에 보과해야 합니다."
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    new "android.keystore 파일에 키를 생성할 것입니다.\n\n애플리케이션의 업그레이드에 필요하기 때문에 파일을 반드시 백업하시기 바랍니다.\n\n또한 키는 안전한 곳에 보관해야 합니다.\n\nandroid.keystore를 백업하고 안전한 장소에 보관 하시겠습니까?"
 
     # androidstrings.rpy:68
     old "Please enter your name or the name of your organization."

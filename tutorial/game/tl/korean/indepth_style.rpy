@@ -709,7 +709,7 @@ translate korean strings:
 
     # indepth_style.rpy:22
     old "Button 2"
-    new "{font=../../launcher/game/fonts/NanumGothic.ttf}버튼 2{/font}"
+    new "{font=../../launcher/game/fonts/SourceHanSansLite.ttf}버튼 2{/font}"
 
     # indepth_style.rpy:66
     old "Style basics."
