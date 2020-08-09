@@ -414,7 +414,7 @@
 
     # androidstrings.rpy:67
     old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
-    new "android.keystore 파일에 키를 생성할 것입니다.\n\n애플리케이션의 업그레이드에 필요하기 때문에 파일을 반드시 백업하시기 바랍니다.\n\n또한 키는 안전한 곳에 보관해야 합니다.\n\nandroid.keystore를 백업하고 안전한 장소에 보관 하시겠습니까?"
+    new "android.keystore 파일에 키를 생성할 것입니다.\n\n애플리케이션의 업그레이드에 필요하기 때문에 파일을 반드시 백업하시기 바랍니다.\n\n또한 키는 안전한 곳에 보관해야 합니다.\n\nandroid.keystore를 백업하고 안전한 장소에 보관하시겠습니까?"
 
     # androidstrings.rpy:68
     old "Please enter your name or the name of your organization."
@@ -446,7 +446,7 @@
 
     # choose_theme.rpy:370
     old "Planetarium"
-    new "Planetarium"
+    new "천체망원경"
 
     # choose_theme.rpy:425
     old "Choose Theme"
@@ -798,7 +798,7 @@
 
     # gui7.rpy:311
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}경고g{/b}\n계속하면 사용자 지정된 막대, 버튼, 저장 슬롯, 스크롤바, 그리고 슬라이더 이미지들을 덮어씌웁니다.\n\n무엇을 하고 싶으세요?"
+    new "{b}경고{/b}\n계속하면 사용자 지정된 막대, 버튼, 저장 슬롯, 스크롤바, 그리고 슬라이더 이미지들을 덮어씌웁니다.\n\n무엇을 하고 싶으세요?"
 
     # gui7.rpy:311
     old "Choose new colors, then regenerate image files."
@@ -930,7 +930,7 @@
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "iOS 배포판을 만드려면 renios 패키지를 다운받은 후, 렌'파이 디렉터리에 압축을 해제하세요. 그 다음, 렌'파이를 재시작하세요."
+    new "iOS 배포판을 만드려면 renios 패키지를 다운받은 후, 렌파이 디렉토리 안에 압축을 해제하세요. 그 다음, 렌파이를 재시작하세요."
 
     # ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
@@ -938,7 +938,7 @@
 
     # ios.rpy:30
     old "There is no Xcode project corresponding to the current Ren'Py project. Choose 'Create Xcode Project' to create one."
-    new "현재 렌'파이 프로젝트에 대응하는 Xcode 프로젝트가 없습니다. 'Xcode 프로젝트 만들기'를 눌러 프로젝트를 만드세요."
+    new "현재 렌파이 프로젝트에 대응하는 Xcode 프로젝트가 없습니다. 'Xcode 프로젝트 만들기'를 눌러 프로젝트를 만드세요."
 
     # ios.rpy:31
     old "An Xcode project exists. Choose 'Update Xcode Project' to update it with the latest game files, or use Xcode to build and install it."
@@ -1022,7 +1022,7 @@
 
     # ios.rpy:359
     old "Ren'Py has set the Xcode Projects Directory to:"
-    new "렌'파이가 Xcode 프로젝트 경로를 다음과 같이 설정했습니다:"
+    new "렌파이가 Xcode 프로젝트 경로를 다음과 같이 설정했습니다:"
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
