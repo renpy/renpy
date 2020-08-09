@@ -834,7 +834,7 @@
 
     # gui7.rpy:358
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
-    new "사용자 정의. GUI는 종회비 16:9로 최적화되어 있습니다."
+    new "사용자 정의. GUI는 종횡비 16:9로 최적화되어 있습니다."
 
     # gui7.rpy:373
     old "WIDTH"
