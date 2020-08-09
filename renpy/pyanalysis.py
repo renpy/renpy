@@ -30,6 +30,7 @@ import ast
 
 import zlib
 from pickle import loads, dumps
+import gc
 
 # The set of names that should be treated as constants.
 always_constants = { 'True', 'False', 'None' }
@@ -740,6 +741,7 @@ def load_cache():
         return
 
     try:
+        gc.disable()
         f = renpy.loader.load(CACHE_FILENAME)
         c = loads(zlib.decompress(f.read()))
         f.close()
@@ -749,6 +751,8 @@ def load_cache():
             ccache.ast_exec_cache.update(c.ast_exec_cache)
     except:
         pass
+    finally:
+        gc.enable()
 
 
 def save_cache():

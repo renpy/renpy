@@ -35,6 +35,7 @@ import linecache
 from pickle import loads, dumps
 import zlib
 import weakref
+import gc
 
 import renpy.display
 import renpy.pyanalysis
@@ -2178,6 +2179,7 @@ def load_cache():
         return
 
     try:
+        gc.disable()
         f = renpy.loader.load(CACHE_FILENAME)
 
         digest = f.read(hashlib.md5().digest_size)
@@ -2194,6 +2196,8 @@ def load_cache():
 
     except:
         pass
+    finally:
+        gc.enable()
 
 
 def save_cache():

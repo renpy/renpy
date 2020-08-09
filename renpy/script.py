@@ -35,6 +35,7 @@ import time
 import marshal
 import struct
 import zlib
+import gc
 
 from pickle import loads, dumps
 import shutil
@@ -593,6 +594,7 @@ class Script(object):
             # See if we have a corresponding .rpyc file. If so, then
             # we want to try to upgrade our .rpy file with it.
             try:
+                gc.disable()
                 self.record_pycode = False
 
                 with open(rpycfn, "rb") as rpycf:
@@ -608,6 +610,7 @@ class Script(object):
                 pass
             finally:
                 self.record_pycode = True
+                gc.enable()
 
             self.assign_names(stmts, renpy.parser.elide_filename(fullfn))
 
@@ -647,7 +650,7 @@ class Script(object):
             f = renpy.loader.load(fn)
 
             try:
-
+                gc.disable()
                 for slot in [ 2, 1 ]:
                     try:
                         bindata = self.read_rpyc_data(f, slot)
@@ -681,6 +684,7 @@ class Script(object):
                     self.static_transforms(stmts)
 
             finally:
+                gc.enable()
                 f.close()
 
         else:
@@ -799,12 +803,15 @@ class Script(object):
 
         # Load the oldcache.
         try:
+            gc.disable()
             version, cache = loads(zlib.decompress(renpy.loader.load(BYTECODE_FILE).read()))
             if version == BYTECODE_VERSION:
                 self.bytecode_oldcache = cache
 
         except:
             pass
+        finally:
+            gc.enable()
 
     def update_bytecode(self):
         """
