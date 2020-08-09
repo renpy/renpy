@@ -550,6 +550,10 @@ static int check_channel(int c) {
 struct MediaState *load_sample(SDL_RWops *rw, const char *ext, double start, double end, int video) {
     struct MediaState *rv;
     rv = media_open(rw, ext);
+    if (rv == NULL)
+    {
+        return NULL;
+    }
     media_start_end(rv, start, end);
 
     if (video) {
