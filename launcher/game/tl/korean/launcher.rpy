@@ -30,11 +30,11 @@
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "안드로이드 패키지를 만드려면, RAPT 파일을 내려받은 뒤에 렌파이 디렉토리에 압축 해제하세요. 그 다음 렌파이 런처를 재시작하세요."
+    new "안드로이드 패키지를 만드려면, RAPT 파일을 내려받고 렌파이 디렉터리 안에 압축 해제하세요. 그 다음 렌파이를 재시작하세요."
 
     # android.rpy:31
     old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "윈도우에서 안드로이드 패키지를 만드려면 64비트 JDK가 필요합니다. JDK는 JRE와 다르므로 PC에 JDK가 없는 자바가 설치되어 있을 수 있습니다.\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK를 내려받아 설치한 뒤{/a}, 렌파이 런처를 재시작해주세요."
+    new "윈도우에서 안드로이드 패키지를 만드려면 64비트 JDK가 필요합니다. JDK는 JRE와 다르므로 PC에 JDK가 없는 자바가 설치되어 있을 수 있습니다.\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK를 내려받아 설치한 뒤{/a}, 렌파이를 재시작해주세요."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -174,7 +174,7 @@
 
     # androidstrings.rpy:7
     old "{} is not a directory."
-    new "{}는 디렉토리가 아닙니다."
+    new "{}는 디렉터리가 아닙니다."
 
     # androidstrings.rpy:8
     old "{} does not contain a Ren'Py game."
@@ -194,7 +194,7 @@
 
     # androidstrings.rpy:12
     old "Creating assets directory."
-    new "assets 디렉토리를 생성합니다."
+    new "assets 디렉터리를 생성합니다."
 
     # androidstrings.rpy:13
     old "Creating expansion file."
@@ -438,7 +438,7 @@
 
     # choose_directory.rpy:104
     old "The selected projects directory is not writable."
-    new "선택한 프로젝트 디렉토리에 쓸 수 없습니다."
+    new "선택한 프로젝트 디렉터리에 쓸 수 없습니다."
 
     # choose_theme.rpy:303
     old "Could not change the theme. Perhaps options.rpy was changed too much."
@@ -530,7 +530,7 @@
 
     # distribute_gui.rpy:176
     old "Directory Name:"
-    new "디렉토리 이름:"
+    new "디렉터리 이름:"
 
     # distribute_gui.rpy:180
     old "Executable Name:"
@@ -898,7 +898,7 @@
 
     # interface.rpy:258
     old "Due to package format limitations, non-ASCII file and directory names are not allowed."
-    new "패키지 형식에 제한이 있으므로 ASCII가 아닌 문자가 입력된 파일 이름이나 디렉토리 이름은 사용할 수 없습니다."
+    new "패키지 형식에 제한이 있으므로 ASCII가 아닌 문자가 입력된 파일 이름이나 디렉터리 이름은 사용할 수 없습니다."
 
     # interface.rpy:354
     old "ERROR"
@@ -910,11 +910,11 @@
 
     # interface.rpy:405
     old "File and directory names may not contain / or \\."
-    new "파일 및 디렉토리 이름에는 / 나 \\가 없어야 합니다."
+    new "파일 및 디렉터리 이름에는 / 나 \\가 없어야 합니다."
 
     # interface.rpy:411
     old "File and directory names must consist of ASCII characters."
-    new "파일이나 디렉토리 이름은 ASCII 문자로 지어야 합니다."
+    new "파일이나 디렉터리 이름은 ASCII 문자로 지어야 합니다."
 
     # interface.rpy:479
     old "PROCESSING"
@@ -930,7 +930,7 @@
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "iOS 배포판을 만드려면 renios 패키지를 다운받은 후, 렌파이 디렉토리 안에 압축을 해제하세요. 그 다음, 렌파이를 재시작하세요."
+    new "iOS 배포판을 만드려면 renios 패키지를 다운받은 후, 렌파이 디렉터리 안에 압축을 해제하세요. 그 다음, 렌파이를 재시작하세요."
 
     # ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
@@ -1394,7 +1394,7 @@
 
     # translations.rpy:414
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "대사 추출을 완료했습니다. 추출된 대사는 기본 디렉토리의 dialogue.[persistent.dialogue_format]에서 찾을 수 있습니다."
+    new "대사 추출을 완료했습니다. 추출된 대사는 기본 디렉터리의 dialogue.[persistent.dialogue_format]에서 찾을 수 있습니다."
 
     # updater.rpy:63
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -1406,7 +1406,7 @@
 
     # updater.rpy:66
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
-    new "렌파이의 다음 버전을 테스트하거나 새로운 기능을 미리 이용할 수 있으나 게임을 최종적으로 배포하기에는 적합하지 않은 선배포 버전. "
+    new "렌파이의 다음 버전을 시험하거나 새로운 기능을 미리 이용할 수 있으나 게임을 최종적으로 배포하기에는 적합하지 않은 선배포 버전. "
 
     # updater.rpy:68
     old "Experimental"
@@ -1530,7 +1530,7 @@
 
     # web.rpy:151
     old "Open build directory"
-    new "빌드 디렉토리 열기"
+    new "빌드 디렉터리 열기"
 
     # web.rpy:154
     old "Support:"
