@@ -30,7 +30,7 @@
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "안드로이드 패키지를 만드려면, RAPT 파일을 내려받고 렌파이 디렉터리 안에 압축 해제하세요. 그 다음 렌파이를 재시작하세요."
+    new "안드로이드 패키지를 만드려면, RAPT 파일을 내려받고 렌파이 디렉터리 안에 압축 해제하세요. 그다음 렌파이를 재시작하세요."
 
     # android.rpy:31
     old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
@@ -930,7 +930,7 @@
 
     # ios.rpy:28
     old "To build iOS packages, please download renios, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "iOS 배포판을 만드려면 renios 패키지를 다운받은 후, 렌파이 디렉터리 안에 압축을 해제하세요. 그 다음, 렌파이를 재시작하세요."
+    new "iOS 배포판을 만드려면 renios 패키지를 다운받은 후, 렌파이 디렉터리 안에 압축을 해제하세요. 그다음, 렌파이를 재시작하세요."
 
     # ios.rpy:29
     old "The directory in where Xcode projects will be placed has not been selected. Choose 'Select Directory' to select it."
