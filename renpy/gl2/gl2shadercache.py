@@ -213,7 +213,16 @@ class ShaderCache(object):
         if rv is not None:
             return rv
 
-        partnameset = set(partnames)
+        partnameset = set()
+        partnamenotset = set()
+
+        for i in partnames:
+            if i.startswith("-"):
+                partnamenotset.add(i[1:])
+            else:
+                partnameset.add(i)
+
+        partnameset -= partnamenotset
 
         if "renpy.ftl" not in partnameset:
             partnameset.add(renpy.config.default_shader)
