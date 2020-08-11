@@ -324,7 +324,83 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
         old_g = g
 
+_janome_tokenizer = None
+def annotate_janome(list glyphs):
+    """
+    Annotate the characters with line splitting information by janome.
+    https://github.com/mocobeta/janome
+    """
+    cdef Glyph g, old_g
+    cdef list split_before_list
+    cdef int pre_formclass_is_particle
+    cdef int pos
+    cdef unicode org_text
 
+    split_before_list = []
+    pre_formclass_is_particle = 0
+    pos = 0
+    org_text = u""
+
+    global _janome_tokenizer
+    if _janome_tokenizer is None:
+        from janome.tokenizer import Tokenizer
+        _janome_tokenizer = Tokenizer()
+
+    for g in glyphs:
+        org_text += chr(g.character)
+    tokens = _janome_tokenizer.tokenize(org_text)
+
+    # get the position list of characters after a postpositional particle.
+    for token in tokens:
+        word_formclass = str(token).decode('utf-8').split(',')[0].split()
+        if pre_formclass_is_particle == 1:
+            split_before_list.append(pos)
+
+        if len(word_formclass) > 1:
+            pos += len(word_formclass[0])
+            if word_formclass[1] == u"助詞":
+                pre_formclass_is_particle = 1
+            else:
+                pre_formclass_is_particle = 0
+        else:
+            #space character isn't returned
+            pos += 1
+
+    old_g = glyphs[0]
+    for i in range(len(glyphs)):
+        g = glyphs[i]
+
+        # split after a postpositional particle.
+        if i in split_before_list:
+            g.split = SPLIT_BEFORE
+            
+        # characters allowed to be placed at the end of a line 
+        if chr(old_g.character) in \
+                                u")]）｝〕〉》」』】〙〗｠" \
+                                u"?!？！‼⁇⁈⁉" \
+                                u"、。":
+            g.split = SPLIT_BEFORE
+
+        # characters aren't placed at the begining of a line. 
+        if g.character == 0 or chr(g.character) in \
+                                u",)]）｝、〕〉》」』】〙〗〟’”｠»" \
+                                u"‐゠–〜～" \
+                                u"?!‼⁇⁈⁉" \
+                                u"・:;/" \
+                                u"。." \
+                                u"？！":
+            g.split = SPLIT_NONE
+
+        if g.character == 0x20 or g.character == 0x200b:
+            g.split = SPLIT_INSTEAD
+
+        # Don't split ruby.
+        if g.ruby == RUBY_TOP or g.ruby == RUBY_ALT:
+            g.split = SPLIT_NONE
+        elif g.ruby == RUBY_BOTTOM and old_g.ruby == RUBY_BOTTOM:
+            g.split = SPLIT_NONE
+    
+        old_g = g
 
 def linebreak_greedy(list glyphs, int first_width, int rest_width):
     """
