@@ -1,4 +1,4 @@
-#@PydevCodeAnalysisIgnore
+# @PydevCodeAnalysisIgnore
 
 # This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
@@ -44,7 +44,7 @@ def path_to_common(renpy_base):
 
 
 def path_to_saves(gamedir, save_directory=None):
-    import renpy  # @UnresolvedImport
+    import renpy # @UnresolvedImport
 
     if save_directory is None:
         save_directory = renpy.config.save_directory
@@ -165,7 +165,6 @@ if android:
     __main__.path_to_renpy_base = path_to_renpy_base
     __main__.path_to_common = path_to_common
     __main__.path_to_saves = path_to_saves
-    os.environ["RENPY_RENDERER"] = "gl"
 
 
 def main():

@@ -2148,7 +2148,7 @@ class Interface(object):
             elif renpy.windows:
                 renderers = [ "gl", "angle", "gles", "sw" ]
             else:
-                renderers = [ "gl", "gles2", "sw" ]
+                renderers = [ "gl", "gles", "sw" ]
 
             if renpy.config.gl2:
 
