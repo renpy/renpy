@@ -523,7 +523,8 @@ but, doesn't break line before below characters::
 
     ,)]）｝、〕〉》」』】〙〗〟’”｠»ゝゞァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇷ゚ㇺㇻㇼㇽㇾㇿ々〻ー‐゠–〜～?!‼⁇⁈⁉・:;/。.？！
 
-To use this, you should install janome and pkgutil into your game directory.::
+You should install janome and pkgutil into your game directory if you use
+this.::
 
     pip install --target game/python-packages janome
 
