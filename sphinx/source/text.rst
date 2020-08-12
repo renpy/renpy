@@ -521,7 +521,7 @@ after a postpositional particle and below characters::
 
 but, doesn't break line before below characters::
 
-    ,)]）｝、〕〉》」』】〙〗〟’”｠»ー‐゠–〜～?!‼⁇⁈⁉・:;/。.？！
+    ,)]）｝、〕〉》」』】〙〗〟’”｠»ゝゞーァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇷ゚ㇺㇻㇼㇽㇾㇿ々〻ー‐゠–〜～?!‼⁇⁈⁉・:;/。.？！
 
 To use this, you should install janome and pkgutil into your game directory.::
 
@@ -538,7 +538,7 @@ game directory because it takes dozens of seconds.::
 
     init python:
         from janome.tokenizer import Tokenizer
-        renpy.text.textsupport._janome_tokenizer = Tokenizer()
+        renpy.text.textsupport._janome_tokenize = Tokenizer().tokenize
 
 janome is under Apache License 2.0 and uses the MeCab-IPADIC dictionary/statistical
 model, so we suggest using the below wording in your project's README file or

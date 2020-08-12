@@ -324,7 +324,7 @@ def annotate_unicode(list glyphs, bint no_ideographs, int cjk):
 
         old_g = g
 
-_janome_tokenizer = None
+_janome_tokenize = None
 def annotate_janome(list glyphs):
     """
     Annotate the characters with line splitting information by janome.
@@ -341,20 +341,21 @@ def annotate_janome(list glyphs):
     pos = 0
     org_text = u""
 
-    global _janome_tokenizer
-    if _janome_tokenizer is None:
+    global _janome_tokenize
+    if _janome_tokenize is None:
         from janome.tokenizer import Tokenizer
-        _janome_tokenizer = Tokenizer()
+        _janome_tokenize = Tokenizer().tokenize
 
     for g in glyphs:
         org_text += chr(g.character)
-    tokens = _janome_tokenizer.tokenize(org_text)
+    tokens = _janome_tokenize(org_text)
 
+    split_before_list_append = split_before_list.append
     # get the position list of characters after a postpositional particle.
     for token in tokens:
         word_formclass = str(token).decode('utf-8').split(',')[0].split()
         if pre_formclass_is_particle == 1:
-            split_before_list.append(pos)
+            split_before_list_append(pos)
 
         if len(word_formclass) > 1:
             pos += len(word_formclass[0])
@@ -385,7 +386,7 @@ def annotate_janome(list glyphs):
         if g.character == 0 or chr(g.character) in \
                                 u",)]）｝、〕〉》」』】〙〗〟’”｠»" \
                                 u"ゝゞーァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇷ゚ㇺㇻㇼㇽㇾㇿ々〻" \
-                                u"‐゠ー–〜～" \
+                                u"‐゠–〜～" \
                                 u"?!‼⁇⁈⁉" \
                                 u"・:;/" \
                                 u"。." \
