@@ -551,7 +551,9 @@ App Store description to use janome:
     including the GNU Lesser General Public License. A complete list of software
     is available at http://www.renpy.org/doc/html/license.html.
 
-    janome (Apache License 2.0) http://www.apache.org/licenses/LICENSE-2.0
+    janome (https://github.com/mocobeta/janome) Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+
+    This program also includes MeCab-IPADIC (Nara Institute of Science and Technology)
 
 And you should include a readable copy of
 `NOTICE.txt <https://github.com/mocobeta/janome/blob/master/NOTICE.txt>`_ with
