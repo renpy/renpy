@@ -494,9 +494,10 @@ spaces, which can be enabled by setting::
 
 This can be changed from the default of "unicode" in gui.rpy.
 
-Japanese has multiple rules for line breaking. We recommend starting with
-"japanese-normal", and moving to "japanese-loose" or "japanese-strict" for
-more or less break opportunities, respectively. ::
+Japanese has multiple rules for line breaking. We recommend starting
+with "japanese-normal", and moving to "japanese-loose" or
+"japanese-strict" for more or less break opportunities, respectively.
+There is also "japanese-janome".::
 
     define gui.language = "japanese-loose"
 
@@ -509,9 +510,53 @@ algorithm, use::
 The faster line-breaking algorithm is not be necessary unless the
 game is displaying huge amounts of text, such as in NVL-mode.
 
-The line breaking algorithms can be further configured using the
+The above line breaking algorithms can be further configured using the
 :func:`renpy.language_tailor` function.
 
+"japanese-janome" breaks line by `janome <https://github.com/mocobeta/janome>`_,
+which is Japanese Morphological Analysis library. This breaks the line
+after a postpositional particle and below characters::
+
+    )]）｝〕〉》」』】〙〗｠?!？！‼⁇⁈⁉、。
+
+but, doesn't break line before below characters::
+
+    ,)]）｝、〕〉》」』】〙〗〟’”｠»ー‐゠–〜～?!‼⁇⁈⁉・:;/。.？！
+
+To use this, you should install janome and pkgutil into your game directory.::
+
+    pip install --target game/python-packages janome
+
+Then, copy pkgutil.py into the same python-packages directory from
+https://github.com/python/cpython/blob/2.7/Lib/pkgutil.py.
+
+This is very natural but fairly slow line-breaking algorithm, so isn't
+recommended for huge amounts of text, such as in history.
+
+you should import janome in init block and place presplash.png into your
+game directory because it takes dozens of seconds.::
+
+    init python:
+        from janome.tokenizer import Tokenizer
+        renpy.text.textsupport._janome_tokenizer = Tokenizer()
+
+janome is under Apache License 2.0 and uses the MeCab-IPADIC dictionary/statistical
+model, so we suggest using the below wording in your project's README file or
+App Store description to use janome:
+
+    This program contains Ren'Py and below software.
+
+    Ren'Py contains free software licensed under a number of licenses,
+    including the GNU Lesser General Public License. A complete list of software
+    is available at http://www.renpy.org/doc/html/license.html.
+
+    janome (Apache License 2.0) http://www.apache.org/licenses/LICENSE-2.0
+
+And you should include a readable copy of
+`NOTICE.txt <https://github.com/mocobeta/janome/blob/master/NOTICE.txt>`_ with
+every copy of Ren'Py you distribute or display below wording in your application:
+
+    This program includes MeCab-IPADIC (Nara Institute of Science and Technology)
 
 Vertical Text
 -------------
