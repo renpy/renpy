@@ -385,8 +385,8 @@ def annotate_janome(list glyphs):
         # characters aren't placed at the begining of a line. 
         if g.character == 0 or chr(g.character) in \
                                 u",)]）｝、〕〉》」』】〙〗〟’”｠»" \
-                                u"ゝゞーァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇷ゚ㇺㇻㇼㇽㇾㇿ々〻" \
-                                u"‐゠–〜～" \
+                                u"ゝゞァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇷ゚ㇺㇻㇼㇽㇾㇿ々〻" \
+                                u"ー‐゠–〜～" \
                                 u"?!‼⁇⁈⁉" \
                                 u"・:;/" \
                                 u"。." \

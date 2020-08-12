@@ -521,7 +521,7 @@ after a postpositional particle and below characters::
 
 but, doesn't break line before below characters::
 
-    ,)]）｝、〕〉》」』】〙〗〟’”｠»ゝゞーァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇷ゚ㇺㇻㇼㇽㇾㇿ々〻ー‐゠–〜～?!‼⁇⁈⁉・:;/。.？！
+    ,)]）｝、〕〉》」』】〙〗〟’”｠»ゝゞァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇷ゚ㇺㇻㇼㇽㇾㇿ々〻ー‐゠–〜～?!‼⁇⁈⁉・:;/。.？！
 
 To use this, you should install janome and pkgutil into your game directory.::
 
