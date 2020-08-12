@@ -419,7 +419,7 @@ translate russian strings:
 
     # androidstrings.rpy:66
     old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
-    new "Я создам ключ в файле android.keystore.\n\nВам нужно сохранить этот файл. Если вы его потеряете, то не сможете обновлять ваше приложение. n.\n\nТакже вам нужно держать ваш ключ в безопасность. Если злоумышленникам удастся получить его, они потенциально могут создать вредоносную версию приложения и красть данные ваших пользователей.\n\nБудете ли вы хранить android.keystore и держать его в надёжном месте?"
+    new "Я создам ключ в файле android.keystore.\n\nВам нужно сохранить этот файл. Если вы его потеряете, то не сможете обновлять ваше приложение.\n\nТакже вам нужно держать ваш ключ в безопасность. Если злоумышленникам удастся получить его, они потенциально могут создать вредоносную версию приложения и красть данные ваших пользователей.\n\nБудете ли вы хранить android.keystore и держать его в надёжном месте?"
 
     # androidstrings.rpy:67
     old "Please enter your name or the name of your organization."
