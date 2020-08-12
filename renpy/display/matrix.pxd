@@ -3,23 +3,23 @@ cdef class Matrix:
     cdef float m[0]
 
     cdef public float xdx
-    cdef public float xdy
-    cdef public float xdz
-    cdef public float xdw
-
     cdef public float ydx
-    cdef public float ydy
-    cdef public float ydz
-    cdef public float ydw
-
     cdef public float zdx
-    cdef public float zdy
-    cdef public float zdz
-    cdef public float zdw
-
     cdef public float wdx
+
+    cdef public float xdy
+    cdef public float ydy
+    cdef public float zdy
     cdef public float wdy
+
+    cdef public float xdz
+    cdef public float ydz
+    cdef public float zdz
     cdef public float wdz
+
+    cdef public float xdw
+    cdef public float ydw
+    cdef public float zdw
     cdef public float wdw
 
     # When this matrix is generated, where it was generated from.

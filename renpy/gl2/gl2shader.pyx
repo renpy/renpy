@@ -52,7 +52,7 @@ cdef class UniformVec4(Uniform):
 
 cdef class UniformMat4(Uniform):
     cdef void assign(self, data):
-        glUniformMatrix4fv(self.location, 1, GL_TRUE, (<Matrix> data).m)
+        glUniformMatrix4fv(self.location, 1, GL_FALSE, (<Matrix> data).m)
 
 cdef class UniformSampler2D(Uniform):
     cdef int sampler
