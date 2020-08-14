@@ -19,7 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 #########################################################################
 # WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 #
@@ -28,11 +27,11 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
+from renpy.compat.pickle import loads, dumps
 
 import ast
 import collections
 import linecache
-from pickle import loads, dumps
 import zlib
 import weakref
 
@@ -369,7 +368,7 @@ class SLBlock(SLNode):
                 keyword_values[k] = py_eval_bytecode(compile_expr(node))
             else:
                 keyword_keys.append(ast.Str(s=k))
-                keyword_exprs.append(node)  # Will be compiled as part of ast.Dict below.
+                keyword_exprs.append(node) # Will be compiled as part of ast.Dict below.
 
             self.constant = min(self.constant, const)
 
@@ -694,7 +693,7 @@ class SLDisplayable(SLBlock):
                 has_values = True
             else:
                 values.append(use_expression)
-                exprs.append(node)  # Will be compiled as part of the tuple.
+                exprs.append(node) # Will be compiled as part of the tuple.
                 has_exprs = True
 
             self.constant = min(self.constant, const)
@@ -918,8 +917,8 @@ class SLDisplayable(SLBlock):
 
                 imagemap = self.imagemap
 
-                cache.copy_on_change = False  # We no longer need to copy on change.
-                cache.children = None  # Re-add the children.
+                cache.copy_on_change = False # We no longer need to copy on change.
+                cache.children = None # Re-add the children.
 
             if debug:
                 if reused:
@@ -1957,10 +1956,10 @@ class SLScreen(SLBlock):
         self.tag = None
 
         # The variant of screen we're defining.
-        self.variant = "None"  # expr.
+        self.variant = "None" # expr.
 
         # Should we predict this screen?
-        self.predict = "None"  # expr.
+        self.predict = "None" # expr.
 
         # Should this screen be sensitive.
         self.sensitive = "True"
@@ -2174,7 +2173,7 @@ CACHE_FILENAME = "cache/screens.rpyb"
 
 
 def load_cache():
-    if renpy.game.args.compile:  # @UndefinedVariable
+    if renpy.game.args.compile: # @UndefinedVariable
         return
 
     try:

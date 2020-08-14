@@ -36,9 +36,13 @@ import sys
 
 import renpy
 
+import pickle
+import renpy.compat.pickle as cPickle
+
 from json import dumps as json_dumps
 
 # Dump that chooses which pickle to use:
+
 
 def dump(o, f):
     if renpy.config.use_cpickle:

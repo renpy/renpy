@@ -24,13 +24,14 @@ from renpy.compat import *
 
 import renpy
 import os.path
-from pickle import loads
 import sys
 import types
 import threading
 import zlib
 import re
 import io
+
+from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it

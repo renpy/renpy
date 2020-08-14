@@ -36,7 +36,7 @@ import marshal
 import struct
 import zlib
 
-from pickle import loads, dumps
+from renpy.compat.pickle import loads, dumps
 import shutil
 
 # The version of the dumped script.

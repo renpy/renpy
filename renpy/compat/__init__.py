@@ -78,16 +78,6 @@ future.standard_library.install_aliases()
 PY2 = future.utils.PY2
 
 ################################################################################
-# Make both cPickle and pickle available to support config.use_cpickle on
-# Python 2 (on Python 3 it's a no-op)
-
-if PY2:
-    import cPickle
-    import pickle
-else:
-    import pickle, pickle as cPickle
-
-################################################################################
 # Make open mimic Python 3.
 
 if PY2:
@@ -132,7 +122,7 @@ else:
 # Sort key functions.
 
 __all__ = [ "PY2", "open", "basestring", "str", "pystr", "range",
-            "bord", "bchr", "tobytes", "chr", "pickle", "cPickle"]
+            "bord", "bchr", "tobytes", "chr", ]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ]
