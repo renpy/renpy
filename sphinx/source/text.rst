@@ -521,9 +521,10 @@ after a postpositional particle and below characters::
 
 but, doesn't break line before below characters::
 
-    ,)]）｝、〕〉》」』】〙〗〟’”｠»ゝゞーァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇷ゚ㇺㇻㇼㇽㇾㇿ々〻ー‐゠–〜～?!‼⁇⁈⁉・:;/。.？！
+    ,)]）｝、〕〉》」』】〙〗〟’”｠»ゝゞァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇷ゚ㇺㇻㇼㇽㇾㇿ々〻ー‐゠–〜～?!‼⁇⁈⁉・:;/。.？！
 
-To use this, you should install janome and pkgutil into your game directory.::
+You should install janome and pkgutil into your game directory if you use
+this.::
 
     pip install --target game/python-packages janome
 
@@ -550,7 +551,9 @@ App Store description to use janome:
     including the GNU Lesser General Public License. A complete list of software
     is available at http://www.renpy.org/doc/html/license.html.
 
-    janome (Apache License 2.0) http://www.apache.org/licenses/LICENSE-2.0
+    janome (https://github.com/mocobeta/janome) Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+
+    This program also includes MeCab-IPADIC (Nara Institute of Science and Technology)
 
 And you should include a readable copy of
 `NOTICE.txt <https://github.com/mocobeta/janome/blob/master/NOTICE.txt>`_ with
