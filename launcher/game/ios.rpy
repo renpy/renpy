@@ -200,12 +200,12 @@ init python:
 
         os.unlink(py_fn)
 
-        ios_image(p, "ios-icon.png", "Media.xcassets/AppIcon.appiconset", True)
-        ios_image(p, "ios-launchimage.png", "Media.xcassets/LaunchImage.launchimage", False)
+        ios_image(p, "ios-icon.png", "Media.xcassets/AppIcon.appiconset", True, target)
+        # ios_image(p, "ios-launchimage.png", "Media.xcassets/LaunchImage.launchimage", False, target)
 
-    def ios_image(p, source, destination, scale):
+    def ios_image(p, source, destination, scale, target):
         source = os.path.join(p.path, source)
-        destination = os.path.join(xcode_project(p), destination)
+        destination = os.path.join(xcode_project(p, target), destination)
 
         renios.image.generate(source, destination, scale)
 
