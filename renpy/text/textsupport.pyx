@@ -331,12 +331,13 @@ def annotate_janome(list glyphs):
     https://github.com/mocobeta/janome
     """
     cdef Glyph g, old_g
-    cdef list split_before_list
+    cdef set split_before_set
+    cdef list word_formclass
     cdef int pre_formclass_is_particle
     cdef int pos
     cdef unicode org_text
 
-    split_before_list = []
+    split_before_set = set()
     pre_formclass_is_particle = 0
     pos = 0
     org_text = u""
@@ -350,12 +351,12 @@ def annotate_janome(list glyphs):
         org_text += chr(g.character)
     tokens = _janome_tokenize(org_text)
 
-    split_before_list_append = split_before_list.append
-    # get the position list of characters after a postpositional particle.
+    split_before_set_add = split_before_set.add
+    # get the position set of characters after a postpositional particle.
     for token in tokens:
         word_formclass = str(token).decode('utf-8').split(',')[0].split()
         if pre_formclass_is_particle == 1:
-            split_before_list_append(pos)
+            split_before_set_add(pos)
 
         if len(word_formclass) > 1:
             pos += len(word_formclass[0])
@@ -372,7 +373,7 @@ def annotate_janome(list glyphs):
         g = glyphs[i]
 
         # split after a postpositional particle.
-        if i in split_before_list:
+        if i in split_before_set:
             g.split = SPLIT_BEFORE
             
         # characters allowed to be placed at the end of a line 
