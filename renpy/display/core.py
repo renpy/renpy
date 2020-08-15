@@ -2048,6 +2048,7 @@ class Interface(object):
         This is called after display init, but before the window is created.
         """
 
+        pygame.display.hint("SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR", "0")
         pygame.display.hint("SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS", "0")
         pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
