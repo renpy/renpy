@@ -1523,8 +1523,8 @@ translate spanish strings:
     new "Puedo crear una clave de firma de la aplicación para usted. Firmar una aplicación con esta clave le permite ubicarla en Android Market y otras tiendas de aplicaciones. \ N \ n¿Desea crear una clave?"
 
     # game/androidstrings.rpy:67
-    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\n\\You also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
-    new "Crearé la clave en el archivo android.keystore.\n\nTienes que hacer una copia de seguridad de este archivo. Si lo pierdes, no podrás actualizar tu aplicación.\n\n\\También debes mantener la clave segura. Si la gente malvada obtiene este archivo, podrían crear versiones falsas de su aplicación y, posiblemente, robar los datos de sus usuarios.\n\n¿Harás una copia de seguridad de android.keystore y la mantendrás en un lugar seguro?"
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    new "Crearé la clave en el archivo android.keystore.\n\nTienes que hacer una copia de seguridad de este archivo. Si lo pierdes, no podrás actualizar tu aplicación.\n\nTambién debes mantener la clave segura. Si la gente malvada obtiene este archivo, podrían crear versiones falsas de su aplicación y, posiblemente, robar los datos de sus usuarios.\n\n¿Harás una copia de seguridad de android.keystore y la mantendrás en un lugar seguro?"
 
     # game/androidstrings.rpy:68
     old "Please enter your name or the name of your organization."
