@@ -34,8 +34,11 @@ init python:
         varying vec2 v_tex_coord;
     """, vertex_200="""
         v_tex_coord = a_tex_coord;
+    """, fragment_50="""
+        float lod_bias = -0.9999;
+
     """, fragment_200="""
-        gl_FragColor = texture2D(tex0, v_tex_coord.xy);
+        gl_FragColor = texture2D(tex0, v_tex_coord.xy, lod_bias);
     """)
 
     renpy.register_shader("renpy.solid", variables="""
