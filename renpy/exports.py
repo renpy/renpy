@@ -86,7 +86,7 @@ from renpy.atl import atl_warper
 from renpy.easy import predict, displayable, split_properties
 from renpy.parser import unelide_filename, get_parse_errors
 
-from renpy.translation import change_language, known_languages
+from renpy.translation import change_language, known_languages, translate_string
 from renpy.translation.generation import generic_filter as transform_text
 
 from renpy.persistent import register_persistent
@@ -162,7 +162,7 @@ def public_api():
     predict, predict_screen
     displayable, split_properties
     unelide_filename, get_parse_errors
-    change_language, known_languages
+    change_language, known_languages, translate_string
     transform_text
     language_tailor
     register_persistent
