@@ -306,7 +306,7 @@ cdef class Program:
             for 0 <= i < self.samplers:
                 glActiveTexture(GL_TEXTURE0 + i)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
 
 
     def finish(Program self):
