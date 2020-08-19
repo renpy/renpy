@@ -1504,6 +1504,16 @@ cdef class Render:
         else:
             self.uniforms[name] = value
 
+    def add_property(self, name, value):
+        """
+        Adds a render property with name and value.
+        """
+
+        if self.properties is None:
+            self.properties = { name : value }
+        else:
+            self.properties[name] = value
+
 class Canvas(object):
 
     def __init__(self, surf): #@DuplicatedSignature

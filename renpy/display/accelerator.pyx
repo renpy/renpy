@@ -406,15 +406,11 @@ def transform_render(self, widtho, heighto, st, at):
                 -rydx / inv_det,
                 rxdx / inv_det)
 
-    # If we need to create properties, create them.
-    if state.nearest:
-        rv.properties = { }
-
     # Nearest neightbor.
     rv.nearest = state.nearest
 
     if state.nearest:
-        rv.properties["texture_scaling"] = "nearest"
+        rv.add_property("texture_scaling", "nearest")
 
     # Alpha.
     alpha = state.alpha
