@@ -1190,7 +1190,7 @@ cdef class GL2DrawingContext:
 
         program.start()
 
-        program.set_uniform("u_lod_bias", 1.0)
+        program.set_uniform("u_lod_bias", -1.0)
         program.set_uniform("u_transform", transform)
         program.set_uniform("u_time", renpy.display.interface.frame_time)
         program.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
@@ -1203,7 +1203,7 @@ cdef class GL2DrawingContext:
         program.draw(mesh, properties)
         program.finish()
 
-    def draw_one(self, what, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, dict properties, pixel_perfect):
+    def draw_one(self, what, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, dict properties):
         """
         This is responsible for walking the surface tree, and drawing any
         Models, Renders, and Surfaces it encounters.
@@ -1285,11 +1285,12 @@ cdef class GL2DrawingContext:
 
             child_transform = transform
             child_clip_polygon = clip_polygon
-            child_pixel_perfect = pixel_perfect
+            child_properties = properties
 
             if (cx or cy):
-                if isinstance(cx, float) and not pixel_perfect:
-                    child_pixel_perfect = False
+                if isinstance(cx, float) and not properties["pixel_perfect"]:
+                    child_properties = dict(properties)
+                    child_properties["pixel_perfect"] = False
 
                 child_transform = child_transform * Matrix.coffset(cx, cy, 0)
 
@@ -1302,7 +1303,7 @@ cdef class GL2DrawingContext:
                 if child_clip_polygon is not None:
                     child_clip_polygon = child_clip_polygon.multiply_matrix(r.forward)
 
-            self.draw_one(child, child_transform, child_clip_polygon, shaders, uniforms, properties)
+            self.draw_one(child, child_transform, child_clip_polygon, shaders, uniforms, child_properties)
 
 
         return 0

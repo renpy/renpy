@@ -418,7 +418,7 @@ cdef class GLTexture(Model):
         program = self.loader.ftl_program
         program.start()
         program.set_uniform("tex0", tex)
-        program.draw(mesh)
+        program.draw(mesh, {})
         program.finish()
 
         # Create premultiplied.
