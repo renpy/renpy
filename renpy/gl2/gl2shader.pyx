@@ -99,6 +99,14 @@ ATTRIBUTE_TYPES = {
     "vec4" : 4,
 }
 
+TEXTURE_SCALING = {
+    "nearest" : (GL_NEAREST, GL_NEAREST),
+    "linear" : (GL_LINEAR, GL_LINEAR),
+    "nearest_mipmap_nearest" : (GL_NEAREST, GL_NEAREST_MIPMAP_NEAREST),
+    "linear_mipmap_nearest" : (GL_LINEAR, GL_LINEAR_MIPMAP_NEAREST),
+    "nearest_mipmap_linear" : (GL_NEAREST, GL_NEAREST_MIPMAP_LINEAR),
+    "linear_mipmap_linear" : (GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR),
+}
 
 cdef class Program:
     """
@@ -118,9 +126,6 @@ cdef class Program:
 
         # The number of samplers that have been added.
         self.samplers = 0
-
-        # Should the next draw use nearest neighbor?
-        self.nearest = False
 
     def find_variables(self, source):
 
@@ -245,10 +250,6 @@ cdef class Program:
 
     def start(self):
         glUseProgram(self.program)
-        self.nearest = False
-
-    def use_nearest(self):
-        self.nearest = True
 
     def set_uniform(self, name, value):
         cdef Uniform u
@@ -270,7 +271,7 @@ cdef class Program:
             u.assign(value)
             u.ready = True
 
-    def draw(self, Mesh mesh):
+    def draw(self, Mesh mesh, dict properties):
 
         cdef Attribute a
         cdef Uniform u
@@ -293,16 +294,17 @@ cdef class Program:
             if not u.ready:
                 self.missing("uniform", name)
 
-        if self.nearest:
+        if "texture_scaling" in properties:
+            magnify, minify = TEXTURE_SCALING[properties["texture_scaling"]]
 
             for 0 <= i < self.samplers:
                 glActiveTexture(GL_TEXTURE0 + i)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify)
 
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
 
-        if self.nearest:
+        if "texture_scaling" in properties:
             for 0 <= i < self.samplers:
                 glActiveTexture(GL_TEXTURE0 + i)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)

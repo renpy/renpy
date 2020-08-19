@@ -406,8 +406,17 @@ def transform_render(self, widtho, heighto, st, at):
                 -rydx / inv_det,
                 rxdx / inv_det)
 
+    # If we need to create properties, create them.
+    if state.nearest:
+        rv.properties = { }
+
+    # Nearest neightbor.
     rv.nearest = state.nearest
 
+    if state.nearest:
+        rv.properties["texture_scaling"] = "nearest"
+
+    # Alpha.
     alpha = state.alpha
 
     if alpha < 0.0:
@@ -424,6 +433,7 @@ def transform_render(self, widtho, heighto, st, at):
         rv.add_uniform("u_renpy_alpha", rv.alpha)
         rv.add_uniform("u_renpy_over", rv.over)
 
+    # Shaders and uniforms.
     if state.shader is not None:
 
         if isinstance(state.shader, basestring):
@@ -438,6 +448,7 @@ def transform_render(self, widtho, heighto, st, at):
             if value is not None:
                 rv.add_uniform(name, value)
 
+    # Clipping.
     rv.xclipping = clipping
     rv.yclipping = clipping
 

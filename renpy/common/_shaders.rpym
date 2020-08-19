@@ -29,16 +29,14 @@ init python:
     """)
 
     renpy.register_shader("renpy.texture", variables="""
+        uniform float u_lod_bias;
         uniform sampler2D tex0;
         attribute vec2 a_tex_coord;
         varying vec2 v_tex_coord;
     """, vertex_200="""
         v_tex_coord = a_tex_coord;
-    """, fragment_50="""
-        float lod_bias = -0.9999;
-
     """, fragment_200="""
-        gl_FragColor = texture2D(tex0, v_tex_coord.xy, lod_bias);
+        gl_FragColor = texture2D(tex0, v_tex_coord.xy, u_lod_bias);
     """)
 
     renpy.register_shader("renpy.solid", variables="""
@@ -48,6 +46,7 @@ init python:
     """)
 
     renpy.register_shader("renpy.dissolve", variables="""
+        uniform float u_lod_bias;
         uniform sampler2D tex0;
         uniform sampler2D tex1;
         uniform float u_renpy_dissolve;
@@ -56,13 +55,14 @@ init python:
     """, vertex_200="""
         v_tex_coord = a_tex_coord;
     """, fragment_200="""
-        vec4 color0 = texture2D(tex0, v_tex_coord.st);
-        vec4 color1 = texture2D(tex1, v_tex_coord.st);
+        vec4 color0 = texture2D(tex0, v_tex_coord.st, u_lod_bias);
+        vec4 color1 = texture2D(tex1, v_tex_coord.st, u_lod_bias);
 
-        gl_FragColor = mix(color0, color1, u_renpy_dissolve);
+        gl_FragColor = mix(color0, color1, u_renpy_dissolve, u_lod_bias);
     """)
 
     renpy.register_shader("renpy.imagedissolve", variables="""
+        uniform float u_lod_bias;
         uniform sampler2D tex0;
         uniform sampler2D tex1;
         uniform sampler2D tex2;
@@ -73,9 +73,9 @@ init python:
     """, vertex_200="""
         v_tex_coord = a_tex_coord;
     """, fragment_200="""
-        vec4 color0 = texture2D(tex0, v_tex_coord.st);
-        vec4 color1 = texture2D(tex1, v_tex_coord.st);
-        vec4 color2 = texture2D(tex2, v_tex_coord.st);
+        vec4 color0 = texture2D(tex0, v_tex_coord.st, u_lod_bias);
+        vec4 color1 = texture2D(tex1, v_tex_coord.st, u_lod_bias);
+        vec4 color2 = texture2D(tex2, v_tex_coord.stm, u_lod_bias);
 
         float a = clamp((color0.a + u_renpy_dissolve_offset) * u_renpy_dissolve_multiplier, 0.0, 1.0);
         gl_FragColor = mix(color1, color2, a);
