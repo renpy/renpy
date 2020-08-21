@@ -301,8 +301,6 @@ class Pixellate(Transition):
         rv.operation = renpy.display.render.PIXELLATE
         rv.operation_parameter = 2 ** step
 
-        print("step", step)
-
         rv.mesh = True
         rv.add_shader("renpy.texture")
         rv.add_property("texture_scaling", "nearest_mipmap_nearest")

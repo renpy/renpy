@@ -310,8 +310,6 @@ cdef class GLTexture(Model):
 
         self.loader.texture_load_queue.add(self)
 
-
-
     def from_render(GLTexture self, what):
         """
         This renders `what` to this texture.
@@ -337,8 +335,6 @@ cdef class GLTexture(Model):
         cdef Matrix transform
         transform = Matrix.ctexture_projection(cw, ch)
 
-        start = time.time()
-
         self.allocate_texture(premultiplied, tw, th)
 
         # Set up the viewport.
@@ -356,7 +352,6 @@ cdef class GLTexture(Model):
         context.draw(what, transform)
 
         glBindTexture(GL_TEXTURE_2D, premultiplied)
-
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, tw, th, 0)
 
         self.mipmap_texture(premultiplied, tw, th)
@@ -366,8 +361,6 @@ cdef class GLTexture(Model):
 
         self.loaded = True
 
-        if self.width > 500:
-            print("FR", time.time() - start)
 
     def __repr__(self):
         return "<GLTexture {}x{} {}>".format(self.width, self.height, self.number)
@@ -457,11 +450,21 @@ cdef class GLTexture(Model):
         self.surface = None
 
     def allocate_texture(GLTexture self, GLuint tex, int tw, int th):
+        """
+        Allocates the VRAM required to store `tex`, which is a `tw` x `th`
+        texture, including all mipmap levels.
+        """
+
+
+        # It's not 100% clear why we need this function, but it does seem to
+        # significantly speed things up on my GeForce GTX 1060 3GB/PCIe/SSE2.
+        # Going from a single to multiple mipmap levels takes ~9ms when loading
+        # each mipmap, while allocating the space first reduces that to ~1ms.
 
         glBindTexture(GL_TEXTURE_2D, tex)
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
@@ -478,12 +481,17 @@ cdef class GLTexture(Model):
             level += 1
 
     def mipmap_texture(GLTexture self, GLuint tex, int tw, int th):
+        """
+        Uses render-to-texture operations to create missing mipmap
+        levels.
+        """
 
         cdef GLuint level = 0
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level)
 
         mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
 
-        # glViewport(0, 0, tw, th)
+        glDisable(GL_BLEND)
 
         while True:
             if (tw <= 1) and (th <= 1):
@@ -493,18 +501,23 @@ cdef class GLTexture(Model):
             th = max(1, th >> 1)
             level += 1
 
-#             glClearColor(1.0, 0.0, 0.0, 1.0)
-#             glClear(GL_COLOR_BUFFER_BIT)
-#
-#             # Draw.
-#             program = self.loader.ftl_program
-#             program.start()
-#             program.set_uniform("tex0", tex)
-#             program.draw(mesh, {})
-#             program.finish()
+            glViewport(0, 0, tw, th)
+
+            glClearColor(1.0, 0.0, 0.0, 1.0)
+            glClear(GL_COLOR_BUFFER_BIT)
+
+            # Draw.
+            program = self.loader.ftl_program
+            program.start()
+            program.set_uniform("tex0", tex)
+            program.draw(mesh, {})
+            program.finish()
 
             glBindTexture(GL_TEXTURE_2D, tex)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level)
             glCopyTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, 0, 0, tw, th, 0)
+
+        glEnable(GL_BLEND)
 
 
     def __dealloc__(self):
