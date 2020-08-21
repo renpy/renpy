@@ -53,6 +53,7 @@ GL_FEATURES = [
 
 GLES_FEATURES = [
     "GL_ES_VERSION_2_0",
+    "GL_ES_VERSION_3_0",
     ]
 
 
@@ -340,6 +341,9 @@ class XMLToPYX:
 
         for i in sorted(self.features.commands):
             c = self.commands[i]
+
+            if c.return_type.strip() == "void *":
+                continue
 
             params = list(zip(c.parameters, c.parameter_types))
             param_list = ", ".join(c.parameters)
