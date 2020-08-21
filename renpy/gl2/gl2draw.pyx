@@ -895,8 +895,8 @@ cdef class GL2Draw:
         if isinstance(what, Texture):
             return what
 
-        if what.cached_texture is not None:
-            return what.cached_texture
+#         if what.cached_texture is not None:
+#             return what.cached_texture
 
         rv = self.texture_loader.render_to_texture(what)
 

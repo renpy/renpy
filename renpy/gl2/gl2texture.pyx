@@ -271,7 +271,6 @@ cdef class GLTexture(Model):
         self.loader.total_texture_size += self.width * self.height * 4
 
 
-
     def from_surface(GLTexture self, surface):
         """
         Called to indicate this texture should be loaded from a surface.
@@ -311,6 +310,8 @@ cdef class GLTexture(Model):
 
         self.loader.texture_load_queue.add(self)
 
+
+
     def from_render(GLTexture self, what):
         """
         This renders `what` to this texture.
@@ -332,17 +333,20 @@ cdef class GLTexture(Model):
         # Bind the framebuffer.
         draw.change_fbo(draw.fbo)
 
+        # Project the child from virtual space to the screen space.
+        cdef Matrix transform
+        transform = Matrix.ctexture_projection(cw, ch)
+
+        start = time.time()
+
+        self.allocate_texture(premultiplied, tw, th)
+
         # Set up the viewport.
         glViewport(0, 0, tw, th)
 
         # Clear the screen.
-        clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
-        glClearColor(clear_r, clear_g, clear_b, 0.0)
+        glClearColor(0.0, 0.0, 0.0, 0.0)
         glClear(GL_COLOR_BUFFER_BIT)
-
-        # Project the child from virtual space to the screen space.
-        cdef Matrix transform
-        transform = Matrix.ctexture_projection(cw, ch)
 
         # Set up the default modes.
         glEnable(GL_BLEND)
@@ -352,16 +356,18 @@ cdef class GLTexture(Model):
         context.draw(what, transform)
 
         glBindTexture(GL_TEXTURE_2D, premultiplied)
+
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, tw, th, 0)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
+        self.mipmap_texture(premultiplied, tw, th)
 
         self.number = premultiplied
         self.loader.allocated.add(self.number)
 
         self.loaded = True
+
+        if self.width > 500:
+            print("FR", time.time() - start)
 
     def __repr__(self):
         return "<GLTexture {}x{} {}>".format(self.width, self.height, self.number)
@@ -423,15 +429,16 @@ cdef class GLTexture(Model):
 
         # Create premultiplied.
         glBindTexture(GL_TEXTURE_2D, premultiplied)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, self.width, self.height, 0)
 
         glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
         glGenerateMipmap(GL_TEXTURE_2D)
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
         # Delete tex.
         glDeleteTextures(1, &tex)
@@ -448,6 +455,57 @@ cdef class GLTexture(Model):
             self.data = NULL
 
         self.surface = None
+
+    def allocate_texture(GLTexture self, GLuint tex, int tw, int th):
+
+        glBindTexture(GL_TEXTURE_2D, tex)
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
+        cdef GLuint level = 0
+
+        while True:
+            glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+            if tw == 1 and th == 1:
+                break
+
+            tw = max(tw >> 1, 1)
+            th = max(th >> 1, 1)
+            level += 1
+
+    def mipmap_texture(GLTexture self, GLuint tex, int tw, int th):
+
+        cdef GLuint level = 0
+
+        mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
+
+        # glViewport(0, 0, tw, th)
+
+        while True:
+            if (tw <= 1) and (th <= 1):
+                break
+
+            tw = max(1, tw >> 1)
+            th = max(1, th >> 1)
+            level += 1
+
+#             glClearColor(1.0, 0.0, 0.0, 1.0)
+#             glClear(GL_COLOR_BUFFER_BIT)
+#
+#             # Draw.
+#             program = self.loader.ftl_program
+#             program.start()
+#             program.set_uniform("tex0", tex)
+#             program.draw(mesh, {})
+#             program.finish()
+
+            glBindTexture(GL_TEXTURE_2D, tex)
+            glCopyTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, 0, 0, tw, th, 0)
+
 
     def __dealloc__(self):
 
