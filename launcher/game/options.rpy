@@ -183,9 +183,7 @@ init -1 python hide:
 
     config.sound = False
     config.quit_action = Quit(confirm=False)
-    config.gl_resize = False
     config.window_icon = "images/logo.png"
-    config.windows_icon = "images/logo32.png"
     config.has_autosave = False
     config.log_enable = False
     config.mouse_hide_time = None
