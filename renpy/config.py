@@ -1044,6 +1044,9 @@ merge_uniforms = { }
 # Does the side image required an attribute to be defined?
 side_image_requires_attributes = True
 
+# What is the max mipmap level?
+max_mipmap_level = 1000
+
 del os
 del collections
 

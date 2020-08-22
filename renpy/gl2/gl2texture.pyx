@@ -456,6 +456,9 @@ cdef class GLTexture(Model):
             th = max(1, th >> 1)
             level += 1
 
+            if level > renpy.config.max_mipmap_level:
+                break
+
             glViewport(0, 0, tw, th)
 
             glClearColor(1.0, 0.0, 0.0, 1.0)
