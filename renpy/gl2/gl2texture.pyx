@@ -389,16 +389,11 @@ cdef class GLTexture(Model):
         program.finish()
 
         # Create premultiplied.
-        glBindTexture(GL_TEXTURE_2D, premultiplied)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        self.allocate_texture(premultiplied, self.width, self.height)
 
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, self.width, self.height, 0)
 
-        glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
-        glGenerateMipmap(GL_TEXTURE_2D)
+        self.mipmap_texture(premultiplied, self.width, self.height)
 
         # Delete tex.
         glDeleteTextures(1, &tex)
@@ -408,7 +403,6 @@ cdef class GLTexture(Model):
         self.loader.allocated.add(self.number)
 
         self.loaded = True
-
         self.surface = None
 
     def allocate_texture(GLTexture self, GLuint tex, int tw, int th):
@@ -416,7 +410,6 @@ cdef class GLTexture(Model):
         Allocates the VRAM required to store `tex`, which is a `tw` x `th`
         texture, including all mipmap levels.
         """
-
 
         # It's not 100% clear why we need this function, but it does seem to
         # significantly speed things up on my GeForce GTX 1060 3GB/PCIe/SSE2.
