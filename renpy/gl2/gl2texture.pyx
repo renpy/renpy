@@ -263,7 +263,6 @@ cdef class GLTexture(Model):
         self.loaded = False
 
         # Used for loading surfaces.
-        self.data = NULL
         self.surface = None
 
         # Update the loader.
@@ -276,37 +275,7 @@ cdef class GLTexture(Model):
         Called to indicate this texture should be loaded from a surface.
         """
 
-        # Make a copy of the texture data.
-        cdef SDL_Surface *s
-        s = PySurface_AsSurface(surface)
-
-        pitch_pixels = s.pitch / 4
-        margin = pitch_pixels - s.w
-
-        if s.w and s.h and (margin < 64) and s.w < self.loader.max_texture_width:
-            # In-place path.
-
-            self.data = NULL
-            self.surface = surface
-
-        else:
-            # Copying path.
-
-            pixels = <unsigned char *> s.pixels
-            data = <unsigned char *> malloc(s.h * s.w * 4)
-            p = data
-
-            if s.pitch == s.w * 4:
-                memcpy(p, pixels, s.h * s.w * 4)
-            else:
-                for 0 <= i < s.h:
-                    memcpy(p, pixels, s.w * 4)
-
-                    pixels += s.pitch
-                    p += (s.w * 4)
-
-            self.data = data
-            self.surface = None
+        self.surface = surface
 
         self.loader.texture_load_queue.add(self)
 
@@ -381,6 +350,8 @@ cdef class GLTexture(Model):
 
         draw = self.loader.draw
 
+        s = PySurface_AsSurface(self.surface)
+
         # Generate the old textures.
         glGenTextures(1, &tex)
         glGenTextures(1, &premultiplied)
@@ -392,19 +363,16 @@ cdef class GLTexture(Model):
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, tex)
 
+        # Setup the non-premultiplied texture.
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
-        # Load the texture through zero-copy and normal paths.
-        if self.surface is not None:
-            s = PySurface_AsSurface(self.surface)
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s.pitch / 4, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, s.pixels)
-            mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 4.0 * s.w / s.pitch, 1.0)
-        else:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, self.data)
-            mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, s.pixels)
+
+        mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
 
         # Set up the viewport.
         glViewport(0, 0, self.width, self.height)
@@ -432,7 +400,6 @@ cdef class GLTexture(Model):
         glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
         glGenerateMipmap(GL_TEXTURE_2D)
 
-
         # Delete tex.
         glDeleteTextures(1, &tex)
 
@@ -441,11 +408,6 @@ cdef class GLTexture(Model):
         self.loader.allocated.add(self.number)
 
         self.loaded = True
-
-        # Free the data memory.
-        if self.data != NULL:
-            free(self.data)
-            self.data = NULL
 
         self.surface = None
 
@@ -519,12 +481,6 @@ cdef class GLTexture(Model):
 
         glEnable(GL_BLEND)
 
-
-    def __dealloc__(self):
-
-        if self.data:
-            free(self.data)
-            self.data = NULL
 
     def __del__(self):
         try:

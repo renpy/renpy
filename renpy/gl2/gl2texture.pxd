@@ -62,10 +62,6 @@ cdef class GLTexture(Model):
     # that.
     cdef object surface
 
-    # If we're not doing in-place loading, this is the data that's used for
-    # that.
-    cdef unsigned char *data
-
     # The texture loader associated with this texture.
     cdef TextureLoader loader
 
