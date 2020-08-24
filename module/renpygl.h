@@ -3,9 +3,13 @@
 
 #include <SDL.h>
 
-#if defined(__IPHONEOS__) || defined(__ANDROID__)
+#if defined(__IPHONEOS__)
 
-#include <SDL_opengles2.h>
+#include <OpenGLES/ES3/gl.h>
+
+#elif defined(__ANDROID__)
+
+#include <GLES3/gl3.h>
 
 #else
 
