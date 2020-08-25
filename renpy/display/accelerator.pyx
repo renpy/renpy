@@ -143,6 +143,28 @@ def transform_render(self, widtho, heighto, st, at):
 
         cr = tcr
 
+    if (xpan is not None) or (ypan is not None):
+
+        if xpan is not None:
+            xpan = ((xpan % 360) + 180) / 360.0
+            pan_x = cwidth * xpan
+            pan_w = cwidth
+        else:
+            pan_x = 0
+            pan_w = cr.width
+
+        if ypan is not None:
+            ypan = ((ypan % 360) + 180) / 360.0
+            pan_y = cheight * ypan
+            pan_h = cheight
+        else:
+            pan_y = 0
+            pan_h = cr.height
+
+        crop = (pan_x, pan_y, pan_w, pan_h)
+
+    else:
+        crop = state.crop
 
     # The width and height of the child.
     width = cr.width
@@ -160,7 +182,6 @@ def transform_render(self, widtho, heighto, st, at):
     yo = 0
 
     # Cropping.
-    crop = state.crop
     if (state.corner1 is not None) and (crop is None) and (state.corner2 is not None):
         x1, y1 = state.corner1
         x2, y2 = state.corner2
@@ -289,16 +310,6 @@ def transform_render(self, widtho, heighto, st, at):
         # origin corrections for flipping
         if yzoom < 0:
             yo += height
-
-    # Pan.
-
-    if xpan is not None:
-        xpan = (xpan % 360) + 180
-        xo += xzoom * cwidth * -(xpan / 360.0) + widtho / 2.0
-
-    if ypan is not None:
-        ypan = (ypan % 360) + 180
-        yo += yzoom * cheight * -(ypan / 360.0) + heighto / 2.0
 
 
     # Rotation.
