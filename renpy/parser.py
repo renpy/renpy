@@ -945,7 +945,7 @@ class Lexer(object):
         oldpos = self.pos
         rv = self.word()
 
-        if (rv == "r") or (rv == "u"):
+        if (rv == "r") or (rv == "u") or (rv == "ur"):
             if self.text[self.pos:self.pos + 1] in ('"', "'", "`"):
                 self.pos = oldpos
                 return None
@@ -1046,8 +1046,8 @@ class Lexer(object):
         c = self.text[self.pos]
 
         # Allow unicode and raw strings.
-        for mod in ('uU', 'rR'):
-            if c not in mod:
+        for mod in ('u', 'r'):
+            if c != mod:
                 continue
 
             self.pos += 1
