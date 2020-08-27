@@ -161,10 +161,7 @@ def transform_render(self, widtho, heighto, st, at):
             pan_y = 0
             pan_h = cr.height
 
-        crop = (pan_x, pan_y, pan_w, pan_h)
-
-    else:
-        crop = state.crop
+        cr = cr.subsurface((pan_x, pan_y, pan_w, pan_h))
 
     # The width and height of the child.
     width = cr.width
@@ -180,6 +177,8 @@ def transform_render(self, widtho, heighto, st, at):
 
     xo = 0
     yo = 0
+
+    crop = state.crop
 
     # Cropping.
     if (state.corner1 is not None) and (crop is None) and (state.corner2 is not None):

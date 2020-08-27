@@ -849,8 +849,7 @@ both horizontal and vertical positions.
     Otherwise, the components are considered to be an absolute number
     of pixels.
 
-    If corners and crop are given, crop takes priority over corners. If
-    xpan or ypan are given, crop is ignored.
+    If corners and crop are given, crop takes priority over corners.
 
 .. transform-property:: crop_relative
 
