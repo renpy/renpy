@@ -146,7 +146,7 @@ def transform_render(self, widtho, heighto, st, at):
     if (xpan is not None) or (ypan is not None):
 
         if xpan is not None:
-            xpan = ((xpan % 360) + 180) / 360.0
+            xpan = (xpan % 360) / 360.0
             pan_x = cwidth * xpan
             pan_w = cwidth
         else:
@@ -154,7 +154,7 @@ def transform_render(self, widtho, heighto, st, at):
             pan_w = cr.width
 
         if ypan is not None:
-            ypan = ((ypan % 360) + 180) / 360.0
+            ypan = (ypan % 360) / 360.0
             pan_y = cheight * ypan
             pan_h = cheight
         else:
