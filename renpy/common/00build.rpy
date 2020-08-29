@@ -87,12 +87,11 @@ init -1500 python in build:
         # Ignore Ren'Py and renpy.exe.
         ( "lib/*/renpy", None),
         ( "lib/*/renpy.exe", None),
+        ( "lib/*/pythonw.exe", None),
 
         # Windows patterns.
-        ( "lib/windows-i686/pythonw.exe", None),
         ( "lib/windows-i686/**", "windows"),
-
-        ( "lib/windows-x86_64/**", None),
+        ( "lib/windows-x86_64/**", "windows"),
 
         # Linux patterns.
         ( "lib/linux-*/**", "linux"),
@@ -329,7 +328,7 @@ init -1500 python in build:
     package("pc", "zip", "windows linux renpy all", "PC: Windows and Linux")
     package("linux", "tar.bz2", "linux renpy all", "Linux x86/x86_64")
     package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh x86_64")
-    package("win", "zip", "windows renpy all", "Windows x86")
+    package("win", "zip", "windows renpy all", "Windows x86/x86_64")
     package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
     package("steam", "zip", "windows linux mac renpy all", hidden=True)
     package("android", "directory", "android all", hidden=True, update=False, dlc=True)
