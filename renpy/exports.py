@@ -190,6 +190,12 @@ def public_api():
 
 del public_api
 
+# The number of bits in the architecture.
+if sys.maxsize > (2 << 32):
+    bits = 64
+else:
+    bits = 32
+
 
 def roll_forward_info():
     """
