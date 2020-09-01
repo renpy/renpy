@@ -54,10 +54,10 @@ translate russian tutorial_create_22f516df:
     e "Также, чтобы сделать свою игру, вам понадобится отредактировать её скрипт. Чтобы сделать это, кликните на 'script.rpy' в окне проекта."
 
 # game/tutorial_quickstart.rpy:54
-translate russian tutorial_create_18cd1d9d:
+translate russian tutorial_create_9151025b:
 
-    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
-    e "Если это ваш первый раз, Ren'Py попросит вас выбрать текстовый редактор. Editra — вполне безопасный выбор, но перед выбором внимательно прочитайте описания или же используйте собственный редактор."
+    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Atom might be a safe choice, but read the descriptions to be sure."
+    e "Если это ваш первый раз, Ren'Py попросит вас выбрать текстовый редактор. Atom — вполне безопасный выбор, но перед выбором внимательно прочитайте описания или же используйте собственный редактор."
 
 # game/tutorial_quickstart.rpy:56
 translate russian tutorial_create_bfbd6220:

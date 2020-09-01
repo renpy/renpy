@@ -54,10 +54,10 @@ translate spanish tutorial_create_22f516df:
     e "También necesitarás editar el script de juegos para hacer cambios. Para hacer eso, haga clic en 'script.rpy' en la página principal del lanzador."
 
 # game/tutorial_quickstart.rpy:54
-translate spanish tutorial_create_18cd1d9d:
+translate spanish tutorial_create_9151025b:
 
-    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
-    e "Si es la primera vez que lo haces, Ren'Py te pedirá que selecciones un editor de texto. Editra puede ser una opción segura, pero lee las descripciones para estar seguro."
+    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Atom might be a safe choice, but read the descriptions to be sure."
+    e "Si es la primera vez que lo haces, Ren'Py te pedirá que selecciones un editor de texto. Atom puede ser una opción segura, pero lee las descripciones para estar seguro."
 
 # game/tutorial_quickstart.rpy:56
 translate spanish tutorial_create_bfbd6220:

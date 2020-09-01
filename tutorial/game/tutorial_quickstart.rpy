@@ -51,7 +51,7 @@ label tutorial_create:
 
     e "You'll also need to edit the games script to make changes. To do that, click 'script.rpy' on the front page of the launcher."
 
-    e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
+    e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Atom might be a safe choice, but read the descriptions to be sure."
 
     e "After the text editor is downloaded, the script will open up and you can start to change what characters are saying."
 
