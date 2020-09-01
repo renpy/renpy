@@ -78,8 +78,8 @@ def process_file(fn):
     edits = missing[fn]
     edits.sort()
 
-    with open(fn, "r", encoding="utf-8") as f:
-        data = f.read()
+    with open(fn, "rb") as f:
+        data = f.read().decode("utf-8")
 
     # How much of the input has been consumed.
     consumed = 0
@@ -95,8 +95,8 @@ def process_file(fn):
 
     output += data[consumed:]
 
-    with open(fn + ".new", "w", encoding="utf-8") as f:
-        f.write(output)
+    with open(fn + ".new", "wb") as f:
+        f.write(output.encode("utf-8"))
 
     try:
         os.unlink(fn + ".bak")
