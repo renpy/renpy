@@ -423,10 +423,7 @@ def redraw(d, when):
     redraw_queue.append((when + renpy.game.interface.frame_time, d))
 
 
-
-
 IDENTITY = Matrix2D(1, 0, 0, 1)
-
 
 
 def take_focuses(focuses):
@@ -914,7 +911,8 @@ cdef class Render:
             (reverse.xdx != 1.0 or
             reverse.xdy != 0.0 or
             reverse.ydx != 0.0 or
-            reverse.ydy != 1.0)):
+            reverse.ydy != 1.0) or
+            (self.mesh and (self.mesh is not True))):
 
             # This doesn't actually make a subsurface, as we can't easily do
             # so for non-rectangle-aligned renders.
@@ -1029,6 +1027,8 @@ cdef class Render:
         rv.operation_complete = self.operation_complete
         rv.nearest = self.nearest
 
+        # TODO: Non-true mesh.
+        rv.mesh = self.mesh
         rv.shaders = self.shaders
         rv.uniforms = self.uniforms
         rv.properties = self.properties
