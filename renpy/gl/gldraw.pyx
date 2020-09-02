@@ -907,6 +907,9 @@ cdef class GLDraw:
 
         if rend.operation == DISSOLVE:
 
+            if not rend.children:
+                return 0
+
             if self.fast_dissolve:
 
                 # This is a fast version of dissolve that's used on
@@ -937,6 +940,9 @@ cdef class GLDraw:
 
         elif rend.operation == IMAGEDISSOLVE:
 
+            if not rend.children:
+                return 0
+
             self.set_clip(clip)
 
             gltexture.imageblend(
@@ -955,8 +961,11 @@ cdef class GLDraw:
 
             return 0
 
-
         elif rend.operation == PIXELLATE:
+
+            if not rend.children:
+                return 0
+
             self.set_clip(clip)
 
             p = rend.operation_parameter
@@ -981,6 +990,10 @@ cdef class GLDraw:
             return 0
 
         elif rend.operation == FLATTEN:
+
+            if not rend.children:
+                return 0
+
             self.set_clip(clip)
 
             gltexture.blit(
