@@ -187,6 +187,12 @@ init -1600 python:
 
     def _toggle_skipping():
 
+        if not renpy.config.allow_skipping:
+            return
+
+        if not renpy.store._skipping:
+            return
+
         if not config.skipping:
             config.skipping = "slow"
         else:
