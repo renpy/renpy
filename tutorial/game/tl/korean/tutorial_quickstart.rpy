@@ -57,7 +57,7 @@ translate korean tutorial_create_22f516df:
 translate korean tutorial_create_9151025b:
 
     # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Atom might be a safe choice, but read the descriptions to be sure."
-    e "만약 처음인 경우에는 렌파이는 네게 텍스트 에디터를 골라달라고 할 거야. 에디트라(Atom)는 안전한 선택이지만 설명을 확실히 읽는 게 좋아."
+    e "만약 처음인 경우에는 렌파이는 네게 텍스트 에디터를 골라달라고 할 거야. 아톰(Atom)은 안전한 선택이지만 설명을 확실히 읽는 게 좋아."
 
 # game/tutorial_quickstart.rpy:56
 translate korean tutorial_create_bfbd6220:
