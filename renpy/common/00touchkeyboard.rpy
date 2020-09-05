@@ -87,15 +87,15 @@ init -1500 python:
 init -1500:
 
     transform _touch_keyboard:
-        alpha 0.5
+        alpha .5
         xalign 0.5
 
     style _touch_keyboard_button:
-        color "#fff"
         hover_background "#f00"
         #xalign 0.5
 
     style _touch_keyboard_button_text:
+        color "#fff"
         outlines [ (absolute(3), "#000", absolute(0), absolute(0)) ]
         size 50
         min_width 50
@@ -108,114 +108,121 @@ init -1500:
         hbox:
             at _touch_keyboard
 
-            grid 5 9:
+            grid 7 7:
                 textbutton "A" action _TouchKeyboardTextInput('A')
                 textbutton "B" action _TouchKeyboardTextInput('B')
                 textbutton "C" action _TouchKeyboardTextInput('C')
                 textbutton "D" action _TouchKeyboardTextInput('D')
                 textbutton "E" action _TouchKeyboardTextInput('E')
-
                 textbutton "F" action _TouchKeyboardTextInput('F')
                 textbutton "G" action _TouchKeyboardTextInput('G')
+
                 textbutton "H" action _TouchKeyboardTextInput('H')
                 textbutton "I" action _TouchKeyboardTextInput('I')
                 textbutton "J" action _TouchKeyboardTextInput('J')
-
                 textbutton "K" action _TouchKeyboardTextInput('K')
                 textbutton "L" action _TouchKeyboardTextInput('L')
                 textbutton "M" action _TouchKeyboardTextInput('M')
                 textbutton "N" action _TouchKeyboardTextInput('N')
-                textbutton "O" action _TouchKeyboardTextInput('O')
 
+                textbutton "O" action _TouchKeyboardTextInput('O')
                 textbutton "P" action _TouchKeyboardTextInput('P')
                 textbutton "Q" action _TouchKeyboardTextInput('Q')
                 textbutton "R" action _TouchKeyboardTextInput('R')
                 textbutton "S" action _TouchKeyboardTextInput('S')
                 textbutton "T" action _TouchKeyboardTextInput('T')
-
                 textbutton "U" action _TouchKeyboardTextInput('U')
+
                 textbutton "V" action _TouchKeyboardTextInput('V')
                 textbutton "W" action _TouchKeyboardTextInput('W')
                 textbutton "X" action _TouchKeyboardTextInput('X')
                 textbutton "Y" action _TouchKeyboardTextInput('Y')
-
                 textbutton "Z" action _TouchKeyboardTextInput('Z')
-                textbutton "[" action _TouchKeyboardTextInput('[')
-                textbutton "]" action _TouchKeyboardTextInput(']')
-                textbutton "␣" action _TouchKeyboardTextInput(' ')
-                textbutton "_" action _TouchKeyboardTextInput('_')
+                null
+                null
 
+                textbutton "+"  action _TouchKeyboardTextInput('+')
+                textbutton "-"  action _TouchKeyboardTextInput('-')
                 textbutton "0" action _TouchKeyboardTextInput('0')
                 textbutton "1" action _TouchKeyboardTextInput('1')
                 textbutton "2" action _TouchKeyboardTextInput('2')
                 textbutton "3" action _TouchKeyboardTextInput('3')
                 textbutton "4" action _TouchKeyboardTextInput('4')
 
+                textbutton "*"  action _TouchKeyboardTextInput('*')
+                textbutton "/" action _TouchKeyboardTextInput('/')
                 textbutton "5" action _TouchKeyboardTextInput('5')
                 textbutton "6" action _TouchKeyboardTextInput('6')
                 textbutton "7" action _TouchKeyboardTextInput('7')
                 textbutton "8" action _TouchKeyboardTextInput('8')
                 textbutton "9" action _TouchKeyboardTextInput('9')
 
-                textbutton "/" action _TouchKeyboardTextInput('/')
+
+                textbutton "#"  action _TouchKeyboardTextInput('#')
+                textbutton "$"  action _TouchKeyboardTextInput('$')
                 textbutton "=" action _TouchKeyboardTextInput('=')
-                textbutton "@" action _TouchKeyboardTextInput('@')
                 textbutton "<" action _TouchKeyboardTextInput('<')
                 textbutton ">" action _TouchKeyboardTextInput('>')
+                textbutton "_" action _TouchKeyboardTextInput('_')
+                null
+
 
             null width 30
 
-            grid 5 9:
+            grid 7 7:
                 textbutton "a"  action _TouchKeyboardTextInput('a')
                 textbutton "b"  action _TouchKeyboardTextInput('b')
                 textbutton "c"  action _TouchKeyboardTextInput('c')
                 textbutton "d"  action _TouchKeyboardTextInput('d')
                 textbutton "e"  action _TouchKeyboardTextInput('e')
-
                 textbutton "f"  action _TouchKeyboardTextInput('f')
                 textbutton "g"  action _TouchKeyboardTextInput('g')
+
                 textbutton "h"  action _TouchKeyboardTextInput('h')
                 textbutton "i"  action _TouchKeyboardTextInput('i')
                 textbutton "j"  action _TouchKeyboardTextInput('j')
-
                 textbutton "k"  action _TouchKeyboardTextInput('k')
                 textbutton "l"  action _TouchKeyboardTextInput('l')
                 textbutton "m"  action _TouchKeyboardTextInput('m')
                 textbutton "n"  action _TouchKeyboardTextInput('n')
-                textbutton "o"  action _TouchKeyboardTextInput('o')
 
+                textbutton "o"  action _TouchKeyboardTextInput('o')
                 textbutton "p"  action _TouchKeyboardTextInput('p')
                 textbutton "q"  action _TouchKeyboardTextInput('q')
                 textbutton "r"  action _TouchKeyboardTextInput('r')
                 textbutton "s"  action _TouchKeyboardTextInput('s')
                 textbutton "t"  action _TouchKeyboardTextInput('t')
-
                 textbutton "u"  action _TouchKeyboardTextInput('u')
+
                 textbutton "v"  action _TouchKeyboardTextInput('v')
                 textbutton "w"  action _TouchKeyboardTextInput('w')
                 textbutton "x"  action _TouchKeyboardTextInput('x')
                 textbutton "y"  action _TouchKeyboardTextInput('y')
-
                 textbutton "z"  action _TouchKeyboardTextInput('z')
-                textbutton "{{" action _TouchKeyboardTextInput('{')
-                textbutton "}"  action _TouchKeyboardTextInput('}')
+                null
+                null
+
                 textbutton "|"  action _TouchKeyboardTextInput('|')
                 textbutton "~"  action _TouchKeyboardTextInput('~')
-
-                textbutton "!"  action _TouchKeyboardTextInput('!')
-                textbutton "#"  action _TouchKeyboardTextInput('#')
-                textbutton "$"  action _TouchKeyboardTextInput('$')
                 textbutton "%"  action _TouchKeyboardTextInput('%')
                 textbutton "&"  action _TouchKeyboardTextInput('&')
-
+                textbutton "@" action _TouchKeyboardTextInput('@')
                 textbutton "("  action _TouchKeyboardTextInput('(')
                 textbutton ")"  action _TouchKeyboardTextInput(')')
-                textbutton "*"  action _TouchKeyboardTextInput('*')
-                textbutton "+"  action _TouchKeyboardTextInput('+')
-                textbutton "-"  action _TouchKeyboardTextInput('-')
 
+
+                textbutton "."  action _TouchKeyboardTextInput('.')
+                textbutton "!"  action _TouchKeyboardTextInput('!')
                 textbutton ":"  action _TouchKeyboardTextInput(':')
                 textbutton ";"  action _TouchKeyboardTextInput(';')
+                textbutton "\"" action _TouchKeyboardTextInput('\"')
+                null
+                null
+
+                textbutton "␣" action _TouchKeyboardTextInput(' ')
+                null
                 null
                 textbutton "←"  action _TouchKeyboardBackspace()
+                null
+                null
                 textbutton "⏎" action _TouchKeyboardReturn()
