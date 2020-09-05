@@ -2794,8 +2794,8 @@ class Interface(object):
         if self.text_rect is not None:
 
             not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown() # @UndefinedVariable
-            if renpy.emscripten and self.touch:
-                not_shown = renpy.exports.get_screen('_touchwebkeyboard', layer='screens') is None
+            if self.touch_keyboard:
+                not_shown = renpy.exports.get_screen('_touch_keyboard', layer='screens') is None
 
             if self.old_text_rect != self.text_rect:
                 x, y, w, h = self.text_rect
