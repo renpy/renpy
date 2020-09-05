@@ -92,13 +92,13 @@ init -1500:
 
     style _touch_keyboard_button:
         hover_background "#f00"
-        #xalign 0.5
 
     style _touch_keyboard_button_text:
         color "#fff"
+        font "DejaVuSans.ttf"
         outlines [ (absolute(3), "#000", absolute(0), absolute(0)) ]
-        size 50
-        min_width 50
+        size gui._scale(55)
+        min_width gui._scale(55)
         text_align 0.5
 
     screen _touch_keyboard:
@@ -165,7 +165,6 @@ init -1500:
                 textbutton ">" action _TouchKeyboardTextInput('>')
                 textbutton "_" action _TouchKeyboardTextInput('_')
                 null
-
 
             null width 30
 
