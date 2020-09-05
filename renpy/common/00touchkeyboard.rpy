@@ -101,7 +101,7 @@ init -1500:
         min_width 50
         text_align 0.5
 
-    screen _touchwebkeyboard:
+    screen _touch_keyboard:
         zorder 100
         style_prefix "_touchwebkeyboard"
 

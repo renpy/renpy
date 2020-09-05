@@ -114,6 +114,7 @@ PERIODIC_INTERVAL = 50
 time_base = 0.0
 time_mult = 1.0
 
+
 def init_time():
     warp = os.environ.get("RENPY_TIMEWARP", "1.0")
 
@@ -1799,7 +1800,6 @@ class Interface(object):
         # Are we in fullscreen mode?
         self.fullscreen = False
 
-
         # Things to be preloaded.
         self.preloads = [ ]
 
@@ -1925,7 +1925,10 @@ class Interface(object):
         # Are we a touchscreen?
         self.touch = renpy.exports.variant("touch")
 
-        # Should we restart the interaction?
+        # Should we use the touch keyboard?
+        self.touch_keyboard = (self.touch and renpy.emscripten) or renpy.config.touch_keyboard
+
+        # Should werestart the interaction?
         self.restart_interaction = True
 
         # For compatibility with older code.
@@ -2804,9 +2807,10 @@ class Interface(object):
 
             if not self.old_text_rect or not_shown:
                 pygame.key.start_text_input() # @UndefinedVariable
-                if renpy.emscripten and self.touch:
-                    renpy.exports.restart_interaction()  # required in mobile mode
-                    renpy.exports.show_screen('_touchwebkeyboard',
+
+                if self.touch_keyboard:
+                    renpy.exports.restart_interaction() # required in mobile mode
+                    renpy.exports.show_screen('_touch_keyboard',
                         _layer='screens', # not 'transient' so as to be above other screens
                                           # not 'overlay' as it conflicts with console
                         _transient=True,
@@ -2816,8 +2820,9 @@ class Interface(object):
             if self.old_text_rect:
                 pygame.key.stop_text_input() # @UndefinedVariable
                 pygame.key.set_text_input_rect(None) # @UndefinedVariable
-                if renpy.emscripten and self.touch:
-                    renpy.exports.hide_screen('_touchwebkeyboard', layer='screens')
+
+                if self.touch_keyboard:
+                    renpy.exports.hide_screen('_touch_keyboard', layer='screens')
 
         self.old_text_rect = self.text_rect
 
