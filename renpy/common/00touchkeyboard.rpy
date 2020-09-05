@@ -24,7 +24,7 @@ init -1500 python:
     import pygame_sdl2
 
     @renpy.pure
-    class _TouchWebTextInput(Action, DictEquality):
+    class _TouchKeyboardTextInput(Action, DictEquality):
         """
         Simulate text input
         """
@@ -39,7 +39,7 @@ init -1500 python:
                 text=self.char))
 
     @renpy.pure
-    class _TouchWebKeyBackspace(Action, DictEquality):
+    class _TouchKeyboardBackspace(Action, DictEquality):
         """
          Simulate backspace
          """
@@ -59,7 +59,7 @@ init -1500 python:
             ))
 
     @renpy.pure
-    class _TouchWebKeyReturn(Action, DictEquality):
+    class _TouchKeyboardReturn(Action, DictEquality):
         """
          Simulate return
          """
@@ -68,7 +68,7 @@ init -1500 python:
             import pygame_sdl2
 
             # avoid loop when K_RETURN activates our button
-            renpy.exports.hide_screen('_touchwebkeyboard', layer='screens')
+            renpy.exports.hide_screen('_touch_keyboard', layer='screens')
             renpy.restart_interaction()
 
             pygame_sdl2.event.post(pygame_sdl2.event.Event(
@@ -86,16 +86,16 @@ init -1500 python:
 
 init -1500:
 
-    transform _touchwebkeyboard:
+    transform _touch_keyboard:
         alpha 0.5
         xalign 0.5
 
-    style _touchwebkeyboard_button:
+    style _touch_keyboard_button:
         color "#fff"
         hover_background "#f00"
         #xalign 0.5
 
-    style _touchwebkeyboard_button_text:
+    style _touch_keyboard_button_text:
         outlines [ (absolute(3), "#000", absolute(0), absolute(0)) ]
         size 50
         min_width 50
@@ -103,119 +103,119 @@ init -1500:
 
     screen _touch_keyboard:
         zorder 100
-        style_prefix "_touchwebkeyboard"
+        style_prefix "_touch_keyboard"
 
         hbox:
-            at _touchwebkeyboard
+            at _touch_keyboard
 
             grid 5 9:
-                textbutton "A" action _TouchWebTextInput('A')
-                textbutton "B" action _TouchWebTextInput('B')
-                textbutton "C" action _TouchWebTextInput('C')
-                textbutton "D" action _TouchWebTextInput('D')
-                textbutton "E" action _TouchWebTextInput('E')
+                textbutton "A" action _TouchKeyboardTextInput('A')
+                textbutton "B" action _TouchKeyboardTextInput('B')
+                textbutton "C" action _TouchKeyboardTextInput('C')
+                textbutton "D" action _TouchKeyboardTextInput('D')
+                textbutton "E" action _TouchKeyboardTextInput('E')
 
-                textbutton "F" action _TouchWebTextInput('F')
-                textbutton "G" action _TouchWebTextInput('G')
-                textbutton "H" action _TouchWebTextInput('H')
-                textbutton "I" action _TouchWebTextInput('I')
-                textbutton "J" action _TouchWebTextInput('J')
+                textbutton "F" action _TouchKeyboardTextInput('F')
+                textbutton "G" action _TouchKeyboardTextInput('G')
+                textbutton "H" action _TouchKeyboardTextInput('H')
+                textbutton "I" action _TouchKeyboardTextInput('I')
+                textbutton "J" action _TouchKeyboardTextInput('J')
 
-                textbutton "K" action _TouchWebTextInput('K')
-                textbutton "L" action _TouchWebTextInput('L')
-                textbutton "M" action _TouchWebTextInput('M')
-                textbutton "N" action _TouchWebTextInput('N')
-                textbutton "O" action _TouchWebTextInput('O')
+                textbutton "K" action _TouchKeyboardTextInput('K')
+                textbutton "L" action _TouchKeyboardTextInput('L')
+                textbutton "M" action _TouchKeyboardTextInput('M')
+                textbutton "N" action _TouchKeyboardTextInput('N')
+                textbutton "O" action _TouchKeyboardTextInput('O')
 
-                textbutton "P" action _TouchWebTextInput('P')
-                textbutton "Q" action _TouchWebTextInput('Q')
-                textbutton "R" action _TouchWebTextInput('R')
-                textbutton "S" action _TouchWebTextInput('S')
-                textbutton "T" action _TouchWebTextInput('T')
+                textbutton "P" action _TouchKeyboardTextInput('P')
+                textbutton "Q" action _TouchKeyboardTextInput('Q')
+                textbutton "R" action _TouchKeyboardTextInput('R')
+                textbutton "S" action _TouchKeyboardTextInput('S')
+                textbutton "T" action _TouchKeyboardTextInput('T')
 
-                textbutton "U" action _TouchWebTextInput('U')
-                textbutton "V" action _TouchWebTextInput('V')
-                textbutton "W" action _TouchWebTextInput('W')
-                textbutton "X" action _TouchWebTextInput('X')
-                textbutton "Y" action _TouchWebTextInput('Y')
+                textbutton "U" action _TouchKeyboardTextInput('U')
+                textbutton "V" action _TouchKeyboardTextInput('V')
+                textbutton "W" action _TouchKeyboardTextInput('W')
+                textbutton "X" action _TouchKeyboardTextInput('X')
+                textbutton "Y" action _TouchKeyboardTextInput('Y')
 
-                textbutton "Z" action _TouchWebTextInput('Z')
-                textbutton "[" action _TouchWebTextInput('[')
-                textbutton "]" action _TouchWebTextInput(']')
-                textbutton "␣" action _TouchWebTextInput(' ')
-                textbutton "_" action _TouchWebTextInput('_')
+                textbutton "Z" action _TouchKeyboardTextInput('Z')
+                textbutton "[" action _TouchKeyboardTextInput('[')
+                textbutton "]" action _TouchKeyboardTextInput(']')
+                textbutton "␣" action _TouchKeyboardTextInput(' ')
+                textbutton "_" action _TouchKeyboardTextInput('_')
 
-                textbutton "0" action _TouchWebTextInput('0')
-                textbutton "1" action _TouchWebTextInput('1')
-                textbutton "2" action _TouchWebTextInput('2')
-                textbutton "3" action _TouchWebTextInput('3')
-                textbutton "4" action _TouchWebTextInput('4')
+                textbutton "0" action _TouchKeyboardTextInput('0')
+                textbutton "1" action _TouchKeyboardTextInput('1')
+                textbutton "2" action _TouchKeyboardTextInput('2')
+                textbutton "3" action _TouchKeyboardTextInput('3')
+                textbutton "4" action _TouchKeyboardTextInput('4')
 
-                textbutton "5" action _TouchWebTextInput('5')
-                textbutton "6" action _TouchWebTextInput('6')
-                textbutton "7" action _TouchWebTextInput('7')
-                textbutton "8" action _TouchWebTextInput('8')
-                textbutton "9" action _TouchWebTextInput('9')
+                textbutton "5" action _TouchKeyboardTextInput('5')
+                textbutton "6" action _TouchKeyboardTextInput('6')
+                textbutton "7" action _TouchKeyboardTextInput('7')
+                textbutton "8" action _TouchKeyboardTextInput('8')
+                textbutton "9" action _TouchKeyboardTextInput('9')
 
-                textbutton "/" action _TouchWebTextInput('/')
-                textbutton "=" action _TouchWebTextInput('=')
-                textbutton "@" action _TouchWebTextInput('@')
-                textbutton "<" action _TouchWebTextInput('<')
-                textbutton ">" action _TouchWebTextInput('>')
+                textbutton "/" action _TouchKeyboardTextInput('/')
+                textbutton "=" action _TouchKeyboardTextInput('=')
+                textbutton "@" action _TouchKeyboardTextInput('@')
+                textbutton "<" action _TouchKeyboardTextInput('<')
+                textbutton ">" action _TouchKeyboardTextInput('>')
 
             null width 30
 
             grid 5 9:
-                textbutton "a"  action _TouchWebTextInput('a')
-                textbutton "b"  action _TouchWebTextInput('b')
-                textbutton "c"  action _TouchWebTextInput('c')
-                textbutton "d"  action _TouchWebTextInput('d')
-                textbutton "e"  action _TouchWebTextInput('e')
+                textbutton "a"  action _TouchKeyboardTextInput('a')
+                textbutton "b"  action _TouchKeyboardTextInput('b')
+                textbutton "c"  action _TouchKeyboardTextInput('c')
+                textbutton "d"  action _TouchKeyboardTextInput('d')
+                textbutton "e"  action _TouchKeyboardTextInput('e')
 
-                textbutton "f"  action _TouchWebTextInput('f')
-                textbutton "g"  action _TouchWebTextInput('g')
-                textbutton "h"  action _TouchWebTextInput('h')
-                textbutton "i"  action _TouchWebTextInput('i')
-                textbutton "j"  action _TouchWebTextInput('j')
+                textbutton "f"  action _TouchKeyboardTextInput('f')
+                textbutton "g"  action _TouchKeyboardTextInput('g')
+                textbutton "h"  action _TouchKeyboardTextInput('h')
+                textbutton "i"  action _TouchKeyboardTextInput('i')
+                textbutton "j"  action _TouchKeyboardTextInput('j')
 
-                textbutton "k"  action _TouchWebTextInput('k')
-                textbutton "l"  action _TouchWebTextInput('l')
-                textbutton "m"  action _TouchWebTextInput('m')
-                textbutton "n"  action _TouchWebTextInput('n')
-                textbutton "o"  action _TouchWebTextInput('o')
+                textbutton "k"  action _TouchKeyboardTextInput('k')
+                textbutton "l"  action _TouchKeyboardTextInput('l')
+                textbutton "m"  action _TouchKeyboardTextInput('m')
+                textbutton "n"  action _TouchKeyboardTextInput('n')
+                textbutton "o"  action _TouchKeyboardTextInput('o')
 
-                textbutton "p"  action _TouchWebTextInput('p')
-                textbutton "q"  action _TouchWebTextInput('q')
-                textbutton "r"  action _TouchWebTextInput('r')
-                textbutton "s"  action _TouchWebTextInput('s')
-                textbutton "t"  action _TouchWebTextInput('t')
+                textbutton "p"  action _TouchKeyboardTextInput('p')
+                textbutton "q"  action _TouchKeyboardTextInput('q')
+                textbutton "r"  action _TouchKeyboardTextInput('r')
+                textbutton "s"  action _TouchKeyboardTextInput('s')
+                textbutton "t"  action _TouchKeyboardTextInput('t')
 
-                textbutton "u"  action _TouchWebTextInput('u')
-                textbutton "v"  action _TouchWebTextInput('v')
-                textbutton "w"  action _TouchWebTextInput('w')
-                textbutton "x"  action _TouchWebTextInput('x')
-                textbutton "y"  action _TouchWebTextInput('y')
+                textbutton "u"  action _TouchKeyboardTextInput('u')
+                textbutton "v"  action _TouchKeyboardTextInput('v')
+                textbutton "w"  action _TouchKeyboardTextInput('w')
+                textbutton "x"  action _TouchKeyboardTextInput('x')
+                textbutton "y"  action _TouchKeyboardTextInput('y')
 
-                textbutton "z"  action _TouchWebTextInput('z')
-                textbutton "{{" action _TouchWebTextInput('{')
-                textbutton "}"  action _TouchWebTextInput('}')
-                textbutton "|"  action _TouchWebTextInput('|')
-                textbutton "~"  action _TouchWebTextInput('~')
+                textbutton "z"  action _TouchKeyboardTextInput('z')
+                textbutton "{{" action _TouchKeyboardTextInput('{')
+                textbutton "}"  action _TouchKeyboardTextInput('}')
+                textbutton "|"  action _TouchKeyboardTextInput('|')
+                textbutton "~"  action _TouchKeyboardTextInput('~')
 
-                textbutton "!"  action _TouchWebTextInput('!')
-                textbutton "#"  action _TouchWebTextInput('#')
-                textbutton "$"  action _TouchWebTextInput('$')
-                textbutton "%"  action _TouchWebTextInput('%')
-                textbutton "&"  action _TouchWebTextInput('&')
+                textbutton "!"  action _TouchKeyboardTextInput('!')
+                textbutton "#"  action _TouchKeyboardTextInput('#')
+                textbutton "$"  action _TouchKeyboardTextInput('$')
+                textbutton "%"  action _TouchKeyboardTextInput('%')
+                textbutton "&"  action _TouchKeyboardTextInput('&')
 
-                textbutton "("  action _TouchWebTextInput('(')
-                textbutton ")"  action _TouchWebTextInput(')')
-                textbutton "*"  action _TouchWebTextInput('*')
-                textbutton "+"  action _TouchWebTextInput('+')
-                textbutton "-"  action _TouchWebTextInput('-')
+                textbutton "("  action _TouchKeyboardTextInput('(')
+                textbutton ")"  action _TouchKeyboardTextInput(')')
+                textbutton "*"  action _TouchKeyboardTextInput('*')
+                textbutton "+"  action _TouchKeyboardTextInput('+')
+                textbutton "-"  action _TouchKeyboardTextInput('-')
 
-                textbutton ":"  action _TouchWebTextInput(':')
-                textbutton ";"  action _TouchWebTextInput(';')
+                textbutton ":"  action _TouchKeyboardTextInput(':')
+                textbutton ";"  action _TouchKeyboardTextInput(';')
                 null
-                textbutton "←"  action _TouchWebKeyBackspace()
-                textbutton "⏎" action _TouchWebKeyReturn()
+                textbutton "←"  action _TouchKeyboardBackspace()
+                textbutton "⏎" action _TouchKeyboardReturn()
