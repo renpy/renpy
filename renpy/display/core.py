@@ -1928,7 +1928,7 @@ class Interface(object):
         # Should we use the touch keyboard?
         self.touch_keyboard = (self.touch and renpy.emscripten) or renpy.config.touch_keyboard
 
-        # Should werestart the interaction?
+        # Should we restart the interaction?
         self.restart_interaction = True
 
         # For compatibility with older code.

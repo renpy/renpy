@@ -141,15 +141,15 @@ init -1500:
                 null
                 null
 
-                textbutton "+"  action _TouchKeyboardTextInput('+')
-                textbutton "-"  action _TouchKeyboardTextInput('-')
+                textbutton "+" action _TouchKeyboardTextInput('+')
+                textbutton "-" action _TouchKeyboardTextInput('-')
                 textbutton "0" action _TouchKeyboardTextInput('0')
                 textbutton "1" action _TouchKeyboardTextInput('1')
                 textbutton "2" action _TouchKeyboardTextInput('2')
                 textbutton "3" action _TouchKeyboardTextInput('3')
                 textbutton "4" action _TouchKeyboardTextInput('4')
 
-                textbutton "*"  action _TouchKeyboardTextInput('*')
+                textbutton "*" action _TouchKeyboardTextInput('*')
                 textbutton "/" action _TouchKeyboardTextInput('/')
                 textbutton "5" action _TouchKeyboardTextInput('5')
                 textbutton "6" action _TouchKeyboardTextInput('6')
@@ -158,8 +158,8 @@ init -1500:
                 textbutton "9" action _TouchKeyboardTextInput('9')
 
 
-                textbutton "#"  action _TouchKeyboardTextInput('#')
-                textbutton "$"  action _TouchKeyboardTextInput('$')
+                textbutton "#" action _TouchKeyboardTextInput('#')
+                textbutton "$" action _TouchKeyboardTextInput('$')
                 textbutton "=" action _TouchKeyboardTextInput('=')
                 textbutton "<" action _TouchKeyboardTextInput('<')
                 textbutton ">" action _TouchKeyboardTextInput('>')
@@ -205,7 +205,7 @@ init -1500:
                 textbutton "~"  action _TouchKeyboardTextInput('~')
                 textbutton "%"  action _TouchKeyboardTextInput('%')
                 textbutton "&"  action _TouchKeyboardTextInput('&')
-                textbutton "@" action _TouchKeyboardTextInput('@')
+                textbutton "@"  action _TouchKeyboardTextInput('@')
                 textbutton "("  action _TouchKeyboardTextInput('(')
                 textbutton ")"  action _TouchKeyboardTextInput(')')
 
@@ -218,10 +218,10 @@ init -1500:
                 null
                 null
 
-                textbutton "␣" action _TouchKeyboardTextInput(' ')
+                textbutton "␣"  action _TouchKeyboardTextInput(' ')
                 null
                 null
                 textbutton "←"  action _TouchKeyboardBackspace()
                 null
                 null
-                textbutton "⏎" action _TouchKeyboardReturn()
+                textbutton "⏎"  action _TouchKeyboardReturn()
