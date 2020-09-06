@@ -506,10 +506,13 @@ class SLCache(object):
         # A list of the children that were added to self.displayable.
         self.children = None
 
-        # The old transform created.
-        self.transform = None
+        # The outermost old transform.
+        self.outer_transform = None
 
-        # The transform that was used to create self.transform.
+        # The innermost old transform.
+        self.inner_transform = None
+
+        # The transform (or list of transforms) that was used to create self.transform.
         self.raw_transform = None
 
         # The imagemap stack entry we reuse.
@@ -1032,45 +1035,65 @@ class SLDisplayable(SLBlock):
         if (transform is not None) and (d is not NO_DISPLAYABLE):
             if reused and (transform == cache.raw_transform):
 
-                if isinstance(cache.transform, renpy.display.transform.Transform):
-                    if cache.transform.child is not d:
-                        cache.transform.set_child(d, duplicate=False)
+                if isinstance(cache.inner_transform, renpy.display.transform.Transform):
+                    if cache.inner_transform.child is not d:
+                        cache.inner_transform.set_child(d, duplicate=False)
 
-                d = cache.transform
+                d = cache.outer_transform
+
             else:
+                old_outer_transform = cache.outer_transform
+
                 cache.raw_transform = transform
+                cache.inner_transform = None
+                cache.outer_transform = None
 
                 if isinstance(transform, Transform):
                     d = transform(child=d)
                     d._unique()
 
+                    cache.inner_transform = d
+                    cache.outer_transform = d
+
                 elif isinstance(transform, list_or_tuple):
                     for t in transform:
                         if isinstance(t, Transform):
                             d = t(child=d)
+
+                            cache.outer_transform = d
+                            if cache.inner_transform is None:
+                                cache.inner_transform = d
+
                         else:
                             d = t(d)
+                            cache.raw_transform = None
+                            cache.outer_transform = None
+                            cache.inner_transform = None
 
                         d._unique()
 
                 else:
                     d = transform(d)
                     d._unique()
+                    cache.raw_transform = None
+                    cache.outer_transform = None
+                    cache.inner_transform = None
 
                 if isinstance(d, Transform):
-                    old_transform = cache.transform
 
                     if not context.updating:
-                        old_transform = None
+                        old_outer_transform = None
 
-                    d.take_state(old_transform)
-                    d.take_execution_state(old_transform)
-
-            cache.transform = d
+                    d.take_state(old_outer_transform)
+                    d.take_execution_state(old_outer_transform)
 
         else:
-            cache.transform = None
+            cache.inner_transform = None
+            cache.outer_transform = None
             cache.raw_transform = None
+
+        if cache.raw_transform and not cache.outer_transform:
+            raise Exception("Uh-oh.")
 
         if ctx.fail:
             context.fail = True
