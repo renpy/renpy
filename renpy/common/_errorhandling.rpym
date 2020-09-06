@@ -285,11 +285,11 @@ init python:
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        reload_game = [ 'R' ],
+        toggle_fullscreen = [ 'noshift_K_f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
+        reload_game = [ 'shift_K_r' ],
         quit = [ 'meta_q', 'alt_K_F4', 'alt_q' ],
         iconify = [ 'meta_m', 'alt_m' ],
-        choose_renderer = [ 'G' ],
+        choose_renderer = [ 'shift_K_g' ],
 
         # Focus.
         focus_left = [ 'K_LEFT' ],
@@ -637,7 +637,7 @@ screen _exception:
                     hovered tt.action(_("Quits the game."))
 
     if config.developer and reload_action:
-        key "R" action reload_action
+        key "reload_game" action reload_action
 
     key "console" action __EnterConsole()
 
@@ -703,4 +703,4 @@ screen _parse_errors:
             text tt.value
 
     if config.developer and reload_action:
-        key "R" action reload_action
+        key "reload_game" action reload_action
