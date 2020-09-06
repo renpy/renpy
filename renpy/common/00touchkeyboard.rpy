@@ -87,7 +87,8 @@ init -1500 python:
 init -1500:
 
     transform _touch_keyboard:
-        alpha .5
+        mesh True
+        alpha 0.6
         xalign 0.5
 
     style _touch_keyboard_button:
