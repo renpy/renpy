@@ -1092,9 +1092,6 @@ class SLDisplayable(SLBlock):
             cache.outer_transform = None
             cache.raw_transform = None
 
-        if cache.raw_transform and not cache.outer_transform:
-            raise Exception("Uh-oh.")
-
         if ctx.fail:
             context.fail = True
 
