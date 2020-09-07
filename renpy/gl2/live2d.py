@@ -233,6 +233,15 @@ class Live2DCommon(object):
 
                 self.attributes.add(name)
 
+        for i in self.model_json.get("Groups", [ ]):
+            name = i["Name"]
+            ids = i["Ids"]
+
+            if i["Target"] == "Parameter":
+                self.model.parameter_groups[name] = ids
+            elif i["Target"] == "Opacity":
+                self.model.opacity_groups[name] = ids
+
     def apply_aliases(self, aliases):
 
         for k, v in aliases.items():
@@ -453,10 +462,12 @@ class Live2D(renpy.display.core.Displayable):
             kind, key = k
             factor, value = v
 
-            if kind == "Parameter":
-                common.model.set_parameter(key, value, factor)
-            else:
+            if kind == "PartOpacity":
                 common.model.set_part_opacity(key, value)
+            elif kind == "Parameter":
+                common.model.set_parameter(key, value, factor)
+            elif kind == "Model":
+                common.model.set_parameter(key, value, factor)
 
         return motion.wait(st, st_fade)
 

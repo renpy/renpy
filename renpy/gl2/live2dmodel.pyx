@@ -172,6 +172,9 @@ cdef class Live2DModel:
     cdef public dict parameters
     cdef public dict parts
 
+    cdef public dict parameter_groups
+    cdef public dict opacity_groups
+
     cdef list meshes
 
     cdef Matrix forward
@@ -254,6 +257,9 @@ cdef class Live2DModel:
             name = self.part_ids[i]
             self.parts[name] = Part(i, name)
 
+        self.opacity_groups = { }
+        self.parameter_groups = { }
+
         # Render the model.
 
         cdef Mesh2 mesh
@@ -288,6 +294,8 @@ cdef class Live2DModel:
         part = self.parts.get(name, None)
 
         if part is None:
+            for i in self.opacity_groups.get(name, [ ]):
+                self.set_part_opacity(i, value)
             return
 
         self.part_opacities[part.index] = value
@@ -296,6 +304,8 @@ cdef class Live2DModel:
         parameter = self.parameters.get(name, None)
 
         if parameter is None:
+            for i in self.parameter_groups.get(name, [ ]):
+                self.set_parameter(i, value, weight=weight)
             return
 
         old = self.parameter_values[parameter.index]
@@ -346,7 +356,6 @@ cdef class Live2DModel:
             r.add_shader("renpy.alpha")
             r.add_uniform("u_renpy_alpha", alpha)
             r.add_uniform("u_renpy_over", 1.0)
-            print(i, alpha)
 
             r.blit(textures[self.drawable_texture_indices[i]], (0, 0))
 
