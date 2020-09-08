@@ -348,20 +348,24 @@ cdef class Live2DModel:
             r.forward = self.forward
             r.mesh = mesh
 
-            alpha = self.drawable_opacities[i]
 
             for s in shaders:
                 r.add_shader(s)
-
-            r.add_shader("renpy.alpha")
-            r.add_uniform("u_renpy_alpha", alpha)
-            r.add_uniform("u_renpy_over", 1.0)
 
             r.blit(textures[self.drawable_texture_indices[i]], (0, 0))
 
             raw_renders.append(r)
 
             if self.drawable_dynamic_flags[i] & csmIsVisible:
+
+                alpha = self.drawable_opacities[i]
+
+                if alpha != 1.0:
+
+                    r.add_shader("renpy.alpha")
+                    r.add_uniform("u_renpy_alpha", alpha)
+                    r.add_uniform("u_renpy_over", 1.0)
+
                 renders.append((self.drawable_render_orders[i], r))
 
         for 0 <= i < self.drawable_count:
