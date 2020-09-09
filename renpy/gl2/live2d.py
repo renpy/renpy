@@ -181,18 +181,23 @@ class Live2DCommon(object):
         for i in self.model_json["FileReferences"]["Textures"]:
             self.textures.append(renpy.easy.displayable(self.base + i))
 
-        # The motion information.
-        self.motions = { }
-
         # A map from the motion file name to the information about it.
         motion_files = { }
 
+        # A map from the expression name to the information about it.
+        expression_files = { }
+
         motions_dir = self.base + "motions/"
+        expressions_dir = self.base + "expressions/"
 
         for i in renpy.exports.list_files():
             if i.startswith(motions_dir):
                 i = i[len(self.base):]
                 motion_files[i] = { "File" : i }
+
+            elif i.startswith(expressions_dir):
+                i = i[len(self.base):]
+                expression_files[i] = { "File" : i }
 
         def walk_json_files(o, d):
             if isinstance(o, list):
@@ -208,9 +213,10 @@ class Live2DCommon(object):
                 walk_json_files(i, d)
 
         walk_json_files(self.model_json["FileReferences"].get("Motions", { }), motion_files)
+        walk_json_files(self.model_json["FileReferences"].get("Expressions", { }), expression_files)
 
         # A list of attributes that are known.
-        self.attributes = set()
+        self.attributes = set([ "still", "null" ])
 
         # A map from a motion name to a motion identifier.
         self.motions = { "still" : renpy.gl2.live2dmotion.NullMotion() }
@@ -230,6 +236,26 @@ class Live2DCommon(object):
                     self.base + i["File"],
                     i.get("FadeInTime", 0.0),
                     i.get("FadeOutTime", 0.0))
+
+                self.attributes.add(name)
+
+        # A map from an expression to that expression's parameter list.
+        self.expressions = { "null" : [ ] }
+
+        for i in expression_files.values():
+            name = i["File"].lower().rpartition("/")[2].partition(".")[0]
+
+            prefix, _, suffix = name.partition("_")
+
+            if prefix == model_name:
+                name = suffix
+
+            if renpy.loader.loadable(self.base + i["File"]):
+                renpy.display.log.write(" - expression %s -> %s", name, i["File"])
+
+                expression_json = json.load(renpy.loader.load(self.base + i["File"]))
+
+                self.expressions[name] = expression_json.get("Parameters", [ ])
 
                 self.attributes.add(name)
 
