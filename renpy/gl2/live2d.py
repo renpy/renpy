@@ -274,6 +274,9 @@ class Live2DCommon(object):
             if v in self.motions:
                 self.motions[k] = self.motions[v]
 
+            if v in self.expressions:
+                self.expressions[k] = self.expressions[v]
+
 
 # This maps a filename to a Live2DCommon object.
 common_cache = { }
@@ -376,12 +379,13 @@ class Live2D(renpy.display.core.Displayable):
         return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
-    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, **properties):
+    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, ** properties):
 
         super(Live2D, self).__init__(**properties)
 
         self.filename = filename
         self.motions = motions
+        self.expression = expression
 
         self.zoom = zoom
         self.top = top
@@ -407,10 +411,19 @@ class Live2D(renpy.display.core.Displayable):
         common = self.common
         motions = [ ]
 
+        expression = None
+
         for i in args.args:
 
             if i in common.motions:
                 motions.append(i)
+                continue
+
+            if i in common.expressions:
+                if expression is not None:
+                    raise Exception("When showing {}, {} and {} are both live2d expressions.".format(" ".join(args.name), i, expression))
+
+                expression = i
                 continue
 
             raise Exception("When showing {}, {} is not a known attribute.".format(" ".join(args.name), i))
@@ -423,12 +436,13 @@ class Live2D(renpy.display.core.Displayable):
             base=self.base,
             height=self.height,
             loop=self.loop,
-            fade=self.fade)
+            fade=self.fade,
+            expression=expression)
 
         rv.name = args.name
 
         if args.args:
-            rv._dupicatable = False
+            rv._duplicatable = False
 
         return rv
 
@@ -438,7 +452,9 @@ class Live2D(renpy.display.core.Displayable):
 
         available = set(common.attributes)
 
-        # Todo: Expressions
+        for i in attributes:
+            if i in common.expressions:
+                available -= set(common.expressions)
 
         available |= set(attributes)
 
@@ -448,16 +464,24 @@ class Live2D(renpy.display.core.Displayable):
 
         common = self.common
 
-        motions = [ i for i in optional if i in common.motions ]
+        # Chose all motions.
+        rv = [ i for i in attributes if i in common.motions ]
 
-        if not motions:
-            motions = [ i for i in optional if i in common.motions ][:-1]
+        # If there are no motions, choose the last one from the optional attributes.
+        if not rv:
+            rv = [ i for i in optional if i in common.motions ][:-1]
 
-        return tuple(motions)
+        # Choose the first expression.
+        for i in list(attributes) + list(optional):
+            if i in common.expressions:
+                rv.insert(0, i)
+                break
+
+        return tuple(rv)
 
     def update(self, common, st, st_fade):
         """
-        This updates the common model with the infromation taken from the
+        This updates the common model with the information taken from the
         motions associated with this object. It returns the delay until
         Ren'Py needs to cause a redraw to occur, or None if no delay
         should occur.
@@ -537,6 +561,10 @@ class Live2D(renpy.display.core.Displayable):
             old_redraw = None
 
         new_redraw = self.update(common, st, None)
+
+        if self.expression:
+            for i in common.expressions[self.expression]:
+                common.model.blend_parameter(i["Id"], i["Blend"], i["Value"])
 
         # Apply the redraws.
         if (new_redraw is not None) and (old_redraw is not None):

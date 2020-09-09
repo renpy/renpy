@@ -311,6 +311,23 @@ cdef class Live2DModel:
         old = self.parameter_values[parameter.index]
         self.parameter_values[parameter.index] = old + weight * (value - old)
 
+    def blend_parameter(self, name, blend, value):
+
+        parameter = self.parameters.get(name, None)
+
+        if parameter is None:
+            for i in self.parameter_groups.get(name, [ ]):
+                self.blend_parameter(i, blend, value)
+            return
+
+        old = self.parameter_values[parameter.index]
+
+        if blend == "Multiply":
+            self.parameter_values[parameter.index] = old * value
+        else:
+            self.parameter_values[parameter.index] = old + value
+
+
     def render(self, textures):
 
         cdef int i
