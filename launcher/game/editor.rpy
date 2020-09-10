@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -148,7 +148,7 @@ init 1 python in editor:
 
         fei = fancy_editors = [ ]
 
-        # Atom.
+        # Atom
         AD = _("(Recommended) A modern and approachable text editor.")
 
         if renpy.windows:
