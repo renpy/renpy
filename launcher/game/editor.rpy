@@ -173,6 +173,20 @@ init 1 python in editor:
 
         fei.append(e)
 
+        # VSCode
+        fei.append(FancyEditorInfo(
+            0,
+            "VSCode",
+            _("An open source lightweight IDE maintained by Microsoft. Available for download on {a=https://code.visualstudio.com/}the official website{/a}.\nMake sure the code command is added to your {b}PATH{/b}."),
+            None))
+
+        # Sublime Text
+        fei.append(FancyEditorInfo(
+            1,
+            "Sublime Text",
+            _("A sophisticated text editor for code, markup and prose. You can buy Sublime Text {a=https://www.sublimetext.com/}on their official website{/a}.\nMake sure the subl command is added to your {b}PATH{/b}."),
+            None))
+
         # jEdit
         fei.append(FancyEditorInfo(
             2,
