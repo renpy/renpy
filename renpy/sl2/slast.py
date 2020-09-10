@@ -335,6 +335,7 @@ class SLBlock(SLNode):
         rv = SLNode.instantiate(self, transclude)
         rv.keyword = self.keyword
         rv.children = [ i.copy(transclude) for i in self.children ]
+        rv.atl_transform = self.atl_transform
 
         return rv
 
@@ -394,14 +395,21 @@ class SLBlock(SLNode):
             const = self.atl_transform.constant
             self.constant = min(self.constant, const)
 
+        was_last_keyword = False
         for i in self.children:
             if i.has_keyword:
+
+                if was_last_keyword:
+                    raise Exception("Properties are not allowed here.")
+
                 self.keyword_children.append(i)
                 self.has_keyword = True
 
             if i.last_keyword:
                 self.last_keyword = True
-                break
+                was_last_keyword = True
+                if not renpy.config.developer:
+                    break
 
     def execute(self, context):
 
@@ -480,6 +488,23 @@ class SLBlock(SLNode):
                     worklist.append(block)
             else:
                 return True
+
+        return False
+
+    def keyword_exist(self, name):
+        """
+        Returns true if this block or it's SLIf children have parsed `name` keyword,
+        or false otherwise.
+        """
+
+        if name in dict(self.keyword):
+            return True
+
+        for n in self.children:
+
+            if isinstance(n, SLIf):
+                if n.keyword_exist(name):
+                    return True
 
         return False
 
@@ -578,7 +603,7 @@ class SLDisplayable(SLBlock):
             The base name of the main style.
 
         `pass_context`
-            If given, the context is passed in as the first positonal argument
+            If given, the context is passed in as the first positional argument
             of the displayable.
 
         `imagemap`
@@ -666,8 +691,8 @@ class SLDisplayable(SLBlock):
             for k, v in self.keyword:
                 const = min(self.constant, analysis.is_constant_expr(v))
 
-                if k == "id":
-                    const = NOT_CONST
+            if self.keyword_exist("id"):
+                const = NOT_CONST
 
             if const == LOCAL_CONST:
                 analysis.mark_constant(self.variable)
@@ -722,9 +747,8 @@ class SLDisplayable(SLBlock):
         # If we have the id property, we're not constant - since we may get
         # additional keywords via id. (It's unlikely, but id should be pretty
         # rare.)
-        for k, _expr in self.keyword:
-            if k == "id":
-                self.constant = NOT_CONST
+        if self.keyword_exist("id"):
+            self.constant = NOT_CONST
 
         if self.variable is not None:
             self.constant = NOT_CONST
@@ -821,21 +845,20 @@ class SLDisplayable(SLBlock):
 
             SLBlock.keywords(self, ctx)
 
+            arguments = keywords.pop("arguments", None)
+            if arguments:
+                positional += arguments
+
+            properties = keywords.pop("properties", None)
+            if properties:
+                keywords.update(properties)
+
             # Get the widget id and transform, if any.
             widget_id = keywords.pop("id", None)
             transform = keywords.pop("at", None)
 
-            arguments = keywords.pop("arguments", None)
-            properties = keywords.pop("properties", None)
-            style_suffix = keywords.pop("style_suffix", None) or self.style
-
-            if arguments:
-                positional += arguments
-
-            if properties:
-                keywords.update(properties)
-
             # If we don't know the style, figure it out.
+            style_suffix = keywords.pop("style_suffix", None) or self.style
             if ("style" not in keywords) and style_suffix:
                 if ctx.style_prefix is None:
                     keywords["style"] = style_suffix
@@ -1265,8 +1288,8 @@ class SLIf(SLNode):
             self.constant = min(self.constant, block.constant)
             self.prepared_entries.append((cond, block))
 
-            self.has_keyword = self.has_keyword or block.has_keyword
-            self.last_keyword = self.last_keyword or block.last_keyword
+            self.has_keyword |= block.has_keyword
+            self.last_keyword |= block.last_keyword
 
     def execute(self, context):
 
@@ -1287,12 +1310,8 @@ class SLIf(SLNode):
         # True if no block has been the main choice yet.
         first = True
 
-        # Has any instance of this node been predicted? We only predict
-        # once per node, for performance reasons.
-        predicted = self.serial in context.predicted
-
-        if not predicted:
-            context.predicted.add(self.serial)
+        # Other blocks that we predict if not predicted.
+        false_blocks = [ ]
 
         for cond, block in self.prepared_entries:
             try:
@@ -1310,21 +1329,30 @@ class SLIf(SLNode):
                     except:
                         pass
 
-            # Not-taken branches, only if not already predicted.
-            elif not predicted:
+            else:
+                false_blocks.append(block)
 
-                ctx = SLContext(context)
-                ctx.children = [ ]
-                ctx.unlikely = True
+        # Has any instance of this node been predicted? We only predict
+        # once per node, for performance reasons.
+        if self.serial in context.predicted:
+            return
 
-                for i in block.children:
-                    try:
-                        i.execute(ctx)
-                    except:
-                        pass
+        context.predicted.add(self.serial)
 
-                for i in ctx.children:
-                    predict_displayable(i)
+        # Not-taken branches.
+        for block in false_blocks:
+            ctx = SLContext(context)
+            ctx.children = [ ]
+            ctx.unlikely = True
+
+            for i in block.children:
+                try:
+                    i.execute(ctx)
+                except:
+                    pass
+
+            for i in ctx.children:
+                predict_displayable(i)
 
     def keywords(self, context):
 
@@ -1350,6 +1378,9 @@ class SLIf(SLNode):
 
     def has_python(self):
         return any(i[1].has_python() for i in self.entries)
+
+    def keyword_exist(self, name):
+        return any(i[1].keyword_exist(name) for i in self.entries)
 
 
 class SLShowIf(SLNode):
@@ -1720,7 +1751,7 @@ class SLUse(SLNode):
             else:
                 const = False
         else:
-            const = False
+            const = True
 
         if isinstance(self.target, renpy.ast.PyExpr):
 
@@ -1877,7 +1908,8 @@ class SLUse(SLNode):
             self.ast.copy_on_change(c)
 
     def used_screens(self, callback):
-        callback(self.target)
+        if not isinstance(self.target, renpy.ast.PyExpr):
+            callback(self.target)
 
 
 class SLTransclude(SLNode):
@@ -1935,6 +1967,192 @@ class SLTransclude(SLNode):
 
     def has_transclude(self):
         return True
+
+
+class SLCustomUse(SLNode):
+    """This represents special use screen statement defined
+    by renpy.register_sl_statement.
+    """
+
+    def __init__(self, loc, target, positional, block):
+
+        SLNode.__init__(self, loc)
+
+        # The name of the screen we're accessing.
+        self.target = target
+
+        # The SL2 SLScreen node at the root of the ast for that screen.
+        self.ast = None
+
+        # Positional argument expressions.
+        self.positional = positional
+
+        # A block for transclusion, from which we also take kwargs.
+        self.block = block
+
+    def copy(self, transclude):
+
+        rv = self.instantiate(transclude)
+
+        rv.target = self.target
+        rv.ast = None
+
+        rv.positional = self.positional
+        rv.block = self.block.copy(transclude)
+
+        return rv
+
+    def analyze(self, analysis):
+
+        self.last_keyword = True
+
+        self.block.analyze(analysis)
+
+    def prepare(self, analysis):
+
+        block = self.block
+
+        block.prepare(analysis)
+
+        # Figure out the ast we want to use.
+        target = renpy.display.screen.get_screen_variant(self.target)
+
+        if target is None:
+            self.constant = NOT_CONST
+
+            if renpy.config.developer:
+                raise Exception("A screen named {} does not exist.".format(self.target))
+            else:
+                return
+
+        if target.ast is None:
+            self.constant = NOT_CONST
+
+            if renpy.config.developer:
+                raise Exception("A screen used in CD SLS should be a SL-based screen.")
+            else:
+                return
+
+        # If we have the id property, we're not constant - since we may get
+        # our state via other screen on replace.
+        if block.keyword_exist("id")
+            self.constant = NOT_CONST
+            self.ast = target.ast.not_const_ast
+
+        elif block.constant == GLOBAL_CONST:
+            self.ast = target.ast.const_ast
+        else:
+            self.ast = target.ast.not_const_ast
+
+        self.constant = min(self.constant, self.ast.constant)
+
+    def execute(self, context):
+
+        # Figure out the cache to use.
+        ctx = SLContext(context)
+        ctx.new_cache = context.new_cache[self.serial] = { }
+        ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
+        ctx.uses_scope = [ ]
+
+        # Evaluate the arguments to use in screen.
+        try:
+            args = [eval(i, context.globals, context.scope) for i in self.positional]
+
+            kwargs = ctx.keywords = {}
+
+            self.block.keywords(ctx)
+
+            arguments = kwargs.pop("arguments", None)
+            if arguments:
+                args += arguments
+
+            properties = kwargs.pop("properties", None)
+            if properties:
+                kwargs.update(properties)
+
+            # If we don't know the style, figure it out.
+            style_suffix = kwargs.pop("style_suffix", None)
+            if ("style" not in kwargs) and style_suffix:
+                if ctx.style_prefix is None:
+                    kwargs["style"] = style_suffix
+                else:
+                    kwargs["style"] = ctx.style_prefix + "_" + style_suffix
+
+        except:
+            if not context.predicting:
+                raise
+
+            args = [ ]
+            kwargs = { }
+
+        # Get the id and deal with replacement algorithm.
+        id = kwargs.pop("id", None)
+        if id is not None:
+
+            use_id = (self.target, id)
+
+            ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
+
+            if use_id in ctx.old_use_cache:
+                ctx.updating = True
+
+            ctx.new_use_cache[use_id] = ctx.new_cache
+
+        else:
+
+            ctx.old_cache = context.old_cache.get(self.serial, None) or { }
+
+        if not isinstance(ctx.old_cache, dict):
+            ctx.old_cache = { }
+        if not isinstance(ctx.miss_cache, dict):
+            ctx.miss_cache = { }
+
+        ast = self.ast
+
+        # Apply the arguments to the parameters (if present) or to the scope of the used screen.
+        if ast.parameters is not None:
+            new_scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
+
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+            scope.update(new_scope)
+
+        else:
+
+            if args:
+                raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
+
+            scope = context.scope.copy()
+            scope.update(kwargs)
+
+        scope["_scope"] = scope
+        ctx.new_cache["scope"] = scope
+
+        # Run the child screen.
+        ctx.scope = scope
+        ctx.parent = weakref.ref(context)
+
+        # If we have any children, pass them to (possible) transclude
+        if self.block.children:
+            ctx.transclude = self.block
+
+        try:
+            ast.execute(ctx)
+        finally:
+            del scope["_scope"]
+
+        if ctx.fail:
+            context.fail = True
+
+    def copy_on_change(self, cache):
+
+        c = cache.get(self.serial, None)
+        if c is None:
+            return
+
+        self.ast.copy_on_change(c)
+
+    def used_screens(self, callback):
+        callback(self.target)
 
 
 class SLScreen(SLBlock):
