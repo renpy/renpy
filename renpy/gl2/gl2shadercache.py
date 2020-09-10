@@ -263,6 +263,9 @@ class ShaderCache(object):
         vertex = source(vertex_variables, vertex_parts, vertex_functions, False, self.gles)
         fragment = source(fragment_variables, fragment_parts, fragment_functions, True, self.gles)
 
+        self.log_shader("vertex", sortedpartnames, vertex)
+        self.log_shader("fragment", sortedpartnames, fragment)
+
         from renpy.gl2.gl2shader import Program
 
         rv = Program(sortedpartnames, vertex, fragment)
@@ -363,3 +366,19 @@ class ShaderCache(object):
 
         self.cache.clear()
         self.missing.clear()
+
+    def log_shader(self, kind, partnames, text):
+        """
+        Logs the shader text to the log.
+        """
+
+        if not renpy.config.developer:
+            return
+
+        name = kind + " " + ", ".join(partnames) + " "
+        name = name + "-" * max(0, 80 - len(name))
+
+        renpy.display.log.write("%s", name)
+        renpy.display.log.write("%s", text)
+        renpy.display.log.write("-" * 80)
+
