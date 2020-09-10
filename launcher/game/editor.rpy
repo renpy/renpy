@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -147,6 +147,8 @@ init 1 python in editor:
         scan_all()
 
         fei = fancy_editors = [ ]
+        systemEditorName = "System Editor"
+        disabledEditorName = "None"
 
         # Atom
         AD = _("(Recommended) A modern and approachable text editor.")
@@ -199,12 +201,15 @@ init 1 python in editor:
 
         fei.append(FancyEditorInfo(
             3,
-            _("System Editor"),
+            _(systemEditorName),
             _("Invokes the editor your operating system has associated with .rpy files."),
             None))
 
-        for k in editors:
-            if k in [ "Atom", "jEdit", "System Editor", "None" ]:
+        for editor in editors:
+            if (
+                    any(editor == fancyEditor.name for fancyEditor in fei) or
+                    editor == disabledEditorName or
+                    editor == systemEditorName):
                 continue
 
             fei.append(FancyEditorInfo(
@@ -215,7 +220,7 @@ init 1 python in editor:
 
         fei.append(FancyEditorInfo(
             5,
-            _("None"),
+            _(disabledEditorName),
             _("Prevents Ren'Py from opening a text editor."),
             None))
 
