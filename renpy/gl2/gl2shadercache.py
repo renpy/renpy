@@ -142,17 +142,17 @@ def source(variables, parts, functions, fragment, gles):
     rv = [ ]
 
     if gles:
-        rv.append("""
-#version 300 es
+        rv.append("""\
+#version 100
 """)
 
         if fragment:
-            rv.append("""
+            rv.append("""\
 precision mediump float;
 """)
 
     else:
-        rv.append("""
+        rv.append("""\
 #version 120
 """)
 
