@@ -1041,7 +1041,8 @@ Margin Style Properties
 -----------------------
 
 Margin properties are used to add transparent space around some
-displyables. Most notably: windows, frames, buttons and grids.
+displayables. Most notably: windows, frames, buttons and the cells inside
+grids.
 
 .. style-property:: left_margin int
 
