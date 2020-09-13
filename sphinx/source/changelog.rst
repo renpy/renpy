@@ -2,7 +2,6 @@
 Full Changelog
 ==============
 
-
 .. _renpy-7.4:
 
 7.4.0
@@ -85,8 +84,8 @@ transform property versions of matrixcolor, as the new version uses
 use the same matrixes. Instead, there are number of new :ref:`ColorMatrix <colormatrix>`
 objects that need to be used.
 
-Python 3 Compatibility
-----------------------
+Python 2/Python 3 Compatibility Mode
+-----------------------------------
 
 While Ren'Py is not yet supported on Python 3, this release of Ren'Py
 includes several features to allow you to begin writing scripts that will
@@ -110,11 +109,79 @@ in a Python 3 compatibility mode. The two changes this causes are:
   but need to be explicitly turned into a list before being saved or participating
   in rollback.
 
-Upgrades and Platform Support
------------------------------
+Upgraded Libraries and Platform Support
+---------------------------------------
 
+For Ren'Py 7.4, the build system was redone, replacing the multiple build
+systems needed to build Ren'Py with a single build platform that handles
+every platform except for webasm. The change in build system also involved
+updating all  of the libraries that Ren'Py uses to newer versions.
 
+As a result of this, the list of platforms that Ren'Py offically supports
+has changed slightly. Here's the latest list of what is supported:
 
+.. list-table::
+    :header-rows: 1
+
+    * - Platform
+      - CPU
+      - Status
+      - Note
+    * - Linux
+      - x86_64
+      - Done
+      - Raised minimum version to Ubuntu 16.04
+    * - Linux
+      - i686
+      - Done
+      - Raised minimum version to Ubuntu 16.04
+    * - Linux
+      - i686
+      - Done
+      - Raised minimum version to Ubuntu 16.04
+    * - Linux
+      - armv7l
+      - Done
+      - Intended to support Raspberry Pi, uses Raspian Buster
+    * - Windows
+      - x86_64
+      - Done
+      - A new port to 64-bit Windows XP+
+    * - Windows
+      - i686
+      - Done
+      - Continued support for 32-Bit Windows XP+
+    * - macOS
+      - x86_64
+      - macOS 10.6+. (All 64-bit macOS versions.)
+    * - Android
+      - armv7a
+      - Android 4.4 KitKat
+    * - Android
+      - arm64
+      - Android 5.0 Lollipop
+    * - Android
+      - x86_64
+      - Android 5.0 Lollipop
+    * - iOS
+      - arm64
+      - All 64-bit iOS devices
+    * - iOS
+      - x86_64
+      - The 64-bit iOS simulator
+    * - Web
+      - webasm
+      - Modern web browser
+
+The biggest new platform that Ren'Py supports is the 64-bit windows
+platform, which means that Ren'Py is available in 64-bits on all major
+desktop and mobile platforms.  The new :var:`renpy.bits` variable can
+be used to determine if Ren'Py is running on a 32 or 64-bit platform,
+if necessary. (For example, to set :var:`config.image_cache_size_mb` appropriately.)
+
+The one platform that loses support in this release is 32-bit (armv7l) iOS
+devices. These devices are no longer supported by Apple, and do not support
+the level of OpenGL ES that Ren'Py requires.
 
 Web
 ---
@@ -134,6 +201,19 @@ Translations
 The Simplified Chinese, Japanese, and Korean translations have been updated, and now
 use a unified font.
 
+Depreciations and Removals
+--------------------------
+
+As describe above, Ren'Py no longer supports 32-bit iOS devices.
+
+The choice of downloading the Editra text editor has been removed from Ren'Py.
+Editra hadn't been updated in over 5 years, and the website it was originally
+distributed from has disappeared.
+
+While not completely removed, the software renderer has been simplified and
+removed as an option for gameplay. Its purposes is now limited to informing
+players about issues that prevent display of graphics with a GPU-based
+renderer.
 
 Miscellaneous
 -------------
@@ -161,17 +241,8 @@ Ren'Py support an {alt} text tag, that causes the text to be spoken during
 self-voicing, but not displayed. It also supports a {noalt} text tag that does
 the opposite.
 
-The new :var:`renpy.bits` variable can be used to determine if Ren'Py
-is running on a 32 or 64-bit platform, if necessary. (For example, to
-set :var:`config.image_cache_size_mb` appropriately.)
-
-
 The launcher window can now be resized if necessary. A button has been added to
 the launcher preferences to restore the default size.
-
-The choice of downloading the Editra text editor has been removed from Ren'Py.
-Editra hadn't been updated in over 5 years, and the website it was originally
-distributed from has disappeared.
 
 Pressing PAUSE on your keyboard brings the player to the game menu, finally
 giving that key a function.
