@@ -85,6 +85,37 @@ transform property versions of matrixcolor, as the new version uses
 use the same matrixes. Instead, there are number of new :ref:`ColorMatrix <colormatrix>`
 objects that need to be used.
 
+Python 3 Compatibility
+----------------------
+
+While Ren'Py is not yet supported on Python 3, this release of Ren'Py
+includes several features to allow you to begin writing scripts that will
+work on both Python 2 and Python 3.
+
+First, Ren'Py now uses `future <https://python-future.org/>`_ to provide
+standard library compatibility. It's now possible to import modules using
+their Python 3 names, when a renaming has occured.
+
+When a .rpyc file begins with the new ``rpy python 3``, the file is compiled
+in a Python 3 compatibility mode. The two changes this causes are:
+
+* Ren'Py will compile the file in a mode that attempts to emulate Python 3
+  semantics, including the change to division. In Python 3, ``1/2`` is equal
+  to .5, and not 0. Since this changes the type of the expression,
+  this can change the position of displayables. ``1//2`` keeps the original
+  semantics.
+* Ren'Py will change the behavior of dict so that the ``items``, ``keys``, and
+  ``values`` methods return views, rather than lists, when called directly
+  from that .rpy file. These match the Python 3 semantics for these methods,
+  but need to be explicitly turned into a list before being saved or participating
+  in rollback.
+
+Upgrades and Platform Support
+-----------------------------
+
+
+
+
 Web
 ---
 
@@ -104,20 +135,17 @@ The Simplified Chinese, Japanese, and Korean translations have been updated, and
 use a unified font.
 
 
-TODO:
------
-
-* minsize/maxside
-* tertiarty volumne
-* rpy python 3
-
-
 Miscellaneous
 -------------
 
-The new :var:`renpy.bits` variable can be used to determine if Ren'Py
-is running on a 32 or 64-bit platform, if necessary. (For example, to
-set :var:`config.image_cache_size_mb` appropriately.)
+It is now possible to specify a relative audio channel whenever an
+audio is file is played, using the new ``volume`` clause to ``play`` and
+``queue``.
+
+The new :tpref:`fit` property of transforms provides for different ways
+of making an image fit size with a different aspect ratio. For example,
+it can be scaled to fit fully within the given size, or to make sure that
+it completely coveres the given size.
 
 The :tpref:`xpan` and :tpref:`ypan` transform properties no longer double
 the size of the displayable they are applied to, making them easier to combine
@@ -132,6 +160,11 @@ each cell.
 Ren'Py support an {alt} text tag, that causes the text to be spoken during
 self-voicing, but not displayed. It also supports a {noalt} text tag that does
 the opposite.
+
+The new :var:`renpy.bits` variable can be used to determine if Ren'Py
+is running on a 32 or 64-bit platform, if necessary. (For example, to
+set :var:`config.image_cache_size_mb` appropriately.)
+
 
 The launcher window can now be resized if necessary. A button has been added to
 the launcher preferences to restore the default size.

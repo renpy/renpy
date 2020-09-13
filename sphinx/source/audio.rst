@@ -68,6 +68,13 @@ given, the default of the channel is used. ::
         "We can also play a list of sounds, or music."
         play music [ "a.ogg", "b.ogg" ] fadeout 1.0 fadein 1.0
 
+The ``volume`` clause is also optional, and specifies a relative volume for
+the track, between 0.0 and 1.0. This makes it possible to adjust the volume a
+track is played at, each time it's played. ::
+
+        play sound "woof.mp3" volume 0.5
+
+
 On the audio channel, multiple play statements play multiple sounds at the same
 time::
 
@@ -95,8 +102,20 @@ the channel finishes playing the currently playing file.
 The queue statement begins with keyword ``queue``, followed by the the name of a
 channel to play sound on. It optionally takes the ``loop`` and ``noloop`` clauses. ::
 
-        queue sound "woof.ogg"
+        queue sound "woof.mp3"
         queue music [ "a.ogg", "b.ogg" ]
+
+Queue also takes the ``volume`` clause. ::
+
+        play sound "woof.mp3" volume 0.25
+        queue sound "woof.mp3" volume 0.5
+        queue sound "woof.mp3" volume 0.75
+        queue sound "woof.mp3" volume 1.0
+
+When multiple queue statements are given without an interaction between them,
+all sound files are added to the queue. After an interaction has occured, the
+first queue statement clears the queue, unless it has already been cleared by
+a play or stop statement.
 
 The advantage of using these statements is that your program will be checked for
 missing sound and music files when lint is run. The functions below exist to allow
