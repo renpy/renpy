@@ -109,10 +109,11 @@ def transform_render(self, widtho, heighto, st, at):
     fit = state.fit
 
     if fit is None:
-        fit = 'contain' if (xsize is None) or (ysize is None) else 'fill'
+        fit = 'fill'
 
-    if (xsize is not None) and (ysize is not None) and fit == 'fill':
+    if xsize is not None:
         widtho = xsize
+    if ysize is not None:
         heighto = ysize
 
     cr = render(child, widtho, heighto, st - self.child_st_base, at)
@@ -255,7 +256,7 @@ def transform_render(self, widtho, heighto, st, at):
                 if xsize is None:
                     xsize = width
                 if ysize is None:
-                    ysize = width
+                    ysize = height
 
         if mul is not None:
             xsize = mul * width
