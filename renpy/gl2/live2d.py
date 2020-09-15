@@ -408,6 +408,9 @@ class Live2D(renpy.display.core.Displayable):
         if not self._duplicatable:
             return self
 
+        if not args:
+            return self
+
         common = self.common
         motions = [ ]
 
@@ -440,9 +443,7 @@ class Live2D(renpy.display.core.Displayable):
             expression=expression)
 
         rv.name = args.name
-
-        if args.args:
-            rv._duplicatable = False
+        rv._duplicatable = False
 
         return rv
 
