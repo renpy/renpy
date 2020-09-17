@@ -1029,7 +1029,7 @@ These are used with the fixed layout.
 
 .. style-property:: order_reverse boolean
 
-    If False, the default, the items in the box will be draw first-to-last,
+    If False, the default, the items in the box will be drawn first-to-last,
     with the first item in the box being below the second, and so on. If True,
     this order will be reversed, and the first item in the box will be above
     all other items in the box.
@@ -1041,8 +1041,8 @@ Margin Style Properties
 -----------------------
 
 Margin properties are used to add transparent space around some
-displayables. Most notably: windows, frames, buttons and the cells inside
-grids.
+displayables. Most notably: windows, frames, buttons and outside
+a grid or vpgrid.
 
 .. style-property:: left_margin int
 

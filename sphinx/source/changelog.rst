@@ -224,8 +224,8 @@ audio is file is played, using the new ``volume`` clause to ``play`` and
 
 The new :tpref:`fit` property of transforms provides for different ways
 of making an image fit size with a different aspect ratio. For example,
-it can be scaled to fit fully within the given size, or to make sure that
-it completely coveres the given size.
+it can be scaled to be contained fully within the given size, or to make sure that
+it completely covers the given size.
 
 The :tpref:`xpan` and :tpref:`ypan` transform properties no longer double
 the size of the displayable they are applied to, making them easier to combine
@@ -234,8 +234,8 @@ with positioning transform properties.
 The :func:`renpy.input` function can now take regular expressions when determining
 what is and is not allowed.
 
-Grids now take :propref:`margin` style properties. The margin is applied inside
-each cell.
+Grids now take :propref:`margin` style properties, that is applied outside the
+grid, and inside a containing viewport.
 
 Ren'Py support an {alt} text tag, that causes the text to be spoken during
 self-voicing, but not displayed. It also supports a {noalt} text tag that does

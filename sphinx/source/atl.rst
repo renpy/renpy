@@ -909,10 +909,7 @@ both horizontal and vertical positions.
    :default: None
 
    If not None, causes the displayable to be sized according to the
-   table below. When None, if both xsize and ysize are not None,
-   ``fill`` will be used, otherwise ``contain``.
-
-   In this context "dimensions" refers to one or more of ``xsize`` and
+   table below. In this context "dimensions" refers to one or more of ``xsize`` and
    ``ysize`` that are not None.
 
    .. list-table::
@@ -927,7 +924,7 @@ both horizontal and vertical positions.
       * - ``cover``
         - As small as possible, while matching or exceeding all
           dimensions. Maintains aspect ratio.
-      * - ``fill``
+      * - None or ``fill``
         - Stretches/squashes displayable to exactly match dimensions.
       * - ``scale-down``
         - As for ``contain``, but will never increase the size of the
