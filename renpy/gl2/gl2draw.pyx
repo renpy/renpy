@@ -1182,7 +1182,7 @@ cdef class GL2DrawingContext:
         if clip_polygon is not None:
 
             if model.reverse is not IDENTITY:
-                clip_polygon.multiply_matrix_inplace(model.forward)
+                clip_polygon = clip_polygon.multiply_matrix(model.forward)
 
             mesh = mesh.crop(clip_polygon)
 
