@@ -194,10 +194,13 @@ init -1500:
     #
     # `problem` is the kind of problem that is occuring. It can be:
     # - "sw" if the software renderer was selected.
+    # - "gl2" if GL2 should be used but wasn't selected.
     # - other things, added in the future.
     #
     # `url` is the url of a web page on renpy.org that will include
     # info on troubleshooting display problems.
+    #
+    # `allow_continue` controls whether this error can be ignored.
     screen _performance_warning:
 
         frame:
@@ -211,6 +214,8 @@ init -1500:
 
             if problem == "sw":
                 text _("This computer is using software rendering.")
+            elif problem == "gl2":
+                text _("This game requires use of GL2 that can't be initialised.")
             else:
                 text _("This computer has a problem displaying graphics: [problem].") substitute True
 
@@ -220,12 +225,26 @@ init -1500:
 
             null height 10
 
-            textbutton _("Continue, Show this warning again"):
-                action Return(True)
-                xfill True
+            if url:
+                text _("More details on how to fix this can be found in the {a=[url]}documentation{/a}.") substitute True
 
-            textbutton _("Continue, Don't show warning again"):
-                action Return(False)
+                null height 10
+
+            if allow_continue:
+                textbutton _("Continue, Show this warning again"):
+                    action Return(True)
+                    xfill True
+
+                textbutton _("Continue, Don't show warning again"):
+                    action Return(False)
+                    xfill True
+
+                null height 10
+
+            # Since on mac and linux it is impossible to enter safe_mode,
+            # if the user cannot ignore the error, he should not get stuck.
+            textbutton _("Change render options"):
+                action Jump("_choose_renderer")
                 xfill True
 
             null height 10
@@ -290,19 +309,32 @@ init -1500 python:
         # The problem we have.
         problem = None
 
+        # Can user ignore it?
+        allow_continue = True
+
         renderer_info = renpy.get_renderer_info()
 
         # Software renderer check.
         if config.renderer != "sw" and renderer_info["renderer"] == "sw":
             problem = "sw"
+            allow_continue = False
+
+        # Game require gl2 that wasn't initialized.
+        elif config.gl2 and not renderer_info.get("models", False):
+            problem = "gl2"
+            allow_continue = False
 
         if problem is None:
             return
 
-        directx_update = None
+        # Disable "Return" button on _choose_renderer screen.
+        if not allow_continue:
+            renpy.display.interface.safe_mode = True
+
+        url = "https://renpy.org/doc/html/problems.html#dealing-with-display-problems"
 
         # Give the warning message to the user.
-        renpy.show_screen("_performance_warning", problem=problem, directx_update=directx_update, _transient=True)
+        renpy.show_screen("_performance_warning", problem=problem, allow_continue=allow_continue, url=url, _transient=True)
         result = ui.interact(suppress_overlay=True, suppress_underlay=True)
 
         # Store the user's choice, and continue.
@@ -328,6 +360,6 @@ label _choose_renderer:
     scene expression "#000"
 
     $ renpy.shown_window()
-    $ renpy.show_screen("_choose_renderer",  _transient=True)
+    $ renpy.show_screen("_choose_renderer", _transient=True)
     $ ui.interact(suppress_overlay=True, suppress_underlay=True)
     return
