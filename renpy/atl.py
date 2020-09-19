@@ -957,7 +957,7 @@ class RawMultipurpose(RawStatement):
 
         for name, expr in self.properties:
             if name not in PROPERTIES:
-                raise Exception("ATL Property %s is unknown at runtime." % property)
+                raise Exception("ATL Property %s is unknown at runtime." % name)
 
             value = ctx.eval(expr)
             properties.append((name, value))
@@ -966,7 +966,7 @@ class RawMultipurpose(RawStatement):
 
         for name, exprs in self.splines:
             if name not in PROPERTIES:
-                raise Exception("ATL Property %s is unknown at runtime." % property)
+                raise Exception("ATL Property %s is unknown at runtime." % name)
 
             values = [ ctx.eval(i) for i in exprs ]
 
