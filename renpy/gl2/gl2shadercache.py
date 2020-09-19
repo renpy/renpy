@@ -108,10 +108,11 @@ class ShaderPart(object):
             if not a:
                 continue
 
-            if len(a) != 3:
-                print("Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(l))
-
             a = tuple(a)
+
+            if len(a) != 3:
+                raise Exception("{}: Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(self.name, l))
+
             kind = a[0]
             name = a[2]
 
