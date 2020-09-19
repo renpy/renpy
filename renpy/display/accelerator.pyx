@@ -368,14 +368,19 @@ def transform_render(self, widtho, heighto, st, at):
 
     rv = Render(width, height)
 
-    if state.mesh:
+    mesh = state.mesh
+    blur = state.blur
+
+    if (blur is not None) and (not mesh):
+        mesh = True
+
+    if mesh:
 
         rv.operation = renpy.display.render.FLATTEN
         rv.add_shader("renpy.texture")
 
-
-        if isinstance(state.mesh, tuple):
-            mesh_width, mesh_height = state.mesh
+        if isinstance(mesh, tuple):
+            mesh_width, mesh_height = mesh
 
             rv.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
                 mesh_width, mesh_height,
@@ -384,6 +389,10 @@ def transform_render(self, widtho, heighto, st, at):
         else:
             rv.mesh = True
 
+    if blur:
+        rv.add_shader("-renpy.texture")
+        rv.add_shader("renpy.blur")
+        rv.add_uniform("u_renpy_blur_log2", math.log(state.blur, 2))
 
     if state.matrixcolor:
         matrix = state.matrixcolor

@@ -60,8 +60,11 @@ change expression and to queue up one or more motions. This is integrated
 into Ren'Py's image attribute system. Ren'Py also supports fading from
 one motion to another when an attribute changes.
 
-Matrixcolor
------------
+Matrixcolor and Blur
+--------------------
+
+The model-based renderer enables new functionality in transforms, such as
+matrixcolor and blur.
 
 Transforms (including ATL Transforms) now support a new :tpref:`matrixcolor`
 property, which either a matrix or an object that creates a matrix that
@@ -81,8 +84,12 @@ images.
 There are a few difference between the image manipulator and the the
 transform property versions of matrixcolor, as the new version uses
 4x4 matrices and premultiplied alpha color, so the new property can't
-use the same matrixes. Instead, there are number of new :ref:`ColorMatrix <colormatrix>`
+use the same matrices. Instead, there are number of new :ref:`ColorMatrix <colormatrix>`
 objects that need to be used.
+
+Transforms also support a new :tpref:`blur` property, which blurs the child
+of the displayable by the given number of pixels.
+
 
 Python 2/Python 3 Compatibility Mode
 -----------------------------------
