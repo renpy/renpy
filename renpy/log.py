@@ -221,7 +221,7 @@ class StdioRedirector(object):
 
     def __init__(self):
         self.buffer = ''
-        self.log = open("log", developer=False, append=False)
+        self.log = open("log", developer=False, append=False, flush=True)
 
     def write(self, s):
 
