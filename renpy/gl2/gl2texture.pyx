@@ -290,8 +290,11 @@ cdef class GLTexture(Model):
         draw = self.loader.draw
 
         # The visible size of the texture.
-        tw = min(int(math.ceil(cw * draw.draw_per_virt)), loader.max_texture_width)
-        th = min(int(math.ceil(ch * draw.draw_per_virt)), loader.max_texture_height)
+
+        tw, th = draw.virt_to_draw.transform(cw, ch)
+
+        tw = min(int(tw), loader.max_texture_width)
+        th = min(int(th), loader.max_texture_height)
 
         cdef GLuint premultiplied
 
