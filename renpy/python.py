@@ -41,6 +41,7 @@ import time
 import io
 import types
 import copyreg
+import functools
 
 import renpy.audio
 
@@ -773,6 +774,7 @@ mutate_flag = True
 
 def mutator(method):
 
+    @functools.wraps(method, ("__name__", "__doc__"), ())
     def do_mutation(self, *args, **kwargs):
 
         global mutate_flag
