@@ -871,6 +871,7 @@ cdef class GL2Draw:
                 uniforms.update(r.uniforms)
 
             for i, c in enumerate(r.children):
+                uniforms["res" + str(i)] = c[0].get_size()
                 uniforms["tex" + str(i)] = self.render_to_texture(c[0])
 
             if r.mesh is True:
