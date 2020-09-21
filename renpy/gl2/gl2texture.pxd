@@ -49,6 +49,8 @@ cdef class TextureLoader:
     cdef GLint max_texture_width
     cdef GLint max_texture_height
 
+    cdef GLfloat max_anisotropy
+
 
 cdef class GLTexture(Model):
 

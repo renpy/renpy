@@ -52,6 +52,10 @@ from renpy.display.matrix cimport Matrix
 # This has different names in GL and GLES, but the same value.
 cdef GLenum RGBA8 = 0x8058
 
+# An extension here,
+cdef GLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
+cdef GLenum MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF
+
 ################################################################################
 
 cdef class TextureLoader:
@@ -71,6 +75,8 @@ cdef class TextureLoader:
         self.free_list = [ ]
         self.total_texture_size = 0
         self.texture_load_queue = weakref.WeakSet()
+
+        glGetFloatv(MAX_TEXTURE_MAX_ANISOTROPY_EXT, &self.max_anisotropy)
 
     def quit(self):
         """
@@ -425,6 +431,7 @@ cdef class GLTexture(Model):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, self.loader.max_anisotropy)
 
         cdef GLuint level = 0
 
