@@ -50,7 +50,7 @@ init python:
         gl_FragColor = vec4(0.);
         float renpy_blur_norm = 0.;
 
-        for (float i = 0; i < u_renpy_blur_log2 + 5; i += 1) {
+        for (float i = 0.; i < u_renpy_blur_log2 + 5.; i += 1.) {
             float renpy_blur_weight = exp(-0.5 * pow(u_renpy_blur_log2 - i, 2.));
             gl_FragColor += renpy_blur_weight * texture2D(tex0, v_tex_coord.xy, i);
             renpy_blur_norm += renpy_blur_weight;
