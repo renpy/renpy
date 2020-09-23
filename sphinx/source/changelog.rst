@@ -160,7 +160,7 @@ has changed slightly. Here's the latest list of what is supported:
       - Continued support for 32-Bit Windows XP+
     * - macOS
       - x86_64
-      - macOS 10.6+. (All 64-bit macOS versions.)
+      - macOS 10.6+ (All 64-bit macOS versions.)
     * - Android
       - armv7a
       - Android 4.4 KitKat
@@ -172,13 +172,13 @@ has changed slightly. Here's the latest list of what is supported:
       - Android 5.0 Lollipop
     * - iOS
       - arm64
-      - All 64-bit iOS devices
+      - All 64-bit iOS devices, iOS 11.0+
     * - iOS
       - x86_64
-      - The 64-bit iOS simulator
+      - The 64-bit iOS simulator, iOS 11.0+
     * - Web
       - webasm
-      - Modern web browser
+      - Modern web browsers
 
 The biggest new platform that Ren'Py supports is the 64-bit windows
 platform, which means that Ren'Py is available in 64-bits on all major
