@@ -1436,6 +1436,7 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 	}
 	ms->rwops = rwops;
 
+#ifndef __EMSCRIPTEN__
 	ms->cond = SDL_CreateCond();
 	if (ms->cond == NULL) {
 		deallocate(ms);
@@ -1446,6 +1447,7 @@ MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 		deallocate(ms);
 		return NULL;
 	}
+#endif
 
 	ms->audio_duration = -1;
 	ms->frame_drops = 1;
