@@ -608,9 +608,11 @@ cdef class GL2Draw:
         # higher pitch.
         BORDER = 64
 
-        width = max(self.virtual_size[0] + BORDER, self.drawable_size[0] + BORDER, 1024)
+        width, height = renpy.config.fbo_size
+
+        width = max(self.virtual_size[0] + BORDER, self.drawable_size[0] + BORDER, width)
         width = min(width, max_texture_size, max_renderbuffer_size)
-        height = max(self.virtual_size[1] + BORDER, self.drawable_size[1] + BORDER, 1024)
+        height = max(self.virtual_size[1] + BORDER, self.drawable_size[1] + BORDER, height)
         height = min(height, max_texture_size, max_renderbuffer_size)
 
         renpy.display.log.write("Maximum texture size: %dx%d", width, height)
