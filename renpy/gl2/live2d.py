@@ -268,6 +268,8 @@ class Live2DCommon(object):
             elif i["Target"] == "Opacity":
                 self.model.opacity_groups[name] = ids
 
+        self.nonexclusive = { }
+
     def apply_aliases(self, aliases):
 
         for k, v in aliases.items():
@@ -276,6 +278,11 @@ class Live2DCommon(object):
 
             if v in self.expressions:
                 self.expressions[k] = self.expressions[v]
+
+    def apply_nonexclusive(self, nonexclusive):
+        for i in nonexclusive:
+            if i in self.expressions:
+                self.nonexclusive[i] = self.expressions.pop(i)
 
 
 # This maps a filename to a Live2DCommon object.
@@ -363,6 +370,7 @@ class Live2D(renpy.display.core.Displayable):
 
     common_cache = None
     _duplicatable = True
+    used_nonexclusive = None
 
     @property
     def common(self):
@@ -379,13 +387,14 @@ class Live2D(renpy.display.core.Displayable):
         return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
-    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, ** properties):
+    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, nonexclusive=None, used_nonexclusive=None, **properties):
 
         super(Live2D, self).__init__(**properties)
 
         self.filename = filename
         self.motions = motions
         self.expression = expression
+        self.used_nonexclusive = used_nonexclusive
 
         self.zoom = zoom
         self.top = top
@@ -403,6 +412,9 @@ class Live2D(renpy.display.core.Displayable):
         if aliases:
             common.apply_aliases(aliases)
 
+        if nonexclusive:
+            common.apply_nonexclusive(nonexclusive)
+
     def _duplicate(self, args):
 
         if not self._duplicatable:
@@ -413,6 +425,7 @@ class Live2D(renpy.display.core.Displayable):
 
         common = self.common
         motions = [ ]
+        used_nonexclusive = [ ]
 
         expression = None
 
@@ -420,6 +433,10 @@ class Live2D(renpy.display.core.Displayable):
 
             if i in common.motions:
                 motions.append(i)
+                continue
+
+            if i in common.nonexclusive:
+                used_nonexclusive.append(i)
                 continue
 
             if i in common.expressions:
@@ -440,7 +457,8 @@ class Live2D(renpy.display.core.Displayable):
             height=self.height,
             loop=self.loop,
             fade=self.fade,
-            expression=expression)
+            expression=expression,
+            used_nonexclusive=used_nonexclusive)
 
         rv.name = args.name
         rv._duplicatable = False
@@ -477,6 +495,11 @@ class Live2D(renpy.display.core.Displayable):
             if i in common.expressions:
                 rv.insert(0, i)
                 break
+
+        # Choose all possible nonexclusive attributes.
+        for i in list(attributes) + list(optional):
+            if i in common.nonexclusive:
+                rv.append(i)
 
         return tuple(rv)
 
@@ -562,6 +585,11 @@ class Live2D(renpy.display.core.Displayable):
             old_redraw = None
 
         new_redraw = self.update(common, st, None)
+
+        if self.used_nonexclusive:
+            for e in self.used_nonexclusive:
+                for i in common.nonexclusive[e]:
+                    common.model.blend_parameter(i["Id"], i["Blend"], i["Value"])
 
         if self.expression:
             for i in common.expressions[self.expression]:
