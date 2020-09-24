@@ -431,7 +431,7 @@ cdef class GLDraw:
                 renpy.display.log.write("Windowed mode.")
                 self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF, **window_args)
 
-            except pygame.error, e:
+            except pygame.error as e:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
                 return False
 
@@ -510,7 +510,7 @@ cdef class GLDraw:
             self.info["environ"] = "shader"
             self.environ.init()
 
-        except Exception, e:
+        except Exception as e:
             renpy.display.log.write("Initializing shader environment failed:")
             renpy.display.log.exception()
             self.environ = None
