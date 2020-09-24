@@ -128,11 +128,11 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
                     with queue_lock:
                         with open(fullpath, 'wb') as f:
                             f.write(r.read())
-                except urllib2.URLError, e:
+                except urllib2.URLError as e:
                     self.error = str(e.reason)
-                except httplib.HTTPException, e:
+                except httplib.HTTPException as e:
                     self.error = 'HTTPException'
-                except Exception, e:
+                except Exception as e:
                     self.error = 'Error: ' + str(e)
                 self.done = True
             threading.Thread(target=thread_main, name="XMLHttpRequest").start()
