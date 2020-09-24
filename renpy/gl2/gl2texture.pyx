@@ -433,6 +433,10 @@ cdef class GLTexture(Model):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
         glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, self.loader.max_anisotropy)
 
+        # Store the texture size that was loaded.
+        self.texture_width = tw
+        self.texture_height = th
+
         cdef GLuint level = 0
 
         while True:
@@ -444,6 +448,8 @@ cdef class GLTexture(Model):
             tw = max(tw >> 1, 1)
             th = max(th >> 1, 1)
             level += 1
+
+
 
     def mipmap_texture(GLTexture self, GLuint tex, int tw, int th):
         """

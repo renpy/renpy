@@ -68,6 +68,7 @@ cdef class UniformSampler2D(Uniform):
 
         if isinstance(data, GLTexture):
             glBindTexture(GL_TEXTURE_2D, data.number)
+            self.program.set_uniform("res{}".format(self.sampler), (data.texture_width, data.texture_height))
         else:
             glBindTexture(GL_TEXTURE_2D, data)
 
