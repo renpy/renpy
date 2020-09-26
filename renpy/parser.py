@@ -2508,7 +2508,6 @@ def translate_strings(init_loc, language, l):
             bc = compile(s, "<string>", "eval", renpy.python.new_compile_flags, 1)
             return eval(bc, renpy.store.__dict__)
         except:
-            raise
             ll.error('could not parse string')
 
     while ll.advance():

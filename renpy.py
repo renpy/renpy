@@ -152,7 +152,6 @@ def path_to_renpy_base():
 try:
     import ast; ast
 except:
-    raise
     print("Ren'Py requires at least python 2.6.")
     sys.exit(0)
 
