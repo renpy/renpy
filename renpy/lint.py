@@ -558,6 +558,9 @@ def check_redefined(node, kind):
     elif kind == 'define':
         scanned = all_define_statments
 
+        if not (node.operator == "=" and node.index is None):
+            return
+
     # Combine store name and varname
 
     store_name = node.store
