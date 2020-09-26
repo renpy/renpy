@@ -22,7 +22,7 @@ clear`` statements at the end of each page.
 
 Characters can be declared to use NVL-mode by adding a ``kind=nvl``
 parameter to each of the Character declarations. For example, if we
-the character declarations from the Quickstart manual are::
+use the character declarations from the Quickstart manual::
 
     define s = Character('Sylvie', color="#c8ffc8")
     define m = Character('Me', color="#c8c8ff")
@@ -73,8 +73,7 @@ kinetic novel that does not have transitions.)
 Including the ``{clear}`` text tag on a line by itself is the equivalent
 of an ``nvl clear`` statement without leaving monologue mode. For example::
 
-    ::
-
+    label start:
         s """
         This is one block of text in monologue mode.
 
@@ -260,4 +259,3 @@ Script of The Question (NVL-mode Edition)
 
 You can view the full script of the NVL-mode edition of ''The Question''
 :ref:`here <thequestion_nvl>`.
-
