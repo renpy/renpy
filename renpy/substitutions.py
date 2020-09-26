@@ -59,7 +59,7 @@ class Formatter(string.Formatter):
         # The parts we've seen.
         literal = ''
         value = ''
-        format = ''  # @ReservedAssignment
+        format = '' # @ReservedAssignment
         conversion = None
 
         state = LITERAL
@@ -105,7 +105,7 @@ class Formatter(string.Formatter):
                         state = LITERAL
                         literal = ''
                         value = ''
-                        format = ''  # @ReservedAssignment
+                        format = '' # @ReservedAssignment
                         conversion = None
                         continue
 
@@ -129,7 +129,7 @@ class Formatter(string.Formatter):
                     state = LITERAL
                     literal = ''
                     value = ''
-                    format = ''  # @ReservedAssignment
+                    format = '' # @ReservedAssignment
                     conversion = None
                     continue
 
@@ -148,7 +148,7 @@ class Formatter(string.Formatter):
                     state = LITERAL
                     literal = ''
                     value = ''
-                    format = ''  # @ReservedAssignment
+                    format = '' # @ReservedAssignment
                     conversion = None
                     continue
 
@@ -170,7 +170,7 @@ class Formatter(string.Formatter):
         if not conversion:
             raise ValueError("Conversion specifier can't be empty.")
 
-        if set(conversion) - set("rstqulci"):
+        if set(conversion) - set("rstqulci!"):
             raise ValueError("Unknown symbols in conversion specifier, this must use only the \"rstqulci\".")
 
         if "r" in conversion:
@@ -193,7 +193,7 @@ class Formatter(string.Formatter):
         if "i" in conversion:
             try:
                 value = substitute(value, translate=False)[0]
-            except RuntimeError:  # PY3 RecursionError
+            except RuntimeError: # PY3 RecursionError
                 raise ValueError("Substitution {!r} refers to itself in a loop.".format(value))
 
         if "q" in conversion:
@@ -262,14 +262,14 @@ def substitute(s, scope=None, force=False, translate=True):
     old_s = s
 
     if scope is not None:
-        kwargs = MultipleDict(scope, renpy.store.__dict__)  # @UndefinedVariable
+        kwargs = MultipleDict(scope, renpy.store.__dict__) # @UndefinedVariable
     else:
-        kwargs = renpy.store.__dict__  # @UndefinedVariable
+        kwargs = renpy.store.__dict__ # @UndefinedVariable
 
     try:
         s = formatter.vformat(s, (), kwargs)
     except:
-        if renpy.display.predict.predicting:  # @UndefinedVariable
+        if renpy.display.predict.predicting: # @UndefinedVariable
             return " ", True
         raise
 
