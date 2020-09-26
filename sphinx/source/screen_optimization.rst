@@ -195,6 +195,8 @@ any displayables after the first time it is predicted or shown::
             textbutton "Sad" action SetVariable("mood", "sad")
             textbutton "Angry" action SetVariable("mood", "angry")
 
+.. _const-text:
+
 Const Text
 ----------
 
@@ -219,6 +221,12 @@ a string, the entire expression is const::
 
     text _("Your score is: [score]")
 
+If a variable containing the text contain substitution it's necessary to use
+``!i`` conversion flag::
+
+    $ who = "Jane"
+    $ t = "Hello, [who]!"
+    text "Then I told her, "[t!i]""
 
 Const Functions
 ----------------
