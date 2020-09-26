@@ -36,6 +36,9 @@ import renpy
 # The window.
 window = None
 
+# The progress bar (if exists).
+progress_bar = None
+
 # The start time.
 start_time = time.time()
 
@@ -48,7 +51,6 @@ class ProgressBar(pygame_sdl2.sprite.Sprite):
         self.background = pygame_sdl2.image.load(background)
         self.width, self.height = self.background.get_size()
         self.image = pygame_sdl2.Surface((self.width, self.height))
-        self.progress = 0
         self.counter = 0.0
 
     def convert_alpha(self, surface=None):
@@ -60,9 +62,10 @@ class ProgressBar(pygame_sdl2.sprite.Sprite):
 
     def update(self, total):
         self.counter += 1
-        self.progress = min(self.counter / total, 1)
+        width = self.width * min(self.counter / total, 1)
+        foreground = self.foreground.subsurface(0, 0, width, self.height)
         self.image.blit(self.background, (0, 0))
-        self.image.blit(self.foreground.subsurface(0, 0, self.width * self.progress, self.height), (0, 0))
+        self.image.blit(foreground, (0, 0))
 
 
 def find_file(base_name, root):
@@ -100,12 +103,13 @@ def start(basedir, gamedir):
 
     pygame_sdl2.display.init()
 
-    global presplash
+    global progress_bar
 
     if presplash_fn:
         presplash = pygame_sdl2.image.load(presplash_fn)
     else:
-        presplash = ProgressBar(foreground=foreground_fn, background=background_fn)
+        presplash = ProgressBar(foreground_fn, background_fn)
+        progress_bar = presplash
 
     global window
 
@@ -138,9 +142,9 @@ def pump_window():
     if window is None:
         return
 
-    if renpy.game.script and isinstance(presplash, ProgressBar):
-        presplash.update(len(renpy.game.script.script_files) + 23)
-        window.get_surface().blit(presplash.image, (0, 0))
+    if progress_bar and renpy.game.script:
+        progress_bar.update(len(renpy.game.script.script_files) + 23)
+        window.get_surface().blit(progress_bar.image, (0, 0))
         window.update()
 
     for ev in pygame_sdl2.event.get():
@@ -167,6 +171,10 @@ def end():
 
     window.destroy()
     window = None
+
+    # Remove references to presplash images
+    global progress_bar
+    progress_bar = None
 
 
 def sleep():
