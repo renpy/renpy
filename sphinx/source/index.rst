@@ -98,6 +98,7 @@ Other Functionality
    achievement
    history
    multiple
+   splashscreen_presplash
 
 Python and Ren'Py
 -----------------
