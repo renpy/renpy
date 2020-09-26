@@ -619,7 +619,8 @@ class Script(object):
                     self.write_rpyc_header(f)
                     self.write_rpyc_data(f, 1, dumps((data, stmts), 2))
                 except:
-                    pass
+                    import traceback
+                    traceback.print_exc()
 
             self.static_transforms(stmts)
 
@@ -635,7 +636,8 @@ class Script(object):
 
                     f.close()
                 except:
-                    pass
+                    import traceback
+                    traceback.print_exc()
 
             self.loaded_rpy = True
 
