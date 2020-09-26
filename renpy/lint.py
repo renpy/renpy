@@ -569,6 +569,9 @@ def check_redefined(node, kind):
     else:
         full_name = node.varname
 
+    if full_name in renpy.config.lint_ignore_redefine:
+        return
+
     original_node = scanned.get(full_name)
     if original_node:
         report(

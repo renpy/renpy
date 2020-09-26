@@ -1054,6 +1054,9 @@ touch_keyboard = os.environ.get("RENPY_TOUCH_KEYBOARD", False)
 # largest texture size.
 fbo_size = (4096, 4096)
 
+# Names to ignore the redefinition of.
+lint_ignore_redefine = [ "gui.about" ]
+
 del os
 del collections
 
