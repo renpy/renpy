@@ -119,7 +119,7 @@ ROT26 – ROT13 applied twice – is just normal text. ::
             for kind, text in contents:
 
                 if kind == renpy.TEXT_TEXT:
-                    text = rot13_transfor(text)
+                    text = rot13_transform(text)
 
                 rv.append((kind, text))
 
