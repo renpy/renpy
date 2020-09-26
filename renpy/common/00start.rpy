@@ -72,12 +72,7 @@ init -1600 python:
 
         import os
 
-        if "RENPY_LANGUAGE" in os.environ:
-            language = os.environ["RENPY_LANGUAGE"]
-        elif config.language is not None:
-            language = config.language
-        else:
-            language = _preferences.language
+        language = os.environ.get("RENPY_LANGUAGE") or config.language or _preferences.language
 
         renpy.change_language(language)
 
