@@ -350,10 +350,18 @@ def main():
             if fn.lower().endswith(".rpe"):
                 load_rpe(dir + "/" + fn)
 
+    # Generate a list of extensions for each archive handler.
+    archive_extensions = [ ]
+    for handler in renpy.loader.archive_handlers:
+        for ext in handler.get_supported_extensions():
+            if not (ext in archive_extensions):
+                archive_extensions.append(ext)
+
     # The basename is the final component of the path to the gamedir.
     for i in sorted(os.listdir(renpy.config.gamedir)):
 
-        if not i.endswith(".rpa"):
+        # Check if the archive does not have any of the extensions in archive_extensions
+        if list(filter(i.endswith, archive_extensions)) == []:
             continue
 
         i = i[:-4]
