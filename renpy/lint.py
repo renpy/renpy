@@ -52,6 +52,11 @@ image_prefixes = None
 # The node the report will be about:
 report_node = None
 
+# Collect define/default statements to check for duplication
+all_define_statments = {}
+all_default_statements = {}
+
+
 # Reports a message to the user.
 
 
@@ -527,7 +532,6 @@ def check_while(node):
 
 
 def check_if(node):
-
     for condition, _block in node.entries:
         try_compile("in a condition of the if statement", condition)
 
@@ -544,6 +548,35 @@ def check_define(node, kind):
 
     if node.varname in renpy_builtins:
         report("'%s %s' replaces a Ren'Py built-in name, which may cause problems.", kind, node.varname)
+
+
+def check_redefined(node, kind):
+    """
+    Check if a define or default statement has already been created.
+    """
+    if kind == 'default':
+        scanned = all_default_statements
+    elif kind == 'define':
+        scanned = all_define_statments
+
+    # Combine store name and varname
+    store_name = node.store.strip('store.')
+    if store_name:
+        full_name = "{}.{}".format(store_name, node.varname)
+    else:
+        full_name = node.varname
+
+    original_node = scanned.get(full_name)
+    if original_node:
+        report(
+            "{} {} already defined at {}:{}".format(
+                kind,
+                full_name,
+                original_node.filename,
+                original_node.linenumber,
+            )
+        )
+    scanned[full_name] = node
 
 
 def check_style_property_displayable(name, property, d):
@@ -806,9 +839,11 @@ def lint():
 
         elif isinstance(node, renpy.ast.Define):
             check_define(node, "define")
+            check_redefined(node, "define")
 
         elif isinstance(node, renpy.ast.Default):
             check_define(node, "default")
+            check_redefined(node, "default")
 
     report_node = None
 
