@@ -56,7 +56,6 @@ report_node = None
 all_define_statments = {}
 all_default_statements = {}
 
-
 # Reports a message to the user.
 
 
@@ -560,7 +559,11 @@ def check_redefined(node, kind):
         scanned = all_define_statments
 
     # Combine store name and varname
-    store_name = node.store.strip('store.')
+
+    store_name = node.store
+    if store_name.startswith("store."):
+        store_name = store_name[6:]
+
     if store_name:
         full_name = "{}.{}".format(store_name, node.varname)
     else:
