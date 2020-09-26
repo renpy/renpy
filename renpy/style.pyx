@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -18,6 +18,8 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+from __future__ import print_function, unicode_literals
 
 from cpython.ref cimport PyObject, Py_XDECREF
 from libc.string cimport memset
@@ -296,6 +298,11 @@ cdef class StyleCore:
 
             self.properties.append(properties)
 
+        if properties and ("insensitive_child" in properties):
+            if properties["insensitive_child"] is False:
+                import traceback
+                traceback.print_stack()
+
         self.parent = get_tuple_name(parent)
         self.name = name
         self.help = help
@@ -521,7 +528,7 @@ cdef class StyleCore:
         return self._get(index - self.prefix_offset)
 
 
-    def _predict_window(self, pd):
+    def _visit_window(self, pd):
         """
         Predicts properties for a window.
 
@@ -535,7 +542,7 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
-    def _predict_bar(self, pd):
+    def _visit_bar(self, pd):
         """
         Predicts properties for a window.
 
@@ -549,7 +556,7 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
-    def _predict_frame(self, pd):
+    def _visit_frame(self, pd):
         """
         Predicts properties for a Frame.
 
@@ -774,10 +781,10 @@ def build_styles():
     for i in renpy.config.build_styles_callbacks:
         i()
 
-    for s in styles.values():
+    for s in list(styles.values()):
         unbuild_style(s)
 
-    for s in styles.values():
+    for s in list(styles.values()):
         build_style(s)
 
 def rebuild(prepare_screens=True):
@@ -808,7 +815,7 @@ def backup():
 
     rv = { }
 
-    for k, v in styles.iteritems():
+    for k, v in styles.items():
         rv[k] = (v.parent, copy_properties(v.properties))
 
     return rv
@@ -827,7 +834,7 @@ def restore(o):
             del styles[i]
 
 
-    for k, v in o.iteritems():
+    for k, v in o.items():
 
         s = get_or_create_style(k[0])
 

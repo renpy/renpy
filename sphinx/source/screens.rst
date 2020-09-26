@@ -60,7 +60,7 @@ screens. It consists of a statement that declares a new screen,
 statements that add displayables to that screen, and control
 statements.
 
-Here's an example of a screen.::
+Here's an example of a screen::
 
     screen say(who, what):
         window id "window":
@@ -96,7 +96,7 @@ consists of the property name, followed by the value of that
 property. Property values are simple expressions, unless otherwise
 noted. A property list is a space-separated list of these properties.
 
-If a statement ends with a colon (:), then it takes a block. Each line
+If a statement ends with a colon ``:``, then it takes a block. Each line
 in a block may be one of two things:
 
 * A property list.
@@ -106,7 +106,7 @@ in a block may be one of two things:
 Screen Statement
 ----------------
 
-The `screen` statement is a Ren'Py script language statement that is
+The ``screen`` statement is a Ren'Py script language statement that is
 used to declare a new screen. It is parsed using the screen language
 common syntax.
 
@@ -117,6 +117,10 @@ expression. It takes the following properties:
     If True, the screen is modal. A modal screen prevents the user
     from interacting with displayables below it, except
     for the default keymap.
+
+`sensitive`
+    An expression that determines whether the screen is sensitive or not.
+    This expression is evaluated at least once per interaction.
 
 `tag`
     Parsed as a name, not an expression. This specifies a tag
@@ -169,19 +173,33 @@ allow the game to react to various events.
 All user interface statements take the following common properties:
 
 `at`
-    A transform, or list of transforms, that are used to wrap this
-    displayable. The show, hide, replace, and replaced external events
-    are delivered to a transform if and only if it is added directly
-    to the screen.
+    This can be a transform, or a list of transforms, or an anonymous
+    transform (a transform that is defined directly in at) ::
+
+        transform hello_t:
+            align (0.7, 0.5) alpha 0.0
+            linear 0.5 alpha 1.0
+
+        screen hello_title():
+            text "Hello." at hello_t
+            text "Hello.":
+                at transform:
+                    align (0.2, 0.5) alpha 0.0
+                    linear 0.5 alpha 1.0
+
+    This transforms are used to wrap this displayable. The show, hide,
+    replace, and replaced external events are delivered to a transform
+    if and only if it is added directly to the screen.
 
     For example, if a vbox is wrapped in a transform, and added directly
     to the screen, then events are delivered to that transform. But if
     a transform wraps a textbutton that is added to the vbox, this
     second transform is not given events.
 
-`default`
-    If given and true, the displayable is focused by default. Only one
-    displayable should have this.
+`default_focus`
+    If given and true, the displayable is focused by default. When
+    multiple displayables have this, the values are compared and the
+    displayable with the greatest default focus becomes the default.
 
 `id`
     An identifier for the user-interface statement. When a screen is
@@ -189,12 +207,11 @@ All user interface statements take the following common properties:
     given identifier. Some screens will require that a displayable
     with a given identifier is created.
 
-    By default, the id is automatically-generated.
+    By default, the ``id`` is automatically-generated.
 
 `style`
-    The name of the style applied to this displayable. This may be a
-    string name, or a style object. The style gives default
-    values for style properties.
+    A string giving the name of the style applied to this displayable. The
+    style gives default values for style properties.
 
 `style_prefix`
     .. _style-prefix:
@@ -217,7 +234,7 @@ All user interface statements take the following common properties:
     this displayable and its children.
 
 `style_group`
-    An alias for `style_prefix`, used in older version of Ren'Py.
+    An alias for `style_prefix`, used in older versions of Ren'Py.
 
 `style_suffix`
     Specifies the suffix that is combined with the `style_prefix` to
@@ -244,12 +261,27 @@ All user interface statements take the following common properties:
     :func:`GetTooltip` function. See the :ref:`tooltips` section for
     more details.
 
+    Objects passed to tooltip must support equality. If equality is
+    not supported, an infinite loop may occur.
+
+`arguments`
+    A tuple or list containing additional positional arguments that
+    are given to the displayable.
+
+`properties`
+    A dictionary containing additional properties given to the
+    displayable.
+
 Many user interface statements take classes of style properties, or
 transform properties. These properties can have a style prefix
 associated with them, that determines when they apply. For example, if
-text is given the hover_size property, it sets the text size when the
+text is given the ``hover_size`` property, it sets the text size when the
 text is hovered.
 
+User interface statements take an ``as`` clause, which takes a variable
+name, without any quotes. The displayable that the statement creates is
+assigned to the variable. (An example can be found in :ref:`the drag and drop
+documentation <as-example>`.)
 
 .. _sl-add:
 
@@ -258,7 +290,7 @@ Add
 
 Adds an image or other displayable to the screen. This optionally
 takes :ref:`transform properties <transform-properties>`. If at least
-one transform property is given, a Transform is created to wrap the
+one transform property is given, a :class:`Transform` is created to wrap the
 image, and the properties are given to the transform.
 
 If the displayable is None, nothing is added to the screen.
@@ -291,7 +323,7 @@ data. It takes the following properties:
     A :func:`ui.adjustment` object that this bar adjusts.
 
 `changed`
-    If given, this should be a python function. The function is called
+    If given, this should be a Python function. The function is called
     with the value of the adjustment when the adjustment is changed.
 
 `hovered`
@@ -463,7 +495,7 @@ It also takes:
 * :ref:`position-style-properties`
 * :ref:`grid-style-properties`
 
-This must be given columns * rows children. Giving it a different
+This must be given (columns * rows) children. Giving it a different
 number of children is an error.
 
 ::
@@ -632,6 +664,10 @@ The input statement takes no parameters, and the following properties:
     A string containing characters that are disallowed from being
     typed into this input. (By default, "{}".)
 
+`copypaste`
+    If True, it becomes possible to copy and paste
+    into this input. (By default, disabled.)
+
 `prefix`
     An immutable string to prepend to what the user has typed.
 
@@ -639,7 +675,7 @@ The input statement takes no parameters, and the following properties:
     An immutable string to append to what the user has typed.
 
 `changed`
-    A python function that is called with what the user has typed,
+    A Python function that is called with what the user has typed,
     when the string changes.
 
 
@@ -728,36 +764,6 @@ It does not take children.
             textbutton "Window" action Preference("display", "window")
 
 
-.. _sl-null:
-
-Null
-----
-
-The null statement inserts an empty area on the screen. This can be
-used to space things out. The null statement takes no parameters, and
-the following properties:
-
-`width`
-    The width of the empty area, in pixels.
-
-`height`
-    The height of the empty area, in pixels.
-
-It also takes:
-
-* :ref:`Common Properties <common-properties>`
-* :ref:`position-style-properties`
-
-It does not take children.
-
-::
-
-    screen text_box():
-        vbox:
-             text "The title."
-             null height 20
-             text "This body text."
-
 .. _mousearea:
 .. _sl-mousearea:
 
@@ -767,7 +773,7 @@ Mousearea
 A mouse area is an area of the screen that can react to the mouse
 entering or leaving it. Unlike a button, a mouse area does not take
 focus, so it's possible to have a mouse area with buttons inside it.
-The mousearea statement takes no parameters, and the following properties:
+The ``mousearea`` statement takes no parameters, and the following properties:
 
 `hovered`
     An action to run when the mouse enters the mouse area.
@@ -817,6 +823,38 @@ take up the entire screen, a less useful behavior.
     label start:
         show screen button_overlay
 
+
+.. _sl-null:
+
+Null
+----
+
+The null statement inserts an empty area on the screen. This can be
+used to space things out. The null statement takes no parameters, and
+the following properties:
+
+`width`
+    The width of the empty area, in pixels.
+
+`height`
+    The height of the empty area, in pixels.
+
+It also takes:
+
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
+
+It does not take children.
+
+::
+
+    screen text_box():
+        vbox:
+             text "The title."
+             null height 20
+             text "This body text."
+
+
 .. _sl-side:
 
 Side
@@ -847,6 +885,10 @@ then the center. The corners and sides are rendered with an available
 area of 0, so it may be necessary to supply them a minimum size (using
 :propref:`xminimum` or :propref:`yminimum`) to ensure they render at
 all.
+The order of placing children is controlled from top to bottom when
+adding them (i.e. also in the order of substrings in the argument),
+the latter will be the highest. This is may be disabled by
+:var:`config.keep_side_render_order`.
 
 Children correspond to entries in the places list, so this must have
 the same number of children as there are entries in the places list.
@@ -981,7 +1023,7 @@ Transform
 ---------
 
 Applies a transform to its child. This takes no parameters, and the
-following property groups :
+following property groups:
 
 * :ref:`Common Properties <common-properties>`
 * :ref:`Transform Properties <transform-properties>`
@@ -1243,7 +1285,7 @@ Imagemap Statements
 ===================
 
 A convenient way of creating a screen, especially for those who think
-visually is to create an imagemap. When creating an imagemap, the
+visually, is to create an imagemap. When creating an imagemap, the
 imagemap statement is used to specify up to six images. The hotspot
 and hotbar images are used to carve rectangular areas out of the
 image, and apply actions and values to those areas.
@@ -1504,10 +1546,7 @@ events occur, and executing arbitrary Python.
 Default
 -------
 
-The default statement sets the default value of a variable when the
-screen is first one. :func:`SetScreenVariable`
-
-The default statement sets the default value of a variable, if it is not
+The ``default`` statement sets the default value of a variable, if it is not
 passed as an argument to the screen, or inherited from a screen that calls
 us using the use statement.
 
@@ -1529,8 +1568,8 @@ us using the use statement.
 For
 ---
 
-The for statement is similar to the Python for statement, except that
-it does not support the else clause. It supports assignment to
+The ``for`` statement is similar to the Python ``for`` statement, except that
+it does not support the ``else`` clause. It supports assignment to
 (optionally nested) tuple patterns, as well as variables.
 
 ::
@@ -1543,13 +1582,29 @@ it does not support the else clause. It supports assignment to
                 textbutton numeral action Return(i + 1)
 
 
+The for statement takes an index clause::
+
+
+    screen five_buttons():
+        vbox:
+            for i, numeral index numeral in enumerate(numerals):
+                textbutton numeral action Return(i + 1)
+
+If given, the ``index`` clause should consist of an expression that returns
+a hashable and comparable value that is unique for each row in the list.
+Ren'Py uses this value to make sure that transforms and other state wind
+up associated with the correct iteration. If you're seeing weird behavior
+when elements are added to or removed from a list you're iterating over,
+you might want to use an index clause.
+
+
 .. _sl-if:
 
 If
 --
 
-The screen language if statement is the same as the Python/Ren'Py if
-statement. It supports the if, elif, and else clauses.
+The screen language ``if`` statement is the same as the Python/Ren'Py ``if``
+statement. It supports the ``if``, ``elif``, and ``else`` clauses.
 
 ::
 
@@ -1564,7 +1619,7 @@ statement. It supports the if, elif, and else clauses.
 On
 --
 
-The on statement allows the screen to execute an action when an event
+The ``on`` statement allows the screen to execute an action when an event
 occurs. It takes one parameter, a string giving the name of an
 event. This should be one of:
 
@@ -1595,11 +1650,11 @@ occurs.
 Use
 ---
 
-The use statement allows a screen to include another. The use
+The ``use`` statement allows a screen to include another. The use
 statement takes the name of the screen to use. This can optionally be
 followed by an argument list, in parenthesis.
 
-If the used screen include parameters, its scope is initialized to the
+If the used screen includes parameters, its scope is initialized to the
 result of assigning the arguments to those parameters. Otherwise, it
 is passed the scope of the current screen, updated with any keyword
 arguments passed to the screen.
@@ -1656,6 +1711,32 @@ is transfered from old to new.
         pause
         return
 
+Instead of the name of the screen, the keyword ``expression`` can be
+given, followed by an expression giving the name of the screen to use.
+If parameters are required, the ``pass`` keyword must be given to separate
+them from the expression.
+
+::
+
+    screen ed(num):
+        text "Ed"
+        text "Captain"
+
+    screen kelly(num):
+        text "Kelly"
+        text "First Officer"
+
+    screen bortus(num):
+        text "Bortus"
+        text "Second Officer"
+
+    screen crew():
+        hbox:
+            for i, member in enumerate(party):
+                vbox:
+                    use expression member.screen pass (i + 1)
+
+
 Use and Transclude
 ^^^^^^^^^^^^^^^^^^
 
@@ -1697,7 +1778,7 @@ The use and transclude constructs form the basis of
 Python
 ------
 
-The screen language also includes single-line and multiple-line python
+The screen language also includes single-line and multiple-line Python
 statements, which can execute Python. The Python runs in the scope
 of the screen.
 
@@ -1725,14 +1806,17 @@ has side effects, those side effects may occur at unpredictable times.
 Showif Statement
 ================
 
-The showif statement takes a condition. It shows its children when the
+The ``showif`` statement takes a condition. It shows its children when the
 condition is true, and hides the children when the condition is false.
 When showif's children have transforms, it will supply them with ATL
 events to manage the show and hide process, so that Ren'Py can animate
 the show and hide process.
 
+The ``showif`` statement wraps its children in a displayable that manages
+the show and hide process.
+
 Multiple showif statements can be grouped together into a single
-showif/elif/else construct, similiar to an if statement.
+``showif``/``elif``/``else`` construct, similiar to an if statement.
 **Unlike the if statement, showif executes all of its blocks, including Python, even if the condition is false.**
 This is because the showif statement needs to create the children that it is
 hiding.
@@ -1747,7 +1831,7 @@ Showif delivers three events to its children:
 ``hide``
     Is delivered when the condition changes from true to false.
 
-For these purposes, the condition of an elif clause is always false if any
+For these purposes, the condition of an ``elif`` clause is always false if any
 prior condition is true, while the condition of an else clause is only true
 when all prior conditions are false.
 
@@ -1793,19 +1877,15 @@ Screen Statements
 In addition to the screen statement, there are three Ren'Py script
 language statements that involve screens.
 
-Two of these statements take a keyword argument list. This is a python
-argument list, in parenthesis, consisting of only keyword
-arguments. Positional arguments, extra positional arguments (*), and
-extra keyword arguments (**) are not allowed.
-
 Show Screen
 -----------
 
-The show screen statement causes a screen to be shown. It takes an
-screen name, and an optional argument list. If present, the arguments
-are used to initialize the scope of the screen.
+The ``show screen`` statement causes a screen to be shown. It takes an
+screen name, and an optional Python argument list. If present, the arguments
+are used to initialize the scope of the screen. There are also some
+specific keywords passed to :func:`show_screen` and :func:`call_screen`.
 
-The show screen statement takes an optional nopredict keyword, that
+The show screen statement takes an optional ``nopredict`` keyword, that
 prevents screen prediction from occurring. During screen prediction,
 arguments to the screen are evaluated. Please ensure that evaluating
 the screen arguments does not cause unexpected side-effects to occur.
@@ -1827,27 +1907,34 @@ hidden. This allows them to be used for overlay purposes.
         show rare_screen nopredict
 
 
+The ``show screen`` statement takes a with clause, which is interpreted in the
+same way that the with clause of a ``show`` statement is. ::
+
+    show screen clock_screen with dissolve
+
 Hide Screen
 -----------
 
-The hide screen statement is used to hide a screen that is currently
-being shown. If the screen is not being shown, nothing happens.
+The ``hide screen`` statement is used to hide a screen that is currently
+being shown. If the screen is not being shown, nothing happens. The with
+clause is interpreted the same way the ``with`` clause of a show statement
+is.
 
 ::
 
+    hide screen rare_screen
+    hide screen clock_screen with dissolve
     hide screen overlay_screen
-    hide screen clock
-
 
 Call Screen
 -----------
 
-The call screen statement shows a screen, and then hides it again at
+The ``call screen`` statement shows a screen, and then hides it again at
 the end of the current interaction. If the screen returns a value,
-then the value is placed in `_return`.
+then the value is placed in ``_return``.
 
 This can be used to display an imagemap. The imagemap can place a
-value into the `_return` variable using the :func:`Return` action,
+value into the ``_return`` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
 The call screen statement takes an optional ``nopredict`` keyword, that
@@ -1948,12 +2035,15 @@ and choosing the entries that apply to the current platform.
    also defined).
 
 ``"mobile"``
-   Defined on mobile platforms, such as Android and iOS.
+   Defined on mobile platforms, such as Android, iOS and mobile web browsers.
 
 ``"pc"``
    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
    a mouse and keyboard present, to allow buttons to be hovered, and
    to allow precise pointing.
+
+``"web"``
+   Defined when running inside a web browser.
 
 ``None``
    Always defined.
@@ -1971,4 +2061,3 @@ An example of defining a screen variant is:
         variant "small"
 
         text "Hello, World." size 30
-

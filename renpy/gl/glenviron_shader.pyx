@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -18,22 +18,29 @@
 # NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-DEF ANGLE = False
+from __future__ import print_function
 
-from gl cimport *
+from renpy.uguu.gl cimport *
 from gldraw cimport *
 
 cdef int round(double d):
     return <int> (d + .5)
 
 
-VERTEX_SHADER1 = """\
+GLES_PORTABILITY = """\
 #ifdef GL_ES
-precision highp float;
+  #ifdef GL_FRAGMENT_PRECISION_HIGH
+    precision highp float;
+  # else
+    precision mediump float;
+  # endif
 #endif
+"""
 
+VERTEX_SHADER1 = GLES_PORTABILITY + """\
 uniform mat4 Projection;
 
 attribute vec4 Vertex;
@@ -51,11 +58,7 @@ void main() {
 }
 """
 
-VERTEX_SHADER2 = """\
-#ifdef GL_ES
-precision highp float;
-#endif
-
+VERTEX_SHADER2 = GLES_PORTABILITY + """\
 uniform mat4 Projection;
 
 attribute vec4 Vertex;
@@ -76,11 +79,7 @@ void main() {
 }
 """
 
-VERTEX_SHADER3 = """\
-#ifdef GL_ES
-precision highp float;
-#endif
-
+VERTEX_SHADER3 = GLES_PORTABILITY + """\
 uniform mat4 Projection;
 
 attribute vec4 Vertex;
@@ -107,11 +106,7 @@ void main() {
 
 
 
-BLIT_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+BLIT_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 
@@ -128,11 +123,7 @@ void main()
 }
 """
 
-BLIT_CLIP_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+BLIT_CLIP_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 
@@ -153,11 +144,7 @@ void main()
 }
 """
 
-BLEND_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+BLEND_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
@@ -180,11 +167,7 @@ void main()
 """
 
 
-BLEND_CLIP_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+BLEND_CLIP_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
@@ -210,11 +193,7 @@ void main()
 }
 """
 
-IMAGEBLEND_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+IMAGEBLEND_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
@@ -242,11 +221,7 @@ void main()
 }
 """
 
-IMAGEBLEND_CLIP_SHADER = """
-#ifdef GL_ES
-precision highp float;
-#endif
-
+IMAGEBLEND_CLIP_SHADER = GLES_PORTABILITY + """\
 uniform vec4 Color;
 uniform sampler2D tex0;
 uniform sampler2D tex1;
@@ -318,14 +293,16 @@ def compile_shader(kind, source):
     Allocates and compiles a shader.
     """
 
+    source = source.encode("utf-8")
+
     cdef char *sourceptr = <char *> source
     cdef int lensource = len(source)
 
-    handle = glCreateShaderObjectARB(kind)
-    glShaderSourceARB(handle, 1, <GLcharARB **> &sourceptr, &lensource)
-    glCompileShaderARB(handle)
+    handle = glCreateShader(kind)
+    glShaderSource(handle, 1, <GLchar **> &sourceptr, &lensource)
+    glCompileShader(handle)
 
-    check_status(True, handle, GL_OBJECT_COMPILE_STATUS_ARB)
+    check_status(True, handle, GL_COMPILE_STATUS)
 
     return handle
 
@@ -335,19 +312,19 @@ def compile_program(vertex, fragment):
     Compiles a pair of shaders into a program.
     """
 
-    vertex_shader = compile_shader(GL_VERTEX_SHADER_ARB, vertex)
-    fragment_shader = compile_shader(GL_FRAGMENT_SHADER_ARB, fragment)
+    vertex_shader = compile_shader(GL_VERTEX_SHADER, vertex)
+    fragment_shader = compile_shader(GL_FRAGMENT_SHADER, fragment)
 
-    program = glCreateProgramObjectARB()
+    program = glCreateProgram()
 
-    glAttachObjectARB(program, vertex_shader)
-    glAttachObjectARB(program, fragment_shader)
+    glAttachShader(program, vertex_shader)
+    glAttachShader(program, fragment_shader)
 
-    glLinkProgramARB(program)
+    glLinkProgram(program)
 
-    check_status(False, program, GL_OBJECT_LINK_STATUS_ARB)
+    check_status(False, program, GL_LINK_STATUS)
 
-    glUseProgramObjectARB(program)
+    glUseProgram(program)
 
     glDeleteShader(vertex_shader)
     glDeleteShader(fragment_shader)
@@ -385,36 +362,36 @@ cdef class Program(object):
     def __init__(self, vertex, fragment):
         self.program = compile_program(vertex, fragment)
 
-        self.Vertex = glGetAttribLocationARB(self.program, "Vertex")
-        self.VertexTexCoord0 = glGetAttribLocationARB(self.program, "VertexTexCoord0")
-        self.VertexTexCoord1 = glGetAttribLocationARB(self.program, "VertexTexCoord1")
-        self.VertexTexCoord2 = glGetAttribLocationARB(self.program, "VertexTexCoord2")
+        self.Vertex = glGetAttribLocation(self.program, "Vertex")
+        self.VertexTexCoord0 = glGetAttribLocation(self.program, "VertexTexCoord0")
+        self.VertexTexCoord1 = glGetAttribLocation(self.program, "VertexTexCoord1")
+        self.VertexTexCoord2 = glGetAttribLocation(self.program, "VertexTexCoord2")
 
-        self.Projection = glGetUniformLocationARB(self.program, "Projection")
-        self.tex0 = glGetUniformLocationARB(self.program, "tex0")
-        self.tex1 = glGetUniformLocationARB(self.program, "tex1")
-        self.tex2 = glGetUniformLocationARB(self.program, "tex2")
-        self.offset = glGetUniformLocationARB(self.program, "offset")
-        self.multiplier = glGetUniformLocationARB(self.program, "multiplier")
-        self.done = glGetUniformLocationARB(self.program, "done")
-        self.Color = glGetUniformLocationARB(self.program, "Color")
-        self.clip0 = glGetUniformLocationARB(self.program, "clip0")
-        self.clip1 = glGetUniformLocationARB(self.program, "clip1")
+        self.Projection = glGetUniformLocation(self.program, "Projection")
+        self.tex0 = glGetUniformLocation(self.program, "tex0")
+        self.tex1 = glGetUniformLocation(self.program, "tex1")
+        self.tex2 = glGetUniformLocation(self.program, "tex2")
+        self.offset = glGetUniformLocation(self.program, "offset")
+        self.multiplier = glGetUniformLocation(self.program, "multiplier")
+        self.done = glGetUniformLocation(self.program, "done")
+        self.Color = glGetUniformLocation(self.program, "Color")
+        self.clip0 = glGetUniformLocation(self.program, "clip0")
+        self.clip1 = glGetUniformLocation(self.program, "clip1")
 
     def disable_attribs(self):
         # Disable the vertex attributes used by this program.
 
         if self.Vertex != -1:
-            glDisableVertexAttribArrayARB(self.Vertex)
+            glDisableVertexAttribArray(self.Vertex)
 
         if self.VertexTexCoord0 != -1:
-            glDisableVertexAttribArrayARB(self.VertexTexCoord0)
+            glDisableVertexAttribArray(self.VertexTexCoord0)
 
         if self.VertexTexCoord1 != -1:
-            glDisableVertexAttribArrayARB(self.VertexTexCoord1)
+            glDisableVertexAttribArray(self.VertexTexCoord1)
 
         if self.VertexTexCoord2 != -1:
-            glDisableVertexAttribArrayARB(self.VertexTexCoord2)
+            glDisableVertexAttribArray(self.VertexTexCoord2)
 
     def delete(self):
         glDeleteProgram(self.program)
@@ -482,12 +459,12 @@ cdef class ShaderEnviron(Environ):
 
         self.program = program
 
-        glUseProgramObjectARB(program.program)
-        glUniformMatrix4fvARB(program.Projection, 1, GL_FALSE, self.projection)
+        glUseProgram(program.program)
+        glUniformMatrix4fv(program.Projection, 1, GL_FALSE, self.projection)
 
         if self.clipping:
-            glUniform2fARB(program.clip0, self.clip_x0 - .01, self.clip_y0 - .01)
-            glUniform2fARB(program.clip1, self.clip_x1 + .01, self.clip_y1 + .01)
+            glUniform2f(program.clip0, self.clip_x0 - .01, self.clip_y0 - .01)
+            glUniform2f(program.clip1, self.clip_x1 + .01, self.clip_y1 + .01)
 
     cdef void blit(self):
 
@@ -498,7 +475,7 @@ cdef class ShaderEnviron(Environ):
 
         if self.program is not program:
             self.activate(program)
-            glUniform1iARB(program.tex0, 0)
+            glUniform1i(program.tex0, 0)
 
     cdef void blend(self, double fraction):
         if self.clipping:
@@ -508,10 +485,10 @@ cdef class ShaderEnviron(Environ):
 
         if self.program is not program:
             self.activate(program)
-            glUniform1iARB(program.tex0, 0)
-            glUniform1iARB(program.tex1, 1)
+            glUniform1i(program.tex0, 0)
+            glUniform1i(program.tex1, 1)
 
-        glUniform1fARB(program.done, fraction)
+        glUniform1f(program.done, fraction)
 
     cdef void imageblend(self, double fraction, int ramp):
 
@@ -522,9 +499,9 @@ cdef class ShaderEnviron(Environ):
 
         if self.program is not program:
             self.activate(program)
-            glUniform1iARB(program.tex0, 0)
-            glUniform1iARB(program.tex1, 1)
-            glUniform1iARB(program.tex2, 2)
+            glUniform1i(program.tex0, 0)
+            glUniform1i(program.tex1, 1)
+            glUniform1i(program.tex2, 2)
 
         # Prevent a DBZ if the user gives us a 0 ramp.
         if ramp < 1:
@@ -536,12 +513,12 @@ cdef class ShaderEnviron(Environ):
         offset = start + ( end - start) * fraction
 
         # Setup the multiplier and the offset.
-        glUniform1fARB(program.multiplier, 256.0 / ramp)
-        glUniform1fARB(program.offset, offset)
+        glUniform1f(program.multiplier, 256.0 / ramp)
+        glUniform1f(program.offset, offset)
 
     cdef void set_vertex(self, float *vertices):
-        glEnableVertexAttribArrayARB(self.program.Vertex)
-        glVertexAttribPointerARB(self.program.Vertex, 2, GL_FLOAT, GL_FALSE, 0, <GLubyte *> vertices)
+        glEnableVertexAttribArray(self.program.Vertex)
+        glVertexAttribPointer(self.program.Vertex, 2, GL_FLOAT, GL_FALSE, 0, <GLubyte *> vertices)
 
     cdef void set_texture(self, int unit, float *coords):
         cdef tex
@@ -550,7 +527,7 @@ cdef class ShaderEnviron(Environ):
             tex = self.program.VertexTexCoord0
         elif unit == 1:
             tex = self.program.VertexTexCoord1
-        elif unit == 2 and RENPY_THIRD_TEXTURE:
+        elif unit == 2:
             tex = self.program.VertexTexCoord2
         else:
             return
@@ -559,13 +536,13 @@ cdef class ShaderEnviron(Environ):
             return
 
         if coords != NULL:
-            glVertexAttribPointerARB(tex, 2, GL_FLOAT, GL_FALSE, 0, <GLubyte *> coords)
-            glEnableVertexAttribArrayARB(tex)
+            glVertexAttribPointer(tex, 2, GL_FLOAT, GL_FALSE, 0, <GLubyte *> coords)
+            glEnableVertexAttribArray(tex)
         else:
-            glDisableVertexAttribArrayARB(tex)
+            glDisableVertexAttribArray(tex)
 
     cdef void set_color(self, float r, float g, float b, float a):
-        glUniform4fARB(self.program.Color, r, g, b, a)
+        glUniform4f(self.program.Color, r, g, b, a)
 
     cdef void ortho(self, double left, double right, double bottom, double top, double near, double far):
 

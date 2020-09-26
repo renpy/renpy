@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -38,6 +38,9 @@ init -1100 python in gui:
         `height`
             The height of the default window.
         """
+
+        if (not renpy.is_init_phase()) and config.developer:
+            raise Exception("gui.init may only be called during the init phase.")
 
         config.screen_width = width
         config.screen_height = height
@@ -186,6 +189,8 @@ init -1100 python in gui:
     renpy.pure("gui.SetPreference")
     renpy.pure("gui.TogglePreference")
 
+    # The extension used for auto-defined images.
+    button_image_extension = ".png"
 
     def button_properties(kind):
         """
@@ -241,9 +246,9 @@ init -1100 python in gui:
         backgrounds = [ ]
 
         if kind != "button":
-            backgrounds.append("gui/button/" + kind[:-7] + "_[prefix_]background.png")
+            backgrounds.append("gui/button/" + kind[:-7] + "_[prefix_]background" + button_image_extension)
 
-        backgrounds.append("gui/button/[prefix_]background.png")
+        backgrounds.append("gui/button/[prefix_]background" + button_image_extension)
 
         if renpy.variant("small"):
             backgrounds = [ i.replace("gui/button", "gui/phone/button") for i in backgrounds ] + backgrounds
@@ -269,6 +274,7 @@ init -1100 python in gui:
 
     def text_properties(kind=None, accent=False):
         """
+        :name: gui.text_properties
         :doc: gui
 
         Given a `kind` of button, returns a dictionary giving standard style
@@ -453,6 +459,7 @@ init -1100 python in gui:
                 return self
 
             def fill_rect(self, rect, color=None):
+
                 if color is None:
                     color = gui.accent_color
 
@@ -485,18 +492,21 @@ init -1100 python in gui:
             height = scale(gui.button_height, 33)
 
         check_width = gui.check_button_borders.padding[0]
+        check_margin = scale(None, 3)
         check_rect = (
-            scale(None, 3),
+            check_margin,
             gui.check_button_borders.padding[1],
-            min(check_width, scale(None, 5)),
+            min(check_width - check_margin, scale(None, 5)),
             height - gui.check_button_borders.padding[1] - gui.check_button_borders.padding[3],
             )
 
         radio_width = gui.radio_button_borders.padding[0]
+        radio_margin = scale(None, 3)
+
         radio_rect = (
-            scale(None, 3),
+            radio_margin,
             gui.radio_button_borders.padding[1],
-            min(radio_width, scale(None, 5)),
+            min(radio_width - radio_margin, scale(None, 5)),
             height - gui.radio_button_borders.padding[1] - gui.radio_button_borders.padding[3],
             )
 

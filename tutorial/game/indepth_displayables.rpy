@@ -52,7 +52,7 @@ label simple_displayables:
 
     e "The Transform displayable takes a displayable and can apply transform properties to it."
 
-    e "Notice how, since it takes a displayable, it can take another image. In face, it can take any displayable defined here."
+    e "Notice how, since it takes a displayable, it can take another image. In fact, it can take any displayable defined here."
 
     example:
         image logo solidexample = Solid("#0000cc", xysize=(200, 200))
@@ -80,15 +80,15 @@ label simple_displayables:
     e "This means that we can apply other displayables, like Transform, to Text in the same way we do to images."
 
     example:
-        image logo livecomposite = LiveComposite((240, 460),
+        image logo composite = Composite((240, 460),
             (0, 0), "logo blink",
             (0, 50), "logo base.png",
             (0, 100), "logo base.png")
 
-    show logo livecomposite at logopos
+    show logo composite at logopos
     with dissolve
 
-    e "The LiveComposite displayable lets us group multiple displayables together into a single one, from bottom to top."
+    e "The Composite displayable lets us group multiple displayables together into a single one, from bottom to top."
 
     hide logo
 
@@ -134,5 +134,3 @@ label simple_displayables:
     e "You can even write custom displayables for minigames, if you're proficient at Python. But for many visual novels, these will be all you'll need."
 
     return
-
-

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -84,13 +84,14 @@ init -1 python:
 
             self.info_msg = ""
 
-            with open(self.filename, "w"):
+            with open(self.filename, "w") as f:
+                f.write(renpy.version() + "\n")
                 pass
 
         def log(self, msg):
             with open(self.filename, "a") as f:
                 f.write("\n")
-                f.write(msg)
+                f.write(unicode(msg))
                 f.write("\n")
 
         def info(self, prompt):
@@ -189,11 +190,12 @@ init -1 python:
                 interface.processing(self.info_msg, show_screen=True, cancel=cancel_action)
 
                 kwargs = { }
-                if yes:
-                    kwargs["stdin"] = subprocess.PIPE
 
                 try:
-                    self.process = subprocess.Popen(cmd, cwd=renpy.fsencode(RAPT_PATH), stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
+                    self.process = subprocess.Popen(cmd, cwd=renpy.fsencode(RAPT_PATH), stdout=f, stderr=f, stdin=subprocess.PIPE, startupinfo=startupinfo, **kwargs)
+                    # avoid SIGTTIN caused by e.g. gradle doing empty read on terminal stdin
+                    if not yes:
+                        self.process.stdin.close()
                 except:
                     import traceback
                     traceback.print_exc(file=f)
@@ -214,6 +216,7 @@ init -1 python:
                 if yes and self.yes_thread:
                     self.run_yes = False
                     self.yes_thread.join()
+                    self.process.stdin.close()
 
                 self.process = None
                 self.yes_thread = None

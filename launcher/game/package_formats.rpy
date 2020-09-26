@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,13 +28,21 @@ init python in distribute:
     import struct
     import stat
     import shutil
+    import sys
     import threading
 
+    from renpy import six
     from zipfile import crc32
 
-    zlib.Z_DEFAULT_COMPRESSION = 9
+
+    # Since the long type doesn't exist on py3, define it here
+    if six.PY3:
+        long = int
+
+    zlib.Z_DEFAULT_COMPRESSION = 5
 
     class ZipFile(zipfile.ZipFile):
+
 
         def write_with_info(self, zinfo, filename):
             """Put the bytes from filename into the archive under the name
@@ -66,8 +74,13 @@ init python in distribute:
                 # Must overwrite CRC and sizes with correct data later
                 zinfo.CRC = CRC = 0
                 zinfo.compress_size = compress_size = 0
-                zinfo.file_size = file_size = 0
-                self.fp.write(zinfo.FileHeader())
+                file_size = 0
+
+                zip64 = self._allowZip64 and \
+                        zinfo.file_size * 1.05 > zipfile.ZIP64_LIMIT
+
+                self.fp.write(zinfo.FileHeader(zip64))
+
                 if zinfo.compress_type == zipfile.ZIP_DEFLATED:
                     cmpr = zlib.compressobj(zlib.Z_DEFAULT_COMPRESSION,
                          zlib.DEFLATED, -15)
@@ -92,11 +105,19 @@ init python in distribute:
                 zinfo.compress_size = file_size
             zinfo.CRC = CRC
             zinfo.file_size = file_size
+
+            if not zip64 and self._allowZip64:
+                if file_size > zipfile.ZIP64_LIMIT:
+                    raise RuntimeError('File size has increased during compressing')
+                if compress_size > zipfile.ZIP64_LIMIT:
+                    raise RuntimeError('Compressed size larger than uncompressed size')
+
             # Seek backwards and write CRC and file sizes
             position = self.fp.tell()       # Preserve current position in file
-            self.fp.seek(zinfo.header_offset + 14, 0)
-            self.fp.write(struct.pack("<LLL", zinfo.CRC, zinfo.compress_size,
-                  zinfo.file_size))
+            self.fp.seek(zinfo.header_offset, 0)
+
+            self.fp.write(zinfo.FileHeader(zip64))
+
             self.fp.seek(position, 0)
             self.filelist.append(zinfo)
             self.NameToInfo[zinfo.filename] = zinfo
@@ -142,9 +163,9 @@ init python in distribute:
             zi.create_system = 3
 
             if xbit:
-                zi.external_attr = long(0100755) << 16
+                zi.external_attr = long(0o100755) << 16
             else:
-                zi.external_attr = long(0100644) << 16
+                zi.external_attr = long(0o100644) << 16
 
             self.zipfile.write_with_info(zi, path)
 
@@ -156,7 +177,7 @@ init python in distribute:
             zi.date_time = self.get_date_time(path)
             zi.compress_type = zipfile.ZIP_STORED
             zi.create_system = 3
-            zi.external_attr = (long(0040755) << 16) | 0x10
+            zi.external_attr = (long(0o040755) << 16) | 0x10
 
             self.zipfile.write_with_info(zi, path)
 
@@ -187,9 +208,9 @@ init python in distribute:
                 info.type = tarfile.DIRTYPE
 
             if xbit:
-                info.mode = 0755
+                info.mode = 0o755
             else:
-                info.mode = 0644
+                info.mode = 0o644
 
             info.uid = 1000
             info.gid = 1000
@@ -253,10 +274,14 @@ init python in distribute:
 
         def mkdir(self, path):
             if not os.path.isdir(path):
-                os.mkdir(path, 0755)
+                os.makedirs(path, 0o755)
 
         def __init__(self, path):
             self.path = path
+
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+
             self.mkdir(path)
 
         def add_file(self, name, path, xbit):
@@ -264,14 +289,13 @@ init python in distribute:
 
             # If this is not a directory, ensure all parent directories
             # have been created
-            if not os.path.isdir(os.path.dirname(fn)):
-                os.makedirs(os.path.dirname(fn), 0755)
+            self.mkdir(os.path.dirname(fn))
             shutil.copy2(path, fn)
 
             if xbit:
-                os.chmod(fn, 0755)
+                os.chmod(fn, 0o755)
             else:
-                os.chmod(fn, 0644)
+                os.chmod(fn, 0o644)
 
         def add_directory(self, name, path):
             fn = os.path.join(self.path, name)
@@ -376,14 +400,10 @@ init python in distribute:
                 break
 
             t += 1
-            print(t, " ".join(sorted([ i.what for i in alive ])))
+            print("\r " + str(t) + " " + " ".join(sorted([ i.what for i in alive ])))
 
             time.sleep(1)
 
         for i in parallel_threads:
             if i.done:
                 i.done()
-
-
-
-

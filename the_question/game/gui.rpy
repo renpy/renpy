@@ -88,9 +88,6 @@ define gui.title_text_size = 50
 define gui.main_menu_background = "gui/main_menu.png"
 define gui.game_menu_background = "gui/game_menu.png"
 
-## Should we show the name and version of the game?
-define gui.show_name = True
-
 ## The color of the main menu.
 define gui.main_menu_text_color = "#ffaa22"
 
@@ -433,8 +430,8 @@ init python:
         ## Adjust the location of the textbox.
         gui.textbox_height = 240
         gui.name_xpos = 80
-        gui.text_xpos = 90
-        gui.text_width = 1100
+        gui.dialogue_xpos = 90
+        gui.dialogue_width = 1100
 
         ## Change the size and spacing of items in the game menu.
         gui.choice_button_width = 1240

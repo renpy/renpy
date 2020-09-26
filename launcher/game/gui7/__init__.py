@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -36,10 +36,12 @@ def generate_gui(p):
     CodeGenerator(p).copy_script("script.rpy")
     CodeGenerator(p).copy_files()
 
-    images = os.path.join(p.prefix, "images")
+    for dn in [ "images", "audio" ]:
 
-    if not os.path.exists(images):
-        os.mkdir(images)
+        fulldn = os.path.join(p.prefix, dn)
+
+        if not os.path.exists(fulldn):
+            os.mkdir(fulldn)
 
 
 def generate_gui_command():

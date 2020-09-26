@@ -2,7 +2,7 @@ Conditional Statements
 ======================
 
 Ren'Py includes several statements that can alter control flow based on
-expression values. (This is in addition to the :ref:`jump <jump-statement>`,
+expression values. This is in addition to the :ref:`jump <jump-statement>`,
 :ref:`call <call-statement>` and :ref:`return <return-statement>` statements,
 which transfer control unconditionally.
 
@@ -15,18 +15,18 @@ and for statements, but can't embed Ren'Py script statements.
 If Statement
 ------------
 
-The if statement conditionally executes a block of statements if a python
+The ``if`` statement conditionally executes a block of statements if a Python
 expression is true. It consists of an ``if`` clause, zero or more ``elif``
-clauses, and an optional``else`` clause.
+clauses, and an optional ``else`` clause.
 
 Each clause should be on its own logical line, followed by a block of
-statements. The ``if`` and ``elif`` clauses are followed by an expression,
-while all clauses end with a colon. (:)
+statements. The if and elif clauses are followed by an expression,
+while all clauses end with a colon ``:``.
 
 Examples are::
 
     if flag:
-        e "You're set the flag!"
+        e "You've set the flag!"
 
 ::
 
@@ -54,8 +54,8 @@ the ``else`` clause is executed, if the ``else`` clause is present.
 While Statement
 ---------------
 
-The while statement executes a block of statements while an expression
-evaluates true. For example::
+The ``while`` statement executes a block of statements while an expression
+evaluates True. For example::
 
     $ count = 10
 
@@ -76,7 +76,7 @@ evaluates true. For example::
 
 The expression is evaluated when while statement is first reached, and
 then each time control reaches the end of the block. When the expression
-return a false value, the statement after the while statement is executed.
+returns a false value, the statement after the while statement is executed.
 
 Ren'Py does not have continue, break, or for statements. Continue and break
 statements can be replaced by jumps to labels placed before or after the
@@ -89,7 +89,7 @@ how a while loop can replace a for statement.
 Pass Statement
 --------------
 
-The pass statement can be used when a block is required, but no
+The ``pass`` statement can be used when a block is required, but no
 statement is suitable. It does nothing.
 
 For example::
@@ -103,7 +103,7 @@ For example::
 
 ::
 
-    # event.step() is a function that returns true while there are
+    # event.step() is a function that returns True while there are
     # still events that need to be executed.
 
     while event.step():

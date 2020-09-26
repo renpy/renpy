@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,8 +21,8 @@
 
 # This file manages the frame performance log.
 
-from __future__ import print_function, unicode_literals
-
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import time
 import renpy
@@ -89,10 +89,12 @@ def analyze():
     else:
         return
 
-    if (end - start) < renpy.config.profile_time:
+    if (end - start) < renpy.config.profile_time and not renpy.display.interface.profile_once:
         return
 
     s = "\n"
+    s = s.encode("utf-8")
+
     renpy.log.real_stdout.write(s)
     renpy.display.log.write(s)
 
@@ -106,8 +108,9 @@ def analyze():
             dt[1],
             dt[2],
             dt[3],
-            event.format(*args),
+            event.format(*args).replace("%", "%%"),
             )
+        s = s.encode("utf-8")
 
         renpy.log.real_stdout.write(s)
         renpy.display.log.write(s)

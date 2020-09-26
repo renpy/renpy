@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,7 +27,8 @@
 init -1400:
 
     transform reset:
-        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None
+        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False
+        xsize None ysize None fit None crop None
 
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
@@ -62,7 +63,8 @@ init -1400:
         xpos 1.0 xanchor 0.0 ypos 1.0 yanchor 1.0
 
     transform default:
-        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None
+        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False
+        xsize None ysize None fit None crop None
         xpos 0.5 xanchor 0.5 ypos 1.0 yanchor 1.0
 
     # These are used by the transitions to move things offscreen. We don't
@@ -143,13 +145,13 @@ init -1400 python:
 
         `time_warp`, `in_time_warp`, `out_time_warp`
             Time warp functions that are given a time from 0.0 to 1.0 representing
-            the fraction of the move complete, and return a value in the same
+            the fraction of the move that is complete, and return a value in the same
             range giving the fraction of a linear move that is complete.
 
             This can be used to define functions that ease the images around,
             rather than moving them at a constant speed.
 
-            The three argument are used for images remaining on the screen,
+            The three arguments are used for images remaining on the screen,
             newly shown images, and newly hidden images, respectively.
 
         `old`
@@ -247,7 +249,7 @@ init -1400 python:
                 ),
             }
 
-        for k, v in moves.iteritems():
+        for k, v in moves.items():
             setattr(store, prefix + k, v)
 
     def old_move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
@@ -315,7 +317,7 @@ init -1400 python:
                 leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp, **kwargs)),
             }
 
-        for k, v in moves.iteritems():
+        for k, v in moves.items():
             setattr(store, prefix + k, v)
 
     define.move_transitions = move_transitions
@@ -352,7 +354,7 @@ init -1400:
 
     define irisout = CropMove(1.0, "irisout")
     define irisin = CropMove(1.0, "irisin")
-    
+
     # Various uses of PushMove.
     define pushright = PushMove(1.0, "pushright")
     define pushleft = PushMove(1.0, "pushleft")
@@ -375,6 +377,8 @@ init -1400:
 
     # The default narrator.
     define _narrator = Character(None, kind=adv, what_style='say_thought')
+    define centered = Character(None, what_style="centered_text", window_style="centered_window")
+    define vcentered = Character(None, what_style="centered_vtext", window_style="centered_window")
 
 init 1400 python:
     if not hasattr(store, 'narrator'):
@@ -382,14 +386,6 @@ init 1400 python:
 
     renpy.pure('narrator')
     renpy.pure('name_only')
-
-    if not hasattr(store, 'centered'):
-        centered = Character(None, what_style="centered_text", window_style="centered_window")
-    if not hasattr(store, 'vcentered'):
-        vcentered = Character(None, what_style="centered_vtext", window_style="centered_window")
-
-    renpy.pure('centered')
-    renpy.pure('vcentered')
 
     # This is necessary to ensure that config.default_transform works.
     if config.default_transform:

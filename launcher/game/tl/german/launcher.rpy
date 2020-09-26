@@ -7,7 +7,7 @@ translate german strings:
 
     # about.rpy:43
     old "View license"
-    new "Lizenz ansehen"
+    new "Lizenz anzeigen"
 
     # add_file.rpy:28
     old "FILENAME"
@@ -15,7 +15,7 @@ translate german strings:
 
     # add_file.rpy:28
     old "Enter the name of the script file to create."
-    new "Geben Sie den Namen der Script-Datei ein, um sie zu erstellen."
+    new "Geben Sie den Namen der zu erstellenden Script-Datei ein."
 
     # add_file.rpy:31
     old "The filename must have the .rpy extension."
@@ -34,8 +34,8 @@ translate german strings:
     new "Um eine Android-Datei zu erstellen, laden Sie bitte RAPT herunter, entpacken Sie es und platzieren Sie es im Ren’Py Verzeichnis. Starten Sie dann bitte Ren’Py neu."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Ein 32-bit Java-Development-Kit wird benötigt, um Android-Packages auf Windows zu erstellen. Das JDK unterscheidet sich vom JRE, daher ist es möglich, dass Sie Java ohne das JDK installiert haben.\n\nBitte {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}laden Sie das JDK herunter und installieren Sie es{/a}, dann starten Sie den Ren’Py-Launcher neu."
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Ein x86 Java-Development-Kit wird benötigt, um Android-Packages auf Windows zu erstellen. Das JDK unterscheidet sich vom JRE, daher ist es möglich, dass Sie Java ohne das JDK installiert haben.\n\nBitte {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}laden Sie das JDK herunter und installieren Sie es{/a}, dann starten Sie den Ren’Py-Launcher neu."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -235,7 +235,7 @@ translate german strings:
 
     # distribute.rpy:443
     old "Scanning project files..."
-    new "Projektdateien werden geprüft …"
+    new "Projektdateien werden geprüft..."
 
     # distribute.rpy:459
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
@@ -247,7 +247,7 @@ translate german strings:
 
     # distribute.rpy:516
     old "Scanning Ren'Py files..."
-    new "Ren’Py-Dateien werden geprüft …"
+    new "Ren’Py-Dateien werden geprüft..."
 
     # distribute.rpy:569
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
@@ -255,7 +255,7 @@ translate german strings:
 
     # distribute.rpy:752
     old "Archiving files..."
-    new "Dateien werden archiviert …"
+    new "Dateien werden archiviert..."
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
@@ -335,7 +335,7 @@ translate german strings:
 
     # distribute_gui.rpy:242
     old "Force Recompile"
-    new "Force Recompile"
+    new "Neu kompilieren"
 
     # distribute_gui.rpy:246
     old "Build"
@@ -409,6 +409,10 @@ translate german strings:
     old "Open [text] directory."
     new "Open [text] directory."
 
+    # front_page.rpy:91
+    old "PROJECTS:"
+    new "PROJEKTE:"
+
     # front_page.rpy:93
     old "refresh"
     new "Aktualisieren"
@@ -469,6 +473,10 @@ translate german strings:
     old "All script files"
     new "Alle Dateien"
 
+    # front_page.rpy:221
+    old "Actions"
+    new "Aktionen"
+
     # front_page.rpy:223
     old "Navigate Script"
     new "Skript navigieren"
@@ -479,7 +487,7 @@ translate german strings:
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "Change/Update GUI"
+    new "GUI anpassen/aktualisieren"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -487,7 +495,7 @@ translate german strings:
 
     # front_page.rpy:242
     old "Delete Persistent"
-    new "Persistent-Dateien löschen"
+    new "Persistenz-Dateien löschen"
 
     # front_page.rpy:251
     old "Build Distributions"
@@ -511,11 +519,11 @@ translate german strings:
 
     # front_page.rpy:272
     old "Checking script for potential problems..."
-    new "Überprüft Script auf potentielle Probleme …"
+    new "Überprüfe Script auf potentielle Probleme..."
 
     # front_page.rpy:287
     old "Deleting persistent data..."
-    new "Löscht Persistent-Dateien …"
+    new "Lösche Persistent-Dateien..."
 
     # front_page.rpy:295
     old "Recompiling all rpy files into rpyc files..."
@@ -606,8 +614,8 @@ translate german strings:
     new "FEHLER"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "Während [what!q] ist ein Fehler aufgetreten:"
+    old "While [what!qt], an error occured:"
+    new "Während [what!qt] ist ein Fehler aufgetreten:"
 
     # interface.rpy:356
     old "[exception!q]"
@@ -879,7 +887,7 @@ translate german strings:
 
     # preferences.rpy:94
     old "Projects directory: [text]"
-    new "Projects directory: [text]"
+    new "Projektverzeichnis: [text]"
 
     # preferences.rpy:96
     old "Not Set"
@@ -891,7 +899,7 @@ translate german strings:
 
     # preferences.rpy:117
     old "Text editor: [text]"
-    new "Text editor: [text]"
+    new "Texteditor: [text]"
 
     # preferences.rpy:133
     old "Update Channel:"
@@ -923,11 +931,15 @@ translate german strings:
 
     # preferences.rpy:174
     old "Show edit file section"
-    new "Show edit file section"
+    new "'Dateien bearbeiten' anzeigen"
 
     # preferences.rpy:175
     old "Large fonts"
-    new "Large fonts"
+    new "Große Schriftarten"
+
+    # preferences.rpy:182
+    old "Sponsor message"
+    new "Sponsoren-Hinweis"
 
     # preferences.rpy:178
     old "Console output"
@@ -967,7 +979,7 @@ translate german strings:
 
     # project.rpy:242
     old "Ren'Py is scanning the project..."
-    new "Ren’Py scannt das Projekt …"
+    new "Ren’Py scannt das Projekt..."
 
     # project.rpy:568
     old "Launching"
@@ -1031,7 +1043,7 @@ translate german strings:
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
-    new "Ren’Py erstellt Übersetzungen …"
+    new "Ren’Py erstellt Übersetzungen..."
 
     # translations.rpy:235
     old "Ren'Py has finished generating [language] translations."
@@ -1087,7 +1099,7 @@ translate german strings:
 
     # translations.rpy:374
     old "Ren'Py is extracting dialogue...."
-    new "Ren’Py extrahiert Dialoge …"
+    new "Ren’Py extrahiert Dialoge..."
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."

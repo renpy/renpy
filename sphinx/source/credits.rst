@@ -19,13 +19,16 @@ the omission in future versions.
 * Aleema
 * Alessio
 * Alexandre Tranchant
+* Alisha Taylor
+* Andy_kl
 * Apricotorange
+* Arda Güler
 * Arowana-vx
 * Asfdfdfd
 * Auro-Cyanide
 * Baekansi
 * Bbs3223474
-* Beuc
+* Ben Wright
 * BlackDragonHunt/Mangagamer
 * Bryan Tsang
 * Carl
@@ -34,6 +37,7 @@ the omission in future versions.
 * Chris Mear
 * Christian Koepp
 * Civalin
+* Craig P. Donson
 * DaFool
 * Daniel Luque
 * David Gowers
@@ -43,17 +47,22 @@ the omission in future versions.
 * Derik
 * Diapolo10
 * Doomfest
+* Donghyeok Tak
 * DragoonHP
 * Duanemoody
 * Edward Betts
 * Edwin
+* Eevee (Lexy Munroe)
 * Eliza Velasquez
 * Emmanuel Marty
 * Emmeken
 * Enerccio
 * Eniko
+* Eric Ahn
 * Evilantishad0w
+* Felix Lampe
 * Franck_v
+* Frédéric Chapoton
 * Gas
 * George Economidis
 * Giuseppe Bertone
@@ -62,6 +71,7 @@ the omission in future versions.
 * Gustavo Carvalho
 * Helloise
 * Hentai Senshi
+* Herpior
 * HikkeKun
 * Hixbooks
 * Huang Junjie
@@ -72,27 +82,37 @@ the omission in future versions.
 * Jake Staines
 * James Broadhead
 * James Pearson Hughes
+* Jan Beich
 * Javimat
 * Joshua Fehler
+* Julian Uy
 * Kalawore
 * Kathryn
 * Kevin Turner
 * Kinsman
+* Kobaltcore
 * Koichi "vbkaisetsu" Akabe
+* Konstantin Mozheyko
 * Konstantin Nikolayev
 * Kuroonehalf
 * Kyouryuukunn
 * Lapalissiano
+* Lee Yunseok
 * Lore
 * Maissara Moustafa
+* Mal Graty
 * Marcel
 * Markus Koschany
+* Max le Fou
 * Maxwell Paul Brickner
+* Meithal
 * Merumelu
 * mikey (ATP Projects)
 * Morgan Willcock
+* Moshibit
 * MrStalker
-* Mugenjohncel
+* Mugenjohncel (Uncle Mugen)
+* Muhammad Nur Hidayat Yasuyoshi
 * NetGenSuperstar
 * NoJoker
 * Nolanlemahn
@@ -102,11 +122,16 @@ the omission in future versions.
 * Patrick Dawson
 * Paul Morio
 * Pavel Langwell
+* Peter DeVita
+* Philat
+* Pionere
 * Piroshki
 * Pratomo Asta Nugraha
 * Project Gardares
+* Psunbury
 * Rastagong
 * RangHo Lee
+* Remix
 * Ren
 * Renoa
 * Ria-kon
@@ -114,12 +139,18 @@ the omission in future versions.
 * Rikxz
 * rivvil
 * Robert Penner
+* Roope Herpiö
+* Saltome
 * Sapphi
 * Scout
+* Sergey Musiyenko
+* Shayne Officer
+* Shehriyar Qureshi
 * Shiz
 * SleepKirby
 * Spiky Caterpillar
 * Susnux
+* Sylvain Beucler
 * Thuong Nguyen Huu
 * Tlm-2501
 * Tmrwiz
@@ -129,6 +160,7 @@ the omission in future versions.
 * Winter Wolves
 * Xavi-Mat
 * Xela
+* Zedraxlo
 * Zhangning
 * Zigmut
 

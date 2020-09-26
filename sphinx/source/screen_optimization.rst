@@ -24,7 +24,7 @@ Parameter List
 ==============
 
 For best performance, all screens should be defined with a parameter list.
-When a screen doesn't take parameters, it should be define with an empty
+When a screen doesn't take parameters, it should be defined with an empty
 parameter list. The screen::
 
     screen test():
@@ -40,7 +40,7 @@ is faster than::
                 text "[i]"
 
 When a screen is defined without a parameter list, any name used in that
-screen can be redefined when the screen is show. This requires Ren'Py to be
+screen can be redefined when the screen is shown. This requires Ren'Py to be
 more conservative when analyzing the screen, which can limit the optimization
 it performs.
 
@@ -55,7 +55,7 @@ There are two ways Ren'Py automatically predicts screens:
 
 * Ren'Py will predict screens shown by the ``show screen`` and ``call screen``
   statements.
-* Ren'Py will predict screen that will be shown by the :func:`Show` and :func:`ShowMenu`
+* Ren'Py will predict screens that will be shown by the :func:`Show` and :func:`ShowMenu`
   actions.
 
 If screens are shown from Python, it's a good idea to start predicting
@@ -82,13 +82,13 @@ showing it to the user, which can lead to another significant speedup.
 To compare positional arguments and properties, Ren'Py uses the notion of
 equality embodied by Python's == operator. We've extended this notion of
 equality to actions by deciding two actions should be equal when they are
-indistinguishable from each other - when it doesn't matter which action
+indistinguishable from each other – when it doesn't matter which action
 is invoked, or which action is queried to determine sensitivity or
 selectedness.
 
 All actions provided with Ren'Py conform to this definition. When defining
 your own actions, it makes sense to provide them with this notion of
-equality. This can be done by supplying an appropriate __eq__ method.
+equality. This can be done by supplying an appropriate ``__eq__`` method.
 For example::
 
     class TargetShip(Action):
@@ -105,7 +105,7 @@ For example::
             global target
             target = self.ship
 
-It's important to define the __eq__ function carefully, making sure it
+It's important to define the ``__eq__`` function carefully, making sure it
 compares all fields, and uses equality (==) and identity (is) comparison
 as appropriate.
 
@@ -195,6 +195,8 @@ any displayables after the first time it is predicted or shown::
             textbutton "Sad" action SetVariable("mood", "sad")
             textbutton "Angry" action SetVariable("mood", "angry")
 
+.. _const-text:
+
 Const Text
 ----------
 
@@ -219,6 +221,12 @@ a string, the entire expression is const::
 
     text _("Your score is: [score]")
 
+If a variable containing the text contain substitution it's necessary to use
+``!i`` conversion flag::
+
+    $ who = "Jane"
+    $ t = "Hello, [who]!"
+    text "Then I told her, "[t!i]""
 
 Const Functions
 ----------------

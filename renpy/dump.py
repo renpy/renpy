@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,6 +23,9 @@
 # information about the game that's used to reflect on the contents,
 # including how to navigate around the game.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import inspect
 import json
 import sys
@@ -30,13 +33,11 @@ import os
 
 import renpy
 
-
 # A list of (name, filename, linenumber) tuples, for various types of
 # name. These are added to as the definitions occur.
 definitions = [ ]
 transforms = [ ]
 screens = [ ]
-
 
 # Does a file exist? We cache the result here.
 file_exists_cache = { }
@@ -78,9 +79,9 @@ def dump(error):
     if not args.json_dump:
         return
 
-    def filter(name, filename):  # @ReservedAssignment
+    def name_filter(name, filename): # @ReservedAssignment
         """
-        Returns true if the name is included by the filter, or false if it is excluded.
+        Returns true if the name is included by the name_filter, or false if it is excluded.
         """
 
         filename = filename.replace("\\", "/")
@@ -121,14 +122,14 @@ def dump(error):
     # Labels.
     label = location["label"] = { }
 
-    for name, n in renpy.game.script.namemap.iteritems():
+    for name, n in renpy.game.script.namemap.items():
         filename = n.filename
         line = n.linenumber
 
         if not isinstance(name, basestring):
             continue
 
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         label[name] = [ filename, line ]
@@ -137,7 +138,7 @@ def dump(error):
     define = location["define"] = { }
 
     for name, filename, line in definitions:
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         define[name] = [ filename, line ]
@@ -146,7 +147,7 @@ def dump(error):
     screen = location["screen"] = { }
 
     for name, filename, line in screens:
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         screen[name] = [ filename, line ]
@@ -155,7 +156,7 @@ def dump(error):
     transform = location["transform"] = { }
 
     for name, filename, line in transforms:
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         transform[name] = [ filename, line ]
@@ -172,10 +173,10 @@ def dump(error):
         """
 
         if inspect.isfunction(o):
-            return inspect.getfile(o), o.func_code.co_firstlineno
+            return inspect.getfile(o), o.__code__.co_firstlineno
 
         if inspect.ismethod(o):
-            return get_line(o.im_func)
+            return get_line(o.__func__)
 
         return None, None
 
@@ -205,7 +206,7 @@ def dump(error):
                     if filename is None:
                         continue
 
-                    if not filter(name, filename):
+                    if not name_filter(name, filename):
                         continue
 
                     code[prefix + name] = [ filename, line ]
@@ -214,7 +215,7 @@ def dump(error):
 
             if inspect.isclass(o):
 
-                for methname, method in o.__dict__.iteritems():
+                for methname, method in o.__dict__.items():
 
                     try:
                         if inspect.getmodule(method) != mod:
@@ -225,10 +226,10 @@ def dump(error):
                         if filename is None:
                             continue
 
-                        if not filter(name, filename):
+                        if not name_filter(name, filename):
                             continue
 
-                        if not filter(methname, filename):
+                        if not name_filter(methname, filename):
                             continue
 
                         code[prefix + name + "." + methname] = [ filename, line ]
@@ -237,15 +238,19 @@ def dump(error):
 
     # Add the build info from 00build.rpy, if it's available.
     try:
-        result["build"] = renpy.store.build.dump()  # @UndefinedVariable
+        result["build"] = renpy.store.build.dump() # @UndefinedVariable
     except:
         pass
 
     if args.json_dump != "-":
         new = args.json_dump + ".new"
 
-        with file(new, "w") as f:
-            json.dump(result, f)
+        if PY2:
+            with open(new, "wb") as f:
+                json.dump(result, f)
+        else:
+            with open(new, "w") as f:
+                json.dump(result, f)
 
         if os.path.exists(args.json_dump):
             os.unlink(args.json_dump)

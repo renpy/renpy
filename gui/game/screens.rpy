@@ -323,12 +323,14 @@ screen navigation():
 
         textbutton _("About") action ShowMenu("about")
 
-        if renpy.variant("pc"):
+        if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
 
             ## Help isn't necessary or relevant to mobile devices.
             textbutton _("Help") action ShowMenu("help")
 
-            ## The quit button is banned on iOS and unnecessary on Android.
+        if renpy.variant("pc"):
+
+            ## The quit button is banned on iOS and unnecessary on Android and Web.
             textbutton _("Quit") action Quit(confirm=not main_menu)
 
 
@@ -442,6 +444,7 @@ screen game_menu(title, scroll=None, yinitial=0.0):
                         scrollbars "vertical"
                         mousewheel True
                         draggable True
+                        pagekeys True
 
                         side_yfill True
 
@@ -457,6 +460,7 @@ screen game_menu(title, scroll=None, yinitial=0.0):
                         scrollbars "vertical"
                         mousewheel True
                         draggable True
+                        pagekeys True
 
                         side_yfill True
 
@@ -560,10 +564,6 @@ screen about():
                 text "[gui.about!t]\n"
 
             text _("Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]")
-
-
-## This is redefined in options.rpy to add text to the about screen.
-define gui.about = ""
 
 
 style about_label is gui_label
@@ -723,7 +723,7 @@ screen preferences():
             hbox:
                 box_wrap True
 
-                if renpy.variant("pc"):
+                if renpy.variant("pc") or renpy.variant("web"):
 
                     vbox:
                         style_prefix "radio"
@@ -841,7 +841,7 @@ style radio_vbox:
 
 style radio_button:
     properties gui.button_properties("radio_button")
-    foreground "gui/button/check_[prefix_]foreground.png"
+    foreground "gui/button/radio_[prefix_]foreground.png"
 
 style radio_button_text:
     properties gui.button_text_properties("radio_button")
@@ -902,13 +902,15 @@ screen history():
 
                     label h.who:
                         style "history_name"
+                        substitute False
 
                         ## Take the color of the who text from the Character, if set.
                         if "color" in h.who_args:
                             text_color h.who_args["color"]
 
                 $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
-                text what
+                text what:
+                    substitute False
 
         if not _history_list:
             label _("The dialogue history is empty.")
@@ -917,7 +919,7 @@ screen history():
 ## This determines what tags are allowed to be displayed on the history
 ## screen.
 
-define gui.history_allow_tags = set()
+define gui.history_allow_tags = { "alt", "noalt" }
 
 
 style history_window is empty
@@ -1417,16 +1419,18 @@ screen quick_menu():
 
     zorder 100
 
-    hbox:
-        style_prefix "quick"
+    if quick_menu:
 
-        xalign 0.5
-        yalign 1.0
+        hbox:
+            style_prefix "quick"
 
-        textbutton _("Back") action Rollback()
-        textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
-        textbutton _("Auto") action Preference("auto-forward", "toggle")
-        textbutton _("Menu") action ShowMenu()
+            xalign 0.5
+            yalign 1.0
+
+            textbutton _("Back") action Rollback()
+            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
+            textbutton _("Auto") action Preference("auto-forward", "toggle")
+            textbutton _("Menu") action ShowMenu()
 
 
 style window:
@@ -1435,7 +1439,7 @@ style window:
 
 style radio_button:
     variant "small"
-    foreground "gui/phone/button/check_[prefix_]foreground.png"
+    foreground "gui/phone/button/radio_[prefix_]foreground.png"
 
 style check_button:
     variant "small"
@@ -1508,8 +1512,3 @@ style slider_pref_vbox:
 style slider_pref_slider:
     variant "small"
     xsize gui.scale(600)
-
-
-
-
-

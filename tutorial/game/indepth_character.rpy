@@ -45,7 +45,7 @@ label demo_character:
     example:
         define e1 = Character("Eileen", window_background="gui/startextbox.png")
 
-        e1 "The window_background property sets the image thay's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
+        e1 "The window_background property sets the image that's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
 
     example:
 

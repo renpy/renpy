@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -203,8 +203,9 @@ init -1500 python:
                     renpy.force_autosave()
 
                 layout.yesno_screen(layout.QUIT, Quit(False))
+
             else:
-                renpy.jump("_quit")
+                renpy.quit(save=True)
 
     @renpy.pure
     class Skip(Action, DictEquality):

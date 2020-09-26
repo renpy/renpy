@@ -4,7 +4,7 @@
 Statement Equivalents
 =====================
 
-To allow Ren'Py to be scripted in python, each Ren'Py statement has
+To allow Ren'Py to be scripted in Python, each Ren'Py statement has
 a Python equivalent. This usually consists of a Python function,
 but may also consist of a pattern of Python calls that perform an action
 equivalent to the statement.
@@ -22,12 +22,12 @@ as a function. The following displays the same line twice::
 
 Displaying narration can be done the same way, by using the
 ``narrator`` character. When calling a character, it's possible to
-supply the keyword argument `interact`. When interact is false,
+supply the keyword argument ``interact``. When ``interact`` is False,
 Ren'Py will display the character dialogue box, and will then
 return before performing an interaction.
 
 This equivalence of characters and function objects works in the other
-direction as well. It is possible to declare a python function, and
+direction as well. It is possible to declare a Python function, and
 then use that function in the place of a character object. For
 example, the following function uses a variable to choose between
 two characters. ::
@@ -72,14 +72,14 @@ Displaying Images
 =================
 
 The image, scene, show, and hide statements each have an equivalent
-python function.
+Python function.
 
 .. include:: inc/se_images
 
 Transitions
 ===========
 
-The equivalent of the with statement is the renpy.with_statement
+The equivalent of the with statement is the :func:`renpy.with_statement`
 function.
 
 .. include:: inc/se_with
@@ -87,13 +87,13 @@ function.
 Jump
 ====
 
-The equivalent of the jump statement is the renpy.jump function.
+The equivalent of the jump statement is the :func:`renpy.jump` function.
 
 .. include:: inc/se_jump
 
 Call
 ====
 
-The equivalent of the call statement is the renpy.call function.
+The equivalent of the call statement is the :func:`renpy.call` function.
 
 .. include:: inc/se_call

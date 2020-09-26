@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,7 +30,7 @@ screen _developer:
     modal True
 
     frame:
-        style_group ""
+        style_prefix ""
 
         has side "t c b":
             spacing gui._scale(10)
@@ -60,6 +60,9 @@ screen _developer:
                     textbutton _("Hide Image Load Log (F4)"):
                         action Hide("_image_load_log")
 
+                textbutton _("Image Attributes"):
+                    action ui.callsinnewcontext("_image_attributes")
+
         hbox:
             spacing gui._scale(25)
 
@@ -68,13 +71,58 @@ screen _developer:
                 size_group "developer"
 
 
-screen _variable_viewer(entries):
+screen _image_attributes():
+
+    frame:
+        style_prefix ""
+        right_padding 0
+
+        has side "c b":
+            spacing gui._scale(10)
+
+
+        vbox:
+            label _("Image Attributes")
+
+
+            for name in renpy.get_hidden_tags():
+                $ attributes = " ".join(renpy.get_attributes(name))
+                text _("[name] [attributes] (hidden)")
+
+            for name in renpy.get_showing_tags():
+                $ attributes = " ".join(renpy.get_attributes(name))
+                text _("[name] [attributes]")
+
+        hbox:
+            spacing gui._scale(25)
+
+            textbutton _(u"Return"):
+                action Return(True)
+
+
+    pass
+
+label _image_attributes:
+
+    call _enter_game_menu
+
+    call screen _image_attributes
+
+    return
+
+screen _variable_viewer(all_entries, deleted_entries):
 
     zorder 1010
     modal True
+    default show_deleted = True
+    python:
+        if show_deleted:
+            entries = all_entries
+        else:
+            entries = [(n, v) for n, v in all_entries if n not in deleted_entries]
 
     frame:
-        style_group ""
+        style_prefix ""
         right_padding 0
 
         has side "t c b":
@@ -102,6 +150,9 @@ screen _variable_viewer(entries):
 
             textbutton _(u"Return"):
                 action Return(True)
+            if all_entries and deleted_entries:
+                textbutton (_(u"Hide deleted") if show_deleted else _(u"Show deleted")):
+                    action ToggleScreenVariable("show_deleted")
 
 
 label _debugger_screen:
@@ -115,6 +166,7 @@ label _debugger_screen:
         aRepr.maxstring = 120
 
         entries = [ ]
+        deleted_entries = set()
 
         for sn, d in renpy.python.store_dicts.items():
 
@@ -139,11 +191,14 @@ label _debugger_screen:
 
                 name = (sn + "." + vn)[6:]
 
+                if vn not in d:
+                    deleted_entries.add(name)
+
                 entries.append((name, value))
 
         entries.sort(key=lambda e : e[0])
 
-        renpy.call_screen("_variable_viewer", entries=entries)
+        renpy.call_screen("_variable_viewer", all_entries=entries, deleted_entries=deleted_entries)
 
     return
 
@@ -272,9 +327,14 @@ init 1050 python:
 
             return True
 
-        config.missing_scene = __missing_scene_callback
-        config.missing_show = __missing_show_callback
-        config.missing_hide = __missing_hide_callback
+        if config.missing_scene is None:
+            config.missing_scene = __missing_scene_callback
+
+        if config.missing_show is None:
+            config.missing_show = __missing_show_callback
+
+        if config.missing_hide is None:
+            config.missing_hide = __missing_hide_callback
 
 
 init -1050 python:
@@ -427,7 +487,6 @@ init python:
                     text = repr((x, y))
                     self.clipboard = __("Position copied to clipboard.")
 
-                import pygame.scrap
                 pygame.scrap.put(pygame.scrap.SCRAP_TEXT, text)
 
 screen _image_location_picker(image_files):
@@ -435,7 +494,7 @@ screen _image_location_picker(image_files):
     default filter = ""
 
     frame:
-        style_group ""
+        style_prefix ""
 
         has side "t c b":
             spacing gui._scale(10)
@@ -487,7 +546,7 @@ label _image_location_picker:
             lfn = fn.lower()
 
             for i in extensions:
-                if fn.endswith(i):
+                if lfn.endswith(i):
                     image_files.append(fn)
 
         image_files.sort()
@@ -518,7 +577,10 @@ label _filename_list:
 
     python hide:
         import os
-        f = file("files.txt", "w")
+
+        FILES_TXT = os.path.join(renpy.config.basedir, "files.txt")
+
+        f = file(FILES_TXT, "w")
 
         for dirname, dirs, files in os.walk(config.gamedir):
 
@@ -528,12 +590,12 @@ label _filename_list:
             for fn in files:
                 fn = os.path.join(dirname, fn)
                 fn = fn[len(config.gamedir) + 1:]
-                print >>f, fn.encode("utf-8", "replace")
-                print fn.encode("utf-8", "replace")
+                print(fn.encode("utf-8", "replace"), file=f)
+                print(fn.encode("utf-8", "replace"))
 
         f.close()
 
-        renpy.launch_editor(["files.txt"], transient=1)
+        renpy.launch_editor([ FILES_TXT ], transient=1)
 
     return
 
@@ -596,14 +658,14 @@ screen _image_load_log():
 
     timer 10.0 action SetScreenVariable("show_help", False)
 
-init python:
+init 1000 python hide:
     if config.transparent_tile:
-        config.underlay.append(Frame("_transparent_tile.png", tile=True))
-        renpy.start_predict("_transparent_tile.png")
+        tile = im.Tile("_transparent_tile.png", (config.screen_width, config.screen_height))
+        config.underlay.append(tile)
+        renpy.start_predict(tile)
 
     config.per_frame_screens.append("_image_load_log")
 
     config.underlay.append(renpy.Keymap(
         image_load_log = ToggleScreen("_image_load_log")
     ))
-

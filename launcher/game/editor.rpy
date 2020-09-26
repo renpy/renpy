@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -173,39 +173,6 @@ init 1 python in editor:
 
         fei.append(e)
 
-
-        # Editra.
-        ED  = _("A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input.")
-        EDL  = _("A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython.")
-
-        if renpy.windows:
-            dlc = "editra-windows"
-            installed = os.path.exists(os.path.join(config.basedir, "editra/Editra-win32"))
-            description = ED
-            error_message = None
-        elif renpy.macintosh:
-            dlc = "editra-mac"
-            installed = os.path.exists(os.path.join(config.basedir, "editra/Editra-mac.app"))
-            description = ED
-            error_message = None
-        else:
-            dlc = "editra-linux"
-            installed = os.path.exists(os.path.join(config.basedir, "editra/Editra"))
-            description = EDL
-            error_message = _("This may have occured because wxPython is not installed on this system.")
-
-        e = FancyEditorInfo(
-            1,
-            "Editra",
-            description,
-            dlc,
-            _("Up to 22 MB download required."),
-            error_message)
-
-        e.installed = e.installed and installed
-
-        fei.append(e)
-
         # jEdit
         fei.append(FancyEditorInfo(
             2,
@@ -223,7 +190,7 @@ init 1 python in editor:
             None))
 
         for k in editors:
-            if k in [ "Atom", "Editra", "jEdit", "System Editor", "None" ]:
+            if k in [ "Atom", "jEdit", "System Editor", "None" ]:
                 continue
 
             fei.append(FancyEditorInfo(
@@ -266,13 +233,13 @@ init 1 python in editor:
             if i.name == persistent.editor:
                 if i.installed and i.name in editors:
                     ei = editors[i.name]
-                    os.environ[b"RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
+                    os.environ["RENPY_EDIT_PY"] = renpy.fsencode(os.path.abspath(ei.filename))
                     error_message = i.error_message
                     break
 
         else:
             persistent.editor = None
-            os.environ.pop(b"RENPY_EDIT_PY", None)
+            os.environ.pop("RENPY_EDIT_PY", None)
 
         renpy.editor.init()
 
@@ -335,7 +302,7 @@ init 1 python in editor:
 
 
     class Edit(Action):
-        alt = "Edit [text]."
+        alt = _("Edit [text].")
 
         def __init__(self, filename, line=None, check=False):
             """
@@ -382,7 +349,7 @@ init 1 python in editor:
                 e.open(fn, line=self.line)
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
@@ -428,7 +395,7 @@ init 1 python in editor:
                 e.open(self.filename, line=self.line)
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
@@ -437,8 +404,6 @@ init 1 python in editor:
         """
         Opens all scripts that are part of the current project in a web browser.
         """
-
-        alt = "Edit [text]."
 
         def __init__(self):
             return
@@ -468,7 +433,7 @@ init 1 python in editor:
 
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
@@ -477,8 +442,6 @@ init 1 python in editor:
         """
         Opens the project's base directory in an editor.
         """
-
-        alt = "Open project in editor."
 
         def __call__(self):
 
@@ -493,7 +456,7 @@ init 1 python in editor:
                 e.open_project(project.current.path)
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 

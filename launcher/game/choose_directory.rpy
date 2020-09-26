@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -51,6 +51,7 @@ init python:
 
         if path:
             default_path = path
+            path = None
         else:
             try:
                 default_path = os.path.dirname(os.path.abspath(config.renpy_base))
@@ -70,7 +71,12 @@ init python:
 
             try:
 
-                cmd = [ "/usr/bin/python", os.path.join(config.gamedir, "tkaskdir.py"), renpy.fsencode(default_path) ]
+                if os.path.exists("/usr/bin/python3"):
+                    system_python = "/usr/bin/python3"
+                else:
+                    system_python = "/usr/bin/python"
+
+                cmd = [ system_python, os.path.join(config.gamedir, "tkaskdir.py"), renpy.fsencode(default_path) ]
 
                 p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
                 choice = p.stdout.read()
@@ -84,17 +90,18 @@ init python:
                 choice = ""
                 path = None
 
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."), label=None)
+                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."), label=None)
 
             if code:
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."), label=None)
+                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."), label=None)
 
             elif choice:
                 path = choice.decode("utf-8")
 
         is_default = False
 
-        if path is None:
+        # Path being None or "" means nothing was selected.
+        if not path:
             path = default_path
             is_default = True
 

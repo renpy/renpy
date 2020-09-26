@@ -138,7 +138,7 @@ translate italian strings:
     new "## I bordi del riquadro che contiene il nome del personaggio, in questo ordine: sinistro, superiore, destro, inferiore."
 
     # gui.rpy:127
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
     new "## Se 'True', lo sfondo di namebox sarà tassellato (ripetuto come una piastrella). Se 'False' sarà invece scalato."
 
     # gui.rpy:132

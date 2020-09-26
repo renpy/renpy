@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,6 +23,9 @@
 # where we store save data, and can retrieve it from.
 #
 # The current save location is stored in the location variable in loadsave.py.
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import os
 import zipfile
@@ -88,6 +91,15 @@ class FileLocation(object):
 
         return os.path.join(self.directory, renpy.exports.fsencode(slotname + renpy.savegame_suffix))
 
+    def sync(self):
+        """
+        Called to indicate that the HOME filesystem was changed.
+        """
+
+        if renpy.emscripten:
+            import emscripten  # @UnresolvedImport
+            emscripten.syncfs()
+
     def scan(self):
         """
         Scan for files that are added or removed.
@@ -117,7 +129,7 @@ class FileLocation(object):
 
             self.mtimes = new_mtimes
 
-            for slotname, mtime in new_mtimes.iteritems():
+            for slotname, mtime in new_mtimes.items():
                 if old_mtimes.get(slotname, None) != mtime:
                     clear_slot(slotname)
 
@@ -146,6 +158,7 @@ class FileLocation(object):
         with disk_lock:
             record.write_file(filename)
 
+        self.sync()
         self.scan()
 
     def list(self):
@@ -264,6 +277,7 @@ class FileLocation(object):
             if os.path.exists(filename):
                 os.unlink(filename)
 
+            self.sync()
             self.scan()
 
     def rename(self, old, new):
@@ -284,6 +298,7 @@ class FileLocation(object):
 
             os.rename(old, new)
 
+            self.sync()
             self.scan()
 
     def copy(self, old, new):
@@ -300,6 +315,7 @@ class FileLocation(object):
 
             shutil.copyfile(old, new)
 
+            self.sync()
             self.scan()
 
     def load_persistent(self):
@@ -335,6 +351,8 @@ class FileLocation(object):
             safe_rename(fn_tmp, fn_new)
             safe_rename(fn_new, fn)
 
+            self.sync()
+
     def unlink_persistent(self):
 
         if not self.active:
@@ -342,6 +360,8 @@ class FileLocation(object):
 
         try:
             os.unlink(self.persistent)
+
+            self.sync()
         except:
             pass
 
@@ -350,6 +370,9 @@ class FileLocation(object):
             return False
 
         return self.directory == other.directory
+
+    def __ne__(self, other):
+        return not (self == other)
 
 
 class MultiLocation(object):
@@ -379,9 +402,10 @@ class MultiLocation(object):
 
             slot_mtime = l.mtime(slotname)
 
-            if slot_mtime > mtime:
-                mtime = slot_mtime
-                location = l
+            if slot_mtime is not None:
+                if slot_mtime > mtime:
+                    mtime = slot_mtime
+                    location = l
 
         return location
 
@@ -484,6 +508,10 @@ class MultiLocation(object):
             return False
 
         return self.locations == other.locations
+
+    def __ne__(self, other):
+        return not (self == other)
+
 
 
 # The thread that scans locations every few seconds.

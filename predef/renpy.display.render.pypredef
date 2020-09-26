@@ -48,3 +48,4 @@ BLIT = int
 DISSOLVE = int
 IMAGEDISSOLVE = int
 PIXELLATE = int
+FLATTEN = int

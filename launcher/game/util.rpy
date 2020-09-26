@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,7 +34,7 @@ init -1 python in util:
             if not os.path.isdir(d):
                 return [ ]
 
-            return [ i for i in os.listdir(d) if isinstance(i, unicode) ]
+            return [ i for i in os.listdir(d) if isinstance(i, str) ]
 
         except:
             return [ ]

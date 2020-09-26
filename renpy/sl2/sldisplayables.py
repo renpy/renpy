@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,7 +22,8 @@
 ##############################################################################
 # Definitions of screen language statements.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 import renpy.text.text
@@ -90,7 +91,7 @@ class ShowIf(renpy.display.layout.Container):
         if self.show_child:
             cw, ch = cr.get_size()
             rv = renpy.display.render.Render(cw, ch)
-            rv.blit(cr, (0, 0))
+            rv.blit(cr, (0, 0), focus=self.condition)
         else:
             rv = renpy.display.render.Render(0, 0)
 
@@ -163,11 +164,13 @@ Keyword("default")
 Keyword("length")
 Keyword("allow")
 Keyword("exclude")
+Keyword("copypaste")
 Keyword("prefix")
 Keyword("suffix")
 Keyword("changed")
 Keyword("pixel_width")
 Keyword("value")
+Style("caret")
 add(text_properties)
 
 # Omit imagemap_compat for being too high level (and obsolete).
@@ -211,6 +214,7 @@ add(text_text_properties)
 DisplayableParser("label", renpy.ui._label, "label", 0, scope=True)
 Positional("label")
 Keyword("text_style")
+Keyword("substitute")
 add(window_properties)
 add(text_position_properties)
 add(text_text_properties)
@@ -347,6 +351,7 @@ Keyword("xinitial")
 Keyword("yinitial")
 Keyword("scrollbars")
 Keyword("spacing")
+Keyword("transpose")
 Style("xminimum")
 Style("yminimum")
 PrefixStyle("side_", "spacing")
@@ -373,6 +378,7 @@ Keyword("xinitial")
 Keyword("yinitial")
 Keyword("scrollbars")
 Keyword("spacing")
+Keyword("transpose")
 Style("spacing")
 Style("xminimum")
 Style("yminimum")
@@ -432,12 +438,13 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
 
     Transform = renpy.display.motion.Transform
 
-    if kwargs:
-        rv = Transform(child=d, **kwargs)
-
     if (replaces is not None) and isinstance(rv, Transform):
         rv.take_state(replaces)
         rv.take_execution_state(replaces)
+
+    if kwargs:
+        rv = Transform(child=d, **kwargs)
+        rv._main = d
 
     return rv
 
@@ -451,12 +458,14 @@ for name in [ "add", "image" ]:
         Style(i)
 
 DisplayableParser("drag", renpy.display.dragdrop.Drag, "drag", 1, replaces=True)
+Keyword("activated")
 Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")
 Keyword("drag_raise")
 Keyword("dragged")
 Keyword("dropped")
+Keyword("drop_allowable")
 Keyword("drag_handle")
 Keyword("drag_joined")
 Keyword("drag_offscreen")
@@ -465,9 +474,11 @@ Keyword("hovered")
 Keyword("unhovered")
 Keyword("focus_mask")
 Keyword("mouse_drop")
+Keyword("alternate")
 Style("child")
 
 DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
+Keyword("min_overlap")
 
 DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0, replaces=True)
 Keyword("hovered")

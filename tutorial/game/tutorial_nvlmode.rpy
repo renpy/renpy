@@ -11,6 +11,8 @@ example nvl3a:
 
 define menu = renpy.display_menu
 
+define config.lint_ignore_redefine += [ "store.menu" ]
+
 label tutorial_nvlmode:
 
     window hide

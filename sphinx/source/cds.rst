@@ -1,19 +1,32 @@
+.. _cds:
+
 Creator-Defined Statements
 ==========================
 
-Creator-defined statements allow you to add your own statements to Ren'Py. This
+Creator-Defined Statements (CDS) allow you to add your own statements to Ren'Py. This
 makes it possible to add things that are not supported by the current syntax of
-Ren'Py.
+Ren'Py. CDS are more flexible than the direct Python code. Most often, CDS are used
+when you have a repeatable construction. For example, calling a function with one argument.
+Ren'Py does not know what this function does and how it should be executed,
+so Ren'Py does not do anything with it until execution and has an error if an exception occurs.
+Using the CDS allows you to check the correctness of the syntax using parse
+(for example, check that the argument is a valid string), to ignore incorrect data
+at execution (for non-critical functions, it is better to skip the execute than
+to throw an exception), predict displayables (if the function uses them),
+and give you addition information during lint (if at runtime it was ignored you
+can have a report here). The CDS does not guarantee that the execution will be successful,
+but the better you code your statement, the better Ren'Py can "understand" what
+you expect from it.
 
-Creator-defined statements must be defined in a python early block. What's more,
+Creator-defined statements must be defined in a ``python early`` block. What's more,
 the filename containing the user-defined statement must be be loaded earlier
-than any file that uses it. Since Ren'Py loads files in unicode sort order, it
+than any file that uses it. Since Ren'Py loads files in Unicode sort order, it
 generally makes sense to prefix the name of any file containing a user-defined
 statement with 01, or some other small number.
 
-A user-defined statement cannot be used in the file in which it is defined.
+A creator-defined statement cannot be used in the file in which it is defined.
 
-Creator-defined statement are registered using the renpy.register_statement
+Creator-defined statement are registered using the :func:`renpy.register_statement`
 function.
 
 .. include:: inc/statement_register
@@ -22,9 +35,45 @@ The parse method takes a Lexer object:
 
 .. class:: Lexer
 
+    .. method:: error(msg)
+
+        Adds a `msg` (with the current position) in the list of detected
+        parsing errors. This interrupts the parsing of the current statement,
+        but does not prevent further parsing.
+
+    .. method:: require(thing, name=None)
+
+        Tries to parse `thing`, and reports an error if it cannot be done.
+
+        If `thing` is a string, tries to parse it using :func:`match`.
+        Otherwise, thing must be a other method on this lexer object,
+        which is called without arguments. If `name` is not specified,
+        the name of the method will be used in the message
+        (or `thing` if it's a string), otherwise the `name` will be used.
+
     .. method:: eol()
 
         True if the lexer is at the end of the line.
+
+    .. method:: expect_eol()
+
+        If we are not at the end of the line, raise an error.
+
+    .. method:: expect_noblock(stmt)
+
+        Called to indicate this statement does not expect a block.
+        If a block is found, raises an error. `stmt` should be a string,
+        it will be added to the message with an error.
+
+    .. method:: expect_block(stmt)
+
+        Called to indicate that the statement requires that a non-empty
+        block is present. `stmt` should be a string, it will be added
+        to the message with an error.
+
+    .. method:: has_block()
+
+        True if the current line has a non-empty block.
 
     .. method:: match(re)
 
@@ -33,7 +82,8 @@ The parse method takes a Lexer object:
         All of the statements in the lexer that match things are implemented
         in terms of this function. They first skip whitespace, then attempt
         to match against the line. If the match succeeds, the matched text
-        is returned. Otherwise, None is returned.
+        is returned. Otherwise, None is returned, and the state of the lexer
+        is unchanged.
 
     .. method:: keyword(s)
 
@@ -48,6 +98,11 @@ The parse method takes a Lexer object:
         Matches any word, including keywords. Returns the text of the
         matched word.
 
+    .. method:: image_name_component()
+
+        Matches an image name component. Unlike a word, a image name
+        component can begin with a number.
+
     .. method:: string()
 
         Matches a Ren'Py string.
@@ -61,13 +116,41 @@ The parse method takes a Lexer object:
         Matches a floating point number, returns a string containing the
         floating point number.
 
+    .. method:: label_name(declare=False)
+
+        Matches a label name, either absolute or relative. If `declare`
+        is true, then the global label name is set. (Note that this does not
+        actually declare the label - the statement is required to do that
+        by returning it from the `label` function.)
+
     .. method:: simple_expression()
 
-        Matches a simple python expression, returns it as a string.
+        Matches a simple Python expression, returns it as a string.
+        This is often used when you expect a variable name.
+        It is not recommended to change the result. The correct action is
+        to evaluate the result in the future.
+
+    .. method:: delimited_python(delim)
+
+        Matches a Python expression that ends in a `delim`, for example ':'.
+        This is often used when you expect a condition until the delimiter.
+        It is not recommended to change the result. The correct action is
+        to evaluate the result in the future. This raises an error if
+        end of line is reached before the delimiter.
+
+    .. method:: arguments()
+
+        This must be called before the parentheses with the arguments list,
+        if they are not specified returns None, otherwise
+        returns an object representing the arguments to a function
+        call. This object has an ``evaluate`` method on it that
+        takes an optional `scope` dictionary, and returns a tuple
+        in which the first component is a tuple of positional arguments,
+        and the second component is a dictionary of keyword arguments.
 
     .. method:: rest()
 
-        Skips whitespace, the returns the rest of the line.
+        Skips whitespace, then returns the rest of the line.
 
     .. method:: checkpoint()
 
@@ -86,7 +169,81 @@ The parse method takes a Lexer object:
     .. method:: advance()
 
         In a subblock lexer, advances to the next line. This must be called
-        before the first line, so the first line can be parsed.
+        before the first line, so the first line can be parsed. Returns True
+        if we've successfully advanced to a line in the block, or False
+        if we have advanced beyond all lines in the block.
+
+    .. method:: renpy_statement()
+
+        When called, this parses the current line as a Ren'Py script statement,
+        generating an error if this is not possible. This method returns
+        an opaque object that can be returned from get_next() or passed
+        to :func:`renpy.jump` or :func:`renpy.call`. This object should
+        not be stored except as part of the parse result of the statement.
+
+        When the statement returned from this completes, control is
+        transfered to the statement after the creator-defined statement.
+        (Which might be the statement created using post_execute).
+
+    .. method:: renpy_block(empty=False)
+
+        This parses all of the remaining lines in the current block
+        as Ren'Py script, and returns a SubParse corresponding to the
+        first statement in the block. The block is chained together such
+        that all statements in the block are run, and then control is
+        transferred to the statement after this creator-defined statement.
+
+        Note that this parses the current block. In the more likely
+        case that you'd like to parse the subblock of the current
+        statement, the correct way to do that is::
+
+
+            def mystatement_parse(l):
+
+                l.require(':')
+                l.expect_eol()
+                l.expect_block("mystatement")
+
+                child = l.subblock_lexer().renpy_block()
+
+                return { "child" : child }
+
+        `empty`
+            If True, allows an empty block to be parsed. (An empty block
+            is equivalent to a block with a single ``pass`` statement.)
+
+            If False, an empty block triggers an error.
+
+
+    .. method:: catch_error()
+
+        This is a context decorator, used in conjunction with the with
+        statement, that catches and reports lexer errors inside its
+        context block, then continues after the block.
+
+        Here's an example of how it can be used to report multiple errors
+        in a single subblock. ::
+
+            def mystatement_parse(l):
+
+                l.require(':')
+                l.expect_eol()
+                l.expect_block("mystatement")
+
+                strings = [ ]
+                ll = l.subblock_lexer()
+
+                while ll.advance():
+                    with ll.catch_errors():
+                        strings.append(ll.require(ll.string))
+                        ll.expect_noblock("string inside mystatement")
+                        ll.expect_eol()
+
+                return { "strings" : strings }
+
+
+
+
 
 
 Lint Utility Functions
@@ -99,7 +256,7 @@ These functions are useful in writing lint functions.
 Example
 -------
 
-This creates a new statement "line" that allows lines of text to be specified
+This creates a new statement ``line`` that allows lines of text to be specified
 without quotes. ::
 
     python early:

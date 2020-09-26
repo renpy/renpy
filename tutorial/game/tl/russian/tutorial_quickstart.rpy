@@ -54,10 +54,10 @@ translate russian tutorial_create_22f516df:
     e "Также, чтобы сделать свою игру, вам понадобится отредактировать её скрипт. Чтобы сделать это, кликните на 'script.rpy' в окне проекта."
 
 # game/tutorial_quickstart.rpy:54
-translate russian tutorial_create_18cd1d9d:
+translate russian tutorial_create_9151025b:
 
-    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
-    e "Если это ваш первый раз, Ren'Py попросит вас выбрать текстовый редактор. Editra — вполне безопасный выбор, но перед выбором внимательно прочитайте описания или же используйте собственный редактор."
+    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Atom might be a safe choice, but read the descriptions to be sure."
+    e "Если это ваш первый раз, Ren'Py попросит вас выбрать текстовый редактор. Atom — вполне безопасный выбор, но перед выбором внимательно прочитайте описания или же используйте собственный редактор."
 
 # game/tutorial_quickstart.rpy:56
 translate russian tutorial_create_bfbd6220:
@@ -498,10 +498,10 @@ translate russian tutorial_simple_positions_2377e3b3:
     e "Обычно трансформации определяются выше основного скрипта, сразу после определения персонажей, но в Ren'Py не имеет значения, где вы будете их определять."
 
 # game/tutorial_quickstart.rpy:347
-translate russian tutorial_simple_positions_fa09596c:
+translate russian tutorial_simple_positions_3ce7e367:
 
-    # e "The transform is given a name, sightleft, and then the xalign and yalign properties."
-    e "Нашей трансформации даётся имя sightleft, а затем параметры xalign и yalign."
+    # e "The transform is given a name, slightleft, and then the xalign and yalign properties."
+    e "Нашей трансформации даётся имя slightleft, а затем параметры xalign и yalign."
 
 # game/tutorial_quickstart.rpy:355
 translate russian tutorial_simple_positions_82d640d9:
@@ -620,7 +620,7 @@ translate russian tutorial_music_3555b640:
 # game/tutorial_quickstart.rpy:449
 translate russian tutorial_music_a776b6ad:
 
-    # e "Let's check out some of the commands that can effect the music channel."
+    # e "Let's check out some of the commands that can affect the music channel."
     e "Давайте посмотрим на команды, влияющие на канал музыки."
 
 # game/tutorial_quickstart.rpy:454

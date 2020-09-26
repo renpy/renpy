@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -18,6 +18,10 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 
 import renpy.display
 import contextlib
@@ -227,7 +231,7 @@ class Parser(object):
         and expr instances, and adjusts the line number.
         """
 
-        if isinstance(expr, unicode):
+        if isinstance(expr, str):
             expr = renpy.python.escape_unicode(expr)
 
         try:
@@ -250,7 +254,7 @@ class Parser(object):
         adjusts the line number. Returns a list of statements.
         """
 
-        if isinstance(code, unicode):
+        if isinstance(code, str):
             code = renpy.python.escape_unicode(code)
 
         try:
@@ -615,6 +619,7 @@ bar_properties = [ Style(i) for i in [
 box_properties = [ Style(i) for i in [
     "box_layout",
     "box_wrap",
+    "box_wrap_spacing",
     "box_reverse",
     "order_reverse",
     "spacing",
@@ -713,6 +718,7 @@ Keyword("default")
 Keyword("length")
 Keyword("allow")
 Keyword("exclude")
+Keyword("copypaste")
 Keyword("prefix")
 Keyword("suffix")
 Keyword("changed")
@@ -879,6 +885,7 @@ Keyword("droppable")
 Keyword("drag_raise")
 Keyword("dragged")
 Keyword("dropped")
+Keyword("drop_allowable")
 Keyword("drag_handle")
 Keyword("drag_joined")
 Keyword("clicked")
@@ -890,6 +897,7 @@ add(ui_properties)
 add(position_properties)
 
 FunctionStatementParser("draggroup", "ui.draggroup", many)
+Keyword("min_overlap")
 add(ui_properties)
 add(position_properties)
 

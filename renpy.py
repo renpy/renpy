@@ -1,9 +1,9 @@
-#@PydevCodeAnalysisIgnore
+# @PydevCodeAnalysisIgnore
 
 # This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
 
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
 import os
 import sys
@@ -44,7 +44,7 @@ def path_to_common(renpy_base):
 
 
 def path_to_saves(gamedir, save_directory=None):
-    import renpy  # @UnresolvedImport
+    import renpy # @UnresolvedImport
 
     if save_directory is None:
         save_directory = renpy.config.save_directory
@@ -104,7 +104,7 @@ def path_to_saves(gamedir, save_directory=None):
 
     # No save directory given.
     if not save_directory:
-        return gamedir + "/saves"
+        return os.path.join(gamedir, "saves")
 
     # Search the path above Ren'Py for a directory named "Ren'Py Data".
     # If it exists, then use that for our save directory.
@@ -146,12 +146,12 @@ def path_to_renpy_base():
 
 ##############################################################################
 
+
 # Doing the version check this way also doubles as an import of ast,
 # which helps py2exe et al.
 try:
     import ast; ast
 except:
-    raise
     print("Ren'Py requires at least python 2.6.")
     sys.exit(0)
 
@@ -164,7 +164,6 @@ if android:
     __main__.path_to_renpy_base = path_to_renpy_base
     __main__.path_to_common = path_to_common
     __main__.path_to_saves = path_to_saves
-    os.environ["RENPY_RENDERER"] = "gl"
 
 
 def main():
@@ -193,6 +192,7 @@ def main():
         raise
 
     renpy.bootstrap.bootstrap(renpy_base)
+
 
 if __name__ == "__main__":
     main()

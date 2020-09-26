@@ -1,7 +1,7 @@
 # This file was automatically generated from renpy/gl/glblacklist.py
 # Modifications will be automatically overwritten.
 
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,6 +31,8 @@
 
 # If both of the last two entries are false, GL refuses to
 # start.
+
+from __future__ import print_function
 
 BLACKLIST = [
 

@@ -9,9 +9,9 @@ Windows Encoding Problems
 
 Ren'Py will fail to start on Windows if it's placed in a directory with a
 full path that isn't representable in the current system language. For example,
-if Ren'Py is in the directory:
+if Ren'Py is in the directory::
 
-    C:\ビジュアルノベル\renpy-6.16.0-sdk\
+  C:\ビジュアルノベル\renpy-6.16.0-sdk\
 
 and the system is set to use the English language, Ren'Py will be unable to
 start. To fix this problem, start the control panel, select "Region and Language

@@ -21,9 +21,9 @@ statement after the label statement whenever the end of the block is reached.
 
 There are two kinds of labels: *global* and *local* labels. Global labels live
 in one global scope shared across all project files and thus should have unique
-names per game. Local labels logically reside inside scope of the global label
-they are declared in. To declare a local label, prefix its name with `.`. For
-example: ::
+names per game. Local labels logically reside inside the scope of the global label
+they are declared in. To declare a local label, prefix its name with a period ``.``.
+For example::
 
     label global_label:
         "Inside a global label.."
@@ -39,7 +39,7 @@ declared in or by their full name, consisting of global and local name parts: ::
         jump global_label.local_name
 
 The label statement may take an optional list of parameters. These parameters
-are processed as described in PEP 3102, with two exceptions:
+are processed as described in :pep:`3102`, with two exceptions:
 
 * The values of default parameters are evaluated at call time.
 * The variables are dynamically, rather than lexically, scoped.
@@ -79,7 +79,7 @@ string so computed is used as the name of the label to call. If the
 ``expression`` keyword is not present, the name of the statement to call must be
 explicitly given.
 
-If the optional from clause is present, it has the effect of including a label
+If the optional ``from`` clause is present, it has the effect of including a label
 statement with the given name as the statement immediately following the call
 statement. An explicit label helps to ensure that saved games with return
 stacks can return to the proper place when loaded on a changed script. ::
@@ -90,7 +90,7 @@ stacks can return to the proper place when loaded on a changed script. ::
 
     call subroutine(2)
 
-    call expression "subroutine" pass (count=3)
+    call expression "sub" + "routine" pass (count=3)
 
     # ...
 
@@ -101,8 +101,7 @@ stacks can return to the proper place when loaded on a changed script. ::
 
         return
 
-The call statement may take arguments, which are processed as described in PEP
-3102.
+The call statement may take arguments, which are processed as described in :pep:`3102`.
 
 When using a call expression with an arguments list, the ``pass`` keyword must
 be inserted between the expression and the arguments list. Otherwise, the
@@ -114,12 +113,12 @@ call.
 Return Statement
 ----------------
 
-The return statement pops the top statement off of the call stack, and transfers
+The ``return`` statement pops the top statement off of the call stack, and transfers
 control to it. If the call stack is empty, the return statement restarts
 Ren'Py, returning control to the main menu.
 
 If the optional expression is given to return, it is evaluated, and it's result
-is stored in the _return variable. This variable is dynamically scoped to each
+is stored in the ``_return`` variable. This variable is dynamically scoped to each
 context.
 
 Special Labels
@@ -140,7 +139,7 @@ The following labels are used by Ren'Py:
 
 ``splashscreen``
     If it exists, this label is called when the game is first run, before
-    showing the main menu.
+    showing the main menu. Please see :ref:`Adding a Splashscreen <adding_a_splashscreen>`.
 
 ``before_main_menu``
     If it exists, this label is called before the main menu. It is used in
@@ -158,7 +157,7 @@ The following labels are used by Ren'Py:
 
 ``after_warp``
     If it is existed, this label is called after a warp but before the warped-to
-    statement executes. please see :ref:`Warping to a line <warping_to_a_line>`
+    statement executes. Please see :ref:`Warping to a line <warping_to_a_line>`.
 
 Labels & Control Flow Functions
 -------------------------------

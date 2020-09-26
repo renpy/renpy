@@ -61,8 +61,8 @@
     new "ERROR"
 
     # game/interface.rpy:328
-    old "While [what!q], an error occured:"
-    new "Enquanto [what!q], ocorreu um erro:"
+    old "While [what!qt], an error occured:"
+    new "Enquanto [what!qt], ocorreu um erro:"
 
     # game/interface.rpy:329
     old "[exception!q]"

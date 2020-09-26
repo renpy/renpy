@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,6 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import pygame_sdl2 as pygame
 
 try:
@@ -34,6 +37,25 @@ ftfont.init()  # @UndefinedVariable
 
 WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
+
+
+def is_zerowidth(char):
+    if char == 0x200b:  # Zero-width space.
+        return True
+
+    if char == 0x200c:  # Zero-width non-joiner.
+        return True
+
+    if char == 0x200d:  # Zero-width joiner.
+        return True
+
+    if char == 0x2060:  # Word joiner.
+        return True
+
+    if char == 0xfeff:  # Zero width non-breaking space.
+        return True
+
+    return False
 
 
 class ImageFont(object):
@@ -64,15 +86,21 @@ class ImageFont(object):
             g = textsupport.Glyph()  # @UndefinedVariable
 
             g.character = ord(c)
-            g.ascent = self.height
+            g.ascent = self.baseline
             g.line_spacing = self.height
 
-            width = self.width.get(c, None)
-            if width is None:
-                raise Exception("Character {0!r} not found in image-based font.".format(c))
+            if not is_zerowidth(g.character):
 
-            g.width = self.width[c]
-            g.advance = self.advance[c]
+                width = self.width.get(c, None)
+                if width is None:
+                    raise Exception("Character {0!r} not found in image-based font.".format(c))
+
+                g.width = self.width[c]
+                g.advance = self.advance[c]
+
+            else:
+                g.width = 0
+                g.advance = 0
 
             rv.append(g)
 
@@ -92,7 +120,11 @@ class ImageFont(object):
             return
 
         for g in glyphs:
-            c = unichr(g.character)
+
+            if not g.width:
+                continue
+
+            c = chr(g.character)
 
             cxo, cyo = self.offsets[c]
             x = g.x + xo + cxo
@@ -117,7 +149,8 @@ class SFont(ImageFont):
                  spacewidth,
                  default_kern,
                  kerns,
-                 charset):
+                 charset,
+                 baseline=None):
 
         super(SFont, self).__init__()
 
@@ -126,6 +159,7 @@ class SFont(ImageFont):
         self.default_kern = default_kern
         self.kerns = kerns
         self.charset = charset
+        self.baseline = baseline
 
     def load(self):
 
@@ -140,7 +174,11 @@ class SFont(ImageFont):
         sw, sh = surf.get_size()
         height = sh
         self.height = height  # W0201
-        self.baseline = height  # W0201
+        if self.baseline is None:
+            self.baseline = height  # W0201
+        elif self.baseline < 0:
+            # Negative value is the distance from the bottom (vs top)
+            self.baseline = height + self.baseline  # W0201
 
         # Create space characters.
         self.chars[u' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
@@ -234,7 +272,7 @@ class MudgeFont(ImageFont):
             if char < 0:
                 continue
 
-            c = unichr(char)
+            c = chr(char)
             x = int(e.attrib["x"])
             y = int(e.attrib["y"])
             w = int(e.attrib["width"])
@@ -330,7 +368,7 @@ class BMFont(ImageFont):
             elif kind == "page":
                 pages[int(args["id"])] = renpy.display.im.Image(args["file"]).load(unscaled=True)
             elif kind == "char":
-                c = unichr(int(args["id"]))
+                c = chr(int(args["id"]))
                 x = int(args["x"])
                 y = int(args["y"])
                 w = int(args["width"])
@@ -347,6 +385,10 @@ class BMFont(ImageFont):
                 self.width[c] = w + xo
                 self.advance[c] = xadvance
                 self.offsets[c] = (xo, yo)
+            elif kind == "kerning":
+                first = chr(int(args["first"]))
+                second = chr(int(args["second"]))
+                self.kerns[first + second] = int(args["amount"])
 
         f.close()
 
@@ -376,14 +418,14 @@ class ScaledImageFont(ImageFont):
         self.baseline = scale(parent.baseline)
         self.default_kern = scale(parent.default_kern)
 
-        self.width = { k : scale(v) for k, v in parent.width.iteritems() }
-        self.advance = { k : scale(v) for k, v in parent.advance.iteritems() }
-        self.offsets = { k : (scale(v[0]), scale(v[1])) for k, v in parent.offsets.iteritems() }
-        self.kerns = { k : scale(v) for k, v in parent.kerns.iteritems() }
+        self.width = { k : scale(v) for k, v in parent.width.items() }
+        self.advance = { k : scale(v) for k, v in parent.advance.items() }
+        self.offsets = { k : (scale(v[0]), scale(v[1])) for k, v in parent.offsets.items() }
+        self.kerns = { k : scale(v) for k, v in parent.kerns.items() }
 
         self.chars = { }
 
-        for k, v in parent.chars.iteritems():
+        for k, v in parent.chars.items():
             w, h = v.get_size()
             nw = scale(w)
             nh = scale(h)
@@ -391,7 +433,7 @@ class ScaledImageFont(ImageFont):
 
 
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False,
-                   filename=None, spacewidth=10, default_kern=0, kerns={},
+                   filename=None, spacewidth=10, baseline=None, default_kern=0, kerns={},
                    charset=u"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"):
     """
     :doc: image_fonts
@@ -423,6 +465,13 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
     `spacewidth`
         The width of a space character, an integer in pixels.
 
+    `baseline`
+        The distance from the top of the font to the baseline (the invisible
+        line letters sit on), an integer in pixels.  If this font is mixed with
+        other fonts, their baselines will be aligned.  Negative values indicate
+        distance from the bottom of the font instead, and ``None`` means the
+        baseline equals the height (i.e., is at the very bottom of the font).
+
     `default_kern`
         The default kern spacing between characters, in pixels.
 
@@ -430,7 +479,8 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
         A map from two-character strings to the kern that should be used between
         those characters.
 
-    `charset` - The character set of the font. A string containing characters in
+    `charset`
+        The character set of the font. A string containing characters in
         the order in which they are found in the image. The default character
         set for a SFont is::
 
@@ -442,7 +492,7 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
     if name is None or size is None or filename is None:
         raise Exception("When registering an SFont, the font name, font size, and filename are required.")
 
-    sf = SFont(filename, spacewidth, default_kern, kerns, charset)
+    sf = SFont(filename, spacewidth, default_kern, kerns, charset, baseline)
     image_fonts[(name, size, bold, italics)] = sf
 
 
@@ -573,12 +623,12 @@ def load_face(fn):
 
             pygame.sysfont.initsysfonts()
 
-            for v in pygame.sysfont.Sysfonts.itervalues():
+            for v in pygame.sysfont.Sysfonts.values():
                 if v is not None:
-                    for _flags, ffn in v.iteritems():
+                    for _flags, ffn in v.items():
                         for i in fonts:
                             if ffn.lower().endswith(i):
-                                font_file = file(ffn, "rb")
+                                font_file = open(ffn, "rb")
                                 break
 
                         if font_file:
@@ -590,7 +640,7 @@ def load_face(fn):
     if font_file is None:
         raise Exception("Could not find font {0!r}.".format(orig_fn))
 
-    rv = ftfont.FTFace(font_file, index)  # @UndefinedVariable
+    rv = ftfont.FTFace(font_file, index, orig_fn)  # @UndefinedVariable
 
     face_cache[orig_fn] = rv
 
@@ -665,7 +715,7 @@ def free_memory():
 
 
 def load_fonts():
-    for i in image_fonts.itervalues():
+    for i in image_fonts.values():
         i.load()
 
     for i in renpy.config.preload_fonts:
@@ -682,14 +732,9 @@ class FontGroup(object):
 
     def __init__(self):
 
-        # A list of font names we know of.
-        self.fonts = [ ]
-
-        # A map from character to the index of the font it's part of.
-        self.cache = { }
-
-        # A list of (index, start, end) tuples.
-        self.patterns = [ ]
+        # A map from character index to font name. None is used for
+        # the default font.
+        self.map = { }
 
     def add(self, font, start, end):
         """
@@ -699,7 +744,8 @@ class FontGroup(object):
 
         `start`
             The start of the range. This may be a single-character string, or
-            an integer giving a unicode code point.
+            an integer giving a unicode code point. If start is None, then the
+            font is used as the default.
 
         `end`
             The end of the range. This may be a single-character string, or an
@@ -712,6 +758,18 @@ class FontGroup(object):
         chained together.
         """
 
+        if start is None:
+
+            if isinstance(font, FontGroup):
+                for k, v in font.map.items():
+                    if k not in self.map:
+                        self.map[k] = v
+            else:
+                if None not in self.map:
+                    self.map[None] = font
+
+            return self
+
         if not isinstance(start, int):
             start = ord(start)
 
@@ -721,12 +779,9 @@ class FontGroup(object):
         if end < start:
             raise Exception("In FontGroup.add, the start of a character range must be before the end of the range.")
 
-        if font not in self.fonts:
-            self.fonts.append(font)
-
-        index = self.fonts.index(font)
-
-        self.patterns.append((index, start, end))
+        for i in range(start, end+1):
+            if i not in self.map:
+                self.map[i] = font
 
         return self
 
@@ -738,32 +793,27 @@ class FontGroup(object):
         mark = 0
         pos = 0
 
-        old_index = 0
-
-        cache = self.cache
+        old_font = None
 
         for c in s:
 
-            index = cache.get(c, None)
+            n = ord(c)
 
-            if index is None:
-                n = ord(c)
+            font = self.map.get(ord(c), None)
 
-                for index, start, end in self.patterns:
-                    if start <= n <= end:
-                        break
-                else:
+            if font is None:
+                font = self.map.get(None, None)
+
+                if font is None:
                     raise Exception("Character U+{0:04x} not found in FontGroup".format(n))
 
-                cache[c] = index
-
-            if index != old_index:
+            if font != old_font:
                 if pos:
-                    yield self.fonts[old_index], s[mark:pos]
+                    yield old_font, s[mark:pos]
 
-                old_index = index
+                old_font = font
                 mark = pos
 
             pos += 1
 
-        yield self.fonts[old_index], s[mark:]
+        yield font, s[mark:]

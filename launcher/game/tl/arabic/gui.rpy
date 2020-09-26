@@ -138,7 +138,7 @@ translate arabic strings:
     new "## حجم الخط الذي يحيط بصندوق اسم الشخصية, الاحجام بالترتيب هي اليسار, الأعلى, اليمين, و الأسفل."
 
     # gui.rpy:127
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
     new "## عندما يتم اختيار True سيتم تكرار الخلفية حتى تغطي الصندوق, عند اختيار False سيتم تمديد الصورة لتغطي الصندوق."
 
     # gui.rpy:132

@@ -138,7 +138,7 @@ translate french strings:
     new "## Les bordures de la zone contenant le nom du personnage dans l’ordre suivant gauche, haut, droite, bas."
 
     # gui.rpy:127
-    old "## If True, the background of the namebox will be tiled, if False, the background if the namebox will be scaled."
+    old "## If True, the background of the namebox will be tiled, if False, the background of the namebox will be scaled."
     new "## Si « True » (vrai), l’arrière plan de zone du nom sera en mosaïque, si « False »(faux), l’arrière plan de la zone du nom sera mis à l’échelle."
 
     # gui.rpy:132

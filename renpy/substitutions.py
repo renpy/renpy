@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,9 @@
 
 # This file contains support for string translation and string formatting
 # operations.
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
 import string
@@ -161,25 +164,49 @@ class Formatter(string.Formatter):
 
     def convert_field(self, value, conversion):
 
-        if not conversion:
+        if conversion is None:
             return value
+
+        if not conversion:
+            raise ValueError("Conversion specifier can't be empty.")
+
+        if set(conversion) - set("rstqulci"):
+            raise ValueError("Unknown symbols in conversion specifier, this must use only the \"rstqulci\".")
 
         if "r" in conversion:
             value = repr(value)
+            conversion = conversion.replace("r", "")
         elif "s" in conversion:
-            value = unicode(value)
+            value = str(value)
+            conversion = conversion.replace("s", "")
+
+        if not conversion:
+            return value
+
+        # All conversion symbols below assume we have a string.
+        if not isinstance(value, basestring):
+            value = str(value)
 
         if "t" in conversion:
-            if not isinstance(value, basestring):
-                value = unicode(value)
-
             value = renpy.translation.translate_string(value)
 
-        if "q" in conversion:
-            if not isinstance(value, basestring):
-                value = unicode(value)
+        if "i" in conversion:
+            try:
+                value = substitute(value, translate=False)[0]
+            except RuntimeError:  # PY3 RecursionError
+                raise ValueError("Substitution {!r} refers to itself in a loop.".format(value))
 
+        if "q" in conversion:
             value = value.replace("{", "{{")
+
+        if "u" in conversion:
+            value = value.upper()
+
+        if "l" in conversion:
+            value = value.lower()
+
+        if "c" in conversion and value:
+            value = value[0].upper() + value[1:]
 
         return value
 
@@ -220,7 +247,7 @@ def substitute(s, scope=None, force=False, translate=True):
     """
 
     if not isinstance(s, basestring):
-        s = unicode(s)
+        s = str(s)
 
     if translate:
         s = renpy.translation.translate_string(s)
@@ -239,6 +266,11 @@ def substitute(s, scope=None, force=False, translate=True):
     else:
         kwargs = renpy.store.__dict__  # @UndefinedVariable
 
-    s = formatter.vformat(s, (), kwargs)
+    try:
+        s = formatter.vformat(s, (), kwargs)
+    except:
+        if renpy.display.predict.predicting:  # @UndefinedVariable
+            return " ", True
+        raise
 
     return s, (s != old_s)

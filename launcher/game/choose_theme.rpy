@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,6 +24,7 @@ init python:
     import codecs
     import re
     import sys
+    import future.utils
 
     def theme_names():
         """
@@ -97,7 +98,7 @@ init python:
             return
 
         renpy.style.restore(style_backup)
-        exec theme_data.THEME[theme][scheme] in globals()
+        future.utils.exec_(theme_data.THEME[theme][scheme], globals(), globals())
 
         # Rebuild the style cache.
         renpy.style.rebuild(False)
@@ -504,7 +505,7 @@ label choose_theme_callable:
     call screen choose_theme
 
     python hide:
-        with interface.error_handling("changing the theme"):
+        with interface.error_handling(_("changing the theme")):
             switch_theme()
 
     return

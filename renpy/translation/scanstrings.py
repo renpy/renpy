@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,11 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function, unicode_literals
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import os
 import re
-import codecs
 
 import renpy.translation
 
@@ -31,8 +31,8 @@ import renpy.translation
 
 STRING_RE = r"""(?x)
 \b_[_p]?\s*\(\s*[uU]?(
-\"\"\"(?:\\.|\"{1,2}|[^\\"])*?\"\"\"
-|'''(?:\\.|\'{1,2}|[^\\'])*?'''
+\"\"\"(?:\\.|\\\n|\"{1,2}|[^\\"])*?\"\"\"
+|'''(?:\\.|\\\n|\'{1,2}|[^\\'])*?'''
 |"(?:\\.|[^\\"])*"
 |'(?:\\.|[^\\'])*'
 )\s*\)
@@ -127,6 +127,8 @@ def scan_strings(filename):
         for m in re.finditer(STRING_RE, text):
 
             s = m.group(1)
+            s = s.replace('\\\n', "")
+
             if s is not None:
                 s = s.strip()
                 s = "u" + s
@@ -151,7 +153,7 @@ def scan_comments(filename):
     comment = [ ]
     start = 0
 
-    with codecs.open(filename, "r", "utf-8") as f:
+    with open(filename, "r", encoding="utf-8") as f:
         lines = [ i.rstrip() for i in f.read().replace(u"\ufeff", "").split('\n') ]
 
     for i, l in enumerate(lines):

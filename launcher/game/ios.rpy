@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -58,6 +58,7 @@ init python:
 
     if RENIOS_PATH:
         import renios.create
+        import renios.image
 
     def IOSState():
         if not RENIOS_PATH:
@@ -104,11 +105,14 @@ init python:
         xcode_name_cache[s] = s
         return s
 
-    def xcode_project(p=None):
+    def xcode_project(p=None, target=None):
         """
         Return the path to the Xcode project corresponding to `p`, or the current
         project if `p` is None
         """
+
+        if target is not None:
+            return target
 
         if p is None:
             p = project.current
@@ -118,12 +122,22 @@ init python:
 
         return os.path.join(persistent.xcode_projects_directory, xcode_name(p.name))
 
-    def ios_create(p=None, gui=True):
+    def ios_create(p=None, gui=True, target=None):
+        project.current.update_dump(force=True, gui=gui)
 
-        dest = xcode_project(p)
+        name = project.current.dump.get("name", None)
+        version = project.current.dump.get("version", None)
+
+        dest = xcode_project(p, target)
+
+        if gui:
+            iface = MobileInterface("ios")
+        else:
+            iface = rapt.interface.Interface()
 
         if os.path.exists(dest):
-            interface.yesno(_("The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"), no=Jump("ios"))
+            if not iface.yesno(_("The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?")):
+                return
 
             i = 0
             while True:
@@ -134,12 +148,11 @@ init python:
 
             os.rename(dest, backup)
 
-        iface = MobileInterface("ios")
-        renios.create.create_project(iface, dest)
+        renios.create.create_project(iface, dest, name, version)
 
-        ios_populate(p, gui=gui)
+        ios_populate(p, gui=gui, target=target)
 
-    def ios_populate(p=None, gui=True):
+    def ios_populate(p=None, gui=True, target=None):
         """
         This actually builds the package.
         """
@@ -149,7 +162,7 @@ init python:
         if p is None:
             p = project.current
 
-        dist = os.path.join(xcode_project(p), "base")
+        dist = os.path.join(xcode_project(p, target), "base")
 
         if os.path.exists(dist):
             shutil.rmtree(dist)
@@ -186,6 +199,15 @@ init python:
                     main_f.write(l)
 
         os.unlink(py_fn)
+
+        ios_image(p, "ios-icon.png", "Media.xcassets/AppIcon.appiconset", True, target)
+        # ios_image(p, "ios-launchimage.png", "Media.xcassets/LaunchImage.launchimage", False, target)
+
+    def ios_image(p, source, destination, scale, target):
+        source = os.path.join(p.path, source)
+        destination = os.path.join(xcode_project(p, target), destination)
+
+        renios.image.generate(source, destination, scale)
 
 
     def launch_xcode():
@@ -372,3 +394,37 @@ label update_xcode_project:
     $ ios_populate(None, True)
 
     jump ios
+
+init python:
+
+    def ios_create_command():
+        ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("project", help="The path to the Ren'Py project.")
+        ap.add_argument("destination", help="The path the iOS project that will be created.")
+
+        args = ap.parse_args()
+
+        p = project.Project(args.project)
+
+        ios_create(p, False, args.destination)
+
+        return False
+
+    renpy.arguments.register_command("ios_create", ios_create_command)
+
+
+    def ios_populate_command():
+        ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("project", help="The path to the Ren'Py project.")
+        ap.add_argument("destination", help="The path the iOS project that will be created.")
+
+        args = ap.parse_args()
+
+        p = project.Project(args.project)
+
+        ios_populate(p, False, args.destination)
+
+        return False
+
+    renpy.arguments.register_command("ios_populate", ios_populate_command)
+

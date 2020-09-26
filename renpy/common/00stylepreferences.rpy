@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -79,7 +79,7 @@ init -1500 python:
         has a valid value.
         """
 
-        for preference, alternatives in __alternatives.iteritems():
+        for preference, alternatives in __alternatives.items():
             alt = persistent._style_preferences.get(preference, None)
 
             if alt not in alternatives:
@@ -102,7 +102,7 @@ init -1500 python:
         Called to apply the style preferences
         """
 
-        for preference, alternatives in __preferences.iteritems():
+        for preference, alternatives in __preferences.items():
 
             alt = persistent._style_preferences.get(preference, None)
 

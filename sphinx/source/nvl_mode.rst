@@ -22,7 +22,7 @@ clear`` statements at the end of each page.
 
 Characters can be declared to use NVL-mode by adding a ``kind=nvl``
 parameter to each of the Character declarations. For example, if we
-the character declarations from the Quickstart manual are::
+use the character declarations from the Quickstart manual::
 
     define s = Character('Sylvie', color="#c8ffc8")
     define m = Character('Me', color="#c8c8ff")
@@ -67,8 +67,27 @@ While nvl-mode games generally have more text per paragraph, this
 example demonstrates a basic NVL-mode script. (Suitable for use in a
 kinetic novel that does not have transitions.)
 
-Menus
------
+.. _nvl-monologue-mode:
+
+:ref:`Monologue mode <monologue-mode>` works with NVL-mode as well.
+Including the ``{clear}`` text tag on a line by itself is the equivalent
+of an ``nvl clear`` statement without leaving monologue mode. For example::
+
+    label start:
+        s """
+        This is one block of text in monologue mode.
+
+        This is a second block, on the same page as the first.
+
+        {clear}
+
+        The page just cleared!
+        """
+
+.. _nvl-mode-menu:
+
+NVL-mode Menus
+--------------
 
 By default, menus are displayed in ADV-mode, taking up the full
 screen. There is also an alternate NVL-mode menu presentation, which
@@ -82,6 +101,19 @@ To access this alternate menu presentation, write::
 The menu will disappear after the choice has been made, so it usually
 makes sense to follow menus with an "nvl clear" or some sort of
 indication as to the choice.
+
+:ref:`Menu arguments <menu-arguments>` can also be used to access
+a NVL-mode menu. This is done by providing a true `nvl` argument
+that is set to True. This is useful when mixing NVL-mode and ADV-mode
+menus in a single game. ::
+
+    menu (nvl=True):
+        "I prefer NVL-mode.":
+            pass
+
+        "ADV-mode is more for me.":
+            pass
+
 
 Showing and Hiding the NVL-mode Window
 --------------------------------------
@@ -227,4 +259,3 @@ Script of The Question (NVL-mode Edition)
 
 You can view the full script of the NVL-mode edition of ''The Question''
 :ref:`here <thequestion_nvl>`.
-

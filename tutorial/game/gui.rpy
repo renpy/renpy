@@ -88,9 +88,6 @@ define gui.title_text_size = 50
 define gui.main_menu_background = "gui/main_menu.jpg"
 define gui.game_menu_background = "images/bg washington.jpg"
 
-## Should we show the name and version of the game?
-define gui.show_name = False
-
 
 ## Dialogue ####################################################################
 ##
@@ -124,7 +121,7 @@ define gui.namebox_height = None
 define gui.namebox_borders = Borders(5, 5, 5, 5)
 
 ## If True, the background of the namebox will be tiled, if False, the
-## background if the namebox will be scaled.
+## background of the namebox will be scaled.
 define gui.namebox_tile = False
 
 
@@ -430,8 +427,8 @@ init python:
         ## Adjust the location of the textbox.
         gui.textbox_height = 240
         gui.name_xpos = 80
-        gui.text_xpos = 90
-        gui.text_width = 1100
+        gui.dialogue_xpos = 90
+        gui.dialogue_width = 1100
 
         ## Change the size and spacing of items in the game menu.
         gui.choice_button_width = 1240

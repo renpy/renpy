@@ -2,5 +2,5 @@
 #define RENPYBIDICORE_H
 #include <Python.h>
 
-PyObject *renpybidi_log2vis(PyObject *s, int *direction);
+PyObject *renpybidi_log2vis(PyUnicodeObject *s, int *direction);
 #endif

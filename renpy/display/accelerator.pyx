@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,6 +19,8 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+from __future__ import print_function
 
 import renpy
 import math
@@ -102,8 +104,17 @@ def transform_render(self, widtho, heighto, st, at):
 
     state = self.state
 
-    if state.size:
-        widtho, heighto = state.size
+    xsize = state.xsize
+    ysize = state.ysize
+    fit = state.fit
+
+    if fit is None:
+        fit = 'fill'
+
+    if xsize is not None:
+        widtho = xsize
+    if ysize is not None:
+        heighto = ysize
 
     cr = render(child, widtho, heighto, st - self.child_st_base, at)
 
@@ -133,6 +144,25 @@ def transform_render(self, widtho, heighto, st, at):
 
         cr = tcr
 
+    if (xpan is not None) or (ypan is not None):
+
+        if xpan is not None:
+            xpan = (xpan % 360) / 360.0
+            pan_x = cwidth * xpan
+            pan_w = cwidth
+        else:
+            pan_x = 0
+            pan_w = cr.width
+
+        if ypan is not None:
+            ypan = (ypan % 360) / 360.0
+            pan_y = cheight * ypan
+            pan_h = cheight
+        else:
+            pan_y = 0
+            pan_h = cr.height
+
+        cr = cr.subsurface((pan_x, pan_y, pan_w, pan_h))
 
     # The width and height of the child.
     width = cr.width
@@ -149,8 +179,9 @@ def transform_render(self, widtho, heighto, st, at):
     xo = 0
     yo = 0
 
-    # Cropping.
     crop = state.crop
+
+    # Cropping.
     if (state.corner1 is not None) and (crop is None) and (state.corner2 is not None):
         x1, y1 = state.corner1
         x2, y2 = state.corner2
@@ -198,27 +229,54 @@ def transform_render(self, widtho, heighto, st, at):
             clipping = True
 
     # Size.
-    size = state.size
-    maxsize = state.maxsize
+    if (width != 0) and (height != 0):
+        maxsize = state.maxsize
+        mul = None
 
-    if (maxsize is not None) and (width != 0) and (height != 0):
-        maxsizex, maxsizey = maxsize
-        mul = min(maxsizex / width, maxsizey / height)
-        size = (width * mul, height * mul)
+        if (maxsize is not None):
+            maxsizex, maxsizey = maxsize
+            mul = min(maxsizex / width, maxsizey / height)
 
-    if (size is not None) and (size != (width, height)) and (width != 0) and (height != 0):
-        nw, nh = size
+        scale = []
+        if xsize is not None:
+            scale.append(xsize / width)
+        if ysize is not None:
+            scale.append(ysize / height)
 
-        xzoom = 1.0 * nw / width
-        yzoom = 1.0 * nh / height
+        if scale:
+            if fit == 'scale-up':
+                mul = max(1, *scale)
+            elif fit == 'scale-down':
+                mul = min(1, *scale)
+            elif fit == 'contain':
+                mul = min(scale)
+            elif fit == 'cover':
+                mul = max(scale)
+            else:
+                if xsize is None:
+                    xsize = width
+                if ysize is None:
+                    ysize = height
 
-        rxdx = xzoom
-        rydy = yzoom
+        if mul is not None:
+            xsize = mul * width
+            ysize = mul * height
 
-        xo *= xzoom
-        yo *= yzoom
+        if (xsize is not None) and (ysize is not None) and ((xsize, ysize) != (width, height)):
+            nw = xsize
+            nh = ysize
 
-        width, height = size
+            xzoom = 1.0 * nw / width
+            yzoom = 1.0 * nh / height
+
+            rxdx = xzoom
+            rydy = yzoom
+
+            xo *= xzoom
+            yo *= yzoom
+
+            width = xsize
+            height = ysize
 
     # zoom
     zoom = state.zoom
@@ -252,16 +310,6 @@ def transform_render(self, widtho, heighto, st, at):
         # origin corrections for flipping
         if yzoom < 0:
             yo += height
-
-    # Pan.
-
-    if xpan is not None:
-        xpan = (xpan % 360) + 180
-        xo += xzoom * cwidth * -(xpan / 360.0) + widtho / 2.0
-
-    if ypan is not None:
-        ypan = (ypan % 360) + 180
-        yo += yzoom * cheight * -(ypan / 360.0) + heighto / 2.0
 
 
     # Rotation.
@@ -320,6 +368,44 @@ def transform_render(self, widtho, heighto, st, at):
 
     rv = Render(width, height)
 
+    mesh = state.mesh
+    blur = state.blur
+
+    if (blur is not None) and (not mesh):
+        mesh = True
+
+    if mesh:
+
+        rv.operation = renpy.display.render.FLATTEN
+        rv.add_shader("renpy.texture")
+
+        if isinstance(mesh, tuple):
+            mesh_width, mesh_height = mesh
+
+            rv.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
+                mesh_width, mesh_height,
+                0.0, 0.0, cr.width, cr.height,
+                0.0, 0.0, 1.0, 1.0)
+        else:
+            rv.mesh = True
+
+    if blur:
+        rv.add_shader("-renpy.texture")
+        rv.add_shader("renpy.blur")
+        rv.add_uniform("u_renpy_blur_log2", math.log(state.blur, 2))
+
+    if state.matrixcolor:
+        matrix = state.matrixcolor
+
+        if callable(matrix):
+            matrix = matrix(None, 1.0)
+
+        if not isinstance(matrix, renpy.display.matrix.Matrix):
+            raise Exception("matrixcolor requires a Matrix (not im.matrix, got %r)" % (matrix,))
+
+        rv.add_shader("renpy.matrixcolor")
+        rv.add_uniform("u_renpy_matrixcolor", matrix)
+
     # Default case - no transformation matrix.
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
         self.forward = IDENTITY
@@ -340,8 +426,13 @@ def transform_render(self, widtho, heighto, st, at):
                 -rydx / inv_det,
                 rxdx / inv_det)
 
+    # Nearest neightbor.
     rv.nearest = state.nearest
 
+    if state.nearest:
+        rv.add_property("texture_scaling", "nearest")
+
+    # Alpha.
     alpha = state.alpha
 
     if alpha < 0.0:
@@ -352,6 +443,28 @@ def transform_render(self, widtho, heighto, st, at):
     rv.alpha = alpha
 
     rv.over = 1.0 - state.additive
+
+    if (rv.alpha != 1.0) or (rv.over != 1.0):
+        rv.add_shader("renpy.alpha")
+        rv.add_uniform("u_renpy_alpha", rv.alpha)
+        rv.add_uniform("u_renpy_over", rv.over)
+
+    # Shaders and uniforms.
+    if state.shader is not None:
+
+        if isinstance(state.shader, basestring):
+            rv.add_shader(state.shader)
+        else:
+            for name in state.shader:
+                rv.add_shader(name)
+
+        for name in renpy.display.transform.uniforms:
+            value = getattr(state, name, None)
+
+            if value is not None:
+                rv.add_uniform(name, value)
+
+    # Clipping.
     rv.xclipping = clipping
     rv.yclipping = clipping
 

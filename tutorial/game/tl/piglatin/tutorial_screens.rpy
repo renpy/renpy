@@ -415,179 +415,179 @@ translate piglatin screen_use_f74fab6e:
 
 translate piglatin strings:
 
-    # tutorial_screens.rpy:26
+    # game/tutorial_screens.rpy:26
     old " Lv. [lv]"
     new " Vlay. [lv]"
 
-    # tutorial_screens.rpy:29
+    # game/tutorial_screens.rpy:29
     old "HP"
     new "Phay"
 
-    # tutorial_screens.rpy:58
+    # game/tutorial_screens.rpy:58
     old "Morning"
     new "Orningmay"
 
-    # tutorial_screens.rpy:58
+    # game/tutorial_screens.rpy:58
     old "Afternoon"
     new "Fternoonaay"
 
-    # tutorial_screens.rpy:58
+    # game/tutorial_screens.rpy:58
     old "Evening"
     new "Veningeay"
 
-    # tutorial_screens.rpy:61
+    # game/tutorial_screens.rpy:61
     old "Study"
     new "Tudysay"
 
-    # tutorial_screens.rpy:61
+    # game/tutorial_screens.rpy:61
     old "Exercise"
     new "Xerciseeay"
 
-    # tutorial_screens.rpy:61
+    # game/tutorial_screens.rpy:61
     old "Eat"
     new "Ateay"
 
-    # tutorial_screens.rpy:61
+    # game/tutorial_screens.rpy:61
     old "Drink"
     new "Rinkday"
 
-    # tutorial_screens.rpy:61
+    # game/tutorial_screens.rpy:61
     old "Be Merry"
     new "Ebay Errymay"
 
-    # tutorial_screens.rpy:107
+    # game/tutorial_screens.rpy:107
     old "Strength"
     new "Trengthsay"
 
-    # tutorial_screens.rpy:111
+    # game/tutorial_screens.rpy:111
     old "Intelligence"
     new "Ntelligenceiay"
 
-    # tutorial_screens.rpy:115
+    # game/tutorial_screens.rpy:115
     old "Moxie"
     new "Oxiemay"
 
-    # tutorial_screens.rpy:119
+    # game/tutorial_screens.rpy:119
     old "Chutzpah"
     new "Hutzpahcay"
 
-    # tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:171
     old "What screens can do."
     new "Hatway creenssay ancay oday."
 
-    # tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:171
     old "How to show screens."
     new "Owhay otay owshay creenssay."
 
-    # tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:171
     old "Passing parameters to screens."
     new "Assingpay arameterspay otay creenssay."
 
-    # tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:171
     old "Screen properties."
     new "Creensay ropertiespay."
 
-    # tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:171
     old "Special screen statements."
     new "Pecialsay creensay atementsstay."
 
-    # tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:171
     old "Using other screens."
     new "Singuay otheray creenssay."
 
-    # tutorial_screens.rpy:171
+    # game/tutorial_screens.rpy:171
     old "That's it."
     new "Hattay'say itay."
 
-    # tutorial_screens.rpy:205
+    # game/tutorial_screens.rpy:205
     old "I do."
     new "Iay oday."
 
-    # tutorial_screens.rpy:331
+    # game/tutorial_screens.rpy:331
     old "Hello, world."
     new "Ellohay, orldway."
 
-    # tutorial_screens.rpy:331
+    # game/tutorial_screens.rpy:331
     old "You can't cancel this."
     new "Ouyay ancay'tay ancelcay histay."
 
-    # tutorial_screens.rpy:346
+    # game/tutorial_screens.rpy:346
     old "Shiro was here."
     new "Hirosay asway erehay."
 
-    # tutorial_screens.rpy:362
+    # game/tutorial_screens.rpy:362
     old "Click either button to continue."
     new "Lickcay eitheray uttonbay otay ontinuecay."
 
-    # tutorial_screens.rpy:377
+    # game/tutorial_screens.rpy:377
     old "Close This Screen"
     new "Losecay Histay Creensay"
 
-    # tutorial_screens.rpy:388
+    # game/tutorial_screens.rpy:388
     old "A Tag Screen"
     new "Aay Agtay Creensay"
 
-    # tutorial_screens.rpy:395
+    # game/tutorial_screens.rpy:395
     old "B Tag Screen"
     new "Bay Agtay Creensay"
 
-    # tutorial_screens.rpy:447
+    # game/tutorial_screens.rpy:447
     old "You're on a small device."
     new "Ouyay'eray onay aay mallsay eviceday."
 
-    # tutorial_screens.rpy:452
+    # game/tutorial_screens.rpy:452
     old "You're not on a small device."
     new "Ouyay'eray otnay onay aay mallsay eviceday."
 
-    # tutorial_screens.rpy:466
+    # game/tutorial_screens.rpy:466
     old "This text is red."
     new "Histay exttay isay edray."
 
-    # tutorial_screens.rpy:496
+    # game/tutorial_screens.rpy:496
     old "Hello, World."
     new "Ellohay, Orldway."
 
-    # tutorial_screens.rpy:510
+    # game/tutorial_screens.rpy:510
     old "It's good to meet you."
     new "Tiay'say oodgay otay eetmay ouyay."
 
-    # tutorial_screens.rpy:534
+    # game/tutorial_screens.rpy:534
     old "Increase"
     new "Ncreaseiay"
 
-    # tutorial_screens.rpy:563
+    # game/tutorial_screens.rpy:563
     old "Earth"
     new "Artheay"
 
-    # tutorial_screens.rpy:563
+    # game/tutorial_screens.rpy:563
     old "Moon"
     new "Oonmay"
 
-    # tutorial_screens.rpy:563
+    # game/tutorial_screens.rpy:563
     old "Mars"
     new "Arsmay"
 
-    # tutorial_screens.rpy:581
+    # game/tutorial_screens.rpy:581
     old "Now press 'a'."
     new "Ownay resspay 'aay'."
 
-    # tutorial_screens.rpy:583
+    # game/tutorial_screens.rpy:583
     old "The screen was just shown."
     new "Hetay creensay asway ustjay ownshay."
 
-    # tutorial_screens.rpy:585
+    # game/tutorial_screens.rpy:585
     old "You pressed the 'a' key."
     new "Ouyay ressedpay hetay 'aay' eykay."
 
-    # tutorial_screens.rpy:608
+    # game/tutorial_screens.rpy:608
     old "Health"
     new "Ealthhay"
 
-    # tutorial_screens.rpy:613
+    # game/tutorial_screens.rpy:613
     old "Magic"
     new "Agicmay"
 
-    # tutorial_screens.rpy:644
+    # game/tutorial_screens.rpy:644
     old "There's not much left to see."
     new "Heretay'say otnay uchmay eftlay otay eesay."
 

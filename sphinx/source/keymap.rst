@@ -25,6 +25,7 @@ scroll wheel to the top.
 There are two kinds of keyboard keysyms. The first is a string containing a
 character that is generated when a key is pressed. This is useful for
 binding alphabetic keys and numbers. Examples of these keysyms include "a", "A", and "7".
+Note that these are case sensitive, "a" does not match "A".
 
 Keyboard keysyms can also be the symbolic name for the key. This can be any of
 the K\_ constants taken from pygame.constants. This type of keysym looks like
@@ -35,26 +36,29 @@ Keyboard keysyms may be preceded by the following prefixes, separated by
 underscores:
 
 alt
-    Matches if the alt key is pressed. Keysyms without this prefix match
-    when the alt key is not pressed.
+    Matches if the Alt key is pressed. Keysyms without this prefix match
+    when the Alt key is not pressed.
 meta
-    Matches if the meta, command, or windows key is pressed. Keysyms without
+    Matches if the meta, Command, or Windows key is pressed. Keysyms without
     this prefix match when the meta key is not pressed.
 ctrl
-    Matches if the ctrl key is pressed. Keysyms without this prefix match
-    when the ctrl key is not pressed. (Ctrl is not very useful, as it
+    Matches if the Ctrl key is pressed. Keysyms without this prefix match
+    when the Ctrl key is not pressed. (Ctrl is not very useful, as it
     usually triggers skipping.)
 shift
-    Matches when the shift key is pressed.
+    Matches when the Shift key is pressed.
 noshift
-    Matches when the shift key is not pressed. A K\_ keysym ignores the state
-    of the shift key when matching.
+    Matches when the Shift key is not pressed.
 repeat
     Matches when the key is a repeat due to the key being held down. Keysyms
     without this prefix do not match repeats.
+keydown
+    Matches when the key is being pressed down (the default).
+keyup
+    Matches when the key is being released.
 
 For example, the keysym "shift_alt_K_F5" will match the F5 key being pressed
-while shift and alt are held down.
+while Shift and Alt are held down.
 
 
 To change a binding, update the appropriate list in :var:`config.keymap`. The
@@ -66,34 +70,35 @@ statement, and removes the space key from that list. ::
         $ config.keymap['dismiss'].remove('K_SPACE')
 
 The default keymap is contained inside renpy/common/00keymap.rpy, and
-as of version 6.99 is as follows::
+as of version 7.4 is as follows::
 
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
         rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
-        screenshot = [ 's' ],
+        screenshot = [ 's', 'alt_K_s', 'alt_shift_K_s', 'noshift_K_s' ],
         toggle_afm = [ ],
-        toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3' ],
-        hide_windows = [ 'mouseup_2', 'h' ],
-        launch_editor = [ 'E' ],
+        toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11', 'noshift_K_f' ],
+        game_menu = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
+        hide_windows = [ 'mouseup_2', 'h', 'noshift_K_h' ],
+        launch_editor = [ 'E', 'shift_K_e' ],
         dump_styles = [ ],
-        reload_game = [ 'R' ],
-        inspector = [ 'I' ],
-        full_inspector = [ 'alt_I' ],
-        developer = [ 'D' ],
+        reload_game = [ 'R', 'alt_shift_K_r', 'shift_K_r' ],
+        inspector = [ 'I', 'shift_K_i' ],
+        full_inspector = [ 'alt_shift_K_i' ],
+        developer = [ 'shift_K_d', 'alt_shift_K_d' ],
         quit = [ ],
         iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
-        choose_renderer = [ 'G' ],
+        choose_renderer = [ 'G', 'alt_shift_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
+        accessibility = [ "K_a" ],
 
         # Accessibility.
-        self_voicing = [ 'v', 'V' ],
-        clipboard_voicing = [ 'C' ],
-        debug_voicing = [ 'alt_V', 'meta_V' ],
+        self_voicing = [ 'v', 'V', 'alt_K_v', 'K_v' ],
+        clipboard_voicing = [ 'C', 'alt_shift_K_c', 'shift_K_c' ],
+        debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
 
         # Say.
         rollforward = [ 'mousedown_5', 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
@@ -125,6 +130,8 @@ as of version 6.99 is as follows::
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
         input_home = [ 'K_HOME' ],
         input_end = [ 'K_END' ],
+        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c' ],
+        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v' ],
 
         # Viewport.
         viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
@@ -135,12 +142,14 @@ as of version 6.99 is as follows::
         viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
+        viewport_pageup = [ 'K_PAGEUP', 'repeat_K_PAGEUP' ],
+        viewport_pagedown = [ 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
 
         # These keys control skipping.
         skip = [ 'K_LCTRL', 'K_RCTRL' ],
         stop_skipping = [ ],
         toggle_skip = [ 'K_TAB' ],
-        fast_skip = [ '>' ],
+        fast_skip = [ '>', 'shift_K_PERIOD' ],
 
         # Bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
@@ -158,9 +167,12 @@ as of version 6.99 is as follows::
         drag_deactivate = [ 'mouseup_1' ],
 
         # Debug console.
-        console = [ 'shift_O' ],
+        console = [ 'shift_K_o', 'alt_shift_K_o' ],
         console_older = [ 'K_UP', 'repeat_K_UP' ],
         console_newer = [ 'K_DOWN', 'repeat_K_DOWN'],
+
+        # Director
+        director = [ 'noshift_K_d' ],
 
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
@@ -168,10 +180,12 @@ as of version 6.99 is as follows::
         viewport_down = [ 'mousedown_5' ],
 
         # Profile commands.
+        performance = [ 'K_F3' ],
+        image_load_log = [ 'K_F4' ],
         profile_once = [ 'K_F8' ],
         memory_profile = [ 'K_F7' ],
 
-        )
+    )
 
 Gamepad bindings work a little differently. Gamepad bindings work by mapping
 a gamepad event to one or more Ren'Py event names. The default set of

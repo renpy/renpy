@@ -13,7 +13,7 @@ translate russian start_d48fb984:
 # game/script.rpy:23
 translate russian start_622654e3:
 
-    # "I've had a lot of other thoughts on my mind…thoughts that culminate in a question."
+    # "I've had a lot of other thoughts on my mind...thoughts that culminate in a question."
     "У меня было много разных мыслей в голове… и все эти мысли кульминировались вопросом."
 
 # game/script.rpy:25
@@ -37,7 +37,7 @@ translate russian start_1d44d9d7:
 # game/script.rpy:37
 translate russian start_1c8af99f:
 
-    # "But recently… I've felt that I want something more."
+    # "But recently... I've felt that I want something more."
     "Но в последнее время… Я почувствовал, что мне хочется чего-то большего."
 
 # game/script.rpy:39
@@ -55,7 +55,7 @@ translate russian rightaway_cf214f74:
 # game/script.rpy:60
 translate russian rightaway_f5f51c33:
 
-    # m "Good…"
+    # m "Good..."
     m "Хорошо…"
 
 # game/script.rpy:62
@@ -97,7 +97,7 @@ translate russian rightaway_8f173bb5:
 # game/script.rpy:77
 translate russian rightaway_aa84c954:
 
-    # m "Hey… Umm…"
+    # m "Hey... Umm..."
     m "Эй… Эмм…"
 
 # game/script.rpy:82
@@ -109,13 +109,13 @@ translate russian rightaway_79becbf8:
 # game/script.rpy:84
 translate russian rightaway_6a5d032c:
 
-    # "I'll ask her…!"
+    # "I'll ask her...!"
     "Я спрошу её..!"
 
 # game/script.rpy:86
 translate russian rightaway_29e68260:
 
-    # m "Ummm… Will you…"
+    # m "Ummm... Will you..."
     m "Эммм… Хотела бы ты…"
 
 # game/script.rpy:88
@@ -133,7 +133,7 @@ translate russian rightaway_16b8cb94:
 # game/script.rpy:94
 translate russian rightaway_289664f3:
 
-    # "She looks so shocked that I begin to fear the worst. But then…"
+    # "She looks so shocked that I begin to fear the worst. But then..."
     "Она выглядела столь шокированной, что я начал бояться худшего. Но затем…"
 
 # game/script.rpy:98
@@ -175,7 +175,7 @@ translate russian game_fa834128:
 # game/script.rpy:121
 translate russian game_d9b28ade:
 
-    # m "And I thought maybe you could help me…since I know how you like to draw."
+    # m "And I thought maybe you could help me...since I know how you like to draw."
     m "И я думал, что ты могла бы помочь мне… так как я знаю, как тебе нравится рисовать."
 
 # game/script.rpy:123
@@ -235,7 +235,7 @@ translate russian book_2277f2aa:
 # game/script.rpy:154
 translate russian book_ccd3e9b0:
 
-    # m "That's great! So…would you be interested in working with me as an artist?"
+    # m "That's great! So...would you be interested in working with me as an artist?"
     m "Это отлично! Так… ты хочешь работать со мной в качестве художницы?"
 
 # game/script.rpy:156
@@ -271,13 +271,13 @@ translate russian marry_285256a1:
 # game/script.rpy:178
 translate russian marry_27260f18:
 
-    # "And one day…"
+    # "And one day..."
     "И в один день…"
 
 # game/script.rpy:183
 translate russian marry_bf690666:
 
-    # s "Hey…"
+    # s "Hey..."
     s "Эй…"
 
 # game/script.rpy:185
@@ -307,13 +307,13 @@ translate russian marry_f913278c:
 # game/script.rpy:197
 translate russian marry_4ba892a0:
 
-    # m "A while…"
+    # m "A while..."
     m "Некоторое время…"
 
 # game/script.rpy:201
 translate russian marry_39d7f0df:
 
-    # s "These last few years we've been making visual novels together, spending time together, helping each other…"
+    # s "These last few years we've been making visual novels together, spending time together, helping each other..."
     s "Последнюю пару лет мы делаем визуальные новеллы и проводим время вместе, помогаем друг другу…"
 
 # game/script.rpy:203
@@ -325,7 +325,7 @@ translate russian marry_1516df50:
 # game/script.rpy:205
 translate russian marry_3234b0ab:
 
-    # m "Sylvie…"
+    # m "Sylvie..."
     m "Сильви…"
 
 # game/script.rpy:209
@@ -355,7 +355,7 @@ translate russian marry_81ed468b:
 # game/script.rpy:219
 translate russian marry_1c4ae954:
 
-    # m "I guess… I was too worried about timing. I wanted to ask the right question at the right time."
+    # m "I guess... I was too worried about timing. I wanted to ask the right question at the right time."
     m "Думаю… Я просто слишком волновался о времени. Я хотел задать правильный вопрос в правильное время."
 
 # game/script.rpy:223
@@ -373,7 +373,7 @@ translate russian marry_ca27786f:
 # game/script.rpy:230
 translate russian marry_621ed4fc:
 
-    # "Our visual novel duo lives on even after we're married…and I try my best to be more decisive."
+    # "Our visual novel duo lives on even after we're married...and I try my best to be more decisive."
     "Наш дуэт разработки жил и после нашей свадьбы… и я изо всех сил старался стать решительнее."
 
 # game/script.rpy:232
@@ -409,7 +409,7 @@ translate russian later_982e14b6:
 # game/script.rpy:249
 translate russian later_f0f9a061:
 
-    # "I guess I'll never know the answer to my question now…"
+    # "I guess I'll never know the answer to my question now..."
     "Полагаю, теперь я никогда не узнаю ответ на мой вопрос…"
 
 # game/script.rpy:251

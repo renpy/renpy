@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,10 +19,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 
 # Allow pickling NoneType.
-import __builtin__
-__builtin__.NoneType = type(None)
+if PY2:
+    import __builtin__
+    __builtin__.NoneType = type(None)
+else:
+    import builtins
+    builtins.NoneType = type(None)
 
 
 class Object(object):
@@ -77,7 +84,7 @@ class Sentinel(object):
         rv = sentinels.get(name, None)
 
         if rv is None:
-            rv = object.__new__(cls, name)
+            rv = object.__new__(cls)
             sentinels[name] = rv
 
         return rv

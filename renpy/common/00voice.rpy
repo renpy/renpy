@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -170,8 +170,8 @@ init -1500 python:
         :doc: voice_action
 
         This allows the volume of each characters to be adjusted.
-        If `volume` is None, this returns the value of volume of `voice_tag`.
-        Otherwise, this set it to `volume`.
+        If `volume` is None, this returns a BarValue that
+        controls the value of `voice_tag`. Otherwise, this set it to `volume`.
 
         `volume` is a number between 0.0 and 1.0, and is interpreted as a
         fraction of the mixer volume for `voice` channel.
@@ -185,6 +185,17 @@ init -1500 python:
         else:
             return SetDict(persistent._character_volume, voice_tag, volume)
 
+    def GetCharacterVolume(voice_tag):
+        """
+        :doc: preference_functions
+
+        This returns the volume associated with voice tag, a number
+        between 0.0 and 1.0, which is interpreted as a fraction of the
+        mixer volume for the `voice` channel.
+        """
+
+        return persistent._character_volume.get(voice_tag, 1.0)
+
     @renpy.pure
     class PlayCharacterVoice(Action, FieldEquality):
         """
@@ -197,7 +208,7 @@ init -1500 python:
             The full path to a sound file. No voice-related handling
             of this file is done.
 
-         selected`
+        `selected`
             If True, buttons using this action will be marked as selected
             while the sample is playing.
         """
@@ -305,16 +316,22 @@ init -1500 python:
             self.tag = _voice.tag
 
             if not self.filename and config.auto_voice:
-                tlid = renpy.game.context().translate_identifier
 
-                if tlid is not None:
+                for tlid in [
+                    renpy.game.context().translate_identifier,
+                    renpy.game.context().alternate_translate_identifier,
+                    renpy.game.context().deferred_translate_identifier,
+                    ]:
+
+                    if tlid is None:
+                        continue
 
                     if isinstance(config.auto_voice, (str, unicode)):
                         fn = config.auto_voice.format(id=tlid)
                     else:
                         fn = config.auto_voice(tlid)
 
-                    _voice.auto_filename = fn
+                    self.auto_filename = fn
 
                     if fn and renpy.loadable(fn):
 
@@ -323,7 +340,9 @@ init -1500 python:
                         else:
                             self.filename = fn
 
-                self.tlid = tlid
+                        break
+
+            self.tlid = renpy.game.context().translate_identifier or renpy.game.context().deferred_translate_identifier
 
             if self.filename:
                 self.sustain = False
@@ -409,7 +428,14 @@ init -1500 python hide:
             renpy.sound.stop(channel="voice")
             return
 
+        if _preferences.voice_sustain and not _voice.sustain:
+            _voice.sustain = "preference"
+
+        if _voice.play:
+            _voice.sustain = False
+
         vi = VoiceInfo()
+
         if not _voice.sustain:
             _voice.info = vi
 
@@ -417,6 +443,8 @@ init -1500 python hide:
             _voice.play = vi.filename
         else:
             _voice.play = None
+
+        renpy.game.context().deferred_translate_identifier = None
 
         _voice.auto_file = vi.auto_filename
         _voice.sustain = vi.sustain
@@ -444,9 +472,6 @@ init -1500 python hide:
         _voice.play = None
         _voice.sustain = False
         _voice.tag = None
-
-        if _preferences.voice_sustain and not _voice.sustain:
-            _voice.sustain = "preference"
 
     config.start_interact_callbacks.append(voice_interact)
     config.fast_skipping_callbacks.append(voice_interact)
@@ -506,8 +531,17 @@ python early hide:
         return fn
 
     def execute_voice(fn):
-        fn = eval(fn)
+        fn = _audio_eval(fn)
         voice(fn)
+
+    def predict_voice(fn):
+        if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+            fn = config.voice_filename_format.format(filename=_audio_eval(fn))
+            try:
+                renpy.loader.load(fn)
+            except renpy.webloader.DownloadNeeded as exception:
+                renpy.webloader.enqueue(exception.relpath, 'voice', None)
+        return [ ]
 
     def lint_voice(fn):
         _voice.seen_in_lint = True
@@ -527,6 +561,7 @@ python early hide:
     renpy.statements.register('voice',
                               parse=parse_voice,
                               execute=execute_voice,
+                              predict=predict_voice,
                               lint=lint_voice,
                               translatable=True)
 

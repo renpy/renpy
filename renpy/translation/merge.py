@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,11 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import absolute_import, division, print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
 import json
-import io
 
 
 def merge_strings():
@@ -47,7 +47,7 @@ def merge_strings():
     if language not in renpy.game.script.translator.strings:  # @UndefinedVariable
         raise Exception("Language %r does not have any translations." % language)
 
-    with io.open(args.source, "r", encoding="utf-8") as f:
+    with open(args.source, "r", encoding="utf-8") as f:
         data = json.loads(f.read())
 
     if args.reverse:

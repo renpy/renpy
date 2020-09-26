@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -166,9 +166,54 @@ init -1900 python:
             config.cache_surfaces = True
             config.optimize_texture_bounds = False
 
+        if version <= (6, 99, 14, 3):
+            config.late_images_scan = True
+            config.dissolve_force_alpha = False
+            config.replay_movie_sprites = False
+
+        if version <= (7, 0, 0):
+            config.reject_relative = False
+            config.say_attributes_use_side_image = False
+
+        if version <= (7, 1, 0):
+            config.menu_showed_window = True
+            config.window_auto_show = [ "say" ]
+            config.window_auto_hide = [ "scene", "call screen" ]
+
+        if version <= (7, 1, 1):
+            config.menu_actions = False
+
+        if version <= (7, 2, 2):
+            config.say_attribute_transition_callback_attrs = False
+            config.keep_side_render_order = False
+
+        if version <= (7, 3, 0):
+            config.force_sound = False
+
+        if version <= (7, 3, 2):
+            config.audio_directory = None
+            config.early_start_store = True
+
+        if version <= (7, 3, 5):
+            config.side_image_requires_attributes = False
+
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
+
+python early hide:
+    try:
+        import ast
+        script_version = renpy.file("script_version.txt").read()
+        script_version = ast.literal_eval(script_version)
+
+        if script_version <= (7, 2, 2):
+            config.keyword_after_python = True
+
+    except:
+        pass
+
 
 init -1000 python hide:
     try:
@@ -195,7 +240,7 @@ init -1000 python hide:
     except:
         pass
 
-init 1900 python hide::
+init 1900 python hide:
 
     # This returns true if the script_version is <= the
     # script_version supplied. Give it the last script version
@@ -259,5 +304,3 @@ init 1900 python hide::
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
         config.default_afm_enable = None
-
-

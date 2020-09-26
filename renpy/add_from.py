@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,10 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import collections
 import renpy
 import os
-import codecs
 
 # A map from filename to position, target label pairs.
 missing = collections.defaultdict(list)
@@ -32,9 +34,6 @@ def report_missing(target, filename, position):
     """
     Reports that the call statement ending at `position` in `filename`
     is missing a from clause.
-
-    `target`
-        The string
     """
 
     missing[filename].append((position, target))
@@ -48,6 +47,8 @@ def generate_label(target):
     """
     Generate a reasonable and unique new label for a call to `target`.
     """
+
+    target = target.replace(".", "_")
 
     n = 0
 
@@ -77,8 +78,8 @@ def process_file(fn):
     edits = missing[fn]
     edits.sort()
 
-    with codecs.open(fn, "r", "utf-8") as f:
-        data = f.read()
+    with open(fn, "rb") as f:
+        data = f.read().decode("utf-8")
 
     # How much of the input has been consumed.
     consumed = 0
@@ -94,8 +95,8 @@ def process_file(fn):
 
     output += data[consumed:]
 
-    with codecs.open(fn + ".new", "w", "utf-8") as f:
-        f.write(output)
+    with open(fn + ".new", "wb") as f:
+        f.write(output.encode("utf-8"))
 
     try:
         os.unlink(fn + ".bak")
@@ -115,5 +116,6 @@ def add_from():
             process_file(fn)
 
     return False
+
 
 renpy.arguments.register_command("add_from", add_from)

@@ -318,12 +318,14 @@ screen navigation():
 
         textbutton _("About") action ShowMenu("about")
 
-        if renpy.variant("pc"):
+        if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
 
             ## Help isn't necessary or relevant to mobile devices.
             textbutton _("Help") action ShowMenu("help")
 
-            ## The quit button is banned on iOS and unnecessary on Android.
+        if renpy.variant("pc"):
+
+            ## The quit button is banned on iOS and unnecessary on Android and Web.
             textbutton _("Quit") action Quit(confirm=not main_menu)
 
 
@@ -436,6 +438,7 @@ screen game_menu(title, scroll=None):
                         scrollbars "vertical"
                         mousewheel True
                         draggable True
+                        pagekeys True
 
                         side_yfill True
 
@@ -451,6 +454,7 @@ screen game_menu(title, scroll=None):
                         scrollbars "vertical"
                         mousewheel True
                         draggable True
+                        pagekeys True
 
                         side_yfill True
 
@@ -593,10 +597,6 @@ screen about():
             text _("\nMade with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]")
             null height 15
             text _("[renpy.license!t]") size 20
-
-
-## This is redefined in options.rpy to add text to the about screen.
-define gui.about = ""
 
 
 style about_label is gui_label
@@ -767,7 +767,7 @@ screen preferences():
             hbox:
                 box_wrap True
 
-                if renpy.variant("pc"):
+                if renpy.variant("pc") or renpy.variant("web"):
 
                     vbox:
                         style_prefix "radio"
@@ -789,16 +789,25 @@ screen preferences():
                     textbutton _("After Choices") action Preference("after choices", "toggle")
                     textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
 
+                if renpy.loadable("../../launcher/game/fonts/SourceHanSansLite.ttf"):
+
 #begin language_picker
-                ## Additional vboxes of type "radio_pref" or "check_pref" can be
-                ## added here, to add additional creator-defined preferences.
+                    ## Additional vboxes of type "radio_pref" or "check_pref" can be
+                    ## added here, to add additional creator-defined preferences.
 
-                vbox:
-                    style_prefix "radio"
-                    label _("Language")
+                    vbox:
+                        style_prefix "radio"
+                        label _("Language")
 
-                    textbutton "English" text_font "DejaVuSans.ttf"action Language(None)
-                    textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+                        textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
+                        textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
+                        textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+                        textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
+                        textbutton "한국어" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("korean")
+                        textbutton "简体中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("simplified_chinese")
+                        textbutton "繁體中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("traditional_chinese")
+                        textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
+                        textbutton "日本語" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("japanese")
 
 #end language_picker
 
@@ -895,7 +904,7 @@ style radio_vbox:
 
 style radio_button:
     properties gui.button_properties("radio_button")
-    foreground "gui/button/check_[prefix_]foreground.png"
+    foreground "gui/button/radio_[prefix_]foreground.png"
 
 style radio_button_text:
     properties gui.button_text_properties("radio_button")
@@ -956,17 +965,21 @@ screen history():
 
                     label h.who:
                         style "history_name"
+                        substitute False
 
                         ## Take the color of the who text from the Character, if
                         ## set.
                         if "color" in h.who_args:
                             text_color h.who_args["color"]
 
-                text h.what
+                $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                text what:
+                    substitute False
 
         if not _history_list:
             label _("The dialogue history is empty.")
 
+define gui.history_allow_tags = set()
 
 style history_window is empty
 
@@ -1516,4 +1529,3 @@ style slider_pref_slider:
 style main_menu_vbox:
     variant "small"
     xsize 900
-

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -35,7 +35,7 @@ init -1400 python:
 
     class Layout():
         def __call__(self, func):
-            setattr(self, func.func_name, func)
+            setattr(self, func.__name__, func)
             return func
 
     layout = _layout =  Layout()
@@ -139,7 +139,7 @@ init -1400 python hide:
         if renpy.has_screen("joystick_preferences"):
             defaults["joystick_preferences"] = layout.screen_joystick_preferences
 
-        for k, v in defaults.iteritems():
+        for k, v in defaults.items():
             if k not in layout.provided:
                 v()
 

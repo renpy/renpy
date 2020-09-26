@@ -25,6 +25,8 @@
 
 init offset = -1101
 
+default persistent._director_bottom = False
+
 init python in director:
     from store import Action, config
     import store
@@ -37,6 +39,10 @@ init python in director:
 
     # The set of tags that should only be used with the show statement.
     show_tags = set()
+
+    # Should we try to filter out tags that have other tags as their
+    # prefix (as are used alot in layerimages)?
+    blacklist_prefixed_tags = True
 
     # A list of transforms to use.
     transforms = [ "left", "center", "right" ]
@@ -413,23 +419,22 @@ init python in director:
         """
 
         if state.kind is None:
-            return None
+            rv = None
 
         elif state.kind == "with":
-            return "with {}".format(state.transition)
+            rv = "with {}".format(state.transition)
 
         elif state.kind in ("play", "queue"):
-            return get_play_queue_statement()
+            rv = get_play_queue_statement()
 
         elif state.kind == "stop":
-            return get_stop_statement()
+            rv = get_stop_statement()
 
         elif state.kind == "voice":
-            return get_voice_statement()
+            rv = get_voice_statement()
 
         else:
-            return get_scene_show_hide_statement()
-
+            rv = get_scene_show_hide_statement()
 
         return rv
 
@@ -1304,6 +1309,9 @@ init python in director:
             if rv is not None:
                 return rv
 
+            if ev.type == renpy.display.core.TIMEEVENT:
+                return None
+
             if state.mode != "lines":
 
                 if renpy.map_event(ev, "rollback") or renpy.map_event(ev, "rollforward"):
@@ -1344,7 +1352,7 @@ init python in director:
 
         return tuple(rv)
 
-init 1101 python hide in director:
+init 2202 python hide in director:
 
     if state.active:
 
@@ -1379,6 +1387,31 @@ init 1101 python hide in director:
 
             audio_files[c].sort()
 
+    if blacklist_prefixed_tags:
+
+        available = set()
+
+        for i in sorted(renpy.get_available_image_tags()):
+
+            blacklist = False
+
+            prefix = i
+
+            while prefix:
+                prefix, _, _  = prefix.rpartition("_")
+                if prefix in available:
+                    blacklist = True
+
+            if i in scene_tags:
+                blacklist = False
+            if i in show_tags:
+                blacklist = False
+
+            if blacklist:
+                tag_blacklist.add(i)
+            else:
+                available.add(i)
+
 
 
 # Styles and screens ###########################################################
@@ -1386,9 +1419,16 @@ init 1101 python hide in director:
 style director_frame is _frame:
     xfill True
     yfill False
-    background "#d0d0d0d0"
     ypadding 0
+
+style director_top_frame is director_frame:
+    background "#d0d0d0d0"
     yalign 0.0
+
+style director_bottom_frame is director_frame:
+    background "#d0d0d0f0"
+    yalign 1.0
+
 
 style director_text is _text:
     size 18
@@ -1406,7 +1446,6 @@ style director_button_text is director_text:
     insensitive_color "#00000020"
     selected_color "#0099cc"
 
-
 style director_edit_button is director_button:
     xsize 18
 
@@ -1419,6 +1458,12 @@ style director_action_button is director_button
 style director_action_button_text is director_button_text:
     size 26
 
+style director_icon_action_button is director_action_button:
+    xpadding 10
+
+style director_icon_action_button_text is director_action_button_text:
+    font "DejaVuSans.ttf"
+
 style director_statement_text is director_text:
     size 20
 
@@ -1429,6 +1474,20 @@ style director_statement_button_text is director_button_text:
 
 style director_vscrollbar is _vscrollbar
 
+screen director_move_button():
+
+    if persistent._director_bottom:
+
+        textbutton _("⬆"):
+            style "director_icon_action_button"
+            action SetField(persistent, "_director_bottom", False)
+            xalign 1.0
+    else:
+
+        textbutton _("⬇"):
+            style "director_icon_action_button"
+            action SetField(persistent, "_director_bottom", True)
+            xalign 1.0
 
 screen director_lines(state):
 
@@ -1483,13 +1542,17 @@ screen director_lines(state):
 
         null height 14
 
-        hbox:
-            xpos (gui._scale(300) + 30)
-            yalign 1.0
+        fixed:
+            yfit True
 
-            textbutton _("Done"):
-                action director.Stop()
-                style "director_action_button"
+            hbox:
+                xpos (gui._scale(300) + 30)
+
+                textbutton _("Done"):
+                    action director.Stop()
+                    style "director_action_button"
+
+            use director_move_button()
 
 
 
@@ -1555,21 +1618,27 @@ screen director_footer(state):
 
     null height 14
 
-    hbox:
-        style_prefix "director_action"
+    fixed:
 
-        spacing 26
+        yfit True
 
-        if state.change:
-            textbutton _("Change") action director.Commit()
-        else:
-            textbutton _("Add") action director.Commit()
+        hbox:
+            style_prefix "director_action"
+
+            spacing 26
+
+            if state.change:
+                textbutton _("Change") action director.Commit()
+            else:
+                textbutton _("Add") action director.Commit()
 
 
-        textbutton _("Cancel") action director.Cancel()
+            textbutton _("Cancel") action director.Cancel()
 
-        if state.change:
-            textbutton _("Remove") action director.Remove()
+            if state.change:
+                textbutton _("Remove") action director.Remove()
+
+        use director_move_button()
 
 
 # Formats the choices.
@@ -1755,6 +1824,9 @@ screen director():
 
     frame:
         style_prefix "director"
+
+        style ("director_bottom_frame" if persistent._director_bottom else "director_top_frame")
+
         xpadding ( 0 if state.mode == "lines" else gui._scale(20) )
 
         at director.SemiModal

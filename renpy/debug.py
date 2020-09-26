@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,17 +22,21 @@
 # This file contains debugging code that isn't enabled in normal Ren'Py
 # operation.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy
-import __builtin__
 import threading
 import datetime
 import traceback
 import os
+import builtins
+import io
 
-real_open = __builtin__.open
-__builtin__.real_file = __builtin__.file
+if PY2:
+    real_open = io.open
+else:
+    real_open = builtins.open
 
 report = True
 
@@ -69,5 +73,4 @@ def init_main_thread_open():
     if not "RENPY_DEBUG_MAIN_THREAD_OPEN" in os.environ:
         return
 
-    __builtin__.open = replacement_open
-    __builtin__.file = replacement_open
+    builtins.open = replacement_open

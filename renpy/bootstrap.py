@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import os.path
 import sys
 import subprocess
@@ -27,18 +29,20 @@ import io
 
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
-# Sets the default encoding to the filesystem encoding.
+# Sets the default encoding to utf-8.
 old_stdout = sys.stdout
 old_stderr = sys.stderr
 
-reload(sys)
-sys.setdefaultencoding(FSENCODING)  # @UndefinedVariable
+if PY2:
+    sys_executable = sys.executable
+    reload(sys)
+    sys.setdefaultencoding("utf-8") # @UndefinedVariable
+    sys.executable = sys_executable
 
 sys.stdout = old_stdout
 sys.stderr = old_stderr
 
 import renpy.error
-
 
 # Extra things used for distribution.
 
@@ -66,7 +70,7 @@ def extra_imports():
     import difflib; difflib
     import shutil; shutil
     import tarfile; tarfile
-    import bz2; bz2  # @UnresolvedImport
+    import bz2; bz2 # @UnresolvedImport
     import webbrowser; webbrowser
     import posixpath; posixpath
     import ctypes; ctypes
@@ -86,6 +90,16 @@ def extra_imports():
     import cProfile; cProfile
     import pstats; pstats
     import _ssl; _ssl
+    import SimpleHTTPServer; SimpleHTTPServer
+    import wave; wave
+    import sunau; sunau
+
+    # Used by requests.
+    import cgi; cgi
+    import Cookie; Cookie
+    import hmac; hmac
+    import Queue; Queue
+    import uuid; uuid
 
 
 class NullFile(io.IOBase):
@@ -113,14 +127,13 @@ def null_files():
 
 null_files()
 
-
 trace_file = None
 trace_local = None
 
 
 def trace_function(frame, event, arg):
     fn = os.path.basename(frame.f_code.co_filename)
-    print(fn, frame.f_lineno, frame.f_code.co_name, event, file=trace_file)
+    trace_file.write("{} {} {} {}\n".format(fn, frame.f_lineno, frame.f_code.co_name, event))
     return trace_local
 
 
@@ -128,7 +141,7 @@ def enable_trace(level):
     global trace_file
     global trace_local
 
-    trace_file = file("trace.txt", "w", 1)
+    trace_file = open("trace.txt", "w", buffering=1, encoding="utf-8")
 
     if level > 1:
         trace_local = trace_function
@@ -150,21 +163,24 @@ def popen_del(self, *args, **kwargs):
 
 def bootstrap(renpy_base):
 
-    global renpy  # W0602
+    global renpy # W0602
 
-    import renpy.log  # @UnusedImport
+    import renpy.log # @UnusedImport
 
     # Remove a legacy environment setting.
-    if os.environ.get(b"SDL_VIDEODRIVER", "") == "windib":
-        del os.environ[b"SDL_VIDEODRIVER"]
+    if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
+        del os.environ["SDL_VIDEODRIVER"]
 
-    renpy_base = unicode(renpy_base, FSENCODING, "replace")
+    if not isinstance(renpy_base, str):
+        renpy_base = str(renpy_base, FSENCODING, "replace")
 
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
         evars = { }
-        execfile(renpy_base + "/environment.txt", evars)
-        for k, v in evars.iteritems():
+        with open(renpy_base + "/environment.txt", "r") as f:
+            code = compile(f.read(), renpy_base + "/environment.txt", 'exec')
+            exec(code, evars)
+        for k, v in evars.items():
             if k not in os.environ:
                 os.environ[k] = str(v)
 
@@ -172,12 +188,14 @@ def bootstrap(renpy_base):
     # .app file.), if on a mac.
     alt_path = os.path.abspath("renpy_base")
     if ".app" in alt_path:
-        alt_path = alt_path[:alt_path.find(".app")+4]
+        alt_path = alt_path[:alt_path.find(".app") + 4]
 
         if os.path.exists(alt_path + "/environment.txt"):
             evars = { }
-            execfile(alt_path + "/environment.txt", evars)
-            for k, v in evars.iteritems():
+            with open(alt_path + "/environment.txt", "rb") as f:
+                code = compile(f.read(), alt_path + "/environment.txt", 'exec')
+                exec(code, evars)
+            for k, v in evars.items():
                 if k not in os.environ:
                     os.environ[k] = str(v)
 
@@ -195,7 +213,9 @@ def bootstrap(renpy_base):
         enable_trace(args.trace)
 
     if args.basedir:
-        basedir = os.path.abspath(args.basedir).decode(FSENCODING)
+        basedir = os.path.abspath(args.basedir)
+        if not isinstance(basedir, str):
+            basedir = basedir.decode(FSENCODING)
     else:
         basedir = renpy_base
 
@@ -259,7 +279,7 @@ You may be using a system install of python. Please run {0}.sh,
 
     # If we're not given a command, show the presplash.
     if args.command == "run" and not renpy.mobile:
-        import renpy.display.presplash  # @Reimport
+        import renpy.display.presplash # @Reimport
         renpy.display.presplash.start(basedir, gamedir)
 
     # Ditto for the Ren'Py module.
@@ -277,7 +297,7 @@ You may be using a system install of python. Please run {0}.sh,
 
     # Load up all of Ren'Py, in the right order.
 
-    import renpy  # @Reimport
+    import renpy # @Reimport
     renpy.import_all()
 
     renpy.loader.init_importer()
@@ -345,6 +365,9 @@ You may be using a system install of python. Please run {0}.sh,
         if renpy.display.draw:
             renpy.display.draw.quit()
 
+        renpy.audio.audio.quit()
+
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
-        subprocess.Popen.__del__ = popen_del
+        if not renpy.emscripten:
+            subprocess.Popen.__del__ = popen_del

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -18,6 +18,9 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 from renpy.display.render import render, Render, Matrix2D
@@ -139,7 +142,7 @@ class Frame(renpy.display.core.Displayable):
     :name: Frame
 
     A displayable that resizes an image to fill the available area,
-    while preserving the width and height of its borders.  is often
+    while preserving the width and height of its borders. It is often
     used as the background of a window or button.
 
     .. figure:: frame_example.png
@@ -150,8 +153,8 @@ class Frame(renpy.display.core.Displayable):
         An image manipulator that will be resized by this frame.
 
     `left`
-        The size of the border on the left side. This can also be an
-        :func:`Borders` object, in which case that object is use in place
+        The size of the border on the left side. This can also be a
+        :func:`Borders` object, in which case that object is used in place
         of the other parameters.
 
     `top`
@@ -165,8 +168,10 @@ class Frame(renpy.display.core.Displayable):
         The side of the border on the bottom. If None, defaults to `top`.
 
     `tile`
-        If true, tiling is used to resize sections of the image,
-        rather than scaling.
+        If set to True, tiling is used to resize sections of the image,
+        rather than scaling. If set to the string "integer", the nearest
+        integer number of tiles will be used in each direction. That set of
+        full tiles will then be scaled up or down to fit the required area.
 
     ::
 
@@ -178,6 +183,7 @@ class Frame(renpy.display.core.Displayable):
     __version__ = 1
 
     properties = { }
+    tile_ratio = 0.5
 
     def after_upgrade(self, version):
         if version < 2:
@@ -186,7 +192,9 @@ class Frame(renpy.display.core.Displayable):
             self.top = self.yborder
             self.bottom = self.yborder
 
-    def __init__(self, image, left=None, top=None, right=None, bottom=None, xborder=0, yborder=0, bilinear=True, tile=False, **properties):
+    def __init__(self, image, left=None, top=None, right=None, bottom=None,
+                 xborder=0, yborder=0, bilinear=True, tile=False,
+                 tile_ratio=0.5, **properties):
         super(Frame, self).__init__(**properties)
 
         self.image = renpy.easy.displayable(image)
@@ -201,6 +209,9 @@ class Frame(renpy.display.core.Displayable):
             bottom = insets.bottom
 
         self.tile = tile
+        # When tile="integer" the proportion of an edge tile that determines
+        # whether to use less tiles and stretch or more tiles and shrink
+        self.tile_ratio = float(tile_ratio)
 
         # Compat for old argument names.
         if left is None:
@@ -225,7 +236,9 @@ class Frame(renpy.display.core.Displayable):
             self.top,
             self.right,
             self.bottom,
-            " tile" if self.tile else "")
+            (" tile ({})".format(self.tile_ratio) if self.tile == "integer"
+             else " tile" if self.tile
+             else ""))
 
     def __eq__(self, o):
         if not self._equals(o):
@@ -244,6 +257,9 @@ class Frame(renpy.display.core.Displayable):
             return False
 
         if self.tile != o.tile:
+            return False
+
+        if self.tile_ratio != o.tile_ratio:
             return False
 
         return True
@@ -268,16 +284,16 @@ class Frame(renpy.display.core.Displayable):
 
         xborder = min(bw, sw - 2, dw)
         if xborder and bw:
-            left = self.left * xborder / bw
-            right = self.right * xborder / bw
+            left = self.left * xborder // bw
+            right = self.right * xborder // bw
         else:
             left = 0
             right = 0
 
         yborder = min(bh, sh - 2, dh)
         if yborder and bh:
-            top = self.top * yborder / bh
-            bottom = self.bottom * yborder / bh
+            top = self.top * yborder // bh
+            bottom = self.bottom * yborder // bh
         else:
             top = 0
             bottom = 0
@@ -343,18 +359,36 @@ class Frame(renpy.display.core.Displayable):
             if csw != cdw or csh != cdh:
 
                 if self.tile:
-                    newcr = Render(cdw, cdh)
+                    ctw, cth = cdw, cdh
+
+                    xtiles = max(1, cdw // csw + (1 if cdw % csw else 0))
+                    ytiles = max(1, cdh // csh + (1 if cdh % csh else 0))
+
+                    if cdw % csw or cdh % csh:
+                        # Area is not an exact integer number of tiles
+
+                        if self.tile == "integer":
+                            if cdw % csw / float(csw) < self.tile_ratio:
+                                xtiles = max(1, xtiles-1)
+                            if cdh % csh / float(csh) < self.tile_ratio:
+                                ytiles = max(1, ytiles-1)
+
+                            # Set size of the used tiles (ready to scale)
+                            ctw, cth = csw * xtiles, csh * ytiles
+
+                    newcr = Render(ctw, cth)
                     newcr.xclipping = True
                     newcr.yclipping = True
 
-                    for x in xrange(0, cdw, csw):
-                        for y in xrange(0, cdh, csh):
-                            newcr.blit(cr, (x, y))
+                    for x in range(0, xtiles):
+                        for y in range(0, ytiles):
+                            newcr.blit(cr, (x * csw, y * csh))
 
+                    csw, csh = ctw, cth
                     cr = newcr
 
-                else:
-
+                if csw != cdw or csh != cdh:
+                    # Subsurface needs scaling
                     newcr = Render(cdw, cdh)
                     newcr.forward = Matrix2D(1.0 * csw / cdw, 0, 0, 1.0 * csh / cdh)
                     newcr.reverse = Matrix2D(1.0 * cdw / csw, 0, 0, 1.0 * cdh / csh)
@@ -463,19 +497,42 @@ class Frame(renpy.display.core.Displayable):
 
             # Scale or tile if we have to.
             if dstsize != srcsize:
+
                 if self.tile:
                     tilew, tileh = srcsize
                     dstw, dsth = dstsize
 
-                    surf2 = renpy.display.pgrender.surface_unscaled(dstsize, surf)
+                    xtiles = max(
+                        1, dstw // tilew + (1 if dstw % tilew else 0))
+                    ytiles = max(
+                        1, dsth // tileh + (1 if dsth % tileh else 0))
 
-                    for y in range(0, dsth, tileh):
-                        for x in range(0, dstw, tilew):
-                            surf2.blit(surf, (x, y))
+                    if dstw % tilew or dsth % tileh:
+                        # Area is not an exact integer number of tiles
 
-                    surf = surf2
+                        if self.tile == "integer":
+                            if dstw % tilew / float(tilew) < self.tile_ratio:
+                                xtiles = max(1, xtiles-1)
+                            if dsth % tileh / float(tileh) < self.tile_ratio:
+                                ytiles = max(1, ytiles-1)
 
-                else:
+                    # Tile at least one tile in each direction
+                    surf2 = renpy.display.pgrender.surface_unscaled(
+                        (tilew * xtiles, tileh * ytiles), surf)
+
+                    for y in range(0, ytiles):
+                        for x in range(0, xtiles):
+                            surf2.blit(surf, (x*tilew, y*tileh))
+
+                    if self.tile is True:
+                        # Trim the tiled surface to required size
+                        surf = surf2.subsurface((0, 0, dstw, dsth))
+                    else:
+                        # Using integer full 'tiles' per side
+                        srcsize = (tilew * xtiles, tileh * ytiles)
+                        surf = surf2
+
+                if dstsize != srcsize:
                     surf2 = renpy.display.scale.real_transform_scale(surf, dstsize)
                     surf = surf2
 
@@ -515,12 +572,9 @@ class Frame(renpy.display.core.Displayable):
         return rv
 
     def visit(self):
-        return [ ]
-
-    def predict_one(self):
-        pd = renpy.display.predict.displayable
-        self.style._predict_frame(pd)
-        pd(self.image)
+        rv = [ ]
+        self.style._visit_frame(rv)
+        return rv
 
 
 class FileCurrentScreenshot(renpy.display.core.Displayable):

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,19 +19,18 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import absolute_import
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
-import renpy  # @UnusedImport
+import renpy # @UnusedImport
 from renpy.python import py_compile
 
 # Import the Python AST module, instead of the Ren'Py ast module.
 import ast
 
 import zlib
-from cPickle import loads, dumps
+
+from renpy.compat.pickle import loads, dumps
 
 # The set of names that should be treated as constants.
 always_constants = { 'True', 'False', 'None' }
@@ -52,6 +51,10 @@ pure_functions = {
     # minstore.py
     "_",
     "_p",
+    "absolute",
+    "__renpy__list__",
+    "__renpy__dict__",
+    "__renpy__set__",
 
     # defaultstore.py
     "ImageReference", "Image", "Frame", "Solid", "LiveComposite", "LiveCrop",
@@ -141,6 +144,8 @@ def pure(fn):
     `fn`
         The name of the function to declare pure. This may either be a string
         containing the name of the function, or the function itself.
+        If a string is passed and the function is inside the module,
+        this string should contain the module name with the dot.
 
     Returns `fn`, allowing this function to be used as a decorator.
     """
@@ -149,6 +154,12 @@ def pure(fn):
 
     if not isinstance(name, basestring):
         name = fn.__name__
+
+        module = fn.__module__
+        name = module + "." + name
+
+    if name.startswith("store."):
+        name = name[6:]
 
     if name not in not_constants:
         pure_functions.add(name)
@@ -178,9 +189,9 @@ class Control(object):
 
 
 # Three levels of constness.
-GLOBAL_CONST = 2  # Expressions that are const everywhere.
-LOCAL_CONST = 1  # Expressions that are const with regard to a screen + parameters.
-NOT_CONST = 0    # Expressions that are not const.
+GLOBAL_CONST = 2 # Expressions that are const everywhere.
+LOCAL_CONST = 1 # Expressions that are const with regard to a screen + parameters.
+NOT_CONST = 0 # Expressions that are not const.
 
 
 class DeltaSet(object):
@@ -366,7 +377,7 @@ class Analysis(object):
         object equality.
         """
 
-        def check_slice(slice):  # @ReservedAssignment
+        def check_slice(slice): # @ReservedAssignment
 
             if isinstance(slice, ast.Index):
                 return check_node(slice.value)
@@ -436,12 +447,14 @@ class Analysis(object):
             """
             Returns true if the ast node `node` is constant.
             """
+            if not PY2:
+                return NOT_CONST
 
             # This handles children that do not exist.
             if node is None:
                 return GLOBAL_CONST
 
-            #PY3: see if there are new node types.
+            # PY3: see if there are new node types.
 
             if isinstance(node, (ast.Num, ast.Str)):
                 return GLOBAL_CONST
@@ -724,7 +737,7 @@ CACHE_FILENAME = "cache/pyanalysis.rpyb"
 
 
 def load_cache():
-    if renpy.game.args.compile:  # @UndefinedVariable
+    if renpy.game.args.compile: # @UndefinedVariable
         return
 
     try:

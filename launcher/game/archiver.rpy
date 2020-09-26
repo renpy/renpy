@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,8 +28,9 @@ init python in archiver:
     import sys
     import random
     import glob
+    import zlib
 
-    from cPickle import dumps, HIGHEST_PROTOCOL
+    from pickle import dumps, HIGHEST_PROTOCOL
 
 
     class Archive(object):
@@ -76,7 +77,7 @@ init python in archiver:
 
             indexoff = self.f.tell()
 
-            self.f.write(dumps(self.index, HIGHEST_PROTOCOL).encode("zlib"))
+            self.f.write(zlib.compress(dumps(self.index, HIGHEST_PROTOCOL)))
 
             self.f.seek(0)
             self.f.write(b"RPA-3.0 %016x %08x\n" % (indexoff, self.key))

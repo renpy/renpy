@@ -367,9 +367,9 @@ translate russian style_text_e7204a95:
     e "Изначально, весь текст в Ren'Py сглажен, чтобы у него не были видны острые края. Параметр antialias может выключить сглаживание, что сделает текст более резким."
 
 # game/indepth_style.rpy:487
-translate russian style_text_b4563984:
+translate russian style_text_a5316e4c:
 
-    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
+    # e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
     e "Параметр adjust_spacing сперва кажется незаметным, так как он виден только тогда, когда игрок изменяет размеры окна. При включении, символы немного сдвигаются, так что они примерно сохраняют свой относительный отступ."
 
 # game/indepth_style.rpy:496
@@ -498,12 +498,6 @@ translate russian style_button_02fa647e:
     # e "Finally, the focus_mask property applies to partially transparent buttons. When it's set to True, only areas of the button that aren't transparent cause a button to focus."
     e "И последнее, параметр focus_mask применяется к частично прозрачным кнопкам. Когда параметр включается, только область кнопки, не затронутая прозрачностью, будет вызывать эффект наведения."
 
-# game/indepth_style.rpy:679
-translate russian style_button_fb973235:
-
-    # e "Be careful with focus_mask, as it only works on desktop platforms. It doesn't yet work on Android or iOS."
-    e "Будьте осторожны с этим параметром, так как он работает только на ПК. На Android или iOS он работать не будет."
-
 # game/indepth_style.rpy:759
 translate russian style_bar_414d454a:
 
@@ -535,9 +529,9 @@ translate russian style_bar_9ef4f62f:
     e "Мы дали полоске параметр ysize, чтобы указать на то, какой высоты она должна быть. Мы так же могли бы сделать с xsize, задав ширину, но в данном случае полоска ограничена шириной рамки."
 
 # game/indepth_style.rpy:792
-translate russian style_bar_80d8ceed:
+translate russian style_bar_d4c29710:
 
-    # e "When the bar_invert style property is true, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
+    # e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
     e "Когда включается параметр bar_invert, полоска начинает увеличиваться справа налево. Хотя можно просто поменять местами наши объекты."
 
 # game/indepth_style.rpy:806
@@ -661,10 +655,10 @@ translate russian style_box_4a2866f0:
     e "Но само собой, у нас есть для него пара параметров."
 
 # game/indepth_style.rpy:1064
-translate russian style_box_a3b47b6e:
+translate russian style_box_66e042c4:
 
-    # e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
-    e "Если параметр xfit равен true, фиксация покрывает всех своих детей, а затем сжимается до их размера по ширине. Параметр yfit работает уже по высоте."
+    # e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
+    e "Если параметр xfit равен True, фиксация покрывает всех своих детей, а затем сжимается до их размера по ширине. Параметр yfit работает уже по высоте."
 
 # game/indepth_style.rpy:1072
 translate russian style_box_6a593b10:

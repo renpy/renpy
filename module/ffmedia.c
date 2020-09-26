@@ -10,8 +10,17 @@
 
 #if defined(__arm__) && !(__MACOS__ || __IPHONEOS__)
 #define USE_MEMALIGN
-#include <malloc.h>
+#include <stdlib.h>
 #endif
+
+/* Should a mono channel be split into two equal stero channels (true) or
+ * should the energy be split onto two stereo channels with 1/2 the energy
+ * (false).
+ */
+static int audio_equal_mono = 1;
+
+/* The weight of stereo channels when audio_equal_mono is true. */
+static double stereo_matrix[] = { 1.0, 1.0 };
 
 /* The output audio sample rate. */
 static int audio_sample_rate = 44100;
@@ -75,6 +84,9 @@ static int64_t rwops_seek(void *opaque, int64_t offset, int whence) {
 static AVIOContext *rwops_open(SDL_RWops *rw) {
 
     unsigned char *buffer = av_malloc(RWOPS_BUFFER);
+	if (buffer == NULL) {
+		return NULL;
+	}
     AVIOContext *rv = avio_alloc_context(
         buffer,
         RWOPS_BUFFER,
@@ -83,6 +95,10 @@ static AVIOContext *rwops_open(SDL_RWops *rw) {
         rwops_read,
         rwops_write,
         rwops_seek);
+    if (rv == NULL) {
+    	av_free(buffer);
+    	return NULL;
+    }
 
     return rv;
 }
@@ -238,6 +254,9 @@ typedef struct MediaState {
 	/* The wall time the last video frame was read. */
 	double video_read_time;
 
+	/* Are frame drops allowed? */
+	int frame_drops;
+
 } MediaState;
 
 static AVFrame *dequeue_frame(FrameQueue *fq);
@@ -254,21 +273,34 @@ static void deallocate(MediaState *ms) {
 			break;
 		}
 
-		SDL_free(sqe->pixels);
+		if (sqe->pixels) {
+			SDL_free(sqe->pixels);
+		}
 		av_free(sqe);
 	}
 
-	sws_freeContext(ms->sws);
+	if (ms->sws) {
+		sws_freeContext(ms->sws);
+	}
 
-	av_frame_free(&ms->video_decode_frame);
+	if (ms->video_decode_frame) {
+		av_frame_free(&ms->video_decode_frame);
+	}
 
 	av_packet_unref(&ms->video_pkt);
 
 	/* Destroy audio stuff. */
-	swr_free(&ms->swr);
+	if (ms->swr) {
+		swr_free(&ms->swr);
+	}
 
-	av_frame_free(&ms->audio_decode_frame);
-	av_frame_free(&ms->audio_out_frame);
+	if (ms->audio_decode_frame) {
+		av_frame_free(&ms->audio_decode_frame);
+	}
+
+	if (ms->audio_out_frame) {
+		av_frame_free(&ms->audio_out_frame);
+	}
 
 	while (1) {
 		AVFrame *f = dequeue_frame(&ms->audio_queue);
@@ -284,29 +316,46 @@ static void deallocate(MediaState *ms) {
 	free_packet_queue(&ms->audio_packet_queue);
 	free_packet_queue(&ms->video_packet_queue);
 
-	avcodec_free_context(&ms->video_context);
-	avcodec_free_context(&ms->audio_context);
+	if (ms->video_context) {
+		avcodec_free_context(&ms->video_context);
+	}
+	if (ms->audio_context) {
+		avcodec_free_context(&ms->audio_context);
+	}
 
 	if (ms->ctx) {
 		for (int i = 0; i < ms->ctx->nb_streams; i++) {
-			avcodec_close(ms->ctx->streams[i]->codec);
+			if (ms->ctx->streams[i]->codec) {
+				avcodec_close(ms->ctx->streams[i]->codec);
+			}
 		}
-	}
 
-	if (ms->ctx->pb) {
-		av_freep(&ms->ctx->pb->buffer);
-		av_freep(&ms->ctx->pb);
-	}
+		if (ms->ctx->pb) {
+			if (ms->ctx->pb->buffer) {
+				av_freep(&ms->ctx->pb->buffer);
+			}
+			av_freep(&ms->ctx->pb);
+		}
 
-	avformat_close_input(&ms->ctx);
+		avformat_close_input(&ms->ctx);
+		avformat_free_context(ms->ctx);
+	}
 
 	/* Destroy alloc stuff. */
-	SDL_DestroyCond(ms->cond);
-	SDL_DestroyMutex(ms->lock);
+	if (ms->cond) {
+		SDL_DestroyCond(ms->cond);
+	}
+	if (ms->lock) {
+		SDL_DestroyMutex(ms->lock);
+	}
 
-	rwops_close(ms->rwops);
+	if (ms->rwops) {
+		rwops_close(ms->rwops);
+	}
 
-	av_free(ms->filename);
+	if (ms->filename) {
+		av_free(ms->filename);
+	}
 	av_free(ms);
 }
 
@@ -339,6 +388,10 @@ static AVFrame *dequeue_frame(FrameQueue *fq) {
 
 static void enqueue_packet(PacketQueue *pq, AVPacket *pkt) {
 	AVPacketList *pl = av_malloc(sizeof(AVPacketList));
+	if (pl == NULL)
+	{
+		return;
+	}
 
 	av_init_packet(&pl->pkt);
 	av_packet_ref(&pl->pkt, pkt);
@@ -484,6 +537,10 @@ static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
 
 	codec_ctx = avcodec_alloc_context3(codec);
 
+	if (codec_ctx == NULL) {
+		return NULL;
+	}
+
 	if (avcodec_copy_context(codec_ctx, codec_ctx_orig)) {
 		goto fail;
 	}
@@ -516,6 +573,11 @@ static void decode_audio(MediaState *ms) {
 
 	if (ms->audio_decode_frame == NULL) {
 		ms->audio_decode_frame = av_frame_alloc();
+	}
+
+	if (ms->audio_decode_frame == NULL) {
+		ms->audio_finished = 1;
+		return;
 	}
 
 	av_init_packet(&pkt);
@@ -559,14 +621,35 @@ static void decode_audio(MediaState *ms) {
 				break;
 			}
 
-			if (!ms->audio_decode_frame->channel_layout) {
-				ms->audio_decode_frame->channel_layout = av_get_default_channel_layout(ms->audio_decode_frame->channels);
+            converted_frame = av_frame_alloc();
+
+			if (converted_frame == NULL) {
+				ms->audio_finished = 1;
+				return;
 			}
 
-			converted_frame = av_frame_alloc();
-			converted_frame->sample_rate = audio_sample_rate;
-			converted_frame->channel_layout = AV_CH_LAYOUT_STEREO;
-			converted_frame->format = AV_SAMPLE_FMT_S16;
+            converted_frame->sample_rate = audio_sample_rate;
+            converted_frame->channel_layout = AV_CH_LAYOUT_STEREO;
+            converted_frame->format = AV_SAMPLE_FMT_S16;
+
+			if (!ms->audio_decode_frame->channel_layout) {
+				ms->audio_decode_frame->channel_layout = av_get_default_channel_layout(ms->audio_decode_frame->channels);
+
+				if (audio_equal_mono && (ms->audio_decode_frame->channels == 1)) {
+				    swr_alloc_set_opts(
+                        ms->swr,
+                        converted_frame->channel_layout,
+                        converted_frame->format,
+                        converted_frame->sample_rate,
+                        ms->audio_decode_frame->channel_layout,
+                        ms->audio_decode_frame->format,
+                        ms->audio_decode_frame->sample_rate,
+                        0,
+                        NULL);
+
+				    swr_set_matrix(ms->swr, stereo_matrix, 1);
+				}
+			}
 
 			if(swr_convert_frame(ms->swr, converted_frame, ms->audio_decode_frame)) {
 				av_frame_free(&converted_frame);
@@ -671,7 +754,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		return NULL;
 	}
 
-	// If we're behind on decoding the frame, skip it.
+	// If we're behind on decoding the frame, drop it.
 	if (ms->video_pts_offset && (ms->video_pts_offset + pts < ms->video_read_time)) {
 
 		// If we're 5s behind, give up on video for the time being, so we don't
@@ -680,7 +763,9 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 			ms->video_finished = 1;
 		}
 
-		return NULL;
+		if (ms->frame_drops) {
+		    return NULL;
+		}
 	}
 
 	SDL_Surface *sample = rgba_surface;
@@ -709,6 +794,10 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	}
 
 	SurfaceQueueEntry *rv = av_malloc(sizeof(SurfaceQueueEntry));
+	if (rv == NULL) {
+		ms->video_finished = 1;
+		return NULL;
+	}
 	rv->w = ms->video_decode_frame->width + FRAME_PADDING * 2;
 	rv->pitch = rv->w * sample->format->BytesPerPixel;
 	rv->h = ms->video_decode_frame->height + FRAME_PADDING * 2;
@@ -718,7 +807,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 
 
 #ifdef USE_MEMALIGN
-    rv->pixels = memalign(16, rv->pitch * rv->h);
+    posix_memalign(&rv->pixels, 16, rv->pitch * rv->h);
     memset(rv->pixels, 0, rv->pitch * rv->h);
 #else
     rv->pixels = SDL_calloc(1, rv->pitch * rv->h);
@@ -759,6 +848,11 @@ static void decode_video(MediaState *ms) {
 		ms->video_decode_frame = av_frame_alloc();
 	}
 
+	if (!ms->video_decode_frame) {
+		ms->video_finished = 1;
+		return;
+	}
+
 	SDL_LockMutex(ms->lock);
 
 	if (!ms->video_finished && (ms->surface_queue_size < FRAMES)) {
@@ -783,10 +877,16 @@ static void decode_video(MediaState *ms) {
 }
 
 
+static int decode_sync_start(void *arg);
+void media_read_sync(struct MediaState *ms);
+void media_read_sync_finish(struct MediaState *ms);
+
+
 /**
  * Returns 1 if there is a video frame ready on this channel, or 0 otherwise.
  */
 int media_video_ready(struct MediaState *ms) {
+
 	int consumed = 0;
 	int rv = 0;
 
@@ -852,6 +952,7 @@ done:
 
 
 SDL_Surface *media_read_video(MediaState *ms) {
+
 	SDL_Surface *rv = NULL;
 	SurfaceQueueEntry *sqe = NULL;
 
@@ -861,9 +962,11 @@ SDL_Surface *media_read_video(MediaState *ms) {
 
 	SDL_LockMutex(ms->lock);
 
+#ifndef __EMSCRIPTEN__
 	while (!ms->ready) {
-		SDL_CondWait(ms->cond, ms->lock);
+	    SDL_CondWait(ms->cond, ms->lock);
 	}
+#endif
 
 	if (!ms->surface_queue_size) {
 		goto done;
@@ -918,13 +1021,21 @@ static int decode_thread(void *arg) {
 	int err;
 
 	AVFormatContext *ctx = avformat_alloc_context();
+	if (ctx == NULL) {
+		goto finish;
+	}
 	ms->ctx = ctx;
 
 	AVIOContext *io_context = rwops_open(ms->rwops);
+	if (io_context == NULL) {
+		goto finish;
+	}
 	ctx->pb = io_context;
 
 	err = avformat_open_input(&ctx, ms->filename, NULL, NULL);
 	if (err) {
+		avformat_free_context(ctx);
+		ms->ctx = NULL;
 		goto finish;
 	}
 
@@ -955,6 +1066,9 @@ static int decode_thread(void *arg) {
 	ms->audio_context = find_context(ctx, ms->audio_stream);
 
 	ms->swr = swr_alloc();
+	if (ms->swr == NULL) {
+		goto finish;
+	}
 
 	av_init_packet(&ms->video_pkt);
 
@@ -1037,7 +1151,159 @@ finish:
 }
 
 
+void media_read_sync_finish(struct MediaState *ms) {
+	// copy/paste from end of decode_thread
+
+	/* Data used by the decoder should be freed here, while data shared with
+	 * the readers should be freed in media_close.
+	 */
+
+	SDL_LockMutex(ms->lock);
+
+	/* Ensures that every stream becomes ready. */
+	if (!ms->ready) {
+		ms->ready = 1;
+		SDL_CondBroadcast(ms->cond);
+	}
+
+	while (!ms->quit) {
+		/* SDL_CondWait(ms->cond, ms->lock); */
+	}
+
+	SDL_UnlockMutex(ms->lock);
+
+	deallocate(ms);
+}
+
+
+static int decode_sync_start(void *arg) {
+    // copy/paste from start of decode_thread
+	MediaState *ms = (MediaState *) arg;
+
+	int err;
+
+	AVFormatContext *ctx = avformat_alloc_context();
+	if (ctx == NULL) {
+		media_read_sync_finish(ms);
+	}
+	ms->ctx = ctx;
+
+	AVIOContext *io_context = rwops_open(ms->rwops);
+	if (io_context == NULL) {
+		media_read_sync_finish(ms);
+	}
+	ctx->pb = io_context;
+
+	err = avformat_open_input(&ctx, ms->filename, NULL, NULL);
+	if (err) {
+		avformat_free_context(ctx);
+		ms->ctx = NULL;
+		media_read_sync_finish(ms);
+	}
+
+	err = avformat_find_stream_info(ctx, NULL);
+	if (err) {
+		media_read_sync_finish(ms);
+	}
+
+
+	ms->video_stream = -1;
+	ms->audio_stream = -1;
+
+	for (int i = 0; i < ctx->nb_streams; i++) {
+		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+			if (ms->want_video && ms->video_stream == -1) {
+				ms->video_stream = i;
+			}
+		}
+
+		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+			if (ms->audio_stream == -1) {
+				ms->audio_stream = i;
+			}
+		}
+	}
+
+	ms->video_context = find_context(ctx, ms->video_stream);
+	ms->audio_context = find_context(ctx, ms->audio_stream);
+
+	ms->swr = swr_alloc();
+	if (ms->swr == NULL) {
+		media_read_sync_finish(ms);
+	}
+
+	av_init_packet(&ms->video_pkt);
+
+	// Compute the number of samples we need to play back.
+	if (ms->audio_duration < 0) {
+		if (av_fmt_ctx_get_duration_estimation_method(ctx) != AVFMT_DURATION_FROM_BITRATE) {
+
+			long long duration = ((long long) ctx->duration) * audio_sample_rate;
+			ms->audio_duration = (unsigned int) (duration /  AV_TIME_BASE);
+
+			ms->total_duration = 1.0 * ctx->duration / AV_TIME_BASE;
+
+			// Check that the duration is reasonable (between 0s and 3600s). If not,
+			// reject it.
+			if (ms->audio_duration < 0 || ms->audio_duration > 3600 * audio_sample_rate) {
+				ms->audio_duration = -1;
+			}
+
+			ms->audio_duration -= (unsigned int) (ms->skip * audio_sample_rate);
+
+
+		} else {
+			ms->audio_duration = -1;
+		}
+	}
+
+	if (ms->skip != 0.0) {
+		av_seek_frame(ctx, -1, (int64_t) (ms->skip * AV_TIME_BASE), AVSEEK_FLAG_BACKWARD);
+	}
+
+	// [snip!]
+
+	return 0;
+}
+
+
+void media_read_sync(struct MediaState *ms) {
+	// copy/paste from middle of decode_thread
+	// printf("---* media_read_sync %p\n", ms);
+
+	//while (!ms->quit) {
+	if (!ms->quit) {
+		// printf("     audio_finished: %d, video_finished: %d\n", ms->audio_finished, ms->video_finished);
+		if (! ms->audio_finished) {
+			decode_audio(ms);
+		}
+
+		if (! ms->video_finished) {
+			decode_video(ms);
+		}
+
+		SDL_LockMutex(ms->lock);
+
+		if (!ms->ready) {
+			ms->ready = 1;
+			SDL_CondBroadcast(ms->cond);
+		}
+
+		if (!(ms->needs_decode || ms->quit)) {
+			/* SDL_CondWait(ms->cond, ms->lock); */
+		}
+
+		ms->needs_decode = 0;
+
+		SDL_UnlockMutex(ms->lock);
+	}
+}
+
+
 int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
+#ifdef __EMSCRIPTEN__
+    media_read_sync(ms);
+#endif
 
 	SDL_LockMutex(ms->lock);
 
@@ -1122,6 +1388,7 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 }
 
 void media_wait_ready(struct MediaState *ms) {
+#ifndef __EMSCRIPTEN__
     SDL_LockMutex(ms->lock);
 
     while (!ms->ready) {
@@ -1129,6 +1396,7 @@ void media_wait_ready(struct MediaState *ms) {
     }
 
     SDL_UnlockMutex(ms->lock);
+#endif
 }
 
 
@@ -1137,7 +1405,12 @@ double media_duration(MediaState *ms) {
 }
 
 void media_start(MediaState *ms) {
-	char buf[1024];
+
+#ifdef __EMSCRIPTEN__
+    decode_sync_start(ms);
+#else
+
+    char buf[1024];
 
 	snprintf(buf, 1024, "decode: %s", ms->filename);
 	SDL_Thread *t = SDL_CreateThread(decode_thread, buf, (void *) ms);
@@ -1146,19 +1419,38 @@ void media_start(MediaState *ms) {
 		ms->started = 1;
 		SDL_DetachThread(t);
 	}
+#endif
 }
 
 
 MediaState *media_open(SDL_RWops *rwops, const char *filename) {
 	MediaState *ms = av_calloc(1, sizeof(MediaState));
+	if (ms == NULL) {
+		return NULL;
+	}
 
 	ms->filename = av_strdup(filename);
+	if (ms->filename == NULL) {
+		deallocate(ms);
+		return NULL;
+	}
 	ms->rwops = rwops;
 
+#ifndef __EMSCRIPTEN__
 	ms->cond = SDL_CreateCond();
+	if (ms->cond == NULL) {
+		deallocate(ms);
+		return NULL;
+	}
 	ms->lock = SDL_CreateMutex();
+	if (ms->lock == NULL) {
+		deallocate(ms);
+		return NULL;
+	}
+#endif
 
 	ms->audio_duration = -1;
+	ms->frame_drops = 1;
 
 	return ms;
 }
@@ -1189,8 +1481,9 @@ void media_start_end(MediaState *ms, double start, double end) {
 /**
  * Marks the channel as having video.
  */
-void media_want_video(MediaState *ms) {
+void media_want_video(MediaState *ms, int video) {
 	ms->want_video = 1;
+	ms->frame_drops = (video != 2);
 }
 
 void media_close(MediaState *ms) {
@@ -1203,6 +1496,11 @@ void media_close(MediaState *ms) {
 	/* Tell the decoder to terminate. It will deallocate everything for us. */
 	SDL_LockMutex(ms->lock);
 	ms->quit = 1;
+
+#ifdef __EMSCRIPTEN__
+	media_read_sync_finish(ms);
+#endif
+
 	SDL_CondBroadcast(ms->cond);
 	SDL_UnlockMutex(ms->lock);
 
@@ -1217,9 +1515,10 @@ void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
 	rgba_surface = rgba;
 }
 
-void media_init(int rate, int status) {
+void media_init(int rate, int status, int equal_mono) {
 
 	audio_sample_rate = rate / SPEED;
+	audio_equal_mono = equal_mono;
 
     av_register_all();
 

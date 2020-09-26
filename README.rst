@@ -2,7 +2,7 @@
 The Ren'Py Visual Novel Engine
 ==============================
 
-http://www.renpy.org
+https://www.renpy.org
 
 Ren'Py development takes place on the ``master`` branch, and occasionally
 on feature branches.
@@ -11,21 +11,21 @@ on feature branches.
 Getting Started
 ===============
 
-Ren'Py depends on a number of python modules written in Cython and C. For
-changes to Ren'Py that only involve python modules, you can use the modules
+Ren'Py depends on a number of Python modules written in Cython and C. For
+changes to Ren'Py that only involve Python modules, you can use the modules
 found in the latest nightly build. Otherwise, you'll have to compile the
 modules yourself.
 
 The development scripts assume a POSIX-like platform. The scripts should run
-on Linux or Mac OS X, and can be made to run on Windows using an environment
-like Msys.
+on Linux or macOS, and can be made to run on Windows using an environment
+like MSYS.
 
 Nightly Build
 -------------
 
 Nightly builds can be downloaded from:
 
-   http://nightly.renpy.org
+   https://nightly.renpy.org
 
 Note that the latest nightly build is at the bottom of the list. Once you've
 unpacked the nightly, change into this repository, and run::
@@ -63,9 +63,9 @@ To return to this virtualenv later, run::
 
     workon renpy
 
-After activating the virtualenv, install cython::
+After activating the virtualenv, install cython, future, and six::
 
-    pip install -U cython
+    pip install -U cython future six
 
 Then, install pygame_sdl2 by running the following commands::
 
@@ -76,10 +76,11 @@ Then, install pygame_sdl2 by running the following commands::
     python setup.py install_headers
     popd
 
-Next, set RENPY_DEPS_INSTALL To a \::-separated list of paths containing the
-dependencies, and RENPY_CYTHON to the name of the cython command::
+Next, set RENPY_DEPS_INSTALL To a \:-separated (\;-separated on Windows)
+list of paths containing the dependencies, and RENPY_CYTHON to the name
+of the cython command::
 
-    export RENPY_DEPS_INSTALL="/usr::/usr/lib/x86_64-linux-gnu/"
+    export RENPY_DEPS_INSTALL="/usr:/usr/lib/x86_64-linux-gnu/"
     export RENPY_CYTHON=cython
 
 Finally, use setup.py in the Ren'Py ``module`` directory to compile and
@@ -103,7 +104,7 @@ Building
 
 Building the documentation requires Ren'Py to work. You'll either need to
 link in a nightly build, or compile the modules as described above. You'll
-also need the `Sphinx <http://sphinx-doc.org/>`_ documentation generator.
+also need the `Sphinx <https://www.sphinx-doc.org>`_ documentation generator.
 If you have pip working, install Sphinx using::
 
     pip install -U sphinx
@@ -123,7 +124,7 @@ not edit the files in sphinx/source/inc directly, as they will be overwritten.
 Docstrings may include tags on the first few lines:
 
 \:doc: `section` `kind`
-    Indicates that this functions should be documented. `section` gives
+    Indicates that this function should be documented. `section` gives
     the name of the include file the function will be documented in, while
     `kind` indicates the kind of object to be documented (one of ``function``,
     ``method`` or ``class``. If omitted, `kind` will be auto-detected.
@@ -154,7 +155,7 @@ Translating
 For best practices when it comes to translating the launcher and template
 game, please read:
 
-http://lemmasoft.renai.us/forums/viewtopic.php?p=321603#p321603
+https://lemmasoft.renai.us/forums/viewtopic.php?p=321603#p321603
 
 
 Contributing
@@ -163,3 +164,10 @@ Contributing
 For bug fixes, documentation improvements, and simple changes, just
 make a pull request. For more complex changes, it might make sense
 to file an issue first so we can discuss the design.
+
+License
+=======
+
+For the complete licensing terms, please read:
+
+https://www.renpy.org/doc/html/license.html

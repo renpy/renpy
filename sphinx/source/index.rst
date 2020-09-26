@@ -11,6 +11,11 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
 
         http://ja.renpy.org/doc/html/
 
+.. only:: not language_cn and not gettext
+
+    简体中文的文档请参考这里：
+
+        https://www.renpy.cn/doc/index.html
 
 Getting Started
 ---------------
@@ -49,6 +54,8 @@ Text, Displayables, Transforms, and Transitions
    transforms
    transitions
    atl
+   matrixcolor
+   layeredimage
 
 Customizing Ren'Py
 ------------------
@@ -91,6 +98,7 @@ Other Functionality
    achievement
    history
    multiple
+   splashscreen_presplash
 
 Python and Ren'Py
 -----------------

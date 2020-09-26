@@ -11,29 +11,24 @@ With no configuration, Ren'Py is able to build the following kinds of
 packages:
 
 PC: Windows and Linux
-
     A zip file targeting Windows x86, Linux x86, and Linux x86_64.
 
 Linux x86/x86_64
-
     A tar.bz2 file targeting Linux x86 and Linux x86_64.
 
 Macintosh x86_64
-
     A zip file containing a Macintosh application targeting Macintosh
     OS X on Intel processors. Game data will be included inside the
     application, which appears to the user as a single file.
 
 Windows x86
-
-   A zip file targeting Windows x86.
+     A zip file targeting Windows x86.
 
 Windows, Mac, and Linux for Markets
-
-   A distribution that contains the information required to run on
-   software markets like itch.io and Steam. This isn't meant to be
-   run directly (and probably won't work on the Mac), but should be
-   fed to the app store upload process.
+     A distribution that contains the information required to run on
+     software markets like itch.io and Steam. This isn't meant to be
+     run directly (and probably won't work on the Mac), but should be
+     fed to the app store upload process.
 
 .. warning::
 
@@ -49,7 +44,8 @@ Basic Configuration
 
 The build process can be configured by setting variables and calling
 function that live in the build namespace. This must be done from
-inside an init python block.
+inside an ``init python`` block. The default settings for these configurations are 
+set in ``options.rpy``.
 
 There are a few basic variables and functions that many games will
 use.
@@ -176,7 +172,7 @@ Documentation
 
 Calling the build.documentation function with patterns marks files
 matching those patterns as documentation. Documentation files are
-included twice in a Macintosh application - both inside and outside
+included twice in a Macintosh application – both inside and outside
 of the application itself.
 
 For example, to mark all txt and html files in the base directory as
@@ -238,8 +234,39 @@ game scripts into scripts.rpa::
 If an archive file is empty, it will not be built.
 
 Please think twice about archiving your game. Keeping files open will
-help others run your game on future platforms - platforms that may not
+help others run your game on future platforms – platforms that may not
 exist until after you're gone.
+
+Requirements
+------------
+
+Some stores ask the requirements for Ren'Py applications to run. While
+this varies from game to game, here's a set of minimums for a generic
+visual novel.
+
+**Windows**
+
+* Version: Windows XP or higher.
+* CPU: 2.0 GHz Core 2 Duo
+* RAM: 2.0 GB
+* Graphics: OpenGL 2.0 or DirectX 9.0c
+
+**macOS**
+
+* Version: 10.6+
+* CPU: 2.0 GHz Core 2 Duo (64 bit only)
+* RAM: 2.0 GB
+* Graphics: OpenGL 2.0
+
+**Linux**
+
+* Version: Ubuntu 12.04+
+* CPU: 2.0 GHz Core 2 Duo
+* RAM: 2.0 GB
+* Graphics: OpenGL 2.0
+
+The amount of disk space required is entirely determined by the assets in your
+game, and the amount of CPU and RAM needed may also vary.
 
 
 Build Functions
@@ -264,7 +291,7 @@ The following variables provide further control of the build process:
     may be an absolute or a relative path. A relative path is considered to
     be relative to the projects directory.
 
-    The following values are substituted in using python's str.format function.
+    The following values are substituted in using Python's ``str.format`` function.
 
     ``{directory_name}``
         The value of build.directory_name.

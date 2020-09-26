@@ -34,8 +34,8 @@ translate indonesian strings:
     new "Untuk membuat package Android, silahkan download RAPT, unzip/extrak, dan taruh di direktori Ren,Py. Dan restart launcher Ren'Py."
 
     # android.rpy:31
-    old "A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Java Development Kit 32-bit di perlukan untuk membuat package Android di Windows, JDK itu berbeda dari JRE, jadi sangat mungkin kamu memiliki java tanpa JDK\n\nTolong {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}Download dan install JDK{/a}, lalu restart launcher Ren'Py "
+    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Java Development Kit 32-bit di perlukan untuk membuat package Android di Windows, JDK itu berbeda dari JRE, jadi sangat mungkin kamu memiliki java tanpa JDK\n\nTolong {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}Download dan install JDK{/a}, lalu restart launcher Ren'Py "
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -606,8 +606,8 @@ translate indonesian strings:
     new "ERROR"
 
     # interface.rpy:356
-    old "While [what!q], an error occured:"
-    new "Kesalahan terjadi ketika : [what!q] adalah :"
+    old "While [what!qt], an error occured:"
+    new "Kesalahan terjadi ketika : [what!qt] adalah :"
 
     # interface.rpy:356
     old "[exception!q]"
@@ -1253,7 +1253,7 @@ translate indonesian strings:
     new "Navigasi: [project.current.display_name!q]"
 
     # new_project.rpy:71
-    old "You will be creating an [new_project_language] language project. Change the launcher language in preferences to create a project in another language."
+    old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
     new "Kamu akan membuat bahasa proyek : [new_project_language]. Ganti bahasa launcher di pengaturan untuk membuat proyek dalam bahasa lain."
 
     # preferences.rpy:187
@@ -1271,4 +1271,3 @@ translate indonesian strings:
     # translations.rpy:343
     old "Extract Dialogue: [project.current.display_name!q]"
     new "Extrak Dialog: [project.current.display_name!q]"
-

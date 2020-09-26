@@ -6,6 +6,9 @@ import os.path
 import re
 import codecs
 
+import datetime
+year = datetime.date.today().year
+
 ENDINGS = [
     ".rpy",
     ".rpym",
@@ -55,7 +58,7 @@ def process_file(fn):
         for l in f:
             l = re.sub(
                 r"Copyright (\d{4})-\d{4} Tom Rothamel",
-                r"Copyright \1-2018 Tom Rothamel",
+                r"Copyright \1-{} Tom Rothamel".format(year),
                 l)
 
             if re.search(r"Copyright .* Tom Rothamel", l):

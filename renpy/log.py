@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,16 +21,20 @@
 
 # This module handles the logging of messages to a file.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import os.path
-import codecs
 import traceback
 import platform
 import time
 import tempfile
-
-import renpy
 import sys
+import io
+
+import encodings.latin_1  # @UnusedImport
+
+import renpy.config
 
 real_stdout = sys.stdout
 real_stderr = sys.stderr
@@ -112,9 +116,9 @@ class LogFile(object):
             else:
 
                 try:
-                    self.file = codecs.open(fn, mode, "utf-8")
+                    self.file = io.open(fn, mode, encoding="utf-8")
                 except:
-                    self.file = codecs.open(altfn, mode, "utf-8")
+                    self.file = io.open(altfn, mode, encoding="utf-8")
 
             if self.append:
                 self.write('')
@@ -145,13 +149,15 @@ class LogFile(object):
         if self.open():
 
             if not self.raw_write:
-                s = s % args
+                try:
+                    s = s % args
+                except:
+                    s = repr((s,) + args)
+
                 s += "\n"
 
-            if not isinstance(s, unicode):
+            if not isinstance(s, str):
                 s = s.decode("latin-1")
-
-            s = s.replace("\n", "\r\n")
 
             self.file.write(s)
 
@@ -215,16 +221,14 @@ class StdioRedirector(object):
 
     def __init__(self):
         self.buffer = ''
-        self.log = open("log", developer=False, append=False)
+        self.log = open("log", developer=False, append=False, flush=True)
 
     def write(self, s):
 
-        if isinstance(s, unicode):
-            es = s.encode("utf-8")
-        else:
-            es = s
+        if not isinstance(s, str):
+            s = str(s, "utf-8", "replace")
 
-        self.real_file.write(es)
+        self.real_file.write(s)
         self.real_file.flush()
 
         if renpy.ios:
@@ -246,7 +250,6 @@ class StdioRedirector(object):
                 try:
                     i(l)
                 except:
-                    # traceback.print_exc(None, real_stderr)
                     pass
 
         self.buffer = lines[-1]

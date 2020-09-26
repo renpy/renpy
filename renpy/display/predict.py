@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,6 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # This file contains the routines that manage image prediction.
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import renpy.display
 
@@ -120,7 +123,7 @@ def prediction_coroutine(root_widget):
     if len(renpy.game.contexts) >= 2:
         sls = renpy.game.contexts[-2].scene_lists
 
-        for l in sls.layers.itervalues():
+        for l in sls.layers.values():
             for sle in l:
                 try:
                     displayable(sle.displayable)
@@ -136,9 +139,22 @@ def prediction_coroutine(root_widget):
     while not (yield False):
         continue
 
+    predicting = True
+
+    for i in renpy.config.expensive_predict_callbacks:
+        i()
+
+        predicting = False
+        yield False
+        predicting = True
+
+    predicted_screens = [ ]
+
     # Predict screens given with renpy.start_predict_screen.
-    for name, value in renpy.store._predict_screen.items():
+    for name, value in list(renpy.store._predict_screen.items()):
         args, kwargs = value
+
+        predicted_screens.append((name, args, kwargs))
 
         renpy.display.screen.predict_screen(name, *args, **kwargs)
 
@@ -153,11 +169,14 @@ def prediction_coroutine(root_widget):
     try:
         root_widget.visit_all(lambda i : i.predict_one_action())
     except:
-        pass
+        if renpy.config.debug_image_cache:
+            import traceback
+
+            print("While predicting actions.")
+            traceback.print_exc()
+            print()
 
     predicting = False
-
-    predicted_screens = [ ]
 
     # Predict the screens themselves.
     for t in screens:
@@ -177,12 +196,7 @@ def prediction_coroutine(root_widget):
 
         predicting = True
 
-        try:
-            renpy.display.screen.predict_screen(name, *args, **kwargs)
-        except:
-            if renpy.config.debug_image_cache:
-                renpy.display.ic_log.write("While predicting screen %s %r", name, kwargs)
-                renpy.display.ic_log.exception()
+        renpy.display.screen.predict_screen(name, *args, **kwargs)
 
         predicting = False
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,6 +26,9 @@
 
 # All functions in the is file should be documented in the wiki.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import sys
 import renpy.display
 import renpy.text
@@ -52,6 +55,9 @@ class Action(renpy.object.Object):
     def get_selected(self):
         return False
 
+    def get_tooltip(self):
+        return None
+
     def periodic(self, st):
         return
 
@@ -70,6 +76,8 @@ class BarValue(renpy.object.Object):
     # Alt text.
     alt = "Bar"
 
+    force_step = False
+
     def replaces(self, other):
         return
 
@@ -81,6 +89,9 @@ class BarValue(renpy.object.Object):
 
     def get_style(self):
         return "bar", "vbar"
+
+    def get_tooltip(self):
+        return None
 
 
 ##############################################################################
@@ -428,7 +439,10 @@ screen = None
 class Wrapper(renpy.object.Object):
 
     def __reduce__(self):
-        return self.name
+        if PY2:
+            return bytes(self.name)
+        else:
+            return self.name
 
     def __init__(self, function, one=False, many=False, imagemap=False, replaces=False, style=None, **kwargs):
 
@@ -641,10 +655,12 @@ soundstopbehavior = Wrapper(renpy.display.behavior.SoundStopBehavior)
 
 def _key(key, action=None, activate_sound=None):
 
-    if action is None:
-        raise Exception("Action is required in ui.key.")
+    if isinstance(key, (list, tuple)):
+        keymap = {k: action for k in key}
+    else:
+        keymap = {key: action}
 
-    return renpy.display.behavior.Keymap(activate_sound=activate_sound, **{ key : action})
+    return renpy.display.behavior.Keymap(activate_sound=activate_sound, **keymap)
 
 
 key = Wrapper(_key)
@@ -660,10 +676,13 @@ class ChoiceActionBase(Action):
     previously visited and mark it so if it is chosen.
     """
 
-    def __init__(self, label, value, location=None, block_all=None):
+    sensitive = True
+
+    def __init__(self, label, value, location=None, block_all=None, sensitive=True, args=None, kwargs=None):
         self.label = label
         self.value = value
         self.location = location
+        self.sensitive = sensitive
 
         if block_all is None:
             self.block_all = renpy.config.fix_rollback_without_choice
@@ -678,8 +697,13 @@ class ChoiceActionBase(Action):
             if self.chosen is None:
                 self.chosen = renpy.game.persistent._chosen = { }
 
+        # The arguments passed to a menu choice.
+        self.args = args
+        self.kwargs = kwargs
+
     def get_sensitive(self):
-        return not renpy.exports.in_fixed_rollback() or (not self.block_all and self.get_selected())
+        return (self.sensitive and
+                not renpy.exports.in_fixed_rollback() or (not self.block_all and self.get_selected()))
 
     def get_selected(self):
         roll_forward = renpy.exports.roll_forward_info()
@@ -801,8 +825,6 @@ def menu(menuitems,
          default=False,
          **properties):
 
-    # menu is now a conglomeration of other widgets. And bully for it.
-
     renpy.ui.vbox(style=style, **properties)
 
     for label, val in menuitems:
@@ -813,7 +835,10 @@ def menu(menuitems,
             text = choice_style
             button = choice_button_style
 
-            clicked = ChoiceReturn(label, val, location)
+            if isinstance(val, ChoiceReturn):
+                clicked = val
+            else:
+                clicked = ChoiceReturn(label, val, location)
 
             if clicked.get_chosen():
                 text = choice_chosen_style
@@ -1108,8 +1133,8 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
         vscrollbar_properties.setdefault("style", "vscrollbar")
 
     alt = viewport_properties.get("alt", "viewport")
-    scrollbar_properties.setdefault("alt", alt + " horizontal scrollbar")
-    vscrollbar_properties.setdefault("alt", alt + " vertical scrollbar")
+    scrollbar_properties.setdefault("alt", renpy.minstore.__(alt) + " " + renpy.minstore.__("horizontal scroll"))
+    vscrollbar_properties.setdefault("alt", renpy.minstore.__(alt) + " " + renpy.minstore.__("vertical scroll"))
 
     if scrollbars == "vertical":
 
@@ -1452,6 +1477,6 @@ def screen_id(id_, d):
 
 # Update the wrappers to have names.
 k, v = None, None
-for k, v in globals().iteritems():
+for k, v in globals().items():
     if isinstance(v, Wrapper):
         v.name = k

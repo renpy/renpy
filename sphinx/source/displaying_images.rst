@@ -45,7 +45,7 @@ and ``happy``.
 A displayable is something that can be shown on the screen. The most
 common thing to show is a static image, which can be specified by
 giving the filename of the image, as a string. In the example above,
-we might use ``"mary_beach_night_happy.png"`` as the filename.
+we might use "mary_beach_night_happy.png" as the filename.
 However, an image may refer to :ref:`any displayable Ren'Py supports
 <displayables>`, not just static images. Thus, the same statements
 that are used to display images can also be used for animations, solid
@@ -82,7 +82,7 @@ overlay
 
 Additional layers can be defined by updating :var:`config.layers`, and
 the various other layer-related config variables. Using
-:func:`renpy.layer_at_list`, one or more transforms can be applied to
+:func:`renpy.show_layer_at`, one or more transforms can be applied to
 a layer.
 
 Defining Images
@@ -104,11 +104,11 @@ Images Directory
 
 The image directory is named "images", and is placed under the game directory.
 When a file with the .jpg or .png extension is placed underneath this directory,
-the extension is stripped, the rest of the filename is forced to lower case,
-and the resulting filename is use as the image name if an image with that
+the extension is stripped, the rest of the filename is forced to lowercase,
+and the resulting filename is used as the image name if an image with that
 name has not been previously defined.
 
-This process place in all directories underneath the image directory. For
+This process takes place in all directories underneath the image directory. For
 example, all of these files will define the image ``eileen happy``::
 
     game/images/eileen happy.png
@@ -120,14 +120,14 @@ example, all of these files will define the image ``eileen happy``::
 Image Statement
 ---------------
 
-An image statement is used to define an image. An image statement
+The ``image`` statement is used to define an image. An image statement
 consists of a single logical line beginning with the keyword ``image``,
-followed by an image name, an equals sign (``=``), and a
+followed by an image name, an equals sign ``=``, and a
 displayable. For example::
 
     image eileen happy = "eileen_happy.png"
     image black = "#000"
-    image bg tiled = LiveTile("tile.jpg")
+    image bg tiled = Tile("tile.jpg")
 
     image eileen happy question = VBox(
         "question.png",
@@ -140,9 +140,9 @@ game/eileen/happy.png, then you can write::
 
     image eileen happy = "eileen/happy.png"
 
-The image statement is run at init-time, before the menus are shown
-or the start label runs. When not contained inside an init block,
-image statements are run as if they were placed inside an init block of
+The image statement is run at init time, before the menus are shown
+or the start label runs. When not contained inside an ``init`` block,
+image statements are run as if they were placed inside an ``init`` block of
 priority 500.
 
 See also the :ref:`ATL variant of the image statement. <atl-image-statement>`
@@ -153,7 +153,7 @@ See also the :ref:`ATL variant of the image statement. <atl-image-statement>`
 Show Statement
 ==============
 
-The show statement is used to display an image on a layer. A show
+The ``show`` statement is used to display an image on a layer. A show
 statement consists of a single logical line beginning with the
 keyword ``show``, followed by an image name, followed by zero or
 more properties.
@@ -172,7 +172,7 @@ If a unique image cannot be found, an exception occurs.
 If an image with the same image tag is already showing on the layer,
 the new image replaces it. Otherwise, the image is placed above all
 other images in the layer. (That is, closest to the user.) This order
-may be modified by the zorder and behind properties.
+may be modified by the ``zorder`` and ``behind`` properties.
 
 The show statement does not cause an interaction to occur. For the
 image to actually be displayed to the user, a statement that causes an
@@ -182,12 +182,12 @@ run.
 The show statement takes the following properties:
 
 ``as``
-    The as property takes a name. This name is used in place of the
+    The ``as`` property takes a name. This name is used in place of the
     image tag when the image is shown. This allows the same image
     to be on the screen twice.
 
 ``at``
-    The at property takes one or more comma-separated
+    The ``at`` property takes one or more comma-separated
     simple expressions. Each expression must evaluate to a
     transform. The transforms are applied to the image in
     left-to-right order.
@@ -219,10 +219,10 @@ Assuming we have the following images defined::
 
 Some example show statements are::
 
-    # Basic show
+    # Basic show.
     show mary night sad
 
-    # Since 'mary night happy' is showing, the following statement is
+    # Since 'mary night sad' is showing, the following statement is
     # equivalent to:
     # show mary night happy
     show mary happy
@@ -271,7 +271,7 @@ To stop applying transforms to the layer, use::
 Scene Statement
 ===============
 
-The scene statement removes all displayables from a layer, and then
+The ``scene`` statement removes all displayables from a layer, and then
 shows an image on that layer. It consists of the keyword ``scene``,
 followed by an image name, followed by zero or more properties. The
 image is shown in the same way as in the show statement, and the scene
@@ -296,7 +296,7 @@ displayable.
 Hide Statement
 ==============
 
-The hide statement removes an image from a layer. It consists of the
+The ``hide`` statement removes an image from a layer. It consists of the
 keyword ``hide``, followed by an image name, followed by an optional
 property. The hide statement takes the image tag from the image name,
 and then hides any image on the layer with that tag.
@@ -333,7 +333,7 @@ Instead, just write::
 With Statement
 ==============
 
-The with statement is used to apply a transition effect when the scene
+The ``with`` statement is used to apply a transition effect when the scene
 is changed, making showing and hiding images less abrupt. The with
 statement consists of the keyword ``with``, followed by a simple
 expression that evaluates either to a transition object or the special
@@ -367,7 +367,7 @@ transition is, by default, defined as a .5 second dissolve.)
 
 The second transition occurs after the Eileen and Lucy images are
 shown. It causes a dissolve from the scene consisting solely of the
-background to the scene consisting of all three images - the result is
+background to the scene consisting of all three images – the result is
 that the two new images appear to dissolve in simultaneously.
 
 .. _with-none:
@@ -378,7 +378,7 @@ With None
 In the above example, there are two dissolves. But what if we wanted
 the background to appear instantly, followed by a dissolve of the two
 characters? Simply omitting the first with statement would cause all
-three images to dissolve in - we need a way to say that the first
+three images to dissolve in – we need a way to say that the first
 should be show instantly.
 
 The with statement changes behavior when given the special value
@@ -402,7 +402,7 @@ scene consisting of all three images.
 With Clause of Scene, Show, and Hide Statements
 -----------------------------------------------
 
-The show, scene, and hide statements can take an optional with clause,
+The show, scene, and hide statements can take an optional ``with`` clause,
 which allows a transition to be combined with showing or hiding an
 image. This clause follows the statements at the end of the same
 logical line. It begins with the keyword ``with``, followed by a
@@ -428,9 +428,9 @@ is equivalent to::
 Hide and Show Window
 ====================
 
-The window statement is used to control if a window is shown when a character
-is not speaking. (For example, during transitions and pauses.) The window show
-statement causes the window to be shown, while the window hide statement hides
+The ``window`` statement is used to control if a window is shown when a character
+is not speaking (for example, during transitions and pauses). The ``window show``
+statement causes the window to be shown, while the ``window hide`` statement hides
 the window.
 
 If the optional transition is given, it's used to show and hide the window.
@@ -439,9 +439,8 @@ If not given, it defaults to :var:`config.window_show_transition` and
 it from occurring.
 
 The window itself is displayed by calling :var:`config.empty_window`. It defaults to
-having the narrator say an empty string.::
+having the narrator say an empty string. ::
 
-    ###
         show bg washington
         show eileen happy
         with dissolve

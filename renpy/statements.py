@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,9 @@
 
 # This module contains code to support user-defined statements.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import renpy
 
 # The statement registry. It's a map from tuples giving the prefixes of
@@ -30,7 +33,28 @@ registry = { }
 parsers = renpy.parser.ParseTrie()
 
 
-def register(name, parse=None, lint=None, execute=None, predict=None, next=None, scry=None, block=False, init=False, translatable=False, execute_init=None, label=None):  # @ReservedAssignment
+def register(
+        name,
+        parse=None,
+        lint=None,
+        execute=None,
+        predict=None,
+        next=None,
+        scry=None,
+        block=False,
+        init=False,
+        translatable=False,
+        execute_init=None,
+        init_priority=0,
+        label=None,
+        warp=None,
+        translation_strings=None,
+        force_begin_rollback=False,
+        post_execute=None,
+        post_label=None,
+        predict_all=True,
+        predict_next=None,
+):
     """
     :doc: statement_register
     :name: renpy.register_statement
@@ -46,12 +70,13 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
         When this is False, the statement does not expect a block. When True, it
         expects a block, but leaves it up to the lexer to parse that block. If the
         string "script", the block is interpreted as containing one or more
-        Ren'Py script language statements.
+        Ren'Py script language statements. If the string "possible", the
+        block expect condition is determined by the parse function.
 
     `parse`
         This is a function that takes a Lexer object. This function should parse the
         statement, and return an object. This object is passed as an argument to all the
-        other functions. The lexer argument has the following methods:
+        other functions.
 
     `lint`
         This is called to check the statement. It is passed a single argument, the
@@ -85,49 +110,130 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
         statement. If it returns a string, that string is used as the statement
         label, which can be called and jumped to like any other label.
 
+    `warp`
+        This is a function that is called to determine if this statement
+        should execute during warping. If the function exists and returns
+        true, it's run during warp, otherwise the statement is not run
+        during warp.
+
     `scry`
         Used internally by Ren'Py.
 
     `init`
         True if this statement should be run at init-time. (If the statement
         is not already inside an init block, it's automatically placed inside
-        an init 0 block.) This calls the execute function, in addition to the
+        an init block.) This calls the execute function, in addition to the
         execute_init function.
+
+    `init_priority`
+        An integer that determines the priority of initialization of the
+        init block.
+
+    `translation_strings`
+        A function that is called with the parsed block. It's expected to
+        return a list of strings, which are then reported as being available
+        to be translated.
+
+    `force_begin_rollback`
+        This should be set to true on statements that are likely to cause the
+        end of a fast skip, similar to ``menu`` or ``call screen``.
+
+    `post_execute`
+        A function that is executed as part the next statement after this
+        one. (Adding a post_execute function changes the contents of the RPYC
+        file, meaning a Force Compile is necessary.)
+
+    `post_label`
+        This is a function that is called to determine the label of this
+        the post execute statement. If it returns a string, that string is used
+        as the statement label, which can be called and jumped to like any other
+        label. This can be used to create a unique return point.
+
+    `predict_all`
+        If True, then this predicts all sub-parses of this statement and
+        the statement after this statement.
+
+    `predict_next`
+        This is called with a single argument, the label of the statement
+        that would run after this statement.
+
+        This should be called to predict the statements that can run after
+        this one. It's expected to return a list of of labels or SubParse
+        objects. This is not called if `predict_all` is true.
     """
+
     name = tuple(name.split())
 
-    registry[name] = dict(parse=parse,
-                          lint=lint,
-                          execute=execute,
-                          execute_init=execute_init,
-                          predict=predict,
-                          next=next,
-                          scry=scry,
-                          label=label)
+    if label:
+        force_begin_rollback = True
+
+    registry[name] = dict(
+        parse=parse,
+        lint=lint,
+        execute=execute,
+        execute_init=execute_init,
+        predict=predict,
+        next=next,
+        scry=scry,
+        label=label,
+        warp=warp,
+        translation_strings=translation_strings,
+        rollback="force" if force_begin_rollback else "normal",
+        post_execute=post_execute,
+        post_label=post_label,
+        predict_all=predict_all,
+        predict_next=predict_next,
+
+    )
+
+    if block not in [True, False, "script", "possible" ]:
+        raise Exception("Unknown \"block\" argument value: {}".format(block))
 
     # The function that is called to create an ast.UserStatement.
     def parse_user_statement(l, loc):
-        renpy.exports.push_error_handler(l.error)
 
         try:
-            rv = renpy.ast.UserStatement(loc, l.text, l.subblock)
-            rv.translatable = translatable
+            renpy.exports.push_error_handler(l.error)
 
-            if not block:
+            old_subparses = l.subparses
+            l.subparses = [ ]
+
+            text = l.text
+            subblock = l.subblock
+
+            code_block = None
+
+            if block is False:
                 l.expect_noblock(" ".join(name) + " statement")
-                l.advance()
+            elif block is True:
+                l.expect_block(" ".join(name) + " statement")
             elif block == "script":
                 l.expect_block(" ".join(name) + " statement")
-                rv.code_block = renpy.parser.parse_block(l.subblock_lexer())
+                code_block = renpy.parser.parse_block(l.subblock_lexer())
+
+            start_line = l.line
+
+            parsed = name, parse(l)
+
+            if l.line == start_line:
                 l.advance()
-            else:
-                l.expect_block(" ".join(name) + " statement")
-                l.advance()
+
+            rv = renpy.ast.UserStatement(loc, text, subblock, parsed)
+            rv.translatable = translatable
+            rv.translation_relevant = bool(translation_strings)
+            rv.code_block = code_block
+            rv.subparses = l.subparses
+
         finally:
+            l.subparses = old_subparses
             renpy.exports.pop_error_handler()
 
+        if (post_execute is not None) or (post_label is not None):
+            post = renpy.ast.PostUserStatement(loc, rv)
+            rv = [ rv, post ]
+
         if init and not l.init:
-            rv = renpy.ast.Init(loc, [ rv ], 0)
+            rv = renpy.ast.Init(loc, [rv], init_priority + l.init_offset)
 
         return rv
 
@@ -141,6 +247,9 @@ def register(name, parse=None, lint=None, execute=None, predict=None, next=None,
 
 
 def parse(node, line, subblock):
+    """
+    This is used for runtime parsing of CDSes that were created before 7.3.
+    """
 
     block = [ (node.filename, node.linenumber, line, subblock) ]
     l = renpy.parser.Lexer(block)
@@ -167,6 +276,11 @@ def call(method, parsed, *args, **kwargs):
         return None
 
     return method(parsed, *args, **kwargs)
+
+
+def get(key, parsed):
+    name, parsed = parsed
+    return registry[name].get(key, None)
 
 
 def get_name(parsed):

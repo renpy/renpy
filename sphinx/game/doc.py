@@ -50,6 +50,15 @@ knot
 SL2_KEYWORDS = """\
 tag
 has
+index
+"""
+
+# LayerImage keywords
+LI_KEYWORDS = """\
+layeredimage
+attribute
+group
+always
 """
 
 
@@ -157,7 +166,7 @@ def expanded_sl2_properties():
 
 
 def write_keywords():
-    f = file("source/keywords.py", "w")
+    f = open("source/keywords.py", "w")
 
     kwlist = set(keyword.kwlist)
     kwlist |= script_keywords()
@@ -165,6 +174,7 @@ def write_keywords():
     kwlist |= set(ATL_KEYWORDS.split())
     kwlist |= set(SCRIPT_KEYWORDS.split())
     kwlist |= set(SL2_KEYWORDS.split())
+    kwlist |= set(LI_KEYWORDS.split())
 
     kwlist = list(kwlist)
 
@@ -187,6 +197,13 @@ def write_keywords():
 # A map from filename to a list of lines that are supposed to go into
 # that file.
 line_buffer = collections.defaultdict(list)
+
+
+# A map from id(o) to the names it's documented under.
+documented = collections.defaultdict(list)
+
+# This keeps all objectsd we see alive, to prevent duplicates in documented.
+documented_list = [ ]
 
 
 def scan(name, o, prefix=""):
@@ -286,6 +303,9 @@ def scan(name, o, prefix=""):
     if inspect.isclass(o):
         for i in dir(o):
             scan(i, getattr(o, i), prefix + "    ")
+
+    documented_list.append(o)
+    documented[id(o)].append(name)
 
 
 def scan_section(name, o):
@@ -437,3 +457,17 @@ def write_tq():
 
     with open("source/thequestion.rst", "w") as f:
         f.write(template.format(script=script, options=options))
+
+
+def check_dups():
+
+    duplicates = False
+
+    for v in documented.values():
+        if len(v) >= 2:
+            duplicates = True
+
+            print(" and ".join(v), "are duplicate.")
+
+    if duplicates:
+        raise SystemExit(1)

@@ -484,7 +484,7 @@ label style_text:
 
     show screen text("adjust_true_text")
 
-    e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When true, characters will be shifted a bit so the Text has the same relative spacing."
+    e "The adjust_spacing property is a very subtle one, that only matters when a player resizes the window. When True, characters will be shifted a bit so the Text has the same relative spacing."
 
 
     example:
@@ -676,8 +676,6 @@ label style_button:
 
     e "Finally, the focus_mask property applies to partially transparent buttons. When it's set to True, only areas of the button that aren't transparent cause a button to focus."
 
-    e "Be careful with focus_mask, as it only works on desktop platforms. It doesn't yet work on Android or iOS."
-
     hide example
     hide screen button
     with dissolve
@@ -789,7 +787,7 @@ label style_bar:
 
     show screen bar('invert_bar')
 
-    e "When the bar_invert style property is true, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
+    e "When the bar_invert style property is True, the bar value is displayed on the right side of the bar. The left_bar and right_bar displayables might also need to be swapped."
 
     example:
         style resizing_bar is default:
@@ -1061,7 +1059,7 @@ label style_box:
 
     show screen fixed('fit_fixed')
 
-    e "When the xfit style property is true, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
+    e "When the xfit style property is True, the fixed lays out all its children as if it was full size, and then shrinks in width to fit them. The yfit style works the same way, but in height."
 
     example:
         style reverse_fixed:

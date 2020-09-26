@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,9 @@
 # screen up as soon as possible, to let the user know something is
 # going on.
 
-import threading
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import pygame_sdl2
 import os.path
 import sys
@@ -34,26 +36,42 @@ import renpy
 # The window.
 window = None
 
-# Should the event thread keep running?
-keep_running = False
-
 # The start time.
 start_time = time.time()
 
-PRESPLASHEVENT = pygame_sdl2.event.register("PRESPLASHEVENT")
+
+class ProgressBar(pygame_sdl2.sprite.Sprite):
+
+    def __init__(self, foreground, background):
+        super(ProgressBar, self).__init__()
+        self.foreground = pygame_sdl2.image.load(foreground)
+        self.background = pygame_sdl2.image.load(background)
+        self.width, self.height = self.background.get_size()
+        self.image = pygame_sdl2.Surface((self.width, self.height))
+        self.progress = 0
+        self.counter = 0.0
+
+    def convert_alpha(self, surface=None):
+        self.foreground = self.foreground.convert_alpha(surface)
+        self.background = self.background.convert_alpha(surface)
+
+    def get_size(self):
+        return (self.width, self.height)
+
+    def update(self, total):
+        self.counter += 1
+        self.progress = min(self.counter / total, 1)
+        self.image.blit(self.background, (0, 0))
+        self.image.blit(self.foreground.subsurface(0, 0, self.width * self.progress, self.height), (0, 0))
 
 
-def run_event_thread():
-    """
-    Disposes of events while the window is running.
-    """
-
-    pygame_sdl2.time.set_timer(PRESPLASHEVENT, 20)
-
-    while keep_running:
-        pygame_sdl2.event.wait()
-
-    pygame_sdl2.time.set_timer(PRESPLASHEVENT, 0)
+def find_file(base_name, root):
+    allowed_exts = [ ".png", ".jpg" ]
+    for ext in allowed_exts:
+        fn = os.path.join(root, base_name + ext)
+        if os.path.exists(fn):
+            return fn
+    return None
 
 
 def start(basedir, gamedir):
@@ -64,13 +82,14 @@ def start(basedir, gamedir):
     if "RENPY_LESS_UPDATES" in os.environ:
         return
 
-    filenames = [ "/presplash.png", "/presplash.jpg" ]
-    for fn in filenames:
-        fn = gamedir + fn
-        if os.path.exists(fn):
-            break
-    else:
-        return
+    presplash_fn = find_file("presplash", root=gamedir)
+
+    if not presplash_fn:
+        foreground_fn = find_file("presplash_foreground", root=gamedir)
+        background_fn = find_file("presplash_background", root=gamedir)
+
+        if not foreground_fn or not background_fn:
+            return
 
     if renpy.windows:
 
@@ -81,35 +100,52 @@ def start(basedir, gamedir):
 
     pygame_sdl2.display.init()
 
-    img = pygame_sdl2.image.load(fn, fn)
+    global presplash
+
+    if presplash_fn:
+        presplash = pygame_sdl2.image.load(presplash_fn)
+    else:
+        presplash = ProgressBar(foreground=foreground_fn, background=background_fn)
 
     global window
 
     bounds = pygame_sdl2.display.get_display_bounds(0)
 
-    sw, sh = img.get_size()
+    sw, sh = presplash.get_size()
     x = bounds[0] + bounds[2] // 2 - sw // 2
     y = bounds[1] + bounds[3] // 2 - sh // 2
 
     window = pygame_sdl2.display.Window(
         sys.argv[0],
-        img.get_size(),
+        (sw, sh),
         flags=pygame_sdl2.WINDOW_BORDERLESS,
         pos=(x, y))
 
-    img = img.convert_alpha(window.get_surface())
+    if presplash_fn:
+        presplash = presplash.convert_alpha(window.get_surface())
+        window.get_surface().blit(presplash, (0, 0))
+    else:
+        presplash.convert_alpha(window.get_surface())
+        window.get_surface().blit(presplash.background, (0, 0))
 
-    window.get_surface().blit(img, (0, 0))
     window.update()
-
-    global event_thread
-
-    event_thread = threading.Thread(target=run_event_thread)
-    event_thread.daemon = True
-    event_thread.start()
 
     global start_time
     start_time = time.time()
+
+
+def pump_window():
+    if window is None:
+        return
+
+    if renpy.game.script and isinstance(presplash, ProgressBar):
+        presplash.update(len(renpy.game.script.script_files) + 23)
+        window.get_surface().blit(presplash.image, (0, 0))
+        window.update()
+
+    for ev in pygame_sdl2.event.get():
+        if ev.type == pygame_sdl2.QUIT:
+            raise renpy.game.QuitException(relaunch=False, status=0)
 
 
 def end():
@@ -117,16 +153,17 @@ def end():
     Called just before we initialize the display to hide the presplash.
     """
 
-    global keep_running
-    global event_thread
     global window
+
+    if renpy.emscripten:
+        # presplash handled on the JavaScript side, because emscripten
+        # currently does not support destroying/recreating GL contexts;
+        # in addition browsers support animated webp
+        import emscripten
+        emscripten.run_script(r"""presplashEnd();""")
 
     if window is None:
         return
-
-    keep_running = False
-
-    event_thread.join()
 
     window.destroy()
     window = None
@@ -134,13 +171,13 @@ def end():
 
 def sleep():
     """
-    Sleep to the end of config.minimum_presplash_time.
+    Pump window to the end of config.minimum_presplash_time.
     """
 
     if not (window or renpy.mobile):
         return
 
-    remaining = start_time + renpy.config.minimum_presplash_time - time.time()
+    end_time = start_time + renpy.config.minimum_presplash_time
 
-    if remaining > 0:
-        time.sleep(remaining)
+    while end_time - time.time() > 0:
+        pump_window()

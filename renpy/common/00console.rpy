@@ -118,12 +118,220 @@ init -1500 python:
     # be actually run.
     config.console_callback = None
 
+default persistent._console_short = True
+default persistent._console_unicode_escaping = False
+
 init -1500 python in _console:
     from store import config, persistent, NoRollback
     import sys
     import traceback
     import store
 
+    from reprlib import Repr
+    class PrettyRepr(Repr):
+        _ellipsis = str("...")
+
+        def repr_str(self, x, level):
+            s = repr(x)
+            if len(s) > self.maxstring:
+                i = max(0, (self.maxstring - 3) // 2)
+                s = s[:i] + self._ellipsis + s[len(s) - i:]
+            return s
+
+        def repr_unicode(self, x, level):
+            s = repr(x)
+            if not persistent._console_unicode_escaping:
+                s = s.decode("unicode-escape", errors="replace")
+
+            if len(s) > self.maxstring:
+                i = max(0, (self.maxstring - 3) // 2)
+                s = s[:i] + self._ellipsis + s[len(s) - i:]
+            return s
+
+        def repr_tuple(self, x, level):
+            if not x: return "()"
+
+            if level <= 0: return "(...)"
+
+            if len(x) == 1:
+                item_r = self.repr1(x[0], level - 1)
+                if item_r.endswith("\n"):
+                    item_r = item_r[:-1] + ",\n"
+                else:
+                    item_r = item_r + ","
+                return "(%s)" % item_r
+
+            iter_x = self._to_shorted_list(x, self.maxtuple)
+            return self._repr_iterable(iter_x, level, '(', ')')
+
+        def repr_list(self, x, level):
+            if not x: return "[]"
+
+            if level <= 0: return "[...]"
+
+            iter_x = self._to_shorted_list(x, self.maxlist)
+            return self._repr_iterable(iter_x, level, '[', ']')
+
+        repr_RevertableList = repr_list
+
+        def repr_set(self, x, level):
+            if not x: return "set()"
+
+            if level <= 0: return "set({...})"
+
+            iter_x = self._to_shorted_list(x, self.maxset, sort=True)
+            return self._repr_iterable(iter_x, level, '{', '}')
+
+        repr_RevertableSet = repr_set
+
+        def repr_frozenset(self, x, level):
+            if not x: return "frozenset()"
+
+            if level <= 0: return "frozenset({...})"
+
+            iter_x = self._to_shorted_list(x, self.maxfrozenset, sort=True)
+            return self._repr_iterable(iter_x, level, 'frozenset({', '})')
+
+        def repr_dict(self, x, level):
+            if not x: return "{}"
+
+            if level <= 0: return "{...}"
+
+            iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
+            iter_x = self._make_pretty_items(x, iter_keys)
+            return self._repr_iterable(iter_x, level, '{', '}')
+
+        repr_RevertableDict = repr_dict
+
+        def repr_defaultdict(self, x, level):
+            def_factory = x.default_factory
+            def_factory = self.repr1(def_factory, level)
+            left = "defaultdict(%s, {" % def_factory
+
+            if not x: return left + "})"
+
+            if level <= 0: return left + "...})"
+
+            iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
+            iter_x = self._make_pretty_items(x, iter_keys)
+            return self._repr_iterable(iter_x, level, left, '})')
+
+        def repr_OrderedDict(self, x, level):
+            if not x: return "OrderedDict()"
+
+            if level <= 0: return "OrderedDict({...})"
+
+            iter_keys = self._to_shorted_list(x, self.maxdict)
+            iter_x = self._make_pretty_items(x, iter_keys)
+            return self._repr_iterable(iter_x, level, 'OrderedDict({', '})')
+
+
+        class _PrettyDictItem(object):
+            """
+            This class to store dictionary like key-value pairs
+            to make pretty repr of this.
+            """
+            def __init__(self, key, value):
+                self.key = key
+                self.value = value
+
+        def repr__PrettyDictItem(self, x, level):
+            newlevel = level - 1
+            key = self.repr1(x.key, newlevel)
+            if x.value is self._ellipsis:
+                value = x.value
+            else:
+                value = self.repr1(x.value, newlevel)
+            return "%s: %s" % (key, value)
+
+        def _make_pretty_items(self, x, iter_keys):
+            ellipsis = self._ellipsis
+            DictItem = self._PrettyDictItem
+            iter_x = []
+            for key in iter_keys:
+                if key is ellipsis:
+                    di = ellipsis
+                elif x[key] is x:
+                    di = DictItem(key, ellipsis)
+                else:
+                    di = DictItem(key, x[key])
+                iter_x.append(di)
+            return iter_x
+
+        def _repr_iterable(self, iter_x, level, left, right):
+            ellipsis = self._ellipsis
+            newlevel = level - 1
+            repr1 = self.repr1
+            need_indent = False
+            repr_len = 0
+            rv = []
+            for elem in iter_x:
+                if elem is ellipsis:
+                    rv.append(ellipsis)
+                    continue
+
+                e_repr = repr1(elem, newlevel)
+                if "\n" in e_repr:
+                    need_indent = True
+                elif len(e_repr) > self.maxstring:
+                    need_indent = True
+                repr_len += len(e_repr)
+                rv.append(e_repr)
+
+            if repr_len > self.maxother:
+                need_indent = True
+
+            if not need_indent:
+                return '%s%s%s' % (left, ", ".join(rv), right)
+
+            indent = "    "
+            sep = ",\n"
+            result = ""
+            for e_repr in rv:
+                if '\n' in e_repr:
+                    e_repr = e_repr.replace("\n", "\n    ")
+                result += indent + e_repr + sep
+            return '%s\n%s%s' % (left, result, right)
+
+        def _to_shorted_list(self, x, maxlen, sort=False):
+            """
+            This function returns the list representation of `x`, where references
+            to itself are replaced by an ellipsis, and also if the length of `x`
+            is longer than `maxlen`, the values in the middle are replaced by
+            an ellipsis. If `sort` is True, it also tries to sort the values.
+            """
+            # Since not all sequences of items can be sorted and comparison
+            # functions may raise arbitrary exceptions, make an unsorted
+            # sequence in that case.
+            ellipsis = self._ellipsis
+            iter_x = x
+            if sort:
+                try:
+                    iter_x = sorted(iter_x)
+                except Exception:
+                    pass
+
+            if not isinstance(x, (tuple, _list)):
+                iter_x = list(iter_x)
+
+            n = len(x)
+            if n > maxlen:
+                i = max(0, maxlen // 2)
+                ellipsis_add = type(iter_x)([ellipsis])
+                iter_x = iter_x[:i] + ellipsis_add + iter_x[n - i:]
+
+            return [ellipsis if v is x else v for v in iter_x]
+
+
+    aRepr = PrettyRepr()
+    aRepr.maxtuple = 20
+    aRepr.maxlist = 20
+    aRepr.maxarray = 20
+    aRepr.maxdict = 10
+    aRepr.maxset = 20
+    aRepr.maxfrozenset = 20
+    aRepr.maxstring = 60
+    aRepr.maxother = 200
 
     # The list of traced expressions.
     class TracedExpressionsList(NoRollback, list):
@@ -352,7 +560,15 @@ init -1500 python in _console:
 
             old_entry = None
 
+            if persistent._console_short:
+                if len(stdio_lines) > 30:
+                    stdio_lines[:] = stdio_lines[:10] + [ (False, " ... ") ] + stdio_lines[-20:]
+
             for error, l in stdio_lines:
+                if persistent._console_short:
+                    if len(l) > 200:
+                        l = l[:100] + "..." + l[-100:]
+
                 if (old_entry is not None) and (error == old_entry.is_error):
                     old_entry.result += "\n" + l
                 else:
@@ -394,7 +610,7 @@ init -1500 python in _console:
                     l.advance()
 
                     # Command can be None, but that's okay, since the lookup will fail.
-                    command = l.name()
+                    command = l.word()
 
                     command_fn = config.console_commands.get(command, None)
 
@@ -424,7 +640,11 @@ init -1500 python in _console:
                     pass
                 else:
                     result = renpy.python.py_eval(code)
-                    he.result = repr(result)
+                    if persistent._console_short:
+                        he.result = aRepr.repr(result)
+                    else:
+                        he.result = repr(result)
+
                     he.update_lines()
                     return
 
@@ -469,7 +689,7 @@ init -1500 python in _console:
 
         if renpy.game.context().rollback:
             try:
-                renpy.rollback(checkpoints=0, force=True, greedy=False, label="_console")
+                renpy.rollback(checkpoints=0, force=True, greedy=False, current_label="_console")
             except renpy.game.CONTROL_EXCEPTIONS:
                 raise
             except:
@@ -495,7 +715,7 @@ init -1500 python in _console:
 
     @command(_("help: show this help"))
     def help(l):
-        keys = list(config.console_commands.iterkeys())
+        keys = list(config.console_commands.keys())
         keys.sort()
 
         rv = __("commands:\n")
@@ -576,7 +796,7 @@ init -1500 python in _console:
         :name: renpy.watch
         :doc: debug
 
-        This watches the given python expression, by displaying it in the
+        This watches the given Python expression, by displaying it in the
         upper-right corner of the screen.
         """
 
@@ -607,7 +827,7 @@ init -1500 python in _console:
         :name: renpy.unwatch
         :doc: debug
 
-        Stops watching the given python expression.
+        Stops watching the given Python expression.
         """
 
         block = [ ( "<console>", 1, expr, [ ]) ]
@@ -629,7 +849,7 @@ init -1500 python in _console:
         :name: renpy.unwatch
         :doc: debug
 
-        Stops watching all python expressions.
+        Stops watching all Python expressions.
         """
 
         unwatchall(None)
@@ -638,7 +858,10 @@ init -1500 python in _console:
 
     @command(_("jump <label>: jumps to label"))
     def jump(l):
-        label = l.name()
+        label = l.label_name()
+
+        if label is None:
+            raise Exception("Could not parse label. (Unqualified local labels are not allowed.)")
 
         if not console.can_renpy():
             raise Exception("Ren'Py script not enabled. Not jumping.")
@@ -648,6 +871,22 @@ init -1500 python in _console:
 
         renpy.pop_call()
         renpy.jump(label)
+
+    @command(_("short: Shorten the representation of objects on the console (default)."))
+    def short(l):
+        persistent._console_short = True
+
+    @command(_("long: Print the full representation of objects on the console."))
+    def long(l):
+        persistent._console_short = False
+
+    @command(_("escape: Enables escaping of unicode symbols in unicode strings."))
+    def escape(l):
+        persistent._console_unicode_escaping = True
+
+    @command(_("unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."))
+    def unescape(l):
+        persistent._console_unicode_escaping = False
 
 
 screen _console:
@@ -726,7 +965,7 @@ screen _console:
                 else:
                     text "... " style "_console_prompt"
 
-                input default default style "_console_input_text" exclude ""
+                input default default style "_console_input_text" exclude "" copypaste True
 
 
     key "game_menu" action Jump("_console_return")

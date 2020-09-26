@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import renpy.test
 import renpy.display
 import random
@@ -45,7 +47,7 @@ def find_focus(pattern):
                 return None
 
         if f.x is None:
-            t = renpy.display.tts.root._tts_all()  # @UndefinedVariable
+            t = renpy.display.tts.root._tts_all() # @UndefinedVariable
         else:
             t = f.widget._tts_all()
 
@@ -54,7 +56,7 @@ def find_focus(pattern):
         else:
             return None
 
-    # A list of alt_text_length, focus pairs.
+    # A list of alt_text, focus pairs.
     matching = [ ]
 
     for f in renpy.display.focus.focus_list:
@@ -62,14 +64,14 @@ def find_focus(pattern):
         alt = match(f)
 
         if alt is not None:
-            matching.append((len(alt), f, alt))
+            matching.append((alt, f))
 
     if not matching:
         return None
 
     # This gets the matching displayable with the shortest alt text, which
     # is likely what we want.
-    matching.sort()
+    matching.sort(key=lambda a : (len(a[0]), a[0]))
     return matching[0][1]
 
 

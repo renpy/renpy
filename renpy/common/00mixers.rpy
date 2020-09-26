@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,9 +24,8 @@
 
 init -1600 python hide:
 
-    # Set to true in the very unlikely event you want to manually init
-    # the sound system.
-    config.force_sound = False
+    # Set to False if you don't want sound to initialize without any mixers.
+    config.force_sound = True
 
     # basics: True if the game will have music.
     config.has_music = True
@@ -41,7 +40,7 @@ init -1600 python hide:
 
     # Register 8 channels by default, for compatiblity with older version
     # of Ren'Py.
-    for i in xrange(0, 8):
+    for i in range(0, 8):
         renpy.music.register_channel(i)
 
     # Set up default names for some of the channels.
@@ -79,8 +78,10 @@ init 1600:
 
         else:
             for i, m in enumerate(mixers):
+
                 renpy.sound.set_mixer(i, m, default=True)
-                if m == 'music':
+
+                if i >= 3:
                     renpy.music.set_music(i, True, default=True)
                 else:
                     renpy.music.set_music(i, False, default=True)

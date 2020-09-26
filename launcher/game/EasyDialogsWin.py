@@ -996,14 +996,14 @@ def GetArgv(optionlist=None, commandlist=None, addoldfile=1, addnewfile=1, addfo
             if item[0] == '"':
                 while item[-1] != '"':
                     if not tmplist:
-                        raise RuntimeError, "Unterminated quoted argument"
+                        raise RuntimeError("Unterminated quoted argument")
                     item = item + ' ' + tmplist[0]
                     del tmplist[0]
                 item = item[1:-1]
             if item[0] == "'":
                 while item[-1] != "'":
                     if not tmplist:
-                        raise RuntimeError, "Unterminated quoted argument"
+                        raise RuntimeError("Unterminated quoted argument")
                     item = item + ' ' + tmplist[0]
                     del tmplist[0]
                 item = item[1:-1]

@@ -177,3 +177,11 @@ translate japanese strings:
     old "jump <label>: jumps to label"
     new "jump <ラベル>: ラベルにジャンプ"
 
+    # renpy/common/00console.rpy:685
+    old "short: Shorten the representation of objects on the console (default)."
+    new "short: コンソール上のオブジェクトを短く表現する（デフォルト）"
+
+    # renpy/common/00console.rpy:690
+    old "long: Print the full representation of objects on the console."
+    new "long: コンソール上のオブジェクトを全て表現する"
+

@@ -97,11 +97,11 @@ translate piglatin after_nvl_menu_146d840b:
 
 translate piglatin strings:
 
-    # tutorial_nvlmode.rpy:48
+    # game/tutorial_nvlmode.rpy:48
     old "Yes."
     new "Esyay."
 
-    # tutorial_nvlmode.rpy:48
+    # game/tutorial_nvlmode.rpy:48
     old "No."
     new "Onay."
 

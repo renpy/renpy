@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,16 +23,32 @@ init -1500 python:
 
     @renpy.pure
     class __DisplayAction(Action, DictEquality):
+
+        factor = 1.0
+
         def __init__(self, factor):
-            self.width = int(factor * config.screen_width)
-            self.height = int(factor * config.screen_height)
+            self.factor = factor
+
+        def get_size(self):
+
+            w = int(self.factor * config.screen_width)
+            h = int(self.factor * config.screen_height)
+
+            rv = (w, h)
+
+            max_window_size = renpy.get_renderer_info().get("max_window_size", rv)
+
+            if w > max_window_size[0]:
+                rv = max_window_size
+
+            return rv
 
         def __call__(self):
-            renpy.set_physical_size((self.width, self.height))
+            renpy.set_physical_size(self.get_size())
             renpy.restart_interaction()
 
         def get_sensitive(self):
-            if self.width == config.screen_width and self.height == config.screen_height:
+            if self.factor == 1.0:
                 return True
 
             return renpy.get_renderer_info()["resizable"]
@@ -41,7 +57,7 @@ init -1500 python:
             if _preferences.fullscreen:
                 return False
 
-            return (self.width, self.height) == renpy.get_physical_size()
+            return self.get_size() == renpy.get_physical_size()
 
     _m1_00screen__DisplayAction = __DisplayAction
 
@@ -55,6 +71,7 @@ init -1500 python:
         """
 
         def __call__(self):
+            renpy.free_memory()
             renpy.display.interface.display_reset = True
 
 
@@ -160,6 +177,8 @@ init -1500 python:
          * Preference("self voicing", "disable") - Disable self-voicing.
          * Preference("self voicing", "toggle") - Toggles self-voicing.
 
+         * Preference("self voicing volume drop", 0.5) - Drops the volume of non-voice mixers when self voicing is active.
+
          * Preference("clipboard voicing", "enable") - Enables clipboard-voicing.
          * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
          * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
@@ -182,6 +201,13 @@ init -1500 python:
          * Preference("gl tearing", True) - Tears rather than skipping frames.
          * Preference("gl tearing", False) - Skips frames rather than tearing.
 
+         * Preference("font transform", "opendyslexic") - Sets the accessibility font transform to opendyslexic.
+         * Preference("font transform", "dejavusans") - Sets the accessibility font transform to deja vu sans.
+         * Preference("font transform", None) - Disables the accessibility font transform.
+
+         * Preference("font size", 1.0) - Sets the accessibility font size scaling factor.
+         * Preference("font line spacing", 1.0) - Sets the accessibility font vertical spacing scaling factor.
+
          Values that can be used with bars are:
 
          * Preference("text speed")
@@ -190,6 +216,9 @@ init -1500 python:
          * Preference("sound volume")
          * Preference("voice volume")
          * Preference("mixer <mixer> volume")
+         * Preference("self voicing volume drop")
+         * Preference("font size")
+         * Preference("font line spacing")
 
          The `range` parameter can be given to give the range of certain bars.
          For "text speed", it defaults to 200 cps. For "auto-forward time", it
@@ -204,7 +233,7 @@ init -1500 python:
 
         def get():
 
-            if name == "display":
+            if name == _("display"):
                 if value == "fullscreen":
                     return SetField(_preferences, "fullscreen", True)
                 elif value == "window":
@@ -216,7 +245,7 @@ init -1500 python:
                 elif isinstance(value, (int, float)):
                     return __DisplayAction(value)
 
-            elif name == "transitions":
+            elif name == _("transitions"):
 
                 if value == "all":
                     return SetField(_preferences, "transitions", 2)
@@ -225,9 +254,9 @@ init -1500 python:
                 elif value == "none":
                     return SetField(_preferences, "transitions", 0)
                 elif value == "toggle":
-                    return ToggleField(_preferences, "transitions", true_value=2, false_value=0)
+                    return ToggleField(_preferences, "transitions", true_value=2, false_value=0), _("skip transitions")
 
-            elif name == "video sprites":
+            elif name == _("video sprites"):
 
                 if value == "show":
                     return SetField(_preferences, "video_image_fallback", False)
@@ -236,7 +265,7 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "video_image_fallback")
 
-            elif name == "show empty window":
+            elif name == _("show empty window"):
 
                 if value == "show":
                     return SetField(_preferences, "show_empty_window", True)
@@ -245,7 +274,7 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "show_empty_window")
 
-            elif name == "text speed":
+            elif name == _("text speed"):
 
                 if value is None:
                     bar_range = range or 200
@@ -253,36 +282,37 @@ init -1500 python:
                 elif isinstance(value, int):
                     return SetField(_preferences, "text_cps", value)
 
-            elif name == "joystick" or name == "joystick...":
+            elif name == _("joystick") or name == _("joystick..."):
 
                 if renpy.display.joystick.enabled or config.always_has_joystick:
                     return ShowMenu("joystick_preferences")
                 else:
                     return None
 
-            elif name == "skip":
+            elif name == _("skip"):
 
                 if value == "all messages" or value == "all":
-                    return SetField(_preferences, "skip_unseen", True)
-                elif value == "seen messages" or value == "seen":
-                    return SetField(_preferences, "skip_unseen", False)
-                elif value == "toggle":
-                    return ToggleField(_preferences, "skip_unseen")
+                    return SetField(_preferences, "skip_unseen", True), _("skip unseen [text]")
 
-            elif name == "begin skipping":
+                elif value == "seen messages" or value == "seen":
+                    return SetField(_preferences, "skip_unseen", False), _("skip unseen [text]")
+                elif value == "toggle":
+                    return ToggleField(_preferences, "skip_unseen"), _("skip unseen text")
+
+            elif name == _("begin skipping"):
 
                 return Skip()
 
-            elif name == "after choices":
+            elif name == _("after choices"):
 
                 if value == "keep skipping" or value == "keep" or value == "skip":
                     return SetField(_preferences, "skip_after_choices", True)
                 elif value == "stop skipping" or value == "stop":
                     return SetField(_preferences, "skip_after_choices", False)
                 elif value == "toggle":
-                    return ToggleField(_preferences, "skip_after_choices")
+                    return ToggleField(_preferences, "skip_after_choices"), _("skip after choices")
 
-            elif name == "auto-forward time":
+            elif name == _("auto-forward time"):
 
                 if value is None:
 
@@ -296,16 +326,17 @@ init -1500 python:
                 elif isinstance(value, int):
                     return SetField(_preferences, "afm_time", value)
 
-            elif name == "auto-forward":
+            elif name == _("auto-forward"):
 
                 if value == "enable":
                     return SetField(_preferences, "afm_enable", True)
                 elif value == "disable":
                     return SetField(_preferences, "afm_enable", False)
                 elif value == "toggle":
-                    return ToggleField(_preferences, "afm_enable")
+                    return ToggleField(_preferences, "afm_enable"), _("Auto forward")
 
-            elif name == "auto-forward after click":
+
+            elif name == _("auto-forward after click"):
 
                 if value == "enable":
                     return SetField(_preferences, "afm_after_click", True)
@@ -314,7 +345,7 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "afm_after_click")
 
-            elif name == "automatic move":
+            elif name == _("automatic move"):
 
                 if value == "enable":
                     return SetField(_preferences, "mouse_move", True)
@@ -323,7 +354,7 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "mouse_move")
 
-            elif name == "wait for voice":
+            elif name == _("wait for voice"):
 
                 if value == "enable":
                     return SetField(_preferences, "wait_voice", True)
@@ -332,7 +363,7 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "wait_voice")
 
-            elif name == "voice sustain":
+            elif name == _("voice sustain"):
 
                 if value == "enable":
                     return SetField(_preferences, "voice_sustain", True)
@@ -341,7 +372,7 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "voice_sustain")
 
-            elif name == "self voicing":
+            elif name == _("self voicing"):
 
                 if value == "enable":
                     return SetField(_preferences, "self_voicing", True)
@@ -350,7 +381,15 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing")
 
-            elif name == "clipboard voicing":
+            elif name == _("self voicing volume drop"):
+
+                if value is None:
+                    bar_range = range or 1.0
+                    return FieldValue(_preferences, "self_voicing_volume_drop", range=1.0, style="slider")
+
+                return SetField(_preferences, "self_voicing_volume_drop", value)
+
+            elif name == _("clipboard voicing"):
 
                 if value == "enable":
                     return SetField(_preferences, "self_voicing", "clipboard")
@@ -359,7 +398,7 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing", true_value="clipboard")
 
-            elif name == "debug voicing":
+            elif name == _("debug voicing"):
 
                 if value == "enable":
                     return SetField(_preferences, "self_voicing", "debug")
@@ -368,7 +407,7 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "self_voicing", true_value="debug")
 
-            elif name == "emphasize audio":
+            elif name == _("emphasize audio"):
 
                 if value == "enable":
                     return SetField(_preferences, "emphasize_audio", True)
@@ -377,7 +416,7 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "emphasize_audio")
 
-            elif name == "rollback side":
+            elif name == _("rollback side"):
 
                 if value in [ "left", "right", "disable" ]:
                     if renpy.mobile:
@@ -387,17 +426,38 @@ init -1500 python:
 
                     return SetField(_preferences, field, value)
 
-            elif name == "gl powersave":
+            elif name == _("gl powersave"):
                 if value == "toggle":
                     return [ ToggleField(_preferences, "gl_powersave"), _DisplayReset() ]
                 else:
                     return [ SetField(_preferences, "gl_powersave", value), _DisplayReset() ]
 
-            elif name == "gl framerate":
+            elif name == _("gl framerate"):
                 return [ SetField(_preferences, "gl_framerate", value), _DisplayReset() ]
 
-            elif name == "gl tearing":
+            elif name == _("gl tearing"):
                 return [ SetField(_preferences, "gl_tearing", value), _DisplayReset() ]
+
+            elif name == _("font transform"):
+                return [ SetField(_preferences, "font_transform", value), _DisplayReset() ]
+
+            elif name == _("font size"):
+
+                if value is None:
+                    bar_range = range or 1.0
+                    return FieldValue(_preferences, "font_size", range=bar_range, style="slider", offset=.5, action=_DisplayReset())
+
+                return [ SetField(_preferences, "font_size", value), _DisplayReset() ]
+
+            elif name == _("font line spacing"):
+
+                if value is None:
+                    bar_range = range or 1.0
+                    return FieldValue(_preferences, "font_line_spacing", range=bar_range, style="slider", offset=.5, action=_DisplayReset())
+
+                return [ SetField(_preferences, "font_line_spacing", value), _DisplayReset() ]
+
+
 
             mixer_names = {
                 "music" : "music",
@@ -406,31 +466,45 @@ init -1500 python:
                 "all" : _preferences.get_all_mixers(),
             }
 
+            # Make these available to the translation system
+            if False:
+                _("music volume")
+                _("sound volume")
+                _("voice volume")
+                _("mute music")
+                _("mute sound")
+                _("mute voice")
+                _("mute all")
+
             n = name.split()
 
             if n[-1] == "volume":
                 if len(n) == 3 and n[0] == "mixer":
+                    alt = n[1] + " volume"
                     mixer = n[1]
                 elif len(n) == 2:
+                    alt = n[0] + " volume"
                     mixer = mixer_names.get(n[0], n[0])
 
                 if value is None:
-                    return MixerValue(mixer)
+                    return MixerValue(mixer), alt
                 else:
-                    return SetMixer(mixer, value)
+                    return SetMixer(mixer, value), __(alt) + " [text]"
 
             if n[-1] == "mute":
                 if len(n) == 3 and n[0] == "mixer":
+                    alt = "mute " + n[1]
                     mixer = n[1]
                 elif len(n) == 2:
+                    alt = "mute " + n[0]
                     mixer = mixer_names.get(n[0], n[0])
 
                 if value == "enable":
-                    return SetMute(mixer, True)
+                    return SetMute(mixer, True), __(alt) + " [text]"
                 elif value == "disable":
-                    return SetMute(mixer, False)
+                    return SetMute(mixer, False), __(alt) + " [text]"
                 elif value == "toggle":
-                    return ToggleMute(mixer)
+                    return ToggleMute(mixer), alt
 
             else:
                 raise Exception("Preference(%r, %r) is unknown." % (name , value))
@@ -438,7 +512,16 @@ init -1500 python:
         rv = get()
 
         if rv is not None:
-            rv.alt = name + " [text]"
+
+            if isinstance(rv, tuple):
+                rv, alt = rv
+            else:
+                alt = None
+
+            if alt is not None:
+                rv.alt = __(alt)
+            else:
+                rv.alt = __(name) + " [text]"
 
         return rv
 

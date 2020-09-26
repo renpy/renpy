@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,6 +32,11 @@ init -1500 python:
 
         def __init__(self, action):
             self.action = action
+
+            try:
+                self.alt = action.alt
+            except:
+                pass
 
         def __call__(self):
             return self.action.__call__()
@@ -69,19 +74,29 @@ init -1500 python:
         """
         :doc: other_action
 
-        This allows an expression to control if a button should be marked
-        as selected. It should be used as part of a list with one or more
-        actions. For example::
+        This indicates that one action in a list of actions should be used
+        to determine if a button is selected. This only makes sense
+        when the button has a list of actions. For example::
 
-            # The button is selected if mars_flag is True
+            # The button is selected only if mars_flag is True
             textbutton "Marsopolis":
-                action [ Jump("mars"), SelectedIf(mars_flag) ]
+                action [ SelectedIf(SetVariable("mars_flag", True)), SetVariable("on_mars", True) ]
+
+        The action inside SelectedIf is run normally when the button is clicked.
         """
+
+        # Note: This had been documented to take a boolean.
 
         def __init__(self, expression):
             self.expression = expression
 
+            if isinstance(expression, Action):
+                for i in [ "get_selected", "get_sensitive", "get_tooltip", "periodic", "unhovered", "unhovered" ]:
+                    setattr(self, i, getattr(expression, i, None))
+
         def __call__(self):
+            if isinstance(self.expression, Action):
+                return self.expression()
             return None
 
         def get_selected(self):
@@ -92,19 +107,29 @@ init -1500 python:
         """
         :doc: other_action
 
-        This allows an expression to control if a button should be marked
-        as sensitive. It should be used as part of a list with one or more
-        actions. For example::
+        This indicates that one action in a list of actions should be used
+        to determine if a button is sensitive. This only makes sense
+        when the button has a list of actions. For example::
 
-            # The button is sensitive if mars_flag is True
+            # The button is sensitive only if mars_flag is True
             textbutton "Marsopolis":
-                action [ Jump("mars"), SensitiveIf(mars_flag) ]
+                action [ SensitiveIf(SetVariable("mars_flag", True)), SetVariable("on_mars", True) ]
+
+        The action inside SensitiveIf is run normally when the button is clicked.
         """
+
+        # Note: This had been documented to take a boolean.
 
         def __init__(self, expression):
             self.expression = expression
 
+            if isinstance(expression, Action):
+                for i in [ "get_selected", "get_sensitive", "get_tooltip", "periodic", "unhovered", "unhovered" ]:
+                    setattr(self, i, getattr(expression, i, None))
+
         def __call__(self):
+            if isinstance(self.expression, Action):
+                return self.expression()
             return None
 
         def get_sensitive(self):
@@ -189,10 +214,21 @@ init -1500 python:
 
         This action causes a rollback to occur, when a rollback is possible.
         Otherwise, nothing happens.
+
+        The arguments are given to :func:`renpy.rollback`, except that the
+        `force` argument defaults to "menu".
         """
 
+        args = tuple()
+        kwargs = { "force" : "menu" }
+
+        def __init__(self, *args, **kwargs):
+            self.args = args
+            kwargs.setdefault("force", "menu")
+            self.kwargs = kwargs
+
         def __call__(self):
-            renpy.rollback(force="menu")
+            renpy.rollback(*self.args, **self.kwargs)
 
         def get_sensitive(self):
             return renpy.can_rollback()
@@ -336,7 +372,7 @@ init -1500 python:
             the default language of the game script.
         """
 
-        alt = "Language [text]"
+        alt = _("Language [text]")
 
         def __init__(self, language):
             self.language = language
@@ -547,6 +583,71 @@ init -1500 python:
 
         def get_selected(self):
             return renpy.is_selected(self.yes)
+
+        def get_tooltip(self):
+            return renpy.display.behavior.get_tooltip(self.yes)
+
+
+    @renpy.pure
+    class Scroll(Action, DictEquality):
+        """
+        :doc: other_action
+
+        Causes a Bar, Viewport, or Vpgrid to scroll.
+
+        `id`
+            The id of a bar, viewport, or vpgrid in the current screen.
+
+        `direction`
+            For a vbar, one of "increase" or "decrease". For a viewport
+            or vpgrid, one of "horizontal increase", "vertical increase",
+            "horizontal decrease", or "vertical decrease".
+
+        `amount`
+            The amount to scroll by. This can be a number of pixels, or
+            else "step" or "page".
+        """
+
+        def __init__(self, id, direction, amount="step"):
+            self.id = id
+            self.direction = direction
+            self.amount = amount
+
+        def __call__(self):
+
+            d = renpy.get_widget(None, self.id)
+
+            if d is None:
+                raise Exception("There is no displayable with the id {}.".format(self.id))
+
+            if self.direction == "increase":
+                delta = +1
+                adjustment = d.adjustment
+            elif self.direction == "decrease":
+                delta = -1
+                adjustment = d.adjustment
+            elif self.direction == "horizontal increase":
+                delta = +1
+                adjustment = d.xadjustment
+            elif self.direction == "horizontal decrease":
+                delta = -1
+                adjustment = d.xadjustment
+            elif self.direction == "vertical increase":
+                delta = +1
+                adjustment = d.yadjustment
+            elif self.direction == "vertical decrease":
+                delta = -1
+                adjustment = d.yadjustment
+            else:
+                raise Exception("Unknown scroll direction: {}".format(self.direction))
+
+            if self.amount == "step":
+                adjustment.change(adjustment.value + delta * adjustment.step)
+            elif self.amount == "page":
+                adjustment.change(adjustment.value + delta * adjustment.page)
+            else:
+                adjustment.change(adjustment.value + delta * self.amount)
+
 
 init -1500:
 

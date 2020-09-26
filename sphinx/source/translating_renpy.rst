@@ -12,11 +12,11 @@ message can be translated.
 
 To create a new translation:
 
-1. Open the Ren'PY launcher.
+1. Open the Ren'Py launcher.
 2. On the preferences page, choose "Open launcher project".
 3. Choose "Generate Translations."
 4. Enter the name of the language to translate to. This should consist of
-   lower-case ASCII characters and underscores, so "japanese", "russian",
+   lowercase ASCII characters and underscores, so "japanese", "russian",
    or "ancient_klingon" are all valid language names.
 5. Choose "Generate Translations."
 
@@ -96,7 +96,7 @@ Changing the Launcher Style
 ---------------------------
 
 The styles used by the launcher can be configured by setting variables
-in a translate python block. The following variables are available. The
+in a ``translate python`` block. The following variables are available. The
 names are a bit confusing, as they reflect the English-language translation.
 
 These variables are only available in the launcher.
@@ -111,13 +111,13 @@ These variables are only available in the launcher.
 
 .. var:: gui.REGULAR_BOLD = False
 
-    If true, heavy-weight text is bolded.
+    If True, heavy-weight text is bolded.
 
 .. var:: gui.FONT_SCALE = 1.0
 
     A scaling factor that is applied to all text in the launcher.
 
-A translate python block is used to set these variables. For example, the
+A ``translate python`` block is used to set these variables. For example, the
 following is used to change the fonts in the Arabic translation of
 Ren'Py::
 
@@ -132,7 +132,7 @@ Functions
 ---------
 
 The following functions are used to configure translation in the launcher.
-They should be called from the init python block.
+They should be called from the ``init python`` block.
 
 .. function:: translate_font(language, font)
 

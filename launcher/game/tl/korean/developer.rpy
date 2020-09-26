@@ -1,5 +1,4 @@
-﻿
-translate korean strings:
+﻿translate korean strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
@@ -7,7 +6,7 @@ translate korean strings:
 
     # _developer/developer.rpym:43
     old "Reload Game (Shift+R)"
-    new "게임 재시작 (Shift + R)"
+    new "게임 재시작 (Shift+R)"
 
     # _developer/developer.rpym:45
     old "Console (Shift+O)"
@@ -51,7 +50,7 @@ translate korean strings:
 
     # _developer/developer.rpym:378
     old "Mouse position: %r"
-    new "마우스 포인터 좌료: %r"
+    new "마우스 포인터 좌표: %r"
 
     # _developer/developer.rpym:383
     old "Right-click or escape to quit."
@@ -75,7 +74,7 @@ translate korean strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    new "\n{color=#cfc}✔ 예측된 이미지 (좋은){/color}\n{color=#fcc}✘ 예측하지 못한 이미지 (나쁜){/color}\n{color=#fff}드래그로 이동.{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
@@ -103,7 +102,7 @@ translate korean strings:
 
     # _developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "(디스플레이어블에 적용되는 속성이 없습니다)"
+    new "        (디스플레이어블에 적용되는 속성이 없습니다)"
 
     # _developer/inspector.rpym:147
     old "        (default properties omitted)"
@@ -135,11 +134,11 @@ translate korean strings:
 
     # 00console.rpy:413
     old " <renpy script statement>: run the statement\n"
-    new "<렌파이 스크립트 명령문>: 명령문을 실행한다\n"
+    new " <렌파이 스크립트 명령문>: 명령문을 실행한다\n"
 
     # 00console.rpy:415
     old " <python expression or statement>: run the expression or statement"
-    new "<파이썬 표현식 또는 명령문>: 표현식이나 명령문을 실행한다"
+    new " <파이썬 표현식 또는 명령문>: 표현식이나 명령문을 실행한다"
 
     # 00console.rpy:423
     old "clear: clear the console history"
@@ -177,3 +176,10 @@ translate korean strings:
     old "jump <label>: jumps to label"
     new "jump <label>: label로 점프한다"
 
+    # 00console.rpy:685
+    old "short: Shorten the representation of objects on the console (default)."
+    new "short: 콘솔에서 오브젝트 표시를 줄인다 (기본값)."
+
+     # 00console.rpy:690
+    old "long: Print the full representation of objects on the console."
+    new "long: 콘솔에서 오브젝트를 모두 표시한다."

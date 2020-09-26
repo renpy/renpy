@@ -22,7 +22,7 @@ ATL can be included as part of three Ren'Py script statements.
 Transform Statement
 -------------------
 
-The transform statement creates a transform that can be supplied as part of an
+The ``transform`` statement creates a transform that can be supplied as part of an
 at clause. The syntax of the transform statement is:
 
 .. productionlist:: script
@@ -30,11 +30,11 @@ at clause. The syntax of the transform statement is:
                   :    `atl_block`
 
 The transform statement  must be run at init time. If it is found outside an
-init block, then it is automatically placed inside an init block with a
+``init`` block, then it is automatically placed inside an ``init`` block with a
 priority of 0. The transform may have a list of parameters, which must be
 supplied when it is called.
 
-`Name` must be a python identifier. The transform created by the ATL block is
+`Name` must be a Python identifier. The transform created by the ATL block is
 bound to this name.::
 
    transform left_to_right:
@@ -47,7 +47,7 @@ bound to this name.::
 Image Statement With ATL Block
 ------------------------------
 
-The second way to use ATL is as part of an image statement with ATL block.
+The second way to use ATL is as part of an ``image`` statement with ATL block.
 This binds an image name to the given transform. As there's no way to supply
 parameters to this transform, it's only useful if the transform defines an
 animation. The syntax for an image statement with ATL block is:
@@ -69,7 +69,7 @@ animation. The syntax for an image statement with ATL block is:
 Scene and Show Statements with ATL Block
 ----------------------------------------
 
-The final way to use ATL is as part of a scene or show statement. This wraps
+The final way to use ATL is as part of a ``scene`` or ``show`` statement. This wraps
 the image being shown inside an ATL transformation.
 
 .. productionlist:: script
@@ -99,7 +99,7 @@ There are two kinds of ATL statements: simple and complex. Simple statements
 do not take an ATL block. A single logical line may contain one or more ATL
 statements, separated by commas. A complex statement contains a block, must
 be on its own line. The first line of a complex statement always ends with a
-colon (":").
+colon ``:``.
 
 By default, statements in a block are executed in the order in which they
 appear, starting with the first statement in the block. Execution terminates
@@ -111,7 +111,7 @@ terminated.
 
 If an ATL statement requires evaluation of an expression, such evaluation
 occurs when the transform is first added to the scene list. (Such as when
-using a show statement or ui function.)
+using a ``show`` statement or ``ui`` function.)
 
 ATL Statements
 ==============
@@ -150,10 +150,14 @@ The interpolation statement can then contain a number of other clauses. When a
 property and value are present, then the value is the value the property will
 obtain at the end of the statement. The value can be obtained in several ways:
 
-* If the value is followed by one or two knots, then spline motion is used.
+* If the value is followed by one or more knots, then spline motion is used.
   The starting point is the value of the property at the start of the
   interpolation, the end point is the property value, and the knots are used
-  to control the spline.
+  to control the spline. A quadratic curve is used for a single knot, Bezier 
+  is used when there are two and Catmull-Rom is used for three or more knots. 
+  In the former two cases, the knot or knots are simply control nodes. For 
+  Catmull-Rom, the first and last knot are control nodes (often outside the 
+  displayed path) and the other knots are points the path passes through.
 
 * If the interpolation statement contains a "clockwise" or
   "counterclockwise" clause, circular motion is used, as described below.
@@ -195,22 +199,22 @@ Some sample interpolations are::
 An important special case is that the pause warper, followed by a time and
 nothing else, causes ATL execution to pause for that amount of time.
 
-Some properties can have values of multiple types. For example, the xpos
+Some properties can have values of multiple types. For example, the :propref:`xpos`
 property can be an int, float, or absolute. The behavior is undefined when an
 interpolation has old and new property values of different types.
 
 Time Statement
 --------------
 
-The time statement is a simple control statement. It contains a single
-simple_expression, which is evaluated to give a time, expressed as seconds
+The ``time`` statement is a simple control statement. It contains a single
+`simple_expression`, which is evaluated to give a time, expressed as seconds
 from the start of execution of the containing block.
 
 .. productionlist:: atl
     atl_time : "time" `simple_expression`
 
 When the time given in the statement is reached, the following statement
-begins to execute.This transfer of control occurs even if a previous
+begins to execute. This transfer of control occurs even if a previous
 statement is still executing, and causes any prior statement to immediately
 terminate.
 
@@ -267,7 +271,7 @@ There are three things the first simple expression may evaluate to:
          # Show logo_bw.png, with a dissolve.
          "logo_bw.png" with Dissolve(0.5, alpha=True)
 
-         # Run the move_right tranform.
+         # Run the move_right transform.
          move_right
 
 Pass Statement
@@ -276,7 +280,7 @@ Pass Statement
 .. productionlist:: atl
     atl_pass : "pass"
 
-The pass statement is a simple statement that causes nothing to happen. This
+The ``pass`` statement is a simple statement that causes nothing to happen. This
 can be used when there's a desire to separate statements, like when there are
 two sets of choice statements that would otherwise be back-to-back.
 
@@ -284,10 +288,10 @@ Repeat Statement
 ----------------
 
 
-The repeat statement is a simple statement that causes the block containing it
+The ``repeat`` statement is a simple statement that causes the block containing it
 to resume execution from the beginning. If the expression is present, then it
 is evaluated to give an integer number of times the block will execute. (So a
-block ending with "repeat 2" will execute at most twice.)
+block ending with ``repeat 2`` will execute at most twice.)
 
 .. productionlist:: atl
     atl_repeat : "repeat" (`simple_expression`)?
@@ -304,7 +308,7 @@ The repeat statement must be the last statement in a block.::
 Block Statement
 ---------------
 
-The block statement is a complex statement that contains a block of ATL statements.
+The ``block`` statement is a complex statement that contains a block of ATL statements.
 This can be used to group statements that will repeat.
 
 .. productionlist:: atl
@@ -313,7 +317,7 @@ This can be used to group statements that will repeat.
 
 ::
 
-    label logo base:
+    show logo base:
         alpha 0.0 xalign 0.0 yalign 0.0
         linear 1.0 alpha 1.0
 
@@ -325,7 +329,7 @@ This can be used to group statements that will repeat.
 Choice Statement
 ----------------
 
-The choice statement is a complex statement that defines one of a set of
+The ``choice`` statement is a complex statement that defines one of a set of
 potential choices. Ren'Py will pick one of the choices in the set, and
 execute the ATL block associated with it, and then continue execution after
 the last choice in the choice set.
@@ -355,7 +359,7 @@ is assumed.
 Parallel Statement
 ------------------
 
-The parallel statement is used to define a set of ATL blocks to execute in
+The ``parallel`` statement is used to define a set of ATL blocks to execute in
 parallel.
 
 .. productionlist:: atl
@@ -388,7 +392,7 @@ undefined.
 Event Statement
 ---------------
 
-The event statement is a simple statement that causes an event with the given
+The ``event`` statement is a simple statement that causes an event with the given
 name to be produced.
 
 .. productionlist:: atl
@@ -402,7 +406,7 @@ handler.
 On Statement
 ------------
 
-The On statement is a complex statement that defines an event handler. On
+The ``on`` statement is a complex statement that defines an event handler. On
 statements are greedily grouped into a single statement. On statement can
 handle a single event name, or a comma-separated list of event names.
 
@@ -435,8 +439,8 @@ by the time statement, or an enclosing event handler.)
 Contains Statement
 ------------------
 
-The contains statement sets the displayable contained by this ATL transform.
-(The child of the transform.) There are two variants of the contains
+The ``contains`` statement sets the displayable contained by this ATL transform
+(the child of the transform). There are two variants of the contains
 statement.
 
 The contains expression variant takes an expression, and sets that expression
@@ -496,7 +500,7 @@ arguments to be easily passed to the children.
 Function Statement
 ------------------
 
-The function statement allows ATL to use Python functions to control the ATL
+The ``function`` statement allows ATL to use Python functions to control the ATL
 properties.
 
 .. productionlist:: atl
@@ -572,8 +576,8 @@ http://www.easings.net/.
 
 .. include:: inc/easings
 
-New warpers can be defined using the renpy.atl_warper decorator, in a python
-early block. It should be placed in a file that is parsed before any file
+New warpers can be defined using the ``renpy.atl_warper`` decorator, in a ``python
+early`` block. It should be placed in a file that is parsed before any file
 that uses the warper. This looks like::
 
     python early hide:
@@ -589,11 +593,11 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, renpy.absolute, or
+When the type is given as position, it may be an int, ``renpy.absolute``, or
 float. If it's a float, it's interpreted as a fraction of the size of the
-containing area (for pos) or displayable (for anchor).
+containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
 
-Note that not all properties are independent. For example, xalign and xpos
+Note that not all properties are independent. For example, :propref:`xalign` and :propref:`xpos`
 both update some of the same underlying data. In a parallel statement, only
 one block should adjust horizontal position, and one should adjust vertical
 positions. (These may be the same block.) The angle and radius properties set
@@ -683,8 +687,6 @@ both horizontal and vertical positions.
     The number of pixels the displayable is offset by in the vertical
     direction. Positive values offset toward the bottom.
 
-
-
 .. transform-property:: xcenter
 
     :type: float
@@ -763,7 +765,7 @@ both horizontal and vertical positions.
     :type: boolean
     :default: None
 
-    If true, the displayable and its children are drawn using nearest-neighbor
+    If True, the displayable and its children are drawn using nearest-neighbor
     filtering. If False, the displayable and its children are drawn using
     bilinear filtering. If None, this is inherited from the parent, or
     :var:`config.nearest_neighbor`, which defaults to False.
@@ -845,10 +847,12 @@ both horizontal and vertical positions.
 
     If not None, causes the displayable to be cropped to the given
     box. The box is specified as a tuple of (x, y, width, height).
-    If floats are given and crop_relative is true, the components are
+    If floats are given and ``crop_relative`` is true, the components are
     taken as a fraction of the width and hight of the source image.
     Otherwise, the components are considered to be an absolute number
     of pixels.
+
+    If corners and crop are given, crop takes priority over corners.
 
 .. transform-property:: crop_relative
 
@@ -863,16 +867,16 @@ both horizontal and vertical positions.
     :type: None or (int, int)
     :default: None
 
-    If not None, gives the upper-left corner of the crop box. This
-    takes priority over crop.
+    If not None, gives the upper-left corner of the crop box. Crop takes
+    priority over corners.
 
 .. transform-property:: corner2
 
     :type: None or (int, int)
     :default: None
 
-    If not None, gives the lower right corner of the crop box. This
-    takes priority over crop.
+    If not None, gives the lower right corner of the crop box. Cropt takes
+    priority over corners.
 
 .. transform-property:: size
 
@@ -881,6 +885,56 @@ both horizontal and vertical positions.
 
     If not None, causes the displayable to be scaled to the given
     size.
+
+    This is affected by the :tpref:`fit` property.
+
+.. transform-property:: xsize
+
+    :type: None or int
+    :default: None
+
+    If not None, causes the displayable to be scaled to the given width.
+
+    This is affected by the :tpref:`fit` property.
+
+.. transform-property:: ysize
+
+    :type: None or int
+    :default: None
+
+    If not None, causes the displayable to be scaled to the given height.
+
+    This is affected by the :tpref:`fit` property.
+
+.. transform-property:: fit
+
+   :type: None or string
+   :default: None
+
+   If not None, causes the displayable to be sized according to the
+   table below. In this context "dimensions" refers to one or more of ``xsize`` and
+   ``ysize`` that are not None.
+
+   .. list-table::
+      :widths: 15 85
+      :header-rows: 1
+
+      * - Value
+        - Description
+      * - ``contain``
+        - As large as possible, without exceeding any dimensions.
+          Maintains aspect ratio.
+      * - ``cover``
+        - As small as possible, while matching or exceeding all
+          dimensions. Maintains aspect ratio.
+      * - None or ``fill``
+        - Stretches/squashes displayable to exactly match dimensions.
+      * - ``scale-down``
+        - As for ``contain``, but will never increase the size of the
+          displayable.
+      * - ``scale-up``
+        - As for ``cover``, but will never decrease the size of the
+          displayable.
 
 .. transform-property:: maxsize
 
@@ -891,6 +945,11 @@ both horizontal and vertical positions.
     within a box of this size, while preserving aspect ratio. (Note that
     this means that one of the dimensions may be smaller than the size
     of this box.)
+
+    .. warning::
+
+        This property is deprecated. Consider using :tpref:`size` in
+        conjuction with :tpref:`fit` and the value ``contain``.
 
 .. transform-property:: subpixel
 
@@ -953,6 +1012,26 @@ both horizontal and vertical positions.
     The number of times to tile the image vertically. (This is ignored when
     ypan is given.)
 
+.. transform-property:: matrixcolor
+
+    :type: None or Matrix or MatrixColor
+    :default: None
+
+    If not None, the value of this property is used to recolor everything
+    that children of this transform draw. See :ref:`matricolor` for more
+    information.
+
+.. transform-property:: blur
+
+    :type: None or float
+    :default: None
+
+    This blurs the child of this image by `blur` pixels, up to the border
+    of the displayable. The precise details of the blurring may change
+    between Ren'Py versions, and the blurring may exhibit artifactsm,
+    especially when the image being blurred is changing.
+
+
 These properties are applied in the following order:
 
 #. tile
@@ -962,6 +1041,7 @@ These properties are applied in the following order:
 #. pan
 #. rotate
 #. position properties
+#. matrixcolor
 
 
 Circular Motion
@@ -986,7 +1066,7 @@ External Events
 The following events can be triggered automatically:
 
 ``start``
-    A pseudo-event, triggered on entering an on statement, if no event of
+    A pseudo-event, triggered on entering an ``on`` statement, if no event of
     higher priority has happened.
 
 ``show``
@@ -994,12 +1074,12 @@ The following events can be triggered automatically:
     statement, and no image with the given tag exists.
 
 ``replace``
-    Triggered when transform is shown using the show statement, replacing
+    Triggered when transform is shown using the ``show`` statement, replacing
     an image with the given tag.
 
 ``hide``
-    Triggered when the transform is hidden using the hide statement or its
-    python equivalent.
+    Triggered when the transform is hidden using the ``hide`` statement or its
+    Python equivalent.
 
     Note that this isn't triggered when the transform is eliminated via
     the scene statement or exiting the context it exists in, such as when

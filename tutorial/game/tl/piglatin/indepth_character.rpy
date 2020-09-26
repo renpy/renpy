@@ -78,10 +78,10 @@ translate piglatin demo_character_b456f0a9:
     e "Heretay areay uiteqay aay ewfay ifferentday ropertiespay hattay ancay ebay etsay histay ayway. Erehay areay omesay ofay hetay ostmay usefulay."
 
 # game/indepth_character.rpy:48
-translate piglatin demo_character_3c3b8e00:
+translate piglatin demo_character_31ace18e:
 
-    # e1 "The window_background property sets the image thay's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
-    e1 "Hetay indow_backgroundway ropertypay etssay hetay imageay haytay'say useday orfay hetay ackgroundbay ofay hetay extboxtay, hichway ouldshay ebay hetay amesay izesay asay hetay efaultday inay uigay/extboxtay.ngpay."
+    # e1 "The window_background property sets the image that's used for the background of the textbox, which should be the same size as the default in gui/textbox.png."
+    e1 "Hetay indow_backgroundway ropertypay etssay hetay imageay hattay'say useday orfay hetay ackgroundbay ofay hetay extboxtay, hichway ouldshay ebay hetay amesay izesay asay hetay efaultday inay uigay/extboxtay.ngpay."
 
 # game/indepth_character.rpy:54
 translate piglatin demo_character_18ba073d:

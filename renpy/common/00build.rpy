@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -69,32 +69,38 @@ init -1500 python in build:
 
         ( "**/*.pyc", None),
 
-        ( "renpy.py", "renpy"),
+        ( "renpy.py", "all"),
 
         ( "renpy/", "all"),
+        ( "renpy/**.py", "renpy"),
+        ( "renpy/**.pyx", "renpy"),
+        ( "renpy/**.pyd", "renpy"),
+        ( "renpy/**.pxi", "renpy"),
         ( "renpy/common/", "all"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**.rpy", "renpy"),
         ( "renpy/common/**.rpym", "renpy"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**", "all"),
-        ( "renpy/**", "renpy"),
+        ( "renpy/**", "all"),
 
         # Ignore Ren'Py and renpy.exe.
         ( "lib/*/renpy", None),
         ( "lib/*/renpy.exe", None),
+        ( "lib/*/pythonw.exe", None),
 
         # Windows patterns.
         ( "lib/windows-i686/**", "windows"),
+        ( "lib/windows-x86_64/**", "windows"),
 
         # Linux patterns.
         ( "lib/linux-*/**", "linux"),
 
         # Mac patterns
-        ( "lib/darwin-x86_64/**", "mac"),
+        ( "lib/mac-x86_64/**", "mac"),
 
         # Shared patterns.
-        ( "/lib/**", "windows linux mac"),
+        ( "/lib/**", "windows linux mac android ios"),
         ( "renpy.sh", "linux mac"),
     ])
 
@@ -132,6 +138,8 @@ init -1500 python in build:
         ("dialogue.txt", None),
         ("dialogue.tab", None),
         ("profile_screen.txt", None),
+        ("files.txt", None),
+        ("memory.txt", None),
 
         ("tmp/", None),
         ("game/saves/", None),
@@ -142,13 +150,19 @@ init -1500 python in build:
         ("android.txt", None),
 
         (".android.json", "android"),
-        ("android-icon.png", "android"),
-        ("android-presplash.*", "android"),
-        ("android-*-icon.png", "android"),
-        ("android-*-presplash.*", "android"),
-        ("ouya_icon.png", "android"),
+        ("android-*.png", "android"),
+        ("android-*.jpg", "android"),
+        ("ouya_icon.png", None),
 
         ("ios-presplash.*", "ios"),
+        ("ios-launchimage.png", None),
+        ("ios-icon.png", None),
+
+        ("web-presplash.png", "web"),
+        ("web-presplash.jpg", "web"),
+        ("web-presplash.webp", "web"),
+        ("progressive_download.txt", "web"),
+
         ])
 
     base_patterns = [ ]
@@ -217,21 +231,11 @@ init -1500 python in build:
 
     xbit_patterns = [
         "**.sh",
-        "**/*.so.*",
-        "**/*.so",
-        "**/*.dylib",
 
-        "lib/**/python",
-        "lib/**/pythonw",
-        "lib/**/zsync",
-        "lib/**/zsyncmake",
+        "lib/linux-*/*",
+        "lib/mac-*/*",
 
         "**.app/Contents/MacOS/*",
-
-        "**.app/Contents/MacOS/lib/**/python",
-        "**.app/Contents/MacOS/lib/**/pythonw",
-        "**.app/Contents/MacOS/lib/**/zsync",
-        "**.app/Contents/MacOS/lib/**/zsyncmake",
         ]
 
     def executable(pattern):
@@ -324,11 +328,12 @@ init -1500 python in build:
     package("pc", "zip", "windows linux renpy all", "PC: Windows and Linux")
     package("linux", "tar.bz2", "linux renpy all", "Linux x86/x86_64")
     package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh x86_64")
-    package("win", "zip", "windows renpy all", "Windows x86")
+    package("win", "zip", "windows renpy all", "Windows x86/x86_64")
     package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
     package("steam", "zip", "windows linux mac renpy all", hidden=True)
-    package("android", "directory", "android renpy all", hidden=True, update=False, dlc=True)
-    package("ios", "directory", "ios renpy all", hidden=True, update=False, dlc=True)
+    package("android", "directory", "android all", hidden=True, update=False, dlc=True)
+    package("ios", "directory", "ios all", hidden=True, update=False, dlc=True)
+    package("web", "zip", "web all", update=False, dlc=True)
 
     # Data that we expect the user to set.
 
@@ -379,13 +384,13 @@ init -1500 python in build:
     mac_identity = None
 
     # The command used for mac codesigning.
-    mac_codesign_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "--deep", "--no-strict", "{app}" ]
+    mac_codesign_command = [ "/usr/bin/codesign", "--entitlements={entitlements}", "--options=runtime", "--timestamp", "-s", "{identity}", "-f", "--deep", "--no-strict", "{app}" ]
 
     # The command used to build a dmg.
     mac_create_dmg_command = [ "/usr/bin/hdiutil", "create", "-format", "UDBZ", "-volname", "{volname}", "-srcfolder", "{sourcedir}", "-ov", "{dmg}" ]
 
     # The command used to sign a dmg.
-    mac_codesign_dmg_command = [ "/usr/bin/codesign", "-s", "{identity}", "-f", "{dmg}" ]
+    mac_codesign_dmg_command = [ "/usr/bin/codesign", "--timestamp", "-s", "{identity}", "-f", "{dmg}" ]
 
     # Do we want to add the script_version file?
     script_version = True
@@ -425,7 +430,7 @@ init -1500 python in build:
         rv["renpy_patterns"] = excludes + renpy_patterns
         rv["xbit_patterns"] = xbit_patterns
         rv["version"] = version or directory_name
-        rv["display_name"] = display_name or executable_name
+        rv["display_name"] = display_name or config.name or executable_name
 
         rv["exclude_empty_directories"] = exclude_empty_directories
 

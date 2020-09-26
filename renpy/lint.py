@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import renpy.display
 import renpy.text
 import codecs
@@ -28,10 +30,9 @@ import re
 import sys
 import collections
 import textwrap
+import builtins
 
-import __builtin__
-
-python_builtins = set(dir(__builtin__))
+python_builtins = set(dir(builtins))
 renpy_builtins = set()
 
 image_prefixes = None
@@ -50,6 +51,10 @@ image_prefixes = None
 
 # The node the report will be about:
 report_node = None
+
+# Collect define/default statements to check for duplication
+all_define_statments = {}
+all_default_statements = {}
 
 # Reports a message to the user.
 
@@ -71,14 +76,33 @@ added = { }
 # occurs.
 
 
-def add(msg):
+def add(msg, *args):
     if not msg in added:
         added[msg] = True
-        print(unicode(msg).encode('utf-8'))
+        msg = str(msg) % args
+        print(msg)
 
 
-# Trys to evaluate an expression, announcing an error if it fails.
+# Tries to evaluate an expression, announcing an error if it fails.
 def try_eval(where, expr, additional=None):
+    """
+    :doc: lint
+
+    Tries to evaluate an expression, and writes an error to lint.txt if
+    it fails.
+
+    `where`
+        A string giving the location the expression is found. Used to
+        generate an error message of the form "Could not evaluate `expr`
+        in `where`."
+
+    `expr`
+        The expression to try evaluating.
+
+    `additional`
+        If given, an additional line of information that is addded to the
+        error message.
+    """
 
     # Make sure the expression compiles.
     try_compile(where, expr)
@@ -105,6 +129,24 @@ def try_eval(where, expr, additional=None):
 
 
 def try_compile(where, expr, additional=None):
+    """
+    :doc: lint
+
+    Tries to compile an expression, and writes an error to lint.txt if
+    it fails.
+
+    `where`
+        A string giving the location the expression is found. Used to
+        generate an error message of the form "Could not evaluate `expr`
+        in `where`."
+
+    `expr`
+        The expression to try compiling.
+
+    `additional`
+        If given, an additional line of information that is addded to the
+        error message.
+    """
 
     try:
         renpy.python.py_compile_eval_bytecode(expr)
@@ -139,17 +181,22 @@ def image_exists_imprecise(name):
         else:
             required.add(i)
 
-    for im in renpy.display.image.images:
+    for im, d in renpy.display.image.images.items():
 
         if im[0] != nametag:
             continue
 
         attrs = set(im[1:])
 
-        if [ i for i in required if i not in attrs ]:
+        if [ i for i in banned if i in attrs ]:
             continue
 
-        if [ i for i in banned if i in attrs ]:
+        li = getattr(d, "_list_attributes", None)
+
+        if li is not None:
+            attrs = attrs | set(li(im[0], required))
+
+        if [ i for i in required if i not in attrs ]:
             continue
 
         imprecise_cache.add(name)
@@ -172,18 +219,41 @@ def image_exists_precise(name):
 
     nametag = name[0]
 
-    required = set(name[1:])
+    required = set()
+    banned = set()
 
-    for im in renpy.display.image.images:
+    for i in name[1:]:
+        if i[0] == "-":
+            banned.add(i[1:])
+        else:
+            required.add(i)
+
+    for im, d in renpy.display.image.images.items():
 
         if im[0] != nametag:
             continue
 
         attrs = set(im[1:])
 
-        if attrs == required:
-            precise_cache.add(name)
-            return True
+        if attrs - required:
+            continue
+
+        rest = required - attrs
+
+        if rest:
+
+            try:
+                da = renpy.display.core.DisplayableArguments()
+                da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs)
+                da.args = tuple(i for i in name[1:] if i in rest)
+                da.lint = True
+                d._duplicate(da)
+            except:
+                continue
+
+        precise_cache.add(name)
+
+        return True
 
     return False
 
@@ -202,26 +272,16 @@ def image_exists(name, expression, tag, precise=True):
     if expression:
         return
 
-    namelist = list(name)
-    names = " ".join(namelist)
-
-    # Look for the precise name.
-    while namelist:
-        if tuple(namelist) in renpy.display.image.images:
-            return
-
-        namelist.pop()
-
-    # If we're not precise, then we have to start looking for images
-    # that we can possibly match.
-    if precise:
-        if image_exists_precise(name):
-            return
-    else:
+    if not precise:
         if image_exists_imprecise(name):
             return
 
-    report("The image named '%s' was not declared.", names)
+    # If we're not precise, then we have to start looking for images
+    # that we can possibly match.
+    if image_exists_precise(name):
+        return
+
+    report("'%s' is not an image.", " ".join(name))
 
 
 # Only check each file once.
@@ -309,8 +369,8 @@ def precheck_show(node):
     tag = imspec(node.imspec)[2]
     image_prefixes[tag] = True
 
-
 # Lints ast.Hide.
+
 
 def check_hide(node):
 
@@ -427,7 +487,7 @@ def check_say(node):
     if image_exists_imprecise(name):
         return
 
-    if image_exists_imprecise(('side', ) + name):
+    if image_exists_imprecise(('side',) + name):
         return
 
     report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
@@ -471,7 +531,6 @@ def check_while(node):
 
 
 def check_if(node):
-
     for condition, _block in node.entries:
         try_compile("in a condition of the if statement", condition)
 
@@ -488,6 +547,42 @@ def check_define(node, kind):
 
     if node.varname in renpy_builtins:
         report("'%s %s' replaces a Ren'Py built-in name, which may cause problems.", kind, node.varname)
+
+
+def check_redefined(node, kind):
+    """
+    Check if a define or default statement has already been created.
+    """
+    if kind == 'default':
+        scanned = all_default_statements
+    elif kind == 'define':
+        scanned = all_define_statments
+
+    # Combine store name and varname
+
+    store_name = node.store
+    if store_name.startswith("store."):
+        store_name = store_name[6:]
+
+    if store_name:
+        full_name = "{}.{}".format(store_name, node.varname)
+    else:
+        full_name = node.varname
+
+    if full_name in renpy.config.lint_ignore_redefine:
+        return
+
+    original_node = scanned.get(full_name)
+    if original_node:
+        report(
+            "{} {} already defined at {}:{}".format(
+                kind,
+                full_name,
+                original_node.filename,
+                original_node.linenumber,
+            )
+        )
+    scanned[full_name] = node
 
 
 def check_style_property_displayable(name, property, d):
@@ -527,19 +622,18 @@ def check_style_property_displayable(name, property, d):
 def check_style(name, s):
 
     for p in s.properties:
-        for k, v in p.iteritems():
+        for k, v in p.items():
 
             # Treat font specially.
             if k.endswith("font"):
                 if isinstance(v, renpy.text.font.FontGroup):
-                    for f in v.fonts:
+                    for f in set(v.map.values()):
                         check_file(name, f)
                 else:
                     check_file(name, v)
 
             if isinstance(v, renpy.display.core.Displayable):
                 check_style_property_displayable(name, k, v)
-#                check_displayable(kname, v)
 
 
 def check_label(node):
@@ -561,8 +655,15 @@ def check_label(node):
         add_arg(pi.extrakw)
 
 
+def check_screen(node):
+
+    if (node.screen.parameters is None) and renpy.config.lint_screens_without_parameters:
+        report("The screen %s has not been given a parameter list.", node.screen.name)
+        add("This can be fixed by writing 'screen %s():' instead.", node.screen.name)
+
+
 def check_styles():
-    for full_name, s in renpy.style.styles.iteritems():  # @UndefinedVariable
+    for full_name, s in renpy.style.styles.items(): # @UndefinedVariable
         name = "style." + full_name[0]
         for i in full_name[1:]:
             name += "[{!r}]".format(i)
@@ -646,13 +747,12 @@ def lint():
     args = ap.parse_args()
 
     if args.filename:
-        f = open(args.filename, "w")
+        f = codecs.open(args.filename, "w", encoding="utf-8")
         sys.stdout = f
 
     renpy.game.lint = True
 
-    print(codecs.BOM_UTF8)
-    print(unicode(renpy.version + " lint report, generated at: " + time.ctime()).encode("utf-8"))
+    print("\ufeff" + renpy.version + " lint report, generated at: " + time.ctime())
 
     # This supports check_hide.
     global image_prefixes
@@ -664,8 +764,8 @@ def lint():
     # Iterate through every statement in the program, processing
     # them. We sort them in filename, linenumber order.
 
-    all_stmts = [ (i.filename, i.linenumber, i) for i in renpy.game.script.all_stmts ]
-    all_stmts.sort()
+    all_stmts = list(renpy.game.script.all_stmts)
+    all_stmts.sort(key=lambda n : (n.filename, n.linenumber))
 
     # The current count.
     counts = collections.defaultdict(Count)
@@ -679,11 +779,11 @@ def lint():
 
     global report_node
 
-    for _fn, _ln, node in all_stmts:
+    for node in all_stmts:
         if isinstance(node, (renpy.ast.Show, renpy.ast.Scene)):
             precheck_show(node)
 
-    for _fn, _ln, node in all_stmts:
+    for node in all_stmts:
 
         if common(node):
             continue
@@ -741,12 +841,15 @@ def lint():
 
         elif isinstance(node, renpy.ast.Screen):
             screen_count += 1
+            check_screen(node)
 
         elif isinstance(node, renpy.ast.Define):
             check_define(node, "define")
+            check_redefined(node, "define")
 
         elif isinstance(node, renpy.ast.Default):
             check_define(node, "default")
+            check_redefined(node, "default")
 
     report_node = None
 

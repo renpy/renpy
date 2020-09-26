@@ -27,8 +27,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Python.h>
 #include <SDL.h>
 
-void RPS_play(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadeout, int tight, int paused, double start, double end);
-void RPS_queue(int channel, SDL_RWops *rw, const char *ext, PyObject *name, int fadeout, int tight, double start, double end);
+void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadeout, int tight, int paused, double start, double end);
+void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, int fadeout, int tight, double start, double end);
 void RPS_stop(int channel);
 void RPS_dequeue(int channel, int even_tight);
 int RPS_queue_depth(int channel);
@@ -50,7 +50,7 @@ PyObject *RPS_read_video(int channel);
 void RPS_sample_surfaces(PyObject *rgb, PyObject *rgba);
 void RPS_set_video(int channel, int video);
 
-void RPS_init(int freq, int stereo, int samples, int status);
+void RPS_init(int freq, int stereo, int samples, int status, int equal_mono);
 void RPS_quit(void);
 
 void RPS_advance_time(void);

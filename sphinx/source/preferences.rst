@@ -6,7 +6,7 @@ Preference Variables
 
 Preference variables store the values of Ren'Py preferences. While the value
 of a preference should be set at runtime using the :func:`Preference` action,
-preference variables should be used in conjuction with the default statement
+preference variables should be used in conjunction with the default statement
 to set the default value of a preference.
 
 For example::
@@ -25,6 +25,11 @@ can then change it again.)
     If True, auto-forward move will be continue after a click. If False,
     a click will end auto-forward mode. The equivalent of the
     "auto-forward after click" preference.
+
+.. var:: preferences.afm_enable = False
+
+    If True, auto-forward move is enabled, otherwise False. The equivalent
+    of the "auto-forward" preference.
 
 .. var:: preferences.afm_time = 15
 
@@ -46,6 +51,16 @@ can then change it again.)
     cause rollback to occur. One of "left", "right", or "disable". This is
     the equivalend of the "rollback side" preference when on a mobile
     platform.
+
+.. var:: preferences.language = None
+
+    The language that the player has selected to use when running the game.
+    This is None for the default language or a string containing a language
+    the game is translated to.
+
+    This can be used to set the default language, and can be read to determine
+    the current language. The :func:`Language` action can be used to change
+    the language.
 
 .. var:: preferences.emphasize_audio = False
 
@@ -98,8 +113,9 @@ can then change it again.)
 
 .. var:: preferences.skip_unseen = False
 
-    When True, Ren'Py will only skip unseen text. When False, Ren'Py will
-    skip all text. The equivalent of the "skip" preference.
+    When True, Ren'Py will skip all text. When False, Ren'Py will
+    only skip text that has been read by the player in any session.
+    The equivalent of the "skip" preference.
 
 .. var:: preferences.text_cps = 0
 

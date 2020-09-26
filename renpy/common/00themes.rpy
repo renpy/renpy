@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,7 +25,7 @@ init -1400 python:
 
         # Using theme as a decorator is what we do to create a new theme.
         def __call__(self, func):
-            setattr(self, func.func_name, func)
+            setattr(self, func.__name__, func)
             return func
 
     _theme = theme = _Theme()
@@ -714,7 +714,7 @@ init -1110 python hide:
 
     @theme
     def image_buttons(d):
-        for k, (idle, hover, selected_idle, selected_hover, insensitive) in d.iteritems():
+        for k, (idle, hover, selected_idle, selected_hover, insensitive) in d.items():
             s = style.button[k]
             s.xpadding = 0
             s.ypadding = 0
@@ -730,7 +730,7 @@ init -1110 python hide:
 
     @theme
     def image_labels(d):
-        for k, l in d.iteritems():
+        for k, l in d.items():
             s = style.label[k]
             s.xpadding = 0
             s.ypadding = 0

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,9 @@
 
 # The public API for music in games.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import renpy.audio
 
 from renpy.audio.audio import get_channel, get_serial
@@ -30,7 +33,7 @@ from renpy.audio.audio import register_channel, alias_channel
 register_channel; alias_channel
 
 
-def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False):
+def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False, relative_volume=1.0):
     """
     :doc: audio
 
@@ -71,6 +74,12 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
         instead will be kept playing. (This will always queue up an additional
         loop of the music.)
 
+    `relative_volume`
+        This is the volume relative to the current channel volume.
+        The specified file will be played at that relative volume. If not
+        specified, it will always default to 1.0, which plays the file at the
+        original volume as determined by the mixer, channel and secondary volume.
+
     This clears the pause flag for `channel`.
     """
 
@@ -87,7 +96,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
         try:
             c = get_channel(channel)
-            ctx = c.context
+            ctx = c.copy_context()
 
             if loop is None:
                 loop = c.default_loop
@@ -109,7 +118,13 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
                 c.fadeout(fadeout)
                 loop_only = False
 
-            c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight, loop_only=loop_only)
+            if renpy.config.skip_sounds and renpy.config.skipping and (not loop):
+                enqueue = False
+            else:
+                enqueue = True
+
+            if enqueue:
+                c.enqueue(filenames, loop=loop, synchro_start=synchro_start, fadein=fadein, tight=tight, loop_only=loop_only, relative_volume=relative_volume)
 
             t = get_serial()
             ctx.last_changed = t
@@ -129,7 +144,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
                 raise
 
 
-def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tight=None):
+def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tight=None, relative_volume=1.0):
     """
     :doc: audio
 
@@ -159,6 +174,12 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         If this is True, then fadeouts will span into the next-queued sound. If
         None, this is true when loop is True, and false otherwise.
 
+    `relative_volume`
+        This is the volume relative to the current channel volume.
+        The specified file will be played at that relative volume. If not
+        specified, it will always default to 1.0, which plays the file at the
+        original volume as determined by the mixer, channel and secondary volume.
+
     This clears the pause flag for `channel`.
     """
 
@@ -172,12 +193,15 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
     if isinstance(filenames, basestring):
         filenames = [ filenames ]
 
+    if renpy.config.skipping == "fast":
+        stop(channel)
+
     with renpy.audio.audio.lock:
 
         try:
 
             c = get_channel(channel)
-            ctx = c.context
+            ctx = c.copy_context()
 
             if loop is None:
                 loop = c.default_loop
@@ -188,7 +212,13 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
             if clear_queue:
                 c.dequeue(True)
 
-            c.enqueue(filenames, loop=loop, fadein=fadein, tight=tight)
+            if renpy.config.skip_sounds and renpy.config.skipping and (not loop):
+                enqueue = False
+            else:
+                enqueue = True
+
+            if enqueue:
+                c.enqueue(filenames, loop=loop, fadein=fadein, tight=tight, relative_volume=relative_volume)
 
             t = get_serial()
             ctx.last_changed = t
@@ -250,7 +280,7 @@ def stop(channel="music", fadeout=None):
 
         try:
             c = get_channel(channel)
-            ctx = c.context
+            ctx = c.copy_context()
 
             if fadeout is None:
                 fadeout = renpy.config.fade_music
@@ -478,7 +508,7 @@ def set_pause(value, channel="music"):
     """
     try:
         c = renpy.audio.audio.get_channel(channel)
-        c.context.pause = value
+        c.copy_context().pause = value
     except:
         if renpy.config.debug_sound:
             raise
@@ -544,7 +574,6 @@ def channel_defined(channel):
         return True
     except:
         return False
-
 
 # Music change logic:
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,11 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import os
 import copy
 import time
+import zlib
 
 import renpy
 
@@ -192,7 +194,7 @@ def load(filename):
     # Unserialize the persistent data.
     try:
         with open(filename, "rb") as f:
-            s = f.read().decode("zlib")
+            s = zlib.decompress(f.read())
         persistent = loads(s)
     except:
         import renpy.display
@@ -231,7 +233,7 @@ def init():
     # Create the backup of the persistent data.
     v = vars(persistent)
 
-    for k, v in vars(persistent).iteritems():
+    for k, v in vars(persistent).items():
         backup[k] = safe_deepcopy(v)
 
     return persistent
@@ -335,7 +337,7 @@ def merge(other):
 
 
 # The mtime of the most recently processed savefile.
-persistent_mtime = None
+persistent_mtime = 0
 
 
 def check_update():
@@ -368,7 +370,7 @@ def update(force_save=False):
     # A list of (mtime, other) pairs, where other is a persistent file
     # we might want to merge in.
     pairs = renpy.loadsave.location.load_persistent()
-    pairs.sort()
+    pairs.sort(key=lambda a : a[0])
 
     # Deals with the case where we don't have any persistent data for
     # some reason.
@@ -402,7 +404,7 @@ def save():
         return
 
     try:
-        data = dumps(renpy.game.persistent).encode("zlib")
+        data = zlib.compress(dumps(renpy.game.persistent), 3)
         renpy.loadsave.location.save_persistent(data)
     except:
         if renpy.config.developer:
@@ -488,7 +490,7 @@ def MultiPersistent(name):
             break
 
     try:
-        rv = loads(file(fn).read())
+        rv = loads(open(fn, "rb").read())
     except:
         rv = _MultiPersistent()
 

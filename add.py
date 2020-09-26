@@ -11,10 +11,10 @@ from renpy import version_tuple  # @UnresolvedImport
 SOURCE = [
     "/home/tom/ab/renpy",
     "/home/tom/ab/android/",
-    "/home/tom/ab/android/python-for-android",
     "/home/tom/ab/ripe/renios",
     "/home/tom/ab/renpy-deps",
     "/home/tom/ab/pygame_sdl2",
+    "/home/tom/ab/renpyweb",
     ]
 
 version = ".".join(str(i) for i in version_tuple)
@@ -102,6 +102,7 @@ for i in links:
     if os.path.exists(i):
         os.unlink(i)
     os.symlink(short_version, i)
+
 
 os.chdir("/home/tom/ab/website")
 subprocess.check_call("./upload.sh")

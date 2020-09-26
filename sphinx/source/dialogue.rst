@@ -18,7 +18,7 @@ objects.
 Say Statement
 -------------
 
-The say statement is used for dialogue and narration. Since it's
+The ``say`` statement is used for dialogue and narration. Since it's
 almost always the most frequently used statement in Ren'Py scripts,
 the say statement has a syntax that minimizes the overhead in
 writing it. Some example say statements are::
@@ -61,7 +61,6 @@ the ``[`` character begins a substitution. To use them in dialogue,
 double them. It may also be necessary to precede a quote with a
 backslash to prevent it from closing the string. For example::
 
-   ###
        "I walked past a sign saying, \"Let's give it 100%!\""
 
 
@@ -70,7 +69,7 @@ Defining Character Objects
 
 By creating a Character object and using it in a say statement, you
 can customize the look (and to some extent, the behavior) of
-dialogue. Characters are created by using the define statement to
+dialogue. Characters are created by using the ``define`` statement to
 assign a Character to a variable. For example::
 
     define e = Character("Eileen",
@@ -79,15 +78,14 @@ assign a Character to a variable. For example::
 
 Once this is done, the character can be used in a say statement::
 
-    ###
         e "Hello, world."
 
-Character is a python function, that takes a large number of keyword
+Character is a Python function that takes a large number of keyword
 arguments. These keyword arguments control the behavior of the
 character.
 
-The define statement causes its expression to be evaluated, and assigned to the
-supplied name. If not inside an init block, the define statement will
+The ``define`` statement causes its expression to be evaluated, and assigned to the
+supplied name. If not inside an ``init`` block, the ``define`` statement will
 automatically be run with init priority 0.
 
 .. include:: inc/character
@@ -103,7 +101,6 @@ In this form, if an image with the given tag is showing, Ren'Py will
 issue a show command involving the character tag and the
 attributes. If the image is not shown, Ren'Py will store the
 attributes for use by side images, but will not show an image.
-
 
 For example::
 
@@ -128,8 +125,46 @@ is equivalent to::
         show eileen happy
         e "But it's just a passing thing."
 
+
+When the image attribute begins with an @, the change is temporary, and
+reverts to the previously displaying image at the end of the line of dialogue.
+
+For example::
+
+    define e = Character("Eileen", image="eileen")
+
+    label start:
+
+        show eileen mad
+        e "I'm a little upset at you."
+
+        e @ happy "That's funny."
+
+        e "But don't think it gets you out of hot water."
+
+is equivalent to::
+
+    define e = Character("Eileen")
+
+    label start:
+
+        show eileen mad
+        e "I'm a little upset at you."
+
+        show eileen happy
+        e "That's funny."
+
+        show eileen mad
+        e "But don't think it gets you out of hot water."
+
+The two syntaxes can be combined, with the permanent changes coming before
+the @ and the temporary ones coming after. ::
+
+    e happy @ vhappy "Really! That changes everything."
+
 To cause a transition to occur whenever the images are changed in this way, set
-:var:`config.say_attribute_transition` to a transition.
+:var:`config.say_attribute_transition` to a transition. For more control,
+use :var:`config.say_attribute_transition_callback`.
 
 
 Example Characters
@@ -138,7 +173,7 @@ Example Characters
 Here are a few example characters::
 
     # A character that has its dialogue enclosed in parenthesis.
-    define e = Character("Eileen", what_prefix='"', what_suffix='"')
+    define e = Character("Eileen", what_prefix='(', what_suffix=')')
 
     # A character that pulls its name from a variable.
     define p = Character("player_name", dynamic=True)
@@ -186,7 +221,7 @@ them can be a problem.
      and the dialogue given to extend. This can be used to have the screen
      change over the course of dialogue.
 
-     Extend is aware of NVL-mode, and treats it correctly.
+     Extend is aware of NVL-mode and treats it correctly.
 
 For example::
 
@@ -218,31 +253,34 @@ these statements control the presence or absence of the window during
 non-dialogue interactions.
 
 ``window show``
-
-The window show statement causes the window to be shown.
-It takes as an argument an optional transition, which is used to show the
-window. If the transition is omitted, :var:`config.window_show_transition`
-is used.
+    The window show statement causes the window to be shown.
+    It takes as an argument an optional transition, which is used to show the
+    window. If the transition is omitted, :var:`config.window_show_transition`
+    is used.
 
 ``window hide``
-
-The window hide statement causes the window to be hidden. It takes as an
-argument an optional transition, which is used to hide the window. If
-the transition is omitted,  :var:`config.window_hide_transition` is
-used.
+    The window hide statement causes the window to be hidden. It takes as an
+    argument an optional transition, which is used to hide the window. If
+    the transition is omitted, :var:`config.window_hide_transition` is
+    used.
 
 ``window auto``
+    This enables automatic management of the window. The window is shown
+    before statements listed in :var:`config.window_auto_show` – by default,
+    say statements. The window is hidden before statements listed in
+    :var:`config.window_auto_hide` – by default, ``scene`` and ``call screen``
+    statements, and ``menu`` statements without a caption.
+    (Only statements are considered, not statement equivalent
+    functions.)
 
-This enables automatic management of the window. The window is shown
-before statements listed in :var:`config.window_auto_show` - by default,
-say statements. The window is hidden before statements listed in
-:var:`config.window_auto_hide` - by default, ``scene`` and ``call screen``
-statements. (Only statements are considered, not statement equivalent
-functions.)
+``window auto hide``, ``window auto show``
+    These statements show or hide the window, with an optional transition,
+    like ``window show`` or ``window hide`` do. However, unlike those
+    statements, this keeps automatic management enabled.
 
 The ``window auto`` statement uses :var:`config.window_show_transition`
 and :var:`config.window_hide_transition` to show and hide the window,
-respectively. ``window auto`` is cancelled by ``window show`` or ``window hide``.
+respectively. ``window auto`` is cancelled by ``window show`` and ``window hide``.
 
 For example::
 
@@ -265,6 +303,13 @@ For example::
     scene bg washington  # the window is hidden before the scene change.
     with dissolve
 
+    window auto show     # Shows the window before it normally would be shown.
+
+    show eileen
+    with dissolve
+
+    "Without window auto show, the window would have been shown here."
+
 Dialogue window management is subject to the "show empty window"
 :func:`Preference`. If the preference is disabled, the statements above
 have no effect.
@@ -278,10 +323,51 @@ in parenthesis after the say statement. For example, one can write::
 
     e "Hello, world." (what_color="#8c8")
 
-Arguments to the Say statement are first processed by var:`config.say_arguments_callback`,
+Arguments to the say statement are first processed by :var:`config.say_arguments_callback`,
 if it is not None. If any remain, they are then passed to the character,
 which treats them as if they were present when the character was defined.
 So, the example above displays the dialogue in green.
+Special keywords `_mode` and `_with_node` will override the ones set in
+the character only for this interaction.
+
+.. _monologue-mode:
+
+Monologue Mode
+--------------
+
+Some visual novels have extended narration, or multiple blocks of dialogue
+from the same character. In these cases, typing the name of the character
+and the quotes multiple times is somewhat redundant.
+
+To cover these cases, Ren'Py supports monologue mode. When dialogue is inside
+triple-quoted strings, Ren'Py will break the dialogue up into blocks at blank
+lines. Each block is then used to create its own say statement. Here's an
+example, with three blocks of narration followed by three lines of dialogue::
+
+    """
+    This is the first line of narration. It's longer than the other two
+    lines, so it has to wrap.
+
+    This is the second line of narration.
+
+    This is the third line of narration.
+    """
+
+    e """
+    This is the first line of dialogue. It's longer than the other two
+    lines, so it has to wrap.
+
+    This is the second line of dialogue.
+
+    This is the third line of dialogue.
+    """
+
+While additional clauses like arguments or attributes are allowed, they are
+passed to each line in the monologue, which may be less useful.
+
+If you'd like to omit the spaces between the blocks, write
+``rpy monologue single`` at the top level of the file, before the first
+monologue line.
 
 
 Python Equivalents
@@ -293,7 +379,7 @@ Python Equivalents
 
 When the first parameter to a say statement is present and an expression,
 the say statement is equivalent to calling that expressing with the dialogue
-and an `interact` argument of True. For example::
+and an ``interact`` argument of True. For example::
 
     e "Hello, world."
 
@@ -312,7 +398,7 @@ This character can then be used alongside a variable in the default store::
     label start:
 
         # This is a terrible variable name.
-        e = 100
+        $ e = 100
 
         e "Our starting energy is [e] units."
 
@@ -322,14 +408,14 @@ A say with arguments sees the arguments passed to the function. For example::
 
 is equivalent to::
 
-    e("Hello, world.", interact=True, what_size=32)
+    $ e("Hello, world.", interact=True, what_size=32)
 
 When e is a Character, this is further equivalent to::
 
-    Character(kind=e, what_size=32)("Hello, world.", interact=True)
+    $ Character(kind=e, what_size=32)("Hello, world.", interact=True)
 
-But it's possible to use var:`config.say_arguments_callback` or
-have `e` wrap a character to do things differently.
+But it's possible to use :var:`config.say_arguments_callback` or
+have ``e`` wrap a character to do things differently.
 
 
 

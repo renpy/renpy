@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -109,10 +109,10 @@ init 1 python:
     SEPARATOR = Frame(PATTERN, 0, 0, tile=True, ymaximum=5, yalign=1.0)
     SEPARATOR2 = Frame(PATTERN, 0, 0, tile=True, ymaximum=10, yalign=1.0)
 
-    SPACER_HEIGHT = 12
+    SPACER_HEIGHT = 8
     SPACER = Null(height=SPACER_HEIGHT)
 
-    HALF_SPACER_HEIGHT = 6
+    HALF_SPACER_HEIGHT = 4
     HALF_SPACER = Null(height=HALF_SPACER_HEIGHT)
 
     # DIVIDING THE SCREEN

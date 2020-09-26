@@ -54,10 +54,10 @@ translate piglatin tutorial_create_22f516df:
     e "Ouyay'llay alsoay eednay otay editay hetay amesgay criptsay otay akemay angeschay. Otay oday hattay, ickclay 'criptsay.pyray' onay hetay ontfray agepay ofay hetay auncherlay."
 
 # game/tutorial_quickstart.rpy:54
-translate piglatin tutorial_create_18cd1d9d:
+translate piglatin tutorial_create_9151025b:
 
-    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
-    e "Fiay itay'say ouryay irstfay imetay oingday osay, Enray'Ypay illway askay ouyay otay electsay aay exttay editoray. Ditraeay ightmay ebay aay afesay oicechay, utbay eadray hetay escriptionsday otay ebay uresay."
+    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Atom might be a safe choice, but read the descriptions to be sure."
+    e "Fiay itay'say ouryay irstfay imetay oingday osay, Enray'Ypay illway askay ouyay otay electsay aay exttay editoray. Tomaay ightmay ebay aay afesay oicechay, utbay eadray hetay escriptionsday otay ebay uresay."
 
 # game/tutorial_quickstart.rpy:56
 translate piglatin tutorial_create_bfbd6220:
@@ -498,10 +498,10 @@ translate piglatin tutorial_simple_positions_2377e3b3:
     e "Suallyuay ansformstray areay efinedday atay hetay optay ofay aay ilefay, ightray afteray hetay aracterschay. Utbay itay oesnday'tay attermay otay Enray'Ypay hereway ouyay efineday hemtay."
 
 # game/tutorial_quickstart.rpy:347
-translate piglatin tutorial_simple_positions_fa09596c:
+translate piglatin tutorial_simple_positions_3ce7e367:
 
-    # e "The transform is given a name, sightleft, and then the xalign and yalign properties."
-    e "Hetay ansformtray isay ivengay aay amenay, ightleftsay, anday hentay hetay alignxay anday alignyay ropertiespay."
+    # e "The transform is given a name, slightleft, and then the xalign and yalign properties."
+    e "Hetay ansformtray isay ivengay aay amenay, ightleftslay, anday hentay hetay alignxay anday alignyay ropertiespay."
 
 # game/tutorial_quickstart.rpy:355
 translate piglatin tutorial_simple_positions_82d640d9:
@@ -618,10 +618,10 @@ translate piglatin tutorial_music_3555b640:
     e "Hetay oundssay hemselvestay areay oredstay inay audioay ilesfay. Enray'Ypay upportssay hetay Pusoay, Ggoay Orbisvay, anday p3may ormatsfay."
 
 # game/tutorial_quickstart.rpy:449
-translate piglatin tutorial_music_a776b6ad:
+translate piglatin tutorial_music_a2ffbe9b:
 
-    # e "Let's check out some of the commands that can effect the music channel."
-    e "Etlay'say eckchay outay omesay ofay hetay ommandscay hattay ancay effectay hetay usicmay annelchay."
+    # e "Let's check out some of the commands that can affect the music channel."
+    e "Etlay'say eckchay outay omesay ofay hetay ommandscay hattay ancay affectay hetay usicmay annelchay."
 
 # game/tutorial_quickstart.rpy:454
 translate piglatin tutorial_music_8b606a55:
@@ -841,23 +841,23 @@ translate piglatin tutorial_input_0548d3e2:
 
 translate piglatin strings:
 
-    # tutorial_quickstart.rpy:2
+    # game/tutorial_quickstart.rpy:2
     old "Lucy"
     new "Ucylay"
 
-    # tutorial_quickstart.rpy:497
+    # game/tutorial_quickstart.rpy:497
     old "Yes, I do."
     new "Esyay, Iay oday."
 
-    # tutorial_quickstart.rpy:497
+    # game/tutorial_quickstart.rpy:497
     old "No, I don't."
     new "Onay, Iay onday'tay."
 
-    # tutorial_quickstart.rpy:589
+    # game/tutorial_quickstart.rpy:589
     old "What's your name?"
     new "Hatway'say ouryay amenay?"
 
-    # tutorial_quickstart.rpy:591
+    # game/tutorial_quickstart.rpy:591
     old "Guy Shy"
     new "Uygay Hysay"
 

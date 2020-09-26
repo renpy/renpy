@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -74,7 +74,7 @@ init -1700 python:
     # Layers to clear when entering the menus.
     config.menu_clear_layers = [ ]
 
-    # What we do on a game menu invokcation.
+    # What we do on a game menu invocation.
     config.game_menu_action = None
 
     # The screen that we go to when entering the game menu.
@@ -200,8 +200,6 @@ label _game_menu_preferences:
         jump expression "preferences_screen"
 
 label _quit:
-    if renpy.has_label("quit"):
-        call expression "quit"
     $ renpy.quit()
 
 label _return_fast_skipping:

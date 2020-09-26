@@ -37,9 +37,9 @@ translate russian simple_displayables_9cd108c6:
     e "Объект Трансформация (Transform) берёт определённый объект и применяет к нему свои настройки."
 
 # game/indepth_displayables.rpy:55
-translate russian simple_displayables_a313a959:
+translate russian simple_displayables_f8e1ba3f:
 
-    # e "Notice how, since it takes a displayable, it can take another image. In face, it can take any displayable defined here."
+    # e "Notice how, since it takes a displayable, it can take another image. In fact, it can take any displayable defined here."
     e "Заметьте, раз трансформации нужен объект, она также может взять и изображение. Впрочем, трансформация может изменить любой объявленный здесь объект."
 
 # game/indepth_displayables.rpy:63
@@ -61,10 +61,10 @@ translate russian simple_displayables_0befbee0:
     e "Это означает, что мы можем применять к нему и другие объекты, так же как и к изображениям, например, трансформацию."
 
 # game/indepth_displayables.rpy:91
-translate russian simple_displayables_fde549c4:
+translate russian simple_displayables_fcf2325f:
 
-    # e "The LiveComposite displayable lets us group multiple displayables together into a single one, from bottom to top."
-    e "Объект LiveComposite позволяет нам группировать разные объекты в один снизу вверх."
+    # e "The Composite displayable lets us group multiple displayables together into a single one, from bottom to top."
+    e "Объект Composite позволяет нам группировать разные объекты в один снизу вверх."
 
 # game/indepth_displayables.rpy:101
 translate russian simple_displayables_3dc0050e:
@@ -107,4 +107,3 @@ translate russian strings:
     # indepth_displayables.rpy:67
     old "This is a text displayable."
     new "Это текстовый объект."
-

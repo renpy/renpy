@@ -15,7 +15,7 @@ translate japanese strings:
 
     # options.rpy:12
     old "## A human-readable name of the game. This is used to set the default window title, and shows up in the interface and error reports."
-    new "## 人が読みやすいゲーム名。ゲーム名はデフォルトのウィンドウタイトルに使われる他、インターフェースやエラーリポートにも表示されます。"
+    new "## 人の目で読み取れるゲーム名。ゲーム名はデフォルトのウィンドウタイトルに使われる他、インターフェースやエラーリポートにも表示されます。"
 
     # options.rpy:15
     old "## The _() surrounding the string marks it as eligible for translation."
@@ -51,19 +51,19 @@ translate japanese strings:
 
     # options.rpy:55
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
-    new "## サウンドやボイスの設定画面でユーザーがテストサウンドを再生できるようにしたい場合、以下の行をアンコメントしてサンプルサウンドを指定します。"
+    new "## サウンドやボイスの設定画面で、ユーザーがテストサウンドを再生可能にする場合、以下の行をアンコメントしてサンプルサウンドを指定します。"
 
     # options.rpy:62
     old "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. This file will continue playing into the game, until it is stopped or another file is played."
-    new "## 次の行をアンコメントしてオーディオファイルを指定すると、メインメニューで再生することができます。このファイルは、停止するか他の音楽が再生されない限りゲーム中で流れ続けます。"
+    new "## 次の行をアンコメントしてオーディオファイルを指定すると、メインメニューで再生されます。このファイルは、停止するか他の音楽が再生されない限りゲーム中で流れ続けます。"
 
     # options.rpy:69
     old "## Transitions"
-    new "## トランジション（画面遷移効果）"
+    new "## トランジション"
 
     # options.rpy:71
     old "## These variables set transitions that are used when certain events occur. Each variable should be set to a transition, or None to indicate that no transition should be used."
-    new "## 以下の変数は、メニュー切り替えなどのイベントに対するトランジションを設定します。各変数にはトランジションオブジェクトを指定します。トランジションを使わない場合は None に設定します。"
+    new "## 以下の変数は、メニュー切り替えなどのイベントに対するトランジションを設定します。各変数にはトランジションを指定します。トランジションを使わない場合は None に設定します。"
 
     # options.rpy:75
     old "## Entering or exiting the game menu."
@@ -79,7 +79,7 @@ translate japanese strings:
 
     # options.rpy:91
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."
-    new "## メインメニューからゲームを開始する時のトランジションは、ここでは設定できません。代わりに、ゲーム開始後の最初のシーンで with ステートメント（文）を使ってください。"
+    new "## メインメニューからゲームを開始する時のトランジションは、ここでは設定できません。代わりに、ゲーム開始後の最初のシーンで with ステートメントを使ってください。"
 
     # options.rpy:96
     old "## Window management"
@@ -91,7 +91,7 @@ translate japanese strings:
 
     # options.rpy:103
     old "## After the game has started, this can be changed with the \"window show\", \"window hide\", and \"window auto\" statements."
-    new "## ゲーム開始後は、\"window show\"、\"window hide\"、\"window auto\" ステートメントで変更することができます。"
+    new "## ゲーム開始後でも \"window show\"、\"window hide\"、\"window auto\" ステートメントで変更することができます。"
 
     # options.rpy:109
     old "## Transitions used to show and hide the dialogue window"
@@ -199,7 +199,7 @@ translate japanese strings:
 
     # options.rpy:196
     old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
-    new "## Mac のコード署名を有効にするため Apple Developer ID アプリケーション を含む文字列を設定します。必ず Apple が発行したあなたの ID に変更してください。"
+    new "## Mac のコード署名を有効にするために Apple Developer ID アプリケーション を含む文字列を設定します。必ず Apple が発行したあなたの ID に変更してください。"
 
 
 translate japanese strings:
@@ -207,4 +207,11 @@ translate japanese strings:
     # options.rpy:81
     old "## Between screens of the game menu."
     new "## ゲームメニューのスクリーンを切り替える時のトランジション。"
+
+
+translate japanese strings:
+
+    # options.rpy:31
+    old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
+    new "## About（バージョン情報）スクリーンに表示されるテキスト。トリプルクオートの間にテキストを入力します。段落の間には空行を挿入して下さい。"
 

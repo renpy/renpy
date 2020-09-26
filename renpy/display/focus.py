@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,8 +21,12 @@
 
 # This file contains code to manage focus on the display.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
 import pygame_sdl2 as pygame
 import renpy.display
+import operator
 
 
 class Focus(object):
@@ -79,7 +83,6 @@ focus_type = "mouse"
 # the focus to change.
 pending_focus_type = "mouse"
 
-
 # The current tooltip and tooltip screen.
 tooltip = None
 
@@ -104,7 +107,7 @@ def set_focused(widget, arg, screen):
     if widget is None:
         new_tooltip = None
     else:
-        new_tooltip = widget._tooltip
+        new_tooltip = widget._get_tooltip()
 
     if tooltip != new_tooltip:
         tooltip = new_tooltip
@@ -177,9 +180,19 @@ def take_focuses():
     global default_focus
     default_focus = None
 
+    global grab
+
+    grab_found = False
+
     for f in focus_list:
         if f.x is None:
             default_focus = f
+
+        if f.widget is grab:
+            grab_found = True
+
+    if not grab_found:
+        grab = None
 
     if (default_focus is not None) and (get_focused() is None):
         change_focus(default_focus, True)
@@ -223,7 +236,10 @@ def before_interact(roots):
         fwn.append((f, n, renpy.display.screen._current_screen))
 
     for root in roots:
-        root.find_focusable(callback, None)
+        try:
+            root.find_focusable(callback, None)
+        except renpy.display.layout.IgnoreLayers:
+            pass
 
     # Assign a full name to each focusable.
 
@@ -264,21 +280,31 @@ def before_interact(roots):
         for f, n, screen in fwn:
             if f.full_focus_name == current_name:
                 current = f
-                set_focused(f, None, screen)
+                set_focused(f, argument, screen)
                 break
         else:
             current = None
 
-    # Otherwise, focus the default widget, or nothing.
+    # Otherwise, focus the default widget.
     if current is None:
+
+        defaults = [ ]
 
         for f, n, screen in fwn:
             if f.default:
-                current = f
-                set_focused(f, None, screen)
-                break
-        else:
-            set_focused(None, None, None)
+                defaults.append((f.default, f, screen))
+
+        if defaults:
+            if len(defaults) > 1:
+                defaults.sort(key=operator.itemgetter(0))
+
+            _, f, screen = defaults[-1]
+
+            current = f
+            set_focused(f, None, screen)
+
+    if current is None:
+        set_focused(None, None, None)
 
     # Finally, mark the current widget as the focused widget, and
     # all other widgets as unfocused.
@@ -392,7 +418,7 @@ def mouse_handler(ev, x, y, default=False):
 def focus_extreme(xmul, ymul, wmul, hmul):
 
     max_focus = None
-    max_score = -(65536**2)
+    max_score = -(65536 ** 2)
 
     for f in focus_list:
 
@@ -415,8 +441,8 @@ def focus_extreme(xmul, ymul, wmul, hmul):
 # This calculates the distance between two points, applying
 # the given fudge factors. The distance is left squared.
 def points_dist(x0, y0, x1, y1, xfudge, yfudge):
-    return (( x0 - x1 ) * xfudge ) ** 2 + \
-           (( y0 - y1 ) * yfudge ) ** 2
+    return ((x0 - x1) * xfudge) ** 2 + \
+           ((y0 - y1) * yfudge) ** 2
 
 
 # This computes the distance between two horizontal lines. (So the

@@ -134,7 +134,7 @@ class, we'll present them with the `self` parameter.
 
     Base class for creator-defined displayables.
 
-    .. method:: __init__(**properties):
+    .. method:: __init__(**properties)
 
         A subclass may override the constructor, perhaps adding new
         parameters. If it does, it should pass all unknown keyword
@@ -288,7 +288,7 @@ the implicit `self` parameter.
 
         Sets the zoom level of the children of this displayable in the
         horitzontal and vertical axes. Only the children of the displayable
-        are zoomed - the width, height, and blit coordinates are not zoomed.
+        are zoomed – the width, height, and blit coordinates are not zoomed.
 
 
 

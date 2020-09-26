@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -129,6 +129,7 @@ init python in project:
             data.setdefault("packages", [ "pc", "mac" ])
             data.setdefault("add_from", True)
             data.setdefault("force_recompile", True)
+            data.setdefault("android_build", "Release")
 
             if "renamed_all" not in data:
                 dp = data["packages"]
@@ -334,12 +335,14 @@ init python in project:
                 for l, line in enumerate(data):
                     l += 1
 
+                    line = line[:1024]
+
                     try:
                         line = line.decode("utf-8")
                     except:
                         continue
 
-                    m = re.search(ur".*#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
+                    m = re.search(r"#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
 
                     if m is None:
                         continue
@@ -587,6 +590,9 @@ init python in project:
                 if language is None:
                     rv = p
 
+                elif rv is None:
+                    rv = p
+
                 elif os.path.exists(os.path.join(p.path, "game", "tl", _preferences.language)):
                     rv = p
 
@@ -785,8 +791,6 @@ init python:
     def get_projects_directory_command():
         ap = renpy.arguments.ArgumentParser()
         args = ap.parse_args()
-
-        print renpy.fsencode(persistent.projects_directory)
 
         return False
 

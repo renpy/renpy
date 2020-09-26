@@ -31,8 +31,12 @@ styles.txt
 /*testing*
 /screenshot*
 /renpy.exe
+/renpy-32.exe
+/renpy.sh
 /lib
 /lib.old
+/lib2
+/lib3
 /doc
 /.pydevproject
 /.pydevproject.bak
@@ -79,7 +83,17 @@ renpy/vc_version.py
 doc-web
 
 sphinx/source/inc
-sphinx/source/keywords.py
 sphinx/source/thequestion.rst
 tutorial/game/tutorial_director.rpy
 launcher/theme
+module/emscripten-static/
+web/
+
+cubism
+glexperiment
+live2d
+rapt2
+rapt3
+renios2
+renios3
+notarized

@@ -97,13 +97,26 @@ with the menu statement. It is given the following parameter:
     .. attribute:: action
 
         An action that should be invoked when the menu choice is
-        chosen. This many be None if this is a menu cation, and
-        :var:`config.narrator_menu` is false.
+        chosen. This may be None if this is a menu caption, and
+        :var:`config.narrator_menu` is False.
 
     .. attribute:: chosen
 
-        This is true if this choice has been chosen at least once
+        This is True if this choice has been chosen at least once
         in any playthrough of the game.
+
+    .. attribute:: args
+
+        This is a tuple that contains any positional arguments passed
+        to the menu choice.
+
+    .. attribute:: kwargs
+
+        This is a dictionary that contains any keyword arguments passed
+        to the menu choice.
+
+In addition, any arguments passed to a menu statement are passed in during
+the call to the screen.
 
 ::
 
@@ -315,16 +328,37 @@ Here's a very simple skip indicator screen::
         text _("Skipping")
 
 
+.. _ctc-screen:
+
 CTC (Click-To-Continue)
 -----------------------
 
 If present, the ``ctc`` screen is displayed when dialogue has finished
 showing, to prompt the player to click to display more text. It may be
-given a single parameter.
+given a single parameter and multiple keyword arguments.
 
 `arg`
-    If the :func:`Character` object is given a `ctc` argument, it is passed
-    as the first positional argument to this screen.
+    The ctc displayable selected by the :func:`Character`. This is one of
+    the `ctc`, `ctc_pause`, or `ctc_timedpause` arguments to Character,
+    as appropriate. If no CTC is given to the Character, this argument is not passed at
+    all.
+
+In addition, there are several parameters that are only passed if the screen requires
+them.
+
+`ctc_kind`
+    The kind of CTC to display. One of "last" (for the last CTC on a line),
+    "pause", or "timedpause".
+
+`ctc_last`
+    The `ctc` argument to :func:`Character`.
+
+`ctc_pause`
+    The `ctc_pause` argument to :func:`Character`.
+
+`ctc_timedpause`
+    The `ctc_timedpause` argument to :func:`Character`.
+
 
 Here's a very simple ctc screen::
 
@@ -382,10 +416,8 @@ begins.
             textbutton _("Help") action Help()
             textbutton _("Quit") action Quit(confirm=False)
 
-    init python:
-
-        # Make all the main menu buttons be the same size.
-        style.mm_button.size_group = "mm"
+    style mm_button:
+        size_group "mm"
 
 .. _navigation-screen:
 
@@ -420,8 +452,8 @@ then use that screen from the save, load and preferences screens.
             textbutton _("Help") action Help()
             textbutton _("Quit") action Quit()
 
-    init python:
-        style.gm_nav_button.size_group = "gm_nav"
+    style gm_nav_button:
+        size_group "gm_nav"
 
 .. _save-screen:
 
@@ -645,21 +677,24 @@ from :func:`Preference`.
                     bar value Preference("voice volume")
                     textbutton "Test" action Play("voice", "voice_test.ogg") style "soundtest_button"
 
-    init python:
+    style pref_frame:
+        xfill True
+        xmargin 5
+        top_margin 5
 
-        style.pref_frame.xfill = True
-        style.pref_frame.xmargin = 5
-        style.pref_frame.top_margin = 5
+    style pref_vbox:
+        xfill True
 
-        style.pref_vbox.xfill = True
+    style pref_button:
+        size_group "pref"
+        xalign 1.0
 
-        style.pref_button.size_group = "pref"
-        style.pref_button.xalign = 1.0
+    style pref_slider:
+        xmaximum 192
+        xalign 1.0
 
-        style.pref_slider.xmaximum = 192
-        style.pref_slider.xalign = 1.0
-
-        style.soundtest_button.xalign = 1.0
+    style soundtest_button:
+        xalign 1.0
 
 .. _yesno-prompt-screen:
 .. _confirm-screen:
@@ -680,9 +715,9 @@ user. It takes the following parameters:
     * gui.QUIT - "Are you sure you want to quit?"
     * gui.MAIN_MENU - "Are you sure you want to return to the main\nmenu? This will lose unsaved progress."
     * gui.END_REPLAY - "Are you sure you want to end the replay?"
-    * gui.SLOW_SKIP = "Are you sure you want to begin skipping?"
-    * gui.FAST_SKIP_SEEN = "Are you sure you want to skip to the next choice?"
-    * gui.FAST_SKIP_UNSEEN = "Are you sure you want to skip unseen dialogue to the next choice?"
+    * gui.SLOW_SKIP - "Are you sure you want to begin skipping?"
+    * gui.FAST_SKIP_SEEN - "Are you sure you want to skip to the next choice?"
+    * gui.FAST_SKIP_UNSEEN - "Are you sure you want to skip unseen dialogue to the next choice?"
 
 
     The values of the variables are strings, which means they can be

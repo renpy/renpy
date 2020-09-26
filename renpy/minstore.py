@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -18,6 +18,11 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
+
+unicode = str  # @ReservedAssignment
 
 python_list = _list = list
 python_dict = _dict = dict
@@ -44,6 +49,24 @@ from renpy.python import revertable_sorted as sorted  # @UnusedImport
 import renpy.ui as ui  # @UnusedImport
 import renpy.exports as renpy  # @Reimport @UnusedImport
 from renpy.translation import translate_string as __  # @UnusedImport
+
+from renpy.python import store_eval as eval
+
+from renpy.display.core import absolute
+
+_print = print
+
+
+def print(*args, **kwargs):
+    """
+    :undocumented:
+
+    This is a variant of the print function that forces a checkpoint
+    at the start of the next statement, so that it can't be rolled past.
+    """
+
+    renpy.game.context().force_checkpoint = True
+    _print(*args, **kwargs)
 
 
 def _(s):
@@ -116,3 +139,45 @@ def _p(s):
 
     rv += " ".join(para)
     return rv
+
+
+__all__ = [
+    'PY2',
+    'Set',
+    '_',
+    '__',
+    '__renpy__dict__',
+    '__renpy__list__',
+    '__renpy__set__',
+    '_dict',
+    '_list',
+    '_object',
+    '_p',
+    '_print',
+    '_set',
+    '_type',
+    'absolute',
+    'basestring',
+    'bchr',
+    'bord',
+    'dict',
+    'eval',
+    'list',
+    'object',
+    'open',
+    'print',
+    'python_dict',
+    'python_list',
+    'python_object',
+    'python_set',
+    'range',
+    'set',
+    'sorted',
+    'str',
+    'tobytes',
+    'ui',
+    'unicode',
+    ]
+
+if PY2:
+    __all__ = [ bytes(i) for i in __all__ ]

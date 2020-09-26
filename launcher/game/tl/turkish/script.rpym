@@ -1,0 +1,32 @@
+﻿# Oyun kodlaması bu dosyadadir.
+
+# Oyundaki karakterleri tanimla. Renk argumani karakterin
+# isminin rengini belirler.
+define e = Character("Eileen")
+
+
+# Oyun burada baslar.
+
+label start:
+
+    # Bir arkaplan goster. Varsayilan olarak bir yer tutucu kullanilir, ancak siz
+    # resimler klasorune bir dosya ekleyerek (bg room.png ya da bg room.jpg adinda)
+    # eklediginiz resmi gosterebilirsiniz.
+
+    scene bg room
+
+    # Bu bir karakteri gösterir. Şimdilik bir yer tutucu kullaniliyor, ama siz
+    # "eileen happy.png" isimli bir dosyayi resimler klasörüne ekleyerek
+    # istediğiniz resmi gösterebilirsiniz.
+
+    show eileen happy
+
+    # Bunlar diyalog satirlarini gosterir.
+
+    e "Yeni bir Ren'Py oyunu yarattiniz."
+
+    e "Hikaye, resimler ve müzikleri ekledikten sonra, bütün dünya ile paylaşabilirsiniz!"
+
+    # Bu oyunu bitirir.
+
+    return

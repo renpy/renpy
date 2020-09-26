@@ -1,4 +1,5 @@
-﻿translate russian strings:
+﻿
+translate russian strings:
 
     # options.rpy:15
     old "The Question"

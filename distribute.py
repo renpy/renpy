@@ -9,6 +9,13 @@ import compileall
 import shutil
 import subprocess
 import argparse
+import time
+
+try:
+    # reload is built-in in Python 2, in importlib in Python 3
+    reload
+except NameError:
+    from importlib import reload
 
 if not sys.flags.optimize:
     raise Exception("Optimization disabled.")
@@ -38,16 +45,21 @@ def copy_tutorial_file(src, dest):
 
 def main():
 
+    start = time.time()
+
     if not sys.flags.optimize:
         raise Exception("Not running with python optimization.")
 
     ap = argparse.ArgumentParser()
-    ap.add_argument("version")
+    ap.add_argument("version", nargs="?")
     ap.add_argument("--fast", action="store_true")
     ap.add_argument("--pygame", action="store", default=None)
     ap.add_argument("--no-rapt", action="store_true")
     ap.add_argument("--variant", action="store")
-    ap.add_argument("--sign", action="store_true")
+    ap.add_argument("--sign", action="store_true", default=True)
+    ap.add_argument("--nosign", action="store_false", dest="sign")
+    ap.add_argument("--notarized", action="store_true", dest="notarized")
+    ap.add_argument("--vc-version-only", action="store_true")
 
     args = ap.parse_args()
 
@@ -60,6 +72,9 @@ def main():
     # Determine the version. We grab the current revision, and if any
     # file has changed, bump it by 1.
     import renpy
+
+    if args.version is None:
+        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])  # @UndefinedVariable
 
     match_version = ".".join(str(i) for i in renpy.version_tuple[:2])  # @UndefinedVariable
 
@@ -76,6 +91,9 @@ def main():
 
     with open("renpy/vc_version.py", "w") as f:
         f.write("vc_version = {}".format(vc_version))
+
+    if args.vc_version_only:
+        return
 
     try:
         reload(sys.modules['renpy.vc_version'])  # @UndefinedVariable
@@ -97,6 +115,9 @@ def main():
 
     if args.variant:
         destination += "-" + args.variant
+
+    if os.path.exists(os.path.join(destination, "checksums.txt")):
+        raise Exception("The checksums.txt file exists.")
 
     print("Version {} ({})".format(args.version, full_version))
 
@@ -158,6 +179,12 @@ def main():
             "--destination",
             destination,
             ]
+
+        if args.notarized:
+            cmd.extend([
+                "--macapp",
+                "notarized/out",
+                ])
 
     print()
     subprocess.check_call(cmd)
@@ -234,8 +261,7 @@ def main():
 
     print()
 
-    if not (args.fast or args.sign):
-        print("For a final-ish release, remember to use --sign so we're signed on the mac.")
+    print("Distribute took {:.0f} seconds.".format(time.time() - start))
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE
 
-from __future__ import unicode_literals
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import copy
 import renpy.audio
@@ -57,7 +58,6 @@ pad_bindings = {
     "pad_righty_pos" : [ "focus_down", "bar_down" ],
 }
 
-
 all_preferences = [ ]
 
 
@@ -70,9 +70,6 @@ class Preference(object):
         self.name = name
         self.default = default
         self.types = types if types else type(default)
-
-        if self.types is unicode:
-            self.types = basestring
 
         all_preferences.append(self)
 
@@ -93,7 +90,6 @@ Preference("wait_voice", True)
 # Should we disengage auto-forward mode after a click?
 Preference("afm_after_click", False)
 
-
 # 2 - All transitions.
 # 1 - Only non-default transitions.
 # 0 - No transitions.
@@ -105,19 +101,19 @@ Preference("video_image_fallback", False)
 Preference("skip_after_choices", False)
 
 # A map from channel name to the current volume (between 0 and 1).
-Preference("volumes", { } )
+Preference("volumes", { })
 
 # Not used anymore.
-Preference("mute", { } )
+Preference("mute", { })
 
 # Joystick mappings.
-Preference("joymap", { } )
+Preference("joymap", { })
 
 # The size of the window, or None if we don't know it yet.
-Preference("physical_size", None, (tuple, type(None)) )
+Preference("physical_size", None, (tuple, type(None)))
 
 # The virtual size at the time self.physical_size was set.
-Preference("virtual_size", None, (tuple, type(None)) )
+Preference("virtual_size", None, (tuple, type(None)))
 
 # The graphics renderer we use.
 Preference("renderer", "auto")
@@ -126,10 +122,14 @@ Preference("renderer", "auto")
 Preference("performance_test", True)
 
 # The language we use for translations.
-Preference("language", None, (basestring, type(None)) )
+Preference("language", None, (str, type(None)))
 
 # Should we self-voice?
-Preference("self_voicing", False, (bool, basestring, type(None)))
+Preference("self_voicing", False, (bool, str, type(None)))
+
+# The amount to drop the volume of non-voice mixers when self voicing is
+# enabled.
+Preference("self_voicing_volume_drop", 0.5)
 
 # Should we emphasize audio?
 Preference("emphasize_audio", False)
@@ -152,6 +152,15 @@ Preference("gl_framerate", None, (int, type(None)))
 
 # Do we allow tearing?
 Preference("gl_tearing", False)
+
+# The font transformation used.
+Preference("font_transform", None, (type(None), str))
+
+# An adjustment applied to font size.
+Preference("font_size", 1.0)
+
+# An adjustment applied to font line spacing.
+Preference("font_line_spacing", 1.0)
 
 
 class Preferences(renpy.object.Object):
@@ -182,6 +191,9 @@ class Preferences(renpy.object.Object):
         for p in all_preferences:
 
             v = getattr(self, p.name, None)
+
+            if isinstance(v, bytes):
+                v = v.decode("utf-8")
 
             if not isinstance(v, p.types):
                 error = "Preference {} has wrong type. {!r} is not of type {!r}.".format(p.name, v, p.types)
@@ -232,6 +244,9 @@ class Preferences(renpy.object.Object):
 
     def __eq__(self, other):
         return vars(self) == vars(other)
+
+    def __ne__(self, other):
+        return not (self == other)
 
 
 renpy.game.Preferences = Preferences

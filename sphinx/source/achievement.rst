@@ -11,3 +11,12 @@ automatically synchronized with Steam.
 
 
 .. include:: inc/achievement
+
+
+Variables that control achievements are::
+
+.. var:: achievement.steam_position = None
+
+    If not None, this sets the position of the steam notification popup.
+    This must be a string, one of "top left", "top right", "bottom left",
+    or "bottom right".

@@ -58,6 +58,10 @@ The following environment variables control the behavior of Ren'Py:
     %d substitution in it. For example, setting this to "screenshot%04d.jpg" will
     cause Ren'Py to write out jpeg screenshots rather than the usual pngs.
 
+``RENPY_SEARCHPATH``
+    If set, a double-colon (\:\:) separated list of additional paths that
+    are added to :var:`config.searchpath`.
+
 ``RENPY_SIMPLE_EXCEPTIONS``
     When set, this disables Ren'Py's graphical exception handling.
 
@@ -91,5 +95,5 @@ variables.
 
 At startup, Ren'Py will look in the Ren'Py directory (the one containing
 renpy.exe or renpy.py) for the file "environment.txt". If it exists, it will be
-evaluated as a python file, and the values defined in that file will be used as
+evaluated as a Python file, and the values defined in that file will be used as
 the default values of environment variables.

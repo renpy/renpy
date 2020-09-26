@@ -185,7 +185,10 @@ transform reset:
     yzoom 1.0
 
     crop None
-    size None
+
+    xsize None
+    ysize None
+    fit None
 
     alpha 1.0
 
@@ -485,7 +488,7 @@ label tutorial_atl:
 
     hide screen example
 
-    e "The key to ATL is what we call composeability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
+    e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
 
     e "Before I explain how ATL works, let me explain what animation and transformation are."
 

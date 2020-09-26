@@ -85,8 +85,10 @@ div.section {
 }
 
 #sidebar {
-	max-height: 95%;
+    position: fixed;
+	max-height: 82vh;
     overflow-y: auto;
+    width: 263px;
 }
 
 dl.var dt {

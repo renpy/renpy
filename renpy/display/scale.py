@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,9 @@
 
 # This used to hack pygame to support resolution-scaling. Now it just kinda
 # sits here, to provide compatibility with what it used to be.
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import *
 
 import pygame_sdl2 as pygame
 import renpy.display
@@ -100,11 +103,11 @@ def real_smoothscale(src, size, dest=None):
 
     while iwidth >= width * 2:
         xshrink *= 2
-        iwidth /= 2
+        iwidth //= 2
 
     while iheight >= height * 2:
         yshrink *= 2
-        iheight /= 2
+        iheight //= 2
 
     if iwidth != srcwidth or iheight != srcheight:
         inter = pgrender.surface_unscaled((iwidth, iheight), src)

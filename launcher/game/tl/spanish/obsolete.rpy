@@ -1,5 +1,4 @@
-﻿
-translate spanish strings:
+﻿translate spanish strings:
 
     # _layout/classic_joystick_preferences.rpym:94
     old "Joystick Mapping"
@@ -24,4 +23,3 @@ translate spanish strings:
     # _compat/gamemenu.rpym:362
     old "Next"
     new "Siguiente"
-

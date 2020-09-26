@@ -1,4 +1,4 @@
-# Copyright 2004-2018 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,8 @@
 
 # Utility functions used by the various property functions:
 
+from __future__ import print_function
+
 import renpy
 
 
@@ -29,6 +31,13 @@ def none_is_null(o):
         return renpy.display.layout.Null()  # @UndefinedVariable
     else:
         return renpy.easy.displayable(o)
+
+
+def none_is_0(o):
+    if o is None:
+        return 0
+    else:
+        return o
 
 
 def expand_focus_mask(v):
@@ -54,6 +63,7 @@ def expand_outlines(l):
             rv.append((i[0], renpy.easy.color(i[1]), i[2], i[3]))
 
     return rv
+
 
 # Names for anchors.
 ANCHORS = dict(
