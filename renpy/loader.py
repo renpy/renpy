@@ -24,13 +24,15 @@ from renpy.compat import *
 
 import renpy
 import os.path
-from pickle import loads
 import sys
 import types
 import threading
 import zlib
 import re
 import io
+import unicodedata
+
+from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
@@ -242,10 +244,10 @@ def index_archives():
             f.close()
 
     for dir, fn in listdirfiles(): # @ReservedAssignment
-        lower_map[fn.lower()] = fn
+        lower_map[unicodedata.normalize('NFC', fn.lower())] = fn
 
     for fn in remote_files:
-        lower_map[fn.lower()] = fn
+        lower_map[unicodedata.normalize('NFC', fn.lower())] = fn
 
 
 def walkdir(dir): # @ReservedAssignment
@@ -319,7 +321,7 @@ def scandirfiles():
 
         files.append((dn, fn))
         seen.add(fn)
-        loadable_cache[fn.lower()] = True
+        loadable_cache[unicodedata.normalize('NFC', fn.lower())] = True
 
     for i in scandirfiles_callbacks:
         i(add, seen)
@@ -598,7 +600,7 @@ def load_core(name):
     Returns an open python file object of the given type.
     """
 
-    name = lower_map.get(name.lower(), name)
+    name = lower_map.get(unicodedata.normalize('NFC', name.lower()), name)
 
     for i in file_open_callbacks:
         rv = i(name)
@@ -700,7 +702,7 @@ def load_from_remote_file(name):
     Defer loading a file if it has not been downloaded yet but exists on the remote server.
     """
 
-    if remote_files.has_key(name):
+    if name in remote_files:
         raise DownloadNeeded(relpath=name, rtype=remote_files[name]['type'], size=remote_files[name]['size'])
 
     return None
@@ -771,7 +773,7 @@ def loadable_core(name):
     Returns True if the name is loadable with load, False if it is not.
     """
 
-    name = lower_map.get(name.lower(), name)
+    name = lower_map.get(unicodedata.normalize('NFC', name.lower()), name)
 
     if name in loadable_cache:
         return loadable_cache[name]
@@ -794,7 +796,7 @@ def loadable_core(name):
             loadable_cache[name] = True
             return True
 
-    if remote_files.has_key(name):
+    if name in remote_files:
         loadable_cache[name] = True
         return name
 
@@ -827,7 +829,7 @@ def transfn(name):
     if renpy.config.reject_backslash and "\\" in name:
         raise Exception("Backslash in filename, use '/' instead: %r" % name)
 
-    name = lower_map.get(name.lower(), name)
+    name = lower_map.get(unicodedata.normalize('NFC', name.lower()), name)
 
     if isinstance(name, bytes):
         name = name.decode("utf-8")

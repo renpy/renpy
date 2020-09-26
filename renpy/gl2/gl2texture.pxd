@@ -49,6 +49,8 @@ cdef class TextureLoader:
     cdef GLint max_texture_width
     cdef GLint max_texture_height
 
+    cdef GLfloat max_anisotropy
+
 
 cdef class GLTexture(Model):
 
@@ -62,11 +64,14 @@ cdef class GLTexture(Model):
     # that.
     cdef object surface
 
-    # If we're not doing in-place loading, this is the data that's used for
-    # that.
-    cdef unsigned char *data
-
     # The texture loader associated with this texture.
     cdef TextureLoader loader
+
+
+    # The width and height of the texture. (Which may be a different size
+    # than the model, if the texture is being rendered in the drawable
+    # space.
+    cdef public int texture_width
+    cdef public int texture_height
 
     cpdef subsurface(GLTexture self, t)

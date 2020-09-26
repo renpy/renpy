@@ -963,27 +963,35 @@ init python in distribute:
             else:
                 windows = 'windows'
 
+
             icon_fn = os.path.join(self.project.path, "icon.ico")
-            old_exe_fn = os.path.join(config.renpy_base, "lib/windows-i686/renpy.exe")
-            old_python_fn = os.path.join(config.renpy_base, "lib/windows-i686/pythonw.exe")
 
-            if os.path.exists(icon_fn) and os.path.exists(old_exe_fn):
-                exe_fn = self.temp_filename("renpy.exe")
-                python_fn = self.temp_filename("pythonw.exe")
 
-                with open(exe_fn, "wb") as f:
-                    f.write(change_icons(old_exe_fn, icon_fn))
+            def write_exe(src, dst, tmp):
+                """
+                Write the exe found at `src` (taken as relative to renpy-base)
+                as `dst` (in the distribution). `tmp` is the name of a tempfile
+                that is written if one is needed.
+                """
 
-                with open(python_fn, "wb") as f:
-                    f.write(change_icons(old_python_fn, icon_fn))
+                src = os.path.join(config.renpy_base, src)
+                tmp = self.temp_filename(tmp)
 
-            else:
-                exe_fn = old_exe_fn
-                python_fn = old_python_fn
+                if os.path.exists(icon_fn) and os.path.exists(src):
 
-            if os.path.exists(exe_fn):
-                self.add_file(windows, self.exe, exe_fn)
-                self.add_file(windows, "lib/windows-i686/pythonw.exe", python_fn)
+                    with open(tmp, "wb") as f:
+                        f.write(change_icons(src, icon_fn))
+
+                else:
+                    tmp = src
+
+                if os.path.exists(tmp):
+                    self.add_file(windows, dst, tmp)
+
+            write_exe("lib/windows-i686/renpy.exe", "renpy-32.exe", "renpy-32.exe")
+            write_exe("lib/windows-i686/pythonw.exe", "lib/windows-i686/pythonw.exe", "pythonw-32.exe")
+            write_exe("lib/windows-x86_64/renpy.exe", "renpy.exe", "renpy-64.exe")
+            write_exe("lib/windows-x86_64/pythonw.exe", "lib/windows-x86_64/pythonw.exe", "pythonw-64.exe")
 
         def add_main_py(self):
             if self.build['renpy']:

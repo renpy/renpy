@@ -108,10 +108,11 @@ class ShaderPart(object):
             if not a:
                 continue
 
-            if len(a) != 3:
-                print("Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(l))
-
             a = tuple(a)
+
+            if len(a) != 3:
+                raise Exception("{}: Unknown shader variable line {!r}. Only the form '{{uniform,attribute,vertex}} {{type}} {{name}} is allowed.".format(self.name, l))
+
             kind = a[0]
             name = a[2]
 
@@ -142,17 +143,17 @@ def source(variables, parts, functions, fragment, gles):
     rv = [ ]
 
     if gles:
-        rv.append("""
+        rv.append("""\
 #version 100
 """)
 
         if fragment:
-            rv.append("""
+            rv.append("""\
 precision mediump float;
 """)
 
     else:
-        rv.append("""
+        rv.append("""\
 #version 120
 """)
 
@@ -213,7 +214,16 @@ class ShaderCache(object):
         if rv is not None:
             return rv
 
-        partnameset = set(partnames)
+        partnameset = set()
+        partnamenotset = set()
+
+        for i in partnames:
+            if i.startswith("-"):
+                partnamenotset.add(i[1:])
+            else:
+                partnameset.add(i)
+
+        partnameset -= partnamenotset
 
         if "renpy.ftl" not in partnameset:
             partnameset.add(renpy.config.default_shader)
@@ -253,6 +263,9 @@ class ShaderCache(object):
 
         vertex = source(vertex_variables, vertex_parts, vertex_functions, False, self.gles)
         fragment = source(fragment_variables, fragment_parts, fragment_functions, True, self.gles)
+
+        self.log_shader("vertex", sortedpartnames, vertex)
+        self.log_shader("fragment", sortedpartnames, fragment)
 
         from renpy.gl2.gl2shader import Program
 
@@ -354,3 +367,19 @@ class ShaderCache(object):
 
         self.cache.clear()
         self.missing.clear()
+
+    def log_shader(self, kind, partnames, text):
+        """
+        Logs the shader text to the log.
+        """
+
+        if not renpy.config.developer:
+            return
+
+        name = kind + " " + ", ".join(partnames) + " "
+        name = name + "-" * max(0, 80 - len(name))
+
+        renpy.display.log.write("%s", name)
+        renpy.display.log.write("%s", text)
+        renpy.display.log.write("-" * 80)
+

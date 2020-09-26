@@ -55,10 +55,10 @@ translate japanese tutorial_create_22f516df:
     e "ゲーム作成のために、スクリプトも変更する必要があります。そのためには、ランチャーのフロントページの'script.rpy'をクリックして下さい。"
 
 # game/tutorial_quickstart.rpy:54
-translate japanese tutorial_create_18cd1d9d:
+translate japanese tutorial_create_9151025b:
 
-    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
-    e "初めてクリックしたなら、Ren'Pyはテキストエディターの選択を促します。Editraが無難でしょうが、説明を読んで選択してください。"
+    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Atom might be a safe choice, but read the descriptions to be sure."
+    e "初めてクリックしたなら、Ren'Pyはテキストエディターの選択を促します。Atomが無難でしょうが、説明を読んで選択してください。"
 
 # game/tutorial_quickstart.rpy:56
 translate japanese tutorial_create_bfbd6220:

@@ -294,6 +294,8 @@ def choose_variants():
 
 def main():
 
+    gc.set_threshold(*renpy.config.gc_thresholds)
+
     log_clock("Bootstrap to the start of init.init")
 
     renpy.game.exception_info = 'Before loading the script.'
@@ -565,7 +567,7 @@ def main():
         renpy.python.make_clean_stores()
         log_clock("Making clean stores")
 
-        gc.collect()
+        gc.collect(2)
 
         if renpy.config.manage_gc:
             gc.set_threshold(*renpy.config.gc_thresholds)
@@ -576,6 +578,9 @@ def main():
                 gc_debug |= gc.DEBUG_SAVEALL
 
             gc.set_debug(gc_debug)
+
+        else:
+            gc.set_threshold(700, 10, 10)
 
         log_clock("Initial gc.")
 

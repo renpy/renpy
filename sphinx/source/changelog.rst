@@ -2,6 +2,260 @@
 Full Changelog
 ==============
 
+.. _renpy-7.4:
+
+7.4.0
+=====
+
+Model-Based Renderer
+--------------------
+
+This release includes a new model-based renderer, the component of Ren'Py that
+is responsible for drawing text and images to the user's display, supplementing
+(with the intent of eventually replacing) the original OpenGL renderer added
+in Ren'Py 6.10. This renderer takes better advantage of the hardware present
+in modern GPUS (both dedicated graphics cards and GPUs integrated into
+processors) to improve performance and increase capability. This renderer
+supports desktop computers that support either OpenGL 2.2 or DirectX 9.0c or
+11, and mobile devices and embedded systems that support OpenGL ES 3.
+
+The biggest change in the model-based renderer is that Ren'Py is no longer
+limited to drawing rectangular images in a 2-dimensional plane. Instead,
+Ren'Py has been converted to use meshes made up of triangles in a
+three-dimensional space. While existing rectangular sprites are
+displayed in the same way, this opens up Ren'Py to non-rectangular
+meshes, and eventually full three dimensional geometry.
+
+In addition to mesh geometry, model-based renderering supports shaders,
+both shaders included with Ren'Py, and shaders specified by creators as
+part of their game. Shaders are small programs that run on the GPU, that
+can process geometry and pixel data, to allow for all sorts of graphical
+effects.
+
+The model-based renderer implements a new fast texture loading system,
+which moves an expensive part of texture loading, alpha
+premultiplication, from the CPU to the GPU.
+
+The model-based renderer also creates mipmaps for each texture that is loaded
+into the GPU. A mipmap is a series of smaller versions of the texture,
+stored on the GPU. By creating and utilizing mipmaps, Ren'Py is now able
+to shrink images below 50% of the original size, without the appearance
+of the aliasing artifacts. This is especially relevant when assets meant
+for 4K monitors are used on 1080P and smaller displays.
+
+For this release, the Model-Based Renderer is opt in, with that opt-in
+controlled by the :var:`config.gl2` variable. As we gain more experience
+with it, it is indended to be come the default Ren'Py renderer.
+
+Live2D
+------
+
+One of the features enabled by the model-based renderer is support for
+displaying sprites made in Live2D. Ren'Py requires you to download Live2D
+Cubism separately, as you'll need to execute a contract with Live2D, Inc.
+before distributing a game that uses their technology.
+
+Ren'Py supports the display of Live2D models, complete with the ability to
+change expression and to queue up one or more motions. This is integrated
+into Ren'Py's image attribute system. Ren'Py also supports fading from
+one motion to another when an attribute changes.
+
+Matrixcolor and Blur
+--------------------
+
+The model-based renderer enables new functionality in transforms, such as
+matrixcolor and blur.
+
+Transforms (including ATL Transforms) now support a new :tpref:`matrixcolor`
+property, which either a matrix or an object that creates a matrix that
+changes in time, and uses it to recolor everything that is a child of the
+transform.
+
+While previous versions of Ren'Py supported the :func:`im.MatrixColor` image
+manipulator, the new property is much improved. The image manipulator would
+often take a large fraction of a second, making it too slow for real-time use,
+and was limited to single images. The new transform property is fast enough
+that it can be changed every frame if necessary, and can be applied to
+any displayable. It's now possible to apply a Transform using matrixcolor
+to a layer, to recolor the entire layer - making it possible to push your
+game into sepia or black-and-white without needing a separate set of
+images.
+
+There are a few difference between the image manipulator and the the
+transform property versions of matrixcolor, as the new version uses
+4x4 matrices and premultiplied alpha color, so the new property can't
+use the same matrices. Instead, there are number of new :ref:`ColorMatrix <colormatrix>`
+objects that need to be used.
+
+Transforms also support a new :tpref:`blur` property, which blurs the child
+of the displayable by the given number of pixels.
+
+
+Python 2/Python 3 Compatibility Mode
+-----------------------------------
+
+While Ren'Py is not yet supported on Python 3, this release of Ren'Py
+includes several features to allow you to begin writing scripts that will
+work on both Python 2 and Python 3.
+
+First, Ren'Py now uses `future <https://python-future.org/>`_ to provide
+standard library compatibility. It's now possible to import modules using
+their Python 3 names, when a renaming has occured.
+
+When a .rpyc file begins with the new ``rpy python 3``, the file is compiled
+in a Python 3 compatibility mode. The two changes this causes are:
+
+* Ren'Py will compile the file in a mode that attempts to emulate Python 3
+  semantics, including the change to division. In Python 3, ``1/2`` is equal
+  to .5, and not 0. Since this changes the type of the expression,
+  this can change the position of displayables. ``1//2`` keeps the original
+  semantics.
+* Ren'Py will change the behavior of dict so that the ``items``, ``keys``, and
+  ``values`` methods return views, rather than lists, when called directly
+  from that .rpy file. These match the Python 3 semantics for these methods,
+  but need to be explicitly turned into a list before being saved or participating
+  in rollback.
+
+Upgraded Libraries and Platform Support
+---------------------------------------
+
+For Ren'Py 7.4, the build system was redone, replacing the multiple build
+systems needed to build Ren'Py with a single build platform that handles
+every platform except for webasm. The change in build system also involved
+updating all  of the libraries that Ren'Py uses to newer versions.
+
+As a result of this, the list of platforms that Ren'Py offically supports
+has changed slightly. Here's the latest list of what is supported:
+
+.. list-table::
+    :header-rows: 1
+
+    * - Platform
+      - CPU
+      - Status
+      - Note
+    * - Linux
+      - x86_64
+      - Done
+      - Raised minimum version to Ubuntu 16.04
+    * - Linux
+      - i686
+      - Done
+      - Raised minimum version to Ubuntu 16.04
+    * - Linux
+      - i686
+      - Done
+      - Raised minimum version to Ubuntu 16.04
+    * - Linux
+      - armv7l
+      - Done
+      - Intended to support Raspberry Pi, uses Raspian Buster
+    * - Windows
+      - x86_64
+      - Done
+      - A new port to 64-bit Windows XP+
+    * - Windows
+      - i686
+      - Done
+      - Continued support for 32-Bit Windows XP+
+    * - macOS
+      - x86_64
+      - macOS 10.6+ (All 64-bit macOS versions.)
+    * - Android
+      - armv7a
+      - Android 4.4 KitKat
+    * - Android
+      - arm64
+      - Android 5.0 Lollipop
+    * - Android
+      - x86_64
+      - Android 5.0 Lollipop
+    * - iOS
+      - arm64
+      - All 64-bit iOS devices, iOS 11.0+
+    * - iOS
+      - x86_64
+      - The 64-bit iOS simulator, iOS 11.0+
+    * - Web
+      - webasm
+      - Modern web browsers
+
+The biggest new platform that Ren'Py supports is the 64-bit windows
+platform, which means that Ren'Py is available in 64-bits on all major
+desktop and mobile platforms.  The new :var:`renpy.bits` variable can
+be used to determine if Ren'Py is running on a 32 or 64-bit platform,
+if necessary. (For example, to set :var:`config.image_cache_size_mb` appropriately.)
+
+The one platform that loses support in this release is 32-bit (armv7l) iOS
+devices. These devices are no longer supported by Apple, and do not support
+the level of OpenGL ES that Ren'Py requires.
+
+Web
+---
+
+A game built for the web platform can now download image and audio files
+from the web server as the game is played. In the case of images, the download
+begins when the image is predicted. This can reduce the initial time it takes
+before the game begins running.
+
+When running inside a web browser on a touch-screen device, Ren'Py will
+display a touch-based keyboard, to compensate for web browners having
+difficulty displaying keyboard entry for wasm-based games.
+
+Translations
+------------
+
+The Simplified Chinese, Japanese, and Korean translations have been updated, and now
+use a unified font.
+
+Depreciations and Removals
+--------------------------
+
+As describe above, Ren'Py no longer supports 32-bit iOS devices.
+
+The choice of downloading the Editra text editor has been removed from Ren'Py.
+Editra hadn't been updated in over 5 years, and the website it was originally
+distributed from has disappeared.
+
+While not completely removed, the software renderer has been simplified and
+removed as an option for gameplay. Its purposes is now limited to informing
+players about issues that prevent display of graphics with a GPU-based
+renderer.
+
+Miscellaneous
+-------------
+
+It is now possible to specify a relative audio channel whenever an
+audio is file is played, using the new ``volume`` clause to ``play`` and
+``queue``.
+
+The new :tpref:`fit` property of transforms provides for different ways
+of making an image fit size with a different aspect ratio. For example,
+it can be scaled to be contained fully within the given size, or to make sure that
+it completely covers the given size.
+
+The :tpref:`xpan` and :tpref:`ypan` transform properties no longer double
+the size of the displayable they are applied to, making them easier to combine
+with positioning transform properties.
+
+The :func:`renpy.input` function can now take regular expressions when determining
+what is and is not allowed.
+
+Grids now take :propref:`margin` style properties, that is applied outside the
+grid, and inside a containing viewport.
+
+Ren'Py support an {alt} text tag, that causes the text to be spoken during
+self-voicing, but not displayed. It also supports a {noalt} text tag that does
+the opposite.
+
+The launcher window can now be resized if necessary. A button has been added to
+the launcher preferences to restore the default size.
+
+Pressing PAUSE on your keyboard brings the player to the game menu, finally
+giving that key a function.
+
+
+
 .. _renpy-7.3.5:
 
 7.3.5

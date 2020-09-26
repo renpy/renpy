@@ -54,10 +54,10 @@ translate piglatin tutorial_create_22f516df:
     e "Ouyay'llay alsoay eednay otay editay hetay amesgay criptsay otay akemay angeschay. Otay oday hattay, ickclay 'criptsay.pyray' onay hetay ontfray agepay ofay hetay auncherlay."
 
 # game/tutorial_quickstart.rpy:54
-translate piglatin tutorial_create_18cd1d9d:
+translate piglatin tutorial_create_9151025b:
 
-    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
-    e "Fiay itay'say ouryay irstfay imetay oingday osay, Enray'Ypay illway askay ouyay otay electsay aay exttay editoray. Ditraeay ightmay ebay aay afesay oicechay, utbay eadray hetay escriptionsday otay ebay uresay."
+    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Atom might be a safe choice, but read the descriptions to be sure."
+    e "Fiay itay'say ouryay irstfay imetay oingday osay, Enray'Ypay illway askay ouyay otay electsay aay exttay editoray. Tomaay ightmay ebay aay afesay oicechay, utbay eadray hetay escriptionsday otay ebay uresay."
 
 # game/tutorial_quickstart.rpy:56
 translate piglatin tutorial_create_bfbd6220:

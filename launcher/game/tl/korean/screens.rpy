@@ -210,7 +210,7 @@
 
     # screens.rpy:558
     old "Version [config.version!t]\n"
-    new "버젼 [config.version!t]\n"
+    new "버전 [config.version!t]\n"
 
     # screens.rpy:560
     old "## gui.about is usually set in options.rpy."

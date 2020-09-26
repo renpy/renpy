@@ -54,10 +54,10 @@ translate french tutorial_create_22f516df:
     e "Vous aurez besoin d’éditer les scripts du jeu pour effectuer des changements. Pour ce faire, cliquez sur « script.rpy » sur la page principale du lanceur."
 
 # game/tutorial_quickstart.rpy:54
-translate french tutorial_create_18cd1d9d:
+translate french tutorial_create_9151025b:
 
-    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Editra might be a safe choice, but read the descriptions to be sure."
-    e "Si c’est la première fois que vous le faites, Ren’Py vous demandera de sélectionner un éditeur. Editra est un choix fiable, mais lisez les descriptions pour vous informer au mieux sur les éditeurs proposés."
+    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Atom might be a safe choice, but read the descriptions to be sure."
+    e "Si c’est la première fois que vous le faites, Ren’Py vous demandera de sélectionner un éditeur. Atom est un choix fiable, mais lisez les descriptions pour vous informer au mieux sur les éditeurs proposés."
 
 # game/tutorial_quickstart.rpy:56
 translate french tutorial_create_bfbd6220:

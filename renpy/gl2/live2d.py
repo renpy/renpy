@@ -92,7 +92,7 @@ def init():
         varying vec2 v_mask_coord;
     """, vertex_200="""
         v_tex_coord = a_tex_coord;
-        v_mask_coord = vec2(a_position.x / 2 + .5, -a_position.y / 2 + .5);
+        v_mask_coord = vec2(a_position.x / 2.0 + .5, -a_position.y / 2.0 + .5);
     """, fragment_200="""
         vec4 color = texture2D(tex0, v_tex_coord);
         vec4 mask = texture2D(tex1, v_mask_coord);
@@ -108,7 +108,7 @@ def init():
         varying vec2 v_mask_coord;
     """, vertex_200="""
         v_tex_coord = a_tex_coord;
-        v_mask_coord = vec2(a_position.x / 2 + .5, -a_position.y / 2 + .5);
+        v_mask_coord = vec2(a_position.x / 2.0 + .5, -a_position.y / 2.0 + .5);
     """, fragment_200="""
         vec4 color = texture2D(tex0, v_tex_coord);
         vec4 mask = texture2D(tex1, v_mask_coord);
@@ -181,18 +181,23 @@ class Live2DCommon(object):
         for i in self.model_json["FileReferences"]["Textures"]:
             self.textures.append(renpy.easy.displayable(self.base + i))
 
-        # The motion information.
-        self.motions = { }
-
         # A map from the motion file name to the information about it.
         motion_files = { }
 
+        # A map from the expression name to the information about it.
+        expression_files = { }
+
         motions_dir = self.base + "motions/"
+        expressions_dir = self.base + "expressions/"
 
         for i in renpy.exports.list_files():
             if i.startswith(motions_dir):
                 i = i[len(self.base):]
                 motion_files[i] = { "File" : i }
+
+            elif i.startswith(expressions_dir):
+                i = i[len(self.base):]
+                expression_files[i] = { "File" : i }
 
         def walk_json_files(o, d):
             if isinstance(o, list):
@@ -208,9 +213,10 @@ class Live2DCommon(object):
                 walk_json_files(i, d)
 
         walk_json_files(self.model_json["FileReferences"].get("Motions", { }), motion_files)
+        walk_json_files(self.model_json["FileReferences"].get("Expressions", { }), expression_files)
 
         # A list of attributes that are known.
-        self.attributes = set()
+        self.attributes = set([ "still", "null" ])
 
         # A map from a motion name to a motion identifier.
         self.motions = { "still" : renpy.gl2.live2dmotion.NullMotion() }
@@ -233,11 +239,50 @@ class Live2DCommon(object):
 
                 self.attributes.add(name)
 
+        # A map from an expression to that expression's parameter list.
+        self.expressions = { "null" : [ ] }
+
+        for i in expression_files.values():
+            name = i["File"].lower().rpartition("/")[2].partition(".")[0]
+
+            prefix, _, suffix = name.partition("_")
+
+            if prefix == model_name:
+                name = suffix
+
+            if renpy.loader.loadable(self.base + i["File"]):
+                renpy.display.log.write(" - expression %s -> %s", name, i["File"])
+
+                expression_json = json.load(renpy.loader.load(self.base + i["File"]))
+
+                self.expressions[name] = expression_json.get("Parameters", [ ])
+
+                self.attributes.add(name)
+
+        for i in self.model_json.get("Groups", [ ]):
+            name = i["Name"]
+            ids = i["Ids"]
+
+            if i["Target"] == "Parameter":
+                self.model.parameter_groups[name] = ids
+            elif i["Target"] == "Opacity":
+                self.model.opacity_groups[name] = ids
+
+        self.nonexclusive = { }
+
     def apply_aliases(self, aliases):
 
         for k, v in aliases.items():
             if v in self.motions:
                 self.motions[k] = self.motions[v]
+
+            if v in self.expressions:
+                self.expressions[k] = self.expressions[v]
+
+    def apply_nonexclusive(self, nonexclusive):
+        for i in nonexclusive:
+            if i in self.expressions:
+                self.nonexclusive[i] = self.expressions.pop(i)
 
 
 # This maps a filename to a Live2DCommon object.
@@ -325,6 +370,7 @@ class Live2D(renpy.display.core.Displayable):
 
     common_cache = None
     _duplicatable = True
+    used_nonexclusive = None
 
     @property
     def common(self):
@@ -341,12 +387,14 @@ class Live2D(renpy.display.core.Displayable):
         return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
-    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, **properties):
+    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, nonexclusive=None, used_nonexclusive=None, **properties):
 
         super(Live2D, self).__init__(**properties)
 
         self.filename = filename
         self.motions = motions
+        self.expression = expression
+        self.used_nonexclusive = used_nonexclusive
 
         self.zoom = zoom
         self.top = top
@@ -364,18 +412,38 @@ class Live2D(renpy.display.core.Displayable):
         if aliases:
             common.apply_aliases(aliases)
 
+        if nonexclusive:
+            common.apply_nonexclusive(nonexclusive)
+
     def _duplicate(self, args):
 
         if not self._duplicatable:
             return self
 
+        if not args:
+            return self
+
         common = self.common
         motions = [ ]
+        used_nonexclusive = [ ]
+
+        expression = None
 
         for i in args.args:
 
             if i in common.motions:
                 motions.append(i)
+                continue
+
+            if i in common.nonexclusive:
+                used_nonexclusive.append(i)
+                continue
+
+            if i in common.expressions:
+                if expression is not None:
+                    raise Exception("When showing {}, {} and {} are both live2d expressions.".format(" ".join(args.name), i, expression))
+
+                expression = i
                 continue
 
             raise Exception("When showing {}, {} is not a known attribute.".format(" ".join(args.name), i))
@@ -388,12 +456,12 @@ class Live2D(renpy.display.core.Displayable):
             base=self.base,
             height=self.height,
             loop=self.loop,
-            fade=self.fade)
+            fade=self.fade,
+            expression=expression,
+            used_nonexclusive=used_nonexclusive)
 
         rv.name = args.name
-
-        if args.args:
-            rv._dupicatable = False
+        rv._duplicatable = False
 
         return rv
 
@@ -403,7 +471,9 @@ class Live2D(renpy.display.core.Displayable):
 
         available = set(common.attributes)
 
-        # Todo: Expressions
+        for i in attributes:
+            if i in common.expressions:
+                available -= set(common.expressions)
 
         available |= set(attributes)
 
@@ -413,16 +483,29 @@ class Live2D(renpy.display.core.Displayable):
 
         common = self.common
 
-        motions = [ i for i in optional if i in common.motions ]
+        # Chose all motions.
+        rv = [ i for i in attributes if i in common.motions ]
 
-        if not motions:
-            motions = [ i for i in optional if i in common.motions ][:-1]
+        # If there are no motions, choose the last one from the optional attributes.
+        if not rv:
+            rv = [ i for i in optional if i in common.motions ][:-1]
 
-        return tuple(motions)
+        # Choose the first expression.
+        for i in list(attributes) + list(optional):
+            if i in common.expressions:
+                rv.insert(0, i)
+                break
+
+        # Choose all possible nonexclusive attributes.
+        for i in list(attributes) + list(optional):
+            if i in common.nonexclusive:
+                rv.append(i)
+
+        return tuple(rv)
 
     def update(self, common, st, st_fade):
         """
-        This updates the common model with the infromation taken from the
+        This updates the common model with the information taken from the
         motions associated with this object. It returns the delay until
         Ren'Py needs to cause a redraw to occur, or None if no delay
         should occur.
@@ -453,10 +536,12 @@ class Live2D(renpy.display.core.Displayable):
             kind, key = k
             factor, value = v
 
-            if kind == "Parameter":
-                common.model.set_parameter(key, value, factor)
-            else:
+            if kind == "PartOpacity":
                 common.model.set_part_opacity(key, value)
+            elif kind == "Parameter":
+                common.model.set_parameter(key, value, factor)
+            elif kind == "Model":
+                common.model.set_parameter(key, value, factor)
 
         return motion.wait(st, st_fade)
 
@@ -500,6 +585,15 @@ class Live2D(renpy.display.core.Displayable):
             old_redraw = None
 
         new_redraw = self.update(common, st, None)
+
+        if self.used_nonexclusive:
+            for e in self.used_nonexclusive:
+                for i in common.nonexclusive[e]:
+                    common.model.blend_parameter(i["Id"], i["Blend"], i["Value"])
+
+        if self.expression:
+            for i in common.expressions[self.expression]:
+                common.model.blend_parameter(i["Id"], i["Blend"], i["Value"])
 
         # Apply the redraws.
         if (new_redraw is not None) and (old_redraw is not None):

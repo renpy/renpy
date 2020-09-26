@@ -270,7 +270,7 @@ cdef class GL2Draw:
 
         if gles:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "1")
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
         else:
@@ -386,7 +386,7 @@ cdef class GL2Draw:
                 renpy.display.log.write("Windowed mode.")
                 self.window = pygame.display.set_mode((pwidth, pheight), window_flags)
 
-            except pygame.error, e:
+            except pygame.error as e:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
                 return False
 
@@ -608,9 +608,11 @@ cdef class GL2Draw:
         # higher pitch.
         BORDER = 64
 
-        width = max(self.virtual_size[0] + BORDER, self.drawable_size[0] + BORDER, 1024)
+        width, height = renpy.config.fbo_size
+
+        width = max(self.virtual_size[0] + BORDER, self.drawable_size[0] + BORDER, width)
         width = min(width, max_texture_size, max_renderbuffer_size)
-        height = max(self.virtual_size[1] + BORDER, self.drawable_size[1] + BORDER, 1024)
+        height = max(self.virtual_size[1] + BORDER, self.drawable_size[1] + BORDER, height)
         height = min(height, max_texture_size, max_renderbuffer_size)
 
         renpy.display.log.write("Maximum texture size: %dx%d", width, height)
@@ -862,6 +864,9 @@ cdef class GL2Draw:
 
         # If we have a mesh (or mesh=True), create the Model.
         if r.mesh:
+
+            if (r.mesh is True) and (not r.children):
+                return
 
             uniforms = { }
             if r.uniforms:
@@ -1165,21 +1170,21 @@ cdef class GL2DrawingContext:
 
         return Matrix.coffset(xoff / halfwidth, yoff / halfheight, 0) * transform
 
-    def draw_model(self, model, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, bint nearest, pixel_perfect):
+    def draw_model(self, model, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, dict properties):
 
         cdef Mesh mesh = model.mesh
 
         if model.reverse is not IDENTITY:
              transform = transform * model.reverse
 
-        if pixel_perfect:
+        if properties["pixel_perfect"]:
             transform = self.correct_pixel_perfect(transform)
 
         # If a clip polygon is in place, clip the mesh with it.
         if clip_polygon is not None:
 
             if model.reverse is not IDENTITY:
-                clip_polygon.multiply_matrix_inplace(model.forward)
+                clip_polygon = clip_polygon.multiply_matrix(model.forward)
 
             mesh = mesh.crop(clip_polygon)
 
@@ -1190,9 +1195,7 @@ cdef class GL2DrawingContext:
 
         program.start()
 
-        if nearest:
-            program.use_nearest()
-
+        program.set_uniform("u_lod_bias", -1.0)
         program.set_uniform("u_transform", transform)
         program.set_uniform("u_time", renpy.display.interface.frame_time)
         program.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
@@ -1202,10 +1205,10 @@ cdef class GL2DrawingContext:
         if uniforms:
             program.set_uniforms(uniforms)
 
-        program.draw(mesh)
+        program.draw(mesh, properties)
         program.finish()
 
-    def draw_one(self, what, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, bint nearest, pixel_perfect):
+    def draw_one(self, what, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, dict properties):
         """
         This is responsible for walking the surface tree, and drawing any
         Models, Renders, and Surfaces it encounters.
@@ -1222,10 +1225,9 @@ cdef class GL2DrawingContext:
         `uniforms`
             A dictionary of uniforms.
 
-        `pixel_perfect`
-            Should this displayable be rendered in "pixel perfect" mode? This
-            is False if any sort of subpixel location has been done, otherwise
-            True if pixel perfect drawing has been requested, otherwise None.
+        `properties`
+            Various properties that control how things are drawn, that are updated
+            and passed to the shader.
         """
 
         cdef Matrix child_transform
@@ -1236,90 +1238,77 @@ cdef class GL2DrawingContext:
             what = self.gl2draw.load_texture(what)
 
         if isinstance(what, Model):
-            self.draw_model(what, transform, clip_polygon, shaders, uniforms, nearest, pixel_perfect)
+            self.draw_model(what, transform, clip_polygon, shaders, uniforms, properties)
             return
 
         cdef Render r
         r = what
 
-        try:
+        if r.text_input:
+            renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
 
-            if r.text_input:
-                renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
+        # Handle clipping.
+        if (r.xclipping or r.yclipping):
+            new_clip_polygon = Polygon.rectangle(0, 0, r.width, r.height)
 
-            # Handle clipping.
-            if (r.xclipping or r.yclipping):
-                new_clip_polygon = Polygon.rectangle(0, 0, r.width, r.height)
+            if clip_polygon is not None:
+                clip_polygon = new_clip_polygon.intersect(clip_polygon)
+                if clip_polygon is None:
+                    return
+            else:
+                clip_polygon = new_clip_polygon
 
-                if clip_polygon is not None:
-                    clip_polygon = new_clip_polygon.intersect(new_clip_polygon)
-                    if clip_polygon is None:
-                        return
+        has_reverse = (r.reverse is not None) and (r.reverse is not IDENTITY)
+
+        if has_reverse or r.properties:
+            properties = dict(properties)
+
+        if r.properties is not None:
+            properties.update(r.properties)
+
+        if has_reverse and (properties["pixel_perfect"] is None):
+            properties["pixel_perfect"] = False
+
+        if r.shaders is not None:
+            shaders = shaders + r.shaders
+
+        if r.uniforms is not None:
+            uniforms = dict(uniforms)
+
+            for k, v in r.uniforms.items():
+                if (k in uniforms) and (k in renpy.config.merge_uniforms):
+                    uniforms[k] = renpy.config.merge_uniforms[k](uniforms[k], v)
                 else:
-                    clip_polygon = new_clip_polygon
+                    uniforms[k] = v
 
-            if r.nearest:
-                nearest = True
+        children = r.visible_children
 
-            if r.properties is not None:
-                if "depth" in r.properties:
-                    glClear(GL_DEPTH_BUFFER_BIT)
-                    glEnable(GL_DEPTH_TEST)
+        if r.cached_model is not None:
+            children = [ (r.cached_model, 0, 0, False, False) ]
 
-                if "pixel_perfect" in r.properties:
-                    if pixel_perfect is None:
-                        pixel_perfect = True
+        for child, cx, cy, focus, main in children:
 
-            if r.shaders is not None:
-                shaders = shaders + r.shaders
+            child_transform = transform
+            child_clip_polygon = clip_polygon
+            child_properties = properties
 
-            if r.uniforms is not None:
-                uniforms = dict(uniforms)
+            if (cx or cy):
+                if isinstance(cx, float) and not properties["pixel_perfect"]:
+                    child_properties = dict(properties)
+                    child_properties["pixel_perfect"] = False
 
-                for k, v in r.uniforms.items():
-                    if (k in uniforms) and (k in renpy.config.merge_uniforms):
-                        uniforms[k] = renpy.config.merge_uniforms[k](uniforms[k], v)
-                    else:
-                        uniforms[k] = v
+                child_transform = child_transform * Matrix.coffset(cx, cy, 0)
 
-            children = r.visible_children
+                if child_clip_polygon is not None:
+                    child_clip_polygon = child_clip_polygon.multiply_matrix(Matrix.coffset(-cx, -cy, 0))
 
-            if r.cached_model is not None:
-                children = [ (r.cached_model, 0, 0, False, False) ]
+            if has_reverse:
+                child_transform = child_transform * r.reverse
 
-            has_reverse = (r.reverse is not None) and (r.reverse is not IDENTITY)
+                if child_clip_polygon is not None:
+                    child_clip_polygon = child_clip_polygon.multiply_matrix(r.forward)
 
-            if has_reverse and (pixel_perfect is None):
-                pixel_perfect = False
-
-            for child, cx, cy, focus, main in children:
-
-                child_transform = transform
-                child_clip_polygon = clip_polygon
-                child_pixel_perfect = pixel_perfect
-
-                if (cx or cy):
-                    if isinstance(cx, float) and not pixel_perfect:
-                        child_pixel_perfect = False
-
-                    child_transform = child_transform * Matrix.coffset(cx, cy, 0)
-
-                    if child_clip_polygon is not None:
-                        child_clip_polygon = child_clip_polygon.multiply_matrix(Matrix.coffset(-cx, -cy, 0))
-
-                if has_reverse:
-                    child_transform = child_transform * r.reverse
-
-                    if child_clip_polygon is not None:
-                        child_clip_polygon = child_clip_polygon.multiply_matrix(r.forward)
-
-                self.draw_one(child, child_transform, child_clip_polygon, shaders, uniforms, nearest, child_pixel_perfect)
-
-        finally:
-
-            if r.properties is not None:
-                if "depth" in r.properties:
-                    glDisable(GL_DEPTH_TEST)
+            self.draw_one(child, child_transform, child_clip_polygon, shaders, uniforms, child_properties)
 
 
         return 0
@@ -1330,9 +1319,12 @@ cdef class GL2DrawingContext:
         clip_polygon = None
         shaders = ()
         uniforms = {}
-        nearest = False
+        properties = { "pixel_perfect" : None }
 
-        self.draw_one(what, transform, clip_polygon, shaders, uniforms, nearest, None)
+        if renpy.config.nearest_neighbor:
+            properties["texture_scaling"] = "nearest"
+
+        self.draw_one(what, transform, clip_polygon, shaders, uniforms, properties)
 
 
 

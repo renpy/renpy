@@ -26,27 +26,27 @@ init -1600 python:
         # Bindings present almost everywhere, unless explicitly
         # disabled.
         rollback = [ 'K_PAGEUP', 'repeat_K_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
-        screenshot = [ 's', 'alt_K_s', 'alt_shift_K_s' ],
+        screenshot = [ 's', 'alt_K_s', 'alt_shift_K_s', 'noshift_K_s' ],
         toggle_afm = [ ],
-        toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11' ],
-        game_menu = [ 'K_ESCAPE', 'K_MENU', 'mouseup_3' ],
-        hide_windows = [ 'mouseup_2', 'h' ],
-        launch_editor = [ 'E' ],
+        toggle_fullscreen = [ 'f', 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11', 'noshift_K_f' ],
+        game_menu = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
+        hide_windows = [ 'mouseup_2', 'h', 'noshift_K_h' ],
+        launch_editor = [ 'E', 'shift_K_e' ],
         dump_styles = [ ],
-        reload_game = [ 'R', 'alt_shift_K_r' ],
-        inspector = [ 'I' ],
+        reload_game = [ 'R', 'alt_shift_K_r', 'shift_K_r' ],
+        inspector = [ 'I', 'shift_K_i' ],
         full_inspector = [ 'alt_shift_K_i' ],
-        developer = [ 'D', 'alt_shift_K_d' ],
+        developer = [ 'shift_K_d', 'alt_shift_K_d' ],
         quit = [ ],
         iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
-        choose_renderer = [ 'G', 'alt_shift_K_g' ],
+        choose_renderer = [ 'G', 'alt_shift_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
         accessibility = [ "K_a" ],
 
         # Accessibility.
-        self_voicing = [ 'v', 'V', 'alt_K_v'  ],
-        clipboard_voicing = [ 'C', 'alt_shift_K_c' ],
+        self_voicing = [ 'v', 'V', 'alt_K_v', 'K_v' ],
+        clipboard_voicing = [ 'C', 'alt_shift_K_c', 'shift_K_c' ],
         debug_voicing = [ 'alt_shift_K_v', 'meta_shift_K_v' ],
 
         # Say.
@@ -79,8 +79,8 @@ init -1600 python:
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
         input_home = [ 'K_HOME' ],
         input_end = [ 'K_END' ],
-        input_copy = [ 'ctrl_K_INSERT', 'ctrl_K_c' ],
-        input_paste = [ 'shift_K_INSERT', 'ctrl_K_v' ],
+        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c' ],
+        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v' ],
 
         # Viewport.
         viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
@@ -91,14 +91,14 @@ init -1600 python:
         viewport_wheeldown = [ 'mousedown_5' ],
         viewport_drag_start = [ 'mousedown_1' ],
         viewport_drag_end = [ 'mouseup_1' ],
-        viewport_pageup = [  'K_PAGEUP', 'repeat_K_PAGEUP' ],
-        viewport_pagedown = [  'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
+        viewport_pageup = [ 'K_PAGEUP', 'repeat_K_PAGEUP' ],
+        viewport_pagedown = [ 'K_PAGEDOWN', 'repeat_K_PAGEDOWN' ],
 
         # These keys control skipping.
         skip = [ 'K_LCTRL', 'K_RCTRL' ],
         stop_skipping = [ ],
         toggle_skip = [ 'K_TAB' ],
-        fast_skip = [ '>' ],
+        fast_skip = [ '>', 'shift_K_PERIOD' ],
 
         # Bar.
         bar_activate = [ 'mousedown_1', 'K_RETURN', 'K_KP_ENTER', 'K_SELECT' ],
@@ -116,12 +116,12 @@ init -1600 python:
         drag_deactivate = [ 'mouseup_1' ],
 
         # Debug console.
-        console = [ 'shift_O', 'alt_shift_K_o' ],
+        console = [ 'shift_K_o', 'alt_shift_K_o' ],
         console_older = [ 'K_UP', 'repeat_K_UP' ],
         console_newer = [ 'K_DOWN', 'repeat_K_DOWN'],
 
         # Director
-        director = [ 'd' ],
+        director = [ 'noshift_K_d' ],
 
         # Ignored (kept for backwards compatibility).
         toggle_music = [ 'm' ],
@@ -134,7 +134,7 @@ init -1600 python:
         profile_once = [ 'K_F8' ],
         memory_profile = [ 'K_F7' ],
 
-        )
+    )
 
     config.default_keymap = { k : list(v) for k, v in config.keymap.items() }
 
@@ -163,7 +163,7 @@ init -1600 python:
         "pad_rightx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
 
         "pad_dpup_press" : [ "focus_up", "bar_up", "viewport_uparrow" ],
-        "pad_lefty_neg" :  [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "pad_lefty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
         "pad_righty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
 
         "pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
@@ -186,6 +186,12 @@ init -1600 python:
         renpy.run(Preference("auto-forward", "toggle"))
 
     def _toggle_skipping():
+
+        if not renpy.config.allow_skipping:
+            return
+
+        if not renpy.store._skipping:
+            return
 
         if not config.skipping:
             config.skipping = "slow"
@@ -261,6 +267,13 @@ init -1600 python:
             if not os.path.exists(fn):
                 break
             i += 1
+
+        try:
+            dn = os.path.dirname(fn)
+            if not os.path.exists(dn):
+                os.makedirs(dn)
+        except:
+            pass
 
         try:
             if not renpy.screenshot(fn):

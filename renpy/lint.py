@@ -708,7 +708,7 @@ def lint():
     args = ap.parse_args()
 
     if args.filename:
-        f = open(args.filename, "w")
+        f = codecs.open(args.filename, "w", encoding="utf-8")
         sys.stdout = f
 
     renpy.game.lint = True

@@ -1582,7 +1582,7 @@ translate japanese strings:
     new "アプリケーションに署名するキーを発行できます。このキーでアプリケーションに署名すると、アンドロイドマーケットや他のストアで配布できるようになります。\n\nキーを作成しますか？"
 
     # game/androidstrings.rpy:67
-    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\n\\You also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
     new "android.keystore ファイルを作成します。\n\nこのファイルはバックアップしてください。もし失くした場合はアプリをアップグレードすることが出来なくなります。\n\nまた、このファイルは安全な場所に保管してください。このファイルが悪意のある人間の手に渡ると、アプリのフェイクバージョンを作られたり、ユーザーデータを盗まれる恐れがあります。\n\nandroid.keystore のバックアップを作成し、安全な場所に保存しますか？"
 
     # game/androidstrings.rpy:68

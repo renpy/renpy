@@ -119,7 +119,7 @@ statement. For example::
 
 .. var:: pushright
 
-    Also: **pushleft, pushtop, pushbottom**
+    Also: **pushleft, pushup, pushdown**
 
     These use the new scene to slide the old scene out the named
     side. Instances of the :func:`PushMove` transition class.

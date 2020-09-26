@@ -1041,6 +1041,19 @@ tts_filter_tags = [ "noalt", "rt", "art" ]
 # to a function that takes the two values and merges them.
 merge_uniforms = { }
 
+# Does the side image required an attribute to be defined?
+side_image_requires_attributes = True
+
+# What is the max mipmap level?
+max_mipmap_level = 1000
+
+# Should we show the touch keyboard outside of emscripten/touch.
+touch_keyboard = os.environ.get("RENPY_TOUCH_KEYBOARD", False)
+
+# The size of the framebuffer Ren'Py creates, which doubles as the
+# largest texture size.
+fbo_size = (4096, 4096)
+
 del os
 del collections
 

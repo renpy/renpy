@@ -1072,14 +1072,6 @@ Rarely or Internally Used
     the selected direction of motion, when moving focus with the
     keyboard.
 
-.. var:: config.gl_enable = True
-
-    Set this to False to disable OpenGL acceleration. OpenGL acceleration
-    will automatically be disabled if it's determined that the system
-    cannot support it, so it usually isn't necessary to set this.
-
-    OpenGL can also be disabled by holding down shift at startup.
-
 .. var:: config.gl_resize = True
 
     Determines if the user is allowed to resize an OpenGL-drawn window.

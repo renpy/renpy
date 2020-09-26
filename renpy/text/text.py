@@ -1241,7 +1241,7 @@ class Layout(object):
         l = [ ]
 
         for ts, s in p:
-            s, direction = log2vis(s, direction)
+            s, direction = log2vis(unicode(s), direction)
             l.append((ts, s))
 
         rtl = (direction == RTL or direction == WRTL)

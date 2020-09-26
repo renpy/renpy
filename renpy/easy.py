@@ -152,10 +152,10 @@ def dynamic_image(d, scope=None, prefix=None, search=None):
 
     def find(name):
 
-        if renpy.loader.loadable(name):
+        if renpy.exports.image_exists(name):
             return True
 
-        if renpy.exports.image_exists(name):
+        if renpy.loader.loadable(name):
             return True
 
         if lookup_displayable_prefix(name):

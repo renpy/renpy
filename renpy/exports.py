@@ -86,7 +86,7 @@ from renpy.atl import atl_warper
 from renpy.easy import predict, displayable, split_properties
 from renpy.parser import unelide_filename, get_parse_errors
 
-from renpy.translation import change_language, known_languages
+from renpy.translation import change_language, known_languages, translate_string
 from renpy.translation.generation import generic_filter as transform_text
 
 from renpy.persistent import register_persistent
@@ -162,7 +162,7 @@ def public_api():
     predict, predict_screen
     displayable, split_properties
     unelide_filename, get_parse_errors
-    change_language, known_languages
+    change_language, known_languages, translate_string
     transform_text
     language_tailor
     register_persistent
@@ -189,6 +189,12 @@ def public_api():
 
 
 del public_api
+
+# The number of bits in the architecture.
+if sys.maxsize > (2 << 32):
+    bits = 64
+else:
+    bits = 32
 
 
 def roll_forward_info():
@@ -3157,6 +3163,10 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer=None):
     if image_tag is not None:
         image_layer = default_layer(layer, image_tag)
         attrs = (image_tag,) + images.get_attributes(image_layer, image_tag)
+
+        if renpy.config.side_image_requires_attributes and (len(attrs) < 2):
+            return None
+
     else:
         attrs = renpy.store._side_image_attributes
 

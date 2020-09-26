@@ -414,8 +414,8 @@ translate turkish strings:
     new "Sizin için bir uygulama imzalama anahtarı yaratabilirim. Bir uygulamayı bu anahtarla imzalamak, uygulamanın Android Market ve diğer mağazalara yerleştirilebilmesini sağlar.\n\nAnahtar yaratmak ister misiniz?"
 
     # androidstrings.rpy:67
-    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\n\\You also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
-    new "Anahtarı android.keystore dosyasında yaratacağım.\n\nBu dosyayı yedeklemeniz gerekecek. Eğer onu kaybederseniz, uygulamanızı güncelleyemeyeceksiniz.\n\n\\Anahtarı da güvenli tutmanız gerekiyor. Eğer kötü niyetli insanların eline geçerse uygulamanızın sahte versiyonlarını yapabilir ve kullanıcılarınızın bilgilerini çalabilirler.\n\nandroid.keystore dosyasını yedekleyip güvenli tutacak mısınız?"
+    old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
+    new "Anahtarı android.keystore dosyasında yaratacağım.\n\nBu dosyayı yedeklemeniz gerekecek. Eğer onu kaybederseniz, uygulamanızı güncelleyemeyeceksiniz.\n\nAnahtarı da güvenli tutmanız gerekiyor. Eğer kötü niyetli insanların eline geçerse uygulamanızın sahte versiyonlarını yapabilir ve kullanıcılarınızın bilgilerini çalabilirler.\n\nandroid.keystore dosyasını yedekleyip güvenli tutacak mısınız?"
 
     # androidstrings.rpy:68
     old "Please enter your name or the name of your organization."

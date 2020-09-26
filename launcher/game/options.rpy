@@ -183,9 +183,7 @@ init -1 python hide:
 
     config.sound = False
     config.quit_action = Quit(confirm=False)
-    config.gl_resize = False
     config.window_icon = "images/logo.png"
-    config.windows_icon = "images/logo32.png"
     config.has_autosave = False
     config.log_enable = False
     config.mouse_hide_time = None
@@ -385,16 +383,6 @@ init python:
     # jedit rules.
     build.classify_renpy("jedit/**", "jedit")
 
-    # editra rules.
-    build.classify_renpy("editra/", "editra-all")
-    build.classify_renpy("editra/Editra.edit.py", "editra-all")
-    build.classify_renpy("editra/Editra/**", "editra-linux editra-windows")
-    build.classify_renpy("editra/Editra-mac.app/**", "editra-mac")
-    build.classify_renpy("editra/lib/**", "editra-windows")
-    build.classify_renpy("editra/editra.exe", "editra-windows")
-    build.executable("editra/Editra/Editra")
-
-
     # Packages.
     build.packages = [ ]
 
@@ -403,10 +391,6 @@ init python:
     build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
 
     build.package("jedit", "zip", "jedit", dlc=True)
-
-    build.package("editra-linux", "tar.bz2", "editra-all editra-linux", dlc=True)
-    build.package("editra-mac", "zip", "editra-all editra-mac", dlc=True)
-    build.package("editra-windows", "zip", "editra-all editra-windows", dlc=True)
 
     build.package("atom-linux", "tar.bz2", "atom-all atom-linux", dlc=True)
     build.package("atom-mac", "zip", "atom-all atom-mac", dlc=True)

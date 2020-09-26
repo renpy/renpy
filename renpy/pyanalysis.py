@@ -22,14 +22,15 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
 
-import renpy  # @UnusedImport
+import renpy # @UnusedImport
 from renpy.python import py_compile
 
 # Import the Python AST module, instead of the Ren'Py ast module.
 import ast
 
 import zlib
-from pickle import loads, dumps
+
+from renpy.compat.pickle import loads, dumps
 
 # The set of names that should be treated as constants.
 always_constants = { 'True', 'False', 'None' }
@@ -188,9 +189,9 @@ class Control(object):
 
 
 # Three levels of constness.
-GLOBAL_CONST = 2  # Expressions that are const everywhere.
-LOCAL_CONST = 1  # Expressions that are const with regard to a screen + parameters.
-NOT_CONST = 0    # Expressions that are not const.
+GLOBAL_CONST = 2 # Expressions that are const everywhere.
+LOCAL_CONST = 1 # Expressions that are const with regard to a screen + parameters.
+NOT_CONST = 0 # Expressions that are not const.
 
 
 class DeltaSet(object):
@@ -376,7 +377,7 @@ class Analysis(object):
         object equality.
         """
 
-        def check_slice(slice):  # @ReservedAssignment
+        def check_slice(slice): # @ReservedAssignment
 
             if isinstance(slice, ast.Index):
                 return check_node(slice.value)
@@ -453,7 +454,7 @@ class Analysis(object):
             if node is None:
                 return GLOBAL_CONST
 
-            #PY3: see if there are new node types.
+            # PY3: see if there are new node types.
 
             if isinstance(node, (ast.Num, ast.Str)):
                 return GLOBAL_CONST
@@ -736,7 +737,7 @@ CACHE_FILENAME = "cache/pyanalysis.rpyb"
 
 
 def load_cache():
-    if renpy.game.args.compile:  # @UndefinedVariable
+    if renpy.game.args.compile: # @UndefinedVariable
         return
 
     try:

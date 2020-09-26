@@ -362,7 +362,7 @@ call looks like::
 
 
     python early:
-        renpy.register_sl_statement("titledwindow", positional=1, children=1).add_property("icon").add_property("pos")
+        renpy.register_sl_statement("titledwindow", children=1).add_positional("title").add_property("icon").add_property("pos")
 
 Then, we define a screen that implements the custom statement. This screen can be defined in
 any file. One such screen is::
@@ -385,3 +385,26 @@ any file. One such screen is::
                 null height 15
 
                 transclude
+
+
+When are used large property groups like a `add_property_group`, it makes sense to use
+the \*\*properties syntax with a properties keyword in some place. For example::
+
+    screen titledwindow(title, icon=None, **properties):
+        frame:
+            # When background not in properties it will use it as default value.
+            background "#00000080"
+
+            properties properties
+
+            has vbox
+
+            hbox:
+                if icon is not None:
+                    add icon
+
+                text title
+
+            null height 15
+
+            transclude

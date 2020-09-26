@@ -235,12 +235,24 @@ def glActiveTexture(texture):
 def glAttachShader(program, shader):
     renpy.uguu.gl.glAttachShader(program, shader)
 
+def glBeginQuery(target, id):
+    renpy.uguu.gl.glBeginQuery(target, id)
+
+def glBeginTransformFeedback(primitiveMode):
+    renpy.uguu.gl.glBeginTransformFeedback(primitiveMode)
+
 def glBindAttribLocation(program, index, name):
     cdef ptr name_ptr = get_ptr(name)
     renpy.uguu.gl.glBindAttribLocation(program, index, <const GLchar *> name_ptr.ptr)
 
 def glBindBuffer(target, buffer):
     renpy.uguu.gl.glBindBuffer(target, buffer)
+
+def glBindBufferBase(target, index, buffer):
+    renpy.uguu.gl.glBindBufferBase(target, index, buffer)
+
+def glBindBufferRange(target, index, buffer, offset, size):
+    renpy.uguu.gl.glBindBufferRange(target, index, buffer, offset, size)
 
 def glBindFramebuffer(target, framebuffer):
     renpy.uguu.gl.glBindFramebuffer(target, framebuffer)
@@ -250,6 +262,9 @@ def glBindRenderbuffer(target, renderbuffer):
 
 def glBindTexture(target, texture):
     renpy.uguu.gl.glBindTexture(target, texture)
+
+def glBindVertexArray(array):
+    renpy.uguu.gl.glBindVertexArray(array)
 
 def glBlendColor(red, green, blue, alpha):
     renpy.uguu.gl.glBlendColor(red, green, blue, alpha)
@@ -266,6 +281,9 @@ def glBlendFunc(sfactor, dfactor):
 def glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha):
     renpy.uguu.gl.glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha)
 
+def glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter):
+    renpy.uguu.gl.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter)
+
 def glBufferData(target, size, data, usage):
     cdef ptr data_ptr = get_ptr(data)
     renpy.uguu.gl.glBufferData(target, size, <const void *> data_ptr.ptr, usage)
@@ -279,6 +297,21 @@ def glCheckFramebufferStatus(target):
 
 def glClear(mask):
     renpy.uguu.gl.glClear(mask)
+
+def glClearBufferfi(buffer, drawbuffer, depth, stencil):
+    renpy.uguu.gl.glClearBufferfi(buffer, drawbuffer, depth, stencil)
+
+def glClearBufferfv(buffer, drawbuffer, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glClearBufferfv(buffer, drawbuffer, <const GLfloat *> value_ptr.ptr)
+
+def glClearBufferiv(buffer, drawbuffer, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glClearBufferiv(buffer, drawbuffer, <const GLint *> value_ptr.ptr)
+
+def glClearBufferuiv(buffer, drawbuffer, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glClearBufferuiv(buffer, drawbuffer, <const GLuint *> value_ptr.ptr)
 
 def glClearColor(red, green, blue, alpha):
     renpy.uguu.gl.glClearColor(red, green, blue, alpha)
@@ -296,15 +329,26 @@ def glCompressedTexImage2D(target, level, internalformat, width, height, border,
     cdef ptr data_ptr = get_ptr(data)
     renpy.uguu.gl.glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, <const void *> data_ptr.ptr)
 
+def glCompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data):
+    cdef ptr data_ptr = get_ptr(data)
+    renpy.uguu.gl.glCompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, <const void *> data_ptr.ptr)
+
 def glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data):
     cdef ptr data_ptr = get_ptr(data)
     renpy.uguu.gl.glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, <const void *> data_ptr.ptr)
+
+def glCompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data):
+    cdef ptr data_ptr = get_ptr(data)
+    renpy.uguu.gl.glCompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, <const void *> data_ptr.ptr)
 
 def glCopyTexImage2D(target, level, internalformat, x, y, width, height, border):
     renpy.uguu.gl.glCopyTexImage2D(target, level, internalformat, x, y, width, height, border)
 
 def glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height):
     renpy.uguu.gl.glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height)
+
+def glCopyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height):
+    renpy.uguu.gl.glCopyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height)
 
 def glCreateProgram():
     return renpy.uguu.gl.glCreateProgram()
@@ -326,6 +370,10 @@ def glDeleteFramebuffers(n, framebuffers):
 def glDeleteProgram(program):
     renpy.uguu.gl.glDeleteProgram(program)
 
+def glDeleteQueries(n, ids):
+    cdef ptr ids_ptr = get_ptr(ids)
+    renpy.uguu.gl.glDeleteQueries(n, <const GLuint *> ids_ptr.ptr)
+
 def glDeleteRenderbuffers(n, renderbuffers):
     cdef ptr renderbuffers_ptr = get_ptr(renderbuffers)
     renpy.uguu.gl.glDeleteRenderbuffers(n, <const GLuint *> renderbuffers_ptr.ptr)
@@ -336,6 +384,10 @@ def glDeleteShader(shader):
 def glDeleteTextures(n, textures):
     cdef ptr textures_ptr = get_ptr(textures)
     renpy.uguu.gl.glDeleteTextures(n, <const GLuint *> textures_ptr.ptr)
+
+def glDeleteVertexArrays(n, arrays):
+    cdef ptr arrays_ptr = get_ptr(arrays)
+    renpy.uguu.gl.glDeleteVertexArrays(n, <const GLuint *> arrays_ptr.ptr)
 
 def glDepthFunc(func):
     renpy.uguu.gl.glDepthFunc(func)
@@ -355,9 +407,17 @@ def glDisableVertexAttribArray(index):
 def glDrawArrays(mode, first, count):
     renpy.uguu.gl.glDrawArrays(mode, first, count)
 
+def glDrawBuffers(n, bufs):
+    cdef ptr bufs_ptr = get_ptr(bufs)
+    renpy.uguu.gl.glDrawBuffers(n, <const GLenum *> bufs_ptr.ptr)
+
 def glDrawElements(mode, count, type, indices):
     cdef ptr indices_ptr = get_ptr(indices)
     renpy.uguu.gl.glDrawElements(mode, count, type, <const void *> indices_ptr.ptr)
+
+def glDrawRangeElements(mode, start, end, count, type, indices):
+    cdef ptr indices_ptr = get_ptr(indices)
+    renpy.uguu.gl.glDrawRangeElements(mode, start, end, count, type, <const void *> indices_ptr.ptr)
 
 def glEnable(cap):
     renpy.uguu.gl.glEnable(cap)
@@ -365,17 +425,29 @@ def glEnable(cap):
 def glEnableVertexAttribArray(index):
     renpy.uguu.gl.glEnableVertexAttribArray(index)
 
+def glEndQuery(target):
+    renpy.uguu.gl.glEndQuery(target)
+
+def glEndTransformFeedback():
+    renpy.uguu.gl.glEndTransformFeedback()
+
 def glFinish():
     renpy.uguu.gl.glFinish()
 
 def glFlush():
     renpy.uguu.gl.glFlush()
 
+def glFlushMappedBufferRange(target, offset, length):
+    renpy.uguu.gl.glFlushMappedBufferRange(target, offset, length)
+
 def glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer):
     renpy.uguu.gl.glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer)
 
 def glFramebufferTexture2D(target, attachment, textarget, texture, level):
     renpy.uguu.gl.glFramebufferTexture2D(target, attachment, textarget, texture, level)
+
+def glFramebufferTextureLayer(target, attachment, texture, level, layer):
+    renpy.uguu.gl.glFramebufferTextureLayer(target, attachment, texture, level, layer)
 
 def glFrontFace(mode):
     renpy.uguu.gl.glFrontFace(mode)
@@ -388,6 +460,10 @@ def glGenFramebuffers(n, framebuffers):
     cdef ptr framebuffers_ptr = get_ptr(framebuffers)
     renpy.uguu.gl.glGenFramebuffers(n, <GLuint *> framebuffers_ptr.ptr)
 
+def glGenQueries(n, ids):
+    cdef ptr ids_ptr = get_ptr(ids)
+    renpy.uguu.gl.glGenQueries(n, <GLuint *> ids_ptr.ptr)
+
 def glGenRenderbuffers(n, renderbuffers):
     cdef ptr renderbuffers_ptr = get_ptr(renderbuffers)
     renpy.uguu.gl.glGenRenderbuffers(n, <GLuint *> renderbuffers_ptr.ptr)
@@ -395,6 +471,10 @@ def glGenRenderbuffers(n, renderbuffers):
 def glGenTextures(n, textures):
     cdef ptr textures_ptr = get_ptr(textures)
     renpy.uguu.gl.glGenTextures(n, <GLuint *> textures_ptr.ptr)
+
+def glGenVertexArrays(n, arrays):
+    cdef ptr arrays_ptr = get_ptr(arrays)
+    renpy.uguu.gl.glGenVertexArrays(n, <GLuint *> arrays_ptr.ptr)
 
 def glGenerateMipmap(target):
     renpy.uguu.gl.glGenerateMipmap(target)
@@ -430,6 +510,10 @@ def glGetBufferParameteriv(target, pname, params):
     cdef ptr params_ptr = get_ptr(params)
     renpy.uguu.gl.glGetBufferParameteriv(target, pname, <GLint *> params_ptr.ptr)
 
+def glGetBufferPointerv(target, pname, params):
+    cdef ptr params_ptr = get_ptr(params)
+    renpy.uguu.gl.glGetBufferPointerv(target, pname, <void **> params_ptr.ptr)
+
 def glGetError():
     return renpy.uguu.gl.glGetError()
 
@@ -437,9 +521,17 @@ def glGetFloatv(pname, data):
     cdef ptr data_ptr = get_ptr(data)
     renpy.uguu.gl.glGetFloatv(pname, <GLfloat *> data_ptr.ptr)
 
+def glGetFragDataLocation(program, name):
+    cdef ptr name_ptr = get_ptr(name)
+    return renpy.uguu.gl.glGetFragDataLocation(program, <const GLchar *> name_ptr.ptr)
+
 def glGetFramebufferAttachmentParameteriv(target, attachment, pname, params):
     cdef ptr params_ptr = get_ptr(params)
     renpy.uguu.gl.glGetFramebufferAttachmentParameteriv(target, attachment, pname, <GLint *> params_ptr.ptr)
+
+def glGetIntegeri_v(target, index, data):
+    cdef ptr data_ptr = get_ptr(data)
+    renpy.uguu.gl.glGetIntegeri_v(target, index, <GLint *> data_ptr.ptr)
 
 def glGetIntegerv(pname, data):
     cdef ptr data_ptr = get_ptr(data)
@@ -453,6 +545,14 @@ def glGetProgramInfoLog(program, bufSize, length, infoLog):
 def glGetProgramiv(program, pname, params):
     cdef ptr params_ptr = get_ptr(params)
     renpy.uguu.gl.glGetProgramiv(program, pname, <GLint *> params_ptr.ptr)
+
+def glGetQueryObjectuiv(id, pname, params):
+    cdef ptr params_ptr = get_ptr(params)
+    renpy.uguu.gl.glGetQueryObjectuiv(id, pname, <GLuint *> params_ptr.ptr)
+
+def glGetQueryiv(target, pname, params):
+    cdef ptr params_ptr = get_ptr(params)
+    renpy.uguu.gl.glGetQueryiv(target, pname, <GLint *> params_ptr.ptr)
 
 def glGetRenderbufferParameteriv(target, pname, params):
     cdef ptr params_ptr = get_ptr(params)
@@ -475,6 +575,9 @@ def glGetShaderiv(shader, pname, params):
 def glGetString(name):
     return proxy_return_string(renpy.uguu.gl.glGetString(name))
 
+def glGetStringi(name, index):
+    return proxy_return_string(renpy.uguu.gl.glGetStringi(name, index))
+
 def glGetTexParameterfv(target, pname, params):
     cdef ptr params_ptr = get_ptr(params)
     renpy.uguu.gl.glGetTexParameterfv(target, pname, <GLfloat *> params_ptr.ptr)
@@ -482,6 +585,13 @@ def glGetTexParameterfv(target, pname, params):
 def glGetTexParameteriv(target, pname, params):
     cdef ptr params_ptr = get_ptr(params)
     renpy.uguu.gl.glGetTexParameteriv(target, pname, <GLint *> params_ptr.ptr)
+
+def glGetTransformFeedbackVarying(program, index, bufSize, length, size, type, name):
+    cdef ptr length_ptr = get_ptr(length)
+    cdef ptr size_ptr = get_ptr(size)
+    cdef ptr type_ptr = get_ptr(type)
+    cdef ptr name_ptr = get_ptr(name)
+    renpy.uguu.gl.glGetTransformFeedbackVarying(program, index, bufSize, <GLsizei *> length_ptr.ptr, <GLsizei *> size_ptr.ptr, <GLenum *> type_ptr.ptr, <GLchar *> name_ptr.ptr)
 
 def glGetUniformLocation(program, name):
     cdef ptr name_ptr = get_ptr(name)
@@ -494,6 +604,18 @@ def glGetUniformfv(program, location, params):
 def glGetUniformiv(program, location, params):
     cdef ptr params_ptr = get_ptr(params)
     renpy.uguu.gl.glGetUniformiv(program, location, <GLint *> params_ptr.ptr)
+
+def glGetUniformuiv(program, location, params):
+    cdef ptr params_ptr = get_ptr(params)
+    renpy.uguu.gl.glGetUniformuiv(program, location, <GLuint *> params_ptr.ptr)
+
+def glGetVertexAttribIiv(index, pname, params):
+    cdef ptr params_ptr = get_ptr(params)
+    renpy.uguu.gl.glGetVertexAttribIiv(index, pname, <GLint *> params_ptr.ptr)
+
+def glGetVertexAttribIuiv(index, pname, params):
+    cdef ptr params_ptr = get_ptr(params)
+    renpy.uguu.gl.glGetVertexAttribIuiv(index, pname, <GLuint *> params_ptr.ptr)
 
 def glGetVertexAttribPointerv(index, pname, pointer):
     cdef ptr pointer_ptr = get_ptr(pointer)
@@ -522,6 +644,9 @@ def glIsFramebuffer(framebuffer):
 def glIsProgram(program):
     return renpy.uguu.gl.glIsProgram(program)
 
+def glIsQuery(id):
+    return renpy.uguu.gl.glIsQuery(id)
+
 def glIsRenderbuffer(renderbuffer):
     return renpy.uguu.gl.glIsRenderbuffer(renderbuffer)
 
@@ -530,6 +655,9 @@ def glIsShader(shader):
 
 def glIsTexture(texture):
     return renpy.uguu.gl.glIsTexture(texture)
+
+def glIsVertexArray(array):
+    return renpy.uguu.gl.glIsVertexArray(array)
 
 def glLineWidth(width):
     renpy.uguu.gl.glLineWidth(width)
@@ -543,12 +671,18 @@ def glPixelStorei(pname, param):
 def glPolygonOffset(factor, units):
     renpy.uguu.gl.glPolygonOffset(factor, units)
 
+def glReadBuffer(src):
+    renpy.uguu.gl.glReadBuffer(src)
+
 def glReadPixels(x, y, width, height, format, type, pixels):
     cdef ptr pixels_ptr = get_ptr(pixels)
     renpy.uguu.gl.glReadPixels(x, y, width, height, format, type, <void *> pixels_ptr.ptr)
 
 def glRenderbufferStorage(target, internalformat, width, height):
     renpy.uguu.gl.glRenderbufferStorage(target, internalformat, width, height)
+
+def glRenderbufferStorageMultisample(target, samples, internalformat, width, height):
+    renpy.uguu.gl.glRenderbufferStorageMultisample(target, samples, internalformat, width, height)
 
 def glSampleCoverage(value, invert):
     renpy.uguu.gl.glSampleCoverage(value, invert)
@@ -583,6 +717,10 @@ def glTexImage2D(target, level, internalformat, width, height, border, format, t
     cdef ptr pixels_ptr = get_ptr(pixels)
     renpy.uguu.gl.glTexImage2D(target, level, internalformat, width, height, border, format, type, <const void *> pixels_ptr.ptr)
 
+def glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, pixels):
+    cdef ptr pixels_ptr = get_ptr(pixels)
+    renpy.uguu.gl.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, <const void *> pixels_ptr.ptr)
+
 def glTexParameterf(target, pname, param):
     renpy.uguu.gl.glTexParameterf(target, pname, param)
 
@@ -601,6 +739,14 @@ def glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type
     cdef ptr pixels_ptr = get_ptr(pixels)
     renpy.uguu.gl.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, <const void *> pixels_ptr.ptr)
 
+def glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels):
+    cdef ptr pixels_ptr = get_ptr(pixels)
+    renpy.uguu.gl.glTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, <const void *> pixels_ptr.ptr)
+
+def glTransformFeedbackVaryings(program, count, varyings, bufferMode):
+    cdef ptr varyings_ptr = get_ptr(varyings)
+    renpy.uguu.gl.glTransformFeedbackVaryings(program, count, <const GLchar *const*> varyings_ptr.ptr, bufferMode)
+
 def glUniform1f(location, v0):
     renpy.uguu.gl.glUniform1f(location, v0)
 
@@ -614,6 +760,13 @@ def glUniform1i(location, v0):
 def glUniform1iv(location, count, value):
     cdef ptr value_ptr = get_ptr(value)
     renpy.uguu.gl.glUniform1iv(location, count, <const GLint *> value_ptr.ptr)
+
+def glUniform1ui(location, v0):
+    renpy.uguu.gl.glUniform1ui(location, v0)
+
+def glUniform1uiv(location, count, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glUniform1uiv(location, count, <const GLuint *> value_ptr.ptr)
 
 def glUniform2f(location, v0, v1):
     renpy.uguu.gl.glUniform2f(location, v0, v1)
@@ -629,6 +782,13 @@ def glUniform2iv(location, count, value):
     cdef ptr value_ptr = get_ptr(value)
     renpy.uguu.gl.glUniform2iv(location, count, <const GLint *> value_ptr.ptr)
 
+def glUniform2ui(location, v0, v1):
+    renpy.uguu.gl.glUniform2ui(location, v0, v1)
+
+def glUniform2uiv(location, count, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glUniform2uiv(location, count, <const GLuint *> value_ptr.ptr)
+
 def glUniform3f(location, v0, v1, v2):
     renpy.uguu.gl.glUniform3f(location, v0, v1, v2)
 
@@ -642,6 +802,13 @@ def glUniform3i(location, v0, v1, v2):
 def glUniform3iv(location, count, value):
     cdef ptr value_ptr = get_ptr(value)
     renpy.uguu.gl.glUniform3iv(location, count, <const GLint *> value_ptr.ptr)
+
+def glUniform3ui(location, v0, v1, v2):
+    renpy.uguu.gl.glUniform3ui(location, v0, v1, v2)
+
+def glUniform3uiv(location, count, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glUniform3uiv(location, count, <const GLuint *> value_ptr.ptr)
 
 def glUniform4f(location, v0, v1, v2, v3):
     renpy.uguu.gl.glUniform4f(location, v0, v1, v2, v3)
@@ -657,17 +824,51 @@ def glUniform4iv(location, count, value):
     cdef ptr value_ptr = get_ptr(value)
     renpy.uguu.gl.glUniform4iv(location, count, <const GLint *> value_ptr.ptr)
 
+def glUniform4ui(location, v0, v1, v2, v3):
+    renpy.uguu.gl.glUniform4ui(location, v0, v1, v2, v3)
+
+def glUniform4uiv(location, count, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glUniform4uiv(location, count, <const GLuint *> value_ptr.ptr)
+
 def glUniformMatrix2fv(location, count, transpose, value):
     cdef ptr value_ptr = get_ptr(value)
     renpy.uguu.gl.glUniformMatrix2fv(location, count, transpose, <const GLfloat *> value_ptr.ptr)
+
+def glUniformMatrix2x3fv(location, count, transpose, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glUniformMatrix2x3fv(location, count, transpose, <const GLfloat *> value_ptr.ptr)
+
+def glUniformMatrix2x4fv(location, count, transpose, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glUniformMatrix2x4fv(location, count, transpose, <const GLfloat *> value_ptr.ptr)
 
 def glUniformMatrix3fv(location, count, transpose, value):
     cdef ptr value_ptr = get_ptr(value)
     renpy.uguu.gl.glUniformMatrix3fv(location, count, transpose, <const GLfloat *> value_ptr.ptr)
 
+def glUniformMatrix3x2fv(location, count, transpose, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glUniformMatrix3x2fv(location, count, transpose, <const GLfloat *> value_ptr.ptr)
+
+def glUniformMatrix3x4fv(location, count, transpose, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glUniformMatrix3x4fv(location, count, transpose, <const GLfloat *> value_ptr.ptr)
+
 def glUniformMatrix4fv(location, count, transpose, value):
     cdef ptr value_ptr = get_ptr(value)
     renpy.uguu.gl.glUniformMatrix4fv(location, count, transpose, <const GLfloat *> value_ptr.ptr)
+
+def glUniformMatrix4x2fv(location, count, transpose, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glUniformMatrix4x2fv(location, count, transpose, <const GLfloat *> value_ptr.ptr)
+
+def glUniformMatrix4x3fv(location, count, transpose, value):
+    cdef ptr value_ptr = get_ptr(value)
+    renpy.uguu.gl.glUniformMatrix4x3fv(location, count, transpose, <const GLfloat *> value_ptr.ptr)
+
+def glUnmapBuffer(target):
+    return renpy.uguu.gl.glUnmapBuffer(target)
 
 def glUseProgram(program):
     renpy.uguu.gl.glUseProgram(program)
@@ -703,6 +904,24 @@ def glVertexAttrib4fv(index, v):
     cdef ptr v_ptr = get_ptr(v)
     renpy.uguu.gl.glVertexAttrib4fv(index, <const GLfloat *> v_ptr.ptr)
 
+def glVertexAttribI4i(index, x, y, z, w):
+    renpy.uguu.gl.glVertexAttribI4i(index, x, y, z, w)
+
+def glVertexAttribI4iv(index, v):
+    cdef ptr v_ptr = get_ptr(v)
+    renpy.uguu.gl.glVertexAttribI4iv(index, <const GLint *> v_ptr.ptr)
+
+def glVertexAttribI4ui(index, x, y, z, w):
+    renpy.uguu.gl.glVertexAttribI4ui(index, x, y, z, w)
+
+def glVertexAttribI4uiv(index, v):
+    cdef ptr v_ptr = get_ptr(v)
+    renpy.uguu.gl.glVertexAttribI4uiv(index, <const GLuint *> v_ptr.ptr)
+
+def glVertexAttribIPointer(index, size, type, stride, pointer):
+    cdef ptr pointer_ptr = get_ptr(pointer)
+    renpy.uguu.gl.glVertexAttribIPointer(index, size, type, stride, <const void *> pointer_ptr.ptr)
+
 def glVertexAttribPointer(index, size, type, normalized, stride, pointer):
     cdef ptr pointer_ptr = get_ptr(pointer)
     renpy.uguu.gl.glVertexAttribPointer(index, size, type, normalized, stride, <const void *> pointer_ptr.ptr)
@@ -716,13 +935,19 @@ GL_NO_ERROR = renpy.uguu.gl.GL_NO_ERROR
 GL_POINTS = renpy.uguu.gl.GL_POINTS
 GL_ZERO = renpy.uguu.gl.GL_ZERO
 GL_LINES = renpy.uguu.gl.GL_LINES
+GL_MAP_READ_BIT = renpy.uguu.gl.GL_MAP_READ_BIT
 GL_ONE = renpy.uguu.gl.GL_ONE
 GL_TRUE = renpy.uguu.gl.GL_TRUE
 GL_LINE_LOOP = renpy.uguu.gl.GL_LINE_LOOP
+GL_MAP_WRITE_BIT = renpy.uguu.gl.GL_MAP_WRITE_BIT
 GL_LINE_STRIP = renpy.uguu.gl.GL_LINE_STRIP
+GL_MAP_INVALIDATE_RANGE_BIT = renpy.uguu.gl.GL_MAP_INVALIDATE_RANGE_BIT
 GL_TRIANGLES = renpy.uguu.gl.GL_TRIANGLES
 GL_TRIANGLE_STRIP = renpy.uguu.gl.GL_TRIANGLE_STRIP
 GL_TRIANGLE_FAN = renpy.uguu.gl.GL_TRIANGLE_FAN
+GL_MAP_INVALIDATE_BUFFER_BIT = renpy.uguu.gl.GL_MAP_INVALIDATE_BUFFER_BIT
+GL_MAP_FLUSH_EXPLICIT_BIT = renpy.uguu.gl.GL_MAP_FLUSH_EXPLICIT_BIT
+GL_MAP_UNSYNCHRONIZED_BIT = renpy.uguu.gl.GL_MAP_UNSYNCHRONIZED_BIT
 GL_DEPTH_BUFFER_BIT = renpy.uguu.gl.GL_DEPTH_BUFFER_BIT
 GL_NEVER = renpy.uguu.gl.GL_NEVER
 GL_LESS = renpy.uguu.gl.GL_LESS
@@ -773,11 +998,18 @@ GL_STENCIL_WRITEMASK = renpy.uguu.gl.GL_STENCIL_WRITEMASK
 GL_VIEWPORT = renpy.uguu.gl.GL_VIEWPORT
 GL_DITHER = renpy.uguu.gl.GL_DITHER
 GL_BLEND = renpy.uguu.gl.GL_BLEND
+GL_READ_BUFFER = renpy.uguu.gl.GL_READ_BUFFER
 GL_SCISSOR_BOX = renpy.uguu.gl.GL_SCISSOR_BOX
 GL_SCISSOR_TEST = renpy.uguu.gl.GL_SCISSOR_TEST
 GL_COLOR_CLEAR_VALUE = renpy.uguu.gl.GL_COLOR_CLEAR_VALUE
 GL_COLOR_WRITEMASK = renpy.uguu.gl.GL_COLOR_WRITEMASK
+GL_UNPACK_ROW_LENGTH = renpy.uguu.gl.GL_UNPACK_ROW_LENGTH
+GL_UNPACK_SKIP_ROWS = renpy.uguu.gl.GL_UNPACK_SKIP_ROWS
+GL_UNPACK_SKIP_PIXELS = renpy.uguu.gl.GL_UNPACK_SKIP_PIXELS
 GL_UNPACK_ALIGNMENT = renpy.uguu.gl.GL_UNPACK_ALIGNMENT
+GL_PACK_ROW_LENGTH = renpy.uguu.gl.GL_PACK_ROW_LENGTH
+GL_PACK_SKIP_ROWS = renpy.uguu.gl.GL_PACK_SKIP_ROWS
+GL_PACK_SKIP_PIXELS = renpy.uguu.gl.GL_PACK_SKIP_PIXELS
 GL_PACK_ALIGNMENT = renpy.uguu.gl.GL_PACK_ALIGNMENT
 GL_MAX_TEXTURE_SIZE = renpy.uguu.gl.GL_MAX_TEXTURE_SIZE
 GL_MAX_VIEWPORT_DIMS = renpy.uguu.gl.GL_MAX_VIEWPORT_DIMS
@@ -799,9 +1031,16 @@ GL_UNSIGNED_SHORT = renpy.uguu.gl.GL_UNSIGNED_SHORT
 GL_INT = renpy.uguu.gl.GL_INT
 GL_UNSIGNED_INT = renpy.uguu.gl.GL_UNSIGNED_INT
 GL_FLOAT = renpy.uguu.gl.GL_FLOAT
+GL_HALF_FLOAT = renpy.uguu.gl.GL_HALF_FLOAT
 GL_INVERT = renpy.uguu.gl.GL_INVERT
 GL_TEXTURE = renpy.uguu.gl.GL_TEXTURE
+GL_COLOR = renpy.uguu.gl.GL_COLOR
+GL_DEPTH = renpy.uguu.gl.GL_DEPTH
+GL_STENCIL = renpy.uguu.gl.GL_STENCIL
 GL_DEPTH_COMPONENT = renpy.uguu.gl.GL_DEPTH_COMPONENT
+GL_RED = renpy.uguu.gl.GL_RED
+GL_GREEN = renpy.uguu.gl.GL_GREEN
+GL_BLUE = renpy.uguu.gl.GL_BLUE
 GL_ALPHA = renpy.uguu.gl.GL_ALPHA
 GL_RGB = renpy.uguu.gl.GL_RGB
 GL_RGBA = renpy.uguu.gl.GL_RGBA
@@ -834,6 +1073,8 @@ GL_CONSTANT_ALPHA = renpy.uguu.gl.GL_CONSTANT_ALPHA
 GL_ONE_MINUS_CONSTANT_ALPHA = renpy.uguu.gl.GL_ONE_MINUS_CONSTANT_ALPHA
 GL_BLEND_COLOR = renpy.uguu.gl.GL_BLEND_COLOR
 GL_FUNC_ADD = renpy.uguu.gl.GL_FUNC_ADD
+GL_MIN = renpy.uguu.gl.GL_MIN
+GL_MAX = renpy.uguu.gl.GL_MAX
 GL_BLEND_EQUATION = renpy.uguu.gl.GL_BLEND_EQUATION
 GL_BLEND_EQUATION_RGB = renpy.uguu.gl.GL_BLEND_EQUATION_RGB
 GL_FUNC_SUBTRACT = renpy.uguu.gl.GL_FUNC_SUBTRACT
@@ -842,9 +1083,18 @@ GL_UNSIGNED_SHORT_4_4_4_4 = renpy.uguu.gl.GL_UNSIGNED_SHORT_4_4_4_4
 GL_UNSIGNED_SHORT_5_5_5_1 = renpy.uguu.gl.GL_UNSIGNED_SHORT_5_5_5_1
 GL_POLYGON_OFFSET_FILL = renpy.uguu.gl.GL_POLYGON_OFFSET_FILL
 GL_POLYGON_OFFSET_FACTOR = renpy.uguu.gl.GL_POLYGON_OFFSET_FACTOR
+GL_RGB8 = renpy.uguu.gl.GL_RGB8
 GL_RGBA4 = renpy.uguu.gl.GL_RGBA4
 GL_RGB5_A1 = renpy.uguu.gl.GL_RGB5_A1
+GL_RGBA8 = renpy.uguu.gl.GL_RGBA8
+GL_RGB10_A2 = renpy.uguu.gl.GL_RGB10_A2
 GL_TEXTURE_BINDING_2D = renpy.uguu.gl.GL_TEXTURE_BINDING_2D
+GL_TEXTURE_BINDING_3D = renpy.uguu.gl.GL_TEXTURE_BINDING_3D
+GL_UNPACK_SKIP_IMAGES = renpy.uguu.gl.GL_UNPACK_SKIP_IMAGES
+GL_UNPACK_IMAGE_HEIGHT = renpy.uguu.gl.GL_UNPACK_IMAGE_HEIGHT
+GL_TEXTURE_3D = renpy.uguu.gl.GL_TEXTURE_3D
+GL_TEXTURE_WRAP_R = renpy.uguu.gl.GL_TEXTURE_WRAP_R
+GL_MAX_3D_TEXTURE_SIZE = renpy.uguu.gl.GL_MAX_3D_TEXTURE_SIZE
 GL_SAMPLE_ALPHA_TO_COVERAGE = renpy.uguu.gl.GL_SAMPLE_ALPHA_TO_COVERAGE
 GL_SAMPLE_COVERAGE = renpy.uguu.gl.GL_SAMPLE_COVERAGE
 GL_SAMPLE_BUFFERS = renpy.uguu.gl.GL_SAMPLE_BUFFERS
@@ -855,10 +1105,52 @@ GL_BLEND_DST_RGB = renpy.uguu.gl.GL_BLEND_DST_RGB
 GL_BLEND_SRC_RGB = renpy.uguu.gl.GL_BLEND_SRC_RGB
 GL_BLEND_DST_ALPHA = renpy.uguu.gl.GL_BLEND_DST_ALPHA
 GL_BLEND_SRC_ALPHA = renpy.uguu.gl.GL_BLEND_SRC_ALPHA
+GL_MAX_ELEMENTS_VERTICES = renpy.uguu.gl.GL_MAX_ELEMENTS_VERTICES
+GL_MAX_ELEMENTS_INDICES = renpy.uguu.gl.GL_MAX_ELEMENTS_INDICES
 GL_CLAMP_TO_EDGE = renpy.uguu.gl.GL_CLAMP_TO_EDGE
+GL_TEXTURE_MIN_LOD = renpy.uguu.gl.GL_TEXTURE_MIN_LOD
+GL_TEXTURE_MAX_LOD = renpy.uguu.gl.GL_TEXTURE_MAX_LOD
+GL_TEXTURE_BASE_LEVEL = renpy.uguu.gl.GL_TEXTURE_BASE_LEVEL
+GL_TEXTURE_MAX_LEVEL = renpy.uguu.gl.GL_TEXTURE_MAX_LEVEL
 GL_GENERATE_MIPMAP_HINT = renpy.uguu.gl.GL_GENERATE_MIPMAP_HINT
 GL_DEPTH_COMPONENT16 = renpy.uguu.gl.GL_DEPTH_COMPONENT16
+GL_DEPTH_COMPONENT24 = renpy.uguu.gl.GL_DEPTH_COMPONENT24
+GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING
+GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE
+GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE
+GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE
+GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE
+GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE
+GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE
+GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE
+GL_FRAMEBUFFER_DEFAULT = renpy.uguu.gl.GL_FRAMEBUFFER_DEFAULT
+GL_FRAMEBUFFER_UNDEFINED = renpy.uguu.gl.GL_FRAMEBUFFER_UNDEFINED
+GL_DEPTH_STENCIL_ATTACHMENT = renpy.uguu.gl.GL_DEPTH_STENCIL_ATTACHMENT
+GL_MAJOR_VERSION = renpy.uguu.gl.GL_MAJOR_VERSION
+GL_MINOR_VERSION = renpy.uguu.gl.GL_MINOR_VERSION
+GL_NUM_EXTENSIONS = renpy.uguu.gl.GL_NUM_EXTENSIONS
+GL_RG = renpy.uguu.gl.GL_RG
+GL_RG_INTEGER = renpy.uguu.gl.GL_RG_INTEGER
+GL_R8 = renpy.uguu.gl.GL_R8
+GL_RG8 = renpy.uguu.gl.GL_RG8
+GL_R16F = renpy.uguu.gl.GL_R16F
+GL_R32F = renpy.uguu.gl.GL_R32F
+GL_RG16F = renpy.uguu.gl.GL_RG16F
+GL_RG32F = renpy.uguu.gl.GL_RG32F
+GL_R8I = renpy.uguu.gl.GL_R8I
+GL_R8UI = renpy.uguu.gl.GL_R8UI
+GL_R16I = renpy.uguu.gl.GL_R16I
+GL_R16UI = renpy.uguu.gl.GL_R16UI
+GL_R32I = renpy.uguu.gl.GL_R32I
+GL_R32UI = renpy.uguu.gl.GL_R32UI
+GL_RG8I = renpy.uguu.gl.GL_RG8I
+GL_RG8UI = renpy.uguu.gl.GL_RG8UI
+GL_RG16I = renpy.uguu.gl.GL_RG16I
+GL_RG16UI = renpy.uguu.gl.GL_RG16UI
+GL_RG32I = renpy.uguu.gl.GL_RG32I
+GL_RG32UI = renpy.uguu.gl.GL_RG32UI
 GL_UNSIGNED_SHORT_5_6_5 = renpy.uguu.gl.GL_UNSIGNED_SHORT_5_6_5
+GL_UNSIGNED_INT_2_10_10_10_REV = renpy.uguu.gl.GL_UNSIGNED_INT_2_10_10_10_REV
 GL_MIRRORED_REPEAT = renpy.uguu.gl.GL_MIRRORED_REPEAT
 GL_ALIASED_POINT_SIZE_RANGE = renpy.uguu.gl.GL_ALIASED_POINT_SIZE_RANGE
 GL_ALIASED_LINE_WIDTH_RANGE = renpy.uguu.gl.GL_ALIASED_LINE_WIDTH_RANGE
@@ -896,6 +1188,9 @@ GL_TEXTURE30 = renpy.uguu.gl.GL_TEXTURE30
 GL_TEXTURE31 = renpy.uguu.gl.GL_TEXTURE31
 GL_ACTIVE_TEXTURE = renpy.uguu.gl.GL_ACTIVE_TEXTURE
 GL_MAX_RENDERBUFFER_SIZE = renpy.uguu.gl.GL_MAX_RENDERBUFFER_SIZE
+GL_DEPTH_STENCIL = renpy.uguu.gl.GL_DEPTH_STENCIL
+GL_UNSIGNED_INT_24_8 = renpy.uguu.gl.GL_UNSIGNED_INT_24_8
+GL_MAX_TEXTURE_LOD_BIAS = renpy.uguu.gl.GL_MAX_TEXTURE_LOD_BIAS
 GL_INCR_WRAP = renpy.uguu.gl.GL_INCR_WRAP
 GL_DECR_WRAP = renpy.uguu.gl.GL_DECR_WRAP
 GL_TEXTURE_CUBE_MAP = renpy.uguu.gl.GL_TEXTURE_CUBE_MAP
@@ -907,6 +1202,7 @@ GL_TEXTURE_CUBE_MAP_NEGATIVE_Y = renpy.uguu.gl.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
 GL_TEXTURE_CUBE_MAP_POSITIVE_Z = renpy.uguu.gl.GL_TEXTURE_CUBE_MAP_POSITIVE_Z
 GL_TEXTURE_CUBE_MAP_NEGATIVE_Z = renpy.uguu.gl.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 GL_MAX_CUBE_MAP_TEXTURE_SIZE = renpy.uguu.gl.GL_MAX_CUBE_MAP_TEXTURE_SIZE
+GL_VERTEX_ARRAY_BINDING = renpy.uguu.gl.GL_VERTEX_ARRAY_BINDING
 GL_VERTEX_ATTRIB_ARRAY_ENABLED = renpy.uguu.gl.GL_VERTEX_ATTRIB_ARRAY_ENABLED
 GL_VERTEX_ATTRIB_ARRAY_SIZE = renpy.uguu.gl.GL_VERTEX_ATTRIB_ARRAY_SIZE
 GL_VERTEX_ATTRIB_ARRAY_STRIDE = renpy.uguu.gl.GL_VERTEX_ATTRIB_ARRAY_STRIDE
@@ -921,7 +1217,34 @@ GL_STENCIL_BACK_FUNC = renpy.uguu.gl.GL_STENCIL_BACK_FUNC
 GL_STENCIL_BACK_FAIL = renpy.uguu.gl.GL_STENCIL_BACK_FAIL
 GL_STENCIL_BACK_PASS_DEPTH_FAIL = renpy.uguu.gl.GL_STENCIL_BACK_PASS_DEPTH_FAIL
 GL_STENCIL_BACK_PASS_DEPTH_PASS = renpy.uguu.gl.GL_STENCIL_BACK_PASS_DEPTH_PASS
+GL_RGBA32F = renpy.uguu.gl.GL_RGBA32F
+GL_RGB32F = renpy.uguu.gl.GL_RGB32F
+GL_RGBA16F = renpy.uguu.gl.GL_RGBA16F
+GL_RGB16F = renpy.uguu.gl.GL_RGB16F
+GL_MAX_DRAW_BUFFERS = renpy.uguu.gl.GL_MAX_DRAW_BUFFERS
+GL_DRAW_BUFFER0 = renpy.uguu.gl.GL_DRAW_BUFFER0
+GL_DRAW_BUFFER1 = renpy.uguu.gl.GL_DRAW_BUFFER1
+GL_DRAW_BUFFER2 = renpy.uguu.gl.GL_DRAW_BUFFER2
+GL_DRAW_BUFFER3 = renpy.uguu.gl.GL_DRAW_BUFFER3
+GL_DRAW_BUFFER4 = renpy.uguu.gl.GL_DRAW_BUFFER4
+GL_DRAW_BUFFER5 = renpy.uguu.gl.GL_DRAW_BUFFER5
+GL_DRAW_BUFFER6 = renpy.uguu.gl.GL_DRAW_BUFFER6
+GL_DRAW_BUFFER7 = renpy.uguu.gl.GL_DRAW_BUFFER7
+GL_DRAW_BUFFER8 = renpy.uguu.gl.GL_DRAW_BUFFER8
+GL_DRAW_BUFFER9 = renpy.uguu.gl.GL_DRAW_BUFFER9
+GL_DRAW_BUFFER10 = renpy.uguu.gl.GL_DRAW_BUFFER10
+GL_DRAW_BUFFER11 = renpy.uguu.gl.GL_DRAW_BUFFER11
+GL_DRAW_BUFFER12 = renpy.uguu.gl.GL_DRAW_BUFFER12
+GL_DRAW_BUFFER13 = renpy.uguu.gl.GL_DRAW_BUFFER13
+GL_DRAW_BUFFER14 = renpy.uguu.gl.GL_DRAW_BUFFER14
+GL_DRAW_BUFFER15 = renpy.uguu.gl.GL_DRAW_BUFFER15
 GL_BLEND_EQUATION_ALPHA = renpy.uguu.gl.GL_BLEND_EQUATION_ALPHA
+GL_TEXTURE_COMPARE_MODE = renpy.uguu.gl.GL_TEXTURE_COMPARE_MODE
+GL_TEXTURE_COMPARE_FUNC = renpy.uguu.gl.GL_TEXTURE_COMPARE_FUNC
+GL_COMPARE_REF_TO_TEXTURE = renpy.uguu.gl.GL_COMPARE_REF_TO_TEXTURE
+GL_CURRENT_QUERY = renpy.uguu.gl.GL_CURRENT_QUERY
+GL_QUERY_RESULT = renpy.uguu.gl.GL_QUERY_RESULT
+GL_QUERY_RESULT_AVAILABLE = renpy.uguu.gl.GL_QUERY_RESULT_AVAILABLE
 GL_MAX_VERTEX_ATTRIBS = renpy.uguu.gl.GL_MAX_VERTEX_ATTRIBS
 GL_VERTEX_ATTRIB_ARRAY_NORMALIZED = renpy.uguu.gl.GL_VERTEX_ATTRIB_ARRAY_NORMALIZED
 GL_MAX_TEXTURE_IMAGE_UNITS = renpy.uguu.gl.GL_MAX_TEXTURE_IMAGE_UNITS
@@ -930,11 +1253,31 @@ GL_ELEMENT_ARRAY_BUFFER = renpy.uguu.gl.GL_ELEMENT_ARRAY_BUFFER
 GL_ARRAY_BUFFER_BINDING = renpy.uguu.gl.GL_ARRAY_BUFFER_BINDING
 GL_ELEMENT_ARRAY_BUFFER_BINDING = renpy.uguu.gl.GL_ELEMENT_ARRAY_BUFFER_BINDING
 GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING = renpy.uguu.gl.GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING
+GL_BUFFER_MAPPED = renpy.uguu.gl.GL_BUFFER_MAPPED
+GL_BUFFER_MAP_POINTER = renpy.uguu.gl.GL_BUFFER_MAP_POINTER
 GL_STREAM_DRAW = renpy.uguu.gl.GL_STREAM_DRAW
+GL_STREAM_READ = renpy.uguu.gl.GL_STREAM_READ
+GL_STREAM_COPY = renpy.uguu.gl.GL_STREAM_COPY
 GL_STATIC_DRAW = renpy.uguu.gl.GL_STATIC_DRAW
+GL_STATIC_READ = renpy.uguu.gl.GL_STATIC_READ
+GL_STATIC_COPY = renpy.uguu.gl.GL_STATIC_COPY
 GL_DYNAMIC_DRAW = renpy.uguu.gl.GL_DYNAMIC_DRAW
+GL_DYNAMIC_READ = renpy.uguu.gl.GL_DYNAMIC_READ
+GL_DYNAMIC_COPY = renpy.uguu.gl.GL_DYNAMIC_COPY
+GL_PIXEL_PACK_BUFFER = renpy.uguu.gl.GL_PIXEL_PACK_BUFFER
+GL_PIXEL_UNPACK_BUFFER = renpy.uguu.gl.GL_PIXEL_UNPACK_BUFFER
+GL_PIXEL_PACK_BUFFER_BINDING = renpy.uguu.gl.GL_PIXEL_PACK_BUFFER_BINDING
+GL_PIXEL_UNPACK_BUFFER_BINDING = renpy.uguu.gl.GL_PIXEL_UNPACK_BUFFER_BINDING
+GL_DEPTH24_STENCIL8 = renpy.uguu.gl.GL_DEPTH24_STENCIL8
+GL_VERTEX_ATTRIB_ARRAY_INTEGER = renpy.uguu.gl.GL_VERTEX_ATTRIB_ARRAY_INTEGER
+GL_MAX_ARRAY_TEXTURE_LAYERS = renpy.uguu.gl.GL_MAX_ARRAY_TEXTURE_LAYERS
+GL_MIN_PROGRAM_TEXEL_OFFSET = renpy.uguu.gl.GL_MIN_PROGRAM_TEXEL_OFFSET
+GL_MAX_PROGRAM_TEXEL_OFFSET = renpy.uguu.gl.GL_MAX_PROGRAM_TEXEL_OFFSET
 GL_FRAGMENT_SHADER = renpy.uguu.gl.GL_FRAGMENT_SHADER
 GL_VERTEX_SHADER = renpy.uguu.gl.GL_VERTEX_SHADER
+GL_MAX_FRAGMENT_UNIFORM_COMPONENTS = renpy.uguu.gl.GL_MAX_FRAGMENT_UNIFORM_COMPONENTS
+GL_MAX_VERTEX_UNIFORM_COMPONENTS = renpy.uguu.gl.GL_MAX_VERTEX_UNIFORM_COMPONENTS
+GL_MAX_VARYING_COMPONENTS = renpy.uguu.gl.GL_MAX_VARYING_COMPONENTS
 GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS = renpy.uguu.gl.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS
 GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS = renpy.uguu.gl.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
 GL_SHADER_TYPE = renpy.uguu.gl.GL_SHADER_TYPE
@@ -952,7 +1295,15 @@ GL_FLOAT_MAT2 = renpy.uguu.gl.GL_FLOAT_MAT2
 GL_FLOAT_MAT3 = renpy.uguu.gl.GL_FLOAT_MAT3
 GL_FLOAT_MAT4 = renpy.uguu.gl.GL_FLOAT_MAT4
 GL_SAMPLER_2D = renpy.uguu.gl.GL_SAMPLER_2D
+GL_SAMPLER_3D = renpy.uguu.gl.GL_SAMPLER_3D
 GL_SAMPLER_CUBE = renpy.uguu.gl.GL_SAMPLER_CUBE
+GL_SAMPLER_2D_SHADOW = renpy.uguu.gl.GL_SAMPLER_2D_SHADOW
+GL_FLOAT_MAT2x3 = renpy.uguu.gl.GL_FLOAT_MAT2x3
+GL_FLOAT_MAT2x4 = renpy.uguu.gl.GL_FLOAT_MAT2x4
+GL_FLOAT_MAT3x2 = renpy.uguu.gl.GL_FLOAT_MAT3x2
+GL_FLOAT_MAT3x4 = renpy.uguu.gl.GL_FLOAT_MAT3x4
+GL_FLOAT_MAT4x2 = renpy.uguu.gl.GL_FLOAT_MAT4x2
+GL_FLOAT_MAT4x3 = renpy.uguu.gl.GL_FLOAT_MAT4x3
 GL_DELETE_STATUS = renpy.uguu.gl.GL_DELETE_STATUS
 GL_COMPILE_STATUS = renpy.uguu.gl.GL_COMPILE_STATUS
 GL_LINK_STATUS = renpy.uguu.gl.GL_LINK_STATUS
@@ -964,22 +1315,87 @@ GL_ACTIVE_UNIFORM_MAX_LENGTH = renpy.uguu.gl.GL_ACTIVE_UNIFORM_MAX_LENGTH
 GL_SHADER_SOURCE_LENGTH = renpy.uguu.gl.GL_SHADER_SOURCE_LENGTH
 GL_ACTIVE_ATTRIBUTES = renpy.uguu.gl.GL_ACTIVE_ATTRIBUTES
 GL_ACTIVE_ATTRIBUTE_MAX_LENGTH = renpy.uguu.gl.GL_ACTIVE_ATTRIBUTE_MAX_LENGTH
+GL_FRAGMENT_SHADER_DERIVATIVE_HINT = renpy.uguu.gl.GL_FRAGMENT_SHADER_DERIVATIVE_HINT
 GL_SHADING_LANGUAGE_VERSION = renpy.uguu.gl.GL_SHADING_LANGUAGE_VERSION
 GL_CURRENT_PROGRAM = renpy.uguu.gl.GL_CURRENT_PROGRAM
+GL_UNSIGNED_NORMALIZED = renpy.uguu.gl.GL_UNSIGNED_NORMALIZED
+GL_TEXTURE_2D_ARRAY = renpy.uguu.gl.GL_TEXTURE_2D_ARRAY
+GL_TEXTURE_BINDING_2D_ARRAY = renpy.uguu.gl.GL_TEXTURE_BINDING_2D_ARRAY
+GL_R11F_G11F_B10F = renpy.uguu.gl.GL_R11F_G11F_B10F
+GL_UNSIGNED_INT_10F_11F_11F_REV = renpy.uguu.gl.GL_UNSIGNED_INT_10F_11F_11F_REV
+GL_RGB9_E5 = renpy.uguu.gl.GL_RGB9_E5
+GL_UNSIGNED_INT_5_9_9_9_REV = renpy.uguu.gl.GL_UNSIGNED_INT_5_9_9_9_REV
+GL_SRGB = renpy.uguu.gl.GL_SRGB
+GL_SRGB8 = renpy.uguu.gl.GL_SRGB8
+GL_SRGB8_ALPHA8 = renpy.uguu.gl.GL_SRGB8_ALPHA8
+GL_TRANSFORM_FEEDBACK_VARYING_MAX_LENGTH = renpy.uguu.gl.GL_TRANSFORM_FEEDBACK_VARYING_MAX_LENGTH
+GL_TRANSFORM_FEEDBACK_BUFFER_MODE = renpy.uguu.gl.GL_TRANSFORM_FEEDBACK_BUFFER_MODE
+GL_MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS = renpy.uguu.gl.GL_MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS
+GL_TRANSFORM_FEEDBACK_VARYINGS = renpy.uguu.gl.GL_TRANSFORM_FEEDBACK_VARYINGS
+GL_TRANSFORM_FEEDBACK_BUFFER_START = renpy.uguu.gl.GL_TRANSFORM_FEEDBACK_BUFFER_START
+GL_TRANSFORM_FEEDBACK_BUFFER_SIZE = renpy.uguu.gl.GL_TRANSFORM_FEEDBACK_BUFFER_SIZE
+GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN = renpy.uguu.gl.GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN
+GL_RASTERIZER_DISCARD = renpy.uguu.gl.GL_RASTERIZER_DISCARD
+GL_MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS = renpy.uguu.gl.GL_MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS
+GL_MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS = renpy.uguu.gl.GL_MAX_TRANSFORM_FEEDBACK_SEPARATE_ATTRIBS
+GL_INTERLEAVED_ATTRIBS = renpy.uguu.gl.GL_INTERLEAVED_ATTRIBS
+GL_SEPARATE_ATTRIBS = renpy.uguu.gl.GL_SEPARATE_ATTRIBS
+GL_TRANSFORM_FEEDBACK_BUFFER = renpy.uguu.gl.GL_TRANSFORM_FEEDBACK_BUFFER
+GL_TRANSFORM_FEEDBACK_BUFFER_BINDING = renpy.uguu.gl.GL_TRANSFORM_FEEDBACK_BUFFER_BINDING
 GL_STENCIL_BACK_REF = renpy.uguu.gl.GL_STENCIL_BACK_REF
 GL_STENCIL_BACK_VALUE_MASK = renpy.uguu.gl.GL_STENCIL_BACK_VALUE_MASK
 GL_STENCIL_BACK_WRITEMASK = renpy.uguu.gl.GL_STENCIL_BACK_WRITEMASK
+GL_DRAW_FRAMEBUFFER_BINDING = renpy.uguu.gl.GL_DRAW_FRAMEBUFFER_BINDING
 GL_FRAMEBUFFER_BINDING = renpy.uguu.gl.GL_FRAMEBUFFER_BINDING
 GL_RENDERBUFFER_BINDING = renpy.uguu.gl.GL_RENDERBUFFER_BINDING
+GL_READ_FRAMEBUFFER = renpy.uguu.gl.GL_READ_FRAMEBUFFER
+GL_DRAW_FRAMEBUFFER = renpy.uguu.gl.GL_DRAW_FRAMEBUFFER
+GL_READ_FRAMEBUFFER_BINDING = renpy.uguu.gl.GL_READ_FRAMEBUFFER_BINDING
+GL_RENDERBUFFER_SAMPLES = renpy.uguu.gl.GL_RENDERBUFFER_SAMPLES
+GL_DEPTH_COMPONENT32F = renpy.uguu.gl.GL_DEPTH_COMPONENT32F
+GL_DEPTH32F_STENCIL8 = renpy.uguu.gl.GL_DEPTH32F_STENCIL8
 GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE
 GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME
 GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL
 GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE
+GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER = renpy.uguu.gl.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER
 GL_FRAMEBUFFER_COMPLETE = renpy.uguu.gl.GL_FRAMEBUFFER_COMPLETE
 GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT = renpy.uguu.gl.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
 GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = renpy.uguu.gl.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
 GL_FRAMEBUFFER_UNSUPPORTED = renpy.uguu.gl.GL_FRAMEBUFFER_UNSUPPORTED
+GL_MAX_COLOR_ATTACHMENTS = renpy.uguu.gl.GL_MAX_COLOR_ATTACHMENTS
 GL_COLOR_ATTACHMENT0 = renpy.uguu.gl.GL_COLOR_ATTACHMENT0
+GL_COLOR_ATTACHMENT1 = renpy.uguu.gl.GL_COLOR_ATTACHMENT1
+GL_COLOR_ATTACHMENT2 = renpy.uguu.gl.GL_COLOR_ATTACHMENT2
+GL_COLOR_ATTACHMENT3 = renpy.uguu.gl.GL_COLOR_ATTACHMENT3
+GL_COLOR_ATTACHMENT4 = renpy.uguu.gl.GL_COLOR_ATTACHMENT4
+GL_COLOR_ATTACHMENT5 = renpy.uguu.gl.GL_COLOR_ATTACHMENT5
+GL_COLOR_ATTACHMENT6 = renpy.uguu.gl.GL_COLOR_ATTACHMENT6
+GL_COLOR_ATTACHMENT7 = renpy.uguu.gl.GL_COLOR_ATTACHMENT7
+GL_COLOR_ATTACHMENT8 = renpy.uguu.gl.GL_COLOR_ATTACHMENT8
+GL_COLOR_ATTACHMENT9 = renpy.uguu.gl.GL_COLOR_ATTACHMENT9
+GL_COLOR_ATTACHMENT10 = renpy.uguu.gl.GL_COLOR_ATTACHMENT10
+GL_COLOR_ATTACHMENT11 = renpy.uguu.gl.GL_COLOR_ATTACHMENT11
+GL_COLOR_ATTACHMENT12 = renpy.uguu.gl.GL_COLOR_ATTACHMENT12
+GL_COLOR_ATTACHMENT13 = renpy.uguu.gl.GL_COLOR_ATTACHMENT13
+GL_COLOR_ATTACHMENT14 = renpy.uguu.gl.GL_COLOR_ATTACHMENT14
+GL_COLOR_ATTACHMENT15 = renpy.uguu.gl.GL_COLOR_ATTACHMENT15
+GL_COLOR_ATTACHMENT16 = renpy.uguu.gl.GL_COLOR_ATTACHMENT16
+GL_COLOR_ATTACHMENT17 = renpy.uguu.gl.GL_COLOR_ATTACHMENT17
+GL_COLOR_ATTACHMENT18 = renpy.uguu.gl.GL_COLOR_ATTACHMENT18
+GL_COLOR_ATTACHMENT19 = renpy.uguu.gl.GL_COLOR_ATTACHMENT19
+GL_COLOR_ATTACHMENT20 = renpy.uguu.gl.GL_COLOR_ATTACHMENT20
+GL_COLOR_ATTACHMENT21 = renpy.uguu.gl.GL_COLOR_ATTACHMENT21
+GL_COLOR_ATTACHMENT22 = renpy.uguu.gl.GL_COLOR_ATTACHMENT22
+GL_COLOR_ATTACHMENT23 = renpy.uguu.gl.GL_COLOR_ATTACHMENT23
+GL_COLOR_ATTACHMENT24 = renpy.uguu.gl.GL_COLOR_ATTACHMENT24
+GL_COLOR_ATTACHMENT25 = renpy.uguu.gl.GL_COLOR_ATTACHMENT25
+GL_COLOR_ATTACHMENT26 = renpy.uguu.gl.GL_COLOR_ATTACHMENT26
+GL_COLOR_ATTACHMENT27 = renpy.uguu.gl.GL_COLOR_ATTACHMENT27
+GL_COLOR_ATTACHMENT28 = renpy.uguu.gl.GL_COLOR_ATTACHMENT28
+GL_COLOR_ATTACHMENT29 = renpy.uguu.gl.GL_COLOR_ATTACHMENT29
+GL_COLOR_ATTACHMENT30 = renpy.uguu.gl.GL_COLOR_ATTACHMENT30
+GL_COLOR_ATTACHMENT31 = renpy.uguu.gl.GL_COLOR_ATTACHMENT31
 GL_DEPTH_ATTACHMENT = renpy.uguu.gl.GL_DEPTH_ATTACHMENT
 GL_STENCIL_ATTACHMENT = renpy.uguu.gl.GL_STENCIL_ATTACHMENT
 GL_FRAMEBUFFER = renpy.uguu.gl.GL_FRAMEBUFFER
@@ -994,3 +1410,38 @@ GL_RENDERBUFFER_BLUE_SIZE = renpy.uguu.gl.GL_RENDERBUFFER_BLUE_SIZE
 GL_RENDERBUFFER_ALPHA_SIZE = renpy.uguu.gl.GL_RENDERBUFFER_ALPHA_SIZE
 GL_RENDERBUFFER_DEPTH_SIZE = renpy.uguu.gl.GL_RENDERBUFFER_DEPTH_SIZE
 GL_RENDERBUFFER_STENCIL_SIZE = renpy.uguu.gl.GL_RENDERBUFFER_STENCIL_SIZE
+GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE = renpy.uguu.gl.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE
+GL_MAX_SAMPLES = renpy.uguu.gl.GL_MAX_SAMPLES
+GL_RGBA32UI = renpy.uguu.gl.GL_RGBA32UI
+GL_RGB32UI = renpy.uguu.gl.GL_RGB32UI
+GL_RGBA16UI = renpy.uguu.gl.GL_RGBA16UI
+GL_RGB16UI = renpy.uguu.gl.GL_RGB16UI
+GL_RGBA8UI = renpy.uguu.gl.GL_RGBA8UI
+GL_RGB8UI = renpy.uguu.gl.GL_RGB8UI
+GL_RGBA32I = renpy.uguu.gl.GL_RGBA32I
+GL_RGB32I = renpy.uguu.gl.GL_RGB32I
+GL_RGBA16I = renpy.uguu.gl.GL_RGBA16I
+GL_RGB16I = renpy.uguu.gl.GL_RGB16I
+GL_RGBA8I = renpy.uguu.gl.GL_RGBA8I
+GL_RGB8I = renpy.uguu.gl.GL_RGB8I
+GL_RED_INTEGER = renpy.uguu.gl.GL_RED_INTEGER
+GL_RGB_INTEGER = renpy.uguu.gl.GL_RGB_INTEGER
+GL_RGBA_INTEGER = renpy.uguu.gl.GL_RGBA_INTEGER
+GL_FLOAT_32_UNSIGNED_INT_24_8_REV = renpy.uguu.gl.GL_FLOAT_32_UNSIGNED_INT_24_8_REV
+GL_SAMPLER_2D_ARRAY = renpy.uguu.gl.GL_SAMPLER_2D_ARRAY
+GL_SAMPLER_2D_ARRAY_SHADOW = renpy.uguu.gl.GL_SAMPLER_2D_ARRAY_SHADOW
+GL_SAMPLER_CUBE_SHADOW = renpy.uguu.gl.GL_SAMPLER_CUBE_SHADOW
+GL_UNSIGNED_INT_VEC2 = renpy.uguu.gl.GL_UNSIGNED_INT_VEC2
+GL_UNSIGNED_INT_VEC3 = renpy.uguu.gl.GL_UNSIGNED_INT_VEC3
+GL_UNSIGNED_INT_VEC4 = renpy.uguu.gl.GL_UNSIGNED_INT_VEC4
+GL_INT_SAMPLER_2D = renpy.uguu.gl.GL_INT_SAMPLER_2D
+GL_INT_SAMPLER_3D = renpy.uguu.gl.GL_INT_SAMPLER_3D
+GL_INT_SAMPLER_CUBE = renpy.uguu.gl.GL_INT_SAMPLER_CUBE
+GL_INT_SAMPLER_2D_ARRAY = renpy.uguu.gl.GL_INT_SAMPLER_2D_ARRAY
+GL_UNSIGNED_INT_SAMPLER_2D = renpy.uguu.gl.GL_UNSIGNED_INT_SAMPLER_2D
+GL_UNSIGNED_INT_SAMPLER_3D = renpy.uguu.gl.GL_UNSIGNED_INT_SAMPLER_3D
+GL_UNSIGNED_INT_SAMPLER_CUBE = renpy.uguu.gl.GL_UNSIGNED_INT_SAMPLER_CUBE
+GL_UNSIGNED_INT_SAMPLER_2D_ARRAY = renpy.uguu.gl.GL_UNSIGNED_INT_SAMPLER_2D_ARRAY
+GL_BUFFER_ACCESS_FLAGS = renpy.uguu.gl.GL_BUFFER_ACCESS_FLAGS
+GL_BUFFER_MAP_LENGTH = renpy.uguu.gl.GL_BUFFER_MAP_LENGTH
+GL_BUFFER_MAP_OFFSET = renpy.uguu.gl.GL_BUFFER_MAP_OFFSET

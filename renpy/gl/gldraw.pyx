@@ -431,7 +431,7 @@ cdef class GLDraw:
                 renpy.display.log.write("Windowed mode.")
                 self.window = pygame.display.set_mode((pwidth, pheight), resizable | opengl | pygame.DOUBLEBUF, **window_args)
 
-            except pygame.error, e:
+            except pygame.error as e:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
                 return False
 
@@ -510,7 +510,7 @@ cdef class GLDraw:
             self.info["environ"] = "shader"
             self.environ.init()
 
-        except Exception, e:
+        except Exception as e:
             renpy.display.log.write("Initializing shader environment failed:")
             renpy.display.log.exception()
             self.environ = None
@@ -907,6 +907,9 @@ cdef class GLDraw:
 
         if rend.operation == DISSOLVE:
 
+            if not rend.children:
+                return 0
+
             if self.fast_dissolve:
 
                 # This is a fast version of dissolve that's used on
@@ -937,6 +940,9 @@ cdef class GLDraw:
 
         elif rend.operation == IMAGEDISSOLVE:
 
+            if not rend.children:
+                return 0
+
             self.set_clip(clip)
 
             gltexture.imageblend(
@@ -955,8 +961,11 @@ cdef class GLDraw:
 
             return 0
 
-
         elif rend.operation == PIXELLATE:
+
+            if not rend.children:
+                return 0
+
             self.set_clip(clip)
 
             p = rend.operation_parameter
@@ -981,6 +990,10 @@ cdef class GLDraw:
             return 0
 
         elif rend.operation == FLATTEN:
+
+            if not rend.children:
+                return 0
+
             self.set_clip(clip)
 
             gltexture.blit(

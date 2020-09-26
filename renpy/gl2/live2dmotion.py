@@ -174,7 +174,7 @@ class Motion(object):
     def get(self, st, fade_st):
         """
         Returns a dictionary where the keys are the type of parameter and the
-        parameter name, and the values are the
+        parameter name, and the values are the blend factor and value.
         """
 
         st = st % self.duration

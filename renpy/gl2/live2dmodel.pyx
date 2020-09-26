@@ -172,6 +172,9 @@ cdef class Live2DModel:
     cdef public dict parameters
     cdef public dict parts
 
+    cdef public dict parameter_groups
+    cdef public dict opacity_groups
+
     cdef list meshes
 
     cdef Matrix forward
@@ -254,6 +257,9 @@ cdef class Live2DModel:
             name = self.part_ids[i]
             self.parts[name] = Part(i, name)
 
+        self.opacity_groups = { }
+        self.parameter_groups = { }
+
         # Render the model.
 
         cdef Mesh2 mesh
@@ -288,6 +294,8 @@ cdef class Live2DModel:
         part = self.parts.get(name, None)
 
         if part is None:
+            for i in self.opacity_groups.get(name, [ ]):
+                self.set_part_opacity(i, value)
             return
 
         self.part_opacities[part.index] = value
@@ -296,10 +304,29 @@ cdef class Live2DModel:
         parameter = self.parameters.get(name, None)
 
         if parameter is None:
+            for i in self.parameter_groups.get(name, [ ]):
+                self.set_parameter(i, value, weight=weight)
             return
 
         old = self.parameter_values[parameter.index]
         self.parameter_values[parameter.index] = old + weight * (value - old)
+
+    def blend_parameter(self, name, blend, value):
+
+        parameter = self.parameters.get(name, None)
+
+        if parameter is None:
+            for i in self.parameter_groups.get(name, [ ]):
+                self.blend_parameter(i, blend, value)
+            return
+
+        old = self.parameter_values[parameter.index]
+
+        if blend == "Multiply":
+            self.parameter_values[parameter.index] = old * value
+        else:
+            self.parameter_values[parameter.index] = old + value
+
 
     def render(self, textures):
 
@@ -338,21 +365,24 @@ cdef class Live2DModel:
             r.forward = self.forward
             r.mesh = mesh
 
-            alpha = self.drawable_opacities[i]
 
             for s in shaders:
                 r.add_shader(s)
-
-            r.add_shader("renpy.alpha")
-            r.add_uniform("u_renpy_alpha", alpha)
-            r.add_uniform("u_renpy_over", 1.0)
-            print(i, alpha)
 
             r.blit(textures[self.drawable_texture_indices[i]], (0, 0))
 
             raw_renders.append(r)
 
             if self.drawable_dynamic_flags[i] & csmIsVisible:
+
+                alpha = self.drawable_opacities[i]
+
+                if alpha != 1.0:
+
+                    r.add_shader("renpy.alpha")
+                    r.add_uniform("u_renpy_alpha", alpha)
+                    r.add_uniform("u_renpy_over", 1.0)
+
                 renders.append((self.drawable_render_orders[i], r))
 
         for 0 <= i < self.drawable_count:

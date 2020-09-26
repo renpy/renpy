@@ -24,14 +24,14 @@ from __future__ import print_function
 from libc.string cimport memset
 from libc.math cimport sin, cos, M_PI as pi
 
-cdef float *aligned_1 = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]
+cdef float *aligned_1 = [ 1, 0, 0, 0, 0, 1, 0, 0,  0, 0, 1, 0, 0, 0, 0, 1 ]
 cdef float *aligned_2 = [ 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]
 
 fields = [
-    "xdx", "xdy", "xdz", "xdw",
-    "ydx", "ydy", "ydz", "ydw",
-    "zdx", "zdy", "zdz", "zdw",
-    "wdx", "wdy", "wdz", "wdw",
+    "xdx", "ydx", "zdx", "wdx",
+    "xdy", "ydy", "zdy", "wdy",
+    "xdz", "ydz", "zdz", "wdz",
+    "xdw", "ydw", "zdw", "wdw",
     ]
 
 cdef inline bint absne(float a, float b):

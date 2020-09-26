@@ -123,6 +123,8 @@ init -1500 python in iap:
             self.store.clearSKUs()
 
             for p in products.values():
+                print("Adding sku:", self.identifier(p))
+
                 self.store.addSKU(self.identifier(p))
 
         def get_store_name(self):

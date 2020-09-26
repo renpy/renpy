@@ -118,10 +118,10 @@ Customization
 Most customization is performed in the Xcode project. For example, the
 icon, launch images, and orientations are all customized in Xcode.
 
-Launch Images
--------------
+Launch Storyboard
+-----------------
 
-When the application is run, the Launch Image (configure as part of the
+When the application is run, the Launch Storyboard (configure as part of the
 Xcode project, outside of Ren'Py) will be displayed until Ren'Py is ready
 to display the game's user interface.
 
@@ -132,14 +132,9 @@ Generation
 -----------
 
 To ease development, it's possible to have Ren'Py generate the iOS icon
-and launch image from files.
+images from files.
 
 ``ios-icon.png``
     If present, this file is scaled to the various sizes of png file
     needed to make an iOS icon.
 
-``ios-launchimage.png``
-    If present, this file is used to make an iOS Launch Image. This is done
-    by creating an image of the required sized, filling it with the top-left
-    pixel of this file, and then centering this file in the center of the
-    Launch Image.

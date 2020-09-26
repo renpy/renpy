@@ -683,7 +683,6 @@ both horizontal and vertical positions.
     The number of pixels the displayable is offset by in the vertical
     direction. Positive values offset toward the bottom.
 
-
 .. transform-property:: xcenter
 
     :type: float
@@ -909,10 +908,7 @@ both horizontal and vertical positions.
    :default: None
 
    If not None, causes the displayable to be sized according to the
-   table below. When None, if both xsize and ysize are not None,
-   ``fill`` will be used, otherwise ``contain``.
-
-   In this context "dimensions" refers to one or more of ``xsize`` and
+   table below. In this context "dimensions" refers to one or more of ``xsize`` and
    ``ysize`` that are not None.
 
    .. list-table::
@@ -927,7 +923,7 @@ both horizontal and vertical positions.
       * - ``cover``
         - As small as possible, while matching or exceeding all
           dimensions. Maintains aspect ratio.
-      * - ``fill``
+      * - None or ``fill``
         - Stretches/squashes displayable to exactly match dimensions.
       * - ``scale-down``
         - As for ``contain``, but will never increase the size of the
@@ -1014,12 +1010,22 @@ both horizontal and vertical positions.
 
 .. transform-property:: matrixcolor
 
-    :type: None or im.matrix or MatrixColor
-    :default: none
+    :type: None or Matrix or MatrixColor
+    :default: None
 
     If not None, the value of this property is used to recolor everything
     that children of this transform draw. See :ref:`matricolor` for more
     information.
+
+.. transform-property:: blur
+
+    :type: None or float
+    :default: None
+
+    This blurs the child of this image by `blur` pixels, up to the border
+    of the displayable. The precise details of the blurring may change
+    between Ren'Py versions, and the blurring may exhibit artifactsm,
+    especially when the image being blurred is changing.
 
 
 These properties are applied in the following order:

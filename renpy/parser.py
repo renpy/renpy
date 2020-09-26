@@ -156,17 +156,18 @@ def elide_filename(fn):
     or relative to the Ren'Py directory.
     """
 
-    ofn = fn
-    fn = os.path.abspath(fn)
-    basedir = os.path.abspath(renpy.config.basedir)
-    renpy_base = os.path.abspath(renpy.config.renpy_base)
+    original_fn = fn
+    fn = fn.replace("\\", "/")
 
-    if fn.startswith(basedir):
-        return os.path.relpath(fn, basedir).replace("\\", "/")
-    elif fn.startswith(renpy_base):
-        return os.path.relpath(fn, renpy_base).replace("\\", "/")
+    for d in [ renpy.config.basedir, renpy.config.renpy_base ]:
+        d = os.path.abspath(d).replace("\\", "/") + "/"
+        if fn.startswith(d):
+            rv = fn[len(d):]
+            break
     else:
-        return ofn.replace("\\", "/")
+        rv = original_fn.replace("\\", "/")
+
+    return rv
 
 
 def unelide_filename(fn):
@@ -945,7 +946,7 @@ class Lexer(object):
         oldpos = self.pos
         rv = self.word()
 
-        if (rv == "r") or (rv == "u"):
+        if (rv == "r") or (rv == "u") or (rv == "ur"):
             if self.text[self.pos:self.pos + 1] in ('"', "'", "`"):
                 self.pos = oldpos
                 return None
@@ -1042,23 +1043,24 @@ class Lexer(object):
         if self.eol():
             return False
 
+        old_pos = self.pos
         c = self.text[self.pos]
 
-        # Allow unicode strings.
-        if c == 'u':
+        # Allow unicode and raw strings.
+        for mod in ('u', 'r'):
+            if c != mod:
+                continue
+
             self.pos += 1
 
             if self.pos == len(self.text):
-                self.pos -= 1
+                self.pos = old_pos
                 return False
 
             c = self.text[self.pos]
 
-            if c not in ('"', "'"):
-                self.pos -= 1
-                return False
-
-        elif c not in ('"', "'"):
+        if c not in ('"', "'"):
+            self.pos = old_pos
             return False
 
         delim = c

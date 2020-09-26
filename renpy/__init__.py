@@ -56,6 +56,7 @@ def update_path():
 update_path()
 
 from renpy.compat import *
+import renpy.compat.pickle as pickle
 
 import sys
 import os

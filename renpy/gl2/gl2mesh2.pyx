@@ -299,10 +299,10 @@ cdef void copy_point(Mesh2 old, int op, Mesh2 new, int np):
         new.attribute[np * stride + i] = old.attribute[op * stride + i]
 
 cdef void intersectLines(
-    float x1, float y1,
-    float x2, float y2,
-    float x3, float y3,
-    float x4, float y4,
+    double x1, double y1,
+    double x2, double y2,
+    double x3, double y3,
+    double x4, double y4,
     float *px, float *py,
     ):
     """
@@ -311,10 +311,11 @@ cdef void intersectLines(
     lines intersect.
     """
 
-    cdef float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+    cdef double denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
 
-    px[0] = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom
-    py[0] = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom
+    px[0] = <float> ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom
+    py[0] = <float> ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom
+
 
 cdef int split_line(Mesh2 old, Mesh2 new, CropInfo *ci, int p0idx, int p1idx):
 

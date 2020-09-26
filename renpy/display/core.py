@@ -48,6 +48,9 @@ try:
 except:
     android = None
 
+if renpy.emscripten:
+    import emscripten
+
 TIMEEVENT = pygame.event.register("TIMEEVENT")
 PERIODIC = pygame.event.register("PERIODIC")
 REDRAW = pygame.event.register("REDRAW")
@@ -1922,6 +1925,9 @@ class Interface(object):
         # Are we a touchscreen?
         self.touch = renpy.exports.variant("touch")
 
+        # Should we use the touch keyboard?
+        self.touch_keyboard = (self.touch and renpy.emscripten) or renpy.config.touch_keyboard
+
         # Should we restart the interaction?
         self.restart_interaction = True
 
@@ -2048,6 +2054,7 @@ class Interface(object):
         This is called after display init, but before the window is created.
         """
 
+        pygame.display.hint("SDL_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR", "0")
         pygame.display.hint("SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS", "0")
         pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
@@ -2148,7 +2155,7 @@ class Interface(object):
             elif renpy.windows:
                 renderers = [ "gl", "angle", "gles", "sw" ]
             else:
-                renderers = [ "gl", "gles2", "sw" ]
+                renderers = [ "gl", "gles", "sw" ]
 
             if renpy.config.gl2:
 
@@ -2405,7 +2412,6 @@ class Interface(object):
         try:
             renpy.display.scale.image_save_unscaled(window, filename)
             if renpy.emscripten:
-                import emscripten
                 emscripten.run_script(r'''FSDownload('%s');''' % filename)
             return True
         except:
@@ -2788,6 +2794,8 @@ class Interface(object):
         if self.text_rect is not None:
 
             not_shown = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown() # @UndefinedVariable
+            if self.touch_keyboard:
+                not_shown = renpy.exports.get_screen('_touch_keyboard', layer='screens') is None
 
             if self.old_text_rect != self.text_rect:
                 x, y, w, h = self.text_rect
@@ -2800,10 +2808,21 @@ class Interface(object):
             if not self.old_text_rect or not_shown:
                 pygame.key.start_text_input() # @UndefinedVariable
 
+                if self.touch_keyboard:
+                    renpy.exports.restart_interaction() # required in mobile mode
+                    renpy.exports.show_screen('_touch_keyboard',
+                        _layer='screens', # not 'transient' so as to be above other screens
+                                          # not 'overlay' as it conflicts with console
+                        _transient=True,
+                    )
+
         else:
             if self.old_text_rect:
                 pygame.key.stop_text_input() # @UndefinedVariable
                 pygame.key.set_text_input_rect(None) # @UndefinedVariable
+
+                if self.touch_keyboard:
+                    renpy.exports.hide_screen('_touch_keyboard', layer='screens')
 
         self.old_text_rect = self.text_rect
 
