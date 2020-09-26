@@ -1372,11 +1372,13 @@ class Input(renpy.text.text.Text):  # @UndefinedVariable
             raise renpy.display.core.IgnoreEvent()
 
         elif self.copypaste and map_event(ev, "input_copy"):
-            pygame.scrap.put(pygame.scrap.SCRAP_TEXT, self.content)
+            text = self.content.encode("utf-8")
+            pygame.scrap.put(pygame.scrap.SCRAP_TEXT, text)
             raise renpy.display.core.IgnoreEvent()
 
         elif self.copypaste and map_event(ev, "input_paste"):
             text = pygame.scrap.get(pygame.scrap.SCRAP_TEXT)
+            text = text.decode("utf-8")
             raw_text = ""
             for c in text:
                 if ord(c) >= 32:
