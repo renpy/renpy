@@ -436,9 +436,8 @@ class _MultiPersistent(object):
     def save(self):
 
         fn = self._filename
-        f = open(fn + ".new", "wb")
-        dump(self, f)
-        f.close()
+        with open(fn + ".new", "wb") as f:
+            dump(self, f)
 
         try:
             os.rename(fn + ".new", fn)

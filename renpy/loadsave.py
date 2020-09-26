@@ -186,7 +186,7 @@ def save_dump(roots, log):
 
     f.close()
 
-
+    
 def find_bad_reduction(roots, log):
     """
     Finds objects that can't be reduced properly.

@@ -104,14 +104,12 @@ init python in project:
 
         def load_data(self):
             try:
-                f = open(os.path.join(self.path, "project.json"), "rb")
-                self.data = json.load(f)
-                f.close()
+                with open(os.path.join(self.path, "project.json"), "rb") as f:
+                    self.data = json.load(f)
             except:
                 self.data = { }
 
             self.update_data()
-
 
         def save_data(self):
             """
