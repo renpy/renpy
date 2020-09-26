@@ -599,10 +599,6 @@ screen about():
             text _("[renpy.license!t]") size 20
 
 
-## This is redefined in options.rpy to add text to the about screen.
-define gui.about = ""
-
-
 style about_label is gui_label
 style about_label_text is gui_label_text
 style about_text is gui_text

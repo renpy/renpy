@@ -39,7 +39,6 @@ style label_text is gui_text:
 style prompt_text is gui_text:
     properties gui.text_properties("prompt")
 
-
 style bar:
     ysize gui.bar_size
     left_bar Frame("gui/bar/left.png", gui.bar_borders, tile=gui.bar_tile)
@@ -572,8 +571,6 @@ screen about():
             text _("Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]")
 
 
-## This is redefined in options.rpy to add text to the about screen.
-define gui.about = ""
 
 
 style about_label is gui_label

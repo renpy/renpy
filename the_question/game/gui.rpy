@@ -88,9 +88,6 @@ define gui.title_text_size = 50
 define gui.main_menu_background = "gui/main_menu.png"
 define gui.game_menu_background = "gui/game_menu.png"
 
-## Should we show the name and version of the game?
-define gui.show_name = True
-
 ## The color of the main menu.
 define gui.main_menu_text_color = "#ffaa22"
 
