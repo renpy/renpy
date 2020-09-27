@@ -359,13 +359,13 @@ def main():
 
     # The basename is the final component of the path to the gamedir.
     for i in sorted(os.listdir(renpy.config.gamedir)):
+        base, ext = os.path.splitext(i)
 
         # Check if the archive does not have any of the extensions in archive_extensions
-        if list(filter(i.endswith, archive_extensions)) == []:
+        if not (ext in archive_extensions):
             continue
 
-        i = i[:-4]
-        renpy.config.archives.append(i)
+        renpy.config.archives.append(base)
 
     renpy.config.archives.reverse()
 
