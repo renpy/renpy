@@ -649,10 +649,11 @@ class Image(ImageBase):
                 filelike = open(os.path.join('_placeholders', exception.relpath), 'rb')
                 filename = 'use_png_format.png'
 
-            if unscaled:
-                surf = renpy.display.pgrender.load_image_unscaled(filelike, filename)
-            else:
-                surf = renpy.display.pgrender.load_image(filelike, filename)
+            with filelike as f:
+                if unscaled:
+                    surf = renpy.display.pgrender.load_image_unscaled(f, filename)
+                else:
+                    surf = renpy.display.pgrender.load_image(f, filename)
 
             if exception is not None:
                 # avoid size-related exceptions (e.g. Crop on a smaller placeholder)
@@ -723,11 +724,10 @@ class ZipFileImage(ImageBase):
 
     def load(self):
         try:
-            zf = zipfile.ZipFile(self.zipfilename, 'r')
-            data = zf.read(self.filename)
-            sio = io.BytesIO(data)
-            rv = renpy.display.pgrender.load_image(sio, self.filename)
-            zf.close()
+            with zipfile.ZipFile(self.zipfilename, 'r') as zf:
+                data = zf.read(self.filename)
+                sio = io.BytesIO(data)
+                rv = renpy.display.pgrender.load_image(sio, self.filename)
             return rv
         except:
             return renpy.display.pgrender.surface((2, 2), True)

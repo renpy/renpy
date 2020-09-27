@@ -611,30 +611,23 @@ class Script(object):
 
             self.assign_names(stmts, renpy.parser.elide_filename(fullfn))
 
-            if not renpy.macapp:
-
-                try:
-                    f = open(rpycfn, "wb")
-
-                    self.write_rpyc_header(f)
-                    self.write_rpyc_data(f, 1, dumps((data, stmts), 2))
-                except:
-                    import traceback
-                    traceback.print_exc()
+            pickle_data_before_static_transforms = dumps((data, stmts), 2)
 
             self.static_transforms(stmts)
 
+            pickle_data_after_static_transforms = dumps((data, stmts), 2)
+
             if not renpy.macapp:
-
                 try:
-                    self.write_rpyc_data(f, 2, dumps((data, stmts), 2))
+                    with open(rpycfn, "wb") as f:
+                        self.write_rpyc_header(f)
+                        self.write_rpyc_data(f, 1, pickle_data_before_static_transforms)
+                        self.write_rpyc_data(f, 2, pickle_data_after_static_transforms)
 
-                    with open(fullfn, "rU") as fullf:
-                        rpydigest = hashlib.md5(fullf.read()).digest()
+                        with open(fullfn, "rU") as fullf:
+                            rpydigest = hashlib.md5(fullf.read()).digest()
 
-                    self.write_rpyc_md5(f, rpydigest)
-
-                    f.close()
+                        self.write_rpyc_md5(f, rpydigest)
                 except:
                     import traceback
                     traceback.print_exc()
@@ -646,10 +639,7 @@ class Script(object):
             data = None
             stmts = None
 
-            f = renpy.loader.load(fn)
-
-            try:
-
+            with renpy.loader.load(fn) as f:
                 for slot in [ 2, 1 ]:
                     try:
                         bindata = self.read_rpyc_data(f, slot)
@@ -682,9 +672,6 @@ class Script(object):
                 if slot < 2:
                     self.static_transforms(stmts)
 
-            finally:
-                f.close()
-
         else:
             return None, None
 
@@ -703,10 +690,9 @@ class Script(object):
             if data is None:
                 raise Exception("Could not load from archive %s." % (lastfn,))
 
-            f = renpy.loader.load(fn + compiled)
-            f.seek(-hashlib.md5().digest_size, 2)
-            digest = f.read(hashlib.md5().digest_size)
-            f.close()
+            with renpy.loader.load(fn + compiled) as f:
+                f.seek(-hashlib.md5().digest_size, 2)
+                digest = f.read(hashlib.md5().digest_size)
 
         else:
 
@@ -801,9 +787,10 @@ class Script(object):
 
         # Load the oldcache.
         try:
-            version, cache = loads(zlib.decompress(renpy.loader.load(BYTECODE_FILE).read()))
-            if version == BYTECODE_VERSION:
-                self.bytecode_oldcache = cache
+            with renpy.loader.load(BYTECODE_FILE) as f:
+                version, cache = loads(zlib.decompress(f.read()))
+                if version == BYTECODE_VERSION:
+                    self.bytecode_oldcache = cache
 
         except:
             pass

@@ -188,7 +188,8 @@ cdef class Live2DModel:
 
         cdef int i
 
-        data = renpy.loader.load(fn).read()
+        with renpy.loader.load(fn) as f:
+            data = f.read()
 
         # Load the MOC.
         self.moc_data = AlignedMemory(len(data), csmAlignofMoc, data)

@@ -226,22 +226,22 @@ def index_archives():
                 f = open(fn, "rb")
             except:
                 continue
-            file_header = f.read(max_header_length)
-            for handler in archive_handlers:
-                try:
-                    archive_handled = False
-                    for header in handler.get_supported_headers():
-                        if file_header.startswith(header):
-                            f.seek(0, 0)
-                            index = handler.read_index(f)
-                            archives.append((prefix + ext, index))
-                            archive_handled = True
+            with f:
+                file_header = f.read(max_header_length)
+                for handler in archive_handlers:
+                    try:
+                        archive_handled = False
+                        for header in handler.get_supported_headers():
+                            if file_header.startswith(header):
+                                f.seek(0, 0)
+                                index = handler.read_index(f)
+                                archives.append((prefix + ext, index))
+                                archive_handled = True
+                                break
+                        if archive_handled == True:
                             break
-                    if archive_handled == True:
-                        break
-                except:
-                    raise
-            f.close()
+                    except:
+                        raise
 
     for dir, fn in listdirfiles(): # @ReservedAssignment
         lower_map[unicodedata.normalize('NFC', fn.lower())] = fn
@@ -682,14 +682,12 @@ def load_from_archive(name):
 
         # Compatibility path.
         else:
-            f = open(afn, "rb")
+            with open(afn, "rb") as f:
+                for offset, dlen in index[name]:
+                    f.seek(offset)
+                    data.append(f.read(dlen))
 
-            for offset, dlen in index[name]:
-                f.seek(offset)
-                data.append(f.read(dlen))
-
-            rv = io.BytesIO(b''.join(data))
-            f.close()
+                rv = io.BytesIO(b''.join(data))
 
         return rv
 

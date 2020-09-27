@@ -149,9 +149,8 @@ def run(restart):
 
 def load_rpe(fn):
 
-    zfn = zipfile.ZipFile(fn)
-    autorun = zfn.read("autorun.py")
-    zfn.close()
+    with zipfile.ZipFile(fn) as zfn:
+        autorun = zfn.read("autorun.py")
 
     sys.path.insert(0, fn)
     exec(autorun, dict())

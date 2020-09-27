@@ -427,20 +427,17 @@ class StringTranslator(object):
         else:
             fn = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, "strings.rpy")
 
-        f = renpy.translation.generation.open_tl_file(fn)
-
-        f.write(u"translate {} strings:\n".format(language))
-        f.write(u"\n")
-
-        for i in self.unknown:
-
-            i = quote_unicode(i)
-
-            f.write(u"    old \"{}\"\n".format(i))
-            f.write(u"    new \"{}\"\n".format(i))
+        with renpy.translation.generation.open_tl_file(fn) as f:
+            f.write(u"translate {} strings:\n".format(language))
             f.write(u"\n")
 
-        f.close()
+            for i in self.unknown:
+
+                i = quote_unicode(i)
+
+                f.write(u"    old \"{}\"\n".format(i))
+                f.write(u"    new \"{}\"\n".format(i))
+                f.write(u"\n")
 
 
 def add_string_translation(language, old, new, newloc):
@@ -494,36 +491,33 @@ def load_rpt(fn):
 
     language = os.path.basename(fn).replace(".rpt", "")
 
-    f = renpy.loader.load(fn)
-
     old = None
 
-    for l in f:
-        l = l.decode("utf-8")
-        l = l.rstrip()
+    with renpy.loader.load(fn) as f:
+        for l in f:
+            l = l.decode("utf-8")
+            l = l.rstrip()
 
-        if not l:
-            continue
+            if not l:
+                continue
 
-        if l[0] == '#':
-            continue
+            if l[0] == '#':
+                continue
 
-        s = unquote(l[2:])
+            s = unquote(l[2:])
 
-        if l[0] == '<':
-            if old:
-                raise Exception("{0} string {1!r} does not have a translation.".format(language, old))
+            if l[0] == '<':
+                if old:
+                    raise Exception("{0} string {1!r} does not have a translation.".format(language, old))
 
-            old = s
+                old = s
 
-        if l[0] == ">":
-            if old is None:
-                raise Exception("{0} translation {1!r} doesn't belong to a string.".format(language, s))
+            if l[0] == ">":
+                if old is None:
+                    raise Exception("{0} translation {1!r} doesn't belong to a string.".format(language, s))
 
-            add_string_translation(language, old, s, None)
-            old = None
-
-    f.close()
+                add_string_translation(language, old, s, None)
+                old = None
 
     if old is not None:
         raise Exception("{0} string {1!r} does not have a translation.".format(language, old))

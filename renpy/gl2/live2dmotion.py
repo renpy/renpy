@@ -111,7 +111,8 @@ class Motion(object):
 
         self.filename = filename
 
-        j = json.load(renpy.loader.load(filename))
+        with renpy.loader.load(filename) as f:
+            j = json.load(f)
 
         self.duration = j["Meta"]["Duration"]
         self.curves = { }

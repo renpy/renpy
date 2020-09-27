@@ -741,9 +741,8 @@ def load_cache():
         return
 
     try:
-        f = renpy.loader.load(CACHE_FILENAME)
-        c = loads(zlib.decompress(f.read()))
-        f.close()
+        with renpy.loader.load(CACHE_FILENAME) as f:
+            c = loads(zlib.decompress(f.read()))
 
         if c.version == ccache.version:
             ccache.ast_eval_cache.update(c.ast_eval_cache)

@@ -2095,10 +2095,11 @@ class Interface(object):
         if icon:
 
             try:
-                im = renpy.display.scale.image_load_unscaled(
-                    renpy.loader.load(icon),
-                    icon,
-                    )
+                with renpy.loader.load(icon) as f:
+                    im = renpy.display.scale.image_load_unscaled(
+                        f,
+                        icon,
+                        )
 
                 # Convert the aspect ratio to be square.
                 iw, ih = im.get_size()
@@ -2355,10 +2356,9 @@ class Interface(object):
 
         self.screenshot_surface = surf
 
-        sio = io.BytesIO()
-        renpy.display.module.save_png(surf, sio, 0)
-        self.screenshot = sio.getvalue()
-        sio.close()
+        with io.BytesIO() as sio:
+            renpy.display.module.save_png(surf, sio, 0)
+            self.screenshot = sio.getvalue()
 
     def check_background_screenshot(self):
         """

@@ -97,25 +97,24 @@ init -1500 python in updater:
         except:
             log = io.StringIO()
 
-        with open(DEFERRED_UPDATE_FILE, "rb") as f:
-            for l in f:
+        with log:
+            with open(DEFERRED_UPDATE_FILE, "rb") as f:
+                for l in f:
 
-                l = l.rstrip("\r\n")
-                l = l.decode("utf-8")
+                    l = l.rstrip("\r\n")
+                    l = l.decode("utf-8")
 
-                log.write(l.encode("utf-8"))
+                    log.write(l.encode("utf-8"))
 
-                try:
-                    process_deferred_line(l)
-                except:
-                    traceback.print_exc(file=log)
+                    try:
+                        process_deferred_line(l)
+                    except:
+                        traceback.print_exc(file=log)
 
-        try:
-            os.unlink(DEFERRED_UPDATE_FILE)
-        except:
-            traceback.print_exc(file=log)
-
-        log.close()
+            try:
+                os.unlink(DEFERRED_UPDATE_FILE)
+            except:
+                traceback.print_exc(file=log)
 
     # Process deferred updates on startup, if any exist.
     process_deferred()
@@ -301,9 +300,8 @@ init -1500 python in updater:
             self.moves = [ ]
 
             if public_key is not None:
-                f = renpy.file(public_key)
-                self.public_key = rsa.PublicKey.load_pkcs1(f.read())
-                f.close()
+                with renpy.file(public_key) as f:
+                    self.public_key = rsa.PublicKey.load_pkcs1(f.read())
             else:
                 self.public_key = None
 
@@ -802,51 +800,48 @@ init -1500 python in updater:
             directories.add("update")
             all.append("update/current.json")
 
-            tf = tarfile.open(self.update_filename(module, False), "w")
+            with tarfile.open(self.update_filename(module, False), "w") as tf:
+                for i, name in enumerate(all):
 
-            for i, name in enumerate(all):
+                    if self.cancelled:
+                        raise UpdateCancelled()
 
-                if self.cancelled:
-                    raise UpdateCancelled()
+                    self.progress = 1.0 * i / len(all)
 
-                self.progress = 1.0 * i / len(all)
+                    directory = name in directories
+                    xbit = name in xbits
 
-                directory = name in directories
-                xbit = name in xbits
+                    path = self.path(name)
 
-                path = self.path(name)
+                    if directory:
+                        info = tarfile.TarInfo(name)
+                        info.size = 0
+                        info.type = tarfile.DIRTYPE
+                    else:
+                        if not os.path.exists(path):
+                            continue
 
-                if directory:
-                    info = tarfile.TarInfo(name)
-                    info.size = 0
-                    info.type = tarfile.DIRTYPE
-                else:
-                    if not os.path.exists(path):
-                        continue
+                        info = tf.gettarinfo(path, name)
 
-                    info = tf.gettarinfo(path, name)
+                        if not info.isreg():
+                            continue
 
-                    if not info.isreg():
-                        continue
+                    info.uid = 1000
+                    info.gid = 1000
+                    info.mtime = 0
+                    info.uname = "renpy"
+                    info.gname = "renpy"
 
-                info.uid = 1000
-                info.gid = 1000
-                info.mtime = 0
-                info.uname = "renpy"
-                info.gname = "renpy"
+                    if xbit or directory:
+                        info.mode = 0o777
+                    else:
+                        info.mode = 0o666
 
-                if xbit or directory:
-                    info.mode = 0o777
-                else:
-                    info.mode = 0o666
-
-                if info.isreg():
-                    with open(path, "rb") as f:
-                        tf.addfile(info, f)
-                else:
-                    tf.addfile(info)
-
-            tf.close()
+                    if info.isreg():
+                        with open(path, "rb") as f:
+                            tf.addfile(info, f)
+                    else:
+                        tf.addfile(info)
 
         def download(self, module, standalone=False):
             """
@@ -954,20 +949,19 @@ init -1500 python in updater:
 
                 done_sums = 0
 
-                for i in sums:
+                with f:
+                    for i in sums:
 
-                    if self.cancelled:
-                        break
+                        if self.cancelled:
+                            break
 
-                    data = f.read(65536)
+                        data = f.read(65536)
 
-                    if not data:
-                        break
+                        if not data:
+                            break
 
-                    if (zlib.adler32(data) & 0xffffffff) == i:
-                        done_sums += 1
-
-                f.close()
+                        if (zlib.adler32(data) & 0xffffffff) == i:
+                            done_sums += 1
 
                 raw_progress = 1.0 * done_sums / len(sums)
 
@@ -1033,69 +1027,62 @@ init -1500 python in updater:
 
             # First pass, just figure out how many tarinfo objects are in the tarfile.
             tf_len = 0
-            tf = tarfile.open(update_fn, "r")
-            for i in tf:
-                tf_len += 1
-            tf.close()
+            with tarfile.open(update_fn, "r") as tf:
+                for i in tf:
+                    tf_len += 1
 
-            tf = tarfile.open(update_fn, "r")
+            with tarfile.open(update_fn, "r") as tf:
+                for i, info in enumerate(tf):
 
-            for i, info in enumerate(tf):
+                    self.progress = 1.0 * i / tf_len
 
-                self.progress = 1.0 * i / tf_len
+                    if info.name == "update":
+                        continue
 
-                if info.name == "update":
-                    continue
+                    # Process the status info for the current module.
+                    if info.name == "update/current.json":
+                        with tf.extractfile(info) as tff:
+                            state = json.load(tff)
 
-                # Process the status info for the current module.
-                if info.name == "update/current.json":
-                    tff = tf.extractfile(info)
-                    state = json.load(tff)
-                    tff.close()
+                        self.new_state[module] = state[module]
 
-                    self.new_state[module] = state[module]
+                        continue
 
-                    continue
+                    path = self.path(info.name)
 
-                path = self.path(info.name)
+                    # Extract directories.
+                    if info.isdir():
+                        try:
+                            os.makedirs(path)
+                        except:
+                            pass
 
-                # Extract directories.
-                if info.isdir():
-                    try:
-                        os.makedirs(path)
-                    except:
-                        pass
+                        continue
 
-                    continue
+                    if not info.isreg():
+                        raise UpdateError(__("While unpacking {}, unknown type {}.").format(info.name, info.type))
 
-                if not info.isreg():
-                    raise UpdateError(__("While unpacking {}, unknown type {}.").format(info.name, info.type))
+                    # Extract regular files.
+                    with tf.extractfile(info) as tff:
+                        new_path = path + ".new"
+                        with file(new_path, "wb") as f:
+                            while True:
+                                data = tff.read(1024 * 1024)
+                                if not data:
+                                    break
+                                f.write(data)
 
-                # Extract regular files.
-                tff = tf.extractfile(info)
-                new_path = path + ".new"
-                f = file(new_path, "wb")
+                    if info.mode & 1:
+                        # If the xbit is set in the tar info, set it on disk if we can.
+                        try:
+                            umask = os.umask(0)
+                            os.umask(umask)
 
-                while True:
-                    data = tff.read(1024 * 1024)
-                    if not data:
-                        break
-                    f.write(data)
+                            os.chmod(new_path, 0o777 & (~umask))
+                        except:
+                            pass
 
-                f.close()
-                tff.close()
-
-                if info.mode & 1:
-                    # If the xbit is set in the tar info, set it on disk if we can.
-                    try:
-                        umask = os.umask(0)
-                        os.umask(umask)
-
-                        os.chmod(new_path, 0o777 & (~umask))
-                    except:
-                        pass
-
-                self.moves.append(path)
+                    self.moves.append(path)
 
         def move_files(self):
             """

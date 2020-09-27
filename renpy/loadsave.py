@@ -181,11 +181,9 @@ def save_dump(roots, log):
 
     f, _ = renpy.error.open_error_file("save_dump.txt", "w")
 
-    visit(roots, "roots")
-    visit(log, "log")
-
-    f.close()
-
+    with f:
+        visit(roots, "roots")
+        visit(log, "log")
     
 def find_bad_reduction(roots, log):
     """
@@ -349,24 +347,21 @@ class SaveRecord(object):
             safe_rename(filename_new, filename)
             return
 
-        zf = zipfile.ZipFile(filename_new, "w", zipfile.ZIP_DEFLATED)
+        with zipfile.ZipFile(filename_new, "w", zipfile.ZIP_DEFLATED) as zf:
+            # Screenshot.
+            zf.writestr("screenshot.png", self.screenshot)
 
-        # Screenshot.
-        zf.writestr("screenshot.png", self.screenshot)
+            # Extra info.
+            zf.writestr("extra_info", self.extra_info.encode("utf-8"))
 
-        # Extra info.
-        zf.writestr("extra_info", self.extra_info.encode("utf-8"))
+            # Json
+            zf.writestr("json", self.json)
 
-        # Json
-        zf.writestr("json", self.json)
+            # Version.
+            zf.writestr("renpy_version", renpy.version)
 
-        # Version.
-        zf.writestr("renpy_version", renpy.version)
-
-        # The actual game.
-        zf.writestr("log", self.log)
-
-        zf.close()
+            # The actual game.
+            zf.writestr("log", self.log)
 
         safe_rename(filename_new, filename)
 

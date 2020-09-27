@@ -205,7 +205,8 @@ init -1900 python:
 python early hide:
     try:
         import ast
-        script_version = renpy.file("script_version.txt").read()
+        with renpy.file("script_version.txt") as f:
+            script_version = f.read()
         script_version = ast.literal_eval(script_version)
 
         if script_version <= (7, 2, 2):
@@ -218,7 +219,8 @@ python early hide:
 init -1000 python hide:
     try:
         import ast
-        script_version = renpy.file("script_version.txt").read()
+        with renpy.file("script_version.txt") as f:
+            script_version = f.read()
         config.script_version = ast.literal_eval(script_version)
         renpy.write_log("Set script version to: %r", config.script_version)
     except:

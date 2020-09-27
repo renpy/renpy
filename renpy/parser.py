@@ -214,9 +214,8 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
     if filedata:
         data = filedata
     else:
-        f = open(filename, "rb")
-        data = f.read().decode("utf-8")
-        f.close()
+        with open(filename, "rb") as f:
+            data = f.read().decode("utf-8")
 
     filename = elide_filename(filename)
     prefix = munge_filename(filename)
@@ -2925,34 +2924,33 @@ def report_parse_errors():
     full_text = ""
 
     f, error_fn = renpy.error.open_error_file("errors.txt", "w")
-    f.write("\ufeff") # BOM
+    with f:
+        f.write("\ufeff") # BOM
 
-    print("I'm sorry, but errors were detected in your script. Please correct the", file=f)
-    print("errors listed below, and try again.", file=f)
-    print("", file=f)
+        print("I'm sorry, but errors were detected in your script. Please correct the", file=f)
+        print("errors listed below, and try again.", file=f)
+        print("", file=f)
 
-    for i in parse_errors:
+        for i in parse_errors:
 
-        full_text += i
-        full_text += "\n\n"
+            full_text += i
+            full_text += "\n\n"
 
-        if not isinstance(i, str):
-            i = str(i, "utf-8", "replace")
+            if not isinstance(i, str):
+                i = str(i, "utf-8", "replace")
+
+            print("", file=f)
+            print(i, file=f)
+
+            try:
+                print("")
+                print(i)
+            except:
+                pass
 
         print("", file=f)
-        print(i, file=f)
-
-        try:
-            print("")
-            print(i)
-        except:
-            pass
-
-    print("", file=f)
-    print("Ren'Py Version:", renpy.version, file=f)
-    print(str(time.ctime()), file=f)
-
-    f.close()
+        print("Ren'Py Version:", renpy.version, file=f)
+        print(str(time.ctime()), file=f)
 
     renpy.display.error.report_parse_errors(full_text, error_fn)
 
