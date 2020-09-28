@@ -553,6 +553,7 @@ class Transform(Container):
     xtile = Proxy("xtile")
     ytile = Proxy("ytile")
 
+    matrixcolor = Proxy("matrixcolor")
     shader = Proxy("shader")
     mesh = Proxy("mesh")
     blur = Proxy("blur")
@@ -1135,4 +1136,3 @@ def add_uniform(name):
     setattr(TransformState, name, None)
     setattr(Transform, name, Proxy(name))
     renpy.atl.PROPERTIES[name] = renpy.atl.any_object
-
