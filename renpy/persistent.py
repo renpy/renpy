@@ -453,11 +453,11 @@ def MultiPersistent(name):
     if not renpy.game.context().init_phase:
         raise Exception("MultiPersistent objects must be created during the init phase.")
 
-    if renpy.android:
-        files = [ os.path.join(os.environ['ANDROID_OLD_PUBLIC'], '../RenPy/Persistent') ]
-
-    elif renpy.ios:
-        raise Exception("MultiPersistent is not supported on iOS.")
+    if renpy.android or renpy.ios:
+        # Due to the security policy of mobile devices, we store MultiPersistent
+        # in the same place as common persistent.
+        # This is better than not working at all.
+        files = [ renpy.config.savedir ]
 
     elif renpy.windows:
         files = [ os.path.expanduser("~/RenPy/Persistent") ]
