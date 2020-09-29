@@ -2429,14 +2429,12 @@ def load_cache():
         return
 
     try:
-        f = renpy.loader.load(CACHE_FILENAME)
+        with renpy.loader.load(CACHE_FILENAME) as f:
+            digest = f.read(hashlib.md5().digest_size)
+            if digest != renpy.game.script.digest.digest():
+                return
 
-        digest = f.read(hashlib.md5().digest_size)
-        if digest != renpy.game.script.digest.digest():
-            return
-
-        s = loads(zlib.decompress(f.read()))
-        f.close()
+            s = loads(zlib.decompress(f.read()))
 
         if s.version == scache.version:
             renpy.game.script.update_bytecode()

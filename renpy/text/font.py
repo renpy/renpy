@@ -261,7 +261,8 @@ class MudgeFont(ImageFont):
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
 
         # Parse the xml file.
-        tree = etree.fromstring(renpy.loader.load(self.xml).read())
+        with renpy.loader.load(self.xml) as f:
+            tree = etree.fromstring(f.read())
 
         height = 0
 
@@ -357,40 +358,38 @@ class BMFont(ImageFont):
 
         pages = { }
 
-        f = renpy.loader.load(self.filename)
-        for l in f:
+        with renpy.loader.load(self.filename) as f:
+            for l in f:
 
-            kind, args = parse_bmfont_line(l)
+                kind, args = parse_bmfont_line(l)
 
-            if kind == "common":
-                self.height = int(args["lineHeight"])  # W0201
-                self.baseline = int(args["base"])  # W0201
-            elif kind == "page":
-                pages[int(args["id"])] = renpy.display.im.Image(args["file"]).load(unscaled=True)
-            elif kind == "char":
-                c = chr(int(args["id"]))
-                x = int(args["x"])
-                y = int(args["y"])
-                w = int(args["width"])
-                h = int(args["height"])
-                xo = int(args["xoffset"])
-                yo = int(args["yoffset"])
-                xadvance = int(args["xadvance"])
-                page = int(args["page"])
+                if kind == "common":
+                    self.height = int(args["lineHeight"])  # W0201
+                    self.baseline = int(args["base"])  # W0201
+                elif kind == "page":
+                    pages[int(args["id"])] = renpy.display.im.Image(args["file"]).load(unscaled=True)
+                elif kind == "char":
+                    c = chr(int(args["id"]))
+                    x = int(args["x"])
+                    y = int(args["y"])
+                    w = int(args["width"])
+                    h = int(args["height"])
+                    xo = int(args["xoffset"])
+                    yo = int(args["yoffset"])
+                    xadvance = int(args["xadvance"])
+                    page = int(args["page"])
 
-                ss = pages[page].subsurface((x, y, w, h))
-                ss = renpy.display.scale.surface_scale(ss)
+                    ss = pages[page].subsurface((x, y, w, h))
+                    ss = renpy.display.scale.surface_scale(ss)
 
-                self.chars[c] = ss
-                self.width[c] = w + xo
-                self.advance[c] = xadvance
-                self.offsets[c] = (xo, yo)
-            elif kind == "kerning":
-                first = chr(int(args["first"]))
-                second = chr(int(args["second"]))
-                self.kerns[first + second] = int(args["amount"])
-
-        f.close()
+                    self.chars[c] = ss
+                    self.width[c] = w + xo
+                    self.advance[c] = xadvance
+                    self.offsets[c] = (xo, yo)
+                elif kind == "kerning":
+                    first = chr(int(args["first"]))
+                    second = chr(int(args["second"]))
+                    self.kerns[first + second] = int(args["amount"])
 
         if u'\u00a0' not in self.chars:
             self.chars[u'\u00a0'] = self.chars[u' ']

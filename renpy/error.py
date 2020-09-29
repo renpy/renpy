@@ -214,19 +214,19 @@ def report_exception(e, editor=True):
 
         f, traceback_fn = open_error_file("traceback.txt", "w")
 
-        f.write("\ufeff") # BOM
+        with f:
+            f.write("\ufeff") # BOM
 
-        print("I'm sorry, but an uncaught exception occurred.", file=f)
-        print('', file=f)
+            print("I'm sorry, but an uncaught exception occurred.", file=f)
+            print('', file=f)
 
-        f.write(simple)
+            f.write(simple)
 
-        print('', file=f)
-        print("-- Full Traceback ------------------------------------------------------------", file=f)
-        print('', file=f)
+            print('', file=f)
+            print("-- Full Traceback ------------------------------------------------------------", file=f)
+            print('', file=f)
 
-        f.write(full)
-        f.close()
+            f.write(full)
 
         try:
             if editor and renpy.game.args.command == "run": # @UndefinedVariable

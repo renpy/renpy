@@ -170,7 +170,8 @@ class Live2DCommon(object):
             self.base += "/"
 
         # The contents of the .model3.json file.
-        self.model_json = json.load(renpy.loader.load(filename))
+        with renpy.loader.load(filename) as f:
+            self.model_json = json.load(f)
 
         # The model created from the moc3 file.
         self.model = renpy.gl2.live2dmodel.Live2DModel(self.base + self.model_json["FileReferences"]["Moc"])
@@ -253,7 +254,8 @@ class Live2DCommon(object):
             if renpy.loader.loadable(self.base + i["File"]):
                 renpy.display.log.write(" - expression %s -> %s", name, i["File"])
 
-                expression_json = json.load(renpy.loader.load(self.base + i["File"]))
+                with renpy.loader.load(self.base + i["File"]) as f:
+                    expression_json = json.load(f)
 
                 self.expressions[name] = expression_json.get("Parameters", [ ])
 

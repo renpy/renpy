@@ -335,30 +335,27 @@ class ShaderCache(object):
         """
 
         try:
-            f = renpy.loader.load(self.filename)
+            with renpy.loader.load(self.filename) as f:
+                for l in f:
+                    l = l.strip()
+                    partnames = tuple(l.strip().split())
+
+                    if not partnames:
+                        continue
+
+                    if not self.check(partnames):
+                        self.missing.add(partnames)
+                        continue
+
+                    try:
+                        self.get(partnames)
+                    except:
+                        renpy.display.log.write("Precompiling shader {!r}:".format(partnames))
+                        renpy.display.log.exception()
+                        self.missing.add(partnames)
         except:
             renpy.display.log.write("Could not open {!r}:".format(self.filename))
             return
-
-        for l in f:
-            l = l.strip()
-            partnames = tuple(l.strip().split())
-
-            if not partnames:
-                continue
-
-            if not self.check(partnames):
-                self.missing.add(partnames)
-                continue
-
-            try:
-                self.get(partnames)
-            except:
-                renpy.display.log.write("Precompiling shader {!r}:".format(partnames))
-                renpy.display.log.exception()
-                self.missing.add(partnames)
-
-        f.close()
 
     def clear(self):
         """

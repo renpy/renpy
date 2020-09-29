@@ -116,11 +116,10 @@ class AndroidVideoChannel(object):
 
         print("Playing", filename)
 
-        f = renpy.loader.load(filename)
-
-        real_fn = f.name
-        base = getattr(f, "base", -1)
-        length = getattr(f, "length", -1)
+        with renpy.loader.load(filename) as f:
+            real_fn = f.name
+            base = getattr(f, "base", -1)
+            length = getattr(f, "length", -1)
 
         self.filename = filename
         self.player = VideoPlayer(real_fn, base, length)

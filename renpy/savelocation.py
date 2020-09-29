@@ -190,29 +190,23 @@ class FileLocation(object):
 
             try:
                 filename = self.filename(slotname)
-                zf = zipfile.ZipFile(filename, "r")
+                with zipfile.ZipFile(filename, "r") as zf:
+                    try:
+                        data = zf.read("json")
+                        data = json.loads(data)
+                        return data
+                    except:
+                        pass
+
+                    try:
+                        extra_info = zf.read("extra_info").decode("utf-8")
+                        return { "_save_name" : extra_info }
+                    except:
+                        pass
+
+                    return { }
             except:
                 return None
-
-            try:
-
-                try:
-                    data = zf.read("json")
-                    data = json.loads(data)
-                    return data
-                except:
-                    pass
-
-                try:
-                    extra_info = zf.read("extra_info").decode("utf-8")
-                    return { "_save_name" : extra_info }
-                except:
-                    pass
-
-                return { }
-
-            finally:
-                zf.close()
 
     def screenshot(self, slotname):
         """
@@ -230,18 +224,15 @@ class FileLocation(object):
 
             try:
                 filename = self.filename(slotname)
-                zf = zipfile.ZipFile(filename, "r")
+                with zipfile.ZipFile(filename, "r") as zf:
+                    try:
+                        png = False
+                        zf.getinfo('screenshot.tga')
+                    except:
+                        png = True
+                        zf.getinfo('screenshot.png')
             except:
                 return None
-
-            try:
-                png = False
-                zf.getinfo('screenshot.tga')
-            except:
-                png = True
-                zf.getinfo('screenshot.png')
-
-            zf.close()
 
             if png:
                 screenshot = renpy.display.im.ZipFileImage(filename, "screenshot.png", mtime)
@@ -260,9 +251,8 @@ class FileLocation(object):
 
             filename = self.filename(slotname)
 
-            zf = zipfile.ZipFile(filename, "r")
-            rv = zf.read("log")
-            zf.close()
+            with zipfile.ZipFile(filename, "r") as zf:
+                rv = zf.read("log")
 
             return rv
 
