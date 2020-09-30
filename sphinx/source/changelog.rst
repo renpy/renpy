@@ -193,14 +193,25 @@ the level of OpenGL ES that Ren'Py requires.
 Web
 ---
 
-A game built for the web platform can now download image and audio files
-from the web server as the game is played. In the case of images, the download
-begins when the image is predicted. This can reduce the initial time it takes
-before the game begins running.
+Ren'Py now runs significantly faster in the browser, thanks to new
+compilation techniques.
 
-When running inside a web browser on a touch-screen device, Ren'Py will
-display a touch-based keyboard, to compensate for web browners having
-difficulty displaying keyboard entry for wasm-based games.
+A game built for the web platform can now download image and audio
+files from the web server as the game is played. The download begins
+when the image or sound is predicted. This can reduce the initial time
+it takes before the game begins running, as well as memory usage.
+
+When running inside a web browser on a touch-screen device, Ren'Py
+will display a touch-based keyboard, to compensate for web browsers
+having difficulty displaying keyboard entry for wasm-based games.
+
+The splash screen displayed while loading can use the WebP format,
+including animated WebP.
+
+More Python modules are provided, making the Python environment closer
+to native Ren'Py ports.
+
+Support for iOS browsers was improved.
 
 Translations
 ------------
