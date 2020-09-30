@@ -369,7 +369,8 @@ def transform_render(self, widtho, heighto, st, at):
     rv = Render(width, height)
 
     mesh = state.mesh
-    blur = state.blur
+
+    blur = state.blur or None
 
     if (blur is not None) and (not mesh):
         mesh = True
