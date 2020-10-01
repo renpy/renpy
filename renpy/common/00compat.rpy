@@ -196,6 +196,7 @@ init -1900 python:
 
         if version <= (7, 3, 5):
             config.side_image_requires_attributes = False
+            config.window_functions_set_auto = False
 
 
     # The version of Ren'Py this script is intended for, or

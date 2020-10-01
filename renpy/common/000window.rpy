@@ -34,6 +34,8 @@ init -1200 python:
     # A list of statements that cause the window to be auto-hidden.
     config.window_auto_hide = [ "scene", "call screen", "menu" ]
 
+    config.window_functions_set_auto = True
+
     _window_auto = False
 
     def _window_show(trans=False, auto=False):
@@ -52,7 +54,8 @@ init -1200 python:
             statment.
         """
 
-        store._window_auto = auto
+        if config.window_functions_set_auto:
+            store._window_auto = auto
 
         if store._window:
             return
@@ -83,7 +86,8 @@ init -1200 python:
             statment.
         """
 
-        store._window_auto = auto
+        if config.window_functions_set_auto:
+            store._window_auto = auto
 
         if not store._window:
             return
