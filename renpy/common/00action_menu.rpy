@@ -58,9 +58,9 @@ init -1500 python:
          Extra arguments and keyword arguments are passed on to the screen
          """
 
-        def __init__(self, screen=None, transition=None, *args, **kwargs):
+        def __init__(self, screen=None, _transition=None, *args, **kwargs):
             self.screen = screen
-            self.transition = transition
+            self.transition = _transition
             self.args = args
             self.kwargs = kwargs
 
