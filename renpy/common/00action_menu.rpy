@@ -58,8 +58,9 @@ init -1500 python:
          Extra arguments and keyword arguments are passed on to the screen
          """
 
-        def __init__(self, screen=None, *args, **kwargs):
+        def __init__(self, screen=None, transition=None, *args, **kwargs):
             self.screen = screen
+            self.transition = transition
             self.args = args
             self.kwargs = kwargs
 
@@ -83,7 +84,7 @@ init -1500 python:
 
                 if renpy.has_screen(screen):
 
-                    renpy.transition(config.intra_transition)
+                    renpy.transition(self.transition or config.intra_transition)
                     renpy.show_screen(screen, _transient=True, *self.args, **self.kwargs)
                     renpy.restart_interaction()
 
