@@ -42,9 +42,10 @@ init -1500 python:
          the screen mechanism. If the screen doesn't exist, then "_screen"
          is appended to it, and that label is jumped to.
          
-         `_transition`, if set, manually specifies the transition used when
-         changing screens. If omitted, the default transition is
-         config.intra_transition.
+         If the optional keyword argument `_transition` is given, the
+         menu will change screens using the provided transition.
+         If not manually specified, the default transition is 
+         `config.intra_transition`.
 
          * ShowMenu("load")
          * ShowMenu("save")
