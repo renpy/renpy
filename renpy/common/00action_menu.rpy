@@ -41,6 +41,10 @@ init -1500 python:
          `screen` is usually the name of a screen, which is shown using
          the screen mechanism. If the screen doesn't exist, then "_screen"
          is appended to it, and that label is jumped to.
+         
+         `_transition`, if set, manually specifies the transition used when
+         changing screens. If omitted, the default transition is
+         config.intra_transition.
 
          * ShowMenu("load")
          * ShowMenu("save")
@@ -57,10 +61,11 @@ init -1500 python:
 
          Extra arguments and keyword arguments are passed on to the screen
          """
+        transition = None  # For save compatability; see renpy#2376
 
-        def __init__(self, screen=None, _transition=None, *args, **kwargs):
+        def __init__(self, screen=None, *args, **kwargs):
             self.screen = screen
-            self.transition = _transition
+            self.transition = kwargs.pop("_transition", None)
             self.args = args
             self.kwargs = kwargs
 
