@@ -254,6 +254,9 @@ class Live2DCommon(object):
             if renpy.loader.loadable(self.base + i["File"]):
                 renpy.display.log.write(" - expression %s -> %s", name, i["File"])
 
+                if name in self.attributes:
+                    raise Exception("Name {!r} is already specified as a motion.".format(name))
+
                 with renpy.loader.load(self.base + i["File"]) as f:
                     expression_json = json.load(f)
 
@@ -275,14 +278,30 @@ class Live2DCommon(object):
     def apply_aliases(self, aliases):
 
         for k, v in aliases.items():
-            if v in self.motions:
-                self.motions[k] = self.motions[v]
+            target = None
 
-            if v in self.expressions:
-                self.expressions[k] = self.expressions[v]
+            if v in self.motions:
+                target = self.motions
+
+            elif v in self.expressions:
+                target = self.expressions
+
+            elif v in self.nonexclusive:
+                target = self.expressions
+
+            else:
+                raise Exception("Name {!r} is not a known motion or expression.".fromat(v))
+
+            if k in target:
+                raise Exception("Name {!r} is already specified as a motion or expression.".fromat(k))
+
+            target[k] = target[v]
 
     def apply_nonexclusive(self, nonexclusive):
         for i in nonexclusive:
+            if i not in self.expressions:
+                raise Exception("Name {!r} is not a known expression.".fromat(i))
+
             self.nonexclusive[i] = self.expressions.pop(i)
 
 
@@ -410,11 +429,11 @@ class Live2D(renpy.display.core.Displayable):
         # Load the common data. Needed!
         common = self.common
 
-        if aliases:
-            common.apply_aliases(aliases)
-
         if nonexclusive:
             common.apply_nonexclusive(nonexclusive)
+
+        if aliases:
+            common.apply_aliases(aliases)
 
     def _duplicate(self, args):
 
