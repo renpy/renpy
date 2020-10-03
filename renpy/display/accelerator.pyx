@@ -217,7 +217,7 @@ def transform_render(self, widtho, heighto, st, at):
 
         negative_xo, negative_yo, width, height = crop
 
-        if state.rotate:
+        if state.rotate is not None:
             clipcr = Render(width, height)
             clipcr.subpixel_blit(cr, (-negative_xo, -negative_yo))
             clipcr.xclipping = True
@@ -480,4 +480,3 @@ def transform_render(self, widtho, heighto, st, at):
     self.render_size = (width, height)
 
     return rv
-
