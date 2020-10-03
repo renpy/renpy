@@ -165,7 +165,7 @@ def filter_text_tags(s, allow=None, deny=None):
                 if kind not in deny:
                     rv.append("{" + text + "}")
         else:
-            rv.append(text)
+            rv.append(text.replace("{", "{{"))
 
     return "".join(rv)
 
