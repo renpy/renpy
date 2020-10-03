@@ -283,8 +283,7 @@ class Live2DCommon(object):
 
     def apply_nonexclusive(self, nonexclusive):
         for i in nonexclusive:
-            if i in self.expressions:
-                self.nonexclusive[i] = self.expressions.pop(i)
+            self.nonexclusive[i] = self.expressions.pop(i)
 
 
 # This maps a filename to a Live2DCommon object.
