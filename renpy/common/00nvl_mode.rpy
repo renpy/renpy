@@ -403,7 +403,7 @@ init -1500 python:
             if self.clear:
                 nvl_clear()
 
-            self.add_history("adv", who, what)
+            self.add_history("nvl", who, what)
 
         def do_extend(self):
             renpy.mode(self.mode)
