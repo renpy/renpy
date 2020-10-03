@@ -29,7 +29,6 @@ import renpy
 import re
 import codecs
 
-
 # A map from line loc (elided filename, line) to the Line object representing
 # that line.
 lines = { }
@@ -252,7 +251,7 @@ def nodes_on_line(filename, linenumber):
     rv = [ ]
 
     for i in renpy.game.script.all_stmts:
-        if (i.filename == filename) and (i.linenumber == linenumber):
+        if (i.filename == filename) and (i.linenumber == linenumber) and (i.rollback != "never"):
             rv.append(i)
 
     return rv
@@ -268,7 +267,8 @@ def nodes_on_line_at_or_after(filename, linenumber):
     lines = [ i.linenumber
               for i in renpy.game.script.all_stmts
               if (i.filename == filename)
-              if (i.linenumber >= linenumber) ]
+              if (i.linenumber >= linenumber)
+              if (i.rollback != "never") ]
 
     if not lines:
         return [ ]
