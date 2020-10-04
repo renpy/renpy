@@ -266,8 +266,8 @@ def interpolate_spline(t, spline):
 
 
 def get_catmull_rom_value(t, p_1, p0, p1, p2):
-    """ 
-    Very basic Catmull-Rom calculation with no alpha or handling 
+    """
+    Very basic Catmull-Rom calculation with no alpha or handling
     of multi-dimensional points
     """
     t = float(max(0.0, min(1.0, t)))
@@ -537,7 +537,7 @@ class ATLTransformBase(renpy.object.Object):
                     raise Exception("Cannot compile ATL Transform at %s:%d, as it's missing positional parameter %s." % (
                         self.atl.loc[0],
                         self.atl.loc[1],
-                        self.parameters.positional[0],
+                        p,
                         ))
 
         if constant and self.parent_transform:
@@ -784,7 +784,7 @@ class RawBlock(RawStatement):
         try:
             block = self.compile(Context({}))
         except RuntimeError:  # PY3: RecursionError
-            raise Exception("This transform refers to itself in the cycle.")
+            raise Exception("This transform refers to itself in a cycle.")
         except:
             self.constant = NOT_CONST
         else:
