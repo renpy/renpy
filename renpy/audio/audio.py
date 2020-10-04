@@ -143,6 +143,7 @@ class MusicContext(renpy.python.RevertableObject):
 
     pause = False
     tertiary_volume = 1.0
+    raw_secondary_volume = 1.0
 
     def __init__(self):
 
@@ -157,8 +158,11 @@ class MusicContext(renpy.python.RevertableObject):
         # The time the secondary volume was last ordered changed.
         self.secondary_volume_time = None
 
-        # The secondary volume.
+        # The computed secondary volume.
         self.secondary_volume = 1.0
+
+        # The raw secondary volume.
+        self.raw_secondary_volume = 1.0
 
         # The tertiary volume.
         self.tertiary_volume = 1.0
@@ -701,6 +705,7 @@ class Channel(object):
 
             now = get_serial()
             self.context.secondary_volume_time = now
+            self.context.raw_secondary_volume = volume
             self.context.secondary_volume = volume * self.context.tertiary_volume
 
             if pcm_ok:
@@ -709,7 +714,7 @@ class Channel(object):
 
     def set_tertiary_volume(self, volume):
         self.context.tertiary_volume = volume
-        self.set_secondary_volume(1.0, 0)
+        self.set_secondary_volume(self.context.raw_secondary_volume, 0)
 
     def pause(self):
         with lock:
