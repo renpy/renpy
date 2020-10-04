@@ -578,8 +578,9 @@ class Channel(object):
 
             if self.secondary_volume_time != self.context.secondary_volume_time:
                 self.secondary_volume_time = self.context.secondary_volume_time
+                result_volume = self.context.secondary_volume * self.context.tertiary_volume
                 renpysound.set_secondary_volume(self.number,
-                                                self.context.secondary_volume,
+                                                result_volume,
                                                 0)
 
         if not self.queue and self.callback:
@@ -701,15 +702,16 @@ class Channel(object):
 
             now = get_serial()
             self.context.secondary_volume_time = now
-            self.context.secondary_volume = volume * self.context.tertiary_volume
+            self.context.secondary_volume = volume
 
             if pcm_ok:
                 self.secondary_volume_time = self.context.secondary_volume_time
-                renpysound.set_secondary_volume(self.number, self.context.secondary_volume, delay)
+                result_volume = self.context.secondary_volume * self.context.tertiary_volume
+                renpysound.set_secondary_volume(self.number, result_volume, delay)
 
     def set_tertiary_volume(self, volume):
         self.context.tertiary_volume = volume
-        self.set_secondary_volume(1.0, 0)
+        self.set_secondary_volume(self.context.secondary_volume, 0)
 
     def pause(self):
         with lock:
