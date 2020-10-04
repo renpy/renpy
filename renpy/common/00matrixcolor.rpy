@@ -158,9 +158,9 @@ init -1500 python:
                 a = self.color.alpha
 
                 r = oldr + (r - oldr) * done
-                g = oldg + (r - oldg) * done
-                b = oldb + (r - oldb) * done
-                a = olda + (r - olda) * done
+                g = oldg + (g - oldg) * done
+                b = oldb + (b - oldb) * done
+                a = olda + (a - olda) * done
 
             r *= a
             g *= a
@@ -359,4 +359,3 @@ init -1500 python:
         """
 
         return TintMatrix(tint) * SaturationMatrix(0.0, desat)
-
