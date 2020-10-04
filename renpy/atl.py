@@ -1562,8 +1562,8 @@ class RawTime(RawStatement):
         compiling(self.loc)
         return Time(self.loc, ctx.eval(self.time))
 
-    def mark_constant(self):
-        self.constant = is_constant_expr(self.time)
+    def mark_constant(self, analysis):
+        self.constant = analysis.is_constant_expr(self.time)
 
 
 class Time(Statement):
