@@ -143,7 +143,6 @@ class MusicContext(renpy.python.RevertableObject):
 
     pause = False
     tertiary_volume = 1.0
-    raw_secondary_volume = 1.0
 
     def __init__(self):
 
@@ -158,11 +157,8 @@ class MusicContext(renpy.python.RevertableObject):
         # The time the secondary volume was last ordered changed.
         self.secondary_volume_time = None
 
-        # The computed secondary volume.
+        # The secondary volume.
         self.secondary_volume = 1.0
-
-        # The raw secondary volume.
-        self.raw_secondary_volume = 1.0
 
         # The tertiary volume.
         self.tertiary_volume = 1.0
@@ -582,8 +578,9 @@ class Channel(object):
 
             if self.secondary_volume_time != self.context.secondary_volume_time:
                 self.secondary_volume_time = self.context.secondary_volume_time
+                result_volume = self.context.secondary_volume * self.context.tertiary_volume
                 renpysound.set_secondary_volume(self.number,
-                                                self.context.secondary_volume,
+                                                result_volume,
                                                 0)
 
         if not self.queue and self.callback:
@@ -705,16 +702,16 @@ class Channel(object):
 
             now = get_serial()
             self.context.secondary_volume_time = now
-            self.context.raw_secondary_volume = volume
-            self.context.secondary_volume = volume * self.context.tertiary_volume
+            self.context.secondary_volume = volume
 
             if pcm_ok:
                 self.secondary_volume_time = self.context.secondary_volume_time
-                renpysound.set_secondary_volume(self.number, self.context.secondary_volume, delay)
+                result_volume = self.context.secondary_volume * self.context.tertiary_volume
+                renpysound.set_secondary_volume(self.number, result_volume, delay)
 
     def set_tertiary_volume(self, volume):
         self.context.tertiary_volume = volume
-        self.set_secondary_volume(self.context.raw_secondary_volume, 0)
+        self.set_secondary_volume(self.context.secondary_volume, 0)
 
     def pause(self):
         with lock:
