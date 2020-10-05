@@ -119,6 +119,7 @@ init -1500 python:
     config.console_callback = None
 
 default persistent._console_short = True
+default persistent._console_traced_short = True
 default persistent._console_unicode_escaping = False
 
 init -1500 python in _console:
@@ -350,6 +351,16 @@ init -1500 python in _console:
     aRepr.maxfrozenset = 20
     aRepr.maxstring = 60
     aRepr.maxother = 200
+
+    traced_aRepr = PrettyRepr()
+    traced_aRepr.maxtuple = 20
+    traced_aRepr.maxlist = 20
+    traced_aRepr.maxarray = 20
+    traced_aRepr.maxdict = 10
+    traced_aRepr.maxset = 20
+    traced_aRepr.maxfrozenset = 20
+    traced_aRepr.maxstring = 30
+    traced_aRepr.maxother = 100
 
     # The list of traced expressions.
     class TracedExpressionsList(NoRollback, list):
@@ -800,10 +811,19 @@ init -1500 python in _console:
     def R(l):
         store._reload_game()
 
-    @command(_("watch <expression>: watch a python expression"))
+    @command(_("watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"))
     def watch(l):
         expr = l.rest()
-        expr.strip()
+        expr = expr.strip()
+
+        if expr == "short":
+            persistent._console_traced_short = True
+            return
+
+        if expr == "long":
+            persistent._console_traced_short = False
+            return
+
         renpy.python.py_compile(expr, 'eval')
 
         traced_expressions.append(expr)
@@ -829,7 +849,11 @@ init -1500 python in _console:
     @command(_("unwatch <expression>: stop watching an expression"))
     def unwatch(l):
         expr = l.rest()
-        expr.strip()
+        expr = expr.strip()
+
+        if expr == "all":
+            renpy_unwatchall()
+            return
 
         if expr in traced_expressions:
             traced_expressions.remove(expr)
@@ -1004,10 +1028,16 @@ screen _trace_screen:
 
                 for expr in _console.traced_expressions:
                     python:
+                        if persistent._console_traced_short:
+                            repr_func = _console.traced_aRepr.repr
+                        else:
+                            repr_func = repr
+
                         try:
-                            value = repr(eval(expr))
+                            value = repr_func(eval(expr))
                         except:
                             value = "eval failed"
+                        del repr_func
 
                     hbox:
                         text "[expr!q]: " style "_console_trace_var"
