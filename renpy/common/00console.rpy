@@ -322,6 +322,24 @@ init -1500 python in _console:
 
             return [ellipsis if v is x else v for v in iter_x]
 
+        def repr_Matrix(self, x, level):
+            if level <= 0: return "Matrix([...])"
+
+            rv = "Matrix(["
+
+            for line in (
+                [x.xdx, x.xdy, x.xdz, x.xdw],
+                [x.ydx, x.ydy, x.ydz, x.ydw],
+                [x.zdx, x.zdy, x.zdz, x.zdw],
+                [x.wdx, x.wdy, x.wdz, x.wdw],
+            ):
+                rv += "\n    "
+
+                for point in line:
+                    rv += "{:10.7f}, ".format(point)
+
+            return rv + "\n])"
+
 
     aRepr = PrettyRepr()
     aRepr.maxtuple = 20
