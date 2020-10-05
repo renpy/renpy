@@ -2977,17 +2977,19 @@ def get_renderer_info():
     :doc: other
 
     Returns a dictionary, giving information about the renderer Ren'Py is
-    currently using. The dictionary has one required key:
+    currently using. Defined keys are:
 
     ``"renderer"``
-        One of ``"gl"`` or ``"sw"``, corresponding to the OpenGL and
-        software renderers, respectively.
+        A string giving the name of the renderer that is in use.
 
     ``"resizable"``
         True if and only if the window is resizable.
 
     ``"additive"``
         True if and only if the renderer supports additive blending.
+
+    ``"model"``
+        Present and true if model-based rendering is supported.
 
     Other, renderer-specific, keys may also exist. The dictionary should
     be treated as immutable. This should only be called once the display
