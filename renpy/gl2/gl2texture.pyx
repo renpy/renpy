@@ -440,6 +440,7 @@ cdef class GLTexture(Model):
         cdef GLuint level = 0
 
         while True:
+
             glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
             if tw == 1 and th == 1:
@@ -449,50 +450,24 @@ cdef class GLTexture(Model):
             th = max(th >> 1, 1)
             level += 1
 
-
-
-    def mipmap_texture(GLTexture self, GLuint tex, int tw, int th):
-        """
-        Uses render-to-texture operations to create missing mipmap
-        levels.
-        """
-
-        cdef GLuint level = 0
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level)
-
-        mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
-
-        glDisable(GL_BLEND)
-
-        while True:
-            if (tw <= 1) and (th <= 1):
-                break
-
-            tw = max(1, tw >> 1)
-            th = max(1, th >> 1)
-            level += 1
-
             if level > renpy.config.max_mipmap_level:
                 break
 
-            glViewport(0, 0, tw, th)
+    def mipmap_texture(GLTexture self, GLuint tex, int tw, int th):
+        """
+        Generate the mipmaps for a texture.
+        """
 
-            glClearColor(1.0, 0.0, 0.0, 1.0)
-            glClear(GL_COLOR_BUFFER_BIT)
+        cdef GLuint level = renpy.config.max_mipmap_level
 
-            # Draw.
-            program = self.loader.ftl_program
-            program.start()
-            program.set_uniform("tex0", tex)
-            program.draw(mesh, {})
-            program.finish()
+        glBindTexture(GL_TEXTURE_2D, tex)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level)
 
-            glBindTexture(GL_TEXTURE_2D, tex)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level)
-            glCopyTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, 0, 0, tw, th, 0)
+        if level == 0:
+            return
 
-        glEnable(GL_BLEND)
-
+        glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
+        glGenerateMipmap(GL_TEXTURE_2D)
 
     def __del__(self):
         try:
