@@ -170,7 +170,7 @@ init -1 python:
 
             self.cmd = cmd
 
-            f = open(self.filename, "a")
+            f = open(self.filename, "ab")
 
             f.write("\n\n\n")
 

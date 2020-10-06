@@ -307,7 +307,7 @@ init -1500 python in updater:
 
             # The logfile that update errors are written to.
             try:
-                self.log = open(os.path.join(self.updatedir, "log.txt"), "w")
+                self.log = open(os.path.join(self.updatedir, "log.txt"), "wb")
             except:
                 self.log = None
 
