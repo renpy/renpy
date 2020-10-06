@@ -1041,8 +1041,9 @@ init -1500 python in updater:
 
                     # Process the status info for the current module.
                     if info.name == "update/current.json":
-                        with tf.extractfile(info) as tff:
-                            state = json.load(tff)
+                        tff = tf.extractfile(info)
+                        state = json.load(tff)
+                        tff.close()
 
                         self.new_state[module] = state[module]
 
@@ -1063,14 +1064,16 @@ init -1500 python in updater:
                         raise UpdateError(__("While unpacking {}, unknown type {}.").format(info.name, info.type))
 
                     # Extract regular files.
-                    with tf.extractfile(info) as tff:
-                        new_path = path + ".new"
-                        with file(new_path, "wb") as f:
-                            while True:
-                                data = tff.read(1024 * 1024)
-                                if not data:
-                                    break
-                                f.write(data)
+                    tff = tf.extractfile(info)
+                    new_path = path + ".new"
+                    with file(new_path, "wb") as f:
+                        while True:
+                            data = tff.read(1024 * 1024)
+                            if not data:
+                                break
+                            f.write(data)
+
+                    tff.close()
 
                     if info.mode & 1:
                         # If the xbit is set in the tar info, set it on disk if we can.
