@@ -399,9 +399,9 @@ init python in interface:
 
     import string
     DIGITS_LETTERS = string.digits
-    PROJECT_LETTERS = DIGITS_LETTERS + string.ascii_letters + " _"
+    PROJECT_LETTERS = string.digits + string.ascii_letters + " _"
     FILENAME_LETTERS = PROJECT_LETTERS + "\\/"
-    TRANSLATE_LETTERS = string.ascii_letters + "_"
+    TRANSLATE_LETTERS = string.ascii_letters + string.digits + "_"
 
     def input(title, message, filename=False, sanitize=True, cancel=None, allow=None, default=""):
         """
