@@ -1139,13 +1139,13 @@ class ADVCharacter(object):
 
             if who is not None:
                 if renpy.config.new_substitutions:
-                    who_pattern = sub(self.who_prefix + "[[who]" + self.who_suffix)
+                    who_pattern = sub(sub(self.who_prefix) + "[[who]" + sub(self.who_suffix))
                     who = who_pattern.replace("[who]", sub(who))
                 else:
                     who = self.who_prefix + who + self.who_suffix
 
             if renpy.config.new_substitutions:
-                what_pattern = sub(self.what_prefix + "[[what]" + self.what_suffix)
+                what_pattern = sub(sub(self.what_prefix) + "[[what]" + sub(self.what_suffix))
                 what = what_pattern.replace("[what]", sub(what, translate=True))
             else:
                 what = self.what_prefix + what + self.what_suffix
