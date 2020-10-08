@@ -652,8 +652,9 @@ def check_label(node):
 
     if pi is not None:
 
-        for i in pi.positional:
+        for i, _ in pi.parameters:
             add_arg(i)
+
         add_arg(pi.extrapos)
         add_arg(pi.extrakw)
 
