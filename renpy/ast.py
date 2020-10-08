@@ -301,16 +301,19 @@ class ArgumentInfo(renpy.object.Object):
 
     def after_upgrade(self, version):
         if version < 1:
-            length = len(self.arguments) + 2
-            if self.extrapos:
+            arguments = self.arguments
+            extrapos = self.extrapos
+            extrakw = self.extrakw
+            length = len(arguments) + bool(extrapos) + bool(extrakw)
+            if extrapos:
                 self.starred_indexes = { length - 1 }
-                self.arguments.append((None, self.extrapos))
+                arguments.append((None, extrapos))
 
-            if self.extrakw:
+            if extrakw:
                 self.doublestarred_indexes = { length - 1 }
-                self.arguments.append((None, self.extrakw))
+                arguments.append((None, extrakw))
 
-            if self.extrapos and self.extrakw:
+            if extrapos and extrakw:
                 self.starred_indexes = { length - 2 }
 
     def __init__(self, arguments, starred_indexes=None, doublestarred_indexes=None):
