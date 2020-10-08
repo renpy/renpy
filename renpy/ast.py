@@ -301,7 +301,7 @@ class ArgumentInfo(renpy.object.Object):
 
     def after_upgrade(self, version):
         if version < 1:
-            length = len(self.arguments)
+            length = len(self.arguments) + 2
             if self.extrapos:
                 self.starred_indexes = { length - 1 }
                 self.arguments.append((None, self.extrapos))
