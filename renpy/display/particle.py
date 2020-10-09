@@ -416,6 +416,9 @@ class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):
     def render(self, w, h, st, at):
         return renpy.display.render.render(self.sm, w, h, st, at)
 
+    def visit(self):
+        return [ self.sm ]
+
 
 class SnowBlossomFactory(renpy.python.NoRollback):
 
