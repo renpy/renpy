@@ -459,11 +459,17 @@ def transform_render(self, widtho, heighto, st, at):
             for name in state.shader:
                 rv.add_shader(name)
 
-        for name in renpy.display.transform.uniforms:
-            value = getattr(state, name, None)
+    for name in renpy.display.transform.uniforms:
+        value = getattr(state, name, None)
 
-            if value is not None:
-                rv.add_uniform(name, value)
+        if value is not None:
+            rv.add_uniform(name, value)
+
+    for name in renpy.display.transform.gl_properties:
+        value = getattr(state, name, None)
+
+        if value is not None:
+            rv.add_property(name[3:], value)
 
     # Clipping.
     rv.xclipping = clipping

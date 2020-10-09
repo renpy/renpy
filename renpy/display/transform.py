@@ -189,6 +189,9 @@ class TransformState(renpy.object.Object):
         for i in uniforms:
             setattr(self, i, None)
 
+        for i in gl_properties:
+            setattr(self, i, None)
+
     def take_state(self, ts):
 
         self.nearest = ts.nearest
@@ -232,6 +235,9 @@ class TransformState(renpy.object.Object):
         self.events = ts.events
 
         for i in uniforms:
+            setattr(self, i, getattr(ts, i))
+
+        for i in gl_properties:
             setattr(self, i, getattr(ts, i))
 
         # Take the computed position properties, not the
@@ -1113,6 +1119,7 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
 
 uniforms = set()
+gl_properties = set()
 
 
 def add_uniform(name):
@@ -1136,3 +1143,20 @@ def add_uniform(name):
     setattr(TransformState, name, None)
     setattr(Transform, name, Proxy(name))
     renpy.atl.PROPERTIES[name] = renpy.atl.any_object
+
+
+def add_gl_property(name):
+    """
+    Adds a GL property with `name` to Transform and ATL.
+    """
+
+    if name in gl_properties:
+        return
+
+    gl_properties.add(name)
+    setattr(TransformState, name, None)
+    setattr(Transform, name, Proxy(name))
+    renpy.atl.PROPERTIES[name] = renpy.atl.any_object
+
+
+add_gl_property("gl_color_mask")
