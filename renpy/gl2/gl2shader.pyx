@@ -295,21 +295,32 @@ cdef class Program:
             if not u.ready:
                 self.missing("uniform", name)
 
-        if "texture_scaling" in properties:
-            magnify, minify = TEXTURE_SCALING[properties["texture_scaling"]]
+        if len(properties) > 1:
 
-            for 0 <= i < self.samplers:
-                glActiveTexture(GL_TEXTURE0 + i)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify)
+            if "color_mask" in properties:
+                mask_r, mask_g, mask_b, mask_a = properties["color_mask"]
+                glColorMask(mask_r, mask_g, mask_b, mask_a)
+
+            if "texture_scaling" in properties:
+                magnify, minify = TEXTURE_SCALING[properties["texture_scaling"]]
+
+                for 0 <= i < self.samplers:
+                    glActiveTexture(GL_TEXTURE0 + i)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify)
 
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
 
-        if "texture_scaling" in properties:
-            for 0 <= i < self.samplers:
-                glActiveTexture(GL_TEXTURE0 + i)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+        if len(properties) > 1:
+
+            if "texture_scaling" in properties:
+                for 0 <= i < self.samplers:
+                    glActiveTexture(GL_TEXTURE0 + i)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+
+            if "color_mask" in properties:
+                glColorMask(True, True, True, True)
 
 
     def finish(Program self):
@@ -321,5 +332,3 @@ cdef class Program:
 
         for u in self.uniforms.itervalues():
             u.finish()
-
-
