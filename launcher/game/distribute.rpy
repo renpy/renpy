@@ -489,6 +489,7 @@ init python in distribute:
             # The various executables, which change names based on self.executable_name.
             self.app = self.executable_name + ".app"
             self.exe = self.executable_name + ".exe"
+            self.exe32 = self.executable_name + "-32.exe"
             self.sh = self.executable_name + ".sh"
             self.py = self.executable_name + ".py"
 
@@ -988,9 +989,9 @@ init python in distribute:
                 if os.path.exists(tmp):
                     self.add_file(windows, dst, tmp)
 
-            write_exe("lib/windows-i686/renpy.exe", "renpy-32.exe", "renpy-32.exe")
+            write_exe("lib/windows-i686/renpy.exe", self.exe32, self.exe32)
             write_exe("lib/windows-i686/pythonw.exe", "lib/windows-i686/pythonw.exe", "pythonw-32.exe")
-            write_exe("lib/windows-x86_64/renpy.exe", "renpy.exe", "renpy-64.exe")
+            write_exe("lib/windows-x86_64/renpy.exe", self.exe, self.exe)
             write_exe("lib/windows-x86_64/pythonw.exe", "lib/windows-x86_64/pythonw.exe", "pythonw-64.exe")
 
         def add_main_py(self):
