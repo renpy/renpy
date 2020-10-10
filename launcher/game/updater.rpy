@@ -189,11 +189,10 @@ label update:
 
         import urllib2
         import json
-        import ssl
 
         with interface.error_handling(_("downloading the list of update channels")):
             context = ssl._create_unverified_context()
-            channel_data = urllib2.urlopen(CHANNELS_URL, context=context)
+            channel_data = urllib2.urlopen(CHANNELS_URL, context=ssl_context())
 
         with interface.error_handling(_("parsing the list of update channels")):
             channels = json.load(channel_data)["releases"]
