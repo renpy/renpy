@@ -49,7 +49,7 @@ init python hide:
                 pass
 
 
-        macrenpyexe = os.path.join(maclib, "renpy")
+        macpython = os.path.join(maclib, "python")
 
-        if sys.executable.startswith(macapp) and os.path.exists(macrenpyexe):
-            sys.executable = macrenpyexe
+        if sys.executable.startswith(macapp) and os.path.exists(macpython):
+            sys.executable = macpython
