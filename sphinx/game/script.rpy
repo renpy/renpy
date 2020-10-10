@@ -1,6 +1,9 @@
 init 1000000 python:
     import doc
+    import shaderdoc
     import __builtin__
+
+    shaderdoc.shaders()
 
     doc.scan_section("", renpy.store)
     doc.scan_section("renpy.", renpy)

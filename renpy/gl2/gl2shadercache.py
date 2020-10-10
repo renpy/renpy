@@ -125,6 +125,8 @@ class ShaderPart(object):
             if kind == "uniform":
                 renpy.display.transform.add_uniform(name)
 
+        self.raw_variables = variables
+
 
 # A map from a tuple giving the parts that comprise a shader, to the Shader
 # object. The same shader might appear multiple times, to optimize performance.
