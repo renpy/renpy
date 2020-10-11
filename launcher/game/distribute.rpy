@@ -316,7 +316,7 @@ init python in distribute:
             for f in list(self):
 
                 if f.name.startswith("lib/python2.7") and (not duplicate):
-                    name = app + "/Contents/MacOS/lib/python2.7/" + f.name
+                    name = app + "/Contents/MacOS/" + f.name
 
                 elif f.name.startswith("lib/mac-x86_64"):
                     name = app + "/Contents/MacOS/" + f.name[15:]
@@ -945,7 +945,6 @@ init python in distribute:
 
             self.add_directory(filelist, resources)
             self.add_file(filelist, resources + "/icon.icns", icon_fn)
-
 
             if not self.build['renpy']:
                 self.add_directory(filelist, contents + "/MacOS/lib")

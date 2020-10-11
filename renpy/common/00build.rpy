@@ -97,7 +97,7 @@ init -1500 python in build:
         ( "lib/linux-*/**", "linux"),
 
         # Mac patterns
-        ( "lib/mac-x86_64/**", "mac"),
+        ( "lib/mac-*/**", "mac"),
 
         # Shared patterns.
         ( "/lib/**", "windows linux mac android ios"),
