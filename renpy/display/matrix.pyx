@@ -43,7 +43,56 @@ cdef inline bint abseq(float a, float b):
 
 cdef class Matrix:
     """
-    Represents a 4x4 matrix.
+    :doc: matrix
+    :args: (l)
+
+    This represents a 4x4 matrix, that is used in various places in Ren'Py.
+
+    When used to transform coordinates, the 16 elements of this matrix are::
+
+        xdx, xdy, xdz, xdw,
+        ydx, ydy, ydz, ydw,
+        zdx, zdy, zdz, zdw,
+        wdx, wdy, wdz, wdw
+
+    where x' = xdx * x + xdy * y + xdz * z + xdw * w, where x is the original
+    value of x and x' is the transformed value, and similarly for x, y, x, and
+    w.  This is usually applied to a position where w is 1, allowing any combination
+    of translation, rotation, and scaling to be expressed in a single matrix.
+
+    When used to transform colors, the 16 elements of this matrix are::
+
+        rdr, rdg, rdb, rda,
+        gdr, gdg, gdg, gda,
+        bdr, bdg, bdb, bda,
+        adr, adg, adb, ada,
+
+    For the red, green, blue, and alpha channels.
+
+    Matrix objects can be multiplied using the Python multiplication operator,
+    to generate a matrix that performs both operations. The order in which
+    the matrixes appear can matter. Assuming `v` is a position or color being
+    transformed::
+
+        (step2 * step1) * v
+
+    is equivalent to::
+
+        step2 * (step1 * v)
+
+    `l`
+        This can be a list of 4, 9, or 16 numbers that is used to introduce
+        this matrix. If not the full 16, the top-left corner of the matrix
+        is initialized, with zdz and wdw set to 1.0 if not given. For example::
+
+            Matrix([ 1, 2, 3, 4 ])
+
+        would result in the Matrix::
+
+            1.0, 2.0, 0.0, 0.0,
+            3.0, 4.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0,
     """
 
     def __init__(Matrix self, l):

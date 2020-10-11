@@ -119,6 +119,7 @@ Python and Ren'Py
    character_callbacks
    file_python
    color_class
+   matrix
    model
    other
 
