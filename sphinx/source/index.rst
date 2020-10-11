@@ -99,6 +99,8 @@ Other Functionality
    history
    multiple
    splashscreen_presplash
+   matrixcolor
+   live2d
 
 Python and Ren'Py
 -----------------
@@ -120,7 +122,6 @@ Python and Ren'Py
    file_python
    color_class
    matrix
-   matrixcolor
    model
    other
 
