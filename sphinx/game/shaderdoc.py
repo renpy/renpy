@@ -32,11 +32,13 @@ def shaders():
             if sp.name == "renpy.ftl":
                 continue
 
-            p("=== {} (priority {}) ===".format(sp.name, priority(sp)[0]))
-            p("")
+            header = "{} (priority {})".format(sp.name, priority(sp)[0])
+
+            p(header)
+            p("^" * len(header))
 
             if sp.raw_variables:
-                p("**Variables:** ::")
+                p("Variables::")
 
                 s = textwrap.dedent(sp.raw_variables)
 
@@ -46,12 +48,12 @@ def shaders():
                 raise Exception("Can't doc functions yet.")
 
             for _, s in sp.vertex_parts:
-                p("** Vertex shader:** ::")
+                p("Vertex shader::")
 
                 indented(s)
 
             for _, s in sp.fragment_parts:
-                p("** Fragment shader:** ::")
+                p("Fragment shader::")
 
                 indented(s)
 

@@ -226,6 +226,7 @@ the implicit `self` parameter.
     `width`, `height`
         The width and height of the render object, in pixels.
 
+
     .. method:: blit(source, pos, main=True)
 
         Draws another render object into this render object.
@@ -289,6 +290,38 @@ the implicit `self` parameter.
         Sets the zoom level of the children of this displayable in the
         horitzontal and vertical axes. Only the children of the displayable
         are zoomed – the width, height, and blit coordinates are not zoomed.
+
+    The following attributes and methods are only used when model-based rendering
+    is enabled:
+
+    .. attribute:: mesh
+
+        This field enables model-based rendering for this Render. If true:
+
+        If set to True:
+
+        * All of the children of this displayable are rendered to textures.
+        * A mesh the size of the first child is assocated with this displayable.
+        * A model is created with the mesh, shaders, uniforms, and properties
+          associated with this Render.
+
+        The model will then be drawn in a single operation.
+
+    .. method:: add_shader(shader)
+
+        This causes the shader part `shader` to be used when this Render
+        or its children are drawn. The part should be a string, or can be a
+        string beginning with "-" to prevent a shader from being drawn.
+
+    .. method:: add_uniform(name, value)
+
+        Causes the uniform `name` to have `value` when this Render or
+        its children are drawn.
+
+    .. method:: add_property(name, value)
+
+        Causes the GL property `name` to have `value` when this Render or
+        one of its children are drawn.
 
 
 
