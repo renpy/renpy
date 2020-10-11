@@ -145,13 +145,21 @@ init -1500 python:
         """
 
         def __init__(self, color):
-            self.color = renpy.easy.color(color)
+            self.color = Color(color)
 
         def __call__(self, other, done):
+
             if type(other) is not type(self):
+
+                # When not using an old color, we can take
+                # r, g, b, and a from self.color.
                 r, g, b = self.color.rgb
                 a = self.color.alpha
+
             else:
+
+                # Otherwise, we have to extract from self.color
+                # and other.color, and interpolate the results.
                 oldr, oldg, oldb = other.color.rgb
                 olda = other.color.alpha
                 r, g, b = self.color.rgb
@@ -162,10 +170,13 @@ init -1500 python:
                 b = oldb + (b - oldb) * done
                 a = olda + (a - olda) * done
 
+            # To properly handle premultiplied alpha, the color channels
+            # have to be multiplied by the alpha channel.
             r *= a
             g *= a
             b *= a
 
+            # Return a Matrix.
             return Matrix([ r, 0, 0, 0,
                             0, g, 0, 0,
                             0, 0, b, 0,

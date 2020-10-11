@@ -13,7 +13,8 @@ def register_shader(name, **kwargs):
     """
     :doc: register_shader
 
-    This registers a part of a shader. Shader parts have a name, and then
+    This registers a shader part. This takes `name`, and then
+    keyword arguments.
 
     `name`
         A string giving the name of the shader part. Names starting with an
@@ -26,7 +27,7 @@ def register_shader(name, **kwargs):
 
             variables='''
             uniform sampler2D tex0;
-            attribute vec2 tex_coord;
+            attribute vec2 a_tex_coord;
             varying vec2 v_tex_coord;
             '''
 

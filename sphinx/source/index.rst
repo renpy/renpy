@@ -120,6 +120,7 @@ Python and Ren'Py
    file_python
    color_class
    matrix
+   matrixcolor
    model
    other
 
