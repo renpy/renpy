@@ -11,6 +11,8 @@ shader_part = { }
 
 def register_shader(name, **kwargs):
     """
+    :doc: register_shader
+
     This registers a part of a shader. Shader parts have a name, and then
 
     `name`

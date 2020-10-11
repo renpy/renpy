@@ -46,12 +46,12 @@ def shaders():
                 raise Exception("Can't doc functions yet.")
 
             for _, s in sp.vertex_parts:
-                p("** Vertex shader: ** ::")
+                p("** Vertex shader:** ::")
 
                 indented(s)
 
             for _, s in sp.fragment_parts:
-                p("** Fragment shader: ** ::")
+                p("** Fragment shader:** ::")
 
                 indented(s)
 
