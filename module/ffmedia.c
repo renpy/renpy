@@ -141,6 +141,8 @@ typedef struct SurfaceQueueEntry {
 
 typedef struct MediaState {
 
+	/* The thread. */
+	SDL_Thread* thread;
 
 	/* The condition and lock. */
 	SDL_cond* cond;
@@ -154,12 +156,6 @@ typedef struct MediaState {
 	 * True if we this stream should have video.
 	 */
 	int want_video;
-
-	/*
-	 * This becomes true when the decode thread starts, when
-	 * it is the decode thread's job to deallocate this object.
-	 */
-	int started;
 
 	/* This becomes true once the decode thread has finished initializing
 	 * and the readers and writers can do their thing.
@@ -339,6 +335,11 @@ static void deallocate(MediaState *ms) {
 
 		avformat_close_input(&ms->ctx);
 		avformat_free_context(ms->ctx);
+	}
+
+	/* Wait for thread to finish, then free it. */
+	if (ms->thread) {
+		SDL_WaitThread(ms->thread, NULL);
 	}
 
 	/* Destroy alloc stuff. */
@@ -1014,8 +1015,28 @@ done:
 	return rv;
 }
 
+static SDL_cond* ms_manager_cond;
+static SDL_mutex* ms_manager_lock;
+static SDL_Thread* ms_manager_thread;
+static int ms_manager_quit;
+static MediaState* ms_manager_mediastate;
 
-static int decode_thread(void *arg) {
+static void thread_manager_pass_mediastate_to_thread(MediaState *ms) {
+	if (ms_manager_thread == NULL)
+	{
+		return;
+	}
+	SDL_LockMutex(ms_manager_lock);
+	while (ms_manager_mediastate != NULL)
+	{
+		SDL_CondWait(ms_manager_cond, ms_manager_lock);
+	}
+	ms_manager_mediastate = ms;
+	SDL_CondBroadcast(ms_manager_cond);
+	SDL_UnlockMutex(ms_manager_lock);
+}
+
+static int decode_thread_func(void *arg) {
 	MediaState *ms = (MediaState *) arg;
 
 	int err;
@@ -1145,8 +1166,34 @@ finish:
 
 	SDL_UnlockMutex(ms->lock);
 
-	deallocate(ms);
+	thread_manager_pass_mediastate_to_thread(ms);
+	return 0;
+}
 
+static int ms_manager_thread_func(void *arg) {
+	while ((ms_manager_mediastate != NULL) || !ms_manager_quit)
+	{
+		SDL_LockMutex(ms_manager_lock);
+
+		SDL_CondBroadcast(ms_manager_cond);
+		if (ms_manager_mediastate == NULL && !ms_manager_quit) {
+			SDL_CondWait(ms_manager_cond, ms_manager_lock);
+		}
+
+		MediaState* ms = NULL;
+
+		if (ms_manager_mediastate != NULL) {
+			ms = ms_manager_mediastate;
+			ms_manager_mediastate = NULL;
+			SDL_CondBroadcast(ms_manager_cond);
+		}
+
+		SDL_UnlockMutex(ms_manager_lock);
+
+		if (ms != NULL) {
+			deallocate(ms);
+		}
+	}
 	return 0;
 }
 
@@ -1413,11 +1460,10 @@ void media_start(MediaState *ms) {
     char buf[1024];
 
 	snprintf(buf, 1024, "decode: %s", ms->filename);
-	SDL_Thread *t = SDL_CreateThread(decode_thread, buf, (void *) ms);
+	SDL_Thread *t = SDL_CreateThread(decode_thread_func, buf, (void *) ms);
 
 	if (t) {
-		ms->started = 1;
-		SDL_DetachThread(t);
+		ms->thread = t;
 	}
 #endif
 }
@@ -1488,7 +1534,7 @@ void media_want_video(MediaState *ms, int video) {
 
 void media_close(MediaState *ms) {
 
-	if (!ms->started) {
+	if (!ms->thread) {
 		deallocate(ms);
 		return;
 	}
@@ -1528,6 +1574,48 @@ void media_init(int rate, int status, int equal_mono) {
         av_log_set_level(AV_LOG_ERROR);
     }
 
+#ifndef __EMSCRIPTEN__
+    ms_manager_quit = 0;
+    ms_manager_mediastate = NULL;
+	ms_manager_cond = SDL_CreateCond();
+	if (ms_manager_cond == NULL) {
+		return;
+	}
+	ms_manager_lock = SDL_CreateMutex();
+	if (ms_manager_lock == NULL) {
+		SDL_DestroyCond(ms_manager_cond);
+		return;
+	}
+
+	SDL_Thread *t = SDL_CreateThread(ms_manager_thread_func, "ffmedia: MediaState resource manager", NULL);
+
+	if (t) {
+		ms_manager_thread = t;
+	}
+	else {
+		SDL_DestroyMutex(ms_manager_lock);
+		SDL_DestroyCond(ms_manager_cond);
+		return;
+	}
+#endif
+}
+
+void media_quit(void) {
+#ifndef __EMSCRIPTEN__
+	if (ms_manager_thread != NULL && ms_manager_lock != NULL && ms_manager_cond != NULL) {
+		SDL_LockMutex(ms_manager_lock);
+		while (ms_manager_mediastate != NULL)
+		{
+			SDL_CondWait(ms_manager_cond, ms_manager_lock);
+		}
+		ms_manager_quit = 1;
+		SDL_CondBroadcast(ms_manager_cond);
+		SDL_UnlockMutex(ms_manager_lock);
+		SDL_WaitThread(ms_manager_thread, NULL);
+		SDL_DestroyCond(ms_manager_cond);
+		SDL_DestroyMutex(ms_manager_lock);
+	}
+#endif
 }
 
 

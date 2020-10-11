@@ -63,6 +63,7 @@ struct MediaState;
 typedef struct MediaState MediaState;
 
 void media_init(int rate, int status, int equal_mono);
+void media_quit(void);
 
 void media_advance_time(void);
 void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba);
@@ -1176,6 +1177,8 @@ void RPS_quit() {
     for (i = 0; i < num_channels; i++) {
         RPS_stop(i);
     }
+
+    media_quit();
 
     SDL_CloseAudio();
 
