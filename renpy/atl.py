@@ -179,7 +179,7 @@ def interpolate(t, a, b, type): # @ReservedAssignment
     """
 
     # Deal with booleans, nones, etc.
-    if b is None or isinstance(b, (bool, basestring, renpy.display.im.matrix)):
+    if b is None or isinstance(b, (bool, basestring, renpy.display.matrix.Matrix)):
         if t >= 1.0:
             return b
         else:
