@@ -153,10 +153,10 @@ obtain at the end of the statement. The value can be obtained in several ways:
 * If the value is followed by one or more knots, then spline motion is used.
   The starting point is the value of the property at the start of the
   interpolation, the end point is the property value, and the knots are used
-  to control the spline. A quadratic curve is used for a single knot, Bezier 
-  is used when there are two and Catmull-Rom is used for three or more knots. 
-  In the former two cases, the knot or knots are simply control nodes. For 
-  Catmull-Rom, the first and last knot are control nodes (often outside the 
+  to control the spline. A quadratic curve is used for a single knot, Bezier
+  is used when there are two and Catmull-Rom is used for three or more knots.
+  In the former two cases, the knot or knots are simply control nodes. For
+  Catmull-Rom, the first and last knot are control nodes (often outside the
   displayed path) and the other knots are points the path passes through.
 
 * If the interpolation statement contains a "clockwise" or
@@ -1018,7 +1018,7 @@ both horizontal and vertical positions.
     :default: None
 
     If not None, the value of this property is used to recolor everything
-    that children of this transform draw. See :ref:`matricolor` for more
+    that children of this transform draw. See :ref:`matrixcolor` for more
     information.
 
 .. transform-property:: blur

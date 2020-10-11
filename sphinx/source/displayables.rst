@@ -38,7 +38,7 @@ string is given, a dynamic image is created. A dynamic image has
 of each interaction (such as say statements and menus). The resulting
 string is processed according to the rules above.
 
-When a string has "[prefix_]" in it, that substitution is replaced with
+When a string has "[prefix\_]" in it, that substitution is replaced with
 each of the style prefixes associated with the current displayable.
 
 .. _images:

@@ -92,7 +92,7 @@ of the displayable by the given number of pixels.
 
 
 Python 2/Python 3 Compatibility Mode
------------------------------------
+------------------------------------
 
 While Ren'Py is not yet supported on Python 3, this release of Ren'Py
 includes several features to allow you to begin writing scripts that will
@@ -132,31 +132,24 @@ has changed slightly. Here's the latest list of what is supported:
 
     * - Platform
       - CPU
-      - Status
       - Note
     * - Linux
       - x86_64
-      - Done
       - Raised minimum version to Ubuntu 16.04
     * - Linux
       - i686
-      - Done
       - Raised minimum version to Ubuntu 16.04
     * - Linux
       - i686
-      - Done
       - Raised minimum version to Ubuntu 16.04
     * - Linux
       - armv7l
-      - Done
       - Intended to support Raspberry Pi, uses Raspian Buster
     * - Windows
       - x86_64
-      - Done
       - A new port to 64-bit Windows XP+
     * - Windows
       - i686
-      - Done
       - Continued support for 32-Bit Windows XP+
     * - macOS
       - x86_64
@@ -311,7 +304,7 @@ This release fixes major graphics glitches that were introduced in 7.3.3.
 Other Changes
 -------------
 
-Dynamic images can now include "[prefix_]" everywhere, and especially when
+Dynamic images can now include "[prefix\_]" everywhere, and especially when
 ``add`` has been used to add a dynamic image to buttons, drags, and similar
 focusable objects.
 
@@ -391,7 +384,7 @@ The notify screen is now hidden on rollback.
 The NVL mode screen indicates that it shows the window, which prevents
 problems when ``window show`` is in effect.
 
-When a :ref:`Call` with `from_current` set to true occurs during a
+When a :func:`Call` with `from_current` set to true occurs during a
 multi-part statement (like a menu with dialogue), control is restored
 to the first part of that multi-part statement (thus causing the dialouge
 to be displayed).
