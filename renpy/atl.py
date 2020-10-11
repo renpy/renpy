@@ -190,6 +190,9 @@ def interpolate(t, a, b, type): # @ReservedAssignment
         if a is None:
             a = [ None ] * len(b)
 
+        if not isinstance(type, tuple):
+            type = (type,) * len(b)
+
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
 
     # If something is callable, call it and return the result.
@@ -249,33 +252,34 @@ def interpolate_spline(t, spline):
 
             # Catmull-Rom (re-adjust the control points)
             spline = ([spline[1], spline[0]]
-                    + list(spline[2:-2])
-                    + [spline[-1], spline[-2]])
+                    +list(spline[2:-2])
+                    +[spline[-1], spline[-2]])
 
             inner_spline_count = float(len(spline) - 3)
 
             # determine which spline values are relevant
-            sector = int(t // ( 1.0 / inner_spline_count ) + 1)
+            sector = int(t // (1.0 / inner_spline_count) + 1)
 
             # determine t for this sector
-            t = ( t % ( 1.0 / inner_spline_count ) ) * inner_spline_count
+            t = (t % (1.0 / inner_spline_count)) * inner_spline_count
 
-            rv = get_catmull_rom_value(t, *spline[sector-1:sector+3])
+            rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
 
     return correct_type(rv, spline[-1], position)
 
 
 def get_catmull_rom_value(t, p_1, p0, p1, p2):
-    """ 
-    Very basic Catmull-Rom calculation with no alpha or handling 
+    """
+    Very basic Catmull-Rom calculation with no alpha or handling
     of multi-dimensional points
     """
     t = float(max(0.0, min(1.0, t)))
     return type(p0)(
-        (t * ((2-t)*t - 1) * p_1
-        + (t*t*(3*t - 5) + 2) * p0
-        + t*((4 - 3*t)*t + 1) * p1
-        + (t-1)*t*t * p2 ) / 2)
+        (t * ((2 - t) * t - 1) * p_1
+        +(t * t * (3 * t - 5) + 2) * p0
+        +t * ((4 - 3 * t) * t + 1) * p1
+        +(t - 1) * t * t * p2) / 2)
+
 
 # A list of atl transforms that may need to be compile.
 compile_queue = [ ]
