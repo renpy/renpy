@@ -172,12 +172,12 @@ Generally, shader parts should be of the form "namespace.part", such as
 
 Ren'Py supports only the following variable types:
 
-* float
-* vec2
-* vec3
-* vec4
-* mat4
-* sampler2D
+* float (a Python float)
+* vec2 (a tuple of 2 floats)
+* vec3 (a tuple of 3 floats)
+* vec4 (a tuple of 4 floats)
+* mat4 (a :class:`Matrix`)
+* sampler2D (supplied by Ren'Py)
 
 Uniform variables should begin with u\_, attributes with a\_, and varying
 variables with v\_. Names starting with u_renpy\_, a_renpy, and v_renpy
