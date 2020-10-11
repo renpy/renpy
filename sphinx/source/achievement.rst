@@ -13,7 +13,7 @@ automatically synchronized with Steam.
 .. include:: inc/achievement
 
 
-Variables that control achievements are::
+Variables that control achievements are:
 
 .. var:: achievement.steam_position = None
 
