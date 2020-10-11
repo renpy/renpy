@@ -481,6 +481,9 @@ def find_parents(cls):
     # GC to save memory.
     gc.collect()
 
+    if gc.garbage:
+        del gc.garbage[:]
+
     objs = gc.get_objects()
 
     def print_path(o):
