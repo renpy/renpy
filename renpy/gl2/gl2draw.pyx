@@ -1195,6 +1195,7 @@ cdef class GL2DrawingContext:
 
         program.start()
 
+        program.set_uniform("u_model_size", (model.width, model.height))
         program.set_uniform("u_lod_bias", -1.0)
         program.set_uniform("u_transform", transform)
         program.set_uniform("u_time", renpy.display.interface.frame_time)
