@@ -302,6 +302,9 @@ cdef class GLTexture(Model):
         tw = min(int(tw), loader.max_texture_width)
         th = min(int(th), loader.max_texture_height)
 
+        tw = max(tw, 1)
+        th = max(th, 1)
+
         cdef GLuint premultiplied
 
         glGenTextures(1, &premultiplied)
