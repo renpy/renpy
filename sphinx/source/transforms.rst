@@ -61,8 +61,8 @@ The transforms are:
 .. var:: default
 
     Centers horizontally, and aligns to the bottom of the screen. This
-    can be redefined to change the default placement of images shown
-    with the show or scene statements.
+    can be redefined via :var:`config.default_transform` to change the
+    default placement of images shown with the show or scene statements.
 
 .. var:: left
 
