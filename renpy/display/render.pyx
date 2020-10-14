@@ -876,37 +876,6 @@ cdef class Render:
 
         reverse = self.reverse
 
-        # This code doesn't work. We need to do the clipping in the screen
-        # space, or it's too easy to get overlaps or lines. (At some point,
-        # we should optimize things and only clip when necessary.)
-
-#         if False and ((reverse is not None) and (reverse.xdx != 1.0 or reverse.ydy != 1.0) and
-#             (reverse.xdx > 0.0 and
-#             reverse.xdy == 0.0 and
-#             reverse.ydx == 0.0 and
-#             reverse.ydy > 0.0)):
-#
-#             # When rectangle-aligned but not 1:1, transform the rectangle and
-#             # keep cropping.
-#
-#             w, h = self.forward.transform(w + x, h + y)
-#             x, y = self.forward.transform(x, y)
-#
-#
-#             x = int(x)
-#             y = int(y)
-#             w = int(w) - x + 1
-#             h = int(h) - y
-#
-#             if (w <= 0) or (h <= 0):
-#                 return rv
-#
-#             xdx = 1.0 * rect[2] / w
-#             ydy = 1.0 * rect[3] / h
-#
-#             rv.reverse = Matrix2D(xdx, 0.0, 0.0, ydy)
-#             rv.forward = Matrix2D(1.0 / xdx, 0.0, 0.0, 1.0 / ydy)
-
         if ((reverse is not None) and
             (reverse.xdx != 1.0 or
             reverse.xdy != 0.0 or
@@ -1027,7 +996,6 @@ cdef class Render:
         rv.operation_complete = self.operation_complete
         rv.nearest = self.nearest
 
-        # TODO: Non-true mesh.
         rv.mesh = self.mesh
         rv.shaders = self.shaders
         rv.uniforms = self.uniforms
