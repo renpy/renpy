@@ -881,7 +881,7 @@ cdef class Render:
             reverse.xdy != 0.0 or
             reverse.ydx != 0.0 or
             reverse.ydy != 1.0) or
-            (self.mesh and (self.mesh is not True))):
+            self.mesh):
 
             # This doesn't actually make a subsurface, as we can't easily do
             # so for non-rectangle-aligned renders.
