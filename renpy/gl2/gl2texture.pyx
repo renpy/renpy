@@ -305,6 +305,9 @@ cdef class GLTexture(Model):
         tw = max(tw, 1)
         th = max(th, 1)
 
+        cw = max(cw, 1)
+        ch = max(ch, 1)
+
         cdef GLuint premultiplied
 
         glGenTextures(1, &premultiplied)
