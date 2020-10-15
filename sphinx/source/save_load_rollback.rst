@@ -36,16 +36,20 @@ the game began, and all objects reachable from those variables. Note that it's
 the change to the variables that matters – changes to fields in objects will
 not cause those objects to be saved.
 
+Variables set using the :ref:`default statement <default-statement>` will
+always be saved.
+
 In this example::
 
     define a = 1
     define o = object()
+    default c = 17
 
     label start:
          $ b = 1
          $ o.value = 42
 
-only `b` will be saved. A will not be saved because it does not change once
+only `b` and `c` will be saved. `A` will not be saved because it does not change once
 the game begins. `O` is not saved because it does not change – the object it
 refers to changes, but the variable itself does not.
 
@@ -53,7 +57,7 @@ refers to changes, but the variable itself does not.
 What isn't Saved
 ================
 
-Python variables that are not changed before the game begins will not be
+Python variables that are not changed after the game begins will not be
 saved. This can be a major problem if a variable that is saved and one that is
 refer to the same object. (Alias the object.) In this example::
 
