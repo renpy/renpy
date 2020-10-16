@@ -12,4 +12,5 @@ if [ "$1" != "" ]; then
     ln -s "$1/lib" "$ROOT/lib"
     ln -s "$1/renpy.app" "$ROOT"
     ln -s "$1/renpy.exe" "$ROOT"
+    ln -s "$1/renpy.sh" "$ROOT"
 fi
