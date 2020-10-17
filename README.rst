@@ -52,7 +52,7 @@ the command::
     apt-get install virtualenvwrapper python-dev libavcodec-dev libavformat-dev \
         libavresample-dev libswresample-dev libswscale-dev libfreetype6-dev libglew1.6-dev \
         libfribidi-dev libsdl2-dev libsdl2-image-dev libsdl2-gfx-dev \
-        libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-turbo8-dev
+        libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev
 
 We strongly suggest installing the Ren'Py modules into a Python
 virtualenv. To create a new virtualenv, open a new terminal and run::
@@ -80,7 +80,7 @@ Next, set RENPY_DEPS_INSTALL To a \:-separated (\;-separated on Windows)
 list of paths containing the dependencies, and RENPY_CYTHON to the name
 of the cython command::
 
-    export RENPY_DEPS_INSTALL="/usr:/usr/lib/x86_64-linux-gnu/"
+    export RENPY_DEPS_INSTALL="/usr:/usr/lib/$(uname -m)-linux-gnu/"
     export RENPY_CYTHON=cython
 
 Finally, use setup.py in the Ren'Py ``module`` directory to compile and
