@@ -123,10 +123,15 @@ The resulting image is the size of the bounding box of all the layers, so
 it probably makes sense to have one layer the full size of the image, which
 no other layer goes outside of. The first layer is in the back of the image,
 while the last is in front – in this example, the glasses will be on top of
-the other layers.
+the other layers. It's recommended to avoid properties that assume the size
+of the containing image, like :propref:`xcenter` and :propref:`xalign`, as
+these properties do not work well the when the image size is not known.
 
 Groups and attributes may appear more than once in a layered image, with
 all of the layers with an attribute being displayed.
+
+With the exception of the condition in an ``if`` statement, all Python
+expressions are evaluated at init time.
 
 
 Using an Layered Image
@@ -536,6 +541,14 @@ Ren'Py optimizes images by cropping them to the bounding box of the
 non-transparent pixels before loading them into RAM. As a result, assuming
 the images are being predicted properly, it generally won't improve
 performance or image size much to crop the images yourself.
+
+**Layered images shouldn't use data that changes at runtime.**
+With the exception of the condition inside an if statement, all of the
+expressions in a layered images are run at init time. The layered image
+will not pick up changes in variables that occur after the game starts.
+(However, expressions in ATL transforms will be run each time the image
+is show, as with other ATL transforms.)
+
 
 
 Python
