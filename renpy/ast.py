@@ -2275,10 +2275,7 @@ class Screen(Node):
 
     def __init__(self, loc, screen):
         """
-        @param name: The name of the image being defined.
-
-        @param expr: An expression yielding a Displayable that is
-        assigned to the image.
+        @param screen: The name of the screen being defined.
         """
 
         super(Screen, self).__init__(loc)
