@@ -2275,10 +2275,9 @@ class Screen(Node):
 
     def __init__(self, loc, screen):
         """
-        @param name: The name of the image being defined.
-
-        @param expr: An expression yielding a Displayable that is
-        assigned to the image.
+        @param screen: The screen object being defined. 
+        In SL1, an instance of screenlang.ScreenLangScreen.
+        In SL2, an instance of sl2.slast.SLScreen.
         """
 
         super(Screen, self).__init__(loc)
