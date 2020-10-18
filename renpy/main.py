@@ -568,6 +568,9 @@ def main():
 
         gc.collect(2)
 
+        if gc.garbage:
+            del gc.garbage[:]
+
         if renpy.config.manage_gc:
             gc.set_threshold(*renpy.config.gc_thresholds)
 

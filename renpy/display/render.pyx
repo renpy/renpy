@@ -131,6 +131,10 @@ def check_at_shutdown():
     free_memory()
 
     gc.collect()
+
+    if gc.garbage:
+        del gc.garbage[:]
+
     l = gc.get_objects()
 
     count = 0

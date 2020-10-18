@@ -2017,7 +2017,7 @@ class Interface(object):
         gc.collect()
 
         if gc.garbage:
-            gc.garbage[:] = [ ]
+            del gc.garbage[:]
 
         renpy.display.render.render_ready()
 
@@ -2936,7 +2936,7 @@ class Interface(object):
 
             if gc.garbage:
                 renpy.memory.print_garbage(gen)
-                gc.garbage[:] = [ ]
+                del gc.garbage[:]
 
             renpy.plog(2, "after gc")
 
