@@ -2275,7 +2275,9 @@ class Screen(Node):
 
     def __init__(self, loc, screen):
         """
-        @param screen: The name of the screen being defined.
+        @param screen: The screen object being defined. 
+        In SL1, an instance of screenlang.ScreenLangScreen.
+        In SL2, an instance of sl2.slast.SLScreen.
         """
 
         super(Screen, self).__init__(loc)
