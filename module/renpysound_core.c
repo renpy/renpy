@@ -523,7 +523,13 @@ static int check_channel(int c) {
     }
 
     if (c >= num_channels) {
-        channels = realloc(channels, sizeof(struct Channel) * (c + 1));
+        struct Channel *extended_channels = realloc(channels, sizeof(struct Channel) * (c + 1));
+        if (extended_channels == NULL) {
+            error(RPS_ERROR);
+            error_msg = "Unable to allocate additional channels.";
+            return -1;
+        }
+        channels = extended_channels;
 
         for (i = num_channels; i <= c; i++) {
 
