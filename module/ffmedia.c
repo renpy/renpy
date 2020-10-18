@@ -141,11 +141,15 @@ typedef struct SurfaceQueueEntry {
 
 typedef struct MediaState {
 
+    /* The next entry in a list of MediaStates */
+    struct MediaState *next;
+
+    /* The thread associated with decoding this media. */
+    SDL_Thread *thread;
 
 	/* The condition and lock. */
 	SDL_cond* cond;
 	SDL_mutex* lock;
-
 
 	SDL_RWops *rwops;
 	char *filename;
@@ -154,12 +158,6 @@ typedef struct MediaState {
 	 * True if we this stream should have video.
 	 */
 	int want_video;
-
-	/*
-	 * This becomes true when the decode thread starts, when
-	 * it is the decode thread's job to deallocate this object.
-	 */
-	int started;
 
 	/* This becomes true once the decode thread has finished initializing
 	 * and the readers and writers can do their thing.
@@ -263,10 +261,17 @@ static AVFrame *dequeue_frame(FrameQueue *fq);
 static void free_packet_queue(PacketQueue *pq);
 static SurfaceQueueEntry *dequeue_surface(SurfaceQueueEntry **queue);
 
-static void deallocate(MediaState *ms) {
-	/* Destroy video stuff. */
 
-	while (1) {
+/* A queue of MediaState objects that are awaiting deallocation.*/
+static MediaState *deallocate_queue = NULL;
+
+/* A mutex that discards deallocate_queue. */
+SDL_mutex *deallocate_mutex = NULL;
+
+/* Deallocates a single MediaState. */
+static void deallocate(MediaState *ms) {
+
+    while (1) {
 		SurfaceQueueEntry *sqe = dequeue_surface(&ms->surface_queue);
 
 		if (! sqe) {
@@ -356,7 +361,34 @@ static void deallocate(MediaState *ms) {
 	if (ms->filename) {
 		av_free(ms->filename);
 	}
-	av_free(ms);
+
+	/* Add this MediaState to a queue to have its thread ended, and the MediaState
+	 * deactivated.
+	 */
+	SDL_LockMutex(deallocate_mutex);
+    ms->next = deallocate_queue;
+    deallocate_queue = ms;
+    SDL_UnlockMutex(deallocate_mutex);
+
+}
+
+/* Perform the portion of deallocation that's been deferred to the main thread. */
+static void deallocate_deferred() {
+
+    SDL_LockMutex(deallocate_queue);
+
+    while (deallocate_queue) {
+        MediaState *ms = deallocate_queue;
+        deallocate_queue = ms->next;
+
+        if (ms->thread) {
+            SDL_WaitThread(ms->thread, NULL);
+        }
+
+        av_free(ms);
+    }
+
+    SDL_UnlockMutex(deallocate_mutex);
 }
 
 static void enqueue_frame(FrameQueue *fq, AVFrame *frame) {
@@ -1414,17 +1446,16 @@ void media_start(MediaState *ms) {
 
 	snprintf(buf, 1024, "decode: %s", ms->filename);
 	SDL_Thread *t = SDL_CreateThread(decode_thread, buf, (void *) ms);
-
-	if (t) {
-		ms->started = 1;
-		SDL_DetachThread(t);
-	}
+	ms->thread = t;
 #endif
 }
 
 
 MediaState *media_open(SDL_RWops *rwops, const char *filename) {
-	MediaState *ms = av_calloc(1, sizeof(MediaState));
+
+    deallocate_deferred();
+
+    MediaState *ms = av_calloc(1, sizeof(MediaState));
 	if (ms == NULL) {
 		return NULL;
 	}
@@ -1488,7 +1519,7 @@ void media_want_video(MediaState *ms, int video) {
 
 void media_close(MediaState *ms) {
 
-	if (!ms->started) {
+	if (!ms->thread) {
 		deallocate(ms);
 		return;
 	}
@@ -1516,6 +1547,8 @@ void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
 }
 
 void media_init(int rate, int status, int equal_mono) {
+
+    deallocate_mutex = SDL_CreateMutex();
 
 	audio_sample_rate = rate / SPEED;
 	audio_equal_mono = equal_mono;
