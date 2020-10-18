@@ -41,6 +41,10 @@ in Python.
 Screens are updated at the start of each interaction, and each time an
 interaction is restarted.
 
+A screen has a scope associated with it, giving values to some
+variables. When a variable is accessed by a screen, it's first looked
+up in the scope, and then looked up as a global variable.
+
 **Screens must not cause side effects that are visible from
 outside the screen.** Ren'Py will run a screen multiple times, as
 it deems necessary. It runs a screen as part of the image
@@ -48,9 +52,13 @@ prediction process, before the screen is first shown. As a result, if
 running a screen has side effects, those side effects may occur at
 unpredictable times.
 
-A screen has a scope associated with it, giving values to some
-variables. When a variable is accessed by a screen, it's first looked
-up in the scope, and then looked up as a global variable.
+**Using Python generators in screens may cause unpredictable results.**
+This traces back to an issue with the way the Python interpreter compiles
+Python source code that will be used in a screen context. Generators
+can be used in Python functions called from a screen, but not in the
+screen itself.
+
+
 
 Screen Language
 ===============
