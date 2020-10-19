@@ -434,10 +434,13 @@ class Grid(Container):
         rows = self.rows
 
         if len(self.children) != cols * rows:
-            if len(self.children) < cols * rows:
+            if not config.allow_underfull and len(self.children) < cols * rows:
                 raise Exception("Grid not completely full.")
-            else:
+            elif len(self.children) > cols * rows:
                 raise Exception("Grid overfull.")
+            else:
+                while len(self.children) < cols * rows:
+                    self.children.append(Null())
 
         if self.transpose:
             children = [ ]
