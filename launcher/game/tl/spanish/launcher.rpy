@@ -1654,3 +1654,50 @@ translate spanish strings:
     old "audio"
     new "audio"
 
+    # game/androidstrings.rpy:47
+    old "Do you want to automatically update the Java source code?"
+    new "¿Quiere actualizar automáticamente el código fuente de Java?"
+
+    # game/choose_directory.rpy:93
+    old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."
+    new "Ren'Py no pudo ejecutar Python con tkinter para elegir el directorio. Instale el paquete python3-tk o tkinter."
+
+    # game/install.rpy:33
+    old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
+    new "No se pudo instalar [name!t], ya que no se encontró un archivo que coincida con [zipglob] en el directorio del SDK de Ren'Py."
+
+    # game/install.rpy:76
+    old "Successfully installed [name!t]."
+    new "[name!t] se instaló correctamente."
+
+    # game/install.rpy:104
+    old "Install Libraries"
+    new "Instalar bibliotecas"
+
+    # game/install.rpy:119
+    old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
+    new "Esta pantalla le permite instalar bibliotecas que no se pueden distribuir con Ren'Py. Algunas de estas bibliotecas pueden requerir que acepte una licencia de terceros antes de ser utilizadas o distribuidas."
+
+    # game/install.rpy:134
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} agrega soporte para mostrar modelos Live2D. Coloque CubismSdkForNative-4-{i}version{/i}.zip en el directorio Ren'Py SDK y luego haga clic en Instalar. La distribución de un juego con Live2D requiere que acepte una licencia de Live2D, Inc."
+
+    # game/install.rpy:138
+    old "Open Ren'Py SDK Directory"
+    new "Abrir el directorio del SDK de Ren'Py"
+
+    # game/preferences.rpy:138
+    old "Install libraries"
+    new "Instalar bibliotecas"
+
+    # game/preferences.rpy:140
+    old "Reset window size"
+    new "Restablecer el tamaño de la ventana"
+
+    # game/web.rpy:242
+    old "Preparing progressive download"
+    new "Preparando descarga progresiva"
+
+    # game/web.rpy:341
+    old "Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    new "Las imágenes y las músicas se pueden descargar mientras juega. Se creará un archivo 'progress_download.txt' para que pueda configurar este comportamiento."

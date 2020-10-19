@@ -196,3 +196,14 @@
     old "long: Print the full representation of objects on the console."
     new "long: imprime la representación completa de los objetos en la consola."
 
+    # renpy/common/00console.rpy:814
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    new "watch <expression>: observa una expresión de Python\n watch short: hace que la representación de las expresiones rastreadas sea corta (predeterminado)\n watch long: hace que la representación de las expresiones rastreadas sea corta"
+
+    # renpy/common/00console.rpy:925
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    new "escape: habilita el escape de símbolos Unicode en cadenas Unicode."
+
+    # renpy/common/00console.rpy:929
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    new "unescape: Desactiva el escape de símbolos Unicode en cadenas Unicode y lo imprime como está (predeterminado)."
