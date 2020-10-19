@@ -459,6 +459,9 @@ log_enable = True
 # Should we log text overflows?
 debug_text_overflow = False
 
+# Should underfull grids raise an exception?
+allow_underfull = False
+
 # Should we save the window size in the preferences?
 save_physical_size = True
 

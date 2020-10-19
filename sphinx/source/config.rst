@@ -226,6 +226,10 @@ Occasionally Used
     If not None, a function that is called with no arguments after a
     replay completes.
 
+.. var:: config.allow_underfull = False
+
+    If True, Ren'Py will not require grids to be full in order to display.
+
 .. var:: config.auto_channels = { "audio" : ( "sfx", "", ""  ) }
 
     This is used to define automatic audio channels. It's a map the
