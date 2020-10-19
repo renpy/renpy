@@ -434,7 +434,7 @@ class Grid(Container):
         rows = self.rows
 
         if len(self.children) != cols * rows:
-            if not config.allow_underfull and len(self.children) < cols * rows:
+            if not renpy.config.allow_underfull and len(self.children) < cols * rows:
                 raise Exception("Grid not completely full.")
             elif len(self.children) > cols * rows:
                 raise Exception("Grid overfull.")
