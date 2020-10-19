@@ -32,15 +32,17 @@ screen about:
 
             has vbox xfill True
 
-            add "images/logo.png" xalign 0.5 yoffset -5
+            add "images/logo.png" xalign 0.5 yoffset +25 zoom .75
 
-            null height 15
+            null height 70
 
-            text _("[version!q]") xalign 0.5 bold True
+            text _("[version!q]") xalign 0.5 bold True yoffset -30
 
-            null height 20
+            text "Ren'Py is an awesome and an ever-growing visual novel engine used by thousands of creators from around the world. It is a powerful tool for creating visual novels and also life simulation games, using Python scripting. The lovely open source community helps Ren'Py grow!" xalign 0.5 yoffset -10 size 14
 
-            textbutton _("View license") action interface.OpenLicense() xalign 0.5
+            null height 2
+
+            textbutton _("View license") action interface.OpenLicense() xalign 0.5 yoffset -5
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
 
