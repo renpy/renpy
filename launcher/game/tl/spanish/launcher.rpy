@@ -1680,7 +1680,7 @@ translate spanish strings:
 
     # game/install.rpy:134
     old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
-    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} agrega soporte para mostrar modelos Live2D. Coloque CubismSdkForNative-4-{i}versión{/i}.zip en el directorio Ren'Py SDK y luego haga clic en Instalar. La distribución de un juego con Live2D requiere que acepte una licencia de Live2D, Inc."
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} agrega soporte para mostrar modelos Live2D. Coloque CubismSdkForNative-4-{i}version{/i}.zip en el directorio Ren'Py SDK y luego haga clic en Instalar. La distribución de un juego con Live2D requiere que acepte una licencia de Live2D, Inc."
 
     # game/install.rpy:138
     old "Open Ren'Py SDK Directory"
