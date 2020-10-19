@@ -236,3 +236,38 @@
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Copia el archivo errors.txt al portapapeles como Markdown para Discord."
 
+    # renpy/common/00gltest.rpy:77
+    old "Force ANGLE Renderer"
+    new "Force renderizador ANGLE"
+
+    # renpy/common/00gltest.rpy:81
+    old "Force GL Renderer"
+    new "Force renderizador GL"
+
+    # renpy/common/00gltest.rpy:85
+    old "Force GLES Renderer"
+    new "Force renderizador GLES"
+
+    # renpy/common/00gltest.rpy:90
+    old "Force ANGLE2 Renderer"
+    new "Force renderizador ANGLE2"
+
+    # renpy/common/00gltest.rpy:94
+    old "Force GL2 Renderer"
+    new "Force renderizador GL2"
+
+    # renpy/common/00gltest.rpy:98
+    old "Force GLES2 Renderer"
+    new "Force renderizador GLES2"
+
+    # renpy/common/00gltest.rpy:218
+    old "This game requires use of GL2 that can't be initialised."
+    new "Este juego requiere el uso de GL2 que no se puede inicializar."
+
+    # renpy/common/00gltest.rpy:229
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Puede encontrar más detalles sobre cómo solucionar este problema en la {a=[url]} documentación {/a}."
+
+    # renpy/common/00gltest.rpy:246
+    old "Change render options"
+    new "Cambiar las opciones de renderizado"
