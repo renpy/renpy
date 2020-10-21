@@ -258,6 +258,9 @@ class Pixellate(Transition):
         The number of steps that will occur, in each direction. Each step
         creates pixels about twice the size of those in the previous step,
         so a 5-step pixellation will create 32x32 pixels.
+
+    Note: When using the angle on certain hardware, this may lead to a pixellated
+    blur rather than correct pixellation. This mode should be rare in practice.
     """
 
     def __init__(self, time, steps, old_widget=None, new_widget=None, **properties):
@@ -304,6 +307,7 @@ class Pixellate(Transition):
         rv.mesh = True
         rv.add_shader("renpy.texture")
         rv.add_property("texture_scaling", "nearest_mipmap_nearest")
+        rv.add_property("anisotropic", False)
         rv.add_uniform("u_lod_bias", step + 1)
 
         renpy.display.render.redraw(self, 0)

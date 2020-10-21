@@ -191,13 +191,13 @@ cdef class TextureLoader:
 
         return rv
 
-    def render_to_texture(self, what):
+    def render_to_texture(self, what, anisotropic=True):
         """
         Renders `what` to a texture.
         """
 
         rv = Texture(what.get_size(), self)
-        rv.from_render(what)
+        rv.from_render(what, anisotropic)
         return rv
 
 
@@ -285,7 +285,7 @@ cdef class GLTexture(Model):
 
         self.loader.texture_load_queue.add(self)
 
-    def from_render(GLTexture self, what):
+    def from_render(GLTexture self, what, anisotropic):
         """
         This renders `what` to this texture.
         """
@@ -319,7 +319,7 @@ cdef class GLTexture(Model):
         cdef Matrix transform
         transform = Matrix.ctexture_projection(cw, ch)
 
-        self.allocate_texture(premultiplied, tw, th)
+        self.allocate_texture(premultiplied, tw, th, anisotropic)
 
         # Set up the viewport.
         glViewport(0, 0, tw, th)
@@ -404,7 +404,7 @@ cdef class GLTexture(Model):
         program.finish()
 
         # Create premultiplied.
-        self.allocate_texture(premultiplied, self.width, self.height)
+        self.allocate_texture(premultiplied, self.width, self.height, True)
 
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, self.width, self.height, 0)
 
@@ -420,7 +420,7 @@ cdef class GLTexture(Model):
         self.loaded = True
         self.surface = None
 
-    def allocate_texture(GLTexture self, GLuint tex, int tw, int th):
+    def allocate_texture(GLTexture self, GLuint tex, int tw, int th, anisotropic):
         """
         Allocates the VRAM required to store `tex`, which is a `tw` x `th`
         texture, including all mipmap levels.
@@ -437,7 +437,9 @@ cdef class GLTexture(Model):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-        glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, self.loader.max_anisotropy)
+
+        if anisotropic:
+            glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, self.loader.max_anisotropy)
 
         # Store the texture size that was loaded.
         self.texture_width = tw
