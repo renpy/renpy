@@ -375,7 +375,7 @@ static void deallocate(MediaState *ms) {
 /* Perform the portion of deallocation that's been deferred to the main thread. */
 static void deallocate_deferred() {
 
-    SDL_LockMutex(deallocate_queue);
+    SDL_LockMutex(deallocate_mutex);
 
     while (deallocate_queue) {
         MediaState *ms = deallocate_queue;
