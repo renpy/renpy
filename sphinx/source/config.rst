@@ -226,7 +226,7 @@ Occasionally Used
     If not None, a function that is called with no arguments after a
     replay completes.
 
-.. var:: config.allow_underfull = False
+.. var:: config.allow_underfull_grids = False
 
     If True, Ren'Py will not require grids to be full in order to display.
 

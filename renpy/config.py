@@ -460,7 +460,7 @@ log_enable = True
 debug_text_overflow = False
 
 # Should underfull grids raise an exception?
-allow_underfull = False
+allow_underfull_grids = False
 
 # Should we save the window size in the preferences?
 save_physical_size = True
@@ -1087,4 +1087,3 @@ def init():
         (r'\.(png|jpg|jpeg|webp|gif|tif|tiff|bmp)$', renpy.exports.flush_cache_file),
         (r'\.(mp2|mp3|ogg|opus|wav)$', renpy.audio.audio.autoreload),
         ]
-
