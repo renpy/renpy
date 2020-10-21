@@ -376,6 +376,8 @@ init python:
     build.classify_renpy("lib/**/*steam_api*", None)
     build.classify_renpy("lib/linux-armv7l/", "raspi")
     build.classify_renpy("lib/linux-armv7l/**", "raspi")
+    build.classify_renpy("lib/linux-aarch64/", "raspi")
+    build.classify_renpy("lib/linux-aarch64/**", "raspi")
     build.classify_renpy("lib/**", "binary")
     build.classify_renpy("renpy.sh", "binary")
     # renpy.app is now built from scratch from distribute.rpy.
