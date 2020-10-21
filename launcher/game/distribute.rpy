@@ -903,6 +903,16 @@ init python in distribute:
                     armfn,
                     True)
 
+            arm64fn = os.path.join(config.renpy_base, "lib/linux-aarch64/renpy")
+
+            if os.path.exists(arm64fn):
+
+                self.add_file(
+                    raspi,
+                    "lib/linux-aarch64/" + self.executable_name,
+                    arm64fn,
+                    True)
+
 
             self.add_file(
                 mac,
