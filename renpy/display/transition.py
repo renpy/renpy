@@ -258,9 +258,6 @@ class Pixellate(Transition):
         The number of steps that will occur, in each direction. Each step
         creates pixels about twice the size of those in the previous step,
         so a 5-step pixellation will create 32x32 pixels.
-
-    Note: When using the angle on certain hardware, this may lead to a pixellated
-    blur rather than correct pixellation. This mode should be rare in practice.
     """
 
     def __init__(self, time, steps, old_widget=None, new_widget=None, **properties):
