@@ -26,6 +26,7 @@
 
 import sys
 
+
 # Gtk generally has better support than TKinter on various Linux distributions
 def gtk_select_directory(title):
     dialog = Gtk.FileChooserNative(title=title,
@@ -41,18 +42,19 @@ def tk_select_directory(initialdir, title):
     root = Tk()
     root.withdraw()
 
-    return skdirectory(initialdir=initialdir, parent=root, title=title)
+    return askdirectory(initialdir=initialdir, parent=root, title=title)
+
 
 try:
     import gi
     gi.require_version('Gtk', '3.0')
     from gi.repository import Gtk
-    
+
     def select_directory(title):
         result = gtk_select_directory(title)
 
         return result if result else ''
-    
+
 except:
 # Python3 and Python2-style imports.
     try:
