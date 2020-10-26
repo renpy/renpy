@@ -29,13 +29,13 @@ import random
 
 
 def compiling(loc):
-    file, number = loc # @ReservedAssignment
+    file, number = loc  # @ReservedAssignment
 
     renpy.game.exception_info = "Compiling ATL code at %s:%d" % (file, number)
 
 
 def executing(loc):
-    file, number = loc # @ReservedAssignment
+    file, number = loc  # @ReservedAssignment
 
     renpy.game.exception_info = "Executing ATL code at %s:%d" % (file, number)
 
@@ -173,7 +173,7 @@ def correct_type(v, b, ty):
         return ty(v)
 
 
-def interpolate(t, a, b, type): # @ReservedAssignment
+def interpolate(t, a, b, type):  # @ReservedAssignment
     """
     Linearly interpolate the arguments.
     """
@@ -308,9 +308,9 @@ class Context(object):
     def __init__(self, context):
         self.context = context
 
-    def eval(self, expr): # @ReservedAssignment
+    def eval(self, expr):  # @ReservedAssignment
         expr = renpy.python.escape_unicode(expr)
-        return eval(expr, renpy.store.__dict__, self.context) # @UndefinedVariable
+        return eval(expr, renpy.store.__dict__, self.context)  # @UndefinedVariable
 
     def __eq__(self, other):
         if not isinstance(other, Context):
@@ -395,6 +395,7 @@ class ATLTransformBase(renpy.object.Object):
             compile_queue.append(self)
 
     def _handles_event(self, event):
+        # type: (str) -> bool
         if (self.block is not None) and (self.block._handles_event(event)):
             return True
 
@@ -527,7 +528,7 @@ class ATLTransformBase(renpy.object.Object):
 
         return rv
 
-    def compile(self): # @ReservedAssignment
+    def compile(self):  # @ReservedAssignment
         """
         Compiles the ATL code into a block. As necessary, updates the
         properties.
@@ -579,6 +580,7 @@ class ATLTransformBase(renpy.object.Object):
         return block
 
     def execute(self, trans, st, at):
+        # type: (Transform, float, float) -> Union[float, None]
 
         if self.done:
             return None
@@ -668,7 +670,7 @@ class RawStatement(object):
 
     # Compiles this RawStatement into a Statement, by using ctx to
     # evaluate expressions as necessary.
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         raise Exception("Compile not implemented.")
 
     # Predicts the images used by this statement.
@@ -722,10 +724,12 @@ class Statement(renpy.object.Object):
 
     # Return a list of displayable children.
     def visit(self):
+        # type: () -> list
         return [ ]
 
     # Does this respond to an event?
     def _handles_event(self, event):
+        # type: (str) -> bool
         return False
 
 # This represents a Raw ATL block.
@@ -745,7 +749,7 @@ class RawBlock(RawStatement):
 
         self.animation = animation
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
 
         statements = [ i.compile(ctx) for i in self.statements ]
@@ -787,7 +791,7 @@ class Block(Statement):
         self.times.sort()
 
     def _handles_event(self, event):
-
+        # type: (str) -> bool
         for i in self.statements:
             if i._handles_event(event):
                 return True
@@ -795,7 +799,7 @@ class Block(Statement):
         return False
 
     def execute(self, trans, st, state, events):
-
+        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str])
         executing(self.loc)
 
         # Unpack the state.
@@ -946,7 +950,7 @@ class RawMultipurpose(RawStatement):
     def add_spline(self, name, exprs):
         self.splines.append((name, exprs))
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
 
         compiling(self.loc)
 
@@ -1079,7 +1083,7 @@ class RawContainsExpr(RawStatement):
 
         self.expression = expr
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         child = ctx.eval(self.expression)
         return Child(self.loc, child, None)
@@ -1097,7 +1101,7 @@ class RawChild(RawStatement):
 
         self.children = [ child ]
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
 
         children = [ ]
 
@@ -1133,7 +1137,7 @@ class Child(Statement):
         self.transition = transition
 
     def execute(self, trans, st, state, events):
-
+        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str])
         executing(self.loc)
 
         old_child = trans.raw_child
@@ -1179,7 +1183,7 @@ class Interpolation(Statement):
         self.circles = circles
 
     def execute(self, trans, st, state, events):
-
+        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str])
         executing(self.loc)
 
         warper = warpers.get(self.warper, self.warper)
@@ -1331,7 +1335,7 @@ class RawRepeat(RawStatement):
 
         self.repeats = repeats
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
 
         compiling(self.loc)
 
@@ -1355,6 +1359,7 @@ class Repeat(Statement):
         self.repeats = repeats
 
     def execute(self, trans, st, state, events):
+        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str]) -> tuple[str, tuple, int]
         return "repeat", (self.repeats, st), 0
 
 # Parallel statement.
@@ -1367,7 +1372,7 @@ class RawParallel(RawStatement):
         super(RawParallel, self).__init__(loc)
         self.blocks = [ block ]
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         return Parallel(self.loc, [i.compile(ctx) for i in self.blocks])
 
     def predict(self, ctx):
@@ -1391,7 +1396,7 @@ class Parallel(Statement):
         self.blocks = blocks
 
     def _handles_event(self, event):
-
+        # type: (str) -> bool
         for i in self.blocks:
             if i._handles_event(event):
                 return True
@@ -1399,7 +1404,7 @@ class Parallel(Statement):
         return False
 
     def execute(self, trans, st, state, events):
-
+        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str])
         executing(self.loc)
 
         if state is None:
@@ -1446,7 +1451,7 @@ class RawChoice(RawStatement):
 
         self.choices = [ (chance, block) ]
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         return Choice(self.loc, [ (ctx.eval(chance), block.compile(ctx)) for chance, block in self.choices])
 
@@ -1473,7 +1478,7 @@ class Choice(Statement):
         self.choices = choices
 
     def _handles_event(self, event):
-
+        # type: (str) -> bool
         for i in self.choices:
             if i[1]._handles_event(event):
                 return True
@@ -1481,7 +1486,7 @@ class Choice(Statement):
         return False
 
     def execute(self, trans, st, state, events):
-
+        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str])
         executing(self.loc)
 
         if state is None:
@@ -1522,7 +1527,7 @@ class RawTime(RawStatement):
         super(RawTime, self).__init__(loc)
         self.time = time
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         return Time(self.loc, ctx.eval(self.time))
 
@@ -1538,6 +1543,7 @@ class Time(Statement):
         self.time = time
 
     def execute(self, trans, st, state, events):
+        # type: (Transform, float, tuple[str, float, Union[tuple, None], list[str]]) -> tuple[str, None, None]
         return "continue", None, None
 
 # The On statement.
@@ -1553,7 +1559,7 @@ class RawOn(RawStatement):
         for i in names:
             self.handlers[i] = block
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
 
         handlers = { }
@@ -1585,13 +1591,14 @@ class On(Statement):
         self.handlers = handlers
 
     def _handles_event(self, event):
+        # type: (str) -> bool
         if event in self.handlers:
             return True
         else:
             return False
 
     def execute(self, trans, st, state, events):
-
+        # type: (Transform, float, tuple[str, float, Union[tuple, None], list[str]]) -> tuple[str, tuple, None]
         executing(self.loc)
 
         # If it's our first time through, start in the start state.
@@ -1672,7 +1679,7 @@ class RawEvent(RawStatement):
 
         self.name = name
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         return Event(self.loc, self.name)
 
     def mark_constant(self):
@@ -1687,6 +1694,7 @@ class Event(Statement):
         self.name = name
 
     def execute(self, trans, st, state, events):
+        # type: (Transform, float, tuple[str, float, Union[tuple, None], list[str]]) -> tuple(str, tuple[str, float], None)
         return "event", (self.name, st), None
 
 
@@ -1697,7 +1705,7 @@ class RawFunction(RawStatement):
 
         self.expr = expr
 
-    def compile(self, ctx): # @ReservedAssignment
+    def compile(self, ctx):  # @ReservedAssignment
         compiling(self.loc)
         return Function(self.loc, ctx.eval(self.expr))
 
@@ -1713,9 +1721,11 @@ class Function(Statement):
         self.function = function
 
     def _handles_event(self, event):
+        # type: (str) -> bool
         return True
 
     def execute(self, trans, st, state, events):
+        # type: (Transform, float, tuple[str, float, Union[tuple, None], list[str]]) -> tuple(str, Union[int, None], Union[Callable, None])
         fr = self.function(trans, st, trans.at)
 
         if fr is not None:
