@@ -474,6 +474,9 @@ cdef class GLTexture(Model):
         if level == 0:
             return
 
+        if tw == 0 or th == 0:
+            return
+
         glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST)
         glGenerateMipmap(GL_TEXTURE_2D)
 
