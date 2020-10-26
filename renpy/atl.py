@@ -27,6 +27,11 @@ import renpy.pyanalysis
 
 import random
 
+try:
+    from typing import Callable, List, Tuple, Union
+except ImportError:
+    pass
+
 
 def compiling(loc):
     file, number = loc  # @ReservedAssignment
@@ -580,7 +585,7 @@ class ATLTransformBase(renpy.object.Object):
         return block
 
     def execute(self, trans, st, at):
-        # type: (Transform, float, float) -> Union[float, None]
+        # type: (Transform, float, float) -> Union[int, float, None]
 
         if self.done:
             return None
@@ -799,7 +804,7 @@ class Block(Statement):
         return False
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str])
+        # type: (Transform, float, Tuple, List[str]) -> Tuple
         executing(self.loc)
 
         # Unpack the state.
@@ -1137,7 +1142,7 @@ class Child(Statement):
         self.transition = transition
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str])
+        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple[str, float, None]
         executing(self.loc)
 
         old_child = trans.raw_child
@@ -1183,7 +1188,7 @@ class Interpolation(Statement):
         self.circles = circles
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str])
+        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple
         executing(self.loc)
 
         warper = warpers.get(self.warper, self.warper)
@@ -1359,7 +1364,7 @@ class Repeat(Statement):
         self.repeats = repeats
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str]) -> tuple[str, tuple, int]
+        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple[str, Tuple, int]
         return "repeat", (self.repeats, st), 0
 
 # Parallel statement.
@@ -1404,7 +1409,7 @@ class Parallel(Statement):
         return False
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str])
+        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple
         executing(self.loc)
 
         if state is None:
@@ -1486,7 +1491,7 @@ class Choice(Statement):
         return False
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, tuple[str, float, Union[tuple, None]], list[str])
+        # type: (Transform, float, Tuple, List[str]) -> Tuple
         executing(self.loc)
 
         if state is None:
@@ -1505,9 +1510,9 @@ class Choice(Statement):
             cstate = None
 
         else:
-            choice, cstate = state
+            choice, cstate = state  # type: Choice, Tuple
 
-        action, arg, pause = choice.execute(trans, st, cstate, events)
+        action, arg, pause = choice.execute(trans, st, cstate, events)  # type: Tuple
 
         if action == "continue":
             return "continue", (choice, arg), pause
@@ -1543,7 +1548,7 @@ class Time(Statement):
         self.time = time
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, tuple[str, float, Union[tuple, None], list[str]]) -> tuple[str, None, None]
+        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple[str, None, None]
         return "continue", None, None
 
 # The On statement.
@@ -1598,7 +1603,7 @@ class On(Statement):
             return False
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, tuple[str, float, Union[tuple, None], list[str]]) -> tuple[str, tuple, None]
+        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple[str, Tuple, None]
         executing(self.loc)
 
         # If it's our first time through, start in the start state.
@@ -1694,7 +1699,7 @@ class Event(Statement):
         self.name = name
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, tuple[str, float, Union[tuple, None], list[str]]) -> tuple(str, tuple[str, float], None)
+        # type: (Transform, float, Tuple[str, float, Union[tuple, None]], List[str]) -> Tuple[str, Tuple[str, float], None]
         return "event", (self.name, st), None
 
 
@@ -1725,7 +1730,7 @@ class Function(Statement):
         return True
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, tuple[str, float, Union[tuple, None], list[str]]) -> tuple(str, Union[int, None], Union[Callable, None])
+        # type: (Transform, float, Tuple[str, float, Union[tuple, None]], List[str]) -> Tuple[str, Union[int, None], Union[Callable, None]]
         fr = self.function(trans, st, trans.at)
 
         if fr is not None:
