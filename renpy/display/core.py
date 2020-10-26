@@ -2058,6 +2058,7 @@ class Interface(object):
         pygame.display.hint("SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS", "0")
         pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
+        pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
 
         # Needed for Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
@@ -2306,6 +2307,9 @@ class Interface(object):
 
         if draw:
             renpy.display.draw.draw_screen(surftree)
+
+        if renpy.emscripten:
+            emscripten.sleep(0)
 
         now = time.time()
 
@@ -2557,7 +2561,18 @@ class Interface(object):
 
         self.check_background_screenshot()
 
-        ev = pygame.event.wait()
+        if renpy.emscripten:
+
+            while True:
+                ev = pygame.event.poll()
+                if ev.type != pygame.NOEVENT:
+                    break
+
+                emscripten.sleep(5)
+
+        else:
+            ev = pygame.event.wait()
+
         self.last_event = ev
 
         return ev
