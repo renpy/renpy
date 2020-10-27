@@ -28,7 +28,8 @@ import renpy.pyanalysis
 import random
 
 try:
-    from typing import Callable, List, Tuple, Union
+    from typing import Any, Callable, Dict, List, Text, Tuple, Union
+    from renpy.display.transform import Transform
 except ImportError:
     pass
 
@@ -287,7 +288,7 @@ def get_catmull_rom_value(t, p_1, p0, p1, p2):
 
 
 # A list of atl transforms that may need to be compile.
-compile_queue = [ ]
+compile_queue = [ ]  # type: List[ATLTransformBase]
 
 
 def compile_all():
@@ -394,13 +395,13 @@ class ATLTransformBase(renpy.object.Object):
         self.parent_transform = None
 
         # The offset between st and when this ATL block first executed.
-        self.atl_st_offset = 0
+        self.atl_st_offset = 0  # type: Union[None, float, int]
 
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
     def _handles_event(self, event):
-        # type: (str) -> bool
+        # type: (Text) -> bool
         if (self.block is not None) and (self.block._handles_event(event)):
             return True
 
@@ -734,7 +735,7 @@ class Statement(renpy.object.Object):
 
     # Does this respond to an event?
     def _handles_event(self, event):
-        # type: (str) -> bool
+        # type: (Text) -> bool
         return False
 
 # This represents a Raw ATL block.
@@ -796,7 +797,7 @@ class Block(Statement):
         self.times.sort()
 
     def _handles_event(self, event):
-        # type: (str) -> bool
+        # type: (Text) -> bool
         for i in self.statements:
             if i._handles_event(event):
                 return True
@@ -804,7 +805,7 @@ class Block(Statement):
         return False
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, Tuple, List[str]) -> Tuple
+        # type: (Transform, float, Tuple, List[Text]) -> Tuple[Text, Any, Any]
         executing(self.loc)
 
         # Unpack the state.
@@ -1142,7 +1143,7 @@ class Child(Statement):
         self.transition = transition
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple[str, float, None]
+        # type: (Transform, float, Tuple[Text, float, Union[Tuple, None]], List[Text]) -> Tuple[Text, float, None]
         executing(self.loc)
 
         old_child = trans.raw_child
@@ -1188,7 +1189,7 @@ class Interpolation(Statement):
         self.circles = circles
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple
+        # type: (Transform, float, Tuple[Dict, float, Union[Tuple, None]], List[Text]) -> Tuple
         executing(self.loc)
 
         warper = warpers.get(self.warper, self.warper)
@@ -1230,10 +1231,10 @@ class Interpolation(Statement):
 
             # Now, the things we change linearly are in the difference
             # between the new and old states.
-            linear = trans.state.diff(newts)
+            linear = trans.state.diff(newts)  # type: Dict
 
-            revolution = None
-            splines = [ ]
+            revolution = None  # type: Union[Tuple, None]
+            splines = [ ]  # type: List
 
             revdir = self.revolution
             circles = self.circles
@@ -1258,10 +1259,10 @@ class Interpolation(Statement):
                     trans.state.yanchoraround = newts.yanchoraround
 
                     # Get the start and end angles and radii.
-                    startangle = trans.state.angle
-                    endangle = newts.angle
-                    startradius = trans.state.radius
-                    endradius = newts.radius
+                    startangle = trans.state.angle  # type: int
+                    endangle = newts.angle  # type: int
+                    startradius = trans.state.radius  # type: int
+                    endradius = newts.radius  # type: int
 
                     # Make sure the revolution is in the appropriate direction,
                     # and contains an appropriate number of circles.
@@ -1364,7 +1365,7 @@ class Repeat(Statement):
         self.repeats = repeats
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple[str, Tuple, int]
+        # type: (Transform, float, Tuple[Text, float, Union[Tuple, None]], List[Text]) -> Tuple[Text, Tuple, int]
         return "repeat", (self.repeats, st), 0
 
 # Parallel statement.
@@ -1401,7 +1402,7 @@ class Parallel(Statement):
         self.blocks = blocks
 
     def _handles_event(self, event):
-        # type: (str) -> bool
+        # type: (Text) -> bool
         for i in self.blocks:
             if i._handles_event(event):
                 return True
@@ -1409,7 +1410,7 @@ class Parallel(Statement):
         return False
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple
+        # type: (Transform, float, Tuple[Parallel, Union[Tuple, None]], List[Text]) -> Tuple
         executing(self.loc)
 
         if state is None:
@@ -1483,7 +1484,7 @@ class Choice(Statement):
         self.choices = choices
 
     def _handles_event(self, event):
-        # type: (str) -> bool
+        # type: (Text) -> bool
         for i in self.choices:
             if i[1]._handles_event(event):
                 return True
@@ -1491,7 +1492,7 @@ class Choice(Statement):
         return False
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, Tuple, List[str]) -> Tuple
+        # type: (Transform, float, Union[Tuple, None], List[Text]) -> Tuple
         executing(self.loc)
 
         if state is None:
@@ -1512,7 +1513,7 @@ class Choice(Statement):
         else:
             choice, cstate = state  # type: Choice, Tuple
 
-        action, arg, pause = choice.execute(trans, st, cstate, events)  # type: Tuple
+        action, arg, pause = choice.execute(trans, st, cstate, events)  # type: Text, Any, int
 
         if action == "continue":
             return "continue", (choice, arg), pause
@@ -1548,7 +1549,7 @@ class Time(Statement):
         self.time = time
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple[str, None, None]
+        # type: (Transform, float, Tuple[Text, float, Union[Tuple, None]], List[Text]) -> Tuple[Text, None, None]
         return "continue", None, None
 
 # The On statement.
@@ -1596,14 +1597,14 @@ class On(Statement):
         self.handlers = handlers
 
     def _handles_event(self, event):
-        # type: (str) -> bool
+        # type: (Text) -> bool
         if event in self.handlers:
             return True
         else:
             return False
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, Tuple[str, float, Union[Tuple, None]], List[str]) -> Tuple[str, Tuple, None]
+        # type: (Transform, float, Tuple[Text, float, Union[Tuple, None]], List[Text]) -> Tuple[Text, Tuple, None]
         executing(self.loc)
 
         # If it's our first time through, start in the start state.
@@ -1699,7 +1700,7 @@ class Event(Statement):
         self.name = name
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, Tuple[str, float, Union[tuple, None]], List[str]) -> Tuple[str, Tuple[str, float], None]
+        # type: (Transform, float, Tuple[Text, float, Union[tuple, None]], List[Text]) -> Tuple[Text, Tuple[Text, float], None]
         return "event", (self.name, st), None
 
 
@@ -1726,11 +1727,11 @@ class Function(Statement):
         self.function = function
 
     def _handles_event(self, event):
-        # type: (str) -> bool
+        # type: (Text) -> bool
         return True
 
     def execute(self, trans, st, state, events):
-        # type: (Transform, float, Tuple[str, float, Union[tuple, None]], List[str]) -> Tuple[str, Union[int, None], Union[Callable, None]]
+        # type: (Transform, float, Tuple[Text, float, Union[tuple, None]], List[Text]) -> Tuple[Text, Union[int, None], Union[Callable, None]]
         fr = self.function(trans, st, trans.at)
 
         if fr is not None:
