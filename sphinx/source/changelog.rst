@@ -234,7 +234,7 @@ The ``define`` statement can now be used to set a key in a dictionary. ::
     # Ren'Py was started in 2004.
     define age["eileen"] = 2020 - 2004
 
-The ``define`` statement can take += and |=, to apply the appropriate
+The ``define`` statement can take += and \|=, to apply the appropriate
 update operators. ::
 
     define config.keymap['dismiss'] = [ 'K_KP_PLUS' ]
