@@ -173,7 +173,7 @@ has changed slightly. Here's the latest list of what is supported:
       - webasm
       - Modern web browsers
 
-The biggest new platform that Ren'Py supports is the 64-bit windows
+The biggest new platform that Ren'Py supports is the 64-bit Windows
 platform, which means that Ren'Py is available in 64-bits on all major
 desktop and mobile platforms.  The new :var:`renpy.bits` variable can
 be used to determine if Ren'Py is running on a 32 or 64-bit platform,
