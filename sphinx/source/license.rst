@@ -25,7 +25,7 @@ Most of Ren'Py is covered by the terms of the following (MIT) license:
     OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Portions of Ren'Py are derived from code that is licensed under the
+Portions of Ren'Py are derived from source code that is licensed under the
 GNU Lesser General Public License, so Ren'Py games must be distributed in a
 manner that satisfies the LGPL.
 
@@ -33,7 +33,7 @@ Please see each individual source file for a list of copyright
 holders. The artwork in the demo is released by various copyright
 holders, under the same terms.
 
-Ren'Py binaries include code from the following projects:
+Ren'Py binaries can include source code from the following projects:
 
 * Python (Python License)
 * Pygame_SDL2 (MIT License, GNU LGPL)
@@ -51,17 +51,23 @@ Ren'Py binaries include code from the following projects:
 * py2exe (MIT License)
 * GLEW (Modified BSD, MIT License)
 * zsync (Artistic License)
+* pyjnius (MIT License)
+* ANGLE (Three clause BSD License)
 
 For the purposes of LGPL compliance, all source code that Ren'Py depends
 on is located in one of the following repositories:
 
 * https://github.com/renpy/renpy (Ren'Py)
 * https://github.com/renpy/pygame_sdl2 (Pygame_SDL2)
+* https://github.com/renpy/renpy-build (Dependencies)
+* https://github.com/renpy/renpyweb (Web)
+
+And for releases before Ren'Py 7.4:
+
 * https://github.com/renpy/renpy-deps (Desktop dependencies)
 * https://github.com/renpy/python-for-android (Android)
 * https://github.com/renpy/rapt (Android Build Tools)
 * https://github.com/renpy/renios (iOS)
-* https://github.com/renpy/renpyweb (Web)
 
 Although we are unable to provide legal advice, we believe compliance can be
 achieved by including a copy of this license with every copy of Ren'Py you
