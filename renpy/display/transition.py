@@ -475,22 +475,22 @@ class ImageDissolve(Transition):
         if not reverse:
 
             # Copies red -> alpha
-            matrix = renpy.display.im.matrix(
-                0, 0, 0, 0, 1,
-                0, 0, 0, 0, 1,
-                0, 0, 0, 0, 1,
-                1, 0, 0, 0, 0)
+            matrix = renpy.display.matrix.Matrix([0, 0, 0, 0,
+                                                  0, 0, 0, 0,
+                                                  0, 0, 0, 0,
+                                                  1, 0, 0, 0, ])
 
         else:
 
             # Copies 1-red -> alpha
-            matrix = renpy.display.im.matrix(
-                0, 0, 0, 0, 1,
-                0, 0, 0, 0, 1,
-                0, 0, 0, 0, 1,
-                -1, 0, 0, 0, 1)
+            matrix = renpy.display.matrix.Matrix([0, 0, 0, 0,
+                                                  0, 0, 0, 0,
+                                                  0, 0, 0, 0,
+                                                  -1, 0, 0, 1, ])
+            # asserts the displayable is not transparent at all
+            # just like InvertMatrix does
 
-        self.image = renpy.display.im.MatrixColor(image, matrix)
+        self.image = renpy.display.motion.Transform(image, matrixcolor=matrix)
 
         if ramp is not None:
             ramplen = len(ramp)
