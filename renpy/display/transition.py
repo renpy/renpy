@@ -408,9 +408,9 @@ class ImageDissolve(Transition):
     dissolve in first, and black pixels will dissolve in last.
 
     `image`
-        A control image to use. This must be either an image file or
-        image manipulator. The control image should be the size of
-        the scenes being dissolved.
+        A control image to use. This can be any displayable. The control image
+        should be the size of the scenes being dissolved, and if `reverse=True`,
+        it should be fully opaque.
 
     `time`
         The time the dissolve will take.
