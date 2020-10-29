@@ -174,13 +174,13 @@ def main():
 
     # Add paths.
     if os.path.exists(renpy_base + "/module"):
-        sys.path.append(renpy_base + "/module")
+        sys.path.insert(0, renpy_base + "/module")
 
-    sys.path.append(renpy_base)
+    sys.path.insert(0, renpy_base)
 
     # This is looked for by the mac launcher.
     if os.path.exists(renpy_base + "/renpy.zip"):
-        sys.path.append(renpy_base + "/renpy.zip")
+        sys.path.insert(0, renpy_base + "/renpy.zip")
 
     # Ignore warnings that happen.
     warnings.simplefilter("ignore", DeprecationWarning)
