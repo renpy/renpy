@@ -103,7 +103,7 @@ translate simplified_chinese strings:
 
     # 00gltest.rpy:256
     old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
-    new "关于如何解决该问题的更多细节可以在{a=[url]}文档{/a}中找到。"
+    new "关于如何解决该问题的更多详情可以在{a=[url]}文档{/a}中找到。"
 
     # 00gltest.rpy:242
     old "Continue, Show this warning again"
