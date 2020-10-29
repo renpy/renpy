@@ -73,6 +73,10 @@ translate simplified_chinese strings:
     old "This computer is using software rendering."
     new "此计算机正在使用软件渲染。"
 
+    # 00gltest.rpy:245
+    old "This game requires use of GL2 that can't be initialised."
+    new "此游戏需要使用 GL2，但其无法初始化。"
+
     # 00gltest.rpy:220
     old "This computer is not using shaders."
     new "此计算机没有使用着色器。"
@@ -97,6 +101,10 @@ translate simplified_chinese strings:
     old "Update DirectX"
     new "更新 DirectX"
 
+    # 00gltest.rpy:256
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "关于如何解决该问题的更多细节可以在{a=[url]}文档{/a}中找到。"
+
     # 00gltest.rpy:242
     old "Continue, Show this warning again"
     new "继续，下次继续显示该警告"
@@ -104,6 +112,10 @@ translate simplified_chinese strings:
     # 00gltest.rpy:246
     old "Continue, Don't show warning again"
     new "继续，不再显示该警告"
+
+    # 00gltest.rpy:273
+    old "Change render options"
+    new "更改渲染选项"
 
     # 00gltest.rpy:264
     old "Updating DirectX."
