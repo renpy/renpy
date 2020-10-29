@@ -37,6 +37,8 @@ import warnings
 
 
 def path_to_common(renpy_base):
+    if (renpy_base + "/renpy.zip") in sys.path:
+        return (renpy_base + "/renpy.zip", "renpy/common/")
     return renpy_base + "/renpy/common"
 
 # Given a directory holding a Ren'Py game, this is expected to return
