@@ -327,11 +327,13 @@ def main():
     # Find the common directory.
     commondir = __main__.path_to_common(renpy.config.renpy_base) # E1101 @UndefinedVariable
 
-    if os.path.isdir(commondir):
-        renpy.config.searchpath.append(commondir)
-        renpy.config.commondir = commondir
-    else:
-        renpy.config.commondir = None
+    renpy.config.commondir = None
+    if commondir is not None: 
+        if isinstance(commondir, str) and os.path.isdir(commondir):
+            renpy.config.searchpath.append(commondir)
+            renpy.config.commondir = commondir
+        elif isinstance(commondir, tuple) and len(commondir) >= 2 and os.path.isfile(commondir[0]):
+            renpy.config.commondir = commondir
 
     # Add path from env variable, if any
     if "RENPY_SEARCHPATH" in os.environ:

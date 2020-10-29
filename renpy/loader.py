@@ -31,6 +31,8 @@ import zlib
 import re
 import io
 import unicodedata
+import zipfile
+import struct
 
 from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded
@@ -95,6 +97,9 @@ else:
 # Files on disk should be checked before archives. Otherwise, among
 # other things, using a new version of bytecode.rpyb will break.
 archives = [ ]
+
+# A list of paths that should be handled as the Ren'Py common folder.
+common_paths = [ ]
 
 # The value of renpy.config.archives the last time index_archives was
 # run.
@@ -243,6 +248,38 @@ def index_archives():
                     except:
                         raise
 
+    global common_paths
+    common_paths = []
+    if renpy.config.commondir is not None:
+        commondir = renpy.config.commondir
+        if isinstance(commondir, tuple) and len(commondir) >= 2:
+            test_commonfile = commondir[0]
+            if os.path.isfile(commondir[0]):
+                index = {}
+                with open(test_commonfile, "rb") as f:
+                    with zipfile.ZipFile(f) as zf:
+                        for info in zf.infolist():
+                            fn = info.filename.decode("ASCII")
+                            if fn.startswith("./"):
+                                fn = fn[2:]
+                            if info.filename.startswith(commondir[1]):
+                                fn = fn[13:]
+                                # Only uncompressed entries are supported.
+                                if info.compress_type == zipfile.ZIP_STORED:
+                                    index[fn] = []
+                                    f.seek(info.header_offset)
+                                    h = struct.unpack(zipfile.structFileHeader, f.read(zipfile.sizeFileHeader))
+                                    offset = (
+                                        info.header_offset +
+                                        zipfile.sizeFileHeader +
+                                        h[zipfile._FH_FILENAME_LENGTH] +
+                                        h[zipfile._FH_EXTRA_FIELD_LENGTH])
+                                    index[fn].append((offset, info.file_size, b""))
+                if len(index) > 0:
+                    archives.append((test_commonfile, index, True))
+        elif isinstance(commondir, str) and os.path.isdir(commondir):
+            common_paths.append(commondir)
+
     for dir, fn in listdirfiles(): # @ReservedAssignment
         lower_map[unicodedata.normalize('NFC', fn.lower())] = fn
 
@@ -384,7 +421,7 @@ def scandirfiles_from_filesystem(add, seen):
 
     for i in renpy.config.searchpath:
 
-        if (renpy.config.commondir) and (i == renpy.config.commondir):
+        if i in common_paths:
             files = common_files # @UnusedVariable
         else:
             files = game_files # @UnusedVariable
@@ -400,9 +437,13 @@ def scandirfiles_from_archives(add, seen):
     Scans archives and fills out game_files.
     """
 
-    files = game_files
-
-    for _prefix, index in archives:
+    for archive in archives:
+        index = archive[1]
+        common = (len(archive) >= 3 and archive[2] is True)
+        if common:
+            files = common_files
+        else:
+            files = game_files
         for j in index:
             add(None, j, files, seen)
 
@@ -660,23 +701,31 @@ def load_from_archive(name):
     Returns an open python file object of the given type from an archive file.
     """
 
-    for prefix, index in archives:
+    for archive in archives:
+        prefix = archive[0]
+        index = archive[1]
+        common = (len(archive) >= 3 and archive[2] is True)
         if not name in index:
             continue
 
-        afn = transfn(prefix)
-
         data = [ ]
+
+        afn = prefix
+        if not common:
+            afn = transfn(afn)
 
         # Direct path.
         if len(index[name]) == 1:
 
             t = index[name][0]
             if len(t) == 2:
-                offset, dlen = t
+                offset = t[0]
+                dlen = t[1]
                 start = b''
             else:
-                offset, dlen, start = t
+                offset = t[0]
+                dlen = t[1]
+                start = t[2]
 
             rv = SubFile(afn, offset, dlen, start)
 
@@ -789,7 +838,8 @@ def loadable_core(name):
             loadable_cache[name] = True
             return True
 
-    for _prefix, index in archives:
+    for archive in archives:
+        index = archive[1]
         if name in index:
             loadable_cache[name] = True
             return True
