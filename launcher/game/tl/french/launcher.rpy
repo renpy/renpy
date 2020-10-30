@@ -819,7 +819,7 @@ translate french strings:
 
     # navigation.rpy:249
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
-    new "Aucun commentaire «TODO» trouvé.\n\nPour en créer un, écrivez \"# TODO\" dans le script."
+    new "Aucun commentaire « TODO » trouvé.\n\nPour en créer un, écrivez \"# TODO\" dans le script."
 
     # navigation.rpy:256
     old "The list of names is empty."
@@ -919,7 +919,7 @@ translate french strings:
 
     # preferences.rpy:173
     old "Show templates"
-    new "Afficher  les modèles"
+    new "Afficher les modèles"
 
     # preferences.rpy:174
     old "Show edit file section"
@@ -1115,7 +1115,7 @@ translate french strings:
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
-    new "Un aperçu de la prochaine version de Ren’Py qui peut être utilisée pour faire des tests et profiter de toutes nouvelles fonctionnalités, mais par pour créer de nouveaux jeux."
+    new "Un aperçu de la prochaine version de Ren’Py qui peut être utilisée pour faire des tests et profiter de toutes nouvelles fonctionnalités, mais pas pour créer de nouveaux jeux."
 
     # updater.rpy:114
     old "Experimental"
