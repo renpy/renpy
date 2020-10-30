@@ -1604,3 +1604,55 @@ translate russian strings:
     # game/web.rpy:151
     old "Open build directory"
     new "Открыть папку сборки"
+
+    # game/androidstrings.rpy:47
+    old "Do you want to automatically update the Java source code?"
+    new "Вы хотите автоматически обновлять исходный код Java?"
+
+    # game/choose_directory.rpy:93
+    old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."
+    new "Ren'Py не смог запустить python с tkinter для выбора каталога. Пожалуйста, установите модуль python3-tk или tkinter."
+
+    # game/front_page.rpy:198
+    old "audio"
+    new "звук"
+
+    # game/install.rpy:33
+    old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
+    new "Установка [name!t] провалилась, так как файл, соответствующий [zipglob] не был найден в папке Ren'Py SDK."
+
+    # game/install.rpy:76
+    old "Successfully installed [name!t]."
+    new "Успешно установлен [name!t]."
+
+    # game/install.rpy:104
+    old "Install Libraries"
+    new "Установка библиотек"
+
+    # game/install.rpy:119
+    old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
+    new "Этот экран позволяет установить библиотеки, которые не могут распространяться вместе с Ren'Py. Некоторые из этих библиотек могут потребовать от вас принятия сторонней лицензии для использования или распространения."
+
+    # game/install.rpy:134
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} добавляет поддержку отображения моделей Live2D. Поместите CubismSdkForNative-4-{i}версия{/i}.zip в папку Ren'Py SDK, а затем нажмите кнопку Установить. Для распространения игры с Live2D необходимо принять лицензию от Live2D, Inc."
+
+    # game/install.rpy:138
+    old "Open Ren'Py SDK Directory"
+    new "Открыть папку Ren'Py SDK"
+
+    # game/preferences.rpy:138
+    old "Install libraries"
+    new "Установить библиотеки"
+
+    # game/preferences.rpy:140
+    old "Reset window size"
+    new "Сбросить размер окна"
+
+    # game/web.rpy:242
+    old "Preparing progressive download"
+    new "Подготовка прогрессивной загрузки"
+
+    # game/web.rpy:341
+    old "Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    new "Изображения и музыка могут загружаться во время игры. Будет создан файл 'progressive_download.txt', чтобы вы могли настроить такое поведение."
