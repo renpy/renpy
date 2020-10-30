@@ -459,7 +459,7 @@ translate spanish strings:
 
     # screens.rpy:1009
     old "Advances dialogue without selecting choices."
-    new "Avanza el dilogo sin seleccionar opciones."
+    new "Avanza el diálogo sin seleccionar opciones."
 
     # screens.rpy:1012
     old "Arrow Keys"
