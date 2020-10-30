@@ -113,6 +113,13 @@ class Script(object):
         else:
             self.key = None
 
+        # A list of directory, filename w/o extension pairs. This is
+        # what we will load immediately.
+        self.script_files = [ ]
+
+        # Similar, but for modules:
+        self.module_files = [ ]
+
         self.namemap = { }
         self.all_stmts = [ ]
         self.all_pycode = [ ]
@@ -169,8 +176,8 @@ class Script(object):
 
     def make_backups(self):
 
-        backup_list = self.backup_list
-        self.backup_list = [ ]
+        backup_list = self.backup_list[:]
+        del self.backup_list[:]
 
         if os.environ.get("RENPY_DISABLE_BACKUPS", "") == "I take responsibility for this.":
             return
@@ -228,12 +235,8 @@ class Script(object):
         # A list of all files in the search directories.
         dirlist = renpy.loader.listdirfiles()
 
-        # A list of directory, filename w/o extension pairs. This is
-        # what we will load immediately.
-        self.script_files = [ ]
-
-        # Similar, but for modules:
-        self.module_files = [ ]
+        del self.script_files[:]
+        del self.module_files[:]
 
         for dir, fn in dirlist: # @ReservedAssignment
 
@@ -807,7 +810,7 @@ class Script(object):
             except:
                 pass
 
-        self.all_pyexpr = [ ]
+        del self.all_pyexpr[:]
 
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
@@ -862,7 +865,7 @@ class Script(object):
             self.bytecode_newcache[key] = code
             i.bytecode = marshal.loads(code)
 
-        self.all_pycode = [ ]
+        del self.all_pycode[:]
 
     def save_bytecode(self):
         if renpy.macapp:
@@ -938,7 +941,7 @@ class Script(object):
         for i in self.need_analysis:
             i.analyze()
 
-        self.need_analysis = [ ]
+        del self.need_analysis[:]
 
     def report_duplicate_labels(self):
         if not renpy.config.developer:

@@ -24,7 +24,7 @@
 init python:
 
     def _clear_performance():
-        renpy.display.interface.frame_times[:] = [ ]
+        del renpy.display.interface.frame_times[:]
 
 screen _performance:
 

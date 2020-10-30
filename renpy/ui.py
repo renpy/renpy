@@ -238,13 +238,10 @@ imagemap_stack = [ ]
 # Called at the end of the init phase, and from the screen
 # prediction code.
 def reset():
-    global stack
-    global at_stack
-    global imagemap_stack
-
-    stack = [ Layer('transient') ]
-    at_stack = [ ]
-    imagemap_stack = [ ]
+    del stack[:]
+    stack.append(Layer('transient'))
+    del at_stack[:]
+    del imagemap_stack[:]
 
 
 renpy.game.post_init.append(reset)
@@ -392,7 +389,7 @@ def reopen(w, clear):
     stack.append(Many(w))
 
     if clear:
-        w.children[:] = [ ]
+        del w.children[:]
 
 
 def context_enter(w):

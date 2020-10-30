@@ -217,7 +217,7 @@ cdef class TextureLoader:
 
             self.allocated.discard(texture_number)
 
-        self.free_list = [ ]
+        del self.free_list[:]
 
 
     def ready_one_texture(self):

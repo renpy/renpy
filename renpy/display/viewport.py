@@ -267,7 +267,8 @@ class Viewport(renpy.display.layout.Container):
         cw, ch = surf.get_size()
         cxo, cyo, width, height = self.update_offsets(cw, ch, st)
 
-        self.offsets = [ (cxo, cyo) ]
+        del self.offsets[:]
+        self.offsets.append((cxo, cyo))
 
         rv = renpy.display.render.Render(width, height)
         rv.blit(surf, (cxo, cyo))
@@ -543,7 +544,7 @@ class VPGrid(Viewport):
         child_height = self.child_height or height
 
         if not self.children:
-            self.offsets = [ ]
+            del self.offsets[:]
             return renpy.display.render.Render(0, 0)
 
         # The number of children.
@@ -595,7 +596,7 @@ class VPGrid(Viewport):
         cxo += left_margin
         cyo += top_margin
 
-        self.offsets = [ ]
+        del self.offsets[:]
 
         # Render everything.
         rv = renpy.display.render.Render(width, height)

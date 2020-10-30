@@ -895,7 +895,7 @@ class SceneLists(renpy.object.Object):
         for layer, tag in self.additional_transient:
             self.remove(layer, tag, prefix=prefix)
 
-        self.additional_transient = [ ]
+        del self.additional_transient[:]
 
     def transient_is_empty(self):
         """
@@ -1216,7 +1216,7 @@ class SceneLists(renpy.object.Object):
             return
 
         if not hide:
-            self.layers[layer] = [ ]
+            del self.layers[layer][:]
 
         else:
 
@@ -2261,7 +2261,7 @@ class Interface(object):
         self.profile_once = False
 
         # Clear the frame times.
-        self.frame_times = [ ]
+        del self.frame_times[:]
 
     def set_mode(self):
         """
@@ -2885,8 +2885,8 @@ class Interface(object):
 
         # These things can be done once per interaction.
 
-        preloads = self.preloads
-        self.preloads = [ ]
+        preloads = list(self.preloads)
+        del self.preloads[:]
 
         try:
             self.start_interact = True

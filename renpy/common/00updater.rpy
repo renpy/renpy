@@ -741,7 +741,7 @@ init -1500 python in updater:
             rv = None
 
             # A list of names of modules we want to update.
-            self.modules = [ ]
+            del self.modules[:]
 
             # DLC?
             if self.add:

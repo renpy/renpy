@@ -291,13 +291,11 @@ def compile_all():
     to compile all transforms.
     """
 
-    global compile_queue
-
     for i in compile_queue:
         if i.atl.constant == GLOBAL_CONST:
             i.compile()
 
-    compile_queue = [ ]
+    del compile_queue[:]
 
 
 # This is the context used when compiling an ATL statement. It stores the

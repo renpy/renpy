@@ -332,7 +332,7 @@ def main():
         renpy.config.searchpath.extend(os.environ["RENPY_SEARCHPATH"].split("::"))
 
     if renpy.android:
-        renpy.config.searchpath = [ ]
+        del renpy.config.searchpath[:]
         renpy.config.commondir = None
 
         if "ANDROID_PUBLIC" in os.environ:
@@ -485,7 +485,7 @@ def main():
         log_clock("Loading persistent")
 
         # Clear the list of seen statements in this game.
-        game.seen_session = { }
+        game.seen_session.clear()
 
         # Initialize persistent variables.
         renpy.store.persistent = game.persistent

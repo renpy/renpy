@@ -328,7 +328,7 @@ class SpriteManager(renpy.display.core.Displayable):
         return rv
 
     def destroy_all(self):
-        self.children = [ ]
+        del self.children[:]
 
 
 class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):

@@ -232,7 +232,7 @@ init python in director:
         # the actions used to edit those lines.
         for lle in lines[-30:]:
             if isinstance(lle.node, renpy.ast.Say):
-                state.lines = [ ]
+                del state.lines[:]
                 break
 
         for lle in lines[-30:]:
@@ -770,17 +770,17 @@ init python in director:
             state.tag = None
             state.original_tag = None
 
-            state.attributes = [ ]
-            state.original_attributes = [ ]
+            del state.attributes[:]
+            del state.original_attributes[:]
 
-            state.transforms = [ ]
-            state.original_transforms = [ ]
+            del state.transforms[:]
+            del state.original_transforms[:]
 
             state.transition = None
             state.original_transition = None
 
-            state.behind = [ ]
-            state.original_behind = [ ]
+            del state.behind[:]
+            del state.original_behind[:]
 
             state.channel = None
             state.original_channel = None
@@ -904,9 +904,9 @@ init python in director:
                 else:
 
                     self.tag = None
-                    self.attributes = [ ]
-                    self.transforms = [ ]
-                    self.behind = [ ]
+                    del self.attributes[:]
+                    del self.transforms[:]
+                    del self.behind[:]
 
                 self.sensitive = is_scene_show_hide_editable(node)
 
@@ -971,7 +971,7 @@ init python in director:
             state.tag = self.tag
             state.original_tag = self.tag
 
-            state.attributes = self.attributes
+            state.attributes = list(self.attributes)
             state.original_attributes = list(self.attributes)
 
             state.transforms = list(self.transforms)
@@ -980,7 +980,7 @@ init python in director:
             state.transition = self.transition
             state.original_transition = self.transition
 
-            state.behind = self.behind
+            state.behind = list(self.behind)
             state.original_behind = list(self.behind)
 
             state.channel = self.channel
@@ -1005,7 +1005,7 @@ init python in director:
             if self.kind != state.kind:
                 state.kind = self.kind
                 state.tag = None
-                state.attributes = [ ]
+                del state.attributes[:]
 
             if self.kind in ("scene", "show", "hide"):
                 state.mode = "tag"
@@ -1037,7 +1037,7 @@ init python in director:
             if state.tag != self.tag:
 
                 state.tag = self.tag
-                state.attributes = [ ]
+                del state.attributes[:]
 
             if state.kind != "hide":
                 state.mode = "attributes"

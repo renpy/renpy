@@ -92,9 +92,10 @@ class DialogueTextTags(object):
                     self.no_wait = True
 
                 elif tag == "fast":
-                    self.pause_start = [ len(self.text) ]
-                    self.pause_end = [ ]
-                    self.pause_delay = [ ]
+                    del self.pause_start[:]
+                    self.pause_start.append(len(self.text))
+                    del self.pause_end[:]
+                    del self.pause_delay[:]
                     self.no_wait = False
 
                 elif tag == "done":

@@ -142,32 +142,32 @@ def init_emulator():
     """
 
     global emulator
-    global overlay
     global ios
+
+    del overlay[:]
 
     name = os.environ.get("RENPY_EMULATOR", "")
 
     if name == "touch":
         emulator = touch_emulator
-        overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
+        overlay.append(renpy.store.DynamicDisplayable(dynamic_keyboard))
 
     elif name == "ios-touch":
         emulator = touch_emulator
-        overlay = [ renpy.store.DynamicDisplayable(dynamic_keyboard) ]
+        overlay.append(renpy.store.DynamicDisplayable(dynamic_keyboard))
         ios = True
 
     elif name == "tv":
         emulator = tv_emulator
-        overlay = [ renpy.display.motion.Transform(
+        overlay.append(renpy.display.motion.Transform(
             "_tv_unsafe.png",
             xalign=0.5,
             yalign=0.5,
             size=(int(renpy.config.screen_height * 16.0 / 9.0), renpy.config.screen_height),
-            ) ]
+            ))
 
     else:
         emulator = null_emulator
-        overlay = [ ]
 
     if emulator is not null_emulator:
         renpy.exports.windows = False

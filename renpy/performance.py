@@ -39,8 +39,7 @@ running = False
 
 
 def clear():
-    global fpl
-    fpl = [ ]
+    del fpl[:]
 
     global running
     running = True

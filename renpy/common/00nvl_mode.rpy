@@ -343,7 +343,7 @@ init -1500 python:
                 store.nvl_list = [ ]
 
             if store._nvl_language != _preferences.language:
-                store.nvl_list = [ ]
+                del store.nvl_list[:]
                 store._nvl_language = _preferences.language
 
             while config.nvl_list_length and (len(nvl_list) + 1 > config.nvl_list_length):
@@ -438,7 +438,10 @@ init -1500 python:
         The Python equivalent of the ``nvl clear`` statement.
         """
 
-        store.nvl_list = [ ]
+        if store.nvl_list is None:
+            store.nvl_list = [ ]
+
+        del store.nvl_list[:]
 
     # Run clear at the start of the game.
     config.start_callbacks.append(nvl_clear)

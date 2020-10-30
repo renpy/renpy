@@ -172,8 +172,7 @@ focus_list = [ ]
 
 
 def take_focuses():
-    global focus_list
-    focus_list = [ ]
+    del focus_list[:]
 
     renpy.display.render.take_focuses(focus_list)
 

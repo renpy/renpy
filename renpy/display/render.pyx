@@ -1060,7 +1060,7 @@ cdef class Render:
             if not cache:
                 del render_cache[id_ro]
 
-        self.render_of = [ ]
+        del self.render_of[:]
         self.focuses = None
         self.pass_focuses = None
 
@@ -1116,7 +1116,7 @@ cdef class Render:
             screen = self.focus_screen
 
         if self.modal:
-            focuses[:] = [ ]
+            del focuses[:]
 
         if self.focuses:
 
@@ -1324,7 +1324,7 @@ cdef class Render:
                 cw, ch = child.get_size()
                 if cw + xo < self.width or ch + yo < self.height:
                     if child.is_opaque():
-                        vc = [ ]
+                        del vc[:]
                         rv = True
 
             vc.append(i)

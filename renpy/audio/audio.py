@@ -426,7 +426,7 @@ class Channel(object):
             if self.loop:
                 self.queue = self.queue[-len(self.loop):]
             else:
-                self.queue = [ ]
+                del self.queue[:]
             return
 
         topq = None
@@ -551,7 +551,7 @@ class Channel(object):
         with lock:
 
             self.queue = self.queue[:self.keep_queue]
-            self.loop = [ ]
+            del self.loop[:]
 
             if not pcm_ok:
                 return
@@ -646,7 +646,7 @@ class Channel(object):
             if loop:
                 self.loop = list(filenames)
             else:
-                self.loop = [ ]
+                del self.loop[:]
 
     def get_playing(self):
 
@@ -960,8 +960,8 @@ def quit(): # @ReservedAssignment
         c.dequeue()
         c.fadeout(0)
 
-        c.queue = [ ]
-        c.loop = [ ]
+        del c.queue[:]
+        del c.loop[:]
         c.playing = False
         c.playing_midi = False
         c.wait_stop = False

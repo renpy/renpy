@@ -188,7 +188,7 @@ init -1500 python in build:
         Clears the list of patterns used to classify files.
         """
 
-        base_patterns[:] = [ ]
+        del base_patterns[:]
 
     def remove(l, pattern):
         """

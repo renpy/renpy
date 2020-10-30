@@ -1085,12 +1085,10 @@ inputs = [ ]
 
 
 def input_pre_per_interact():
-    global input_values
-    global inputs
     global default_input_value
 
-    input_values = [ ]
-    inputs = [ ]
+    del input_values[:]
+    del inputs[:]
     default_input_value = None
 
 

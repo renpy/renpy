@@ -185,9 +185,9 @@ class Cache(object):
 
         self.lock.acquire()
 
-        self.preloads = [ ]
-        self.pin_cache = { }
-        self.cache = { }
+        del self.preloads[:]
+        self.pin_cache.clear()
+        self.cache.clear()
         self.first_preload_in_tick = True
 
         self.added.clear()
@@ -200,7 +200,7 @@ class Cache(object):
 
         with self.lock:
             self.time += 1
-            self.preloads = [ ]
+            del self.preloads[:]
             self.first_preload_in_tick = True
             self.added.clear()
 
@@ -212,7 +212,7 @@ class Cache(object):
     # The preload thread can deal with this update, so we don't need
     # to lock things.
     def end_tick(self):
-        self.preloads = [ ]
+        del self.preloads[:]
 
     # This returns the pygame surface corresponding to the provided
     # image. It also takes care of updating the age of images in the
@@ -476,7 +476,7 @@ class Cache(object):
                         for i in self.preloads:
                             renpy.display.ic_log.write("Overfull %r", i)
 
-                    self.preloads = [ ]
+                    del self.preloads[:]
 
                     break
 

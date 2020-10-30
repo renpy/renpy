@@ -35,7 +35,7 @@ import builtins
 python_builtins = set(dir(builtins))
 renpy_builtins = set()
 
-image_prefixes = None
+image_prefixes = {}
 
 # Things to check in lint.
 #
@@ -758,8 +758,7 @@ def lint():
     print("\ufeff" + renpy.version + " lint report, generated at: " + time.ctime())
 
     # This supports check_hide.
-    global image_prefixes
-    image_prefixes = { }
+    image_prefixes.clear()
 
     for k in renpy.display.image.images:
         image_prefixes[k[0]] = True

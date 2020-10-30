@@ -134,7 +134,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
                 ctx.last_filenames = filenames
                 ctx.last_tight = tight
             else:
-                ctx.last_filenames = [ ]
+                del ctx.last_filenames[:]
                 ctx.last_tight = False
 
             ctx.pause = False
@@ -228,7 +228,7 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
                 ctx.last_filenames = filenames
                 ctx.last_tight = tight
             else:
-                ctx.last_filenames = [ ]
+                del ctx.last_filenames[:]
                 ctx.last_tight = False
 
             ctx.pause = False
@@ -290,7 +290,7 @@ def stop(channel="music", fadeout=None):
             t = get_serial()
             ctx.last_changed = t
             c.last_changed = t
-            ctx.last_filenames = [ ]
+            del ctx.last_filenames[:]
             ctx.last_tight = False
 
         except:

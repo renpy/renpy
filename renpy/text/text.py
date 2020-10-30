@@ -1410,13 +1410,11 @@ def layout_cache_clear():
     Clears the old and new layout caches.
     """
 
-    global layout_cache_old, layout_cache_new
-    layout_cache_old = { }
-    layout_cache_new = { }
+    layout_cache_old.clear()
+    layout_cache_new.clear()
 
-    global virtual_layout_cache_old, virtual_layout_cache_new
-    virtual_layout_cache_old = { }
-    virtual_layout_cache_new = { }
+    virtual_layout_cache_old.clear()
+    virtual_layout_cache_new.clear()
 
 
 # A list of slow text that's being displayed right now.
@@ -1428,16 +1426,13 @@ def text_tick():
     Called once per interaction, to merge the old and new layout caches.
     """
 
-    global layout_cache_old, layout_cache_new
-    layout_cache_old = layout_cache_new
-    layout_cache_new = { }
+    layout_cache_old = layout_cache_new.copy()
+    layout_cache_new.clear()
 
-    global virtual_layout_cache_old, virtual_layout_cache_new
-    virtual_layout_cache_old = layout_cache_new
-    virtual_layout_cache_new = { }
+    virtual_layout_cache_old = layout_cache_new.copy()
+    virtual_layout_cache_new.clear()
 
-    global slow_text
-    slow_text = [ ]
+    del slow_text[:]
 
 
 VERT_REVERSE = renpy.display.render.Matrix2D(0, -1, 1, 0)
@@ -2135,7 +2130,7 @@ class Text(renpy.display.core.Displayable):
         # Blit displayables.
         if layout.displayable_blits:
 
-            self.displayable_offsets = [ ]
+            del self.displayable_offsets[:]
 
             drend = renpy.display.render.Render(w, h)
             drend.forward = layout.reverse

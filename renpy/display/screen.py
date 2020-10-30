@@ -315,16 +315,16 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def after_setstate(self):
         self.screen = get_screen_variant(self.screen_name[0])
         self.child = None
-        self.children = [ ]
-        self.transforms = { }
-        self.widgets = { }
+        del self.children[:]
+        self.transforms.clear()
+        self.widgets.clear()
         self.old_widgets = None
         self.old_transforms = None
-        self.hidden_widgets = { }
-        self.cache = { }
+        self.hidden_widgets.clear()
+        self.cache.clear()
         self.phase = UPDATE
-        self.use_cache = { }
-        self.miss_cache = { }
+        self.use_cache.clear()
+        self.miss_cache.clear()
 
         self.profile = profile.get(self.screen_name, None)
 
@@ -602,10 +602,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
                     debug = True
 
         # Cycle widgets and transforms.
-        self.old_widgets = self.widgets
-        self.old_transforms = self.transforms
-        self.widgets = { }
-        self.transforms = { }
+        self.old_widgets = self.widgets.copy()
+        self.old_transforms = self.transforms.copy()
+        self.widgets.clear()
+        self.transforms.clear()
 
         push_current_screen(self)
 

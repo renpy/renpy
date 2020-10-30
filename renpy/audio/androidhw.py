@@ -164,7 +164,7 @@ class AndroidVideoChannel(object):
         """
 
         if self.get_playing():
-            self.queue = [ ]
+            del self.queue[:]
         else:
             self.queue = self.queue[:1]
 
@@ -182,7 +182,7 @@ class AndroidVideoChannel(object):
         """
 
         self.stop()
-        self.queue = [ ]
+        del self.queue[:]
 
     def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False):
         self.queue.extend(filenames)

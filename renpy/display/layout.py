@@ -496,7 +496,7 @@ class Grid(Container):
                 offsets.append(offset)
 
         if self.transpose:
-            self.offsets = [ ]
+            del self.offsets[:]
             for x in range(cols):
                 for y in range(rows):
                     self.offsets.append(offsets[y * cols + x])
@@ -569,8 +569,8 @@ class MultiBox(Container):
     def _clear(self):
         super(MultiBox, self)._clear()
 
-        self.start_times = [ ]
-        self.anim_times = [ ]
+        del self.start_times[:]
+        del self.anim_times[:]
         self.layers = None
         self.scene_list = None
 

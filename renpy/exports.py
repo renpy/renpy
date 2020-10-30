@@ -3575,7 +3575,7 @@ def clear_line_log():
     Clears the line log.
     """
 
-    renpy.game.context().line_log = [ ]
+    del renpy.game.context().line_log[:]
 
 
 def add_layer(layer, above=None, below=None, menu_clear=True):

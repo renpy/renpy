@@ -386,7 +386,7 @@ init -1500 python in _console:
                     self.pop(0)
 
         def clear(self):
-            self[:] = [ ]
+            del self[:]
 
     class ConsoleHistoryEntry(object):
         """
@@ -769,7 +769,7 @@ init -1500 python in _console:
 
     @command(_("clear: clear the console history"))
     def clear(l):
-        console.history[:] = [ ]
+        del console.history[:]
 
     @command(_("exit: exit the console"))
     def exit(l):
@@ -883,7 +883,7 @@ init -1500 python in _console:
 
     @command(_("unwatchall: stop watching all expressions"))
     def unwatchall(l):
-        traced_expressions[:] = [ ]
+        del traced_expressions[:]
         renpy.hide_screen("_trace_screen")
 
     def renpy_unwatchall():

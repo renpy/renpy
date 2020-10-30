@@ -608,7 +608,7 @@ def dealloc_textures():
     for i in npot_free_textures:
         i.deallocate()
 
-    npot_free_textures[:] = [ ]
+    del npot_free_textures[:]
 
     if not renpy.game.preferences.gl_npot:
 
@@ -642,7 +642,7 @@ def cleanup():
     for i in npot_free_textures:
         i.deallocate()
 
-    npot_free_textures[:] = [ ]
+    del npot_free_textures[:]
 
 def compute_subrow(row, offset, width):
     """

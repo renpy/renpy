@@ -274,13 +274,13 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
             if c == u'\n' and not parendepth:
 
-                line = ''.join(line)
+                line_str = ''.join(line)
 
                 # If not blank...
-                if not re.match(u"^\s*$", line):
+                if not re.match(u"^\s*$", line_str):
 
                     # Add to the results.
-                    rv.append((filename, start_number, line))
+                    rv.append((filename, start_number, line_str))
 
                 if endpos is None:
                     endpos = pos
@@ -298,7 +298,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                 number += 1
                 endpos = None
                 # This helps out error checking.
-                line = [ ]
+                del line[:]
                 break
 
             if c == u'\n':
@@ -2910,9 +2910,8 @@ def parse(fn, filedata=None, linenumber=1):
 
 
 def get_parse_errors():
-    global parse_errors
-    rv = parse_errors
-    parse_errors = [ ]
+    rv = parse_errors[:]
+    del parse_errors[:]
     return rv
 
 

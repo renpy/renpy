@@ -397,7 +397,7 @@ cdef class StyleCore:
         self.parent = get_tuple_name(parent)
 
     def clear(self):
-        self.properties = [ ]
+        del self.properties[:]
 
     def take(self, other):
         """

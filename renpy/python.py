@@ -1485,7 +1485,7 @@ class RollbackLog(renpy.object.Object):
         self.force_checkpoint = False
 
     def after_setstate(self):
-        self.mutated = { }
+        self.mutated.clear()
         self.rolled_forward = False
 
     def after_upgrade(self, version):

@@ -129,11 +129,11 @@ def _p(s):
     for l in lines:
         if not l:
             rv += " ".join(para) + "\n\n"
-            para = [ ]
+            del para[:]
         elif re.search(r'\{p[^}]*\}$', l):
             para.append(l)
             rv += " ".join(para)
-            para = [ ]
+            del para[:]
         else:
             para.append(l)
 
