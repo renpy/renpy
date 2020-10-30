@@ -258,19 +258,30 @@ class Cache(object):
         # Otherwise, we load the image ourselves.
         if ce is None:
 
-            try:
-                if image in self.pin_cache:
-                    surf = self.pin_cache[image]
-                else:
-
-                    if not predict:
-                        with renpy.game.ExceptionInfo("While loading %r:", image):
-                            surf = image.load()
+            tries = 1
+            while True:
+                try:
+                    if image in self.pin_cache:
+                        surf = self.pin_cache[image]
                     else:
-                        surf = image.load()
 
-            except:
-                raise
+                        if not predict:
+                            with renpy.game.ExceptionInfo("While loading %r:", image):
+                                surf = image.load()
+                        else:
+                            surf = image.load()
+                    break
+                except Exception as e:
+                    if not predict and tries > 0:
+                        estr = repr(e)
+                        if ("Failed to allocate" in estr) or ("Out of memory" in estr) or ("Failed to decode" in estr):
+                            renpy.exports.free_memory()
+
+                            tries -= 1
+                            continue
+                    raise
+                except:
+                    raise
 
             w, h = surf.get_size()
 
