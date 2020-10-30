@@ -872,8 +872,8 @@ class FactorScale(ImageBase):
 
         image logo doubled = im.FactorScale("logo.png", 1.5)
 
-    The same effect can now be achieved with the :ref:`transform-property-zoom` or the
-    :ref:`transform-property-xzoom` and :ref:`transform-property-yzoom` transform properties.
+    The same effect can now be achieved with the :tpref:`zoom` or the
+    :tpref:`xzoom` and :tpref:`yzoom` transform properties.
     """
 
     def __init__(self, im, width, height=None, bilinear=True, **properties):
@@ -933,8 +933,8 @@ class Flip(ImageBase):
         image eileen flip = im.Flip("eileen_happy.png", vertical=True)
 
     The same effect can now be achieved by setting
-    :ref:`transform-property-xzoom` (for horizontal flip)
-    or :ref:`transform-property-yzoom` (for vertical flip) to a negative value.
+    :tpref:`xzoom` (for horizontal flip)
+    or :tpref:`yzoom` (for vertical flip) to a negative value.
     """
 
     def __init__(self, im, horizontal=False, vertical=False, **properties):
@@ -1022,7 +1022,7 @@ class Crop(ImageBase):
 
         image logo crop = im.Crop("logo.png", (0, 0, 100, 307))
 
-    The same effect can now be achieved by setting the :ref:`transform-property-crop` transform property.
+    The same effect can now be achieved by setting the :tpref:`crop` transform property.
     """
 
     def __init__(self, im, x, y=None, w=None, h=None, **properties):
@@ -1217,7 +1217,7 @@ class Blur(ImageBase):
 
         image logo blurred = im.Blur("logo.png", 1.5)
 
-    The same effect can now be achieved with the :ref:`transform-property-blur` transform property.
+    The same effect can now be achieved with the :tpref:`blur` transform property.
     """
 
     def __init__(self, im, xrad, yrad=None, **properties):
@@ -1417,7 +1417,7 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an identity matrix, one that does not change color or
         alpha.
 
-        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
         is IdentityMatrix().
         """
 
@@ -1448,7 +1448,7 @@ im.matrix(%f, %f, %f, %f, %f.
             mostly sensitive to green, more of the green channel is
             kept then the other two channels.
 
-        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
         is SaturationMatrix(value, desat).
         """
 
@@ -1472,7 +1472,7 @@ im.matrix(%f, %f, %f, %f, %f.
         grayscale). This is equivalent to calling
         im.matrix.saturation(0).
 
-        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
         is SaturationMatrix(0).
         """
 
@@ -1491,7 +1491,7 @@ im.matrix(%f, %f, %f, %f, %f.
         the value of the red channel is 100, the transformed color
         will have a red value of 50.)
 
-        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
         is TintMatrix(Color((r, g, b))).
         """
 
@@ -1509,7 +1509,7 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that inverts the red, green, and blue
         channels of the image without changing the alpha channel.
 
-        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
         is InvertMatrix(1.0).
         """
 
@@ -1531,7 +1531,7 @@ im.matrix(%f, %f, %f, %f, %f.
             a number between -1 and 1, with -1 the darkest possible
             image and 1 the brightest.
 
-        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
         is BrightnessMatrix(b).
         """
 
@@ -1549,7 +1549,7 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that alters the opacity of an image. An
         `o` of 0.0 is fully transparent, while 1.0 is fully opaque.
 
-        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
         is OpacityMatrix(o).
         """
 
@@ -1568,7 +1568,7 @@ im.matrix(%f, %f, %f, %f, %f.
         be greater than 0.0, with values between 0.0 and 1.0 decreasing contrast, and
         values greater than 1.0 increasing contrast.
 
-        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
         is ContrastMatrix(c).
         """
 
@@ -1584,7 +1584,7 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that rotates the hue by `h` degrees, while
         preserving luminosity.
 
-        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
         is HueMatrix(h).
         """
 
@@ -1619,7 +1619,7 @@ im.matrix(%f, %f, %f, %f, %f.
                 im.matrix.colorize("#f00", "#00f"))
 
 
-        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
         is ColorizeMatrix(black_color, white_color).
         """
 
@@ -1648,7 +1648,7 @@ def Grayscale(im, desat=(0.2126, 0.7152, 0.0722), **properties):
     manipulator `im`.
 
     The same effect can now be achieved by supplying SaturationMatrix(0)
-    to the :ref:`transform-property-matrixcolor` transform property.
+    to the :tpref:`matrixcolor` transform property.
     """
 
     return MatrixColor(im, matrix.saturation(0.0, desat), **properties)
@@ -1663,7 +1663,7 @@ def Sepia(im, tint=(1.0, .94, .76), desat=(0.2126, 0.7152, 0.0722), **properties
     manipulator `im`.
 
     The same effect can now be achieved by supplying SepiaMatrix()
-    to the :ref:`transform-property-matrixcolor` transform property.
+    to the :tpref:`matrixcolor` transform property.
     """
 
     return MatrixColor(im, matrix.saturation(0.0, desat) * matrix.tint(tint[0], tint[1], tint[2]), **properties)
