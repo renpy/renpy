@@ -871,6 +871,9 @@ class FactorScale(ImageBase):
     ::
 
         image logo doubled = im.FactorScale("logo.png", 1.5)
+
+    The same effect can now be achieved with the :ref:`transform-property-zoom` or the
+    :ref:`transform-property-xzoom` and :ref:`transform-property-yzoom` transform properties.
     """
 
     def __init__(self, im, width, height=None, bilinear=True, **properties):
@@ -928,6 +931,10 @@ class Flip(ImageBase):
     ::
 
         image eileen flip = im.Flip("eileen_happy.png", vertical=True)
+
+    The same effect can now be achieved by setting
+    :ref:`transform-property-xzoom` (for horizontal flip)
+    or :ref:`transform-property-yzoom` (for vertical flip) to a negative value.
     """
 
     def __init__(self, im, horizontal=False, vertical=False, **properties):
@@ -1014,6 +1021,8 @@ class Crop(ImageBase):
     ::
 
         image logo crop = im.Crop("logo.png", (0, 0, 100, 307))
+
+    The same effect can now be achieved by setting the :ref:`transform-property-crop` transform property.
     """
 
     def __init__(self, im, x, y=None, w=None, h=None, **properties):
@@ -1207,6 +1216,8 @@ class Blur(ImageBase):
     ::
 
         image logo blurred = im.Blur("logo.png", 1.5)
+
+    The same effect can now be achieved with the :ref:`transform-property-blur` transform property.
     """
 
     def __init__(self, im, xrad, yrad=None, **properties):
@@ -1405,6 +1416,9 @@ im.matrix(%f, %f, %f, %f, %f.
 
         Returns an identity matrix, one that does not change color or
         alpha.
+
+        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        is IdentityMatrix().
         """
 
         return matrix(1, 0, 0, 0, 0,
@@ -1433,6 +1447,9 @@ im.matrix(%f, %f, %f, %f, %f.
             of an NTSC television signal. Since the human eye is
             mostly sensitive to green, more of the green channel is
             kept then the other two channels.
+
+        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        is SaturationMatrix(value, desat).
         """
 
         r, g, b = desat
@@ -1454,6 +1471,9 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that desaturates the image (makes it
         grayscale). This is equivalent to calling
         im.matrix.saturation(0).
+
+        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        is SaturationMatrix(0).
         """
 
         return matrix.saturation(0.0)
@@ -1470,6 +1490,9 @@ im.matrix(%f, %f, %f, %f, %f.
         placed into the final image. (For example, if `r` is .5, and
         the value of the red channel is 100, the transformed color
         will have a red value of 50.)
+
+        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        is TintMatrix(Color((r, g, b))).
         """
 
         return matrix(r, 0, 0, 0, 0,
@@ -1485,6 +1508,9 @@ im.matrix(%f, %f, %f, %f, %f.
 
         Returns an im.matrix that inverts the red, green, and blue
         channels of the image without changing the alpha channel.
+
+        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        is InvertMatrix(1.0).
         """
 
         return matrix(-1, 0, 0, 0, 1,
@@ -1504,6 +1530,9 @@ im.matrix(%f, %f, %f, %f, %f.
             The amount of change in image brightness. This should be
             a number between -1 and 1, with -1 the darkest possible
             image and 1 the brightest.
+
+        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        is BrightnessMatrix(b).
         """
 
         return matrix(1, 0, 0, 0, b,
@@ -1519,6 +1548,9 @@ im.matrix(%f, %f, %f, %f, %f.
 
         Returns an im.matrix that alters the opacity of an image. An
         `o` of 0.0 is fully transparent, while 1.0 is fully opaque.
+
+        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        is OpacityMatrix(o).
         """
 
         return matrix(1, 0, 0, 0, 0,
@@ -1535,6 +1567,9 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that alters the contrast of an image. `c` should
         be greater than 0.0, with values between 0.0 and 1.0 decreasing contrast, and
         values greater than 1.0 increasing contrast.
+
+        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        is ContrastMatrix(c).
         """
 
         return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5)
@@ -1548,6 +1583,9 @@ im.matrix(%f, %f, %f, %f, %f.
 
         Returns an im.matrix that rotates the hue by `h` degrees, while
         preserving luminosity.
+
+        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        is HueMatrix(h).
         """
 
         h = h * math.pi / 180
@@ -1580,6 +1618,9 @@ im.matrix(%f, %f, %f, %f, %f.
                 "bwlogo.png",
                 im.matrix.colorize("#f00", "#00f"))
 
+
+        A suitable equivalent for the :ref:`transform-property-matrixcolor` transform property
+        is ColorizeMatrix(black_color, white_color).
         """
 
         (r0, g0, b0, _a0) = renpy.easy.color(black_color)
@@ -1605,6 +1646,9 @@ def Grayscale(im, desat=(0.2126, 0.7152, 0.0722), **properties):
 
     An image manipulator that creates a desaturated version of the image
     manipulator `im`.
+
+    The same effect can now be achieved by supplying SaturationMatrix(0)
+    to the :ref:`transform-property-matrixcolor` transform property.
     """
 
     return MatrixColor(im, matrix.saturation(0.0, desat), **properties)
@@ -1617,6 +1661,9 @@ def Sepia(im, tint=(1.0, .94, .76), desat=(0.2126, 0.7152, 0.0722), **properties
 
     An image manipulator that creates a sepia-toned version of the image
     manipulator `im`.
+
+    The same effect can now be achieved by supplying SepiaMatrix()
+    to the :ref:`transform-property-matrixcolor` transform property.
     """
 
     return MatrixColor(im, matrix.saturation(0.0, desat) * matrix.tint(tint[0], tint[1], tint[2]), **properties)
@@ -1656,6 +1703,8 @@ class Tile(ImageBase):
     `size`
         If not None, a (width, height) tuple. If None, this defaults to
         (:var:`config.screen_width`, :var:`config.screen_height`).
+
+    The same effect can now be achieved with Tile(im, size=size)
     """
 
     def __init__(self, im, size=None, **properties):
