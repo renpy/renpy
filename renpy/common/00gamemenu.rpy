@@ -169,7 +169,7 @@ label _game_menu(*args, _game_menu_screen=_game_menu_screen, **kwargs):
         jump expression "game_menu"
 
     if renpy.has_screen(_game_menu_screen):
-        $ renpy.show_screen(_game_menu_screen, *args, **kwargs)
+        $ renpy.show_screen(_game_menu_screen, *args, _transient=True, **kwargs)
         $ ui.interact()
         jump _noisy_return
 
