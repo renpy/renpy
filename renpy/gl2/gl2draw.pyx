@@ -295,8 +295,6 @@ cdef class GL2Draw:
             renpy.display.log.write("GL Disabled.")
             return False
 
-        print("Using {} renderer.".format(self.info["renderer"]))
-
         if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
             physical_size = (None, None)
         else:
@@ -403,8 +401,6 @@ cdef class GL2Draw:
         renpy.display.log.write("Renderer: %r", renderer)
         renpy.display.log.write("Version: %r", version)
         renpy.display.log.write("Display Info: %s", self.display_info)
-
-        print(renderer, version)
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.split(" "))
