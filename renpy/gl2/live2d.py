@@ -290,17 +290,17 @@ class Live2DCommon(object):
                 target = self.expressions
 
             else:
-                raise Exception("Name {!r} is not a known motion or expression.".fromat(v))
+                raise Exception("Name {!r} is not a known motion or expression.".format(v))
 
             if k in target:
-                raise Exception("Name {!r} is already specified as a motion or expression.".fromat(k))
+                raise Exception("Name {!r} is already specified as a motion or expression.".format(k))
 
             target[k] = target[v]
 
     def apply_nonexclusive(self, nonexclusive):
         for i in nonexclusive:
             if i not in self.expressions:
-                raise Exception("Name {!r} is not a known expression.".fromat(i))
+                raise Exception("Name {!r} is not a known expression.".format(i))
 
             self.nonexclusive[i] = self.expressions.pop(i)
 
