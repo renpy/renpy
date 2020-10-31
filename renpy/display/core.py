@@ -1876,17 +1876,6 @@ class Interface(object):
         # The thread that can do display operations.
         self.thread = threading.current_thread()
 
-        # Initialize audio.
-        renpy.audio.audio.init()
-
-        # Initialize pygame.
-        try:
-            pygame.display.init()
-        except:
-            pass
-
-        self.post_init()
-
         # Init timing.
         init_time()
         self.mouse_event_time = get_time()
@@ -1934,8 +1923,6 @@ class Interface(object):
         # For compatibility with older code.
         if renpy.config.periodic_callback:
             renpy.config.periodic_callbacks.append(renpy.config.periodic_callback)
-
-        renpy.display.emulator.init_emulator()
 
         # Has start been called?
         self.started = False
@@ -2011,8 +1998,23 @@ class Interface(object):
         Starts the interface, by opening a window and setting the mode.
         """
 
+        import traceback
+
         if self.started:
             return
+
+        # Initialize audio.
+        renpy.audio.audio.init()
+
+        # Initialize pygame.
+        try:
+            pygame.display.init()
+        except:
+            pass
+
+        self.post_init()
+
+        renpy.display.emulator.init_emulator()
 
         gc.collect()
 

@@ -65,9 +65,11 @@ def init_display():
         renpy.config.init_system_styles()
 
     if not renpy.game.interface:
-        renpy.display.core.Interface().start()
+        renpy.display.core.Interface()
         renpy.loader.index_archives()
         renpy.display.im.cache.init()
+    else:
+        renpy.game.interface.start()
 
     renpy.ui.reset()
 
@@ -92,7 +94,7 @@ def report_exception(short, full, traceback_fn):
 
     error_dump()
 
-    if renpy.game.args.command != "run":  # @UndefinedVariable
+    if renpy.game.args.command != "run": # @UndefinedVariable
         return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
@@ -165,7 +167,7 @@ def report_parse_errors(errors, error_fn):
 
     error_dump()
 
-    if renpy.game.args.command != "run":  # @UndefinedVariable
+    if renpy.game.args.command != "run": # @UndefinedVariable
         return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
