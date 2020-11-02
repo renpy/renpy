@@ -1202,7 +1202,7 @@ cdef class GL2DrawingContext:
         program.set_uniform("u_model_size", (model.width, model.height))
         program.set_uniform("u_lod_bias", -1.0)
         program.set_uniform("u_transform", transform)
-        program.set_uniform("u_time", renpy.display.interface.frame_time)
+        program.set_uniform("u_time", (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400)
         program.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
 
         model.program_uniforms(program)

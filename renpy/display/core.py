@@ -1803,6 +1803,9 @@ class Interface(object):
         # Things to be preloaded.
         self.preloads = [ ]
 
+        # The time at which this object was initialized.
+        self.init_time = get_time()
+
         # The time at which this draw occurs.
         self.frame_time = 0
 
