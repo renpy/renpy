@@ -374,7 +374,7 @@ def main():
         renpy.config.searchpath.extend(os.environ["RENPY_SEARCHPATH"].split("::"))
 
     if renpy.android:
-        renpy.config.searchpath = [ ]
+        renpy.config.searchpath = [ renpy.config.gamedir ]
         renpy.config.commondir = None
 
         android_searchpath()
@@ -392,22 +392,12 @@ def main():
             if not (ext in archive_extensions):
                 archive_extensions.append(ext)
 
-    # Find archives.
-    for dn in renpy.config.searchpath:
-
-        if os.path.isdir(dn):
-            continue
-
-        for i in sorted(os.listdir(dn)):
-            base, ext = os.path.splitext(i)
-
-            # Check if the archive does not have any of the extensions in archive_extensions
-            if not (ext in archive_extensions):
-                continue
-
-            renpy.config.archives.append(base)
-
-    renpy.config.archives.reverse()
+    # Collect archive names.
+    for dir in renpy.config.searchpath: # @ReservedAssignment
+        for fn in reversed(sorted(os.listdir(dir))):
+            base, ext = os.path.splitext(fn)
+            if ext in archive_extensions:
+                renpy.config.archives.append(base)
 
     # Initialize archives.
     renpy.loader.index_archives()
