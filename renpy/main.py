@@ -385,12 +385,9 @@ def main():
             if fn.lower().endswith(".rpe"):
                 load_rpe(dir + "/" + fn)
 
-    # Generate a list of extensions for each archive handler.
-    archive_extensions = [ ]
-    for handler in renpy.loader.archive_handlers:
-        for ext in handler.get_supported_extensions():
-            if not (ext in archive_extensions):
-                archive_extensions.append(ext)
+    # Generate a set of supported archive extensions.
+    archive_extensions = set(e for h in renpy.loader.archive_handlers
+                               for e in h.get_supported_extensions())
 
     # Collect archive names.
     for dir in renpy.config.searchpath: # @ReservedAssignment
