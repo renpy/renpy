@@ -235,8 +235,8 @@ class Live2DCommon(object):
 
                 self.motions[name] = renpy.gl2.live2dmotion.Motion(
                     self.base + i["File"],
-                    i.get("FadeInTime", 0.0),
-                    i.get("FadeOutTime", 0.0))
+                    i.get("FadeInTime", 1.0),
+                    i.get("FadeOutTime", 1.0))
 
                 self.attributes.add(name)
 
