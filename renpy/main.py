@@ -389,12 +389,13 @@ def main():
     archive_extensions = set(e for h in renpy.loader.archive_handlers
                                for e in h.get_supported_extensions())
 
-    # Collect archive names.
-    for dir in renpy.config.searchpath: # @ReservedAssignment
-        for fn in reversed(sorted(os.listdir(dir))):
-            base, ext = os.path.splitext(fn)
-            if ext in archive_extensions:
-                renpy.config.archives.append(base)
+    # Lazy iterator of potential archives (basename and extension.)
+    archive_candidates = (os.path.splitext(f) for d in renpy.config.searchpath
+                                              for f in os.listdir(d))
+
+    # Materialise reverse-sorted (load order) unique list of archive names.
+    renpy.config.archives = sorted(set(b for b, e in archive_candidates
+                                         if e in archive_extensions), reverse=True)
 
     # Initialize archives.
     renpy.loader.index_archives()
