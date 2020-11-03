@@ -268,6 +268,12 @@ the opposite.
 The launcher window can now be resized if necessary. A button has been added to
 the launcher preferences to restore the default size.
 
+The new :var:`build.mac_info_plist` variable makes it easier to customize
+the mac app.
+
+The `requests <https://requests.readthedocs.io/en/master/>`_ library, is
+bundled with Ren'Py, making accessing the web much easier.
+
 Pressing PAUSE on your keyboard brings the player to the game menu, finally
 giving that key a function.
 
