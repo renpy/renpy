@@ -808,3 +808,11 @@ translate japanese strings:
     old "Sixth Child"
     new "Sixth Child"
 
+# TODO: Translation updated at 2020-10-29 22:51
+
+translate japanese strings:
+
+    # game/indepth_style.rpy:329
+    old "Far better it is to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy nor suffer much, because they live in the gray twilight that knows not victory nor defeat.\n\n–Theodore Roosevelt"
+    new "Far better it is to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy nor suffer much, because they live in the gray twilight that knows not victory nor defeat.\n\n–Theodore Roosevelt"
+
