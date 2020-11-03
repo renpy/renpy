@@ -778,3 +778,15 @@ translate japanese strings:
     old "Show deleted"
     new "消去済みを表示する"
 
+# TODO: Translation updated at 2020-11-03 09:43
+
+translate japanese strings:
+
+    # renpy/common/00accessibility.rpy:193
+    old "Self-Voicing Volume Drop"
+    new "自己発話音量"
+
+    # renpy/common/00preferences.rpy:384
+    old "self voicing volume drop"
+    new "セルフボイシングボリュームを下げる"
+

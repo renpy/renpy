@@ -1701,3 +1701,55 @@ translate japanese strings:
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "ウェブアプリをパッケージングするために、RenPyWeb (Ren'Py's web support) をダウンロードする必要があります。 RenPyWeb をダウンロードしますか？"
 
+# TODO: Translation updated at 2020-11-03 09:43
+
+translate japanese strings:
+
+    # game/androidstrings.rpy:47
+    old "Do you want to automatically update the Java source code?"
+    new "Javaのソースコードを自動的に更新したいですか?"
+
+    # game/choose_directory.rpy:93
+    old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."
+    new "Ren'Pyはpythonでtkinterkを実行してディレクトリを選択できません。python3-tkまたはtkinterパッケージをインストールしてください。"
+
+    # game/install.rpy:33
+    old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
+    new "Ren'Py SDKディレクトリに[zipglob]にマッチするファイルが見つからなかったため、[name!t]をインストールできませんでした。"
+
+    # game/install.rpy:76
+    old "Successfully installed [name!t]."
+    new "[name!t]のインストールに成功しました。"
+
+    # game/install.rpy:104
+    old "Install Libraries"
+    new "ライブラリのインストール"
+
+    # game/install.rpy:119
+    old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
+    new "この画面ではRen'pyと共に配布できないライブラリをダウンロードします。これらのライブラリの一部は使用や配布前にサードパーティーのライセンスに同意が必要です。"
+
+    # game/install.rpy:134
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Custom SDK for Native {/a}はLive2Dモデルの表示サポートを追加します。Ren'Py SDK ディレクトリにCubismSdkForNative-4-{i}version{/i}.zipを置き、クリックしてインストールしてください。Live2Dと共にゲームを配布するには Live2D Inc.のライセンスに同意が必要です。"
+
+    # game/install.rpy:138
+    old "Open Ren'Py SDK Directory"
+    new "Ren'Py SDKディレクトリを開く"
+
+    # game/preferences.rpy:138
+    old "Install libraries"
+    new "ライブラリのインストール"
+
+    # game/preferences.rpy:140
+    old "Reset window size"
+    new "ウィンドウサイズリセット"
+
+    # game/web.rpy:242
+    old "Preparing progressive download"
+    new "プログレッシブダウンロードの準備"
+
+    # game/web.rpy:341
+    old "Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    new "画像と音声がプレイ中にダウンロード可能です。 'progressive_download.txt' ファイルが作成されるのでこれを編集して振舞を設定できます。"
+
