@@ -239,6 +239,12 @@ The im.MatrixColor image manipulator has been replaced by Transforms
 and ATL transforms that specify the matrixcolor property. Each `im.matrix`
 generator has been given a new `Matrix` equivalent, as shown.
 
+.. warning::
+    
+    The new Matrix objects multiply in the opposite order as the im.Matrixcolor
+    ones. With X being the Matrix corresponding to im.Matrixcolor.x,
+    ``C*B*A`` will be the Matrix corresponding to ``im.a*im.b*im.c``.
+
 .. include:: inc/im_matrixcolor
 
 Placeholders
