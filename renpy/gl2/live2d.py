@@ -146,7 +146,7 @@ class Live2DCommon(object):
     but is loaded at init time.
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, aliases, nonexclusive):
 
         init()
 
@@ -275,9 +275,7 @@ class Live2DCommon(object):
 
         self.nonexclusive = { }
 
-    def apply_aliases(self, aliases):
-
-        for k, v in aliases.items():
+        for k, v in aliases:
             target = None
 
             if v in self.motions:
@@ -297,7 +295,6 @@ class Live2DCommon(object):
 
             target[k] = target[v]
 
-    def apply_nonexclusive(self, nonexclusive):
         for i in nonexclusive:
             if i not in self.expressions:
                 raise Exception("Name {!r} is not a known expression.".format(i))
@@ -397,21 +394,38 @@ class Live2D(renpy.display.core.Displayable):
         if self.common_cache is not None:
             return self.common_cache
 
-        rv = common_cache.get(self.filename, None)
+        key = (self.filename, self.aliases, self.nonexclusive)
+
+        rv = common_cache.get(key, None)
 
         if rv is None:
-            rv = Live2DCommon(self.filename)
-            common_cache[self.filename] = rv
+            rv = Live2DCommon(*key)
+            common_cache[key] = rv
 
         self.common_cache = rv
         return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
-    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, nonexclusive=None, used_nonexclusive=None, **properties):
+    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases=None, fade=None, motions=None, expression=None, nonexclusive=None, used_nonexclusive=None, **properties):
 
         super(Live2D, self).__init__(**properties)
 
         self.filename = filename
+
+        if aliases is None:
+            aliases = ()
+        elif isinstance(aliases, dict):
+            aliases = tuple(aliases.items())
+
+        self.aliases = aliases
+
+        if nonexclusive is None:
+            nonexclusive = ()
+        elif isinstance(nonexclusive, list):
+            nonexclusive = tuple(nonexclusive)
+
+        self.nonexclusive = nonexclusive
+
         self.motions = motions
         self.expression = expression
         self.used_nonexclusive = used_nonexclusive
@@ -428,12 +442,6 @@ class Live2D(renpy.display.core.Displayable):
 
         # Load the common data. Needed!
         common = self.common
-
-        if nonexclusive:
-            common.apply_nonexclusive(nonexclusive)
-
-        if aliases:
-            common.apply_aliases(aliases)
 
     def _duplicate(self, args):
 
@@ -470,6 +478,8 @@ class Live2D(renpy.display.core.Displayable):
 
         rv = Live2D(
             self.filename,
+            aliases=self.aliases,
+            nonexclusive=self.nonexclusive,
             motions=motions,
             zoom=self.zoom,
             top=self.top,
