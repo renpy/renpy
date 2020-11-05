@@ -128,13 +128,20 @@ def init():
 
 def reset():
     """
-    Resets this module when Ren'Py restarts.
+    Resets this module when Ren'Py reloads the script.
     """
 
     global did_init
     did_init = False
 
     common_cache.clear()
+
+
+def reset_states():
+    """
+    Resets the Live2D states when Ren'Py restarts the game.
+    """
+
     states.clear()
 
 

@@ -308,6 +308,12 @@ def main():
     # Init the config after load.
     renpy.config.init()
 
+    # Reset live2d if it exists.
+    try:
+        renpy.gl2.live2d.reset()
+    except:
+        pass
+
     # Set up variants.
     choose_variants()
     renpy.display.touch = "touch" in renpy.config.variants
@@ -614,9 +620,9 @@ def main():
 
             finally:
 
-                # Reset if it exists.
+                # Reset live2d if it exists.
                 try:
-                    renpy.gl2.live2d.reset()
+                    renpy.gl2.live2d.reset_states()
                 except:
                     pass
 
