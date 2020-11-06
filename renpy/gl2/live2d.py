@@ -633,11 +633,7 @@ class Live2D(renpy.display.core.Displayable):
         # Render the textures.
         textures = [ renpy.display.render.render(d, width, height, st, at) for d in common.textures ]
 
-        # Render the model.
-        rend = model.render(textures)
-
-        # Figure out zoom.
-        sw, sh = rend.get_size()
+        sw, sh = model.get_size()
 
         zoom = self.zoom
 
@@ -657,13 +653,12 @@ class Live2D(renpy.display.core.Displayable):
             size = sh
             top = 0
 
+        # Render the model.
+        rend = model.render(textures, zoom)
+
         # Apply scaling as needed.
         rv = renpy.exports.Render(sw * zoom, size * zoom)
         rv.blit(rend, (0, -top * zoom))
-
-        if zoom != 1.0:
-            rv.reverse = renpy.display.matrix.Matrix.scale(zoom, zoom, 1.0)
-            rv.forward = renpy.display.matrix.Matrix.scale(1 / zoom, 1 / zoom, 1.0)
 
         return rv
 
