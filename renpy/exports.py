@@ -28,6 +28,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 
 import re
+import gc
 
 import renpy.display
 import renpy.audio
@@ -2359,6 +2360,11 @@ def free_memory():
     renpy.display.interface.kill_textures()
     renpy.display.interface.kill_surfaces()
     renpy.text.font.free_memory()
+
+    gc.collect(2)
+
+    if gc.garbage:
+        del gc.garbage[:]
 
 
 def flush_cache_file(fn):
