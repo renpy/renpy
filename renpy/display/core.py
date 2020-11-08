@@ -2146,6 +2146,7 @@ class Interface(object):
 
         renderer = renpy.game.preferences.renderer
         renderer = os.environ.get("RENPY_RENDERER", renderer)
+        renderer = renpy.session.get("renderer", renderer)
 
         if self.safe_mode:
             renderer = "sw"
@@ -2292,6 +2293,9 @@ class Interface(object):
             # Ensure we don't get stuck in fullscreen.
             renpy.game.preferences.fullscreen = False
             raise Exception("Could not set video mode.")
+
+        renpy.session["renderer"] = draw.info["renderer"]
+        renpy.game.persistent._gl2 = renpy.config.gl2
 
         if renpy.android:
             android.init()
