@@ -139,6 +139,9 @@ screen install():
 
                             text _("The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc.")
 
+                            add SPACER
+
+                            text _("Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support.")
 
     textbutton _("Cancel") action Return(False) style "l_left_button"
     textbutton _("Open Ren'Py SDK Directory") action OpenDirectory(config.renpy_base, absolute=True) style "l_right_button"

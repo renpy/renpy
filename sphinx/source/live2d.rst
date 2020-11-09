@@ -22,6 +22,17 @@ Ren'Py back a list of meshes to show. Ren'Py then renders these meshes, and the 
 Ren'Py supports Live2D animations in the Cubism 3 and Cubism 4 formats.
 It supports the playback of expressions and motions.
 
+.. warning::
+
+    Live2D is not supported on the x86_64 Android platform, as a DLL is not
+    provided for this platform. This means that it may have problems running
+    on the Android emulator or ChromeOS.
+
+    Live2D is not supported on the web platform.
+
+    Installing Live2D on iOS requires copying the static libraries into your
+    iOS project by hand.
+
 Installing Live2D
 -----------------
 
