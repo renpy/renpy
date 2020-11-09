@@ -283,6 +283,7 @@ init python:
     except:
         pass
 
+    build.classify_renpy("rapt/**/libLive2DCubismCore.so", None)
     build.classify_renpy("rapt/**", "rapt")
     build.executable("rapt/prototype/gradlew")
 
