@@ -134,6 +134,7 @@ DisplayableParser("grid", renpy.display.layout.Grid, "grid", many)
 Positional("cols")
 Positional("rows")
 Keyword("transpose")
+Keyword("allow_underfull")
 add(grid_properties)
 
 DisplayableParser("side", renpy.display.layout.Side, "side", many)

@@ -210,8 +210,9 @@ Image can be used whenever an image manipulator is required.
 With the few exceptions listed below, the use of image manipulators is
 historic. A number of image manipulators that had been documented in the
 past should no longer be used, as they suffer from inherent problems.
-In many cases, the :func:`Transform` displayable provides similar
-functionality in a more general manner, while fixing the problems.
+In any case except for `im.Data`, the :func:`Transform` displayable provides
+similar functionality in a more general manner, while fixing the problems,
+although it sometimes requires gl2 to be enabled.
 
 .. include:: inc/im_im
 
@@ -235,7 +236,14 @@ more efficient, in both time and image cache space, than using
 two im.MatrixColors.
 
 The im.MatrixColor image manipulator has been replaced by Transforms
-and ATL transforms that specify the matrixcolor property.
+and ATL transforms that specify the matrixcolor property. Each `im.matrix`
+generator has been given a new `Matrix` equivalent, as shown.
+
+.. warning::
+    
+    The new Matrix objects multiply in the opposite order as the im.Matrixcolor
+    ones. With X being the Matrix corresponding to im.Matrixcolor.x,
+    ``C*B*A`` will be the Matrix corresponding to ``im.a*im.b*im.c``.
 
 .. include:: inc/im_matrixcolor
 

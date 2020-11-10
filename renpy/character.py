@@ -1058,6 +1058,21 @@ class ADVCharacter(object):
 
         self("", interact=False, _call_done=False)
 
+    def has_character_arguments(self, **kwargs):
+        """
+        Returns True if `kwargs` contains any keyword arguments that will
+        cause the creation of a new Character object and the proxying of a
+        call to that Character object, and False otherwise.
+        """
+
+        safe_kwargs_keys = { "interact", "_mode", "_call_done", "multiple", "_with_none" }
+
+        for i in kwargs:
+            if i not in safe_kwargs_keys:
+                return False
+
+        return True
+
     def __call__(self, what, interact=True, _call_done=True, multiple=None, **kwargs):
 
         _mode = kwargs.pop("_mode", None)

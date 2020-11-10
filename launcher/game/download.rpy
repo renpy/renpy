@@ -37,7 +37,8 @@ init python:
 
         if ssl_context_cache is None:
             import ssl
-            ssl_context_cache = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=renpy.loader.transfn("cacert.pem"))
+            import certifi
+            ssl_context_cache = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where())
 
         return ssl_context_cache
 

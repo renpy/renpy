@@ -1,32 +1,47 @@
-Chrome OS / Chrome Browser
-==========================
+Chrome OS/Chromebook
+====================
 
-Ren'Py supports being run under Chrome OS and as an application inside the
-Chrome web browser. This consists of the ability to run Ren'Py
-Android apps under the Android Runtime for Chrome (ARC).
+There are two ways to run Ren'Py under Chrome OS.
 
-To port a Ren'Py Android app to Chrome, the following steps are required:
+Android on Chrome OS
+--------------------
 
-1. Install the ARC Welder app from the Chrome Web Store:
-   https://chrome.google.com/webstore/detail/arc-welder/emfinbmielocnlhgmfkkmkngdoccbadn
+The easiest way to make a game available for Chrome OS is to package it for
+Android, as described in the :ref:`Android documentation <android>`. Ren'Py's
+Android support was designed with Chrome OS in mind as well.
 
-2. Package the game for Android, as described in the :ref:`Android documentation <android>`.
+This mode only supports playing games, not developing new games.
 
-3. Launch ARC Welder from the apps menu inside Chrome.
+Linux on Chrome OS
+------------------
 
-4. Find the path to the .apk file containing your app.
+Ren'Py games and the Ren'Py SDK can also be installed on a Chromebook. This allows
+you to develop Ren'Py games on your Chromebook.
 
-5. Choose the following options:
+To install it:
 
-   * Orientation: Landscape
-   * Form factor: Tablet
-   * Resize: Disabled
-   * Clipboard access: unchecked
+1. Install Linux for Chrombebook, as described at https://support.google.com/chromebook/answer/9145439?hl=en .
 
-   Resizing does not currently work, so it's best to leave it disabled.
+2. Change the Crosstini GPU Support setting to enabled, by typing chrome://flags/#crostini-gpu-support, and choosing enable.
 
+3. Restart your Chromebook.
 
-6. Choose "Test". The game will load and run in the Chrome web browser.
+4. Upgrade Linux, by launching a terminal, and running::
 
-7. Choose "Download Zip". Chrome will generate a .zip file suitable for
-   uploading to the Chrome Web Store.
+    sudo apt update
+    sudo apt dist-upgrade
+
+5. Restart your Chromebook, again.
+
+To install a version of Ren'Py, open a terminal and run::
+
+    wget https://www.renpy.org/dl/7.4.0/renpy-7.4.0-sdk.tar.bz2
+    tar xaf renpy-7.4.0-sdk.tar.bz2
+
+To run that version of Ren'Py, open a terminal and run::
+
+    cd ~/ab/renpy-7.4.0-sdk
+    ./renpy.sh
+
+Note that this works with other versions of Ren'Py if you change 7.4.0
+for another version.

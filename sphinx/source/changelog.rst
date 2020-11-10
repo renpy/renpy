@@ -173,7 +173,7 @@ has changed slightly. Here's the latest list of what is supported:
       - webasm
       - Modern web browsers
 
-The biggest new platform that Ren'Py supports is the 64-bit windows
+The biggest new platform that Ren'Py supports is the 64-bit Windows
 platform, which means that Ren'Py is available in 64-bits on all major
 desktop and mobile platforms.  The new :var:`renpy.bits` variable can
 be used to determine if Ren'Py is running on a 32 or 64-bit platform,
@@ -229,6 +229,19 @@ renderer.
 Miscellaneous
 -------------
 
+The ``define`` statement can now be used to set a key in a dictionary. ::
+
+    # Ren'Py was started in 2004.
+    define age["eileen"] = 2020 - 2004
+
+The ``define`` statement can take += and \|=, to apply the appropriate
+update operators. ::
+
+    define config.keymap['dismiss'] = [ 'K_KP_PLUS' ]
+
+    # This assumes endings is a set.
+    define endings |= { "best" }
+
 It is now possible to specify a relative audio channel whenever an
 audio is file is played, using the new ``volume`` clause to ``play`` and
 ``queue``.
@@ -254,6 +267,12 @@ the opposite.
 
 The launcher window can now be resized if necessary. A button has been added to
 the launcher preferences to restore the default size.
+
+The new :var:`build.mac_info_plist` variable makes it easier to customize
+the mac app.
+
+The `requests <https://requests.readthedocs.io/en/master/>`_ library, is
+bundled with Ren'Py, making accessing the web much easier.
 
 Pressing PAUSE on your keyboard brings the player to the game menu, finally
 giving that key a function.

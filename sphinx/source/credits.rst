@@ -20,6 +20,7 @@ the omission in future versions.
 * Alessio
 * Alexandre Tranchant
 * Alisha Taylor
+* Andrej
 * Andy_kl
 * Apricotorange
 * Arda Güler
@@ -32,13 +33,17 @@ the omission in future versions.
 * BlackDragonHunt/Mangagamer
 * Bryan Tsang
 * Carl
+* Capntrips
 * Caryoscelus
 * CensoredUsername (C)
+* Cherie Davidson
 * Chris Mear
 * Christian Koepp
 * Civalin
+* CobaltCore
 * Craig P. Donson
 * DaFool
+* Daniel Conley
 * Daniel Luque
 * David Gowers
 * Deji
@@ -46,6 +51,7 @@ the omission in future versions.
 * Denzil
 * Derik
 * Diapolo10
+* Dogtopus
 * Doomfest
 * Donghyeok Tak
 * DragoonHP
@@ -65,7 +71,10 @@ the omission in future versions.
 * Frédéric Chapoton
 * Gas
 * George Economidis
+* GimmiRuski
+* Gio
 * Giuseppe Bertone
+* Gouvernathor
 * Gregory Pease
 * Grey
 * Gustavo Carvalho
@@ -76,6 +85,7 @@ the omission in future versions.
 * Hixbooks
 * Huang Junjie
 * Huanxuantian
+* Hyper Sonic
 * Ian Leslie
 * Jackmcbarn
 * JaHIY
@@ -84,9 +94,12 @@ the omission in future versions.
 * James Pearson Hughes
 * Jan Beich
 * Javimat
+* Joaquin Garmendia Cabrera
 * Joshua Fehler
+* Joshua Stone
 * Julian Uy
 * Kalawore
+* Kapil Gain
 * Kathryn
 * Kevin Turner
 * Kinsman
@@ -98,10 +111,14 @@ the omission in future versions.
 * Kyouryuukunn
 * Lapalissiano
 * Lee Yunseok
+* Lezalith
 * Lore
+* Lucas Ramage
+* Maciej Katafiasz
 * Maissara Moustafa
 * Mal Graty
 * Marcel
+* Mason Chou
 * Markus Koschany
 * Max le Fou
 * Maxwell Paul Brickner

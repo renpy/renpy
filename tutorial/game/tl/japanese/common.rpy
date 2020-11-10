@@ -1130,3 +1130,51 @@ translate japanese strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "クリップボードに errors.txt を Discord に適した Markdown 形式でコピーする。"
 
+# TODO: Translation updated at 2020-10-29 22:51
+
+translate japanese strings:
+
+    # renpy/common/00accessibility.rpy:193
+    old "Self-Voicing Volume Drop"
+    new "自己発話音量"
+
+    # renpy/common/00preferences.rpy:384
+    old "self voicing volume drop"
+    new "セルフボイシングボリュームを下げる"
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "GLレンダリングを強制"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "ANGLEレンダリングを強制"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "GLESレンダリングを強制"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "GL2レンダリングを強制"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "ANGLE2レンダリングを強制"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "GLES2レンダリングを強制"
+
+    # renpy/common/00gltest.rpy:245
+    old "This game requires use of GL2 that can't be initialised."
+    new "このゲームはGL2を必要としますが初期化できません。"
+
+    # renpy/common/00gltest.rpy:256
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "詳しい修正方法は{a=[url]}documentation{/a}を参照してください。"
+
+    # renpy/common/00gltest.rpy:273
+    old "Change render options"
+    new "レンダリング設定を変更"
+

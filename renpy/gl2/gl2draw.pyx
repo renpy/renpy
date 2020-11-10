@@ -182,13 +182,12 @@ cdef class GL2Draw:
 
         renpy.display.log.write("primary display bounds: %r", bounds)
 
-        head_full_w = bounds[2]
         head_w = bounds[2] - 102
         head_h = bounds[3] - 102
 
         # Figure out the default window size.
-        bound_w = min(vwidth, visible_w, head_w)
-        bound_h = min(vwidth, visible_h, head_h)
+        bound_w = min(visible_w, head_w)
+        bound_h = min(visible_h, head_h)
 
         self.info["max_window_size"] = (
             int(round(min(bound_h * virtual_ar, bound_w))),
@@ -294,8 +293,6 @@ cdef class GL2Draw:
         if not renpy.config.gl_enable:
             renpy.display.log.write("GL Disabled.")
             return False
-
-        print("Using {} renderer.".format(self.info["renderer"]))
 
         if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
             physical_size = (None, None)
@@ -403,8 +400,6 @@ cdef class GL2Draw:
         renpy.display.log.write("Renderer: %r", renderer)
         renpy.display.log.write("Version: %r", version)
         renpy.display.log.write("Display Info: %s", self.display_info)
-
-        print(renderer, version)
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.split(" "))
@@ -876,8 +871,13 @@ cdef class GL2Draw:
             if r.uniforms:
                 uniforms.update(r.uniforms)
 
+            if r.properties:
+                anisotropic = r.properties.get("anisotropic", False)
+            else:
+                anisotropic = True
+
             for i, c in enumerate(r.children):
-                uniforms["tex" + str(i)] = self.render_to_texture(c[0])
+                uniforms["tex" + str(i)] = self.render_to_texture(c[0], anisotropic=anisotropic)
 
             if r.mesh is True:
                 mesh = uniforms["tex0"].mesh
@@ -891,7 +891,7 @@ cdef class GL2Draw:
                 uniforms)
 
 
-    def render_to_texture(self, what, alpha=True):
+    def render_to_texture(self, what, alpha=True, anisotropic=True):
         """
         Renders `what` to a texture. The texture will have the drawable
         size of `what`.
@@ -907,7 +907,7 @@ cdef class GL2Draw:
         if what.cached_texture is not None:
             return what.cached_texture
 
-        rv = self.texture_loader.render_to_texture(what)
+        rv = self.texture_loader.render_to_texture(what, anisotropic)
 
         what.cached_texture = rv
 
@@ -1202,7 +1202,7 @@ cdef class GL2DrawingContext:
         program.set_uniform("u_model_size", (model.width, model.height))
         program.set_uniform("u_lod_bias", -1.0)
         program.set_uniform("u_transform", transform)
-        program.set_uniform("u_time", renpy.display.interface.frame_time)
+        program.set_uniform("u_time", (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400)
         program.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
 
         model.program_uniforms(program)

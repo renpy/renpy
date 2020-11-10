@@ -86,6 +86,13 @@ else:
     open = builtins.open
 
 ################################################################################
+# Make strict use surrogateescape error handling.
+if PY2:
+    import codecs
+    surrogateescape_error = codecs.lookup_error("surrogateescape")
+    codecs.register_error("strict", surrogateescape_error)
+
+################################################################################
 # String (text and binary) types and functions.
 
 basestring = future.utils.string_types # @ReservedAssignment

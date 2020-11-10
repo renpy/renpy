@@ -390,15 +390,22 @@ class Grid(Container):
     widgets that only use part of the space available to them.
     """
 
+    allow_underfull = None
+
     def __init__(self, cols, rows, padding=None,
                  transpose=False,
-                 style='grid', **properties):
+                 style='grid',
+                 allow_underfull=None,
+                 **properties):
         """
         @param cols: The number of columns in this widget.
 
         @params rows: The number of rows in this widget.
 
         @params transpose: True if the grid should be transposed.
+
+        @params allow_underfull: Controls if grid may be underfull.
+        If None - uses config.allow_underfull_grids.
         """
 
         if padding is not None:
@@ -413,6 +420,7 @@ class Grid(Container):
         self.rows = rows
 
         self.transpose = transpose
+        self.allow_underfull = allow_underfull
 
     def render(self, width, height, st, at):
 
@@ -432,12 +440,6 @@ class Grid(Container):
         # For convenience and speed.
         cols = self.cols
         rows = self.rows
-
-        if len(self.children) != cols * rows:
-            if len(self.children) < cols * rows:
-                raise Exception("Grid not completely full.")
-            else:
-                raise Exception("Grid overfull.")
 
         if self.transpose:
             children = [ ]
@@ -502,6 +504,27 @@ class Grid(Container):
             self.offsets = offsets
 
         return rv
+
+    def per_interact(self):
+        super(Grid, self).per_interact()
+
+        delta = (self.cols * self.rows) - len(self.children)
+        if delta == 0:
+            return
+
+        elif delta < 0:
+            raise Exception("Grid overfull.")
+
+        if self.allow_underfull is None:
+            allow_underfull = renpy.config.allow_underfull
+        else:
+            allow_underfull = self.allow_underfull
+
+        if not allow_underfull:
+            raise Exception("Grid not completely full.")
+        else:
+            for _ in range(delta):
+                self.add(Null())
 
 
 class IgnoreLayers(Exception):
@@ -1442,10 +1465,10 @@ def ShowingSwitch(*args, **kwargs):
     One use of ShowingSwitch is to have images change depending on
     the current emotion of a character. For example::
 
-    image emotion_indicator = ShowingSwitch(
-       "eileen concerned", "emotion_indicator concerned",
-       "eileen vhappy", "emotion_indicator vhappy",
-       None, "emotion_indicator happy")
+        image emotion_indicator = ShowingSwitch(
+           "eileen concerned", "emotion_indicator concerned",
+           "eileen vhappy", "emotion_indicator vhappy",
+           None, "emotion_indicator happy")
 
     """
 

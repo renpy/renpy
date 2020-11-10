@@ -177,10 +177,6 @@ cdef class Live2DModel:
 
     cdef list meshes
 
-    cdef Matrix forward
-    cdef Matrix reverse
-    cdef tuple offset
-
     def __init__(self, fn):
         """
         Loads the Live2D model.
@@ -261,29 +257,6 @@ cdef class Live2DModel:
         self.opacity_groups = { }
         self.parameter_groups = { }
 
-        # Render the model.
-
-        cdef Mesh2 mesh
-
-        w = self.pixel_size.X
-        h = self.pixel_size.Y
-
-        self.offset = (w / 2.0 - self.pixels_per_unit, h / 2.0 - self.pixels_per_unit)
-
-        ppu = self.pixels_per_unit
-        invppu = -self.pixels_per_unit
-
-        self.reverse = Matrix([
-            ppu, 0, 0, ppu,
-            0, -ppu, 0, ppu,
-            0, 0, 1, 0,
-            0, 0, 0, 1, ])
-
-        self.forward = Matrix([
-            invppu, 0, 0, invppu,
-            0, -invppu, 0, invppu,
-            0, 0, 1, 0,
-            0, 0, 0, 1, ])
 
         csmUpdateModel(self.model)
 
@@ -329,7 +302,10 @@ cdef class Live2DModel:
             self.parameter_values[parameter.index] = old + value
 
 
-    def render(self, textures):
+    def get_size(self):
+        return (self.pixel_size.X, self.pixel_size.Y)
+
+    def render(self, textures, zoom):
 
         cdef int i
 
@@ -343,8 +319,34 @@ cdef class Live2DModel:
 
         csmUpdateModel(self.model)
 
-        w = self.pixel_size.X
-        h = self.pixel_size.Y
+
+        # Render the model.
+
+#         w = self.pixel_size.X
+#         h = self.pixel_size.Y
+        w = int(zoom * self.pixel_size.X)
+        h = int(zoom * self.pixel_size.Y)
+
+        ppu = self.pixels_per_unit * zoom
+
+        if ppu:
+            invppu = 1 / ppu
+        else:
+            invppu = 0
+
+        offset = (w / 2.0 - ppu, h / 2.0 - ppu)
+
+        reverse = Matrix([
+            ppu, 0, 0, ppu,
+            0, -ppu, 0, ppu,
+            0, 0, 1, 0,
+            0, 0, 0, 1, ])
+
+        forward = Matrix([
+            invppu, 0, 0, invppu,
+            0, -invppu, 0, invppu,
+            0, 0, 1, 0,
+            0, 0, 0, 1, ])
 
         rv = Render(w, h)
         renders = [ ]
@@ -360,12 +362,10 @@ cdef class Live2DModel:
 
             mesh.triangles = self.drawable_index_counts[i] // 3
             memcpy(mesh.triangle, self.drawable_indices[i],  sizeof(unsigned short) * mesh.triangles * 3)
-
-            r = Render(self.pixels_per_unit * 2, self.pixels_per_unit * 2)
-            r.reverse = self.reverse
-            r.forward = self.forward
+            r = Render(ppu * 2, ppu * 2)
+            r.reverse = reverse
+            r.forward = forward
             r.mesh = mesh
-
 
             for s in shaders:
                 r.add_shader(s)
@@ -404,9 +404,6 @@ cdef class Live2DModel:
         renders.sort()
 
         for t in renders:
-            rv.subpixel_blit(t[1], self.offset)
+            rv.subpixel_blit(t[1], offset)
 
         return rv
-
-
-

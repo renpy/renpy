@@ -85,6 +85,12 @@ label install_live2d:
             (r".*/Core/dll/windows/x86/(Live2DCubismCore.dll)", r"lib/windows-i686/\1"),
             (r".*/Core/dll/macos/(libLive2DCubismCore.dylib)", r"lib/mac-x86_64/\1"),
             (r".*/Core/dll/experimental/rpi/(libLive2DCubismCore.so)", r"lib/linux-armv7l/\1"),
+
+            (r".*/Core/dll/android/(armeabi-v7a/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
+            (r".*/Core/dll/android/(arm64-v8a/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
+
+            # This doesn't exist yet.
+            # (r".*/Core/dll/android/(x86_64/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
         ]
 
         install_from_zip("Live2D Cubism SDK for Native", "CubismSdkForNative-4-*.zip", patterns)
@@ -133,6 +139,9 @@ screen install():
 
                             text _("The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc.")
 
+                            add SPACER
+
+                            text _("Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support.")
 
     textbutton _("Cancel") action Return(False) style "l_left_button"
     textbutton _("Open Ren'Py SDK Directory") action OpenDirectory(config.renpy_base, absolute=True) style "l_right_button"

@@ -392,6 +392,9 @@ init -1500 python in build:
     # The command used to sign a dmg.
     mac_codesign_dmg_command = [ "/usr/bin/codesign", "--timestamp", "-s", "{identity}", "-f", "{dmg}" ]
 
+    # Additional or Override keys to add to the Info.plist.
+    mac_info_plist = { }
+
     # Do we want to add the script_version file?
     script_version = True
 
@@ -461,6 +464,8 @@ init -1500 python in build:
             rv["mac_codesign_command"] = mac_codesign_command
             rv["mac_create_dmg_command"] = mac_create_dmg_command
             rv["mac_codesign_dmg_command"] = mac_codesign_dmg_command
+
+        rv["mac_info_plist"] = mac_info_plist
 
         return rv
 

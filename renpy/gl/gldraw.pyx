@@ -238,8 +238,12 @@ cdef class GLDraw:
         if renpy.android or renpy.ios:
             fullscreen = True
 
-        width = renpy.game.preferences.physical_size[0] or self.virtual_size[0]
-        height = renpy.game.preferences.physical_size[1] or self.virtual_size[1]
+        if renpy.game.preferences.physical_size:
+            width = renpy.game.preferences.physical_size[0] or self.virtual_size[0]
+            height = renpy.game.preferences.physical_size[1] or self.virtual_size[1]
+        else:
+            width = self.virtual_size[0]
+            height = self.virtual_size[1]
 
         max_w, max_h = self.info["max_window_size"]
         width = min(width, max_w)
@@ -321,13 +325,12 @@ cdef class GLDraw:
 
         renpy.display.log.write("primary display bounds: %r", bounds)
 
-        head_full_w = bounds[2]
         head_w = bounds[2] - 102
         head_h = bounds[3] - 102
 
         # Figure out the default window size.
-        bound_w = min(vwidth, visible_w, head_w)
-        bound_h = min(vwidth, visible_h, head_h)
+        bound_w = min(visible_w, head_w)
+        bound_h = min(visible_h, head_h)
 
         self.info["max_window_size"] = (
             int(round(min(bound_h * virtual_ar, bound_w))),
