@@ -1704,5 +1704,5 @@ translate spanish strings:
 
     # game/install.rpy:144
     old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
-    new "Live2D en Ren'Py no es compatible con Web, Android x86_64 (incluidos emuladores y Chrome OS) y debe agregarse a los proyectos de iOS manualmente. Live2D debe reinstalarse después de actualizar Ren'Py o instalar el soporte de Android."
+    new "Live2D en Ren'Py no tiene soporte en Web, Android x86_64 (incluidos emuladores y Chrome OS) y debe agregarse a los proyectos de iOS manualmente. Live2D debe reinstalarse después de actualizar Ren'Py o instalar el soporte de Android."
 
