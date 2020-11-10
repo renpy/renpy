@@ -1701,3 +1701,8 @@ translate spanish strings:
     # game/web.rpy:341
     old "Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
     new "Las imágenes y las músicas se pueden descargar mientras juega. Se creará un archivo 'progress_download.txt' para que pueda configurar este comportamiento."
+
+    # game/install.rpy:144
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new "Live2D en Ren'Py no es compatible con Web, Android x86_64 (incluidos emuladores y Chrome OS) y debe agregarse a los proyectos de iOS manualmente. Live2D debe reinstalarse después de actualizar Ren'Py o instalar el soporte de Android."
+
