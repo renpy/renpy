@@ -282,6 +282,9 @@ class Live2DCommon(object):
 
         self.nonexclusive = { }
 
+        # This may be True, False, or a set of motion names.
+        self.seamless = False
+
     def apply_aliases(self, aliases):
 
         for k, v in aliases.items():
@@ -310,6 +313,17 @@ class Live2DCommon(object):
                 raise Exception("Name {!r} is not a known expression.".format(i))
 
             self.nonexclusive[i] = self.expressions.pop(i)
+
+    def apply_seamless(self, value):
+        self.seamless = value
+
+    def is_seamless(self, motion):
+        if self.seamless is True:
+            return True
+        elif self.seamless is False:
+            return False
+        else:
+            return (motion in self.seamless)
 
 
 # This maps a filename to a Live2DCommon object.
@@ -414,7 +428,7 @@ class Live2D(renpy.display.core.Displayable):
         return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
-    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, nonexclusive=None, used_nonexclusive=None, **properties):
+    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, nonexclusive=None, used_nonexclusive=None, seamless=None, **properties):
 
         super(Live2D, self).__init__(**properties)
 
@@ -441,6 +455,9 @@ class Live2D(renpy.display.core.Displayable):
 
         if aliases:
             common.apply_aliases(aliases)
+
+        if seamless is not None:
+            common.apply_seamless(seamless)
 
     def _duplicate(self, args):
 
@@ -541,22 +558,35 @@ class Live2D(renpy.display.core.Displayable):
         if not self.motions:
             return
 
+        # True if the motion should be faded in.
+        do_fade_in = True
+
+        # True if the motion should be faded out.
+        do_fade_out = True
+
         for m in self.motions:
             motion = common.motions.get(m, None)
 
             if motion.duration > st:
+
+                if self.loop and (m == self.motions[-1]):
+                    do_fade_out = not common.is_seamless(m)
+
                 break
 
             st -= motion.duration
 
         else:
-            if not self.loop:
+            if self.loop:
+                do_fade_in = not common.is_seamless(m)
+                do_fade_out = not common.is_seamless(m)
+            else:
                 st = motion.duration
 
         if motion is None:
             return None
 
-        motion_data = motion.get(st, st_fade)
+        motion_data = motion.get(st, st_fade, do_fade_in, do_fade_out)
 
         for k, v in motion_data.items():
 
@@ -570,7 +600,7 @@ class Live2D(renpy.display.core.Displayable):
             elif kind == "Model":
                 common.model.set_parameter(key, value, factor)
 
-        return motion.wait(st, st_fade)
+        return motion.wait(st, st_fade, do_fade_in, do_fade_out)
 
     def render(self, width, height, st, at):
 

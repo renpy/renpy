@@ -65,7 +65,7 @@ Defining Animations
 
 Live2D animations are defined using the Live2D displayable and the image statement:
 
-.. function: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, **properties)
+.. function: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, **properties)
 
     This displayable displays a Live2D animation.
 
@@ -112,8 +112,17 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         a time. If listed here, any number of nonexclusive expressions can be
         shown, in addition to one exclusive expression.
 
+    `seamless`
+        This determines if seamless looping should be used. Seamless looping
+        avoids fading between loops of a single motion. This may be True to
+        enable seamless looping all the time, False to dispable it all the
+        time, or a set of motions to be looped.
+
     Only `filename` should be given positionally, and all other arguments should
     be given as keyword arguments.
+
+    The values of `alias`, `fade`, `nonexclusive`, and `seamless` are shared between all
+    Live2D objects that share `filename`, such that these only need to be supplied once.
 
 Live2D displayables should be assigned to an image statement::
 
