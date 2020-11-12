@@ -185,3 +185,8 @@ Finally, the :func:`SideImage` function returns, as a displayable, the
 current side image. This can be used as part of more advanced screen
 customization.
 
+
+Functions
+---------
+
+.. include: inc/side
