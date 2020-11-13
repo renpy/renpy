@@ -566,7 +566,7 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
 
     key = tag or name[0]
 
-    layer = default_layer(key, layer)
+    layer = default_layer(layer, key)
 
     if what is None:
         what = name
