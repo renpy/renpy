@@ -124,7 +124,7 @@ translate japanese screens_showing_e8f68c08:
 translate japanese screens_showing_7e48fc22:
 
     # e "And that is inside a frame that provides the background and borders. The frame has an at property that takes a transform giving its position."
-    e "また、これは背景や境界線を指定されたフレームの中にあります。このフレームは位置を与える変換を行うatプロパティを持ちます。"
+    e "また、これは背景や境界線を指定されたフレームの中にあります。このフレームは位置を与えるTransformを行うatプロパティを持ちます。"
 
 # game/tutorial_screens.rpy:286
 translate japanese screens_showing_80425bf3:

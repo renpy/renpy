@@ -28,7 +28,7 @@ translate japanese screen_displayable_properties_527d4b4e:
 translate japanese screen_displayable_properties_8aff26dd:
 
     # e "The at property applies a transform to the displayable, the same way the at clause in the show statement does."
-    e "atプロパティは、showステートメント内のatの部分と同じように、displayableに変換を適用します。"
+    e "atプロパティは、showステートメント内のatの部分と同じように、displayableにTransformを適用します。"
 
 # game/tutorial_screen_displayables.rpy:106
 translate japanese screen_displayable_properties_2ed40a70:
@@ -100,13 +100,13 @@ translate japanese add_displayable_1f5571e3:
 translate japanese add_displayable_0213ffa2:
 
     # e "In addition to the displayable, the add statement can be given transform properties. These can place or otherwise transform the displayable being added."
-    e "displayableに加え、addステートメントではtransformプロパティを与えることもできます。これにより、追加されたdisplayableを配置したり変換したりできます。"
+    e "displayableに加え、addステートメントではtransformプロパティを与えることもできます。これにより、追加されたdisplayableを配置したりTransformしたりできます。"
 
 # game/tutorial_screen_displayables.rpy:207
 translate japanese add_displayable_3a56a464:
 
     # e "Of course, the add statement can also take the at property, letting you give it a more complex transform."
-    e "もちろん、addステートメントはatプロパティも取りますし、更に複雑な変換を与えることもできます。"
+    e "もちろん、addステートメントはatプロパティも取りますし、更に複雑なTransformを与えることもできます。"
 
 # game/tutorial_screen_displayables.rpy:222
 translate japanese text_displayable_96f88225:

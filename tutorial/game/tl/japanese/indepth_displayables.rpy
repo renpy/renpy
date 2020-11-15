@@ -34,7 +34,7 @@ translate japanese simple_displayables_7f2efb23:
 translate japanese simple_displayables_9cd108c6:
 
     # e "The Transform displayable takes a displayable and can apply transform properties to it."
-    e "変換DisplayableはDisplayableをとってそれに変換を適用します。"
+    e "Transform DisplayableはDisplayableをとってそれに transform を適用します。"
 
 # game/indepth_displayables.rpy:55
 translate japanese simple_displayables_f8e1ba3f:
@@ -58,7 +58,7 @@ translate japanese simple_displayables_b102a029:
 translate japanese simple_displayables_0befbee0:
 
     # e "This means that we can apply other displayables, like Transform, to Text in the same way we do to images."
-    e "これにより、変換のような他のDisplayableを画像にするのと同様にテキストに適用できます。"
+    e "つまり画像にするのと同様にTransformのような他のDisplayableをテキストに適用できます。"
 
 # game/indepth_displayables.rpy:91
 translate japanese simple_displayables_fcf2325f:

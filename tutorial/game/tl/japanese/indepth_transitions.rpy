@@ -460,7 +460,7 @@ translate japanese demo_alphadissolve_51613c02:
 translate japanese demo_alphadissolve_7c08cf8b:
 
     # e "The AlphaDissolve displayable takes a control displayable, usually an ATL transform."
-    e "AlphaDissolveの画像としては、通常はATL変換を行った制御画像を用います。"
+    e "AlphaDissolveの画像としては、通常はATL transformを行った制御画像を用います。"
 
 # game/indepth_transitions.rpy:523
 translate japanese demo_alphadissolve_068e3e98:

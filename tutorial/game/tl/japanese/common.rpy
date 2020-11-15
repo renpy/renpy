@@ -380,7 +380,7 @@ translate japanese strings:
 
     # renpy/common/00director.rpy:1729
     old "Transforms:"
-    new "変換:"
+    new "Transform:"
 
     # renpy/common/00director.rpy:1748
     old "Behind:"
