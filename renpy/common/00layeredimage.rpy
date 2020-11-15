@@ -589,7 +589,7 @@ python early in layeredimage:
             kwargs.setdefault("xfit", True)
             kwargs.setdefault("yfit", True)
 
-            self.transform_args = { k : kwargs.pop(k) for k, v in kwargs.items() if k not in renpy.sl2.slproperties.box_property_names }
+            self.transform_args = {k : kwargs.pop(k) for k, v in kwargs.items() if k not in (renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names)}
             self.fixed_args = kwargs
 
         def format(self, what, attribute=None, group=None, variant=None, image=None):
