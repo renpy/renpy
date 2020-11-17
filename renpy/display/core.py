@@ -1521,7 +1521,7 @@ class Renderer(object):
     involved drawing and the SDL main window, as documented here.
 
     A Renderer is responsible for updating the renpy.game.preferences.fullscreen
-    and renpy.game.preferencences.physical_size preferences, when these are
+    and renpy.game.preferences.physical_size preferences, when these are
     changed from outside the game.
 
     A renderer has an info dict, that contains the keys from pygame_sdl2.display.Info(),
@@ -2720,6 +2720,13 @@ class Interface(object):
 
         # Deal with a hardware mouse, the easy way.
         if not renpy.config.mouse:
+            self.set_mouse(True)
+            return
+
+        # Use hardware mouse if the preferences force.
+        if renpy.game.preferences.system_cursor:
+            if isinstance(self.old_mouse, pygame.mouse.ColorCursor):
+                pygame.mouse.reset()
             self.set_mouse(True)
             return
 

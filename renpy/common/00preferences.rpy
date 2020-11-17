@@ -208,6 +208,10 @@ init -1500 python:
          * Preference("font size", 1.0) - Sets the accessibility font size scaling factor.
          * Preference("font line spacing", 1.0) - Sets the accessibility font vertical spacing scaling factor.
 
+         * Preference("system cursor", "enable") - Use system cursor ignoring config.mouse.
+         * Preference("system cursor", "disable") - Use cursor defined in config.mouse.
+         * Preference("system cursor", "toggle") - Toggle system cursor.
+
          Values that can be used with bars are:
 
          * Preference("text speed")
@@ -456,6 +460,15 @@ init -1500 python:
                     return FieldValue(_preferences, "font_line_spacing", range=bar_range, style="slider", offset=.5, action=_DisplayReset())
 
                 return [ SetField(_preferences, "font_line_spacing", value), _DisplayReset() ]
+
+            elif name == _("system cursor"):
+
+                if value == "enable":
+                    return SetField(_preferences, "system_cursor", True)
+                elif value == "disable":
+                    return SetField(_preferences, "system_cursor", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "system_cursor")
 
 
 
