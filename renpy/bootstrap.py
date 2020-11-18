@@ -360,6 +360,8 @@ You may be using a system install of python. Please run {0}.sh,
         if "RENPY_SHUTDOWN_TRACE" in os.environ:
             enable_trace(int(os.environ["RENPY_SHUTDOWN_TRACE"]))
 
+        renpy.display.tts.tts(None)
+
         renpy.display.im.cache.quit()
 
         if renpy.display.draw:
