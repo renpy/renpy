@@ -509,9 +509,6 @@ init -1500 python:
         def get_sensitive(self):
             return renpy.can_load(__slotname(self.name, self.page, self.slot))
 
-        def get_selected(self):
-            return __newest_slot() == __slotname(self.name, self.page, self.slot)
-
 
     def FileAction(name, page=None, **kwargs):
         """
@@ -955,4 +952,3 @@ init 1050 python hide:
             int(persistent._file_page)
         except:
             persistent._file_page = "1"
-
