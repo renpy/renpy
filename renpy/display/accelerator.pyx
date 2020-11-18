@@ -108,9 +108,6 @@ def transform_render(self, widtho, heighto, st, at):
     ysize = state.ysize
     fit = state.fit
 
-    if fit is None:
-        fit = 'fill'
-
     if xsize is not None:
         widtho = xsize
     if ysize is not None:
@@ -242,6 +239,12 @@ def transform_render(self, widtho, heighto, st, at):
             scale.append(xsize / width)
         if ysize is not None:
             scale.append(ysize / height)
+        
+        if fit and not scale:
+            scale = [widtho / width, heighto / height]
+
+        if fit is None:
+            fit = 'fill'
 
         if scale:
             if fit == 'scale-up':
