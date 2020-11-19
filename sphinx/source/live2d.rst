@@ -241,3 +241,8 @@ is set to True. If the animation is being looped, it is important to add
 greater than .2 second pauses that Ren'Py can exploit to perform expensive
 image prediction. (This may not be necessary if image prediction and loading
 can happen at other times.)
+
+Functions
+---------
+
+.. include:: inc/live2d
