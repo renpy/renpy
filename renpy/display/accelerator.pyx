@@ -115,6 +115,7 @@ def transform_render(self, widtho, heighto, st, at):
 
     cr = render(child, widtho, heighto, st - self.child_st_base, at)
 
+
     cwidth = cr.width
     cheight = cr.height
 
@@ -160,6 +161,37 @@ def transform_render(self, widtho, heighto, st, at):
             pan_h = cr.height
 
         cr = cr.subsurface((pan_x, pan_y, pan_w, pan_h))
+
+    mesh = state.mesh
+    blur = state.blur or None
+
+    if (blur is not None) and (not mesh):
+        mesh = True
+
+    if mesh:
+
+        mr = Render(cr.width, cr.height)
+        mr.blit(cr, (0, 0))
+
+        mr.operation = renpy.display.render.FLATTEN
+        mr.add_shader("renpy.texture")
+
+        if isinstance(mesh, tuple):
+            mesh_width, mesh_height = mesh
+
+            mr.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
+                mesh_width, mesh_height,
+                0.0, 0.0, cr.width, cr.height,
+                0.0, 0.0, 1.0, 1.0)
+        else:
+            mr.mesh = True
+
+        if blur:
+            mr.add_shader("-renpy.texture")
+            mr.add_shader("renpy.blur")
+            mr.add_uniform("u_renpy_blur_log2", math.log(state.blur, 2))
+
+        cr = mr
 
     # The width and height of the child.
     width = cr.width
@@ -239,7 +271,7 @@ def transform_render(self, widtho, heighto, st, at):
             scale.append(xsize / width)
         if ysize is not None:
             scale.append(ysize / height)
-        
+
         if fit and not scale:
             scale = [widtho / width, heighto / height]
 
@@ -371,33 +403,6 @@ def transform_render(self, widtho, heighto, st, at):
 
     rv = Render(width, height)
 
-    mesh = state.mesh
-
-    blur = state.blur or None
-
-    if (blur is not None) and (not mesh):
-        mesh = True
-
-    if mesh:
-
-        rv.operation = renpy.display.render.FLATTEN
-        rv.add_shader("renpy.texture")
-
-        if isinstance(mesh, tuple):
-            mesh_width, mesh_height = mesh
-
-            rv.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
-                mesh_width, mesh_height,
-                0.0, 0.0, cr.width, cr.height,
-                0.0, 0.0, 1.0, 1.0)
-        else:
-            rv.mesh = True
-
-    if blur:
-        rv.add_shader("-renpy.texture")
-        rv.add_shader("renpy.blur")
-        rv.add_uniform("u_renpy_blur_log2", math.log(state.blur, 2))
-
     if state.matrixcolor:
         matrix = state.matrixcolor
 
@@ -430,7 +435,7 @@ def transform_render(self, widtho, heighto, st, at):
                 -rydx / inv_det,
                 rxdx / inv_det)
 
-    # Nearest neightbor.
+    # Nearest neighbor.
     rv.nearest = state.nearest
 
     if state.nearest:
