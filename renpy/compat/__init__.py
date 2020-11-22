@@ -56,9 +56,6 @@ Right now, it does the following things:
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 
-import renpy
-renpy.update_path()
-
 import future.standard_library
 import future.utils
 import builtins
@@ -91,6 +88,9 @@ if PY2:
     import codecs
     surrogateescape_error = codecs.lookup_error("surrogateescape")
     codecs.register_error("strict", surrogateescape_error)
+
+import renpy
+renpy.update_path()
 
 ################################################################################
 # String (text and binary) types and functions.
