@@ -131,7 +131,7 @@ Then it will open the script file in the editor.
 
 Once the editor opens, erase everything in script.rpy. We're starting
 from scratch, so you don't need what's there. Copy the example above into
-script.ry, and save it.
+script.rpy, and save it.
 
 You're now ready to run this example. Go back to the launcher, and
 choose "Launch Project". Ren'Py will start up. Notice how, without any
