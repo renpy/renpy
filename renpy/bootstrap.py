@@ -172,7 +172,7 @@ def bootstrap(renpy_base):
         del os.environ["SDL_VIDEODRIVER"]
 
     if not isinstance(renpy_base, str):
-        renpy_base = str(renpy_base, FSENCODING, "replace")
+        renpy_base = str(renpy_base, FSENCODING)
 
     # If environment.txt exists, load it into the os.environ dictionary.
     if os.path.exists(renpy_base + "/environment.txt"):
