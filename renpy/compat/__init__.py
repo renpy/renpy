@@ -86,6 +86,9 @@ else:
 # Make strict use surrogateescape error handling.
 if PY2:
     import codecs
+
+    strict_error = codecs.lookup_error("strict")
+    codecs.register_error("python_strict", strict_error)
     surrogateescape_error = codecs.lookup_error("surrogateescape")
     codecs.register_error("strict", surrogateescape_error)
 

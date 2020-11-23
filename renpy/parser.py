@@ -215,7 +215,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
         data = filedata
     else:
         with open(filename, "rb") as f:
-            data = f.read().decode("utf-8")
+            data = f.read().decode("utf-8", "python_strict")
 
     filename = elide_filename(filename)
     prefix = munge_filename(filename)
