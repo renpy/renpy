@@ -222,7 +222,7 @@ Aliasing
 The `alias` parameter lets you specify your own names for the motions
 that would otherwise be automatically defined. For example, one could do::
 
-    image hiyori = Live2D("Resources/Hiyori", base=.6, alias={"idle" : "m01"})
+    image hiyori = Live2D("Resources/Hiyori", base=.6, aliases={"idle" : "m01"})
 
 To be able to use::
 
