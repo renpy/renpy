@@ -1162,8 +1162,6 @@ init python in distribute:
                     f.name += ".macho"
                     f.path = tempfile
 
-                    print(repr(f))
-
             return fl
 
         def prepare_file_list(self, format, file_lists):
