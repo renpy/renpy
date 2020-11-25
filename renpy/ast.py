@@ -62,7 +62,7 @@ class ParameterInfo(object):
     label.
     """
 
-    def __init__(self, parameters, positional, extrapos, extrakw):
+    def __init__(self, parameters, positional, extrapos, extrakw, annotations=None):
 
         # A list of parameter name, default value pairs.
         self.parameters = parameters
@@ -78,6 +78,9 @@ class ParameterInfo(object):
         # A variable that takes the extra keyword arguments, if
         # any. None if no such variable exists.
         self.extrakw = extrakw
+
+        # A dict that stores annotations for every parameter
+        self.annotations = annotations
 
     def apply(self, args, kwargs, ignore_errors=False):
         """
