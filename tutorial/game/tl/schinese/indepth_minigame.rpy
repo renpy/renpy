@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/indepth_minigame.rpy:220
 translate schinese demo_minigame_8f14835c:
 

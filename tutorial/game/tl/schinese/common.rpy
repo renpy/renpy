@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 translate schinese strings:
 
     # renpy/common/00accessibility.rpy:28
@@ -1129,7 +1128,6 @@ translate schinese strings:
     # renpy/common/_errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "以Markdown复制 errors.txt 文件到Discord。"
-# TODO: Translation updated at 2020-11-01 00:00
 
 translate schinese strings:
 

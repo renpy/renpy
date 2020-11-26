@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/indepth_text.rpy:22
 translate japanese a_label_8d79d234:
 

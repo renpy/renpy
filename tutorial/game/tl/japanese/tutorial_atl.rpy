@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/tutorial_atl.rpy:205
 translate japanese tutorial_positions_a09a3fd1:
 

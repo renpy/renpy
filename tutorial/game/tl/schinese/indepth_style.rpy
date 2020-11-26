@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/indepth_style.rpy:40
 translate schinese new_gui_17a0326e:
 

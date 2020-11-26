@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/tutorial_video.rpy:10
 translate schinese tutorial_video_f34a17f5:
 

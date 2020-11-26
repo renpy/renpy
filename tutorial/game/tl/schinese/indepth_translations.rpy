@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/indepth_translations.rpy:12
 translate schinese translations_c4ef181f:
 

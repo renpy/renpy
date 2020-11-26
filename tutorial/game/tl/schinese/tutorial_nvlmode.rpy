@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/tutorial_nvlmode.rpy:17
 translate schinese tutorial_nvlmode_76b2fe88:
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/tutorial_quickstart.rpy:28
 translate japanese tutorial_create_27048c11:
 

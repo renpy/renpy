@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/indepth_character.rpy:11
 translate schinese demo_character_e7e1b1bb:
 

@@ -1,4 +1,4 @@
-
+﻿
 translate simplified_chinese strings:
 
     # game/screens.rpy:251

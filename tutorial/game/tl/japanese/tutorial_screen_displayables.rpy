@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/tutorial_screen_displayables.rpy:3
 translate japanese screen_displayables_7c897a6d:
 
@@ -130,7 +129,7 @@ translate japanese text_displayable_9351d9dd:
 translate japanese text_displayable_32d76ccb:
 
     # e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it."
-    e "スクリーン内でtextステートメントを使用してテキストが表示される場合、スクリーン内で定義されたものは外で定義された変数よりも優先されます。" 
+    e "スクリーン内でtextステートメントを使用してテキストが表示される場合、スクリーン内で定義されたものは外で定義された変数よりも優先されます。"
 
 # game/tutorial_screen_displayables.rpy:238
 translate japanese text_displayable_7e84a5d1:

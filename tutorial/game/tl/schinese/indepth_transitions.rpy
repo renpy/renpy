@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/indepth_transitions.rpy:56
 translate schinese demo_transitions_5bbc72fe:
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/script.rpy:156
 translate japanese start_0e6a5bb4:
 

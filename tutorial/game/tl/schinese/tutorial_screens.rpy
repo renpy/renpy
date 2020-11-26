@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/tutorial_screens.rpy:165
 translate schinese tutorial_screens_2faa22e5:
 

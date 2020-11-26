@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/indepth_displayables.rpy:15
 translate schinese simple_displayables_db46fd25:
 

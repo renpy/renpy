@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/indepth_text.rpy:22
 translate schinese a_label_8d79d234:
 

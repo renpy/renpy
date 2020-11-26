@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/tutorial_quickstart.rpy:28
 translate schinese tutorial_create_27048c11:
 
@@ -862,7 +861,6 @@ translate schinese strings:
     old "Guy Shy"
     new "害 羞 小 伙"
 
-# TODO: Translation updated at 2020-11-01 00:00
 
 # game/tutorial_quickstart.rpy:54
 translate schinese tutorial_create_9151025b:

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/tutorial_distribute.rpy:3
 translate schinese distribute_7db9b042:
 

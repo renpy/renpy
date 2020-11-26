@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/tutorial_director.rpy:5
 translate schinese director_e4543d9b:
 

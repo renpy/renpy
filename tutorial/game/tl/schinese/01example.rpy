@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 translate schinese strings:
 
     # game/01example.rpy:473

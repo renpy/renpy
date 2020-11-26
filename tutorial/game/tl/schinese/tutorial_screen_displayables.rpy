@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/tutorial_screen_displayables.rpy:3
 translate schinese screen_displayables_7c897a6d:
 

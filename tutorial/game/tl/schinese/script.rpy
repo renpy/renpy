@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/script.rpy:156
 translate schinese start_0e6a5bb4:
 

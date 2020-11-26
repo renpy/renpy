@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-04-12 22:59
-
+﻿
 # game/tutorial_atl.rpy:205
 translate schinese tutorial_positions_a09a3fd1:
 

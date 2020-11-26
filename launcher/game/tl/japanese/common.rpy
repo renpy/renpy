@@ -778,7 +778,6 @@ translate japanese strings:
     old "Show deleted"
     new "消去済みを表示する"
 
-# TODO: Translation updated at 2020-11-03 09:43
 
 translate japanese strings:
 

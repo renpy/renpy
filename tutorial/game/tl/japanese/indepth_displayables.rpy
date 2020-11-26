@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/indepth_displayables.rpy:15
 translate japanese simple_displayables_db46fd25:
 
