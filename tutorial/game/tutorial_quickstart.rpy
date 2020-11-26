@@ -539,9 +539,9 @@ label tutorial_menus:
 
     e "Similarly, picking the second choice jumps us to choice1_no, which also runs two lines of script."
 
-    e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
+    e "The lines beginning with the dollar sign are lines of Python code, which are used to set a flag based on the user's choice."
 
-    e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
+    e "The flag is named menu_flag, and it's set to True or False based on the user's choice. Python's if statement can be used to test a flag, so the game can remember the user's choice."
 
     example:
         if menu_flag:
