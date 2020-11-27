@@ -1,4 +1,5 @@
-﻿
+# TODO: Translation updated at 2020-02-15 11:18
+
 translate japanese strings:
 
     # renpy/common/00accessibility.rpy:28
@@ -379,7 +380,7 @@ translate japanese strings:
 
     # renpy/common/00director.rpy:1729
     old "Transforms:"
-    new "変換:"
+    new "Transform:"
 
     # renpy/common/00director.rpy:1748
     old "Behind:"
@@ -1129,6 +1130,7 @@ translate japanese strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "クリップボードに errors.txt を Discord に適した Markdown 形式でコピーする。"
 
+# TODO: Translation updated at 2020-10-29 22:51
 
 translate japanese strings:
 
@@ -1175,4 +1177,3 @@ translate japanese strings:
     # renpy/common/00gltest.rpy:273
     old "Change render options"
     new "レンダリング設定を変更"
-

@@ -1,4 +1,5 @@
-﻿
+# TODO: Translation updated at 2020-02-15 11:18
+
 # game/tutorial_atl.rpy:205
 translate japanese tutorial_positions_a09a3fd1:
 
@@ -164,7 +165,7 @@ translate japanese tutorial_positions_2b184a93:
 translate japanese tutorial_positions_5aac4f3f:
 
     # e "With the right combination of position and anchor, any place on the screen can be specified, without even knowing the size of the image."
-    e "位置とアンカーを適切に組み合わせることで、画像の大きさを知らなくても画面上のあらゆる場所を指定できます。"
+    e "位置とアンカーを適切に組み合わせるて、画像の大きさを知らなくても画面上のあらゆる場所を指定できます。"
 
 # game/tutorial_atl.rpy:357
 translate japanese tutorial_positions_3b59b797:
@@ -236,25 +237,25 @@ translate japanese tutorial_positions_e0fe2d81:
 translate japanese tutorial_positions_0f4ca2b6:
 
     # e "Once you understand positions, you can use transformations to move things around the Ren'Py screen."
-    e "位置について理解できたら、変換を使ってRen'Pyの画面上でものを移動できるようになります。"
+    e "位置について理解できたら、Transformを使ってRen'Pyの画面上でものを移動できるようになります。"
 
 # game/tutorial_atl.rpy:418
 translate japanese tutorial_atl_d5d6b62a:
 
     # e "Ren'Py uses transforms to animate, manipulate, and place images. We've already seen the very simplest of transforms in use:"
-    e "Ren'Pyは変換(transform)を使って画像のアニメーションや操作、配置をします。もっとも簡単な変換がこちらです。:"
+    e "Ren'PyはTransformを使って画像のアニメーションや操作、配置をします。もっとも簡単なTransformがこちらです。:"
 
 # game/tutorial_atl.rpy:425
 translate japanese tutorial_atl_7e853c9d:
 
     # e "Transforms can be very simple affairs that place the image somewhere on the screen, like the right transform."
-    e "変換はright変換のように画像を画面のどこかに配置するとても簡単なものもあります。"
+    e "Transformはright Transformのように画像を画面のどこかに配置するとても簡単なものもあります。"
 
 # game/tutorial_atl.rpy:429
 translate japanese tutorial_atl_87a6ecbd:
 
     # e "But transforms can also be far more complicated affairs, that introduce animation and effects into the mix. To demonstrate, let's have a Gratuitous Rock Concert!"
-    e "しかし変換はアニメーションやエフェクトのようなよりずっと複雑なこもとできます。デモンストレーションとして無償のロックコンサートを初めましょう。"
+    e "しかしTransformはアニメーションやエフェクトのようなよりずっと複雑なこともできます。デモンストレーションとして無償のロックコンサートを初めましょう。"
 
 # game/tutorial_atl.rpy:437
 translate japanese tutorial_atl_65badef3:
@@ -272,7 +273,7 @@ translate japanese tutorial_atl_e0d3c5ec:
 translate japanese tutorial_atl_f2407514:
 
     # e "Most transforms in Ren'Py are built using the Animation and Transform Language, or ATL for short."
-    e "Ren'Pyのほとんどの変換はAnimation and Transform LanguageつまりATLを使用して作成されています。"
+    e "Ren'PyのほとんどのTransformはAnimation and Transform LanguageつまりATLを使用して作成されています。"
 
 # game/tutorial_atl.rpy:449
 translate japanese tutorial_atl_1f22f875:
@@ -308,19 +309,19 @@ translate japanese tutorial_atl_da7a7759:
 translate japanese tutorial_atl_1dd345c6:
 
     # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
-    e "ATLがshowステートメントの一部に使用されると、プロパティーの値は変換が変更された時も残ります。このためクリックで移動を止めても画像は同じ場所に残ります。"
+    e "ATLがshowステートメントの一部に使用されると、プロパティーの値はTransformが変更された時も残ります。このためクリックで移動を止めても画像は同じ場所に残ります。"
 
 # game/tutorial_atl.rpy:488
 translate japanese tutorial_atl_98047789:
 
     # e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
-    e "ATLの鍵となるのはコンポーザーというものです。ATLは比較的単純なコマンドからなり、それらを組み合わせることで複雑な変換を作成できます。"
+    e "ATLの鍵となるのはコンポーザーというものです。ATLは比較的単純なコマンドからなり、それらを組み合わせて複雑なTransformを作成できます。"
 
 # game/tutorial_atl.rpy:490
 translate japanese tutorial_atl_ed82983f:
 
     # e "Before I explain how ATL works, let me explain what animation and transformation are."
-    e "ATLでどのようなことが出来るかの前に、アニメーションと変換とは何かを説明します。"
+    e "ATLでどのようなことが出来るかの前に、アニメーションとTransformとは何かを説明します。"
 
 # game/tutorial_atl.rpy:495
 translate japanese tutorial_atl_2807adff:
@@ -332,7 +333,7 @@ translate japanese tutorial_atl_2807adff:
 translate japanese tutorial_atl_3eec202b:
 
     # e "Transformation involves moving or distorting an image. This includes placing it on the screen, zooming it in and out, rotating it, and changing its opacity."
-    e "変換は、画像が移動や変形を伴うときを言います。画面への表示、拡大・縮小、回転、透明度の変更といったものが含まれます。"
+    e "Transformは、画像の移動や変形を意味します。画面への表示、拡大・縮小、回転、透明度の変更といったものが含まれます。"
 
 # game/tutorial_atl.rpy:530
 translate japanese tutorial_atl_fbc9bf83:
@@ -386,7 +387,7 @@ translate japanese tutorial_atl_e5872360:
 translate japanese tutorial_atl_2e9d63ea:
 
     # e "With animation done, we'll see how we can use ATL to transform images, starting with positioning an image on the screen."
-    e "アニメーションを実行してATLによってどのように画像を変換するかを見ましょう。まずは画面に画像を配置します。"
+    e "アニメーションを実行してATLによってどのように画像をTransformするかを見ましょう。まずは画面に画像を配置します。"
 
 # game/tutorial_atl.rpy:570
 translate japanese tutorial_atl_ddc55039:
@@ -422,7 +423,7 @@ translate japanese tutorial_atl_d3416d4f:
 translate japanese tutorial_atl_4e7512ec:
 
     # e "The interpolation statement allows you to smoothly vary the value of a transform property, from an old to a new value."
-    e "補間ステートメントを使うと、変換プロパティーの値を古い値から新しい値に少しずつ変化させることができます。"
+    e "補間ステートメントを使うと、Transformプロパティーの値を古い値から新しい値に少しずつ変化させることができます。"
 
 # game/tutorial_atl.rpy:588
 translate japanese tutorial_atl_685eeeaa:
@@ -458,13 +459,13 @@ translate japanese tutorial_atl_d08fe8d9:
 translate japanese tutorial_atl_84b22ac0:
 
     # e "ATL transforms created using the statement become ATL statements themselves. Since the default positions are also transforms, this means that we can use left, right, and center inside of an ATL block."
-    e "ステートメントで作成されたATL変換は自身もATLステートメントとなります。デフォルトの位置も変換の一つなので、left、right、centerをATLブロックの中に使えます。"
+    e "ステートメントで作成されたATL Transformは自身もATLステートメントとなります。デフォルトの位置もTransformの一つなので、left、right、centerをATLブロックの中に使えます。"
 
 # game/tutorial_atl.rpy:635
 translate japanese tutorial_atl_331126c1:
 
     # e "Here, we have two new statements. The block statement allows you to include a block of ATL code. Since the repeat statement applies to blocks, this lets you repeat only part of an ATL transform."
-    e "ここで、新しいステートメントが2つ出てきました。blockステートメントを使うと、ATLコードにブロックを含められるようになります。ブロックの中でrepeatステートメントが使われると、ATL変換の一部だけが繰り返されます。"
+    e "ここで、新しいステートメントが2つ出てきました。blockステートメントを使うと、ATLコードにブロックを含められるようになります。ブロックの中でrepeatステートメントが使われると、ATL Transformの一部だけが繰り返されます。"
 
 # game/tutorial_atl.rpy:637
 translate japanese tutorial_atl_24f67b67:
@@ -506,7 +507,7 @@ translate japanese tutorial_atl_2265254b:
 translate japanese transform_properties_391169cf:
 
     # e "Ren'Py has quite a few transform properties that can be used with ATL, the Transform displayable, and the add Screen Language statement."
-    e "Ren'PyにATLや変換displayable、スクリーン言語ステートメントで使えるはかなりの数の変換プロパティーがあります。"
+    e "Ren'PyにATLやTransform displayable、スクリーン言語ステートメントで使えるはかなりの数のTransformプロパティーがあります。"
 
 # game/tutorial_atl.rpy:685
 translate japanese transform_properties_fc895a1f:
@@ -518,7 +519,7 @@ translate japanese transform_properties_fc895a1f:
 translate japanese transform_properties_88daf990:
 
     # e "First off, all of the position properties are also transform properties. These include the pos, anchor, align, center, and offset properties."
-    e "最初に、すべての位置プロパティーは変換プロパティーでもあります。これらにはpos,  anchor,  center,  offsetプロパティーを含みます。"
+    e "最初に、すべての位置プロパティーはTransformプロパティーでもあります。これらにはpos,  anchor,  center,  offsetプロパティーを含みます。"
 
 # game/tutorial_atl.rpy:719
 translate japanese transform_properties_d7a487f1:
@@ -542,7 +543,7 @@ translate japanese transform_properties_4194527e:
 translate japanese transform_properties_35934e77:
 
     # e "Transforms also support polar coordinates. The around property sets the center of the coordinate system to coordinates given in pixels."
-    e "変換は極座標もサポートしています。aroundプロパティーは座標系の中心をピクセル単位で特定の座標に設定します。"
+    e "Transformは極座標もサポートしています。aroundプロパティーは座標系の中心をピクセル単位で特定の座標に設定します。"
 
 # game/tutorial_atl.rpy:763
 translate japanese transform_properties_605ebd0c:
@@ -578,7 +579,7 @@ translate japanese transform_properties_b98b780b:
 translate japanese transform_properties_74d542ff:
 
     # e "Instead of zooming by a scale factor, the size transform property can be used to scale a displayable to a size in pixels."
-    e "倍数指定のzoomの代りに、size変換プロパティーを使用して画像をあるピクセルサイズまでスケールできます。"
+    e "倍数指定のzoomの代りに、size transformプロパティーを使用して画像をあるピクセルサイズまでスケールできます。"
 
 # game/tutorial_atl.rpy:834
 translate japanese transform_properties_438ed776:
@@ -608,7 +609,7 @@ translate japanese transform_properties_66d29ee8:
 translate japanese transform_properties_7f32e8ad:
 
     # e "The tile transform properties, xtile and ytile, repeat the displayable multiple times."
-    e "tile変換プロパティーxtileとytileは画像を何回も繰替えします。"
+    e "tile transformプロパティーxtileとytileは画像を何回も繰替えします。"
 
 # game/tutorial_atl.rpy:891
 translate japanese transform_properties_207b7fc8:
@@ -632,7 +633,7 @@ translate japanese transform_properties_f34abd82:
 translate japanese transform_properties_bfa3b139:
 
     # e "Those are all the transform properties we have to work with. By putting them together in the right order, you can create complex things."
-    e "これらはすべて使用する必要がある変換プロパティーです。順番通りに配置して、複雑なものも作成できます。"
+    e "これらはすべて使用する必要があるTransformプロパティーです。順番通りに配置して、複雑なものも作成できます。"
 
 translate japanese strings:
 
