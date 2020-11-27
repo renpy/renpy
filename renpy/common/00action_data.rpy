@@ -428,7 +428,7 @@ init -1600 python:
         `set`
             The set to remove from. This may be a set or list.
         `value`
-            The value to add or append.
+            The value to remove.
         """
 
         identity_fields = [ 'set' ]

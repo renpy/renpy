@@ -1,4 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
+# TODO: Translation updated at 2020-02-15 11:18
 
 # game/tutorial_screen_displayables.rpy:3
 translate japanese screen_displayables_7c897a6d:

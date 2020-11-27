@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/tutorial_director.rpy:5
 translate japanese director_e4543d9b:
 
@@ -34,7 +33,7 @@ translate japanese director_43504744:
 translate japanese director_32f8695e:
 
     # e "The idea is that you can use an editor to write the script and logic of your visual novel, and then interactively add images in the right places."
-    e "あなたのビジュアルノベルのスクリプトやロジックを書くためにエディタを使用し、さらに画像を適切な位置にインタラクティブに追加することができる、というご提案です。" 
+    e "あなたのビジュアルノベルのスクリプトやロジックを書くためにエディタを使用し、さらに画像を適切な位置にインタラクティブに追加することができる、というご提案です。"
 
 # game/tutorial_director.rpy:21
 translate japanese director_62734181:

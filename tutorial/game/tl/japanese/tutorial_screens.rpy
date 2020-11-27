@@ -1,4 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
+# TODO: Translation updated at 2020-02-15 11:18
 
 # game/tutorial_screens.rpy:165
 translate japanese tutorial_screens_2faa22e5:
@@ -591,3 +591,4 @@ translate japanese strings:
     # game/tutorial_screens.rpy:644
     old "There's not much left to see."
     new "あと少しです。"
+

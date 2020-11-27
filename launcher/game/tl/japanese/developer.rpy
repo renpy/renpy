@@ -185,7 +185,6 @@ translate japanese strings:
     old "long: Print the full representation of objects on the console."
     new "long: コンソール上のオブジェクトを全て表現する"
 
-# TODO: Translation updated at 2020-11-03 09:43
 
 translate japanese strings:
 

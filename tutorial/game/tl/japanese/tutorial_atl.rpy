@@ -1,4 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
+# TODO: Translation updated at 2020-02-15 11:18
 
 # game/tutorial_atl.rpy:205
 translate japanese tutorial_positions_a09a3fd1:
@@ -165,7 +165,7 @@ translate japanese tutorial_positions_2b184a93:
 translate japanese tutorial_positions_5aac4f3f:
 
     # e "With the right combination of position and anchor, any place on the screen can be specified, without even knowing the size of the image."
-    e "位置とアンカーを適切に組み合わせることで、画像の大きさを知らなくても画面上のあらゆる場所を指定できます。"
+    e "位置とアンカーを適切に組み合わせるて、画像の大きさを知らなくても画面上のあらゆる場所を指定できます。"
 
 # game/tutorial_atl.rpy:357
 translate japanese tutorial_positions_3b59b797:
@@ -255,7 +255,7 @@ translate japanese tutorial_atl_7e853c9d:
 translate japanese tutorial_atl_87a6ecbd:
 
     # e "But transforms can also be far more complicated affairs, that introduce animation and effects into the mix. To demonstrate, let's have a Gratuitous Rock Concert!"
-    e "しかしTransformはアニメーションやエフェクトのようなよりずっと複雑なこもとできます。デモンストレーションとして無償のロックコンサートを初めましょう。"
+    e "しかしTransformはアニメーションやエフェクトのようなよりずっと複雑なこともできます。デモンストレーションとして無償のロックコンサートを初めましょう。"
 
 # game/tutorial_atl.rpy:437
 translate japanese tutorial_atl_65badef3:
@@ -315,7 +315,7 @@ translate japanese tutorial_atl_1dd345c6:
 translate japanese tutorial_atl_98047789:
 
     # e "The key to ATL is what we call composability. ATL is made up of relatively simple commands, which can be combined together to create complicated transforms."
-    e "ATLの鍵となるのはコンポーザーというものです。ATLは比較的単純なコマンドからなり、それらを組み合わせることで複雑なTransformを作成できます。"
+    e "ATLの鍵となるのはコンポーザーというものです。ATLは比較的単純なコマンドからなり、それらを組み合わせて複雑なTransformを作成できます。"
 
 # game/tutorial_atl.rpy:490
 translate japanese tutorial_atl_ed82983f:

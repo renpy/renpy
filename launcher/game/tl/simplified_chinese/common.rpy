@@ -1,4 +1,4 @@
-
+﻿
 translate simplified_chinese strings:
 
     # 00accessibility.rpy:28

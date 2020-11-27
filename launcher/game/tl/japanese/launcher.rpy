@@ -1701,7 +1701,6 @@ translate japanese strings:
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "ウェブアプリをパッケージングするために、RenPyWeb (Ren'Py's web support) をダウンロードする必要があります。 RenPyWeb をダウンロードしますか？"
 
-# TODO: Translation updated at 2020-11-03 09:43
 
 translate japanese strings:
 

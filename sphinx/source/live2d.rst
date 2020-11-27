@@ -222,7 +222,7 @@ Aliasing
 The `alias` parameter lets you specify your own names for the motions
 that would otherwise be automatically defined. For example, one could do::
 
-    image hiyori = Live2D("Resources/Hiyori", base=.6, alias={"idle" : "m01"})
+    image hiyori = Live2D("Resources/Hiyori", base=.6, aliases={"idle" : "m01"})
 
 To be able to use::
 
@@ -241,3 +241,8 @@ is set to True. If the animation is being looped, it is important to add
 greater than .2 second pauses that Ren'Py can exploit to perform expensive
 image prediction. (This may not be necessary if image prediction and loading
 can happen at other times.)
+
+Functions
+---------
+
+.. include:: inc/live2d

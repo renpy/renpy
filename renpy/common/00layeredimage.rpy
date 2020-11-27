@@ -562,7 +562,7 @@ python early in layeredimage:
         """
 
         attribute_function = None
-        transforms = { }
+        transform_args = { }
 
         def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, **kwargs):
 

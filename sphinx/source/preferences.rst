@@ -147,6 +147,12 @@ can then change it again.)
     finish before advancing. If False, it will not. The equivalent of the
     "wait for voice" preference.
 
+.. var:: preferences.system_cursor = False
+
+    If True, the system cursor is forced to be used, ignoring the
+    :var:`config.mouse` value. If False, it will not. The equivalent of the
+    "system cursor" preference.
+
 
 
 Audio Channel Defaults

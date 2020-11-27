@@ -197,7 +197,7 @@ Keyword("image_style")
 add(window_properties)
 add(button_properties)
 
-DisplayableParser("textbutton", renpy.ui._textbutton, 0, scope=True)
+DisplayableParser("textbutton", renpy.ui._textbutton, "button", 0, scope=True)
 Positional("label")
 Keyword("action")
 Keyword("clicked")
@@ -222,7 +222,7 @@ add(text_text_properties)
 
 
 def sl2bar(context=None, **properties):
-    range = 1  # @ReservedAssignment
+    range = 1 # @ReservedAssignment
     value = 0
     width = None
     height = None
@@ -230,9 +230,9 @@ def sl2bar(context=None, **properties):
     if "width" in properties:
         width = properties.pop("width")
     if "height" in properties:
-        height  = properties.pop("height")
+        height = properties.pop("height")
     if "range" in properties:
-        range = properties.pop("range")  # @ReservedAssignment
+        range = properties.pop("range") # @ReservedAssignment
     if "value" in properties:
         value = properties.pop("value")
 
@@ -255,7 +255,7 @@ add(bar_properties)
 
 
 def sl2vbar(context=None, **properties):
-    range = 1  # @ReservedAssignment
+    range = 1 # @ReservedAssignment
     value = 0
     width = None
     height = None
@@ -263,9 +263,9 @@ def sl2vbar(context=None, **properties):
     if "width" in properties:
         width = properties.pop("width")
     if "height" in properties:
-        height  = properties.pop("height")
+        height = properties.pop("height")
     if "range" in properties:
-        range = properties.pop("range")  # @ReservedAssignment
+        range = properties.pop("range") # @ReservedAssignment
     if "value" in properties:
         value = properties.pop("value")
 
@@ -286,8 +286,8 @@ Keyword("hovered")
 Keyword("unhovered")
 add(bar_properties)
 
-
 # Omit autobar. (behavior)
+
 
 def sl2viewport(context=None, **kwargs):
     """
@@ -363,7 +363,6 @@ add(scrollbar_bar_properties)
 add(vscrollbar_bar_properties)
 add(viewport_position_properties)
 
-
 DisplayableParser("vpgrid", sl2vpgrid, "vpgrid", many, replaces=True, pass_context=True)
 Keyword("rows")
 Keyword("cols")
@@ -415,7 +414,6 @@ Keyword("adjustment")
 Keyword("range")
 Keyword("value")
 add(bar_properties)
-
 
 DisplayableParser("transform", renpy.display.motion.Transform, "transform", 1, default_properties=False)
 Keyword("at")
@@ -481,7 +479,7 @@ Style("child")
 DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
 Keyword("min_overlap")
 
-DisplayableParser("mousearea", renpy.display.behavior.MouseArea, 0, replaces=True)
+DisplayableParser("mousearea", renpy.display.behavior.MouseArea, None, 0, replaces=True)
 Keyword("hovered")
 Keyword("unhovered")
 Style("focus_mask")

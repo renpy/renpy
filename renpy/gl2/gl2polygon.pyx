@@ -28,9 +28,59 @@ cdef class Polygon:
             rv += " "
             rv += point2str(self.point[i])
 
+        ax = self.point[1].x - self.point[0].x
+        ay = self.point[1].y - self.point[0].y
+        bx = self.point[2].x - self.point[0].x
+        by = self.point[2].y - self.point[0].y
+
+        if (ax * by - bx * ay) > -0.000001:
+            rv += " ccw"
+        else:
+            rv += " cw"
+
         rv += ">"
 
         return rv
+
+    cpdef void ensure_winding(Polygon self):
+        """
+        Checks to ensure that the winding of this polygon is what
+        Ren'Py expects (CCW). If not, rearranges the points top
+        ensure the winding is correct.
+        """
+
+        cdef float ax, ay, bx, by
+        cdef int i, j
+        cdef Point2 t
+
+        # Check each point after the second to see if it's on the right
+        # side of the line between points 0 and 1.
+
+        ax = self.point[1].x - self.point[0].x
+        ay = self.point[1].y - self.point[0].y
+
+        for 2 <= i < self.points:
+
+            bx = self.point[i].x - self.point[0].x
+            by = self.point[i].y - self.point[0].y
+
+            if (ax * by - bx * ay) > -0.000001:
+                return
+
+        # If we're here, the winding is bad, and needs to be fixed by swapping
+        # points around.
+
+        i = 0
+        j = self.points - 1
+
+        while i < j:
+            tmp = self.point[i]
+            self.point[i] = self.point[j]
+            self.point[j] = tmp
+
+            i += 1
+            j -= 1
+
 
     @staticmethod
     def from_list(list l):
@@ -76,6 +126,8 @@ cdef class Polygon:
 
         cdef int i
         cdef int j
+
+        self.ensure_winding()
 
         rv = self
 

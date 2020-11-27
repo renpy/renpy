@@ -465,7 +465,7 @@ Occasionally Used
     you could write::
 
         init python:
-            config.font_replacement_map["Vera.ttf", False, True] = ("VeraIt.ttf", False, False).
+            config.font_replacement_map["Vera.ttf", False, True] = ("VeraIt.ttf", False, False)
 
     Please note that these mappings only apply to specific variants of
     a font. In this case, requests for a bold italic version of vera

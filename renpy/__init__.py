@@ -24,7 +24,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 
-# All imports should go below renpy.compat and update_path.
+# All imports should go below renpy.compat.
 
 
 def update_path():
@@ -53,9 +53,9 @@ def update_path():
         return
 
 
+from renpy.compat import *
 update_path()
 
-from renpy.compat import *
 import renpy.compat.pickle as pickle
 
 import sys

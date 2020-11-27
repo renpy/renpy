@@ -189,4 +189,4 @@ customization.
 Functions
 ---------
 
-.. include: inc/side
+.. include:: inc/side

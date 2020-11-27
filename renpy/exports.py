@@ -3280,7 +3280,7 @@ def fsencode(s):
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"
-    return s.encode(fsencoding, "replace")
+    return s.encode(fsencoding)
 
 
 @renpy_pure

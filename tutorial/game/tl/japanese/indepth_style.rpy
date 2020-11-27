@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/indepth_style.rpy:40
 translate japanese new_gui_17a0326e:
 
@@ -808,7 +807,6 @@ translate japanese strings:
     old "Sixth Child"
     new "Sixth Child"
 
-# TODO: Translation updated at 2020-10-29 22:51
 
 translate japanese strings:
 
