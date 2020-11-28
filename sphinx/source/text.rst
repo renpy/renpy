@@ -531,15 +531,15 @@ this(janome doesn't support python2 after v0.3.10).::
 Then, copy pkgutil.py into the same python-packages directory from
 https://github.com/python/cpython/blob/2.7/Lib/pkgutil.py.
 
-This is very natural but fairly slow line-breaking algorithm, so isn't
-recommended for huge amounts of text, such as in history.
-
-you should import janome in init block and place presplash.png into your
-game directory because it takes dozens of seconds.::
+You should import janome in init block and place presplash.png into your game
+directory because it takes dozens of seconds. This is very natural but fairly
+slow line-breaking algorithm, so isn't recommended for huge amounts of text,
+such as in history. We recommend to use this for only say_dialogue directly::
 
     init python:
         from janome.tokenizer import Tokenizer
         renpy.text.textsupport._janome_tokenize = Tokenizer().tokenize
+        style.say_dialogue.language = "japanese-janome"
 
 janome is under Apache License 2.0 and uses the MeCab-IPADIC dictionary/statistical
 model, so we suggest using the below wording in your project's README file or
