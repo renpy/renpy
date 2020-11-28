@@ -481,17 +481,28 @@ def MultiPersistent(name):
         pass
 
     fn = ""  # prevent a warning from happening.
+    data = None
 
     # Find the first file that actually exists. Otherwise, use the last
     # file.
     for fn in files:
-        fn = fn + "/" + name
-        if os.path.exists(fn):
-            break
+        fn = os.path.join(fn, name)
+        if os.path.isfile(fn):
+            try:
+                data = open(fn, "rb").read()
+                break
+            except:
+                pass
 
-    try:
-        rv = loads(open(fn, "rb").read())
-    except:
+    if data is not None:
+        try:
+            rv = loads(data)
+        except:
+            data = None
+            renpy.display.log.write("Loading MultiPersistent at %s:" % fn)
+            renpy.display.log.exception()
+
+    if data is None:
         rv = _MultiPersistent()
 
     rv._filename = fn  # W0201
