@@ -524,9 +524,9 @@ but, doesn't break line before below characters::
     ,)]）｝、〕〉》」』】〙〗〟’”｠»ゝゞァィゥェォッャュョヮヵヶぁぃぅぇぉっゃゅょゎゕゖㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇷ゚ㇺㇻㇼㇽㇾㇿ々〻ー‐゠–〜～?!‼⁇⁈⁉・:;/。.？！
 
 You should install janome and pkgutil into your game directory if you use
-this.::
+this(janome doesn't support python2 after v0.3.10).::
 
-    pip install --target game/python-packages janome
+    pip install --target game/python-packages janome==0.3.10
 
 Then, copy pkgutil.py into the same python-packages directory from
 https://github.com/python/cpython/blob/2.7/Lib/pkgutil.py.
