@@ -84,6 +84,10 @@ automatically selects screen variants based on the
 device's screen size and capabilities. See :ref:`screen-variants` for
 more information.
 
+Due to the security policy of mobile devices, MultiPersistent functionality
+is limited only to this game and its updates, i.e. it cannot be shared by
+another game.
+
 
 Testing and Emulation
 =====================
