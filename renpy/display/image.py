@@ -928,7 +928,7 @@ class ShownImageInfo(renpy.object.Object):
                 i = i[1:]
 
                 if i in optional:
-                    optional.discard(i)
+                    optional.remove(i)
 
                 if i in required:
                     required.remove(i)
@@ -938,7 +938,7 @@ class ShownImageInfo(renpy.object.Object):
 
         for i in remove:
             if i in optional:
-                optional.discard(i)
+                optional.remove(i)
 
         return self.choose_image(nametag, required, optional, name)
 
