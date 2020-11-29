@@ -1321,6 +1321,11 @@ Rarely or Internally Used
     If set to True, some profiling information will be output to
     stdout.
 
+.. var:: config.profile_init = 0.25
+
+    ``init`` and ``init python`` blocks taking longer than this amount of time
+    to run are reported to log file.
+
 .. var:: config.quit_on_mobile_background = False
 
     If True, the mobile app will quit when it loses focus.
