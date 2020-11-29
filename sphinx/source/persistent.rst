@@ -81,7 +81,7 @@ calling its save method. Undefined fields default to None. To ensure the
 object can be loaded again, we suggest not assigning the object instances
 of user-defined types.
 
-.. class:: MultiPersistent(key)
+.. class:: MultiPersistent(key, save_on_quit=False)
 
     Creates a new ``MultiPersistent`` object. This should only be called inside an
     ``init`` block, and it returns a new ``MultiPersistent`` with the given key.
@@ -90,6 +90,8 @@ of user-defined types.
         The key used to to access the multipersistent data. Games using the
         same key will access the same multipersistent data.
 
+    `save_on_quit`
+        If it is True, this object will be automatically saved when Ren'Py terminates.
 
     .. method:: save()
 

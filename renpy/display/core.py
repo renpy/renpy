@@ -2769,6 +2769,7 @@ class Interface(object):
                 renpy.loadsave.save("_reload-1")
 
             renpy.persistent.update(True)
+            renpy.persistent.save_MP()
 
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
