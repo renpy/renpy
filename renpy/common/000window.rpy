@@ -108,10 +108,10 @@ init -1200 python:
             return
 
         if statement in config.window_auto_hide:
-            _window_hide()
+            _window_hide(auto=True)
 
         if statement in config.window_auto_show:
-            _window_show()
+            _window_show(auto=True)
 
     config.statement_callbacks.append(_window_auto_callback)
 
