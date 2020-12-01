@@ -1206,6 +1206,13 @@ class ADVCharacter(object):
                     after = images.get_attributes(None, self.image_tag)
                     self.handle_say_transition('restore', before, after)
 
+    @property
+    def statement_name(self):
+        if not (self.condition is None or renpy.python.py_eval(self.condition)):
+            return "say-condition-false"
+        else:
+            return "say"
+
     def predict(self, what):
 
         old_attr_state = self.handle_say_attributes(True, True)
