@@ -232,6 +232,10 @@ renderer.
 Miscellaneous
 -------------
 
+Ren'Py now uses software playback of movies on Android and iOS devices,
+meaning the same files can be used on all platforms that support video
+playback.
+
 Defining a mouse cursor using :var:`config.mouse` now uses SDL2's color cursor
 API, which generally results in hardware acceleration and reduced mouse movement
 lag.

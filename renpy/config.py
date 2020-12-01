@@ -568,7 +568,7 @@ transition_screens = True
 predict_statements_callback = None
 
 # Should we use hardware video on platforms that support it?
-hw_video = True
+hw_video = False
 
 # A function to use to dispatch gestures.
 dispatch_gesture = None

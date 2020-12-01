@@ -12,6 +12,22 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+.. _incompatible-7.4:
+
+7.4
+---
+
+Mobile platforms now use hardware, rather than software, video playback.
+To restore the old behavior, use::
+
+    define config.hw_video = True
+
+Ren'Py will now only show side images if with at least one attribute in
+addition to the image tag. To disable this, use::
+
+    define config.side_image_requires_attributes = False
+
+
 .. _incompatible-7.3.3:
 
 7.3.3
