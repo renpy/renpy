@@ -152,9 +152,8 @@ def warp():
     n = node
 
     while True:
-        n = prev.get(n, None)
+        n = prev.pop(n, None)
         if n:
-            del prev[n]
             run.append(n)
         else:
             break
