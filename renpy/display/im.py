@@ -115,7 +115,7 @@ class Cache(object):
 
         # The preload thread.
         self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
-        self.preload_thread.setDaemon(True)
+        self.preload_thread.daemon = True
         self.preload_thread.start()
 
         # Have we been added this tick?
@@ -169,7 +169,7 @@ class Cache(object):
             self.cache_limit = int(renpy.config.image_cache_size_mb * 1024 * 1024 // 4)
 
     def quit(self): # @ReservedAssignment
-        if not self.preload_thread.isAlive():
+        if not self.preload_thread.is_alive():
             return
 
         with self.preload_lock:
