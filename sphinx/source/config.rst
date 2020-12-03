@@ -1494,6 +1494,12 @@ Rarely or Internally Used
     an interaction is started. These callbacks are not called when an
     interaction is restarted.
 
+.. var:: config.quit_callbacks = ...
+
+    A list of functions that are called (without any arguments) when
+    Ren'Py terminates. This is intended to free resources, such as
+    opened files or started threads.
+
 .. var:: config.top_layers = [ ]
 
     This is a list of names of layers that are displayed above all

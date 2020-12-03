@@ -637,6 +637,9 @@ def main():
 
         gc.set_debug(0)
 
+        for i in renpy.config.quit_callbacks:
+            i()
+
         renpy.loader.auto_quit()
         renpy.savelocation.quit()
         renpy.translation.write_updated_strings()

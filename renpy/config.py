@@ -1060,6 +1060,9 @@ fbo_size = (4096, 4096)
 # Names to ignore the redefinition of.
 lint_ignore_redefine = [ "gui.about" ]
 
+# A list of functions that are called when Ren'Py terminates.
+quit_callbacks = [ ]
+
 del os
 del collections
 
