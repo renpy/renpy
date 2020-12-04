@@ -308,6 +308,7 @@ cdef class Live2DModel:
     def render(self, textures, zoom):
 
         cdef int i
+        cdef int j
 
         cdef Render r
         cdef Render m
@@ -392,12 +393,20 @@ cdef class Live2DModel:
                 continue
 
             r = raw_renders[i]
-            m = raw_renders[self.drawable_masks[i][0]]
+
+            if self.drawable_mask_counts[i] == 1:
+                m = raw_renders[self.drawable_masks[i][0]]
+            else:
+                continue
 
             if self.drawable_constant_flags[i] & csmIsInvertedMask:
-                r.shaders = inverted_mask_shaders
+
+                shaders = inverted_mask_shaders
             else:
-                r.shaders = mask_shaders
+                shaders = mask_shaders
+
+            for s in shaders:
+                r.add_shader(s)
 
             r.blit(m, (0, 0))
 
