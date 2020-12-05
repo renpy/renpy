@@ -387,6 +387,9 @@ cdef class Live2DModel:
 
                 renders.append((self.drawable_render_orders[i], r))
 
+
+        multi_masks = { }
+
         for 0 <= i < self.drawable_count:
 
             if self.drawable_mask_counts[i] == 0:
@@ -397,7 +400,24 @@ cdef class Live2DModel:
             if self.drawable_mask_counts[i] == 1:
                 m = raw_renders[self.drawable_masks[i][0]]
             else:
-                continue
+
+                key = [ ]
+                for 0 <= j < self.drawable_mask_counts[i]:
+                    key.append(self.drawable_masks[i][j])
+                    key = tuple(key)
+
+                    m = multi_masks.get(key, None)
+
+                    if m is None:
+                        m = renpy.display.render.Render(ppu * 2, ppu * 2)
+                        m.mesh = True
+#                         m.forward = forward
+#                         m.reverse = reverse
+
+                        for j in key:
+                            m.blit(raw_renders[j], (0, 0))
+
+                        multi_masks[key] = m
 
             if self.drawable_constant_flags[i] & csmIsInvertedMask:
 
