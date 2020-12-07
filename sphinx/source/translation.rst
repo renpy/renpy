@@ -189,7 +189,7 @@ into::
     translate piglatin start_36562aba:
 
         # e "You scored [points] points!"
-        e $ latin_points = to_roman_numerals(points)
+        $ latin_points = to_roman_numerals(points)
         e "Ouyay oredscay [latin_points] ointspay!"
 
 
