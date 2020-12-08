@@ -285,22 +285,25 @@ cdef class Live2DModel:
         old = self.parameter_values[parameter.index]
         self.parameter_values[parameter.index] = old + weight * (value - old)
 
-    def blend_parameter(self, name, blend, value):
+    def blend_parameter(self, name, blend, value, weight=1.0):
 
         parameter = self.parameters.get(name, None)
 
         if parameter is None:
             for i in self.parameter_groups.get(name, [ ]):
-                self.blend_parameter(i, blend, value)
+                self.blend_parameter(i, blend, value, weight=weight)
             return
 
         old = self.parameter_values[parameter.index]
 
         if blend == "Multiply":
-            self.parameter_values[parameter.index] = old * value
-        else:
-            self.parameter_values[parameter.index] = old + value
+            value = old * value
+        elif blend == "Add":
+            value = old + value
+        elif blend == "Overwrite":
+            value = value
 
+        self.parameter_values[parameter.index] = old + weight * (value - old)
 
     def get_size(self):
         return (self.pixel_size.X, self.pixel_size.Y)
@@ -319,7 +322,6 @@ cdef class Live2DModel:
         inverted_mask_shaders = ("live2d.inverted_mask", "live2d.flip_texture")
 
         csmUpdateModel(self.model)
-
 
         # Render the model.
 
