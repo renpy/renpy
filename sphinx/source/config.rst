@@ -1048,10 +1048,6 @@ Rarely or Internally Used
     returns False, the built-in exception handler is use. This function may also call
     :func:`renpy.jump` to transfer control to some other label.
 
-    As a special case, this can also be False, which will prevent Ren'Py from
-    handling exceptions, allowing debuggers and other tools to process
-    exceptions directly.
-
 .. var:: config.fade_music = 0.0
 
     This is the amount of time in seconds to spend fading the old

@@ -589,10 +589,6 @@ class Context(renpy.object.Object):
                             self.exception_handler(short, full, traceback_fn)
                             handled = True
                         elif renpy.config.exception_handler is not None:
-
-                            if renpy.config.exception_handler is False:
-                                reraise(exc_info[0], exc_info[1], exc_info[2])
-
                             handled = renpy.config.exception_handler(short, full, traceback_fn)
 
                         if not handled:
