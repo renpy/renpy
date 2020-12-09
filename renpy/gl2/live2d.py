@@ -437,7 +437,12 @@ def update_states():
             state.old_expressions = [ ]
 
         state.new = d
-        state.new_base_time = None
+
+        if d.sustain:
+            state.new_base_time = state.old_base_time
+        else:
+            state.new_base_time = None
+
         state.cycle_new = True
 
     sls = renpy.display.core.scene_lists()
@@ -476,7 +481,7 @@ class Live2D(renpy.display.core.Displayable):
         return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
-    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, nonexclusive=None, used_nonexclusive=None, seamless=None, **properties):
+    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, nonexclusive=None, used_nonexclusive=None, seamless=None, sustain=False, **properties):
 
         super(Live2D, self).__init__(**properties)
 
@@ -491,6 +496,7 @@ class Live2D(renpy.display.core.Displayable):
         self.height = height
         self.loop = loop
         self.fade = fade
+        self.sustain = sustain
 
         # The name of this displayable.
         self.name = None
@@ -520,8 +526,13 @@ class Live2D(renpy.display.core.Displayable):
         used_nonexclusive = [ ]
 
         expression = None
+        sustain = False
 
         for i in args.args:
+
+            if i == "_sustain":
+                sustain = True
+                continue
 
             if i in common.motions:
                 motions.append(i)
@@ -550,7 +561,8 @@ class Live2D(renpy.display.core.Displayable):
             loop=self.loop,
             fade=self.fade,
             expression=expression,
-            used_nonexclusive=used_nonexclusive)
+            used_nonexclusive=used_nonexclusive,
+            sustain=sustain)
 
         rv.name = args.name
         rv._duplicatable = False
@@ -580,7 +592,7 @@ class Live2D(renpy.display.core.Displayable):
 
         # If there are no motions, choose the last one from the optional attributes.
         if not rv:
-            rv = [ i for i in optional if i in common.motions ][:-1]
+            rv = [ "_sustain" ] + [ i for i in optional if i in common.motions ]
 
         # Choose the first expression.
         for i in list(attributes) + list(optional):
@@ -718,7 +730,8 @@ class Live2D(renpy.display.core.Displayable):
             if state.new is not self:
                 fade = False
 
-            state.new_base_time = renpy.display.interface.frame_time - st
+            if state.new_base_time is None:
+                state.new_base_time = renpy.display.interface.frame_time - st
 
             if state.old is None:
                 fade = False
@@ -736,10 +749,12 @@ class Live2D(renpy.display.core.Displayable):
 
         if fade:
             old_redraw = state.old.update(common, renpy.display.interface.frame_time - state.old_base_time, st)
+            t = renpy.display.interface.frame_time - state.new_base_time
         else:
             old_redraw = None
+            t = st
 
-        new_redraw = self.update(common, st, None)
+        new_redraw = self.update(common, t, None)
 
         # Apply the expressions.
         expression_redraw = self.update_expressions(st)
