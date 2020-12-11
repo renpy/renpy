@@ -246,7 +246,7 @@ visual novel.
 
 **Windows**
 
-* Version: Windows XP or higher.
+* Version: Windows Vista or higher.
 * CPU: 2.0 GHz Core 2 Duo
 * RAM: 2.0 GB
 * Graphics: OpenGL 2.0 or DirectX 9.0c

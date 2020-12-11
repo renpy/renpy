@@ -147,10 +147,10 @@ has changed slightly. Here's the latest list of what is supported:
       - Intended to support Raspberry Pi, uses Raspian Buster
     * - Windows
       - x86_64
-      - A new port to 64-bit Windows XP+
+      - A new port to 64-bit Windows Vista and later.
     * - Windows
       - i686
-      - Continued support for 32-Bit Windows XP+
+      - Raised minimum version to Windows Vista.
     * - macOS
       - x86_64
       - macOS 10.6+ (All 64-bit macOS versions.)
