@@ -218,7 +218,9 @@ Neoteus.
 Depreciations and Removals
 --------------------------
 
-As describe above, Ren'Py no longer supports 32-bit iOS devices.
+As described above, Ren'Py no longer support Windows XP.
+
+As described above, Ren'Py no longer supports 32-bit iOS devices.
 
 The choice of downloading the Editra text editor has been removed from Ren'Py.
 Editra hadn't been updated in over 5 years, and the website it was originally
