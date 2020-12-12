@@ -383,9 +383,14 @@ cdef class Live2DModel:
 
                 if alpha != 1.0:
 
-                    r.add_shader("renpy.alpha")
-                    r.add_uniform("u_renpy_alpha", alpha)
-                    r.add_uniform("u_renpy_over", 1.0)
+                    ar = renpy.display.render.Render(r.width, r.height)
+                    ar.blit(r, (0, 0))
+
+                    ar.add_shader("renpy.alpha")
+                    ar.add_uniform("u_renpy_alpha", alpha)
+                    ar.add_uniform("u_renpy_over", 1.0)
+
+                    r = ar
 
                 renders.append((self.drawable_render_orders[i], r))
 
