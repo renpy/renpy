@@ -372,9 +372,9 @@ init python:
     build.classify_renpy("module/fribidi-src/**", "source")
 
     # all-platforms binary.
-    build.classify_renpy("lib/**/_renpysteam*", None)
+    build.classify_renpy("lib/**/_renpysteam*", "steam")
+    build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
-    build.classify_renpy("lib/**/*steam_api*", None)
     build.classify_renpy("lib/linux-armv7l/", "raspi")
     build.classify_renpy("lib/linux-armv7l/**", "raspi")
     build.classify_renpy("lib/**", "binary")
@@ -390,6 +390,7 @@ init python:
     build.package("sdk", "zip tar.bz2 dmg", "source binary")
     build.package("source", "tar.bz2", "source source_only", update=False)
     build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
+    build.package("steam", "zip", "steam", dlc=True, update=False)
 
     build.package("jedit", "zip", "jedit", dlc=True)
 
