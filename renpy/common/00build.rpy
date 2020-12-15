@@ -138,6 +138,7 @@ init -1500 python in build:
         ("dialogue.txt", None),
         ("dialogue.tab", None),
         ("profile_screen.txt", None),
+
         ("files.txt", None),
         ("memory.txt", None),
 
@@ -162,6 +163,8 @@ init -1500 python in build:
         ("web-presplash.jpg", "web"),
         ("web-presplash.webp", "web"),
         ("progressive_download.txt", "web"),
+
+        ("steam_appid.txt", None),
 
         ])
 
