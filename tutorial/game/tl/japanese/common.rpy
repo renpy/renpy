@@ -1,4 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
+# TODO: Translation updated at 2020-02-15 11:18
 
 translate japanese strings:
 
@@ -380,7 +380,7 @@ translate japanese strings:
 
     # renpy/common/00director.rpy:1729
     old "Transforms:"
-    new "変換:"
+    new "Transform:"
 
     # renpy/common/00director.rpy:1748
     old "Behind:"
@@ -1177,4 +1177,3 @@ translate japanese strings:
     # renpy/common/00gltest.rpy:273
     old "Change render options"
     new "レンダリング設定を変更"
-

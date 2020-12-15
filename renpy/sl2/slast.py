@@ -66,14 +66,20 @@ filename = '<screen language>'
 profile_log = renpy.log.open("profile_screen", developer=True, append=False, flush=False)
 
 
-def compile_expr(node):
+def compile_expr(loc, node):
     """
     Wraps the node in a python AST, and compiles it.
     """
 
+    filename = loc[0]
+    if filename in renpy.python.py3_files:
+        flags = renpy.python.py3_compile_flags
+    else:
+        flags = renpy.python.new_compile_flags
+
     expr = ast.Expression(body=node)
     ast.fix_missing_locations(expr)
-    return compile(expr, filename, "eval")
+    return compile(expr, filename, "eval", flags, 1)
 
 
 class SLContext(renpy.ui.Addable):
@@ -366,7 +372,7 @@ class SLBlock(SLNode):
             const = analysis.is_constant(node)
 
             if const == GLOBAL_CONST:
-                keyword_values[k] = py_eval_bytecode(compile_expr(node))
+                keyword_values[k] = py_eval_bytecode(compile_expr(self.location, node))
             else:
                 keyword_keys.append(ast.Str(s=k))
                 keyword_exprs.append(node) # Will be compiled as part of ast.Dict below.
@@ -381,7 +387,7 @@ class SLBlock(SLNode):
         if keyword_keys:
             node = ast.Dict(keys=keyword_keys, values=keyword_exprs)
             ast.copy_location(node, keyword_exprs[0])
-            self.keyword_exprs = compile_expr(node)
+            self.keyword_exprs = compile_expr(self.location, node)
         else:
             self.keyword_exprs = None
 
@@ -716,7 +722,7 @@ class SLDisplayable(SLBlock):
             const = analysis.is_constant(node)
 
             if const == GLOBAL_CONST:
-                values.append(py_eval_bytecode(compile_expr(node)))
+                values.append(py_eval_bytecode(compile_expr(self.location, node)))
                 exprs.append(ast.Num(n=0))
                 has_values = True
             else:
@@ -734,7 +740,7 @@ class SLDisplayable(SLBlock):
         if has_exprs:
             t = ast.Tuple(elts=exprs, ctx=ast.Load())
             ast.copy_location(t, exprs[0])
-            self.positional_exprs = compile_expr(t)
+            self.positional_exprs = compile_expr(self.location, t)
         else:
             self.positional_exprs = None
 
@@ -1282,7 +1288,7 @@ class SLIf(SLNode):
 
                 self.constant = min(self.constant, analysis.is_constant(node))
 
-                cond = compile_expr(node)
+                cond = compile_expr(self.location, node)
 
             block.prepare(analysis)
             self.constant = min(self.constant, block.constant)
@@ -1422,7 +1428,7 @@ class SLShowIf(SLNode):
 
                 self.constant = min(self.constant, analysis.is_constant(node))
 
-                cond = compile_expr(node)
+                cond = compile_expr(self.location, node)
 
             block.prepare(analysis)
             self.constant = min(self.constant, block.constant)
@@ -1518,11 +1524,11 @@ class SLFor(SLBlock):
         const = analysis.is_constant(node)
 
         if const == GLOBAL_CONST:
-            self.expression_value = py_eval_bytecode(compile_expr(node))
+            self.expression_value = py_eval_bytecode(compile_expr(self.location, node))
             self.expression_expr = None
         else:
             self.expression_value = None
-            self.expression_expr = compile_expr(node)
+            self.expression_expr = compile_expr(self.location, node)
 
         self.constant = min(self.constant, const)
 
@@ -1684,7 +1690,7 @@ class SLDefault(SLNode):
         analysis.mark_not_constant(self.variable)
 
     def prepare(self, analysis):
-        self.expr = compile_expr(ccache.ast_eval(self.expression))
+        self.expr = compile_expr(self.location, ccache.ast_eval(self.expression))
         self.constant = NOT_CONST
         self.last_keyword = True
 

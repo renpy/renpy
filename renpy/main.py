@@ -34,6 +34,7 @@ import sys
 import time
 import zipfile
 import gc
+import linecache
 
 import __main__
 
@@ -298,6 +299,9 @@ def main():
     log_clock("Bootstrap to the start of init.init")
 
     renpy.game.exception_info = 'Before loading the script.'
+
+    # Clear the line cache, since the script may have changed.
+    linecache.clearcache()
 
     # Get ready to accept new arguments.
     renpy.arguments.pre_init()
@@ -614,6 +618,7 @@ def main():
                 finally:
                     restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
                     renpy.persistent.update(True)
+                    renpy.persistent.save_MP()
 
             except game.FullRestartException as e:
                 restart = e.reason

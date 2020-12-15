@@ -566,7 +566,7 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
 
     key = tag or name[0]
 
-    layer = default_layer(key, layer)
+    layer = default_layer(layer, key)
 
     if what is None:
         what = name
@@ -599,6 +599,35 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
 
     renpy.game.context().images.predict_show(layer, name, True)
     renpy.display.predict.displayable(img)
+
+
+def set_tag_attributes(name, layer=None):
+    """
+    :doc: side
+
+    This sets the attributes associated with an image tag when that image
+    tag is not showing. The main use of this would be to directly set the
+    attributes used by a side image.
+
+    For example::
+
+        $ renpy.set_tag_attributes("lucy mad")
+        $ renpy.say(l, "I'm rather cross.")
+
+    and::
+
+        l mad "I'm rather cross."
+
+    are equivalent.
+    """
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    tag = name[0]
+    name = renpy.game.context().images.apply_attributes(layer, tag, name)
+
+    renpy.game.context().images.predict_show(layer, name, False)
 
 
 def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
@@ -3148,7 +3177,7 @@ def get_say_attributes():
 
 def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer=None):
     """
-    :doc: other
+    :doc: side
 
     This attempts to find an image to show as the side image.
 
@@ -3251,7 +3280,7 @@ def fsencode(s):
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"
-    return s.encode(fsencoding, "replace")
+    return s.encode(fsencoding)
 
 
 @renpy_pure

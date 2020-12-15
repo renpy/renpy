@@ -562,6 +562,7 @@ python early in layeredimage:
         """
 
         attribute_function = None
+        transform_args = { }
 
         def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, **kwargs):
 
@@ -588,6 +589,7 @@ python early in layeredimage:
             kwargs.setdefault("xfit", True)
             kwargs.setdefault("yfit", True)
 
+            self.transform_args = {k : kwargs.pop(k) for k, v in kwargs.items() if k not in (renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names)}
             self.fixed_args = kwargs
 
         def format(self, what, attribute=None, group=None, variant=None, image=None):
@@ -687,9 +689,11 @@ python early in layeredimage:
 
                 rv = Fixed(rv, text, fit_first=True)
 
-
             for i in self.at:
                 rv = i(rv)
+
+            if self.transform_args:
+                rv = Transform(child=rv, **self.transform_args)
 
             return rv
 
@@ -1052,7 +1056,8 @@ python early in layeredimage:
 
                 while parse_property(ll, rv, [ "image_format", "format_function", "attribute_function", "at" ] +
                     renpy.sl2.slproperties.position_property_names +
-                    renpy.sl2.slproperties.box_property_names
+                    renpy.sl2.slproperties.box_property_names +
+                    ATL_PROPERTIES
                     ):
                     pass
 

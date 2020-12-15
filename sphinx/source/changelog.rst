@@ -147,10 +147,10 @@ has changed slightly. Here's the latest list of what is supported:
       - Intended to support Raspberry Pi, uses Raspian Buster
     * - Windows
       - x86_64
-      - A new port to 64-bit Windows XP+
+      - A new port to 64-bit Windows Vista and later.
     * - Windows
       - i686
-      - Continued support for 32-Bit Windows XP+
+      - Raised minimum version to Windows Vista.
     * - macOS
       - x86_64
       - macOS 10.6+ (All 64-bit macOS versions.)
@@ -212,10 +212,15 @@ Translations
 The Simplified Chinese, Japanese, and Korean translations have been updated, and now
 use a unified font.
 
+There is a new Simplified Chinese translation of the tutorial game, courtesy of
+Neoteus.
+
 Depreciations and Removals
 --------------------------
 
-As describe above, Ren'Py no longer supports 32-bit iOS devices.
+As described above, Ren'Py no longer support Windows XP.
+
+As described above, Ren'Py no longer supports 32-bit iOS devices.
 
 The choice of downloading the Editra text editor has been removed from Ren'Py.
 Editra hadn't been updated in over 5 years, and the website it was originally
@@ -228,6 +233,14 @@ renderer.
 
 Miscellaneous
 -------------
+
+Ren'Py now uses software playback of movies on Android and iOS devices,
+meaning the same files can be used on all platforms that support video
+playback.
+
+Defining a mouse cursor using :var:`config.mouse` now uses SDL2's color cursor
+API, which generally results in hardware acceleration and reduced mouse movement
+lag.
 
 The ``define`` statement can now be used to set a key in a dictionary. ::
 

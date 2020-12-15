@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/tutorial_video.rpy:10
 translate japanese tutorial_video_f34a17f5:
 

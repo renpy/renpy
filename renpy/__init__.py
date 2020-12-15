@@ -24,7 +24,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 
-# All imports should go below renpy.compat and update_path.
+# All imports should go below renpy.compat.
 
 
 def update_path():
@@ -53,9 +53,9 @@ def update_path():
         return
 
 
+from renpy.compat import *
 update_path()
 
-from renpy.compat import *
 import renpy.compat.pickle as pickle
 
 import sys
@@ -230,6 +230,7 @@ name_blacklist = {
     "renpy.audio.audio.lock",
     "renpy.audio.audio.periodic_condition",
     "renpy.webloader.queue_lock",
+    "renpy.persistent.save_MP_instances",
     }
 
 
@@ -821,4 +822,3 @@ if False:
     import renpy.gl.glrtt_copy
     import renpy.gl.glrtt_fbo
     import renpy.gl.gltexture
-

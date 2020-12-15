@@ -128,7 +128,7 @@ screen install():
 
                         add SPACER
 
-                        textbutton "Install Live2D Cubism SDK for Native":
+                        textbutton _("Install Live2D Cubism SDK for Native"):
                             action Jump("install_live2d")
 
                         add HALF_SPACER
@@ -143,6 +143,35 @@ screen install():
 
                             text _("Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support.")
 
+                        add SPACER
+
+
+                        if not achievement.has_steam:
+
+                            textbutton _("Install Steam Support"):
+                                action Jump("install_steam")
+
+                            add HALF_SPACER
+
+                            frame:
+                                style "l_indent"
+                                has vbox
+
+                                text _("Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}.")
+
+                        else:
+
+                            textbutton _("Install Steam Support")
+
+                            add HALF_SPACER
+
+                            frame:
+                                style "l_indent"
+                                has vbox
+
+                                text _("Steam support has already been installed.")
+
+
     textbutton _("Cancel") action Return(False) style "l_left_button"
     textbutton _("Open Ren'Py SDK Directory") action OpenDirectory(config.renpy_base, absolute=True) style "l_right_button"
 
@@ -151,3 +180,7 @@ screen install():
 label install:
     call screen install
     jump preferences
+
+label install_steam:
+    $ add_dlc("steam", restart=True)
+    jump install

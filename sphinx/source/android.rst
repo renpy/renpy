@@ -84,6 +84,10 @@ automatically selects screen variants based on the
 device's screen size and capabilities. See :ref:`screen-variants` for
 more information.
 
+Due to the security policy of mobile devices, MultiPersistent functionality
+is limited only to this game and its updates, i.e. it cannot be shared by
+another game.
+
 
 Testing and Emulation
 =====================
@@ -321,7 +325,7 @@ variables:
 .. var:: build.google_play_key = "..."
 
     This is the Google Play license key associated with your application,
-    which can be found on the "Services & APIs" tab associated with
+    which can be found on the "Monetization Setup" tab associated with
     your application in the Google Play developer console. (Be sure to
     remove all spaces and newlines from the key.)
 

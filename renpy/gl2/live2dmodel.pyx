@@ -285,22 +285,25 @@ cdef class Live2DModel:
         old = self.parameter_values[parameter.index]
         self.parameter_values[parameter.index] = old + weight * (value - old)
 
-    def blend_parameter(self, name, blend, value):
+    def blend_parameter(self, name, blend, value, weight=1.0):
 
         parameter = self.parameters.get(name, None)
 
         if parameter is None:
             for i in self.parameter_groups.get(name, [ ]):
-                self.blend_parameter(i, blend, value)
+                self.blend_parameter(i, blend, value, weight=weight)
             return
 
         old = self.parameter_values[parameter.index]
 
         if blend == "Multiply":
-            self.parameter_values[parameter.index] = old * value
-        else:
-            self.parameter_values[parameter.index] = old + value
+            value = old * value
+        elif blend == "Add":
+            value = old + value
+        elif blend == "Overwrite":
+            value = value
 
+        self.parameter_values[parameter.index] = old + weight * (value - old)
 
     def get_size(self):
         return (self.pixel_size.X, self.pixel_size.Y)
@@ -308,6 +311,7 @@ cdef class Live2DModel:
     def render(self, textures, zoom):
 
         cdef int i
+        cdef int j
 
         cdef Render r
         cdef Render m
@@ -318,7 +322,6 @@ cdef class Live2DModel:
         inverted_mask_shaders = ("live2d.inverted_mask", "live2d.flip_texture")
 
         csmUpdateModel(self.model)
-
 
         # Render the model.
 
@@ -380,11 +383,19 @@ cdef class Live2DModel:
 
                 if alpha != 1.0:
 
-                    r.add_shader("renpy.alpha")
-                    r.add_uniform("u_renpy_alpha", alpha)
-                    r.add_uniform("u_renpy_over", 1.0)
+                    ar = renpy.display.render.Render(r.width, r.height)
+                    ar.blit(r, (0, 0))
+
+                    ar.add_shader("renpy.alpha")
+                    ar.add_uniform("u_renpy_alpha", alpha)
+                    ar.add_uniform("u_renpy_over", 1.0)
+
+                    r = ar
 
                 renders.append((self.drawable_render_orders[i], r))
+
+
+        multi_masks = { }
 
         for 0 <= i < self.drawable_count:
 
@@ -392,12 +403,36 @@ cdef class Live2DModel:
                 continue
 
             r = raw_renders[i]
-            m = raw_renders[self.drawable_masks[i][0]]
+
+            if self.drawable_mask_counts[i] == 1:
+                m = raw_renders[self.drawable_masks[i][0]]
+            else:
+
+                key = [ ]
+
+                for 0 <= j < self.drawable_mask_counts[i]:
+                    key.append(self.drawable_masks[i][j])
+
+                key = tuple(key)
+
+                m = multi_masks.get(key, None)
+
+                if m is None:
+                    m = renpy.display.render.Render(ppu * 2, ppu * 2)
+
+                    for j in key:
+                        m.blit(raw_renders[j], (0, 0))
+
+                    multi_masks[key] = m
 
             if self.drawable_constant_flags[i] & csmIsInvertedMask:
-                r.shaders = inverted_mask_shaders
+
+                shaders = inverted_mask_shaders
             else:
-                r.shaders = mask_shaders
+                shaders = mask_shaders
+
+            for s in shaders:
+                r.add_shader(s)
 
             r.blit(m, (0, 0))
 

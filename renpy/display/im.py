@@ -223,7 +223,7 @@ class Cache(object):
         if render:
             texture = True
 
-        optimize_bounds = renpy.config.optimize_texture_bounds
+        optimize_bounds = renpy.config.optimize_texture_bounds and image.optimize_bounds
 
         if not isinstance(image, ImageBase):
             raise Exception("Expected an image of some sort, but got" + str(image) + ".")
@@ -560,6 +560,8 @@ class ImageBase(renpy.display.core.Displayable):
 
     __version__ = 1
 
+    optimize_bounds = False
+
     def after_upgrade(self, version):
         if version < 1:
             self.cache = True
@@ -568,6 +570,7 @@ class ImageBase(renpy.display.core.Displayable):
 
         self.rle = properties.pop('rle', None)
         self.cache = properties.pop('cache', True)
+        self.optimize_bounds = properties.pop('optimize_bounds', True)
 
         properties.setdefault('style', 'image')
 
@@ -1790,13 +1793,18 @@ def image(arg, loose=False, **properties):
     """
     :doc: im_image
     :name: Image
-    :args: (filename, **properties)
+    :args: (filename, *, optimize_bounds=True, **properties)
 
     Loads an image from a file. `filename` is a
     string giving the name of the file.
 
     `filename` should be a JPEG or PNG file with an appropriate
     extension.
+
+    If optimize_bounds is True, only the portion of the image that
+    inside the bounding box of non-transparent pixels is loaded into
+    GPU memory. (The only reason to set this to False is when using an
+    image as input to a shader.)
     """
 
     """

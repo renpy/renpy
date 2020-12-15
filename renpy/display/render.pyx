@@ -995,6 +995,7 @@ cdef class Render:
 
         rv.depends_on(self)
         rv.alpha = self.alpha
+        rv.over = self.over
         rv.operation = self.operation
         rv.operation_alpha = self.operation_alpha
         rv.operation_complete = self.operation_complete

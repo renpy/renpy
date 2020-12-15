@@ -162,6 +162,9 @@ Preference("font_size", 1.0)
 # An adjustment applied to font line spacing.
 Preference("font_line_spacing", 1.0)
 
+# Do we forcefully use a system cursor?
+Preference("system_cursor", False)
+
 
 class Preferences(renpy.object.Object):
     """

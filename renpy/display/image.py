@@ -917,20 +917,28 @@ class ShownImageInfo(renpy.object.Object):
         nametag = name[0]
 
         # The set of attributes a matching image may have.
-        optional = set(wanted) | set(self.attributes.get((layer, tag), [ ]))
+        optional = list(wanted) + list(self.attributes.get((layer, tag), [ ]))
 
-        # The set of attributes a matching image must have/not have.
-        # Evaluated in order.
-        required = set()
+        # The list of attributes a matching image must have.
+        required = [ ]
+
         for i in name[1:]:
             if i[0] == "-":
-                optional.discard(i[1:])
-                required.discard(i[1:])
+
+                i = i[1:]
+
+                if i in optional:
+                    optional.remove(i)
+
+                if i in required:
+                    required.remove(i)
+
             else:
-                required.add(i)
+                required.append(i)
 
         for i in remove:
-            optional.discard(i)
+            if i in optional:
+                optional.remove(i)
 
         return self.choose_image(nametag, required, optional, name)
 
@@ -947,8 +955,8 @@ class ShownImageInfo(renpy.object.Object):
             ca = getattr(d, "_choose_attributes", None)
 
             if ca:
-                ca_required = { i for i in required if i not in attrs }
-                ca_optional = { i for i in optional if i not in attrs }
+                ca_required = [ i for i in required if i not in attrs ]
+                ca_optional = [ i for i in optional if i not in attrs ]
                 newattrs = ca(tag, ca_required, ca_optional)
 
                 if newattrs is None:
@@ -963,7 +971,7 @@ class ShownImageInfo(renpy.object.Object):
                     num_required += 1
                     continue
 
-                elif i not in optional:
+                elif (i not in optional) and (ca is None):
                     break
 
             else:

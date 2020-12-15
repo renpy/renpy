@@ -902,7 +902,7 @@ class ADVCharacter(object):
             show_image = (self.image_tag,) + attrs + tuple(wanted) + tuple("-" + i for i in remove)
 
             if predict:
-                images.predict_show(layer, show_image)
+                renpy.exports.predict_show(new_image)
             else:
                 renpy.exports.show(show_image)
                 return True
@@ -1017,7 +1017,7 @@ class ADVCharacter(object):
                 renpy.exports.show(image_with_attrs)
                 return True
             else:
-                images.predict_show(None, image_with_attrs)
+                renpy.exports.predict_show(image_with_attrs)
 
         else:
             images.predict_show(None, image_with_attrs, show=False)
@@ -1205,6 +1205,13 @@ class ADVCharacter(object):
                 if self.restore_say_attributes(False, old_attr_state, interact):
                     after = images.get_attributes(None, self.image_tag)
                     self.handle_say_transition('restore', before, after)
+
+    @property
+    def statement_name(self):
+        if not (self.condition is None or renpy.python.py_eval(self.condition)):
+            return "say-condition-false"
+        else:
+            return "say"
 
     def predict(self, what):
 

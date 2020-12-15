@@ -48,7 +48,7 @@ def write_traceback_list(out, l):
 
         # Filename is either unicode or fsecoded bytes.
         if isinstance(filename, bytes):
-            filename = filename.decode(FSENCODING, "replace")
+            filename = filename.decode(FSENCODING)
 
         # Line is a number.
 
@@ -56,7 +56,7 @@ def write_traceback_list(out, l):
         # or comes from inside Ren'Py.
 
         if isinstance(text, bytes):
-            text = text.decode("utf-8", "replace")
+            text = text.decode("utf-8")
 
         ul.append((filename, line, what, text))
 

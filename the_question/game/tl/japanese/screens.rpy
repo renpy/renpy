@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-12 23:03
-
+﻿
 translate japanese strings:
 
     # game/screens.rpy:251

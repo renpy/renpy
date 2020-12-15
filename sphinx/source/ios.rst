@@ -37,8 +37,6 @@ iOS is similar to Android, but differs from the mouse-based platforms
 that Ren'Py supports. All of the :ref:`android platform differences <android-platform-differences>`
 apply to iOS.
 
-iOS does not support :class:`MultiPersistent`.
-
 A list of video formats supported by iOS can be found
 `here <https://developer.apple.com/library/ios/documentation/Miscellaneous/Conceptual/iPhoneOSTechOverview/MediaLayer/MediaLayer.html#//apple_ref/doc/uid/TP40007898-CH9-SW6>`_.
 
@@ -137,4 +135,3 @@ images from files.
 ``ios-icon.png``
     If present, this file is scaled to the various sizes of png file
     needed to make an iOS icon.
-

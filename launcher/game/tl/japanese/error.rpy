@@ -259,7 +259,6 @@ translate japanese strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "クリップボードに errors.txt を Discord に適した Markdown 形式でコピーする。"
 
-# TODO: Translation updated at 2020-11-03 09:43
 
 translate japanese strings:
 

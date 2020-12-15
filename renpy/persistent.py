@@ -26,6 +26,7 @@ import os
 import copy
 import time
 import zlib
+import weakref
 
 import renpy
 
@@ -415,6 +416,11 @@ def save():
 # MultiPersistent
 ################################################################################
 
+save_MP_instances = weakref.WeakSet()
+
+def save_MP():
+    for ins in save_MP_instances:
+        ins.save()
 
 class _MultiPersistent(object):
 
@@ -446,7 +452,7 @@ class _MultiPersistent(object):
             os.rename(fn + ".new", fn)
 
 
-def MultiPersistent(name):
+def MultiPersistent(name, save_on_quit=False):
 
     name = renpy.exports.fsencode(name)
 
@@ -481,20 +487,34 @@ def MultiPersistent(name):
         pass
 
     fn = ""  # prevent a warning from happening.
+    data = None
 
     # Find the first file that actually exists. Otherwise, use the last
     # file.
     for fn in files:
-        fn = fn + "/" + name
-        if os.path.exists(fn):
-            break
+        fn = os.path.join(fn, name)
+        if os.path.isfile(fn):
+            try:
+                data = open(fn, "rb").read()
+                break
+            except:
+                pass
 
-    try:
-        rv = loads(open(fn, "rb").read())
-    except:
+    if data is not None:
+        try:
+            rv = loads(data)
+        except:
+            data = None
+            renpy.display.log.write("Loading MultiPersistent at %s:" % fn)
+            renpy.display.log.exception()
+
+    if data is None:
         rv = _MultiPersistent()
 
     rv._filename = fn  # W0201
+
+    if save_on_quit:
+        save_MP_instances.add(rv)
     return rv
 
 

@@ -242,8 +242,10 @@ def dump(error):
     except:
         pass
 
-    if args.json_dump != "-":
-        new = args.json_dump + ".new"
+    filename = renpy.exports.fsdecode(args.json_dump)
+
+    if filename != "-":
+        new = filename + ".new"
 
         if PY2:
             with open(new, "wb") as f:
@@ -252,9 +254,9 @@ def dump(error):
             with open(new, "w") as f:
                 json.dump(result, f)
 
-        if os.path.exists(args.json_dump):
-            os.unlink(args.json_dump)
+        if os.path.exists(filename):
+            os.unlink(filename)
 
-        os.rename(new, args.json_dump)
+        os.rename(new, filename)
     else:
         json.dump(result, sys.stdout, indent=2)

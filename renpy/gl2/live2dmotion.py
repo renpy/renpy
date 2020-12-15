@@ -275,8 +275,8 @@ class NullMotion(object):
 
     duration = 1.0
 
-    def get(self, st, fade_st):
+    def get(self, st, fade_st, do_fade_in, do_fade_out):
         return { }
 
-    def wait(self, st, fade_st):
+    def wait(self, st, fade_st, do_fade_in, do_fade_out):
         return max(1.0 - st, 0)

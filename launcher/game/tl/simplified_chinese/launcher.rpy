@@ -1,4 +1,4 @@
-
+﻿
 translate simplified_chinese strings:
 
     # about.rpy:39
