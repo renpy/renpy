@@ -390,7 +390,7 @@ init python:
     build.package("sdk", "zip tar.bz2 dmg", "source binary")
     build.package("source", "tar.bz2", "source source_only", update=False)
     build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
-    build.package("steam", "zip", "steam", dlc=True, update=False)
+    build.package("steam", "zip", "steam", dlc=True)
 
     build.package("jedit", "zip", "jedit", dlc=True)
 

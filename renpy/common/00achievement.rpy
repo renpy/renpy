@@ -206,9 +206,12 @@ init -1500 python in achievement:
 
             return steam.get_achievement(name)
 
+    # Are the steam libraries installed? Used by the launcher.
+    has_steam = False
 
     try:
         import _renpysteam as steam
+        has_steam = True
         renpy.write_log("Imported steam.")
     except Exception as e:
         steam = None
