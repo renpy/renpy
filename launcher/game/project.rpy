@@ -779,8 +779,8 @@ label choose_projects_directory:
             interface.info(_("Ren'Py has set the projects directory to:"), "[path!q]", path=path)
 
         persistent.projects_directory = path
-        multipersistent.projects_directory = path
-        multipersistent.save()
+        project.multipersistent.projects_directory = path
+        project.multipersistent.save()
 
         project.manager.scan()
 
@@ -795,8 +795,8 @@ init python:
         args = ap.parse_args()
 
         persistent.projects_directory = renpy.fsdecode(args.projects)
-        multipersistent.projects_directory = path
-        multipersistent.save()
+        project.multipersistent.projects_directory = path
+        project.multipersistent.save()
         renpy.save_persistent()
 
         return False
