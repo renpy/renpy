@@ -434,7 +434,7 @@
 
     # game/choose_directory.rpy:93
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."
-    new "디렉터리를 선택하기 위해 tkinter로 파이썬을 실행할 수 없습니다. python3-tk 또는 tkinter 패키지를 설치하십시오."
+    new "프로젝트 경로를 선택하는 tkinter를 구동하지 못했습니다. python3-tk 또는 tkinter 패키지를 설치하십시오."
 
     # game/choose_directory.rpy:111
     old "The selected projects directory is not writable."
