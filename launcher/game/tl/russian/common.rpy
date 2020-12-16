@@ -888,3 +888,7 @@ translate russian strings:
     # renpy/common/00preferences.rpy:384
     old "self voicing volume drop"
     new "уменьшение громкости при озвучке через синтезатор речи"
+
+    # renpy/common/00preferences.rpy:464
+    old "system cursor"
+    new "системный курсор"

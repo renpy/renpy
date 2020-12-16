@@ -1060,6 +1060,10 @@ fbo_size = (4096, 4096)
 # Names to ignore the redefinition of.
 lint_ignore_redefine = [ "gui.about" ]
 
+# The steam_appid, if known. This needs to be set here since it is loaded
+# very early.
+steam_appid = None
+
 del os
 del collections
 

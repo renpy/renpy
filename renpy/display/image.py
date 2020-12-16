@@ -971,7 +971,7 @@ class ShownImageInfo(renpy.object.Object):
                     num_required += 1
                     continue
 
-                elif i not in optional:
+                elif (i not in optional) and (ca is None):
                     break
 
             else:
