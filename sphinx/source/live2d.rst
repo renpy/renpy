@@ -65,7 +65,7 @@ Defining Animations
 
 Live2D animations are defined using the Live2D displayable and the image statement:
 
-.. function: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, attribute_function=None, **properties)
+.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, **properties)
 
     This displayable displays a Live2D animation.
 
@@ -169,10 +169,10 @@ Some examples are::
     show hiyori m10 m01
 
 These use the default names found in the Cubism SDK sample names. The names
-of the motions and expressions are taken from the Live2D files, and if they
-begin with the name of the model3.json file (without directories or extensions),
-followed by an underscore, then that prefix is removed. (For example, "Hiyori_m01"
-becomes just m01.)
+of the motions and expressions are taken from the Live2D files, then forced to lower
+case, and if they begin with the name of the model3.json file (without directories
+or extensions), followed by an underscore, then that prefix is removed. (For example,
+"Hiyori_Motion01" becomes just motion01.)
 
 At most one exclusive expression can be used, and any number of nonexclusive expressions and
 motions can be given. When more than one motion is given, the motions are played in order,

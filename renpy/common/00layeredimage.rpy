@@ -549,7 +549,9 @@ python early in layeredimage:
             have been chosen. It can be used to express complex dependencies between attributes
             or select attributes at random.
 
-        Additional keyword arguments are passed to a Fixed that is created to hold
+        Additional keyword arguments may contain transform properties. If
+        any are present, a transform is created that wraps the result image.
+        Remaining keyword arguments are passed to a Fixed that is created to hold
         the layer. Unless explicitly overridden, xfit and yfit are set to true on
         the Fixed, which means it will shrink to the smallest size that fits all
         of the layer images it is showing.
