@@ -295,7 +295,7 @@ class Live2DCommon(object):
             elif i["Target"] == "Opacity":
                 self.model.opacity_groups[name] = ids
 
-        # All expressions, non-exclusive and exclusive.
+        # All expressions, non-exclusive and exclusive, and its aliases.
         self.all_expressions = dict(self.expressions)
 
         # Nonexcusive expressions.
@@ -315,15 +315,18 @@ class Live2DCommon(object):
 
         for k, v in aliases.items():
             target = None
+            expression = False
 
             if v in self.motions:
                 target = self.motions
 
             elif v in self.expressions:
                 target = self.expressions
+                expression = True
 
             elif v in self.nonexclusive:
                 target = self.nonexclusive
+                expression = True
 
             else:
                 raise Exception("Name {!r} is not a known motion or expression.".format(v))
@@ -332,6 +335,9 @@ class Live2DCommon(object):
                 raise Exception("Name {!r} is already specified as a motion or expression.".format(k))
 
             target[k] = target[v]
+
+            if expression:
+                self.all_expressions[k] = target[v]
 
     def apply_nonexclusive(self, nonexclusive):
         for i in nonexclusive:
