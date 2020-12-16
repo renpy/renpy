@@ -323,7 +323,7 @@ class Live2DCommon(object):
                 target = self.expressions
 
             elif v in self.nonexclusive:
-                target = self.expressions
+                target = self.nonexclusive
 
             else:
                 raise Exception("Name {!r} is not a known motion or expression.".format(v))
