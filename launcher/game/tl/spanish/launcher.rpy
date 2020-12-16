@@ -1706,3 +1706,19 @@ translate spanish strings:
     old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
     new "Live2D en Ren'Py no tiene soporte en Web, Android x86_64 (incluidos emuladores y Chrome OS) y debe agregarse a los proyectos de iOS manualmente. Live2D debe reinstalarse después de actualizar Ren'Py o instalar el soporte de Android."
 
+    # game/install.rpy:131
+    old "Install Live2D Cubism SDK for Native"
+    new "Instalar Live2D Cubism SDK for Native"
+
+    # game/install.rpy:151
+    old "Install Steam Support"
+    new "Instalar el Soporte de Steam"
+
+    # game/install.rpy:160
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    new "Antes de instalar el soporte de Steam, asegúrate de ser un {a=https://partner.steamgames.com/}socio de Steam{/a}.." 
+
+    # game/install.rpy:172
+    old "Steam support has already been installed."
+    new "El soporte de Steam ya está instalado."
+

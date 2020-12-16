@@ -206,9 +206,29 @@ init -1500 python in achievement:
 
             return steam.get_achievement(name)
 
+    def steam_preinit():
+        """
+        This runs before steam.init(), and sets up the steam_appid
+        from config.steam_appid.
+        """
+
+        import os
+
+        if config.early_script_version is not None:
+            return
+
+        if config.steam_appid is None:
+            return
+
+        with open(os.path.join(config.renpy_base, "steam_appid.txt"), "w") as f:
+            f.write(str(config.steam_appid) + "\n")
+
+    # Are the steam libraries installed? Used by the launcher.
+    has_steam = False
 
     try:
         import _renpysteam as steam
+        has_steam = True
         renpy.write_log("Imported steam.")
     except Exception as e:
         steam = None
@@ -220,6 +240,8 @@ init -1500 python in achievement:
 
         if steam.version < want_version:
             raise Exception("_renpysteam module is too old. (want version %d, got %d)" % (steam.version, want_version))
+
+        steam_preinit()
 
         if steam.init():
             renpy.write_log("Initialized steam.")

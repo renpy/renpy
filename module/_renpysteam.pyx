@@ -87,6 +87,8 @@ cdef extern from "steam/steam_api.h":
 
         bool GetDlcDownloadProgress(AppId_t nAppID, uint64 *punBytesDownloaded, uint64 *punBytesTotal)
 
+        int GetAppBuildId();
+
     ctypedef struct DlcInstalled_t:
         AppId_t m_nAppID
 
@@ -119,9 +121,19 @@ cdef extern from "steam/steam_api.h":
         CSteamID GetSteamID()
         HAuthTicket GetAuthSessionTicket(void *pTicket, int cbMaxTicket, uint32 *pcbTicket)
         void CancelAuthTicket(HAuthTicket hAuthTicket)
+        int GetGameBadgeLevel( int nSeries, bool bFoil )
 
     ISteamUser *SteamUser()
 
+    # UGC.
+    ctypedef uint64 PublishedFileId_t
+
+    cdef cppclass ISteamUGC:
+        bool GetItemInstallInfo(PublishedFileId_t nPublishedFileID, uint64 *punSizeOnDisk, char *pchFolder, uint32 cchFolderSize, uint32 *punTimeStamp )
+        uint32 GetSubscribedItems(PublishedFileId_t*pvecPublishedFileID, uint32 cMaxEntries)
+        uint32 GetNumSubscribedItems()
+
+    ISteamUGC *SteamUGC()
 
 cdef extern from "steamcallbacks.h":
     cdef cppclass SteamCallback[T]:
@@ -342,17 +354,11 @@ def dlc_installed(appid):
 
     return SteamApps().BIsDlcInstalled(appid)
 
-def install_dlc(appid): # , callback):
+def install_dlc(appid):
     """
     :doc: steam_apps
 
     Requests the DLC with `appid` be installed.
-    """
-
-    """
-    If not None, `callback`
-    will be called with `appid` when the install finishes. Only one
-    callback can be registered at a time.
     """
 
     SteamApps().InstallDLC(appid)
@@ -381,6 +387,15 @@ def dlc_progress(appid):
         return done, total
     else:
         return None
+
+def get_app_build_id():
+    """
+    :doc: steam_apps
+
+    Returns the build ID of the installed game.
+    """
+
+    return SteamApps().GetAppBuildId()
 
 
 ######################################################################## Overlay
@@ -525,6 +540,60 @@ def cancel_ticket():
 
     h_ticket = 0
     ticket = None
+
+def get_game_badge_level(series, foil):
+    """
+    :doc: steam_user
+
+    Gets the level of the users Steam badge for your game.
+    """
+
+    return SteamUser().GetGameBadgeLevel(series, foil)
+
+
+########################################################################### UGC
+
+def get_subscribed_items():
+    """
+    :doc: steam_ugc
+
+    Returns a list of the item ids the user has subscribed to in the steam
+    workshop.
+    """
+
+    cdef PublishedFileId_t subscribed[512]
+    cdef uint32 count
+    cdef uint32 i
+
+    count = SteamUGC().GetSubscribedItems(subscribed, 512)
+
+    rv = [ ]
+
+    for 0 <= i <= count:
+        rv.append(subscribed[i])
+
+    return rv
+
+def get_subscribed_item_path(item_id):
+    """
+    :doc: steam_ugc
+
+    Returns the path where an item of user-generated content was installed. Returns
+    None if the item was not installed.
+
+    `item_id`
+        The item id.
+    """
+
+    cdef char path[4096]
+    cdef uint64 size
+    cdef uint32 timestamp
+
+    if not SteamUGC().GetItemInstallInfo(item_id, &size, path, 4096, &timestamp):
+        return None
+
+    return renpy.exports.fsdecode(path)
+
 
 
 ################################################################# Initialization
