@@ -1633,6 +1633,10 @@ translate russian strings:
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
     new "Этот экран позволяет установить библиотеки, которые не могут распространяться вместе с Ren'Py. Некоторые из этих библиотек могут потребовать от вас принятия сторонней лицензии для использования или распространения."
 
+    # game/install.rpy:131
+    old "Install Live2D Cubism SDK for Native"
+    new "Установить Live2D Cubism SDK for Native"
+
     # game/install.rpy:134
     old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
     new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} добавляет поддержку отображения моделей Live2D. Поместите CubismSdkForNative-4-{i}версия{/i}.zip в папку Ren'Py SDK, а затем нажмите кнопку Установить. Для распространения игры с Live2D необходимо принять лицензию от Live2D, Inc."
@@ -1648,6 +1652,22 @@ translate russian strings:
     # game/preferences.rpy:140
     old "Reset window size"
     new "Сбросить размер окна"
+
+    # game/install.rpy:144
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new "Live2D в Ren'Py не поддерживается на Web, Android x86_64 (включая эмуляторы и Chrome OS), а также должен добавлятся в iOS проекты вручную. Live2D должен быть установлен заново после обновления Ren'Py и/или установки пакета поддержки Android."
+
+    # game/install.rpy:151
+    old "Install Steam Support"
+    new "Установить поддержку Steam"
+
+    # game/install.rpy:160
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    new "Перед установкой поддержки Steam убедитесь что вы являетесь {a=https://partner.steamgames.com/}партнёром Steam{/a}."
+
+    # game/install.rpy:172
+    old "Steam support has already been installed."
+    new "Поддержка Steam уже установлена."
 
     # game/web.rpy:242
     old "Preparing progressive download"
