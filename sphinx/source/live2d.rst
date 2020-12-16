@@ -120,16 +120,30 @@ Live2D animations are defined using the Live2D displayable and the image stateme
 
     `attribute_function`
         If not None, this is a function that takes a tuple of attributes,
-        and returns a second tuple of attributes. The second tuple of attributes
-        is used to actually show the image. This can be used to change the motions
-        that are shown based on the expression that is in use. It should ensure
+        and returns a second tuple of attributes. This can be used to replace
+        attributes for the purpose of display only - the attributes it returns
+        are not used when showing an image.  It should ensure
         that at most one attribute corresponding to an expression is given.
+
+    `attribute_filter`
+        If not None, this is a function that takes a tuple of attributes,
+        and returns a second tuple of attributes. This is usually used to
+        filter out nonexclusice attributes that conflict with each other. The attributes
+        are ordered such that more recently requested attributes come first,
+        meaning that in the case of a conflict, the first attribute should
+        win.
+
+    The difference between `attribute_function` and `attribute_filter` is
+    that the former is generally used to compute replacement - the presence
+    of two attributes means one should be replaced by a third. The latter
+    is used to resolve conflicts between attributes, like having a group of
+    attributes where only one is valid.
 
     Only `filename` should be given positionally, and all other arguments should
     be given as keyword arguments.
 
-    The values of `alias`, `fade`, `nonexclusive`, and `seamless` are shared between all
-    Live2D objects that share `filename`, such that these only need to be supplied once.
+    The values of `alias`, `fade`, `nonexclusive`, and `seamless`, `attribute_function` and `attribute_filter`
+    are shared between all Live2D objects that share `filename`, such that these only need to be supplied once.
 
 Live2D displayables should be assigned to an image statement::
 

@@ -308,6 +308,9 @@ class Live2DCommon(object):
         # a tuple of attributes.
         self.attribute_function = None
 
+        # Same.
+        self.attribute_filter = None
+
     def apply_aliases(self, aliases):
 
         for k, v in aliases.items():
@@ -485,7 +488,25 @@ class Live2D(renpy.display.core.Displayable):
         return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
-    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, nonexclusive=None, used_nonexclusive=None, seamless=None, sustain=False, attribute_function=None, **properties):
+    def __init__(
+            self,
+            filename,
+            zoom=None,
+            top=0.0,
+            base=1.0,
+            height=1.0,
+            loop=False,
+            aliases={},
+            fade=None,
+            motions=None,
+            expression=None,
+            nonexclusive=None,
+            used_nonexclusive=None,
+            seamless=None,
+            sustain=False,
+            attribute_function=None,
+            attribute_filter=None,
+            **properties):
 
         super(Live2D, self).__init__(**properties)
 
@@ -519,6 +540,9 @@ class Live2D(renpy.display.core.Displayable):
 
         if attribute_function is not None:
             common.attribute_function = attribute_function
+
+        if attribute_filter is not None:
+            common.attribute_filter = attribute_filter
 
     def _duplicate(self, args):
 
@@ -604,7 +628,10 @@ class Live2D(renpy.display.core.Displayable):
 
         # If there are no motions, choose the last one from the optional attributes.
         if not rv:
-            rv = [ "_sustain" ] + [ i for i in optional if i in common.motions ]
+            sustain = True
+            rv = [ i for i in optional if i in common.motions ]
+        else:
+            sustain = False
 
         # Choose the first expression.
         for i in list(attributes) + list(optional):
@@ -616,6 +643,12 @@ class Live2D(renpy.display.core.Displayable):
         for i in list(attributes) + list(optional):
             if i in common.nonexclusive:
                 rv.append(i)
+
+        if common.attribute_filter:
+            rv = common.attribute_filter(rv)
+
+        if sustain:
+            rv = ("_sustain" ,) + rv
 
         return tuple(rv)
 
