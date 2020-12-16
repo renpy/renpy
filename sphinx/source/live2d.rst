@@ -65,7 +65,7 @@ Defining Animations
 
 Live2D animations are defined using the Live2D displayable and the image statement:
 
-.. function: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, **properties)
+.. function: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, attribute_function=None, **properties)
 
     This displayable displays a Live2D animation.
 
@@ -117,6 +117,13 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         avoids fading between loops of a single motion. This may be True to
         enable seamless looping all the time, False to dispable it all the
         time, or a set of motions to be looped.
+
+    `attribute_function`
+        If not None, this is a function that takes a tuple of attributes,
+        and returns a second tuple of attributes. The second tuple of attributes
+        is used to actually show the image. This can be used to change the motions
+        that are shown based on the expression that is in use. It should ensure
+        that at most one attribute corresponding to an expression is given.
 
     Only `filename` should be given positionally, and all other arguments should
     be given as keyword arguments.
