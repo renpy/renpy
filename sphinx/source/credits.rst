@@ -26,6 +26,7 @@ the omission in future versions.
 * Arda Güler
 * Arowana-vx
 * Asfdfdfd
+* Asriel Senna
 * Auro-Cyanide
 * Baekansi
 * Bbs3223474
@@ -75,6 +76,7 @@ the omission in future versions.
 * Gio
 * Giuseppe Bertone
 * Gouvernathor
+* Gratusfr
 * Gregory Pease
 * Grey
 * Gustavo Carvalho
@@ -130,6 +132,7 @@ the omission in future versions.
 * MrStalker
 * Mugenjohncel (Uncle Mugen)
 * Muhammad Nur Hidayat Yasuyoshi
+* Neotus
 * NetGenSuperstar
 * NoJoker
 * Nolanlemahn
