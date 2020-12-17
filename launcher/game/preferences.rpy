@@ -36,7 +36,12 @@ init python:
         rv = [ ( "English", None) ]
 
         for i in languages:
-            rv.append((i.replace("_", " ").title(), i))
+            rv.append((i.title(), i))
+
+        for i in (("Schinese", "schinese"), ("Tchinese", "tchinese")):
+            if i in rv:
+                rv.remove(i)
+                rv.append(({"schinese": "Simplified Chinese", "tchinese": "Traditional Chinese"}.get(i[1]), i[1]))
 
         rv.sort()
 
