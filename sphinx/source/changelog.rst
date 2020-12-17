@@ -206,6 +206,16 @@ to native Ren'Py ports.
 
 Support for iOS browsers was improved.
 
+Steam
+-----
+
+It is now possible to install Steam support from the Ren'Py launcher, by
+choosing "preferences", "Install libraries", "Install Steam Support".
+
+The new :var:`config.steam_appid` variable automatically creates the
+steam_appid.txt file for you. This needs to be set by a ``define`` statement,
+or in a python early block.
+
 Translations
 ------------
 
