@@ -3215,8 +3215,8 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=True, layer=None):
     if not_showing and images.showing(attr_layer, (attrs[0],)):
         return None
 
-    required = set()
-    optional = set(attrs)
+    required = [ attrs[0] ]
+    optional = list(attrs[1:])
 
     return images.choose_image(prefix_tag, required, optional, None)
 
