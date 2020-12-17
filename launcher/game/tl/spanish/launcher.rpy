@@ -1716,7 +1716,7 @@ translate spanish strings:
 
     # game/install.rpy:160
     old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
-    new "Antes de instalar el soporte de Steam, asegúrate de ser un {a=https://partner.steamgames.com/}socio de Steam{/a}.." 
+    new "Antes de instalar el soporte de Steam, asegúrate de ser un {a=https://partner.steamgames.com/}socio de Steam{/a}.."
 
     # game/install.rpy:172
     old "Steam support has already been installed."

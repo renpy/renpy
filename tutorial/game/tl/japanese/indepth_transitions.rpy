@@ -1,5 +1,4 @@
-# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/indepth_transitions.rpy:56
 translate japanese demo_transitions_5bbc72fe:
 

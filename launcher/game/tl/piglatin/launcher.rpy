@@ -485,35 +485,35 @@ translate piglatin strings:
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
     new "Uildingbay istributionsday ailedfay:\n\nHetay uildbay.irectory_nameday ariablevay aymay otnay includeay hetay pacesay, oloncay, oray emicolonsay aracterschay."
 
-    # game/distribute.rpy:509
+    # game/distribute.rpy:510
     old "No packages are selected, so there's nothing to do."
     new "Onay ackagespay areay electedsay, osay heretay'say othingnay otay oday."
 
-    # game/distribute.rpy:521
+    # game/distribute.rpy:522
     old "Scanning Ren'Py files..."
     new "Canningsay Enray'Ypay ilesfay..."
 
-    # game/distribute.rpy:580
+    # game/distribute.rpy:581
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
     new "Llaay ackagespay avehay eenbay uiltbay.\n\nUeday otay hetay resencepay ofay ermissionpay informationay, unpackingay anday epackingray hetay Inuxlay anday Acintoshmay istributionsday onay Indowsway isay otnay upportedsay."
 
-    # game/distribute.rpy:763
+    # game/distribute.rpy:764
     old "Archiving files..."
     new "Rchivingaay ilesfay..."
 
-    # game/distribute.rpy:1089
+    # game/distribute.rpy:1091
     old "Unpacking the Macintosh application for signing..."
     new "Npackinguay hetay Acintoshmay applicationay orfay igningsay..."
 
-    # game/distribute.rpy:1099
+    # game/distribute.rpy:1101
     old "Signing the Macintosh application...\n(This may take a long time.)"
     new "Igningsay hetay Acintoshmay applicationay...\n(Histay aymay aketay aay onglay imetay.)"
 
-    # game/distribute.rpy:1122
+    # game/distribute.rpy:1124
     old "Creating the Macintosh DMG..."
     new "Reatingcay hetay Acintoshmay Mgday..."
 
-    # game/distribute.rpy:1133
+    # game/distribute.rpy:1135
     old "Signing the Macintosh DMG..."
     new "Igningsay hetay Acintoshmay Mgday..."
 
@@ -873,19 +873,39 @@ translate piglatin strings:
     old "Successfully installed [name!t]."
     new "Uccessfullysay installeday [name!t]."
 
-    # game/install.rpy:104
+    # game/install.rpy:110
     old "Install Libraries"
     new "Nstalliay Ibrarieslay"
 
-    # game/install.rpy:119
+    # game/install.rpy:125
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
     new "Histay creensay allowsay ouyay otay installay ibrarieslay hattay ancay'tay ebay istributedday ithway Enray'Ypay. Omesay ofay hesetay ibrarieslay aymay equireray ouyay otay agreeay otay aay hirdtay-artypay icenselay eforebay eingbay useday oray istributedday."
 
-    # game/install.rpy:134
+    # game/install.rpy:131
+    old "Install Live2D Cubism SDK for Native"
+    new "Nstalliay Ive2dlay Ubismcay Dksay orfay Ativenay"
+
+    # game/install.rpy:140
     old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
     new "Hetay {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Ubismcay Dksay orfay Ativenay{/a} addsay upportsay orfay isplayingday Ive2dlay odelsmay. Lacepay Ubismsdkfornativecay-4ay-{i}ersionvay{/i}.ipzay inay hetay Enray'Ypay Dksay irectoryday, anday hentay ickclay Nstalliay. Istributingday aay amegay ithway Ive2dlay equiresray ouyay otay acceptay aay icenselay omfray Ive2dlay, Nciay."
 
-    # game/install.rpy:138
+    # game/install.rpy:144
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new "Ive2dlay inay Enray'Ypay oesnday'tay upportsay hetay Ebway, Ndroidaay 86_64xay (includingay emulatorsay anday Hromecay Soay), anday ustmay ebay addeday otay iOSay rojectspay anuallymay. Ive2dlay ustmay ebay einstalledray afteray upgradingay Enray'Ypay oray installingay Ndroidaay upportsay."
+
+    # game/install.rpy:151
+    old "Install Steam Support"
+    new "Nstalliay Teamsay Upportsay"
+
+    # game/install.rpy:160
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    new "Eforebay installingay Teamsay upportsay, easeplay akemay uresay ouyay areay aay {a=https://partner.steamgames.com/}Teamsay artnerpay{/a}."
+
+    # game/install.rpy:172
+    old "Steam support has already been installed."
+    new "Teamsay upportsay ashay alreadyay eenbay installeday."
+
+    # game/install.rpy:176
     old "Open Ren'Py SDK Directory"
     new "Penoay Enray'Ypay Dksay Irectoryday"
 
@@ -1305,19 +1325,19 @@ translate piglatin strings:
     old "Language:"
     new "Anguagelay:"
 
-    # game/project.rpy:49
+    # game/project.rpy:51
     old "After making changes to the script, press shift+R to reload your game."
     new "Fteraay akingmay angeschay otay hetay criptsay, resspay iftshay+Ray otay eloadray ouryay amegay."
 
-    # game/project.rpy:49
+    # game/project.rpy:51
     old "Press shift+O (the letter) to access the console."
     new "Resspay iftshay+Oay (hetay etterlay) otay accessay hetay onsolecay."
 
-    # game/project.rpy:49
+    # game/project.rpy:51
     old "Press shift+D to access the developer menu."
     new "Resspay iftshay+Day otay accessay hetay eveloperday enumay."
 
-    # game/project.rpy:49
+    # game/project.rpy:51
     old "Have you backed up your projects recently?"
     new "Avehay ouyay ackedbay upay ouryay rojectspay ecentlyray?"
 
@@ -1333,23 +1353,23 @@ translate piglatin strings:
     old "Ren'Py is scanning the project..."
     new "Enray'Ypay isay canningsay hetay rojectpay..."
 
-    # game/project.rpy:731
+    # game/project.rpy:740
     old "Launching"
     new "Aunchinglay"
 
-    # game/project.rpy:765
+    # game/project.rpy:774
     old "PROJECTS DIRECTORY"
     new "Rojectspay Irectoryday"
 
-    # game/project.rpy:765
+    # game/project.rpy:774
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Leasepay oosechay hetay rojectspay irectoryday usingay hetay irectoryday ooserchay.\n{b}Hetay irectoryday ooserchay aymay avehay openeday ehindbay histay indowway.{/b}"
 
-    # game/project.rpy:765
+    # game/project.rpy:774
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Histay auncherlay illway cansay orfay rojectspay inay histay irectoryday, illway reatecay ewnay rojectspay inay histay irectoryday, anday illway aceplay uiltbay rojectspay intoay histay irectoryday."
 
-    # game/project.rpy:770
+    # game/project.rpy:779
     old "Ren'Py has set the projects directory to:"
     new "Enray'Ypay ashay etsay hetay rojectspay irectoryday otay:"
 
@@ -1557,11 +1577,11 @@ translate piglatin strings:
     old "Fetching the list of update channels"
     new "Etchingfay hetay istlay ofay updateay annelschay"
 
-    # game/updater.rpy:194
+    # game/updater.rpy:193
     old "downloading the list of update channels"
     new "ownloadingday hetay istlay ofay updateay annelschay"
 
-    # game/updater.rpy:198
+    # game/updater.rpy:196
     old "parsing the list of update channels"
     new "arsingpay hetay istlay ofay updateay annelschay"
 
