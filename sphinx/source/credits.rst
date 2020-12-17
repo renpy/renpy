@@ -20,7 +20,6 @@ the omission in future versions.
 * Alessio
 * Alexandre Tranchant
 * Alisha Taylor
-* Andrej
 * Andy_kl
 * Apricotorange
 * Arda Güler
