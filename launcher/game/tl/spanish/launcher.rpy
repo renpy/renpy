@@ -1408,7 +1408,7 @@ translate spanish strings:
 
     # game/androidstrings.rpy:38
     old "Which app store would you like to support in-app purchasing through?"
-    new "¿En qué tienda de aplicaciones te gustaría soporte paracompras desde la aplicación?"
+    new "¿En qué tienda de aplicaciones te gustaría soporte para compras desde la aplicación?"
 
     # game/androidstrings.rpy:39
     old "Google Play."
@@ -1520,7 +1520,7 @@ translate spanish strings:
 
     # game/androidstrings.rpy:66
     old "I can create an application signing key for you. Signing an application with this key allows it to be placed in the Android Market and other app stores.\n\nDo you want to create a key?"
-    new "Puedo crear una clave de firma de la aplicación para usted. Firmar una aplicación con esta clave le permite ubicarla en Android Market y otras tiendas de aplicaciones. \ N \ n¿Desea crear una clave?"
+    new "Puedo crear una clave de firma de la aplicación para ti. Firmar una aplicación con esta clave le permite ubicarla en Android Market y otras tiendas de aplicaciones.\n\n¿Desea crear una clave?"
 
     # game/androidstrings.rpy:67
     old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
