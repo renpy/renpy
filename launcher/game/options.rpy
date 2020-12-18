@@ -409,3 +409,7 @@ define config.translate_launcher = True
 
 # Reduce the rate of screen updates.
 default preferences.gl_powersave = True
+
+# Disable steam.
+python early:
+    config.enable_steam = False

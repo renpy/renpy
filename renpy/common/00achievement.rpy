@@ -19,6 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+python early:
+
+    # Should steam be enabled?
+    config.enable_steam = True
+
 init -1500 python in achievement:
     from store import persistent, renpy, config, Action
 
@@ -243,7 +248,9 @@ init -1500 python in achievement:
 
         steam_preinit()
 
-        if steam.init():
+        if not config.enable_steam:
+            steam = None
+        elif steam.init():
             renpy.write_log("Initialized steam.")
             backends.insert(0, SteamBackend())
         else:
