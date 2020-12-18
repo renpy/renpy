@@ -57,6 +57,8 @@ Ren'Py binaries can include source code from the following projects:
 * certifi (Mozilla Public License 2.0)
 * urllib3 (MIT License)
 * chardet (GNU LGPL)
+* libusb (GNU LGPL)
+
 
 For the purposes of LGPL compliance, all source code that Ren'Py depends
 on is located in one of the following repositories:
