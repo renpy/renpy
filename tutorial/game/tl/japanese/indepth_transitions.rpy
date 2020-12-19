@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/indepth_transitions.rpy:56
 translate japanese demo_transitions_5bbc72fe:
 
@@ -52,7 +51,7 @@ translate japanese demo_simple_transitions_141bb95d:
 translate japanese demo_simple_transitions_f059f4ae:
 
     # e "You can use 'Fade' to define your own fades. By changing the timing and the color faded to, you can use this for special effects, like flashbulbs."
-    e "「Fade」関数を使うと、独自のフェードを定義できます。フェード時間とフェード先の色を変えることで、フラッシュバルブのような特別なエフェクトを作成できます。"
+    e "「Fade」関数を使うと、独自のフェードを定義できます。フェード時間とフェード先の色を変えてフラッシュバルブのような特別なエフェクトを作成できます。"
 
 # game/indepth_transitions.rpy:129
 translate japanese demo_simple_transitions_e948905b:
@@ -70,7 +69,7 @@ translate japanese demo_simple_transitions_6a1ae05f:
 translate japanese demo_simple_transitions_bdfcd85a:
 
     # e "You can use 'Pixellate' to change the details of the pixellation."
-    e "「Pixellate」関数を使うことで、ピクセル化の詳細を変更できます。"
+    e "「Pixellate」関数を使って、ピクセル化の詳細を変更できます。"
 
 # game/indepth_transitions.rpy:136
 translate japanese demo_simple_transitions_432f7224:
@@ -460,7 +459,7 @@ translate japanese demo_alphadissolve_51613c02:
 translate japanese demo_alphadissolve_7c08cf8b:
 
     # e "The AlphaDissolve displayable takes a control displayable, usually an ATL transform."
-    e "AlphaDissolveの画像としては、通常はATL変換を行った制御画像を用います。"
+    e "AlphaDissolveの画像としては、通常はATL transformを行った制御画像を用います。"
 
 # game/indepth_transitions.rpy:523
 translate japanese demo_alphadissolve_068e3e98:

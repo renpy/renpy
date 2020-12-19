@@ -44,7 +44,7 @@ Basic Configuration
 
 The build process can be configured by setting variables and calling
 function that live in the build namespace. This must be done from
-inside an ``init python`` block. The default settings for these configurations are 
+inside an ``init python`` block. The default settings for these configurations are
 set in ``options.rpy``.
 
 There are a few basic variables and functions that many games will
@@ -246,7 +246,7 @@ visual novel.
 
 **Windows**
 
-* Version: Windows XP or higher.
+* Version: Windows Vista or higher.
 * CPU: 2.0 GHz Core 2 Duo
 * RAM: 2.0 GB
 * Graphics: OpenGL 2.0 or DirectX 9.0c
@@ -260,7 +260,7 @@ visual novel.
 
 **Linux**
 
-* Version: Ubuntu 12.04+
+* Version: Ubuntu 16.04+
 * CPU: 2.0 GHz Core 2 Duo
 * RAM: 2.0 GB
 * Graphics: OpenGL 2.0
@@ -324,3 +324,10 @@ The following variables provide further control of the build process:
     Once this is set, after the distributions have been built, you can
     click "Build distributions", "Upload to itch.io" to cause an upload
     to occur.
+
+.. var:: build.mac_info_plist = { }
+
+    This is a dictionary mapping strings to strings, that can be used to
+    add or override keys in the mac's Info.plist file.
+
+

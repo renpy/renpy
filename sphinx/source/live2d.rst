@@ -22,6 +22,17 @@ Ren'Py back a list of meshes to show. Ren'Py then renders these meshes, and the 
 Ren'Py supports Live2D animations in the Cubism 3 and Cubism 4 formats.
 It supports the playback of expressions and motions.
 
+.. warning::
+
+    Live2D is not supported on the x86_64 Android platform, as a DLL is not
+    provided for this platform. This means that it may have problems running
+    on the Android emulator or ChromeOS.
+
+    Live2D is not supported on the web platform.
+
+    Installing Live2D on iOS requires copying the static libraries into your
+    iOS project by hand.
+
 Installing Live2D
 -----------------
 
@@ -54,7 +65,7 @@ Defining Animations
 
 Live2D animations are defined using the Live2D displayable and the image statement:
 
-.. function: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, **properties)
+.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, **properties)
 
     This displayable displays a Live2D animation.
 
@@ -101,8 +112,38 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         a time. If listed here, any number of nonexclusive expressions can be
         shown, in addition to one exclusive expression.
 
+    `seamless`
+        This determines if seamless looping should be used. Seamless looping
+        avoids fading between loops of a single motion. This may be True to
+        enable seamless looping all the time, False to dispable it all the
+        time, or a set of motions to be looped.
+
+    `attribute_function`
+        If not None, this is a function that takes a tuple of attributes,
+        and returns a second tuple of attributes. This can be used to replace
+        attributes for the purpose of display only - the attributes it returns
+        are not used when showing an image.  It should ensure
+        that at most one attribute corresponding to an expression is given.
+
+    `attribute_filter`
+        If not None, this is a function that takes a tuple of attributes,
+        and returns a second tuple of attributes. This is usually used to
+        filter out nonexclusice attributes that conflict with each other. The attributes
+        are ordered such that more recently requested attributes come first,
+        meaning that in the case of a conflict, the first attribute should
+        win.
+
+    The difference between `attribute_function` and `attribute_filter` is
+    that the former is generally used to compute replacement - the presence
+    of two attributes means one should be replaced by a third. The latter
+    is used to resolve conflicts between attributes, like having a group of
+    attributes where only one is valid.
+
     Only `filename` should be given positionally, and all other arguments should
     be given as keyword arguments.
+
+    The values of `alias`, `fade`, `nonexclusive`, and `seamless`, `attribute_function` and `attribute_filter`
+    are shared between all Live2D objects that share `filename`, such that these only need to be supplied once.
 
 Live2D displayables should be assigned to an image statement::
 
@@ -128,10 +169,10 @@ Some examples are::
     show hiyori m10 m01
 
 These use the default names found in the Cubism SDK sample names. The names
-of the motions and expressions are taken from the Live2D files, and if they
-begin with the name of the model3.json file (without directories or extensions),
-followed by an underscore, then that prefix is removed. (For example, "Hiyori_m01"
-becomes just m01.)
+of the motions and expressions are taken from the Live2D files, then forced to lower
+case, and if they begin with the name of the model3.json file (without directories
+or extensions), followed by an underscore, then that prefix is removed. (For example,
+"Hiyori_Motion01" becomes just motion01.)
 
 At most one exclusive expression can be used, and any number of nonexclusive expressions and
 motions can be given. When more than one motion is given, the motions are played in order,
@@ -202,7 +243,7 @@ Aliasing
 The `alias` parameter lets you specify your own names for the motions
 that would otherwise be automatically defined. For example, one could do::
 
-    image hiyori = Live2D("Resources/Hiyori", base=.6, alias={"idle" : "m01"})
+    image hiyori = Live2D("Resources/Hiyori", base=.6, aliases={"idle" : "m01"})
 
 To be able to use::
 
@@ -221,3 +262,8 @@ is set to True. If the animation is being looped, it is important to add
 greater than .2 second pauses that Ren'Py can exploit to perform expensive
 image prediction. (This may not be necessary if image prediction and loading
 can happen at other times.)
+
+Functions
+---------
+
+.. include:: inc/live2d

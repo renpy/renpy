@@ -147,10 +147,10 @@ has changed slightly. Here's the latest list of what is supported:
       - Intended to support Raspberry Pi, uses Raspian Buster
     * - Windows
       - x86_64
-      - A new port to 64-bit Windows XP+
+      - A new port to 64-bit Windows Vista and later.
     * - Windows
       - i686
-      - Continued support for 32-Bit Windows XP+
+      - Raised minimum version to Windows Vista.
     * - macOS
       - x86_64
       - macOS 10.6+ (All 64-bit macOS versions.)
@@ -173,7 +173,7 @@ has changed slightly. Here's the latest list of what is supported:
       - webasm
       - Modern web browsers
 
-The biggest new platform that Ren'Py supports is the 64-bit windows
+The biggest new platform that Ren'Py supports is the 64-bit Windows
 platform, which means that Ren'Py is available in 64-bits on all major
 desktop and mobile platforms.  The new :var:`renpy.bits` variable can
 be used to determine if Ren'Py is running on a 32 or 64-bit platform,
@@ -206,16 +206,31 @@ to native Ren'Py ports.
 
 Support for iOS browsers was improved.
 
+Steam
+-----
+
+It is now possible to install Steam support from the Ren'Py launcher, by
+choosing "preferences", "Install libraries", "Install Steam Support".
+
+The new :var:`config.steam_appid` variable automatically creates the
+steam_appid.txt file for you. This needs to be set by a ``define`` statement,
+or in a python early block.
+
 Translations
 ------------
 
 The Simplified Chinese, Japanese, and Korean translations have been updated, and now
 use a unified font.
 
+There is a new Simplified Chinese translation of the tutorial game, courtesy of
+Neoteus.
+
 Depreciations and Removals
 --------------------------
 
-As describe above, Ren'Py no longer supports 32-bit iOS devices.
+As described above, Ren'Py no longer support Windows XP.
+
+As described above, Ren'Py no longer supports 32-bit iOS devices.
 
 The choice of downloading the Editra text editor has been removed from Ren'Py.
 Editra hadn't been updated in over 5 years, and the website it was originally
@@ -228,6 +243,27 @@ renderer.
 
 Miscellaneous
 -------------
+
+Ren'Py now uses software playback of movies on Android and iOS devices,
+meaning the same files can be used on all platforms that support video
+playback.
+
+Defining a mouse cursor using :var:`config.mouse` now uses SDL2's color cursor
+API, which generally results in hardware acceleration and reduced mouse movement
+lag.
+
+The ``define`` statement can now be used to set a key in a dictionary. ::
+
+    # Ren'Py was started in 2004.
+    define age["eileen"] = 2020 - 2004
+
+The ``define`` statement can take += and \|=, to apply the appropriate
+update operators. ::
+
+    define config.keymap['dismiss'] = [ 'K_KP_PLUS' ]
+
+    # This assumes endings is a set.
+    define endings |= { "best" }
 
 It is now possible to specify a relative audio channel whenever an
 audio is file is played, using the new ``volume`` clause to ``play`` and
@@ -254,6 +290,12 @@ the opposite.
 
 The launcher window can now be resized if necessary. A button has been added to
 the launcher preferences to restore the default size.
+
+The new :var:`build.mac_info_plist` variable makes it easier to customize
+the mac app.
+
+The `requests <https://requests.readthedocs.io/en/master/>`_ library, is
+bundled with Ren'Py, making accessing the web much easier.
 
 Pressing PAUSE on your keyboard brings the player to the game menu, finally
 giving that key a function.

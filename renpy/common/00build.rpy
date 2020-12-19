@@ -138,6 +138,7 @@ init -1500 python in build:
         ("dialogue.txt", None),
         ("dialogue.tab", None),
         ("profile_screen.txt", None),
+
         ("files.txt", None),
         ("memory.txt", None),
 
@@ -162,6 +163,8 @@ init -1500 python in build:
         ("web-presplash.jpg", "web"),
         ("web-presplash.webp", "web"),
         ("progressive_download.txt", "web"),
+
+        ("steam_appid.txt", None),
 
         ])
 
@@ -392,6 +395,9 @@ init -1500 python in build:
     # The command used to sign a dmg.
     mac_codesign_dmg_command = [ "/usr/bin/codesign", "--timestamp", "-s", "{identity}", "-f", "{dmg}" ]
 
+    # Additional or Override keys to add to the Info.plist.
+    mac_info_plist = { }
+
     # Do we want to add the script_version file?
     script_version = True
 
@@ -461,6 +467,8 @@ init -1500 python in build:
             rv["mac_codesign_command"] = mac_codesign_command
             rv["mac_create_dmg_command"] = mac_create_dmg_command
             rv["mac_codesign_dmg_command"] = mac_codesign_dmg_command
+
+        rv["mac_info_plist"] = mac_info_plist
 
         return rv
 

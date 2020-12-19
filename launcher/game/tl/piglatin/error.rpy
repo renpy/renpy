@@ -1,93 +1,105 @@
 ﻿
 translate piglatin strings:
 
-    # renpy/common/00gltest.rpy:66
+    # renpy/common/00gltest.rpy:89
     old "Renderer"
     new "Endererray"
 
-    # renpy/common/00gltest.rpy:70
+    # renpy/common/00gltest.rpy:93
     old "Automatically Choose"
     new "Utomaticallyaay Hoosecay"
 
-    # renpy/common/00gltest.rpy:77
-    old "Force ANGLE Renderer"
-    new "Orcefay Ngleaay Endererray"
-
-    # renpy/common/00gltest.rpy:81
+    # renpy/common/00gltest.rpy:100
     old "Force GL Renderer"
     new "Orcefay Lgay Endererray"
 
-    # renpy/common/00gltest.rpy:85
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "Orcefay Ngleaay Endererray"
+
+    # renpy/common/00gltest.rpy:110
     old "Force GLES Renderer"
     new "Orcefay Lesgay Endererray"
 
-    # renpy/common/00gltest.rpy:90
-    old "Force ANGLE2 Renderer"
-    new "Orcefay Ngle2aay Endererray"
-
-    # renpy/common/00gltest.rpy:94
+    # renpy/common/00gltest.rpy:116
     old "Force GL2 Renderer"
     new "Orcefay L2gay Endererray"
 
-    # renpy/common/00gltest.rpy:98
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "Orcefay Ngle2aay Endererray"
+
+    # renpy/common/00gltest.rpy:126
     old "Force GLES2 Renderer"
     new "Orcefay Les2gay Endererray"
 
-    # renpy/common/00gltest.rpy:109
+    # renpy/common/00gltest.rpy:136
     old "Enable"
     new "Nableeay"
 
-    # renpy/common/00gltest.rpy:128
+    # renpy/common/00gltest.rpy:155
     old "Powersave"
     new "Owersavepay"
 
-    # renpy/common/00gltest.rpy:142
+    # renpy/common/00gltest.rpy:169
     old "Framerate"
     new "Rameratefay"
 
-    # renpy/common/00gltest.rpy:146
+    # renpy/common/00gltest.rpy:173
     old "Screen"
     new "Creensay"
 
-    # renpy/common/00gltest.rpy:150
+    # renpy/common/00gltest.rpy:177
     old "60"
     new "06ay"
 
-    # renpy/common/00gltest.rpy:154
+    # renpy/common/00gltest.rpy:181
     old "30"
     new "03ay"
 
-    # renpy/common/00gltest.rpy:160
+    # renpy/common/00gltest.rpy:187
     old "Tearing"
     new "Earingtay"
 
-    # renpy/common/00gltest.rpy:176
+    # renpy/common/00gltest.rpy:203
     old "Changes will take effect the next time this program is run."
     new "Hangescay illway aketay effectay hetay extnay imetay histay rogrampay isay unray."
 
-    # renpy/common/00gltest.rpy:208
+    # renpy/common/00gltest.rpy:238
     old "Performance Warning"
     new "Erformancepay Arningway"
 
-    # renpy/common/00gltest.rpy:213
+    # renpy/common/00gltest.rpy:243
     old "This computer is using software rendering."
     new "Histay omputercay isay usingay oftwaresay enderingray."
 
-    # renpy/common/00gltest.rpy:215
+    # renpy/common/00gltest.rpy:245
+    old "This game requires use of GL2 that can't be initialised."
+    new "Histay amegay equiresray useay ofay L2gay hattay ancay'tay ebay initialiseday."
+
+    # renpy/common/00gltest.rpy:247
     old "This computer has a problem displaying graphics: [problem]."
     new "Histay omputercay ashay aay roblempay isplayingday aphicsgray: [problem]."
 
-    # renpy/common/00gltest.rpy:219
+    # renpy/common/00gltest.rpy:251
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
     new "Tsiay aphicsgray riversday aymay ebay outay ofay ateday oray otnay operatingay orrectlycay. Histay ancay eadlay otay owslay oray incorrectay aphicsgray isplayday."
 
-    # renpy/common/00gltest.rpy:223
+    # renpy/common/00gltest.rpy:256
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Oremay etailsday onay owhay otay ixfay histay ancay ebay oundfay inay hetay {a=[url]}ocumentationday{/a}."
+
+    # renpy/common/00gltest.rpy:261
     old "Continue, Show this warning again"
     new "Ontinuecay, Howsay histay arningway againay"
 
-    # renpy/common/00gltest.rpy:227
+    # renpy/common/00gltest.rpy:265
     old "Continue, Don't show warning again"
     new "Ontinuecay, Onday'tay owshay arningway againay"
+
+    # renpy/common/00gltest.rpy:273
+    old "Change render options"
+    new "Hangecay enderray optionsay"
 
     # renpy/common/00gamepad.rpy:32
     old "Select Gamepad to Calibrate"

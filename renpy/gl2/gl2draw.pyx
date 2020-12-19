@@ -95,12 +95,6 @@ cdef class GL2Draw:
         # The physical size of the window we got.
         self.physical_size = None
 
-        # Is the mouse currently visible?
-        self.mouse_old_visible = None
-
-        # The (x, y) and texture of the software mouse.
-        self.mouse_info = (0, 0, None)
-
         # This is used to cache the surface->texture operation.
         self.texture_cache = weakref.WeakKeyDictionary()
 
@@ -182,13 +176,12 @@ cdef class GL2Draw:
 
         renpy.display.log.write("primary display bounds: %r", bounds)
 
-        head_full_w = bounds[2]
         head_w = bounds[2] - 102
         head_h = bounds[3] - 102
 
         # Figure out the default window size.
-        bound_w = min(vwidth, visible_w, head_w)
-        bound_h = min(vwidth, visible_h, head_h)
+        bound_w = min(visible_w, head_w)
+        bound_h = min(visible_h, head_h)
 
         self.info["max_window_size"] = (
             int(round(min(bound_h * virtual_ar, bound_w))),
@@ -294,8 +287,6 @@ cdef class GL2Draw:
         if not renpy.config.gl_enable:
             renpy.display.log.write("GL Disabled.")
             return False
-
-        print("Using {} renderer.".format(self.info["renderer"]))
 
         if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
             physical_size = (None, None)
@@ -404,8 +395,6 @@ cdef class GL2Draw:
         renpy.display.log.write("Version: %r", version)
         renpy.display.log.write("Display Info: %s", self.display_info)
 
-        print(renderer, version)
-
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.split(" "))
 
@@ -423,9 +412,6 @@ cdef class GL2Draw:
         elif renpy.emscripten:
             # give back control to browser regularly
             self.redraw_period = 0.1
-
-        # Prepare a mouse display.
-        self.mouse_old_visible = None
 
         self.shader_cache = ShaderCache("cache/shaders.txt", self.gles)
         self.shader_cache.load()
@@ -683,12 +669,6 @@ cdef class GL2Draw:
             rv = True
         elif first_pass:
             rv = True
-        else:
-            # Redraw if the mouse moves.
-            mx, my, tex = self.mouse_info
-
-            if tex and (mx, my) != pygame.mouse.get_pos():
-                rv = True
 
         # Handle fast redraw.
         if rv:
@@ -755,8 +735,6 @@ cdef class GL2Draw:
         """
         Called to flip the screen after it's drawn.
         """
-
-        self.draw_mouse()
 
         start = time.time()
 
@@ -1024,34 +1002,6 @@ cdef class GL2Draw:
         x, y = self.untranslate_point(x, y)
         pygame.mouse.set_pos([x, y])
 
-    # Private.
-    def draw_mouse(self):
-
-        hardware, mx, my, tex = renpy.game.interface.get_mouse_info()
-
-        self.mouse_info = (mx, my, tex)
-
-        if self.mouse_old_visible != hardware:
-            pygame.mouse.set_visible(hardware)
-            self.mouse_old_visible = hardware
-
-        if not tex:
-            return
-
-        x, y = pygame.mouse.get_pos()
-
-        x -= mx
-        y -= my
-
-        pw, ph = self.physical_size
-        pbx, pby, pbw, pbh = self.physical_box
-
-        # Multipliers from mouse coordinates to draw coordinates.
-        xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
-        ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
-
-        # TODO.
-
     def screenshot(self, render_tree):
         cdef unsigned char *pixels
         cdef SDL_Surface *surf
@@ -1207,7 +1157,7 @@ cdef class GL2DrawingContext:
         program.set_uniform("u_model_size", (model.width, model.height))
         program.set_uniform("u_lod_bias", -1.0)
         program.set_uniform("u_transform", transform)
-        program.set_uniform("u_time", renpy.display.interface.frame_time)
+        program.set_uniform("u_time", (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400)
         program.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
 
         model.program_uniforms(program)

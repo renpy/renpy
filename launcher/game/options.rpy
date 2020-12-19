@@ -283,6 +283,7 @@ init python:
     except:
         pass
 
+    build.classify_renpy("rapt/**/libLive2DCubismCore.so", None)
     build.classify_renpy("rapt/**", "rapt")
     build.executable("rapt/prototype/gradlew")
 
@@ -306,6 +307,7 @@ init python:
     build.classify_renpy("**/log.txt", None)
     build.classify_renpy("**/traceback.txt", None)
     build.classify_renpy("**/errors.txt", None)
+    build.classify_renpy("**/steam_appid.txt", None)
     build.classify_renpy("**/saves/", None)
     build.classify_renpy("**/tmp/", None)
     build.classify_renpy("**/.Editra", None)
@@ -371,9 +373,9 @@ init python:
     build.classify_renpy("module/fribidi-src/**", "source")
 
     # all-platforms binary.
-    build.classify_renpy("lib/**/_renpysteam*", None)
+    build.classify_renpy("lib/**/_renpysteam*", "steam")
+    build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
-    build.classify_renpy("lib/**/*steam_api*", None)
     build.classify_renpy("lib/linux-armv7l/", "raspi")
     build.classify_renpy("lib/linux-armv7l/**", "raspi")
     build.classify_renpy("lib/**", "binary")
@@ -389,6 +391,7 @@ init python:
     build.package("sdk", "zip tar.bz2 dmg", "source binary")
     build.package("source", "tar.bz2", "source source_only", update=False)
     build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
+    build.package("steam", "zip", "steam", dlc=True)
 
     build.package("jedit", "zip", "jedit", dlc=True)
 
@@ -406,3 +409,7 @@ define config.translate_launcher = True
 
 # Reduce the rate of screen updates.
 default preferences.gl_powersave = True
+
+# Disable steam.
+python early:
+    config.enable_steam = False

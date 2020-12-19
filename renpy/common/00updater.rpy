@@ -1100,7 +1100,7 @@ init -1500 python in updater:
                     self.log.write("could not rename file %s" % path.encode("utf-8"))
 
                     with open(DEFERRED_UPDATE_FILE, "ab") as f:
-                        f.write("R " + path.encode("utf-8") + "\n")
+                        f.write("R " + path.encode("utf-8") + "\r\n")
 
                     continue
 
@@ -1146,7 +1146,7 @@ init -1500 python in updater:
                 if os.path.exists(i):
                     self.log.write("could not delete file %s" % i.encode("utf-8"))
                     with open(DEFERRED_UPDATE_FILE, "wb") as f:
-                        f.write("D " + i.encode("utf-8") + "\n")
+                        f.write("D " + i.encode("utf-8") + "\r\n")
 
             for i in old_directories:
                 try:

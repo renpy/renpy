@@ -6,13 +6,11 @@ import os
 import subprocess
 import sys
 
-from renpy import version_tuple  # @UnresolvedImport
+from renpy import version_tuple # @UnresolvedImport
 
 SOURCE = [
     "/home/tom/ab/renpy",
-    "/home/tom/ab/android/",
-    "/home/tom/ab/ripe/renios",
-    "/home/tom/ab/renpy-deps",
+    "/home/tom/ab/renpy-build",
     "/home/tom/ab/pygame_sdl2",
     "/home/tom/ab/renpyweb",
     ]
@@ -95,7 +93,6 @@ if tag:
 
         subprocess.check_call([ "git", "tag", "-a", tag, "-m", "Tagging Ren'Py + " + version + " release." ])
 
-
 os.chdir("/home/tom/ab/renpy/dl")
 
 for i in links:
@@ -103,10 +100,8 @@ for i in links:
         os.unlink(i)
     os.symlink(short_version, i)
 
-
 os.chdir("/home/tom/ab/website")
 subprocess.check_call("./upload.sh")
-
 
 os.chdir("/home/tom/ab/renpy/sphinx")
 if args.release:

@@ -1408,7 +1408,7 @@ translate spanish strings:
 
     # game/androidstrings.rpy:38
     old "Which app store would you like to support in-app purchasing through?"
-    new "¿En qué tienda de aplicaciones te gustaría soporte paracompras desde la aplicación?"
+    new "¿En qué tienda de aplicaciones te gustaría soporte para compras desde la aplicación?"
 
     # game/androidstrings.rpy:39
     old "Google Play."
@@ -1520,7 +1520,7 @@ translate spanish strings:
 
     # game/androidstrings.rpy:66
     old "I can create an application signing key for you. Signing an application with this key allows it to be placed in the Android Market and other app stores.\n\nDo you want to create a key?"
-    new "Puedo crear una clave de firma de la aplicación para usted. Firmar una aplicación con esta clave le permite ubicarla en Android Market y otras tiendas de aplicaciones. \ N \ n¿Desea crear una clave?"
+    new "Puedo crear una clave de firma de la aplicación para ti. Firmar una aplicación con esta clave le permite ubicarla en Android Market y otras tiendas de aplicaciones.\n\n¿Desea crear una clave?"
 
     # game/androidstrings.rpy:67
     old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
@@ -1701,3 +1701,24 @@ translate spanish strings:
     # game/web.rpy:341
     old "Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
     new "Las imágenes y las músicas se pueden descargar mientras juega. Se creará un archivo 'progress_download.txt' para que pueda configurar este comportamiento."
+
+    # game/install.rpy:144
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new "Live2D en Ren'Py no tiene soporte en Web, Android x86_64 (incluidos emuladores y Chrome OS) y debe agregarse a los proyectos de iOS manualmente. Live2D debe reinstalarse después de actualizar Ren'Py o instalar el soporte de Android."
+
+    # game/install.rpy:131
+    old "Install Live2D Cubism SDK for Native"
+    new "Instalar Live2D Cubism SDK for Native"
+
+    # game/install.rpy:151
+    old "Install Steam Support"
+    new "Instalar el Soporte de Steam"
+
+    # game/install.rpy:160
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    new "Antes de instalar el soporte de Steam, asegúrate de ser un {a=https://partner.steamgames.com/}socio de Steam{/a}.."
+
+    # game/install.rpy:172
+    old "Steam support has already been installed."
+    new "El soporte de Steam ya está instalado."
+

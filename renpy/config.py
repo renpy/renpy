@@ -568,7 +568,7 @@ transition_screens = True
 predict_statements_callback = None
 
 # Should we use hardware video on platforms that support it?
-hw_video = True
+hw_video = False
 
 # A function to use to dispatch gestures.
 dispatch_gesture = None
@@ -1059,6 +1059,13 @@ fbo_size = (4096, 4096)
 
 # Names to ignore the redefinition of.
 lint_ignore_redefine = [ "gui.about" ]
+
+# A list of functions that are called when Ren'Py terminates.
+quit_callbacks = [ ]
+
+# The steam_appid, if known. This needs to be set here since it is loaded
+# very early.
+steam_appid = None
 
 del os
 del collections

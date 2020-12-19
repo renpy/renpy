@@ -172,7 +172,7 @@ class Motion(object):
                 curve.get("FadeOutTime", fadeout),
                 )
 
-    def get(self, st, fade_st):
+    def get(self, st, fade_st, do_fade_in, do_fade_out):
         """
         Returns a dictionary where the keys are the type of parameter and the
         parameter name, and the values are the blend factor and value.
@@ -185,6 +185,12 @@ class Motion(object):
         for k, segments in self.curves.items():
 
             fadein, fadeout = self.fades[k]
+
+            if not do_fade_in:
+                fadein = 0.0
+
+            if not do_fade_out:
+                fadeout = 0.0
 
             factor = 1.0
 
@@ -214,7 +220,7 @@ class Motion(object):
 
         return rv
 
-    def wait(self, st, fade_st):
+    def wait(self, st, fade_st, do_fade_in, do_fade_out):
         """
         Returns how much time should pass until this displayable needs to be
         redrawn.
@@ -227,6 +233,9 @@ class Motion(object):
         for k, segments in self.curves.items():
 
             fadeout = self.fades[k][1]
+
+            if not do_fade_out:
+                fadeout = 0
 
             factor = 1.0
 
@@ -266,8 +275,8 @@ class NullMotion(object):
 
     duration = 1.0
 
-    def get(self, st, fade_st):
+    def get(self, st, fade_st, do_fade_in, do_fade_out):
         return { }
 
-    def wait(self, st, fade_st):
+    def wait(self, st, fade_st, do_fade_in, do_fade_out):
         return max(1.0 - st, 0)

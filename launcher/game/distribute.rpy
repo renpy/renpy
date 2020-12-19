@@ -843,7 +843,7 @@ init python in distribute:
                 CFBundleName=display_name,
                 CFBundlePackageType="APPL",
                 CFBundleShortVersionString=version,
-                CFBundleVersion="1.0.{0}".format(int(time.time())),
+                CFBundleVersion=time.strftime("%Y.%m%d.%H%M%S"),
                 LSApplicationCategoryType="public.app-category.simulation-games",
                 CFBundleDocumentTypes = [
                     {
@@ -863,6 +863,8 @@ init python in distribute:
 
             if self.build.get('allow_integrated_gpu', False):
                 plist["NSSupportsAutomaticGraphicsSwitching"] = True
+
+            plist.update(self.build.get("mac_info_plist", { }))
 
             rv = self.temp_filename("Info.plist")
             plistlib.writePlist(plist, rv)
@@ -1159,8 +1161,6 @@ init python in distribute:
 
                     f.name += ".macho"
                     f.path = tempfile
-
-                    print(repr(f))
 
             return fl
 

@@ -30,7 +30,7 @@ init python:
     import os
 
 init python in project:
-    from store import persistent, config, Action, renpy, _preferences
+    from store import persistent, config, Action, renpy, _preferences, MultiPersistent
     import store.util as util
     import store.interface as interface
 
@@ -40,6 +40,8 @@ init python in project:
     import subprocess
     import re
     import tempfile
+
+    multipersistent = MultiPersistent("launcher.renpy.org")
 
     if persistent.blurb is None:
         persistent.blurb = 0
@@ -431,8 +433,17 @@ init python in project:
 
             global current
 
+            if persistent.projects_directory is None:
+                if multipersistent.projects_directory is not None:
+                    persistent.projects_directory = multipersistent.projects_directory
+
             if (persistent.projects_directory is not None) and not os.path.isdir(persistent.projects_directory):
                 persistent.projects_directory = None
+
+            if persistent.projects_directory is not None:
+                if multipersistent.projects_directory is None:
+                    multipersistent.projects_directory = persistent.projects_directory
+                    multipersistent.save()
 
             self.projects_directory = persistent.projects_directory
 
@@ -768,6 +779,8 @@ label choose_projects_directory:
             interface.info(_("Ren'Py has set the projects directory to:"), "[path!q]", path=path)
 
         persistent.projects_directory = path
+        project.multipersistent.projects_directory = path
+        project.multipersistent.save()
 
         project.manager.scan()
 
@@ -782,6 +795,8 @@ init python:
         args = ap.parse_args()
 
         persistent.projects_directory = renpy.fsdecode(args.projects)
+        project.multipersistent.projects_directory = path
+        project.multipersistent.save()
         renpy.save_persistent()
 
         return False

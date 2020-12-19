@@ -72,3 +72,15 @@ translate russian strings:
     # 00console.rpy:690
     old "long: Print the full representation of objects on the console."
     new "long: Выводить полное представление обектов (repr) в консоли."
+
+    # renpy/common/00console.rpy:814
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    new "watch <выражение>: наблюдать за выражением python\n watch short: укорачивает отображение отслеживаемых выражений (по умолчанию)\n watch long: делает отображение отслеживаемых выражений как есть"
+
+    # renpy/common/00console.rpy:925
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    new "escape: Включает экранирование Unicode символов в строках unicode."
+
+    # renpy/common/00console.rpy:929
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    new "unescape: Выключает экранирование Unicode символов в строках unicode и выводит их как есть (по умолчанию)."

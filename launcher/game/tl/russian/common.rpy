@@ -880,3 +880,15 @@ translate russian strings:
     # renpy/common/00accessibility.rpy:191
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
     new "Параметры этого меню предназначены для увеличения доступности. Они могут работать не со всеми играми, а некоторые комбинации опций могут сделать игру отображаемой некорректно. Это не проблема с игрой или движком. Для достижения наилучших результатов при изменении шрифтов старайтесь сохранять размер текста таким, каким он был изначально."
+
+    # renpy/common/00accessibility.rpy:193
+    old "Self-Voicing Volume Drop"
+    new "Уменьшение громкости при озвучке через синтезатор речи"
+
+    # renpy/common/00preferences.rpy:384
+    old "self voicing volume drop"
+    new "уменьшение громкости при озвучке через синтезатор речи"
+
+    # renpy/common/00preferences.rpy:464
+    old "system cursor"
+    new "системный курсор"

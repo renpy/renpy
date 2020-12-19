@@ -199,3 +199,15 @@ init python:
 ## by a slash.
 
 # define build.itch_project = "renpytom/test-project"
+
+
+# Custom mouse.
+define config.mouse = { 'default' : [ 
+        ("gui/mouse0.png", 0, 0),
+        ("gui/mouse1.png", 0, 0),
+        ("gui/mouse2.png", 0, 0),
+        ("gui/mouse1.png", 0, 0), 
+    ] * 2 + [
+        ("gui/mouse0.png", 0, 0),
+    ] * (10 * 20)
+}

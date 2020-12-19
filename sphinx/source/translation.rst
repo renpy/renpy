@@ -430,8 +430,6 @@ translation:
 
 .. include:: inc/underscore_p
 
-.. include:: inc/translate_string
-
 There are two language-related variables. One is
 :var:`config.language`, which is used to change the default language
 of the game.

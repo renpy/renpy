@@ -262,7 +262,8 @@ The following uniforms are made available to all Models.
 
 ``float u_time``
     The time of the frame. The epoch is undefined, so it's best to treat
-    this as a number that increases by one second a second.
+    this as a number that increases by one second a second. The time is
+    modulo 86400, so it will reset to 0.0 once a day.
 
 ``vec4 u_random``
     Four random numbers between 0.0 and 1.0 that are (with incredibly high

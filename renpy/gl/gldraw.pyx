@@ -89,12 +89,6 @@ cdef class GLDraw:
         # The physical size of the window we got.
         self.physical_size = None
 
-        # Is the mouse currently visible?
-        self.mouse_old_visible = None
-
-        # The (x, y) and texture of the software mouse.
-        self.mouse_info = (0, 0, None)
-
         # This is used to cache the surface->texture operation.
         self.texture_cache = weakref.WeakKeyDictionary()
 
@@ -225,9 +219,6 @@ cdef class GLDraw:
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-        # Prepare a mouse display.
-        self.mouse_old_visible = None
-
         self.rtt.init()
         self.environ.init()
 
@@ -238,8 +229,12 @@ cdef class GLDraw:
         if renpy.android or renpy.ios:
             fullscreen = True
 
-        width = renpy.game.preferences.physical_size[0] or self.virtual_size[0]
-        height = renpy.game.preferences.physical_size[1] or self.virtual_size[1]
+        if renpy.game.preferences.physical_size:
+            width = renpy.game.preferences.physical_size[0] or self.virtual_size[0]
+            height = renpy.game.preferences.physical_size[1] or self.virtual_size[1]
+        else:
+            width = self.virtual_size[0]
+            height = self.virtual_size[1]
 
         max_w, max_h = self.info["max_window_size"]
         width = min(width, max_w)
@@ -321,13 +316,12 @@ cdef class GLDraw:
 
         renpy.display.log.write("primary display bounds: %r", bounds)
 
-        head_full_w = bounds[2]
         head_w = bounds[2] - 102
         head_h = bounds[3] - 102
 
         # Figure out the default window size.
-        bound_w = min(vwidth, visible_w, head_w)
-        bound_h = min(vwidth, visible_h, head_h)
+        bound_w = min(visible_w, head_w)
+        bound_h = min(visible_h, head_h)
 
         self.info["max_window_size"] = (
             int(round(min(bound_h * virtual_ar, bound_w))),
@@ -611,12 +605,6 @@ cdef class GLDraw:
             rv = True
         elif first_pass:
             rv = True
-        else:
-            # Redraw if the mouse moves.
-            mx, my, tex = self.mouse_info
-
-            if tex and (mx, my) != pygame.mouse.get_pos():
-                rv = True
 
         # Handle fast redraw.
         if rv:
@@ -765,8 +753,6 @@ cdef class GLDraw:
             self.draw_transformed(surftree, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
         if flip:
-
-            self.draw_mouse()
 
             start = time.time()
 
@@ -1241,47 +1227,6 @@ cdef class GLDraw:
     def set_mouse_pos(self, x, y):
         x, y = self.untranslate_point(x, y)
         pygame.mouse.set_pos([x, y])
-
-    # Private.
-    def draw_mouse(self):
-
-        hardware, mx, my, tex = renpy.game.interface.get_mouse_info()
-
-        self.mouse_info = (mx, my, tex)
-
-        if self.mouse_old_visible != hardware:
-            pygame.mouse.set_visible(hardware)
-            self.mouse_old_visible = hardware
-
-        if not tex:
-            return
-
-        x, y = pygame.mouse.get_pos()
-
-        x -= mx
-        y -= my
-
-        pw, ph = self.physical_size
-        pbx, pby, pbw, pbh = self.physical_box
-
-        xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
-        ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
-
-        self.environ.viewport(0, 0, xmul * pw, ymul * ph)
-        self.environ.ortho(0, pw, ph, 0, -1.0, 1.0)
-
-        self.clip_mode_screen()
-        self.set_clip((-pbx, -pby, pw, ph))
-
-        gltexture.blit(
-            tex,
-            x,
-            y,
-            IDENTITY,
-            1.0,
-            1.0,
-            self.environ,
-            False)
 
     def screenshot(self, surftree):
         cdef unsigned char *pixels

@@ -1,7 +1,7 @@
 Splashscreen and Presplash
 ==========================
 
-.. _adding-a-splashscreen::
+.. _adding-a-splashscreen:
 
 Adding a Splashscreen
 ---------------------

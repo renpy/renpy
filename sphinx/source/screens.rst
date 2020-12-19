@@ -85,8 +85,8 @@ two parameters, `who` and `what`.
 
 The screen contains a window, which has been given the id of
 "window". This window contains a vertical box, and the spacing inside
-that box is 10 pixels. It contains two text fields, one of the name of
-the speaker, and the other with the speaker's id.
+that box is 10 pixels. It contains two text fields, one displaying the name of
+the speaker, and the displaying what is being spoken.
 
 Screen Language Syntax
 ----------------------

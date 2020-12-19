@@ -1521,7 +1521,7 @@ class Renderer(object):
     involved drawing and the SDL main window, as documented here.
 
     A Renderer is responsible for updating the renpy.game.preferences.fullscreen
-    and renpy.game.preferencences.physical_size preferences, when these are
+    and renpy.game.preferences.physical_size preferences, when these are
     changed from outside the game.
 
     A renderer has an info dict, that contains the keys from pygame_sdl2.display.Info(),
@@ -1803,6 +1803,9 @@ class Interface(object):
         # Things to be preloaded.
         self.preloads = [ ]
 
+        # The time at which this object was initialized.
+        self.init_time = get_time()
+
         # The time at which this draw occurs.
         self.frame_time = 0
 
@@ -1876,17 +1879,6 @@ class Interface(object):
         # The thread that can do display operations.
         self.thread = threading.current_thread()
 
-        # Initialize audio.
-        renpy.audio.audio.init()
-
-        # Initialize pygame.
-        try:
-            pygame.display.init()
-        except:
-            pass
-
-        self.post_init()
-
         # Init timing.
         init_time()
         self.mouse_event_time = get_time()
@@ -1935,8 +1927,6 @@ class Interface(object):
         if renpy.config.periodic_callback:
             renpy.config.periodic_callbacks.append(renpy.config.periodic_callback)
 
-        renpy.display.emulator.init_emulator()
-
         # Has start been called?
         self.started = False
 
@@ -1963,6 +1953,12 @@ class Interface(object):
 
         # The duration of each frame, in seconds.
         self.frame_duration = 1.0 / 60.0
+
+        # The cursor cache.
+        self.cursor_cache = None
+
+        # The old mouse.
+        self.old_mouse = None
 
     def setup_dpi_scaling(self):
 
@@ -2011,8 +2007,24 @@ class Interface(object):
         Starts the interface, by opening a window and setting the mode.
         """
 
+        import traceback
+
         if self.started:
             return
+
+        # Initialize audio.
+        renpy.audio.audio.init()
+
+        # Initialize pygame.
+        try:
+            pygame.display.init()
+            pygame.mouse.init()
+        except:
+            pass
+
+        self.post_init()
+
+        renpy.display.emulator.init_emulator()
 
         gc.collect()
 
@@ -2048,6 +2060,27 @@ class Interface(object):
 
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
+
+        # Create a cache of the the mouse information.
+        if renpy.config.mouse:
+
+            self.cursor_cache = { }
+
+            cursors = { }
+
+            for key, cursor_list in renpy.config.mouse.items():
+                l = [ ]
+
+                for i in cursor_list:
+
+                    if i not in cursors:
+                        fn, x, y = i
+                        surf = renpy.display.im.load_surface(fn)
+                        cursors[i] = pygame.mouse.ColorCursor(surf, x, y)
+
+                    l.append(cursors[i])
+
+                self.cursor_cache[key] = l
 
     def post_init(self):
         """
@@ -2141,6 +2174,7 @@ class Interface(object):
 
         renderer = renpy.game.preferences.renderer
         renderer = os.environ.get("RENPY_RENDERER", renderer)
+        renderer = renpy.session.get("renderer", renderer)
 
         if self.safe_mode:
             renderer = "sw"
@@ -2287,6 +2321,9 @@ class Interface(object):
             # Ensure we don't get stuck in fullscreen.
             renpy.game.preferences.fullscreen = False
             raise Exception("Could not set video mode.")
+
+        renpy.session["renderer"] = draw.info["renderer"]
+        renpy.game.persistent._gl2 = renpy.config.gl2
 
         if renpy.android:
             android.init()
@@ -2645,7 +2682,29 @@ class Interface(object):
         else:
             renpy.exports.quit(save=True)
 
-    def get_mouse_info(self):
+    def set_mouse(self, cursor):
+        """
+        Sets the current mouse cursor.
+
+        True sets a visible system cursor. False hides the cursor. A ColorCursor
+        object sets a cursor image.
+        """
+
+        if cursor is self.old_mouse:
+            return
+
+        self.old_mouse = cursor
+
+        if cursor is True:
+            pygame.mouse.set_visible(True)
+        elif cursor is False:
+            pygame.mouse.set_visible(False)
+        else:
+            pygame.mouse.set_visible(True)
+            cursor.activate()
+
+    def update_mouse(self):
+
         # Figure out if the mouse visibility algorithm is hiding the mouse.
         if (renpy.config.mouse_hide_time is not None) and (self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time()):
             visible = False
@@ -2656,32 +2715,32 @@ class Interface(object):
 
         # If not visible, hide the mouse.
         if not visible:
-            return False, 0, 0, None
+            self.set_mouse(False)
+            return
 
         # Deal with a hardware mouse, the easy way.
         if not renpy.config.mouse:
-            return True, 0, 0, None
+            self.set_mouse(True)
+            return
 
-        # Deal with the mouse going offscreen.
-        if not self.mouse_focused:
-            return False, 0, 0, None
+        # Use hardware mouse if the preferences force.
+        if renpy.game.preferences.system_cursor:
+            if isinstance(self.old_mouse, pygame.mouse.ColorCursor):
+                pygame.mouse.reset()
+            self.set_mouse(True)
+            return
 
         mouse_kind = renpy.display.focus.get_mouse() or self.mouse
 
         # Figure out the mouse animation.
-        if mouse_kind in renpy.config.mouse:
-            anim = renpy.config.mouse[mouse_kind]
+        if mouse_kind in self.cursor_cache:
+            anim = self.cursor_cache[mouse_kind]
         else:
-            anim = renpy.config.mouse[getattr(renpy.store, 'default_mouse', 'default')]
+            anim = self.cursor_cache[getattr(renpy.store, 'default_mouse', 'default')]
 
-        img, x, y = anim[self.ticks % len(anim)]
-        rend = renpy.display.im.load_image(img)
+        cursor = anim[self.ticks % len(anim)]
 
-        tex = rend.children[0][0]
-        xo = rend.children[0][1]
-        yo = rend.children[0][2]
-
-        return False, x - xo, y - yo, tex
+        self.set_mouse(cursor)
 
     def set_mouse_pos(self, x, y, duration):
         """
@@ -2710,6 +2769,7 @@ class Interface(object):
                 renpy.loadsave.save("_reload-1")
 
             renpy.persistent.update(True)
+            renpy.persistent.save_MP()
 
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
@@ -3581,6 +3641,9 @@ class Interface(object):
 
                     renpy.audio.audio.periodic()
                     renpy.display.tts.periodic()
+
+                    self.update_mouse()
+
                     continue
 
                 # Handle quit specially for now.

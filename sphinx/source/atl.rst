@@ -1035,6 +1035,7 @@ both horizontal and vertical positions.
 These properties are applied in the following order:
 
 #. tile
+#. mesh, blur
 #. crop, corner1, corner2
 #. size, maxsize
 #. zoom, xzoom, yzoom

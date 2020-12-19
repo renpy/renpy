@@ -34,6 +34,7 @@ import sys
 import time
 import zipfile
 import gc
+import linecache
 
 import __main__
 
@@ -299,6 +300,9 @@ def main():
 
     renpy.game.exception_info = 'Before loading the script.'
 
+    # Clear the line cache, since the script may have changed.
+    linecache.clearcache()
+
     # Get ready to accept new arguments.
     renpy.arguments.pre_init()
 
@@ -307,6 +311,12 @@ def main():
 
     # Init the config after load.
     renpy.config.init()
+
+    # Reset live2d if it exists.
+    try:
+        renpy.gl2.live2d.reset()
+    except:
+        pass
 
     # Set up variants.
     choose_variants()
@@ -608,15 +618,16 @@ def main():
                 finally:
                     restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
                     renpy.persistent.update(True)
+                    renpy.persistent.save_MP()
 
             except game.FullRestartException as e:
                 restart = e.reason
 
             finally:
 
-                # Reset if it exists.
+                # Reset live2d if it exists.
                 try:
-                    renpy.gl2.live2d.reset()
+                    renpy.gl2.live2d.reset_states()
                 except:
                     pass
 
@@ -629,6 +640,9 @@ def main():
     finally:
 
         gc.set_debug(0)
+
+        for i in renpy.config.quit_callbacks:
+            i()
 
         renpy.loader.auto_quit()
         renpy.savelocation.quit()

@@ -36,6 +36,8 @@ VP9, VP8, or Theora; Opus or Vorbis; and WebM, Matroska, or Ogg.)
 Movies can be displayed fullscreen or in a displayable. Fullscreen movies
 are more efficient.
 
+Movies are not supported on the Web platform.
+
 
 Fullscreen Movies
 -----------------
@@ -48,8 +50,8 @@ it. ::
         $ renpy.movie_cutscene("On_Your_Mark.webm")
 
 On mobile platforms, such as Android and iOS, hardware video decoding is
-used when :var:`config.hw_video` is True, the default. This is generally
-much faster, but the list of supported movie formats depends on the
+used when :var:`config.hw_video` is changed to True. This can be faster, but the list of
+supported movie formats depends on the
 platform. See for instance
 `Android's supported media formats <https://developer.android.com/guide/topics/media/media-formats>`_.
 A quick way to test if your videos are supported is to copy them to your target device and play them with its default video player.

@@ -38,8 +38,6 @@ cdef class GLDraw:
     cdef public tuple drawable_size
     cdef public tuple virtual_box
     cdef public tuple physical_box
-    cdef object mouse_old_visible
-    cdef object mouse_info
     cdef object texture_cache
     cdef double last_redraw_time
     cdef double redraw_period

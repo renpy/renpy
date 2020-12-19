@@ -1,4 +1,4 @@
-
+﻿
 translate simplified_chinese strings:
 
     # 00console.rpy:273
@@ -50,8 +50,8 @@ translate simplified_chinese strings:
     new "reload：重新加载游戏，并重新整理脚本"
 
     # 00console.rpy:595
-    old "watch <expression>: watch a python expression"
-    new "watch <表达式>：监视该 python 表达式"
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    new "watch <表达式>：监视该 python 表达式\n watch short：简短表征所跟踪的表达式（默认）\n watch long：按原样表征所跟踪的表达式"
 
     # 00console.rpy:621
     old "unwatch <expression>: stop watching an expression"
@@ -67,16 +67,16 @@ translate simplified_chinese strings:
 
     # 00console.rpy:685
     old "short: Shorten the representation of objects on the console (default)."
-    new "short：在控制台中缩短对象的表示（默认）。"
+    new "short：在控制台中缩短对象的表征（默认）。"
 
     # 00console.rpy:690
     old "long: Print the full representation of objects on the console."
-    new "long：在控制台中打印出对象的完整表示。"
+    new "long：在控制台中打印出对象的完整表征。"
 
     # 00console.rpy:883
     old "escape: Enables escaping of unicode symbols in unicode strings."
-    new "escape: 启用转义 Unicode 字符串中的 Unicode 符号。"
+    new "escape：启用转义 Unicode 字符串中的 Unicode 符号。"
 
     # 00console.rpy:887
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
-    new "unescape: 禁止转义 Unicode 字符串中的 Unicode 符号，并按原样显示（默认）。"
+    new "unescape：禁止转义 Unicode 字符串中的 Unicode 符号，并按原样显示（默认）。"

@@ -76,6 +76,8 @@ While this is a simple example, there is a lot of color theory that can be
 expressed in this way. Matrices can be combined by multiplying them
 together, and when that happens the matrices are combined right to left.
 
+.. _colormatrix:
+
 ColorMatrix
 -----------
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/indepth_minigame.rpy:220
 translate japanese demo_minigame_8f14835c:
 

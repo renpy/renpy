@@ -1,4 +1,4 @@
-
+﻿
 translate simplified_chinese strings:
 
     # about.rpy:39
@@ -334,8 +334,8 @@ translate simplified_chinese strings:
     new "您是否允许该应用访问互联网？"
 
     # androidstrings.rpy:47
-    old "Do you want to automatically update the generated project?"
-    new "您希望自动更新已生成的工程吗？"
+    old "Do you want to automatically update the Java source code?"
+    new "您希望自动更新 Java 源代码吗？"
 
     # androidstrings.rpy:48
     old "Yes. This is the best choice for most projects."
@@ -434,8 +434,8 @@ translate simplified_chinese strings:
     new "看起来您已准备好开始打包游戏了。"
 
     # choose_directory.rpy:88
-    old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."
-    new "Ren'Py 无法使用 Python 的 Tkinter 来选择目录。请安装 Python-tk 或 Tkinter 支持包。"
+    old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."
+    new "Ren'Py 无法使用 Python 的 Tkinter 来选择目录。请安装 Python3-tk 或 Tkinter 包。"
 
     # choose_directory.rpy:106
     old "The selected projects directory is not writable."
@@ -1264,6 +1264,10 @@ translate simplified_chinese strings:
     # preferences.rpy:143
     old "Install libraries"
     new "安装库"
+
+    # preferences.rpy:140
+    old "Reset window size"
+    new "重置窗口大小"
 
     # preferences.rpy:145
     old "Navigation Options:"

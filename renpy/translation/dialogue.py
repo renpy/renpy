@@ -150,9 +150,13 @@ def notags_filter(s):
     return square_pass(s)
 
 
+def what_filter(s):
+    return "[what]"
+
+
 class DialogueFile(object):
 
-    def __init__(self, filename, output, tdf=True, strings=False, notags=True, escape=True):  # @ReservedAssignment
+    def __init__(self, filename, output, tdf=True, strings=False, notags=True, escape=True): # @ReservedAssignment
         """
         `filename`
             The file we're extracting dialogue from.
@@ -232,6 +236,7 @@ class DialogueFile(object):
                             what,
                             n.filename,
                             str(n.linenumber),
+                            n.get_code(what_filter)
                             ])
 
                     else:
@@ -259,7 +264,7 @@ class DialogueFile(object):
 
         for line, s in scan_strings(self.filename):
 
-            stl = renpy.game.script.translator.strings[None]  # @UndefinedVariable
+            stl = renpy.game.script.translator.strings[None] # @UndefinedVariable
 
             if s in stl.translations:
                 continue
@@ -313,6 +318,7 @@ def dialogue_command():
                 "Dialogue",
                 "Filename",
                 "Line Number",
+                "Ren'Py Script",
                 ]
 
             f.write("\t".join(line).encode("utf-8") + "\n")

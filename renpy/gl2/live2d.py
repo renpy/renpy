@@ -128,14 +128,32 @@ def init():
 
 def reset():
     """
-    Resets this module when Ren'Py restarts.
+    Resets this module when Ren'Py reloads the script.
     """
 
     global did_init
     did_init = False
 
     common_cache.clear()
+
+
+def reset_states():
+    """
+    Resets the Live2D states when Ren'Py restarts the game.
+    """
+
     states.clear()
+
+
+class Live2DExpression(object):
+    """
+    The data corresponding to an expression.
+    """
+
+    def __init__(self, parameters, fadein, fadeout):
+        self.parameters = parameters
+        self.fadein = fadein
+        self.fadeout = fadeout
 
 
 class Live2DCommon(object):
@@ -235,13 +253,13 @@ class Live2DCommon(object):
 
                 self.motions[name] = renpy.gl2.live2dmotion.Motion(
                     self.base + i["File"],
-                    i.get("FadeInTime", 0.0),
-                    i.get("FadeOutTime", 0.0))
+                    i.get("FadeInTime", 1.0),
+                    i.get("FadeOutTime", 1.0))
 
                 self.attributes.add(name)
 
-        # A map from an expression to that expression's parameter list.
-        self.expressions = { "null" : [ ] }
+        # A map from an expression to a Live2DExpression object.
+        self.expressions = { "null" : Live2DExpression([ ], 0.0, 0.0) }
 
         for i in expression_files.values():
             name = i["File"].lower().rpartition("/")[2].partition(".")[0]
@@ -260,7 +278,11 @@ class Live2DCommon(object):
                 with renpy.loader.load(self.base + i["File"]) as f:
                     expression_json = json.load(f)
 
-                self.expressions[name] = expression_json.get("Parameters", [ ])
+                self.expressions[name] = Live2DExpression(
+                    expression_json.get("Parameters", [ ]),
+                    expression_json.get("FadeInTime", 1.0),
+                    expression_json.get("FadeOutTime", 1.0),
+                    )
 
                 self.attributes.add(name)
 
@@ -273,36 +295,67 @@ class Live2DCommon(object):
             elif i["Target"] == "Opacity":
                 self.model.opacity_groups[name] = ids
 
+        # All expressions, non-exclusive and exclusive, and its aliases.
+        self.all_expressions = dict(self.expressions)
+
+        # Nonexcusive expressions.
         self.nonexclusive = { }
+
+        # This may be True, False, or a set of motion names.
+        self.seamless = False
+
+        # If not None, a function that takes a tuple of attributes, and returns
+        # a tuple of attributes.
+        self.attribute_function = None
+
+        # Same.
+        self.attribute_filter = None
 
     def apply_aliases(self, aliases):
 
         for k, v in aliases.items():
             target = None
+            expression = False
 
             if v in self.motions:
                 target = self.motions
 
             elif v in self.expressions:
                 target = self.expressions
+                expression = True
 
             elif v in self.nonexclusive:
-                target = self.expressions
+                target = self.nonexclusive
+                expression = True
 
             else:
-                raise Exception("Name {!r} is not a known motion or expression.".fromat(v))
+                raise Exception("Name {!r} is not a known motion or expression.".format(v))
 
             if k in target:
-                raise Exception("Name {!r} is already specified as a motion or expression.".fromat(k))
+                raise Exception("Name {!r} is already specified as a motion or expression.".format(k))
 
             target[k] = target[v]
+
+            if expression:
+                self.all_expressions[k] = target[v]
 
     def apply_nonexclusive(self, nonexclusive):
         for i in nonexclusive:
             if i not in self.expressions:
-                raise Exception("Name {!r} is not a known expression.".fromat(i))
+                raise Exception("Name {!r} is not a known expression.".format(i))
 
             self.nonexclusive[i] = self.expressions.pop(i)
+
+    def apply_seamless(self, value):
+        self.seamless = value
+
+    def is_seamless(self, motion):
+        if self.seamless is True:
+            return True
+        elif self.seamless is False:
+            return False
+        else:
+            return (motion in self.seamless)
 
 
 # This maps a filename to a Live2DCommon object.
@@ -329,6 +382,32 @@ class Live2DState(object):
         self.old_base_time = 0
         self.new_base_time = 0
 
+        # A list of (expression_name, time_shown) tuples.
+        self.expressions = [ ]
+
+        # A list of (expression_name, time_shown, time_hidden) tuples.
+        self.old_expressions = [ ]
+
+    def update_expressions(self, expressions, now):
+        """
+        Updates the lists of new and old expressions.
+
+        `expressions`
+            A list of strings giving expression names.
+
+        `now`
+            The time the current displayable started showing.
+        """
+
+        current = set(name for name, _ in self.expressions)
+
+        self.old_expressions = \
+            [ (name, shown, hidden) for name, shown, hidden in self.old_expressions if name not in expressions  ] + \
+            [ (name, shown, now) for name, shown in self.expressions if name not in expressions ]
+
+        self.expressions = [ (name, shown) for (name, shown) in self.expressions if name in expressions ]
+        self.expressions += [ (name, now) for name in expressions if name not in current ]
+
 
 # A map from name to Live2DState object.
 states = collections.defaultdict(Live2DState)
@@ -336,7 +415,8 @@ states = collections.defaultdict(Live2DState)
 
 def update_states():
     """
-    Called once per interact to walk the tree of
+    Called once per interact to walk the tree of displayables and find
+    the old and new live2d states.
     """
 
     def visit(d):
@@ -366,9 +446,16 @@ def update_states():
         else:
             state.old = None
             state.old_base_time = None
+            state.expressions = [ ]
+            state.old_expressions = [ ]
 
         state.new = d
-        state.new_base_time = None
+
+        if d.sustain:
+            state.new_base_time = state.old_base_time
+        else:
+            state.new_base_time = None
+
         state.cycle_new = True
 
     sls = renpy.display.core.scene_lists()
@@ -407,7 +494,25 @@ class Live2D(renpy.display.core.Displayable):
         return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
-    def __init__(self, filename, zoom=None, top=0.0, base=1.0, height=1.0, loop=False, aliases={}, fade=None, motions=None, expression=None, nonexclusive=None, used_nonexclusive=None, **properties):
+    def __init__(
+            self,
+            filename,
+            zoom=None,
+            top=0.0,
+            base=1.0,
+            height=1.0,
+            loop=False,
+            aliases={},
+            fade=None,
+            motions=None,
+            expression=None,
+            nonexclusive=None,
+            used_nonexclusive=None,
+            seamless=None,
+            sustain=False,
+            attribute_function=None,
+            attribute_filter=None,
+            **properties):
 
         super(Live2D, self).__init__(**properties)
 
@@ -422,6 +527,7 @@ class Live2D(renpy.display.core.Displayable):
         self.height = height
         self.loop = loop
         self.fade = fade
+        self.sustain = sustain
 
         # The name of this displayable.
         self.name = None
@@ -434,6 +540,15 @@ class Live2D(renpy.display.core.Displayable):
 
         if aliases:
             common.apply_aliases(aliases)
+
+        if seamless is not None:
+            common.apply_seamless(seamless)
+
+        if attribute_function is not None:
+            common.attribute_function = attribute_function
+
+        if attribute_filter is not None:
+            common.attribute_filter = attribute_filter
 
     def _duplicate(self, args):
 
@@ -448,8 +563,18 @@ class Live2D(renpy.display.core.Displayable):
         used_nonexclusive = [ ]
 
         expression = None
+        sustain = False
 
-        for i in args.args:
+        if "_sustain" in args.args:
+            attributes = tuple(i for i in args.args if i != "_sustain")
+            sustain = True
+        else:
+            attributes = args.args
+
+        if common.attribute_function is not None:
+            attributes = common.attribute_function(attributes)
+
+        for i in attributes:
 
             if i in common.motions:
                 motions.append(i)
@@ -478,7 +603,8 @@ class Live2D(renpy.display.core.Displayable):
             loop=self.loop,
             fade=self.fade,
             expression=expression,
-            used_nonexclusive=used_nonexclusive)
+            used_nonexclusive=used_nonexclusive,
+            sustain=sustain)
 
         rv.name = args.name
         rv._duplicatable = False
@@ -508,7 +634,10 @@ class Live2D(renpy.display.core.Displayable):
 
         # If there are no motions, choose the last one from the optional attributes.
         if not rv:
-            rv = [ i for i in optional if i in common.motions ][:-1]
+            sustain = True
+            rv = [ i for i in optional if i in common.motions ]
+        else:
+            sustain = False
 
         # Choose the first expression.
         for i in list(attributes) + list(optional):
@@ -520,6 +649,12 @@ class Live2D(renpy.display.core.Displayable):
         for i in list(attributes) + list(optional):
             if i in common.nonexclusive:
                 rv.append(i)
+
+        if common.attribute_filter:
+            rv = common.attribute_filter(rv)
+
+        if sustain:
+            rv = ("_sustain" ,) + rv
 
         return tuple(rv)
 
@@ -534,22 +669,35 @@ class Live2D(renpy.display.core.Displayable):
         if not self.motions:
             return
 
+        # True if the motion should be faded in.
+        do_fade_in = True
+
+        # True if the motion should be faded out.
+        do_fade_out = True
+
         for m in self.motions:
             motion = common.motions.get(m, None)
 
             if motion.duration > st:
+
+                if self.loop and (m == self.motions[-1]):
+                    do_fade_out = not common.is_seamless(m)
+
                 break
 
             st -= motion.duration
 
         else:
-            if not self.loop:
+            if self.loop:
+                do_fade_in = not common.is_seamless(m)
+                do_fade_out = not common.is_seamless(m)
+            else:
                 st = motion.duration
 
         if motion is None:
             return None
 
-        motion_data = motion.get(st, st_fade)
+        motion_data = motion.get(st, st_fade, do_fade_in, do_fade_out)
 
         for k, v in motion_data.items():
 
@@ -563,7 +711,57 @@ class Live2D(renpy.display.core.Displayable):
             elif kind == "Model":
                 common.model.set_parameter(key, value, factor)
 
-        return motion.wait(st, st_fade)
+        return motion.wait(st, st_fade, do_fade_in, do_fade_out)
+
+    def update_expressions(self, st):
+
+        common = self.common
+        model = common.model
+        state = states[self.name]
+
+        now = renpy.display.interface.frame_time
+
+        # Reap obsolete old_expressions.
+        state.old_expressions = [ (name, shown, hidden) for (name, shown, hidden) in state.old_expressions if (now - hidden) < common.all_expressions[name].fadeout ]
+
+        # Determine the list of expressions that are being shown by this displayable.
+        expressions = list(self.used_nonexclusive)
+        if self.expression:
+            expressions.append(self.expression)
+
+        # Use them to update old_expressions and expressions in the frame.
+        state.update_expressions(expressions, now - st)
+
+        # Actually blend.
+        redraw = None
+
+        for name, shown, hidden in state.old_expressions:
+            weight = 1.0
+            e = common.all_expressions[name]
+
+            if (e.fadein > 0) and (now - shown) < e.fadein:
+                weight = min(weight, (now - shown) / e.fadein)
+                redraw = 0
+
+            if (e.fadeout > 0) and (now - hidden) < e.fadeout:
+                weight = min(weight, 1.0 - (now - hidden) / e.fadeout)
+                redraw = 0
+
+            for i in e.parameters:
+                model.blend_parameter(i["Id"], i["Blend"], i["Value"], weight=weight)
+
+        for name, shown in state.expressions:
+            weight = 1.0
+            e = common.all_expressions[name]
+
+            if (e.fadein > 0) and (now - shown) < e.fadein:
+                weight = min(weight, (now - shown) / e.fadein)
+                redraw = 0
+
+            for i in e.parameters:
+                model.blend_parameter(i["Id"], i["Blend"], i["Value"], weight=weight)
+
+        return redraw
 
     def render(self, width, height, st, at):
 
@@ -583,7 +781,8 @@ class Live2D(renpy.display.core.Displayable):
             if state.new is not self:
                 fade = False
 
-            state.new_base_time = renpy.display.interface.frame_time - st
+            if state.new_base_time is None:
+                state.new_base_time = renpy.display.interface.frame_time - st
 
             if state.old is None:
                 fade = False
@@ -601,36 +800,27 @@ class Live2D(renpy.display.core.Displayable):
 
         if fade:
             old_redraw = state.old.update(common, renpy.display.interface.frame_time - state.old_base_time, st)
+            t = renpy.display.interface.frame_time - state.new_base_time
         else:
             old_redraw = None
+            t = st
 
-        new_redraw = self.update(common, st, None)
+        new_redraw = self.update(common, t, None)
 
-        if self.used_nonexclusive:
-            for e in self.used_nonexclusive:
-                for i in common.nonexclusive[e]:
-                    common.model.blend_parameter(i["Id"], i["Blend"], i["Value"])
+        # Apply the expressions.
+        expression_redraw = self.update_expressions(st)
 
-        if self.expression:
-            for i in common.expressions[self.expression]:
-                common.model.blend_parameter(i["Id"], i["Blend"], i["Value"])
+        # Determine when to redraw.
+        redraws = [ new_redraw, old_redraw, expression_redraw ]
+        redraws = [ i for i in redraws if i is not None ]
 
-        # Apply the redraws.
-        if (new_redraw is not None) and (old_redraw is not None):
-            renpy.display.render.redraw(self, min(new_redraw, old_redraw))
-        elif new_redraw is not None:
-            renpy.display.render.redraw(self, new_redraw)
-        elif old_redraw is not None:
-            renpy.display.render.redraw(self, old_redraw)
+        if redraws:
+            renpy.display.render.redraw(self, min(redraws))
 
         # Render the textures.
         textures = [ renpy.display.render.render(d, width, height, st, at) for d in common.textures ]
 
-        # Render the model.
-        rend = model.render(textures)
-
-        # Figure out zoom.
-        sw, sh = rend.get_size()
+        sw, sh = model.get_size()
 
         zoom = self.zoom
 
@@ -645,18 +835,18 @@ class Live2D(renpy.display.core.Displayable):
             base = s(self.base)
 
             size = max(base - top, 1.0)
+
             zoom = 1.0 * self.height * renpy.config.screen_height / size
         else:
             size = sh
             top = 0
 
+        # Render the model.
+        rend = model.render(textures, zoom)
+
         # Apply scaling as needed.
         rv = renpy.exports.Render(sw * zoom, size * zoom)
         rv.blit(rend, (0, -top * zoom))
-
-        if zoom != 1.0:
-            rv.reverse = renpy.display.matrix.Matrix.scale(zoom, zoom, 1.0)
-            rv.forward = renpy.display.matrix.Matrix.scale(1 / zoom, 1 / zoom, 1.0)
 
         return rv
 

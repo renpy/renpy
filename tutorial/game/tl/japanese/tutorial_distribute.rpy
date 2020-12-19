@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/tutorial_distribute.rpy:3
 translate japanese distribute_7db9b042:
 

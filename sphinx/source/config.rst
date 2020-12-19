@@ -465,7 +465,7 @@ Occasionally Used
     you could write::
 
         init python:
-            config.font_replacement_map["Vera.ttf", False, True] = ("VeraIt.ttf", False, False).
+            config.font_replacement_map["Vera.ttf", False, True] = ("VeraIt.ttf", False, False)
 
     Please note that these mappings only apply to specific variants of
     a font. In this case, requests for a bold italic version of vera
@@ -520,9 +520,8 @@ Occasionally Used
 .. var:: config.hw_video = False
 
     If true, hardware video playback will be used on mobile platforms. This
-    is faster, but only some formats are supported and only fullscreen video
-    is available. If false, software playback will be used, but it may be
-    too slow to be useful.
+    may be faster, but only some formats are supported and only fullscreen video
+    is available. If false, software playback will be used.
 
 .. var:: config.hyperlink_handlers = { ... }
 
@@ -1321,6 +1320,11 @@ Rarely or Internally Used
     If set to True, some profiling information will be output to
     stdout.
 
+.. var:: config.profile_init = 0.25
+
+    ``init`` and ``init python`` blocks taking longer than this amount of time
+    to run are reported to log file.
+
 .. var:: config.quit_on_mobile_background = False
 
     If True, the mobile app will quit when it loses focus.
@@ -1489,6 +1493,12 @@ Rarely or Internally Used
     A list of functions that are called (without any arguments) when
     an interaction is started. These callbacks are not called when an
     interaction is restarted.
+
+.. var:: config.quit_callbacks = ...
+
+    A list of functions that are called (without any arguments) when
+    Ren'Py terminates. This is intended to free resources, such as
+    opened files or started threads.
 
 .. var:: config.top_layers = [ ]
 

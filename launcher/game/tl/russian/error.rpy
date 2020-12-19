@@ -236,3 +236,39 @@ translate russian strings:
     # _errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Копирует файл errors.txt в буфер обмена как Markdown для Дискорда."
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "Принудительный GL рендеринг"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "Принудительный ANGLE рендеринг"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "Принудительный GLES рендеринг"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "Принудительный GL2 рендеринг"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "Принудительный ANGLE2 рендеринг"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "Принудительный GLES2 рендеринг"
+
+    # renpy/common/00gltest.rpy:245
+    old "This game requires use of GL2 that can't be initialised."
+    new "Эта игра требует использование GL2 который не может быть инициализирован."
+
+    # renpy/common/00gltest.rpy:256
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Больше информации о том как это может быть исправлено смотрите в {a=[url]}документации{/a}."
+
+    # renpy/common/00gltest.rpy:273
+    old "Change render options"
+    new "Изменить настройки рендеринга"

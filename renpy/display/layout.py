@@ -1465,10 +1465,10 @@ def ShowingSwitch(*args, **kwargs):
     One use of ShowingSwitch is to have images change depending on
     the current emotion of a character. For example::
 
-    image emotion_indicator = ShowingSwitch(
-       "eileen concerned", "emotion_indicator concerned",
-       "eileen vhappy", "emotion_indicator vhappy",
-       None, "emotion_indicator happy")
+        image emotion_indicator = ShowingSwitch(
+           "eileen concerned", "emotion_indicator concerned",
+           "eileen vhappy", "emotion_indicator vhappy",
+           None, "emotion_indicator happy")
 
     """
 
