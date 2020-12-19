@@ -2736,7 +2736,7 @@ class Interface(object):
             return
 
         # Deal with a hardware mouse, the easy way.
-        if not renpy.config.mouse:
+        if self.cursor_cache is None:
             self.set_mouse(True)
             return
 
