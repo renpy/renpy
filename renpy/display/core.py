@@ -2749,13 +2749,14 @@ class Interface(object):
 
         mouse_kind = renpy.display.focus.get_mouse() or self.mouse
 
-        # Figure out the mouse animation.
+        if (mouse_kind == 'default') or (mouse_kind not in self.cursor_cache):
+            mouse_kind = getattr(renpy.store, 'default_mouse', 'default')
+
         if mouse_kind in self.cursor_cache:
             anim = self.cursor_cache[mouse_kind]
+            cursor = anim[self.ticks % len(anim)]
         else:
-            anim = self.cursor_cache[getattr(renpy.store, 'default_mouse', 'default')]
-
-        cursor = anim[self.ticks % len(anim)]
+            cursor = True
 
         self.set_mouse(cursor)
 
