@@ -71,71 +71,71 @@ translate japanese strings:
 
     # game/screens.rpy:553
     old "[config.version!t]\n"
-    new ""
+    new "[config.version!t]\n"
 
     # game/screens.rpy:557
     old "Updated Character Art"
-    new ""
+    new "Updated Character Art"
 
     # game/screens.rpy:558
     old "Deji"
-    new ""
+    new "Deji"
 
     # game/screens.rpy:562
     old "Original Character Art"
-    new ""
+    new "Original Character Art"
 
     # game/screens.rpy:563
     old "Derik"
-    new ""
+    new "Derik"
 
     # game/screens.rpy:569
     old "Updated Background Art"
-    new ""
+    new "Updated Background Art"
 
     # game/screens.rpy:570
     old "Mugenjohncel"
-    new ""
+    new "Mugenjohncel"
 
     # game/screens.rpy:574
     old "Original Background Art"
-    new ""
+    new "Original Background Art"
 
     # game/screens.rpy:575
     old "DaFool"
-    new ""
+    new "DaFool"
 
     # game/screens.rpy:581
     old "Music By"
-    new ""
+    new "Music By"
 
     # game/screens.rpy:582
     old "Alessio"
-    new ""
+    new "Alessio"
 
     # game/screens.rpy:588
     old "Update Written By"
-    new ""
+    new "Update Written By"
 
     # game/screens.rpy:589
     old "Lore"
-    new ""
+    new "Lore"
 
     # game/screens.rpy:593
     old "Originally Written By "
-    new ""
+    new "Originally Written By "
 
     # game/screens.rpy:594
     old "mikey (ATP Projects)"
-    new ""
+    new "mikey (ATP Projects)"
 
     # game/screens.rpy:597
     old "\nMade with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]"
-    new ""
+    new "\nMade with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]"
 
     # game/screens.rpy:599
     old "[renpy.license!t]"
-    new ""
+    new "[renpy.license!t]"
 
     # game/screens.rpy:645
     old "Page {}"
@@ -159,19 +159,19 @@ translate japanese strings:
 
     # game/screens.rpy:704
     old "<"
-    new ""
+    new "<"
 
     # game/screens.rpy:707
     old "{#auto_page}A"
-    new ""
+    new "{#auto_page}A"
 
     # game/screens.rpy:710
     old "{#quick_page}Q"
-    new ""
+    new "{#quick_page}Q"
 
     # game/screens.rpy:716
     old ">"
-    new ""
+    new ">"
 
     # game/screens.rpy:778
     old "Display"
@@ -215,7 +215,7 @@ translate japanese strings:
 
     # game/screens.rpy:802
     old "Language"
-    new ""
+    new "言語"
 
     # game/screens.rpy:823
     old "Text Speed"
@@ -263,7 +263,7 @@ translate japanese strings:
 
     # game/screens.rpy:1064
     old "Enter"
-    new ""
+    new "Enter"
 
     # game/screens.rpy:1065
     old "Advances dialogue and activates the interface."
@@ -271,7 +271,7 @@ translate japanese strings:
 
     # game/screens.rpy:1068
     old "Space"
-    new ""
+    new "Space"
 
     # game/screens.rpy:1069
     old "Advances dialogue without selecting choices."
@@ -287,7 +287,7 @@ translate japanese strings:
 
     # game/screens.rpy:1076
     old "Escape"
-    new ""
+    new "Escape"
 
     # game/screens.rpy:1077
     old "Accesses the game menu."
@@ -295,7 +295,7 @@ translate japanese strings:
 
     # game/screens.rpy:1080
     old "Ctrl"
-    new ""
+    new "Ctrl"
 
     # game/screens.rpy:1081
     old "Skips dialogue while held down."
@@ -303,7 +303,7 @@ translate japanese strings:
 
     # game/screens.rpy:1084
     old "Tab"
-    new ""
+    new "Tab"
 
     # game/screens.rpy:1085
     old "Toggles dialogue skipping."
@@ -311,7 +311,7 @@ translate japanese strings:
 
     # game/screens.rpy:1088
     old "Page Up"
-    new ""
+    new "Page Up"
 
     # game/screens.rpy:1089
     old "Rolls back to earlier dialogue."
@@ -319,7 +319,7 @@ translate japanese strings:
 
     # game/screens.rpy:1092
     old "Page Down"
-    new ""
+    new "Page Down"
 
     # game/screens.rpy:1093
     old "Rolls forward to later dialogue."
