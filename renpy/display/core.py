@@ -130,6 +130,23 @@ def get_time():
     return time_base + (t - time_base) * time_mult
 
 
+def get_size():
+    """
+    Returns the screen size. Always returns at least 256, 256, to make sure
+    that we don't divide by zero.
+    """
+
+    size = pygame.display.get_size()
+
+    if not size:
+        return size
+
+    if size[0] >= 256 and size[1] >= 256:
+        return size
+
+    return (max(size[0], 256), max(size[1], 256))
+
+
 def displayable_by_tag(layer, tag):
     """
     Get the displayable on the given layer with the given tag.
