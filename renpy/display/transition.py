@@ -330,6 +330,10 @@ class Dissolve(Transition):
         A function that adjusts the timeline. If not None, this should be a
         function that takes a fractional time between 0.0 and 1.0, and returns
         a number in the same range.
+
+    `events`
+        If False (default) will ignore events (such as mouse clicks) until the
+        transition is complete, otherwise it will pass the event to a new_widget.
     """
 
     __version__ = 1
@@ -340,13 +344,13 @@ class Dissolve(Transition):
 
     time_warp = None
 
-    def __init__(self, time, old_widget=None, new_widget=None, alpha=False, time_warp=None, **properties):
+    def __init__(self, time, old_widget=None, new_widget=None, alpha=False, time_warp=None, events=False, **properties):
         super(Dissolve, self).__init__(time, **properties)
 
         self.time = time
         self.old_widget = old_widget
         self.new_widget = new_widget
-        self.events = False
+        self.events = events
         self.alpha = alpha
         self.time_warp = time_warp
 
