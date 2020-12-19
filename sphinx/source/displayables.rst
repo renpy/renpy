@@ -245,7 +245,7 @@ generator has been given a new `Matrix` equivalent, as shown.
     ones. With X being the Matrix corresponding to im.Matrixcolor.x,
     ``C*B*A`` will be the Matrix corresponding to ``im.a*im.b*im.c``.
 
-.. include:: inc/im_matrixcolor
+.. include:: inc/im_matrix
 
 Placeholders
 ------------
