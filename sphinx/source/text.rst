@@ -313,7 +313,7 @@ Tags that apply to all text are:
 
 .. text-tag:: plain
 
-   The plain tag ensures the text does not have, bold, italics, underline,
+   The plain tag ensures the text does not have bold, italics, underline,
    or strikethrough applied. ::
 
        "{b}This is bold. {plain}This is not.{/plain} This is bold.{/b}"
