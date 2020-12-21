@@ -87,14 +87,14 @@ axis_positions = {}
 # The axis threshold.
 THRESHOLD = (32768 // 2)
 
-
 # Should we ignore events?
 ignore = False
 
 
-def make_event(name):
+def post_event(control, state):
     """
-    Creates an EVENTNAME event with `name`, and returns it.
+    Creates an EVENTNAME event for the given state and name, and post it
+    to the event queue.
     """
 
     if not renpy.display.interface.keyboard_focused:
@@ -103,6 +103,8 @@ def make_event(name):
     if ignore:
         return None
 
+    name = "pad_{}_{}".format(control, state)
+
     names = [ name ]
 
     if renpy.config.map_pad_event:
@@ -110,9 +112,11 @@ def make_event(name):
     else:
         names.extend(renpy.config.pad_bindings.get(name, ()))
 
-    return pygame_sdl2.event.Event(
+    ev = pygame_sdl2.event.Event(
         renpy.display.core.EVENTNAME,
         { "eventnames" : names, "controller" : name, "up" : False })
+
+    pygame.event.post(ev)
 
 
 def exists():
@@ -126,7 +130,7 @@ def exists():
         return False
 
 
-def quit(index):  # @ReservedAssignment
+def quit(index): # @ReservedAssignment
     """
     Quits the controller at index.
     """
@@ -148,6 +152,65 @@ def start(index):
     c.init()
 
     renpy.exports.restart_interaction()
+
+
+class PadEvent(object):
+    """
+    This stores the information about a PadEvent, to trigger repeats.
+    """
+
+    def __init__(self, control):
+
+        # The control this corresponds to.
+        self.control = control
+
+        # The current state of the control.
+        self.state = None
+
+        # When should the repeat occur?
+        self.repeat_time = 0
+
+    def event(self, state):
+
+        self.state = state
+        self.repeat_time = renpy.display.core.get_time() + renpy.config.controller_first_repeat
+
+        post_event(self.control, self.state)
+
+    def repeat(self):
+
+        if self.state not in renpy.config.controller_repeat_states:
+            return
+
+        now = renpy.display.core.get_time()
+
+        if now < self.repeat_time:
+            return
+
+        self.repeat_time = self.repeat_time + renpy.config.controller_repeat
+
+        if self.repeat_time < now:
+            self.repeat_time = now + renpy.config.controller_repeat
+
+        post_event(self.control, self.state)
+
+
+# A map from the pade event name to the pad event object.
+pad_events = { }
+
+
+def controller_event(control, state):
+
+    pe = pad_events.get(control, None)
+    if pe is None:
+        pe = pad_events[control] = PadEvent(control)
+
+    pe.event(state)
+
+
+def periodic():
+    for pe in pad_events.values():
+        pe.repeat()
 
 
 def event(ev):
@@ -180,8 +243,9 @@ def event(ev):
 
         axis_positions[(ev.which, ev.axis)] = pos
 
-        name = "pad_{}_{}".format(get_string_for_axis(ev.axis), pos)
-        ev = make_event(name)
+        controller_event(get_string_for_axis(ev.axis), pos)
+
+        return None
 
     elif ev.type in (CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP):
 
@@ -190,8 +254,8 @@ def event(ev):
         else:
             pr = "release"
 
-        name = "pad_{}_{}".format(get_string_for_button(ev.button), pr)
-        ev = make_event(name)
+        controller_event(get_string_for_button(ev.button), pr)
+        return None
 
     elif ev.type in (
             pygame.JOYAXISMOTION,

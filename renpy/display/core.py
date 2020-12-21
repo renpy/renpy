@@ -3659,6 +3659,7 @@ class Interface(object):
 
                     renpy.audio.audio.periodic()
                     renpy.display.tts.periodic()
+                    renpy.display.controller.periodic()
 
                     self.update_mouse()
 

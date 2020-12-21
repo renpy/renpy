@@ -1067,6 +1067,15 @@ quit_callbacks = [ ]
 # very early.
 steam_appid = None
 
+# How long between when the controller is pressed and the first repeat?
+controller_first_repeat = .25
+
+# How long between repeats?
+controller_repeat = .05
+
+# The states that repeat.
+controller_repeat_states = { "pos", "neg", "press" }
+
 del os
 del collections
 
