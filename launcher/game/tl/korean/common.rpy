@@ -716,53 +716,62 @@
     old "Show deleted"
     new "삭제항목 보이기"
 
-    # 00accessibility.rpy:76
+    # 00accessibility.rpy:128
     old "Font Override"
     new "글꼴 덮어쓰기"
 
-    # 00accessibility.rpy:80
+    # 00accessibility.rpy:132
     old "Default"
     new "기본"
 
-    # 00accessibility.rpy:84
+    # 00accessibility.rpy:136
     old "DejaVu Sans"
     new "DejaVu Sans"
 
-    # 00accessibility.rpy:88
+    # 00accessibility.rpy:140
     old "Opendyslexic"
     new "Opendyslexic"
 
-    # 00accessibility.rpy:94
+    # 00accessibility.rpy:146
     old "Text Size Scaling"
     new "글자 크기 조절"
 
-    # 00accessibility.rpy:100
+    # 00accessibility.rpy:152
     old "Reset"
     new "초기화"
 
-    # 00accessibility.rpy:105
+    # 00accessibility.rpy:158
     old "Line Spacing Scaling"
     new "줄 간격 조절"
 
-    # 00accessibility.rpy:117
+    # 00accessibility.rpy:171
     old "Self-Voicing"
     new "대사 읽기"
 
-    # 00accessibility.rpy:121
+    # 00accessibility.rpy:175
     old "Off"
     new "끄기"
 
-    # 00accessibility.rpy:125
+    # 00accessibility.rpy:179
     old "Text-to-speech"
     new "텍스트 음성 변환"
 
-    # 00accessibility.rpy:129
+    # 00accessibility.rpy:183
     old "Clipboard"
     new "클립보드"
 
-    # 00accessibility.rpy:146
+    # 00accessibility.rpy:193
+    old "Self-Voicing Volume Drop"
+    new "대사 읽기 음소거"
+
+
+    # 00accessibility.rpy:202
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
     new "이 메뉴의 옵션은 접근성을 향상시키기 위한 것입니다. 모든 게임에서 작동하지 않을 수 있고 일부 옵션 조합은 게임을 플레이할 수 없게 만들 수 있으며 이러한 경우 게임이나 엔진의 문제가 아닙니다. 글꼴을 변경할 때 최상의 결과를 얻으려면 글자 크기를 원래대로 유지하십시오."
+
+    # 00preferences.rpy:388
+    old "self voicing volume drop"
+    new "대사 읽기 음소거"
 
     # 00preferences.rpy:430
     old "font transform"
@@ -775,3 +784,7 @@
     # 00preferences.rpy:441
     old "font line spacing"
     new "글꼴 줄 간격"
+
+    # 00preferences.rpy:464
+    old "system cursor"
+    new "시스템 커서"
