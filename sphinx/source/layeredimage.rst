@@ -588,4 +588,27 @@ image, like this::
 
     image side augustina = LayeredImageProxy("augustina", Transform(crop=(0, 0, 362, 362), xoffset=-80))
 
+Using a layeredimage inside a :func:`DynamicDisplayable` doesn't really work,
+since the attributes given to the DynamicDisplayable aren't given to the layeredimage.
+However, since interpolation is performed on the string given to , it allows for
+layeredimages to partially depend on the state of the game, for example::
+
+    layeredimage malex:
+        ...
+
+    layeredimage falex:
+        ...
+
+    default alexgender = "f"
+    image alex = LayeredImageProxy("[alexgender]alex")
+
+    menu start:
+        "What will be Alex's gender ?"
+        "Male":
+            $ alexgender = "m"
+        "Female":
+            $ alexgender = "f"
+
+The caveat is that a showing image will not be updated when the underlying variable changes.
+It has to be hidden then shown again.
 .. include:: inc/li_proxy
