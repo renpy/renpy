@@ -28,6 +28,10 @@ addition to the image tag. To disable this, use::
     define config.side_image_requires_attributes = False
 
 
+While setting config variables, like :var:`config.mouse`, outside of the init
+phase was never supported, it will not work in 7.4. Consider using the
+:var:`default_mouse` variable to set a custom mouse cursor, instead.
+
 .. _incompatible-7.3.3:
 
 7.3.3
