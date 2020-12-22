@@ -8,7 +8,7 @@ python early in layeredimage:
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
 
     # The properties for attribute layers.
-    LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + ATL_PROPERTIES
+    LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at", "if_dyn" ] + ATL_PROPERTIES
 
     # This is the default value for predict_all given to conditions.
     predict_all = False
@@ -90,7 +90,7 @@ python early in layeredimage:
         Base class for our layers.
         """
 
-        def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], **kwargs):
+        def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], if_dyn=None, **kwargs):
 
             if not isinstance(at, list):
                 at = [ at ]
@@ -112,6 +112,8 @@ python early in layeredimage:
 
             self.if_not = if_not
 
+            self.if_dyn = if_dyn
+
             self.transform_args = kwargs
 
         def check(self, attributes):
@@ -130,6 +132,10 @@ python early in layeredimage:
 
             for i in self.if_not:
                 if i in attributes:
+                    return False
+
+            if self.if_dyn:
+                if not eval(self.if_dyn):
                     return False
 
             return True
@@ -563,7 +569,7 @@ python early in layeredimage:
 
         attribute_function = None
 
-        def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, **kwargs):
+        def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, is_dynamic=False, **kwargs):
 
             self.name = name
             self.image_format = image_format
@@ -584,6 +590,8 @@ python early in layeredimage:
                 at = [ at ]
 
             self.at = at
+
+            self.is_dynamic = is_dynamic
 
             kwargs.setdefault("xfit", True)
             kwargs.setdefault("yfit", True)
@@ -757,6 +765,8 @@ python early in layeredimage:
 
     class RawLayeredImage(object):
 
+        is_dynamic = False
+
         def __init__(self, name):
             self.name = name
             self.children = [ ]
@@ -770,9 +780,14 @@ python early in layeredimage:
             for i in self.children:
                 l.extend(i.execute())
 
+            for i in l:
+                if i.if_dyn:
+                    self.is_dynamic = True
+                    break
+
             renpy.image(
                 self.name,
-                LayeredImage(l, name=self.name.replace(" ", "_"), **properties),
+                LayeredImage(l, name=self.name.replace(" ", "_"), is_dynamic=self.is_dynamic, **properties),
             )
 
     def execute_layeredimage(rai):
