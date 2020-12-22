@@ -26,7 +26,7 @@ python early in layeredimage:
             which is used to create better error messages.
 
         `name`
-            The name of the attribute image.
+            The name of the layeredimage.
 
         `group`
             The group of an attribute, None if not supplied or if it's
@@ -528,7 +528,7 @@ python early in layeredimage:
             after it is parameterized.
 
         `name`
-            The name of the attribute image. This is used as part of the names
+            The name of the layeredimage. This is used as part of the names
             of image components.
 
         `image_format`
