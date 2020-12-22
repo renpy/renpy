@@ -299,8 +299,8 @@ cdef class GLTexture(Model):
 
         tw, th = draw.virt_to_draw.transform(cw, ch)
 
-        tw = min(int(tw), loader.max_texture_width)
-        th = min(int(th), loader.max_texture_height)
+        tw = min(round(tw), loader.max_texture_width)
+        th = min(round(th), loader.max_texture_height)
 
         tw = max(tw, 1)
         th = max(th, 1)
