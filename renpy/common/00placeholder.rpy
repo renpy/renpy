@@ -55,12 +55,7 @@ init -1500 python:
                     to use. If the image name begins with "bg", "cg", or
                     "event", uses 'bg'.
 
-                    Otherwise, contacts a web service to guess gender from
-                    the character's name, and uses that. (The 'girl' placeholder
-                    is used when the service can't guess.)
-
-                    The webservice will only be contacted when :var:`config.developer`
-                    is True.
+                    Otherwise, the 'girl' placeholder is used.
 
             `full`
                 If true, a full-body sprite is used. Otherwise, a 3/4 sprite

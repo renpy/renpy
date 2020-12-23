@@ -69,6 +69,13 @@ evaluates True. For example::
 
 ::
 
+    $ lines = ["sounds/three.mp3", "sounds/two.mp3", "sounds/one.mp3"]
+    while lines: # evaluates to True as long as the list is not empty
+        play sound lines.pop(0) # removes the first element
+        pause
+
+::
+
     while True:
 
         "This is the song that never terminates."
@@ -81,7 +88,9 @@ returns a false value, the statement after the while statement is executed.
 Ren'Py does not have continue, break, or for statements. Continue and break
 statements can be replaced by jumps to labels placed before or after the
 while loop, respectively. The first example of a while loop, above, shows
-how a while loop can replace a for statement.
+how a while loop can replace a simple for statement. The second shows
+how it can replace a for statement which iterates through a list (also
+known as a foreach statement in other programming languages).
 
 
 .. _pass-statement:
