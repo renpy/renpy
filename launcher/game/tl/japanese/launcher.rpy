@@ -35,7 +35,7 @@ translate japanese strings:
 
     # android.rpy:31
     old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Windows では、Android パッケージのビルドに 32-bit の Java 開発キットが必要です。JDK は JRE とは異なるため、JDK が無くても Java が利用できます。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK のダウンロードとインストール{/a}を行い、Ren'Py ランチャーを再起動して下さい。"
+    new "Windows では、Android パッケージのビルドに 32-bit の Java 開発キットが必要です。JDK は JRE とは異なるため、JDK が無くても Java が利用できます。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK{/a}のダウンロードとインストールを行い、Ren'Py ランチャーを再起動して下さい。"
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -1331,7 +1331,7 @@ translate japanese strings:
 
     # game/android.rpy:31
     old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "ウィンドウズでアンドロイドパッケージをビルドするには、 64-bit/x64 Java 8 Development Kit が必要になります。 JDK は JRE とは違うもので、Java には含まれていません。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}から JDK をダンロードしてインストールし{/a}、それから Ren'Py ランチャーを再起動してください。"
+    new "ウィンドウズでアンドロイドパッケージをビルドするには、 64-bit/x64 Java 8 Development Kit が必要になります。 JDK は JRE とは違うもので、Java には含まれていません。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK{/a}をダンロード、インストールしてから Ren'Py ランチャーを再起動してください。"
 
     # game/android.rpy:50
     old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
