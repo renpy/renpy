@@ -900,7 +900,7 @@ class ShownImageInfo(renpy.object.Object):
         """
         Given a layer, tag, and an image name (with attributes),
         returns the canonical name of an image, if one exists. Raises
-        an exception if it's ambiguious, and returns None if an image
+        an exception if it's ambiguous, and returns None if an image
         with that name couldn't be found.
         """
 
@@ -995,6 +995,17 @@ class ShownImageInfo(renpy.object.Object):
 
         if matches is None:
             return None
+
+        if len(matches) > 1: # we try to avoid an exception by keeping only the match with the largest amount of optional attributes
+            maxnopt = -1 # the maximum number of optional attributes any match has
+            for match in matches:
+                lenn = len(set(match).intersection(optional)) # number of optionals in this match
+                if lenn > maxnopt:
+                    maxnopt = lenn
+                    newmatches = [ match ]
+                elif lenn == maxnopt:
+                    newmatches.append(match)
+            matches = newmatches
 
         if len(matches) == 1:
             return matches[0]
