@@ -1143,7 +1143,7 @@ python early in layeredimage:
 
                 def new_per_interact():
                     newchild = self._base_duplicate(args)
-                    if rv.child is not newchild:
+                    if rv.child != newchild:
                         rv.remove(rv.child)
                         rv.add(newchild)
                         renpy.display.render.redraw(rv, 0)
