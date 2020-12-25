@@ -1325,7 +1325,7 @@ class Hide(Node):
 
         layer = renpy.exports.default_layer(layer, tag)
 
-        renpy.game.context().images.predict_hide(tag, layer)
+        renpy.game.context().images.predict_hide(layer, (tag,))
 
         return [ self.next ]
 
