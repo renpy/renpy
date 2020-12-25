@@ -945,7 +945,7 @@ class ShownImageInfo(renpy.object.Object):
     def choose_image(self, tag, required, optional, exception_name):
 
         # The longest length of an image that matches.
-        max_len = -1
+        max_opt = -1
 
         # The list of matching images.
         matches = None
@@ -965,13 +965,16 @@ class ShownImageInfo(renpy.object.Object):
                 attrs = attrs + newattrs
 
             num_required = 0
+            num_optional = 0
 
             for i in attrs:
                 if i in required:
                     num_required += 1
                     continue
-
-                elif (i not in optional) and (ca is None):
+                if i in optional:
+                    num_optional += 1
+                    continue
+                elif ca is None:
                     break
 
             else:
@@ -982,13 +985,11 @@ class ShownImageInfo(renpy.object.Object):
                 if num_required != len(required):
                     continue
 
-                len_attrs = len(set(attrs))
-
-                if len_attrs < max_len:
+                if num_optional < max_opt:
                     continue
 
-                if len_attrs > max_len:
-                    max_len = len_attrs
+                if num_optional > max_opt:
+                    max_opt = num_optional
                     matches = [ ]
 
                 matches.append((tag,) + attrs)
@@ -996,14 +997,14 @@ class ShownImageInfo(renpy.object.Object):
         if matches is None:
             return None
 
-        if len(matches) > 1: # we try to avoid an exception by keeping only the match with the largest amount of optional attributes
-            maxnopt = -1 # the maximum number of optional attributes any match has
+        if len(matches) > 1: # we try to avoid an exception by keeping only the match with the least total amount of attributes
+            min_len = float('inf') # the minimum length any match has
             for match in matches:
-                lenn = len(set(match).intersection(optional)) # number of optionals in this match
-                if lenn > maxnopt:
-                    maxnopt = lenn
+                lenn = len(set(match))
+                if lenn < min_len:
+                    min_len = lenn
                     newmatches = [ match ]
-                elif lenn == maxnopt:
+                elif lenn == min_len:
                     newmatches.append(match)
             matches = newmatches
 
