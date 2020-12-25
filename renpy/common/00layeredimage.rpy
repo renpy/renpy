@@ -1122,13 +1122,35 @@ python early in layeredimage:
             return image
 
 
-        def _duplicate(self, args):
+        def _base_duplicate(self, args):
 
             rv = self.image._duplicate(args)
 
 
             for i in self.transform:
                 rv = i(rv)
+
+            return rv
+
+        def _duplicate(self, args):
+
+            rv = self._base_duplicate(args)
+
+            if "[" in self.name:
+                rv = Fixed(rv, fit_first=True)
+
+                per_interact_original = rv.per_interact
+
+                def new_per_interact():
+                    newchild = self._base_duplicate(args)
+                    if rv.child is not newchild:
+                        rv.remove(rv.child)
+                        rv.add(newchild)
+                        renpy.display.render.redraw(rv, 0)
+                        newchild.visit_all(lambda i : i.per_interact())
+                    return per_interact_original()
+
+                rv.per_interact = new_per_interact
 
             return rv
 
