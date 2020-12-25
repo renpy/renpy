@@ -154,7 +154,7 @@ class Cache(object):
 
         start = self.time - generations
 
-        rv = sum(i.size() for i in self.cache.values() if i.time > start)
+        rv = sum(i.size() for i in list(self.cache.values()) if i.time > start)
         return rv
 
     def init(self):
