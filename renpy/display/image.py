@@ -952,6 +952,9 @@ class ShownImageInfo(renpy.object.Object):
 
         for attrs, d in image_attributes[tag].items():
 
+            if not all((i in required) or (i in optional) for i in attrs):
+                continue
+
             ca = getattr(d, "_choose_attributes", None)
 
             if ca:
@@ -970,9 +973,6 @@ class ShownImageInfo(renpy.object.Object):
                 if i in required:
                     num_required += 1
                     continue
-
-                elif (i not in optional) and (ca is None):
-                    break
 
             else:
 
@@ -995,17 +995,6 @@ class ShownImageInfo(renpy.object.Object):
 
         if matches is None:
             return None
-
-        if len(matches) > 1: # we try to avoid an exception by keeping only the match with the largest amount of optional attributes
-            maxnopt = -1 # the maximum number of optional attributes any match has
-            for match in matches:
-                lenn = len(set(match).intersection(optional)) # number of optionals in this match
-                if lenn > maxnopt:
-                    maxnopt = lenn
-                    newmatches = [ match ]
-                elif lenn == maxnopt:
-                    newmatches.append(match)
-            matches = newmatches
 
         if len(matches) == 1:
             return matches[0]
