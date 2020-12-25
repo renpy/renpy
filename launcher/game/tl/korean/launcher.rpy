@@ -229,206 +229,214 @@
     new "arm64-v8a 버전은 최신, armeabi-v7a 버전은 구형 안드로이드 휴대폰과 태블릿에서 작동하며, x86_64 버전은 시뮬레이터와 크롬북에서 작동합니다."
 
     # game/androidstrings.rpy:21
+    old "The universal version works everywhere but is larger."
+    new "유니버셜 버전은 어디에서나 작동하지만 더 많은 용량이 필요합니다."
+
+    # game/androidstrings.rpy:22
     old "What is the full name of your application? This name will appear in the list of installed applications."
     new "애플리케이션의 전체 이름을 무엇인가요? 이것은 설치된 애플리케이션 목록에 표시됩니다."
 
-    # game/androidstrings.rpy:22
+    # game/androidstrings.rpy:23
     old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
     new "애플리케이션의 짧은 이름은 무엇인가요? 이것은 런처와 애플리케이션 숏컷에 사용됩니다."
 
-    # game/androidstrings.rpy:23
+    # game/androidstrings.rpy:24
     old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
     new "패키지의 이름은 무엇입니까？\n\n이것은 일반적으로 com.domain.program 또는 com.domain.email.program 형식입니다. ASCII 문자와 점만 포함할 수 있습니다. 하나 이상의 점이 있어야 합니다."
 
-    # game/androidstrings.rpy:24
+    # game/androidstrings.rpy:25
     old "The package name may not be empty."
     new "패키지 이름은 비워둘 수 없습니다."
 
-    # game/androidstrings.rpy:25
+    # game/androidstrings.rpy:26
     old "The package name may not contain spaces."
     new "패키지 이름은 공백을 포함할 수 없습니다."
 
-    # game/androidstrings.rpy:26
+    # game/androidstrings.rpy:27
     old "The package name must contain at least one dot."
     new "패키지 이름은 하나 이상의 점을 포함해야 합니다."
 
-    # game/androidstrings.rpy:27
+    # game/androidstrings.rpy:28
     old "The package name may not contain two dots in a row, or begin or end with a dot."
     new "패키지 이름은 행에 두 개의 점이 포함될 수 없으며, 점으로 시작되거나 끝날 수 없습니다."
 
-    # game/androidstrings.rpy:28
+    # game/androidstrings.rpy:29
     old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
     new "패키지 이름의 각 부분은 문자로 시작해야 하며, 문자와 숫자, 그리고 밑줄만 포함해야 합니다."
 
-    # game/androidstrings.rpy:29
+    # game/androidstrings.rpy:30
     old "{} is a Java keyword, and can't be used as part of a package name."
     new "{} 는 자바 키워드이며 패키지 이름의 부분으로 사용될 수 없습니다."
 
-    # game/androidstrings.rpy:30
+    # game/androidstrings.rpy:31
     old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
     new "애플리케이션의 버전은 어떻게 되나요?\n\n이것은 사람이 읽을 수 있어야 하며 숫자와 점만 포함될 수 있습니다."
 
-    # game/androidstrings.rpy:31
+    # game/androidstrings.rpy:32
     old "The version number must contain only numbers and dots."
     new "버전 넘버는 숫자와 점만을 포함해야 합니다."
 
-    # game/androidstrings.rpy:32
+    # game/androidstrings.rpy:33
     old "What is the version code?\n\nThis must be a positive integer number, and the value should increase between versions."
     new "버전 코드는 어떻게 되나요?\n\n이것은 양의 정수여야 하며, 값은 버전에 따라 증가할 수 있습니다."
 
-    # game/androidstrings.rpy:33
+    # game/androidstrings.rpy:34
     old "The numeric version must contain only numbers."
     new "버전의 숫자는 숫자만 포함해야 합니다."
 
-    # game/androidstrings.rpy:34
+    # game/androidstrings.rpy:35
     old "How would you like your application to be displayed?"
     new "애플리케이션을 어떻게 표시할까요?"
 
-    # game/androidstrings.rpy:35
+    # game/androidstrings.rpy:36
     old "In landscape orientation."
     new "가로(Landscape) 방향으로."
 
-    # game/androidstrings.rpy:36
+    # game/androidstrings.rpy:37
     old "In portrait orientation."
     new "세로(Portrait) 방향으로"
 
-    # game/androidstrings.rpy:37
+    # game/androidstrings.rpy:38
     old "In the user's preferred orientation."
     new "사용자가 선호하는 방향으로."
 
-    # game/androidstrings.rpy:38
+    # game/androidstrings.rpy:39
     old "Which app store would you like to support in-app purchasing through?"
     new "인앱 구매를 지원하려는 앱 스토어가 있습니까?"
 
-    # game/androidstrings.rpy:39
+    # game/androidstrings.rpy:40
     old "Google Play."
     new "구글 플레이."
 
-    # game/androidstrings.rpy:40
+    # game/androidstrings.rpy:41
     old "Amazon App Store."
     new "아마존 앱 스토어."
 
-    # game/androidstrings.rpy:41
+    # game/androidstrings.rpy:42
     old "Both, in one app."
     new "모두, 하나의 앱에."
 
-    # game/androidstrings.rpy:42
+    # game/androidstrings.rpy:43
     old "Neither."
     new "지원하지 않음."
 
-    # game/androidstrings.rpy:43
+    # game/androidstrings.rpy:44
     old "Would you like to create an expansion APK?"
     new "확장 APK를 생성하시겠습니까?"
 
-    # game/androidstrings.rpy:44
+    # game/androidstrings.rpy:45
+    old "Automatically installing expansion APKs {a=https://issuetracker.google.com/issues/160942333}may not work on Android 11{/a}."
+    new "확장 APK의 자동 설치는 {a=https://issuetracker.google.com/issues/160942333}안드로이드 11에서 작동하지 않을 수 있습니다{/a}."
+
+    # game/androidstrings.rpy:46
     old "No. Size limit of 100 MB on Google Play, but can be distributed through other stores and sideloaded."
     new "아니오. 구글 플레이의 100 MB 크기 제한으로, 하지만 다른 스토어 및 사이드로드를 통해 배포할 수 있습니다."
 
-    # game/androidstrings.rpy:45
-    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
-    new "네. 2GB 크기 제한으로, 하지만 구글 플레이 외부에서 작동하지 않습니다. (이 기능을 사용하려면 설명서를 읽으십시오.)"
+    # game/androidstrings.rpy:47
+    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work)"
+    new "네. 2GB 크기 제한으로, 하지만 구글 플레이 외부에서 작동하지 않습니다. (이 기능을 사용하려면 설명서를 참고)"
 
-    # game/androidstrings.rpy:46
+    # game/androidstrings.rpy:48
     old "Do you want to allow the app to access the Internet?"
     new "앱이 인터넷에 액세스하도록 허용하시겠습니까?"
 
-    # game/androidstrings.rpy:47
+    # game/androidstrings.rpy:49
     old "Do you want to automatically update the generated project?"
     new "생성된 프로젝트를 자동으로 업데이트하시겠습니까?"
 
-    # game/androidstrings.rpy:48
+    # game/androidstrings.rpy:50
     old "Yes. This is the best choice for most projects."
     new "예. 이것은 대부분의 프로젝트에 적합합니다."
 
-    # game/androidstrings.rpy:49
+    # game/androidstrings.rpy:51
     old "No. This may require manual updates when Ren'Py or the project configuration changes."
     new "아니오. 렌파이 또는 프로젝트 구성이 변경되면 수동 업데이트가 필요할 수 있습니다."
 
-    # game/androidstrings.rpy:50
+    # game/androidstrings.rpy:52
     old "Unknown configuration variable: {}"
     new "알 수 없는 환경 변수: {}"
 
-    # game/androidstrings.rpy:51
+    # game/androidstrings.rpy:53
     old "I'm compiling a short test program, to see if you have a working JDK on your system."
     new "시스템에 작동하는 JDK가 있는지 확인하기 위해 간단한 테스트 프로그램을 컴파일하고 있습니다."
 
-    # game/androidstrings.rpy:52
+    # game/androidstrings.rpy:54
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
     new "javac를 사용하여 테스트 파일을 컴파일할 수 없습니다. 자바 개발 키트를 아직 설치하지 않은 경우 아래에서 설치하세요:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nJDK는 JRE와 다르므로 JDK가 없어도 Java를 사용할 수 있습니다. 작동하는 JDK가 없으면 계속할 수 없습니다."
 
-    # game/androidstrings.rpy:53
+    # game/androidstrings.rpy:55
     old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
     new "컴퓨터에 설치된 자바 버전은 안드로이드 SDK에서 지원하는 유일한 버전인 JDK 8이 아닙니다. JDK 8은 아래에서 설치할 수 있습니다:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\n다른 버전의 자바를 사용하도록 JAVA_HOME 환경 변수를 설정할 수도 있습니다."
 
-    # game/androidstrings.rpy:54
+    # game/androidstrings.rpy:56
     old "The JDK is present and working. Good!"
     new "JDK가 잘 작동하고 있네요！"
 
-    # game/androidstrings.rpy:55
+    # game/androidstrings.rpy:57
     old "The Android SDK has already been unpacked."
     new "안드로이드 SDK가 이미 설치돼 있습니다."
 
-    # game/androidstrings.rpy:56
+    # game/androidstrings.rpy:58
     old "Do you accept the Android SDK Terms and Conditions?"
     new "안드로이드 SDK 이용 약관에 동의하십니까?"
 
-    # game/androidstrings.rpy:57
+    # game/androidstrings.rpy:59
     old "I'm downloading the Android SDK. This might take a while."
     new "안드로이드 SDK를 내려받는 중입니다. 다소 시간이 소요될 수 있습니다."
 
-    # game/androidstrings.rpy:58
+    # game/androidstrings.rpy:60
     old "I'm extracting the Android SDK."
     new "안드로이드 SDK의 압축을 풀고 있습니다."
 
-    # game/androidstrings.rpy:59
+    # game/androidstrings.rpy:61
     old "I've finished unpacking the Android SDK."
     new "안드로이드 SDK의 설치를 완료했습니다."
 
-    # game/androidstrings.rpy:60
+    # game/androidstrings.rpy:62
     old "I'm about to download and install the required Android packages. This might take a while."
     new "필요한 안드로이드 패키지를 설치하고 있습니다. 다소 시간이 소요될 수 있습니다."
 
-    # game/androidstrings.rpy:61
+    # game/androidstrings.rpy:63
     old "I was unable to accept the Android licenses."
     new "안드로이드 라이선스를 수락할 수 없었습니다."
 
-    # game/androidstrings.rpy:62
+    # game/androidstrings.rpy:65
     old "I was unable to install the required Android packages."
     new "필요한 안드로이드 패키지를 설치할 수 없었습니다."
 
-    # game/androidstrings.rpy:63
+    # game/androidstrings.rpy:66
     old "I've finished installing the required Android packages."
     new "필요한 안드로이드 패키지의 설치가 완료됐습니다."
 
-    # game/androidstrings.rpy:64
+    # game/androidstrings.rpy:67
     old "You set the keystore yourself, so I'll assume it's how you want it."
     new "키스토어(keystore)를 설정합니다."
 
-    # game/androidstrings.rpy:65
+    # game/androidstrings.rpy:68
     old "You've already created an Android keystore, so I won't create a new one for you."
     new "이미 안드로이드 키스토어(keystore)를 만들었습니다."
 
-    # game/androidstrings.rpy:66
+    # game/androidstrings.rpy:69
     old "I can create an application signing key for you. Signing an application with this key allows it to be placed in the Android Market and other app stores.\n\nDo you want to create a key?"
     new "애플리케이션 서명 키를 만들 수 있습니다. 이 키를 사용하여 애플리케이션에 서명하면 안드로이드 상점 및 기타 앱 스토어에 배포할 수 있습니다.\n\n키를 만드시겠습니까?"
 
-    # game/androidstrings.rpy:67
+    # game/androidstrings.rpy:70
     old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
     new "android.keystore 파일에 키를 생성할 것입니다.\n\n애플리케이션의 업그레이드에 필요하기 때문에 파일을 반드시 백업하시기 바랍니다.\n\n또한 키는 안전한 곳에 보관해야 합니다.\n\nandroid.keystore를 백업하고 안전한 장소에 보관하시겠습니까?"
 
-    # game/androidstrings.rpy:68
+    # game/androidstrings.rpy:71
     old "Please enter your name or the name of your organization."
     new "당신의 이름과 단체 이름을 기입하십시오."
 
-    # game/androidstrings.rpy:69
+    # game/androidstrings.rpy:72
     old "Could not create android.keystore. Is keytool in your path?"
     new "android.keystore를 생성하지 못했습니다. 키툴(keytool)이 경로에 있습니까?"
 
-    # game/androidstrings.rpy:70
+    # game/androidstrings.rpy:73
     old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
     new "android.keystore를 생성했습니다. 백업하시고, 안전한 곳에 보관하십시오."
 
-    # game/androidstrings.rpy:71
+    # game/androidstrings.rpy:74
     old "It looks like you're ready to start packaging games."
     new "게임을 패키징할 준비가 됐습니다."
 
