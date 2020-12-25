@@ -136,13 +136,14 @@ class Cache(object):
         cache, in pixels.
         """
 
-        rv = sum(i.size() for i in self.cache.values())
+        with self.lock:
+            rv = sum(i.size() for i in self.cache.values())
 
-#         print("Total cache size: {:.1f}/{:.1f} MB (Textures {:.1f} MB)".format(
-#             4.0 * rv / 1024 / 1024,
-#             4.0 * self.cache_limit / 1024 / 1024,
-#             1.0 * renpy.exports.get_texture_size()[0] / 1024 / 1024,
-#             ))
+        # print("Total cache size: {:.1f}/{:.1f} MB (Textures {:.1f} MB)".format(
+        #     4.0 * rv / 1024 / 1024,
+        #     4.0 * self.cache_limit / 1024 / 1024,
+        #     1.0 * renpy.exports.get_texture_size()[0] / 1024 / 1024,
+        #     ))
 
         return rv
 
@@ -154,7 +155,9 @@ class Cache(object):
 
         start = self.time - generations
 
-        rv = sum(i.size() for i in list(self.cache.values()) if i.time > start)
+        with self.lock:
+            rv = sum(i.size() for i in self.cache.values() if i.time > start)
+
         return rv
 
     def init(self):
