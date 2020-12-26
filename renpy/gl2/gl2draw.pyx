@@ -925,6 +925,7 @@ cdef class GL2Draw:
         # Project the child from virtual space to the screen space.
         cdef Matrix transform
         transform = renpy.display.render.IDENTITY
+        transform = Matrix.cscreen_projection(1, 1)
 
         # Set up the default modes.
         glEnable(GL_BLEND)
