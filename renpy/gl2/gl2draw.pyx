@@ -1097,11 +1097,15 @@ cdef class GL2DrawingContext:
     cdef float width
     cdef float height
 
-    def __init__(self, GL2Draw draw, width, height):
+    cdef bint debug
+
+    def __init__(self, GL2Draw draw, width, height, debug=False):
         self.gl2draw = draw
 
         self.width = width
         self.height = height
+
+        self.debug = debug
 
     cdef Matrix correct_pixel_perfect(self, Matrix transform):
         """
@@ -1149,6 +1153,10 @@ cdef class GL2DrawingContext:
 
         if model.shaders:
             shaders = shaders + model.shaders
+
+        if self.debug:
+            import renpy.gl2.gl2debug as gl2debug
+            gl2debug.geometry(mesh, transform)
 
         program = self.gl2draw.shader_cache.get(shaders)
 
