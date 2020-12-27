@@ -58,7 +58,7 @@ What isn't Saved
 ================
 
 Python variables that are not changed after the game begins will not be
-saved. This can be a major problem if a variable that is saved and one that is
+saved. This can be a major problem if a variable that is not saved and one that is
 refer to the same object. (Alias the object.) In this example::
 
     init python:
@@ -374,7 +374,7 @@ Example::
             hotspot (8, 200, 78, 78) action ui.ChoiceJump("swimming", "go_swimming", block_all=False)
             hotspot (204, 50, 78, 78) action ui.ChoiceJump("science", "go_science_club", block_all=False)
             hotspot (452, 79, 78, 78) action ui.ChoiceJump("art", "go_art_lessons", block_all=False)
-            hotspot (602, 316, 78, 78) action uiChoiceJump("home", "go_home", block_all=False)
+            hotspot (602, 316, 78, 78) action ui.ChoiceJump("home", "go_home", block_all=False)
 
 Example::
 
