@@ -91,7 +91,7 @@ THRESHOLD = (32768 // 2)
 ignore = False
 
 
-def post_event(control, state):
+def post_event(control, state, repeat):
     """
     Creates an EVENTNAME event for the given state and name, and post it
     to the event queue.
@@ -104,6 +104,9 @@ def post_event(control, state):
         return None
 
     name = "pad_{}_{}".format(control, state)
+
+    if repeat:
+        name = "repeat_" + name
 
     names = [ name ]
 
@@ -175,7 +178,7 @@ class PadEvent(object):
         self.state = state
         self.repeat_time = renpy.display.core.get_time() + renpy.config.controller_first_repeat
 
-        post_event(self.control, self.state)
+        post_event(self.control, self.state, False)
 
     def repeat(self):
 
@@ -192,7 +195,7 @@ class PadEvent(object):
         if self.repeat_time < now:
             self.repeat_time = now + renpy.config.controller_repeat
 
-        post_event(self.control, self.state)
+        post_event(self.control, self.state, True)
 
 
 # A map from the pade event name to the pad event object.
