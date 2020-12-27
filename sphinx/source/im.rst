@@ -1,6 +1,6 @@
 :orphan:
 
-.. _image-manipulators:
+.. _image-manipulator:
 
 Image Manipulators
 ==================
