@@ -411,16 +411,18 @@ def save():
         if renpy.config.developer:
             raise
 
-
 ################################################################################
 # MultiPersistent
 ################################################################################
 
+
 save_MP_instances = weakref.WeakSet()
+
 
 def save_MP():
     for ins in save_MP_instances:
         ins.save()
+
 
 class _MultiPersistent(object):
 
@@ -442,14 +444,14 @@ class _MultiPersistent(object):
     def save(self):
 
         fn = self._filename
-        with open(fn + ".new", "wb") as f:
+        with open(fn + b".new", "wb") as f:
             dump(self, f)
 
         try:
-            os.rename(fn + ".new", fn)
+            os.rename(fn + b".new", fn)
         except:
             os.unlink(fn)
-            os.rename(fn + ".new", fn)
+            os.rename(fn + b".new", fn)
 
 
 def MultiPersistent(name, save_on_quit=False):
@@ -486,7 +488,7 @@ def MultiPersistent(name, save_on_quit=False):
     except:
         pass
 
-    fn = ""  # prevent a warning from happening.
+    fn = "" # prevent a warning from happening.
     data = None
 
     # Find the first file that actually exists. Otherwise, use the last
@@ -511,7 +513,7 @@ def MultiPersistent(name, save_on_quit=False):
     if data is None:
         rv = _MultiPersistent()
 
-    rv._filename = fn  # W0201
+    rv._filename = fn # W0201
 
     if save_on_quit:
         save_MP_instances.add(rv)
