@@ -138,6 +138,7 @@ the omission in future versions.
 * Nyaatrap
 * Oshi-Shinobu
 * Patrick Dawson
+* Paul J Martinez
 * Paul Morio
 * Pavel Langwell
 * Peter DeVita
