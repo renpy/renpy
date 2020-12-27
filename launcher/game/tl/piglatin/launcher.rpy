@@ -230,206 +230,214 @@ translate piglatin strings:
     new "Hetay arm64ay-8avay ersionvay orksway onay ewernay Ndroidaay evicesday, hetay armeabiay-7avay ersionvay orksway onay olderay evicesday, anday hetay 86_64xay ersionvay orksway onay hetay imulatorsay anday romebookschay."
 
     # game/androidstrings.rpy:21
+    old "The universal version works everywhere but is larger."
+    new "Hetay universalay ersionvay orksway everywhereay utbay isay argerlay."
+
+    # game/androidstrings.rpy:22
     old "What is the full name of your application? This name will appear in the list of installed applications."
     new "Hatway isay hetay ullfay amenay ofay ouryay applicationay? Histay amenay illway appearay inay hetay istlay ofay installeday applicationsay."
 
-    # game/androidstrings.rpy:22
+    # game/androidstrings.rpy:23
     old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
     new "Hatway isay hetay ortshay amenay ofay ouryay applicationay? Histay amenay illway ebay useday inay hetay auncherlay, anday orfay applicationay ortcutsshay."
 
-    # game/androidstrings.rpy:23
+    # game/androidstrings.rpy:24
     old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
     new "Hatway isay hetay amenay ofay hetay ackagepay?\n\nHistay isay usuallyay ofay hetay ormfay omcay.omainday.rogrampay oray omcay.omainday.emailay.rogrampay. Tiay aymay onlyay ontaincay Sciiaay etterslay anday otsday. Tiay ustmay ontaincay atay eastlay oneay otday."
 
-    # game/androidstrings.rpy:24
+    # game/androidstrings.rpy:25
     old "The package name may not be empty."
     new "Hetay ackagepay amenay aymay otnay ebay emptyay."
 
-    # game/androidstrings.rpy:25
+    # game/androidstrings.rpy:26
     old "The package name may not contain spaces."
     new "Hetay ackagepay amenay aymay otnay ontaincay pacessay."
 
-    # game/androidstrings.rpy:26
+    # game/androidstrings.rpy:27
     old "The package name must contain at least one dot."
     new "Hetay ackagepay amenay ustmay ontaincay atay eastlay oneay otday."
 
-    # game/androidstrings.rpy:27
+    # game/androidstrings.rpy:28
     old "The package name may not contain two dots in a row, or begin or end with a dot."
     new "Hetay ackagepay amenay aymay otnay ontaincay wotay otsday inay aay owray, oray eginbay oray enday ithway aay otday."
 
-    # game/androidstrings.rpy:28
+    # game/androidstrings.rpy:29
     old "Each part of the package name must start with a letter, and contain only letters, numbers, and underscores."
     new "Acheay artpay ofay hetay ackagepay amenay ustmay artstay ithway aay etterlay, anday ontaincay onlyay etterslay, umbersnay, anday underscoresay."
 
-    # game/androidstrings.rpy:29
+    # game/androidstrings.rpy:30
     old "{} is a Java keyword, and can't be used as part of a package name."
     new "{} isay aay Avajay eywordkay, anday ancay'tay ebay useday asay artpay ofay aay ackagepay amenay."
 
-    # game/androidstrings.rpy:30
+    # game/androidstrings.rpy:31
     old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
     new "Hatway isay hetay applicationay'say ersionvay?\n\nHistay ouldshay ebay hetay umanhay-eadableray ersionvay hattay ouyay ouldway resentpay otay aay ersonpay. Tiay ustmay ontaincay onlyay umbersnay anday otsday."
 
-    # game/androidstrings.rpy:31
+    # game/androidstrings.rpy:32
     old "The version number must contain only numbers and dots."
     new "Hetay ersionvay umbernay ustmay ontaincay onlyay umbersnay anday otsday."
 
-    # game/androidstrings.rpy:32
+    # game/androidstrings.rpy:33
     old "What is the version code?\n\nThis must be a positive integer number, and the value should increase between versions."
     new "Hatway isay hetay ersionvay odecay?\n\nHistay ustmay ebay aay ositivepay integeray umbernay, anday hetay aluevay ouldshay increaseay etweenbay ersionsvay."
 
-    # game/androidstrings.rpy:33
+    # game/androidstrings.rpy:34
     old "The numeric version must contain only numbers."
     new "Hetay umericnay ersionvay ustmay ontaincay onlyay umbersnay."
 
-    # game/androidstrings.rpy:34
+    # game/androidstrings.rpy:35
     old "How would you like your application to be displayed?"
     new "Owhay ouldway ouyay ikelay ouryay applicationay otay ebay isplayedday?"
 
-    # game/androidstrings.rpy:35
+    # game/androidstrings.rpy:36
     old "In landscape orientation."
     new "Niay andscapelay orientationay."
 
-    # game/androidstrings.rpy:36
+    # game/androidstrings.rpy:37
     old "In portrait orientation."
     new "Niay ortraitpay orientationay."
 
-    # game/androidstrings.rpy:37
+    # game/androidstrings.rpy:38
     old "In the user's preferred orientation."
     new "Niay hetay useray'say referredpay orientationay."
 
-    # game/androidstrings.rpy:38
+    # game/androidstrings.rpy:39
     old "Which app store would you like to support in-app purchasing through?"
     new "Hichway appay orestay ouldway ouyay ikelay otay upportsay inay-appay urchasingpay hroughtay?"
 
-    # game/androidstrings.rpy:39
+    # game/androidstrings.rpy:40
     old "Google Play."
     new "Ooglegay Laypay."
 
-    # game/androidstrings.rpy:40
+    # game/androidstrings.rpy:41
     old "Amazon App Store."
     new "Mazonaay Ppaay Toresay."
 
-    # game/androidstrings.rpy:41
+    # game/androidstrings.rpy:42
     old "Both, in one app."
     new "Othbay, inay oneay appay."
 
-    # game/androidstrings.rpy:42
+    # game/androidstrings.rpy:43
     old "Neither."
     new "Eithernay."
 
-    # game/androidstrings.rpy:43
+    # game/androidstrings.rpy:44
     old "Would you like to create an expansion APK?"
     new "Ouldway ouyay ikelay otay reatecay anay expansionay Pkaay?"
 
-    # game/androidstrings.rpy:44
+    # game/androidstrings.rpy:45
+    old "Automatically installing expansion APKs {a=https://issuetracker.google.com/issues/160942333}may not work on Android 11{/a}."
+    new "Utomaticallyaay installingay expansionay Pksaay {a=https://issuetracker.google.com/issues/160942333}aymay otnay orkway onay Ndroidaay 11ay{/a}."
+
+    # game/androidstrings.rpy:46
     old "No. Size limit of 100 MB on Google Play, but can be distributed through other stores and sideloaded."
     new "Onay. Izesay imitlay ofay 001ay Bmay onay Ooglegay Laypay, utbay ancay ebay istributedday hroughtay otheray oresstay anday ideloadedsay."
 
-    # game/androidstrings.rpy:45
-    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
-    new "Esyay. 2ay Bgay izesay imitlay, utbay onway'tay orkway outsideay ofay Ooglegay Laypay. (Eadray hetay ocumentationday otay etgay histay otay orkway.)"
+    # game/androidstrings.rpy:47
+    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work)"
+    new "Esyay. 2ay Bgay izesay imitlay, utbay onway'tay orkway outsideay ofay Ooglegay Laypay. (Eadray hetay ocumentationday otay etgay histay otay orkway)"
 
-    # game/androidstrings.rpy:46
+    # game/androidstrings.rpy:48
     old "Do you want to allow the app to access the Internet?"
     new "Oday ouyay antway otay alloway hetay appay otay accessay hetay Nternetiay?"
 
-    # game/androidstrings.rpy:47
+    # game/androidstrings.rpy:49
     old "Do you want to automatically update the Java source code?"
     new "Oday ouyay antway otay automaticallyay updateay hetay Avajay ourcesay odecay?"
 
-    # game/androidstrings.rpy:48
+    # game/androidstrings.rpy:50
     old "Yes. This is the best choice for most projects."
     new "Esyay. Histay isay hetay estbay oicechay orfay ostmay rojectspay."
 
-    # game/androidstrings.rpy:49
+    # game/androidstrings.rpy:51
     old "No. This may require manual updates when Ren'Py or the project configuration changes."
     new "Onay. Histay aymay equireray anualmay updatesay henway Enray'Ypay oray hetay rojectpay onfigurationcay angeschay."
 
-    # game/androidstrings.rpy:50
+    # game/androidstrings.rpy:52
     old "Unknown configuration variable: {}"
     new "Nknownuay onfigurationcay ariablevay: {}"
 
-    # game/androidstrings.rpy:51
+    # game/androidstrings.rpy:53
     old "I'm compiling a short test program, to see if you have a working JDK on your system."
     new "Iay'may ompilingcay aay ortshay esttay rogrampay, otay eesay ifay ouyay avehay aay orkingway Dkjay onay ouryay ystemsay."
 
-    # game/androidstrings.rpy:52
+    # game/androidstrings.rpy:54
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
     new "Iay asway unableay otay useay avacjay otay ompilecay aay esttay ilefay. Fiay ouyay avenhay'tay installeday hetay Avajay Evelopmentday Itkay etyay, easeplay ownloadday itay omfray:\n\nttphay://wwway.oracleay.omcay/echnetworktay/avajay/avasejay/ownloadsday/dk8jay-ownloadsday-1331512ay.tmlhay\n\nHetay Dkjay isay ifferentday omfray hetay Rejay, osay itay'say ossiblepay ouyay avehay Avajay ithoutway avinghay hetay Dkjay. Ithoutway aay orkingway Dkjay, Iay ancay'tay ontinuecay."
 
-    # game/androidstrings.rpy:53
+    # game/androidstrings.rpy:55
     old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
     new "Hetay ersionvay ofay Avajay onay ouryay omputercay oesday otnay appearay otay ebay Dkjay 8ay, hichway isay hetay onlyay ersionvay upportedsay ybay hetay Ndroidaay Dksay. Fiay ouyay eednay otay installay Dkjay 8ay, ouyay ancay ownloadday itay omfray:\n\nttphay://wwway.oracleay.omcay/echnetworktay/avajay/avasejay/ownloadsday/dk8jay-ownloadsday-1331512ay.tmlhay\n\nOuyay ancay alsoay etsay hetay Ava_homejay environmentay ariablevay otay useay aay ifferentday ersionvay ofay Avajay."
 
-    # game/androidstrings.rpy:54
+    # game/androidstrings.rpy:56
     old "The JDK is present and working. Good!"
     new "Hetay Dkjay isay resentpay anday orkingway. Oodgay!"
 
-    # game/androidstrings.rpy:55
+    # game/androidstrings.rpy:57
     old "The Android SDK has already been unpacked."
     new "Hetay Ndroidaay Dksay ashay alreadyay eenbay unpackeday."
 
-    # game/androidstrings.rpy:56
+    # game/androidstrings.rpy:58
     old "Do you accept the Android SDK Terms and Conditions?"
     new "Oday ouyay acceptay hetay Ndroidaay Dksay Ermstay anday Onditionscay?"
 
-    # game/androidstrings.rpy:57
+    # game/androidstrings.rpy:59
     old "I'm downloading the Android SDK. This might take a while."
     new "Iay'may ownloadingday hetay Ndroidaay Dksay. Histay ightmay aketay aay hileway."
 
-    # game/androidstrings.rpy:58
+    # game/androidstrings.rpy:60
     old "I'm extracting the Android SDK."
     new "Iay'may extractingay hetay Ndroidaay Dksay."
 
-    # game/androidstrings.rpy:59
+    # game/androidstrings.rpy:61
     old "I've finished unpacking the Android SDK."
     new "Iay'evay inishedfay unpackingay hetay Ndroidaay Dksay."
 
-    # game/androidstrings.rpy:60
+    # game/androidstrings.rpy:62
     old "I'm about to download and install the required Android packages. This might take a while."
     new "Iay'may aboutay otay ownloadday anday installay hetay equiredray Ndroidaay ackagespay. Histay ightmay aketay aay hileway."
 
-    # game/androidstrings.rpy:61
+    # game/androidstrings.rpy:63
     old "I was unable to accept the Android licenses."
     new "Iay asway unableay otay acceptay hetay Ndroidaay icenseslay."
 
-    # game/androidstrings.rpy:62
+    # game/androidstrings.rpy:65
     old "I was unable to install the required Android packages."
     new "Iay asway unableay otay installay hetay equiredray Ndroidaay ackagespay."
 
-    # game/androidstrings.rpy:63
+    # game/androidstrings.rpy:66
     old "I've finished installing the required Android packages."
     new "Iay'evay inishedfay installingay hetay equiredray Ndroidaay ackagespay."
 
-    # game/androidstrings.rpy:64
+    # game/androidstrings.rpy:67
     old "You set the keystore yourself, so I'll assume it's how you want it."
     new "Ouyay etsay hetay eystorekay ourselfyay, osay Iay'llay assumeay itay'say owhay ouyay antway itay."
 
-    # game/androidstrings.rpy:65
+    # game/androidstrings.rpy:68
     old "You've already created an Android keystore, so I won't create a new one for you."
     new "Ouyay'evay alreadyay reatedcay anay Ndroidaay eystorekay, osay Iay onway'tay reatecay aay ewnay oneay orfay ouyay."
 
-    # game/androidstrings.rpy:66
+    # game/androidstrings.rpy:69
     old "I can create an application signing key for you. Signing an application with this key allows it to be placed in the Android Market and other app stores.\n\nDo you want to create a key?"
     new "Iay ancay reatecay anay applicationay igningsay eykay orfay ouyay. Igningsay anay applicationay ithway histay eykay allowsay itay otay ebay acedplay inay hetay Ndroidaay Arketmay anday otheray appay oresstay.\n\nOday ouyay antway otay reatecay aay eykay?"
 
-    # game/androidstrings.rpy:67
+    # game/androidstrings.rpy:70
     old "I will create the key in the android.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of android.keystore, and keep it in a safe place?"
     new "Iay illway reatecay hetay eykay inay hetay androiday.eystorekay ilefay.\n\nOuyay eednay otay ackbay histay ilefay upay. Fiay ouyay oselay itay, ouyay illway otnay ebay ableay otay upgradeay ouryay applicationay.\n\nOuyay alsoay eednay otay eepkay hetay eykay afesay. Fiay evilay eoplepay etgay histay ilefay, heytay ouldcay akemay akefay ersionsvay ofay ouryay applicationay, anday otentiallypay ealstay ouryay usersay' ataday.\n\nIllway ouyay akemay aay ackupbay ofay androiday.eystorekay, anday eepkay itay inay aay afesay aceplay?"
 
-    # game/androidstrings.rpy:68
+    # game/androidstrings.rpy:71
     old "Please enter your name or the name of your organization."
     new "Leasepay enteray ouryay amenay oray hetay amenay ofay ouryay organizationay."
 
-    # game/androidstrings.rpy:69
+    # game/androidstrings.rpy:72
     old "Could not create android.keystore. Is keytool in your path?"
     new "Ouldcay otnay reatecay androiday.eystorekay. Siay eytoolkay inay ouryay athpay?"
 
-    # game/androidstrings.rpy:70
+    # game/androidstrings.rpy:73
     old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
     new "Iay'evay inishedfay reatingcay androiday.eystorekay. Leasepay ackbay itay upay, anday eepkay itay inay aay afesay aceplay."
 
-    # game/androidstrings.rpy:71
+    # game/androidstrings.rpy:74
     old "It looks like you're ready to start packaging games."
     new "Tiay ookslay ikelay ouyay'eray eadyray otay artstay ackagingpay amesgay."
 
@@ -1237,91 +1245,91 @@ translate piglatin strings:
     old "Please select a template to use for your new project. The template sets the default font and the user interface language. If your language is not supported, choose 'english'."
     new "Leasepay electsay aay emplatetay otay useay orfay ouryay ewnay rojectpay. Hetay emplatetay etssay hetay efaultday ontfay anday hetay useray interfaceay anguagelay. Fiay ouryay anguagelay isay otnay upportedsay, oosechay 'englishay'."
 
-    # game/preferences.rpy:68
+    # game/preferences.rpy:73
     old "Launcher Preferences"
     new "Auncherlay Referencespay"
 
-    # game/preferences.rpy:89
+    # game/preferences.rpy:94
     old "Projects Directory:"
     new "Rojectspay Irectoryday:"
 
-    # game/preferences.rpy:96
+    # game/preferences.rpy:101
     old "[persistent.projects_directory!q]"
     new "[persistent.projects_directory!q]"
 
-    # game/preferences.rpy:98
+    # game/preferences.rpy:103
     old "Projects directory: [text]"
     new "Rojectspay irectoryday: [text]"
 
-    # game/preferences.rpy:100
+    # game/preferences.rpy:105
     old "Not Set"
     new "Otnay Etsay"
 
-    # game/preferences.rpy:115
+    # game/preferences.rpy:120
     old "Text Editor:"
     new "Exttay Ditoreay:"
 
-    # game/preferences.rpy:121
+    # game/preferences.rpy:126
     old "Text editor: [text]"
     new "Exttay editoray: [text]"
 
-    # game/preferences.rpy:138
+    # game/preferences.rpy:143
     old "Install libraries"
     new "Nstalliay ibrarieslay"
 
-    # game/preferences.rpy:139
+    # game/preferences.rpy:144
     old "Open launcher project"
     new "Penoay auncherlay rojectpay"
 
-    # game/preferences.rpy:140
+    # game/preferences.rpy:145
     old "Reset window size"
     new "Esetray indowway izesay"
 
-    # game/preferences.rpy:156
+    # game/preferences.rpy:161
     old "Navigation Options:"
     new "Avigationnay Ptionsoay:"
 
-    # game/preferences.rpy:160
+    # game/preferences.rpy:165
     old "Include private names"
     new "Ncludeiay rivatepay amesnay"
 
-    # game/preferences.rpy:161
+    # game/preferences.rpy:166
     old "Include library names"
     new "Ncludeiay ibrarylay amesnay"
 
-    # game/preferences.rpy:171
+    # game/preferences.rpy:176
     old "Launcher Options:"
     new "Auncherlay Ptionsoay:"
 
-    # game/preferences.rpy:175
+    # game/preferences.rpy:180
     old "Show edit file section"
     new "Howsay editay ilefay ectionsay"
 
-    # game/preferences.rpy:176
+    # game/preferences.rpy:181
     old "Large fonts"
     new "Argelay ontsfay"
 
-    # game/preferences.rpy:179
+    # game/preferences.rpy:184
     old "Console output"
     new "Onsolecay outputay"
 
-    # game/preferences.rpy:183
+    # game/preferences.rpy:188
     old "Force new tutorial"
     new "Orcefay ewnay utorialtay"
 
-    # game/preferences.rpy:187
+    # game/preferences.rpy:192
     old "Legacy options"
     new "Egacylay optionsay"
 
-    # game/preferences.rpy:190
+    # game/preferences.rpy:195
     old "Show templates"
     new "Howsay emplatestay"
 
-    # game/preferences.rpy:192
+    # game/preferences.rpy:197
     old "Sponsor message"
     new "Ponsorsay essagemay"
 
-    # game/preferences.rpy:212
+    # game/preferences.rpy:217
     old "Language:"
     new "Anguagelay:"
 
@@ -1353,23 +1361,23 @@ translate piglatin strings:
     old "Ren'Py is scanning the project..."
     new "Enray'Ypay isay canningsay hetay rojectpay..."
 
-    # game/project.rpy:740
+    # game/project.rpy:742
     old "Launching"
     new "Aunchinglay"
 
-    # game/project.rpy:774
+    # game/project.rpy:776
     old "PROJECTS DIRECTORY"
     new "Rojectspay Irectoryday"
 
-    # game/project.rpy:774
+    # game/project.rpy:776
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "Leasepay oosechay hetay rojectspay irectoryday usingay hetay irectoryday ooserchay.\n{b}Hetay irectoryday ooserchay aymay avehay openeday ehindbay histay indowway.{/b}"
 
-    # game/project.rpy:774
+    # game/project.rpy:776
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "Histay auncherlay illway cansay orfay rojectspay inay histay irectoryday, illway reatecay ewnay rojectspay inay histay irectoryday, anday illway aceplay uiltbay rojectspay intoay histay irectoryday."
 
-    # game/project.rpy:779
+    # game/project.rpy:781
     old "Ren'Py has set the projects directory to:"
     new "Enray'Ypay ashay etsay hetay rojectspay irectoryday otay:"
 

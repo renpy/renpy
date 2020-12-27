@@ -441,11 +441,11 @@ translate piglatin strings:
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
-    # renpy/common/00keymap.rpy:280
+    # renpy/common/00keymap.rpy:301
     old "Failed to save screenshot as %s."
     new "Ailedfay otay avesay creenshotsay asay %say."
 
-    # renpy/common/00keymap.rpy:292
+    # renpy/common/00keymap.rpy:313
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 
@@ -862,14 +862,14 @@ translate piglatin strings:
     new "Alibratingcay [name] ([i]/[total])"
 
     # renpy/common/00gamepad.rpy:58
-    old "Press or move the [control!s] [kind]."
-    new "Resspay oray ovemay hetay [control!s] [kind]."
+    old "Press or move the '[control!s]' [kind]."
+    new "Resspay oray ovemay hetay '[control!s]' [kind]."
 
-    # renpy/common/00gamepad.rpy:66
+    # renpy/common/00gamepad.rpy:68
     old "Skip (A)"
     new "Kipsay (Aay)"
 
-    # renpy/common/00gamepad.rpy:69
+    # renpy/common/00gamepad.rpy:71
     old "Back (B)"
     new "Ackbay (Bay)"
 
