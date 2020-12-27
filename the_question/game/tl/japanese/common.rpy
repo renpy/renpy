@@ -1030,8 +1030,8 @@ translate japanese strings:
     new "キャリブレート [name] ([i]/[total])"
 
     # renpy/common/00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "[control!r] [kind] を押すか、倒すかしてください。"
+    old "Press or move the [control!s] [kind]."
+    new "[control!s] [kind] を押すか、倒すかしてください。"
 
     # renpy/common/00gamepad.rpy:66
     old "Skip (A)"

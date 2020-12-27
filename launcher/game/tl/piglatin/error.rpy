@@ -114,8 +114,8 @@ translate piglatin strings:
     new "Alibratingcay [name] ([i]/[total])"
 
     # renpy/common/00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Resspay oray ovemay hetay [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Resspay oray ovemay hetay [control!s] [kind]."
 
     # renpy/common/00gamepad.rpy:66
     old "Skip (A)"

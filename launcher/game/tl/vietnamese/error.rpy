@@ -102,8 +102,8 @@ translate vietnamese strings:
     new "Đo đạc [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Nhấn hoặc di chuyển [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Nhấn hoặc di chuyển [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"

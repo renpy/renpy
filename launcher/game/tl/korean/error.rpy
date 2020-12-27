@@ -129,8 +129,8 @@
     new "[name]를 보정 중입니다. ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "[control!r] [kind]를 누르거나 이동합니다."
+    old "Press or move the [control!s] [kind]."
+    new "[control!s] [kind]를 누르거나 이동합니다."
 
     # 00gamepad.rpy:66
     old "Skip (A)"

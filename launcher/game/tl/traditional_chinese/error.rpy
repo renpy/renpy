@@ -102,8 +102,8 @@ translate traditional_chinese strings:
     new "Calibrating [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Press or move the [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Press or move the [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
