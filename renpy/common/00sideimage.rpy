@@ -28,10 +28,6 @@ init -1650 python:
     # main character.
     config.side_image_tag = None
 
-    # If True, the side image will only be shown if an image with the same tag
-    # is not shown.
-    config.side_image_only_not_showing = False
-
     # A transform to use when the side image changes to that of a different
     # character.
     config.side_image_change_transform = None
