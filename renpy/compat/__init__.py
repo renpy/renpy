@@ -87,7 +87,6 @@ else:
 
 def compat_open(*args, **kwargs):
     if (sys._getframe(1).f_code.co_flags & 0xa000) == 0xa000:
-        print("A")
         return open(*args, **kwargs)
     else:
         return python_open(*args, **kwargs)
