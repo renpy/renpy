@@ -22,7 +22,10 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
 
-unicode = str  # @ReservedAssignment
+from renpy.compat import compat_open as open
+from renpy.compat import compat_open as file
+
+unicode = str # @ReservedAssignment
 
 python_list = _list = list
 python_dict = _dict = dict
@@ -32,23 +35,23 @@ python_set = _set = set
 _type = type
 
 from renpy.python import RevertableList as __renpy__list__
-list = __renpy__list__  # @ReservedAssignment
+list = __renpy__list__ # @ReservedAssignment
 
 from renpy.python import RevertableDict as __renpy__dict__
-dict = __renpy__dict__  # @ReservedAssignment
+dict = __renpy__dict__ # @ReservedAssignment
 
 from renpy.python import RevertableSet as __renpy__set__
-set = __renpy__set__  # @ReservedAssignment
+set = __renpy__set__ # @ReservedAssignment
 Set = __renpy__set__
 
-from renpy.python import RevertableObject as object  # @UnusedImport
+from renpy.python import RevertableObject as object # @UnusedImport
 
-from renpy.python import revertable_range as range  # @UnusedImport
-from renpy.python import revertable_sorted as sorted  # @UnusedImport
+from renpy.python import revertable_range as range # @UnusedImport
+from renpy.python import revertable_sorted as sorted # @UnusedImport
 
-import renpy.ui as ui  # @UnusedImport
-import renpy.exports as renpy  # @Reimport @UnusedImport
-from renpy.translation import translate_string as __  # @UnusedImport
+import renpy.ui as ui # @UnusedImport
+import renpy.exports as renpy # @Reimport @UnusedImport
+from renpy.translation import translate_string as __ # @UnusedImport
 
 from renpy.python import store_eval as eval
 

@@ -64,6 +64,8 @@ import io
 import sys
 import operator
 
+python_open = open
+
 ################################################################################
 # Alias the Python 3 standard library.
 
@@ -81,6 +83,15 @@ if PY2:
     open = io.open
 else:
     open = builtins.open
+
+
+def compat_open(*args, **kwargs):
+    if (sys._getframe(1).f_code.co_flags & 0xa000) == 0xa000:
+        print("A")
+        return open(*args, **kwargs)
+    else:
+        return python_open(*args, **kwargs)
+
 
 ################################################################################
 # Make strict use surrogateescape error handling.
