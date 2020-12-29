@@ -212,14 +212,14 @@ init -1500 python:
 
         `value`
             The amount the alpha channel should be multiplied by,
-            a number betwen 0.0 and 1.0.
+            a number between 0.0 and 1.0.
         """
 
         def get(self, value):
 
-            return Matrix([ 1, 0, 0, 0,
-                            0, 1, 0, 0,
-                            0, 0, 1, 0,
+            return Matrix([ value, 0, 0, 0,
+                            0, value, 0, 0,
+                            0, 0, value, 0,
                             0, 0, 0, value, ])
 
 
