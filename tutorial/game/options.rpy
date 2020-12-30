@@ -201,13 +201,19 @@ init python:
 # define build.itch_project = "renpytom/test-project"
 
 
-# Custom mouse.
-define config.mouse = { 'default' : [ 
-        ("gui/mouse0.png", 0, 0),
-        ("gui/mouse1.png", 0, 0),
-        ("gui/mouse2.png", 0, 0),
-        ("gui/mouse1.png", 0, 0), 
-    ] * 2 + [
-        ("gui/mouse0.png", 0, 0),
-    ] * (10 * 20)
+init python hide:
+    import datetime
+
+    today = datetime.date.today()
+    if (today.month == 3) and (today.day == 19):
+
+        # A cat, not a mouse.
+        config.mouse = { 'default' : [
+            ("gui/mouse0.png", 0, 0),
+            ("gui/mouse1.png", 0, 0),
+            ("gui/mouse2.png", 0, 0),
+            ("gui/mouse1.png", 0, 0),
+        ] * 2 + [
+            ("gui/mouse0.png", 0, 0),
+        ] * (10 * 20)
 }
