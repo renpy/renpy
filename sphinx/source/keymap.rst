@@ -249,4 +249,4 @@ gamepad bindings is given below::
 Gamepad buttons have an event name of the form "pad_*button*_press" or
 "pad_*button*_release". Analog axis events have the form "pad_*axis*_pos",
 "pad_*axis*_neg", or "pad_*axis*_zero". If held down, a second gamepad binding
-is generated, withe the "repeat_" prefix.
+is generated, withe the "repeat\_" prefix.
