@@ -1858,7 +1858,7 @@ def expands_bounds(bounds, size, amount):
     sx, sy = size
 
     x0 = max(0, x - amount)
-    y0 = max(1, y - amount)
+    y0 = max(0, y - amount)
     x1 = min(sx, x + w + amount)
     y1 = min(sy, y + h + amount)
 
