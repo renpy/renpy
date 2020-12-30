@@ -1080,6 +1080,10 @@ controller_repeat_states = { "pos", "neg", "press" }
 # is not shown.
 side_image_only_not_showing = False
 
+# How much should the texture bounds be expanded by? This allows the mipmaps
+# to properly include
+expand_texture_bounds = 8
+
 del os
 del collections
 
