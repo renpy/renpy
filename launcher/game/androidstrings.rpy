@@ -44,7 +44,7 @@ init python hide:
     __("Would you like to create an expansion APK?")
     __("Automatically installing expansion APKs {a=https://issuetracker.google.com/issues/160942333}may not work on Android 11{/a}.")
     __("No. Size limit of 100 MB on Google Play, but can be distributed through other stores and sideloaded.")
-    __("Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work)")
+    __("Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)")
     __("Do you want to allow the app to access the Internet?")
     __("Do you want to automatically update the Java source code?")
     __("Yes. This is the best choice for most projects.")
