@@ -330,7 +330,7 @@ translate russian strings:
     new "Нет. Ограничение по размеру в Google Play - 100 МБ, но может распространяться через другие магазины или локально."
 
     # androidstrings.rpy:44
-    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work)"
+    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
     new "Да. Ограничение в 2 ГБ, но не будет работать вне среды Google Play. (Ознакомьтесь с {a=https://renpy.org/doc/html/android.html?highlight=apk#google-play-expansion-apks}документацией{/a})"
 
     # androidstrings.rpy:45
