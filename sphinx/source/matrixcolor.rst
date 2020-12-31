@@ -101,7 +101,7 @@ A ColorMatrix is a class that inherits from the ColorMatrix class, and
 implements a __call__ method. This method takes:
 
 * An old object to interpolate off of. This object may be of any class,
-  and may be None if the no old object exists.
+  and may be None if no old object exists.
 * A value betwee 0.0 and 1.0, representing the point to interpolate.
   0.0 is entirely the old object, and 1.0 is entirely the new object.
 

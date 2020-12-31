@@ -25,7 +25,7 @@ five things that can be provided:
   where each component is an integer between 0 and 255. Colors are
   passed to :func:`Solid`.
 * An image name. Any other string is interpreted as a reference to an
-  image defined with the image statement.
+  image defined with the image statement, or if none exist, to a filename.
 * A list. If a list is provided, each item is expanded as described
   below, and checked to see if it matches a filename or image name.
   If so, expansion stops and the matched thing is then processed
@@ -207,7 +207,7 @@ An image manipulator can be used any place a displayable can, but not
 vice-versa. An :func:`Image` is a kind of image manipulator, so an
 Image can be used whenever an image manipulator is required.
 
-With the few exceptions listed below, the use of image manipulators is
+The use of image manipulators is
 historic. A number of image manipulators that had been documented in the
 past should no longer be used, as they suffer from inherent problems.
 In any case except for :func:`im.Data`, the :func:`Transform` displayable provides

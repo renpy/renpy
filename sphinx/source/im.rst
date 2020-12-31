@@ -12,7 +12,7 @@ image manipulators as input.
 
 An image manipulator can be used any place a displayable can, but not
 vice-versa. An :func:`Image` is a kind of image manipulator, so an
-Image can e used whenever an image manipulator is required.
+Image can be used whenever an image manipulator is required.
 
 With the few exceptions listed below, the use of image manipulators is
 historic. A number of image manipulators that had been documented in the
