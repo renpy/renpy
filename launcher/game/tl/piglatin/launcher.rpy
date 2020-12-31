@@ -334,8 +334,8 @@ translate piglatin strings:
     new "Onay. Izesay imitlay ofay 001ay Bmay onay Ooglegay Laypay, utbay ancay ebay istributedday hroughtay otheray oresstay anday ideloadedsay."
 
     # game/androidstrings.rpy:47
-    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work)"
-    new "Esyay. 2ay Bgay izesay imitlay, utbay onway'tay orkway outsideay ofay Ooglegay Laypay. (Eadray hetay ocumentationday otay etgay histay otay orkway)"
+    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
+    new "Esyay. 2ay Bgay izesay imitlay, utbay onway'tay orkway outsideay ofay Ooglegay Laypay. (Eadray hetay ocumentationday otay etgay histay otay orkway.)"
 
     # game/androidstrings.rpy:48
     old "Do you want to allow the app to access the Internet?"

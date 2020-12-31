@@ -333,8 +333,8 @@
     new "아니오. 구글 플레이의 100 MB 크기 제한으로, 하지만 다른 스토어 및 사이드로드를 통해 배포할 수 있습니다."
 
     # game/androidstrings.rpy:47
-    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work)"
-    new "네. 2GB 크기 제한으로, 하지만 구글 플레이 외부에서 작동하지 않습니다. (이 기능을 사용하려면 설명서를 참고)"
+    old "Yes. 2 GB size limit, but won't work outside of Google Play. (Read the documentation to get this to work.)"
+    new "네. 2GB 크기 제한으로, 하지만 구글 플레이 외부에서 작동하지 않습니다. (이 기능을 사용하려면 설명서를 참고.)"
 
     # game/androidstrings.rpy:48
     old "Do you want to allow the app to access the Internet?"
