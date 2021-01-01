@@ -1676,3 +1676,11 @@ translate russian strings:
     # game/web.rpy:341
     old "Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
     new "Изображения и музыка могут загружаться во время игры. Будет создан файл 'progressive_download.txt', чтобы вы могли настроить такое поведение."
+
+    # game/androidstrings.rpy:21
+    old "The universal version works everywhere but is larger."
+    new "Универсальная версия работает на всех устройствах но занимает больше места."
+
+    # game/androidstrings.rpy:45
+    old "Automatically installing expansion APKs {a=https://issuetracker.google.com/issues/160942333}may not work on Android 11{/a}."
+    new "Автоматическая установка APK-расширения {a=https://issuetracker.google.com/issues/160942333}может не работать на Android 11{/a}."

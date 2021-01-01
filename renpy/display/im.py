@@ -136,13 +136,14 @@ class Cache(object):
         cache, in pixels.
         """
 
-        rv = sum(i.size() for i in self.cache.values())
+        with self.lock:
+            rv = sum(i.size() for i in self.cache.values())
 
-#         print("Total cache size: {:.1f}/{:.1f} MB (Textures {:.1f} MB)".format(
-#             4.0 * rv / 1024 / 1024,
-#             4.0 * self.cache_limit / 1024 / 1024,
-#             1.0 * renpy.exports.get_texture_size()[0] / 1024 / 1024,
-#             ))
+        # print("Total cache size: {:.1f}/{:.1f} MB (Textures {:.1f} MB)".format(
+        #     4.0 * rv / 1024 / 1024,
+        #     4.0 * self.cache_limit / 1024 / 1024,
+        #     1.0 * renpy.exports.get_texture_size()[0] / 1024 / 1024,
+        #     ))
 
         return rv
 
@@ -154,7 +155,9 @@ class Cache(object):
 
         start = self.time - generations
 
-        rv = sum(i.size() for i in self.cache.values() if i.time > start)
+        with self.lock:
+            rv = sum(i.size() for i in self.cache.values() if i.time > start)
+
         return rv
 
     def init(self):
@@ -272,10 +275,11 @@ class Cache(object):
             except:
                 raise
 
-            w, h = surf.get_size()
+            w, h = size = surf.get_size()
 
             if optimize_bounds:
                 bounds = tuple(surf.get_bounding_rect())
+                bounds = expands_bounds(bounds, size, renpy.config.expand_texture_bounds)
                 w = bounds[2]
                 h = bounds[3]
             else:
@@ -1843,6 +1847,22 @@ def image(arg, loose=False, **properties):
         raise Exception("Expected an image, but got a general displayable.")
     else:
         raise Exception("Could not construct image from argument.")
+
+
+def expands_bounds(bounds, size, amount):
+    """
+    This expands the rectangle bounds by amount, while ensure it fits inside size.
+    """
+
+    x, y, w, h = bounds
+    sx, sy = size
+
+    x0 = max(0, x - amount)
+    y0 = max(0, y - amount)
+    x1 = min(sx, x + w + amount)
+    y1 = min(sy, y + h + amount)
+
+    return (x0, y0, x1 - x0, y1 - y0)
 
 
 def load_image(im):

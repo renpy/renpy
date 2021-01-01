@@ -26,7 +26,7 @@ python early in layeredimage:
             which is used to create better error messages.
 
         `name`
-            The name of the attribute image.
+            The name of the layeredimage.
 
         `group`
             The group of an attribute, None if not supplied or if it's
@@ -528,7 +528,7 @@ python early in layeredimage:
             after it is parameterized.
 
         `name`
-            The name of the attribute image. This is used as part of the names
+            The name of the layeredimage. This is used as part of the names
             of image components.
 
         `image_format`
@@ -1105,7 +1105,6 @@ python early in layeredimage:
             else:
                 self.transform = [ transform ]
 
-
         @property
         def image(self):
 
@@ -1121,22 +1120,34 @@ python early in layeredimage:
 
             return image
 
-
         def _duplicate(self, args):
 
             rv = self.image._duplicate(args)
-
 
             for i in self.transform:
                 rv = i(rv)
 
             return rv
 
+        def filter_attributes(self, attributes):
+
+            if attributes is None:
+                return None
+
+            name = self.name
+
+            if "[" in name:
+                name = renpy.substitute(name, translate=False)
+
+            name = name.split()
+
+            return tuple(i for i in attributes if i not in name[1:])
+
         def _choose_attributes(self, tag, attributes, optional):
-            return self.image._choose_attributes(tag, attributes, optional)
+            return self.filter_attributes(self.image._choose_attributes(tag, attributes, optional))
 
         def _list_attributes(self, tag, attributes):
-            return self.image._list_attributes(tag, attributes)
+            return self.filter_attributes(self.image._list_attributes(tag, attributes))
 
     renpy.store.Attribute = Attribute
     renpy.store.LayeredImage = LayeredImage

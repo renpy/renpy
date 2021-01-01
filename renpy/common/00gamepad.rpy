@@ -55,13 +55,15 @@ screen _gamepad_control(name, control, kind, mappings, back, i, total):
 
         null height 20
 
-        text _("Press or move the [control!r] [kind].")
-
+        text _("Press or move the '[control!s]' [kind].")
 
         null height 20
 
         hbox:
+            spacing gui._scale(25)
+
             textbutton _("Cancel") action Return("cancel")
+
             if len(mappings) >= 2:
                 textbutton _("Skip (A)") action Return("skip")
 

@@ -1289,6 +1289,11 @@ Rarely or Internally Used
     cleared before the overlay functions are called. "overlay" should
     always be in this list.
 
+.. var:: config.pause_with_transition = False
+
+    If false, :func:`renpy.pause` is always, used by the ``pause`` statement.
+    If true, when given a delay, ``pause`` is equivalent to ``with Pause(...)``.
+
 .. var:: config.per_frame_screens = [ ... ]
 
     This is a list of strings giving the name of screens that are updated

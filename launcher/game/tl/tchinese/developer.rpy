@@ -1,5 +1,5 @@
 ﻿
-translate traditional_chinese strings:
+translate tchinese strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
@@ -176,4 +176,3 @@ translate traditional_chinese strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <標籤>: 跳移至標籤"
-

@@ -1,5 +1,5 @@
 ﻿
-translate simplified_chinese strings:
+translate schinese strings:
 
     # screens.rpy:9
     old "## Styles"
@@ -237,438 +237,434 @@ translate simplified_chinese strings:
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
     new "引擎：{a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only]\n\n[renpy.license!t]"
 
-    # screens.rpy:569
-    old "## This is redefined in options.rpy to add text to the about screen."
-    new "## 此变量在 options.rpy 中重新定义，来添加文本到关于界面。"
-
-    # screens.rpy:581
+    # screens.rpy:577
     old "## Load and Save screens"
     new "## 读取和保存界面"
 
-    # screens.rpy:583
+    # screens.rpy:579
     old "## These screens are responsible for letting the player save the game and load it again. Since they share nearly everything in common, both are implemented in terms of a third screen, file_slots."
     new "## 这些界面负责让玩家保存游戏并能够再次读取。由于它们几乎完全一样，因此它们都是以第三方界面“file_slots”来实现的。"
 
-    # screens.rpy:587
+    # screens.rpy:583
     old "## https://www.renpy.org/doc/html/screen_special.html#save https://www.renpy.org/doc/html/screen_special.html#load"
     new "## https://www.renpy.cn/doc/screen_special.html#save https://www.renpy.cn/doc/screen_special.html#load"
 
-    # screens.rpy:606
+    # screens.rpy:602
     old "Page {}"
     new "第 {} 页"
 
-    # screens.rpy:606
+    # screens.rpy:602
     old "Automatic saves"
     new "自动存档"
 
-    # screens.rpy:606
+    # screens.rpy:602
     old "Quick saves"
     new "快速存档"
 
-    # screens.rpy:612
+    # screens.rpy:608
     old "## This ensures the input will get the enter event before any of the buttons do."
     new "## 此语句确保输入控件在任意按钮执行前可以获取“enter”事件。"
 
-    # screens.rpy:616
+    # screens.rpy:612
     old "## The page name, which can be edited by clicking on a button."
     new "## 页面名称，可以通过单击按钮进行编辑。"
 
-    # screens.rpy:628
+    # screens.rpy:624
     old "## The grid of file slots."
     new "## 存档位网格。"
 
-    # screens.rpy:648
+    # screens.rpy:644
     old "{#file_time}%A, %B %d %Y, %H:%M"
     new "{#file_time}%Y-%m-%d %H:%M"
 
-    # screens.rpy:648
+    # screens.rpy:644
     old "empty slot"
     new "空存档位"
 
-    # screens.rpy:656
+    # screens.rpy:652
     old "## Buttons to access other pages."
     new "## 用于访问其他页面的按钮。"
 
-    # screens.rpy:665
+    # screens.rpy:661
     old "<"
     new "<"
 
-    # screens.rpy:668
+    # screens.rpy:664
     old "{#auto_page}A"
     new "{#auto_page}A"
 
-    # screens.rpy:671
+    # screens.rpy:667
     old "{#quick_page}Q"
     new "{#quick_page}Q"
 
-    # screens.rpy:673
+    # screens.rpy:669
     old "## range(1, 10) gives the numbers from 1 to 9."
     new "## “range(1, 10)”给出 1 到 9 之间的数字。"
 
-    # screens.rpy:677
+    # screens.rpy:673
     old ">"
     new ">"
 
-    # screens.rpy:712
+    # screens.rpy:708
     old "## Preferences screen"
     new "## 设置界面"
 
-    # screens.rpy:714
+    # screens.rpy:710
     old "## The preferences screen allows the player to configure the game to better suit themselves."
     new "## 设置界面允许玩家配置游戏以更好地适应自己的习惯。"
 
-    # screens.rpy:717
+    # screens.rpy:713
     old "## https://www.renpy.org/doc/html/screen_special.html#preferences"
     new "## https://www.renpy.cn/doc/screen_special.html#preferences"
 
-    # screens.rpy:734
+    # screens.rpy:730
     old "Display"
     new "显示"
 
-    # screens.rpy:735
+    # screens.rpy:731
     old "Window"
     new "窗口"
 
-    # screens.rpy:736
+    # screens.rpy:732
     old "Fullscreen"
     new "全屏"
 
-    # screens.rpy:740
+    # screens.rpy:736
     old "Rollback Side"
     new "回退操作区"
 
-    # screens.rpy:741
+    # screens.rpy:737
     old "Disable"
     new "禁用"
 
-    # screens.rpy:742
+    # screens.rpy:738
     old "Left"
     new "屏幕左侧"
 
-    # screens.rpy:743
+    # screens.rpy:739
     old "Right"
     new "屏幕右侧"
 
-    # screens.rpy:748
+    # screens.rpy:744
     old "Unseen Text"
     new "未读文本"
 
-    # screens.rpy:749
+    # screens.rpy:745
     old "After Choices"
     new "选项后继续"
 
-    # screens.rpy:750
+    # screens.rpy:746
     old "Transitions"
     new "忽略转场"
 
-    # screens.rpy:752
+    # screens.rpy:748
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
     new "## 可以在此处添加类型为“radio_pref”或“check_pref”的其他“vbox”，以添加其他创建者定义的首选项设置。"
 
-    # screens.rpy:763
+    # screens.rpy:759
     old "Text Speed"
     new "文字速度"
 
-    # screens.rpy:767
+    # screens.rpy:763
     old "Auto-Forward Time"
     new "自动前进时间"
 
-    # screens.rpy:774
+    # screens.rpy:770
     old "Music Volume"
     new "音乐音量"
 
-    # screens.rpy:781
+    # screens.rpy:777
     old "Sound Volume"
     new "音效音量"
 
-    # screens.rpy:787
+    # screens.rpy:783
     old "Test"
     new "测试"
 
-    # screens.rpy:791
+    # screens.rpy:787
     old "Voice Volume"
     new "语音音量"
 
-    # screens.rpy:802
+    # screens.rpy:798
     old "Mute All"
     new "全部静音"
 
-    # screens.rpy:878
+    # screens.rpy:874
     old "## History screen"
     new "## 历史界面"
 
-    # screens.rpy:880
+    # screens.rpy:876
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
     new "## 这是一个向玩家显示对话历史的界面。虽然此界面没有任何特殊之处，但它必须访问储存在“_history_list”中的对话历史记录。"
 
-    # screens.rpy:884
+    # screens.rpy:880
     old "## https://www.renpy.org/doc/html/history.html"
     new "## https://www.renpy.cn/doc/history.html"
 
-    # screens.rpy:890
+    # screens.rpy:886
     old "## Avoid predicting this screen, as it can be very large."
     new "## 避免预缓存此界面，因为它可能非常大。"
 
-    # screens.rpy:901
+    # screens.rpy:897
     old "## This lays things out properly if history_height is None."
     new "## 此语句可确保如果“history_height”为“None”的话仍可正常显示条目。"
 
-    # screens.rpy:911
+    # screens.rpy:907
     old "## Take the color of the who text from the Character, if set."
     new "## 若角色颜色已设置，则从“Character”对象中读取颜色到叙述人文本中。"
 
-    # screens.rpy:920
+    # screens.rpy:916
     old "The dialogue history is empty."
     new "尚无对话历史记录。"
 
-    # screens.rpy:923
+    # screens.rpy:919
     old "## This determines what tags are allowed to be displayed on the history screen."
     new "## 此语句决定了允许在历史记录界面上显示哪些标签。"
 
-    # screens.rpy:970
+    # screens.rpy:966
     old "## Help screen"
     new "## 帮助界面"
 
-    # screens.rpy:972
+    # screens.rpy:968
     old "## A screen that gives information about key and mouse bindings. It uses other screens (keyboard_help, mouse_help, and gamepad_help) to display the actual help."
     new "## 提供有关键盘和鼠标映射信息的界面。它使用其它界面（“keyboard_help”，“mouse_help“和”gamepad_help“）来显示实际的帮助内容。"
 
-    # screens.rpy:991
+    # screens.rpy:987
     old "Keyboard"
     new "键盘"
 
-    # screens.rpy:992
+    # screens.rpy:988
     old "Mouse"
     new "鼠标"
 
-    # screens.rpy:995
+    # screens.rpy:991
     old "Gamepad"
     new "手柄"
 
-    # screens.rpy:1008
+    # screens.rpy:1004
     old "Enter"
     new "回车"
 
-    # screens.rpy:1009
+    # screens.rpy:1005
     old "Advances dialogue and activates the interface."
     new "推进对话并激活界面。"
 
-    # screens.rpy:1012
+    # screens.rpy:1008
     old "Space"
     new "空格"
 
-    # screens.rpy:1013
+    # screens.rpy:1009
     old "Advances dialogue without selecting choices."
     new "推进对话但不激活选项。"
 
-    # screens.rpy:1016
+    # screens.rpy:1012
     old "Arrow Keys"
     new "方向键"
 
-    # screens.rpy:1017
+    # screens.rpy:1013
     old "Navigate the interface."
     new "导航界面。"
 
-    # screens.rpy:1020
+    # screens.rpy:1016
     old "Escape"
     new "Esc"
 
-    # screens.rpy:1021
+    # screens.rpy:1017
     old "Accesses the game menu."
     new "访问游戏菜单。"
 
-    # screens.rpy:1024
+    # screens.rpy:1020
     old "Ctrl"
     new "Ctrl"
 
-    # screens.rpy:1025
+    # screens.rpy:1021
     old "Skips dialogue while held down."
     new "按住时快进对话。"
 
-    # screens.rpy:1028
+    # screens.rpy:1024
     old "Tab"
     new "Tab"
 
-    # screens.rpy:1029
+    # screens.rpy:1025
     old "Toggles dialogue skipping."
     new "切换对话快进。"
 
-    # screens.rpy:1032
+    # screens.rpy:1028
     old "Page Up"
     new "Page Up"
 
-    # screens.rpy:1033
+    # screens.rpy:1029
     old "Rolls back to earlier dialogue."
     new "回退至先前的对话。"
 
-    # screens.rpy:1036
+    # screens.rpy:1032
     old "Page Down"
     new "Page Down"
 
-    # screens.rpy:1037
+    # screens.rpy:1033
     old "Rolls forward to later dialogue."
     new "向前至之后的对话。"
 
-    # screens.rpy:1041
+    # screens.rpy:1037
     old "Hides the user interface."
     new "隐藏用户界面。"
 
-    # screens.rpy:1045
+    # screens.rpy:1041
     old "Takes a screenshot."
     new "截图。"
 
-    # screens.rpy:1049
+    # screens.rpy:1045
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
     new "切换辅助{a=https://www.renpy.org/l/voicing}自动朗读{/a}。"
 
-    # screens.rpy:1055
+    # screens.rpy:1051
     old "Left Click"
     new "左键点击"
 
-    # screens.rpy:1059
+    # screens.rpy:1055
     old "Middle Click"
     new "中键点击"
 
-    # screens.rpy:1063
+    # screens.rpy:1059
     old "Right Click"
     new "右键点击"
 
-    # screens.rpy:1067
+    # screens.rpy:1063
     old "Mouse Wheel Up\nClick Rollback Side"
     new "鼠标滚轮上\n点击回退操作区"
 
-    # screens.rpy:1071
+    # screens.rpy:1067
     old "Mouse Wheel Down"
     new "鼠标滚轮下"
 
-    # screens.rpy:1078
+    # screens.rpy:1074
     old "Right Trigger\nA/Bottom Button"
     new "右扳机键\nA/底键"
 
-    # screens.rpy:1082
+    # screens.rpy:1078
     old "Left Trigger\nLeft Shoulder"
     new "左扳机键\n左肩键"
 
-    # screens.rpy:1086
+    # screens.rpy:1082
     old "Right Shoulder"
     new "右肩键"
 
-    # screens.rpy:1091
+    # screens.rpy:1087
     old "D-Pad, Sticks"
     new "十字键，摇杆"
 
-    # screens.rpy:1095
+    # screens.rpy:1091
     old "Start, Guide"
     new "开始，向导"
 
-    # screens.rpy:1099
+    # screens.rpy:1095
     old "Y/Top Button"
     new "Y/顶键"
 
-    # screens.rpy:1102
+    # screens.rpy:1098
     old "Calibrate"
     new "校准"
 
-    # screens.rpy:1130
+    # screens.rpy:1126
     old "## Additional screens"
     new "## 其他界面"
 
-    # screens.rpy:1134
+    # screens.rpy:1130
     old "## Confirm screen"
     new "## 确认界面"
 
-    # screens.rpy:1136
+    # screens.rpy:1132
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
     new "## 当 Ren'Py 需要询问玩家有关确定或取消的问题时，会调用确认界面。"
 
-    # screens.rpy:1139
+    # screens.rpy:1135
     old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
     new "## https://www.renpy.cn/doc/screen_special.html#confirm"
 
-    # screens.rpy:1143
+    # screens.rpy:1139
     old "## Ensure other screens do not get input while this screen is displayed."
     new "## 显示此界面时，确保其他界面无法输入。"
 
-    # screens.rpy:1167
+    # screens.rpy:1163
     old "Yes"
     new "确定"
 
-    # screens.rpy:1168
+    # screens.rpy:1164
     old "No"
     new "取消"
 
-    # screens.rpy:1170
+    # screens.rpy:1166
     old "## Right-click and escape answer \"no\"."
     new "## 右键点击退出并答复“no”（取消）。"
 
-    # screens.rpy:1197
+    # screens.rpy:1193
     old "## Skip indicator screen"
     new "## 快进指示界面"
 
-    # screens.rpy:1199
+    # screens.rpy:1195
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
     new "## “skip_indicator”界面用于指示快进正在进行中。"
 
-    # screens.rpy:1202
+    # screens.rpy:1198
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
     new "## https://www.renpy.cn/doc/screen_special.html#skip-indicator"
 
-    # screens.rpy:1214
+    # screens.rpy:1210
     old "Skipping"
     new "正在快进"
 
-    # screens.rpy:1221
+    # screens.rpy:1217
     old "## This transform is used to blink the arrows one after another."
     new "## 此变换用于一个接一个地闪烁箭头。"
 
-    # screens.rpy:1248
+    # screens.rpy:1244
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
     new "## 我们必须使用包含“BLACK RIGHT-POINTING SMALL TRIANGLE”字形的字体。"
 
-    # screens.rpy:1253
+    # screens.rpy:1249
     old "## Notify screen"
     new "## 通知界面"
 
-    # screens.rpy:1255
+    # screens.rpy:1251
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
     new "## 通知界面用于向玩家显示消息。（例如，当游戏快速保存或已截屏时。）"
 
-    # screens.rpy:1258
+    # screens.rpy:1254
     old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
     new "## https://www.renpy.cn/doc/screen_special.html#notify-screen"
 
-    # screens.rpy:1292
+    # screens.rpy:1288
     old "## NVL screen"
     new "## NVL 模式界面"
 
-    # screens.rpy:1294
+    # screens.rpy:1290
     old "## This screen is used for NVL-mode dialogue and menus."
     new "## 此界面用于 NVL 模式的对话和菜单。"
 
-    # screens.rpy:1296
+    # screens.rpy:1292
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
     new "## https://www.renpy.cn/doc/screen_special.html#nvl"
 
-    # screens.rpy:1307
+    # screens.rpy:1303
     old "## Displays dialogue in either a vpgrid or the vbox."
     new "## 在“vpgrid”或“vbox”中显示对话框。"
 
-    # screens.rpy:1320
+    # screens.rpy:1316
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
     new "## 如果给定，则显示“menu”。 如果“config.narrator_menu”设置为“True”，则“menu”可能显示不正确，如前述。"
 
-    # screens.rpy:1350
+    # screens.rpy:1346
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
     new "## 此语句控制一次可以显示的 NVL 模式条目的最大数量。"
 
-    # screens.rpy:1412
+    # screens.rpy:1408
     old "## Mobile Variants"
     new "## 移动设备界面"
 
-    # screens.rpy:1419
+    # screens.rpy:1415
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
     new "## 由于鼠标可能不存在，我们将快捷菜单替换为更容易触摸且按钮更少更大的版本。"
 
-    # screens.rpy:1437
+    # screens.rpy:1433
     old "Menu"
     new "菜单"

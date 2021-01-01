@@ -117,7 +117,7 @@ def sl2_regexps():
     style_part2 = "(?:" + "|".join(sorted(renpy.sl2.slparser.STYLE_PREFIXES)) + ")"
 
     items = list(groups.items())
-    items.sort(key=lambda a : ( tuple(sorted(a[1])), a[0][1] ) )
+    items.sort(key=lambda a : (tuple(sorted(a[1])), a[0][1]))
 
     for k, prefixes in items:
         names, style = k
@@ -197,7 +197,6 @@ def write_keywords():
 # A map from filename to a list of lines that are supposed to go into
 # that file.
 line_buffer = collections.defaultdict(list)
-
 
 # A map from id(o) to the names it's documented under.
 documented = collections.defaultdict(list)
@@ -413,8 +412,8 @@ def write_pure_const():
         for i in l:
             f.write("* " + format_name(i) + "\n")
 
-    pure = renpy.pyanalysis.pure_functions  # @UndefinedVariable
-    constants = renpy.pyanalysis.constants - pure  # @UndefinedVariable
+    pure = renpy.pyanalysis.pure_functions # @UndefinedVariable
+    constants = renpy.pyanalysis.constants - pure # @UndefinedVariable
 
     with open("source/inc/pure_vars", "w") as f:
         write_set(f, pure)

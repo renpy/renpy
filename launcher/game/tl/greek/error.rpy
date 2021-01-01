@@ -102,8 +102,8 @@ translate greek strings:
     new "Ρυθμίζεται το [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Πατήστε ή κουνήστε το [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Πατήστε ή κουνήστε το [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"

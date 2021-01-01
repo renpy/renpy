@@ -1,5 +1,5 @@
 ﻿
-translate traditional_chinese strings:
+translate tchinese strings:
 
     # options.rpy:1
     old "## This file contains options that can be changed to customize your game."
@@ -192,4 +192,3 @@ translate traditional_chinese strings:
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## The username and project name associated with an itch.io project, separated by a slash."
-

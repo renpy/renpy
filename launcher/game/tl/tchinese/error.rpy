@@ -1,5 +1,5 @@
 ﻿
-translate traditional_chinese strings:
+translate tchinese strings:
 
     # 00gltest.rpy:64
     old "Graphics Acceleration"
@@ -102,8 +102,8 @@ translate traditional_chinese strings:
     new "Calibrating [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Press or move the [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Press or move the [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -176,4 +176,3 @@ translate traditional_chinese strings:
     # _errorhandling.rpym:612
     old "Copies the errors.txt file to the clipboard."
     new "Copies the errors.txt file to the clipboard."
-

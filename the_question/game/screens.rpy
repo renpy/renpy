@@ -804,8 +804,8 @@ screen preferences():
                         textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                         textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
                         textbutton "한국어" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("korean")
-                        textbutton "简体中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("simplified_chinese")
-                        textbutton "繁體中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("traditional_chinese")
+                        textbutton "简体中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("schinese")
+                        textbutton "繁體中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("tchinese")
                         textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
                         textbutton "日本語" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("japanese")
 

@@ -416,6 +416,9 @@ python early hide:
     ##########################################################################
     # Pause statement.
 
+    # Should the pause statement use the pause Transition?
+    config.pause_with_transition = False
+
     def parse_pause(l):
 
         delay = l.simple_expression()
@@ -434,7 +437,10 @@ python early hide:
 
         if p["delay"]:
             delay = eval(p["delay"])
-            renpy.with_statement(Pause(delay))
+            if config.pause_with_transition:
+                renpy.with_statement(Pause(delay))
+            else:
+                renpy.pause(delay)
         else:
             renpy.pause()
 

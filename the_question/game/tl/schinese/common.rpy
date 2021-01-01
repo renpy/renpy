@@ -1,5 +1,5 @@
 ﻿
-translate simplified_chinese strings:
+translate schinese strings:
 
     # 00accessibility.rpy:28
     old "Self-voicing disabled."
@@ -73,31 +73,35 @@ translate simplified_chinese strings:
     old "Reset"
     new "重置"
 
-    # 00accessibility.rpy:157
+    # 00accessibility.rpy:158
     old "Line Spacing Scaling"
     new "行距缩放"
 
-    # 00accessibility.rpy:169
+    # 00accessibility.rpy:171
     old "Self-Voicing"
     new "自动朗读"
 
-    # 00accessibility.rpy:173
+    # 00accessibility.rpy:175
     old "Off"
     new "关闭"
 
-    # 00accessibility.rpy:177
+    # 00accessibility.rpy:179
     old "Text-to-speech"
     new "文字转语音"
 
-    # 00accessibility.rpy:181
+    # 00accessibility.rpy:183
     old "Clipboard"
     new "剪贴板"
 
-    # 00accessibility.rpy:185
+    # 00accessibility.rpy:187
     old "Debug"
     new "调试"
 
-    # 00accessibility.rpy:191
+    # 00accessibility.rpy:193
+    old "Self-Voicing Volume Drop"
+    new "自动朗读音量下降"
+
+    # 00accessibility.rpy:202
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
     new "此菜单上的选项旨在改善辅助功能。这些选项可能不适用于所有游戏，并且某些选项组合可能会导致游戏无法游玩。这不是游戏或引擎的问题。为了在更改字体时获得最佳效果，请尝试保持文字大小与原始大小相同。"
 
@@ -269,35 +273,35 @@ translate simplified_chinese strings:
     old "Delete slot [text]"
     new "删除存档 [text]"
 
-    # 00action_file.rpy:569
+    # 00action_file.rpy:566
     old "File page auto"
     new "自动存档页"
 
-    # 00action_file.rpy:571
+    # 00action_file.rpy:568
     old "File page quick"
     new "快速存档页"
 
-    # 00action_file.rpy:573
+    # 00action_file.rpy:570
     old "File page [text]"
     new "第 [text] 存档页"
 
-    # 00action_file.rpy:772
+    # 00action_file.rpy:769
     old "Next file page."
     new "下一存档页。"
 
-    # 00action_file.rpy:845
+    # 00action_file.rpy:842
     old "Previous file page."
     new "上一存档页。"
 
-    # 00action_file.rpy:906
+    # 00action_file.rpy:903
     old "Quick save complete."
     new "快速保存完成。"
 
-    # 00action_file.rpy:924
+    # 00action_file.rpy:921
     old "Quick save."
     new "快速保存。"
 
-    # 00action_file.rpy:943
+    # 00action_file.rpy:940
     old "Quick load."
     new "快速读取。"
 
@@ -437,11 +441,11 @@ translate simplified_chinese strings:
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "您确定要跳过未读对话，直接快进到下个选项吗？"
 
-    # 00keymap.rpy:267
+    # 00keymap.rpy:280
     old "Failed to save screenshot as %s."
     new "截图保存到以下位置时失败：%s"
 
-    # 00keymap.rpy:279
+    # 00keymap.rpy:292
     old "Saved screenshot as %s."
     new "截图已保存到以下位置：%s"
 
@@ -453,171 +457,179 @@ translate simplified_chinese strings:
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
     new "本程序包含了由数个许可证授权的免费软件，包括 MIT 许可证和 GNU 宽松通用公共许可证。完整软件列表及源代码链接，请{a=https://www.renpy.org/l/license}访问此处{/a}。"
 
-    # 00preferences.rpy:233
+    # 00preferences.rpy:240
     old "display"
     new "display"
 
-    # 00preferences.rpy:245
+    # 00preferences.rpy:252
     old "transitions"
     new "transitions"
 
-    # 00preferences.rpy:254
+    # 00preferences.rpy:261
     old "skip transitions"
     new "skip transitions"
 
-    # 00preferences.rpy:256
+    # 00preferences.rpy:263
     old "video sprites"
     new "video sprites"
 
-    # 00preferences.rpy:265
+    # 00preferences.rpy:272
     old "show empty window"
     new "show empty window"
 
-    # 00preferences.rpy:274
+    # 00preferences.rpy:281
     old "text speed"
     new "text speed"
 
-    # 00preferences.rpy:282
+    # 00preferences.rpy:289
     old "joystick"
     new "joystick"
 
-    # 00preferences.rpy:282
+    # 00preferences.rpy:289
     old "joystick..."
     new "joystick..."
 
-    # 00preferences.rpy:289
+    # 00preferences.rpy:296
     old "skip"
     new "skip"
 
-    # 00preferences.rpy:292
+    # 00preferences.rpy:299
     old "skip unseen [text]"
     new "skip unseen [text]"
 
-    # 00preferences.rpy:297
+    # 00preferences.rpy:304
     old "skip unseen text"
     new "skip unseen text"
 
-    # 00preferences.rpy:299
+    # 00preferences.rpy:306
     old "begin skipping"
     new "begin skipping"
 
-    # 00preferences.rpy:303
+    # 00preferences.rpy:310
     old "after choices"
     new "after choices"
 
-    # 00preferences.rpy:310
+    # 00preferences.rpy:317
     old "skip after choices"
     new "skip after choices"
 
-    # 00preferences.rpy:312
+    # 00preferences.rpy:319
     old "auto-forward time"
     new "auto-forward time"
 
-    # 00preferences.rpy:326
+    # 00preferences.rpy:333
     old "auto-forward"
     new "auto-forward"
 
-    # 00preferences.rpy:333
+    # 00preferences.rpy:340
     old "Auto forward"
     new "自动前进"
 
-    # 00preferences.rpy:336
+    # 00preferences.rpy:343
     old "auto-forward after click"
     new "auto-forward after click"
 
-    # 00preferences.rpy:345
+    # 00preferences.rpy:352
     old "automatic move"
     new "automatic move"
 
-    # 00preferences.rpy:354
+    # 00preferences.rpy:361
     old "wait for voice"
     new "wait for voice"
 
-    # 00preferences.rpy:363
+    # 00preferences.rpy:370
     old "voice sustain"
     new "voice sustain"
 
-    # 00preferences.rpy:372
+    # 00preferences.rpy:379
     old "self voicing"
     new "self voicing"
 
-    # 00preferences.rpy:381
+    # 00preferences.rpy:388
+    old "self voicing volume drop"
+    new "self voicing volume drop"
+
+    # 00preferences.rpy:396
     old "clipboard voicing"
     new "clipboard voicing"
 
-    # 00preferences.rpy:390
+    # 00preferences.rpy:405
     old "debug voicing"
     new "debug voicing"
 
-    # 00preferences.rpy:399
+    # 00preferences.rpy:414
     old "emphasize audio"
     new "emphasize audio"
 
-    # 00preferences.rpy:408
+    # 00preferences.rpy:423
     old "rollback side"
     new "rollback side"
 
-    # 00preferences.rpy:418
+    # 00preferences.rpy:433
     old "gl powersave"
     new "gl powersave"
 
-    # 00preferences.rpy:424
+    # 00preferences.rpy:439
     old "gl framerate"
     new "gl framerate"
 
-    # 00preferences.rpy:427
+    # 00preferences.rpy:442
     old "gl tearing"
     new "gl tearing"
 
-    # 00preferences.rpy:430
+    # 00preferences.rpy:445
     old "font transform"
     new "font transform"
 
-    # 00preferences.rpy:433
+    # 00preferences.rpy:448
     old "font size"
     new "font size"
 
-    # 00preferences.rpy:441
+    # 00preferences.rpy:456
     old "font line spacing"
     new "font line spacing"
 
-    # 00preferences.rpy:460
+    # 00preferences.rpy:464
+    old "system cursor"
+    new "system cursor"
+
+    # 00preferences.rpy:484
     old "music volume"
     new "music volume"
 
-    # 00preferences.rpy:461
+    # 00preferences.rpy:485
     old "sound volume"
     new "sound volume"
 
-    # 00preferences.rpy:462
+    # 00preferences.rpy:486
     old "voice volume"
     new "voice volume"
 
-    # 00preferences.rpy:463
+    # 00preferences.rpy:487
     old "mute music"
     new "mute music"
 
-    # 00preferences.rpy:464
+    # 00preferences.rpy:488
     old "mute sound"
     new "mute sound"
 
-    # 00preferences.rpy:465
+    # 00preferences.rpy:489
     old "mute voice"
     new "mute voice"
 
-    # 00preferences.rpy:466
+    # 00preferences.rpy:490
     old "mute all"
     new "mute all"
 
-    # 00preferences.rpy:547
+    # 00preferences.rpy:571
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
     new "剪贴板朗读已开启。按 Shift+C 来关闭。"
 
-    # 00preferences.rpy:549
+    # 00preferences.rpy:573
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
     new "自动朗读将开始朗读“[renpy.display.tts.last]”。按 Alt+Shift+V 来关闭。"
 
-    # 00preferences.rpy:551
+    # 00preferences.rpy:575
     old "Self-voicing enabled. Press 'v' to disable."
     new "自动朗读已开启。按 V 来关闭。"
 
@@ -721,27 +733,27 @@ translate simplified_chinese strings:
     old "Position copied to clipboard."
     new "坐标已复制到剪贴板。"
 
-    # _developer/developer.rpym:507
+    # _developer/developer.rpym:506
     old "Type to filter: "
     new "输入关键字过滤："
 
-    # _developer/developer.rpym:635
+    # _developer/developer.rpym:631
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
     new "贴图：[tex_count] ([tex_size_mb:.1f] MB)"
 
-    # _developer/developer.rpym:639
+    # _developer/developer.rpym:635
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "图像缓存：[cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
 
-    # _developer/developer.rpym:649
+    # _developer/developer.rpym:645
     old "✔ "
     new "✔ "
 
-    # _developer/developer.rpym:652
+    # _developer/developer.rpym:648
     old "✘ "
     new "✘ "
 
-    # _developer/developer.rpym:657
+    # _developer/developer.rpym:653
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
     new "\n{color=#cfc}✔ 已预载图像（良好）{/color}\n{color=#fcc}✘ 未预载图像（糟糕）{/color}\n{color=#fff}拖动来移动位置。{/color}"
 
@@ -789,217 +801,217 @@ translate simplified_chinese strings:
     old "q"
     new "q"
 
-    # 00iap.rpy:217
+    # 00iap.rpy:219
     old "Contacting App Store\nPlease Wait..."
     new "正在连线 App Store\n请稍后……"
 
-    # 00updater.rpy:375
+    # 00updater.rpy:374
     old "The Ren'Py Updater is not supported on mobile devices."
     new "Ren'Py 尚不支持在移动设备上执行更新。"
 
-    # 00updater.rpy:494
+    # 00updater.rpy:493
     old "An error is being simulated."
     new "已模拟一个错误。"
 
-    # 00updater.rpy:678
+    # 00updater.rpy:677
     old "Either this project does not support updating, or the update status file was deleted."
     new "此工程不支持更新，或者是更新状态文件已被删除。"
 
-    # 00updater.rpy:692
+    # 00updater.rpy:691
     old "This account does not have permission to perform an update."
     new "此帐号没有执行更新的权限。"
 
-    # 00updater.rpy:695
+    # 00updater.rpy:694
     old "This account does not have permission to write the update log."
     new "此帐号没有写入更新日志的权限。"
 
-    # 00updater.rpy:722
+    # 00updater.rpy:721
     old "Could not verify update signature."
     new "无法验证更新签名。"
 
-    # 00updater.rpy:997
+    # 00updater.rpy:992
     old "The update file was not downloaded."
     new "更新文件未能下载。"
 
-    # 00updater.rpy:1015
+    # 00updater.rpy:1010
     old "The update file does not have the correct digest - it may have been corrupted."
     new "更新文件校验失败。文件可能已损坏。"
 
-    # 00updater.rpy:1071
+    # 00updater.rpy:1064
     old "While unpacking {}, unknown type {}."
     new "解压 {} 时出现未知错误 {}。"
 
-    # 00updater.rpy:1439
+    # 00updater.rpy:1430
     old "Updater"
     new "更新程序"
 
-    # 00updater.rpy:1450
+    # 00updater.rpy:1437
+    old "An error has occured:"
+    new "发生错误："
+
+    # 00updater.rpy:1439
+    old "Checking for updates."
+    new "正在检查更新。"
+
+    # 00updater.rpy:1441
     old "This program is up to date."
     new "此程序已是最新版本。"
 
-    # 00updater.rpy:1452
+    # 00updater.rpy:1443
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] 现已可用。您希望现在安装吗？"
 
-    # 00updater.rpy:1454
+    # 00updater.rpy:1445
     old "Preparing to download the updates."
     new "正在准备下载更新。"
 
-    # 00updater.rpy:1456
+    # 00updater.rpy:1447
     old "Downloading the updates."
     new "正在下载更新。"
 
-    # 00updater.rpy:1458
+    # 00updater.rpy:1449
     old "Unpacking the updates."
     new "正在解压更新。"
 
-    # 00updater.rpy:1462
+    # 00updater.rpy:1451
+    old "Finishing up."
+    new "完成。"
+
+    # 00updater.rpy:1453
     old "The updates have been installed. The program will restart."
     new "此更新已安装。程序将重新启动。"
 
-    # 00updater.rpy:1464
+    # 00updater.rpy:1455
     old "The updates have been installed."
     new "更新已安装。"
 
-    # 00updater.rpy:1466
+    # 00updater.rpy:1457
     old "The updates were cancelled."
     new "更新已取消。"
 
-    # 00gallery.rpy:592
+    # 00updater.rpy:1472
+    old "Proceed"
+    new "继续"
+
+    # 00gallery.rpy:590
     old "Image [index] of [count] locked."
     new "图片 [count] / [index] 尚未解锁。"
 
-    # 00gallery.rpy:612
+    # 00gallery.rpy:610
     old "prev"
     new "上一页"
 
-    # 00gallery.rpy:613
+    # 00gallery.rpy:611
     old "next"
     new "下一页"
 
-    # 00gallery.rpy:614
+    # 00gallery.rpy:612
     old "slideshow"
     new "幻灯片"
 
-    # 00gallery.rpy:615
+    # 00gallery.rpy:613
     old "return"
     new "返回"
 
-    # 00gltest.rpy:70
+    # 00gltest.rpy:89
     old "Renderer"
     new "渲染器"
 
-    # 00gltest.rpy:74
+    # 00gltest.rpy:93
     old "Automatically Choose"
     new "自动选择"
 
-    # 00gltest.rpy:79
-    old "Force Angle/DirectX Renderer"
-    new "强制 Angle/DirectX 渲染"
+    # 00gltest.rpy:100
+    old "Force GL Renderer"
+    new "强制 GL 渲染"
 
-    # 00gltest.rpy:83
-    old "Force OpenGL Renderer"
-    new "强制 OpenGL 渲染"
+    # 00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "强制 ANGLE 渲染"
 
-    # 00gltest.rpy:87
-    old "Force Software Renderer"
-    new "强制软件渲染"
+    # 00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "强制 GLES 渲染"
 
-    # 00gltest.rpy:93
-    old "NPOT"
-    new "NPOT"
+    # 00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "强制 GL2 渲染"
 
-    # 00gltest.rpy:97
+    # 00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "强制 ANGLE2 渲染"
+
+    # 00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "强制 GLES2 渲染"
+
+    # 00gltest.rpy:136
     old "Enable"
     new "启用"
 
-    # 00gltest.rpy:131
+    # 00gltest.rpy:155
     old "Powersave"
     new "省电模式"
 
-    # 00gltest.rpy:145
+    # 00gltest.rpy:169
     old "Framerate"
     new "帧率"
 
-    # 00gltest.rpy:149
+    # 00gltest.rpy:173
     old "Screen"
     new "根据屏幕"
 
-    # 00gltest.rpy:153
+    # 00gltest.rpy:177
     old "60"
     new "60"
 
-    # 00gltest.rpy:157
+    # 00gltest.rpy:181
     old "30"
     new "30"
 
-    # 00gltest.rpy:163
+    # 00gltest.rpy:187
     old "Tearing"
     new "画面撕裂"
 
-    # 00gltest.rpy:179
+    # 00gltest.rpy:203
     old "Changes will take effect the next time this program is run."
     new "更改将会在下次启动程序时生效。"
 
-    # 00gltest.rpy:213
+    # 00gltest.rpy:238
     old "Performance Warning"
     new "性能影响警告"
 
-    # 00gltest.rpy:218
+    # 00gltest.rpy:243
     old "This computer is using software rendering."
     new "此计算机正在使用软件渲染。"
 
-    # 00gltest.rpy:220
-    old "This computer is not using shaders."
-    new "此计算机没有使用着色器。"
+    # 00gltest.rpy:245
+    old "This game requires use of GL2 that can't be initialised."
+    new "此游戏需要使用 GL2，但其无法初始化。"
 
-    # 00gltest.rpy:222
-    old "This computer is displaying graphics slowly."
-    new "此计算机图形显示缓慢。"
-
-    # 00gltest.rpy:224
+    # 00gltest.rpy:247
     old "This computer has a problem displaying graphics: [problem]."
     new "此计算机显示图形时出错：[problem]"
 
-    # 00gltest.rpy:229
-    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "目前的图形驱动程序版本可能过旧或未正确运行。这会导致图形显示缓慢或者错误。更新 DirectX 可能会解决该问题。"
-
-    # 00gltest.rpy:231
+    # 00gltest.rpy:251
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
     new "目前图形驱动程序版本可能过旧或未正确运行。这会导致图形显示缓慢或者错误。"
 
-    # 00gltest.rpy:236
-    old "Update DirectX"
-    new "更新 DirectX"
+    # 00gltest.rpy:256
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "关于如何解决该问题的更多详情可以在{a=[url]}文档{/a}中找到。"
 
-    # 00gltest.rpy:242
+    # 00gltest.rpy:261
     old "Continue, Show this warning again"
     new "继续，下次继续显示该警告"
 
-    # 00gltest.rpy:246
+    # 00gltest.rpy:265
     old "Continue, Don't show warning again"
     new "继续，不再显示该警告"
 
-    # 00gltest.rpy:264
-    old "Updating DirectX."
-    new "正在更新 DirectX。"
-
-    # 00gltest.rpy:268
-    old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "DirectX 在线安装已启动，它将会最小化至任务栏。请按照说明安装 DirectX。"
-
-    # 00gltest.rpy:272
-    old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}警告：{/b}微软的 DirectX 在线安装程序会默认安装 Bing 浏览器工具栏。如果您不需要安装这个工具栏，请取消勾选对应选项。"
-
-    # 00gltest.rpy:276
-    old "When setup finishes, please click below to restart this program."
-    new "当安装完成后请点击下方来重新启动程序。"
-
-    # 00gltest.rpy:278
-    old "Restart"
-    new "重新启动"
+    # 00gltest.rpy:273
+    old "Change render options"
+    new "更改渲染选项"
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
@@ -1014,8 +1026,8 @@ translate simplified_chinese strings:
     new "正在校准 [name]（[i]/[total]）"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "按下或移动 [control!r] [kind]。"
+    old "Press or move the [control!s] [kind]."
+    new "按下或移动 [control!s] [kind]。"
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -1025,102 +1037,86 @@ translate simplified_chinese strings:
     old "Back (B)"
     new "返回（B）"
 
-    # _errorhandling.rpym:538
+    # _errorhandling.rpym:540
     old "Open"
     new "打开"
 
-    # _errorhandling.rpym:540
+    # _errorhandling.rpym:542
     old "Opens the traceback.txt file in a text editor."
     new "在文本编辑器中打开追溯报告（traceback.txt）。"
 
-    # _errorhandling.rpym:542
+    # _errorhandling.rpym:544
     old "Copy BBCode"
     new "复制 BBCode"
 
-    # _errorhandling.rpym:544
+    # _errorhandling.rpym:546
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
     new "复制追溯报告（traceback.txt）的内容到剪贴板，作为 https://lemmasoft.renai.us/ 等论坛的 BBcode。"
 
-    # _errorhandling.rpym:546
+    # _errorhandling.rpym:548
     old "Copy Markdown"
     new "复制 Markdown"
 
-    # _errorhandling.rpym:548
+    # _errorhandling.rpym:550
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
     new "复制追溯报告（traceback.txt）的内容到剪贴板，作为 Discord 的 Markdown。"
 
-    # _errorhandling.rpym:577
+    # _errorhandling.rpym:579
     old "An exception has occurred."
     new "发生异常。"
 
-    # _errorhandling.rpym:597
+    # _errorhandling.rpym:602
     old "Rollback"
     new "回滚"
 
-    # _errorhandling.rpym:599
+    # _errorhandling.rpym:604
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "尝试回滚到先前的状态，使您可以存档或者选择不同选项。"
 
-    # _errorhandling.rpym:602
+    # _errorhandling.rpym:607
     old "Ignore"
     new "忽略"
 
-    # _errorhandling.rpym:606
+    # _errorhandling.rpym:611
     old "Ignores the exception, allowing you to continue."
     new "忽略异常，让您可以继续。"
 
-    # _errorhandling.rpym:608
+    # _errorhandling.rpym:613
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "忽略异常，让您可以继续。但这通常会引起更多错误。"
 
-    # _errorhandling.rpym:612
+    # _errorhandling.rpym:617
     old "Reload"
     new "重新加载"
 
-    # _errorhandling.rpym:614
+    # _errorhandling.rpym:619
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "从硬盘重新加载游戏，尝试保存和恢复游戏状态。"
 
-    # _errorhandling.rpym:617
+    # _errorhandling.rpym:622
     old "Console"
     new "控制台"
 
-    # _errorhandling.rpym:619
+    # _errorhandling.rpym:624
     old "Opens a console to allow debugging the problem."
     new "打开控制台，允许您对问题进行调试。"
 
-    # _errorhandling.rpym:629
+    # _errorhandling.rpym:637
     old "Quits the game."
     new "退出游戏。"
 
-    # _errorhandling.rpym:653
+    # _errorhandling.rpym:658
     old "Parsing the script failed."
     new "解析脚本失败。"
 
-    # _errorhandling.rpym:679
+    # _errorhandling.rpym:684
     old "Opens the errors.txt file in a text editor."
     new "在文本编辑器中打开追溯报告（traceback.txt）。"
 
-    # _errorhandling.rpym:683
+    # _errorhandling.rpym:688
     old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
     new "复制解析错误文件（errors.txt）到剪贴板，作为 https://lemmasoft.renai.us/ 等论坛的 BBcode。"
 
-    # _errorhandling.rpym:687
+    # _errorhandling.rpym:692
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "复制解析错误文件（errors.txt）到剪贴板，作为 Discord 的 Markdown。"
-
-    # 00updater.rpy:1446
-    old "An error has occured:"
-    new "发生错误："
-
-    # 00updater.rpy:1448
-    old "Checking for updates."
-    new "正在检查更新。"
-
-    # 00updater.rpy:1460
-    old "Finishing up."
-    new "完成。"
-
-    # 00updater.rpy:1481
-    old "Proceed"
-    new "继续"

@@ -436,7 +436,7 @@ cdef class GL2Draw:
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
         # Get the size of the created screen.
-        pwidth, pheight = pygame.display.get_size()
+        pwidth, pheight = renpy.display.core.get_size()
 
         renpy.game.preferences.fullscreen = fullscreen
         renpy.game.interface.fullscreen = fullscreen
@@ -544,7 +544,7 @@ cdef class GL2Draw:
 
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
-        size = pygame.display.get_size()
+        size = renpy.display.core.get_size()
 
         if force or (fullscreen != renpy.display.interface.fullscreen) or (size != self.physical_size):
             renpy.display.interface.before_resize()
@@ -925,6 +925,7 @@ cdef class GL2Draw:
         # Project the child from virtual space to the screen space.
         cdef Matrix transform
         transform = renpy.display.render.IDENTITY
+        transform = Matrix.cscreen_projection(1, 1)
 
         # Set up the default modes.
         glEnable(GL_BLEND)
@@ -1097,11 +1098,15 @@ cdef class GL2DrawingContext:
     cdef float width
     cdef float height
 
-    def __init__(self, GL2Draw draw, width, height):
+    cdef bint debug
+
+    def __init__(self, GL2Draw draw, width, height, debug=False):
         self.gl2draw = draw
 
         self.width = width
         self.height = height
+
+        self.debug = debug
 
     cdef Matrix correct_pixel_perfect(self, Matrix transform):
         """
@@ -1149,6 +1154,10 @@ cdef class GL2DrawingContext:
 
         if model.shaders:
             shaders = shaders + model.shaders
+
+        if self.debug:
+            import renpy.gl2.gl2debug as gl2debug
+            gl2debug.geometry(mesh, transform)
 
         program = self.gl2draw.shader_cache.get(shaders)
 

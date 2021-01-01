@@ -900,7 +900,7 @@ class ShownImageInfo(renpy.object.Object):
         """
         Given a layer, tag, and an image name (with attributes),
         returns the canonical name of an image, if one exists. Raises
-        an exception if it's ambiguious, and returns None if an image
+        an exception if it's ambiguous, and returns None if an image
         with that name couldn't be found.
         """
 
@@ -952,6 +952,9 @@ class ShownImageInfo(renpy.object.Object):
 
         for attrs, d in image_attributes[tag].items():
 
+            if not all((i in required) or (i in optional) for i in attrs):
+                continue
+
             ca = getattr(d, "_choose_attributes", None)
 
             if ca:
@@ -970,9 +973,6 @@ class ShownImageInfo(renpy.object.Object):
                 if i in required:
                     num_required += 1
                     continue
-
-                elif (i not in optional) and (ca is None):
-                    break
 
             else:
 

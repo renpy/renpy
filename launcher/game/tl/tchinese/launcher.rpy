@@ -1,5 +1,5 @@
 ﻿
-translate traditional_chinese strings:
+translate tchinese strings:
 
     # about.rpy:39
     old "[version!q]"
@@ -1184,4 +1184,3 @@ translate traditional_chinese strings:
     # updater.rpy:195
     old "Proceed"
     new "繼續"
-

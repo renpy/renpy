@@ -1,5 +1,5 @@
 ﻿
-translate traditional_chinese strings:
+translate tchinese strings:
 
     # gui.rpy:2
     old "## Initialization"
@@ -408,4 +408,3 @@ translate traditional_chinese strings:
     # gui.rpy:456
     old "## Quick buttons."
     new "## Quick buttons."
-

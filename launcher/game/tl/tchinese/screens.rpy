@@ -1,5 +1,5 @@
 ﻿
-translate traditional_chinese strings:
+translate tchinese strings:
 
     # screens.rpy:9
     old "## Styles"
@@ -640,4 +640,3 @@ translate traditional_chinese strings:
     # screens.rpy:1429
     old "Menu"
     new "Menu"
-

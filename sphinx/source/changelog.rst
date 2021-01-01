@@ -244,6 +244,10 @@ renderer.
 Miscellaneous
 -------------
 
+Support for controllers has been improved. Repeat is now supported
+on controllers, and the libraries that Ren'Py uses have been compiled
+to support many of the more popular game controllers.
+
 Ren'Py now uses software playback of movies on Android and iOS devices,
 meaning the same files can be used on all platforms that support video
 playback.

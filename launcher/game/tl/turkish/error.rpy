@@ -130,8 +130,8 @@ translate turkish strings:
     new "Kalibre Ediliyor [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Bas veya hareket ettir [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Bas veya hareket ettir [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"

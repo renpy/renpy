@@ -130,6 +130,23 @@ def get_time():
     return time_base + (t - time_base) * time_mult
 
 
+def get_size():
+    """
+    Returns the screen size. Always returns at least 256, 256, to make sure
+    that we don't divide by zero.
+    """
+
+    size = pygame.display.get_size()
+
+    if not size:
+        return size
+
+    if size[0] >= 256 and size[1] >= 256:
+        return size
+
+    return (max(size[0], 256), max(size[1], 256))
+
+
 def displayable_by_tag(layer, tag):
     """
     Get the displayable on the given layer with the given tag.
@@ -2719,7 +2736,7 @@ class Interface(object):
             return
 
         # Deal with a hardware mouse, the easy way.
-        if not renpy.config.mouse:
+        if self.cursor_cache is None:
             self.set_mouse(True)
             return
 
@@ -2732,13 +2749,14 @@ class Interface(object):
 
         mouse_kind = renpy.display.focus.get_mouse() or self.mouse
 
-        # Figure out the mouse animation.
+        if (mouse_kind == 'default') or (mouse_kind not in self.cursor_cache):
+            mouse_kind = getattr(renpy.store, 'default_mouse', 'default')
+
         if mouse_kind in self.cursor_cache:
             anim = self.cursor_cache[mouse_kind]
+            cursor = anim[self.ticks % len(anim)]
         else:
-            anim = self.cursor_cache[getattr(renpy.store, 'default_mouse', 'default')]
-
-        cursor = anim[self.ticks % len(anim)]
+            cursor = True
 
         self.set_mouse(cursor)
 
@@ -3641,6 +3659,7 @@ class Interface(object):
 
                     renpy.audio.audio.periodic()
                     renpy.display.tts.periodic()
+                    renpy.display.controller.periodic()
 
                     self.update_mouse()
 

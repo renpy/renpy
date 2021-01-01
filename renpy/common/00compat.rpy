@@ -199,6 +199,9 @@ init -1900 python:
             config.window_functions_set_auto = False
             config.hw_video = True
 
+        if verion <= (7, 4, 0):
+            config.pause_with_transition = True
+
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

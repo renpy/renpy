@@ -1,5 +1,5 @@
 ﻿
-translate simplified_chinese strings:
+translate schinese strings:
 
     # about.rpy:39
     old "[version!q]"
@@ -433,167 +433,167 @@ translate simplified_chinese strings:
     old "It looks like you're ready to start packaging games."
     new "看起来您已准备好开始打包游戏了。"
 
-    # choose_directory.rpy:88
+    # choose_directory.rpy:93
     old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."
     new "Ren'Py 无法使用 Python 的 Tkinter 来选择目录。请安装 Python3-tk 或 Tkinter 包。"
 
-    # choose_directory.rpy:106
+    # choose_directory.rpy:111
     old "The selected projects directory is not writable."
     new "所选的工程目录无法执行写操作。"
 
-    # choose_theme.rpy:303
+    # choose_theme.rpy:304
     old "Could not change the theme. Perhaps options.rpy was changed too much."
     new "无法更改主题。可能 options.rpy 已被过度修改。"
 
-    # choose_theme.rpy:370
+    # choose_theme.rpy:371
     old "Planetarium"
     new "Planetarium"
 
-    # choose_theme.rpy:425
+    # choose_theme.rpy:426
     old "Choose Theme"
     new "选择主题"
 
-    # choose_theme.rpy:438
+    # choose_theme.rpy:439
     old "Theme"
     new "主题"
 
-    # choose_theme.rpy:463
+    # choose_theme.rpy:464
     old "Color Scheme"
     new "配色方案"
 
-    # choose_theme.rpy:495
+    # choose_theme.rpy:496
     old "Continue"
     new "继续"
 
-    # choose_theme.rpy:507 此处与 While 连用
+    # choose_theme.rpy:508 此处与 While 连用
     old "changing the theme"
     new "更改主题"
 
-    # consolecommand.rpy:84
+    # consolecommand.rpy:86
     old "INFORMATION"
     new "信息"
 
-    # consolecommand.rpy:84
+    # consolecommand.rpy:86
     old "The command is being run in a new operating system console window."
     new "此命令正在新的操作系统控制台窗口中运行。"
 
-    # distribute.rpy:452
+    # distribute.rpy:448
     old "Scanning project files..."
     new "正在扫描工程文件……"
 
-    # distribute.rpy:468
+    # distribute.rpy:464
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
     new "生成分发版失败：\n\n变量 build.directory_name 不能包含空格、冒号和分号。"
 
-    # distribute.rpy:513
+    # distribute.rpy:510
     old "No packages are selected, so there's nothing to do."
     new "因未选择任何打包平台，故未执行任何操作。"
 
-    # distribute.rpy:525
+    # distribute.rpy:523
     old "Scanning Ren'Py files..."
     new "正在扫描 Ren'Py 文件……"
 
-    # distribute.rpy:584
+    # distribute.rpy:581
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
     new "已生成所有的分发包。\n\n由于包内写入了权限信息，因此不支持在 Windows 上解包并重新打包 Linux 和 Macintosh 分发版。"
 
-    # distribute.rpy:767
+    # distribute.rpy:764
     old "Archiving files..."
     new "正在封装文件……"
 
-    # distribute.rpy:1092
+    # distribute.rpy:1091
     old "Unpacking the Macintosh application for signing..."
     new "正在解包 Macintosh 应用并签名……"
 
-    # distribute.rpy:1102
+    # distribute.rpy:1101
     old "Signing the Macintosh application...\n(This may take a long time.)"
     new "正在签名 Macintosh 应用……\n（可能需要很长时间。）"
 
-    # distribute.rpy:1125
+    # distribute.rpy:1124
     old "Creating the Macintosh DMG..."
     new "正在创建 Macintosh DMG……"
 
-    # distribute.rpy:1136
+    # distribute.rpy:1135
     old "Signing the Macintosh DMG..."
     new "正在签名 Macintosh DMG……"
 
-    # distribute.rpy:1331
+    # distribute.rpy:1356
     old "Writing the [variant] [format] package."
     new "正在写入 [variant] 版 [format] 包。"
 
-    # distribute.rpy:1344
+    # distribute.rpy:1369
     old "Making the [variant] update zsync file."
     new "正在制作 [variant] 版更新同步文件。"
 
-    # distribute.rpy:1454
+    # distribute.rpy:1479
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
     new "已处理 {b}[complete]{/b} / {b}[total]{/b} 个文件。"
 
-    # distribute_gui.rpy:160
+    # distribute_gui.rpy:157
     old "Build Distributions: [project.current.display_name!q]"
     new "生成分发版：[project.current.display_name!q]"
 
-    # distribute_gui.rpy:174
+    # distribute_gui.rpy:171
     old "Directory Name:"
     new "目录名："
 
-    # distribute_gui.rpy:178
+    # distribute_gui.rpy:175
     old "Executable Name:"
     new "可执行程序名："
 
-    # distribute_gui.rpy:188
+    # distribute_gui.rpy:185
     old "Actions:"
     new "操作："
 
-    # distribute_gui.rpy:196
+    # distribute_gui.rpy:193
     old "Edit options.rpy"
     new "编辑 options.rpy"
 
-    # distribute_gui.rpy:197
+    # distribute_gui.rpy:194
     old "Add from clauses to calls, once"
     new "向 call 语句添加 from 从句，执行一次"
 
-    # distribute_gui.rpy:198
+    # distribute_gui.rpy:195
     old "Refresh"
     new "刷新"
 
-    # distribute_gui.rpy:202
+    # distribute_gui.rpy:199
     old "Upload to itch.io"
     new "上传到 itch.io"
 
-    # distribute_gui.rpy:218
+    # distribute_gui.rpy:215
     old "Build Packages:"
     new "生成分发包："
 
-    # distribute_gui.rpy:237
+    # distribute_gui.rpy:234
     old "Options:"
     new "选项："
 
-    # distribute_gui.rpy:242
+    # distribute_gui.rpy:239
     old "Build Updates"
     new "生成更新"
 
-    # distribute_gui.rpy:244
+    # distribute_gui.rpy:241
     old "Add from clauses to calls"
     new "向 call 语句添加 from 从句"
 
-    # distribute_gui.rpy:245
+    # distribute_gui.rpy:242
     old "Force Recompile"
     new "强制重新编译"
 
-    # distribute_gui.rpy:265
+    # distribute_gui.rpy:246
     old "Build"
     new "生成"
 
-    # distribute_gui.rpy:269
+    # distribute_gui.rpy:250
     old "Adding from clauses to call statements that do not have them."
     new "正在向 call 语句添加缺失的 from 从句。"
 
-    # distribute_gui.rpy:290
+    # distribute_gui.rpy:271
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
     new "运行工程时检测到错误。请在生成分发版之前确保工程能够正常运行。"
 
-    # distribute_gui.rpy:307
+    # distribute_gui.rpy:288
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
     new "您的工程尚未包含生成信息。您希望在 options.rpy 末端添加生成信息吗？"
 
@@ -613,63 +613,47 @@ translate simplified_chinese strings:
     old "Up to 150 MB download required."
     new "需要下载最多 150 MB 的文件。"
 
-    # editor.rpy:178
-    old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input."
-    new "一个成熟的编辑器。Editra 缺乏对中日韩输入法的良好支持。"
-
-    # editor.rpy:179
-    old "A mature editor. Editra lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython."
-    new "一个成熟的编辑器。Editra 缺乏对中日韩输入法的良好支持。在 Linux 系统运行 Editra 需要安装 wxPython。"
-
-    # editor.rpy:195
-    old "This may have occured because wxPython is not installed on this system."
-    new "这可能是由于您的系统中尚未安装 wxPython 造成的。"
-
-    # editor.rpy:197
-    old "Up to 22 MB download required."
-    new "需要下载最多 22 MB 的文件。"
-
-    # editor.rpy:210
+    # editor.rpy:177
     old "A mature editor that requires Java."
     new "一个成熟的编辑器，需要安装 Java。"
 
-    # editor.rpy:210
+    # editor.rpy:177
     old "1.8 MB download required."
     new "需要下载 1.8 MB 的文件。"
 
-    # editor.rpy:210
+    # editor.rpy:177
     old "This may have occured because Java is not installed on this system."
     new "这可能是由于您的系统中尚未安装 Java 造成的。"
 
-    # editor.rpy:219
+    # editor.rpy:186
     old "System Editor"
     new "操作系统编辑器"
 
-    # editor.rpy:219
+    # editor.rpy:186
     old "Invokes the editor your operating system has associated with .rpy files."
     new "调用您操作系统已关联到 .rpy 文件的编辑器。"
 
-    # editor.rpy:235
+    # editor.rpy:202
     old "None"
     new "无"
 
-    # editor.rpy:235
+    # editor.rpy:202
     old "Prevents Ren'Py from opening a text editor."
     new "禁止 Ren'Py 自动打开文本编辑器。"
 
-    # editor.rpy:338
+    # editor.rpy:305
     old "Edit [text]."
     new "编辑 [text]。"
 
-    # editor.rpy:387
+    # editor.rpy:354
     old "An exception occured while launching the text editor:\n[exception!q]"
     new "启动编辑器时出现异常：\n[exception!q]"
 
-    # editor.rpy:519
+    # editor.rpy:486
     old "Select Editor"
     new "选择编辑器"
 
-    # editor.rpy:534
+    # editor.rpy:501
     old "A text editor is the program you'll use to edit Ren'Py script files. Here, you can select the editor Ren'Py will use. If not already present, the editor will be automatically downloaded and installed."
     new "文本编辑器是指您用来编辑 Ren'Py 脚本的程序。在这里您可以选择 Ren'Py 要使用的编辑器。若您选择的编辑器不存在，Ren'Py 将会自动下载并安装此编辑器。"
 
@@ -831,7 +815,7 @@ translate simplified_chinese strings:
 
     # gui7.rpy:311
     old "Regenerate the image files using the colors in gui.rpy."
-    new ""
+    new "使用 gui.rpy 中的配色重新生成图像文件。"
 
     # gui7.rpy:339
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
@@ -885,23 +869,43 @@ translate simplified_chinese strings:
     old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
     new "无法安装 [name!t]，因为在 Ren'Py SDK 目录中找不到与 [zipglob] 匹配的文件。"
 
-    # install.rpy:73
+    # install.rpy:76
     old "Successfully installed [name!t]."
     new "已成功安装 [name!t]。"
 
-    # install.rpy:101
+    # install.rpy:110
     old "Install Libraries"
     new "安装库"
 
-    # install.rpy:116
+    # install.rpy:125
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
     new "本界面将引导您安装 Ren'Py 无法分发的库。其中一些库可能会要求您在使用或分发之前同意第三方许可证。"
 
     # install.rpy:131
+    old "Install Live2D Cubism SDK for Native"
+    new "安装 Live2D Cubism SDK for Native"
+
+    # install.rpy:140
     old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
     new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} 增加了对显示 Live2D 模型的支持。将 CubismSdkForNative-4-{i}version{/i}.zip 放在 Ren'Py SDK 目录中，然后单击“安装”。使用 Live2D 分发游戏需要您接受 Live2D 公司的许可。"
 
-    # install.rpy:135
+    # install.rpy:144
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new "Ren'Py 中的 Live2D 不支持网页版和安卓 x86_64（包括模拟器和 Chrome OS），且必须手动添加至 iOS 工程。更新 Ren'Py 或安装安卓支持包后需要重新安装 Live2D。"
+
+    # install.rpy:151
+    old "Install Steam Support"
+    new "安装 Steam 支持包"
+
+    # install.rpy:160
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    new "在安装 Steam 支持包之前，请确保您是 {a=https://partner.steamgames.com/}Steam 合作伙伴{/a}。"
+
+    # install.rpy:172
+    old "Steam support has already been installed."
+    new " Steam 支持包已安装。"
+
+    # install.rpy:176
     old "Open Ren'Py SDK Directory"
     new "打开 Ren'Py SDK 目录"
 
@@ -1021,55 +1025,55 @@ translate simplified_chinese strings:
     old "Opens the directory containing Xcode projects."
     new "打开包含 Xcode 工程的目录。"
 
-    # ios.rpy:131
+    # ios.rpy:139
     old "The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"
     new "Xcode 工程已经存在。您希望重命名旧工程，并用新工程将其替换吗？"
 
-    # ios.rpy:225
+    # ios.rpy:233
     old "iOS: [project.current.display_name!q]"
     new "iOS：[project.current.display_name!q]"
 
-    # ios.rpy:254
+    # ios.rpy:262
     old "iPhone"
     new "iPhone"
 
-    # ios.rpy:258
+    # ios.rpy:266
     old "iPad"
     new "iPad"
 
-    # ios.rpy:278
+    # ios.rpy:286
     old "Select Xcode Projects Directory"
     new "指定 Xcode 工程目录"
 
-    # ios.rpy:282
+    # ios.rpy:290
     old "Create Xcode Project"
     new "创建 Xcode 工程"
 
-    # ios.rpy:286
+    # ios.rpy:294
     old "Update Xcode Project"
     new "更新 Xcode 工程"
 
-    # ios.rpy:291
+    # ios.rpy:299
     old "Launch Xcode"
     new "启动 Xcode"
 
-    # ios.rpy:326
+    # ios.rpy:334
     old "Open Xcode Projects Directory"
     new "打开 Xcode 工程目录"
 
-    # ios.rpy:359
+    # ios.rpy:367
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
     new "在打包 iOS 应用之前，您需要先下载 renios，即 Ren'Py iOS 支持包。您希望现在就开始下载 renios 吗？"
 
-    # ios.rpy:368
+    # ios.rpy:376
     old "XCODE PROJECTS DIRECTORY"
     new "XCODE 工程目录"
 
-    # ios.rpy:368
+    # ios.rpy:376
     old "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "请使用弹出的目录选择窗口来指定 Xcode 工程目录。\n{b}目录选择窗口可能会被本窗口覆盖。{/b}"
 
-    # ios.rpy:373
+    # ios.rpy:381
     old "Ren'Py has set the Xcode Projects Directory to:"
     new "Ren'Py 已将 Xcode 工程目录设置为："
 
@@ -1097,7 +1101,7 @@ translate simplified_chinese strings:
     old "The name of the itch project has not been set."
     new "尚未设置 itch 工程名。"
 
-    # itch.rpy:151
+    # itch.rpy:149
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
     new "请{a=https://itch.io/game/new}创建您的工程{/a}，并在 options.rpy 里添加诸如以下内容的语句：\n{vspace=5}define build.itch_project = \"user-name/game-name\""
 
@@ -1265,79 +1269,75 @@ translate simplified_chinese strings:
     old "Install libraries"
     new "安装库"
 
-    # preferences.rpy:140
-    old "Reset window size"
-    new "重置窗口大小"
-
-    # preferences.rpy:145
-    old "Navigation Options:"
-    new "定位选项："
-
-    # preferences.rpy:149
-    old "Include private names"
-    new "包含私有名称"
-
-    # preferences.rpy:150
-    old "Include library names"
-    new "包含库名称"
-
-    # preferences.rpy:160
-    old "Launcher Options:"
-    new "启动器选项："
-
-    # preferences.rpy:164
-    old "Hardware rendering"
-    new "硬件渲染"
-
-    # preferences.rpy:165
-    old "Show edit file section"
-    new "显示编辑文件部件"
-
-    # preferences.rpy:166
-    old "Large fonts"
-    new "大字体"
-
-    # preferences.rpy:169
-    old "Console output"
-    new "控制台输出"
-
-    # preferences.rpy:173
-    old "Force new tutorial"
-    new "强制新手教程"
-
-    # preferences.rpy:177
-    old "Legacy options"
-    new "传统选项"
-
-    # preferences.rpy:180
-    old "Show templates"
-    new "显示模板"
-
-    # preferences.rpy:182
-    old "Sponsor message"
-    new "赞助者信息"
-
-    # preferences.rpy:202
+    # preferences.rpy:144
     old "Open launcher project"
     new "打开启动器工程"
 
-    # preferences.rpy:216
+    # preferences.rpy:145
+    old "Reset window size"
+    new "重置窗口大小"
+
+    # preferences.rpy:161
+    old "Navigation Options:"
+    new "定位选项："
+
+    # preferences.rpy:165
+    old "Include private names"
+    new "包含私有名称"
+
+    # preferences.rpy:166
+    old "Include library names"
+    new "包含库名称"
+
+    # preferences.rpy:176
+    old "Launcher Options:"
+    new "启动器选项："
+
+    # preferences.rpy:180
+    old "Show edit file section"
+    new "显示编辑文件部件"
+
+    # preferences.rpy:181
+    old "Large fonts"
+    new "大字体"
+
+    # preferences.rpy:184
+    old "Console output"
+    new "控制台输出"
+
+    # preferences.rpy:188
+    old "Force new tutorial"
+    new "强制新手教程"
+
+    # preferences.rpy:192
+    old "Legacy options"
+    new "传统选项"
+
+    # preferences.rpy:195
+    old "Show templates"
+    new "显示模板"
+
+    # preferences.rpy:197
+    old "Sponsor message"
+    new "赞助者信息"
+
+    # preferences.rpy:217
     old "Language:"
     new "语言："
 
-    # project.rpy:49
+    # project.rpy:51
     old "After making changes to the script, press shift+R to reload your game."
     new "在对脚本进行更改之后，按 Shift+R 来重新载入游戏。"
 
-    # project.rpy:49
+    # project.rpy:51
     old "Press shift+O (the letter) to access the console."
     new "按 Shift+O（字母 O）来打开控制台。"
 
-    # project.rpy:49
+    # project.rpy:51
     old "Press shift+D to access the developer menu."
     new "按 Shift+D 打开开发者菜单。"
 
-    # project.rpy:49
+    # project.rpy:51
     old "Have you backed up your projects recently?"
     new "您最近备份过您的工程吗？"
 
@@ -1353,23 +1353,23 @@ translate simplified_chinese strings:
     old "Ren'Py is scanning the project..."
     new "Ren'Py 正在扫描工程……"
 
-    # project.rpy:729
+    # project.rpy:740
     old "Launching"
     new "启动中"
 
-    # project.rpy:763
+    # project.rpy:774
     old "PROJECTS DIRECTORY"
     new "工程目录"
 
-    # project.rpy:763
+    # project.rpy:774
     old "Please choose the projects directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "请使用弹出的目录选择窗口来指定工程目录。\n{b}目录选择窗口可能会被本窗口覆盖。{/b}"
 
-    # project.rpy:763
+    # project.rpy:774
     old "This launcher will scan for projects in this directory, will create new projects in this directory, and will place built projects into this directory."
     new "该启动器将会在此目录里扫描工程、创建新工程以及将生成的工程放置在此。"
 
-    # project.rpy:768
+    # project.rpy:779
     old "Ren'Py has set the projects directory to:"
     new "Ren'Py 已将工程目录设置为："
 
@@ -1386,8 +1386,8 @@ translate simplified_chinese strings:
     new "为翻译生成空字串"
 
     # translations.rpy:176
-    old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "生成或更新翻译文件。文件将放置在 game/tl/[persistent.translate_language!q]。"
+    old "Generates or updates translation files. The files will be placed in tl/[persistent.translate_language!q]."
+    new "生成或更新翻译文件。文件将放置在 tl/[persistent.translate_language!q]。"
 
     # translations.rpy:196
     old "Extract String Translations"
@@ -1577,65 +1577,61 @@ translate simplified_chinese strings:
     old "Fetching the list of update channels"
     new "正在获取更新通道列表"
 
-    # updater.rpy:194 此处与 While 连用
+    # updater.rpy:193 此处与 While 连用
     old "downloading the list of update channels"
     new "下载更新通道列表"
 
-    # updater.rpy:198 此处与 While 连用
+    # updater.rpy:196 此处与 While 连用
     old "parsing the list of update channels"
     new "解析更新通道列表"
-
-    # web.rpy:119
-    old "Web: [project.current.display_name!q]"
-    new "网页：[project.current.display_name!q]"
-
-    # web.rpy:149
-    old "Build Web Application"
-    new "生成网页应用"
-
-    # web.rpy:150
-    old "Build and Open in Browser"
-    new "生成应用并在浏览器中打开"
-
-    # web.rpy:151
-    old "Open in Browser"
-    new "在浏览器中打开"
-
-    # web.rpy:152
-    old "Open build directory"
-    new "打开生成目录"
-
-    # web.rpy:156
-    old "Support:"
-    new "支持："
-
-    # web.rpy:164
-    old "RenPyWeb Home"
-    new "RenPyWeb 主页"
-
-    # web.rpy:165
-    old "Beuc's Patreon"
-    new "Beuc 的 Patreon"
-
-    # web.rpy:183
-    old "Ren'Py web applications require the entire game to be downloaded to the player's computer before it can start."
-    new "Ren'Py 网页应用要求将整个游戏下载到玩家的计算机上之后才能启动。"
-
-    # web.rpy:187
-    old "Current limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general."
-    new "当前在网页平台中的限制意味着加载较大图像、音频文件或视频时可能会导致声音或帧数抖动，并且通常会降低性能。"
-
-    # web.rpy:196
-    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
-    new "在打包网页应用之前，您需要先下载 RenPyWeb，即 Ren'Py 网页支持包。您希望现在就开始下载 RenPyWeb 吗？"
 
     # web.rpy:242
     old "Preparing progressive download"
     new "正在准备渐进式下载"
 
+    # web.rpy:277
+    old "Web: [project.current.display_name!q]"
+    new "网页：[project.current.display_name!q]"
+
+    # web.rpy:307
+    old "Build Web Application"
+    new "生成网页应用"
+
+    # web.rpy:308
+    old "Build and Open in Browser"
+    new "生成应用并在浏览器中打开"
+
+    # web.rpy:309
+    old "Open in Browser"
+    new "在浏览器中打开"
+
+    # web.rpy:310
+    old "Open build directory"
+    new "打开生成目录"
+
+    # web.rpy:314
+    old "Support:"
+    new "支持："
+
+    # web.rpy:322
+    old "RenPyWeb Home"
+    new "RenPyWeb 主页"
+
+    # web.rpy:323
+    old "Beuc's Patreon"
+    new "Beuc 的 Patreon"
+
     # web.rpy:341
     old "Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
     new "图像和音乐可以在进行游戏时下载。引擎将创建“progressive_download.txt”的文件，以便您配置此行为。"
+
+    # web.rpy:345
+    old "Current limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general."
+    new "当前在网页平台中的限制意味着加载较大图像、音频文件或视频时可能会导致声音或帧数抖动，并且通常会降低性能。"
+
+    # web.rpy:354
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    new "在打包网页应用之前，您需要先下载 RenPyWeb，即 Ren'Py 网页支持包。您希望现在就开始下载 RenPyWeb 吗？"
 
     old "Web (Beta)"
     new "网页（测试版）"

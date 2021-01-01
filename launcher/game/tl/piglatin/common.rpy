@@ -441,11 +441,11 @@ translate piglatin strings:
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
-    # renpy/common/00keymap.rpy:280
+    # renpy/common/00keymap.rpy:301
     old "Failed to save screenshot as %s."
     new "Ailedfay otay avesay creenshotsay asay %say."
 
-    # renpy/common/00keymap.rpy:292
+    # renpy/common/00keymap.rpy:313
     old "Saved screenshot as %s."
     new "Avedsay creenshotsay asay %say."
 

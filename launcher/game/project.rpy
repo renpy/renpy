@@ -366,6 +366,8 @@ init python in project:
             Unelides the filename relative to the project base.
             """
 
+            fn = os.path.normpath(fn)
+
             fn1 = os.path.join(self.path, fn)
             if os.path.exists(fn1):
                 return fn1

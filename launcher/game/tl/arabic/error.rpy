@@ -102,8 +102,8 @@ translate arabic strings:
     new "يتم تهيئة [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "الرجاء ضغط الزر او تحريك [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "الرجاء ضغط الزر او تحريك [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"

@@ -12,6 +12,18 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+.. _incompatible-7.4.1:
+
+7.4.1
+-----
+
+Pause with a delay now uses :func:`renpy.pause` rather than ``with Pause(...)``.
+This means that the user will have to click to bypass multiple pauses in a row.
+To revert to the old behavior, use::
+
+    define config.pause_with_transition = True
+
+
 .. _incompatible-7.4:
 
 7.4
@@ -27,6 +39,10 @@ addition to the image tag. To disable this, use::
 
     define config.side_image_requires_attributes = False
 
+
+While setting config variables, like :var:`config.mouse`, outside of the init
+phase was never supported, it will not work in 7.4. Consider using the
+:var:`default_mouse` variable to set a custom mouse cursor, instead.
 
 .. _incompatible-7.3.3:
 

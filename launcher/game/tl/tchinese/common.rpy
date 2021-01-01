@@ -1,5 +1,5 @@
 ﻿
-translate traditional_chinese strings:
+translate tchinese strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
@@ -237,6 +237,30 @@ translate traditional_chinese strings:
     old "Self-voicing enabled. Press 'v' to disable."
     new "Self-voicing 已啟用。按 'v' 禁用"
 
+    # _compat/gamemenu.rpym:198
+    old "Empty Slot."
+    new "空白檔位"
+
+    # _compat/gamemenu.rpym:170
+    old "a"
+    new "a"
+
+    # _compat/gamemenu.rpym:179
+    old "q"
+    new "q"
+
+    # _compat/gamemenu.rpym:355
+    old "Previous"
+    new "上一頁"
+
+    # _compat/gamemenu.rpym:362
+    old "Next"
+    new "下一頁"
+
+    # _compat/preferences.rpym:428
+    old "Joystick Mapping"
+    new "遊戲桿映射"
+
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
     new "Contacting App Store\nPlease Wait..."
@@ -332,4 +356,3 @@ translate traditional_chinese strings:
     # 00gallery.rpy:586
     old "return"
     new "返回"
-

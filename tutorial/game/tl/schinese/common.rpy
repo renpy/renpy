@@ -1034,8 +1034,8 @@ translate schinese strings:
     new "校准 [name] ([i]/[total])"
 
     # renpy/common/00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "按下或移动 [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "按下或移动 [control!s] [kind]."
 
     # renpy/common/00gamepad.rpy:66
     old "Skip (A)"

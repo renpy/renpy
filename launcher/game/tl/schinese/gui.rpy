@@ -1,5 +1,5 @@
 ﻿
-translate simplified_chinese strings:
+translate schinese strings:
 
     # gui.rpy:2
     old "## Initialization"

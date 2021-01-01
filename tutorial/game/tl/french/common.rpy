@@ -948,8 +948,8 @@ translate french strings:
     new "Calibrage de [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Pressez ou déplacez le [kind] [control!r]."
+    old "Press or move the [control!s] [kind]."
+    new "Pressez ou déplacez le [kind] [control!s]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"

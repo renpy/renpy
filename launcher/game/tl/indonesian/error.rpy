@@ -101,8 +101,8 @@
     new "Mengkalibrasi [nama] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Tekan atau gerakan [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Tekan atau gerakan [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"

@@ -102,8 +102,8 @@ translate italian strings:
     new "Calibrazione [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Premi o muovi [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Premi o muovi [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"

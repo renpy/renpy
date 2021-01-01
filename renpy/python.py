@@ -368,12 +368,10 @@ class NoRollback(object):
 def reached(obj, reachable, wait):
     """
     @param obj: The object that was reached.
-    @param path: The path from the store via which it was reached.
 
     `reachable`
         A map from id(obj) to int. The int is 1 if the object was reached
         normally, and 0 if it was reached, but inherits from NoRollback.
-
     """
 
     if wait:
@@ -1369,14 +1367,23 @@ class Rollback(renpy.object.Object):
         # Purge object update information for unreachable objects.
         new_objects = [ ]
 
-        for o, rb in self.objects:
-            if reachable.get(id(o), 0):
-                new_objects.append((o, rb))
-                reached(rb, reachable, wait)
-            else:
-                if renpy.config.debug:
-                    print("Removing unreachable:", o, file=renpy.log.real_stdout)
-                    pass
+        objects_changed = True
+        seen = set()
+
+        while objects_changed:
+
+            objects_changed = False
+
+            for o, rb in self.objects:
+
+                id_o = id(o)
+
+                if (id_o not in seen) and reachable.get(id_o, 0):
+                    seen.add(id_o)
+                    objects_changed = True
+
+                    new_objects.append((o, rb))
+                    reached(rb, reachable, wait)
 
         del self.objects[:]
         self.objects.extend(new_objects)

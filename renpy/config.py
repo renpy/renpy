@@ -1067,6 +1067,23 @@ quit_callbacks = [ ]
 # very early.
 steam_appid = None
 
+# How long between when the controller is pressed and the first repeat?
+controller_first_repeat = .25
+
+# How long between repeats?
+controller_repeat = .05
+
+# The states that repeat.
+controller_repeat_states = { "pos", "neg", "press" }
+
+# If True, the side image will only be shown if an image with the same tag
+# is not shown.
+side_image_only_not_showing = False
+
+# How much should the texture bounds be expanded by? This allows the mipmaps
+# to properly include
+expand_texture_bounds = 8
+
 del os
 del collections
 
