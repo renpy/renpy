@@ -1721,4 +1721,13 @@ translate spanish strings:
     # game/install.rpy:172
     old "Steam support has already been installed."
     new "El soporte de Steam ya está instalado."
+    
+    # game/androidstrings.rpy:21
+    old "The universal version works everywhere but is larger."
+    new "La versión universal funciona en todas partes pero es más grande."
+
+    # game/androidstrings.rpy:45
+    old "Automatically installing expansion APKs {a=https://issuetracker.google.com/issues/160942333}may not work on Android 11{/a}."
+    new "Es posible que la instalación automática de APK de expansión {a=https://issuetracker.google.com/issues/160942333} no funcione en Android 11 {/a}."
+
 
