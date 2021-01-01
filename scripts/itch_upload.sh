@@ -25,7 +25,3 @@ butler push "$D/renpy-$1-renios.zip" $P:renios
 butler push "$D/renpy-$1-atom-linux.tar.bz2" $P:atom-linux
 butler push "$D/renpy-$1-atom-mac.zip" $P:atom-mac
 butler push "$D/renpy-$1-atom-windows.zip" $P:atom-windows
-
-butler push "$D/renpy-$1-editra-linux.tar.bz2" $P:editra-linux
-butler push "$D/renpy-$1-editra-mac.zip" $P:editra-mac
-butler push "$D/renpy-$1-editra-windows.zip" $P:editra-windows
