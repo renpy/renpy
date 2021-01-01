@@ -199,7 +199,7 @@ init -1900 python:
             config.window_functions_set_auto = False
             config.hw_video = True
 
-        if verion <= (7, 4, 0):
+        if version <= (7, 4, 0):
             config.pause_with_transition = True
 
 
