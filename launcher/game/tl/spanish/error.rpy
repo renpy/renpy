@@ -271,3 +271,7 @@
     # renpy/common/00gltest.rpy:246
     old "Change render options"
     new "Cambiar las opciones de renderizado"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "Presiona o mueve el '[control!s]' [kind]."
