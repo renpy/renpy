@@ -601,7 +601,7 @@ new_compile_flags = (old_compile_flags
                       | __future__.unicode_literals.compiler_flag
                       )
 
-py3_compile_flags = (old_compile_flags |
+py3_compile_flags = (new_compile_flags |
                       __future__.division.compiler_flag)
 
 # The set of files that should be compiled under Python 2 with Python 3
