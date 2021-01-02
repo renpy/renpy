@@ -253,7 +253,7 @@ visual novel.
 
 **macOS**
 
-* Version: 10.6+
+* Version: 10.10+
 * CPU: 2.0 GHz Core 2 Duo (64 bit only)
 * RAM: 2.0 GB
 * Graphics: OpenGL 2.0

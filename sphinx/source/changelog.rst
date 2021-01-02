@@ -153,7 +153,7 @@ has changed slightly. Here's the latest list of what is supported:
       - Raised minimum version to Windows Vista.
     * - macOS
       - x86_64
-      - macOS 10.6+ (All 64-bit macOS versions.)
+      - macOS 10.10+
     * - Android
       - armv7a
       - Android 4.4 KitKat
