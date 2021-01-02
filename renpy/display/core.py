@@ -2196,27 +2196,31 @@ class Interface(object):
         if self.safe_mode:
             renderer = "sw"
 
-        if (renderer == "angle" or renderer == "angle2") and (not renpy.windows):
-            renderer = "auto"
-
         renpy.config.renderer = renderer
 
-        if renderer == "auto":
-
-            if renpy.android or renpy.ios or renpy.emscripten:
-                renderers = [ "gles" ]
-            elif renpy.windows:
-                renderers = [ "gl", "angle", "gles", "sw" ]
-            else:
-                renderers = [ "gl", "gles", "sw" ]
-
-            if renpy.config.gl2:
-
-                for i in [ "gles", "angle", "gl" ]:
-                    if i in renderers:
-                        renderers.insert(0, i + "2")
-
+        if renpy.android or renpy.ios or renpy.emscripten:
+            renderers = [ "gles" ]
+        elif renpy.windows:
+            renderers = [ "gl", "angle", "gles", "sw" ]
         else:
+            renderers = [ "gl", "gles", "sw" ]
+
+        if renpy.config.gl2:
+
+            found = False
+
+            for i in [ "gles", "angle", "gl" ]:
+                if i in renderers:
+                    name = i + "2"
+                    renderers.insert(0, name)
+
+                    if renderer == name:
+                        found = True
+
+            if not found:
+                renderer = "auto"
+
+        if renderer in renderers:
             renderers = [ renderer, "sw" ]
 
         draw_objects = { }
