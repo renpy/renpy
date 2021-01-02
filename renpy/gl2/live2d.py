@@ -650,13 +650,17 @@ class Live2D(renpy.display.core.Displayable):
             if i in common.nonexclusive:
                 rv.append(i)
 
+        rv = tuple(rv)
+
         if common.attribute_filter:
             rv = common.attribute_filter(rv)
+            if not isinstance(rv, tuple):
+                rv = tuple(rv)
 
         if sustain:
-            rv = ("_sustain" ,) + rv
+            rv = ("_sustain",) + rv
 
-        return tuple(rv)
+        return rv
 
     def update(self, common, st, st_fade):
         """
