@@ -631,6 +631,95 @@ def fix_missing_locations(node, lineno, col_offset):
         fix_missing_locations(child, lineno, col_offset)
 
 
+def quote_eval(s):
+    """
+    Quotes a string for `eval`. This is necessary when it's in certain places,
+    like as part of an argument string. We need to stick \ at the end of lines
+    that don't have it already, and that aren't in triple-quoted strings.
+    """
+
+    # No newlines! No problem.
+    if "\n" not in s:
+        return s
+
+    # Characters being added to the string.
+    rv = [ ]
+
+    # Pad out the string, so we don't have to deal with quotes at the end.
+    s += "\0\0"
+
+    len_s = len(s)
+
+    # The index into the string.
+    i = 0
+
+    # Special characters, that aren't just copied into the string.
+    special = "\0\\'\"\n"
+
+    # The string currently being processed.
+    string = None
+
+    while i < len_s:
+
+        c = s[i]
+
+        # Non-special characters.
+        if c not in special:
+            start = i
+
+            while True:
+                i += 1
+                if s[i] in special:
+                    break
+
+            rv.append(s[start:i])
+            continue
+
+        # Null.
+        if c == '\0':
+            rv.append(c)
+            i += 1
+            continue
+
+        # Any escaped character passes.
+        if c == '\\':
+            rv.append(s[i:i + 2])
+            i += 2
+            continue
+
+        # String delimiters.
+        if c in '\'"':
+
+            if ((string is None) or (len(string) == 3)) and (s[i + 1] == c) and (s[i + 2] == c):
+                delim = c + c + c
+            else:
+                delim = c
+
+            if (string is not None) and (delim == string):
+                string = None
+            else:
+                string = delim
+
+            rv.append(delim)
+            i += len(delim)
+
+            continue
+
+        # Newline.
+        if c == "\n":
+            if string is None:
+                rv.append('\\')
+
+            rv.append("\n")
+            i += 1
+            continue
+
+        raise Exception("Unknown character %r (can't happen)".format(c))
+
+    # Since the last 2 characters are \0, those characters need to be stripped.
+    return "".join(rv[:-2])
+
+
 def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True):
     """
     Compiles the given source code using the supplied codegenerator.
@@ -692,7 +781,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     source = escape_unicode(source)
 
     if mode == "eval":
-        source = source.replace("\n", "\\\n").replace("\\\\\n", "\\\n")
+        source = quote_eval(source)
 
     try:
         line_offset = lineno - 1
