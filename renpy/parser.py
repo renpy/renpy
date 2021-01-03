@@ -171,6 +171,8 @@ def elide_filename(fn):
 
 
 def unelide_filename(fn):
+    fn = os.path.normpath(fn)
+
     fn1 = os.path.join(renpy.config.basedir, fn)
     if os.path.exists(fn1):
         return fn1
