@@ -335,7 +335,10 @@ def read_video(channel):
 
     # Remove padding from the edges of the surface.
     w, h = rv.get_size()
-    return rv.subsurface((4, 4, w-8, h-8))
+
+    # This has to be set to the same number it is in ffmedia.c
+    FRAME_PADDING = 8
+    return rv.subsurface((FRAME_PADDING, FRAME_PADDING, w - FRAME_PADDING * 2, h - FRAME_PADDING * 2))
 
 # No video will be played from this channel.
 NO_VIDEO = 0
