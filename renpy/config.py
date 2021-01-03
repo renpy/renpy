@@ -1084,6 +1084,9 @@ side_image_only_not_showing = False
 # to properly include
 expand_texture_bounds = 8
 
+# Should time events be modal?
+modal_timeevent = False
+
 del os
 del collections
 

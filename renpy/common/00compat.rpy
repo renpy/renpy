@@ -201,6 +201,7 @@ init -1900 python:
 
         if version <= (7, 4, 0):
             config.pause_with_transition = True
+            config.modal_timeevents = False
 
 
     # The version of Ren'Py this script is intended for, or
