@@ -9,8 +9,10 @@
 #include <SDL_thread.h>
 
 #include <stdlib.h>
-#include <malloc.h>
 
+#if defined(_WIN32)
+#include <malloc.h>
+#endif
 
 
 /* Should a mono channel be split into two equal stero channels (true) or
