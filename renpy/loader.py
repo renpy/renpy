@@ -106,6 +106,7 @@ lower_map = { }
 # A list containing archive handlers.
 archive_handlers = [ ]
 
+
 class RPAv3ArchiveHandler(object):
     """
     Archive handler handling RPAv3 archives.
@@ -137,7 +138,9 @@ class RPAv3ArchiveHandler(object):
                 index[k] = [ (offset ^ key, dlen ^ key, start) for offset, dlen, start in index[k] ]
         return index
 
+
 archive_handlers.append(RPAv3ArchiveHandler)
+
 
 class RPAv2ArchiveHandler(object):
     """
@@ -158,10 +161,12 @@ class RPAv2ArchiveHandler(object):
         offset = int(l[8:], 16)
         infile.seek(offset)
         index = loads(zlib.decompress(infile.read()))
-        
+
         return index
 
+
 archive_handlers.append(RPAv2ArchiveHandler)
+
 
 class RPAv1ArchiveHandler(object):
     """
@@ -180,7 +185,9 @@ class RPAv1ArchiveHandler(object):
     def read_index(infile):
         return loads(zlib.decompress(infile.read()))
 
+
 archive_handlers.append(RPAv1ArchiveHandler)
+
 
 def index_archives():
     """
@@ -298,8 +305,10 @@ def cleardirfiles():
     game_files = [ ]
     common_files = [ ]
 
+
 # A list of callbacks to fill out the lists above.
 scandirfiles_callbacks = [ ]
+
 
 def scandirfiles():
     """
@@ -310,6 +319,9 @@ def scandirfiles():
     seen = set()
 
     def add(dn, fn, files, seen):
+
+        fn = unicode(fn)
+
         if fn in seen:
             return
 
@@ -325,6 +337,7 @@ def scandirfiles():
 
     for i in scandirfiles_callbacks:
         i(add, seen)
+
 
 def scandirfiles_from_apk(add, seen):
     """
@@ -346,8 +359,10 @@ def scandirfiles_from_apk(add, seen):
 
             add(None, f, files, seen)
 
+
 if renpy.android:
     scandirfiles_callbacks.append(scandirfiles_from_apk)
+
 
 def scandirfiles_from_remote_file(add, seen):
     """
@@ -374,8 +389,10 @@ def scandirfiles_from_remote_file(add, seen):
                 add('/game', f, files, seen)
                 remote_files[f] = {'type':entry_type, 'size':entry_size}
 
+
 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
     scandirfiles_callbacks.append(scandirfiles_from_remote_file)
+
 
 def scandirfiles_from_filesystem(add, seen):
     """
@@ -393,7 +410,9 @@ def scandirfiles_from_filesystem(add, seen):
         for j in walkdir(i):
             add(i, j, files, seen)
 
+
 scandirfiles_callbacks.append(scandirfiles_from_filesystem)
+
 
 def scandirfiles_from_archives(add, seen):
     """
@@ -405,6 +424,7 @@ def scandirfiles_from_archives(add, seen):
     for _prefix, index in archives:
         for j in index:
             add(None, j, files, seen)
+
 
 scandirfiles_callbacks.append(scandirfiles_from_archives)
 
@@ -595,6 +615,7 @@ if "RENPY_FORCE_SUBFILE" in os.environ:
 # A list of callbacks to open an open python file object of the given type.
 file_open_callbacks = [ ]
 
+
 def load_core(name):
     """
     Returns an open python file object of the given type.
@@ -609,6 +630,7 @@ def load_core(name):
 
     return None
 
+
 def load_from_file_open_callback(name):
     """
     Returns an open python file object of the given type from the file open callback.
@@ -619,7 +641,9 @@ def load_from_file_open_callback(name):
 
     return None
 
+
 file_open_callbacks.append(load_from_file_open_callback)
+
 
 def load_from_filesystem(name):
     """
@@ -635,7 +659,9 @@ def load_from_filesystem(name):
 
     return None
 
+
 file_open_callbacks.append(load_from_filesystem)
+
 
 def load_from_apk(name):
     """
@@ -652,8 +678,10 @@ def load_from_apk(name):
 
     return None
 
+
 if renpy.android:
     file_open_callbacks.append(load_from_apk)
+
 
 def load_from_archive(name):
     """
@@ -693,7 +721,9 @@ def load_from_archive(name):
 
     return None
 
+
 file_open_callbacks.append(load_from_archive)
+
 
 def load_from_remote_file(name):
     """
@@ -705,8 +735,10 @@ def load_from_remote_file(name):
 
     return None
 
+
 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
     file_open_callbacks.append(load_from_remote_file)
+
 
 def check_name(name):
     """
