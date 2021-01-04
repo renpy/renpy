@@ -118,6 +118,12 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         enable seamless looping all the time, False to dispable it all the
         time, or a set of motions to be looped.
 
+    `default_fade`
+        The default amount of time that is spending fading into our out of
+        a motion or expression. This defaults to 1.0, per Live2D, which
+        might mean that fades happen unexpectedly. Set this to 0.0 to ensure
+        that fading is only done when it is explicitly requested.
+
     `attribute_function`
         If not None, this is a function that takes a tuple of attributes,
         and returns a second tuple of attributes. This can be used to replace
@@ -142,8 +148,10 @@ Live2D animations are defined using the Live2D displayable and the image stateme
     Only `filename` should be given positionally, and all other arguments should
     be given as keyword arguments.
 
-    The values of `alias`, `fade`, `nonexclusive`, and `seamless`, `attribute_function` and `attribute_filter`
-    are shared between all Live2D objects that share `filename`, such that these only need to be supplied once.
+    The values of `alias`, `fade`, `nonexclusive`, `seamless`, `default_fade`, `attribute_function`
+    and `attribute_filter` are shared between all Live2D objects that share `filename`,
+    such that these only need to be supplied once as part of the first Live2D object to
+    use `filename`.
 
 Live2D displayables should be assigned to an image statement::
 

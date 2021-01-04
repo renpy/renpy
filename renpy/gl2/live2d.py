@@ -164,7 +164,7 @@ class Live2DCommon(object):
     but is loaded at init time.
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, default_fade):
 
         init()
 
@@ -253,8 +253,8 @@ class Live2DCommon(object):
 
                 self.motions[name] = renpy.gl2.live2dmotion.Motion(
                     self.base + i["File"],
-                    i.get("FadeInTime", 1.0),
-                    i.get("FadeOutTime", 1.0))
+                    i.get("FadeInTime", default_fade),
+                    i.get("FadeOutTime", default_fade))
 
                 self.attributes.add(name)
 
@@ -280,8 +280,8 @@ class Live2DCommon(object):
 
                 self.expressions[name] = Live2DExpression(
                     expression_json.get("Parameters", [ ]),
-                    expression_json.get("FadeInTime", 1.0),
-                    expression_json.get("FadeOutTime", 1.0),
+                    expression_json.get("FadeInTime", default_fade),
+                    expression_json.get("FadeOutTime", default_fade),
                     )
 
                 self.attributes.add(name)
@@ -479,19 +479,24 @@ class Live2D(renpy.display.core.Displayable):
     _duplicatable = True
     used_nonexclusive = None
 
+    def create_common(self, default_fade=1.0):
+
+        rv = common_cache.get(self.filename, None)
+
+        if rv is None:
+            rv = Live2DCommon(self.filename, default_fade)
+            common_cache[self.filename] = rv
+
+        self.common_cache = rv
+
+        return rv
+
     @property
     def common(self):
         if self.common_cache is not None:
             return self.common_cache
 
-        rv = common_cache.get(self.filename, None)
-
-        if rv is None:
-            rv = Live2DCommon(self.filename)
-            common_cache[self.filename] = rv
-
-        self.common_cache = rv
-        return rv
+        return self.create_common(self.filename)
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
     def __init__(
@@ -512,6 +517,7 @@ class Live2D(renpy.display.core.Displayable):
             sustain=False,
             attribute_function=None,
             attribute_filter=None,
+            default_fade=1.0,
             **properties):
 
         super(Live2D, self).__init__(**properties)
@@ -533,7 +539,7 @@ class Live2D(renpy.display.core.Displayable):
         self.name = None
 
         # Load the common data. Needed!
-        common = self.common
+        common = self.create_common(default_fade)
 
         if nonexclusive:
             common.apply_nonexclusive(nonexclusive)

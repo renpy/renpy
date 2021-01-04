@@ -178,7 +178,10 @@ class Motion(object):
         parameter name, and the values are the blend factor and value.
         """
 
-        st = st % self.duration
+        if st == self.duration:
+            st = self.duration
+        else:
+            st = st % self.duration
 
         rv = { }
 
@@ -211,7 +214,7 @@ class Motion(object):
             t = st
 
             for i in segments:
-                if t < i.duration:
+                if t <= i.duration:
                     rv[k] = (factor, i.get(t))
 
                     break
