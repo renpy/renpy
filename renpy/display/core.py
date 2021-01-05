@@ -2159,17 +2159,12 @@ class Interface(object):
         renderer = os.environ.get("RENPY_RENDERER", renderer)
         renderer = renpy.session.get("renderer", renderer)
 
-        if self.safe_mode:
-            renderer = "sw"
-
-        renpy.config.renderer = renderer
-
         if renpy.android or renpy.ios or renpy.emscripten:
             renderers = [ "gles" ]
         elif renpy.windows:
-            renderers = [ "gl", "angle", "gles", "sw" ]
+            renderers = [ "gl", "angle", "gles" ]
         else:
-            renderers = [ "gl", "gles", "sw" ]
+            renderers = [ "gl", "gles" ]
 
         gl2_renderers = [ ]
 
@@ -2178,18 +2173,28 @@ class Interface(object):
             if i in renderers:
                 gl2_renderers.append(i + "2")
 
-            if renpy.config.gl2:
-                renderers = gl2_renderers + renderers
+        if renpy.config.gl2:
+            renderers = gl2_renderers + renderers
 
-                if renderer not in gl2_renderers:
-                    renderer = "auto"
+            # Prevent a performance warning if the renderer
+            # is taken from old persistent data
+            if renderer not in gl2_renderers:
+                renderer = "auto"
 
-            else:
-
-                renderers = renderers + gl2_renderers
+        else:
+            renderers = renderers + gl2_renderers
 
         if renderer in renderers:
             renderers = [ renderer, "sw" ]
+
+        # Software renderer is the last hope for PC and mac.
+        if not (renpy.android or renpy.ios or renpy.emscripten):
+            renderers = renderers + [ "sw" ]
+
+        if self.safe_mode:
+            renderer = "sw"
+
+        renpy.config.renderer = renderer
 
         draw_objects = { }
 
