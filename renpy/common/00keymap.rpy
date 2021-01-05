@@ -238,14 +238,13 @@ init -1600 python:
 
     def _help(help=None):
 
-        if config.help_screen and renpy.has_screen(config.help_screen):
-            renpy.run(ShowMenu(config.help_screen))
-            return
-
         if help is None:
             help = config.help
 
         if help is None:
+            if config.help_screen and renpy.has_screen(config.help_screen):
+                renpy.run(ShowMenu(config.help_screen))
+
             return
 
         if renpy.has_label(help):
