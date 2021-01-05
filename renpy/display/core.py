@@ -2171,20 +2171,22 @@ class Interface(object):
         else:
             renderers = [ "gl", "gles", "sw" ]
 
-        if renpy.config.gl2:
+        gl2_renderers = [ ]
 
-            found = False
+        for i in [ "gl", "angle", "gles" ]:
 
-            for i in [ "gles", "angle", "gl" ]:
-                if i in renderers:
-                    name = i + "2"
-                    renderers.insert(0, name)
+            if i in renderers:
+                gl2_renderers.append(i + "2")
 
-                    if renderer == name:
-                        found = True
+            if renpy.config.gl2:
+                renderers = gl2_renderers + renderers
 
-            if not found:
-                renderer = "auto"
+                if renderer not in gl2_renderers:
+                    renderer = "auto"
+
+            else:
+
+                renderers = renderers + gl2_renderers
 
         if renderer in renderers:
             renderers = [ renderer, "sw" ]
