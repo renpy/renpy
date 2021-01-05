@@ -2223,7 +2223,7 @@ class Interface(object):
 
         def append_draw(name):
             if name in draw_objects:
-                rv.append(draw_objects[name])
+                rv.append((name, draw_objects[name]))
             else:
                 renpy.display.log.write("Unknown renderer: {0}".format(name))
 
@@ -2297,7 +2297,9 @@ class Interface(object):
         else:
             draws = self.get_draw_constructors()
 
-        for draw in draws:
+        for name, draw in draws:
+            renpy.display.log.write("")
+            renpy.display.log.write("Initializing {0} renderer:".format(name))
             if draw.init(virtual_size):
                 renpy.display.draw = draw
                 renpy.display.render.models = draw.info.get("models", False)

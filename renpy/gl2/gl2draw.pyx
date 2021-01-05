@@ -300,8 +300,6 @@ cdef class GL2Draw:
         else:
             fullscreen = renpy.game.preferences.fullscreen
 
-        renpy.display.log.write("")
-
         # Handle swap control.
         target_framerate = renpy.game.preferences.gl_framerate
         refresh_rate = renpy.display.get_info().refresh_rate

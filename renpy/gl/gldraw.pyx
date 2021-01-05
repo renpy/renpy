@@ -286,8 +286,6 @@ cdef class GLDraw:
         else:
             fullscreen = renpy.game.preferences.fullscreen
 
-        renpy.display.log.write("")
-
         self.virtual_size = virtual_size
 
         vwidth, vheight = virtual_size
