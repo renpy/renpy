@@ -2467,9 +2467,20 @@ class Interface(object):
             PPP("empty window")
 
             try:
+
+                old_say_attributes = renpy.game.context().say_attributes
+                renpy.game.context().say_attributes = None
+
+                old_temporary_attributes = renpy.game.context().temporary_attributes
+                renpy.game.context().temporary_attributes = None
+
                 renpy.config.empty_window()
+
             finally:
                 renpy.store._history = old_history
+
+                renpy.game.context().say_attributes = old_say_attributes
+                renpy.game.context().temporary_attributes = old_temporary_attributes
 
     def do_with(self, trans, paired, clear=False):
 
@@ -2493,8 +2504,6 @@ class Interface(object):
         """
 
         PPP("start of with none")
-
-        renpy.game.context().say_attributes = None
 
         # Show the window, if that's necessary.
         self.show_window()
@@ -3787,8 +3796,6 @@ class Interface(object):
             return False, e.value
 
         finally:
-
-            renpy.game.context().say_attributes = None
 
             # Clean out the overlay layers.
             for i in renpy.config.overlay_layers:
