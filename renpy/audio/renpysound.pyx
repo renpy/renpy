@@ -337,7 +337,7 @@ def read_video(channel):
     w, h = rv.get_size()
 
     # This has to be set to the same number it is in ffmedia.c
-    FRAME_PADDING = 8
+    FRAME_PADDING = 4
     return rv.subsurface((FRAME_PADDING, FRAME_PADDING, w - FRAME_PADDING * 2, h - FRAME_PADDING * 2))
 
 # No video will be played from this channel.

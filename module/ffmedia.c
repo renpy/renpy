@@ -10,11 +10,6 @@
 
 #include <stdlib.h>
 
-#if defined(_WIN32)
-#include <malloc.h>
-#endif
-
-
 /* Should a mono channel be split into two equal stero channels (true) or
  * should the energy be split onto two stereo channels with 1/2 the energy
  * (false).
@@ -37,7 +32,7 @@ const int BPS = 4; // Bytes per sample.
 const int FRAMES = 3;
 
 // The alignment of each row of pixels.
-const int ROW_ALIGNMENT = 32;
+const int ROW_ALIGNMENT = 16;
 
 // The number of pixels on each side. This has to be greater that 0 (since
 // Ren'Py needs some padding), FRAME_PADDING * BPS has to be a multiple of
@@ -846,7 +841,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	}
 
 #if defined(_WIN32)
-    rv->pixels = _aligned_malloc(rv->pitch * rv->h, ROW_ALIGNMENT);
+    rv->pixels = SDL_calloc(rv->pitch * rv->h, 1);
 #else
     posix_memalign(&rv->pixels, ROW_ALIGNMENT, rv->pitch * rv->h);
 #endif
