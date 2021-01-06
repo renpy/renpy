@@ -71,10 +71,18 @@ init python:
 
             try:
 
-                if os.path.exists("/usr/bin/python3"):
-                    system_python = "/usr/bin/python3"
+
+                if renpy.macintosh:
+                    # tkinter is broken on Python 3, so use it as a last resort - maybe apple fixed it?
+                    system_pythons = [ "/usr/bin/python2", "/usr/bin/python", "/usr/bin/python3" ]
                 else:
-                    system_python = "/usr/bin/python"
+                    system_pythons = [ "/usr/bin/python3", "/usr/bin/python2", "/usr/bin/python" ]
+
+                for system_python in system_pythons:
+                    if os.path.exists(system_python):
+                        break
+                else:
+                    system_python = system_pythons[0]
 
                 cmd = [ system_python, os.path.join(config.gamedir, "tkaskdir.py"), renpy.fsencode(default_path) ]
 
