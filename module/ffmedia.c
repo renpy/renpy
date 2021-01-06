@@ -578,6 +578,8 @@ static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
 		goto fail;
 	}
 
+    codec_ctx->thread_count = 0;
+
 	if (avcodec_open2(codec_ctx, codec, NULL)) {
 		goto fail;
 	}
