@@ -376,6 +376,7 @@ cdef class GLDraw:
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
+
         else:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
 
@@ -407,6 +408,9 @@ cdef class GLDraw:
         if opengl:
             pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
             pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
+
+        if renpy.config.gl_set_attributes is not None:
+            renpy.config.gl_set_attributes()
 
         self.window = None
 

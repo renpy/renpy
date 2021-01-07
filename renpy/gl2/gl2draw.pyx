@@ -272,6 +272,9 @@ cdef class GL2Draw:
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 1);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY)
 
+        if renpy.config.gl_set_attributes is not None:
+            renpy.config.gl_set_attributes()
+
     def init(self, virtual_size):
         """
         This changes the video mode. It also initializes OpenGL, if it

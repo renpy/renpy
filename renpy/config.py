@@ -1087,6 +1087,9 @@ expand_texture_bounds = 8
 # Should time events be modal?
 modal_timeevent = False
 
+# This exists for debugging Ren'Py.
+gl_set_attributes = None
+
 del os
 del collections
 
