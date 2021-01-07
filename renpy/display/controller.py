@@ -156,6 +156,13 @@ def start(index):
 
     renpy.exports.restart_interaction()
 
+def rumble(duration):
+    """
+    Rumbles all controllers for `duration` ms.
+    """
+
+    for controller in controllers.values():
+        controller.rumble(0x2222, 0x2222, duration)
 
 class PadEvent(object):
     """

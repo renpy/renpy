@@ -3161,6 +3161,8 @@ def vibrate(duration):
         import android # @UnresolvedImport
         android.vibrate(duration)
 
+    renpy.display.controller.vibrate(int(duration * 1000))
+
 
 def get_say_attributes():
     """
