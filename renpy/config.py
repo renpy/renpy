@@ -601,7 +601,7 @@ missing_label_callback = None
 preserve_zorder = True
 
 # The set of names to ignore.
-lint_ignore_replaces = [ 'help', 'quit' ]
+lint_ignore_replaces = [ 'help', 'quit', "_confirm_quit" ]
 
 # How long should the presplash be kept up for?
 minimum_presplash_time = 0.0

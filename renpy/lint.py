@@ -408,10 +408,21 @@ def check_user(node):
         report("Didn't properly report what the next statement should be.")
 
 
+def quote_text(s):
+
+    s = s.replace("\\", "\\\\")
+    s = s.replace("\"", "\\\"")
+    s = s.replace("\t", "\\t")
+    s = s.replace("\n", "\\n")
+
+    return "\"" + s + "\""
+
+
 def text_checks(s):
+
     msg = renpy.text.extras.check_text_tags(s)
     if msg:
-        report("%s (in %s)", msg, repr(s)[1:])
+        report("%s (in %s)", msg, quote_text(s))
 
     if "%" in s and renpy.config.old_substitutions:
 
@@ -438,7 +449,7 @@ def text_checks(s):
                 elif c in "diouxXeEfFgGcrs%":
                     state = 0
                 else:
-                    report("Unknown string format code '%s' (in %s)", fmt, repr(s)[1:])
+                    report("Unknown string format code '%s' (in %s)", fmt, quote_text(s))
                     state = 0
 
             # In a mapping key.
@@ -448,7 +459,7 @@ def text_checks(s):
                     state = 1
 
         if state != 0:
-            report("Unterminated string format code '%s' (in %s)", fmt, repr(s)[1:])
+            report("Unterminated string format code '%s' (in %s)", fmt, quote_text(s))
 
 
 def check_say(node):
