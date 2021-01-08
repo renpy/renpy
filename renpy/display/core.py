@@ -1979,18 +1979,52 @@ class Interface(object):
 
     def setup_dpi_scaling(self):
 
-        # This used to do a lot more, but it's now all in SDL. So stub it out
-        # until we can take the time to remove it entirely.
-
         if "RENPY_HIGHDPI" in os.environ:
             return float(os.environ["RENPY_HIGHDPI"])
 
-        return 1.0
+        if not renpy.windows:
+            return 1.0
+
+        try:
+            import ctypes
+            from ctypes import c_void_p, c_int
+
+            ctypes.windll.user32.SetProcessDPIAware()
+
+            GetDC = ctypes.windll.user32.GetDC
+            GetDC.restype = c_void_p
+            GetDC.argtypes = [ c_void_p ]
+
+            ReleaseDC = ctypes.windll.user32.ReleaseDC
+            ReleaseDC.argtypes = [ c_void_p, c_void_p ]
+
+            GetDeviceCaps = ctypes.windll.gdi32.GetDeviceCaps
+            GetDeviceCaps.restype = c_int
+            GetDeviceCaps.argtypes = [ c_void_p, c_int ]
+
+            LOGPIXELSX = 88
+
+            dc = GetDC(None)
+            rv = GetDeviceCaps(dc, LOGPIXELSX) / 96.0
+            ReleaseDC(None, dc)
+
+            if rv < renpy.config.de_minimus_dpi_scale:
+                renpy.display.log.write("De minimus DPI scale, was %r", rv)
+                rv = 1.0
+
+            return rv
+
+        except:
+            renpy.display.log.write("Could not determine DPI scale factor:")
+            renpy.display.log.exception()
+            return 1.0
 
     def start(self):
         """
         Starts the interface, by opening a window and setting the mode.
         """
+
+        import traceback
 
         if self.started:
             return
