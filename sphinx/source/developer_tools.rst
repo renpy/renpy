@@ -49,6 +49,9 @@ preserved across the reload. This means that if one of those statements is
 changed, it is necessary to rollback and re-execute the statement to see its
 new effect.
 
+Beware that saving during a replay is usually not possible. Reloading during a
+replay may result in strange behavior, such as :var:`_in_replay` being wrong.
+
 Shift+I Style Inspecting
 ------------------------
 
