@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -41,12 +41,7 @@ import io
 
 # Import the appropriate modules, or set them to None if we cannot.
 
-disable = os.environ.get("RENPY_DISABLE_SOUND", "")
-
-if not disable:
-    import renpy.audio.renpysound as renpysound
-else:
-    renpysound = None
+import renpy.audio.renpysound as renpysound
 
 # This is True if we were able to sucessfully enable the pcm audio.
 pcm_ok = None
@@ -889,7 +884,7 @@ def init():
     global pcm_ok
     global mix_ok
 
-    if not renpy.config.sound:
+    if not renpy.config.sound or ("RENPY_DISABLE_SOUND" in os.environ):
         pcm_ok = False
         mix_ok = False
         return
