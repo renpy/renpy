@@ -2,6 +2,83 @@
 Full Changelog
 ==============
 
+
+.. _renpy-7.4.1:
+
+Pause Statement Change
+----------------------
+
+The behavior of the ``pause`` statement with a time has changed, so that::
+
+    pause 1.0
+
+is now equivalent to::
+
+    $ renpy.pause(1.0)
+
+and not::
+
+    with Pause(1.0)
+
+This means that other features that expect a real pause will work during the
+pause statement.
+
+Screen Modal Change
+-------------------
+
+Modal screens no longer block pause, timeouts, and other displayables
+that rely on events being delivered on time from functioning. This means
+that a pause can end when a modal screen is up
+
+Live2D
+------
+
+Live2D support has has a `default_fade` argument added, which can change the
+default duration of fades at the start and end of motions and expressions.
+
+An issue with live2d that manifested as a tuple error has been fixed.
+
+macOS Compatibility
+-------------------
+
+The minimum supported version of macOS is now 10.10 (Yosemite). Ren'Py
+7.4 did not run on this version, so this represents a restoration of
+support for this version.
+
+Other Fixes
+-----------
+
+An issue that could cause crashes on movies of certain sizes when
+Ren'Py was run on a computer that supports SSE3 has been fixed.
+
+Movie playback now uses multiple cores for video decoding, as it
+did in previous versions of Ren'Py.
+
+An issue that could cause the size of the Ren'Py window to increase
+when run on Windows with a non-100% DPI has been fixed.
+
+Ren'Py will no longer give a performance warning when an unsupported
+renderer is selected, such as when using the GL or ANGLE renderer on
+a game that requires gl2.
+
+An issue that would, in some cases, prevent say attributes from being
+shown has been fixed.
+
+An issue preventing MultiPersistent files from working on computers that
+do not use UTF-8 at the default file encoding has been fixed.
+
+The flags for compiling Python when ``rpy python 3`` is enabled have been
+improved.
+
+An issue that prevented triple-quoted strings (like the strings used for
+gui.about) from being evaluated correctly has been fixed.
+
+Ren'Py now attempts to detect and prevent a crash when controller
+emulation software (such as SCP Toolkit) is in use.
+
+Ren'Py now detects its path during certain reloads.
+
+
 .. _renpy-7.4:
 
 7.4.0
