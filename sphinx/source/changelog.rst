@@ -45,6 +45,11 @@ The minimum supported version of macOS is now 10.10 (Yosemite). Ren'Py
 7.4 did not run on this version, so this represents a restoration of
 support for this version.
 
+Translations
+------------
+
+The Spanish translation has been updated.
+
 Other Fixes
 -----------
 
