@@ -5,6 +5,9 @@ Full Changelog
 
 .. _renpy-7.4.1:
 
+7.4.1
+=====
+
 Pause Statement Change
 ----------------------
 
