@@ -33,6 +33,7 @@ import_pygame_sdl2()
 import renpy
 import renpy.uguu.gl
 import renpy.uguu.angle
+import renpy.gl.glfunctions
 import pygame_sdl2 as pygame
 import os
 import os.path
@@ -438,7 +439,11 @@ cdef class GLDraw:
             self.quit()
             return False
 
+        renpy.uguu.gl.clear_missing_functions()
         renpy.uguu.gl.load()
+        if renpy.uguu.gl.check_missing_functions(renpy.gl.glfunctions.required_functions):
+            self.quit()
+            return False
 
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)

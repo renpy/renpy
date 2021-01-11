@@ -29,6 +29,7 @@ from libc.stdlib cimport malloc, free
 from sdl2 cimport *
 from renpy.uguu.gl cimport *
 import renpy.uguu.angle
+import renpy.gl2.gl2functions
 
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
@@ -385,7 +386,10 @@ cdef class GL2Draw:
         # Initialize OpenGL.
 
         # Load uguu, and init GL.
-        uguugl.load()
+        renpy.uguu.gl.clear_missing_functions()
+        renpy.uguu.gl.load()
+        if renpy.uguu.gl.check_missing_functions(renpy.gl2.gl2functions.required_functions):
+            return False
 
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
