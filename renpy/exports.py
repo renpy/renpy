@@ -2145,17 +2145,25 @@ def log(msg):
         return
 
     try:
+        msg = unicode(msg)
+    except:
+        pass
+
+    try:
 
         if not logfile:
-            import codecs
-            logfile = open(renpy.config.log, "a")
+            import os
+            logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), "a")
 
             if not logfile.tell():
                 logfile.write("\ufeff")
 
         import textwrap
 
-        print(textwrap.fill(msg, renpy.config.log_width).encode("utf-8"), file=logfile)
+        wrapped = textwrap.fill(msg, renpy.config.log_width)
+        wrapped = unicode(wrapped)
+
+        logfile.write(wrapped + "\n")
         logfile.flush()
 
     except:
