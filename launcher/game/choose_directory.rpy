@@ -19,7 +19,24 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
+
+
 init python:
+
+    if renpy.windows:
+        import EasyDialogsWin as EasyDialogs
+    else:
+        EasyDialogs = None
+
+    pyobjus = None
+
+    if renpy.macintosh:
+        try:
+            import pyobjus
+        except:
+            pass
+
 
     def directory_is_writable(path):
         test = os.path.join(path, "renpy test do not use")
@@ -67,10 +84,32 @@ init python:
             else:
                 path = None
 
+        elif pyobjus:
+
+            from pyobjus import autoclass
+            from pyobjus.dylib_manager import load_framework, INCLUDE
+
+            load_framework(INCLUDE.AppKit)
+            NSURL = autoclass('NSURL')
+            NSOpenPanel = autoclass('NSOpenPanel')
+
+            panel = NSOpenPanel.openPanel()
+            panel.setCanChooseDirectories_(True)
+            panel.setCanChooseFiles_(False)
+            panel.setCanCreateDirectories_(True)
+
+            if default_path:
+                url = NSURL.fileURLWithPath_(default_path)
+                panel.setDirectoryURL_(url)
+
+            if panel.runModal():
+                path = panel.filename().UTF8String().decode("utf-8")
+            else:
+                path = None
+
         else:
 
             try:
-
 
                 if renpy.macintosh:
                     # tkinter is broken on Python 3, so use it as a last resort - maybe apple fixed it?

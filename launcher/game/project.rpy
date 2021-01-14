@@ -22,11 +22,6 @@
 # Code that manages projects.
 
 init python:
-    if renpy.windows:
-        import EasyDialogsWin as EasyDialogs
-    else:
-        EasyDialogs = None
-
     import os
 
 init python in project:
