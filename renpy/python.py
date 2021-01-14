@@ -1226,6 +1226,23 @@ class RevertableObject(object):
         self.__dict__.update(compressed)
 
 
+class AlwaysRollback(RevertableObject):
+    """
+    This is a revertible object that always participates in rollback.
+    It's used when a revertable object is created by an object that
+    doesn't participate in the rollback system.
+    """
+
+    def __new__(cls, *args, **kwargs):
+        self = super(AlwaysRollback, cls).__new__(cls)
+
+        log = renpy.game.log
+        if log is not None:
+            del log.mutated[id(self)]
+
+        return self
+
+
 class RollbackRandom(random.Random):
     """
     This is used for Random objects returned by renpy.random.Random.
@@ -1486,6 +1503,7 @@ class Rollback(renpy.object.Object):
         """
 
         for obj, roll in reversed(self.objects):
+
             if roll is not None:
                 obj._rollback(roll)
 

@@ -2070,13 +2070,11 @@ class Conditional(renpy.display.layout.Container):
             return self.child.event(ev, x, y, st)
 
 
-class TimerState(renpy.python.RevertableObject):
+class TimerState(renpy.python.AlwaysRollback):
     """
     Stores the state of the timer, which may need to be rolled back.
     """
 
-    # Prevents us from having to worry about our initialization being
-    # rolled back.
     started = False
     next_event = None
 
