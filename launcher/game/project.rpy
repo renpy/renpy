@@ -792,7 +792,7 @@ init python:
         args = ap.parse_args()
 
         persistent.projects_directory = renpy.fsdecode(args.projects)
-        project.multipersistent.projects_directory = path
+        project.multipersistent.projects_directory = persistent.projects_directory
         project.multipersistent.save()
         renpy.save_persistent()
 
@@ -803,6 +803,9 @@ init python:
     def get_projects_directory_command():
         ap = renpy.arguments.ArgumentParser()
         args = ap.parse_args()
+
+        if persistent.projects_directory is not None:
+            print(persistent.projects_directory)
 
         return False
 
