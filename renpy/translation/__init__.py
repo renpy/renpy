@@ -271,6 +271,11 @@ class Restructurer(object):
         digest = md5.hexdigest()[:8]
 
         identifier = self.unique_identifier(self.label, digest)
+
+        for i in block:
+            if isinstance(i, renpy.ast.Say):
+                identifier = getattr(i, "identifier", None) or identifier
+
         self.identifiers.add(identifier)
 
         if self.alternate is not None:

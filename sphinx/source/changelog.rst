@@ -26,6 +26,20 @@ and not::
 This means that other features that expect a real pause will work during the
 pause statement.
 
+Say Statement Id Clause
+-----------------------
+
+The say statement has now grown an ``id`` clause, that lets you specify the
+old say statement id. This is useful for changing a say statement in the
+original language, such as to fix an obvious typo, without needing to
+update all the translations.
+
+To use it, just add ``id`` to the say statement, followed by the
+statement id::
+
+    e "This used to have a typo." id start_61b861a2
+
+
 Screen Modal Change
 -------------------
 

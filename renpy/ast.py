@@ -586,6 +586,7 @@ class Say(Node):
         'arguments',
         'temporary_attributes',
         'rollback',
+        'identifier',
         ]
 
     def diff_info(self):
@@ -600,7 +601,7 @@ class Say(Node):
         self.rollback = "normal"
         return self
 
-    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None):
+    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None, identifier=None):
 
         super(Say, self).__init__(loc)
 
@@ -628,6 +629,10 @@ class Say(Node):
         # Ditto for temporary attributes.
         self.temporary_attributes = temporary_attributes
 
+        # If given, write in the identifier.
+        if identifier is not None:
+            self.identifier = identifier
+
     def get_code(self, dialogue_filter=None):
         rv = [ ]
 
@@ -649,6 +654,10 @@ class Say(Node):
 
         if not self.interact:
             rv.append("nointeract")
+
+        if getattr(self, "identifier", None):
+            rv.append("id")
+            rv.append(getattr(self, "identifier", None))
 
         if self.with_:
             rv.append("with")
