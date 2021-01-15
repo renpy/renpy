@@ -480,7 +480,7 @@ label tutorial_atl:
         show logo base:
             yoffset 10
 
-    e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
+    e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though your click stopped the motion, the image remains in the same place."
 
     hide logo
     show eileen happy at center

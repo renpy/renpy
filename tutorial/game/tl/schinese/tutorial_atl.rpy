@@ -308,7 +308,7 @@ translate schinese tutorial_atl_da7a7759:
 # game/tutorial_atl.rpy:480
 translate schinese tutorial_atl_1dd345c6:
 
-    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
+    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though your click stopped the motion, the image remains in the same place."
     e "当ATL用作show语句的一部分时，即使变换已更改，属性值也存在。所以即使你用点击停止图像的运动，它仍然保持在原来的位置。"
 
 # game/tutorial_atl.rpy:488
