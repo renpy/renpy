@@ -150,6 +150,8 @@ init -1500 python in build:
         ("launcherinfo.py", None),
         ("android.txt", None),
 
+        ("game/presplash*.*", "all"),
+
         (".android.json", "android"),
         ("android-*.png", "android"),
         ("android-*.jpg", "android"),
