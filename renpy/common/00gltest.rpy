@@ -133,6 +133,10 @@ init -1500:
 
                     null height 10
 
+                    textbutton _("Enable (No Blocklist)"):
+                        action SetField(_preferences, "pad_enabled", "all")
+                        style_suffix "radio_button"
+
                     textbutton _("Enable"):
                         action SetField(_preferences, "pad_enabled", True)
                         style_suffix "radio_button"

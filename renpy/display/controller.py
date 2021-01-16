@@ -69,14 +69,6 @@ def init():
     except:
         renpy.display.log.exception()
 
-    for i in range(pygame_sdl2.controller.get_count()):
-
-        try:
-            c = Controller(i)
-            renpy.exports.write_log("controller: %r %r %r" % (c.get_guid_string(), c.get_name(), c.is_controller()))
-        except:
-            renpy.display.log.exception()
-
 
 # A map from controller index to controller object.
 controllers = { }
@@ -152,6 +144,15 @@ def start(index):
 
     quit(index)
     controllers[index] = c = Controller(index)
+
+    renpy.exports.write_log("controller: %r %r %r" % (c.get_guid_string(), c.get_name(), c.is_controller()))
+
+    if renpy.game.preferences.pad_enabled != "all":
+        for prefix in renpy.config.controller_blocklist:
+            if c.get_guid_string().startswith(prefix):
+                renpy.exports.write_log("Controller found in blocklist, not using.")
+                return
+
     c.init()
 
     renpy.exports.restart_interaction()

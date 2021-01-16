@@ -1090,6 +1090,11 @@ modal_timeevent = False
 # This exists for debugging Ren'Py.
 gl_set_attributes = None
 
+# The blacklist of controllers with known problems.
+controller_blocklist = [
+    "030000007e0500000920", # Nintendo Pro Controller (needs init to work.)
+]
+
 del os
 del collections
 
