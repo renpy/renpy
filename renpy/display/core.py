@@ -2109,8 +2109,9 @@ class Interface(object):
         pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
+        pygame.display.hint("SDL_VIDEO_ALLOW_SCREENSAVER", "1")
 
-        # Needed for Unity.
+        # Needed for Ubuntu Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
         os.environ['SDL_VIDEO_X11_WMCLASS'] = wmclass
 
