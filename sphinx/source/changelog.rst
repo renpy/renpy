@@ -85,7 +85,7 @@ the iOS build. This library makes it possible to access Cocoa APIs.
 Android
 -------
 
-There have been reports that pereleases of Ren'Py 7.4.1 will not run
+There have been reports that prereleases of Ren'Py 7.4.1 will not run
 properly on older Android devices, like the Samsung Galaxy S5. We
 are attempting to acquire an example of a device exhibiting the
 problem, and will make a new release as required.
