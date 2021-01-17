@@ -383,13 +383,11 @@ synthetic_properties = sorted_dict(
     xsize=[
         ('xminimum', None),
         ('xmaximum', None),
-        ('xfill', True)
         ],
 
     ysize=[
         ('yminimum', None),
         ('ymaximum', None),
-        ('yfill', True),
         ],
 
     xysize=[
@@ -397,8 +395,6 @@ synthetic_properties = sorted_dict(
         ('xmaximum', 'index_0'),
         ('yminimum', 'index_1'),
         ('ymaximum', 'index_1'),
-        ('xfill', True),
-        ('yfill', True),
         ],
 
     area=[
