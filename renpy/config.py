@@ -1095,6 +1095,9 @@ controller_blocklist = [
     "030000007e0500000920", # Nintendo Pro Controller (needs init to work.)
 ]
 
+# Should dissolve transitions be mipmapped by default?
+mipmap_dissolves = False
+
 del os
 del collections
 

@@ -447,6 +447,10 @@ cdef class GLTexture(Model):
 
         cdef GLuint level = 0
 
+        max_level = renpy.config.max_mipmap_level
+        if not properties.get("mipmap", True):
+            max_level = 0
+
         while True:
 
             glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
@@ -458,7 +462,7 @@ cdef class GLTexture(Model):
             th = max(th >> 1, 1)
             level += 1
 
-            if level > renpy.config.max_mipmap_level:
+            if level > max_level:
                 break
 
     def mipmap_texture(GLTexture self, GLuint tex, int tw, int th, properties={}):
@@ -467,6 +471,9 @@ cdef class GLTexture(Model):
         """
 
         cdef GLuint level = renpy.config.max_mipmap_level
+
+        if not properties.get("mipmap", True):
+            level = 0
 
         glBindTexture(GL_TEXTURE_2D, tex)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, level)
