@@ -295,24 +295,30 @@ class Context(renpy.object.Object):
 
             self.images = renpy.display.image.ShownImageInfo(context.images)
 
+            self.dynamic_stack = [ i.copy() for i in context.dynamic_stack ]
+
+            # A list of modes that the context has been in.
+            self.modes = list(context.modes)
+
         else:
             oldsl = None
             self.images = renpy.display.image.ShownImageInfo(None)
+
+            self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay", "_side_image_attributes" ])
+            self.dynamic_stack.append({ })
+
+            self.modes = [ "start" ]
 
         self.scene_lists = renpy.display.core.SceneLists(oldsl, self.images)
 
         for i in renpy.config.context_copy_remove_screens:
             self.scene_lists.remove("screens", i, None)
 
-        self.make_dynamic([ "_return", "_args", "_kwargs", "mouse_visible", "suppress_overlay", "_side_image_attributes" ])
-        self.dynamic_stack.append({ })
-
         if clear:
             for i in renpy.config.context_clear_layers:
                 self.scene_lists.clear(layer=i)
 
-        # A list of modes that the context has been in.
-        self.modes = renpy.python.RevertableList([ "start" ])
+        # Should we be using modes?
         self.use_modes = True
 
         # The language we started with.
