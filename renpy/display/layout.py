@@ -913,7 +913,7 @@ class MultiBox(Container):
                 sw, sh = surf.get_size()
 
                 if box_wrap and remwidth - sw - padding < 0 and line:
-                    maxx, maxy = layout_line(line, (target_width - x) if xfill else 0, 0)
+                    maxx, maxy = layout_line(line, (target_width - x), 0)
 
                     y += line_height + box_wrap_spacing
                     x = 0
@@ -926,10 +926,7 @@ class MultiBox(Container):
                 x += sw + padding
                 remwidth -= (sw + padding)
 
-            if box_wrap:
-                xfill = False
-
-            maxx, maxy = layout_line(line, (target_width - x) if xfill else 0, 0)
+            maxx, maxy = layout_line(line, (target_width - x) if (not box_wrap) else 0, 0)
 
         elif layout == "vertical":
 
@@ -958,7 +955,7 @@ class MultiBox(Container):
                 sw, sh = surf.get_size()
 
                 if box_wrap and remheight - sh - padding < 0:
-                    maxx, maxy = layout_line(line, 0, (target_height - y) if yfill else 0)
+                    maxx, maxy = layout_line(line, 0, (target_height - y))
 
                     x += line_width + box_wrap_spacing
                     y = 0
@@ -971,10 +968,7 @@ class MultiBox(Container):
                 y += sh + padding
                 remheight -= (sh + padding)
 
-            if box_wrap:
-                yfill = False
-
-            maxx, maxy = layout_line(line, 0, (target_height - y) if yfill else 0)
+            maxx, maxy = layout_line(line, 0, (target_height - y) if (not box_wrap) else 0)
 
         else:
             raise Exception("Unknown box layout: %r" % layout)
