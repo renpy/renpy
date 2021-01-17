@@ -926,6 +926,9 @@ class MultiBox(Container):
                 x += sw + padding
                 remwidth -= (sw + padding)
 
+            if box_wrap:
+                xfill = False
+
             maxx, maxy = layout_line(line, (target_width - x) if xfill else 0, 0)
 
         elif layout == "vertical":
@@ -967,6 +970,9 @@ class MultiBox(Container):
                 line_width = max(line_width, sw)
                 y += sh + padding
                 remheight -= (sh + padding)
+
+            if box_wrap:
+                yfill = False
 
             maxx, maxy = layout_line(line, 0, (target_height - y) if yfill else 0)
 
