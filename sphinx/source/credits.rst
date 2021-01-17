@@ -12,10 +12,9 @@ missing some names in my logs. If this applies to you, please
 accept my apologies and email pytom at bishoujo.us so I can fix
 the omission in future versions.
 
-
-
 * Absinthe
 * Aenakume
+* Ajkahn96
 * Aleema
 * Alessio
 * Alexandre Tranchant
