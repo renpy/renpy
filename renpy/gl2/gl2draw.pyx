@@ -862,13 +862,8 @@ cdef class GL2Draw:
             if r.uniforms:
                 uniforms.update(r.uniforms)
 
-            if r.properties:
-                anisotropic = r.properties.get("anisotropic", False)
-            else:
-                anisotropic = True
-
             for i, c in enumerate(r.children):
-                uniforms["tex" + str(i)] = self.render_to_texture(c[0], anisotropic=anisotropic)
+                uniforms["tex" + str(i)] = self.render_to_texture(c[0], properties=r.properties)
 
             if r.mesh is True:
                 mesh = uniforms["tex0"].mesh
@@ -882,11 +877,14 @@ cdef class GL2Draw:
                 uniforms)
 
 
-    def render_to_texture(self, what, alpha=True, anisotropic=True):
+    def render_to_texture(self, what, alpha=True, properties={}):
         """
         Renders `what` to a texture. The texture will have the drawable
         size of `what`.
         """
+
+        if properties is None:
+            properties = {}
 
         if isinstance(what, Surface):
             what = self.load_texture(what)
@@ -898,7 +896,7 @@ cdef class GL2Draw:
         if what.cached_texture is not None:
             return what.cached_texture
 
-        rv = self.texture_loader.render_to_texture(what, anisotropic)
+        rv = self.texture_loader.render_to_texture(what, properties)
 
         what.cached_texture = rv
 
