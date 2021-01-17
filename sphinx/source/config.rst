@@ -1033,6 +1033,13 @@ Rarely or Internally Used
 
     A list of layers that are cleared when entering a new context.
 
+.. var:: config.controller_blocklist = [ ... ]
+
+    A list of strings, where each string is matched against the GUID
+    of a game controller. These strings are mached as a prefix to the
+    controller GUID (which cand be found in log.txt), and if matched,
+    prevent the controller from being initialized.
+
 .. var:: config.exception_handler = None
 
     If not None, this should be a function that takes three arguments:
