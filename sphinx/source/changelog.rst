@@ -153,6 +153,8 @@ to False.
 The toggle version of self-voicing preferences have been changed to
 provide a better selected state.
 
+Lint now once again reports statistics by translation.
+
 
 .. _renpy-7.4:
 
