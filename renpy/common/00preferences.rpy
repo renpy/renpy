@@ -383,7 +383,7 @@ init -1500 python:
                 elif value == "disable":
                     return SetField(_preferences, "self_voicing", False)
                 elif value == "toggle":
-                    return ToggleField(_preferences, "self_voicing")
+                    return ToggleField(_preferences, "self_voicing", true_value=True, false_value=False)
 
             elif name == _("self voicing volume drop"):
 
@@ -400,7 +400,7 @@ init -1500 python:
                 elif value == "disable":
                     return SetField(_preferences, "self_voicing", False)
                 elif value == "toggle":
-                    return ToggleField(_preferences, "self_voicing", true_value="clipboard")
+                    return ToggleField(_preferences, "self_voicing", true_value="clipboard", false_value=False)
 
             elif name == _("debug voicing"):
 
@@ -409,7 +409,7 @@ init -1500 python:
                 elif value == "disable":
                     return SetField(_preferences, "self_voicing", False)
                 elif value == "toggle":
-                    return ToggleField(_preferences, "self_voicing", true_value="debug")
+                    return ToggleField(_preferences, "self_voicing", true_value="debug", false_value=False)
 
             elif name == _("emphasize audio"):
 

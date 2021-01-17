@@ -124,6 +124,7 @@ the omission in future versions.
 * Maxwell Paul Brickner
 * Meithal
 * Merumelu
+* Midgetthetree
 * mikey (ATP Projects)
 * Morgan Willcock
 * Moshibit
