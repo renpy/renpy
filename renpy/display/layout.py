@@ -1942,7 +1942,7 @@ class AlphaMask(Container):
 
     `mipmap`
         If True, the textures used by this display have mipmaps generated.
-        If False, no mipmaps are generated. If None, the value of :renpy:`config.mipmap_dissolves`
+        If False, no mipmaps are generated. If None, the value of :var:`config.mipmap_dissolves`
         is used.
     """
 

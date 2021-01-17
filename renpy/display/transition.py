@@ -333,7 +333,7 @@ class Dissolve(Transition):
 
     `mipmap`
         If True, the textures used by this transition have mipmaps generated.
-        If False, no mipmaps are generated. If None, the value of :renpy:`config.mipmap_dissolves`
+        If False, no mipmaps are generated. If None, the value of :var:`config.mipmap_dissolves`
         is used.
     """
 
@@ -442,7 +442,7 @@ class ImageDissolve(Transition):
 
     `mipmap`
         If True, the textures used by this transition have mipmaps generated.
-        If False, no mipmaps are generated. If None, the value of :renpy:`config.mipmap_dissolves`
+        If False, no mipmaps are generated. If None, the value of :var:`config.mipmap_dissolves`
         is used.
 
     ::
@@ -610,7 +610,7 @@ class AlphaDissolve(Transition):
 
     `mipmap`
         If True, the textures used by this transition have mipmaps generated.
-        If False, no mipmaps are generated. If None, the value of :renpy:`config.mipmap_dissolves`
+        If False, no mipmaps are generated. If None, the value of :var:`config.mipmap_dissolves`
         is used.
      """
 
