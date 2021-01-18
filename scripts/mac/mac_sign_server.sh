@@ -31,7 +31,7 @@ echo "Submitted app for notarization."
 
 $(dirname $0)/wait_notarization.py
 
-sleep 10
+sleep 15
 
 xcrun stapler staple "$APP"
 
