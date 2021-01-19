@@ -332,11 +332,6 @@ static void deallocate(MediaState *ms) {
 	}
 
 	if (ms->ctx) {
-		for (int i = 0; i < ms->ctx->nb_streams; i++) {
-			if (ms->ctx->streams[i]->codec) {
-				avcodec_close(ms->ctx->streams[i]->codec);
-			}
-		}
 
 		if (ms->ctx->pb) {
 			if (ms->ctx->pb->buffer) {
@@ -560,26 +555,28 @@ static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
 		return NULL;
 	}
 
-	AVCodec *codec;
+	AVCodec *codec = NULL;
 	AVCodecContext *codec_ctx = NULL;
-	AVCodecContext *codec_ctx_orig = ctx->streams[index]->codec;
 
-	codec = avcodec_find_decoder(codec_ctx_orig->codec_id);
-
-	if (codec == NULL) {
-		return NULL;
-	}
-
-	codec_ctx = avcodec_alloc_context3(codec);
+	codec_ctx = avcodec_alloc_context3(NULL);
 
 	if (codec_ctx == NULL) {
 		return NULL;
 	}
 
-	if (avcodec_copy_context(codec_ctx, codec_ctx_orig)) {
+	if (avcodec_parameters_to_context(codec_ctx, ctx->streams[index]->codecpar) < 0) {
 		goto fail;
 	}
 
+	codec_ctx->pkt_timebase = ctx->streams[index]->time_base;
+
+    codec = avcodec_find_decoder(codec_ctx->codec_id);
+
+    if (codec == NULL) {
+        goto fail;
+    }
+
+    codec_ctx->codec_id = codec->id;
     codec_ctx->thread_count = 0;
 
 	if (avcodec_open2(codec_ctx, codec, NULL)) {
@@ -693,7 +690,7 @@ static void decode_audio(MediaState *ms) {
 				continue;
 			}
 
-			double start = av_frame_get_best_effort_timestamp(ms->audio_decode_frame) * timebase;
+			double start = ms->audio_decode_frame->best_effort_timestamp * timebase;
 			double end = start + 1.0 * converted_frame->nb_samples / audio_sample_rate;
 
 			SDL_LockMutex(ms->lock);
@@ -784,8 +781,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 
 	}
 
-	double pts = av_frame_get_best_effort_timestamp(ms->video_decode_frame) \
-			* av_q2d(ms->ctx->streams[ms->video_stream]->time_base);
+	double pts = ms->video_decode_frame->best_effort_timestamp * av_q2d(ms->ctx->streams[ms->video_stream]->time_base);
 
 	if (pts < ms->skip) {
 		return NULL;
@@ -1088,13 +1084,13 @@ static int decode_thread(void *arg) {
 	ms->audio_stream = -1;
 
 	for (int i = 0; i < ctx->nb_streams; i++) {
-		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+		if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
 			if (ms->want_video && ms->video_stream == -1) {
 				ms->video_stream = i;
 			}
 		}
 
-		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+		if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
 			if (ms->audio_stream == -1) {
 				ms->audio_stream = i;
 			}
@@ -1250,13 +1246,13 @@ static int decode_sync_start(void *arg) {
 	ms->audio_stream = -1;
 
 	for (int i = 0; i < ctx->nb_streams; i++) {
-		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+		if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
 			if (ms->want_video && ms->video_stream == -1) {
 				ms->video_stream = i;
 			}
 		}
 
-		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+		if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
 			if (ms->audio_stream == -1) {
 				ms->audio_stream = i;
 			}
@@ -1559,8 +1555,6 @@ void media_init(int rate, int status, int equal_mono) {
 
 	audio_sample_rate = rate / SPEED;
 	audio_equal_mono = equal_mono;
-
-    av_register_all();
 
     if (status) {
         av_log_set_level(AV_LOG_INFO);
