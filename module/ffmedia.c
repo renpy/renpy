@@ -592,6 +592,55 @@ fail:
 
 
 /**
+ * Given a packet, decodes a frame if possible. This is intended to be a drop-in replacement
+ * for the now deprecated avcodec_decode_audio4/video2 APIs.
+ *
+ * \param[in]   context     The context the decoding is done in.
+ * \param[out]  frame       A frame that is updated with the decoded data.
+ * \param[out]  got_frame   Set to 1 if a frame was decoded, 0 if not.
+ * \param[in]   pkt         The packet data to present.
+ *
+ * Returns pkt->size if the packet was consumed, 0 if not, or < 0 on error (including
+ * end of file.)
+ */
+static int decode_common(AVCodecContext *context, AVFrame *frame, int *got_frame, AVPacket *pkt) {
+
+    int ret;
+    int rv = 0;
+
+    if (pkt) {
+        ret = avcodec_send_packet(context, pkt);
+
+        if (ret >= 0) {
+            rv = pkt->size;
+        } else if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
+            rv = 0;
+        } else {
+           return ret;
+        }
+    }
+
+    ret = avcodec_receive_frame(context, frame);
+
+    if (ret >= 0) {
+        *got_frame = 1;
+    } else if (ret == AVERROR(EAGAIN)) {
+        *got_frame = 0;
+    } else if (ret == AVERROR_EOF) {
+        *got_frame = 0;
+        if (!pkt || pkt->size == 0) {
+            return ret;
+        }
+    } else {
+        *got_frame = 0;
+        return ret;
+    }
+
+    return rv;
+}
+
+
+/**
  * Decodes audio. Returns 0 if no audio was decoded, or 1 if some audio was
  * decoded.
  */
@@ -630,7 +679,7 @@ static void decode_audio(MediaState *ms) {
 
 		do {
 			int got_frame;
-			int read_size = avcodec_decode_audio4(ms->audio_context, ms->audio_decode_frame, &got_frame, &pkt_temp);
+			int read_size = decode_common(ms->audio_context, ms->audio_decode_frame, &got_frame, &pkt_temp);
 
 			if (read_size < 0) {
 
@@ -760,7 +809,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		}
 
 		int got_frame = 0;
-		int read_size = avcodec_decode_video2(ms->video_context, ms->video_decode_frame, &got_frame, &ms->video_pkt_tmp);
+		int read_size = decode_common(ms->video_context, ms->video_decode_frame, &got_frame, &ms->video_pkt_tmp);
 
 		if (read_size < 0) {
 			ms->video_finished = 1;
