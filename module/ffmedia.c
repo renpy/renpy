@@ -40,8 +40,10 @@ const int ROW_ALIGNMENT = 16;
 // read_video function of renpysound.pyx.
 const int FRAME_PADDING = ROW_ALIGNMENT / 4;
 
-
 const int SPEED = 1;
+
+// How many seconds early can frames be delivered?
+static const double frame_early_delivery = .005;
 
 static SDL_Surface *rgb_surface = NULL;
 static SDL_Surface *rgba_surface = NULL;
@@ -966,7 +968,7 @@ int media_video_ready(struct MediaState *ms) {
 
 	if (ms->surface_queue) {
 		if (ms->video_pts_offset) {
-			if (ms->surface_queue->pts + ms->video_pts_offset <= current_time) {
+			if (ms->surface_queue->pts + ms->video_pts_offset <= current_time + frame_early_delivery) {
 				rv = 1;
 			}
 		} else {
@@ -1013,7 +1015,7 @@ SDL_Surface *media_read_video(MediaState *ms) {
 		ms->video_pts_offset = current_time - ms->surface_queue->pts;
 	}
 
-	if (ms->surface_queue->pts + ms->video_pts_offset <= current_time) {
+	if (ms->surface_queue->pts + ms->video_pts_offset <= current_time + frame_early_delivery) {
 		sqe = dequeue_surface(&ms->surface_queue);
 		ms->surface_queue_size -= 1;
 
