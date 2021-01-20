@@ -551,6 +551,8 @@ static int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
 
 static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
 
+    AVDictionary *opts = NULL;
+
 	if (index == -1) {
 		return NULL;
 	}
@@ -577,15 +579,20 @@ static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
     }
 
     codec_ctx->codec_id = codec->id;
-    codec_ctx->thread_count = 0;
 
-	if (avcodec_open2(codec_ctx, codec, NULL)) {
+    av_dict_set(&opts, "threads", "auto", 0);
+    av_dict_set(&opts, "refcounted_frames", "0", 0);
+
+	if (avcodec_open2(codec_ctx, codec, &opts)) {
 		goto fail;
 	}
 
 	return codec_ctx;
 
 fail:
+
+    av_dict_free(&opts);
+
 	avcodec_free_context(&codec_ctx);
 	return NULL;
 }
