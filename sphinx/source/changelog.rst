@@ -151,7 +151,7 @@ parameter defaults to :var:`config.mipmap_dissolves`, which defaults
 to False.
 
 Similarly, the :func:`Movie` displayable has a `mipmap` parameter
-that is controlled by :var:`
+that is controlled by :var:`config.mipmap_movies`
 
 The toggle version of self-voicing preferences have been changed to
 provide a better selected state.
