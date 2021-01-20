@@ -96,9 +96,6 @@ cdef class GL2Draw:
         # The physical size of the window we got.
         self.physical_size = None
 
-        # This is used to cache the surface->texture operation.
-        self.texture_cache = weakref.WeakKeyDictionary()
-
         # The time of the last redraw.
         self.last_redraw_time = 0
 
@@ -696,22 +693,14 @@ cdef class GL2Draw:
             return False
 
     def mutated_surface(self, surf):
-        if surf in self.texture_cache:
-            del self.texture_cache[surf]
+        return
 
     def load_texture(self, surf, transient=False, properties={}):
         """
         Loads a texture into memory.
         """
 
-        # Turn a surface into a texture grid.
-        rv = self.texture_cache.get(surf, None)
-
-        if rv is None:
-            rv = self.texture_loader.load_surface(surf, properties)
-            self.texture_cache[surf] = rv
-
-        return rv
+        return self.texture_loader.load_surface(surf, properties)
 
     def ready_one_texture(self):
         """
@@ -1065,7 +1054,6 @@ cdef class GL2Draw:
         return rv
 
     def kill_textures(self):
-        self.texture_cache.clear()
         self.texture_loader.cleanup()
 
     def event_peek_sleep(self):
