@@ -699,7 +699,7 @@ cdef class GL2Draw:
         if surf in self.texture_cache:
             del self.texture_cache[surf]
 
-    def load_texture(self, surf, transient=False):
+    def load_texture(self, surf, transient=False, properties={}):
         """
         Loads a texture into memory.
         """
@@ -708,7 +708,7 @@ cdef class GL2Draw:
         rv = self.texture_cache.get(surf, None)
 
         if rv is None:
-            rv = self.texture_loader.load_surface(surf)
+            rv = self.texture_loader.load_surface(surf, properties)
             self.texture_cache[surf] = rv
 
         return rv

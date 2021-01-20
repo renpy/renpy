@@ -931,7 +931,7 @@ class SWDraw(object):
         for i in clippers:
             i.mutated.add(id(surf))
 
-    def load_texture(self, surf, transient=False):
+    def load_texture(self, surf, transient=False, properties={}):
         """
         Creates a texture from the surface. In the software implementation,
         the only difference between a texture and a surface is that a texture

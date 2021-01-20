@@ -96,7 +96,7 @@ cdef class TextureLoader:
 
         return self.total_texture_size, len(self.allocated)
 
-    def load_one_surface(self, surf, bl, bt, br, bb):
+    def load_one_surface(self, surf, bl, bt, br, bb, properties):
         """
         Converts a surface into a texture.
         """
@@ -104,7 +104,7 @@ cdef class TextureLoader:
         size = surf.get_size()
 
         rv = Texture(size, self)
-        rv.from_surface(surf)
+        rv.from_surface(surf, properties)
 
         if bl or bt or br or bb:
             w, h = size
@@ -169,14 +169,14 @@ cdef class TextureLoader:
         return rv
 
 
-    def load_surface(self, surf):
+    def load_surface(self, surf, properties):
         border = 1
 
         size = surf.get_size()
         w, h = size
 
         if (w <= self.max_texture_width) and (h <= self.max_texture_height):
-            return self.load_one_surface(surf, 0, 0, 0, 0)
+            return self.load_one_surface(surf, 0, 0, 0, 0, properties)
 
         htiles = self.texture_axis(w, self.max_texture_width, border)
         vtiles = self.texture_axis(h, self.max_texture_height, border)
@@ -186,7 +186,7 @@ cdef class TextureLoader:
         for ty, th, bt, bb in vtiles:
             for tx, tw, bl, br in htiles:
                 ss = surf.subsurface((tx - bl, ty - bt, tw + bl + br, th + bt + bb))
-                t = self.load_one_surface(ss, bl, bt, br, bb)
+                t = self.load_one_surface(ss, bl, bt, br, bb, properties)
                 rv.blit(t, (tx, ty))
 
         return rv
@@ -276,12 +276,13 @@ cdef class GLTexture(Model):
         self.loader.total_texture_size += self.width * self.height * 4
 
 
-    def from_surface(GLTexture self, surface):
+    def from_surface(GLTexture self, surface, properties):
         """
         Called to indicate this texture should be loaded from a surface.
         """
 
         self.surface = surface
+        self.properties = properties
 
         self.loader.texture_load_queue.add(self)
 
@@ -404,11 +405,11 @@ cdef class GLTexture(Model):
         program.finish()
 
         # Create premultiplied.
-        self.allocate_texture(premultiplied, self.width, self.height)
+        self.allocate_texture(premultiplied, self.width, self.height, self.properties)
 
         glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, self.width, self.height, 0)
 
-        self.mipmap_texture(premultiplied, self.width, self.height)
+        self.mipmap_texture(premultiplied, self.width, self.height, self.properties)
 
         # Delete tex.
         glDeleteTextures(1, &tex)
