@@ -1098,6 +1098,9 @@ controller_blocklist = [
 # Should dissolve transitions be mipmapped by default?
 mipmap_dissolves = False
 
+# Should movies be mipmapped by default?
+mipmap_movies = False
+
 del os
 del collections
 
