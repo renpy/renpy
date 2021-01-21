@@ -220,8 +220,11 @@ cdef class GLDraw:
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-        self.rtt.init()
-        self.environ.init()
+        try:
+            self.rtt.init()
+            self.environ.init()
+        except:
+            renpy.display.interface.display_reset = True
 
     def resize(self):
 
