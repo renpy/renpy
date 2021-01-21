@@ -725,8 +725,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             return rv
 
         if self.modal:
-            if (ev.type != renpy.display.core.TIMEEVENT) or renpy.config.modal_timeevent:
-                raise renpy.display.layout.IgnoreLayers()
+            raise renpy.display.layout.IgnoreLayers()
 
     def get_phase_name(self):
         return phase_name[self.phase]

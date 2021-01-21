@@ -23,16 +23,6 @@ To revert to the old behavior, use::
 
     define config.pause_with_transition = True
 
-Modal screens no longer block pause, timeouts, and other displayables
-that rely on events being delivered on time from functioning. This means
-that a pause can end when a modal screen is up
-
-To restore the old behavior:
-
-    define config.modal_timeevent = True
-
-
-
 
 .. _incompatible-7.4:
 
