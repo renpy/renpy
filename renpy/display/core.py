@@ -3559,7 +3559,7 @@ class Interface(object):
                         self.mouse_move = None
 
                 # See if we want to restart the interaction entirely.
-                if self.restart_interaction:
+                if self.restart_interaction and not self.display_reset:
                     return True, None
 
                 # Determine if we need a redraw. (We want to run these
