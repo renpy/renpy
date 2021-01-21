@@ -416,7 +416,6 @@ cdef class GL2Draw:
             self.redraw_period = 0.1
 
         self.shader_cache = ShaderCache("cache/shaders.txt", self.gles)
-        self.shader_cache.load()
 
         # Initialize the texture loader.
         self.texture_loader = TextureLoader(self)
@@ -509,9 +508,9 @@ cdef class GL2Draw:
 
         self.draw_transform = Matrix.cscreen_projection(self.drawable_viewport[2], self.drawable_viewport[3])
 
+        self.shader_cache.load()
         self.init_fbo()
         self.texture_loader.init()
-
 
     def resize(self):
         """
@@ -591,6 +590,7 @@ cdef class GL2Draw:
 
         # Generate the framebuffer.
         glGenFramebuffers(1, &self.fbo)
+
         glGenTextures(1, &self.color_texture)
 
         if renpy.config.depth_size:
@@ -599,7 +599,10 @@ cdef class GL2Draw:
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
         glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
 
-        # The number of pixels of addiitonal border, so we can load textures with
+        max_texture_size = max(max_texture_size, 1024)
+        max_renderbuffer_size = max(max_renderbuffer_size, 1024)
+
+        # The number of pixels of additional border, so we can load textures with
         # higher pitch.
         BORDER = 64
 
@@ -739,7 +742,8 @@ cdef class GL2Draw:
 
         try:
             pygame.display.flip()
-        except pygame.error:
+        except pygame.error as e:
+            renpy.display.log("Flip failed %r", e)
             renpy.game.interface.display_reset = True
 
         end = time.time()
