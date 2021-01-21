@@ -8,8 +8,8 @@ Full Changelog
 7.4.1
 =====
 
-Pause Statement Change
-----------------------
+Pause Statement Changes
+-----------------------
 
 The behavior of the ``pause`` statement with a time has changed, so that::
 
@@ -26,6 +26,9 @@ and not::
 This means that other features that expect a real pause will work during the
 pause statement.
 
+Modal screens no longer block the ``pause`` statement, or :func:`renpy.pause()`.
+this means that a pause can end even if a modal screen is displayed above it.
+
 Say Statement Id Clause
 -----------------------
 
@@ -38,13 +41,6 @@ To use it, just add ``id`` to the say statement, followed by the
 statement id::
 
     e "This used to have a typo." id start_61b861a2
-
-Screen Modal Change
--------------------
-
-Modal screens no longer block pause, timeouts, and other displayables
-that rely on events being delivered on time from functioning. This means
-that a pause can end when a modal screen is up
 
 Live2D
 ------

@@ -1513,10 +1513,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     else:
         renpy.ui.saybehavior(afm=afm)
 
-    if delay is not None:
-        renpy.ui.pausebehavior(delay, False)
-
-    rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward)
+    rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay)
 
     if checkpoint:
         renpy.exports.checkpoint(rv, keep_rollback=True)
