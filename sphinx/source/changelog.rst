@@ -138,16 +138,14 @@ has been fixed.
 When given a size, the hbox and vbox displayables now position children
 in the same way those children were positioned in Ren'Py 7.4.
 
-The :func:`Dissolve`, :func:`ImageDissolve`, and :func:`AlphaDissolve`
-transitions and the :func:`AlphaMask` displayable now have a `mipmap`
-parameter, that determines if mipmaps are created. Avoding creating
+The new :propref:`mipmap` style property applies to the  :func:`Dissolve`, :func:`ImageDissolve`,
+and :func:`AlphaDissolve` transitions, the :func:`AlphaMask`, :func:`Movie`, and :func:`Text`
+displayables, and text in general. This property controls if mipmaps are
+generated for the textures created by these displayables. Avoiding creating
 mipmaps may improve rendering performance on slower computers, but
-can lead to artifacts when scaling down. When not specified, this
-parameter defaults to :var:`config.mipmap_dissolves`, which defaults
-to False.
-
-Similarly, the :func:`Movie` displayable has a `mipmap` parameter
-that is controlled by :var:`config.mipmap_movies`
+can lead to artifacts when scaling down.  When not specified, this property
+defaults to :var:`config.mipmap_dissolves`, :var:`config.mipmap_movies`, or
+:var:`config.mipmap_text`, as appropriate.
 
 The toggle version of self-voicing preferences have been changed to
 provide a better selected state.
