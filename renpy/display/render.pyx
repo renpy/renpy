@@ -737,7 +737,7 @@ cdef class Render:
 
     cpdef int blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
         """
-        Blits `source` (a Render or Surface) to this Render, offset by
+        Blits `source` (a Render, Surface, or Model) to this Render, offset by
         xo and yo.
 
         If `focus` is true, then focuses are added from the child to the
@@ -746,10 +746,14 @@ cdef class Render:
         This will only blit on integer pixel boundaries.
         """
 
-        (xo, yo) = pos
-
         if source is self:
             raise Exception("Blitting to self.")
+
+        if models:
+            if isinstance(source, pygame.Surface):
+                source = renpy.display.draw.load_texture(source)
+
+        (xo, yo) = pos
 
         xo = int(xo)
         yo = int(yo)
@@ -767,7 +771,7 @@ cdef class Render:
 
     cpdef int subpixel_blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
         """
-        Blits `source` (a Render or Surface) to this Render, offset by
+        Blits `source` (a Render, Surface, or Model) to this Render, offset by
         xo and yo.
 
         If `focus` is true, then focuses are added from the child to the
@@ -775,6 +779,13 @@ cdef class Render:
 
         This blits at fractional pixel boundaries.
         """
+
+        if source is self:
+            raise Exception("Blitting to self.")
+
+        if models:
+            if isinstance(source, pygame.Surface):
+                source = renpy.display.draw.load_texture(source)
 
         (xo, yo) = pos
 
@@ -802,6 +813,13 @@ cdef class Render:
 
         This blits at fractional pixel boundaries.
         """
+
+        if source is self:
+            raise Exception("Blitting to self.")
+
+        if models:
+            if isinstance(source, pygame.Surface):
+                source = renpy.display.draw.load_texture(source)
 
         (xo, yo) = pos
 
