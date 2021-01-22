@@ -194,7 +194,7 @@ init -1800:
         xoffset 0
         yoffset 0
         subpixel False
-        mipmap False
+        mipmap None
 
         # Sound properties
         activate_sound None
