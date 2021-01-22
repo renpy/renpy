@@ -1939,22 +1939,14 @@ class AlphaMask(Container):
 
     Note that this takes different arguments from :func:`im.AlphaMask`,
     which uses the mask's red channel.
-
-    `mipmap`
-        If True, the textures used by this display have mipmaps generated.
-        If False, no mipmaps are generated. If None, the value of :var:`config.mipmap_dissolves`
-        is used.
     """
 
-    mipmap = None
-
-    def __init__(self, child, mask, mipmap=None, **properties):
+    def __init__(self, child, mask, **properties):
         super(AlphaMask, self).__init__(**properties)
 
         self.add(child)
         self.mask = renpy.easy.displayable(mask)
         self.null = None
-        self.mipmap = mipmap
 
     def render(self, width, height, st, at):
 
@@ -1980,7 +1972,7 @@ class AlphaMask(Container):
         rv.add_shader("renpy.imagedissolve")
         rv.add_uniform("u_renpy_dissolve_offset", 0)
         rv.add_uniform("u_renpy_dissolve_multiplier", 1.0)
-        rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.mipmap is None) else self.mipmap)
+        rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
 
         rv.blit(mr, (0, 0), focus=False, main=False)
         rv.blit(nr, (0, 0), focus=False, main=False)

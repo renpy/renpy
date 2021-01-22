@@ -306,11 +306,6 @@ class Movie(renpy.display.core.Displayable):
         If False, the movie will not loop. If `image` is defined, the image
         will be displayed when the movie ends. Otherwise, the displayable will
         become transparent.
-
-    `mipmap`
-        If True, textures loaded by the movie will be mipmapped. If False,
-        textures will not be. If None, the value of :var:`config.mipmap_movies`
-        is used.
     """
 
     fullscreen = False
@@ -328,8 +323,6 @@ class Movie(renpy.display.core.Displayable):
 
     loop = True
 
-    mipmap = False
-
     def ensure_channel(self, name):
 
         if name is None:
@@ -345,7 +338,7 @@ class Movie(renpy.display.core.Displayable):
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop)
 
-    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, mipmap=None, **properties):
+    def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, **properties):
         super(Movie, self).__init__(**properties)
 
         global auto_channel_serial
@@ -380,8 +373,6 @@ class Movie(renpy.display.core.Displayable):
 
         self.play_callback = play_callback
 
-        self.mipmap = mipmap
-
         if (self.channel == "movie") and (renpy.config.hw_video) and renpy.mobile:
             raise Exception("Movie(channel='movie') doesn't work on mobile when config.hw_video is true. (Use a different channel argument.)")
 
@@ -410,7 +401,7 @@ class Movie(renpy.display.core.Displayable):
 
         if self.size is None:
 
-            tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask, self.mipmap)
+            tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask, self.style.mipmap)
 
             if (not not_playing) and (tex is not None):
                 width, height = tex.get_size()

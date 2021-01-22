@@ -330,11 +330,6 @@ class Dissolve(Transition):
         A function that adjusts the timeline. If not None, this should be a
         function that takes a fractional time between 0.0 and 1.0, and returns
         a number in the same range.
-
-    `mipmap`
-        If True, the textures used by this transition have mipmaps generated.
-        If False, no mipmaps are generated. If None, the value of :var:`config.mipmap_dissolves`
-        is used.
     """
 
     __version__ = 1
@@ -344,9 +339,8 @@ class Dissolve(Transition):
             self.alpha = False
 
     time_warp = None
-    mipmap = None
 
-    def __init__(self, time, old_widget=None, new_widget=None, alpha=False, time_warp=None, mipmap=None, **properties):
+    def __init__(self, time, old_widget=None, new_widget=None, alpha=False, time_warp=None, **properties):
         super(Dissolve, self).__init__(time, **properties)
 
         self.time = time
@@ -355,7 +349,6 @@ class Dissolve(Transition):
         self.events = False
         self.alpha = alpha
         self.time_warp = time_warp
-        self.mipmap = None
 
     def render(self, width, height, st, at):
 
@@ -395,7 +388,7 @@ class Dissolve(Transition):
             rv.mesh = True
             rv.add_shader("renpy.dissolve")
             rv.add_uniform("u_renpy_dissolve", complete)
-            rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.mipmap is None) else self.mipmap)
+            rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
 
         rv.blit(bottom, (0, 0), focus=False, main=False)
         rv.blit(top, (0, 0), focus=True, main=True)
@@ -440,11 +433,6 @@ class ImageDissolve(Transition):
         function that takes a fractional time between 0.0 and 1.0, and returns
         a number in the same range.
 
-    `mipmap`
-        If True, the textures used by this transition have mipmaps generated.
-        If False, no mipmaps are generated. If None, the value of :var:`config.mipmap_dissolves`
-        is used.
-
     ::
 
         define circirisout = ImageDissolve("circiris.png", 1.0)
@@ -459,7 +447,6 @@ class ImageDissolve(Transition):
             self.alpha = False
 
     time_warp = None
-    mipmap = None
 
     def __init__(
             self,
@@ -473,7 +460,6 @@ class ImageDissolve(Transition):
             old_widget=None,
             new_widget=None,
             time_warp=None,
-            mipmap=None,
             **properties):
 
         # ramptype and ramp are now unused, but are kept for compatbility with
@@ -512,8 +498,6 @@ class ImageDissolve(Transition):
 
         # The length of the ramp.
         self.ramplen = max(ramplen, 1)
-
-        self.mipmap = mipmap
 
     def visit(self):
         return super(ImageDissolve, self).visit() + [ self.image ]
@@ -573,7 +557,7 @@ class ImageDissolve(Transition):
             rv.add_shader("renpy.imagedissolve",)
             rv.add_uniform("u_renpy_dissolve_offset", offset)
             rv.add_uniform("u_renpy_dissolve_multiplier", 256.0 / ramp)
-            rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.mipmap is None) else self.mipmap)
+            rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
 
         rv.blit(image, (0, 0), focus=False, main=False)
         rv.blit(bottom, (0, 0), focus=False, main=False)
@@ -607,11 +591,6 @@ class AlphaDissolve(Transition):
         If true, the alpha channel is reversed. Opaque areas are taken
         from the old image, while transparent areas are taken from the
         new image.
-
-    `mipmap`
-        If True, the textures used by this transition have mipmaps generated.
-        If False, no mipmaps are generated. If None, the value of :var:`config.mipmap_dissolves`
-        is used.
      """
 
     mipmap = None
@@ -624,7 +603,6 @@ class AlphaDissolve(Transition):
             new_widget=None,
             alpha=False,
             reverse=False,
-            mipmap=None,
             **properties):
 
         super(AlphaDissolve, self).__init__(delay, **properties)
@@ -638,8 +616,6 @@ class AlphaDissolve(Transition):
 
         self.alpha = alpha
         self.reverse = reverse
-
-        self.mipmap = mipmap
 
     def visit(self):
         return super(AlphaDissolve, self).visit() + [ self.control ]
@@ -672,7 +648,7 @@ class AlphaDissolve(Transition):
             rv.add_shader("renpy.imagedissolve",)
             rv.add_uniform("u_renpy_dissolve_offset", 0)
             rv.add_uniform("u_renpy_dissolve_multiplier", 1.0)
-            rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.mipmap is None) else self.mipmap)
+            rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
 
         rv.blit(control, (0, 0), focus=False, main=False)
 
