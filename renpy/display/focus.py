@@ -422,6 +422,9 @@ def focus_extreme(xmul, ymul, wmul, hmul):
 
     for f in focus_list:
 
+        if not f.widget.style.keyboard_focus:
+            continue
+
         if f.x is None:
             continue
 
