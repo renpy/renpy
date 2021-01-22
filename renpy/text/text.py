@@ -831,7 +831,7 @@ class Layout(object):
                 self.make_alignment_grid(surf)
 
             renpy.display.draw.mutated_surface(surf)
-            tex = renpy.display.draw.load_texture(surf)
+            tex = renpy.display.draw.load_texture(surf, properties={ "mipmap" : renpy.config.mipmap_text if (style.mipmap is None) else style.mipmap })
 
             self.textures[key] = tex
 
@@ -1449,7 +1449,7 @@ class Text(renpy.display.core.Displayable):
     """
     :name: Text
     :doc: text
-    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, **properties)
+    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, mipmap=None, **properties)
 
     A displayable that displays text on the screen.
 

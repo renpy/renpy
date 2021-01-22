@@ -99,6 +99,7 @@ text_property_names = [
     "underline",
     "hinting",
     "adjust_spacing",
+    "mipmap",
     ]
 
 text_properties = [ Style(i) for i in text_property_names ]
@@ -149,8 +150,7 @@ button_properties = [ Style(i) for i in [
         Keyword("alternate_keysym"),
     ]
 
-
-bar_property_names =  [
+bar_property_names = [
     "bar_vertical",
     "bar_invert",
     "bar_resizing",
@@ -195,7 +195,6 @@ grid_properties = [ Style(i) for i in [
     "xspacing",
     "yspacing",
     ] ] + margin_properties
-
 
 ui_properties = [
     Keyword("at"),

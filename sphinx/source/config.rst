@@ -1244,6 +1244,11 @@ Rarely or Internally Used
 
     The default value of the mipmap argument to :func:`Movie`.
 
+.. var:: config.mipmap_text = False
+
+    The default value of the mipmap argument to :func:`Text`, including
+    text used in screen statements.
+
 .. var:: config.missing_image_callback = None
 
     If not None, this function is called when an attempt to load an

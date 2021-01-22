@@ -181,6 +181,7 @@ style_properties = sorted_dict(
     line_spacing=None,
     mouse=None,
     min_width=None,
+    mipmap=None,
     newline_indent=None,
     order_reverse=None,
     outlines='expand_outlines',

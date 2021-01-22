@@ -398,6 +398,15 @@ or on the screen when not inside a layout.
 
     This will not work with all displayables and all layouts.
 
+.. style-property:: mipmap boolean or None
+
+    This controls if textures created by this displayable are mipmapped.
+    This applies only to certain displayables, including :func:`Text`,
+    :func:`Movie`, and dissolves.
+
+    If None, the default for this is taken from config variables such
+    as :var:`config.mipmap_text`, :var:`config.mipmap_movies`, and
+    :var:`config.mipmap_dissolves`.
 
 .. _text-style-properties:
 
