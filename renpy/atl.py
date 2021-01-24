@@ -199,7 +199,10 @@ def interpolate(t, a, b, type): # @ReservedAssignment
     elif callable(b):
         a_origin = getattr(a, "origin", None)
         rv = b(a_origin, t)
-        rv.origin = b
+        if hasattr(b, "get_origin"):
+            rv.origin = b.get_origin(a_origin, t)
+        else:
+            rv.origin = b
         return rv
 
     # Interpolate everything else.

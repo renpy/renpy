@@ -22,6 +22,7 @@
 # This contains ColorMatrix and the various *Matrix classes.
 
 init -1500 python:
+    import copy as _copy
     import math as _math
 
     class ColorMatrix(object):
@@ -42,6 +43,14 @@ init -1500 python:
 
             value = other.value + (self.value - other.value) * done
             return self.get(value)
+
+        def get_origin(self, other, done):
+            if type(other) is not type(self):
+                return self
+
+            rv = _copy.copy(self)
+            rv.value = other.value + (self.value - other.value) * done
+            return rv
 
         def __mul__(self, other):
             return _MultiplyMatrix(self, other)
@@ -72,6 +81,15 @@ init -1500 python:
                 return self.left(None, 1.0) * self.right(None, 1.0)
 
             return self.left(other.left, done) * self.right(other.right, done)
+
+        def get_origin(self, other, done):
+            if type(other) is not type(self):
+                return self
+
+            rv = _copy.copy(self)
+            rv.left = self.left.get_origin(other.left, done)
+            rv.right = self.right.get_origin(other.right, done)
+            return rv
 
 
     class IdentityMatrix(ColorMatrix):
@@ -181,6 +199,19 @@ init -1500 python:
                             0, g, 0, 0,
                             0, 0, b, 0,
                             0, 0, 0, a ])
+
+        def get_origin(self, other, done):
+            if type(other) is not type(self):
+                return self
+
+            oldr, oldg, oldb = other.color.rgb
+            olda = other.color.alpha
+            r, g, b = self.color.rgb
+            a = self.color.alpha
+
+            rv = _copy.copy(self)
+            rv.color = Color(rgb=(oldr + (r - oldr) * done, oldg + (g - oldg) * done, oldb + (b - oldb) * done), alpha=olda + (a - olda) * done)
+            return rv
 
     class BrightnessMatrix(ColorMatrix):
         """
@@ -307,6 +338,27 @@ init -1500 python:
                             0, (wg - bg), 0, bg,
                             0, 0, (wb - bb), bb,
                             0, 0, 0, 1, ])
+
+        def get_origin(self, other, done):
+            if type(other) is not type(self):
+                return self
+
+            obr, obg, obb = other.black.rgb
+            owr, owg, owb = other.white.rgb
+            nbr, nbg, nbb = self.black.rgb
+            nwr, nwg, nwb = self.white.rgb
+
+            br = obr + (nbr - obr) * done
+            bg = obg + (nbg - obg) * done
+            bb = obb + (nbb - obb) * done
+            wr = owr + (nwr - owr) * done
+            wg = owg + (nwg - owg) * done
+            wb = owb + (nwb - owb) * done
+
+            rv = _copy.copy(self)
+            rv.black = Color(rgb=(br, bg, bb))
+            rv.white = Color(rgb=(wr, wg, wb))
+            return rv
 
 
     class HueMatrix(ColorMatrix):
