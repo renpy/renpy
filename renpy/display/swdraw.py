@@ -865,11 +865,7 @@ class SWDraw(object):
             pygame.display.update(updates)
 
         else:
-
-            if self.scale_fast:
-                pygame.transform.scale(self.window, self.screen.get_size(), self.screen)
-            else:
-                renpy.display.scale.smoothscale(self.window, self.screen.get_size(), self.screen)
+            renpy.display.scale.smoothscale(self.window, self.screen.get_size(), self.screen)
 
             pygame.display.flip()
 
