@@ -965,7 +965,12 @@ Rarely or Internally Used
 .. var:: config.allow_skipping = True
 
     If set to False, the user is not able to skip over the text of the
-    game.
+    game. See :var:`_skipping`.
+
+.. var:: config.allow_screensaver = True
+
+    If True, the screensaver may activite while the game is running. If
+    False, the screensaver is disabled.
 
 .. var:: config.archives = [ ]
 

@@ -1104,6 +1104,9 @@ mipmap_movies = False
 # Should text be mipmapped by default?
 mipmap_text = False
 
+# Should the screensaver be allowed?
+allow_screensaver = True
+
 del os
 del collections
 
