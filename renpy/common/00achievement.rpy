@@ -82,6 +82,13 @@ init -1500 python in achievement:
             if persistent._achievement_progress is None:
                 persistent._achievement_progress = _dict()
 
+        def register(self, name, stat_max=None, stat_modulo=1, **kwargs):
+            '''
+            `steam` and `steam_stat` are ignored.
+            `stat_modulo` is currently not implemented.
+            '''
+            self.stats[name] = (stat_max, stat_modulo)
+
         def grant(self, name):
             persistent._achievements.add(name)
 
@@ -94,9 +101,24 @@ init -1500 python in achievement:
         def has(self, name):
             return name in persistent._achievements
 
-        def progress(self, name, complete):
-            old = persistent._achievement_progress.get(name, 0)
-            persistent._achievement_progress[name] = max(complete, old)
+        def progress(self, name, completed):
+            current = persistent._achievement_progress.get(name, 0)
+
+            if name not in self.stats:
+                if config.developer:
+                    raise Exception("To report progress, you must register {} with a stat_max.".format(name))
+                else:
+                    return
+
+            stat_max, stat_modulo = self.stats[name]
+
+            if (current is not None) and (current >= completed):
+                return
+
+            if completed >= stat_max:
+                grant(name) # global achievement function, not self.grant, arguable
+
+            persistent._achievement_progress[name] = max(completed, current)
 
     def merge(old, new, current):
         if old is None:
