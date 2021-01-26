@@ -320,6 +320,17 @@ init -1500 python in achievement:
         for i in backends:
             i.clear_all()
 
+    def get_progress(name):
+        """
+        :doc: achievement
+
+        Returns the current progress towards the achievement identified
+        with `name`, or 0 if no progress has been registered for it or if
+        the achievement is not known.
+        """
+
+        return persistent._achievement_progress.get(name, 0)
+
     def progress(name, complete, total=None):
         """
         :doc: achievement
