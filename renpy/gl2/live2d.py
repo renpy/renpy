@@ -311,6 +311,8 @@ class Live2DCommon(object):
         # Same.
         self.attribute_filter = None
 
+        self.update_function = None
+
     def apply_aliases(self, aliases):
 
         for k, v in aliases.items():
@@ -517,6 +519,7 @@ class Live2D(renpy.display.core.Displayable):
             sustain=False,
             attribute_function=None,
             attribute_filter=None,
+            update_function=None,
             default_fade=1.0,
             **properties):
 
@@ -555,6 +558,9 @@ class Live2D(renpy.display.core.Displayable):
 
         if attribute_filter is not None:
             common.attribute_filter = attribute_filter
+
+        if update_function is not None:
+            common.update_function = update_function
 
     def _duplicate(self, args):
 
@@ -773,6 +779,17 @@ class Live2D(renpy.display.core.Displayable):
 
         return redraw
 
+    def blend_parameter(self, name, blend, value, weight=1.0):
+        if blend == "multiply":
+            blend = "Multiply"
+        elif blend == "add":
+            blend = "Add"
+        elif blend == "overwrite":
+            blend = "Overwrite"
+        else:
+            raise Exception("Unknown blend mode {!r}".format(blend))
+        self.common.model.blend_parameter(name, blend, value, weight)
+
     def render(self, width, height, st, at):
 
         common = self.common
@@ -806,7 +823,7 @@ class Live2D(renpy.display.core.Displayable):
                 fade = False
 
         # Reset the parameter, and update.
-        common.model.reset_parameters()
+        model.reset_parameters()
 
         if fade:
             old_redraw = state.old.update(common, renpy.display.interface.frame_time - state.old_base_time, st)
@@ -820,8 +837,14 @@ class Live2D(renpy.display.core.Displayable):
         # Apply the expressions.
         expression_redraw = self.update_expressions(st)
 
+        # Apply the user-defined update.
+        if common.update_function is None:
+            user_redraw = None
+        else:
+            user_redraw = common.update_function(self, st)
+
         # Determine when to redraw.
-        redraws = [ new_redraw, old_redraw, expression_redraw ]
+        redraws = [ new_redraw, old_redraw, expression_redraw, user_redraw ]
         redraws = [ i for i in redraws if i is not None ]
 
         if redraws:
