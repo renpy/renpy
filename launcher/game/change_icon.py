@@ -320,7 +320,10 @@ def change_icons(oldexe, icofn):
 
     if newsize < physize:
 
-        rsrc += b"\0" * (physize - newsize)
+        while len(rsrc) < physize:
+            rsrc = rsrc + rsrc
+
+        rsrc = rsrc[:physize]
 
         return basedata + rsrc
 
