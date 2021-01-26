@@ -104,6 +104,11 @@ init -1500 python in achievement:
         def progress(self, name, completed):
             current = persistent._achievement_progress.get(name, 0)
 
+            if (current is not None) and (current >= completed):
+                return
+
+            persistent._achievement_progress[name] = max(completed, current)
+
             if name not in self.stats:
                 if config.developer:
                     raise Exception("To report progress, you must register {} with a stat_max.".format(name))
@@ -112,13 +117,8 @@ init -1500 python in achievement:
 
             stat_max, stat_modulo = self.stats[name]
 
-            if (current is not None) and (current >= completed):
-                return
-
             if completed >= stat_max:
-                grant(name) # global achievement function, not self.grant, arguable
-
-            persistent._achievement_progress[name] = max(completed, current)
+                self.grant(name)
 
     def merge(old, new, current):
         if old is None:
