@@ -90,10 +90,11 @@ init -1500 python in build:
         ( "lib/*/pythonw.exe", None),
 
         # Windows patterns.
-        ( "lib/windows-i686/**", "windows"),
+        ( "lib/windows-i686/**", "windows_i686"),
         ( "lib/windows-x86_64/**", "windows"),
 
         # Linux patterns.
+        ( "lib/linux-i686/**", "linux_i686"),
         ( "lib/linux-*/**", "linux"),
 
         # Mac patterns
@@ -331,14 +332,14 @@ init -1500 python in build:
         packages.append(d)
 
     package("pc", "zip", "windows linux renpy all", "PC: Windows and Linux")
-    package("linux", "tar.bz2", "linux renpy all", "Linux x86/x86_64")
-    package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh x86_64")
-    package("win", "zip", "windows renpy all", "Windows x86/x86_64")
+    package("linux", "tar.bz2", "linux renpy all", "Linux")
+    package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh")
+    package("win", "zip", "windows renpy all", "Windows")
     package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
     package("steam", "zip", "windows linux mac renpy all", hidden=True)
     package("android", "directory", "android all", hidden=True, update=False, dlc=True)
     package("ios", "directory", "ios all", hidden=True, update=False, dlc=True)
-    package("web", "zip", "web all", update=False, dlc=True)
+    package("web", "zip", "web all", hidden=True, update=False, dlc=True)
 
     # Data that we expect the user to set.
 
@@ -402,6 +403,12 @@ init -1500 python in build:
 
     # Do we want to add the script_version file?
     script_version = True
+
+    # A list of file lists to merge.
+    merge = [ ]
+
+    # Do we want to include the i686 binaries?
+    include_i686 = True
 
 
     # This function is called by the json_dump command to dump the build data
@@ -471,6 +478,12 @@ init -1500 python in build:
             rv["mac_codesign_dmg_command"] = mac_codesign_dmg_command
 
         rv["mac_info_plist"] = mac_info_plist
+
+        rv["merge"] = list(merge)
+
+        if include_i686:
+           rv['merge'].append(("linux_i686", "linux"))
+           rv['merge'].append(("windows_i686", "windows"))
 
         return rv
 

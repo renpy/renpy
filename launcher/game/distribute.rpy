@@ -542,6 +542,9 @@ init python in distribute:
             # Assign the x-bit as necessary.
             self.mark_executable()
 
+            # Merge file lists, as needed.
+            self.merge_file_lists()
+
             # Rename the executable-like files.
             if not build['renpy']:
                 self.rename()
@@ -639,6 +642,17 @@ init python in distribute:
 
             for fn in os.listdir(directory):
                 walk(fn, os.path.join(directory, fn))
+
+        def merge_file_lists(self):
+            """
+            For each (old, new) in self.build['merge'], merge the old list
+            into the new list.
+            """
+
+            for old, new in self.build['merge']:
+                self.file_lists[new] = FileList.merge([
+                    self.file_lists[old],
+                    self.file_lists[new]])
 
         def rescan(self, oldlist, directory):
             """
@@ -875,16 +889,18 @@ init python in distribute:
             if self.build['renpy']:
                 windows = 'binary'
                 linux = 'binary'
+                linux_i686 = 'binary'
                 mac = 'binary'
                 raspi = 'raspi'
             else:
                 windows = 'windows'
                 linux = 'linux'
+                linux_i686 = 'linux_i686'
                 mac = 'mac'
                 raspi = 'linux'
 
             self.add_file(
-                linux,
+                linux_i686,
                 "lib/linux-i686/" + self.executable_name,
                 os.path.join(config.renpy_base, "lib/linux-i686/renpy"),
                 True)
@@ -962,14 +978,16 @@ init python in distribute:
 
             if self.build['renpy']:
                 windows = 'binary'
+                windows_i686 = 'binary'
             else:
                 windows = 'windows'
+                windows_i686 = 'windows_i686'
 
 
             icon_fn = os.path.join(self.project.path, "icon.ico")
 
 
-            def write_exe(src, dst, tmp):
+            def write_exe(src, dst, tmp, fl):
                 """
                 Write the exe found at `src` (taken as relative to renpy-base)
                 as `dst` (in the distribution). `tmp` is the name of a tempfile
@@ -988,19 +1006,18 @@ init python in distribute:
                     tmp = src
 
                 if os.path.exists(tmp):
-                    self.add_file(windows, dst, tmp)
+                    self.add_file(fl, dst, tmp)
 
-            write_exe("lib/windows-i686/renpy.exe", self.exe32, self.exe32)
-            write_exe("lib/windows-i686/pythonw.exe", "lib/windows-i686/pythonw.exe", "pythonw-32.exe")
-            write_exe("lib/windows-x86_64/renpy.exe", self.exe, self.exe)
-            write_exe("lib/windows-x86_64/pythonw.exe", "lib/windows-x86_64/pythonw.exe", "pythonw-64.exe")
+            write_exe("lib/windows-i686/renpy.exe", self.exe32, self.exe32, windows_i686)
+            write_exe("lib/windows-i686/pythonw.exe", "lib/windows-i686/pythonw.exe", "pythonw-32.exe", windows_i686)
+            write_exe("lib/windows-x86_64/renpy.exe", self.exe, self.exe, windows)
+            write_exe("lib/windows-x86_64/pythonw.exe", "lib/windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
 
         def add_main_py(self):
             if self.build['renpy']:
                 return
 
             self.add_file("web", "main.py", os.path.join(config.renpy_base, "renpy.py"))
-
 
         def mark_executable(self):
             """
