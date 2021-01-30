@@ -15,6 +15,10 @@ The new :var:`config.context_fadeout_music` and :var:`config.context_fadein_musi
 variables make it possible to fade out and in music when a game is loaded or
 other context changes cause the music to change.
 
+Ren'Py now searches for Live2D motion and expression files using the
+extensions (.motion3.json and .exp3.json), rather than using
+directory names.
+
 The new :var:`build.include_i686` variable determines if the 32-bit
 versions of Ren'Py are included in the build. Not including 32-bit
 binaries can reduced download size and prevent overzealous antivirus

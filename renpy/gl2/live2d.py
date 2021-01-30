@@ -206,15 +206,15 @@ class Live2DCommon(object):
         # A map from the expression name to the information about it.
         expression_files = { }
 
-        motions_dir = self.base + "motions/"
-        expressions_dir = self.base + "expressions/"
-
         for i in renpy.exports.list_files():
-            if i.startswith(motions_dir):
+
+            if not i.startswith(self.base):
+                continue
+
+            if i.endswith("motion3.json"):
                 i = i[len(self.base):]
                 motion_files[i] = { "File" : i }
-
-            elif i.startswith(expressions_dir):
+            elif i.endswith(".exp3.json"):
                 i = i[len(self.base):]
                 expression_files[i] = { "File" : i }
 
