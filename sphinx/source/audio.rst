@@ -7,7 +7,7 @@ using the following audio file formats
 * Opus
 * Ogg Vorbis
 * MP3
-* WAV (uncompressed PCM only)
+* WAV (uncompressed 16-bit signed PCM only)
 
 Ren'Py supports an arbitrary number of audio channels. There are three
 normal channels defined by default:
