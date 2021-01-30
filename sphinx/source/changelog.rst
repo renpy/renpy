@@ -3,6 +3,49 @@ Full Changelog
 ==============
 
 
+.. _renpy-7.4.2:
+
+7.4.2
+=====
+
+Fixes and Changes
+-----------------
+
+The new :var:`build.include_i686` variable determines if the 32-bit
+versions of Ren'Py are included in the build. Not including 32-bit
+binaries can reduced download size and prevent overzealous antivirus
+programs from incorrectly reporting distributions as infected.
+
+Ren'Py will no longer disable the screen saver or prevent the
+system from going to sleep when a game is running.
+
+A macOS issue with the operating system's fullscreen (invoked using the gree
+button) disabling resizing, and hence preventing the window from being
+restored to it's normal size, has been resolved.
+
+A crash on raspberry pi displaying a webp image has been fixed.
+
+This release fixes missing files caused by a mistake in the build process:
+
+* The say.vbs file was missing, preventing self-voicing from working on
+  Windows.
+* Various files required to support ANGLE were missing, which prevented
+  DirectX rendering from working.
+
+Android
+-------
+
+There is a know issue with certain Android devices where games may be
+unresponsive. I'm working on a fix, but I didn't want to delay the fixes
+for this.
+
+The detection of the JVM on macOS is more robust, and less likely to
+be confused by a browser plug-in.
+
+Ren'Py now recommends the use of AdoptOpenJDK as a source for the
+JVM.
+
+
 .. _renpy-7.4.1:
 
 7.4.1
