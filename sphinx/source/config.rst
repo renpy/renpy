@@ -328,6 +328,16 @@ Occasionally Used
     Contains a list of screens that are removed when a context is copied
     for rollback or saving.
 
+.. var:: config.context_fadein_music = 0
+
+    The amount of time in seconds Ren'Py spends fading in music when the music is
+    played due to a context change. (Usually, when the game is loaded.)
+
+.. var:: config.context_fadeout_music = 0
+
+    The amount of time in seconds Ren'Py spends fading out music when the music is
+    played due to a context change. (Usually, when the game is loaded.)
+
 .. var:: config.debug = False
 
     Enables debugging functionality (mostly by turning some missing
