@@ -43,9 +43,9 @@ This release fixes missing files caused by a mistake in the build process:
 Android
 -------
 
-There is a know issue with certain Android devices where games may be
-unresponsive. I'm working on a fix, but I didn't want to delay the fixes
-for this.
+There is a known issue with Samsung devices with the magnification shortcut
+enabled, where the game may become unresponsive. I'm working on a fix, but
+didn't want to delay the release for this.
 
 The detection of the JVM on macOS is more robust, and less likely to
 be confused by a browser plug-in.
