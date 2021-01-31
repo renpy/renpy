@@ -1107,6 +1107,10 @@ mipmap_text = False
 # Should the screensaver be allowed?
 allow_screensaver = True
 
+# The amount of time to spend fading in and out music when the context changes.
+context_fadein_music = 0
+context_fadeout_music = 0
+
 del os
 del collections
 
