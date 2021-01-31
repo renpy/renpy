@@ -410,6 +410,8 @@ init -1500 python in build:
     # Do we want to include the i686 binaries?
     include_i686 = True
 
+    # Do we want to change the icon on the i686 binaries?
+    change_icon_i686 = True
 
     # This function is called by the json_dump command to dump the build data
     # into the json file.
@@ -484,6 +486,8 @@ init -1500 python in build:
         if include_i686:
            rv['merge'].append(("linux_i686", "linux"))
            rv['merge'].append(("windows_i686", "windows"))
+
+        rv["change_icon_i686"] = change_icon_i686
 
         return rv
 

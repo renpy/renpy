@@ -279,11 +279,12 @@ Advanced Configuration
 
 The following variables provide further control of the build process:
 
-.. var:: build.exclude_empty_directories = True
 
-    If true, empty directories (including directories left empty by
-    file archiving) will be removed from generated packages. If false,
-    empty directories will be included.
+.. var:: build.allow_integrated_gpu = True
+
+    Allows Ren'Py to run on the integrated GPU on platforms that have both
+    integrated and discrete GPUs. Right now, this is only supported on Mac
+    OS X.
 
 .. var:: build.destination = "{directory_name}-dists"
 
@@ -302,11 +303,22 @@ The following variables provide further control of the build process:
     ``{version}``
         The value of build.version.
 
-.. var:: build.allow_integrated_gpu = True
+.. var:: build.change_icon_i686 = True
 
-    Allows Ren'Py to run on the integrated GPU on platforms that have both
-    integrated and discrete GPUs. Right now, this is only supported on Mac
-    OS X.
+    If True, and icon.ico exists, the icon of the 32-bit Windows executable
+    will be changed. If False, the icon will not be changed. Setting this
+    to False may prevent some antivirus programs from producing a false
+    positive for your game.
+
+.. var:: build.exclude_empty_directories = True
+
+    If true, empty directories (including directories left empty by
+    file archiving) will be removed from generated packages. If false,
+    empty directories will be included.
+.. var:: build.include_i686 = True
+
+    If true, files necessary to run on 32-bit x86 processors will be included
+    in the Linux and Mac builds. If False, these files will not be included.
 
 .. var:: build.include_old_themes = True
 

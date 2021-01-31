@@ -994,10 +994,15 @@ init python in distribute:
                 that is written if one is needed.
                 """
 
+                if fl == "windows_i686":
+                    should_change_icon = self.build["change_icon_i686"]
+                else:
+                    should_change_icon = True
+
                 src = os.path.join(config.renpy_base, src)
                 tmp = self.temp_filename(tmp)
 
-                if os.path.exists(icon_fn) and os.path.exists(src):
+                if should_change_icon and os.path.exists(icon_fn) and os.path.exists(src):
 
                     with open(tmp, "wb") as f:
                         f.write(change_icons(src, icon_fn))

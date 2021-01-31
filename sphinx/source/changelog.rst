@@ -24,6 +24,10 @@ versions of Ren'Py are included in the build. Not including 32-bit
 binaries can reduced download size and prevent overzealous antivirus
 programs from incorrectly reporting distributions as infected.
 
+The new :var:`build.change_icon_i686` will prevent the icon for the
+i686 version from being changed. This may prevent antivirus programs
+from incorrect detections.
+
 Ren'Py will no longer disable the screen saver or prevent the
 system from going to sleep when a game is running.
 
