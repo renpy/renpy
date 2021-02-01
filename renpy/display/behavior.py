@@ -2181,13 +2181,17 @@ class MouseArea(renpy.display.core.Displayable):
         if renpy.display.focus.get_grab():
             return
 
-        if self.style.focus_mask is not None:
-            crend = renpy.display.render.render(self.style.focus_mask, self.width, self.height, st, self.at_st_offset + st)
-            is_hovered = crend.is_pixel_opaque(x, y)
-        elif 0 <= x < self.width and 0 <= y < self.height:
-            is_hovered = True
-        else:
+        if renpy.display.focus.focus_type == 'keyboard':
             is_hovered = False
+
+        else:
+            if self.style.focus_mask is not None:
+                crend = renpy.display.render.render(self.style.focus_mask, self.width, self.height, st, self.at_st_offset + st)
+                is_hovered = crend.is_pixel_opaque(x, y)
+            elif 0 <= x < self.width and 0 <= y < self.height:
+                is_hovered = True
+            else:
+                is_hovered = False
 
         if is_hovered and not self.is_hovered:
             self.is_hovered = True
