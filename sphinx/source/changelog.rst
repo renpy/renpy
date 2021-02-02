@@ -3,6 +3,18 @@ Full Changelog
 ==============
 
 
+.. _renpy-7.4.3:
+
+7.4.2
+=====
+
+Features
+--------
+
+The new :func:`renpy.get_zorder_list` and :func:`renpy.change_zorder` allow
+the zorder of images and screens to be manipulated after being shown.
+
+
 .. _renpy-7.4.2:
 
 7.4.2
