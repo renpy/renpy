@@ -1455,6 +1455,37 @@ class SceneLists(renpy.object.Object):
 
         return (x, y, sw, sh)
 
+    def get_zorder_list(self, layer):
+        """
+        Returns a list of (tag, zorder) pairs.
+        """
+
+        rv = [ ]
+
+        for sle in self.layers.get(layer, [ ]):
+
+            if sle.tag is None:
+                continue
+            if "$" in sle.tag:
+                continue
+
+            rv.append((sle.tag, sle.zorder))
+
+        return rv
+
+    def change_zorder(self, layer, tag, zorder):
+        """
+        Changes the zorder for tag on layer.
+        """
+
+        sl = self.layers.get(layer, [ ])
+        for sle in sl:
+
+            if sle.tag == tag:
+                sle.zorder = zorder
+
+        sl.sort(key=lambda sle : sle.zorder)
+
 
 def scene_lists(index=-1):
     """

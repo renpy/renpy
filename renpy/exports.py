@@ -3908,3 +3908,24 @@ def add_to_all_stores(name, value):
 
         if name not in ns:
             ns[name] = value
+
+
+def get_zorder_list(layer):
+    """
+    :doc: image_func
+
+    Returns a list of (tag, zorder) pairs for `layer`.
+    """
+
+    return renpy.display.core.scene_lists().get_zorder_list(layer)
+
+
+def change_zorder(layer, tag, zorder):
+    """
+    :doc: image_func
+
+    Changes the zorder of `tag` on `layer` to `zorder`.
+    """
+
+    return renpy.display.core.scene_lists().change_zorder(layer, tag, zorder)
+
