@@ -153,17 +153,14 @@ init -1500 python:
 
                 # When not using an old color, we can take
                 # r, g, b, and a from self.color.
-                r, g, b = self.color.rgb
-                a = self.color.alpha
+                r, g, b, a = self.color.rgba
 
             else:
 
                 # Otherwise, we have to extract from self.color
                 # and other.color, and interpolate the results.
-                oldr, oldg, oldb = other.color.rgb
-                olda = other.color.alpha
-                r, g, b = self.color.rgb
-                a = self.color.alpha
+                oldr, oldg, oldb, olda = other.color.rgba
+                r, g, b, a = self.color.rgba
 
                 r = oldr + (r - oldr) * done
                 g = oldg + (g - oldg) * done
