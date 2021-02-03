@@ -2181,7 +2181,7 @@ class MouseArea(renpy.display.core.Displayable):
         if renpy.display.focus.get_grab():
             return
 
-        if renpy.display.focus.focus_type == 'keyboard':
+        if renpy.display.focus.pending_focus_type == 'keyboard':
             is_hovered = False
 
         else:
