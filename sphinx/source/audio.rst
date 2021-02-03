@@ -100,7 +100,7 @@ The ``queue`` statement is used to queue up audio files. They will be played whe
 the channel finishes playing the currently playing file.
 
 The queue statement begins with keyword ``queue``, followed by the the name of a
-channel to play sound on. It optionally takes the ``loop`` and ``noloop`` clauses. ::
+channel to play sound on. It optionally takes the ``fadein``, ``loop`` and ``noloop`` clauses. ::
 
         queue sound "woof.mp3"
         queue music [ "a.ogg", "b.ogg" ]
