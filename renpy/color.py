@@ -97,6 +97,11 @@ class Color(tuple):
         the red, green, and blue components. Each component ranges between 0.0
         and 1.0.
 
+    .. attribute:: rgba
+
+        Returns the color as a tuple of four floating point numbers giving
+        the red, green, blue and alpha components as 0.0 to 1.0 values.
+
     .. attribute:: alpha
 
         Returns the alpha (opacity) of this Color as a number between 0.0 and
@@ -115,6 +120,7 @@ class Color(tuple):
     _hls = None
     _hsv = None
     _alpha = None
+    _rgba = None
 
     def __new__(cls, color=None, hls=None, hsv=None, rgb=None, alpha=1.0):
 
@@ -178,6 +184,7 @@ class Color(tuple):
             rv._hls = hls
             rv._hsv = hsv
             rv._alpha = alpha
+            rv._rgba = tuple(list(rgb) + [alpha])
 
             return rv
 
@@ -209,6 +216,18 @@ class Color(tuple):
                 )
 
         return self._rgb
+
+    @property
+    def rgba(self):
+        if self._rgba is None:
+            self._rgba = (
+                self[0] / 255.0,
+                self[1] / 255.0,
+                self[2] / 255.0,
+                self[3] / 255.0,
+                )
+
+        return self._rgba
 
     @property
     def hls(self):
