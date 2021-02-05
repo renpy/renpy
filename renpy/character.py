@@ -99,6 +99,7 @@ class DialogueTextTags(object):
 
                 elif tag == "done":
                     self.has_done = True
+                    self.text += full_tag
                     break
 
                 self.text += full_tag
@@ -107,6 +108,25 @@ class DialogueTextTags(object):
                 break
 
         self.pause_end.append(len(self.text))
+
+        while True:
+
+            try:
+                self.text += next(i)
+
+                quoted = next(i)
+                full_tag = next(i)
+                tag = next(i)
+                value = next(i)
+
+                if quoted is not None:
+                    self.text += quoted
+                    continue
+
+                self.text += full_tag
+
+            except StopIteration:
+                break
 
         if self.no_wait:
             self.pause_delay.append(0)
