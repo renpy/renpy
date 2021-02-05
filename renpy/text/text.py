@@ -1767,6 +1767,7 @@ class Text(renpy.display.core.Displayable):
             rv.append(i)
 
         rv = "".join(rv)
+        rv, _, _ = rv.partition("{done}")
         _, _, rv = rv.rpartition("{fast}")
 
         rv = renpy.text.extras.filter_alt_text(rv)

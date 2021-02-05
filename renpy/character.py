@@ -507,7 +507,7 @@ def display_say(
 
     if all_at_once:
         pause_start = [ dtt.pause_start[0] ]
-        pause_end = [ len(dtt.text) ]
+        pause_end = [ dtt.pause_end[-1] ]
         pause_delay = [ dtt.pause_delay[-1] ]
     else:
         pause_start = dtt.pause_start
