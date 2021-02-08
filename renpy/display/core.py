@@ -2061,6 +2061,8 @@ class Interface(object):
             return
 
         # Initialize audio.
+        pygame.display.hint("SDL_AUDIO_DEVICE_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
+
         renpy.audio.audio.init()
 
         # Initialize pygame.
