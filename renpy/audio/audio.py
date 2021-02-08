@@ -249,6 +249,15 @@ class Channel(object):
 
         # The time the secondary volume of this channel was last set.
         self.secondary_volume_time = None
+        
+        #The next filename to play on this channel
+        self.next_channel_filename = None
+
+        #Queue a volume adjustment for the relative channel volume.
+        self.queued_tertiary_volume = None
+
+        #The current relative channel volume that the player is hearing. separating this from the "context" volume allows for smooth volume transitions on loads and such
+        self.current_tertiary_volume = 1.0
 
         # Should we stop playing on mute?
         self.stop_on_mute = stop_on_mute
@@ -476,8 +485,6 @@ class Channel(object):
             try:
                 filename, start, end = self.split_filename(topq.filename, topq.loop)
 
-                self.set_tertiary_volume(topq.relative_volume)
-
                 if (end >= 0) and ((end - start) <= 0) and self.queue:
                     continue
 
@@ -490,8 +497,11 @@ class Channel(object):
 
                 if depth == 0:
                     renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end)
+                    self.set_tertiary_volume(topq.relative_volume, setvolnow=True)
                 else:
                     renpysound.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight, start=start, end=end)
+                    self.set_tertiary_volume(topq.relative_volume, setvolnow=False)
+                    self.next_channel_filename = topq.filename
 
                 self.playing = True
 
@@ -508,6 +518,10 @@ class Channel(object):
                     return
 
             break
+
+        #If a volume update has been 'queued', and the file currently playing is the same that was queued with this volume update, then update the volume
+        if self.queued_tertiary_volume != None and self.get_playing() == self.next_channel_filename:
+            self.set_tertiary_volume(self.queued_tertiary_volume, setvolnow=True)
 
         # Empty queue?
         if not self.queue:
@@ -573,7 +587,7 @@ class Channel(object):
 
             if self.secondary_volume_time != self.context.secondary_volume_time:
                 self.secondary_volume_time = self.context.secondary_volume_time
-                result_volume = self.context.secondary_volume * self.context.tertiary_volume
+                result_volume = self.context.secondary_volume * self.current_tertiary_volume
                 renpysound.set_secondary_volume(self.number,
                                                 result_volume,
                                                 0)
@@ -634,8 +648,17 @@ class Channel(object):
 
                 self.wait_stop = synchro_start
                 self.synchro_start = synchro_start
+            else:
+                #loop_only = called with the same loop list, so just check volume
+                if relative_volume != self.current_tertiary_volume:
+                    self.set_tertiary_volume(relative_volume, setvolnow=True)
+                
 
             if loop:
+                #If the next thing currently playing is in the list of the new loop, just set volume. music.play with if_change or context switch (loading, ect..) will cause this
+                if self.get_playing() != None and len(self.queue) > 0 and self.get_playing() in list(filenames):
+                    if relative_volume != self.current_tertiary_volume:
+                        self.set_tertiary_volume(relative_volume, setvolnow=True)
                 self.loop = list(filenames)
             else:
                 self.loop = [ ]
@@ -698,12 +721,18 @@ class Channel(object):
 
             if pcm_ok:
                 self.secondary_volume_time = self.context.secondary_volume_time
-                result_volume = self.context.secondary_volume * self.context.tertiary_volume
+                result_volume = self.context.secondary_volume * self.current_tertiary_volume
                 renpysound.set_secondary_volume(self.number, result_volume, delay)
 
-    def set_tertiary_volume(self, volume):
+    def set_tertiary_volume(self, volume, setvolnow=True):
         self.context.tertiary_volume = volume
-        self.set_secondary_volume(self.context.secondary_volume, 0)
+        if setvolnow:
+            self.current_tertiary_volume = volume
+            self.set_secondary_volume(self.context.secondary_volume, 0)
+            self.queued_tertiary_volume = None
+        else:
+            self.queued_tertiary_volume = volume
+
 
     def pause(self):
         with lock:
@@ -1135,9 +1164,10 @@ def interact():
                 if c.loop:
                     if not filenames or c.get_playing() not in filenames:
                         c.fadeout(renpy.config.context_fadeout_music or renpy.config.fade_music)
+                    c.dequeue()
 
                 if filenames:
-                    c.enqueue(filenames, loop=True, synchro_start=True, tight=tight, fadein=renpy.config.context_fadein_music)
+                    c.enqueue(filenames, loop=True, synchro_start=True, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.tertiary_volume)
 
                 c.last_changed = ctx.last_changed
 
