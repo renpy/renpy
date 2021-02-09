@@ -326,9 +326,12 @@ cdef class GL2Draw:
 
         # Angle or GL?
         if self.angle:
-            renpy.uguu.angle.load_angle()
+            res = renpy.uguu.angle.load_angle()
         else:
-            renpy.uguu.angle.load_gl()
+            res = renpy.uguu.angle.load_gl()
+
+        if not res:
+            return False
 
         # Determine the GLES mode, the actual window size to request, and the
         # window flags to use. (These are platform dependent.)

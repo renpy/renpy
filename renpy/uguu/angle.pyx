@@ -1,4 +1,4 @@
-from sdl2 cimport SDL_GL_LoadLibrary, SDL_GL_UnloadLibrary
+from sdl2 cimport SDL_GL_LoadLibrary, SDL_GL_UnloadLibrary, SDL_GetError
 
 cdef bint angle_loaded = False
 
@@ -18,10 +18,16 @@ def load_gl():
     if not angle_loaded:
         return
 
-    SDL_GL_UnloadLibrary()
-    SDL_GL_LoadLibrary(NULL)
-
     angle_loaded = False
+
+    SDL_GL_UnloadLibrary()
+    if SDL_GL_LoadLibrary(NULL):
+        renpy.display.log.write("Loading GL DLL: %s", SDL_GetError())
+        return False
+
+    return True
+
+
 
 def load_angle():
     """
@@ -43,9 +49,15 @@ def load_angle():
 
     renpy.display.log.write("Using ANGLE DLL: %s", dll)
 
-    SDL_GL_UnloadLibrary()
-    SDL_GL_LoadLibrary(dll)
-
     angle_loaded = True
+
+    SDL_GL_UnloadLibrary()
+    if SDL_GL_LoadLibrary(dll):
+        renpy.display.log.write("Loading ANGLE DLL: %s", SDL_GetError())
+        return False
+
+    return True
+
+
 
 

@@ -370,9 +370,12 @@ cdef class GLDraw:
 
         # Angle or GL?
         if self.angle:
-            renpy.uguu.angle.load_angle()
+            res = renpy.uguu.angle.load_angle()
         else:
-            renpy.uguu.angle.load_gl()
+            res = renpy.uguu.angle.load_gl()
+
+        if not res:
+            return False
 
         # Set the display mode.
 
