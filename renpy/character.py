@@ -1328,7 +1328,9 @@ class ADVCharacter(object):
         if not renpy.store._history: # @UndefinedVariable
             return
 
-        renpy.store._history_list.pop() # @UndefinedVariable
+        # The history can be reset at any time, so check that we have some.
+        if renpy.store._history_list:
+            renpy.store._history_list.pop() # @UndefinedVariable
 
 
 def Character(name=NotSet, kind=None, **properties):
