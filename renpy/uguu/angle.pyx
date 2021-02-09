@@ -16,7 +16,7 @@ def load_gl():
     renpy.display.log.write("Using GL DLL.")
 
     if not angle_loaded:
-        return
+        return True
 
     angle_loaded = False
 
@@ -37,7 +37,7 @@ def load_angle():
     global angle_loaded
 
     if angle_loaded:
-        return
+        return True
 
     for i in sys.path:
         dll = os.path.join(i, "libEGL.dll")
@@ -45,7 +45,7 @@ def load_angle():
             break
     else:
         renpy.display.log.write("Could not find angle DLL.")
-        return
+        return False
 
     renpy.display.log.write("Using ANGLE DLL: %s", dll)
 
