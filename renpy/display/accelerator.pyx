@@ -186,10 +186,10 @@ def transform_render(self, widtho, heighto, st, at):
         else:
             mr.mesh = True
 
-        if blur:
+        if blur is not None:
             mr.add_shader("-renpy.texture")
             mr.add_shader("renpy.blur")
-            mr.add_uniform("u_renpy_blur_log2", math.log(state.blur, 2))
+            mr.add_uniform("u_renpy_blur_log2", math.log(blur, 2))
 
         cr = mr
 
