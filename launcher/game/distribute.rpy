@@ -873,6 +873,7 @@ init python in distribute:
                         "UTTypeTagSpecification" : { "public.filename-extension" : [ "rpy" ] }
                     },
                     ],
+                NSHighResolutionCapable=True,
                 )
 
             if self.build.get('allow_integrated_gpu', False):
