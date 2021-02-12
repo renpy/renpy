@@ -5,7 +5,7 @@ Full Changelog
 
 .. _renpy-7.4.3:
 
-7.4.2
+7.4.3
 =====
 
 Features
@@ -13,6 +13,13 @@ Features
 
 The new :func:`renpy.get_zorder_list` and :func:`renpy.change_zorder` allow
 the zorder of images and screens to be manipulated after being shown.
+
+Old Features
+------------
+
+The :var:`default_mouse` variable was introduced in Ren'Py 7.4, as a way
+to allow the mouse cursor to be changed without changing :var:`config.mouse`
+at runtime, as changing config variables at runtime isn't supported.
 
 
 .. _renpy-7.4.2:
