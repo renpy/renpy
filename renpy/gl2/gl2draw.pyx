@@ -1158,7 +1158,7 @@ cdef class GL2DrawingContext:
 
         if self.debug:
             import renpy.gl2.gl2debug as gl2debug
-            gl2debug.geometry(mesh, transform)
+            gl2debug.geometry(mesh, transform, self.width, self.height)
 
         program = self.gl2draw.shader_cache.get(shaders)
 
