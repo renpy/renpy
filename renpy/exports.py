@@ -816,7 +816,7 @@ def scene(layer='master'):
         renpy.config.missing_scene(layer)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input"): # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", **kwargs): # @ReservedAssignment
     """
     :doc: input
 
@@ -850,7 +850,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
         screen is used.
 
     If :var:`config.disable_input` is True, this function only returns
-    `default`.
+    `default`. 
+
+    Any additional keyword arguments are passed to the ``screen``.
     """
 
     if renpy.config.disable_input:
@@ -872,7 +874,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
         widget_properties = { }
         widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width)
 
-        show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt)
+        show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **kwargs)
 
     else:
 
