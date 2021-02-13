@@ -22,8 +22,8 @@ cdef class Model:
         self.forward = IDENTITY
         self.reverse = IDENTITY
 
-    def __repr__(self):
-        rv = "<Model {}x{} {} {}".format(self.width, self.height, self.shaders, self.uniforms)
+    def __repr__(Model self):
+        rv = "<{} {}x{} {} {}".format(type(self).__name__, self.width, self.height, self.shaders, self.uniforms)
 
         if self.forward is not IDENTITY:
             rv += "\n    forward (to mesh):\n    " + repr(self.forward).replace("\n", "\n    ")
