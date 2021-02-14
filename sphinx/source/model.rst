@@ -294,12 +294,21 @@ GL Properties
 -------------
 
 GL properties change the global state of OpenGL, or the Model-Based renderer.
+These properties Take a ``gl\_`` prefix when used as part of a Transform, so
+you'd write ``gl_color_masks`` in ATL.
 
 ``color_masks``
     This is expecting to be a 4-tuple of booleans, corresponding to the four
     channels of a pixel (red, green, blue, and alpha). If a given channel is
     treu, the draw operation will write to that pixel. Otherwise, it will
     not.
+
+``pixel_perfect``
+    This only makes sense to set when a mesh is being created. When True,
+    Ren'Py will move the mesh such that the first vertex is aligned with
+    a pixel on the screen. This is mostly used in conjunction with text,
+    to ensure that the text remains sharp.
+
 
 Default Shader Parts
 --------------------

@@ -1109,6 +1109,26 @@ cdef class GL2DrawingContext:
 
         self.debug = debug
 
+    def merge_properties(self, dict old, dict child):
+        """
+        Merges the child properties into the old properties,
+        returning new properties.
+        """
+
+        rv = dict(old)
+
+        if not child:
+            return rv
+
+        for k, v in child.items():
+            if k == "pixel_perfect":
+                if old["pixel_perfect"] is False:
+                    continue
+
+            rv[k] = v
+
+        return rv
+
     cdef Matrix correct_pixel_perfect(self, Matrix transform):
         """
         Corrects `transform` so that the (0, 0) pixel is aligned with a
@@ -1136,6 +1156,9 @@ cdef class GL2DrawingContext:
         return Matrix.coffset(xoff / halfwidth, yoff / halfheight, 0) * transform
 
     def draw_model(self, model, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, dict properties):
+
+        if model.properties:
+            properties = self.merge_properties(self, model.properties)
 
         cdef Mesh mesh = model.mesh
 
@@ -1231,10 +1254,7 @@ cdef class GL2DrawingContext:
         has_reverse = (r.reverse is not None) and (r.reverse is not IDENTITY)
 
         if has_reverse or r.properties:
-            properties = dict(properties)
-
-        if r.properties is not None:
-            properties.update(r.properties)
+            properties = self.merge_properties(properties, r.properties)
 
         if has_reverse and (properties["pixel_perfect"] is None):
             properties["pixel_perfect"] = False

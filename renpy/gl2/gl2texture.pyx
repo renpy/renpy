@@ -254,12 +254,7 @@ cdef class GLTexture(Model):
 
         width, height = size
 
-        mesh = Mesh2.texture_rectangle(
-            0.0, 0.0, width, height,
-            0.0, 0.0, 1.0, 1.0,
-            )
-
-        Model.__init__(self, size, mesh, ("renpy.texture",), None)
+        Model.__init__(self, size, None, ("renpy.texture",), None)
 
         # The number of the OpenGL texture this texture object
         # represents.
@@ -284,6 +279,11 @@ cdef class GLTexture(Model):
         self.surface = surface
         self.properties = properties
 
+        self.mesh = Mesh2.texture_rectangle(
+            0.0, 0.0, self.width, self.height,
+            0.0, 0.0, 1.0, 1.0,
+            )
+
         self.loader.texture_load_queue.add(self)
 
     def from_render(GLTexture self, what, properties):
@@ -306,8 +306,15 @@ cdef class GLTexture(Model):
         tw = max(tw, 1)
         th = max(th, 1)
 
-        cw = max(cw, 1)
-        ch = max(ch, 1)
+        cw, ch = draw.draw_to_virt.transform(tw, th)
+
+        cw = max(cw, 1.0)
+        ch = max(ch, 1.0)
+
+        self.mesh = Mesh2.texture_rectangle(
+            0.0, 0.0, cw, ch,
+            0.0, 0.0, 1.0, 1.0,
+            )
 
         cdef GLuint premultiplied
 
@@ -343,6 +350,9 @@ cdef class GLTexture(Model):
 
         self.number = premultiplied
         self.loader.allocated.add(self.number)
+
+        if "pixel_perfect" in properties:
+            self.properties = { "pixel_perfect" : properties["pixel_perfect"] }
 
         self.loaded = True
 

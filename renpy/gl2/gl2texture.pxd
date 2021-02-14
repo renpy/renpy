@@ -73,7 +73,4 @@ cdef class GLTexture(Model):
     cdef public int texture_width
     cdef public int texture_height
 
-    # Properties associated with the texture.
-    cdef dict properties
-
     cpdef subsurface(GLTexture self, t)

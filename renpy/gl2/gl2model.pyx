@@ -17,6 +17,7 @@ cdef class Model:
         self.mesh = mesh
         self.shaders = shaders
         self.uniforms = uniforms
+        self.properties = None
         self.cached_texture = None
 
         self.forward = IDENTITY
