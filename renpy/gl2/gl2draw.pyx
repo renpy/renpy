@@ -1157,9 +1157,6 @@ cdef class GL2DrawingContext:
 
     def draw_model(self, model, Matrix transform, Polygon clip_polygon, tuple shaders, dict uniforms, dict properties):
 
-        if model.properties:
-            properties = self.merge_properties(self, model.properties)
-
         cdef Mesh mesh = model.mesh
 
         if model.reverse is not IDENTITY:
