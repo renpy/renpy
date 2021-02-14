@@ -1014,8 +1014,10 @@ init python in distribute:
                 if os.path.exists(tmp):
                     self.add_file(fl, dst, tmp)
 
-            write_exe("lib/windows-i686/renpy.exe", self.exe32, self.exe32, windows_i686)
-            write_exe("lib/windows-i686/pythonw.exe", "lib/windows-i686/pythonw.exe", "pythonw-32.exe", windows_i686)
+            if self.build["include_i686"]:
+                write_exe("lib/windows-i686/renpy.exe", self.exe32, self.exe32, windows_i686)
+                write_exe("lib/windows-i686/pythonw.exe", "lib/windows-i686/pythonw.exe", "pythonw-32.exe", windows_i686)
+
             write_exe("lib/windows-x86_64/renpy.exe", self.exe, self.exe, windows)
             write_exe("lib/windows-x86_64/pythonw.exe", "lib/windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
 
