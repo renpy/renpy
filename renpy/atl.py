@@ -155,6 +155,7 @@ PROPERTIES = {
     "matrixcolor" : matrixcolor,
     "shader" : any_object,
     "mesh" : mesh,
+    "mesh_pad" : any_object,
     "blur" : float_or_none,
     }
 

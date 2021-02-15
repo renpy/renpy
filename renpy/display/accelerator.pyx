@@ -170,7 +170,25 @@ def transform_render(self, widtho, heighto, st, at):
 
     if mesh:
 
+
         mr = Render(cr.width, cr.height)
+
+        mesh_pad = state.mesh_pad
+
+        if state.mesh_pad:
+
+            if len(mesh_pad) == 4:
+                pad_left, pad_top, pad_right, pad_bottom = mesh_pad
+            else:
+                pad_right, pad_bottom = mesh_pad
+                pad_left = 0
+                pad_top = 0
+
+            padded = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
+            padded.blit(cr, (pad_left, pad_top))
+
+            cr = padded
+
         mr.blit(cr, (0, 0))
 
         mr.operation = renpy.display.render.FLATTEN
