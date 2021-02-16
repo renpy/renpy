@@ -816,7 +816,7 @@ def scene(layer='master'):
         renpy.config.missing_scene(layer)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input"): # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", **kwargs): # @ReservedAssignment
     """
     :doc: input
 
@@ -850,7 +850,10 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
         screen is used.
 
     If :var:`config.disable_input` is True, this function only returns
-    `default`.
+    `default`. 
+
+    Keywords prefixed with ``show_`` have the prefix stripped and
+    are passed to the screen.
     """
 
     if renpy.config.disable_input:
@@ -868,11 +871,22 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     fixed = in_fixed_rollback()
 
+    # put arguments with show_ prefix aside
+	show_properties, other_properties = renpy.easy.split_properties(kwargs, "show_", "")
+
+	# all allowed properties without the show_ prefix
+	allowed_properties = ["prompt", "default", "allow", "exclude", "length", "pixel_width", "screen"]
+
+	# create a dict containing properties without the show_prefix and not in allowed_properties, if there are any
+	unknown_properties = dict( [(property, value) for (property, value) in other_properties.items() if property not in allowed_properties] )
+	if unknown_properties:
+	    raise TypeError("input() got unexpected keyword argument(s): {}".format( ", ".join( unknown_properties.keys() ) ))
+
     if has_screen(screen):
         widget_properties = { }
         widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width)
 
-        show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt)
+        show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **show_properties)
 
     else:
 
