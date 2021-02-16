@@ -850,7 +850,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
         screen is used.
 
     If :var:`config.disable_input` is True, this function only returns
-    `default`. 
+    `default`.
 
     Keywords prefixed with ``show_`` have the prefix stripped and
     are passed to the screen.
@@ -872,15 +872,10 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     fixed = in_fixed_rollback()
 
     # put arguments with show_ prefix aside
-	show_properties, other_properties = renpy.easy.split_properties(kwargs, "show_", "")
+    show_properties, kwargs = renpy.easy.split_properties(kwargs, "show_", "")
 
-	# all allowed properties without the show_ prefix
-	allowed_properties = ["prompt", "default", "allow", "exclude", "length", "pixel_width", "screen"]
-
-	# create a dict containing properties without the show_prefix and not in allowed_properties, if there are any
-	unknown_properties = dict( [(property, value) for (property, value) in other_properties.items() if property not in allowed_properties] )
-	if unknown_properties:
-	    raise TypeError("input() got unexpected keyword argument(s): {}".format( ", ".join( unknown_properties.keys() ) ))
+    if kwargs:
+        raise TypeError("renpy.input() got unexpected keyword argument(s): {}".format(", ".join(kwargs.keys())))
 
     if has_screen(screen):
         widget_properties = { }
