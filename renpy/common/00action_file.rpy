@@ -817,9 +817,9 @@ init -1500 python:
 
     class FilePagePrevious(Action, DictEquality):
         """
-         :doc: file_action
+        :doc: file_action
 
-         Goes to the previous file page, if possible.
+        Goes to the previous file page, if possible.
 
         `max`
             If set, this should be an integer that gives the number of
@@ -836,8 +836,7 @@ init -1500 python:
         `quick`
             If true, this can bring the player to
             the page of automatic saves.
-
-         """
+        """
 
         alt = _("Previous file page.")
 
