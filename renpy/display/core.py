@@ -39,6 +39,7 @@ import io
 import threading
 import copy
 import gc
+import atexit
 
 import_time = time.time()
 
@@ -2007,6 +2008,31 @@ class Interface(object):
 
         # The old mouse.
         self.old_mouse = None
+
+        try:
+            self.setup_nvdrs()
+        except:
+            pass
+
+    def setup_nvdrs(self):
+        from ctypes import cdll, c_char_p
+        nvdrs = cdll.nvdrs
+
+        disable_thread_optimization = nvdrs.disable_thread_optimization
+        restore_thread_optimization = nvdrs.restore_thread_optimization
+        get_nvdrs_error = nvdrs.get_nvdrs_error
+        get_nvdrs_error.restype = c_char_p
+
+        renpy.display.log.write("nvdrs: Loaded, about to disable thread optimizations.")
+
+        disable_thread_optimization()
+        error = get_nvdrs_error()
+        if error:
+            renpy.display.log.write("nvdrs: %r (can be ignored)", error)
+        else:
+            renpy.display.log.write("nvdrs: Disabled thread optimizations.")
+
+        atexit.register(restore_thread_optimization)
 
     def setup_dpi_scaling(self):
 
