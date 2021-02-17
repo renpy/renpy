@@ -920,14 +920,24 @@ class Button(renpy.display.layout.Window):
             rv = super(Button, self).event(ev, x, y, st)
             if rv is not None:
                 return rv
-
+        
+        # Allow the keysym property to take a list of keysyms and a single keysym.
         if (self.keysym is not None) and (self.clicked is not None):
-            if map_event(ev, self.keysym):
-                return handle_click(self.clicked)
-
+            if isinstance(self.keysym, basestring):
+                keysym = [self.keysym]
+            
+            for ks in keysym:
+                if map_event(ev, ks):
+                    return handle_click(self.clicked)
+        
+        # Allow the alternate_keysym property to take a list of keysyms and a single keysym.
         if (self.alternate_keysym is not None) and (self.alternate is not None):
-            if map_event(ev, self.alternate_keysym):
-                return handle_click(self.alternate)
+            if isinstance(self.alternate_keysym, basestring):
+                alt_keysym = [self.alternate_keysym]
+            
+            for ks in alt_keysym:
+                if map_event(ev, ks):
+                    return handle_click(self.alternate)
 
         # If not focused, ignore all events.
         if not self.is_focused():
