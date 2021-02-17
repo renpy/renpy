@@ -180,6 +180,7 @@ style_properties = sorted_dict(
     left_padding=None,
     line_spacing=None,
     mouse=None,
+    modal=None,
     min_width=None,
     mipmap=None,
     newline_indent=None,

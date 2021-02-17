@@ -179,6 +179,7 @@ init -1800:
         ymargin 0
         xfill False
         yfill False
+        modal False
 
         # Size properties
         xminimum 0
