@@ -30,8 +30,11 @@ from freetype cimport *
 from ttgsubtable cimport *
 from textsupport cimport Glyph, SPLIT_INSTEAD
 import traceback
+import sys
 
 import renpy.config
+
+cdef bint _use_ucs2 = (sys.maxunicode == 0xffff)
 
 cdef extern from "ftsupport.h":
     char *freetype_error_to_string(int error)
@@ -78,6 +81,21 @@ cdef bint is_vs(unsigned int char):
 
     return False
 
+cdef int is_ucs2_surrogate(unsigned int char):
+    if _use_ucs2:
+        if 0xd800 <= char <= 0xdbff:
+            # High
+            return 2
+        elif 0xdc00 <= char <= 0xdfff:
+            # Low
+            return 1
+        else:
+            # Not a surrogate
+            return 0
+    else:
+        # skip when not using UCS-2
+        return 0
+
 cdef bint is_zerowidth(unsigned int char):
     if char == 0x200b: # Zero-width space.
         return True
@@ -95,6 +113,9 @@ cdef bint is_zerowidth(unsigned int char):
         return True
 
     if is_vs(char): # Variation sequences
+        return True
+
+    if is_ucs2_surrogate(char) == 1: # Low surrogate pair (width is calculated when a high surrogate is read)
         return True
 
     return False
@@ -497,7 +518,7 @@ cdef class FTFont:
         cdef FT_Face face
         cdef list rv
         cdef int len_s
-        cdef Py_UNICODE c, next_c, vs
+        cdef FT_ULong c, next_c, vs
         cdef FT_UInt index, next_index
         cdef int error
         cdef Glyph gl
@@ -505,6 +526,7 @@ cdef class FTFont:
         cdef int kern
         cdef float advance
         cdef int i
+        cdef int vs_offset
         cdef glyph_cache *cache
 
         cdef float min_advance, next_min_advance
@@ -521,10 +543,16 @@ cdef class FTFont:
         if len_s:
 
             next_min_advance = 0
-            next_c = s[0]
 
-            if len_s > 1 and is_vs(s[1]):
-                vs = s[1]
+            if len_s > 1 and is_ucs2_surrogate(s[0]) == 2 and is_ucs2_surrogate(s[1]) == 1:
+                next_c = ((s[0] & 0b1111111111) << 10) | (s[1] & 0b1111111111)
+                vs_offset = 2
+            else:
+                next_c = s[0]
+                vs_offset = 1
+
+            if len_s > vs_offset and is_vs(s[vs_offset]):
+                vs = s[vs_offset]
                 next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
             else:
                 next_index = FT_Get_Char_Index(face, next_c)
@@ -546,10 +574,15 @@ cdef class FTFont:
             gl.draw = True
 
             if i < len_s - 1:
-                next_c = s[i + 1]
+                if i < len_s - 2 and is_ucs2_surrogate(s[i + 1]) == 2 and is_ucs2_surrogate(s[i + 2]) == 1:
+                    next_c = ((s[i + 1] & 0b1111111111) << 10) | (s[i + 2] & 0b1111111111)
+                    vs_offset = 3
+                else:
+                    next_c = s[i + 1]
+                    vs_offset = 2
 
-                if i < len_s - 2 and is_vs(s[i + 2]):
-                    vs = s[i + 2]
+                if i < len_s - vs_offset and is_vs(s[i + vs_offset]):
+                    vs = s[i + vs_offset]
                     next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
                 else:
                     next_index = FT_Get_Char_Index(face, next_c)
