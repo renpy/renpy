@@ -556,6 +556,7 @@ cdef class FTFont:
             if is_ucs2_surrogate(s[0]) != 1 and len_s > vs_offset and is_vs(s[vs_offset]):
                 vs = s[vs_offset]
                 next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
+
                 # Fallback to 0 if variation doesn't exist
                 if next_index == 0:
                     vs = 0
@@ -582,6 +583,7 @@ cdef class FTFont:
             gl.draw = True
 
             if i < len_s - 1:
+
                 if i < len_s - 2 and is_ucs2_surrogate(s[i + 1]) == 2 and is_ucs2_surrogate(s[i + 2]) == 1:
                     next_c = ((<FT_ULong> s[i + 1]) & 0b1111111111) << 10
                     next_c |= (<FT_ULong> s[i + 2]) & 0b1111111111
@@ -594,6 +596,7 @@ cdef class FTFont:
                 if is_ucs2_surrogate(s[i + 1]) != 1 and i < len_s - vs_offset and is_vs(s[i + vs_offset]):
                     vs = s[i + vs_offset]
                     next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
+
                     # Fallback to 0 if variation doesn't exist
                     if next_index == 0:
                         vs = 0
@@ -664,6 +667,7 @@ cdef class FTFont:
                 index = FT_Get_Char_Index(face, glyph.character)
             else:
                 index = FT_Face_GetCharVariantIndex(face, glyph.character, glyph.variation)
+
             cache = self.get_glyph(index)
 
             bmx = <int> (glyph.x + .5) + cache.bitmap_left
@@ -742,6 +746,7 @@ cdef class FTFont:
                 index = FT_Get_Char_Index(face, glyph.character)
             else:
                 index = FT_Face_GetCharVariantIndex(face, glyph.character, glyph.variation)
+
             cache = self.get_glyph(index)
 
             # with nogil used to be here, but it slowed things down.
