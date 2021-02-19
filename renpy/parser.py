@@ -2335,9 +2335,7 @@ def label_statement(l, loc, init=False):
     else:
         hide = False
 
-    l.require(':')
-    l.expect_eol()
-
+    l.match(':')
     # Optional block here. It's empty if no block is associated with
     # this statement.
     block = parse_block(l.subblock_lexer(init))
