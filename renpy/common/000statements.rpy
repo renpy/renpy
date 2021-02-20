@@ -469,7 +469,7 @@ python early hide:
     # Should we predict screens?
     config.predict_screen_statements = True
 
-    def warp_true():
+    def warp_true(p):
         return True
 
     def parse_show_call_screen(l):

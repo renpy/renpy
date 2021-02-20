@@ -335,6 +335,10 @@ def change_icons(oldexe, icofn):
 
     newExactSize = len(rsrc)
 
+    #From note about flags above regarding image flags. These two should be 0
+    pe.FILE_HEADER.Characteristics = pe.FILE_HEADER.Characteristics & (~pefile.IMAGE_CHARACTERISTICS["IMAGE_FILE_LINE_NUMS_STRIPPED"])
+    pe.FILE_HEADER.Characteristics = pe.FILE_HEADER.Characteristics & (~pefile.IMAGE_CHARACTERISTICS["IMAGE_FILE_LOCAL_SYMS_STRIPPED"])
+    
     #Per docs, symbol table can just be removed
     #https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#coff-file-header-object-and-image  see "PointerToSymbolTable"  and  "NumberOfSymbols "
     
@@ -398,7 +402,13 @@ def change_icons(oldexe, icofn):
 
 
     #The symbol table is simply left off. Its size DOES factor into ImageSize, but we didn't calculate it above, so fine
-    return pe.write()[:base] + rsrc
+    #Correctly checksum the file. The entire file is involved in the calculation, so a new PE object must be generated for the calculation to work against
+    newFile = pe.write()[:base] + rsrc
+    newpe = pefile.PE(data=newFile)
+    newpe.OPTIONAL_HEADER.CheckSum = newpe.generate_checksum()
+
+    return newpe.write()
+
 
 
 if __name__ == "__main__":

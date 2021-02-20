@@ -407,7 +407,10 @@ def mouse_handler(ev, x, y, default=False):
         else:
             pending_focus_type = "mouse"
 
-    new_focus = renpy.display.render.focus_at_point(x, y)
+    try:
+        new_focus = renpy.display.render.focus_at_point(x, y)
+    except renpy.display.layout.IgnoreLayers:
+        new_focus = None
 
     if new_focus is None:
         new_focus = default_focus

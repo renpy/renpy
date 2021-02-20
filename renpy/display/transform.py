@@ -118,6 +118,7 @@ class TransformState(renpy.object.Object):
     matrixcolor = None
     shader = None
     mesh = False
+    mesh_pad = None
     blur = None
 
     def __init__(self):
@@ -163,6 +164,7 @@ class TransformState(renpy.object.Object):
         self.matrixcolor = None
         self.shader = None
         self.mesh = False
+        self.mesh_pad = None
         self.blur = None
 
         self.delay = 0
@@ -227,6 +229,7 @@ class TransformState(renpy.object.Object):
         self.matrixcolor = ts.matrixcolor
         self.shader = ts.shader
         self.mesh = ts.mesh
+        self.mesh_pad = ts.mesh_pad
         self.blur = ts.blur
 
         self.last_angle = ts.last_angle
@@ -324,6 +327,8 @@ class TransformState(renpy.object.Object):
         # It doesn't make sense to interpolate these.
         # diff2("shader", newts.shader, self.shader)
         # diff2("mesh", newts.mesh, self.mesh)
+
+        diff2("mesh_pad", newts.mesh_pad, self.mesh_pad)
 
         diff2("blur", newts.blur, self.blur)
 
@@ -562,6 +567,7 @@ class Transform(Container):
     matrixcolor = Proxy("matrixcolor")
     shader = Proxy("shader")
     mesh = Proxy("mesh")
+    mesh_pad = Proxy("mesh_pad")
     blur = Proxy("blur")
 
     debug = Proxy("debug")
@@ -1160,3 +1166,4 @@ def add_gl_property(name):
 
 
 add_gl_property("gl_color_mask")
+add_gl_property("gl_pixel_perfect")

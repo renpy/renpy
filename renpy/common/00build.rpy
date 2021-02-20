@@ -487,6 +487,7 @@ init -1500 python in build:
            rv['merge'].append(("linux_i686", "linux"))
            rv['merge'].append(("windows_i686", "windows"))
 
+        rv["include_i686"] = include_i686
         rv["change_icon_i686"] = change_icon_i686
 
         return rv

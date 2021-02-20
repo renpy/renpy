@@ -1267,8 +1267,9 @@ cdef class Render:
                 if cf is not None:
                     rv = cf
 
-        if rv is None and self.modal:
-            rv = Modal
+        if (rv is None) and self.modal:
+            if renpy.display.layout.check_modal(self.modal, None, x, y, self.width, self.height):
+                return Modal
 
         return rv
 

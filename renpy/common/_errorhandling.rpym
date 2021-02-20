@@ -98,6 +98,7 @@ init label _errorhandling:
         yfill False
         xminimum 0
         yminimum 0
+        modal False
 
         # Placement properties
         xpos None

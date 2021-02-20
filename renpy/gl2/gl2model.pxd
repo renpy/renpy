@@ -23,6 +23,10 @@ cdef class Model:
     # or None.
     cdef public dict uniforms
 
+    # Either a dictionary giving properties associated with this model,
+    # or None.
+    cdef public dict properties
+
     # The cached_texture that comes from this model. (This is
     # a Texture.)
     cdef object cached_texture

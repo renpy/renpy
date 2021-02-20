@@ -224,6 +224,9 @@ def map_event(ev, keysym):
 
         return False
 
+    if isinstance(keysym, list):
+        keysym = tuple(keysym)
+
     check_code = event_cache.get(keysym, None)
     if check_code is None:
         check_code = eval("lambda ev : " + compile_event(keysym, True), globals())
@@ -232,17 +235,20 @@ def map_event(ev, keysym):
     return check_code(ev)
 
 
-def map_keyup(ev, name):
+def map_keyup(ev, keysym):
     """Returns true if the event matches the named keycode being released."""
 
     if ev.type == renpy.display.core.EVENTNAME:
         if (name in ev.eventnames) and ev.up:
             return True
 
-    check_code = keyup_cache.get(name, None)
+    if isinstance(keysym, list):
+        keysym = tuple(keysym)
+
+    check_code = keyup_cache.get(keysym, None)
     if check_code is None:
-        check_code = eval("lambda ev : " + compile_event(name, False), globals())
-        keyup_cache[name] = check_code
+        check_code = eval("lambda ev : " + compile_event(keysym, False), globals())
+        keyup_cache[keysym] = check_code
 
     return check_code(ev)
 

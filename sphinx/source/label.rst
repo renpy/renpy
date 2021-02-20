@@ -159,6 +159,12 @@ The following labels are used by Ren'Py:
     If it is existed, this label is called after a warp but before the warped-to
     statement executes. Please see :ref:`Warping to a line <warping_to_a_line>`.
 
+``hide_windows``
+    If it exists, this label is called when the player hides the windows with
+    the right mouse button or the H key. If this returns true, the hide is
+    cancelled (it's assumed the hide has occurred). Otherwise, the hide
+    continues.
+
 Labels & Control Flow Functions
 -------------------------------
 

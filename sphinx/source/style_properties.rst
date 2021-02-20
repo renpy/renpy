@@ -772,6 +772,18 @@ buttons. :ref:`margin-style-properties` also form part of this group.
     If not None, this should be a string. Ren'Py will render all
     windows with the same size_group value at the same size.
 
+.. style-property:: modal boolean or callable
+
+    If True, the window is treated as modal. Events will stop propagating
+    through layers whole the mouse is within the window or button. If False,
+    the window is not modal.
+
+    This may also be a callable function. If it is, the function is called
+    with (ev, x, y, w, h), where `ev` is either a pygame event, or None to
+    represent a generic mouse event; `x` and `y` are coordinates relative
+    to the window, and `w` and `h` are the height and width of the window.
+    If the callable returns true, the windows is treated as modal. If it
+    returns false, it is not.
 
 .. _button-style-properties:
 
