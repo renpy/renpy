@@ -461,9 +461,12 @@ def translate_string(s, language=Default):
     :doc: translate_string
     :name: renpy.translate_string
 
-    Translates interface string `s` to `language`. If `language` is Default,
-    uses the language set in the preferences. This does not mark `s` to be
-    translated.
+    Returns `s` immediately translated into `language`. If `language`
+    is Default, uses the language set in the preferences.
+    Strings enclosed in this function will **not** be added
+    to the list of translatable strings. Note that the string may be
+    double-translated, if it matches a string translation when it
+    is displayed.
     """
 
     if language is Default:
