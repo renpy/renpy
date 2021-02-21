@@ -778,7 +778,6 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
     source = str(source)
     source = source.replace("\r", "")
-    source = escape_unicode(source)
 
     if mode == "eval":
         source = quote_eval(source)
@@ -803,6 +802,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
             except:
                 flags = old_compile_flags
+                source = escape_unicode(source)
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
 
         tree = wrap_node.visit(tree)
