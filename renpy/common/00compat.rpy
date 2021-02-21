@@ -202,6 +202,9 @@ init -1900 python:
         if version <= (7, 4, 0):
             config.pause_with_transition = True
 
+        if version <= (7, 4, 2):
+            config.dismiss_blocking_transitions = False
+
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

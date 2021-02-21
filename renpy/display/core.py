@@ -3889,6 +3889,22 @@ class Interface(object):
                             l = self.surftree.main_displayables_at_point(x, y, renpy.config.layers)
                             renpy.game.invoke_in_new_context(renpy.config.inspector, l)
 
+                    # Handle the dismissing of non trans_pause transitions.
+                    if self.ongoing_transition.get(None, None) and (not suppress_transition) and (not trans_pause) and (renpy.config.dismiss_blocking_transitions):
+
+                        if renpy.store._dismiss_pause:
+                            dismiss = "dismiss"
+                        else:
+                            dismiss = "dismiss_hard_pause"
+
+                        if renpy.display.behavior.map_event(ev, dismiss):
+                            self.transition.pop(None, None)
+                            self.ongoing_transition.pop(None, None)
+                            self.transition_time.pop(None, None)
+                            self.transition_from.pop(None, None)
+                            self.restart_interaction = True
+                            raise IgnoreEvent()
+
                 except IgnoreEvent:
                     # An ignored event can change the timeout. So we want to
                     # process an TIMEEVENT to ensure that the timeout is

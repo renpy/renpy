@@ -12,6 +12,15 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+.. _incompatible-7.4.3:
+
+It is now possible to click to dismiss transitions introduced with
+:func:`renpy.transition`, and places that use it like the ``with`` clause
+of say or ``call screen`` statement. To prevent this, use::
+
+    define dismiss_blocking_transitions = False
+
+
 .. _incompatible-7.4.1:
 
 7.4.1

@@ -1111,6 +1111,10 @@ allow_screensaver = True
 context_fadein_music = 0
 context_fadeout_music = 0
 
+# Shout it be possible to dismiss blocking transitions that are not part of
+# a with statement?
+dismiss_blocking_transitions = True
+
 del os
 del collections
 
