@@ -240,6 +240,9 @@ class ParameterizedText(object):
 
     def _duplicate(self, args):
 
+        if args.lint:
+            return renpy.text.text.Text("", style=self.style, **self.properties)
+
         if len(args.args) == 0:
             raise Exception("'%s' takes a single string parameter." % ' '.join(args.name))
 
