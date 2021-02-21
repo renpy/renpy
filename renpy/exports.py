@@ -3938,3 +3938,66 @@ def change_zorder(layer, tag, zorder):
 
     return renpy.display.core.scene_lists().change_zorder(layer, tag, zorder)
 
+
+sdl_dll = False
+
+
+def get_sdl_dll():
+    """
+    :doc: sdl
+
+    This returns a ctypes.cdll object that refers to the library that contains
+    the instance of SDL2 that Ren'Py is using.
+
+    If this can not be done, None is returned.
+    """
+
+    global sdl_dll
+
+    if sdl_dll is not False:
+        return sdl_dll
+
+    try:
+
+        DLLS = [ None, "librenpython.dll", "librenpython.dylib", "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
+
+        import ctypes
+
+        for i in DLLS:
+            try:
+                # Look for the DLL.
+                dll = ctypes.cdll[i]
+                # See if it has SDL_GetError..
+                dll.SDL_GetError
+            except:
+                continue
+
+            sdl_dll = dll
+            return dll
+
+    except:
+        pass
+
+    sdl_dll = None
+    return None
+
+
+def get_sdl_window_pointer():
+    """
+    :doc: sdl
+
+    Returns a pointer (of type ctypes.c_void_p) to the main window, or None
+    if the main window is not displayed, or some other problem occurs.
+    """
+
+    try:
+        window = pygame_sdl2.display.get_window()
+
+        if window is None:
+            return
+
+        return window.get_sdl_window_pointer()
+
+    except:
+        return None
+
