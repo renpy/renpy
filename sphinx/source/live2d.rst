@@ -65,7 +65,7 @@ Defining Animations
 
 Live2D animations are defined using the Live2D displayable and the image statement:
 
-.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, **properties)
+.. function:: Live2D(filename, zoom=None, top=0.0, base=1.0, height=1.0, alias={}, loop=False, fade=None, seamless=None, attribute_function=None, attribute_filter=None, update_function=None, **properties)
 
     This displayable displays a Live2D animation.
 
@@ -139,6 +139,21 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         meaning that in the case of a conflict, the first attribute should
         win.
 
+    `update_function`
+        If not None, this is a function that is called when the animation
+        is rendered after updating parameters by the current motion and expressions.
+        The function is called with two arguments:
+
+        * The Live2D object.
+        * The shown timebase, in seconds.
+
+        This function is used to dynamically change parameters using the `blend_parameter`
+        method of the passed Live2D object.
+        The function should return a delay, in seconds, after which it will
+        be called again, or None to be called again at the start of the next
+        interaction. Note that as long the motion is running, this function
+        will also be called every frame.
+
     The difference between `attribute_function` and `attribute_filter` is
     that the former is generally used to compute replacement - the presence
     of two attributes means one should be replaced by a third. The latter
@@ -148,10 +163,27 @@ Live2D animations are defined using the Live2D displayable and the image stateme
     Only `filename` should be given positionally, and all other arguments should
     be given as keyword arguments.
 
-    The values of `alias`, `fade`, `nonexclusive`, `seamless`, `default_fade`, `attribute_function`
-    and `attribute_filter` are shared between all Live2D objects that share `filename`,
+    The values of `alias`, `fade`, `nonexclusive`, `seamless`, `default_fade`, `attribute_function`,
+    `attribute_filter` and `update_function` are shared between all Live2D objects that share `filename`,
     such that these only need to be supplied once as part of the first Live2D object to
     use `filename`.
+
+    .. method:: blend_parameter(name, blend, value, weight=1.0)
+
+        This method blends the current value of the parameter with passed.
+        This have no effect outside of `update_function`.
+
+        `name`
+            Name of parameter to change defined for this model.
+
+        `blend`
+            One of "Add", "Multiply" or "Overwrite". The blend kind that will be used.
+
+        `value`
+            The value to be used.
+
+        `weight`
+            Float from 0.0 to 1.0, the weight by which the new value will change the current value.
 
 Live2D displayables should be assigned to an image statement::
 
