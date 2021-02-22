@@ -728,6 +728,8 @@ class FontGroup(object):
 
     A group of fonts that can be used as a single font.
     """
+    
+    char_map = dict()
 
     def __init__(self):
 
@@ -735,7 +737,7 @@ class FontGroup(object):
         # the default font.
         self.map = { }
 
-    def add(self, font, start, end):
+    def add(self, font, start, end, target=None, target_increment=False):
         """
         :doc: font_group
 
@@ -749,6 +751,17 @@ class FontGroup(object):
         `end`
             The end of the range. This may be a single-character string, or an
             integer giving a unicode code point.
+
+        `target`
+            If given, associates the given range of characters with specific
+            characters from the given font, depending on target_increment.
+            This may be a single-character string, or an integer giving a
+            unicode code point.
+
+        `target_increment`
+            If True, the [start, end] range is mapped to the
+            [target, target+end-start] range. If False, every character from the
+            range is associated with the target character.
 
         When multiple .add() calls include the same character, the first call
         takes precedence.
@@ -775,12 +788,19 @@ class FontGroup(object):
         if not isinstance(end, int):
             end = ord(end)
 
+        if target and not isinstance(target, int):
+            target = ord(target)
+
         if end < start:
             raise Exception("In FontGroup.add, the start of a character range must be before the end of the range.")
 
         for i in range(start, end+1):
             if i not in self.map:
                 self.map[i] = font
+            if target:
+                self.char_map[i] = target
+                if target_increment:
+                    self.char_map[i] += i-start
 
         return self
 
