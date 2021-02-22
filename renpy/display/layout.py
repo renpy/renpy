@@ -1983,8 +1983,9 @@ class AlphaMask(Container):
     def __init__(self, child, mask, **properties):
         super(AlphaMask, self).__init__(**properties)
 
-        self.add(child)
         self.mask = renpy.easy.displayable(mask)
+        self.add(self.mask)
+        self.add(child)
         self.null = None
 
     def render(self, width, height, st, at):
@@ -2013,8 +2014,10 @@ class AlphaMask(Container):
         rv.add_uniform("u_renpy_dissolve_multiplier", 1.0)
         rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
 
-        rv.blit(mr, (0, 0), focus=False, main=False)
+        rv.blit(mr, (0, 0))
         rv.blit(nr, (0, 0), focus=False, main=False)
         rv.blit(cr, (0, 0))
+
+        self.offsets = [ (0, 0), (0, 0) ]
 
         return rv
