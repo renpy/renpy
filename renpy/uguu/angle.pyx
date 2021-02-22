@@ -22,7 +22,7 @@ def load_gl():
 
     SDL_GL_UnloadLibrary()
     if SDL_GL_LoadLibrary(NULL):
-        renpy.display.log.write("Loading GL DLL: %s", SDL_GetError())
+        renpy.display.log.write("Loading GL DLL: %s", renpy.exports.fsdecode(SDL_GetError()))
         return False
 
     return True
@@ -53,7 +53,7 @@ def load_angle():
 
     SDL_GL_UnloadLibrary()
     if SDL_GL_LoadLibrary(dll):
-        renpy.display.log.write("Loading ANGLE DLL: %s", SDL_GetError())
+        renpy.display.log.write("Loading ANGLE DLL: %s", renpy.exports.fsdecode(SDL_GetError()))
         return False
 
     return True
