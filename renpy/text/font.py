@@ -797,10 +797,10 @@ class FontGroup(object):
         for i in range(start, end+1):
             if i not in self.map:
                 self.map[i] = font
-            if target:
-                self.char_map[i] = target
-                if target_increment:
-                    self.char_map[i] += i-start
+                if target:
+                    self.char_map[i] = target
+                    if target_increment:
+                        self.char_map[i] += i-start
 
         return self
 
@@ -814,7 +814,7 @@ class FontGroup(object):
 
         old_font = None
 
-        for c in s:
+        for i, c in enumerate(s):
 
             n = ord(c)
 
@@ -825,6 +825,9 @@ class FontGroup(object):
 
                 if font is None:
                     raise Exception("Character U+{0:04x} not found in FontGroup".format(n))
+
+            if c in self.char_map:
+                s = ''.join((s[:i], self.char_map[c], s[i+1:]))
 
             if font != old_font:
                 if pos:
