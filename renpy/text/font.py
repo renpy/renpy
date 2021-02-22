@@ -750,13 +750,15 @@ class FontGroup(object):
 
         `end`
             The end of the range. This may be a single-character string, or an
-            integer giving a unicode code point.
+            integer giving a unicode code point. This is ignored if start is
+            None.
 
         `target`
             If given, associates the given range of characters with specific
             characters from the given font, depending on target_increment.
             This may be a single-character string, or an integer giving a
-            unicode code point.
+            unicode code point. This is ignored if the character had already
+            been added.
 
         `target_increment`
             If True, the [start, end] range is mapped to the
@@ -801,6 +803,45 @@ class FontGroup(object):
                     self.char_map[i] = target
                     if target_increment:
                         self.char_map[i] += i-start
+
+        return self
+
+    def remap(self, cha, target):
+        """
+        :doc: font_group
+
+        Remaps one or a set of characters to a single target character.
+
+        `cha`
+            The character or characters to remap. This may be a single-character
+            string, or an integer giving a unicode code point, or an iterable of
+            either.
+
+        `target`
+            The character to remap to. This may be a single-character string, or
+            an integer giving a unicode code point.
+
+        Any given character having already been remapped (either with add or with
+        remap) will be ignored. However, if the FontGroup has no default font, any
+        given character must have been previously added.
+
+        This method also returns the FontGroup, for the same reasons.
+        """
+
+        if isinstance(cha, (int)) or isinstance(cha, (str, bytes)) and len(cha) == 1:
+            cha = (cha,)
+
+        if not isinstance(target, int):
+            target = ord(target)
+
+        for i in cha:
+            if not isinstance(i, int):
+                i = ord(i)
+            if not ((None in self.map) or (i in self.map)):
+                raise Exception("Character U+{0:04x} has no font in this FontGroup".format(i))
+            if not i in self.char_map:
+                # means the character has not already been remapped
+                self.char_map[i] = target
 
         return self
 
