@@ -128,6 +128,7 @@ cdef class Polygon:
         cdef int j
 
         self.ensure_winding()
+        p.ensure_winding()
 
         rv = self
 
@@ -192,7 +193,6 @@ cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
 
     cdef int i
     cdef int j
-
 
     # The vector from a0 to a1.
     cdef float lx = a1.x - a0.x

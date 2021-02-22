@@ -329,7 +329,7 @@ init 1 python in editor:
                 return True
 
             fn = project.current.unelide_filename(self.filename)
-            return os.path.exists(fn)
+            return os.path.exists(renpy.fsencode(fn))
 
         def __call__(self):
 
@@ -377,7 +377,7 @@ init 1 python in editor:
             if not self.check:
                 return True
 
-            return os.path.exists(self.filename)
+            return os.path.exists(renpy.fsencode(self.filename))
 
         def __call__(self):
 

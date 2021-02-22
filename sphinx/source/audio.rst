@@ -7,7 +7,7 @@ using the following audio file formats
 * Opus
 * Ogg Vorbis
 * MP3
-* WAV (uncompressed PCM only)
+* WAV (uncompressed 16-bit signed PCM only)
 
 Ren'Py supports an arbitrary number of audio channels. There are three
 normal channels defined by default:
@@ -100,7 +100,7 @@ The ``queue`` statement is used to queue up audio files. They will be played whe
 the channel finishes playing the currently playing file.
 
 The queue statement begins with keyword ``queue``, followed by the the name of a
-channel to play sound on. It optionally takes the ``loop`` and ``noloop`` clauses. ::
+channel to play sound on. It optionally takes the ``fadein``, ``loop`` and ``noloop`` clauses. ::
 
         queue sound "woof.mp3"
         queue music [ "a.ogg", "b.ogg" ]

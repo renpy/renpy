@@ -458,7 +458,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         finally:
             pop_current_screen()
 
-        if self.modal:
+        if self.modal and not callable(self.modal):
             raise renpy.display.layout.IgnoreLayers()
 
     def copy(self):
@@ -724,8 +724,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if rv is not None:
             return rv
 
-        if self.modal:
-            raise renpy.display.layout.IgnoreLayers()
+        renpy.display.layout.check_modal(self.modal, ev, x, y, renpy.config.screen_width, renpy.config.screen_height)
 
     def get_phase_name(self):
         return phase_name[self.phase]

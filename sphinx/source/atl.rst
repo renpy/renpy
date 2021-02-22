@@ -956,8 +956,18 @@ both horizontal and vertical positions.
     :type: boolean
     :default: False
 
-    If True, causes things to be drawn on the screen using subpixel
-    positioning.
+    If True, causes the child to be placed using subpixel positioning.
+
+    Subpixel positioning effects the colors (including transparency)
+    that are drawn into pixels, but not which pixels are drawn. When
+    subpixel positoning is used in combination with movement (the usual
+    case), the image should have transparent borders in the directions
+    it might be moved in, if those edges are visible on the screen.
+
+    For example, if a character sprite is being moved horizontally,
+    it makes sense to have transparent borders on the left and right.
+    These might not be necessary when panning over a background that
+    extends outside the visible area, as the edges will not be seen.
 
 .. transform-property:: delay
 

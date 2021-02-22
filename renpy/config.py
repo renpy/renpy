@@ -1104,6 +1104,17 @@ mipmap_movies = False
 # Should text be mipmapped by default?
 mipmap_text = False
 
+# Should the screensaver be allowed?
+allow_screensaver = True
+
+# The amount of time to spend fading in and out music when the context changes.
+context_fadein_music = 0
+context_fadeout_music = 0
+
+# Shout it be possible to dismiss blocking transitions that are not part of
+# a with statement?
+dismiss_blocking_transitions = True
+
 del os
 del collections
 

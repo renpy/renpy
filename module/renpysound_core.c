@@ -496,6 +496,10 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 c->queued_tight = 0;
                 c->queued_start_ms = 0;
 
+                if (c->playing_fadein) {
+                    old_tight = 0;
+                }
+
                 UNLOCK_NAME()
 
                 start_sample(c, ! old_tight);

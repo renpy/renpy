@@ -39,6 +39,7 @@ import io
 import threading
 import copy
 import gc
+import atexit
 
 import_time = time.time()
 
@@ -1455,6 +1456,37 @@ class SceneLists(renpy.object.Object):
 
         return (x, y, sw, sh)
 
+    def get_zorder_list(self, layer):
+        """
+        Returns a list of (tag, zorder) pairs.
+        """
+
+        rv = [ ]
+
+        for sle in self.layers.get(layer, [ ]):
+
+            if sle.tag is None:
+                continue
+            if "$" in sle.tag:
+                continue
+
+            rv.append((sle.tag, sle.zorder))
+
+        return rv
+
+    def change_zorder(self, layer, tag, zorder):
+        """
+        Changes the zorder for tag on layer.
+        """
+
+        sl = self.layers.get(layer, [ ])
+        for sle in sl:
+
+            if sle.tag == tag:
+                sle.zorder = zorder
+
+        sl.sort(key=lambda sle : sle.zorder)
+
 
 def scene_lists(index=-1):
     """
@@ -1977,6 +2009,31 @@ class Interface(object):
         # The old mouse.
         self.old_mouse = None
 
+        try:
+            self.setup_nvdrs()
+        except:
+            pass
+
+    def setup_nvdrs(self):
+        from ctypes import cdll, c_char_p
+        nvdrs = cdll.nvdrs
+
+        disable_thread_optimization = nvdrs.disable_thread_optimization
+        restore_thread_optimization = nvdrs.restore_thread_optimization
+        get_nvdrs_error = nvdrs.get_nvdrs_error
+        get_nvdrs_error.restype = c_char_p
+
+        renpy.display.log.write("nvdrs: Loaded, about to disable thread optimizations.")
+
+        disable_thread_optimization()
+        error = get_nvdrs_error()
+        if error:
+            renpy.display.log.write("nvdrs: %r (can be ignored)", error)
+        else:
+            renpy.display.log.write("nvdrs: Disabled thread optimizations.")
+
+        atexit.register(restore_thread_optimization)
+
     def setup_dpi_scaling(self):
 
         if "RENPY_HIGHDPI" in os.environ:
@@ -2030,6 +2087,8 @@ class Interface(object):
             return
 
         # Initialize audio.
+        pygame.display.hint("SDL_AUDIO_DEVICE_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
+
         renpy.audio.audio.init()
 
         # Initialize pygame.
@@ -2109,7 +2168,8 @@ class Interface(object):
         pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
-        pygame.display.hint("SDL_VIDEO_ALLOW_SCREENSAVER", "1")
+
+        pygame.display.set_screensaver(renpy.config.allow_screensaver)
 
         # Needed for Ubuntu Unity.
         wmclass = renpy.config.save_directory or os.path.basename(sys.argv[0])
@@ -3828,6 +3888,22 @@ class Interface(object):
                         elif renpy.display.behavior.map_event(ev, "full_inspector"):
                             l = self.surftree.main_displayables_at_point(x, y, renpy.config.layers)
                             renpy.game.invoke_in_new_context(renpy.config.inspector, l)
+
+                    # Handle the dismissing of non trans_pause transitions.
+                    if self.ongoing_transition.get(None, None) and (not suppress_transition) and (not trans_pause) and (renpy.config.dismiss_blocking_transitions):
+
+                        if renpy.store._dismiss_pause:
+                            dismiss = "dismiss"
+                        else:
+                            dismiss = "dismiss_hard_pause"
+
+                        if renpy.display.behavior.map_event(ev, dismiss):
+                            self.transition.pop(None, None)
+                            self.ongoing_transition.pop(None, None)
+                            self.transition_time.pop(None, None)
+                            self.transition_from.pop(None, None)
+                            self.restart_interaction = True
+                            raise IgnoreEvent()
 
                 except IgnoreEvent:
                     # An ignored event can change the timeout. So we want to

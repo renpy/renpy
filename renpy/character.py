@@ -99,6 +99,7 @@ class DialogueTextTags(object):
 
                 elif tag == "done":
                     self.has_done = True
+                    self.text += full_tag
                     break
 
                 self.text += full_tag
@@ -107,6 +108,25 @@ class DialogueTextTags(object):
                 break
 
         self.pause_end.append(len(self.text))
+
+        while True:
+
+            try:
+                self.text += next(i)
+
+                quoted = next(i)
+                full_tag = next(i)
+                tag = next(i)
+                value = next(i)
+
+                if quoted is not None:
+                    self.text += quoted
+                    continue
+
+                self.text += full_tag
+
+            except StopIteration:
+                break
 
         if self.no_wait:
             self.pause_delay.append(0)
@@ -487,7 +507,7 @@ def display_say(
 
     if all_at_once:
         pause_start = [ dtt.pause_start[0] ]
-        pause_end = [ len(dtt.text) ]
+        pause_end = [ dtt.pause_end[-1] ]
         pause_delay = [ dtt.pause_delay[-1] ]
     else:
         pause_start = dtt.pause_start
@@ -1308,7 +1328,9 @@ class ADVCharacter(object):
         if not renpy.store._history: # @UndefinedVariable
             return
 
-        renpy.store._history_list.pop() # @UndefinedVariable
+        # The history can be reset at any time, so check that we have some.
+        if renpy.store._history_list:
+            renpy.store._history_list.pop() # @UndefinedVariable
 
 
 def Character(name=NotSet, kind=None, **properties):

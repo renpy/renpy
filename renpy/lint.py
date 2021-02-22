@@ -66,8 +66,8 @@ def report(msg, *args):
         out = ""
 
     out += msg % args
-    print()
-    print(out.encode('utf-8'))
+    print("")
+    print(out)
 
 
 added = { }
@@ -761,7 +761,7 @@ def lint():
     args = ap.parse_args()
 
     if args.filename:
-        f = codecs.open(args.filename, "w", encoding="utf-8")
+        f = open(args.filename, "w", encoding="utf-8")
         sys.stdout = f
 
     renpy.game.lint = True
@@ -898,10 +898,10 @@ characters per block. """.format(
 
         lines.append(s)
 
-    print()
-    print()
+    print("")
+    print("")
     print("Statistics:")
-    print()
+    print("")
 
     languages = list(counts)
     languages.sort()
@@ -913,17 +913,17 @@ characters per block. """.format(
 
     for l in lines:
         for ll in textwrap.wrap(l, 78):
-            print(ll.encode("utf-8"))
+            print(ll)
 
-        print()
+        print("")
 
     for i in renpy.config.lint_stats_callbacks:
         i()
 
-    print()
+    print("")
     if renpy.config.developer and (renpy.config.original_developer != "auto"):
         print("Remember to set config.developer to False before releasing.")
-        print()
+        print("")
 
     print("Lint is not a substitute for thorough testing. Remember to update Ren'Py")
     print("before releasing. New releases fix bugs and improve compatibility.")

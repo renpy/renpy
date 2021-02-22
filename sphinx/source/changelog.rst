@@ -3,6 +3,86 @@ Full Changelog
 ==============
 
 
+.. _renpy-7.4.3:
+
+7.4.3
+=====
+
+Features
+--------
+
+The new :func:`renpy.get_zorder_list` and :func:`renpy.change_zorder` allow
+the zorder of images and screens to be manipulated after being shown.
+
+Old Features
+------------
+
+The :var:`default_mouse` variable was introduced in Ren'Py 7.4, as a way
+to allow the mouse cursor to be changed without changing :var:`config.mouse`
+at runtime, as changing config variables at runtime isn't supported.
+
+Transations
+-----------
+
+The Ren'Py documentation has been translated into both Simplified and
+Traditional Chinese, courtesy of 被诅咒的章鱼 and 逆转咸鱼.
+
+
+.. _renpy-7.4.2:
+
+7.4.2
+=====
+
+Fixes and Changes
+-----------------
+
+The new :var:`config.context_fadeout_music` and :var:`config.context_fadein_music`
+variables make it possible to fade out and in music when a game is loaded or
+other context changes cause the music to change.
+
+Ren'Py now searches for Live2D motion and expression files using the
+extensions (.motion3.json and .exp3.json), rather than using
+directory names.
+
+The new :var:`build.include_i686` variable determines if the 32-bit
+versions of Ren'Py are included in the build. Not including 32-bit
+binaries can reduced download size and prevent overzealous antivirus
+programs from incorrectly reporting distributions as infected.
+
+The new :var:`build.change_icon_i686` will prevent the icon for the
+i686 version from being changed. This may prevent antivirus programs
+from incorrect detections.
+
+Ren'Py will no longer disable the screen saver or prevent the
+system from going to sleep when a game is running.
+
+A macOS issue with the operating system's fullscreen (invoked using the gree
+button) disabling resizing, and hence preventing the window from being
+restored to it's normal size, has been resolved.
+
+A crash on raspberry pi displaying a webp image has been fixed.
+
+This release fixes missing files caused by a mistake in the build process:
+
+* The say.vbs file was missing, preventing self-voicing from working on
+  Windows.
+* Various files required to support ANGLE were missing, which prevented
+  DirectX rendering from working.
+
+Android
+-------
+
+There is a known issue with Samsung devices with the magnification shortcut
+enabled, where the game may become unresponsive. I'm working on a fix, but
+didn't want to delay the release for this.
+
+The detection of the JVM on macOS is more robust, and less likely to
+be confused by a browser plug-in.
+
+Ren'Py now recommends the use of AdoptOpenJDK as a source for the
+JVM.
+
+
 .. _renpy-7.4.1:
 
 7.4.1

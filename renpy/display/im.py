@@ -618,6 +618,10 @@ class ImageBase(renpy.display.core.Displayable):
         return [ ]
 
 
+ignored_images = set()
+images_to_ignore = set()
+
+
 class Image(ImageBase):
     """
     This image manipulator loads an image from a file.
@@ -677,7 +681,15 @@ class Image(ImageBase):
 
                 return im.load()
 
-            raise
+            else:
+
+                if self.filename not in ignored_images:
+                    images_to_ignore.add(self.filename)
+                    raise e
+                else:
+                    return Image("_missing_image.png").load()
+
+            raise e
 
     def predict_files(self):
 

@@ -326,9 +326,12 @@ cdef class GL2Draw:
 
         # Angle or GL?
         if self.angle:
-            renpy.uguu.angle.load_angle()
+            res = renpy.uguu.angle.load_angle()
         else:
-            renpy.uguu.angle.load_gl()
+            res = renpy.uguu.angle.load_gl()
+
+        if not res:
+            return False
 
         # Determine the GLES mode, the actual window size to request, and the
         # window flags to use. (These are platform dependent.)
@@ -743,7 +746,7 @@ cdef class GL2Draw:
         try:
             pygame.display.flip()
         except pygame.error as e:
-            renpy.display.log("Flip failed %r", e)
+            renpy.display.log.write("Flip failed %r", e)
             renpy.game.interface.display_reset = True
 
         end = time.time()
@@ -1106,6 +1109,26 @@ cdef class GL2DrawingContext:
 
         self.debug = debug
 
+    def merge_properties(self, dict old, dict child):
+        """
+        Merges the child properties into the old properties,
+        returning new properties.
+        """
+
+        rv = dict(old)
+
+        if not child:
+            return rv
+
+        for k, v in child.items():
+            if k == "pixel_perfect":
+                if old["pixel_perfect"] is False:
+                    continue
+
+            rv[k] = v
+
+        return rv
+
     cdef Matrix correct_pixel_perfect(self, Matrix transform):
         """
         Corrects `transform` so that the (0, 0) pixel is aligned with a
@@ -1155,7 +1178,7 @@ cdef class GL2DrawingContext:
 
         if self.debug:
             import renpy.gl2.gl2debug as gl2debug
-            gl2debug.geometry(mesh, transform)
+            gl2debug.geometry(mesh, transform, self.width, self.height)
 
         program = self.gl2draw.shader_cache.get(shaders)
 
@@ -1228,10 +1251,7 @@ cdef class GL2DrawingContext:
         has_reverse = (r.reverse is not None) and (r.reverse is not IDENTITY)
 
         if has_reverse or r.properties:
-            properties = dict(properties)
-
-        if r.properties is not None:
-            properties.update(r.properties)
+            properties = self.merge_properties(properties, r.properties)
 
         if has_reverse and (properties["pixel_perfect"] is None):
             properties["pixel_perfect"] = False

@@ -231,6 +231,32 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     * The child of this transform will be rendered to a texture.
     * The renpy.texture shader will be added.
 
+.. transform-property:: mesh_pad
+
+    :type: None or tuple
+    :default: None
+
+    If not None, this can either be a 2 or 4 component tuple. If mesh is
+    true and this is given, this applies padding to the size of the textues
+    applied to the the textures used by the mesh. A two component tuple applies
+    padding to the right and bottom, while a four component tuple applies
+    padding to the left, top, right, and bottom.
+
+    This can be used, in conjunction with the pixel_perfect property, to
+    render text into a mesh. In Ren'Py, text is rendered at the screen
+    resoltution, which might overflow the boundaries of the texture that
+    will be applied to the mesh. Adding a few pixels of padding makes the
+    texture bigger, which will display all pixels. For example::
+
+        transform adjust_text:
+            mesh True
+            mesh_pad (10, 0)
+            gl_pixel_perfect True
+            shader "shaders.adjust_text"
+
+    will ensure that the texture passed to the shader contains all of the pixels
+    of the text.
+
 .. transform-property:: shader
 
     :type: None or str or list of str
@@ -294,12 +320,21 @@ GL Properties
 -------------
 
 GL properties change the global state of OpenGL, or the Model-Based renderer.
+These properties Take a ``gl\_`` prefix when used as part of a Transform, so
+you'd write ``gl_color_masks`` in ATL.
 
 ``color_masks``
     This is expecting to be a 4-tuple of booleans, corresponding to the four
     channels of a pixel (red, green, blue, and alpha). If a given channel is
     treu, the draw operation will write to that pixel. Otherwise, it will
     not.
+
+``pixel_perfect``
+    This only makes sense to set when a mesh is being created. When True,
+    Ren'Py will move the mesh such that the first vertex is aligned with
+    a pixel on the screen. This is mostly used in conjunction with text,
+    to ensure that the text remains sharp.
+
 
 Default Shader Parts
 --------------------

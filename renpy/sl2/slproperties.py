@@ -129,6 +129,7 @@ window_properties = [ Style(i) for i in [
     "background",
     "foreground",
     "size_group",
+    "modal",
     ] ] + margin_properties + padding_properties
 
 button_properties = [ Style(i) for i in [

@@ -328,6 +328,16 @@ Occasionally Used
     Contains a list of screens that are removed when a context is copied
     for rollback or saving.
 
+.. var:: config.context_fadein_music = 0
+
+    The amount of time in seconds Ren'Py spends fading in music when the music is
+    played due to a context change. (Usually, when the game is loaded.)
+
+.. var:: config.context_fadeout_music = 0
+
+    The amount of time in seconds Ren'Py spends fading out music when the music is
+    played due to a context change. (Usually, when the game is loaded.)
+
 .. var:: config.debug = False
 
     Enables debugging functionality (mostly by turning some missing
@@ -965,7 +975,12 @@ Rarely or Internally Used
 .. var:: config.allow_skipping = True
 
     If set to False, the user is not able to skip over the text of the
-    game.
+    game. See :var:`_skipping`.
+
+.. var:: config.allow_screensaver = True
+
+    If True, the screensaver may activite while the game is running. If
+    False, the screensaver is disabled.
 
 .. var:: config.archives = [ ]
 

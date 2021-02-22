@@ -816,7 +816,7 @@ def scene(layer='master'):
         renpy.config.missing_scene(layer)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input"): # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", **kwargs): # @ReservedAssignment
     """
     :doc: input
 
@@ -851,6 +851,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     If :var:`config.disable_input` is True, this function only returns
     `default`.
+
+    Keywords prefixed with ``show_`` have the prefix stripped and
+    are passed to the screen.
     """
 
     if renpy.config.disable_input:
@@ -868,11 +871,17 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     fixed = in_fixed_rollback()
 
+    # put arguments with show_ prefix aside
+    show_properties, kwargs = renpy.easy.split_properties(kwargs, "show_", "")
+
+    if kwargs:
+        raise TypeError("renpy.input() got unexpected keyword argument(s): {}".format(", ".join(kwargs.keys())))
+
     if has_screen(screen):
         widget_properties = { }
         widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width)
 
-        show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt)
+        show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **show_properties)
 
     else:
 
@@ -3908,3 +3917,87 @@ def add_to_all_stores(name, value):
 
         if name not in ns:
             ns[name] = value
+
+
+def get_zorder_list(layer):
+    """
+    :doc: image_func
+
+    Returns a list of (tag, zorder) pairs for `layer`.
+    """
+
+    return renpy.display.core.scene_lists().get_zorder_list(layer)
+
+
+def change_zorder(layer, tag, zorder):
+    """
+    :doc: image_func
+
+    Changes the zorder of `tag` on `layer` to `zorder`.
+    """
+
+    return renpy.display.core.scene_lists().change_zorder(layer, tag, zorder)
+
+
+sdl_dll = False
+
+
+def get_sdl_dll():
+    """
+    :doc: sdl
+
+    This returns a ctypes.cdll object that refers to the library that contains
+    the instance of SDL2 that Ren'Py is using.
+
+    If this can not be done, None is returned.
+    """
+
+    global sdl_dll
+
+    if sdl_dll is not False:
+        return sdl_dll
+
+    try:
+
+        DLLS = [ None, "librenpython.dll", "librenpython.dylib", "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
+
+        import ctypes
+
+        for i in DLLS:
+            try:
+                # Look for the DLL.
+                dll = ctypes.cdll[i]
+                # See if it has SDL_GetError..
+                dll.SDL_GetError
+            except:
+                continue
+
+            sdl_dll = dll
+            return dll
+
+    except:
+        pass
+
+    sdl_dll = None
+    return None
+
+
+def get_sdl_window_pointer():
+    """
+    :doc: sdl
+
+    Returns a pointer (of type ctypes.c_void_p) to the main window, or None
+    if the main window is not displayed, or some other problem occurs.
+    """
+
+    try:
+        window = pygame_sdl2.display.get_window()
+
+        if window is None:
+            return
+
+        return window.get_sdl_window_pointer()
+
+    except:
+        return None
+

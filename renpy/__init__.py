@@ -74,10 +74,10 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (7, 4, 2, vc_version)
+version_tuple = (7, 4, 3, vc_version)
 
 # The name of this version.
-version_name = "The Better One."
+version_name = "The Best One."
 
 # A string giving the version number only (8.0.1.123).
 version_only = ".".join(str(i) for i in version_tuple)
@@ -232,6 +232,7 @@ name_blacklist = {
     "renpy.audio.audio.periodic_condition",
     "renpy.webloader.queue_lock",
     "renpy.persistent.save_MP_instances",
+    "renpy.exports.sdl_dll",
     }
 
 

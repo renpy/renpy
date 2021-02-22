@@ -444,6 +444,11 @@ label _hide_windows:
     if _windows_hidden:
         return
 
+    if renpy.has_label("hide_windows"):
+        call hide_windows
+        if _return:
+            return
+
     python:
         _windows_hidden = True
         voice_sustain()
