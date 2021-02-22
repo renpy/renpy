@@ -311,6 +311,7 @@ class Live2DCommon(object):
         # Same.
         self.attribute_filter = None
 
+        # If not None, a function that can blend parameters itself after applying expressions.
         self.update_function = None
 
     def apply_aliases(self, aliases):
@@ -780,14 +781,9 @@ class Live2D(renpy.display.core.Displayable):
         return redraw
 
     def blend_parameter(self, name, blend, value, weight=1.0):
-        if blend == "multiply":
-            blend = "Multiply"
-        elif blend == "add":
-            blend = "Add"
-        elif blend == "overwrite":
-            blend = "Overwrite"
-        else:
+        if blend not in ("Add", "Multiply", "Overwrite"):
             raise Exception("Unknown blend mode {!r}".format(blend))
+
         self.common.model.blend_parameter(name, blend, value, weight)
 
     def render(self, width, height, st, at):
