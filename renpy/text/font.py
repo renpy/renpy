@@ -826,8 +826,8 @@ class FontGroup(object):
                 if font is None:
                     raise Exception("Character U+{0:04x} not found in FontGroup".format(n))
 
-            if c in self.char_map:
-                s = ''.join((s[:i], self.char_map[c], s[i+1:]))
+            if n in self.char_map:
+                s = ''.join((s[:i], chr(self.char_map[n]), s[i+1:]))
 
             if font != old_font:
                 if pos:
