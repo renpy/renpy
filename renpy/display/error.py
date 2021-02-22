@@ -145,6 +145,8 @@ def report_exception(short, full, traceback_fn):
             traceback_fn=traceback_fn,
             )
 
+        renpy.display.im.ignored_images |= renpy.display.im.images_to_ignore
+
         if renpy.store._ignore_action is not None:
             renpy.display.behavior.run(renpy.store._ignore_action)
 
