@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -77,6 +77,8 @@ init -1 python:
     # The color of input text.
     INPUT_COLOR = "#d86b45"
 
+    scrollbar_center = Fixed(Solid(REVERSE_TEXT, area=(2, 2, 2, 4)), Solid(REVERSE_TEXT, area=(8, 2, 2, 4)), Solid(REVERSE_TEXT, area=(14, 2, 2, 4)), xysize=(18, 8))
+    vscrollbar_center = Fixed(Solid(REVERSE_TEXT, area=(2, 2, 4, 2)), Solid(REVERSE_TEXT, area=(2, 8, 4, 2)), Solid(REVERSE_TEXT, area=(2, 14, 4, 2)), xysize=(8, 18))
 
 init 1 python:
 
@@ -121,7 +123,10 @@ init 1 python:
     ONEHALF = 377
 
     def checkbox(full, color):
-        return Transform((checkbox_full if full else checkbox_empty)(color), style='l_checkbox_box')
+        check = Fixed(Solid(color, xsize=1, xalign=.0), Solid(color, xsize=1, xalign=1.0), Solid(color, ysize=1, yalign=.0), Solid(color, ysize=1, yalign=1.0), xsize=10, ysize=10)
+        if full:
+            check = Fixed(check, Solid(color, xsize=6, ysize=6, align=(.5, .5)), xsize=10, ysize=10)
+        return Transform(check, style='l_checkbox_box')
 
 
 
@@ -256,11 +261,11 @@ style l_list2_text is l_list_text
 style l_vscrollbar is l_default:
     thumb Fixed(
         Solid(SCROLLBAR_IDLE, xmaximum=8, xalign=0.5),
-        Transform("vscrollbar_center", xalign=0.5, yalign=0.5),
+        Transform(vscrollbar_center, xalign=0.5, yalign=0.5),
         xmaximum = SCROLLBAR_SIZE)
     hover_thumb Fixed(
         Solid(SCROLLBAR_HOVER, xmaximum=8, xalign=0.5),
-        Transform("vscrollbar_center", xalign=0.5, yalign=0.5),
+        Transform(vscrollbar_center, xalign=0.5, yalign=0.5),
         xmaximum = SCROLLBAR_SIZE)
     xmaximum SCROLLBAR_SIZE
     bar_vertical True
@@ -362,10 +367,3 @@ style hyperlink_text:
     font light_font()
     color IDLE
     hover_color HOVER
-
-transform checkbox_empty(col):
-    Fixed(Solid(col, xsize=1, xalign=.0), Solid(col, xsize=1, xalign=1.0), Solid(col, ysize=1, yalign=.0), Solid(col, ysize=1, yalign=1.0), xsize=10, ysize=10)
-transform checkbox_full(col):
-    Fixed(checkbox_empty(col), Solid(col, xsize=6, ysize=6, align=(.5, .5)), xsize=10, ysize=10)
-image scrollbar_center = Fixed(Solid('#ffffff', area=(2, 2, 2, 4)), Solid('#ffffff', area=(8, 2, 2, 4)), Solid('#ffffff', area=(14, 2, 2, 4)), xysize=(18, 8))
-image vscrollbar_center = Fixed(Solid('#ffffff', area=(2, 2, 4, 2)), Solid('#ffffff', area=(2, 8, 4, 2)), Solid('#ffffff', area=(2, 14, 4, 2)), xysize=(8, 18))
