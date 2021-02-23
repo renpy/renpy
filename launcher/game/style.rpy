@@ -56,11 +56,11 @@ init -1 python:
     PATTERN = "images/pattern.png"
 
     # A displayable used for the background of everything.
-    BACKGROUND = "images/background.png"
+    BACKGROUND = "background"
 
     # A displayable used for the background of windows
     # containing commands, preferences, and navigation info.
-    WINDOW = Frame("images/window.png", 0, 0, tile=True)
+    WINDOW = Frame("window", 0, 0, tile=True)
 
     # A displayable used for the background of the projects list.
     PROJECTS_WINDOW = Null()
@@ -121,10 +121,7 @@ init 1 python:
     ONEHALF = 377
 
     def checkbox(full, color):
-        if full:
-            return im.Twocolor("images/checkbox_full.png", color, color, style="l_checkbox_box")
-        else:
-            return im.Twocolor("images/checkbox_empty.png", color, color, style="l_checkbox_box")
+        return Transform((checkbox_full if full else checkbox_empty)(color), style='l_checkbox_box')
 
 
 
@@ -259,11 +256,11 @@ style l_list2_text is l_list_text
 style l_vscrollbar is l_default:
     thumb Fixed(
         Solid(SCROLLBAR_IDLE, xmaximum=8, xalign=0.5),
-        Image("images/vscrollbar_center.png", xalign=0.5, yalign=0.5),
+        Transform("vscrollbar_center", xalign=0.5, yalign=0.5),
         xmaximum = SCROLLBAR_SIZE)
     hover_thumb Fixed(
         Solid(SCROLLBAR_HOVER, xmaximum=8, xalign=0.5),
-        Image("images/vscrollbar_center.png", xalign=0.5, yalign=0.5),
+        Transform("vscrollbar_center", xalign=0.5, yalign=0.5),
         xmaximum = SCROLLBAR_SIZE)
     xmaximum SCROLLBAR_SIZE
     bar_vertical True
@@ -365,3 +362,10 @@ style hyperlink_text:
     font light_font()
     color IDLE
     hover_color HOVER
+
+transform checkbox_empty(col):
+    Fixed(Solid(col, xsize=1, xalign=.0), Solid(col, xsize=1, xalign=1.0), Solid(col, ysize=1, yalign=.0), Solid(col, ysize=1, yalign=1.0), xsize=10, ysize=10)
+transform checkbox_full(col):
+    Fixed(checkbox_empty(col), Solid(col, xsize=6, ysize=6, align=(.5, .5)), xsize=10, ysize=10)
+image scrollbar_center = Fixed(Solid('#ffffff', area=(2, 2, 2, 4)), Solid('#ffffff', area=(8, 2, 2, 4)), Solid('#ffffff', area=(14, 2, 2, 4)), xysize=(18, 8))
+image vscrollbar_center = Fixed(Solid('#ffffff', area=(2, 2, 4, 2)), Solid('#ffffff', area=(2, 8, 4, 2)), Solid('#ffffff', area=(2, 14, 4, 2)), xysize=(8, 18))
