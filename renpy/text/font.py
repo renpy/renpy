@@ -729,6 +729,7 @@ class FontGroup(object):
     A group of fonts that can be used as a single font.
     """
 
+    # For compatibility with older instances.
     char_map = dict()
 
     def __init__(self):
@@ -736,6 +737,9 @@ class FontGroup(object):
         # A map from character index to font name. None is used for
         # the default font.
         self.map = { }
+
+        # A map from character number to character number, used to implement remap.
+        self.char_map = { }
 
     def add(self, font, start, end, target=None, target_increment=False):
         """
@@ -799,10 +803,12 @@ class FontGroup(object):
         for i in range(start, end + 1):
             if i not in self.map:
                 self.map[i] = font
-                if target:
+
+                if target is not None:
                     self.char_map[i] = target
+
                     if target_increment:
-                        self.char_map[i] += i - start
+                        target += 1
 
         return self
 
@@ -855,6 +861,10 @@ class FontGroup(object):
 
         old_font = None
 
+        if self.char_map:
+            s = [ ord(i) for i in s ]
+            s = "".join(chr(self.char_map.get(i, i)) for i in s)
+
         for i, c in enumerate(s):
 
             n = ord(c)
@@ -866,9 +876,6 @@ class FontGroup(object):
 
                 if font is None:
                     raise Exception("Character U+{0:04x} not found in FontGroup".format(n))
-
-            if n in self.char_map:
-                s = ''.join((s[:i], chr(self.char_map[n]), s[i + 1:]))
 
             if font != old_font:
                 if pos:
