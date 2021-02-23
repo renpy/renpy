@@ -1047,7 +1047,10 @@ class ADVCharacter(object):
         who = self.name
 
         if self.dynamic:
-            who = renpy.python.py_eval(who)
+            if callable(who):
+                who = who()
+            else:
+                who = renpy.python.py_eval(who)
 
         return renpy.substitutions.substitute(who)[0]
 
@@ -1056,7 +1059,10 @@ class ADVCharacter(object):
         who = self.name
 
         if self.dynamic:
-            who = renpy.python.py_eval(who)
+            if callable(who):
+                who = who()
+            else:
+                who = renpy.python.py_eval(who)
 
         rv = renpy.substitutions.substitute(who)[0]
 
