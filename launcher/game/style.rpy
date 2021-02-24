@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -77,10 +77,54 @@ init -1 python:
     # The color of input text.
     INPUT_COLOR = "#d86b45"
 
-    scrollbar_center = Fixed(Solid(REVERSE_TEXT, area=(2, 2, 2, 4)), Solid(REVERSE_TEXT, area=(8, 2, 2, 4)), Solid(REVERSE_TEXT, area=(14, 2, 2, 4)), xysize=(18, 8))
-    vscrollbar_center = Fixed(Solid(REVERSE_TEXT, area=(2, 2, 4, 2)), Solid(REVERSE_TEXT, area=(2, 8, 4, 2)), Solid(REVERSE_TEXT, area=(2, 14, 4, 2)), xysize=(8, 18))
+    if persistent.dark_theme:
+        # The color of non-interactive text.
+        TEXT = "#545454"
+
+        # Colors for buttons in various states.
+        IDLE = "#42637b"
+        HOVER = "#d86b45"
+        DISABLED = "#808080"
+
+        # Colors for reversed text buttons (selected list entries).
+        REVERSE_IDLE = "#78a5c5"
+        REVERSE_HOVER = "#d86b45"
+        REVERSE_TEXT = "#ffffff"
+
+        # Colors for the scrollbar thumb.
+        SCROLLBAR_IDLE = "#dfdfdf"
+        SCROLLBAR_HOVER = "#d86b45"
+
+        # An image used as a separator pattern.
+        PATTERN = "images/pattern.png"
+
+        # A displayable used for the background of everything.
+        BACKGROUND = Fixed(Solid(REVERSE_TEXT), xsize=800, ysize=600)
+
+        # A displayable used for the background of the projects list.
+        PROJECTS_WINDOW = Null()
+
+        # A displayable used the background of information boxes.
+        INFO_WINDOW = "#f9f9f9"
+
+        # Colors for the titles of information boxes.
+        ERROR_COLOR = "#d15353"
+        INFO_COLOR = "#545454"
+        INTERACTION_COLOR = "#d19753"
+        QUESTION_COLOR = "#d19753"
+
+        # The color of input text.
+        INPUT_COLOR = "#d86b45"
+
+        # A displayable used for the background of windows
+        # containing commands, preferences, and navigation info.
+        WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
+
 
 init 1 python:
+
+    scrollbar_center = Fixed(Solid(REVERSE_TEXT, area=(2, 2, 2, 4)), Solid(REVERSE_TEXT, area=(8, 2, 2, 4)), Solid(REVERSE_TEXT, area=(14, 2, 2, 4)), xysize=(18, 8))
+    vscrollbar_center = Fixed(Solid(REVERSE_TEXT, area=(2, 2, 4, 2)), Solid(REVERSE_TEXT, area=(2, 8, 4, 2)), Solid(REVERSE_TEXT, area=(2, 14, 4, 2)), xysize=(8, 18))
 
     def size(n):
         """
@@ -126,7 +170,7 @@ init 1 python:
         check = Fixed(Solid(color, xsize=1, xalign=.0), Solid(color, xsize=1, xalign=1.0), Solid(color, ysize=1, yalign=.0), Solid(color, ysize=1, yalign=1.0), xsize=10, ysize=10)
         if full:
             check = Fixed(check, Solid(color, xsize=6, ysize=6, align=(.5, .5)), xsize=10, ysize=10)
-        return Transform(check, style='l_checkbox_box')
+        return Transform(check, ycenter=11)
 
 
 
@@ -342,10 +386,6 @@ style l_checkbox is l_button:
     selected_idle_background checkbox(True, IDLE)
     selected_hover_background checkbox(True, HOVER)
     insensitive_background checkbox(False, DISABLED)
-
-style l_checkbox_box:
-    yanchor 0.5
-    ypos 11
 
 style l_checkbox_text is l_button_text:
     selected_font light_font()
