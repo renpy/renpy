@@ -121,10 +121,13 @@ init -1 python:
         WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
 
+
 init 1 python:
 
-    scrollbar_center = Fixed(Solid(REVERSE_TEXT, area=(2, 2, 2, 4)), Solid(REVERSE_TEXT, area=(8, 2, 2, 4)), Solid(REVERSE_TEXT, area=(14, 2, 2, 4)), xysize=(18, 8))
-    vscrollbar_center = Fixed(Solid(REVERSE_TEXT, area=(2, 2, 4, 2)), Solid(REVERSE_TEXT, area=(2, 8, 4, 2)), Solid(REVERSE_TEXT, area=(2, 14, 4, 2)), xysize=(8, 18))
+    if not renpy.has_image('scrollbar_center'):
+        renpy.image('scrollbar_center', Fixed(Solid(REVERSE_TEXT, area=(2, 2, 2, 4)), Solid(REVERSE_TEXT, area=(8, 2, 2, 4)), Solid(REVERSE_TEXT, area=(14, 2, 2, 4)), xysize=(18, 8)))
+    if not renpy.has_image('vscrollbar_center'):
+        renpy.image('vscrollbar_center', Fixed(Solid(REVERSE_TEXT, area=(2, 2, 4, 2)), Solid(REVERSE_TEXT, area=(2, 8, 4, 2)), Solid(REVERSE_TEXT, area=(2, 14, 4, 2)), xysize=(8, 18)))
 
     def size(n):
         """
@@ -167,10 +170,13 @@ init 1 python:
     ONEHALF = 377
 
     def checkbox(full, color):
-        check = Fixed(Solid(color, xsize=1, xalign=.0), Solid(color, xsize=1, xalign=1.0), Solid(color, ysize=1, yalign=.0), Solid(color, ysize=1, yalign=1.0), xsize=10, ysize=10)
-        if full:
-            check = Fixed(check, Solid(color, xsize=6, ysize=6, align=(.5, .5)), xsize=10, ysize=10)
-        return Transform(check, ycenter=11)
+        if renpy.has_image('checkbox_full'):
+            check = im.Twocolor(''.join(["images/checkbox_", "full" if full else "empty", ".png"]), color, color)
+        else:
+            check = Fixed(Solid(color, xsize=1, xalign=.0), Solid(color, xsize=1, xalign=1.0), Solid(color, ysize=1, yalign=.0), Solid(color, ysize=1, yalign=1.0), xsize=10, ysize=10)
+            if full:
+                check = Fixed(check, Solid(color, xsize=6, ysize=6, align=(.5, .5)), xsize=10, ysize=10)
+        return At(check, l_checkbox_box)
 
 
 
@@ -305,11 +311,11 @@ style l_list2_text is l_list_text
 style l_vscrollbar is l_default:
     thumb Fixed(
         Solid(SCROLLBAR_IDLE, xmaximum=8, xalign=0.5),
-        Transform(vscrollbar_center, xalign=0.5, yalign=0.5),
+        Transform('vscrollbar_center', xalign=0.5, yalign=0.5),
         xmaximum = SCROLLBAR_SIZE)
     hover_thumb Fixed(
         Solid(SCROLLBAR_HOVER, xmaximum=8, xalign=0.5),
-        Transform(vscrollbar_center, xalign=0.5, yalign=0.5),
+        Transform('vscrollbar_center', xalign=0.5, yalign=0.5),
         xmaximum = SCROLLBAR_SIZE)
     xmaximum SCROLLBAR_SIZE
     bar_vertical True
@@ -386,6 +392,9 @@ style l_checkbox is l_button:
     selected_idle_background checkbox(True, IDLE)
     selected_hover_background checkbox(True, HOVER)
     insensitive_background checkbox(False, DISABLED)
+
+transform l_checkbox_box:
+    ycenter 11
 
 style l_checkbox_text is l_button_text:
     selected_font light_font()
