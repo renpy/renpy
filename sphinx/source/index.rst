@@ -171,6 +171,7 @@ Changes, License, and Credits
    :maxdepth: 1
 
    changelog
+   changelog6
    incompatible
    distributor
    license
