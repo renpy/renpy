@@ -658,6 +658,12 @@ python early in layeredimage:
             if self.attribute_function:
                 attributes = set(self.attribute_function(attributes))
 
+                unknown = set(attributes)
+
+                for a in self.attributes:
+
+                    unknown.discard(a.attribute)
+
             rv = Fixed(**self.fixed_args)
 
             for i in self.layers:
