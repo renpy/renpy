@@ -701,7 +701,7 @@ class Displayable(renpy.object.Object):
 
         rv = [ ]
 
-        for i in self.visit():
+        for i in self.visit()[::-1]:
             if i is not None:
                 speech = i._tts()
 
