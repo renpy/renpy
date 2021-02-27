@@ -177,8 +177,6 @@ translate french strings:
     old "Copies the errors.txt file to the clipboard."
     new "Copie le contenu du fichier « errors.txt » dans le presse-papier."
 
-translate french strings:
-
     # renpy/common/_errorhandling.rpym:542
     old "Copy BBCode"
     new "Copier en BBCode"
@@ -215,3 +213,82 @@ translate french strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Copie le fichier errors.txt dans le presse-papier au format Markdown pour Discord."
 
+    # renpy/common/00gltest.rpy:89
+    old "Renderer"
+    new "Moteur de rendu"
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "Forcer le moteur de rendu GL"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "Forcer le moteur de rendu ANGLE"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "Forcer le moteur de rendu GLES"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "Forcer le moteur de rendu GL2"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "Forcer le moteur de rendu ANGLE2"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "Forcer le moteur de rendu GLES2"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "Activer (Sans Blocklist)"
+
+    # renpy/common/00gltest.rpy:159
+    old "Powersave"
+    new "Économie d'énergie"
+
+    # renpy/common/00gltest.rpy:173
+    old "Framerate"
+    new "Images par seconde"
+
+    # renpy/common/00gltest.rpy:177
+    old "Screen"
+    new "Écran"
+
+    # renpy/common/00gltest.rpy:181
+    old "60"
+    new "60"
+
+    # renpy/common/00gltest.rpy:185
+    old "30"
+    new "30"
+
+    # renpy/common/00gltest.rpy:191
+    old "Tearing"
+    new "Tearing"
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    new "Ce jeu nécessite l'usage de GL2, qui ne peut pas être initialisé."
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "Le fichier {a=edit:1:log.txt}log.txt{/a} peut contenir des informations pour vous aider à déterminer ce qui ne va pas avec votre ordinateur."
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Plus de détails sur comment réparer ça dans la {a=[url]}documentation{/a}."
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    new "Changer les options de rendu"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "Appuyez sur le [kind] '[control!s]'."
+
+    # renpy/common/_errorhandling.rpym:542
+    old "Open"
+    new "Ouvrir"
