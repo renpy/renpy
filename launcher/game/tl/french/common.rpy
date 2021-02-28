@@ -421,7 +421,7 @@ translate french strings:
 
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing Volume Drop"
-    new "Baisse de volume de la vocalisation automatique"
+    new "Baisse de volume pendant la lecture vocale"
 
     # renpy/common/00accessibility.rpy:202
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
@@ -649,11 +649,11 @@ translate french strings:
 
     # renpy/common/00preferences.rpy:379
     old "self voicing"
-    new "voix automatique"
+    new "lecture vocale"
 
     # renpy/common/00preferences.rpy:388
     old "self voicing volume drop"
-    new "baisse de volume de la voix automatique"
+    new "baisse de volume pendant la lecture vocale"
 
     # renpy/common/00preferences.rpy:396
     old "clipboard voicing"
