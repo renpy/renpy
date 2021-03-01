@@ -2086,6 +2086,10 @@ class Interface(object):
         if self.started:
             return
 
+        # Avoid starting on Android if we don't have focus.
+        if renpy.android:
+            self.check_android_start()
+
         # Initialize audio.
         pygame.display.hint("SDL_AUDIO_DEVICE_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
 
@@ -2863,17 +2867,49 @@ class Interface(object):
 
         return (get_time() - self.frame_time) <= seconds_ago
 
+    def mobile_save(self):
+        """
+        Create a mobile reload file.
+        """
+
+        if renpy.config.save_on_mobile_background and (not renpy.store.main_menu):
+            renpy.loadsave.save("_reload-1")
+
+        renpy.persistent.update(True)
+        renpy.persistent.save_MP()
+
+    def mobile_unlink(self):
+        """
+        Delete an unused mobile reload file.
+        """
+
+        # Since we came back to life, we can get rid of the
+        # auto-reload.
+        renpy.loadsave.unlink_save("_reload-1")
+
+    def check_android_start(self):
+        """
+        Delays until the android screen is visible, to ensure the
+        GL context is created properly.
+        """
+
+        from jnius import autoclass
+        SDLActivity = autoclass("org.libsdl.app.SDLActivity")
+
+        if SDLActivity.mHasFocus:
+            return
+
+        renpy.display.log.write("App not focused at interface start, shutting down early.")
+
+        self.mobile_save()
+
+        import os
+        os._exit(1)
+
     def check_suspend(self, ev):
         """
         Handles the SDL2 suspend process.
         """
-
-        def save():
-            if renpy.config.save_on_mobile_background and (not renpy.store.main_menu):
-                renpy.loadsave.save("_reload-1")
-
-            renpy.persistent.update(True)
-            renpy.persistent.save_MP()
 
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
@@ -2889,7 +2925,7 @@ class Interface(object):
         pygame.time.set_timer(REDRAW, 0)
         pygame.time.set_timer(TIMEEVENT, 0)
 
-        save()
+        self.mobile_save()
 
         if renpy.config.quit_on_mobile_background:
             sys.exit(0)
@@ -2906,9 +2942,7 @@ class Interface(object):
 
         print("Entering foreground.")
 
-        # Since we came back to life, we can get rid of the
-        # auto-reload.
-        renpy.loadsave.unlink_save("_reload-1")
+        self.mobile_unlink()
 
         pygame.time.set_timer(PERIODIC, PERIODIC_INTERVAL)
 
