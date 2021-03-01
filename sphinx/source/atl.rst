@@ -513,7 +513,6 @@ The functions have the same signature as those used with :func:`Transform`:
 
 * The second argument is the shown timebase, the number of seconds since the
   function began executing.
-
 * The third argument is the the animation timebase, which is the number of
   seconds something with the same tag has been on the screen.
 
@@ -521,6 +520,10 @@ The functions have the same signature as those used with :func:`Transform`:
   number of seconds has elapsed. (0 seconds means to call the function as
   soon as possible.) If the function returns None, control will pass to the
   next ATL statement.
+
+This function should not have side effects other
+than changing the Transform object in the first argument, and may be
+called at any time with any value to enable prediction.
 
 ::
 
