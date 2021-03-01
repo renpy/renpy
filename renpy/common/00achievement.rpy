@@ -82,6 +82,9 @@ init -1500 python in achievement:
             if persistent._achievement_progress is None:
                 persistent._achievement_progress = _dict()
 
+        def register(self, name, stat_max=None, **kwargs):
+            self.stats[name] = stat_max
+
         def grant(self, name):
             persistent._achievements.add(name)
 
@@ -94,9 +97,24 @@ init -1500 python in achievement:
         def has(self, name):
             return name in persistent._achievements
 
-        def progress(self, name, complete):
-            old = persistent._achievement_progress.get(name, 0)
-            persistent._achievement_progress[name] = max(complete, old)
+        def progress(self, name, completed):
+            current = persistent._achievement_progress.get(name, 0)
+
+            if (current is not None) and (current >= completed):
+                return
+
+            persistent._achievement_progress[name] = completed
+
+            if name not in self.stats:
+                if config.developer:
+                    raise Exception("To report progress, you must register {} with a stat_max.".format(name))
+                else:
+                    return
+
+            stat_max = self.stats[name]
+
+            if completed >= stat_max:
+                self.grant(name)
 
     def merge(old, new, current):
         if old is None:
