@@ -107,7 +107,7 @@ lower_map = { }
 archive_handlers = [ ]
 
 
-class RPAv3ArchiveHandler(object):
+class RPAv3ArchiveHandler():
     """
     Archive handler handling RPAv3 archives.
     """
@@ -142,7 +142,7 @@ class RPAv3ArchiveHandler(object):
 archive_handlers.append(RPAv3ArchiveHandler)
 
 
-class RPAv2ArchiveHandler(object):
+class RPAv2ArchiveHandler():
     """
     Archive handler handling RPAv2 archives.
     """
@@ -168,7 +168,7 @@ class RPAv2ArchiveHandler(object):
 archive_handlers.append(RPAv2ArchiveHandler)
 
 
-class RPAv1ArchiveHandler(object):
+class RPAv1ArchiveHandler():
     """
     Archive handler handling RPAv1 archives.
     """
@@ -444,7 +444,7 @@ def listdirfiles(common=True):
         return list(game_files)
 
 
-class SubFile(object):
+class SubFile():
 
     def __init__(self, fn, base, length, start):
         self.fn = fn
@@ -733,8 +733,6 @@ def load_from_remote_file(name):
     if name in remote_files:
         raise DownloadNeeded(relpath=name, rtype=remote_files[name]['type'], size=remote_files[name]['size'])
 
-    return None
-
 
 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
     file_open_callbacks.append(load_from_remote_file)
@@ -911,7 +909,7 @@ def get_hash(name):
 # Module Loading
 
 
-class RenpyImporter(object):
+class RenpyImporter():
     """
     An importer, that tries to load modules from the places where Ren'Py
     searches for data files.

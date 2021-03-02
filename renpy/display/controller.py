@@ -32,6 +32,7 @@ from pygame_sdl2.controller import Controller, get_string_for_axis, get_string_f
 import pygame_sdl2 as pygame
 
 import os
+import sys
 
 
 def load_mappings():
@@ -142,7 +143,7 @@ def start(index):
     Starts the controller at index.
     """
 
-    quit(index)
+    sys.exit(index)
     controllers[index] = c = Controller(index)
 
     renpy.exports.write_log("controller: %r %r %r" % (c.get_guid_string(), c.get_name(), c.is_controller()))
@@ -228,7 +229,7 @@ def event(ev):
         return None
 
     elif ev.type == CONTROLLERDEVICEREMOVED:
-        quit(ev.which)
+        sys.exit(ev.which)
         return None
 
     elif ev.type == CONTROLLERAXISMOTION:

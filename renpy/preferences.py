@@ -61,7 +61,7 @@ pad_bindings = {
 all_preferences = [ ]
 
 
-class Preference(object):
+class Preference():
     """
     Represents information about a preference.
     """

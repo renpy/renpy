@@ -41,7 +41,7 @@ import cStringIO
 generators = [ ]
 
 
-class Generator(object):
+class Generator():
 
     def __init__(self, name, docs):
 

@@ -29,7 +29,7 @@ import traceback
 import subprocess
 
 
-class Editor(object):
+class Editor():
     """
     This class is intended to be subclassed by editor subclasses. It provides a
     number of editor related operations, which are called by Ren'Py (including

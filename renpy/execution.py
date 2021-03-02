@@ -82,7 +82,7 @@ def not_infinite_loop(delay):
     il_time = time.time() + delay
 
 
-class Delete(object):
+class Delete():
     pass
 
 
@@ -92,7 +92,7 @@ class PredictInfo(renpy.object.Object):
     """
 
 
-class LineLogEntry(object):
+class LineLogEntry():
 
     def __init__(self, filename, line, node, abnormal):
         self.filename = filename

@@ -37,7 +37,7 @@ TAG_RE = re.compile(r'(\{\{)|(\{(p|w|nw|fast|done)(?:\=([^}]*))?\})', re.S)
 less_pauses = ("RENPY_LESS_PAUSES" in os.environ)
 
 
-class DialogueTextTags(object):
+class DialogueTextTags():
     """
     This object parses the text tags that only make sense in dialogue,
     like {fast}, {p}, {w}, and {nw}.
@@ -368,7 +368,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     return rv
 
 
-class SlowDone(object):
+class SlowDone():
     delay = None
     ctc_kwargs = { }
 
@@ -688,7 +688,7 @@ NotSet = renpy.object.Sentinel("NotSet")
 multiple_count = 0
 
 
-class ADVCharacter(object):
+class ADVCharacter():
     """
     The character object contains information about a character. When
     passed as the first argument to a say statement, it can control

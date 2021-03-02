@@ -127,7 +127,6 @@ try:
     if PY2:
         import renpy.compat.dictviews # @UnresolvedImport
 except ImportError:
-    import sys
     print("Could not import renpy.compat.dictviews.", file=sys.stderr)
 
 ################################################################################
