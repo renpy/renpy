@@ -117,6 +117,8 @@ The {done} text tag now works as defined.
 Ren'Py is better at checking for GL load failuires and falling back to older
 libraries.
 
+Apps built for macOS should enable HighDPI mode.
+
 -----------
 
 The Ren'Py documentation has been translated into both Simplified and
