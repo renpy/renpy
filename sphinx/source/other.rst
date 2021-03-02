@@ -127,7 +127,7 @@ It should be used instead of the standard Python random module. ::
 Returns a new random number generator object separate from the main one, seeded
 with the specified value if provided.
 
-.. _SDL
+.. _SDL:
 
 SDL
 ----
