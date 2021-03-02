@@ -93,11 +93,11 @@ class BarValue(renpy.object.Object):
     def get_tooltip(self):
         return None
 
-
 ##############################################################################
 # Things we can add to. These have two methods: add is called with the
 # widget we're adding. close is called when the thing is ready to be
 # closed.
+
 
 class Addable(object):
     # A style_prefix associates with this addable.
@@ -250,7 +250,7 @@ def reset():
 renpy.game.post_init.append(reset)
 
 
-def interact(type='misc', roll_forward=None, **kwargs):  # @ReservedAssignment
+def interact(type='misc', roll_forward=None, **kwargs): # @ReservedAssignment
     """
     :doc: ui
     :args: (roll_forward=None, mouse='default')
@@ -289,7 +289,7 @@ def interact(type='misc', roll_forward=None, **kwargs):  # @ReservedAssignment
         renpy.config.skipping = None
 
     if len(stack) != 1:
-        raise Exception("ui.interact called with non-empty widget/layer stack. Did you forget a ui.close() somewhere?\nStack was "+('\n'.join([str(item) for item in stack])))
+        raise Exception("ui.interact called with non-empty widget/layer stack. Did you forget a ui.close() somewhere?\nStack was " + ('\n'.join([str(item) for item in stack])))
 
     if at_stack:
         raise Exception("ui.interact called with non-empty at stack.")
@@ -389,7 +389,7 @@ def close(d=None):
 
 def reopen(w, clear):
 
-    stack.append(Many(w))
+    stack.append(Many(w, None, None))
 
     if clear:
         w.children[:] = [ ]
@@ -420,7 +420,7 @@ def combine_style(style_prefix, style_suffix):
     else:
         new_style = style_prefix + "_" + style_suffix
 
-    return renpy.style.get_style(new_style)  # @UndefinedVariable
+    return renpy.style.get_style(new_style) # @UndefinedVariable
 
 
 def prefixed_style(style_suffix):
@@ -476,7 +476,7 @@ class Wrapper(renpy.object.Object):
 
         # Pull out the special kwargs, widget_id, at, and style_prefix.
 
-        widget_id = kwargs.pop("id", None)  # @ReservedAssignment
+        widget_id = kwargs.pop("id", None) # @ReservedAssignment
 
         at_list = kwargs.pop("at", [ ])
         if not isinstance(at_list, (list, tuple)):
@@ -529,9 +529,9 @@ class Wrapper(renpy.object.Object):
             etype, e, tb = sys.exc_info(); etype
 
             if tb.tb_next is None:
-                e.args = (e.args[0].replace("__call__", "ui." + self.name), )
+                e.args = (e.args[0].replace("__call__", "ui." + self.name),)
 
-            del tb  # Important! Prevents memory leaks via our frame.
+            del tb # Important! Prevents memory leaks via our frame.
             raise
 
         main = w._main or w
@@ -583,9 +583,9 @@ class Wrapper(renpy.object.Object):
 
         return main
 
-
 ##############################################################################
 # Widget functions.
+
 
 def _add(d, **kwargs):
     d = renpy.easy.displayable(d)
@@ -692,7 +692,7 @@ class ChoiceActionBase(Action):
         self.chosen = None
 
         if self.location:
-            self.chosen = renpy.game.persistent._chosen  # @UndefinedVariable
+            self.chosen = renpy.game.persistent._chosen # @UndefinedVariable
 
             if self.chosen is None:
                 self.chosen = renpy.game.persistent._chosen = { }
@@ -862,7 +862,7 @@ def menu(menuitems,
     close()
 
 
-input = Wrapper(renpy.display.behavior.Input, exclude='{}', style="input", replaces=True)  # @ReservedAssignment
+input = Wrapper(renpy.display.behavior.Input, exclude='{}', style="input", replaces=True) # @ReservedAssignment
 
 
 def imagemap_compat(ground,
@@ -945,7 +945,7 @@ def _imagebutton(idle_image=None,
             if auto:
                 raise Exception("Imagebutton does not have a %s image. (auto=%r)." % (name, auto))
             else:
-                raise Exception("Imagebutton does not have a %s image." % (name, ))
+                raise Exception("Imagebutton does not have a %s image." % (name,))
 
         return None
 
@@ -986,7 +986,7 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
         style = prefixed_style("button")
 
     if text_style is None:
-        text_style = renpy.style.get_text_style(style, prefixed_style('button_text'))  # @UndefinedVariable
+        text_style = renpy.style.get_text_style(style, prefixed_style('button_text')) # @UndefinedVariable
 
     rv = renpy.display.behavior.Button(style=style, clicked=clicked, **button_kwargs)
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
@@ -1007,7 +1007,7 @@ def _label(label, style=None, text_style=None, substitute=True, scope=None, **kw
         style = prefixed_style('label')
 
     if text_style is None:
-        text_style = renpy.style.get_text_style(style, prefixed_style('label_text'))  # @UndefinedVariable
+        text_style = renpy.style.get_text_style(style, prefixed_style('label_text')) # @UndefinedVariable
 
     rv = renpy.display.layout.Window(None, style=style, **label_kwargs)
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
@@ -1025,13 +1025,13 @@ adjustment = renpy.display.behavior.Adjustment
 def _bar(*args, **properties):
 
     if len(args) == 4:
-        width, height, range, value = args  # @ReservedAssignment
+        width, height, range, value = args # @ReservedAssignment
     if len(args) == 2:
-        range, value = args  # @ReservedAssignment
+        range, value = args # @ReservedAssignment
         width = None
         height = None
     else:
-        range = 1  # @ReservedAssignment
+        range = 1 # @ReservedAssignment
         value = 0
         width = None
         height = None
@@ -1040,10 +1040,10 @@ def _bar(*args, **properties):
         width = properties.pop("width")
 
     if "height" in properties:
-        height  = properties.pop("height")
+        height = properties.pop("height")
 
     if "range" in properties:
-        range = properties.pop("range")  # @ReservedAssignment
+        range = properties.pop("range") # @ReservedAssignment
 
     if "value" in properties:
         value = properties.pop("value")
@@ -1071,7 +1071,7 @@ scrollbar = Wrapper(_bar, style='scrollbar', replaces=True)
 vscrollbar = Wrapper(_bar, style='vscrollbar', replaces=True)
 
 
-def _autobar_interpolate(range, start, end, time, st, at, **properties):  # @ReservedAssignment
+def _autobar_interpolate(range, start, end, time, st, at, **properties): # @ReservedAssignment
 
     if st > time:
         t = 1.0
@@ -1087,7 +1087,7 @@ def _autobar_interpolate(range, start, end, time, st, at, **properties):  # @Res
 autobar_interpolate = renpy.curry.curry(_autobar_interpolate)
 
 
-def _autobar(range, start, end, time, **properties):  # @ReservedAssignment
+def _autobar(range, start, end, time, **properties): # @ReservedAssignment
     return renpy.display.layout.DynamicDisplayable(autobar_interpolate(range, start, end, time, **properties))
 
 
@@ -1203,9 +1203,9 @@ drag = Wrapper(renpy.display.dragdrop.Drag, replaces=True, one=True)
 draggroup = Wrapper(renpy.display.dragdrop.DragGroup, replaces=True, many=True)
 mousearea = Wrapper(renpy.display.behavior.MouseArea, replaces=True)
 
-
 ##############################################################################
 # New-style imagemap related functions.
+
 
 class Imagemap(object):
     """
@@ -1249,13 +1249,13 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
 
         raise Exception("Could not find a %s image for imagemap." % name[0])
 
-    ground = pick(ground, ( "ground", "idle" ), idle)
-    idle = pick(idle, ( "idle", ), ground)
-    selected_idle = pick(selected_idle, ( "selected_idle", ), idle)
-    hover = pick(hover, ( "hover", ), ground)
-    selected_hover = pick(selected_hover, ( "selected_hover", ), hover)
-    insensitive = pick(insensitive, ("insensitive", ), ground)
-    selected_insensitive = pick(selected_insensitive, ("selected_insensitive", ), hover)
+    ground = pick(ground, ("ground", "idle"), idle)
+    idle = pick(idle, ("idle",), ground)
+    selected_idle = pick(selected_idle, ("selected_idle",), idle)
+    hover = pick(hover, ("hover",), ground)
+    selected_hover = pick(selected_hover, ("selected_hover",), hover)
+    insensitive = pick(insensitive, ("insensitive",), ground)
+    selected_insensitive = pick(selected_insensitive, ("selected_insensitive",), hover)
 
     imagemap_stack.append(
         Imagemap(
@@ -1349,7 +1349,7 @@ def hotspot(*args, **kwargs):
     null()
 
 
-def _hotbar(spot, adjustment=None, range=None, value=None, **properties):  # @ReservedAssignment
+def _hotbar(spot, adjustment=None, range=None, value=None, **properties): # @ReservedAssignment
 
     if (adjustment is None) and (range is None) and (value is None):
         raise Exception("hotbar requires either an adjustment or a range and value.")
@@ -1366,10 +1366,10 @@ def _hotbar(spot, adjustment=None, range=None, value=None, **properties):  # @Re
     properties.setdefault("xanchor", 0)
     properties.setdefault("yanchor", 0)
 
-    fore_bar=imagemap.cache.crop(imagemap.selected_idle, spot)
-    aft_bar=imagemap.cache.crop(imagemap.idle, spot)
-    hover_fore_bar=imagemap.cache.crop(imagemap.selected_hover, spot)
-    hover_aft_bar=imagemap.cache.crop(imagemap.hover, spot)
+    fore_bar = imagemap.cache.crop(imagemap.selected_idle, spot)
+    aft_bar = imagemap.cache.crop(imagemap.idle, spot)
+    hover_fore_bar = imagemap.cache.crop(imagemap.selected_hover, spot)
+    hover_aft_bar = imagemap.cache.crop(imagemap.hover, spot)
 
     if h > w:
         properties.setdefault("bar_vertical", True)
@@ -1399,9 +1399,9 @@ def _hotbar(spot, adjustment=None, range=None, value=None, **properties):  # @Re
 
 hotbar = Wrapper(_hotbar, style="hotbar", replaces=True)
 
-
 ##############################################################################
 # Curried functions, for use in clicked, hovered, and unhovered.
+
 
 def _returns(v):
 
