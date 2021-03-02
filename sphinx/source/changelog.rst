@@ -7,11 +7,88 @@ Changelog (Ren'Py 7.x-)
 7.4.3
 =====
 
+Windows
+-------
+
+The code for changing icons has been rewritten, to produce executables that
+do not include any extraneous data other than the software and the icons
+being added. This should prevent some antivirus programs from producing
+false positives.
+
+Ren'Py is now linked against the Universal C Runtime on Windows. This
+may raise the version of Windows that Ren'Py runs on to Windows Vista
+with certain hotfixes. This both modernizes Ren'Py, and should prevent
+some antivirus programs from producing false positives.
+
+Ren'Py will now disable Threaded Optimization on Nvidia GPUs. Threaded
+Optimization interacted poorly with Ren'Py, causing pauses in places where
+Ren'Py did not expect pauses to occur. This could manifest as audio glitches
+that this change fixes.
+
+Android
+-------
+
+The non-model-based renderer now properly deallocates textures when Android
+causes a render context to change. This prevents visual glitches that would
+randomly occur, often during Dissolves.
+
+Ren'Py now checks that it has focus when the game actually starts. This
+fixes an issue where, if the player switched out of the application before
+the game could fully start. Now, if Ren'Py has lost focus at game start,
+it will save and quit, then re-launch when the player returns to the game.
+
 Features
 --------
 
 The new :func:`renpy.get_zorder_list` and :func:`renpy.change_zorder` allow
 the zorder of images and screens to be manipulated after being shown.
+
+Windows and frames can now take the :propref:`modal` style property. This is
+similar to the modal property of screens, but only applies when the mouse
+is within the boundaries of the window or frame. This can be used to ensure
+the player can't click a button behind the window, while allowing buttons
+that are not obstructed to be used.
+
+The :func:`Live2D` displayable now takes an `update_function` parameter,
+which makes it possible to update parameters directly.
+
+Ren'Py now supports the display of Emoji and other characters from outside
+the Basic Multilingual Plane, if the fonts in use support the characters.
+Right now, the emoji are displayed using the font rendering system, which
+produces monochrome glyphs.
+
+The :class:`FontGroup` class can now be used to remap characters inside
+a font.
+
+Displayables in the mask portion of a :func:`AlphaMask` are now focusable,
+allowing new effects.
+
+The player can now choose to ingore image files that cannot be loaded.
+
+The new :func:`renpy.get_sdl_dll` and :func:`renpy.get_sdl_window_pointer`
+functions make it possible to access the SDL DLL using ctypes. This may
+make it possible to implement funcitonality that is in SDL, but Ren'Py
+does not provide access to.
+
+Clicking now ends a transition introduced with :func:`renpy.transition`,
+or statements that have a ``with`` clause.
+
+:func:`renpy.translate_string` is now a documented function that provides
+the ability to translate a string to a selected language.
+
+It is now possible to create a ``hide_windows`` label, that provides a way
+to customize the hiding of windows that occurs when middle-clicking or
+pressing the h key.
+
+New properties, like the :tpref:`mesh_pad` transform property
+and the ``gl_pixel_perfect`` gl property, make it possible to
+perform pixel perfect rendering after applying a shader to text.
+
+The :func:`renpy.input` function now takes properties beginning with
+``show_``, that are passed to the ``input`` screen.
+
+The :class:`Color` class now has an rgba property, that returns an
+rgba tuple.
 
 Old Features
 ------------
@@ -20,12 +97,32 @@ The :var:`default_mouse` variable was introduced in Ren'Py 7.4, as a way
 to allow the mouse cursor to be changed without changing :var:`config.mouse`
 at runtime, as changing config variables at runtime isn't supported.
 
-Transations
+Other Fixes
+-----------
+
+An issue that prevented multiple modal screens from being processed correctly
+has been fixed. This would manifest as focus problems.
+
+Lint now produces files with Windows-style newlines, on Windows.
+
+SDL error messages are decoded using the system encoding on Windows, making
+them more readable.
+
+Issues with quoting unicode characters in Python have been fixed.
+
+Values of the :tpref:`blur` transform property between 0 and 1 now work properly.
+
+The {done} text tag now works as defined.
+
+Ren'Py is better at checking for GL load failuires and falling back to older
+libraries.
+
 -----------
 
 The Ren'Py documentation has been translated into both Simplified and
 Traditional Chinese, courtesy of 被诅咒的章鱼 and 逆转咸鱼.
 
+The French translations have been updated.
 
 .. _renpy-7.4.2:
 
