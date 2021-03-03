@@ -606,6 +606,10 @@ Occasionally Used
 
     If not None, a music file to play when at the main menu.
 
+.. var:: config.main_menu_music_fadein = 0.0
+
+    The number of seconds to take to fade in :var:`config.main_menu_music`.
+
 .. var:: config.menu_arguments_callback = None
 
     If not None, this should be a function that takes positional and/or

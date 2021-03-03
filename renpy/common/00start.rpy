@@ -27,6 +27,9 @@ init -1600 python hide:
     # menus: Music to play at the main menu.
     config.main_menu_music = None
 
+    # The amount of time to spend fading in the main menu music.
+    config.main_menu_music_fadein = 0.0
+
     # advanced: Callbacks to run at start.
     config.start_callbacks = [ ]
 
@@ -238,7 +241,7 @@ label _start:
     $ renpy.block_rollback()
 
     if config.main_menu_music:
-        $ renpy.music.play(config.main_menu_music, if_changed=True)
+        $ renpy.music.play(config.main_menu_music, if_changed=True, fadin=config.main_menu_music_fadein)
     else:
         $ renpy.music.stop()
 

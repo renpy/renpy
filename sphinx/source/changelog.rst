@@ -40,6 +40,9 @@ it will save and quit, then re-launch when the player returns to the game.
 Features
 --------
 
+Added :var:`config.main_menu_music_fadein`, a way of fading in the main
+menu music.
+
 The new :func:`renpy.get_zorder_list` and :func:`renpy.change_zorder` allow
 the zorder of images and screens to be manipulated after being shown.
 
