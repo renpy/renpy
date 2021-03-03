@@ -196,7 +196,11 @@ screen preferences:
 
                         textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
-                        textbutton _("Dark theme") style "l_checkbox" action [ToggleField(persistent, "dark_theme"), Function(renpy.reload_script)]
+                        textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), Function(renpy.reload_script)]
+
+                        textbutton _("Clear theme") style "l_checkbox" action [ToggleField(persistent, "theme", "clear", None), Function(renpy.reload_script)]
+
+                        textbutton _("Dark theme") style "l_checkbox" action [ToggleField(persistent, "theme", "dark", None), Function(renpy.reload_script)]
 
 
                 if translations:
