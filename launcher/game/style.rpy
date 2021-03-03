@@ -77,7 +77,50 @@ init -1 python:
     # The color of input text.
     INPUT_COLOR = "#d86b45"
 
-    if persistent.dark_theme:
+    if persistent.theme == 'dark':
+        # The color of non-interactive text.
+        TEXT = "#ababab"
+
+        # Colors for buttons in various states.
+        IDLE = "#709cbe"
+        HOVER = "#d86b45"
+        DISABLED = "#7f7f7f"
+
+        # Colors for reversed text buttons (selected list entries).
+        REVERSE_IDLE = "#78a5c5"
+        REVERSE_HOVER = "#d86b45"
+        REVERSE_TEXT = "#0a0a0a"
+
+        # Colors for the scrollbar thumb.
+        SCROLLBAR_IDLE = "#282828"
+        SCROLLBAR_HOVER = "#d86b45"
+
+        # An image used as a separator pattern.
+        PATTERN = "images/pattern.png"
+
+        # A displayable used for the background of everything.
+        BACKGROUND = Fixed(Solid(REVERSE_TEXT), xsize=800, ysize=600)
+
+        # A displayable used for the background of the projects list.
+        PROJECTS_WINDOW = Null()
+
+        # A displayable used the background of information boxes.
+        INFO_WINDOW = "#101010"
+
+        # Colors for the titles of information boxes.
+        ERROR_COLOR = "#d15353"
+        INFO_COLOR = "#ababab"
+        INTERACTION_COLOR = "#d19753"
+        QUESTION_COLOR = "#d19753"
+
+        # The color of input text.
+        INPUT_COLOR = "#d86b45"
+
+        # A displayable used for the background of windows
+        # containing commands, preferences, and navigation info.
+        WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
+
+    elif persistent.theme == 'clear':
         # The color of non-interactive text.
         TEXT = "#545454"
 
