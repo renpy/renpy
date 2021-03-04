@@ -3,7 +3,7 @@
 Movie
 =====
 
-Ren'Py is capable of using libav (included) to play movies using the
+Ren'Py is capable of using FFmpeg (included) to play movies using the
 video codecs:
 
 * VP9
