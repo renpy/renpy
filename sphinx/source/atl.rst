@@ -1044,7 +1044,7 @@ both horizontal and vertical positions.
 
     This blurs the child of this image by `blur` pixels, up to the border
     of the displayable. The precise details of the blurring may change
-    between Ren'Py versions, and the blurring may exhibit artifactsm,
+    between Ren'Py versions, and the blurring may exhibit artifacts,
     especially when the image being blurred is changing.
 
     This requires model-based rendering to be enabled by setting :var:`config.gl2` to
