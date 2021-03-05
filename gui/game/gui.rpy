@@ -442,6 +442,7 @@ init python:
         gui.slider_size = gui.scale(36)
 
         gui.choice_button_width = gui.scale(1240)
+        gui.choice_button_text_size = gui.scale(30)
 
         gui.navigation_spacing = gui.scale(20)
         gui.pref_button_spacing = gui.scale(10)
