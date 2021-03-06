@@ -241,7 +241,7 @@ label _start:
     $ renpy.block_rollback()
 
     if config.main_menu_music:
-        $ renpy.music.play(config.main_menu_music, if_changed=True, fadin=config.main_menu_music_fadein)
+        $ renpy.music.play(config.main_menu_music, if_changed=True, fadein=config.main_menu_music_fadein)
     else:
         $ renpy.music.stop()
 
