@@ -397,10 +397,12 @@ cdef class GL2Draw:
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(extensions_string.split(" "))
 
-        renpy.display.log.write("Extensions:")
+        if renpy.config.log_gl_extensions:
 
-        for i in sorted(extensions):
-            renpy.display.log.write("    %s", i)
+            renpy.display.log.write("Extensions:")
+
+            for i in sorted(extensions):
+                renpy.display.log.write("    %s", i)
 
         # Do additional setup needed.
         renpy.display.pgrender.set_rgba_masks()

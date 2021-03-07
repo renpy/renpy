@@ -463,10 +463,12 @@ cdef class GLDraw:
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(i.decode("utf-8") for i in extensions_string.split(b" "))
 
-        renpy.display.log.write("Extensions:")
+        if renpy.config.log_gl_extensions:
 
-        for i in sorted(extensions):
-            renpy.display.log.write("    %s", i)
+            renpy.display.log.write("Extensions:")
+
+            for i in sorted(extensions):
+                renpy.display.log.write("    %s", i)
 
         if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
             self.quit()

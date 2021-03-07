@@ -583,7 +583,7 @@ gesture_component_size = .05
 gesture_stroke_size = .2
 
 # Should we log to stdout rather than files?
-log_to_stdout = False
+log_to_stdout = bool(int(os.environ.get("RENPY_LOG_TO_STDOUT", "0")))
 
 # new-style custom text tags.
 custom_text_tags = { }
@@ -1114,6 +1114,12 @@ context_fadeout_music = 0
 # Shout it be possible to dismiss blocking transitions that are not part of
 # a with statement?
 dismiss_blocking_transitions = True
+
+# Should GL extensions be logged to log.txt
+log_gl_extensions = False
+
+# Should GL shaders be logged to log.txt
+log_gl_shaders = False
 
 del os
 del collections

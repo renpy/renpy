@@ -212,6 +212,13 @@ The custom shader can then be applied using a transform::
 
     show eileen happy at gradient
 
+There is a variable that can help in debugging custom shaders:
+
+.. var:: config.log_gl_shaders = False
+
+    If true, source code for the GLSL shader programs will be written to
+    log.txt on start.
+
 Transforms and Model-Based Rendering
 ------------------------------------
 

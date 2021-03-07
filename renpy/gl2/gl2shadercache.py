@@ -375,7 +375,7 @@ class ShaderCache(object):
         Logs the shader text to the log.
         """
 
-        if not renpy.config.developer:
+        if not renpy.config.log_gl_shaders:
             return
 
         name = kind + " " + ", ".join(partnames) + " "
