@@ -2414,7 +2414,8 @@ class Interface(object):
                 renpy.display.render.models = draw.info.get("models", False)
                 break
             else:
-                pass
+                pygame.display.destroy()
+
         else:
             # Ensure we don't get stuck in fullscreen.
             renpy.game.preferences.fullscreen = False
