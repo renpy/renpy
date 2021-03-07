@@ -1505,10 +1505,10 @@ style vslider:
     base_bar Frame("gui/phone/slider/vertical_[prefix_]bar.png", gui.vslider_borders, tile=gui.slider_tile)
     thumb "gui/phone/slider/vertical_[prefix_]thumb.png"
 
-style slider_pref_vbox:
+style slider_vbox:
     variant "small"
     xsize None
 
-style slider_pref_slider:
+style slider_slider:
     variant "small"
     xsize gui.scale(600)
