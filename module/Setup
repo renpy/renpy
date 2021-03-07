@@ -22,7 +22,6 @@ renpy.display.render gen/renpy.display.render.c
 renpy.display.accelerator gen/renpy.display.accelerator.c
 renpy.uguu.gl gen/renpy.uguu.gl.c
 renpy.uguu.uguu gen/renpy.uguu.uguu.c
-renpy.uguu.angle gen/renpy.uguu.angle.c
 renpy.gl.gldraw gen/renpy.gl.gldraw.c
 renpy.gl.gltexture gen/renpy.gl.gltexture.c
 renpy.gl.glenviron_shader gen/renpy.gl.glenviron_shader.c

@@ -32,7 +32,6 @@ import_pygame_sdl2()
 
 import renpy
 import renpy.uguu.gl
-import renpy.uguu.angle
 import renpy.gl.glfunctions
 import pygame_sdl2 as pygame
 import os
@@ -370,15 +369,6 @@ cdef class GLDraw:
         renpy.display.interface.frame_duration = 1.0 * abs(vsync) / refresh_rate
 
         renpy.display.log.write("swap interval: %r frames", vsync)
-
-        # Angle or GL?
-        if self.angle:
-            res = renpy.uguu.angle.load_angle()
-        else:
-            res = renpy.uguu.angle.load_gl()
-
-        if not res:
-            return False
 
         # Set the display mode.
 

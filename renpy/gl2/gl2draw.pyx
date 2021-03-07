@@ -28,7 +28,6 @@ DEF ANGLE = False
 from libc.stdlib cimport malloc, free
 from sdl2 cimport *
 from renpy.uguu.gl cimport *
-import renpy.uguu.angle
 import renpy.gl2.gl2functions
 
 from pygame_sdl2 cimport *
@@ -323,15 +322,6 @@ cdef class GL2Draw:
         renpy.display.interface.frame_duration = 1.0 * abs(vsync) / refresh_rate
 
         renpy.display.log.write("swap interval: %r frames", vsync)
-
-        # Angle or GL?
-        if self.angle:
-            res = renpy.uguu.angle.load_angle()
-        else:
-            res = renpy.uguu.angle.load_gl()
-
-        if not res:
-            return False
 
         # Determine the GLES mode, the actual window size to request, and the
         # window flags to use. (These are platform dependent.)
