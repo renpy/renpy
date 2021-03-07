@@ -385,6 +385,10 @@ cdef class GL2Draw:
 
         # Initialize OpenGL.
 
+        if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+            self.quit()
+            return False
+
         # Load uguu, and init GL.
         renpy.uguu.gl.clear_missing_functions()
         renpy.uguu.gl.load()
@@ -574,7 +578,8 @@ cdef class GL2Draw:
 
         self.quit_fbo()
 
-        self.shader_cache.save()
+        if self.shader_cache is not None:
+            self.shader_cache.save()
 
 
     def init_fbo(GL2Draw self):
@@ -1061,7 +1066,8 @@ cdef class GL2Draw:
         return rv
 
     def kill_textures(self):
-        self.texture_loader.cleanup()
+        if self.texture_loader is not None:
+            self.texture_loader.cleanup()
 
     def event_peek_sleep(self):
         pass

@@ -444,10 +444,6 @@ cdef class GLDraw:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
                 return False
 
-        if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
-            self.quit()
-            return False
-
         renpy.uguu.gl.clear_missing_functions()
         renpy.uguu.gl.load()
         if renpy.uguu.gl.check_missing_functions(renpy.gl.glfunctions.required_functions):
@@ -481,6 +477,10 @@ cdef class GLDraw:
 
         for i in sorted(extensions):
             renpy.display.log.write("    %s", i)
+
+        if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+            self.quit()
+            return False
 
         def use_subsystem(module, envvar, envval, *req_ext):
             """
