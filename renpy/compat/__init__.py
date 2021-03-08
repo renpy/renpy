@@ -81,6 +81,8 @@ PY2 = future.utils.PY2
 
 if PY2:
     open = io.open
+    import re
+    re.Pattern = re._pattern_type
 else:
     open = builtins.open
 

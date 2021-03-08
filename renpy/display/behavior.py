@@ -1424,7 +1424,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                 if self.allow:
 
                     # Allow is regex
-                    if isinstance(self.allow, re._pattern_type):
+                    if isinstance(self.allow, re.Pattern):
 
                         # Character doesn't match
                         if self.allow.search(c) is None:
@@ -1438,7 +1438,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                 if self.exclude:
 
                     # Exclude is regex
-                    if isinstance(self.exclude, re._pattern_type):
+                    if isinstance(self.exclude, re.Pattern):
 
                         # Character matches
                         if self.exclude.search(c) is not None:
