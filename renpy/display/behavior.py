@@ -239,7 +239,7 @@ def map_keyup(ev, keysym):
     """Returns true if the event matches the named keycode being released."""
 
     if ev.type == renpy.display.core.EVENTNAME:
-        if (name in ev.eventnames) and ev.up:
+        if (keysym in ev.eventnames) and ev.up:
             return True
 
     if isinstance(keysym, list):
