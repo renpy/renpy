@@ -518,7 +518,7 @@ class Grid(Container):
             raise Exception("Grid overfull.")
 
         if self.allow_underfull is None:
-            allow_underfull = renpy.config.allow_underfull
+            allow_underfull = renpy.config.allow_underfull_grids
         else:
             allow_underfull = self.allow_underfull
 
