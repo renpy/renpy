@@ -24,7 +24,20 @@
                 setattr(persistent, name, value)
 
         def get(self, name):
-            return getattre(persistent, name)
+            return getattr(persistent, name)
+
+    class _ErrorNamespace(object):
+        def __init__(self, name):
+            self.name = name
+
+        def set(self, name, value):
+            raise Exception("The define statement can not be used with the {} namespace.".format(self.name))
+
+        def set_default(self, name, value):
+            raise Exception("The default statement can not be used with the {} namespace.".format(self.name))
+
+        def get(self, name):
+            raise Exception("The default and define statements can not be used with the {} namespace.".format(self.name))
 
     class _PreferencesNamespace(object):
 
@@ -73,4 +86,5 @@
     config.special_namespaces["store.persistent"] = _PersistentNamespace()
     config.special_namespaces["store.preferences"] =  _PreferencesNamespace()
     config.special_namespaces["store.gui"] = _GuiNamespace()
+    config.special_namespaces["store.renpy"] = _ErrorNamespace("renpy")
 
