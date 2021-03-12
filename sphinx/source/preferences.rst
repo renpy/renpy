@@ -154,6 +154,33 @@ can then change it again.)
     "system cursor" preference.
 
 
+Mixer Functions
+---------------
+
+.. function:: preferences.set_volume(mixer, volume)
+
+    Sets `mixer` to `volume`.
+
+    `mixer`
+        A string giving the name of the mixer. By default, the mixers
+        are "music", "sfx", and "voice".
+
+    `volume`
+        A number between 0.0 and 1.0.
+
+.. function:: preferences.get_volume(mixer):
+
+    Gets the volume for `mixer`. If the mixer is muted, this returns
+    0.0.
+
+.. function:: preferences.set_mute(mixer, mute):
+
+    Sets the mute setting for `mixer`. If `mute` is true, the mixer is muted.
+
+.. function:: preferences.get_mute(mute):
+
+    Gets the mute setting for `mixer`.
+
 
 Audio Channel Defaults
 -----------------------
