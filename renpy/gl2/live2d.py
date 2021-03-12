@@ -692,8 +692,14 @@ class Live2D(renpy.display.core.Displayable):
         # True if the motion should be faded out.
         do_fade_out = True
 
+        # True if the motion stays on last frame.
+        last_frame = False
+
         for m in self.motions:
             motion = common.motions.get(m, None)
+
+            if motion is None:
+                continue
 
             if motion.duration > st:
 
@@ -705,16 +711,17 @@ class Live2D(renpy.display.core.Displayable):
             st -= motion.duration
 
         else:
+            if motion is None:
+                return None
+
             if self.loop:
                 do_fade_in = not common.is_seamless(m)
                 do_fade_out = not common.is_seamless(m)
             else:
                 st = motion.duration
+                last_frame = True
 
-        if motion is None:
-            return None
-
-        motion_data = motion.get(st, st_fade, do_fade_in, do_fade_out)
+        motion_data, wait = motion.update(st, st_fade, do_fade_in, do_fade_out)
 
         for k, v in motion_data.items():
 
@@ -728,7 +735,7 @@ class Live2D(renpy.display.core.Displayable):
             elif kind == "Model":
                 common.model.set_parameter(key, value, factor)
 
-        return motion.wait(st, st_fade, do_fade_in, do_fade_out)
+        return None if last_frame else wait
 
     def update_expressions(self, st):
 
