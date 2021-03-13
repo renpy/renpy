@@ -85,16 +85,19 @@ init -1500 python in achievement:
             self.stat_max = { }
 
         def register(self, name, stat_max=None, **kwargs):
-            self.stat_max[name] = stat_max
+            if stat_max:
+                self.stat_max[name] = stat_max
 
         def grant(self, name):
             persistent._achievements.add(name)
 
         def clear(self, name):
             persistent._achievements.discard(name)
+            persistent._achievement_progress.discard(name)
 
         def clear_all(self):
             persistent._achievements.clear()
+            persistent._achievement_progress.clear()
 
         def has(self, name):
             return name in persistent._achievements
