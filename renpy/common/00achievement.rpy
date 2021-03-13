@@ -93,9 +93,11 @@ init -1500 python in achievement:
 
         def clear(self, name):
             persistent._achievements.discard(name)
+            persistent._achievement_progress.discard(name)
 
         def clear_all(self):
             persistent._achievements.clear()
+            persistent._achievement_progress.clear()
 
         def has(self, name):
             return name in persistent._achievements
