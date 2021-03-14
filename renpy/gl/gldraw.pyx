@@ -337,9 +337,18 @@ cdef class GLDraw:
 
         if renpy.windows or renpy.linux or renpy.macintosh:
 
-            pwidth = min(visible_w, pwidth, head_w)
-            pheight = min(visible_h, pheight, head_h)
-            pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
+            # Are we maximized?
+            old_surface = pygame.display.get_surface()
+            if old_surface is not None:
+                maximized = old_surface.get_flags() & pygame.WINDOW_MAXIMIZED
+            else:
+                maximized = False
+
+            if not maximized:
+
+                pwidth = min(visible_w, pwidth, head_w)
+                pheight = min(visible_h, pheight, head_h)
+                pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
 
         pwidth = int(round(pwidth))
         pheight = int(round(pheight))
