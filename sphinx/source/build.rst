@@ -237,6 +237,41 @@ Please think twice about archiving your game. Keeping files open will
 help others run your game on future platforms – platforms that may not
 exist until after you're gone.
 
+.. _old-game:
+
+The Old-game Directory
+----------------------
+
+When making multiple releases, like when a game is distributed through
+early access or platforms like Patreon, it's necessary to keep the
+old .rpyc files around. The .rpyc files contain information that is
+necessary to ensure that saves can be loaded, and omitting these
+files can cause problems.
+
+At the same time, Ren'Py  will update the .rpyc files in the game
+directory when these files are changed, making the files unsuitable
+for inclusion in version control.
+
+To solve this problem, Ren'Py allows you to place the .rpyc files from
+a previous distribution into the old-game directory, which is alongside
+the game directory. The directory structure of old-game/ should match
+the directory structure of game/. For example, game/scripts/day1.rpyc
+should be moved to old-game/scripts/day1.rpyc. Files in old-game that are
+not .rpyc files are ignored.
+
+The advantage of using old-game is that the old-game .rpyc files can be
+checked in, and that Ren'Py will always start from a known source when
+generating .rpyc files. While this might not be necessary for a
+single-developer game with minor changes, old-game is useful for large
+multiple developer games.
+
+More information about how .rpyc files help with loading saves into changed
+games can be found at:
+
+* `Under the hood: .rpyc files <https://www.patreon.com/posts/under-hood-rpyc-23035810>`_
+* `Ren'Py developer update: February 20201 <https://www.patreon.com/posts/renpy-developer-48146908>`_
+
+
 Requirements
 ------------
 

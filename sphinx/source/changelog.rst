@@ -4,6 +4,28 @@ Changelog (Ren'Py 7.x-)
 
 .. _renpy-7.4.3:
 
+7.4.4
+=====
+
+The old-game directory
+----------------------
+
+To help creators that make multiple releases of their games (as with
+early access or Patreon releases), Ren'Py now supports an old-game directory,
+which can be a copy of the game directory from the previous release. Ren'Py
+will use the information found in the .rpyc files in this directory when it
+generates .rpyc files. As the .rpyc files are used when loading games,
+this will tend to help Ren'Py load games created by multiple
+developers.
+
+For more information, see the :ref:`documentation <old-game>`.
+
+Fixes
+-----
+
+
+
+
 7.4.3
 =====
 
