@@ -153,7 +153,6 @@ can then change it again.)
     :var:`config.mouse` value. If False, it will not. The equivalent of the
     "system cursor" preference.
 
-
 Mixer Functions
 ---------------
 

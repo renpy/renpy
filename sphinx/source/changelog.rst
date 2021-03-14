@@ -23,7 +23,27 @@ For more information, see the :ref:`documentation <old-game>`.
 Fixes
 -----
 
+A crash that could occur with gestures or controllers has been fixed.
 
+A crash that occured when generating web distributions on windows has
+been fixed.
+
+The persistent backend for achievements now supports the clearing of
+progress.
+
+Live2D now resets opacities with other parameters.
+
+Ren'Py does not change the size of a maximized window when reloading.
+
+Other
+-----
+
+Using default or define with the ``renpy`` namespace will now produce an
+error.
+
+A number of previously-undocumented methods on the `preferences object <preference-variables>`
+have been documented. These methods make it possible to get or set the current value
+of the volume and the current value of mute.
 
 
 7.4.3
