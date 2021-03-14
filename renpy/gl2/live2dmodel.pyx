@@ -120,9 +120,10 @@ class Parameter(object):
 
 class Part(object):
 
-    def __init__(self, index, name):
+    def __init__(self, index, name, default_opacity):
         self.index = index
         self.name = name
+        self.default_opacity = default_opacity
 
 cdef class Live2DModel:
     """
@@ -252,17 +253,20 @@ cdef class Live2DModel:
 
         for 0 <= i < self.part_count:
             name = self.part_ids[i]
-            self.parts[name] = Part(i, name)
+            self.parts[name] = Part(i, name, self.part_opacities[i])
 
         self.opacity_groups = { }
         self.parameter_groups = { }
-
 
         csmUpdateModel(self.model)
 
     def reset_parameters(self):
         for i in self.parameters.values():
             self.parameter_values[i.index] = i.default
+
+        for i in self.parts.values():
+            self.part_opacities[i.index] = i.default_opacity
+
 
     def set_part_opacity(self, name, value):
         part = self.parts.get(name, None)
