@@ -300,16 +300,19 @@ cdef class GLTexture(Model):
 
         tw, th = draw.virt_to_draw.transform(cw, ch)
 
-        tw = min(round(tw), loader.max_texture_width)
-        th = min(round(th), loader.max_texture_height)
+        tw = round(tw)
+        th = round(th)
+
+        cw, ch = draw.draw_to_virt.transform(tw, th)
+
+        tw = min(tw, loader.max_texture_width)
+        th = min(th, loader.max_texture_height)
 
         tw = max(tw, 1)
         th = max(th, 1)
 
-        cw, ch = draw.draw_to_virt.transform(tw, th)
-
-        cw = max(cw, 1.0)
-        ch = max(ch, 1.0)
+        cw = max(cw, 1)
+        ch = max(ch, 1)
 
         self.mesh = Mesh2.texture_rectangle(
             0.0, 0.0, cw, ch,
