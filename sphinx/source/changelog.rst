@@ -38,6 +38,12 @@ Ren'Py does not change the size of a maximized window when reloading.
 Other
 -----
 
+There is a new GL property, ``blend_func`` that is supported by the
+model-based renderer. This allows the customization of the GL blend
+function, allowing Ren'Py to start to support new blend modes.
+
+Live2D now supports the additive and multiply blend modes.
+
 Using default or define with the ``renpy`` namespace will now produce an
 error.
 
