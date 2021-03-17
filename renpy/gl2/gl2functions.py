@@ -10,6 +10,8 @@ required_functions = [
     "glBindFramebuffer",
     "glBindRenderbuffer",
     "glBindTexture",
+    "glBlendEquation",
+    "glBlendEquationSeparate",
     "glBlendFunc",
     "glBlendFuncSeparate",
     "glClear",
