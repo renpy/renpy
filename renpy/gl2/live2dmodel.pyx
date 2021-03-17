@@ -30,6 +30,8 @@ from renpy.gl2.gl2mesh2 cimport Mesh2
 from renpy.display.matrix cimport Matrix
 from renpy.display.render cimport Render
 
+from renpy.uguu.gl cimport GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_DST_COLOR, GL_DST_ALPHA
+
 import renpy
 
 cdef extern from "SDL.h" nogil:
@@ -380,6 +382,11 @@ cdef class Live2DModel:
             r.blit(textures[self.drawable_texture_indices[i]], (0, 0))
 
             raw_renders.append(r)
+
+            if self.drawable_constant_flags[i] & csmBlendAdditive:
+                r.add_property("blend_func", (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE))
+            elif self.drawable_constant_flags[i] & csmBlendMultiplicative:
+                r.add_property("blend_func", (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE))
 
             if self.drawable_dynamic_flags[i] & csmIsVisible:
 
