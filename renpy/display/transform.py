@@ -1167,3 +1167,4 @@ def add_gl_property(name):
 
 add_gl_property("gl_color_mask")
 add_gl_property("gl_pixel_perfect")
+add_gl_property("gl_blend_func")

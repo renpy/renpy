@@ -333,7 +333,7 @@ you'd write ``gl_color_masks`` in ATL.
 ``color_masks``
     This is expecting to be a 4-tuple of booleans, corresponding to the four
     channels of a pixel (red, green, blue, and alpha). If a given channel is
-    treu, the draw operation will write to that pixel. Otherwise, it will
+    true, the draw operation will write to that pixel. Otherwise, it will
     not.
 
 ``pixel_perfect``
@@ -342,6 +342,22 @@ you'd write ``gl_color_masks`` in ATL.
     a pixel on the screen. This is mostly used in conjunction with text,
     to ensure that the text remains sharp.
 
+``blend_func``
+    If present, this is expected to be a six-component tuple, which is
+    used to set the equation used to blend the pixel being drawn with the
+    pixel it is being drawn to, and the parameters to that equation.
+
+    Specifically, this should be (`rgb_equation`, `src_rgb`, `dst_rgb`,
+    `alpha_equation`, `src_alpha`, `dst_alpha`). These will be used to
+    call::
+
+        glBlendEquationSeparate(rgb_equation, alpha_equation)
+        glBlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha)
+
+    Please check out the OpenGL documentation for what these functions do.
+    OpenGL constants can be imported from renpy.uguu::
+
+        from renpy.uguu import GL_ONE, GL_ONE_MINUS_SRC_ALPHA
 
 Default Shader Parts
 --------------------

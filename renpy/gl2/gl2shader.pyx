@@ -309,6 +309,11 @@ cdef class Program:
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify)
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify)
 
+            if "blend_func" in properties:
+                rgb_eq, src_rgb, dst_rgb, alpha_eq, src_alpha, dst_alpha = properties["blend_func"]
+                glBlendEquationSeparate(rgb_eq, alpha_eq)
+                glBlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha)
+
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
 
         if len(properties) > 1:
@@ -321,6 +326,10 @@ cdef class Program:
 
             if "color_mask" in properties:
                 glColorMask(True, True, True, True)
+
+            if "blend_func" in properties:
+                glBlendEquation(GL_FUNC_ADD)
+                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
 
     def finish(Program self):
