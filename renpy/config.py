@@ -1121,6 +1121,9 @@ log_gl_extensions = False
 # Should GL shaders be logged to log.txt
 log_gl_shaders = False
 
+# OpenGL Blend Funcs
+gl_blend_func = { }
+
 del os
 del collections
 
@@ -1148,3 +1151,12 @@ def init():
         (r'\.(png|jpg|jpeg|webp|gif|tif|tiff|bmp)$', renpy.exports.flush_cache_file),
         (r'\.(mp2|mp3|ogg|opus|wav)$', renpy.audio.audio.autoreload),
         ]
+
+    from renpy.uguu import GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_DST_COLOR, GL_MIN, GL_MAX
+
+    gl_blend_func["normal"] = (GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+    gl_blend_func["add"] = (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE)
+    gl_blend_func["multiply"] = (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE)
+    gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
+    gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
+

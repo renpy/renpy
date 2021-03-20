@@ -120,6 +120,7 @@ class TransformState(renpy.object.Object):
     mesh = False
     mesh_pad = None
     blur = None
+    blend = None
 
     def __init__(self):
         self.alpha = 1
@@ -166,6 +167,7 @@ class TransformState(renpy.object.Object):
         self.mesh = False
         self.mesh_pad = None
         self.blur = None
+        self.blend = None
 
         self.delay = 0
 
@@ -231,6 +233,7 @@ class TransformState(renpy.object.Object):
         self.mesh = ts.mesh
         self.mesh_pad = ts.mesh_pad
         self.blur = ts.blur
+        self.blend = ts.blend
 
         self.last_angle = ts.last_angle
 
@@ -327,6 +330,7 @@ class TransformState(renpy.object.Object):
         # It doesn't make sense to interpolate these.
         # diff2("shader", newts.shader, self.shader)
         # diff2("mesh", newts.mesh, self.mesh)
+        # blend
 
         diff2("mesh_pad", newts.mesh_pad, self.mesh_pad)
 
@@ -569,6 +573,7 @@ class Transform(Container):
     mesh = Proxy("mesh")
     mesh_pad = Proxy("mesh_pad")
     blur = Proxy("blur")
+    blend = Proxy("blend")
 
     debug = Proxy("debug")
     events = Proxy("events")

@@ -157,6 +157,7 @@ PROPERTIES = {
     "mesh" : mesh,
     "mesh_pad" : any_object,
     "blur" : float_or_none,
+    "blend" : any_object,
     }
 
 

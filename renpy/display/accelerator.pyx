@@ -459,6 +459,9 @@ def transform_render(self, widtho, heighto, st, at):
     if state.nearest:
         rv.add_property("texture_scaling", "nearest")
 
+    if state.blend:
+        rv.add_property("blend_func", renpy.config.gl_blend_func[state.blend])
+
     # Alpha.
     alpha = state.alpha
 
