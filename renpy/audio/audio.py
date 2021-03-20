@@ -353,6 +353,17 @@ class Channel(object):
             except:
                 raise exception("expected float, got {!r}.".format(v))
 
+        def expect_channel():
+            if not spec:
+                raise exception("expected channel at end.")
+
+            v = spec.pop(0)
+
+            try:
+                return renpy.audio.audio.get_channel(v)
+            except:
+                raise exception("expected channel, got {!r}.".format(v))
+
         m = re.match(r'<(.*)>(.*)', filename)
         if not m:
             return filename, 0, -1
@@ -373,6 +384,13 @@ class Channel(object):
                 start = expect_float()
             elif clause == "to":
                 end = expect_float()
+            elif clause == "sync":
+                sync_channel = expect_channel()
+                t = sync_channel.get_pos()
+                if not t or t < 0:
+                    pass
+                else:
+                    start = t / 1000.0
             elif clause == "loop":
                 loop = expect_float()
             elif clause == "silence":
