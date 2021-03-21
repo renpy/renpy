@@ -25,7 +25,7 @@ Fixes
 
 A crash that could occur with gestures or controllers has been fixed.
 
-A crash that occured when generating web distributions on windows has
+A crash that occurred when generating web distributions on windows has
 been fixed.
 
 The persistent backend for achievements now supports the clearing of

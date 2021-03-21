@@ -273,10 +273,39 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     applied to the  this Render (if a Model is created) or the Models reached
     through this Render.
 
+.. transform_property:: blend
+
+    :type: None or str
+    :default: None
+
+    if not None, this should be a string. This string is looked up in
+    :var:`config.gl_blend_func` to  get the value for the gl_blend_func
+    property. It's used to use alternate blend modes.
+
+    The default blend modes this supports are "normal", "add", "multiply",
+    "min", and "max".
+
+
 In addition, uniforms that start with u\_ and not u_renpy are made available
 as Transform properties. GL properties are made available as transform
 properties starting with gl\_. For example, the color_mask property is made
 available as gl_color_mask.
+
+Blend Functions
+---------------
+
+.. var:: config.gl_blend_func = { ... }
+
+    A dictionaryt used to map a blend mode name to a blend function. The
+    blend modes are suppled to the blend func property, given below.
+
+The default blend modes are::
+
+    gl_blend_func["normal"] = (GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+    gl_blend_func["add"] = (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE)
+    gl_blend_func["multiply"] = (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE)
+    gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
+    gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
 
 
 Uniforms and Attributes
