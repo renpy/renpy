@@ -49,7 +49,7 @@ init python:
 
     DEBUG_TEXT = _("Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device.")
     RELEASE_TEXT = _("Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device.")
-    HEAP_SIZE_TEXT = _("Opens {i}gradle.properties{/i} in a editor to change Java Heap Size in RAPT.\n\nUse this only if you recieve a {i}java.lang.OutOfMemory{/i} error while building.")
+    HEAP_SIZE_TEXT = _("Opens \"gradle.properties\" in a editor in order to change the Java heap size limit in RAPT.\n\nUse this if you recieved a \"java.lang.OutOfMemory\" error while building.")
 
     import subprocess
     import re
@@ -421,7 +421,7 @@ screen android:
                                 hovered tt.Action(LOGCAT_TEXT)
                                 
                             textbutton _("Change Java Heap Size"):
-                                action AndroidIfState(state, ANDROID_NO_CONFIG, editor.Edit(config.basedir + "/rapt/project/gradle.properties")
+                                action AndroidIfState(state, ANDROID_NO_CONFIG, editor.Edit(config.basedir + "/rapt/project/gradle.properties"))
                                 hovered tt.Action(HEAP_SIZE_TEXT)
 
 
