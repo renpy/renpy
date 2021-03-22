@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # about.rpy:39
     old "[version!q]"
@@ -32,9 +32,9 @@
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
     new "Para construir un paquete para Android, por favor descarga RAPT, descomprímelo y colócalo dentro de la carpeta de Ren'Py. Después reinicia el launcher de Ren'Py."
 
-    # android.rpy:31
-    old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Se necesita Java Development Kit de 32-bit para construir paquetes de Android en Windows. El JDK es diferente al JRE, es posible que tengas Java sin tener el JDK.\n\nPor favor {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}descarga e instala el JDK{/a}, después, reinicia Ren'Py."
+    # game/android.rpy:31
+    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Se requiere un kit de desarrollo Java 8 de 64 bits/x64 para construir paquetes de Android en Windows. El JDK es diferente del JRE, por lo que es posible que tengas Java sin el JDK.\n\nPor favor, {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}descarga e instala el JDK{/a}, luego reinicia el launcher de Ren'Py."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
@@ -1462,13 +1462,13 @@ translate spanish strings:
     old "I'm compiling a short test program, to see if you have a working JDK on your system."
     new "Estoy compilando un programa de prueba corto, para ver si tienes un JDK en funcionamiento en tu sistema."
 
-    # game/androidstrings.rpy:52
-    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
-    new "No pude usar javac para compilar un archivo de prueba. Si aún no has instalado el Kit de desarrollo de Java, descárgalo de:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nEl JDK es diferente del JRE, por lo que es posible que tengas Java sin tener el JDK. Sin un JDK en funcionamiento, no puedo continuar."
+    # game/androidstrings.rpy:54
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttps://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
+    new "No pude usar javac para compilar un archivo de prueba. Si aún no has instalado el Kit de desarrollo de Java, descárgalo de:\n\nhttps://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot\n\nEl JDK es diferente del JRE, por lo que es posible que tengas Java sin tener el JDK. Sin un JDK en funcionamiento, no puedo continuar."
 
-    # game/androidstrings.rpy:53
-    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
-    new "La versión de Java en su computadora no parece ser JDK 8, que es la única versión compatible con el SDK de Android. Si necesitas instalar JDK 8, puedes descargarlo de:\n\nhttp://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html\n\nTambién puedes configurar la Variable de entorno JAVA_HOME para usar una versión diferente de Java."
+    # game/androidstrings.rpy:55
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\nhttps://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new "La versión de Java en su computadora no parece ser JDK 8, que es la única versión compatible con el SDK de Android. Si necesitas instalar JDK 8, puedes descargarlo de:\n\nhttps://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot\n\nTambién puedes configurar la Variable de entorno JAVA_HOME para usar una versión diferente de Java."
 
     # game/androidstrings.rpy:54
     old "The JDK is present and working. Good!"
@@ -1721,7 +1721,7 @@ translate spanish strings:
     # game/install.rpy:172
     old "Steam support has already been installed."
     new "El soporte de Steam ya está instalado."
-    
+
     # game/androidstrings.rpy:21
     old "The universal version works everywhere but is larger."
     new "La versión universal funciona en todas partes pero es más grande."
@@ -1729,5 +1729,4 @@ translate spanish strings:
     # game/androidstrings.rpy:45
     old "Automatically installing expansion APKs {a=https://issuetracker.google.com/issues/160942333}may not work on Android 11{/a}."
     new "Es posible que la instalación automática de APK de expansión {a=https://issuetracker.google.com/issues/160942333} no funcione en Android 11 {/a}."
-
 
