@@ -1093,7 +1093,7 @@ translate spanish strings:
 
     # renpy/common/00accessibility.rpy:136
     old "Clipboard"
-    new "Potapapeles"
+    new "Portapapeles"
 
     # renpy/common/00accessibility.rpy:140
     old "Debug"

@@ -1123,7 +1123,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:129
     old "Clipboard"
-    new "Potapapeles"
+    new "Portapapeles"
 
     # 00accessibility.rpy:133
     old "Debug"
