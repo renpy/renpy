@@ -63,10 +63,10 @@ init python in distribute:
 
         while pattern:
             if pattern.startswith("**"):
-                regexp += r'.*'
+                regexp += r'.+'
                 pattern = pattern[2:]
             elif pattern[0] == "*":
-                regexp += r'[^/]*/?'
+                regexp += r'[^/]+/?'
                 pattern = pattern[1:]
             elif pattern[0] == '[':
                 regexp += r'['
