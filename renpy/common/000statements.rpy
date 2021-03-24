@@ -454,7 +454,6 @@ python early hide:
         else:
             renpy.pause()
 
-
     renpy.register_statement('pause',
                               parse=parse_pause,
                               lint=lint_pause,

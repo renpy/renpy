@@ -1124,6 +1124,9 @@ log_gl_shaders = False
 # OpenGL Blend Funcs
 gl_blend_func = { }
 
+# Should we pause immediately after a rollback?
+pause_after_rollback = False
+
 del os
 del collections
 

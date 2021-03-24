@@ -1488,14 +1488,17 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
         tl;dr - Don't use renpy.pause with hard=True.
     """
 
+    if renpy.config.skipping == "fast":
+        return False
+
+    if renpy.game.after_rollback and not renpy.config.pause_after_rollback:
+        return False
+
     if checkpoint is None:
         if delay is not None:
             checkpoint = False
         else:
             checkpoint = True
-
-    if renpy.config.skipping == "fast":
-        return False
 
     roll_forward = renpy.exports.roll_forward_info()
     if roll_forward not in [ True, False ]:
