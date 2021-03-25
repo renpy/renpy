@@ -553,6 +553,9 @@ def check_modal(modal, ev, x, y, w, h):
     if not modal:
         return False
 
+    if (ev is not None) and (ev.type == renpy.display.core.TIMEEVENT) and ev.modal:
+        return False
+
     if not callable(modal):
         modal = default_modal_function
 
@@ -1057,8 +1060,8 @@ class MultiBox(Container):
         except IgnoreLayers:
             if self.layers:
 
-                if ev.type != renpy.display.core.TIMEEVENT:
-                    renpy.display.interface.post_time_event()
+                if (ev.type != renpy.display.core.TIMEEVENT) or (not ev.modal):
+                    renpy.display.interface.post_time_event(modal=True)
 
                 return None
             else:
