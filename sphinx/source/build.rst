@@ -153,7 +153,8 @@ Files that are not otherwise classified are placed in the "all" file
 list.
 
 To exclude files from distribution, classify them as None or the
-empty string.
+empty string. In this case, \* and \*\* at the end of the pattern
+must match at least one character.
 
 For example::
 

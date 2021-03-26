@@ -615,8 +615,17 @@ init python in distribute:
                     match_name = name
 
                 for pattern, file_list in patterns:
+
                     if match(match_name, pattern):
+
+                        # When we have ('test/**', None), avoid excluding test.
+                        if (not file_list) and is_dir:
+                            new_pattern = pattern.rstrip("*")
+                            if (pattern != new_pattern) and match(match_name, new_pattern):
+                                continue
+
                         break
+
                 else:
                     print(str(match_name), "doesn't match anything.", file=self.log)
 
