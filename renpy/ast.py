@@ -2061,6 +2061,7 @@ def create_store(name):
 
 
 class StoreNamespace(object):
+    pure = True
 
     def __init__(self, store):
         self.store = store
@@ -2159,7 +2160,9 @@ class Define(Node):
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
         if self.operator == "=" and self.index is None:
-            renpy.exports.pure(self.store + "." + self.varname)
+            ns, _special = get_namespace(self.store)
+            if getattr(ns, "pure", True):
+                renpy.exports.pure(self.store + "." + self.varname)
 
         self.set()
 
