@@ -38,11 +38,34 @@ declared in or by their full name, consisting of global and local name parts: ::
         "Now lets jump inside local label located somewhere else."
         jump global_label.local_name
 
+.. _label-parameters:
+
+Label Parameters
+----------------
+
 The label statement may take an optional list of parameters. These parameters
 are processed as described in :pep:`3102`, with two exceptions:
 
 * The values of default parameters are evaluated at call time.
 * The variables are dynamically, rather than lexically, scoped.
+
+Due to the scoping of label parameters, they override the default and define statements. 
+In the following example, the value of `my_variable` will be set to 'Two' once the `sample2` label is reached. 
+Once `sample3` is reached, the value of `my_variable` will still be 'Two'. ::
+
+    default my_variable = 'Zero'
+
+    label start:
+
+    label sample1:
+        "[my_variable]"
+
+    label sample2(my_variable='Two'):
+        "[my_variable]"
+        
+    label sample3:
+        "[my_variable]"
+
 
 .. _jump-statement:
 
