@@ -42,31 +42,31 @@ it's running on.
 
 .. var:: renpy.windows
 
-    True when running on Windows.
+    Has a true value when running on Windows.
 
 .. var:: renpy.macintosh
 
-    True when running on macOS.
+    Has a true value when running on macOS.
 
 .. var:: renpy.linux
 
-    True when running on Linux or other POSIX-like operating systems.
+    Has a true value when running on Linux or other POSIX-like operating systems.
 
 .. var:: renpy.android
 
-    True when running on Android.
+    Has a true value when running on Android.
 
 .. var:: renpy.ios
 
-    True when running on iOS.
+    Has a true value when running on iOS.
 
 .. var:: renpy.emscripten
 
-    True when running in the browser.
+    Has a true value when running in the browser.
 
 .. var:: renpy.mobile
 
-    True when running on Android or iOS or in the browser.
+    Has a true value when running on Android or iOS or in the browser.
 
 These are only set when running on the actual devices, not when running on
 in the emulators. These are more intended for use in platform-specific
