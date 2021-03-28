@@ -44,6 +44,13 @@ are processed as described in :pep:`3102`, with two exceptions:
 * The values of default parameters are evaluated at call time.
 * The variables are dynamically, rather than lexically, scoped.
 
+When a variable is dynamically scoped, its value lasts until a return
+statement following the label. It doesn't generally make sense to
+have a label with parameters that is reached by a jump or a previous
+statement. For an example of labels with parameters, see the
+:ref:`call statement <call-statement>`.
+
+
 .. _jump-statement:
 
 Jump Statement
@@ -84,13 +91,17 @@ statement with the given name as the statement immediately following the call
 statement. An explicit label helps to ensure that saved games with return
 stacks can return to the proper place when loaded on a changed script. ::
 
-    e "First, we will call a subroutine."
+    label start:
 
-    call subroutine
+        e "First, we will call a subroutine."
 
-    call subroutine(2)
+        call subroutine
 
-    call expression "sub" + "routine" pass (count=3)
+        call subroutine(2)
+
+        call expression "sub" + "routine" pass (count=3)
+
+        return
 
     # ...
 
