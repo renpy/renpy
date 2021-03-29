@@ -273,7 +273,7 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     applied to the  this Render (if a Model is created) or the Models reached
     through this Render.
 
-.. transform_property:: blend
+.. transform-property:: blend
 
     :type: None or str
     :default: None
