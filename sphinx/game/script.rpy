@@ -20,6 +20,7 @@ init 1000000 python:
     doc.scan_section("achievement.", achievement)
     doc.scan_section("gui.", gui)
     doc.scan_section("layeredimage.", layeredimage)
+    doc.scan_section("Matrix.", Matrix)
 
     doc.write_line_buffer()
     doc.write_keywords()

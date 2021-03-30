@@ -24,12 +24,13 @@
 init -1500 python:
     import math as _math
 
-    class ColorMatrix(object):
+    class _BaseMatrix(object):
         """
         :undocumented:
 
         Documented in text. The base class for various *Matrix classes
-        that are intended to return a Matrix that transforms colors.
+        that are intended to return a Matrix, both ColorMatrix and
+        TransformMatrix.
         """
 
         def __init__(self, value=1.0):
@@ -54,6 +55,16 @@ init -1500 python:
 
         def __ne__(self, other):
             return not (self == other)
+
+    class ColorMatrix(_BaseMatrix):
+        """
+        :undocumented:
+
+        Documented in text. The base class for various *Matrix classes
+        that are intended to return a Matrix that transforms colors.
+        """
+
+        pass
 
     class _MultiplyMatrix(ColorMatrix):
         """

@@ -360,6 +360,9 @@ cdef class Matrix:
     @staticmethod
     def identity():
         """
+        :doc: matrix
+        :args: ()
+
         Returns an identity matrix.
         """
         return identity_matrix()
@@ -371,6 +374,9 @@ cdef class Matrix:
     @staticmethod
     def offset(x, y, z):
         """
+        :doc: matrix
+        :args: (x, y, z)
+
         Returns a matrix that offsets the vertex by a fixed amount.
         """
         return offset_matrix(x, y, z)
@@ -382,6 +388,9 @@ cdef class Matrix:
     @staticmethod
     def rotate(x, y, z):
         """
+        :doc: matrix
+        :args: (x, y, z)
+
         Returns a matrix that rotates the displayable around the
         origin.
 
@@ -397,6 +406,9 @@ cdef class Matrix:
     @staticmethod
     def scale(x, y, z):
         """
+        :doc: matrix
+        :args: (x, y, z)
+
         Returns a matrix that scales the displayable.
 
         `x`, `y`, `z`
@@ -411,9 +423,14 @@ cdef class Matrix:
     @staticmethod
     def perspective(w, h, n, p, f):
         """
-        Returns the Ren'Py projection matrix. This is a view into a 3d space
-        where (0, 0) is the top left corner (`w`/2, `h`/2) is the center, and
-        (`w`,`h`) is the bottom right, when the z coordinate is 0.
+        :doc: matrix
+        :args: (w, h, n, p, f)
+
+        Returns a matrix suitable for the perspective projection of an image
+        in the Ren'Py coordinate system. This is a view into the a coordinate
+        system where, where when z=0, (0, 0) corresponds to the top-left corner
+        of the screen, and (w, h) corresponds to the bottom-right corner of
+        the screen.
 
         `w`, `h`
             The width and height of the input plane, in pixels.
@@ -422,8 +439,8 @@ cdef class Matrix:
             The distance of the near plane from the camera.
 
         `p`
-            The distance of the 1:1 plane from the camera. This is where 1 pixel
-            is one coordinate unit.
+            How far the z=0 plane is from the camera. This is also where one
+            virtual pixel is one coordinate unit in x and y.
 
         `f`
             The distance of the far plane from the camera.

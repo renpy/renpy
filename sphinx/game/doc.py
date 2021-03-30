@@ -385,8 +385,6 @@ def format_name(name):
 
 def write_reserved(module, dest, ignore_builtins):
 
-    print("Writing", dest)
-
     with open(dest, "w") as f:
 
         for i in sorted(dir(module)):
