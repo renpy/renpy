@@ -453,6 +453,11 @@ def transform_render(self, widtho, heighto, st, at):
                 -rydx / inv_det,
                 rxdx / inv_det)
 
+    # matrixtransform
+    if state.matrixtransform is not None:
+        self.reverse = rv.reverse = state.matrixtransform * self.reverse
+        self.forward = rv.forward = self.forward * state.matrixtransform.inverse()
+
     # Nearest neighbor.
     rv.nearest = state.nearest
 

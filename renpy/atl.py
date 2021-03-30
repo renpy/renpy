@@ -85,7 +85,7 @@ def float_or_none(x):
     return float(x)
 
 
-def matrixcolor(x):
+def matrix(x):
     if x is None:
         return None
     elif callable(x):
@@ -152,7 +152,8 @@ PROPERTIES = {
     "ypan" : float_or_none,
     "xtile" : int,
     "ytile" : int,
-    "matrixcolor" : matrixcolor,
+    "matrixtransform" : matrix,
+    "matrixcolor" : matrix,
     "shader" : any_object,
     "mesh" : mesh,
     "mesh_pad" : any_object,

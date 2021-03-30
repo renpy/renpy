@@ -45,7 +45,6 @@ init -1400 python:
 
             if type(other) is not type(self):
                 return self.function(*self.args)
-
             else:
                 args = tuple(a + (b - a) * done for a, b in zip(other.args, self.args))
                 return self.function(*args)
