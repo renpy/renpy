@@ -56,6 +56,9 @@ report_node = None
 all_define_statments = {}
 all_default_statements = {}
 
+# True if at east one error was reported, false otherwise.
+error_reported = False
+
 # Reports a message to the user.
 
 
@@ -68,6 +71,9 @@ def report(msg, *args):
     out += msg % args
     print("")
     print(out)
+
+    global error_reported
+    error_reported = True
 
 
 added = { }
@@ -927,5 +933,8 @@ characters per block. """.format(
 
     print("Lint is not a substitute for thorough testing. Remember to update Ren'Py")
     print("before releasing. New releases fix bugs and improve compatibility.")
+
+    if error_reported:
+        renpy.exports.quit(status=1)
 
     return False
