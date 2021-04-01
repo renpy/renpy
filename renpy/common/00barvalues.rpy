@@ -243,7 +243,7 @@ init -1500 python:
         force_step = False
 
         identity_fields = [ 'object', ]
-        equality_fields = [ 'range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step' ]
+        equality_fields = [ 'range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step', 'field' ]
 
         def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
             self.object = object
