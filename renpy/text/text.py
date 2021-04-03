@@ -995,6 +995,12 @@ class Layout(object):
                     tss.pop()
 
                     if not tss:
+
+                        tag = tag[1:]
+
+                        if not renpy.text.extras.text_tags.get(tag, True):
+                            raise Exception("{/%s} isn't valid, since the %s text tag doesn't take a close tag." % (tag, tag))
+
                         raise Exception("%r closes a text tag that isn't open." % text)
 
                 elif tag == "_start":
