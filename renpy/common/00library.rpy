@@ -366,8 +366,19 @@ wipeup
 zoomin
 zoominout
 zoomout
+
+_autosave
+_confirm_quit
+_dismiss_pause
+_game_menu_screen
+_ignore_action
+_quit_slot
+_rollback
+_skipping
+_window_subtitle
 """.split():
 
+        # _history, history_list, and _version are set later, so aren't included.
         renpy.lint.renpy_builtins.remove(i)
 
     del i
