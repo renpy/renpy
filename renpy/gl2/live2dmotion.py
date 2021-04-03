@@ -172,11 +172,10 @@ class Motion(object):
                 curve.get("FadeOutTime", fadeout),
                 )
 
-    def update(self, st, fade_st, do_fade_in, do_fade_out):
+    def get(self, st, fade_st, do_fade_in, do_fade_out):
         """
-        Returns a tuple of dictionary where the keys are the type of parameter
-        and the parameter name, and the values are the blend factor and value, and
-        number how much time should pass until this displayable needs to be redrawn.
+        Returns a dictionary where the keys are the type of parameter and the
+        parameter name, and the values are the blend factor and value.
         """
 
         if st == self.duration:
@@ -184,9 +183,7 @@ class Motion(object):
         else:
             st = st % self.duration
 
-        data = { }
-
-        wait = 86400.0
+        rv = { }
 
         for k, segments in self.curves.items():
 
@@ -217,21 +214,61 @@ class Motion(object):
             t = st
 
             for i in segments:
-                if t <= i.duration or i is segments[-1]:
-
-                    if factor > 0.0:
-                        wait = min(wait, i.wait(t))
-
-                    data[k] = (factor, i.get(t))
+                if t <= i.duration:
+                    rv[k] = (factor, i.get(t))
 
                     break
 
                 t -= i.duration
 
-        if wait == 86400.0:
-            wait = None
+        return rv
 
-        return data, wait
+    def wait(self, st, fade_st, do_fade_in, do_fade_out):
+        """
+        Returns how much time should pass until this displayable needs to be
+        redrawn.
+        """
+
+        st = st % self.duration
+
+        rv = 86400.0
+
+        for k, segments in self.curves.items():
+
+            fadeout = self.fades[k][1]
+
+            if not do_fade_out:
+                fadeout = 0
+
+            factor = 1.0
+
+            if st > self.duration - fadeout:
+                factor = min(factor, 1.0 - (st - (self.duration - fadeout)) / fadeout)
+
+            if fade_st is not None:
+                if fadeout > 0:
+                    factor = min(factor, 1.0 - fade_st / fadeout)
+                else:
+                    factor = 0.0
+
+            factor = max(factor, 0.0)
+
+            if factor == 0.0:
+                continue
+
+            t = st
+
+            for i in segments:
+                if t < i.duration:
+                    rv = min(rv, i.wait(t))
+                    break
+
+                t -= i.duration
+
+        if rv == 86400.0:
+            rv = None
+
+        return rv
 
 
 class NullMotion(object):
@@ -241,5 +278,8 @@ class NullMotion(object):
 
     duration = 1.0
 
-    def update(self, st, fade_st, do_fade_in, do_fade_out):
-        return { }, max(1.0 - st, 0)
+    def get(self, st, fade_st, do_fade_in, do_fade_out):
+        return { }
+
+    def wait(self, st, fade_st, do_fade_in, do_fade_out):
+        return max(1.0 - st, 0)
