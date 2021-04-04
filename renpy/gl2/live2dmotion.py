@@ -128,6 +128,8 @@ class Motion(object):
 
             segments = [ ]
 
+            curve_duration = 0.0
+
             while s:
 
                 kind = s.pop(0)
@@ -165,6 +167,11 @@ class Motion(object):
 
                 x0 = x
                 y0 = y
+
+                curve_duration += segments[-1].duration
+
+            if curve_duration < self.duration:
+                segments.append(Step(curve_duration, y0, self.duration, y))
 
             self.curves[target, name] = segments
             self.fades[target, name] = (
@@ -259,7 +266,7 @@ class Motion(object):
             t = st
 
             for i in segments:
-                if t < i.duration:
+                if t <= i.duration:
                     rv = min(rv, i.wait(t))
                     break
 
