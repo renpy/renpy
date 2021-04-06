@@ -697,7 +697,7 @@ def quote_eval(s):
 
             if (string is not None) and (delim == string):
                 string = None
-            else:
+            elif string is None:
                 string = delim
 
             rv.append(delim)
