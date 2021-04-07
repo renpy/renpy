@@ -591,7 +591,7 @@ cdef class GL2Draw:
         # Generate the framebuffer.
         glGenFramebuffers(1, &self.fbo)
 
-        glGenTextures(1, &self.color_texture)
+        glGenRenderbuffers(1, &self.color_renderbuffer)
 
         if renpy.config.depth_size:
             glGenRenderbuffers(1, &self.depth_renderbuffer)
@@ -620,14 +620,14 @@ cdef class GL2Draw:
 
         self.change_fbo(self.fbo)
 
-        glBindTexture(GL_TEXTURE_2D, self.color_texture)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,  GL_RGBA, GL_UNSIGNED_BYTE, NULL)
-        glFramebufferTexture2D(
+        glBindRenderbuffer(GL_RENDERBUFFER, self.color_renderbuffer)
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, width, height)
+
+        glFramebufferRenderbuffer(
             GL_FRAMEBUFFER,
             GL_COLOR_ATTACHMENT0,
-            GL_TEXTURE_2D,
-            self.color_texture,
-            0)
+            GL_RENDERBUFFER,
+            self.color_renderbuffer)
 
         if renpy.config.depth_size:
 
@@ -645,7 +645,7 @@ cdef class GL2Draw:
         self.change_fbo(self.default_fbo)
 
         glDeleteFramebuffers(1, &self.fbo)
-        glDeleteTextures(1, &self.color_texture)
+        glDeleteRenderbuffers(1, &self.color_renderbuffer)
 
         if renpy.config.depth_size:
             glDeleteRenderbuffers(1, &self.depth_renderbuffer)
