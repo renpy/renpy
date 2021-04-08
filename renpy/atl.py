@@ -107,9 +107,11 @@ PROPERTIES = {
     "pos" : (position, position),
     "xpos" : position,
     "ypos" : position,
+    "zpos" : float_or_none,
     "anchor" : (position, position),
     "xanchor" : position,
     "yanchor" : position,
+    "zanchor" : float_or_none,
     "xaround" : position,
     "yaround" : position,
     "xanchoraround" : float,
@@ -159,6 +161,7 @@ PROPERTIES = {
     "mesh_pad" : any_object,
     "blur" : float_or_none,
     "blend" : any_object,
+    "perspective" : any_object,
     }
 
 

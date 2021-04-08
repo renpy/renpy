@@ -123,6 +123,10 @@ class TransformState(renpy.object.Object):
     blur = None
     blend = None
 
+    zpos = 0.0
+    zanchor = None
+    perspective = None
+
     def __init__(self):
         self.alpha = 1
         self.nearest = None
@@ -170,6 +174,10 @@ class TransformState(renpy.object.Object):
         self.mesh_pad = None
         self.blur = None
         self.blend = None
+
+        self.zpos = 0.0
+        self.zanchor = None
+        self.perspective = None
 
         self.delay = 0
 
@@ -237,6 +245,10 @@ class TransformState(renpy.object.Object):
         self.mesh_pad = ts.mesh_pad
         self.blur = ts.blur
         self.blend = ts.blend
+
+        self.zpos = ts.zpos
+        self.zanchor = ts.zanchor
+        self.perspective = ts.perspective
 
         self.last_angle = ts.last_angle
 
@@ -339,6 +351,10 @@ class TransformState(renpy.object.Object):
         diff2("mesh_pad", newts.mesh_pad, self.mesh_pad)
 
         diff2("blur", newts.blur, self.blur)
+
+        diff2("zpos", newts.zpos, self.zpos)
+        diff2("zanchor", newts.zanchor, self.zanchor)
+        diff2("perspective", newts.perspective, self.perspective)
 
         diff2("debug", newts.debug, self.debug)
         diff2("events", newts.events, self.events)
@@ -579,6 +595,10 @@ class Transform(Container):
     mesh_pad = Proxy("mesh_pad")
     blur = Proxy("blur")
     blend = Proxy("blend")
+
+    zpos = Proxy("zpos")
+    zanchor = Proxy("zanchor")
+    persperctive = Proxy("perspective")
 
     debug = Proxy("debug")
     events = Proxy("events")
