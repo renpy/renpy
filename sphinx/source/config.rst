@@ -674,7 +674,10 @@ Occasionally Used
     `xoffset`, `yoffset`) tuples, representing frames.
 
     `image`
-        The mouse cursor image.
+        The mouse cursor image. The maximum size for this image
+        varies based on the player's hardware. 32x32 is guaranteed
+        to work everywhere, while 64x64 works on most hardware. Larger
+        images may not work.
 
     `xoffset`
         The offset of the hotspot pixel from the left side of the
