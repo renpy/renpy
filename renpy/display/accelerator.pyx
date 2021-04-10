@@ -24,6 +24,7 @@ from __future__ import print_function
 
 import renpy
 import math
+from renpy.display.matrix cimport Matrix
 from renpy.display.render cimport Render, Matrix2D, render
 from renpy.display.core import absolute
 
@@ -435,28 +436,29 @@ def transform_render(self, widtho, heighto, st, at):
 
     # Default case - no transformation matrix.
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
-        self.forward = IDENTITY
         self.reverse = IDENTITY
-
     else:
-
         self.reverse = rv.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
-
-        inv_det = rxdx * rydy - rxdy * rydx
-
-        if not inv_det:
-            self.forward = rv.forward = Matrix2D(0, 0, 0, 0)
-        else:
-            self.forward = rv.forward = Matrix2D(
-                rydy / inv_det,
-                -rxdy / inv_det,
-                -rydx / inv_det,
-                rxdx / inv_det)
 
     # matrixtransform
     if state.matrixtransform is not None:
         self.reverse = rv.reverse = state.matrixtransform * self.reverse
-        self.forward = rv.forward = self.forward * state.matrixtransform.inverse()
+
+    if state.zanchor is None:
+        state.zanchor = state.zpos
+
+    if state.perspective:
+        near, far = renpy.config.gl_near_far
+        self.reverse = rv.reverse = Matrix.perspective(width, height, near, state.zanchor, far) * Matrix.offset(0, 0, -(state.zpos - state.zanchor)) * self.reverse
+    else:
+        if state.zpos:
+            self.reverse = rv.reverse = Matrix.offset(0, 0, state.zpos)
+
+    # Set the forward matrix.
+    if self.reverse is not IDENTITY:
+        self.forward = rv.forward = self.reverse.inverse()
+    else:
+        self.forward = IDENTITY
 
     # Nearest neighbor.
     rv.nearest = state.nearest

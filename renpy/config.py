@@ -1127,6 +1127,9 @@ gl_blend_func = { }
 # Should we pause immediately after a rollback?
 pause_after_rollback = False
 
+# The default near and far plane.
+gl_near_far = (100, 20000)
+
 del os
 del collections
 
