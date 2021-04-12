@@ -473,7 +473,7 @@ class ImageDissolve(Transition):
         self.alpha = alpha
         self.time_warp = time_warp
 
-        if config.gl2:
+        if renpy.config.gl2:
             if not reverse:
                 # Copies red -> alpha
                 matrix = renpy.display.matrix.Matrix([0, 0, 0, 0,
