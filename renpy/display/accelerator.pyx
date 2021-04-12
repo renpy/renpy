@@ -442,7 +442,25 @@ def transform_render(self, widtho, heighto, st, at):
 
     # matrixtransform
     if state.matrixtransform is not None:
-        self.reverse = rv.reverse = state.matrixtransform * self.reverse
+
+        if state.matrixanchor is None:
+
+            manchorx = width / 2.0
+            manchory = width / 2.0
+
+        else:
+            manchorx, manchory = state.matrixanchor
+
+            if type(manchorx) is float:
+                manchorx *= width
+            if type(manchory) is float:
+                manchory *= height
+
+        m = Matrix.offset(-manchorx, -manchory, 0.0)
+        m = state.matrixtransform * m
+        m = Matrix.offset(manchorx, manchory, 0.0) * m
+
+        self.reverse = rv.reverse = m * self.reverse
 
     if state.zanchor is None:
         state.zanchor = state.zpos

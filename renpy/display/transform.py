@@ -116,6 +116,7 @@ class TransformState(renpy.object.Object):
     fit = None
     maxsize = None
     matrixtransform = None
+    matrixanchor = None
     matrixcolor = None
     shader = None
     mesh = False
@@ -168,7 +169,9 @@ class TransformState(renpy.object.Object):
         self.maxsize = None
 
         self.matrixtransform = None
+        self.matrixanchor = None
         self.matrixcolor = None
+
         self.shader = None
         self.mesh = False
         self.mesh_pad = None
@@ -239,6 +242,7 @@ class TransformState(renpy.object.Object):
         self.ytile = ts.ytile
 
         self.matrixtransform = ts.matrixtransform
+        self.matrixanchor = ts.matrixanchor
         self.matrixcolor = ts.matrixcolor
         self.shader = ts.shader
         self.mesh = ts.mesh
@@ -341,6 +345,7 @@ class TransformState(renpy.object.Object):
         diff2("ytile", newts.ytile, self.ytile)
 
         diff2("matrixtransform", newts.matrixtransform, self.matrixtransform)
+        diff2("matrixanchor", newts.matrixanchor, self.matrixanchor)
         diff2("matrixcolor", newts.matrixcolor, self.matrixcolor)
 
         # It doesn't make sense to interpolate these.
@@ -589,6 +594,7 @@ class Transform(Container):
     ytile = Proxy("ytile")
 
     matrixtransform = Proxy("matrixtransform")
+    matrixanchor = Proxy("matrixanchor")
     matrixcolor = Proxy("matrixcolor")
     shader = Proxy("shader")
     mesh = Proxy("mesh")
