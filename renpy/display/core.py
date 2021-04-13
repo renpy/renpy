@@ -1245,7 +1245,9 @@ class SceneLists(renpy.object.Object):
 
         self.at_list[layer].clear()
         self.shown.predict_scene(layer)
-        self.layer_at_list[layer] = (None, [ ])
+
+        if renpy.config.scene_clears_layer_at_list:
+            self.layer_at_list[layer] = (None, [ ])
 
     def set_layer_at_list(self, layer, at_list, reset=True):
         self.layer_at_list[layer] = (None, list(at_list))

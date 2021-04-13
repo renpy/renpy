@@ -208,6 +208,7 @@ init -1900 python:
         if version <= (7, 4, 4):
             config.pause_after_rollback = True
             config.gl2 = False
+            config.scene_clears_layer_at_list = True
 
 
     # The version of Ren'Py this script is intended for, or
