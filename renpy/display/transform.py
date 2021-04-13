@@ -122,6 +122,12 @@ class TransformState(renpy.object.Object):
 
         self.last_angle = ts.last_angle
 
+        # Set the position and anchor to None, so inheritance works.
+        self.xpos = None
+        self.ypos = None
+        self.xanchor = None
+        self.yanchor = None
+
         # Take the computed position properties, not the
         # raw ones.
         (self.inherited_xpos,
@@ -1001,7 +1007,6 @@ ALIASES = {
     "offset" : (int, int),
     "pos" : (position, position),
     "radius" : float,
-    "shader" : any_object,
     "size" : (int, int),
     "xalign" : float,
     "xcenter" : position,
