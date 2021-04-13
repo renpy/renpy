@@ -31,6 +31,7 @@ import renpy.display # @UnusedImport
 from renpy.display.layout import Container
 
 from renpy.display.accelerator import transform_render
+from renpy.atl import position, any_object, bool_or_none, float_or_none, matrix, mesh
 
 # The null object that's used if we don't have a defined child.
 null = None
@@ -94,104 +95,10 @@ def first_not_none(*args):
 
 class TransformState(renpy.object.Object):
 
-    nearest = None
-    xoffset = None
-    yoffset = None
-    inherited_xpos = None
-    inherited_ypos = None
-    inherited_xanchor = None
-    inherited_yanchor = None
-    transform_anchor = False
-    additive = 0.0
-    debug = None
-    events = True
-    crop_relative = False
-    xpan = None
-    ypan = None
-    xtile = 1
-    ytile = 1
-    last_angle = None
-    xsize = None
-    ysize = None
-    fit = None
-    maxsize = None
-    matrixtransform = None
-    matrixanchor = None
-    matrixcolor = None
-    shader = None
-    mesh = False
-    mesh_pad = None
-    blur = None
-    blend = None
-
-    zpos = 0.0
-    zanchor = None
-    perspective = None
-
     def __init__(self):
-        self.alpha = 1
-        self.nearest = None
-        self.additive = 0.0
-        self.rotate = None
-        self.rotate_pad = True
-        self.transform_anchor = False
-        self.zoom = 1
-        self.xzoom = 1
-        self.yzoom = 1
 
-        self.xpos = None
-        self.ypos = None
-        self.xanchor = None
-        self.yanchor = None
-        self.xoffset = 0
-        self.yoffset = 0
-
-        self.xaround = 0.0
-        self.yaround = 0.0
-        self.xanchoraround = 0.0
-        self.yanchoraround = 0.0
-
-        self.xpan = None
-        self.ypan = None
-        self.xtile = 1
-        self.ytile = 1
-
-        self.subpixel = False
-
-        self.crop = None
-        self.crop_relative = False
-        self.corner1 = None
-        self.corner2 = None
-
-        self.xsize = None
-        self.ysize = None
-        self.fit = None
-        self.maxsize = None
-
-        self.matrixtransform = None
-        self.matrixanchor = None
-        self.matrixcolor = None
-
-        self.shader = None
-        self.mesh = False
-        self.mesh_pad = None
-        self.blur = None
-        self.blend = None
-
-        self.zpos = 0.0
-        self.zanchor = None
-        self.perspective = None
-
-        self.delay = 0
-
-        self.debug = None
-        self.events = True
-
-        # Note: When adding a new property, we need to add it to:
-        # - take_state
-        # - diff
-        # - renpy.atl.PROPERTIES
-        # - Proxies in Transform
+        # Most fields on this object are set by add_property, at the bottom
+        # of this file.
 
         # An xpos (etc) inherited from our child overrides an xpos inherited
         # from an old transform, but not an xpos set in the current transform.
@@ -203,67 +110,17 @@ class TransformState(renpy.object.Object):
         self.inherited_xanchor = None
         self.inherited_yanchor = None
 
-        for i in uniforms:
-            setattr(self, i, None)
-
-        for i in gl_properties:
-            setattr(self, i, None)
+        # The last angle that was rotated to.
+        self.last_angle = None
 
     def take_state(self, ts):
 
-        self.nearest = ts.nearest
-        self.alpha = ts.alpha
-        self.additive = ts.additive
-        self.rotate = ts.rotate
-        self.rotate_pad = ts.rotate_pad
-        self.transform_anchor = ts.transform_anchor
-        self.zoom = ts.zoom
-        self.xzoom = ts.xzoom
-        self.yzoom = ts.yzoom
+        d = self.__dict__
 
-        self.xaround = ts.xaround
-        self.yaround = ts.yaround
-        self.xanchoraround = ts.xanchoraround
-        self.yanchoraround = ts.yanchoraround
-
-        self.crop = ts.crop
-        self.crop_relative = ts.crop_relative
-        self.corner1 = ts.corner1
-        self.corner2 = ts.corner2
-
-        self.xsize = ts.xsize
-        self.ysize = ts.ysize
-        self.fit = ts.fit
-        self.maxsize = ts.maxsize
-
-        self.xpan = ts.xpan
-        self.ypan = ts.ypan
-        self.xtile = ts.xtile
-        self.ytile = ts.ytile
-
-        self.matrixtransform = ts.matrixtransform
-        self.matrixanchor = ts.matrixanchor
-        self.matrixcolor = ts.matrixcolor
-        self.shader = ts.shader
-        self.mesh = ts.mesh
-        self.mesh_pad = ts.mesh_pad
-        self.blur = ts.blur
-        self.blend = ts.blend
-
-        self.zpos = ts.zpos
-        self.zanchor = ts.zanchor
-        self.perspective = ts.perspective
+        for k in all_properties:
+            d[k] = getattr(ts, k)
 
         self.last_angle = ts.last_angle
-
-        self.debug = ts.debug
-        self.events = ts.events
-
-        for i in uniforms:
-            setattr(self, i, getattr(ts, i))
-
-        for i in gl_properties:
-            setattr(self, i, getattr(ts, i))
 
         # Take the computed position properties, not the
         # raw ones.
@@ -285,87 +142,25 @@ class TransformState(renpy.object.Object):
 
         rv = { }
 
-        def diff2(prop, new, old):
+        for prop in diff2_properties:
+            new = getattr(newts, prop)
+            old = getattr(self, prop)
+
             if new != old:
                 rv[prop] = (old, new)
 
-        def diff4(prop, new, inherited_new, old, inherited_old):
+        for prop in diff4_properties:
+
+            new = getattr(newts, prop)
+            old = getattr(self, prop)
+
             if new is None:
-                new_value = inherited_new
-            else:
-                new_value = new
-
+                new = getattr(newts, "inherited_" + prop)
             if old is None:
-                old_value = inherited_old
-            else:
-                old_value = old
+                old = getattr(self, "inherited_" + prop)
 
-            if new_value != old_value:
-                rv[prop] = (old_value, new_value)
-
-        diff2("nearest", newts.nearest, self.nearest)
-        diff2("alpha", newts.alpha, self.alpha)
-        diff2("additive", newts.additive, self.additive)
-        diff2("rotate", newts.rotate, self.rotate)
-        diff2("rotate_pad", newts.rotate_pad, self.rotate_pad)
-        diff2("transform_anchor", newts.transform_anchor, self.transform_anchor)
-        diff2("zoom", newts.zoom, self.zoom)
-        diff2("xzoom", newts.xzoom, self.xzoom)
-        diff2("yzoom", newts.yzoom, self.yzoom)
-
-        diff2("xaround", newts.xaround, self.xaround)
-        diff2("yaround", newts.yaround, self.yaround)
-        diff2("xanchoraround", newts.xanchoraround, self.xanchoraround)
-        diff2("yanchoraround", newts.yanchoraround, self.yanchoraround)
-
-        diff2("subpixel", newts.subpixel, self.subpixel)
-
-        diff2("crop", newts.crop, self.crop)
-        diff2("crop_relative", newts.crop_relative, self.crop_relative)
-        diff2("corner1", newts.corner1, self.corner1)
-        diff2("corner2", newts.corner2, self.corner2)
-
-        diff2("xsize", newts.xsize, self.xsize)
-        diff2("ysize", newts.ysize, self.ysize)
-        diff2("fit", newts.fit, self.fit)
-        diff2("maxsize", newts.maxsize, self.maxsize)
-
-        diff4("xpos", newts.xpos, newts.inherited_xpos, self.xpos, self.inherited_xpos)
-        diff4("xanchor", newts.xanchor, newts.inherited_xanchor, self.xanchor, self.inherited_xanchor)
-        diff2("xoffset", newts.xoffset, self.xoffset)
-
-        diff4("ypos", newts.ypos, newts.inherited_ypos, self.ypos, self.inherited_ypos)
-        diff4("yanchor", newts.yanchor, newts.inherited_yanchor, self.yanchor, self.inherited_yanchor)
-        diff2("yoffset", newts.yoffset, self.yoffset)
-
-        diff2("xpan", newts.xpan, self.xpan)
-        diff2("ypan", newts.ypan, self.ypan)
-
-        diff2("xtile", newts.xtile, self.xtile)
-        diff2("ytile", newts.ytile, self.ytile)
-
-        diff2("matrixtransform", newts.matrixtransform, self.matrixtransform)
-        diff2("matrixanchor", newts.matrixanchor, self.matrixanchor)
-        diff2("matrixcolor", newts.matrixcolor, self.matrixcolor)
-
-        # It doesn't make sense to interpolate these.
-        # diff2("shader", newts.shader, self.shader)
-        # diff2("mesh", newts.mesh, self.mesh)
-        # blend
-
-        diff2("mesh_pad", newts.mesh_pad, self.mesh_pad)
-
-        diff2("blur", newts.blur, self.blur)
-
-        diff2("zpos", newts.zpos, self.zpos)
-        diff2("zanchor", newts.zanchor, self.zanchor)
-        diff2("perspective", newts.perspective, self.perspective)
-
-        diff2("debug", newts.debug, self.debug)
-        diff2("events", newts.events, self.events)
-
-        for i in uniforms:
-            diff2(i, getattr(newts, i), getattr(self, i))
+            if new != old:
+                rv[prop] = (old, new)
 
         return rv
 
@@ -532,82 +327,6 @@ class Transform(Container):
 
     __version__ = 5
     transform_event_responder = True
-
-    # Proxying things over to our state.
-    nearest = Proxy("nearest")
-    alpha = Proxy("alpha")
-    additive = Proxy("additive")
-    rotate = Proxy("rotate")
-    rotate_pad = Proxy("rotate_pad")
-    transform_anchor = Proxy("transform_anchor")
-    zoom = Proxy("zoom")
-    xzoom = Proxy("xzoom")
-    yzoom = Proxy("yzoom")
-
-    xpos = Proxy("xpos")
-    ypos = Proxy("ypos")
-    xanchor = Proxy("xanchor")
-    yanchor = Proxy("yanchor")
-
-    xalign = Proxy("xalign")
-    yalign = Proxy("yalign")
-
-    around = Proxy("around")
-    alignaround = Proxy("alignaround")
-    angle = Proxy("angle")
-    radius = Proxy("radius")
-
-    xaround = Proxy("xaround")
-    yaround = Proxy("yaround")
-    xanchoraround = Proxy("xanchoraround")
-    yanchoraround = Proxy("yanchoraround")
-
-    pos = Proxy("pos")
-    anchor = Proxy("anchor")
-    align = Proxy("align")
-
-    crop = Proxy("crop")
-    crop_relative = Proxy("crop_relative")
-    corner1 = Proxy("corner1")
-    corner2 = Proxy("corner2")
-
-    xsize = Proxy("xsize")
-    ysize = Proxy("ysize")
-    size = Proxy("size")
-    fit = Proxy("fit")
-    maxsize = Proxy("maxsize")
-
-    delay = Proxy("delay")
-
-    xoffset = Proxy("xoffset")
-    yoffset = Proxy("yoffset")
-    offset = Proxy("offset")
-
-    subpixel = Proxy("subpixel")
-
-    xcenter = Proxy("xcenter")
-    ycenter = Proxy("ycenter")
-
-    xpan = Proxy("xpan")
-    ypan = Proxy("ypan")
-    xtile = Proxy("xtile")
-    ytile = Proxy("ytile")
-
-    matrixtransform = Proxy("matrixtransform")
-    matrixanchor = Proxy("matrixanchor")
-    matrixcolor = Proxy("matrixcolor")
-    shader = Proxy("shader")
-    mesh = Proxy("mesh")
-    mesh_pad = Proxy("mesh_pad")
-    blur = Proxy("blur")
-    blend = Proxy("blend")
-
-    zpos = Proxy("zpos")
-    zanchor = Proxy("zanchor")
-    persperctive = Proxy("perspective")
-
-    debug = Proxy("debug")
-    events = Proxy("events")
 
     def after_upgrade(self, version):
 
@@ -1160,17 +879,40 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         self.execute(self, self.st, self.at)
 
 
+# Names of transform properties, and if the property should be handles with
+# diff2 or diff2.
+all_properties = set()
+diff2_properties = set()
+diff4_properties = set()
+
+# Uniforms and GL properties.
 uniforms = set()
 gl_properties = set()
+
+
+def add_property(name, atl=any_object, default=None, diff=2):
+    """
+    Adds an ATL property.
+    """
+
+    if name in all_properties:
+        return
+
+    all_properties.add(name)
+    setattr(TransformState, name, default)
+    setattr(Transform, name, Proxy(name))
+    renpy.atl.PROPERTIES[name] = atl
+
+    if diff == 2:
+        diff2_properties.add(name)
+    elif diff == 4:
+        diff4_properties.add(name)
 
 
 def add_uniform(name):
     """
     Adds a uniform with `name` to Transform and ATL.
     """
-
-    if name in uniforms:
-        return
 
     if not name.startswith("u_"):
         return
@@ -1181,10 +923,9 @@ def add_uniform(name):
     if name in renpy.gl2.gl2draw.standard_uniforms:
         return
 
+    add_property(name, diff=2)
+
     uniforms.add(name)
-    setattr(TransformState, name, None)
-    setattr(Transform, name, Proxy(name))
-    renpy.atl.PROPERTIES[name] = renpy.atl.any_object
 
 
 def add_gl_property(name):
@@ -1192,15 +933,149 @@ def add_gl_property(name):
     Adds a GL property with `name` to Transform and ATL.
     """
 
-    if name in gl_properties:
-        return
+    add_property(name, diff=None)
 
     gl_properties.add(name)
-    setattr(TransformState, name, None)
-    setattr(Transform, name, Proxy(name))
-    renpy.atl.PROPERTIES[name] = renpy.atl.any_object
 
+
+add_property("additive", float, 0.0)
+add_property("alpha", float, 1.0)
+add_property("blend", any_object, None)
+add_property("blur", float_or_none, None)
+add_property("corner1", (float, float), None)
+add_property("corner2", (float, float), None)
+add_property("crop", (float, float, float, float), None)
+add_property("crop_relative", bool, False)
+add_property("debug", any_object, None)
+add_property("delay", float, 0)
+add_property("events", bool, True)
+add_property("fit", str, None)
+add_property("matrixanchor", (position, position), None)
+add_property("matrixcolor", matrix, None)
+add_property("matrixtransform", matrix, None)
+add_property("maxsize", (int, int), None)
+add_property("mesh", mesh, False, diff=None)
+add_property("mesh_pad", any_object, None)
+add_property("nearest", bool_or_none, 1.0)
+add_property("perspective", any_object, None)
+add_property("rotate", float, None)
+add_property("rotate_pad", bool, True)
+add_property("shader", any_object, None, diff=None)
+add_property("subpixel", bool, False)
+add_property("transform_anchor", bool, False)
+add_property("zoom", float, 1.0)
+
+add_property("xanchoraround", float, 0.0)
+add_property("xanchor", position, None, diff=4)
+add_property("xaround", position, 0.0)
+add_property("xoffset", float, 0.0)
+add_property("xpan", float_or_none, None)
+add_property("xpos", position, None, diff=4)
+add_property("xsize", int, None)
+add_property("xtile", int, 1)
+
+add_property("xzoom", float, 1.0)
+add_property("yanchoraround", float, 0.0)
+add_property("yanchor", position, None, diff=4)
+add_property("yaround", position, 0.0)
+add_property("yoffset", float, 0.0)
+add_property("ypan", float_or_none, None)
+add_property("ypos", position, None, diff=4)
+add_property("ysize", int, None)
+add_property("ytile", int, 1)
+add_property("yzoom", float, 1.0)
+
+add_property("zanchor", float, 0.0)
+add_property("zpos", float, 0.0)
 
 add_gl_property("gl_color_mask")
 add_gl_property("gl_pixel_perfect")
 add_gl_property("gl_blend_func")
+
+ALIASES = {
+    "alignaround" : (float, float),
+    "align" : (float, float),
+    "anchor" : (position, position),
+    "angle" : float,
+    "around" : (position, position),
+    "offset" : (int, int),
+    "pos" : (position, position),
+    "radius" : float,
+    "shader" : any_object,
+    "size" : (int, int),
+    "xalign" : float,
+    "xcenter" : position,
+    "yalign" : float,
+    "ycenter" : position,
+    }
+
+renpy.atl.PROPERTIES.update(ALIASES)
+
+for name in ALIASES:
+    setattr(Transform, name, Proxy(name))
+
+OLD_PROPERTIES = {
+    "pos" : (position, position),
+    "xpos" : position,
+    "ypos" : position,
+    "zpos" : float_or_none,
+    "anchor" : (position, position),
+    "xanchor" : position,
+    "yanchor" : position,
+    "zanchor" : float_or_none,
+    "xaround" : position,
+    "yaround" : position,
+    "xanchoraround" : float,
+    "yanchoraround" : float,
+    "align" : (float, float),
+    "xalign" : float,
+    "yalign" : float,
+    "rotate" : float,
+    "rotate_pad" : bool,
+    "transform_anchor" : bool,
+    "xzoom" : float,
+    "yzoom" : float,
+    "zoom" : float,
+    "nearest" : bool_or_none,
+    "alpha" : float,
+    "additive" : float,
+    "around" : (position, position),
+    "alignaround" : (float, float),
+    "angle" : float,
+    "radius" : float,
+    "crop" : (float, float, float, float),
+    "crop_relative" : bool,
+    "xsize" : int,
+    "ysize" : int,
+    "size" : (int, int),
+    "fit" : str,
+    "maxsize" : (int, int),
+    "corner1" : (float, float),
+    "corner2" : (float, float),
+    "subpixel" : bool,
+    "delay" : float,
+    "xoffset" : float,
+    "yoffset" : float,
+    "offset" : (int, int),
+    "xcenter" : position,
+    "ycenter" : position,
+    "debug" : any_object,
+    "events" : bool,
+    "xpan" : float_or_none,
+    "ypan" : float_or_none,
+    "xtile" : int,
+    "ytile" : int,
+    "matrixcolor" : matrix,
+    "matrixtransform" : matrix,
+    "matrixanchor" : (position, position),
+    "shader" : any_object,
+    "mesh" : mesh,
+    "mesh_pad" : any_object,
+    "blur" : float_or_none,
+    "blend" : any_object,
+    "perspective" : any_object,
+    }
+
+for k in OLD_PROPERTIES:
+    if k not in renpy.atl.PROPERTIES:
+        print(k)
