@@ -60,6 +60,10 @@ def nogil_copy(src, dest):
 cdef Matrix2D IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
+
+# The distance to the 1:1 plan, in the current perspective.
+z11 = 0.0
+
 # This file contains implementations of methods of classes that
 # are found in other files, for performance reasons.
 
@@ -81,6 +85,9 @@ def transform_render(self, widtho, heighto, st, at):
     cdef int xtile, ytile
     cdef int i, j
 
+
+    global z11
+
     # Should we perform clipping?
     clipping = False
 
@@ -100,8 +107,10 @@ def transform_render(self, widtho, heighto, st, at):
     # Render the child.
     child = self.child
 
+
     if child is None:
         child = renpy.display.transform.get_null()
+
 
     state = self.state
 
@@ -114,8 +123,22 @@ def transform_render(self, widtho, heighto, st, at):
     if ysize is not None:
         heighto = ysize
 
+    # Figure out the perspective.
+    perspective = state.perspective
+
+    if perspective is True:
+        perspective = renpy.config.perspective
+
+    # Set the z11 distance.
+    old_z11 = z11
+
+    if perspective:
+        z11 = perspective[1]
+
     cr = render(child, widtho, heighto, st - self.child_st_base, at)
 
+    # Reset the z11 distance.
+    z11 = old_z11
 
     cwidth = cr.width
     cheight = cr.height
@@ -438,7 +461,7 @@ def transform_render(self, widtho, heighto, st, at):
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
         self.reverse = IDENTITY
     else:
-        self.reverse = rv.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
+        self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
     # matrixtransform
     if state.matrixtransform is not None:
@@ -460,20 +483,20 @@ def transform_render(self, widtho, heighto, st, at):
         m = state.matrixtransform * m
         m = Matrix.offset(manchorx, manchory, 0.0) * m
 
-        self.reverse = rv.reverse = m * self.reverse
+        self.reverse = m * self.reverse
 
-    if state.zanchor is None:
-        state.zanchor = state.zpos
+    # zpos
+    if state.zpos:
+        self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
 
-    if state.perspective:
-        near, far = renpy.config.gl_near_far
-        self.reverse = rv.reverse = Matrix.perspective(width, height, near, state.zanchor, far) * Matrix.offset(0, 0, -(state.zpos - state.zanchor)) * self.reverse
-    else:
-        if state.zpos:
-            self.reverse = rv.reverse = Matrix.offset(0, 0, state.zpos)
+    # perspective
+    if perspective:
+        near, z11, far = perspective
+        self.reverse = Matrix.perspective(width, height, near, z11, far) * self.reverse
 
     # Set the forward matrix.
     if self.reverse is not IDENTITY:
+        rv.reverse = self.reverse
         self.forward = rv.forward = self.reverse.inverse()
     else:
         self.forward = IDENTITY
@@ -496,7 +519,6 @@ def transform_render(self, widtho, heighto, st, at):
         alpha = 1.0
 
     rv.alpha = alpha
-
     rv.over = 1.0 - state.additive
 
     if (rv.alpha != 1.0) or (rv.over != 1.0):
