@@ -985,8 +985,8 @@ add_property("ysize", int, None)
 add_property("ytile", int, 1)
 add_property("yzoom", float, 1.0)
 
-add_property("zanchor", float, 0.0)
 add_property("zpos", float, 0.0)
+add_property("zzoom", bool, False)
 
 add_gl_property("gl_color_mask")
 add_gl_property("gl_pixel_perfect")
@@ -1014,68 +1014,3 @@ renpy.atl.PROPERTIES.update(ALIASES)
 for name in ALIASES:
     setattr(Transform, name, Proxy(name))
 
-OLD_PROPERTIES = {
-    "pos" : (position, position),
-    "xpos" : position,
-    "ypos" : position,
-    "zpos" : float_or_none,
-    "anchor" : (position, position),
-    "xanchor" : position,
-    "yanchor" : position,
-    "zanchor" : float_or_none,
-    "xaround" : position,
-    "yaround" : position,
-    "xanchoraround" : float,
-    "yanchoraround" : float,
-    "align" : (float, float),
-    "xalign" : float,
-    "yalign" : float,
-    "rotate" : float,
-    "rotate_pad" : bool,
-    "transform_anchor" : bool,
-    "xzoom" : float,
-    "yzoom" : float,
-    "zoom" : float,
-    "nearest" : bool_or_none,
-    "alpha" : float,
-    "additive" : float,
-    "around" : (position, position),
-    "alignaround" : (float, float),
-    "angle" : float,
-    "radius" : float,
-    "crop" : (float, float, float, float),
-    "crop_relative" : bool,
-    "xsize" : int,
-    "ysize" : int,
-    "size" : (int, int),
-    "fit" : str,
-    "maxsize" : (int, int),
-    "corner1" : (float, float),
-    "corner2" : (float, float),
-    "subpixel" : bool,
-    "delay" : float,
-    "xoffset" : float,
-    "yoffset" : float,
-    "offset" : (int, int),
-    "xcenter" : position,
-    "ycenter" : position,
-    "debug" : any_object,
-    "events" : bool,
-    "xpan" : float_or_none,
-    "ypan" : float_or_none,
-    "xtile" : int,
-    "ytile" : int,
-    "matrixcolor" : matrix,
-    "matrixtransform" : matrix,
-    "matrixanchor" : (position, position),
-    "shader" : any_object,
-    "mesh" : mesh,
-    "mesh_pad" : any_object,
-    "blur" : float_or_none,
-    "blend" : any_object,
-    "perspective" : any_object,
-    }
-
-for k in OLD_PROPERTIES:
-    if k not in renpy.atl.PROPERTIES:
-        print(k)
