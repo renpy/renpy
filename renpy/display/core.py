@@ -2012,6 +2012,10 @@ class Interface(object):
         # The old mouse.
         self.old_mouse = None
 
+        # A map from a layer to the duration of the current transition on that
+        # layer.
+        self.transition_delay = { }
+
         try:
             self.setup_nvdrs()
         except:
@@ -2631,7 +2635,10 @@ class Interface(object):
 
         # Compute the scene.
         for layer, d in self.compute_scene(scene_lists).items():
-            if layer not in self.transition:
+            if layer is None:
+                if not self.transition:
+                    self.old_scene[layer] = d
+            elif layer not in self.transition:
                 self.old_scene[layer] = d
 
         # Get rid of transient things.
@@ -2644,6 +2651,29 @@ class Interface(object):
         if renpy.store._side_image_attributes_reset:
             renpy.store._side_image_attributes = None
             renpy.store._side_image_attributes_reset = False
+
+    def end_transitions(self):
+        """
+        This runs at the end of each interaction to remove the transitions
+        that have run their course.
+        """
+
+        layers = list(self.ongoing_transition)
+
+        for l in layers:
+            if l is None:
+                self.ongoing_transition.pop(None, None)
+                self.transition_time.pop(None, None)
+                self.transition_from.pop(None, None)
+                continue
+
+            start = self.transition_time.get(l, self.frame_time)
+            delay = self.transition_delay.get(l, 0)
+
+            if (self.frame_time - start) >= delay:
+                self.ongoing_transition.pop(l, None)
+                self.transition_time.pop(l, None)
+                self.transition_from.pop(l, None)
 
     def set_transition(self, transition, layer=None, force=False):
         """
@@ -3118,9 +3148,7 @@ class Interface(object):
                 scene_lists = renpy.game.context().scene_lists
                 scene_lists.replace_transient()
 
-            self.ongoing_transition = { }
-            self.transition_time = { }
-            self.transition_from = { }
+            self.end_transitions()
 
             self.restart_interaction = True
 
@@ -3976,6 +4004,9 @@ class Interface(object):
             return False, e.value
 
         finally:
+
+            # Determine the transition delay for each layer.
+            self.transition_delay = { k : getattr(v, "delay", 0) for k, v in layers_root.layers.items() }
 
             # Clean out the overlay layers.
             for i in renpy.config.overlay_layers:

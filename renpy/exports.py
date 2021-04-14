@@ -815,6 +815,9 @@ def scene(layer='master'):
     if renpy.config.missing_scene:
         renpy.config.missing_scene(layer)
 
+    # End a transition that's affecting layer.
+    renpy.display.interface.ongoing_transition.pop(layer, None)
+
 
 def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", **kwargs): # @ReservedAssignment
     """
