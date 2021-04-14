@@ -2433,6 +2433,7 @@ class Interface(object):
 
         if renpy.android:
             android.init()
+            pygame.event.get()
 
     def draw_screen(self, root_widget, fullscreen_video, draw):
 
