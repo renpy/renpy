@@ -621,7 +621,7 @@ cdef class GL2Draw:
         self.change_fbo(self.fbo)
 
         glBindRenderbuffer(GL_RENDERBUFFER, self.color_renderbuffer)
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA, width, height)
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height)
 
         glFramebufferRenderbuffer(
             GL_FRAMEBUFFER,
