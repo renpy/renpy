@@ -43,7 +43,7 @@ screen _developer:
                 textbutton _("Interactive Director (D)"):
                     action [ director.Start(), Hide("_developer") ]
                 textbutton _("Reload Game (Shift+R)"):
-                    action ui.callsinnewcontext("_save_reload_game")
+                    action renpy.reload_script
                 textbutton _("Console (Shift+O)"):
                     action [ Hide("_developer"), _console.enter ]
                 textbutton _("Variable Viewer"):
