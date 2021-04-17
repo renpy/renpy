@@ -2261,6 +2261,9 @@ class Interface(object):
         Figures out the list of draw constructors to try.
         """
 
+        if "RENPY_RENDERER" in os.environ:
+            renpy.config.gl2 = False
+
         renderer = renpy.game.preferences.renderer
         renderer = os.environ.get("RENPY_RENDERER", renderer)
         renderer = renpy.session.get("renderer", renderer)
