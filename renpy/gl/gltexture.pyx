@@ -125,6 +125,9 @@ def test_texture_sizes(Environ environ, draw):
     renpy.display.log.write("- Hardware max texture size: %d", hw_max_size)
     hw_max_size = min(2048, hw_max_size)
 
+    if renpy.session.get("gl_did_texture_text", False):
+        return True
+
     SIZES = [ ]
 
     size = 64
@@ -241,6 +244,8 @@ def test_texture_sizes(Environ environ, draw):
     if not SIZES:
         renpy.display.log.write("Textures are not rendering properly.")
         return False
+
+    renpy.session["gl_did_texture_text"] = True
 
     SIZES.reverse()
     return True
