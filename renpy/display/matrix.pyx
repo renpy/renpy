@@ -396,6 +396,13 @@ cdef class Matrix:
 
         `x`, `y`, `x`
             The amount to rotate around the origin, in degrees.
+
+
+        The rotations are applied in order:
+
+        * A clockwise rotation by `x` degrees in the Y/Z plane.
+        * A clockwise rotation by `y` degrees in the Z/X plane.
+        * A clockwise rotation by `z` degrees in the X/Y plane.
         """
         return rotate_matrix(x, y, z)
 
