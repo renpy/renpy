@@ -74,7 +74,3 @@ init -1400 python:
         nargs = 3
         function = Matrix.scale
 
-    class PerspectiveMatrix(TransformMatrix):
-        nargs = 5
-        function = Matrix.perspective
-
