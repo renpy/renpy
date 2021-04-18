@@ -962,7 +962,7 @@ add_property("matrixtransform", matrix, None)
 add_property("maxsize", (int, int), None)
 add_property("mesh", mesh, False, diff=None)
 add_property("mesh_pad", any_object, None)
-add_property("nearest", bool_or_none, 1.0)
+add_property("nearest", bool_or_none, None)
 add_property("perspective", any_object, None)
 add_property("rotate", float, None)
 add_property("rotate_pad", bool, True)
@@ -1018,4 +1018,3 @@ renpy.atl.PROPERTIES.update(ALIASES)
 
 for name in ALIASES:
     setattr(Transform, name, Proxy(name))
-
