@@ -469,7 +469,7 @@ def transform_render(self, widtho, heighto, st, at):
         if state.matrixanchor is None:
 
             manchorx = width / 2.0
-            manchory = width / 2.0
+            manchory = height / 2.0
 
         else:
             manchorx, manchory = state.matrixanchor
