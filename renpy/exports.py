@@ -4007,3 +4007,18 @@ def get_sdl_window_pointer():
     except:
         return None
 
+
+def is_mouse_visible():
+    """
+    :doc: other
+
+    Returns True if the mouse cursor is visible, False otherwise.
+    """
+
+    if not renpy.display.interface:
+        return True
+
+    if not renpy.display.interface.mouse_focused:
+        return False
+
+    return renpy.display.interface.is_mouse_visible()

@@ -1206,11 +1206,6 @@ cdef class GLDraw:
         x = int(x)
         y = int(y)
 
-        x = max(0, x)
-        x = min(vw, x)
-        y = max(0, y)
-        y = min(vh, y)
-
         return x, y
 
     def untranslate_point(self, x, y):

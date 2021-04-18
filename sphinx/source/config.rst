@@ -689,6 +689,18 @@ Occasionally Used
     The frames are played back at 20Hz, and the animation loops after
     all frames have been shown.
 
+.. var:: config.mouse_displayable = None
+
+    If not None, this should either be a displayable, or a callable that
+    returns a displayable. The callable may return None, in which case
+    Ren'Py proceeds if the displayable is None.
+
+    If a displayable is given, the mouse cursor is hidden, and the
+    displayable is shown above anything else. This displayable is
+    responsible for positioning and drawing a sythetic mouse
+    cursor, and so should probably be a :func:`MouseDisplayable`
+    or something very similar.
+
 .. var:: config.narrator_menu = False
 
     (This is set to True by the default screens.rpy file.) If true,

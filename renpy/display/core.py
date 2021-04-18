@@ -2848,8 +2848,7 @@ class Interface(object):
             pygame.mouse.set_visible(True)
             cursor.activate()
 
-    def update_mouse(self):
-
+    def is_mouse_visible(self):
         # Figure out if the mouse visibility algorithm is hiding the mouse.
         if (renpy.config.mouse_hide_time is not None) and (self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time()):
             visible = False
@@ -2857,6 +2856,18 @@ class Interface(object):
             visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
 
         visible = visible and self.show_mouse and not (renpy.display.video.fullscreen)
+
+        return visible
+
+    def update_mouse(self, mouse_displayable):
+
+        visible = self.is_mouse_visible()
+
+        if mouse_displayable is not None:
+            x, y = renpy.exports.get_mouse_pos()
+
+            if (0 <= x < renpy.config.screen_width) and (0 <= y < renpy.config.screen_height):
+                visible = False
 
         # If not visible, hide the mouse.
         if not visible:
@@ -3534,6 +3545,14 @@ class Interface(object):
         for i in renpy.display.emulator.overlay:
             root_widget.add(i)
 
+        mouse_displayable = renpy.config.mouse_displayable
+        if mouse_displayable is not None:
+            if not isinstance(mouse_displayable, Displayable):
+                mouse_displayable = mouse_displayable()
+
+            if mouse_displayable is not None:
+                root_widget.add(mouse_displayable)
+
         del add_layer
 
         self.prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
@@ -3836,7 +3855,7 @@ class Interface(object):
                     renpy.display.tts.periodic()
                     renpy.display.controller.periodic()
 
-                    self.update_mouse()
+                    self.update_mouse(mouse_displayable)
 
                     continue
 
@@ -3902,6 +3921,9 @@ class Interface(object):
                     if self.ignore_touch:
                         renpy.display.focus.mouse_handler(None, -1, -1, default=False)
 
+                    if mouse_displayable:
+                        renpy.display.render.redraw(mouse_displayable, 0)
+
                 # Handle focus notifications.
                 if ev.type == pygame.ACTIVEEVENT:
 
@@ -3910,6 +3932,9 @@ class Interface(object):
                             renpy.display.focus.clear_focus()
 
                         self.mouse_focused = ev.gain
+
+                        if mouse_displayable:
+                            renpy.display.render.redraw(mouse_displayable, 0)
 
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain

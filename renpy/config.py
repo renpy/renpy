@@ -1133,6 +1133,10 @@ perspective = (100.0, 1000.0, 20000.0)
 # Does the scene clear the layer at list?
 scene_clears_layer_at_list = False
 
+# The mouse displayable, if any. Can be a displayable, or a callable that
+# return a displayable.
+mouse_displayable = None
+
 del os
 del collections
 
