@@ -463,6 +463,16 @@ def transform_render(self, widtho, heighto, st, at):
     else:
         self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
+    # xpos and ypos.
+    if perspective:
+        placement = (state.xpos, state.ypos, state.xanchor, state.yanchor, state.xoffset, state.yoffset, True)
+        xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
+
+        self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
+
+    elif state.zpos:
+        self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
+
     # matrixtransform
     if state.matrixtransform is not None:
 
@@ -484,10 +494,6 @@ def transform_render(self, widtho, heighto, st, at):
         m = Matrix.offset(manchorx, manchory, 0.0) * m
 
         self.reverse = m * self.reverse
-
-    # zpos
-    if state.zpos:
-        self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
 
     if state.zzoom and z11:
         zzoom = (z11 - state.zpos) / z11

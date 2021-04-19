@@ -123,10 +123,11 @@ class TransformState(renpy.object.Object):
         self.last_angle = ts.last_angle
 
         # Set the position and anchor to None, so inheritance works.
-        self.xpos = None
-        self.ypos = None
-        self.xanchor = None
-        self.yanchor = None
+        if self.perspective is None:
+            self.xpos = None
+            self.ypos = None
+            self.xanchor = None
+            self.yanchor = None
 
         # Take the computed position properties, not the
         # raw ones.
@@ -171,6 +172,17 @@ class TransformState(renpy.object.Object):
         return rv
 
     def get_placement(self, cxoffset=0, cyoffset=0):
+
+        if self.perspective is not None:
+            return (
+                0,
+                0,
+                0,
+                0,
+                cxoffset,
+                cyoffset,
+                False,
+                )
 
         return (
             first_not_none(self.xpos, self.inherited_xpos),
