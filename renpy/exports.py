@@ -1524,7 +1524,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
         afm = None
 
     if hard or not renpy.store._dismiss_pause:
-        renpy.ui.saybehavior(afm=afm, dismiss='dismiss_hard_pause')
+        renpy.ui.saybehavior(afm=afm, dismiss='dismiss_hard_pause', dismiss_unfocused=[])
     else:
         renpy.ui.saybehavior(afm=afm)
 
