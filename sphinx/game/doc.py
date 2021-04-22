@@ -218,6 +218,11 @@ def scan(name, o, prefix=""):
     # Get the function's docstring.
     doc = inspect.getdoc(o)
 
+#     if doc is None:
+#         doc = getattr(o, "__doc__", None)
+#         if not isinstance(doc, basestring):
+#             doc = None
+
     if not doc:
         return
 
