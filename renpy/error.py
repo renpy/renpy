@@ -229,7 +229,7 @@ def report_exception(e, editor=True):
             f.write(full)
 
         try:
-            if editor and renpy.game.args.command == "run": # @UndefinedVariable
+            if editor and ((renpy.game.args.command == "run") or (renpy.game.args.errors_in_editor)): # @UndefinedVariable
                 renpy.exports.launch_editor([ traceback_fn ], 1, transient=1)
         except:
             pass

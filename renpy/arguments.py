@@ -34,10 +34,9 @@ import renpy
 
 try:
     import site
-    site._renpy_argv_emulation()  # @UndefinedVariable
+    site._renpy_argv_emulation() # @UndefinedVariable
 except:
     pass
-
 
 # A map from command name to a (function, flag) tuple. The flag is true if the
 # function will parse command line arguments, and false otherwise.
@@ -120,6 +119,10 @@ class ArgumentParser(argparse.ArgumentParser):
             "--lint", action="store_true", dest="lint",
             help=argparse.SUPPRESS)
 
+        self.add_argument(
+            "--errors-in-editor", action="store_true",
+            help="Causes errors to open in a text editor.")
+
         dump = self.add_argument_group("JSON dump arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
         dump.add_argument("--json-dump", action="store", metavar="FILE", help="The name of the JSON file.")
         dump.add_argument("--json-dump-private", action="store_true", default=False, help="Include private names. (Names beginning with _.)")
@@ -128,7 +131,7 @@ class ArgumentParser(argparse.ArgumentParser):
         if second_pass:
             self.add_argument("-h", "--help", action="help", help="Displays this help message, then exits.")
 
-            command = renpy.game.args.command  # @UndefinedVariable
+            command = renpy.game.args.command # @UndefinedVariable
             self.group = self.add_argument_group("{0} command arguments".format(command), description)
 
     def add_argument(self, *args, **kwargs):
@@ -184,7 +187,7 @@ def run():
     if args.warp:
         renpy.warp.warp_spec = args.warp
 
-    if args.profile_display:  # @UndefinedVariable
+    if args.profile_display: # @UndefinedVariable
         renpy.config.profile = True
 
     if args.debug_image_cache:
@@ -193,7 +196,7 @@ def run():
     return True
 
 
-def compile():  # @ReservedAssignment
+def compile(): # @ReservedAssignment
     """
     This command forces the game script to be recompiled.
     """
@@ -203,7 +206,7 @@ def compile():  # @ReservedAssignment
     return False
 
 
-def quit():  # @ReservedAssignment
+def quit(): # @ReservedAssignment
     """
     This command is used to quit without doing anything.
     """
@@ -277,9 +280,9 @@ def post_init():
     if execution should continue and False otherwise.
     """
 
-    command = renpy.game.args.command  # @UndefinedVariable
+    command = renpy.game.args.command # @UndefinedVariable
 
-    if command == "run" and renpy.game.args.lint:  # @UndefinedVariable
+    if command == "run" and renpy.game.args.lint: # @UndefinedVariable
         command = "lint"
 
     if command not in commands:

@@ -254,6 +254,8 @@ init python in project:
             if persistent.navigate_library:
                 cmd.append("--json-dump-common")
 
+            cmd.append("--errors-in-editor")
+
             environ = dict(os.environ)
             environ["RENPY_LAUNCHER_LANGUAGE"] = _preferences.language or "english"
             environ.update(env)
