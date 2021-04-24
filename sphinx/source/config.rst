@@ -501,6 +501,11 @@ Occasionally Used
     edges drawn when aspect ratio of the window or monitor in fullscreen
     mode) does not match the aspect ratio of the game.
 
+.. var:: config.gl_lod_bias = -0.5
+
+    The default value of the :ref:`u_lod_bias <u-lod-bias>` uniform,
+    which controls the mipmap level Ren'Py uses.
+
 .. var:: config.gl_test_image = "black"
 
     The name of the image that is used when running the OpenGL

@@ -1137,6 +1137,9 @@ scene_clears_layer_at_list = False
 # return a displayable.
 mouse_displayable = None
 
+# The default bias for the GL level of detail.
+gl_lod_bias = -.5
+
 del os
 del collections
 

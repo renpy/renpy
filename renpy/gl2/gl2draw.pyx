@@ -1178,7 +1178,7 @@ cdef class GL2DrawingContext:
         program.start()
 
         program.set_uniform("u_model_size", (model.width, model.height))
-        program.set_uniform("u_lod_bias", -1.0)
+        program.set_uniform("u_lod_bias", float(renpy.config.gl_lod_bias))
         program.set_uniform("u_transform", transform)
         program.set_uniform("u_time", (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400)
         program.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
@@ -1305,7 +1305,6 @@ cdef class GL2DrawingContext:
             properties["texture_scaling"] = "nearest"
 
         self.draw_one(what, transform, clip_polygon, shaders, uniforms, properties)
-
 
 
 # A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.

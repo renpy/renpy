@@ -316,8 +316,13 @@ The following uniforms are made available to all Models.
 ``vec2 u_model_size``
     The width and height of the model.
 
-``vec2 u_lod_bias``
-    The level of detail bias to apply to texture lookups.
+.. _u-lod-bias:
+
+``float u_lod_bias``
+    The level of detail bias to apply to texture lookups. This may be
+    set in a Transform. The default value, taken from :var:`config.gl_lod_bias`
+    and defaulting to -0.5, biases Ren'Py to always pick the next bigger
+    level and scale it down.
 
 ``mat4 u_transform``
     The transform used project virtual pixels to the OpenGL viewport.
