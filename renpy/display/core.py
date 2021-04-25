@@ -2859,6 +2859,18 @@ class Interface(object):
 
         return visible
 
+    def get_mouse_name(self, cache_only=False):
+
+        mouse_kind = renpy.display.focus.get_mouse() or self.mouse
+
+        if cache_only and (mouse_kind not in self.cursor_cache):
+            mouse_kind = 'default'
+
+        if mouse_kind == 'default':
+            mouse_kind = getattr(renpy.store, 'default_mouse', 'default')
+
+        return mouse_kind
+
     def update_mouse(self, mouse_displayable):
 
         visible = self.is_mouse_visible()
@@ -2886,10 +2898,7 @@ class Interface(object):
             self.set_mouse(True)
             return
 
-        mouse_kind = renpy.display.focus.get_mouse() or self.mouse
-
-        if (mouse_kind == 'default') or (mouse_kind not in self.cursor_cache):
-            mouse_kind = getattr(renpy.store, 'default_mouse', 'default')
+        mouse_kind = self.get_mouse_name()
 
         if mouse_kind in self.cursor_cache:
             anim = self.cursor_cache[mouse_kind]
@@ -3551,7 +3560,7 @@ class Interface(object):
                 mouse_displayable = mouse_displayable()
 
             if mouse_displayable is not None:
-                root_widget.add(mouse_displayable)
+                root_widget.add(mouse_displayable, 0, 0)
 
         del add_layer
 

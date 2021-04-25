@@ -4022,3 +4022,16 @@ def is_mouse_visible():
         return False
 
     return renpy.display.interface.is_mouse_visible()
+
+
+def get_mouse_name():
+    """
+    :doc: other
+
+    Returns the name of the mouse that should be shown.
+    """
+
+    if not renpy.display.interface:
+        return 'default'
+
+    return renpy.display.interface.get_mouse_name()
