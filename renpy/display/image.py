@@ -904,6 +904,10 @@ class ShownImageInfo(renpy.object.Object):
         with that name couldn't be found.
         """
 
+        f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
+        if f is not None:
+            name = f(name)
+
         if layer is None:
             layer = renpy.config.tag_layer.get(tag, "master")
 

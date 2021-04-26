@@ -1140,6 +1140,10 @@ mouse_displayable = None
 # The default bias for the GL level of detail.
 gl_lod_bias = -.5
 
+# A dictionary from a tag (or None) to a function that adjusts the attributes
+# of that tag.
+adjust_attributes = { }
+
 del os
 del collections
 

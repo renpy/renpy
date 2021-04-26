@@ -216,6 +216,18 @@ for more information on how to set defaults for various preferences.
 Occasionally Used
 -----------------
 
+.. var:: config.adjust_attributes = { }
+
+    If not None, this is a dictionary. When a statement or function that
+    contains image attributes executes or is predicted, the tag is
+    looked up in this dictionary. If it is not found, the None key
+    is looked up in this dictionary.
+
+    If either is found, they're expected to be a function. The function
+    is given an image name, a tuple consisting of the tag and any
+    attributes. It should return an adjusted tuple, which contains
+    and a potential new set of attributes.
+
 .. var:: config.after_load_callbacks = [ ... ]
 
     A list of functions that are called (with no arguments) when a load
