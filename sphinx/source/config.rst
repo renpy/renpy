@@ -228,6 +228,9 @@ Occasionally Used
     attributes. It should return an adjusted tuple, which contains
     and a potential new set of attributes.
 
+    As this function may be called during prediction, it should not
+    rely on the image's state.
+
 .. var:: config.after_load_callbacks = [ ... ]
 
     A list of functions that are called (with no arguments) when a load
