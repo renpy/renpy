@@ -238,7 +238,7 @@ init -1500 python in achievement:
         from config.steam_appid.
         """
 
-        import os
+        import os, sys
 
         if config.early_script_version is not None:
             return
@@ -246,7 +246,7 @@ init -1500 python in achievement:
         if config.steam_appid is None:
             return
 
-        with open(os.path.join(config.renpy_base, "steam_appid.txt"), "w") as f:
+        with open(os.path.join(os.path.dirname(sys.executable), "steam_appid.txt"), "w") as f:
             f.write(str(config.steam_appid) + "\n")
 
     # Are the steam libraries installed? Used by the launcher.

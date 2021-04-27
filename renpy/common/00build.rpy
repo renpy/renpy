@@ -69,6 +69,8 @@ init -1500 python in build:
 
         ( "**/*.pyc", None),
 
+        ( "**/steam_appid.txt", None),
+
         ( "renpy.py", "all"),
 
         ( "renpy/", "all"),
