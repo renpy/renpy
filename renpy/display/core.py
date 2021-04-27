@@ -2861,9 +2861,12 @@ class Interface(object):
 
         return visible
 
-    def get_mouse_name(self, cache_only=False):
+    def get_mouse_name(self, cache_only=False, interaction=True):
 
-        mouse_kind = renpy.display.focus.get_mouse() or self.mouse
+        mouse_kind = renpy.display.focus.get_mouse()
+
+        if interaction and (mouse_kind is None):
+            mouse_kind = self.mouse
 
         if cache_only and (mouse_kind not in self.cursor_cache):
             mouse_kind = 'default'
@@ -2900,7 +2903,7 @@ class Interface(object):
             self.set_mouse(True)
             return
 
-        mouse_kind = self.get_mouse_name()
+        mouse_kind = self.get_mouse_name(True)
 
         if mouse_kind in self.cursor_cache:
             anim = self.cursor_cache[mouse_kind]
