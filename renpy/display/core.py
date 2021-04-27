@@ -2841,8 +2841,10 @@ class Interface(object):
         self.old_mouse = cursor
 
         if cursor is True:
+            pygame.mouse.reset()
             pygame.mouse.set_visible(True)
         elif cursor is False:
+            pygame.mouse.reset()
             pygame.mouse.set_visible(False)
         else:
             pygame.mouse.set_visible(True)
