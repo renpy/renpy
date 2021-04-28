@@ -3,7 +3,7 @@
 translate korean distribute_7db9b042:
 
     # e "One thing Ren'Py makes easy is building distributions of your visual novel so you can give it to players."
-    e "렌파이가 쉽게 할 수 있는 것들 중 하나는 시각 소설의 배포판을 제작하여 플레이어에게 줄 수 있다는 거야."
+    e "렌파이가 쉽게 할 수 있는 것들 중 하나는 비주얼 노벨의 배포판을 제작하여 플레이어에게 전달해주는 거야."
 
 # game/tutorial_distribute.rpy:5
 translate korean distribute_d373903b:
@@ -15,19 +15,19 @@ translate korean distribute_d373903b:
 translate korean distribute_2f970565:
 
     # e "While not every potential problem lint reports is a real issue, they generally are, and you should try to understand what might be wrong."
-    e "보고서의 모든 잠재된 문제들이 실제로는 문제가 되지 않을 수 있지만, 그것들은 일반적으로 문제가 되기 때문에, 무엇이 문제인지 이해해야 해."
+    e "보고서의 모든 잠재된 문제들이 실제로 문제를 발생시키는 건 아니지만, 보통은 문제가 되니까, 어느 것이 문제인지 이해하는 게 좋아."
 
 # game/tutorial_distribute.rpy:12
 translate korean distribute_29aea017:
 
     # e "After lint has finished, you can choose Build Distributions to build the Windows, Linux, and Mac distributions of your game."
-    e "오류 검사가 완료된 다음에는, '배포판 만들기'를 선택하여 게임의 Windows, Linux 및 Mac 배포판 빌드를 만들 수 있어."
+    e "오류 검사를 마친 다음에는, '배포판 만들기'를 선택하여 게임의 Windows, Linux 및 Mac 배포판 빌드를 만들 수 있어."
 
 # game/tutorial_distribute.rpy:14
 translate korean distribute_821be97b:
 
     # e "This can be as simple as clicking the Build button, when you're not on a Mac."
-    e "Mac을 사용하지 않는 경우에는 간단히 '만들기' 버튼을 클릭하는 것만으로 빌드를 할 수 있어."
+    e "Mac을 사용하지 않는 경우에는 간단히 빌드 버튼을 클릭하는 것만으로 빌드를 할 수 있어."
 
 # game/tutorial_distribute.rpy:16
 translate korean distribute_638f964a:
@@ -51,7 +51,7 @@ translate korean distribute_0b547b7b:
 translate korean distribute_50a57bcf:
 
     # e "Mobile platforms might also require you to change your visual novel a little, due to the smaller limited devices. For example, buttons need to be made large enough for a person to touch."
-    e "모바일 플랫폼들은 작은 장치라는 제한이 있기 때문에 제작한 시각 소설을 조금 변경해야 할 수도 있어. 예를 들면, 버튼은 사람이 터치할 수 있을 정도로 커야 하지."
+    e "모바일 플랫폼들은 작은 장치라는 제한이 있기 때문에 제작한 비주얼 노벨을 조금 변경해야 할 수도 있어. 예를 들면, 버튼은 사람이 터치할 수 있을 정도로 커야 하지."
 
 # game/tutorial_distribute.rpy:27
 translate korean distribute_a9a2149f:
@@ -63,11 +63,11 @@ translate korean distribute_a9a2149f:
 translate korean distribute_f1cbc9d0:
 
     # e "Thanks to the distribution tools Ren'Py ships with, there are thousands of visual novels available."
-    e "렌파이가 제공하는 배포 도구 덕분에 우리는 수천 개의 시각 소설을 이용할 수 있어."
+    e "렌파이가 제공하는 배포 도구 덕분에, 우리는 수천 개의 비주얼 노벨을 플레이할 수 있어."
 
 # game/tutorial_distribute.rpy:33
 translate korean distribute_500b3e7f:
 
     # e "I hope that soon, yours will be one of them!"
-    e "나는 곧 네 시각 소설이 그중 하나가 되기를 바랄게!"
+    e "네 비주얼 노벨이 곧 그중 하나가 되기를 바랄게!"
 
