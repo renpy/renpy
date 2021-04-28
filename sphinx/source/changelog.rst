@@ -2,7 +2,98 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
-.. _renpy-7.4.3:
+.. _renpy-7.4.5:
+
+7.4.5
+=====
+
+Model-Based Renderer
+--------------------
+
+The model-based renderer is now the default for games that are released
+with Ren'Py 7.4.5. To disable it for your game, please set :var:`config.gl2`
+to False.
+
+When the model-based renderer is being used, Ren'Py now supports a "3D Stage".
+This adds a third dimension to sprites, allowing for perspective correct
+zooming and motion, the rotation and translation of displayables in 3D,
+and many other new effects. Please see the :ref:`3D Stage <three-d-stage>`
+documentation for more information.
+
+To facilitate the 3D Stage, the ``scene`` statement no longer clears
+applied a layer as a whole with ``show layer`` of :func:`renpy.layer_at_list`.
+
+The new :func:`Swing` transition is usable when the model-based renderer
+is enabled. This causes the scene to rotate around the vertical or horizontal
+axis, in three dimensions, and to be replaced with a previous scene.
+
+The new :tpref:`blend` transform property allows the blend function to be
+specified. The blend function controls how a pixel being drawn is combined
+to the pixel it is being drawn to.In addition to the "normal" and "add" blend
+functions that Ren'Py already supported, new "multipy", "min", and "max" functions
+have been added.
+
+
+Mouse
+-----
+
+There have been a number of changes and improvements to the hardware mouse
+support, and it's now documented that GPUs have limits to the size of the
+hardware mouse that can be supported.
+
+A new variable :var:`config.mouse_displayable` and displayable,
+:func:`MouseDisplayable`, now can be used to replace the hardware mouse
+with a software one, similar to the way it was done in Ren'Py 7.3 and
+earlier.
+
+Features
+--------
+
+There is now a dark theme for the launcher.
+
+The new :var:`config.adjust_attributes` callback allows you to intercept
+image attributes when show, and replace them with a list of your own.
+For example, it's possible to use this to rewrite ``eileen happy``
+to ``eileen happy_eyes happy_mouth``, which interacts well with
+LayeredImage.
+
+When running lint from the command line, the ``--error-code`` option can
+be given to cause Ren'Py to return with an error code if lint fails.
+
+Layer transitions can now persist past the end of an interaction.
+
+Ren'Py avoids pausing right after a rollback, so that the rollback tries
+to finish at a more interactive statement.
+
+When playing a sound, it is possible to sync the start time of an audio
+file in one channel with the time of the audio file in another channel.
+
+
+Platform Support Fixes
+----------------------
+
+Building for iOS has been fixed.
+
+Support for Steam on macOS has been fixed.
+
+Signing and Notarizing macOS applications has been fixed.
+
+An issue that prevented blur from working properly on certain Android
+devices has been fixed.
+
+Other Fixes
+-----------
+
+The default level-of-detail bias has been set to -0.5, and can be changed
+with :var:`config.gl_lod_bias`. This is used to bias Ren'Py into scaling
+down, rather than scaling up, but the previous bias would cause Ren'Py
+to create jagged edges on images.
+
+There have been a number of improvements to the way Ren'Py handles
+modal screens.
+
+
+.. _renpy-7.4.4:
 
 7.4.4
 =====
@@ -51,6 +142,8 @@ A number of previously-undocumented methods on the `preferences object <preferen
 have been documented. These methods make it possible to get or set the current value
 of the volume and the current value of mute.
 
+
+.. _renpy-7.4.3:
 
 7.4.3
 =====
