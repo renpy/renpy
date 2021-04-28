@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,13 +32,12 @@ import tempfile
 import sys
 import io
 
-import encodings.latin_1  # @UnusedImport
+import encodings.latin_1 # @UnusedImport
 
 import renpy.config
 
 real_stdout = sys.stdout
 real_stderr = sys.stderr
-
 
 # The file events are logged to.
 log_file = None
@@ -78,7 +77,11 @@ class LogFile(object):
         if renpy.ios:
             self.file = real_stdout
 
-    def open(self):  # @ReservedAssignment
+    def open(self): # @ReservedAssignment
+
+        if renpy.config.log_to_stdout:
+            self.file = real_stdout
+            return True
 
         if self.file:
             return True
@@ -110,15 +113,10 @@ class LogFile(object):
             else:
                 mode = "w"
 
-            if renpy.config.log_to_stdout:
-                self.file = real_stdout
-
-            else:
-
-                try:
-                    self.file = io.open(fn, mode, encoding="utf-8")
-                except:
-                    self.file = io.open(altfn, mode, encoding="utf-8")
+            try:
+                self.file = io.open(fn, mode, encoding="utf-8")
+            except:
+                self.file = io.open(altfn, mode, encoding="utf-8")
 
             if self.append:
                 self.write('')
@@ -178,7 +176,7 @@ class LogFile(object):
 log_cache = { }
 
 
-def open(name, append=False, developer=False, flush=False):  # @ReservedAssignment
+def open(name, append=False, developer=False, flush=False): # @ReservedAssignment
     rv = log_cache.get(name, None)
 
     if rv is None:
@@ -213,9 +211,9 @@ class TimeLog(list):
         while self[0][0] < (now - self.duration):
             self.pop(0)
 
-
 ################################################################################
 # Stdout / Stderr Redirection
+
 
 class StdioRedirector(object):
 
@@ -228,8 +226,9 @@ class StdioRedirector(object):
         if not isinstance(s, str):
             s = str(s, "utf-8", "replace")
 
-        self.real_file.write(s)
-        self.real_file.flush()
+        if not renpy.config.log_to_stdout:
+            self.real_file.write(s)
+            self.real_file.flush()
 
         if renpy.ios:
             return

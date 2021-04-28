@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,6 +26,9 @@ init -1600 python hide:
 
     # menus: Music to play at the main menu.
     config.main_menu_music = None
+
+    # The amount of time to spend fading in the main menu music.
+    config.main_menu_music_fadein = 0.0
 
     # advanced: Callbacks to run at start.
     config.start_callbacks = [ ]
@@ -238,7 +241,7 @@ label _start:
     $ renpy.block_rollback()
 
     if config.main_menu_music:
-        $ renpy.music.play(config.main_menu_music, if_changed=True)
+        $ renpy.music.play(config.main_menu_music, if_changed=True, fadein=config.main_menu_music_fadein)
     else:
         $ renpy.music.stop()
 

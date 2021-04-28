@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # 00gltest.rpy:70
     old "Renderer"
@@ -275,3 +275,12 @@
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
     new "Presiona o mueve el '[control!s]' [kind]."
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "Habilitar (sin Blocklist)"
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "El archivo {a=edit:1:log.txt}log.txt{/a} puede contener información para ayudarte a encontrar el problema en tu ordenador."
+

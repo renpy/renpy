@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -601,7 +601,7 @@ new_compile_flags = (old_compile_flags
                       | __future__.unicode_literals.compiler_flag
                       )
 
-py3_compile_flags = (old_compile_flags |
+py3_compile_flags = (new_compile_flags |
                       __future__.division.compiler_flag)
 
 # The set of files that should be compiled under Python 2 with Python 3
@@ -629,6 +629,95 @@ def fix_missing_locations(node, lineno, col_offset):
             col_offset = node.col_offset
     for child in ast.iter_child_nodes(node):
         fix_missing_locations(child, lineno, col_offset)
+
+
+def quote_eval(s):
+    """
+    Quotes a string for `eval`. This is necessary when it's in certain places,
+    like as part of an argument string. We need to stick \ at the end of lines
+    that don't have it already, and that aren't in triple-quoted strings.
+    """
+
+    # No newlines! No problem.
+    if "\n" not in s:
+        return s
+
+    # Characters being added to the string.
+    rv = [ ]
+
+    # Pad out the string, so we don't have to deal with quotes at the end.
+    s += "\0\0"
+
+    len_s = len(s)
+
+    # The index into the string.
+    i = 0
+
+    # Special characters, that aren't just copied into the string.
+    special = "\0\\'\"\n"
+
+    # The string currently being processed.
+    string = None
+
+    while i < len_s:
+
+        c = s[i]
+
+        # Non-special characters.
+        if c not in special:
+            start = i
+
+            while True:
+                i += 1
+                if s[i] in special:
+                    break
+
+            rv.append(s[start:i])
+            continue
+
+        # Null.
+        if c == '\0':
+            rv.append(c)
+            i += 1
+            continue
+
+        # Any escaped character passes.
+        if c == '\\':
+            rv.append(s[i:i + 2])
+            i += 2
+            continue
+
+        # String delimiters.
+        if c in '\'"':
+
+            if ((string is None) or (len(string) == 3)) and (s[i + 1] == c) and (s[i + 2] == c):
+                delim = c + c + c
+            else:
+                delim = c
+
+            if (string is not None) and (delim == string):
+                string = None
+            elif string is None:
+                string = delim
+
+            rv.append(delim)
+            i += len(delim)
+
+            continue
+
+        # Newline.
+        if c == "\n":
+            if string is None:
+                rv.append('\\')
+
+            rv.append("\n")
+            i += 1
+            continue
+
+        raise Exception("Unknown character %r (can't happen)".format(c))
+
+    # Since the last 2 characters are \0, those characters need to be stripped.
+    return "".join(rv[:-2])
 
 
 def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True):
@@ -689,10 +778,9 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
     source = str(source)
     source = source.replace("\r", "")
-    source = escape_unicode(source)
 
     if mode == "eval":
-        source = source.replace("\n", "\\\n").replace("\\\\\n", "\\\n")
+        source = quote_eval(source)
 
     try:
         line_offset = lineno - 1
@@ -714,6 +802,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
             except:
                 flags = old_compile_flags
+                source = escape_unicode(source)
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
 
         tree = wrap_node.visit(tree)
@@ -1137,6 +1226,23 @@ class RevertableObject(object):
         self.__dict__.update(compressed)
 
 
+class AlwaysRollback(RevertableObject):
+    """
+    This is a revertible object that always participates in rollback.
+    It's used when a revertable object is created by an object that
+    doesn't participate in the rollback system.
+    """
+
+    def __new__(cls, *args, **kwargs):
+        self = super(AlwaysRollback, cls).__new__(cls)
+
+        log = renpy.game.log
+        if log is not None:
+            del log.mutated[id(self)]
+
+        return self
+
+
 class RollbackRandom(random.Random):
     """
     This is used for Random objects returned by renpy.random.Random.
@@ -1397,6 +1503,7 @@ class Rollback(renpy.object.Object):
         """
 
         for obj, roll in reversed(self.objects):
+
             if roll is not None:
                 obj._rollback(roll)
 

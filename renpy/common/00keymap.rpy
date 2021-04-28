@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -238,14 +238,13 @@ init -1600 python:
 
     def _help(help=None):
 
-        if config.help_screen and renpy.has_screen(config.help_screen):
-            renpy.run(ShowMenu(config.help_screen))
-            return
-
         if help is None:
             help = config.help
 
         if help is None:
+            if config.help_screen and renpy.has_screen(config.help_screen):
+                renpy.run(ShowMenu(config.help_screen))
+
             return
 
         if renpy.has_label(help):
@@ -444,6 +443,11 @@ label _hide_windows:
 
     if _windows_hidden:
         return
+
+    if renpy.has_label("hide_windows"):
+        call hide_windows
+        if _return:
+            return
 
     python:
         _windows_hidden = True

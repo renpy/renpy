@@ -192,6 +192,17 @@ into::
         $ latin_points = to_roman_numerals(points)
         e "Ouyay oredscay [latin_points] ointspay!"
 
+Sometimes it might be desirable to change a line of
+dialogue in the original language, without requiring
+the translators to retranslate the line. For example,
+a typo in English is unlikely to have surved the process
+of being translated into Russian.
+
+This can be done by including an ``id`` clause as part of the
+say statement, giving the translation ID to use for this
+statement. For example:
+
+    e "This used to have a typo." id start_61b861a2
 
 Tips
 ----
@@ -429,6 +440,8 @@ translation:
    is displayed.
 
 .. include:: inc/underscore_p
+
+.. include:: inc/translate_string
 
 There are two language-related variables. One is
 :var:`config.language`, which is used to change the default language

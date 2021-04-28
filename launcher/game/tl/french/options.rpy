@@ -192,3 +192,15 @@ translate french strings:
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Le nom d’utilisateur et du projet associé au projet itch.io, séparé par un slash."
+
+    # gui/game/options.rpy:31
+    old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
+    new "## Texte placé sur l'écran \"À propos\" du jeu. Placez le texte entre triples guillemets, et laissez une ligne entre les paragraphes."
+
+    # gui/game/options.rpy:82
+    old "## Between screens of the game menu."
+    new "## Entre les écrans du menu du jeu."
+
+    # gui/game/options.rpy:152
+    old "## Icon"
+    new "## Icône"

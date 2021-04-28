@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,12 +24,13 @@
 init -1500 python:
     import math as _math
 
-    class ColorMatrix(object):
+    class _BaseMatrix(object):
         """
         :undocumented:
 
         Documented in text. The base class for various *Matrix classes
-        that are intended to return a Matrix that transforms colors.
+        that are intended to return a Matrix, both ColorMatrix and
+        TransformMatrix.
         """
 
         def __init__(self, value=1.0):
@@ -54,6 +55,16 @@ init -1500 python:
 
         def __ne__(self, other):
             return not (self == other)
+
+    class ColorMatrix(_BaseMatrix):
+        """
+        :undocumented:
+
+        Documented in text. The base class for various *Matrix classes
+        that are intended to return a Matrix that transforms colors.
+        """
+
+        pass
 
     class _MultiplyMatrix(ColorMatrix):
         """
@@ -153,17 +164,14 @@ init -1500 python:
 
                 # When not using an old color, we can take
                 # r, g, b, and a from self.color.
-                r, g, b = self.color.rgb
-                a = self.color.alpha
+                r, g, b, a = self.color.rgba
 
             else:
 
                 # Otherwise, we have to extract from self.color
                 # and other.color, and interpolate the results.
-                oldr, oldg, oldb = other.color.rgb
-                olda = other.color.alpha
-                r, g, b = self.color.rgb
-                a = self.color.alpha
+                oldr, oldg, oldb, olda = other.color.rgba
+                r, g, b, a = self.color.rgba
 
                 r = oldr + (r - oldr) * done
                 g = oldg + (g - oldg) * done

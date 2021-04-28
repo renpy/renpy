@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -224,6 +224,9 @@ def map_event(ev, keysym):
 
         return False
 
+    if isinstance(keysym, list):
+        keysym = tuple(keysym)
+
     check_code = event_cache.get(keysym, None)
     if check_code is None:
         check_code = eval("lambda ev : " + compile_event(keysym, True), globals())
@@ -232,17 +235,20 @@ def map_event(ev, keysym):
     return check_code(ev)
 
 
-def map_keyup(ev, name):
+def map_keyup(ev, keysym):
     """Returns true if the event matches the named keycode being released."""
 
     if ev.type == renpy.display.core.EVENTNAME:
-        if (name in ev.eventnames) and ev.up:
+        if (keysym in ev.eventnames) and ev.up:
             return True
 
-    check_code = keyup_cache.get(name, None)
+    if isinstance(keysym, list):
+        keysym = tuple(keysym)
+
+    check_code = keyup_cache.get(keysym, None)
     if check_code is None:
-        check_code = eval("lambda ev : " + compile_event(name, False), globals())
-        keyup_cache[name] = check_code
+        check_code = eval("lambda ev : " + compile_event(keysym, False), globals())
+        keyup_cache[keysym] = check_code
 
     return check_code(ev)
 
@@ -667,7 +673,11 @@ class SayBehavior(renpy.display.layout.Null):
         if renpy.config.skipping and renpy.config.allow_skipping and renpy.store._skipping:
 
             if ev.type == renpy.display.core.TIMEEVENT and st >= skip_delay:
-                if renpy.game.preferences.skip_unseen:
+
+                if ev.modal:
+                    renpy.config.skipping = None
+                    renpy.exports.restart_interaction()
+                elif renpy.game.preferences.skip_unseen:
                     return True
                 elif renpy.config.skipping == "fast":
                     return True
@@ -1418,7 +1428,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                 if self.allow:
 
                     # Allow is regex
-                    if isinstance(self.allow, re._pattern_type):
+                    if isinstance(self.allow, re.Pattern):
 
                         # Character doesn't match
                         if self.allow.search(c) is None:
@@ -1432,7 +1442,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                 if self.exclude:
 
                     # Exclude is regex
-                    if isinstance(self.exclude, re._pattern_type):
+                    if isinstance(self.exclude, re.Pattern):
 
                         # Character matches
                         if self.exclude.search(c) is not None:
@@ -2070,13 +2080,11 @@ class Conditional(renpy.display.layout.Container):
             return self.child.event(ev, x, y, st)
 
 
-class TimerState(renpy.python.RevertableObject):
+class TimerState(renpy.python.AlwaysRollback):
     """
     Stores the state of the timer, which may need to be rolled back.
     """
 
-    # Prevents us from having to worry about our initialization being
-    # rolled back.
     started = False
     next_event = None
 
@@ -2183,13 +2191,17 @@ class MouseArea(renpy.display.core.Displayable):
         if renpy.display.focus.get_grab():
             return
 
-        if self.style.focus_mask is not None:
-            crend = renpy.display.render.render(self.style.focus_mask, self.width, self.height, st, self.at_st_offset + st)
-            is_hovered = crend.is_pixel_opaque(x, y)
-        elif 0 <= x < self.width and 0 <= y < self.height:
-            is_hovered = True
-        else:
+        if renpy.display.focus.pending_focus_type == 'keyboard':
             is_hovered = False
+
+        else:
+            if self.style.focus_mask is not None:
+                crend = renpy.display.render.render(self.style.focus_mask, self.width, self.height, st, self.at_st_offset + st)
+                is_hovered = crend.is_pixel_opaque(x, y)
+            elif 0 <= x < self.width and 0 <= y < self.height:
+                is_hovered = True
+            else:
+                is_hovered = False
 
         if is_hovered and not self.is_hovered:
             self.is_hovered = True

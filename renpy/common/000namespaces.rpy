@@ -1,6 +1,8 @@
 ﻿python early hide:
 
     class _ObjectNamespace(object):
+        pure = True
+
         def __init__(self, nso, name):
             self.nso = nso
             self.name = name
@@ -15,6 +17,8 @@
             return getattr(self.nso, name)
 
     class _PersistentNamespace(object):
+        pure = False
+
         def set(self, name, value):
             if getattr(persistent, name) is None:
                 setattr(persistent, name, value)
@@ -24,9 +28,25 @@
                 setattr(persistent, name, value)
 
         def get(self, name):
-            return getattre(persistent, name)
+            return getattr(persistent, name)
+
+    class _ErrorNamespace(object):
+        pure = False
+
+        def __init__(self, name):
+            self.name = name
+
+        def set(self, name, value):
+            raise Exception("The define statement can not be used with the {} namespace.".format(self.name))
+
+        def set_default(self, name, value):
+            raise Exception("The default statement can not be used with the {} namespace.".format(self.name))
+
+        def get(self, name):
+            raise Exception("The default and define statements can not be used with the {} namespace.".format(self.name))
 
     class _PreferencesNamespace(object):
+        pure = False
 
         def set(self, name, value):
             raise Exception("The define statement can not be used with the preferences namespace.")
@@ -60,6 +80,8 @@
             raise Exception("The define statement can not be used with the preferences namespace.")
 
     class _GuiNamespace(object):
+        pure = True
+
         def set(self, name, value):
             setattr(gui, name, value)
 
@@ -73,4 +95,5 @@
     config.special_namespaces["store.persistent"] = _PersistentNamespace()
     config.special_namespaces["store.preferences"] =  _PreferencesNamespace()
     config.special_namespaces["store.gui"] = _GuiNamespace()
+    config.special_namespaces["store.renpy"] = _ErrorNamespace("renpy")
 

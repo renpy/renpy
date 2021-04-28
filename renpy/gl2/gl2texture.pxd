@@ -67,7 +67,6 @@ cdef class GLTexture(Model):
     # The texture loader associated with this texture.
     cdef TextureLoader loader
 
-
     # The width and height of the texture. (Which may be a different size
     # than the model, if the texture is being rendered in the drawable
     # space.

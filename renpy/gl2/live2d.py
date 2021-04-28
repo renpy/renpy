@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -164,7 +164,7 @@ class Live2DCommon(object):
     but is loaded at init time.
     """
 
-    def __init__(self, filename):
+    def __init__(self, filename, default_fade):
 
         init()
 
@@ -206,15 +206,15 @@ class Live2DCommon(object):
         # A map from the expression name to the information about it.
         expression_files = { }
 
-        motions_dir = self.base + "motions/"
-        expressions_dir = self.base + "expressions/"
-
         for i in renpy.exports.list_files():
-            if i.startswith(motions_dir):
+
+            if not i.startswith(self.base):
+                continue
+
+            if i.endswith("motion3.json"):
                 i = i[len(self.base):]
                 motion_files[i] = { "File" : i }
-
-            elif i.startswith(expressions_dir):
+            elif i.endswith(".exp3.json"):
                 i = i[len(self.base):]
                 expression_files[i] = { "File" : i }
 
@@ -253,8 +253,8 @@ class Live2DCommon(object):
 
                 self.motions[name] = renpy.gl2.live2dmotion.Motion(
                     self.base + i["File"],
-                    i.get("FadeInTime", 1.0),
-                    i.get("FadeOutTime", 1.0))
+                    i.get("FadeInTime", default_fade),
+                    i.get("FadeOutTime", default_fade))
 
                 self.attributes.add(name)
 
@@ -280,8 +280,8 @@ class Live2DCommon(object):
 
                 self.expressions[name] = Live2DExpression(
                     expression_json.get("Parameters", [ ]),
-                    expression_json.get("FadeInTime", 1.0),
-                    expression_json.get("FadeOutTime", 1.0),
+                    expression_json.get("FadeInTime", default_fade),
+                    expression_json.get("FadeOutTime", default_fade),
                     )
 
                 self.attributes.add(name)
@@ -310,6 +310,9 @@ class Live2DCommon(object):
 
         # Same.
         self.attribute_filter = None
+
+        # If not None, a function that can blend parameters itself after applying expressions.
+        self.update_function = None
 
     def apply_aliases(self, aliases):
 
@@ -479,19 +482,24 @@ class Live2D(renpy.display.core.Displayable):
     _duplicatable = True
     used_nonexclusive = None
 
+    def create_common(self, default_fade=1.0):
+
+        rv = common_cache.get(self.filename, None)
+
+        if rv is None:
+            rv = Live2DCommon(self.filename, default_fade)
+            common_cache[self.filename] = rv
+
+        self.common_cache = rv
+
+        return rv
+
     @property
     def common(self):
         if self.common_cache is not None:
             return self.common_cache
 
-        rv = common_cache.get(self.filename, None)
-
-        if rv is None:
-            rv = Live2DCommon(self.filename)
-            common_cache[self.filename] = rv
-
-        self.common_cache = rv
-        return rv
+        return self.create_common(self.filename)
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
     def __init__(
@@ -512,6 +520,8 @@ class Live2D(renpy.display.core.Displayable):
             sustain=False,
             attribute_function=None,
             attribute_filter=None,
+            update_function=None,
+            default_fade=1.0,
             **properties):
 
         super(Live2D, self).__init__(**properties)
@@ -533,7 +543,7 @@ class Live2D(renpy.display.core.Displayable):
         self.name = None
 
         # Load the common data. Needed!
-        common = self.common
+        common = self.create_common(default_fade)
 
         if nonexclusive:
             common.apply_nonexclusive(nonexclusive)
@@ -549,6 +559,9 @@ class Live2D(renpy.display.core.Displayable):
 
         if attribute_filter is not None:
             common.attribute_filter = attribute_filter
+
+        if update_function is not None:
+            common.update_function = update_function
 
     def _duplicate(self, args):
 
@@ -650,13 +663,17 @@ class Live2D(renpy.display.core.Displayable):
             if i in common.nonexclusive:
                 rv.append(i)
 
+        rv = tuple(rv)
+
         if common.attribute_filter:
             rv = common.attribute_filter(rv)
+            if not isinstance(rv, tuple):
+                rv = tuple(rv)
 
         if sustain:
-            rv = ("_sustain" ,) + rv
+            rv = ("_sustain",) + rv
 
-        return tuple(rv)
+        return rv
 
     def update(self, common, st, st_fade):
         """
@@ -675,8 +692,14 @@ class Live2D(renpy.display.core.Displayable):
         # True if the motion should be faded out.
         do_fade_out = True
 
+        # True if this is the last frame of a series of motions.
+        last_frame = False
+
         for m in self.motions:
             motion = common.motions.get(m, None)
+
+            if motion is None:
+                continue
 
             if motion.duration > st:
 
@@ -688,11 +711,15 @@ class Live2D(renpy.display.core.Displayable):
             st -= motion.duration
 
         else:
+            if motion is None:
+                return None
+
             if self.loop:
                 do_fade_in = not common.is_seamless(m)
                 do_fade_out = not common.is_seamless(m)
             else:
                 st = motion.duration
+                last_frame = True
 
         if motion is None:
             return None
@@ -711,7 +738,10 @@ class Live2D(renpy.display.core.Displayable):
             elif kind == "Model":
                 common.model.set_parameter(key, value, factor)
 
-        return motion.wait(st, st_fade, do_fade_in, do_fade_out)
+        if last_frame:
+            return None
+        else:
+            return motion.wait(st, st_fade, do_fade_in, do_fade_out)
 
     def update_expressions(self, st):
 
@@ -763,6 +793,12 @@ class Live2D(renpy.display.core.Displayable):
 
         return redraw
 
+    def blend_parameter(self, name, blend, value, weight=1.0):
+        if blend not in ("Add", "Multiply", "Overwrite"):
+            raise Exception("Unknown blend mode {!r}".format(blend))
+
+        self.common.model.blend_parameter(name, blend, value, weight)
+
     def render(self, width, height, st, at):
 
         common = self.common
@@ -796,7 +832,7 @@ class Live2D(renpy.display.core.Displayable):
                 fade = False
 
         # Reset the parameter, and update.
-        common.model.reset_parameters()
+        model.reset_parameters()
 
         if fade:
             old_redraw = state.old.update(common, renpy.display.interface.frame_time - state.old_base_time, st)
@@ -810,8 +846,14 @@ class Live2D(renpy.display.core.Displayable):
         # Apply the expressions.
         expression_redraw = self.update_expressions(st)
 
+        # Apply the user-defined update.
+        if common.update_function is None:
+            user_redraw = None
+        else:
+            user_redraw = common.update_function(self, st)
+
         # Determine when to redraw.
-        redraws = [ new_redraw, old_redraw, expression_redraw ]
+        redraws = [ new_redraw, old_redraw, expression_redraw, user_redraw ]
         redraws = [ i for i in redraws if i is not None ]
 
         if redraws:

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -246,8 +246,8 @@ init python:
     # Mac signing options.
     import os
     build.mac_identity = os.environ.get("RENPY_MAC_IDENTITY", None)
-    build.mac_codesign_command = [ "/home/tom/ab/renpy-deps/mac/mac_sign_client.sh", "{identity}", "{app}" ]
-    build.mac_create_dmg_command = [ "/home/tom/ab/renpy-deps/mac/mac_dmg_client.sh", "{identity}", "{volname}", "{sourcedir}", "{dmg}" ]
+    build.mac_codesign_command = [ config.renpy_base + "/scripts/mac/mac_sign_client.sh", "{identity}", "{app}" ]
+    build.mac_create_dmg_command = [ config.renpy_base + "/scripts/mac/mac_dmg_client.sh", "{identity}", "{volname}", "{sourcedir}", "{dmg}" ]
     build.mac_codesign_dmg_command = [ "/bin/true" ]
 
 

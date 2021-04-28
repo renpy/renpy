@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -99,6 +99,7 @@ text_property_names = [
     "underline",
     "hinting",
     "adjust_spacing",
+    "mipmap",
     ]
 
 text_properties = [ Style(i) for i in text_property_names ]
@@ -128,6 +129,7 @@ window_properties = [ Style(i) for i in [
     "background",
     "foreground",
     "size_group",
+    "modal",
     ] ] + margin_properties + padding_properties
 
 button_properties = [ Style(i) for i in [
@@ -149,8 +151,7 @@ button_properties = [ Style(i) for i in [
         Keyword("alternate_keysym"),
     ]
 
-
-bar_property_names =  [
+bar_property_names = [
     "bar_vertical",
     "bar_invert",
     "bar_resizing",
@@ -195,7 +196,6 @@ grid_properties = [ Style(i) for i in [
     "xspacing",
     "yspacing",
     ] ] + margin_properties
-
 
 ui_properties = [
     Keyword("at"),

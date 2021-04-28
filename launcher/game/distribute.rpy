@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -316,7 +316,7 @@ init python in distribute:
             for f in list(self):
 
                 if f.name.startswith("lib/python2.7") and (not duplicate):
-                    name = app + "/Contents/MacOS/" + f.name
+                    name = app + "/Contents/Resources/" + f.name
 
                 elif f.name.startswith("lib/mac-x86_64"):
                     name = app + "/Contents/MacOS/" + f.name[15:]
@@ -542,6 +542,9 @@ init python in distribute:
             # Assign the x-bit as necessary.
             self.mark_executable()
 
+            # Merge file lists, as needed.
+            self.merge_file_lists()
+
             # Rename the executable-like files.
             if not build['renpy']:
                 self.rename()
@@ -612,8 +615,17 @@ init python in distribute:
                     match_name = name
 
                 for pattern, file_list in patterns:
+
                     if match(match_name, pattern):
+
+                        # When we have ('test/**', None), avoid excluding test.
+                        if (not file_list) and is_dir:
+                            new_pattern = pattern.rstrip("*")
+                            if (pattern != new_pattern) and match(match_name, new_pattern):
+                                continue
+
                         break
+
                 else:
                     print(str(match_name), "doesn't match anything.", file=self.log)
 
@@ -639,6 +651,17 @@ init python in distribute:
 
             for fn in os.listdir(directory):
                 walk(fn, os.path.join(directory, fn))
+
+        def merge_file_lists(self):
+            """
+            For each (old, new) in self.build['merge'], merge the old list
+            into the new list.
+            """
+
+            for old, new in self.build['merge']:
+                self.file_lists[new] = FileList.merge([
+                    self.file_lists[old],
+                    self.file_lists[new]])
 
         def rescan(self, oldlist, directory):
             """
@@ -859,6 +882,7 @@ init python in distribute:
                         "UTTypeTagSpecification" : { "public.filename-extension" : [ "rpy" ] }
                     },
                     ],
+                NSHighResolutionCapable=True,
                 )
 
             if self.build.get('allow_integrated_gpu', False):
@@ -875,16 +899,18 @@ init python in distribute:
             if self.build['renpy']:
                 windows = 'binary'
                 linux = 'binary'
+                linux_i686 = 'binary'
                 mac = 'binary'
                 raspi = 'raspi'
             else:
                 windows = 'windows'
                 linux = 'linux'
+                linux_i686 = 'linux_i686'
                 mac = 'mac'
                 raspi = 'linux'
 
             self.add_file(
-                linux,
+                linux_i686,
                 "lib/linux-i686/" + self.executable_name,
                 os.path.join(config.renpy_base, "lib/linux-i686/renpy"),
                 True)
@@ -951,7 +977,7 @@ init python in distribute:
             if not self.build['renpy']:
                 self.add_directory(filelist, contents + "/MacOS/lib")
                 self.add_directory(filelist, contents + "/MacOS/lib/mac-x86_64")
-                self.add_directory(filelist, contents + "/MacOS/lib/python2.7")
+                self.add_directory(filelist, contents + "/Resources/lib/python2.7")
 
             self.file_lists[filelist].mac_lib_transform(self.app, self.build['renpy'])
 
@@ -962,24 +988,31 @@ init python in distribute:
 
             if self.build['renpy']:
                 windows = 'binary'
+                windows_i686 = 'binary'
             else:
                 windows = 'windows'
+                windows_i686 = 'windows_i686'
 
 
             icon_fn = os.path.join(self.project.path, "icon.ico")
 
 
-            def write_exe(src, dst, tmp):
+            def write_exe(src, dst, tmp, fl):
                 """
                 Write the exe found at `src` (taken as relative to renpy-base)
                 as `dst` (in the distribution). `tmp` is the name of a tempfile
                 that is written if one is needed.
                 """
 
+                if fl == "windows_i686":
+                    should_change_icon = self.build["change_icon_i686"]
+                else:
+                    should_change_icon = True
+
                 src = os.path.join(config.renpy_base, src)
                 tmp = self.temp_filename(tmp)
 
-                if os.path.exists(icon_fn) and os.path.exists(src):
+                if should_change_icon and os.path.exists(icon_fn) and os.path.exists(src):
 
                     with open(tmp, "wb") as f:
                         f.write(change_icons(src, icon_fn))
@@ -988,19 +1021,20 @@ init python in distribute:
                     tmp = src
 
                 if os.path.exists(tmp):
-                    self.add_file(windows, dst, tmp)
+                    self.add_file(fl, dst, tmp)
 
-            write_exe("lib/windows-i686/renpy.exe", self.exe32, self.exe32)
-            write_exe("lib/windows-i686/pythonw.exe", "lib/windows-i686/pythonw.exe", "pythonw-32.exe")
-            write_exe("lib/windows-x86_64/renpy.exe", self.exe, self.exe)
-            write_exe("lib/windows-x86_64/pythonw.exe", "lib/windows-x86_64/pythonw.exe", "pythonw-64.exe")
+            if self.build["include_i686"]:
+                write_exe("lib/windows-i686/renpy.exe", self.exe32, self.exe32, windows_i686)
+                write_exe("lib/windows-i686/pythonw.exe", "lib/windows-i686/pythonw.exe", "pythonw-32.exe", windows_i686)
+
+            write_exe("lib/windows-x86_64/renpy.exe", self.exe, self.exe, windows)
+            write_exe("lib/windows-x86_64/pythonw.exe", "lib/windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
 
         def add_main_py(self):
             if self.build['renpy']:
                 return
 
             self.add_file("web", "main.py", os.path.join(config.renpy_base, "renpy.py"))
-
 
         def mark_executable(self):
             """
@@ -1383,6 +1417,11 @@ init python in distribute:
                 return
 
             index = { }
+
+            # Ren'Py 7.4.1 forgot to include mac zsync, so it needs to be downloaded before the update
+            # can occur.
+            if self.build['renpy']:
+                index["monkeypatch"] = "def mac_fix():\n    import renpy\n    if not renpy.macintosh:\n        return\n\n    import os\n    mac = os.path.join(renpy.config.renpy_base, \"lib\", \"mac-x86_64\")\n    zsync = os.path.join(mac, \"zsync\")\n\n    if not os.path.isdir(mac):\n        return\n\n    if os.path.isdir(zsync):\n        return\n\n    import requests\n\n    response = requests.get(\"https://www.renpy.org/dl/mac-fix/zsync\")\n\n    with open(zsync + \".new\", \"w\") as f:\n        f.write(response.content)\n    \n    os.chmod(zsync + \".new\", 0o755)\n    os.rename(zsync + \".new\", zsync)\n\nmac_fix()\n"
 
             def add_variant(variant):
 

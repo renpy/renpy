@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -56,6 +56,9 @@ report_node = None
 all_define_statments = {}
 all_default_statements = {}
 
+# True if at east one error was reported, false otherwise.
+error_reported = False
+
 # Reports a message to the user.
 
 
@@ -66,8 +69,11 @@ def report(msg, *args):
         out = ""
 
     out += msg % args
-    print()
-    print(out.encode('utf-8'))
+    print("")
+    print(out)
+
+    global error_reported
+    error_reported = True
 
 
 added = { }
@@ -408,10 +414,21 @@ def check_user(node):
         report("Didn't properly report what the next statement should be.")
 
 
+def quote_text(s):
+
+    s = s.replace("\\", "\\\\")
+    s = s.replace("\"", "\\\"")
+    s = s.replace("\t", "\\t")
+    s = s.replace("\n", "\\n")
+
+    return "\"" + s + "\""
+
+
 def text_checks(s):
+
     msg = renpy.text.extras.check_text_tags(s)
     if msg:
-        report("%s (in %s)", msg, repr(s)[1:])
+        report("%s (in %s)", msg, quote_text(s))
 
     if "%" in s and renpy.config.old_substitutions:
 
@@ -438,7 +455,7 @@ def text_checks(s):
                 elif c in "diouxXeEfFgGcrs%":
                     state = 0
                 else:
-                    report("Unknown string format code '%s' (in %s)", fmt, repr(s)[1:])
+                    report("Unknown string format code '%s' (in %s)", fmt, quote_text(s))
                     state = 0
 
             # In a mapping key.
@@ -448,7 +465,7 @@ def text_checks(s):
                     state = 1
 
         if state != 0:
-            report("Unterminated string format code '%s' (in %s)", fmt, repr(s)[1:])
+            report("Unterminated string format code '%s' (in %s)", fmt, quote_text(s))
 
 
 def check_say(node):
@@ -746,11 +763,12 @@ def lint():
 
     ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
+    ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errros, 1 if lint errors are found.")
 
     args = ap.parse_args()
 
     if args.filename:
-        f = codecs.open(args.filename, "w", encoding="utf-8")
+        f = open(args.filename, "w", encoding="utf-8")
         sys.stdout = f
 
     renpy.game.lint = True
@@ -768,7 +786,7 @@ def lint():
     # them. We sort them in filename, linenumber order.
 
     all_stmts = list(renpy.game.script.all_stmts)
-    all_stmts.sort(key=lambda n : (n.filename, n.linenumber))
+    all_stmts.sort(key=lambda n : n.filename)
 
     # The current count.
     counts = collections.defaultdict(Count)
@@ -887,10 +905,10 @@ characters per block. """.format(
 
         lines.append(s)
 
-    print()
-    print()
+    print("")
+    print("")
     print("Statistics:")
-    print()
+    print("")
 
     languages = list(counts)
     languages.sort()
@@ -902,19 +920,22 @@ characters per block. """.format(
 
     for l in lines:
         for ll in textwrap.wrap(l, 78):
-            print(ll.encode("utf-8"))
+            print(ll)
 
-        print()
+        print("")
 
     for i in renpy.config.lint_stats_callbacks:
         i()
 
-    print()
+    print("")
     if renpy.config.developer and (renpy.config.original_developer != "auto"):
         print("Remember to set config.developer to False before releasing.")
-        print()
+        print("")
 
     print("Lint is not a substitute for thorough testing. Remember to update Ren'Py")
     print("before releasing. New releases fix bugs and improve compatibility.")
+
+    if error_reported and args.error_code:
+        renpy.exports.quit(status=1)
 
     return False

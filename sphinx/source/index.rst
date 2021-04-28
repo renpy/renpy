@@ -15,7 +15,11 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
 
     简体中文的文档请参考这里：
 
-        https://www.renpy.cn/doc/index.html
+        https://renpy.cn/doc/
+
+    繁體中文的文件請參考這裡：
+
+        https://renpy.cn/doc-tw/
 
 Getting Started
 ---------------
@@ -167,6 +171,7 @@ Changes, License, and Credits
    :maxdepth: 1
 
    changelog
+   changelog6
    incompatible
    distributor
    license

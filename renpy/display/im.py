@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -115,7 +115,7 @@ class Cache(object):
 
         # The preload thread.
         self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
-        self.preload_thread.setDaemon(True)
+        self.preload_thread.daemon = True
         self.preload_thread.start()
 
         # Have we been added this tick?
@@ -172,7 +172,7 @@ class Cache(object):
             self.cache_limit = int(renpy.config.image_cache_size_mb * 1024 * 1024 // 4)
 
     def quit(self): # @ReservedAssignment
-        if not self.preload_thread.isAlive():
+        if not self.preload_thread.is_alive():
             return
 
         with self.preload_lock:
@@ -618,6 +618,10 @@ class ImageBase(renpy.display.core.Displayable):
         return [ ]
 
 
+ignored_images = set()
+images_to_ignore = set()
+
+
 class Image(ImageBase):
     """
     This image manipulator loads an image from a file.
@@ -677,7 +681,15 @@ class Image(ImageBase):
 
                 return im.load()
 
-            raise
+            else:
+
+                if self.filename not in ignored_images:
+                    images_to_ignore.add(self.filename)
+                    raise e
+                else:
+                    return Image("_missing_image.png").load()
+
+            raise e
 
     def predict_files(self):
 

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -175,6 +175,7 @@ python early hide:
         channel = None
         loop = None
         volume = "1.0"
+        fadein = "0"
 
         while not l.eol():
 
@@ -197,9 +198,16 @@ python early hide:
                 volume = l.simple_expression()
                 continue
 
+            if l.keyword('fadein'):
+                fadein = l.simple_expression()
+                if fadein is None:
+                    renpy.error('expected simple expression')
+
+                continue
+
             renpy.error('expected end of line')
 
-        return dict(file=file, channel=channel, loop=loop, volume=volume)
+        return dict(file=file, channel=channel, loop=loop, volume=volume, fadein=fadein)
 
     def execute_queue_music(p):
         if p["channel"] is not None:
@@ -211,7 +219,9 @@ python early hide:
             _audio_eval(p["file"]),
             channel=channel,
             loop=p.get("loop", None),
-            relative_volume=eval(p.get("volume", "1.0")))
+            relative_volume=eval(p.get("volume", "1.0")),
+            fadein=eval(p.get("fadein", "0")),
+            )
 
 
     renpy.register_statement('queue music',
@@ -444,7 +454,6 @@ python early hide:
         else:
             renpy.pause()
 
-
     renpy.register_statement('pause',
                               parse=parse_pause,
                               lint=lint_pause,
@@ -459,7 +468,7 @@ python early hide:
     # Should we predict screens?
     config.predict_screen_statements = True
 
-    def warp_true():
+    def warp_true(p):
         return True
 
     def parse_show_call_screen(l):

@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -199,10 +199,10 @@ def report_exception(e, editor=True):
     print('', file=full)
 
     try:
-        print(platform.platform(), file=full)
+        print(str(platform.platform()), file=full)
         print(renpy.version, file=full)
         print(renpy.config.name + " " + renpy.config.version, file=full)
-        print(time.ctime(), file=full)
+        print(str(time.ctime()), file=full)
     except:
         pass
 
@@ -229,7 +229,7 @@ def report_exception(e, editor=True):
             f.write(full)
 
         try:
-            if editor and renpy.game.args.command == "run": # @UndefinedVariable
+            if editor and ((renpy.game.args.command == "run") or (renpy.game.args.errors_in_editor)): # @UndefinedVariable
                 renpy.exports.launch_editor([ traceback_fn ], 1, transient=1)
         except:
             pass

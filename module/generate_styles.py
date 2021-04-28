@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,7 +29,7 @@ from builtins import str
 import collections
 import os
 
-from io import StringIO  # @UnusedImport
+from io import StringIO # @UnusedImport
 
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -101,13 +101,12 @@ Prefix(4, 'selected_idle_', 3, [ ])
 Prefix(3, 'selected_insensitive_', 3, [ ])
 Prefix(-3, 'selected_', 2, [ "selected_hover_", "selected_idle_", "selected_insensitive_" ])
 Prefix(2, 'hover_', 1, [ "selected_hover_" ])
-Prefix(1, 'idle_', 1, [ "selected_idle_" ] )
+Prefix(1, 'idle_', 1, [ "selected_idle_" ])
 Prefix(0, 'insensitive_', 1, [ "selected_insensitive_" ])
-Prefix(-4, '', 0, [ "selected_hover_", "selected_idle_", "selected_insensitive_", "idle_", "hover_", "insensitive_" ] )
+Prefix(-4, '', 0, [ "selected_hover_", "selected_idle_", "selected_insensitive_", "idle_", "hover_", "insensitive_" ])
 
 Prefix(-2, 'activate_', 0, [ ])
 Prefix(-1, 'selected_activate_', 0, [ ])
-
 
 # The images that are searched by a prefix.
 PREFIX_SEARCH = {
@@ -119,7 +118,6 @@ PREFIX_SEARCH = {
     "selected_insensitive_" : [ "selected_insensitive_", "insensitive_", "selected_", "", "selected_idle_", "idle_" ],
     "" : [ "" ],
     }
-
 
 ################################################################################
 # Style Properties
@@ -182,7 +180,9 @@ style_properties = sorted_dict(
     left_padding=None,
     line_spacing=None,
     mouse=None,
+    modal=None,
     min_width=None,
+    mipmap=None,
     newline_indent=None,
     order_reverse=None,
     outlines='expand_outlines',
@@ -239,7 +239,6 @@ displayable_properties = {
     "thumb_shadow",
     }
 
-
 # A map from a style property to its index in the order of style_properties.
 style_property_index = collections.OrderedDict()
 for i, name in enumerate(style_properties):
@@ -249,7 +248,6 @@ style_property_count = len(style_properties)
 
 # print("{} properties * {} prefixes = {} cache entries".format(
 #     style_property_count, PREFIX_COUNT, style_property_count * PREFIX_COUNT))
-
 
 # Special priority properties - these take a +1 compared to others. Generally,
 # these would be listed in the tuples in synthetic_properies, below.
@@ -275,7 +273,6 @@ property_priority = sorted_dict(
     xfill=1,
     yfill=1,
 )
-
 
 # A list of synthetic style properties, where each property is expanded into
 # multiple style properties. Each property are mapped into a list of tuples,
@@ -350,8 +347,8 @@ synthetic_properties = sorted_dict(
         ('aft_bar', None),
         ],
 
-    box_spacing=[ ( 'spacing', None ) ],
-    box_first_spacing=[ ( 'first_spacing', None) ],
+    box_spacing=[ ('spacing', None) ],
+    box_first_spacing=[ ('first_spacing', None) ],
 
     pos=[
         ('xpos', 'index_0'),

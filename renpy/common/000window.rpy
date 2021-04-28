@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -196,20 +196,23 @@ python early hide:
             trans = eval(p["show"])
             _window_show(trans, auto=True)
 
+    def warp_true(p):
+        return True
+
 
     renpy.register_statement('window show',
                               parse=parse_window,
                               execute=execute_window_show,
                               lint=lint_window,
-                              warp=lambda : True)
+                              warp=warp_true)
 
     renpy.register_statement('window hide',
                               parse=parse_window,
                               execute=execute_window_hide,
                               lint=lint_window,
-                              warp=lambda : True)
+                              warp=warp_true)
 
     renpy.register_statement('window auto',
                              parse=parse_window_auto,
                              execute=execute_window_auto,
-                             warp=lambda : True)
+                             warp=warp_true)

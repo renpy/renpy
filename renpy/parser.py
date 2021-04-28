@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -171,6 +171,8 @@ def elide_filename(fn):
 
 
 def unelide_filename(fn):
+    fn = os.path.normpath(fn)
+
     fn1 = os.path.join(renpy.config.basedir, fn)
     if os.path.exists(fn1):
         return fn1
@@ -2712,6 +2714,7 @@ def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None):
     interact = True
     with_ = None
     arguments = None
+    identifier = None
 
     while True:
 
@@ -2723,6 +2726,10 @@ def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None):
                 l.error('say can only take a single with clause')
 
             with_ = l.require(l.simple_expression)
+
+        elif l.keyword("id"):
+
+            identifier = l.require(l.name)
 
         else:
             args = parse_arguments(l)
@@ -2744,12 +2751,12 @@ def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None):
             if i == "{clear}":
                 rv.append(ast.UserStatement(loc, "nvl clear", [ ], (("nvl", "clear"), { })))
             else:
-                rv.append(ast.Say(loc, who, i, with_, attributes=attributes, interact=interact, arguments=arguments, temporary_attributes=temporary_attributes))
+                rv.append(ast.Say(loc, who, i, with_, attributes=attributes, interact=interact, arguments=arguments, temporary_attributes=temporary_attributes, identifier=identifier))
 
         return rv
 
     else:
-        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments, temporary_attributes=temporary_attributes)
+        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments, temporary_attributes=temporary_attributes, identifier=identifier)
 
 
 def say_attributes(l):

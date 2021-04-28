@@ -658,6 +658,15 @@ python early in layeredimage:
             if self.attribute_function:
                 attributes = set(self.attribute_function(attributes))
 
+                unknown = set([i[1:] if i.startswith('-') else i for i in attributes])
+
+                for a in self.attributes:
+
+                    unknown.discard(a.attribute)
+
+                    if a.variant:
+                        unknown.discard(a.variant)
+
             rv = Fixed(**self.fixed_args)
 
             for i in self.layers:

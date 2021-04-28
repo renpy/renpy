@@ -37,7 +37,6 @@ cdef class GL2Draw:
     cdef public tuple drawable_size
     cdef public tuple virtual_box
     cdef public tuple physical_box
-    cdef object texture_cache
     cdef double last_redraw_time
     cdef double redraw_period
     cdef public dict info
@@ -66,7 +65,7 @@ cdef class GL2Draw:
     cdef public int fast_redraw_frames
 
     # The color texture object used for offscreen rendering.
-    cdef GLuint color_texture
+    cdef GLuint color_renderbuffer
 
     # The depth renderbuffer object used for offscreen rendering.
     cdef GLuint depth_renderbuffer

@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -903,6 +903,10 @@ class ShownImageInfo(renpy.object.Object):
         an exception if it's ambiguous, and returns None if an image
         with that name couldn't be found.
         """
+
+        f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
+        if f is not None:
+            name = f(name)
 
         if layer is None:
             layer = renpy.config.tag_layer.get(tag, "master")

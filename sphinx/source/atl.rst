@@ -39,7 +39,7 @@ bound to this name.::
 
    transform left_to_right:
        xalign 0.0
-       linear 2.0 yalign 1.0
+       linear 2.0 xalign 1.0
        repeat
 
 .. _atl-image-statement:
@@ -513,7 +513,6 @@ The functions have the same signature as those used with :func:`Transform`:
 
 * The second argument is the shown timebase, the number of seconds since the
   function began executing.
-
 * The third argument is the the animation timebase, which is the number of
   seconds something with the same tag has been on the screen.
 
@@ -521,6 +520,10 @@ The functions have the same signature as those used with :func:`Transform`:
   number of seconds has elapsed. (0 seconds means to call the function as
   soon as possible.) If the function returns None, control will pass to the
   next ATL statement.
+
+This function should not have side effects other
+than changing the Transform object in the first argument, and may be
+called at any time with any value to enable prediction.
 
 ::
 
@@ -956,8 +959,18 @@ both horizontal and vertical positions.
     :type: boolean
     :default: False
 
-    If True, causes things to be drawn on the screen using subpixel
-    positioning.
+    If True, causes the child to be placed using subpixel positioning.
+
+    Subpixel positioning effects the colors (including transparency)
+    that are drawn into pixels, but not which pixels are drawn. When
+    subpixel positoning is used in combination with movement (the usual
+    case), the image should have transparent borders in the directions
+    it might be moved in, if those edges are visible on the screen.
+
+    For example, if a character sprite is being moved horizontally,
+    it makes sense to have transparent borders on the left and right.
+    These might not be necessary when panning over a background that
+    extends outside the visible area, as the edges will not be seen.
 
 .. transform-property:: delay
 
@@ -1021,6 +1034,9 @@ both horizontal and vertical positions.
     that children of this transform draw. See :ref:`matrixcolor` for more
     information.
 
+    This requires model-based rendering to be enabled by setting :var:`config.gl2` to
+    True.
+
 .. transform-property:: blur
 
     :type: None or float
@@ -1028,8 +1044,11 @@ both horizontal and vertical positions.
 
     This blurs the child of this image by `blur` pixels, up to the border
     of the displayable. The precise details of the blurring may change
-    between Ren'Py versions, and the blurring may exhibit artifactsm,
+    between Ren'Py versions, and the blurring may exhibit artifacts,
     especially when the image being blurred is changing.
+
+    This requires model-based rendering to be enabled by setting :var:`config.gl2` to
+    True.
 
 
 These properties are applied in the following order:

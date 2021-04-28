@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,6 +24,7 @@ from __future__ import print_function
 
 import renpy
 import math
+from renpy.display.matrix cimport Matrix
 from renpy.display.render cimport Render, Matrix2D, render
 from renpy.display.core import absolute
 
@@ -59,6 +60,10 @@ def nogil_copy(src, dest):
 cdef Matrix2D IDENTITY
 IDENTITY = renpy.display.render.IDENTITY
 
+
+# The distance to the 1:1 plan, in the current perspective.
+z11 = 0.0
+
 # This file contains implementations of methods of classes that
 # are found in other files, for performance reasons.
 
@@ -80,6 +85,9 @@ def transform_render(self, widtho, heighto, st, at):
     cdef int xtile, ytile
     cdef int i, j
 
+
+    global z11
+
     # Should we perform clipping?
     clipping = False
 
@@ -99,8 +107,10 @@ def transform_render(self, widtho, heighto, st, at):
     # Render the child.
     child = self.child
 
+
     if child is None:
         child = renpy.display.transform.get_null()
+
 
     state = self.state
 
@@ -113,8 +123,22 @@ def transform_render(self, widtho, heighto, st, at):
     if ysize is not None:
         heighto = ysize
 
+    # Figure out the perspective.
+    perspective = state.perspective
+
+    if perspective is True:
+        perspective = renpy.config.perspective
+
+    # Set the z11 distance.
+    old_z11 = z11
+
+    if perspective:
+        z11 = perspective[1]
+
     cr = render(child, widtho, heighto, st - self.child_st_base, at)
 
+    # Reset the z11 distance.
+    z11 = old_z11
 
     cwidth = cr.width
     cheight = cr.height
@@ -170,7 +194,25 @@ def transform_render(self, widtho, heighto, st, at):
 
     if mesh:
 
+
         mr = Render(cr.width, cr.height)
+
+        mesh_pad = state.mesh_pad
+
+        if state.mesh_pad:
+
+            if len(mesh_pad) == 4:
+                pad_left, pad_top, pad_right, pad_bottom = mesh_pad
+            else:
+                pad_right, pad_bottom = mesh_pad
+                pad_left = 0
+                pad_top = 0
+
+            padded = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
+            padded.blit(cr, (pad_left, pad_top))
+
+            cr = padded
+
         mr.blit(cr, (0, 0))
 
         mr.operation = renpy.display.render.FLATTEN
@@ -186,10 +228,10 @@ def transform_render(self, widtho, heighto, st, at):
         else:
             mr.mesh = True
 
-        if blur:
+        if blur is not None:
             mr.add_shader("-renpy.texture")
             mr.add_shader("renpy.blur")
-            mr.add_uniform("u_renpy_blur_log2", math.log(state.blur, 2))
+            mr.add_uniform("u_renpy_blur_log2", math.log(blur, 2))
 
         cr = mr
 
@@ -417,29 +459,66 @@ def transform_render(self, widtho, heighto, st, at):
 
     # Default case - no transformation matrix.
     if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
-        self.forward = IDENTITY
         self.reverse = IDENTITY
-
     else:
+        self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
-        self.reverse = rv.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
+    # xpos and ypos.
+    if perspective:
+        placement = (state.xpos, state.ypos, state.xanchor, state.yanchor, state.xoffset, state.yoffset, True)
+        xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
 
-        inv_det = rxdx * rydy - rxdy * rydx
+        self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
 
-        if not inv_det:
-            self.forward = rv.forward = Matrix2D(0, 0, 0, 0)
+    elif state.zpos:
+        self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
+
+    # matrixtransform
+    if state.matrixtransform is not None:
+
+        if state.matrixanchor is None:
+
+            manchorx = width / 2.0
+            manchory = height / 2.0
+
         else:
-            self.forward = rv.forward = Matrix2D(
-                rydy / inv_det,
-                -rxdy / inv_det,
-                -rydx / inv_det,
-                rxdx / inv_det)
+            manchorx, manchory = state.matrixanchor
+
+            if type(manchorx) is float:
+                manchorx *= width
+            if type(manchory) is float:
+                manchory *= height
+
+        m = Matrix.offset(-manchorx, -manchory, 0.0)
+        m = state.matrixtransform * m
+        m = Matrix.offset(manchorx, manchory, 0.0) * m
+
+        self.reverse = m * self.reverse
+
+    if state.zzoom and z11:
+        zzoom = (z11 - state.zpos) / z11
+        self.reverse = Matrix.scale(zzoom, zzoom, 0) * self.reverse
+
+    # perspective
+    if perspective:
+        near, z11, far = perspective
+        self.reverse = Matrix.perspective(width, height, near, z11, far) * self.reverse
+
+    # Set the forward matrix.
+    if self.reverse is not IDENTITY:
+        rv.reverse = self.reverse
+        self.forward = rv.forward = self.reverse.inverse()
+    else:
+        self.forward = IDENTITY
 
     # Nearest neighbor.
     rv.nearest = state.nearest
 
     if state.nearest:
         rv.add_property("texture_scaling", "nearest")
+
+    if state.blend:
+        rv.add_property("blend_func", renpy.config.gl_blend_func[state.blend])
 
     # Alpha.
     alpha = state.alpha
@@ -450,7 +529,6 @@ def transform_render(self, widtho, heighto, st, at):
         alpha = 1.0
 
     rv.alpha = alpha
-
     rv.over = 1.0 - state.additive
 
     if (rv.alpha != 1.0) or (rv.over != 1.0):

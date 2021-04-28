@@ -324,10 +324,16 @@ variables:
 
 .. var:: build.google_play_key = "..."
 
-    This is the Google Play license key associated with your application,
+    This is the Google Play Licensing key associated with your application,
     which can be found on the "Monetization Setup" tab associated with
     your application in the Google Play developer console. (Be sure to
     remove all spaces and newlines from the key.)
+
+    This looks something like::
+
+        define build.google_play_key = "MIIBIjANBgkqhkiG9w0BAQEFA…HGTQIDAQAB"
+
+    Except that there are many more letters and numbers in place of ….
 
 .. var:: build.google_play_salt = ( ... )
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -271,6 +271,11 @@ class Restructurer(object):
         digest = md5.hexdigest()[:8]
 
         identifier = self.unique_identifier(self.label, digest)
+
+        for i in block:
+            if isinstance(i, renpy.ast.Say):
+                identifier = getattr(i, "identifier", None) or identifier
+
         self.identifiers.add(identifier)
 
         if self.alternate is not None:
@@ -456,9 +461,12 @@ def translate_string(s, language=Default):
     :doc: translate_string
     :name: renpy.translate_string
 
-    Translates interface string `s` to `language`. If `language` is Default,
-    uses the language set in the preferences. This does not mark `s` to be
-    translated.
+    Returns `s` immediately translated into `language`. If `language`
+    is Default, uses the language set in the preferences.
+    Strings enclosed in this function will **not** be added
+    to the list of translatable strings. Note that the string may be
+    double-translated, if it matches a string translation when it
+    is displayed.
     """
 
     if language is Default:

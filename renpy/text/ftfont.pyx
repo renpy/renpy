@@ -1,5 +1,5 @@
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,8 +30,11 @@ from freetype cimport *
 from ttgsubtable cimport *
 from textsupport cimport Glyph, SPLIT_INSTEAD
 import traceback
+import sys
 
 import renpy.config
+
+cdef bint _use_ucs2 = (sys.maxunicode == 0xffff)
 
 cdef extern from "ftsupport.h":
     char *freetype_error_to_string(int error)
@@ -78,6 +81,21 @@ cdef bint is_vs(unsigned int char):
 
     return False
 
+cdef int is_ucs2_surrogate(unsigned int char):
+    if _use_ucs2:
+        if 0xd800 <= char <= 0xdbff:
+            # High
+            return 2
+        elif 0xdc00 <= char <= 0xdfff:
+            # Low
+            return 1
+        else:
+            # Not a surrogate
+            return 0
+    else:
+        # skip when not using UCS-2
+        return 0
+
 cdef bint is_zerowidth(unsigned int char):
     if char == 0x200b: # Zero-width space.
         return True
@@ -95,6 +113,9 @@ cdef bint is_zerowidth(unsigned int char):
         return True
 
     if is_vs(char): # Variation sequences
+        return True
+
+    if is_ucs2_surrogate(char) == 1: # Low surrogate pair (width is calculated when a high surrogate is read)
         return True
 
     return False
@@ -497,7 +518,7 @@ cdef class FTFont:
         cdef FT_Face face
         cdef list rv
         cdef int len_s
-        cdef Py_UNICODE c, next_c, vs
+        cdef FT_ULong c, next_c, vs
         cdef FT_UInt index, next_index
         cdef int error
         cdef Glyph gl
@@ -505,6 +526,7 @@ cdef class FTFont:
         cdef int kern
         cdef float advance
         cdef int i
+        cdef int vs_offset
         cdef glyph_cache *cache
 
         cdef float min_advance, next_min_advance
@@ -521,12 +543,26 @@ cdef class FTFont:
         if len_s:
 
             next_min_advance = 0
-            next_c = s[0]
 
-            if len_s > 1 and is_vs(s[1]):
-                vs = s[1]
-                next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
+            if len_s > 1 and is_ucs2_surrogate(s[0]) == 2 and is_ucs2_surrogate(s[1]) == 1:
+                next_c = ((<FT_ULong> s[0]) & 0b1111111111) << 10
+                next_c |= (<FT_ULong> s[1]) & 0b1111111111
+                next_c += 0x10000
+                vs_offset = 2
             else:
+                next_c = s[0]
+                vs_offset = 1
+
+            if is_ucs2_surrogate(s[0]) != 1 and len_s > vs_offset and is_vs(s[vs_offset]):
+                vs = s[vs_offset]
+                next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
+
+                # Fallback to 0 if variation doesn't exist
+                if next_index == 0:
+                    vs = 0
+                    next_index = FT_Get_Char_Index(face, next_c)
+            else:
+                vs = 0
                 next_index = FT_Get_Char_Index(face, next_c)
 
         for i from 0 <= i < len_s:
@@ -540,18 +576,33 @@ cdef class FTFont:
             gl = Glyph.__new__(Glyph)
 
             gl.character = c
+            gl.variation = vs
             gl.ascent = self.ascent
             gl.width = cache.width
             gl.line_spacing = self.lineskip
             gl.draw = True
 
             if i < len_s - 1:
-                next_c = s[i + 1]
 
-                if i < len_s - 2 and is_vs(s[i + 2]):
-                    vs = s[i + 2]
-                    next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
+                if i < len_s - 2 and is_ucs2_surrogate(s[i + 1]) == 2 and is_ucs2_surrogate(s[i + 2]) == 1:
+                    next_c = ((<FT_ULong> s[i + 1]) & 0b1111111111) << 10
+                    next_c |= (<FT_ULong> s[i + 2]) & 0b1111111111
+                    next_c += 0x10000
+                    vs_offset = 3
                 else:
+                    next_c = s[i + 1]
+                    vs_offset = 2
+
+                if is_ucs2_surrogate(s[i + 1]) != 1 and i < len_s - vs_offset and is_vs(s[i + vs_offset]):
+                    vs = s[i + vs_offset]
+                    next_index = FT_Face_GetCharVariantIndex(face, next_c, vs)
+
+                    # Fallback to 0 if variation doesn't exist
+                    if next_index == 0:
+                        vs = 0
+                        next_index = FT_Get_Char_Index(face, next_c)
+                else:
+                    vs = 0
                     next_index = FT_Get_Char_Index(face, next_c)
 
                 error = FT_Get_Kerning(face, index, next_index, FT_KERNING_DEFAULT, &kerning)
@@ -612,7 +663,11 @@ cdef class FTFont:
             if glyph.character == 0x200b:
                 continue
 
-            index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
+            if glyph.variation == 0:
+                index = FT_Get_Char_Index(face, glyph.character)
+            else:
+                index = FT_Face_GetCharVariantIndex(face, glyph.character, glyph.variation)
+
             cache = self.get_glyph(index)
 
             bmx = <int> (glyph.x + .5) + cache.bitmap_left
@@ -687,7 +742,11 @@ cdef class FTFont:
             underline_x = x - glyph.delta_x_offset
             underline_end = x + <int> glyph.advance + expand
 
-            index = FT_Get_Char_Index(face, <Py_UNICODE> glyph.character)
+            if glyph.variation == 0:
+                index = FT_Get_Char_Index(face, glyph.character)
+            else:
+                index = FT_Face_GetCharVariantIndex(face, glyph.character, glyph.variation)
+
             cache = self.get_glyph(index)
 
             # with nogil used to be here, but it slowed things down.

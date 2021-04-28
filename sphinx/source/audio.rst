@@ -7,7 +7,7 @@ using the following audio file formats
 * Opus
 * Ogg Vorbis
 * MP3
-* WAV (uncompressed PCM only)
+* WAV (uncompressed 16-bit signed PCM only)
 
 Ren'Py supports an arbitrary number of audio channels. There are three
 normal channels defined by default:
@@ -100,7 +100,7 @@ The ``queue`` statement is used to queue up audio files. They will be played whe
 the channel finishes playing the currently playing file.
 
 The queue statement begins with keyword ``queue``, followed by the the name of a
-channel to play sound on. It optionally takes the ``loop`` and ``noloop`` clauses. ::
+channel to play sound on. It optionally takes the ``fadein``, ``loop`` and ``noloop`` clauses. ::
 
         queue sound "woof.mp3"
         queue music [ "a.ogg", "b.ogg" ]
@@ -159,6 +159,25 @@ will play 10.5 seconds of waves.opus, starting at the 5 second mark. The stateme
 
 will play song.opus all the way through once, then loop back to the 6.333
 second mark before playing it again all the way through to the end.
+
+.. _sync-start:
+
+Sync Start Position
+-------------------
+
+The position in the file at which the clip begins playing can also be synced to
+another channel with a currently-playing track using a filename like
+"<sync channelname>track.opus", where channelname is the name of the channel,
+which could be music, sound, or any other registered channels.
+
+This can be used to sync multi-layered looping tracks together. For example::
+
+        play music_2 [ "<sync music_1>layer_2.opus", "layer_2.opus" ]
+
+Will play layer_2.opus with the start time synced to the current track in
+channel music_1 in the first iteration, before playing the whole track in
+subsequent iterations. (By default, the layer_2.opus start time will remain
+modified even in subsequent iterations in the loop.)
 
 .. _silence:
 

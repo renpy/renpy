@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -195,7 +195,6 @@ cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
 
 cython("renpy.uguu.gl", libs=sdl)
 cython("renpy.uguu.uguu", libs=sdl)
-cython("renpy.uguu.angle", libs=sdl)
 
 cython("renpy.gl.gldraw", libs=sdl)
 cython("renpy.gl.gltexture", libs=sdl)

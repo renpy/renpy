@@ -44,6 +44,7 @@ cdef class Glyph:
 
         # The character we use.
         public unsigned int character
+        public unsigned int variation
 
         # Controls splitting of this glyph, based on where we are in the
         # the line.

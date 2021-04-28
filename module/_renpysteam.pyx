@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -116,6 +116,7 @@ cdef extern from "steam/steam_api.h":
 
     cdef cppclass CSteamID:
         AccountID_t GetAccountID()
+        uint64 ConvertToUint64()
 
     cdef cppclass ISteamUser:
         CSteamID GetSteamID()
@@ -490,6 +491,24 @@ def get_persona_name():
     return SteamFriends().GetPersonaName().decode("utf-8")
 
 
+cdef extern from "steam/steam_api_flat.h":
+    ctypedef unsigned long long uint64_steamid
+    ISteamUser *SteamAPI_SteamUser_v021();
+    uint64_steamid SteamAPI_ISteamUser_GetSteamID( ISteamUser* self );
+
+def get_csteam_id():
+    """
+    :doc: steam_user
+
+    Returns the user's full CSteamID as a 64-bit number..
+    """
+
+    # Accessing methods on CSteamID was crashing on Windows, so use
+    # the flat API instead.
+
+    return SteamAPI_ISteamUser_GetSteamID(SteamAPI_SteamUser_v021())
+
+
 def get_account_id():
     """
     :doc: steam_user
@@ -497,7 +516,8 @@ def get_account_id():
     Returns the user's account ID.
     """
 
-    return SteamUser().GetSteamID().GetAccountID()
+    return get_csteam_id() & 0xffffffff
+
 
 cdef HAuthTicket h_ticket = 0
 ticket = None

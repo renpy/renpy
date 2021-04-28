@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -239,6 +239,9 @@ class ParameterizedText(object):
     _duplicatable = True
 
     def _duplicate(self, args):
+
+        if args.lint:
+            return renpy.text.text.Text("", style=self.style, **self.properties)
 
         if len(args.args) == 0:
             raise Exception("'%s' takes a single string parameter." % ' '.join(args.name))

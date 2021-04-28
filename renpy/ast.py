@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -586,6 +586,7 @@ class Say(Node):
         'arguments',
         'temporary_attributes',
         'rollback',
+        'identifier',
         ]
 
     def diff_info(self):
@@ -600,7 +601,7 @@ class Say(Node):
         self.rollback = "normal"
         return self
 
-    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None):
+    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None, identifier=None):
 
         super(Say, self).__init__(loc)
 
@@ -628,6 +629,10 @@ class Say(Node):
         # Ditto for temporary attributes.
         self.temporary_attributes = temporary_attributes
 
+        # If given, write in the identifier.
+        if identifier is not None:
+            self.identifier = identifier
+
     def get_code(self, dialogue_filter=None):
         rv = [ ]
 
@@ -649,6 +654,10 @@ class Say(Node):
 
         if not self.interact:
             rv.append("nointeract")
+
+        if getattr(self, "identifier", None):
+            rv.append("id")
+            rv.append(getattr(self, "identifier", None))
 
         if self.with_:
             rv.append("with")
@@ -2052,6 +2061,7 @@ def create_store(name):
 
 
 class StoreNamespace(object):
+    pure = True
 
     def __init__(self, store):
         self.store = store
@@ -2077,7 +2087,14 @@ def get_namespace(store):
 
 # Config variables that are set twice - once when the rpy is first loaded,
 # and then again at init time.
-EARLY_CONFIG = { "save_directory", "allow_duplicate_labels", "keyword_after_python", "steam_appid" }
+EARLY_CONFIG = {
+    "save_directory",
+    "allow_duplicate_labels",
+    "keyword_after_python",
+    "steam_appid",
+    "name",
+    "version",
+}
 
 define_statements = [ ]
 
@@ -2143,7 +2160,9 @@ class Define(Node):
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
         if self.operator == "=" and self.index is None:
-            renpy.exports.pure(self.store + "." + self.varname)
+            ns, _special = get_namespace(self.store)
+            if getattr(ns, "pure", True):
+                renpy.exports.pure(self.store + "." + self.varname)
 
         self.set()
 

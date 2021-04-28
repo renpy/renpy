@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -33,26 +33,26 @@ import renpy.display
 import renpy.text.ftfont as ftfont
 import renpy.text.textsupport as textsupport
 
-ftfont.init()  # @UndefinedVariable
+ftfont.init() # @UndefinedVariable
 
 WHITE = (255, 255, 255, 255)
 BLACK = (0, 0, 0, 255)
 
 
 def is_zerowidth(char):
-    if char == 0x200b:  # Zero-width space.
+    if char == 0x200b: # Zero-width space.
         return True
 
-    if char == 0x200c:  # Zero-width non-joiner.
+    if char == 0x200c: # Zero-width non-joiner.
         return True
 
-    if char == 0x200d:  # Zero-width joiner.
+    if char == 0x200d: # Zero-width joiner.
         return True
 
-    if char == 0x2060:  # Word joiner.
+    if char == 0x2060: # Word joiner.
         return True
 
-    if char == 0xfeff:  # Zero width non-breaking space.
+    if char == 0xfeff: # Zero width non-breaking space.
         return True
 
     return False
@@ -83,7 +83,7 @@ class ImageFont(object):
             return rv
 
         for c in s:
-            g = textsupport.Glyph()  # @UndefinedVariable
+            g = textsupport.Glyph() # @UndefinedVariable
 
             g.character = ord(c)
             g.ascent = self.baseline
@@ -106,7 +106,7 @@ class ImageFont(object):
 
         # Compute kerning.
         for i in range(len(s) - 1):
-            kern = self.kerns.get(s[i] + s[i+1], self.default_kern)
+            kern = self.kerns.get(s[i] + s[i + 1], self.default_kern)
             rv[i].advance += kern
 
         return rv
@@ -163,22 +163,22 @@ class SFont(ImageFont):
 
     def load(self):
 
-        self.chars = { }  # W0201
-        self.width = { }  # W0201
-        self.advance = { }  # W0201
-        self.offsets = { }  # W0201
+        self.chars = { } # W0201
+        self.width = { } # W0201
+        self.advance = { } # W0201
+        self.offsets = { } # W0201
 
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
 
         sw, sh = surf.get_size()
         height = sh
-        self.height = height  # W0201
+        self.height = height # W0201
         if self.baseline is None:
-            self.baseline = height  # W0201
+            self.baseline = height # W0201
         elif self.baseline < 0:
             # Negative value is the distance from the bottom (vs top)
-            self.baseline = height + self.baseline  # W0201
+            self.baseline = height + self.baseline # W0201
 
         # Create space characters.
         self.chars[u' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
@@ -252,10 +252,10 @@ class MudgeFont(ImageFont):
 
     def load(self):
 
-        self.chars = { }  # W0201
-        self.width = { }  # W0201
-        self.advance = { }  # W0201
-        self.offsets = { }  # W0201
+        self.chars = { } # W0201
+        self.width = { } # W0201
+        self.advance = { } # W0201
+        self.offsets = { } # W0201
 
         # Load in the image.
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
@@ -289,8 +289,8 @@ class MudgeFont(ImageFont):
 
             height = max(height, h)
 
-        self.height = height  # W0201
-        self.baseline = height  # W0201
+        self.height = height # W0201
+        self.baseline = height # W0201
 
         # Create space characters.
         if u' ' not in self.chars:
@@ -336,7 +336,7 @@ def parse_bmfont_line(l):
     if w:
         line.append(w)
 
-    map = dict(i.split("=", 1) for i in line[1:])  # @ReservedAssignment
+    map = dict(i.split("=", 1) for i in line[1:]) # @ReservedAssignment
     return line[0], map
 
 
@@ -349,12 +349,12 @@ class BMFont(ImageFont):
 
     def load(self):
 
-        self.chars = { }  # W0201
-        self.width = { }  # W0201
-        self.advance = { }  # W0201
-        self.offsets = { }  # W0201
-        self.kerns = { }  # W0201
-        self.default_kern = 0  # W0201
+        self.chars = { } # W0201
+        self.width = { } # W0201
+        self.advance = { } # W0201
+        self.offsets = { } # W0201
+        self.kerns = { } # W0201
+        self.default_kern = 0 # W0201
 
         pages = { }
 
@@ -364,8 +364,8 @@ class BMFont(ImageFont):
                 kind, args = parse_bmfont_line(l)
 
                 if kind == "common":
-                    self.height = int(args["lineHeight"])  # W0201
-                    self.baseline = int(args["base"])  # W0201
+                    self.height = int(args["lineHeight"]) # W0201
+                    self.baseline = int(args["base"]) # W0201
                 elif kind == "page":
                     pages[int(args["id"])] = renpy.display.im.Image(args["file"]).load(unscaled=True)
                 elif kind == "char":
@@ -639,7 +639,7 @@ def load_face(fn):
     if font_file is None:
         raise Exception("Could not find font {0!r}.".format(orig_fn))
 
-    rv = ftfont.FTFace(font_file, index, orig_fn)  # @UndefinedVariable
+    rv = ftfont.FTFace(font_file, index, orig_fn) # @UndefinedVariable
 
     face_cache[orig_fn] = rv
 
@@ -697,7 +697,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
 
     # Load a TTF.
     face = load_face(fn)
-    rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting)  # @UndefinedVariable
+    rv = ftfont.FTFont(face, int(size * scale), bold, italics, outline, antialias, vertical, hinting) # @UndefinedVariable
 
     font_cache[key] = rv
 
@@ -729,13 +729,19 @@ class FontGroup(object):
     A group of fonts that can be used as a single font.
     """
 
+    # For compatibility with older instances.
+    char_map = dict()
+
     def __init__(self):
 
         # A map from character index to font name. None is used for
         # the default font.
         self.map = { }
 
-    def add(self, font, start, end):
+        # A map from character number to character number, used to implement remap.
+        self.char_map = { }
+
+    def add(self, font, start, end, target=None, target_increment=False):
         """
         :doc: font_group
 
@@ -748,7 +754,20 @@ class FontGroup(object):
 
         `end`
             The end of the range. This may be a single-character string, or an
-            integer giving a unicode code point.
+            integer giving a unicode code point. This is ignored if start is
+            None.
+
+        `target`
+            If given, associates the given range of characters with specific
+            characters from the given font, depending on target_increment.
+            This may be a single-character string, or an integer giving a
+            unicode code point. This is ignored if the character had already
+            been added.
+
+        `target_increment`
+            If True, the [start, end] range is mapped to the
+            [target, target+end-start] range. If False, every character from the
+            range is associated with the target character.
 
         When multiple .add() calls include the same character, the first call
         takes precedence.
@@ -775,12 +794,60 @@ class FontGroup(object):
         if not isinstance(end, int):
             end = ord(end)
 
+        if target and not isinstance(target, int):
+            target = ord(target)
+
         if end < start:
             raise Exception("In FontGroup.add, the start of a character range must be before the end of the range.")
 
-        for i in range(start, end+1):
+        for i in range(start, end + 1):
             if i not in self.map:
                 self.map[i] = font
+
+                if target is not None:
+                    self.char_map[i] = target
+
+                    if target_increment:
+                        target += 1
+
+        return self
+
+    def remap(self, cha, target):
+        """
+        :doc: font_group
+
+        Remaps one or a set of characters to a single target character.
+
+        `cha`
+            The character or characters to remap. This may be a single-character
+            string, or an integer giving a unicode code point, or an iterable of
+            either.
+
+        `target`
+            The character to remap to. This may be a single-character string, or
+            an integer giving a unicode code point.
+
+        Any given character having already been remapped (either with add or with
+        remap) will be ignored. However, if the FontGroup has no default font, any
+        given character must have been previously added.
+
+        This method also returns the FontGroup, for the same reasons.
+        """
+
+        if isinstance(cha, (int)) or isinstance(cha, (str, bytes)) and len(cha) == 1:
+            cha = (cha,)
+
+        if not isinstance(target, int):
+            target = ord(target)
+
+        for i in cha:
+            if not isinstance(i, int):
+                i = ord(i)
+            if not ((None in self.map) or (i in self.map)):
+                raise Exception("Character U+{0:04x} has no font in this FontGroup".format(i))
+            if not i in self.char_map:
+                # means the character has not already been remapped
+                self.char_map[i] = target
 
         return self
 
@@ -794,7 +861,11 @@ class FontGroup(object):
 
         old_font = None
 
-        for c in s:
+        if self.char_map:
+            s = [ ord(i) for i in s ]
+            s = "".join(chr(self.char_map.get(i, i)) for i in s)
+
+        for i, c in enumerate(s):
 
             n = ord(c)
 

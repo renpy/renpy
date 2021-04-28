@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -249,7 +249,9 @@ class Container(renpy.display.core.Displayable):
         return None
 
     def visit(self):
-        return self.children
+        rv = list(self.children)
+        rv.reverse()
+        return rv
 
     # These interact with the ui functions to allow use as a context
     # manager.
@@ -516,7 +518,7 @@ class Grid(Container):
             raise Exception("Grid overfull.")
 
         if self.allow_underfull is None:
-            allow_underfull = renpy.config.allow_underfull
+            allow_underfull = renpy.config.allow_underfull_grids
         else:
             allow_underfull = self.allow_underfull
 
@@ -534,6 +536,33 @@ class IgnoreLayers(Exception):
     """
 
     pass
+
+
+def default_modal_function(ev, x, y, w, h):
+    if (0 <= x < w) and (0 <= y < h):
+        return True
+
+    return False
+
+
+def check_modal(modal, ev, x, y, w, h):
+    """
+    This evaluates the modal property of frames and screens.
+    """
+
+    if not modal:
+        return False
+
+    if (ev is not None) and (ev.type == renpy.display.core.TIMEEVENT) and ev.modal:
+        return False
+
+    if not callable(modal):
+        modal = default_modal_function
+
+    if modal(ev, x, y, w, h):
+        return True
+
+    return False
 
 
 class MultiBox(Container):
@@ -913,7 +942,7 @@ class MultiBox(Container):
                 sw, sh = surf.get_size()
 
                 if box_wrap and remwidth - sw - padding < 0 and line:
-                    maxx, maxy = layout_line(line, (target_width - x) if xfill else 0, 0)
+                    maxx, maxy = layout_line(line, (target_width - x), 0)
 
                     y += line_height + box_wrap_spacing
                     x = 0
@@ -926,7 +955,7 @@ class MultiBox(Container):
                 x += sw + padding
                 remwidth -= (sw + padding)
 
-            maxx, maxy = layout_line(line, (target_width - x) if xfill else 0, 0)
+            maxx, maxy = layout_line(line, (target_width - x) if (not box_wrap) else 0, 0)
 
         elif layout == "vertical":
 
@@ -955,7 +984,7 @@ class MultiBox(Container):
                 sw, sh = surf.get_size()
 
                 if box_wrap and remheight - sh - padding < 0:
-                    maxx, maxy = layout_line(line, 0, (target_height - y) if yfill else 0)
+                    maxx, maxy = layout_line(line, 0, (target_height - y))
 
                     x += line_width + box_wrap_spacing
                     y = 0
@@ -968,7 +997,7 @@ class MultiBox(Container):
                 y += sh + padding
                 remheight -= (sh + padding)
 
-            maxx, maxy = layout_line(line, 0, (target_height - y) if yfill else 0)
+            maxx, maxy = layout_line(line, 0, (target_height - y) if (not box_wrap) else 0)
 
         else:
             raise Exception("Unknown box layout: %r" % layout)
@@ -1031,8 +1060,8 @@ class MultiBox(Container):
         except IgnoreLayers:
             if self.layers:
 
-                if ev.type != renpy.display.core.TIMEEVENT:
-                    renpy.display.interface.post_time_event()
+                if (ev.type != renpy.display.core.TIMEEVENT) or (not ev.modal):
+                    renpy.display.interface.post_time_event(modal=True)
 
                 return None
             else:
@@ -1086,6 +1115,8 @@ class Window(Container):
     displayable. All other properties are as for the :ref:`Window`
     screen language statement.
     """
+
+    window_size = (0, 0)
 
     def __init__(self, child=None, style='window', **properties):
         super(Window, self).__init__(style=style, **properties)
@@ -1174,6 +1205,7 @@ class Window(Container):
                 height = min(height, ymaximum)
 
         rv = renpy.display.render.Render(width, height)
+        rv.modal = self.style.modal
 
         # Draw the background. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
@@ -1208,6 +1240,18 @@ class Window(Container):
         self.window_size = width, height # W0201
 
         return rv
+
+    def event(self, ev, x, y, st):
+
+        rv = super(Window, self).event(ev, x, y, st)
+        if rv is not None:
+            return rv
+
+        w, h = self.window_size
+        if check_modal(self.style.modal, ev, x, y, w, h):
+            raise IgnoreLayers()
+
+        return None
 
 
 def dynamic_displayable_compat(st, at, expr):
@@ -1944,8 +1988,9 @@ class AlphaMask(Container):
     def __init__(self, child, mask, **properties):
         super(AlphaMask, self).__init__(**properties)
 
-        self.add(child)
         self.mask = renpy.easy.displayable(mask)
+        self.add(self.mask)
+        self.add(child)
         self.null = None
 
     def render(self, width, height, st, at):
@@ -1972,9 +2017,12 @@ class AlphaMask(Container):
         rv.add_shader("renpy.imagedissolve")
         rv.add_uniform("u_renpy_dissolve_offset", 0)
         rv.add_uniform("u_renpy_dissolve_multiplier", 1.0)
+        rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
 
-        rv.blit(mr, (0, 0), focus=False, main=False)
+        rv.blit(mr, (0, 0))
         rv.blit(nr, (0, 0), focus=False, main=False)
         rv.blit(cr, (0, 0))
+
+        self.offsets = [ (0, 0), (0, 0) ]
 
         return rv

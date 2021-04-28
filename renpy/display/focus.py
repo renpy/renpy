@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -274,6 +274,9 @@ def before_interact(roots):
     current = get_focused()
     current = replaced_by.get(id(current), current)
 
+    # Update the grab.
+    grab = replaced_by.get(id(grab), None)
+
     if current is not None:
         current_name = current.full_focus_name
 
@@ -284,6 +287,9 @@ def before_interact(roots):
                 break
         else:
             current = None
+
+    if grab is not None:
+        current = grab
 
     # Otherwise, focus the default widget.
     if current is None:
@@ -323,17 +329,15 @@ def before_interact(roots):
         finally:
             renpy.display.screen.pop_current_screen()
 
-    # Update the grab.
-    grab = replaced_by.get(id(grab), None)
-
     # Clear replaced_by.
     replaced_by.clear()
 
-# This changes the focus to be the widget contained inside the new
-# focus object.
-
 
 def change_focus(newfocus, default=False):
+    """
+    Change the focus to the displayable in ``newfocus``.
+    """
+
     rv = None
 
     if grab:
@@ -403,7 +407,10 @@ def mouse_handler(ev, x, y, default=False):
         else:
             pending_focus_type = "mouse"
 
-    new_focus = renpy.display.render.focus_at_point(x, y)
+    try:
+        new_focus = renpy.display.render.focus_at_point(x, y)
+    except renpy.display.layout.IgnoreLayers:
+        new_focus = None
 
     if new_focus is None:
         new_focus = default_focus
@@ -421,6 +428,9 @@ def focus_extreme(xmul, ymul, wmul, hmul):
     max_score = -(65536 ** 2)
 
     for f in focus_list:
+
+        if not f.widget.style.keyboard_focus:
+            continue
 
         if f.x is None:
             continue

@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -710,9 +710,6 @@ class SWDraw(object):
     def init(self, virtual_size):
 
         # These disable a failed load of ANGLE.
-        import renpy.uguu.angle
-        renpy.uguu.angle.load_gl()
-
         pygame.display.gl_reset_attributes()
         pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
 
@@ -865,11 +862,7 @@ class SWDraw(object):
             pygame.display.update(updates)
 
         else:
-
-            if self.scale_fast:
-                pygame.transform.scale(self.window, self.screen.get_size(), self.screen)
-            else:
-                renpy.display.scale.smoothscale(self.window, self.screen.get_size(), self.screen)
+            renpy.display.scale.smoothscale(self.window, self.screen.get_size(), self.screen)
 
             pygame.display.flip()
 
@@ -931,7 +924,7 @@ class SWDraw(object):
         for i in clippers:
             i.mutated.add(id(surf))
 
-    def load_texture(self, surf, transient=False):
+    def load_texture(self, surf, transient=False, properties={}):
         """
         Creates a texture from the surface. In the software implementation,
         the only difference between a texture and a surface is that a texture

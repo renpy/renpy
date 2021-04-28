@@ -47,6 +47,10 @@ The Python equivalent of an ATL transform is a Transform object.
         be called again, or None to be called again at the start of the next
         interaction.
 
+        This function should not have side effects other
+        than changing the Transform object in the first argument, and may be
+        called at any time with any value to enable prediction.
+
     Additional arguments are taken as values to set transform properties to.
 
     .. attribute:: hide_request

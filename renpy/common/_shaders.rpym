@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -50,7 +50,14 @@ init python:
         gl_FragColor = vec4(0.);
         float renpy_blur_norm = 0.;
 
-        for (float i = 0.; i < u_renpy_blur_log2 + 5.; i += 1.) {
+        for (float i = -5.; i < 1.; i += 1.) {
+            float renpy_blur_weight = exp(-0.5 * pow(u_renpy_blur_log2 - i, 2.));
+            renpy_blur_norm += renpy_blur_weight;
+        }
+
+        gl_FragColor += renpy_blur_norm * texture2D(tex0, v_tex_coord.xy, 0.);
+
+        for (float i = 1.; i < u_renpy_blur_log2 + 5.; i += 1.) {
             float renpy_blur_weight = exp(-0.5 * pow(u_renpy_blur_log2 - i, 2.));
             gl_FragColor += renpy_blur_weight * texture2D(tex0, v_tex_coord.xy, i);
             renpy_blur_norm += renpy_blur_weight;

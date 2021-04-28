@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -326,7 +326,7 @@ class Script(object):
                 s.name = (fn, version, self.serial)
                 self.serial += 1
 
-    def merge_names(self, old_stmts, new_stmts):
+    def merge_names(self, old_stmts, new_stmts, used_names):
 
         old_stmts = collapse_stmts(old_stmts)
         new_stmts = collapse_stmts(new_stmts)
@@ -341,8 +341,9 @@ class Script(object):
                 old = old_stmts[oldl + i]
                 new = new_stmts[newl + i]
 
-                if new.name is None:
+                if (new.name is None) and (new.name not in used_names):
                     new.name = old.name
+                    used_names.add(new.name)
 
     def load_string(self, filename, filedata, linenumber=1):
         """
@@ -578,8 +579,13 @@ class Script(object):
             if not dir:
                 raise Exception("Cannot load rpy/rpym file %s from inside an archive." % fn)
 
+            base, _, game = dir.rpartition("/")
+            olddir = base + "/old-" + game
+
             fullfn = dir + "/" + fn
             rpycfn = fullfn + "c"
+
+            oldrpycfn = olddir + "/" + fn + "c"
 
             stmts = renpy.parser.parse(fullfn)
 
@@ -590,24 +596,28 @@ class Script(object):
             if stmts is None:
                 return data, [ ]
 
-            # See if we have a corresponding .rpyc file. If so, then
-            # we want to try to upgrade our .rpy file with it.
-            try:
-                self.record_pycode = False
+            used_names = set()
 
-                with open(rpycfn, "rb") as rpycf:
-                    bindata = self.read_rpyc_data(rpycf, 1)
+            for mergefn in [ oldrpycfn, rpycfn ]:
 
-                old_data, old_stmts = loads(bindata)
+                # See if we have a corresponding .rpyc file. If so, then
+                # we want to try to upgrade our .rpy file with it.
+                try:
+                    self.record_pycode = False
 
-                self.merge_names(old_stmts, stmts)
+                    with open(mergefn, "rb") as rpycf:
+                        bindata = self.read_rpyc_data(rpycf, 1)
 
-                del old_data
-                del old_stmts
-            except:
-                pass
-            finally:
-                self.record_pycode = True
+                    old_data, old_stmts = loads(bindata)
+
+                    self.merge_names(old_stmts, stmts, used_names)
+
+                    del old_data
+                    del old_stmts
+                except:
+                    pass
+                finally:
+                    self.record_pycode = True
 
             self.assign_names(stmts, renpy.parser.elide_filename(fullfn))
 

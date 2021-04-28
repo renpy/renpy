@@ -12,6 +12,37 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+7.4.5
+------
+
+Games produced with this version use the model-based renderer by default.
+To disable the model-based renderer, use::
+
+    define config.gl2 = False
+
+The ``scene`` statement no longer clears the layer at list. To clear the
+layer at list, use::
+
+    show layer master
+
+Where "master" is the name of the layer. Alternatively, the old behavior
+can be restored with::
+
+    define config.scene_clears_layer_at_list = True
+
+
+.. _incompatible-7.4.3:
+
+7.4.3
+-----
+
+It is now possible to click to dismiss transitions introduced with
+:func:`renpy.transition`, and places that use it like the ``with`` clause
+of say or ``call screen`` statement. To prevent this, use::
+
+    define dismiss_blocking_transitions = False
+
+
 .. _incompatible-7.4.1:
 
 7.4.1

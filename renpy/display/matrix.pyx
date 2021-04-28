@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -287,6 +287,72 @@ cdef class Matrix:
 
         return False
 
+    cpdef Matrix inverse(Matrix self):
+        """
+        Returns the inverse of this matrix.
+        """
+
+        if self.inverse_cache is not None:
+            return self.inverse_cache
+
+        cdef Matrix rv = Matrix(None)
+
+        self.inverse_cache = rv
+
+        cdef float *m = self.m
+        cdef float *im = rv.m
+
+        cdef double A2323 = m[10] * m[15] - m[11] * m[14];
+        cdef double A1323 = m[ 9] * m[15] - m[11] * m[13];
+        cdef double A1223 = m[ 9] * m[14] - m[10] * m[13];
+        cdef double A0323 = m[ 8] * m[15] - m[11] * m[12];
+        cdef double A0223 = m[ 8] * m[14] - m[10] * m[12];
+        cdef double A0123 = m[ 8] * m[13] - m[ 9] * m[12];
+        cdef double A2313 = m[ 6] * m[15] - m[ 7] * m[14];
+        cdef double A1313 = m[ 5] * m[15] - m[ 7] * m[13];
+        cdef double A1213 = m[ 5] * m[14] - m[ 6] * m[13];
+        cdef double A2312 = m[ 6] * m[11] - m[ 7] * m[10];
+        cdef double A1312 = m[ 5] * m[11] - m[ 7] * m[ 9];
+        cdef double A1212 = m[ 5] * m[10] - m[ 6] * m[ 9];
+        cdef double A0313 = m[ 4] * m[15] - m[ 7] * m[12];
+        cdef double A0213 = m[ 4] * m[14] - m[ 6] * m[12];
+        cdef double A0312 = m[ 4] * m[11] - m[ 7] * m[ 8];
+        cdef double A0212 = m[ 4] * m[10] - m[ 6] * m[ 8];
+        cdef double A0113 = m[ 4] * m[13] - m[ 5] * m[12];
+        cdef double A0112 = m[ 4] * m[ 9] - m[ 5] * m[ 8];
+
+        cdef double det;
+
+        det = m[ 0] * ( m[ 5] * A2323 - m[ 6] * A1323 + m[ 7] * A1223 ) \
+            - m[ 1] * ( m[ 4] * A2323 - m[ 6] * A0323 + m[ 7] * A0223 ) \
+            + m[ 2] * ( m[ 4] * A1323 - m[ 5] * A0323 + m[ 7] * A0123 ) \
+            - m[ 3] * ( m[ 4] * A1223 - m[ 5] * A0223 + m[ 6] * A0123 )
+
+        if det == 0:
+            rv.m[15] = 1.0
+            return rv
+
+        det = 1 / det;
+
+        im[ 0] = <float> (det *   ( m[ 5] * A2323 - m[ 6] * A1323 + m[ 7] * A1223 ))
+        im[ 1] = <float> (det * - ( m[ 1] * A2323 - m[ 2] * A1323 + m[ 3] * A1223 ))
+        im[ 2] = <float> (det *   ( m[ 1] * A2313 - m[ 2] * A1313 + m[ 3] * A1213 ))
+        im[ 3] = <float> (det * - ( m[ 1] * A2312 - m[ 2] * A1312 + m[ 3] * A1212 ))
+        im[ 4] = <float> (det * - ( m[ 4] * A2323 - m[ 6] * A0323 + m[ 7] * A0223 ))
+        im[ 5] = <float> (det *   ( m[ 0] * A2323 - m[ 2] * A0323 + m[ 3] * A0223 ))
+        im[ 6] = <float> (det * - ( m[ 0] * A2313 - m[ 2] * A0313 + m[ 3] * A0213 ))
+        im[ 7] = <float> (det *   ( m[ 0] * A2312 - m[ 2] * A0312 + m[ 3] * A0212 ))
+        im[ 8] = <float> (det *   ( m[ 4] * A1323 - m[ 5] * A0323 + m[ 7] * A0123 ))
+        im[ 9] = <float> (det * - ( m[ 0] * A1323 - m[ 1] * A0323 + m[ 3] * A0123 ))
+        im[10] = <float> (det *   ( m[ 0] * A1313 - m[ 1] * A0313 + m[ 3] * A0113 ))
+        im[11] = <float> (det * - ( m[ 0] * A1312 - m[ 1] * A0312 + m[ 3] * A0112 ))
+        im[12] = <float> (det * - ( m[ 4] * A1223 - m[ 5] * A0223 + m[ 6] * A0123 ))
+        im[13] = <float> (det *   ( m[ 0] * A1223 - m[ 1] * A0223 + m[ 2] * A0123 ))
+        im[14] = <float> (det * - ( m[ 0] * A1213 - m[ 1] * A0213 + m[ 2] * A0113 ))
+        im[15] = <float> (det *   ( m[ 0] * A1212 - m[ 1] * A0212 + m[ 2] * A0112 ))
+
+        return rv
+
     @staticmethod
     cdef Matrix cidentity():
         return identity_matrix()
@@ -294,6 +360,9 @@ cdef class Matrix:
     @staticmethod
     def identity():
         """
+        :doc: matrix
+        :args: ()
+
         Returns an identity matrix.
         """
         return identity_matrix()
@@ -305,6 +374,9 @@ cdef class Matrix:
     @staticmethod
     def offset(x, y, z):
         """
+        :doc: matrix
+        :args: (x, y, z)
+
         Returns a matrix that offsets the vertex by a fixed amount.
         """
         return offset_matrix(x, y, z)
@@ -316,11 +388,21 @@ cdef class Matrix:
     @staticmethod
     def rotate(x, y, z):
         """
+        :doc: matrix
+        :args: (x, y, z)
+
         Returns a matrix that rotates the displayable around the
         origin.
 
         `x`, `y`, `x`
             The amount to rotate around the origin, in degrees.
+
+
+        The rotations are applied in order:
+
+        * A clockwise rotation by `x` degrees in the Y/Z plane.
+        * A clockwise rotation by `y` degrees in the Z/X plane.
+        * A clockwise rotation by `z` degrees in the X/Y plane.
         """
         return rotate_matrix(x, y, z)
 
@@ -331,6 +413,9 @@ cdef class Matrix:
     @staticmethod
     def scale(x, y, z):
         """
+        :doc: matrix
+        :args: (x, y, z)
+
         Returns a matrix that scales the displayable.
 
         `x`, `y`, `z`
@@ -345,9 +430,14 @@ cdef class Matrix:
     @staticmethod
     def perspective(w, h, n, p, f):
         """
-        Returns the Ren'Py projection matrix. This is a view into a 3d space
-        where (0, 0) is the top left corner (`w`/2, `h`/2) is the center, and
-        (`w`,`h`) is the bottom right, when the z coordinate is 0.
+        :doc: matrix
+        :args: (w, h, n, p, f)
+
+        Returns a matrix suitable for the perspective projection of an image
+        in the Ren'Py coordinate system. This is a view into the a coordinate
+        system where, where when z=0, (0, 0) corresponds to the top-left corner
+        of the screen, and (w, h) corresponds to the bottom-right corner of
+        the screen.
 
         `w`, `h`
             The width and height of the input plane, in pixels.
@@ -356,8 +446,8 @@ cdef class Matrix:
             The distance of the near plane from the camera.
 
         `p`
-            The distance of the 1:1 plane from the camera. This is where 1 pixel
-            is one coordinate unit.
+            How far the z=0 plane is from the camera. This is also where one
+            virtual pixel is one coordinate unit in x and y.
 
         `f`
             The distance of the far plane from the camera.

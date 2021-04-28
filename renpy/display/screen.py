@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -458,7 +458,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         finally:
             pop_current_screen()
 
-        if self.modal:
+        if self.modal and not callable(self.modal):
             raise renpy.display.layout.IgnoreLayers()
 
     def copy(self):
@@ -724,7 +724,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if rv is not None:
             return rv
 
-        if self.modal:
+        if renpy.display.layout.check_modal(self.modal, ev, x, y, renpy.config.screen_width, renpy.config.screen_height):
             raise renpy.display.layout.IgnoreLayers()
 
     def get_phase_name(self):

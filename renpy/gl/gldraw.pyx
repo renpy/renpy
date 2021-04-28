@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,7 +32,7 @@ import_pygame_sdl2()
 
 import renpy
 import renpy.uguu.gl
-import renpy.uguu.angle
+import renpy.gl.glfunctions
 import pygame_sdl2 as pygame
 import os
 import os.path
@@ -146,6 +146,9 @@ cdef class GLDraw:
         self.environ.deinit()
         self.rtt.deinit()
 
+        gltexture.dealloc_textures()
+        gltexture.free_texture_numbers()
+
         if renpy.android or renpy.ios:
             pygame.display.get_window().recreate_gl_context()
 
@@ -159,11 +162,11 @@ cdef class GLDraw:
         renpy.game.preferences.fullscreen = fullscreen
         renpy.game.interface.fullscreen = fullscreen
 
-        if not fullscreen:
-            renpy.game.preferences.physical_size = pwidth, pheight
-
         self.physical_size = (pwidth, pheight)
         self.drawable_size = pygame.display.get_drawable_size()
+
+        if not fullscreen:
+            renpy.game.preferences.physical_size = self.get_physical_size()
 
         renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
 
@@ -219,8 +222,11 @@ cdef class GLDraw:
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-        self.rtt.init()
-        self.environ.init()
+        try:
+            self.rtt.init()
+            self.environ.init()
+        except:
+            renpy.display.interface.display_reset = True
 
     def resize(self):
 
@@ -235,6 +241,9 @@ cdef class GLDraw:
         else:
             width = self.virtual_size[0]
             height = self.virtual_size[1]
+
+        width *= self.dpi_scale
+        height *= self.dpi_scale
 
         max_w, max_h = self.info["max_window_size"]
         width = min(width, max_w)
@@ -286,8 +295,6 @@ cdef class GLDraw:
         else:
             fullscreen = renpy.game.preferences.fullscreen
 
-        renpy.display.log.write("")
-
         self.virtual_size = virtual_size
 
         vwidth, vheight = virtual_size
@@ -330,9 +337,18 @@ cdef class GLDraw:
 
         if renpy.windows or renpy.linux or renpy.macintosh:
 
-            pwidth = min(visible_w, pwidth, head_w)
-            pheight = min(visible_h, pheight, head_h)
-            pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
+            # Are we maximized?
+            old_surface = pygame.display.get_surface()
+            if old_surface is not None:
+                maximized = old_surface.get_flags() & pygame.WINDOW_MAXIMIZED
+            else:
+                maximized = False
+
+            if not maximized:
+
+                pwidth = min(visible_w, pwidth, head_w)
+                pheight = min(visible_h, pheight, head_h)
+                pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
 
         pwidth = int(round(pwidth))
         pheight = int(round(pheight))
@@ -363,12 +379,6 @@ cdef class GLDraw:
 
         renpy.display.log.write("swap interval: %r frames", vsync)
 
-        # Angle or GL?
-        if self.angle:
-            renpy.uguu.angle.load_angle()
-        else:
-            renpy.uguu.angle.load_gl()
-
         # Set the display mode.
 
         pygame.display.gl_reset_attributes()
@@ -378,6 +388,7 @@ cdef class GLDraw:
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
+
         else:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
 
@@ -410,6 +421,9 @@ cdef class GLDraw:
             pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
             pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
+        if renpy.config.gl_set_attributes is not None:
+            renpy.config.gl_set_attributes()
+
         self.window = None
 
         if (self.window is None) and fullscreen:
@@ -429,11 +443,11 @@ cdef class GLDraw:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
                 return False
 
-        if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+        renpy.uguu.gl.clear_missing_functions()
+        renpy.uguu.gl.load()
+        if renpy.uguu.gl.check_missing_functions(renpy.gl.glfunctions.required_functions):
             self.quit()
             return False
-
-        renpy.uguu.gl.load()
 
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
@@ -458,10 +472,16 @@ cdef class GLDraw:
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(i.decode("utf-8") for i in extensions_string.split(b" "))
 
-        renpy.display.log.write("Extensions:")
+        if renpy.config.log_gl_extensions:
 
-        for i in sorted(extensions):
-            renpy.display.log.write("    %s", i)
+            renpy.display.log.write("Extensions:")
+
+            for i in sorted(extensions):
+                renpy.display.log.write("    %s", i)
+
+        if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+            self.quit()
+            return False
 
         def use_subsystem(module, envvar, envval, *req_ext):
             """
@@ -627,7 +647,7 @@ cdef class GLDraw:
         if surf in self.texture_cache:
             del self.texture_cache[surf]
 
-    def load_texture(self, surf, transient=False):
+    def load_texture(self, surf, transient=False, properties={}):
         """
         Loads a texture into memory.
         """
@@ -761,7 +781,6 @@ cdef class GLDraw:
             try:
                 pygame.display.flip()
             except pygame.error:
-                print("Flip failed.")
                 renpy.game.interface.display_reset = True
 
             end = time.time()
@@ -1187,11 +1206,6 @@ cdef class GLDraw:
         x = int(x)
         y = int(y)
 
-        x = max(0, x)
-        x = min(vw, x)
-        y = max(0, y)
-        y = min(vh, y)
-
         return x, y
 
     def untranslate_point(self, x, y):
@@ -1297,8 +1311,6 @@ cdef class GLDraw:
         y = int(y / self.dpi_scale)
 
         return (x, y)
-
-
 
 
 class Rtt(object):

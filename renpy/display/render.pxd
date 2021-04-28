@@ -72,7 +72,8 @@ cdef class Render:
     # gl, sw: Caching of render-to-texture.
     cdef public object surface, alpha_surface, half_cache
 
-    cdef public bint modal
+    cdef public object modal
+
     cdef public bint text_input
 
     # gl2 ######################################################################

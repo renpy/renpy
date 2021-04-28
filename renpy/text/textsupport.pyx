@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,10 +27,14 @@ include "linebreak.pxi"
 cdef class Glyph:
 
     def __cinit__(self):
+        self.variation = 0
         self.delta_x_offset = 0
 
     def __repr__(self):
-        return "<Glyph {0!r} time={1}>".format(self.character, self.time)
+        if self.variation == 0:
+            return "<Glyph {0!r} time={1}>".format(self.character, self.time)
+        else:
+            return "<Glyph {0!r} vs={1} time={2}>".format(self.character, self.variation, self.time)
 
 cdef class Line:
 

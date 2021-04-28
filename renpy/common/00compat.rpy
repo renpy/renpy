@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -199,9 +199,17 @@ init -1900 python:
             config.window_functions_set_auto = False
             config.hw_video = True
 
-        if verion <= (7, 4, 0):
+        if version <= (7, 4, 0):
             config.pause_with_transition = True
 
+        if version <= (7, 4, 2):
+            config.dismiss_blocking_transitions = False
+
+        if version <= (7, 4, 4):
+            config.pause_after_rollback = True
+            config.gl2 = False
+            config.scene_clears_layer_at_list = True
+            config.gl_lod_bias = -1.0
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

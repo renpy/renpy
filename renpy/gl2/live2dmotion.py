@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -128,6 +128,8 @@ class Motion(object):
 
             segments = [ ]
 
+            curve_duration = 0.0
+
             while s:
 
                 kind = s.pop(0)
@@ -166,6 +168,11 @@ class Motion(object):
                 x0 = x
                 y0 = y
 
+                curve_duration += segments[-1].duration
+
+            if curve_duration < self.duration:
+                segments.append(Step(curve_duration, y0, self.duration, y))
+
             self.curves[target, name] = segments
             self.fades[target, name] = (
                 curve.get("FadeInTime", fadein),
@@ -178,7 +185,10 @@ class Motion(object):
         parameter name, and the values are the blend factor and value.
         """
 
-        st = st % self.duration
+        if st == self.duration:
+            st = self.duration
+        else:
+            st = st % self.duration
 
         rv = { }
 
@@ -211,7 +221,7 @@ class Motion(object):
             t = st
 
             for i in segments:
-                if t < i.duration:
+                if t <= i.duration:
                     rv[k] = (factor, i.get(t))
 
                     break
@@ -256,7 +266,7 @@ class Motion(object):
             t = st
 
             for i in segments:
-                if t < i.duration:
+                if t <= i.duration:
                     rv = min(rv, i.wait(t))
                     break
 

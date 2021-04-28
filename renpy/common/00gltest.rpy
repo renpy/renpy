@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -133,6 +133,10 @@ init -1500:
 
                     null height 10
 
+                    textbutton _("Enable (No Blocklist)"):
+                        action SetField(_preferences, "pad_enabled", "all")
+                        style_suffix "radio_button"
+
                     textbutton _("Enable"):
                         action SetField(_preferences, "pad_enabled", True)
                         style_suffix "radio_button"
@@ -252,6 +256,10 @@ init -1500:
 
             null height 10
 
+            text _("The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer.")
+
+            null height 10
+
             if url:
                 text _("More details on how to fix this can be found in the {a=[url]}documentation{/a}.") substitute True
 
@@ -341,7 +349,7 @@ init -1500 python:
 
         renderer_info = renpy.get_renderer_info()
 
-        # Software renderer check.
+         # Software renderer check.
         if config.renderer != "sw" and renderer_info["renderer"] == "sw":
             problem = "sw"
             allow_continue = False

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,11 +22,6 @@
 # Code that manages projects.
 
 init python:
-    if renpy.windows:
-        import EasyDialogsWin as EasyDialogs
-    else:
-        EasyDialogs = None
-
     import os
 
 init python in project:
@@ -258,6 +253,8 @@ init python in project:
 
             if persistent.navigate_library:
                 cmd.append("--json-dump-common")
+
+            cmd.append("--errors-in-editor")
 
             environ = dict(os.environ)
             environ["RENPY_LAUNCHER_LANGUAGE"] = _preferences.language or "english"
@@ -797,7 +794,7 @@ init python:
         args = ap.parse_args()
 
         persistent.projects_directory = renpy.fsdecode(args.projects)
-        project.multipersistent.projects_directory = path
+        project.multipersistent.projects_directory = persistent.projects_directory
         project.multipersistent.save()
         renpy.save_persistent()
 
@@ -808,6 +805,9 @@ init python:
     def get_projects_directory_command():
         ap = renpy.arguments.ArgumentParser()
         args = ap.parse_args()
+
+        if persistent.projects_directory is not None:
+            print(persistent.projects_directory)
 
         return False
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,6 +29,8 @@ from renpy.gl2.gl2mesh2 cimport Mesh2
 
 from renpy.display.matrix cimport Matrix
 from renpy.display.render cimport Render
+
+from renpy.uguu.gl cimport GL_ZERO, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_DST_COLOR, GL_DST_ALPHA
 
 import renpy
 
@@ -120,9 +122,10 @@ class Parameter(object):
 
 class Part(object):
 
-    def __init__(self, index, name):
+    def __init__(self, index, name, default_opacity):
         self.index = index
         self.name = name
+        self.default_opacity = default_opacity
 
 cdef class Live2DModel:
     """
@@ -252,17 +255,20 @@ cdef class Live2DModel:
 
         for 0 <= i < self.part_count:
             name = self.part_ids[i]
-            self.parts[name] = Part(i, name)
+            self.parts[name] = Part(i, name, self.part_opacities[i])
 
         self.opacity_groups = { }
         self.parameter_groups = { }
-
 
         csmUpdateModel(self.model)
 
     def reset_parameters(self):
         for i in self.parameters.values():
             self.parameter_values[i.index] = i.default
+
+        for i in self.parts.values():
+            self.part_opacities[i.index] = i.default_opacity
+
 
     def set_part_opacity(self, name, value):
         part = self.parts.get(name, None)
@@ -376,6 +382,11 @@ cdef class Live2DModel:
             r.blit(textures[self.drawable_texture_indices[i]], (0, 0))
 
             raw_renders.append(r)
+
+            if self.drawable_constant_flags[i] & csmBlendAdditive:
+                r.add_property("blend_func", (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE))
+            elif self.drawable_constant_flags[i] & csmBlendMultiplicative:
+                r.add_property("blend_func", (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE))
 
             if self.drawable_dynamic_flags[i] & csmIsVisible:
 

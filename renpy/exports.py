@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -815,8 +815,11 @@ def scene(layer='master'):
     if renpy.config.missing_scene:
         renpy.config.missing_scene(layer)
 
+    # End a transition that's affecting layer.
+    renpy.display.interface.ongoing_transition.pop(layer, None)
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input"): # @ReservedAssignment
+
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", **kwargs): # @ReservedAssignment
     """
     :doc: input
 
@@ -851,6 +854,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     If :var:`config.disable_input` is True, this function only returns
     `default`.
+
+    Keywords prefixed with ``show_`` have the prefix stripped and
+    are passed to the screen.
     """
 
     if renpy.config.disable_input:
@@ -868,11 +874,17 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     fixed = in_fixed_rollback()
 
+    # put arguments with show_ prefix aside
+    show_properties, kwargs = renpy.easy.split_properties(kwargs, "show_", "")
+
+    if kwargs:
+        raise TypeError("renpy.input() got unexpected keyword argument(s): {}".format(", ".join(kwargs.keys())))
+
     if has_screen(screen):
         widget_properties = { }
         widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width)
 
-        show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt)
+        show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **show_properties)
 
     else:
 
@@ -1479,14 +1491,17 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
         tl;dr - Don't use renpy.pause with hard=True.
     """
 
+    if renpy.config.skipping == "fast":
+        return False
+
+    if renpy.game.after_rollback and not renpy.config.pause_after_rollback:
+        return False
+
     if checkpoint is None:
         if delay is not None:
             checkpoint = False
         else:
             checkpoint = True
-
-    if renpy.config.skipping == "fast":
-        return False
 
     roll_forward = renpy.exports.roll_forward_info()
     if roll_forward not in [ True, False ]:
@@ -1509,14 +1524,11 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
         afm = None
 
     if hard or not renpy.store._dismiss_pause:
-        renpy.ui.saybehavior(afm=afm, dismiss='dismiss_hard_pause')
+        renpy.ui.saybehavior(afm=afm, dismiss='dismiss_hard_pause', dismiss_unfocused=[])
     else:
         renpy.ui.saybehavior(afm=afm)
 
-    if delay is not None:
-        renpy.ui.pausebehavior(delay, False)
-
-    rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward)
+    rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay)
 
     if checkpoint:
         renpy.exports.checkpoint(rv, keep_rollback=True)
@@ -2145,17 +2157,25 @@ def log(msg):
         return
 
     try:
+        msg = unicode(msg)
+    except:
+        pass
+
+    try:
 
         if not logfile:
-            import codecs
-            logfile = open(renpy.config.log, "a")
+            import os
+            logfile = open(os.path.join(renpy.config.basedir, renpy.config.log), "a")
 
             if not logfile.tell():
                 logfile.write("\ufeff")
 
         import textwrap
 
-        print(textwrap.fill(msg, renpy.config.log_width).encode("utf-8"), file=logfile)
+        wrapped = textwrap.fill(msg, renpy.config.log_width)
+        wrapped = unicode(wrapped)
+
+        logfile.write(wrapped + "\n")
         logfile.flush()
 
     except:
@@ -3903,3 +3923,120 @@ def add_to_all_stores(name, value):
 
         if name not in ns:
             ns[name] = value
+
+
+def get_zorder_list(layer):
+    """
+    :doc: image_func
+
+    Returns a list of (tag, zorder) pairs for `layer`.
+    """
+
+    return renpy.display.core.scene_lists().get_zorder_list(layer)
+
+
+def change_zorder(layer, tag, zorder):
+    """
+    :doc: image_func
+
+    Changes the zorder of `tag` on `layer` to `zorder`.
+    """
+
+    return renpy.display.core.scene_lists().change_zorder(layer, tag, zorder)
+
+
+sdl_dll = False
+
+
+def get_sdl_dll():
+    """
+    :doc: sdl
+
+    This returns a ctypes.cdll object that refers to the library that contains
+    the instance of SDL2 that Ren'Py is using.
+
+    If this can not be done, None is returned.
+    """
+
+    global sdl_dll
+
+    if sdl_dll is not False:
+        return sdl_dll
+
+    try:
+
+        DLLS = [ None, "librenpython.dll", "librenpython.dylib", "librenpython.so", "SDL2.dll", "libSDL2.dylib", "libSDL2-2.0.so.0" ]
+
+        import ctypes
+
+        for i in DLLS:
+            try:
+                # Look for the DLL.
+                dll = ctypes.cdll[i]
+                # See if it has SDL_GetError..
+                dll.SDL_GetError
+            except:
+                continue
+
+            sdl_dll = dll
+            return dll
+
+    except:
+        pass
+
+    sdl_dll = None
+    return None
+
+
+def get_sdl_window_pointer():
+    """
+    :doc: sdl
+
+    Returns a pointer (of type ctypes.c_void_p) to the main window, or None
+    if the main window is not displayed, or some other problem occurs.
+    """
+
+    try:
+        window = pygame_sdl2.display.get_window()
+
+        if window is None:
+            return
+
+        return window.get_sdl_window_pointer()
+
+    except:
+        return None
+
+
+def is_mouse_visible():
+    """
+    :doc: other
+
+    Returns True if the mouse cursor is visible, False otherwise.
+    """
+
+    if not renpy.display.interface:
+        return True
+
+    if not renpy.display.interface.mouse_focused:
+        return False
+
+    return renpy.display.interface.is_mouse_visible()
+
+
+def get_mouse_name(interaction=False):
+    """
+    :doc: other
+
+    Returns the name of the mouse that should be shown.
+
+
+    `interaction`
+        If true, get a mouse name that is based on the type of interaction
+        occuring. (This is rarely useful.)
+    """
+
+    if not renpy.display.interface:
+        return 'default'
+
+    return renpy.display.interface.get_mouse_name(interaction=interaction)

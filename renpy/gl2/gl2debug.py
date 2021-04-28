@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,7 +25,7 @@ from renpy.compat import *
 import renpy
 
 
-def geometry(mesh, transform):
+def geometry(mesh, transform, width, height):
     """
     Debugs the drawing of geometry by applying `transform` to `mesh`, and
     then projecting it onto the screen.
@@ -33,9 +33,6 @@ def geometry(mesh, transform):
 
     points = mesh.get_points()
     triangles = mesh.get_triangles()
-
-    width = renpy.config.screen_width
-    height = renpy.config.screen_height
 
     l = ["Mesh:"]
 

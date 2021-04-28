@@ -212,6 +212,13 @@ The custom shader can then be applied using a transform::
 
     show eileen happy at gradient
 
+There is a variable that can help in debugging custom shaders:
+
+.. var:: config.log_gl_shaders = False
+
+    If true, source code for the GLSL shader programs will be written to
+    log.txt on start.
+
 Transforms and Model-Based Rendering
 ------------------------------------
 
@@ -231,6 +238,32 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     * The child of this transform will be rendered to a texture.
     * The renpy.texture shader will be added.
 
+.. transform-property:: mesh_pad
+
+    :type: None or tuple
+    :default: None
+
+    If not None, this can either be a 2 or 4 component tuple. If mesh is
+    true and this is given, this applies padding to the size of the textues
+    applied to the the textures used by the mesh. A two component tuple applies
+    padding to the right and bottom, while a four component tuple applies
+    padding to the left, top, right, and bottom.
+
+    This can be used, in conjunction with the pixel_perfect property, to
+    render text into a mesh. In Ren'Py, text is rendered at the screen
+    resoltution, which might overflow the boundaries of the texture that
+    will be applied to the mesh. Adding a few pixels of padding makes the
+    texture bigger, which will display all pixels. For example::
+
+        transform adjust_text:
+            mesh True
+            mesh_pad (10, 0)
+            gl_pixel_perfect True
+            shader "shaders.adjust_text"
+
+    will ensure that the texture passed to the shader contains all of the pixels
+    of the text.
+
 .. transform-property:: shader
 
     :type: None or str or list of str
@@ -240,10 +273,39 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     applied to the  this Render (if a Model is created) or the Models reached
     through this Render.
 
+.. transform-property:: blend
+
+    :type: None or str
+    :default: None
+
+    if not None, this should be a string. This string is looked up in
+    :var:`config.gl_blend_func` to  get the value for the gl_blend_func
+    property. It's used to use alternate blend modes.
+
+    The default blend modes this supports are "normal", "add", "multiply",
+    "min", and "max".
+
+
 In addition, uniforms that start with u\_ and not u_renpy are made available
 as Transform properties. GL properties are made available as transform
 properties starting with gl\_. For example, the color_mask property is made
 available as gl_color_mask.
+
+Blend Functions
+---------------
+
+.. var:: config.gl_blend_func = { ... }
+
+    A dictionaryt used to map a blend mode name to a blend function. The
+    blend modes are suppled to the blend func property, given below.
+
+The default blend modes are::
+
+    gl_blend_func["normal"] = (GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+    gl_blend_func["add"] = (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE)
+    gl_blend_func["multiply"] = (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE)
+    gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
+    gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
 
 
 Uniforms and Attributes
@@ -254,8 +316,13 @@ The following uniforms are made available to all Models.
 ``vec2 u_model_size``
     The width and height of the model.
 
-``vec2 u_lod_bias``
-    The level of detail bias to apply to texture lookups.
+.. _u-lod-bias:
+
+``float u_lod_bias``
+    The level of detail bias to apply to texture lookups. This may be
+    set in a Transform. The default value, taken from :var:`config.gl_lod_bias`
+    and defaulting to -0.5, biases Ren'Py to always pick the next bigger
+    level and scale it down.
 
 ``mat4 u_transform``
     The transform used project virtual pixels to the OpenGL viewport.
@@ -294,12 +361,37 @@ GL Properties
 -------------
 
 GL properties change the global state of OpenGL, or the Model-Based renderer.
+These properties Take a ``gl\_`` prefix when used as part of a Transform, so
+you'd write ``gl_color_masks`` in ATL.
 
 ``color_masks``
     This is expecting to be a 4-tuple of booleans, corresponding to the four
     channels of a pixel (red, green, blue, and alpha). If a given channel is
-    treu, the draw operation will write to that pixel. Otherwise, it will
+    true, the draw operation will write to that pixel. Otherwise, it will
     not.
+
+``pixel_perfect``
+    This only makes sense to set when a mesh is being created. When True,
+    Ren'Py will move the mesh such that the first vertex is aligned with
+    a pixel on the screen. This is mostly used in conjunction with text,
+    to ensure that the text remains sharp.
+
+``blend_func``
+    If present, this is expected to be a six-component tuple, which is
+    used to set the equation used to blend the pixel being drawn with the
+    pixel it is being drawn to, and the parameters to that equation.
+
+    Specifically, this should be (`rgb_equation`, `src_rgb`, `dst_rgb`,
+    `alpha_equation`, `src_alpha`, `dst_alpha`). These will be used to
+    call::
+
+        glBlendEquationSeparate(rgb_equation, alpha_equation)
+        glBlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha)
+
+    Please check out the OpenGL documentation for what these functions do.
+    OpenGL constants can be imported from renpy.uguu::
+
+        from renpy.uguu import GL_ONE, GL_ONE_MINUS_SRC_ALPHA
 
 Default Shader Parts
 --------------------
