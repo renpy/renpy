@@ -1732,7 +1732,7 @@ translate spanish strings:
 
     # game/preferences.rpy:199
     old "Default theme"
-    new "Tema por defecto"
+    new "Tema predeterminado "
 
     # game/preferences.rpy:201
     old "Clear theme"
