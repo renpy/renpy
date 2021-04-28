@@ -9,13 +9,13 @@ translate korean start_0e6a5bb4:
 translate korean start_d3abb53c:
 
     # e "In this tutorial, we'll teach you the basics of Ren'Py, so you can make games of your own. We'll also demonstrate many features, so you can see what Ren'Py is capable of."
-    e "이 길라잡이에서, 우리는 네게 너만의 게임을 만들 수 있게 렌파이의 기본을 알려줄 거야. 또한 렌파이가 어떤 기능을 제공하는지 알 수 있도록 많은 기능을 선보일 거야."
+    e "이 길라잡이는 네가 너만의 게임을 만들 수 있도록, 렌파이의 기본을 알려줄 거야. 또한 렌파이가 어떤 기능을 제공하는지 알 수 있도록 많은 기능을 선보일 거야."
 
 # game/script.rpy:205
 translate korean end_b2482727:
 
     # e "Thank you for viewing this tutorial."
-    e "이 길라잡이을 봐줘서 고마와."
+    e "이 길라잡이를 봐줘서 고마워."
 
 # game/script.rpy:207
 translate korean end_38362e36:
@@ -27,13 +27,13 @@ translate korean end_38362e36:
 translate korean end_02527d05:
 
     # e "You can download new versions of Ren'Py from {a=https://www.renpy.org/}https://www.renpy.org/{/a}. For help and discussion, check out the {a=https://lemmasoft.renai.us/forums/}Lemma Soft Forums{/a}."
-    e "너는 {a=https://www.renpy.org/}https://www.renpy.org/{/a}에서 렌파이의 새 버전을 내려받을 수 있어. 도움과 토론을 위한다면, {a=https://lemmasoft.renai.us/forums/}렘마 소프트 포럼{/a}을 방문해 줘."
+    e "너는 {a=https://www.renpy.org/}https://www.renpy.org/{/a}에서 렌파이의 새 버전을 내려받을 수 있어. 도움을 받거나 토론을 하려면, {a=https://lemmasoft.renai.us/forums/}렘마 소프트 포럼{/a}을 방문해 줘."
 
 # game/script.rpy:211
 translate korean end_c9d03136:
 
     # e "We'd like to thank Piroshki for contributing my sprites; Mugenjohncel for Lucy, the band, and drawn backgrounds; and Jake for the magic circle."
-    e "우리는 내 스프라이트를 만든 피로스키(Piroshki)와; 루시, 밴드, 배경을 그려준 무겐존셀(Mugenjohncel); 매직 서클을 만들어준 제이크(Jake)에게 감사를 전하고 싶어."
+    e "내 스프라이트를 만들어준 피로스키(Piroshki)와; 루시, 밴드, 배경을 그려준 무겐존셀(Mugenjohncel); 매직 서클을 만들어준 제이크(Jake)에게 감사를 전하고 싶어."
 
 # game/script.rpy:213
 translate korean end_762dc07a:
@@ -45,7 +45,7 @@ translate korean end_762dc07a:
 translate korean end_a634d396:
 
     # e "We look forward to seeing what you create with Ren'Py. Have fun!"
-    e "우리는 네가 렌파이로 만드는 것을 보길 고대해. 즐겨봐!"
+    e "네가 렌파이로 뭘 만드는지 보고 싶어. 즐겨봐!"
 
 translate korean strings:
 
@@ -171,4 +171,4 @@ translate korean strings:
 
     # script.rpy:170
     old "Is there anything else you'd like to see?"
-    new "더 궁금한 것이 있어?"
+    new "더 궁금한 게 있어?"
