@@ -535,7 +535,7 @@ def quit():  # @ReservedAssignment
 
     with scan_thread_condition:
         quit_scan_thread = True
-        scan_thread_condition.notifyAll()
+        scan_thread_condition.notify_all()
 
     scan_thread.join()
 

@@ -184,7 +184,7 @@ def save_dump(roots, log):
     with f:
         visit(roots, "roots")
         visit(log, "log")
-    
+
 def find_bad_reduction(roots, log):
     """
     Finds objects that can't be reduced properly.
@@ -483,7 +483,7 @@ def autosave():
         return
 
     # That is, autosave is running.
-    if not autosave_not_running.isSet():
+    if not autosave_not_running.is_set():
         return
 
     if renpy.config.skipping:
@@ -527,7 +527,7 @@ def force_autosave(take_screenshot=False, block=False):
         return
 
     # That is, autosave is running.
-    if not autosave_not_running.isSet():
+    if not autosave_not_running.is_set():
         return
 
     # Join the autosave thread to clear resources.
