@@ -40,7 +40,8 @@ init -1500 python:
             .. method MouseDisplayable.add(name, cursor, x, y)
 
                 This adds a second cursor, that is used when the `name`
-                mouse is displayed.
+                mouse is displayed. This returns the MouseDisplayable,
+                so that
 
             """
 
@@ -48,13 +49,13 @@ init -1500 python:
 
             self.cursors = { 'default': ( renpy.displayable(cursor), x, y) }
 
-
             self.last_cursor = "_default_"
             self.last_cursor_st = 0
 
 
         def add(self, name, cursor, x, y):
             self.cursors[name] = ( renpy.displayable(cursor), x, y )
+            return self
 
         def render(self, width, height, st, at):
 
