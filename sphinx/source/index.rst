@@ -76,6 +76,7 @@ Customizing Ren'Py
    config
    preferences
    store_variables
+   mouse
 
 Tools
 -----
