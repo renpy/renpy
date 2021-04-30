@@ -542,6 +542,30 @@ def get_attributes(tag, layer=None, if_hidden=None):
     return renpy.game.context().images.get_attributes(layer, tag, if_hidden)
 
 
+def _find_image(layer, key, name, what):
+    """
+    :undocumented:
+
+    Finds an image to show.
+    """
+
+    if renpy.config.image_attributes:
+
+        new_what = renpy.game.context().images.apply_attributes(layer, key, name)
+        if new_what is not None:
+            what = new_what
+            name = (key,) + new_what[1:]
+            return name, what
+
+    f = renpy.config.adjust_attributes.get(what[0], None) or renpy.config.adjust_attributes.get(None, None)
+    if f is not None:
+        new_what = f(what)
+        name = (key,) + new_what[1:]
+        return name, new_what
+
+    return name, what
+
+
 def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
     """
     :undocumented:
@@ -577,13 +601,8 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
         base = img = what
 
     else:
-        if renpy.config.image_attributes:
 
-            new_what = renpy.game.context().images.apply_attributes(layer, key, name)
-            if new_what is not None:
-                what = new_what
-                name = (key,) + new_what[1:]
-
+        name, what = _find_image(layer, key, name, what)
         base = img = renpy.display.image.ImageReference(what, style='image_placement')
 
         if not base.find_target():
@@ -715,13 +734,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
             base = img = what
 
     else:
-
-        if renpy.config.image_attributes:
-            new_what = renpy.game.context().images.apply_attributes(layer, key, name)
-            if new_what is not None:
-                what = new_what
-                name = (key,) + new_what[1:]
-
+        name, what = _find_image(layer, key, name, what)
         base = img = renpy.display.image.ImageReference(what, style='image_placement')
 
         if not base.find_target() and renpy.config.missing_show:
