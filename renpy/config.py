@@ -1009,7 +1009,7 @@ gl2 = True
 
 # Does this game use the depth buffer? If so, how many bits of depth should
 # it use?
-depth_size = None
+depth_size = 24
 
 # A list of screens to remove when the context is copied.
 context_copy_remove_screens = [ "notify" ]

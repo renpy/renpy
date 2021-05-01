@@ -1261,6 +1261,14 @@ cdef class GL2DrawingContext:
                 else:
                     uniforms[k] = v
 
+        depth = properties.pop("depth", False) and not properties.get("has_depth", False)
+        if depth:
+            glClear(GL_DEPTH_BUFFER_BIT)
+            glEnable(GL_DEPTH_TEST)
+            glDepthFunc(GL_LESS)
+
+            properties["has_depth"] = True
+
         children = r.visible_children
 
         if r.cached_model is not None:
@@ -1290,6 +1298,9 @@ cdef class GL2DrawingContext:
 
             self.draw_one(child, child_transform, child_clip_polygon, shaders, uniforms, child_properties)
 
+
+        if depth:
+            glDisable(GL_DEPTH_TEST)
 
         return 0
 
