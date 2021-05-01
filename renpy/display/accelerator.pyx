@@ -497,7 +497,12 @@ def transform_render(self, widtho, heighto, st, at):
 
     if state.zzoom and z11:
         zzoom = (z11 - state.zpos) / z11
-        self.reverse = Matrix.scale(zzoom, zzoom, 0) * self.reverse
+
+        m = Matrix.offset(-width / 2, -height / 2, 0.0)
+        m = Matrix.scale(zzoom, zzoom, 1) * m
+        m = Matrix.offset(width / 2, height / 2, 0.0) * m
+
+        self.reverse = m * self.reverse
 
     # perspective
     if perspective:
