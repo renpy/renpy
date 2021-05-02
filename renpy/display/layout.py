@@ -783,11 +783,11 @@ class MultiBox(Container):
 
                 if first_fit_width:
                     width = rv.width = size[0]
-                    first_fit_width = False
+                    first_fit_width = None
 
                 if first_fit_height:
                     height = rv.height = size[1]
-                    first_fit_height = False
+                    first_fit_height = None
 
                 if surf:
                     offset = child.place(rv, 0, 0, width, height, surf)
@@ -801,7 +801,7 @@ class MultiBox(Container):
                 for o, s in zip(offsets, sizes):
                     width = max(o[0] + s[0], width)
 
-                    if fit_first:
+                    if first_fit_width is None:
                         break
 
                 rv.width = width
@@ -815,13 +815,13 @@ class MultiBox(Container):
                 for o, s in zip(offsets, sizes):
                     height = max(o[1] + s[1], height)
 
-                    if fit_first:
+                    if first_fit_height is None:
                         break
 
                 rv.height = height
 
                 if height > renpy.config.max_fit_size:
-                    raise Exception("Fixed fit width ({}) is too large.".format(height))
+                    raise Exception("Fixed fit height ({}) is too large.".format(height))
 
             if self.style.order_reverse:
                 offsets.reverse()
