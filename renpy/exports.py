@@ -1819,6 +1819,10 @@ def reload_script():
     save.
     """
 
+    # Avoid reloading in a replay.
+    if renpy.store._in_replay:
+        return
+
     s = get_screen("menu")
 
     session.pop("_reload_screen", None)
