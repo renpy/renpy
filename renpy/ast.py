@@ -700,8 +700,8 @@ class Say(Node):
             if self.arguments is not None:
                 args, kwargs = self.arguments.evaluate()
             else:
-                args = tuple()
-                kwargs = dict()
+                args = ()
+                kwargs = {}
 
             kwargs.setdefault("interact", self.interact)
 
@@ -1632,7 +1632,7 @@ class Menu(Node):
                 if self.item_arguments and (self.item_arguments[i] is not None):
                     item_arguments.append(self.item_arguments[i].evaluate())
                 else:
-                    item_arguments.append((tuple(), dict()))
+                    item_arguments.append(( (), {} ))
 
         if narration:
             renpy.exports.say(None, "\n".join(narration), interact=False)
