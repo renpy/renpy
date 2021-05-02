@@ -1730,3 +1730,14 @@ translate spanish strings:
     old "Automatically installing expansion APKs {a=https://issuetracker.google.com/issues/160942333}may not work on Android 11{/a}."
     new "Es posible que la instalación automática de APK de expansión {a=https://issuetracker.google.com/issues/160942333} no funcione en Android 11 {/a}."
 
+    # game/preferences.rpy:199
+    old "Default theme"
+    new "Tema predeterminado"
+
+    # game/preferences.rpy:201
+    old "Clear theme"
+    new "Tema claro"
+
+    # game/preferences.rpy:203
+    old "Dark theme"
+    new "Tema oscuro"
