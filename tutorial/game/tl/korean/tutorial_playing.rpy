@@ -3,7 +3,7 @@
 translate korean tutorial_playing_2985ab86:
 
     # e "As someone who has played more than a few visual novels, there are many features that I expect all games to have."
-    e "어느 정도 시각 소설을 플레이한 사람으로서, 모든 게임에서 기대할 수 있는 많은 기능들이 있어."
+    e "어느 정도 비주얼 노벨을 플레이한 사람이라면, 모든 게임에 기대할만한 많은 기능들이 있어."
 
 # game/tutorial_playing.rpy:13
 translate korean tutorial_playing_ca4769bb:
@@ -93,13 +93,13 @@ translate korean tutorial_playing_bc29822e:
 translate korean tutorial_playing_dc0f9cf7:
 
     # e "When I'm liking a visual novel, I want to see all the endings. Ren'Py's skip function lets me easily do this, by skipping text that I've already seen."
-    e "나는 좋아하는 시각 소설에서 모든 결말을 보길 원해. 렌파이의 넘기기 기능은 이미 본 것들을 넘김으로써 이러한 것들을 우리가 쉽게 할 수 있도록 도와줘."
+    e "만약 좋아하는 비주얼 노벨의 모든 분기의 엔딩을 보길 원한다면, 렌파이의 넘기기 기능은 이미 본 것들을 넘김으로써 이러한 것들을 우리가 쉽게 할 수 있도록 도와줘."
 
 # game/tutorial_playing.rpy:57
 translate korean tutorial_playing_93f7b8f9:
 
     # e "I can skip a few lines by holding down Control, or I can toggle skip mode by clicking the skip button at the bottom of the screen."
-    e "나는 컨트롤(Control, Ctrl)을 누르고 있는 것으로 몇 줄을 넘기거나, 화면 아래에 넘기기 버튼을 클릭해서 넘기기 기능을 토글할 수 있어."
+    e "나는 컨트롤(Ctrl)을 누르고 있는 것으로 몇 줄을 넘기거나, 화면 아래에 넘기기 버튼을 클릭해서 넘기기 기능을 토글할 수 있어."
 
 # game/tutorial_playing.rpy:59
 translate korean tutorial_playing_d3553fbe:
@@ -123,7 +123,7 @@ translate korean tutorial_playing_14e1c854:
 translate korean tutorial_playing_5d6e4c0f:
 
     # e "Pressing the 's' key saves a screenshot to disk, so I can upload pictures of the game to websites like {a=https://www.renpy.org}renpy.org{/a}."
-    e "'s'키를 누르면 갈무리를 디스크에 저장해, 그러면 나는 {a=https://www.renpy.org}renpy.org{/a}와 같은 웹사이트에 저장된 갈무리를 업로드할 수 있어."
+    e "'s'키를 누르면 스크린샷을 디스크에 저장해, 그러면 나는 {a=https://www.renpy.org}renpy.org{/a}와 같은 웹사이트에 저장된 스크린샷을 업로드할 수 있어."
 
 # game/tutorial_playing.rpy:67
 translate korean tutorial_playing_73f3cfec:
@@ -171,7 +171,7 @@ translate korean tutorial_rollback_5b73f822:
 translate korean tutorial_rollback_de0b6f5a:
 
     # e "Well, are you going to try it?"
-    e "음, 정말로 해본 거야?"
+    e "음, 정말 해본 거 맞아?"
 
 # game/tutorial_playing.rpy:98
 translate korean tutorial_rollback_6bbdedaa:
