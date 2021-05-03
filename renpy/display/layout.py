@@ -1475,7 +1475,7 @@ def ConditionSwitch(*args, **kwargs):
     if len(args) % 2 != 0:
         raise Exception('ConditionSwitch takes an even number of arguments')
 
-    for cond, d in zip(args[0::2], args[1::2]):
+    for cond, d in zip(args[0::2], args[1::2])+[(True, Null())]:
 
         if cond not in cond_cache:
             code = renpy.python.py_compile(cond, 'eval')
