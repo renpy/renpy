@@ -1389,6 +1389,12 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         if self.child:
             return self.child.event(ev, x, y, st)
 
+    def visit(self):
+        if not self.child:
+            self.update(0, 0)
+
+        return [ self.child ]
+
 
 # A cache of compiled conditions used by ConditionSwitch.
 cond_cache = { }
