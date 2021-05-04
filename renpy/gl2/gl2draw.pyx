@@ -632,13 +632,22 @@ cdef class GL2Draw:
         if renpy.config.depth_size:
 
             glBindRenderbuffer(GL_RENDERBUFFER, self.depth_renderbuffer)
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height)
+
+            if self.gles:
+                if renpy.config.depth_size >= 24:
+                    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height)
+                else:
+                    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height)
+
+            else:
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height)
 
             glFramebufferRenderbuffer(
                 GL_FRAMEBUFFER,
                 GL_DEPTH_ATTACHMENT,
                 GL_RENDERBUFFER,
                 self.depth_renderbuffer)
+
 
     def quit_fbo(GL2Draw self):
 
