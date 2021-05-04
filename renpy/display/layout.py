@@ -1308,6 +1308,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
     def after_setstate(self):
         self.child = None
+        self.raw_child = None
 
     def __init__(self, function, *args, **kwargs):
 
@@ -1326,14 +1327,19 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
     def _duplicate(self, args):
         rv = self._copy(args)
-
-        if rv.child is not None and rv.child._duplicateable:
-            rv.child = rv.child._duplicate(args)
+        rv.child = None
+        rv.raw_child = None
 
         return rv
 
     def visit(self):
-        return [ ]
+        if not self.child:
+            self.update(0, 0)
+
+        if self.child:
+            return [ self.child ]
+        else:
+            return [ ]
 
     def update(self, st, at):
         child, redraw = self.function(st, at, *self.args, **self.kwargs)
@@ -1359,7 +1365,6 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
     def render(self, w, h, st, at):
         self.update(st, at)
-
         return renpy.display.render.render(self.child, w, h, st, at)
 
     def predict_one(self):
@@ -1388,12 +1393,6 @@ class DynamicDisplayable(renpy.display.core.Displayable):
     def event(self, ev, x, y, st):
         if self.child:
             return self.child.event(ev, x, y, st)
-
-    def visit(self):
-        if not self.child:
-            self.update(0, 0)
-
-        return [ self.child ]
 
 
 # A cache of compiled conditions used by ConditionSwitch.
