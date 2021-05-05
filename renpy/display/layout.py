@@ -1418,7 +1418,9 @@ def condition_switch_pick(switch):
         if renpy.python.py_eval_bytecode(code):
             return d
 
-    raise Exception("Switch could not choose a displayable.")
+    if renpy.config.developer:
+        raise Exception("Switch could not choose a displayable.")
+    return Null()
 
 
 def condition_switch_show(st, at, switch, predict_all=None):
@@ -1475,7 +1477,7 @@ def ConditionSwitch(*args, **kwargs):
     if len(args) % 2 != 0:
         raise Exception('ConditionSwitch takes an even number of arguments')
 
-    for cond, d in zip(args[0::2], args[1::2])+[(True, Null())]:
+    for cond, d in zip(args[0::2], args[1::2]):
 
         if cond not in cond_cache:
             code = renpy.python.py_compile(cond, 'eval')
