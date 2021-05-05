@@ -1417,7 +1417,9 @@ def condition_switch_pick(switch):
         if renpy.python.py_eval_bytecode(code):
             return d
 
-    raise Exception("Switch could not choose a displayable.")
+    if renpy.config.developer:
+        raise Exception("Switch could not choose a displayable.")
+    return Null()
 
 
 def condition_switch_show(st, at, switch, predict_all=None):
