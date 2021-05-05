@@ -37,6 +37,25 @@ import renpy
 
 memory_log = renpy.log.open("memory")
 
+# Names that are intended to be constant containers and may be skipped during profiling.
+constant_containers = {
+    "renpy.game.script",
+    "renpy.display.image.images",
+    "renpy.display.image.image_attributes",
+    "renpy.python.py_compile_cache",
+    "renpy.python.old_py_compile_cache",
+    "renpy.python.store_dicts",
+    "renpy.python.store_modules",
+    "renpy.pyanalysis.ccache",
+    "renpy.gl2.live2d.common_cache",
+    "renpy.sl2.slast.scache",
+    "renpy.sl2.slast.ccache",
+    "renpy.sl2.slparser.all_statements",
+    "renpy.screenlang.all_statements",
+    "renpy.display.screen.screens_at_sort",
+    "renpy.display.screen.screens",
+    "renpy.display.screen.screens_by_name",
+}
 
 def print_garbage(gen):
     """
@@ -212,11 +231,6 @@ def walk_memory(roots, seen=None):
     # A map from root_name to total_size.
     size = collections.defaultdict(int)
 
-    def add(name, o):
-        """
-        Adds o to the worklist if it's not in seen.
-        """
-
     for name, o in roots:
         id_o = id(o)
 
@@ -253,7 +267,7 @@ def walk_memory(roots, seen=None):
     return size, seen
 
 
-def profile_memory_common(packages=[ "renpy", "store" ]):
+def profile_memory_common(packages=[ "renpy", "store" ], skip_constants=False):
     """
     Profiles object, surface, and texture memory used in the renpy and store
     packages.
@@ -283,12 +297,17 @@ def profile_memory_common(packages=[ "renpy", "store" ]):
             continue
 
         for name, o in mod.__dict__.items():
-            roots.append((mod_name + "." + name, o))
+            name = mod_name + "." + name
+
+            if skip_constants and name in constant_containers:
+                continue
+
+            roots.append((name, o))
 
     return walk_memory(roots)
 
 
-def profile_memory(fraction=1.0, minimum=0):
+def profile_memory(fraction=1.0, minimum=0, skip_constants=False):
     """
     :doc: memory
 
@@ -309,6 +328,10 @@ def profile_memory(fraction=1.0, minimum=0):
         If a name is accounted less than `minimum` bytes of memory, it will
         not be printed.
 
+    `skip_constants`
+        If True, the profiler will skip scanning of large Ren'Py's containers,
+        that are intended to be immutable after startup.
+
     As it has to scan all memory used by Ren'Py, this function may take a
     long time to complete.
     """
@@ -318,7 +341,7 @@ def profile_memory(fraction=1.0, minimum=0):
     write("Memory profile at " + time.ctime() + ":")
     write("")
 
-    usage = [ (v, k) for (k, v) in profile_memory_common()[0].items() ]
+    usage = [ (v, k) for (k, v) in profile_memory_common(skip_constants=skip_constants)[0].items() ]
     usage.sort()
 
     # The total number of bytes allocated.
@@ -344,7 +367,7 @@ old_usage = { }
 old_total = 0
 
 
-def diff_memory(update=True):
+def diff_memory(update=True, skip_constants=False):
     """
     :doc: memory
 
@@ -356,6 +379,10 @@ def diff_memory(update=True):
     that the memory is reachable from. If an object is reachable from more
     than one name, it's assigned to the name it's most directly reachable
     from.
+
+    `skip_constants`
+        If True, the profiler will skip scanning of large Ren'Py's containers,
+        that are intended to be immutable after startup.
 
     As it has to scan all memory used by Ren'Py, this function may take a
     long time to complete.
@@ -369,7 +396,7 @@ def diff_memory(update=True):
     write("Memory diff at " + time.ctime() + ":")
     write("")
 
-    usage = profile_memory_common()[0]
+    usage = profile_memory_common(skip_constants=skip_constants)[0]
     total = sum(usage.values())
 
     diff = [ ]
