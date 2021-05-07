@@ -2528,7 +2528,7 @@ class Interface(object):
         """
 
         if not self.started:
-            self.start()
+            return None
 
         rv = self.screenshot
 

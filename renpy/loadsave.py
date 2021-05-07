@@ -185,6 +185,7 @@ def save_dump(roots, log):
         visit(roots, "roots")
         visit(log, "log")
 
+
 def find_bad_reduction(roots, log):
     """
     Finds objects that can't be reduced properly.
@@ -349,7 +350,8 @@ class SaveRecord(object):
 
         with zipfile.ZipFile(filename_new, "w", zipfile.ZIP_DEFLATED) as zf:
             # Screenshot.
-            zf.writestr("screenshot.png", self.screenshot)
+            if self.screenshot is not None:
+                zf.writestr("screenshot.png", self.screenshot)
 
             # Extra info.
             zf.writestr("extra_info", self.extra_info.encode("utf-8"))
