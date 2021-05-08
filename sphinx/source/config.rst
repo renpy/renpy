@@ -245,6 +245,13 @@ Occasionally Used
 
     If True, Ren'Py will not require grids to be full in order to display.
 
+.. var:: config.pause_after_rollback = False
+
+    If False, the default, rolling back will skip any pauses (timed or
+    not) and stop only at other interactions such as dialogues, menus...
+    If True, renpy will include timeless pauses to the valid places a
+    rollback can take the user.
+
 .. var:: config.auto_channels = { "audio" : ( "sfx", "", ""  ) }
 
     This is used to define automatic audio channels. It's a map the
