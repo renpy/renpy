@@ -923,7 +923,14 @@ def init():
         except:
             if renpy.config.debug_sound:
                 raise
-            pcm_ok = False
+
+            os.environ["SDL_AUDIODRIVER"] = "dummy"
+
+            try:
+                renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono)
+                pcm_ok = True
+            except:
+                pcm_ok = False
 
     # Find all of the mixers in the game.
     mixers = [ ]
