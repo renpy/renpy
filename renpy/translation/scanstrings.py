@@ -33,8 +33,8 @@ STRING_RE = r"""(?x)
 \b_[_p]?\s*\(\s*[uU]?(
 \"\"\"(?:\\.|\\\n|\"{1,2}|[^\\"])*?\"\"\"
 |'''(?:\\.|\\\n|\'{1,2}|[^\\'])*?'''
-|"(?:\\.|[^\\"])*"
-|'(?:\\.|[^\\'])*'
+|"(?:\\.|\\\n|[^\\"])*"
+|'(?:\\.|\\\n|[^\\'])*'
 )\s*\)
 """
 
@@ -45,7 +45,6 @@ REGULAR_PRIORITIES = [
     ("screens.rpy", 30, "screens.rpy"),
     ("", 100, "launcher.rpy"),
 ]
-
 
 COMMON_PRIORITIES = [
     ("_compat/", 420, "obsolete.rpy"),
@@ -119,7 +118,7 @@ def scan_strings(filename):
 
     rv = [ ]
 
-    for line, s in renpy.game.script.translator.additional_strings[filename]:  # @UndefinedVariable
+    for line, s in renpy.game.script.translator.additional_strings[filename]: # @UndefinedVariable
         rv.append(String(filename, line, s, False))
 
     for _filename, lineno, text in renpy.parser.list_logical_lines(filename):
