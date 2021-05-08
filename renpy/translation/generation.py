@@ -37,44 +37,6 @@ from renpy.parser import elide_filename
 # Translation Generation
 ################################################################################
 
-STRING_RE = r"""(?x)
-\b__?\s*\(\s*[uU]?(
-\"\"\"(?:\\.|\"{1,2}|[^\\"])*?\"\"\"
-|'''(?:\\.|\'{1,2}|[^\\'])*?'''
-|"(?:\\.|[^\\"])*"
-|'(?:\\.|[^\\'])*'
-)\s*\)
-"""
-
-
-def scan_strings(filename):
-    """
-    Scans `filename`, a file containing Ren'Py script, for translatable
-    strings.
-
-    Generates a list of (line, string) tuples.
-    """
-
-    rv = [ ]
-
-    for line, s in renpy.game.script.translator.additional_strings[filename]: # @UndefinedVariable
-        rv.append((line, s))
-
-    line = 1
-
-    for _filename, lineno, text in renpy.parser.list_logical_lines(filename):
-
-        for m in re.finditer(STRING_RE, text):
-
-            s = m.group(1)
-            if s is not None:
-                s = s.strip()
-                s = "u" + s
-                s = eval(s)
-                rv.append((lineno, s))
-
-    return rv
-
 
 def scan_comments(filename):
 

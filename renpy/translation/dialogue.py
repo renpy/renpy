@@ -27,7 +27,6 @@ import renpy
 import os
 
 from renpy.translation import quote_unicode
-from renpy.translation.generation import scan_strings
 
 
 def create_dialogue_map(language):
@@ -262,7 +261,10 @@ class DialogueFile(object):
 
         filename = renpy.parser.elide_filename(self.filename)
 
-        for line, s in scan_strings(self.filename):
+        for ss in renpy.translation.scanstrings.scan_strings(self.filename):
+
+            line = ss.line
+            s = ss.text
 
             stl = renpy.game.script.translator.strings[None] # @UndefinedVariable
 
