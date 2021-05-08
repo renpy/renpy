@@ -266,7 +266,7 @@ def in_fixed_rollback():
     return renpy.game.log.in_fixed_rollback()
 
 
-def checkpoint(data=None, keep_rollback=None):
+def checkpoint(data=None, keep_rollback=None, hard=True):
     """
     :doc: rollback
     :args: (data=None)
@@ -280,12 +280,16 @@ def checkpoint(data=None, keep_rollback=None):
     `data`
         This data is returned by :func:`renpy.roll_forward_info` when the
         game is being rolled back.
+
+    `hard`
+        If true, this is a hard checkpoint that rollback will stop at. If false,
+        this is a soft checkpoint that will not stop rollback.
     """
 
     if keep_rollback is None:
         keep_rollback = renpy.config.keep_rollback_data
 
-    renpy.game.log.checkpoint(data, keep_rollback=keep_rollback, hard=renpy.store._rollback)
+    renpy.game.log.checkpoint(data, keep_rollback=keep_rollback, hard=renpy.store._rollback and hard)
 
     if renpy.store._rollback and renpy.config.auto_clear_screenshot:
         renpy.game.interface.clear_screenshot = True
@@ -1525,7 +1529,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
             rv = False
 
         if checkpoint:
-            renpy.exports.checkpoint(rv, keep_rollback=True)
+            renpy.exports.checkpoint(rv, keep_rollback=True, hard=False)
 
         return rv
 
@@ -1553,7 +1557,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay)
 
     if checkpoint:
-        renpy.exports.checkpoint(rv, keep_rollback=True)
+        renpy.exports.checkpoint(rv, keep_rollback=True, hard=renpy.config.pause_after_rollback)
 
     if with_none is None:
         with_none = renpy.config.implicit_with_none
