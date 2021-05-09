@@ -21,12 +21,13 @@
 
 init -1100 python in gui:
     from store import config, layout, _preferences, Frame, Null, persistent, Action, DictEquality
+    import math
 
     config.translate_clean_stores.append("gui")
 
     _null = Null()
 
-    def init(width, height):
+    def init(width, height, fov=75):
         """
         :doc: gui
 
@@ -37,6 +38,9 @@ init -1100 python in gui:
 
         `height`
             The height of the default window.
+
+        `fov`
+            The field of view of the 3d stage.
         """
 
         if (not renpy.is_init_phase()) and config.developer:
@@ -44,6 +48,10 @@ init -1100 python in gui:
 
         config.screen_width = width
         config.screen_height = height
+
+        z = (width / 2) / math.tan(math.radians(fov / 2))
+
+        config.perspective = (100.0, z, 100000.0)
 
         layout.defaults()
 
