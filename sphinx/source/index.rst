@@ -60,6 +60,7 @@ Text, Displayables, Transforms, and Transitions
    atl
    matrixcolor
    layeredimage
+   3dstage
 
 Customizing Ren'Py
 ------------------
