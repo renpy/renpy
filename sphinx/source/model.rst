@@ -158,6 +158,8 @@ in shader use occur, this file should be edited or deleted so it can be
 re-created with valid data.
 
 
+.. _custom-shaders:
+
 Creating a Custom Shader
 -------------------------
 
@@ -356,6 +358,7 @@ If textures are available, so is the following attribute:
 ``vec2 a_tex_coord``
     The coordinate that this vertex projects to inside the textures.
 
+.. _gl-properties:
 
 GL Properties
 -------------
@@ -363,18 +366,6 @@ GL Properties
 GL properties change the global state of OpenGL, or the Model-Based renderer.
 These properties Take a ``gl\_`` prefix when used as part of a Transform, so
 you'd write ``gl_color_masks`` in ATL.
-
-``color_masks``
-    This is expecting to be a 4-tuple of booleans, corresponding to the four
-    channels of a pixel (red, green, blue, and alpha). If a given channel is
-    true, the draw operation will write to that pixel. Otherwise, it will
-    not.
-
-``pixel_perfect``
-    This only makes sense to set when a mesh is being created. When True,
-    Ren'Py will move the mesh such that the first vertex is aligned with
-    a pixel on the screen. This is mostly used in conjunction with text,
-    to ensure that the text remains sharp.
 
 ``blend_func``
     If present, this is expected to be a six-component tuple, which is
@@ -392,6 +383,23 @@ you'd write ``gl_color_masks`` in ATL.
     OpenGL constants can be imported from renpy.uguu::
 
         from renpy.uguu import GL_ONE, GL_ONE_MINUS_SRC_ALPHA
+
+``color_masks``
+    This is expecting to be a 4-tuple of booleans, corresponding to the four
+    channels of a pixel (red, green, blue, and alpha). If a given channel is
+    true, the draw operation will write to that pixel. Otherwise, it will
+    not.
+
+``depth``
+    If true, this will clear the depth buffer, and then enable depth
+    rendering for this displayable and the children of this displayable.
+
+``pixel_perfect``
+    This only makes sense to set when a mesh is being created. When True,
+    Ren'Py will move the mesh such that the first vertex is aligned with
+    a pixel on the screen. This is mostly used in conjunction with text,
+    to ensure that the text remains sharp.
+
 
 Default Shader Parts
 --------------------

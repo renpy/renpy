@@ -1050,6 +1050,19 @@ both horizontal and vertical positions.
     This requires model-based rendering to be enabled by setting :var:`config.gl2` to
     True.
 
+There are also several sets of transform properties that are documented elsewhere:
+
+3D Stage properties:
+    :tpref:`perspective`, :tpreff:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
+
+Model-based rendering properties:
+    :tpref:`blend`, :tpref:`mesh`, :tpref:`mesh_pad`, :tpref:`shader`
+
+GL Properties:
+    Prepend ``gl_`` to one of the :ref:`GL properties <gl-properties>`.
+
+Uniforms:
+    Properties beginning with ``u_`` are uniforms that can be used by :ref:`custom shaders <custom-shaders>`.
 
 These properties are applied in the following order:
 
@@ -1060,9 +1073,14 @@ These properties are applied in the following order:
 #. zoom, xzoom, yzoom
 #. pan
 #. rotate
-#. position properties
+#. zpos
+#. matrixtransform, matrixanchor
+#. zzoom
+#. perspective
+#. nearest, blend, alpha, additive, shader.
 #. matrixcolor
-
+#. GL Properties, Uniforms
+#. position properties
 
 Circular Motion
 ===============
