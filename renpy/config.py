@@ -1128,7 +1128,7 @@ gl_blend_func = { }
 pause_after_rollback = False
 
 # The default perspective.
-perspective = (100.0, 1000.0, 20000.0)
+perspective = (100.0, 1000.0, 100000.0)
 
 # Does the scene clear the layer at list?
 scene_clears_layer_at_list = False
