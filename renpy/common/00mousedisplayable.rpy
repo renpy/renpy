@@ -22,28 +22,27 @@
 init -1500 python:
 
     class MouseDisplayable(renpy.Displayable):
+        """
+        :doc: mouse_displayable
+
+        A displayable that wraps a mouse cursor displayable, and causes
+        it to move across the screen when the player moves their mouse.
+
+        `cursor`
+            A displayable that is used to draw the mouse.
+
+        `x`, `y`
+            The coordinates of the hotspot, relative to the upper left
+            corner of the mouse, in virtual pixels.
+
+        .. method MouseDisplayable.add(name, cursor, x, y)
+
+            This adds a second cursor, that is used when the `name`
+            mouse is displayed. This returns the MouseDisplayable,
+            so that calls to this method can be chained.
+            """
 
         def __init__(self, cursor, x, y):
-            """
-            :doc: mouse_displayable
-
-            A displayable that wraps a mouse cursor displayable, and causes
-            it to move across the screen when the player moves their mouse.
-
-            `cursor`
-                A displayable that is used to draw the mouse.
-
-            `x`, `y`
-                The coordinates of the hotspot, relative to the upper left
-                corner of the mouse, in virtual pixels.
-
-            .. method MouseDisplayable.add(name, cursor, x, y)
-
-                This adds a second cursor, that is used when the `name`
-                mouse is displayed. This returns the MouseDisplayable,
-                so that
-
-            """
 
             super(MouseDisplayable, self).__init__()
 

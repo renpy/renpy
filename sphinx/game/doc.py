@@ -305,8 +305,12 @@ def scan(name, o, prefix=""):
     lb.append(prefix + "")
 
     if inspect.isclass(o):
-        for i in dir(o):
-            scan(i, getattr(o, i), prefix + "    ")
+        if (name not in [ "Matrix", "OffsetMatrix", "RotateMatrix", "ScaleMatrix" ]):
+            for i in dir(o):
+                scan(i, getattr(o, i), prefix + "    ")
+
+    if name == "identity":
+        raise Exception("identity")
 
     documented_list.append(o)
     documented[id(o)].append(name)

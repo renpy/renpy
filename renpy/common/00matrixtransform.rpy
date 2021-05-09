@@ -49,12 +49,12 @@ init -1400 python:
                 args = tuple(a + (b - a) * done for a, b in zip(other.args, self.args))
                 return self.function(*args)
 
-        @property
-        def __doc__(self):
-            if not self.function:
+        @staticmethod
+        def _document(function):
+            if not function:
                 return ":undocumented:"
 
-            rv = self.function.__doc__
+            rv = function.__doc__
 
             rv = rv.replace(":doc: matrix", ":doc: transform_matrix")
             rv = rv.replace("Returns", "A TransformMatrix that returns")
@@ -65,12 +65,15 @@ init -1400 python:
     class OffsetMatrix(TransformMatrix):
         nargs = 3
         function = Matrix.offset
+        __doc__ = TransformMatrix._document(Matrix.offset)
 
     class RotateMatrix(TransformMatrix):
         nargs = 3
         function = Matrix.rotate
+        __doc__ = TransformMatrix._document(Matrix.rotate)
 
     class ScaleMatrix(TransformMatrix):
         nargs = 3
         function = Matrix.scale
+        __doc__ = TransformMatrix._document(Matrix.scale)
 
