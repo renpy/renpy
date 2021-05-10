@@ -1053,7 +1053,7 @@ both horizontal and vertical positions.
 There are also several sets of transform properties that are documented elsewhere:
 
 3D Stage properties:
-    :tpref:`perspective`, :tpreff:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
+    :tpref:`perspective`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
 
 Model-based rendering properties:
     :tpref:`blend`, :tpref:`mesh`, :tpref:`mesh_pad`, :tpref:`shader`

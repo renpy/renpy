@@ -86,7 +86,7 @@ when using 2D coordinates. ::
 
     scene bg washington
 
-    show lucy concerned at right
+    show lucy mad at right
 
     show eileen happy
 
@@ -95,27 +95,47 @@ three dimensional space::
 
 
     scene bg washington:
-        zpos -1000
+        xalign 0.5 yalign 1.0 zpos -1000
 
-    show lucy concerned at right, Transform(zpos=100)
+    show lucy mad:
+        xalign 1.0 yalign 1.0 zpos 100
 
     show eileen happy:
+        xalign 0.5 yalign 1.0 zpos 200
+
+As an ATL transform is given, the default transform is not used, and it's
+necessary to specify :tpref:`xalign` and :tpref:`yalign` to position the
+displayable in the x and y axes. Of course, transforms can also be used. ::
+
+    transform zbg:
+        zpos -100
+
+    transform z100:
+        zpos 100
+
+    transform z200
         zpos 200
+
+    scene bg washington at center, zbg
+
+    show lucy mad at right, z100
+
+    show eileen happy at center, z200
+
 
 If you try this, you'll see an empty space around the background. That's
 because by moving it back, it becomes smaller, and doesn't fill the screen.
 Ren'Py has an easy way of fixing this problem - :tpref:`zzoom`. Setting
-the zzoom property to true will scale an image by the amount it was shrunk
+the tpref:`zzoom` property to True will scale an image by the amount it was shrunk
 due to having a negative zpos. It's useful for backgrounds. ::
 
-    scene bg washington:
-        zpos -1000
-        zzoom True
+    transform zbg:
+        zpos -100 zzoom False
 
-It's also possible to use ATL to vary ``zpos``, just like you would xpos and
+It's also possible to use ATL to vary zpos, just like you would xpos and
 ypos. ::
 
-    show eileen happy:
+    show eileen happy at center:
         zpos 0
         linear 4.0 zpos 200
 
@@ -133,7 +153,9 @@ It's possible to move the camera, as well, using ``show layer``. For example, ::
         linear 3.0 xpos 500
 
 When doing this, it probably makes sense to use background images that are
-larger than the window.
+larger than the window. As of Ren'Py 7.4.5, properties do not persist
+between invocations of ``show layer``, so all properties need to be
+specified each time ``show layer`` is used.
 
 If you apply a zpos to a sprite, and it doesn't take effect, the reason is
 probably because you omitted the ``perspective`` clause of the ``show layer``
@@ -153,9 +175,6 @@ to sort by depth, using :tpref:`gl_depth`::
     show layer master:
         perspective True
         gl_depth True
-
-If you find yourself doing this all the time, :var:`config.perspective_implies_depth`
-can make this easier.
 
 Slight rounding errors can cause images that are nominally at the same depth to
 appear above or below each other. Flattening these images and displaying them
@@ -183,7 +202,7 @@ image.
 
 For example::
 
-    show eileen happy:
+    show eileen happy at center:
         matrixtransform RotateMatrix(45, 0, 0)
 
 Will rotate the image around the line going horizontally through it's center. The
@@ -194,8 +213,8 @@ Matrixes can be chained together with multiplication. It's easiest to think
 about them being applied right to left. In this example::
 
 
-    show eileen happy:
-        matrixtransform RotateMatrix(45, 0, 0) * TranslateMatrix(0, 300, 0)
+    show eileen happy at center:
+        matrixtransform RotateMatrix(45, 0, 0) * OffsetMatrix(0, -300, 0)
 
 The image will be shifted up by 300 pixels, and then will be rotated around
 the X axis.
@@ -213,8 +232,8 @@ Matrix-creating classes. Instances of TransformMatrix are called by Ren'Py,
 and return Matrixes. TransformMatrix is well integrated with ATL, allowing
 for matrixtransform animations. ::
 
-    transform red_blue_tint:
-        matrixtransform RotateMatrix(0.0, 0.0, 0.0)_
+    transform xrotate:
+        matrixtransform RotateMatrix(0.0, 0.0, 0.0)
         linear 4.0 matrixtransform RotateMatrix(360.0, 0.0, 0.0)
         repeat
 
@@ -229,9 +248,82 @@ implements a __call__ method. This method takes:
 Built-In TransformMatrix Subclasses
 -----------------------------------
 
-The following is the list of ColorMatrix subclasses that are built into
+The following is the list of TransformMatrix subclasses that are built into
 Ren'Py.
 
 .. include:: inc/transform_matrix
+
+
+Transform Properties
+--------------------
+
+The following transform properties are used by ther 3D Stage.
+
+    :tpref:`perspective`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
+
+.. transform-property:: matrixanchor
+
+    :type: (position, position)
+    :default: (0.5, 0.5)
+
+    This gives the position of the matrix anchor relative to the image. If the
+    variables are floats, this is relative to the size of the child, otherwise
+    it's absolute pixels.
+
+    This sets the location of the (0, 0, 0) point that matrixtransform applies
+    its transform to.
+
+.. transform-property:: matrixtransform
+
+    :type: None or Matrix or TransformMatrix
+    :default: None
+
+    If not None, this gives a matrix that is used to transform the vertices
+    of the child of the transform. The transformation is from screen coordinates
+    to the
+
+.. transform-property:: perspective
+
+    :type: True or False or Float or (Float, Float, Float)
+    :default: False
+
+    When applied to a transform, this enables perspective rendering. This
+    takes a triple, giving the near plane, z-distance to the 1:1 plane, and
+    far plane.
+
+    If a single float, the distances to the near and far planes are taken
+    from :var:`config.perspective`. If True, all three values are taken
+    from that variable.
+
+    When perspective is not false, the meaning of the :tpref:`xpos`, :tpref:`ypos:,
+    and :tpref:`zpos` are inverted, providing the effect of positioning the
+    camera rather than the child.
+
+.. transform-property:: zpos
+
+    :type: float
+    :default: 0
+
+    This offsets the child along the z-axis. When perspective is false,
+    this is used directly, otherwise it is multiplied by -1 and used.
+
+    If settiong this causes the child to disappear, it's likely that the
+    transform is not being used with a displayable where zpos is False.
+
+.. transform-property:: zzoom
+
+    :type: bool
+    :default: False
+
+    If this is true, the z-distance to the 1:1 plane (`zone`) is determined,
+    along with this displayable's zpos. The child is then scaled by (`zone` - `zpos`) / `zone`
+    in the x and y axes.
+
+    The intended use for this is in displaying a background with a negative `zpos`, which
+    would normally make the background small. Setting this to true means that the background
+    will be displayed at 1:1 size.
+
+
+
 
 
