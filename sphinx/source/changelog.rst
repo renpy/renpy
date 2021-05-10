@@ -74,7 +74,7 @@ Platform Support Fixes
 
 Several packages that are required to build on Android are now included
 as part of Ren'Py. This fixes errors that are related to Bintray being
-shut down. This fix will required you to regenerate your Android project,
+shut down. This fix will require you to regenerate your Android project,
 by answering the Android Configuration question "Do you want to automatically update
 the Java source code?" with "Yes."
 
