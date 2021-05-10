@@ -128,6 +128,8 @@ def transform_render(self, widtho, heighto, st, at):
 
     if perspective is True:
         perspective = renpy.config.perspective
+    if isinstance(perspective, (int, float)):
+        perspective = (renpy.config.perspective[0], perspective, renpy.config.perspective[2])
 
     # Set the z11 distance.
     old_z11 = z11
