@@ -1379,7 +1379,16 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         if not self.editable:
             return None
 
-        if (ev.type == pygame.KEYDOWN) and (pygame.key.get_mods() & pygame.KMOD_LALT) and (not ev.unicode):
+        edit_controls = any([
+            map_event(ev, "input_jump_word_left"),
+            map_event(ev, "input_jump_word_right"),
+            map_event(ev, "input_jump_full_left"),
+            map_event(ev, "input_jump_full_right"),
+            map_event(ev, "input_delete_word"),
+            map_event(ev, "input_delete_full"),
+        ])
+
+        if (ev.type == pygame.KEYDOWN) and (pygame.key.get_mods() & pygame.KMOD_LALT) and (not ev.unicode) and not edit_controls:
             return None
 
         l = len(self.content)
@@ -1417,6 +1426,27 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
+        elif map_event(ev, "input_jump_word_left"):
+            if self.caret_pos > 0:
+                space_pos = 0
+                for item in re.finditer(r"\s+", self.content[:self.caret_pos - 1]):
+                    start, end = item.span()
+                    if end != self.caret_pos - 1:
+                        space_pos = end
+                self.caret_pos = space_pos
+                self.update_text(self.content, self.editable)
+
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+
+        elif map_event(ev, "input_jump_full_left"):
+            if self.caret_pos > 0:
+                self.caret_pos = 0
+                self.update_text(self.content, self.editable)
+
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+
         elif map_event(ev, "input_right"):
             if self.caret_pos < l:
                 self.caret_pos += 1
@@ -1425,9 +1455,53 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
+        elif map_event(ev, "input_jump_word_right"):
+            if self.caret_pos < l:
+                space_pos = l
+                for item in re.finditer(r"\s+", self.content[self.caret_pos + 1:]):
+                    start, end = item.span()
+                    space_pos = end
+                    break
+                self.caret_pos = min(space_pos + self.caret_pos + 1, l)
+                self.update_text(self.content, self.editable)
+
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+
+        elif map_event(ev, "input_jump_full_right"):
+            if self.caret_pos < l:
+                self.caret_pos = l
+                self.update_text(self.content, self.editable)
+
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+
         elif map_event(ev, "input_delete"):
             if self.caret_pos < l:
                 content = self.content[0:self.caret_pos] + self.content[self.caret_pos + 1:l]
+                self.update_text(content, self.editable)
+
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+
+        elif map_event(ev, "input_delete_word"):
+            if self.caret_pos <= l:
+                space_pos = 0
+                for item in re.finditer(r"\s+", self.content[:self.caret_pos - 1]):
+                    start, end = item.span()
+                    if end != self.caret_pos - 1:
+                        space_pos = end
+                content = self.content[0:space_pos] + self.content[self.caret_pos:l]
+                self.caret_pos = space_pos
+                self.update_text(content, self.editable)
+
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+
+        elif map_event(ev, "input_delete_full"):
+            if self.caret_pos <= l:
+                content = self.content[self.caret_pos:l]
+                self.caret_pos = 0
                 self.update_text(content, self.editable)
 
             renpy.display.render.redraw(self, 0)

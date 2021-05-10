@@ -81,6 +81,12 @@ init -1600 python:
         input_end = [ 'K_END' ],
         input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c' ],
         input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v' ],
+        input_jump_word_left = [ 'alt_K_LEFT' ],
+        input_jump_word_right = [ 'alt_K_RIGHT' ],
+        input_jump_full_left = [ 'meta_K_LEFT' ],
+        input_jump_full_right = [ 'meta_K_RIGHT' ],
+        input_delete_word = [ 'alt_K_BACKSPACE' ],
+        input_delete_full = [ 'meta_K_BACKSPACE' ],
 
         # Viewport.
         viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
