@@ -41,6 +41,7 @@ the omission in future versions.
 * Christian Koepp
 * Civalin
 * CobaltCore
+* CodePsy
 * Craig P. Donson
 * 被诅咒的章鱼
 * DaFool
@@ -105,6 +106,7 @@ the omission in future versions.
 * Kapil Gain
 * Kathryn
 * Kevin Turner
+* KG
 * Kinsman
 * Kobaltcore
 * Koichi "vbkaisetsu" Akabe
@@ -114,6 +116,7 @@ the omission in future versions.
 * Kyouryuukunn
 * Lapalissiano
 * Lee Yunseok
+* Lent1
 * Lezalith
 * Lore
 * Lucas Ramage

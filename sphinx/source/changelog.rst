@@ -15,9 +15,9 @@ with Ren'Py 7.4.5. To disable it for your game, please set :var:`config.gl2`
 to False.
 
 When the model-based renderer is being used, Ren'Py now supports a "3D Stage".
-This adds a third dimension to sprites, allowing for perspective correct
+This adds a third dimension to shown images, allowing for perspective correct
 zooming and motion, the rotation and translation of displayables in 3D,
-and many other new effects. Please see the :ref:`3D Stage <three-d-stage>`
+and many other new effects. Please see the :ref:`3D Stage <3dstage>`
 documentation for more information.
 
 To facilitate the 3D Stage, the ``scene`` statement no longer clears
@@ -30,7 +30,7 @@ axis, in three dimensions, and to be replaced with a previous scene.
 The new :tpref:`blend` transform property allows the blend function to be
 specified. The blend function controls how a pixel being drawn is combined
 to the pixel it is being drawn to.In addition to the "normal" and "add" blend
-functions that Ren'Py already supported, new "multipy", "min", and "max" functions
+functions that Ren'Py already supported, new "multiply", "min", and "max" functions
 have been added.
 
 
@@ -71,6 +71,12 @@ file in one channel with the time of the audio file in another channel.
 
 Platform Support Fixes
 ----------------------
+
+Several packages that are required to build on Android are now included
+as part of Ren'Py. This fixes errors that are related to Bintray being
+shut down. This fix will required you to regenerate your Android project,
+by answering the Android Configuration question "Do you want to automatically update
+the Java source code?" with "Yes."
 
 Building for iOS has been fixed.
 
