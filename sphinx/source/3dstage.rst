@@ -113,14 +113,13 @@ displayable in the x and y axes. Of course, transforms can also be used. ::
     transform z100:
         zpos 100
 
-    transform z200
-        zpos 200
-
     scene bg washington at center, zbg
 
     show lucy mad at right, z100
 
-    show eileen happy at center, z200
+    show eileen happy:
+        center
+        zpos 200
 
 
 If you try this, you'll see an empty space around the background. That's
