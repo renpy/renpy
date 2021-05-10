@@ -278,8 +278,7 @@ The following transform properties are used by ther 3D Stage.
     :default: None
 
     If not None, this gives a matrix that is used to transform the vertices
-    of the child of the transform. The transformation is from screen coordinates
-    to the
+    of the child of the transform.
 
 .. transform-property:: perspective
 
@@ -294,7 +293,7 @@ The following transform properties are used by ther 3D Stage.
     from :var:`config.perspective`. If True, all three values are taken
     from that variable.
 
-    When perspective is not false, the meaning of the :tpref:`xpos`, :tpref:`ypos:,
+    When perspective is not false, the meaning of the :tpref:`xpos`, :tpref:`ypos`,
     and :tpref:`zpos` are inverted, providing the effect of positioning the
     camera rather than the child.
 
@@ -306,7 +305,7 @@ The following transform properties are used by ther 3D Stage.
     This offsets the child along the z-axis. When perspective is false,
     this is used directly, otherwise it is multiplied by -1 and used.
 
-    If settiong this causes the child to disappear, it's likely that the
+    If setting this causes the child to disappear, it's likely that the
     transform is not being used with a displayable where zpos is False.
 
 .. transform-property:: zzoom
