@@ -1032,7 +1032,7 @@ class SceneLists(renpy.object.Object):
         `behind` - A list of tags to place the thing behind.
 
         `at_list` - The at_list associated with this
-        displayable. Counterintunitively, this is not actually
+        displayable. Counterintuitively, this is not actually
         applied, but merely stored for future use.
 
         `name` - The full name of the image being displayed. This is used for
