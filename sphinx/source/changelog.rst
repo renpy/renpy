@@ -21,7 +21,8 @@ and many other new effects. Please see the :ref:`3D Stage <3dstage>`
 documentation for more information.
 
 To facilitate the 3D Stage, the ``scene`` statement no longer clears
-applied a layer as a whole with ``show layer`` of :func:`renpy.layer_at_list`.
+transforms applied to a layer as a whole with ``show layer`` or
+:func:`renpy.layer_at_list`.
 
 The new :func:`Swing` transition is usable when the model-based renderer
 is enabled. This causes the scene to rotate around the vertical or horizontal
