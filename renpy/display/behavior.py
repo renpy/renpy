@@ -80,7 +80,7 @@ def compile_event(key, keydown):
     if part[0] == "joy" or part[0] == "pad":
         return "(False)"
 
-    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl" }
+    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl" }
     modifiers = set()
 
     while part[0] in MODIFIERS:
@@ -115,15 +115,24 @@ def compile_event(key, keydown):
 
         if "meta" in modifiers:
             rv += " and (ev.mod & %d)" % pygame.KMOD_META
-        else:
+        elif not ("osctrl" in modifiers and renpy.macintosh):
             rv += " and not (ev.mod & %d)" % pygame.KMOD_META
 
     if key not in [ "K_LCTRL", "K_RCTRL" ]:
 
         if "ctrl" in modifiers:
             rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
+
+        if renpy.macintosh:
+            if "osctrl" in modifiers:
+                rv += " and (ev.mod & %d)" % pygame.KMOD_META
+            else:
+                rv += " and not (ev.mod & %d)" % pygame.KMOD_META
         else:
-            rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
+            if "osctrl" in modifiers and "ctrl" not in modifiers:
+                rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
+            elif "ctrl" not in modifiers:
+                rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
 
     if key not in [ "K_LSHIFT", "K_RSHIFT" ]:
 
