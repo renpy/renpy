@@ -69,6 +69,9 @@ cdef class TextureLoader:
 
     def init(self):
 
+        if self.allocated:
+            self.quit()
+
         self.ftl_program = self.draw.shader_cache.get(("renpy.ftl",))
 
         self.allocated = set()
@@ -88,6 +91,8 @@ cdef class TextureLoader:
         for texture_number in self.allocated:
             texnums[0] = texture_number
             glDeleteTextures(1, texnums)
+
+        self.allocated = set()
 
     def get_texture_size(self):
         """
