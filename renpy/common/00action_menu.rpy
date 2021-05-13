@@ -41,10 +41,10 @@ init -1500 python:
          `screen` is usually the name of a screen, which is shown using
          the screen mechanism. If the screen doesn't exist, then "_screen"
          is appended to it, and that label is jumped to.
-         
+
          If the optional keyword argument `_transition` is given, the
          menu will change screens using the provided transition.
-         If not manually specified, the default transition is 
+         If not manually specified, the default transition is
          `config.intra_transition`.
 
          * ShowMenu("load")
@@ -159,10 +159,18 @@ init -1500 python:
               If true, causes Ren'Py to ask the user if he wishes to
               return to the main menu, rather than returning
               directly.
-         """
 
-        def __init__(self, confirm=True):
+        `save`
+            If true, the game is saved in :var:`_quit_slot` before Ren'Py
+            restarts and returns the user to the main menu. The game is not
+            saved if :var:`_quit_slot` is None.
+        """
+
+        save = True
+
+        def __init__(self, confirm=True, save=True):
             self.confirm = confirm
+            self.save = save
 
         def __call__(self):
 
@@ -173,9 +181,9 @@ init -1500 python:
                 if config.autosave_on_quit:
                     renpy.force_autosave()
 
-                layout.yesno_screen(layout.MAIN_MENU, MainMenu(False))
+                layout.yesno_screen(layout.MAIN_MENU, MainMenu(False, save=self.save))
             else:
-                renpy.full_restart(config.game_main_transition)
+                renpy.full_restart(config.game_main_transition, save=self.save)
 
         def get_sensitive(self):
             return not renpy.context()._main_menu

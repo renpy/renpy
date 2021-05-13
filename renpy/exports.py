@@ -1796,7 +1796,7 @@ def take_screenshot(scale=None, background=False):
     renpy.game.interface.take_screenshot(scale, background=background)
 
 
-def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu"):
+def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu", save=False):
     """
     :doc: other
 
@@ -1805,7 +1805,14 @@ def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu
     `transition`
         If given, the transition to run, or None to not run a transition.
         False uses :var:`config.end_game_transition`.
+
+    `save`
+        If true, the game is saved in :var:`_quit_slot` before Ren'Py
+        restarts and returns the user to the main menu.
     """
+
+    if save and (renpy.store._quit_slot is not None):
+        renpy.loadsave.save(renpy.store._quit_slot, getattr(renpy.store, "save_name", ""))
 
     if transition is False:
         transition = renpy.config.end_game_transition
