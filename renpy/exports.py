@@ -836,7 +836,7 @@ def scene(layer='master'):
     renpy.display.interface.ongoing_transition.pop(layer, None)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", **kwargs): # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, **kwargs): # @ReservedAssignment
     """
     :doc: input
 
@@ -869,6 +869,10 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
         The name of the screen that takes input. If not given, the ``input``
         screen is used.
 
+    `mask`
+        If not None, a single-character string that replaces the input text that
+        is shown to the player, such as to conceal a password.
+
     If :var:`config.disable_input` is True, this function only returns
     `default`.
 
@@ -899,7 +903,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     if has_screen(screen):
         widget_properties = { }
-        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width)
+        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width, mask=mask)
 
         show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **show_properties)
 

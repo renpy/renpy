@@ -687,6 +687,9 @@ The input statement takes no parameters, and the following properties:
     A Python function that is called with what the user has typed,
     when the string changes.
 
+`mask`
+    If given, a string that replaces each displayable character in
+    the text. This can be used to mask out a password.
 
 It also takes:
 

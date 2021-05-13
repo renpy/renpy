@@ -980,6 +980,11 @@ class Layout(object):
                     continue
 
                 elif type == TEXT:
+
+                    if (text_displayable.mask is not None):
+                        if text != u"\u200b":
+                            text = text_displayable.mask * len(text)
+
                     line.extend(tss[-1].subsegment(text))
                     continue
 
@@ -1484,6 +1489,7 @@ class Text(renpy.display.core.Displayable):
     locked = False
 
     language = None
+    mask = None
 
     def after_upgrade(self, version):
 
@@ -1501,7 +1507,7 @@ class Text(renpy.display.core.Displayable):
             self.end = None
             self.dirty = True
 
-    def __init__(self, text, slow=None, scope=None, substitute=None, slow_done=None, replaces=None, **properties):
+    def __init__(self, text, slow=None, scope=None, substitute=None, slow_done=None, replaces=None, mask=None, **properties):
 
         super(Text, self).__init__(**properties)
 
@@ -1526,6 +1532,9 @@ class Text(renpy.display.core.Displayable):
 
         # The text, after substitutions.
         self.text = None
+
+        # A mask, for passwords and such.
+        self.mask = mask
 
         # Sets the text we're showing, and performs substitutions.
         self.set_text(text, scope, substitute)

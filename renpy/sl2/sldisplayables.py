@@ -171,6 +171,7 @@ Keyword("suffix")
 Keyword("changed")
 Keyword("pixel_width")
 Keyword("value")
+Keyword("mask")
 Style("caret")
 add(text_properties)
 

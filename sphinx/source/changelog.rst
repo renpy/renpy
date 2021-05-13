@@ -50,6 +50,11 @@ earlier.
 Features
 --------
 
+The :func:`renpy.input` function and the input displayable take a new
+`mask` parameter, that specifies a string that masks out characters
+that would be shown to the player. This can be used to hide the text
+of a password.
+
 There is now a dark theme for the launcher.
 
 The new :var:`config.adjust_attributes` callback allows you to intercept
