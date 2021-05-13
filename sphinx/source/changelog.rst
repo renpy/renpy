@@ -50,6 +50,10 @@ earlier.
 Features
 --------
 
+The new :func:`renpy.muic.get_loop` function returns a list of sound
+files that are set to be looped on a channel, making it possible to
+store and replay them.
+
 The :func:`renpy.input` function and the input displayable take a new
 `mask` parameter, that specifies a string that masks out characters
 that would be shown to the player. This can be used to hide the text
