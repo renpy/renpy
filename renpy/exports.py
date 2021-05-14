@@ -1964,6 +1964,33 @@ def screenshot(filename):
     return renpy.game.interface.save_screenshot(filename)
 
 
+def screenshot_to_bytes(size):
+    """
+    :doc: other
+
+    Returns a screenshot as a bytes object, that can be passed to im.Data().
+    The bytes will be a png-format image, such that::
+
+        $ data = renpy.screenshot_to_bytes((640, 360))
+        show expression im.Data(data, "screenshot.png"):
+            align (0, 0)
+
+    Will show the image. The bytes objects returned can be stored in save
+    files and persistent data. However, these may be large, and care should
+    be taken to not include too many.
+
+    `size`
+        The size the screenshot will be resized to. If None, the screenshot
+        will be resized, and hence will be the size of the player's window,
+        without any letterbars.
+
+    This function may be slow, and so it's intended for save-like screenshots,
+    and not realtime effects.
+    """
+
+    return renpy.game.interface.screenshot_to_bytes(size)
+
+
 @renpy_pure
 def version(tuple=False): # @ReservedAssignment
     """

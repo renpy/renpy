@@ -2571,6 +2571,30 @@ class Interface(object):
 
             return False
 
+    def screenshot_to_bytes(self, size=None):
+        """
+        This takes a screenshot of the last thing drawn, and returns it.
+        """
+
+        self.clear_screenshot = False
+
+        # Do nothing before the first interaction.
+        if not self.started:
+            return
+
+        surf = renpy.display.draw.screenshot(self.surftree)
+
+        if size is not None:
+            surf = renpy.display.scale.smoothscale(surf, size)
+
+        renpy.display.render.mutated_surface(surf)
+
+        self.screenshot_surface = surf
+
+        with io.BytesIO() as sio:
+            renpy.display.module.save_png(surf, sio, 0)
+            return sio.getvalue()
+
     def show_window(self):
 
         if not renpy.store._window:
