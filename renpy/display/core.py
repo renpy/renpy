@@ -2016,6 +2016,9 @@ class Interface(object):
         # layer.
         self.transition_delay = { }
 
+        # Is this the first frame?
+        self.first_frame = True
+
         try:
             self.setup_nvdrs()
         except:
@@ -2206,6 +2209,18 @@ class Interface(object):
                 continue
 
             pygame.event.set_blocked(i)
+
+    def after_first_frame(self):
+        """
+        Called after the first frame has been drawn.
+        """
+
+        if renpy.android:
+            from jnius import autoclass
+            PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
+            PythonSDLActivity.hidePresplash()
+
+            print("Hid presplash.")
 
     def set_icon(self):
         """
@@ -2470,6 +2485,10 @@ class Interface(object):
 
         self.surftree = surftree
         self.fullscreen_video = fullscreen_video
+
+        if self.first_frame:
+            self.after_first_frame()
+            self.first_frame = False
 
     def take_screenshot(self, scale, background=False):
         """
