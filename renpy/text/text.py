@@ -553,11 +553,12 @@ class Layout(object):
         # data from one Layout to another.
         self.paragraph_glyphs = [ ]
 
-        width = self.scale_int(width)
-        height = self.scale_int(height)
-
+        # The virtual width and height offered to this Layout.
         self.width = width
         self.height = height
+
+        width = self.scale_int(width)
+        height = self.scale_int(height)
 
         # Figure out outlines and other info.
         outlines, xborder, yborder, xoffset, yoffset = self.figure_outlines(style)
