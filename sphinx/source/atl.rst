@@ -1059,7 +1059,7 @@ Model-based rendering properties:
     :tpref:`blend`, :tpref:`mesh`, :tpref:`mesh_pad`, :tpref:`shader`
 
 GL Properties:
-    Prepend ``gl_`` to one of the :ref:`GL properties <gl-properties>`.
+    The :ref:`GL properties <gl-properties>`.
 
 Uniforms:
     Properties beginning with ``u_`` are uniforms that can be used by :ref:`custom shaders <custom-shaders>`.

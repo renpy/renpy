@@ -364,10 +364,19 @@ GL Properties
 -------------
 
 GL properties change the global state of OpenGL, or the Model-Based renderer.
-These properties Take a ``gl\_`` prefix when used as part of a Transform, so
-you'd write ``gl_color_masks`` in ATL.
+These properties can be used with a Transform, or with the :func:`Render.add_property`
+function.
 
-``blend_func``
+``gl_anisotropic``
+    If supplied, this determines if the textures applied to a mesh are
+    created with anisotropy. Anisotropy is a feature that causes multiple
+    texels (texture pixels) to be sampled when a texture is zoomed by a
+    different amount in X and Y.
+
+    This defaults to true. Ren'Py sets this to False for certain effects,
+    like the Pixellate transition.
+
+``gl_blend_func``
     If present, this is expected to be a six-component tuple, which is
     used to set the equation used to blend the pixel being drawn with the
     pixel it is being drawn to, and the parameters to that equation.
@@ -379,26 +388,48 @@ you'd write ``gl_color_masks`` in ATL.
         glBlendEquationSeparate(rgb_equation, alpha_equation)
         glBlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha)
 
-    Please check out the OpenGL documentation for what these functions do.
+    Please see the OpenGL documentation for what these functions do.
     OpenGL constants can be imported from renpy.uguu::
 
-        from renpy.uguu import GL_ONE, GL_ONE_MINUS_SRC_ALPHA
+        init python:
+            from renpy.uguu import GL_ONE, GL_ONE_MINUS_SRC_ALPHA
 
-``color_masks``
+    The :tpref:`blend` transform property is generally an easy way to
+    use this.
+
+``gl_color_masks``
     This is expecting to be a 4-tuple of booleans, corresponding to the four
     channels of a pixel (red, green, blue, and alpha). If a given channel is
     true, the draw operation will write to that pixel. Otherwise, it will
     not.
 
-``depth``
+``gl_depth``
     If true, this will clear the depth buffer, and then enable depth
     rendering for this displayable and the children of this displayable.
 
-``pixel_perfect``
+``gl_mipmap``
+
+    If supplied, this determines if the textures supplied to a mesh are
+    created with mipmaps. This defaults to true.
+
+``gl_pixel_perfect``
     This only makes sense to set when a mesh is being created. When True,
     Ren'Py will move the mesh such that the first vertex is aligned with
     a pixel on the screen. This is mostly used in conjunction with text,
     to ensure that the text remains sharp.
+
+``gl_texture_wrap``
+
+    When supplied, this determines how the textures applied to a mesh
+    are wrapped. This expects a 2-component tuple, where the first
+    component is used to set GL_TEXTURE_WRAP_S and the second component
+    is used to set GL_TEXTURE_WRAP_T, which conventionally are the X and Y
+    axes of the created textyure.
+
+    The values should be OpenGL constants imported from renpy.uguu::
+
+        init python:
+            from renpy.uguu import GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, GL_REPEAT
 
 
 Default Shader Parts
