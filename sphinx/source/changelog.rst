@@ -83,24 +83,41 @@ to finish at a more interactive statement.
 When playing a sound, it is possible to sync the start time of an audio
 file in one channel with the time of the audio file in another channel.
 
+Android
+-------
 
-Platform Support Fixes
-----------------------
+The way Ren'Py displays the presplash screen on Android has been
+changed. The presplash is now displayed by the Java bootstrap, in
+a new layer on top of the OpenGL layer. This is a new approach
+compared to Ren'Py 7.4, where the presplash was displayed using SDL's
+2D rendering. This change appears to improve compatibility with Android
+devices, and prevent instances of black screens on start.
+
+As part of this change, the way Ren'Py scales the presplash image has
+been changed. Ren'Py will now scale-to-fit the presplash image inside
+the available area.
 
 Several packages that are required to build on Android are now included
 as part of Ren'Py. This fixes errors that are related to Bintray being
-shut down. This fix will require you to regenerate your Android project,
-by answering the Android Configuration question "Do you want to automatically update
-the Java source code?" with "Yes."
+shut down.
+
+An issue that prevented blur from working properly on certain Android
+devices has been fixed.
+
+The Android fixes will require you to regenerate your Android project,
+by answering the Android Configuration question "Do you want to automatically
+update the Java source code?" with "Yes."
+
+Other Platforms
+---------------
+
+The Web Platform beta has been updated.
 
 Building for iOS has been fixed.
 
 Support for Steam on macOS has been fixed.
 
 Signing and Notarizing macOS applications has been fixed.
-
-An issue that prevented blur from working properly on certain Android
-devices has been fixed.
 
 Other Fixes
 -----------
