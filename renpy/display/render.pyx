@@ -1501,6 +1501,9 @@ cdef class Render:
         Adds a render property with name and value.
         """
 
+        if name[:3] == "gl_":
+            name = name[3:]
+
         if self.properties is None:
             self.properties = { name : value }
         else:
