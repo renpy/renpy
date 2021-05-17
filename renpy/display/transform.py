@@ -1010,6 +1010,9 @@ add_gl_property("gl_color_mask")
 add_gl_property("gl_pixel_perfect")
 add_gl_property("gl_blend_func")
 add_gl_property("gl_depth")
+add_gl_property("gl_anisostropic")
+add_gl_property("gl_mipmap")
+add_gl_property("gl_texture_wrap")
 
 ALIASES = {
     "alignaround" : (float, float),
