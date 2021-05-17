@@ -278,6 +278,9 @@ cdef class Program:
         cdef Uniform u
         cdef int i
 
+        if not mesh.triangles:
+            return
+
         # Set up the attributes.
         for a in self.attributes:
             if a.name == "a_position":
