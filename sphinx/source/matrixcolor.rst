@@ -97,8 +97,8 @@ for matrixcolor animations. ::
         linear 3.0 matrixcolor TintMatrix("#f00")
         repeat
 
-A ColorMatrix is a class that inherits from the ColorMatrix class, and
-implements a __call__ method. This method takes:
+The ColorMatrix class can be subclassed, with the subclasses replacing its
+``__call__`` method. This method takes:
 
 * An old object to interpolate off of. This object may be of any class,
   and may be None if no old object exists.

@@ -239,8 +239,8 @@ for matrixtransform animations. ::
         linear 4.0 matrixtransform RotateMatrix(360.0, 0.0, 0.0)
         repeat
 
-A TransformMatrix is a class that inherits from the TransformMatrix class, and
-implements a __call__ method. This method takes:
+Subclasses of TransformMatrix are expected to implement the ``__call__`` method.
+This method takes:
 
 * An old object to interpolate off of. This object may be of any class,
   and may be None if no old object exists.
