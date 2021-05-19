@@ -50,7 +50,7 @@ earlier.
 Features
 --------
 
-A new function, :func:`renpy.screenshot_as_bytes`, takes a screenshot
+A new function, :func:`renpy.screenshot_to_bytes`, takes a screenshot
 and stores it in a bytes object that can be passed to :func:`im.Data`.
 While these objects are large, it is possible to store them in regular
 and persistent saves.
