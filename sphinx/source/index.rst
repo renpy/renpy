@@ -61,6 +61,7 @@ Text, Displayables, Transforms, and Transitions
    matrixcolor
    layeredimage
    3dstage
+   live2d
 
 Customizing Ren'Py
 ------------------
@@ -105,8 +106,6 @@ Other Functionality
    history
    multiple
    splashscreen_presplash
-   matrixcolor
-   live2d
 
 Python and Ren'Py
 -----------------
