@@ -2293,6 +2293,7 @@ class SLScreen(SLBlock):
 
         if self.has_transclude():
             self.not_const_ast = self.copy(NOT_CONST)
+            self.not_const_ast.const_ast = self.not_const_ast
             targets = [ self.const_ast, self.not_const_ast ]
         else:
             self.not_const_ast = self.const_ast
@@ -2350,8 +2351,8 @@ class SLScreen(SLBlock):
             profile_log.write('    not_const: %s', " ".join(not_constants))
 
     def execute(self, context):
-        self.keywords(context)
-        SLBlock.execute(self, context)
+        self.const_ast.keywords(context)
+        SLBlock.execute(self.const_ast, context)
 
     def report_traceback(self, name, last):
         if last:
@@ -2361,6 +2362,9 @@ class SLScreen(SLBlock):
             return [ ]
 
         return SLBlock.report_traceback(self, name, last)
+
+    def copy_on_change(self, cache):
+        SLBlock.copy_on_change(self.const_ast, cache)
 
     def __call__(self, *args, **kwargs):
         scope = kwargs["_scope"]
@@ -2408,7 +2412,8 @@ class SLScreen(SLBlock):
         context.old_use_cache = current_screen.use_cache
         context.new_use_cache = { }
 
-        self.const_ast.execute(context)
+        # This really executes self.const_ast.
+        self.execute(context)
 
         for i in context.children:
             renpy.ui.implicit_add(i)
