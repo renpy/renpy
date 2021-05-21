@@ -1099,6 +1099,31 @@ class ADVCharacter(object):
 
         return True
 
+    def prefix_suffix(self, thing, prefix, body, suffix):
+
+        def sub(s, scope=None, force=False, translate=True):
+            return renpy.substitutions.substitute(s, scope=scope, force=force, translate=translate)[0]
+
+        thingvar_quoted = "[[" + thing + "]"
+        thingvar = "[" + thing + "]"
+
+        if not renpy.config.new_substitutions:
+            return prefix + body + suffix
+
+        # Used before Ren'Py 7.4.
+        elif renpy.config.who_what_sub_compat == 0:
+            pattern = sub(prefix + thingvar_quoted + suffix)
+            rv = pattern.replace(thingvar, sub(body))
+
+        # Used from Ren'Py 7.4 to Ren'Py 7.4.4
+        elif renpy.config.who_what_sub_compat == 1:
+            pattern = sub(sub(prefix) + thingvar_quoted + sub(suffix))
+            return pattern.replace(thingvar, sub(body))
+
+        # 7.4.5 on.
+        else:
+            return(sub(prefix) + sub(body) + sub(suffix))
+
     def __call__(self, what, interact=True, _call_done=True, multiple=None, **kwargs):
 
         _mode = kwargs.pop("_mode", None)
@@ -1175,21 +1200,10 @@ class ADVCharacter(object):
                 else:
                     who = renpy.python.py_eval(who)
 
-            def sub(s, scope=None, force=False, translate=True):
-                return renpy.substitutions.substitute(s, scope=scope, force=force, translate=translate)[0]
-
             if who is not None:
-                if renpy.config.new_substitutions:
-                    who_pattern = sub(sub(self.who_prefix) + "[[who]" + sub(self.who_suffix))
-                    who = who_pattern.replace("[who]", sub(who))
-                else:
-                    who = self.who_prefix + who + self.who_suffix
+                who = self.prefix_suffix("who", self.who_prefix, who, self.who_suffix)
 
-            if renpy.config.new_substitutions:
-                what_pattern = sub(sub(self.what_prefix) + "[[what]" + sub(self.what_suffix))
-                what = what_pattern.replace("[what]", sub(what, translate=True))
-            else:
-                what = self.what_prefix + what + self.what_suffix
+            what = self.prefix_suffix("what", self.what_prefix, what, self.what_suffix)
 
             # Run the add_function, to add this character to the
             # things like NVL-mode.
