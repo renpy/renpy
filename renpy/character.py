@@ -1113,7 +1113,7 @@ class ADVCharacter(object):
         # Used before Ren'Py 7.4.
         elif renpy.config.who_what_sub_compat == 0:
             pattern = sub(prefix + thingvar_quoted + suffix)
-            rv = pattern.replace(thingvar, sub(body))
+            return pattern.replace(thingvar, sub(body))
 
         # Used from Ren'Py 7.4 to Ren'Py 7.4.4
         elif renpy.config.who_what_sub_compat == 1:
@@ -1122,7 +1122,7 @@ class ADVCharacter(object):
 
         # 7.4.5 on.
         else:
-            return(sub(prefix) + sub(body) + sub(suffix))
+            return (sub(prefix) + sub(body) + sub(suffix))
 
     def __call__(self, what, interact=True, _call_done=True, multiple=None, **kwargs):
 
