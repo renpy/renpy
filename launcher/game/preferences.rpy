@@ -53,6 +53,11 @@ init python:
 
     show_legacy = os.path.exists(os.path.join(config.renpy_base, "templates", "english", "game", "script.rpy"))
 
+    class RestartAtPreferences(Action):
+        def __call__(self):
+            renpy.session["launcher_start_label"] = "preferences"
+            renpy.utter_restart()
+
 default persistent.legacy = False
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
@@ -196,11 +201,11 @@ screen preferences:
 
                         textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
-                        textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), renpy.reload_script]
+                        add HALF_SPACER
 
-                        textbutton _("Clear theme") style "l_checkbox" action [ToggleField(persistent, "theme", "clear", None), renpy.reload_script]
-
-                        textbutton _("Dark theme") style "l_checkbox" action [ToggleField(persistent, "theme", "dark", None), renpy.reload_script]
+                        textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
+                        textbutton _("Clear theme") style "l_checkbox" action [SetField(persistent, "theme", "clear", None), RestartAtPreferences() ]
+                        textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark", None), RestartAtPreferences()]
 
 
                 if translations:

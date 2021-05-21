@@ -260,6 +260,8 @@ label start:
     show screen bottom_info
     $ dmgcheck()
 
+    jump expression renpy.session.pop("launcher_start_label", "front_page")
+
 label front_page:
     call screen front_page
     jump front_page
