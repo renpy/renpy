@@ -416,6 +416,9 @@ init -1500 python in updater:
             self.can_cancel = True
             self.can_proceed = False
 
+            # Disable autoreload.
+            renpy.set_autoreload(False)
+
             # Perform the update.
             self.new_state = dict(self.current_state)
             renpy.restart_interaction()
