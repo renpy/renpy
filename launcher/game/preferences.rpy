@@ -204,7 +204,7 @@ screen preferences:
                         add HALF_SPACER
 
                         textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
-                        textbutton _("Clear theme") style "l_checkbox" action [SetField(persistent, "theme", "clear", None), RestartAtPreferences() ]
+                        # textbutton _("Clear theme") style "l_checkbox" action [SetField(persistent, "theme", "clear", None), RestartAtPreferences() ]
                         textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark", None), RestartAtPreferences()]
 
 
