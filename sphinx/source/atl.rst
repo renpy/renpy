@@ -596,7 +596,7 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, ``renpy.absolute``, or
+When the type is given as position, it may be an int, an ``absolute``, or a
 float. If it's a float, it's interpreted as a fraction of the size of the
 containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
 
@@ -1135,4 +1135,3 @@ The following events can be triggered automatically:
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``
    Triggered when button containing this transform, or a button contained
    by this transform, enters the named state.
-
