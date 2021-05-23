@@ -113,6 +113,12 @@ Other Platforms
 
 The Web Platform beta has been updated.
 
+A regression in Mobile Safari for iOS 14.5.1 and later prevents Ren'Py from
+starting on that platform. As the issue is with Mobile Safari, no workaround
+is possible, and a message is displayed prompting the player to contact
+Apple. This regression affects other iOS browsers that are shells for Mobile
+Safari, like Chrome and Firefox.
+
 Building for iOS has been fixed.
 
 Support for Steam on macOS has been fixed.
