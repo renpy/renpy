@@ -121,10 +121,9 @@ novel kinds of value a style property can expect.
         containing area. For example, 0.5 is a point halfway between the
         sides of the containing area, while 1.0 is on the right or bottom
         side.
-    renpy.absolute (like renpy.absolute(100.25))
-        A ``renpy.absolute`` number is interpreted as the number of pixels
-        from the left or top side of the screen, when using subpixel-precise
-        rendering.
+    absolute (like absolute(100.25))
+        An ``absolute`` number is interpreted as the number of pixels from the
+        left or top side of the screen, when using subpixel-precise rendering.
 
 `displayable`
     Any displayable. If a displayable contains a "[prefix\_]" substitution,
