@@ -1870,7 +1870,6 @@ class Interface(object):
         self.in_quit_event = False
 
         self.time_event = pygame.event.Event(TIMEEVENT, { "modal" : False })
-        self.modal_time_event = pygame.event.Event(TIMEEVENT, { "modal" : True })
         self.redraw_event = pygame.event.Event(REDRAW)
 
         # Are we focused?
@@ -3073,16 +3072,13 @@ class Interface(object):
         self.transition_from.clear()
         self.transition_time.clear()
 
-    def post_time_event(self, modal=False):
+    def post_time_event(self):
         """
         Posts a time_event object to the queue.
         """
 
         try:
-            if modal:
-                pygame.event.post(self.modal_time_event)
-            else:
-                pygame.event.post(self.time_event)
+            pygame.event.post(self.time_event)
         except:
             pass
 
@@ -3883,8 +3879,8 @@ class Interface(object):
                     old_timeout_time = None
                     pygame.event.clear([TIMEEVENT])
 
-                    if not hasattr(ev, "modal"):
-                        ev = self.time_event
+                    # Set the modal flag to False.
+                    ev.modal = False
 
                 # On Android, where we have multiple mouse buttons, we can
                 # merge a mouse down and mouse up event with its successor. This
