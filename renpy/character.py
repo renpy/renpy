@@ -1356,7 +1356,7 @@ class ADVCharacter(object):
 def Character(name=NotSet, kind=None, **properties):
     """
     :doc: character
-    :args: (name, kind=adv, **args)
+    :args: (name=NotSet, kind=adv, **args)
     :name: Character
 
     Creates and returns a Character object, which controls the look
@@ -1365,7 +1365,8 @@ def Character(name=NotSet, kind=None, **properties):
     `name`
         If a string, the name of the character for dialogue. When
         ``name`` is None, display of the name is omitted, as for
-        narration.
+        narration. If no name is given, the name is taken from
+        ``kind``.
 
     `kind`
         The Character to base this Character off of. When used, the
