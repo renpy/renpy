@@ -1,4 +1,4 @@
-:orphan:
+.. :orphan:
 
 
 Dealing With Display Problems
@@ -21,8 +21,8 @@ currently exist to enable new features, and are expected to become the
 default renderer in the future.
 
 4. gl2: OpenGL 2.0 or greater.
-2. angle2: Windows, DirectX 9 or DirectX 11.
-3. gles2: OpenGL ES 3.0.
+5. angle2: Windows, DirectX 9 or DirectX 11.
+6. gles2: OpenGL ES 3.0.
 
 Older versions of Ren'Py supported a software renderer, but this has
 been removed.
