@@ -193,6 +193,7 @@ init -1900 python:
         if version <= (7, 3, 2):
             config.audio_directory = None
             config.early_start_store = True
+            config.compat_viewport_minimum = True
 
         if version <= (7, 3, 5):
             config.side_image_requires_attributes = False

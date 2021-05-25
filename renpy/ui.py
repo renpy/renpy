@@ -1112,7 +1112,9 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
         from renpy.sl2.slproperties import position_property_names
 
         for k, v in core_properties.items():
-            if k in position_property_names:
+            if (renpy.config.compat_viewport_minimum) and (k in { "minimum", "xminimum", "yminimum" }):
+                viewport_properties[k] = v
+            elif k in position_property_names:
                 side_properties[k] = v
             elif _spacing_to_side and (k == "spacing"):
                 side_properties[k] = v

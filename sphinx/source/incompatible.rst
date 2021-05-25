@@ -85,9 +85,16 @@ after ``default`` statements in all cases. To restore the old behavior
 (where callbacks were run before ``default`` statements during game
 but not replay start), use::
 
-    define config.early_start_callbacks = True
+    define config.early_start_store = True
 
+When given to a viewport or vpgrid with scrollbars, the minimum, xminimum,
+and yminimum side properties now apply to the side containing the scrollbars
+and viewport, and not solely the viewport.
 
+To work around this, either use ``viewport_minimum``, ``viewport_xminimum``,
+and ``viewport_yminimum``, or include::
+
+    define config.compat_viewport_minimum = True
 
 .. _incompatible-7.3.0:
 
