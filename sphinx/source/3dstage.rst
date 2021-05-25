@@ -45,7 +45,7 @@ Camera
 ------
 
 The initial placement of the camera is controlled by the parameters to
-:renpy:`gui.init`. First, Ren'Py uses `width` and `fov` to compute the
+:func:`gui.init`. First, Ren'Py uses `width` and `fov` to compute the
 default `z` distance. For the default `fov` of 75:
 
 * When width = 1280, z is about 834
