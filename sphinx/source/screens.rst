@@ -292,26 +292,6 @@ name, without any quotes. The displayable that the statement creates is
 assigned to the variable. (An example can be found in :ref:`the drag and drop
 documentation <as-example>`.)
 
-.. _sl-add:
-
-Add
----
-
-Adds an image or other displayable to the screen. This optionally
-takes :ref:`transform properties <transform-properties>`. If at least
-one transform property is given, a :class:`Transform` is created to wrap the
-image, and the properties are given to the transform.
-
-If the displayable is None, nothing is added to the screen.
-
-This does not take any children.
-
-::
-
-    screen add_test():
-        add "logo.png" xalign 1.0 yalign 0.0
-
-
 .. _sl-bar:
 
 Bar
@@ -1476,6 +1456,34 @@ This does not take children.
 
 Hotbars should be given the ``alt`` style property to allow Ren'Py's
 self-voicing feature to work.
+
+Add Statement
+=============
+
+The add statement is a bit special, as it adds an already-exising displayble
+to the screen. As a result, it doesn't take the properties common to the
+user interface statements.
+
+.. _sl-add:
+
+Add
+---
+
+Adds an image or other displayable to the screen. This optionally
+takes :ref:`transform properties <transform-properties>`. If at least
+one transform property is given, a :class:`Transform` is created to wrap the
+image, and the properties are given to the transform.
+
+If the displayable is None, nothing is added to the screen.
+
+This does not take any children.
+
+::
+
+    screen add_test():
+        add "logo.png" xalign 1.0 yalign 0.0
+
+
 
 
 Advanced Displayables
