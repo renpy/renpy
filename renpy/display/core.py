@@ -2740,6 +2740,9 @@ class Interface(object):
         This peeks the next event. It returns None if no event exists.
         """
 
+        if renpy.emscripten:
+            emscripten.sleep(0)
+
         if self.pushed_event:
             return self.pushed_event
 
@@ -2760,6 +2763,9 @@ class Interface(object):
         Called to busy-wait for an event while we're waiting to
         redraw a frame.
         """
+
+        if renpy.emscripten:
+            emscripten.sleep(0)
 
         if self.pushed_event:
             rv = self.pushed_event
@@ -2787,12 +2793,14 @@ class Interface(object):
 
         if renpy.emscripten:
 
+            emscripten.sleep(0)
+
             while True:
                 ev = pygame.event.poll()
                 if ev.type != pygame.NOEVENT:
                     break
 
-                emscripten.sleep(5)
+                emscripten.sleep(1)
 
         else:
             ev = pygame.event.wait()
