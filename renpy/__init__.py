@@ -74,7 +74,7 @@ except ImportError:
     vc_version = 0
 
 # The tuple giving the version number.
-version_tuple = (7, 4, 5, vc_version)
+version_tuple = (7, 4, 6, vc_version)
 
 # The name of this version.
 version_name = "The Five-Leaf Clover"
