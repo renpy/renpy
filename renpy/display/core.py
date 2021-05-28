@@ -181,6 +181,74 @@ class absolute(float):
     """
     __slots__ = [ ]
 
+class coordinate:
+    """
+    A combination of a relative and absolute coordinate.
+    """
+    def __init__(self, offset, relative=0):
+        self.offset = absolute(offset)
+        self.relative = relative if (isinstance(relative, int) and relative == 0) else float(relative)
+
+    def __add__(self, other):
+        if isinstance(other, float) and not isinstance(other, absolute):
+            return coordinate(offset=self.offset, relative=self.relative+other)
+        if isinstance(other, coordinate) and isinstance(self.relative, int) and isinstance(other.relative, int):
+            return coordinate(offset=self.offset+other.offset)
+        return NotImplemented
+
+    def __radd__(self, other):
+        return self+other
+
+    def __sub__(self, other):
+        return self + -other
+    # no rsub - on purpose
+
+    def __mul__(self, other): # not documented
+        return other*self
+
+    def __rmul__(self, other):
+        if not isinstance(self.relative, int):
+            return NotImplemented
+            # raise Exception("Multiplying a coordinate is disabled when a relative value exists")
+        if isinstance(other, (int, absolute)):
+            return coordinate(offset=self.offset*other)
+        return NotImplemented
+
+    def __eq__(self, other):
+        return isinstance(other, coordinate) and self.offset == other.offset and self.relative == other.relative
+
+    def __repr__(self):
+        return ''.join(("<",
+                        str(self.relative),
+                        "+",
+                        str(int(self.offset) if int(self.offset)==self.offset else self.offset),
+                        "px>"))
+
+class PX(coordinate):
+    """
+    The type of the `px` singleton.
+    """
+    def __init__(self):
+        super(PX, self).__init__(offset=1)
+
+    _store = []
+    def __new__(cls): # ensures px is a singleton, like None
+        if cls._store:
+            return cls._store[0]
+        self = object.__new__(PX)
+        cls._store.append(self)
+        return self
+
+    def __rmul__(self, other):
+        if isinstance(other, (int, absolute)):
+            return coordinate(offset=other)
+        return NotImplemented
+
+    def __mul__(self, other): # not documented
+        return other*self
+
+px = PX()
+
 
 def place(width, height, sw, sh, placement):
     """
