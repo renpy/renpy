@@ -40,7 +40,7 @@ It is now possible to click to dismiss transitions introduced with
 :func:`renpy.transition`, and places that use it like the ``with`` clause
 of say or ``call screen`` statement. To prevent this, use::
 
-    define dismiss_blocking_transitions = False
+    define config.dismiss_blocking_transitions = False
 
 
 .. _incompatible-7.4.1:
