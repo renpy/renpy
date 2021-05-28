@@ -80,7 +80,7 @@ giving the name of the cursor, to something that can be focused in a
 screen. (A button or bar.) For example::
 
     screen test():
-        textbutton "Mouse Test" actiuon NullAction mouse "spin"
+        textbutton "Mouse Test" action NullAction() mouse "spin"
 
 It's also possible to use :var:`default_mouse` to set the mouse cursor
 globally::
