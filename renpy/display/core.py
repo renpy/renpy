@@ -224,22 +224,7 @@ class coordinate:
                         str(int(self.offset) if int(self.offset)==self.offset else self.offset),
                         "px>"))
 
-class PX(coordinate):
-    """
-    The type of the `px` singleton.
-    """
-    def __init__(self):
-        super(PX, self).__init__(offset=1)
-
-    _store = []
-    def __new__(cls): # ensures px is a singleton, like None
-        if cls._store:
-            return cls._store[0]
-        self = object.__new__(PX)
-        cls._store.append(self)
-        return self
-
-px = PX()
+px = coordinate(offset=1, relative=0)
 
 
 def place(width, height, sw, sh, placement):
