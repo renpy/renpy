@@ -724,7 +724,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         if rv is not None:
             return rv
 
-        if renpy.display.layout.check_modal(self.modal, ev, x, y, renpy.config.screen_width, renpy.config.screen_height):
+        if renpy.display.layout.check_modal(self.modal, ev, x, y, None, None):
             raise renpy.display.layout.IgnoreLayers()
 
     def get_phase_name(self):

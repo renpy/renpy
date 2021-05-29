@@ -539,6 +539,9 @@ class IgnoreLayers(Exception):
 
 
 def default_modal_function(ev, x, y, w, h):
+    if w is None:
+        return True
+
     if (0 <= x < w) and (0 <= y < h):
         return True
 
