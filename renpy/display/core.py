@@ -239,14 +239,6 @@ class PX(coordinate):
         cls._store.append(self)
         return self
 
-    def __rmul__(self, other):
-        if isinstance(other, (int, absolute)):
-            return coordinate(offset=other)
-        return NotImplemented
-
-    def __mul__(self, other): # not documented
-        return other*self
-
 px = PX()
 
 
