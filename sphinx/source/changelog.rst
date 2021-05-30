@@ -2,6 +2,22 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
+.. _renpy-7.4.6:
+
+7.4.6
+=====
+
+Fixes
+-----
+
+A mistake in the build process meant that a change to fix compilation
+on iOS that had been in the nightly didn't make it into the Ren'Py
+release.
+
+An issue where a modal screen would not block time events when the Ren'Py
+window lost focus has been fixed.
+
+
 .. _renpy-7.4.5:
 
 7.4.5
