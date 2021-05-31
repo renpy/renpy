@@ -17,6 +17,13 @@ release.
 An issue where a modal screen would not block time events when the Ren'Py
 window lost focus has been fixed.
 
+The number of iterations of the blur shader has been limited, which ensures
+that Ren'Py is compatible with more webgl devices.
+
+Ren'Py will re-compile the Python files in the renpy/ directory, when the
+Force Recompile option is checked. This ensures that if those files are
+recompiled for some reason, the path to Ren'Py on the creator's system
+will not be included.
 
 .. _renpy-7.4.5:
 
