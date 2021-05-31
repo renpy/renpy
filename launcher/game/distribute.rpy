@@ -448,6 +448,16 @@ init python in distribute:
                 self.reporter.info(_("Scanning project files..."))
                 project.update_dump(force=True, gui=False, compile=project.data['force_recompile'])
 
+                if project.data['force_recompile']:
+                    import compileall
+
+                    compileall.compile_dir(
+                        os.path.join(config.renpy_base, "renpy"),
+                        ddir="renpy/",
+                        force=True,
+                    )
+
+
             if project.dump.get("error", False):
                 raise Exception("Could not get build data from the project. Please ensure the project runs.")
 
