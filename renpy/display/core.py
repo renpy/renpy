@@ -194,6 +194,8 @@ class coordinate:
             return coordinate(offset=self.offset, relative=self.relative+other)
         if isinstance(other, coordinate) and isinstance(self.relative, int) and isinstance(other.relative, int):
             return coordinate(offset=self.offset+other.offset)
+        elif isinstance(other, coordinate):
+            raise AttributeError("Coordinates with a relative value don't support addition")
         return NotImplemented
 
     def __radd__(self, other):
@@ -208,8 +210,7 @@ class coordinate:
 
     def __rmul__(self, other):
         if not isinstance(self.relative, int):
-            return NotImplemented
-            # raise Exception("Multiplying a coordinate is disabled when a relative value exists")
+            raise AttributeError("Coordinates with a relative value do not support multiplication")
         if isinstance(other, (int, absolute)):
             return coordinate(offset=self.offset*other)
         return NotImplemented
