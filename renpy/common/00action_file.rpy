@@ -80,21 +80,31 @@ init -1500 python:
         A version of strftime that's meant to work with Ren'Py's translation
         system.
         """
-        rv = format
 
         month = t[1] - 1
         wday = t[6]
 
-        rv = rv.replace("%a", __(_weekday_name_short[wday]))
-        rv = rv.replace("%A", __(_weekday_name_long[wday]))
-        rv = rv.replace("%b", __(_month_name_short[month]))
-        rv = rv.replace("%B", __(_month_name_long[month]))
+        import re
+        import time
 
-        if "%" in rv:
-            import time
-            rv = time.strftime(rv, t)
+        rv = [ ]
 
-        return rv
+        for i in re.split(r'(%[-_^#]?[0-9]*[a-zA-Z])', format):
+
+            if i == "%a":
+                rv.append(__(_weekday_name_short[wday]))
+            elif i == "%A":
+                rv.append(__(_weekday_name_long[wday]))
+            elif i == "%b":
+                rv.append(__(_month_name_short[month]))
+            elif i == "%B":
+                rv.append(__(_month_name_long[month]))
+            elif "%" in i:
+                rv.append(time.strftime(i, t))
+            else:
+                rv.append(i)
+
+        return "".join(rv)
 
 
     ##########################################################################
