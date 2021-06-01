@@ -3626,6 +3626,16 @@ def invoke_in_thread(fn, *args, **kwargs):
 
     This function creates a daemon thread, which will be automatically
     stopped when Ren'Py is shutting down.
+
+    This thread is very limited in what it can do with the Ren'Py API.
+    Changing store variables is allowed, as is calling the :func:`renpy.queue_event`
+    function. Most other portions of the Ren'Py API are expected to be called from
+    the main thread.
+
+    The primary use of this function is to place accesss to a web API in a second
+    thread, and then update variables with the results of that call, by storing
+    the result in variables and then relying on the interaction restart to cause
+    screens to display those variables.
     """
 
     def run():
