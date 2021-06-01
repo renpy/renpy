@@ -77,7 +77,7 @@ except ImportError:
 version_tuple = (7, 4, 6, vc_version)
 
 # The name of this version.
-version_name = "The Five-Leaf Clover"
+version_name = "The Hex Editor"
 
 # A string giving the version number only (8.0.1.123).
 version_only = ".".join(str(i) for i in version_tuple)
