@@ -574,6 +574,17 @@ cdef class GL2Draw:
             self.shader_cache.save()
 
 
+    cdef void change_fbo(self, GLuint fbo):
+        """
+        *Internal*
+        Change the FBO.
+        """
+        if self.current_fbo != fbo:
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo)
+            self.current_fbo = fbo
+
+
+
     def init_fbo(GL2Draw self):
         """
         *Internal*
@@ -587,6 +598,10 @@ cdef class GL2Draw:
         # Store the default FBO.
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, <GLint *> &self.default_fbo);
         self.current_fbo = self.default_fbo
+
+        # Store the default RBO
+        cdef GLuint default_renderbuffer
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, <GLint *> &default_renderbuffer);
 
         # Generate the framebuffer.
         glGenFramebuffers(1, &self.fbo)
@@ -647,6 +662,9 @@ cdef class GL2Draw:
                 GL_DEPTH_ATTACHMENT,
                 GL_RENDERBUFFER,
                 self.depth_renderbuffer)
+
+        glBindRenderbuffer(GL_RENDERBUFFER, default_renderbuffer)
+        self.change_fbo(self.default_fbo)
 
 
     def quit_fbo(GL2Draw self):
@@ -1075,14 +1093,6 @@ cdef class GL2Draw:
         y = int(y / self.dpi_scale)
 
         return (x, y)
-
-    ############################################################################
-    # Everything below this point is an internal detail.
-
-    cdef void change_fbo(self, GLuint fbo):
-        if self.current_fbo != fbo:
-            glBindFramebuffer(GL_FRAMEBUFFER, fbo)
-            self.current_fbo = fbo
 
 
 cdef class GL2DrawingContext:
