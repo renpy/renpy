@@ -688,9 +688,10 @@ class Script(object):
         return data, stmts
 
     def load_appropriate_file(self, compiled, source, dir, fn, initcode): # @ReservedAssignment
+        data = None
+
         # This can only be a .rpyc file, since we're loading it
         # from an archive.
-
         if dir is None:
 
             rpyfn = fn + source
@@ -751,6 +752,9 @@ class Script(object):
                             print("Could not load " + rpycfn)
 
                 except:
+                    renpy.display.log.write("While loading %r", rpycfn)
+                    renpy.display.log.exception()
+
                     if "RENPY_RPYC_EXCEPTIONS" in os.environ:
                         print("While loading", rpycfn)
                         raise
