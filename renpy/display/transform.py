@@ -95,6 +95,8 @@ def first_not_none(*args):
 
 class TransformState(renpy.object.Object):
 
+    last_angle = None
+
     def __init__(self):
 
         # Most fields on this object are set by add_property, at the bottom
