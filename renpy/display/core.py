@@ -2900,6 +2900,14 @@ class Interface(object):
             pygame.mouse.set_visible(True)
             cursor.activate()
 
+    def hide_mouse(self):
+        """
+        Called from the controller to hide the mouse when a controller
+        event happens.
+        """
+
+        self.mouse_event_time = 0
+
     def is_mouse_visible(self):
         # Figure out if the mouse visibility algorithm is hiding the mouse.
         if (renpy.config.mouse_hide_time is not None) and (self.mouse_event_time + renpy.config.mouse_hide_time < renpy.display.core.get_time()):

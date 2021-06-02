@@ -181,6 +181,9 @@ class PadEvent(object):
 
         post_event(self.control, self.state, False)
 
+        if renpy.display.interface is not None:
+            renpy.display.interface.hide_mouse()
+
     def repeat(self):
 
         if self.state not in renpy.config.controller_repeat_states:
