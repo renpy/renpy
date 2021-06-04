@@ -17,7 +17,7 @@ cdef class AttributeLayout:
 cdef class Mesh:
     """
     This represents the polygon and vertex data that is stored within
-    a Model.
+    a GL2Model.
     """
 
     # The number of points that space has been allocated for.

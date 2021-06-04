@@ -196,7 +196,6 @@ def transform_render(self, widtho, heighto, st, at):
 
     if mesh:
 
-
         mr = Render(cr.width, cr.height)
 
         mesh_pad = state.mesh_pad

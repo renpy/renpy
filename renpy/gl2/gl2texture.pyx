@@ -45,7 +45,7 @@ from renpy.gl2.gl2draw cimport GL2Draw
 
 from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2mesh2 cimport Mesh2
-from renpy.gl2.gl2model cimport Model
+from renpy.gl2.gl2model cimport GL2Model
 
 from renpy.display.matrix cimport Matrix
 
@@ -127,7 +127,7 @@ cdef class TextureLoader:
                     0.0, 0.0, pw, ph,
                     0.0, 0.0, 0.0, 0.0)
 
-            rv = Model((pw, ph), mesh, ("renpy.texture",), { "tex0" : rv })
+            rv = GL2Model((pw, ph), mesh, ("renpy.texture",), { "tex0" : rv })
 
         return rv
 
@@ -243,7 +243,7 @@ cdef class TextureLoader:
 
         return False
 
-cdef class GLTexture(Model):
+cdef class GLTexture(GL2Model):
     """
     This class represents an OpenGL texture that needs to be loaded by
     Ren'Py. It's responsible for handling deferred loading of textures,
@@ -259,7 +259,7 @@ cdef class GLTexture(Model):
 
         width, height = size
 
-        Model.__init__(self, size, None, ("renpy.texture",), None)
+        GL2Model.__init__(self, size, None, ("renpy.texture",), None)
 
         # The number of the OpenGL texture this texture object
         # represents.
@@ -525,7 +525,7 @@ cdef class GLTexture(Model):
         shader.set_uniform("tex0", self)
 
     cpdef subsurface(self, rect):
-        rv = Model.subsurface(self, rect)
+        rv = GL2Model.subsurface(self, rect)
         if rv is not self:
             rv.uniforms = { "tex0" : self }
         return rv

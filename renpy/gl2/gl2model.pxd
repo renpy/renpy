@@ -1,7 +1,7 @@
 from renpy.display.matrix cimport Matrix
 from renpy.gl2.gl2mesh cimport Mesh
 
-cdef class Model:
+cdef class GL2Model:
 
     # The width and height.
     cdef public int width
@@ -31,6 +31,6 @@ cdef class Model:
     # a Texture.)
     cdef object cached_texture
 
-    cpdef Model copy(Model self)
-    cpdef subsurface(Model self, t)
-    cpdef scale(Model self, float factor)
+    cpdef GL2Model copy(GL2Model self)
+    cpdef subsurface(GL2Model self, t)
+    cpdef scale(GL2Model self, float factor)

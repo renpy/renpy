@@ -5,13 +5,13 @@ from renpy.gl2.gl2texture cimport GLTexture
 
 from libc.math cimport ceil
 
-cdef class Model:
+cdef class GL2Model:
     """
     A model can be placed as a leaf of the tree of Renders, and contains
     everything needed to be draw to the screen.
     """
 
-    def __init__(Model self, size, mesh, shaders, uniforms):
+    def __init__(GL2Model self, size, mesh, shaders, uniforms):
         self.width = size[0]
         self.height = size[1]
         self.mesh = mesh
@@ -23,7 +23,7 @@ cdef class Model:
         self.forward = IDENTITY
         self.reverse = IDENTITY
 
-    def __repr__(Model self):
+    def __repr__(GL2Model self):
         rv = "<{} {}x{} {} {}".format(type(self).__name__, self.width, self.height, self.shaders, self.uniforms)
 
         if self.forward is not IDENTITY:
@@ -54,25 +54,25 @@ cdef class Model:
 
     def get_size(self):
         """
-        Returns the size of this Model.
+        Returns the size of this GL2Model.
         """
 
         return (self.width, self.height)
 
-    cpdef Model copy(Model self):
+    cpdef GL2Model copy(GL2Model self):
         """
         Creates an identical copy of the current model.
         """
 
-        cdef Model rv = Model((self.width, self.height), self.mesh, self.shaders, self.uniforms)
+        cdef GL2Model rv = GL2Model((self.width, self.height), self.mesh, self.shaders, self.uniforms)
         rv.forward = self.forward
         rv.reverse = self.reverse
 
         return rv
 
-    cpdef subsurface(Model self, rect):
+    cpdef subsurface(GL2Model self, rect):
         """
-        Given a rectangle `rect`, returns a Model that only contains the
+        Given a rectangle `rect`, returns a GL2Model that only contains the
         portion of the model inside the rectangle.
         """
 
@@ -80,7 +80,7 @@ cdef class Model:
 
         x, y, w, h = rect
 
-        cdef Model rv = self.copy()
+        cdef GL2Model rv = self.copy()
 
         rv.width = <int> ceil(w)
         rv.height = <int> ceil(h)
@@ -95,14 +95,14 @@ cdef class Model:
 
         return rv
 
-    cpdef scale(Model self, float factor):
+    cpdef scale(GL2Model self, float factor):
         """
         Creates a new model that is this model scaled by a constant factor.
         """
 
         cdef float reciprocal_factor
 
-        cdef Model rv = self.copy()
+        cdef GL2Model rv = self.copy()
 
         rv.width = <int> ceil(rv.width * factor)
         rv.height = <int> ceil(rv.height * factor)

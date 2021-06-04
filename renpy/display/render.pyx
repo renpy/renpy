@@ -737,7 +737,7 @@ cdef class Render:
 
     cpdef int blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
         """
-        Blits `source` (a Render, Surface, or Model) to this Render, offset by
+        Blits `source` (a Render, Surface, or GL2Model) to this Render, offset by
         xo and yo.
 
         If `focus` is true, then focuses are added from the child to the
@@ -771,7 +771,7 @@ cdef class Render:
 
     cpdef int subpixel_blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
         """
-        Blits `source` (a Render, Surface, or Model) to this Render, offset by
+        Blits `source` (a Render, Surface, or GL2Model) to this Render, offset by
         xo and yo.
 
         If `focus` is true, then focuses are added from the child to the
