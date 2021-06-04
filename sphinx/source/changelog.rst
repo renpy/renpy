@@ -7,6 +7,11 @@ Changelog (Ren'Py 7.x-)
 7.4.6
 =====
 
+Improvements
+------------
+
+Using a controller immediately hides the mouse cursor.
+
 Fixes
 -----
 
