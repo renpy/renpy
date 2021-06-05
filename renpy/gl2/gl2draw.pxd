@@ -59,7 +59,7 @@ cdef class GL2Draw:
 
     # The matrix that goes from drawable space to the window. This isn't used
     # directly, it's used to determine if something is being drawn in a wa
-    # that it shoudl be lined up with pixels.
+    # that it should be lined up with pixels.
     cdef public Matrix draw_transform
 
     cdef public int fast_redraw_frames

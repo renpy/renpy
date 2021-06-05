@@ -471,6 +471,7 @@ def import_all():
     import renpy.display.emulator
     import renpy.display.tts
     import renpy.display.gesture
+    import renpy.display.model
 
     import renpy.display.error
 
@@ -763,6 +764,9 @@ if False:
     import renpy.display.gesture
     import renpy.display.matrix
     import renpy.display.render
+    import renpy.display.model
+
+    print(renpy.display.model)
 
     import renpy.display.error
 
