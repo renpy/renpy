@@ -937,9 +937,6 @@ def add_uniform(name):
     if not name.startswith("u_"):
         return
 
-    if name.startswith("u_renpy"):
-        return
-
     if name in renpy.gl2.gl2draw.standard_uniforms:
         return
 
