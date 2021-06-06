@@ -447,7 +447,7 @@ differences, that is still useful. ::
 
 The differences are:
 
-* The transforms applied with ``show layer`` persist are cleared at the
+* The transforms applied with ``show layer`` are cleared at the
   next ``scene`` statement, while ``camera`` transforms last until
   explicitly cleared.
 
