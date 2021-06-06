@@ -457,8 +457,12 @@ class Script(object):
                         return
 
                     self.duplicate_labels.append(
-                        u'The label {} is defined twice, at\n  File "{}", line {} and\n  File "{}", line {}.'.format(
-                            bad_name, old_node.filename, old_node.linenumber, bad_node.filename, bad_node.linenumber))
+                        u'The label {} is defined twice, at File "{}", line {}:\n{}and File "{}", line {}:\n{}'.format(
+                            bad_name, old_node.filename, old_node.linenumber,
+                            renpy.parser.get_line_text(old_node.filename, old_node.linenumber),
+                            bad_node.filename, bad_node.linenumber,
+                            renpy.parser.get_line_text(old_node.filename, old_node.linenumber),
+                        ))
 
         self.update_bytecode()
 

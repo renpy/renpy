@@ -43,6 +43,26 @@ parse_errors = [ ]
 from renpy.parsersupport import match_logical_word
 
 
+def get_line_text(filename, lineno):
+    """
+    Gets the text of a line, in a best-effort way, for debugging purposes. May
+    return just a newline.
+    """
+
+    import linecache
+    full_filename = renpy.exports.unelide_filename(filename)
+
+    print(full_filename, linecache.getline(full_filename, lineno))
+
+    try:
+        line = linecache.getline(full_filename, lineno) or "\n"
+        line = line.decode("utf-8")
+    except:
+        line = "\n"
+
+    return line
+
+
 class ParseError(Exception):
 
     def __init__(self, filename, number, msg, line=None, pos=None, first=False):
