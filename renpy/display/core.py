@@ -797,6 +797,7 @@ class SceneLists(renpy.object.Object):
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
+                self.camera_list[i] = (None, [ ])
 
     def after_upgrade(self, version):
 
@@ -840,9 +841,13 @@ class SceneLists(renpy.object.Object):
         # A map from layer name -> tag -> at_list associated with that tag.
         self.at_list = { }
 
-        # A map from layer to (star time, at_list), where the at list has
+        # A map from layer to (start time, at_list), where the at list has
         # been applied to the layer as a whole.
         self.layer_at_list = { }
+
+        # The camera list, which is similar to the layer at list but is not
+        # cleared during the scene statement.
+        self.camera_list = { }
 
         # The current shown images,
         self.shown = shown
@@ -859,6 +864,9 @@ class SceneLists(renpy.object.Object):
         # layer.
         self.layer_transform = { }
 
+        # Same thing, but for the camera transform.
+        self.camera_transform = { }
+
         if oldsl:
 
             for i in renpy.config.layers + renpy.config.top_layers:
@@ -871,9 +879,11 @@ class SceneLists(renpy.object.Object):
                 if i in oldsl.at_list:
                     self.at_list[i] = oldsl.at_list[i].copy()
                     self.layer_at_list[i] = oldsl.layer_at_list[i]
+                    self.camera_list[i] = oldsl.camera_list[i]
                 else:
                     self.at_list[i] = { }
                     self.layer_at_list[i] = (None, [ ])
+                    self.camera_list[i] = (None, [ ])
 
             for i in renpy.config.overlay_layers:
                 self.clear(i)
@@ -885,12 +895,14 @@ class SceneLists(renpy.object.Object):
             self.drag_group = oldsl.drag_group
 
             self.layer_transform.update(oldsl.layer_transform)
+            self.camera_transform.update(oldsl.camera_transform)
 
         else:
             for i in renpy.config.layers + renpy.config.top_layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
+                self.camera_list[i] = (None, [ ])
 
             self.music = None
             self.focused = None
@@ -1249,8 +1261,12 @@ class SceneLists(renpy.object.Object):
         if renpy.config.scene_clears_layer_at_list:
             self.layer_at_list[layer] = (None, [ ])
 
-    def set_layer_at_list(self, layer, at_list, reset=True):
-        self.layer_at_list[layer] = (None, list(at_list))
+    def set_layer_at_list(self, layer, at_list, reset=True, camera=False):
+
+        if camera:
+            self.camera_list[layer] = (None, list(at_list))
+        else:
+            self.layer_at_list[layer] = (None, list(at_list))
 
         if reset:
             self.layer_transform[layer] = None
@@ -1260,6 +1276,9 @@ class SceneLists(renpy.object.Object):
         This finds entries with a time of None, and replaces that
         time with the given time.
         """
+
+        for l, (t, ll) in list(self.camera_list.items()):
+            self.camera_list[l] = (t or time, ll)
 
         for l, (t, ll) in list(self.layer_at_list.items()):
             self.layer_at_list[l] = (t or time, ll)
@@ -1302,6 +1321,8 @@ class SceneLists(renpy.object.Object):
         rv.layer_name = layer
         rv._duplicatable = False
 
+        # Layer at list.
+
         time, at_list = self.layer_at_list[layer]
 
         old_transform = self.layer_transform.get(layer, None)
@@ -1327,6 +1348,34 @@ class SceneLists(renpy.object.Object):
             rv = f
 
         self.layer_transform[layer] = new_transform
+
+        # Camera list.
+
+        time, at_list = self.camera_list[layer]
+
+        old_transform = self.camera_transform.get(layer, None)
+        new_transform = None
+
+        if at_list:
+
+            for a in at_list:
+
+                if isinstance(a, renpy.display.motion.Transform):
+                    rv = a(child=rv)
+                    new_transform = rv
+                else:
+                    rv = a(rv)
+
+            if (new_transform is not None):
+                self.transform_state(old_transform, new_transform, execution=True)
+
+            f = renpy.display.layout.MultiBox(layout='fixed')
+            f.add(rv, time, time)
+            f.layer_name = layer
+
+            rv = f
+
+        self.camera_transform[layer] = new_transform
 
         return rv
 

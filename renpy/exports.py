@@ -2422,7 +2422,7 @@ def image_size(im):
     return surf.get_size()
 
 
-def get_at_list(name, layer=None):
+def get_at_list(name, layer=None, camera=False):
     """
     :doc: se_images
 
@@ -2442,13 +2442,13 @@ def get_at_list(name, layer=None):
     return renpy.game.context().scene_lists.at_list[layer].get(tag, None)
 
 
-def show_layer_at(at_list, layer='master', reset=True):
+def show_layer_at(at_list, layer='master', reset=True, camera=False):
     """
     :doc: se_images
     :name: renpy.show_layer_at
 
     The Python equivalent of the ``show layer`` `layer` ``at`` `at_list`
-    statement.
+    statement. If `camera` is True, the equivalent of the ``camera`` statement.
 
     `reset`
         If true, the transform state is reset to the start when it is shown.
@@ -2459,7 +2459,7 @@ def show_layer_at(at_list, layer='master', reset=True):
     if not isinstance(at_list, list):
         at_list = [ at_list ]
 
-    renpy.game.context().scene_lists.set_layer_at_list(layer, at_list, reset=reset)
+    renpy.game.context().scene_lists.set_layer_at_list(layer, at_list, reset=reset, camera=camera)
 
 
 layer_at_list = show_layer_at
