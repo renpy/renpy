@@ -431,6 +431,28 @@ function.
         init python:
             from renpy.uguu import GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, GL_REPEAT
 
+Model Displayable
+-----------------
+
+The Model displayable acts as a factory to created models for use with the
+model-based renderer.
+
+.. include:: model_displayable
+
+Model Displayable Examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The Model displayable can be used in conjunction with an ATL transform and
+a built-in shader to create the Dissolve transform::
+
+    transform dt(delay=1.0, new_widget=None, old_widget=None):
+        delay delay
+        Model().texture(old_widget).child(new_widget)
+        shader [ 'renpy.dissolve' ]
+
+        u_renpy_dissolve 0.0
+        linear delay u_renpy_dissolve 1.0
+
 
 Default Shader Parts
 --------------------

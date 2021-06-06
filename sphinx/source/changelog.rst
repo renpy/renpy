@@ -7,8 +7,36 @@ Changelog (Ren'Py 7.x-)
 7.4.6
 =====
 
-Improvements
-------------
+Camera Statement
+----------------
+
+There is a new ``camera`` statement, intended for use with the 3D Stage system.
+This statement is similar to the ``show layer`` statement, except that the layer
+name is not required, and it is not cleared when a ``scene`` statement is run.
+
+This statement lets you write::
+
+    camera:
+        perspective True
+
+to enable the 3D State system.
+
+As part of this, the ``show layer`` and ``scene`` statements have been reverted
+to their behavior in 7.4.4 and earlier, where the ``scene`` statement clears
+the list of transforms.
+
+Model Displayable
+-----------------
+
+The new :class:`Model` displayable serves as a way to create models for
+use with the model-based renderer. Right now, the class is able to
+create 2D models with multiple textures, making it possible to create
+custom transforms that work like some of the built-in transforms do.
+
+This displayable doesn't support 3D, yet, but that's expected in the future.
+
+Other Improvements
+------------------
 
 Using a controller immediately hides the mouse cursor.
 

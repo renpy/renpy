@@ -75,9 +75,9 @@ Using the 3D Stage
 ------------------
 
 The first thing to do to use the 3D stage is to enable it for a layer, using
-the ``show layer`` statement. This is usually done with::
+the ``camera`` statement. This is usually done with::
 
-    show layer master:
+    camera:
         perspective True
 
 though it's possible that you'll want to include a default camera position, as
@@ -147,21 +147,19 @@ position the images in a three dimensional rectangular volume (like a cube, but
 not all the sides are the same length), and then apply perspective to the image,
 which can cause parts of the image to move offscreen.
 
-It's possible to move the camera, as well, using ``show layer``. For example, ::
+It's possible to move the camera, as well, using ``camera``. For example, ::
 
-    show layer master:
+    camera:
         perspective True
         xpos 0
         linear 3.0 xpos 500
 
 When doing this, it probably makes sense to use background images that are
-larger than the window. As of Ren'Py 7.4.5, properties do not persist
-between invocations of ``show layer``, so all properties need to be
-specified each time ``show layer`` is used.
+larger than the window.
 
 If you apply a zpos to a sprite, and it doesn't take effect, the reason is
-probably because you omitted the ``perspective`` clause of the ``show layer``
-statement.
+probably because you omitted the ``perspective`` clause of the ``camera``
+transform.
 
 Depth
 -----
@@ -174,7 +172,7 @@ farther away.
 If your game shows images out of order like this, you can tell the GPU
 to sort by depth, using :tpref:`gl_depth`::
 
-    show layer master:
+    camera:
         perspective True
         gl_depth True
 

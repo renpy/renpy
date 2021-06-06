@@ -138,7 +138,7 @@ with Ren'Py, including which features will or will not be compiled in. These
 functions may fail on platforms that can otherwise run Ren'Py, and so it's
 important to check for None before proceeding.
 
-.. include: inc/sdl
+.. include:: inc/sdl
 
 ::
 

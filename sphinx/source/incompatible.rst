@@ -12,6 +12,12 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+7.4.6
+-----
+
+The change regarding the layer at list in 7.4.5 was reverted. The new ``camera``
+statement defaults to the new semantics, while leaving ``show layer`` alone.
+
 7.4.5
 ------
 
@@ -20,6 +26,7 @@ To disable the model-based renderer, use::
 
     define config.gl2 = False
 
+**Reverted in 7.4.6**
 The ``scene`` statement no longer clears the layer at list. To clear the
 layer at list, use::
 
