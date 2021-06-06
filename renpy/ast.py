@@ -1239,6 +1239,46 @@ class ShowLayer(Node):
             self.atl.mark_constant()
 
 
+class Camera(Node):
+
+    warp = True
+
+    __slots__ = [
+        'layer',
+        'at_list',
+        'atl',
+        ]
+
+    def __init__(self, loc, layer, at_list, atl):
+        super(Camera, self).__init__(loc)
+
+        self.layer = layer
+        self.at_list = at_list
+        self.atl = atl
+
+    def diff_info(self):
+        return (ShowLayer, self.layer)
+
+    def execute(self):
+        next_node(self.next)
+        statement_name("show layer")
+
+        at_list = [ renpy.python.py_eval(i) for i in self.at_list ]
+
+        if self.atl is not None:
+            atl = renpy.display.motion.ATLTransform(self.atl)
+            at_list.append(atl)
+
+        renpy.exports.layer_at_list(at_list, layer=self.layer, camera=True)
+
+    def predict(self):
+        return [ self.next ]
+
+    def analyze(self):
+        if self.atl is not None:
+            self.atl.mark_constant()
+
+
 class Scene(Node):
 
     __slots__ = [
@@ -1632,7 +1672,7 @@ class Menu(Node):
                 if self.item_arguments and (self.item_arguments[i] is not None):
                     item_arguments.append(self.item_arguments[i].evaluate())
                 else:
-                    item_arguments.append(( (), {} ))
+                    item_arguments.append(((), {}))
 
         if narration:
             renpy.exports.say(None, "\n".join(narration), interact=False)

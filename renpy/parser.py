@@ -2118,6 +2118,30 @@ def show_layer_statement(l, loc):
     return rv
 
 
+@statement("camera")
+def camera_statement(l, loc):
+
+    layer = l.name() or 'master'
+
+    if l.keyword("at"):
+        at_list = parse_simple_expression_list(l)
+    else:
+        at_list = [ ]
+
+    if l.match(':'):
+        atl = renpy.atl.parse_atl(l.subblock_lexer())
+    else:
+        atl = None
+        l.expect_noblock('camera statement')
+
+    l.expect_eol()
+    l.advance()
+
+    rv = ast.Camera(loc, layer, at_list, atl)
+
+    return rv
+
+
 @statement("hide")
 def hide_statement(l, loc):
     imspec = parse_image_specifier(l)
