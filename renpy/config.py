@@ -1131,7 +1131,7 @@ pause_after_rollback = False
 perspective = (100.0, 1000.0, 100000.0)
 
 # Does the scene clear the layer at list?
-scene_clears_layer_at_list = False
+scene_clears_layer_at_list = True
 
 # The mouse displayable, if any. Can be a displayable, or a callable that
 # return a displayable.
