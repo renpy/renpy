@@ -126,7 +126,7 @@ class Model(renpy.display.core.Displayable):
             This may only be true for one texture.
         """
 
-        self.textures.append(self, Texture(displayable, focus, main, fit))
+        self.textures.append(Texture(displayable, focus, main, fit))
         return self
 
     def child(self, displayable, fit=False):
