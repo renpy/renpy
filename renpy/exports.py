@@ -1526,7 +1526,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     if roll_forward not in [ True, False ]:
         roll_forward = None
 
-    if renpy.game.after_rollback and not renpy.config.pause_after_rollback:
+    if (delay is not None) and renpy.game.after_rollback and not renpy.config.pause_after_rollback:
 
         rv = roll_forward
         if rv is None:
