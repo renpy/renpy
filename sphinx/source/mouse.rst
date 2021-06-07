@@ -1,5 +1,5 @@
 Custom Mouse Cursors
---------------------
+====================
 
 Ren'Py has two systems for creating custom mouse cursors. The first takes
 advantage of the hardware mouse cursor, while the second uses Ren'Py to
