@@ -1131,8 +1131,13 @@ class Interpolation(Statement):
 
         warper = warpers.get(self.warper, self.warper)
 
+        if trans.atl.animation:
+            st_or_at = trans.at
+        else:
+            st_or_at = trans.st
+
         if (self.warper != "instant") and (state is None) and (
-                (trans.atl_state is not None) or (trans.st == 0)
+                (trans.atl_state is not None) or (st_or_at == 0)
                 ):
             first = True
         else:
