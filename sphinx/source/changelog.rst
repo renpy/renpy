@@ -38,6 +38,10 @@ This displayable doesn't support 3D, yet, but that's expected in the future.
 Other Improvements
 ------------------
 
+The Atom text editor has been updated, and the language-renpy plugin assoicated
+with it has been updated to support the new keywords introduced in recent
+versions of Ren'Py.
+
 Using a controller immediately hides the mouse cursor.
 
 Fixes
@@ -57,6 +61,12 @@ Ren'Py will re-compile the Python files in the renpy/ directory, when the
 Force Recompile option is checked. This ensures that if those files are
 recompiled for some reason, the path to Ren'Py on the creator's system
 will not be included.
+
+ATL will now skip to the first frame to be displayed when using the animation
+timebase.
+
+Ren'Py will no longer pauses without timeouts after a rollback.
+
 
 .. _renpy-7.4.5:
 
