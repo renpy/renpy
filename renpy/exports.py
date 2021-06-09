@@ -1561,7 +1561,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay)
 
     if checkpoint:
-        renpy.exports.checkpoint(rv, keep_rollback=True, hard=renpy.config.pause_after_rollback)
+        renpy.exports.checkpoint(rv, keep_rollback=True, hard=renpy.config.pause_after_rollback or (delay is None))
 
     if with_none is None:
         with_none = renpy.config.implicit_with_none
