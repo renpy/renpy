@@ -34,7 +34,7 @@ init python:
             if renpy.macintosh:
                 fn = "console.command"
                 nl = "\n"
-                prefix = "#!/bin/bash"
+                prefix = "#!/bin/sh"
             elif renpy.windows:
                 fn = "console.bat"
                 nl = "\r\n"
@@ -48,7 +48,6 @@ init python:
             self.fn = project.current.temp_filename(fn)
             self.f = open(self.fn, "wb")
             self.nl = nl
-
 
             self.f.write(renpy.fsencode(prefix) + nl)
 
@@ -74,7 +73,11 @@ init python:
             self.f.close()
             os.chmod(self.fn, 0o755)
 
-            command = renpy.fsencode('"{}"'.format(self.fn.replace("\"", "\\\"")))
+            if renpy.macintosh:
+                command = renpy.fsencode(self.fn)
+            else:
+                command = renpy.fsencode('"{}"'.format(self.fn.replace("\"", "\\\"")))
+
 
             if renpy.windows:
                 subprocess.Popen([ command ], shell=True)
