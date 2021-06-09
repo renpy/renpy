@@ -1594,4 +1594,4 @@ label distribute:
             )
 
 
-    jump front_page
+    jump build_distributions
