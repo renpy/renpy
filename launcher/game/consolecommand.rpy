@@ -73,17 +73,11 @@ init python:
             self.f.close()
             os.chmod(self.fn, 0o755)
 
-            if renpy.macintosh:
-                command = renpy.fsencode(self.fn)
-            else:
+            if renpy.linux:
                 command = renpy.fsencode('"{}"'.format(self.fn.replace("\"", "\\\"")))
-
-
-            if renpy.windows:
-                subprocess.Popen([ command ], shell=True)
-            elif renpy.macintosh:
-                subprocess.Popen([ "open", "-a", "Terminal", command ])
-            else:
                 subprocess.Popen([ "x-terminal-emulator", "-e", command ])
+            else:
+                command = renpy.fsencode(self.fn)
+                os.startfile(command)
 
             interface.interaction(_("INFORMATION"), _("The command is being run in a new operating system console window."), pause=2.5)
