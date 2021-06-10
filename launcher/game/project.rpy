@@ -763,6 +763,14 @@ init 10 python:
         if not directory_is_writable(persistent.projects_directory):
             persistent.projects_directory = None
 
+label after_load:
+    python:
+        if project.current is not None:
+            project.current.update_dump()
+
+    return
+
+
 ###############################################################################
 # Code to choose the projects directory.
 
