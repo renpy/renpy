@@ -276,6 +276,8 @@ label build_distributions:
 
     call build_update_dump
 
+label post_build:
+
     if not project.current.dump["build"]["directory_name"]:
         jump build_missing
 
