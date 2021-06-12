@@ -792,11 +792,17 @@ class SceneLists(renpy.object.Object):
     __version__ = 7
 
     def after_setstate(self):
+
+        self.camera_list = getattr(self, "camera_list", { })
+        self.camera_transform = getattr(self, "camera_transform", { })
+
         for i in renpy.config.layers + renpy.config.top_layers:
             if i not in self.layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
+
+            if i not in self.camera_list:
                 self.camera_list[i] = (None, [ ])
 
     def after_upgrade(self, version):
