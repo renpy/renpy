@@ -199,6 +199,7 @@ each model it is used to render::
             uniform vec4 u_gradient_right;
             uniform vec2 u_model_size;
             varying float v_gradient_done;
+            attribute vec4 a_position;
         """, vertex_300="""
             v_gradient_done = a_position.x / u_model_size.x;
         """, fragment_300="""
