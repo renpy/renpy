@@ -311,16 +311,6 @@ screen web():
 
                         add SPACER
 
-                        text _("Support:")
-
-                        add HALF_SPACER
-
-                        frame style "l_indent":
-
-                            has vbox
-
-                            textbutton _("RenPyWeb Home") action OpenURL("https://renpy.beuc.net/")
-
 
                 # Right side.
                 frame:
