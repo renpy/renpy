@@ -895,8 +895,9 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         return "<ATL Transform {:x} {!r}>".format(id(self), self.atl.loc)
 
     def _show(self):
+        old_state = self.atl_state
         super(ATLTransform, self)._show()
-        self.execute(self, self.st, self.at)
+        self.atl_state = old_state
 
 
 # Names of transform properties, and if the property should be handles with
