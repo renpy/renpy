@@ -106,7 +106,7 @@ def compile_event(key, keydown):
 
     if key not in [ "K_LALT", "K_RALT" ]:
 
-        if "alt" in modifiers:
+        if "alt" in modifiers or (renpy.macintosh and "osctrl" in modifiers):
             rv += " and (ev.mod & %d)" % pygame.KMOD_ALT
         else:
             rv += " and not (ev.mod & %d)" % pygame.KMOD_ALT
@@ -115,24 +115,15 @@ def compile_event(key, keydown):
 
         if "meta" in modifiers:
             rv += " and (ev.mod & %d)" % pygame.KMOD_META
-        elif not ("osctrl" in modifiers and renpy.macintosh):
+        else:
             rv += " and not (ev.mod & %d)" % pygame.KMOD_META
 
     if key not in [ "K_LCTRL", "K_RCTRL" ]:
 
-        if "ctrl" in modifiers:
+        if "ctrl" in modifiers or (not renpy.macintosh and "osctrl" in modifiers):
             rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
-
-        if renpy.macintosh:
-            if "osctrl" in modifiers:
-                rv += " and (ev.mod & %d)" % pygame.KMOD_META
-            else:
-                rv += " and not (ev.mod & %d)" % pygame.KMOD_META
         else:
-            if "osctrl" in modifiers and "ctrl" not in modifiers:
-                rv += " and (ev.mod & %d)" % pygame.KMOD_CTRL
-            elif "ctrl" not in modifiers:
-                rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
+            rv += " and not (ev.mod & %d)" % pygame.KMOD_CTRL
 
     if key not in [ "K_LSHIFT", "K_RSHIFT" ]:
 
@@ -1391,8 +1382,6 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         edit_controls = any([
             map_event(ev, "input_jump_word_left"),
             map_event(ev, "input_jump_word_right"),
-            map_event(ev, "input_jump_full_left"),
-            map_event(ev, "input_jump_full_right"),
             map_event(ev, "input_delete_word"),
             map_event(ev, "input_delete_full"),
         ])
@@ -1438,19 +1427,13 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         elif map_event(ev, "input_jump_word_left"):
             if self.caret_pos > 0:
                 space_pos = 0
-                for item in re.finditer(r"\s+", self.content[:self.caret_pos - 1]):
+                prev_end = 0
+                for item in re.finditer(r"\s+", self.content[:self.caret_pos]):
                     start, end = item.span()
-                    if end != self.caret_pos - 1:
+                    if end != self.caret_pos:
                         space_pos = end
+                    prev_end = end
                 self.caret_pos = space_pos
-                self.update_text(self.content, self.editable)
-
-            renpy.display.render.redraw(self, 0)
-            raise renpy.display.core.IgnoreEvent()
-
-        elif map_event(ev, "input_jump_full_left"):
-            if self.caret_pos > 0:
-                self.caret_pos = 0
                 self.update_text(self.content, self.editable)
 
             renpy.display.render.redraw(self, 0)
@@ -1477,14 +1460,6 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
 
-        elif map_event(ev, "input_jump_full_right"):
-            if self.caret_pos < l:
-                self.caret_pos = l
-                self.update_text(self.content, self.editable)
-
-            renpy.display.render.redraw(self, 0)
-            raise renpy.display.core.IgnoreEvent()
-
         elif map_event(ev, "input_delete"):
             if self.caret_pos < l:
                 content = self.content[0:self.caret_pos] + self.content[self.caret_pos + 1:l]
@@ -1496,9 +1471,9 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         elif map_event(ev, "input_delete_word"):
             if self.caret_pos <= l:
                 space_pos = 0
-                for item in re.finditer(r"\s+", self.content[:self.caret_pos - 1]):
+                for item in re.finditer(r"\s+", self.content[:self.caret_pos]):
                     start, end = item.span()
-                    if end != self.caret_pos - 1:
+                    if end != self.caret_pos:
                         space_pos = end
                 content = self.content[0:space_pos] + self.content[self.caret_pos:l]
                 self.caret_pos = space_pos
