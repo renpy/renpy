@@ -364,12 +364,16 @@ class Channel(object):
             except:
                 raise exception("expected channel, got {!r}.".format(v))
 
+        if isinstance(filename, AudioData):
+            return filename, 0, -1
+
         m = re.match(r'<(.*)>(.*)', filename)
         if not m:
             return filename, 0, -1
 
         spec = m.group(1)
         fn = m.group(2)
+        fn = self.file_prefix + fn + self.file_suffix
 
         spec = spec.split()
 
@@ -502,7 +506,7 @@ class Channel(object):
                 if isinstance(topq.filename, AudioData):
                     topf = io.BytesIO(topq.filename.data)
                 else:
-                    topf = load(self.file_prefix + filename + self.file_suffix)
+                    topf = load(filename)
 
                 renpysound.set_video(self.number, self.movie)
 
