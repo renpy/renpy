@@ -369,7 +369,7 @@ class Channel(object):
 
         m = re.match(r'<(.*)>(.*)', filename)
         if not m:
-            return filename, 0, -1
+            return self.file_prefix + filename + self.file_suffix, 0, -1
 
         spec = m.group(1)
         fn = m.group(2)
