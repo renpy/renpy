@@ -291,6 +291,8 @@ init -1000 python:
         config.developer = True
         config.default_developer = True
 
+    config.screenshot_folder = ""
+
     # Lock the library object.
     config.locked = True
 

@@ -280,6 +280,9 @@ init -1600 python:
         if renpy.macapp:
             dest = os.path.expanduser(b"~/Desktop")
 
+        if config.screenshot_folder:
+            dest = os.path.join(dest, *config.screenshot_folder.split("/"))
+
         # Try to pick a filename.
         i = 1
         while True:
