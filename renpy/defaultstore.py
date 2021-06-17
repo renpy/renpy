@@ -460,6 +460,9 @@ _ignore_action = None
 # The save slot that Ren'Py saves to on quit.
 _quit_slot = None
 
+# The directory in which Ren'Py saves screenshots.
+_screenshot_pattern = None
+
 # Make these available to user code.
 import sys
 import os

@@ -1514,6 +1514,11 @@ Rarely or Internally Used
     config.renpy_base. The first filename that does not exist is used as the
     name of the screenshot.
 
+    Directories are created if they do not exist.
+
+    See also :var:`_screenshot_pattern`, which is used in preference to this
+    variable if not None.
+
 .. var:: config.script_version = None
 
     If not None, this is interpreted as a script version. The library

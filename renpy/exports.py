@@ -1959,6 +1959,9 @@ def screenshot(filename):
 
     Returns True if the screenshot was saved successfully, False if saving
     failed for some reason.
+
+    The :var:`config.screenshot_pattern` and :var:`_screenshot_pattern`
+    variables control the file the screenshot is saved in.
     """
 
     return renpy.game.interface.save_screenshot(filename)

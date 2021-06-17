@@ -133,6 +133,12 @@ and rolled-back when rollback occurs.
 
     A save name that is included with saves.
 
+.. var:: _screenshot_pattern = None
+
+    If not None, this string is used in preference to :var:`config.screenshot_pattern`
+    to determine the filename of a screenshot. Please see the documentation for
+    that variable for the format of the string.
+
 .. var:: _skipping = True
 
     Controls if skipping is allowed.

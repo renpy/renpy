@@ -280,10 +280,12 @@ init -1600 python:
         if renpy.macapp:
             dest = os.path.expanduser(b"~/Desktop")
 
+        pattern = renpy.store._screenshot_pattern or config.screenshot_pattern
+
         # Try to pick a filename.
         i = 1
         while True:
-            fn = os.path.join(dest, config.screenshot_pattern % i)
+            fn = os.path.join(dest, pattern % i)
             if not os.path.exists(fn):
                 break
             i += 1
