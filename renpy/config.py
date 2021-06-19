@@ -1153,6 +1153,9 @@ who_what_sub_compat = 2
 # Compat for {,x,y}minimum when applied to side.
 compat_viewport_minimum = False
 
+# Should webaudio be used on the web platform?
+webaudio = True
+
 del os
 del collections
 

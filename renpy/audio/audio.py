@@ -911,6 +911,10 @@ def init():
         mix_ok = False
         return
 
+    if renpy.emscripten and renpy.config.webaudio:
+        import renpy.audio.webaudio as webaudio
+        renpysound.__dict__.update(webaudio.__dict__)
+
     if pcm_ok is None and renpysound:
         bufsize = 2048
         if renpy.emscripten:

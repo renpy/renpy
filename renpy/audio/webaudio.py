@@ -19,71 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-This file defines the API that Ren'Py uses to communicate with an audio and video
-backend, and the default implementation of the API. This API is not intended
-to be stable between multiple Ren'Py releases, and so is more intended for use
-in ports to different platforms.
-
-There are a few common variables with specific datatypes here.
-
-`channel`
-    An integer giving  the number of an audio channel.  These integers are
-    allocated densely, but there's no limit to how many channels may be
-    present at one time.
-
-`file`
-    This is an object representing an open file. This may be a Python file
-    object, or a Ren'Py subfile object. All objects past to this have a
-    `name` field, giving the name of the file. SubFiles also have `base`
-    and length. Base is the offset from the start of the file where the data
-    begins, while length is the amount of data in total.
-
-Times and durations are represented as floats giving the number of seconds.
-
-A channel may have up to two files associated with it, the playing file and
-the queued file. The queued file begins playing when the current file ends
-or is stopped.
-"""
-
-# When changing this API, change webaudio.py, too!
-
-from __future__ import print_function
-
-from pygame_sdl2 cimport *
-import_pygame_sdl2()
-
-cdef extern from "renpysound_core.h":
-
-    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int fadein, int tight, int paused, double start, double end)
-    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int fadein, int tight, double start, double end)
-    void RPS_stop(int channel)
-    void RPS_dequeue(int channel, int even_tight)
-    int RPS_queue_depth(int channel)
-    object RPS_playing_name(int channel)
-    void RPS_fadeout(int channel, int ms)
-    void RPS_pause(int channel, int pause)
-    void RPS_unpause_all()
-    int RPS_get_pos(int channel)
-    double RPS_get_duration(int channel)
-    void RPS_set_endevent(int channel, int event)
-    void RPS_set_volume(int channel, float volume)
-    float RPS_get_volume(int channel)
-    void RPS_set_pan(int channel, float pan, float delay)
-    void RPS_set_secondary_volume(int channel, float vol2, float delay)
-
-    void RPS_advance_time()
-    int RPS_video_ready(int channel)
-    object RPS_read_video(int channel)
-    void RPS_set_video(int channel, int video)
-
-    void RPS_sample_surfaces(object, object)
-    void RPS_init(int freq, int stereo, int samples, int status, int equal_mono)
-    void RPS_quit()
-
-    void RPS_periodic()
-    char *RPS_get_error()
-
 
 def check_error():
     """
@@ -93,9 +28,6 @@ def check_error():
     it raises.)
     """
 
-    e = RPS_get_error();
-    if len(e):
-        raise Exception(unicode(e, "utf-8", "replace"))
 
 def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0):
     """
@@ -123,27 +55,6 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     """
 
 
-    cdef SDL_RWops *rw
-
-    rw = RWopsFromPython(file)
-
-    if rw == NULL:
-        raise Exception("Could not create RWops.")
-
-    if paused:
-        pause = 1
-    else:
-        pause = 0
-
-    if tight:
-        tight = 1
-    else:
-        tight = 0
-
-    name = name.encode("utf-8")
-    RPS_play(channel, rw, name, name, fadein, tight, pause, start, end)
-    check_error()
-
 def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
@@ -152,29 +63,12 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     The other arguments are as for play.
     """
 
-    cdef SDL_RWops *rw
-
-    rw = RWopsFromPython(file)
-
-    if rw == NULL:
-        raise Exception("Could not create RWops.")
-
-    if tight:
-        tight = 1
-    else:
-        tight = 0
-
-    name = name.encode("utf-8")
-    RPS_queue(channel, rw, name, name, fadein, tight, start, end)
-    check_error()
 
 def stop(channel):
     """
     Immediately stops `channel`, and unqueues any queued audio file.
     """
 
-    RPS_stop(channel)
-    check_error()
 
 def dequeue(channel, even_tight=False):
     """
@@ -185,7 +79,6 @@ def dequeue(channel, even_tight=False):
         a file marked as tight is dequeued.
     """
 
-    RPS_dequeue(channel, even_tight)
 
 def queue_depth(channel):
     """
@@ -194,7 +87,6 @@ def queue_depth(channel):
     and one is queued.
     """
 
-    return RPS_queue_depth(channel)
 
 def playing_name(channel):
     """
@@ -202,43 +94,30 @@ def playing_name(channel):
     `play` or `queue`.
     """
 
-    rv = RPS_playing_name(channel)
-
-    if rv is not None:
-        rv = rv.decode("utf-8")
-
-    return rv
 
 def pause(channel):
     """
     Pauses `channel`.
     """
 
-    RPS_pause(channel, 1)
-    check_error()
 
 def unpause(channel):
     """
     Unpauses `channel`.
     """
 
-    RPS_pause(channel, 0)
-    check_error()
 
 def unpause_all():
     """
     Unpauses all channels that are paused.
     """
 
-    RPS_unpause_all()
 
 def fadeout(channel, delay):
     """
     Fades out `channel` over `delay` seconds.
     """
 
-    RPS_fadeout(channel, int(delay * 1000))
-    check_error()
 
 def busy(channel):
     """
@@ -246,7 +125,6 @@ def busy(channel):
     otherwise
     """
 
-    return RPS_get_pos(channel) != -1
 
 def get_pos(channel):
     """
@@ -254,7 +132,6 @@ def get_pos(channel):
     if not file is is playing or it is not known.
     """
 
-    return RPS_get_pos(channel)
 
 def get_duration(channel):
     """
@@ -262,7 +139,6 @@ def get_duration(channel):
     file is playing or it is not known.
     """
 
-    return RPS_get_duration(channel)
 
 def set_volume(channel, volume):
     """
@@ -271,12 +147,6 @@ def set_volume(channel, volume):
     logarithmic nature of human hearing.
     """
 
-    if volume == 0:
-        RPS_set_volume(channel, 0)
-    else:
-        RPS_set_volume(channel, volume ** 2)
-
-    check_error()
 
 def set_pan(channel, pan, delay):
     """
@@ -292,8 +162,6 @@ def set_pan(channel, pan, delay):
         The amount of time it takes for the panning to occur.
     """
 
-    RPS_set_pan(channel, pan, delay)
-    check_error()
 
 def set_secondary_volume(channel, volume, delay):
     """
@@ -305,15 +173,12 @@ def set_secondary_volume(channel, volume, delay):
         The time it takes for the change in volume to happen.
     """
 
-    RPS_set_secondary_volume(channel, volume, delay)
-    check_error()
 
 def get_volume(channel):
     """
     Gets the primary volume associated with `channel`.
     """
 
-    return RPS_get_volume(channel)
 
 def video_ready(channel):
     """
@@ -321,7 +186,8 @@ def video_ready(channel):
     presentation.
     """
 
-    return RPS_video_ready(channel)
+    return False
+
 
 def read_video(channel):
     """
@@ -329,17 +195,8 @@ def read_video(channel):
     as an SDL surface with 2px of padding on all sides.
     """
 
-    rv = RPS_read_video(channel)
+    return None
 
-    if rv is None:
-        return rv
-
-    # Remove padding from the edges of the surface.
-    w, h = rv.get_size()
-
-    # This has to be set to the same number it is in ffmedia.c
-    FRAME_PADDING = 4
-    return rv.subsurface((FRAME_PADDING, FRAME_PADDING, w - FRAME_PADDING * 2, h - FRAME_PADDING * 2))
 
 # No video will be played from this channel.
 NO_VIDEO = 0
@@ -350,17 +207,14 @@ NODROP_VIDEO = 1
 # The video will be played, allowing framedrops.
 DROP_VIDEO = 2
 
+
 def set_video(channel, video):
     """
     Sets a flag that determines if this channel will attempt to decode video.
     """
 
-    if video == NODROP_VIDEO:
-        RPS_set_video(channel, NODROP_VIDEO)
-    elif video:
-        RPS_set_video(channel, DROP_VIDEO)
-    else:
-        RPS_set_video(channel, NO_VIDEO)
+    return
+
 
 def init(freq, stereo, samples, status=False, equal_mono=False):
     """
@@ -382,27 +236,20 @@ def init(freq, stereo, samples, status=False, equal_mono=False):
     `
     """
 
-    if status:
-        status = 1
-    else:
-        status = 0
+    return
 
-    RPS_init(freq, stereo, samples, status, equal_mono)
-    check_error()
 
 def quit(): # @ReservedAssignment
     """
     De-initializes the audio system.
     """
 
-    RPS_quit()
 
 def periodic():
     """
     Called periodically (at 20 Hz).
     """
 
-    RPS_periodic()
 
 def advance_time():
     """
@@ -410,25 +257,11 @@ def advance_time():
     """
 
 
-    RPS_advance_time()
-
-# Store the sample surfaces so they stay alive.
-rgb_surface = None
-rgba_surface = None
-
 def sample_surfaces(rgb, rgba):
     """
     Called to provide sample surfaces to the display system. The surfaces
     returned by read_video should be in the same format as these.
     """
 
-    global rgb_surface
-    global rgba_surface
-
-    rgb_surface = rgb
-    rgba_surface = rgb
-
-    RPS_sample_surfaces(rgb, rgba)
-
-# When changing this API, change webaudio.py, too!
+    return
 
