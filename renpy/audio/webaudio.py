@@ -19,14 +19,35 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import renpy
+import emscripten
+from json import dumps
 
-def check_error():
+
+def call(function, *args):
     """
-    This is called by Ren'Py to check for an error. This function should raise
-    a meaningful exception if an error has occurred in a background thread,
-    or do nothing if an error has not occured. (It should clear any error that
-    it raises.)
+    Calls a method on `function`.
     """
+
+    emscripten.run_script("renpyAudio.{}.apply(null, {});".format(function, dumps(args)))
+
+
+def call_int(function, *args):
+    """
+    Calls a method on `function`.
+    """
+
+    return emscripten.run_script_int("renpyAudio.{}.apply(null, {});".format(function, dumps(args)))
+
+
+def call_str(function, *args):
+    """
+    Calls a method on `function`.
+    """
+
+    rv = emscripten.run_script_string("renpyAudio.{}.apply(null, {});".format(function, dumps(args))).decode("utf-8")
+
+    return rv
 
 
 def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0):
@@ -54,6 +75,13 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         A time in the file to end playing.    `
     """
 
+    try:
+        file = file.name
+    except:
+        pass
+
+    call("play", channel, file, name, start, end)
+
 
 def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     """
@@ -63,11 +91,20 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     The other arguments are as for play.
     """
 
+    try:
+        file = file.name
+    except:
+        pass
+
+    call("queue", channel, file, name, start, end)
+
 
 def stop(channel):
     """
     Immediately stops `channel`, and unqueues any queued audio file.
     """
+
+    call("stop", channel)
 
 
 def dequeue(channel, even_tight=False):
@@ -79,6 +116,8 @@ def dequeue(channel, even_tight=False):
         a file marked as tight is dequeued.
     """
 
+    call("dequeue", channel)
+
 
 def queue_depth(channel):
     """
@@ -87,6 +126,8 @@ def queue_depth(channel):
     and one is queued.
     """
 
+    return emscripten.run_script_int("renpyAudio.queue_depth({})".format(channel))
+
 
 def playing_name(channel):
     """
@@ -94,11 +135,20 @@ def playing_name(channel):
     `play` or `queue`.
     """
 
+    rv = call_str("playing_name", channel)
+
+    if rv:
+        return rv
+
+    return None
+
 
 def pause(channel):
     """
     Pauses `channel`.
     """
+
+    call("pause", channel)
 
 
 def unpause(channel):
@@ -106,17 +156,23 @@ def unpause(channel):
     Unpauses `channel`.
     """
 
+    call("unpause", channel)
+
 
 def unpause_all():
     """
     Unpauses all channels that are paused.
     """
 
+    call("unpause_all")
+
 
 def fadeout(channel, delay):
     """
     Fades out `channel` over `delay` seconds.
     """
+
+    stop(channel)
 
 
 def busy(channel):
@@ -125,6 +181,8 @@ def busy(channel):
     otherwise
     """
 
+    return queue_depth(channel) > 0
+
 
 def get_pos(channel):
     """
@@ -132,12 +190,26 @@ def get_pos(channel):
     if not file is is playing or it is not known.
     """
 
+    rv = call_int("get_pos", channel)
+
+    if rv >= 0:
+        return rv / 1000.0
+    else:
+        return None
+
 
 def get_duration(channel):
     """
-    Reutrns the duration of the audio file playing in `channel`, or None if no
+    Returns the duration of the audio file playing in `channel`, or None if no
     file is playing or it is not known.
     """
+
+    rv = call_int("get_duration", channel)
+
+    if rv >= 0:
+        return rv / 1000.0
+    else:
+        return None
 
 
 def set_volume(channel, volume):
@@ -146,6 +218,8 @@ def set_volume(channel, volume):
     0 and 1. This volume control is perceptual, taking into account the
     logarithmic nature of human hearing.
     """
+
+    call("set_volume", channel, volume)
 
 
 def set_pan(channel, pan, delay):
@@ -162,6 +236,8 @@ def set_pan(channel, pan, delay):
         The amount of time it takes for the panning to occur.
     """
 
+    return
+
 
 def set_secondary_volume(channel, volume, delay):
     """
@@ -173,11 +249,15 @@ def set_secondary_volume(channel, volume, delay):
         The time it takes for the change in volume to happen.
     """
 
+    call("set_secondary_volume", channel, volume)
+
 
 def get_volume(channel):
     """
     Gets the primary volume associated with `channel`.
     """
+
+    return call_int("get_volume", channel)
 
 
 def video_ready(channel):
@@ -236,7 +316,12 @@ def init(freq, stereo, samples, status=False, equal_mono=False):
     `
     """
 
-    return
+    renpy.config.debug_sound = True
+
+    js = renpy.loader.load("_audio.js").read()
+    emscripten.run_script(js)
+
+    return True
 
 
 def quit(): # @ReservedAssignment
