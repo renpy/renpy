@@ -56,7 +56,7 @@ cdef class Matrix:
         wdx, wdy, wdz, wdw
 
     where x' = xdx * x + xdy * y + xdz * z + xdw * w, where x is the original
-    value of x and x' is the transformed value, and similarly for x, y, x, and
+    value of x and x' is the transformed value, and similarly for x, y, z, and
     w.  This is usually applied to a position where w is 1, allowing any combination
     of translation, rotation, and scaling to be expressed in a single matrix.
 
@@ -394,7 +394,7 @@ cdef class Matrix:
         Returns a matrix that rotates the displayable around the
         origin.
 
-        `x`, `y`, `x`
+        `x`, `y`, `z`
             The amount to rotate around the origin, in degrees.
 
 
