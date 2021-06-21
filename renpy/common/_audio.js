@@ -45,8 +45,8 @@ let get_channel = (channel) => {
         queued : null,
         primary_volume : 1.0,
         secondary_volume : 1.0,
+        paused : false,
     };
-
 
     channels[channel] = c;
 
@@ -54,7 +54,7 @@ let get_channel = (channel) => {
 };
 
 /**
- * Starts channel `c` playing, if it is not playing.
+ * Attempts to start playing channel `c`.
  */
 let start_playing = (c) => {
 
@@ -64,13 +64,19 @@ let start_playing = (c) => {
         return;
     }
 
-    if (p.started) {
-        return;
+    if (p.started !== null) {
+        return; 
     }
 
     if (p.source === null) {
         return;
     }
+
+    if (c.paused) {
+        return;
+    }
+
+    p.source.connect(context.destination);
 
     if (p.end >= 0) {
         p.source.start(0, p.start, p.end);
@@ -78,21 +84,56 @@ let start_playing = (c) => {
         p.source.start(0, p.start);
     }
 
-    p.started = true;
+    p.started = context.currentTime;
+};
+
+let pause_playing = (c) => {
+    
+    if (c.paused) {
+        return;
+    }
+
+    c.paused = true;
+
+    let p = c.playing;
+
+    if (p === null) {
+        return;
+    }
+
+    if (p.source === null) {
+        return;
+    }
+
+    if (p.started === null) {
+        return;
+    }
+    
+    p.source.stop()
+    p.start += (context.currentTime - p.started);
+    p.started = null;
+}
+
+/**
+ * Stops playing channel `c`.
+ */
+let stop_playing = (c) => {
+
+
+    if (c.playing !== null && c.playing.source !== null) {
+        c.playing.source.stop()
+        c.playing.source.disconnect();
+    }
+
+    c.playing = c.queued;
+    c.queued = null;
 };
 
 /**
  * Called when a channel ends naturally, to move things along.
  */
 let on_end = (c) => {
-
-    if (c.playing.source !== null) {
-        c.playing.source.disconnect();
-    }
-
-    c.playing = c.queued;
-    c.queued = null;
-
+    stop_playing(c);
     start_playing(c);
 };
 
@@ -110,7 +151,7 @@ renpyAudio.queue = (channel, file, name, start, end) => {
         name : name, 
         start : start, 
         end : end, 
-        started : false
+        started : null
     };
 
     if (c.playing === null) {
@@ -122,7 +163,6 @@ renpyAudio.queue = (channel, file, name, start, end) => {
     context.decodeAudioData(array.buffer, (buffer) => {
         var source = context.createBufferSource();
         source.buffer = buffer;
-        source.connect(context.destination);
         source.onended = () => { on_end(c); };
 
         q.source = source;
@@ -133,9 +173,14 @@ renpyAudio.queue = (channel, file, name, start, end) => {
 };
 
 renpyAudio.stop = (channel) => {
+    let c = get_channel(channel);
+    c.queued = null;
+    stop_playing(c);
 };
 
 renpyAudio.dequeue = (channel) => {
+    let c = get_channel(channel);
+    c.queued = null;
 };
 
 renpyAudio.queue_depth = (channel) => {
@@ -164,23 +209,52 @@ renpyAudio.playing_name = (channel) => {
 };
 
 renpyAudio.pause = (channel) => {
+    
+    let c = get_channel(channel);
+    pause_playing(c);
 };
 
 
 renpyAudio.unpause = (channel) => {
+    let c = get_channel(channel);
+    start_playing(c);
 };
 
 
 renpyAudio.unpauseAll = () => {
+    for (let i of Object.entries(channel)) {
+        start_playing(i[1]);
+    }
 };
 
 renpyAudio.get_pos = (channel) => {
-    return 0.0 * 1000;
+
+    let c = get_channel(channel);
+    let p = c.playing;
+
+    if (p === null) {
+        return 0;
+    }
+
+    let rv = p.start;
+
+    if (p.started !== null) {
+        rv += (context.currentTime - p.started);
+    }
+
+    return rv * 1000;
 };
 
 
 renpyAudio.get_duration = (channel) => {
-    return 0.0 * 1000;
+    let c = get_channel(channel);
+    let p = c.playing;
+
+    if (p.buffer) {
+        return p.buffer.duration * 1000;
+    }
+
+    return 0;
 };
 
 
@@ -193,5 +267,3 @@ renpyAudio.set_secondary_volume = (channel, volume) => {
 renpyAudio.get_volume = (channel) => {
     return 1.0 * 1000;
 };
-
-console.log("_audio.js loaded.");
