@@ -80,7 +80,8 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     except:
         pass
 
-    call("play", channel, file, name, start, end)
+    call("stop", channel)
+    call("queue", channel, file, name, start, end)
 
 
 def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):

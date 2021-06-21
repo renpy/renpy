@@ -20,29 +20,116 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-renpyAudio = { };
+/**
+ * A map from channel to channel object.
+ */
+let channels = { };
+
+let context = new AudioContext();
+
+/**
+ * Given a channel number, gets the channel object, creating a new channel
+ * object if required.
+ */
+
+let get_channel = (channel) => {
+
+    let c = channels[channel];
+
+    if (c) {
+        return c;
+    }
+
+    c = {
+        playing : null,
+        queued : null,
+        primary_volume : 1.0,
+        secondary_volume : 1.0,
+    };
 
 
-let playing = false;
+    channels[channel] = c;
 
-renpyAudio.play = (channel, file, name, start, stop) => {
-
-    if (playing) return;
-    playing = true;
-
-    let array = FS.readFile(file);
-    let context = new AudioContext();
-    let source = context.createBufferSource();
-
-    context.decodeAudioData(array.buffer, (buffer) => {
-        source.buffer = buffer;
-        source.connect(context.destination)
-        source.ended = () => { console.log("done.") };
-        source.start(0);
-    });
+    return c;
 };
 
-renpyAudio.queue = (channel, file, name, start, stop) => {
+/**
+ * Starts channel `c` playing, if it is not playing.
+ */
+let start_playing = (c) => {
+
+    let p = c.playing;
+
+    if (p === null) {
+        return;
+    }
+
+    if (p.started) {
+        return;
+    }
+
+    if (p.source === null) {
+        return;
+    }
+
+    if (p.end >= 0) {
+        p.source.start(0, p.start, p.end);
+    } else {
+        p.source.start(0, p.start);
+    }
+
+    p.started = true;
+};
+
+/**
+ * Called when a channel ends naturally, to move things along.
+ */
+let on_end = (c) => {
+
+    if (c.playing.source !== null) {
+        c.playing.source.disconnect();
+    }
+
+    c.playing = c.queued;
+    c.queued = null;
+
+    start_playing(c);
+};
+
+
+renpyAudio = { };
+
+renpyAudio.queue = (channel, file, name, start, end) => {
+
+    let c = get_channel(channel);
+    let array = FS.readFile(file);
+
+    let q = { 
+        source : null, 
+        buffer : null,
+        name : name, 
+        start : start, 
+        end : end, 
+        started : false
+    };
+
+    if (c.playing === null) {
+        c.playing = q;
+    } else {
+        c.queued = q;
+    }
+
+    context.decodeAudioData(array.buffer, (buffer) => {
+        var source = context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(context.destination);
+        source.onended = () => { on_end(c); };
+
+        q.source = source;
+        q.buffer = buffer;
+
+        start_playing(c);
+    });
 };
 
 renpyAudio.stop = (channel) => {
@@ -52,10 +139,27 @@ renpyAudio.dequeue = (channel) => {
 };
 
 renpyAudio.queue_depth = (channel) => {
-    return 0;
+    let rv = 0;
+    let c = get_channel(channel);
+
+    if (c.playing !== null) {
+        rv += 1;
+    }
+
+    if (c.queued !== null) {
+        rv += 1;
+    }
+
+    return rv;
 };
 
 renpyAudio.playing_name = (channel) => {
+    let c = get_channel(channel);
+
+    if (c.playing !== null) {
+        return c.playing.name;
+    }
+
     return "";
 };
 
@@ -91,4 +195,3 @@ renpyAudio.get_volume = (channel) => {
 };
 
 console.log("_audio.js loaded.");
-
