@@ -140,7 +140,7 @@ let on_end = (c) => {
 
 renpyAudio = { };
 
-renpyAudio.queue = (channel, file, name, start, end) => {
+renpyAudio.queue = (channel, file, name, start, end, paused, fadein) => {
 
     let c = get_channel(channel);
     let array = FS.readFile(file);
@@ -151,11 +151,13 @@ renpyAudio.queue = (channel, file, name, start, end) => {
         name : name, 
         start : start, 
         end : end, 
-        started : null
+        started : null,
+        fadein : fadein
     };
 
     if (c.playing === null) {
         c.playing = q;
+        c.paused = paused;
     } else {
         c.queued = q;
     }
