@@ -109,7 +109,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         If True, playback is paused rather than started.
 
     `fadein`
-        The time it should take the fade the music in.
+        The time it should take the fade the music inm, in ms.
 
     `tight`
         If true, the file is played in tight mode. This means that fadeouts

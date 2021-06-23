@@ -43,10 +43,16 @@ let get_channel = (channel) => {
     c = {
         playing : null,
         queued : null,
-        primary_volume : 1.0,
-        secondary_volume : 1.0,
+        fade_volume : context.createGain(),
+        primary_volume : context.createGain(),
+        secondary_volume : context.createGain(),
         paused : false,
     };
+
+    c.destination = c.fade_volume;;
+    c.fade_volume.connect(c.primary_volume);
+    c.primary_volume.connect(c.secondary_volume);
+    c.secondary_volume.connect(context.destination);
 
     channels[channel] = c;
 
@@ -76,13 +82,28 @@ let start_playing = (c) => {
         return;
     }
 
-    p.source.connect(context.destination);
+    context.resume();
+
+    p.source.connect(c.destination);
+
+    if (p.fadein > 0) {
+        c.fade_volume.gain.value = 0.01;
+        c.fade_volume.gain.linearRampToValueAtTime(1.0, context.currentTime + p.fadein);
+    } else {
+        c.fade_volume.gain.value = 1.0;
+    }
+
+    console.log(c.fade_volume.gain.value);
+    console.log(c.primary_volume.gain.value);
+    console.log(c.secondary_volume.gain.value);
 
     if (p.end >= 0) {
         p.source.start(0, p.start, p.end);
     } else {
         p.source.start(0, p.start);
     }
+
+    console.log("Start", p.name);
 
     p.started = context.currentTime;
 };
@@ -185,6 +206,22 @@ renpyAudio.dequeue = (channel) => {
     c.queued = null;
 };
 
+renpyAudio.fadeout = (channel, delay) => {
+
+    let c = get_channel(channel);
+    if (c.playing == null || c.playing.started == null) {
+        c.playing = queued;
+        c.queued = null;
+        start_playing(c);
+        return;
+    }
+
+    console.log("Dealy!", delay);
+
+    c.fade_volume.gain.linearRampToValueAtTime(0.0, context.currentTime + delay);
+    c.playing.source.stop(context.currentTime + delay);
+};
+
 renpyAudio.queue_depth = (channel) => {
     let rv = 0;
     let c = get_channel(channel);
@@ -196,6 +233,7 @@ renpyAudio.queue_depth = (channel) => {
     if (c.queued !== null) {
         rv += 1;
     }
+
 
     return rv;
 };
@@ -247,7 +285,6 @@ renpyAudio.get_pos = (channel) => {
     return rv * 1000;
 };
 
-
 renpyAudio.get_duration = (channel) => {
     let c = get_channel(channel);
     let p = c.playing;
@@ -259,13 +296,16 @@ renpyAudio.get_duration = (channel) => {
     return 0;
 };
 
-
 renpyAudio.set_volume = (channel, volume) => {
+    let c = get_channel(channel);
+    c.primary_volume.gain.value = volume;
 };
 
-renpyAudio.set_secondary_volume = (channel, volume) => {
+renpyAudio.set_secondary_volume = (channel, volume, delay) => {
+    let c = get_channel(channel);
+    c.primary_volume.gain.linearRampToValueAtTime(volume, context.currentTime + delay);
 };
 
 renpyAudio.get_volume = (channel) => {
-    return 1.0 * 1000;
+    return c.primary_volume.gain * 1000;
 };

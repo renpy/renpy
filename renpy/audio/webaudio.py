@@ -62,7 +62,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         If True, playback is paused rather than started.
 
     `fadein`
-        The time it should take the fade the music in.
+        The time it should take the fade the music in, in ms.
 
     `tight`
         If true, the file is played in tight mode. This means that fadeouts
@@ -81,7 +81,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         pass
 
     call("stop", channel)
-    call("queue", channel, file, name, start, end, paused, fadein)
+    call("queue", channel, file, name, start, end, paused, fadein / 1000.0)
 
 
 def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
@@ -97,7 +97,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     except:
         pass
 
-    call("queue", channel, file, name, start, end, False, fadein)
+    call("queue", channel, file, name, start, end, False, fadein / 1000.0)
 
 
 def stop(channel):
@@ -173,7 +173,7 @@ def fadeout(channel, delay):
     Fades out `channel` over `delay` seconds.
     """
 
-    stop(channel)
+    call("fadeout", channel, delay)
 
 
 def busy(channel):
@@ -250,7 +250,7 @@ def set_secondary_volume(channel, volume, delay):
         The time it takes for the change in volume to happen.
     """
 
-    call("set_secondary_volume", channel, volume)
+    call("set_secondary_volume", channel, volume, delay)
 
 
 def get_volume(channel):
