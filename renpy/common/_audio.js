@@ -87,6 +87,10 @@ let start_playing = (c) => {
     p.source.connect(c.destination);
 
     if (p.fadeout === null) {
+        let value = c.fade_volume.gain.value;
+        c.fade_volume.gain.cancelScheduledValues(context.currentTime);
+        c.fade_volume.gain.value = value;
+
         if (p.fadein > 0) {
             c.fade_volume.gain.value = 0.01;
             c.fade_volume.gain.linearRampToValueAtTime(1.0, context.currentTime + p.fadein);
@@ -102,6 +106,9 @@ let start_playing = (c) => {
     }
 
     if (p.fadeout !== null) {
+        let value = c.fade_volume.gain.value;
+        c.fade_volume.gain.cancelScheduledValues(context.currentTime);
+        c.fade_volume.gain.value = value;
         c.fade_volume.gain.linearRampToValueAtTime(0.0, context.currentTime + p.fadeout);
         c.playing.source.stop(context.currentTime + p.fadeout);
     }
@@ -226,6 +233,9 @@ renpyAudio.fadeout = (channel, delay) => {
 
     let p = c.playing;
 
+    let value = c.fade_volume.gain.value;
+    c.fade_volume.gain.cancelScheduledValues(context.currentTime);
+    c.fade_volume.gain.value = value;
     c.fade_volume.gain.linearRampToValueAtTime(0.0, context.currentTime + delay);
     p.source.stop(context.currentTime + delay);
 
