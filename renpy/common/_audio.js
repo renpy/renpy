@@ -372,3 +372,11 @@ renpyAudio.set_pan = (channel, pan, delay) => {
     control.value = value;
     control.linearRampToValueAtTime(pan, context.currentTime + delay);
 }
+
+renpyAudio.tts = (s) => {
+    console.log("tts: " + s);
+
+    let u = new SpeechSynthesisUtterance(s);
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+}
