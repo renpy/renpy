@@ -237,7 +237,7 @@ def set_pan(channel, pan, delay):
         The amount of time it takes for the panning to occur.
     """
 
-    return
+    call("set_pan", channel, pan, delay)
 
 
 def set_secondary_volume(channel, volume, delay):

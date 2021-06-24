@@ -31,7 +31,6 @@ let context = new AudioContext();
  * Given a channel number, gets the channel object, creating a new channel
  * object if required.
  */
-
 let get_channel = (channel) => {
 
     let c = channels[channel];
@@ -43,13 +42,15 @@ let get_channel = (channel) => {
     c = {
         playing : null,
         queued : null,
+        stereo_pan : context.createStereoPanner(),
         fade_volume : context.createGain(),
         primary_volume : context.createGain(),
         secondary_volume : context.createGain(),
         paused : false,
     };
 
-    c.destination = c.fade_volume;;
+    c.destination = c.stereo_pan;
+    c.stereo_pan.connect(c.fade_volume);
     c.fade_volume.connect(c.primary_volume);
     c.primary_volume.connect(c.secondary_volume);
     c.secondary_volume.connect(context.destination);
@@ -58,6 +59,7 @@ let get_channel = (channel) => {
 
     return c;
 };
+
 
 /**
  * Attempts to start playing channel `c`.
@@ -116,6 +118,7 @@ let start_playing = (c) => {
     p.started = context.currentTime;
 };
 
+
 let pause_playing = (c) => {
     
     if (c.paused) {
@@ -143,6 +146,7 @@ let pause_playing = (c) => {
     p.started = null;
 }
 
+
 /**
  * Stops playing channel `c`.
  */
@@ -158,6 +162,7 @@ let stop_playing = (c) => {
     c.queued = null;
 };
 
+
 /**
  * Called when a channel ends naturally, to move things along.
  */
@@ -166,8 +171,8 @@ let on_end = (c) => {
     start_playing(c);
 };
 
-
 renpyAudio = { };
+
 
 renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end) => {
 
@@ -205,11 +210,13 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end) => 
     });
 };
 
+
 renpyAudio.stop = (channel) => {
     let c = get_channel(channel);
     c.queued = null;
     stop_playing(c);
 };
+
 
 renpyAudio.dequeue = (channel, even_tight) => {
     let c = get_channel(channel);
@@ -220,6 +227,7 @@ renpyAudio.dequeue = (channel, even_tight) => {
 
     c.queued = null;
 };
+
 
 renpyAudio.fadeout = (channel, delay) => {
 
@@ -251,6 +259,7 @@ renpyAudio.fadeout = (channel, delay) => {
 
 };
 
+
 renpyAudio.queue_depth = (channel) => {
     let rv = 0;
     let c = get_channel(channel);
@@ -266,6 +275,7 @@ renpyAudio.queue_depth = (channel) => {
     return rv;
 };
 
+
 renpyAudio.playing_name = (channel) => {
     let c = get_channel(channel);
 
@@ -275,6 +285,7 @@ renpyAudio.playing_name = (channel) => {
 
     return "";
 };
+
 
 renpyAudio.pause = (channel) => {
     
@@ -295,6 +306,7 @@ renpyAudio.unpauseAll = () => {
     }
 };
 
+
 renpyAudio.get_pos = (channel) => {
 
     let c = get_channel(channel);
@@ -313,6 +325,7 @@ renpyAudio.get_pos = (channel) => {
     return rv * 1000;
 };
 
+
 renpyAudio.get_duration = (channel) => {
     let c = get_channel(channel);
     let p = c.playing;
@@ -324,16 +337,36 @@ renpyAudio.get_duration = (channel) => {
     return 0;
 };
 
+
 renpyAudio.set_volume = (channel, volume) => {
     let c = get_channel(channel);
     c.primary_volume.gain.value = volume;
 };
 
+
 renpyAudio.set_secondary_volume = (channel, volume, delay) => {
     let c = get_channel(channel);
-    c.primary_volume.gain.linearRampToValueAtTime(volume, context.currentTime + delay);
+    let control = c.secondary_volume.gain;
+
+    let value = control.value;
+    control.cancelScheduledValues(context.currentTime);
+    control.value = value;
+    control.linearRampToValueAtTime(volume, context.currentTime + delay);
 };
+
 
 renpyAudio.get_volume = (channel) => {
     return c.primary_volume.gain * 1000;
 };
+
+
+renpyAudio.set_pan = (channel, pan, delay) => {
+
+    let c = get_channel(channel);
+    let control = c.stereo_pan.pan;
+
+    let value = control.value;
+    control.cancelScheduledValues(context.currentTime);
+    control.value = value;
+    control.linearRampToValueAtTime(pan, context.currentTime + delay);
+}
