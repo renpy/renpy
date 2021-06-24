@@ -167,7 +167,10 @@ let stop_playing = (c) => {
  * Called when a channel ends naturally, to move things along.
  */
 let on_end = (c) => {
-    stop_playing(c);
+    if (c.playing.started) {
+        stop_playing(c);
+    }
+    
     start_playing(c);
 };
 
@@ -221,6 +224,7 @@ renpyAudio.stop = (channel) => {
 
 
 renpyAudio.dequeue = (channel, even_tight) => {
+
     let c = get_channel(channel);
 
     if (c.queued && c.queued.tight && !even_tight) {
@@ -235,7 +239,7 @@ renpyAudio.fadeout = (channel, delay) => {
 
     let c = get_channel(channel);
     if (c.playing == null || c.playing.started == null) {
-        c.playing = queued;
+        c.playing = c.queued;
         c.queued = null;
         start_playing(c);
         return;
@@ -249,7 +253,7 @@ renpyAudio.fadeout = (channel, delay) => {
     c.fade_volume.gain.linearRampToValueAtTime(0.0, context.currentTime + delay);
     p.source.stop(context.currentTime + delay);
 
-    if (c.queued === null && !c.queued.tight) {
+    if (c.queued === null || !c.queued.tight) {
         return;
     }
 
@@ -257,10 +261,13 @@ renpyAudio.fadeout = (channel, delay) => {
 
     if (remaining > 0 && c.queued) {
         c.queued.fadeout = remaining;
+    } else {
+        c.queued = null;
     }
 
 };
 
+// let oldChannel7 = -1;
 
 renpyAudio.queue_depth = (channel) => {
     let rv = 0;
@@ -273,6 +280,12 @@ renpyAudio.queue_depth = (channel) => {
     if (c.queued !== null) {
         rv += 1;
     }
+
+    // if (channel == 7 && oldChannel7 != rv) {
+    //     console.log(c.playing, c.queued);
+    //     console.log("queue_depth", rv);
+    //     oldChannel7 = rv;
+    // }
 
     return rv;
 };
