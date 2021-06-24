@@ -109,7 +109,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         If True, playback is paused rather than started.
 
     `fadein`
-        The time it should take the fade the music inm, in ms.
+        The time it should take the fade the music in, in seconds.
 
     `tight`
         If true, the file is played in tight mode. This means that fadeouts
@@ -140,7 +140,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_play(channel, rw, name, name, fadein, tight, pause, start, end)
+    RPS_play(channel, rw, name, name, fadein * 1000, tight, pause, start, end)
     check_error()
 
 def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
@@ -164,7 +164,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_queue(channel, rw, name, name, fadein, tight, start, end)
+    RPS_queue(channel, rw, name, name, fadein * 1000, tight, start, end)
     check_error()
 
 def stop(channel):
@@ -249,16 +249,16 @@ def busy(channel):
 
 def get_pos(channel):
     """
-    Returns the position of the audio file playing in `channel`. Returns None
-    if not file is is playing or it is not known.
+    Returns the position of the audio file playing in `channel`, in seconds.
+    Returns None if not file is is playing or it is not known.
     """
 
-    return RPS_get_pos(channel)
+    return RPS_get_pos(channel) / 1000.0
 
 def get_duration(channel):
     """
-    Reutrns the duration of the audio file playing in `channel`, or None if no
-    file is playing or it is not known.
+    Returns the duration of the audio file playing in `channel`, in seconds, or
+    None if no file is playing or it is not known.
     """
 
     return RPS_get_duration(channel)

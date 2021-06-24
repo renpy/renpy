@@ -365,7 +365,7 @@ def get_pos(channel="music"):
         if not t or t < 0:
             return None
 
-        return t / 1000.0
+        return t
 
     except:
         if renpy.config.debug_sound:

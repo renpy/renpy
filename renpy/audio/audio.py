@@ -394,7 +394,7 @@ class Channel(object):
                 if not t or t < 0:
                     pass
                 else:
-                    start = t / 1000.0
+                    start = t
             elif clause == "loop":
                 loop = expect_float()
             elif clause == "silence":
@@ -648,7 +648,7 @@ class Channel(object):
                 self.keep_queue += 1
 
                 for filename in filenames:
-                    qe = QueueEntry(filename, int(fadein * 1000), tight, False, relative_volume)
+                    qe = QueueEntry(filename, fadein, tight, False, relative_volume)
                     self.queue.append(qe)
 
                     # Only fade the first thing in.
