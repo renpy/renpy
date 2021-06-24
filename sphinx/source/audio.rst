@@ -2,12 +2,15 @@ Audio
 =======
 
 Ren'Py supports playing music and sound effects in the background,
-using the following audio file formats
+using the following audio file formats:
 
 * Opus
 * Ogg Vorbis
 * MP3
 * WAV (uncompressed 16-bit signed PCM only)
+
+Opus and Ogg Vorbis may not be supported in WebKit-based web browsers,
+such as Safari, but are the best formats for other platforms.
 
 Ren'Py supports an arbitrary number of audio channels. There are three
 normal channels defined by default:
