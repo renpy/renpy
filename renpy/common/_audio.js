@@ -207,6 +207,8 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end) => 
         q.buffer = buffer;
 
         start_playing(c);
+    }, () => {
+        console.log(`The audio data in ${file} could not be decoded. The file format may not be supported by this browser.`);   
     });
 };
 
