@@ -122,7 +122,6 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         A time in the file to end playing.    `
     """
 
-
     cdef SDL_RWops *rw
 
     rw = RWopsFromPython(file)

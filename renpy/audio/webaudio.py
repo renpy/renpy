@@ -78,10 +78,10 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     try:
         file = file.name
     except:
-        pass
+        return
 
     call("stop", channel)
-    call("queue", channel, file, name, start, end, paused, fadein / 1000.0)
+    call("queue", channel, file, name, paused, fadein / 1000.0, tight, start, end)
 
 
 def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
@@ -95,9 +95,9 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     try:
         file = file.name
     except:
-        pass
+        return
 
-    call("queue", channel, file, name, start, end, False, fadein / 1000.0)
+    call("queue", channel, file, name, False, fadein / 1000.0, tight, start, end)
 
 
 def stop(channel):
@@ -117,7 +117,7 @@ def dequeue(channel, even_tight=False):
         a file marked as tight is dequeued.
     """
 
-    call("dequeue", channel)
+    call("dequeue", channel, even_tight)
 
 
 def queue_depth(channel):

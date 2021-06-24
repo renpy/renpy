@@ -86,16 +86,14 @@ let start_playing = (c) => {
 
     p.source.connect(c.destination);
 
-    if (p.fadein > 0) {
-        c.fade_volume.gain.value = 0.01;
-        c.fade_volume.gain.linearRampToValueAtTime(1.0, context.currentTime + p.fadein);
-    } else {
-        c.fade_volume.gain.value = 1.0;
+    if (p.fadeout === null) {
+        if (p.fadein > 0) {
+            c.fade_volume.gain.value = 0.01;
+            c.fade_volume.gain.linearRampToValueAtTime(1.0, context.currentTime + p.fadein);
+        } else {
+            c.fade_volume.gain.value = 1.0;
+        }
     }
-
-    console.log(c.fade_volume.gain.value);
-    console.log(c.primary_volume.gain.value);
-    console.log(c.secondary_volume.gain.value);
 
     if (p.end >= 0) {
         p.source.start(0, p.start, p.end);
@@ -103,7 +101,10 @@ let start_playing = (c) => {
         p.source.start(0, p.start);
     }
 
-    console.log("Start", p.name);
+    if (p.fadeout !== null) {
+        c.fade_volume.gain.linearRampToValueAtTime(0.0, context.currentTime + p.fadeout);
+        c.playing.source.stop(context.currentTime + p.fadeout);
+    }
 
     p.started = context.currentTime;
 };
@@ -161,7 +162,7 @@ let on_end = (c) => {
 
 renpyAudio = { };
 
-renpyAudio.queue = (channel, file, name, start, end, paused, fadein) => {
+renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end) => {
 
     let c = get_channel(channel);
     let array = FS.readFile(file);
@@ -173,7 +174,9 @@ renpyAudio.queue = (channel, file, name, start, end, paused, fadein) => {
         start : start, 
         end : end, 
         started : null,
-        fadein : fadein
+        fadein : fadein,
+        fadeout: null,
+        tight : tight
     };
 
     if (c.playing === null) {
@@ -201,8 +204,13 @@ renpyAudio.stop = (channel) => {
     stop_playing(c);
 };
 
-renpyAudio.dequeue = (channel) => {
+renpyAudio.dequeue = (channel, even_tight) => {
     let c = get_channel(channel);
+
+    if (c.queued && c.queued.tight && !even_tight) {
+        return;
+    }
+
     c.queued = null;
 };
 
@@ -216,10 +224,21 @@ renpyAudio.fadeout = (channel, delay) => {
         return;
     }
 
-    console.log("Dealy!", delay);
+    let p = c.playing;
 
     c.fade_volume.gain.linearRampToValueAtTime(0.0, context.currentTime + delay);
-    c.playing.source.stop(context.currentTime + delay);
+    p.source.stop(context.currentTime + delay);
+
+    if (c.queued === null && !c.queued.tight) {
+        return;
+    }
+
+    let remaining = delay + context.currentTime - p.started - p.buffer.duration;
+
+    if (remaining > 0 && c.queued) {
+        c.queued.fadeout = remaining;
+    }
+
 };
 
 renpyAudio.queue_depth = (channel) => {
@@ -233,7 +252,6 @@ renpyAudio.queue_depth = (channel) => {
     if (c.queued !== null) {
         rv += 1;
     }
-
 
     return rv;
 };
