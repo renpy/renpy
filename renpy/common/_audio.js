@@ -167,7 +167,7 @@ let stop_playing = (c) => {
  * Called when a channel ends naturally, to move things along.
  */
 let on_end = (c) => {
-    if (c.playing.started !== null) {
+    if (c.playing !== null && c.playing.started !== null) {
         stop_playing(c);
     }
     
