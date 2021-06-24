@@ -252,6 +252,15 @@ Occasionally Used
     If True, renpy will include timeless pauses to the valid places a
     rollback can take the user.
 
+.. var:: config.audio_filename_callback = None
+
+    If not None, this is a function that is called with an audio filename,
+    and is expected to return a second audio filename, the latter of which
+    will be played.
+
+    This is intended for use when an a games has audio file formats changed,
+    but it's not destired to update the game script.
+
 .. var:: config.auto_channels = { "audio" : ( "sfx", "", ""  ) }
 
     This is used to define automatic audio channels. It's a map the

@@ -1156,6 +1156,9 @@ compat_viewport_minimum = False
 # Should webaudio be used on the web platform?
 webaudio = True
 
+# If not None, a callback that can be used to alter audio filenames.
+audio_filename_callback = None
+
 del os
 del collections
 

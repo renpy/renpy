@@ -498,6 +498,9 @@ class Channel(object):
             try:
                 filename, start, end = self.split_filename(topq.filename, topq.loop)
 
+                if renpy.config.audio_filename_callback is not None:
+                    filename = renpy.config.audio_filename_callback(filename)
+
                 self.set_tertiary_volume(topq.relative_volume)
 
                 if (end >= 0) and ((end - start) <= 0) and self.queue:
