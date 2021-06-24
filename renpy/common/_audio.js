@@ -85,7 +85,6 @@ let start_playing = (c) => {
     }
 
     context.resume();
-
     p.source.connect(c.destination);
 
     if (p.fadeout === null) {
@@ -202,6 +201,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end) => 
     }
 
     context.decodeAudioData(array.buffer, (buffer) => {
+
         var source = context.createBufferSource();
         source.buffer = buffer;
         source.onended = () => { on_end(c); };
@@ -384,7 +384,7 @@ renpyAudio.set_pan = (channel, pan, delay) => {
     control.cancelScheduledValues(context.currentTime);
     control.value = value;
     control.linearRampToValueAtTime(pan, context.currentTime + delay);
-}
+};
 
 renpyAudio.tts = (s) => {
     console.log("tts: " + s);
@@ -392,4 +392,18 @@ renpyAudio.tts = (s) => {
     let u = new SpeechSynthesisUtterance(s);
     speechSynthesis.cancel();
     speechSynthesis.speak(u);
+};
+
+if (context.state == "suspended") {
+    let unlockContext = () => {
+        context.resume().then(() => {
+            document.body.removeEventListener('click', unlockContext, true);
+            document.body.removeEventListener('touchend', unlockContext, true);
+            document.body.removeEventListener('touchstart', unlockContext, true);
+        });
+    };
+
+    document.body.addEventListener('click', unlockContext, true);
+    document.body.addEventListener('touchend', unlockContext, true);
+    document.body.addEventListener('touchstart', unlockContext, true);
 }
