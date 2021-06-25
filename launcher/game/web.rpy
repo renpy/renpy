@@ -104,7 +104,7 @@ init python:
                 + "# +/- type path\n"
                 + '- image game/gui/**\n'
                 + '+ image game/**\n'
-                + '+ music game/music/**\n'
+                + '+ music game/audio/**\n'
                 + '+ voice game/voice/**\n'
             )
 
@@ -327,11 +327,15 @@ screen web():
                         style "l_indent"
                         has vbox
 
-                        text _("Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior.")
+                        text _("Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior.")
 
                         add SPACER
 
-                        text _("Current limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general.")
+                        text _("Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported.")
+
+                        add SPACER
+
+                        text _("There are known issues with Safari and other Webkit-based browsers that may prevent games from running.")
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
 
