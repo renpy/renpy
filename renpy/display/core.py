@@ -1252,7 +1252,7 @@ class SceneLists(renpy.object.Object):
             return
 
         if not hide:
-            self.layers[layer] = [ ]
+            self.layers[layer][:] = [ ]
 
         else:
 
@@ -1290,7 +1290,7 @@ class SceneLists(renpy.object.Object):
             self.layer_at_list[l] = (t or time, ll)
 
         for l, ll in self.layers.items():
-            self.layers[l] = [ i.update_time(time) for i in ll ]
+            self.layers[l][:] = [ i.update_time(time) for i in ll ]
 
     def showing(self, layer, name):
         """
@@ -1395,7 +1395,7 @@ class SceneLists(renpy.object.Object):
         replaced_tag = "replaced$" + tag
 
         l = self.layers[layer]
-        self.layers[layer] = [ i for i in l if i.tag != hide_tag and i.tag != replaced_tag ]
+        self.layers[layer][:] = [ i for i in l if i.tag != hide_tag and i.tag != replaced_tag ]
 
     def remove_hidden(self):
         """
@@ -1425,7 +1425,7 @@ class SceneLists(renpy.object.Object):
 
                 newl.append(sle)
 
-            self.layers[l] = newl
+            self.layers[l][:] = newl
 
     def remove_all_hidden(self):
         """
@@ -1444,7 +1444,7 @@ class SceneLists(renpy.object.Object):
 
                 newl.append(sle)
 
-            self.layers[l] = newl
+            self.layers[l][:] = newl
 
     def get_displayable_by_tag(self, layer, tag):
         """
