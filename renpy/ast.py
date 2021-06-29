@@ -659,12 +659,13 @@ class Say(Node):
             rv.append("id")
             rv.append(getattr(self, "identifier", None))
 
+        if self.arguments:
+            rv.append(self.arguments.get_code())
+
+        # This has to be at the end.
         if self.with_:
             rv.append("with")
             rv.append(self.with_)
-
-        if self.arguments:
-            rv.append(self.arguments.get_code())
 
         return " ".join(rv)
 
