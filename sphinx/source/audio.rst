@@ -2,12 +2,15 @@ Audio
 =======
 
 Ren'Py supports playing music and sound effects in the background,
-using the following audio file formats
+using the following audio file formats:
 
 * Opus
 * Ogg Vorbis
 * MP3
 * WAV (uncompressed 16-bit signed PCM only)
+
+Opus and Ogg Vorbis may not be supported in WebKit-based web browsers,
+such as Safari, but are the best formats for other platforms.
 
 Ren'Py supports an arbitrary number of audio channels. There are three
 normal channels defined by default:
@@ -81,6 +84,13 @@ time::
         play audio "sfx1.opus"
         play audio "sfx2.opus"
 
+A variable may be used instead of a string here. If a variable exists in the
+:ref:`audio namespace <audio-namespace>`, it's used in preference to the default namespace::
+
+        play music illurock
+
+Files placed into the audio namespace may automatically define variables that can
+be used like this.
 
 Stop Statement
 --------------
@@ -116,6 +126,9 @@ When multiple queue statements are given without an interaction between them,
 all sound files are added to the queue. After an interaction has occured, the
 first queue statement clears the queue, unless it has already been cleared by
 a play or stop statement.
+
+A variable may be used instead of a string here. If a variable exists in the
+:ref:`audio namespace <audio-namespace>`, it's used in preference to the default namespace::
 
 The advantage of using these statements is that your program will be checked for
 missing sound and music files when lint is run. The functions below exist to allow
@@ -210,7 +223,7 @@ and then use::
 
     play music sunflower
 
-Ren'Py will also automatically place sound files in the audio name face,
+Ren'Py will also automatically place sound files in the audio namespace,
 if found in the ``game/audio`` directory. Files in this directory with a
 supported extension (currently, .wav, .mp2, .mp3, .ogg, and .opus) have the
 extension stripped, the rest of the filename forced to lower case, and are

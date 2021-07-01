@@ -245,12 +245,14 @@ Occasionally Used
 
     If True, Ren'Py will not require grids to be full in order to display.
 
-.. var:: config.pause_after_rollback = False
+.. var:: config.audio_filename_callback = None
 
-    If False, the default, rolling back will skip any pauses (timed or
-    not) and stop only at other interactions such as dialogues, menus...
-    If True, renpy will include timeless pauses to the valid places a
-    rollback can take the user.
+    If not None, this is a function that is called with an audio filename,
+    and is expected to return a second audio filename, the latter of which
+    will be played.
+
+    This is intended for use when an a games has audio file formats changed,
+    but it's not destired to update the game script.
 
 .. var:: config.auto_channels = { "audio" : ( "sfx", "", ""  ) }
 
@@ -762,6 +764,13 @@ Occasionally Used
     A list of screens that are displayed when the overlay is enabled,
     and hidden when the overlay is suppressed. (The screens are shown
     on the screens layer, not the overlay layer.)
+
+.. var:: config.pause_after_rollback = False
+
+    If False, the default, rolling back will skip any pauses (timed or
+    not) and stop only at other interactions such as dialogues, menus...
+    If True, renpy will include timeless pauses to the valid places a
+    rollback can take the user.
 
 .. var:: config.preload_fonts = [ ]
 

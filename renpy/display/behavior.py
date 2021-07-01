@@ -1542,6 +1542,9 @@ class Adjustment(renpy.object.Object):
             This function is called with the adjustment object when
             the range of the adjustment is set by a viewport.
 
+            This function may be called multiple times, as part of the layout
+            process.
+
         `force_step`
             If True and this adjustment changes by dragging associated
             viewport or a bar, value will be changed only if the drag

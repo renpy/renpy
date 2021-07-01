@@ -394,7 +394,7 @@ class Channel(object):
                 if not t or t < 0:
                     pass
                 else:
-                    start = t / 1000.0
+                    start = t
             elif clause == "loop":
                 loop = expect_float()
             elif clause == "silence":
@@ -497,6 +497,9 @@ class Channel(object):
 
             try:
                 filename, start, end = self.split_filename(topq.filename, topq.loop)
+
+                if renpy.config.audio_filename_callback is not None:
+                    filename = renpy.config.audio_filename_callback(filename)
 
                 self.set_tertiary_volume(topq.relative_volume)
 
@@ -648,7 +651,7 @@ class Channel(object):
                 self.keep_queue += 1
 
                 for filename in filenames:
-                    qe = QueueEntry(filename, int(fadein * 1000), tight, False, relative_volume)
+                    qe = QueueEntry(filename, fadein, tight, False, relative_volume)
                     self.queue.append(qe)
 
                     # Only fade the first thing in.
@@ -929,6 +932,7 @@ def init():
             renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono)
             pcm_ok = True
         except:
+
             if renpy.config.debug_sound:
                 raise
 

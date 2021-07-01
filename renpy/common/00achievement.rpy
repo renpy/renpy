@@ -93,7 +93,8 @@ init -1500 python in achievement:
 
         def clear(self, name):
             persistent._achievements.discard(name)
-            persistent._achievement_progress.discard(name)
+            if name in persistent._achievement_progress:
+                del persistent._achievement_progress[name]
 
         def clear_all(self):
             persistent._achievements.clear()
@@ -327,9 +328,8 @@ init -1500 python in achievement:
         Clears the achievement with `name`.
         """
 
-        if has(name):
-            for i in backends:
-                i.clear(name)
+        for i in backends:
+            i.clear(name)
 
     def clear_all():
         """

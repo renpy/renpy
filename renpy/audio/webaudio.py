@@ -62,7 +62,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         If True, playback is paused rather than started.
 
     `fadein`
-        The time it should take the fade the music in.
+        The time it should take the fade the music in, in seconds.
 
     `tight`
         If true, the file is played in tight mode. This means that fadeouts
@@ -78,10 +78,10 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     try:
         file = file.name
     except:
-        pass
+        return
 
     call("stop", channel)
-    call("queue", channel, file, name, start, end)
+    call("queue", channel, file, name, paused, fadein, tight, start, end)
 
 
 def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
@@ -95,9 +95,9 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     try:
         file = file.name
     except:
-        pass
+        return
 
-    call("queue", channel, file, name, start, end)
+    call("queue", channel, file, name, False, fadein, tight, start, end)
 
 
 def stop(channel):
@@ -117,7 +117,7 @@ def dequeue(channel, even_tight=False):
         a file marked as tight is dequeued.
     """
 
-    call("dequeue", channel)
+    call("dequeue", channel, even_tight)
 
 
 def queue_depth(channel):
@@ -173,7 +173,7 @@ def fadeout(channel, delay):
     Fades out `channel` over `delay` seconds.
     """
 
-    stop(channel)
+    call("fadeout", channel, delay)
 
 
 def busy(channel):
@@ -237,7 +237,7 @@ def set_pan(channel, pan, delay):
         The amount of time it takes for the panning to occur.
     """
 
-    return
+    call("set_pan", channel, pan, delay)
 
 
 def set_secondary_volume(channel, volume, delay):
@@ -250,7 +250,7 @@ def set_secondary_volume(channel, volume, delay):
         The time it takes for the change in volume to happen.
     """
 
-    call("set_secondary_volume", channel, volume)
+    call("set_secondary_volume", channel, volume, delay)
 
 
 def get_volume(channel):

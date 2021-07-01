@@ -30,6 +30,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 
 import argparse
+import os
 import renpy
 
 try:
@@ -41,6 +42,9 @@ except:
 # A map from command name to a (function, flag) tuple. The flag is true if the
 # function will parse command line arguments, and false otherwise.
 commands = { }
+
+# True if the command requires the display, false if it doesn't.
+display = { }
 
 # Commands that force compile to be set.
 compile_commands = { "compile", "add_from", "merge_strings" }
@@ -229,7 +233,7 @@ def rmpersistent():
     return False
 
 
-def register_command(name, function):
+def register_command(name, function, uses_display=False):
     """
     Registers a command that can be invoked when Ren'Py is run on the command
     line. When the command is run, `function` is called with no arguments.
@@ -240,9 +244,14 @@ def register_command(name, function):
 
     If `function` returns true, Ren'Py startup proceeds normally. Otherwise,
     Ren'Py will terminate when function() returns.
+
+    `uses_display`
+        If true, Ren'Py will initialize the display. If False, Ren'Py will
+        use dummy video and audio drivers.
     """
 
     commands[name] = function
+    display[name] = uses_display
 
 
 def bootstrap():
@@ -266,7 +275,7 @@ def pre_init():
 
     global subparsers
 
-    register_command("run", run)
+    register_command("run", run, True)
     register_command("lint", renpy.lint.lint)
     register_command("compile", compile)
     register_command("rmpersistent", rmpersistent)
@@ -287,6 +296,10 @@ def post_init():
 
     if command not in commands:
         ArgumentParser().error("Command {0} is unknown.".format(command))
+
+    if not display[command]:
+        os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
+        os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 
     return commands[command]()
 

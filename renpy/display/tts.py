@@ -117,13 +117,21 @@ def default_tts_function(s):
     elif renpy.windows:
 
         if renpy.config.tts_voice is None:
-            voice = "default voice"  # something that is unlikely to match.
+            voice = "default voice" # something that is unlikely to match.
         else:
             voice = renpy.config.tts_voice
 
         say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
         s = s.replace('"', "")
         process = subprocess.Popen([ "wscript", fsencode(say_vbs), fsencode(s), fsencode(voice) ])
+
+    elif renpy.emscripten and renpy.config.webaudio:
+
+        try:
+            from renpy.audio.webaudio import call
+            call("tts", s)
+        except:
+            pass
 
 
 def tts(s):
