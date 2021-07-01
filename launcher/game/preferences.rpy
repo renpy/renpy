@@ -206,6 +206,7 @@ screen preferences:
                         textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
                         # textbutton _("Clear theme") style "l_checkbox" action [SetField(persistent, "theme", "clear", None), RestartAtPreferences() ]
                         textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark", None), RestartAtPreferences()]
+                        textbutton _("Custom theme") style "l_checkbox" action [SetField(persistent, "theme", "custom", None), RestartAtPreferences()]
 
 
                 if translations:

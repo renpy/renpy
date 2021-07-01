@@ -164,6 +164,50 @@ init -1 python:
         # containing commands, preferences, and navigation info.
         WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
+    elif persistent.theme == 'custom':
+
+        # The color of non-interactive text.
+        TEXT = custom_text
+
+        # Colors for buttons in various states.
+        IDLE = custom_idle
+        HOVER = custom_hover
+        DISABLED = custom_disable
+
+        # Colors for reversed text buttons (selected list entries).
+        REVERSE_IDLE = custom_reverse_idle
+        REVERSE_HOVER = reverse_hover
+        REVERSE_TEXT = custom_reverse_text
+
+        # Colors for the scrollbar thumb.
+        SCROLLBAR_IDLE = custom_scrollbar_idle
+        SCROLLBAR_HOVER = custom_scrollbar_hover
+
+        # An image used as a separator pattern.
+        PATTERN = custom_pattern
+
+        # A displayable used for the background of everything.
+        BACKGROUND = custom_background
+
+        # A displayable used for the background of the projects list.
+        PROJECTS_WINDOW = custom_projects_window
+
+        # A displayable used the background of information boxes.
+        INFO_WINDOW = custom_info_window
+
+        # Colors for the titles of information boxes.
+        ERROR_COLOR = custom_error_color
+        INFO_COLOR = custom_info_color
+        INTERACTION_COLOR = custom_interaction_color
+        QUESTION_COLOR = custom_question_color
+
+        # The color of input text.
+        INPUT_COLOR = custom_imput_color
+
+        # A displayable used for the background of windows
+        # containing commands, preferences, and navigation info.
+        WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
+
 
 
 init 1 python:
