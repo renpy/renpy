@@ -15,6 +15,8 @@ expected to be forward or backwards compatible.
 
 2. Modify skin.rpy to skin the launcher. Place the image files you use
    into the launcher's game directory.
+   
+3. Select Custom theme in preferences.
 
 An incorrect skin.rpy file could prevent the launcher from
 starting. To fix it, you'll need to remove skin.rpy and skin.rpyc from
