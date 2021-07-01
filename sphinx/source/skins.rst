@@ -14,7 +14,8 @@ expected to be forward or backwards compatible.
    preferences screen.
 
 2. Modify skin.rpy to skin the launcher. Place the image files you use
-   into the launcher's game directory. Recommended size 800x600 pixels. 
+   into the launcher's game directory. Recommended size for background 
+   800x600 pixels. 
    
 3. Select Custom theme in preferences.
 
