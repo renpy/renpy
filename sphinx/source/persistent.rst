@@ -66,6 +66,17 @@ union of that set when merging data. ::
 Persistent Functions
 --------------------
 
+.. function:: persistent._clear(progress=False)
+
+    Resets the persistent data.
+
+    `progress`
+        If true, also resets progress data that Ren'Py keeps.
+
+    Note that this will delete all persistent data, and will not re-apply
+    defaults until Ren'Py restarts.
+
+
 .. include:: inc/persistent
 
 Multi-Game Persistence
