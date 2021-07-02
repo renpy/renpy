@@ -550,6 +550,9 @@ adjust_view_size = None
 # True if we should autosave when a choice occurs.
 autosave_on_choice = True
 
+# True if we should autosave when the player has input something.
+autosave_on_input = True
+
 # A list of channels we should emphasize the audio on.
 emphasize_audio_channels = [ 'voice' ]
 
