@@ -1752,3 +1752,23 @@ translate french strings:
     # game/web.rpy:354
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Avant l'empaquetage des apps web, vous devrez télécharger RenPyWeb, le support web de Ren'Py. Voulez-vous télécharger RenPyWeb maintenant ?"
+
+    # game/preferences.rpy:206
+    old "Default theme"
+    new "Thème par défaut"
+
+    # game/preferences.rpy:209
+    old "Custom theme"
+    new "Thème personnalisé"
+
+    # game/web.rpy:330
+    old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    new "Les images et la musique peuvent être téléchargées pendant le jeu. Un fichier 'progressive_download.txt' sera créé pour configurer cette fonction."
+
+    # game/web.rpy:334
+    old "Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported."
+    new "Les limitations actuelles de la platforme web signifient que le chargement de grandes images peuvent causer des bugs audio ou des saccades. Les objets 'Movies' ne sont pas supportés."
+
+    # game/web.rpy:338
+    old "There are known issues with Safari and other Webkit-based browsers that may prevent games from running."
+    new "Des bugs connus avec Safari et d'autres navigateurs basés sur Webkit peuvent empêcher des jeux de fonctionner."
