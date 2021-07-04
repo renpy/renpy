@@ -669,7 +669,7 @@ class Displayable(renpy.object.Object):
 
     def _show(self):
         """
-        Called when the displayable is added to a scene list.
+        No longer used.
         """
 
     def _target(self):
@@ -1111,7 +1111,6 @@ class SceneLists(renpy.object.Object):
                 thing = self.transform_state(l[remove_index].displayable, thing)
 
             thing.set_transform_event("replace")
-            thing._show()
 
         else:
 
@@ -1119,7 +1118,6 @@ class SceneLists(renpy.object.Object):
                 thing = self.transform_state(default_transform, thing)
 
             thing.set_transform_event("show")
-            thing._show()
 
         sle = SceneListEntry(key, zorder, st, at, thing, name)
         l.insert(add_index, sle)
@@ -3634,8 +3632,6 @@ class Interface(object):
 
             if not isinstance(trans, Displayable):
                 raise Exception("Expected transition to be a displayable, not a %r" % trans)
-
-            trans._show()
 
             transition_time = self.transition_time.get(None, None)
             root_widget.add(trans, transition_time, transition_time)

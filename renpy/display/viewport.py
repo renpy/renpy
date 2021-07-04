@@ -65,14 +65,6 @@ class Viewport(renpy.display.layout.Container):
             self.edge_yspeed = 0
             self.edge_last_st = None
 
-        if version < 4:
-            self.xadjustment_param = None
-            self.yadjustment_param = None
-            self.offsets_param = (None, None)
-            self.set_adjustments_param = True
-            self.xinitial_param = None
-            self.yinitial_param = None
-
         if version < 5:
             self.focusable = self.draggable
 
@@ -95,17 +87,30 @@ class Viewport(renpy.display.layout.Container):
                  **properties):
 
         super(Viewport, self).__init__(style=style, **properties)
+
         if child is not None:
             self.add(child)
 
-        self.xadjustment_param = xadjustment
-        self.yadjustment_param = yadjustment
-        self.offsets_param = offsets
-        self.set_adjustments_param = set_adjustments
-        self.xinitial_param = xinitial
-        self.yinitial_param = yinitial
+        if xadjustment is None:
+            self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
+        else:
+            self.xadjustment = xadjustment
 
-        self._show()
+        if yadjustment is None:
+            self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
+        else:
+            self.yadjustment = yadjustment
+
+        if self.xadjustment.adjustable is None:
+            self.xadjustment.adjustable = True
+
+        if self.yadjustment.adjustable is None:
+            self.yadjustment.adjustable = True
+
+        self.set_adjustments = set_adjustments
+
+        self.xoffset = offsets[0] if (offsets[0] is not None) else xinitial
+        self.yoffset = offsets[1] if (offsets[1] is not None) else yinitial
 
         if isinstance(replaces, Viewport) and replaces.offsets:
             self.xadjustment.range = replaces.xadjustment.range
@@ -156,29 +161,6 @@ class Viewport(renpy.display.layout.Container):
             self.edge_size = 0
             self.edge_speed = 0
             self.edge_function = edgescroll_proportional
-
-    def _show(self):
-        if self.xadjustment_param is None:
-            self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
-        else:
-            self.xadjustment = self.xadjustment_param
-
-        if self.yadjustment_param is None:
-            self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
-        else:
-            self.yadjustment = self.yadjustment_param
-
-        if self.xadjustment.adjustable is None:
-            self.xadjustment.adjustable = True
-
-        if self.yadjustment.adjustable is None:
-            self.yadjustment.adjustable = True
-
-        self.set_adjustments = self.set_adjustments_param
-
-        offsets = self.offsets_param
-        self.xoffset = offsets[0] if (offsets[0] is not None) else self.xinitial_param
-        self.yoffset = offsets[1] if (offsets[1] is not None) else self.yinitial_param
 
     def per_interact(self):
         self.xadjustment.register(self)
@@ -342,7 +324,7 @@ class Viewport(renpy.display.layout.Container):
                 self.yadjustment.change(new_yvalue)
                 newy = y
 
-            self.drag_position = (newx, newy)  # W0201
+            self.drag_position = (newx, newy) # W0201
 
         if not ((0 <= x < self.width) and (0 <= y <= self.height)):
             self.edge_xspeed = 0
