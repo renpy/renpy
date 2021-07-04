@@ -1783,6 +1783,8 @@ def parse_parameters(l):
             if l.match(r'='):
                 l.skip_whitespace()
                 default = l.delimited_python("),")
+                if not default.strip():
+                    l.error("Empty parameter default.")
             else:
                 default = None
 
