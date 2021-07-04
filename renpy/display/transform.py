@@ -863,9 +863,6 @@ class Transform(Container):
 
         return rv
 
-    def _show(self):
-        self.update_state()
-
 
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
@@ -893,11 +890,6 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
     def __repr__(self):
         return "<ATL Transform {:x} {!r}>".format(id(self), self.atl.loc)
-
-    def _show(self):
-        old_state = self.atl_state
-        super(ATLTransform, self)._show()
-        self.atl_state = old_state
 
 
 # Names of transform properties, and if the property should be handles with

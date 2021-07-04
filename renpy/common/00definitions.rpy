@@ -452,4 +452,4 @@ init 1400 python:
 
     # This is necessary to ensure that config.default_transform works.
     if config.default_transform:
-        config.default_transform._show()
+        config.default_transform.update_state()
