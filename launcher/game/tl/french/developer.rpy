@@ -195,4 +195,4 @@ translate french strings:
 
     # renpy/common/00console.rpy:929
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
-    new "unescape : Désacrive l'échappage des symboles unicode dans les chaînes de caractères unicode et les affiche telles quelles (par défaut)."
+    new "unescape : Désactive l'échappage des symboles unicode dans les chaînes de caractères unicode et les affiche telles quelles (par défaut)."
