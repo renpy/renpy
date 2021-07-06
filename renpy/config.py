@@ -1159,6 +1159,9 @@ webaudio = True
 # If not None, a callback that can be used to alter audio filenames.
 audio_filename_callback = None
 
+# Should minimums be adjusted when x/yminimum and x/ymaximum are both floats?
+adjust_minimums = True
+
 del os
 del collections
 

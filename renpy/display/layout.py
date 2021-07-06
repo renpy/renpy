@@ -53,7 +53,7 @@ def xyminimums(style, width, height):
     if type(xminimum) is float:
         xmaximum = style.xmaximum
 
-        if (type(xmaximum) is float) and xmaximum:
+        if (type(xmaximum) is float) and xmaximum and renpy.config.adjust_minimums:
             xminimum = xminimum / xmaximum
 
         xminimum = xminimum * width
@@ -61,7 +61,7 @@ def xyminimums(style, width, height):
     if type(yminimum) is float:
         ymaximum = style.ymaximum
 
-        if (type(ymaximum) is float) and ymaximum:
+        if (type(ymaximum) is float) and ymaximum and renpy.config.adjust_minimums:
             yminimum = yminimum / ymaximum
 
         yminimum = yminimum * height
