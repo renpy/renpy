@@ -35,10 +35,38 @@ def scale(num, base):
     returns num unchanged.
     """
 
-    if isinstance(num, float):
+    if type(num) is float:
         return num * base
     else:
         return num
+
+
+def xyminimums(style, width, height):
+    """
+    Get the xyminimum and yminimum values as actual pixels, taking into account
+    that width and height might have been adjusted by x/ymaximum already.
+    """
+
+    xminimum = style.xminimum
+    yminimum = style.yminimum
+
+    if type(xminimum) is float:
+        xmaximum = style.xmaximum
+
+        if (type(xmaximum) is float) and xmaximum:
+            xminimum = xminimum / xmaximum
+
+        xminimum = xminimum * width
+
+    if type(yminimum) is float:
+        ymaximum = style.ymaximum
+
+        if (type(ymaximum) is float) and ymaximum:
+            yminimum = yminimum / ymaximum
+
+        yminimum = yminimum * height
+
+    return xminimum, yminimum
 
 
 class Null(renpy.display.core.Displayable):
@@ -1152,11 +1180,9 @@ class Window(Container):
         # save some typing.
         style = self.style
 
-        xminimum = scale(style.xminimum, width)
-        yminimum = scale(style.yminimum, height)
-
-        xmaximum = scale(style.xmaximum, width)
-        ymaximum = scale(style.ymaximum, height)
+        xminimum, yminimum = xyminimums(style, width, height)
+        xmaximum = width
+        ymaximum = height
 
         size_group = self.style.size_group
         if size_group and size_group in size_groups:

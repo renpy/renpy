@@ -177,6 +177,8 @@ class Viewport(renpy.display.layout.Container):
         The returned offsets will be negative or zero.
         """
 
+        xminimum, yminimum = renpy.display.layout.xyminimums(self.style, width, height)
+
         width = self.width
         height = self.height
 
@@ -186,8 +188,8 @@ class Viewport(renpy.display.layout.Container):
         if not self.style.yfill:
             height = min(ch, height)
 
-        width = max(width, self.style.xminimum)
-        height = max(height, self.style.yminimum)
+        width = max(width, xminimum)
+        height = max(height, yminimum)
 
         if (not renpy.display.render.sizing) and self.set_adjustments:
 

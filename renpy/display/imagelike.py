@@ -64,8 +64,10 @@ class Solid(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
-        width = max(self.style.xminimum, width)
-        height = max(self.style.yminimum, height)
+        xminimum, yminimum = renpy.display.layout.xyminimums(self.style, width, height)
+
+        width = max(xminimum, width)
+        height = max(yminimum, height)
 
         color = self.color or self.style.color
 
@@ -369,9 +371,9 @@ class Frame(renpy.display.core.Displayable):
 
                         if self.tile == "integer":
                             if cdw % csw / float(csw) < self.tile_ratio:
-                                xtiles = max(1, xtiles-1)
+                                xtiles = max(1, xtiles - 1)
                             if cdh % csh / float(csh) < self.tile_ratio:
-                                ytiles = max(1, ytiles-1)
+                                ytiles = max(1, ytiles - 1)
 
                             # Set size of the used tiles (ready to scale)
                             ctw, cth = csw * xtiles, csh * ytiles
@@ -512,9 +514,9 @@ class Frame(renpy.display.core.Displayable):
 
                         if self.tile == "integer":
                             if dstw % tilew / float(tilew) < self.tile_ratio:
-                                xtiles = max(1, xtiles-1)
+                                xtiles = max(1, xtiles - 1)
                             if dsth % tileh / float(tileh) < self.tile_ratio:
-                                ytiles = max(1, ytiles-1)
+                                ytiles = max(1, ytiles - 1)
 
                     # Tile at least one tile in each direction
                     surf2 = renpy.display.pgrender.surface_unscaled(
@@ -522,7 +524,7 @@ class Frame(renpy.display.core.Displayable):
 
                     for y in range(0, ytiles):
                         for x in range(0, xtiles):
-                            surf2.blit(surf, (x*tilew, y*tileh))
+                            surf2.blit(surf, (x * tilew, y * tileh))
 
                     if self.tile is True:
                         # Trim the tiled surface to required size
