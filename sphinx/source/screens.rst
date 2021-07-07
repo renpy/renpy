@@ -671,6 +671,10 @@ The input statement takes no parameters, and the following properties:
     If given, a string that replaces each displayable character in
     the text. This can be used to mask out a password.
 
+`caret_blink`
+    If True, the default caret will blink. Overrides :var:`config.input_caret_blink`.
+
+
 It also takes:
 
 * :ref:`Common Properties <common-properties>`
