@@ -1810,6 +1810,8 @@ def parse_arguments(l):
     extrakw = None
     extrapos = None
 
+    has_kw = False
+
     if not l.match(r'\('):
         return None
 
@@ -1839,6 +1841,11 @@ def parse_arguments(l):
             if not (name and l.match(r'=')):
                 l.revert(state)
                 name = None
+
+            if name:
+                has_kw = True
+            elif has_kw:
+                l.error("positional argument follows keyword argument")
 
             l.skip_whitespace()
             arguments.append((name, l.delimited_python("),")))
