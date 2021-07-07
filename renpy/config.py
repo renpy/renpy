@@ -1162,6 +1162,9 @@ audio_filename_callback = None
 # Should minimums be adjusted when x/yminimum and x/ymaximum are both floats?
 adjust_minimums = True
 
+# Should the default input caret blink ?
+input_caret_blink = True
+
 del os
 del collections
 
