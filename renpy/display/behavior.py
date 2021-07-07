@@ -1161,6 +1161,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                  pixel_width=None,
                  value=None,
                  copypaste=False,
+                 caret_blink=renpy.config.input_caret_blink,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
@@ -1192,7 +1193,13 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             if i.endswith("color"):
                 caretprops[i] = properties[i]
 
-        self.caret = renpy.display.image.Solid(xmaximum=1, style=style, **caretprops)
+        caret = renpy.display.image.Solid(xsize=1, style=style, **caretprops)
+        if caret_blink:
+            self.caret = renpy.store.Fixed(renpy.display.anim.Animation(caret, 0.5,
+                                                                        renpy.display.layout.Null(xsize=1), 0.5),
+                                           xsize=0)
+        else:
+            self.caret = renpy.store.Fixed(caret, xsize=0)
         self.caret_pos = len(self.content)
         self.old_caret_pos = self.caret_pos
 
