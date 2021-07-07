@@ -1202,10 +1202,8 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
 
         caret = renpy.display.image.Solid(xsize=1, style=style, **caretprops)
         if caret_blink:
-            self.caret = renpy.store.Fixed(renpy.display.transform.Transform(caret, function=renpy.curry.curry(blink)(caret_blink=caret_blink)),
-                                           xsize=0,)
-        else:
-            self.caret = renpy.store.Fixed(caret, xsize=0)
+            caret = renpy.display.transform.Transform(caret, function=renpy.curry.partial(blink, caret_blink=caret_blink))
+    self.caret = renpy.store.Fixed(caret, xsize=0)
         self.caret_pos = len(self.content)
         self.old_caret_pos = self.caret_pos
 
