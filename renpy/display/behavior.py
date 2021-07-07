@@ -1130,6 +1130,13 @@ def input_post_per_interact():
             i.caret_pos = len(content)
 
 
+def blink(trans, st, at, caret_blink):
+    if int(st*2/caret_blink)%2:
+        trans.alpha = .0
+    else:
+        trans.alpha = 1.
+    return (caret_blink/2)-(st%(caret_blink/2))
+
 class Input(renpy.text.text.Text): # @UndefinedVariable
     """
     This is a Displayable that takes text as input.
@@ -1195,13 +1202,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
 
         caret = renpy.display.image.Solid(xsize=1, style=style, **caretprops)
         if caret_blink:
-            def blink(trans, st, at):
-                if int(st*2)%2:
-                    trans.alpha = .0
-                else:
-                    trans.alpha = 1.
-                return .5
-            self.caret = renpy.store.Fixed(renpy.display.transform.Transform(caret, function=blink),
+            self.caret = renpy.store.Fixed(renpy.display.transform.Transform(caret, function=renpy.curry.curry(blink)(caret_blink=caret_blink)),
                                            xsize=0,)
         else:
             self.caret = renpy.store.Fixed(caret, xsize=0)
