@@ -1163,7 +1163,7 @@ audio_filename_callback = None
 adjust_minimums = True
 
 # Should the default input caret blink ?
-input_caret_blink = True
+input_caret_blink = 1.
 
 del os
 del collections
