@@ -594,6 +594,10 @@ Occasionally Used
     can be repeatedly loaded, hurting performance. If not none,
     :var:`config.image_cache_size` is used instead of this variable.
 
+.. var:: config.input_caret_blink = True
+
+    Sets whether or not the default caret in an input will blink or not.
+
 .. var:: config.key_repeat = (.3, .03)
 
     Controls the rate of keyboard repeat. When key repeat is enabled, this
