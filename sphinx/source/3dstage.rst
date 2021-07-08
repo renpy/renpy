@@ -242,7 +242,7 @@ This method takes:
 
 * An old object to interpolate off of. This object may be of any class,
   and may be None if no old object exists.
-* A value betwee 0.0 and 1.0, representing the point to interpolate.
+* A value between 0.0 and 1.0, representing the point to interpolate.
   0.0 is entirely the old object, and 1.0 is entirely the new object.
 
 Built-In TransformMatrix Subclasses
