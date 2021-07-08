@@ -1131,11 +1131,10 @@ def input_post_per_interact():
 
 
 def blink(trans, st, at, caret_blink):
-    if int(st*2/caret_blink)%2:
-        trans.alpha = .0
-    else:
-        trans.alpha = 1.
-    return (caret_blink/2)-(st%(caret_blink/2))
+    ttl = caret_blink - st % caret_blink
+    trans.alpha = ttl > caret_blink / 2.
+    return ttl % (caret_blink / 2.)
+
 
 class Input(renpy.text.text.Text): # @UndefinedVariable
     """
