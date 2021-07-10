@@ -395,6 +395,14 @@ It also takes:
 It takes one children. If zero, two, or more children are supplied,
 they are implicitly added to a fixed, which is added to the button.
 
+Here's an example of a button with a hoverable arrow image centered to its outlined and resized text
+::
+
+    button:
+        idle_background Transform("arrow_idle.png", xalign=0.5, yalign=0.5)
+        hover_background Transform("arrow_hover.png", xalign=0.5, yalign=0.5)
+        text "north" outlines [ (2, "#333", 0, 0) ] size 44
+        action Jump("label_town_north")
 
 .. _sl-fixed:
 
