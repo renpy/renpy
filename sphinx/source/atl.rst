@@ -1034,9 +1034,6 @@ both horizontal and vertical positions.
     that children of this transform draw. See :ref:`matrixcolor` for more
     information.
 
-    This requires model-based rendering to be enabled by setting :var:`config.gl2` to
-    True.
-
 .. transform-property:: blur
 
     :type: None or float
@@ -1046,9 +1043,6 @@ both horizontal and vertical positions.
     of the displayable. The precise details of the blurring may change
     between Ren'Py versions, and the blurring may exhibit artifacts,
     especially when the image being blurred is changing.
-
-    This requires model-based rendering to be enabled by setting :var:`config.gl2` to
-    True.
 
 There are also several sets of transform properties that are documented elsewhere:
 
