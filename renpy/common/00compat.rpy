@@ -218,6 +218,7 @@ init -1900 python:
 
         if version <= (7, 4, 6):
             config.adjust_minimums = False
+            config.atl_start_on_show = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

@@ -1741,3 +1741,8 @@ translate spanish strings:
     # game/preferences.rpy:203
     old "Dark theme"
     new "Tema oscuro"
+
+    # game/preferences.rpy:209
+    old "Custom theme"
+    new "Tema personalizado"
+    

@@ -550,6 +550,9 @@ adjust_view_size = None
 # True if we should autosave when a choice occurs.
 autosave_on_choice = True
 
+# True if we should autosave when the player has input something.
+autosave_on_input = True
+
 # A list of channels we should emphasize the audio on.
 emphasize_audio_channels = [ 'voice' ]
 
@@ -1161,6 +1164,9 @@ audio_filename_callback = None
 
 # Should minimums be adjusted when x/yminimum and x/ymaximum are both floats?
 adjust_minimums = True
+
+# Should ATL start on show?
+atl_start_on_show = True
 
 # Should the default input caret blink ?
 input_caret_blink = 1.

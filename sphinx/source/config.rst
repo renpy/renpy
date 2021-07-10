@@ -1090,6 +1090,11 @@ Rarely or Internally Used
     save time, the autosave occurs while the user is being prompted to confirm
     his or her decision.)
 
+.. var:: config.autosave_on_input = True
+
+    If True, Ren'Py will autosave when the user inputs text.
+    (When :func:`renpy.input` is called.)
+
 .. var:: config.character_callback = None
 
     The default value of the callback parameter of Character.

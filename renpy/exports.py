@@ -927,7 +927,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     renpy.exports.shown_window()
 
-    if not renpy.game.after_rollback:
+    if renpy.config.autosave_on_input and not renpy.game.after_rollback:
         renpy.loadsave.force_autosave(True)
 
     # use normal "say" click behavior if input can't be changed
