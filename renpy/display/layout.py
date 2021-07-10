@@ -1151,6 +1151,7 @@ class Window(Container):
     """
 
     window_size = (0, 0)
+    current_child = None
 
     def __init__(self, child=None, style='window', **properties):
         super(Window, self).__init__(style=style, **properties)
@@ -1211,6 +1212,18 @@ class Window(Container):
         cypadding = top_padding + bottom_padding
 
         child = self.get_child()
+
+        # Transfer the state from the current child to the new child.
+        if child is not self.current_child:
+            if self.current_child is not None:
+                old_target = self.current_child._target()
+                new_target = child._target()
+
+                if isinstance(old_target, renpy.display.transform.Transform) and isinstance(new_target, renpy.display.transform.Transform):
+                    new_target.take_state(old_target)
+                    new_target.take_execution_state(old_target)
+
+            self.current_child = child
 
         # Render the child.
         surf = render(child,
