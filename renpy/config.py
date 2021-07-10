@@ -1165,6 +1165,9 @@ audio_filename_callback = None
 # Should minimums be adjusted when x/yminimum and x/ymaximum are both floats?
 adjust_minimums = True
 
+# Should ATL start on show?
+atl_start_on_show = True
+
 del os
 del collections
 
