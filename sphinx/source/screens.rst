@@ -402,7 +402,7 @@ Here's an example of a button with a hoverable arrow image centered to its outli
         idle_background Transform("arrow_idle.png", xalign=0.5, yalign=0.5)
         hover_background Transform("arrow_hover.png", xalign=0.5, yalign=0.5)
         text "north" outlines [ (2, "#333", 0, 0) ] size 44
-        action Jump("label_town_north")
+        action Jump("town_north") # a label
 
 .. _sl-fixed:
 
