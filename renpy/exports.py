@@ -2349,6 +2349,27 @@ def seen_label(label):
     return label in renpy.game.persistent._seen_ever # @UndefinedVariable
 
 
+def mark_label_seen(label):
+    """
+    :doc: label
+
+    Marks the named label as if it has been already executed on the current user's
+    system.
+    """
+    renpy.game.persistent._seen_ever[label] = True
+
+
+def mark_label_unseen(label):
+    """
+    :doc: label
+
+    Marks the named label as if it has not been executed on the current user's
+    system yet.
+    """
+    if label in renpy.game.persistent._seen_ever:
+        del renpy.game.persistent._seen_ever[label]
+
+
 def seen_audio(filename):
     """
     :doc: audio
@@ -2356,10 +2377,34 @@ def seen_audio(filename):
     Returns True if the given filename has been played at least once on the current
     user's system.
     """
-
     filename = re.sub(r'^<.*?>', '', filename)
 
     return filename in renpy.game.persistent._seen_audio # @UndefinedVariable
+
+
+def mark_audio_seen(filename):
+    """
+    :doc: audio
+
+    Marks the given filename as if it has been already played on the current user's
+    system.
+    """
+    filename = re.sub(r'^<.*?>', '', filename)
+
+    renpy.game.persistent._seen_audio[filename] = True
+
+
+def mark_audio_unseen(filename):
+    """
+    :doc: audio
+
+    Marks the given filename as if it has not been played on the current user's
+    system yet.
+    """
+    filename = re.sub(r'^<.*?>', '', filename)
+
+    if filename in renpy.game.persistent._seen_audio:
+        del renpy.game.persistent._seen_audio[filename]
 
 
 def seen_image(name):
@@ -2376,6 +2421,33 @@ def seen_image(name):
         name = tuple(name.split())
 
     return name in renpy.game.persistent._seen_images # @UndefinedVariable
+
+
+def mark_image_seen(name):
+    """
+    :doc: image_func
+
+    Marks the named image as if it has been already displayed on the current user's
+    system.
+    """
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    renpy.game.persistent._seen_images[name] = True
+
+
+def mark_image_unseen(name):
+    """
+    :doc: image_func
+
+    Marks the named image as if it has not been displayed on the current user's
+    system yet.
+    """
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    if name in renpy.game.persistent._seen_images:
+        del renpy.game.persistent._seen_images[name]
 
 
 def file(fn): # @ReservedAssignment
