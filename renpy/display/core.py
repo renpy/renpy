@@ -80,6 +80,7 @@ enabled_events = {
 
     pygame.TEXTEDITING,
     pygame.TEXTINPUT,
+    pygame.KEYMAPCHANGED,
 
     pygame.MOUSEMOTION,
     pygame.MOUSEBUTTONDOWN,
@@ -2244,10 +2245,6 @@ class Interface(object):
         self.set_window_caption(force=True)
         self.set_icon()
 
-        if renpy.config.key_repeat is not None:
-            delay, repeat_delay = renpy.config.key_repeat
-            pygame.key.set_repeat(int(1000 * delay), int(1000 * repeat_delay))
-
         if renpy.android:
             android.wakelock(True)
 
@@ -3992,6 +3989,15 @@ class Interface(object):
                         self.text_editing = None
                 elif ev.type == pygame.TEXTINPUT:
                     self.text_editing = None
+
+                elif ev.type == pygame.KEYMAPCHANGED:
+
+                    # Clear the mods when the keymap is changed, such as when
+                    # an IME is selected. This fixes a problem on Windows 10 where
+                    # super+space won't unset super.
+                    pygame.key.set_mods(0)
+                    continue
+
                 elif self.text_editing and ev.type in [ pygame.KEYDOWN, pygame.KEYUP ]:
                     continue
 

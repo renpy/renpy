@@ -1247,7 +1247,18 @@ cdef class GL2DrawingContext:
         r = what
 
         if r.text_input:
-            renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
+
+            tovirt = Matrix.cscreen_projection(self.gl2draw.virtual_size[0], self.gl2draw.virtual_size[1]).inverse() * transform
+
+            x0, y0 = tovirt.transform(0, 0)
+            x1, y1 = tovirt.transform(r.width, r.height)
+
+            xmin = min(x0, x1)
+            xmax = max(x0, x1)
+            ymin = min(y0, y1)
+            ymax = max(y0, y1)
+
+            renpy.display.interface.text_rect = (xmin, ymin, xmax - xmin, ymax - ymin)
 
         # Handle clipping.
         if (r.xclipping or r.yclipping):
