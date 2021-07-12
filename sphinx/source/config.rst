@@ -594,13 +594,6 @@ Occasionally Used
     can be repeatedly loaded, hurting performance. If not none,
     :var:`config.image_cache_size` is used instead of this variable.
 
-.. var:: config.key_repeat = (.3, .03)
-
-    Controls the rate of keyboard repeat. When key repeat is enabled, this
-    should be a tuple. The first item in the tuple is the delay before the
-    first repeat, and the second item is the delay between repeats. Both
-    are in seconds. If None, keyboard repeat is disabled.
-
 .. var:: config.language = None
 
     If not None, this should be a string giving the default language
