@@ -532,8 +532,7 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
                 continue
 
             change_focus(f)
-
-            break
+            return
 
         return
 
