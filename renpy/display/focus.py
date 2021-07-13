@@ -525,7 +525,16 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
     current = get_focused()
 
     if not current:
-        change_focus(focus_list[0])
+
+        for f in focus_list:
+
+            if not f.widget.style.keyboard_focus:
+                continue
+
+            change_focus(f)
+
+            break
+
         return
 
     # Find the current focus.
