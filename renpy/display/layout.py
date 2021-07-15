@@ -1350,6 +1350,8 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
     _duplicatable = True
     raw_child = None
+    last_st = 0
+    last_at = 0
 
     def after_setstate(self):
         self.child = None
@@ -1378,8 +1380,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         return rv
 
     def visit(self):
-        if not self.child:
-            self.update(0, 0)
+        self.update(self.last_st, self.last_at)
 
         if self.child:
             return [ self.child ]
@@ -1387,6 +1388,9 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             return [ ]
 
     def update(self, st, at):
+        self.last_st = st
+        self.last_at = at
+
         child, redraw = self.function(st, at, *self.args, **self.kwargs)
         child = renpy.easy.displayable(child)
 
