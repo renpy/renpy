@@ -1167,10 +1167,13 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                  pixel_width=None,
                  value=None,
                  copypaste=False,
-                 caret_blink=renpy.config.input_caret_blink,
+                 caret_blink=None,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
+
+        if caret_blink is None:
+            caret_blink = renpy.config.input_caret_blink
 
         if value:
             self.value = value
