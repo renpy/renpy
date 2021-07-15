@@ -543,6 +543,48 @@ called at any time with any value to enable prediction.
             repeat
 
 
+Animation Statement
+-------------------
+
+The ``animation`` statement must be the first statement in an ATL block,
+and tells Ren'Py this statement uses the animation timebase.
+
+.. productionlist:: atl
+    atl_animation : "animation"
+
+As compared to the normal showing timebase, the animation timebase starts
+when an image or screen with the same tag is shown. This is generally used
+to have one image replaced by a second one at the same apparent time. For
+example::
+
+    image eileen happy moving:
+        animation
+        "eileen happy"
+        xalign 0.0
+        linear 5.0 xalign 1.0
+        repeat
+
+    image eileen vhappy moving:
+        animation
+        "eileen vhappy"
+        xalign 0.0
+        linear 5.0 xalign 1.0
+        repeat
+
+    label start:
+
+        show eileen happy moving
+        pause
+        show eileen vhappy moving
+        pause
+
+This example will cause Eileen to change expression when the first pause
+finishes, but will not cause her postion to change, as both animations
+share the same animation time, and hence will place her sprite in the same place.
+Without the animation statement, the position would reset when the player
+clicks.
+
+
 .. _warpers:
 
 Warpers
