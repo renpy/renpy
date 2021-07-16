@@ -594,6 +594,10 @@ Occasionally Used
     can be repeatedly loaded, hurting performance. If not none,
     :var:`config.image_cache_size` is used instead of this variable.
 
+.. var:: config.input_caret_blink = 1.0
+
+    If not False, sets the blinking period of the default caret, in seconds.
+
 .. var:: config.language = None
 
     If not None, this should be a string giving the default language

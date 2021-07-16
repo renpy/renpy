@@ -1168,6 +1168,9 @@ adjust_minimums = True
 # Should ATL start on show?
 atl_start_on_show = True
 
+# Should the default input caret blink ?
+input_caret_blink = 1.
+
 del os
 del collections
 
