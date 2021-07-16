@@ -452,8 +452,20 @@ cdef class GLTexture(GL2Model):
 
         glBindTexture(GL_TEXTURE_2D, tex)
 
+
+        max_level = renpy.config.max_mipmap_level
+
+        if not properties.get("mipmap", True):
+            max_level = 0
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, max_level)
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+
+        if max_level:
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+        else:
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
 
         wrap_s, wrap_t = properties.get("texture_wrap", (GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE))
 
@@ -469,9 +481,6 @@ cdef class GLTexture(GL2Model):
 
         cdef GLuint level = 0
 
-        max_level = renpy.config.max_mipmap_level
-        if not properties.get("mipmap", True):
-            max_level = 0
 
         while True:
 
