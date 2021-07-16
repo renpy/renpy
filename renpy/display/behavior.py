@@ -1130,10 +1130,45 @@ def input_post_per_interact():
             i.caret_pos = len(content)
 
 
-def blink(trans, st, at, caret_blink):
-    ttl = caret_blink - st % caret_blink
-    trans.alpha = ttl > caret_blink / 2.
-    return ttl % (caret_blink / 2.)
+class CaretBlink(renpy.display.core.Displayable):
+    """
+    A displayable that renders the caret.
+    """
+
+    def __init__(self, caret, caret_blink, **properties):
+
+        super(CaretBlink, self).__init__(**properties)
+        caret = renpy.easy.displayable(caret)
+
+        if caret._duplicatable:
+            caret = caret._duplicate()
+            caret._unique()
+
+        self.caret = caret
+        self.caret_blink = caret_blink
+
+        self.st_base = 0
+
+    def get_position(self):
+        return self.caret.get_position()
+
+    def visit(self):
+        return [ self.caret ]
+
+    def render(self, width, height, st, at):
+        st -= self.st_base
+
+        cr = renpy.display.render.render(self.caret, width, height, st, at)
+        rv = renpy.display.render.Render(0, height)
+
+        ttl = self.caret_blink - st % self.caret_blink
+
+        if ttl > self.caret_blink / 2.0:
+            rv.blit(cr, (0, 0))
+
+        renpy.display.render.redraw(self, ttl % (self.caret_blink / 2.))
+
+        return rv
 
 
 class Input(renpy.text.text.Text): # @UndefinedVariable
@@ -1151,6 +1186,8 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
     edit_text = u""
     value = None
     shown = False
+
+    st = 0
 
     def __init__(self,
                  default="",
@@ -1203,9 +1240,11 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                 caretprops[i] = properties[i]
 
         caret = renpy.display.image.Solid(xsize=1, style=style, **caretprops)
+
         if caret_blink:
-            caret = renpy.display.transform.Transform(caret, function=renpy.curry.partial(blink, caret_blink=caret_blink))
-        self.caret = renpy.store.Fixed(caret, xsize=0)
+            caret = CaretBlink(caret, caret_blink)
+
+        self.caret = caret
         self.caret_pos = len(self.content)
         self.old_caret_pos = self.caret_pos
 
@@ -1229,12 +1268,14 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         old_content = self.content
 
         if new_content != self.content or editable != self.editable or edit:
+
             renpy.display.render.redraw(self, 0)
 
         self.editable = editable
 
         # Choose the caret.
         caret = self.style.caret
+
         if caret is None:
             caret = self.caret
 
@@ -1273,6 +1314,10 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                                content[self.caret_pos:l].replace("{", "{{"), self.suffix])
             else:
                 self.set_text([self.prefix, content.replace("{", "{{"), self.suffix ])
+
+            if isinstance(self.caret, CaretBlink):
+                self.caret.st_base = self.st
+                renpy.display.render.redraw(self.caret, 0)
 
         set_content(new_content)
 
@@ -1328,6 +1373,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
 
     def event(self, ev, x, y, st):
 
+        self.st = st
         self.old_caret_pos = self.caret_pos
 
         if not self.editable:
@@ -1481,6 +1527,8 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             raise renpy.display.core.IgnoreEvent()
 
     def render(self, width, height, st, at):
+        self.st = st
+
         rv = super(Input, self).render(width, height, st, at)
 
         if self.editable:
