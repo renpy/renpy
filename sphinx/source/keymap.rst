@@ -25,7 +25,9 @@ scroll wheel to the top.
 There are two kinds of keyboard keysyms. The first is a string containing a
 character that is generated when a key is pressed. This is useful for
 binding alphabetic keys and numbers. Examples of these keysyms include "a", "A", and "7".
-Note that these are case sensitive, "a" does not match "A".
+Note that these are case sensitive, "a" does not match "A". This kind of keysym
+is only useful when an event generates text - for example, the a key being
+released will not match ``keyup_a``, as no text is generated.
 
 Keyboard keysyms can also be the symbolic name for the key. This can be any of
 the K\_ constants taken from pygame.constants. This type of keysym looks like
