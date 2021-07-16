@@ -810,7 +810,15 @@ class Layout(object):
                 continue
 
             # Create the texture.
-            surf = renpy.display.pgrender.surface((sw + o, sh + o), True)
+
+            tw = sw + o
+            th = sh + o
+
+            # If not a multiple of 32, round up.
+            tw = (tw | 0x1f) + 1 if (tw & 0x1f) else tw
+            th = (th | 0x1f) + 1 if (th & 0x1f) else th
+
+            surf = renpy.display.pgrender.surface((tw, th), True)
 
             di.surface = surf
             di.override_color = color
