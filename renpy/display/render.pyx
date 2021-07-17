@@ -914,14 +914,16 @@ cdef class Render:
             # Try to avoid clipping if a surface fits entirely inside the
             # rectangle.
 
-            if (reverse.xdx > 0.0 and
-                reverse.xdy == 0.0 and
-                reverse.ydx == 0.0 and
-                reverse.ydy > 0.0):
+            if (reverse is None) or (reverse.xdx > 0.0 and
+                                     reverse.xdy == 0.0 and
+                                     reverse.ydx == 0.0 and
+                                     reverse.ydy > 0.0):
 
-                tx, ty = self.forward.transform(x, y)
-                tw, th = self.forward.transform(w + x, h + y)
-                rw, rh = self.forward.transform(self.width, self.height)
+                forward = self.forward or IDENTITY
+
+                tx, ty = forward.transform(x, y)
+                tw, th = forward.transform(w + x, h + y)
+                rw, rh = forward.transform(self.width, self.height)
 
                 if (tx <= 0) and (tw >= rw):
                     rv.xclipping = False
