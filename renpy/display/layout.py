@@ -1182,8 +1182,14 @@ class Window(Container):
         style = self.style
 
         xminimum, yminimum = xyminimums(style, width, height)
-        xmaximum = width
-        ymaximum = height
+
+        xmaximum = self.style.xmaximum
+        ymaximum = self.style.ymaximum
+
+        if type(xmaximum) is float:
+            xmaximum *= width
+        if type(ymaximum) is float:
+            ymaximum *= height
 
         size_group = self.style.size_group
         if size_group and size_group in size_groups:
