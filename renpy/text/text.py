@@ -912,13 +912,13 @@ class Layout(object):
             if self.oversample < 1:
                 return n
 
-            return n * int(self.oversample)
+            return int(n * int(self.oversample))
 
         else:
             if n == 0:
                 return 0
 
-            rv = round(n * self.oversample)
+            rv = int(round(n * self.oversample))
 
             if n < 0 and rv > -1:
                 rv = -1
