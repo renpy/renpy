@@ -39,7 +39,8 @@ and invoke many other actions. A game-maker can also write new actions
 in Python.
 
 Screens are updated at the start of each interaction, and each time an
-interaction is restarted.
+interaction is restarted. Note that a ``with None`` statement does not
+cause an interaction to happen, and hence won't update a screen.
 
 A screen has a scope associated with it, giving values to some
 variables. When a variable is accessed by a screen, it's first looked
