@@ -2088,6 +2088,11 @@ class RollbackLog(renpy.object.Object):
 
         begin_stores()
 
+        if self.log:
+            self.current = self.log[-1]
+        else:
+            self.current = None
+
         # Restart the context or the top context.
         if replace_context:
 
