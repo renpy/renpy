@@ -156,7 +156,7 @@ transition to a variable::
 
 
 The time_warp argument taken by many transition classes can be given
-builtin warpers found in the ``renpy.atl.warpers`` dictionary,
+builtin warpers found in the ``_warper`` module,
 see :ref:`warpers <warpers>`.
 
 .. include:: inc/transition
