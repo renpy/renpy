@@ -24,6 +24,8 @@
 
 python early in _warper:
 
+    from renpy.atl import pause, instant
+
     # pause is defined internally, but would look like:
     #
     # @renpy.atl_warper

@@ -621,6 +621,9 @@ http://www.easings.net/.
 
 .. include:: inc/easings
 
+These warpers can be accessed in the ``_warper`` read-only module, which contains
+the functions listed above.
+
 New warpers can be defined using the ``renpy.atl_warper`` decorator, in a ``python
 early`` block. It should be placed in a file that is parsed before any file
 that uses the warper. This looks like::

@@ -155,6 +155,10 @@ transition to a variable::
          with annoytheuser
 
 
+The time_warp argument taken by many transition classes can be given
+builtin warpers found in the ``_warper`` module,
+see :ref:`warpers <warpers>`.
+
 .. include:: inc/transition
 
 Transition Families
