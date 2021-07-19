@@ -1108,8 +1108,15 @@ class SceneLists(renpy.object.Object):
                     isinstance(old, renpy.display.motion.Transform)):
 
                 thing = sle.displayable._change_transform_child(thing)
+                add_index = None
+
             else:
-                thing = self.transform_state(l[remove_index].displayable, thing)
+
+                if not self.hide_or_replace(layer, remove_index, "replaced"):
+                    if add_index > remove_index:
+                        add_index -= 1
+
+                thing = self.transform_state(old, thing)
 
             thing.set_transform_event("replace")
 
@@ -1120,24 +1127,21 @@ class SceneLists(renpy.object.Object):
 
             thing.set_transform_event("show")
 
-        sle = SceneListEntry(key, zorder, st, at, thing, name)
-        l.insert(add_index, sle)
-
-        if remove_index is not None:
-            if add_index <= remove_index:
-                remove_index += 1
-
-            self.hide_or_replace(layer, remove_index, "replaced")
+        if add_index is not None:
+            sle = SceneListEntry(key, zorder, st, at, thing, name)
+            l.insert(add_index, sle)
 
     def hide_or_replace(self, layer, index, prefix):
         """
         Hides or replaces the scene list entry at the given
         index. `prefix` is a prefix that is used if the entry
         decides it doesn't want to be hidden quite yet.
+
+        Returns True if the displayable is kept, False if it is removed.
         """
 
         if index is None:
-            return
+            return False
 
         l = self.layers[layer]
         oldsle = l[index]
@@ -1171,9 +1175,11 @@ class SceneLists(renpy.object.Object):
 
                 l[index] = sle
 
-                return
+                return True
 
         l.pop(index)
+
+        return False
 
     def get_all_displayables(self, current=False):
         """

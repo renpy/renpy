@@ -345,6 +345,10 @@ class ATLTransformBase(renpy.object.Object):
             compile_queue.append(self)
 
     def _handles_event(self, event):
+
+        if (event == "replaced") and (self.atl_state is None):
+            return True
+
         if (self.block is not None) and (self.block._handles_event(event)):
             return True
 
