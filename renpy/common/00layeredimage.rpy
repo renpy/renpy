@@ -1,4 +1,4 @@
-﻿init offset = -100
+init offset = -100
 
 python early in layeredimage:
 
@@ -1162,8 +1162,131 @@ python early in layeredimage:
         def _list_attributes(self, tag, attributes):
             return self.filter_attributes(self.image._list_attributes(tag, attributes))
 
+    class DynamicLayeredImageProxy(renpy.display.image.DynamicImage, LayeredImageProxy):
+        _litarget = None # will store the layeredimage or normal displayable
+        _duplicate_args = None
+
+        def __init__(self, name, transform=None, **properties):
+            renpy.display.image.DynamicImage.__init__(self, name, **properties)
+            if transform is None:
+                self.transform = [ ]
+            elif isinstance(transform, list):
+                self.transform = transform
+            else:
+                self.transform = [ transform ]
+
+        def find_target(self, scope=None, update=True):
+            '''
+            Heavy code duplication.
+            Almost the same as DynamicImage's, but allows layeredimages.
+            '''
+            if self.locked and (self.target is not None):
+                return
+
+            if self._args.prefix is None:
+                if self._duplicatable:
+                    prefix = self.style.prefix
+                else:
+                    prefix = ""
+            else:
+                prefix = self._args.prefix
+
+            search = [ ]
+            try:
+                target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix, search=search, allow_layim=renpy.display.image.get_registered_image)
+            except:
+                target = None
+            if not isinstance(target, LayeredImage):
+                try:
+                    target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix, search=search)
+                except KeyError as ke:
+                    raise Exception("In DynamicImage %r: Could not find substitution '%s'." % (self.name, str(ke.args[0])))
+                except Exception as e:
+                    raise Exception("In DynamicImage %r: %r" % (self.name, e))
+
+            if target is None:
+                error = "DynamicImage %r: could not find image." % (self.name,)
+
+                if len(search) == 1:
+                    error += " (%r)" % (search[0],)
+                elif len(search) == 2:
+                    error += " (%r, %r)" % (search[0], search[1])
+                elif len(search) > 2:
+                    error += " (%r, %r, and %d more.)" % (search[0], search[1], len(search) - 2)
+
+                raise Exception(error)
+
+            if self.raw_target == target:
+                return False
+
+            if not update:
+                return True
+
+            self.raw_target = target
+            old_target = self.target
+
+            if getattr(target, "_duplicatable", False) and not isinstance(target, LayeredImage):
+                target = target._duplicate(self._args)
+
+            self.target = target
+
+            renpy.display.render.redraw(self, 0)
+
+            if not old_target:
+                return True
+
+            if not isinstance(old_target, renpy.display.motion.Transform):
+                return True
+
+            if not isinstance(target, (renpy.display.motion.Transform, LayeredImage)):
+                self.target = target = renpy.display.motion.Transform(child=target)
+
+            self.target.take_state(old_target)
+
+            return True
+
+        @property
+        def image(self):
+            if self._litarget is None:
+                self.find_target()
+            return self._litarget
+
+        @property
+        def target(self):
+            if isinstance(self._litarget, LayeredImage):
+                return LayeredImageProxy._duplicate(self, self._duplicate_args)
+            return self._litarget
+        @target.setter
+        def target(self, value):
+            self._litarget = value
+
+        def _duplicate(self, args):
+            self._duplicate_args = args
+
+            if self.target is None:
+                self.find_target()
+
+            return renpy.display.image.DynamicImage._duplicate(self, args)
+
+        def __hash__(self):
+            if self.transform is not None:
+                return NotImplemented
+            return super(DynamicLayeredImageProxy, self).__hash__()
+
+        def __eq__(self, other):
+            if super(DynamicLayeredImageProxy, self).__eq__(other):
+                if hasattr(other, "transform"):
+                    if self.transform == other.transform:
+                        return True
+            return False
+
+        def __unicode__(self):
+            return super(DynamicLayeredImageProxy, self).__unicode__().replace("DynamicImage", "DynamicLayeredImageProxy")
+
     renpy.store.Attribute = Attribute
     renpy.store.LayeredImage = LayeredImage
     renpy.store.LayeredImageProxy = LayeredImageProxy
+    renpy.store.DynamicLayeredImageProxy = DynamicLayeredImageProxy
+    # renpy.store.DynamicImage = DynamicLayeredImageProxy
     renpy.store.Condition = Condition
     renpy.store.ConditionGroup = ConditionGroup
