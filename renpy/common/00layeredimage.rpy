@@ -260,7 +260,7 @@ python early in layeredimage:
             self.image = None
             self.properties = OrderedDict()
 
-        def execute(self, group=None, group_properties=None):
+        def execute(self, group=None, group_properties={}):
 
 
             if self.image:
