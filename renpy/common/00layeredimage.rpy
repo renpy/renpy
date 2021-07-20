@@ -216,7 +216,7 @@ python early in layeredimage:
         def __init__(self, group, attribute, image=None, default=False, group_args={}, **kwargs):
 
             prefix = kwargs.pop("prefix", group_args.pop("prefix", None))
-            variant = kwargs.pop("variant", group_args.pop("prefix", None))
+            variant = kwargs.pop("variant", group_args.pop("variant", None))
 
             super(Attribute, self).__init__(group_args=group_args, **kwargs)
 
@@ -260,8 +260,11 @@ python early in layeredimage:
             self.image = None
             self.properties = OrderedDict()
 
-        def execute(self, group=None, group_properties={}):
-
+        def execute(self, group=None, group_properties=None):
+            if group_properties is None:
+                group_properties = dict()
+            else:
+                group_properties = dict(group_properties)
 
             if self.image:
                 image = eval(self.image)
