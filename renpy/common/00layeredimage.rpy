@@ -261,7 +261,9 @@ python early in layeredimage:
             self.image = None
             self.properties = OrderedDict()
 
-        def execute(self, group=None, group_properties={}):
+        def execute(self, group=None, group_properties=None):
+            if group_properties is None:
+                group_properties = {}
 
             if self.image:
                 image = eval(self.image)
