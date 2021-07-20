@@ -6,6 +6,7 @@ python early in layeredimage:
     from collections import OrderedDict
 
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
+    ATL_PROPERTIES_SET = set(ATL_PROPERTIES)
 
     # The properties for attribute layers.
     LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + ATL_PROPERTIES
@@ -262,15 +263,16 @@ python early in layeredimage:
 
         def execute(self, group=None, group_properties={}):
 
-
             if self.image:
                 image = eval(self.image)
             else:
                 image = None
 
-            properties = { k : eval(v) for k, v in self.properties.items() }
+            properties = { k : v for k, v in group_properties.items() if k not in ATL_PROPERTIES_SET }
+            group_args = { k : v for k, v in group_properties.items() if k in ATL_PROPERTIES_SET }
+            properties.update({ k : eval(v) for k, v in self.properties.items() })
 
-            return [ Attribute(group, self.name, image, group_args=group_properties, **properties) ]
+            return [ Attribute(group, self.name, image, group_args=group_args, **properties) ]
 
 
     class RawAttributeGroup(object):
@@ -595,7 +597,7 @@ python early in layeredimage:
             kwargs.setdefault("xfit", True)
             kwargs.setdefault("yfit", True)
 
-            self.transform_args = {k : kwargs.pop(k) for k, v in kwargs.items() if k not in (renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names)}
+            self.transform_args = {k : kwargs.pop(k) for k, v in list(kwargs.items()) if k not in (renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names)}
             self.fixed_args = kwargs
 
         def format(self, what, attribute=None, group=None, variant=None, image=None):
