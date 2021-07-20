@@ -216,8 +216,8 @@ python early in layeredimage:
 
         def __init__(self, group, attribute, image=None, default=False, group_args={}, **kwargs):
 
-            prefix = kwargs.pop("prefix", group_args.pop("prefix", None))
-            variant = kwargs.pop("variant", group_args.pop("prefix", None))
+            prefix = kwargs.pop("prefix", None)
+            variant = kwargs.pop("variant", None)
 
             super(Attribute, self).__init__(group_args=group_args, **kwargs)
 
