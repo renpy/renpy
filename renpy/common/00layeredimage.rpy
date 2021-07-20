@@ -1196,7 +1196,7 @@ python early in layeredimage:
                 target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix, search=search, allow_layim=renpy.display.image.get_registered_image)
             except:
                 target = None
-            if not isinstance(target, LayeredImage):
+            if not isinstance(target, (LayeredImage, LayeredImageProxy)):
                 try:
                     target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix, search=search)
                 except KeyError as ke:
@@ -1225,7 +1225,7 @@ python early in layeredimage:
             self.raw_target = target
             old_target = self.target
 
-            if getattr(target, "_duplicatable", False) and not isinstance(target, LayeredImage):
+            if getattr(target, "_duplicatable", False) and not isinstance(target, (LayeredImage, LayeredImageProxy)):
                 target = target._duplicate(self._args)
 
             self.target = target
@@ -1238,7 +1238,7 @@ python early in layeredimage:
             if not isinstance(old_target, renpy.display.motion.Transform):
                 return True
 
-            if not isinstance(target, (renpy.display.motion.Transform, LayeredImage)):
+            if not isinstance(target, (renpy.display.motion.Transform, LayeredImage, LayeredImageProxy)):
                 self.target = target = renpy.display.motion.Transform(child=target)
 
             self.target.take_state(old_target)
@@ -1253,7 +1253,7 @@ python early in layeredimage:
 
         @property
         def target(self):
-            if isinstance(self._litarget, LayeredImage):
+            if isinstance(self._litarget, (LayeredImage, LayeredImageProxy)):
                 return LayeredImageProxy._duplicate(self, self._duplicate_args)
             return self._litarget
         @target.setter
@@ -1266,7 +1266,15 @@ python early in layeredimage:
             if self.target is None:
                 self.find_target()
 
-            return renpy.display.image.DynamicImage._duplicate(self, args)
+            if args and args.args and not isinstance(self._litarget, (LayeredImage, LayeredImageProxy)):
+                args.extraneous()
+
+            rv = self._copy(args)
+            rv.target = None
+            rv.raw_target = None
+            for i in self.transform:
+                rv = i(rv)
+            return rv
 
         def __hash__(self):
             if self.transform is not None:
