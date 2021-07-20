@@ -83,7 +83,7 @@ init -1600 python:
         input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v' ],
         input_jump_word_left = [ 'osctrl_K_LEFT' ],
         input_jump_word_right = [ 'osctrl_K_RIGHT' ],
-        input_delete_word = [ 'ctrl_K_BACKSPACE', 'alt_K_BACKSPACE' ],
+        input_delete_word = [ 'osctrl_K_BACKSPACE' ],
         input_delete_full = [ 'meta_K_BACKSPACE' ],
 
         # Viewport.
