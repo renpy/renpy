@@ -24,6 +24,12 @@ adjust audio filenames on play, on the web and on other platforms.
 Self-voicing, with the 'v' key, now works on the web platform if the
 browser supports it.
 
+Support for Ren'Py is limited on webkit-based browsers, due to
+https://bugs.webkit.org/show_bug.cgi?id=227421 . This seems to affect
+Safari on macOS, especially the M1, as well all web browsers on iOS. As there
+is no way to fix this issue in Ren'Py, the web shell has been modified to
+report the issue.
+
 iOS
 ---
 
