@@ -2205,7 +2205,7 @@ class Interface(object):
 
         s = "Total time until interface ready: {}s".format(time.time() - import_time)
 
-        renpy.display.log.write(s)
+        pygame.event.get()
 
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
