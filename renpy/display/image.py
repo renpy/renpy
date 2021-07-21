@@ -657,12 +657,13 @@ class DynamicImage(renpy.display.core.Displayable):
         if not update:
             return True
 
-        self.raw_target = target
+        raw_target = target
         old_target = self.target
 
         if target._duplicatable:
             target = target._duplicate(self._args)
 
+        self.raw_target = raw_target
         self.target = target
 
         renpy.display.render.redraw(self, 0)
