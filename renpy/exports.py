@@ -4193,3 +4193,21 @@ def get_mouse_name(interaction=False):
         return 'default'
 
     return renpy.display.interface.get_mouse_name(interaction=interaction)
+
+
+def set_focus(screen, id, layer="screens"): # @ReservedAssignment
+    """
+    :doc: screens
+
+    This attempts to focus the displayable with `id` in the screen `screen`.
+    Focusing will fail if the displayable isn't found, the window isn't
+    focused, or something else is grabbing focus.
+
+    The focus may change if the mouse moves, even slightly, after this call
+    is processed.
+    """
+
+    renpy.display.focus.override = (screen, id, layer)
+    renpy.display.interface.last_event = None
+    restart_interaction()
+

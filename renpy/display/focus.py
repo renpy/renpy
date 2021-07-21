@@ -86,7 +86,8 @@ pending_focus_type = "mouse"
 # The current tooltip and tooltip screen.
 tooltip = None
 
-# Sets the currently focused widget.
+# Overrides the currently focused displayable.
+override = None
 
 
 def set_focused(widget, arg, screen):
@@ -226,6 +227,7 @@ def before_interact(roots):
     displayables.
     """
 
+    global override
     global new_grab
     global grab
 
@@ -272,6 +274,13 @@ def before_interact(roots):
     # it becomes the new current widget.
 
     current = get_focused()
+
+    if override is not None:
+        d = renpy.exports.get_displayable(*override)
+
+        if d is not None:
+            current = d
+
     current = replaced_by.get(id(current), current)
 
     # Update the grab.
