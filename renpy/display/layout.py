@@ -1397,19 +1397,20 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         self.last_st = st
         self.last_at = at
 
-        child, redraw = self.function(st, at, *self.args, **self.kwargs)
-        child = renpy.easy.displayable(child)
+        raw_child, redraw = self.function(st, at, *self.args, **self.kwargs)
+        raw_child = renpy.easy.displayable(raw_child)
 
-        if child != self.raw_child:
+        if raw_child != self.raw_child:
 
-            self.raw_child = child
-
-            if child._duplicatable:
-                child = child._duplicate(self._args)
+            if raw_child._duplicatable:
+                child = raw_child._duplicate(self._args)
                 child._unique()
+            else:
+                child = raw_child
 
             child.visit_all(lambda c : c.per_interact())
 
+            self.raw_child = raw_child
             self.child = child
 
         if redraw is not None:
