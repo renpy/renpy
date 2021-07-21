@@ -1281,7 +1281,7 @@ def current_screen():
 def get_displayable(screen, id, layer=None): # @ReservedAssignment
     """
     :doc: screens
-    :name:
+    :name: renpy.get_displayable
 
     From the `screen` on `layer`, returns the displayable with
     `id`. Returns None if the screen doesn't exist, or there is no

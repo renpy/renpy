@@ -56,6 +56,10 @@ controlled by the :var:`config.caret_blink` variable.
 Other
 -----
 
+The new :func:`renpy.set_focus` function makes it possible to set
+the focused displayable, though mouse motions might immediately
+change the focus.
+
 In layered images, transform properties given to attributes now take
 precedence to those given in groups. Previously, it was possible for
 the attributes to conflict, such as when :tpref:`align` was given to the group
