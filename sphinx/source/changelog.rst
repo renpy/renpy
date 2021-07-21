@@ -2,6 +2,99 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
+.. _renpy-7.4.7:
+
+Web and Web Audio
+-----------------
+
+The way that the web platform plays audio has been rewritten. Instead of
+using ffmpeg as Ren'Py does on other platform, the web version of Ren'Py
+will hand sound files off to the browser's builtin audio player. This
+is often multithreaded, and so prevents the skipping and crackling that
+had been occurring with the web port.
+
+The file formats that are supported on the web platform are now the
+formats supported in browsers. This is Opus, Ogg, and MP3 in modern
+web browsers, and just MP3 in Safari. (But see the Safari issues
+below.)
+
+The new :var:`config.audio_filename_callback` makes it possible to
+adjust audio filenames on play, on the web and on other platforms.
+
+Self-voicing, with the 'v' key, now works on the web platform if the
+browser supports it.
+
+iOS
+---
+
+The iOS build is now compiled with a more modern version of Clang, allowing
+it to run on the 12th generation iPhone and 2nd generation iPhone SE without
+the pillarboxing (or worse, both pillarboxing and letterboxing) that
+would otherwise be required.
+
+Ren'Py can compile for the iOS simulator on M1 macs, but the simulator itself
+may cause runtime issues.
+
+Input
+-----
+
+The input displayable now supports a number of new quality of life
+features. Specifically, the following new features now work:
+
+* Jumping a word to the left. (Ctrl-Left, Alt-Left on Macintosh.)
+* Jumping a word to the right. (Ctrl-Right, Alt-Right on Macintosh.)
+* Deleting a word. (Ctrl-Backspace, Alt-Backspace on Macintosh.)
+* Deleting the line. (Windows-Backspace, Command-Backspace on Macintosh.)
+
+In addition, Windows-Left and Windows-Right (Command-Left and Command-Right on
+Macintosh) now navigate to the stand and end of the line, in addition to the
+usual Home and End keys.
+
+The input caret now blinks to draw attention. The blink rate is
+controlled by the :var:`config.caret_blink` variable.
+
+Other
+-----
+
+In layered images, transform properties given to attributes now take
+precedence to those given in groups. Previously, it was possible for
+the attributes to conflict, such as when :tpref:`align` was given to the group
+and :tpref:`xalign` was given to the attribute.
+
+It is now possible to roll back past variables set in the console.
+
+The new :func:`mark_label_seen` and :func:`mark_label_unseen` make it
+possible to manipulate the set of seen labels.
+
+The new :func:`mark_audio_seen` and :func:`mark_audio_unseen` make it
+possible to manipulate the set of seen audio files.
+
+The new :func:`mark_image_seen` and :func:`mark_image_unseen` make it
+possible to manipulate the set of seen images.
+
+ATL transforms in screens now start when first shown, rather than when the
+screen containing the transform is first shown.
+
+The new :var:`config.autosave_on_input` variabel controls if autosaving
+occurs on input.
+
+Ren'Py will now report an error when a positional argument follows a
+keyword argument.
+
+It is now possible to use floating point numbers for :propref:`xsize` and
+:propref:`ysize`, and have the result be correct. Previously, the floating
+point numbers would be applied twice, so a :func:`xsize` of .5 would
+represent 1/4 of the available width, rather than the correct 1/2 as it
+does now.
+
+The :func:`persistent._clear` method, which clears persistent data, is now
+documented.
+
+The Spanish translation has been updated.
+
+Atom has been updated.
+
+
 .. _renpy-7.4.6:
 
 7.4.6

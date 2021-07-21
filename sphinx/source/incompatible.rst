@@ -12,11 +12,39 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+.. _incompatible-7.4.7:
+
+7.4.7
+-----
+
+When :propref:`xminimum` and :propref:`xmaximum` are both floats, the
+minimum is interpreted as being a fraction of the available area. This
+means that :propref:`xsize` will have the expected result when being
+given a float. This may cause some displayables to change size. To revert
+this change::
+
+    define config.adjust_minimums = False
+
+An ATL displayable in a screen will now start its animation when it first
+appears, rather than when the screen itself is shown. To revert this change::
+
+    define config.atl_start_on_show = False
+
+Input carets now blink by default. To change this::
+
+    define config.input_caret_blink = False
+
+
+.. _incompatible-7.4.6:
+
 7.4.6
 -----
 
 The change regarding the layer at list in 7.4.5 was reverted. The new ``camera``
 statement defaults to the new semantics, while leaving ``show layer`` alone.
+
+.. _incompatible-7.4.5:
+
 
 7.4.5
 ------

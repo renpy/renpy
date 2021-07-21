@@ -438,7 +438,7 @@ Model Displayable
 The Model displayable acts as a factory to created models for use with the
 model-based renderer.
 
-.. include:: model_displayable
+.. include:: inc/model_displayable
 
 Model Displayable Examples
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
