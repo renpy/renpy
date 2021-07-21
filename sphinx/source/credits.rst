@@ -130,7 +130,7 @@ the omission in future versions.
 * Maxwell Paul Brickner
 * Meithal
 * Merumelu
-* Midgetthetree
+* Midgethetree
 * mikey (ATP Projects)
 * Morgan Willcock
 * Moshibit
