@@ -63,8 +63,8 @@ from renpy.display.behavior import is_selected, is_sensitive
 
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen
-from renpy.display.screen import has_screen, get_screen, get_widget, ScreenProfile as profile_screen
-from renpy.display.screen import get_widget_properties
+from renpy.display.screen import has_screen, get_screen, get_displayable, get_widget, ScreenProfile as profile_screen
+from renpy.display.screen import get_displayable_properties, get_widget_properties
 
 from renpy.display.focus import focus_coordinates
 from renpy.display.predict import screen as predict_screen

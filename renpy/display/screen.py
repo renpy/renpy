@@ -1278,11 +1278,12 @@ def current_screen():
     return _current_screen
 
 
-def get_widget(screen, id, layer=None): # @ReservedAssignment
+def get_displayable(screen, id, layer=None): # @ReservedAssignment
     """
     :doc: screens
+    :name:
 
-    From the `screen` on `layer`, returns the widget with
+    From the `screen` on `layer`, returns the displayable with
     `id`. Returns None if the screen doesn't exist, or there is no
     widget with that id on the screen.
     """
@@ -1308,11 +1309,15 @@ def get_widget(screen, id, layer=None): # @ReservedAssignment
     return rv
 
 
-def get_widget_properties(id, screen=None, layer=None): # @ReservedAssignment
+get_widget = get_displayable
+
+
+def get_displayable_properties(id, screen=None, layer=None): # @ReservedAssignment
     """
     :doc: screens
+    :name: renpy.get_displayable_properties
 
-    Returns the properties for the widget with `id` in the `screen`
+    Returns the properties for the displayable with `id` in the `screen`
     on `layer`. If `screen` is None, returns the properties for the
     current screen. This can be used from Python or property code inside
     a screen.
@@ -1338,6 +1343,9 @@ def get_widget_properties(id, screen=None, layer=None): # @ReservedAssignment
         rv = { }
 
     return rv
+
+
+get_widget_properties = get_displayable_properties
 
 
 def before_restart():
