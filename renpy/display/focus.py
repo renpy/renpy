@@ -267,6 +267,9 @@ def before_interact(roots):
 
     fwn = fwn2
 
+    # Is this a default change?
+    default = True
+
     # We assume id(None) is not in replaced_by.
     replaced_by.pop(None, None)
 
@@ -274,17 +277,19 @@ def before_interact(roots):
     # it becomes the new current widget.
 
     current = get_focused()
-
-    if override is not None:
-        d = renpy.exports.get_displayable(*override)
-
-        if d is not None:
-            current = d
-
     current = replaced_by.get(id(current), current)
 
     # Update the grab.
     grab = replaced_by.get(id(grab), None)
+
+    if override is not None:
+        d = renpy.exports.get_displayable(*override)
+
+        if (d is not None) and (current is not d) and not grab:
+            current = d
+            default = False
+
+    override = None
 
     if current is not None:
         current_name = current.full_focus_name
@@ -327,14 +332,14 @@ def before_interact(roots):
         if f is not current:
             renpy.display.screen.push_current_screen(screen)
             try:
-                f.unfocus(default=True)
+                f.unfocus(default=default)
             finally:
                 renpy.display.screen.pop_current_screen()
 
     if current:
         renpy.display.screen.push_current_screen(screen_of_focused)
         try:
-            current.focus(default=True)
+            current.focus(default=default)
         finally:
             renpy.display.screen.pop_current_screen()
 
