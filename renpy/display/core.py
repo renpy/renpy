@@ -1102,19 +1102,18 @@ class SceneLists(renpy.object.Object):
             if keep_st:
                 st = sle.show_time
 
+            if not self.hide_or_replace(layer, remove_index, "replaced"):
+                if add_index > remove_index:
+                    add_index -= 1
+
             if (not atl and
                     not at_list and
                     renpy.config.keep_running_transform and
                     isinstance(old, renpy.display.motion.Transform)):
 
                 thing = sle.displayable._change_transform_child(thing)
-                add_index = None
 
             else:
-
-                if not self.hide_or_replace(layer, remove_index, "replaced"):
-                    if add_index > remove_index:
-                        add_index -= 1
 
                 thing = self.transform_state(old, thing)
 
