@@ -58,7 +58,7 @@ expected to be forward or backwards compatible.
        # A displayable used for the background of windows
        # containing commands, preferences, and navigation info.
        custom_window = Frame(Fixed(Solid(custom_reverse_idle, xsize=4, xalign=0), Solid(custom_info_window, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
-       
+
 3. Modify skin.rpy to skin the launcher. Place the image files you use
    into the launcher's game directory. Recommended size for background 
    800x600 pixels. 
