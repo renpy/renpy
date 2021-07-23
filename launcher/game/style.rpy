@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -164,7 +164,7 @@ init -1 python:
         # containing commands, preferences, and navigation info.
         WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
-    elif persistent.theme == 'custom':
+    elif renpy.exists("skin.rpy") and persistent.theme == 'custom':
 
         # The color of non-interactive text.
         TEXT = custom_text
@@ -206,7 +206,7 @@ init -1 python:
 
         # A displayable used for the background of windows
         # containing commands, preferences, and navigation info.
-        WINDOW = custom_window 
+        WINDOW = custom_window
 
 
 
