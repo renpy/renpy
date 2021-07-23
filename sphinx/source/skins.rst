@@ -17,7 +17,7 @@ expected to be forward or backwards compatible.
 
 3. Copy the following into skin.rpy::
 
-    init -2 python:
+   init -2 python:
        # The color of non-interactive text.
        custom_text = "#545454"
 
