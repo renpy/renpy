@@ -46,10 +46,6 @@ with this::
        # A displayable used for the background of everything.
        custom_background = "images/background.png"
 
-       # A displayable used for the background of windows
-       # containing commands, preferences, and navigation info.
-       custom_window = "#ffffff80" # Frame("window.png", 0, 0, tile=True)
-
        # A displayable used for the background of the projects list.
        custom_projects_window = Null()
 
