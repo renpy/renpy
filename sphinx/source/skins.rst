@@ -17,7 +17,7 @@ expected to be forward or backwards compatible.
 
 3. Copy the following into skin.rpy::
 
-   init -2 python:
+    init python:
        # The color of non-interactive text.
        custom_text = "#545454"
 
@@ -59,11 +59,11 @@ expected to be forward or backwards compatible.
        # containing commands, preferences, and navigation info.
        custom_window = Frame(Fixed(Solid(custom_reverse_idle, xsize=4, xalign=0), Solid(custom_info_window, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
-3. Modify skin.rpy to skin the launcher. Place the image files you use
+4. Modify skin.rpy to skin the launcher. Place the image files you use
    into the launcher's game directory. Recommended size for background 
    800x600 pixels. 
    
-4. Select Custom theme in preferences.
+5. Select Custom theme in preferences.
 
 An incorrect skin.rpy file could prevent the launcher from
 starting. To fix it, you'll need to remove skin.rpy and skin.rpyc from the launcher's game directory, start the launcher, and then put them back.
