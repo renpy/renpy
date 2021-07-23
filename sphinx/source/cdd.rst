@@ -173,7 +173,10 @@ class, we'll present them with the `self` parameter.
         The event method is called to pass a pygame event to
         the creator-defined displayable. If the event method returns
         a value other than None, that value is returned as the result
-        of the interaction.
+        of the interaction. If the event method returns None, the event
+        is passed on to other displayables.
+
+        To ignore the event without returning None, raise :class:`renpy.IgnoreEvent`.
 
         The event method exists on other displayables, allowing the
         creator-defined displayable to pass on the event.
@@ -325,10 +328,8 @@ the implicit `self` parameter.
 
 
 
-Utility Functions
-=================
-
-These function manage the rendering process.
+Utility Functions and Classes
+=============================
 
 .. include:: inc/udd_utility
 
@@ -336,3 +337,11 @@ These function manage the rendering process.
 
     Causes the displayable `d` to be redrawn after `when` seconds have
     elapsed.
+
+.. class:: renpy.IgnoreEvent
+
+    This is an exception that, if raised, causes Ren'Py to ignore the
+    event. To raise this inside the event method, write::
+
+        raise renpy.IgnoreEvent()
+
