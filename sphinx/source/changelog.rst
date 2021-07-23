@@ -52,12 +52,11 @@ features. Specifically, the following new features now work:
 * Deleting a word. (Ctrl-Backspace, Alt-Backspace on Macintosh.)
 * Deleting the line. (Windows-Backspace, Command-Backspace on Macintosh.)
 
-In addition, Windows-Left and Windows-Right (Command-Left and Command-Right on
-Macintosh) now navigate to the stand and end of the line, in addition to the
-usual Home and End keys.
+In addition, Command-Left and Command-Right on Macintosh now navigate to
+the start and end of the line, in addition to the usual Home and End keys.
 
 The input caret now blinks to draw attention. The blink rate is
-controlled by the :var:`config.caret_blink` variable.
+controlled by the :var:`config.input_caret_blink` variable.
 
 Other
 -----
