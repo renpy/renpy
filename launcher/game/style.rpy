@@ -206,7 +206,7 @@ init -1 python:
 
         # A displayable used for the background of windows
         # containing commands, preferences, and navigation info.
-        WINDOW = Frame(Fixed(Solid(REVERSE_IDLE, xsize=4, xalign=0), Solid(INFO_WINDOW, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
+        WINDOW = custom_window 
 
 
 
