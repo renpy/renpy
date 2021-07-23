@@ -21,10 +21,6 @@
     # A displayable used for the background of everything.
     custom_background = "images/background.png"
 
-    # A displayable used for the background of windows
-    # containing commands, preferences, and navigation info.
-    custom_window = "#ffffff80" # Frame("window.png", 0, 0, tile=True)
-
     # A displayable used for the background of the projects list.
     custom_projects_window = Null()
 
@@ -39,3 +35,8 @@
 
     # The color of input text.
     custom_imput_color = "#d86b45"
+    
+    # A displayable used for the background of windows
+    # containing commands, preferences, and navigation info.
+    custom_window = Frame(Fixed(Solid(custom_reverse_idle, xsize=4, xalign=0), Solid(custom_info_window, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
+
