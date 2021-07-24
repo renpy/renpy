@@ -61,6 +61,9 @@ controlled by the :var:`config.input_caret_blink` variable.
 Other
 -----
 
+The :func:`Preferences` function can now return actions that allow
+access to the renderer and accessibility menus.
+
 The new :func:`renpy.set_focus` function makes it possible to set
 the focused displayable, though mouse motions might immediately
 change the focus.

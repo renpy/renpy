@@ -228,6 +228,13 @@ init -1500 python:
          For "text speed", it defaults to 200 cps. For "auto-forward time", it
          defaults to 30.0 seconds per chunk of text. (These are maximums, not
          defaults.)
+
+         Actions that can be used with buttons are:
+
+         * Preference("renderer menu") - Show the renderer menu.
+         * Preference("accessibility menu") - Show the accessibility menu.
+
+         These screens are intended for internal use, and are not customizable.
          """
 
         name = name.lower()
@@ -470,6 +477,11 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "system_cursor")
 
+            elif name == _("renderer menu"):
+                return renpy.curried_call_in_new_context("_choose_renderer")
+
+            elif name == _("accessibility menu"):
+                return ToggleScreen("_accessibility")
 
 
             mixer_names = {
