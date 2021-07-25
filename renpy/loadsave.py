@@ -414,7 +414,9 @@ def save(slotname, extra_info='', mutate_flag=False):
         if bad is None:
             reraise(t, e, tb)
 
-        e.args = (e.args[0] + ' (perhaps {})'.format(bad),) + e.args[1:]
+        if len(e.args) > 1:
+            e.args = (e.args[0] + ' (perhaps {})'.format(bad),) + e.args[1:]
+
         reraise(t, e, tb)
 
     if mutate_flag and renpy.python.mutate_flag:
