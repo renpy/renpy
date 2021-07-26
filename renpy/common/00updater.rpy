@@ -95,7 +95,7 @@ init -1500 python in updater:
         try:
             log = file(DEFERRED_UPDATE_LOG, "ab")
         except:
-            log = io.StringIO()
+            log = io.BytesIO()
 
         with log:
             with open(DEFERRED_UPDATE_FILE, "rb") as f:
