@@ -183,7 +183,7 @@ Ren'Py supports only the following variable types:
 
 Uniform variables should begin with u\_, attributes with a\_, and varying
 variables with v\_. Names starting with u_renpy\_, a_renpy, and v_renpy
-are reserved, as as the standard variables given below.
+are reserved, as are the standard variables given below.
 
 As a general sketch for priority levels, priority 100 sets up geometry,
 priority 200 determines the initial fragment color (gl_FragColor), and
@@ -328,7 +328,7 @@ The following uniforms are made available to all Models.
     level and scale it down.
 
 ``mat4 u_transform``
-    The transform used project virtual pixels to the OpenGL viewport.
+    The transform used to project virtual pixels to the OpenGL viewport.
 
 ``float u_time``
     The time of the frame. The epoch is undefined, so it's best to treat
@@ -409,7 +409,6 @@ function.
     rendering for this displayable and the children of this displayable.
 
 ``gl_mipmap``
-
     If supplied, this determines if the textures supplied to a mesh are
     created with mipmaps. This defaults to true.
 
@@ -420,7 +419,6 @@ function.
     to ensure that the text remains sharp.
 
 ``gl_texture_wrap``
-
     When supplied, this determines how the textures applied to a mesh
     are wrapped. This expects a 2-component tuple, where the first
     component is used to set GL_TEXTURE_WRAP_S and the second component

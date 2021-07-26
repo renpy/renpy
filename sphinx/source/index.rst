@@ -120,7 +120,7 @@ Python and Ren'Py
    gui_advanced
    screen_python
    modes
-   udd
+   cdd
    cds
    custom_text_tags
    character_callbacks

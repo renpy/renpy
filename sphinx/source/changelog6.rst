@@ -1,4 +1,4 @@
-.. _changelog-6
+.. _changelog-6:
 
 ==============================
 Changelog (Ren'Py 6.11 - 6.99)
