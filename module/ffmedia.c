@@ -998,6 +998,12 @@ int media_video_ready(struct MediaState *ms) {
 		goto done;
 	}
 
+	if (ms->pause_time > 0) {
+	    goto done;
+	}
+
+	double offset_time = current_time - ms->time_offset;
+
 	/*
 	 * If we have an obsolete frame, drop it.
 	 */
@@ -1027,7 +1033,7 @@ int media_video_ready(struct MediaState *ms) {
 
 	if (ms->surface_queue) {
 		if (ms->video_pts_offset) {
-			if (ms->surface_queue->pts + ms->video_pts_offset <= current_time + frame_early_delivery) {
+			if (ms->surface_queue->pts + ms->video_pts_offset <= offset_time + frame_early_delivery) {
 				rv = 1;
 			}
 		} else {
@@ -1058,6 +1064,8 @@ SDL_Surface *media_read_video(MediaState *ms) {
 		return NULL;
 	}
 
+	double offset_time = current_time - ms->time_offset;
+
 	SDL_LockMutex(ms->lock);
 
 #ifndef __EMSCRIPTEN__
@@ -1066,15 +1074,19 @@ SDL_Surface *media_read_video(MediaState *ms) {
 	}
 #endif
 
+	if (ms->pause_time > 0) {
+	    goto done;
+	}
+
 	if (!ms->surface_queue_size) {
 		goto done;
 	}
 
 	if (ms->video_pts_offset == 0.0) {
-		ms->video_pts_offset = current_time - ms->surface_queue->pts;
+		ms->video_pts_offset = offset_time - ms->surface_queue->pts;
 	}
 
-	if (ms->surface_queue->pts + ms->video_pts_offset <= current_time + frame_early_delivery) {
+	if (ms->surface_queue->pts + ms->video_pts_offset <= offset_time + frame_early_delivery) {
 		sqe = dequeue_surface(&ms->surface_queue);
 		ms->surface_queue_size -= 1;
 
@@ -1085,7 +1097,7 @@ done:
     /* Only signal if we've consumed something. */
 	if (sqe) {
 		ms->needs_decode = 1;
-		ms->video_read_time = current_time;
+		ms->video_read_time = offset_time;
 		SDL_CondBroadcast(ms->cond);
 	}
 
@@ -1586,7 +1598,7 @@ void media_pause(MediaState *ms, int pause) {
     if (pause && (ms->pause_time == 0)) {
         ms->pause_time = current_time;
     } else if ((!pause) && (ms->pause_time > 0)) {
-        ms->time_offset = current_time - ms->pause_time;
+        ms->time_offset += current_time - ms->pause_time;
         ms->pause_time = 0;
     }
 }
