@@ -1171,6 +1171,9 @@ atl_start_on_show = True
 # Should the default input caret blink ?
 input_caret_blink = 1.
 
+# The channel movies with play defined play on.
+single_movie_channel = None
+
 del os
 del collections
 
