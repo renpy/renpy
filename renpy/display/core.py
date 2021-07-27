@@ -2202,12 +2202,7 @@ class Interface(object):
         if not self.safe_mode:
             renpy.display.controller.init()
 
-        s = "Total time until interface ready: {}s".format(time.time() - import_time)
-
-        pygame.event.get()
-
-        if renpy.android and not renpy.config.log_to_stdout:
-            print(s)
+        pygame.event.get([ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ])
 
         # Create a cache of the the mouse information.
         if renpy.config.mouse:
@@ -2229,6 +2224,11 @@ class Interface(object):
                     l.append(cursors[i])
 
                 self.cursor_cache[key] = l
+
+        s = "Total time until interface ready: {}s".format(time.time() - import_time)
+
+        if renpy.android and not renpy.config.log_to_stdout:
+            print(s)
 
     def post_init(self):
         """
