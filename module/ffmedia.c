@@ -258,6 +258,13 @@ typedef struct MediaState {
 	/* Are frame drops allowed? */
 	int frame_drops;
 
+	/* The time the pause happened, or 0 if we're not paused. */
+	double pause_time;
+
+	/* The offset between now and the time of the current frame, at least for video. */
+	double time_offset;
+
+
 } MediaState;
 
 static AVFrame *dequeue_frame(FrameQueue *fq);
@@ -1567,13 +1574,21 @@ void media_start_end(MediaState *ms, double start, double end) {
 	}
 }
 
-
 /**
  * Marks the channel as having video.
  */
 void media_want_video(MediaState *ms, int video) {
 	ms->want_video = 1;
 	ms->frame_drops = (video != 2);
+}
+
+void media_pause(MediaState *ms, int pause) {
+    if (pause && (ms->pause_time == 0)) {
+        ms->pause_time = current_time;
+    } else if ((!pause) && (ms->pause_time > 0)) {
+        ms->time_offset = current_time - ms->pause_time;
+        ms->pause_time = 0;
+    }
 }
 
 void media_close(MediaState *ms) {
