@@ -4,6 +4,9 @@ Changelog (Ren'Py 7.x-)
 
 .. _renpy-7.4.7:
 
+7.4.7
+=====
+
 Web and Web Audio
 -----------------
 
