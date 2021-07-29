@@ -3638,6 +3638,9 @@ class Interface(object):
             transition_time = self.transition_time.get(None, None)
             root_widget.add(trans, transition_time, transition_time)
 
+            if (transition_time is None) and isinstance(trans, renpy.display.transform.Transform):
+                trans.update_state()
+
             if trans_pause:
 
                 if renpy.store._dismiss_pause:
