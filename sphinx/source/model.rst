@@ -408,6 +408,11 @@ function.
     If true, this will clear the depth buffer, and then enable depth
     rendering for this displayable and the children of this displayable.
 
+    Note that drawing any pixel, even transparent pixels, will update
+    the depth buffer. As a result, using this with images that have
+    transparency may lead to unexpected problems. (As an alternative,
+    consider the ``zorder`` and ``behind`` clauses of the ``show`` statement.)
+
 ``gl_mipmap``
     If supplied, this determines if the textures supplied to a mesh are
     created with mipmaps. This defaults to true.
