@@ -637,9 +637,7 @@ class Transform(Container):
 
         d.st_offset = self.st_offset
         d.at_offset = self.at_offset
-
-        if not (self.hide_request or self.replaced_request):
-            d.atl_st_offset = None
+        d.atl_st_offset = self.atl_st_offset or self.st_offset
 
         if kind == "hide":
             d.hide_request = True
@@ -650,11 +648,11 @@ class Transform(Container):
         d.replaced_response = True
 
         if d.function is not None:
-            d.function(d, st + d.st_offset, at + d.at_offset)
+            d.function(d, st, at)
         elif isinstance(d, ATLTransform):
-            d.execute(d, st + d.st_offset, at + d.at_offset)
+            d.execute(d, st, at)
 
-        new_child = d.child._hide(st, at, kind)
+        new_child = d.child._hide(st - self.st_offset, at - self.st_offset, kind)
 
         if new_child is not None:
             d.child = new_child
