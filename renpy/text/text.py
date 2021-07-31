@@ -813,8 +813,8 @@ class Layout(object):
 
             # Create the texture.
 
-            tw = sw + o
-            th = sh + o
+            tw = int(sw + o)
+            th = int(sh + o)
 
             # If not a multiple of 32, round up.
             tw = (tw | 0x1f) + 1 if (tw & 0x1f) else tw
