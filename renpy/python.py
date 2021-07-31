@@ -1382,6 +1382,7 @@ class Rollback(renpy.object.Object):
     __version__ = 5
 
     identifier = None
+    not_greedy = False
 
     def __init__(self):
 
@@ -1410,6 +1411,10 @@ class Rollback(renpy.object.Object):
         # True if this is a hard checkpoint, where the rollback counter
         # decreases.
         self.hard_checkpoint = False
+
+        # True if this is a not-greedy checkpoint, which should end
+        # rollbacks that occur in greedy mode.
+        self.not_greedy = False
 
         # A unique identifier for this rollback object.
 
@@ -1837,7 +1842,11 @@ class RollbackLog(renpy.object.Object):
         if hard and (not self.current.hard_checkpoint):
             if self.rollback_limit < renpy.config.hard_rollback_limit:
                 self.rollback_limit += 1
-            self.current.hard_checkpoint = hard
+
+            if hard == "not_greedy":
+                self.current.not_greedy = True
+            else:
+                self.current.hard_checkpoint = hard
 
         if self.in_fixed_rollback() and self.forward:
             # use data from the forward stack
@@ -2019,6 +2028,9 @@ class RollbackLog(renpy.object.Object):
                 break
 
             if rb.hard_checkpoint:
+                break
+
+            if rb.not_greedy:
                 break
 
             revlog.append(self.log.pop())

@@ -1050,7 +1050,11 @@ label _console:
 
     while True:
         python in _console:
-            console.interact()
+            try:
+                console.interact()
+            finally:
+                renpy.game.context().force_checkpoint = True
+                renpy.exports.checkpoint(hard="not_greedy")
 
 label _console_return:
     return
