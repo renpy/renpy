@@ -300,8 +300,9 @@ it will unpack supporting files, which make take some time.
 
 android-presplash.jpg
     The image that's used when the app is loading. This should be surrounded
-    by a monocolored border. That border is expanded to fill the screen.
-
+    by 1px of a monocolored border. When displayed, the image is scaled to
+    fit available space while preserving aspect ratio, and the rest of the
+    screen is filled with the border color.
 
 .. _expansion-apk:
 
