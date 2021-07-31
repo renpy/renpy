@@ -410,7 +410,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         except Exception as e:
 
-            if renpy.config.debug:
+            if renpy.config.debug or renpy.config.developer:
                 raise
 
             error(str(e))
