@@ -391,7 +391,7 @@ class SpaceSegment(object):
 
 class DisplayableSegment(object):
     """
-    A segment that's used to render horizontal or vertical whitespace.
+    A segment that's used to render displayables.
     """
 
     def __init__(self, ts, d, renders):
@@ -404,6 +404,9 @@ class DisplayableSegment(object):
         rend = renders[d]
 
         self.width, self.height = rend.get_size()
+
+        if isinstance(d, renpy.display.behavior.CaretBlink):
+            self.width = 0
 
         self.hyperlink = ts.hyperlink
         self.cps = ts.cps
@@ -441,7 +444,6 @@ class DisplayableSegment(object):
         glyph = glyphs[0]
 
         if di.displayable_blits is not None:
-
             di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.width, glyph.ascent, glyph.line_spacing, glyph.time))
 
     def assign_times(self, gt, glyphs):

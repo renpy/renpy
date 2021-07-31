@@ -1137,6 +1137,8 @@ class CaretBlink(renpy.display.core.Displayable):
 
     def __init__(self, caret, caret_blink, **properties):
 
+        properties.setdefault("yalign", 0.0)
+
         super(CaretBlink, self).__init__(**properties)
         caret = renpy.easy.displayable(caret)
 
@@ -1159,7 +1161,7 @@ class CaretBlink(renpy.display.core.Displayable):
         st -= self.st_base
 
         cr = renpy.display.render.render(self.caret, width, height, st, at)
-        rv = renpy.display.render.Render(0, height)
+        rv = renpy.display.render.Render(1, height)
 
         ttl = self.caret_blink - st % self.caret_blink
 
