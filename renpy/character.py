@@ -710,6 +710,8 @@ class ADVCharacter(object):
     voice_tag = None
     properties = { }
 
+    _statement_name = None
+
     # When adding a new argument here, remember to add it to copy below.
     def __init__(
             self,
@@ -776,6 +778,8 @@ class ADVCharacter(object):
             type=d('type'),
             advance=d('advance'),
             )
+
+        self._statement_name = properties.pop("statement_name", None)
 
         self.properties = collections.defaultdict(dict)
 
@@ -1248,7 +1252,9 @@ class ADVCharacter(object):
 
     @property
     def statement_name(self):
-        if not (self.condition is None or renpy.python.py_eval(self.condition)):
+        if self._statement_name is not None:
+            return self._statement_name
+        elif not (self.condition is None or renpy.python.py_eval(self.condition)):
             return "say-condition-false"
         else:
             return "say"

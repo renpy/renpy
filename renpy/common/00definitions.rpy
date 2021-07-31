@@ -439,8 +439,8 @@ init -1400:
 
     # The default narrator.
     define _narrator = Character(None, kind=adv, what_style='say_thought')
-    define centered = Character(None, what_style="centered_text", window_style="centered_window")
-    define vcentered = Character(None, what_style="centered_vtext", window_style="centered_window")
+    define centered = Character(None, what_style="centered_text", window_style="centered_window", statement_name="say-centered")
+    define vcentered = Character(None, what_style="centered_vtext", window_style="centered_window", statement_name="say-centered")
 
 
 init 1400 python:

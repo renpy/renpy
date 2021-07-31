@@ -957,7 +957,7 @@ Occasionally Used
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
 
-.. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu' ]
+.. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu', "say-centered" ]
 
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.
