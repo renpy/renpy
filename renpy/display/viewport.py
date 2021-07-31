@@ -236,6 +236,9 @@ class Viewport(renpy.display.layout.Container):
 
         self._clipping = (cw > width) or (ch > height)
 
+        self.width = width
+        self.height = height
+
         return cxo, cyo, width, height
 
     def render(self, width, height, st, at):
