@@ -97,7 +97,7 @@ class FileLocation(object):
         """
 
         if renpy.emscripten:
-            import emscripten  # @UnresolvedImport
+            import emscripten # @UnresolvedImport
             emscripten.syncfs()
 
     def scan(self):
@@ -282,6 +282,9 @@ class FileLocation(object):
 
             if not os.path.exists(old):
                 return
+
+            os.rename(old, old + ".tmp")
+            old = old + ".tmp"
 
             if os.path.exists(new):
                 os.unlink(new)
@@ -503,7 +506,6 @@ class MultiLocation(object):
         return not (self == other)
 
 
-
 # The thread that scans locations every few seconds.
 scan_thread = None
 
@@ -522,7 +524,7 @@ def run_scan_thread():
     while not quit_scan_thread:
 
         try:
-            renpy.loadsave.location.scan()  # @UndefinedVariable
+            renpy.loadsave.location.scan() # @UndefinedVariable
         except:
             pass
 
@@ -530,7 +532,7 @@ def run_scan_thread():
             scan_thread_condition.wait(5.0)
 
 
-def quit():  # @ReservedAssignment
+def quit(): # @ReservedAssignment
     global quit_scan_thread
 
     with scan_thread_condition:
