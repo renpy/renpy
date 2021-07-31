@@ -2089,10 +2089,9 @@ class RollbackLog(renpy.object.Object):
         self.mutated.clear()
         begin_stores()
 
+        self.current = Rollback()
         if self.log:
-            self.current = self.log[-1]
-        else:
-            self.current = None
+            self.log.append(self.current)
 
         # Restart the context or the top context.
         if replace_context:
