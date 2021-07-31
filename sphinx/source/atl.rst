@@ -1180,3 +1180,57 @@ The following events can be triggered automatically:
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``
    Triggered when button containing this transform, or a button contained
    by this transform, enters the named state.
+
+
+.. _replacing-transforms:
+
+Replacing Transforms
+====================
+
+When an an ATL transform or transform defined using the :func:`Transform` class
+is replaced by another class, the properties of the transform that's being
+replaced are inherited by the transform that's replacing it.
+
+When the ``show`` statement has multiple transforms in the at list, the
+transforms are matched from last to first, until one list runs out. For
+example, in::
+
+    show eileen happy at a, b, c
+    "Let's wait a bit."
+    show eileen happy at d, e
+
+the ``c`` transform is replaced by ``e``, the ``b`` transform is replaced by
+``d``, and nothing replaces the ``a`` transform.
+
+At the moment of replacement, the values of the properties of the old transform
+get inherited by the new transform. If the old transform was being animated,
+this might mean an intermediate value is inherited. For example::
+
+    transform bounce:
+        linear 3.0 xalign 1.0
+        linear 3.0 xalign 0.0
+        repeat
+
+    transform headright:
+        linear 15 xalign 1.0
+
+    label example:
+        show eileen happy at bounce
+        pause
+        show eileen happy at headright
+        pause
+
+In this example, the sprite will bounce from left to right and back until
+the player clicks. When that happens, the ``xalign`` from ``bounce`` will
+be used to initialize the ``xalign`` of headright, and so the sprite
+will move from where it was when the player first clicked.
+
+The position properties (:tpref:`xpos`, :tpref:`ypos`, :tpref:`xanchor`, and :tpref:`yanchor`),
+have a special rule for inheritance - a value set in the child will override a value set
+in the parent. This is because a displayable may have only one position, and
+a position that is actively set takes precedence. These properties may be set in
+multiple ways - for example, :tpref:`xalign` sets xpos and xanchor.
+
+Finally, when a ``show`` statement does not include and ``at`` clause, the
+same displayables are used, so no inheritence is necessary. To prevent inheritance,
+show and then hide the displayable.

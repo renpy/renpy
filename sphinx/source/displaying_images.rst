@@ -197,6 +197,10 @@ The show statement takes the following properties:
     exists, the image will be displayed using the :var:`default`
     transform.
 
+    See the section on :ref:`replacing transforms <replacing-transforms>`
+    for information about how replacing the transforms associated with
+    a tag can change the transform properties.
+
 ``behind``
     Takes a comma-separated list of one or more names. Each name is
     taken as an image tag. The image is shown behind all images with
