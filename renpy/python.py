@@ -2086,6 +2086,7 @@ class RollbackLog(renpy.object.Object):
 
         renpy.game.contexts.extend(other_contexts)
 
+        self.mutated.clear()
         begin_stores()
 
         if self.log:
