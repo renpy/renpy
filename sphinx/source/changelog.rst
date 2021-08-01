@@ -4,6 +4,45 @@ Changelog (Ren'Py 7.x-)
 
 .. _renpy-7.4.7:
 
+7.4.8
+=====
+
+Fixes
+-----
+
+This fixes a major problem that could cause rollback to corrupt lists,
+dictionaries, sets, and objects. Everyone that uses 7.4.7 is recommended
+to upgrade.
+
+A crash that could be caused by non-integer outlines has been fixed.
+
+The correct size of a viewport is used for edge and mouse wheel scrolling.
+
+Game controller detection has been fixed.
+
+Features
+--------
+
+It is now possible, using :func:`PauseAction` or :func:`renpy.music.set_pause`,
+to pause a channel that's playing video.
+
+The default channel for movies can now be set with :var:`config.single_movie_channel`.
+
+Changes
+-------
+
+When in developer mode, errors parameterizing an image will be reported to
+the developer, rather than causing a placeholder (the gray ghost girl) to
+appear.
+
+The text window will not be shown before being hidden by the ``centered``
+and ``vcentered`` characters.
+
+Rolling back to a place where the shift+O console caused a change in the
+state of the game will not cause the effects of the console to be reverted.
+Rolling back one step further will.
+
+
 7.4.7
 =====
 
