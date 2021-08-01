@@ -637,7 +637,9 @@ class Transform(Container):
 
         d.st_offset = self.st_offset
         d.at_offset = self.at_offset
-        d.atl_st_offset = self.atl_st_offset or self.st_offset
+
+        if isinstance(self, ATLTransform):
+            d.atl_st_offset = self.atl_st_offset if (self.atl_st_offset is not None) else self.st_offset
 
         if kind == "hide":
             d.hide_request = True
