@@ -1174,6 +1174,9 @@ input_caret_blink = 1.
 # The channel movies with play defined play on.
 single_movie_channel = None
 
+# Should Ren'Py raise exceptions when finding an image?
+raise_image_exceptions = True
+
 del os
 del collections
 
