@@ -1563,15 +1563,22 @@ class On(Statement):
         # handle it.
         for event in events:
 
-            if event in self.handlers:
+            while event:
+                if event in self.handlers:
+                    break
 
-                # Do not allow people to abort the hide or replaced event.
-                lock_event = (name == "hide" and trans.hide_request) or (name == "replaced" and trans.replaced_request)
+                event = event.partition("_")[2]
 
-                if not lock_event:
-                    name = event
-                    start = st
-                    cstate = None
+            if not event:
+                continue
+
+            # Do not allow people to abort the hide or replaced event.
+            lock_event = (name == "hide" and trans.hide_request) or (name == "replaced" and trans.replaced_request)
+
+            if not lock_event:
+                name = event
+                start = st
+                cstate = None
 
         while True:
 
