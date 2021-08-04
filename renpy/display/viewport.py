@@ -357,7 +357,7 @@ class Viewport(renpy.display.layout.Container):
                 adjustment = self.yadjustment
                 change = False
 
-            if renpy.display.behavior.map_event(ev, 'viewport_up'):
+            if renpy.display.behavior.map_event(ev, 'viewport_wheelup'):
 
                 if change and (adjustment.value == 0):
                     return None
@@ -368,7 +368,7 @@ class Viewport(renpy.display.layout.Container):
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
-            if renpy.display.behavior.map_event(ev, 'viewport_down'):
+            if renpy.display.behavior.map_event(ev, 'viewport_wheeldown'):
 
                 if change and (adjustment.value == adjustment.range):
                     return None
