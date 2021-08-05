@@ -318,6 +318,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.children = [ ]
         self.transforms = { }
         self.widgets = { }
+        self.base_widgets = { }
         self.old_widgets = None
         self.old_transforms = None
         self.hidden_widgets = { }
@@ -362,6 +363,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         # A map from name to the widget with that name.
         self.widgets = { }
+
+        # Same, but to the widget without considering _main.
+        self.base_widgets = { }
 
         # The persistent cache.
         self.cache = { }
@@ -465,6 +469,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         rv = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
         rv.transforms = self.transforms.copy()
         rv.widgets = self.widgets.copy()
+        rv.base_widgets = self.widgets.copy()
         rv.old_transfers = True
         rv.child = self.child
 
@@ -605,6 +610,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.old_widgets = self.widgets
         self.old_transforms = self.transforms
         self.widgets = { }
+        self.base_widgets = { }
         self.transforms = { }
 
         push_current_screen(self)
@@ -1278,7 +1284,7 @@ def current_screen():
     return _current_screen
 
 
-def get_displayable(screen, id, layer=None): # @ReservedAssignment
+def get_displayable(screen, id, layer=None, base=False): # @ReservedAssignment
     """
     :doc: screens
     :name: renpy.get_displayable
@@ -1305,7 +1311,11 @@ def get_displayable(screen, id, layer=None): # @ReservedAssignment
     if screen.child is None:
         screen.update()
 
-    rv = screen.widgets.get(id, None)
+    if base:
+        rv = screen.base_widgets.get(id, None)
+    else:
+        rv = screen.widgets.get(id, None)
+
     return rv
 
 

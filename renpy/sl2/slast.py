@@ -909,6 +909,7 @@ class SLDisplayable(SLBlock):
 
                 if widget_id and not ctx.unlikely:
                     screen.widgets[widget_id] = main
+                    screen.base_widgets[widget_id] = d
 
                 if self.scope and main._uses_scope:
                     if copy_on_change:
@@ -945,6 +946,7 @@ class SLDisplayable(SLBlock):
 
                 if widget_id and not ctx.unlikely:
                     screen.widgets[widget_id] = main
+                    screen.base_widgets[widget_id] = d
                 # End child creation code.
 
                 imagemap = self.imagemap
@@ -1028,6 +1030,7 @@ class SLDisplayable(SLBlock):
 
                 if widget_id:
                     screen.widgets[widget_id] = main
+                    screen.base_widgets[widget_id] = d
                 # End child creation code.
 
                 cache.copy_on_change = False

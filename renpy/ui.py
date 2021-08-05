@@ -991,6 +991,7 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
     rv = renpy.display.behavior.Button(style=style, clicked=clicked, **button_kwargs)
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
     rv.add(text)
+    rv._main = text
     rv._composite_parts = [ text ]
     return rv
 
