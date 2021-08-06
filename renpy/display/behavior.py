@@ -2070,6 +2070,7 @@ class Bar(renpy.display.core.Displayable):
             just_grabbed = True
             grabbed = True
             ignore_event = True
+            renpy.exports.play(self.style.activate_sound)
 
         if grabbed:
 
