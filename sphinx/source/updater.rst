@@ -32,9 +32,15 @@ The updater requires that you provide your own hosting. You should be
 able to download the update files by going to the appropriate URL
 directly, and your server must support HTTP range queries.
 
+HTTPS is not supported for patching.
+
 (This means paying for web hosting, as "sharing" sites tend not to
 support the required features.)
 
+If the `patch` parameter is set to False, or an https url is given,
+the updater will not attempt to patch the game. Instead, it will
+download the full archive, and unpack that update. While this is a larger
+download, it will work with many more web servers.
 
 Building an Update
 ------------------
