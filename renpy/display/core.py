@@ -2478,6 +2478,10 @@ class Interface(object):
         window.
         """
 
+        if renpy.session.get("_keep_renderer", False):
+            renpy.display.render.models = renpy.display.draw.info.get("models", False)
+            return
+
         virtual_size = (renpy.config.screen_width, renpy.config.screen_height)
 
         if renpy.display.draw:

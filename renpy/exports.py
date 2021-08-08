@@ -1824,13 +1824,15 @@ def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu
     raise renpy.game.FullRestartException((transition, label, target))
 
 
-def utter_restart():
+def utter_restart(keep_renderer=False):
     """
     :undocumented: Used in the implementation of shift+R.
 
     Causes an utter restart of Ren'Py. This reloads the script and
     re-runs initialization.
     """
+
+    renpy.session["_keep_renderer"] = keep_renderer
 
     raise renpy.game.UtterRestartException()
 

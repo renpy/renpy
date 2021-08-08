@@ -604,9 +604,11 @@ def reload_all():
     renpy.display.render.mark_sweep()
 
     # Get rid of the draw module and interface.
-    renpy.display.draw.quit()
-    renpy.display.draw = None
     renpy.display.interface = None
+
+    if not renpy.session.get("_keep_renderer", False):
+        renpy.display.draw.quit()
+        renpy.display.draw = None
 
     py_compile_cache = renpy.python.py_compile_cache
     reload_modules = renpy.config.reload_modules
