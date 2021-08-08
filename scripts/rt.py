@@ -43,7 +43,7 @@ def list_command(args):
 def select(dn):
     p = pathlib.Path(dn)
 
-    if CURRENT.exists():
+    if CURRENT.is_symlink():
         CURRENT.unlink()
 
     CURRENT.symlink_to(p)
