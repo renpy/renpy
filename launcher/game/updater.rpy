@@ -103,7 +103,7 @@ screen update_channel(channels):
                     for c in channels:
 
                         if c["split_version"] != list(renpy.version_tuple):
-                            $ action = updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)
+                            $ action = [updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False), SetField(persistent, "has_update", False)]
                             $ current = ""
                         else:
                             $ action = None
@@ -203,5 +203,12 @@ init python:
 
         with interface.error_handling(_("parsing the list of update channels")):
             channels = json.load(channel_data)["releases"]
+
+        renpy.store.persistent.has_update = False
+        for chan in channels:
+            if (chan["channel"] == "Release"):
+                if (chan["split_version"] != list(renpy.version_tuple)):
+                    renpy.store.persistent.has_update = True
+                break
 
         return channels
