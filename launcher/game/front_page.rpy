@@ -23,6 +23,8 @@ define PROJECT_ADJUSTMENT = ui.adjustment()
 
 init python:
 
+    import datetime
+
     import os
     import subprocess
 
@@ -262,18 +264,11 @@ label start:
 
     jump expression renpy.session.pop("launcher_start_label", "front_page")
 
-default has_update = False
+default persistent.has_update = False
 
 label front_page:
     if persistent.daily_update_check and ((not persistent.last_update_check) or (datetime.date.today() > persistent.last_update_check)):
-        python hide:
-            import datetime
-        
-            for chan in update_label_function():
-                if (chan["channel"] == "Release"):
-                    if (chan["split_version"] > list(renpy.version_tuple)):
-                        renpy.store.has_update = True
-                    break
+        $ update_label_function()
         $ persistent.last_update_check = datetime.date.today()
 
     call screen front_page
