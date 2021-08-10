@@ -207,7 +207,7 @@ init python:
         renpy.store.persistent.has_update = False
         for chan in channels:
             if (chan["channel"] == "Release"):
-                if (chan["split_version"] != list(renpy.version_tuple)):
+                if (chan["split_version"] > list(renpy.version_tuple)):
                     renpy.store.persistent.has_update = True
                 break
 
