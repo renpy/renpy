@@ -184,10 +184,7 @@ screen updater:
 
 label update:
 
-    python hide:
-        channels = update_label_function()
-
-        renpy.call_screen("update_channel", channels)
+    call screen update_channel(update_label_function()) nopredict
 
     jump front_page
 
