@@ -127,7 +127,7 @@ screen bottom_info:
 
                     if ability.can_update:
                         textbutton _("update") action Jump("update") style "l_link":
-                            if has_update:
+                            if persistent.has_update:
                                 # text_color "#F96854"
                                 # text_hover_color Color("#F96854").tint(.8)
                                 text_color "#fff"
