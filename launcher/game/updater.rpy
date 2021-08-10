@@ -102,7 +102,7 @@ screen update_channel(channels):
 
                     for c in channels:
 
-                        if  c["split_version"] != list(renpy.version_tuple):
+                        if c["split_version"] != list(renpy.version_tuple):
                             $ action = updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)
                             $ current = ""
                         else:
@@ -185,6 +185,14 @@ screen updater:
 label update:
 
     python hide:
+        channels = update_label_function()
+
+        renpy.call_screen("update_channel", channels)
+
+    jump front_page
+
+init python:
+    def update_label_function():
         interface.processing(_("Fetching the list of update channels"))
 
         import urllib2
@@ -196,7 +204,4 @@ label update:
         with interface.error_handling(_("parsing the list of update channels")):
             channels = json.load(channel_data)["releases"]
 
-        renpy.call_screen("update_channel", channels)
-
-    jump front_page
-
+        return channels
