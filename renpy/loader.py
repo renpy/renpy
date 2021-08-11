@@ -293,6 +293,8 @@ loadable_cache = { }
 # A map from filename to if the file is downloadable.
 remote_files = { }
 
+# A map with found files during scanning. 
+folder_files = { }  # type: dict[str, list]
 
 def cleardirfiles():
     """
@@ -334,9 +336,20 @@ def scandirfiles():
         files.append((dn, fn))
         seen.add(fn)
         loadable_cache[unicodedata.normalize('NFC', fn.lower())] = True
+        folder, _, fn = fn.rpartition("/")
+        folder_files[folder] = folder_files.get(folder, []) + [fn]
 
     for i in scandirfiles_callbacks:
         i(add, seen)
+
+
+def get_files_in(pathfolder):
+    """
+    Return a list with files, if any were found during scanning.
+    """
+    if isinstance(pathfolder, (list, tuple)):
+        pathfolder = "/".join(pathfolder)
+    return folder_files.get(pathfolder, [])
 
 
 def scandirfiles_from_apk(add, seen):
