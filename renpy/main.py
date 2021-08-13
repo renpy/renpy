@@ -292,6 +292,38 @@ def choose_variants():
         renpy.config.variants.insert(0, 'large')
 
 
+def android_searchpath():
+    """
+    Determines the searchpath on Android.
+    """
+
+    packs = [
+        "ANDROID_PACK_FF1",
+        "ANDROID_PACK_FF2",
+        "ANDROID_PACK_FF3",
+        "ANDROID_PACK_FF4",
+    ]
+
+    if "ANDROID_PUBLIC" in os.environ:
+        android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
+
+        if os.path.exists(android_game):
+            print("Adding to path:", android_game)
+            renpy.config.searchpath.insert(0, android_game)
+
+    for i in packs:
+        if i not in os.environ:
+            continue
+
+        assets = os.environ[i]
+
+        for i in [ "renpy/common", "game" ]:
+            dn = os.path.join(assets, i)
+            if os.path.isdir(dn):
+                print("Adding to path:", dn)
+                renpy.config.searchpath.append(dn)
+
+
 def main():
 
     gc.set_threshold(*renpy.config.gc_thresholds)
@@ -345,13 +377,7 @@ def main():
         renpy.config.searchpath = [ ]
         renpy.config.commondir = None
 
-        if "ANDROID_PUBLIC" in os.environ:
-            android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
-
-            print("Android searchpath: ", android_game)
-
-            if os.path.exists(android_game):
-                renpy.config.searchpath.insert(0, android_game)
+        android_searchpath()
 
     # Load Ren'Py extensions.
     for dir in renpy.config.searchpath: # @ReservedAssignment
