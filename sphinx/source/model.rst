@@ -398,7 +398,7 @@ function.
     The :tpref:`blend` transform property is generally an easy way to
     use this.
 
-``gl_color_masks``
+``gl_color_mask``
     This is expecting to be a 4-tuple of booleans, corresponding to the four
     channels of a pixel (red, green, blue, and alpha). If a given channel is
     true, the draw operation will write to that pixel. Otherwise, it will
