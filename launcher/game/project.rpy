@@ -453,9 +453,10 @@ init python in project:
 
             if self.projects_directory is not None:
                 self.scan_directory(self.projects_directory)
+            else:
+                self.projects_directory = os.path.join(config.renpy_base, "projects")
+                self.scan_directory(self.projects_directory)
 
-
-            self.scan_directory(config.renpy_base)
             self.scan_directory(os.path.join(config.renpy_base, "templates"))
 
             self.projects.sort(key=lambda p : p.name.lower())

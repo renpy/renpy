@@ -57,8 +57,8 @@ styles.txt
 /.settings
 /LICENSE.txt
 /templates/english/README.html
-/the_question/README.html
-/tutorial/README.html
+/projects/the_question/README.html
+/projects/tutorial/README.html
 /renpy/angle/*.pyx
 /renpy/angle/*.pxd
 /renpy-ppc.zip
@@ -83,7 +83,7 @@ renpy/vc_version.py
 /ai
 /interface_7
 /htmlcov
-/the_question*/.android.json
+/projects/the_question*/.android.json
 /WINDOWS.rst
 /old
 
@@ -96,7 +96,7 @@ doc-web
 
 sphinx/source/inc
 sphinx/source/thequestion.rst
-tutorial/game/tutorial_director.rpy
+projects/tutorial/game/tutorial_director.rpy
 launcher/theme
 module/emscripten-static/
 web/

@@ -35,8 +35,8 @@ rmln renpy
 rmcp run.sh
 rmcp renpy.py
 rmcp launcher
-rmcp tutorial
-rmcp the_question
+rmcp projects/tutorial
+rmcp projects/the_question
 rmcp gui
 
 if [ -e "$S/testing" ]; then

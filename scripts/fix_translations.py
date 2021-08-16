@@ -52,6 +52,6 @@ os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 process("launcher/game/tl")
 process("templates")
-process("tutorial/game/tl")
-process("the_question/game/tl")
+process("projects/tutorial/game/tl")
+process("projects/the_question/game/tl")
 process("gui")

@@ -191,7 +191,7 @@ def write_keywords():
 
     f.close()
 
-    shutil.copy("source/keywords.py", "../tutorial/game/keywords.py")
+    shutil.copy("source/keywords.py", "../projects/tutorial/game/keywords.py")
 
 
 # A map from filename to a list of lines that are supposed to go into
@@ -448,7 +448,7 @@ def write_easings(ns):
 
 def tq_script(name):
 
-    with open("../the_question/game/" + name, "r") as f:
+    with open("../projects/the_question/game/" + name, "r") as f:
         lines = f.readlines()
         lines = [ ("    " + i).rstrip() for i in lines ]
         return "\n".join(lines)

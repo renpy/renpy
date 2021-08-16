@@ -58,6 +58,6 @@ args = ap.parse_args()
 
 process("launcher/game/tl")
 process("templates")
-process("tutorial/game/tl")
-process("the_question/game/tl")
+process("projects/tutorial/game/tl")
+process("projects/the_question/game/tl")
 process("gui")

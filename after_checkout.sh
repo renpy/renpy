@@ -2,8 +2,8 @@
 
 ROOT="$(dirname $(python -c "import os;print(os.path.realpath('$0'))"))"
 
-ln -s "$ROOT/help.html" "$ROOT/tutorial/README.html"
-ln -s "$ROOT/help.html" "$ROOT/the_question/README.html"
+ln -s "$ROOT/help.html" "$ROOT/projects/tutorial/README.html"
+ln -s "$ROOT/help.html" "$ROOT/projects/the_question/README.html"
 ln -s "$ROOT/help.html" "$ROOT/templates/english/README.html"
 
 ln -s "$ROOT/sphinx/source/license.rst" "$ROOT/LICENSE.txt"

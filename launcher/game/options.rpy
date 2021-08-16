@@ -339,8 +339,8 @@ init python:
     source_and_binary("launcher")
     source_and_binary("gui", binary=None)
 
-    source_and_binary("the_question")
-    source_and_binary("tutorial")
+    source_and_binary("projects/the_question")
+    source_and_binary("projects/tutorial")
 
     # docs.
     build.classify_renpy("doc/", "source")

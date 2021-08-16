@@ -131,7 +131,7 @@ def main():
 
     # Compile the various games.
     if not args.fast:
-        for i in [ 'tutorial', 'launcher', 'the_question' ]:
+        for i in [ 'projects/tutorial', 'launcher', 'projects/the_question' ]:
             print("Compiling", i)
             subprocess.check_call(["./renpy.sh", i, "quit" ])
 
