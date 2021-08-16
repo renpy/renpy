@@ -1011,6 +1011,7 @@ add_gl_property("gl_blend_func")
 add_gl_property("gl_depth")
 add_gl_property("gl_anisotropic")
 add_gl_property("gl_mipmap")
+add_gl_property("gl_texture_scaling")
 add_gl_property("gl_texture_wrap")
 
 ALIASES = {
