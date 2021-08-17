@@ -57,8 +57,18 @@ init -1500 python:
 
             return c(what, interact=interact)
 
+    def alt_statement_name():
+        if _preferences.self_voicing:
+            return "say"
+        else:
+            return "say-condition-false"
+
+    alt.statement_name = alt_statement_name
+    del alt_statement_name
+
     # Old name for alt.
     sv = alt
+
 
 
 init -1500 python hide:
