@@ -271,6 +271,11 @@ def image_exists(name, expression, tag, precise=True):
     Checks a scene or show statement for image existence.
     """
 
+    orig = name
+    f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
+    if f is not None:
+        name = f(name)
+
     # Add the tag to the set of known tags.
     tag = tag or name[0]
     image_prefixes[tag] = True
@@ -287,7 +292,7 @@ def image_exists(name, expression, tag, precise=True):
     if image_exists_precise(name):
         return
 
-    report("'%s' is not an image.", " ".join(name))
+    report("'%s' is not an image.", " ".join(orig))
 
 
 # Only check each file once.
