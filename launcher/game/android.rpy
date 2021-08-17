@@ -26,14 +26,16 @@ init python:
     ANDROID_NO_JDK = 1
     ANDROID_NO_SDK = 2
     ANDROID_NO_KEY = 3
-    ANDROID_NO_CONFIG = 4
-    ANDROID_NO_BUNDLE = 5
-    ANDROID_OK = 6
+    ANDROID_NO_BUNDLE_KEY = 4
+    ANDROID_NO_CONFIG = 5
+    ANDROID_NO_BUNDLE = 6
+    ANDROID_OK = 7
 
     NO_RAPT_TEXT = _("To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher.")
     NO_JDK_TEXT = _("A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}download and install the JDK{/a}, then restart the Ren'Py launcher.")
     NO_SDK_TEXT = _("RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this.")
     NO_KEY_TEXT = _("RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore.")
+    NO_BUNDLE_KEY_TEXT = _("RAPT has been installed, but a bundle key hasn't been configured. Please create a new key, or restore bundle.keystore.")
     NO_CONFIG_TEXT = _("The current project has not been configured. Use \"Configure\" to configure it before building.")
     NO_BUNDLE_TEXT = _("Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores).")
     OK_TEXT = _("Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device.")
@@ -108,6 +110,8 @@ init python:
             return ANDROID_NO_SDK
         if not os.path.exists(rapt.plat.path("project/local.properties")):
             return ANDROID_NO_KEY
+        if not os.path.exists(rapt.plat.path("project/bundle.properties")):
+            return ANDROID_NO_BUNDLE_KEY
         if not os.path.exists(os.path.join(project.current.path, ".android.json")):
             return ANDROID_NO_CONFIG
         if persistent.android_bundle is None:
