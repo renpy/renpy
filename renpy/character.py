@@ -1250,7 +1250,6 @@ class ADVCharacter(object):
                     after = images.get_attributes(None, self.image_tag)
                     self.handle_say_transition('restore', before, after)
 
-    @property
     def statement_name(self):
         if self._statement_name is not None:
             return self._statement_name
