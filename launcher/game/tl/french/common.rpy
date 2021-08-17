@@ -770,3 +770,11 @@ translate french strings:
     # renpy/common/_developer/developer.rpym:635
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "Cache d'images : [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+
+    # renpy/common/00preferences.rpy:480
+    old "renderer menu"
+    new "menu de rendu"
+
+    # renpy/common/00preferences.rpy:483
+    old "accessibility menu"
+    new "menu d'accessibilité"

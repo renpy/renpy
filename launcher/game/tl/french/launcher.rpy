@@ -1772,3 +1772,67 @@ translate french strings:
     # game/web.rpy:338
     old "There are known issues with Safari and other Webkit-based browsers that may prevent games from running."
     new "Des bugs connus avec Safari et d'autres navigateurs basés sur Webkit peuvent empêcher des jeux de fonctionner."
+
+    # game/android.rpy:38
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    new "Faites le choix entre un Play Bundle (pour Google Play), ou un Universal APK (pour d'autres librairies d'applications)."
+
+    # game/android.rpy:53
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    new "Appaire un autre appareil par Wi-Fi, sur Android 11+."
+
+    # game/android.rpy:54
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    new "Se connecte à un appareil par Wi-Fi, sur Android 11+."
+
+    # game/android.rpy:56
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    new "Construit un Android App Bundle (ABB), fait pour être uploadé sur Google Play. Peut inclure jusqu'à 2GB de données."
+
+    # game/android.rpy:57
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    new "Construit un paquet Universal APK, fait pour d'autres librairies que Google Play. Peut inclure jusqu'à 2GB de données."
+
+    # game/android.rpy:384
+    old "Play Bundle"
+    new "Play Bundle"
+
+    # game/android.rpy:388
+    old "Universal APK"
+    new "Universal APK"
+
+    # game/android.rpy:445
+    old "Wi-Fi Debugging Pair"
+    new "Debug d'appairage Wi-Fi"
+
+    # game/android.rpy:449
+    old "Wi-Fi Debugging Connect"
+    new "Debug de connexion Wi-Fi"
+
+    # game/android.rpy:537
+    old "Wi-Fi Pairing Code"
+    new "Code d'appairage Wi-Fi"
+
+    # game/android.rpy:537
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    new "Si supporté, peut être trouvé dans 'Options de développement', 'Débogage sans fil', 'Appairer appareil avec un code'."
+
+    # game/android.rpy:544
+    old "Pairing Host & Port"
+    new "Hôte d'appairage & Port"
+
+    # game/android.rpy:560
+    old "IP Address & Port"
+    new "Addresse IP & Port"
+
+    # game/android.rpy:560
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    new "Si supporté, peut être trouvé dans 'Options de développement', 'Débogage sans fil'."
+
+    # game/gui7.rpy:311
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    new "{size=-4}\n\nCeci ne remplacera pas gui/main_menu.png, gui/game_menu.png, ou gui/window_icon.png, mais créera des fichiers s'ils n'existent pas.{/size}"
+
+    # game/ios.rpy:339
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    new "Des erreurs sont rapportées sur le simulateur d'iOS sur Apple Silicon. Préférez des appareils x86_64 ou iOS."
