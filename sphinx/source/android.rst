@@ -38,9 +38,6 @@ keybindings work:
      save the game. If necessary, the save will be automatically
      loaded when the user returns to the game.
 
-`Menu`
-     Brings up the in-game menu, and returns to the game.
-
 `Back`
      Rolls back.
 
@@ -60,11 +57,6 @@ due to the Android software and hardware are:
 * The touchscreen is treated as if it was a mouse. However, it will
   only produce mouse events when the user is actively touching the
   screen.
-
-* Movie playback in fullscreen mode can only use
-  media formats that are supported by Android devices. See
-  `this page <http://developer.android.com/guide/appendix/media-formats.html>`_
-  for a list of supported video formats.
 
 * Text input (such as :func:`renpy.input`) is limited to the input methods
   that do not require completions to work. (Western languages probably work,
@@ -159,10 +151,10 @@ before you can build packages:
 
 **Java Development Kit.**
 The Java Development Kit (JDK) contains several tools that are used by
-|PGS4A|, including the tools used to generate keys and sign
+RAPT, including the tools used to generate keys and sign
 packages. It can be downloaded from:
 
-    http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+    https://adoptopenjdk.net/releases.html?variant=openjdk8&jvmVariant=hotspot
 
 You'll need version 8 of the JDK.
 
@@ -210,7 +202,7 @@ warnings about licenses, and ask if you want it to generate a key.
    passphrase. You should really use keytool to generate your own
    signing keys.
 
-    http://docs.oracle.com/javase/7/docs/technotes/tools/windows/keytool.html
+    https://developer.android.com/studio/publish/app-signing?hl=fr#generate-key
 
    At the very least, you should keep the android.keystore file in
    a safe place. You should also back it up, because without the
@@ -234,26 +226,33 @@ previous choices will be remembered.
 Step 4: Build and Install the Package
 -------------------------------------
 
-Finally, you can build and install the package. This is done with a
-by connecting your Android device to your computer, and choosing
-"Build & Install" from the Android screen of the Ren'Py launcher.
-(The first time you install, your Android device may ask you
-to authorize your computer to install applications.)
+Finally, you can build and install the package.  You'll first want to
+choose between one of the two release modes:
 
-If you'd rather copy the game's apk file to your Android device manually,
-choose "Build Package" from the Android screen of the Ren'Py launcher. Then
-navigate to the 'bin' directory underneath the RAPT directory and copy the
-appropriate file to your Android device. You will then need to find
-the .apk file in your Android device using a file manager application and
-open it to install the game.
+Play Bundle
+    Play bundle releases are in the Android App Bundle (AAB) format,
+    and are suitable only for upload to the Google Play store, though
+    such releases can also be installed on Play-enabled Android devices.
 
-Ren'Py allows you to select between two release modes, Debug and Release.
-The debug mode is useful for testing, as it allows you to easily use Android
-studio to view the logs or files on the device. Release produces a version
-of the app suitable to upload to the various stores.
+    Play bundles may be up to 2 GB in size, but this is divided into
+    4 500MB fast-follow pack files, with each file in your game assigned
+    to one of the four bundles. This may be an issue with four files -
+    a game won't be able to fit 5 files of 300 MB in size, as there will
+    only be room for one in each of the four pack files.
 
-You will need to uninstall the app when switching between debug and
-release builds.
+Universal APK
+    Universal APK release are suitable for direct installation onto
+    Android devices, either through Ren'Py, ADB, non-Play app stores,
+    or sideloading through the web.
+
+    Universal APKs can be up to 2 GB in size, with no restrictions on
+    the contents.
+
+There are three commands which allow you to perform various combinations
+of building the package, installing it on your device, and launching the
+application for testing.
+
+You may need to uninstall the app when switching between release modes.
 
 
 Icon and Presplash Images
@@ -306,49 +305,8 @@ android-presplash.jpg
 
 .. _expansion-apk:
 
-Google Play Expansion APKs
-==========================
+Expansion APKs
+--------------
 
-Ren'Py optionally supports the use of expansion APKs when used on a device
-supporting Google Play. Expansion APKs allow Google Play to host games
-larger than 50MB in size. Please see:
+As of Ren'Py 7.4.9, Explansion APKs are no longer supported.
 
-    http://developer.android.com/google/play/expansion-files.html
-
-For information about expansion APKs work. Right now, only the
-main expansion APK is supported, giving a 2GB limit. When an Expansion
-APK is created, all game files will be placed in the
-expansion APK. Ren'Py will transparently use these files.
-
-To configure your game to use Expansion APKs, you'll need to set two
-variables:
-
-.. var:: build.google_play_key = "..."
-
-    This is the Google Play Licensing key associated with your application,
-    which can be found on the "Monetization Setup" tab associated with
-    your application in the Google Play developer console. (Be sure to
-    remove all spaces and newlines from the key.)
-
-    This looks something like::
-
-        define build.google_play_key = "MIIBIjANBgkqhkiG9w0BAQEFA…HGTQIDAQAB"
-
-    Except that there are many more letters and numbers in place of ….
-
-.. var:: build.google_play_salt = ( ... )
-
-    This should be a tuple of 20 bytes, where each byte is represented as
-    an integer between -128 and 127. This is used to encrypt license
-    information returned from Google Play.
-
-    A valid (if insecure) value for this variable is::
-
-        (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
-
-RAPT will place the expansion APK on the device when installing
-the APK package on the device. The expansion APK will be an .obb file
-found inside the bin subdirectory of the RAPT directory.
-
-In normal operation, Google Play will place the expansion APK on the
-device automatically when the user installs the application.
