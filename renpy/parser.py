@@ -1619,6 +1619,7 @@ def parse_menu(stmtl, loc, arguments):
 
     say_who = None
     say_what = None
+    say_loc = None
 
     # Tuples of (label, condition, block)
     items = [ ]
@@ -1660,6 +1661,7 @@ def parse_menu(stmtl, loc, arguments):
             has_say = True
             say_who = who
             say_what = what
+            say_loc = l.get_location()
 
             continue
 
@@ -1711,7 +1713,7 @@ def parse_menu(stmtl, loc, arguments):
 
     rv = [ ]
     if has_say:
-        rv.append(ast.Say(loc, say_who, say_what, None, interact=False))
+        rv.append(ast.Say(say_loc, say_who, say_what, None, interact=False))
 
     rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption, arguments, item_arguments))
 
