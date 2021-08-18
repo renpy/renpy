@@ -1587,7 +1587,7 @@ init -1500:
 
                     if u.progress is not None:
                         null height gui._scale(10)
-                        bar value u.progress range 1.0 style "_bar"
+                        bar value (u.progress or 0.0) range 1.0 style "_bar"
 
             hbox:
 

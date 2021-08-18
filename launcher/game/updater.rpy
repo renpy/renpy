@@ -171,7 +171,7 @@ screen updater:
 
                     bar:
                         range 1.0
-                        value u.progress
+                        value (u.progress or 0.0)
                         style "l_progress_bar"
 
         label _("Ren'Py Update") style "l_info_label"
