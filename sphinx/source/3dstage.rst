@@ -257,7 +257,7 @@ Ren'Py.
 Transform Properties
 --------------------
 
-The following transform properties are used by ther 3D Stage.
+The following transform properties are used by the 3D Stage.
 
     :tpref:`perspective`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
 
