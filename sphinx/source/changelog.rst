@@ -2,7 +2,7 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
-.. _renpy-7.4.7:
+.. _renpy-7.4.8:
 
 7.4.8
 =====
@@ -42,6 +42,8 @@ Rolling back to a place where the shift+O console caused a change in the
 state of the game will not cause the effects of the console to be reverted.
 Rolling back one step further will.
 
+
+.. _renpy-7.4.7:
 
 7.4.7
 =====
