@@ -392,9 +392,13 @@ def main():
             if not (ext in archive_extensions):
                 archive_extensions.append(ext)
 
-    # The basename is the final component of the path to the gamedir.
-    for dir in renpy.config.searchpath:
-        for i in sorted(os.listdir(dir)):
+    # Find archives.
+    for dn in renpy.config.searchpath:
+
+        if os.path.isdir(dn):
+            continue
+
+        for i in sorted(os.listdir(dn)):
             base, ext = os.path.splitext(i)
 
             # Check if the archive does not have any of the extensions in archive_extensions
