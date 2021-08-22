@@ -1219,10 +1219,6 @@ cdef class Render:
             if y < 0 or y >= self.height:
                 return None
 
-        if self.operation == IMAGEDISSOLVE:
-            if not self.children[0][0].is_pixel_opaque(x, y):
-                return None
-
         rv = None
 
         if self.focuses:
@@ -1268,6 +1264,11 @@ cdef class Render:
                 cf = child.focus_at_point(x, y, screen)
                 if cf is not None:
                     rv = cf
+
+        if rv is not None:
+            if self.operation == IMAGEDISSOLVE:
+                if not self.children[0][0].is_pixel_opaque(x, y):
+                    rv = None
 
         if (rv is None) and self.modal:
             if renpy.display.layout.check_modal(self.modal, None, x, y, self.width, self.height):
