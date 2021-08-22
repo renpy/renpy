@@ -25,6 +25,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
 
+import math
+
 import renpy.display
 import pygame_sdl2 as pygame
 
@@ -176,6 +178,9 @@ class Viewport(renpy.display.layout.Container):
 
         The returned offsets will be negative or zero.
         """
+
+        cw = int(math.ceil(cw))
+        ch = int(math.ceil(ch))
 
         width = self.width
         height = self.height
