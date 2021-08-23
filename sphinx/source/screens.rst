@@ -1963,15 +1963,28 @@ This can be used to display an imagemap. The imagemap can place a
 value into the ``_return`` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
-The call screen statement takes an optional ``nopredict`` keyword, that
+The call screen statement takes an optional ``nopredict`` keyword, which
 prevents screen prediction from occurring. During screen prediction,
 arguments to the screen are evaluated. Please ensure that evaluating
 the screen arguments does not cause unexpected side-effects to occur.
 
-The call screen statement takes an optional ``with`` keyword, followed
-by a transition. The transition takes place when the screen is first
-displayed. A with statement after the transition runs after the screen
-is hidden, provided control is not transferred.
+In the case of the call screen statement, the ``with`` clause exists but
+behaves a little differently than usual. Using the ``with`` keyword
+followed by a transition on the same line as the ``call`` only specifies
+the transition to be used when the screen appears.
+
+Since calling a screen is an interaction, and since interactions trigger
+an implicit ``with None``, using a simple ``with`` statement after the
+``call screen`` instruction won't make the screen disappear using the
+transition, as it would only execute after the screen has already been
+hidden. The way to make it work is to disable the implicit ``with None``
+transition, either in the whole game by setting
+:var:`config.implicit_with_none` to False, or just for one instance by
+passing the ``_with_none=False`` special keyword argument to the screen
+call, as showcased below. In that case, adding a ``with`` statement after
+the screen will specify the transition tu use to hide the screen. Using a
+``[Return(), With(dissolve)]`` action list within the screen also works,
+but only when that action list is triggered.
 
 .. warning::
 
@@ -1984,9 +1997,14 @@ is hidden, provided control is not transferred.
 
     call screen my_screen(side_effect_function()) nopredict
 
-    # Shows the screen with dissolve and hides it with fade.
+    # Shows the screen with dissolve
     call screen my_other_screen with dissolve
-    with fade
+    # The screens instantly hides with None, then the pixellate transition executes
+    with pixellate
+
+    # Shows the screen with dissolve and hides it with pixellate.
+    call screen my_other_screen(_with_none=False) with dissolve
+    with pixellate
 
 .. _screen-variants:
 
