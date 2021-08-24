@@ -1952,6 +1952,41 @@ class AdjustTimes(Container):
         return self.child.get_placement()
 
 
+class MatchTimes(Container):
+    """
+    A displayable that changes the `target` so that the times given to
+    this target match the times this displayable was rendered at.
+
+    `target`
+        This must be an AdjustTimes displayable, that's a child of this
+        MatchTimes displayable.
+    """
+
+    def __init__(self, child, target, **properties):
+        super(MatchTimes, self).__init__(**properties)
+
+        self.target = target
+
+        self.add(child)
+
+    def render(self, w, h, st, at):
+
+        self.target.start_time = renpy.game.interface.frame_time - st
+        self.target.anim_time = renpy.game.interface.frame_time - at
+
+        cr = renpy.display.render.render(self.child, w, h, st, at)
+        cw, ch = cr.get_size()
+        rv = renpy.display.render.Render(cw, ch)
+        rv.blit(cr, (0, 0))
+
+        self.offsets = [ (0, 0) ]
+
+        return rv
+
+    def get_placement(self):
+        return self.child.get_placement()
+
+
 class Tile(Container):
     """
     :doc: disp_imagelike

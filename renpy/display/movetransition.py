@@ -526,7 +526,14 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
                     and d.scene_list is not None):
 
                     d = merge_slide(old.raw_layers[layer], new.raw_layers[layer], merge_slide)
-                    f = renpy.game.context().scene_lists.transform_layer(layer, d)
+
+                    adjust = renpy.display.layout.AdjustTimes(d, None, None)
+                    f = renpy.game.context().scene_lists.transform_layer(layer, adjust)
+
+                    if f is adjust:
+                        f = d
+                    else:
+                        f = renpy.display.layout.MatchTimes(f, adjust)
 
                 rv.raw_layers[layer] = d
                 rv.layers[layer] = f
