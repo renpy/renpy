@@ -297,19 +297,23 @@ def android_searchpath():
     Determines the searchpath on Android.
     """
 
+    # The default gamedir, in private.
+    renpy.config.searchpath = [ renpy.config.gamedir ]
+
+    # The public android directory.
+    if "ANDROID_PUBLIC" in os.environ:
+        android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
+
+        if os.path.exists(android_game):
+            renpy.config.searchpath.insert(0, android_game)
+
+    # Asset packs.
     packs = [
         "ANDROID_PACK_FF1",
         "ANDROID_PACK_FF2",
         "ANDROID_PACK_FF3",
         "ANDROID_PACK_FF4",
     ]
-
-    if "ANDROID_PUBLIC" in os.environ:
-        android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
-
-        if os.path.exists(android_game):
-            print("Adding to path:", android_game)
-            renpy.config.searchpath.insert(0, android_game)
 
     for i in packs:
         if i not in os.environ:
@@ -320,8 +324,9 @@ def android_searchpath():
         for i in [ "renpy/common", "game" ]:
             dn = os.path.join(assets, i)
             if os.path.isdir(dn):
-                print("Adding to path:", dn)
                 renpy.config.searchpath.append(dn)
+
+    print("Android search paths:" , " ".join(renpy.config.searchpath))
 
 
 def main():
@@ -374,7 +379,6 @@ def main():
         renpy.config.searchpath.extend(os.environ["RENPY_SEARCHPATH"].split("::"))
 
     if renpy.android:
-        renpy.config.searchpath = [ ]
         renpy.config.commondir = None
 
         android_searchpath()
