@@ -759,7 +759,7 @@ def save_cache():
         return
 
     try:
-        data = zlib.compress(dumps(ccache, 2), 9)
+        data = zlib.compress(dumps(ccache, 2), 3)
 
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
             f.write(data)

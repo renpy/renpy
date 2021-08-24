@@ -2470,7 +2470,7 @@ def save_cache():
         return
 
     try:
-        data = zlib.compress(dumps(scache, 2), 9)
+        data = zlib.compress(dumps(scache, 2), 3)
 
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
             f.write(renpy.game.script.digest.digest())
