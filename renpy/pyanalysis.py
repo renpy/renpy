@@ -706,6 +706,8 @@ class CompilerCache(object):
             self.ast_eval_cache[key] = rv
             self.updated = True
 
+        new_ccache.ast_eval_cache[key] = rv
+
         return rv
 
     def ast_eval(self, expr):
@@ -728,10 +730,13 @@ class CompilerCache(object):
             self.ast_exec_cache[key] = rv
             self.updated = True
 
+        new_ccache.ast_exec_cache[key] = rv
+
         return rv
 
 
 ccache = CompilerCache()
+new_ccache = CompilerCache()
 
 CACHE_FILENAME = "cache/pyanalysis.rpyb"
 
@@ -759,7 +764,7 @@ def save_cache():
         return
 
     try:
-        data = zlib.compress(dumps(ccache, 2), 3)
+        data = zlib.compress(dumps(new_ccache, 2), 3)
 
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
             f.write(data)
