@@ -32,7 +32,8 @@ at clause. The syntax of the transform statement is:
 The transform statement  must be run at init time. If it is found outside an
 ``init`` block, then it is automatically placed inside an ``init`` block with a
 priority of 0. The transform may have a list of parameters, which must be
-supplied when it is called.
+supplied when it is called. Default values for the right-most parameters can
+be given by adding "=" and the value (e.g. "transform a (b, c=0):").
 
 `Name` must be a Python identifier. The transform created by the ATL block is
 bound to this name.::
