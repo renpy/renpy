@@ -1331,6 +1331,16 @@ class SceneLists(renpy.object.Object):
         rv.layer_name = layer
         rv._duplicatable = False
 
+        return rv
+
+    def transform_layer(self, layer, d):
+        """
+        When `d` is a layer created with make_layer, returns `d` with the
+        various at_list transformas applied to it.
+        """
+
+        rv = d
+
         # Layer at list.
 
         time, at_list = self.layer_at_list[layer]
@@ -2891,17 +2901,22 @@ class Interface(object):
         name to a Fixed containing that layer.
         """
 
+        raw = { }
         rv = { }
 
         for layer in renpy.config.layers + renpy.config.top_layers:
-            rv[layer] = scene_lists.make_layer(layer, self.layer_properties[layer])
+            raw[layer] = d = scene_lists.make_layer(layer, self.layer_properties[layer])
+            rv[layer] = scene_lists.transform_layer(layer, d)
 
         root = renpy.display.layout.MultiBox(layout='fixed')
         root.layers = { }
+        root.raw_layers = { }
 
         for layer in renpy.config.layers:
             root.layers[layer] = rv[layer]
+            root.raw_layers[layer] = raw[layer]
             root.add(rv[layer])
+
         rv[None] = root
 
         return rv
@@ -3591,6 +3606,7 @@ class Interface(object):
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
         layers_root.layers = { }
+        layers_root.raw_layers = scene[None].raw_layers
 
         def add_layer(where, layer):
 
@@ -3626,6 +3642,7 @@ class Interface(object):
 
             old_root = renpy.display.layout.MultiBox(layout='fixed')
             old_root.layers = { }
+            old_root.raw_layers = self.transition_from[None].raw_layers
 
             for layer in renpy.config.layers:
                 d = self.transition_from[None].layers[layer]

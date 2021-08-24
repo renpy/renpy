@@ -626,6 +626,9 @@ class MultiBox(Container):
         # that layer.
         self.layers = None
 
+        # The same, but for the raw layers.
+        self.raw_layers = None
+
         # The scene list for this widget.
         self.scene_list = None
 
@@ -635,6 +638,7 @@ class MultiBox(Container):
         self.start_times = [ ]
         self.anim_times = [ ]
         self.layers = None
+        self.raw_layers = None
         self.scene_list = None
 
     def _in_current_store(self):
@@ -669,18 +673,24 @@ class MultiBox(Container):
         elif self.layers:
             rv = MultiBox(layout=self.default_layout)
             rv.layers = { }
+            rv.raw_layers = { }
 
             changed = False
 
             for layer in renpy.config.layers:
-                old_d = self.layers[layer]
+                old_d = self.raw_layers[layer]
                 new_d = old_d._in_current_store()
+
+                rv.raw_layers[layer] = new_d
 
                 if new_d is not old_d:
                     changed = True
+                    new_d = renpy.game.context().scene_lists.transform_layer(layer, new_d)
+                else:
+                    new_d = self.layers[layer]
 
-                rv.add(new_d)
                 rv.layers[layer] = new_d
+                rv.add(new_d)
 
             if not changed:
                 return self

@@ -337,7 +337,7 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
     # This calls merge_slide to actually do the merging.
 
     rv = merge_slide(old_widget, new_widget)
-    rv.delay = delay  # W0201
+    rv.delay = delay # W0201
 
     return rv
 
@@ -512,18 +512,23 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
         if new.layers:
 
             rv = renpy.display.layout.MultiBox(layout='fixed')
+
+            rv.raw_layers = { }
             rv.layers = { }
 
             for layer in renpy.config.layers:
 
                 f = new.layers[layer]
+                d = new.raw_layers[layer]
 
-                if (isinstance(f, renpy.display.layout.MultiBox)
+                if (isinstance(d, renpy.display.layout.MultiBox)
                     and layer in layers
-                        and f.scene_list is not None):
+                    and d.scene_list is not None):
 
-                    f = merge_slide(old.layers[layer], new.layers[layer], merge_slide)
+                    d = merge_slide(old.raw_layers[layer], new.raw_layers[layer], merge_slide)
+                    f = renpy.game.context().scene_lists.transform_layer(layer, d)
 
+                rv.raw_layers[layer] = d
                 rv.layers[layer] = f
                 rv.add(f)
 
