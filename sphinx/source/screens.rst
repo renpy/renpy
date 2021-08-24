@@ -1968,23 +1968,18 @@ prevents screen prediction from occurring. During screen prediction,
 arguments to the screen are evaluated. Please ensure that evaluating
 the screen arguments does not cause unexpected side-effects to occur.
 
-In the case of the call screen statement, the ``with`` clause exists but
-behaves a little differently than usual. Using the ``with`` keyword
-followed by a transition on the same line as the ``call`` only specifies
-the transition to be used when the screen appears.
+In a call screen statement, the ``with`` clause causes a transition
+to occur when the screen is shown.
 
-Since calling a screen is an interaction, and since interactions trigger
-an implicit ``with None``, using a simple ``with`` statement after the
+Since calling a screen is an interaction, and interactions trigger
+an implicit ``with None``, using a ``with`` statement after the
 ``call screen`` instruction won't make the screen disappear using the
-transition, as it would only execute after the screen has already been
-hidden. The way to make it work is to disable the implicit ``with None``
-transition, either in the whole game by setting
-:var:`config.implicit_with_none` to False, or just for one instance by
-passing the ``_with_none=False`` special keyword argument to the screen
-call, as showcased below. In that case, adding a ``with`` statement after
-the screen will specify the transition tu use to hide the screen. Using a
-``[Return(), With(dissolve)]`` action list within the screen also works,
-but only when that action list is triggered.
+transition, as the screen will already will be gone. To disable the
+implicit ``with None`` transition, pass the ``_with_none=False``
+special keyword argument to the screen, as in the example below.
+
+Other ways of triggering transitions also work, such as the
+``[ With(dissolve), Return() ]`` action list.
 
 .. warning::
 
