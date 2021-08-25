@@ -399,7 +399,7 @@ def main():
     # Find archives.
     for dn in renpy.config.searchpath:
 
-        if os.path.isdir(dn):
+        if not os.path.isdir(dn):
             continue
 
         for i in sorted(os.listdir(dn)):
