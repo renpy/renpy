@@ -898,12 +898,21 @@ cdef class Render:
 
         reverse = self.reverse
 
+        this = self
+
+        if (reverse is not None) and (reverse.wdw != 1.0):
+            this = Render(self.width, self.height)
+            this.mesh = True
+            this.add_shader("renpy.texture")
+            this.blit(self, (0, 0), focus=focus, main=True)
+            reverse = None
+
         if ((reverse is not None) and
             (reverse.xdx != 1.0 or
             reverse.xdy != 0.0 or
             reverse.ydx != 0.0 or
             reverse.ydy != 1.0) or
-            self.mesh):
+            this.mesh):
 
             # This doesn't actually make a subsurface, as we can't easily do
             # so for non-rectangle-aligned renders.
@@ -919,11 +928,11 @@ cdef class Render:
                                      reverse.ydx == 0.0 and
                                      reverse.ydy > 0.0):
 
-                forward = self.forward or IDENTITY
+                forward = this.forward or IDENTITY
 
                 tx, ty = forward.transform(x, y)
                 tw, th = forward.transform(w + x, h + y)
-                rw, rh = forward.transform(self.width, self.height)
+                rw, rh = forward.transform(this.width, this.height)
 
                 if (tx <= 0) and (tw >= rw):
                     rv.xclipping = False
@@ -931,7 +940,7 @@ cdef class Render:
                 if (ty <= 0) and (th >= rh):
                     rv.yclipping = False
 
-            rv.blit(self, (-x, -y), focus=focus, main=True)
+            rv.blit(this, (-x, -y), focus=focus, main=True)
             return rv
 
         # This is the path that executes for rectangle-aligned surfaces,
@@ -980,6 +989,7 @@ cdef class Render:
 
             except:
                 raise Exception("Creating subsurface failed. child size = ({}, {}), crop = {!r}".format(childw, childh, crop))
+
 
             rv.blit(newchild, offset, focus=cfocus, main=cmain)
 
