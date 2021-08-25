@@ -928,16 +928,10 @@ def run_context(top):
             return rv
 
         except renpy.game.RestartContext as e:
-
-            # Apply defaults.
-            renpy.exports.execute_default_statement(False)
             continue
 
         except renpy.game.RestartTopContext as e:
             if top:
-
-                # Apply defaults.
-                renpy.exports.execute_default_statement(False)
                 continue
 
             else:

@@ -89,7 +89,6 @@ label _after_load:
         main_menu = False
         _in_replay = None
 
-        renpy.execute_default_statement(False)
         _init_language()
 
     python hide:
