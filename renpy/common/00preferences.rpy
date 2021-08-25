@@ -183,7 +183,7 @@ init -1500 python:
          * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
          * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
 
-         * Preference("debug voicing", "enable") - Enables self.-voicing debug
+         * Preference("debug voicing", "enable") - Enables self-voicing debug
          * Preference("debug voicing", "disable") - Disable self-voicing debug.
          * Preference("debug voicing", "toggle") - Toggles self-voicing debug.
 
@@ -211,6 +211,13 @@ init -1500 python:
          * Preference("system cursor", "enable") - Use system cursor ignoring config.mouse.
          * Preference("system cursor", "disable") - Use cursor defined in config.mouse.
          * Preference("system cursor", "toggle") - Toggle system cursor.
+
+
+         * Preference("high contrast text", "enable") - Enables white text on a black background.
+         * Preference("high contrast text", "disable") - Disables high contrast text.
+         * Preference("high contrast text", "toggle") - Toggles high contrast text.
+
+
 
          Values that can be used with bars are:
 
@@ -482,6 +489,15 @@ init -1500 python:
 
             elif name == _("accessibility menu"):
                 return ToggleScreen("_accessibility")
+
+            elif name == _("high contrast text"):
+
+                if value == "enable":
+                    return [ SetField(_preferences, "high_contrast", True), _DisplayReset() ]
+                elif value == "disable":
+                    return [ SetField(_preferences, "high_contrast", False), _DisplayReset() ]
+                elif value == "toggle":
+                    return [ ToggleField(_preferences, "high_contrast"), _DisplayReset() ]
 
 
             mixer_names = {

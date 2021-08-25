@@ -175,6 +175,18 @@ screen _accessibility():
                         alt "reset font line spacing"
                         action Preference("font line spacing", 1.0)
 
+                    null height 10
+
+                    label _("High Contrast Text")
+
+                    textbutton _("Enable"):
+                        action Preference("high contrast text", "enable")
+                        style_suffix "radio_button"
+
+                    textbutton _("Disable"):
+                        action Preference("high contrast text", "disable")
+                        style_suffix "radio_button"
+
 
                 vbox:
 
