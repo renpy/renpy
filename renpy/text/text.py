@@ -811,6 +811,12 @@ class Layout(object):
             if key in self.textures:
                 continue
 
+            if color == None:
+                self.displayable_blits = [ ]
+                di.displayable_blits = self.displayable_blits
+            else:
+                di.displayable_blits = None
+
             # Create the texture.
 
             tw = int(sw + o)
@@ -822,15 +828,15 @@ class Layout(object):
 
             surf = renpy.display.pgrender.surface((tw, th), True)
 
+            if renpy.game.preferences.high_contrast:
+                if color:
+                    surf.fill(color)
+                else:
+                    color = (255, 255, 255, 255)
+
             di.surface = surf
             di.override_color = color
             di.outline = o
-
-            if color == None:
-                self.displayable_blits = [ ]
-                di.displayable_blits = self.displayable_blits
-            else:
-                di.displayable_blits = None
 
             for ts, glyphs in par_seg_glyphs:
                 if ts is self.end_segment:
@@ -1282,7 +1288,7 @@ class Layout(object):
         style_outlines = style.outlines
         dslist = style.drop_shadow
 
-        if not style_outlines and not dslist:
+        if (not style_outlines) and (not dslist) and not renpy.game.preferences.high_contrast:
             return [ (0, None, 0, 0) ], 0, 0, 0, 0
 
         outlines = [ ]
@@ -1323,6 +1329,9 @@ class Layout(object):
                 bottom = b
 
         outlines.append((0, None, 0, 0))
+
+        if renpy.game.preferences.high_contrast:
+            outlines = [ (2, (0, 0, 0, 255), 0, 0), (0, None, 0, 0) ]
 
         return outlines, right - left, bottom - top, -left, -top
 
