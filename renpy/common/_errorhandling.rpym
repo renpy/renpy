@@ -681,17 +681,7 @@ screen _parse_errors:
                     action reload_action
                     hovered tt.action(_("Reloads the game from disk, saving and restoring game state if possible."))
 
-                textbutton _("Open"):
-                    action _EditFile(error_fn)
-                    hovered tt.action(_("Opens the errors.txt file in a text editor."))
-
-                textbutton _("Copy BBCode"):
-                    action _CopyFile(error_fn, u"[code]\n{}[/code]\n")
-                    hovered tt.action(_("Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."))
-
-                textbutton __("Copy Markdown"):
-                    action _CopyFile(error_fn, u"```\n{}```\n")
-                    hovered tt.action(_("Copies the errors.txt file to the clipboard as Markdown for Discord."))
+                use _exception_actions(error_fn, tt)
 
                 vbox:
                     xfill True
@@ -704,5 +694,5 @@ screen _parse_errors:
             # Tooltip.
             text tt.value
 
-    if config.developer and reload_action:
+    if reload_action:
         key "reload_game" action reload_action
