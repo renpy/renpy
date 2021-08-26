@@ -832,7 +832,20 @@ class Layout(object):
                 if color:
                     surf.fill(color)
                 else:
+                    prefix = style.prefix
+                    prefix_color = style.color
+                    style.set_prefix("idle_")
+                    idle_color = style.color
+                    style.set_prefix(prefix)
+
                     color = (255, 255, 255, 255)
+
+                    if idle_color != prefix_color:
+
+                        if "hover" in prefix:
+                            color = (255, 255, 224, 255)
+                        elif "selected" in style.prefix:
+                            color = (224, 255, 255, 255)
 
             di.surface = surf
             di.override_color = color
