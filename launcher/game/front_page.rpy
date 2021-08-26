@@ -23,6 +23,8 @@ define PROJECT_ADJUSTMENT = ui.adjustment()
 
 init python:
 
+    import datetime
+
     import os
     import subprocess
 
@@ -262,7 +264,13 @@ label start:
 
     jump expression renpy.session.pop("launcher_start_label", "front_page")
 
+default persistent.has_update = False
+
 label front_page:
+    if persistent.daily_update_check and ((not persistent.last_update_check) or (datetime.date.today() > persistent.last_update_check)):
+        $ update_label_function()
+        $ persistent.last_update_check = datetime.date.today()
+
     call screen front_page
     jump front_page
 

@@ -61,6 +61,7 @@ init python:
 default persistent.legacy = False
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
+default persistent.daily_update_check = False
 
 screen preferences:
 
@@ -207,6 +208,9 @@ screen preferences:
                         # textbutton _("Clear theme") style "l_checkbox" action [SetField(persistent, "theme", "clear", None), RestartAtPreferences() ]
                         textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark", None), RestartAtPreferences()]
                         textbutton _("Custom theme") style "l_checkbox" action [SetField(persistent, "theme", "custom", None), RestartAtPreferences()]
+
+                        if ability.can_update:
+                            textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
 
 
                 if translations:
