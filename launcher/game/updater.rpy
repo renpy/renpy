@@ -184,28 +184,32 @@ screen updater:
 
 label update:
 
-    call screen update_channel(update_label_function()) nopredict
+    $ update_channels = fetch_update_channels(quiet=False)
+    call screen update_channel(update_channels) nopredict
 
     jump front_page
 
 init python:
-    def update_label_function():
-        interface.processing(_("Fetching the list of update channels"))
 
-        import urllib2
-        import json
+    def fetch_update_channels(quiet=True):
 
-        with interface.error_handling(_("downloading the list of update channels")):
-            channel_data = urllib2.urlopen(CHANNELS_URL, context=ssl_context())
+        if not quiet:
+            interface.processing(_("Fetching the list of update channels"))
 
-        with interface.error_handling(_("parsing the list of update channels")):
-            channels = json.load(channel_data)["releases"]
+        import requests
 
-        renpy.store.persistent.has_update = False
+        if not quiet:
+            with interface.error_handling(_("downloading the list of update channels")):
+                channels = requests.get(CHANNELS_URL).json()["releases"]
+        else:
+            channels = requests.get(CHANNELS_URL).json()["releases"]
+
+        persistent.has_update = False
+
         for chan in channels:
-            if (chan["channel"] == "Release"):
-                if (chan["split_version"] > list(renpy.version_tuple)):
-                    renpy.store.persistent.has_update = True
+            if chan["channel"] == "Release":
+                if chan["split_version"] > list(renpy.version_tuple):
+                    persistent.has_update = True
                 break
 
         return channels

@@ -128,15 +128,8 @@ screen bottom_info:
                     if ability.can_update:
                         textbutton _("update") action Jump("update") style "l_link":
                             if persistent.has_update:
-                                if renpy.display.render.models:
-                                    text_color "#fff"
-                                    at transform:
-                                        ease 1 matrixcolor TintMatrix("#f96854")
-                                        ease 1 matrixcolor TintMatrix(TEXT)
-                                        repeat
-                                else:
-                                    text_color "#F96854"
-                                    text_hover_color Color("#F96854").tint(.8)
+                                text_color "#F96854"
+                                text_hover_color Color("#F96854").tint(.8)
 
                     textbutton _("preferences") style "l_link" action Jump("preferences")
                     textbutton _("quit") style "l_link" action Quit(confirm=False)
