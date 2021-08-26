@@ -306,7 +306,7 @@ def before_interact(roots):
         current = grab
 
     # Otherwise, focus the default widget.
-    if current is None:
+    if (current is None) and renpy.display.interface.start_interact:
 
         defaults = [ ]
 
