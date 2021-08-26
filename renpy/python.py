@@ -2062,7 +2062,7 @@ class RollbackLog(renpy.object.Object):
         for rb in revlog:
             rb.rollback()
 
-            if rb.context.current == self.fixed_rollback_boundary:
+            if (rb.context.current == self.fixed_rollback_boundary) and (rb.context.current):
                 self.rollback_is_fixed = True
 
             if rb.forward is not None:
