@@ -750,3 +750,10 @@ translate spanish strings:
     old "system cursor"
     new "cursor del sistema"
 
+    # renpy/common/00preferences.rpy:480
+    old "menú de renderizado"
+    new ""
+
+    # renpy/common/00preferences.rpy:483
+    old "menú de accesibilidad"
+    new ""
