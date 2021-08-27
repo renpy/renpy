@@ -297,13 +297,25 @@ class TransformState(renpy.object.Object):
 
     offset = property(get_offset, set_offset)
 
-    def get_size(self):
+    def get_xysize(self):
         return self.xsize, self.ysize
 
-    def set_size(self, value):
+    def set_xysize(self, value):
         if value is None:
             value = (None, None)
         self.xsize, self.ysize = value
+
+    xysize = property(get_xysize, set_xysize)
+
+    def get_size(self):
+        if renpy.config.old_size_tpref:
+            return tuple(int(x) for x in self.xysize)
+        return self.xysize
+
+    def set_size(self, value):
+        if renpy.config.old_size_tpref and value is not None:
+            value = tuple(int(x) for x in value)
+        self.xysize = value
 
     size = property(get_size, set_size)
 
@@ -323,6 +335,16 @@ class TransformState(renpy.object.Object):
 
     xcenter = property(get_xcenter, set_xcenter)
     ycenter = property(get_ycenter, set_ycenter)
+
+    def get_xycenter(self):
+        return self.xcenter, self.ycenter
+
+    def set_xycenter(self, value):
+        if value is None:
+            value = (None, None)
+        self.xcenter, self.ycenter = value
+
+    xycenter = property(get_xycenter, set_xycenter)
 
 
 class Proxy(object):
@@ -990,8 +1012,8 @@ add_property("xpan", float_or_none, None)
 add_property("xpos", position, None, diff=4)
 add_property("xsize", int, None)
 add_property("xtile", int, 1)
-
 add_property("xzoom", float, 1.0)
+
 add_property("yanchoraround", float, 0.0)
 add_property("yanchor", position, None, diff=4)
 add_property("yaround", position, 0.0)
@@ -1026,6 +1048,8 @@ ALIASES = {
     "size" : (int, int),
     "xalign" : float,
     "xcenter" : position,
+    "xycenter" : (position, position),
+    "xysize" : (position, position),
     "yalign" : float,
     "ycenter" : position,
     }
