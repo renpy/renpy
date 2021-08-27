@@ -307,17 +307,13 @@ class TransformState(renpy.object.Object):
 
     xysize = property(get_xysize, set_xysize)
 
-    def get_size(self):
-        if renpy.config.old_size_tpref:
-            return tuple(int(x) for x in self.xysize)
-        return self.xysize
-
     def set_size(self, value):
-        if renpy.config.old_size_tpref and value is not None:
-            value = tuple(int(x) for x in value)
-        self.xysize = value
+        if value is None:
+            self.xysize = None
+        else:
+            self.xysize = tuple(int(x) if isinstance(x, float) else x for x in value)
 
-    size = property(get_size, set_size)
+    size = property(get_xysize, set_size)
 
     def set_xcenter(self, value):
         self.xpos = value
