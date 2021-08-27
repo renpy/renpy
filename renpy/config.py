@@ -1177,6 +1177,9 @@ single_movie_channel = None
 # Should Ren'Py raise exceptions when finding an image?
 raise_image_exceptions = True
 
+# Should the size transform property only accept numbers of pixels ?
+old_size_tpref = False
+
 del os
 del collections
 
@@ -1212,4 +1215,3 @@ def init():
     gl_blend_func["multiply"] = (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE)
     gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
-
