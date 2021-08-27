@@ -119,9 +119,15 @@ def transform_render(self, widtho, heighto, st, at):
     fit = state.fit
 
     if xsize is not None:
-        widtho = xsize
+        if isinstance(xsize, float) and not isinstance(xsize, absolute) and not renpy.config.old_size_tpref:
+            widtho *= xsize
+        else:
+            widtho = xsize
     if ysize is not None:
-        heighto = ysize
+        if isinstance(ysize, float) and not isinstance(ysize, absolute) and not renpy.config.old_size_tpref:
+            heighto *= ysize
+        else:
+            heighto = ysize
 
     # Figure out the perspective.
     perspective = state.perspective
