@@ -1813,6 +1813,10 @@ translate spanish strings:
     # game/ios.rpy:339
     old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
     new "Hay problemas conocidos con el simulador de iOS en Apple Silicon. Pruebe en dispositivos x86_64 o iOS."
+    
+    # game/preferences.rpy:213
+    old "Daily check for update"
+    new "Comprobación diaria de actualizaciones"
 
     # game/web.rpy:330
     old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
