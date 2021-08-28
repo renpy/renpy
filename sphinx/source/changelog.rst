@@ -2,6 +2,103 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
+.. _renpy-7.4.9:
+
+7.4.9
+=====
+
+Android
+-------
+
+This release features major changes to Ren'Py's Android support, starting
+with support for the Android App Bundle format, now required for your game
+to be uploaded to Google Play.
+
+When run on Google Play, Ren'Py will use Play Asset Delivery to deliver
+the game data to the player's device. This should have the same 2 GB limit
+of previous versions of Ren'Py, with each file in your game automatically
+assigned to one of four 500 MB asset packs. If the games is started before
+all of the asset packs have been delivered, Ren'Py will wait for delivery
+to finish before starting.
+
+Ren'Py still supports building 2GB APKs that can be sideloaded onto devices,
+and supplied to other app stores.
+
+Ren'Py now builds against version 30 of the Android SDK.
+
+Ren'Py supports wireless debugging on Android 11 devices.
+
+A number of questions have been removed from the Android configuration
+process, simplifying the process. Most notably, Ren'Py now automatically
+manages the numeric version of the package, so it's no longer required to
+increment that version with each build.
+
+Ren'Py will now look for archives in the external files directory, and
+automatically use the archives if found. This makes it possible to
+distribute patches, updates, and additional asset to users.
+
+Updater
+-------
+
+The Ren'Py updater has been improved. It is now possible to download
+updates over https, though doing so is less efficient, as the entire
+update file will need to be download rather than just the required
+changes.
+
+It is possible to opt into a daily check for updates in the launcher
+preferences. This will cause Ren'Py to check once a day for updates,
+and highlight the update button if one exists.
+
+Camera/Perspective Improvements
+-------------------------------
+
+Using the ``camera`` statement in non-trival manners, such as to apply
+perspective, could cause problems with several transitions, most notably
+the move transitions. This has been fixed, and so these transions should
+work.
+
+Operations that required the taking of a subsurface (for
+example, the slide and wipe transitions, or the use of viewports) didn't
+work when applied to a perspective transform. This has been fixed, but
+it does require a render to texture operation to work, leaving it up
+to the creator to decide if the performance penalty is desirable.
+
+Accessibility
+-------------
+
+The shift+A Accessibility menu now supports enabling high contrast text, which
+converts all text to light-on-black. This is intended to assist player who
+need higher contrast to experience a game.
+
+Descriptive text (the :var:`alt` character) no longer causes the dialogue
+window to fade in if the descriptive text is disabled.
+
+Other
+-----
+
+An issue that caused analysis files to grow unconstrained, slowing down
+Ren'Py startup, has been fixed. The analysis file will be reduced in size
+when the game scripts are recompiled.
+
+The :propref:`hover_sound` and :properef:`activate_sound` properties now
+apply to bars.
+
+When dispatching events in ATL, if an event with a ``selected_`` prefix is not
+handled, the prefix is stripped and the event is matched again. This means
+that a ``hover`` handler will handle the ``selected_hover`` even if the
+``selected_hover`` handler does not exist, and same thing with ``selected_idle``
+
+Ren'Py versions can now include an optional letter at the end. The ``n`` suffix
+is applied to nightly builds of Ren'Py, while the ``u`` suffix is applied to
+unofficial builds.
+
+The ``default`` statement is applied after each rollback.
+
+A regression that could prevent text in buttons from changing has been fixed.
+
+
+
+
 .. _renpy-7.4.8:
 
 7.4.8
