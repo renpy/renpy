@@ -120,21 +120,19 @@ def transform_render(self, widtho, heighto, st, at):
 
     if xsize is not None:
         if isinstance(xsize, float) and not isinstance(xsize, absolute) and not renpy.config.old_size_tpref:
-            widtho *= xsize
-        else:
-            widtho = xsize
+            xsize *= widtho
+        widtho = xsize
     if ysize is not None:
         if isinstance(ysize, float) and not isinstance(ysize, absolute) and not renpy.config.old_size_tpref:
-            heighto *= ysize
-        else:
-            heighto = ysize
+            ysize *= heighto
+        heighto = ysize
 
     # Figure out the perspective.
     perspective = state.perspective
 
     if perspective is True:
         perspective = renpy.config.perspective
-    if isinstance(perspective, (int, float)):
+    elif isinstance(perspective, (int, float)):
         perspective = (renpy.config.perspective[0], perspective, renpy.config.perspective[2])
 
     # Set the z11 distance.
