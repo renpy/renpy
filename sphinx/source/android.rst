@@ -303,6 +303,17 @@ android-presplash.jpg
     fit available space while preserving aspect ratio, and the rest of the
     screen is filled with the border color.
 
+android-downloading.jpg
+    The image thjat's used when the app is downloading assets from Google
+    Play Asset delivery. This should be surrounded
+    by 1px of a monocolored border. When displayed, the image is scaled to
+    fit available space while preserving aspect ratio, and the rest of the
+    screen is filled with the border color.
+
+    A 20px-high progress bar is displayed 20px from the bottom, left, and
+    right sides of the screen, showing download progress.
+
+
 .. _expansion-apk:
 
 Expansion APKs
