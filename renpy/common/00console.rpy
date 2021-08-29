@@ -556,6 +556,8 @@ init -1500 python in _console:
 
                 return rv
 
+            renpy.ui.reset()
+
             renpy.game.context().exception_handler = None
 
             renpy.show_screen("_console", lines=self.lines[:-1], default=self.lines[-1], history=self.history, _transient=True)
