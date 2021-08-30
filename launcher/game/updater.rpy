@@ -207,7 +207,7 @@ init python:
         persistent.has_update = False
 
         for chan in channels:
-            if chan["channel"] == "Release":
+            if (chan["channel"] == "Release") or not persistent.daily_check_nightly:
                 if chan["split_version"] > list(renpy.version_tuple):
                     persistent.has_update = True
                 break
