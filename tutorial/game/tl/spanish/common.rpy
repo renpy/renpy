@@ -1147,7 +1147,7 @@ translate spanish strings:
 
     # renpy/common/00accessibility.rpy:180
     old "High Contrast Text"
-    new "Texto de Alto Contraste "
+    new "Texto de Alto Contraste"
 
     # renpy/common/00accessibility.rpy:215
     old "Self-Voicing Volume Drop"
