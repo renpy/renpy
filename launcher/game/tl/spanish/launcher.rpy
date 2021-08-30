@@ -1830,3 +1830,19 @@ translate spanish strings:
     old "There are known issues with Safari and other Webkit-based browsers that may prevent games from running."
     new "Existen problemas conocidos con Safari y otros navegadores basados en Webkit que pueden impedir que los juegos se ejecuten."
     
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    new "Estoy instalando el paquete."
+
+    # game/androidstrings.rpy:30
+    old "How much RAM do you want to allocate to Gradle?\n\nThis must be a positive integer number."
+    new "¿Cuánta RAM desea asignar a Gradle?\n\nDebe ser un número entero positivo."
+
+    # game/androidstrings.rpy:31
+    old "The RAM size must contain only numbers."
+    new "El tamaño de la RAM debe contener solo números."
+
+    # game/androidstrings.rpy:61
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    new "No se pudo crear bundle.keystore. ¿Está keytool en tu ruta?"
+    
