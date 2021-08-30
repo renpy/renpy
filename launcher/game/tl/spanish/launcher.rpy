@@ -1532,7 +1532,7 @@ translate spanish strings:
 
     # game/androidstrings.rpy:69
     old "Could not create android.keystore. Is keytool in your path?"
-    new "No se pudo crear android.keystore. ¿Esta keytool en tu ruta?"
+    new "No se pudo crear android.keystore. ¿Está keytool en tu ruta?"
 
     # game/androidstrings.rpy:70
     old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
