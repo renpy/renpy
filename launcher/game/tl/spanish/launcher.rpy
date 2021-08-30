@@ -1532,7 +1532,7 @@ translate spanish strings:
 
     # game/androidstrings.rpy:69
     old "Could not create android.keystore. Is keytool in your path?"
-    new "No se pudo crear android.keystore. ¿Esta keytool en tu ruta?"
+    new "No se pudo crear android.keystore. ¿Está keytool en tu ruta?"
 
     # game/androidstrings.rpy:70
     old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
@@ -1745,4 +1745,104 @@ translate spanish strings:
     # game/preferences.rpy:209
     old "Custom theme"
     new "Tema personalizado"
+    
+    # game/android.rpy:38
+    old "RAPT has been installed, but a bundle key hasn't been configured. Please create a new key, or restore bundle.keystore."
+    new "Se ha instalado RAPT, pero no se ha configurado una clave de paquete. Cree una nueva clave o restaure bundle.keystore."
+
+    # game/android.rpy:40
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    new "Selecciona si quieres un Play Bundle (para Google Play) o un APK Universal (para descarga lateral y otras tiendas de aplicaciones)."
+
+    # game/android.rpy:55
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    new "Empareja con un dispositivo a través de Wi-Fi, en Android 11+."
+
+    # game/android.rpy:56
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    new "Conecta a un dispositivo a través de Wi-Fi, en Android 11+."
+
+    # game/android.rpy:58
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    new "Crea un paquete de aplicaciones de Android (ABB), destinado a cargarse en Google Play. Esto puede incluir hasta 2 GB de datos."
+
+    # game/android.rpy:59
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    new "Crea un paquete de APK universal, destinado a la descarga lateral y a tiendas distintas de Google Play. Esto puede incluir hasta 2 GB de datos."
+
+    # game/android.rpy:388
+    old "Play Bundle"
+    new "Play Bundle"
+
+    # game/android.rpy:392
+    old "Universal APK"
+    new "APK Universal"
+
+    # game/android.rpy:449
+    old "Wi-Fi Debugging Pair"
+    new "Depuración de par de Wi-Fi "
+
+    # game/android.rpy:453
+    old "Wi-Fi Debugging Connect"
+    new "Depuración de conexión de Wi-Fi "
+
+    # game/android.rpy:541
+    old "Wi-Fi Pairing Code"
+    new "Código de emparejamiento de Wi-Fi"
+
+    # game/android.rpy:541
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    new "Si es compatible, puede encontrarlo en 'Opciones de desarrollador', 'Depuración inalámbrica', 'Emparejar dispositivo con código de emparejamiento'."
+
+    # game/android.rpy:548
+    old "Pairing Host & Port"
+    new "Emparejamiento de host y puerto"
+
+    # game/android.rpy:564
+    old "IP Address & Port"
+    new "Dirección IP y puerto"
+
+    # game/android.rpy:564
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    new "Si es compatible, puede encontrarlo en 'Opciones de desarrollador', 'Depuración inalámbrica'."
+
+    # game/gui7.rpy:311
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    new "size=-4}\n\nEsto no sobrescribirá gui/main_menu.png, gui/game_menu.png y gui/window_icon.png, pero creará archivos que no existen.{/size}"
+
+    # game/ios.rpy:339
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    new "Hay problemas conocidos con el simulador de iOS en Apple Silicon. Pruebe en dispositivos x86_64 o iOS."
+    
+    # game/preferences.rpy:213
+    old "Daily check for update"
+    new "Comprobación diaria de actualizaciones"
+
+    # game/web.rpy:330
+    old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    new "Las imágenes y la música se pueden descargar mientras se reproduce. Se creará un archivo 'progress_download.txt' para que pueda configurar este comportamiento."
+
+    # game/web.rpy:334
+    old "Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported."
+    new "Las limitaciones actuales en la plataforma web significan que la carga de imágenes grandes puede causar problemas de audio o de velocidad de fotogramas, y un rendimiento más bajo en general. No se admiten películas."
+
+    # game/web.rpy:338
+    old "There are known issues with Safari and other Webkit-based browsers that may prevent games from running."
+    new "Existen problemas conocidos con Safari y otros navegadores basados en Webkit que pueden impedir que los juegos se ejecuten."
+    
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    new "Estoy instalando el paquete."
+
+    # game/androidstrings.rpy:30
+    old "How much RAM do you want to allocate to Gradle?\n\nThis must be a positive integer number."
+    new "¿Cuánta RAM desea asignar a Gradle?\n\nDebe ser un número entero positivo."
+
+    # game/androidstrings.rpy:31
+    old "The RAM size must contain only numbers."
+    new "El tamaño de la RAM debe contener solo números."
+
+    # game/androidstrings.rpy:61
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    new "No se pudo crear bundle.keystore. ¿Está keytool en tu ruta?"
     

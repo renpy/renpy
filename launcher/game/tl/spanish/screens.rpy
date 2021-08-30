@@ -677,3 +677,7 @@ translate spanish strings:
     old "## The quit button is banned on iOS and unnecessary on Android and Web."
     new "## El botón de salida está prohibido en iOS y no es necesario en Android y Web."
 
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    new "Abre el menú de accesibilidad."
+

@@ -1145,3 +1145,78 @@ translate spanish strings:
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
     new "Las opciones en este menú están destinadas a mejorar la accesibilidad. Es posible que no funcionen con todos los juegos, y algunas combinaciones de opciones pueden hacer que el juego no se pueda jugar. Esto no es un problema con el juego o el motor. Para obtener los mejores resultados al cambiar las fuentes, intente mantener el tamaño del texto igual al original."
 
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "Texto de Alto Contraste"
+
+    # renpy/common/00accessibility.rpy:215
+    old "Self-Voicing Volume Drop"
+    new "Caída de Volumen de Voz Automática"
+
+    # renpy/common/00preferences.rpy:402
+    old "self voicing volume drop"
+    new "caída de volumen de voz automática"
+
+    # renpy/common/00preferences.rpy:478
+    old "system cursor"
+    new "cursor del sistema"
+
+    # renpy/common/00preferences.rpy:487
+    old "renderer menu"
+    new "menú de renderizado"
+
+    # renpy/common/00preferences.rpy:490
+    old "accessibility menu"
+    new "menú de accesibilidad"
+
+    # renpy/common/00preferences.rpy:493
+    old "high contrast text"
+    new "texto de alto contraste"
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "Forzar renderizador GL"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "Force renderizador ANGLE"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "Forzar renderizador GLES"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "Forzar renderizador GL2"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "Forzar renderizador ANGLE2"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "Forzar renderizador GLES2"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "Habilitar (sin Blocklist)"
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    new "Este juego requiere el uso de GL2 que no se puede inicializar."
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "El archivo {a=edit:1:log.txt}log.txt{/a} puede contener información para ayudarte a encontrar el problema en tu ordenador."
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Puede encontrar más detalles sobre cómo solucionar este problema en la {a=[url]} documentación {/a}."
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    new "Cambiar las opciones de renderizado"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "Presiona o mueve el '[control!s]' [kind]."
