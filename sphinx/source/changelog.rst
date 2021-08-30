@@ -21,6 +21,10 @@ assigned to one of four 500 MB asset packs. If the games is started before
 all of the asset packs have been delivered, Ren'Py will wait for delivery
 to finish before starting.
 
+A new android-downloading.jpg file is used in place of android-presplash.jpg
+when Play Asset Delivery is downloading the game's assets. This screen is
+overlayed with a progress bar.
+
 Ren'Py still supports building 2GB APKs that can be sideloaded onto devices,
 and supplied to other app stores.
 
