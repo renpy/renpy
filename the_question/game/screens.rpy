@@ -1103,6 +1103,10 @@ screen keyboard_help():
         label "V"
         text _("Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}.")
 
+    hbox:
+        label "Shift+A"
+        text _("Opens the accessibility menu.")
+
 
 screen mouse_help():
 
