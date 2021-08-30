@@ -62,6 +62,7 @@ default persistent.legacy = False
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
 default persistent.daily_update_check = False
+default persistent.daily_check_nightly = False
 
 screen preferences:
 
@@ -202,15 +203,17 @@ screen preferences:
 
                         textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
 
+                        if ability.can_update:
+                            textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
+                            if persistent.daily_update_check:
+                                textbutton _("Include nightly builds") style "l_checkbox" action [ToggleField(persistent, "daily_check_nightly")] sensitive persistent.daily_update_check
+
                         add HALF_SPACER
 
                         textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
                         # textbutton _("Clear theme") style "l_checkbox" action [SetField(persistent, "theme", "clear", None), RestartAtPreferences() ]
                         textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark", None), RestartAtPreferences()]
                         textbutton _("Custom theme") style "l_checkbox" action [SetField(persistent, "theme", "custom", None), RestartAtPreferences()]
-
-                        if ability.can_update:
-                            textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
 
 
                 if translations:
