@@ -764,3 +764,4 @@ translate spanish strings:
 
     # renpy/common/00preferences.rpy:493
     old "high contrast text"
+    new "texto de alto contraste"
