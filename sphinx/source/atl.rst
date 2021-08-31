@@ -746,7 +746,7 @@ both horizontal and vertical positions.
 
 .. transform-property:: xcenter
 
-    :type: float
+    :type: position
     :default: 0.0
 
     Equivalent to setting xpos to the value of this property, and
@@ -754,7 +754,7 @@ both horizontal and vertical positions.
 
 .. transform-property:: ycenter
 
-    :type: float
+    :type: position
     :default: 0.0
 
     Equivalent to setting ypos to the value of this property, and
