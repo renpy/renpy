@@ -927,9 +927,9 @@ both horizontal and vertical positions.
     If not None, gives the lower right corner of the crop box. Cropt takes
     priority over corners.
 
-.. transform-property:: size
+.. transform-property:: xysize
 
-    :type: None or (int, int)
+    :type: None or (position, position)
     :default: None
 
     If not None, causes the displayable to be scaled to the given
@@ -939,7 +939,7 @@ both horizontal and vertical positions.
 
 .. transform-property:: xsize
 
-    :type: None or int
+    :type: None or position
     :default: None
 
     If not None, causes the displayable to be scaled to the given width.
@@ -948,7 +948,7 @@ both horizontal and vertical positions.
 
 .. transform-property:: ysize
 
-    :type: None or int
+    :type: None or position
     :default: None
 
     If not None, causes the displayable to be scaled to the given height.
@@ -985,6 +985,20 @@ both horizontal and vertical positions.
         - As for ``cover``, but will never decrease the size of the
           displayable.
 
+.. transform-property:: size
+
+    :type: None or (int, int)
+    :default: None
+
+    If not None, causes the displayable to be scaled to the given
+    size.
+
+    This is affected by the :tpref:`fit` property.
+
+    .. warning::
+
+        This property is deprecated. Use :tpref:`xysize` instead.
+
 .. transform-property:: maxsize
 
     :type: None or (int, int)
@@ -997,7 +1011,7 @@ both horizontal and vertical positions.
 
     .. warning::
 
-        This property is deprecated. Consider using :tpref:`size` in
+        This property is deprecated. Consider using :tpref:`xysize` in
         conjuction with :tpref:`fit` and the value ``contain``.
 
 .. transform-property:: subpixel
@@ -1115,7 +1129,7 @@ These properties are applied in the following order:
 #. tile
 #. mesh, blur
 #. crop, corner1, corner2
-#. size, maxsize
+#. xysize, size, maxsize
 #. zoom, xzoom, yzoom
 #. pan
 #. rotate
