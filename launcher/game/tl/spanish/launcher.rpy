@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # about.rpy:39
     old "[version!q]"
@@ -1745,7 +1745,7 @@ translate spanish strings:
     # game/preferences.rpy:209
     old "Custom theme"
     new "Tema personalizado"
-    
+
     # game/android.rpy:38
     old "RAPT has been installed, but a bundle key hasn't been configured. Please create a new key, or restore bundle.keystore."
     new "Se ha instalado RAPT, pero no se ha configurado una clave de paquete. Cree una nueva clave o restaure bundle.keystore."
@@ -1813,7 +1813,7 @@ translate spanish strings:
     # game/ios.rpy:339
     old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
     new "Hay problemas conocidos con el simulador de iOS en Apple Silicon. Pruebe en dispositivos x86_64 o iOS."
-    
+
     # game/preferences.rpy:213
     old "Daily check for update"
     new "Comprobación diaria de actualizaciones"
@@ -1829,7 +1829,7 @@ translate spanish strings:
     # game/web.rpy:338
     old "There are known issues with Safari and other Webkit-based browsers that may prevent games from running."
     new "Existen problemas conocidos con Safari y otros navegadores basados en Webkit que pueden impedir que los juegos se ejecuten."
-    
+
     # game/androidstrings.rpy:16
     old "I'm installing the bundle."
     new "Estoy instalando el paquete."
@@ -1845,4 +1845,4 @@ translate spanish strings:
     # game/androidstrings.rpy:61
     old "Could not create bundle.keystore. Is keytool in your path?"
     new "No se pudo crear bundle.keystore. ¿Está keytool en tu ruta?"
-    
+

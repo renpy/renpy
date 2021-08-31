@@ -1218,4 +1218,4 @@ translate spanish strings:
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
     new "Presiona o mueve el '[control!s]' [kind]."
-    
+

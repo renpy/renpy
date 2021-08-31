@@ -306,10 +306,10 @@ translate piglatin tutorial_atl_da7a7759:
     e "Inallyfay, anay Tlaay ockblay ancay ebay useday asay artpay ofay aay owshay atementstay, insteaday ofay hetay atay auseclay."
 
 # game/tutorial_atl.rpy:483
-translate piglatin tutorial_atl_1dd345c6:
+translate piglatin tutorial_atl_da7a7759:
 
-    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though your click stopped the motion, the image remains in the same place."
-    e "Henway Tlaay isay useday asay artpay ofay aay owshay atementstay, aluesvay ofay ropertiespay existay evenay henway hetay ansformtray isay angedchay. Osay evenay houghtay ouryay ickclay oppedstay hetay otionmay, hetay imageay emainsray inay hetay amesay aceplay."
+    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though your click stopped the motion, the image remains in the same place." id tutorial_atl_da7a7759
+    e "Henway Tlaay isay useday asay artpay ofay aay owshay atementstay, aluesvay ofay ropertiespay existay evenay henway hetay ansformtray isay angedchay. Osay evenay houghtay ouryay ickclay oppedstay hetay otionmay, hetay imageay emainsray inay hetay amesay aceplay." id tutorial_atl_da7a7759
 
 # game/tutorial_atl.rpy:491
 translate piglatin tutorial_atl_98047789:

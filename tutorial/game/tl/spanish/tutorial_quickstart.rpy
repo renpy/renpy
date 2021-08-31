@@ -860,7 +860,7 @@ translate spanish tutorial_music_a2ffbe9b:
 
     # e "Let's check out some of the commands that can affect the music channel."
     e "Revisemos algunos de los comandos que pueden afectar el canal music."
-    
+
 # game/tutorial_quickstart.rpy:246
 translate spanish tutorial_images_a5e7eb24:
 

@@ -181,11 +181,11 @@ translate piglatin strings:
     old "## This ensures that any other menu screen is replaced."
     new "## Histay ensuresay hattay anyay otheray enumay creensay isay eplacedray."
 
-    # gui/game/screens.rpy:363
+    # gui/game/screens.rpy:361
     old "## This empty frame darkens the main menu."
     new "## Histay emptyay amefray arkensday hetay ainmay enumay."
 
-    # gui/game/screens.rpy:367
+    # gui/game/screens.rpy:365
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
     new "## Hetay useay atementstay includesay anotheray creensay insideay histay oneay. Hetay actualay ontentscay ofay hetay ainmay enumay areay inay hetay avigationnay creensay."
 
@@ -517,155 +517,159 @@ translate piglatin strings:
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
     new "Ogglestay assistiveay {a=https://www.renpy.org/l/voicing}elfsay-oicingvay{/a}."
 
-    # gui/game/screens.rpy:1051
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    new "Pensoay hetay accessibilityay enumay."
+
+    # gui/game/screens.rpy:1055
     old "Left Click"
     new "Eftlay Lickcay"
 
-    # gui/game/screens.rpy:1055
+    # gui/game/screens.rpy:1059
     old "Middle Click"
     new "Iddlemay Lickcay"
 
-    # gui/game/screens.rpy:1059
+    # gui/game/screens.rpy:1063
     old "Right Click"
     new "Ightray Lickcay"
 
-    # gui/game/screens.rpy:1063
+    # gui/game/screens.rpy:1067
     old "Mouse Wheel Up\nClick Rollback Side"
     new "Ousemay Heelway Puay\nLickcay Ollbackray Idesay"
 
-    # gui/game/screens.rpy:1067
+    # gui/game/screens.rpy:1071
     old "Mouse Wheel Down"
     new "Ousemay Heelway Ownday"
 
-    # gui/game/screens.rpy:1074
+    # gui/game/screens.rpy:1078
     old "Right Trigger\nA/Bottom Button"
     new "Ightray Riggertay\nAay/Ottombay Uttonbay"
 
-    # gui/game/screens.rpy:1078
+    # gui/game/screens.rpy:1082
     old "Left Trigger\nLeft Shoulder"
     new "Eftlay Riggertay\nEftlay Houldersay"
 
-    # gui/game/screens.rpy:1082
+    # gui/game/screens.rpy:1086
     old "Right Shoulder"
     new "Ightray Houldersay"
 
-    # gui/game/screens.rpy:1087
+    # gui/game/screens.rpy:1091
     old "D-Pad, Sticks"
     new "Day-Adpay, Tickssay"
 
-    # gui/game/screens.rpy:1091
+    # gui/game/screens.rpy:1095
     old "Start, Guide"
     new "Tartsay, Uidegay"
 
-    # gui/game/screens.rpy:1095
+    # gui/game/screens.rpy:1099
     old "Y/Top Button"
     new "Yay/Optay Uttonbay"
 
-    # gui/game/screens.rpy:1098
+    # gui/game/screens.rpy:1102
     old "Calibrate"
     new "Alibratecay"
 
-    # gui/game/screens.rpy:1126
+    # gui/game/screens.rpy:1130
     old "## Additional screens"
     new "## Dditionalaay creenssay"
 
-    # gui/game/screens.rpy:1130
+    # gui/game/screens.rpy:1134
     old "## Confirm screen"
     new "## Onfirmcay creensay"
 
-    # gui/game/screens.rpy:1132
+    # gui/game/screens.rpy:1136
     old "## The confirm screen is called when Ren'Py wants to ask the player a yes or no question."
     new "## Hetay onfirmcay creensay isay alledcay henway Enray'Ypay antsway otay askay hetay ayerplay aay esyay oray onay uestionqay."
 
-    # gui/game/screens.rpy:1135
+    # gui/game/screens.rpy:1139
     old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#onfirmcay"
 
-    # gui/game/screens.rpy:1139
+    # gui/game/screens.rpy:1143
     old "## Ensure other screens do not get input while this screen is displayed."
     new "## Nsureeay otheray creenssay oday otnay etgay inputay hileway histay creensay isay isplayedday."
 
-    # gui/game/screens.rpy:1163
+    # gui/game/screens.rpy:1167
     old "Yes"
     new "Esyay"
 
-    # gui/game/screens.rpy:1164
+    # gui/game/screens.rpy:1168
     old "No"
     new "Onay"
 
-    # gui/game/screens.rpy:1166
+    # gui/game/screens.rpy:1170
     old "## Right-click and escape answer \"no\"."
     new "## Ightray-ickclay anday escapeay answeray \"onay\"."
 
-    # gui/game/screens.rpy:1193
+    # gui/game/screens.rpy:1197
     old "## Skip indicator screen"
     new "## Kipsay indicatoray creensay"
 
-    # gui/game/screens.rpy:1195
+    # gui/game/screens.rpy:1199
     old "## The skip_indicator screen is displayed to indicate that skipping is in progress."
     new "## Hetay kip_indicatorsay creensay isay isplayedday otay indicateay hattay kippingsay isay inay rogresspay."
 
-    # gui/game/screens.rpy:1198
+    # gui/game/screens.rpy:1202
     old "## https://www.renpy.org/doc/html/screen_special.html#skip-indicator"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#kipsay-indicatoray"
 
-    # gui/game/screens.rpy:1210
+    # gui/game/screens.rpy:1214
     old "Skipping"
     new "Kippingsay"
 
-    # gui/game/screens.rpy:1217
+    # gui/game/screens.rpy:1221
     old "## This transform is used to blink the arrows one after another."
     new "## Histay ansformtray isay useday otay inkblay hetay arrowsay oneay afteray anotheray."
 
-    # gui/game/screens.rpy:1244
+    # gui/game/screens.rpy:1248
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
     new "## Eway avehay otay useay aay ontfay hattay ashay hetay Lackbay Ightray-Ointingpay Mallsay Riangletay yphglay inay itay."
 
-    # gui/game/screens.rpy:1249
+    # gui/game/screens.rpy:1253
     old "## Notify screen"
     new "## Otifynay creensay"
 
-    # gui/game/screens.rpy:1251
+    # gui/game/screens.rpy:1255
     old "## The notify screen is used to show the player a message. (For example, when the game is quicksaved or a screenshot has been taken.)"
     new "## Hetay otifynay creensay isay useday otay owshay hetay ayerplay aay essagemay. (Orfay exampleay, henway hetay amegay isay uicksavedqay oray aay creenshotsay ashay eenbay akentay.)"
 
-    # gui/game/screens.rpy:1254
+    # gui/game/screens.rpy:1258
     old "## https://www.renpy.org/doc/html/screen_special.html#notify-screen"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#otifynay-creensay"
 
-    # gui/game/screens.rpy:1288
+    # gui/game/screens.rpy:1292
     old "## NVL screen"
     new "## Vlnay creensay"
 
-    # gui/game/screens.rpy:1290
+    # gui/game/screens.rpy:1294
     old "## This screen is used for NVL-mode dialogue and menus."
     new "## Histay creensay isay useday orfay Vlnay-odemay ialogueday anday enusmay."
 
-    # gui/game/screens.rpy:1292
+    # gui/game/screens.rpy:1296
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
     new "## ttpshay://wwway.enpyray.orgay/ocday/tmlhay/creen_specialsay.tmlhay#vlnay"
 
-    # gui/game/screens.rpy:1303
+    # gui/game/screens.rpy:1307
     old "## Displays dialogue in either a vpgrid or the vbox."
     new "## Isplaysday ialogueday inay eitheray aay pgridvay oray hetay boxvay."
 
-    # gui/game/screens.rpy:1316
+    # gui/game/screens.rpy:1320
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
     new "## Isplaysday hetay enumay, ifay ivengay. Hetay enumay aymay ebay isplayedday incorrectlyay ifay onfigcay.arrator_menunay isay etsay otay Ruetay, asay itay isay aboveay."
 
-    # gui/game/screens.rpy:1346
+    # gui/game/screens.rpy:1350
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
     new "## Histay ontrolscay hetay aximummay umbernay ofay Vlnay-odemay entriesay hattay ancay ebay isplayedday atay onceay."
 
-    # gui/game/screens.rpy:1408
+    # gui/game/screens.rpy:1412
     old "## Mobile Variants"
     new "## Obilemay Ariantsvay"
 
-    # gui/game/screens.rpy:1415
+    # gui/game/screens.rpy:1419
     old "## Since a mouse may not be present, we replace the quick menu with a version that uses fewer and bigger buttons that are easier to touch."
     new "## Incesay aay ousemay aymay otnay ebay resentpay, eway eplaceray hetay uickqay enumay ithway aay ersionvay hattay usesay ewerfay anday iggerbay uttonsbay hattay areay easieray otay ouchtay."
 
-    # gui/game/screens.rpy:1433
+    # gui/game/screens.rpy:1437
     old "Menu"
     new "Enumay"
 
