@@ -736,6 +736,14 @@ both horizontal and vertical positions.
     The number of pixels the displayable is offset by in the vertical
     direction. Positive values offset toward the bottom.
 
+.. transform-property:: xycenter
+
+    :type: (position, position)
+    :default: (0.0, 0.0)
+
+    Equivalent to setting pos to the value of this property, and
+    anchor to (0.5, 0.5).
+
 .. transform-property:: xcenter
 
     :type: float
