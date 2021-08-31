@@ -363,6 +363,11 @@ The following variables provide further control of the build process:
 
     This is set to False when :func:`gui.init` is called.
 
+.. var:: build.include_update = False
+
+    When true, Ren'Py will produce the files required for the :ref:`updater <web-updater>`
+    to work.
+
 .. var:: build.itch_project = None
 
     Setting this allows the Ren'Py launcher to upload your project to

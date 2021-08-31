@@ -261,67 +261,71 @@ translate piglatin strings:
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
     new "Ogglestay assistiveay {a=https://www.renpy.org/l/voicing}elfsay-oicingvay{/a}."
 
-    # game/screens.rpy:1085
+    # game/screens.rpy:1083
+    old "Opens the accessibility menu."
+    new "Pensoay hetay accessibilityay enumay."
+
+    # game/screens.rpy:1089
     old "Left Click"
     new "Eftlay Lickcay"
 
-    # game/screens.rpy:1089
+    # game/screens.rpy:1093
     old "Middle Click"
     new "Iddlemay Lickcay"
 
-    # game/screens.rpy:1093
+    # game/screens.rpy:1097
     old "Right Click"
     new "Ightray Lickcay"
 
-    # game/screens.rpy:1097
+    # game/screens.rpy:1101
     old "Mouse Wheel Up\nClick Rollback Side"
     new "Ousemay Heelway Puay\nLickcay Ollbackray Idesay"
 
-    # game/screens.rpy:1101
+    # game/screens.rpy:1105
     old "Mouse Wheel Down"
     new "Ousemay Heelway Ownday"
 
-    # game/screens.rpy:1108
+    # game/screens.rpy:1112
     old "Right Trigger\nA/Bottom Button"
     new "Ightray Riggertay\nAay/Ottombay Uttonbay"
 
-    # game/screens.rpy:1112
+    # game/screens.rpy:1116
     old "Left Trigger\nLeft Shoulder"
     new "Eftlay Riggertay\nEftlay Houldersay"
 
-    # game/screens.rpy:1116
+    # game/screens.rpy:1120
     old "Right Shoulder"
     new "Ightray Houldersay"
 
-    # game/screens.rpy:1120
+    # game/screens.rpy:1124
     old "D-Pad, Sticks"
     new "Day-Adpay, Tickssay"
 
-    # game/screens.rpy:1124
+    # game/screens.rpy:1128
     old "Start, Guide"
     new "Tartsay, Uidegay"
 
-    # game/screens.rpy:1128
+    # game/screens.rpy:1132
     old "Y/Top Button"
     new "Yay/Optay Uttonbay"
 
-    # game/screens.rpy:1131
+    # game/screens.rpy:1135
     old "Calibrate"
     new "Alibratecay"
 
-    # game/screens.rpy:1196
+    # game/screens.rpy:1200
     old "Yes"
     new "Esyay"
 
-    # game/screens.rpy:1197
+    # game/screens.rpy:1201
     old "No"
     new "Onay"
 
-    # game/screens.rpy:1243
+    # game/screens.rpy:1247
     old "Skipping"
     new "Kippingsay"
 
-    # game/screens.rpy:1464
+    # game/screens.rpy:1468
     old "Menu"
     new "Enumay"
 

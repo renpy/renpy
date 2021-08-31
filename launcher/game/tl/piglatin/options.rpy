@@ -46,8 +46,8 @@ translate piglatin strings:
     new "## Oundssay anday usicmay"
 
     # gui/game/options.rpy:47
-    old "## These three variables control which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
-    new "## Hesetay hreetay ariablesvay ontrolcay hichway ixersmay areay ownshay otay hetay ayerplay ybay efaultday. Ettingsay oneay ofay hesetay otay Alsefay illway idehay hetay appropriateay ixermay."
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    new "## Hesetay hreetay ariablesvay ontrolcay, amongay otheray hingstay, hichway ixersmay areay ownshay otay hetay ayerplay ybay efaultday. Ettingsay oneay ofay hesetay otay Alsefay illway idehay hetay appropriateay ixermay."
 
     # gui/game/options.rpy:56
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."

@@ -401,3 +401,7 @@ translate spanish strings:
     old "Menu"
     new "Menú"
 
+    # game/screens.rpy:1108
+    old "Opens the accessibility menu."
+    new "Abre el menú de accesibilidad."
+

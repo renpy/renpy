@@ -750,3 +750,18 @@ translate spanish strings:
     old "system cursor"
     new "cursor del sistema"
 
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "Texto de Alto Contraste"
+
+    # renpy/common/00preferences.rpy:487
+    old "renderer menu"
+    new "menú de renderizado"
+
+    # renpy/common/00preferences.rpy:490
+    old "accessibility menu"
+    new "menú de accesibilidad"
+
+    # renpy/common/00preferences.rpy:493
+    old "high contrast text"
+    new "texto de alto contraste"

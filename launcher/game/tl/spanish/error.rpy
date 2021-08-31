@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # 00gltest.rpy:70
     old "Renderer"
@@ -10,15 +10,15 @@ translate spanish strings:
 
     # 00gltest.rpy:79
     old "Force Angle/DirectX Renderer"
-    new "Forzar 'Angle/DirectX Renderer'"
+    new "Forzar Renderizador 'Angle/DirectX'"
 
     # 00gltest.rpy:83
     old "Force OpenGL Renderer"
-    new "Forzar 'OpenGL Renderer'"
+    new "Forzar Renderizador 'OpenGL'"
 
     # 00gltest.rpy:87
     old "Force Software Renderer"
-    new "Forzar 'Software Renderer'"
+    new "Forzar Renderizado por Software"
 
     # 00gltest.rpy:93
     old "NPOT"
@@ -242,23 +242,23 @@ translate spanish strings:
 
     # renpy/common/00gltest.rpy:81
     old "Force GL Renderer"
-    new "Force renderizador GL"
+    new "Forzar renderizador GL"
 
     # renpy/common/00gltest.rpy:85
     old "Force GLES Renderer"
-    new "Force renderizador GLES"
+    new "Forzar renderizador GLES"
 
     # renpy/common/00gltest.rpy:90
     old "Force ANGLE2 Renderer"
-    new "Force renderizador ANGLE2"
+    new "Forzar renderizador ANGLE2"
 
     # renpy/common/00gltest.rpy:94
     old "Force GL2 Renderer"
-    new "Force renderizador GL2"
+    new "Forzar renderizador GL2"
 
     # renpy/common/00gltest.rpy:98
     old "Force GLES2 Renderer"
-    new "Force renderizador GLES2"
+    new "Forzar renderizador GLES2"
 
     # renpy/common/00gltest.rpy:218
     old "This game requires use of GL2 that can't be initialised."

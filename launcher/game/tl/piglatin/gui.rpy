@@ -425,11 +425,11 @@ translate piglatin strings:
     old "## Change the size and spacing of various things."
     new "## Hangecay hetay izesay anday pacingsay ofay ariousvay hingstay."
 
-    # gui/game/gui.rpy:454
+    # gui/game/gui.rpy:455
     old "## File button layout."
     new "## Ilefay uttonbay ayoutlay."
 
-    # gui/game/gui.rpy:458
+    # gui/game/gui.rpy:459
     old "## NVL-mode."
     new "## Vlnay-odemay."
 

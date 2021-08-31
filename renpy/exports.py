@@ -1257,14 +1257,14 @@ def display_menu(items,
 
             item_actions.append(me)
 
-            show_screen(
-                screen,
-                items=item_actions,
-                _widget_properties=props,
-                _transient=True,
-                _layer=renpy.config.choice_layer,
-                *menu_args,
-                **scope)
+        show_screen(
+            screen,
+            items=item_actions,
+            _widget_properties=props,
+            _transient=True,
+            _layer=renpy.config.choice_layer,
+            *menu_args,
+            **scope)
 
     else:
         renpy.exports.shown_window()
