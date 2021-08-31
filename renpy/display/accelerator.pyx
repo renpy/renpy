@@ -119,11 +119,11 @@ def transform_render(self, widtho, heighto, st, at):
     fit = state.fit
 
     if xsize is not None:
-        if isinstance(xsize, float) and not isinstance(xsize, absolute) and not renpy.config.old_size_tpref:
+        if type(xsize) is float and renpy.config.relative_transform_size:
             xsize *= widtho
         widtho = xsize
     if ysize is not None:
-        if isinstance(ysize, float) and not isinstance(ysize, absolute) and not renpy.config.old_size_tpref:
+        if type(ysize) is float and renpy.config.relative_transform_size:
             ysize *= heighto
         heighto = ysize
 

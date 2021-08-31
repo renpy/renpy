@@ -1178,7 +1178,7 @@ single_movie_channel = None
 raise_image_exceptions = True
 
 # Should the size transform property only accept numbers of pixels ?
-old_size_tpref = False
+relative_transform_size = True
 
 del os
 del collections
