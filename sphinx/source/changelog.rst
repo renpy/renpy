@@ -2,6 +2,21 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
+.. _renpy-7.4.9:
+
+7.4.9
+=====
+
+Transform Properties
+--------------------
+
+The :tpref:`xsize` and :tpref:`ysize` transform properties have slightly changed
+in behavior, to match the corresponding style properties. While they used to
+accept only numbers of pixels, they now take "position" values, which means
+either a number of pixels expressed as an ``int`` or ``absolute``, or a fraction
+of the available room expressed as a ``float``. The old wrapper, :tpref:`size`,
+is deprecated, and the new wrapper, :tpref:`xysize`, should be used instead.
+
 .. _renpy-7.4.8:
 
 7.4.8
