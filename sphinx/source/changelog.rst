@@ -77,6 +77,16 @@ need higher contrast to experience a game.
 Descriptive text (the :var:`alt` character) no longer causes the dialogue
 window to fade in if the descriptive text is disabled.
 
+Transform Properties
+--------------------
+
+The :tpref:`xsize` and :tpref:`ysize` transform properties have slightly changed
+in behavior, to match the corresponding style properties. While they used to
+accept only numbers of pixels, they now take "position" values, which means
+either a number of pixels expressed as an ``int`` or ``absolute``, or a fraction
+of the available room expressed as a ``float``. The old wrapper, :tpref:`size`,
+is deprecated, and the new wrapper, :tpref:`xysize`, should be used instead.
+
 Other
 -----
 
@@ -99,7 +109,6 @@ unofficial builds.
 The ``default`` statement is applied after each rollback.
 
 A regression that could prevent text in buttons from changing has been fixed.
-
 
 
 

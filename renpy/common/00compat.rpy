@@ -221,6 +221,9 @@ init -1900 python:
             config.atl_start_on_show = False
             config.input_caret_blink = False
 
+        if version <= (7, 4, 8):
+            config.relative_transform_size = False
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None

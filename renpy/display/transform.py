@@ -297,15 +297,23 @@ class TransformState(renpy.object.Object):
 
     offset = property(get_offset, set_offset)
 
-    def get_size(self):
+    def get_xysize(self):
         return self.xsize, self.ysize
 
-    def set_size(self, value):
+    def set_xysize(self, value):
         if value is None:
             value = (None, None)
         self.xsize, self.ysize = value
 
-    size = property(get_size, set_size)
+    xysize = property(get_xysize, set_xysize)
+
+    def set_size(self, value):
+        if value is None:
+            self.xysize = None
+        else:
+            self.xysize = tuple(int(x) if isinstance(x, float) else x for x in value)
+
+    size = property(get_xysize, set_size)
 
     def set_xcenter(self, value):
         self.xpos = value
@@ -323,6 +331,16 @@ class TransformState(renpy.object.Object):
 
     xcenter = property(get_xcenter, set_xcenter)
     ycenter = property(get_ycenter, set_ycenter)
+
+    def get_xycenter(self):
+        return self.xcenter, self.ycenter
+
+    def set_xycenter(self, value):
+        if value is None:
+            value = (None, None)
+        self.xcenter, self.ycenter = value
+
+    xycenter = property(get_xycenter, set_xycenter)
 
 
 class Proxy(object):
@@ -988,17 +1006,17 @@ add_property("xaround", position, 0.0)
 add_property("xoffset", float, 0.0)
 add_property("xpan", float_or_none, None)
 add_property("xpos", position, None, diff=4)
-add_property("xsize", int, None)
+add_property("xsize", position, None)
 add_property("xtile", int, 1)
-
 add_property("xzoom", float, 1.0)
+
 add_property("yanchoraround", float, 0.0)
 add_property("yanchor", position, None, diff=4)
 add_property("yaround", position, 0.0)
 add_property("yoffset", float, 0.0)
 add_property("ypan", float_or_none, None)
 add_property("ypos", position, None, diff=4)
-add_property("ysize", int, None)
+add_property("ysize", position, None)
 add_property("ytile", int, 1)
 add_property("yzoom", float, 1.0)
 
@@ -1026,6 +1044,8 @@ ALIASES = {
     "size" : (int, int),
     "xalign" : float,
     "xcenter" : position,
+    "xycenter" : (position, position),
+    "xysize" : (position, position),
     "yalign" : float,
     "ycenter" : position,
     }
