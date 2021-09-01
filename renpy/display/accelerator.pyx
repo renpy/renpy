@@ -107,10 +107,8 @@ def transform_render(self, widtho, heighto, st, at):
     # Render the child.
     child = self.child
 
-
     if child is None:
         child = renpy.display.transform.get_null()
-
 
     state = self.state
 
