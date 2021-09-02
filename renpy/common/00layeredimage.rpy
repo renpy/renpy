@@ -748,7 +748,7 @@ python early in layeredimage:
 
         def _choose_attributes(self, tag, attributes, optional):
 
-            unknown = list(attributes)
+            rv = list(attributes)
 
             attributes = set(attributes)
             banned = self.get_banned(attributes)
@@ -758,22 +758,10 @@ python early in layeredimage:
             if both:
                 raise Exception("The attributes for {} conflict: {}".format(tag, " ".join(both)))
 
-
             if optional is not None:
-                attributes |= (set(optional) - banned)
+                rv.extend(set(optional) - attributes - banned)
 
-            rv = [ ]
-
-            for a in self.attributes:
-
-                if a.attribute in attributes:
-                    if a.attribute not in rv:
-                        rv.append(a.attribute)
-
-                if a.attribute in unknown:
-                    unknown.remove(a.attribute)
-
-            if unknown:
+            if set(rv).difference(a.attribute for a in self.attributes):
                 return None
 
             return tuple(rv)
