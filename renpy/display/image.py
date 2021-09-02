@@ -974,8 +974,8 @@ class ShownImageInfo(renpy.object.Object):
 
             num_required = 0
 
-            for i in attrs:
-                if i in set(required):
+            for i in set(attrs):
+                if i in required:
                     num_required += 1
                     continue
 
