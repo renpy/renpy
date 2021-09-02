@@ -975,7 +975,7 @@ class ShownImageInfo(renpy.object.Object):
             num_required = 0
 
             for i in attrs:
-                if i in required:
+                if i in set(required):
                     num_required += 1
                     continue
 
@@ -984,7 +984,7 @@ class ShownImageInfo(renpy.object.Object):
                 # We don't have any not-found attributes. But we might not
                 # have all of the attributes.
 
-                if num_required != len(required):
+                if num_required != len(set(required)):
                     continue
 
                 len_attrs = len(set(attrs))
