@@ -323,6 +323,9 @@ class CodeGenerator(object):
 
                     m = re.match(r'## ?([ *]*)(.*)', s)
 
+                    if m is None:
+                        raise Exception("Comment translation doesn't start with '## ': {}".format(s))
+
                     prefix = m.group(1)
                     empty = ' ' * len(prefix)
                     rest = m.group(2)
