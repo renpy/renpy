@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # _layout/classic_joystick_preferences.rpym:94
     old "Joystick Mapping"
@@ -24,4 +23,3 @@ translate french strings:
     # _compat/gamemenu.rpym:362
     old "Next"
     new "Suivant"
-

@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # about.rpy:39
     old "[version!q]"
@@ -1836,3 +1835,39 @@ translate french strings:
     # game/ios.rpy:339
     old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
     new "Des erreurs sont rapportées sur le simulateur d'iOS sur Apple Silicon. Préférez des appareils x86_64 ou iOS."
+
+    # game/android.rpy:38
+    old "RAPT has been installed, but a bundle key hasn't been configured. Please create a new key, or restore bundle.keystore."
+    new "RAPT a été installé, mais aucune clé de paquet n'a été configurée. Créez une nouvelle clé, ou restaurez bundle.keystore."
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    new "J'installe le paquet."
+
+    # game/androidstrings.rpy:30
+    old "How much RAM do you want to allocate to Gradle?\n\nThis must be a positive integer number."
+    new "Combien de RAM voulez-vous allouer à Gradle ?\n\nEntrez un nombre entier positif."
+
+    # game/androidstrings.rpy:31
+    old "The RAM size must contain only numbers."
+    new "La taille de RAM ne doit contenir que des chiffres."
+
+    # game/androidstrings.rpy:55
+    old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
+    new "Je paux vous créer une clé de signature d'application. Cette clé est nécessaire pour créer des Universal APK pour des autres stores que Google Play.\n\nVoulez-vous créer une clé ?"
+
+    # game/androidstrings.rpy:59
+    old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
+    new "Je peux vous créer une clé de signature de paquets. Cette clé est nécessaire pour construire un Android App Bundle (AAB) pour uploader sur Google Play.\n\nVoulez-vous créer une clé ?"
+
+    # game/androidstrings.rpy:60
+    old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
+    new "Je vais créer la clé dans le fichier bundle.keystore.\n\nVous devez conserver ce fichier. Sans lui, vous ne pourrez plus mettre à jour votre application.\n\nVous devez aussi la garder cachée. Si des malotrus accèdent à ce fichier, ils pourront faire des faussez versions de votre application, et potentiellement voler les données des utilisateurs.\n\nAllez-vous faire une sauvegarde de bundle.keystore, et le garder bien caché ?"
+
+    # game/androidstrings.rpy:61
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    new "Impossible de créer bundle.keystore. Est-ce que le keytool est dans votre path ?"
+
+    # game/preferences.rpy:206
+    old "Daily check for update"
+    new "Vérification quotidienne des mises à jour"
