@@ -456,7 +456,7 @@ The differences are:
   explicitly cleared.
 
 * ``show layer`` requires a layer name, while ``camera`` defaults to the
-   master layer.
+  master layer.
 
 
 Hide and Show Window
