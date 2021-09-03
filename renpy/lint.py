@@ -498,21 +498,22 @@ def check_say(node):
     if not isinstance(char, renpy.character.ADVCharacter):
         return
 
-    if node.attributes is None:
-        return
-
     if char.image_tag is None:
         return
 
-    name = (char.image_tag,) + node.attributes
+    for attributes in (node.attributes, node.temporary_attributes):
+        if attributes is None:
+            continue
 
-    if image_exists_imprecise(name):
-        return
+        name = (char.image_tag,) + attributes
 
-    if image_exists_imprecise(('side',) + name):
-        return
+        if image_exists_imprecise(name):
+            continue
 
-    report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
+        if image_exists_imprecise(('side',) + name):
+            continue
+
+        report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
 
 
 def check_menu(node):
