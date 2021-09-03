@@ -33,19 +33,19 @@ Ren'Py ships with a number of transforms defined by default. These
 transforms position things on the screen. Here's a depiction of where
 each default transform will position an image. ::
 
-   +-----------------------------------------------------------+
-   |topleft, reset               top                   topright|
-   |                                                           |
-   |                                                           |
-   |                                                           |
-   |                                                           |
-   |                          truecenter                       |
-   |                                                           |
-   |                                                           |
-   |                                                           |
-   |                                                           |
-   |left                   center, default                right|
-   +-----------------------------------------------------------+
+                +-----------------------------------------------------------+
+                |topleft, reset               top                   topright|
+                |                                                           |
+                |                                                           |
+                |                                                           |
+                |                                                           |
+   offscreenleft|                          truecenter                       |offscreenright
+                |                                                           |
+                |                                                           |
+                |                                                           |
+                |                                                           |
+                |left                   center, default                right|
+                +-----------------------------------------------------------+
 
 The offscreenleft and offscreenright transforms position images off the
 screen. These transforms can be used to move things off the screen
