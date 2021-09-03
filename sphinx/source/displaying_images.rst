@@ -193,8 +193,9 @@ The show statement takes the following properties:
     left-to-right order.
 
     If no at clause is given, Ren'Py will retain any existing
-    transform that has been applied to the image. If no transform
-    exists, the image will be displayed using the :var:`default`
+    transform that has been applied to the image, if they were
+    created with ATL or with :class:`Transform`. If no transform
+    is specified, the image will be displayed using the :var:`default`
     transform.
 
     See the section on :ref:`replacing transforms <replacing-transforms>`
