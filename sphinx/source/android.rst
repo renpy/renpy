@@ -313,10 +313,30 @@ android-downloading.jpg
     A 20px-high progress bar is displayed 20px from the bottom, left, and
     right sides of the screen, showing download progress.
 
-Permissions
-===========
+.. _pyjnius:
+
+Pyjnius
+=======
+
+When running on Android, a version of the `Pyjnius <https://pyjnius.readthedocs.io/en/stable/>`_
+library is available. This allows advanced creators to call into the Android
+libraries.
+
+It may be necessary to get the main activity. It can be found in the mActivity
+field in the org.renpy.android.PythonSDLActivity class. For example::
+
+    init python:
+        if renpy.android:
+            import jinus
+            mActivity = jnius.autoclass("org.renpy.android.PythonSDLActivity")
+        else:
+            mActivity = None
+
 
 .. _android-permissions:
+
+Permissions
+===========
 
 While Ren'Py doesn't require additional permissions to run, if your
 game uses Pyjnius to call into Android, it might be necessary to
