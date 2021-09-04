@@ -2441,6 +2441,7 @@ class Interface(object):
         renpy.display.im.cache.clear()
         renpy.display.render.free_memory()
         renpy.text.text.layout_cache_clear()
+        renpy.display.video.texture.clear()
 
     def kill_surfaces(self):
         """
