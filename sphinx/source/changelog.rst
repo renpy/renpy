@@ -41,6 +41,13 @@ Ren'Py will now look for archives in the external files directory, and
 automatically use the archives if found. This makes it possible to
 distribute patches, updates, and additional asset to users.
 
+The inclusion of :ref:`Pyjnius <pyjinus>`, a library for calling
+the Android API, is now documented.
+
+The new :var:`build.android_permissions` variable, :func:`renpy.check_permission`
+function, and :func:`renpy.request_permission` function provide a way to
+request permissions on Android beyond those that Ren'Py users itself.
+
 Updater
 -------
 
@@ -110,6 +117,8 @@ The ``default`` statement is applied after each rollback.
 
 A regression that could prevent text in buttons from changing has been fixed.
 
+The inclusion of :ref:`Pyobjus <pyobjus>` with Ren'Py is now documented. The
+Pyobjus library allows games to call APIs on iOS and macOS.
 
 
 .. _renpy-7.4.8:

@@ -343,7 +343,7 @@ game uses Pyjnius to call into Android, it might be necessary to
 request permissions. Ren'Py has a variable and two functions to
 interact with the Android permissions system.
 
-.. var:: build.android_permissiosn = [ ]
+.. var:: build.android_permissions = [ ]
 
     This is a list of strings, with each string giving the full name
     of an Android permission. For example, "android.permission.WRITE_EXTERNAL_STORAGE".
