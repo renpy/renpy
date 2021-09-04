@@ -313,11 +313,30 @@ android-downloading.jpg
     A 20px-high progress bar is displayed 20px from the bottom, left, and
     right sides of the screen, showing download progress.
 
+Permissions
+===========
 
-.. _expansion-apk:
+.. _android-permissions:
 
-Expansion APKs
---------------
+While Ren'Py doesn't require additional permissions to run, if your
+game uses Pyjnius to call into Android, it might be necessary to
+request permissions. Ren'Py has a variable and two functions to
+interact with the Android permissions system.
 
-As of Ren'Py 7.4.9, Explansion APKs are no longer supported.
+.. var:: build.android_permissiosn = [ ]
+
+    This is a list of strings, with each string giving the full name
+    of an Android permission. For example, "android.permission.WRITE_EXTERNAL_STORAGE".
+    This simply declares that the application might request these permissions, it's
+    necessary to use renpy.check_permission and renpy.request_permission as necessary
+    to request the permission.
+
+.. include: inc/android_permission
+
+
+
+
+
+
+
 

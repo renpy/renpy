@@ -4234,7 +4234,10 @@ def check_permission(permission):
     PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
     activity = PythonSDLActivity.mActivity
 
-    return activity.checkSelfPermission(permission) == 0 # PackageManager.PERMISSION_GRANTED
+    try:
+        return activity.checkSelfPermission(permission) == 0 # PackageManager.PERMISSION_GRANTED
+    except:
+        return False
 
 
 def request_permission(permission):
