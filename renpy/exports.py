@@ -4213,3 +4213,46 @@ def set_focus(screen, id, layer="screens"): # @ReservedAssignment
     renpy.display.interface.last_event = None
     restart_interaction()
 
+
+def check_permission(permission):
+    """
+    :doc: android_permission
+
+    Checks to see if an Android permission has been granted to this application.
+
+    `permission`
+        A string giving the name of the permission, for example, "android.permission.WRITE_EXTERNAL_STORAGE".
+
+    Returns true if the permission has been granted, false if it has not or if called on
+    a non-Android platform.
+    """
+
+    if not renpy.android:
+        return False
+
+    from jnius import autoclass
+    PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
+    activity = PythonSDLActivity.mActivity
+
+    return activity.checkSelfPermission(permission) == 0 # PackageManager.PERMISSION_GRANTED
+
+
+def request_permission(permission):
+    """
+    :doc: android_permission
+
+    Asks Android to grant a permission to this application. The user may be
+    prompted to grant the permission.
+
+    `permission`
+        A string giving the name of the permission, for example, "android.permission.WRITE_EXTERNAL_STORAGE".
+
+    Returns true if the permission has been granted, false if not or if called on a
+    non-Android platform.
+    """
+
+    if not renpy.android:
+        return False
+
+    return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8"))
+
