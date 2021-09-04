@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # screens.rpy:9
     old "## Styles"
@@ -716,3 +715,7 @@ translate french strings:
     # gui/game/screens.rpy:1292
     old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
     new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    new "Ouvre le menu d'accessibilité."

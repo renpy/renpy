@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # 00gltest.rpy:64
     old "Graphics Acceleration"

@@ -394,8 +394,8 @@ overridden by the same property of the attribute itself.
 **Pattern.** The image pattern used consists of:
 
 * The name of the image, with spaces replaced with underscores.
-* The name of the group.
-* The name of the variant.
+* The name of the group, if the group is not ``multiple``.
+* The name of the variant, if there is one.
 * The name of the attribute.
 
 all combined with underscores. For example, if we have a layered image with

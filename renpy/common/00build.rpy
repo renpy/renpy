@@ -417,6 +417,9 @@ init -1500 python in build:
     # Do we want to change the icon on the i686 binaries?
     change_icon_i686 = True
 
+    # A list of additional android permission names.
+    android_permissions = [ ]
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -493,6 +496,8 @@ init -1500 python in build:
 
         rv["include_i686"] = include_i686
         rv["change_icon_i686"] = change_icon_i686
+
+        rv["android_permissions"] = android_permissions
 
         return rv
 

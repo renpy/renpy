@@ -1,4 +1,3 @@
-﻿
 translate french strings:
 
     # _developer/developer.rpym:38

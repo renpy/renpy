@@ -1,4 +1,3 @@
-﻿
 translate french strings:
 
     # 00action_file.rpy:26
@@ -353,7 +352,7 @@ translate french strings:
 
     # renpy/common/00accessibility.rpy:94
     old "Text Size Scaling"
-    new "Redimensionnement du Texte"
+    new "Redimensionnement du texte"
 
     # renpy/common/00accessibility.rpy:100
     old "Reset"
@@ -361,7 +360,7 @@ translate french strings:
 
     # renpy/common/00accessibility.rpy:105
     old "Line Spacing Scaling"
-    new "Espacement Vertical"
+    new "Espacement vertical"
 
     # renpy/common/00accessibility.rpy:117
     old "Self-Voicing"
@@ -778,3 +777,11 @@ translate french strings:
     # renpy/common/00preferences.rpy:483
     old "accessibility menu"
     new "menu d'accessibilité"
+
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "Texte en contraste élevé (surbrillance)"
+
+    # renpy/common/00preferences.rpy:493
+    old "high contrast text"
+    new "texte en contraste élevé"
