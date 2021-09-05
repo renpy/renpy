@@ -171,7 +171,7 @@ class Model(renpy.display.core.Displayable):
         self.uniforms[name] = value
         return self
 
-    def properties(self, name, value):
+    def property(self, name, value):
         """
         :doc: model_displayable method
 
