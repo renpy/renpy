@@ -378,6 +378,7 @@ class ATLTransformBase(renpy.object.Object):
         super(ATLTransformBase, self).take_execution_state(t)
 
         self.atl_st_offset = None
+        self.atl_state = None
 
         if self is t:
             return
@@ -405,7 +406,6 @@ class ATLTransformBase(renpy.object.Object):
         self.at = t.at
         self.st_offset = t.st_offset
         self.at_offset = t.at_offset
-
         self.atl_st_offset = t.atl_st_offset
 
         if self.child is renpy.display.motion.null:
