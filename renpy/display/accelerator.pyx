@@ -563,7 +563,10 @@ def transform_render(self, widtho, heighto, st, at):
         value = getattr(state, name, None)
 
         if value is not None:
-            rv.add_property(name[3:], value)
+            if mesh:
+                mr.add_property(name[3:], value)
+            else:
+                rv.add_property(name[3:], value)
 
     # Clipping.
     rv.xclipping = clipping
