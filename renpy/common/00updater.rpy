@@ -233,8 +233,6 @@ init -1500 python in updater:
             Takes the same arguments as update().
             """
 
-            url = url.replace("http:", "https:")
-
             self.patch = patch
 
             if not url.startswith("http:"):
