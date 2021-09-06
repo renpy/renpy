@@ -14,6 +14,10 @@ This release features major changes to Ren'Py's Android support, starting
 with support for the Android App Bundle format, now required for your game
 to be uploaded to Google Play.
 
+As bundles use different signing keys than APKs, it will be necessary to
+uninstall and reinstall the game when switching from APKs to Bundles
+for testing.
+
 When run on Google Play, Ren'Py will use Play Asset Delivery to deliver
 the game data to the player's device. This should have the same 2 GB limit
 of previous versions of Ren'Py, with each file in your game automatically
@@ -47,6 +51,9 @@ the Android API, is now documented.
 The new :var:`build.android_permissions` variable, :func:`renpy.check_permission`
 function, and :func:`renpy.request_permission` function provide a way to
 request permissions on Android beyond those that Ren'Py users itself.
+
+When creating Android keys, Ren'Py will back them up to the same place it
+backs up script files. This isn't a substitute for making your own backups.
 
 Updater
 -------

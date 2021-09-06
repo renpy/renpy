@@ -204,9 +204,12 @@ warnings about licenses, and ask if you want it to generate a key.
 
     https://developer.android.com/studio/publish/app-signing?hl=fr#generate-key
 
-   At the very least, you should keep the android.keystore file in
+   At the very least, you should keep the android.keystore and bundle.keystore files in
    a safe place. You should also back it up, because without the
    key, you won't be able to upload the generated applications.
+
+When creating Android keys, Ren'Py will back them up to the same place it
+backs up script files. This isn't a substitute for making your own backups.
 
 If you don't want to download the SDK each time, you can create a file
 named sdk.txt containing a single line that is the path to the
