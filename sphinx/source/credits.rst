@@ -112,6 +112,7 @@ the omission in future versions.
 * Koichi "vbkaisetsu" Akabe
 * Konstantin Mozheyko
 * Konstantin Nikolayev
+* KorDen
 * Kuroonehalf
 * Kyouryuukunn
 * Lapalissiano
