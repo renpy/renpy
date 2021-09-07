@@ -746,22 +746,26 @@ python early in layeredimage:
 
             return [ i[1] for i in group_attr ]
 
-        def _choose_attributes(self, tag, attributes, optional):
+        def _choose_attributes(self, tag, required, optional):
 
-            rv = list(attributes)
+            rv = list(required)
 
-            attributes = set(attributes)
-            banned = self.get_banned(attributes)
-
-            both = attributes & banned
+            required = set(required)
+            banned = self.get_banned(required)
+            both = required & banned
 
             if both:
                 raise Exception("The attributes for {} conflict: {}".format(tag, " ".join(both)))
 
-            if optional is not None:
-                rv.extend(set(optional) - attributes - banned)
+            # The set of all available attributes.
+            available_attributes = set(a.attribute for a in self.attributes)
 
-            if set(rv).difference(a.attribute for a in self.attributes):
+            if optional is not None:
+                optional = set(optional) & available_attributes
+                rv.extend(optional - required - banned)
+
+            # If there is an unknown attribute.
+            if set(rv) - available_attributes:
                 return None
 
             return tuple(rv)
