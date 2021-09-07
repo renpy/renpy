@@ -542,14 +542,14 @@ label android_pair:
             _("Wi-Fi Pairing Code"),
             _("If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."),
             sanitize=False,
-            cancel="android",
+            cancel=Jump("android"),
             )
 
         host = interface.input(
             _("Pairing Host & Port"),
             _("If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."),
             sanitize=False,
-            cancel="android",
+            cancel=Jump("android"),
             )
 
         cc = ConsoleCommand()
@@ -565,7 +565,7 @@ label android_connect:
             _("IP Address & Port"),
             _("If supported, this can be found in 'Developer options', 'Wireless debugging'."),
             sanitize=False,
-            cancel="android",
+            cancel=Jump("android"),
             )
 
         cc = ConsoleCommand()
