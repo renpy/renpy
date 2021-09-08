@@ -1196,6 +1196,9 @@ cdef class Render:
 
         for child, cx, cy, focus, main in self.children:
 
+            if not focus:
+                continue
+
             if not isinstance(child, Render):
                 continue
 
