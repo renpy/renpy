@@ -1845,7 +1845,7 @@ translate spanish strings:
     # game/androidstrings.rpy:61
     old "Could not create bundle.keystore. Is keytool in your path?"
     new "No se pudo crear bundle.keystore. ¿Está keytool en tu ruta?"
-    
+
     # game/androidstrings.rpy:55
     old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
     new "Puedo crear una clave de firma de la aplicación para ti. Esta clave es necesaria para crear un APK universal para la descarga y las tiendas que no sean Google Play.\n\n¿Desea crear una clave?"
