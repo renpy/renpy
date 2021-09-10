@@ -108,6 +108,12 @@ class ShowIf(renpy.display.layout.Container):
     def get_placement(self):
         return self.child.get_placement()
 
+    def _tts(self):
+        if self.condition:
+            return self._tts_common()
+        else:
+            return ""
+
 
 DisplayableParser("null", renpy.display.layout.Null, "default", 0)
 Keyword("width")
