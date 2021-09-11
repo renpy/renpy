@@ -707,12 +707,17 @@ class Displayable(renpy.object.Object):
         else:
             order = -1
 
+        speech = ""
+
         for i in self.visit()[::order]:
             if i is not None:
                 speech = i._tts()
 
                 if speech.strip():
                     rv.append(speech)
+
+                    if isinstance(speech, renpy.display.tts.TTSDone):
+                        break
 
         rv = ": ".join(rv)
         rv = rv.replace("::", ":")
@@ -725,6 +730,8 @@ class Displayable(renpy.object.Object):
 
         if alt is not None:
             rv = renpy.substitutions.substitute(alt, scope={ "text" : rv })[0]
+
+        rv = type(speech)(rv)
 
         return rv
 

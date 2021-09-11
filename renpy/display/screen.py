@@ -736,6 +736,15 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def get_phase_name(self):
         return phase_name[self.phase]
 
+    def _tts(self):
+        if (self.phase == OLD) or (self.phase == HIDE):
+            return ""
+
+        if self.modal:
+            return renpy.display.tts.TTSDone(self._tts_common())
+        else:
+            return self._tts_common()
+
 
 # The name of the screen that is currently being displayed, or
 # None if no screen is being currently displayed.
