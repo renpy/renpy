@@ -1180,6 +1180,9 @@ raise_image_exceptions = True
 # Should the size transform property only accept numbers of pixels ?
 relative_transform_size = True
 
+# Should tts of layers be from front to back?
+tts_front_to_back = True
+
 del os
 del collections
 

@@ -223,6 +223,7 @@ init -1900 python:
 
         if version <= (7, 4, 8):
             config.relative_transform_size = False
+            config.tts_front_to_back = False
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

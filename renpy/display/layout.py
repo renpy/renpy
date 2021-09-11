@@ -1115,7 +1115,7 @@ class MultiBox(Container):
 
     def _tts(self):
         if self.layers or self.scene_list:
-            return self._tts_common(reverse=True)
+            return self._tts_common(reverse=renpy.config.tts_front_to_back)
         else:
             return self._tts_common()
 
