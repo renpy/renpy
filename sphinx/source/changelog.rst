@@ -91,6 +91,16 @@ need higher contrast to experience a game.
 Descriptive text (the :var:`alt` character) no longer causes the dialogue
 window to fade in if the descriptive text is disabled.
 
+The order in which self-voicing reads out layers, screens, and displayables
+directly on a layer has changed, such that the screen and displayables that
+are drawn last (closest to the player) are read out first. This does not
+apply to displayables withoin a screen or layout displayable, which are
+still read first to last.
+
+Modal screens cause self-voicing to stop after the contents of the screen
+has been read.
+
+
 Transform Properties
 --------------------
 

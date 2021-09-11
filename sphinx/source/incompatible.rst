@@ -12,6 +12,25 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+
+.. _incompatible-7.4.9:
+
+7.4.9
+-----
+
+Ren'Py will now interpret floating point numbers given to a Transform's
+:tpref:`xsize` or :tpref:`ysize` properties as a size relative to the area
+available to the Transform. To revert this change::
+
+    define config.relative_transform_size = False
+
+The order in which Ren'Py's self-voicing reads out layers, screens, and displayables
+in screens has changed so that screens and displayables closest to the player
+are read first. To revert to the old order::
+
+    define config.tts_front_to_back = False
+
+
 .. _incompatible-7.4.7:
 
 7.4.7
