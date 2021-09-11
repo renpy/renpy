@@ -698,11 +698,16 @@ class Displayable(renpy.object.Object):
 
         return
 
-    def _tts_common(self, default_alt=None):
+    def _tts_common(self, default_alt=None, reverse=False):
 
         rv = [ ]
 
-        for i in self.visit()[::-1]:
+        if reverse:
+            order = 1
+        else:
+            order = -1
+
+        for i in self.visit()[::order]:
             if i is not None:
                 speech = i._tts()
 

@@ -29,6 +29,13 @@ import subprocess
 import pygame_sdl2 as pygame
 
 
+class TTSDone(str):
+    """
+    A subclass of string that is returned from a tts function to stop
+    further TTS processing.
+    """
+
+
 class TTSRoot(Exception):
     """
     An exception that can be used to cause the TTS system to read the text

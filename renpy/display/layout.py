@@ -1113,6 +1113,12 @@ class MultiBox(Container):
 
         return None
 
+    def _tts(self):
+        if self.layers or self.scene_list:
+            return self._tts_common(reverse=True)
+        else:
+            return self._tts_common()
+
 
 def Fixed(**properties):
     return MultiBox(layout='fixed', **properties)
