@@ -74,7 +74,7 @@ the omission in future versions.
 * Gas
 * George Economidis
 * GimmiRuski
-* Gio
+* GiovanH
 * Giuseppe Bertone
 * Gouvernathor
 * Gratusfr
