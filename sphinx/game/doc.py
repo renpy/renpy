@@ -226,6 +226,9 @@ def scan(name, o, prefix=""):
     if not doc:
         return
 
+    if doc[0] == ' ':
+        print("Bad docstring for ", name, repr(doc))
+
     # Break up the doc string, scan it for specials.
     lines = [ ]
 
