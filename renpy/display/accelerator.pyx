@@ -394,7 +394,7 @@ def transform_render(self, widtho, heighto, st, at):
 
     # Rotation.
     rotate = state.rotate
-    if rotate is not None:
+    if (rotate is not None) and (not perspective):
 
         cw = width
         ch = height
@@ -472,6 +472,13 @@ def transform_render(self, widtho, heighto, st, at):
         xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
 
         self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
+
+        if rotate is not None:
+            m = Matrix.offset(-width / 2, -height / 2, 0.0)
+            m = Matrix.rotate(0, 0, -rotate) * m
+            m = Matrix.offset(width / 2, height / 2, 0.0) * m
+
+            self.reverse = m * self.reverse
 
     elif state.zpos:
         self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
