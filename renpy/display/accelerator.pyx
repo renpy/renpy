@@ -130,6 +130,8 @@ def transform_render(self, widtho, heighto, st, at):
 
     if perspective is True:
         perspective = renpy.config.perspective
+    elif perspective is False:
+        perspective = None
     elif isinstance(perspective, (int, float)):
         perspective = (renpy.config.perspective[0], perspective, renpy.config.perspective[2])
 
