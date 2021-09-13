@@ -1120,6 +1120,9 @@ def check_autoreload():
             needs_autoreload.discard(fn)
             auto_mtimes[fn] = mtime
 
+        if not renpy.autoreload:
+            return
+
         for regex, func in renpy.config.autoreload_functions:
             if re.search(regex, fn, re.I):
                 fn = os.path.relpath(fn, renpy.config.gamedir).replace("\\", "/")
