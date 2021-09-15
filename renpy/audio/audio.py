@@ -425,6 +425,9 @@ class Channel(object):
 
         vol = self.chan_volume * mixer_volume
 
+        if renpy.game.preferences.mute.get(self.mixer, False):
+            vol = 0.0
+
         if vol != self.actual_volume:
             renpysound.set_volume(self.number, vol)
             self.actual_volume = vol
