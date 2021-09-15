@@ -606,7 +606,7 @@
 
     # gui7.rpy:358
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
-    new "Personalizas. La GUI está optimizada para una ratio 16:9."
+    new "Personalizado. La GUI está optimizada para una ratio 16:9."
 
     # gui7.rpy:373
     old "WIDTH"
