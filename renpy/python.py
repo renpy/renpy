@@ -2103,19 +2103,27 @@ class RollbackLog(renpy.object.Object):
         self.mutated.clear()
         begin_stores()
 
-        self.current = Rollback()
-        if self.log:
-            self.log.append(self.current)
-
         # Restart the context or the top context.
         if replace_context:
 
             if force_checkpoint:
                 renpy.game.contexts[0].force_checkpoint = True
 
+            self.current = Rollback()
+            self.current.context = renpy.game.contexts[0].rollback_copy()
+
+            if self.log is not None:
+                self.log.append(self.current)
+
             raise renpy.game.RestartTopContext()
 
         else:
+
+            self.current = Rollback()
+            self.current.context = renpy.game.context().rollback_copy()
+
+            if self.log is not None:
+                self.log.append(self.current)
 
             if force_checkpoint:
                 renpy.game.context().force_checkpoint = True
