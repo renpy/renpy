@@ -123,7 +123,7 @@ class ParameterizedColor(object):
     def _duplicate(self, args):
 
         if args.lint:
-            return renpy.text.text.Color("#000", style=self.style, **self.properties)
+            return Solid("#000", style=self.style, **self.properties)
 
         if len(args.args) == 0:
             raise Exception("{} takes a single string parameter.".format(' '.join(args.name)))
@@ -131,7 +131,7 @@ class ParameterizedColor(object):
         param = " ".join(args.args)
         string = renpy.python.py_eval(param)
 
-        return renpy.display.imagelike.Solid(string, style=self.style, **self.properties)
+        return Solid(string, style=self.style, **self.properties)
 
 
 class Borders(object):
