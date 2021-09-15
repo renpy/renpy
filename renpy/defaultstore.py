@@ -146,6 +146,7 @@ Image = renpy.display.im.image
 Frame = renpy.display.imagelike.Frame
 Borders = renpy.display.imagelike.Borders
 Solid = renpy.display.imagelike.Solid
+ParameterizedColor = renpy.display.imagelike.ParameterizedColor
 FileCurrentScreenshot = renpy.display.imagelike.FileCurrentScreenshot
 
 LiveComposite = renpy.display.layout.LiveComposite
