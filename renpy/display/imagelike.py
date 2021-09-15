@@ -90,6 +90,50 @@ class Solid(renpy.display.core.Displayable):
         return rv
 
 
+class ParameterizedColor(object):
+    """
+    :name: ParameterizedColor
+    :doc: disp_imagelike
+
+    This is a displayable that can be shown with an additional string
+    parameter, which is interpreted as a rgb(a) color code as if it were an
+    image. This is usually used as part of the pre-defined ``color`` image.
+    Similar to the :ref:`ParameterizedText <text-displayables>` displayable.
+
+    For example, one can do::
+
+        show color "#f003" at truecenter
+        with dissolve
+        pause 1
+        hide color
+        with dissolve
+
+    You can use ParameterizedColor directly to define similar images with
+    different style properties. For example, one can write::
+
+        image left_blind = ParameterizedColor(xsize=0.5, xalign=0.0)
+    """
+
+    def __init__(self, style='default', **properties):
+        self.style = style
+        self.properties = properties
+
+    _duplicatable = True
+
+    def _duplicate(self, args):
+
+        if args.lint:
+            return renpy.text.text.Color("#000", style=self.style, **self.properties)
+
+        if len(args.args) == 0:
+            raise Exception("{} takes a single string parameter.".format(' '.join(args.name)))
+
+        param = " ".join(args.args)
+        string = renpy.python.py_eval(param)
+
+        return renpy.display.imagelike.Solid(string, style=self.style, **self.properties)
+
+
 class Borders(object):
     """
     :doc: disp_imagelike
