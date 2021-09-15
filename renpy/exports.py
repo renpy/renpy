@@ -73,6 +73,8 @@ from renpy.display.image import image_exists, image_exists as has_image, list_im
 from renpy.display.image import get_available_image_tags, get_available_image_attributes, check_image_attributes, get_ordered_image_attributes
 from renpy.display.image import get_registered_image
 
+from renpy.display.imagelike import ParameterizedColor
+
 from renpy.display.im import load_surface, load_image
 
 from renpy.curry import curry, partial
@@ -118,6 +120,7 @@ from renpy.gl2.gl2shadercache import register_shader
 from renpy.gl2.live2d import has_live2d
 
 renpy_pure("ParameterizedText")
+renpy_pure("ParameterizedColor")
 renpy_pure("Keymap")
 renpy_pure("has_screen")
 renpy_pure("image_exists")
@@ -174,6 +177,7 @@ def public_api():
     image_exists, has_image, list_images
     get_available_image_tags, get_available_image_attributes, check_image_attributes, get_ordered_image_attributes
     get_registered_image
+    ParameterizedColor
     load_image, load_surface
     profile_memory, diff_memory, profile_rollback
     TEXT_TAG
@@ -4258,4 +4262,3 @@ def request_permission(permission):
         return False
 
     return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8"))
-
