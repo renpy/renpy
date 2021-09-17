@@ -816,12 +816,16 @@ class Block(Statement):
                     loop_end = target - arg
                     duration = loop_end - loop_start
 
-                    if duration <= 0:
+                    if (state is None) and (duration <= 0):
                         raise Exception("ATL appears to be in an infinite loop.")
 
                     # Figure how many durations can occur between the
                     # start of the loop and now.
-                    new_repeats = int((target - loop_start) / duration)
+
+                    if duration:
+                        new_repeats = int((target - loop_start) / duration)
+                    else:
+                        new_repeats = 0
 
                     if count is not None:
                         if repeats + new_repeats >= count:
@@ -1143,12 +1147,22 @@ class Interpolation(Statement):
         else:
             st_or_at = trans.st
 
-        if (self.warper != "instant") and (state is None) and (
-                (trans.atl_state is not None) or (st_or_at == 0)
-                ):
-            first = True
+        # True if we want want to make sure this interpolation is shown for at
+        # least one frame.
+        if self.warper == "instant":
+            first_frame = False
+        elif state is not None:
+            first_frame = False
+        elif (self.duration == 0) and (not self.properties and not self.revolution and not self.splines):
+            first_frame = True
+        elif trans.atl_state is not None:
+            first_frame = True
+        elif st_or_at == 0:
+            first_frame = True
         else:
-            first = False
+            # This is the case when we're skipping through a displayable to
+            # find the right time.
+            first_frame = False
 
         if self.duration:
             complete = min(1.0, st / self.duration)
@@ -1272,7 +1286,7 @@ class Interpolation(Statement):
             value = interpolate_spline(complete, values)
             setattr(trans.state, name, value)
 
-        if ((not first) or (not renpy.config.atl_one_frame)) and (st >= self.duration):
+        if (st >= self.duration) and ((not first_frame) or (not renpy.config.atl_one_frame)):
             return "next", st - self.duration, None
         else:
             if not self.properties and not self.revolution and not self.splines:
