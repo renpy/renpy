@@ -1627,6 +1627,9 @@ def get_safe_mode():
     if renpy.safe_mode_checked:
         return False
 
+    if getattr(renpy.game.args, "safe_mode", False):
+        return True
+
     try:
         if renpy.windows:
             import ctypes

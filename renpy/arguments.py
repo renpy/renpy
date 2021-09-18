@@ -127,6 +127,10 @@ class ArgumentParser(argparse.ArgumentParser):
             "--errors-in-editor", action="store_true",
             help="Causes errors to open in a text editor.")
 
+        self.add_argument(
+            '--safe-mode', dest='safe_mode', action='store_true', default=False,
+            help="Forces Ren'Py to start in safe mode, allowing the player to configure graphics.")
+
         dump = self.add_argument_group("JSON dump arguments", description="Ren'Py can dump information about the game to a JSON file. These options let you select the file, and choose what is dumped.")
         dump.add_argument("--json-dump", action="store", metavar="FILE", help="The name of the JSON file.")
         dump.add_argument("--json-dump-private", action="store_true", default=False, help="Include private names. (Names beginning with _.)")
