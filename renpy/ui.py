@@ -689,14 +689,6 @@ class ChoiceActionBase(Action):
         else:
             self.block_all = block_all
 
-        self.chosen = None
-
-        if self.location:
-            self.chosen = renpy.game.persistent._chosen # @UndefinedVariable
-
-            if self.chosen is None:
-                self.chosen = renpy.game.persistent._chosen = { }
-
         # The arguments passed to a menu choice.
         self.args = args
         self.kwargs = kwargs
@@ -708,6 +700,13 @@ class ChoiceActionBase(Action):
     def get_selected(self):
         roll_forward = renpy.exports.roll_forward_info()
         return renpy.exports.in_fixed_rollback() and roll_forward == self.value
+
+    @property
+    def chosen(self):
+        if not self.location:
+            return None
+
+        return renpy.game.persistent._chosen
 
     def get_chosen(self):
         if self.chosen is None:
