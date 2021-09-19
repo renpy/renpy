@@ -4185,6 +4185,11 @@ class Interface(object):
                     if ev.type != TIMEEVENT:
                         self.post_time_event()
 
+                    # On mobile, if an event originates from the touch mouse, unfocus.
+                    if renpy.mobile and (ev.type == pygame.MOUSEBUTTONUP) and getattr(ev, "which", 0) == 4294967295:
+                        if not self.restart_interaction:
+                            renpy.display.focus.mouse_handler(None, -1, -1, default=False)
+
                 # Check again after handling the event.
                 needs_redraw |= renpy.display.render.check_redraws()
 
