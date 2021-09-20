@@ -78,6 +78,10 @@ class FileLocation(object):
         # The persistent file.
         self.persistent = os.path.join(self.directory, "persistent")
 
+        # The persistent seen file.
+        # This doesn't check its mtime as these files are likely updated together
+        self.persistent_seen = os.path.join(self.directory, "seen")
+
         # The mtime of the persistent file.
         self.persistent_mtime = 0
 
@@ -137,16 +141,25 @@ class FileLocation(object):
                 if slotname not in new_mtimes:
                     clear_slot(slotname)
 
+            new_pfn = None
+            mtime = None
             for pfn in [ self.persistent + ".new", self.persistent ]:
                 if os.path.exists(pfn):
                     mtime = os.path.getmtime(pfn)
 
                     if mtime != self.persistent_mtime:
-                        data = renpy.persistent.load(pfn)
-                        if data is not None:
-                            self.persistent_mtime = mtime
-                            self.persistent_data = data
-                            break
+                        new_pfn = pfn
+                        break
+
+            if new_pfn is not None:
+                for pfn in [ self.persistent_seen + ".new", self.persistent_seen ]:
+                    if os.path.exists(pfn):
+                        break
+
+                data = renpy.persistent.load(new_pfn, pfn)
+                if data is not None:
+                    self.persistent_mtime = mtime
+                    self.persistent_data = data
 
     def save(self, slotname, record):
         """
@@ -323,26 +336,26 @@ class FileLocation(object):
         else:
             return [ ]
 
-    def save_persistent(self, data):
+    def save_persistent(self, data, seen_data):
         """
         Saves `data` as the persistent data. Data is a binary string giving
         the persistent data in python format.
         """
 
+        if not self.active:
+            return
+
         with disk_lock:
 
-            if not self.active:
-                return
+            for fn, value in [ (self.persistent, data), (self.persistent_seen, seen_data) ]:
+                fn_tmp = fn + tmp
+                fn_new = fn + ".new"
 
-            fn = self.persistent
-            fn_tmp = fn + tmp
-            fn_new = fn + ".new"
+                with open(fn_tmp, "wb") as f:
+                    f.write(value)
 
-            with open(fn_tmp, "wb") as f:
-                f.write(data)
-
-            safe_rename(fn_tmp, fn_new)
-            safe_rename(fn_new, fn)
+                safe_rename(fn_tmp, fn_new)
+                safe_rename(fn_new, fn)
 
             self.sync()
 
@@ -353,10 +366,15 @@ class FileLocation(object):
 
         try:
             os.unlink(self.persistent)
-
-            self.sync()
         except:
             pass
+
+        try:
+            os.unlink(self.persistent_seen)
+        except:
+            pass
+
+        self.sync()
 
     def __eq__(self, other):
         if not isinstance(other, FileLocation):
@@ -479,10 +497,10 @@ class MultiLocation(object):
 
         return rv
 
-    def save_persistent(self, data):
+    def save_persistent(self, data, seen_data):
 
         for l in self.active_locations():
-            l.save_persistent(data)
+            l.save_persistent(data, seen_data)
 
     def unlink_persistent(self):
 

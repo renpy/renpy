@@ -27,6 +27,7 @@ import copy
 import time
 import zlib
 import weakref
+import marshal
 
 import renpy
 
@@ -75,33 +76,42 @@ class Persistent(object):
             self._chosen.clear()
             self._seen_audio.clear()
 
-    def _update(self):
+    def _update(self, seen_data=None):
         """
         Updates the persistent data to be the latest version of
         the persistent data.
         """
 
+        if seen_data is None:
+            seen_data = { }
+
         if self._preferences is None:
             self._preferences = renpy.preferences.Preferences()
 
-        # Initialize the set of statements seen ever.
-        if not self._seen_ever:
-            self._seen_ever = { }
+        def dictset_merge(field, default):
+            self_f = getattr(self, field)
+            seen_f = seen_data.get(field, default)
 
-        # Initialize the set of images seen ever.
-        if not self._seen_images:
-            self._seen_images = { }
+            if not self_f:
+                return seen_f
 
-        # Initialize the set of chosen menu choices.
-        if not self._chosen:
-            self._chosen = { }
+            self_f.update(seen_f)
+            return self_f
 
-        if not self._seen_audio:
-            self._seen_audio = { }
+        # The set of statements seen ever.
+        self._seen_ever = dictset_merge("_seen_ever", { })
+
+        # The set of images seen ever.
+        self._seen_images = dictset_merge("_seen_images", { })
+
+        # The set of chosen menu choices.
+        self._chosen = dictset_merge("_chosen", { })
+
+        # The set of audio files seen ever.
+        self._seen_audio = dictset_merge("_seen_audio", { })
 
         # The set of seen translate identifiers.
-        if not self._seen_translates:
-            self._seen_translates = set()
+        self._seen_translates = dictset_merge("_seen_translates", set())
 
         # A map from the name of a field to the time that field was last
         # changed at.
@@ -182,11 +192,11 @@ def find_changes():
     return rv
 
 
-def load(filename):
+def load(filename, seen_filename):
     """
-    Loads persistence data from `filename`. Returns None if the data
-    could not be loaded, or a Persistent object if it could be
-    loaded.
+    Loads persistence data from `filename` and `seen_filename`.
+    Returns None if the data could not be loaded, or a Persistent
+    object if it could be loaded.
     """
 
     if not os.path.exists(filename):
@@ -197,6 +207,13 @@ def load(filename):
         with open(filename, "rb") as f:
             s = zlib.decompress(f.read())
         persistent = loads(s)
+
+        seen_data = None
+        if os.path.exists(seen_filename):
+            with open(seen_filename, "rb") as f:
+                s = zlib.decompress(f.read())
+            seen_data = marshal.loads(s)
+
     except:
         import renpy.display
 
@@ -208,7 +225,7 @@ def load(filename):
 
         return None
 
-    persistent._update()
+    persistent._update(seen_data)
 
     return persistent
 
@@ -218,22 +235,26 @@ def init():
     Loads the persistent data from disk.
 
     This performs the initial load of persistent data from the local
-    disk, so that we can configure the savelocation system.
+    disk.
     """
 
+    seen_filename = os.path.join(renpy.config.savedir, "seen")
+    for pfn in [ seen_filename + ".new", seen_filename ]:
+        if os.path.exists(pfn):
+            seen_filename = pfn
+            break
+
     filename = os.path.join(renpy.config.savedir, "persistent.new")
-    persistent = load(filename)
+    persistent = load(filename, seen_filename)
 
     if persistent is None:
         filename = os.path.join(renpy.config.savedir, "persistent")
-        persistent = load(filename)
+        persistent = load(filename, seen_filename)
 
     if persistent is None:
         persistent = Persistent()
 
     # Create the backup of the persistent data.
-    v = vars(persistent)
-
     for k, v in vars(persistent).items():
         backup[k] = safe_deepcopy(v)
 
@@ -286,9 +307,20 @@ def dictset_merge(old, new, current):
     return current
 
 
+# These fields should only contain types that can be serialised
+# by marshal module, and will be saved in a separate 'seen' file.
+marshal_fields = [
+    "_seen_ever",
+    "_seen_images",
+    "_seen_audio",
+    "_seen_translates",
+    "_chosen",
+]
+
 register_persistent("_seen_ever", dictset_merge)
 register_persistent("_seen_images", dictset_merge)
 register_persistent("_seen_audio", dictset_merge)
+register_persistent("_seen_translates", dictset_merge)
 register_persistent("_chosen", dictset_merge)
 
 
@@ -405,11 +437,23 @@ def save():
         return
 
     try:
-        data = zlib.compress(dumps(renpy.game.persistent), 3)
-        renpy.loadsave.location.save_persistent(data)
+        seen_fields = dict.fromkeys(marshal_fields)
+        persistent = renpy.game.persistent
+        for field in seen_fields:
+            seen_fields[field] = persistent.__dict__.pop(field)
+
+        data = zlib.compress(dumps(persistent), 3)
+        seen_data = zlib.compress(marshal.dumps(seen_fields), 3)
+        renpy.loadsave.location.save_persistent(data, seen_data)
+
     except:
         if renpy.config.developer:
             raise
+
+    finally:
+        persistent.__dict__.update(seen_fields)
+
+
 
 ################################################################################
 # MultiPersistent
@@ -523,3 +567,42 @@ def MultiPersistent(name, save_on_quit=False):
 
 renpy.loadsave._MultiPersistent = _MultiPersistent
 renpy.loadsave.MultiPersistent = MultiPersistent
+
+
+
+
+def compare_oldnew_save():
+    script = renpy.game.script
+    persistent = renpy.game.persistent
+    persistent._seen_ever.update({k: True for k, v in script.namemap.items() if isinstance(v, renpy.ast.Say)})
+    persistent._seen_ever.update({k: True for k, v in script.namemap.items() if isinstance(v, renpy.ast.With)})
+    persistent._seen_ever.update({k: True for k, v in script.namemap.items() if isinstance(v, renpy.ast.UserStatement) and v.line.startswith(("pause", "call"))})
+    persistent._seen_translates.update(script.translator.default_translates)
+
+    times = [ ]
+    for reps in range(10):
+        start = time.clock()
+        save()
+        times.append(time.clock() - start)
+
+    times.sort()
+    print("New save:")
+    print(" ".join("{:.4f}".format(t) for t in times))
+
+    times = [ ]
+    for reps in range(10):
+        start = time.clock()
+
+        try:
+            data = zlib.compress(dumps(persistent), 3)
+            renpy.loadsave.location.save_persistent(data, b"")
+        except:
+            if renpy.config.developer:
+                raise
+        times.append(time.clock() - start)
+
+    times.sort()
+    print("Old save:")
+    print(" ".join("{:.4f}".format(t) for t in times))
+
+    save()
