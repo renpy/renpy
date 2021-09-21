@@ -2798,7 +2798,7 @@ class Interface(object):
                 self.transition_from.pop(None, None)
                 continue
 
-            start = self.transition_time.get(l, self.frame_time)
+            start = self.transition_time.get(l, self.frame_time) or 0
             delay = self.transition_delay.get(l, 0)
 
             if (self.frame_time - start) >= delay:
