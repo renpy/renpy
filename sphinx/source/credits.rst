@@ -162,6 +162,7 @@ the omission in future versions.
 * Remix
 * Ren
 * Renoa
+* Reptile
 * Ruben Jesus Garcia-Hernandez
 * Ria-kon
 * Ricardo Pérez
