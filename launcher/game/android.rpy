@@ -135,6 +135,8 @@ init python:
             return NO_SDK_TEXT
         if state == ANDROID_NO_KEY:
             return NO_KEY_TEXT
+        if state == ANDROID_NO_BUNDLE_KEY:
+            return NO_BUNDLE_KEY_TEXT
         if state == ANDROID_NO_CONFIG:
             return NO_CONFIG_TEXT
         if state == ANDROID_NO_BUNDLE:
@@ -634,4 +636,3 @@ init python:
         return False
 
     renpy.arguments.register_command("android_build", android_build_command)
-
