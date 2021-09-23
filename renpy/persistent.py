@@ -411,6 +411,19 @@ def save():
         if renpy.config.developer:
             raise
 
+    global persistent_mtime
+
+    # Prevent updates just after save
+    mtime = persistent_mtime
+
+    for mtime, _data in renpy.loadsave.location.load_persistent():
+        if mtime <= persistent_mtime:
+            continue
+
+    persistent_mtime = mtime
+
+
+
 ################################################################################
 # MultiPersistent
 ################################################################################
