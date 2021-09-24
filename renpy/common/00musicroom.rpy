@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -117,6 +117,39 @@ init -1500 python:
 
         def get_selected(self):
             return renpy.music.get_playing() is None
+
+        def periodic(self, st):
+            if self.selected != self.get_selected():
+                self.selected = self.get_selected()
+                renpy.restart_interaction()
+
+            self.mr.periodic(st)
+
+            return .1
+    
+    @renpy.pure
+    class __MusicRoomTogglePause(Action, FieldEquality):
+        """
+        The action returned by MusicRoom.TogglePause.
+        """
+
+        identity_fields = [ "mr" ]
+
+        def __init__(self, mr):
+            self.mr = mr
+            self.selected = self.get_selected()
+
+        def __call__(self):
+            if renpy.music.get_playing(self.mr.channel) is None:
+                return self.mr.play()
+
+            if renpy.music.get_pause(self.mr.channel):
+                self.mr.Music_pause(None)
+            else:
+                self.mr.Music_pause(True)
+
+        def get_selected(self):
+            return renpy.music.get_pause() is None
 
         def periodic(self, st):
             if self.selected != self.get_selected():
@@ -377,6 +410,14 @@ init -1500 python:
 
             renpy.music.stop(channel=self.channel, fadeout=self.fadeout)
 
+        def Music_pause(self,flg):
+            """
+            Pause the music from playing.
+            """
+
+            renpy.music.set_pause(flg, channel=self.channel)
+        
+
         def next(self):
             """
             Plays the next file in the playlist.
@@ -445,6 +486,20 @@ init -1500 python:
             """
 
             return __MusicRoomStop(self)
+        
+        def TogglePause(self):
+            """
+            :doc: music_room method
+
+            If music is currently playing it will pause, otherwise it will resume from where it stopped.
+
+            In case a music has already finished the queue will play the music again from the beginning the next time it is called.
+
+            If the music is playing the button will receive the selected status and when paused it will be removed.
+            """
+
+            return __MusicRoomTogglePause(self)
+
 
         def Next(self):
             """
