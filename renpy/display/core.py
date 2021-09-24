@@ -1168,7 +1168,7 @@ class SceneLists(renpy.object.Object):
 
         if (prefix is not None) and oldsle.tag:
 
-            d = oldsle.displayable._hide(now - st, now - at, prefix)
+            d = oldsle.displayable._in_current_store()._hide(now - st, now - at, prefix)
 
             # _hide can mutate the layers, so we need to recompute
             # index.
