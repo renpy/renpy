@@ -2187,6 +2187,9 @@ class SLCustomUse(SLNode):
     def used_screens(self, callback):
         callback(self.target)
 
+    def has_transclude(self):
+        return self.block.has_transclude()
+
 
 class SLScreen(SLBlock):
     """
