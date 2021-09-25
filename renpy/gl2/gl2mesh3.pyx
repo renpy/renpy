@@ -502,6 +502,9 @@ cdef Mesh3 crop_mesh(Mesh3 m, Polygon p):
 
     p.ensure_winding()
 
+    if p.points < 3:
+        return Mesh3(m.layout, 0, 0)
+
     j = p.points - 1
 
     for 0 <= i < p.points:
