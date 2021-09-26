@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -138,6 +138,11 @@ init -1500 python:
 
         def get_sensitive(self):
             return renpy.music.get_playing(self.mr.channel)
+        
+        def periodic(self, st):
+            self.mr.periodic(st)
+
+            return .1
 
 
     @renpy.pure
