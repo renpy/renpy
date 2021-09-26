@@ -290,7 +290,7 @@ init python in distribute:
             # If this is not a directory, ensure all parent directories
             # have been created
             self.mkdir(os.path.dirname(fn))
-            shutil.copy2(path, fn)
+            shutil.copy(path, fn)
 
             if xbit:
                 os.chmod(fn, 0o755)

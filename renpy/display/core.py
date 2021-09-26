@@ -1142,6 +1142,10 @@ class SceneLists(renpy.object.Object):
             sle = SceneListEntry(key, zorder, st, at, thing, name)
             l.insert(add_index, sle)
 
+        # By walking the tree of displayables we allow the displayables to
+        # capture the current state.
+        thing.visit_all(lambda d : None)
+
     def hide_or_replace(self, layer, index, prefix):
         """
         Hides or replaces the scene list entry at the given
