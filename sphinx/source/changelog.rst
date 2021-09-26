@@ -55,6 +55,20 @@ request permissions on Android beyond those that Ren'Py users itself.
 When creating Android keys, Ren'Py will back them up to the same place it
 backs up script files. This isn't a substitute for making your own backups.
 
+iOS
+---
+
+The iOS build process has been updated create a project that is more complete
+after the initial generation, with the launch screen set up and no unused
+schemas.
+
+As always, it's necessary to create a new iOS project each time Ren'Py is
+updated.
+
+The inclusion of :ref:`Pyobjus <pyobjus>` with Ren'Py is now documented. The
+Pyobjus library allows games to call APIs on iOS and macOS.
+
+
 Updater
 -------
 
@@ -114,6 +128,15 @@ is deprecated, and the new wrapper, :tpref:`xysize`, should be used instead.
 Other
 -----
 
+A new Polish translation of the launcher has been added.
+
+The music room has been updated to include a TogglePause button,
+that pauses and unpauses music.
+
+There is now a --safe-mode flag, that starts Ren'Py in safe mode.
+
+Mute now mutes movies.
+
 An issue that caused analysis files to grow unconstrained, slowing down
 Ren'Py startup, has been fixed. The analysis file will be reduced in size
 when the game scripts are recompiled.
@@ -133,9 +156,6 @@ unofficial builds.
 The ``default`` statement is applied after each rollback.
 
 A regression that could prevent text in buttons from changing has been fixed.
-
-The inclusion of :ref:`Pyobjus <pyobjus>` with Ren'Py is now documented. The
-Pyobjus library allows games to call APIs on iOS and macOS.
 
 
 .. _renpy-7.4.8:
