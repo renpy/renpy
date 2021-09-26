@@ -36,6 +36,7 @@ the omission in future versions.
 * Capntrips
 * Caryoscelus
 * CensoredUsername (C)
+* Charles Surett
 * Cherie Davidson
 * Chris Mear
 * Christian Koepp
@@ -71,6 +72,7 @@ the omission in future versions.
 * Felix Lampe
 * Franck_v
 * Frédéric Chapoton
+* GanstaKingofSA
 * Gas
 * George Economidis
 * GimmiRuski
@@ -81,6 +83,7 @@ the omission in future versions.
 * Gregory Pease
 * Grey
 * Gustavo Carvalho
+* Hanaka
 * Helloise
 * Hentai Senshi
 * Herpior
@@ -102,6 +105,7 @@ the omission in future versions.
 * Joshua Fehler
 * Joshua Stone
 * Julian Uy
+* Jürg Billeter
 * Kalawore
 * Kapil Gain
 * Kathryn
@@ -119,6 +123,7 @@ the omission in future versions.
 * Lee Yunseok
 * Lent1
 * Lezalith
+* Liu Wenyuan
 * Lore
 * Lucas Ramage
 * Maciej Katafiasz
@@ -139,6 +144,7 @@ the omission in future versions.
 * Mugenjohncel (Uncle Mugen)
 * Muhammad Nur Hidayat Yasuyoshi
 * Neotus
+* Neyunse
 * NetGenSuperstar
 * 逆转咸鱼
 * NoJoker
