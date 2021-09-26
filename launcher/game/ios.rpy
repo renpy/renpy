@@ -212,8 +212,8 @@ init python:
 
     def launch_xcode():
         dist = xcode_project(None)
-        base = os.path.basename(dist)
-        xcodeproj = "{}/{}.xcodeproj".format(dist, base)
+        name = project.current.dump.get("name", None)
+        xcodeproj = "{}/{}.xcodeproj".format(dist, name)
 
         subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
 
