@@ -55,6 +55,9 @@ request permissions on Android beyond those that Ren'Py users itself.
 When creating Android keys, Ren'Py will back them up to the same place it
 backs up script files. This isn't a substitute for making your own backups.
 
+An issue that could cause black screenshots on Android and other platforms has
+been (hopefully) fixed.
+
 iOS
 ---
 
