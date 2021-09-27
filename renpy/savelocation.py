@@ -344,6 +344,9 @@ class FileLocation(object):
             safe_rename(fn_tmp, fn_new)
             safe_rename(fn_new, fn)
 
+            # Prevent persistent from unpickle just after save
+            self.persistent_mtime = os.path.getmtime(fn)
+
             self.sync()
 
     def unlink_persistent(self):
