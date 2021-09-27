@@ -797,8 +797,6 @@ cdef class GL2Draw:
         Draws the screen.
         """
 
-        # NOTE: This needs to set interface.text_rect as a side effect.
-
         renpy.plog(1, "start draw_screen")
 
         if renpy.display.video.fullscreen:
@@ -839,9 +837,9 @@ cdef class GL2Draw:
         context = GL2DrawingContext(self, w, h)
         context.draw(surf, transform)
 
-        self.flip()
-
-        self.texture_loader.cleanup()
+        if flip:
+            self.flip()
+            self.texture_loader.cleanup()
 
     def load_all_textures(self, what):
         """
