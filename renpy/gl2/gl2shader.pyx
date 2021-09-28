@@ -18,16 +18,14 @@ GLSL_PRECISIONS = {
 
 
 cdef class Uniform:
-    cdef Program program
     cdef GLint location
     cdef bint ready
 
     def __init__(self, program, location):
-        self.program = program
         self.location = location
         self.ready = False
 
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         return
 
     cdef void finish(self):
@@ -35,23 +33,23 @@ cdef class Uniform:
         return
 
 cdef class UniformFloat(Uniform):
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glUniform1f(self.location, data)
 
 cdef class UniformVec2(Uniform):
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glUniform2f(self.location, data[0], data[1])
 
 cdef class UniformVec3(Uniform):
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glUniform3f(self.location, data[0], data[1], data[2])
 
 cdef class UniformVec4(Uniform):
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glUniform4f(self.location, data[0], data[1], data[2], data[3])
 
 cdef class UniformMat4(Uniform):
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glUniformMatrix4fv(self.location, 1, GL_FALSE, (<Matrix> data).m)
 
 cdef class UniformSampler2D(Uniform):
@@ -62,13 +60,13 @@ cdef class UniformSampler2D(Uniform):
         self.sampler = program.samplers
         program.samplers += 1
 
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glActiveTexture(GL_TEXTURE0 + self.sampler)
         glUniform1i(self.location, self.sampler)
 
         if isinstance(data, GLTexture):
             glBindTexture(GL_TEXTURE_2D, data.number)
-            self.program.set_uniform("res{}".format(self.sampler), (data.texture_width, data.texture_height))
+            program.set_uniform("res{}".format(self.sampler), (data.texture_width, data.texture_height))
         else:
             glBindTexture(GL_TEXTURE_2D, data)
 
@@ -258,7 +256,7 @@ cdef class Program:
         if u is None:
             return
 
-        u.assign(value)
+        u.assign(self, value)
         u.ready = True
 
     def set_uniforms(self, dict uniforms):
@@ -269,7 +267,7 @@ cdef class Program:
             if u is None:
                 continue
 
-            u.assign(value)
+            u.assign(self, value)
             u.ready = True
 
     def draw(self, Mesh mesh, dict properties):
