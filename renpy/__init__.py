@@ -414,6 +414,7 @@ def import_all():
     import renpy.python
     import renpy.script
     import renpy.statements
+    import renpy.util
 
     global plog
     plog = renpy.performance.log
@@ -719,6 +720,7 @@ if False:
     import renpy.python
     import renpy.script
     import renpy.statements
+    import renpy.util
 
     import renpy.styledata # @UnresolvedImport
     import renpy.style

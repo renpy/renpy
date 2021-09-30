@@ -59,6 +59,8 @@ class FileLocation(object):
         except:
             pass
 
+        renpy.util.expose_directory(self.directory)
+
         # Try to write a test file.
         try:
             fn = os.path.join(self.directory, "text.txt")
@@ -157,6 +159,8 @@ class FileLocation(object):
 
         with disk_lock:
             record.write_file(filename)
+
+        renpy.util.expose_file(filename)
 
         self.sync()
         self.scan()
@@ -290,6 +294,7 @@ class FileLocation(object):
                 os.unlink(new)
 
             os.rename(old, new)
+            renpy.util.expose_file(new)
 
             self.sync()
             self.scan()
@@ -307,6 +312,7 @@ class FileLocation(object):
                 return
 
             shutil.copyfile(old, new)
+            renpy.util.expose_file(new)
 
             self.sync()
             self.scan()
@@ -346,6 +352,8 @@ class FileLocation(object):
 
             # Prevent persistent from unpickle just after save
             self.persistent_mtime = os.path.getmtime(fn)
+
+            renpy.util.expose_file(fn)
 
             self.sync()
 
