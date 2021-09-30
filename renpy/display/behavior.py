@@ -1828,6 +1828,7 @@ class Bar(renpy.display.core.Displayable):
                  replaces=None,
                  hovered=None,
                  unhovered=None,
+                 released=None,
                  **properties):
 
         self.value = None
@@ -1880,6 +1881,8 @@ class Bar(renpy.display.core.Displayable):
 
         self.hovered = hovered
         self.unhovered = unhovered
+
+        self.released = released
 
     def per_interact(self):
         if self.value is not None:
@@ -2139,6 +2142,10 @@ class Bar(renpy.display.core.Displayable):
                 rv = self.adjustment.change(value)
                 if rv is not None:
                     return rv
+
+            rv = run(self.released)
+            if rv is not None:
+                return rv
 
             raise renpy.display.core.IgnoreEvent()
 

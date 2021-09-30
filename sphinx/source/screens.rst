@@ -322,6 +322,10 @@ data. It takes the following properties:
 `unhovered`
     An action to run when the bar loses focus.
 
+`released`
+    An action to run when the bar button is released. This will be invoked
+    even if the bar has not changed its value.
+
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
 
@@ -337,7 +341,7 @@ This does not take children.
         frame:
             has vbox
 
-            bar value Preference("sound volume")
+            bar value Preference("sound volume") released Play("sound", "audio/sample_sound.ogg")
             bar value Preference("music volume")
             bar value Preference("voice volume")
 
