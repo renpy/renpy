@@ -365,7 +365,6 @@ to allow access to file storage, there are some directories that files can be
 placed in. (This assumes that your game's package is org.renpy.mygame, but it will
 almost certainly be different.)
 
-
 Android/data/org.renpy.mygame/files/saves
     This contains the game's save files.
 
@@ -373,11 +372,4 @@ Android/data/org.renpy.mygame/files/game
     This might not exist, in which case you may create it. Files in this directory
     are loaded in preference to files in the androids packages, which means that
     patches can be placed in this directory.
-
-
-
-
-
-
-
 
