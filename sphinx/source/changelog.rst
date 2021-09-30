@@ -58,6 +58,10 @@ backs up script files. This isn't a substitute for making your own backups.
 An issue that could cause black screenshots on Android and other platforms has
 been (hopefully) fixed.
 
+The permissions of saves and log.txt are now explicitly managed on Android
+to make these files group-readable, ensuring the player can access logs and
+files.
+
 iOS
 ---
 
