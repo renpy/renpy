@@ -290,7 +290,7 @@ class Context(renpy.object.Object):
 
             vars(self.info).update(vars(context.info))
 
-            self.music = renpy.python.RevertableDict(context.music)
+            self.music = dict(context.music)
             self.movie = dict(context.movie)
 
             self.images = renpy.display.image.ShownImageInfo(context.images)
