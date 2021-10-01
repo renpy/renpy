@@ -363,12 +363,23 @@ init python:
     def _(s):
         return s
 
+    def __limit_lines(lines):
+        """
+        Limit the number of lines shown.
+        """
+
+        if len(lines) < 401:
+            return lines
+
+        return lines[:200] + [ "..." ] + lines[-200:]
+
     # This function is responsible for taking a traceback, and converting
     # it to a string that can be shown with text.
     def __format_traceback(s):
         import re
 
         lines = [ i.replace("{", "{{") for i in s.split("\n") ]
+        lines = __limit_lines(lines)
 
         rv = [ ("{size=%d}" % gui._scale(22)) + lines[0] + "{/size}" ]
 
@@ -380,13 +391,13 @@ init python:
 
         return "\n".join(rv)
 
-
     def __format_parse_errors(s):
         import re
 
         rv = ""
 
         lines = s.split("\n")
+        lines = __limit_lines(lines)
         len_lines = len(lines)
 
         ln = 0
