@@ -44,7 +44,7 @@ this change::
 
     define config.adjust_minimums = False
 
-An ATL displayable in a screen will now start its animation when it first
+An ATL displayable will now start its animation when it first
 appears, rather than when the screen itself is shown. To revert this change::
 
     define config.atl_start_on_show = False

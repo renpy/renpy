@@ -1343,8 +1343,8 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         and should return a (d, redraw) tuple, where:
 
         * `d` is a displayable to show.
-        * `redraw` is the amount of time to wait before calling the
-          function again, or None to not call the function again
+        * `redraw` is the maximum amount of time to wait before calling the
+          function again, or None to not require the function be called again
           before the start of the next interaction.
 
         `function` is called at the start of every interaction.
@@ -1414,9 +1414,11 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         self.last_at = at
 
         raw_child, redraw = self.function(st, at, *self.args, **self.kwargs)
-        raw_child = renpy.easy.displayable(raw_child)
 
         if raw_child != self.raw_child:
+
+            self.raw_child = raw_child
+            raw_child = renpy.easy.displayable(raw_child)
 
             if raw_child._duplicatable:
                 child = raw_child._duplicate(self._args)
@@ -1424,9 +1426,12 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             else:
                 child = raw_child
 
+            if isinstance(self.child, Transform) and isinstance(child, Transform):
+                child.take_state(self.child)
+                child.take_execution_state(self.child)
+
             child.visit_all(lambda c : c.per_interact())
 
-            self.raw_child = raw_child
             self.child = child
 
         if redraw is not None:
