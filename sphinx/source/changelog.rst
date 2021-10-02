@@ -135,6 +135,16 @@ is deprecated, and the new wrapper, :tpref:`xysize`, should be used instead.
 Other
 -----
 
+The :ref:`bar <sl-bar>` screen language statement now has a new property,
+`released`, that gives an action to perform when the bar is released.
+
+It's now documented that the :ref:`key <sl-key>` screen language statement
+can take a list of keysyms.
+
+On Linux, if Ren'Py detects the "C" locale, it will enable support for
+UTF-8 filesystems. This is intented to provide better compatibility with
+Steam Linux, which uses this locale.
+
 A new Polish translation of the launcher has been added.
 
 The music room has been updated to include a TogglePause button,
