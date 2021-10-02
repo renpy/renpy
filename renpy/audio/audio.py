@@ -456,7 +456,10 @@ class Channel(object):
         # files. So this loop will only execute once, in practice.
         while True:
 
-            depth = renpysound.queue_depth(self.number)
+            if self._number is not None:
+                depth = renpysound.queue_depth(self.number)
+            else:
+                depth = 0
 
             if depth == 0:
                 self.wait_stop = False
@@ -579,6 +582,9 @@ class Channel(object):
             if not pcm_ok:
                 return
 
+            if self._number is None:
+                return
+
             if self.keep_queue == 0:
                 renpysound.dequeue(self.number, even_tight)
                 self.wait_stop = False
@@ -621,6 +627,9 @@ class Channel(object):
             self.dequeue()
 
             if not pcm_ok:
+                return
+
+            if self._number is None:
                 return
 
             if secs == 0:
@@ -673,6 +682,9 @@ class Channel(object):
         if not pcm_ok:
             return None
 
+        if self._number is None:
+            return None
+
         rv = renpysound.playing_name(self.number)
 
         with lock:
@@ -695,11 +707,17 @@ class Channel(object):
         if not pcm_ok:
             return -1
 
+        if self._number is None:
+            return -1
+
         return renpysound.get_pos(self.number)
 
     def get_duration(self):
 
         if not pcm_ok:
+            return 0.0
+
+        if self._number is None:
             return 0.0
 
         return renpysound.get_duration(self.number)
@@ -738,17 +756,19 @@ class Channel(object):
             renpysound.pause(self.number)
 
     def unpause(self):
+        if self._number is None:
+            return
+
         with lock:
             renpysound.unpause(self.number)
 
     def read_video(self):
-        if pcm_ok:
-            return renpysound.read_video(self.number)
+        if not pcm_ok:
+            return None
 
-        return None
+        return renpysound.read_video(self.number)
 
     def video_ready(self):
-
         if not pcm_ok:
             return 1
 
@@ -991,6 +1011,7 @@ def quit(): # @ReservedAssignment
     for c in all_channels:
         c.dequeue()
         c.fadeout(0)
+        c.unpause()
 
         c.queue = [ ]
         c.loop = [ ]
