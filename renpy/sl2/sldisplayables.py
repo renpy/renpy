@@ -258,6 +258,7 @@ Keyword("value")
 Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
+Keyword("released")
 add(bar_properties)
 
 
@@ -291,6 +292,7 @@ Keyword("value")
 Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
+Keyword("released")
 add(bar_properties)
 
 # Omit autobar. (behavior)
