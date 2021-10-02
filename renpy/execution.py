@@ -252,7 +252,7 @@ class Context(renpy.object.Object):
 
         # A map from the name of a music channel to the MusicContext
         # object corresponding to that channel.
-        self.music = renpy.python.RevertableDict()
+        self.music = { }
 
         # True if we're in the middle of a call to ui.interact. This
         # will cause Ren'Py to generate an error if we call ui.interact
