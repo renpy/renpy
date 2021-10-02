@@ -598,6 +598,9 @@ def reload_all():
     # Clear all pending exceptions.
     sys.exc_clear()
 
+    # Quit audio.
+    renpy.audio.audio.quit()
+
     # Reset the styles.
     renpy.style.reset() # @UndefinedVariable
 
@@ -779,8 +782,6 @@ if False:
     import renpy.display.matrix
     import renpy.display.render
     import renpy.display.model
-
-    print(renpy.display.model)
 
     import renpy.display.error
 
