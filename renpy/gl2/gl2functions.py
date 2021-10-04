@@ -64,3 +64,4 @@ required_functions = [
     "glVertexAttribPointer",
     "glViewport",
 ]
+
