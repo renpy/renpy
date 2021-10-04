@@ -560,8 +560,14 @@ def display_say(
                 what_ctc = what_ctc._duplicate(None)
                 what_ctc._unique()
 
+            if ctc is not what_ctc:
+                if (ctc is not None) and ctc._duplicatable:
+                    ctc = ctc._duplicate(None)
+                    ctc._unique()
+
             if delay == 0:
                 what_ctc = None
+                ctc = None
 
             # Run the show callback.
             for c in callback:
@@ -589,7 +595,13 @@ def display_say(
                     if ctc_position == "nestled":
                         what_text.set_ctc(what_ctc)
                     elif ctc_position == "nestled-close":
-                        what_text.set_ctc([ u"\ufeff", what_ctc])
+                        what_text.set_ctc([ u"\ufeff", what_ctc, ])
+
+                if (not last_pause) and ctc:
+                    if ctc_position == "nestled":
+                        what_text.set_last_ctc(ctc)
+                    elif ctc_position == "nestled-close":
+                        what_text.set_last_ctc([ u"\ufeff", ctc, ])
 
                 if what_text.text[0] == what_string:
 
