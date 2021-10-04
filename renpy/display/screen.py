@@ -639,7 +639,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
             renpy.ui.close()
 
         finally:
-            del self.scope["_scope"]
+            # Safe removal as to not reraise another exception and lose the last one
+            self.scope.pop("_scope", None)
 
             renpy.ui.screen = old_ui_screen
             pop_current_screen()
@@ -1229,7 +1230,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
             print()
 
     finally:
-        del scope["_scope"]
+        scope.pop("_scope", None)
 
     renpy.ui.reset()
 
@@ -1284,7 +1285,7 @@ def use_screen(_screen_name, *_args, **kwargs):
     try:
         screen.function(**scope)
     finally:
-        del scope["_scope"]
+        scope.pop("_scope", None)
 
     _current_screen.old_transfers = old_transfers
 
