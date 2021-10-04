@@ -1238,7 +1238,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
             print()
 
     finally:
-        del scope["_scope"]
+        scope.pop("_scope", None)
 
     renpy.ui.reset()
 
@@ -1293,7 +1293,7 @@ def use_screen(_screen_name, *_args, **kwargs):
     try:
         screen.function(**scope)
     finally:
-        del scope["_scope"]
+        scope.pop("_scope", None)
 
     _current_screen.old_transfers = old_transfers
 
