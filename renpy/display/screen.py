@@ -638,16 +638,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
             renpy.ui.close()
 
-        # Avoid suppressing errors during evaluation, we should log what happened and report it
-        except:
-            import traceback
-
-            print("While evaluating screen ", self.screen_name)
-            traceback.print_exc()
-            print()
-
         finally:
-            # Safe removal as to not reraise another exception
+            # Safe removal as to not reraise another exception and lose the last one
             self.scope.pop("_scope", None)
 
             renpy.ui.screen = old_ui_screen
