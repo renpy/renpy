@@ -1445,7 +1445,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
         cr = renpy.display.render.render(self.child, w, h, st, at)
         rv = renpy.display.render.Render(cr.width, cr.height)
-        rv.blit(self.child, (0, 0))
+        rv.blit(cr, (0, 0))
         return rv
 
     def predict_one(self):
