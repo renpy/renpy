@@ -143,6 +143,7 @@ the omission in future versions.
 * MrStalker
 * Mugenjohncel (Uncle Mugen)
 * Muhammad Nur Hidayat Yasuyoshi
+* Multimokia
 * Neotus
 * Neyunse
 * NetGenSuperstar
