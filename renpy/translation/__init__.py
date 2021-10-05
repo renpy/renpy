@@ -272,17 +272,26 @@ class Restructurer(object):
 
         identifier = self.unique_identifier(self.label, digest)
 
-        for i in block:
-            if isinstance(i, renpy.ast.Say):
-                identifier = getattr(i, "identifier", None) or identifier
-
-        self.identifiers.add(identifier)
+        # Take id clause from the block if the last statement is Say statement
+        id_identifier = None
+        if isinstance(block[-1], renpy.ast.Say):
+            id_identifier = getattr(block[-1], "identifier", None)
 
         if self.alternate is not None:
             alternate = self.unique_identifier(self.alternate, digest)
-            self.identifiers.add(alternate)
+            identifier = id_identifier or identifier
+
+        elif id_identifier is not None:
+            alternate = identifier
+            identifier = id_identifier
+
         else:
             alternate = None
+            identifier = identifier
+
+        self.identifiers.add(identifier)
+        if alternate is not None:
+            self.identifiers.add(alternate)
 
         loc = (block[0].filename, block[0].linenumber)
 
