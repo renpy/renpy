@@ -78,11 +78,21 @@ except ImportError:
 
 official = official and getattr(site, "renpy_build_official", False)
 
-# The tuple giving the version number.
-version_tuple = (7, 4, 9, vc_version)
+if PY2:
 
-# The name of this version.
-version_name = "Lucky Robot Retcon"
+    # The tuple giving the version number.
+    version_tuple = (7, 5, 0, vc_version)
+
+    # The name of this version.
+    version_name = ""
+
+else:
+
+    # The tuple giving the version number.
+    version_tuple = (8, 0, 0, vc_version)
+
+    # The name of this version.
+    version_name = "Heck Freezes Over"
 
 # A string giving the version number only (8.0.1.123), with a suffix if needed.
 version_only = ".".join(str(i) for i in version_tuple)
