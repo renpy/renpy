@@ -1611,15 +1611,12 @@ def parse_menu(stmtl, loc, arguments):
 
     has_choice = False
 
-    has_say = False
+    say_ast = None
     has_caption = False
 
     with_ = None
     set = None # @ReservedAssignment
 
-    say_who = None
-    say_what = None
-    say_loc = None
 
     # Tuples of (label, condition, block)
     items = [ ]
@@ -1649,20 +1646,16 @@ def parse_menu(stmtl, loc, arguments):
 
         if who is not None and what is not None:
 
-            l.expect_eol()
-            l.expect_noblock("say menuitem")
-
             if has_caption:
                 l.error("Say menuitems and captions may not exist in the same menu.")
 
-            if has_say:
+            if say_ast:
                 l.error("Only one say menuitem may exist per menu.")
 
-            has_say = True
-            say_who = who
-            say_what = what
-            say_loc = l.get_location()
+            say_ast = finish_say(l, l.get_location(), who, what, interact=False)
 
+            l.expect_eol()
+            l.expect_noblock("say menuitem")
             continue
 
         l.revert(state)
@@ -1678,7 +1671,7 @@ def parse_menu(stmtl, loc, arguments):
             if l.subblock:
                 l.error("Line is followed by a block, despite not being a menu choice. Did you forget a colon at the end of the line?")
 
-            if label and has_say:
+            if label and say_ast:
                 l.error("Captions and say menuitems may not exist in the same menu.")
 
             # Only set this if the caption is not "".
@@ -1712,10 +1705,10 @@ def parse_menu(stmtl, loc, arguments):
         stmtl.error("Menu does not contain any choices.")
 
     rv = [ ]
-    if has_say:
-        rv.append(ast.Say(say_loc, say_who, say_what, None, interact=False))
+    if say_ast:
+        rv.append(say_ast)
 
-    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption, arguments, item_arguments))
+    rv.append(ast.Menu(loc, items, set, with_, say_ast or has_caption, arguments, item_arguments))
 
     for index, i in enumerate(rv):
         if index:
@@ -2761,12 +2754,11 @@ def rpy_python_3(l, loc):
     return rv
 
 
-def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None):
+def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None, interact=True):
 
     if what is None:
         return None
 
-    interact = True
     with_ = None
     arguments = None
     identifier = None
