@@ -371,8 +371,9 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 class SlowDone(object):
     delay = None
     ctc_kwargs = { }
+    last_pause = True
 
-    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs): # @ReservedAssignment
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause): # @ReservedAssignment
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
@@ -381,6 +382,7 @@ class SlowDone(object):
         self.cb_args = cb_args
         self.delay = delay
         self.ctc_kwargs = ctc_kwargs
+        self.last_pause = last_pause
 
     def __call__(self):
 
@@ -401,7 +403,7 @@ class SlowDone(object):
                 renpy.exports.restart_interaction()
 
         if self.delay is not None:
-            renpy.ui.pausebehavior(self.delay, True, voice=True)
+            renpy.ui.pausebehavior(self.delay, True, voice=self.last_pause)
             renpy.exports.restart_interaction()
 
         for c in self.callback:
@@ -574,7 +576,7 @@ def display_say(
                 c("show", interact=interact, type=type, **cb_args)
 
             # Create the callback that is called when the slow text is done.
-            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs)
+            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause)
 
             # Show the text.
             if multiple:

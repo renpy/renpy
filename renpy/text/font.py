@@ -336,6 +336,9 @@ def parse_bmfont_line(l):
     if w:
         line.append(w)
 
+    if not line:
+        line = [ "" ]
+
     map = dict(i.split("=", 1) for i in line[1:]) # @ReservedAssignment
     return line[0], map
 
