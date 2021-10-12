@@ -340,7 +340,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         self.name = name
 
-    def __repr__(self):
+    def _repr_info(self):
         return repr(self.name)
 
     def __hash__(self):
@@ -576,7 +576,7 @@ class DynamicImage(renpy.display.core.Displayable):
     def _scope(self, scope, update):
         return self.find_target(scope, update)
 
-    def __repr__(self):
+    def _repr_info(self):
         return repr(self.name)
 
     def __hash__(self):
