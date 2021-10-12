@@ -446,10 +446,19 @@ class Displayable(renpy.object.Object):
         return True
 
     def __str__(self):
+        # returns bytes in PY2, unicode in PY3
         return self.__class__.__name__
 
     def __repr__(self):
-        return "<{} at {:x}>".format(str(self), id(self))
+        rep = object.__repr__(self)
+        reprinfo = getattr(self, _repr_info, None)
+        if reprinfo is None:
+            return rep
+        if callable(reprinfo):
+            reprinfo = reprinfo()
+        # return rep[:-1] + " " + reprinfo + ">"
+        parto = rep.partition("at")
+        return parto[0] + "(" + reprinfo + ") at" + parto[2]
 
     def find_focusable(self, callback, focus_name):
 

@@ -591,9 +591,6 @@ class ImageBase(renpy.display.core.Displayable):
 
         return self.identity == other.identity
 
-    def __repr__(self):
-        return "<" + " ".join([repr(i) for i in self.identity]) + ">"
-
     def load(self):
         """
         This function is called by the image cache code to cause this
