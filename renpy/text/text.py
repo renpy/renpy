@@ -1632,7 +1632,7 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
-    def __unicode__(self):
+    def _repr_info(self):
         s = ""
 
         for i in self.text:
@@ -1644,7 +1644,7 @@ class Text(renpy.display.core.Displayable):
                 break
 
         s = s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
-        return u"Text \"{}\"".format(s)
+        return repr(s)
 
     def get_all_text(self):
         """

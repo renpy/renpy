@@ -632,11 +632,11 @@ class Image(ImageBase):
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
 
-    def __unicode__(self):
+    def _repr_info(self):
         if len(self.filename) < 20:
-            return u"Image %r" % self.filename
+            return repr(self.filename)
         else:
-            return u"Image \u2026%s" % self.filename[-20:]
+            return repr("\u2026"+self.filename[-20:])
 
     def get_hash(self):
         return renpy.loader.get_hash(self.filename)
@@ -722,8 +722,8 @@ class Data(ImageBase):
         self.data = data
         self.filename = filename
 
-    def __unicode__(self):
-        return u"im.Data(%r)" % self.filename
+    def _repr_info(self):
+        return repr(self.filename)
 
     def load(self):
         f = io.BytesIO(self.data)
