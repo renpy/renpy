@@ -707,20 +707,22 @@ class MultiBox(Container):
 
         return rv
 
-    def __unicode__(self):
+    def __repr__(self):
         layout = self.style.box_layout
 
         if layout is None:
             layout = self.default_layout
 
         if layout == "fixed":
-            return "Fixed"
+            classname = "Fixed"
         elif layout == "horizontal":
-            return "HBox"
+            classname = "HBox"
         elif layout == "vertical":
-            return "VBox"
+            classname = "VBox"
         else:
-            return "MultiBox"
+            classname = "MultiBox"
+
+        return "<" + classname + " " + super(MultiBox, self).__repr__().partition(" ")[2]
 
     def add(self, widget, start_time=None, anim_time=None): # W0221
         super(MultiBox, self).add(widget)
