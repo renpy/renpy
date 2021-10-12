@@ -1060,18 +1060,6 @@ class ADVCharacter(object):
         else:
             images.predict_show(None, image_with_attrs, show=False)
 
-    def __unicode__(self):
-
-        who = self.name
-
-        if self.dynamic:
-            if callable(who):
-                who = who()
-            else:
-                who = renpy.python.py_eval(who)
-
-        return renpy.substitutions.substitute(who)[0]
-
     def __str__(self):
 
         who = self.name
