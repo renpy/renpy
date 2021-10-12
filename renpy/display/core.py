@@ -451,7 +451,7 @@ class Displayable(renpy.object.Object):
 
     def __repr__(self):
         rep = object.__repr__(self)
-        reprinfo = getattr(self, _repr_info, None)
+        reprinfo = getattr(self, '_repr_info', None)
         if reprinfo is None:
             return rep
         if callable(reprinfo):
