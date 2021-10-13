@@ -427,7 +427,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.phase = PREDICT
 
     def _repr_info(self):
-        return " ".join(self.screen_name)
+        return repr(" ".join(self.screen_name))
 
     def visit(self):
         return [ self.child ]
