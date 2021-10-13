@@ -176,9 +176,9 @@ init python:
 
     def __safe_repr(name):
         try:
-            s = unicode(repr(name))
+            s = str(repr(name))
             if len(s) > 51:
-                s = s[:50] + u"\u2026"
+                s = s[:50] + "\u2026"
 
             return s
         except:
