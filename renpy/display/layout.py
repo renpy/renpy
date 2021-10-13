@@ -723,7 +723,7 @@ class MultiBox(Container):
             else:
                 classname = "MultiBox"
 
-            return "<" + classname + " " + super(MultiBox, self).__repr__().partition(" ")[2]
+            return super(MultiBox, self).__repr__().replace("MultiBox", classname)
         return super(MultiBox, self).__repr__()
 
     def add(self, widget, start_time=None, anim_time=None): # W0221
