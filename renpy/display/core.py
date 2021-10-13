@@ -445,10 +445,6 @@ class Displayable(renpy.object.Object):
 
         return True
 
-    def __str__(self):
-        # returns bytes in PY2, unicode in PY3
-        return self.__class__.__name__
-
     _repr_info = None
 
     def __repr__(self):
