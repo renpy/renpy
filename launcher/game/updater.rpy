@@ -72,8 +72,8 @@ init python:
     _("Nightly")
     _("The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all.")
 
+    VIEW_CHANGELOG = _("(View change log)")
 
-    changelog = _("(See change list)")
 
 
 
@@ -108,7 +108,14 @@ screen update_channel(channels):
 
                         if c["split_version"] != list(renpy.version_tuple):
                             $ action = [updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False), SetField(persistent, "has_update", False)]
-                            $ current = ""
+
+                            if c["channel"] == "Release":
+                                $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")
+                            elif c["channel"] == "Prerelease":
+                                $ current = _("• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}")
+                            else:
+                                $ current = ""
+
                         else:
                             $ action = None
                             $ current = _("• This version is installed and up-to-date.")
@@ -121,10 +128,6 @@ screen update_channel(channels):
 
                             # Opens the web browser to show the change log if the channel is "Release" or "Prerelease"
 
-                            if c["channel"] == "Release":
-                                textbutton changelog action OpenURL('https://www.renpy.org/doc/html/changelog.html')
-                            elif c["channel"] == "Prerelease":
-                                textbutton changelog action OpenURL('https://www.renpy.org/dev-doc/html/changelog.html')
 
                         add HALF_SPACER
 
