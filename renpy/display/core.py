@@ -449,9 +449,11 @@ class Displayable(renpy.object.Object):
         # returns bytes in PY2, unicode in PY3
         return self.__class__.__name__
 
+    _repr_info = None
+
     def __repr__(self):
         rep = object.__repr__(self)
-        reprinfo = getattr(self, '_repr_info', None)
+        reprinfo = self._repr_info
         if reprinfo is None:
             return rep
         if callable(reprinfo):
