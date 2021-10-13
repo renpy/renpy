@@ -24,6 +24,22 @@
 style _hyperlink_button is _default
 style _hyperlink_button_text is _hyperlink
 
+init python:
+    def _inspector_repr(d):
+        if type(d) is renpy.display.screen.ScreenDisplayable:
+            clname =  "Screen"
+        elif type(d) is renpy.display.layout.MultiBox:
+            clname =  d._classname()
+        else:
+            clname =  type(d).__name__
+
+        info = d._repr_info
+        if info is None:
+            return clname
+        if callable(info):
+            info = info()
+        return clname + " " + info
+
 screen _inspector:
     zorder 1010
     modal True
@@ -75,7 +91,7 @@ screen _inspector:
 
                 for depth, width, height, d in tree:
 
-                    $ t = "  " * depth + u"\u2022 " + unicode(d)
+                    $ t = "  " * depth + u"\u2022 " + _inspector_repr(d)
                     $ s = __format_style(d.style.parent)
 
 
@@ -118,7 +134,7 @@ screen _style_inspector:
             xfill True
             spacing gui._scale(10)
 
-        $ displayable_name = unicode(d)
+        $ displayable_name = _inspector_repr(d)
         label _("Inspecting Styles of [displayable_name!q]")
 
         $ styles = d.style.inspect()
