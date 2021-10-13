@@ -229,7 +229,7 @@ class Cache(object):
         optimize_bounds = renpy.config.optimize_texture_bounds and image.optimize_bounds
 
         if not isinstance(image, ImageBase):
-            raise Exception("Expected an image of some sort, but got" + type(image).__name__ + ".")
+            raise Exception("Expected an image of some sort, but got" + repr(image) + ".")
 
         if not image.cache:
             surf = image.load()
