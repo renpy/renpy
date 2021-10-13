@@ -708,7 +708,7 @@ class MultiBox(Container):
         return rv
 
     def __repr__(self):
-        if type(self) == MultiBox:
+        if type(self) is MultiBox:
             layout = self.style.box_layout
 
             if layout is None:
