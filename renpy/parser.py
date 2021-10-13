@@ -112,9 +112,7 @@ class ParseError(Exception):
 
         Exception.__init__(self, message)
 
-    def __str__(self):
-        if PY2:
-            return self.message.encode()
+    def __unicode__(self):
         return self.message
 
 # Something to hold the expected line number.
