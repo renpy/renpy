@@ -707,21 +707,25 @@ class MultiBox(Container):
 
         return rv
 
+    def _classname(self):
+        if type(self) is not MultiBox:
+            return type(self).__name__
+
+        layout = self.style.box_layout
+        if layout is None:
+            layout = self.default_layout
+
+        if layout == "fixed":
+            return "Fixed"
+        elif layout == "horizontal":
+            return "HBox"
+        elif layout == "vertical":
+            return "VBox"
+        return "MultiBox"
+
     def __repr__(self):
         if type(self) is MultiBox:
-            layout = self.style.box_layout
-
-            if layout is None:
-                layout = self.default_layout
-
-            if layout == "fixed":
-                classname = "Fixed"
-            elif layout == "horizontal":
-                classname = "HBox"
-            elif layout == "vertical":
-                classname = "VBox"
-            else:
-                classname = "MultiBox"
+            classname = self._classname()
 
             return super(MultiBox, self).__repr__().replace("MultiBox", classname)
         return super(MultiBox, self).__repr__()
