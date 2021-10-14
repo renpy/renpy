@@ -1071,15 +1071,14 @@ cdef class Render:
 
         self.cache_killed = True
 
-        for i in list(self.parents):
+        for i in self.parents:
             i.kill_cache()
 
         self.parents.clear()
 
-        for i in list(self.depends_on_list):
-            i.parents.discard(self)
-
-        del self.depends_on_list[:]
+        for i in self.depends_on_list:
+            if not i.cache_killed:
+                i.parents.discard(self)
 
         for ro in self.render_of:
             id_ro = id(ro)
@@ -1092,15 +1091,9 @@ cdef class Render:
             if not cache:
                 del render_cache[id_ro]
 
-        del self.render_of[:]
-        del self.visible_children[:]
-        del self.children[:]
-
+        self.render_of = [ ]
         self.focuses = None
         self.pass_focuses = None
-
-        self.cached_texture = None
-        self.cached_model = None
 
     def kill(self):
         """
