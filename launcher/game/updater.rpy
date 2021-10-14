@@ -72,10 +72,6 @@ init python:
     _("Nightly")
     _("The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all.")
 
-    VIEW_CHANGELOG = _("(View change log)")
-
-
-
 
 screen update_channel(channels):
 
