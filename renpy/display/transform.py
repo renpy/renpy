@@ -888,6 +888,9 @@ class Transform(Container):
 
         return rv
 
+    def _repr_info(self):
+        return repr(self.child)
+
 
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
@@ -913,8 +916,8 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
         self.active = True
 
-    def __repr__(self):
-        return "<ATL Transform {:x} {!r}>".format(id(self), self.atl.loc)
+    def _repr_info(self):
+        return repr(self.atl.loc)
 
 
 # Names of transform properties, and if the property should be handles with
