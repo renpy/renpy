@@ -1708,7 +1708,7 @@ def parse_menu(stmtl, loc, arguments):
     if say_ast:
         rv.append(say_ast)
 
-    rv.append(ast.Menu(loc, items, set, with_, say_ast or has_caption, arguments, item_arguments))
+    rv.append(ast.Menu(loc, items, set, with_, say_ast is not None or has_caption, arguments, item_arguments))
 
     for index, i in enumerate(rv):
         if index:
