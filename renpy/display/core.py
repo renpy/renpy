@@ -457,7 +457,10 @@ class Displayable(renpy.object.Object):
         if reprinfo and not ((reprinfo[0] == '(') and (reprinfo[-1] == ')')):
             reprinfo = "".join(("(", reprinfo, ")"))
         parto = rep.rpartition(" at ")
-        return parto[0] + " " + reprinfo + " at " + parto[2]
+        return " ".join((parto[0],
+                         reprinfo,
+                         "at",
+                         parto[2]))
 
     def find_focusable(self, callback, focus_name):
 
