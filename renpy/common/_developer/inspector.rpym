@@ -24,22 +24,6 @@
 style _hyperlink_button is _default
 style _hyperlink_button_text is _hyperlink
 
-init python:
-    def _inspector_repr(d):
-        if type(d) is renpy.display.screen.ScreenDisplayable:
-            clname = "Screen"
-        elif type(d) is renpy.display.layout.MultiBox:
-            clname = d._classname()
-        else:
-            clname = type(d).__name__
-
-        info = d._repr_info
-        if info is None:
-            return clname
-        if callable(info):
-            info = info()
-        return clname + " " + info
-
 screen _inspector:
     zorder 1010
     modal True
@@ -208,3 +192,18 @@ init python:
         renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
 
     config.inspector = __inspect
+
+    def _inspector_repr(d):
+        if type(d) is renpy.display.screen.ScreenDisplayable:
+            clname = "Screen"
+        elif type(d) is renpy.display.layout.MultiBox:
+            clname = d._classname()
+        else:
+            clname = type(d).__name__
+
+        info = d._repr_info
+        if info is None:
+            return clname
+        if callable(info):
+            info = info()
+        return clname + " " + info
