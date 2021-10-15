@@ -1643,7 +1643,6 @@ class Text(renpy.display.core.Displayable):
                 s = s[:24] + u"\u2026"
                 break
 
-        s = s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
         return repr(s)
 
     def get_all_text(self):
