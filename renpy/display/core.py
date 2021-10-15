@@ -454,9 +454,10 @@ class Displayable(renpy.object.Object):
             return rep
         if callable(reprinfo):
             reprinfo = reprinfo()
-        # return rep[:-1] + " " + reprinfo + ">"
+        if reprinfo and not ((reprinfo[0] == '(') and (reprinfo[-1] == ')')):
+            reprinfo = "".join(("(", reprinfo, ")"))
         parto = rep.rpartition(" at ")
-        return parto[0] + " (" + reprinfo + ") at " + parto[2]
+        return parto[0] + " " + reprinfo + " at " + parto[2]
 
     def find_focusable(self, callback, focus_name):
 
