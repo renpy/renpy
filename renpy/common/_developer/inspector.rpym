@@ -201,9 +201,7 @@ init python:
         else:
             clname = type(d).__name__
 
-        info = d._repr_info
+        info = d._repr_info()
         if info is None:
             return clname
-        if callable(info):
-            info = info()
         return clname + " " + info

@@ -445,15 +445,14 @@ class Displayable(renpy.object.Object):
 
         return True
 
-    _repr_info = None
+    def _repr_info(self):
+        return None
 
     def __repr__(self):
         rep = object.__repr__(self)
-        reprinfo = self._repr_info
+        reprinfo = self._repr_info()
         if reprinfo is None:
             return rep
-        if callable(reprinfo):
-            reprinfo = reprinfo()
         if reprinfo and not ((reprinfo[0] == '(') and (reprinfo[-1] == ')')):
             reprinfo = "".join(("(", reprinfo, ")"))
         parto = rep.rpartition(" at ")
