@@ -197,6 +197,22 @@ class Cache(object):
 
         self.lock.release()
 
+    def get_renders(self):
+        """
+        Get a list of Renders in the image cache, where ce.texture is a Render.
+        """
+
+        Render = renpy.display.render.Render
+
+        rv = [ ]
+
+        with self.lock:
+            for ce in self.cache.values():
+                if isinstance(ce.texture, Render):
+                    rv.append(ce.texture)
+
+        return rv
+
     # Increments time, and clears the list of images to be
     # preloaded.
     def tick(self):

@@ -515,6 +515,8 @@ def mark_sweep():
     if screen_render is not None:
         worklist.append(screen_render)
 
+    worklist.extend(renpy.display.im.cache.get_renders())
+
     i = 0
 
     while i < len(worklist):
