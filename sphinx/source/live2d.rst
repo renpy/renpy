@@ -185,6 +185,14 @@ Live2D animations are defined using the Live2D displayable and the image stateme
         `weight`
             Float from 0.0 to 1.0, the weight by which the new value will change the current value.
 
+There is a config variable that can help in debugging what motions and
+expressions was loaded from .model3.json files:
+
+.. var:: config.log_live2d_loading = False
+
+    If True, loaded path and used motions and expressions will be written to
+    log.txt on start.
+
 Live2D displayables should be assigned to an image statement::
 
     image hiyori = Live2D("Resources/Hiyori", base=.6)
