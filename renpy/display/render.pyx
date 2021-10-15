@@ -1079,8 +1079,6 @@ cdef class Render:
         for i in list(self.depends_on_list):
             i.parents.discard(self)
 
-        del self.depends_on_list[:]
-
         for ro in self.render_of:
             id_ro = id(ro)
 
@@ -1092,9 +1090,19 @@ cdef class Render:
             if not cache:
                 del render_cache[id_ro]
 
-        del self.render_of[:]
-        del self.visible_children[:]
-        del self.children[:]
+        # Break references to other Renders.
+        #
+        # This is conditional, as there is a special case that needs to be
+        # dealt with. GL2 breaks large surfaces into multiple textures combined
+        # by a Render. These should not be changed on a cache kill, but since
+        # these can't depend on a Render, can't cause cycles.
+        if self.depends_on_list:
+            del self.depends_on_list[:]
+            del self.render_of[:]
+            del self.children[:]
+
+        self.opaque = None
+        self.visible_children = self.children
 
         self.focuses = None
         self.pass_focuses = None

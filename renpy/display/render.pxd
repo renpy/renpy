@@ -63,7 +63,7 @@ cdef class Render:
     cdef public object draw_func
     cdef public object render_of
 
-    cdef public bint opaque
+    cdef public object opaque
     cdef public list visible_children
 
     cdef public bint xclipping
