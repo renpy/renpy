@@ -1271,3 +1271,51 @@ translate indonesian strings:
     # translations.rpy:343
     old "Extract Dialogue: [project.current.display_name!q]"
     new "Extrak Dialog: [project.current.display_name!q]"
+
+    # game/install.rpy:104
+    old "Install Libraries"
+    new "Pasang Libraries"
+
+    # game/install.rpy:119
+    old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
+    new "Bagian ini menuntunmu untuk memasang libraries yang mana tidak didistribusikan langsung oleh Ren'py.Beberapa libraris mungkin memerlukan izin pihak ketiga agar digunakan atau didistrubiskan."
+
+    # game/install.rpy:131
+    old "Install Live2D Cubism SDK for Native"
+    new "Pasang Live2D Cubism SDK untuk Native"
+
+    # game/install.rpy:134
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} menambahkan dukungan untuk menampilkan Live2D. Letakkan CubismSdkForNative-4-{i}version{/i}.zip ke direktori SDK Ren'Py , dan klik Pasang. Mendistrubusikan game dengan menggunakan Live2D membutuhkan izin(license) yang kamu setujui dari Live2D,Inc mu."
+
+    # game/install.rpy:138
+    old "Open Ren'Py SDK Directory"
+    new "Buka Direktori SDK Ren'Py "
+
+    # game/preferences.rpy:138
+    old "Install libraries"
+    new "Pasang libraries"
+
+    # game/preferences.rpy:140
+    old "Reset window size"
+    new "Reset ukuran window"
+
+    # game/install.rpy:144
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new "Live2D di Ren'py dukung mendukung versi web, Android x86_64 (termsuk emulator dan Chrome OS), dan harus ditambahkan secara manual/terpisah pada iOS. Live2D harus dipasang ulang apabila melakukan pemuktahiran(upgrade) Ren'py atau pada dukungan tambahan pada Androidnya."
+
+    # game/install.rpy:151
+    old "Install Steam Support"
+    new "Pasang Dukungan untuk Steam"
+
+    # game/install.rpy:160
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    new "Sebelum memasangkan dukungan untuk Steam,pastikan kamu adalah bagian dari Steam Partner {a=https://partner.steamgames.com/}{/a}."
+
+    # game/install.rpy:172
+    old "Steam support has already been installed."
+    new "Dukungan untuk Steam telah terpasang."
+
+    # game/web.rpy:242
+    old "Preparing progressive download"
+    new "Persiapan unduh"
