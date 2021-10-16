@@ -2,6 +2,16 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
+.. _renpy-7.4.10:
+
+7.4.10
+======
+
+This released fixes an issue that prevented large images (larger than
+maximum texture size, 4096x4069 on most platforms) from being displayed
+by the gl2 renderer.
+
+
 .. _renpy-7.4.9:
 
 7.4.9
