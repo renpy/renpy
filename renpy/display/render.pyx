@@ -515,7 +515,8 @@ def mark_sweep():
     if screen_render is not None:
         worklist.append(screen_render)
 
-    worklist.extend(renpy.display.im.cache.get_renders())
+    cache_renders = renpy.display.im.cache.get_renders()
+    worklist.extend(cache_renders)
 
     i = 0
 
@@ -532,6 +533,9 @@ def mark_sweep():
     if screen_render is not None:
         screen_render.mark = True
 
+    for r in cache_renders:
+        r.mark = True
+
     for r in live_renders:
         if not r.mark:
             r.kill_cache()
@@ -539,6 +543,7 @@ def mark_sweep():
             r.mark = False
 
     live_renders = worklist
+
 
 def compute_subline(sx0, sw, cx0, cw):
     """
