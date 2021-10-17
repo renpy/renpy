@@ -38,6 +38,8 @@ import collections
 
 did_onetime_init = False
 
+successful_init = False
+
 
 def onetime_init():
     global did_onetime_init
@@ -60,6 +62,8 @@ def onetime_init():
 
     if not renpy.gl2.live2dmodel.load(dll):
         raise Exception("Could not load Live2D. {} was not found.".format(dll))
+
+    successful_init = True
 
 
 did_init = False
@@ -474,6 +478,15 @@ def update_states():
         s.mark = False
 
 
+def Live2D_Dummy(name):
+    # copied from renpy/common/00placeholder.rpy
+    rv = renpy.defaultstore.Fixed(
+        renpy.display.imagelike.Solid("#aaa"),
+        renpy.text.text.Text("\n".join(("Live2D Dummy", name)), style="_default", color="#333333", text_align=0.5, xalign=0.5, ypos=5),
+        alt="",
+    )
+    return rv
+
 class Live2D(renpy.display.core.Displayable):
 
     nosave = [ "common_cache" ]
@@ -500,6 +513,13 @@ class Live2D(renpy.display.core.Displayable):
             return self.common_cache
 
         return self.create_common(self.filename)
+
+    def __new__(clss, *args, **kwargs):
+        if has_live2d() and successful_init:
+            rv = super(Live2D, clss).__new__(clss, *args, **kwargs)
+        else:
+            rv = Live2D_Dummy(args[0])
+        return rv
 
     # Note: When adding new parameters, make sure to add them to _duplicate, too.
     def __init__(
