@@ -45,8 +45,6 @@ def onetime_init():
     if did_onetime_init:
         return
 
-    did_onetime_init = True
-
     if renpy.windows:
         dll = "Live2DCubismCore.dll"
     elif renpy.macintosh:
@@ -60,6 +58,8 @@ def onetime_init():
 
     if not renpy.gl2.live2dmodel.load(dll):
         raise Exception("Could not load Live2D. {} was not found.".format(dll))
+
+    did_onetime_init = True
 
 
 did_init = False
@@ -896,6 +896,10 @@ class Live2D(renpy.display.core.Displayable):
         return self.common.textures
 
 
+# Caches the result of has_live2d.
+_has_live2d = None
+
+
 def has_live2d():
     """
     :doc: live2d
@@ -904,8 +908,14 @@ def has_live2d():
     False otherwise.
     """
 
-    try:
-        init()
-        return True
-    except:
-        return False
+    global _has_live2d
+
+    if _has_live2d is None:
+
+        try:
+            init()
+            _has_live2d = True
+        except:
+            _has_live2d = False
+
+    return _has_live2d
