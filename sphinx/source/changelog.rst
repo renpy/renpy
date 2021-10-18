@@ -11,6 +11,7 @@ This released fixes an issue that prevented large images (larger than
 maximum texture size, 4096x4069 on most platforms) from being displayed
 by the gl2 renderer.
 
+The Indonesian translation was updated.
 
 .. _renpy-7.4.9:
 

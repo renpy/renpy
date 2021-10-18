@@ -123,6 +123,7 @@ the omission in future versions.
 * Lee Yunseok
 * Lent1
 * Lezalith
+* Loliconazter
 * Liu Wenyuan
 * Lore
 * Lucas Ramage
