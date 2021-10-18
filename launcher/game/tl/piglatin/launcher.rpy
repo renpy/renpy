@@ -129,115 +129,115 @@ translate piglatin strings:
     old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
     new "Uildsbay aay Niversaluay Pkaay ackagepay, intendeday orfay ideloadingsay anday oresstay otheray hantay Ooglegay Laypay. Histay ancay includeay upay otay GB2ay ofay ataday."
 
-    # game/android.rpy:262
+    # game/android.rpy:264
     old "Copying Android files to distributions directory."
     new "Opyingcay Ndroidaay ilesfay otay istributionsday irectoryday."
 
-    # game/android.rpy:330
+    # game/android.rpy:332
     old "Android: [project.current.display_name!q]"
     new "Ndroidaay: [project.current.display_name!q]"
 
-    # game/android.rpy:350
+    # game/android.rpy:352
     old "Emulation:"
     new "Mulationeay:"
 
-    # game/android.rpy:359
+    # game/android.rpy:361
     old "Phone"
     new "Honepay"
 
-    # game/android.rpy:363
+    # game/android.rpy:365
     old "Tablet"
     new "Ablettay"
 
-    # game/android.rpy:367
+    # game/android.rpy:369
     old "Television"
     new "Elevisiontay"
 
-    # game/android.rpy:379
+    # game/android.rpy:381
     old "Build:"
     new "Uildbay:"
 
-    # game/android.rpy:390
-    old "Play Bundle"
-    new "Laypay Undlebay"
-
-    # game/android.rpy:394
-    old "Universal APK"
-    new "Niversaluay Pkaay"
-
-    # game/android.rpy:400
+    # game/android.rpy:388
     old "Install SDK & Create Keys"
     new "Nstalliay Dksay & Reatecay Eyskay"
 
-    # game/android.rpy:404
+    # game/android.rpy:392
     old "Configure"
     new "Onfigurecay"
 
-    # game/android.rpy:408
+    # game/android.rpy:398
+    old "Play Bundle"
+    new "Laypay Undlebay"
+
+    # game/android.rpy:403
+    old "Universal APK"
+    new "Niversaluay Pkaay"
+
+    # game/android.rpy:410
     old "Build Package"
     new "Uildbay Ackagepay"
 
-    # game/android.rpy:412
+    # game/android.rpy:414
     old "Build & Install"
     new "Uildbay & Nstalliay"
 
-    # game/android.rpy:416
+    # game/android.rpy:418
     old "Build, Install & Launch"
     new "Uildbay, Nstalliay & Aunchlay"
 
-    # game/android.rpy:439
+    # game/android.rpy:441
     old "Other:"
     new "Theroay:"
 
-    # game/android.rpy:447
+    # game/android.rpy:449
     old "Logcat"
     new "Ogcatlay"
 
-    # game/android.rpy:451
+    # game/android.rpy:453
     old "List Devices"
     new "Istlay Evicesday"
 
-    # game/android.rpy:455
+    # game/android.rpy:457
     old "Wi-Fi Debugging Pair"
     new "Iway-Ifay Ebuggingday Airpay"
 
-    # game/android.rpy:459
+    # game/android.rpy:461
     old "Wi-Fi Debugging Connect"
     new "Iway-Ifay Ebuggingday Onnectcay"
 
-    # game/android.rpy:463
+    # game/android.rpy:465
     old "Wi-Fi Debugging Disconnect"
     new "Iway-Ifay Ebuggingday Isconnectday"
 
-    # game/android.rpy:490
+    # game/android.rpy:492
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
     new "Eforebay ackagingpay Ndroidaay appsay, ouyay'llay eednay otay ownloadday Aptray, hetay Enray'Ypay Ndroidaay Ackagingpay Ooltay. Ouldway ouyay ikelay otay ownloadday Aptray ownay?"
 
-    # game/android.rpy:543
+    # game/android.rpy:545
     old "Retrieving logcat information from device."
     new "Etrievingray ogcatlay informationay omfray eviceday."
 
-    # game/android.rpy:562
+    # game/android.rpy:564
     old "Wi-Fi Pairing Code"
     new "Iway-Ifay Airingpay Odecay"
 
-    # game/android.rpy:562
+    # game/android.rpy:564
     old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
     new "Fiay upportedsay, histay ancay ebay oundfay inay 'Eveloperday optionsay', 'Irelessway ebuggingday', 'Airpay eviceday ithway airingpay odecay'."
 
-    # game/android.rpy:569
+    # game/android.rpy:571
     old "Pairing Host & Port"
     new "Airingpay Osthay & Ortpay"
 
-    # game/android.rpy:585
+    # game/android.rpy:587
     old "IP Address & Port"
     new "Piay Ddressaay & Ortpay"
 
-    # game/android.rpy:585
+    # game/android.rpy:587
     old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
     new "Fiay upportedsay, histay ancay ebay oundfay inay 'Eveloperday optionsay', 'Irelessway ebuggingday'."
 
-    # game/android.rpy:601
+    # game/android.rpy:603
     old "This can be found in 'List Devices'."
     new "Histay ancay ebay oundfay inay 'Istlay Evicesday'."
 
@@ -905,43 +905,43 @@ translate piglatin strings:
     old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
     new "Ouldcay otnay installay [name!t], asay aay ilefay atchingmay [zipglob] asway otnay oundfay inay hetay Enray'Ypay Dksay irectoryday."
 
-    # game/install.rpy:76
+    # game/install.rpy:79
     old "Successfully installed [name!t]."
     new "Uccessfullysay installeday [name!t]."
 
-    # game/install.rpy:110
+    # game/install.rpy:113
     old "Install Libraries"
     new "Nstalliay Ibrarieslay"
 
-    # game/install.rpy:125
+    # game/install.rpy:128
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
     new "Histay creensay allowsay ouyay otay installay ibrarieslay hattay ancay'tay ebay istributedday ithway Enray'Ypay. Omesay ofay hesetay ibrarieslay aymay equireray ouyay otay agreeay otay aay hirdtay-artypay icenselay eforebay eingbay useday oray istributedday."
 
-    # game/install.rpy:131
+    # game/install.rpy:134
     old "Install Live2D Cubism SDK for Native"
     new "Nstalliay Ive2dlay Ubismcay Dksay orfay Ativenay"
 
-    # game/install.rpy:140
+    # game/install.rpy:143
     old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
     new "Hetay {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Ubismcay Dksay orfay Ativenay{/a} addsay upportsay orfay isplayingday Ive2dlay odelsmay. Lacepay Ubismsdkfornativecay-4ay-{i}ersionvay{/i}.ipzay inay hetay Enray'Ypay Dksay irectoryday, anday hentay ickclay Nstalliay. Istributingday aay amegay ithway Ive2dlay equiresray ouyay otay acceptay aay icenselay omfray Ive2dlay, Nciay."
 
-    # game/install.rpy:144
+    # game/install.rpy:147
     old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
     new "Ive2dlay inay Enray'Ypay oesnday'tay upportsay hetay Ebway, Ndroidaay 86_64xay (includingay emulatorsay anday Hromecay Soay), anday ustmay ebay addeday otay iOSay rojectspay anuallymay. Ive2dlay ustmay ebay einstalledray afteray upgradingay Enray'Ypay oray installingay Ndroidaay upportsay."
 
-    # game/install.rpy:151
+    # game/install.rpy:154
     old "Install Steam Support"
     new "Nstalliay Teamsay Upportsay"
 
-    # game/install.rpy:160
+    # game/install.rpy:163
     old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
     new "Eforebay installingay Teamsay upportsay, easeplay akemay uresay ouyay areay aay {a=https://partner.steamgames.com/}Teamsay artnerpay{/a}."
 
-    # game/install.rpy:172
+    # game/install.rpy:175
     old "Steam support has already been installed."
     new "Teamsay upportsay ashay alreadyay eenbay installeday."
 
-    # game/install.rpy:176
+    # game/install.rpy:179
     old "Open Ren'Py SDK Directory"
     new "Penoay Enray'Ypay Dksay Irectoryday"
 
@@ -1533,35 +1533,35 @@ translate piglatin strings:
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
     new "Enray'Ypay ashay inishedfay extractingay ialogueday. Hetay extracteday ialogueday ancay ebay oundfay inay ialogueday.[persistent.dialogue_format] inay hetay asebay irectoryday."
 
-    # game/updater.rpy:62
+    # game/updater.rpy:63
     old "Release"
     new "Eleaseray"
 
-    # game/updater.rpy:63
+    # game/updater.rpy:64
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
     new "{b}Ecommendedray.{/b} Hetay ersionvay ofay Enray'Ypay hattay ouldshay ebay useday inay allay ewlynay-eleasedray amesgay."
 
-    # game/updater.rpy:65
+    # game/updater.rpy:66
     old "Prerelease"
     new "Rereleasepay"
 
-    # game/updater.rpy:66
+    # game/updater.rpy:67
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
     new "Aay reviewpay ofay hetay extnay ersionvay ofay Enray'Ypay hattay ancay ebay useday orfay estingtay anday akingtay advantageay ofay ewnay eaturesfay, utbay otnay orfay inalfay eleasesray ofay amesgay."
 
-    # game/updater.rpy:68
+    # game/updater.rpy:69
     old "Experimental"
     new "Xperimentaleay"
 
-    # game/updater.rpy:69
+    # game/updater.rpy:70
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
     new "Xperimentaleay ersionsvay ofay Enray'Ypay. Ouyay ouldnshay'tay electsay histay annelchay unlessay askeday ybay aay Enray'Ypay eveloperday."
 
-    # game/updater.rpy:71
+    # game/updater.rpy:72
     old "Nightly"
     new "Ightlynay"
 
-    # game/updater.rpy:72
+    # game/updater.rpy:73
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
     new "Hetay eedingblay edgeay ofay Enray'Ypay evelopmentday. Histay aymay avehay hetay atestlay eaturesfay, oray ightmay otnay unray atay allay."
 
@@ -1573,71 +1573,79 @@ translate piglatin strings:
     old "The update channel controls the version of Ren'Py the updater will download."
     new "Hetay updateay annelchay ontrolscay hetay ersionvay ofay Enray'Ypay hetay updateray illway ownloadday."
 
-    # game/updater.rpy:110
+    # game/updater.rpy:109
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/doc/html/changelog.html}Iewvay angechay oglay{/a}"
+
+    # game/updater.rpy:111
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Iewvay angechay oglay{/a}"
+
+    # game/updater.rpy:117
     old "• This version is installed and up-to-date."
     new "• Histay ersionvay isay installeday anday upay-otay-ateday."
 
-    # game/updater.rpy:118
+    # game/updater.rpy:130
     old "%B %d, %Y"
     new "%Bay %day, %Yay"
 
-    # game/updater.rpy:140
+    # game/updater.rpy:152
     old "An error has occured:"
     new "Naay erroray ashay occureday:"
 
-    # game/updater.rpy:142
+    # game/updater.rpy:154
     old "Checking for updates."
     new "Heckingcay orfay updatesay."
 
-    # game/updater.rpy:144
+    # game/updater.rpy:156
     old "Ren'Py is up to date."
     new "Enray'Ypay isay upay otay ateday."
 
-    # game/updater.rpy:146
+    # game/updater.rpy:158
     old "[u.version] is now available. Do you want to install it?"
     new "[u.version] isay ownay availableay. Oday ouyay antway otay installay itay?"
 
-    # game/updater.rpy:148
+    # game/updater.rpy:160
     old "Preparing to download the update."
     new "Reparingpay otay ownloadday hetay updateay."
 
-    # game/updater.rpy:150
+    # game/updater.rpy:162
     old "Downloading the update."
     new "Ownloadingday hetay updateay."
 
-    # game/updater.rpy:152
+    # game/updater.rpy:164
     old "Unpacking the update."
     new "Npackinguay hetay updateay."
 
-    # game/updater.rpy:154
+    # game/updater.rpy:166
     old "Finishing up."
     new "Inishingfay upay."
 
-    # game/updater.rpy:156
+    # game/updater.rpy:168
     old "The update has been installed. Ren'Py will restart."
     new "Hetay updateay ashay eenbay installeday. Enray'Ypay illway estartray."
 
-    # game/updater.rpy:158
+    # game/updater.rpy:170
     old "The update has been installed."
     new "Hetay updateay ashay eenbay installeday."
 
-    # game/updater.rpy:160
+    # game/updater.rpy:172
     old "The update was cancelled."
     new "Hetay updateay asway ancelledcay."
 
-    # game/updater.rpy:177
+    # game/updater.rpy:189
     old "Ren'Py Update"
     new "Enray'Ypay Pdateuay"
 
-    # game/updater.rpy:183
+    # game/updater.rpy:195
     old "Proceed"
     new "Roceedpay"
 
-    # game/updater.rpy:197
+    # game/updater.rpy:209
     old "Fetching the list of update channels"
     new "Etchingfay hetay istlay ofay updateay annelschay"
 
-    # game/updater.rpy:202
+    # game/updater.rpy:214
     old "downloading the list of update channels"
     new "ownloadingday hetay istlay ofay updateay annelschay"
 
