@@ -7,9 +7,20 @@ Changelog (Ren'Py 7.x-)
 7.4.10
 ======
 
+Fixes
+-----
+
 This released fixes an issue that prevented large images (larger than
 maximum texture size, 4096x4069 on most platforms) from being displayed
 by the gl2 renderer.
+
+Dialogue lines that end with the {nw} tag now do not wait for voice to
+finish, and dialogue lines that contain {fast} (including those created
+with the ``extend`` character) sustain the voice from the previous
+statement.
+
+Translations
+------------
 
 The Indonesian translation was updated.
 
@@ -126,7 +137,7 @@ window to fade in if the descriptive text is disabled.
 The order in which self-voicing reads out layers, screens, and displayables
 directly on a layer has changed, such that the screen and displayables that
 are drawn last (closest to the player) are read out first. This does not
-apply to displayables withoin a screen or layout displayable, which are
+apply to displayables within a screen or layout displayable, which are
 still read first to last.
 
 Modal screens cause self-voicing to stop after the contents of the screen
@@ -153,7 +164,7 @@ It's now documented that the :ref:`key <sl-key>` screen language statement
 can take a list of keysyms.
 
 On Linux, if Ren'Py detects the "C" locale, it will enable support for
-UTF-8 filesystems. This is intented to provide better compatibility with
+UTF-8 filesystems. This is intended to provide better compatibility with
 Steam Linux, which uses this locale.
 
 A new Polish translation of the launcher has been added.

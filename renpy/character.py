@@ -63,6 +63,9 @@ class DialogueTextTags(object):
         # Does this statement have a done tag?
         self.has_done = False
 
+        # Does this statement have a fast tag?
+        self.fast = False
+
         i = iter(TAG_RE.split(s))
 
         while True:
@@ -96,6 +99,7 @@ class DialogueTextTags(object):
                     self.pause_end = [ ]
                     self.pause_delay = [ ]
                     self.no_wait = False
+                    self.fast = True
 
                 elif tag == "done":
                     self.has_done = True
@@ -518,11 +522,19 @@ def display_say(
 
     exception = None
 
+    if dtt.fast:
+        for i in renpy.config.say_sustain_callbacks:
+            i()
+
     try:
 
         for i, (start, end, delay) in enumerate(zip(pause_start, pause_end, pause_delay)):
 
+            # True if the is the last pause in a line of dialogue.
             last_pause = (i == len(pause_start) - 1)
+
+            if dtt.no_wait:
+                last_pause = False
 
             # If we're going to do an interaction, then saybehavior needs
             # to be here.
