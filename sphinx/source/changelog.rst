@@ -14,10 +14,17 @@ This released fixes an issue that prevented large images (larger than
 maximum texture size, 4096x4069 on most platforms) from being displayed
 by the gl2 renderer.
 
+
 Dialogue lines that end with the {nw} tag now do not wait for voice to
-finish, and dialogue lines that contain {fast} (including those created
+finish.
+
+Dialogue lines that contain {fast} (including those created
 with the ``extend`` character) sustain the voice from the previous
 statement.
+
+These supplement a change introduced in 7.4.9 (that missed the changelog),
+where timed {w} and {p} text tags will no longer wait for voice to stop
+playing before advancing.
 
 Translations
 ------------
