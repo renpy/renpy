@@ -1256,8 +1256,31 @@ cdef class Render:
 
         rv = None
 
-        if self.focuses:
-            for (d, arg, xo, yo, w, h, mx, my, mask) in self.focuses:
+        if self.pass_focuses:
+            for child in reversed(self.pass_focuses):
+                rv = child.focus_at_point(x, y, screen)
+                if rv is not None:
+                    break
+
+        if rv is None:
+
+            for child, xo, yo, focus, main in reversed(self.children):
+
+                if not focus or not isinstance(child, Render):
+                    continue
+
+                cx = x - xo
+                cy = y - yo
+
+                if self.forward:
+                    cx, cy = self.forward.transform(cx, cy)
+
+                rv = child.focus_at_point(cx, cy, screen)
+                if rv is not None:
+                    break
+
+        if (rv is None) and (self.focuses):
+            for (d, arg, xo, yo, w, h, mx, my, mask) in reversed(self.focuses):
 
                 if xo is None:
                     continue
@@ -1284,26 +1307,8 @@ cdef class Render:
                 elif xo <= x < xo + w and yo <= y < yo + h:
                     rv = d, arg, screen
 
-        for child, xo, yo, focus, main in self.children:
-
-            if not focus or not isinstance(child, Render):
-                continue
-
-            cx = x - xo
-            cy = y - yo
-
-            if self.forward:
-                cx, cy = self.forward.transform(cx, cy)
-
-            cf = child.focus_at_point(cx, cy, screen)
-            if cf is not None:
-                rv = cf
-
-        if self.pass_focuses:
-            for child in self.pass_focuses:
-                cf = child.focus_at_point(x, y, screen)
-                if cf is not None:
-                    rv = cf
+                if rv is not None:
+                    break
 
         if rv is not None:
             if self.operation == IMAGEDISSOLVE:
