@@ -1270,6 +1270,11 @@ cdef class Render:
                         cx, cy = self.forward.transform(cx, cy)
 
                     if isinstance(mask, Render):
+                        if cx < 0 or cx >= mask.width:
+                            continue
+                        if cy < 0 or cy >= mask.height:
+                            continue
+
                         if mask.is_pixel_opaque(cx, cy):
                             rv = d, arg, screen
                     else:
