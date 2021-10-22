@@ -4144,14 +4144,20 @@ class Interface(object):
                     if self.touch:
                         renpy.display.gesture.recognizer.event(ev, x, y) # @UndefinedVariable
 
+                    renpy.plog(1, "start mouse focus handling")
+
                     # Handle the event normally.
                     rv = renpy.display.focus.mouse_handler(ev, x, y)
+
+                    renpy.plog(1, "start event handling")
 
                     if rv is None:
                         rv = root_widget.event(ev, x, y, 0)
 
                     if rv is None:
                         rv = renpy.display.focus.key_handler(ev)
+
+                    renpy.plog(1, "finish event handling")
 
                     if rv is not None:
                         break
