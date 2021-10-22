@@ -173,7 +173,8 @@ class Live2DCommon(object):
             suffix = filename.rpartition("/")[2]
             filename = filename + "/" + suffix + ".model3.json"
 
-        renpy.display.log.write("Loading Live2D from %r.", filename)
+        if renpy.config.log_live2d_loading:
+            renpy.display.log.write("Loading Live2D from %r.", filename)
 
         if not renpy.loader.loadable(filename):
             raise Exception("Live2D model {} does not exist.".format(filename))
@@ -249,7 +250,8 @@ class Live2DCommon(object):
                 name = suffix
 
             if renpy.loader.loadable(self.base + i["File"]):
-                renpy.display.log.write(" - motion %s -> %s", name, i["File"])
+                if renpy.config.log_live2d_loading:
+                    renpy.display.log.write(" - motion %s -> %s", name, i["File"])
 
                 self.motions[name] = renpy.gl2.live2dmotion.Motion(
                     self.base + i["File"],
@@ -270,7 +272,8 @@ class Live2DCommon(object):
                 name = suffix
 
             if renpy.loader.loadable(self.base + i["File"]):
-                renpy.display.log.write(" - expression %s -> %s", name, i["File"])
+                if renpy.config.log_live2d_loading:
+                    renpy.display.log.write(" - expression %s -> %s", name, i["File"])
 
                 if name in self.attributes:
                     raise Exception("Name {!r} is already specified as a motion.".format(name))
