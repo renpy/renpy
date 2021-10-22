@@ -14,7 +14,6 @@ This released fixes an issue that prevented large images (larger than
 maximum texture size, 4096x4069 on most platforms) from being displayed
 by the gl2 renderer.
 
-
 Dialogue lines that end with the {nw} tag now do not wait for voice to
 finish.
 
@@ -25,6 +24,16 @@ statement.
 These supplement a change introduced in 7.4.9 (that missed the changelog),
 where timed {w} and {p} text tags will no longer wait for voice to stop
 playing before advancing.
+
+The :propref:`focus_mask` property can be slow, but several changes to
+have been included to fix pathological cases of slowness. While it's best
+to avoid it if possible (the default will change to None for drags, where
+it's True now, in 7.5), this should allow for some speedups where it is
+True.
+
+Live2D support no longer logs to log.txt by default. That logging can be
+restored with :var:`config.log_live2d_loading`.
+
 
 Translations
 ------------
