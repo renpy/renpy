@@ -415,6 +415,9 @@ def mouse_handler(ev, x, y, default=False):
 
     global pending_focus_type
 
+    if grab:
+        return
+
     if ev is not None:
         if ev.type not in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
             return
