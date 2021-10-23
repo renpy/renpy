@@ -585,7 +585,7 @@ FLATTEN = 4
 
 cdef class Render:
 
-    def __init__(Render self, float width, float height, draw_func=None, layer_name=None): #@DuplicatedSignature
+    def __init__(Render self, float width, float height, layer_name=None): #@DuplicatedSignature
         """
         Creates a new render corresponding to the given widget with
         the specified width and height.
@@ -643,10 +643,6 @@ cdef class Render:
 
         # The displayable(s) that this is a render of. (Set by render)
         self.render_of = [ ]
-
-        # If set, this is a function that's called to draw this render
-        # instead of the default.
-        self.draw_func = draw_func
 
         # Should children be clipped to a rectangle?
         self.xclipping = False

@@ -430,7 +430,6 @@ def draw(dest, clip, what, xo, yo, screen):
             dest.forced.add((subx, suby, subx + subw, suby + subh, clip))
         else:
             newdest = dest.subsurface((subx, suby, subw, subh))
-            # what.draw_func(newdest, newx, newy)
             draw_special(what, newdest, newx, newy)
 
         return
@@ -624,7 +623,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
 
             dest = dest.subsurface((x, y, width, height))
 
-    if what.draw_func or what.operation != BLIT:
+    if what.operation != BLIT:
         child = what.pygame_surface(True)
         draw_transformed(dest, clip, child, xo, yo, alpha, forward, reverse)
         return
