@@ -76,11 +76,6 @@ class Surface(pygame.Surface):
     its mode, as necessary.
     """
 
-    opaque = False
-
-    def is_opaque(self):
-        return self.opaque
-
     def convert_alpha(self, surface=None):
         return copy_surface_unscaled(self, True)
 

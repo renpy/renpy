@@ -736,8 +736,6 @@ cdef class GLDraw:
         else:
             reverse = IDENTITY
 
-        surftree.is_opaque()
-
         self.draw_render_textures(surftree, 0)
 
         xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
@@ -831,7 +829,7 @@ cdef class GLDraw:
             non_aligned |= (rend.forward.xdy != 0)
             non_aligned |= (rend.forward.ydy != 0)
 
-        for child, cxo, cyo, focus, main in rend.visible_children:
+        for child, cxo, cyo, focus, main in rend.children:
 
             self.draw_render_textures(child, non_aligned)
 
@@ -1054,7 +1052,7 @@ cdef class GLDraw:
         else:
             child_reverse = reverse
 
-        for child, cx, cy, focus, main in rend.visible_children:
+        for child, cx, cy, focus, main in rend.children:
 
             # The type of cx and cy depends on if this is a subpixel blit or not.
             if type(cx) is float:
@@ -1090,9 +1088,6 @@ cdef class GLDraw:
             clip = self.default_clip
 
             self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, self.virt_to_draw, renpy.config.nearest_neighbor, False)
-
-        if isinstance(what, render.Render):
-            what.is_opaque()
 
         rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
@@ -1174,9 +1169,6 @@ cdef class GLDraw:
             clip = (0, 0, width, height)
 
             draw.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
-
-        if isinstance(what, render.Render):
-            what.is_opaque()
 
         rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
