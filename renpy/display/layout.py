@@ -2129,7 +2129,7 @@ class AlphaMask(Container):
 
         nr = renpy.display.render.render(self.null, w, h, st, at)
 
-        rv = renpy.display.render.Render(w, h, opaque=False)
+        rv = renpy.display.render.Render(w, h)
 
         rv.operation = renpy.display.render.IMAGEDISSOLVE
         rv.operation_alpha = 1.0
