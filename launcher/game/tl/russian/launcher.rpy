@@ -1799,11 +1799,11 @@ translate russian strings:
 
     # game/androidstrings.rpy:57
     old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
-    new ""
+    new "Я могу создать для вас ключ подписи приложения. Этот ключ необходим для создания универсального APK для магазинов, отличных от Google Play и для локального распространения.\n\nХотите создать ключ?"
 
     # game/androidstrings.rpy:61
     old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
-    new "Я могу создать для вас ключ подписи приложения. Этот ключ необходим для создания универсального APK для магазинов, отличных от Google Play и локального распространения.\n\n Хотите создать ключ?"
+    new "Я могу создать для вас ключ подписи пакета. Этот ключ необходим для создания пакета приложения Android (AAB) для загрузки в Google Play.\n\n\nХотите создать ключ?"
 
     # game/androidstrings.rpy:62
     old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
@@ -1848,3 +1848,11 @@ translate russian strings:
     # game/web.rpy:338
     old "There are known issues with Safari and other Webkit-based browsers that may prevent games from running."
     new "Существуют проблемы с Safari и другими браузерами на базе Webkit, которые могут не позволить запустить игру."
+
+    # game/updater.rpy:109
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/doc/html/changelog.html}Посмотреть журнал изменений{/a}"
+
+    # game/updater.rpy:111
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Посмотреть журнал изменений{/a}"
