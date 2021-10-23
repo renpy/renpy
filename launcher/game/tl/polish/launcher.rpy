@@ -906,8 +906,8 @@ translate polish strings:
     new "Live2D w Ren'Py nie obsługuje przeglądarek, Androida x86_64 (w tym emulatorów i Chrome OS) i musi być ręcznie dodany do projektów iOS. Live2D należy ponownie zainstalować po uaktualnieniu Ren'Py lub zainstalowaniu obsługi Androida."
 
     # game/install.rpy:151
-    old "Zainstaluj wsparcie Steam"
-    new ""
+    old "Install Steam Support"
+    new "Zainstaluj wsparcie Steam"
 
     # game/install.rpy:160
     old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
