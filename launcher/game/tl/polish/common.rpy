@@ -87,7 +87,7 @@ translate polish strings:
 
     # renpy/common/00accessibility.rpy:179
     old "Text-to-speech"
-    new "Terkst-na-mowę"
+    new "Tekst-na-mowę"
 
     # renpy/common/00accessibility.rpy:183
     old "Clipboard"
@@ -667,7 +667,7 @@ translate polish strings:
 
     # renpy/common/_developer/developer.rpym:45
     old "Reload Game (Shift+R)"
-    new "Wczytaj grę {Shift+R)"
+    new "Wczytaj grę (Shift+R)"
 
     # renpy/common/_developer/developer.rpym:47
     old "Console (Shift+O)"
@@ -904,4 +904,3 @@ translate polish strings:
     # renpy/common/00gallery.rpy:613
     old "return"
     new "powrót"
-
