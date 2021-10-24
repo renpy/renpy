@@ -34,11 +34,13 @@ True.
 Live2D support no longer logs to log.txt by default. That logging can be
 restored with :var:`config.log_live2d_loading`.
 
+A problem with automatically determining the Android store has been fixed.
+
 
 Translations
 ------------
 
-The Indonesian translation was updated.
+The Indonesian and Polish translations were updated.
 
 .. _renpy-7.4.9:
 
