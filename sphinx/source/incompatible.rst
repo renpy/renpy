@@ -13,6 +13,20 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+7.5.0
+-----
+
+The :propref:`focus_mask` style property now defaults to None for drag displayables.
+This improves performance, but means that the displayable can be dragged by
+transparent pixels. To revert this, the focus_mask property can be set to True
+for individual drags, or globally with::
+
+    style drag:
+        focus_mask True
+
+Both options reduce performance.
+
+
 .. _incompatible-7.4.9:
 
 7.4.9

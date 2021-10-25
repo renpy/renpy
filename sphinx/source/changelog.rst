@@ -2,6 +2,16 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
+.. _renpy-7.5.0:
+
+7.5
+===
+
+The :propref:`focus_mask` style property now defaults to None for drag displayables.
+This improves performance, but means that the displayable can be dragged by
+transparent pixels.
+
+
 .. _renpy-7.4.10:
 
 7.4.10
