@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init -1900 python:
+init -1100 python:
 
     # This is called when script_version is set, to immediately
     # run code in response to a script_version change.
@@ -272,7 +272,7 @@ init -1000 python hide:
     except:
         pass
 
-init 1900 python hide:
+init 1100 python hide:
 
     # This returns true if the script_version is <= the
     # script_version supplied. Give it the last script version
