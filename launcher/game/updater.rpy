@@ -122,8 +122,7 @@ screen update_channel(channels):
                             spacing 7
                             textbutton c["channel"]  action action
 
-                            # Opens the web browser to show the change log if the channel is "Release" or "Prerelease"
-
+                          
 
                         add HALF_SPACER
 
