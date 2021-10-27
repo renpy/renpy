@@ -382,19 +382,19 @@ init -1400:
             background
 
         contains:
-            mesh flatten
             perspective True
 
             # Note: (bool(x) * v) == v when x is true, or 0 otherwise.
 
-            old_widget
+            Transform(old_widget, mesh=flatten)
+
             matrixtransform RotateMatrix(0.0, 0.0, 0.0)
             linear (delay / 2.0) matrixtransform RotateMatrix(
                 bool(vertical) * (-90.0 if reverse else 90.0),
                 bool(not vertical) * (-90.0 if reverse else 90.0),
                 0.0)
 
-            new_widget
+            Transform(new_widget, mesh=flatten)
             matrixtransform RotateMatrix(
                 bool(vertical) * (90.0 if reverse else -90.0),
                 bool(not vertical) * (90.0 if reverse else -90.0),
