@@ -102,6 +102,8 @@ cdef class Render:
     # True if the texture has been loaded.
     cdef public bint loaded
 
+    # A flag that's used to enable debugging on a per-render basis.
+    cdef public bint debug
 
     # operations ###############################################################
 
@@ -111,4 +113,3 @@ cdef class Render:
 
 
 cpdef render(object d, object widtho, object heighto, double st, double at)
-
