@@ -532,6 +532,13 @@ def transform_render(self, widtho, heighto, st, at):
     else:
         self.forward = IDENTITY
 
+    pos = (xo, yo)
+
+    if state.subpixel:
+        rv.subpixel_blit(cr, pos)
+    else:
+        rv.blit(cr, pos)
+
     if mesh and perspective:
         mr = rv = make_mesh(rv)
 
@@ -588,12 +595,6 @@ def transform_render(self, widtho, heighto, st, at):
     rv.xclipping = clipping
     rv.yclipping = clipping
 
-    pos = (xo, yo)
-
-    if state.subpixel:
-        rv.subpixel_blit(cr, pos)
-    else:
-        rv.blit(cr, pos)
 
     self.offsets = [ pos ]
     self.render_size = (width, height)
