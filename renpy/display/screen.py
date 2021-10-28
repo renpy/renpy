@@ -1186,7 +1186,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
 
     name = _screen_name
 
-    if renpy.config.debug_image_cache:
+    if renpy.config.debug_prediction:
         renpy.display.ic_log.write("Predict screen %s", name)
 
     if not isinstance(name, tuple):
@@ -1222,7 +1222,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
         renpy.display.predict.displayable(d)
 
     except:
-        if renpy.config.debug_image_cache:
+        if renpy.config.debug_prediction:
             import traceback
 
             print("While predicting screen", _screen_name)

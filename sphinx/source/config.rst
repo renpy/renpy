@@ -380,6 +380,12 @@ Occasionally Used
     If True, Ren'Py will write information about the :ref:`image cache <images>`
     to image_cache.txt.
 
+.. var:: config.debug_prediction = False
+
+    If True, Ren'Py will will write information about and errors that 
+    occur during prediction (of execution flow, images, and screens) to 
+    log.txt and the console.
+
 .. var:: config.debug_sound = False
 
     Enables debugging of sound functionality. This disables the

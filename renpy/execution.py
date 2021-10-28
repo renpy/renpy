@@ -838,7 +838,7 @@ class Context(renpy.object.Object):
 
             except:
 
-                if renpy.config.debug_image_cache:
+                if renpy.config.debug_prediction:
                     import traceback
 
                     print("While predicting images.")

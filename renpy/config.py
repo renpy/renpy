@@ -1186,6 +1186,9 @@ tts_front_to_back = True
 # Should live2d loading be logged to log.txt
 log_live2d_loading = False
 
+# Should Ren'Py debug prediction?
+debug_prediction = False
+
 del os
 del collections
 

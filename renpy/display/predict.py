@@ -172,7 +172,7 @@ def prediction_coroutine(root_widget):
     try:
         root_widget.visit_all(lambda i : i.predict_one_action())
     except:
-        if renpy.config.debug_image_cache:
+        if renpy.config.debug_prediction:
             import traceback
 
             print("While predicting actions.")

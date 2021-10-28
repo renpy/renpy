@@ -7,6 +7,10 @@ Changelog (Ren'Py 7.x-)
 7.5
 ===
 
+A new :var:`config.debug_prediction` variable has been split out of 
+:var:`config.debug_image_cache`. This controls the logging of 
+prediction errors to the console and log.txt.
+
 The :propref:`focus_mask` style property now defaults to None for drag displayables.
 This improves performance, but means that the displayable can be dragged by
 transparent pixels.
