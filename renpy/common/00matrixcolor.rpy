@@ -246,25 +246,13 @@ init -1500 python:
         """
 
         def get(self, value):
+            d = value
+            v = value / -2 + .5
 
-            v = value
-
-            step1 = Matrix([ 1, 0, 0, -.5,
-                             0, 1, 0, -.5,
-                             0, 0, 1, -.5,
-                             0, 0, 0, 1, ])
-
-            step2 = Matrix([ v, 0, 0, 0,
-                             0, v, 0, 0,
-                             0, 0, v, 0,
-                             0, 0, 0, 1, ])
-
-            step3 = Matrix([ 1, 0, 0, .5,
-                             0, 1, 0, .5,
-                             0, 0, 1, .5,
-                             0, 0, 0, 1, ])
-
-            return step3 * step2 * step1
+            return Matrix([ d, 0, 0, v,
+                            0, d, 0, v,
+                            0, 0, d, v,
+                            0, 0, 0, 1, ])
 
 
     class ColorizeMatrix(ColorMatrix):
