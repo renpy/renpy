@@ -76,15 +76,16 @@ def compile_event(key, keydown):
         else:
             return "(False)"
 
-    # Deal with the Joystick / Gamepad.
-    if part[0] == "joy" or part[0] == "pad":
-        return "(False)"
 
     MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl" }
     modifiers = set()
 
     while part[0] in MODIFIERS:
         modifiers.add(part.pop(0))
+
+    # Deal with the Joystick / Gamepad.
+    if part[0] == "joy" or part[0] == "pad":
+        return "(False)"
 
     key = "_".join(part)
 
