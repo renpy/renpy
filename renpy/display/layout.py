@@ -1238,8 +1238,16 @@ class Window(Container):
         # Transfer the state from the current child to the new child.
         if child is not self.current_child:
             if self.current_child is not None:
-                old_target = self.current_child._target()
-                new_target = child._target()
+
+                old_target = self.current_child
+                new_target = child
+
+                # Only propagate into ImageReferences if the targets are equal.
+                # This tries to fix both bug2864 and p547535.
+                if not isinstance(old_target, renpy.display.transform.Transform) and not isinstance(new_target, renpy.display.transform.Transform):
+                    if old_target == new_target:
+                        old_target = old_target._target()
+                        new_target = new_target._target()
 
                 if isinstance(old_target, renpy.display.transform.Transform) and isinstance(new_target, renpy.display.transform.Transform):
                     new_target.take_state(old_target)
