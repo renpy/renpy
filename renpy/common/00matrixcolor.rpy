@@ -233,19 +233,19 @@ init -1500 python:
 
 
     class ContrastMatrix(ColorMatrix):
+        """
+        :doc: colormatrix
+
+        A ColorMatrix that can be used with :tpref:`matrixcolor` to change
+        the brightness of an image, while leaving the Alpha channel
+        alone.
+
+        `value`
+            The contrast value. Values between 0.0 and 1.0 decrease
+            the contrast, while values above 1.0 increase the contrast.
+        """
 
         def get(self, value):
-            """
-            :doc: colormatrix
-
-            A ColorMatrix that can be used with :tpref:`matrixcolor` to change
-            the brightness of an image, while leaving the Alpha channel
-            alone.
-
-            `value`
-                The contrast value. Values between 0.0 and 1.0 decrease
-                the contrast, while values above 1.0 increase the contrast.
-            """
 
             v = value
 
@@ -259,9 +259,9 @@ init -1500 python:
                              0, 0, v, 0,
                              0, 0, 0, 1, ])
 
-            step3 = Matrix([ 1, 0, 0, -.5,
-                             0, 1, 0, -.5,
-                             0, 0, 1, -.5,
+            step3 = Matrix([ 1, 0, 0, .5,
+                             0, 1, 0, .5,
+                             0, 0, 1, .5,
                              0, 0, 0, 1, ])
 
             return step3 * step2 * step1
