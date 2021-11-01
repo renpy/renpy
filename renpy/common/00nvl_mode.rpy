@@ -354,7 +354,7 @@ init -1500 python:
             page = self.clear or nvl_clear_next()
 
             if config.nvl_page_ctc and page:
-                display_args["ctc"] = config.nvl_page_ctc
+                display_args["ctc"] = renpy.easy.displayable_or_none(config.nvl_page_ctc)
                 display_args["ctc_position"] = config.nvl_page_ctc_position
 
             if config.nvl_paged_rollback:
