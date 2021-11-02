@@ -10,6 +10,9 @@ Changelog (Ren'Py 7.x-)
 The new :var:`config.mouse_focus_clickthrough` variable determines if clicks that
 cause the game window to be focused will be processed normally.
 
+The launcher now runs with :var:`config.mouse_focus_clickthrough` true, which 
+means that it will only take a single click to launch the game.
+
 A new :var:`config.debug_prediction` variable has been split out of 
 :var:`config.debug_image_cache`. This controls the logging of 
 prediction errors to the console and log.txt.
