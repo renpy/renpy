@@ -2270,6 +2270,9 @@ class Interface(object):
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
 
+        if renpy.config.mouse_focus_clickthrough:
+            pygame.display.hint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1")
+
         pygame.display.set_screensaver(renpy.config.allow_screensaver)
 
         # Needed for Ubuntu Unity.
