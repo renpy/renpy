@@ -52,8 +52,6 @@ def get_line_text(filename, lineno):
     import linecache
     full_filename = renpy.exports.unelide_filename(filename)
 
-    print(full_filename, linecache.getline(full_filename, lineno))
-
     try:
         line = linecache.getline(full_filename, lineno) or "\n"
         line = line.decode("utf-8")
