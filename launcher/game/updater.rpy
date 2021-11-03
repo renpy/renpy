@@ -103,7 +103,7 @@ screen update_channel(channels):
                     for c in channels:
 
                         if c["split_version"] != list(renpy.version_tuple):
-                            $ action = [updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False), SetField(persistent, "has_update", False)]
+                            $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)]
 
                             if c["channel"] == "Release":
                                 $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")
@@ -122,7 +122,7 @@ screen update_channel(channels):
                             spacing 7
                             textbutton c["channel"]  action action
 
-                          
+
 
                         add HALF_SPACER
 
