@@ -247,7 +247,7 @@ init -1500 python:
 
         def get(self, value):
             d = value
-            v = value / -2 + .5
+            v = value / -2.0 + .5
 
             return Matrix([ d, 0, 0, v,
                             0, d, 0, v,
