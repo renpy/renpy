@@ -783,13 +783,13 @@ class SLDisplayable(SLBlock):
 
         if cache.constant and (cache.style_prefix == context.style_prefix):
 
-            for i, local_scope in cache.constant_uses_scope:
+            for i, local_scope, context_scope in cache.constant_uses_scope:
 
                 if local_scope:
-                    scope = dict(context.scope)
+                    scope = dict(context_scope)
                     scope.update(local_scope)
                 else:
-                    scope = context.scope
+                    scope = context_scope
 
                 if copy_on_change:
                     if i._scope(scope, False):
@@ -1139,7 +1139,7 @@ class SLDisplayable(SLBlock):
                         if i in ctx.scope:
                             local_scope[i] = ctx.scope[i]
 
-                    ctx.uses_scope.append((main, local_scope))
+                    ctx.uses_scope.append((main, local_scope, ctx.scope))
 
                 cache.constant_uses_scope = ctx.uses_scope
 
@@ -1854,7 +1854,6 @@ class SLUse(SLNode):
         ctx = SLContext(context)
         ctx.new_cache = context.new_cache[self.serial] = { "ast" : ast }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
-        ctx.uses_scope = [ ]
 
         if self.id:
 
@@ -1968,6 +1967,7 @@ class SLTransclude(SLNode):
         ctx.new_cache = context.new_cache[self.serial] = { }
         ctx.old_cache = context.old_cache.get(self.serial, None) or { }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
+        ctx.uses_scope = context.uses_scope
 
         if not isinstance(ctx.old_cache, dict):
             ctx.old_cache = { }
@@ -2085,7 +2085,6 @@ class SLCustomUse(SLNode):
         ctx = SLContext(context)
         ctx.new_cache = context.new_cache[self.serial] = { }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
-        ctx.uses_scope = [ ]
 
         # Evaluate the arguments to use in screen.
         try:
