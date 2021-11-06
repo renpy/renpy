@@ -2069,6 +2069,9 @@ and choosing the entries that apply to the current platform.
 ``"firetv"``
    Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
 
+``"chromeos"``
+   Defined when running as an Android app on a Chromebook.
+
 ``"android"``
    Defined on all Android devices.
 

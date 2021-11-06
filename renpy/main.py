@@ -200,6 +200,15 @@ def choose_variants():
             renpy.config.variants.insert(0, "small")
             return
 
+        # Running on a chromebook.
+        try:
+            PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
+            if PythonSDLActivity.isChromebook():
+                print("Running on ChromeOS.")
+                renpy.config.variants.insert(0, 'chromeos')
+        except:
+            pass
+
         # Otherwise, a phone or tablet.
         renpy.config.variants.insert(0, 'touch')
 
