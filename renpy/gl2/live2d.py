@@ -698,6 +698,14 @@ class Live2D(renpy.display.core.Displayable):
         # True if this is the last frame of a series of motions.
         last_frame = False
 
+        # The index of the current motion in self.motions.
+        current_index = 0
+
+        # The motion object to display.
+        motion = None
+
+        # Determine the current motion.
+
         for m in self.motions:
             motion = common.motions.get(m, None)
 
@@ -705,27 +713,51 @@ class Live2D(renpy.display.core.Displayable):
                 continue
 
             if motion.duration > st:
-
-                if self.loop and (m == self.motions[-1]):
-                    do_fade_out = not common.is_seamless(m)
-
                 break
 
             st -= motion.duration
+            current_index += 1
 
         else:
             if motion is None:
                 return None
 
-            if self.loop:
-                do_fade_in = not common.is_seamless(m)
-                do_fade_out = not common.is_seamless(m)
-            else:
+            if not self.loop:
                 st = motion.duration
                 last_frame = True
 
         if motion is None:
             return None
+
+        # Determine the name of the current, last, and next motions. These are 
+        # None if there is no motion.
+
+        if current_index < len(self.motions):
+            current_name = self.motions[current_index]
+        else:
+            current_name = self.motions[-1]
+
+        if current_index > 0:
+            last_name = self.motions[current_index - 1]
+        else:
+            last_name = None
+
+        if current_index < len(self.motions) - 1:
+            next_name = self.motions[current_index + 1]
+        elif self.loop:
+            next_name = self.motions[-1]
+        else:
+            next_name = None
+
+        # Handle seamless.
+
+        if (last_name == current_name) and common.is_seamless(current_name):
+            do_fade_in = False
+
+        if (next_name == current_name) and common.is_seamless(current_name):
+            do_fade_out = False        
+
+        # Apply the motion.
 
         motion_data = motion.get(st, st_fade, do_fade_in, do_fade_out)
 
