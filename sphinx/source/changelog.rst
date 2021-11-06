@@ -7,6 +7,21 @@ Changelog (Ren'Py 7.x-)
 7.5
 ===
 
+ChromeOS
+----------
+
+Mouse motion is now tracked on Chrome OS devices. This prevents the mouse cursor
+from being hidden between clicks. 
+
+An issue with windows partially rendering on ChromeOS has been resolved. 
+
+When running as an Android application on a ChromeOS device, the "chromeos"
+variant will be selected.
+
+
+Features
+--------
+
 The new :var:`config.mouse_focus_clickthrough` variable determines if clicks that
 cause the game window to be focused will be processed normally.
 
