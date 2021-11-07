@@ -8,12 +8,7 @@ Changelog (Ren'Py 7.x-)
 ===
 
 ChromeOS
-----------
-
-Mouse motion is now tracked on Chrome OS devices. This prevents the mouse cursor
-from being hidden between clicks. 
-
-An issue with windows partially rendering on ChromeOS has been resolved. 
+--------
 
 When running as an Android application on a ChromeOS device, the "chromeos"
 variant will be selected.
@@ -28,13 +23,38 @@ cause the game window to be focused will be processed normally.
 The launcher now runs with :var:`config.mouse_focus_clickthrough` true, which 
 means that it will only take a single click to launch the game.
 
-A new :var:`config.debug_prediction` variable has been split out of 
-:var:`config.debug_image_cache`. This controls the logging of 
-prediction errors to the console and log.txt.
-
 The :propref:`focus_mask` style property now defaults to None for drag displayables.
 This improves performance, but means that the displayable can be dragged by
 transparent pixels.
+
+.. _renpy-7.4.11:
+
+
+7.4.11
+======
+
+Fixes
+-----
+
+Mouse motion is now tracked on Chrome OS devices. This prevents the mouse cursor
+from being hidden between clicks. 
+
+An issue with windows partially rendering on ChromeOS has been resolved. 
+
+An issue with transcludes in screens has been fixed. 
+
+An issue that could prevent a transform with both :tpref:`perspective` and 
+:tpref:`mesh` true from displaying has been fixed.
+
+Buttons now only propagate transform state to direct children, not to 
+children accessed through ImageReferences.
+
+The ``repeat_`` modifier can now be applied to gamepad events. 
+
+A new :var:`config.debug_prediction` variable has been split out of 
+:var:`config.debug_image_cache`. This controls the logging of 
+prediction errors to the console and log.txt, making the latter 
+variable act as documented.
 
 
 .. _renpy-7.4.10:
