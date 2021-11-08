@@ -2,23 +2,7 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
-.. _renpy-7.5.0:
-
-7.5
-===
-
-ChromeOS
---------
-
-When running as an Android application on a ChromeOS device, the "chromeos"
-variant will be selected.
-
-
-Features
---------
-
 .. _renpy-7.4.11:
-
 
 7.4.11
 ======
