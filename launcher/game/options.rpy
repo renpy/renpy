@@ -406,12 +406,8 @@ init python:
 # Enable the special launcher translation mode.
 define config.translate_launcher = True
 
-# Allow clicks that focus the window to be processed.
-define config.mouse_focus_clickthrough = True
-
 # Reduce the rate of screen updates.
 default preferences.gl_powersave = True
-
 
 # Disable steam.
 python early:
