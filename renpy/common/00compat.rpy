@@ -225,9 +225,6 @@ init -1100 python:
             config.relative_transform_size = False
             config.tts_front_to_back = False
 
-        if version <= (7, 5, 0):
-            style.drag.focus_mask = True
-
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None

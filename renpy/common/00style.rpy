@@ -362,7 +362,7 @@ init -1800:
         yfill False
 
     style drag:
-        focus_mask None
+        focus_mask True
 
     # Out-of-game menu root windows
 
