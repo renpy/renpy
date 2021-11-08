@@ -1360,11 +1360,6 @@ Rarely or Internally Used
     name of a label to use as a replacement for the missing label, or None
     to cause Ren'Py to raise an exception.
 
-.. var:: config.mouse_focus_clickthrough = False
-
-    If true, clicks that cause a window to be focused will be processed
-    normally. If false, such clicks will be ignored.
-
 .. var:: config.mouse_hide_time = 30
 
     The mouse is hidden after this number of seconds has elapsed

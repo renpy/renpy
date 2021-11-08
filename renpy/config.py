@@ -1189,9 +1189,6 @@ log_live2d_loading = False
 # Should Ren'Py debug prediction?
 debug_prediction = False
 
-# Should mouse events that cause a window to gain focus be passed through.
-mouse_focus_clickthrough = False
-
 del os
 del collections
 
