@@ -36,6 +36,15 @@ transparent pixels.
 Fixes
 -----
 
+The 4-component constructor for matrices has been fixed. 
+
+Ren'Py now cleans out the android build directories when producing a Android 
+App Bundle (AAB) file, preventing problems that might be caused when packaging 
+multiple games, or a single game where files are deleted.
+
+Live2d now properly handles seamless animation when the same motion is repeated
+in a displayable. (For example, ``show eileen m1 m1 m2`` where ``m1`` is seamless.)
+
 Mouse motion is now tracked on Chrome OS devices. This prevents the mouse cursor
 from being hidden between clicks. 
 
