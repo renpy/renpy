@@ -798,7 +798,6 @@ class SLDisplayable(SLBlock):
                         cache.constant = None
                         break
                 else:
-                    print(i.text)
                     i._scope(scope, True)
 
             else:
