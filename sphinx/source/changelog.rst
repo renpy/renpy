@@ -36,6 +36,9 @@ transparent pixels.
 Fixes
 -----
 
+The :tpref:`gl_depth` property now causes Ren'Py to use GL_LEQUALS, 
+which more closely matches Ren'Py's semantics.
+
 The 4-component constructor for matrices has been fixed. 
 
 Ren'Py now cleans out the android build directories when producing a Android 

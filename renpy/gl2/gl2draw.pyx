@@ -1296,7 +1296,7 @@ cdef class GL2DrawingContext:
         if depth:
             glClear(GL_DEPTH_BUFFER_BIT)
             glEnable(GL_DEPTH_TEST)
-            glDepthFunc(GL_LESS)
+            glDepthFunc(GL_LEQUAL)
 
             properties["has_depth"] = True
 
