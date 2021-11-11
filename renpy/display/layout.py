@@ -685,7 +685,8 @@ class MultiBox(Container):
 
                 if new_d is not old_d:
                     changed = True
-                    new_d = renpy.game.context().scene_lists.transform_layer(layer, new_d)
+                    new_d = renpy.game.context().scene_lists.transform_layer(layer, new_d, layer_at_list=old_d._layer_at_list, camera_list=old_d._camera_list)
+                    rv.layers[layer] = new_d
                 else:
                     new_d = self.layers[layer]
 
