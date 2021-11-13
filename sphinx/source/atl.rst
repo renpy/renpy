@@ -1262,6 +1262,6 @@ in the parent. This is because a displayable may have only one position, and
 a position that is actively set takes precedence. These properties may be set in
 multiple ways - for example, :tpref:`xalign` sets xpos and xanchor.
 
-Finally, when a ``show`` statement does not include and ``at`` clause, the
+Finally, when a ``show`` statement does not include an ``at`` clause, the
 same displayables are used, so no inheritence is necessary. To prevent inheritance,
 show and then hide the displayable.
