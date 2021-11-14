@@ -280,7 +280,6 @@ cdef class Live2DModel:
 
     def set_part_opacity(self, name, value):
         part = self.parts.get(name, None)
-        print("SPO", name, value, part.remaining)
 
         if part is None:
             for i in self.opacity_groups.get(name, [ ]):
