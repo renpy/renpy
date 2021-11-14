@@ -885,13 +885,18 @@ class Live2D(renpy.display.core.Displayable):
         model.reset_parameters()
 
         if fade:
-            old_redraw = state.old.update(common, renpy.display.interface.frame_time - state.old_base_time, st)
             t = renpy.display.interface.frame_time - state.new_base_time
         else:
-            old_redraw = None
             t = st
 
         new_redraw = self.update(common, t, None)
+
+        if fade:
+            old_redraw = state.old.update(common, renpy.display.interface.frame_time - state.old_base_time, st)
+        else:
+            old_redraw = None
+
+        model.finish_parameters()
 
         # Apply the expressions.
         expression_redraw = self.update_expressions(st)
