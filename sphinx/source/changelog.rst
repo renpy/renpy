@@ -36,6 +36,20 @@ transparent pixels.
 Fixes
 -----
 
+Live2D now uses saturation arithmetic to combine motion fadeins and fadeouts, 
+such that if the fadein contributes 80% of a parameter value, and the 
+fadeout contributes 20% of the value, 100% of the value comes from 
+the two motions. (Previously, the fadein and fadeout were applied 
+independently, such that together, the fadein and fadeout would 
+contribute 84% of the value, with the remaining 16% taken from 
+the default.)
+
+When fading from one sequence of Live2D motions to another, the original
+sequence ends when a motion fades out. 
+
+When preserving screens in the old state for a transition, the later_at_list 
+and camera lists are taken from the old state, preventing unexpected changes. 
+
 The :tpref:`gl_depth` property now causes Ren'Py to use GL_LEQUALS, 
 which more closely matches Ren'Py's semantics.
 
