@@ -449,10 +449,7 @@ cdef class GL2Draw:
         if not fullscreen:
             renpy.game.preferences.physical_size = self.get_physical_size()
 
-        if renpy.mobile:
-            print("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
-        else:
-            renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
+        renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
 
         if renpy.config.adjust_view_size is not None:
             view_width, view_height = renpy.config.adjust_view_size(pwidth, pheight)
