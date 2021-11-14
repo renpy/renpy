@@ -706,15 +706,21 @@ class Live2D(renpy.display.core.Displayable):
 
         # Determine the current motion.
 
+        motion_st = st
+        
+        if st_fade is not None:
+            motion_st = st - st_fade
+
         for m in self.motions:
             motion = common.motions.get(m, None)
 
             if motion is None:
                 continue
 
-            if motion.duration > st:
+            elif motion.duration > motion_st:
                 break
 
+            motion_st -= motion.duration
             st -= motion.duration
             current_index += 1
 
@@ -722,9 +728,18 @@ class Live2D(renpy.display.core.Displayable):
             if motion is None:
                 return None
 
-            if not self.loop:
+            if (not self.loop) or (not motion.duration):
                 st = motion.duration
                 last_frame = True
+            
+            elif st_fade is not None:
+                # This keeps a motion from being restarted after it would have
+                # been faded out.
+                motion_start = motion_st - motion_st % motion.duration
+
+                if (st - motion_start) > motion.duration:
+                    st = motion.duration
+                    last_frame = True
 
         if motion is None:
             return None
