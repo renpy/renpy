@@ -717,7 +717,10 @@ class Live2D(renpy.display.core.Displayable):
             if motion is None:
                 continue
 
-            elif motion.duration > motion_st:
+            if motion.duration > st:
+                break
+
+            elif (motion.duration > motion_st) and not common.is_seamless(m):
                 break
 
             motion_st -= motion.duration
@@ -732,7 +735,7 @@ class Live2D(renpy.display.core.Displayable):
                 st = motion.duration
                 last_frame = True
             
-            elif st_fade is not None:
+            elif (st_fade is not None) and not common.is_seamless(m):
                 # This keeps a motion from being restarted after it would have
                 # been faded out.
                 motion_start = motion_st - motion_st % motion.duration
