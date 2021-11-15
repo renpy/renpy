@@ -772,7 +772,7 @@ class Live2D(renpy.display.core.Displayable):
         if (last_name == current_name) and common.is_seamless(current_name):
             do_fade_in = False
 
-        if (next_name == current_name) and common.is_seamless(current_name):
+        if (next_name == current_name) and common.is_seamless(current_name) and (st_fade is None):
             do_fade_out = False        
 
         # Apply the motion.
