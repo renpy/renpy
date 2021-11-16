@@ -36,6 +36,9 @@ transparent pixels.
 Fixes
 -----
 
+The web browser now checks for progressively downloaded images once per
+frame, allowing images to be loaded into the middle of an animation.
+
 Live2D now uses saturation arithmetic to combine motion fadeins and fadeouts, 
 such that if the fadein contributes 80% of a parameter value, and the 
 fadeout contributes 20% of the value, 100% of the value comes from 
