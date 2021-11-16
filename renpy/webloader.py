@@ -202,7 +202,8 @@ def enqueue(relpath, rtype, data):
 def process_downloaded_resources():
     global queue, to_unlink
 
-    reload_needed = False
+    if not queue:
+        return
 
     with queue_lock:
 
@@ -230,7 +231,6 @@ def process_downloaded_resources():
                     # mark for deletion
                     fullpath = os.path.join(renpy.config.gamedir,rr.relpath)
                     to_unlink[fullpath] = time.time()
-                    reload_needed = True
 
                 elif rr.rtype == 'music':
                     # - just wait for the 0.5s placeholder to finish,
@@ -249,11 +249,6 @@ def process_downloaded_resources():
         # don't rethrow an exception while in Ren'Py's error handler
         finally:
             queue = postponed + todo
-
-    if reload_needed:
-        # Refresh the screen and re-load images flushed from cache
-        # Note: done at next Ren'Py interaction (prediction reset)
-        renpy.display.render.free_memory()
 
     # Free files from memory once they are loaded
     # Due to search-path dups and derived images (including image-based animations)

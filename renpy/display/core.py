@@ -3405,21 +3405,13 @@ class Interface(object):
                 self.consider_gc()
                 step += 1
 
-            # Step 2: Load downloaded resources
+            # Step 2: Push textures to GPU.
             elif step == 2:
-
-                if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
-                    renpy.webloader.process_downloaded_resources()
-
-                step += 1
-
-            # Step 3: Push textures to GPU.
-            elif step == 3:
                 renpy.display.draw.ready_one_texture()
                 step += 1
 
-            # Step 4: Predict more images.
-            elif step == 4:
+            # Step 3: Predict more images.
+            elif step == 3:
 
                 if not self.prediction_coroutine:
                     step += 1
@@ -3440,16 +3432,16 @@ class Interface(object):
                     if not expensive:
                         step += 1
 
-            # Step 5: Preload images (on emscripten)
-            elif step == 5:
+            # Step 4: Preload images (on emscripten)
+            elif step == 4:
 
                 if expensive and renpy.emscripten:
                     renpy.display.im.cache.preload_thread_pass()
 
                 step += 1
 
-            # Step 6: Autosave.
-            elif step == 6:
+            # Step 5: Autosave.
+            elif step == 5:
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()
@@ -3803,6 +3795,9 @@ class Interface(object):
 
                 # Check for autoreload.
                 renpy.loader.check_autoreload()
+
+                if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+                    renpy.webloader.process_downloaded_resources()
 
                 for i in renpy.config.needs_redraw_callbacks:
                     if i():
