@@ -247,6 +247,7 @@ cdef class Program:
         self.find_variables(self.fragment)
 
     def missing(self, kind, name):
+        cdef GLfloat viewport[4]
 
         if name == "u_lod_bias":
             self.set_uniform("u_lod_bias", float(renpy.config.gl_lod_bias))
@@ -254,6 +255,9 @@ cdef class Program:
             self.set_uniform("u_time", (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400)
         elif name == "u_random":
             self.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
+        elif name == "u_viewport":
+            glGetFloatv(GL_VIEWPORT, viewport)
+            self.set_uniform("u_viewport", (viewport[0], viewport[1], viewport[2], viewport[3]))
         else:
             raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
 

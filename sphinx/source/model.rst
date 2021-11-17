@@ -339,6 +339,12 @@ The following uniforms are made available to all Models.
     Four random numbers between 0.0 and 1.0 that are (with incredibly high
     likelyhood) different from frame to frame.
 
+``vec4 u_viewport``
+    This gives the current viewport being drawn into. u_viewport.xy is 
+    are the coordinates of the bottom-left corner of the viewport, relative
+    to the bottom-left corner of the window. u_viewport.pq is the width 
+    and height of the viewport.
+
 ``sampler2D tex0``, ``sampler2D tex1``, ``sampler2D tex2``
     If textures are available, the corresponding samplers are placed in
     this variable.
@@ -467,6 +473,3 @@ Default Shader Parts
 --------------------
 
 .. include:: inc/shadersource
-
-
-

@@ -17,6 +17,9 @@ variant will be selected.
 Features
 --------
 
+The location and size of the viewport is made available to shaders as 
+u_viewport.
+
 The new RENPY_PATH_TO_SAVES environment variable makes it possible to control
 where Ren'Py places system-level saves. The RENPY_MULTIPERSISTENT variable has 
 been documented, and controls the same thing with multipersistent data.
