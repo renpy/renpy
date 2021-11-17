@@ -17,6 +17,10 @@ variant will be selected.
 Features
 --------
 
+The new RENPY_PATH_TO_SAVES environment variable makes it possible to control
+where Ren'Py places system-level saves. The RENPY_MULTIPERSISTENT variable has 
+been documented, and controls the same thing with multipersistent data.
+
 The new :var:`config.mouse_focus_clickthrough` variable determines if clicks that
 cause the game window to be focused will be processed normally.
 

@@ -106,6 +106,9 @@ def path_to_saves(gamedir, save_directory=None):
     if not save_directory:
         return os.path.join(gamedir, "saves")
 
+    if "RENPY_PATH_TO_SAVES" in os.environ:
+        return os.environ["RENPY_PATH_TO_SAVES"] + "/" + save_directory
+
     # Search the path above Ren'Py for a directory named "Ren'Py Data".
     # If it exists, then use that for our save directory.
     path = renpy.config.renpy_base
