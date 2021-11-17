@@ -5,6 +5,8 @@ from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.display.matrix cimport Matrix
 
+import renpy
+import random
 
 class ShaderError(Exception):
     pass
@@ -245,7 +247,15 @@ cdef class Program:
         self.find_variables(self.fragment)
 
     def missing(self, kind, name):
-        raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
+
+        if name == "u_lod_bias":
+            self.set_uniform("u_lod_bias", float(renpy.config.gl_lod_bias))
+        elif name == "u_time":
+            self.set_uniform("u_time", (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400)
+        elif name == "u_random":
+            self.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
+        else:
+            raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
 
     def start(self):
         glUseProgram(self.program)
