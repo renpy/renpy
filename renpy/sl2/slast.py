@@ -769,7 +769,12 @@ class SLDisplayable(SLBlock):
 
         screen = renpy.ui.screen
 
-        cache = context.old_cache.get(self.serial, None) or context.miss_cache.get(self.serial, None)
+        cache = context.old_cache.get(self.serial, None) 
+        missed = False
+
+        if cache is None:
+            cache = context.miss_cache.get(self.serial, None)
+            missed = True
 
         if not isinstance(cache, SLCache):
             cache = SLCache()
@@ -781,7 +786,7 @@ class SLDisplayable(SLBlock):
         if debug:
             self.debug_line()
 
-        if cache.constant and (cache.style_prefix == context.style_prefix):
+        if cache.constant and (cache.style_prefix == context.style_prefix) and not (missed and cache.constant_uses_scope):
 
             for i, local_scope, context_scope in cache.constant_uses_scope:
 
@@ -790,8 +795,6 @@ class SLDisplayable(SLBlock):
                     scope.update(local_scope)
                 else:
                     scope = context_scope
-
-
 
                 if copy_on_change:
                     if i._scope(scope, False):
@@ -2405,14 +2408,6 @@ class SLScreen(SLBlock):
 
         context = SLContext()
 
-        context.scope = scope
-        context.globals = renpy.python.store_dicts["store"]
-        context.debug = debug
-        context.predicting = renpy.display.predict.predicting
-        context.updating = (current_screen.phase == renpy.display.screen.UPDATE)
-
-        name = scope["_name"]
-
         def get_cache(d):
             rv = d.get(name, None)
 
@@ -2422,9 +2417,23 @@ class SLScreen(SLBlock):
 
             return rv
 
+        name = scope["_name"]
+
         context.old_cache = get_cache(current_screen.cache)
         context.miss_cache = get_cache(current_screen.miss_cache)
         context.new_cache = { "version" : self.version }
+
+        new_scope = context.old_cache.get("scope", { })
+        new_scope.clear()
+        new_scope.update(scope)
+
+        scope = new_scope
+
+        context.scope = scope
+        context.globals = renpy.python.store_dicts["store"]
+        context.debug = debug
+        context.predicting = renpy.display.predict.predicting
+        context.updating = (current_screen.phase == renpy.display.screen.UPDATE)
 
         context.old_use_cache = current_screen.use_cache
         context.new_use_cache = { }
@@ -2434,6 +2443,8 @@ class SLScreen(SLBlock):
 
         for i in context.children:
             renpy.ui.implicit_add(i)
+
+        context.new_cache["scope"] = scope
 
         current_screen.cache[name] = context.new_cache
         current_screen.use_cache = context.new_use_cache
