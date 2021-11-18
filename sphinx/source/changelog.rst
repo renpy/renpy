@@ -43,6 +43,10 @@ transparent pixels.
 Fixes
 -----
 
+The new :func:`gui.variant` function makes it possible to work around 
+an issue in the standard gui where the calling :func:`gui.rebuild` would cause 
+gui variants to reset. 
+
 The web browser now checks for progressively downloaded images once per
 frame, allowing images to be loaded into the middle of an animation.
 
