@@ -437,7 +437,7 @@ init -1500 python:
             elif name == _("rollback side"):
 
                 if value in [ "left", "right", "disable" ]:
-                    if renpy.exports.mobile:
+                    if renpy.variant("mobile"):
                         field = "mobile_rollback_side"
                     else:
                         field = "desktop_rollback_side"
