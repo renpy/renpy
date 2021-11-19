@@ -169,7 +169,13 @@ def init_emulator():
         emulator = null_emulator
         overlay = [ ]
 
-    if emulator is not null_emulator:
+
+def early_init_emulator():
+
+    name = os.environ.get("RENPY_EMULATOR", "")
+
+    if name:
+
         renpy.exports.windows = False
         renpy.exports.linux = False
         renpy.exports.macintosh = False
