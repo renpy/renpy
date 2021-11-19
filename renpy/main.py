@@ -161,6 +161,7 @@ def choose_variants():
 
     if "RENPY_VARIANT" in os.environ:
         renpy.config.variants = list(os.environ["RENPY_VARIANT"].split()) + [ None ]
+        renpy.display.emulator.early_init_emulator()
         return
 
     renpy.config.variants = [ None ]
