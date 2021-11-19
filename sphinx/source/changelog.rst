@@ -43,6 +43,8 @@ transparent pixels.
 Fixes
 -----
 
+When :var:`config.log` is true, the selected choice is now logged properly.
+
 The new :func:`gui.variant` function makes it possible to work around 
 an issue in the standard gui where the calling :func:`gui.rebuild` would cause 
 gui variants to reset. 

@@ -19,10 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This file contains functions that are exported to the script namespace.
-# Functions defined in this file can be updated by the user to change
-# their behavior, while functions imported in are probably best left
-# alone as part of the api.
+# This file contains functions that are exported to the script namespace as 
+# the renpy namespace. (So renpy.say, renpy.pause, and so on.)
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
@@ -1298,8 +1296,12 @@ def display_menu(items,
         rv = renpy.ui.interact(mouse='menu', type=type, roll_forward=roll_forward)
 
         for label, val in items:
+
+            if isinstance(val, renpy.ui.ChoiceReturn):
+                val = val.value
+
             if rv == val:
-                log("User chose: " + label)
+                log("Player chose: " + label)
                 break
         else:
             log("No choice chosen.")
@@ -4258,4 +4260,3 @@ def request_permission(permission):
         return False
 
     return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8"))
-
