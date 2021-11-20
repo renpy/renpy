@@ -99,6 +99,8 @@ class Persistent(object):
         if not self._seen_audio:
             self._seen_audio = { }
 
+        self._seen_audio = { str(i) : True for i in self._seen_audio }
+
         # The set of seen translate identifiers.
         if not self._seen_translates:
             self._seen_translates = set()
