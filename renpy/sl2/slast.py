@@ -2429,6 +2429,8 @@ class SLScreen(SLBlock):
 
         scope = new_scope
 
+        current_screen.scope = scope
+
         context.scope = scope
         context.globals = renpy.python.store_dicts["store"]
         context.debug = debug
