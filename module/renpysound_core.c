@@ -887,7 +887,7 @@ void RPS_pause(int channel, int pause) {
 
 }
 
-void RPS_unpause_all(void) {
+void RPS_unpause_all_at_start(void) {
 
     int i;
 
@@ -895,7 +895,7 @@ void RPS_unpause_all(void) {
     Py_BEGIN_ALLOW_THREADS
 
     for (i = 0; i < num_channels; i++) {
-        if (channels[i].playing && channels[i].paused) {
+        if (channels[i].playing && channels[i].paused && channels[i].pos == 0) {
             media_wait_ready(channels[i].playing);
         }
     }
@@ -903,8 +903,8 @@ void RPS_unpause_all(void) {
     Py_END_ALLOW_THREADS
 
     for (i = 0; i < num_channels; i++) {
-        channels[i].paused = 0;
-        if (channels[i].playing) {
+        if (channels[i].playing && channels[i].pos == 0) {
+            channels[i].paused = 0;
             media_pause(channels[i].playing, 0);
         }
     }
