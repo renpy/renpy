@@ -160,12 +160,12 @@ def unpause(channel):
     call("unpause", channel)
 
 
-def unpause_all():
+def unpause_all_at_start():
     """
     Unpauses all channels that are paused.
     """
 
-    call("unpause_all")
+    call("unpauseAllAtStart")
 
 
 def fadeout(channel, delay):
@@ -350,4 +350,3 @@ def sample_surfaces(rgb, rgba):
     """
 
     return
-

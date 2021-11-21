@@ -115,6 +115,7 @@ let start_playing = (c) => {
     }
 
     p.started = context.currentTime;
+    p.started_once = true;
 };
 
 
@@ -190,7 +191,8 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end) => 
         started : null,
         fadein : fadein,
         fadeout: null,
-        tight : tight
+        tight : tight,
+        started_once : false
     };
 
     if (c.playing === null) {
@@ -315,9 +317,11 @@ renpyAudio.unpause = (channel) => {
 };
 
 
-renpyAudio.unpauseAll = () => {
-    for (let i of Object.entries(channel)) {
-        start_playing(i[1]);
+renpyAudio.unpauseAllAtStart = () => {
+    for (let i of Object.entries(channels)) {
+        if (i[1].playing && ! i[1].playing.started_once ) {
+            start_playing(i[1]);
+        }
     }
 };
 

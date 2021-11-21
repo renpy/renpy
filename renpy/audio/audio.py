@@ -1096,7 +1096,7 @@ def periodic_pass():
                 need_ss = True
 
         if need_ss:
-            renpysound.unpause_all()
+            renpysound.unpause_all_at_start()
 
             for c in all_channels:
                 c.synchro_start = False
