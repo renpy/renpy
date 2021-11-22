@@ -96,6 +96,9 @@ class SLContext(renpy.ui.Addable):
         # The local scope that python code is evaluated in.
         self.scope = { }
 
+        # The scope of the top-level screen.
+        self.root_scope = self.scope
+
         # The global scope that python code is evaluated in.
         self.globals = { }
 
@@ -785,6 +788,9 @@ class SLDisplayable(SLBlock):
 
             for i, local_scope, context_scope in cache.constant_uses_scope:
 
+                if context_scope is None:
+                    context_scope = context.root_scope
+
                 if local_scope:
                     scope = dict(context_scope)
                     scope.update(local_scope)
@@ -1139,7 +1145,10 @@ class SLDisplayable(SLBlock):
                         if i in ctx.scope:
                             local_scope[i] = ctx.scope[i]
 
-                    ctx.uses_scope.append((main, local_scope, ctx.scope))
+                    if ctx.scope is context.root_scope:
+                        ctx.uses_scope.append((main, local_scope, None))
+                    else:
+                        ctx.uses_scope.append((main, local_scope, ctx.scope))
 
                 cache.constant_uses_scope = ctx.uses_scope
 
@@ -1901,7 +1910,9 @@ class SLUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = context.scope.copy()
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+            scope.clear()
+            scope.update(context.scope)
             scope.update(kwargs)
 
         scope["_scope"] = scope
@@ -2153,7 +2164,9 @@ class SLCustomUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = context.scope.copy()
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+            scope.clear()
+            scope.update(context.scope)
             scope.update(kwargs)
 
         scope["_scope"] = scope
@@ -2400,6 +2413,7 @@ class SLScreen(SLBlock):
         context = SLContext()
 
         context.scope = scope
+        context.root_scope = scope
         context.globals = renpy.python.store_dicts["store"]
         context.debug = debug
         context.predicting = renpy.display.predict.predicting
