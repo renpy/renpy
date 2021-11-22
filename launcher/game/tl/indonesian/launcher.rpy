@@ -1302,7 +1302,7 @@ translate indonesian strings:
 
     # game/install.rpy:144
     old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
-    new "Live2D di Ren'py dukung mendukung versi web, Android x86_64 (termsuk emulator dan Chrome OS), dan harus ditambahkan secara manual/terpisah pada iOS. Live2D harus dipasang ulang apabila melakukan pemuktahiran(upgrade) Ren'py atau pada dukungan tambahan pada Androidnya."
+    new "Live2D di Ren'py tidak mendukung versi web, Android x86_64 (termsuk emulator dan Chrome OS), dan harus ditambahkan secara manual/terpisah pada iOS. Live2D harus dipasang ulang apabila melakukan pemuktahiran(upgrade) Ren'py atau pada dukungan tambahan pada Androidnya."
 
     # game/install.rpy:151
     old "Install Steam Support"
