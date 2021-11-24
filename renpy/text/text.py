@@ -1590,7 +1590,7 @@ class Text(renpy.display.core.Displayable):
         self.start = None
         self.end = None
 
-        if replaces is not None:
+        if isinstance(replaces, Text):
             self.slow = replaces.slow
             self.slow_done = replaces.slow_done
             self.ctc = replaces.ctc
