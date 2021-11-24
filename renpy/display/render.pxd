@@ -24,7 +24,7 @@ from renpy.display.matrix cimport Matrix, Matrix2D
 
 cdef class Render:
 
-    cdef public bint mark, cache_killed
+    cdef public bint mark, cache_killed, killed
 
     cdef public float width, height
     cdef public object layer_name

@@ -538,7 +538,7 @@ def mark_sweep():
 
     for r in live_renders:
         if not r.mark:
-            r.kill_cache()
+            r.kill()
         else:
             r.mark = False
 
@@ -602,6 +602,9 @@ cdef class Render:
 
         # Is has this render been removed from the cache?
         self.cache_killed = False
+
+        # Has this render been completely killed?
+        self.killed = False
 
         self.width = width
         self.height = height
@@ -728,8 +731,15 @@ cdef class Render:
         live_renders.append(self)
 
     def __repr__(self): #@DuplicatedSignature
+        if self.killed:
+            live = "dead "
+        elif self.cache_killed:
+            live = "cache-killed "
+        else:
+            live = ""
+
         return "<{}Render {:x} of {!r}>".format(
-            ("dead " if self.cache_killed else ""),
+            live,
             id(self),
             self.render_of)
 
@@ -1081,6 +1091,30 @@ cdef class Render:
         for i in list(self.parents):
             i.kill_cache()
 
+        for ro in self.render_of:
+            id_ro = id(ro)
+
+            cache = render_cache[id_ro]
+            for k, v in list(cache.items()):
+                if v is self:
+                    del cache[k]
+
+            if not cache:
+                del render_cache[id_ro]
+
+    def kill(self):
+        """
+        Prepares this render and its parents for deallocation.
+        """
+
+        if self.killed:
+            return
+
+        self.killed = True
+
+        for i in list(self.parents):
+            i.kill()
+
         self.parents.clear()
 
         for i in list(self.depends_on_list):
@@ -1117,10 +1151,6 @@ cdef class Render:
         self.cached_texture = None
         self.cached_model = None
 
-    def kill(self):
-        """
-        Retained for compatibility, but does not need to be called.
-        """
 
     def add_focus(self, d, arg=None, x=0, y=0, w=None, h=None, mx=None, my=None, mask=None):
         """
