@@ -593,6 +593,7 @@ def check_modal(modal, ev, x, y, w, h):
     if modal(ev, x, y, w, h):
         if (ev is not None) and (ev.type == renpy.display.core.TIMEEVENT):
             ev.modal = True
+            return False
 
         return True
 
