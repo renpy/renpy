@@ -2258,7 +2258,7 @@ class Timer(renpy.display.layout.Null):
         # Did we start the timer?
         self.started = False
 
-        if replaces is not None:
+        if isinstance(replaces, Timer):
             self.state = replaces.state
         else:
             self.state = TimerState()
@@ -2304,7 +2304,7 @@ class MouseArea(renpy.display.core.Displayable):
         # Are we hovered right now?
         self.is_hovered = False
 
-        if replaces is not None:
+        if isinstance(replaces, MouseArea):
             self.is_hovered = replaces.is_hovered
 
         # Taken from the render.
