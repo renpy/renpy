@@ -219,6 +219,7 @@ class Motion(object):
             factor = max(factor, 0.0)
 
             t = st
+            i = None
 
             for i in segments:
                 if t <= i.duration:
@@ -227,6 +228,11 @@ class Motion(object):
                     break
 
                 t -= i.duration
+
+            else:
+                if i is not None:
+                    t = i.duration
+                    rv[k] = (factor, i.get(t))
 
         return rv
 
