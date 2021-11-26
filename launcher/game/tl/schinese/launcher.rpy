@@ -1635,3 +1635,19 @@ translate schinese strings:
 
     old "Web (Beta)"
     new "网页（测试版）"
+
+    # game/preferences.rpy:206
+    old "Daily check for update"
+    new "每天检查更新"
+
+    # game/preferences.rpy:210
+    old "Default theme"
+    new "默认主题"
+
+    # game/preferences.rpy:212
+    old "Dark theme"
+    new "黑暗主题"
+
+    # game/preferences.rpy:213
+    old "Custom theme"
+    new "自定义主题"
