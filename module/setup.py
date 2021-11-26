@@ -98,8 +98,6 @@ library("z")
 has_libglew = library("GLEW", optional=True)
 has_libglew32 = library("glew32", optional=True)
 
-has_angle = windows and library("EGL", optional=True) and library("GLESv2", optional=True)
-
 if android:
     sdl = [ 'SDL2', 'GLESv2', 'log' ]
     png = 'png16'
