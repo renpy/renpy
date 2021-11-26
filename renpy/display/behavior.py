@@ -513,6 +513,9 @@ class PauseBehavior(renpy.display.layout.Null):
 
     def event(self, ev, x, y, st):
 
+        if ev.type == renpy.display.core.TIMEEVENT and ev.modal:
+            return
+
         if st >= self.delay:
 
             if self.voice and renpy.config.nw_voice:
