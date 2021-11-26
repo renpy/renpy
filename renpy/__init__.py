@@ -466,7 +466,6 @@ def import_all():
 
     import renpy.gl
     import renpy.gl2
-    import renpy.angle
 
     import renpy.display.layout
     import renpy.display.viewport
