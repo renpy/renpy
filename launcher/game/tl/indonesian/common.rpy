@@ -62,7 +62,7 @@
 
     # 00action_file.rpy:47
     old "{#month}February"
-    new "{#month}Febuari"
+    new "{#month}Februari"
 
     # 00action_file.rpy:47
     old "{#month}March"
@@ -118,7 +118,7 @@
 
     # 00action_file.rpy:63
     old "{#month_short}Apr"
-    new "{#month_short}Aprl"
+    new "{#month_short}Apr"
 
     # 00action_file.rpy:63
     old "{#month_short}May"
@@ -134,7 +134,7 @@
 
     # 00action_file.rpy:63
     old "{#month_short}Aug"
-    new "{#month_short}Agust"
+    new "{#month_short}Agu"
 
     # 00action_file.rpy:63
     old "{#month_short}Sep"
@@ -238,11 +238,11 @@
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "Contacting App Store\nPlease Wait..."
+    new "Contacting App Store\nTunggu sebenatar..."
 
     # 00updater.rpy:367
     old "The Ren'Py Updater is not supported on mobile devices."
-    new "Ren'Py Updater tidak di support di perangkat handphone."
+    new "Pembaru Ren'Py tidak di support di perangkat handphone."
 
     # 00updater.rpy:486
     old "An error is being simulated."
@@ -250,39 +250,39 @@
 
     # 00updater.rpy:662
     old "Either this project does not support updating, or the update status file was deleted."
-    new "Antara proyek tidak mendukung update, atau file status update di hapus."
+    new "Antara proyek tidak mendukung pembaharuan, atau status file pembaharuan di hapus."
 
     # 00updater.rpy:676
     old "This account does not have permission to perform an update."
-    new "Akun ini tidak memiliki izin untuk melakukan update."
+    new "Akun ini tidak memiliki izin untuk melakukan pembaharuan."
 
     # 00updater.rpy:679
     old "This account does not have permission to write the update log."
-    new "Akun ini tidak memiliki izin untuk menulis log update."
+    new "Akun ini tidak memiliki izin untuk menulis log pembaharuan."
 
     # 00updater.rpy:704
     old "Could not verify update signature."
-    new "Tidak dapat memverifikasi tandatangan update."
+    new "Tidak dapat memverifikasi tandatangan pembaharuan."
 
     # 00updater.rpy:975
     old "The update file was not downloaded."
-    new "File update tidak di download."
+    new "File pembaharuan tidak di unduh."
 
     # 00updater.rpy:993
     old "The update file does not have the correct digest - it may have been corrupted."
-    new "File update tiidak memiliki digest yang benar  - mungkin file corrupt."
+    new "File pembaharuan tidak memiliki digest yang benar  - mungkin file corrupt/rusak."
 
     # 00updater.rpy:1049
     old "While unpacking {}, unknown type {}."
-    new "Ketika unppack {}, tipe tidak diketahui {}."
+    new "Ketika unpack {}, tipe tidak diketahui {}."
 
     # 00updater.rpy:1393
     old "Updater"
-    new "Updater"
+    new "Pembaru"
 
     # 00updater.rpy:1404
     old "This program is up to date."
-    new "Program ini sudah up to date."
+    new "Program ini sudah up to date(terbaru)."
 
     # 00updater.rpy:1406
     old "[u.version] is available. Do you want to install it?"
@@ -290,27 +290,27 @@
 
     # 00updater.rpy:1408
     old "Preparing to download the updates."
-    new "Bersiap untuk mendownload update."
+    new "Bersiap untuk mengunduh pembaharuan."
 
     # 00updater.rpy:1410
     old "Downloading the updates."
-    new "Mendownload update."
+    new "Mengunduh pembaharuan."
 
     # 00updater.rpy:1412
     old "Unpacking the updates."
-    new "Meng unpack update."
+    new "Mengunpack pembaharuan."
 
     # 00updater.rpy:1416
     old "The updates have been installed. The program will restart."
-    new "Update sudah terpasang. Program akan melakukan restart."
+    new "Pembaharuan telah terpasang. Program akan melakukan restart."
 
     # 00updater.rpy:1418
     old "The updates have been installed."
-    new "Update sudah terpasang."
+    new "Pembaharuan telah terpasang."
 
     # 00updater.rpy:1420
     old "The updates were cancelled."
-    new "Proses update di batalkan."
+    new "Proses pembaharuan di batalkan."
 
     # 00gallery.rpy:563
     old "Image [index] of [count] locked."
@@ -353,23 +353,23 @@ translate indonesian strings:
 
     # 00director.rpy:1471
     old "(attributes)"
-    new "(attributes)"
+    new "(atribut)"
 
     # 00director.rpy:1472
     old "(transform)"
-    new "(tramsform)"
+    new "(tramsformasi)"
 
     # 00director.rpy:1497
     old "(transition)"
-    new "(transition)"
+    new "(transisi)"
 
     # 00director.rpy:1509
     old "(channel)"
-    new "(channel)"
+    new "(kanal)"
 
     # 00director.rpy:1510
     old "(filename)"
-    new "(filename)"
+    new "(namafile)"
 
     # 00director.rpy:1535
     old "Change"
@@ -397,11 +397,11 @@ translate indonesian strings:
 
     # 00director.rpy:1631
     old "Transforms:"
-    new "Transforms:"
+    new "Transformasi:"
 
     # 00director.rpy:1650
     old "Behind:"
-    new "Di Belakang:"
+    new "Dibelakang:"
 
     # 00director.rpy:1669
     old "Transition:"
@@ -409,7 +409,7 @@ translate indonesian strings:
 
     # 00director.rpy:1687
     old "Channel:"
-    new "Channel:"
+    new "Kanal:"
 
     # 00director.rpy:1705
     old "Audio Filename:"
@@ -421,13 +421,12 @@ translate indonesian strings:
 
     # _developer\developer.rpym:67
     old "Show Texture Size"
-    new "Tampilkan Ukuran Textur"
+    new "Tampilkan Ukuran Tekstur"
 
     # _developer\developer.rpym:70
     old "Hide Texture size"
-    new "Sembunyikan Ukuran Textur"
+    new "Sembunyikan Ukuran Tekstur"
 
     # _developer\developer.rpym:569
     old "{size_mb:,.1f} MB in {count} textures."
-    new "{size_mb:,.1f} MB pada {count} textur."
-
+    new "{size_mb:,.1f} MB pada {count} tekstur."
