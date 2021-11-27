@@ -31,23 +31,23 @@ translate indonesian strings:
 
     # android.rpy:30
     old "To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher."
-    new "Untuk membuat package Android, silahkan download RAPT, unzip/extrak, dan taruh di direktori Ren,Py. Dan restart launcher Ren'Py."
+    new "Untuk membangun(package) ke versi Android, silahkan unduh RAPT, unzip/ekstrak, dan taruh di direktori Ren,Py. Dan muat ulang launcher Ren'Py."
 
     # android.rpy:31
     old "An x86 Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Java Development Kit 32-bit di perlukan untuk membuat package Android di Windows, JDK itu berbeda dari JRE, jadi sangat mungkin kamu memiliki java tanpa JDK\n\nTolong {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}Download dan install JDK{/a}, lalu restart launcher Ren'Py "
+    new "x86 Java Development Kit diperlukan untuk membangun(package) ke versi Android di Windows, JDK berbeda dengan JRE, jadi sangat mungkin kamu memiliki java tanpa JDK\n\nTolong {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}Unduh dan pasang JDK{/a}, lalu muat ulang launcher Ren'Py "
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT sudah terinstall, tapi kamu harus menginstall Android SDK sebelum kamu dapat membuat package Android. Untuk Melakukan Ini Pilih Install SDK"
+    new "RAPT sudah terpasang, tapi kamu harus memasang Android SDK sebelum kamu dapat membangun package Android. Untuk Melakukan Ini Pilih Install SDK"
 
     # android.rpy:33
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
-    new "RAPT sudah terinstall, tapi kunci/key belum di configurasi. Silahkan buat kunci/key baru, atau restore android.keystore"
+    new "RAPT sudah terpasang, tapi kunci/key belum di konfigurasi. Silahkan buat kunci/key baru, atau restore android.keystore"
 
     # android.rpy:34
     old "The current project has not been configured. Use \"Configure\" to configure it before building."
-    new "Projek ini belum di configurasi. Gunakan \"Konfigurasi\" untuk mengkonfigurasi sebelum membuat build."
+    new "Projek ini belum dikonfigurasi. Gunakan \"Konfigurasi\" untuk mengkonfigurasi sebelum membuat build."
 
     # android.rpy:35
     old "Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device."
@@ -55,7 +55,7 @@ translate indonesian strings:
 
     # android.rpy:37
     old "Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Mencoba untuk mengemulasi perangkat Android.\n\nInput sentuhan di emulasikan melalui mouse, tapi hanya ketika tombol di tahan. Escape di mapped ke tombol menu, dan PageUp di mapped ke tombol back."
+    new "Uji coba pada perangkat Android.\n\nInput sentuhan di emulasikan melalui mouse, tapi hanya ketika tombol ditahan. Escape di mapped ke tombol menu, dan PageUp di mapped ke tombol back."
 
     # android.rpy:38
     old "Attempts to emulate an Android tablet.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button."
@@ -67,7 +67,7 @@ translate indonesian strings:
 
     # android.rpy:41
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
-    new "Download dan pasang Android SDK dan paket pendukung. Opsional, mengenerate key/kunci yang di butuhkan untuk menandatangani paket."
+    new "Unduh dan pasang Android SDK dan paket pendukung. Opsional, mengenerate key/kunci yang dibutuhkan untuk menandatangani paket."
 
     # android.rpy:42
     old "Configures the package name, version, and other information about this project."
@@ -167,7 +167,7 @@ translate indonesian strings:
 
     # android.rpy:437
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
-    new "Sebelum mempackage aplikasi Android, kamu harus mendownload RAPT, Ren'Py Android Packaging Tool. Maukah kamu mendownload RAPT sekarang?"
+    new "Sebelum membangun(package) ke aplikasi Android, kamu harus mengunduh RAPT, Ren'Py Android Packaging Tool. unduh RAPT sekarang?"
 
     # android.rpy:496
     old "Remote ADB Address"
@@ -239,7 +239,7 @@ translate indonesian strings:
 
     # distribute.rpy:459
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
-    new "Membangun distribusi gagal:\n\nVariabel build.directory_name mungkin tidak menginclude spasi ,tanda kutip ,atau titik koma."
+    new "Membangun distribusi gagal:\n\nVariabel build.directory_name mungkin tidak memasukan(include) spasi ,tanda kutip ,atau titik koma."
 
     # distribute.rpy:504
     old "No packages are selected, so there's nothing to do."
@@ -247,7 +247,7 @@ translate indonesian strings:
 
     # distribute.rpy:516
     old "Scanning Ren'Py files..."
-    new "Scanning file Ren'Py..."
+    new "Memindai file Ren'Py..."
 
     # distribute.rpy:569
     old "All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."
@@ -507,7 +507,7 @@ translate indonesian strings:
 
     # front_page.rpy:256
     old "Extract Dialogue"
-    new "Extrak Dialog"
+    new "Ekstrak Dialog"
 
     # front_page.rpy:272
     old "Checking script for potential problems..."
@@ -719,7 +719,7 @@ translate indonesian strings:
 
     # ios.rpy:345
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
-    new "Sebelum mem package aplikasi iOS, Kamu harus mendownload renios, Ren'Py iOS support. Maukah kamu mendownload renios sekarang?"
+    new "Sebelum membangun ke aplikasi iOS, Kamu harus mengunduh renios, Ren'Py iOS support.unduh renios sekarang?"
 
     # ios.rpy:354
     old "XCODE PROJECTS DIRECTORY"
@@ -883,7 +883,7 @@ translate indonesian strings:
 
     # preferences.rpy:96
     old "Not Set"
-    new "Belum di Set"
+    new "Belum diatur"
 
     # preferences.rpy:111
     old "Text Editor:"
@@ -959,7 +959,7 @@ translate indonesian strings:
 
     # project.rpy:229
     old "Launching the project failed."
-    new "Gagal menjalankan proyek."
+    new "Proyek gagal dijalankan."
 
     # project.rpy:229
     old "Please ensure that your project launches normally before running this command."
@@ -967,7 +967,7 @@ translate indonesian strings:
 
     # project.rpy:242
     old "Ren'Py is scanning the project..."
-    new "Ren'Py sedang menscan proyek..."
+    new "Ren'Py sedang memindai proyek..."
 
     # project.rpy:568
     old "Launching"
@@ -1007,7 +1007,7 @@ translate indonesian strings:
 
     # translations.rpy:168
     old "Extract String Translations"
-    new "Extrak Terjemahan String"
+    new "Ekstrak Terjemahan String"
 
     # translations.rpy:170
     old "Merge String Translations"
@@ -1027,7 +1027,7 @@ translate indonesian strings:
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "Perintah extrak memungkinkan kamu untuk mengextrak terjemahan string dari proyek ke file sementara.\n\nPerintah merge menyatukan terjemahan yang di extrak ke proyek lain."
+    new "Perintah ekstrak memungkinkan kamu untuk mengekstrak string terjemahan dari proyek ke file sementara.\n\nPerintah merge menyatukan terjemahan yang di ekstrak ke proyek lain."
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1111,7 +1111,7 @@ translate indonesian strings:
 
     # updater.rpy:102
     old "Prerelease"
-    new "Prerelease"
+    new "Prarilis"
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1139,11 +1139,11 @@ translate indonesian strings:
 
     # updater.rpy:154
     old "Checking for updates."
-    new "Mencek untuk update."
+    new "Mencek pembaharuan."
 
     # updater.rpy:156
     old "Ren'Py is up to date."
-    new "Renpy sudah up to date."
+    new "Renpy sudah up to date (terbaru)."
 
     # updater.rpy:158
     old "[u.version] is now available. Do you want to install it?"
@@ -1151,15 +1151,15 @@ translate indonesian strings:
 
     # updater.rpy:160
     old "Preparing to download the update."
-    new "Bersiap mendownload update."
+    new "Bersiap mengunduh pembaharuan."
 
     # updater.rpy:162
     old "Downloading the update."
-    new "Mendownload update."
+    new "Pengunduhan pembaharuan."
 
     # updater.rpy:164
     old "Unpacking the update."
-    new "Meng unpack update."
+    new "Meng unpack pembaharuan."
 
     # updater.rpy:166
     old "Finishing up."
@@ -1167,19 +1167,19 @@ translate indonesian strings:
 
     # updater.rpy:168
     old "The update has been installed. Ren'Py will restart."
-    new "Update telah terpasang. Ren'Py akan restart."
+    new "Pembaharuan telah terpasang. Ren'Py akan restart."
 
     # updater.rpy:170
     old "The update has been installed."
-    new "Update telah di pasang."
+    new "Pembaharuan telah di pasang."
 
     # updater.rpy:172
     old "The update was cancelled."
-    new "Update telah di batalkan."
+    new "Pembaharuan telah di batalkan."
 
     # updater.rpy:189
     old "Ren'Py Update"
-    new "Update Ren'Py."
+    new "Perbaharui Ren'Py."
 
     # updater.rpy:195
     old "Proceed"
@@ -1319,3 +1319,7 @@ translate indonesian strings:
     # game/web.rpy:242
     old "Preparing progressive download"
     new "Persiapan unduh"
+
+    # web.rpy:194
+    old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
+    new "Sebelum membangun renpy ke versi web,kamu perlu mengunduh RenpyWeb (Ren'Py's web support),unduh sekarang?"
