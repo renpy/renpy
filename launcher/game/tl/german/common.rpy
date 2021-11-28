@@ -223,7 +223,7 @@ translate german strings:
 
     # 00library.rpy:262
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "Dieses Programm enthält kostenlose Software unter einer Reihe von Lizenzen, einschließlich der MIT License und der GNU Lesser General Public License. Eine vollständige Liste aller Software, inklusive Links zum vollständigen Quellcode, kann {a=https://www.renpy.org/l/license}hier{/a} gefunden werden." 
+    new "Dieses Programm enthält kostenlose Software unter einer Reihe von Lizenzen, einschließlich der MIT License und der GNU Lesser General Public License. Eine vollständige Liste aller Software, inklusive Links zum vollständigen Quellcode, kann {a=https://www.renpy.org/l/license}hier{/a} gefunden werden."
 
     # 00preferences.rpy:422
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
