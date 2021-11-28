@@ -278,6 +278,7 @@ def before_interact(roots):
 
     current = get_focused()
     current = replaced_by.get(id(current), current)
+    old_current = current
 
     # Update the grab.
     grab = replaced_by.get(id(grab), None)
@@ -332,7 +333,11 @@ def before_interact(roots):
         if f is not current:
             renpy.display.screen.push_current_screen(screen)
             try:
-                f.unfocus(default=default)
+                if (f is old_current) and renpy.config.always_unfocus:
+                    f.unfocus(default=False)
+                else:
+                    f.unfocus(default=default)
+
             finally:
                 renpy.display.screen.pop_current_screen()
 

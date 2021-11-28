@@ -10,6 +10,11 @@ Changelog (Ren'Py 7.x-)
 Fixes
 -----
 
+Ren'Py will now always run an `unhovered` action when a displayable (or its 
+replacement) remains shown, and the focus changes. Previously, the unhovered
+action would not run when the loss of focus was caused by showing a second
+screen.
+
 When :var:`config.log` is true, the selected choice is now logged properly.
 
 The new :func:`gui.variant` function makes it possible to work around 
