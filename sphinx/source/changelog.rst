@@ -7,8 +7,64 @@ Changelog (Ren'Py 7.x-)
 7.4.11
 ======
 
+The gui.variant Decorator
+-------------------------
+
+A new gui.variant decorator has been added to Ren'Py. This should be used 
+to decorate a function with the name of a variant, and causes that function
+to be run, if the variant is active, when the game is first started, and then 
+each time the gui is rebuilt (which happens when :func:`gui.rebuild` is called, 
+when a gui preference is changed, or when the translation changes.)
+
+This is expected to be used like::
+
+    init python:
+
+        @gui.variant
+        def small():
+
+            ## Font sizes.
+            gui.text_size = gui.scale(30)
+            gui.name_text_size = gui.scale(36)
+            # ...
+
+as a replacement for::
+
+    init python:
+
+        if renpy.variant("small"):
+            ## Font sizes.
+            gui.text_size = gui.scale(30)
+            gui.name_text_size = gui.scale(36)
+            # ...
+
+Which only runs once, and lost the changes if the gui was ever rebuilt.
+
 Fixes
 -----
+
+When a Live2D motion contains a curve with a shorter duration then the motion
+it is part of, the last value of the curve is retained to the end of the 
+motion.
+
+Rare issues with a displayable being replaced by a displayable of a different
+type are now guarded against. This should only occur when a game is updated
+between saves.
+
+Modal displayables now prevent pauses from ending.
+
+An issue that could cause images to not display in some cases (when a displayable
+was invalidated) has been fixed.
+
+Starting a movie no longer causes paused sounds to unpause. 
+
+AudioData objects are no longer stored in the persistent data. Such objects 
+are removed when persistent data is loaded, if present. 
+
+Platform variables like renpy.android and renpy.ios are now set to follow 
+the emulated platform, when Ren'Py is emulating ios or android.
+
+When in the iOS and Android emulator, the mobile rollback side is used.
 
 Ren'Py will now always run an `unhovered` action when a displayable (or its 
 replacement) remains shown, and the focus changes. Previously, the unhovered
@@ -69,6 +125,11 @@ A new :var:`config.debug_prediction` variable has been split out of
 :var:`config.debug_image_cache`. This controls the logging of 
 prediction errors to the console and log.txt, making the latter 
 variable act as documented.
+
+Translations
+------------
+
+The German, Indonesian, Polish, and Russian translations have been updated.
 
 
 .. _renpy-7.4.10:
