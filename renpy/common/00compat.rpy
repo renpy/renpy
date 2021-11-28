@@ -225,6 +225,9 @@ init -1100 python:
             config.relative_transform_size = False
             config.tts_front_to_back = False
 
+        if version <= (7, 4, 10):
+            config.always_unfocus = False
+
         if version <= (7, 5, 0):
             style.drag.focus_mask = True
 

@@ -1192,6 +1192,10 @@ debug_prediction = False
 # Should mouse events that cause a window to gain focus be passed through.
 mouse_focus_clickthrough = False
 
+# Should the current displayable always run its unfocus handler, even when 
+# focus is taken away by default.
+always_unfocus = True
+
 del os
 del collections
 
