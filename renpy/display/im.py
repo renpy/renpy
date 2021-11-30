@@ -245,7 +245,7 @@ class Cache(object):
         optimize_bounds = renpy.config.optimize_texture_bounds and image.optimize_bounds
 
         if not isinstance(image, ImageBase):
-            raise Exception("Expected an image of some sort, but got" + str(image) + ".")
+            raise Exception("Expected an image of some sort, but got" + repr(image) + ".")
 
         if not image.cache:
             surf = image.load()
@@ -607,9 +607,6 @@ class ImageBase(renpy.display.core.Displayable):
 
         return self.identity == other.identity
 
-    def __repr__(self):
-        return "<" + " ".join([repr(i) for i in self.identity]) + ">"
-
     def load(self):
         """
         This function is called by the image cache code to cause this
@@ -651,11 +648,11 @@ class Image(ImageBase):
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
 
-    def __unicode__(self):
+    def _repr_info(self):
         if len(self.filename) < 20:
-            return u"Image %r" % self.filename
+            return repr(self.filename)
         else:
-            return u"Image \u2026%s" % self.filename[-20:]
+            return repr("\u2026"+self.filename[-20:])
 
     def get_hash(self):
         return renpy.loader.get_hash(self.filename)
@@ -741,8 +738,8 @@ class Data(ImageBase):
         self.data = data
         self.filename = filename
 
-    def __unicode__(self):
-        return u"im.Data(%r)" % self.filename
+    def _repr_info(self):
+        return repr(self.filename)
 
     def load(self):
         f = io.BytesIO(self.data)

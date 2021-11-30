@@ -426,8 +426,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # The lifecycle phase we are in - one of PREDICT, SHOW, UPDATE, or HIDE.
         self.phase = PREDICT
 
-    def __unicode__(self):
-        return "Screen {}".format(" ".join(self.screen_name))
+    def _repr_info(self):
+        return repr(" ".join(self.screen_name))
 
     def visit(self):
         return [ self.child ]

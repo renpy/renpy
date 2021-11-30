@@ -445,14 +445,21 @@ class Displayable(renpy.object.Object):
 
         return True
 
-    def __unicode__(self):
-        return self.__class__.__name__
-
-    def __str__(self):
-        return self.__class__.__name__
+    def _repr_info(self):
+        return None
 
     def __repr__(self):
-        return "<{} at {:x}>".format(str(self), id(self))
+        rep = object.__repr__(self)
+        reprinfo = self._repr_info()
+        if reprinfo is None:
+            return rep
+        if reprinfo and not ((reprinfo[0] == '(') and (reprinfo[-1] == ')')):
+            reprinfo = "".join(("(", reprinfo, ")"))
+        parto = rep.rpartition(" at ")
+        return " ".join((parto[0],
+                         reprinfo,
+                         "at",
+                         parto[2]))
 
     def find_focusable(self, callback, focus_name):
 

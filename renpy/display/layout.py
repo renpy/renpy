@@ -709,9 +709,11 @@ class MultiBox(Container):
 
         return rv
 
-    def __unicode__(self):
-        layout = self.style.box_layout
+    def _classname(self):
+        if type(self) is not MultiBox:
+            return type(self).__name__
 
+        layout = self.style.box_layout
         if layout is None:
             layout = self.default_layout
 
@@ -721,8 +723,14 @@ class MultiBox(Container):
             return "HBox"
         elif layout == "vertical":
             return "VBox"
-        else:
-            return "MultiBox"
+        return "MultiBox"
+
+    def __repr__(self):
+        if type(self) is MultiBox:
+            classname = self._classname()
+
+            return super(MultiBox, self).__repr__().replace("MultiBox", classname)
+        return super(MultiBox, self).__repr__()
 
     def add(self, widget, start_time=None, anim_time=None): # W0221
         super(MultiBox, self).add(widget)

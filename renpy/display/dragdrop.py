@@ -788,9 +788,6 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     _list_type = renpy.python.RevertableList
 
-    def __unicode__(self):
-        return "DragGroup"
-
     def __init__(self, *children, **properties):
         properties.setdefault("style", "fixed")
         properties.setdefault("layout", "fixed")
