@@ -302,7 +302,7 @@ Creates a horizontally-oriented bar that can be used to view or adjust
 data. It takes the following properties:
 
 `value`
-    The current value of the bar. This can be either a :ref:`bar value <input-values>`
+    The current value of the bar. This can be either a :ref:`bar value <bar-values>`
     object, or a number.
 
 `range`
