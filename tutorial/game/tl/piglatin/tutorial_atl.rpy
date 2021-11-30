@@ -83,7 +83,7 @@ translate piglatin tutorial_positions_a423050f:
     # e "Like xpos, ypos can also be an integer. In this case, ypos would give the total number of pixels from the top of the screen."
     e "Ikelay posxay, posyay ancay alsoay ebay anay integeray. Niay histay asecay, posyay ouldway ivegay hetay otaltay umbernay ofay ixelspay omfray hetay optay ofay hetay creensay."
 
-# game/tutorial_atl.rpy:270
+# game/tutorial_atl.rpy:272
 translate piglatin tutorial_positions_bc7a809a:
 
     # e "Can you guess where this position is, relative to the screen?" nointeract
@@ -302,14 +302,14 @@ translate piglatin tutorial_atl_c78b2a1e:
 # game/tutorial_atl.rpy:476
 translate piglatin tutorial_atl_da7a7759:
 
-    # e "Finally, an ATL block can be used as part of a show statement, instead of the at clause."
-    e "Inallyfay, anay Tlaay ockblay ancay ebay useday asay artpay ofay aay owshay atementstay, insteaday ofay hetay atay auseclay."
+    # e "Finally, an ATL block can be used as part of a show statement, instead of the at clause." id tutorial_atl_da7a7759
+    e "Inallyfay, anay Tlaay ockblay ancay ebay useday asay artpay ofay aay owshay atementstay, insteaday ofay hetay atay auseclay." id tutorial_atl_da7a7759
 
 # game/tutorial_atl.rpy:483
-translate piglatin tutorial_atl_da7a7759:
+translate piglatin tutorial_atl_1dd345c6:
 
-    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though your click stopped the motion, the image remains in the same place." id tutorial_atl_da7a7759
-    e "Henway Tlaay isay useday asay artpay ofay aay owshay atementstay, aluesvay ofay ropertiespay existay evenay henway hetay ansformtray isay angedchay. Osay evenay houghtay ouryay ickclay oppedstay hetay otionmay, hetay imageay emainsray inay hetay amesay aceplay." id tutorial_atl_da7a7759
+    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though your click stopped the motion, the image remains in the same place." id tutorial_atl_1dd345c6
+    e "Henway Tlaay isay useday asay artpay ofay aay owshay atementstay, aluesvay ofay ropertiespay existay evenay henway hetay ansformtray isay angedchay. Osay evenay houghtay ouryay ickclay oppedstay hetay otionmay, hetay imageay emainsray inay hetay amesay aceplay." id tutorial_atl_1dd345c6
 
 # game/tutorial_atl.rpy:491
 translate piglatin tutorial_atl_98047789:
