@@ -131,7 +131,7 @@ translate piglatin tutorial_playing_73f3cfec:
     # e "The history button displays a history of read text - but you can also use rollback, which is usually better."
     e "Hetay istoryhay uttonbay isplaysday aay istoryhay ofay eadray exttay - utbay ouyay ancay alsoay useay ollbackray, hichway isay usuallyay etterbay."
 
-# game/tutorial_playing.rpy:69
+# game/tutorial_playing.rpy:71
 translate piglatin tutorial_playing_f065a34c:
 
     # e "Would you like to hear about rollback?" nointeract

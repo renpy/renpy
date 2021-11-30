@@ -409,27 +409,27 @@ translate piglatin strings:
     old "## This increases the size of the quick buttons to make them easier to touch on tablets and phones."
     new "## Histay increasesay hetay izesay ofay hetay uickqay uttonsbay otay akemay hemtay easieray otay ouchtay onay abletstay anday onesphay."
 
-    # gui/game/gui.rpy:423
+    # gui/game/gui.rpy:424
     old "## This changes the size and spacing of various GUI elements to ensure they are easily visible on phones."
     new "## Histay angeschay hetay izesay anday pacingsay ofay ariousvay Uigay elementsay otay ensureay heytay areay easilyay isiblevay onay onesphay."
 
-    # gui/game/gui.rpy:427
+    # gui/game/gui.rpy:429
     old "## Font sizes."
     new "## Ontfay izessay."
 
-    # gui/game/gui.rpy:435
+    # gui/game/gui.rpy:437
     old "## Adjust the location of the textbox."
     new "## Djustaay hetay ocationlay ofay hetay extboxtay."
 
-    # gui/game/gui.rpy:441
+    # gui/game/gui.rpy:443
     old "## Change the size and spacing of various things."
     new "## Hangecay hetay izesay anday pacingsay ofay ariousvay hingstay."
 
-    # gui/game/gui.rpy:455
+    # gui/game/gui.rpy:457
     old "## File button layout."
     new "## Ilefay uttonbay ayoutlay."
 
-    # gui/game/gui.rpy:459
+    # gui/game/gui.rpy:461
     old "## NVL-mode."
     new "## Vlnay-odemay."
 

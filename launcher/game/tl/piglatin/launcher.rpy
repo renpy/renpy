@@ -1585,67 +1585,67 @@ translate piglatin strings:
     old "• This version is installed and up-to-date."
     new "• Histay ersionvay isay installeday anday upay-otay-ateday."
 
-    # game/updater.rpy:130
+    # game/updater.rpy:129
     old "%B %d, %Y"
     new "%Bay %day, %Yay"
 
-    # game/updater.rpy:152
+    # game/updater.rpy:151
     old "An error has occured:"
     new "Naay erroray ashay occureday:"
 
-    # game/updater.rpy:154
+    # game/updater.rpy:153
     old "Checking for updates."
     new "Heckingcay orfay updatesay."
 
-    # game/updater.rpy:156
+    # game/updater.rpy:155
     old "Ren'Py is up to date."
     new "Enray'Ypay isay upay otay ateday."
 
-    # game/updater.rpy:158
+    # game/updater.rpy:157
     old "[u.version] is now available. Do you want to install it?"
     new "[u.version] isay ownay availableay. Oday ouyay antway otay installay itay?"
 
-    # game/updater.rpy:160
+    # game/updater.rpy:159
     old "Preparing to download the update."
     new "Reparingpay otay ownloadday hetay updateay."
 
-    # game/updater.rpy:162
+    # game/updater.rpy:161
     old "Downloading the update."
     new "Ownloadingday hetay updateay."
 
-    # game/updater.rpy:164
+    # game/updater.rpy:163
     old "Unpacking the update."
     new "Npackinguay hetay updateay."
 
-    # game/updater.rpy:166
+    # game/updater.rpy:165
     old "Finishing up."
     new "Inishingfay upay."
 
-    # game/updater.rpy:168
+    # game/updater.rpy:167
     old "The update has been installed. Ren'Py will restart."
     new "Hetay updateay ashay eenbay installeday. Enray'Ypay illway estartray."
 
-    # game/updater.rpy:170
+    # game/updater.rpy:169
     old "The update has been installed."
     new "Hetay updateay ashay eenbay installeday."
 
-    # game/updater.rpy:172
+    # game/updater.rpy:171
     old "The update was cancelled."
     new "Hetay updateay asway ancelledcay."
 
-    # game/updater.rpy:189
+    # game/updater.rpy:188
     old "Ren'Py Update"
     new "Enray'Ypay Pdateuay"
 
-    # game/updater.rpy:195
+    # game/updater.rpy:194
     old "Proceed"
     new "Roceedpay"
 
-    # game/updater.rpy:209
+    # game/updater.rpy:208
     old "Fetching the list of update channels"
     new "Etchingfay hetay istlay ofay updateay annelschay"
 
-    # game/updater.rpy:214
+    # game/updater.rpy:213
     old "downloading the list of update channels"
     new "ownloadingday hetay istlay ofay updateay annelschay"
 
