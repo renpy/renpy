@@ -24,12 +24,6 @@ The new RENPY_PATH_TO_SAVES environment variable makes it possible to control
 where Ren'Py places system-level saves. The RENPY_MULTIPERSISTENT variable has 
 been documented, and controls the same thing with multipersistent data.
 
-The new :var:`config.mouse_focus_clickthrough` variable determines if clicks that
-cause the game window to be focused will be processed normally.
-
-The launcher now runs with :var:`config.mouse_focus_clickthrough` true, which 
-means that it will only take a single click to launch the game.
-
 The :propref:`focus_mask` style property now defaults to None for drag displayables.
 This improves performance, but means that the displayable can be dragged by
 transparent pixels.
@@ -75,6 +69,14 @@ Which only runs once, and lost the changes if the gui was ever rebuilt.
 
 Fixes
 -----
+
+The new :var:`config.mouse_focus_clickthrough` variable determines if clicks that
+cause the game window to be focused will be processed normally.
+
+The launcher now runs with :var:`config.mouse_focus_clickthrough` true, which 
+means that it will only take a single click to launch the game.
+
+The `caret_blink` property of Input is now exposed through screen language.
 
 When a Live2D motion contains a curve with a shorter duration then the motion
 it is part of, the last value of the curve is retained to the end of the 
