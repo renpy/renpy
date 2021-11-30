@@ -28,9 +28,15 @@ This is expected to be used like::
             gui.name_text_size = gui.scale(36)
             # ...
 
+<<<<<<< HEAD
 as a replacement for::
 
     init python:
+=======
+The :propref:`focus_mask` style property now defaults to None for drag displayables.
+This improves performance, but means that the displayable can be dragged by
+transparent pixels.
+>>>>>>> parent of 5c63d9cee... Revert "Enable config.mouse_focus_clickthrough in the launcher."
 
         if renpy.variant("small"):
             ## Font sizes.
