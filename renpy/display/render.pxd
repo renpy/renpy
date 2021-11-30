@@ -60,11 +60,7 @@ cdef class Render:
     cdef public list pass_focuses
     cdef public object focus_screen
 
-    cdef public object draw_func
     cdef public object render_of
-
-    cdef public object opaque
-    cdef public list visible_children
 
     cdef public bint xclipping
     cdef public bint yclipping

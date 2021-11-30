@@ -494,8 +494,6 @@ def render_screen(root, width, height):
 
     invalidated = False
 
-    rv.is_opaque()
-
     return rv
 
 def mark_sweep():
@@ -587,7 +585,7 @@ FLATTEN = 4
 
 cdef class Render:
 
-    def __init__(Render self, float width, float height, draw_func=None, layer_name=None, bint opaque=False): #@DuplicatedSignature
+    def __init__(Render self, float width, float height, layer_name=None): #@DuplicatedSignature
         """
         Creates a new render corresponding to the given widget with
         the specified width and height.
@@ -648,20 +646,6 @@ cdef class Render:
 
         # The displayable(s) that this is a render of. (Set by render)
         self.render_of = [ ]
-
-        # If set, this is a function that's called to draw this render
-        # instead of the default.
-        self.draw_func = draw_func
-
-        # Is this displayable opaque? (May be set on init, or later on
-        # if we have opaque children.) This may be True, False, or None
-        # to indicate we don't know yet.
-        self.opaque = opaque
-
-        # A list of our visible children. (That is, children above and
-        # including our uppermost opaque child.) If nothing is opaque,
-        # includes all children.
-        self.visible_children = self.children
 
         # Should children be clipped to a rectangle?
         self.xclipping = False
@@ -1142,9 +1126,6 @@ cdef class Render:
             del self.render_of[:]
             del self.children[:]
 
-        self.opaque = None
-        self.visible_children = self.children
-
         self.focuses = None
         self.pass_focuses = None
 
@@ -1397,41 +1378,6 @@ cdef class Render:
         return rv
 
 
-    def is_opaque(self):
-        """
-        Returns true if this displayable is opaque, or False otherwise.
-        Also sets self.visible_children.
-        """
-
-        if self.opaque is not None:
-            return self.opaque
-
-        # A rotated image is never opaque. (This isn't actually true, but it
-        # saves us from the expensive calculations require to prove it is.)
-        if self.forward:
-            self.opaque = False
-            return False
-
-        rv = False
-        vc = [ ]
-
-        for i in self.children:
-            child, xo, yo, focus, main = i
-
-            if xo <= 0 and yo <= 0:
-                cw, ch = child.get_size()
-                if cw + xo < self.width or ch + yo < self.height:
-                    if child.is_opaque():
-                        vc = [ ]
-                        rv = True
-
-            vc.append(i)
-
-        self.visible_children = vc
-        self.opaque = rv
-        return rv
-
-
     def is_pixel_opaque(self, x, y):
         """
         Determine if the pixel at x and y is opaque or not.
@@ -1439,9 +1385,6 @@ cdef class Render:
 
         if x < 0 or y < 0 or x >= self.width or y >= self.height:
             return False
-
-        if self.is_opaque():
-            return True
 
         return renpy.display.draw.is_pixel_opaque(self, x, y)
 

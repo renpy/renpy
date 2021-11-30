@@ -370,7 +370,7 @@ class Dissolve(Transition):
         width = min(top.width, bottom.width)
         height = min(top.height, bottom.height)
 
-        rv = renpy.display.render.Render(width, height, opaque=not (self.alpha or renpy.config.dissolve_force_alpha))
+        rv = renpy.display.render.Render(width, height)
 
         rv.operation = renpy.display.render.DISSOLVE
         rv.operation_alpha = self.alpha or renpy.config.dissolve_force_alpha
@@ -533,7 +533,7 @@ class ImageDissolve(Transition):
         width = min(bottom.width, top.width, image.width)
         height = min(bottom.height, top.height, image.height)
 
-        rv = renpy.display.render.Render(width, height, opaque=not (self.alpha or renpy.config.dissolve_force_alpha))
+        rv = renpy.display.render.Render(width, height)
 
         complete = st / self.delay
 
@@ -651,7 +651,7 @@ class AlphaDissolve(Transition):
 
         control = render(self.control, width, height, st, at)
 
-        rv = renpy.display.render.Render(width, height, opaque=not self.alpha)
+        rv = renpy.display.render.Render(width, height)
 
         rv.operation = renpy.display.render.IMAGEDISSOLVE
         rv.operation_alpha = self.alpha or renpy.config.dissolve_force_alpha

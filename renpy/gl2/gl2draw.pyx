@@ -807,9 +807,6 @@ cdef class GL2Draw:
         if surf is None:
             return
 
-        # Compute visible_children.
-        surf.is_opaque()
-
         # Load all the textures and RTTs.
         self.load_all_textures(surf)
 
@@ -929,9 +926,6 @@ cdef class GL2Draw:
             return 0
 
         what = what.subsurface((x, y, 1, 1))
-
-        # Compute visible_children.
-        what.is_opaque()
 
         # Load all the textures and RTTs.
         self.load_all_textures(what)
@@ -1294,7 +1288,7 @@ cdef class GL2DrawingContext:
 
             properties["has_depth"] = True
 
-        children = r.visible_children
+        children = r.children
 
         if r.cached_model is not None:
             children = [ (r.cached_model, 0, 0, False, False) ]
