@@ -281,8 +281,9 @@ class Restructurer(object):
 
         # Take id clause from the block if the last statement is Say statement
         id_identifier = None
-        if isinstance(block[-1], renpy.ast.Say):
-            id_identifier = getattr(block[-1], "identifier", None)
+        for i in block:
+            if isinstance(i, renpy.ast.Say):
+                id_identifier = getattr(i, "identifier", id_identifier)
 
         if self.alternate is not None:
             alternate = self.unique_identifier(self.alternate, digest)
