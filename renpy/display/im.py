@@ -413,8 +413,10 @@ class Cache(object):
                 to_flush.append(ce)
 
         for ce in to_flush:
-            renpy.exports.redraw(ce.what, 0)
             self.kill(ce)
+
+        if to_flush:
+            renpy.display.render.free_memory()
 
     def preload_texture(self, im):
         """
