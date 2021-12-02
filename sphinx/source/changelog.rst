@@ -363,7 +363,7 @@ An issue that caused analysis files to grow unconstrained, slowing down
 Ren'Py startup, has been fixed. The analysis file will be reduced in size
 when the game scripts are recompiled.
 
-The :propref:`hover_sound` and :properef:`activate_sound` properties now
+The :propref:`hover_sound` and :propref:`activate_sound` properties now
 apply to bars.
 
 When dispatching events in ATL, if an event with a ``selected_`` prefix is not
