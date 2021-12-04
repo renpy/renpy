@@ -17,7 +17,10 @@ variant will be selected.
 Features
 --------
 
-The location and size of the viewport is made available to shaders as 
+The new :tpref:`clip` transform property makes it easy to clip a transform 
+down to a specified size.
+
+The location and size of the OpenGL viewport is made available to shaders as 
 u_viewport.
 
 The new RENPY_PATH_TO_SAVES environment variable makes it possible to control
