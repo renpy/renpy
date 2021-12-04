@@ -23,6 +23,7 @@ saves
 tmp
 cache
 env
+.idea
 
 log.txt
 errors.txt
@@ -111,3 +112,4 @@ renios3
 notarized
 
 CubismSdkForNative-4-*.zip
+
