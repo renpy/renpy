@@ -58,7 +58,7 @@
 
     # 00gltest.rpy:164
     old "Update DirectX"
-    new "Update DirectX"
+    new "Perbaharui DirectX"
 
     # 00gltest.rpy:170
     old "Continue, Show this warning again"
@@ -70,7 +70,7 @@
 
     # 00gltest.rpy:192
     old "Updating DirectX."
-    new "Mengupdate DirectX."
+    new "Memperbaharui DirectX."
 
     # 00gltest.rpy:196
     old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
@@ -86,7 +86,7 @@
 
     # 00gltest.rpy:206
     old "Restart"
-    new "Restart"
+    new "Muat Ulang"
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
@@ -130,7 +130,7 @@
 
     # _errorhandling.rpym:519
     old "An exception has occurred."
-    new "Kesalahan telah terjadi."
+    new "Terjadi Kesalahan."
 
     # _errorhandling.rpym:538
     old "Rollback"
