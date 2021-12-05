@@ -31,6 +31,11 @@ The :propref:`focus_mask` style property now defaults to None for drag displayab
 This improves performance, but means that the displayable can be dragged by
 transparent pixels.
 
+Changes
+-------
+
+Playing or stopping music on a channel now unpauses that channel.
+
 .. _renpy-7.4.11:
 
 

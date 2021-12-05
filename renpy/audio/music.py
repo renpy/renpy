@@ -196,6 +196,8 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
     if renpy.config.skipping == "fast":
         stop(channel)
 
+    set_pause(False, channel=channel)
+
     with renpy.audio.audio.lock:
 
         try:
@@ -236,7 +238,7 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         except:
             if renpy.config.debug_sound:
                 raise
-
+    
 
 def playable(filename, channel="music"):
     """
@@ -276,6 +278,9 @@ def stop(channel="music", fadeout=None):
     if renpy.game.context().init_phase:
         return
 
+    if get_pause(channel=channel):
+        fadeout = None
+
     with renpy.audio.audio.lock:
 
         try:
@@ -296,6 +301,8 @@ def stop(channel="music", fadeout=None):
         except:
             if renpy.config.debug_sound:
                 raise
+
+    set_pause(False, channel=channel)
 
 
 def set_music(channel, flag, default=False):
