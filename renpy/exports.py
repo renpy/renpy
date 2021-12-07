@@ -3463,7 +3463,7 @@ def fsdecode(s):
     Converts s from filesystem encoding to unicode.
     """
 
-    if not isinstance(s, pystr):
+    if isinstance(s, str):
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"
