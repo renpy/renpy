@@ -395,7 +395,7 @@ cdef class GL2Draw:
         renpy.display.log.write("Display Info: %s", self.display_info)
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
-        extensions = set(extensions_string.split(" "))
+        extensions = set(extensions_string.decode("utf-8").split(" "))
 
         if renpy.config.log_gl_extensions:
 
