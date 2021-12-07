@@ -3436,7 +3436,7 @@ def reset_physical_size():
 
 
 @renpy_pure
-def fsencode(s):
+def fsencode(s, force=False):
     """
     :doc: file_rare
     :name: renpy.fsencode
@@ -3444,7 +3444,7 @@ def fsencode(s):
     Converts s from unicode to the filesystem encoding.
     """
 
-    if not PY2:
+    if (not PY2) and (not force):
         return s
 
     if not isinstance(s, str):
@@ -3462,9 +3462,6 @@ def fsdecode(s):
 
     Converts s from filesystem encoding to unicode.
     """
-
-    if not PY2:
-        return s
 
     if not isinstance(s, pystr):
         return s

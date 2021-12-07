@@ -471,7 +471,7 @@ class _MultiPersistent(object):
 
 def MultiPersistent(name, save_on_quit=False):
 
-    name = renpy.exports.fsencode(name)
+    name = renpy.exports.fsencode(name, force=True)
 
     if not renpy.game.context().init_phase:
         raise Exception("MultiPersistent objects must be created during the init phase.")
@@ -495,7 +495,7 @@ def MultiPersistent(name, save_on_quit=False):
         files = [ os.path.expanduser(b"~/.renpy/persistent") ]
 
     if "RENPY_MULTIPERSISTENT" in os.environ:
-        files = [ os.environ["RENPY_MULTIPERSISTENT"] ]
+        files = [ os.environ[b"RENPY_MULTIPERSISTENT"] ]
 
     # Make the new persistent directory, why not?
     try:
