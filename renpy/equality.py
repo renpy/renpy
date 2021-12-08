@@ -39,7 +39,7 @@ class DictEquality(RevertableObject):
             if self is o:
                 return True
 
-            if _type(self) is _type(o):
+            if type(self) is type(o):
                 return (self.__dict__ == o.__dict__)
 
             return False
@@ -70,7 +70,7 @@ class FieldEquality(RevertableObject):
             if self is o:
                 return True
 
-            if _type(self) is not _type(o):
+            if type(self) is not type(o):
                 return False
 
             for k in self.equality_fields:
