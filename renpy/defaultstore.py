@@ -239,6 +239,8 @@ Style = renpy.style.Style # @UndefinedVariable
 
 NoRollback = renpy.python.NoRollback
 
+from renpy.equality import DictEquality
+from renpy.equality import FieldEquality
 
 class _layout_class(__builtins__["object"]):
     """
