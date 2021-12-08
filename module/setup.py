@@ -44,7 +44,6 @@ except:
 import generate_styles
 generate_styles.generate()
 
-
 # If RENPY_CC or RENPY_LD are in the environment, and CC or LD are not, use them.
 def setup_env(name):
     renpy_name = "RENPY_" + name
@@ -57,7 +56,7 @@ setup_env("LD")
 setup_env("CXX")
 
 import setuplib
-from setuplib import android, ios, emscripten, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen
+from setuplib import android, ios, emscripten, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen, generate_all_cython
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -221,6 +220,7 @@ cython(
     [ "ftsupport.c", "ttgsubtable.c" ],
     libs=sdl + [ 'freetype', 'z', 'm' ])
 
+generate_all_cython()
 find_unnecessary_gen()
 
 # Figure out the version, and call setup.
