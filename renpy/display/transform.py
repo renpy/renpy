@@ -32,6 +32,7 @@ from renpy.display.layout import Container
 
 from renpy.display.accelerator import transform_render
 from renpy.atl import position, any_object, bool_or_none, float_or_none, matrix, mesh
+from renpy.equality import DictEquality
 
 # The null object that's used if we don't have a defined child.
 null = None
@@ -93,7 +94,7 @@ def first_not_none(*args):
     return i
 
 
-class TransformState(renpy.object.Object):
+class TransformState(renpy.object.Object, DictEquality):
 
     last_angle = None
 
@@ -358,7 +359,7 @@ class Proxy(object):
         return setattr(instance.state, self.name, value)
 
 
-class Transform(Container):
+class Transform(Container, DictEquality):
     """
     Documented in sphinx, because we can't scan this object.
     """
