@@ -23,11 +23,11 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import *
 
 from renpy import config
+from renpy.python import RevertableObject
 
-# Should we debug the equality operations ?
 config.debug_equality = False
 
-class DictEquality(object):
+class DictEquality(RevertableObject):
     """
     Declares two objects equal if their types are the same, and
     their internal dictionaries are equal.
@@ -53,7 +53,7 @@ class DictEquality(object):
     def __ne__(self, o):
         return not (self == o)
 
-class FieldEquality(object):
+class FieldEquality(RevertableObject):
     """
     Declares two objects equal if their types are the same, and
     the listed fields are equal.
