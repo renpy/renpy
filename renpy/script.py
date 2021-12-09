@@ -638,7 +638,7 @@ class Script(object):
                         self.write_rpyc_data(f, 1, pickle_data_before_static_transforms)
                         self.write_rpyc_data(f, 2, pickle_data_after_static_transforms)
 
-                        with open(fullfn, "rU") as fullf:
+                        with open(fullfn, "rb") as fullf:
                             rpydigest = hashlib.md5(fullf.read()).digest()
 
                         self.write_rpyc_md5(f, rpydigest)
@@ -719,8 +719,8 @@ class Script(object):
             renpy.loader.add_auto(rpyfn)
 
             if os.path.exists(rpyfn):
-                with open(rpyfn, "rU", encoding="utf-8") as f:
-                    rpydigest = hashlib.md5(f.read().encode("utf-8")).digest()
+                with open(rpyfn, "rb") as f:
+                    rpydigest = hashlib.md5(f.read()).digest()
             else:
                 rpydigest = None
 
