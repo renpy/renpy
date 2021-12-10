@@ -916,14 +916,6 @@ characters per block. """.format(
 
         lines.append(s)
 
-        if language is None:
-            sl = ["Character stats for default language :"]
-
-            for cha, coun in charastats.items():
-                sl.append("    {0} : {1}".format(cha, humanize(coun)))
-
-            lines.extend(sl)
-
     print("")
     print("")
     print("Statistics:")
@@ -937,9 +929,17 @@ characters per block. """.format(
     lines.append("The game contains {0} menus, {1} images, and {2} screens.".format(
         humanize(menu_count), humanize(image_count), humanize(screen_count)))
 
+    sl = ["Character stats for default language :"]
+    for cha, coun in sorted(charastats.items(), key=lambda a:-a[1]):
+        sl.append("    {0} : {1}".format(cha, humanize(coun)))
+    lines.append(sl)
+
     for l in lines:
-        for ll in textwrap.wrap(l, 78):
-            print(ll)
+        if not isinstance(l, (tuple, list)):
+            l = (l,)
+        for ll in l:
+            for lll in textwrap.wrap(ll, 78):
+                print(lll)
 
         print("")
 
