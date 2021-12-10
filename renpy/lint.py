@@ -797,7 +797,6 @@ def lint():
     # The current count.
     counts = collections.defaultdict(Count)
 
-    # set of all characters in the game
     charastats = collections.defaultdict(int)
 
     # The current language.
