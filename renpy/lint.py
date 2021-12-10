@@ -797,6 +797,9 @@ def lint():
     # The current count.
     counts = collections.defaultdict(Count)
 
+    # set of all characters in the game
+    charastats = collections.defaultdict(int)
+
     # The current language.
     language = None
 
@@ -837,6 +840,8 @@ def lint():
             check_say(node)
 
             counts[language].add(node.what)
+            if language is None:
+                charastats[node.who] += 1
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -910,6 +915,14 @@ characters per block. """.format(
             1.0 * count.characters / count.blocks)
 
         lines.append(s)
+
+        if language is None:
+            sl = ["Character stats for default language :"]
+
+            for cha, coun in charastats.items():
+                sl.append("    {0} : {1}".format(cha, humanize(coun)))
+
+            lines.extend(sl)
 
     print("")
     print("")
