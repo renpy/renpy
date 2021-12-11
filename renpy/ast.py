@@ -2324,11 +2324,11 @@ class Default(Node):
                 raise Exception("{}.{} is being given a default a second time.".format(self.store, self.varname))
             return
 
-        fullname = '.'.join((self.store, self.varname))
-        if fullname in renpy.python.store_dicts.keys():
-            if start and (renpy.config.developer is True):
+        # do the variable shadowing if not in this case, for compatibility reasons
+        if start and (renpy.config.developer is True):
+            fullname = '.'.join((self.store, self.varname))
+            if fullname in renpy.python.store_dicts.keys():
                 raise Exception("The {} default variable is shadowing a store with the same name".format(fullname))
-            return
 
         if start or (self.varname not in d.ever_been_changed):
             d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
