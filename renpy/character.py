@@ -689,7 +689,7 @@ def display_say(
         c("end", interact=interact, type=type, **cb_args)
 
     if exception is not None:
-        raise
+        raise exception
 
 
 class HistoryEntry(renpy.object.Object):
