@@ -133,7 +133,8 @@ is equivalent to::
         e = Character("Eileen")
 
 The define statement can take an optional named store (see below), by
-prepending it to the variable name with a dot. For example::
+prepending it to the variable name with a dot. The store is created
+if it doesn't already exist. For example::
 
     define character.e = Character("Eileen")
 
@@ -181,7 +182,8 @@ When the variable ``points`` is not defined at game load, it's equivalent to::
         $ points = 0
 
 The default statement can take an optional named store (see below), by
-prepending it to the variable name with a dot. For example::
+prepending it to the variable name with a dot. The store is created
+if it doesn't already exist. For example::
 
     default schedule.day = 0
 
@@ -257,6 +259,8 @@ Named stores can be accessed by supplying the ``in`` clause to
 store. Each store corresponds to a Python module. The default store is
 ``store``, while a named store is accessed as ``store.name``. Names in
 the modules can be imported using the Python ``from`` statement.
+Named stores can be created using ``init python in`` blocks, or using
+default or define statements.
 
 For example::
 
@@ -275,8 +279,7 @@ For example::
 
 
 Named stores participate in save, load, and rollback in the same way
-that the default store does. The defined statement can be used to
-define names in a named store.
+that the default store does.
 
 
 .. _python-modules:
