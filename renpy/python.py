@@ -988,6 +988,8 @@ class RevertableList(list):
     if PY2:
         __getslice__ = wrapper(list.__getslice__)
 
+    del wrapper
+
     def __getitem__(self, index):
         rv = list.__getitem__(self, index)
 
