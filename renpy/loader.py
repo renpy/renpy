@@ -236,19 +236,16 @@ def index_archives():
             with f:
                 file_header = f.read(max_header_length)
                 for handler in archive_handlers:
-                    try:
-                        archive_handled = False
-                        for header in handler.get_supported_headers():
-                            if file_header.startswith(header):
-                                f.seek(0, 0)
-                                index = handler.read_index(f)
-                                archives.append((prefix + ext, index))
-                                archive_handled = True
-                                break
-                        if archive_handled == True:
+                    archive_handled = False
+                    for header in handler.get_supported_headers():
+                        if file_header.startswith(header):
+                            f.seek(0, 0)
+                            index = handler.read_index(f)
+                            archives.append((prefix + ext, index))
+                            archive_handled = True
                             break
-                    except:
-                        raise
+                    if archive_handled == True:
+                        break
 
     for dir, fn in listdirfiles(): # @ReservedAssignment
         lower_map[unicodedata.normalize('NFC', fn.lower())] = fn
@@ -569,9 +566,7 @@ class SubFile(object):
         if self.f is None:
             self.open()
 
-        if whence == 0:
-            offset = offset
-        elif whence == 1:
+        if whence == 1:
             offset = self.offset + offset
         elif whence == 2:
             offset = self.length + offset
