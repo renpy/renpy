@@ -185,9 +185,6 @@ translate japanese strings:
     old "long: Print the full representation of objects on the console."
     new "long: コンソール上のオブジェクトを全て表現する"
 
-
-translate japanese strings:
-
     # renpy/common/00console.rpy:814
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
     new "watch <expression>: python式をウォッチ\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
