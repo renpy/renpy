@@ -29,7 +29,6 @@ import renpy
 
 import hashlib
 import os
-import imp
 import difflib
 import time
 import marshal
@@ -46,7 +45,11 @@ script_version = renpy.script_version
 BYTECODE_VERSION = 1
 
 # The python magic code.
-MAGIC = imp.get_magic()
+if PY2:
+    import imp
+    MAGIC = imp.get_magic()
+else:
+    from importlib.util import MAGIC_NUMBER as MAGIC
 
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
@@ -762,8 +765,6 @@ class Script(object):
                     if "RENPY_RPYC_EXCEPTIONS" in os.environ:
                         print("While loading", rpycfn)
                         raise
-
-                    pass
 
                 if data is None:
                     data, stmts = self.load_file(dir, fn + source)
