@@ -1433,12 +1433,10 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         elif map_event(ev, "input_jump_word_left"):
             if self.caret_pos > 0:
                 space_pos = 0
-                prev_end = 0
                 for item in re.finditer(r"\s+", self.content[:self.caret_pos]):
                     start, end = item.span()
                     if end != self.caret_pos:
                         space_pos = end
-                    prev_end = end
                 self.caret_pos = space_pos
                 self.update_text(self.content, self.editable)
 
