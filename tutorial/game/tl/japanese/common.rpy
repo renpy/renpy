@@ -1129,9 +1129,6 @@ translate japanese strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "クリップボードに errors.txt を Discord に適した Markdown 形式でコピーする。"
 
-
-translate japanese strings:
-
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing Volume Drop"
     new "自己発話音量"
@@ -1175,3 +1172,32 @@ translate japanese strings:
     # renpy/common/00gltest.rpy:273
     old "Change render options"
     new "レンダリング設定を変更"
+
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "ハイコントラストテキスト"
+
+    # renpy/common/00preferences.rpy:478
+    old "system cursor"
+    new "システムカーソル"
+
+    # renpy/common/00preferences.rpy:487
+    old "renderer menu"
+    new "レンダーメニュー"
+
+    # renpy/common/00preferences.rpy:490
+    old "accessibility menu"
+    new "アクセス性メニュー"
+
+    # renpy/common/00preferences.rpy:493
+    old "high contrast text"
+    new "ハイコントラストテキスト"
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "{a=edit:1:log.txt}log.txt{/a} ファイルにある情報は何があなたのコンピュータで問題になっているか探る手助けになるでしょう"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "'[control!s]' [kind] を押すか動かしてください"
+
