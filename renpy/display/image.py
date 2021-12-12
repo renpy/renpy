@@ -979,24 +979,22 @@ class ShownImageInfo(renpy.object.Object):
                     num_required += 1
                     continue
 
-            else:
+            # We don't have any not-found attributes. But we might not
+            # have all of the attributes.
 
-                # We don't have any not-found attributes. But we might not
-                # have all of the attributes.
+            if num_required != len(required):
+                continue
 
-                if num_required != len(required):
-                    continue
+            len_attrs = len(set(attrs))
 
-                len_attrs = len(set(attrs))
+            if len_attrs < max_len:
+                continue
 
-                if len_attrs < max_len:
-                    continue
+            if len_attrs > max_len:
+                max_len = len_attrs
+                matches = [ ]
 
-                if len_attrs > max_len:
-                    max_len = len_attrs
-                    matches = [ ]
-
-                matches.append((tag,) + attrs)
+            matches.append((tag,) + attrs)
 
         if matches is None:
             return None
