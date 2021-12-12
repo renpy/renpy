@@ -360,8 +360,6 @@ class NoRollback(object):
     only participate in rollback if they are reachable through other paths.
     """
 
-    pass
-
 # parents = [ ]
 
 
@@ -714,7 +712,7 @@ def quote_eval(s):
             i += 1
             continue
 
-        raise Exception("Unknown character %r (can't happen)".format(c))
+        raise Exception("Unknown character {} (can't happen)".format(c))
 
     # Since the last 2 characters are \0, those characters need to be stripped.
     return "".join(rv[:-2])
