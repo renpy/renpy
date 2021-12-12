@@ -16,6 +16,9 @@
         def get(self, name):
             return getattr(self.nso, name)
 
+        def create_store(self, name):
+            raise Exception("Submodules cannot be created within the {} namespace.".format(self.name))
+
     class _PersistentNamespace(object):
         pure = False
 
@@ -29,6 +32,9 @@
 
         def get(self, name):
             return getattr(persistent, name)
+
+        def create_store(self, name):
+            raise Exception("Submodules cannot be created within the persistent namespace.")
 
     class _ErrorNamespace(object):
         pure = False
@@ -44,6 +50,9 @@
 
         def get(self, name):
             raise Exception("The default and define statements can not be used with the {} namespace.".format(self.name))
+
+        def create_store(self, name):
+            raise Exception("Submodules cannot be created within the {} namespace.".format(self.name))
 
     class _PreferencesNamespace(object):
         pure = False
@@ -79,6 +88,9 @@
         def get(self, name):
             raise Exception("The define statement can not be used with the preferences namespace.")
 
+        def create_store(self, name):
+            raise Exception("Submodules cannot be created within the preferences namespace.")
+
     class _GuiNamespace(object):
         pure = True
 
@@ -91,9 +103,11 @@
         def get(self, name):
             return getattr(gui, name)
 
+        def create_store(self, name):
+            raise Exception("Submodules cannot be created within the gui namespace.")
+
     config.special_namespaces["store.config"] = _ObjectNamespace(config, "config")
     config.special_namespaces["store.persistent"] = _PersistentNamespace()
     config.special_namespaces["store.preferences"] =  _PreferencesNamespace()
     config.special_namespaces["store.gui"] = _GuiNamespace()
     config.special_namespaces["store.renpy"] = _ErrorNamespace("renpy")
-
