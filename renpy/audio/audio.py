@@ -1040,7 +1040,6 @@ def periodic_pass():
     the various channels, which then may play music.
     """
 
-    global pcm_volume
     global old_emphasized
 
     if not pcm_ok:
