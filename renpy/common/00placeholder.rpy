@@ -32,7 +32,7 @@ init -1500 python:
         def after_setstate(self):
             self.child = None
 
-        def __init__(self, base=None, full=False, flip=None, **properties):
+        def __init__(self, base=None, full=False, flip=None, name=None, **properties):
             """
             `base`
                 The type of image to display. This should be one of:
@@ -63,6 +63,11 @@ init -1500 python:
 
             `flip`
                 If true, the sprite is flipped horizontally.
+
+            `name`
+                The name the placeholder will be given. If provided, no other
+                text than this will be displayed on the placeholder. If not,
+                the text will reflect the show instruction used to display it.
             """
 
 
@@ -74,6 +79,8 @@ init -1500 python:
 
             # A list of name components.
             self.name = [ ]
+            if name:
+                self.name.append(name)
 
             # The child of this placeholder, if known.
             self.child = None
@@ -193,7 +200,10 @@ init -1500 python:
             args = args or self._args
 
             rv = Placeholder(self.base, self.full, self.flip)
-            rv.name = list(args.name) + list(args.args)
+            if self.name:
+                rv.name = self.name
+            else:
+                rv.name = list(args.name) + list(args.args)
             rv._duplicatable = False
 
             return rv
