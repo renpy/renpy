@@ -200,10 +200,7 @@ init -1500 python:
             args = args or self._args
 
             rv = Placeholder(self.base, self.full, self.flip)
-            if self.name:
-                rv.name = self.name
-            else:
-                rv.name = list(args.name) + list(args.args)
+            rv.name = self.name or list(args.name) + list(args.args)
             rv._duplicatable = False
 
             return rv
