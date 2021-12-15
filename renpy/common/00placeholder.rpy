@@ -94,7 +94,7 @@ init -1500 python:
             if not self.name:
                 return 'girl'
 
-            tag = self.name[0]
+            tag = self.name[0].partition(' ')[0]
 
             if tag in ( "bg", "cg", "event" ):
                 return "bg"
