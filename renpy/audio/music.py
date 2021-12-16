@@ -251,7 +251,7 @@ def playable(filename, channel="music"):
 
     filename, _, _ = c.split_filename(filename, False)
 
-    return renpy.loader.loadable(c.file_prefix + filename + c.file_suffix)
+    return renpy.loader.loadable(filename)
 
 
 def stop(channel="music", fadeout=None):
