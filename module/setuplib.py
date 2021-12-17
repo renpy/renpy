@@ -311,9 +311,11 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
         cmodule(name, [ c_fn ] + source, libs=libs, includes=includes, define_macros=define_macros, language=language)
 
 lock = threading.Condition()
+cython_failure = False
 
 def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
     import subprocess
+    global cython_failure
 
     if language == "c++":
         lang_args = [ "--cplus" ]
@@ -348,7 +350,8 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
         print(stdout)
 
     if p.returncode:
-        sys.exit(1)
+        cython_failure = True
+        return
 
     # Fix-up source for static loading
     if static:
@@ -396,12 +399,22 @@ def generate_all_cython():
     threads = [ ] 
 
     for args in generate_cython_queue:
-        t = threading.Thread(target=generate_cython, args=args)
-        t.start()
-        threads.append(t)
+
+        if "RENPY_CYTHON_SINGLETHREAD" in os.environ:
+            generate_cython(*args)
+            if cython_failure:
+                sys.exit(1)
+        else:
+            t = threading.Thread(target=generate_cython, args=args)
+            t.start()
+            threads.append(t)
 
     for t in threads:
         t.join()
+
+    if cython_failure:
+        sys.exit(1)
+
 
 def find_unnecessary_gen():
 
