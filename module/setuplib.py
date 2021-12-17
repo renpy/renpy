@@ -337,6 +337,7 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
             "-Iinclude",
             "-I" + gen,
             "-I..",
+            "--3str",
             ] + annotate + lang_args + coverage_args + [
             fn,
             "-o",
