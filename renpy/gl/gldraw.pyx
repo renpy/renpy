@@ -42,8 +42,8 @@ import time
 import math
 
 cimport renpy.display.render as render
-cimport gltexture
-import gltexture
+cimport renpy.gl.gltexture as gltexture
+import renpy.gl.gltexture as gltexture
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE, FLATTEN

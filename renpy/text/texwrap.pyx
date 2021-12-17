@@ -24,7 +24,7 @@
 from __future__ import print_function
 
 import time
-from textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, RUBY_TOP, RUBY_ALT
+from renpy.text.textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, RUBY_TOP, RUBY_ALT
 from libc.stdlib cimport calloc, malloc, free
 
 import collections
