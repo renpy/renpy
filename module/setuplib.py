@@ -346,9 +346,10 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
     stdout, stderr = p.communicate()
 
     with lock:
-        print("")
         print("-", name, "-" * (76 - len(name)))
-        print(stdout)
+        if stdout:
+            print(stdout.decode("utf-8", "surrogateescape"))
+            print("")
 
     if p.returncode:
         cython_failure = True
