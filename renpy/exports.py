@@ -1375,6 +1375,18 @@ def scry_say(who, scry):
         scry.interacts = True
 
 
+def next_who(count=10):
+    scry = renpy.exports.scry()
+
+    while count and scry:
+
+        count -= 1
+        if scry.say:
+            return scry.who
+        scry = scry.next()
+    return None
+
+
 def say(who, what, *args, **kwargs):
     """
     :doc: se_say
