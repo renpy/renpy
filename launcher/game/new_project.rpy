@@ -41,7 +41,7 @@ init python:
         try:
             if (language is None) or os.path.exists(os.path.join(config.renpy_base, "templates", language)):
                 legacy = True
-        except:
+        except Exception:
             pass
 
         if new and legacy:

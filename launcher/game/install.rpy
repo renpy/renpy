@@ -62,7 +62,7 @@ init python:
             if not os.path.exists(os.path.dirname(dstfn)):
                 try:
                     os.makedirs(os.path.dirname(dstfn))
-                except:
+                except Exception:
                     pass
 
             renpy.write_log(fn + " -> " + dstfn)
@@ -73,7 +73,7 @@ init python:
 
             try:
                 os.chmod(dstfn, 0o755)
-            except:
+            except Exception:
                 pass
 
         interface.info(_("Successfully installed [name!t]."), name=name)

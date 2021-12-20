@@ -58,7 +58,7 @@ def path_to_saves(gamedir, save_directory=None):
             open(fn, "r").close()
             os.unlink(fn)
             return True
-        except:
+        except Exception:
             return False
 
     # Android.
@@ -96,7 +96,7 @@ def path_to_saves(gamedir, save_directory=None):
         # url.path seems to change type based on iOS version, for some reason.
         try:
             rv = url.path().UTF8String().decode("utf-8")
-        except:
+        except Exception:
             rv = url.path.UTF8String().decode("utf-8")
 
         print("Saving to", rv)
@@ -154,7 +154,7 @@ def path_to_renpy_base():
 # which helps py2exe et al.
 try:
     import ast; ast
-except:
+except Exception:
     print("Ren'Py requires at least python 2.6.")
     sys.exit(0)
 

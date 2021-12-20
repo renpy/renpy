@@ -294,7 +294,7 @@ init python:
         if changed:
             try:
                 os.unlink(filename + ".bak")
-            except:
+            except Exception:
                 pass
 
             os.rename(filename, filename + ".bak")
@@ -323,7 +323,7 @@ init python:
             if changed:
                 try:
                     os.unlink(filename + ".bak")
-                except:
+                except Exception:
                     pass
 
                 os.rename(filename, filename + ".bak")
@@ -333,7 +333,7 @@ init python:
             try:
                 # just in case
                 os.unlink(filename + ".new")
-            except:
+            except Exception:
                 pass
             pass
 

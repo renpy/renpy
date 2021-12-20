@@ -469,7 +469,7 @@ init 1 python in editor:
         try:
             e = renpy.editor.editor
             return e.has_projects
-        except:
+        except Exception:
             return False
 
 

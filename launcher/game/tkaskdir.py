@@ -55,7 +55,7 @@ try:
 
         return result if result else ''
 
-except:
+except Exception:
 # Python3 and Python2-style imports.
     try:
         from tkinter import Tk

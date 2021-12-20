@@ -1,4 +1,4 @@
-from __future__ import print_function
+except Exception:from __future__ import print_function
 
 import inspect
 import re
@@ -275,7 +275,7 @@ def scan(name, o, prefix=""):
 
             try:
                 args = inspect.getargspec(init)
-            except:
+            except Exception:
                 args = None
 
         elif inspect.isfunction(o):

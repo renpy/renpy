@@ -44,7 +44,7 @@ init python:
 
         try:
             os.makedirs(dn)
-        except:
+        except Exception:
             pass
 
         import urllib2
@@ -69,7 +69,7 @@ init python:
 
         try:
             os.chmod(exe, 0o755)
-        except:
+        except Exception:
             pass
 
         return exe

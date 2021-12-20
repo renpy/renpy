@@ -52,7 +52,7 @@ class ImageGenerator(object):
 
         try:
             os.mkdir(self.prefix, 0o777)
-        except:
+        except Exception:
             pass
 
         self.full_width = self.width / self.scale
@@ -121,7 +121,7 @@ class ImageGenerator(object):
 
         try:
             os.makedirs(dn, 0o777)
-        except:
+        except Exception:
             pass
 
         if os.path.exists(fn):

@@ -37,7 +37,7 @@ init python:
 
                     try:
                         text = renpy.fsdecode(text)
-                    except:
+                    except Exception:
                         text = text.decode("latin-1")
 
                     text = text.strip()
@@ -61,8 +61,5 @@ init python:
                         self.text = text
                         renpy.restart_interaction()
 
-            except:
+            except Exception:
                 pass
-
-
-

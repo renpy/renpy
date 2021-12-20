@@ -2223,7 +2223,7 @@ class PE:
                 rt_version_struct = None
                 try:
                     rt_version_struct = last_entry.directory.entries[0].directory.entries[0].data.struct
-                except:
+                except Exception:
                     # Maybe a malformed directory structure...?
                     # Lets ignore it
                     pass

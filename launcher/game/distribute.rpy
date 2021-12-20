@@ -486,7 +486,7 @@ init python in distribute:
             if not packagedest:
                 try:
                     os.makedirs(self.destination)
-                except:
+                except Exception:
                     pass
 
                 self.load_build_cache()
@@ -1095,7 +1095,7 @@ init python in distribute:
             try:
                 import sys, os
                 isatty = os.isatty(sys.stdin.fileno())
-            except:
+            except Exception:
                 isatty = False
 
             if isatty:

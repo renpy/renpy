@@ -437,7 +437,7 @@ init python in interface:
 
                 try:
                     rv.encode("ascii")
-                except:
+                except Exception:
                     error(_("File and directory names must consist of ASCII characters."), label=None)
                     continue
 

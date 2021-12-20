@@ -208,7 +208,7 @@ class RenpyReporter(coverage.FileReporter):
 
         try:
             stmts = cPickle.loads(data)[1]
-        except:
+        except Exception:
             stmts = [ ]
             print(filename + "c", "failed")
 
