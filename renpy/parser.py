@@ -55,7 +55,7 @@ def get_line_text(filename, lineno):
     try:
         line = linecache.getline(full_filename, lineno) or "\n"
         line = line.decode("utf-8")
-    except:
+    except Exception:
         line = "\n"
 
     return line
@@ -136,13 +136,13 @@ def unicode_filename(fn):
     # Windows.
     try:
         return fn.decode("mbcs")
-    except:
+    except Exception:
         pass
 
     # Mac and (sane) Unix
     try:
         return fn.decode("utf-8")
-    except:
+    except Exception:
         pass
 
     # Insane systems, mojibake.
@@ -2554,7 +2554,7 @@ def translate_strings(init_loc, language, l):
         try:
             bc = compile(s, "<string>", "eval", renpy.python.new_compile_flags, 1)
             return eval(bc, renpy.store.__dict__)
-        except:
+        except Exception:
             ll.error('could not parse string')
 
     while ll.advance():
@@ -2568,7 +2568,7 @@ def translate_strings(init_loc, language, l):
 
             try:
                 old = parse_string(ll.rest())
-            except:
+            except Exception:
                 ll.error("Could not parse string.")
 
         elif ll.keyword('new'):
@@ -2579,7 +2579,7 @@ def translate_strings(init_loc, language, l):
             newloc = ll.get_location()
             try:
                 new = parse_string(ll.rest())
-            except:
+            except Exception:
                 ll.error("Could not parse string.")
 
             block.append(renpy.ast.TranslateString(loc, language, old, new, newloc))
@@ -2997,7 +2997,7 @@ def report_parse_errors():
             try:
                 print("")
                 print(i)
-            except:
+            except Exception:
                 pass
 
         print("", file=f)
@@ -3009,7 +3009,7 @@ def report_parse_errors():
     try:
         if renpy.game.args.command == "run": # @UndefinedVariable
             renpy.exports.launch_editor([ error_fn ], 1, transient=1)
-    except:
+    except Exception:
         pass
 
     return True

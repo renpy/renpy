@@ -35,7 +35,7 @@ init -1500 python:
 
             try:
                 self.alt = action.alt
-            except:
+            except Exception:
                 pass
 
         def __call__(self):
@@ -173,7 +173,7 @@ init -1500 python:
             try:
                 import webbrowser
                 webbrowser.open_new(self.url)
-            except:
+            except Exception:
                 pass
 
     class With(Action, DictEquality):

@@ -134,7 +134,7 @@ def run(restart):
     try:
         renpy.exports.log("--- " + time.ctime())
         renpy.exports.log("")
-    except:
+    except Exception:
         pass
 
     # Note if this is a restart.
@@ -189,7 +189,7 @@ def choose_variants():
             if manufacturer == "Amazon" and model.startswith("AFT"):
                 print("Running on a Fire TV.")
                 renpy.config.variants.insert(0, "firetv")
-        except:
+        except Exception:
             pass
 
         # Are we running on OUYA or Google TV or something similar?
@@ -207,7 +207,7 @@ def choose_variants():
             if PythonSDLActivity.isChromebook():
                 print("Running on ChromeOS.")
                 renpy.config.variants.insert(0, 'chromeos')
-        except:
+        except Exception:
             pass
 
         # Otherwise, a phone or tablet.
@@ -362,7 +362,7 @@ def main():
     # Reset live2d if it exists.
     try:
         renpy.gl2.live2d.reset()
-    except:
+    except Exception:
         pass
 
     # Set up variants.
@@ -673,7 +673,7 @@ def main():
                 # Reset live2d if it exists.
                 try:
                     renpy.gl2.live2d.reset_states()
-                except:
+                except Exception:
                     pass
 
                 # Flush any pending interface work.

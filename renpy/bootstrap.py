@@ -121,7 +121,7 @@ def null_files():
 
         if sys.stdout.fileno() < 0:
             sys.stdout = NullFile()
-    except:
+    except Exception:
         pass
 
 
@@ -270,7 +270,7 @@ def bootstrap(renpy_base):
         import pygame_sdl2
         if not ("pygame" in sys.modules):
             pygame_sdl2.import_as_pygame()
-    except:
+    except Exception:
         print("""\
 Could not import pygame_sdl2. Please ensure that this program has been built
 and unpacked properly. Also, make sure that the directories containing
@@ -290,7 +290,7 @@ You may be using a system install of python. Please run {0}.sh,
     # Ditto for the Ren'Py module.
     try:
         import _renpy; _renpy
-    except:
+    except Exception:
         print("""\
 Could not import _renpy. Please ensure that this program has been built
 and unpacked properly.

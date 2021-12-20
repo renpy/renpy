@@ -76,7 +76,7 @@ def print_garbage(gen):
 
         try:
             suffix = " (" + inspect.getfile(i) + ")"
-        except:
+        except Exception:
             pass
 
         print(" -", prefix + repr(i)[:160] + suffix)
@@ -145,7 +145,7 @@ def cycle_finder(o, name):
 
             try:
                 reduction = o.__reduce_ex__(2)
-            except:
+            except Exception:
                 reduction = [ ]
 
             # Gets an element from the reduction, or o if we don't have
@@ -529,7 +529,7 @@ def find_parents(cls):
                     print("with name", o["__name__"])
                 else:
                     print(repr(o))
-            except:
+            except Exception:
                 print("Bad repr.")
 
             found = False

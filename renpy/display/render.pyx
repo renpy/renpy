@@ -988,7 +988,7 @@ cdef class Render:
                     newchild = child.subsurface(crop)
                     renpy.display.draw.mutated_surface(newchild)
 
-            except:
+            except Exception:
                 raise Exception("Creating subsurface failed. child size = ({}, {}), crop = {!r}".format(childw, childh, crop))
 
 

@@ -181,7 +181,7 @@ init python:
                 s = s[:50] + "\u2026"
 
             return s
-        except:
+        except Exception:
             return _("<repr() failed>")
 
     def __inspect(tree):

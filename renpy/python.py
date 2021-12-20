@@ -399,7 +399,7 @@ def reached(obj, reachable, wait):
         # Treat as fields, indexed by strings.
         for v in vars(obj).values():
             reached(v, reachable, wait)
-    except:
+    except Exception:
         pass
 
     try:
@@ -407,14 +407,14 @@ def reached(obj, reachable, wait):
         if not isinstance(obj, basestring):
             for v in obj.__iter__():
                 reached(v, reachable, wait)
-    except:
+    except Exception:
         pass
 
     try:
         # Treat as dict.
         for v in obj.values():
             reached(v, reachable, wait)
-    except:
+    except Exception:
         pass
 
     # parents.pop()
@@ -800,7 +800,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             try:
                 flags = new_compile_flags
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
-            except:
+            except Exception:
                 flags = old_compile_flags
                 source = escape_unicode(source)
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)

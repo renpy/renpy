@@ -553,7 +553,7 @@ python early hide:
 
         try:
             fn = config.voice_filename_format.format(filename=fn)
-        except:
+        except Exception:
             return
 
         if not renpy.music.playable(fn, 'voice'):

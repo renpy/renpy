@@ -103,7 +103,7 @@ class SystemEditor(Editor):
                 subprocess.call([ "open", filename ])  # @UndefinedVariable
             elif renpy.linux:
                 subprocess.call([ "xdg-open", filename ])  # @UndefinedVariable
-        except:
+        except Exception:
             traceback.print_exc()
 
 
@@ -169,6 +169,6 @@ def launch_editor(filenames, line=1, transient=False):
 
         return True
 
-    except:
+    except Exception:
         traceback.print_exc()
         return False

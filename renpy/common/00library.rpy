@@ -49,7 +49,7 @@ init -1700 python:
 
                 return False
 
-            except:
+            except Exception:
                 if config.debug_equality:
                     raise
 
@@ -88,7 +88,7 @@ init -1700 python:
 
                 return True
 
-            except:
+            except Exception:
 
                 if config.debug_equality:
                     raise
@@ -122,7 +122,7 @@ init -1700 python:
         try:
             who = _last_say_who
             who = renpy.eval_who(who)
-        except:
+        except Exception:
             who = None
 
         if who is None:
@@ -260,7 +260,7 @@ init -1700 python:
         who = Character(who, kind=name_only)
         try:
             who.predict(what)
-        except:
+        except Exception:
             pass
 
     def say(who, what, interact=True, *args, **kwargs):

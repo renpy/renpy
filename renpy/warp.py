@@ -174,7 +174,7 @@ def warp():
             # Execute, if possible.
             try:
                 n.execute()
-            except:
+            except Exception:
                 pass
 
     # Now, return the name of the place where we will warp to. This

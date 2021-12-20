@@ -429,7 +429,7 @@ class SLBlock(SLNode):
 
             try:
                 i.execute(context)
-            except:
+            except Exception:
                 if not context.predicting:
                     raise
 
@@ -968,7 +968,7 @@ class SLDisplayable(SLBlock):
                 else:
                     profile_log.write("    created displayable")
 
-        except:
+        except Exception:
             if not context.predicting:
                 raise
             fail = True
@@ -988,7 +988,7 @@ class SLDisplayable(SLBlock):
             for i in self.children:
                 try:
                     i.execute(ctx)
-                except:
+                except Exception:
                     if not context.predicting:
                         raise
                     fail = True
@@ -1334,7 +1334,7 @@ class SLIf(SLNode):
         for cond, block in self.prepared_entries:
             try:
                 cond_value = (cond is None) or eval(cond, context.globals, context.scope)
-            except:
+            except Exception:
                 cond_value = False
 
             # The taken branch.
@@ -1344,7 +1344,7 @@ class SLIf(SLNode):
                 for i in block.children:
                     try:
                         i.execute(context)
-                    except:
+                    except Exception:
                         pass
 
             else:
@@ -1366,7 +1366,7 @@ class SLIf(SLNode):
             for i in block.children:
                 try:
                     i.execute(ctx)
-                except:
+                except Exception:
                     pass
 
             for i in ctx.children:
@@ -1558,7 +1558,7 @@ class SLFor(SLBlock):
                 value = eval(expr, context.globals, context.scope)
             else:
                 value = self.expression_value
-        except:
+        except Exception:
             if not context.predicting:
                 raise
 
@@ -1592,7 +1592,7 @@ class SLFor(SLBlock):
                 # It can only fail if the unpacking fails, but it can still
                 try:
                     sl_python.execute(ctx)
-                except:
+                except Exception:
                     if not context.predicting:
                         raise
 
@@ -1616,7 +1616,7 @@ class SLFor(SLBlock):
             for i in children_i:
                 try:
                     i.execute(ctx)
-                except:
+                except Exception:
                     if not context.predicting:
                         raise
 
@@ -1891,7 +1891,7 @@ class SLUse(SLNode):
             else:
                 args = [ ]
                 kwargs = { }
-        except:
+        except Exception:
             if not context.predicting:
                 raise
 
@@ -2121,7 +2121,7 @@ class SLCustomUse(SLNode):
                 else:
                     kwargs["style"] = ctx.style_prefix + "_" + style_suffix
 
-        except:
+        except Exception:
             if not context.predicting:
                 raise
 
@@ -2480,7 +2480,7 @@ def load_cache():
             scache.const_analyzed.update(s.const_analyzed)
             scache.not_const_analyzed.update(s.not_const_analyzed)
 
-    except:
+    except Exception:
         pass
 
 
@@ -2497,5 +2497,5 @@ def save_cache():
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
             f.write(renpy.game.script.digest.digest())
             f.write(data)
-    except:
+    except Exception:
         pass

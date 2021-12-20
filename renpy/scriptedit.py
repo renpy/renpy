@@ -370,7 +370,7 @@ def can_add_before(filename, linenumber):
         first_and_last_nodes(nodes)
 
         return True
-    except:
+    except Exception:
         return False
 
 

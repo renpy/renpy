@@ -1221,7 +1221,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
 
         renpy.display.predict.displayable(d)
 
-    except:
+    except Exception:
         if renpy.config.debug_prediction:
             import traceback
 

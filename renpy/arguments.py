@@ -36,7 +36,7 @@ import renpy
 try:
     import site
     site._renpy_argv_emulation() # @UndefinedVariable
-except:
+except Exception:
     pass
 
 # A map from command name to a (function, flag) tuple. The flag is true if the

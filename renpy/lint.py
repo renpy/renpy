@@ -156,7 +156,7 @@ def try_compile(where, expr, additional=None):
 
     try:
         renpy.python.py_compile_eval_bytecode(expr)
-    except:
+    except Exception:
         report("'%s' could not be compiled as a python expression, %s.", expr, where)
         if additional:
             add(additional)
@@ -254,7 +254,7 @@ def image_exists_precise(name):
                 da.args = tuple(i for i in name[1:] if i in rest)
                 da.lint = True
                 d._duplicate(da)
-            except:
+            except Exception:
                 continue
 
         precise_cache.add(name)
@@ -328,7 +328,7 @@ def check_displayable(what, d):
     try:
         if isinstance(d, renpy.display.core.Displayable):
             d.visit_all(lambda a: a.predict_one())
-    except:
+    except Exception:
         pass
 
     for fn in files:
@@ -415,7 +415,7 @@ def check_user(node):
 
     try:
         node.get_next()
-    except:
+    except Exception:
         report("Didn't properly report what the next statement should be.")
 
 
@@ -478,7 +478,7 @@ def check_say(node):
     if node.who:
         try:
             char = renpy.ast.eval_who(node.who)
-        except:
+        except Exception:
             report("Could not evaluate '%s' in the who part of a say statement.", node.who)
             add("Perhaps you forgot to define a character?")
             char = None
@@ -720,7 +720,7 @@ def check_filename_encodings():
         try:
             filename.encode("ascii")
             continue
-        except:
+        except Exception:
             pass
 
         report("%s contains non-ASCII characters in its filename.", filename)

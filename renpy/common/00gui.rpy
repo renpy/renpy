@@ -92,7 +92,7 @@ init -1100 python in gui:
                 gui.text_size = 30
                 # ...
 
-        It can also be called with `f` (a function) and `variant` (a string), 
+        It can also be called with `f` (a function) and `variant` (a string),
         giving the variant name.
         """
 
@@ -473,7 +473,7 @@ init -1100 python in gui:
 
                 try:
                     os.makedirs(dn, 0o777)
-                except:
+                except Exception:
                     pass
 
                 if os.path.exists(fn):

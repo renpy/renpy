@@ -392,7 +392,7 @@ class ATLTransformBase(renpy.object.Object):
         try:
             if not (t.context == self.context):
                 return
-        except:
+        except Exception:
             pass
 
         self.done = t.done
@@ -970,7 +970,7 @@ class RawMultipurpose(RawStatement):
         for expr, _with in self.expressions:
             try:
                 value = ctx.eval(expr)
-            except:
+            except Exception:
                 raise Exception("Could not evaluate expression %r when compiling ATL." % expr)
 
             if not isinstance(value, ATLTransformBase):
@@ -1014,7 +1014,7 @@ class RawMultipurpose(RawStatement):
 
             try:
                 i = ctx.eval(i)
-            except:
+            except Exception:
                 continue
 
             if isinstance(i, ATLTransformBase):
@@ -1023,7 +1023,7 @@ class RawMultipurpose(RawStatement):
 
             try:
                 renpy.easy.predict(i)
-            except:
+            except Exception:
                 continue
 
 # This lets us have an ATL transform as our child.

@@ -414,7 +414,7 @@ def predict_say(who, what):
     who = Character(who, kind=adv)
     try:
         who.predict(what)
-    except:
+    except Exception:
         pass
 
 

@@ -247,7 +247,7 @@ python early hide:
         if script_version <= (7, 2, 2):
             config.keyword_after_python = True
 
-    except:
+    except Exception:
         config.early_script_version = None
         pass
 
@@ -259,7 +259,7 @@ init -1000 python hide:
             script_version = f.read()
         config.script_version = ast.literal_eval(script_version)
         renpy.write_log("Set script version to: %r", config.script_version)
-    except:
+    except Exception:
         pass
 
 
@@ -275,7 +275,7 @@ init -1000 python hide:
                 config.script_version = (6, 99, 12, 4)
 
             renpy.write_log("Set script version to: %r (alternate path)", config.script_version)
-    except:
+    except Exception:
         pass
 
 init 1100 python hide:

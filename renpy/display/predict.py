@@ -127,7 +127,7 @@ def prediction_coroutine(root_widget):
             for sle in l:
                 try:
                     displayable(sle.displayable)
-                except:
+                except Exception:
                     pass
 
     else:
@@ -171,7 +171,7 @@ def prediction_coroutine(root_widget):
 
     try:
         root_widget.visit_all(lambda i : i.predict_one_action())
-    except:
+    except Exception:
         if renpy.config.debug_prediction:
             import traceback
 

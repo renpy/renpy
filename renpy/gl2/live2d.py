@@ -973,7 +973,7 @@ def has_live2d():
         try:
             init()
             _has_live2d = True
-        except:
+        except Exception:
             _has_live2d = False
 
     return _has_live2d

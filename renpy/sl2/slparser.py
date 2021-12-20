@@ -272,7 +272,7 @@ class Parser(object):
             if (not keyword) and (not renpy.config.keyword_after_python):
                 try:
                     literal_eval(expr)
-                except:
+                except Exception:
                     l.error("a non-constant keyword argument like '%s %s' is not allowed after a python block." % (name, expr))
 
             target.keyword.append((name, expr))

@@ -598,7 +598,7 @@ class SayBehavior(renpy.display.layout.Null):
             afm_text = text.text[0][text.start:text.end]
             afm_text = renpy.text.extras.filter_text_tags(afm_text, allow=[])
             self.afm_length = max(len(afm_text), 1)
-        except:
+        except Exception:
             self.afm_length = max(text.end - text.start, 1)
 
     def event(self, ev, x, y, st):
@@ -812,7 +812,7 @@ class Button(renpy.display.layout.Window):
             elif mask is not None:
                 try:
                     mask = renpy.display.render.render(mask, rv.width, rv.height, st, at)
-                except:
+                except Exception:
                     if callable(mask):
                         mask = mask
                     else:

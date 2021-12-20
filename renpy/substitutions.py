@@ -268,7 +268,7 @@ def substitute(s, scope=None, force=False, translate=True):
 
     try:
         s = formatter.vformat(s, (), kwargs)
-    except:
+    except Exception:
         if renpy.display.predict.predicting: # @UndefinedVariable
             return " ", True
         raise

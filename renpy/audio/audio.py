@@ -350,7 +350,7 @@ class Channel(object):
 
             try:
                 return float(v)
-            except:
+            except Exception:
                 raise exception("expected float, got {!r}.".format(v))
 
         def expect_channel():
@@ -361,7 +361,7 @@ class Channel(object):
 
             try:
                 return renpy.audio.audio.get_channel(v)
-            except:
+            except Exception:
                 raise exception("expected channel, got {!r}.".format(v))
 
         if isinstance(filename, AudioData):
@@ -526,7 +526,7 @@ class Channel(object):
 
                 self.playing = True
 
-            except:
+            except Exception:
 
                 # If playing failed, remove topq.filename from self.loop
                 # so we don't keep trying.
@@ -780,12 +780,12 @@ class Channel(object):
 
 try:
     from renpy.audio.androidhw import AndroidVideoChannel
-except:
+except ImportError:
     pass
 
 try:
     from renpy.audio.ioshw import IOSVideoChannel
-except:
+except ImportError:
     pass
 
 # A list of channels we know about.
@@ -954,7 +954,7 @@ def init():
         try:
             renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono)
             pcm_ok = True
-        except:
+        except Exception:
 
             if renpy.config.debug_sound:
                 raise
@@ -964,7 +964,7 @@ def init():
             try:
                 renpysound.init(renpy.config.sound_sample_rate, 2, bufsize, False, renpy.config.equal_mono)
                 pcm_ok = True
-            except:
+            except Exception:
                 pcm_ok = False
 
     # Find all of the mixers in the game.
@@ -1101,7 +1101,7 @@ def periodic_pass():
             for c in all_channels:
                 c.synchro_start = False
 
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
@@ -1202,7 +1202,7 @@ def interact():
 
                 c.last_changed = ctx.last_changed
 
-        except:
+        except Exception:
             if renpy.config.debug_sound:
                 raise
 

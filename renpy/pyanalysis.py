@@ -698,7 +698,7 @@ class CompilerCache(object):
             try:
                 ast.literal_eval(expr)
                 literal = True
-            except:
+            except Exception:
                 literal = False
 
             rv = (expr, literal)
@@ -752,7 +752,7 @@ def load_cache():
         if c.version == ccache.version:
             ccache.ast_eval_cache.update(c.ast_eval_cache)
             ccache.ast_exec_cache.update(c.ast_exec_cache)
-    except:
+    except Exception:
         pass
 
 
@@ -768,5 +768,5 @@ def save_cache():
 
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
             f.write(data)
-    except:
+    except Exception:
         pass

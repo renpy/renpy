@@ -199,13 +199,13 @@ def load(filename):
         with open(filename, "rb") as f:
             s = zlib.decompress(f.read())
         persistent = loads(s)
-    except:
+    except Exception:
         import renpy.display
 
         try:
             renpy.display.log.write("Loading persistent.")
             renpy.display.log.exception()
-        except:
+        except Exception:
             pass
 
         return None
@@ -409,7 +409,7 @@ def save():
     try:
         data = zlib.compress(dumps(renpy.game.persistent), 3)
         renpy.loadsave.location.save_persistent(data)
-    except:
+    except Exception:
         if renpy.config.developer:
             raise
 
@@ -464,7 +464,7 @@ class _MultiPersistent(object):
 
         try:
             os.rename(fn + b".new", fn)
-        except:
+        except Exception:
             os.unlink(fn)
             os.rename(fn + b".new", fn)
 
@@ -500,7 +500,7 @@ def MultiPersistent(name, save_on_quit=False):
     # Make the new persistent directory, why not?
     try:
         os.makedirs(files[-1])
-    except:
+    except Exception:
         pass
 
     fn = b"" # prevent a warning from happening.
@@ -514,13 +514,13 @@ def MultiPersistent(name, save_on_quit=False):
             try:
                 data = open(fn, "rb").read()
                 break
-            except:
+            except Exception:
                 pass
 
     if data is not None:
         try:
             rv = loads(data)
-        except:
+        except Exception:
             data = None
             renpy.display.log.write("Loading MultiPersistent at %r:" % fn)
             renpy.display.log.exception()

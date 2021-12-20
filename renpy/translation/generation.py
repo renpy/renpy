@@ -95,7 +95,7 @@ def open_tl_file(fn):
 
         try:
             os.makedirs(dn)
-        except:
+        except Exception:
             pass
 
         f = open(fn, "a", encoding="utf-8")

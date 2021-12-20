@@ -87,7 +87,7 @@ class ShaderPart(object):
 
             try:
                 priority = int(priority)
-            except:
+            except Exception:
                 shader = None
 
             if shader == "vertex":
@@ -322,14 +322,14 @@ class ShaderCache(object):
 
             try:
                 os.unlink(fn)
-            except:
+            except Exception:
                 pass
 
             os.rename(tmp, fn)
 
             self.dirty = False
 
-        except:
+        except Exception:
             renpy.display.log.write("Saving shaders to {!r}:".format(fn))
             renpy.display.log.exception()
 
@@ -354,11 +354,11 @@ class ShaderCache(object):
 
                     try:
                         self.get(partnames)
-                    except:
+                    except Exception:
                         renpy.display.log.write("Precompiling shader {!r}:".format(partnames))
                         renpy.display.log.exception()
                         self.missing.add(partnames)
-        except:
+        except Exception:
             renpy.display.log.write("Could not open {!r}:".format(self.filename))
             return
 

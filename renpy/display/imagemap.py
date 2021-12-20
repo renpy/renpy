@@ -215,7 +215,7 @@ class ImageMapCache(renpy.object.Object):
         if renpy.config.developer:
             try:
                 self.write_cache(filename)
-            except:
+            except Exception:
                 pass
 
         if renpy.loader.loadable(filename):

@@ -54,7 +54,7 @@ init -1500 python in updater:
 
     try:
         import rsa
-    except:
+    except Exception:
         rsa = None
 
     from renpy.exports import fsencode
@@ -106,7 +106,7 @@ init -1500 python in updater:
 
         try:
             log = file(DEFERRED_UPDATE_LOG, "ab")
-        except:
+        except Exception:
             log = io.BytesIO()
 
         with log:
@@ -120,12 +120,12 @@ init -1500 python in updater:
 
                     try:
                         process_deferred_line(l)
-                    except:
+                    except Exception:
                         traceback.print_exc(file=log)
 
             try:
                 os.unlink(DEFERRED_UPDATE_FILE)
-            except:
+            except Exception:
                 traceback.print_exc(file=log)
 
     # Process deferred updates on startup, if any exist.
@@ -325,7 +325,7 @@ init -1500 python in updater:
             # The logfile that update errors are written to.
             try:
                 self.log = open(os.path.join(self.updatedir, "log.txt"), "wb")
-            except:
+            except Exception:
                 self.log = None
 
             self.simulate = simulate
@@ -457,7 +457,7 @@ init -1500 python in updater:
 
                     try:
                         self.download(i)
-                    except:
+                    except Exception:
                         self.download(i, standalone=True)
 
                 else:
@@ -651,7 +651,7 @@ init -1500 python in updater:
                 try:
                     os.rename(path, path + ".old")
                     os.unlink(path + ".old")
-                except:
+                except Exception:
                     pass
 
         def rename(self, old, new):
@@ -663,12 +663,12 @@ init -1500 python in updater:
             try:
                 os.rename(old, new)
                 return
-            except:
+            except Exception:
                 pass
 
             try:
                 os.unlink(new)
-            except:
+            except Exception:
                 pass
 
             os.rename(old, new)
@@ -714,7 +714,7 @@ init -1500 python in updater:
                     f.write("Hello, World.")
 
                 os.unlink(fn)
-            except:
+            except Exception:
                 raise UpdateError(_("This account does not have permission to perform an update."))
 
             if not self.log:
@@ -742,7 +742,7 @@ init -1500 python in updater:
 
                 try:
                     rsa.verify(updates_json, signature, self.public_key)
-                except:
+                except Exception:
                     raise UpdateError(_("Could not verify update signature."))
 
                 if "monkeypatch" in self.updates:
@@ -884,7 +884,7 @@ init -1500 python in updater:
             for i in range(0, len(data), 4):
                 try:
                     sums.append(struct.unpack("<I", data[i:i+4])[0])
-                except:
+                except Exception:
                     pass
 
             f.close()
@@ -896,12 +896,12 @@ init -1500 python in updater:
             # May not exist, but if it does, we want to delete it.
             try:
                 os.unlink(zsync_fn + ".part")
-            except:
+            except Exception:
                 pass
 
             try:
                 os.unlink(new_fn)
-            except:
+            except Exception:
                 pass
 
             cmd = [
@@ -964,7 +964,7 @@ init -1500 python in updater:
 
                 try:
                     f = file(new_fn + ".part", "rb")
-                except:
+                except Exception:
                     self.log.write("partfile does not exist\n")
                     continue
 
@@ -1055,7 +1055,7 @@ init -1500 python in updater:
 
             try:
                 os.unlink(new_fn)
-            except:
+            except Exception:
                 pass
 
             zsync_url = self.updates[module]["zsync_url"][:-6] + ".update.gz"
@@ -1071,7 +1071,7 @@ init -1500 python in updater:
 
             try:
                 length = int(resp.headers.get("Content-Length", "20000000"))
-            except:
+            except Exception:
                 length = 20000000
 
             done = 0
@@ -1172,7 +1172,7 @@ init -1500 python in updater:
                     if info.isdir():
                         try:
                             os.makedirs(path)
-                        except:
+                        except Exception:
                             pass
 
                         continue
@@ -1199,7 +1199,7 @@ init -1500 python in updater:
                             os.umask(umask)
 
                             os.chmod(new_path, 0o777 & (~umask))
-                        except:
+                        except Exception:
                             pass
 
                     self.moves.append(path)
@@ -1223,7 +1223,7 @@ init -1500 python in updater:
 
                 try:
                     os.rename(path + ".new", path)
-                except:
+                except Exception:
                     pass
 
         def delete_obsolete(self):
@@ -1268,7 +1268,7 @@ init -1500 python in updater:
             for i in old_directories:
                 try:
                     os.rmdir(i)
-                except:
+                except Exception:
                     pass
 
         def save_state(self):
@@ -1290,7 +1290,7 @@ init -1500 python in updater:
             if os.path.exists(fn):
                 try:
                     os.unlink(fn)
-                except:
+                except Exception:
                     pass
 
         def clean_old(self):

@@ -82,7 +82,7 @@ def expand_anchor(v):
 
     try:
         return ANCHORS.get(v, v)
-    except:
+    except Exception:
         # This fixes some bugs in very old Ren'Pys.
 
         for n in ANCHORS:

@@ -70,7 +70,7 @@
             # things.
             try:
                 has_default_field = hasattr(config, default_field)
-            except:
+            except Exception:
                 has_default_field = False
 
             if has_default_field:
@@ -96,4 +96,3 @@
     config.special_namespaces["store.preferences"] =  _PreferencesNamespace()
     config.special_namespaces["store.gui"] = _GuiNamespace()
     config.special_namespaces["store.renpy"] = _ErrorNamespace("renpy")
-

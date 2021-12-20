@@ -475,7 +475,7 @@ def can_show(name, layer=None, tag=None):
 
     try:
         return renpy.game.context().images.apply_attributes(layer, tag, name)
-    except:
+    except Exception:
         return None
 
 
@@ -1371,7 +1371,7 @@ def scry_say(who, scry):
 
     try:
         scry.interacts = who.will_interact()
-    except:
+    except Exception:
         scry.interacts = True
 
 
@@ -2025,7 +2025,7 @@ license = "" # @ReservedAssignment
 try:
     import platform as _platform
     platform = "-".join(_platform.platform().split("-")[:2])
-except:
+except Exception:
     if renpy.android:
         platform = "Android"
     elif renpy.ios:
@@ -2127,7 +2127,7 @@ def exists(filename):
     try:
         renpy.loader.transfn(filename)
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -2146,7 +2146,7 @@ def restart_interaction():
 
     try:
         renpy.game.interface.restart_interaction = True
-    except:
+    except Exception:
         pass
 
 
@@ -2233,7 +2233,7 @@ def log(msg):
 
     try:
         msg = unicode(msg)
-    except:
+    except Exception:
         pass
 
     try:
@@ -2253,7 +2253,7 @@ def log(msg):
         logfile.write(wrapped + "\n")
         logfile.flush()
 
-    except:
+    except Exception:
         renpy.config.log = None
 
 
@@ -3717,7 +3717,7 @@ def invoke_in_thread(fn, *args, **kwargs):
     def run():
         try:
             fn(*args, **kwargs)
-        except:
+        except Exception:
             import traceback
             traceback.print_exc()
 
@@ -4129,13 +4129,13 @@ def get_sdl_dll():
                 dll = ctypes.cdll[i]
                 # See if it has SDL_GetError..
                 dll.SDL_GetError
-            except:
+            except Exception:
                 continue
 
             sdl_dll = dll
             return dll
 
-    except:
+    except Exception:
         pass
 
     sdl_dll = None
@@ -4158,7 +4158,7 @@ def get_sdl_window_pointer():
 
         return window.get_sdl_window_pointer()
 
-    except:
+    except Exception:
         return None
 
 
@@ -4235,7 +4235,7 @@ def check_permission(permission):
 
     try:
         return activity.checkSelfPermission(permission) == 0 # PackageManager.PERMISSION_GRANTED
-    except:
+    except Exception:
         return False
 
 

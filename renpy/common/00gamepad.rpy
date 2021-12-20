@@ -130,7 +130,7 @@ init -1200 python in _gamepad:
                     j.init()
                     name = j.get_name()
                     j.quit()
-                except:
+                except Exception:
                     continue
 
                 if name is None:
@@ -271,4 +271,3 @@ init -1200 python:
             return ui.invokesinnewcontext(_gamepad.calibrate)
         else:
             return None
-

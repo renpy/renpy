@@ -212,12 +212,12 @@ class Script(object):
 
             try:
                 os.makedirs(os.path.dirname(target_fn), 0o700)
-            except:
+            except Exception:
                 pass
 
             try:
                 shutil.copy(fn, target_fn)
-            except:
+            except Exception:
                 pass
 
     def scan_script_files(self):
@@ -618,7 +618,7 @@ class Script(object):
 
                     del old_data
                     del old_stmts
-                except:
+                except Exception:
                     pass
                 finally:
                     self.record_pycode = True
@@ -642,7 +642,7 @@ class Script(object):
                             rpydigest = hashlib.md5(fullf.read()).digest()
 
                         self.write_rpyc_md5(f, rpydigest)
-                except:
+                except Exception:
                     import traceback
                     traceback.print_exc()
 
@@ -662,7 +662,7 @@ class Script(object):
                             data, stmts = loads(bindata)
                             break
 
-                    except:
+                    except Exception:
                         pass
 
                     f.seek(0)
@@ -731,7 +731,7 @@ class Script(object):
                         rpycdigest = f.read(hashlib.md5().digest_size)
                 else:
                     rpycdigest = None
-            except:
+            except Exception:
                 rpycdigest = None
 
             digest = None
@@ -755,7 +755,7 @@ class Script(object):
                         if data is None:
                             print("Could not load " + rpycfn)
 
-                except:
+                except Exception:
                     renpy.display.log.write("While loading %r", rpycfn)
                     renpy.display.log.exception()
 
@@ -810,7 +810,7 @@ class Script(object):
                 if version == BYTECODE_VERSION:
                     self.bytecode_oldcache = cache
 
-        except:
+        except Exception:
             pass
 
     def update_bytecode(self):
@@ -822,7 +822,7 @@ class Script(object):
         for i in self.all_pyexpr:
             try:
                 renpy.python.py_compile(i, 'eval')
-            except:
+            except Exception:
                 pass
 
         self.all_pyexpr = [ ]
@@ -893,7 +893,7 @@ class Script(object):
                 with open(fn, "wb") as f:
                     data = (BYTECODE_VERSION, self.bytecode_newcache)
                     f.write(zlib.compress(dumps(data, 2), 3))
-            except:
+            except Exception:
                 pass
 
     def lookup(self, label):

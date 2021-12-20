@@ -546,7 +546,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             elif mask is not None:
                 try:
                     mask = renpy.display.render.render(mask, fw, fh, st, at)
-                except:
+                except Exception:
                     if callable(mask):
                         mask = mask
                     else:
