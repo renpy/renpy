@@ -38,18 +38,22 @@ styles.txt
 /dist
 /dists
 /renpy.app
+/renpy2.app
+/renpy3.app
 /jedit
 /lint.txt
 /renpy.code
 /*testing*
 /screenshot*
 /renpy.exe
+/renpy2.exe
+/renpy3.exe
 /renpy-32.exe
 /renpy.sh
+/renpy2.sh
+/renpy3.sh
 /lib
 /lib.old
-/lib2
-/lib3
 /doc
 /.pydevproject
 /.pydevproject.bak
@@ -112,4 +116,3 @@ renios3
 notarized
 
 CubismSdkForNative-4-*.zip
-

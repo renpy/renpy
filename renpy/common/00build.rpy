@@ -242,8 +242,8 @@ init -1500 python in build:
     xbit_patterns = [
         "**.sh",
 
-        "lib/linux-*/*",
-        "lib/mac-*/*",
+        "lib/py*-linux-*/*",
+        "lib/py*-mac-*/*",
 
         "**.app/Contents/MacOS/*",
         ]
