@@ -1147,6 +1147,10 @@ gl_lod_bias = -.5
 # of that tag.
 adjust_attributes = { }
 
+# A dictionary from a tag to a function that produces default attributes
+# for that tag.
+default_attributes = {}
+
 # The compatibility mode for who/what substitutions.
 # 0: ver < 7.4
 # 1: 7.4 <= ver <= 7.4.4
