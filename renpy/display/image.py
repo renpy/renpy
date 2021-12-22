@@ -900,7 +900,7 @@ class ShownImageInfo(renpy.object.Object):
 
         self.shown.discard((layer, tag))
 
-    def apply_attributes(self, layer, tag, name, wanted=[], remove=[]):
+    def apply_attributes(self, layer, tag, name):
         """
         Given a layer, tag, and an image name (with attributes),
         returns the canonical name of an image, if one exists. Raises
@@ -916,16 +916,13 @@ class ShownImageInfo(renpy.object.Object):
             layer = renpy.config.tag_layer.get(tag, "master")
 
         # If the name matches one that exactly exists, return it.
-        if (name in images) and not (wanted or remove):
+        if name in images:
             ca = getattr(images[name], "_choose_attributes", None)
 
             if ca is None:
                 return name
 
         nametag = name[0]
-
-        # Start building the set of attributes a matching image may have.
-        optional = list(wanted)
 
         # Find any attributes applied previously.
         defaults = self.attributes.get((layer, tag), None)
@@ -937,9 +934,8 @@ class ShownImageInfo(renpy.object.Object):
             if f is not None:
                 defaults = f(name)
 
-        # Add any defaults to the set of attributes a matching image may have.
-        if defaults is not None:
-            optional.extend(defaults)
+        # The list of attributes a matching image may have.
+        optional = list(defaults) if defaults else [ ]
 
         # The list of attributes a matching image must have.
         required = [ ]
@@ -957,10 +953,6 @@ class ShownImageInfo(renpy.object.Object):
 
             else:
                 required.append(i)
-
-        for i in remove:
-            if i in optional:
-                optional.remove(i)
 
         return self.choose_image(nametag, required, optional, name)
 

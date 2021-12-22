@@ -915,13 +915,13 @@ class ADVCharacter(object):
             properties=self.properties,
             **self.show_args)
 
-    def resolve_say_attributes(self, predict, attrs, wanted=[], remove=[]):
+    def resolve_say_attributes(self, predict, attrs):
         """
         Deals with image attributes associated with the current say
         statement. Returns True if an image is shown, None otherwise.
         """
 
-        if not (attrs or wanted or remove):
+        if not attrs:
             return
 
         if not self.image_tag:
@@ -943,7 +943,7 @@ class ADVCharacter(object):
         # If image is showing already, resolve it, then show or predict it.
         if images.showing(layer, (self.image_tag,)):
 
-            new_image = images.apply_attributes(layer, self.image_tag, tagged_attrs, wanted, remove)
+            new_image = images.apply_attributes(layer, self.image_tag, tagged_attrs)
 
             if new_image is None:
                 new_image = tagged_attrs
@@ -951,7 +951,7 @@ class ADVCharacter(object):
             if images.showing(layer, new_image, exact=True):
                 return
 
-            show_image = (self.image_tag,) + attrs + tuple(wanted) + tuple("-" + i for i in remove)
+            show_image = (self.image_tag,) + attrs
 
             if predict:
                 renpy.exports.predict_show(new_image)
@@ -965,7 +965,7 @@ class ADVCharacter(object):
 
                 tagged_attrs = (renpy.config.side_image_prefix_tag,) + tagged_attrs
 
-                new_image = images.apply_attributes(layer, self.image_tag, tagged_attrs, wanted, remove)
+                new_image = images.apply_attributes(layer, self.image_tag, tagged_attrs)
 
                 if new_image is None:
                     new_image = tagged_attrs
