@@ -228,8 +228,8 @@ Occasionally Used
     attributes. It should return an adjusted tuple, which contains
     and a potential new set of attributes.
 
-    As this function may be called during prediction, it should not
-    rely on the image's state.
+    As this function may be called during prediction, it must not rely
+    on any state.
 
 .. var:: config.after_load_callbacks = [ ... ]
 
@@ -403,22 +403,22 @@ Occasionally Used
     window to the window size, this can be used to report cases where the
     dialogue is too large for its window.
 
-.. var:: config.default_attributes = { }
+.. var:: config.default_attribute_callbacks = { }
 
     When a statement or function that contains image attributes executes or is
     predicted, and the tag is not currently being shown, it's looked up in this
-    dictionary.
+    dictionary. If it is not found, the None key is looked up instead.
 
-    If found, it is expected to be a function. The function is given an image
-    name, a tuple consisting of the tag and any attributes. It should return an
-    iterable which contains any additional attributes to be applied when an
-    image is first shown.
+    If either is found, they're expected to be a function. The function is
+    given an image name, a tuple consisting of the tag and any attributes. It
+    should return an iterable which contains any additional attributes to be
+    applied when an image is first shown.
 
     The results of the function are treated as additive-only, and any explicit
     conflicting or negative attributes will still take precedence.
 
-    As this function may be called during prediction, it should not rely on the
-    image's state.
+    As this function may be called during prediction, it must not rely on any
+    state.
 
 .. var:: config.default_tag_layer = "master"
 

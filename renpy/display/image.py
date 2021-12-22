@@ -929,7 +929,8 @@ class ShownImageInfo(renpy.object.Object):
 
         # If no record, it's the first show, so try to fetch defaults.
         if defaults is None:
-            f = renpy.config.default_attributes.get(name[0], None)
+            f = renpy.config.default_attribute_callbacks.get(name[0], None) \
+                or renpy.config.default_attribute_callbacks.get(None, None)
             if f is not None:
                 defaults = f(name)
 

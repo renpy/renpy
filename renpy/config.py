@@ -1149,7 +1149,7 @@ adjust_attributes = { }
 
 # A dictionary from a tag to a function that produces default attributes
 # for that tag.
-default_attributes = {}
+default_attribute_callbacks = { }
 
 # The compatibility mode for who/what substitutions.
 # 0: ver < 7.4
