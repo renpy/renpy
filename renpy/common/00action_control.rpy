@@ -213,4 +213,31 @@ init -1500 python:
                 renpy.transition(self.transition)
 
             renpy.restart_interaction()
+            
+    @renpy.pure
+    class HideSelf(Action, DictEquality):
+        """
+        :doc: control_action
+        
+        Causes the screen to be hidden where this action is performed.
+        
+        `transition`
+            If not None, a transition that occurs when hiding the screen.
+        """
+
+        def __init__(self, transition=None):
+            self.transition = transition
+
+        def __call__(self):
+            cs = renpy.current_screen()
+
+            if cs is None:
+                return
+
+            renpy.hide_screen(cs.screen_name)
+
+            if self.transition is not None:
+                renpy.transition(self.transition)
+
+            renpy.restart_interaction()
 
