@@ -215,6 +215,7 @@ init -1500 python:
                     return
 
                 self.screen = cs.screen_name
+                self._layer = cs.layer
 
             renpy.hide_screen(self.screen, layer=self._layer)
 
