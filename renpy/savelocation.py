@@ -287,6 +287,9 @@ class FileLocation(object):
             if not os.path.exists(old):
                 return
 
+            if os.path.exists(old + ".tmp"):
+                os.unlink(old + ".tmp")
+
             os.rename(old, old + ".tmp")
             old = old + ".tmp"
 
