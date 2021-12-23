@@ -198,6 +198,7 @@ init -1500 python:
 
         `_layer`
             This is passed as the layer argument to :func:`renpy.hide_screen`.
+            Ignored if `screen` is None.
         """
 
         _layer = None
@@ -214,10 +215,10 @@ init -1500 python:
                 if cs is None:
                     return
 
-                self.screen = cs.screen_name
-                self._layer = cs.layer
+                renpy.hide_screen(cs.screen_name, layer=cs.layer)
 
-            renpy.hide_screen(self.screen, layer=self._layer)
+            else:
+                renpy.hide_screen(self.screen, layer=self._layer)
 
             if self.transition is not None:
                 renpy.transition(self.transition)
