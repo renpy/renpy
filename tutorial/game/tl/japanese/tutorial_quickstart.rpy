@@ -861,3 +861,15 @@ translate japanese strings:
     old "Guy Shy"
     new "恥しがりや"
 
+# game/tutorial_quickstart.rpy:246
+translate japanese tutorial_images_a5e7eb24:
+
+    # e "The show statement adds a new image on top of all the other images on the screen."
+    e "showステートメントはその画面の他のすべての画像の一番上に新しい画像を追加します"
+
+# game/tutorial_quickstart.rpy:248
+translate japanese tutorial_images_86e11de2:
+
+    # e "If there is already an image with the same tag, the new image is used to replace the old one."
+    e "同じタグの画像が既にあった場合は、古い画像が新しい画像に置き換えられます。"
+

@@ -663,9 +663,6 @@ translate japanese strings:
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
     new "## 小さな黒い矢印型のグリフが入ったフォントが必要になります。"
 
-
-translate japanese strings:
-
     # screens.rpy:120
     old "## Make the namebox available for styling through the Character object."
     new "## namebox を Character オブジェクトから使えるスタイルの接頭辞として追加します。（例：namebox_background)"
@@ -697,4 +694,8 @@ translate japanese strings:
     # gui/game/screens.rpy:333
     old "## The quit button is banned on iOS and unnecessary on Android and Web."
     new "## 終了ボタンはiOSでは使用できません。また、AndroidやWebでは必要ありません。"
+
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    new "アクセス性メニューを開きます。"
 

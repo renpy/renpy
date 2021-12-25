@@ -24,8 +24,8 @@
 from __future__ import print_function
 
 from renpy.uguu.gl cimport *
-from gldraw cimport *
-from gldraw import Rtt
+from renpy.gl.gldraw cimport *
+from renpy.gl.gldraw import Rtt
 
 class CopyRtt(Rtt):
     """
@@ -70,4 +70,3 @@ class CopyRtt(Rtt):
 
     def get_size_limit(self, dimension):
         return dimension
-

@@ -93,7 +93,7 @@ cdef class Polygon:
     def from_list(list l):
         cdef int i
 
-        cdef int points = len(l) / 2
+        cdef int points = len(l) // 2
 
         cdef Polygon rv = Polygon(points)
         rv.points = points
@@ -263,4 +263,3 @@ cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
         j = i
 
     return rv
-

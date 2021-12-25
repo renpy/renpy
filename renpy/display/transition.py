@@ -202,7 +202,7 @@ def Fade(out_time,
          ):
     """
     :doc: transition function
-    :args: (out_time, hold_time, in_time, color="#000")
+    :args: (out_time, hold_time, in_time, *, color="#000")
     :name: Fade
 
     Returns a transition that takes `out_time` seconds to fade to

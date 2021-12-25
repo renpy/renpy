@@ -255,7 +255,6 @@ name_blacklist = {
     "renpy.exports.sdl_dll",
     }
 
-
 class Backup(object):
     """
     This represents a backup of all of the fields in the python modules

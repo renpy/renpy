@@ -322,7 +322,12 @@ init python:
         else goes into source.
         """
 
-        build.classify_renpy(pattern + "/**.pyo", binary)
+        if PY2:
+            build.classify_renpy(pattern + "/__pycache__/", None)
+            build.classify_renpy(pattern + "/**.pyo", binary)
+        else:
+            build.classify_renpy(pattern + "/__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), binary)
+
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
         build.classify_renpy(pattern + "/**/cache/*", binary)
@@ -375,10 +380,20 @@ init python:
     build.classify_renpy("lib/**/_renpysteam*", "steam")
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
-    build.classify_renpy("lib/linux-armv7l/", "raspi")
-    build.classify_renpy("lib/linux-armv7l/**", "raspi")
-    build.classify_renpy("lib/**", "binary")
-    build.classify_renpy("renpy.sh", "binary")
+    build.classify_renpy("lib/*linux-armv7l/", "raspi")
+    build.classify_renpy("lib/*linux-armv7l/**", "raspi")
+
+    if PY2:
+        build.classify_renpy("lib/py2-**", "binary")
+        build.classify_renpy("lib/python2*/**", "binary")
+        build.classify_renpy("renpy2.sh", "binary")
+    else:
+        build.classify_renpy("lib/py3-**", "binary")
+        build.classify_renpy("lib/python3*/**", "binary")
+        build.classify_renpy("renpy3.sh", "binary")
+
+    build.classify_renpy("lib/", "binary")
+
     # renpy.app is now built from scratch from distribute.rpy.
 
     # jedit rules.

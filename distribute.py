@@ -1,4 +1,4 @@
-#!/home/tom/ab/renpy/lib/linux-x86_64/python -O
+#!/home/tom/ab/renpy/lib/py2-linux-x86_64/python -O
 
 # Builds a distribution of Ren'Py.
 from __future__ import print_function
