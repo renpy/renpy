@@ -535,8 +535,8 @@ class Grid(Container):
 
         return rv
 
-    def per_interact(self):
-        super(Grid, self).per_interact()
+    def add(self, d):
+        super(Grid, self).add(d)
 
         delta = (self.cols * self.rows) - len(self.children)
         if delta == 0:
@@ -545,16 +545,20 @@ class Grid(Container):
         elif delta < 0:
             raise Exception("Grid overfull.")
 
-        if self.allow_underfull is None:
-            allow_underfull = renpy.config.allow_underfull_grids
-        else:
-            allow_underfull = self.allow_underfull
+    def per_interact(self):
+        super(Grid, self).per_interact()
 
-        if not allow_underfull:
-            raise Exception("Grid not completely full.")
-        else:
-            for _ in range(delta):
-                self.add(Null())
+        delta = (self.cols * self.rows) - len(self.children)
+        if delta > 0:
+            allow_underfull = self.allow_underfull
+            if allow_underfull is None:
+                allow_underfull = renpy.config.allow_underfull_grids
+
+            if not allow_underfull:
+                raise Exception("Grid not completely full.")
+            else:
+                for _ in range(delta):
+                    self.add(Null())
 
 
 class IgnoreLayers(Exception):
