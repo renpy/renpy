@@ -538,11 +538,7 @@ class Grid(Container):
     def add(self, d):
         super(Grid, self).add(d)
 
-        delta = (self.cols * self.rows) - len(self.children)
-        if delta == 0:
-            return
-
-        elif delta < 0:
+        if len(self.children) > (self.cols * self.rows):
             raise Exception("Grid overfull.")
 
     def per_interact(self):
