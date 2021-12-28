@@ -229,6 +229,7 @@ init -1100 python:
             config.always_unfocus = False
 
         if version <= (7, 5, 0):
+            config.allow_unfull_vpgrids = True
             style.drag.focus_mask = True
 
     # The version of Ren'Py this script is intended for, or
