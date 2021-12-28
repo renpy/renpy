@@ -512,7 +512,13 @@ class VPGrid(Viewport):
 
     __version__ = Viewport.__version__
 
-    def __init__(self, cols=None, rows=None, transpose=None, style="vpgrid", **properties):
+    allow_underfull = None
+
+    def __init__(self, cols=None, rows=None,
+                 transpose=None,
+                 style="vpgrid",
+                 allow_underfull=None,
+                 **properties):
 
         super(VPGrid, self).__init__(style=style, **properties)
 
@@ -525,6 +531,7 @@ class VPGrid(Viewport):
         self.grid_cols = cols
         self.grid_rows = rows
         self.grid_transpose = transpose
+        self.allow_underfull = allow_underfull
 
     def render(self, width, height, st, at):
 
@@ -631,3 +638,40 @@ class VPGrid(Viewport):
             rv.add_focus(self, None, 0, 0, width, height)
 
         return rv
+
+    def add(self, d):
+        super(VPGrid, self).add(d)
+
+        if None not in (self.grid_cols, self.grid_rows):
+            if len(self.children) > (self.grid_cols * self.grid_rows):
+                if not renpy.config.allow_unfull_vpgrids:
+                    raise Exception("VPGrid overfull.")
+
+    def per_interact(self):
+        super(VPGrid, self).per_interact()
+
+        exc = None
+
+        if None not in (self.grid_cols, self.grid_rows):
+            delta = (self.grid_cols * self.grid_rows) - len(self.children)
+            if delta > 0:
+                exc = Exception("VPGrid not completely full.")
+
+        else:
+            given = self.grid_cols or self.grid_rows
+            if given: # ignore the case where one is 0 - cannot be underfull
+                delta = given - (len(self.children) % given)
+                # the number of aditional children needed to complete
+                # within [1, given], `given` being all right
+                if delta < given:
+                    exc = Exception("VPGrid not completely full, needs a multiple of {} children.".format(given))
+
+        if exc is not None:
+            allow_underfull = self.allow_underfull
+            if allow_underfull is None:
+                allow_underfull = renpy.config.allow_underfull_grids or renpy.config.allow_unfull_vpgrids
+
+            if not allow_underfull:
+                raise exc
+            for _ in range(delta):
+                self.add(Null())
