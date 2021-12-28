@@ -38,7 +38,8 @@ Having an overfull vpgrid - when both ``rows`` and ``cols`` are specified - is n
 disallowed.
 
 Having an underfull vpgrid now raises an error unless the warning is opted-out using
-the ``allow_underfull`` property.
+either the ``allow_underfull`` property or :var:`config.allow_underfull_grids`, the
+former taking precedence on the latter.
 A vpgrid with both cols and rows specified is underfull if and when it has less than
 rows*cols children.
 A vpgrid with either cols or rows specified is underfull if and when its number of
