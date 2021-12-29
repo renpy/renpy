@@ -309,7 +309,8 @@ label change_gui:
         project_name = project.current.name
 
         mode = interface.choice(
-            _("{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"),
+            __("{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?") +
+            __("{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"),
             [
                 ("change", _("Choose new colors, then regenerate image files.")),
                 ("regenerate",  _("Regenerate the image files using the colors in gui.rpy.")),

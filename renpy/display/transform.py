@@ -297,15 +297,23 @@ class TransformState(renpy.object.Object):
 
     offset = property(get_offset, set_offset)
 
-    def get_size(self):
+    def get_xysize(self):
         return self.xsize, self.ysize
 
-    def set_size(self, value):
+    def set_xysize(self, value):
         if value is None:
             value = (None, None)
         self.xsize, self.ysize = value
 
-    size = property(get_size, set_size)
+    xysize = property(get_xysize, set_xysize)
+
+    def set_size(self, value):
+        if value is None:
+            self.xysize = None
+        else:
+            self.xysize = tuple(int(x) if isinstance(x, float) else x for x in value)
+
+    size = property(get_xysize, set_size)
 
     def set_xcenter(self, value):
         self.xpos = value
@@ -323,6 +331,16 @@ class TransformState(renpy.object.Object):
 
     xcenter = property(get_xcenter, set_xcenter)
     ycenter = property(get_ycenter, set_ycenter)
+
+    def get_xycenter(self):
+        return self.xcenter, self.ycenter
+
+    def set_xycenter(self, value):
+        if value is None:
+            value = (None, None)
+        self.xcenter, self.ycenter = value
+
+    xycenter = property(get_xycenter, set_xycenter)
 
 
 class Proxy(object):
@@ -600,6 +618,10 @@ class Transform(Container):
         return rv
 
     def _handles_event(self, event):
+
+        if (event == "replaced") and (not self.active):
+            return True
+
         if self.function is not None:
             return True
 
@@ -609,9 +631,6 @@ class Transform(Container):
         return False
 
     def _hide(self, st, at, kind):
-
-        if not self.child:
-            return None
 
         # Prevent time from ticking backwards, as can happen if we replace a
         # transform but keep its state.
@@ -623,6 +642,12 @@ class Transform(Container):
         self.st = st = st + self.st_offset
         self.at = at = at + self.at_offset
 
+        if not self.active:
+            self.update_state()
+
+        if not self.child:
+            return None
+
         if not (self.hide_request or self.replaced_request):
             d = self.copy()
         else:
@@ -631,8 +656,8 @@ class Transform(Container):
         d.st_offset = self.st_offset
         d.at_offset = self.at_offset
 
-        if not (self.hide_request or self.replaced_request):
-            d.atl_st_offset = None
+        if isinstance(self, ATLTransform):
+            d.atl_st_offset = self.atl_st_offset if (self.atl_st_offset is not None) else self.st_offset
 
         if kind == "hide":
             d.hide_request = True
@@ -643,11 +668,11 @@ class Transform(Container):
         d.replaced_response = True
 
         if d.function is not None:
-            d.function(d, st + d.st_offset, at + d.at_offset)
+            d.function(d, st, at)
         elif isinstance(d, ATLTransform):
-            d.execute(d, st + d.st_offset, at + d.at_offset)
+            d.execute(d, st, at)
 
-        new_child = d.child._hide(st, at, kind)
+        new_child = d.child._hide(st - self.st_offset, at - self.st_offset, kind)
 
         if new_child is not None:
             d.child = new_child
@@ -863,6 +888,9 @@ class Transform(Container):
 
         return rv
 
+    def _repr_info(self):
+        return repr(self.child)
+
 
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
@@ -888,8 +916,8 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
         self.active = True
 
-    def __repr__(self):
-        return "<ATL Transform {:x} {!r}>".format(id(self), self.atl.loc)
+    def _repr_info(self):
+        return repr((self.child, self.atl.loc))
 
 
 # Names of transform properties, and if the property should be handles with
@@ -952,6 +980,7 @@ add_property("additive", float, 0.0)
 add_property("alpha", float, 1.0)
 add_property("blend", any_object, None)
 add_property("blur", float_or_none, None)
+add_property("clip", (position, position), None)
 add_property("corner1", (float, float), None)
 add_property("corner2", (float, float), None)
 add_property("crop", (float, float, float, float), None)
@@ -981,29 +1010,30 @@ add_property("xaround", position, 0.0)
 add_property("xoffset", float, 0.0)
 add_property("xpan", float_or_none, None)
 add_property("xpos", position, None, diff=4)
-add_property("xsize", int, None)
+add_property("xsize", position, None)
 add_property("xtile", int, 1)
-
 add_property("xzoom", float, 1.0)
+
 add_property("yanchoraround", float, 0.0)
 add_property("yanchor", position, None, diff=4)
 add_property("yaround", position, 0.0)
 add_property("yoffset", float, 0.0)
 add_property("ypan", float_or_none, None)
 add_property("ypos", position, None, diff=4)
-add_property("ysize", int, None)
+add_property("ysize", position, None)
 add_property("ytile", int, 1)
 add_property("yzoom", float, 1.0)
 
 add_property("zpos", float, 0.0)
 add_property("zzoom", bool, False)
 
-add_gl_property("gl_color_mask")
-add_gl_property("gl_pixel_perfect")
+add_gl_property("gl_anisotropic")
 add_gl_property("gl_blend_func")
+add_gl_property("gl_color_mask")
 add_gl_property("gl_depth")
-add_gl_property("gl_anisostropic")
 add_gl_property("gl_mipmap")
+add_gl_property("gl_pixel_perfect")
+add_gl_property("gl_texture_scaling")
 add_gl_property("gl_texture_wrap")
 
 ALIASES = {
@@ -1018,6 +1048,8 @@ ALIASES = {
     "size" : (int, int),
     "xalign" : float,
     "xcenter" : position,
+    "xycenter" : (position, position),
+    "xysize" : (position, position),
     "yalign" : float,
     "ycenter" : position,
     }

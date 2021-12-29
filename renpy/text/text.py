@@ -391,7 +391,7 @@ class SpaceSegment(object):
 
 class DisplayableSegment(object):
     """
-    A segment that's used to render horizontal or vertical whitespace.
+    A segment that's used to render displayables.
     """
 
     def __init__(self, ts, d, renders):
@@ -404,6 +404,9 @@ class DisplayableSegment(object):
         rend = renders[d]
 
         self.width, self.height = rend.get_size()
+
+        if isinstance(d, renpy.display.behavior.CaretBlink):
+            self.width = 0
 
         self.hyperlink = ts.hyperlink
         self.cps = ts.cps
@@ -441,7 +444,6 @@ class DisplayableSegment(object):
         glyph = glyphs[0]
 
         if di.displayable_blits is not None:
-
             di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.width, glyph.ascent, glyph.line_spacing, glyph.time))
 
     def assign_times(self, gt, glyphs):
@@ -809,18 +811,45 @@ class Layout(object):
             if key in self.textures:
                 continue
 
-            # Create the texture.
-            surf = renpy.display.pgrender.surface((sw + o, sh + o), True)
-
-            di.surface = surf
-            di.override_color = color
-            di.outline = o
-
             if color == None:
                 self.displayable_blits = [ ]
                 di.displayable_blits = self.displayable_blits
             else:
                 di.displayable_blits = None
+
+            # Create the texture.
+
+            tw = int(sw + o)
+            th = int(sh + o)
+
+            # If not a multiple of 32, round up.
+            tw = (tw | 0x1f) + 1 if (tw & 0x1f) else tw
+            th = (th | 0x1f) + 1 if (th & 0x1f) else th
+
+            surf = renpy.display.pgrender.surface((tw, th), True)
+
+            if renpy.game.preferences.high_contrast:
+                if color:
+                    surf.fill(color)
+                else:
+                    prefix = style.prefix
+                    prefix_color = style.color
+                    style.set_prefix("idle_")
+                    idle_color = style.color
+                    style.set_prefix(prefix)
+
+                    color = (255, 255, 255, 255)
+
+                    if idle_color != prefix_color:
+
+                        if "hover" in prefix:
+                            color = (255, 255, 224, 255)
+                        elif "selected" in style.prefix:
+                            color = (224, 255, 255, 255)
+
+            di.surface = surf
+            di.override_color = color
+            di.outline = o
 
             for ts, glyphs in par_seg_glyphs:
                 if ts is self.end_segment:
@@ -904,13 +933,13 @@ class Layout(object):
             if self.oversample < 1:
                 return n
 
-            return n * int(self.oversample)
+            return int(n * int(self.oversample))
 
         else:
             if n == 0:
                 return 0
 
-            rv = round(n * self.oversample)
+            rv = int(round(n * self.oversample))
 
             if n < 0 and rv > -1:
                 rv = -1
@@ -1272,7 +1301,7 @@ class Layout(object):
         style_outlines = style.outlines
         dslist = style.drop_shadow
 
-        if not style_outlines and not dslist:
+        if (not style_outlines) and (not dslist) and not renpy.game.preferences.high_contrast:
             return [ (0, None, 0, 0) ], 0, 0, 0, 0
 
         outlines = [ ]
@@ -1313,6 +1342,9 @@ class Layout(object):
                 bottom = b
 
         outlines.append((0, None, 0, 0))
+
+        if renpy.game.preferences.high_contrast:
+            outlines = [ (2, (0, 0, 0, 255), 0, 0), (0, None, 0, 0) ]
 
         return outlines, right - left, bottom - top, -left, -top
 
@@ -1491,6 +1523,7 @@ class Text(renpy.display.core.Displayable):
 
     language = None
     mask = None
+    last_ctc = None
 
     def after_upgrade(self, version):
 
@@ -1557,7 +1590,7 @@ class Text(renpy.display.core.Displayable):
         self.start = None
         self.end = None
 
-        if replaces is not None:
+        if isinstance(replaces, Text):
             self.slow = replaces.slow
             self.slow_done = replaces.slow_done
             self.ctc = replaces.ctc
@@ -1599,7 +1632,7 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
-    def __unicode__(self):
+    def _repr_info(self):
         s = ""
 
         for i in self.text:
@@ -1610,8 +1643,7 @@ class Text(renpy.display.core.Displayable):
                 s = s[:24] + u"\u2026"
                 break
 
-        s = s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
-        return u"Text \"{}\"".format(s)
+        return repr(s)
 
     def get_all_text(self):
         """
@@ -1693,6 +1725,10 @@ class Text(renpy.display.core.Displayable):
         self.ctc = ctc
         self.dirty = True
 
+    def set_last_ctc(self, last_ctc):
+        self.last_ctc = last_ctc
+        self.dirty = True
+
     def update(self):
         """
         This needs to be called after text has been updated, but before
@@ -1741,7 +1777,16 @@ class Text(renpy.display.core.Displayable):
         else:
             # Add the CTC.
             if self.ctc is not None:
-                text.append(self.ctc)
+                if isinstance(self.ctc, list):
+                    text.extend(self.ctc)
+                else:
+                    text.append(self.ctc)
+
+        if self.last_ctc is not None:
+            if isinstance(self.last_ctc, list):
+                text.extend(self.last_ctc)
+            else:
+                text.append(self.last_ctc)
 
         # Tokenize the text.
         tokens = self.tokenize(text)

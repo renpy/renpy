@@ -59,6 +59,8 @@ class FileLocation(object):
         except:
             pass
 
+        renpy.util.expose_directory(self.directory)
+
         # Try to write a test file.
         try:
             fn = os.path.join(self.directory, "text.txt")
@@ -97,7 +99,7 @@ class FileLocation(object):
         """
 
         if renpy.emscripten:
-            import emscripten  # @UnresolvedImport
+            import emscripten # @UnresolvedImport
             emscripten.syncfs()
 
     def scan(self):
@@ -157,6 +159,8 @@ class FileLocation(object):
 
         with disk_lock:
             record.write_file(filename)
+
+        renpy.util.expose_file(filename)
 
         self.sync()
         self.scan()
@@ -283,10 +287,14 @@ class FileLocation(object):
             if not os.path.exists(old):
                 return
 
+            os.rename(old, old + ".tmp")
+            old = old + ".tmp"
+
             if os.path.exists(new):
                 os.unlink(new)
 
             os.rename(old, new)
+            renpy.util.expose_file(new)
 
             self.sync()
             self.scan()
@@ -304,6 +312,7 @@ class FileLocation(object):
                 return
 
             shutil.copyfile(old, new)
+            renpy.util.expose_file(new)
 
             self.sync()
             self.scan()
@@ -340,6 +349,11 @@ class FileLocation(object):
 
             safe_rename(fn_tmp, fn_new)
             safe_rename(fn_new, fn)
+
+            # Prevent persistent from unpickle just after save
+            self.persistent_mtime = os.path.getmtime(fn)
+
+            renpy.util.expose_file(fn)
 
             self.sync()
 
@@ -503,7 +517,6 @@ class MultiLocation(object):
         return not (self == other)
 
 
-
 # The thread that scans locations every few seconds.
 scan_thread = None
 
@@ -522,7 +535,7 @@ def run_scan_thread():
     while not quit_scan_thread:
 
         try:
-            renpy.loadsave.location.scan()  # @UndefinedVariable
+            renpy.loadsave.location.scan() # @UndefinedVariable
         except:
             pass
 
@@ -530,7 +543,7 @@ def run_scan_thread():
             scan_thread_condition.wait(5.0)
 
 
-def quit():  # @ReservedAssignment
+def quit(): # @ReservedAssignment
     global quit_scan_thread
 
     with scan_thread_condition:

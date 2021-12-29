@@ -25,7 +25,9 @@ scroll wheel to the top.
 There are two kinds of keyboard keysyms. The first is a string containing a
 character that is generated when a key is pressed. This is useful for
 binding alphabetic keys and numbers. Examples of these keysyms include "a", "A", and "7".
-Note that these are case sensitive, "a" does not match "A".
+Note that these are case sensitive, "a" does not match "A". This kind of keysym
+is only useful when an event generates text - for example, the a key being
+released will not match ``keyup_a``, as no text is generated.
 
 Keyboard keysyms can also be the symbolic name for the key. This can be any of
 the K\_ constants taken from pygame.constants. This type of keysym looks like
@@ -45,6 +47,8 @@ ctrl
     Matches if the Ctrl key is pressed. Keysyms without this prefix match
     when the Ctrl key is not pressed. (Ctrl is not very useful, as it
     usually triggers skipping.)
+osctrl
+    This is Command on the Macintosh, and ctrl elsewhere.
 shift
     Matches when the Shift key is pressed.
 noshift
@@ -70,7 +74,7 @@ statement, and removes the space key from that list. ::
         $ config.keymap['dismiss'].remove('K_SPACE')
 
 The default keymap is contained inside renpy/common/00keymap.rpy, and
-as of version 7.4 is as follows::
+as of version 7.4.7 is as follows::
 
     config.keymap = dict(
 
@@ -128,10 +132,14 @@ as of version 7.4 is as follows::
         input_up = [ 'K_UP', 'repeat_K_UP' ],
         input_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
-        input_home = [ 'K_HOME' ],
-        input_end = [ 'K_END' ],
+        input_home = [ 'K_HOME', 'meta_K_LEFT' ],
+        input_end = [ 'K_END', 'meta_K_RIGHT' ],
         input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c' ],
         input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v' ],
+        input_jump_word_left = [ 'osctrl_K_LEFT' ],
+        input_jump_word_right = [ 'osctrl_K_RIGHT' ],
+        input_delete_word = [ 'osctrl_K_BACKSPACE' ],
+        input_delete_full = [ 'meta_K_BACKSPACE' ],
 
         # Viewport.
         viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],

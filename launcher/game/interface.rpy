@@ -126,7 +126,10 @@ screen bottom_info:
                     xalign 1.0
 
                     if ability.can_update:
-                        textbutton _("update") action Jump("update") style "l_link"
+                        textbutton _("update") action Jump("update") style "l_link":
+                            if persistent.has_update:
+                                text_color "#F96854"
+                                text_hover_color Color("#F96854").tint(.8)
 
                     textbutton _("preferences") style "l_link" action Jump("preferences")
                     textbutton _("quit") style "l_link" action Quit(confirm=False)

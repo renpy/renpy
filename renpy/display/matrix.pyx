@@ -107,7 +107,7 @@ cdef class Matrix:
         if lenl == 4:
             (self.xdx, self.xdy,
              self.ydx, self.ydy) = l
-            self.ydy = 1.0
+            self.zdz = 1.0
             self.wdw = 1.0
 
         elif lenl == 9:

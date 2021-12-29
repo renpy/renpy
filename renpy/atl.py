@@ -336,12 +336,19 @@ class ATLTransformBase(renpy.object.Object):
         self.parent_transform = None
 
         # The offset between st and when this ATL block first executed.
-        self.atl_st_offset = 0
+        if renpy.config.atl_start_on_show:
+            self.atl_st_offset = None
+        else:
+            self.atl_st_offset = 0
 
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
     def _handles_event(self, event):
+
+        if (event == "replaced") and (self.atl_state is None):
+            return True
+
         if (self.block is not None) and (self.block._handles_event(event)):
             return True
 
@@ -371,6 +378,7 @@ class ATLTransformBase(renpy.object.Object):
         super(ATLTransformBase, self).take_execution_state(t)
 
         self.atl_st_offset = None
+        self.atl_state = None
 
         if self is t:
             return
@@ -398,7 +406,6 @@ class ATLTransformBase(renpy.object.Object):
         self.at = t.at
         self.st_offset = t.st_offset
         self.at_offset = t.at_offset
-
         self.atl_st_offset = t.atl_st_offset
 
         if self.child is renpy.display.motion.null:
@@ -809,12 +816,16 @@ class Block(Statement):
                     loop_end = target - arg
                     duration = loop_end - loop_start
 
-                    if duration <= 0:
+                    if (state is None) and (duration <= 0):
                         raise Exception("ATL appears to be in an infinite loop.")
 
                     # Figure how many durations can occur between the
                     # start of the loop and now.
-                    new_repeats = int((target - loop_start) / duration)
+
+                    if duration:
+                        new_repeats = int((target - loop_start) / duration)
+                    else:
+                        new_repeats = 0
 
                     if count is not None:
                         if repeats + new_repeats >= count:
@@ -1136,12 +1147,22 @@ class Interpolation(Statement):
         else:
             st_or_at = trans.st
 
-        if (self.warper != "instant") and (state is None) and (
-                (trans.atl_state is not None) or (st_or_at == 0)
-                ):
-            first = True
+        # True if we want want to make sure this interpolation is shown for at
+        # least one frame.
+        if self.warper == "instant":
+            first_frame = False
+        elif state is not None:
+            first_frame = False
+        elif (self.duration == 0) and (not self.properties and not self.revolution and not self.splines):
+            first_frame = True
+        elif trans.atl_state is not None:
+            first_frame = True
+        elif st_or_at == 0:
+            first_frame = True
         else:
-            first = False
+            # This is the case when we're skipping through a displayable to
+            # find the right time.
+            first_frame = False
 
         if self.duration:
             complete = min(1.0, st / self.duration)
@@ -1265,7 +1286,7 @@ class Interpolation(Statement):
             value = interpolate_spline(complete, values)
             setattr(trans.state, name, value)
 
-        if ((not first) or (not renpy.config.atl_one_frame)) and (st >= self.duration):
+        if (st >= self.duration) and ((not first_frame) or (not renpy.config.atl_one_frame)):
             return "next", st - self.duration, None
         else:
             if not self.properties and not self.revolution and not self.splines:
@@ -1556,15 +1577,22 @@ class On(Statement):
         # handle it.
         for event in events:
 
-            if event in self.handlers:
+            while event:
+                if event in self.handlers:
+                    break
 
-                # Do not allow people to abort the hide or replaced event.
-                lock_event = (name == "hide" and trans.hide_request) or (name == "replaced" and trans.replaced_request)
+                event = event.partition("_")[2]
 
-                if not lock_event:
-                    name = event
-                    start = st
-                    cstate = None
+            if not event:
+                continue
+
+            # Do not allow people to abort the hide or replaced event.
+            lock_event = (name == "hide" and trans.hide_request) or (name == "replaced" and trans.replaced_request)
+
+            if not lock_event:
+                name = event
+                start = st
+                cstate = None
 
         while True:
 

@@ -52,6 +52,16 @@ init python in distribute:
     import time
     import shutil
 
+    def py(s):
+        """
+        Formats a string with information about the python version.
+        """
+
+        return s.format(
+            major=sys.version_info.major,
+            minor=sys.version_info.minor,
+        )
+
     match_cache = { }
 
     def compile_match(pattern):
@@ -315,11 +325,11 @@ init python in distribute:
 
             for f in list(self):
 
-                if f.name.startswith("lib/python2.7") and (not duplicate):
+                if f.name.startswith("lib/python") and (not duplicate):
                     name = app + "/Contents/Resources/" + f.name
 
-                elif f.name.startswith("lib/mac-x86_64"):
-                    name = app + "/Contents/MacOS/" + f.name[15:]
+                elif f.name.startswith(py("lib/py{major}-mac-x86_64")):
+                    name = app + "/Contents/MacOS/" + f.name[19:]
 
                 else:
                     continue
@@ -556,8 +566,7 @@ init python in distribute:
             self.merge_file_lists()
 
             # Rename the executable-like files.
-            if not build['renpy']:
-                self.rename()
+            self.rename()
 
             # The time of the update version.
             self.update_version = int(time.time())
@@ -919,35 +928,36 @@ init python in distribute:
                 mac = 'mac'
                 raspi = 'linux'
 
+            prefix = py("lib/py{major}-")
+
             self.add_file(
                 linux_i686,
-                "lib/linux-i686/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/linux-i686/renpy"),
+                prefix + "linux-i686/" + self.executable_name,
+                os.path.join(config.renpy_base, prefix + "linux-i686/renpy"),
                 True)
 
             self.add_file(
                 linux,
-                "lib/linux-x86_64/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/linux-x86_64/renpy"),
+                prefix + "linux-x86_64/" + self.executable_name,
+                os.path.join(config.renpy_base, prefix + "linux-x86_64/renpy"),
                 True)
 
-            armfn = os.path.join(config.renpy_base, "lib/linux-armv7l/renpy")
+            armfn = os.path.join(config.renpy_base, prefix + "linux-armv7l/renpy")
 
             if os.path.exists(armfn):
 
                 self.add_file(
                     raspi,
-                    "lib/linux-armv7l/" + self.executable_name,
+                    prefix + "linux-armv7l/" + self.executable_name,
                     armfn,
                     True)
 
 
             self.add_file(
                 mac,
-                "lib/mac-x86_64/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/mac-x86_64/renpy"),
+                prefix + "mac-x86_64/" + self.executable_name,
+                os.path.join(config.renpy_base, prefix + "mac-x86_64/renpy"),
                 True)
-
 
         def add_mac_files(self):
             """
@@ -967,9 +977,11 @@ init python in distribute:
 
             plist_fn = self.write_plist()
             self.add_file(filelist, contents + "/Info.plist", plist_fn)
+
             self.add_file(filelist,
                 contents + "/MacOS/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/mac-x86_64/renpy"))
+                os.path.join(config.renpy_base, py("lib/py{major}-mac-x86_64/renpy")))
+
 
             custom_fn = os.path.join(self.project.path, "icon.icns")
             default_fn = os.path.join(config.renpy_base, "launcher/icon.icns")
@@ -986,8 +998,8 @@ init python in distribute:
 
             if not self.build['renpy']:
                 self.add_directory(filelist, contents + "/MacOS/lib")
-                self.add_directory(filelist, contents + "/MacOS/lib/mac-x86_64")
-                self.add_directory(filelist, contents + "/Resources/lib/python2.7")
+                self.add_directory(filelist, contents + py("/MacOS/lib/py{major}-mac-x86_64"))
+                self.add_directory(filelist, contents + py("/Resources/lib/python{major}.{minor}"))
 
             self.file_lists[filelist].mac_lib_transform(self.app, self.build['renpy'])
 
@@ -1033,12 +1045,20 @@ init python in distribute:
                 if os.path.exists(tmp):
                     self.add_file(fl, dst, tmp)
 
-            if self.build["include_i686"]:
-                write_exe("lib/windows-i686/renpy.exe", self.exe32, self.exe32, windows_i686)
-                write_exe("lib/windows-i686/pythonw.exe", "lib/windows-i686/pythonw.exe", "pythonw-32.exe", windows_i686)
+            if PY2:
 
-            write_exe("lib/windows-x86_64/renpy.exe", self.exe, self.exe, windows)
-            write_exe("lib/windows-x86_64/pythonw.exe", "lib/windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
+                if self.build["include_i686"]:
+                    write_exe("lib/py2-windows-i686/renpy.exe", self.exe32, self.exe32, windows_i686)
+                    write_exe("lib/py2-windows-i686/pythonw.exe", "lib/py2-windows-i686/pythonw.exe", "pythonw-32.exe", windows_i686)
+
+                write_exe("lib/py2-windows-x86_64/renpy.exe", self.exe, self.exe, windows)
+                write_exe("lib/py2-windows-x86_64/pythonw.exe", "lib/py2-windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
+
+            else:
+
+                write_exe("lib/py3-windows-x86_64/renpy.exe", self.exe, self.exe, windows)
+                write_exe("lib/py3-windows-x86_64/pythonw.exe", "lib/py3-windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
+
 
         def add_main_py(self):
             if self.build['renpy']:
@@ -1065,11 +1085,15 @@ init python in distribute:
             Rename files in all lists to match the executable names.
             """
 
+            major_sh = py("renpy{major}.sh")
+
             def rename_one(fn):
                 parts = fn.split('/')
                 p = parts[0]
 
-                if p == "renpy.sh":
+                if p == major_sh:
+                    p = self.sh
+                elif p == "renpy.sh":
                     p = self.sh
                 elif p == "renpy.py":
                     p = self.py
@@ -1188,13 +1212,13 @@ init python in distribute:
         def workaround_mac_notarization(self, fl):
             """
             This works around mac notarization by compressing the unsigned,
-            un-notarized, binaries in lib/mac-x86_64.
+            un-notarized, binaries in lib/py3-mac-x86_64.
             """
 
             fl = fl.copy()
 
             for f in fl:
-                if "/lib/mac-x86_64/" in f.name:
+                if py("/lib/py{major}-mac-x86_64/") in f.name:
                     with open(f.path, "rb") as inf:
                         data = inf.read()
 

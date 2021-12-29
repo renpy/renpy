@@ -5,7 +5,7 @@ translate piglatin screen_displayables_7c897a6d:
     # e "There are quite a few screen displayables. Here, I'll tell you about some of the most important ones."
     e "Heretay areay uiteqay aay ewfay creensay isplayablesday. Erehay, Iay'llay elltay ouyay aboutay omesay ofay hetay ostmay importantay onesay."
 
-# game/tutorial_screen_displayables.rpy:9
+# game/tutorial_screen_displayables.rpy:11
 translate piglatin screen_displayables_menu_fef7b441:
 
     # e "What would you like to know about?" nointeract

@@ -32,7 +32,8 @@ at clause. The syntax of the transform statement is:
 The transform statement  must be run at init time. If it is found outside an
 ``init`` block, then it is automatically placed inside an ``init`` block with a
 priority of 0. The transform may have a list of parameters, which must be
-supplied when it is called.
+supplied when it is called. Default values for the right-most parameters can
+be given by adding "=" and the value (e.g. "transform a (b, c=0):").
 
 `Name` must be a Python identifier. The transform created by the ATL block is
 bound to this name.::
@@ -543,6 +544,48 @@ called at any time with any value to enable prediction.
             repeat
 
 
+Animation Statement
+-------------------
+
+The ``animation`` statement must be the first statement in an ATL block,
+and tells Ren'Py this statement uses the animation timebase.
+
+.. productionlist:: atl
+    atl_animation : "animation"
+
+As compared to the normal showing timebase, the animation timebase starts
+when an image or screen with the same tag is shown. This is generally used
+to have one image replaced by a second one at the same apparent time. For
+example::
+
+    image eileen happy moving:
+        animation
+        "eileen happy"
+        xalign 0.0
+        linear 5.0 xalign 1.0
+        repeat
+
+    image eileen vhappy moving:
+        animation
+        "eileen vhappy"
+        xalign 0.0
+        linear 5.0 xalign 1.0
+        repeat
+
+    label start:
+
+        show eileen happy moving
+        pause
+        show eileen vhappy moving
+        pause
+
+This example will cause Eileen to change expression when the first pause
+finishes, but will not cause her postion to change, as both animations
+share the same animation time, and hence will place her sprite in the same place.
+Without the animation statement, the position would reset when the player
+clicks.
+
+
 .. _warpers:
 
 Warpers
@@ -578,6 +621,9 @@ somewhat. Graphs of these standard functions can be found at
 http://www.easings.net/.
 
 .. include:: inc/easings
+
+These warpers can be accessed in the ``_warper`` read-only module, which contains
+the functions listed above.
 
 New warpers can be defined using the ``renpy.atl_warper`` decorator, in a ``python
 early`` block. It should be placed in a file that is parsed before any file
@@ -674,25 +720,41 @@ both horizontal and vertical positions.
 
     Equivalent to setting ypos and yanchor to this value.
 
+.. transform-property:: offset
+
+    :type: (int, int)
+    :default: (0, 0)
+
+    The number of pixels the displayable is offset by in each direction.
+    Positive values offset towards the bottom-right.
+
 .. transform-property:: xoffset
 
-    :type: float
-    :default: 0.0
+    :type: int
+    :default: 0
 
     The number of pixels the displayable is offset by in the horizontal
     direction. Positive values offset toward the right.
 
 .. transform-property:: yoffset
 
-    :type: float
-    :default: 0.0
+    :type: int
+    :default: 0
 
     The number of pixels the displayable is offset by in the vertical
     direction. Positive values offset toward the bottom.
 
+.. transform-property:: xycenter
+
+    :type: (position, position)
+    :default: (0.0, 0.0)
+
+    Equivalent to setting pos to the value of this property, and
+    anchor to (0.5, 0.5).
+
 .. transform-property:: xcenter
 
-    :type: float
+    :type: position
     :default: 0.0
 
     Equivalent to setting xpos to the value of this property, and
@@ -700,7 +762,7 @@ both horizontal and vertical positions.
 
 .. transform-property:: ycenter
 
-    :type: float
+    :type: position
     :default: 0.0
 
     Equivalent to setting ypos to the value of this property, and
@@ -881,9 +943,9 @@ both horizontal and vertical positions.
     If not None, gives the lower right corner of the crop box. Cropt takes
     priority over corners.
 
-.. transform-property:: size
+.. transform-property:: xysize
 
-    :type: None or (int, int)
+    :type: None or (position, position)
     :default: None
 
     If not None, causes the displayable to be scaled to the given
@@ -893,7 +955,7 @@ both horizontal and vertical positions.
 
 .. transform-property:: xsize
 
-    :type: None or int
+    :type: None or position
     :default: None
 
     If not None, causes the displayable to be scaled to the given width.
@@ -902,7 +964,7 @@ both horizontal and vertical positions.
 
 .. transform-property:: ysize
 
-    :type: None or int
+    :type: None or position
     :default: None
 
     If not None, causes the displayable to be scaled to the given height.
@@ -939,6 +1001,20 @@ both horizontal and vertical positions.
         - As for ``cover``, but will never decrease the size of the
           displayable.
 
+.. transform-property:: size
+
+    :type: None or (int, int)
+    :default: None
+
+    If not None, causes the displayable to be scaled to the given
+    size.
+
+    This is affected by the :tpref:`fit` property.
+
+    .. warning::
+
+        This property is deprecated. Use :tpref:`xysize` instead.
+
 .. transform-property:: maxsize
 
     :type: None or (int, int)
@@ -951,7 +1027,7 @@ both horizontal and vertical positions.
 
     .. warning::
 
-        This property is deprecated. Consider using :tpref:`size` in
+        This property is deprecated. Consider using :tpref:`xysize` in
         conjuction with :tpref:`fit` and the value ``contain``.
 
 .. transform-property:: subpixel
@@ -1039,10 +1115,20 @@ both horizontal and vertical positions.
     :type: None or float
     :default: None
 
-    This blurs the child of this image by `blur` pixels, up to the border
+    This blurs the child of this transform by `blur` pixels, up to the border
     of the displayable. The precise details of the blurring may change
     between Ren'Py versions, and the blurring may exhibit artifacts,
     especially when the image being blurred is changing.
+
+.. transform-property:: clip
+
+    :type: (position, position) or None
+    :default: None
+
+    This clips the child of this transform to the given size. Integers are 
+    interpreted as pixels, while floats are interpreted as relative to the 
+    width and height of the child being clipped.
+
 
 There are also several sets of transform properties that are documented elsewhere:
 
@@ -1063,7 +1149,7 @@ These properties are applied in the following order:
 #. tile
 #. mesh, blur
 #. crop, corner1, corner2
-#. size, maxsize
+#. xysize, size, maxsize
 #. zoom, xzoom, yzoom
 #. pan
 #. rotate
@@ -1074,6 +1160,7 @@ These properties are applied in the following order:
 #. nearest, blend, alpha, additive, shader.
 #. matrixcolor
 #. GL Properties, Uniforms
+#. clip
 #. position properties
 
 Circular Motion
@@ -1129,3 +1216,57 @@ The following events can be triggered automatically:
 ``hover``, ``idle``, ``selected_hover``, ``selected_idle``
    Triggered when button containing this transform, or a button contained
    by this transform, enters the named state.
+
+
+.. _replacing-transforms:
+
+Replacing Transforms
+====================
+
+When an an ATL transform or transform defined using the :func:`Transform` class
+is replaced by another class, the properties of the transform that's being
+replaced are inherited by the transform that's replacing it.
+
+When the ``show`` statement has multiple transforms in the at list, the
+transforms are matched from last to first, until one list runs out. For
+example, in::
+
+    show eileen happy at a, b, c
+    "Let's wait a bit."
+    show eileen happy at d, e
+
+the ``c`` transform is replaced by ``e``, the ``b`` transform is replaced by
+``d``, and nothing replaces the ``a`` transform.
+
+At the moment of replacement, the values of the properties of the old transform
+get inherited by the new transform. If the old transform was being animated,
+this might mean an intermediate value is inherited. For example::
+
+    transform bounce:
+        linear 3.0 xalign 1.0
+        linear 3.0 xalign 0.0
+        repeat
+
+    transform headright:
+        linear 15 xalign 1.0
+
+    label example:
+        show eileen happy at bounce
+        pause
+        show eileen happy at headright
+        pause
+
+In this example, the sprite will bounce from left to right and back until
+the player clicks. When that happens, the ``xalign`` from ``bounce`` will
+be used to initialize the ``xalign`` of headright, and so the sprite
+will move from where it was when the player first clicked.
+
+The position properties (:tpref:`xpos`, :tpref:`ypos`, :tpref:`xanchor`, and :tpref:`yanchor`),
+have a special rule for inheritance - a value set in the child will override a value set
+in the parent. This is because a displayable may have only one position, and
+a position that is actively set takes precedence. These properties may be set in
+multiple ways - for example, :tpref:`xalign` sets xpos and xanchor.
+
+Finally, when a ``show`` statement does not include an ``at`` clause, the
+same displayables are used, so no inheritence is necessary. To prevent inheritance,
+show and then hide the displayable.

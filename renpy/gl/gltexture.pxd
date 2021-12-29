@@ -21,7 +21,7 @@
 
 from renpy.display.matrix cimport Matrix
 cimport renpy.display.render as render
-from gldraw cimport Environ
+from renpy.gl.gldraw cimport Environ
 
 cdef class TextureCore:
     cdef public int width

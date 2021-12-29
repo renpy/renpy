@@ -24,7 +24,7 @@
 from __future__ import print_function
 
 from renpy.uguu.gl cimport *
-from gldraw cimport *
+from renpy.gl.gldraw cimport *
 
 cdef int round(double d):
     return <int> (d + .5)

@@ -38,6 +38,17 @@ UGUUGL_PXD_HEADER = snarf("uguugl_pxd_header.pxd")
 UGUUGL_PYX_HEADER = snarf("uguugl_pyx_header.pyx")
 UGUU_PYX_HEADER = snarf("uguu_pyx_header.pyx")
 
+FRAMEBUFFER_EXT_FUNCTIONS = {
+    "glBindFramebuffer",
+    "glBindRenderbuffer",
+    "glDeleteFramebuffers",
+    "glDeleteRenderbuffers",
+    "glFramebufferRenderbuffer",
+    "glFramebufferTexture2D",
+    "glGenFramebuffers",
+    "glGenRenderbuffers",
+    "glRenderbufferStorage",
+}
 
 GL_FEATURES = [
     "GL_VERSION_1_0",
@@ -318,6 +329,10 @@ class XMLToPYX:
             names.remove(i)
             names.sort()
             names.insert(0, i)
+
+            if (i in FRAMEBUFFER_EXT_FUNCTIONS) and ((i + "EXT") not in names):
+                names.append(i + "EXT")
+                print(names)
 
             names = [ i.encode("utf-8") for i in names ]
 

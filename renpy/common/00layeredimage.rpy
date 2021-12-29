@@ -6,6 +6,7 @@ python early in layeredimage:
     from collections import OrderedDict
 
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
+    ATL_PROPERTIES_SET = set(ATL_PROPERTIES)
 
     # The properties for attribute layers.
     LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + ATL_PROPERTIES
@@ -90,7 +91,9 @@ python early in layeredimage:
         Base class for our layers.
         """
 
-        def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], **kwargs):
+        group_args = {}
+
+        def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], group_args={}, **kwargs):
 
             if not isinstance(at, list):
                 at = [ at ]
@@ -112,6 +115,7 @@ python early in layeredimage:
 
             self.if_not = if_not
 
+            self.group_args = group_args
             self.transform_args = kwargs
 
         def check(self, attributes):
@@ -144,9 +148,14 @@ python early in layeredimage:
             for i in self.at:
                 d = i(d)
 
-            if self.transform_args:
+            if self.group_args or self.transform_args:
+                d = Transform(d)
 
-                d = Transform(d, **self.transform_args)
+                for k, v in self.group_args.items():
+                    setattr(d, k, v)
+
+                for k, v in self.transform_args.items():
+                    setattr(d, k, v)
 
             return d
 
@@ -205,12 +214,12 @@ python early in layeredimage:
         to generate an image filename.
         """
 
-        def __init__(self, group, attribute, image=None, default=False, **kwargs):
+        def __init__(self, group, attribute, image=None, default=False, group_args={}, **kwargs):
 
             prefix = kwargs.pop("prefix", None)
             variant = kwargs.pop("variant", None)
 
-            super(Attribute, self).__init__(**kwargs)
+            super(Attribute, self).__init__(group_args=group_args, **kwargs)
 
             self.group = group
 
@@ -252,20 +261,20 @@ python early in layeredimage:
             self.image = None
             self.properties = OrderedDict()
 
-        def execute(self, group=None, properties=None):
-
-            if properties is not None:
-                properties = dict(properties)
-            else:
-                properties = dict()
+        def execute(self, group=None, group_properties=None):
+            if group_properties is None:
+                group_properties = {}
 
             if self.image:
                 image = eval(self.image)
             else:
                 image = None
 
+            properties = { k : v for k, v in group_properties.items() if k not in ATL_PROPERTIES_SET }
+            group_args = { k : v for k, v in group_properties.items() if k in ATL_PROPERTIES_SET }
             properties.update({ k : eval(v) for k, v in self.properties.items() })
-            return [ Attribute(group, self.name, image, **properties) ]
+
+            return [ Attribute(group, self.name, image, group_args=group_args, **properties) ]
 
 
     class RawAttributeGroup(object):
@@ -281,7 +290,6 @@ python early in layeredimage:
 
             properties = { k : eval(v) for k, v in self.properties.items() }
 
-
             auto = properties.pop("auto", False)
             variant = properties.get("variant", None)
             multiple = properties.pop("multiple", False)
@@ -294,7 +302,7 @@ python early in layeredimage:
                 group = self.group
 
             for i in self.children:
-                rv.extend(i.execute(group=group, properties=properties))
+                rv.extend(i.execute(group=group, group_properties=properties))
 
             if auto:
                 seen = set(i.raw_attribute for i in rv)
@@ -591,7 +599,7 @@ python early in layeredimage:
             kwargs.setdefault("xfit", True)
             kwargs.setdefault("yfit", True)
 
-            self.transform_args = {k : kwargs.pop(k) for k, v in kwargs.items() if k not in (renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names)}
+            self.transform_args = {k : kwargs.pop(k) for k, v in list(kwargs.items()) if k not in (renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names)}
             self.fixed_args = kwargs
 
         def format(self, what, attribute=None, group=None, variant=None, image=None):
@@ -738,34 +746,26 @@ python early in layeredimage:
 
             return [ i[1] for i in group_attr ]
 
-        def _choose_attributes(self, tag, attributes, optional):
+        def _choose_attributes(self, tag, required, optional):
 
-            unknown = list(attributes)
+            rv = list(required)
 
-            attributes = set(attributes)
-            banned = self.get_banned(attributes)
-
-            both = attributes & banned
+            required = set(required)
+            banned = self.get_banned(required)
+            both = required & banned
 
             if both:
                 raise Exception("The attributes for {} conflict: {}".format(tag, " ".join(both)))
 
+            # The set of all available attributes.
+            available_attributes = set(a.attribute for a in self.attributes)
 
             if optional is not None:
-                attributes |= (set(optional) - banned)
+                optional = set(optional) & available_attributes
+                rv.extend(optional - required - banned)
 
-            rv = [ ]
-
-            for a in self.attributes:
-
-                if a.attribute in attributes:
-                    if a.attribute not in rv:
-                        rv.append(a.attribute)
-
-                if a.attribute in unknown:
-                    unknown.remove(a.attribute)
-
-            if unknown:
+            # If there is an unknown attribute.
+            if set(rv) - available_attributes:
                 return None
 
             return tuple(rv)

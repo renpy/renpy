@@ -252,7 +252,7 @@ class Context(renpy.object.Object):
 
         # A map from the name of a music channel to the MusicContext
         # object corresponding to that channel.
-        self.music = renpy.python.RevertableDict()
+        self.music = { }
 
         # True if we're in the middle of a call to ui.interact. This
         # will cause Ren'Py to generate an error if we call ui.interact
@@ -838,7 +838,7 @@ class Context(renpy.object.Object):
 
             except:
 
-                if renpy.config.debug_image_cache:
+                if renpy.config.debug_prediction:
                     import traceback
 
                     print("While predicting images.")
@@ -928,16 +928,10 @@ def run_context(top):
             return rv
 
         except renpy.game.RestartContext as e:
-
-            # Apply defaults.
-            renpy.exports.execute_default_statement(False)
             continue
 
         except renpy.game.RestartTopContext as e:
             if top:
-
-                # Apply defaults.
-                renpy.exports.execute_default_statement(False)
                 continue
 
             else:

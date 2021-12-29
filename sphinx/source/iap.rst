@@ -19,22 +19,7 @@ functions.
   :func:`iap.restore` function or the :func:`iap.Restore` action.
 
 To offer in-app purchases, the purchases (including an associated price)
-must be set up on the various marketplaces. When building for android,
-Ren'Py will ask for the marketplace in use when configuring the package.
-
-Apple App Store
-    The Apple App Store is based on the package name, and does not require
-    special configuration.
-
-Google Play
-    Before Google Play can be used, you must add the Google Play key and
-    a salt to your project. See the :ref:`Expansion APK <expansion-apk>`
-    section for information on how to do this.
-
-Amazon Appstore
-    The Amazon Appstore is based on the package name, and does not
-    require special configuration.
-
+must be set up on the various marketplaces.
 
 IAP Functions
 -------------

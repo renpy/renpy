@@ -123,7 +123,7 @@ def dynamic_keyboard(st, at):
 
     if keyboard is None:
         keyboard = renpy.store.Fixed(
-            renpy.store.Solid("#000", yalign=1.0, ymaximum=.625),
+            renpy.store.Solid("#0008", yalign=1.0, ymaximum=.625),
             renpy.store.Text("On-Screen Keyboard", xalign=.5, yalign=.75),
             )
         null = renpy.store.Null()
@@ -169,7 +169,13 @@ def init_emulator():
         emulator = null_emulator
         overlay = [ ]
 
-    if emulator is not null_emulator:
+
+def early_init_emulator():
+
+    name = os.environ.get("RENPY_EMULATOR", "")
+
+    if name:
+
         renpy.exports.windows = False
         renpy.exports.linux = False
         renpy.exports.macintosh = False

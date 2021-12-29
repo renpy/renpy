@@ -183,7 +183,7 @@ init -1500 python:
          * Preference("clipboard voicing", "disable") - Disable clipboard-voicing.
          * Preference("clipboard voicing", "toggle") - Toggles clipboard-voicing.
 
-         * Preference("debug voicing", "enable") - Enables self.-voicing debug
+         * Preference("debug voicing", "enable") - Enables self-voicing debug
          * Preference("debug voicing", "disable") - Disable self-voicing debug.
          * Preference("debug voicing", "toggle") - Toggles self-voicing debug.
 
@@ -212,6 +212,13 @@ init -1500 python:
          * Preference("system cursor", "disable") - Use cursor defined in config.mouse.
          * Preference("system cursor", "toggle") - Toggle system cursor.
 
+
+         * Preference("high contrast text", "enable") - Enables white text on a black background.
+         * Preference("high contrast text", "disable") - Disables high contrast text.
+         * Preference("high contrast text", "toggle") - Toggles high contrast text.
+
+
+
          Values that can be used with bars are:
 
          * Preference("text speed")
@@ -228,6 +235,13 @@ init -1500 python:
          For "text speed", it defaults to 200 cps. For "auto-forward time", it
          defaults to 30.0 seconds per chunk of text. (These are maximums, not
          defaults.)
+
+         Actions that can be used with buttons are:
+
+         * Preference("renderer menu") - Show the renderer menu.
+         * Preference("accessibility menu") - Show the accessibility menu.
+
+         These screens are intended for internal use, and are not customizable.
          """
 
         name = name.lower()
@@ -423,7 +437,7 @@ init -1500 python:
             elif name == _("rollback side"):
 
                 if value in [ "left", "right", "disable" ]:
-                    if renpy.mobile:
+                    if renpy.variant("mobile"):
                         field = "mobile_rollback_side"
                     else:
                         field = "desktop_rollback_side"
@@ -470,6 +484,20 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "system_cursor")
 
+            elif name == _("renderer menu"):
+                return renpy.curried_call_in_new_context("_choose_renderer")
+
+            elif name == _("accessibility menu"):
+                return ToggleScreen("_accessibility")
+
+            elif name == _("high contrast text"):
+
+                if value == "enable":
+                    return [ SetField(_preferences, "high_contrast", True), _DisplayReset() ]
+                elif value == "disable":
+                    return [ SetField(_preferences, "high_contrast", False), _DisplayReset() ]
+                elif value == "toggle":
+                    return [ ToggleField(_preferences, "high_contrast"), _DisplayReset() ]
 
 
             mixer_names = {

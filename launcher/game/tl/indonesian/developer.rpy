@@ -7,7 +7,7 @@ translate indonesian strings:
 
     # _developer/developer.rpym:43
     old "Reload Game (Shift+R)"
-    new "Reload Game (Shift+R)"
+    new "Muat Ulang Game (Shift+R)"
 
     # _developer/developer.rpym:45
     old "Console (Shift+O)"
@@ -15,19 +15,19 @@ translate indonesian strings:
 
     # _developer/developer.rpym:47
     old "Variable Viewer"
-    new "Viewer variabel"
+    new "Peneliti variabel"
 
     # _developer/developer.rpym:49
     old "Theme Test"
-    new "Test Tema"
+    new "Coba Tema"
 
     # _developer/developer.rpym:51
     old "Image Location Picker"
-    new "Pemilih LokasI Gambar"
+    new "Pemilih Lokasi Gambar"
 
     # _developer/developer.rpym:53
     old "Filename List"
-    new "List Nama File"
+    new "Daftar Nama File"
 
     # _developer/developer.rpym:57
     old "Show Image Load Log"
@@ -127,7 +127,7 @@ translate indonesian strings:
 
     # 00console.rpy:398
     old "help: show this help"
-    new "help: menampilkan bantuan"
+    new "help: tampilkan bantuan"
 
     # 00console.rpy:403
     old "commands:\n"
@@ -143,7 +143,7 @@ translate indonesian strings:
 
     # 00console.rpy:423
     old "clear: clear the console history"
-    new "clear: membersikan histori konsol"
+    new "clear: membersihkan histori konsol"
 
     # 00console.rpy:427
     old "exit: exit the console"
@@ -159,7 +159,7 @@ translate indonesian strings:
 
     # 00console.rpy:459
     old "reload: reloads the game, refreshing the scripts"
-    new "reload: reload game, me refresh script"
+    new "reload: reload game, memuat ulang script"
 
     # 00console.rpy:467
     old "watch <expression>: watch a python expression"
@@ -176,4 +176,3 @@ translate indonesian strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <label>: lompat ke label"
-

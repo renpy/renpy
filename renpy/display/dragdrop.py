@@ -309,7 +309,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         # A z index that's changed when something is raised or lowered.
         self.z = 0
 
-        if replaces is not None:
+        if isinstance(replaces, Drag):
             self.x = replaces.x
             self.y = replaces.y
             self.at = replaces.at
@@ -788,9 +788,6 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     _list_type = renpy.python.RevertableList
 
-    def __unicode__(self):
-        return "DragGroup"
-
     def __init__(self, *children, **properties):
         properties.setdefault("style", "fixed")
         properties.setdefault("layout", "fixed")
@@ -804,7 +801,7 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         self.sorted = False
 
-        if replaces is not None:
+        if isinstance(replaces, DragGroup):
             self.positions = renpy.python.RevertableDict(replaces.positions)
             self.sensitive = replaces.sensitive
             self.z_serial = replaces.z_serial

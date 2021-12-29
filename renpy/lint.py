@@ -271,6 +271,11 @@ def image_exists(name, expression, tag, precise=True):
     Checks a scene or show statement for image existence.
     """
 
+    orig = name
+    f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
+    if f is not None:
+        name = f(name)
+
     # Add the tag to the set of known tags.
     tag = tag or name[0]
     image_prefixes[tag] = True
@@ -287,7 +292,7 @@ def image_exists(name, expression, tag, precise=True):
     if image_exists_precise(name):
         return
 
-    report("'%s' is not an image.", " ".join(name))
+    report("'%s' is not an image.", " ".join(orig))
 
 
 # Only check each file once.
@@ -493,21 +498,22 @@ def check_say(node):
     if not isinstance(char, renpy.character.ADVCharacter):
         return
 
-    if node.attributes is None:
-        return
-
     if char.image_tag is None:
         return
 
-    name = (char.image_tag,) + node.attributes
+    for attributes in (node.attributes, node.temporary_attributes):
+        if attributes is None:
+            continue
 
-    if image_exists_imprecise(name):
-        return
+        name = (char.image_tag,) + attributes
 
-    if image_exists_imprecise(('side',) + name):
-        return
+        if image_exists_imprecise(name):
+            continue
 
-    report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
+        if image_exists_imprecise(('side',) + name):
+            continue
+
+        report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
 
 
 def check_menu(node):
@@ -617,7 +623,7 @@ def check_style_property_displayable(name, property, d):
 
     def sort_short(l):
         l = list(l)
-        l.sort(key=lambda a: len(a))
+        l.sort(key=len)
         return l
 
     alts = sort_short(renpy.style.prefix_alts)

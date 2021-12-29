@@ -96,6 +96,9 @@ class SLContext(renpy.ui.Addable):
         # The local scope that python code is evaluated in.
         self.scope = { }
 
+        # The scope of the top-level screen.
+        self.root_scope = self.scope
+
         # The global scope that python code is evaluated in.
         self.globals = { }
 
@@ -783,13 +786,16 @@ class SLDisplayable(SLBlock):
 
         if cache.constant and (cache.style_prefix == context.style_prefix):
 
-            for i, local_scope in cache.constant_uses_scope:
+            for i, local_scope, context_scope in cache.constant_uses_scope:
+
+                if context_scope is None:
+                    context_scope = context.root_scope
 
                 if local_scope:
-                    scope = dict(context.scope)
+                    scope = dict(context_scope)
                     scope.update(local_scope)
                 else:
-                    scope = context.scope
+                    scope = context_scope
 
                 if copy_on_change:
                     if i._scope(scope, False):
@@ -909,6 +915,7 @@ class SLDisplayable(SLBlock):
 
                 if widget_id and not ctx.unlikely:
                     screen.widgets[widget_id] = main
+                    screen.base_widgets[widget_id] = d
 
                 if self.scope and main._uses_scope:
                     if copy_on_change:
@@ -945,6 +952,7 @@ class SLDisplayable(SLBlock):
 
                 if widget_id and not ctx.unlikely:
                     screen.widgets[widget_id] = main
+                    screen.base_widgets[widget_id] = d
                 # End child creation code.
 
                 imagemap = self.imagemap
@@ -1028,6 +1036,7 @@ class SLDisplayable(SLBlock):
 
                 if widget_id:
                     screen.widgets[widget_id] = main
+                    screen.base_widgets[widget_id] = d
                 # End child creation code.
 
                 cache.copy_on_change = False
@@ -1136,7 +1145,10 @@ class SLDisplayable(SLBlock):
                         if i in ctx.scope:
                             local_scope[i] = ctx.scope[i]
 
-                    ctx.uses_scope.append((main, local_scope))
+                    if ctx.scope is context.root_scope:
+                        ctx.uses_scope.append((main, local_scope, None))
+                    else:
+                        ctx.uses_scope.append((main, local_scope, ctx.scope))
 
                 cache.constant_uses_scope = ctx.uses_scope
 
@@ -1851,7 +1863,6 @@ class SLUse(SLNode):
         ctx = SLContext(context)
         ctx.new_cache = context.new_cache[self.serial] = { "ast" : ast }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
-        ctx.uses_scope = [ ]
 
         if self.id:
 
@@ -1899,7 +1910,9 @@ class SLUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = context.scope.copy()
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+            scope.clear()
+            scope.update(context.scope)
             scope.update(kwargs)
 
         scope["_scope"] = scope
@@ -1935,6 +1948,12 @@ class SLUse(SLNode):
         if not isinstance(self.target, renpy.ast.PyExpr):
             callback(self.target)
 
+    def has_transclude(self):
+        if self.block:
+            return self.block.has_transclude()
+        else:
+            return False
+
 
 class SLTransclude(SLNode):
 
@@ -1959,6 +1978,7 @@ class SLTransclude(SLNode):
         ctx.new_cache = context.new_cache[self.serial] = { }
         ctx.old_cache = context.old_cache.get(self.serial, None) or { }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
+        ctx.uses_scope = context.uses_scope
 
         if not isinstance(ctx.old_cache, dict):
             ctx.old_cache = { }
@@ -2076,7 +2096,6 @@ class SLCustomUse(SLNode):
         ctx = SLContext(context)
         ctx.new_cache = context.new_cache[self.serial] = { }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
-        ctx.uses_scope = [ ]
 
         # Evaluate the arguments to use in screen.
         try:
@@ -2145,7 +2164,9 @@ class SLCustomUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = context.scope.copy()
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+            scope.clear()
+            scope.update(context.scope)
             scope.update(kwargs)
 
         scope["_scope"] = scope
@@ -2177,6 +2198,9 @@ class SLCustomUse(SLNode):
 
     def used_screens(self, callback):
         callback(self.target)
+
+    def has_transclude(self):
+        return self.block.has_transclude()
 
 
 class SLScreen(SLBlock):
@@ -2389,6 +2413,7 @@ class SLScreen(SLBlock):
         context = SLContext()
 
         context.scope = scope
+        context.root_scope = scope
         context.globals = renpy.python.store_dicts["store"]
         context.debug = debug
         context.predicting = renpy.display.predict.predicting
@@ -2467,7 +2492,7 @@ def save_cache():
         return
 
     try:
-        data = zlib.compress(dumps(scache, 2), 9)
+        data = zlib.compress(dumps(scache, 2), 3)
 
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
             f.write(renpy.game.script.digest.digest())

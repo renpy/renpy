@@ -98,8 +98,8 @@ icon.ico
 icon.icns
     The icon that is used on Macintosh.
 
-These icon files much be in specific formats. You'll need to use a
-program or web service (such as http://iconverticons.com/ ) to convert
+These icon files must be in specific formats. You'll need to use a
+program or web service (such as https://anyconv.com/png-to-ico-converter/ and https://anyconv.com/png-to-icns-converter/ ) to convert
 them.
 
 Classifying and Ignoring Files
@@ -362,6 +362,11 @@ The following variables provide further control of the build process:
     6.99.9 will be included in the build. When false, such files are excluded.
 
     This is set to False when :func:`gui.init` is called.
+
+.. var:: build.include_update = False
+
+    When true, Ren'Py will produce the files required for the :ref:`updater <web-updater>`
+    to work.
 
 .. var:: build.itch_project = None
 

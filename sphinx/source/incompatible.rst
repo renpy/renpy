@@ -12,11 +12,89 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+
+7.5.0
+-----
+
+The :propref:`focus_mask` style property now defaults to None for drag displayables.
+This improves performance, but means that the displayable can be dragged by
+transparent pixels. To revert this, the focus_mask property can be set to True
+for individual drags, or globally with::
+
+    style drag:
+        focus_mask True
+
+Both options reduce performance.
+
+The platform-specific directories inside lib/ have had name changes. The 
+``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This 
+change helps support the development of the Python 3 powered Ren'Py 8. 
+These directories are not documented, and may change between Ren'Py 
+versions, but we do guarantee that ``sys.excutable`` is set.
+
+
+.. _incompatible-7.4.11:
+
+7.4.11
+------
+
+Ren'Py will now run a button's unhovered property even when focus is 
+changed by default, such as when a screen is shown or unshown. To 
+revert to the old behavior, use:
+
+    define config.always_unfocus = False
+
+.. _incompatible-7.4.9:
+
+7.4.9
+-----
+
+Ren'Py will now interpret floating point numbers given to a Transform's
+:tpref:`xsize` or :tpref:`ysize` properties as a size relative to the area
+available to the Transform. To revert this change::
+
+    define config.relative_transform_size = False
+
+The order in which Ren'Py's self-voicing reads out layers, screens, and displayables
+in screens has changed so that screens and displayables closest to the player
+are read first. To revert to the old order::
+
+    define config.tts_front_to_back = False
+
+
+.. _incompatible-7.4.7:
+
+7.4.7
+-----
+
+When :propref:`xminimum` and :propref:`xmaximum` are both floats, the
+minimum is interpreted as being a fraction of the available area. This
+means that :propref:`xsize` will have the expected result when being
+given a float. This may cause some displayables to change size. To revert
+this change::
+
+    define config.adjust_minimums = False
+
+An ATL displayable will now start its animation when it first
+appears, rather than when the screen itself is shown. To revert this change::
+
+    define config.atl_start_on_show = False
+
+Input carets now blink by default. To change this::
+
+    define config.input_caret_blink = False
+
+
+.. _incompatible-7.4.6:
+
 7.4.6
 -----
 
 The change regarding the layer at list in 7.4.5 was reverted. The new ``camera``
 statement defaults to the new semantics, while leaving ``show layer`` alone.
+
+.. _incompatible-7.4.5:
+
 
 7.4.5
 ------

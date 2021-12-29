@@ -183,7 +183,7 @@ Ren'Py supports only the following variable types:
 
 Uniform variables should begin with u\_, attributes with a\_, and varying
 variables with v\_. Names starting with u_renpy\_, a_renpy, and v_renpy
-are reserved, as as the standard variables given below.
+are reserved, as are the standard variables given below.
 
 As a general sketch for priority levels, priority 100 sets up geometry,
 priority 200 determines the initial fragment color (gl_FragColor), and
@@ -328,7 +328,7 @@ The following uniforms are made available to all Models.
     level and scale it down.
 
 ``mat4 u_transform``
-    The transform used project virtual pixels to the OpenGL viewport.
+    The transform used to project virtual pixels to the OpenGL viewport.
 
 ``float u_time``
     The time of the frame. The epoch is undefined, so it's best to treat
@@ -338,6 +338,12 @@ The following uniforms are made available to all Models.
 ``vec4 u_random``
     Four random numbers between 0.0 and 1.0 that are (with incredibly high
     likelyhood) different from frame to frame.
+
+``vec4 u_viewport``
+    This gives the current viewport being drawn into. u_viewport.xy is 
+    are the coordinates of the bottom-left corner of the viewport, relative
+    to the bottom-left corner of the window. u_viewport.pq is the width 
+    and height of the viewport.
 
 ``sampler2D tex0``, ``sampler2D tex1``, ``sampler2D tex2``
     If textures are available, the corresponding samplers are placed in
@@ -368,15 +374,6 @@ GL properties change the global state of OpenGL, or the Model-Based renderer.
 These properties can be used with a Transform, or with the :func:`Render.add_property`
 function.
 
-``gl_anisotropic``
-    If supplied, this determines if the textures applied to a mesh are
-    created with anisotropy. Anisotropy is a feature that causes multiple
-    texels (texture pixels) to be sampled when a texture is zoomed by a
-    different amount in X and Y.
-
-    This defaults to true. Ren'Py sets this to False for certain effects,
-    like the Pixellate transition.
-
 ``gl_blend_func``
     If present, this is expected to be a six-component tuple, which is
     used to set the equation used to blend the pixel being drawn with the
@@ -398,7 +395,7 @@ function.
     The :tpref:`blend` transform property is generally an easy way to
     use this.
 
-``gl_color_masks``
+``gl_color_mask``
     This is expecting to be a 4-tuple of booleans, corresponding to the four
     channels of a pixel (red, green, blue, and alpha). If a given channel is
     true, the draw operation will write to that pixel. Otherwise, it will
@@ -408,19 +405,34 @@ function.
     If true, this will clear the depth buffer, and then enable depth
     rendering for this displayable and the children of this displayable.
 
-``gl_mipmap``
-
-    If supplied, this determines if the textures supplied to a mesh are
-    created with mipmaps. This defaults to true.
+    Note that drawing any pixel, even transparent pixels, will update
+    the depth buffer. As a result, using this with images that have
+    transparency may lead to unexpected problems. (As an alternative,
+    consider the ``zorder`` and ``behind`` clauses of the ``show`` statement.)
 
 ``gl_pixel_perfect``
-    This only makes sense to set when a mesh is being created. When True,
-    Ren'Py will move the mesh such that the first vertex is aligned with
+    When True, Ren'Py will move the mesh such that the first vertex is aligned with
     a pixel on the screen. This is mostly used in conjunction with text,
     to ensure that the text remains sharp.
 
-``gl_texture_wrap``
+The following properties only take effect when a texture is being created,
+by a Transform with :tpref:`mesh` set, or by :func:`Model`, where these
+can be supplied the property method.
 
+``gl_mipmap``
+    If supplied, this determines if the textures supplied to a mesh are
+    created with mipmaps. This defaults to true.
+
+``gl_anisotropic``
+    If supplied, this determines if the textures applied to a mesh are
+    created with anisotropy. Anisotropy is a feature that causes multiple
+    texels (texture pixels) to be sampled when a texture is zoomed by a
+    different amount in X and Y.
+
+    This defaults to true. Ren'Py sets this to False for certain effects,
+    like the Pixellate transition.
+
+``gl_texture_wrap``
     When supplied, this determines how the textures applied to a mesh
     are wrapped. This expects a 2-component tuple, where the first
     component is used to set GL_TEXTURE_WRAP_S and the second component
@@ -438,7 +450,7 @@ Model Displayable
 The Model displayable acts as a factory to created models for use with the
 model-based renderer.
 
-.. include:: model_displayable
+.. include:: inc/model_displayable
 
 Model Displayable Examples
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -454,11 +466,10 @@ a built-in shader to create the Dissolve transform::
         u_renpy_dissolve 0.0
         linear delay u_renpy_dissolve 1.0
 
+Using the Model displayable as the child of a displayable is incompatible
+with :tpref:`mesh`, as the two both create models inside Ren'Py.
 
 Default Shader Parts
 --------------------
 
 .. include:: inc/shadersource
-
-
-

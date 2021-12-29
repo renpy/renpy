@@ -438,15 +438,9 @@ radio と check は環境設定の各項目のボタン（デフォルトでは�
     old "## The position of the main menu text."
     new "## メインメニューのテキストの文字揃え。"
 
-
-translate japanese strings:
-
     # gui.rpy:434
     old "## Change the size and spacing of various things."
     new "## 様々なサイズとスペーシングを変更。"
-
-
-translate japanese strings:
 
     # gui.rpy:5
     old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."

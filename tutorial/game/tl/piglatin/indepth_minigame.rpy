@@ -41,7 +41,7 @@ translate piglatin play_pong_68c82e98:
     # e "You won! Congratulations."
     e "Ouyay onway! Ongratulationscay."
 
-# game/indepth_minigame.rpy:255
+# game/indepth_minigame.rpy:256
 translate piglatin pong_done_dde7e31a:
 
     # e "Would you like to play again?" nointeract

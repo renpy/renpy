@@ -24,7 +24,7 @@
 from __future__ import print_function
 
 from renpy.uguu.gl cimport *
-from gldraw cimport *
+from renpy.gl.gldraw cimport *
 
 from sdl2 cimport *
 from pygame_sdl2 cimport *
@@ -1604,4 +1604,3 @@ cdef void draw_rectangle(
     environ.set_vertex(vcoords)
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
-

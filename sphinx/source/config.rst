@@ -263,6 +263,14 @@ Occasionally Used
     * A prefix that is given to files played on the channel.
     * A suffix that is given to files played on the channel.
 
+.. var:: config.auto_movie_channel = True
+
+    If True, and the `play` argument is give to :func:`Movie`, an
+    audio channel name is automatically generated for each movie.
+
+    :var:`config.single_movie_channel` takes precendece over this
+    variable.
+
 .. var:: config.auto_load = None
 
     If not None, the name of a save file to automatically load when
@@ -371,6 +379,12 @@ Occasionally Used
 
     If True, Ren'Py will write information about the :ref:`image cache <images>`
     to image_cache.txt.
+
+.. var:: config.debug_prediction = False
+
+    If True, Ren'Py will will write information about and errors that 
+    occur during prediction (of execution flow, images, and screens) to 
+    log.txt and the console.
 
 .. var:: config.debug_sound = False
 
@@ -594,12 +608,9 @@ Occasionally Used
     can be repeatedly loaded, hurting performance. If not none,
     :var:`config.image_cache_size` is used instead of this variable.
 
-.. var:: config.key_repeat = (.3, .03)
+.. var:: config.input_caret_blink = 1.0
 
-    Controls the rate of keyboard repeat. When key repeat is enabled, this
-    should be a tuple. The first item in the tuple is the delay before the
-    first repeat, and the second item is the delay between repeats. Both
-    are in seconds. If None, keyboard repeat is disabled.
+    If not False, sets the blinking period of the default caret, in seconds.
 
 .. var:: config.language = None
 
@@ -882,6 +893,13 @@ Occasionally Used
 
     The width of the screen. Usually set by :func:`gui.init`.
 
+.. var:: config.single_movie_channel = None
+
+    If not None, and the `play` argument is give to :func:`Movie`,
+    this is the name used for the channel the movie is played on.
+    This should not be "movie", as that name is reserved for
+    Ren'Py's internal use.
+
 .. var:: config.skip_sounds = False
 
     If False, non-looping audio will not be played when Ren'Py is
@@ -945,7 +963,7 @@ Occasionally Used
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
 
-.. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu' ]
+.. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu', "say-centered" ]
 
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.
@@ -1341,6 +1359,11 @@ Rarely or Internally Used
     single parameter, the name of the missing label. It should return the
     name of a label to use as a replacement for the missing label, or None
     to cause Ren'Py to raise an exception.
+
+.. var:: config.mouse_focus_clickthrough = False
+
+    If true, clicks that cause a window to be focused will be processed
+    normally. If false, such clicks will be ignored.
 
 .. var:: config.mouse_hide_time = 30
 

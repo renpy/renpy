@@ -137,7 +137,7 @@ class Model(renpy.display.core.Displayable):
         and `main` parameters are set to true.
         """
 
-        self.texture(displayable, focus=True, main=True, fit=False)
+        self.texture(displayable, focus=True, main=True, fit=fit)
         return self
 
     def shader(self, shader):
@@ -161,7 +161,7 @@ class Model(renpy.display.core.Displayable):
 
         `name`
             A string giving the name of the uniform to set, including the
-            "u_" prefix.
+            "u\\_" prefix.
 
         `value`
             The value of the uniform. Either a float, a 2, 3, or 4 element
@@ -171,18 +171,18 @@ class Model(renpy.display.core.Displayable):
         self.uniforms[name] = value
         return self
 
-    def properties(self, name, value):
+    def property(self, name, value):
         """
         :doc: model_displayable method
 
         Sets the value of a gl property.
 
         `name`
-            A string giving the name of the GL property, including the "gl_"
+            A string giving the name of the GL property, including the "gl\\_"
             prefix.
 
         `value`
-            The value of the gl_property.
+            The value of the gl property.
 
         """
 
@@ -193,7 +193,7 @@ class Model(renpy.display.core.Displayable):
 
     def _handles_event(self, event):
         for i in self.textures:
-            if i._handles_event(event):
+            if i.displayable._handles_event(event):
                 return True
 
         return False

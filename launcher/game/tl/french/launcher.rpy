@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # about.rpy:39
     old "[version!q]"
@@ -307,7 +306,7 @@ translate french strings:
 
     # distribute_gui.rpy:194
     old "Add from clauses to calls, once"
-    new "Add from clauses to calls, once"
+    new "Ajouter des \"from\" aux \"call\""
 
     # distribute_gui.rpy:195
     old "Refresh"
@@ -315,7 +314,7 @@ translate french strings:
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Télécharger (upload) sur itch.io"
+    new "Uploader sur itch.io"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
@@ -331,7 +330,7 @@ translate french strings:
 
     # distribute_gui.rpy:241
     old "Add from clauses to calls"
-    new "Add from clauses to calls"
+    new "Ajouter des \"from\" aux \"call\""
 
     # distribute_gui.rpy:242
     old "Force Recompile"
@@ -343,7 +342,7 @@ translate french strings:
 
     # distribute_gui.rpy:250
     old "Adding from clauses to call statements that do not have them."
-    new "Adding from clauses to call statements that do not have them."
+    new "Ajout de \"from\" aux \"call\" qui n'en ont pas."
 
     # distribute_gui.rpy:271
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
@@ -411,7 +410,7 @@ translate french strings:
 
     # front_page.rpy:93
     old "refresh"
-    new "rafraichir"
+    new "rafraîchir"
 
     # front_page.rpy:120
     old "+ Create New Project"
@@ -655,11 +654,11 @@ translate french strings:
 
     # ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Tentatives pour émuler un iPhone.\n\nLe contact tactile est émulé via la souris, mais seulement si le bouton est maintenu pressé."
+    new "Tentative d'émuler un iPhone.\n\nLe contact tactile est émulé via la souris, mais seulement si le bouton est maintenu pressé."
 
     # ios.rpy:34
     old "Attempts to emulate an iPad.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Tentatives pour émuler un iPad.\n\nLe contact tactile est émulé via la souris, mais seulement si le bouton est maintenu pressé."
+    new "Tentative d'émuler un iPad.\n\nLe contact tactile est émulé via la souris, mais seulement si le bouton est maintenu pressé."
 
     # ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
@@ -743,7 +742,7 @@ translate french strings:
 
     # itch.rpy:99
     old "The butler program was not found."
-    new "Le programme coordonnateur(butler) n'a pas été trouvé."
+    new "Le programme butler n'a pas été trouvé."
 
     # itch.rpy:99
     old "Please install the itch.io app, which includes butler, and try again."
@@ -1075,11 +1074,11 @@ translate french strings:
 
     # translations.rpy:344
     old "Strip text tags from the dialogue."
-    new "Retire les tags (balises) des dialogues."
+    new "Retire les text tags (balises) des dialogues."
 
     # translations.rpy:345
     old "Escape quotes and other special characters."
-    new "Protège (escape) les apostrophes et les autres caractères spéciaux."
+    new "Protège (échappe) les apostrophes et les autres caractères spéciaux."
 
     # translations.rpy:346
     old "Extract all translatable strings, not just dialogue."
@@ -1099,7 +1098,7 @@ translate french strings:
 
     # updater.rpy:86
     old "The update channel controls the version of Ren'Py the updater will download. Please select an update channel:"
-    new "Le canal de mise à jour détermine la version de Ren’Py qui sera téléchargée. S’il vous plaît, sélectionnez un canal de mise à jour :"
+    new "Le canal de mise à jour détermine la version de Ren’Py qui sera téléchargée. Sélectionnez un canal de mise à jour :"
 
     # updater.rpy:91
     old "Release"
@@ -1275,7 +1274,7 @@ translate french strings:
 
     # game/androidstrings.rpy:24
     old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
-    new "Quel est le nom du package?\n\nIl est généralement de la forme com.domain.program ou com.domain.email.program. Il doit uniquement contenir des lettres ASCII et des points. Il doit contenir au moins un point."
+    new "Quel est le nom du package ?\n\nIl est généralement de la forme com.domain.program ou com.domain.email.program. Il doit uniquement contenir des lettres ASCII et des points. Il doit contenir au moins un point."
 
     # game/androidstrings.rpy:25
     old "The package name may not be empty."
@@ -1655,7 +1654,7 @@ translate french strings:
 
     # game/preferences.rpy:145
     old "Reset window size"
-    new "Réinisialiser la taille de la fenêtre"
+    new "Réinitialiser la taille de la fenêtre"
 
     # game/preferences.rpy:188
     old "Force new tutorial"
@@ -1772,3 +1771,143 @@ translate french strings:
     # game/web.rpy:338
     old "There are known issues with Safari and other Webkit-based browsers that may prevent games from running."
     new "Des bugs connus avec Safari et d'autres navigateurs basés sur Webkit peuvent empêcher des jeux de fonctionner."
+
+    # game/android.rpy:38
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    new "Faites le choix entre un Play Bundle (pour Google Play), ou un Universal APK (pour d'autres librairies d'applications)."
+
+    # game/android.rpy:53
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    new "Appaire un autre appareil par Wi-Fi, sur Android 11+."
+
+    # game/android.rpy:54
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    new "Se connecte à un appareil par Wi-Fi, sur Android 11+."
+
+    # game/android.rpy:56
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    new "Construit un Android App Bundle (ABB), fait pour être uploadé sur Google Play. Peut inclure jusqu'à 2GB de données."
+
+    # game/android.rpy:57
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    new "Construit un paquet Universal APK, fait pour d'autres librairies que Google Play. Peut inclure jusqu'à 2GB de données."
+
+    # game/android.rpy:384
+    old "Play Bundle"
+    new "Play Bundle"
+
+    # game/android.rpy:388
+    old "Universal APK"
+    new "Universal APK"
+
+    # game/android.rpy:445
+    old "Wi-Fi Debugging Pair"
+    new "Debug d'appairage Wi-Fi"
+
+    # game/android.rpy:449
+    old "Wi-Fi Debugging Connect"
+    new "Debug de connexion Wi-Fi"
+
+    # game/android.rpy:537
+    old "Wi-Fi Pairing Code"
+    new "Code d'appairage Wi-Fi"
+
+    # game/android.rpy:537
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    new "Si supporté, peut être trouvé dans 'Options de développement', 'Débogage sans fil', 'Appairer appareil avec un code'."
+
+    # game/android.rpy:544
+    old "Pairing Host & Port"
+    new "Hôte d'appairage & Port"
+
+    # game/android.rpy:560
+    old "IP Address & Port"
+    new "Addresse IP & Port"
+
+    # game/android.rpy:560
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    new "Si supporté, peut être trouvé dans 'Options de développement', 'Débogage sans fil'."
+
+    # game/gui7.rpy:311
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    new "{size=-4}\n\nCeci ne remplacera pas gui/main_menu.png, gui/game_menu.png, ou gui/window_icon.png, mais créera des fichiers s'ils n'existent pas.{/size}"
+
+    # game/ios.rpy:339
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    new "Des erreurs sont rapportées sur le simulateur d'iOS sur Apple Silicon. Préférez des appareils x86_64 ou iOS."
+
+    # game/android.rpy:38
+    old "RAPT has been installed, but a bundle key hasn't been configured. Please create a new key, or restore bundle.keystore."
+    new "RAPT a été installé, mais aucune clé de paquet n'a été configurée. Créez une nouvelle clé, ou restaurez bundle.keystore."
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    new "J'installe le paquet."
+
+    # game/androidstrings.rpy:30
+    old "How much RAM do you want to allocate to Gradle?\n\nThis must be a positive integer number."
+    new "Combien de RAM voulez-vous allouer à Gradle ?\n\nEntrez un nombre entier positif."
+
+    # game/androidstrings.rpy:31
+    old "The RAM size must contain only numbers."
+    new "La taille de RAM ne doit contenir que des chiffres."
+
+    # game/androidstrings.rpy:55
+    old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
+    new "Je paux vous créer une clé de signature d'application. Cette clé est nécessaire pour créer des Universal APK pour des autres stores que Google Play.\n\nVoulez-vous créer une clé ?"
+
+    # game/androidstrings.rpy:59
+    old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
+    new "Je peux vous créer une clé de signature de paquets. Cette clé est nécessaire pour construire un Android App Bundle (AAB) pour uploader sur Google Play.\n\nVoulez-vous créer une clé ?"
+
+    # game/androidstrings.rpy:60
+    old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
+    new "Je vais créer la clé dans le fichier bundle.keystore.\n\nVous devez conserver ce fichier. Sans lui, vous ne pourrez plus mettre à jour votre application.\n\nVous devez aussi la garder cachée. Si des malotrus accèdent à ce fichier, ils pourront faire des faussez versions de votre application, et potentiellement voler les données des utilisateurs.\n\nAllez-vous faire une sauvegarde de bundle.keystore, et le garder bien caché ?"
+
+    # game/androidstrings.rpy:61
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    new "Impossible de créer bundle.keystore. Est-ce que le keytool est dans votre path ?"
+
+    # game/preferences.rpy:206
+    old "Daily check for update"
+    new "Vérification quotidienne des mises à jour"
+
+    # game/android.rpy:55
+    old "Lists the connected devices."
+    new "Liste les appareils connectés."
+
+    # game/android.rpy:58
+    old "Disconnects a device connected over Wi-Fi."
+    new "Déconnecte un appareil connecté via Wi-Fi."
+
+    # game/android.rpy:453
+    old "List Devices"
+    new "Lister les appareils"
+
+    # game/android.rpy:465
+    old "Wi-Fi Debugging Disconnect"
+    new "Debug : déconnexion Wi-Fi"
+
+    # game/android.rpy:603
+    old "This can be found in 'List Devices'."
+    new "Introuvable dans 'Lister les appareils'."
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    new "L'installation du bundle semble avoir échoué."
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    new "Le lancement de l'app semble avoir échoué."
+
+    # game/androidstrings.rpy:44
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new "La version de Java présente sur votre ordinateur ne semble pas être JDK 8, qui est la seule version supportée par le SDK Android. Si vous devez installer JDK 8, vous pouvez le télécharger ici :\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nVous pouvez aussi régler la variable d'environnement JAVA_HOME sur une autre version de Java."
+
+    # game/updater.rpy:109
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/doc/html/changelog.html}Regarder le changelog{/a}"
+
+    # game/updater.rpy:111
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Regarder le changelog{/a}"

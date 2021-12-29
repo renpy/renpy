@@ -97,7 +97,6 @@ def start(basedir, gamedir):
     if renpy.windows:
 
         import ctypes
-        from ctypes import c_void_p, c_int
 
         ctypes.windll.user32.SetProcessDPIAware()
 

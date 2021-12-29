@@ -1,6 +1,3 @@
-# This file was automatically generated from renpy/gl/glblacklist.py
-# Modifications will be automatically overwritten.
-
 # Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -22,30 +19,33 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+import renpy
+import os
 
-# The blacklist of OpenGL cards. Fields are:
-# - A substring of the Renderer.
-# - A substring of the Version.
-# - True to allow shader rendering.
-# - True to allow fixed-function rendering.
 
-# If both of the last two entries are false, GL refuses to
-# start.
+def expose_file(fn):
+    """
+    Ensures that `fn` can be read and written by the user, on platforms where
+    that may not be the default.
+    """
 
-from __future__ import print_function
+    if renpy.android:
 
-BLACKLIST = [
+        try:
+            os.chmod(fn, 0o660)
+        except:
+            pass
 
-    # Crashes for Mugenjohncel.
-    ("S3 Graphics DeltaChrome", "1.4 20.00", False, False),
 
-    # A bug in Mesa 7.9 and 7.10 (before 7.10.3) causes the system to
-    # fail to initialize the GLSL compiler.
-    # https://bugs.freedesktop.org/show_bug.cgi?id=35603
-    ("Mesa", "Mesa 7.9", False, True),
-    ("Mesa", "Mesa 7.10.3", True, True),
-    ("Mesa", "Mesa 7.10", False, True),
+def expose_directory(dn):
+    """
+    Ensures that `fn` can be read and written by the user, on platforms where
+    that may not be the default.
+    """
 
-    # Default to allowing everything.
-    ("", "", True, True),
-    ]
+    if renpy.android:
+
+        try:
+            os.chmod(dn, 0o770)
+        except:
+            pass

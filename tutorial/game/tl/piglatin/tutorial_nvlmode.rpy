@@ -37,7 +37,7 @@ translate piglatin tutorial_nvlmode_390a4eb1:
     # nvle "The 'nvl show' and 'nvl hide' statements use transitions to show and hide the NVL window."
     nvle "Hetay 'vlnay owshay' anday 'vlnay idehay' atementsstay useay ansitionstray otay owshay anday idehay hetay Vlnay indowway."
 
-# game/tutorial_nvlmode.rpy:50
+# game/tutorial_nvlmode.rpy:52
 translate piglatin tutorial_nvlmode_05956e33:
 
     # nvle "NVL-mode also supports showing menus to the player, providing it's the last thing on the screen. Understand?" nointeract

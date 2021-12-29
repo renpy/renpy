@@ -57,6 +57,7 @@ constant_containers = {
     "renpy.display.screen.screens_by_name",
 }
 
+
 def print_garbage(gen):
     """
     Prints out the garbage after collecting a generation of memory.
@@ -496,24 +497,17 @@ def profile_rollback():
     write("")
 
 
-################################################################################
-# Legacy memory debug functions
-################################################################################
-
 def find_parents(cls):
     """
     Finds the parents of every object of type `cls`.
     """
-
-    # GC to save memory.
-    gc.collect()
 
     if gc.garbage:
         del gc.garbage[:]
 
     objs = gc.get_objects()
 
-    def print_path(o):
+    def print_path(o, objs):
 
         prefix = ""
 
@@ -521,17 +515,20 @@ def find_parents(cls):
         queue = [ ]
         objects = [ ]
 
+        last = None
+
         for _i in range(30):
 
             objects.append(o)
+            last = o
 
-            print(prefix + str(id(o)), type(o), end=' ')
+            print(prefix + "%x" % id(o), "(%d referrers)" % len(gc.get_referrers(o)), type(o), end=' ')
 
             try:
                 if isinstance(o, dict) and "__name__" in o:
                     print("with name", o["__name__"])
                 else:
-                    print(repr(o))  # [:1000]
+                    print(repr(o))
             except:
                 print("Bad repr.")
 
@@ -575,13 +572,18 @@ def find_parents(cls):
 
             o, prefix = queue.pop()
 
+        for i in gc.get_referrers(last):
+            print(prefix + "<- %x" % id(i), type(i))
+
+        del objects[:]
+
     for o in objs:
         if isinstance(o, cls):
-            import random
-            if random.random() < .1:
 
-                print()
-                print("===================================================")
-                print()
+            print()
+            print("===================================================")
+            print()
 
-                print_path(o)
+            print_path(o, objs)
+
+    del objs[:]

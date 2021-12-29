@@ -161,6 +161,16 @@ If you apply a zpos to a sprite, and it doesn't take effect, the reason is
 probably because you omitted the ``perspective`` clause of the ``camera``
 transform.
 
+The camera can be rotated, with::
+
+    camera:
+        perspective True
+        rotate 45
+
+As the camera is what is rotating, the rotation is in the opposite
+direction as one that rotates a displayable.
+
+
 Depth
 -----
 
@@ -257,7 +267,7 @@ Ren'Py.
 Transform Properties
 --------------------
 
-The following transform properties are used by ther 3D Stage.
+The following transform properties are used by the 3D Stage.
 
     :tpref:`perspective`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
 
@@ -296,8 +306,13 @@ The following transform properties are used by ther 3D Stage.
     from that variable.
 
     When perspective is not false, the meaning of the :tpref:`xpos`, :tpref:`ypos`,
-    and :tpref:`zpos` are inverted, providing the effect of positioning the
+    :tpref:`zpos`, and :tpref:`rotate` are inverted, providing the effect of positioning the
     camera rather than the child.
+
+    As the perspective transformation assumes it's aligned wiht the window,
+    it doesn't make sense to reposition it using :tpref:`xanchor`, and :tpref:`yanchor`,
+    or properties that set those, such as :tpref:`anchor`, :tpref:`align`, :tpref:`center`,
+    etc.
 
 .. transform-property:: zpos
 

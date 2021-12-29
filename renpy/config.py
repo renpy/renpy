@@ -1165,6 +1165,37 @@ audio_filename_callback = None
 # Should minimums be adjusted when x/yminimum and x/ymaximum are both floats?
 adjust_minimums = True
 
+# Should ATL start on show?
+atl_start_on_show = True
+
+# Should the default input caret blink ?
+input_caret_blink = 1.
+
+# The channel movies with play defined play on.
+single_movie_channel = None
+
+# Should Ren'Py raise exceptions when finding an image?
+raise_image_exceptions = True
+
+# Should the size transform property only accept numbers of pixels ?
+relative_transform_size = True
+
+# Should tts of layers be from front to back?
+tts_front_to_back = True
+
+# Should live2d loading be logged to log.txt
+log_live2d_loading = False
+
+# Should Ren'Py debug prediction?
+debug_prediction = False
+
+# Should mouse events that cause a window to gain focus be passed through.
+mouse_focus_clickthrough = False
+
+# Should the current displayable always run its unfocus handler, even when 
+# focus is taken away by default.
+always_unfocus = True
+
 del os
 del collections
 
@@ -1200,4 +1231,3 @@ def init():
     gl_blend_func["multiply"] = (GL_FUNC_ADD, GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ZERO, GL_ONE)
     gl_blend_func["min"] = (GL_MIN, GL_ONE, GL_ONE, GL_MIN, GL_ONE, GL_ONE)
     gl_blend_func["max"] = (GL_MAX, GL_ONE, GL_ONE, GL_MAX, GL_ONE, GL_ONE)
-

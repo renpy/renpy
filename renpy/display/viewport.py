@@ -25,6 +25,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
 
+import math
+
 import renpy.display
 import pygame_sdl2 as pygame
 
@@ -177,6 +179,9 @@ class Viewport(renpy.display.layout.Container):
         The returned offsets will be negative or zero.
         """
 
+        cw = int(math.ceil(cw))
+        ch = int(math.ceil(ch))
+
         width = self.width
         height = self.height
 
@@ -235,6 +240,9 @@ class Viewport(renpy.display.layout.Container):
         cyo = -int(self.yadjustment.value)
 
         self._clipping = (cw > width) or (ch > height)
+
+        self.width = width
+        self.height = height
 
         return cxo, cyo, width, height
 
@@ -354,7 +362,7 @@ class Viewport(renpy.display.layout.Container):
                 adjustment = self.yadjustment
                 change = False
 
-            if renpy.display.behavior.map_event(ev, 'viewport_up'):
+            if renpy.display.behavior.map_event(ev, 'viewport_wheelup'):
 
                 if change and (adjustment.value == 0):
                     return None
@@ -365,7 +373,7 @@ class Viewport(renpy.display.layout.Container):
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
-            if renpy.display.behavior.map_event(ev, 'viewport_down'):
+            if renpy.display.behavior.map_event(ev, 'viewport_wheeldown'):
 
                 if change and (adjustment.value == adjustment.range):
                     return None

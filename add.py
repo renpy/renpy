@@ -12,7 +12,7 @@ SOURCE = [
     "/home/tom/ab/renpy",
     "/home/tom/ab/renpy-build",
     "/home/tom/ab/pygame_sdl2",
-    "/home/tom/ab/renpyweb",
+    "/home/tom/ab/renpy-build/renpyweb",
     ]
 
 version = ".".join(str(i) for i in version_tuple)

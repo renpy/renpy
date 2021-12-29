@@ -36,6 +36,7 @@ the omission in future versions.
 * Capntrips
 * Caryoscelus
 * CensoredUsername (C)
+* Charles Surett
 * Cherie Davidson
 * Chris Mear
 * Christian Koepp
@@ -71,16 +72,18 @@ the omission in future versions.
 * Felix Lampe
 * Franck_v
 * Frédéric Chapoton
+* GanstaKingofSA
 * Gas
 * George Economidis
 * GimmiRuski
-* Gio
+* GiovanH
 * Giuseppe Bertone
 * Gouvernathor
 * Gratusfr
 * Gregory Pease
 * Grey
 * Gustavo Carvalho
+* Hanaka
 * Helloise
 * Hentai Senshi
 * Herpior
@@ -102,6 +105,7 @@ the omission in future versions.
 * Joshua Fehler
 * Joshua Stone
 * Julian Uy
+* Jürg Billeter
 * Kalawore
 * Kapil Gain
 * Kathryn
@@ -112,12 +116,15 @@ the omission in future versions.
 * Koichi "vbkaisetsu" Akabe
 * Konstantin Mozheyko
 * Konstantin Nikolayev
+* KorDen
 * Kuroonehalf
 * Kyouryuukunn
 * Lapalissiano
 * Lee Yunseok
 * Lent1
 * Lezalith
+* Loliconazter
+* Liu Wenyuan
 * Lore
 * Lucas Ramage
 * Maciej Katafiasz
@@ -130,14 +137,16 @@ the omission in future versions.
 * Maxwell Paul Brickner
 * Meithal
 * Merumelu
-* Midgetthetree
+* Midgethetree
 * mikey (ATP Projects)
 * Morgan Willcock
 * Moshibit
 * MrStalker
 * Mugenjohncel (Uncle Mugen)
 * Muhammad Nur Hidayat Yasuyoshi
+* Multimokia
 * Neotus
+* Neyunse
 * NetGenSuperstar
 * 逆转咸鱼
 * NoJoker
@@ -161,6 +170,8 @@ the omission in future versions.
 * Remix
 * Ren
 * Renoa
+* Reptile
+* Ruben Jesus Garcia-Hernandez
 * Ria-kon
 * Ricardo Pérez
 * Rikxz
@@ -174,6 +185,7 @@ the omission in future versions.
 * Shayne Officer
 * Shehriyar Qureshi
 * Shiz
+* Siege-Wizard
 * SleepKirby
 * Spiky Caterpillar
 * Susnux

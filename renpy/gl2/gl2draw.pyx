@@ -266,7 +266,7 @@ cdef class GL2Draw:
         else:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
-            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 1);
+            pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_COMPATIBILITY)
 
         if renpy.config.gl_set_attributes is not None:
@@ -395,7 +395,7 @@ cdef class GL2Draw:
         renpy.display.log.write("Display Info: %s", self.display_info)
 
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
-        extensions = set(extensions_string.split(" "))
+        extensions = set(extensions_string.decode("utf-8").split(" "))
 
         if renpy.config.log_gl_extensions:
 
@@ -797,8 +797,6 @@ cdef class GL2Draw:
         Draws the screen.
         """
 
-        # NOTE: This needs to set interface.text_rect as a side effect.
-
         renpy.plog(1, "start draw_screen")
 
         if renpy.display.video.fullscreen:
@@ -808,9 +806,6 @@ cdef class GL2Draw:
 
         if surf is None:
             return
-
-        # Compute visible_children.
-        surf.is_opaque()
 
         # Load all the textures and RTTs.
         self.load_all_textures(surf)
@@ -839,9 +834,9 @@ cdef class GL2Draw:
         context = GL2DrawingContext(self, w, h)
         context.draw(surf, transform)
 
-        self.flip()
-
-        self.texture_loader.cleanup()
+        if flip:
+            self.flip()
+            self.texture_loader.cleanup()
 
     def load_all_textures(self, what):
         """
@@ -931,9 +926,6 @@ cdef class GL2Draw:
             return 0
 
         what = what.subsurface((x, y, 1, 1))
-
-        # Compute visible_children.
-        what.is_opaque()
 
         # Load all the textures and RTTs.
         self.load_all_textures(what)
@@ -1197,10 +1189,7 @@ cdef class GL2DrawingContext:
         program.start()
 
         program.set_uniform("u_model_size", (model.width, model.height))
-        program.set_uniform("u_lod_bias", float(renpy.config.gl_lod_bias))
         program.set_uniform("u_transform", transform)
-        program.set_uniform("u_time", (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400)
-        program.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
 
         model.program_uniforms(program)
 
@@ -1247,7 +1236,18 @@ cdef class GL2DrawingContext:
         r = what
 
         if r.text_input:
-            renpy.display.interface.text_rect = r.screen_rect(0, 0, transform)
+
+            tovirt = Matrix.cscreen_projection(self.gl2draw.virtual_size[0], self.gl2draw.virtual_size[1]).inverse() * transform
+
+            x0, y0 = tovirt.transform(0, 0)
+            x1, y1 = tovirt.transform(r.width, r.height)
+
+            xmin = min(x0, x1)
+            xmax = max(x0, x1)
+            ymin = min(y0, y1)
+            ymax = max(y0, y1)
+
+            renpy.display.interface.text_rect = (xmin, ymin, xmax - xmin, ymax - ymin)
 
         # Handle clipping.
         if (r.xclipping or r.yclipping):
@@ -1284,11 +1284,11 @@ cdef class GL2DrawingContext:
         if depth:
             glClear(GL_DEPTH_BUFFER_BIT)
             glEnable(GL_DEPTH_TEST)
-            glDepthFunc(GL_LESS)
+            glDepthFunc(GL_LEQUAL)
 
             properties["has_depth"] = True
 
-        children = r.visible_children
+        children = r.children
 
         if r.cached_model is not None:
             children = [ (r.cached_model, 0, 0, False, False) ]

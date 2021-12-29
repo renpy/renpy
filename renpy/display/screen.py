@@ -318,6 +318,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.children = [ ]
         self.transforms = { }
         self.widgets = { }
+        self.base_widgets = { }
         self.old_widgets = None
         self.old_transforms = None
         self.hidden_widgets = { }
@@ -362,6 +363,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         # A map from name to the widget with that name.
         self.widgets = { }
+
+        # Same, but to the widget without considering _main.
+        self.base_widgets = { }
 
         # The persistent cache.
         self.cache = { }
@@ -422,8 +426,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # The lifecycle phase we are in - one of PREDICT, SHOW, UPDATE, or HIDE.
         self.phase = PREDICT
 
-    def __unicode__(self):
-        return "Screen {}".format(" ".join(self.screen_name))
+    def _repr_info(self):
+        return repr(" ".join(self.screen_name))
 
     def visit(self):
         return [ self.child ]
@@ -465,6 +469,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         rv = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
         rv.transforms = self.transforms.copy()
         rv.widgets = self.widgets.copy()
+        rv.base_widgets = self.widgets.copy()
         rv.old_transfers = True
         rv.child = self.child
 
@@ -605,6 +610,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.old_widgets = self.widgets
         self.old_transforms = self.transforms
         self.widgets = { }
+        self.base_widgets = { }
         self.transforms = { }
 
         push_current_screen(self)
@@ -633,7 +639,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
             renpy.ui.close()
 
         finally:
-            del self.scope["_scope"]
+            # Safe removal as to not reraise another exception and lose the last one
+            self.scope.pop("_scope", None)
 
             renpy.ui.screen = old_ui_screen
             pop_current_screen()
@@ -729,6 +736,15 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     def get_phase_name(self):
         return phase_name[self.phase]
+
+    def _tts(self):
+        if (self.phase == OLD) or (self.phase == HIDE):
+            return ""
+
+        if self.modal:
+            return renpy.display.tts.TTSDone(self._tts_common())
+        else:
+            return self._tts_common()
 
 
 # The name of the screen that is currently being displayed, or
@@ -1170,7 +1186,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
 
     name = _screen_name
 
-    if renpy.config.debug_image_cache:
+    if renpy.config.debug_prediction:
         renpy.display.ic_log.write("Predict screen %s", name)
 
     if not isinstance(name, tuple):
@@ -1206,7 +1222,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
         renpy.display.predict.displayable(d)
 
     except:
-        if renpy.config.debug_image_cache:
+        if renpy.config.debug_prediction:
             import traceback
 
             print("While predicting screen", _screen_name)
@@ -1214,7 +1230,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
             print()
 
     finally:
-        del scope["_scope"]
+        scope.pop("_scope", None)
 
     renpy.ui.reset()
 
@@ -1269,7 +1285,7 @@ def use_screen(_screen_name, *_args, **kwargs):
     try:
         screen.function(**scope)
     finally:
-        del scope["_scope"]
+        scope.pop("_scope", None)
 
     _current_screen.old_transfers = old_transfers
 
@@ -1278,11 +1294,12 @@ def current_screen():
     return _current_screen
 
 
-def get_widget(screen, id, layer=None): # @ReservedAssignment
+def get_displayable(screen, id, layer=None, base=False): # @ReservedAssignment
     """
     :doc: screens
+    :name: renpy.get_displayable
 
-    From the `screen` on `layer`, returns the widget with
+    From the `screen` on `layer`, returns the displayable with
     `id`. Returns None if the screen doesn't exist, or there is no
     widget with that id on the screen.
     """
@@ -1304,15 +1321,23 @@ def get_widget(screen, id, layer=None): # @ReservedAssignment
     if screen.child is None:
         screen.update()
 
-    rv = screen.widgets.get(id, None)
+    if base:
+        rv = screen.base_widgets.get(id, None)
+    else:
+        rv = screen.widgets.get(id, None)
+
     return rv
 
 
-def get_widget_properties(id, screen=None, layer=None): # @ReservedAssignment
+get_widget = get_displayable
+
+
+def get_displayable_properties(id, screen=None, layer=None): # @ReservedAssignment
     """
     :doc: screens
+    :name: renpy.get_displayable_properties
 
-    Returns the properties for the widget with `id` in the `screen`
+    Returns the properties for the displayable with `id` in the `screen`
     on `layer`. If `screen` is None, returns the properties for the
     current screen. This can be used from Python or property code inside
     a screen.
@@ -1338,6 +1363,9 @@ def get_widget_properties(id, screen=None, layer=None): # @ReservedAssignment
         rv = { }
 
     return rv
+
+
+get_widget_properties = get_displayable_properties
 
 
 def before_restart():

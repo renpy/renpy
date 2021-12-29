@@ -593,6 +593,7 @@ def check_modal(modal, ev, x, y, w, h):
     if modal(ev, x, y, w, h):
         if (ev is not None) and (ev.type == renpy.display.core.TIMEEVENT):
             ev.modal = True
+            return False
 
         return True
 
@@ -626,6 +627,9 @@ class MultiBox(Container):
         # that layer.
         self.layers = None
 
+        # The same, but for the raw layers.
+        self.raw_layers = None
+
         # The scene list for this widget.
         self.scene_list = None
 
@@ -635,6 +639,7 @@ class MultiBox(Container):
         self.start_times = [ ]
         self.anim_times = [ ]
         self.layers = None
+        self.raw_layers = None
         self.scene_list = None
 
     def _in_current_store(self):
@@ -669,18 +674,25 @@ class MultiBox(Container):
         elif self.layers:
             rv = MultiBox(layout=self.default_layout)
             rv.layers = { }
+            rv.raw_layers = { }
 
             changed = False
 
             for layer in renpy.config.layers:
-                old_d = self.layers[layer]
+                old_d = self.raw_layers[layer]
                 new_d = old_d._in_current_store()
+
+                rv.raw_layers[layer] = new_d
 
                 if new_d is not old_d:
                     changed = True
+                    new_d = renpy.game.context().scene_lists.transform_layer(layer, new_d, layer_at_list=old_d._layer_at_list, camera_list=old_d._camera_list)
+                    rv.layers[layer] = new_d
+                else:
+                    new_d = self.layers[layer]
 
-                rv.add(new_d)
                 rv.layers[layer] = new_d
+                rv.add(new_d)
 
             if not changed:
                 return self
@@ -697,9 +709,11 @@ class MultiBox(Container):
 
         return rv
 
-    def __unicode__(self):
-        layout = self.style.box_layout
+    def _classname(self):
+        if type(self) is not MultiBox:
+            return type(self).__name__
 
+        layout = self.style.box_layout
         if layout is None:
             layout = self.default_layout
 
@@ -709,8 +723,14 @@ class MultiBox(Container):
             return "HBox"
         elif layout == "vertical":
             return "VBox"
-        else:
-            return "MultiBox"
+        return "MultiBox"
+
+    def __repr__(self):
+        if type(self) is MultiBox:
+            classname = self._classname()
+
+            return super(MultiBox, self).__repr__().replace("MultiBox", classname)
+        return super(MultiBox, self).__repr__()
 
     def add(self, widget, start_time=None, anim_time=None): # W0221
         super(MultiBox, self).add(widget)
@@ -1103,6 +1123,12 @@ class MultiBox(Container):
 
         return None
 
+    def _tts(self):
+        if self.layers or self.scene_list:
+            return self._tts_common(reverse=renpy.config.tts_front_to_back)
+        else:
+            return self._tts_common()
+
 
 def Fixed(**properties):
     return MultiBox(layout='fixed', **properties)
@@ -1151,6 +1177,7 @@ class Window(Container):
     """
 
     window_size = (0, 0)
+    current_child = None
 
     def __init__(self, child=None, style='window', **properties):
         super(Window, self).__init__(style=style, **properties)
@@ -1181,8 +1208,14 @@ class Window(Container):
         style = self.style
 
         xminimum, yminimum = xyminimums(style, width, height)
-        xmaximum = width
-        ymaximum = height
+
+        xmaximum = self.style.xmaximum
+        ymaximum = self.style.ymaximum
+
+        if type(xmaximum) is float:
+            xmaximum = width
+        if type(ymaximum) is float:
+            ymaximum = height
 
         size_group = self.style.size_group
         if size_group and size_group in size_groups:
@@ -1211,6 +1244,26 @@ class Window(Container):
         cypadding = top_padding + bottom_padding
 
         child = self.get_child()
+
+        # Transfer the state from the current child to the new child.
+        if child is not self.current_child:
+            if self.current_child is not None:
+
+                old_target = self.current_child
+                new_target = child
+
+                # Only propagate into ImageReferences if the targets are equal.
+                # This tries to fix both bug2864 and p547535.
+                if not isinstance(old_target, renpy.display.transform.Transform) and not isinstance(new_target, renpy.display.transform.Transform):
+                    if old_target == new_target:
+                        old_target = old_target._target()
+                        new_target = new_target._target()
+
+                if isinstance(old_target, renpy.display.transform.Transform) and isinstance(new_target, renpy.display.transform.Transform):
+                    new_target.take_state(old_target)
+                    new_target.take_execution_state(old_target)
+
+            self.current_child = child
 
         # Render the child.
         surf = render(child,
@@ -1308,8 +1361,8 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         and should return a (d, redraw) tuple, where:
 
         * `d` is a displayable to show.
-        * `redraw` is the amount of time to wait before calling the
-          function again, or None to not call the function again
+        * `redraw` is the maximum amount of time to wait before calling the
+          function again, or None to not require the function be called again
           before the start of the next interaction.
 
         `function` is called at the start of every interaction.
@@ -1337,6 +1390,8 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
     _duplicatable = True
     raw_child = None
+    last_st = 0
+    last_at = 0
 
     def after_setstate(self):
         self.child = None
@@ -1365,8 +1420,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
         return rv
 
     def visit(self):
-        if not self.child:
-            self.update(0, 0)
+        self.update(self.last_st, self.last_at)
 
         if self.child:
             return [ self.child ]
@@ -1374,16 +1428,25 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             return [ ]
 
     def update(self, st, at):
-        child, redraw = self.function(st, at, *self.args, **self.kwargs)
-        child = renpy.easy.displayable(child)
+        self.last_st = st
+        self.last_at = at
 
-        if child != self.raw_child:
+        raw_child, redraw = self.function(st, at, *self.args, **self.kwargs)
 
-            self.raw_child = child
+        if raw_child != self.raw_child:
 
-            if child._duplicatable:
-                child = child._duplicate(self._args)
+            self.raw_child = raw_child
+            raw_child = renpy.easy.displayable(raw_child)
+
+            if raw_child._duplicatable:
+                child = raw_child._duplicate(self._args)
                 child._unique()
+            else:
+                child = raw_child
+
+            if isinstance(self.child, Transform) and isinstance(child, Transform):
+                child.take_state(self.child)
+                child.take_execution_state(self.child)
 
             child.visit_all(lambda c : c.per_interact())
 
@@ -1397,7 +1460,11 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
     def render(self, w, h, st, at):
         self.update(st, at)
-        return renpy.display.render.render(self.child, w, h, st, at)
+
+        cr = renpy.display.render.render(self.child, w, h, st, at)
+        rv = renpy.display.render.Render(cr.width, cr.height)
+        rv.blit(cr, (0, 0))
+        return rv
 
     def predict_one(self):
         try:
@@ -1918,6 +1985,41 @@ class AdjustTimes(Container):
         return self.child.get_placement()
 
 
+class MatchTimes(Container):
+    """
+    A displayable that changes the `target` so that the times given to
+    this target match the times this displayable was rendered at.
+
+    `target`
+        This must be an AdjustTimes displayable, that's a child of this
+        MatchTimes displayable.
+    """
+
+    def __init__(self, child, target, **properties):
+        super(MatchTimes, self).__init__(**properties)
+
+        self.target = target
+
+        self.add(child)
+
+    def render(self, w, h, st, at):
+
+        self.target.start_time = renpy.game.interface.frame_time - st
+        self.target.anim_time = renpy.game.interface.frame_time - at
+
+        cr = renpy.display.render.render(self.child, w, h, st, at)
+        cw, ch = cr.get_size()
+        rv = renpy.display.render.Render(cw, ch)
+        rv.blit(cr, (0, 0))
+
+        self.offsets = [ (0, 0) ]
+
+        return rv
+
+    def get_placement(self):
+        return self.child.get_placement()
+
+
 class Tile(Container):
     """
     :doc: disp_imagelike
@@ -2045,7 +2147,7 @@ class AlphaMask(Container):
 
         nr = renpy.display.render.render(self.null, w, h, st, at)
 
-        rv = renpy.display.render.Render(w, h, opaque=False)
+        rv = renpy.display.render.Render(w, h)
 
         rv.operation = renpy.display.render.IMAGEDISSOLVE
         rv.operation_alpha = 1.0

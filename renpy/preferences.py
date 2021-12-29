@@ -165,6 +165,9 @@ Preference("font_line_spacing", 1.0)
 # Do we forcefully use a system cursor?
 Preference("system_cursor", False)
 
+# Do we force high contrast text?
+Preference("high_contrast", False)
+
 
 class Preferences(renpy.object.Object):
     """

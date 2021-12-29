@@ -40,6 +40,18 @@ init -1500 python in updater:
     import io
     import future.utils
 
+    def urlopen(url):
+        import requests
+        return io.BytesIO(requests.get(url).content)
+
+    def urlretrieve(url, fn):
+        import requests
+
+        data = requests.get(url).content
+
+        with open(fn, "wb") as f:
+            f.write(data)
+
     try:
         import rsa
     except:
@@ -95,7 +107,7 @@ init -1500 python in updater:
         try:
             log = file(DEFERRED_UPDATE_LOG, "ab")
         except:
-            log = io.StringIO()
+            log = io.BytesIO()
 
         with log:
             with open(DEFERRED_UPDATE_FILE, "rb") as f:
@@ -216,10 +228,15 @@ init -1500 python in updater:
         # The update was cancelled.
         CANCELLED = "CANCELLED"
 
-        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True):
+        def __init__(self, url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, check_only=False, confirm=True, patch=True):
             """
             Takes the same arguments as update().
             """
+
+            self.patch = patch
+
+            if not url.startswith("http:"):
+                self.patch = False
 
             threading.Thread.__init__(self)
 
@@ -426,18 +443,25 @@ init -1500 python in updater:
             self.progress = 0.0
             self.state = self.PREPARING
 
-            for i in self.modules:
-                self.prepare(i)
+            if self.patch:
+                for i in self.modules:
+                    self.prepare(i)
 
             self.progress = 0.0
             self.state = self.DOWNLOADING
             renpy.restart_interaction()
 
             for i in self.modules:
-                try:
-                    self.download(i)
-                except:
-                    self.download(i, standalone=True)
+
+                if self.patch:
+
+                    try:
+                        self.download(i)
+                    except:
+                        self.download(i, standalone=True)
+
+                else:
+                    self.download_direct(i)
 
             self.clean_old()
 
@@ -702,10 +726,8 @@ init -1500 python in updater:
             self.updates.
             """
 
-            import urllib
-
             fn = os.path.join(self.updatedir, "updates.json")
-            urllib.urlretrieve(self.url, fn)
+            urlretrieve(self.url, fn)
 
             with open(fn, "rb") as f:
                 updates_json = f.read()
@@ -713,7 +735,7 @@ init -1500 python in updater:
 
             if self.public_key is not None:
                 fn = os.path.join(self.updatedir, "updates.json.sig")
-                urllib.urlretrieve(self.url + ".sig", fn)
+                urlretrieve(self.url + ".sig", fn)
 
                 with open(fn, "rb") as f:
                     signature = f.read().decode("base64")
@@ -727,10 +749,8 @@ init -1500 python in updater:
                     future.utils.exec_(self.updates["monkeypatch"], globals(), globals())
 
         def add_dlc_state(self, name):
-            import urllib
-
             url = urlparse.urljoin(self.url, self.updates[name]["json_url"])
-            f = urllib.urlopen(url)
+            f = urlopen(url)
             d = json.load(f)
             d[name]["version"] = 0
             self.current_state.update(d)
@@ -858,9 +878,7 @@ init -1500 python in updater:
             # Download the sums file.
             sums = [ ]
 
-            import urllib
-
-            f = urllib.urlopen(urlparse.urljoin(self.url, self.updates[module]["sums_url"]))
+            f = urlopen(urlparse.urljoin(self.url, self.updates[module]["sums_url"]))
             data = f.read()
 
             for i in range(0, len(data), 4):
@@ -1017,6 +1035,102 @@ init -1500 python in updater:
 
             if self.cancelled:
                 raise UpdateCancelled()
+
+
+        def download_direct(self, module):
+            """
+            Uses zsync to download the module.
+            """
+
+            import requests
+
+            start_progress = None
+
+            new_fn = self.update_filename(module, True)
+            part_fn = new_fn + ".part.gz"
+
+            # Figure out the zsync command.
+
+            zsync_fn = os.path.join(self.updatedir, module + ".zsync")
+
+            try:
+                os.unlink(new_fn)
+            except:
+                pass
+
+            zsync_url = self.updates[module]["zsync_url"][:-6] + ".update.gz"
+            url = urlparse.urljoin(self.url, zsync_url)
+
+            self.log.write("downloading %r\n" % url)
+            self.log.flush()
+
+            resp = requests.get(url, stream=True)
+
+            if not resp.ok:
+                raise UpdateError(_("The update file was not downloaded."))
+
+            try:
+                length = int(resp.headers.get("Content-Length", "20000000"))
+            except:
+                length = 20000000
+
+            done = 0
+
+            with open(part_fn, "wb") as part_f:
+
+                for data in resp.iter_content(1000000):
+
+                    if self.cancelled:
+                        break
+
+                    part_f.write(data)
+
+                    done += len(data)
+
+                    self.progress = min(1.0, 1.0 * done / length)
+
+            resp.close()
+
+            if self.cancelled:
+                raise UpdateCancelled()
+
+            # Decompress the file.
+            import gzip
+
+            with gzip.open(part_fn, "rb") as gz_f:
+                with open(new_fn, "wb") as new_f:
+
+                    while True:
+                        data = gz_f.read(1000000)
+
+                        if not data:
+                            break
+
+                        new_f.write(data)
+
+            os.unlink(part_fn)
+
+            # Check that the downloaded file has the right digest.
+            import hashlib
+            with open(new_fn, "rb") as f:
+                hash = hashlib.sha256()
+
+                while True:
+                    data = f.read(1024 * 1024)
+
+                    if not data:
+                        break
+
+                    hash.update(data)
+
+                digest = hash.hexdigest()
+
+            if digest != self.updates[module]["digest"]:
+                raise UpdateError(_("The update file does not have the correct digest - it may have been corrupted."))
+
+            if self.cancelled:
+                raise UpdateCancelled()
+
 
 
         def unpack(self, module):
@@ -1263,7 +1377,7 @@ init -1500 python in updater:
         return not not get_installed_packages(base)
 
 
-    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True):
+    def update(url, base=None, force=False, public_key=None, simulate=None, add=[], restart=True, confirm=True, patch=True):
         """
         :doc: updater
 
@@ -1303,12 +1417,18 @@ init -1500 python in updater:
         `confirm`
             Should Ren'Py prompt the user to confirm the update? If False, the
             update will proceed without confirmation.
+
+        `patch`
+            If true, Ren'Py will attempt to patch the game, downloading only
+            changed data. If false, Ren'Py will download a complete copy of
+            the game, and update from that. This is set to false automatically
+            when the url does not begin with "http:".
         """
 
         global installed_packages_cache
         installed_packages_cache = None
 
-        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm)
+        u = Updater(url=url, base=base, force=force, public_key=public_key, simulate=simulate, add=add, restart=restart, confirm=confirm, patch=patch)
         ui.timer(.1, repeat=True, action=renpy.restart_interaction)
         renpy.call_screen("updater", u=u)
 
@@ -1465,7 +1585,7 @@ init -1500:
 
                     if u.progress is not None:
                         null height gui._scale(10)
-                        bar value u.progress range 1.0 style "_bar"
+                        bar value (u.progress or 0.0) range 1.0 style "_bar"
 
             hbox:
 

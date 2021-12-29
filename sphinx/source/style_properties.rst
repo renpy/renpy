@@ -455,7 +455,7 @@ Text Style Properties
 
     If not None, this should be a displayable. The input widget will
     use this as the caret at the end of the text. If None, a 1 pixel
-    wide line is used as the caret.
+    wide blinking line is used as the caret.
 
 .. style-property:: color color
 

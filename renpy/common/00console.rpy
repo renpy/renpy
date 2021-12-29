@@ -556,6 +556,8 @@ init -1500 python in _console:
 
                 return rv
 
+            renpy.ui.reset()
+
             renpy.game.context().exception_handler = None
 
             renpy.show_screen("_console", lines=self.lines[:-1], default=self.lines[-1], history=self.history, _transient=True)
@@ -1050,7 +1052,11 @@ label _console:
 
     while True:
         python in _console:
-            console.interact()
+            try:
+                console.interact()
+            finally:
+                renpy.game.context().force_checkpoint = True
+                renpy.exports.checkpoint(hard="not_greedy")
 
 label _console_return:
     return

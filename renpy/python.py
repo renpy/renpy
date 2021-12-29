@@ -360,8 +360,6 @@ class NoRollback(object):
     only participate in rollback if they are reachable through other paths.
     """
 
-    pass
-
 # parents = [ ]
 
 
@@ -714,7 +712,7 @@ def quote_eval(s):
             i += 1
             continue
 
-        raise Exception("Unknown character %r (can't happen)".format(c))
+        raise Exception("Unknown character {} (can't happen)".format(c))
 
     # Since the last 2 characters are \0, those characters need to be stripped.
     return "".join(rv[:-2])
@@ -987,6 +985,8 @@ class RevertableList(list):
     __add__ = wrapper(list.__add__)
     if PY2:
         __getslice__ = wrapper(list.__getslice__)
+
+    del wrapper
 
     def __getitem__(self, index):
         rv = list.__getitem__(self, index)
@@ -1382,6 +1382,7 @@ class Rollback(renpy.object.Object):
     __version__ = 5
 
     identifier = None
+    not_greedy = False
 
     def __init__(self):
 
@@ -1410,6 +1411,10 @@ class Rollback(renpy.object.Object):
         # True if this is a hard checkpoint, where the rollback counter
         # decreases.
         self.hard_checkpoint = False
+
+        # True if this is a not-greedy checkpoint, which should end
+        # rollbacks that occur in greedy mode.
+        self.not_greedy = False
 
         # A unique identifier for this rollback object.
 
@@ -1837,7 +1842,11 @@ class RollbackLog(renpy.object.Object):
         if hard and (not self.current.hard_checkpoint):
             if self.rollback_limit < renpy.config.hard_rollback_limit:
                 self.rollback_limit += 1
-            self.current.hard_checkpoint = hard
+
+            if hard == "not_greedy":
+                self.current.not_greedy = True
+            else:
+                self.current.hard_checkpoint = hard
 
         if self.in_fixed_rollback() and self.forward:
             # use data from the forward stack
@@ -2021,6 +2030,9 @@ class RollbackLog(renpy.object.Object):
             if rb.hard_checkpoint:
                 break
 
+            if rb.not_greedy:
+                break
+
             revlog.append(self.log.pop())
 
         # Decide if we're replacing the current context (rollback command),
@@ -2050,7 +2062,7 @@ class RollbackLog(renpy.object.Object):
         for rb in revlog:
             rb.rollback()
 
-            if rb.context.current == self.fixed_rollback_boundary:
+            if (rb.context.current == self.fixed_rollback_boundary) and (rb.context.current):
                 self.rollback_is_fixed = True
 
             if rb.forward is not None:
@@ -2086,6 +2098,9 @@ class RollbackLog(renpy.object.Object):
 
         renpy.game.contexts.extend(other_contexts)
 
+        renpy.exports.execute_default_statement(False)
+
+        self.mutated.clear()
         begin_stores()
 
         # Restart the context or the top context.
@@ -2094,9 +2109,21 @@ class RollbackLog(renpy.object.Object):
             if force_checkpoint:
                 renpy.game.contexts[0].force_checkpoint = True
 
+            self.current = Rollback()
+            self.current.context = renpy.game.contexts[0].rollback_copy()
+
+            if self.log is not None:
+                self.log.append(self.current)
+
             raise renpy.game.RestartTopContext()
 
         else:
+
+            self.current = Rollback()
+            self.current.context = renpy.game.context().rollback_copy()
+
+            if self.log is not None:
+                self.log.append(self.current)
 
             if force_checkpoint:
                 renpy.game.context().force_checkpoint = True

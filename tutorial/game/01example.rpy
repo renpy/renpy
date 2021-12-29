@@ -69,7 +69,7 @@ python early:
         fn = fn.replace("game/", "")
 
         with renpy.notl_file(fn) as f:
-            data = f.read()
+            data = f.read().decode("utf-8")
 
         rawlines = [ i.rstrip() for i in data.split("\n") ]
 
@@ -564,19 +564,18 @@ init python hide:
     # A list of files we will be scanning.
     files = [ ]
 
-    for i in os.listdir(config.gamedir):
+    for i in renpy.list_files():
         if i.endswith(".rpy"):
-            files.append(os.path.join(config.gamedir, i))
+            files.append(i)
 
     for fn in files:
 
-        f = file(fn, "r")
+        lines = renpy.file(fn).read().decode("utf-8").splitlines()
 
         open_examples = set()
 
-        for l in f:
+        for l in lines:
 
-            l = l.decode("utf-8")
             l = l.rstrip()
 
             m = re.match("\s*#begin (\w+)", l)
@@ -606,8 +605,6 @@ init python hide:
 
         if open_examples:
             raise Exception("Examples %r remain open at the end of %r" % (open_examples, fn))
-
-        f.close()
 
 
 

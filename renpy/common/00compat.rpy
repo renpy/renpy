@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init -1900 python:
+init -1100 python:
 
     # This is called when script_version is set, to immediately
     # run code in response to a script_version change.
@@ -218,6 +218,18 @@ init -1900 python:
 
         if version <= (7, 4, 6):
             config.adjust_minimums = False
+            config.atl_start_on_show = False
+            config.input_caret_blink = False
+
+        if version <= (7, 4, 8):
+            config.relative_transform_size = False
+            config.tts_front_to_back = False
+
+        if version <= (7, 4, 10):
+            config.always_unfocus = False
+
+        if version <= (7, 5, 0):
+            style.drag.focus_mask = True
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
@@ -266,7 +278,7 @@ init -1000 python hide:
     except:
         pass
 
-init 1900 python hide:
+init 1100 python hide:
 
     # This returns true if the script_version is <= the
     # script_version supplied. Give it the last script version

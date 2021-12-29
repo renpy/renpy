@@ -157,71 +157,71 @@ translate piglatin strings:
     old "Ren'Py script disabled."
     new "Enray'Ypay criptsay isabledday."
 
-    # renpy/common/00console.rpy:745
+    # renpy/common/00console.rpy:747
     old "help: show this help"
     new "elphay: owshay histay elphay"
 
-    # renpy/common/00console.rpy:750
+    # renpy/common/00console.rpy:752
     old "commands:\n"
     new "ommandscay:\n"
 
-    # renpy/common/00console.rpy:760
+    # renpy/common/00console.rpy:762
     old " <renpy script statement>: run the statement\n"
     new " <enpyray criptsay atementstay>: unray hetay atementstay\n"
 
-    # renpy/common/00console.rpy:762
+    # renpy/common/00console.rpy:764
     old " <python expression or statement>: run the expression or statement"
     new " <ythonpay expressionay oray atementstay>: unray hetay expressionay oray atementstay"
 
-    # renpy/common/00console.rpy:770
+    # renpy/common/00console.rpy:772
     old "clear: clear the console history"
     new "earclay: earclay hetay onsolecay istoryhay"
 
-    # renpy/common/00console.rpy:774
+    # renpy/common/00console.rpy:776
     old "exit: exit the console"
     new "exitay: exitay hetay onsolecay"
 
-    # renpy/common/00console.rpy:782
+    # renpy/common/00console.rpy:784
     old "load <slot>: loads the game from slot"
     new "oadlay <otslay>: oadslay hetay amegay omfray otslay"
 
-    # renpy/common/00console.rpy:795
+    # renpy/common/00console.rpy:797
     old "save <slot>: saves the game in slot"
     new "avesay <otslay>: avessay hetay amegay inay otslay"
 
-    # renpy/common/00console.rpy:806
+    # renpy/common/00console.rpy:808
     old "reload: reloads the game, refreshing the scripts"
     new "eloadray: eloadsray hetay amegay, efreshingray hetay criptssay"
 
-    # renpy/common/00console.rpy:814
+    # renpy/common/00console.rpy:816
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
     new "atchway <expressionay>: atchway aay ythonpay expressionay\n atchway ortshay: akesmay hetay epresentationray ofay acedtray expressionsay ortshay (efaultday)\n atchway onglay: akesmay hetay epresentationray ofay acedtray expressionsay asay isay"
 
-    # renpy/common/00console.rpy:849
+    # renpy/common/00console.rpy:851
     old "unwatch <expression>: stop watching an expression"
     new "unwatchay <expressionay>: opstay atchingway anay expressionay"
 
-    # renpy/common/00console.rpy:884
+    # renpy/common/00console.rpy:886
     old "unwatchall: stop watching all expressions"
     new "unwatchallay: opstay atchingway allay expressionsay"
 
-    # renpy/common/00console.rpy:901
+    # renpy/common/00console.rpy:903
     old "jump <label>: jumps to label"
     new "umpjay <abellay>: umpsjay otay abellay"
 
-    # renpy/common/00console.rpy:917
+    # renpy/common/00console.rpy:919
     old "short: Shorten the representation of objects on the console (default)."
     new "ortshay: Hortensay hetay epresentationray ofay objectsay onay hetay onsolecay (efaultday)."
 
-    # renpy/common/00console.rpy:921
+    # renpy/common/00console.rpy:923
     old "long: Print the full representation of objects on the console."
     new "onglay: Rintpay hetay ullfay epresentationray ofay objectsay onay hetay onsolecay."
 
-    # renpy/common/00console.rpy:925
+    # renpy/common/00console.rpy:927
     old "escape: Enables escaping of unicode symbols in unicode strings."
     new "escapeay: Nableseay escapingay ofay unicodeay ymbolssay inay unicodeay ringsstay."
 
-    # renpy/common/00console.rpy:929
+    # renpy/common/00console.rpy:931
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
     new "unescapeay: Isablesday escapingay ofay unicodeay ymbolssay inay unicodeay ringsstay anday rintpay itay asay isay (efaultday)."
 

@@ -49,7 +49,7 @@ class Persistent(object):
     # Undefined attributes return None.
     def __getattr__(self, attr):
         if attr.startswith("__") and attr.endswith("__"):
-            raise AttributeError("Persistent object has no attribute %r", attr)
+            raise AttributeError("Persistent object has no attribute %r" % attr)
 
         return None
 
@@ -98,6 +98,8 @@ class Persistent(object):
 
         if not self._seen_audio:
             self._seen_audio = { }
+
+        self._seen_audio = { str(i) : True for i in self._seen_audio }
 
         # The set of seen translate identifiers.
         if not self._seen_translates:
@@ -411,6 +413,19 @@ def save():
         if renpy.config.developer:
             raise
 
+    global persistent_mtime
+
+    # Prevent updates just after save
+    mtime = persistent_mtime
+
+    for mtime, _data in renpy.loadsave.location.load_persistent():
+        if mtime <= persistent_mtime:
+            continue
+
+    persistent_mtime = mtime
+
+
+
 ################################################################################
 # MultiPersistent
 ################################################################################
@@ -456,7 +471,7 @@ class _MultiPersistent(object):
 
 def MultiPersistent(name, save_on_quit=False):
 
-    name = renpy.exports.fsencode(name)
+    name = renpy.exports.fsdecode(name)
 
     if not renpy.game.context().init_phase:
         raise Exception("MultiPersistent objects must be created during the init phase.")
@@ -468,19 +483,19 @@ def MultiPersistent(name, save_on_quit=False):
         files = [ renpy.config.savedir ]
 
     elif renpy.windows:
-        files = [ os.path.expanduser(b"~/RenPy/Persistent") ]
+        files = [ os.path.expanduser("~/RenPy/Persistent") ]
 
         if 'APPDATA' in os.environ:
-            files.append(os.environ[b'APPDATA'] + b"/RenPy/persistent")
+            files.append(renpy.exports.fsdecode(os.environ['APPDATA']) + "/RenPy/persistent")
 
     elif renpy.macintosh:
-        files = [ os.path.expanduser(b"~/.renpy/persistent"),
-                  os.path.expanduser(b"~/Library/RenPy/persistent") ]
+        files = [ os.path.expanduser("~/.renpy/persistent"),
+                  os.path.expanduser("~/Library/RenPy/persistent") ]
     else:
-        files = [ os.path.expanduser(b"~/.renpy/persistent") ]
+        files = [ os.path.expanduser("~/.renpy/persistent") ]
 
     if "RENPY_MULTIPERSISTENT" in os.environ:
-        files = [ os.environ["RENPY_MULTIPERSISTENT"] ]
+        files = [ renpy.exports.fsdecode(os.environ["RENPY_MULTIPERSISTENT"]) ]
 
     # Make the new persistent directory, why not?
     try:
@@ -488,7 +503,7 @@ def MultiPersistent(name, save_on_quit=False):
     except:
         pass
 
-    fn = b"" # prevent a warning from happening.
+    fn = "" # prevent a warning from happening.
     data = None
 
     # Find the first file that actually exists. Otherwise, use the last

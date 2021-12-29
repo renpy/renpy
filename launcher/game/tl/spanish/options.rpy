@@ -199,3 +199,8 @@
     # options.rpy:216
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Los nombres de usuario y de proyecto asociados con un proyecto itch.io, separados por una barra."
+
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    new "## Estas tres variables controlan, entre otras cosas, qué mezcladores se muestran al reproductor de forma predeterminada. Establecer uno de estos en False ocultará el mezclador apropiado. "
+

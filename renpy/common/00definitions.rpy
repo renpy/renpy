@@ -382,19 +382,19 @@ init -1400:
             background
 
         contains:
-            mesh flatten
             perspective True
 
             # Note: (bool(x) * v) == v when x is true, or 0 otherwise.
 
-            old_widget
+            Transform(old_widget, mesh=flatten)
+
             matrixtransform RotateMatrix(0.0, 0.0, 0.0)
             linear (delay / 2.0) matrixtransform RotateMatrix(
                 bool(vertical) * (-90.0 if reverse else 90.0),
                 bool(not vertical) * (-90.0 if reverse else 90.0),
                 0.0)
 
-            new_widget
+            Transform(new_widget, mesh=flatten)
             matrixtransform RotateMatrix(
                 bool(vertical) * (90.0 if reverse else -90.0),
                 bool(not vertical) * (90.0 if reverse else -90.0),
@@ -439,8 +439,8 @@ init -1400:
 
     # The default narrator.
     define _narrator = Character(None, kind=adv, what_style='say_thought')
-    define centered = Character(None, what_style="centered_text", window_style="centered_window")
-    define vcentered = Character(None, what_style="centered_vtext", window_style="centered_window")
+    define centered = Character(None, what_style="centered_text", window_style="centered_window", statement_name="say-centered")
+    define vcentered = Character(None, what_style="centered_vtext", window_style="centered_window", statement_name="say-centered")
 
 
 init 1400 python:

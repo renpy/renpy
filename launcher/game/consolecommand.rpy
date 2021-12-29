@@ -59,16 +59,24 @@ init python:
             args = [ '"{}"'.format(renpy.fsencode(i)) for i in args]
             self.f.write(" ".join(args) + self.nl)
 
+        def write(self, *args):
+            """
+            Adds a command to be run.
+            """
+
+            args = [ '{}'.format(renpy.fsencode(i)) for i in args]
+            self.f.write(" ".join(args) + self.nl)
+
         def run(self):
             """
             Runs the queued up commands.
             """
 
             if renpy.windows:
-                self.add("pause")
+                self.write("pause")
             elif renpy.linux:
                 self.add("echo", "Press enter to close this window...")
-                self.add("read")
+                self.write("read")
 
             self.f.close()
             os.chmod(self.fn, 0o755)

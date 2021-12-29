@@ -39,7 +39,8 @@ and invoke many other actions. A game-maker can also write new actions
 in Python.
 
 Screens are updated at the start of each interaction, and each time an
-interaction is restarted.
+interaction is restarted. Note that a ``with None`` statement does not
+cause an interaction to happen, and hence won't update a screen.
 
 A screen has a scope associated with it, giving values to some
 variables. When a variable is accessed by a screen, it's first looked
@@ -301,7 +302,7 @@ Creates a horizontally-oriented bar that can be used to view or adjust
 data. It takes the following properties:
 
 `value`
-    The current value of the bar. This can be either a :ref:`bar value <input-values>`
+    The current value of the bar. This can be either a :ref:`bar value <bar-values>`
     object, or a number.
 
 `range`
@@ -321,6 +322,10 @@ data. It takes the following properties:
 `unhovered`
     An action to run when the bar loses focus.
 
+`released`
+    An action to run when the bar button is released. This will be invoked
+    even if the bar has not changed its value.
+
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
 
@@ -336,7 +341,7 @@ This does not take children.
         frame:
             has vbox
 
-            bar value Preference("sound volume")
+            bar value Preference("sound volume") released Play("sound", "audio/sample_sound.ogg")
             bar value Preference("music volume")
             bar value Preference("voice volume")
 
@@ -671,6 +676,11 @@ The input statement takes no parameters, and the following properties:
     If given, a string that replaces each displayable character in
     the text. This can be used to mask out a password.
 
+`caret_blink`
+    If not False, the blinking period of the default caret.
+    Overrides :var:`config.input_caret_blink`.
+
+
 It also takes:
 
 * :ref:`Common Properties <common-properties>`
@@ -694,9 +704,9 @@ This does not take any children.
 Key
 ---
 
-This creates a keybinding that runs an action when a key is
-pressed. Key is used in a loose sense here, as it also allows joystick
-and mouse events.
+This creates a keybinding that runs an action when a key is pressed,
+or one of the keys in a given list. Key is used in a loose sense here,
+as it also allows joystick and mouse events.
 
 Key takes one positional parameter, a string giving the key to
 bind. See the :ref:`keymap` section for a description of available
@@ -713,7 +723,7 @@ It takes no children.
     screen keymap_screen():
         key "game_menu" action ShowMenu('save')
         key "p" action ShowMenu('preferences')
-        key "s" action Screenshot()
+        key ["s", "w"] action Screenshot()
 
 
 .. _sl-label:
@@ -1957,15 +1967,23 @@ This can be used to display an imagemap. The imagemap can place a
 value into the ``_return`` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
-The call screen statement takes an optional ``nopredict`` keyword, that
+The call screen statement takes an optional ``nopredict`` keyword, which
 prevents screen prediction from occurring. During screen prediction,
 arguments to the screen are evaluated. Please ensure that evaluating
 the screen arguments does not cause unexpected side-effects to occur.
 
-The call screen statement takes an optional ``with`` keyword, followed
-by a transition. The transition takes place when the screen is first
-displayed. A with statement after the transition runs after the screen
-is hidden, provided control is not transferred.
+In a call screen statement, the ``with`` clause causes a transition
+to occur when the screen is shown.
+
+Since calling a screen is an interaction, and interactions trigger
+an implicit ``with None``, using a ``with`` statement after the
+``call screen`` instruction won't make the screen disappear using the
+transition, as the screen will already will be gone. To disable the
+implicit ``with None`` transition, pass the ``_with_none=False``
+special keyword argument to the screen, as in the example below.
+
+Other ways of triggering transitions also work, such as the
+``[ With(dissolve), Return() ]`` action list.
 
 .. warning::
 
@@ -1978,9 +1996,14 @@ is hidden, provided control is not transferred.
 
     call screen my_screen(side_effect_function()) nopredict
 
-    # Shows the screen with dissolve and hides it with fade.
+    # Shows the screen with dissolve
     call screen my_other_screen with dissolve
-    with fade
+    # The screens instantly hides with None, then the pixellate transition executes
+    with pixellate
+
+    # Shows the screen with dissolve and hides it with pixellate.
+    call screen my_other_screen(_with_none=False) with dissolve
+    with pixellate
 
 .. _screen-variants:
 
@@ -2045,6 +2068,9 @@ and choosing the entries that apply to the current platform.
 
 ``"firetv"``
    Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
+
+``"chromeos"``
+   Defined when running as an Android app on a Chromebook.
 
 ``"android"``
    Defined on all Android devices.

@@ -156,6 +156,13 @@ class ScriptTranslator(object):
             elif type_n is Translate:
 
                 if n.language is None:
+                    if n.identifier in self.default_translates:
+                        old_node = self.default_translates[n.identifier]
+                        raise Exception("Line with id %s appeared twice, at %s:%d and %s:%d." %
+                                          (n.identifier,
+                                           old_node.filename, old_node.linenumber,
+                                           n.filename, n.linenumber))
+
                     self.default_translates[n.identifier] = n
                     self.file_translates[filename].append((label, n))
                 else:
@@ -272,17 +279,27 @@ class Restructurer(object):
 
         identifier = self.unique_identifier(self.label, digest)
 
+        # Take id clause from the block if the last statement is Say statement
+        id_identifier = None
         for i in block:
             if isinstance(i, renpy.ast.Say):
-                identifier = getattr(i, "identifier", None) or identifier
-
-        self.identifiers.add(identifier)
+                id_identifier = getattr(i, "identifier", id_identifier)
 
         if self.alternate is not None:
             alternate = self.unique_identifier(self.alternate, digest)
-            self.identifiers.add(alternate)
+            identifier = id_identifier or identifier
+
+        elif id_identifier is not None:
+            alternate = identifier
+            identifier = id_identifier
+
         else:
             alternate = None
+            identifier = identifier
+
+        self.identifiers.add(identifier)
+        if alternate is not None:
+            self.identifiers.add(alternate)
 
         loc = (block[0].filename, block[0].linenumber)
 
@@ -594,11 +611,11 @@ def new_change_language(tl, language):
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)
 
-    def run_blocks():
+    def run_early_blocks():
         for i in tl.early_block[language]:
             renpy.game.context().run(i.block[0])
 
-    renpy.game.invoke_in_new_context(run_blocks)
+    renpy.game.invoke_in_new_context(run_early_blocks)
 
     for i in renpy.config.language_callbacks[language]:
         i()

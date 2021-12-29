@@ -212,8 +212,8 @@ init python:
 
     def launch_xcode():
         dist = xcode_project(None)
-        base = os.path.basename(dist)
-        xcodeproj = "{}/{}.xcodeproj".format(dist, base)
+        name = project.current.dump.get("name", None)
+        xcodeproj = "{}/{}.xcodeproj".format(dist, name)
 
         subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
 
@@ -300,22 +300,6 @@ screen ios:
                                     action IOSIfState(state, IOS_OK, launch_xcode)
                                     hovered tt.Action(IOS_XCODE_TEXT)
 
-#                             textbutton _("Configure"):
-#                                 action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
-#                                 hovered tt.Action(CONFIGURE_TEXT)
-#
-#                             textbutton _("Build Package"):
-#                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build"))
-#                                 hovered tt.Action(BUILD_TEXT)
-#
-#                             textbutton _("Build & Install"):
-#                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_and_install"))
-#                                 hovered tt.Action(BUILD_AND_INSTALL_TEXT)
-#
-#                             textbutton _("Build, Install & Launch"):
-#                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_install_and_launch"))
-#                                 hovered tt.Action(BUILD_INSTALL_AND_LAUNCH_TEXT)
-
                     add SPACER
                     add SEPARATOR2
 
@@ -349,6 +333,10 @@ screen ios:
                     frame:
                         style "l_indent"
                         has vbox
+
+                        add SPACER
+
+                        text _("There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices.")
 
                         add SPACER
 

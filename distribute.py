@@ -1,4 +1,4 @@
-#!/home/tom/ab/renpy/lib/linux-x86_64/python -O
+#!/home/tom/ab/renpy/lib/py2-linux-x86_64/python -O
 
 # Builds a distribution of Ren'Py.
 from __future__ import print_function
@@ -74,9 +74,9 @@ def main():
     import renpy
 
     if args.version is None:
-        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])  # @UndefinedVariable
+        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1]) # @UndefinedVariable
 
-    match_version = ".".join(str(i) for i in renpy.version_tuple[:2])  # @UndefinedVariable
+    match_version = ".".join(str(i) for i in renpy.version_tuple[:2]) # @UndefinedVariable
 
     s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", "start-" + match_version ])
     parts = s.strip().split("-")
@@ -90,20 +90,26 @@ def main():
         vc_version += 1
 
     with open("renpy/vc_version.py", "w") as f:
-        f.write("vc_version = {}".format(vc_version))
+        import socket
+        official = socket.gethostname() == "eileen"
+        nightly = args.version and "nightly" in args.version
+
+        f.write("vc_version = {}\n".format(vc_version))
+        f.write("official = {}\n".format(official))
+        f.write("nightly = {}\n".format(nightly))
 
     if args.vc_version_only:
         return
 
     try:
-        reload(sys.modules['renpy.vc_version'])  # @UndefinedVariable
+        reload(sys.modules['renpy.vc_version']) # @UndefinedVariable
     except:
-        import renpy.vc_version  # @UnusedImport
+        import renpy.vc_version # @UnusedImport
 
     reload(sys.modules['renpy'])
 
     # Check that the versions match.
-    full_version = renpy.version_only  # @UndefinedVariable
+    full_version = renpy.version_only # @UndefinedVariable
     if "-" not in args.version \
             and not full_version.startswith(args.version):
         raise Exception("The command-line and Ren'Py versions do not match.")
@@ -142,8 +148,8 @@ def main():
 
         sys.path.insert(0, os.path.join(ROOT, "rapt", "buildlib"))
 
-        import rapt.interface  # @UnresolvedImport
-        import rapt.build  # @UnresolvedImport
+        import rapt.interface # @UnresolvedImport
+        import rapt.build # @UnresolvedImport
 
         interface = rapt.interface.Interface()
         rapt.build.distclean(interface)
@@ -232,7 +238,7 @@ def main():
 
         sys.stdout.write("Creating -sdk.7z")
 
-        p = subprocess.Popen([ "7z", "a", sdk +".7z", sdk], stdout=subprocess.PIPE)
+        p = subprocess.Popen([ "7z", "a", sdk + ".7z", sdk], stdout=subprocess.PIPE)
         for i, _l in enumerate(p.stdout):
             if i % 10 != 0:
                 continue

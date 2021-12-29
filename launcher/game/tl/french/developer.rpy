@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"

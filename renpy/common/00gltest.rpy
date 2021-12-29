@@ -379,6 +379,9 @@ init -1500 python:
 
 label _gl_test:
 
+    if renpy.session.get("_keep_renderer", False):
+        return
+
     # Show the test image.
     scene black
     show expression config.gl_test_image

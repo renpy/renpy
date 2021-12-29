@@ -223,6 +223,11 @@ def bootstrap(renpy_base):
         sys.stderr.write("Base directory %r does not exist. Giving up.\n" % (basedir,))
         sys.exit(1)
 
+    # Make game/ on Android.
+    if renpy.android:
+        if not os.path.exists(basedir + "/game"):
+            os.mkdir(basedir + "/game", 0o777)
+
     gamedirs = [ name ]
     game_name = name
 

@@ -193,9 +193,14 @@ The show statement takes the following properties:
     left-to-right order.
 
     If no at clause is given, Ren'Py will retain any existing
-    transform that has been applied to the image. If no transform
-    exists, the image will be displayed using the :var:`default`
+    transform that has been applied to the image, if they were
+    created with ATL or with :class:`Transform`. If no transform
+    is specified, the image will be displayed using the :var:`default`
     transform.
+
+    See the section on :ref:`replacing transforms <replacing-transforms>`
+    for information about how replacing the transforms associated with
+    a tag can change the transform properties.
 
 ``behind``
     Takes a comma-separated list of one or more names. Each name is
@@ -452,7 +457,7 @@ The differences are:
   explicitly cleared.
 
 * ``show layer`` requires a layer name, while ``camera`` defaults to the
-   master layer.
+  master layer.
 
 
 Hide and Show Window

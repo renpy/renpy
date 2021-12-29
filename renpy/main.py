@@ -161,6 +161,7 @@ def choose_variants():
 
     if "RENPY_VARIANT" in os.environ:
         renpy.config.variants = list(os.environ["RENPY_VARIANT"].split()) + [ None ]
+        renpy.display.emulator.early_init_emulator()
         return
 
     renpy.config.variants = [ None ]
@@ -199,6 +200,15 @@ def choose_variants():
             renpy.config.variants.insert(0, "tv")
             renpy.config.variants.insert(0, "small")
             return
+
+        # Running on a chromebook.
+        try:
+            PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
+            if PythonSDLActivity.isChromebook():
+                print("Running on ChromeOS.")
+                renpy.config.variants.insert(0, 'chromeos')
+        except:
+            pass
 
         # Otherwise, a phone or tablet.
         renpy.config.variants.insert(0, 'touch')
@@ -292,6 +302,43 @@ def choose_variants():
         renpy.config.variants.insert(0, 'large')
 
 
+def android_searchpath():
+    """
+    Determines the searchpath on Android.
+    """
+
+    # The default gamedir, in private.
+    renpy.config.searchpath = [ renpy.config.gamedir ]
+
+    # The public android directory.
+    if "ANDROID_PUBLIC" in os.environ:
+        android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
+
+        if os.path.exists(android_game):
+            renpy.config.searchpath.insert(0, android_game)
+
+    # Asset packs.
+    packs = [
+        "ANDROID_PACK_FF1",
+        "ANDROID_PACK_FF2",
+        "ANDROID_PACK_FF3",
+        "ANDROID_PACK_FF4",
+    ]
+
+    for i in packs:
+        if i not in os.environ:
+            continue
+
+        assets = os.environ[i]
+
+        for i in [ "renpy/common", "game" ]:
+            dn = os.path.join(assets, i)
+            if os.path.isdir(dn):
+                renpy.config.searchpath.append(dn)
+
+    print("Android search paths:" , " ".join(renpy.config.searchpath))
+
+
 def main():
 
     gc.set_threshold(*renpy.config.gc_thresholds)
@@ -342,16 +389,9 @@ def main():
         renpy.config.searchpath.extend(os.environ["RENPY_SEARCHPATH"].split("::"))
 
     if renpy.android:
-        renpy.config.searchpath = [ ]
         renpy.config.commondir = None
 
-        if "ANDROID_PUBLIC" in os.environ:
-            android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
-
-            print("Android searchpath: ", android_game)
-
-            if os.path.exists(android_game):
-                renpy.config.searchpath.insert(0, android_game)
+        android_searchpath()
 
     # Load Ren'Py extensions.
     for dir in renpy.config.searchpath: # @ReservedAssignment
@@ -366,15 +406,20 @@ def main():
             if not (ext in archive_extensions):
                 archive_extensions.append(ext)
 
-    # The basename is the final component of the path to the gamedir.
-    for i in sorted(os.listdir(renpy.config.gamedir)):
-        base, ext = os.path.splitext(i)
+    # Find archives.
+    for dn in renpy.config.searchpath:
 
-        # Check if the archive does not have any of the extensions in archive_extensions
-        if not (ext in archive_extensions):
+        if not os.path.isdir(dn):
             continue
 
-        renpy.config.archives.append(base)
+        for i in sorted(os.listdir(dn)):
+            base, ext = os.path.splitext(i)
+
+            # Check if the archive does not have any of the extensions in archive_extensions
+            if not (ext in archive_extensions):
+                continue
+
+            renpy.config.archives.append(base)
 
     renpy.config.archives.reverse()
 

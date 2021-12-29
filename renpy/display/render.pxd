@@ -24,7 +24,7 @@ from renpy.display.matrix cimport Matrix, Matrix2D
 
 cdef class Render:
 
-    cdef public bint mark, cache_killed
+    cdef public bint mark, cache_killed, killed
 
     cdef public float width, height
     cdef public object layer_name
@@ -60,11 +60,7 @@ cdef class Render:
     cdef public list pass_focuses
     cdef public object focus_screen
 
-    cdef public object draw_func
     cdef public object render_of
-
-    cdef public bint opaque
-    cdef public list visible_children
 
     cdef public bint xclipping
     cdef public bint yclipping
@@ -102,6 +98,8 @@ cdef class Render:
     # True if the texture has been loaded.
     cdef public bint loaded
 
+    # A flag that's used to enable debugging on a per-render basis.
+    cdef public bint debug
 
     # operations ###############################################################
 
@@ -111,4 +109,3 @@ cdef class Render:
 
 
 cpdef render(object d, object widtho, object heighto, double st, double at)
-

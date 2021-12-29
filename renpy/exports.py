@@ -19,10 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This file contains functions that are exported to the script namespace.
-# Functions defined in this file can be updated by the user to change
-# their behavior, while functions imported in are probably best left
-# alone as part of the api.
+# This file contains functions that are exported to the script namespace as 
+# the renpy namespace. (So renpy.say, renpy.pause, and so on.)
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
@@ -63,8 +61,8 @@ from renpy.display.behavior import is_selected, is_sensitive
 
 from renpy.display.minigame import Minigame
 from renpy.display.screen import define_screen, show_screen, hide_screen, use_screen, current_screen
-from renpy.display.screen import has_screen, get_screen, get_widget, ScreenProfile as profile_screen
-from renpy.display.screen import get_widget_properties
+from renpy.display.screen import has_screen, get_screen, get_displayable, get_widget, ScreenProfile as profile_screen
+from renpy.display.screen import get_displayable_properties, get_widget_properties
 
 from renpy.display.focus import focus_coordinates
 from renpy.display.predict import screen as predict_screen
@@ -1257,14 +1255,14 @@ def display_menu(items,
 
             item_actions.append(me)
 
-            show_screen(
-                screen,
-                items=item_actions,
-                _widget_properties=props,
-                _transient=True,
-                _layer=renpy.config.choice_layer,
-                *menu_args,
-                **scope)
+        show_screen(
+            screen,
+            items=item_actions,
+            _widget_properties=props,
+            _transient=True,
+            _layer=renpy.config.choice_layer,
+            *menu_args,
+            **scope)
 
     else:
         renpy.exports.shown_window()
@@ -1298,8 +1296,12 @@ def display_menu(items,
         rv = renpy.ui.interact(mouse='menu', type=type, roll_forward=roll_forward)
 
         for label, val in items:
+
+            if isinstance(val, renpy.ui.ChoiceReturn):
+                val = val.value
+
             if rv == val:
-                log("User chose: " + label)
+                log("Player chose: " + label)
                 break
         else:
             log("No choice chosen.")
@@ -1824,13 +1826,15 @@ def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu
     raise renpy.game.FullRestartException((transition, label, target))
 
 
-def utter_restart():
+def utter_restart(keep_renderer=False):
     """
     :undocumented: Used in the implementation of shift+R.
 
     Causes an utter restart of Ren'Py. This reloads the script and
     re-runs initialization.
     """
+
+    renpy.session["_keep_renderer"] = keep_renderer
 
     raise renpy.game.UtterRestartException()
 
@@ -2349,6 +2353,27 @@ def seen_label(label):
     return label in renpy.game.persistent._seen_ever # @UndefinedVariable
 
 
+def mark_label_seen(label):
+    """
+    :doc: label
+
+    Marks the named label as if it has been already executed on the current user's
+    system.
+    """
+    renpy.game.persistent._seen_ever[label] = True
+
+
+def mark_label_unseen(label):
+    """
+    :doc: label
+
+    Marks the named label as if it has not been executed on the current user's
+    system yet.
+    """
+    if label in renpy.game.persistent._seen_ever:
+        del renpy.game.persistent._seen_ever[label]
+
+
 def seen_audio(filename):
     """
     :doc: audio
@@ -2356,10 +2381,34 @@ def seen_audio(filename):
     Returns True if the given filename has been played at least once on the current
     user's system.
     """
-
     filename = re.sub(r'^<.*?>', '', filename)
 
     return filename in renpy.game.persistent._seen_audio # @UndefinedVariable
+
+
+def mark_audio_seen(filename):
+    """
+    :doc: audio
+
+    Marks the given filename as if it has been already played on the current user's
+    system.
+    """
+    filename = re.sub(r'^<.*?>', '', filename)
+
+    renpy.game.persistent._seen_audio[filename] = True
+
+
+def mark_audio_unseen(filename):
+    """
+    :doc: audio
+
+    Marks the given filename as if it has not been played on the current user's
+    system yet.
+    """
+    filename = re.sub(r'^<.*?>', '', filename)
+
+    if filename in renpy.game.persistent._seen_audio:
+        del renpy.game.persistent._seen_audio[filename]
 
 
 def seen_image(name):
@@ -2376,6 +2425,33 @@ def seen_image(name):
         name = tuple(name.split())
 
     return name in renpy.game.persistent._seen_images # @UndefinedVariable
+
+
+def mark_image_seen(name):
+    """
+    :doc: image_func
+
+    Marks the named image as if it has been already displayed on the current user's
+    system.
+    """
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    renpy.game.persistent._seen_images[name] = True
+
+
+def mark_image_unseen(name):
+    """
+    :doc: image_func
+
+    Marks the named image as if it has not been displayed on the current user's
+    system yet.
+    """
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    if name in renpy.game.persistent._seen_images:
+        del renpy.game.persistent._seen_images[name]
 
 
 def file(fn): # @ReservedAssignment
@@ -3360,7 +3436,7 @@ def reset_physical_size():
 
 
 @renpy_pure
-def fsencode(s):
+def fsencode(s, force=False):
     """
     :doc: file_rare
     :name: renpy.fsencode
@@ -3368,7 +3444,7 @@ def fsencode(s):
     Converts s from unicode to the filesystem encoding.
     """
 
-    if not PY2:
+    if (not PY2) and (not force):
         return s
 
     if not isinstance(s, str):
@@ -3387,10 +3463,7 @@ def fsdecode(s):
     Converts s from filesystem encoding to unicode.
     """
 
-    if not PY2:
-        return s
-
-    if not isinstance(s, pystr):
+    if isinstance(s, str):
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"
@@ -4121,3 +4194,66 @@ def get_mouse_name(interaction=False):
         return 'default'
 
     return renpy.display.interface.get_mouse_name(interaction=interaction)
+
+
+def set_focus(screen, id, layer="screens"): # @ReservedAssignment
+    """
+    :doc: screens
+
+    This attempts to focus the displayable with `id` in the screen `screen`.
+    Focusing will fail if the displayable isn't found, the window isn't
+    focused, or something else is grabbing focus.
+
+    The focus may change if the mouse moves, even slightly, after this call
+    is processed.
+    """
+
+    renpy.display.focus.override = (screen, id, layer)
+    renpy.display.interface.last_event = None
+    restart_interaction()
+
+
+def check_permission(permission):
+    """
+    :doc: android_permission
+
+    Checks to see if an Android permission has been granted to this application.
+
+    `permission`
+        A string giving the name of the permission, for example, "android.permission.WRITE_EXTERNAL_STORAGE".
+
+    Returns true if the permission has been granted, false if it has not or if called on
+    a non-Android platform.
+    """
+
+    if not renpy.android:
+        return False
+
+    from jnius import autoclass
+    PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
+    activity = PythonSDLActivity.mActivity
+
+    try:
+        return activity.checkSelfPermission(permission) == 0 # PackageManager.PERMISSION_GRANTED
+    except:
+        return False
+
+
+def request_permission(permission):
+    """
+    :doc: android_permission
+
+    Asks Android to grant a permission to this application. The user may be
+    prompted to grant the permission.
+
+    `permission`
+        A string giving the name of the permission, for example, "android.permission.WRITE_EXTERNAL_STORAGE".
+
+    Returns true if the permission has been granted, false if not or if called on a
+    non-Android platform.
+    """
+
+    if not renpy.android:
+        return False
+
+    return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8"))

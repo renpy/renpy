@@ -340,8 +340,8 @@ class ImageReference(renpy.display.core.Displayable):
 
         self.name = name
 
-    def __unicode__(self):
-        return u"<ImageReference {!r}>".format(self.name)
+    def _repr_info(self):
+        return repr(self.name)
 
     def __hash__(self):
         return hash(self.name)
@@ -410,7 +410,7 @@ class ImageReference(renpy.display.core.Displayable):
 
         except Exception as e:
 
-            if renpy.config.debug:
+            if renpy.config.raise_image_exceptions and (renpy.config.debug or renpy.config.developer):
                 raise
 
             error(str(e))
@@ -576,8 +576,8 @@ class DynamicImage(renpy.display.core.Displayable):
     def _scope(self, scope, update):
         return self.find_target(scope, update)
 
-    def __unicode__(self):
-        return u"DynamicImage {!r}".format(self.name)
+    def _repr_info(self):
+        return repr(self.name)
 
     def __hash__(self):
 
@@ -657,12 +657,13 @@ class DynamicImage(renpy.display.core.Displayable):
         if not update:
             return True
 
-        self.raw_target = target
+        raw_target = target
         old_target = self.target
 
         if target._duplicatable:
             target = target._duplicate(self._args)
 
+        self.raw_target = raw_target
         self.target = target
 
         renpy.display.render.redraw(self, 0)
@@ -978,24 +979,22 @@ class ShownImageInfo(renpy.object.Object):
                     num_required += 1
                     continue
 
-            else:
+            # We don't have any not-found attributes. But we might not
+            # have all of the attributes.
 
-                # We don't have any not-found attributes. But we might not
-                # have all of the attributes.
+            if num_required != len(required):
+                continue
 
-                if num_required != len(required):
-                    continue
+            len_attrs = len(set(attrs))
 
-                len_attrs = len(set(attrs))
+            if len_attrs < max_len:
+                continue
 
-                if len_attrs < max_len:
-                    continue
+            if len_attrs > max_len:
+                max_len = len_attrs
+                matches = [ ]
 
-                if len_attrs > max_len:
-                    max_len = len_attrs
-                    matches = [ ]
-
-                matches.append((tag,) + attrs)
+            matches.append((tag,) + attrs)
 
         if matches is None:
             return None

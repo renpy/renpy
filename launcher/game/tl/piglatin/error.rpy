@@ -34,70 +34,74 @@ translate piglatin strings:
     new "Orcefay Les2gay Endererray"
 
     # renpy/common/00gltest.rpy:136
-    old "Enable"
-    new "Nableeay"
+    old "Enable (No Blocklist)"
+    new "Nableeay (Onay Locklistbay)"
 
-    # renpy/common/00gltest.rpy:155
+    # renpy/common/00gltest.rpy:159
     old "Powersave"
     new "Owersavepay"
 
-    # renpy/common/00gltest.rpy:169
+    # renpy/common/00gltest.rpy:173
     old "Framerate"
     new "Rameratefay"
 
-    # renpy/common/00gltest.rpy:173
+    # renpy/common/00gltest.rpy:177
     old "Screen"
     new "Creensay"
 
-    # renpy/common/00gltest.rpy:177
+    # renpy/common/00gltest.rpy:181
     old "60"
     new "06ay"
 
-    # renpy/common/00gltest.rpy:181
+    # renpy/common/00gltest.rpy:185
     old "30"
     new "03ay"
 
-    # renpy/common/00gltest.rpy:187
+    # renpy/common/00gltest.rpy:191
     old "Tearing"
     new "Earingtay"
 
-    # renpy/common/00gltest.rpy:203
+    # renpy/common/00gltest.rpy:207
     old "Changes will take effect the next time this program is run."
     new "Hangescay illway aketay effectay hetay extnay imetay histay rogrampay isay unray."
 
-    # renpy/common/00gltest.rpy:238
+    # renpy/common/00gltest.rpy:242
     old "Performance Warning"
     new "Erformancepay Arningway"
 
-    # renpy/common/00gltest.rpy:243
+    # renpy/common/00gltest.rpy:247
     old "This computer is using software rendering."
     new "Histay omputercay isay usingay oftwaresay enderingray."
 
-    # renpy/common/00gltest.rpy:245
+    # renpy/common/00gltest.rpy:249
     old "This game requires use of GL2 that can't be initialised."
     new "Histay amegay equiresray useay ofay L2gay hattay ancay'tay ebay initialiseday."
 
-    # renpy/common/00gltest.rpy:247
+    # renpy/common/00gltest.rpy:251
     old "This computer has a problem displaying graphics: [problem]."
     new "Histay omputercay ashay aay roblempay isplayingday aphicsgray: [problem]."
 
-    # renpy/common/00gltest.rpy:251
+    # renpy/common/00gltest.rpy:255
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
     new "Tsiay aphicsgray riversday aymay ebay outay ofay ateday oray otnay operatingay orrectlycay. Histay ancay eadlay otay owslay oray incorrectay aphicsgray isplayday."
 
-    # renpy/common/00gltest.rpy:256
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "Hetay {a=edit:1:log.txt}oglay.xttay{/a} ilefay aymay ontaincay informationay otay elphay ouyay etermineday hatway isay rongway ithway ouryay omputercay."
+
+    # renpy/common/00gltest.rpy:264
     old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
     new "Oremay etailsday onay owhay otay ixfay histay ancay ebay oundfay inay hetay {a=[url]}ocumentationday{/a}."
 
-    # renpy/common/00gltest.rpy:261
+    # renpy/common/00gltest.rpy:269
     old "Continue, Show this warning again"
     new "Ontinuecay, Howsay histay arningway againay"
 
-    # renpy/common/00gltest.rpy:265
+    # renpy/common/00gltest.rpy:273
     old "Continue, Don't show warning again"
     new "Ontinuecay, Onday'tay owshay arningway againay"
 
-    # renpy/common/00gltest.rpy:273
+    # renpy/common/00gltest.rpy:281
     old "Change render options"
     new "Hangecay enderray optionsay"
 
@@ -125,87 +129,75 @@ translate piglatin strings:
     old "Back (B)"
     new "Ackbay (Bay)"
 
-    # renpy/common/_errorhandling.rpym:540
+    # renpy/common/_errorhandling.rpym:553
     old "Open"
     new "Penoay"
 
-    # renpy/common/_errorhandling.rpym:542
+    # renpy/common/_errorhandling.rpym:555
     old "Opens the traceback.txt file in a text editor."
     new "Pensoay hetay acebacktray.xttay ilefay inay aay exttay editoray."
 
-    # renpy/common/_errorhandling.rpym:544
+    # renpy/common/_errorhandling.rpym:557
     old "Copy BBCode"
     new "Opycay Bcodebay"
 
-    # renpy/common/_errorhandling.rpym:546
+    # renpy/common/_errorhandling.rpym:559
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
     new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay asay Bcodebay orfay orumsfay ikelay ttpshay://emmasoftlay.enairay.usay/."
 
-    # renpy/common/_errorhandling.rpym:548
+    # renpy/common/_errorhandling.rpym:561
     old "Copy Markdown"
     new "Opycay Arkdownmay"
 
-    # renpy/common/_errorhandling.rpym:550
+    # renpy/common/_errorhandling.rpym:563
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
     new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay asay Arkdownmay orfay Iscordday."
 
-    # renpy/common/_errorhandling.rpym:579
+    # renpy/common/_errorhandling.rpym:592
     old "An exception has occurred."
     new "Naay exceptionay ashay occurreday."
 
-    # renpy/common/_errorhandling.rpym:602
+    # renpy/common/_errorhandling.rpym:615
     old "Rollback"
     new "Ollbackray"
 
-    # renpy/common/_errorhandling.rpym:604
+    # renpy/common/_errorhandling.rpym:617
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Ttemptsaay aay ollray ackbay otay aay riorpay imetay, allowingay ouyay otay avesay oray oosechay aay ifferentday oicechay."
 
-    # renpy/common/_errorhandling.rpym:607
+    # renpy/common/_errorhandling.rpym:620
     old "Ignore"
     new "Gnoreiay"
 
-    # renpy/common/_errorhandling.rpym:611
+    # renpy/common/_errorhandling.rpym:624
     old "Ignores the exception, allowing you to continue."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay."
 
-    # renpy/common/_errorhandling.rpym:613
+    # renpy/common/_errorhandling.rpym:626
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay. Histay oftenay eadslay otay additionalay errorsay."
 
-    # renpy/common/_errorhandling.rpym:617
+    # renpy/common/_errorhandling.rpym:630
     old "Reload"
     new "Eloadray"
 
-    # renpy/common/_errorhandling.rpym:619
+    # renpy/common/_errorhandling.rpym:632
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Eloadsray hetay amegay omfray iskday, avingsay anday estoringray amegay atestay ifay ossiblepay."
 
-    # renpy/common/_errorhandling.rpym:622
+    # renpy/common/_errorhandling.rpym:635
     old "Console"
     new "Onsolecay"
 
-    # renpy/common/_errorhandling.rpym:624
+    # renpy/common/_errorhandling.rpym:637
     old "Opens a console to allow debugging the problem."
     new "Pensoay aay onsolecay otay alloway ebuggingday hetay roblempay."
 
-    # renpy/common/_errorhandling.rpym:637
+    # renpy/common/_errorhandling.rpym:650
     old "Quits the game."
     new "Uitsqay hetay amegay."
 
-    # renpy/common/_errorhandling.rpym:658
+    # renpy/common/_errorhandling.rpym:671
     old "Parsing the script failed."
     new "Arsingpay hetay criptsay ailedfay."
-
-    # renpy/common/_errorhandling.rpym:684
-    old "Opens the errors.txt file in a text editor."
-    new "Pensoay hetay errorsay.xttay ilefay inay aay exttay editoray."
-
-    # renpy/common/_errorhandling.rpym:688
-    old "Copies the errors.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
-    new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay asay Bcodebay orfay orumsfay ikelay ttpshay://emmasoftlay.enairay.usay/."
-
-    # renpy/common/_errorhandling.rpym:692
-    old "Copies the errors.txt file to the clipboard as Markdown for Discord."
-    new "Opiescay hetay errorsay.xttay ilefay otay hetay ipboardclay asay Arkdownmay orfay Iscordday."
 

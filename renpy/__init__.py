@@ -62,6 +62,7 @@ import sys
 import os
 import copy
 import types
+import site
 
 ################################################################################
 # Version information
@@ -69,18 +70,37 @@ import types
 
 # Version numbers.
 try:
-    from renpy.vc_version import vc_version
+    from renpy.vc_version import vc_version, official, nightly
 except ImportError:
     vc_version = 0
+    official = False
+    nightly = False
 
-# The tuple giving the version number.
-version_tuple = (7, 4, 7, vc_version)
+official = official and getattr(site, "renpy_build_official", False)
 
-# The name of this version.
-version_name = "The Queen of the Skies"
+if PY2:
 
-# A string giving the version number only (8.0.1.123).
+    # The tuple giving the version number.
+    version_tuple = (7, 5, 0, vc_version)
+
+    # The name of this version.
+    version_name = "TBD"
+
+else:
+
+    # The tuple giving the version number.
+    version_tuple = (8, 0, 0, vc_version)
+
+    # The name of this version.
+    version_name = "Heck Freezes Over"
+
+# A string giving the version number only (8.0.1.123), with a suffix if needed.
 version_only = ".".join(str(i) for i in version_tuple)
+
+if not official:
+    version_only += "u"
+elif nightly:
+    version_only += "n"
 
 # A verbose string giving the version.
 version = "Ren'Py " + version_only
@@ -234,7 +254,6 @@ name_blacklist = {
     "renpy.persistent.save_MP_instances",
     "renpy.exports.sdl_dll",
     }
-
 
 class Backup(object):
     """
@@ -404,6 +423,7 @@ def import_all():
     import renpy.python
     import renpy.script
     import renpy.statements
+    import renpy.util
 
     global plog
     plog = renpy.performance.log
@@ -445,7 +465,6 @@ def import_all():
 
     import renpy.gl
     import renpy.gl2
-    import renpy.angle
 
     import renpy.display.layout
     import renpy.display.viewport
@@ -587,6 +606,9 @@ def reload_all():
     # Clear all pending exceptions.
     sys.exc_clear()
 
+    # Quit audio.
+    renpy.audio.audio.quit()
+
     # Reset the styles.
     renpy.style.reset() # @UndefinedVariable
 
@@ -604,9 +626,11 @@ def reload_all():
     renpy.display.render.mark_sweep()
 
     # Get rid of the draw module and interface.
-    renpy.display.draw.quit()
-    renpy.display.draw = None
     renpy.display.interface = None
+
+    if not renpy.session.get("_keep_renderer", False):
+        renpy.display.draw.quit()
+        renpy.display.draw = None
 
     py_compile_cache = renpy.python.py_compile_cache
     reload_modules = renpy.config.reload_modules
@@ -707,6 +731,7 @@ if False:
     import renpy.python
     import renpy.script
     import renpy.statements
+    import renpy.util
 
     import renpy.styledata # @UnresolvedImport
     import renpy.style
@@ -765,8 +790,6 @@ if False:
     import renpy.display.matrix
     import renpy.display.render
     import renpy.display.model
-
-    print(renpy.display.model)
 
     import renpy.display.error
 

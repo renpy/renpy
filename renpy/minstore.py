@@ -22,8 +22,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import *
 
-from renpy.compat import compat_open as open
-from renpy.compat import compat_open as file
+from renpy.compat import compat_open as file, open
 
 unicode = str # @ReservedAssignment
 

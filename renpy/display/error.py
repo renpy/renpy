@@ -180,6 +180,10 @@ def report_parse_errors(errors, error_fn):
     if not renpy.exports.has_screen("_parse_errors"):
         return True
 
+    # ParseError before finishing loading the script
+    if renpy.config.savedir is None:
+        return True
+
     init_display()
 
     reload_action = renpy.exports.utter_restart

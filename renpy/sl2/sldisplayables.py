@@ -108,6 +108,12 @@ class ShowIf(renpy.display.layout.Container):
     def get_placement(self):
         return self.child.get_placement()
 
+    def _tts(self):
+        if self.condition:
+            return self._tts_common()
+        else:
+            return ""
+
 
 DisplayableParser("null", renpy.display.layout.Null, "default", 0)
 Keyword("width")
@@ -172,6 +178,7 @@ Keyword("changed")
 Keyword("pixel_width")
 Keyword("value")
 Keyword("mask")
+Keyword("caret_blink")
 Style("caret")
 add(text_properties)
 
@@ -252,6 +259,7 @@ Keyword("value")
 Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
+Keyword("released")
 add(bar_properties)
 
 
@@ -285,6 +293,7 @@ Keyword("value")
 Keyword("changed")
 Keyword("hovered")
 Keyword("unhovered")
+Keyword("released")
 add(bar_properties)
 
 # Omit autobar. (behavior)

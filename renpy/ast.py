@@ -681,7 +681,12 @@ class Say(Node):
             who = eval_who(self.who, self.who_fast)
 
             if who is not None:
-                statement_name(getattr(who, "statement_name", "say"))
+                stmt_name = getattr(who, "statement_name", "say")
+
+                if callable(stmt_name):
+                    stmt_name = stmt_name()
+
+                statement_name(stmt_name)
             else:
                 statement_name("say")
 
@@ -2466,9 +2471,6 @@ class EndTranslate(Node):
     """
 
     rollback = "never"
-
-    def __init__(self, loc):
-        super(EndTranslate, self).__init__(loc)
 
     def diff_info(self):
         return (EndTranslate,)

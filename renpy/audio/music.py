@@ -196,6 +196,8 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
     if renpy.config.skipping == "fast":
         stop(channel)
 
+    set_pause(False, channel=channel)
+
     with renpy.audio.audio.lock:
 
         try:
@@ -236,7 +238,7 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
         except:
             if renpy.config.debug_sound:
                 raise
-
+    
 
 def playable(filename, channel="music"):
     """
@@ -249,7 +251,7 @@ def playable(filename, channel="music"):
 
     filename, _, _ = c.split_filename(filename, False)
 
-    return renpy.loader.loadable(c.file_prefix + filename + c.file_suffix)
+    return renpy.loader.loadable(filename)
 
 
 def stop(channel="music", fadeout=None):
@@ -276,6 +278,9 @@ def stop(channel="music", fadeout=None):
     if renpy.game.context().init_phase:
         return
 
+    if get_pause(channel=channel):
+        fadeout = 0.0
+
     with renpy.audio.audio.lock:
 
         try:
@@ -296,6 +301,8 @@ def stop(channel="music", fadeout=None):
         except:
             if renpy.config.debug_sound:
                 raise
+
+    set_pause(False, channel=channel)
 
 
 def set_music(channel, flag, default=False):
@@ -379,7 +386,9 @@ def get_duration(channel="music"):
     :doc: audio
 
     Returns the duration of the audio or video file on `channel`. Returns
-    0.0 if no file is playing on `channel`.
+    0.0 if no file is playing on `channel`, or the duration is unknown.
+    Some formats - notably MP3 - do not include duration information in a 
+    format Ren'Py can access.
     """
 
     try:
@@ -390,7 +399,7 @@ def get_duration(channel="music"):
         if renpy.config.debug_sound:
             raise
 
-        return None
+        return 0.0
 
 
 def get_playing(channel="music"):

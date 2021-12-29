@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
@@ -353,7 +352,7 @@ translate french strings:
 
     # renpy/common/00accessibility.rpy:94
     old "Text Size Scaling"
-    new "Redimensionnement du Texte"
+    new "Redimensionnement du texte"
 
     # renpy/common/00accessibility.rpy:100
     old "Reset"
@@ -361,7 +360,7 @@ translate french strings:
 
     # renpy/common/00accessibility.rpy:105
     old "Line Spacing Scaling"
-    new "Espacement Vertical"
+    new "Espacement vertical"
 
     # renpy/common/00accessibility.rpy:117
     old "Self-Voicing"
@@ -770,3 +769,19 @@ translate french strings:
     # renpy/common/_developer/developer.rpym:635
     old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
     new "Cache d'images : [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+
+    # renpy/common/00preferences.rpy:480
+    old "renderer menu"
+    new "menu de rendu"
+
+    # renpy/common/00preferences.rpy:483
+    old "accessibility menu"
+    new "menu d'accessibilité"
+
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "Texte en contraste élevé (surbrillance)"
+
+    # renpy/common/00preferences.rpy:493
+    old "high contrast text"
+    new "texte en contraste élevé"

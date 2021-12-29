@@ -63,6 +63,9 @@ class DialogueTextTags(object):
         # Does this statement have a done tag?
         self.has_done = False
 
+        # Does this statement have a fast tag?
+        self.fast = False
+
         i = iter(TAG_RE.split(s))
 
         while True:
@@ -96,6 +99,7 @@ class DialogueTextTags(object):
                     self.pause_end = [ ]
                     self.pause_delay = [ ]
                     self.no_wait = False
+                    self.fast = True
 
                 elif tag == "done":
                     self.has_done = True
@@ -371,8 +375,9 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
 class SlowDone(object):
     delay = None
     ctc_kwargs = { }
+    last_pause = True
 
-    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs): # @ReservedAssignment
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause): # @ReservedAssignment
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
@@ -381,6 +386,7 @@ class SlowDone(object):
         self.cb_args = cb_args
         self.delay = delay
         self.ctc_kwargs = ctc_kwargs
+        self.last_pause = last_pause
 
     def __call__(self):
 
@@ -401,7 +407,7 @@ class SlowDone(object):
                 renpy.exports.restart_interaction()
 
         if self.delay is not None:
-            renpy.ui.pausebehavior(self.delay, True, voice=True)
+            renpy.ui.pausebehavior(self.delay, True, voice=self.last_pause)
             renpy.exports.restart_interaction()
 
         for c in self.callback:
@@ -516,11 +522,19 @@ def display_say(
 
     exception = None
 
+    if dtt.fast:
+        for i in renpy.config.say_sustain_callbacks:
+            i()
+
     try:
 
         for i, (start, end, delay) in enumerate(zip(pause_start, pause_end, pause_delay)):
 
+            # True if the is the last pause in a line of dialogue.
             last_pause = (i == len(pause_start) - 1)
+
+            if dtt.no_wait:
+                last_pause = False
 
             # If we're going to do an interaction, then saybehavior needs
             # to be here.
@@ -560,15 +574,21 @@ def display_say(
                 what_ctc = what_ctc._duplicate(None)
                 what_ctc._unique()
 
+            if ctc is not what_ctc:
+                if (ctc is not None) and ctc._duplicatable:
+                    ctc = ctc._duplicate(None)
+                    ctc._unique()
+
             if delay == 0:
                 what_ctc = None
+                ctc = None
 
             # Run the show callback.
             for c in callback:
                 c("show", interact=interact, type=type, **cb_args)
 
             # Create the callback that is called when the slow text is done.
-            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs)
+            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause)
 
             # Show the text.
             if multiple:
@@ -589,7 +609,13 @@ def display_say(
                     if ctc_position == "nestled":
                         what_text.set_ctc(what_ctc)
                     elif ctc_position == "nestled-close":
-                        what_text.set_ctc([ u"\ufeff", what_ctc])
+                        what_text.set_ctc([ u"\ufeff", what_ctc, ])
+
+                if (not last_pause) and ctc:
+                    if ctc_position == "nestled":
+                        what_text.set_last_ctc(ctc)
+                    elif ctc_position == "nestled-close":
+                        what_text.set_last_ctc([ u"\ufeff", ctc, ])
 
                 if what_text.text[0] == what_string:
 
@@ -663,7 +689,7 @@ def display_say(
         c("end", interact=interact, type=type, **cb_args)
 
     if exception is not None:
-        raise
+        raise exception
 
 
 class HistoryEntry(renpy.object.Object):
@@ -709,6 +735,8 @@ class ADVCharacter(object):
 
     voice_tag = None
     properties = { }
+
+    _statement_name = None
 
     # When adding a new argument here, remember to add it to copy below.
     def __init__(
@@ -776,6 +804,8 @@ class ADVCharacter(object):
             type=d('type'),
             advance=d('advance'),
             )
+
+        self._statement_name = properties.pop("statement_name", None)
 
         self.properties = collections.defaultdict(dict)
 
@@ -1042,18 +1072,6 @@ class ADVCharacter(object):
         else:
             images.predict_show(None, image_with_attrs, show=False)
 
-    def __unicode__(self):
-
-        who = self.name
-
-        if self.dynamic:
-            if callable(who):
-                who = who()
-            else:
-                who = renpy.python.py_eval(who)
-
-        return renpy.substitutions.substitute(who)[0]
-
     def __str__(self):
 
         who = self.name
@@ -1246,9 +1264,10 @@ class ADVCharacter(object):
                     after = images.get_attributes(None, self.image_tag)
                     self.handle_say_transition('restore', before, after)
 
-    @property
     def statement_name(self):
-        if not (self.condition is None or renpy.python.py_eval(self.condition)):
+        if self._statement_name is not None:
+            return self._statement_name
+        elif not (self.condition is None or renpy.python.py_eval(self.condition)):
             return "say-condition-false"
         else:
             return "say"
