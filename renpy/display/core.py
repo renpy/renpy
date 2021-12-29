@@ -163,8 +163,6 @@ class IgnoreEvent(Exception):
     also don't want to return anything.
     """
 
-    pass
-
 
 class EndInteraction(Exception):
     """
@@ -3135,7 +3133,6 @@ class Interface(object):
 
         self.mobile_save()
 
-        import os
         os._exit(1)
 
     def check_suspend(self, ev):

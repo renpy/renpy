@@ -623,7 +623,7 @@ def check_style_property_displayable(name, property, d):
 
     def sort_short(l):
         l = list(l)
-        l.sort(key=lambda a: len(a))
+        l.sort(key=len)
         return l
 
     alts = sort_short(renpy.style.prefix_alts)

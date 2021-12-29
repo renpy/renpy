@@ -277,19 +277,15 @@ class Cache(object):
         # Otherwise, we load the image ourselves.
         if ce is None:
 
-            try:
-                if image in self.pin_cache:
-                    surf = self.pin_cache[image]
-                else:
+            if image in self.pin_cache:
+                surf = self.pin_cache[image]
+            else:
 
-                    if not predict:
-                        with renpy.game.ExceptionInfo("While loading %r:", image):
-                            surf = image.load()
-                    else:
+                if not predict:
+                    with renpy.game.ExceptionInfo("While loading %r:", image):
                         surf = image.load()
-
-            except Exception:
-                raise
+                else:
+                    surf = image.load()
 
             w, h = size = surf.get_size()
 

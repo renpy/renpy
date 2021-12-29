@@ -36,7 +36,7 @@ init python:
             if os.path.exists(fn):
                 os.unlink(fn)
 
-            with open(fn, "wb") as f:
+            with open(fn, "w") as f:
                 f.write("Testing to see if we're in a DMG.\r\n")
 
             os.unlink(fn)

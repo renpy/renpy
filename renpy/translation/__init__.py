@@ -611,11 +611,11 @@ def new_change_language(tl, language):
     for i in tl.python[language]:
         renpy.python.py_exec_bytecode(i.code.bytecode)
 
-    def run_blocks():
+    def run_early_blocks():
         for i in tl.early_block[language]:
             renpy.game.context().run(i.block[0])
 
-    renpy.game.invoke_in_new_context(run_blocks)
+    renpy.game.invoke_in_new_context(run_early_blocks)
 
     for i in renpy.config.language_callbacks[language]:
         i()

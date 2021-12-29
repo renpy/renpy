@@ -198,14 +198,12 @@ def dynamic_image(d, scope=None, prefix=None, search=None):
             if search is not None:
                 search.append(rv)
 
-    else:
+    rv = d[-1]
 
-        rv = d[-1]
+    if find(rv):
+        return displayable_or_none(rv, dynamic=False)
 
-        if find(rv):
-            return displayable_or_none(rv, dynamic=False)
-
-        return None
+    return None
 
 
 def predict(d):
