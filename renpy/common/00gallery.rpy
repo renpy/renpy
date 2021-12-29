@@ -246,6 +246,7 @@ init -1500 python:
         def image(self, *displayables):
             """
             :doc: gallery method
+            :name: image
 
             Adds a new image to the current button, where an image consists
             of one or more displayables.
