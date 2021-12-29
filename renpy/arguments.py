@@ -264,8 +264,6 @@ def bootstrap():
     unknown arguments. Returns the parsed arguments, and a list of unknown arguments.
     """
 
-    global rest
-
     ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
 
@@ -276,8 +274,6 @@ def pre_init():
     """
     Called before init, to set up argument parsing.
     """
-
-    global subparsers
 
     register_command("run", run, True)
     register_command("lint", renpy.lint.lint)

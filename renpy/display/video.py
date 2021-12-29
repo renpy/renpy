@@ -342,8 +342,6 @@ class Movie(renpy.display.core.Displayable):
     def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, **properties):
         super(Movie, self).__init__(**properties)
 
-        global auto_channel_serial
-
         if channel == "movie" and play and renpy.config.single_movie_channel:
             channel = renpy.config.single_movie_channel
         elif channel == "movie" and play and renpy.config.auto_movie_channel:

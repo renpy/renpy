@@ -49,7 +49,7 @@ class Persistent(object):
     # Undefined attributes return None.
     def __getattr__(self, attr):
         if attr.startswith("__") and attr.endswith("__"):
-            raise AttributeError("Persistent object has no attribute %r", attr)
+            raise AttributeError("Persistent object has no attribute %r" % attr)
 
         return None
 

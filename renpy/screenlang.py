@@ -914,9 +914,6 @@ add(position_properties)
 
 class PassParser(Parser):
 
-    def __init__(self, name):
-        super(PassParser, self).__init__(name)
-
     def parse(self, l, name):
         return self.parse_exec("pass", l.number)
 
@@ -925,9 +922,6 @@ PassParser("pass")
 
 
 class DefaultParser(Parser):
-
-    def __init__(self, name):
-        super(DefaultParser, self).__init__(name)
 
     def parse(self, l, name):
 

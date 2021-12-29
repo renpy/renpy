@@ -228,7 +228,6 @@ def before_interact(roots):
     """
 
     global override
-    global new_grab
     global grab
 
     # a list of focusable, name, screen tuples.

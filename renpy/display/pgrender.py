@@ -55,7 +55,7 @@ def set_rgba_masks():
 
     # Sort the components by absolute value.
     masks = list(sample_alpha.get_masks())
-    masks.sort(key=lambda a : abs(a))
+    masks.sort(key=abs)
 
     # Choose the masks.
     if sys.byteorder == 'big':
@@ -141,8 +141,6 @@ image_load_lock = threading.RLock()
 
 
 def load_image(f, filename):
-    global count
-
     _basename, _dot, ext = filename.rpartition('.')
 
     try:

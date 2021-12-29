@@ -2472,9 +2472,6 @@ class EndTranslate(Node):
 
     rollback = "never"
 
-    def __init__(self, loc):
-        super(EndTranslate, self).__init__(loc)
-
     def diff_info(self):
         return (EndTranslate,)
 
