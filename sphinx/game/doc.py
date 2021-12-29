@@ -11,8 +11,7 @@ import os
 
 try:
     import builtins
-except: 
-    raise
+except ImportError:
     import __builtin__ as builtins
 
 # Additional keywords in the Ren'Py script language.
