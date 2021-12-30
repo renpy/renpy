@@ -863,7 +863,7 @@ init python in distribute:
                 data = f.read()
 
             with open(tmp_fn, "wb") as f:
-                f.write(b"#!/usr/bin/env python2\n")
+                f.write(b"#!/usr/bin/env python3\n")
                 f.write(data)
 
             self.add_file("source_only", "renpy.py", tmp_fn, True)
@@ -1351,7 +1351,7 @@ init python in distribute:
 
             if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
 
-                with open(update_fn, "wb") as f:
+                with open(update_fn, "w") as f:
                     json.dump(update, f, indent=2)
 
                 if (not dlc) or (format == "update"):
@@ -1490,7 +1490,7 @@ init python in distribute:
                     add_variant(p["name"])
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
-            with open(fn, "wb") as f:
+            with open(fn, "w") as f:
                 json.dump(index, f, indent=2)
 
 
@@ -1500,10 +1500,10 @@ init python in distribute:
 
             fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
 
-            with open(fn, "wb") as f:
+            with open(fn, "w", encoding="utf-8") as f:
                 for k, v in self.build_cache.items():
                     l = "\t".join([k, v[0], v[1]]) + "\n"
-                    f.write(l.encode("utf-8"))
+                    f.write(l)
 
         def load_build_cache(self):
             if not self.build['renpy']:
