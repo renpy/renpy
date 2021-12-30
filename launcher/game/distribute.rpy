@@ -186,7 +186,7 @@ init python in distribute:
 
             key = (self.name, self.directory, self.executable)
 
-            hash.update(repr(key))
+            hash.update(repr(key).encode("utf-8"))
 
             if self.path is None:
                 return
@@ -201,9 +201,8 @@ init python in distribute:
                 digest = distributor.hash_cache[self.path]
             else:
                 digest = hash_file(self.path)
-                distributor.hash_cache[self.path] = digest
 
-            hash.update(digest)
+            hash.update(digest.encode("utf-8"))
 
     class FileList(list):
         """
@@ -843,7 +842,7 @@ init python in distribute:
 
             tfn = self.temp_filename(list_name + "_hash.txt")
 
-            with open(tfn, "wb") as tf:
+            with open(tfn, "w") as tf:
                 tf.write(self.file_lists[list_name].hash(self))
 
             self.add_file("binary", "launcher/game/" + list_name + "_hash.txt", tfn)
@@ -910,7 +909,13 @@ init python in distribute:
             plist.update(self.build.get("mac_info_plist", { }))
 
             rv = self.temp_filename("Info.plist")
-            plistlib.writePlist(plist, rv)
+
+            if PY2:
+                plistlib.writePlist(plist, rv)
+            else:
+                with open(rv, "wb") as f:
+                    plistlib.dump(plist, f)
+
             return rv
 
         def add_python(self):
@@ -930,11 +935,13 @@ init python in distribute:
 
             prefix = py("lib/py{major}-")
 
-            self.add_file(
-                linux_i686,
-                prefix + "linux-i686/" + self.executable_name,
-                os.path.join(config.renpy_base, prefix + "linux-i686/renpy"),
-                True)
+            if os.path.exists(linux_i686):
+
+                self.add_file(
+                    linux_i686,
+                    prefix + "linux-i686/" + self.executable_name,
+                    os.path.join(config.renpy_base, prefix + "linux-i686/renpy"),
+                    True)
 
             self.add_file(
                 linux,

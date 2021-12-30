@@ -132,6 +132,11 @@ def main():
 
     print("Version {} ({})".format(args.version, full_version))
 
+    if sys.version_info[0] >= 3:
+        renpy_sh = "./renpy3.sh"
+    else:
+        renpy_sh = "./renpy2.sh"
+
     # Perhaps autobuild.
     if "RENPY_BUILD_ALL" in os.environ:
         print("Autobuild...")
@@ -144,7 +149,7 @@ def main():
     if not args.fast:
         for i in [ 'tutorial', 'launcher', 'the_question' ]:
             print("Compiling", i)
-            subprocess.check_call(["./renpy.sh", i, "quit" ])
+            subprocess.check_call([renpy_sh, i, "quit" ])
 
     # Kick off the rapt build.
     if not args.fast:
@@ -167,10 +172,11 @@ def main():
     if not os.path.exists(destination):
         os.makedirs(destination)
 
+
     if args.fast:
 
         cmd = [
-            "./renpy.sh",
+            renpy_sh,
             "launcher",
             "distribute",
             "launcher",
@@ -183,7 +189,7 @@ def main():
 
     else:
         cmd = [
-            "./renpy.sh",
+            renpy_sh,
             "launcher",
             "distribute",
             "launcher",

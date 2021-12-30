@@ -239,7 +239,7 @@ init python in project:
                 raise Exception("Python interpreter not found: %r", executables)
 
             # Put together the basic command line.
-            cmd = [ executable, "-EO", sys.argv[0] ]
+            cmd = [ executable, sys.argv[0] ]
 
             cmd.append(self.path)
             cmd.extend(args)
@@ -329,7 +329,7 @@ init python in project:
 
             for f in files:
 
-                data = file(self.unelide_filename(f))
+                data = open(self.unelide_filename(f), encoding="utf-8")
 
                 for l, line in enumerate(data):
                     l += 1
