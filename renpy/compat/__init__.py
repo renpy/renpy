@@ -52,6 +52,8 @@ Right now, it does the following things:
 
 * Aliases xrange to range on Python 2.
 
+* Changes the behavior of TextIOWrapper.write so that bytes strings are promoted
+  to unicode strings before being written.
 """
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
@@ -126,11 +128,16 @@ from future.builtins import chr
 
 # The try block solves a chicken-and-egg problem when dictviews is not
 # compiled yet, as part of the Ren'Py build process.
+
+def add_attribute(obj, name, value):
+    pass
+
 try:
     if PY2:
-        import renpy.compat.dictviews # @UnresolvedImport
+        from renpy.compat.dictviews import add_attribute
 except ImportError:
     print("Could not import renpy.compat.dictviews.", file=sys.stderr)
+
 
 ################################################################################
 # Range.
@@ -141,7 +148,25 @@ else:
     range = builtins.range
 
 ################################################################################
-# Sort key functions.
+# Allow TextIOWrapper to take utf8-bytes.
+
+if PY2:
+
+    import io
+    import types
+
+    # io.TextIOWrapper._write = io.TextIOWrapper.write
+
+    def text_write(self, s):
+        if isinstance(s, bytes):
+            s = s.decode("utf-8", "surrogateescape")
+        return self._write(s)
+
+    add_attribute(io.TextIOWrapper, "_write", io.TextIOWrapper.write)
+    add_attribute(io.TextIOWrapper, "write", types.MethodType(text_write, None, io.TextIOWrapper))
+
+################################################################################
+# Export functions.
 
 __all__ = [ "PY2", "open", "basestring", "str", "pystr", "range",
             "bord", "bchr", "tobytes", "chr", "unicode", ]

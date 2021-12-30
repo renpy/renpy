@@ -26,7 +26,6 @@
 # might include windows path separators (\), but archive paths and names we
 # deal with/match against use the unix separator (/).
 
-
 init python in distribute:
 
     from store import config, persistent
