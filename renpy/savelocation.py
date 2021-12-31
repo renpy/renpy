@@ -287,13 +287,9 @@ class FileLocation(object):
             if not os.path.exists(old):
                 return
 
-            os.rename(old, old + ".tmp")
-            old = old + ".tmp"
-
-            if os.path.exists(new):
-                os.unlink(new)
-
-            os.rename(old, new)
+            old_tmp = old + tmp
+            safe_rename(old, old_tmp)
+            safe_rename(old_tmp, new)
             renpy.util.expose_file(new)
 
             self.sync()
