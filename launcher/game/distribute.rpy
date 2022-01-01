@@ -61,6 +61,17 @@ init python in distribute:
             minor=sys.version_info.minor,
         )
 
+    # Going from 7.4 to 7.5 or 8.0, the library directory changed.
+    RENPY_PATCH = py("""\
+def change_renpy_executable():
+    import sys, os, renpy, site
+
+    if hasattr(site, "RENPY_PLATFORM") and hasattr(sys, "renpy_executable") and (renpy.linux or renpy.windows):
+        sys.renpy_executable = os.path.join(renpy.config.renpy_base, "py{major}-" + site.RENPY_PLATFORM, os.path.basename(sys.renpy_executable))
+
+change_renpy_executable()
+""")
+
     match_cache = { }
 
     def compile_match(pattern):
@@ -1458,10 +1469,8 @@ init python in distribute:
 
             index = { }
 
-            # Ren'Py 7.4.1 forgot to include mac zsync, so it needs to be downloaded before the update
-            # can occur.
             if self.build['renpy']:
-                index["monkeypatch"] = "def mac_fix():\n    import renpy\n    if not renpy.macintosh:\n        return\n\n    import os\n    mac = os.path.join(renpy.config.renpy_base, \"lib\", \"mac-x86_64\")\n    zsync = os.path.join(mac, \"zsync\")\n\n    if not os.path.isdir(mac):\n        return\n\n    if os.path.isdir(zsync):\n        return\n\n    import requests\n\n    response = requests.get(\"https://www.renpy.org/dl/mac-fix/zsync\")\n\n    with open(zsync + \".new\", \"w\") as f:\n        f.write(response.content)\n    \n    os.chmod(zsync + \".new\", 0o755)\n    os.rename(zsync + \".new\", zsync)\n\nmac_fix()\n"
+                index["monkeypatch"] = RENPY_PATCH
 
             def add_variant(variant):
 
