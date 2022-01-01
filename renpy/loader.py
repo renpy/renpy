@@ -128,6 +128,15 @@ class RPAv3ArchiveHandler(object):
         infile.seek(offset)
         index = loads(zlib.decompress(infile.read()))
 
+        def start_to_bytes(s):
+            if not s:
+                return b''
+
+            if not isinstance(s, bytes):
+                s = s.encode("latin-1")
+
+            return s
+
         # Deobfuscate the index.
 
         for k in index.keys():
@@ -135,7 +144,8 @@ class RPAv3ArchiveHandler(object):
             if len(index[k][0]) == 2:
                 index[k] = [ (offset ^ key, dlen ^ key) for offset, dlen in index[k] ]
             else:
-                index[k] = [ (offset ^ key, dlen ^ key, start) for offset, dlen, start in index[k] ]
+                index[k] = [ (offset ^ key, dlen ^ key, start_to_bytes(start)) for offset, dlen, start in index[k] ]
+
         return index
 
 
@@ -489,7 +499,7 @@ class SubFile(object):
             rv2 = self.f.read(length)
             self.offset += len(rv2)
         else:
-            rv2 = ""
+            rv2 = b""
 
         return (rv1 + rv2)
 
@@ -506,12 +516,12 @@ class SubFile(object):
 
         # If we're in the start, then read the line ourselves.
         if self.offset < len(self.start):
-            rv = ''
+            rv = b''
 
             while length:
                 c = self.read(1)
                 rv += c
-                if c == '\n':
+                if c == b'\n':
                     break
                 length -= 1
 
@@ -605,7 +615,7 @@ if "RENPY_FORCE_SUBFILE" in os.environ:
         length = f.tell()
         f.seek(0, 0)
 
-        return SubFile(f, 0, length, '')
+        return SubFile(f, 0, length, b'')
 
 # A list of callbacks to open an open python file object of the given type.
 file_open_callbacks = [ ]
