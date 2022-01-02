@@ -27,6 +27,8 @@ import sys
 import subprocess
 import io
 
+# Encoding and sys.stderr/stdout handling ######################################
+
 FSENCODING = sys.getfilesystemencoding() or "utf-8"
 
 # Sets the default encoding to utf-8.
@@ -44,63 +46,6 @@ sys.stderr = old_stderr
 
 import renpy.error
 
-# Extra things used for distribution.
-
-
-def extra_imports():
-    import datetime; datetime
-    import encodings.ascii; encodings.ascii
-    import encodings.utf_8; encodings.utf_8
-    import encodings.zlib_codec; encodings.zlib_codec
-    import encodings.unicode_escape; encodings.unicode_escape
-    import encodings.string_escape; encodings.string_escape
-    import encodings.raw_unicode_escape; encodings.raw_unicode_escape
-    import encodings.mbcs; encodings.mbcs
-    import encodings.utf_16; encodings.utf_16
-    import encodings.utf_16_be; encodings.utf_16_be
-    import encodings.utf_16_le; encodings.utf_16_le
-    import encodings.utf_32_be; encodings.utf_32_be
-    import encodings.latin_1; encodings.latin_1
-    import encodings.hex_codec; encodings.hex_codec
-    import encodings.base64_codec; encodings.base64_codec
-    import encodings.idna; encodings.idna
-    import math; math
-    import glob; glob
-    import pickle; pickle
-    import difflib; difflib
-    import shutil; shutil
-    import tarfile; tarfile
-    import bz2; bz2 # @UnresolvedImport
-    import webbrowser; webbrowser
-    import posixpath; posixpath
-    import ctypes; ctypes
-    import ctypes.wintypes; ctypes.wintypes
-    import argparse; argparse
-    import compiler; compiler
-    import textwrap; textwrap
-    import copy; copy
-    import urllib; urllib
-    import urllib2; urllib2
-    import codecs; codecs
-    import rsa; rsa
-    import decimal; decimal
-    import plistlib; plistlib
-    import _renpysteam; _renpysteam
-    import compileall; compileall
-    import cProfile; cProfile
-    import pstats; pstats
-    import _ssl; _ssl
-    import SimpleHTTPServer; SimpleHTTPServer
-    import wave; wave
-    import sunau; sunau
-
-    # Used by requests.
-    import cgi; cgi
-    import Cookie; Cookie
-    import hmac; hmac
-    import Queue; Queue
-    import uuid; uuid
-
 
 class NullFile(io.IOBase):
     """
@@ -116,16 +61,18 @@ class NullFile(io.IOBase):
 
 def null_files():
     try:
-        if sys.stderr.fileno() < 0:
+        if (sys.stderr is None) or sys.stderr.fileno() < 0:
             sys.stderr = NullFile()
 
-        if sys.stdout.fileno() < 0:
+        if (sys.stderr is None) or sys.stdout.fileno() < 0:
             sys.stdout = NullFile()
     except:
         pass
 
 
 null_files()
+
+# Tracing ######################################################################
 
 trace_file = None
 trace_local = None
@@ -152,12 +99,17 @@ def enable_trace(level):
 
 
 def mac_start(fn):
+    """
+    os.start compatibility for mac.
+    """
+
     os.system("open " + fn)
 
-# This code fixes a bug in subprocess.Popen.__del__
-
-
 def popen_del(self, *args, **kwargs):
+    """
+    Fix an issue where the __del__ method of popen doesn't wor,
+    """
+
     return
 
 
@@ -300,9 +252,8 @@ You may be using a system install of python. Please run {0}.sh,
 """.format(name), file=sys.stderr)
         raise
 
-    # Load up all of Ren'Py, in the right order.
-
-    import renpy # @Reimport
+    # Load the rest of Ren'Py.
+    import renpy
     renpy.import_all()
 
     renpy.loader.init_importer()
