@@ -22,7 +22,8 @@
 # This file contains code to handle GUI-based error reporting.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 
 import renpy.display
 import os

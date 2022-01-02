@@ -53,7 +53,8 @@ def update_path():
         return
 
 
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 update_path()
 
 import renpy.compat.pickle as pickle

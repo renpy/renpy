@@ -23,7 +23,8 @@
 # the renpy namespace. (So renpy.say, renpy.pause, and so on.)
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 
 import re
 import gc
