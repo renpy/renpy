@@ -19,15 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+# This file contains displayables that are image-like, because they take
+# up a rectangular area of the screen, and do not respond to input.
+
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-
-import renpy.display
+import renpy
 from renpy.display.render import render, Render, Matrix2D
-
-# This file contains displayables that are image-like, because they take
-# up a rectangular area of the screen, and do not respond to input.
 
 
 class Solid(renpy.display.core.Displayable):

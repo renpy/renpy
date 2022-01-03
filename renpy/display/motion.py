@@ -25,16 +25,14 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
+import math
+
+import renpy
+from renpy.display.render import render
+from renpy.display.layout import Container
 
 # Some imports are here to handle pickles of a moved class.
 from renpy.display.transform import Transform, Proxy, TransformState, ATLTransform, null  # @UnusedImport
-
-import math
-
-import renpy.display
-
-from renpy.display.render import render
-from renpy.display.layout import Container
 
 
 class Motion(Container):

@@ -27,7 +27,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 
 from renpy.display.render import render, BLIT
 
-import renpy.display
+import renpy
 import random
 
 

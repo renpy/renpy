@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy.display
+import renpy
 
 
 class Texture(object):
@@ -281,4 +281,3 @@ class Model(renpy.display.core.Displayable):
             rv.add_property(k, v)
 
         return rv
-

@@ -28,9 +28,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 import math
 import types # @UnresolvedImport
 
-import renpy.display # @UnusedImport
+import renpy
 from renpy.display.layout import Container
-
 from renpy.display.accelerator import transform_render
 from renpy.atl import position, any_object, bool_or_none, float_or_none, matrix, mesh
 

@@ -25,7 +25,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 
-import renpy.display
+import renpy
 
 # Called to indicate an image should be loaded or preloaded. This is
 # a function that takes an image manipulator, set by reset and predict,

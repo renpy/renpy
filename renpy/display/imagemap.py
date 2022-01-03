@@ -24,13 +24,12 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
+import hashlib
 
 import pygame_sdl2 as pygame
 import renpy.display
-
 from renpy.display.render import render
 
-import hashlib
 
 # A list of cache images we've already written.
 cached = set()

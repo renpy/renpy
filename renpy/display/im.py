@@ -27,9 +27,6 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 
-import renpy.display
-import renpy.webloader
-
 import math
 import zipfile
 import threading
@@ -37,6 +34,7 @@ import time
 import io
 import os.path
 
+import renpy
 
 # This is an entry in the image cache.
 class CacheEntry(object):

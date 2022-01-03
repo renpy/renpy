@@ -29,7 +29,6 @@ import random
 import renpy
 
 
-
 class State(object):
     """
     This creates a state that can be used in a SMAnimation.

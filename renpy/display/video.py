@@ -22,10 +22,9 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-
-import renpy.display
-import renpy.audio
 import collections
+
+import renpy
 
 # The movie displayable that's currently being shown on the screen.
 current_movie = None

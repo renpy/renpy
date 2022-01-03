@@ -25,9 +25,10 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 
 import sys
 import os
-import renpy.audio
 import subprocess
+
 import pygame_sdl2 as pygame
+import renpy
 
 
 class TTSDone(str):

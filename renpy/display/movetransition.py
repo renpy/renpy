@@ -28,11 +28,9 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 
-import renpy.display
+import renpy
 
 # Utility function used by MoveTransition et al.
-
-
 def position(d):
 
     xpos, ypos, xanchor, yanchor, _xoffset, _yoffset, _subpixel = d.get_placement()

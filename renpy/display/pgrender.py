@@ -27,10 +27,10 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 
 
 import sys
-import pygame_sdl2 as pygame
 import threading
-import renpy.display
-import renpy.audio
+
+import pygame_sdl2 as pygame
+import renpy
 
 
 # Sample surfaces, with and without alpha.

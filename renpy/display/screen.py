@@ -23,7 +23,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 from typing import Optional
 
-import renpy.display
+import renpy
 import time
 import collections
 

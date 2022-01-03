@@ -36,11 +36,7 @@ import gc
 import atexit
 
 import pygame_sdl2 as pygame
-
-import renpy.display
-import renpy.audio
-import renpy.text
-import renpy.test
+import renpy
 
 import_time = time.time()
 

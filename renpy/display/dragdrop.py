@@ -25,13 +25,12 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
+import pygame_sdl2 as pygame
 
-import renpy.display
+import renpy
 from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
 from renpy.display.behavior import map_event, run, run_unhovered
-
-import pygame_sdl2 as pygame
 
 
 def default_drag_group():
