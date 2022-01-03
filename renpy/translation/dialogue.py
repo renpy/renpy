@@ -177,7 +177,7 @@ class DialogueFile(object):
 
         self.filename = filename
 
-        commondir = os.path.normpath(renpy.config.commondir)
+        commondir = os.path.normpath(renpy.config.commondir) # type: ignore
 
         if filename.startswith(commondir):
             return
@@ -251,7 +251,7 @@ class DialogueFile(object):
                 lines.sort(key=lambda x: int(x[4]))
 
         for line in lines:
-            self.f.write("\t".join(line).encode("utf-8") + "\n")
+            self.f.write("\t".join(line) + "\n")
 
     def get_strings(self):
         """
@@ -324,7 +324,7 @@ def dialogue_command():
                 "Ren'Py Script",
                 ]
 
-            f.write("\t".join(line).encode("utf-8") + "\n")
+            f.write("\t".join(line) + "\n")
 
     for dirname, filename in renpy.loader.listdirfiles():
         if dirname is None:

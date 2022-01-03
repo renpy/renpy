@@ -576,7 +576,7 @@ def init_translation():
 
     load_all_rpts()
 
-    renpy.store._init_language() # @UndefinedVariable
+    renpy.store._init_language() # type: ignore
 
 
 old_language = "language never set"
@@ -644,8 +644,8 @@ def change_language(language, force=False):
     global old_language
 
     if old_language != language:
-        renpy.store._history_list = renpy.store.list()
-        renpy.store.nvl_list = renpy.store.list()
+        renpy.store._history_list = renpy.store.list() # type: ignore
+        renpy.store.nvl_list = renpy.store.list() # type: ignore
 
     renpy.game.preferences.language = language
     if old_language == language and not force:
@@ -907,14 +907,14 @@ def detect_user_locale():
     import locale
     if renpy.windows:
         import ctypes
-        windll = ctypes.windll.kernel32
+        windll = ctypes.windll.kernel32 # type: ignore
         locale_name = locale.windows_locale.get(windll.GetUserDefaultUILanguage())
     elif renpy.android:
-        from jnius import autoclass
+        from jnius import autoclass # type: ignore
         Locale = autoclass('java.util.Locale')
         locale_name = str(Locale.getDefault().getLanguage())
     elif renpy.ios:
-        import pyobjus
+        import pyobjus # type: ignore
         NSLocale = pyobjus.autoclass("NSLocale")
         languages = NSLocale.preferredLanguages()
         locale_name = languages.objectAtIndex_(0).UTF8String().decode("utf-8")

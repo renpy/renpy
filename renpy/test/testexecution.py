@@ -22,10 +22,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-
-import renpy.display
-import renpy.test
 import pygame_sdl2
+import renpy
 
 # A map from the name of a testcase to the testcase.
 testcases = { }

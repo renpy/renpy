@@ -21,12 +21,12 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-
+from typing import Optional
 
 import pygame_sdl2 as pygame
 
 # The overridden positioning of the mouse.
-mouse_pos = None
+mouse_pos = None # type: Optional[tuple[int, int]]
 
 # The mouse buttons.
 mouse_buttons = [ 0, 0, 0 ]

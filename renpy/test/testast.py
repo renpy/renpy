@@ -22,25 +22,26 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-
-import renpy.display
-import renpy.test
+import renpy
 from renpy.test.testmouse import click_mouse, move_mouse
 
-# This is an object that is used to configure test settings.
-_test = renpy.object.Object()
+class TestSettings(renpy.object.Object):
 
-# Should we use maximum framerate mode?
-_test.maximum_framerate = True
+    def __init__(self):
 
-# How long should we wait before declaring the test stuck?
-_test.timeout = 5.0
+        # Should we use maximum framerate mode?
+        self.maximum_framerate = True
 
-# Should we force the test to proceed despite suppress_underlay?
-_test.force = False
+        # How long should we wait before declaring the test stuck?
+        self.timeout = 5.0
 
-# How long should we wait for a transition before we proceed?
-_test.transition_timeout = 5.0
+        # Should we force the test to proceed despite suppress_underlay?
+        self.force = False
+
+        # How long should we wait for a transition before we proceed?
+        self.transition_timeout = 5.0
+
+_test = TestSettings()
 
 
 class Node(object):
@@ -139,6 +140,8 @@ class Pattern(Node):
         else:
             return False
 
+    def perform(self, x, y, state, t):
+        return None
 
 class Click(Pattern):
 

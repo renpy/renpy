@@ -28,7 +28,7 @@ import pygame_sdl2
 code_to_unicode = {
     pygame_sdl2.K_UNKNOWN : "",
     pygame_sdl2.K_RETURN : "\n",
-    pygame_sdl2.K_ESCAPE : "\e",
+    pygame_sdl2.K_ESCAPE : "",
     pygame_sdl2.K_BACKSPACE : "\b",
     pygame_sdl2.K_TAB : "\t",
     pygame_sdl2.K_SPACE : " ",

@@ -25,7 +25,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 
-import renpy.text
+import renpy
 
 from renpy.text.textsupport import TAG, PARAGRAPH
 import renpy.text.textsupport as textsupport

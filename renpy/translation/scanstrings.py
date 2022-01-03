@@ -26,7 +26,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 import os
 import re
 
-import renpy.translation
+import renpy
 
 ################################################################################
 
@@ -98,6 +98,9 @@ class String(object):
         for prefix, priority, launcher_file in pl:
             if self.elided.startswith(prefix):
                 break
+        else:
+            priority = 500
+            launcher_file = "unknown.rpy"
 
         self.priority = priority
         self.sort_key = (priority, self.filename, self.line)
