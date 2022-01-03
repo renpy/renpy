@@ -21,7 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-
+from typing import Optional
 
 import renpy.display
 import time
@@ -750,7 +750,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
 # The name of the screen that is currently being displayed, or
 # None if no screen is being currently displayed.
-_current_screen = None
+_current_screen = None # Optional[Screen]
 
 # The stack of old current screens.
 current_screen_stack = [ ]
@@ -1291,7 +1291,7 @@ def use_screen(_screen_name, *_args, **kwargs):
     _current_screen.old_transfers = old_transfers
 
 
-def current_screen():
+def current_screen(): # type: () -> Optional[Screen]
     return _current_screen
 
 

@@ -28,7 +28,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-
+from typing import Optional
 
 import sys
 
@@ -433,7 +433,7 @@ def prefixed_style(style_suffix):
 
 # The screen we're using as we add widgets. None if there isn't a
 # screen.
-screen = None
+screen = None # type: Optional[renpy.display.screen.Screen]
 
 
 class Wrapper(renpy.object.Object):

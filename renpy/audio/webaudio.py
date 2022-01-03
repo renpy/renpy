@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy
-import emscripten
+import emscripten # type: ignore
 from json import dumps
 
 

@@ -25,7 +25,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 
-import renpy.audio
+import renpy
 
 from renpy.audio.audio import get_channel, get_serial
 

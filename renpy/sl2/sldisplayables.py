@@ -25,10 +25,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-
-import renpy.display
-import renpy.text.text
-import renpy.sl2
+import renpy
 
 from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
 from renpy.sl2.slparser import DisplayableParser, many
@@ -78,6 +75,8 @@ class ShowIf(renpy.display.layout.Container):
 
     def render(self, width, height, st, at):
 
+        cr = None
+
         if isinstance(self.child, renpy.display.motion.Transform):
             if self.condition or self.show_child:
                 cr = renpy.display.render.render(self.child, width, height, st, at)
@@ -87,6 +86,7 @@ class ShowIf(renpy.display.layout.Container):
                 cr = renpy.display.render.render(self.child, width, height, st, at)
                 self.show_child = True
             else:
+                cr = None
                 self.show_child = False
 
         if self.show_child:

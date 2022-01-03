@@ -58,12 +58,12 @@ position_property_names = [
     "debug",
     ]
 
-position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip") ]
-text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ]
-side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ] + [ Keyword("tooltip") ]
-viewport_position_properties = [ PrefixStyle("viewport_", i) for i in position_property_names ]
-scrollbar_position_properties = [ PrefixStyle("scrollbar_", i) for i in position_property_names ] + [ Keyword("tooltip") ]
-vscrollbar_position_properties = [ PrefixStyle("vscrollbar_", i) for i in position_property_names ] + [ Keyword("tooltip") ]
+position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
+text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ] # type: ignore
+side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
+viewport_position_properties = [ PrefixStyle("viewport_", i) for i in position_property_names ] # type: ignore
+scrollbar_position_properties = [ PrefixStyle("scrollbar_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
+vscrollbar_position_properties = [ PrefixStyle("vscrollbar_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
 
 text_property_names = [
     "antialias",
@@ -150,7 +150,7 @@ button_properties = [ Style(i) for i in [
         Keyword("sensitive"),
         Keyword("keysym"),
         Keyword("alternate_keysym"),
-    ]
+    ] # type: ignore
 
 bar_property_names = [
     "bar_vertical",

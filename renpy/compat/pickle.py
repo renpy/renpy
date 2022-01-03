@@ -23,6 +23,6 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 
 
 if PY2:
-    from cPickle import *
+    from cPickle import dumps, loads, dump, load, HIGHEST_PROTOCOL # type: ignore
 else:
-    from pickle import *
+    from pickle import dumps, loads, dump, load, HIGHEST_PROTOCOL

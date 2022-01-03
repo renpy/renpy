@@ -95,7 +95,7 @@ less_imagedissolve = False
 persistent = None
 
 # The current preferences.
-preferences = None
+preferences = None # type: Optional[renpy.preferences.Preferences]
 
 
 class ExceptionInfo(object):

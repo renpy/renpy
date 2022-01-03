@@ -24,7 +24,8 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 
 
 import collections
-import renpy.sl2
+
+import renpy
 import renpy.sl2.slast as slast
 
 from ast import literal_eval
@@ -995,7 +996,7 @@ class ScreenParser(Parser):
         screen = slast.SLScreen(loc)
 
         screen.name = l.require(l.word)
-        screen.parameters = renpy.parser.parse_parameters(l)
+        screen.parameters = renpy.parser.parse_parameters(l) # type: ignore
 
         self.parse_contents(l, screen, can_tag=True)
 

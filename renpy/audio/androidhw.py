@@ -24,7 +24,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 
 
 import renpy
-import jnius # @UnresolvedImport
+import jnius # type: ignore
 
 from renpy.audio.audio import MusicContext
 
