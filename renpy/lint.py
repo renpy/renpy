@@ -22,9 +22,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-
-import renpy.display
-import renpy.text
 import codecs
 import time
 import re
@@ -32,6 +29,8 @@ import sys
 import collections
 import textwrap
 import builtins
+
+import renpy
 
 python_builtins = set(dir(builtins))
 renpy_builtins = set()
@@ -251,8 +250,8 @@ def image_exists_precise(name):
 
             try:
                 da = renpy.display.core.DisplayableArguments()
-                da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs)
-                da.args = tuple(i for i in name[1:] if i in rest)
+                da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs) 
+                da.args = tuple(i for i in name[1:] if i in rest) 
                 da.lint = True
                 d._duplicate(da)
             except:
@@ -346,7 +345,7 @@ def check_image(node):
 
 def imspec(t):
     if len(t) == 3:
-        return t[0], None, None, t[1], t[2], 0
+        return t[0], None, None, t[1], t[2], 0, None
     if len(t) == 6:
         return t[0], t[1], t[2], t[3], t[4], t[5], None
     else:
@@ -483,6 +482,8 @@ def check_say(node):
             report("Could not evaluate '%s' in the who part of a say statement.", node.who)
             add("Perhaps you forgot to define a character?")
             char = None
+    else:
+        char = None
 
     if node.with_:
         try_eval("the with clause of a say statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
@@ -584,6 +585,8 @@ def check_redefined(node, kind):
 
         if not (node.operator == "=" and node.index is None):
             return
+    else:
+        return
 
     # Combine store name and varname
 

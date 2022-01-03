@@ -23,14 +23,11 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-
-
 unicode = str # @ReservedAssignment
 
 python_list = _list = list
 python_dict = _dict = dict
-python_object = _object = object
+python_object = _object = object # type: ignore
 python_set = _set = set
 
 _type = type
@@ -69,7 +66,7 @@ def print(*args, **kwargs):
     at the start of the next statement, so that it can't be rolled past.
     """
 
-    renpy.game.context().force_checkpoint = True
+    renpy.game.context().force_checkpoint = True # type: ignore
     _print(*args, **kwargs)
 
 

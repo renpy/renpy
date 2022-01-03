@@ -193,10 +193,11 @@ def register(
     # The function that is called to create an ast.UserStatement.
     def parse_user_statement(l, loc):
 
-        try:
-            renpy.exports.push_error_handler(l.error)
+        renpy.exports.push_error_handler(l.error)
 
-            old_subparses = l.subparses
+        old_subparses = l.subparses
+
+        try:
             l.subparses = [ ]
 
             text = l.text

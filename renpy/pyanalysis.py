@@ -292,7 +292,7 @@ class Analysis(object):
 
     def push_control(self, const=True, loop=False, imagemap=False):
         self.control = Control(self.control.const and const, loop, self.imagemap or imagemap)
-        self.control_stack.append(self.control)
+        self.control_stack.append(self.control) # type: ignore
 
     def pop_control(self):
         rv = self.control_stack.pop()
@@ -743,7 +743,7 @@ CACHE_FILENAME = "cache/pyanalysis.rpyb"
 
 
 def load_cache():
-    if renpy.game.args.compile: # @UndefinedVariable
+    if renpy.game.args.compile: # type: ignore
         return
 
     try:

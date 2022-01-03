@@ -32,7 +32,7 @@ import os
 import zipfile
 import json
 
-import renpy.display
+import renpy
 import threading
 
 from renpy.loadsave import clear_slot, safe_rename
@@ -100,7 +100,7 @@ class FileLocation(object):
         """
 
         if renpy.emscripten:
-            import emscripten # @UnresolvedImport
+            import emscripten # type: ignore
             emscripten.syncfs()
 
     def scan(self):
@@ -391,7 +391,7 @@ class MultiLocation(object):
     def newest(self, slotname):
         """
         Returns the location containing the slotname with the newest
-        mtime. Returns None of the slot is empty.
+        mtime. Returns None if the slot is empty.
         """
 
         mtime = -1
@@ -465,7 +465,7 @@ class MultiLocation(object):
 
     def load(self, slotname):
         l = self.newest(slotname)
-        return l.load(slotname)
+        return l.load(slotname) # type: ignore
 
     def unlink(self, slotname):
         for l in self.active_locations():
@@ -547,7 +547,8 @@ def quit(): # @ReservedAssignment
         quit_scan_thread = True
         scan_thread_condition.notify_all()
 
-    scan_thread.join()
+    if scan_thread is not None:
+        scan_thread.join()
 
 
 def init():

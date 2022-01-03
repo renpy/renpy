@@ -25,7 +25,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-from typing import Optional
+from typing import Optional, List
 
 
 import collections
@@ -388,11 +388,11 @@ quit_action = None
 screenshot_crop = None
 
 # Various directories.
-gamedir = None # type: Optional[str] 
-basedir = None # type: Optional[str]
-renpy_base = None # type: Optional[str]
-commondir = None  # type: Optional[str]
-logdir = None  # type: Optional[str] # Where log and error files go.
+gamedir = "" 
+basedir = "" 
+renpy_base = "" 
+commondir = ""  # type: Optional[str]
+logdir = ""  # type: Optional[str] # Where log and error files go.
 
 # Should we enable OpenGL mode?
 gl_enable = True
@@ -430,7 +430,7 @@ choice_screen_chosen = True
 narrator_menu = False
 
 # A list of screen variants to use.
-variants = [ None ]
+variants = [ None ] # type: List
 
 # A function from (auto_parameter, variant) -> displayable.
 imagemap_auto_function = None

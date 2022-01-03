@@ -21,6 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Optional
 
 
 import renpy
@@ -31,10 +32,10 @@ import renpy.log
 # The draw object through which all drawing is routed. This object
 # contains all of the distinction between the software and GL
 # renderers.
-draw = None
+draw = None # type: Optional[renpy.display.core.Draw]
 
 # The interface object.
-interface = None
+interface = None # type: Optional[renpy.display.core.Interface]
 
 # Should we disable imagedissolve-type transitions?
 less_imagedissolve = False

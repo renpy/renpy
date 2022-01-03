@@ -24,14 +24,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-
-
-import renpy.display
-import renpy.audio
-import renpy.text
-import renpy.test
-
-import pygame_sdl2 as pygame
+from typing import Optional, Tuple
 
 import sys
 import os
@@ -41,6 +34,13 @@ import threading
 import copy
 import gc
 import atexit
+
+import pygame_sdl2 as pygame
+
+import renpy.display
+import renpy.audio
+import renpy.text
+import renpy.test
 
 import_time = time.time()
 
@@ -239,14 +239,14 @@ class DisplayableArguments(renpy.object.Object):
     """
 
     # The name of the displayable without any arguments.
-    name = ()
+    name = () # type: Tuple
 
     # Arguments supplied.
-    args = ()
+    args = () # type: Tuple
 
     # The style prefix in play. This is used by DynamicImage to figure
     # out the prefix list to apply.
-    prefix = None
+    prefix = None # Optional[str]
 
     # True if lint is in use.
     lint = False

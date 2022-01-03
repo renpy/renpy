@@ -21,10 +21,10 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-
+from typing import Optional
 
 import renpy
-import os.path
+import os
 import sys
 import types
 import threading
@@ -66,7 +66,7 @@ def get_path(fn):
 
 
 if renpy.android:
-    import android.apk
+    import android.apk # type: ignore
 
     expansion = os.environ.get("ANDROID_EXPANSION", None)
     if expansion is not None:
@@ -381,7 +381,7 @@ def scandirfiles_from_remote_file(add, seen):
     index_filename = os.path.join(renpy.config.gamedir, 'renpyweb_remote_files.txt')
     if os.path.exists(index_filename):
         files = game_files
-        with open(index_filename, 'rb') as remote_index:
+        with open(index_filename, 'r') as remote_index:
             while True:
                 f = remote_index.readline()
                 metadata = remote_index.readline()
@@ -520,7 +520,7 @@ class SubFile(object):
             rv = b''
 
             while length:
-                c = self.read(1)
+                c = self.read(1) # type: bytes
                 rv += c
                 if c == b'\n':
                     break
@@ -546,7 +546,7 @@ class SubFile(object):
 
             if length is not None:
                 length -= len(l)
-                if l < 0:
+                if length < 0:
                     break
 
             rv.append(l)
@@ -605,7 +605,7 @@ class SubFile(object):
         raise Exception("Write not supported by SubFile")
 
 
-open_file = open
+open_file = open # type: ignore
 
 if "RENPY_FORCE_SUBFILE" in os.environ:
 
@@ -770,7 +770,7 @@ def get_prefixes(tl=True):
     rv = [ ]
 
     if tl:
-        language = renpy.game.preferences.language # @UndefinedVariable
+        language = renpy.game.preferences.language # type: ignore
     else:
         language = None
 
@@ -926,7 +926,7 @@ class RenpyImporter(object):
     def __init__(self, prefix=""):
         self.prefix = prefix
 
-    def translate(self, fullname, prefix=None):
+    def translate(self, fullname, prefix=None): # type: (str, Optional[str]) -> str
 
         if prefix is None:
             prefix = self.prefix
@@ -988,7 +988,7 @@ class RenpyImporter(object):
                 if encoding == "latin-1":
                     raise
 
-        exec(code, mod.__dict__)
+        exec(code, mod.__dict__) # type: ignore
 
         return sys.modules[fullname]
 

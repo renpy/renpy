@@ -26,11 +26,11 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 
 # Allow pickling NoneType.
 if PY2:
-    import __builtin__
+    import __builtin__ # type: ignore
     __builtin__.NoneType = type(None)
 else:
     import builtins
-    builtins.NoneType = type(None)
+    builtins.NoneType = type(None) # type: ignore
 
 
 class Object(object):
@@ -63,7 +63,7 @@ class Object(object):
         self.__dict__.update(new_dict)
 
         if version != self.__version__:
-            self.after_upgrade(version)  # E1101
+            self.after_upgrade(version)  # type: ignore
 
         if self.after_setstate:
             self.after_setstate()  # E1102

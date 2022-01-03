@@ -94,7 +94,6 @@ def analyze():
         return
 
     s = "\n"
-    s = s.encode("utf-8")
 
     renpy.log.real_stdout.write(s)
     renpy.display.log.write(s)
@@ -111,7 +110,6 @@ def analyze():
             dt[3],
             event.format(*args).replace("%", "%%"),
             )
-        s = s.encode("utf-8")
 
         renpy.log.real_stdout.write(s)
         renpy.display.log.write(s)

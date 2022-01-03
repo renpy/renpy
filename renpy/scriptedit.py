@@ -65,6 +65,10 @@ class Line(object):
         # The text of the line.
         self.text = ''
 
+        # The full text, including any comments or delimiters.
+        self.full_text = ''
+        
+
     def __repr__(self):
         return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
 
