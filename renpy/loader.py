@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,10 +20,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Optional
 
 import renpy
-import os.path
+import os
 import sys
 import types
 import threading
@@ -65,7 +66,7 @@ def get_path(fn):
 
 
 if renpy.android:
-    import android.apk
+    import android.apk # type: ignore
 
     expansion = os.environ.get("ANDROID_EXPANSION", None)
     if expansion is not None:
@@ -128,6 +129,15 @@ class RPAv3ArchiveHandler(object):
         infile.seek(offset)
         index = loads(zlib.decompress(infile.read()))
 
+        def start_to_bytes(s):
+            if not s:
+                return b''
+
+            if not isinstance(s, bytes):
+                s = s.encode("latin-1")
+
+            return s
+
         # Deobfuscate the index.
 
         for k in index.keys():
@@ -135,7 +145,8 @@ class RPAv3ArchiveHandler(object):
             if len(index[k][0]) == 2:
                 index[k] = [ (offset ^ key, dlen ^ key) for offset, dlen in index[k] ]
             else:
-                index[k] = [ (offset ^ key, dlen ^ key, start) for offset, dlen, start in index[k] ]
+                index[k] = [ (offset ^ key, dlen ^ key, start_to_bytes(start)) for offset, dlen, start in index[k] ]
+
         return index
 
 
@@ -370,7 +381,7 @@ def scandirfiles_from_remote_file(add, seen):
     index_filename = os.path.join(renpy.config.gamedir, 'renpyweb_remote_files.txt')
     if os.path.exists(index_filename):
         files = game_files
-        with open(index_filename, 'rb') as remote_index:
+        with open(index_filename, 'r') as remote_index:
             while True:
                 f = remote_index.readline()
                 metadata = remote_index.readline()
@@ -489,7 +500,7 @@ class SubFile(object):
             rv2 = self.f.read(length)
             self.offset += len(rv2)
         else:
-            rv2 = ""
+            rv2 = b""
 
         return (rv1 + rv2)
 
@@ -506,12 +517,12 @@ class SubFile(object):
 
         # If we're in the start, then read the line ourselves.
         if self.offset < len(self.start):
-            rv = ''
+            rv = b''
 
             while length:
-                c = self.read(1)
+                c = self.read(1) # type: bytes
                 rv += c
-                if c == '\n':
+                if c == b'\n':
                     break
                 length -= 1
 
@@ -535,7 +546,7 @@ class SubFile(object):
 
             if length is not None:
                 length -= len(l)
-                if l < 0:
+                if length < 0:
                     break
 
             rv.append(l)
@@ -594,7 +605,7 @@ class SubFile(object):
         raise Exception("Write not supported by SubFile")
 
 
-open_file = open
+open_file = open # type: ignore
 
 if "RENPY_FORCE_SUBFILE" in os.environ:
 
@@ -605,7 +616,7 @@ if "RENPY_FORCE_SUBFILE" in os.environ:
         length = f.tell()
         f.seek(0, 0)
 
-        return SubFile(f, 0, length, '')
+        return SubFile(f, 0, length, b'')
 
 # A list of callbacks to open an open python file object of the given type.
 file_open_callbacks = [ ]
@@ -759,7 +770,7 @@ def get_prefixes(tl=True):
     rv = [ ]
 
     if tl:
-        language = renpy.game.preferences.language # @UndefinedVariable
+        language = renpy.game.preferences.language # type: ignore
     else:
         language = None
 
@@ -915,7 +926,7 @@ class RenpyImporter(object):
     def __init__(self, prefix=""):
         self.prefix = prefix
 
-    def translate(self, fullname, prefix=None):
+    def translate(self, fullname, prefix=None): # type: (str, Optional[str]) -> str
 
         if prefix is None:
             prefix = self.prefix
@@ -977,7 +988,7 @@ class RenpyImporter(object):
                 if encoding == "latin-1":
                     raise
 
-        exec(code, mod.__dict__)
+        exec(code, mod.__dict__) # type: ignore
 
         return sys.modules[fullname]
 

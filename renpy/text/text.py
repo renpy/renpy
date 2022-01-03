@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,10 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Optional
 
 import math
-import renpy.display
+
+import pygame_sdl2
+import renpy
 
 from renpy.text.textsupport import TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
@@ -157,6 +160,10 @@ class DrawInfo(object):
 
     # No implementation, this is set up in the layout object.
 
+    surface = None # type: Optional[pygame_sdl2.Surface]
+    override_color = None # type: Optional[tuple[int, int, int, int]]
+    outline = 0 # type: float
+    displayable_blits = None # type: Optional[list[tuple[renpy.display.core.Displayable, int, int]]]
 
 class TextSegment(object):
     """
@@ -992,7 +999,7 @@ class Layout(object):
                 if isinstance(i[0], (TextSegment, SpaceSegment, DisplayableSegment)):
                     return
 
-            line.extend(tss[-1].subsegment(u"\u200B"))
+            line.extend(tss[-1].subsegment(u"\u200B")) # type: ignore
 
         for type, text in tokens: # @ReservedAssignment
 
@@ -1637,7 +1644,7 @@ class Text(renpy.display.core.Displayable):
 
         for i in self.text:
             if isinstance(i, basestring):
-                s += i
+                s += i # type: ignore
 
             if len(s) > 25:
                 s = s[:24] + u"\u2026"
@@ -1653,7 +1660,7 @@ class Text(renpy.display.core.Displayable):
 
         for i in self.text:
             if isinstance(i, basestring):
-                s += i
+                s += i # type: ignore
 
         return s
 
@@ -1814,7 +1821,7 @@ class Text(renpy.display.core.Displayable):
         if self.dirty or self.displayables is None:
             self.update()
 
-        return list(self.displayables)
+        return list(self.displayables) # type: ignore
 
     def _tts(self):
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,17 +23,16 @@
 # transform displayables. (As well as displayables that support them.)
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
-
-# Some imports are here to handle pickles of a moved class.
-from renpy.display.transform import Transform, Proxy, TransformState, ATLTransform, null  # @UnusedImport
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 import math
 
-import renpy.display
-
+import renpy
 from renpy.display.render import render
 from renpy.display.layout import Container
+
+# Some imports are here to handle pickles of a moved class.
+from renpy.display.transform import Transform, Proxy, TransformState, ATLTransform, null  # @UnusedImport
 
 
 class Motion(Container):

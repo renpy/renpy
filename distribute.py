@@ -1,7 +1,11 @@
 #!/home/tom/ab/renpy/lib/py2-linux-x86_64/python -O
 
 # Builds a distribution of Ren'Py.
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+
+import future.standard_library
+import future.utils
+PY2 = future.utils.PY2
 
 import sys
 import os
@@ -11,17 +15,14 @@ import subprocess
 import argparse
 import time
 
+
 try:
     # reload is built-in in Python 2, in importlib in Python 3
     reload
 except NameError:
     from importlib import reload
 
-if not sys.flags.optimize:
-    raise Exception("Optimization disabled.")
-
 ROOT = os.path.dirname(os.path.abspath(__file__))
-
 
 def copy_tutorial_file(src, dest):
     """
@@ -47,7 +48,7 @@ def main():
 
     start = time.time()
 
-    if not sys.flags.optimize:
+    if PY2 and not sys.flags.optimize:
         raise Exception("Not running with python optimization.")
 
     ap = argparse.ArgumentParser()
@@ -78,16 +79,20 @@ def main():
 
     match_version = ".".join(str(i) for i in renpy.version_tuple[:2]) # @UndefinedVariable
 
-    s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", "start-" + match_version ])
-    parts = s.strip().split("-")
+    try:
+        s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", "start-" + match_version ])
+        parts = s.strip().split("-")
 
-    if len(parts) <= 3:
+        if len(parts) <= 3:
+            vc_version = 0
+        else:
+            vc_version = int(parts[2])
+
+        if parts[-1] == "dirty":
+            vc_version += 1
+
+    except subprocess.CalledProcessError:
         vc_version = 0
-    else:
-        vc_version = int(parts[2])
-
-    if parts[-1] == "dirty":
-        vc_version += 1
 
     with open("renpy/vc_version.py", "w") as f:
         import socket
@@ -127,6 +132,11 @@ def main():
 
     print("Version {} ({})".format(args.version, full_version))
 
+    if sys.version_info[0] >= 3:
+        renpy_sh = "./renpy3.sh"
+    else:
+        renpy_sh = "./renpy2.sh"
+
     # Perhaps autobuild.
     if "RENPY_BUILD_ALL" in os.environ:
         print("Autobuild...")
@@ -139,7 +149,7 @@ def main():
     if not args.fast:
         for i in [ 'tutorial', 'launcher', 'the_question' ]:
             print("Compiling", i)
-            subprocess.check_call(["./renpy.sh", i, "quit" ])
+            subprocess.check_call([renpy_sh, i, "quit" ])
 
     # Kick off the rapt build.
     if not args.fast:
@@ -162,10 +172,11 @@ def main():
     if not os.path.exists(destination):
         os.makedirs(destination)
 
+
     if args.fast:
 
         cmd = [
-            "./renpy.sh",
+            renpy_sh,
             "launcher",
             "distribute",
             "launcher",
@@ -178,7 +189,7 @@ def main():
 
     else:
         cmd = [
-            "./renpy.sh",
+            renpy_sh,
             "launcher",
             "distribute",
             "launcher",

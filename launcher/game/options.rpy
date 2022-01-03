@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -302,7 +302,6 @@ init python:
     build.classify_renpy("**.old", None)
     build.classify_renpy("**.new", None)
     build.classify_renpy("**.bak", None)
-    build.classify_renpy("**.pyc", None)
 
     build.classify_renpy("**/log.txt", None)
     build.classify_renpy("**/traceback.txt", None)
@@ -326,7 +325,10 @@ init python:
             build.classify_renpy(pattern + "/__pycache__/", None)
             build.classify_renpy(pattern + "/**.pyo", binary)
         else:
+            build.classify_renpy(pattern + "/__pycache__/", binary)
             build.classify_renpy(pattern + "/__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), binary)
+            build.classify_renpy(pattern + "/**.pyc", binary)
+            build.classify_renpy(pattern + "/**.pyo", None)
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
@@ -384,12 +386,12 @@ init python:
     build.classify_renpy("lib/*linux-armv7l/**", "raspi")
 
     if PY2:
-        build.classify_renpy("lib/py2-**", "binary")
-        build.classify_renpy("lib/python2*/**", "binary")
+        source_and_binary("lib/py2-**")
+        source_and_binary("lib/python2**")
         build.classify_renpy("renpy2.sh", "binary")
     else:
-        build.classify_renpy("lib/py3-**", "binary")
-        build.classify_renpy("lib/python3*/**", "binary")
+        source_and_binary("lib/py3-**")
+        source_and_binary("lib/python3**")
         build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")

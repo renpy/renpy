@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,11 +25,9 @@
 # at least pcm_ok, we have no sound whatsoever.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
-from future.utils import raise_
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-import renpy.audio # @UnusedImport
-import renpy.display # @UnusedImport
+from future.utils import raise_
 
 import time
 import pygame_sdl2 # @UnusedImport
@@ -38,6 +36,8 @@ import re
 import threading
 import sys
 import io
+
+import renpy
 
 # Import the appropriate modules, or set them to None if we cannot.
 
@@ -74,7 +74,7 @@ def load(fn):
             # prediction failed, too late
             pass
         # temporary 1s placeholder, will retry loading when looping:
-        rv = open(os.path.join(renpy.config.commondir, '_dl_silence.ogg'), 'rb')
+        rv = open(os.path.join(renpy.config.commondir, '_dl_silence.ogg'), 'rb') # type: ignore
     return rv
 
 
@@ -371,11 +371,10 @@ class Channel(object):
         if not m:
             return self.file_prefix + filename + self.file_suffix, 0, -1
 
-        spec = m.group(1)
         fn = m.group(2)
         fn = self.file_prefix + fn + self.file_suffix
 
-        spec = spec.split()
+        spec = m.group(1).split()
 
         start = 0
         loop = None
@@ -653,7 +652,7 @@ class Channel(object):
 
             for filename in filenames:
                 filename, _, _ = self.split_filename(filename, False)
-                renpy.game.persistent._seen_audio[str(filename)] = True # @UndefinedVariable
+                renpy.game.persistent._seen_audio[str(filename)] = True # type: ignore
 
             if not loop_only:
 

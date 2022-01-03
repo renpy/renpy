@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,7 @@
 # called by default, but can be used when problems occur.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 import time
 import weakref
@@ -144,7 +144,7 @@ def cycle_finder(o, name):
         else:
 
             try:
-                reduction = o.__reduce_ex__(2)
+                reduction = o.__reduce_ex__(2) # type: ignore
             except Exception:
                 reduction = [ ]
 
@@ -163,10 +163,10 @@ def cycle_finder(o, name):
             else:
                 visit(ido, state, path + ".__getstate__()")
 
-            for i, oo in enumerate(get(3, [])):
+            for i, oo in enumerate(get(3, [])): # type: ignore
                 visit(ido, oo, "{0}[{1}]".format(path, i))
 
-            for i in get(4, []):
+            for i in get(4, []): # type: ignore
 
                 if len(i) != 2:
                     continue
@@ -542,7 +542,7 @@ def find_parents(cls):
                 continue
 
             if isinstance(o, weakref.WeakKeyDictionary):
-                for k, v in o.data.items():
+                for k, v in o.items():
                     if v is objects[-4]:
                         k = k()
                         seen.add(id(k))

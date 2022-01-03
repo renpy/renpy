@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,14 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
-
-import renpy.display
-import renpy.style
-import renpy.sl2
-import renpy.test
-
-import renpy.game as game
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Tuple, List, Dict, Set, Optional, Iterable, Any
 
 import os
 import sys
@@ -35,6 +29,9 @@ import time
 import zipfile
 import gc
 import linecache
+
+import renpy
+import renpy.game as game
 
 import __main__
 
@@ -160,7 +157,7 @@ def load_rpe(fn):
 def choose_variants():
 
     if "RENPY_VARIANT" in os.environ:
-        renpy.config.variants = list(os.environ["RENPY_VARIANT"].split()) + [ None ]
+        renpy.config.variants = list(os.environ["RENPY_VARIANT"].split()) + [ None ] # type: ignore
         renpy.display.emulator.early_init_emulator()
         return
 
@@ -168,14 +165,14 @@ def choose_variants():
 
     if renpy.android: # @UndefinedVariable
 
-        renpy.config.variants.insert(0, 'mobile')
-        renpy.config.variants.insert(0, 'android')
+        renpy.config.variants.insert(0, 'mobile') # type: ignore
+        renpy.config.variants.insert(0, 'android') # type: ignore
 
-        import android # @UnresolvedImport
+        import android # type: ignore
         import math
         import pygame_sdl2 as pygame
 
-        from jnius import autoclass # @UnresolvedImport
+        from jnius import autoclass # type: ignore
 
         # Manufacturer/Model-specific variants.
         try:
@@ -188,7 +185,7 @@ def choose_variants():
 
             if manufacturer == "Amazon" and model.startswith("AFT"):
                 print("Running on a Fire TV.")
-                renpy.config.variants.insert(0, "firetv")
+                renpy.config.variants.insert(0, "firetv") # type: ignore
         except Exception:
             pass
 
@@ -197,8 +194,8 @@ def choose_variants():
 
         if package_manager.hasSystemFeature("android.hardware.type.television"):
             print("Running on a television.")
-            renpy.config.variants.insert(0, "tv")
-            renpy.config.variants.insert(0, "small")
+            renpy.config.variants.insert(0, "tv") # type: ignore
+            renpy.config.variants.insert(0, "small") # type: ignore
             return
 
         # Running on a chromebook.
@@ -206,12 +203,12 @@ def choose_variants():
             PythonSDLActivity = autoclass("org.renpy.android.PythonSDLActivity")
             if PythonSDLActivity.isChromebook():
                 print("Running on ChromeOS.")
-                renpy.config.variants.insert(0, 'chromeos')
+                renpy.config.variants.insert(0, 'chromeos') # type: ignore
         except Exception:
             pass
 
         # Otherwise, a phone or tablet.
-        renpy.config.variants.insert(0, 'touch')
+        renpy.config.variants.insert(0, 'touch') # type: ignore
 
         pygame.display.init()
 
@@ -220,18 +217,18 @@ def choose_variants():
         print("Screen diagonal is", diag, "inches.")
 
         if diag >= 6:
-            renpy.config.variants.insert(0, 'tablet')
-            renpy.config.variants.insert(0, 'medium')
+            renpy.config.variants.insert(0, 'tablet') # type: ignore
+            renpy.config.variants.insert(0, 'medium') # type: ignore
         else:
-            renpy.config.variants.insert(0, 'phone')
-            renpy.config.variants.insert(0, 'small')
+            renpy.config.variants.insert(0, 'phone') # type: ignore
+            renpy.config.variants.insert(0, 'small') # type: ignore
 
     elif renpy.ios:
-        renpy.config.variants.insert(0, 'mobile')
-        renpy.config.variants.insert(0, 'ios')
-        renpy.config.variants.insert(0, 'touch')
+        renpy.config.variants.insert(0, 'mobile') # type: ignore
+        renpy.config.variants.insert(0, 'ios') # type: ignore
+        renpy.config.variants.insert(0, 'touch') # type: ignore
 
-        from pyobjus import autoclass # @UnresolvedImport @Reimport
+        from pyobjus import autoclass # type: ignore
         UIDevice = autoclass("UIDevice")
 
         idiom = UIDevice.currentDevice().userInterfaceIdiom
@@ -241,24 +238,24 @@ def choose_variants():
         # idiom 0 is iPhone, 1 is iPad. We assume any bigger idiom will
         # be tablet-like.
         if idiom >= 1:
-            renpy.config.variants.insert(0, 'tablet')
-            renpy.config.variants.insert(0, 'medium')
+            renpy.config.variants.insert(0, 'tablet') # type: ignore
+            renpy.config.variants.insert(0, 'medium') # type: ignore
         else:
-            renpy.config.variants.insert(0, 'phone')
-            renpy.config.variants.insert(0, 'small')
+            renpy.config.variants.insert(0, 'phone') # type: ignore
+            renpy.config.variants.insert(0, 'small') # type: ignore
 
     elif renpy.emscripten:
-        import emscripten
+        import emscripten # type: ignore
         import re
 
         # web
-        renpy.config.variants.insert(0, 'web')
+        renpy.config.variants.insert(0, 'web') # type: ignore
 
         # mobile
         userAgent = emscripten.run_script_string(r'''navigator.userAgent''')
         mobile = re.search('Mobile|Android|iPad|iPhone', userAgent)
         if mobile:
-            renpy.config.variants.insert(0, 'mobile')
+            renpy.config.variants.insert(0, 'mobile') # type: ignore
         # Reserve android/ios for when the OS API is exposed
         # if re.search('Android', userAgent):
         #    renpy.config.variants.insert(0, 'android')
@@ -273,7 +270,7 @@ def choose_variants():
         if touch == 1:
             # mitigate hybrids (e.g. ms surface) by restricting touch to mobile
             if mobile:
-                renpy.config.variants.insert(0, 'touch')
+                renpy.config.variants.insert(0, 'touch') # type: ignore
 
         # large/medium/small
         # tablet/phone
@@ -288,18 +285,18 @@ def choose_variants():
         # medium reference point: ipad 1024x768, ipad pro 1336x1024 (browser "pixels")
         if mobile:
             if (ref_width < 768 or ref_height < 768):
-                renpy.config.variants.insert(0, 'small')
-                renpy.config.variants.insert(0, 'phone')
+                renpy.config.variants.insert(0, 'small') # type: ignore
+                renpy.config.variants.insert(0, 'phone') # type: ignore
             else:
-                renpy.config.variants.insert(0, 'medium')
-                renpy.config.variants.insert(0, 'tablet')
+                renpy.config.variants.insert(0, 'medium') # type: ignore
+                renpy.config.variants.insert(0, 'tablet') # type: ignore
         else:
-            renpy.config.variants.insert(0, 'large')
+            renpy.config.variants.insert(0, 'large') # type: ignore
 
     else:
-        renpy.config.variants.insert(0, 'pc')
+        renpy.config.variants.insert(0, 'pc') # type: ignore
 
-        renpy.config.variants.insert(0, 'large')
+        renpy.config.variants.insert(0, 'large') # type: ignore
 
 
 def android_searchpath():
@@ -435,7 +432,7 @@ def main():
     game.log = renpy.python.RollbackLog()
 
     # Initialize the store.
-    renpy.store.store = sys.modules['store']
+    renpy.store.store = sys.modules['store'] # type: ignore
 
     # Set up styles.
     game.style = renpy.style.StyleManager() # @UndefinedVariable
@@ -452,7 +449,7 @@ def main():
     renpy.game.script = renpy.script.Script()
 
     if renpy.session.get("compile", False):
-        renpy.game.args.compile = True
+        renpy.game.args.compile = True # type: ignore
 
     # Set up error handling.
     renpy.exports.load_module("_errorhandling")
@@ -468,7 +465,7 @@ def main():
     # If recompiling everything, remove orphan .rpyc files.
     # Otherwise, will fail in case orphan .rpyc have same
     # labels as in other scripts (usually happens on script rename).
-    if (renpy.game.args.command == 'compile') and not (renpy.game.args.keep_orphan_rpyc): # @UndefinedVariable
+    if (renpy.game.args.command == 'compile') and not (renpy.game.args.keep_orphan_rpyc): # type: ignore
 
         for (fn, dn) in renpy.game.script.script_files:
 
@@ -492,7 +489,7 @@ def main():
     renpy.game.script.load_script() # sets renpy.game.script.
     log_clock("Loading script")
 
-    if renpy.game.args.command == 'load-test': # @UndefinedVariable
+    if renpy.game.args.command == 'load-test': # type: ignore
         start = time.time()
 
         for i in range(5):
@@ -509,14 +506,14 @@ def main():
     if renpy.config.savedir is None:
         renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir) # E1101 @UndefinedVariable
 
-    if renpy.game.args.savedir: # @UndefinedVariable
-        renpy.config.savedir = renpy.game.args.savedir # @UndefinedVariable
+    if renpy.game.args.savedir: # type: ignore
+        renpy.config.savedir = renpy.game.args.savedir # type: ignore
 
     # Init preferences.
     game.persistent = renpy.persistent.init()
     game.preferences = game.persistent._preferences
 
-    for i in renpy.game.persistent._seen_translates: # @UndefinedVariable
+    for i in renpy.game.persistent._seen_translates: # type: ignore
         if i in renpy.game.script.translator.default_translates:
             renpy.game.seen_translates_count += 1
 
@@ -543,9 +540,9 @@ def main():
         game.seen_session = { }
 
         # Initialize persistent variables.
-        renpy.store.persistent = game.persistent
-        renpy.store._preferences = game.preferences
-        renpy.store._test = renpy.test.testast._test
+        renpy.store.persistent = game.persistent # type: ignore
+        renpy.store._preferences = game.preferences # type: ignore
+        renpy.store._test = renpy.test.testast._test # type: ignore
 
         if renpy.parser.report_parse_errors():
             raise renpy.game.ParseErrorException()
@@ -585,7 +582,7 @@ def main():
         # Sort the images.
         renpy.display.image.image_names.sort()
 
-        game.persistent._virtual_size = renpy.config.screen_width, renpy.config.screen_height
+        game.persistent._virtual_size = renpy.config.screen_width, renpy.config.screen_height # type: ignore
 
         log_clock("Running init code")
 

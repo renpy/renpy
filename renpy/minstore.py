@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,15 +20,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-from renpy.compat import compat_open as file, open
 
 unicode = str # @ReservedAssignment
 
 python_list = _list = list
 python_dict = _dict = dict
-python_object = _object = object
+python_object = _object = object # type: ignore
 python_set = _set = set
 
 _type = type
@@ -67,7 +66,7 @@ def print(*args, **kwargs):
     at the start of the next statement, so that it can't be rolled past.
     """
 
-    renpy.game.context().force_checkpoint = True
+    renpy.game.context().force_checkpoint = True # type: ignore
     _print(*args, **kwargs)
 
 

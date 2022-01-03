@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 import inspect
 import re
@@ -6,10 +6,13 @@ import collections
 import keyword
 import renpy.sl2
 import shutil
-import StringIO
+import io
 import os
 
-import __builtin__
+try:
+    import builtins
+except ImportError:
+    import __builtin__ as builtins
 
 # Additional keywords in the Ren'Py script language.
 SCRIPT_KEYWORDS = """\
@@ -330,14 +333,14 @@ def scan_section(name, o):
 
 def write_line_buffer():
 
-    for k, v in line_buffer.iteritems():
+    for k, v in line_buffer.items():
 
         # f = file("source/inc/" + k, "w")
 
-        f = StringIO.StringIO()
+        f = io.StringIO()
 
-        print(".. Automatically generated file - do not modify.", file=f)
-        print(file=f)
+        print(u".. Automatically generated file - do not modify.", file=f)
+        print(u"", file=f)
 
         for l in v:
             print(l, file=f)
@@ -407,7 +410,7 @@ def write_reserved(module, dest, ignore_builtins):
             if i.startswith("_"):
                 continue
 
-            if ignore_builtins and hasattr(__builtin__, i):
+            if ignore_builtins and hasattr(builtins, i):
                 continue
 
             f.write("* " + format_name(i) + "\n")
