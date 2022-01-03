@@ -22,14 +22,11 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-
 from renpy.minstore import *
 
 # But please note that this will not be available in the body
 # of user code, unless we re-import it.
-import renpy.display
-import renpy.audio
-import renpy.text
+import renpy
 
 import renpy.display.im as im
 import renpy.display.anim as anim
@@ -122,6 +119,7 @@ class _Config(object):
             raise Exception('Deleting configuration variables is not supported.')
         else:
             delattr(renpy.config, name)
+
 
 
 # The styles object.
@@ -240,7 +238,6 @@ Style = renpy.style.Style # @UndefinedVariable
 
 NoRollback = renpy.python.NoRollback
 
-
 class _layout_class(__builtins__["object"]):
     """
     This is used to generate declarative versions of MultiBox and Grid.
@@ -329,10 +326,10 @@ def At(d, *args):
     the outermost transform is the rightmost argument. ::
 
         transform birds_transform:
-             xpos -200
-             linear 10 xpos 800
-             pause 20
-             repeat
+            xpos -200
+            linear 10 xpos 800
+            pause 20
+            repeat
 
         image birds = At("birds.png", birds_transform)
         """
@@ -353,12 +350,9 @@ def At(d, *args):
 Color = renpy.color.Color
 color = renpy.color.Color
 
-# Conveniently get rid of all the packages we had imported before.
-import renpy.exports as renpy # @Reimport
-
 # The default menu functions.
-menu = renpy.display_menu
-predict_menu = renpy.predict_menu
+menu = renpy.exports.display_menu
+predict_menu = renpy.exports.predict_menu
 
 # The default transition.
 default_transition = None
@@ -371,40 +365,40 @@ suppress_overlay = False
 
 # The default ADVCharacter.
 adv = ADVCharacter(None,
-                   who_prefix='',
-                   who_suffix='',
-                   what_prefix='',
-                   what_suffix='',
+                who_prefix='',
+                who_suffix='',
+                what_prefix='',
+                what_suffix='',
 
-                   show_function=renpy.show_display_say,
-                   predict_function=renpy.predict_show_display_say,
+                show_function=renpy.exports.show_display_say,
+                predict_function=renpy.exports.predict_show_display_say,
 
-                   condition=None,
-                   dynamic=False,
-                   image=None,
+                condition=None,
+                dynamic=False,
+                image=None,
 
-                   interact=True,
-                   slow=True,
-                   slow_abortable=True,
-                   afm=True,
-                   ctc=None,
-                   ctc_pause=None,
-                   ctc_timedpause=None,
-                   ctc_position="nestled",
-                   all_at_once=False,
-                   with_none=None,
-                   callback=None,
-                   type='say',
-                   advance=True,
+                interact=True,
+                slow=True,
+                slow_abortable=True,
+                afm=True,
+                ctc=None,
+                ctc_pause=None,
+                ctc_timedpause=None,
+                ctc_position="nestled",
+                all_at_once=False,
+                with_none=None,
+                callback=None,
+                type='say',
+                advance=True,
 
-                   who_style='say_label',
-                   what_style='say_dialogue',
-                   window_style='say_window',
-                   screen='say',
-                   mode='say',
-                   voice_tag=None,
+                who_style='say_label',
+                what_style='say_dialogue',
+                window_style='say_window',
+                screen='say',
+                mode='say',
+                voice_tag=None,
 
-                   kind=False)
+                kind=False)
 
 # predict_say and who are defined in 00library.rpy, but we add default
 # versions here in case there is a problem with initialization. (And
@@ -468,15 +462,4 @@ _screenshot_pattern = None
 import sys
 import os
 
-
-def public_api():
-    ui
-    im
-    object
-    range
-    sorted
-    os
-    sys
-
-
-del public_api
+globals()["renpy"] = renpy.exports

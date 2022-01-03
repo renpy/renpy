@@ -303,7 +303,7 @@ class Color(tuple):
             self[2] * other[2],
             self[3] * other[3]))
 
-    __rmul__ = __mul__
+    __rmul__ = __mul__ # type: ignore
 
     def interpolate_core(self, a, b, fraction):
 

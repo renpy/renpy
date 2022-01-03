@@ -29,8 +29,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 import re
 import gc
 
-import renpy.display
-import renpy.audio
+import renpy
 
 from renpy.pyanalysis import const, pure, not_const
 

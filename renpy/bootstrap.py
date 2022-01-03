@@ -21,9 +21,10 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Optional
 
 
-import os.path
+import os
 import sys
 import subprocess
 import io
@@ -38,8 +39,8 @@ old_stderr = sys.stderr
 
 if PY2:
     sys_executable = sys.executable
-    reload(sys)
-    sys.setdefaultencoding("utf-8") # @UndefinedVariable
+    reload(sys) # type: ignore
+    sys.setdefaultencoding("utf-8") # type: ignore
     sys.executable = sys_executable
 
 sys.stdout = old_stdout
@@ -81,7 +82,7 @@ trace_local = None
 
 def trace_function(frame, event, arg):
     fn = os.path.basename(frame.f_code.co_filename)
-    trace_file.write("{} {} {} {}\n".format(fn, frame.f_lineno, frame.f_code.co_name, event))
+    trace_file.write("{} {} {} {}\n".format(fn, frame.f_lineno, frame.f_code.co_name, event)) # type: ignore
     return trace_local
 
 
@@ -104,7 +105,7 @@ def mac_start(fn):
     os.start compatibility for mac.
     """
 
-    os.system("open " + fn)
+    os.system("open " + fn) # type: ignore
 
 def popen_del(self, *args, **kwargs):
     """
@@ -208,7 +209,7 @@ def bootstrap(renpy_base):
 
     if renpy.macintosh:
         # If we're on a mac, install our own os.start.
-        os.startfile = mac_start
+        os.startfile = mac_start # type: ignore
 
         # Are we starting from inside a mac app resources directory?
         if basedir.endswith("Contents/Resources/autorun"):
@@ -270,7 +271,7 @@ You may be using a system install of python. Please run {0}.sh,
                 renpy.config.renpy_base = renpy_base
                 renpy.config.basedir = basedir
                 renpy.config.gamedir = gamedir
-                renpy.config.args = [ ]
+                renpy.config.args = [ ] # type: ignore
 
                 if renpy.android:
                     renpy.config.logdir = os.environ['ANDROID_PUBLIC']
@@ -299,7 +300,7 @@ You may be using a system install of python. Please run {0}.sh,
 
                 if e.relaunch:
                     if hasattr(sys, "renpy_executable"):
-                        subprocess.Popen([sys.renpy_executable] + sys.argv[1:])
+                        subprocess.Popen([sys.renpy_executable] + sys.argv[1:]) # type: ignore
                     else:
                         subprocess.Popen([sys.executable, "-EO"] + sys.argv)
 
@@ -329,4 +330,4 @@ You may be using a system install of python. Please run {0}.sh,
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
         if not renpy.emscripten:
-            subprocess.Popen.__del__ = popen_del
+            subprocess.Popen.__del__ = popen_del # type: ignore

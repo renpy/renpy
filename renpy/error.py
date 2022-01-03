@@ -135,7 +135,7 @@ def open_error_file(fn, mode):
     """
 
     try:
-        new_fn = os.path.join(renpy.config.logdir, fn)
+        new_fn = os.path.join(renpy.config.logdir, fn) # type: ignore
         f = open(new_fn, mode)
         return f, new_fn
     except:
@@ -161,7 +161,7 @@ def report_exception(e, editor=True):
 
     Returns a three-item tuple, with the first item being
     a simplified traceback, the second being a full traceback,
-    and the third being the traceback filename,
+    and the third being the traceback filename.
     """
 
     # Note: Doki Doki Literature club calls this as ("Words...", False).
@@ -235,12 +235,12 @@ def report_exception(e, editor=True):
             pass
 
         try:
-            if editor and ((renpy.game.args.command == "run") or (renpy.game.args.errors_in_editor)): # @UndefinedVariable
+            if editor and ((renpy.game.args.command == "run") or (renpy.game.args.errors_in_editor)): # type: ignore
                 renpy.exports.launch_editor([ traceback_fn ], 1, transient=1)
         except:
             pass
 
     except:
-        pass
+        traceback_fn = os.path.join(renpy.config.basedir, "traceback.txt") # type: ignore
 
     return simple, full, traceback_fn

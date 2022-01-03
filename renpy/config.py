@@ -25,6 +25,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Optional
 
 
 import collections
@@ -387,11 +388,11 @@ quit_action = None
 screenshot_crop = None
 
 # Various directories.
-gamedir = None
-basedir = None
-renpy_base = None
-commondir = None
-logdir = None # Where log and error files go.
+gamedir = None # type: Optional[str] 
+basedir = None # type: Optional[str]
+renpy_base = None # type: Optional[str]
+commondir = None  # type: Optional[str]
+logdir = None  # type: Optional[str] # Where log and error files go.
 
 # Should we enable OpenGL mode?
 gl_enable = True
@@ -1202,7 +1203,7 @@ del collections
 
 
 def init():
-    import renpy.display
+    import renpy
 
     global scene
     scene = renpy.exports.scene
@@ -1225,7 +1226,7 @@ def init():
         (r'\.(mp2|mp3|ogg|opus|wav)$', renpy.audio.audio.autoreload),
         ]
 
-    from renpy.uguu import GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_DST_COLOR, GL_MIN, GL_MAX
+    from renpy.uguu import GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_DST_COLOR, GL_MIN, GL_MAX # type: ignore
 
     gl_blend_func["normal"] = (GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
     gl_blend_func["add"] = (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE)

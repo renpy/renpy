@@ -99,11 +99,11 @@ class SystemEditor(Editor):
 
         try:
             if renpy.windows:
-                os.startfile(filename)  # @UndefinedVariable
+                os.startfile(filename) # type: ignore
             elif renpy.macintosh:
-                subprocess.call([ "open", filename ])  # @UndefinedVariable
+                subprocess.call([ "open", filename ])
             elif renpy.linux:
-                subprocess.call([ "xdg-open", filename ])  # @UndefinedVariable
+                subprocess.call([ "xdg-open", filename ])
         except:
             traceback.print_exc()
 
@@ -136,7 +136,7 @@ def init():
     exec(code, scope, scope)
 
     if "Editor" in scope:
-        editor = scope["Editor"]()
+        editor = scope["Editor"]() # type: ignore
         return
 
     raise Exception("{0} did not define an Editor class.".format(path))

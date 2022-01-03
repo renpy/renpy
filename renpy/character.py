@@ -24,8 +24,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-
-import renpy.display
+import renpy
 
 import re
 import os
@@ -455,7 +454,7 @@ def display_say(
     if not final:
         advance = False
 
-    if final and (not renpy.game.preferences.skip_unseen) and (not renpy.game.context().seen_current(True)) and renpy.config.skipping == "fast":
+    if final and (not renpy.game.preferences.skip_unseen) and (not renpy.game.context().seen_current(True)) and renpy.config.skipping == "fast": # type: ignore
         renpy.config.skipping = None
 
     # If we're in fast skipping mode, don't bother with say
@@ -499,14 +498,14 @@ def display_say(
     # If we're committed to skipping this statement, disable slow.
     elif (renpy.config.skipping and
           advance and
-          (renpy.game.preferences.skip_unseen or
+          (renpy.game.preferences.skip_unseen or # type: ignore
            renpy.game.context().seen_current(True))):
         slow = False
         all_at_once = True
 
     # Figure out which pause we're on. (Or set the pause to None in
     # order to put us in all-at-once mode.)
-    if not interact or renpy.game.preferences.self_voicing:
+    if not interact or renpy.game.preferences.self_voicing: # type: ignore
         all_at_once = True
 
     if dtt is None:
@@ -702,6 +701,8 @@ class HistoryEntry(renpy.object.Object):
     # See ADVCharacter.add_history for the fields.
 
     multiple = None
+    who = None
+    what = None 
 
     def __repr__(self):
         return "<History {!r} {!r}>".format(self.who, self.what)
@@ -817,8 +818,8 @@ class ADVCharacter(object):
             self.show_args = kind.show_args.copy()
             self.cb_args = kind.cb_args.copy()
 
-            for k, v in kind.properties.items():
-                self.properties[k] = dict(v)
+            for k, val in kind.properties.items():
+                self.properties[k] = dict(val)
 
         else:
             self.who_args = { "substitute" : False }
@@ -839,8 +840,8 @@ class ADVCharacter(object):
 
         split = renpy.easy.split_properties(properties, *split_args)
 
-        for prefix, d in zip(prefixes, split):
-            self.properties[prefix].update(d)
+        for prefix, dictionary in zip(prefixes, split):
+            self.properties[prefix].update(dictionary)
 
         self.properties["who"].update(split[-1])
 
@@ -1317,31 +1318,31 @@ class ADVCharacter(object):
         if history_length is None:
             return
 
-        if not renpy.store._history: # @UndefinedVariable
+        if not renpy.store._history: # type: ignore
             return
 
-        history = renpy.store._history_list # @UndefinedVariable
+        history = renpy.store._history_list # type: ignore
 
         h = HistoryEntry()
 
-        h.kind = kind
+        h.kind = kind # type: ignore
 
         h.who = who
         h.what = what
 
-        h.who_args = self.who_args
-        h.what_args = self.what_args
-        h.window_args = self.window_args
-        h.show_args = self.show_args
+        h.who_args = self.who_args # type: ignore
+        h.what_args = self.what_args # type: ignore
+        h.window_args = self.window_args # type: ignore
+        h.show_args = self.show_args # type: ignore
 
-        h.image_tag = self.image_tag
+        h.image_tag = self.image_tag # type: ignore
 
         h.multiple = multiple
 
         if renpy.game.context().rollback:
-            h.rollback_identifier = renpy.game.log.current.identifier
+            h.rollback_identifier = renpy.game.log.current.identifier # type: ignore
         else:
-            h.rollback_identifier = None
+            h.rollback_identifier = None # type: ignore
 
         for k, v in kwargs.items():
             setattr(h, k, v)
@@ -1365,12 +1366,12 @@ class ADVCharacter(object):
         if history_length is None:
             return
 
-        if not renpy.store._history: # @UndefinedVariable
+        if not renpy.store._history: # type: ignore
             return
 
         # The history can be reset at any time, so check that we have some.
-        if renpy.store._history_list:
-            renpy.store._history_list.pop() # @UndefinedVariable
+        if renpy.store._history_list: # type: ignore
+            renpy.store._history_list.pop() # type: ignore
 
 
 def Character(name=NotSet, kind=None, **properties):

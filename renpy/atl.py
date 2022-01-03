@@ -22,12 +22,9 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
+import random
 
 import renpy
-import renpy.display
-import renpy.pyanalysis
-
-import random
 
 
 def compiling(loc):
@@ -97,7 +94,7 @@ def matrix(x):
 
 
 def mesh(x):
-    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2mesh3.Mesh3, tuple)):
+    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2.gl2mesh3.Mesh3, tuple)):
         return x
 
     return bool(x)
@@ -377,7 +374,7 @@ class ATLTransformBase(renpy.object.Object):
         requires that t.atl is self.atl.
         """
 
-        super(ATLTransformBase, self).take_execution_state(t)
+        super(ATLTransformBase, self).take_execution_state(t) # type: ignore
 
         self.atl_st_offset = None
         self.atl_state = None
@@ -472,7 +469,7 @@ class ATLTransformBase(renpy.object.Object):
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
             child=child,
-            style=self.style_arg,
+            style=self.style_arg, # type: ignore
             context=context,
             parameters=parameters,
             _args=_args,
@@ -604,7 +601,7 @@ class ATLTransformBase(renpy.object.Object):
         if block is None:
             block = self.compile()
 
-        return self.children + block.visit()
+        return self.children + block.visit() # type: ignore
 
 
 # This is used in mark_constant to analyze expressions for constness.
@@ -1459,9 +1456,12 @@ class Choice(Statement):
 
         executing(self.loc)
 
+        choice = None # For typing purposes.
+
         if state is None:
 
             total = 0
+
             for chance, choice in self.choices:
                 total += chance
 

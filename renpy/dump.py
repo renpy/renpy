@@ -77,7 +77,7 @@ def dump(error):
 
     completed_dump = True
 
-    if not args.json_dump:
+    if not args.json_dump: # type: ignore
         return
 
     def name_filter(name, filename): # @ReservedAssignment
@@ -87,7 +87,7 @@ def dump(error):
 
         filename = filename.replace("\\", "/")
 
-        if name.startswith("_") and not args.json_dump_private:
+        if name.startswith("_") and not args.json_dump_private: # type: ignore
             if name.startswith("__") and name.endswith("__"):
                 pass
             else:
@@ -97,7 +97,7 @@ def dump(error):
             return False
 
         if filename.startswith("common/") or filename.startswith("renpy/common/"):
-            return args.json_dump_common
+            return args.json_dump_common # type: ignore
 
         if not filename.startswith("game/"):
             return False
@@ -239,18 +239,18 @@ def dump(error):
 
     # Add the build info from 00build.rpy, if it's available.
     try:
-        result["build"] = renpy.store.build.dump() # @UndefinedVariable
+        result["build"] = renpy.store.build.dump() # type: ignore
     except:
         pass
 
-    filename = renpy.exports.fsdecode(args.json_dump)
+    filename = renpy.exports.fsdecode(args.json_dump) # type: ignore
 
     if filename != "-":
         new = filename + ".new"
 
         if PY2:
             with open(new, "wb") as f:
-                json.dump(result, f)
+                json.dump(result, f) # type: ignore
         else:
             with open(new, "w") as f:
                 json.dump(result, f)

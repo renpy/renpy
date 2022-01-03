@@ -25,9 +25,9 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Optional
 
-
-import renpy.display
+import renpy
 
 # The basepath.
 basepath = None
@@ -40,20 +40,20 @@ searchpath = [ ]
 args = None
 
 # The game's script.
-script = None
+script = None # type: Optional[renpy.script.Script]
 
 # A stack of execution contexts.
 contexts = [ ]
 
 # The interface that the game uses to interact with the user.
-interface = None
+interface = None # type: Optional[renpy.display.core.Interface]
 
 # Are we inside lint?
 lint = False
 
 # The RollbackLog that keeps track of changes to the game state
 # and to the store.
-log = None
+log = None # type: Optional[renpy.python.RollbackLog]
 
 # Some useful additional information about program execution that
 # can be added to the exception.
