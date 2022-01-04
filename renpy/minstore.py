@@ -53,7 +53,7 @@ from renpy.translation import translate_string as __ # @UnusedImport
 
 from renpy.python import store_eval as eval
 
-from renpy.display.core import absolute
+from renpy.display.core import absolute, coordinate, px
 
 _print = print
 
@@ -161,12 +161,14 @@ __all__ = [
     'basestring',
     'bchr',
     'bord',
+    'coordinate',
     'dict',
     'eval',
     'list',
     'object',
     'open',
     'print',
+    'px',
     'python_dict',
     'python_list',
     'python_object',
