@@ -176,7 +176,29 @@ class absolute(float):
     """
     This represents an absolute float coordinate.
     """
-    __slots__ = [ ]
+    __slots__ = ()
+
+    @staticmethod
+    def compute_native(value, room):
+        """
+        Converts a coordinate (in the broad sense of the term) expressed in
+        one of the many coordinate types in renpy, to an absolute number of
+        pixels.
+        """
+        if isinstance(value, (absolute, int)):
+            return value
+        elif isinstance(value, float):
+            return value*room
+        elif isinstance(value, coordinate):
+            return value.offset + value.relative*room
+
+    @classmethod
+    def compute(clss, value, room):
+        """
+        Converts the value to `absolute`, providing type clarity
+        at the cost of memory space and computation time.
+        """
+        return clss(clss.compute_native(value, room))
 
 
 class coordinate(namedtuple("coordinate", ("offset", "relative"))):
