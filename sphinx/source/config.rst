@@ -920,7 +920,7 @@ Occasionally Used
     A dictionary mapping image tag strings to layer name strings. When
     an image is shown without a specific layer name, the image's tag is
     looked up in this dictionary to get the layer to show it on. If the
-    tag is not found here, :var:`config.default_tag_name` is used.
+    tag is not found here, :var:`config.default_tag_layer` is used.
 
 .. var:: config.tag_transform = { }
 
