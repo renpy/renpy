@@ -26,6 +26,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 from typing import Optional, Tuple
 
+from collections import namedtuple
 import sys
 import os
 import time
@@ -176,6 +177,66 @@ class absolute(float):
     This represents an absolute float coordinate.
     """
     __slots__ = [ ]
+
+
+class coordinate(namedtuple("coordinate", ("offset", "relative"))):
+    """
+    A combination of relative and absolute coordinates.
+    """
+    __slots__ = ()
+
+    def __new__(clss, offset, relative=0):
+        offset = absolute(offset)
+        if relative or not isinstance(relative, int):
+            relative = float(relative)
+        return super(coordinate, clss).__new__(clss, offset, relative)
+
+    @property
+    def has_relative(self):
+        return self.relative or not isinstance(self.relative, int)
+
+    # not to document even if enabled
+    # def __mul__(self, other):
+    #     return other*self
+
+    def __rmul__(self, other):
+        """
+        Setting or multiplying the offset value.
+        """
+        if self.has_relative:
+            raise AttributeError("Coordinates with a relative value do not support multiplication.")
+        if isinstance(other, (int, absolute)):
+            return self._replace(offset=self.offset*other)
+        return NotImplemented
+
+    def __add__(self, other):
+        """
+        Setting or adding to the relative value.
+        """
+        if isinstance(other, float) and not isinstance(other, absolute):
+            return self._replace(relative=self.relative+other)
+        if isinstance(other, coordinate):
+            if not (self.has_relative or other.has_relative):
+                # summing coordinates is accepted when they have no relative values
+                return self._replace(offset=self.offset+other.offset)
+            else:
+                raise AttributeError("Coordinates with a relative value don't support addition with other coordinates.")
+        return NotImplemented
+
+    def __radd__(self, other):
+        return self+other
+
+    def __sub__(self, other):
+        return self + -other
+    # no rsub - on purpose
+
+    def __repr__(self):
+        offset = int(self.offset) if int(self.offset)==self.offset else self.offset
+        if self.has_relative:
+            return "<coordinate {}+{}*px>".format(self.relative, offset)
+        return "<coordinate {}*px>".format(offset)
+
+px = coordinate(offset=1, relative=0)
 
 
 def place(width, height, sw, sh, placement):
