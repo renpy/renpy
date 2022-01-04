@@ -217,9 +217,13 @@ class coordinate(namedtuple("coordinate", ("offset", "relative"))):
     def has_relative(self):
         return self.relative or not isinstance(self.relative, int)
 
-    # not to document even if enabled
-    # def __mul__(self, other):
-    #     return other*self
+    def __mul__(self, other):
+        """
+        This should not be documented.
+        Having this function is necessary, otherwise defaults to tuple.__mul__
+        """
+        # return NotImplemented
+        return other*self
 
     def __rmul__(self, other):
         """
@@ -246,17 +250,33 @@ class coordinate(namedtuple("coordinate", ("offset", "relative"))):
         return NotImplemented
 
     def __radd__(self, other):
+        """
+        Adding to the left is supported.
+        """
         return self+other
 
     def __sub__(self, other):
+        """
+        Adding a negative value is supported.
+        """
         return self + -other
     # no rsub - on purpose
 
     def __repr__(self):
-        offset = int(self.offset) if int(self.offset)==self.offset else self.offset
-        if self.has_relative:
-            return "<coordinate {}+{}*px>".format(self.relative, offset)
-        return "<coordinate {}*px>".format(offset)
+        offset = self.offset
+        if int(offset) == offset:
+            offset = int(offset)
+
+        rv = ""
+        if self.relative:
+            rv += "{}+".format(self.relative)
+        rv += "{}*px".format(offset)
+
+        if not isinstance(offset, int):
+            # meaning the relative value is a floating number of pixels
+            # not equal to its representation in that case, since float-mult is disabled
+            rv = "<coordinate {}>".format(rv)
+        return rv
 
 px = coordinate(offset=1, relative=0)
 
