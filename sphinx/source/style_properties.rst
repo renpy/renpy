@@ -99,9 +99,9 @@ text.::
 Style Property Values
 =====================
 
-Each style property expects a specific kind of data. Many of these are
-standard Python types, but a few are novel. Here are descriptions of the
-novel kinds of value a style property can expect.
+Each style property expects a specific kind of data.
+Many of these are standard Python types, but a few are novel. Here are
+descriptions of the novel kinds of value a style property can expect.
 
 `position`
     Positions are used to specify locations relative to the upper-left
@@ -121,9 +121,31 @@ novel kinds of value a style property can expect.
         containing area. For example, 0.5 is a point halfway between the
         sides of the containing area, while 1.0 is on the right or bottom
         side.
-    absolute (like absolute(100.25))
-        An ``absolute`` number is interpreted as the number of pixels from the
-        left or top side of the screen, when using subpixel-precise rendering.
+    absolute (like ``absolute(100.25)``)
+        An ``absolute`` number is interpreted as a floating-point number of
+        pixels from the left or top side of the containing area, when using
+        subpixel-precise rendering.
+    coordinate (like ``0.5-17*px`` or ``coordinate(offset=-12.6, relative=.7)``)
+        A ``coordinate`` is interpreted as a combination between a relative
+        value and an absolute number of pixels.
+
+        It can be created using the ``coordinate`` constructor, called with
+        the ``offset`` and ``relative`` keyword arguments (an offset is
+        required). It can also be created using the built-in ``px``, by
+        multiplying it with an absolute number of pixels and adding it (or
+        substracting it) a floating-point relative value (typing of these
+        values is enforced).
+
+        ``1.0-10*px``, interpreted in a horizontal context, means "10 pixels
+        to the left of the right side of the containing area" and equates to
+        ``coordinate(offset=-10, relative=1.0)``. In the same context,
+        ``6*px+0.5`` means "6 pixels to the right of the center of the
+        containing area".
+
+        Like :class:`Color`, ``coordinate`` instances cannot be modified after
+        creation. You can copy a coordinate by accessing the ``offset`` and
+        ``relative`` attributes, and creating another instance with these
+        values.
 
 `displayable`
     Any displayable. If a displayable contains a "[prefix\_]" substitution,
