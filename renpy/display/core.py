@@ -191,6 +191,7 @@ class absolute(float):
             return value*room
         elif isinstance(value, coordinate):
             return value.offset + value.relative*room
+        raise TypeError("Value {} of type {} not recognized as a position.".format(value, type(value)))
 
     @classmethod
     def compute(clss, value, room):
@@ -230,7 +231,7 @@ class coordinate(namedtuple("coordinate", ("offset", "relative"))):
         Setting or multiplying the offset value.
         """
         if self.has_relative:
-            raise AttributeError("Coordinates with a relative value do not support multiplication.")
+            raise TypeError("Coordinates with a relative value do not support multiplication.")
         if isinstance(other, (int, absolute)):
             return self._replace(offset=self.offset*other)
         return NotImplemented
@@ -246,7 +247,7 @@ class coordinate(namedtuple("coordinate", ("offset", "relative"))):
                 # summing coordinates is accepted when they have no relative values
                 return self._replace(offset=self.offset+other.offset)
             else:
-                raise AttributeError("Coordinates with a relative value don't support addition with other coordinates.")
+                raise TypeError("Coordinates with a relative value don't support addition with other coordinates.")
         return NotImplemented
 
     def __radd__(self, other):
@@ -260,7 +261,15 @@ class coordinate(namedtuple("coordinate", ("offset", "relative"))):
         Adding a negative value is supported.
         """
         return self + -other
-    # no rsub - on purpose
+
+    def __rsub__(self, other):
+        """
+        To enable things like `.7-10*px`, which is resolved as `.7-(10*px)`.
+        """
+        return self._replace(offset=-self.offset)+other
+
+    # `-10*px` is interpreted as `(-10)*px`
+    # so no need to support `-(10*px)` using __neg__
 
     def __repr__(self):
         offset = self.offset
