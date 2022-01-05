@@ -1205,6 +1205,7 @@ class Window(Container):
         xmaximum = self.style.xmaximum
         ymaximum = self.style.ymaximum
 
+        # TODO : check this regarding the new absolute.compute
         if type(xmaximum) is float:
             xmaximum = width
         if type(ymaximum) is float:

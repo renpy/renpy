@@ -76,6 +76,7 @@ def find_focus(pattern):
 
 def relative_position(x, posx, width):
     if posx is not None:
+        # TODO : check this regarding the new absolute.compute
         if isinstance(posx, float):
             x = int(posx * (width - 1))
         else:

@@ -708,7 +708,7 @@ class Live2D(renpy.display.core.Displayable):
         # Determine the current motion.
 
         motion_st = st
-        
+
         if st_fade is not None:
             motion_st = st - st_fade
 
@@ -735,7 +735,7 @@ class Live2D(renpy.display.core.Displayable):
             if (not self.loop) or (not motion.duration):
                 st = motion.duration
                 last_frame = True
-            
+
             elif (st_fade is not None) and not common.is_seamless(m):
                 # This keeps a motion from being restarted after it would have
                 # been faded out.
@@ -748,7 +748,7 @@ class Live2D(renpy.display.core.Displayable):
         if motion is None:
             return None
 
-        # Determine the name of the current, last, and next motions. These are 
+        # Determine the name of the current, last, and next motions. These are
         # None if there is no motion.
 
         if current_index < len(self.motions):
@@ -774,7 +774,7 @@ class Live2D(renpy.display.core.Displayable):
             do_fade_in = False
 
         if (next_name == current_name) and common.is_seamless(current_name) and (st_fade is None):
-            do_fade_out = False        
+            do_fade_out = False
 
         # Apply the motion.
 
@@ -925,6 +925,7 @@ class Live2D(renpy.display.core.Displayable):
 
         zoom = self.zoom
 
+        # TODO : check this regarding the new absolute.compute
         def s(n):
             if isinstance(n, float):
                 return n * sh
