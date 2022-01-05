@@ -320,21 +320,13 @@ def place(width, height, sw, sh, placement):
     if yoffset is None:
         yoffset = 0
 
-    # We need to use type, since isinstance(absolute(0), float).
-    if xpos.__class__ is float:
-        xpos *= width
-
-    if xanchor.__class__ is float:
-        xanchor *= sw
-
+    # the values aren't returned, so compute_native can be used
+    xpos = absolute.compute_native(xpos, width)
+    xanchor = absolute.compute_native(xanchor, sw)
     x = xpos + xoffset - xanchor
 
-    if ypos.__class__ is float:
-        ypos *= height
-
-    if yanchor.__class__ is float:
-        yanchor *= sh
-
+    ypos = absolute.compute_native(ypos, height)
+    yanchor = absolute.compute_native(yanchor, sh)
     y = ypos + yoffset - yanchor
 
     return x, y
