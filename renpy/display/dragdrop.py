@@ -341,11 +341,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         linear move.
         """
 
-        if type(x) is float:
-            x = int(x * self.parent_width)
-
-        if type(y) is float:
-            y = int(y * self.parent_height)
+        x = absolute.compute(x, self.parent_width)
+        y = absolute.compute(y, self.parent_height)
 
         self.target_x = x
         self.target_y = y

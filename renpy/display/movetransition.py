@@ -400,12 +400,7 @@ class MoveInterpolate(renpy.display.core.Displayable):
         def based(v, base):
             if v is None:
                 return 0
-            elif isinstance(v, int):
-                return v
-            elif isinstance(v, renpy.display.core.absolute):
-                return v
-            else:
-                return v * base
+            return renpy.display.core.absolute.compute_native(v, base)
 
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = child.get_placement()
 

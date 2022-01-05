@@ -829,10 +829,8 @@ class Transform(Container):
                 cw, ch = self.child_size
                 rw, rh = self.render_size
 
-                if xanchor.__class__ is float:
-                    xanchor *= cw
-                if yanchor.__class__ is float:
-                    yanchor *= ch
+                xanchor = renpy.display.core.absolute.compute_native(xanchor, cw)
+                yanchor = renpy.display.core.absolute.compute_native(yanchor, ch)
 
                 xanchor -= cw / 2.0
                 yanchor -= ch / 2.0

@@ -160,12 +160,12 @@ def transform_render(self, widtho, heighto, st, at):
     fit = state.fit
 
     if xsize is not None:
-        if (type(xsize) is float) and renpy.config.relative_transform_size:
-            xsize *= widtho
+        if renpy.config.relative_transform_size:
+            xsize = absolute.compute_native(xsize, widtho)
         widtho = xsize
     if ysize is not None:
-        if (type(ysize) is float) and renpy.config.relative_transform_size:
-            ysize *= heighto
+        if renpy.config.relative_transform_size:
+            ysize = absolute.compute_native(ysize, heighto)
         heighto = ysize
 
     # Figure out the perspective.
@@ -285,8 +285,7 @@ def transform_render(self, widtho, heighto, st, at):
             def relative(n, base, limit):
                 if isinstance(n, (int, absolute)):
                     return n
-                else:
-                    return min(int(n * base), limit)
+                return min(int(absolute.compute_native(n, base)), limit)
 
             x = relative(x, width, width)
             y = relative(y, height, height)
@@ -499,11 +498,8 @@ def transform_render(self, widtho, heighto, st, at):
 
         else:
             manchorx, manchory = state.matrixanchor
-
-            if type(manchorx) is float:
-                manchorx *= width
-            if type(manchory) is float:
-                manchory *= height
+            manchorx = absolute.compute_native(manchorx, width)
+            manchory = absolute.compute_native(manchory, height)
 
         m = Matrix.offset(-manchorx, -manchory, 0.0)
         m = state.matrixtransform * m
