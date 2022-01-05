@@ -53,6 +53,7 @@ pure_functions = {
     "_",
     "_p",
     "absolute",
+    "coordinate",
     "__renpy__list__",
     "__renpy__dict__",
     "__renpy__set__",
