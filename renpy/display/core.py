@@ -220,11 +220,11 @@ class coordinate(namedtuple("coordinate", ("offset", "relative"))):
 
     def __mul__(self, other):
         """
-        This should not be documented.
-        Having this function is necessary, otherwise defaults to tuple.__mul__
+        Having this function is necessary, otherwise tuple.__mul__ triggers.
+        If this operation gets enabled (via other*self for example), it should not be documented.
         """
-        # return NotImplemented
-        return other*self
+        # return other*self
+        return NotImplemented
 
     def __rmul__(self, other):
         """
@@ -242,12 +242,6 @@ class coordinate(namedtuple("coordinate", ("offset", "relative"))):
         """
         if isinstance(other, float) and not isinstance(other, absolute):
             return self._replace(relative=self.relative+other)
-        if isinstance(other, coordinate):
-            if not (self.has_relative or other.has_relative):
-                # summing coordinates is accepted when they have no relative values
-                return self._replace(offset=self.offset+other.offset)
-            else:
-                raise TypeError("Coordinates with a relative value don't support addition with other coordinates.")
         return NotImplemented
 
     def __radd__(self, other):

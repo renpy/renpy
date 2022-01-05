@@ -43,8 +43,6 @@ def value_check():
         raise ValueError("absolute.compute failing for offset coordinate")
     if not (absolute.compute(coordinate(offset=4.25, relative=.5), 500) == 254.25):
         raise ValueError("absolute.compute failing for relative+offset coordinate")
-    if not (absolute.compute(coordinate(offset=4.25)+coordinate(offset=-50), 500) == -45.75):
-        raise ValueError("absolute.compute failing for sum of offset coordinates")
 
     if not (absolute.compute(10*px, 500) == 10.):
         raise ValueError("absolute.compute failing for px-built offset coordinate")
@@ -56,18 +54,12 @@ def value_check():
         raise ValueError("absolute.compute failing for px-built coordinate with negative offset followed with relative value")
     if not (absolute.compute(.5-10*px, 500) == 240.):
         raise ValueError("absolute.compute failing for px-built coordinate with relative value followed with negative offset")
-    if not (absolute.compute(10*px+absolute(20)*px, 500) == 30.):
-        raise ValueError("absolute.compute failing for sum of px-built offset coordinates")
-    if not (absolute.compute(10*px+absolute(20)*px+.5, 500) == 280.):
-        raise ValueError("absolute.compute failing for sum of px-built offset coordinates with a relative value")
-    # disabled because summing coordinates with relative values is disabled
-    # if not (absolute.compute(10*px+.5+absolute(20)*px, 500) == 280.):
-    #     raise ValueError("absolute.compute failing for sum of px-built coordinates")
 
 def error_check():
     """
-    Testing for errors which should be there
+    Testing for errors which should be there.
     """
+    # px/coordinate
     try:
         1.*px
     except TypeError: pass
@@ -78,7 +70,13 @@ def error_check():
         (10*px+.5)*10
     except TypeError: pass
     else:
-        raise Exception("Multiplication on coordinates with relative values should be disabled")
+        raise Exception("Multiplication with coordinates having relative values should be disabled")
+
+    try:
+        10*px+10*px
+    except TypeError: pass
+    else:
+        raise Exception("Summing coordinates should be disabled")
 
     try:
         10*px+10
@@ -92,6 +90,7 @@ def error_check():
     else:
         raise Exception("Adding absolutes to coordinates should be disabled")
 
+    # absolute.compute
     try:
         absolute.compute("left")
     except TypeError: pass
