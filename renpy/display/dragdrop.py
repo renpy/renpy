@@ -524,6 +524,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
             fx, fy, fw, fh = self.drag_handle
 
+            # TODO : check this regarding the new absolute.compute
             if isinstance(fx, float):
                 fx = int(fx * cw)
 

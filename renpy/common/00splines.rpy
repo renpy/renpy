@@ -62,6 +62,7 @@ init -1500 python:
             self.initialized = None
 
         def init_values(self, sizes):
+            # TODO : check this regarding the new absolute.compute
             def to_abs_(value, size):
                 if isinstance(value, float):
                     return value * size

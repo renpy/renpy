@@ -595,6 +595,7 @@ def transform_render(self, widtho, heighto, st, at):
         xclip = state.clip[0]
         yclip = state.clip[1]
 
+        # TODO : check this regarding the new absolute.compute
         if isinstance(xclip, float):
             xclip *= rv.width
         if isinstance(yclip, float):

@@ -327,6 +327,7 @@ class Revolver(object):
             if x is None:
                 x = 0
 
+            # TODO : check this regarding the new absolute.compute
             if isinstance(x, float):
                 return int(x * r)
             else:
