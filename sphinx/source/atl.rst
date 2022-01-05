@@ -642,9 +642,11 @@ List of Transform Properties
 
 The following transform properties exist.
 
-When the type is given as position, it may be an int, an ``absolute``, or a
-float. If it's a float, it's interpreted as a fraction of the size of the
-containing area (for :propref:`pos`) or displayable (for :propref:`anchor`).
+When the type is given as position, it may be an int, an ``absolute``, a
+float or a ``coordinate``. If it's a float, it's interpreted as a fraction of
+the size of the containing area (for :propref:`pos`) or displayable (for
+:propref:`anchor`). See :ref:`this section of style properties <position-types>`
+for more details.
 
 Note that not all properties are independent. For example, :propref:`xalign` and :propref:`xpos`
 both update some of the same underlying data. In a parallel statement, only
