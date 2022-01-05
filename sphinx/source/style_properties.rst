@@ -103,6 +103,8 @@ Each style property expects a specific kind of data.
 Many of these are standard Python types, but a few are novel. Here are
 descriptions of the novel kinds of value a style property can expect.
 
+.. _position-types:
+
 `position`
     Positions are used to specify locations relative to the upper-left
     corner of the containing area. (For positions, the containing area is
