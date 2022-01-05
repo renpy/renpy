@@ -254,13 +254,19 @@ class coordinate(namedtuple("coordinate", ("offset", "relative"))):
         """
         Adding a negative value is supported.
         """
-        return self + -other
+        # necessary type check because -absolute() returns a pure float
+        if isinstance(other, float) and not isinstance(other, absolute):
+            return self + -other
+        return NotImplemented
 
     def __rsub__(self, other):
         """
         To enable things like `.7-10*px`, which is resolved as `.7-(10*px)`.
+        Implemented like a private __neg__.
         """
-        return self._replace(offset=-self.offset)+other
+        if not self.has_relative:
+            return other+self._replace(offset=-self.offset)
+        return NotImplemented
 
     # `-10*px` is interpreted as `(-10)*px`
     # so no need to support `-(10*px)` using __neg__
