@@ -339,6 +339,8 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
             "-I..",
             "--3str",
             ] + annotate + lang_args + coverage_args + [
+            "-X", "profile=False",
+            "-X", "binding=True",
             fn,
             "-o",
             c_fn], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
