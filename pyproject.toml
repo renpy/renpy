@@ -1,0 +1,18 @@
+[tool.pyright]
+
+include = [ 
+    "*.py", 
+    "renpy/", 
+    "module/" 
+]
+
+exclude = [
+    "module/build/",
+]
+
+reportOptionalSubscript = false
+reportOptionalMemberAccess = false
+reportOptionalCall = false
+reportOptionalIterable = false
+reportOptionalContextManager = false
+reportOptionalOperand = false
