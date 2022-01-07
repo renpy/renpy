@@ -252,7 +252,13 @@ def index_archives():
                         if file_header.startswith(header):
                             f.seek(0, 0)
                             index = handler.read_index(f)
-                            archives.append((prefix + ext, index))
+                            f.seek(0, 0)
+                            fd = None
+                            try:
+                                fd = os.dup(f.fileno())
+                            except OSError:
+                                pass
+                            archives.append((prefix + ext, index, fd))
                             archive_handled = True
                             break
                     if archive_handled == True:
@@ -429,7 +435,7 @@ def scandirfiles_from_archives(add, seen):
 
     files = game_files
 
-    for _prefix, index in archives:
+    for _prefix, index, _fd in archives:
         for j in index:
             add(None, j, files, seen)
 
@@ -454,8 +460,9 @@ def listdirfiles(common=True):
 
 class SubFile(object):
 
-    def __init__(self, fn, base, length, start):
+    def __init__(self, fn, base, length, start, fd):
         self.fn = fn
+        self.fd = fd
 
         self.f = None
 
@@ -470,7 +477,10 @@ class SubFile(object):
             self.name = None
 
     def open(self):
-        self.f = open(self.fn, "rb")
+        if self.fd is None:
+            self.f = open(self.fn, "rb")
+        else:
+            self.f = open(self.fd, "rb", closefd=False)
         self.f.seek(self.base)
 
     def __enter__(self):
@@ -600,6 +610,9 @@ class SubFile(object):
         if self.f is not None:
             self.f.close()
             self.f = None
+        if self.fd is not None:
+            os.close(self.fd)
+            self.fd = None
 
     def write(self, s):
         raise Exception("Write not supported by SubFile")
@@ -610,13 +623,18 @@ open_file = open # type: ignore
 if "RENPY_FORCE_SUBFILE" in os.environ:
 
     def open_file(name, mode):
-        f = open(name, mode)
+        length = 0
+        fd = None
+        with open(name, mode) as f:
+            f.seek(0, 2)
+            length = f.tell()
+            f.seek(0, 0)
+            try:
+                fd = os.dup(f.fileno())
+            except OSError:
+                pass
 
-        f.seek(0, 2)
-        length = f.tell()
-        f.seek(0, 0)
-
-        return SubFile(f, 0, length, b'')
+        return SubFile(fn=name, base=0, length=length, start=b'', fd=fd)
 
 # A list of callbacks to open an open python file object of the given type.
 file_open_callbacks = [ ]
@@ -694,7 +712,7 @@ def load_from_archive(name):
     Returns an open python file object of the given type from an archive file.
     """
 
-    for prefix, index in archives:
+    for prefix, index, fd in archives:
         if not name in index:
             continue
 
@@ -711,8 +729,12 @@ def load_from_archive(name):
                 start = b''
             else:
                 offset, dlen, start = t
-
-            rv = SubFile(afn, offset, dlen, start)
+            new_fd = None
+            try:
+                new_fd = os.dup(fd)
+            except OSError:
+                pass
+            rv = SubFile(fn=afn, base=offset, length=dlen, start=start, fd=new_fd)
 
         # Compatibility path.
         else:
@@ -827,7 +849,7 @@ def loadable_core(name):
             loadable_cache[name] = True
             return True
 
-    for _prefix, index in archives:
+    for _prefix, index, _fd in archives:
         if name in index:
             loadable_cache[name] = True
             return True
