@@ -1,0 +1,235 @@
+#!/usr/bin/env python3
+
+TYPING_IMPORTS = "List, Dict, Tuple, Set, Optional, Union, Any, Callable, Type".split(", ")
+
+from typing import List, Dict, Tuple, Set, Optional, Union, Any, Callable, Type, TextIO
+
+import sys
+import pathlib
+import textwrap
+import inspect
+import types
+
+ROOT = pathlib.Path(__file__).parent.parent.absolute()
+sys.path.insert(0, str(ROOT))
+
+import _renpy
+import renpy
+renpy.import_all()
+
+
+# Patch renpy.script so the Lexer can be used.
+class FakeScript:
+    all_pyexpr = None
+
+renpy.game.script = FakeScript()
+
+def python_signature(o):
+    """
+    Given a callabale object, try to return a python-style type signature.
+    Returns the signature as a string if it can be determined, or None if 
+    no signature can be determined.
+
+    This first uses inspect.signature to analyze the object. If that doesn't
+    work, it looks for a signature on the first line of the docstring.
+    If the signature containst Cython typing, it's converted to Python.
+    """
+
+    if not callable(o):
+        return None
+
+    # If this is pure-python, then just inspect the signature.
+    try:
+        sig = inspect.signature(o)
+        return (str(sig))
+    except:
+        pass
+
+    # Otherwise, look at the docstring.
+    s = getattr(o, "__doc__", "")
+
+    renpy.game.script.all_pyexpr = [ ]
+
+    if "\n\n" not in s:
+        return
+
+    s = s.split("\n\n")[0]
+
+    lines = renpy.parser.list_logical_lines('<test>', s, 1, add_lines=True)
+    nested = renpy.parser.group_logical_lines(lines)
+
+    l = renpy.parser.Lexer(nested)
+    l.advance()
+
+    l.dotted_name()
+    rv = ""
+
+    def consume(pattern):
+        nonlocal rv
+        m = l.match(pattern)
+        if m:
+            rv += m
+
+        return m
+
+    consume(r'\(')
+
+    first = True
+
+    while True:
+        consume(",")
+
+        if consume(r'\)'):
+            break
+
+        if not first:
+            rv += " "
+        else:
+            first = False
+
+        argname = l.word()
+
+        while True:
+            n = l.word()
+            if n is not None:
+                argname = n
+            else:
+                break
+
+        rv += argname # type: ignore
+        rv += l.delimited_python(",)")
+
+    rv += " "
+    rv += l.rest() 
+
+    return rv
+
+
+def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|type):
+    """
+    This generates type information for a module or class namespace.
+    """
+
+    # Imports.
+    for k, v in sorted(namespace.__dict__.items()):
+
+        if not isinstance(v, types.ModuleType):
+            continue
+
+        name = v.__name__
+
+        if name == k:
+            out.write(prefix + f"import {name}\n")
+        else:
+            out.write(prefix + f"import {name} as {k}\n")
+
+    out.write("\n")
+
+    # Variables.
+    _types = getattr(namespace, "_types", "")
+
+    for l in textwrap.dedent(_types.strip("\n")).split("\n"):
+        if l:
+            out.write(prefix + l + "\n")
+
+    generated = False
+
+    # Classes, methods, and functions.
+    for k, v in sorted(namespace.__dict__.items()):
+
+        if k in TYPING_IMPORTS:
+            continue
+
+        if k in [ "__new__", "__init__" ]:
+            continue
+
+        if isinstance(v, type):
+
+            # Bases and class name.
+            bases = [ i.__name__ for i in v.__bases__  if i != object ]
+            
+            if bases:
+                bases_clause = f"({', '.join(bases)})"
+            else:
+                bases_clause = ""
+
+            out.write(prefix + f"class {v.__name__}{bases_clause}:\n")
+
+            # Figure out the signature for init.
+            init_sig = None
+
+            try:
+                init_sig = python_signature(v)
+            except:
+                pass
+
+            if not init_sig:
+                try:
+                    init_sig = python_signature(v.__init__)
+                except:
+                    pass
+
+
+            if init_sig:
+
+                if "(self" not in init_sig:
+                    init_sig = "(self, " + init_sig[1:]
+
+                out.write(prefix + f"    def __init__{init_sig}: ...\n")
+
+            # Methods and other contents.
+            generate_namespace(out, prefix + "    ", v)
+
+            generated = True
+
+            continue
+
+        try:
+            sig = python_signature(v)
+        except:
+            sig = None
+
+        if sig is None:
+            continue
+
+        if prefix and ("(self" not in sig):
+            out.write(prefix + "@staticmethod\n")
+
+        out.write(prefix + f"def {k}{sig}: ...\n")
+        out.write("\n")
+
+        generated = True
+
+    if not generated:
+
+        out.write(prefix + "pass\n\n")
+
+
+def generate_module(module : types.ModuleType):
+    """
+    This generates type information for a module.
+    """
+
+    if module.__name__.startswith("renpy."):
+        base = ROOT
+    else:
+        base = ROOT / "typings"
+
+    modfn = module.__name__.replace(".", "/")
+
+    fn = base / f"{modfn}.pyi"
+
+    print(fn)
+
+    fn.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(fn, "w") as f:
+        f.write(f"from typing import {', '.join(TYPING_IMPORTS)}\n\n")
+
+        generate_namespace(f, "", module)
+
+def main():
+    generate_module(renpy.display.render)
+
+if __name__ == "__main__":
+    main()
