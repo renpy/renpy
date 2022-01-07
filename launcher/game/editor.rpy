@@ -169,7 +169,7 @@ init 1 python in editor:
             _("Up to 150 MB download required."),
             None)
 
-        e.installed = e.installed and installed
+        e.installed = e.installed and (installed or 'RENPY_ATOM' in os.environ)
 
         fei.append(e)
 
