@@ -26,3 +26,6 @@ if PY2:
     from cPickle import dumps, loads, dump, load, HIGHEST_PROTOCOL # type: ignore
 else:
     from pickle import dumps, loads, dump, load, HIGHEST_PROTOCOL
+
+# allows for renpy8 saves to be loaded in renpy7
+PROTOCOL = 2
