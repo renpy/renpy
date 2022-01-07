@@ -60,7 +60,6 @@ import sys
 import os
 import copy
 import types
-import site
 
 ################################################################################
 # Version information
@@ -74,7 +73,11 @@ except ImportError:
     official = False
     nightly = False
 
-official = official and getattr(site, "renpy_build_official", False)
+try:
+    import site
+    official = official and getattr(site, "renpy_build_official", False)
+except:
+    pass
 
 if PY2:
 
