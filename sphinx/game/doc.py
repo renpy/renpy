@@ -8,6 +8,7 @@ import renpy.sl2
 import shutil
 import io
 import os
+import textwrap
 
 try:
     import builtins
@@ -221,16 +222,15 @@ def scan(name, o, prefix=""):
     # Get the function's docstring.
     doc = inspect.getdoc(o)
 
-#     if doc is None:
-#         doc = getattr(o, "__doc__", None)
-#         if not isinstance(doc, basestring):
-#             doc = None
-
     if not doc:
         return
 
     if doc[0] == ' ':
         print("Bad docstring for ", name, repr(doc))
+
+    if re.match(r'[\w\.]+\(', doc):
+        doc = doc.partition("\n\n")[2]
+        doc = textwrap.dedent(doc)
 
     # Break up the doc string, scan it for specials.
     lines = [ ]
