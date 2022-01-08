@@ -95,6 +95,9 @@ cdef class Matrix:
             0.0, 0.0, 0.0, 1.0,
     """
 
+    _types = "".join(["{} : float\n".format(i) for i in fields])
+
+
     def __init__(Matrix self, l):
 
         memset(self.m, 0, sizeof(float) * 16)
