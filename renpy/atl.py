@@ -475,7 +475,7 @@ class ATLTransformBase(renpy.object.Object):
             _args=_args,
             )
 
-        rv.parent_transform = self
+        rv.parent_transform = self # type: ignore
         rv.take_state(self)
 
         return rv

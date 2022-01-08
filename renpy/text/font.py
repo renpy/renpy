@@ -87,7 +87,7 @@ class ImageFont(object):
     offsets = { } # type: dict[str, tuple[int, int]]
 
     # chars - A map from a character to the surface containing that character.
-    chars = { } # type: dict[str, pygame.Surface]
+    chars = { } # type: dict[str, pygame.surface.Surface]
 
     def glyphs(self, s):
 
@@ -639,7 +639,7 @@ def load_face(fn):
 
             pygame.sysfont.initsysfonts()
 
-            for v in pygame.sysfont.Sysfonts.values():
+            for v in pygame.sysfont.Sysfonts.values(): # type: ignore
                 if v is not None:
                     for _flags, ffn in v.items():
                         for i in fonts:

@@ -70,7 +70,10 @@ def python_signature(o):
     l = renpy.parser.Lexer(nested)
     l.advance()
 
-    l.dotted_name()
+    l.word()
+    while l.match(r"\."):
+        l.word()
+
     rv = ""
 
     def consume(pattern):
@@ -135,13 +138,6 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
             out.write(prefix + f"import {name} as {k}\n")
 
     out.write("\n")
-
-    # Variables.
-    _types = getattr(namespace, "_types", "")
-
-    for l in textwrap.dedent(_types.strip("\n")).split("\n"):
-        if l:
-            out.write(prefix + l + "\n")
 
     generated = False
 
@@ -217,13 +213,24 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
 
         generated = True
 
-    if not generated:
 
-        out.write(prefix + "pass\n\n")
+    # Variables.
 
     for k, v in sorted(namespace.__dict__.items()):
         if isinstance(v, int):
             out.write(prefix + f"{k} : int\n")
+            generated = True
+
+    _types = getattr(namespace, "_types", "")
+
+    for l in textwrap.dedent(_types.strip("\n")).split("\n"):
+        if l:
+            out.write(prefix + l + "\n")
+            generated = True
+
+    if not generated:
+
+        out.write(prefix + "pass\n\n")
 
 
 

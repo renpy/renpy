@@ -23,7 +23,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 
-import renpy.display
+import renpy
 import renpy.gl2.live2dmotion
 from renpy.gl2.gl2shadercache import register_shader
 
@@ -240,7 +240,7 @@ class Live2DCommon(object):
         self.attributes = set([ "still", "null" ])
 
         # A map from a motion name to a motion identifier.
-        self.motions = { "still" : renpy.gl2.live2dmotion.NullMotion() }
+        self.motions = { "still" : renpy.gl2.live2dmotion.NullMotion() } # type: dict[str, renpy.gl2.live2dmotion.Motion|renpy.gl2.live2dmotion.NullMotion]
 
         for i in motion_files.values():
             name = i["File"].lower().rpartition("/")[2].partition(".")[0]

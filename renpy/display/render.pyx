@@ -744,7 +744,7 @@ cdef class Render:
         surface: Any
         alpha_surface: Any
         half_cache: Any
-        mesh: renpy.display.gl2.gl2mesh.GL2Mesh
+        mesh: Any
         shaders: tuple
         uniforms: dict
         properties: dict
@@ -1678,3 +1678,8 @@ class Canvas(object):
 
     def get_surface(self):
         return self.surf
+
+_types = """
+screen_render : Render|None
+IDENTITY : renpy.display.matrix.Matrix
+"""

@@ -1256,15 +1256,15 @@ class ADVCharacter(object):
         finally:
 
             if (multiple is None) and interact:
-                renpy.store._side_image_attributes = old_side_image_attributes
+                renpy.store._side_image_attributes = old_side_image_attributes # type: ignore
 
-                if old_attr_state is not None:
-                    _, images = old_attr_state
+                if old_attr_state is not None: # type: ignore
+                    _, images = old_attr_state # type: ignore
                     before = images.get_attributes(None, self.image_tag)
 
-                if self.restore_say_attributes(False, old_attr_state, interact):
-                    after = images.get_attributes(None, self.image_tag)
-                    self.handle_say_transition('restore', before, after)
+                if self.restore_say_attributes(False, old_attr_state, interact): # type: ignore
+                    after = images.get_attributes(None, self.image_tag) # type: ignore
+                    self.handle_say_transition('restore', before, after) # type: ignore
 
     def statement_name(self):
         if self._statement_name is not None:

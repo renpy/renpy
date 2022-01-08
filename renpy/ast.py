@@ -312,7 +312,7 @@ class PyCode(object):
         if isinstance(code, renpy.python.ast.AST): # @UndefinedVariable
             code = renpy.python.ast.dump(code) # @UndefinedVariable
 
-        self.hash = bchr(renpy.bytecode_version) + hashlib.md5((repr(self.location) + code).encode("utf-8")).digest()
+        self.hash = bchr(renpy.bytecode_version) + hashlib.md5((repr(self.location) + code).encode("utf-8")).digest() # type:ignore
         return self.hash
 
 
@@ -2116,6 +2116,9 @@ class StoreNamespace(object):
         self.store = store
 
     def set(self, name, value):
+        renpy.python.store_dicts[self.store][name] = value
+
+    def set_default(self, name, value):
         renpy.python.store_dicts[self.store][name] = value
 
     def get(self, name):

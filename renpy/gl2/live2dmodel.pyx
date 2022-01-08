@@ -182,6 +182,13 @@ cdef class Live2DModel:
 
     cdef list meshes
 
+    _types = """
+        parameters : dict[str, Parameter]
+        parts : dict[str, Part]
+        parameter_groups : dict
+        opacity_groups : dict
+        """
+
     def __init__(self, fn):
         """
         Loads the Live2D model.
