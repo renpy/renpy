@@ -17,6 +17,9 @@ import _renpy
 import renpy
 renpy.import_all()
 
+import pygame_sdl2
+pygame_sdl2.import_as_pygame()
+
 
 # Patch renpy.script so the Lexer can be used.
 class FakeScript:
@@ -228,8 +231,56 @@ def generate_module(module : types.ModuleType):
 
         generate_namespace(f, "", module)
 
+
+def is_extension(m : types.ModuleType):
+    """
+    Returns true if m is an extension module, and False otherwise.
+    """
+
+    if m.__file__ == "built-in":
+        return True
+
+    if m.__file__.endswith(".so"):
+        return True
+
+    if m.__file__.endswith(".pyd"):
+        return True
+
+    return False
+
+def should_generate(name):
+    """
+    Returns true if we should generate the type information for the module with
+    `name`. 
+    """
+
+    prefix = name.partition(".")[0]
+
+    if prefix in [ "renpy", "pygame", "pygame_sdl2" ]:
+        return True
+
+    return False
+
 def main():
-    generate_module(renpy.display.render)
+
+    packages = set()
+
+    for name in sys.modules:
+        package = name.rpartition(".")[0]
+        packages.add(package)
+
+    for k, v in sorted(sys.modules.items()):
+
+        if not should_generate(k):
+            continue
+
+        if not is_extension(v):
+            continue
+
+        generate_module(v)
+
+
+
 
 if __name__ == "__main__":
     main()
