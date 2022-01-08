@@ -129,6 +129,8 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
 
         if name == k:
             out.write(prefix + f"import {name}\n")
+        elif isinstance(namespace, types.ModuleType) and name == f"{namespace.__name__}.{k}":
+            out.write(prefix + f"from . import {k}\n")
         else:
             out.write(prefix + f"import {name} as {k}\n")
 
