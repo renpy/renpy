@@ -177,10 +177,10 @@ def early_init_emulator():
 
     if name:
 
-        renpy.exports.windows = False
-        renpy.exports.linux = False
-        renpy.exports.macintosh = False
-        renpy.exports.web = False
-        renpy.exports.android = renpy.exports.variant("android")
-        renpy.exports.ios = renpy.exports.variant("ios")
-        renpy.exports.mobile = renpy.exports.android or renpy.exports.ios  # @UndefinedVariable
+        renpy.exports.windows = False # type: ignore
+        renpy.exports.linux = False # type: ignore
+        renpy.exports.macintosh = False # type: ignore
+        renpy.exports.web = False # type: ignore
+        renpy.exports.android = renpy.exports.variant("android") # type: ignore
+        renpy.exports.ios = renpy.exports.variant("ios") # type: ignore
+        renpy.exports.mobile = renpy.exports.android or renpy.exports.ios  # type: ignore

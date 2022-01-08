@@ -20,7 +20,6 @@ renpy.import_all()
 import pygame_sdl2
 pygame_sdl2.import_as_pygame()
 
-
 # Patch renpy.script so the Lexer can be used.
 class FakeScript:
     all_pyexpr = None
@@ -295,6 +294,7 @@ def should_generate(name, m : types.ModuleType):
         return True
 
     return False
+
 
 def main():
 

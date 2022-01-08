@@ -339,6 +339,7 @@ class ImageReference(renpy.display.core.Displayable):
         super(ImageReference, self).__init__(**properties)
 
         self.name = name
+        self.target = None
 
     def _repr_info(self):
         return repr(self.name)
@@ -437,7 +438,7 @@ class ImageReference(renpy.display.core.Displayable):
         if args and args.args:
             args.extraneous()
 
-        rv = self._copy(args)
+        rv = self._copy(args) 
         rv.target = None
 
         if isinstance(rv.name, renpy.display.core.Displayable):

@@ -123,7 +123,7 @@ class Viewport(renpy.display.layout.Container):
             self.yoffset = replaces.yoffset
             self.drag_position = replaces.drag_position
         else:
-            self.drag_position = None
+            self.drag_position = None # type: tuple[int, int]|None
 
         self.child_width, self.child_height = child_size
 
@@ -316,7 +316,7 @@ class Viewport(renpy.display.layout.Container):
                 self.yadjustment.change(yvalue)
                 raise renpy.display.core.IgnoreEvent()
 
-            oldx, oldy = self.drag_position
+            oldx, oldy = self.drag_position # type: ignore
             dx = x - oldx
             dy = y - oldy
 
@@ -505,7 +505,7 @@ class Viewport(renpy.display.layout.Container):
 
 
 # For compatibility with old saves.
-renpy.display.layout.Viewport = Viewport
+renpy.display.layout.Viewport = Viewport # type: ignore
 
 
 class VPGrid(Viewport):
@@ -546,7 +546,7 @@ class VPGrid(Viewport):
         rows = self.grid_rows
 
         if cols is None:
-            cols = lc // rows
+            cols = lc // rows # type: ignore
             if rows * cols < lc:
                 cols += 1
 

@@ -1490,8 +1490,8 @@ def text_tick():
     slow_text = [ ]
 
 
-VERT_REVERSE = renpy.display.render.Matrix2D(0, -1, 1, 0)
-VERT_FORWARD = renpy.display.render.Matrix2D(0, 1, -1, 0)
+VERT_REVERSE = renpy.display.matrix.Matrix2D(0, -1, 1, 0)
+VERT_FORWARD = renpy.display.matrix.Matrix2D(0, 1, -1, 0)
 
 
 class Text(renpy.display.core.Displayable):
@@ -1846,7 +1846,7 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
-    _tts_all = _tts
+    _tts_all = _tts # type: ignore
 
     def kill_layout(self):
         """

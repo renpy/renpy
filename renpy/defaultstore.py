@@ -234,7 +234,7 @@ AudioData = renpy.audio.audio.AudioData
 # NOTE: When exporting something from here, decide if we need to add it to
 # renpy.pyanalysis.pure_functions.
 
-Style = renpy.style.Style # @UndefinedVariable
+Style = renpy.style.Style # type: ignore
 
 NoRollback = renpy.python.NoRollback
 

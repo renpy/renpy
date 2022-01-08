@@ -35,9 +35,9 @@ error_handled = False
 
 
 def call_exception_screen(screen_name, **kwargs):
-    try:
+    old_quit = renpy.config.quit_action
 
-        old_quit = renpy.config.quit_action
+    try:
         renpy.config.quit_action = renpy.exports.quit
 
         for i in renpy.config.layers:
@@ -97,7 +97,7 @@ def report_exception(short, full, traceback_fn):
 
     error_dump()
 
-    if renpy.game.args.command != "run": # @UndefinedVariable
+    if renpy.game.args.command != "run":
         return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:

@@ -77,10 +77,10 @@ def displayable_or_none(d, scope=None, dynamic=True):
             return renpy.store.ImageReference(tuple(d.split()))
 
     if isinstance(d, Color):
-        return renpy.store.Solid(d)
+        return renpy.store.Solid(d) # type: ignore
 
     if isinstance(d, list):
-        return renpy.display.image.DynamicImage(d, scope=scope)
+        return renpy.display.image.DynamicImage(d, scope=scope) # type: ignore
 
     # We assume the user knows what he's doing in this case.
     if hasattr(d, '_duplicate'):

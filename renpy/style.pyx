@@ -847,3 +847,7 @@ def restore(o):
         s.set_parent(parent)
         s.properties = copy_properties(properties)
 
+_types = """
+Style : Any
+prefixed_all_properties : set
+"""

@@ -3938,7 +3938,7 @@ def get_refresh_rate(precision=5):
     precision *= 1.0
 
     info = renpy.display.get_info()
-    rv = info.refresh_rate
+    rv = info.refresh_rate # type: ignore
     rv = round(rv / precision) * precision
 
     return rv

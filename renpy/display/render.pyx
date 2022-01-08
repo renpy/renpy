@@ -739,7 +739,7 @@ cdef class Render:
         depends_on_list: list[Render]
         operation: int
         operation_complete: float
-        operation_alpha: False
+        operation_alpha: bool
         operation_parameter: float
         surface: Any
         alpha_surface: Any
