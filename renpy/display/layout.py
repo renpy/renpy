@@ -1445,7 +1445,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             else:
                 child = raw_child
 
-            if isinstance(self.child, Transform) and isinstance(child, Transform):
+            if isinstance(self.child, renpy.display.transform.Transform) and isinstance(child, renpy.display.transform.Transform):
                 child.take_state(self.child)
                 child.take_execution_state(self.child)
 
@@ -2151,7 +2151,7 @@ class AlphaMask(Container):
         rv = renpy.display.render.Render(w, h)
 
         rv.operation = renpy.display.render.IMAGEDISSOLVE
-        rv.operation_alpha = 1.0
+        rv.operation_alpha = True
         rv.operation_complete = 256.0 / (256.0 + 256.0)
         rv.operation_parameter = 256
 
