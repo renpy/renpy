@@ -53,10 +53,16 @@ def python_signature(o):
 
     renpy.game.script.all_pyexpr = [ ]
 
-    if "\n\n" not in s:
-        return
 
     s = s.split("\n\n")[0]
+
+    if "(" not in s:
+        return None
+
+    if ")" not in s:
+        return None
+
+    s = s.replace("-> void", "")
 
     lines = renpy.parser.list_logical_lines('<test>', s, 1, add_lines=True)
     nested = renpy.parser.group_logical_lines(lines)
@@ -148,8 +154,14 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
 
         if isinstance(v, type):
 
+            if v.__module__ != namespace.__name__:
+                out.write(prefix + f"from {v.__module__} import {k}\n")
+                out.write("\n")
+                generated = True
+                continue
+
             # Bases and class name.
-            bases = [ i.__name__ for i in v.__bases__  if i != object ]
+            bases = [ i.__module__ + "." + i.__name__ for i in v.__bases__  if i != object ]
             
             if bases:
                 bases_clause = f"({', '.join(bases)})"
@@ -207,8 +219,13 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
 
         out.write(prefix + "pass\n\n")
 
+    for k, v in sorted(namespace.__dict__.items()):
+        if isinstance(v, int):
+            out.write(prefix + f"{k} : int\n")
 
-def generate_module(module : types.ModuleType):
+
+
+def generate_module(module : types.ModuleType, package : bool):
     """
     This generates type information for a module.
     """
@@ -220,7 +237,10 @@ def generate_module(module : types.ModuleType):
 
     modfn = module.__name__.replace(".", "/")
 
-    fn = base / f"{modfn}.pyi"
+    if package:
+        fn = base / modfn / "__init__.pyi"
+    else:
+        fn = base / f"{modfn}.pyi"
 
     print(fn)
 
@@ -228,6 +248,9 @@ def generate_module(module : types.ModuleType):
 
     with open(fn, "w") as f:
         f.write(f"from typing import {', '.join(TYPING_IMPORTS)}\n\n")
+        f.write("import builtins\n")
+        f.write("import renpy\n")
+        f.write("import pygame_sdl2\n\n")
 
         generate_namespace(f, "", module)
 
@@ -248,7 +271,7 @@ def is_extension(m : types.ModuleType):
 
     return False
 
-def should_generate(name):
+def should_generate(name, m : types.ModuleType):
     """
     Returns true if we should generate the type information for the module with
     `name`. 
@@ -256,7 +279,10 @@ def should_generate(name):
 
     prefix = name.partition(".")[0]
 
-    if prefix in [ "renpy", "pygame", "pygame_sdl2" ]:
+    if prefix == "renpy":
+        return is_extension(m)
+
+    if prefix in [ "pygame", "pygame_sdl2" ]:
         return True
 
     return False
@@ -271,15 +297,10 @@ def main():
 
     for k, v in sorted(sys.modules.items()):
 
-        if not should_generate(k):
+        if not should_generate(k, v):
             continue
 
-        if not is_extension(v):
-            continue
-
-        generate_module(v)
-
-
+        generate_module(v, k in packages)
 
 
 if __name__ == "__main__":
