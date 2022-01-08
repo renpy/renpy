@@ -84,7 +84,7 @@ class BarValue(renpy.object.Object):
     def periodic(self, st):
         return
 
-    def get_adjustment(self):
+    def get_adjustment(self): # type: (BarValue) -> renpy.display.behavior.Adjustment
         raise Exception("Not implemented")
 
     def get_style(self):

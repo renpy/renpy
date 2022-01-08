@@ -24,7 +24,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, s
 
 import os
 
-import pygame_sdl2.controller
+import pygame_sdl2
 from pygame_sdl2 import CONTROLLERDEVICEADDED, CONTROLLERDEVICEREMOVED
 from pygame_sdl2 import CONTROLLERAXISMOTION, CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP
 from pygame_sdl2.controller import Controller, get_string_for_axis, get_string_for_button
