@@ -729,7 +729,7 @@ cdef class Render:
         nearest: bool
         focuses: list[renpy.display.focus.Focus]
         pass_focuses: list[Render]
-        focus_screen: renpy.display.screen.Screen
+        focus_screen: renpy.display.screen.ScreenDisplayable
         render_of: list[renpy.display.core.Displayable]
         xclipping: bool
         yclipping: bool

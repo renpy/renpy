@@ -433,7 +433,7 @@ def prefixed_style(style_suffix):
 
 # The screen we're using as we add widgets. None if there isn't a
 # screen.
-screen = None # type: Optional[renpy.display.screen.Screen]
+screen = None # type: renpy.display.screen.ScreenDisplayable|None
 
 
 class Wrapper(renpy.object.Object):

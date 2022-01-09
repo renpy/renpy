@@ -24,3 +24,11 @@ from __future__ import print_function
 from collections import OrderedDict
 
 include "stylesets.pxi"
+
+
+_types = """
+all_properties : dict[str, list[str]]
+prefix_priority : dict[str, int]
+prefix_alts : dict[str, list[str]]
+prefix_search : dict[str, list[str]]
+"""

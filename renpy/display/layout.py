@@ -126,9 +126,9 @@ class Container(renpy.display.core.Displayable):
 
     def __init__(self, *args, **properties):
 
-        self.children = self._list_type()
-        self.child = None
-        self.offsets = self._list_type()
+        self.children = self._list_type() # type: list
+        self.child = None # type: renpy.display.core.Displayable|None
+        self.offsets = self._list_type() # type: list[tuple[int, int]]
 
         for i in args:
             self.add(i)
@@ -1812,7 +1812,7 @@ class Side(Container):
         width = old_width
         height = old_height
 
-        self.offsets = [ None ] * len(self.children)
+        self.offsets = [ (0, 0) ] * len(self.children) # Fill temporarily.
 
         lefts = self.left_space
         rights = self.right_space

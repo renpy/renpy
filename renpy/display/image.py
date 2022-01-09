@@ -339,7 +339,7 @@ class ImageReference(renpy.display.core.Displayable):
         super(ImageReference, self).__init__(**properties)
 
         self.name = name
-        self.target = None
+        self.target = None # type: renpy.display.core.Displayable|None
 
     def _repr_info(self):
         return repr(self.name)
@@ -660,11 +660,11 @@ class DynamicImage(renpy.display.core.Displayable):
         if not update:
             return True
 
-        raw_target = target
+        raw_target = target # type: renpy.display.core.Displayable
         old_target = self.target
 
-        if target._duplicatable:
-            target = target._duplicate(self._args)
+        if raw_target._duplicatable:
+            target = raw_target._duplicate(self._args)
 
         self.raw_target = raw_target
         self.target = target

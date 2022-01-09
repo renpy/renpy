@@ -154,7 +154,10 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
         if isinstance(v, type):
 
             if v.__module__ != namespace.__name__:
-                out.write(prefix + f"{k} = {v.__module__}.{v.__name__}\n")
+                if v.__module__.startswith("renpy") or v.__module__.startswith("pygame_sdl2"):
+                    out.write(prefix + f"{k} = {v.__module__}.{v.__name__}\n")
+                else:
+                    out.write(prefix + f"from {v.__module__} import {v.__name__}\n")
                 out.write("\n")
                 generated = True
                 continue

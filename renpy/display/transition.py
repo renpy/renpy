@@ -38,6 +38,9 @@ class Transition(renpy.display.core.Displayable):
     dispatching.
     """
 
+    new_widget = None # type:renpy.display.core.Displayable|None
+    old_widget = None # type:renpy.display.core.Displayable|None
+
     def __init__(self, delay, **properties):
         super(Transition, self).__init__(**properties)
         self.delay = delay
