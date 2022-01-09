@@ -57,6 +57,9 @@ inspection to occur. This will display a list of displayables underneath the
 mouse. For each displayable, it will display the type, the style used, and the
 size it is being rendered at.
 
+Clicking on the style name will display where the style properties used by the
+displayable are taken from.
+
 > Fast Skipping
 ---------------
 

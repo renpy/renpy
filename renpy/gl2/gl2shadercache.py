@@ -3,7 +3,7 @@ import re
 import io
 import os
 
-import renpy.display
+import renpy
 
 # A map from shader part name to ShaderPart
 shader_part = { }
@@ -384,4 +384,3 @@ class ShaderCache(object):
         renpy.display.log.write("%s", name)
         renpy.display.log.write("%s", text)
         renpy.display.log.write("-" * 80)
-

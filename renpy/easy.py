@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,13 +22,12 @@
 # Functions that make the user's life easier.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-
-import renpy.display
-import renpy.styledata
 import contextlib
 import time
+
+import renpy
 
 Color = renpy.color.Color
 color = renpy.color.Color
@@ -78,10 +77,10 @@ def displayable_or_none(d, scope=None, dynamic=True):
             return renpy.store.ImageReference(tuple(d.split()))
 
     if isinstance(d, Color):
-        return renpy.store.Solid(d)
+        return renpy.store.Solid(d) # type: ignore
 
     if isinstance(d, list):
-        return renpy.display.image.DynamicImage(d, scope=scope)
+        return renpy.display.image.DynamicImage(d, scope=scope) # type: ignore
 
     # We assume the user knows what he's doing in this case.
     if hasattr(d, '_duplicate'):

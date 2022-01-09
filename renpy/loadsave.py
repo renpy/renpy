@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,8 +22,10 @@
 # This file contains functions that load and save the game state.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 from future.utils import reraise
+
+from typing import Optional
 
 import io
 import zipfile
@@ -91,9 +93,9 @@ def save_dump(roots, log):
 
         elif isinstance(o, basestring):
             if len(o) <= 80:
-                o_repr = repr(o).encode("utf-8")
+                o_repr = repr(o)
             else:
-                o_repr = repr(o[:80] + "...").encode("utf-8")
+                o_repr = repr(o[:80]) + "..."
 
         elif isinstance(o, (tuple, list)):
             o_repr = "<" + o.__class__.__name__ + ">"
@@ -161,11 +163,11 @@ def save_dump(roots, log):
             else:
                 size += visit(state, path + ".__getstate__()")
 
-            for i, oo in enumerate(get(3, [])):
+            for i, oo in enumerate(get(3, [])): # type: ignore
                 size += 1
                 size += visit(oo, "{0}[{1}]".format(path, i))
 
-            for i in get(4, []):
+            for i in get(4, []): # type: ignore
 
                 if len(i) != 2:
                     continue
@@ -590,7 +592,7 @@ def scan_saved_game(slotname):
     if json is None:
         return None
 
-    extra_info = json.get("_save_name", "")
+    extra_info = json.get("_save_name", "") # type: ignore
 
     screenshot = c.get_screenshot()
 
@@ -641,7 +643,7 @@ def list_saved_games(regexp=r'.', fast=False):
         if c is not None:
             json = c.get_json()
             if json is not None:
-                extra_info = json.get("_save_name", "")
+                extra_info = json.get("_save_name", "") # type: ignore
             else:
                 extra_info = ""
 
@@ -704,7 +706,7 @@ def newest_slot(regexp=None):
             if mtime is None:
                 continue
 
-            if mtime >= max_mtime:
+            if mtime >= max_mtime: # type: ignore
                 rv = i
                 max_mtime = mtime
 
@@ -941,5 +943,5 @@ def init():
 # collection of such locations. This is the default save location.
 location = None
 
-if False:
+if 1 == 0:
     location = renpy.savelocation.FileLocation("blah")

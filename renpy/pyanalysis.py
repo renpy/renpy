@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 
 import renpy # @UnusedImport
 from renpy.python import py_compile
@@ -291,7 +292,7 @@ class Analysis(object):
 
     def push_control(self, const=True, loop=False, imagemap=False):
         self.control = Control(self.control.const and const, loop, self.imagemap or imagemap)
-        self.control_stack.append(self.control)
+        self.control_stack.append(self.control) # type: ignore
 
     def pop_control(self):
         rv = self.control_stack.pop()
@@ -742,7 +743,7 @@ CACHE_FILENAME = "cache/pyanalysis.rpyb"
 
 
 def load_cache():
-    if renpy.game.args.compile: # @UndefinedVariable
+    if renpy.game.args.compile: # type: ignore
         return
 
     try:

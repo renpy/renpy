@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,11 +20,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-import renpy.display
-import renpy.audio
 import collections
+
+import renpy
 
 # The movie displayable that's currently being shown on the screen.
 current_movie = None
@@ -201,8 +201,8 @@ def render_movie(channel, width, height):
     dh = scale * sh
 
     rv = renpy.display.render.Render(width, height)
-    rv.forward = renpy.display.render.Matrix2D(1.0 / scale, 0.0, 0.0, 1.0 / scale)
-    rv.reverse = renpy.display.render.Matrix2D(scale, 0.0, 0.0, scale)
+    rv.forward = renpy.display.matrix.Matrix2D(1.0 / scale, 0.0, 0.0, 1.0 / scale)
+    rv.reverse = renpy.display.matrix.Matrix2D(scale, 0.0, 0.0, scale)
     rv.blit(tex, (int((width - dw) / 2), int((height - dh) / 2)))
 
     return rv
@@ -263,7 +263,7 @@ class Movie(renpy.display.core.Displayable):
 
     `mask_channel`
         The channel the alpha mask video is played on. If not given,
-        defaults to `channel`\ _mask. (For example, if `channel` is "sprite",
+        defaults to `channel`\\_mask. (For example, if `channel` is "sprite",
         `mask_channel` defaults to "sprite_mask".)
 
     `start_image`

@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,8 @@
 # Ren'Py script.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 
 import renpy
 
@@ -219,7 +220,7 @@ class Script(object):
                 pass
 
             try:
-                shutil.copy(fn, target_fn)
+                shutil.copy(fn, target_fn) # type: ignore
             except:
                 pass
 
@@ -276,7 +277,7 @@ class Script(object):
         for fn, dir in script_files: # @ReservedAssignment
             # Mitigate "busy script" warning from the browser
             if renpy.emscripten:
-                import emscripten
+                import emscripten # type: ignore
                 emscripten.sleep(0)
 
             # Pump the presplash window to prevent marking
@@ -615,9 +616,9 @@ class Script(object):
                     with open(mergefn, "rb") as rpycf:
                         bindata = self.read_rpyc_data(rpycf, 1)
 
-                    old_data, old_stmts = loads(bindata)
-
-                    self.merge_names(old_stmts, stmts, used_names)
+                    if bindata is not None:
+                        old_data, old_stmts = loads(bindata) 
+                        self.merge_names(old_stmts, stmts, used_names)
 
                     del old_data
                     del old_stmts
@@ -742,7 +743,7 @@ class Script(object):
             if os.path.exists(rpyfn) and os.path.exists(rpycfn):
 
                 # Are we forcing a compile?
-                force_compile = renpy.game.args.compile # @UndefinedVariable
+                force_compile = renpy.game.args.compile # type: ignore
 
                 # Use the source file here since it'll be loaded if it exists.
                 lastfn = rpyfn
@@ -787,7 +788,7 @@ class Script(object):
                 self.backup_list.append((rpyfn, digest))
 
         if data is None:
-            raise Exception("Could not load file %s." % lastfn)
+            raise Exception("Could not load file %s." % lastfn) # type: ignore
 
         # Check the key.
         if self.key is None:
@@ -795,9 +796,9 @@ class Script(object):
         elif self.key != data['key']:
             raise Exception(fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
 
-        self.finish_load(stmts, initcode, filename=lastfn)
+        self.finish_load(stmts, initcode, filename=lastfn) # type: ignore
 
-        self.digest.update(digest)
+        self.digest.update(digest) # type: ignore
 
     def init_bytecode(self):
         """
@@ -862,9 +863,6 @@ class Script(object):
                     if text is None:
                         text = ''
 
-                    if not isinstance(text, str):
-                        text = text.decode("utf-8", "replace")
-
                     pem = renpy.parser.ParseError(
                         filename=e.filename,
                         number=e.lineno,
@@ -879,7 +877,7 @@ class Script(object):
                 renpy.game.exception_info = old_ei
 
             self.bytecode_newcache[key] = code
-            i.bytecode = marshal.loads(code)
+            i.bytecode = marshal.loads(code) # type: ignore
 
         self.all_pycode = [ ]
 

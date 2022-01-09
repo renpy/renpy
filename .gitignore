@@ -15,6 +15,8 @@ ehthumbs_vista.db
 *.rpymc
 *.pyc
 *.pyo
+*.pyi
+
 
 *~
 *.bak
@@ -73,7 +75,6 @@ styles.txt
 /atom
 /launcher/game/theme
 /launcher/game/script_version.rpy
-
 /dl
 renpy/vc_version.py
 .externalToolBuilders
@@ -91,6 +92,7 @@ renpy/vc_version.py
 /the_question*/.android.json
 /WINDOWS.rst
 /old
+/typings
 
 /*-all/
 /*-win/

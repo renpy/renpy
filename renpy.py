@@ -3,7 +3,7 @@
 # This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
 
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -72,16 +72,15 @@ def path_to_saves(gamedir, save_directory=None):
         for rv in paths:
             if os.path.isdir(rv) and test_writable(rv):
                 break
+        else:
+            rv = paths[-1]
 
         print("Saving to", rv)
-
-        # We return the last path as the default.
-
         return rv
 
     if renpy.ios:
-        from pyobjus import autoclass
-        from pyobjus.objc_py_types import enum
+        from pyobjus import autoclass # type: ignore
+        from pyobjus.objc_py_types import enum # type: ignore
 
         NSSearchPathDirectory = enum("NSSearchPathDirectory", NSDocumentDirectory=9)
         NSSearchPathDomainMask = enum("NSSearchPathDomainMask", NSUserDomainMask=1)
@@ -164,9 +163,9 @@ android = ("ANDROID_PRIVATE" in os.environ)
 # renderers.
 if android:
     __main__ = sys.modules["__main__"]
-    __main__.path_to_renpy_base = path_to_renpy_base
-    __main__.path_to_common = path_to_common
-    __main__.path_to_saves = path_to_saves
+    __main__.path_to_renpy_base = path_to_renpy_base # type: ignore
+    __main__.path_to_common = path_to_common # type: ignore
+    __main__.path_to_saves = path_to_saves # type: ignore
 
 
 def main():

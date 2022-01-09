@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -117,6 +117,8 @@ class Motion(object):
         self.duration = j["Meta"]["Duration"]
         self.curves = { }
         self.fades = { }
+
+        y = 0
 
         for curve in j["Curves"]:
             target = curve["Target"]

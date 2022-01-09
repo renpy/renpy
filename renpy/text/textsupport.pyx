@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -36,6 +36,24 @@ cdef class Glyph:
         else:
             return "<Glyph {0!r} vs={1} time={2}>".format(self.character, self.variation, self.time)
 
+    _types = """
+        x: int
+        y: int
+        delta_x_offset : int
+        character : int
+        variation : int
+        split : int
+        ruby : int
+        ascent : int
+        line_spacing : int
+        width : float
+        advance : float
+        time : float
+        hyperlink : int
+        draw : bool
+        """
+
+
 cdef class Line:
 
     def __init__(self, int y, int height, list glyphs):
@@ -46,6 +64,15 @@ cdef class Line:
 
     def __repr__(self):
         return "<Line y={0}, height={1}>".format(self.y, self.height)
+
+    _types = """
+        y : int
+        height : int
+        glyphs : list[Glyph]
+        max_time : float
+        eop : bool
+        """
+
 
 # The maximum width of text we lay out. This should be quite a bit smaller
 # than the maximum SDL surface width. (16384)
@@ -980,5 +1007,3 @@ def offset_glyphs(list glyphs, short x, short y):
     for g in glyphs:
         g.x += x
         g.y += y
-
-

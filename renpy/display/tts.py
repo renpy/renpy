@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,13 +20,15 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 
 import sys
 import os
-import renpy.audio
 import subprocess
+
 import pygame_sdl2 as pygame
+import renpy
 
 
 class TTSDone(str):
@@ -91,7 +93,7 @@ def default_tts_function(s):
 
     if renpy.game.preferences.self_voicing == "clipboard":
         try:
-            pygame.scrap.put(pygame.SCRAP_TEXT, s.encode("utf-8"))
+            pygame.scrap.put(pygame.scrap.SCRAP_TEXT, s.encode("utf-8"))
         except:
             pass
 

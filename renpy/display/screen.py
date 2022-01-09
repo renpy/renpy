@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,9 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Optional
 
-import renpy.display
+import renpy
 import time
 import collections
 
@@ -355,7 +356,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.scope = renpy.python.RevertableDict(scope)
 
         # The child associated with this screen.
-        self.child = None
+        self.child = None # type: renpy.display.layout.MultiBox|None
 
         # Widget properties given to this screen the last time it was
         # shown.
@@ -403,7 +404,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # Should we transfer data from the old_screen? This becomes
         # true once this screen finishes updating for the first time,
         # and also while we're using something.
-        self.old_transfers = (old_screen and old_screen.screen_name == self.screen_name)
+        self.old_transfers = (old_screen and old_screen.screen_name == self.screen_name) 
 
         # The current transform event, and the last transform event to
         # be processed.
@@ -570,13 +571,13 @@ class ScreenDisplayable(renpy.display.layout.Container):
         updated_screens.add(self)
 
         if self.screen is None:
-            self.child = renpy.display.layout.Null()
+            self.child = renpy.display.layout.MultiBox(layout='fixed')
             return { }
 
         # Do not update if restarting or hiding.
         if self.restarting or (self.phase == HIDE) or (self.phase == OLD):
             if not self.child:
-                self.child = renpy.display.layout.Null()
+                self.child = renpy.display.layout.MultiBox(layout='fixed')
 
             return self.widgets
 
@@ -668,7 +669,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             end = time.time()
 
             if self.profile.time:
-                profile_log.write("* %.2f ms", 1000 * (end - start))
+                profile_log.write("* %.2f ms", 1000 * (end - start)) # type: ignore
 
             if self.profile.debug:
                 profile_log.write("\n")
@@ -749,7 +750,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
 # The name of the screen that is currently being displayed, or
 # None if no screen is being currently displayed.
-_current_screen = None
+_current_screen = None # type: renpy.display.screen.ScreenDisplayable|None
+
+if 0 == 1:
+    _current_screen = renpy.display.screen.ScreenDisplayable() # type: ignore # fake out typing.
+else:
+    _current_screen = None
 
 # The stack of old current screens.
 current_screen_stack = [ ]
@@ -1290,7 +1296,7 @@ def use_screen(_screen_name, *_args, **kwargs):
     _current_screen.old_transfers = old_transfers
 
 
-def current_screen():
+def current_screen(): # type: () -> ScreenDisplayable|None
     return _current_screen
 
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,7 +27,8 @@
 # decide if the game runs or some other action occurs.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 
 import argparse
 import os
@@ -35,7 +36,7 @@ import renpy
 
 try:
     import site
-    site._renpy_argv_emulation() # @UndefinedVariable
+    site._renpy_argv_emulation() # type: ignore
 except:
     pass
 
@@ -139,7 +140,7 @@ class ArgumentParser(argparse.ArgumentParser):
         if second_pass:
             self.add_argument("-h", "--help", action="help", help="Displays this help message, then exits.")
 
-            command = renpy.game.args.command # @UndefinedVariable
+            command = renpy.game.args.command # type: ignore
             self.group = self.add_argument_group("{0} command arguments".format(command), description)
 
     def add_argument(self, *args, **kwargs):
@@ -231,7 +232,7 @@ def rmpersistent():
 
     takes_no_arguments("Deletes the persistent data.")
 
-    renpy.loadsave.location.unlink_persistent()
+    renpy.loadsave.location.unlink_persistent() # type: ignore
     renpy.persistent.should_save_persistent = False
 
     return False
@@ -289,9 +290,9 @@ def post_init():
     if execution should continue and False otherwise.
     """
 
-    command = renpy.game.args.command # @UndefinedVariable
+    command = renpy.game.args.command # type: ignore
 
-    if command == "run" and renpy.game.args.lint: # @UndefinedVariable
+    if command == "run" and renpy.game.args.lint: # type: ignore
         command = "lint"
 
     if command not in commands:
