@@ -545,6 +545,10 @@ def import_all():
 
     import renpy.main
 
+    global six
+    import six
+    sys.modules[pystr('renpy.six')] = six
+
     # Back up the Ren'Py modules.
 
     global backup

@@ -22,6 +22,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
+xrange = range
 
 unicode = str # @ReservedAssignment
 
@@ -182,4 +183,3 @@ __all__ = [
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ] # type: ignore
-    
