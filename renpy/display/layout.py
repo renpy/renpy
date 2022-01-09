@@ -608,6 +608,12 @@ class MultiBox(Container):
     order_reverse = False
     layout = None
 
+    _layer_at_list = None # type: list|None
+    _camera_list = None # type: list|None
+    layers = None # type: dict|None
+    raw_layers = None # type: dict|None
+
+
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
         if spacing is not None:

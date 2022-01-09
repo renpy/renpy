@@ -92,10 +92,10 @@ less_mouse = False
 less_imagedissolve = False
 
 # The persistent data that's kept from session to session
-persistent = None
+persistent = None # type: Any
 
 # The current preferences.
-preferences = None # type: Optional[renpy.preferences.Preferences]
+preferences = None # type: Any
 
 
 class ExceptionInfo(object):

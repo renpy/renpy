@@ -92,6 +92,8 @@ def python_signature(o):
 
         if consume(r'\)'):
             break
+        
+        consume(r'\**')
 
         if not first:
             rv += " "
@@ -152,7 +154,7 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
         if isinstance(v, type):
 
             if v.__module__ != namespace.__name__:
-                out.write(prefix + f"from {v.__module__} import {k}\n")
+                out.write(prefix + f"{k} = {v.__module__}.{v.__name__}\n")
                 out.write("\n")
                 generated = True
                 continue
@@ -311,6 +313,11 @@ def main():
 
         generate_module(v, k in packages)
 
+    for fn in (ROOT / "scripts" / "pyi").glob("**/*.pyi"):
+        dfn =  ROOT / "typings" / fn.relative_to(ROOT / "scripts" / "pyi")
+        text = fn.read_text()
+        dfn.parent.mkdir(parents=True, exist_ok=True)
+        dfn.write_text(text)
 
 if __name__ == "__main__":
     main()

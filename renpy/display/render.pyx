@@ -1682,4 +1682,5 @@ class Canvas(object):
 _types = """
 screen_render : Render|None
 IDENTITY : renpy.display.matrix.Matrix
+blit_lock : threading.Condition
 """

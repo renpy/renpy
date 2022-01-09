@@ -793,9 +793,9 @@ class ShownImageInfo(renpy.object.Object):
             self.attributes = { }
             self.shown = set()
 
-            for layer in self.images:
-                for tag in self.images[layer]:
-                    self.attributes[layer, tag] = self.images[layer][tag][1:]
+            for layer in self.images: # type: ignore
+                for tag in self.images[layer]: # type: ignore
+                    self.attributes[layer, tag] = self.images[layer][tag][1:] # type: ignore
                     self.shown.add((layer, tag))
 
     def get_attributes(self, layer, tag, default=()):

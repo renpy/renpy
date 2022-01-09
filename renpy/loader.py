@@ -884,7 +884,7 @@ def transfn(name):
 hash_cache = dict()
 
 
-def get_hash(name):
+def get_hash(name): # type: (str) -> int
     """
     Returns the time the file m was last modified, or 0 if it
     doesn't exist or is archived.
