@@ -547,7 +547,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         if clip:
 
             dest.blits.append(
-                (minx, miny, maxx + dx0, maxy + dy0, clip, what,
+                (minx, miny, maxx + dx0, maxy + dy0, clip, what, # type: ignore
                  (cx, cy,
                   forward.xdx, forward.ydx,
                   forward.xdy, forward.ydy,
@@ -773,7 +773,7 @@ class SWDraw(object):
         return (x, y)
 
     def mouse_event(self, ev):
-        x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
+        x, y = getattr(ev, 'pos', pygame.mouse.get_pos()) # type: ignore
 
         x /= self.scale_factor
         y /= self.scale_factor

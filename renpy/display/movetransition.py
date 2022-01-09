@@ -418,10 +418,10 @@ class MoveInterpolate(renpy.display.core.Displayable):
 
     def get_placement(self):
 
-        if self.st > self.delay:
+        if self.st > self.delay: # type: ignore
             done = 1.0
         else:
-            done = self.st / self.delay
+            done = self.st / self.delay # type: ignore
 
         if self.time_warp is not None:
             done = self.time_warp(done)

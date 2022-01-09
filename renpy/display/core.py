@@ -332,6 +332,10 @@ class Displayable(renpy.object.Object):
     # Does this displayable have a tooltip?
     _tooltip = None
 
+    # Used by a transition (or transition-like object) to determine how long to
+    # delay for.
+    delay = None # type: float|None
+
     def __ne__(self, o):
         return not (self == o)
 

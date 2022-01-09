@@ -118,7 +118,8 @@ str = future.utils.text_type # @ReservedAssignment
 unicode = future.utils.text_type # @ReservedAssignment
 
 bord = future.utils.bord
-bchr = future.utils.bchr
+def bchr(i): # types: (int) -> bytes
+    return bytes([i])
 tobytes = future.utils.tobytes
 
 from future.builtins import chr

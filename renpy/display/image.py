@@ -383,6 +383,8 @@ class ImageReference(renpy.display.core.Displayable):
             if renpy.config.debug:
                 raise Exception(msg)
 
+        target = None # typing
+
         args = [ ]
 
         while name:
@@ -446,7 +448,7 @@ class ImageReference(renpy.display.core.Displayable):
                 rv.name = rv.name._duplicate(args)
 
         rv.find_target()
-        rv._duplicatable = rv.target._duplicatable
+        rv._duplicatable = rv.target._duplicatable # type: ignore
 
         return rv
 
@@ -1009,7 +1011,7 @@ class ShownImageInfo(renpy.object.Object):
             return None
 
 
-renpy.display.core.ImagePredictInfo = ShownImageInfo
+renpy.display.core.ImagePredictInfo = ShownImageInfo # type: ignore
 
 # Functions that have moved from this module to other modules,
 # that live here for the purpose of backward-compatibility.
