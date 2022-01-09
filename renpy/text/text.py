@@ -21,7 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-from typing import Optional
+from typing import Optional, Callable
 
 import math
 
@@ -138,7 +138,6 @@ def outline_blits(blits, outline):
 
     return rv
 
-
 class DrawInfo(object):
     """
     This object is supplied as a parameter to the draw method of the various
@@ -160,7 +159,7 @@ class DrawInfo(object):
 
     # No implementation, this is set up in the layout object.
 
-    surface = None # type: Optional[pygame_sdl2.Surface]
+    surface = None # type: Optional[pygame_sdl2.surface.Surface]
     override_color = None # type: Optional[tuple[int, int, int, int]]
     outline = 0 # type: float
     displayable_blits = None # type: Optional[list[tuple[renpy.display.core.Displayable, int, int]]]
@@ -1491,8 +1490,8 @@ def text_tick():
     slow_text = [ ]
 
 
-VERT_REVERSE = renpy.display.render.Matrix2D(0, -1, 1, 0)
-VERT_FORWARD = renpy.display.render.Matrix2D(0, 1, -1, 0)
+VERT_REVERSE = renpy.display.matrix.Matrix2D(0, -1, 1, 0)
+VERT_FORWARD = renpy.display.matrix.Matrix2D(0, 1, -1, 0)
 
 
 class Text(renpy.display.core.Displayable):
@@ -1572,7 +1571,7 @@ class Text(renpy.display.core.Displayable):
         self.dirty = True
 
         # The text, after substitutions.
-        self.text = None
+        self.text = None # type: list|None
 
         # A mask, for passwords and such.
         self.mask = mask
@@ -1587,15 +1586,15 @@ class Text(renpy.display.core.Displayable):
         self.slow = slow
 
         # The callback to be called when slow-text mode ends.
-        self.slow_done = None
+        self.slow_done = None # type:Callable|None
 
         # The ctc indicator associated with this text.
         self.ctc = None
 
         # The index of the start and end strings in the first segment of text.
         # (None to show the whole text.)
-        self.start = None
-        self.end = None
+        self.start = None # type: int|None
+        self.end = None # type: int|None
 
         if isinstance(replaces, Text):
             self.slow = replaces.slow
@@ -1847,7 +1846,7 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
-    _tts_all = _tts
+    _tts_all = _tts # type: ignore
 
     def kill_layout(self):
         """

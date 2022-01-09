@@ -165,7 +165,7 @@ class Color(tuple):
                 else:
                     raise Exception("Color string {!r} must be 3, 4, 6, or 8 hex digits long.".format(c))
 
-                return tuple.__new__(cls, (r, g, b, a))
+                return tuple.__new__(cls, (r, g, b, a)) # type: ignore
 
         if hsv is not None:
             rgb = colorsys.hsv_to_rgb(*hsv)
@@ -180,7 +180,7 @@ class Color(tuple):
             b = int(rgb[2] * 255)
             a = int(alpha * 255)
 
-            rv = tuple.__new__(cls, (r, g, b, a))
+            rv = tuple.__new__(cls, (r, g, b, a)) # type: ignore
             rv._rgb = rgb
             rv._hls = hls
             rv._hsv = hsv

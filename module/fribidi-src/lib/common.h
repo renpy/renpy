@@ -117,7 +117,7 @@
 # define fribidi_free free
 #else /* fribidi_malloc */
 # ifndef fribidi_free
-#  error You should define fribidi_free too when you define fribidi_malloc.
+#  error "You should define fribidi_free too when you define fribidi_malloc."
 # endif	/* !fribidi_free */
 #endif /* fribidi_malloc */
 
@@ -144,7 +144,7 @@
 # endif	/* !HAVE_ASM_PAGE_H */
 #else /* FRIBIDI_CHUNK_SIZE */
 # if FRIBIDI_CHUNK_SIZE < 256
-#  error FRIBIDI_CHUNK_SIZE now should define the size of a chunk in bytes.
+#  error "FRIBIDI_CHUNK_SIZE now should define the size of a chunk in bytes."
 # endif	/* FRIBIDI_CHUNK_SIZE < 256 */
 #endif /* FRIBIDI_CHUNK_SIZE */
 
@@ -170,7 +170,7 @@
 #if HAVE_STRINGIZE+0
 # define STRINGIZE(symbol) #symbol
 #else /* !HAVE_STRINGIZE */
-# define STRINGIZE(symbol) (no stringize operator available)
+# error "No stringize operator available?"
 #endif /* !HAVE_STRINGIZE */
 
 /* As per recommendation of GNU Coding Standards. */

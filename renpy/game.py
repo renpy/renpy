@@ -25,7 +25,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-from typing import Optional
+from typing import Optional, Any
 
 import renpy
 
@@ -37,7 +37,7 @@ basepath = None
 searchpath = [ ]
 
 # The options that were read off the command line.
-args = None
+args = None # type: Any
 
 # The game's script.
 script = None # type: Optional[renpy.script.Script]
@@ -92,10 +92,10 @@ less_mouse = False
 less_imagedissolve = False
 
 # The persistent data that's kept from session to session
-persistent = None
+persistent = None # type: Any
 
 # The current preferences.
-preferences = None # type: Optional[renpy.preferences.Preferences]
+preferences = None # type: Any
 
 
 class ExceptionInfo(object):

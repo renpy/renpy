@@ -478,7 +478,7 @@ def autosave_thread_function(take_screenshot):
     finally:
         autosave_not_running.set()
         if renpy.emscripten:
-            import emscripten # type: ignore
+            import emscripten
             emscripten.syncfs()
 
 

@@ -1054,11 +1054,11 @@ class SLDisplayable(SLBlock):
                 for i in ctx.children:
                     f.add(i)
 
-                main.add(f)
+                main.add(f) # type: ignore
 
             else:
                 for i in ctx.children:
-                    main.add(i)
+                    main.add(i) # type: ignore
 
         d = d # type: ignore
         old_d = old_d # type: ignore

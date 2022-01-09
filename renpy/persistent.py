@@ -529,8 +529,6 @@ def MultiPersistent(name, save_on_quit=False):
             renpy.display.log.write("Loading MultiPersistent at %r:" % fn)
             renpy.display.log.exception()
 
-        rv = _MultiPersistent()
-
     rv._filename = fn 
 
     if save_on_quit:

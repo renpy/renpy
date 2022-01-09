@@ -25,7 +25,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 from future.utils import reraise
-from typing import Optional, Tuple
 
 import sys
 import time
@@ -151,7 +150,7 @@ class Context(renpy.object.Object):
 
     deferred_translate_identifier = None
 
-    predict_return_stack = None # type: Optional[List]
+    predict_return_stack = None # type: list|None
 
     def __repr__(self):
 
@@ -265,7 +264,7 @@ class Context(renpy.object.Object):
         self.init_phase = False
 
         # When deferring a rollback, the arguments to pass to renpy.exports.rollback.
-        self.defer_rollback = None # type: Optional[Tuple[int, bool]]
+        self.defer_rollback = None # type: tuple[int, bool]|None
 
         # The exception handler that is called when an exception occurs while executing
         # code. If None, a default handler is used. This is reset when run is called.
@@ -762,7 +761,7 @@ class Context(renpy.object.Object):
         Returns the node corresponding to `label`
         """
 
-        self.predict_return_stack = list(self.predict_return_stack)
+        self.predict_return_stack = list(self.predict_return_stack) # type: ignore
         self.predict_return_stack.append(return_site)
 
         return renpy.game.script.lookup(label)

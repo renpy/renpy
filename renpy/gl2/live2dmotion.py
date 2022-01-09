@@ -118,6 +118,8 @@ class Motion(object):
         self.curves = { }
         self.fades = { }
 
+        y = 0
+
         for curve in j["Curves"]:
             target = curve["Target"]
             name = curve["Id"]

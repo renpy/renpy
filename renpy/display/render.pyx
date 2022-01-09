@@ -714,6 +714,45 @@ cdef class Render:
 
         live_renders.append(self)
 
+    _types = """\
+        mark: bool
+        cache_killed: bool
+        killed: bool
+        width: int
+        height: int
+        layer_name: str
+        children : list[tuple[Render, int, int, bool, bool]]
+        forward: renpy.display.matrix.Matrix
+        reverse: renpy.display.matrix.Matrix
+        alpha: float
+        over: float
+        nearest: bool
+        focuses: list[renpy.display.focus.Focus]
+        pass_focuses: list[Render]
+        focus_screen: renpy.display.screen.ScreenDisplayable
+        render_of: list[renpy.display.core.Displayable]
+        xclipping: bool
+        yclipping: bool
+        modal: bool
+        text_input: bool
+        parents: set[Render]
+        depends_on_list: list[Render]
+        operation: int
+        operation_complete: float
+        operation_alpha: bool
+        operation_parameter: float
+        surface: Any
+        alpha_surface: Any
+        half_cache: Any
+        mesh: Any
+        shaders: tuple
+        uniforms: dict
+        properties: dict
+        cached_texture: Any
+        cached_model: Any
+        loaded: bool
+        """
+
     def __repr__(self): #@DuplicatedSignature
         if self.killed:
             live = "dead "
@@ -1639,3 +1678,9 @@ class Canvas(object):
 
     def get_surface(self):
         return self.surf
+
+_types = """
+screen_render : Render|None
+IDENTITY : renpy.display.matrix.Matrix
+blit_lock : threading.Condition
+"""

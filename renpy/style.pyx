@@ -847,3 +847,13 @@ def restore(o):
         s.set_parent(parent)
         s.properties = copy_properties(properties)
 
+_types = """
+Style : Any
+prefixed_all_properties : set
+all_properties : dict[str, list[str]]
+prefix_priority : dict[str, int]
+prefix_alts : dict[str, list[str]]
+prefix_search : dict[str, list[str]]
+affects : dict[str, list[str]]
+styles: dict[str, Style]
+"""

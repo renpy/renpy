@@ -201,8 +201,8 @@ def render_movie(channel, width, height):
     dh = scale * sh
 
     rv = renpy.display.render.Render(width, height)
-    rv.forward = renpy.display.render.Matrix2D(1.0 / scale, 0.0, 0.0, 1.0 / scale)
-    rv.reverse = renpy.display.render.Matrix2D(scale, 0.0, 0.0, scale)
+    rv.forward = renpy.display.matrix.Matrix2D(1.0 / scale, 0.0, 0.0, 1.0 / scale)
+    rv.reverse = renpy.display.matrix.Matrix2D(scale, 0.0, 0.0, scale)
     rv.blit(tex, (int((width - dw) / 2), int((height - dh) / 2)))
 
     return rv
@@ -263,7 +263,7 @@ class Movie(renpy.display.core.Displayable):
 
     `mask_channel`
         The channel the alpha mask video is played on. If not given,
-        defaults to `channel`\ _mask. (For example, if `channel` is "sprite",
+        defaults to `channel`\\_mask. (For example, if `channel` is "sprite",
         `mask_channel` defaults to "sprite_mask".)
 
     `start_image`

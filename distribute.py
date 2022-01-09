@@ -18,7 +18,7 @@ import time
 
 try:
     # reload is built-in in Python 2, in importlib in Python 3
-    reload
+    reload # type: ignore
 except NameError:
     from importlib import reload
 
@@ -33,7 +33,7 @@ def copy_tutorial_file(src, dest):
     # True if we want to copy the line.
     copy = True
 
-    with open(src, "rb") as sf, open(dest, "wb") as df:
+    with open(src, "r") as sf, open(dest, "w") as df:
         for l in sf:
             if "# tutorial-only" in l:
                 copy = False
@@ -80,7 +80,7 @@ def main():
     match_version = ".".join(str(i) for i in renpy.version_tuple[:2]) # @UndefinedVariable
 
     try:
-        s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", "start-" + match_version ])
+        s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", "start-" + match_version ]).decode("utf-8").strip()
         parts = s.strip().split("-")
 
         if len(parts) <= 3:
@@ -143,7 +143,7 @@ def main():
         subprocess.check_call(["scripts/autobuild.sh"])
 
     # Compile all the python files.
-    compileall.compile_dir("renpy/", ddir="renpy/", force=1, quiet=1)
+    compileall.compile_dir("renpy/", ddir="renpy/", force=True, quiet=1)
 
     # Compile the various games.
     if not args.fast:
@@ -158,8 +158,8 @@ def main():
 
         sys.path.insert(0, os.path.join(ROOT, "rapt", "buildlib"))
 
-        import rapt.interface # @UnresolvedImport
-        import rapt.build # @UnresolvedImport
+        import rapt.interface # type: ignore
+        import rapt.build # type: ignore
 
         interface = rapt.interface.Interface()
         rapt.build.distclean(interface)
@@ -250,7 +250,7 @@ def main():
         sys.stdout.write("Creating -sdk.7z")
 
         p = subprocess.Popen([ "7z", "a", sdk + ".7z", sdk], stdout=subprocess.PIPE)
-        for i, _l in enumerate(p.stdout):
+        for i, _l in enumerate(p.stdout): # type: ignore
             if i % 10 != 0:
                 continue
 
