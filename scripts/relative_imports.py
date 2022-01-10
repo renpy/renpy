@@ -1,4 +1,6 @@
-import pathlib 
+#!/usr/bin/env python3
+
+import pathlib
 import collections
 import re
 
@@ -17,13 +19,13 @@ def find_modules():
         mod = str(i.with_suffix("")).replace("/", ".")
         if mod.endswith(".__init__"):
             mod = mod[:-9]
-        
+
         modules.append(mod)
 
-    # Generated modules. 
+    # Generated modules.
     for i in (ROOT / "module" / "gen3").glob("*.c"):
         mod = str(i.stem)
-        
+
         modules.append(mod)
 
     modules.sort()
