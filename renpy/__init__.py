@@ -151,7 +151,7 @@ def get_windows_version():
 
     try:
 
-        os_version = OSVERSIONINFOEXW()
+        os_version = OSVERSIONINFOEXW() # type: ignore
         os_version.dwOSVersionInfoSize = ctypes.sizeof(os_version)
         retcode = ctypes.windll.Ntdll.RtlGetVersion(ctypes.byref(os_version)) # type: ignore
 
@@ -159,7 +159,7 @@ def get_windows_version():
         if retcode != 0:
             return (10, 0)
 
-        return (os_version.dwMajorVersion, os_version.dwMinorVersion)
+        return (os_version.dwMajorVersion, os_version.dwMinorVersion) # type: ignore
 
     except:
         return (10, 0)

@@ -49,12 +49,14 @@ from renpy.python import revertable_range as range # @UnusedImport
 from renpy.python import revertable_sorted as sorted # @UnusedImport
 
 import renpy.ui as ui # @UnusedImport
-import renpy.exports as renpy # @Reimport @UnusedImport
 from renpy.translation import translate_string as __ # @UnusedImport
 
 from renpy.python import store_eval as eval
 
 from renpy.display.core import absolute
+
+import renpy
+globals()["renpy"] = renpy.exports
 
 _print = print
 
