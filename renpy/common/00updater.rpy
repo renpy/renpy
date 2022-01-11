@@ -105,18 +105,17 @@ init -1500 python in updater:
         time.sleep(3)
 
         try:
-            log = file(DEFERRED_UPDATE_LOG, "ab")
+            log = open(DEFERRED_UPDATE_LOG, "a")
         except:
             log = io.BytesIO()
 
         with log:
-            with open(DEFERRED_UPDATE_FILE, "rb") as f:
+            with open(DEFERRED_UPDATE_FILE, "r") as f:
                 for l in f:
 
                     l = l.rstrip("\r\n")
-                    l = l.decode("utf-8")
 
-                    log.write(l.encode("utf-8"))
+                    log.write(l)
 
                     try:
                         process_deferred_line(l)
@@ -324,7 +323,7 @@ init -1500 python in updater:
 
             # The logfile that update errors are written to.
             try:
-                self.log = open(os.path.join(self.updatedir, "log.txt"), "wb")
+                self.log = open(os.path.join(self.updatedir, "log.txt"), "w")
             except:
                 self.log = None
 
@@ -358,7 +357,7 @@ init -1500 python in updater:
                     self.log.flush()
 
             except UpdateError as e:
-                self.message = e.message
+                self.message = e.args[0]
                 self.can_cancel = True
                 self.can_proceed = False
                 self.state = self.ERROR
@@ -703,14 +702,14 @@ init -1500 python in updater:
             if not os.path.exists(fn):
                 raise UpdateError(_("Either this project does not support updating, or the update status file was deleted."))
 
-            with open(fn, "rb") as f:
+            with open(fn, "r") as f:
                 self.current_state = json.load(f)
 
         def test_write(self):
             fn = os.path.join(self.updatedir, "test.txt")
 
             try:
-                with open(fn, "wb") as f:
+                with open(fn, "w") as f:
                     f.write("Hello, World.")
 
                 os.unlink(fn)
@@ -729,20 +728,24 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "updates.json")
             urlretrieve(self.url, fn)
 
+            with open(fn, "r") as f:
+                self.updates = json.load(f)
+
             with open(fn, "rb") as f:
                 updates_json = f.read()
-                self.updates = json.loads(updates_json)
 
             if self.public_key is not None:
                 fn = os.path.join(self.updatedir, "updates.json.sig")
                 urlretrieve(self.url + ".sig", fn)
 
                 with open(fn, "rb") as f:
-                    signature = f.read().decode("base64")
+                    import codecs
+                    signature = codecs.decode(f.read(), "base64")
 
                 try:
                     rsa.verify(updates_json, signature, self.public_key)
                 except:
+                    raise
                     raise UpdateError(_("Could not verify update signature."))
 
                 if "monkeypatch" in self.updates:
@@ -963,7 +966,7 @@ init -1500 python in updater:
                     break
 
                 try:
-                    f = file(new_fn + ".part", "rb")
+                    f = open(new_fn + ".part", "rb")
                 except:
                     self.log.write("partfile does not exist\n")
                     continue
@@ -1183,7 +1186,7 @@ init -1500 python in updater:
                     # Extract regular files.
                     tff = tf.extractfile(info)
                     new_path = path + ".new"
-                    with file(new_path, "wb") as f:
+                    with open(new_path, "wb") as f:
                         while True:
                             data = tff.read(1024 * 1024)
                             if not data:
@@ -1214,10 +1217,10 @@ init -1500 python in updater:
                 self.unlink(path)
 
                 if os.path.exists(path):
-                    self.log.write("could not rename file %s" % path.encode("utf-8"))
+                    self.log.write("could not rename file %s" % path)
 
-                    with open(DEFERRED_UPDATE_FILE, "ab") as f:
-                        f.write("R " + path.encode("utf-8") + "\r\n")
+                    with open(DEFERRED_UPDATE_FILE, "a") as f:
+                        f.write("R " + path + "\r\n")
 
                     continue
 
@@ -1261,9 +1264,9 @@ init -1500 python in updater:
                 self.unlink(i)
 
                 if os.path.exists(i):
-                    self.log.write("could not delete file %s" % i.encode("utf-8"))
-                    with open(DEFERRED_UPDATE_FILE, "wb") as f:
-                        f.write("D " + i.encode("utf-8") + "\r\n")
+                    self.log.write("could not delete file %s" % i)
+                    with open(DEFERRED_UPDATE_FILE, "w") as f:
+                        f.write("D " + i + "\r\n")
 
             for i in old_directories:
                 try:
@@ -1278,7 +1281,7 @@ init -1500 python in updater:
 
             fn = os.path.join(self.updatedir, "current.json")
 
-            with open(fn, "wb") as f:
+            with open(fn, "w") as f:
                 json.dump(self.new_state, f)
 
         def clean(self, fn):
@@ -1328,7 +1331,7 @@ init -1500 python in updater:
         if not os.path.exists(fn):
             return None
 
-        with open(fn, "rb") as f:
+        with open(fn, "r") as f:
             state = json.load(f)
 
         installed_state_cache = state
