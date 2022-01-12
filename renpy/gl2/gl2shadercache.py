@@ -342,7 +342,7 @@ class ShaderCache(object):
         try:
             with renpy.loader.load(self.filename) as f:
                 for l in f:
-                    l = l.strip()
+                    l = l.strip().decode()
                     partnames = tuple(l.strip().split())
 
                     if not partnames:
