@@ -52,7 +52,7 @@ import time
 import math
 import string
 import array
-from renpy import six
+import six
 
 # Since the long type doesn't exist on py3, define it here
 if six.PY3:

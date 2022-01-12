@@ -226,7 +226,8 @@ init -1100 python in gui:
             else:
                 prefs[self.name] = self.a
 
-            rebuild()
+            if self.rebuild:
+                rebuild()
 
         def get_selected(self):
             prefs = persistent._gui_preference

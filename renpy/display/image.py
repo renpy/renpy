@@ -440,7 +440,7 @@ class ImageReference(renpy.display.core.Displayable):
         if args and args.args:
             args.extraneous()
 
-        rv = self._copy(args) 
+        rv = self._copy(args)
         rv.target = None
 
         if isinstance(rv.name, renpy.display.core.Displayable):
@@ -546,10 +546,10 @@ class DynamicImage(renpy.display.core.Displayable):
     nosave = [ 'raw_target' ]
 
     # The target that this image currently resolves to.
-    target = None
+    target = None # type: renpy.display.core.Displayable|None
 
     # The raw target that the image resolves to, before it has been parameterized.
-    raw_target = None
+    raw_target = None # type: renpy.display.core.Displayable|None
 
     # Have we been locked, so we never change?
     locked = False

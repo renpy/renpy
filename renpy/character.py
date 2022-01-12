@@ -29,7 +29,6 @@ import renpy
 import re
 import os
 import collections
-import renpy.six as six
 
 # This matches the dialogue-relevant text tags.
 TAG_RE = re.compile(r'(\{\{)|(\{(p|w|nw|fast|done)(?:\=([^}]*))?\})', re.S)
@@ -702,7 +701,7 @@ class HistoryEntry(renpy.object.Object):
 
     multiple = None
     who = None
-    what = None 
+    what = None
 
     def __repr__(self):
         return "<History {!r} {!r}>".format(self.who, self.what)

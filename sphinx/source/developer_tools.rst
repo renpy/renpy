@@ -57,14 +57,8 @@ inspection to occur. This will display a list of displayables underneath the
 mouse. For each displayable, it will display the type, the style used, and the
 size it is being rendered at.
 
-Shift+Y Style Dumping
----------------------
-
-When :var:`config.developer` is True, pressing the `dump_styles` key (by default,
-Shift+Y), will write a description of every style Ren'Py knows about to the
-file "styles.txt". This description includes every property that is part of the
-style, the value of that property, and the style the property is inherited
-from.
+Clicking on the style name will display where the style properties used by the
+displayable are taken from.
 
 > Fast Skipping
 ---------------

@@ -975,7 +975,7 @@ class RevertableList(list):
     append = mutator(list.append)
     extend = mutator(list.extend)
     insert = mutator(list.insert)
-    pop = mutator(list.pop)
+    pop = mutator(list.pop) # type: ignore
     remove = mutator(list.remove)
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
@@ -991,7 +991,7 @@ class RevertableList(list):
     __add__ = wrapper(list.__add__) # type: ignore
     if PY2:
         __getslice__ = wrapper(list.__getslice__) # type: ignore
- 
+
     del wrapper
 
     def __getitem__(self, index):
@@ -1277,7 +1277,7 @@ class RollbackRandom(random.Random):
         jumpahead = mutator(random.Random.jumpahead) # type: ignore
 
     getrandbits = mutator(random.Random.getrandbits)
-    seed = mutator(random.Random.seed)
+    seed = mutator(random.Random.seed) # type: ignore
     random = mutator(random.Random.random)
 
     def Random(self, seed=None):

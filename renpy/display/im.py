@@ -605,7 +605,7 @@ class ImageBase(renpy.display.core.Displayable):
 
         return self.identity == other.identity
 
-    def load(self) -> pygame_sdl2.Surface:
+    def load(self): # type:() -> pygame_sdl2.Surface
         """
         This function is called by the image cache code to cause this
         image to be loaded. It's expected that children of this class

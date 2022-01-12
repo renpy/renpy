@@ -151,7 +151,7 @@ def get_windows_version():
 
     try:
 
-        os_version = OSVERSIONINFOEXW()
+        os_version = OSVERSIONINFOEXW() # type: ignore
         os_version.dwOSVersionInfoSize = ctypes.sizeof(os_version)
         retcode = ctypes.windll.Ntdll.RtlGetVersion(ctypes.byref(os_version)) # type: ignore
 
@@ -159,7 +159,7 @@ def get_windows_version():
         if retcode != 0:
             return (10, 0)
 
-        return (os_version.dwMajorVersion, os_version.dwMinorVersion)
+        return (os_version.dwMajorVersion, os_version.dwMinorVersion) # type: ignore
 
     except Exception:
         return (10, 0)
@@ -544,6 +544,10 @@ def import_all():
     import renpy.test.testexecution
 
     import renpy.main
+
+    global six
+    import six
+    sys.modules[pystr('renpy.six')] = six
 
     # Back up the Ren'Py modules.
 
