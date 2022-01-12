@@ -41,7 +41,14 @@
 
     "python.languageServer": "Pylance",
     "python.analysis.typeCheckingMode": "basic",
-    "python.analysis.extraPaths": [ "", ],
+    "python.analysis.extraPaths": [
+        "",
+        "/home/tom/.vscode/extensions/joedevivo.vscode-circuitpython-0.1.15/stubs",
+        "/home/tom/.config/Code/User/globalStorage/joedevivo.vscode-circuitpython/bundle/20220110/adafruit-circuitpython-bundle-py-20220110/lib"
+    ],
     "python.analysis.diagnosticMode": "workspace",
     "python.linting.pylintEnabled": false,
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingModuleSource": "none"
+    },
 }
