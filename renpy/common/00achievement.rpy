@@ -286,7 +286,7 @@ init -1500 python in achievement:
 
         Registers an achievement. Achievements are not required to be
         registered, but doing so allows one to pass information to the
-        backends and to report progress towards the achievement.
+        backends.
 
         `name`
             The name of the achievement to register.
@@ -359,7 +359,7 @@ init -1500 python in achievement:
 
         Reports progress towards the achievement with `name`, if that
         achievement has not been granted. The achievement must be defined
-        with a completion amount and registered with a stat_max.
+        with a completion amount.
 
         `name`
             The name of the achievement. This should be the name of the
