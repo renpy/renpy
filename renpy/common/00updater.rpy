@@ -745,7 +745,6 @@ init -1500 python in updater:
                 try:
                     rsa.verify(updates_json, signature, self.public_key)
                 except:
-                    raise
                     raise UpdateError(_("Could not verify update signature."))
 
                 if "monkeypatch" in self.updates:
