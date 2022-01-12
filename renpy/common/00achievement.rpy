@@ -359,8 +359,7 @@ init -1500 python in achievement:
 
         Reports progress towards the achievement with `name`, if that
         achievement has not been granted. The achievement must be defined
-        with a completion amount. To report progress, you must register
-        the achievement with a stat_max.
+        with a completion amount and registered with a stat_max.
 
         `name`
             The name of the achievement. This should be the name of the
