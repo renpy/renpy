@@ -67,7 +67,7 @@ def change_renpy_executable():
     import sys, os, renpy, site
 
     if hasattr(site, "RENPY_PLATFORM") and hasattr(sys, "renpy_executable") and (renpy.linux or renpy.windows):
-        sys.renpy_executable = os.path.join(renpy.config.renpy_base, "py{major}-" + site.RENPY_PLATFORM, os.path.basename(sys.renpy_executable))
+        sys.renpy_executable = os.path.join(renpy.config.renpy_base, "lib", "py{major}-" + site.RENPY_PLATFORM, os.path.basename(sys.renpy_executable))
 
 change_renpy_executable()
 """)
