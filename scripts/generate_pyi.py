@@ -29,7 +29,7 @@ renpy.game.script = FakeScript()
 def python_signature(o):
     """
     Given a callabale object, try to return a python-style type signature.
-    Returns the signature as a string if it can be determined, or None if 
+    Returns the signature as a string if it can be determined, or None if
     no signature can be determined.
 
     This first uses inspect.signature to analyze the object. If that doesn't
@@ -44,7 +44,7 @@ def python_signature(o):
     try:
         sig = inspect.signature(o)
         return (str(sig))
-    except:
+    except Exception:
         pass
 
     # Otherwise, look at the docstring.
@@ -92,7 +92,7 @@ def python_signature(o):
 
         if consume(r'\)'):
             break
-        
+
         consume(r'\**')
 
         if not first:
@@ -113,7 +113,7 @@ def python_signature(o):
         rv += l.delimited_python(",)")
 
     rv += " "
-    rv += l.rest() 
+    rv += l.rest()
 
     return rv
 
@@ -164,7 +164,7 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
 
             # Bases and class name.
             bases = [ i.__module__ + "." + i.__name__ for i in v.__bases__  if i != object ]
-            
+
             if bases:
                 bases_clause = f"({', '.join(bases)})"
             else:
@@ -177,13 +177,13 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
 
             try:
                 init_sig = python_signature(v)
-            except:
+            except Exception:
                 pass
 
             if not init_sig:
                 try:
                     init_sig = python_signature(v.__init__)
-                except:
+                except Exception:
                     pass
 
 
@@ -203,7 +203,7 @@ def generate_namespace(out : TextIO, prefix : str, namespace : types.ModuleType|
 
         try:
             sig = python_signature(v)
-        except:
+        except Exception:
             sig = None
 
         if sig is None:
@@ -287,7 +287,7 @@ def is_extension(m : types.ModuleType):
 def should_generate(name, m : types.ModuleType):
     """
     Returns true if we should generate the type information for the module with
-    `name`. 
+    `name`.
     """
 
     prefix = name.partition(".")[0]
