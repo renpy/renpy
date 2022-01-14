@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import argparse
 import time
+import collections
 
 
 try:
@@ -77,21 +78,23 @@ def main():
     if args.version is None:
         args.version = ".".join(str(i) for i in renpy.version_tuple[:-1]) # @UndefinedVariable
 
-    match_version = ".".join(str(i) for i in renpy.version_tuple[:2]) # @UndefinedVariable
-
     try:
-        s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", "start-" + match_version ]).decode("utf-8").strip()
+        s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", ]).decode("utf-8").strip()
         parts = s.strip().split("-")
+        dirty = "dirty" in parts
 
-        if len(parts) <= 3:
-            vc_version = 0
+        commits_per_day = collections.defaultdict(int)
+
+        for i in subprocess.check_output([ "git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d", "--follow", "HEAD", "--", "." ]).decode("utf-8").split():
+            commits_per_day[i[2:]] += 1
+
+        if dirty:
+            key = time.strftime("%Y%m%d")[2:]
+            vc_version = "{}{:02d}".format(key, commits_per_day[key] + 1)
         else:
-            vc_version = int(parts[2])
-
-        if parts[-1] == "dirty":
-            vc_version += 1
-
-    except subprocess.CalledProcessError:
+            key = max(commits_per_day.keys())
+            vc_version = "{}{:02d}".format(key, commits_per_day[key])
+    except:
         vc_version = 0
 
     with open("renpy/vc_version.py", "w") as f:
