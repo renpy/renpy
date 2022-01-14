@@ -45,7 +45,7 @@ def call_str(function, *args):
     Calls a method on `function`.
     """
 
-    rv = emscripten.run_script_string("renpyAudio.{}.apply(null, {});".format(function, dumps(args))).decode("utf-8")
+    rv = emscripten.run_script_string("renpyAudio.{}.apply(null, {});".format(function, dumps(args)))
 
     return rv
 
