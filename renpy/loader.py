@@ -1011,7 +1011,10 @@ def add_python_directory(path):
     if path and not path.endswith("/"):
         path = path + "/"
 
-    sys.meta_path.insert(0, RenpyImporter(path))
+    sys.meta_path.insert(0, RenpyImporter(path)) # type: ignore
+    # per: https://docs.python.org/3/library/sys.html#sys.meta_path,
+    # objects in sys.meta_path may have just find_module, and find_spec
+    # is synthesized.
 
 
 def init_importer():
