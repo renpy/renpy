@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This file contains functions that are exported to the script namespace as 
+# This file contains functions that are exported to the script namespace as
 # the renpy namespace. (So renpy.say, renpy.pause, and so on.)
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
@@ -2260,13 +2260,15 @@ def log(msg):
 
 def force_full_redraw():
     """
-    :doc: other
+    :undocumented:
 
     Forces the screen to be redrawn in full. Call this after using pygame
     to redraw the screen directly.
     """
 
-    renpy.game.interface.full_redraw = True
+    # This had been used for the software renderer, but gl rendering rerdraws
+    # the screen every frame, so it's removed.
+    return
 
 
 def do_reshow_say(who, what, interact=False, *args, **kwargs):
