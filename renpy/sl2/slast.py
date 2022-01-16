@@ -110,7 +110,7 @@ class SLContext(renpy.ui.Addable):
         self.keywords = { } # type: Optional[dict[str, Any]]
 
         # The style prefix that is given to children of this displayable.
-        self.style_prefix = None 
+        self.style_prefix = None
 
         # A cache associated with this context. The cache maps from
         # statement serial to information associated with the statement.
@@ -138,7 +138,7 @@ class SLContext(renpy.ui.Addable):
         self.widgets = None # type: Optional[dict[str, Any]]
 
         # True if we should dump debug information to the profile log.
-        self.debug = False 
+        self.debug = False
 
         # True if we're predicting the screen.
         self.predicting = False
@@ -157,7 +157,7 @@ class SLContext(renpy.ui.Addable):
         # True if there was a failure in this statement or any of its children.
         # Fails can only occur when predicting, as otherwise an exception
         # would be thrown.
-        self.fail = False 
+        self.fail = False
 
         # The parent context of a use statement with a block.
         self.parent = None # type: Any
@@ -880,7 +880,7 @@ class SLDisplayable(SLBlock):
                     keywords["style"] = ctx.style_prefix + "_" + style_suffix
 
             if widget_id and (widget_id in screen.widget_properties):
-                keywords.update(screen.widget_properties[widget_id]) 
+                keywords.update(screen.widget_properties[widget_id])
 
             old_d = cache.displayable
             if old_d:
@@ -1064,7 +1064,7 @@ class SLDisplayable(SLBlock):
         old_d = old_d # type: ignore
 
         # Inform the focus system about replacement displayables.
-        if (not context.predicting) and (old_d is not None): 
+        if (not context.predicting) and (old_d is not None):
             replaced_by = renpy.display.focus.replaced_by
             replaced_by[id(old_d)] = d
 
@@ -2500,7 +2500,7 @@ def save_cache():
         return
 
     try:
-        data = zlib.compress(dumps(scache, 2), 3)
+        data = zlib.compress(dumps(scache), 3)
 
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
             f.write(renpy.game.script.digest.digest())

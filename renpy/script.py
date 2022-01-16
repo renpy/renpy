@@ -617,7 +617,7 @@ class Script(object):
                         bindata = self.read_rpyc_data(rpycf, 1)
 
                     if bindata is not None:
-                        old_data, old_stmts = loads(bindata) 
+                        old_data, old_stmts = loads(bindata)
                         self.merge_names(old_stmts, stmts, used_names)
 
                     del old_data
@@ -629,11 +629,11 @@ class Script(object):
 
             self.assign_names(stmts, renpy.parser.elide_filename(fullfn))
 
-            pickle_data_before_static_transforms = dumps((data, stmts), 2)
+            pickle_data_before_static_transforms = dumps((data, stmts))
 
             self.static_transforms(stmts)
 
-            pickle_data_after_static_transforms = dumps((data, stmts), 2)
+            pickle_data_after_static_transforms = dumps((data, stmts))
 
             if not renpy.macapp:
                 try:
@@ -891,7 +891,7 @@ class Script(object):
 
                 with open(fn, "wb") as f:
                     data = (BYTECODE_VERSION, self.bytecode_newcache)
-                    f.write(zlib.compress(dumps(data, 2), 3))
+                    f.write(zlib.compress(dumps(data), 3))
             except:
                 pass
 
