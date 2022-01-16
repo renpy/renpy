@@ -21,11 +21,87 @@
 
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
+import renpy
+import pickle
+import io
+
+# Protocol 2 can be loaded on Python 2 and Python 3.
+PROTOCOL = 2
 
 if PY2:
-    from cPickle import dumps, loads, dump, load, HIGHEST_PROTOCOL # type: ignore
-else:
-    from pickle import dumps, loads, dump, load, HIGHEST_PROTOCOL
 
-# allows for renpy8 saves to be loaded in renpy7
-PROTOCOL = 2
+    import cPickle # type: ignore
+
+    def load(f): # type: ignore
+        if renpy.config.use_cpickle:
+            return cPickle.load(f)
+        else:
+            return pickle.load(f)
+
+    def loads(s): # type: ignore
+        if renpy.config.use_cpickle:
+            return cPickle.loads(s)
+        else:
+            return pickle.loads(s)
+
+    def dump(o, f, highest=False):
+        if renpy.config.use_cpickle:
+            cPickle.dump(o, f, PROTOCOL)
+        else:
+            pickle.dump(o, f,PROTOCOL)
+
+    def dumps(o, highest=False): # type: ignore
+        if renpy.config.use_cpickle:
+            return cPickle.dumps(o, PROTOCOL)
+        else:
+            return pickle.dumps(o, PROTOCOL)
+
+else:
+
+    import functools
+    import datetime
+
+    def make_datetime(cls, *args, **kwargs):
+        """
+        Makes a datetime.date, datetime.time, or date.timetime object from
+        a surrogateescaped str. This is used when unpickling a datetime object
+        that was first created in Python 2.
+        """
+
+        if (len(args) == 1) and isinstance(args[0], str):
+            data = args[0].encode("utf-8", "surrogateescape")
+            return cls.__new__(cls, data.decode("latin-1"))
+
+
+        return cls.__new__(cls, *args, **kwargs)
+
+    unpickle_date = functools.partial(make_datetime, datetime.date)
+    unpickle_time = functools.partial(make_datetime, datetime.time)
+    unpickle_datetime = functools.partial(make_datetime, datetime.datetime)
+
+    class Unpickler(pickle.Unpickler):
+
+        def find_class(self, module, name):
+            if module == "datetime":
+
+                if name == "date":
+                    return unpickle_date
+                elif name == "time":
+                    return unpickle_time
+                elif name == "datetime":
+                    return unpickle_datetime
+
+            return super().find_class(module, name)
+
+    def load(f):
+        up = Unpickler(f, fix_imports=True, encoding="utf-8", errors="surrogateescape")
+        return up.load()
+
+    def loads(s):
+        return load(io.BytesIO(s))
+
+    def dump(o, f, highest=False):
+        pickle.dump(o, f, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
+
+    def dumps(o, highest=False):
+        return pickle.dumps(o, pickle.HIGHEST_PROTOCOL if highest else PROTOCOL)
