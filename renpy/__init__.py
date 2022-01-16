@@ -286,7 +286,7 @@ class Backup(_object):
             self.backup_module(m)
 
         # A pickled version of self.objects.
-        self.objects_pickle = pickle.dumps(self.objects, pickle.HIGHEST_PROTOCOL)
+        self.objects_pickle = pickle.dumps(self.objects, highest=True)
 
         self.objects = { }
 
@@ -330,10 +330,10 @@ class Backup(_object):
             # If we have a problem pickling things, uncomment the next block.
 
             try:
-                pickle.dumps(v, pickle.HIGHEST_PROTOCOL)
+                pickle.dumps(v, highest=True)
             except Exception:
                 print("Cannot pickle", name + "." + k, "=", repr(v))
-                print("Reduce Ex is:", repr(v.__reduce_ex__(pickle.HIGHEST_PROTOCOL)))
+                print("Reduce Ex is:", repr(v.__reduce_ex__(pickle.PROTOCOL)))
 
     def restore(self):
         """

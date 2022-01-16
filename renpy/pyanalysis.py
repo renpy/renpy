@@ -590,7 +590,7 @@ class PyAnalysis(ast.NodeVisitor):
 
     def visit_Name(self, node):
 
-        if isinstance(node, ast.AugStore):
+        if isinstance(node.ctx, ast.AugStore):
             self.analysis.mark_not_constant(node.id)
 
         elif isinstance(node.ctx, ast.Store):

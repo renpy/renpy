@@ -23,6 +23,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Any
 
 import renpy
 
@@ -1201,7 +1202,7 @@ class ADVCharacter(object):
                 renpy.game.context().deferred_translate_identifier = renpy.game.context().translate_identifier
 
             # Figure out the arguments to display.
-            display_args = self.display_args.copy()
+            display_args = self.display_args.copy() # type: Any
             display_args["interact"] = display_args["interact"] and interact
 
             if multiple is not None:

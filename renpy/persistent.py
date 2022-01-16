@@ -31,7 +31,7 @@ import weakref
 
 import renpy
 
-from renpy.loadsave import dump, dumps, loads
+from renpy.compat.pickle import dump, dumps, loads
 
 # The class that's used to hold the persistent data.
 
@@ -529,7 +529,7 @@ def MultiPersistent(name, save_on_quit=False):
             renpy.display.log.write("Loading MultiPersistent at %r:" % fn)
             renpy.display.log.exception()
 
-    rv._filename = fn 
+    rv._filename = fn
 
     if save_on_quit:
         save_MP_instances.add(rv)

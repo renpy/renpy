@@ -2561,7 +2561,7 @@ class Interface(object):
             raise Exception("Could not set video mode.")
 
         renpy.session["renderer"] = draw.info["renderer"]
-        renpy.game.persistent._gl2 = renpy.config.gl2 
+        renpy.game.persistent._gl2 = renpy.config.gl2
 
         if renpy.android:
             android.init()
@@ -4079,7 +4079,9 @@ class Interface(object):
                 # Handle videoresize.
                 if ev.type == pygame.VIDEORESIZE:
 
-                    renpy.game.interface.full_redraw = True
+                    if isinstance(renpy.display.draw, renpy.display.swdraw.SWDraw):
+                        renpy.display.draw.full_redraw = True
+
                     renpy.game.interface.force_redraw = True
 
                     continue

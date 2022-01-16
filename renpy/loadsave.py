@@ -37,34 +37,9 @@ import os
 import sys
 
 import renpy
-
-import pickle
-import renpy.compat.pickle as cPickle
-
 from json import dumps as json_dumps
 
-# Dump that chooses which pickle to use:
-
-
-def dump(o, f):
-    if renpy.config.use_cpickle:
-        cPickle.dump(o, f, cPickle.HIGHEST_PROTOCOL)
-    else:
-        pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
-
-
-def dumps(o):
-    if renpy.config.use_cpickle:
-        return cPickle.dumps(o, cPickle.HIGHEST_PROTOCOL)
-    else:
-        return pickle.dumps(o, pickle.HIGHEST_PROTOCOL)
-
-
-def loads(s):
-    if renpy.config.use_cpickle:
-        return cPickle.loads(s)
-    else:
-        return pickle.loads(s)
+from renpy.compat.pickle import dump, loads
 
 
 # This is used as a quick and dirty way of versioning savegame
