@@ -99,7 +99,7 @@ class GuiParameters(object):
 
         GOOD_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
 
-        simple_name = "".join(i for i in name if i in GOOD_CHARACTERS).encode("ascii")
+        simple_name = "".join(i for i in name if i in GOOD_CHARACTERS)
 
         if not simple_name:
             simple_name = "game"
