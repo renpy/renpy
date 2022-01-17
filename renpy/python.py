@@ -805,12 +805,17 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
         if (not PY2) or (filename in py3_files):
 
+            flags = py3_compile_flags
+
             try:
-                flags = py3_compile_flags
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
-            except SyntaxError as e:
-                print("Error in python", py, "code.")
-                raise e
+            except SyntaxError as orig_e:
+
+                try:
+                    fixed_source = renpy.compat.fixes.fix_tokens(source)
+                    tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                except:
+                    raise orig_e
 
         else:
 

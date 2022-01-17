@@ -386,10 +386,12 @@ def import_all():
 
     import renpy # @UnresolvedImport
 
-    import renpy.arguments # @UnresolvedImport
-
     import renpy.config
     import renpy.log
+
+    import renpy.arguments # @UnresolvedImport
+
+    import renpy.compat.fixes
 
     import renpy.display
 
