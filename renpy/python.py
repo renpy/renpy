@@ -720,7 +720,7 @@ def quote_eval(s):
     return "".join(rv[:-2])
 
 
-def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True):
+def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
@@ -755,6 +755,15 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     if isinstance(source, renpy.ast.PyExpr):
         filename = source.filename
         lineno = source.linenumber
+
+        if py is None:
+            py = source.py
+
+    if py is None:
+        if PY2:
+            py = 2
+        else:
+            py = 3
 
     if cache:
         key = (lineno, filename, str(source), mode, renpy.script.MAGIC)
@@ -794,10 +803,14 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         else:
             py_mode = mode
 
-        if filename in py3_files:
+        if (not PY2) or (filename in py3_files):
 
-            flags = py3_compile_flags
-            tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+            try:
+                flags = py3_compile_flags
+                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+            except SyntaxError as e:
+                print("Error in python", py, "code.")
+                raise e
 
         else:
 

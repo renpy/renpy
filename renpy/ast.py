@@ -233,12 +233,14 @@ class PyExpr(str):
     __slots__ = [
         'filename',
         'linenumber',
+        'py',
         ]
 
-    def __new__(cls, s, filename, linenumber):
+    def __new__(cls, s, filename, linenumber, py=3):
         self = str.__new__(cls, s)
         self.filename = filename
         self.linenumber = linenumber
+        self.py = py
 
         # Queue the string for precompilation.
         if self and (renpy.game.script.all_pyexpr is not None):
@@ -247,7 +249,7 @@ class PyExpr(str):
         return self
 
     def __getnewargs__(self):
-        return (str(self), self.filename, self.linenumber)
+        return (str(self), self.filename, self.linenumber, self.py)
 
 
 def probably_side_effect_free(expr):
@@ -268,13 +270,19 @@ class PyCode(object):
         'mode',
         'bytecode',
         'hash',
+        'py',
         ]
 
     def __getstate__(self):
-        return (1, self.source, self.location, self.mode)
+        return (1, self.source, self.location, self.mode, self.py)
 
     def __setstate__(self, state):
-        (_, self.source, self.location, self.mode) = state
+        if len(state) == 4:
+            (_, self.source, self.location, self.mode) = state
+            self.py = 2
+        else:
+            (self.py, self.source, self.location, self.mode) = state
+
         self.bytecode = None
 
         if renpy.game.script.record_pycode:
@@ -284,6 +292,11 @@ class PyCode(object):
 
         if isinstance(source, PyExpr):
             loc = (source.filename, source.linenumber, source)
+
+        if PY2:
+            self.py = 2
+        else:
+            self.py = 3
 
         # The source code.
         self.source = source
@@ -714,9 +727,9 @@ class Say(Node):
             kwargs.setdefault("interact", self.interact)
 
             if getattr(who, "record_say", True):
-                renpy.store._last_say_who = self.who 
-                renpy.store._last_say_what = what 
-                renpy.store._last_say_args = args 
+                renpy.store._last_say_who = self.who
+                renpy.store._last_say_what = what
+                renpy.store._last_say_args = args
                 renpy.store._last_say_kwargs = kwargs
 
             say_menu_with(self.with_, renpy.game.interface.set_transition)
@@ -1122,7 +1135,7 @@ def predict_imspec(imspec, scene=False, atl=None):
         except:
             pass
 
-    layer = renpy.exports.default_layer(layer, tag or name, expression) 
+    layer = renpy.exports.default_layer(layer, tag or name, expression)
 
     if scene:
         renpy.game.context().images.predict_scene(layer)
