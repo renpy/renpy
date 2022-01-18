@@ -1264,7 +1264,7 @@ class Layout(object):
                 else:
                     raise Exception("Unknown text tag %r" % text)
 
-            except:
+            except Exception:
                 renpy.game.exception_info = "While processing text tag {{{!s}}} in {!r}.:".format(text, text_displayable.get_all_text())
                 raise
 

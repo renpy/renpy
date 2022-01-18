@@ -318,7 +318,7 @@ class PyCode(object):
         try:
             if self.hash is not None:
                 return self.hash
-        except:
+        except Exception:
             pass
 
         code = self.source
@@ -364,7 +364,7 @@ class Scry(object):
         else:
             try:
                 return self._next.scry()
-            except:
+            except Exception:
                 return None
 
 
@@ -585,7 +585,7 @@ def eval_who(who, fast=None):
 
     try:
         return renpy.python.py_eval(who)
-    except:
+    except Exception:
         raise Exception("Sayer '%s' is not defined." % who)
 
 
@@ -1117,7 +1117,7 @@ def predict_imspec(imspec, scene=False, atl=None):
         try:
             img = renpy.python.py_eval(expression)
             img = renpy.easy.displayable(img)
-        except:
+        except Exception:
             return
     else:
         img = None
@@ -1126,13 +1126,13 @@ def predict_imspec(imspec, scene=False, atl=None):
     for i in at_expr_list:
         try:
             at_list.append(renpy.python.py_eval(i))
-        except:
+        except Exception:
             pass
 
     if atl is not None:
         try:
             at_list.append(renpy.display.motion.ATLTransform(atl))
-        except:
+        except Exception:
             pass
 
     layer = renpy.exports.default_layer(layer, tag or name, expression)
@@ -1466,7 +1466,7 @@ class With(Node):
             if trans:
                 renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
 
-        except:
+        except Exception:
             pass
 
         return [ self.next ]
@@ -1526,7 +1526,7 @@ class Call(Node):
 
             try:
                 label = renpy.python.py_eval(label)
-            except:
+            except Exception:
                 return [ ]
 
             if not renpy.game.script.has_label(label):
@@ -1786,7 +1786,7 @@ class Jump(Node):
 
             try:
                 label = renpy.python.py_eval(label)
-            except:
+            except Exception:
                 return [ ]
 
             if not renpy.game.script.has_label(label):

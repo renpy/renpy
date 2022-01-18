@@ -57,7 +57,7 @@ def get_path(fn):
     try:
         if not os.path.exists(dn):
             os.makedirs(dn)
-    except:
+    except Exception:
         pass
 
     return fn
@@ -242,7 +242,7 @@ def index_archives():
             try:
                 fn = transfn(prefix + ext)
                 f = open(fn, "rb")
-            except:
+            except Exception:
                 continue
             with f:
                 file_header = f.read(max_header_length)
@@ -277,7 +277,7 @@ def walkdir(dir): # @ReservedAssignment
 
         try:
             i = renpy.exports.fsdecode(i)
-        except:
+        except Exception:
             continue
 
         if os.path.isdir(dir + "/" + i):
@@ -660,7 +660,7 @@ def load_from_filesystem(name):
         try:
             fn = transfn(name)
             return open_file(fn, "rb")
-        except:
+        except Exception:
             pass
 
     return None
@@ -818,7 +818,7 @@ def loadable_core(name):
         transfn(name)
         loadable_cache[name] = True
         return True
-    except:
+    except Exception:
         pass
 
     for apk in apks:
@@ -907,7 +907,7 @@ def get_hash(name): # type: (str) -> int
 
             rv = zlib.adler32(data, rv)
 
-    except:
+    except Exception:
         pass
 
     hash_cache[name] = rv
@@ -937,7 +937,7 @@ class RenpyImporter(object):
 
             fn = prefix + fullname.replace(".", "/")
 
-        except:
+        except Exception:
             # raise Exception("Could importer-translate %r + %r" % (prefix, fullname))
             return None
 
@@ -984,7 +984,7 @@ class RenpyImporter(object):
 
                 code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
                 break
-            except:
+            except Exception:
                 if encoding == "latin-1":
                     raise
 
@@ -1056,7 +1056,7 @@ def auto_mtime(fn):
 
     try:
         return os.path.getmtime(fn)
-    except:
+    except Exception:
         return None
 
 

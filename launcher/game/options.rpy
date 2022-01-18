@@ -280,7 +280,7 @@ init python:
         with open(os.path.join(config.renpy_base, "atom", "executable.txt")) as f:
             for l in f:
                 build.executable(l.strip())
-    except:
+    except Exception:
         pass
 
     build.classify_renpy("rapt/**/libLive2DCubismCore.so", None)

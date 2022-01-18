@@ -46,7 +46,7 @@ init -1600 python:
         try:
             obj = __get_field(obj, fields, kind)
             setattr(obj, attr, value)
-        except:
+        except Exception:
             raise NameError("The {} {} does not exist.".format(kind, name))
 
     @renpy.pure

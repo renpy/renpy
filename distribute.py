@@ -111,7 +111,7 @@ def main():
 
     try:
         reload(sys.modules['renpy.vc_version']) # @UndefinedVariable
-    except:
+    except Exception:
         import renpy.vc_version # @UnusedImport
 
     reload(sys.modules['renpy'])

@@ -57,5 +57,5 @@ def get(n):
     try:
         joysticks[n] = pygame_sdl2.joystick.Joystick(n)
         return joysticks[n]
-    except:
+    except Exception:
         return None

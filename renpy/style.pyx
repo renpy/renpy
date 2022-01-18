@@ -94,7 +94,7 @@ cpdef get_style(name):
 
     try:
         parent = get_style(end)
-    except:
+    except Exception:
         raise Exception("Style %r does not exist." % name)
 
     rv = Style(parent, name=nametuple)
@@ -704,7 +704,7 @@ cpdef build_style(StyleCore s):
 
                 try:
                     pfw.function(s.cache, cache_priorities, priority, v)
-                except:
+                except Exception:
                     renpy.game.exception_info = "While processing the {} property of {}:".format(k, style_name_to_string(s.name))
                     raise
 

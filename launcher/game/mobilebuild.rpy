@@ -158,7 +158,7 @@ init -1 python:
                     self.process.stdin.write('y\n')
                     self.process.stdin.flush()
                     time.sleep(.2)
-            except:
+            except Exception:
                 import traceback
                 traceback.print_exc()
 
@@ -196,7 +196,7 @@ init -1 python:
                     # avoid SIGTTIN caused by e.g. gradle doing empty read on terminal stdin
                     if not yes:
                         self.process.stdin.close()
-                except:
+                except Exception:
                     import traceback
                     traceback.print_exc(file=f)
                     raise
@@ -262,4 +262,3 @@ init -1 python:
                 self.process.terminate()
 
             renpy.jump(self.platform)
-

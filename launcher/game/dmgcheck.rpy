@@ -42,7 +42,7 @@ init python:
             os.unlink(fn)
             return
 
-        except:
+        except Exception:
 
             # If we're here, we didn't make it through the checks safely. So
             # put up a warning message.

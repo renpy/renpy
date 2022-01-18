@@ -278,7 +278,7 @@ def scan(name, o, prefix=""):
 
             try:
                 args = inspect.getargspec(init)
-            except:
+            except Exception:
                 args = None
 
         elif inspect.isfunction(o):

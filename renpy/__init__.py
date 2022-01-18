@@ -161,7 +161,7 @@ def get_windows_version():
 
         return (os_version.dwMajorVersion, os_version.dwMinorVersion) # type: ignore
 
-    except:
+    except Exception:
         return (10, 0)
 
 
@@ -297,7 +297,7 @@ class Backup(_object):
 
         try:
             name = mod.__name__
-        except:
+        except Exception:
             return
 
         if not name.startswith("renpy"):
@@ -331,7 +331,7 @@ class Backup(_object):
 
             try:
                 pickle.dumps(v, highest=True)
-            except:
+            except Exception:
                 print("Cannot pickle", name + "." + k, "=", repr(v))
                 print("Reduce Ex is:", repr(v.__reduce_ex__(pickle.PROTOCOL)))
 

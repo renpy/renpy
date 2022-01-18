@@ -36,7 +36,7 @@ init -1 python in util:
 
             return [ i for i in os.listdir(d) if isinstance(i, str) ]
 
-        except:
+        except Exception:
             return [ ]
 
     def walk(directory, base=None):
@@ -75,4 +75,3 @@ init -1 python in util:
                 relfn = relfn.replace("\\", "/")
 
                 yield relfn, False
-

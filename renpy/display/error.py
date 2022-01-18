@@ -108,7 +108,7 @@ def report_exception(short, full, traceback_fn):
 
     try:
         init_display()
-    except:
+    except Exception:
         return True
 
     if renpy.display.draw is None:
@@ -131,7 +131,7 @@ def report_exception(short, full, traceback_fn):
 
         if renpy.game.context(-1).next_node is not None:
             ignore_action = renpy.ui.returns(False)
-    except:
+    except Exception:
         pass
 
     try:
@@ -154,7 +154,7 @@ def report_exception(short, full, traceback_fn):
     except renpy.game.CONTROL_EXCEPTIONS:
         raise
 
-    except:
+    except Exception:
         renpy.display.log.write("While handling exception:")
         renpy.display.log.exception()
         raise
@@ -202,7 +202,7 @@ def report_parse_errors(errors, error_fn):
     except renpy.game.CONTROL_EXCEPTIONS:
         raise
 
-    except:
+    except Exception:
         renpy.display.log.write("While handling exception:")
         renpy.display.log.exception()
         raise

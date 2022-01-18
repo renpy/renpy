@@ -339,7 +339,7 @@ class SpriteManager(renpy.display.core.Displayable):
                 for i in pl:
                     i = renpy.easy.displayable(i)
                     rv.append(i)
-        except:
+        except Exception:
             pass
 
         return rv

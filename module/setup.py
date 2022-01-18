@@ -37,7 +37,7 @@ os.chdir(BASE)
 # Create the gen directory if it doesn't exist.
 try:
     os.makedirs("gen")
-except:
+except Exception:
     pass
 
 # Generate styles.

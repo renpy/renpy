@@ -505,7 +505,7 @@ change_renpy_executable()
             if not packagedest:
                 try:
                     os.makedirs(self.destination)
-                except:
+                except Exception:
                     pass
 
                 self.load_build_cache()
@@ -1136,7 +1136,7 @@ change_renpy_executable()
             try:
                 import sys, os
                 isatty = os.isatty(sys.stdin.fileno())
-            except:
+            except Exception:
                 isatty = False
 
             if isatty:

@@ -144,7 +144,7 @@ init python in distribute:
                 # Check that the time is sensible.
                 if rv[0] < 2000:
                     rv = None
-            except:
+            except Exception:
                 rv = None
 
             if rv is None:

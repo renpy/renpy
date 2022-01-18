@@ -112,7 +112,7 @@ init -1500 python:
 #                     rv = "boy"
 #                 else:
 #                     rv = "girl"
-#             except:
+#             except Exception:
 #                 rv = "girl"
 
             rv = "girl"

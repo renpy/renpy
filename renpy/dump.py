@@ -211,7 +211,7 @@ def dump(error):
                         continue
 
                     code[prefix + name] = [ filename, line ]
-                except:
+                except Exception:
                     continue
 
             if inspect.isclass(o):
@@ -234,13 +234,13 @@ def dump(error):
                             continue
 
                         code[prefix + name + "." + methname] = [ filename, line ]
-                    except:
+                    except Exception:
                         continue
 
     # Add the build info from 00build.rpy, if it's available.
     try:
         result["build"] = renpy.store.build.dump() # type: ignore
-    except:
+    except Exception:
         pass
 
     filename = renpy.exports.fsdecode(args.json_dump) # type: ignore

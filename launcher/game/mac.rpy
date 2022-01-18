@@ -45,7 +45,7 @@ init python hide:
                     os.chmod(nfn, 0o755)
                     os.unlink(fn)
 
-            except:
+            except Exception:
                 pass
 
 

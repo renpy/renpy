@@ -208,7 +208,7 @@ init python:
 
         try:
             return base + int((int(filename) - 1) / per_page)
-        except:
+        except Exception:
             return base
 
     # Processes a screenshot.

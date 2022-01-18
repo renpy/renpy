@@ -362,7 +362,7 @@ label gui_project_size:
 
                 try:
                     gui_width = int(gui_width)
-                except:
+                except Exception:
                     interface.error(_("The width must be a number."), label=None)
                     continue
                 break
@@ -378,7 +378,7 @@ label gui_project_size:
 
                 try:
                     gui_height = int(gui_height)
-                except:
+                except Exception:
                     interface.error(_("The height must be a number."), label=None)
                     continue
                 break

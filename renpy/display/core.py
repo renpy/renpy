@@ -43,7 +43,7 @@ import_time = time.time()
 try:
     import android # @UnresolvedImport
     android.init # Check to see if we have the right module.
-except:
+except Exception:
     android = None
 
 if renpy.emscripten:
@@ -1662,7 +1662,7 @@ def get_safe_mode():
         # Safe mode doesn't work on other platforms.
         return False
 
-    except:
+    except Exception:
         return False
 
 
@@ -2131,7 +2131,7 @@ class Interface(object):
 
         try:
             self.setup_nvdrs()
-        except:
+        except Exception:
             pass
 
     def setup_nvdrs(self):
@@ -2191,7 +2191,7 @@ class Interface(object):
 
             return rv
 
-        except:
+        except Exception:
             renpy.display.log.write("Could not determine DPI scale factor:")
             renpy.display.log.exception()
             return 1.0
@@ -2219,7 +2219,7 @@ class Interface(object):
         try:
             pygame.display.init()
             pygame.mouse.init()
-        except:
+        except Exception:
             pass
 
         self.post_init()
@@ -2446,7 +2446,7 @@ class Interface(object):
                 draw_objects[name] = draw_class(*args)
                 return True
 
-            except:
+            except Exception:
                 renpy.display.log.write("Couldn't import {0} renderer:".format(name))
                 renpy.display.log.exception()
 
@@ -2698,7 +2698,7 @@ class Interface(object):
             if renpy.emscripten:
                 emscripten.run_script(r'''FSDownload('%s');''' % filename)
             return True
-        except:
+        except Exception:
             if renpy.config.debug:
                 raise
 
@@ -3213,7 +3213,7 @@ class Interface(object):
 
         try:
             pygame.event.post(self.time_event)
-        except:
+        except Exception:
             pass
 
     def after_longpress(self):
@@ -3631,7 +3631,7 @@ class Interface(object):
         for w in scene.values():
             try:
                 renpy.display.predict.displayable(w)
-            except:
+            except Exception:
                 pass
 
         renpy.plog(1, "final predict")
@@ -3940,7 +3940,7 @@ class Interface(object):
                         if time_left <= 0:
                             try:
                                 pygame.event.post(self.redraw_event)
-                            except:
+                            except Exception:
                                 pass
                             pygame.time.set_timer(REDRAW, 0)
                         else:

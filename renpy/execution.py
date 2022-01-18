@@ -441,14 +441,14 @@ class Context(renpy.object.Object):
                 node = renpy.game.script.lookup(i)
                 if not node.filename.replace("\\", "/").startswith("common/"):
                     rv.append((node.filename, node.linenumber, "script call", None))
-            except:
+            except Exception:
                 pass
 
         try:
             node = renpy.game.script.lookup(self.current)
             if not node.filename.replace("\\", "/").startswith("common/"):
                 rv.append((node.filename, node.linenumber, "script", None))
-        except:
+        except Exception:
             pass
 
         return rv
@@ -837,7 +837,7 @@ class Context(renpy.object.Object):
                         nodes.append((n, self.images, self.predict_return_stack))
                         seen.add(n)
 
-            except:
+            except Exception:
 
                 if renpy.config.debug_prediction:
                     import traceback
@@ -938,6 +938,6 @@ def run_context(top):
             else:
                 raise
 
-        except:
+        except Exception:
             context.pop_all_dynamic()
             raise

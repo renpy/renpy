@@ -504,9 +504,9 @@ class Cache(object):
                 if image not in self.preload_blacklist:
                     try:
                         self.preload_texture(image)
-                    except:
+                    except Exception:
                         self.preload_blacklist.add(image)
-            except:
+            except Exception:
                 pass
 
         with self.lock:
@@ -542,7 +542,7 @@ class Cache(object):
                     surf = image.load()
                     self.pin_cache[image] = surf
                     renpy.display.draw.load_texture(surf)
-                except:
+                except Exception:
                     self.preload_blacklist.add(image)
 
     def add_load_log(self, filename):
@@ -774,7 +774,7 @@ class ZipFileImage(ImageBase):
                 sio = io.BytesIO(data)
                 rv = renpy.display.pgrender.load_image(sio, self.filename)
             return rv
-        except:
+        except Exception:
             return renpy.display.pgrender.surface((2, 2), True)
 
     def predict_files(self):

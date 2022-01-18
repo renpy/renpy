@@ -101,7 +101,7 @@ def process_file(fn):
 
     try:
         os.unlink(fn + ".bak")
-    except:
+    except Exception:
         pass
 
     os.rename(fn, fn + ".bak")

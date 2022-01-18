@@ -27,7 +27,7 @@ import pygame_sdl2 as pygame
 
 try:
     import xml.etree.ElementTree as etree
-except:
+except Exception:
     pass
 
 import renpy
