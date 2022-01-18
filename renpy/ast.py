@@ -281,7 +281,7 @@ class PyCode(object):
             (_, self.source, self.location, self.mode) = state
             self.py = 2
         else:
-            (self.py, self.source, self.location, self.mode) = state
+            (_, self.source, self.location, self.mode, self.py) = state
 
         self.bytecode = None
 
