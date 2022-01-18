@@ -46,7 +46,7 @@ set to True.
 
 Ren'Py will now run a button's unhovered property even when focus is 
 changed by default, such as when a screen is shown or unshown. To 
-revert to the old behavior, use:
+revert to the old behavior, use::
 
     define config.always_unfocus = False
 
