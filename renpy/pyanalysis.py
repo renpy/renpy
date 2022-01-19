@@ -22,17 +22,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-
-import renpy # @UnusedImport
-from renpy.python import py_compile
-
-# Import the Python AST module, instead of the Ren'Py ast module.
-import ast
-
-import zlib
-
-from renpy.compat.pickle import loads, dumps
-
 if PY2:
     from renpy.py2analysis import *
 else:
