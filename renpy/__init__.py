@@ -406,6 +406,11 @@ def import_all():
     # Adds in the Ren'Py loader.
     import renpy.loader
 
+    if not PY2:
+        import renpy.py3analysis
+    else:
+        import renpy.py2analysis
+
     import renpy.pyanalysis
 
     import renpy.ast
@@ -707,6 +712,8 @@ if 1 == 0:
     from . import performance; performance
     from . import persistent; persistent
     from . import preferences; preferences
+    from . import py2analysis; py2analysis
+    from . import py3analysis; py3analysis
     from . import pyanalysis; pyanalysis
     from . import pydict; pydict
     from . import python; python
