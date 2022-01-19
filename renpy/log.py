@@ -116,10 +116,17 @@ class LogFile(object):
 
             try:
                 self.file = io.open(fn, mode, encoding="utf-8")
-                renpy.util.expose_file(fn)
+
+                try:
+                    renpy.util.expose_file(fn)
+                except Exception:
+                    pass
             except Exception:
                 self.file = io.open(altfn, mode, encoding="utf-8")
-                renpy.util.expose_file(altfn)
+                try:
+                    renpy.util.expose_file(altfn)
+                except Exception:
+                    pass
 
             if self.append:
                 self.write('')
