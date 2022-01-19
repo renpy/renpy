@@ -769,3 +769,27 @@ def save_cache():
             f.write(data)
     except Exception:
         pass
+
+
+__all__ = [
+    "always_constants",
+    "Analysis",
+    "ccache",
+    "CompilerCache",
+    "const",
+    "constants",
+    "Control",
+    "DeltaSet",
+    "GLOBAL_CONST",
+    "load_cache",
+    "LOCAL_CONST",
+    "local_constants",
+    "new_ccache",
+    "not_const",
+    "NOT_CONST",
+    "not_constants",
+    "pure",
+    "pure_functions",
+    "PyAnalysis",
+    "save_cache",
+]
