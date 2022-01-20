@@ -58,6 +58,9 @@ def onetime_init():
     if os.path.exists(fn):
         dll = fn
 
+    if not PY2:
+        dll = dll.encode("utf-8")
+
     if not renpy.gl2.live2dmodel.load(dll):
         raise Exception("Could not load Live2D. {} was not found.".format(dll))
 
@@ -709,7 +712,7 @@ class Live2D(renpy.display.core.Displayable):
         # Determine the current motion.
 
         motion_st = st
-        
+
         if st_fade is not None:
             motion_st = st - st_fade
 
@@ -739,7 +742,7 @@ class Live2D(renpy.display.core.Displayable):
             if (not self.loop) or (not motion.duration):
                 st = motion.duration
                 last_frame = True
-            
+
             elif (st_fade is not None) and not common.is_seamless(m):
                 # This keeps a motion from being restarted after it would have
                 # been faded out.
@@ -752,7 +755,7 @@ class Live2D(renpy.display.core.Displayable):
         if motion is None:
             return None
 
-        # Determine the name of the current, last, and next motions. These are 
+        # Determine the name of the current, last, and next motions. These are
         # None if there is no motion.
 
         if current_index < len(self.motions):
@@ -778,7 +781,7 @@ class Live2D(renpy.display.core.Displayable):
             do_fade_in = False
 
         if (next_name == current_name) and common.is_seamless(current_name) and (st_fade is None):
-            do_fade_out = False        
+            do_fade_out = False
 
         # Apply the motion.
 
@@ -880,11 +883,9 @@ class Live2D(renpy.display.core.Displayable):
 
             if state.old is None:
                 fade = False
-
-            if state.old_base_time is None:
+            elif state.old_base_time is None:
                 fade = False
-
-            if state.old.common is not self.common:
+            elif state.old.common is not self.common:
                 fade = False
 
         # Reset the parameter, and update.
