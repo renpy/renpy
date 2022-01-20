@@ -57,7 +57,7 @@ init python:
                 else:
                     subprocess.Popen([ "xdg-open", directory ])
 
-            except:
+            except Exception:
                 pass
 
     # Used for testing.

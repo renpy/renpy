@@ -459,6 +459,8 @@ class Blink(renpy.display.core.Displayable):
 
     def render(self, height, width, st, at):
 
+        delay = 0
+
         if self.anim_timebase:
             t = at
         else:

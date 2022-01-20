@@ -58,7 +58,7 @@ def path_to_saves(gamedir, save_directory=None):
             open(fn, "r").close()
             os.unlink(fn)
             return True
-        except:
+        except Exception:
             return False
 
     # Android.
@@ -72,16 +72,15 @@ def path_to_saves(gamedir, save_directory=None):
         for rv in paths:
             if os.path.isdir(rv) and test_writable(rv):
                 break
+        else:
+            rv = paths[-1]
 
         print("Saving to", rv)
-
-        # We return the last path as the default.
-
         return rv
 
     if renpy.ios:
-        from pyobjus import autoclass
-        from pyobjus.objc_py_types import enum
+        from pyobjus import autoclass # type: ignore
+        from pyobjus.objc_py_types import enum # type: ignore
 
         NSSearchPathDirectory = enum("NSSearchPathDirectory", NSDocumentDirectory=9)
         NSSearchPathDomainMask = enum("NSSearchPathDomainMask", NSUserDomainMask=1)
@@ -96,7 +95,7 @@ def path_to_saves(gamedir, save_directory=None):
         # url.path seems to change type based on iOS version, for some reason.
         try:
             rv = url.path().UTF8String().decode("utf-8")
-        except:
+        except Exception:
             rv = url.path.UTF8String().decode("utf-8")
 
         print("Saving to", rv)
@@ -154,7 +153,7 @@ def path_to_renpy_base():
 # which helps py2exe et al.
 try:
     import ast; ast
-except:
+except Exception:
     print("Ren'Py requires at least python 2.6.")
     sys.exit(0)
 
@@ -164,9 +163,9 @@ android = ("ANDROID_PRIVATE" in os.environ)
 # renderers.
 if android:
     __main__ = sys.modules["__main__"]
-    __main__.path_to_renpy_base = path_to_renpy_base
-    __main__.path_to_common = path_to_common
-    __main__.path_to_saves = path_to_saves
+    __main__.path_to_renpy_base = path_to_renpy_base # type: ignore
+    __main__.path_to_common = path_to_common # type: ignore
+    __main__.path_to_saves = path_to_saves # type: ignore
 
 
 def main():

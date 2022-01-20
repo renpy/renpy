@@ -57,7 +57,7 @@ def get_path(fn):
     try:
         if not os.path.exists(dn):
             os.makedirs(dn)
-    except:
+    except Exception:
         pass
 
     return fn
@@ -242,7 +242,7 @@ def index_archives():
             try:
                 fn = transfn(prefix + ext)
                 f = open(fn, "rb")
-            except:
+            except Exception:
                 continue
             with f:
                 file_header = f.read(max_header_length)
@@ -277,7 +277,7 @@ def walkdir(dir): # @ReservedAssignment
 
         try:
             i = renpy.exports.fsdecode(i)
-        except:
+        except Exception:
             continue
 
         if os.path.isdir(dir + "/" + i):
@@ -660,7 +660,7 @@ def load_from_filesystem(name):
         try:
             fn = transfn(name)
             return open_file(fn, "rb")
-        except:
+        except Exception:
             pass
 
     return None
@@ -818,7 +818,7 @@ def loadable_core(name):
         transfn(name)
         loadable_cache[name] = True
         return True
-    except:
+    except Exception:
         pass
 
     for apk in apks:
@@ -884,7 +884,7 @@ def transfn(name):
 hash_cache = dict()
 
 
-def get_hash(name):
+def get_hash(name): # type: (str) -> int
     """
     Returns the time the file m was last modified, or 0 if it
     doesn't exist or is archived.
@@ -907,7 +907,7 @@ def get_hash(name):
 
             rv = zlib.adler32(data, rv)
 
-    except:
+    except Exception:
         pass
 
     hash_cache[name] = rv
@@ -937,7 +937,7 @@ class RenpyImporter(object):
 
             fn = prefix + fullname.replace(".", "/")
 
-        except:
+        except Exception:
             # raise Exception("Could importer-translate %r + %r" % (prefix, fullname))
             return None
 
@@ -984,7 +984,7 @@ class RenpyImporter(object):
 
                 code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
                 break
-            except:
+            except Exception:
                 if encoding == "latin-1":
                     raise
 
@@ -1011,7 +1011,10 @@ def add_python_directory(path):
     if path and not path.endswith("/"):
         path = path + "/"
 
-    sys.meta_path.insert(0, RenpyImporter(path))
+    sys.meta_path.insert(0, RenpyImporter(path)) # type: ignore
+    # per: https://docs.python.org/3/library/sys.html#sys.meta_path,
+    # objects in sys.meta_path may have just find_module, and find_spec
+    # is synthesized.
 
 
 def init_importer():
@@ -1053,7 +1056,7 @@ def auto_mtime(fn):
 
     try:
         return os.path.getmtime(fn)
-    except:
+    except Exception:
         return None
 
 

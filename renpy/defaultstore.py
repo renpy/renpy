@@ -104,7 +104,7 @@ class _Config(object):
             raise Exception('config.%s is not a known configuration variable.' % (name))
 
         if name == "script_version":
-            renpy.store._set_script_version(value) # E1101 @UndefinedVariable
+            renpy.store._set_script_version(value) # type: ignore
 
         if name == "developer":
             if value == "auto":
@@ -234,7 +234,7 @@ AudioData = renpy.audio.audio.AudioData
 # NOTE: When exporting something from here, decide if we need to add it to
 # renpy.pyanalysis.pure_functions.
 
-Style = renpy.style.Style # @UndefinedVariable
+Style = renpy.style.Style # type: ignore
 
 NoRollback = renpy.python.NoRollback
 
@@ -409,7 +409,7 @@ def predict_say(who, what):
     who = Character(who, kind=adv)
     try:
         who.predict(what)
-    except:
+    except Exception:
         pass
 
 

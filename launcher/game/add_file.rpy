@@ -54,7 +54,7 @@ label add_file:
 
         try:
             os.makedirs(dir)
-        except:
+        except Exception:
             pass
 
         contents = u"\uFEFF"

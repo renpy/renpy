@@ -81,7 +81,7 @@ def default_tts_function(s):
         try:
             process.terminate()
             process.wait()
-        except:
+        except Exception:
             pass
 
     process = None
@@ -93,8 +93,8 @@ def default_tts_function(s):
 
     if renpy.game.preferences.self_voicing == "clipboard":
         try:
-            pygame.scrap.put(pygame.SCRAP_TEXT, s.encode("utf-8"))
-        except:
+            pygame.scrap.put(pygame.scrap.SCRAP_TEXT, s.encode("utf-8"))
+        except Exception:
             pass
 
         return
@@ -139,7 +139,7 @@ def default_tts_function(s):
         try:
             from renpy.audio.webaudio import call
             call("tts", s)
-        except:
+        except Exception:
             pass
 
 
@@ -152,7 +152,7 @@ def tts(s):
 
     try:
         renpy.config.tts_function(s)
-    except:
+    except Exception:
         pass
 
     queue = [ ]

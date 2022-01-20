@@ -1,4 +1,6 @@
-import pathlib 
+#!/usr/bin/env python3
+
+import pathlib
 import collections
 import re
 
@@ -12,7 +14,7 @@ def main():
 
     # .py modules.
     for p in (ROOT / "renpy").glob("**/*.py"):
-    
+
         text = p.read_text()
         text = re.sub(r'^from renpy.compat import(.*)*$', IMPORT_LINE, text, flags=re.MULTILINE)
         p.write_text(text)

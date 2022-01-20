@@ -93,7 +93,7 @@ def traceback_list(tb):
                 if report is not None:
                     l.extend(report)
                     continue
-            except:
+            except Exception:
                 pass
 
         l.append((filename, line_number, name, None))
@@ -104,7 +104,7 @@ def traceback_list(tb):
         if line is None:
             try:
                 line = linecache.getline(filename, line_number)
-            except:
+            except Exception:
                 line = ''
 
         rv.append((filename, line_number, name, line))
@@ -138,13 +138,13 @@ def open_error_file(fn, mode):
         new_fn = os.path.join(renpy.config.logdir, fn) # type: ignore
         f = open(new_fn, mode)
         return f, new_fn
-    except:
+    except Exception:
         pass
 
     try:
         f = open(fn, mode)
         return f, fn
-    except:
+    except Exception:
         pass
 
     import tempfile
@@ -194,7 +194,7 @@ def report_exception(e, editor=True):
         sys.stdout.write(full.getvalue())
         sys.stdout.write("\n")
         sys.stdout.write(simple.getvalue())
-    except:
+    except Exception:
         pass
 
     print('', file=full)
@@ -204,7 +204,7 @@ def report_exception(e, editor=True):
         print(renpy.version, file=full)
         print(renpy.config.name + " " + renpy.config.version, file=full)
         print(str(time.ctime()), file=full)
-    except:
+    except Exception:
         pass
 
     simple = simple.getvalue()
@@ -231,16 +231,16 @@ def report_exception(e, editor=True):
 
         try:
             renpy.util.expose_file(traceback_fn)
-        except:
+        except Exception:
             pass
 
         try:
             if editor and ((renpy.game.args.command == "run") or (renpy.game.args.errors_in_editor)): # type: ignore
                 renpy.exports.launch_editor([ traceback_fn ], 1, transient=1)
-        except:
+        except Exception:
             pass
 
-    except:
+    except Exception:
         traceback_fn = os.path.join(renpy.config.basedir, "traceback.txt") # type: ignore
 
     return simple, full, traceback_fn

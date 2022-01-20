@@ -116,10 +116,17 @@ class LogFile(object):
 
             try:
                 self.file = io.open(fn, mode, encoding="utf-8")
-                renpy.util.expose_file(fn)
-            except:
+
+                try:
+                    renpy.util.expose_file(fn)
+                except Exception:
+                    pass
+            except Exception:
                 self.file = io.open(altfn, mode, encoding="utf-8")
-                renpy.util.expose_file(altfn)
+                try:
+                    renpy.util.expose_file(altfn)
+                except Exception:
+                    pass
 
             if self.append:
                 self.write('')
@@ -129,7 +136,7 @@ class LogFile(object):
             self.write("%s", time.ctime())
             try:
                 self.write("%s", platform.platform())
-            except:
+            except Exception:
                 self.write("Unknown platform.")
             self.write("%s", renpy.version)
             self.write("%s %s", renpy.config.name, renpy.config.version)
@@ -137,7 +144,7 @@ class LogFile(object):
 
             return True
 
-        except:
+        except Exception:
             self.file = False
             traceback.print_exc(file=real_stderr)
             return False
@@ -155,7 +162,7 @@ class LogFile(object):
             if not self.raw_write:
                 try:
                     s = s % args
-                except:
+                except Exception:
                     s = repr((s,) + args)
 
                 s += "\n"
@@ -244,7 +251,7 @@ class StdioRedirector(object):
 
         try:
             callbacks = self.get_callbacks()
-        except:
+        except Exception:
             callbacks = [ ]
 
         for l in lines[:-1]:
@@ -253,7 +260,7 @@ class StdioRedirector(object):
             for i in callbacks:
                 try:
                     i(l)
-                except:
+                except Exception:
                     pass
 
         self.buffer = lines[-1]

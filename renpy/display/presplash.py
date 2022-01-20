@@ -98,7 +98,7 @@ def start(basedir, gamedir):
 
         import ctypes
 
-        ctypes.windll.user32.SetProcessDPIAware()
+        ctypes.windll.user32.SetProcessDPIAware() # type: ignore
 
     pygame_sdl2.display.init()
 
@@ -107,7 +107,7 @@ def start(basedir, gamedir):
     if presplash_fn:
         presplash = pygame_sdl2.image.load(presplash_fn)
     else:
-        presplash = ProgressBar(foreground_fn, background_fn)
+        presplash = ProgressBar(foreground_fn, background_fn) # type: ignore
         progress_bar = presplash
 
     global window

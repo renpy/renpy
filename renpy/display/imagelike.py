@@ -26,7 +26,8 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 import renpy
-from renpy.display.render import render, Render, Matrix2D
+from renpy.display.render import render, Render
+from renpy.display.matrix import Matrix2D
 
 
 class Solid(renpy.display.core.Displayable):
@@ -189,10 +190,10 @@ class Frame(renpy.display.core.Displayable):
 
     def after_upgrade(self, version):
         if version < 2:
-            self.left = self.xborder
-            self.right = self.xborder
-            self.top = self.yborder
-            self.bottom = self.yborder
+            self.left = self.xborder # type: ignore
+            self.right = self.xborder # type: ignore
+            self.top = self.yborder # type: ignore
+            self.bottom = self.yborder # type: ignore
 
     def __init__(self, image, left=None, top=None, right=None, bottom=None,
                  xborder=0, yborder=0, bilinear=True, tile=False,

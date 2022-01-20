@@ -339,6 +339,7 @@ class ImageReference(renpy.display.core.Displayable):
         super(ImageReference, self).__init__(**properties)
 
         self.name = name
+        self.target = None # type: renpy.display.core.Displayable|None
 
     def _repr_info(self):
         return repr(self.name)
@@ -381,6 +382,8 @@ class ImageReference(renpy.display.core.Displayable):
 
             if renpy.config.debug:
                 raise Exception(msg)
+
+        target = None # typing
 
         args = [ ]
 
@@ -445,7 +448,7 @@ class ImageReference(renpy.display.core.Displayable):
                 rv.name = rv.name._duplicate(args)
 
         rv.find_target()
-        rv._duplicatable = rv.target._duplicatable
+        rv._duplicatable = rv.target._duplicatable # type: ignore
 
         return rv
 
@@ -543,10 +546,10 @@ class DynamicImage(renpy.display.core.Displayable):
     nosave = [ 'raw_target' ]
 
     # The target that this image currently resolves to.
-    target = None
+    target = None # type: renpy.display.core.Displayable|None
 
     # The raw target that the image resolves to, before it has been parameterized.
-    raw_target = None
+    raw_target = None # type: renpy.display.core.Displayable|None
 
     # Have we been locked, so we never change?
     locked = False
@@ -657,11 +660,11 @@ class DynamicImage(renpy.display.core.Displayable):
         if not update:
             return True
 
-        raw_target = target
+        raw_target = target # type: renpy.display.core.Displayable
         old_target = self.target
 
-        if target._duplicatable:
-            target = target._duplicate(self._args)
+        if raw_target._duplicatable:
+            target = raw_target._duplicate(self._args)
 
         self.raw_target = raw_target
         self.target = target
@@ -792,9 +795,9 @@ class ShownImageInfo(renpy.object.Object):
             self.attributes = { }
             self.shown = set()
 
-            for layer in self.images:
-                for tag in self.images[layer]:
-                    self.attributes[layer, tag] = self.images[layer][tag][1:]
+            for layer in self.images: # type: ignore
+                for tag in self.images[layer]: # type: ignore
+                    self.attributes[layer, tag] = self.images[layer][tag][1:] # type: ignore
                     self.shown.add((layer, tag))
 
     def get_attributes(self, layer, tag, default=()):
@@ -1008,7 +1011,7 @@ class ShownImageInfo(renpy.object.Object):
             return None
 
 
-renpy.display.core.ImagePredictInfo = ShownImageInfo
+renpy.display.core.ImagePredictInfo = ShownImageInfo # type: ignore
 
 # Functions that have moved from this module to other modules,
 # that live here for the purpose of backward-compatibility.

@@ -103,7 +103,7 @@ init python in project:
             try:
                 with open(os.path.join(self.path, "project.json"), "rb") as f:
                     self.data = json.load(f)
-            except:
+            except Exception:
                 self.data = { }
 
             self.update_data()
@@ -116,7 +116,7 @@ init python in project:
             try:
                 with open(os.path.join(self.path, "project.json"), "wb") as f:
                     json.dump(self.data, f)
-            except:
+            except Exception:
                 self.load_data()
 
         def update_data(self):
@@ -167,7 +167,7 @@ init python in project:
 
             try:
                 os.makedirs(tmp)
-            except:
+            except Exception:
                 pass
 
             if os.path.isdir(tmp):
@@ -186,7 +186,7 @@ init python in project:
                     self.tmp = tmp
                     return
 
-                except:
+                except Exception:
                     pass
 
             self.tmp = tempfile.mkdtemp()
@@ -314,7 +314,7 @@ init python in project:
                 # add todo list to dump data
                 self.update_todos()
 
-            except:
+            except Exception:
                 self.dump["error"] = True
 
         def update_todos(self):
@@ -338,7 +338,7 @@ init python in project:
 
                     try:
                         line = line.decode("utf-8")
-                    except:
+                    except Exception:
                         continue
 
                     m = re.search(r"#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
@@ -541,7 +541,7 @@ init python in project:
 
             try:
                 ppath = self.find_basedir(ppath)
-            except:
+            except Exception:
                 return
 
             if ppath is None:

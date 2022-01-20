@@ -121,7 +121,7 @@ def endian_order(src, r, g, b, a):
 
     rv = [ a, a, a, a ]
 
-    for i, index_i in zip((r, g, b, a), bo_cache):
+    for i, index_i in zip((r, g, b, a), bo_cache): # type: ignore
         rv[index_i] = i
 
     return rv
@@ -263,13 +263,13 @@ def colormatrix(src, dst, matrix):
 
     o = [ None ] * 4
     for i in range(0, 4):
-        o[offs[i]] = i
+        o[offs[i]] = i # type: ignore
 
     _renpy.colormatrix(src, dst,
-                       c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4],
-                       c[o[1]][o[0]], c[o[1]][o[1]], c[o[1]][o[2]], c[o[1]][o[3]], c[o[1]][4],
-                       c[o[2]][o[0]], c[o[2]][o[1]], c[o[2]][o[2]], c[o[2]][o[3]], c[o[2]][4],
-                       c[o[3]][o[0]], c[o[3]][o[1]], c[o[3]][o[2]], c[o[3]][o[3]], c[o[3]][4])
+                       c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4], # type: ignore
+                       c[o[1]][o[0]], c[o[1]][o[1]], c[o[1]][o[2]], c[o[1]][o[3]], c[o[1]][4], # type: ignore
+                       c[o[2]][o[0]], c[o[2]][o[1]], c[o[2]][o[2]], c[o[2]][o[3]], c[o[2]][4], # type: ignore
+                       c[o[3]][o[0]], c[o[3]][o[1]], c[o[3]][o[2]], c[o[3]][o[3]], c[o[3]][4]) # type: ignore
 
 
 def subpixel(src, dst, x, y):

@@ -199,7 +199,7 @@ init -1500 python:
             try:
                 import webbrowser
                 webbrowser.open(target)
-            except:
+            except Exception:
                 pass
 
     def hyperlink_sensitive(target):

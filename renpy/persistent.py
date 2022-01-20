@@ -31,7 +31,7 @@ import weakref
 
 import renpy
 
-from renpy.loadsave import dump, dumps, loads
+from renpy.compat.pickle import dump, dumps, loads
 
 # The class that's used to hold the persistent data.
 
@@ -200,13 +200,13 @@ def load(filename):
         with open(filename, "rb") as f:
             s = zlib.decompress(f.read())
         persistent = loads(s)
-    except:
+    except Exception:
         import renpy.display
 
         try:
             renpy.display.log.write("Loading persistent.")
             renpy.display.log.exception()
-        except:
+        except Exception:
             pass
 
         return None
@@ -410,7 +410,7 @@ def save():
     try:
         data = zlib.compress(dumps(renpy.game.persistent), 3)
         renpy.loadsave.location.save_persistent(data)
-    except:
+    except Exception:
         if renpy.config.developer:
             raise
 
@@ -467,7 +467,7 @@ class _MultiPersistent(object):
 
         try:
             os.rename(fn + ".new", fn)
-        except:
+        except Exception:
             os.unlink(fn)
             os.rename(fn + ".new", fn)
 
@@ -503,7 +503,7 @@ def MultiPersistent(name, save_on_quit=False):
     # Make the new persistent directory, why not?
     try:
         os.makedirs(files[-1]) # type: ignore
-    except:
+    except Exception:
         pass
 
     fn = "" # prevent a warning from happening.
@@ -517,7 +517,7 @@ def MultiPersistent(name, save_on_quit=False):
             try:
                 data = open(fn, "rb").read()
                 break
-            except:
+            except Exception:
                 pass
 
     rv = _MultiPersistent()
@@ -525,11 +525,11 @@ def MultiPersistent(name, save_on_quit=False):
     if data is not None:
         try:
             rv = loads(data)
-        except:
+        except Exception:
             renpy.display.log.write("Loading MultiPersistent at %r:" % fn)
             renpy.display.log.exception()
 
-    rv._filename = fn 
+    rv._filename = fn
 
     if save_on_quit:
         save_MP_instances.add(rv)

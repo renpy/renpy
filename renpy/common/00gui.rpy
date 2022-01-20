@@ -92,7 +92,7 @@ init -1100 python in gui:
                 gui.text_size = 30
                 # ...
 
-        It can also be called with `f` (a function) and `variant` (a string), 
+        It can also be called with `f` (a function) and `variant` (a string),
         giving the variant name.
         """
 
@@ -226,7 +226,8 @@ init -1100 python in gui:
             else:
                 prefs[self.name] = self.a
 
-            rebuild()
+            if self.rebuild:
+                rebuild()
 
         def get_selected(self):
             prefs = persistent._gui_preference
@@ -473,7 +474,7 @@ init -1100 python in gui:
 
                 try:
                     os.makedirs(dn, 0o777)
-                except:
+                except Exception:
                     pass
 
                 if os.path.exists(fn):
@@ -491,12 +492,7 @@ init -1100 python in gui:
                     if not gui._skip_backup:
                         os.rename(fn, bfn)
 
-                import cStringIO
-                sio = cStringIO.StringIO()
-                renpy.display.module.save_png(s, sio, 3)
-
-                with open(fn, "wb") as f:
-                    f.write(sio.getvalue())
+                pygame_sdl2.image.save(s, fn, 3)
 
             def fill(self, color=None):
                 if color is None:

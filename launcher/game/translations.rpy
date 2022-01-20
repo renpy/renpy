@@ -54,7 +54,7 @@ init python:
 
             try:
                 os.makedirs(os.path.join(config.basedir, "tmp"))
-            except:
+            except Exception:
                 pass
 
             write_test = os.path.join(tempdir, "writetest.txt")
@@ -67,7 +67,7 @@ init python:
 
             os.unlink(write_test)
 
-        except:
+        except Exception:
             tempdir = tempfile.mkdtemp()
 
         strings_json = os.path.join(tempdir, "strings.json")

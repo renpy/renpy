@@ -165,7 +165,10 @@ class XMLToPYX:
         self.find_enums()
 
         # A map from feature name to value.
-        self.features = { }
+        self.features = { } 
+
+        # The features, merged together.
+        self.merged = None # type:Feature|None
 
         self.find_features()
         self.select_features()
@@ -274,7 +277,7 @@ class XMLToPYX:
 
         f = gl & gles
 
-        self.features = f
+        self.merged = f
 
     def generate_uguugl_pxd(self, f):
 
@@ -289,7 +292,7 @@ class XMLToPYX:
         for l in self.types:
             w(f"    {l}")
 
-        enums = list(self.features.enums)
+        enums = list(self.merged.enums)
         enums.sort(key=lambda n : (int(self.enums[n], 0), n))
 
         w(f'')
@@ -297,7 +300,7 @@ class XMLToPYX:
         for i in enums:
             w(f"    GLenum {i}")
 
-        for i in sorted(self.features.commands):
+        for i in sorted(self.merged.commands):
             typename = i + "_type"
             c = self.commands[i]
 
@@ -312,7 +315,7 @@ class XMLToPYX:
         def w(s):
             f.write(s + "\n")
 
-        for i in sorted(self.features.commands):
+        for i in sorted(self.merged.commands):
             c = self.commands[i]
 
             w("")
@@ -323,7 +326,7 @@ class XMLToPYX:
         w("")
         w("def load():")
 
-        for i in sorted(self.features.commands):
+        for i in sorted(self.merged.commands):
 
             names = list(self.commands[i].aliases)
             names.remove(i)
@@ -354,7 +357,7 @@ class XMLToPYX:
         for l in self.type_names:
             w(f"from renpy.uguu.gl cimport {l}")
 
-        for i in sorted(self.features.commands):
+        for i in sorted(self.merged.commands):
             c = self.commands[i]
 
             if c.return_type.strip() == "void *":
@@ -391,7 +394,7 @@ class XMLToPYX:
 
         # Expose the enums to python.
 
-        enums = list(self.features.enums)
+        enums = list(self.merged.enums)
         enums.sort(key=lambda n : (int(self.enums[n], 0), n))
 
         w(f'')

@@ -44,7 +44,7 @@ class Texture(object):
         if d is self.displayable:
             return self
 
-        return Texture(self, d, self.focus, self.main, self.fit)
+        return Texture(d, self.focus, self.main, self.fit)
 
 
 class Model(renpy.display.core.Displayable):

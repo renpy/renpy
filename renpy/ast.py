@@ -233,12 +233,14 @@ class PyExpr(str):
     __slots__ = [
         'filename',
         'linenumber',
+        'py',
         ]
 
-    def __new__(cls, s, filename, linenumber):
+    def __new__(cls, s, filename, linenumber, py=3):
         self = str.__new__(cls, s)
         self.filename = filename
         self.linenumber = linenumber
+        self.py = py
 
         # Queue the string for precompilation.
         if self and (renpy.game.script.all_pyexpr is not None):
@@ -247,7 +249,7 @@ class PyExpr(str):
         return self
 
     def __getnewargs__(self):
-        return (str(self), self.filename, self.linenumber)
+        return (str(self), self.filename, self.linenumber, self.py)
 
 
 def probably_side_effect_free(expr):
@@ -268,13 +270,19 @@ class PyCode(object):
         'mode',
         'bytecode',
         'hash',
+        'py',
         ]
 
     def __getstate__(self):
-        return (1, self.source, self.location, self.mode)
+        return (1, self.source, self.location, self.mode, self.py)
 
     def __setstate__(self, state):
-        (_, self.source, self.location, self.mode) = state
+        if len(state) == 4:
+            (_, self.source, self.location, self.mode) = state
+            self.py = 2
+        else:
+            (_, self.source, self.location, self.mode, self.py) = state
+
         self.bytecode = None
 
         if renpy.game.script.record_pycode:
@@ -284,6 +292,11 @@ class PyCode(object):
 
         if isinstance(source, PyExpr):
             loc = (source.filename, source.linenumber, source)
+
+        if PY2:
+            self.py = 2
+        else:
+            self.py = 3
 
         # The source code.
         self.source = source
@@ -305,14 +318,14 @@ class PyCode(object):
         try:
             if self.hash is not None:
                 return self.hash
-        except:
+        except Exception:
             pass
 
         code = self.source
         if isinstance(code, renpy.python.ast.AST): # @UndefinedVariable
             code = renpy.python.ast.dump(code) # @UndefinedVariable
 
-        self.hash = bchr(renpy.bytecode_version) + hashlib.md5((repr(self.location) + code).encode("utf-8")).digest()
+        self.hash = bchr(renpy.bytecode_version) + hashlib.md5((repr(self.location) + code).encode("utf-8")).digest() # type:ignore
         return self.hash
 
 
@@ -351,7 +364,7 @@ class Scry(object):
         else:
             try:
                 return self._next.scry()
-            except:
+            except Exception:
                 return None
 
 
@@ -572,7 +585,7 @@ def eval_who(who, fast=None):
 
     try:
         return renpy.python.py_eval(who)
-    except:
+    except Exception:
         raise Exception("Sayer '%s' is not defined." % who)
 
 
@@ -714,9 +727,9 @@ class Say(Node):
             kwargs.setdefault("interact", self.interact)
 
             if getattr(who, "record_say", True):
-                renpy.store._last_say_who = self.who 
-                renpy.store._last_say_what = what 
-                renpy.store._last_say_args = args 
+                renpy.store._last_say_who = self.who
+                renpy.store._last_say_what = what
+                renpy.store._last_say_args = args
                 renpy.store._last_say_kwargs = kwargs
 
             say_menu_with(self.with_, renpy.game.interface.set_transition)
@@ -1104,7 +1117,7 @@ def predict_imspec(imspec, scene=False, atl=None):
         try:
             img = renpy.python.py_eval(expression)
             img = renpy.easy.displayable(img)
-        except:
+        except Exception:
             return
     else:
         img = None
@@ -1113,16 +1126,16 @@ def predict_imspec(imspec, scene=False, atl=None):
     for i in at_expr_list:
         try:
             at_list.append(renpy.python.py_eval(i))
-        except:
+        except Exception:
             pass
 
     if atl is not None:
         try:
             at_list.append(renpy.display.motion.ATLTransform(atl))
-        except:
+        except Exception:
             pass
 
-    layer = renpy.exports.default_layer(layer, tag or name, expression) 
+    layer = renpy.exports.default_layer(layer, tag or name, expression)
 
     if scene:
         renpy.game.context().images.predict_scene(layer)
@@ -1453,7 +1466,7 @@ class With(Node):
             if trans:
                 renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
 
-        except:
+        except Exception:
             pass
 
         return [ self.next ]
@@ -1513,7 +1526,7 @@ class Call(Node):
 
             try:
                 label = renpy.python.py_eval(label)
-            except:
+            except Exception:
                 return [ ]
 
             if not renpy.game.script.has_label(label):
@@ -1773,7 +1786,7 @@ class Jump(Node):
 
             try:
                 label = renpy.python.py_eval(label)
-            except:
+            except Exception:
                 return [ ]
 
             if not renpy.game.script.has_label(label):
@@ -2116,6 +2129,9 @@ class StoreNamespace(object):
         self.store = store
 
     def set(self, name, value):
+        renpy.python.store_dicts[self.store][name] = value
+
+    def set_default(self, name, value):
         renpy.python.store_dicts[self.store][name] = value
 
     def get(self, name):

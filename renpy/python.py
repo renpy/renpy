@@ -399,7 +399,7 @@ def reached(obj, reachable, wait):
         # Treat as fields, indexed by strings.
         for v in vars(obj).values():
             reached(v, reachable, wait)
-    except:
+    except Exception:
         pass
 
     try:
@@ -407,14 +407,14 @@ def reached(obj, reachable, wait):
         if not isinstance(obj, basestring):
             for v in obj.__iter__():
                 reached(v, reachable, wait)
-    except:
+    except Exception:
         pass
 
     try:
         # Treat as dict.
         for v in obj.values():
             reached(v, reachable, wait)
-    except:
+    except Exception:
         pass
 
     # parents.pop()
@@ -720,7 +720,7 @@ def quote_eval(s):
     return "".join(rv[:-2])
 
 
-def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True):
+def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
@@ -755,6 +755,15 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
     if isinstance(source, renpy.ast.PyExpr):
         filename = source.filename
         lineno = source.linenumber
+
+        if py is None:
+            py = source.py
+
+    if py is None:
+        if PY2:
+            py = 2
+        else:
+            py = 3
 
     if cache:
         key = (lineno, filename, str(source), mode, renpy.script.MAGIC)
@@ -794,17 +803,26 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         else:
             py_mode = mode
 
-        if filename in py3_files:
+        if (not PY2) or (filename in py3_files):
 
             flags = py3_compile_flags
-            tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+
+            try:
+                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+            except SyntaxError as orig_e:
+
+                try:
+                    fixed_source = renpy.compat.fixes.fix_tokens(source)
+                    tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                except:
+                    raise orig_e
 
         else:
 
             try:
                 flags = new_compile_flags
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
-            except:
+            except Exception:
                 flags = old_compile_flags
                 source = escape_unicode(source)
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
@@ -975,7 +993,7 @@ class RevertableList(list):
     append = mutator(list.append)
     extend = mutator(list.extend)
     insert = mutator(list.insert)
-    pop = mutator(list.pop)
+    pop = mutator(list.pop) # type: ignore
     remove = mutator(list.remove)
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
@@ -991,7 +1009,7 @@ class RevertableList(list):
     __add__ = wrapper(list.__add__) # type: ignore
     if PY2:
         __getslice__ = wrapper(list.__getslice__) # type: ignore
- 
+
     del wrapper
 
     def __getitem__(self, index):
@@ -1277,7 +1295,7 @@ class RollbackRandom(random.Random):
         jumpahead = mutator(random.Random.jumpahead) # type: ignore
 
     getrandbits = mutator(random.Random.getrandbits)
-    seed = mutator(random.Random.seed)
+    seed = mutator(random.Random.seed) # type: ignore
     random = mutator(random.Random.random)
 
     def Random(self, seed=None):

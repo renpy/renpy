@@ -140,7 +140,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
             ctx.pause = False
 
-        except:
+        except Exception:
             if renpy.config.debug_sound:
                 raise
 
@@ -236,10 +236,10 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
 
             ctx.pause = False
 
-        except:
+        except Exception:
             if renpy.config.debug_sound:
                 raise
-    
+
 
 def playable(filename, channel="music"):
     """
@@ -299,7 +299,7 @@ def stop(channel="music", fadeout=None):
             ctx.last_filenames = [ ]
             ctx.last_tight = False
 
-        except:
+        except Exception:
             if renpy.config.debug_sound:
                 raise
 
@@ -347,7 +347,7 @@ def get_delay(time, channel="music"):
 
         return time - t
 
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
@@ -375,7 +375,7 @@ def get_pos(channel="music"):
 
         return t
 
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
@@ -388,7 +388,7 @@ def get_duration(channel="music"):
 
     Returns the duration of the audio or video file on `channel`. Returns
     0.0 if no file is playing on `channel`, or the duration is unknown.
-    Some formats - notably MP3 - do not include duration information in a 
+    Some formats - notably MP3 - do not include duration information in a
     format Ren'Py can access.
     """
 
@@ -396,7 +396,7 @@ def get_duration(channel="music"):
         c = renpy.audio.audio.get_channel(channel)
         return c.get_duration()
 
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
@@ -414,7 +414,7 @@ def get_playing(channel="music"):
     try:
         c = renpy.audio.audio.get_channel(channel)
         return c.get_playing()
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
@@ -471,7 +471,7 @@ def set_volume(volume, delay=0, channel="music"):
     try:
         c = renpy.audio.audio.get_channel(channel)
         c.set_secondary_volume(volume, delay)
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
@@ -499,7 +499,7 @@ def set_pan(pan, delay, channel="music"):
     try:
         c = renpy.audio.audio.get_channel(channel)
         c.set_pan(pan, delay)
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
@@ -520,7 +520,7 @@ def set_queue_empty_callback(callback, channel="music"):
     try:
         c = renpy.audio.audio.get_channel(channel)
         c.callback = callback
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
@@ -535,7 +535,7 @@ def set_pause(value, channel="music"):
     try:
         c = renpy.audio.audio.get_channel(channel)
         c.copy_context().pause = value
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
@@ -549,7 +549,7 @@ def get_pause(channel="music"):
     try:
         c = renpy.audio.audio.get_channel(channel)
         return c.context.pause
-    except:
+    except Exception:
 
         return False
 
@@ -572,7 +572,7 @@ def set_mixer(channel, mixer, default=False):
         if not default or c.mixer is None:
             c.mixer = mixer
 
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
@@ -598,7 +598,7 @@ def channel_defined(channel):
     try:
         renpy.audio.audio.get_channel(channel)
         return True
-    except:
+    except Exception:
         return False
 
 # Music change logic:

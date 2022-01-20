@@ -547,7 +547,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         if clip:
 
             dest.blits.append(
-                (minx, miny, maxx + dx0, maxy + dy0, clip, what,
+                (minx, miny, maxx + dx0, maxy + dy0, clip, what, # type: ignore
                  (cx, cy,
                   forward.xdx, forward.ydx,
                   forward.xdy, forward.ydy,
@@ -717,8 +717,8 @@ class SWDraw(object):
         width, height = virtual_size
 
         # Set up scaling, if necessary.
-        screen_width = self.display_info.current_w
-        screen_height = self.display_info.current_h
+        screen_width = self.display_info.current_w # type: ignore
+        screen_height = self.display_info.current_h # type: ignore
 
         scale_factor = min(1.0 * screen_width / width, 1.0 * screen_height / height, 1.0)
         if "RENPY_SCALE_FACTOR" in os.environ:
@@ -773,7 +773,7 @@ class SWDraw(object):
         return (x, y)
 
     def mouse_event(self, ev):
-        x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
+        x, y = getattr(ev, 'pos', pygame.mouse.get_pos()) # type: ignore
 
         x /= self.scale_factor
         y /= self.scale_factor

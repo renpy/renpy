@@ -51,6 +51,11 @@ class SpriteCache(renpy.object.Object):
     # If true, then the render is simple enough it can just be appended to
     # the manager's render's children list.
 
+    child = None # type: renpy.display.core.Displayable|None
+    child_copy = None # type: renpy.display.core.Displayable|None
+    st = 0.0 # type: float|None
+    render = None # type: renpy.display.render.Render|None
+
 
 class Sprite(renpy.object.Object):
     """
@@ -79,6 +84,17 @@ class Sprite(renpy.object.Object):
 
     The methods of a Sprite object are:
         """
+
+    x = 0 # type: int|float|renpy.display.core.absolute
+    y = 0 # type: int|float|renpy.display.core.absolute
+    zorder = 0 # type: int|float
+
+
+    child = None # type: renpy.display.core.Displayable|None
+    render = None # type: renpy.display.render.Render|None
+    live = True # type: bool
+    manager = None # type: SpriteManager|None
+
 
     # Fields:
     #
@@ -323,7 +339,7 @@ class SpriteManager(renpy.display.core.Displayable):
                 for i in pl:
                     i = renpy.easy.displayable(i)
                     rv.append(i)
-        except:
+        except Exception:
             pass
 
         return rv

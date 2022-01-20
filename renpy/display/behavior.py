@@ -146,7 +146,7 @@ def compile_event(key, keydown):
             else:
                 return "(False)"
 
-        rv += " and ev.key == %d)" % (getattr(pygame.constants, key))
+        rv += " and ev.key == %d)" % (getattr(pygame.constants, key)) # type: ignore
 
     return rv
 
@@ -389,7 +389,7 @@ def is_selected(action):
 
     if isinstance(action, (list, tuple)):
         for i in action:
-            if isinstance(i, renpy.store.SelectedIf): # @UndefinedVariable
+            if isinstance(i, renpy.store.SelectedIf): # type: ignore
                 return i.get_selected()
         return any(is_selected(i) for i in action)
 
@@ -409,7 +409,7 @@ def is_sensitive(action):
 
     if isinstance(action, (list, tuple)):
         for i in action:
-            if isinstance(i, renpy.store.SensitiveIf): # @UndefinedVariable
+            if isinstance(i, renpy.store.SensitiveIf): # type: ignore
                 return i.get_sensitive()
         return all(is_sensitive(i) for i in action)
 
@@ -594,7 +594,7 @@ class SayBehavior(renpy.display.layout.Null):
             afm_text = text.text[0][text.start:text.end]
             afm_text = renpy.text.extras.filter_text_tags(afm_text, allow=[])
             self.afm_length = max(len(afm_text), 1)
-        except:
+        except Exception:
             self.afm_length = max(text.end - text.start, 1)
 
     def event(self, ev, x, y, st):
@@ -617,7 +617,7 @@ class SayBehavior(renpy.display.layout.Null):
             else:
                 renpy.game.interface.timeout(afm_delay - st)
 
-        dismiss = [ (i, True) for i in self.dismiss ] + [ (i, False) for i in self.dismiss_unfocused ]
+        dismiss = [ (i, True) for i in self.dismiss ] + [ (i, False) for i in self.dismiss_unfocused ] # type: ignore
 
         for dismiss_event, check_focus in dismiss:
 
@@ -808,7 +808,7 @@ class Button(renpy.display.layout.Window):
             elif mask is not None:
                 try:
                     mask = renpy.display.render.render(mask, rv.width, rv.height, st, at)
-                except:
+                except Exception:
                     if callable(mask):
                         mask = mask
                     else:
@@ -1143,7 +1143,7 @@ class CaretBlink(renpy.display.core.Displayable):
         caret = renpy.easy.displayable(caret)
 
         if caret._duplicatable:
-            caret = caret._duplicate()
+            caret = caret._duplicate(None)
             caret._unique()
 
         self.caret = caret
@@ -1151,8 +1151,8 @@ class CaretBlink(renpy.display.core.Displayable):
 
         self.st_base = 0
 
-    def get_position(self):
-        return self.caret.get_position()
+    def get_placement(self):
+        return self.caret.get_placement()
 
     def visit(self):
         return [ self.caret ]
@@ -1802,11 +1802,11 @@ class Bar(renpy.display.core.Displayable):
     def after_upgrade(self, version):
 
         if version < 1:
-            self.adjustment = Adjustment(self.range, self.value, changed=self.changed) # E1101
+            self.adjustment = Adjustment(self.range, self.value, changed=self.changed) # type: ignore
             self.adjustment.register(self)
-            del self.range # E1101
-            del self.value # E1101
-            del self.changed # E1101
+            del self.range # type: ignore
+            del self.value # type: ignore
+            del self.changed # type: ignore
 
         if version < 2:
             self.value = None

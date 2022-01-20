@@ -22,6 +22,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
+xrange = range
 
 unicode = str # @ReservedAssignment
 
@@ -48,12 +49,14 @@ from renpy.python import revertable_range as range # @UnusedImport
 from renpy.python import revertable_sorted as sorted # @UnusedImport
 
 import renpy.ui as ui # @UnusedImport
-import renpy.exports as renpy # @Reimport @UnusedImport
 from renpy.translation import translate_string as __ # @UnusedImport
 
 from renpy.python import store_eval as eval
 
 from renpy.display.core import absolute, coordinate, px
+
+import renpy
+globals()["renpy"] = renpy.exports
 
 _print = print
 
@@ -183,4 +186,4 @@ __all__ = [
     ]
 
 if PY2:
-    __all__ = [ bytes(i) for i in __all__ ]
+    __all__ = [ bytes(i) for i in __all__ ] # type: ignore

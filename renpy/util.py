@@ -33,7 +33,7 @@ def expose_file(fn):
 
         try:
             os.chmod(fn, 0o660)
-        except:
+        except Exception:
             pass
 
 
@@ -47,5 +47,5 @@ def expose_directory(dn):
 
         try:
             os.chmod(dn, 0o770)
-        except:
+        except Exception:
             pass

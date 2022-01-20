@@ -57,7 +57,7 @@ class FileLocation(object):
         # Make the save directory.
         try:
             os.makedirs(self.directory)
-        except:
+        except Exception:
             pass
 
         renpy.util.expose_directory(self.directory)
@@ -72,7 +72,7 @@ class FileLocation(object):
             os.unlink(fn)
 
             self.active = True
-        except:
+        except Exception:
             self.active = False
 
         # A map from slotname to the mtime of that slot.
@@ -127,7 +127,7 @@ class FileLocation(object):
 
                 try:
                     new_mtimes[slotname] = os.path.getmtime(os.path.join(self.directory, fn))
-                except:
+                except Exception:
                     pass
 
             self.mtimes = new_mtimes
@@ -200,17 +200,17 @@ class FileLocation(object):
                         data = zf.read("json")
                         data = json.loads(data)
                         return data
-                    except:
+                    except Exception:
                         pass
 
                     try:
                         extra_info = zf.read("extra_info").decode("utf-8")
                         return { "_save_name" : extra_info }
-                    except:
+                    except Exception:
                         pass
 
                     return { }
-            except:
+            except Exception:
                 return None
 
     def screenshot(self, slotname):
@@ -233,10 +233,10 @@ class FileLocation(object):
                     try:
                         png = False
                         zf.getinfo('screenshot.tga')
-                    except:
+                    except Exception:
                         png = True
                         zf.getinfo('screenshot.png')
-            except:
+            except Exception:
                 return None
 
             if png:
@@ -363,7 +363,7 @@ class FileLocation(object):
             os.unlink(self.persistent)
 
             self.sync()
-        except:
+        except Exception:
             pass
 
     def __eq__(self, other):
@@ -533,7 +533,7 @@ def run_scan_thread():
 
         try:
             renpy.loadsave.location.scan() # @UndefinedVariable
-        except:
+        except Exception:
             pass
 
         with scan_thread_condition:

@@ -110,7 +110,7 @@ class SLContext(renpy.ui.Addable):
         self.keywords = { } # type: Optional[dict[str, Any]]
 
         # The style prefix that is given to children of this displayable.
-        self.style_prefix = None 
+        self.style_prefix = None
 
         # A cache associated with this context. The cache maps from
         # statement serial to information associated with the statement.
@@ -138,7 +138,7 @@ class SLContext(renpy.ui.Addable):
         self.widgets = None # type: Optional[dict[str, Any]]
 
         # True if we should dump debug information to the profile log.
-        self.debug = False 
+        self.debug = False
 
         # True if we're predicting the screen.
         self.predicting = False
@@ -157,7 +157,7 @@ class SLContext(renpy.ui.Addable):
         # True if there was a failure in this statement or any of its children.
         # Fails can only occur when predicting, as otherwise an exception
         # would be thrown.
-        self.fail = False 
+        self.fail = False
 
         # The parent context of a use statement with a block.
         self.parent = None # type: Any
@@ -428,7 +428,7 @@ class SLBlock(SLNode):
 
             try:
                 i.execute(context)
-            except:
+            except Exception:
                 if not context.predicting:
                     raise
 
@@ -880,7 +880,7 @@ class SLDisplayable(SLBlock):
                     keywords["style"] = ctx.style_prefix + "_" + style_suffix
 
             if widget_id and (widget_id in screen.widget_properties):
-                keywords.update(screen.widget_properties[widget_id]) 
+                keywords.update(screen.widget_properties[widget_id])
 
             old_d = cache.displayable
             if old_d:
@@ -968,7 +968,7 @@ class SLDisplayable(SLBlock):
                 else:
                     profile_log.write("    created displayable")
 
-        except:
+        except Exception:
             if not context.predicting:
                 raise
             fail = True
@@ -988,7 +988,7 @@ class SLDisplayable(SLBlock):
             for i in self.children:
                 try:
                     i.execute(ctx)
-                except:
+                except Exception:
                     if not context.predicting:
                         raise
                     fail = True
@@ -1054,17 +1054,17 @@ class SLDisplayable(SLBlock):
                 for i in ctx.children:
                     f.add(i)
 
-                main.add(f)
+                main.add(f) # type: ignore
 
             else:
                 for i in ctx.children:
-                    main.add(i)
+                    main.add(i) # type: ignore
 
         d = d # type: ignore
         old_d = old_d # type: ignore
 
         # Inform the focus system about replacement displayables.
-        if (not context.predicting) and (old_d is not None): 
+        if (not context.predicting) and (old_d is not None):
             replaced_by = renpy.display.focus.replaced_by
             replaced_by[id(old_d)] = d
 
@@ -1342,7 +1342,7 @@ class SLIf(SLNode):
         for cond, block in self.prepared_entries:
             try:
                 cond_value = (cond is None) or eval(cond, context.globals, context.scope)
-            except:
+            except Exception:
                 cond_value = False
 
             # The taken branch.
@@ -1352,7 +1352,7 @@ class SLIf(SLNode):
                 for i in block.children:
                     try:
                         i.execute(context)
-                    except:
+                    except Exception:
                         pass
 
             else:
@@ -1374,7 +1374,7 @@ class SLIf(SLNode):
             for i in block.children:
                 try:
                     i.execute(ctx)
-                except:
+                except Exception:
                     pass
 
             for i in ctx.children:
@@ -1566,7 +1566,7 @@ class SLFor(SLBlock):
                 value = eval(expr, context.globals, context.scope)
             else:
                 value = self.expression_value
-        except:
+        except Exception:
             if not context.predicting:
                 raise
 
@@ -1600,7 +1600,7 @@ class SLFor(SLBlock):
                 # It can only fail if the unpacking fails, but it can still
                 try:
                     sl_python.execute(ctx)
-                except:
+                except Exception:
                     if not context.predicting:
                         raise
 
@@ -1624,7 +1624,7 @@ class SLFor(SLBlock):
             for i in children_i:
                 try:
                     i.execute(ctx)
-                except:
+                except Exception:
                     if not context.predicting:
                         raise
 
@@ -1899,7 +1899,7 @@ class SLUse(SLNode):
             else:
                 args = [ ]
                 kwargs = { }
-        except:
+        except Exception:
             if not context.predicting:
                 raise
 
@@ -2129,7 +2129,7 @@ class SLCustomUse(SLNode):
                 else:
                     kwargs["style"] = ctx.style_prefix + "_" + style_suffix
 
-        except:
+        except Exception:
             if not context.predicting:
                 raise
 
@@ -2488,7 +2488,7 @@ def load_cache():
             scache.const_analyzed.update(s.const_analyzed)
             scache.not_const_analyzed.update(s.not_const_analyzed)
 
-    except:
+    except Exception:
         pass
 
 
@@ -2500,10 +2500,10 @@ def save_cache():
         return
 
     try:
-        data = zlib.compress(dumps(scache, 2), 3)
+        data = zlib.compress(dumps(scache), 3)
 
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
             f.write(renpy.game.script.digest.digest())
             f.write(data)
-    except:
+    except Exception:
         pass

@@ -84,7 +84,7 @@ class BarValue(renpy.object.Object):
     def periodic(self, st):
         return
 
-    def get_adjustment(self):
+    def get_adjustment(self): # type: (BarValue) -> renpy.display.behavior.Adjustment
         raise Exception("Not implemented")
 
     def get_style(self):
@@ -433,7 +433,7 @@ def prefixed_style(style_suffix):
 
 # The screen we're using as we add widgets. None if there isn't a
 # screen.
-screen = None # type: Optional[renpy.display.screen.Screen]
+screen = None # type: renpy.display.screen.ScreenDisplayable|None
 
 
 class Wrapper(renpy.object.Object):
@@ -1470,7 +1470,10 @@ def screen_id(id_, d):
     if screen is None:
         raise Exception("ui.screen_id must be called from within a screen.")
 
-    screen.widget_id[id_] = d
+    screen.widgets[id_] = d._main or d
+    screen.base_widgets[id_] = d
+
+
 
 ##############################################################################
 # Postamble

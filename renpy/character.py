@@ -23,13 +23,13 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Any
 
 import renpy
 
 import re
 import os
 import collections
-import renpy.six as six
 
 # This matches the dialogue-relevant text tags.
 TAG_RE = re.compile(r'(\{\{)|(\{(p|w|nw|fast|done)(?:\=([^}]*))?\})', re.S)
@@ -702,7 +702,7 @@ class HistoryEntry(renpy.object.Object):
 
     multiple = None
     who = None
-    what = None 
+    what = None
 
     def __repr__(self):
         return "<History {!r} {!r}>".format(self.who, self.what)
@@ -1202,7 +1202,7 @@ class ADVCharacter(object):
                 renpy.game.context().deferred_translate_identifier = renpy.game.context().translate_identifier
 
             # Figure out the arguments to display.
-            display_args = self.display_args.copy()
+            display_args = self.display_args.copy() # type: Any
             display_args["interact"] = display_args["interact"] and interact
 
             if multiple is not None:
@@ -1256,15 +1256,15 @@ class ADVCharacter(object):
         finally:
 
             if (multiple is None) and interact:
-                renpy.store._side_image_attributes = old_side_image_attributes
+                renpy.store._side_image_attributes = old_side_image_attributes # type: ignore
 
-                if old_attr_state is not None:
-                    _, images = old_attr_state
+                if old_attr_state is not None: # type: ignore
+                    _, images = old_attr_state # type: ignore
                     before = images.get_attributes(None, self.image_tag)
 
-                if self.restore_say_attributes(False, old_attr_state, interact):
-                    after = images.get_attributes(None, self.image_tag)
-                    self.handle_say_transition('restore', before, after)
+                if self.restore_say_attributes(False, old_attr_state, interact): # type: ignore
+                    after = images.get_attributes(None, self.image_tag) # type: ignore
+                    self.handle_say_transition('restore', before, after) # type: ignore
 
     def statement_name(self):
         if self._statement_name is not None:
