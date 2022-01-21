@@ -1219,7 +1219,7 @@ class RevertableObject(object):
     __slots__ = ()
 
     def __new__(cls, *args, **kwargs):
-        self = super(RevertableObject, cls).__new__(cls)
+        self = object.__new__(cls)
 
         log = renpy.game.log
         if log is not None:
@@ -1256,6 +1256,9 @@ class OpenRevertableObject(RevertableObject):
     """
     # custom-made for renpy.execution.Context.info
     # also useful for compat
+
+if PY2:
+    RevertableObject = OpenRevertableObject
 
 
 class AlwaysRollback(RevertableObject):
