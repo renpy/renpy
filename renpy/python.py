@@ -1185,7 +1185,7 @@ class RevertableSet(set):
 
         def newmethod(*args, **kwargs):
             rv = method(*args, **kwargs) # type: ignore
-            if isinstance(rv, (set, frozenset)):
+            if isinstance(rv, set):
                 return RevertableSet(rv)
             else:
                 return rv
@@ -1216,6 +1216,7 @@ class RevertableSet(set):
 
 
 class RevertableObject(object):
+    __slots__ = ()
 
     def __new__(cls, *args, **kwargs):
         self = super(RevertableObject, cls).__new__(cls)
@@ -1248,6 +1249,13 @@ class RevertableObject(object):
     def _rollback(self, compressed):
         self.__dict__.clear()
         self.__dict__.update(compressed)
+
+class OpenRevertableObject(RevertableObject):
+    """
+    Opening __slots__, allowing for arbitrary __dict__ editing.
+    """
+    # custom-made for renpy.execution.Context.info
+    # also useful for compat
 
 
 class AlwaysRollback(RevertableObject):
