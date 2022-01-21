@@ -19,8 +19,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init python:
+init python in __scratch:
+    # This is used to store scratch data that's used by the
+    # library, but shouldn't be saved out as part of the savegame.
+    file_picker_page = None
+    initialized = False
+    per_page = 0
+    pages = 0
+    has_autosave = False
+    has_quicksave = False
 
+init python:
     layout.provides('load_save')
     renpy.load_module("_layout/imagemap_common")
 
@@ -67,16 +76,6 @@ init python:
 
     # True if we should prompt before loading a game.
     _load_prompt = True
-
-    # This is used to store scratch data that's used by the
-    # library, but shouldn't be saved out as part of the savegame.
-    __scratch = object()
-    __scratch.file_picker_page = None
-    __scratch.initialized = False
-    __scratch.per_page = 0
-    __scratch.pages = 0
-    __scratch.has_autosave = False
-    __scratch.has_quicksave = False
 
     def _render_savefile(ime, index, name, extra_info, screenshot, mtime, newest, clicked):
 

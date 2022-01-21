@@ -33,8 +33,7 @@ init -1500 python:
 
     # Are style preferences dirty? If so, we need to update them at the start of
     # the next operation.
-    __spdirty = object()
-    __spdirty.flag = True
+    __spdirty_flag = True
 
     # A map from preference name to alternative.
     if persistent._style_preferences is None:
@@ -90,12 +89,13 @@ init -1500 python:
         Called at least once per interaction, to update the styles if necessary.
         """
 
-        if not __spdirty.flag:
+        global __spdirty_flag
+        if not __spdirty_flag:
             return
 
         renpy.style.rebuild()
 
-        __spdirty.flag = False
+        __spdirty_flag = False
 
     def __apply_styles():
         """
@@ -120,7 +120,8 @@ init -1500 python:
                 raise Exception("{0} is not a known alternative for style preference {1}.".format(alternative, preference))
 
     def __change_language():
-        __spdirty.flag = True
+        global __spdirty_flag
+        __spdirty_flag = True
         __update()
 
     def __set_style_preference(preference, alternative):
@@ -140,7 +141,8 @@ init -1500 python:
         __check(preference, alternative)
 
         persistent._style_preferences[preference] = alternative
-        __spdirty.flag = True
+        global __spdirty_flag
+        __spdirty_flag = True
 
         renpy.restart_interaction()
 

@@ -19,8 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init python:
 
+# This is used to store scratch data that's used by the
+# library, but shouldn't be saved out as part of the savegame.
+init python in __scratch:
+    file_picker_page = None
+
+init python:
     layout.provides('load_save')
 
     # Define styles
@@ -82,11 +87,6 @@ init python:
 
     # True if we should prompt before loading a game.
     _load_prompt = True
-
-    # This is used to store scratch data that's used by the
-    # library, but shouldn't be saved out as part of the savegame.
-    __scratch = object()
-    __scratch.file_picker_page = None
 
     def _render_savefile(index, name, extra_info, screenshot, mtime, newest, clicked):
 

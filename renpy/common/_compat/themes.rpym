@@ -23,10 +23,11 @@
 # Please see the LICENSE.txt distributed with Ren'Py for permission to
 # copy and modify.
 
+init python in theme:
+    pass
+
 init -1100:
     python:
-
-        theme = object()
 
         def RoundRect(color, small=False):
             """
@@ -517,4 +518,3 @@ init -1100:
             theme.roundrect(**args)
 
         theme.roundrect_red = theme_roundrect_red
-

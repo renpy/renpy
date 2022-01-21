@@ -101,9 +101,12 @@ init -1400:
 
 # Transitions ##################################################################
 
+init -1400 python in _define:
+    pass
+
 init -1400 python:
 
-    _define = define = object()
+    define = _define
 
     # Ease images around. These are basically cosine-warped moves.
     def _ease_out_time_warp(x):

@@ -40,18 +40,17 @@
 #     $ voice_sustain()
 #     e "...to play for two lines of dialogue."
 
+init -1500 python in _voice:
+    play = None
+    sustain = False
+    seen_in_lint = False
+    tag = None
+    tlid = None
+    auto_file = None
+    info = None
+    last_playing = 0.0
+
 init -1500 python:
-
-    _voice = object()
-    _voice.play = None
-    _voice.sustain = False
-    _voice.seen_in_lint = False
-    _voice.tag = None
-    _voice.tlid = None
-    _voice.auto_file = None
-    _voice.info = None
-    _voice.last_playing = 0.0
-
     # If true, the voice system ignores the interaction.
     _voice.ignore_interaction = False
 

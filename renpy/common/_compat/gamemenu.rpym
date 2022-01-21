@@ -19,8 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init python:
+init python in _scratch:
+    # This is used to store scratch data that's used by the
+    # library, but shouldn't be saved out as part of the savegame.
+    file_picker_page = None
 
+init python:
     ######################################################################
     # First up, we define a bunch of configuration variable, which the
     # user can change.
@@ -77,10 +81,6 @@ init python:
 
     ######################################################################
     # Next, support code.
-
-    # This is used to store scratch data that's used by the
-    # library, but shouldn't be saved out as part of the savegame.
-    _scratch = object()
 
     # This returns a window containing the game menu navigation
     # buttons, set up to jump to the appropriate screen sections.
@@ -197,8 +197,6 @@ init python:
 
         ui.text(_(u"Empty Slot."), style=style.file_picker_empty_slot[index])
         ui.close()
-
-    _scratch.file_picker_page = None
 
     # The names of the various pages that the file picker knows
     # about.
