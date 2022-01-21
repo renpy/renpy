@@ -22,6 +22,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
+import builtins
 
 import renpy # @UnusedImport
 from renpy.python import py_compile
@@ -37,18 +38,9 @@ from renpy.compat.pickle import loads, dumps
 always_constants = { 'True', 'False', 'None' }
 
 # The set of names that should be treated as pure functions.
+pure_functions = set(i for i in dir(builtins) if not i.startswith("__"))
+pure_functions -= { "copyright", "credits", "enumerate", "help", "input", "license", "map", "memoryview", "next", "open", "print", "reversed" }
 pure_functions = {
-    # Python builtins.
-    "abs", "all", "any", "apply", "bin", "bool", "bytes", "callable", "chr",
-    "cmp", "dict", "divmod",
-    "filter", "float", "frozenset",
-    "getattr", "globals", "hasattr", "hash", "hex", "int", "isinstance",
-    "len", "list", "long", "map", "max", "min", "oct", "ord", "pow",
-    "range", "reduce", "repr", "round", "set", "sorted",
-    "str", "sum", "tuple", "unichr", "unicode", "vars", "zip",
-
-    # enumerator and reversed return iterators at the moment.
-
     # minstore.py
     "_",
     "_p",
