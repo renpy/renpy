@@ -91,6 +91,9 @@ else:
                 elif name == "datetime":
                     return unpickle_datetime
 
+            if (module == "renpy.python") and (name == "RevertableObject"):
+                name = "OpenRevertableObject"
+
             return super().find_class(module, name)
 
     def load(f):
