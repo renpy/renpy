@@ -159,11 +159,11 @@ translate spanish strings:
 
     # 00action_file.rpy:353
     old "Save slot %s: [text]"
-    new "Grabar partida %s: [text]"
+    new "Guardar ranura %s: [text]"
 
     # 00action_file.rpy:434
     old "Load slot %s: [text]"
-    new "Load slot %s: [text]"
+    new "Cargar ranura %s: [text]"
 
     # 00action_file.rpy:487
     old "Delete slot [text]"
@@ -171,11 +171,11 @@ translate spanish strings:
 
     # 00action_file.rpy:569
     old "File page auto"
-    new "Página grabado automático"
+    new "Página guardado automático"
 
     # 00action_file.rpy:571
     old "File page quick"
-    new "Página grabado rápido"
+    new "Página guardado rápido"
 
     # 00action_file.rpy:573
     old "File page [text]"
@@ -195,7 +195,7 @@ translate spanish strings:
 
     # 00action_file.rpy:924
     old "Quick save."
-    new "Grabado rápido."
+    new "Guardado rápido."
 
     # 00action_file.rpy:943
     old "Quick load."
@@ -339,7 +339,7 @@ translate spanish strings:
 
     # 00keymap.rpy:258
     old "Failed to save screenshot as %s."
-    new "No se pudo salvar la captura de pantalla como %s."
+    new "No se pudo guardar la captura de pantalla como %s."
 
     # 00keymap.rpy:270
     old "Saved screenshot as %s."
@@ -399,7 +399,7 @@ translate spanish strings:
 
     # 00library.rpy:279
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "Este programa contiene software libre sujeto a diversas licencias que incluyen la licencia MIT y la {i}GNU Lesser General Public License{/i} (Licencia Pública General Reducida de GNU). Puedes encontrar la lista completa de software, con enlaces al código fuente completo, {a=https://www.renpy.org/l/license}aquí (en inglés){/a}."
+    new "Este programa contiene {i}software{/i} libre sujeto a diversas licencias que incluyen la licencia MIT y la {i}GNU Lesser General Public License{/i} (Licencia Pública General Reducida de GNU). Puedes encontrar la lista completa {i}de software{/i}, con enlaces al código fuente completo, {a=https://www.renpy.org/l/license}aquí (en inglés){/a}."
 
     # 00preferences.rpy:207
     old "display"
@@ -411,7 +411,7 @@ translate spanish strings:
 
     # 00preferences.rpy:228
     old "skip transitions"
-    new "salta transiciones"
+    new "saltar transiciones"
 
     # 00preferences.rpy:230
     old "video sprites"
@@ -435,43 +435,43 @@ translate spanish strings:
 
     # 00preferences.rpy:263
     old "skip"
-    new "salta"
+    new "saltar"
 
     # 00preferences.rpy:266
     old "skip unseen [text]"
-    new "salta no visto [text]"
+    new "saltar no visto [text]"
 
     # 00preferences.rpy:271
     old "skip unseen text"
-    new "salva texto no visto"
+    new "saltar texto no visto"
 
     # 00preferences.rpy:273
     old "begin skipping"
-    new "comienza salto"
+    new "comienzar salto"
 
     # 00preferences.rpy:277
     old "after choices"
-    new "tras las opciones"
+    new "tras elecciones"
 
     # 00preferences.rpy:284
     old "skip after choices"
-    new "salta tras las opciones"
+    new "saltar tras elecciones"
 
     # 00preferences.rpy:286
     old "auto-forward time"
-    new "tiempo auto-avance"
+    new "tiempo autoavance"
 
     # 00preferences.rpy:300
     old "auto-forward"
-    new "auto-avance"
+    new "autoavance"
 
     # 00preferences.rpy:307
     old "Auto forward"
-    new "Auto avance"
+    new "Autoavance"
 
     # 00preferences.rpy:310
     old "auto-forward after click"
-    new "auto-avance después del clic"
+    new "autoavanzar después del clic"
 
     # 00preferences.rpy:319
     old "automatic move"
@@ -483,7 +483,7 @@ translate spanish strings:
 
     # 00preferences.rpy:337
     old "voice sustain"
-    new "mantén voz"
+    new "mantener voz"
 
     # 00preferences.rpy:346
     old "self voicing"
@@ -495,19 +495,19 @@ translate spanish strings:
 
     # 00preferences.rpy:364
     old "debug voicing"
-    new "debug voz"
+    new "depurar voz"
 
     # 00preferences.rpy:373
     old "emphasize audio"
-    new "enfatiza audio"
+    new "enfatizar audio"
 
     # 00preferences.rpy:382
     old "rollback side"
-    new "lado retroceso"
+    new "lado de retroceso"
 
     # 00preferences.rpy:392
     old "gl powersave"
-    new "gl ahorro energía"
+    new "gl ahorro de energía"
 
     # 00preferences.rpy:398
     old "gl framerate"
@@ -531,19 +531,19 @@ translate spanish strings:
 
     # 00preferences.rpy:416
     old "mute music"
-    new "silencia música"
+    new "silenciar música"
 
     # 00preferences.rpy:417
     old "mute sound"
-    new "silencia sonido"
+    new "silenciar sonido"
 
     # 00preferences.rpy:418
     old "mute voice"
-    new "silencia voz"
+    new "silenciar voz"
 
     # 00preferences.rpy:419
     old "mute all"
-    new "silencia todo"
+    new "silenciar todo"
 
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
@@ -571,7 +571,7 @@ translate spanish strings:
 
     # _compat\preferences.rpym:428
     old "Joystick Mapping"
-    new "Mapeado del Joystick"
+    new "Mapeado del mando"
 
     # _developer\developer.rpym:38
     old "Developer Menu"
@@ -851,11 +851,11 @@ translate spanish strings:
 
     # 00gltest.rpy:83
     old "Force OpenGL Renderer"
-    new "Forzar 'OpenGL Renderer'"
+    new "Forzar renderizador OpenGL"
 
     # 00gltest.rpy:87
     old "Force Software Renderer"
-    new "Forzar 'Software Renderer'"
+    new "Forzar renderizado por software"
 
     # 00gltest.rpy:93
     old "NPOT"
@@ -1083,11 +1083,11 @@ translate spanish strings:
 
     # 00accessibility.rpy:76
     old "Font Override"
-    new "Cambiar Fuente"
+    new "Sobreescribir fuente"
 
     # 00accessibility.rpy:80
     old "Default"
-    new "por Defecto"
+    new "Por defecto"
 
     # 00accessibility.rpy:84
     old "DejaVu Sans"
@@ -1111,7 +1111,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:117
     old "Self-Voicing"
-    new "Voz-automática"
+    new "Voz automática"
 
     # 00accessibility.rpy:121
     old "Off"
@@ -1147,7 +1147,7 @@ translate spanish strings:
 
     # renpy/common/00accessibility.rpy:180
     old "High Contrast Text"
-    new "Texto de Alto Contraste"
+    new "Texto de alto contraste"
 
     # renpy/common/00accessibility.rpy:215
     old "Self-Voicing Volume Drop"
