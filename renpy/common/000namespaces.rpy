@@ -53,7 +53,7 @@
 
         def set_default(self, name, value):
 
-            undefined = object()
+            undefined = python_object()
 
             if not isinstance(persistent._preference_default, dict):
                 persistent._preference_default = { }

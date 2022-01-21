@@ -24,7 +24,7 @@ init -1600 python:
    ##########################################################################
     # Functions that set variables or fields.
 
-    __FieldNotFound = object()
+    __FieldNotFound = python_object()
 
     def __get_field(obj, name, kind):
 

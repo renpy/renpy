@@ -133,7 +133,7 @@ init -1100 python in gui:
         # actually changing the language.
         renpy.change_language(_preferences.language, force=True)
 
-    not_set = object()
+    not_set = python_object()
 
     def preference(name, default=not_set):
         """
