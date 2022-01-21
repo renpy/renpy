@@ -237,7 +237,7 @@ class Context(renpy.object.Object):
 
         self.rollback = rollback
         self.runtime = 0
-        self.info = renpy.python.RevertableObject()
+        self.info = renpy.python.OpenRevertableObject()
         self.seen = False
 
         # True if there has just been an abnormal transfer of control,
