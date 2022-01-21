@@ -37,6 +37,7 @@ class Object(object):
     """
     Our own base class. Contains methods to simplify serialization.
     """
+    __slots__ = ()
 
     __version__ = 0
 
