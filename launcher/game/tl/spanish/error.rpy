@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # 00gltest.rpy:70
     old "Renderer"
@@ -10,15 +10,15 @@
 
     # 00gltest.rpy:79
     old "Force Angle/DirectX Renderer"
-    new "Forzar Renderizador 'Angle/DirectX'"
+    new "Forzar renderizador 'Angle/DirectX'"
 
     # 00gltest.rpy:83
     old "Force OpenGL Renderer"
-    new "Forzar Renderizador 'OpenGL'"
+    new "Forzar renderizador 'OpenGL'"
 
     # 00gltest.rpy:87
     old "Force Software Renderer"
-    new "Forzar Renderizado por Software"
+    new "Forzar renderizado por software"
 
     # 00gltest.rpy:93
     old "NPOT"
@@ -34,7 +34,7 @@
 
     # 00gltest.rpy:145
     old "Framerate"
-    new "Cuadros por s."
+    new "Cuadros por segundo"
 
     # 00gltest.rpy:149
     old "Screen"
@@ -62,11 +62,11 @@
 
     # 00gltest.rpy:218
     old "This computer is using software rendering."
-    new "Este ordenador usa 'software rendering'."
+    new "Este ordenador usa 'software' de renderizado."
 
     # 00gltest.rpy:220
     old "This computer is not using shaders."
-    new "Este ordenador no usa 'shaders'."
+    new "Este ordenador no usa sombreadores."
 
     # 00gltest.rpy:222
     old "This computer is displaying graphics slowly."
@@ -74,7 +74,7 @@
 
     # 00gltest.rpy:224
     old "This computer has a problem displaying graphics: [problem]."
-    new "Este ordenador tiene un problema mostrando los gráficos: [problem]."
+    new "Este ordenador tiene un problema al mostrar los gráficos: [problem]."
 
     # 00gltest.rpy:229
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
@@ -134,7 +134,7 @@
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Salto (A)"
+    new "Saltar (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
@@ -186,7 +186,7 @@
 
     # _errorhandling.rpym:598
     old "Reloads the game from disk, saving and restoring game state if possible."
-    new "Recarga el juego del disco, guardando y restaurando la partida si es posible."
+    new "Recarga el juego desde el disco, guardando y restaurando la partida si es posible."
 
     # _errorhandling.rpym:601
     old "Console"
@@ -238,7 +238,7 @@
 
     # renpy/common/00gltest.rpy:77
     old "Force ANGLE Renderer"
-    new "Force renderizador ANGLE"
+    new "Forzar renderizador ANGLE"
 
     # renpy/common/00gltest.rpy:81
     old "Force GL Renderer"
@@ -262,11 +262,11 @@
 
     # renpy/common/00gltest.rpy:218
     old "This game requires use of GL2 that can't be initialised."
-    new "Este juego requiere el uso de GL2 que no se puede inicializar."
+    new "Este juego requiere el uso de GL2, el cual no se puede iniciar."
 
     # renpy/common/00gltest.rpy:229
     old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
-    new "Puede encontrar más detalles sobre cómo solucionar este problema en la {a=[url]} documentación {/a}."
+    new "Puedes encontrar más detalles sobre cómo solucionar este problema en la {a=[url]} documentación {/a}."
 
     # renpy/common/00gltest.rpy:246
     old "Change render options"

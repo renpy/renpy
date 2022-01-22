@@ -1,4 +1,4 @@
-﻿
+
 translate spanish strings:
 
     # screens.rpy:9
@@ -7,7 +7,7 @@ translate spanish strings:
 
     # screens.rpy:81
     old "## In-game screens"
-    new "## Pantallas internas a juego"
+    new "## Pantallas internas del juego"
 
     # screens.rpy:85
     old "## Say screen"
@@ -71,7 +71,7 @@ translate spanish strings:
 
     # screens.rpy:240
     old "## The quick menu is displayed in-game to provide easy access to the out-of-game menus."
-    new "## El menú rápido es presentado en el juego para ofrecer fácil acceso a los menus externos al juego."
+    new "## El menú rápido se presenta en el juego para ofrecer fácil acceso a los menus externos al juego."
 
     # screens.rpy:245
     old "## Ensure this appears on top of other screens."
@@ -303,7 +303,7 @@ translate spanish strings:
 
     # screens.rpy:671
     old "## range(1, 10) gives the numbers from 1 to 9."
-    new "## range(1, 10) da los numeros del 1 al 9."
+    new "## range(1, 10) da los números del 1 al 9."
 
     # screens.rpy:675
     old ">"
@@ -331,7 +331,7 @@ translate spanish strings:
 
     # screens.rpy:734
     old "Fullscreen"
-    new "Pant. completa"
+    new "Pantalla completa"
 
     # screens.rpy:738
     old "Rollback Side"
@@ -355,7 +355,7 @@ translate spanish strings:
 
     # screens.rpy:747
     old "After Choices"
-    new "Tras opciones"
+    new "Tras elecciones"
 
     # screens.rpy:748
     old "Transitions"
@@ -371,7 +371,7 @@ translate spanish strings:
 
     # screens.rpy:765
     old "Auto-Forward Time"
-    new "Veloc. auto-avance"
+    new "Veloc. autoavance"
 
     # screens.rpy:772
     old "Music Volume"
@@ -391,7 +391,7 @@ translate spanish strings:
 
     # screens.rpy:800
     old "Mute All"
-    new "Silencia todo"
+    new "Silenciar todo"
 
     # screens.rpy:876
     old "## History screen"
@@ -447,7 +447,7 @@ translate spanish strings:
 
     # screens.rpy:1004
     old "Enter"
-    new "Enter"
+    new "Intro"
 
     # screens.rpy:1005
     old "Advances dialogue and activates the interface."

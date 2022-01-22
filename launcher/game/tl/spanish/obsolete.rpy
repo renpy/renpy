@@ -1,12 +1,12 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # _layout/classic_joystick_preferences.rpym:94
     old "Joystick Mapping"
-    new "Mapeado del Joystick"
+    new "Mapeado del mando"
 
     # _layout/classic_load_save.rpym:138
     old "Empty Slot."
-    new "Vacío."
+    new "Ranura vacía."
 
     # _layout/classic_load_save.rpym:170
     old "a"
