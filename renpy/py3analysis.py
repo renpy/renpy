@@ -370,28 +370,6 @@ class Analysis(object):
         object equality.
         """
 
-        def check_slice(slice): # @ReservedAssignment
-
-            if isinstance(slice, ast.Index):
-                return check_node(slice.value)
-
-            elif isinstance(slice, ast.Slice):
-                consts = [ ]
-
-                if slice.lower:
-                    consts.append(check_node(slice.lower))
-                if slice.upper:
-                    consts.append(check_node(slice.upper))
-                if slice.step:
-                    consts.append(check_node(slice.step))
-
-                if not consts:
-                    return GLOBAL_CONST
-                else:
-                    return min(consts)
-
-            return NOT_CONST
-
         def check_name(node):
             """
             Check nodes that make up a name. This returns a pair:
@@ -438,10 +416,9 @@ class Analysis(object):
 
         def check_node(node):
             """
-            Returns true if the ast node `node` is constant.
+            When given `node`, part of a Python expression, returns how
+            const the expression is.
             """
-            if not PY2:
-                return NOT_CONST
 
             # This handles children that do not exist.
             if node is None:
@@ -449,17 +426,15 @@ class Analysis(object):
 
             # PY3: see if there are new node types.
 
-            if isinstance(node, (ast.Num, ast.Str)):
+
+            if isinstance(node, ast.Constant):
                 return GLOBAL_CONST
-
-            elif isinstance(node, (ast.List, ast.Tuple)):
-                return check_nodes(node.elts)
-
-            elif isinstance(node, (ast.Attribute, ast.Name)):
-                return check_name(node)[0]
 
             elif isinstance(node, ast.BoolOp):
                 return check_nodes(node.values)
+
+            elif isinstance(node, ast.NamedExpr):
+                return check_node(node.value)
 
             elif isinstance(node, ast.BinOp):
                 return min(
@@ -470,26 +445,8 @@ class Analysis(object):
             elif isinstance(node, ast.UnaryOp):
                 return check_node(node.operand)
 
-            elif isinstance(node, ast.Call):
-                const, name = check_name(node.func)
 
-                # The function must have a name, and must be declared pure.
-                if (const != GLOBAL_CONST) or (name not in self.pure_functions):
-                    return NOT_CONST
-
-                consts = [ ]
-
-                # Arguments and keyword arguments must be pure.
-                consts.append(check_nodes(node.args))
-                consts.append(check_nodes(i.value for i in node.keywords))
-
-                if node.starargs is not None:
-                    consts.append(check_node(node.starargs))
-
-                if node.kwargs is not None:
-                    consts.append(check_node(node.kwargs))
-
-                return min(consts)
+            # ast.Lambda is NOT_CONST.
 
             elif isinstance(node, ast.IfExp):
                 return min(
@@ -497,6 +454,7 @@ class Analysis(object):
                     check_node(node.body),
                     check_node(node.orelse),
                     )
+
 
             elif isinstance(node, ast.Dict):
                 return min(
@@ -507,20 +465,66 @@ class Analysis(object):
             elif isinstance(node, ast.Set):
                 return check_nodes(node.elts)
 
+
+            # ast.ListComp is NOT_CONST.
+            # ast.SetComp is NOT_CONST.
+            # ast.DictComp is NOT_CONST.
+
+            # ast.GeneratorExp is NOT_CONST.
+
+            # ast.Await is NOT_CONST.
+            # ast.Yield is NOT_CONST.
+            # ast.YieldFrom is NOT_CONST.
+
             elif isinstance(node, ast.Compare):
                 return min(
                     check_node(node.left),
                     check_nodes(node.comparators),
                     )
 
-            elif isinstance(node, ast.Repr):
-                return check_node(node.value)
+            elif isinstance(node, ast.Call):
+                const, name = check_name(node.func)
+
+                # The function must have a name, and must be declared pure.
+                if (const != GLOBAL_CONST) or (name not in self.pure_functions):
+                    return NOT_CONST
+
+                return min(
+                    check_nodes(node.args),
+                    check_nodes(i.value for i in node.keywords),
+                )
+
+
+            elif isinstance(node, ast.FormattedValue):
+                return min(
+                    check_node(node.value),
+                    check_node(node.format_spec),
+                )
+
+            elif isinstance(node, ast.JoinedStr):
+                return check_nodes(node.values)
+
+            elif isinstance(node, (ast.Attribute, ast.Name)):
+                return check_name(node)[0]
 
             elif isinstance(node, ast.Subscript):
                 return min(
                     check_node(node.value),
-                    check_slice(node.slice),
+                    check_node(node.slice),
                     )
+
+            elif isinstance(node, ast.Starred):
+                return check_node(node.value)
+
+            elif isinstance(node, (ast.List, ast.Tuple)):
+                return check_nodes(node.elts)
+
+            elif isinstance(node, ast.Slice):
+                return min(
+                    check_node(node.lower),
+                    check_node(node.upper),
+                    check_node(node.step),
+                )
 
             return NOT_CONST
 
@@ -731,7 +735,7 @@ class CompilerCache(object):
 ccache = CompilerCache()
 new_ccache = CompilerCache()
 
-CACHE_FILENAME = "cache/pyanalysis.rpyb"
+CACHE_FILENAME = "cache/py3analysis.rpyb"
 
 
 def load_cache():
