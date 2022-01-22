@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
@@ -1125,3 +1124,38 @@ translate french strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Copie le fichier errors.txt dans le presse-papier au format Markdown pour Discord."
 
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "Texte à contraste élevé"
+
+    # renpy/common/00preferences.rpy:487
+    old "renderer menu"
+    new "menu de rendu"
+
+    # renpy/common/00preferences.rpy:490
+    old "accessibility menu"
+    new "menu d'accessibilité"
+
+    # renpy/common/00preferences.rpy:493
+    old "high contrast text"
+    new "texte à contraste élevé"
+
+    # renpy/common/_developer/developer.rpym:63
+    old "Image Attributes"
+    new "Attributs de l'image"
+
+    # renpy/common/_developer/developer.rpym:90
+    old "[name] [attributes] (hidden)"
+    new "[name] [attributes] (caché)"
+
+    # renpy/common/_developer/developer.rpym:94
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:154
+    old "Hide deleted"
+    new "Masquer supprimés"
+
+    # renpy/common/_developer/developer.rpym:154
+    old "Show deleted"
+    new "Montrer supprimés"

@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # screens.rpy:251
     old "Back"
@@ -400,3 +399,7 @@ translate french strings:
     # screens.rpy:1478
     old "Menu"
     new "Menu"
+
+    # game/screens.rpy:1108
+    old "Opens the accessibility menu."
+    new "Ouvre le menu d'accessibilité."
