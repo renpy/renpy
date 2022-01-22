@@ -23,14 +23,11 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
+import functools
 
 
 class Curry(object):
-    """
-    Stores a callable and some arguments. When called, calls the
-    callable with the stored arguments and the additional arguments
-    supplied to the call.
-    """
+    # essentialy the same as Partial, kept for compatibility
 
     hash = None
 
@@ -73,6 +70,42 @@ class Curry(object):
         return self.hash
 
 
+class Partial(functools.partial):
+    """
+    Stores a callable and some arguments. When called, calls the
+    callable with the stored arguments and the additional arguments
+    supplied to the call.
+    """
+
+    __slots__ = ("hash",)
+
+    hash = None
+
+    def __repr__(self):
+        return "<partial %s %r %r>" % (self.func, self.args, self.keywords)
+
+    def __eq__(self, other):
+
+        return (
+            isinstance(other, Partial) and
+            self.func == other.func and
+            self.args == other.args and
+            self.keywords == other.keywords)
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __hash__(self):
+
+        if self.hash is None:
+            self.hash = hash(self.func) ^ hash(self.args)
+
+            for i in self.keywords.items():
+                self.hash ^= hash(i)
+
+        return self.hash
+
+
 def curry(fn):
     """
     Takes a callable, and returns something that, when called, returns
@@ -81,7 +114,7 @@ def curry(fn):
     same thing as the function called once.
     """
 
-    rv = Curry(Curry, fn)
+    rv = Partial(Partial, fn)
     rv.__doc__ = getattr(fn, "__doc__", None)
     rv.__name__ = getattr(fn, "__name__", None)
     return rv
@@ -95,4 +128,4 @@ def partial(function, *args, **kwargs):
     the second call.
     """
 
-    return Curry(function, *args, **kwargs)
+    return Partial(function, *args, **kwargs)
