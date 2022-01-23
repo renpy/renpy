@@ -386,12 +386,12 @@ init python:
     build.classify_renpy("lib/*linux-armv7l/**", "raspi")
 
     if PY2:
-        source_and_binary("lib/py2-**")
-        source_and_binary("lib/python2**")
+        source_and_binary("lib/py2-**", "binary", "binary")
+        source_and_binary("lib/python2**", "binary", "binary")
         build.classify_renpy("renpy2.sh", "binary")
     else:
-        source_and_binary("lib/py3-**")
-        source_and_binary("lib/python3**")
+        source_and_binary("lib/py3-**", "binary", "binary")
+        source_and_binary("lib/python3**", "binary", "binary")
         build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
