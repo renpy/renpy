@@ -584,6 +584,7 @@ class PyAnalysis(ast.NodeVisitor):
 
         self.analysis = analysis
 
+    # Expressions that assign names.
     def visit_Name(self, node):
 
         if isinstance(node.ctx, ast.AugStore):
@@ -594,6 +595,33 @@ class PyAnalysis(ast.NodeVisitor):
                 self.analysis.mark_constant(node.id)
             else:
                 self.analysis.mark_not_constant(node.id)
+
+    def visit_NamedExpr(self, node):
+
+        const = self.analysis.is_constant(node.value)
+        self.analysis.push_control(const, False)
+
+        self.generic_visit(node)
+
+        self.analysis.pop_control()
+
+    # Statements that assign names or control constness.
+
+
+    def visit_FunctionDef(self, node):
+        self.analysis.mark_constant(node.name)
+
+    def visit_AsyncFunctionDef(self, node):
+        self.analysis.mark_constant(node.name)
+
+    def visit_ClassDef(self, node):
+        self.analysis.mark_constant(node.name)
+
+    # Return can't assign a name.
+
+    # Delete doesn't assign a name - so it would be something else making
+    # the name non-const, not delete.
+
 
     def visit_Assign(self, node):
 
@@ -612,6 +640,15 @@ class PyAnalysis(ast.NodeVisitor):
 
         self.analysis.pop_control()
 
+    def visit_AnnAssign(self, node):
+
+        const = self.analysis.is_constant(node.value)
+        self.analysis.push_control(const, False)
+
+        self.generic_visit(node)
+
+        self.analysis.pop_control()
+
     def visit_For(self, node):
 
         const = self.analysis.is_constant(node.iter)
@@ -619,12 +656,15 @@ class PyAnalysis(ast.NodeVisitor):
         self.analysis.push_control(const=const, loop=True)
         old_const = self.analysis.control.const
 
-        self.generic_visit(node)
+        self.generic_visit(node) # All nodes in the loop depend on node.test.
 
         if self.analysis.control.const != old_const:
             self.generic_visit(node)
 
         self.analysis.pop_control()
+
+    def visit_AsyncFor(self, node):
+        return self.visit_For(node)
 
     def visit_While(self, node):
 
@@ -633,7 +673,7 @@ class PyAnalysis(ast.NodeVisitor):
         self.analysis.push_control(const=const, loop=True)
         old_const = self.analysis.control.const
 
-        self.generic_visit(node)
+        self.generic_visit(node) # All nodes in the loop depend on node.test.
 
         if self.analysis.control.const != old_const:
             self.generic_visit(node)
@@ -648,9 +688,45 @@ class PyAnalysis(ast.NodeVisitor):
 
         self.analysis.pop_control()
 
+    # Nothing special for visit_With or visit_AsyncWith, when withitem is
+    # defined as below.
+
+    def visit_withitem(self, node):
+
+        const = self.analysis.is_constant(node.context_expr)
+        self.visit(node.context_expr)
+
+        self.analysis.push_control(const, False)
+        self.visit(node.optional_vars)
+        self.analysis.pop_control()
+
+    # Match is barely implemented. We assume that it's always going to be
+    # performed on something non-constant, which means that every variable
+    # assigned inside the match is also non-constant. This is probably a
+    # reasonable assumption.
+    def visit_Match(self, node):
+        self.analysis.push_control(False)
+        self.generic_visit(node)
+        self.analysis.pop_control()
+
+    def visit_Try(self, node):
+
+        for i in node.handlers:
+            if i.name:
+                self.analysis.mark_not_constant(i.name)
+
+        self.generic_visit(node)
+
+    # Import and Import from can only assign to a variable in a way that
+    # keeps it constant.
+
+    # Global and NonLocal only make sense inside Python functions, and we don't
+    # analyze Python functions.
+
+    # Expr can be ignored, as it can't assign.
+
     # The continue and break statements should be pretty rare, so if they
     # occur, we mark everything later in the loop as non-const.
-
     def visit_Break(self, node):
         self.analysis.exit_loop()
 
