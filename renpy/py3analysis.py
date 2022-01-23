@@ -605,9 +605,8 @@ class PyAnalysis(ast.NodeVisitor):
 
         self.analysis.pop_control()
 
+
     # Statements that assign names or control constness.
-
-
     def visit_FunctionDef(self, node):
         self.analysis.mark_constant(node.name)
 
