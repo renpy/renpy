@@ -337,15 +337,18 @@ label gui_project_size:
 
     python:
 
+        default_size = (1920, 1080)
+
         gui_size = interface.choice(
-            _("What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."),
+            _("What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."),
             [
-                ((1066, 600), "1066x600"),
                 ((1280, 720), "1280x720"),
                 ((1920, 1080), "1920x1080"),
+                ((2560, 1440), "2560x1440"),
+                ((3840, 2160), "3840x2160"),
                 ("custom", _("Custom. The GUI is optimized for a 16:9 aspect ratio.")),
             ],
-            (1280, 720),
+            default_size,
             cancel=Jump("front_page"),
         )
 

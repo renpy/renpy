@@ -601,8 +601,8 @@ translate spanish strings:
     new "[project_dir!q] ya existe. Por favor elige un nombre diferente para el proyecto."
 
     # gui7.rpy:358
-    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "¿Qué resolución debería usar el proyecto? Aunque Ren'Py puede escalar la ventana más grande o más pequeña, este es el tamaño inicial de la ventana, el tamaño en el que se deben dibujar las imágenes y el tamaño en el que serán más nítidas.\n\nEl valor predeterminado de 1280x720 es un compromiso razonable."
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "¿Qué resolución debería usar el proyecto? Aunque Ren'Py puede escalar la ventana más grande o más pequeña, este es el tamaño inicial de la ventana, el tamaño en el que se deben dibujar las imágenes y el tamaño en el que serán más nítidas.\n\nEl valor predeterminado de [default_size[0]]x[default_size[1]] es un compromiso razonable."
 
     # gui7.rpy:358
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
