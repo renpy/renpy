@@ -112,26 +112,22 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
     # simulate
     # Ex: rm -rf odrdtest-simu && unzip -d odrdtest-simu/ odrdtest-1.0-dists/odrdtest-1.0-web/game.zip && RENPY_SIMULATE_DOWNLOAD=1 ./renpy.sh odrdtest-simu
 
-    import urllib2, urllib, urllib.parse, httplib, random
-
+    import urllib, urllib.parse, random, requests
     class XMLHttpRequest(object):
         def __init__(self, filename):
             self.done = False
             self.error = None
             url = 'http://127.0.0.1:8042/game/' + urllib.parse.quote(filename)
-            req = urllib2.Request(url)
             def thread_main():
                 try:
                     time.sleep(random.random() * 0.5)
-                    r = urllib2.urlopen(req)
+                    r = requests.get(url)
                     fullpath = os.path.join(renpy.config.gamedir, filename)
                     with queue_lock:
                         with open(fullpath, 'wb') as f:
-                            f.write(r.read())
-                except urllib2.URLError as e:
-                    self.error = str(e.reason)
-                except httplib.HTTPException:
-                    self.error = 'HTTPException'
+                            f.write(r.content)
+                except requests.RequestException as e:
+                    self.error = repr(e)
                 except Exception as e:
                     self.error = 'Error: ' + str(e)
                 self.done = True
