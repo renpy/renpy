@@ -779,12 +779,12 @@ class Channel(object):
 
 try:
     from renpy.audio.androidhw import AndroidVideoChannel
-except ImportError:
+except Exception:
     pass
 
 try:
     from renpy.audio.ioshw import IOSVideoChannel
-except ImportError:
+except Exception:
     pass
 
 # A list of channels we know about.
