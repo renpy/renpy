@@ -365,6 +365,11 @@ def save(slotname, extra_info='', mutate_flag=False):
     :func:`renpy.take_screenshot` should be called before this function.
     """
 
+    if renpy.emscripten:
+        # Update persistent file on emscripten now
+        # as it cannot be written when page closes
+        renpy.persistent.update()
+
     if mutate_flag:
         renpy.python.mutate_flag = False
 
