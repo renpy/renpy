@@ -1858,3 +1858,44 @@ translate spanish strings:
     old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
     new "Crearé la clave en el archivo bundle.keystore.\n\nNecesitas hacer una copia de seguridad de este archivo. Si la pierdes, no podrás actualizar tu aplicación.\n\nTambién necesitas mantener la clave segura. Si personas malvadas obtienen este archivo, podrían crear versiones falsas de tu aplicación y potencialmente robar los datos de tus usuarios.\n\n¿Harás una copia de seguridad de bundle.keystore y la guardarás en un lugar seguro?"
 
+    # game/android.rpy:55
+    old "Lists the connected devices."
+    new "Enlista los dispositivos conectados."
+
+    # game/android.rpy:58
+    old "Disconnects a device connected over Wi-Fi."
+    new "Desconecta un dispositivo conectado a través de Wi-Fi."
+
+    # game/android.rpy:453
+    old "List Devices"
+    new "Lista de dispositivos"
+
+    # game/android.rpy:465
+    old "Wi-Fi Debugging Disconnect"
+    new "Desconexión de depuración de Wi-Fi"
+
+    # game/android.rpy:603
+    old "This can be found in 'List Devices'."
+    new "Esto se puede encontrar en 'Lista de dispositivos'."
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    new "La instalación del paquete parece haber fallado."
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    new "El lanzamiento de la aplicación parece haber fallado."
+
+    # game/androidstrings.rpy:44
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new "La versión de Java en su computadora no parece ser JDK 8, que es la única versión compatible con el SDK de Android. Si necesita instalar JDK 8, puede descargarlo desde:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nTambién puede configurar la variable de entorno JAVA_HOME para usar una versión diferente de Java."
+
+    # game/updater.rpy:109
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/doc/html/changelog.html}Ver registro de cambios{/a}"
+
+    # game/updater.rpy:111
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Ver registro de cambios{/a}"
+
+
