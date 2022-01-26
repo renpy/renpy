@@ -1,4 +1,4 @@
-translate french strings:
+﻿translate french strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"

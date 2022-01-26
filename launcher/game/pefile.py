@@ -52,7 +52,7 @@ import time
 import math
 import string
 import array
-from renpy import six
+import six
 
 # Since the long type doesn't exist on py3, define it here
 if six.PY3:
@@ -2223,7 +2223,7 @@ class PE:
                 rt_version_struct = None
                 try:
                     rt_version_struct = last_entry.directory.entries[0].directory.entries[0].data.struct
-                except:
+                except Exception:
                     # Maybe a malformed directory structure...?
                     # Lets ignore it
                     pass

@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,13 +23,13 @@
 # Ren'Py script.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 
 import renpy
 
 import hashlib
 import os
-import imp
 import difflib
 import time
 import marshal
@@ -46,7 +46,11 @@ script_version = renpy.script_version
 BYTECODE_VERSION = 1
 
 # The python magic code.
-MAGIC = imp.get_magic()
+if PY2:
+    import imp
+    MAGIC = imp.get_magic()
+else:
+    from importlib.util import MAGIC_NUMBER as MAGIC
 
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
@@ -212,12 +216,12 @@ class Script(object):
 
             try:
                 os.makedirs(os.path.dirname(target_fn), 0o700)
-            except:
+            except Exception:
                 pass
 
             try:
-                shutil.copy(fn, target_fn)
-            except:
+                shutil.copy(fn, target_fn) # type: ignore
+            except Exception:
                 pass
 
     def scan_script_files(self):
@@ -273,7 +277,7 @@ class Script(object):
         for fn, dir in script_files: # @ReservedAssignment
             # Mitigate "busy script" warning from the browser
             if renpy.emscripten:
-                import emscripten
+                import emscripten # type: ignore
                 emscripten.sleep(0)
 
             # Pump the presplash window to prevent marking
@@ -612,24 +616,24 @@ class Script(object):
                     with open(mergefn, "rb") as rpycf:
                         bindata = self.read_rpyc_data(rpycf, 1)
 
-                    old_data, old_stmts = loads(bindata)
-
-                    self.merge_names(old_stmts, stmts, used_names)
+                    if bindata is not None:
+                        old_data, old_stmts = loads(bindata)
+                        self.merge_names(old_stmts, stmts, used_names)
 
                     del old_data
                     del old_stmts
-                except:
+                except Exception:
                     pass
                 finally:
                     self.record_pycode = True
 
             self.assign_names(stmts, renpy.parser.elide_filename(fullfn))
 
-            pickle_data_before_static_transforms = dumps((data, stmts), 2)
+            pickle_data_before_static_transforms = dumps((data, stmts))
 
             self.static_transforms(stmts)
 
-            pickle_data_after_static_transforms = dumps((data, stmts), 2)
+            pickle_data_after_static_transforms = dumps((data, stmts))
 
             if not renpy.macapp:
                 try:
@@ -638,11 +642,11 @@ class Script(object):
                         self.write_rpyc_data(f, 1, pickle_data_before_static_transforms)
                         self.write_rpyc_data(f, 2, pickle_data_after_static_transforms)
 
-                        with open(fullfn, "rU") as fullf:
+                        with open(fullfn, "rb") as fullf:
                             rpydigest = hashlib.md5(fullf.read()).digest()
 
                         self.write_rpyc_md5(f, rpydigest)
-                except:
+                except Exception:
                     import traceback
                     traceback.print_exc()
 
@@ -662,7 +666,7 @@ class Script(object):
                             data, stmts = loads(bindata)
                             break
 
-                    except:
+                    except Exception:
                         pass
 
                     f.seek(0)
@@ -719,8 +723,8 @@ class Script(object):
             renpy.loader.add_auto(rpyfn)
 
             if os.path.exists(rpyfn):
-                with open(rpyfn, "rU", encoding="utf-8") as f:
-                    rpydigest = hashlib.md5(f.read().encode("utf-8")).digest()
+                with open(rpyfn, "rb") as f:
+                    rpydigest = hashlib.md5(f.read()).digest()
             else:
                 rpydigest = None
 
@@ -731,7 +735,7 @@ class Script(object):
                         rpycdigest = f.read(hashlib.md5().digest_size)
                 else:
                     rpycdigest = None
-            except:
+            except Exception:
                 rpycdigest = None
 
             digest = None
@@ -739,7 +743,7 @@ class Script(object):
             if os.path.exists(rpyfn) and os.path.exists(rpycfn):
 
                 # Are we forcing a compile?
-                force_compile = renpy.game.args.compile # @UndefinedVariable
+                force_compile = renpy.game.args.compile # type: ignore
 
                 # Use the source file here since it'll be loaded if it exists.
                 lastfn = rpyfn
@@ -755,15 +759,13 @@ class Script(object):
                         if data is None:
                             print("Could not load " + rpycfn)
 
-                except:
+                except Exception:
                     renpy.display.log.write("While loading %r", rpycfn)
                     renpy.display.log.exception()
 
                     if "RENPY_RPYC_EXCEPTIONS" in os.environ:
                         print("While loading", rpycfn)
                         raise
-
-                    pass
 
                 if data is None:
                     data, stmts = self.load_file(dir, fn + source)
@@ -786,7 +788,7 @@ class Script(object):
                 self.backup_list.append((rpyfn, digest))
 
         if data is None:
-            raise Exception("Could not load file %s." % lastfn)
+            raise Exception("Could not load file %s." % lastfn) # type: ignore
 
         # Check the key.
         if self.key is None:
@@ -794,9 +796,9 @@ class Script(object):
         elif self.key != data['key']:
             raise Exception(fn + " does not share a key with at least one .rpyc file. To fix, delete all .rpyc files, or rerun Ren'Py with the --lock option.")
 
-        self.finish_load(stmts, initcode, filename=lastfn)
+        self.finish_load(stmts, initcode, filename=lastfn) # type: ignore
 
-        self.digest.update(digest)
+        self.digest.update(digest) # type: ignore
 
     def init_bytecode(self):
         """
@@ -810,7 +812,7 @@ class Script(object):
                 if version == BYTECODE_VERSION:
                     self.bytecode_oldcache = cache
 
-        except:
+        except Exception:
             pass
 
     def update_bytecode(self):
@@ -822,7 +824,7 @@ class Script(object):
         for i in self.all_pyexpr:
             try:
                 renpy.python.py_compile(i, 'eval')
-            except:
+            except Exception:
                 pass
 
         self.all_pyexpr = [ ]
@@ -848,11 +850,11 @@ class Script(object):
                 try:
 
                     if i.mode == 'exec':
-                        code = renpy.python.py_compile_exec_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
+                        code = renpy.python.py_compile_exec_bytecode(i.source, filename=i.location[0], lineno=i.location[1], py=i.py)
                     elif i.mode == 'hide':
-                        code = renpy.python.py_compile_hide_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
+                        code = renpy.python.py_compile_hide_bytecode(i.source, filename=i.location[0], lineno=i.location[1], py=i.py)
                     elif i.mode == 'eval':
-                        code = renpy.python.py_compile_eval_bytecode(i.source, filename=i.location[0], lineno=i.location[1])
+                        code = renpy.python.py_compile_eval_bytecode(i.source, filename=i.location[0], lineno=i.location[1], py=i.py)
 
                 except SyntaxError as e:
 
@@ -860,9 +862,6 @@ class Script(object):
 
                     if text is None:
                         text = ''
-
-                    if not isinstance(text, str):
-                        text = text.decode("utf-8", "replace")
 
                     pem = renpy.parser.ParseError(
                         filename=e.filename,
@@ -878,7 +877,7 @@ class Script(object):
                 renpy.game.exception_info = old_ei
 
             self.bytecode_newcache[key] = code
-            i.bytecode = marshal.loads(code)
+            i.bytecode = marshal.loads(code) # type: ignore
 
         self.all_pycode = [ ]
 
@@ -892,8 +891,8 @@ class Script(object):
 
                 with open(fn, "wb") as f:
                     data = (BYTECODE_VERSION, self.bytecode_newcache)
-                    f.write(zlib.compress(dumps(data, 2), 3))
-            except:
+                    f.write(zlib.compress(dumps(data), 3))
+            except Exception:
                 pass
 
     def lookup(self, label):

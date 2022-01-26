@@ -7,10 +7,13 @@ using the following audio file formats:
 * Opus
 * Ogg Vorbis
 * MP3
+* MP2
+* FLAC
 * WAV (uncompressed 16-bit signed PCM only)
 
 Opus and Ogg Vorbis may not be supported in WebKit-based web browsers,
-such as Safari, but are the best formats for other platforms.
+such as Safari, but are the best formats for other platforms. FLAC
+may not be supported either.
 
 Ren'Py supports an arbitrary number of audio channels. There are three
 normal channels defined by default:
@@ -123,12 +126,18 @@ Queue also takes the ``volume`` clause. ::
         queue sound "woof.mp3" volume 1.0
 
 When multiple queue statements are given without an interaction between them,
-all sound files are added to the queue. After an interaction has occured, the
+all sound files are added to the queue. After an interaction has occurred, the
 first queue statement clears the queue, unless it has already been cleared by
 a play or stop statement.
 
 A variable may be used instead of a string here. If a variable exists in the
 :ref:`audio namespace <audio-namespace>`, it's used in preference to the default namespace::
+
+    define audio.woof = "woof.mp23
+
+    # ...
+
+    play sound woof
 
 The advantage of using these statements is that your program will be checked for
 missing sound and music files when lint is run. The functions below exist to allow

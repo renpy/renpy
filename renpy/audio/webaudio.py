@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import renpy
-import emscripten
+import emscripten # type: ignore
 from json import dumps
 
 
@@ -45,7 +45,7 @@ def call_str(function, *args):
     Calls a method on `function`.
     """
 
-    rv = emscripten.run_script_string("renpyAudio.{}.apply(null, {});".format(function, dumps(args))).decode("utf-8")
+    rv = emscripten.run_script_string("renpyAudio.{}.apply(null, {});".format(function, dumps(args)))
 
     return rv
 
@@ -77,7 +77,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
     try:
         file = file.name
-    except:
+    except Exception:
         return
 
     call("stop", channel)
@@ -94,7 +94,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
 
     try:
         file = file.name
-    except:
+    except Exception:
         return
 
     call("queue", channel, file, name, False, fadein, tight, start, end)
@@ -160,12 +160,12 @@ def unpause(channel):
     call("unpause", channel)
 
 
-def unpause_all():
+def unpause_all_at_start():
     """
     Unpauses all channels that are paused.
     """
 
-    call("unpause_all")
+    call("unpauseAllAtStart")
 
 
 def fadeout(channel, delay):
@@ -350,4 +350,3 @@ def sample_surfaces(rgb, rgba):
     """
 
     return
-

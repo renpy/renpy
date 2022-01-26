@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -118,6 +118,8 @@ class Motion(object):
         self.curves = { }
         self.fades = { }
 
+        y = 0
+
         for curve in j["Curves"]:
             target = curve["Target"]
             name = curve["Id"]
@@ -219,6 +221,7 @@ class Motion(object):
             factor = max(factor, 0.0)
 
             t = st
+            i = None
 
             for i in segments:
                 if t <= i.duration:
@@ -227,6 +230,11 @@ class Motion(object):
                     break
 
                 t -= i.duration
+
+            else:
+                if i is not None:
+                    t = i.duration
+                    rv[k] = (factor, i.get(t))
 
         return rv
 

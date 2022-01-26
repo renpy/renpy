@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -158,7 +158,7 @@ init -1 python:
                     self.process.stdin.write('y\n')
                     self.process.stdin.flush()
                     time.sleep(.2)
-            except:
+            except Exception:
                 import traceback
                 traceback.print_exc()
 
@@ -196,7 +196,7 @@ init -1 python:
                     # avoid SIGTTIN caused by e.g. gradle doing empty read on terminal stdin
                     if not yes:
                         self.process.stdin.close()
-                except:
+                except Exception:
                     import traceback
                     traceback.print_exc(file=f)
                     raise
@@ -262,4 +262,3 @@ init -1 python:
                 self.process.terminate()
 
             renpy.jump(self.platform)
-

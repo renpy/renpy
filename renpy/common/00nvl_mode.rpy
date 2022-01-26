@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -354,7 +354,7 @@ init -1500 python:
             page = self.clear or nvl_clear_next()
 
             if config.nvl_page_ctc and page:
-                display_args["ctc"] = config.nvl_page_ctc
+                display_args["ctc"] = renpy.easy.displayable_or_none(config.nvl_page_ctc)
                 display_args["ctc_position"] = config.nvl_page_ctc_position
 
             if config.nvl_paged_rollback:

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -268,7 +268,7 @@ init python:
             try:
                 import webbrowser
                 webbrowser.open(target)
-            except:
+            except Exception:
                 pass
 
         if target.startswith("edit:"):
@@ -363,12 +363,23 @@ init python:
     def _(s):
         return s
 
+    def __limit_lines(lines):
+        """
+        Limit the number of lines shown.
+        """
+
+        if len(lines) < 401:
+            return lines
+
+        return lines[:200] + [ "..." ] + lines[-200:]
+
     # This function is responsible for taking a traceback, and converting
     # it to a string that can be shown with text.
     def __format_traceback(s):
         import re
 
         lines = [ i.replace("{", "{{") for i in s.split("\n") ]
+        lines = __limit_lines(lines)
 
         rv = [ ("{size=%d}" % gui._scale(22)) + lines[0] + "{/size}" ]
 
@@ -380,13 +391,13 @@ init python:
 
         return "\n".join(rv)
 
-
     def __format_parse_errors(s):
         import re
 
         rv = ""
 
         lines = s.split("\n")
+        lines = __limit_lines(lines)
         len_lines = len(lines)
 
         ln = 0
@@ -433,7 +444,7 @@ init python:
         def __call__(self):
             try:
                 renpy.launch_editor([ self.filename ], self.line, transient=1)
-            except:
+            except Exception:
                 pass
 
     class _CopyFile(Action):
@@ -524,7 +535,7 @@ init python:
         def __call__(self):
             try:
                 f = _console.enter
-            except:
+            except Exception:
                 return None
 
             return f()

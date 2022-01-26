@@ -3,6 +3,7 @@
 
 import argparse
 import rsa
+import base64
 
 ap = argparse.ArgumentParser()
 ap.add_argument("private")
@@ -18,4 +19,4 @@ with open(args.json, "rb") as f:
 signature = rsa.sign(message, private, "SHA-256")
 
 with open(args.json + ".sig", "wb") as f:
-    f.write(signature.encode("base64"))
+    f.write(base64.b64encode(signature))

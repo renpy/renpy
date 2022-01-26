@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,9 @@
 # methods that perform standard tasks, like the say and menu methods.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Optional, List
+
 
 import collections
 import os
@@ -343,7 +345,7 @@ auto_save_extra_info = None
 
 # The directory (underneath ~/RenPy, ~/Library/RenPy, or ~/.renpy) where the
 # game-specific data is saved.
-save_directory = None
+save_directory = None # type: str
 
 # These are used to deal with the case where a picture is missing.
 missing_scene = None
@@ -386,11 +388,11 @@ quit_action = None
 screenshot_crop = None
 
 # Various directories.
-gamedir = None
-basedir = None
-renpy_base = None
-commondir = None
-logdir = None # Where log and error files go.
+gamedir = "" 
+basedir = "" 
+renpy_base = "" 
+commondir = ""  # type: Optional[str]
+logdir = ""  # type: Optional[str] # Where log and error files go.
 
 # Should we enable OpenGL mode?
 gl_enable = True
@@ -428,7 +430,7 @@ choice_screen_chosen = True
 narrator_menu = False
 
 # A list of screen variants to use.
-variants = [ None ]
+variants = [ None ] # type: List
 
 # A function from (auto_parameter, variant) -> displayable.
 imagemap_auto_function = None
@@ -1180,12 +1182,28 @@ raise_image_exceptions = True
 # Should the size transform property only accept numbers of pixels ?
 relative_transform_size = True
 
+# Should tts of layers be from front to back?
+tts_front_to_back = True
+
+# Should live2d loading be logged to log.txt
+log_live2d_loading = False
+
+# Should Ren'Py debug prediction?
+debug_prediction = False
+
+# Should mouse events that cause a window to gain focus be passed through.
+mouse_focus_clickthrough = False
+
+# Should the current displayable always run its unfocus handler, even when 
+# focus is taken away by default.
+always_unfocus = True
+
 del os
 del collections
 
 
 def init():
-    import renpy.display
+    import renpy
 
     global scene
     scene = renpy.exports.scene
@@ -1208,7 +1226,7 @@ def init():
         (r'\.(mp2|mp3|ogg|opus|wav)$', renpy.audio.audio.autoreload),
         ]
 
-    from renpy.uguu import GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_DST_COLOR, GL_MIN, GL_MAX
+    from renpy.uguu import GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_DST_COLOR, GL_MIN, GL_MAX # type: ignore
 
     gl_blend_func["normal"] = (GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
     gl_blend_func["add"] = (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE)

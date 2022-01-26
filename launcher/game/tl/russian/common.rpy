@@ -892,3 +892,19 @@ translate russian strings:
     # renpy/common/00preferences.rpy:464
     old "system cursor"
     new "системный курсор"
+
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "Высококонтрастный текст"
+
+    # renpy/common/00preferences.rpy:487
+    old "renderer menu"
+    new "меню рендерера"
+
+    # renpy/common/00preferences.rpy:490
+    old "accessibility menu"
+    new "меню специальных возможностей"
+
+    # renpy/common/00preferences.rpy:493
+    old "high contrast text"
+    new "высококонтрастный текст"

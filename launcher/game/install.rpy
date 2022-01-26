@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -60,7 +60,10 @@ init python:
             dstfn = os.path.join(config.renpy_base, dstfn)
 
             if not os.path.exists(os.path.dirname(dstfn)):
-                continue
+                try:
+                    os.makedirs(os.path.dirname(dstfn))
+                except Exception:
+                    pass
 
             renpy.write_log(fn + " -> " + dstfn)
 
@@ -70,7 +73,7 @@ init python:
 
             try:
                 os.chmod(dstfn, 0o755)
-            except:
+            except Exception:
                 pass
 
         interface.info(_("Successfully installed [name!t]."), name=name)

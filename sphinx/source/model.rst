@@ -339,6 +339,12 @@ The following uniforms are made available to all Models.
     Four random numbers between 0.0 and 1.0 that are (with incredibly high
     likelyhood) different from frame to frame.
 
+``vec4 u_viewport``
+    This gives the current viewport being drawn into. u_viewport.xy is 
+    are the coordinates of the bottom-left corner of the viewport, relative
+    to the bottom-left corner of the window. u_viewport.pq is the width 
+    and height of the viewport.
+
 ``sampler2D tex0``, ``sampler2D tex1``, ``sampler2D tex2``
     If textures are available, the corresponding samplers are placed in
     this variable.
@@ -367,15 +373,6 @@ GL Properties
 GL properties change the global state of OpenGL, or the Model-Based renderer.
 These properties can be used with a Transform, or with the :func:`Render.add_property`
 function.
-
-``gl_anisotropic``
-    If supplied, this determines if the textures applied to a mesh are
-    created with anisotropy. Anisotropy is a feature that causes multiple
-    texels (texture pixels) to be sampled when a texture is zoomed by a
-    different amount in X and Y.
-
-    This defaults to true. Ren'Py sets this to False for certain effects,
-    like the Pixellate transition.
 
 ``gl_blend_func``
     If present, this is expected to be a six-component tuple, which is
@@ -413,15 +410,27 @@ function.
     transparency may lead to unexpected problems. (As an alternative,
     consider the ``zorder`` and ``behind`` clauses of the ``show`` statement.)
 
+``gl_pixel_perfect``
+    When True, Ren'Py will move the mesh such that the first vertex is aligned with
+    a pixel on the screen. This is mostly used in conjunction with text,
+    to ensure that the text remains sharp.
+
+The following properties only take effect when a texture is being created,
+by a Transform with :tpref:`mesh` set, or by :func:`Model`, where these
+can be supplied the property method.
+
 ``gl_mipmap``
     If supplied, this determines if the textures supplied to a mesh are
     created with mipmaps. This defaults to true.
 
-``gl_pixel_perfect``
-    This only makes sense to set when a mesh is being created. When True,
-    Ren'Py will move the mesh such that the first vertex is aligned with
-    a pixel on the screen. This is mostly used in conjunction with text,
-    to ensure that the text remains sharp.
+``gl_anisotropic``
+    If supplied, this determines if the textures applied to a mesh are
+    created with anisotropy. Anisotropy is a feature that causes multiple
+    texels (texture pixels) to be sampled when a texture is zoomed by a
+    different amount in X and Y.
+
+    This defaults to true. Ren'Py sets this to False for certain effects,
+    like the Pixellate transition.
 
 ``gl_texture_wrap``
     When supplied, this determines how the textures applied to a mesh
@@ -457,11 +466,10 @@ a built-in shader to create the Dissolve transform::
         u_renpy_dissolve 0.0
         linear delay u_renpy_dissolve 1.0
 
+Using the Model displayable as the child of a displayable is incompatible
+with :tpref:`mesh`, as the two both create models inside Ren'Py.
 
 Default Shader Parts
 --------------------
 
 .. include:: inc/shadersource
-
-
-

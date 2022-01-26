@@ -413,43 +413,43 @@ translate piglatin strings:
     old "Audio Filename:"
     new "Udioaay Ilenamefay:"
 
-    # renpy/common/00gui.rpy:384
+    # renpy/common/00gui.rpy:423
     old "Are you sure?"
     new "Reaay ouyay uresay?"
 
-    # renpy/common/00gui.rpy:385
+    # renpy/common/00gui.rpy:424
     old "Are you sure you want to delete this save?"
     new "Reaay ouyay uresay ouyay antway otay eleteday histay avesay?"
 
-    # renpy/common/00gui.rpy:386
+    # renpy/common/00gui.rpy:425
     old "Are you sure you want to overwrite your save?"
     new "Reaay ouyay uresay ouyay antway otay overwriteay ouryay avesay?"
 
-    # renpy/common/00gui.rpy:387
+    # renpy/common/00gui.rpy:426
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
     new "Oadinglay illway oselay unsaveday rogresspay.\nReaay ouyay uresay ouyay antway otay oday histay?"
 
-    # renpy/common/00gui.rpy:388
+    # renpy/common/00gui.rpy:427
     old "Are you sure you want to quit?"
     new "Reaay ouyay uresay ouyay antway otay uitqay?"
 
-    # renpy/common/00gui.rpy:389
+    # renpy/common/00gui.rpy:428
     old "Are you sure you want to return to the main menu?\nThis will lose unsaved progress."
     new "Reaay ouyay uresay ouyay antway otay eturnray otay hetay ainmay enumay?\nHistay illway oselay unsaveday rogresspay."
 
-    # renpy/common/00gui.rpy:390
+    # renpy/common/00gui.rpy:429
     old "Are you sure you want to end the replay?"
     new "Reaay ouyay uresay ouyay antway otay enday hetay eplayray?"
 
-    # renpy/common/00gui.rpy:391
+    # renpy/common/00gui.rpy:430
     old "Are you sure you want to begin skipping?"
     new "Reaay ouyay uresay ouyay antway otay eginbay kippingsay?"
 
-    # renpy/common/00gui.rpy:392
+    # renpy/common/00gui.rpy:431
     old "Are you sure you want to skip to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay otay hetay extnay oicechay?"
 
-    # renpy/common/00gui.rpy:393
+    # renpy/common/00gui.rpy:432
     old "Are you sure you want to skip unseen dialogue to the next choice?"
     new "Reaay ouyay uresay ouyay antway otay kipsay unseenay ialogueday otay hetay extnay oicechay?"
 
@@ -661,91 +661,91 @@ translate piglatin strings:
     old "Contacting App Store\nPlease Wait..."
     new "Ontactingcay Ppaay Toresay\nLeasepay Aitway..."
 
-    # renpy/common/00updater.rpy:393
+    # renpy/common/00updater.rpy:391
     old "The Ren'Py Updater is not supported on mobile devices."
     new "Hetay Enray'Ypay Pdateruay isay otnay upportedsay onay obilemay evicesday."
 
-    # renpy/common/00updater.rpy:522
+    # renpy/common/00updater.rpy:520
     old "An error is being simulated."
     new "Naay erroray isay eingbay imulatedsay."
 
-    # renpy/common/00updater.rpy:706
+    # renpy/common/00updater.rpy:704
     old "Either this project does not support updating, or the update status file was deleted."
     new "Ithereay histay rojectpay oesday otnay upportsay updatingay, oray hetay updateay atusstay ilefay asway eletedday."
 
-    # renpy/common/00updater.rpy:720
+    # renpy/common/00updater.rpy:718
     old "This account does not have permission to perform an update."
     new "Histay accountay oesday otnay avehay ermissionpay otay erformpay anay updateay."
 
-    # renpy/common/00updater.rpy:723
+    # renpy/common/00updater.rpy:721
     old "This account does not have permission to write the update log."
     new "Histay accountay oesday otnay avehay ermissionpay otay riteway hetay updateay oglay."
 
-    # renpy/common/00updater.rpy:748
+    # renpy/common/00updater.rpy:746
     old "Could not verify update signature."
     new "Ouldcay otnay erifyvay updateay ignaturesay."
 
-    # renpy/common/00updater.rpy:1015
+    # renpy/common/00updater.rpy:1013
     old "The update file was not downloaded."
     new "Hetay updateay ilefay asway otnay ownloadedday."
 
-    # renpy/common/00updater.rpy:1033
+    # renpy/common/00updater.rpy:1031
     old "The update file does not have the correct digest - it may have been corrupted."
     new "Hetay updateay ilefay oesday otnay avehay hetay orrectcay igestday - itay aymay avehay eenbay orruptedcay."
 
-    # renpy/common/00updater.rpy:1183
+    # renpy/common/00updater.rpy:1181
     old "While unpacking {}, unknown type {}."
     new "Hileway unpackingay {}, unknownay ypetay {}."
 
-    # renpy/common/00updater.rpy:1555
+    # renpy/common/00updater.rpy:1553
     old "Updater"
     new "Pdateruay"
 
-    # renpy/common/00updater.rpy:1562
+    # renpy/common/00updater.rpy:1560
     old "An error has occured:"
     new "Naay erroray ashay occureday:"
 
-    # renpy/common/00updater.rpy:1564
+    # renpy/common/00updater.rpy:1562
     old "Checking for updates."
     new "Heckingcay orfay updatesay."
 
-    # renpy/common/00updater.rpy:1566
+    # renpy/common/00updater.rpy:1564
     old "This program is up to date."
     new "Histay rogrampay isay upay otay ateday."
 
-    # renpy/common/00updater.rpy:1568
+    # renpy/common/00updater.rpy:1566
     old "[u.version] is available. Do you want to install it?"
     new "[u.version] isay availableay. Oday ouyay antway otay installay itay?"
 
-    # renpy/common/00updater.rpy:1570
+    # renpy/common/00updater.rpy:1568
     old "Preparing to download the updates."
     new "Reparingpay otay ownloadday hetay updatesay."
 
-    # renpy/common/00updater.rpy:1572
+    # renpy/common/00updater.rpy:1570
     old "Downloading the updates."
     new "Ownloadingday hetay updatesay."
 
-    # renpy/common/00updater.rpy:1574
+    # renpy/common/00updater.rpy:1572
     old "Unpacking the updates."
     new "Npackinguay hetay updatesay."
 
-    # renpy/common/00updater.rpy:1576
+    # renpy/common/00updater.rpy:1574
     old "Finishing up."
     new "Inishingfay upay."
 
-    # renpy/common/00updater.rpy:1578
+    # renpy/common/00updater.rpy:1576
     old "The updates have been installed. The program will restart."
     new "Hetay updatesay avehay eenbay installeday. Hetay rogrampay illway estartray."
 
-    # renpy/common/00updater.rpy:1580
+    # renpy/common/00updater.rpy:1578
     old "The updates have been installed."
     new "Hetay updatesay avehay eenbay installeday."
 
-    # renpy/common/00updater.rpy:1582
+    # renpy/common/00updater.rpy:1580
     old "The updates were cancelled."
     new "Hetay updatesay ereway ancelledcay."
 
-    # renpy/common/00updater.rpy:1597
+    # renpy/common/00updater.rpy:1595
     old "Proceed"
     new "Roceedpay"
 
@@ -897,75 +897,75 @@ translate piglatin strings:
     old "Back (B)"
     new "Ackbay (Bay)"
 
-    # renpy/common/_errorhandling.rpym:542
+    # renpy/common/_errorhandling.rpym:553
     old "Open"
     new "Penoay"
 
-    # renpy/common/_errorhandling.rpym:544
+    # renpy/common/_errorhandling.rpym:555
     old "Opens the traceback.txt file in a text editor."
     new "Pensoay hetay acebacktray.xttay ilefay inay aay exttay editoray."
 
-    # renpy/common/_errorhandling.rpym:546
+    # renpy/common/_errorhandling.rpym:557
     old "Copy BBCode"
     new "Opycay Bcodebay"
 
-    # renpy/common/_errorhandling.rpym:548
+    # renpy/common/_errorhandling.rpym:559
     old "Copies the traceback.txt file to the clipboard as BBcode for forums like https://lemmasoft.renai.us/."
     new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay asay Bcodebay orfay orumsfay ikelay ttpshay://emmasoftlay.enairay.usay/."
 
-    # renpy/common/_errorhandling.rpym:550
+    # renpy/common/_errorhandling.rpym:561
     old "Copy Markdown"
     new "Opycay Arkdownmay"
 
-    # renpy/common/_errorhandling.rpym:552
+    # renpy/common/_errorhandling.rpym:563
     old "Copies the traceback.txt file to the clipboard as Markdown for Discord."
     new "Opiescay hetay acebacktray.xttay ilefay otay hetay ipboardclay asay Arkdownmay orfay Iscordday."
 
-    # renpy/common/_errorhandling.rpym:581
+    # renpy/common/_errorhandling.rpym:592
     old "An exception has occurred."
     new "Naay exceptionay ashay occurreday."
 
-    # renpy/common/_errorhandling.rpym:604
+    # renpy/common/_errorhandling.rpym:615
     old "Rollback"
     new "Ollbackray"
 
-    # renpy/common/_errorhandling.rpym:606
+    # renpy/common/_errorhandling.rpym:617
     old "Attempts a roll back to a prior time, allowing you to save or choose a different choice."
     new "Ttemptsaay aay ollray ackbay otay aay riorpay imetay, allowingay ouyay otay avesay oray oosechay aay ifferentday oicechay."
 
-    # renpy/common/_errorhandling.rpym:609
+    # renpy/common/_errorhandling.rpym:620
     old "Ignore"
     new "Gnoreiay"
 
-    # renpy/common/_errorhandling.rpym:613
+    # renpy/common/_errorhandling.rpym:624
     old "Ignores the exception, allowing you to continue."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay."
 
-    # renpy/common/_errorhandling.rpym:615
+    # renpy/common/_errorhandling.rpym:626
     old "Ignores the exception, allowing you to continue. This often leads to additional errors."
     new "Gnoresiay hetay exceptionay, allowingay ouyay otay ontinuecay. Histay oftenay eadslay otay additionalay errorsay."
 
-    # renpy/common/_errorhandling.rpym:619
+    # renpy/common/_errorhandling.rpym:630
     old "Reload"
     new "Eloadray"
 
-    # renpy/common/_errorhandling.rpym:621
+    # renpy/common/_errorhandling.rpym:632
     old "Reloads the game from disk, saving and restoring game state if possible."
     new "Eloadsray hetay amegay omfray iskday, avingsay anday estoringray amegay atestay ifay ossiblepay."
 
-    # renpy/common/_errorhandling.rpym:624
+    # renpy/common/_errorhandling.rpym:635
     old "Console"
     new "Onsolecay"
 
-    # renpy/common/_errorhandling.rpym:626
+    # renpy/common/_errorhandling.rpym:637
     old "Opens a console to allow debugging the problem."
     new "Pensoay aay onsolecay otay alloway ebuggingday hetay roblempay."
 
-    # renpy/common/_errorhandling.rpym:639
+    # renpy/common/_errorhandling.rpym:650
     old "Quits the game."
     new "Uitsqay hetay amegay."
 
-    # renpy/common/_errorhandling.rpym:660
+    # renpy/common/_errorhandling.rpym:671
     old "Parsing the script failed."
     new "Arsingpay hetay criptsay ailedfay."
 

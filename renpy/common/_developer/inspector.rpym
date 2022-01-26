@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -75,7 +75,7 @@ screen _inspector:
 
                 for depth, width, height, d in tree:
 
-                    $ t = "  " * depth + u"\u2022 " + unicode(d)
+                    $ t = "  " * depth + u"\u2022 " + _inspector_repr(d)
                     $ s = __format_style(d.style.parent)
 
 
@@ -118,7 +118,7 @@ screen _style_inspector:
             xfill True
             spacing gui._scale(10)
 
-        $ displayable_name = unicode(d)
+        $ displayable_name = _inspector_repr(d)
         label _("Inspecting Styles of [displayable_name!q]")
 
         $ styles = d.style.inspect()
@@ -176,12 +176,12 @@ init python:
 
     def __safe_repr(name):
         try:
-            s = unicode(repr(name))
+            s = str(repr(name))
             if len(s) > 51:
-                s = s[:50] + u"\u2026"
+                s = s[:50] + "\u2026"
 
             return s
-        except:
+        except Exception:
             return _("<repr() failed>")
 
     def __inspect(tree):
@@ -192,3 +192,16 @@ init python:
         renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
 
     config.inspector = __inspect
+
+    def _inspector_repr(d):
+        if type(d) is renpy.display.screen.ScreenDisplayable:
+            clname = "Screen"
+        elif type(d) is renpy.display.layout.MultiBox:
+            clname = d._classname()
+        else:
+            clname = type(d).__name__
+
+        info = d._repr_info()
+        if info is None:
+            return clname
+        return clname + " " + info

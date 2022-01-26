@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,7 +26,9 @@
 # field is copied in the copy() method.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Optional, Any
+
 from renpy.compat.pickle import loads, dumps
 
 import ast
@@ -35,9 +37,7 @@ import linecache
 import zlib
 import weakref
 
-import renpy.display
-import renpy.pyanalysis
-import renpy.sl2
+import renpy
 
 from renpy.display.transform import Transform, ATLTransform
 from renpy.display.layout import Fixed
@@ -94,32 +94,35 @@ class SLContext(renpy.ui.Addable):
             return
 
         # The local scope that python code is evaluated in.
-        self.scope = { }
+        self.scope = { } # type: dict[str, Any]
+
+        # The scope of the top-level screen.
+        self.root_scope = self.scope
 
         # The global scope that python code is evaluated in.
-        self.globals = { }
+        self.globals = { } # type: dict[str, Any]
 
         # A list of child displayables that will be added to an outer
         # displayable.
-        self.children = [ ]
+        self.children = [ ] # type: list[renpy.display.core.Displayable]
 
         # A map from keyword arguments to their values.
-        self.keywords = { }
+        self.keywords = { } # type: Optional[dict[str, Any]]
 
         # The style prefix that is given to children of this displayable.
         self.style_prefix = None
 
         # A cache associated with this context. The cache maps from
         # statement serial to information associated with the statement.
-        self.new_cache = { }
+        self.new_cache = { } # type: dict[Any, Any]
 
         # The old cache, used to take information from the old version of
         # this displayable.
-        self.old_cache = { }
+        self.old_cache = { } # type: dict[Any, Any]
 
         # The miss cache, used to take information that isn't present in
         # old_cache.
-        self.miss_cache = { }
+        self.miss_cache = { } # type: dict[Any, Any]
 
         # The number of times a particular use statement has been called
         # in the current screen. We use this to generate a unique name for
@@ -128,11 +131,11 @@ class SLContext(renpy.ui.Addable):
 
         # When a constant node uses the scope, we add it to this list, so
         # it may be reused. (If None, no list is used.)
-        self.uses_scope = None
+        self.uses_scope = None # type: Optional[list[Any]]
 
         # When a constant node has an id, we added it to this dict, so it
         # may be reused. (If None, no dict is used.)
-        self.widgets = None
+        self.widgets = None # type: Optional[dict[str, Any]]
 
         # True if we should dump debug information to the profile log.
         self.debug = False
@@ -145,11 +148,11 @@ class SLContext(renpy.ui.Addable):
 
         # A list of nodes we've predicted, for cases where predicting more than
         # once could be a performance problem.
-        self.predicted = set()
+        self.predicted = set() # type: set[Any]
 
         # True if we're in a true showif block, False if we're in a false showif
         # block, or None if we're not in a showif block.
-        self.showif = None
+        self.showif = None # type: Optional[bool]
 
         # True if there was a failure in this statement or any of its children.
         # Fails can only occur when predicting, as otherwise an exception
@@ -157,18 +160,18 @@ class SLContext(renpy.ui.Addable):
         self.fail = False
 
         # The parent context of a use statement with a block.
-        self.parent = None
+        self.parent = None # type: Any
 
         # The use statement containing the transcluded block.
-        self.transclude = None
+        self.transclude = None # type: Any
 
         # True if it's unlikely this node will run. This is used in prediction
         # to speed things up.
         self.unlikely = False
 
         # The old and new generations of the use_cache.
-        self.new_use_cache = { }
-        self.old_use_cache = { }
+        self.new_use_cache = { } # type: dict[Any, Any]
+        self.old_use_cache = { } # type: dict[Any, Any]
 
     def add(self, d, key):
         self.children.append(d)
@@ -285,7 +288,6 @@ class SLNode(object):
         full_filename = renpy.exports.unelide_filename(filename)
 
         line = linecache.getline(full_filename, lineno) or ""
-        line = line.decode("utf-8")
 
         profile_log.write("  %s:%d %s", filename, lineno, line.rstrip())
 
@@ -339,9 +341,9 @@ class SLBlock(SLNode):
 
     def instantiate(self, transclude):
         rv = SLNode.instantiate(self, transclude)
-        rv.keyword = self.keyword
-        rv.children = [ i.copy(transclude) for i in self.children ]
-        rv.atl_transform = self.atl_transform
+        rv.keyword = self.keyword # type: ignore
+        rv.children = [ i.copy(transclude) for i in self.children ] # type: ignore
+        rv.atl_transform = self.atl_transform # type: ignore
 
         return rv
 
@@ -426,7 +428,7 @@ class SLBlock(SLNode):
 
             try:
                 i.execute(context)
-            except:
+            except Exception:
                 if not context.predicting:
                     raise
 
@@ -526,52 +528,52 @@ class SLCache(object):
     def __init__(self):
 
         # The displayable object created.
-        self.displayable = None
+        self.displayable = None # type: Optional[renpy.display.core.Displayable]
 
         # The positional arguments that were used to create the displayable.
-        self.positional = None
+        self.positional = None # type: Any
 
         # The keyword arguments that were used to created the displayable.
-        self.keywords = None
+        self.keywords = None # type: Optional[dict[str, Any]]
 
         # A list of the children that were added to self.displayable.
-        self.children = None
+        self.children = None # type: Optional[list[renpy.display.core.Displayable]]
 
         # The outermost old transform.
-        self.outer_transform = None
+        self.outer_transform = None # type: Optional[Any]
 
         # The innermost old transform.
-        self.inner_transform = None
+        self.inner_transform = None # type: Optional[Any]
 
         # The transform (or list of transforms) that was used to create self.transform.
-        self.raw_transform = None
+        self.raw_transform = None # type: Optional[Any]
 
         # The imagemap stack entry we reuse.
-        self.imagemap = None
+        self.imagemap = None # type: Optional[Any]
 
         # If this can be represented as a single constant displayable,
         # do so.
-        self.constant = None
+        self.constant = None # type: Optional[Any]
 
         # For a constant statement, a list of our children that use
         # the scope.
-        self.constant_uses_scope = [ ]
+        self.constant_uses_scope = [ ] # type: Optional[list[Any]]
 
         # For a constant statement, a map from children to widgets.
-        self.constant_widgets = { }
+        self.constant_widgets = { } # type: dict[Any, Any]
 
         # True if the displayable should be re-created if its arguments
         # or children are changed.
         self.copy_on_change = False
 
         # The ShowIf this statement was wrapped in the last time it was wrapped.
-        self.old_showif = None
+        self.old_showif = None # type: Any
 
         # The SLUse that was transcluded by this SLCache statement.
-        self.transclude = None
+        self.transclude = None # type: Any
 
         # The style prefix used when this statement was first created.
-        self.style_prefix = None
+        self.style_prefix = None # type: Optional[str]
 
 
 # A magic value that, if returned by a displayable function, is not added to
@@ -650,17 +652,17 @@ class SLDisplayable(SLBlock):
     def copy(self, transclude):
         rv = self.instantiate(transclude)
 
-        rv.displayable = self.displayable
-        rv.scope = self.scope
-        rv.child_or_fixed = self.child_or_fixed
-        rv.style = self.style
-        rv.pass_context = self.pass_context
-        rv.imagemap = self.imagemap
-        rv.hotspot = self.hotspot
-        rv.replaces = self.replaces
-        rv.default_keywords = self.default_keywords
-        rv.variable = self.variable
-        rv.positional = self.positional
+        rv.displayable = self.displayable # type: ignore
+        rv.scope = self.scope # type: ignore
+        rv.child_or_fixed = self.child_or_fixed # type: ignore
+        rv.style = self.style # type: ignore
+        rv.pass_context = self.pass_context # type: ignore
+        rv.imagemap = self.imagemap # type: ignore
+        rv.hotspot = self.hotspot # type: ignore
+        rv.replaces = self.replaces # type: ignore
+        rv.default_keywords = self.default_keywords # type: ignore
+        rv.variable = self.variable # type: ignore
+        rv.positional = self.positional # type: ignore
 
         return rv
 
@@ -783,13 +785,16 @@ class SLDisplayable(SLBlock):
 
         if cache.constant and (cache.style_prefix == context.style_prefix):
 
-            for i, local_scope in cache.constant_uses_scope:
+            for i, local_scope, context_scope in cache.constant_uses_scope:
+
+                if context_scope is None:
+                    context_scope = context.root_scope
 
                 if local_scope:
-                    scope = dict(context.scope)
+                    scope = dict(context_scope)
                     scope.update(local_scope)
                 else:
-                    scope = context.scope
+                    scope = context_scope
 
                 if copy_on_change:
                     if i._scope(scope, False):
@@ -829,6 +834,9 @@ class SLDisplayable(SLBlock):
         # True if we've pushed something onto the imagemap stack.
         imagemap = False
 
+        # True if we're reusing a displayable.
+        reused = False
+
         try:
             # Evaluate the positional arguments.
             positional_values = self.positional_values
@@ -847,7 +855,7 @@ class SLDisplayable(SLBlock):
             keywords = ctx.keywords = self.default_keywords.copy()
 
             if self.constant:
-                ctx.uses_scope = [ ]
+                ctx.uses_scope = [ ] # type: ignore
 
             SLBlock.keywords(self, ctx)
 
@@ -880,8 +888,6 @@ class SLDisplayable(SLBlock):
             else:
                 old_main = None
 
-            reused = False
-
             if debug:
                 self.report_arguments(cache, positional, keywords, transform)
 
@@ -911,12 +917,12 @@ class SLDisplayable(SLBlock):
                     screen.widgets[widget_id] = main
                     screen.base_widgets[widget_id] = d
 
-                if self.scope and main._uses_scope:
+                if self.scope and main._uses_scope: # type: ignore
                     if copy_on_change:
-                        if main._scope(ctx.scope, False):
+                        if main._scope(ctx.scope, False): # type: ignore
                             reused = False
                     else:
-                        main._scope(ctx.scope, True)
+                        main._scope(ctx.scope, True) # type: ignore
 
             if reused and self.imagemap:
                 imagemap = True
@@ -962,7 +968,7 @@ class SLDisplayable(SLBlock):
                 else:
                     profile_log.write("    created displayable")
 
-        except:
+        except Exception:
             if not context.predicting:
                 raise
             fail = True
@@ -974,7 +980,7 @@ class SLDisplayable(SLBlock):
         ctx.showif = None
 
         stack = renpy.ui.stack
-        stack.append(ctx)
+        stack.append(ctx) # type: ignore
 
         try:
 
@@ -982,7 +988,7 @@ class SLDisplayable(SLBlock):
             for i in self.children:
                 try:
                     i.execute(ctx)
-                except:
+                except Exception:
                     if not context.predicting:
                         raise
                     fail = True
@@ -1009,26 +1015,29 @@ class SLDisplayable(SLBlock):
 
             return
 
+
         if ctx.children != cache.children:
 
             if reused and copy_on_change:
+
+                keywords = keywords # type: ignore
 
                 # This is a copy of the child creation code from above.
                 if self.scope:
                     keywords["scope"] = ctx.scope
 
                 if self.replaces and context.updating:
-                    keywords['replaces'] = old_main
+                    keywords['replaces'] = old_main # type: ignore
 
                 if self.pass_context:
                     keywords['context'] = ctx
 
-                d = self.displayable(*positional, **keywords)
+                d = self.displayable(*positional, **keywords) # type: ignore
                 main = d._main or d
 
                 main._location = self.location
 
-                if widget_id:
+                if widget_id: # type: ignore
                     screen.widgets[widget_id] = main
                     screen.base_widgets[widget_id] = d
                 # End child creation code.
@@ -1045,11 +1054,14 @@ class SLDisplayable(SLBlock):
                 for i in ctx.children:
                     f.add(i)
 
-                main.add(f)
+                main.add(f) # type: ignore
 
             else:
                 for i in ctx.children:
-                    main.add(i)
+                    main.add(i) # type: ignore
+
+        d = d # type: ignore
+        old_d = old_d # type: ignore
 
         # Inform the focus system about replacement displayables.
         if (not context.predicting) and (old_d is not None):
@@ -1063,6 +1075,8 @@ class SLDisplayable(SLBlock):
         cache.displayable = d
         cache.children = ctx.children
         cache.style_prefix = context.style_prefix
+
+        transform = transform # type: ignore
 
         if (transform is not None) and (d is not NO_DISPLAYABLE):
             if reused and (transform == cache.raw_transform):
@@ -1139,7 +1153,10 @@ class SLDisplayable(SLBlock):
                         if i in ctx.scope:
                             local_scope[i] = ctx.scope[i]
 
-                    ctx.uses_scope.append((main, local_scope))
+                    if ctx.scope is context.root_scope:
+                        ctx.uses_scope.append((main, local_scope, None))
+                    else:
+                        ctx.uses_scope.append((main, local_scope, ctx.scope))
 
                 cache.constant_uses_scope = ctx.uses_scope
 
@@ -1325,7 +1342,7 @@ class SLIf(SLNode):
         for cond, block in self.prepared_entries:
             try:
                 cond_value = (cond is None) or eval(cond, context.globals, context.scope)
-            except:
+            except Exception:
                 cond_value = False
 
             # The taken branch.
@@ -1335,7 +1352,7 @@ class SLIf(SLNode):
                 for i in block.children:
                     try:
                         i.execute(context)
-                    except:
+                    except Exception:
                         pass
 
             else:
@@ -1357,7 +1374,7 @@ class SLIf(SLNode):
             for i in block.children:
                 try:
                     i.execute(ctx)
-                except:
+                except Exception:
                     pass
 
             for i in ctx.children:
@@ -1502,9 +1519,9 @@ class SLFor(SLBlock):
     def copy(self, transclude):
         rv = self.instantiate(transclude)
 
-        rv.variable = self.variable
-        rv.expression = self.expression
-        rv.index_expression = self.index_expression
+        rv.variable = self.variable # type: ignore
+        rv.expression = self.expression # type: ignore
+        rv.index_expression = self.index_expression # type: ignore
 
         return rv
 
@@ -1549,7 +1566,7 @@ class SLFor(SLBlock):
                 value = eval(expr, context.globals, context.scope)
             else:
                 value = self.expression_value
-        except:
+        except Exception:
             if not context.predicting:
                 raise
 
@@ -1569,7 +1586,7 @@ class SLFor(SLBlock):
 
         ctx = SLContext(context)
 
-        for index, v in enumerate(value):
+        for index, v in enumerate(value): # type: ignore
 
             ctx.scope[variable] = v
 
@@ -1583,7 +1600,7 @@ class SLFor(SLBlock):
                 # It can only fail if the unpacking fails, but it can still
                 try:
                     sl_python.execute(ctx)
-                except:
+                except Exception:
                     if not context.predicting:
                         raise
 
@@ -1607,7 +1624,7 @@ class SLFor(SLBlock):
             for i in children_i:
                 try:
                     i.execute(ctx)
-                except:
+                except Exception:
                     if not context.predicting:
                         raise
 
@@ -1854,7 +1871,6 @@ class SLUse(SLNode):
         ctx = SLContext(context)
         ctx.new_cache = context.new_cache[self.serial] = { "ast" : ast }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
-        ctx.uses_scope = [ ]
 
         if self.id:
 
@@ -1883,7 +1899,7 @@ class SLUse(SLNode):
             else:
                 args = [ ]
                 kwargs = { }
-        except:
+        except Exception:
             if not context.predicting:
                 raise
 
@@ -1902,7 +1918,9 @@ class SLUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = context.scope.copy()
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+            scope.clear()
+            scope.update(context.scope)
             scope.update(kwargs)
 
         scope["_scope"] = scope
@@ -1938,6 +1956,12 @@ class SLUse(SLNode):
         if not isinstance(self.target, renpy.ast.PyExpr):
             callback(self.target)
 
+    def has_transclude(self):
+        if self.block:
+            return self.block.has_transclude()
+        else:
+            return False
+
 
 class SLTransclude(SLNode):
 
@@ -1962,6 +1986,7 @@ class SLTransclude(SLNode):
         ctx.new_cache = context.new_cache[self.serial] = { }
         ctx.old_cache = context.old_cache.get(self.serial, None) or { }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
+        ctx.uses_scope = context.uses_scope
 
         if not isinstance(ctx.old_cache, dict):
             ctx.old_cache = { }
@@ -1974,7 +1999,7 @@ class SLTransclude(SLNode):
         ctx.showif = context.showif
 
         try:
-            renpy.ui.stack.append(ctx)
+            renpy.ui.stack.append(ctx) # type: ignore
             context.transclude.keywords(ctx)
             context.transclude.execute(ctx)
         finally:
@@ -2079,7 +2104,6 @@ class SLCustomUse(SLNode):
         ctx = SLContext(context)
         ctx.new_cache = context.new_cache[self.serial] = { }
         ctx.miss_cache = context.miss_cache.get(self.serial, None) or { }
-        ctx.uses_scope = [ ]
 
         # Evaluate the arguments to use in screen.
         try:
@@ -2105,7 +2129,7 @@ class SLCustomUse(SLNode):
                 else:
                     kwargs["style"] = ctx.style_prefix + "_" + style_suffix
 
-        except:
+        except Exception:
             if not context.predicting:
                 raise
 
@@ -2148,7 +2172,9 @@ class SLCustomUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = context.scope.copy()
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+            scope.clear()
+            scope.update(context.scope)
             scope.update(kwargs)
 
         scope["_scope"] = scope
@@ -2180,6 +2206,9 @@ class SLCustomUse(SLNode):
 
     def used_screens(self, callback):
         callback(self.target)
+
+    def has_transclude(self):
+        return self.block.has_transclude()
 
 
 class SLScreen(SLBlock):
@@ -2240,19 +2269,19 @@ class SLScreen(SLBlock):
         self.prepared = False
 
     def copy(self, transclude):
-        rv = self.instantiate(transclude)
+        rv = self.instantiate(transclude) # type: ignore
 
-        rv.name = self.name
-        rv.modal = self.modal
-        rv.zorder = self.zorder
-        rv.tag = self.tag
-        rv.variant = self.variant
-        rv.predict = self.predict
-        rv.parameters = self.parameters
-        rv.sensitive = self.sensitive
+        rv.name = self.name # type: ignore
+        rv.modal = self.modal # type: ignore
+        rv.zorder = self.zorder # type: ignore
+        rv.tag = self.tag # type: ignore
+        rv.variant = self.variant # type: ignore
+        rv.predict = self.predict # type: ignore
+        rv.parameters = self.parameters # type: ignore
+        rv.sensitive = self.sensitive # type: ignore
 
-        rv.prepared = False
-        rv.analysis = None
+        rv.prepared = False # type: ignore
+        rv.analysis = None # type: ignore
 
         return rv
 
@@ -2296,7 +2325,7 @@ class SLScreen(SLBlock):
 
         if self.has_transclude():
             self.not_const_ast = self.copy(NOT_CONST)
-            self.not_const_ast.const_ast = self.not_const_ast
+            self.not_const_ast.const_ast = self.not_const_ast # type: ignore
             targets = [ self.const_ast, self.not_const_ast ]
         else:
             self.not_const_ast = self.const_ast
@@ -2334,7 +2363,7 @@ class SLScreen(SLBlock):
         self.const_ast.prepare(self.const_ast.analysis)
 
         if self.not_const_ast is not self.const_ast:
-            self.not_const_ast.prepare(self.not_const_ast.analysis)
+            self.not_const_ast.prepare(self.not_const_ast.analysis) # type: ignore
 
         self.prepared = True
 
@@ -2355,7 +2384,7 @@ class SLScreen(SLBlock):
 
     def execute(self, context):
         self.const_ast.keywords(context)
-        SLBlock.execute(self.const_ast, context)
+        SLBlock.execute(self.const_ast, context) # type: ignore
 
     def report_traceback(self, name, last):
         if last:
@@ -2367,7 +2396,7 @@ class SLScreen(SLBlock):
         return SLBlock.report_traceback(self, name, last)
 
     def copy_on_change(self, cache):
-        SLBlock.copy_on_change(self.const_ast, cache)
+        SLBlock.copy_on_change(self.const_ast, cache) # type: ignore
 
     def __call__(self, *args, **kwargs):
         scope = kwargs["_scope"]
@@ -2392,6 +2421,7 @@ class SLScreen(SLBlock):
         context = SLContext()
 
         context.scope = scope
+        context.root_scope = scope
         context.globals = renpy.python.store_dicts["store"]
         context.debug = debug
         context.predicting = renpy.display.predict.predicting
@@ -2442,7 +2472,7 @@ CACHE_FILENAME = "cache/screens.rpyb"
 
 
 def load_cache():
-    if renpy.game.args.compile: # @UndefinedVariable
+    if renpy.game.args.compile: # type: ignore
         return
 
     try:
@@ -2458,7 +2488,7 @@ def load_cache():
             scache.const_analyzed.update(s.const_analyzed)
             scache.not_const_analyzed.update(s.not_const_analyzed)
 
-    except:
+    except Exception:
         pass
 
 
@@ -2470,10 +2500,10 @@ def save_cache():
         return
 
     try:
-        data = zlib.compress(dumps(scache, 2), 3)
+        data = zlib.compress(dumps(scache), 3)
 
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
             f.write(renpy.game.script.digest.digest())
             f.write(data)
-    except:
+    except Exception:
         pass

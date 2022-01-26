@@ -226,7 +226,7 @@ If a variable containing the text contain substitution it's necessary to use
 
     $ who = "Jane"
     $ t = "Hello, [who]!"
-    text "Then I told her, "[t!i]""
+    text 'Then I told her, "[t!i]"'
 
 Const Functions
 ----------------

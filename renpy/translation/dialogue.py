@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 
 import renpy
 
@@ -176,7 +177,7 @@ class DialogueFile(object):
 
         self.filename = filename
 
-        commondir = os.path.normpath(renpy.config.commondir)
+        commondir = os.path.normpath(renpy.config.commondir) # type: ignore
 
         if filename.startswith(commondir):
             return
@@ -250,7 +251,7 @@ class DialogueFile(object):
                 lines.sort(key=lambda x: int(x[4]))
 
         for line in lines:
-            self.f.write("\t".join(line).encode("utf-8") + "\n")
+            self.f.write("\t".join(line) + "\n")
 
     def get_strings(self):
         """
@@ -323,7 +324,7 @@ def dialogue_command():
                 "Ren'Py Script",
                 ]
 
-            f.write("\t".join(line).encode("utf-8") + "\n")
+            f.write("\t".join(line) + "\n")
 
     for dirname, filename in renpy.loader.listdirfiles():
         if dirname is None:

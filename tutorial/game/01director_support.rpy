@@ -16,8 +16,6 @@ python early hide:
 
         store.director_readonly = False
 
-    except:
+    except Exception:
 
         store.director_readonly = True
-
-

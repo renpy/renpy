@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,12 +20,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
-
-import renpy.display
-import renpy.pyanalysis
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 import random
+
+import renpy
 
 
 def compiling(loc):
@@ -95,7 +94,7 @@ def matrix(x):
 
 
 def mesh(x):
-    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2mesh3.Mesh3, tuple)):
+    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2.gl2mesh3.Mesh3, tuple)):
         return x
 
     return bool(x)
@@ -375,9 +374,10 @@ class ATLTransformBase(renpy.object.Object):
         requires that t.atl is self.atl.
         """
 
-        super(ATLTransformBase, self).take_execution_state(t)
+        super(ATLTransformBase, self).take_execution_state(t) # type: ignore
 
         self.atl_st_offset = None
+        self.atl_state = None
 
         if self is t:
             return
@@ -391,7 +391,7 @@ class ATLTransformBase(renpy.object.Object):
         try:
             if not (t.context == self.context):
                 return
-        except:
+        except Exception:
             pass
 
         self.done = t.done
@@ -405,7 +405,6 @@ class ATLTransformBase(renpy.object.Object):
         self.at = t.at
         self.st_offset = t.st_offset
         self.at_offset = t.at_offset
-
         self.atl_st_offset = t.atl_st_offset
 
         if self.child is renpy.display.motion.null:
@@ -470,13 +469,13 @@ class ATLTransformBase(renpy.object.Object):
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
             child=child,
-            style=self.style_arg,
+            style=self.style_arg, # type: ignore
             context=context,
             parameters=parameters,
             _args=_args,
             )
 
-        rv.parent_transform = self
+        rv.parent_transform = self # type: ignore
         rv.take_state(self)
 
         return rv
@@ -602,7 +601,7 @@ class ATLTransformBase(renpy.object.Object):
         if block is None:
             block = self.compile()
 
-        return self.children + block.visit()
+        return self.children + block.visit() # type: ignore
 
 
 # This is used in mark_constant to analyze expressions for constness.
@@ -816,12 +815,16 @@ class Block(Statement):
                     loop_end = target - arg
                     duration = loop_end - loop_start
 
-                    if duration <= 0:
+                    if (state is None) and (duration <= 0):
                         raise Exception("ATL appears to be in an infinite loop.")
 
                     # Figure how many durations can occur between the
                     # start of the loop and now.
-                    new_repeats = int((target - loop_start) / duration)
+
+                    if duration:
+                        new_repeats = int((target - loop_start) / duration)
+                    else:
+                        new_repeats = 0
 
                     if count is not None:
                         if repeats + new_repeats >= count:
@@ -966,7 +969,7 @@ class RawMultipurpose(RawStatement):
         for expr, _with in self.expressions:
             try:
                 value = ctx.eval(expr)
-            except:
+            except Exception:
                 raise Exception("Could not evaluate expression %r when compiling ATL." % expr)
 
             if not isinstance(value, ATLTransformBase):
@@ -1010,7 +1013,7 @@ class RawMultipurpose(RawStatement):
 
             try:
                 i = ctx.eval(i)
-            except:
+            except Exception:
                 continue
 
             if isinstance(i, ATLTransformBase):
@@ -1019,7 +1022,7 @@ class RawMultipurpose(RawStatement):
 
             try:
                 renpy.easy.predict(i)
-            except:
+            except Exception:
                 continue
 
 # This lets us have an ATL transform as our child.
@@ -1143,12 +1146,22 @@ class Interpolation(Statement):
         else:
             st_or_at = trans.st
 
-        if (self.warper != "instant") and (state is None) and (
-                (trans.atl_state is not None) or (st_or_at == 0)
-                ):
-            first = True
+        # True if we want want to make sure this interpolation is shown for at
+        # least one frame.
+        if self.warper == "instant":
+            first_frame = False
+        elif state is not None:
+            first_frame = False
+        elif (self.duration == 0) and (not self.properties and not self.revolution and not self.splines):
+            first_frame = True
+        elif trans.atl_state is not None:
+            first_frame = True
+        elif st_or_at == 0:
+            first_frame = True
         else:
-            first = False
+            # This is the case when we're skipping through a displayable to
+            # find the right time.
+            first_frame = False
 
         if self.duration:
             complete = min(1.0, st / self.duration)
@@ -1272,7 +1285,7 @@ class Interpolation(Statement):
             value = interpolate_spline(complete, values)
             setattr(trans.state, name, value)
 
-        if ((not first) or (not renpy.config.atl_one_frame)) and (st >= self.duration):
+        if (st >= self.duration) and ((not first_frame) or (not renpy.config.atl_one_frame)):
             return "next", st - self.duration, None
         else:
             if not self.properties and not self.revolution and not self.splines:
@@ -1443,9 +1456,12 @@ class Choice(Statement):
 
         executing(self.loc)
 
+        choice = None # For typing purposes.
+
         if state is None:
 
             total = 0
+
             for chance, choice in self.choices:
                 total += chance
 

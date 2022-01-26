@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,10 +24,10 @@
 # of the stuff thar uses images remaining.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-import renpy.display
-import renpy.text
+
+import renpy
 from renpy.display.render import render, Render
 
 import collections
@@ -339,9 +339,10 @@ class ImageReference(renpy.display.core.Displayable):
         super(ImageReference, self).__init__(**properties)
 
         self.name = name
+        self.target = None # type: renpy.display.core.Displayable|None
 
-    def __unicode__(self):
-        return u"<ImageReference {!r}>".format(self.name)
+    def _repr_info(self):
+        return repr(self.name)
 
     def __hash__(self):
         return hash(self.name)
@@ -381,6 +382,8 @@ class ImageReference(renpy.display.core.Displayable):
 
             if renpy.config.debug:
                 raise Exception(msg)
+
+        target = None # typing
 
         args = [ ]
 
@@ -445,7 +448,7 @@ class ImageReference(renpy.display.core.Displayable):
                 rv.name = rv.name._duplicate(args)
 
         rv.find_target()
-        rv._duplicatable = rv.target._duplicatable
+        rv._duplicatable = rv.target._duplicatable # type: ignore
 
         return rv
 
@@ -543,10 +546,10 @@ class DynamicImage(renpy.display.core.Displayable):
     nosave = [ 'raw_target' ]
 
     # The target that this image currently resolves to.
-    target = None
+    target = None # type: renpy.display.core.Displayable|None
 
     # The raw target that the image resolves to, before it has been parameterized.
-    raw_target = None
+    raw_target = None # type: renpy.display.core.Displayable|None
 
     # Have we been locked, so we never change?
     locked = False
@@ -576,8 +579,8 @@ class DynamicImage(renpy.display.core.Displayable):
     def _scope(self, scope, update):
         return self.find_target(scope, update)
 
-    def __unicode__(self):
-        return u"DynamicImage {!r}".format(self.name)
+    def _repr_info(self):
+        return repr(self.name)
 
     def __hash__(self):
 
@@ -657,11 +660,11 @@ class DynamicImage(renpy.display.core.Displayable):
         if not update:
             return True
 
-        raw_target = target
+        raw_target = target # type: renpy.display.core.Displayable
         old_target = self.target
 
-        if target._duplicatable:
-            target = target._duplicate(self._args)
+        if raw_target._duplicatable:
+            target = raw_target._duplicate(self._args)
 
         self.raw_target = raw_target
         self.target = target
@@ -792,9 +795,9 @@ class ShownImageInfo(renpy.object.Object):
             self.attributes = { }
             self.shown = set()
 
-            for layer in self.images:
-                for tag in self.images[layer]:
-                    self.attributes[layer, tag] = self.images[layer][tag][1:]
+            for layer in self.images: # type: ignore
+                for tag in self.images[layer]: # type: ignore
+                    self.attributes[layer, tag] = self.images[layer][tag][1:] # type: ignore
                     self.shown.add((layer, tag))
 
     def get_attributes(self, layer, tag, default=()):
@@ -979,24 +982,22 @@ class ShownImageInfo(renpy.object.Object):
                     num_required += 1
                     continue
 
-            else:
+            # We don't have any not-found attributes. But we might not
+            # have all of the attributes.
 
-                # We don't have any not-found attributes. But we might not
-                # have all of the attributes.
+            if num_required != len(required):
+                continue
 
-                if num_required != len(required):
-                    continue
+            len_attrs = len(set(attrs))
 
-                len_attrs = len(set(attrs))
+            if len_attrs < max_len:
+                continue
 
-                if len_attrs < max_len:
-                    continue
+            if len_attrs > max_len:
+                max_len = len_attrs
+                matches = [ ]
 
-                if len_attrs > max_len:
-                    max_len = len_attrs
-                    matches = [ ]
-
-                matches.append((tag,) + attrs)
+            matches.append((tag,) + attrs)
 
         if matches is None:
             return None
@@ -1010,7 +1011,7 @@ class ShownImageInfo(renpy.object.Object):
             return None
 
 
-renpy.display.core.ImagePredictInfo = ShownImageInfo
+renpy.display.core.ImagePredictInfo = ShownImageInfo # type: ignore
 
 # Functions that have moved from this module to other modules,
 # that live here for the purpose of backward-compatibility.

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -233,38 +233,26 @@ init -1500 python:
 
 
     class ContrastMatrix(ColorMatrix):
+        """
+        :doc: colormatrix
+
+        A ColorMatrix that can be used with :tpref:`matrixcolor` to change
+        the brightness of an image, while leaving the Alpha channel
+        alone.
+
+        `value`
+            The contrast value. Values between 0.0 and 1.0 decrease
+            the contrast, while values above 1.0 increase the contrast.
+        """
 
         def get(self, value):
-            """
-            :doc: colormatrix
+            d = value
+            v = value / -2.0 + .5
 
-            A ColorMatrix that can be used with :tpref:`matrixcolor` to change
-            the brightness of an image, while leaving the Alpha channel
-            alone.
-
-            `value`
-                The contrast value. Values between 0.0 and 1.0 decrease
-                the contrast, while values above 1.0 increase the contrast.
-            """
-
-            v = value
-
-            step1 = Matrix([ 1, 0, 0, -.5,
-                             0, 1, 0, -.5,
-                             0, 0, 1, -.5,
-                             0, 0, 0, 1, ])
-
-            step2 = Matrix([ v, 0, 0, 0,
-                             0, v, 0, 0,
-                             0, 0, v, 0,
-                             0, 0, 0, 1, ])
-
-            step3 = Matrix([ 1, 0, 0, -.5,
-                             0, 1, 0, -.5,
-                             0, 0, 1, -.5,
-                             0, 0, 0, 1, ])
-
-            return step3 * step2 * step1
+            return Matrix([ d, 0, 0, v,
+                            0, d, 0, v,
+                            0, 0, d, v,
+                            0, 0, 0, 1, ])
 
 
     class ColorizeMatrix(ColorMatrix):

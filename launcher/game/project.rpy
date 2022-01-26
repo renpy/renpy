@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -103,7 +103,7 @@ init python in project:
             try:
                 with open(os.path.join(self.path, "project.json"), "rb") as f:
                     self.data = json.load(f)
-            except:
+            except Exception:
                 self.data = { }
 
             self.update_data()
@@ -116,7 +116,7 @@ init python in project:
             try:
                 with open(os.path.join(self.path, "project.json"), "wb") as f:
                     json.dump(self.data, f)
-            except:
+            except Exception:
                 self.load_data()
 
         def update_data(self):
@@ -167,7 +167,7 @@ init python in project:
 
             try:
                 os.makedirs(tmp)
-            except:
+            except Exception:
                 pass
 
             if os.path.isdir(tmp):
@@ -186,7 +186,7 @@ init python in project:
                     self.tmp = tmp
                     return
 
-                except:
+                except Exception:
                     pass
 
             self.tmp = tempfile.mkdtemp()
@@ -239,7 +239,7 @@ init python in project:
                 raise Exception("Python interpreter not found: %r", executables)
 
             # Put together the basic command line.
-            cmd = [ executable, "-EO", sys.argv[0] ]
+            cmd = [ executable, sys.argv[0] ]
 
             cmd.append(self.path)
             cmd.extend(args)
@@ -314,7 +314,7 @@ init python in project:
                 # add todo list to dump data
                 self.update_todos()
 
-            except:
+            except Exception:
                 self.dump["error"] = True
 
         def update_todos(self):
@@ -329,7 +329,7 @@ init python in project:
 
             for f in files:
 
-                data = file(self.unelide_filename(f))
+                data = open(self.unelide_filename(f), encoding="utf-8")
 
                 for l, line in enumerate(data):
                     l += 1
@@ -338,7 +338,7 @@ init python in project:
 
                     try:
                         line = line.decode("utf-8")
-                    except:
+                    except Exception:
                         continue
 
                     m = re.search(r"#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
@@ -541,7 +541,7 @@ init python in project:
 
             try:
                 ppath = self.find_basedir(ppath)
-            except:
+            except Exception:
                 return
 
             if ppath is None:

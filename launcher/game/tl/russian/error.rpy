@@ -276,3 +276,11 @@ translate russian strings:
     # renpy/common/00gamepad.rpy:58
     old "Press or move the '[control!s]' [kind]."
     new "Нажмите или сдвиньте [kind] '[control!s]'"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "Включить (игнорировать блоклист)"
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "Файл {a=edit:1:log.txt}log.txt{/a} может содержать информацию, которая поможет вам определить, что не так с вашим компьютером."

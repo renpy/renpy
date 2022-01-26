@@ -47,7 +47,7 @@ translate piglatin styles_6189ee12:
     # e "While the default GUI uses variables to provide styles with sensible defaults, if you're replacing the GUI or creating your own screens, you'll need to learn about styles yourself."
     e "Hileway hetay efaultday Uigay usesay ariablesvay otay rovidepay ylesstay ithway ensiblesay efaultsday, ifay ouyay'eray eplacingray hetay Uigay oray reatingcay ouryay ownay creenssay, ouyay'llay eednay otay earnlay aboutay ylesstay ourselfyay."
 
-# game/indepth_style.rpy:66
+# game/indepth_style.rpy:68
 translate piglatin styles_menu_a4a6913e:
 
     # e "What would you like to know about styles?" nointeract

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -59,6 +59,7 @@ init python:
 
     # Strings so they can be translated.
 
+
     _("Release")
     _("{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games.")
 
@@ -70,7 +71,6 @@ init python:
 
     _("Nightly")
     _("The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all.")
-
 
 
 screen update_channel(channels):
@@ -103,15 +103,26 @@ screen update_channel(channels):
                     for c in channels:
 
                         if c["split_version"] != list(renpy.version_tuple):
-                            $ action = [updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False), SetField(persistent, "has_update", False)]
-                            $ current = ""
+                            $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)]
+
+                            if c["channel"] == "Release":
+                                $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")
+                            elif c["channel"] == "Prerelease":
+                                $ current = _("• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}")
+                            else:
+                                $ current = ""
+
                         else:
                             $ action = None
                             $ current = _("• This version is installed and up-to-date.")
 
                         add SPACER
 
-                        textbutton c["channel"] action action
+                        hbox:
+                            spacing 7
+                            textbutton c["channel"]  action action
+
+
 
                         add HALF_SPACER
 

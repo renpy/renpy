@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -151,14 +151,14 @@ init -1500 python:
     @renpy.pure
     class MainMenu(Action, DictEquality):
         """
-         :doc: menu_action
+        :doc: menu_action
 
-         Causes Ren'Py to return to the main menu.
+        Causes Ren'Py to return to the main menu.
 
-         `confirm`
-              If true, causes Ren'Py to ask the user if he wishes to
-              return to the main menu, rather than returning
-              directly.
+        `confirm`
+            If true, causes Ren'Py to ask the user if he wishes to
+            return to the main menu, rather than returning
+            directly.
 
         `save`
             If true, the game is saved in :var:`_quit_slot` before Ren'Py

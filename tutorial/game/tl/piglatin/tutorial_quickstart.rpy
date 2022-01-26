@@ -767,7 +767,7 @@ translate piglatin choice1_done_819e234a:
     # e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
     e "Erehay'say anay exampleay hattay owsshay owhay eway ancay esttay aay agflay, anday oday ifferentday hingstay ifay itay isay uetray oray otnay."
 
-# game/tutorial_quickstart.rpy:559
+# game/tutorial_quickstart.rpy:560
 translate piglatin choice1_done_461e6a59:
 
     # e "Finally, this shows how you can show dialogue and menus at the same time. Understand?" nointeract

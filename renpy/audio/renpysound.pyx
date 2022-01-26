@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -63,7 +63,7 @@ cdef extern from "renpysound_core.h":
     object RPS_playing_name(int channel)
     void RPS_fadeout(int channel, int ms)
     void RPS_pause(int channel, int pause)
-    void RPS_unpause_all()
+    void RPS_unpause_all_at_start()
     int RPS_get_pos(int channel)
     double RPS_get_duration(int channel)
     void RPS_set_endevent(int channel, int event)
@@ -224,12 +224,12 @@ def unpause(channel):
     RPS_pause(channel, 0)
     check_error()
 
-def unpause_all():
+def unpause_all_at_start():
     """
-    Unpauses all channels that are paused.
+    Unpauses all channels that are paused at the start.
     """
 
-    RPS_unpause_all()
+    RPS_unpause_all_at_start()
 
 def fadeout(channel, delay):
     """
@@ -430,4 +430,3 @@ def sample_surfaces(rgb, rgba):
     RPS_sample_surfaces(rgb, rgba)
 
 # When changing this API, change webaudio.py, too!
-

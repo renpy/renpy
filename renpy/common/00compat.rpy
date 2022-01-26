@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init -1900 python:
+init -1100 python:
 
     # This is called when script_version is set, to immediately
     # run code in response to a script_version change.
@@ -223,6 +223,13 @@ init -1900 python:
 
         if version <= (7, 4, 8):
             config.relative_transform_size = False
+            config.tts_front_to_back = False
+
+        if version <= (7, 4, 10):
+            config.always_unfocus = False
+
+        if version <= (7, 5, 0):
+            style.drag.focus_mask = True
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
@@ -240,7 +247,7 @@ python early hide:
         if script_version <= (7, 2, 2):
             config.keyword_after_python = True
 
-    except:
+    except Exception:
         config.early_script_version = None
         pass
 
@@ -252,7 +259,7 @@ init -1000 python hide:
             script_version = f.read()
         config.script_version = ast.literal_eval(script_version)
         renpy.write_log("Set script version to: %r", config.script_version)
-    except:
+    except Exception:
         pass
 
 
@@ -268,10 +275,10 @@ init -1000 python hide:
                 config.script_version = (6, 99, 12, 4)
 
             renpy.write_log("Set script version to: %r (alternate path)", config.script_version)
-    except:
+    except Exception:
         pass
 
-init 1900 python hide:
+init 1100 python hide:
 
     # This returns true if the script_version is <= the
     # script_version supplied. Give it the last script version

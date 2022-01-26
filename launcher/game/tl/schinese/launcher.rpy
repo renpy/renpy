@@ -818,8 +818,8 @@ translate schinese strings:
     new "使用 gui.rpy 中的配色重新生成图像文件。"
 
     # gui7.rpy:339
-    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "您希望该工程使用哪种基础分辨率？虽然 Ren'Py 可以向上或向下缩放窗口，此分辨率将是窗口的初始化尺寸、资源绘制的基础分辨率以及资源显示最清晰的分辨率。\n\n默认的 1280x720 是折中方案。"
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "您希望该工程使用哪种基础分辨率？虽然 Ren'Py 可以向上或向下缩放窗口，此分辨率将是窗口的初始化尺寸、资源绘制的基础分辨率以及资源显示最清晰的分辨率。\n\n默认的 [default_size[0]]x[default_size[1]] 是折中方案。"
 
     # gui7.rpy:339
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
@@ -1635,3 +1635,19 @@ translate schinese strings:
 
     old "Web (Beta)"
     new "网页（测试版）"
+
+    # game/preferences.rpy:206
+    old "Daily check for update"
+    new "每天检查更新"
+
+    # game/preferences.rpy:210
+    old "Default theme"
+    new "默认主题"
+
+    # game/preferences.rpy:212
+    old "Dark theme"
+    new "黑暗主题"
+
+    # game/preferences.rpy:213
+    old "Custom theme"
+    new "自定义主题"

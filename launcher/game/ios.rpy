@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -212,8 +212,8 @@ init python:
 
     def launch_xcode():
         dist = xcode_project(None)
-        base = os.path.basename(dist)
-        xcodeproj = "{}/{}.xcodeproj".format(dist, base)
+        name = project.current.dump.get("name", None)
+        xcodeproj = "{}/{}.xcodeproj".format(dist, name)
 
         subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
 

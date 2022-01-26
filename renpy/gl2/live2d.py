@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,9 +20,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Any
 
-import renpy.display
+
+import renpy
 import renpy.gl2.live2dmotion
 from renpy.gl2.gl2shadercache import register_shader
 
@@ -45,8 +47,6 @@ def onetime_init():
     if did_onetime_init:
         return
 
-    did_onetime_init = True
-
     if renpy.windows:
         dll = "Live2DCubismCore.dll"
     elif renpy.macintosh:
@@ -58,8 +58,13 @@ def onetime_init():
     if os.path.exists(fn):
         dll = fn
 
+    if not PY2:
+        dll = dll.encode("utf-8")
+
     if not renpy.gl2.live2dmodel.load(dll):
         raise Exception("Could not load Live2D. {} was not found.".format(dll))
+
+    did_onetime_init = True
 
 
 did_init = False
@@ -173,7 +178,8 @@ class Live2DCommon(object):
             suffix = filename.rpartition("/")[2]
             filename = filename + "/" + suffix + ".model3.json"
 
-        renpy.display.log.write("Loading Live2D from %r.", filename)
+        if renpy.config.log_live2d_loading:
+            renpy.display.log.write("Loading Live2D from %r.", filename)
 
         if not renpy.loader.loadable(filename):
             raise Exception("Live2D model {} does not exist.".format(filename))
@@ -238,7 +244,7 @@ class Live2DCommon(object):
         self.attributes = set([ "still", "null" ])
 
         # A map from a motion name to a motion identifier.
-        self.motions = { "still" : renpy.gl2.live2dmotion.NullMotion() }
+        self.motions = { "still" : renpy.gl2.live2dmotion.NullMotion() } # type: dict[str, renpy.gl2.live2dmotion.Motion|renpy.gl2.live2dmotion.NullMotion]
 
         for i in motion_files.values():
             name = i["File"].lower().rpartition("/")[2].partition(".")[0]
@@ -249,7 +255,8 @@ class Live2DCommon(object):
                 name = suffix
 
             if renpy.loader.loadable(self.base + i["File"]):
-                renpy.display.log.write(" - motion %s -> %s", name, i["File"])
+                if renpy.config.log_live2d_loading:
+                    renpy.display.log.write(" - motion %s -> %s", name, i["File"])
 
                 self.motions[name] = renpy.gl2.live2dmotion.Motion(
                     self.base + i["File"],
@@ -270,7 +277,8 @@ class Live2DCommon(object):
                 name = suffix
 
             if renpy.loader.loadable(self.base + i["File"]):
-                renpy.display.log.write(" - expression %s -> %s", name, i["File"])
+                if renpy.config.log_live2d_loading:
+                    renpy.display.log.write(" - expression %s -> %s", name, i["File"])
 
                 if name in self.attributes:
                     raise Exception("Name {!r} is already specified as a motion.".format(name))
@@ -299,20 +307,20 @@ class Live2DCommon(object):
         self.all_expressions = dict(self.expressions)
 
         # Nonexcusive expressions.
-        self.nonexclusive = { }
+        self.nonexclusive = { } # type: dict[str, Live2DExpression]
 
         # This may be True, False, or a set of motion names.
-        self.seamless = False
+        self.seamless = False # type: bool|set[str]
 
         # If not None, a function that takes a tuple of attributes, and returns
         # a tuple of attributes.
-        self.attribute_function = None
+        self.attribute_function = None # type: Any
 
         # Same.
-        self.attribute_filter = None
+        self.attribute_filter = None # type: Any
 
         # If not None, a function that can blend parameters itself after applying expressions.
-        self.update_function = None
+        self.update_function = None # type: Any
 
     def apply_aliases(self, aliases):
 
@@ -337,10 +345,10 @@ class Live2DCommon(object):
             if k in target:
                 raise Exception("Name {!r} is already specified as a motion or expression.".format(k))
 
-            target[k] = target[v]
+            target[k] = target[v] # type: ignore
 
             if expression:
-                self.all_expressions[k] = target[v]
+                self.all_expressions[k] = target[v] # type: ignore
 
     def apply_nonexclusive(self, nonexclusive):
         for i in nonexclusive:
@@ -378,12 +386,12 @@ class Live2DState(object):
 
         # The displayable in the old and new state. Both can be None if
         # it's not being shown.
-        self.old = None
-        self.new = None
+        self.old = None # type: Live2D|None
+        self.new = None # type: Live2D|None
 
         # The time at which the old and new displayables were last updated.
-        self.old_base_time = 0
-        self.new_base_time = 0
+        self.old_base_time = 0 # type: float|None
+        self.new_base_time = 0 # type: float|None
 
         # A list of (expression_name, time_shown) tuples.
         self.expressions = [ ]
@@ -529,7 +537,7 @@ class Live2D(renpy.display.core.Displayable):
         self.filename = filename
         self.motions = motions
         self.expression = expression
-        self.used_nonexclusive = used_nonexclusive
+        self.used_nonexclusive = used_nonexclusive # type: list[str]|None
 
         self.zoom = zoom
         self.top = top
@@ -695,6 +703,19 @@ class Live2D(renpy.display.core.Displayable):
         # True if this is the last frame of a series of motions.
         last_frame = False
 
+        # The index of the current motion in self.motions.
+        current_index = 0
+
+        # The motion object to display.
+        motion = None
+
+        # Determine the current motion.
+
+        motion_st = st
+
+        if st_fade is not None:
+            motion_st = st - st_fade
+
         for m in self.motions:
             motion = common.motions.get(m, None)
 
@@ -702,27 +723,67 @@ class Live2D(renpy.display.core.Displayable):
                 continue
 
             if motion.duration > st:
-
-                if self.loop and (m == self.motions[-1]):
-                    do_fade_out = not common.is_seamless(m)
-
                 break
 
+            elif (motion.duration > motion_st) and not common.is_seamless(m):
+                break
+
+            motion_st -= motion.duration
             st -= motion.duration
+            current_index += 1
 
         else:
+
             if motion is None:
                 return None
 
-            if self.loop:
-                do_fade_in = not common.is_seamless(m)
-                do_fade_out = not common.is_seamless(m)
-            else:
+            m = self.motions[-1]
+
+            if (not self.loop) or (not motion.duration):
                 st = motion.duration
                 last_frame = True
 
+            elif (st_fade is not None) and not common.is_seamless(m):
+                # This keeps a motion from being restarted after it would have
+                # been faded out.
+                motion_start = motion_st - motion_st % motion.duration
+
+                if (st - motion_start) > motion.duration:
+                    st = motion.duration
+                    last_frame = True
+
         if motion is None:
             return None
+
+        # Determine the name of the current, last, and next motions. These are
+        # None if there is no motion.
+
+        if current_index < len(self.motions):
+            current_name = self.motions[current_index]
+        else:
+            current_name = self.motions[-1]
+
+        if current_index > 0:
+            last_name = self.motions[current_index - 1]
+        else:
+            last_name = None
+
+        if current_index < len(self.motions) - 1:
+            next_name = self.motions[current_index + 1]
+        elif self.loop:
+            next_name = self.motions[-1]
+        else:
+            next_name = None
+
+        # Handle seamless.
+
+        if (last_name == current_name) and common.is_seamless(current_name):
+            do_fade_in = False
+
+        if (next_name == current_name) and common.is_seamless(current_name) and (st_fade is None):
+            do_fade_out = False
+
+        # Apply the motion.
 
         motion_data = motion.get(st, st_fade, do_fade_in, do_fade_out)
 
@@ -755,7 +816,7 @@ class Live2D(renpy.display.core.Displayable):
         state.old_expressions = [ (name, shown, hidden) for (name, shown, hidden) in state.old_expressions if (now - hidden) < common.all_expressions[name].fadeout ]
 
         # Determine the list of expressions that are being shown by this displayable.
-        expressions = list(self.used_nonexclusive)
+        expressions = list(self.used_nonexclusive) # type: ignore
         if self.expression:
             expressions.append(self.expression)
 
@@ -822,26 +883,27 @@ class Live2D(renpy.display.core.Displayable):
 
             if state.old is None:
                 fade = False
-
-            if state.old_base_time is None:
+            elif state.old_base_time is None:
                 fade = False
-
-        if fade:
-
-            if state.old.common is not self.common:
+            elif state.old.common is not self.common:
                 fade = False
 
         # Reset the parameter, and update.
         model.reset_parameters()
 
         if fade:
-            old_redraw = state.old.update(common, renpy.display.interface.frame_time - state.old_base_time, st)
-            t = renpy.display.interface.frame_time - state.new_base_time
+            t = renpy.display.interface.frame_time - state.new_base_time # type: ignore
         else:
-            old_redraw = None
             t = st
 
         new_redraw = self.update(common, t, None)
+
+        if fade:
+            old_redraw = state.old.update(common, renpy.display.interface.frame_time - state.old_base_time, st) # type: ignore
+        else:
+            old_redraw = None
+
+        model.finish_parameters()
 
         # Apply the expressions.
         expression_redraw = self.update_expressions(st)
@@ -896,6 +958,10 @@ class Live2D(renpy.display.core.Displayable):
         return self.common.textures
 
 
+# Caches the result of has_live2d.
+_has_live2d = None
+
+
 def has_live2d():
     """
     :doc: live2d
@@ -904,8 +970,14 @@ def has_live2d():
     False otherwise.
     """
 
-    try:
-        init()
-        return True
-    except:
-        return False
+    global _has_live2d
+
+    if _has_live2d is None:
+
+        try:
+            init()
+            _has_live2d = True
+        except Exception:
+            _has_live2d = False
+
+    return _has_live2d

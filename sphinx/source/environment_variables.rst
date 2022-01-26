@@ -53,6 +53,13 @@ The following environment variables control the behavior of Ren'Py:
 ``RENPY_LESS_UPDATES``
     This causes Ren'Py to reduce the number of screen updates that occur.
 
+``RENPY_MULTIPERSISTENT``
+    The path to a directory where Ren'Py stores multipersistent data.
+
+``RENPY_PATH_TO_SAVES``
+    The path to a directory where Ren'Py stores it's saves. The actual saves 
+    for a game are stored in a game-specific path underneath this directory.
+
 ``RENPY_SCREENSHOT_PATTERN``
     A pattern used to create screenshot filenames. It should contain a single
     %d substitution in it. For example, setting this to "screenshot%04d.jpg" will

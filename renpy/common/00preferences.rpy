@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -437,7 +437,7 @@ init -1500 python:
             elif name == _("rollback side"):
 
                 if value in [ "left", "right", "disable" ]:
-                    if renpy.mobile:
+                    if renpy.variant("mobile"):
                         field = "mobile_rollback_side"
                     else:
                         field = "desktop_rollback_side"

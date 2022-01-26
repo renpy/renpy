@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,7 @@
 from __future__ import print_function
 
 import time
-from textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, RUBY_TOP, RUBY_ALT
+from renpy.text.textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, RUBY_TOP, RUBY_ALT
 from libc.stdlib cimport calloc, malloc, free
 
 import collections

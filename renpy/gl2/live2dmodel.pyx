@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -119,6 +119,7 @@ class Parameter(object):
         self.minimum = minimum
         self.maximum = maximum
         self.default = default
+        self.remaining = 1.0
 
 class Part(object):
 
@@ -126,6 +127,7 @@ class Part(object):
         self.index = index
         self.name = name
         self.default_opacity = default_opacity
+        self.remaining = 1.0
 
 cdef class Live2DModel:
     """
@@ -179,6 +181,13 @@ cdef class Live2DModel:
     cdef public dict opacity_groups
 
     cdef list meshes
+
+    _types = """
+        parameters : dict[str, Parameter]
+        parts : dict[str, Part]
+        parameter_groups : dict
+        opacity_groups : dict
+        """
 
     def __init__(self, fn):
         """
@@ -243,7 +252,7 @@ cdef class Live2DModel:
         self.parameters = { }
 
         for 0 <= i < self.parameter_count:
-            name = self.parameter_ids[i]
+            name = self.parameter_ids[i].decode("utf-8")
             self.parameters[name] = Parameter(
                 i, name,
                 self.parameter_minimum_values[i],
@@ -254,7 +263,7 @@ cdef class Live2DModel:
         self.parts = { }
 
         for 0 <= i < self.part_count:
-            name = self.part_ids[i]
+            name = self.part_ids[i].decode("utf-8")
             self.parts[name] = Part(i, name, self.part_opacities[i])
 
         self.opacity_groups = { }
@@ -263,11 +272,17 @@ cdef class Live2DModel:
         csmUpdateModel(self.model)
 
     def reset_parameters(self):
+        """
+        Resets the parameters, and resets the remaining weight to 1.0.
+        """
+
         for i in self.parameters.values():
-            self.parameter_values[i.index] = i.default
+            self.parameter_values[i.index] = 0.0
+            i.remaining = 1.0
 
         for i in self.parts.values():
-            self.part_opacities[i.index] = i.default_opacity
+            self.part_opacities[i.index] = 0.0
+            i.remaining = 1.0
 
 
     def set_part_opacity(self, name, value):
@@ -278,7 +293,8 @@ cdef class Live2DModel:
                 self.set_part_opacity(i, value)
             return
 
-        self.part_opacities[part.index] = value
+        self.part_opacities[part.index] += value * part.remaining
+        part.remaining = 0.0
 
     def set_parameter(self, name, value, weight=1.0):
         parameter = self.parameters.get(name, None)
@@ -288,8 +304,20 @@ cdef class Live2DModel:
                 self.set_parameter(i, value, weight=weight)
             return
 
+        weight = min(weight, parameter.remaining)
+
         old = self.parameter_values[parameter.index]
-        self.parameter_values[parameter.index] = old + weight * (value - old)
+        self.parameter_values[parameter.index] += weight * value
+        parameter.remaining -= weight
+
+    def finish_parameters(self):
+        for i in self.parameters.values():
+            self.parameter_values[i.index] += i.default * i.remaining
+            i.remaining = 0.0
+
+        for i in self.parts.values():
+            self.part_opacities[i.index] += i.default_opacity * i.remaining
+            i.remaining = 0.0
 
     def blend_parameter(self, name, blend, value, weight=1.0):
 
@@ -330,9 +358,6 @@ cdef class Live2DModel:
         csmUpdateModel(self.model)
 
         # Render the model.
-
-#         w = self.pixel_size.X
-#         h = self.pixel_size.Y
         w = int(zoom * self.pixel_size.X)
         h = int(zoom * self.pixel_size.Y)
 

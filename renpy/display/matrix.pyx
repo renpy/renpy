@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -95,6 +95,9 @@ cdef class Matrix:
             0.0, 0.0, 0.0, 1.0,
     """
 
+    _types = "".join(["{} : float\n".format(i) for i in fields])
+
+
     def __init__(Matrix self, l):
 
         memset(self.m, 0, sizeof(float) * 16)
@@ -107,7 +110,7 @@ cdef class Matrix:
         if lenl == 4:
             (self.xdx, self.xdy,
              self.ydx, self.ydy) = l
-            self.ydy = 1.0
+            self.zdz = 1.0
             self.wdw = 1.0
 
         elif lenl == 9:

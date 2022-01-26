@@ -663,10 +663,10 @@ def load():
     glBindBufferRange = <glBindBufferRange_type> find_gl_command([b'glBindBufferRange', b'glBindBufferRangeEXT', b'glBindBufferRangeNV'])
 
     global glBindFramebuffer
-    glBindFramebuffer = <glBindFramebuffer_type> find_gl_command([b'glBindFramebuffer'])
+    glBindFramebuffer = <glBindFramebuffer_type> find_gl_command([b'glBindFramebuffer', b'glBindFramebufferEXT'])
 
     global glBindRenderbuffer
-    glBindRenderbuffer = <glBindRenderbuffer_type> find_gl_command([b'glBindRenderbuffer'])
+    glBindRenderbuffer = <glBindRenderbuffer_type> find_gl_command([b'glBindRenderbuffer', b'glBindRenderbufferEXT'])
 
     global glBindTexture
     glBindTexture = <glBindTexture_type> find_gl_command([b'glBindTexture', b'glBindTextureEXT'])

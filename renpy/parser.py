@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,7 @@
 # called when parsing is necessary, and creates an AST from the script.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 import codecs
 import re
@@ -31,11 +31,8 @@ import os
 import time
 import contextlib
 
-import renpy.display
-import renpy.test
-
+import renpy
 import renpy.ast as ast
-import renpy.sl2
 
 # A list of parse error messages.
 parse_errors = [ ]
@@ -52,12 +49,9 @@ def get_line_text(filename, lineno):
     import linecache
     full_filename = renpy.exports.unelide_filename(filename)
 
-    print(full_filename, linecache.getline(full_filename, lineno))
-
     try:
         line = linecache.getline(full_filename, lineno) or "\n"
-        line = line.decode("utf-8")
-    except:
+    except Exception:
         line = "\n"
 
     return line
@@ -138,13 +132,13 @@ def unicode_filename(fn):
     # Windows.
     try:
         return fn.decode("mbcs")
-    except:
+    except Exception:
         pass
 
     # Mac and (sane) Unix
     try:
         return fn.decode("utf-8")
-    except:
+    except Exception:
         pass
 
     # Insane systems, mojibake.
@@ -269,6 +263,9 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
     renpy.scriptedit.files.add(filename)
 
+    line = 0
+    start_number = 0
+
     # Looping over the lines in the file.
     while pos < len_data:
 
@@ -299,7 +296,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                 line = ''.join(line)
 
                 # If not blank...
-                if not re.match(u"^\s*$", line):
+                if not re.match(r"^\s*$", line):
 
                     # Add to the results.
                     rv.append((filename, start_number, line))
@@ -847,7 +844,7 @@ class Lexer(object):
 
             # Collapse runs of whitespace into single spaces.
             s = re.sub(r'\s+', ' ', s)
-            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
+            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
 
         return s
 
@@ -912,7 +909,7 @@ class Lexer(object):
                     continue
 
                 s = re.sub(r'\s+', ' ', s)
-                s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
+                s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
 
                 rv.append(s)
 
@@ -1002,7 +999,7 @@ class Lexer(object):
 
         if not global_name:
             # .local label
-            if not self.match('\.') or not self.global_label:
+            if not self.match(r'\.') or not self.global_label:
                 self.pos = old_pos
                 return None
             global_name = self.global_label
@@ -1011,7 +1008,7 @@ class Lexer(object):
                 self.pos = old_pos
                 return None
         else:
-            if self.match('\.'):
+            if self.match(r'\.'):
                 # full global.local name
                 if declare and global_name != self.global_label:
                     self.pos = old_pos
@@ -1611,15 +1608,12 @@ def parse_menu(stmtl, loc, arguments):
 
     has_choice = False
 
-    has_say = False
+    say_ast = None
     has_caption = False
 
     with_ = None
     set = None # @ReservedAssignment
 
-    say_who = None
-    say_what = None
-    say_loc = None
 
     # Tuples of (label, condition, block)
     items = [ ]
@@ -1649,20 +1643,16 @@ def parse_menu(stmtl, loc, arguments):
 
         if who is not None and what is not None:
 
-            l.expect_eol()
-            l.expect_noblock("say menuitem")
-
             if has_caption:
                 l.error("Say menuitems and captions may not exist in the same menu.")
 
-            if has_say:
+            if say_ast:
                 l.error("Only one say menuitem may exist per menu.")
 
-            has_say = True
-            say_who = who
-            say_what = what
-            say_loc = l.get_location()
+            say_ast = finish_say(l, l.get_location(), who, what, interact=False)
 
+            l.expect_eol()
+            l.expect_noblock("say menuitem")
             continue
 
         l.revert(state)
@@ -1678,7 +1668,7 @@ def parse_menu(stmtl, loc, arguments):
             if l.subblock:
                 l.error("Line is followed by a block, despite not being a menu choice. Did you forget a colon at the end of the line?")
 
-            if label and has_say:
+            if label and say_ast:
                 l.error("Captions and say menuitems may not exist in the same menu.")
 
             # Only set this if the caption is not "".
@@ -1712,10 +1702,10 @@ def parse_menu(stmtl, loc, arguments):
         stmtl.error("Menu does not contain any choices.")
 
     rv = [ ]
-    if has_say:
-        rv.append(ast.Say(say_loc, say_who, say_what, None, interact=False))
+    if say_ast:
+        rv.append(say_ast)
 
-    rv.append(ast.Menu(loc, items, set, with_, has_say or has_caption, arguments, item_arguments))
+    rv.append(ast.Menu(loc, items, set, with_, say_ast is not None or has_caption, arguments, item_arguments))
 
     for index, i in enumerate(rv):
         if index:
@@ -1742,7 +1732,7 @@ def parse_parameters(l):
 
     while True:
 
-        if l.match('\)'):
+        if l.match(r'\)'):
             break
 
         if l.match(r'\*\*'):
@@ -1819,7 +1809,7 @@ def parse_arguments(l):
 
     while True:
 
-        if l.match('\)'):
+        if l.match(r'\)'):
             break
 
         if l.match(r'\*\*'):
@@ -2061,7 +2051,7 @@ def call_statement(l, loc):
 
     arguments = parse_arguments(l)
 
-    rv = [ ast.Call(loc, target, expression, arguments) ]
+    rv = [ ast.Call(loc, target, expression, arguments) ] # type: list[ast.Call|ast.Label|ast.Pass]
 
     if l.keyword('from'):
         name = l.require(l.label_name_declare)
@@ -2441,8 +2431,9 @@ def init_statement(l, loc):
 
     else:
 
+        old_init = l.init
+
         try:
-            old_init = l.init
             l.init = True
 
             block = [ parse_statement(l) ]
@@ -2563,7 +2554,7 @@ def translate_strings(init_loc, language, l):
         try:
             bc = compile(s, "<string>", "eval", renpy.python.new_compile_flags, 1)
             return eval(bc, renpy.store.__dict__)
-        except:
+        except Exception:
             ll.error('could not parse string')
 
     while ll.advance():
@@ -2577,7 +2568,7 @@ def translate_strings(init_loc, language, l):
 
             try:
                 old = parse_string(ll.rest())
-            except:
+            except Exception:
                 ll.error("Could not parse string.")
 
         elif ll.keyword('new'):
@@ -2586,10 +2577,12 @@ def translate_strings(init_loc, language, l):
                 ll.error('no string to translate')
 
             newloc = ll.get_location()
+
             try:
                 new = parse_string(ll.rest())
-            except:
+            except Exception:
                 ll.error("Could not parse string.")
+                new = None
 
             block.append(renpy.ast.TranslateString(loc, language, old, new, newloc))
 
@@ -2626,8 +2619,9 @@ def translate_statement(l, loc):
         return translate_strings(loc, language, l)
 
     elif identifier == "python":
+        old_init = l.init
+
         try:
-            old_init = l.init
             l.init = True
 
             block = [ python_statement(l, loc) ]
@@ -2636,8 +2630,9 @@ def translate_statement(l, loc):
             l.init = old_init
 
     elif identifier == "style":
+        old_init = l.init
+
         try:
-            old_init = l.init
             l.init = True
 
             block = [ style_statement(l, loc) ]
@@ -2674,18 +2669,18 @@ def style_statement(l, loc):
             if parent is not None:
                 l.error("parent clause appears twice.")
 
-            rv.parent = l.require(l.word)
+            rv.parent = l.require(l.word) # type: ignore
             return True
 
         if l.keyword("clear"):
-            rv.clear = True
+            rv.clear = True # type: ignore
             return True
 
         if l.keyword("take"):
-            if rv.take is not None:
+            if rv.take is not None: # type: ignore
                 l.error("take clause appears twice.")
 
-            rv.take = l.require(l.name)
+            rv.take = l.require(l.name) # type: ignore
             return True
 
         if l.keyword("del"):
@@ -2694,14 +2689,14 @@ def style_statement(l, loc):
             if propname not in renpy.style.prefixed_all_properties: # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
-            rv.delattr.append(propname)
+            rv.delattr.append(propname) # type: ignore
             return True
 
         if l.keyword("variant"):
-            if rv.variant is not None:
+            if rv.variant is not None: # type: ignore
                 l.error("variant clause appears twice.")
 
-            rv.variant = l.require(l.simple_expression)
+            rv.variant = l.require(l.simple_expression) # type: ignore
 
             return True
 
@@ -2711,10 +2706,10 @@ def style_statement(l, loc):
             if (propname != "properties") and (propname not in renpy.style.prefixed_all_properties): # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
-            if propname in rv.properties:
+            if propname in rv.properties: # type: ignore
                 l.error("style property %s appears twice." % propname)
 
-            rv.properties[propname] = l.require(l.simple_expression)
+            rv.properties[propname] = l.require(l.simple_expression) # type: ignore
 
             return True
 
@@ -2761,12 +2756,11 @@ def rpy_python_3(l, loc):
     return rv
 
 
-def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None):
+def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None, interact=True):
 
     if what is None:
         return None
 
-    interact = True
     with_ = None
     arguments = None
     identifier = None
@@ -3007,7 +3001,7 @@ def report_parse_errors():
             try:
                 print("")
                 print(i)
-            except:
+            except Exception:
                 pass
 
         print("", file=f)
@@ -3017,9 +3011,9 @@ def report_parse_errors():
     renpy.display.error.report_parse_errors(full_text, error_fn)
 
     try:
-        if renpy.game.args.command == "run": # @UndefinedVariable
+        if renpy.game.args.command == "run": # type: ignore
             renpy.exports.launch_editor([ error_fn ], 1, transient=1)
-    except:
+    except Exception:
         pass
 
     return True

@@ -204,9 +204,12 @@ warnings about licenses, and ask if you want it to generate a key.
 
     https://developer.android.com/studio/publish/app-signing?hl=fr#generate-key
 
-   At the very least, you should keep the android.keystore file in
+   At the very least, you should keep the android.keystore and bundle.keystore files in
    a safe place. You should also back it up, because without the
    key, you won't be able to upload the generated applications.
+
+When creating Android keys, Ren'Py will back them up to the same place it
+backs up script files. This isn't a substitute for making your own backups.
 
 If you don't want to download the SDK each time, you can create a file
 named sdk.txt containing a single line that is the path to the
@@ -354,9 +357,19 @@ interact with the Android permissions system.
 .. include: inc/android_permission
 
 
+Transferring Files to and From Android
+======================================
 
+When your Android device is connected to your computer over USB, and configured
+to allow access to file storage, there are some directories that files can be
+placed in. (This assumes that your game's package is org.renpy.mygame, but it will
+almost certainly be different.)
 
+Android/data/org.renpy.mygame/files/saves
+    This contains the game's save files.
 
-
-
+Android/data/org.renpy.mygame/files/game
+    This might not exist, in which case you may create it. Files in this directory
+    are loaded in preference to files in the androids packages, which means that
+    patches can be placed in this directory.
 

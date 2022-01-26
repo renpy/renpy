@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-default persistent.android_bundle = None
+default persistent.android_bundle = False
 
 init python:
     ANDROID_NO_RAPT = 0
@@ -52,8 +52,10 @@ init python:
     BUILD_INSTALL_AND_LAUNCH_TEXT = _("Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device.")
 
     LOGCAT_TEXT = _("Retrieves the log from the Android device and writes it to a file.")
+    LIST_DEVICES_TEXT = _("Lists the connected devices.")
     PAIR_TEXT = _("Pairs with a device over Wi-Fi, on Android 11+.")
     CONNECT_TEXT = _("Connects to a device over Wi-Fi, on Android 11+.")
+    DISCONNECT_TEXT = _("Disconnects a device connected over Wi-Fi.")
 
     PLAY_BUNDLE_TEXT = _("Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data.")
     UNIVERSAL_APK_TEXT = _("Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data.")
@@ -133,6 +135,8 @@ init python:
             return NO_SDK_TEXT
         if state == ANDROID_NO_KEY:
             return NO_KEY_TEXT
+        if state == ANDROID_NO_BUNDLE_KEY:
+            return NO_BUNDLE_KEY_TEXT
         if state == ANDROID_NO_CONFIG:
             return NO_CONFIG_TEXT
         if state == ANDROID_NO_BUNDLE:
@@ -250,7 +254,7 @@ init python:
                         parent = os.path.dirname(p.path)
                         destination_dir = os.path.join(parent, destination)
 
-            except:
+            except Exception:
                 destination_dir = None
 
             dir_to_open = source_dir
@@ -261,7 +265,7 @@ init python:
 
                 try:
                     os.makedirs(destination_dir)
-                except:
+                except Exception:
                     pass
 
                 try:
@@ -271,7 +275,7 @@ init python:
 
                     dir_to_open = destination_dir
 
-                except:
+                except Exception:
                     import traceback
                     traceback.print_exc()
                     pass
@@ -381,20 +385,6 @@ screen android:
                         frame style "l_indent":
 
                             has vbox
-
-                            hbox:
-                                spacing 15
-
-                                textbutton _("Play Bundle"):
-                                    action SetField(persistent, "android_bundle", True)
-                                    hovered tt.Action(PLAY_BUNDLE_TEXT)
-
-                                textbutton _("Universal APK"):
-                                    action SetField(persistent, "android_bundle", False)
-                                    hovered tt.Action(UNIVERSAL_APK_TEXT)
-
-                            add HALF_SPACER
-
                             textbutton _("Install SDK & Create Keys"):
                                 action AndroidIfState(state, ANDROID_NO_SDK, Jump("android_installsdk"))
                                 hovered tt.Action(INSTALL_SDK_TEXT)
@@ -402,6 +392,20 @@ screen android:
                             textbutton _("Configure"):
                                 action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
                                 hovered tt.Action(CONFIGURE_TEXT)
+
+                            add SPACER
+
+                            textbutton _("Play Bundle"):
+                                action SetField(persistent, "android_bundle", True)
+                                hovered tt.Action(PLAY_BUNDLE_TEXT)
+                                style "l_checkbox"
+
+                            textbutton _("Universal APK"):
+                                action SetField(persistent, "android_bundle", False)
+                                hovered tt.Action(UNIVERSAL_APK_TEXT)
+                                style "l_checkbox"
+
+                            add SPACER
 
                             textbutton _("Build Package"):
                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build"))
@@ -446,6 +450,10 @@ screen android:
                                 action AndroidIfState(state, ANDROID_NO_KEY, Jump("logcat"))
                                 hovered tt.Action(LOGCAT_TEXT)
 
+                            textbutton _("List Devices"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_list_devices"))
+                                hovered tt.Action(LIST_DEVICES_TEXT)
+
                             textbutton _("Wi-Fi Debugging Pair"):
                                 action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_pair"))
                                 hovered tt.Action(PAIR_TEXT)
@@ -453,6 +461,11 @@ screen android:
                             textbutton _("Wi-Fi Debugging Connect"):
                                 action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_connect"))
                                 hovered tt.Action(CONNECT_TEXT)
+
+                            textbutton _("Wi-Fi Debugging Disconnect"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_disconnect"))
+                                hovered tt.Action(DISCONNECT_TEXT)
+
 
 
                     add SPACER
@@ -535,6 +548,16 @@ label logcat:
 
     jump android
 
+label android_list_devices:
+
+    python hide:
+        cc = ConsoleCommand()
+        cc.add(rapt.plat.adb, "devices")
+        cc.run()
+
+    jump android
+
+
 label android_pair:
 
     python hide:
@@ -542,14 +565,14 @@ label android_pair:
             _("Wi-Fi Pairing Code"),
             _("If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."),
             sanitize=False,
-            cancel="android",
+            cancel=Jump("android"),
             )
 
         host = interface.input(
             _("Pairing Host & Port"),
             _("If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."),
             sanitize=False,
-            cancel="android",
+            cancel=Jump("android"),
             )
 
         cc = ConsoleCommand()
@@ -565,11 +588,27 @@ label android_connect:
             _("IP Address & Port"),
             _("If supported, this can be found in 'Developer options', 'Wireless debugging'."),
             sanitize=False,
-            cancel="android",
+            cancel=Jump("android"),
             )
 
         cc = ConsoleCommand()
         cc.add(rapt.plat.adb, "connect", host)
+        cc.run()
+
+    jump android
+
+label android_disconnect:
+
+    python hide:
+        host = interface.input(
+            _("IP Address & Port"),
+            _("This can be found in 'List Devices'."),
+            sanitize=False,
+            cancel=Jump("android"),
+            )
+
+        cc = ConsoleCommand()
+        cc.add(rapt.plat.adb, "disconnect", host)
         cc.run()
 
     jump android
@@ -597,4 +636,3 @@ init python:
         return False
 
     renpy.arguments.register_command("android_build", android_build_command)
-

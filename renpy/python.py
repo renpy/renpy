@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,9 @@
 # game state to some time in the past.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from typing import Optional
+
 
 # Import the python ast module, not ours.
 import ast
@@ -43,10 +45,10 @@ import types
 import copyreg
 import functools
 
-import renpy.audio
+import renpy
 
 # A set of flags that indicate dict should run in future-compatible mode.
-FUTURE_FLAGS = (__future__.CO_FUTURE_DIVISION | __future__.CO_FUTURE_WITH_STATEMENT)
+FUTURE_FLAGS = (__future__.CO_FUTURE_DIVISION | __future__.CO_FUTURE_WITH_STATEMENT) # type: ignore
 
 ##############################################################################
 # Monkeypatch copy_reg to work around a change in the class that RevertableSet
@@ -61,14 +63,14 @@ def _reconstructor(cls, base, state):
     if base is object:
         obj = object.__new__(cls)
     else:
-        obj = base.__new__(cls, state)
+        obj = base.__new__(cls, state) # type: ignore
         if base.__init__ != object.__init__:
             base.__init__(obj, state)
 
     return obj
 
 
-copyreg._reconstructor = _reconstructor
+copyreg._reconstructor = _reconstructor # type: ignore
 
 ##############################################################################
 # Code that implements the store.
@@ -98,7 +100,7 @@ class StoreModule(object):
     # since Python won't call them by default.
 
     def __reduce__(self):
-        return (get_store_module, (self.__name__,))
+        return (get_store_module, (self.__name__,)) # type: ignore
 
     def __init__(self, d):
         object.__setattr__(self, "__dict__", d)
@@ -251,7 +253,7 @@ def create_store(name):
     if name in store_modules:
         sys.modules[pyname] = store_modules[name]
     else:
-        store_modules[name] = sys.modules[pyname] = StoreModule(d)
+        store_modules[name] = sys.modules[pyname] = StoreModule(d) # type: ignore
 
     if parent:
         store_dicts[parent][var] = sys.modules[pyname]
@@ -302,7 +304,7 @@ class StoreBackup():
             self.restore_one(k)
 
 
-clean_store_backup = None
+clean_store_backup = None # type: Optional[StoreBackup]
 
 
 def make_clean_stores():
@@ -325,7 +327,7 @@ def clean_stores():
     Revert the store to the clean copy.
     """
 
-    clean_store_backup.restore()
+    clean_store_backup.restore() # type: ignore
 
 
 def clean_store(name):
@@ -336,7 +338,7 @@ def clean_store(name):
     if not name.startswith("store."):
         name = "store." + name
 
-    clean_store_backup.restore_one(name)
+    clean_store_backup.restore_one(name) # type: ignore
 
 
 def reset_store_changes(name):
@@ -359,8 +361,6 @@ class NoRollback(object):
     rollback. Objects reachable through an instance of a NoRollback class
     only participate in rollback if they are reachable through other paths.
     """
-
-    pass
 
 # parents = [ ]
 
@@ -399,7 +399,7 @@ def reached(obj, reachable, wait):
         # Treat as fields, indexed by strings.
         for v in vars(obj).values():
             reached(v, reachable, wait)
-    except:
+    except Exception:
         pass
 
     try:
@@ -407,14 +407,14 @@ def reached(obj, reachable, wait):
         if not isinstance(obj, basestring):
             for v in obj.__iter__():
                 reached(v, reachable, wait)
-    except:
+    except Exception:
         pass
 
     try:
         # Treat as dict.
         for v in obj.values():
             reached(v, reachable, wait)
-    except:
+    except Exception:
         pass
 
     # parents.pop()
@@ -455,8 +455,8 @@ class WrapNode(ast.NodeTransformer):
     def visit_ClassDef(self, n):
         n = self.generic_visit(n)
 
-        if not n.bases:
-            n.bases.append(ast.Name(id=b("object"), ctx=ast.Load()))
+        if not n.bases: # type: ignore
+            n.bases.append(ast.Name(id=b("object"), ctx=ast.Load())) # type: ignore
 
         return n
 
@@ -550,7 +550,7 @@ _execute_python_hide()
     for i in ast.walk(hide):
         ast.copy_location(i, hide.body[0])
 
-    hide.body[0].body = tree.body
+    hide.body[0].body = tree.body # type: ignore
     tree.body = hide.body
 
 
@@ -634,8 +634,8 @@ def fix_missing_locations(node, lineno, col_offset):
 def quote_eval(s):
     """
     Quotes a string for `eval`. This is necessary when it's in certain places,
-    like as part of an argument string. We need to stick \ at the end of lines
-    that don't have it already, and that aren't in triple-quoted strings.
+    like as part of an argument string. We need to stick a single backslash
+    at the end of lines that don't have it already, and that aren't in triple-quoted strings.
     """
 
     # No newlines! No problem.
@@ -714,13 +714,13 @@ def quote_eval(s):
             i += 1
             continue
 
-        raise Exception("Unknown character %r (can't happen)".format(c))
+        raise Exception("Unknown character {} (can't happen)".format(c))
 
     # Since the last 2 characters are \0, those characters need to be stripped.
     return "".join(rv[:-2])
 
 
-def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True):
+def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=True, py=None):
     """
     Compiles the given source code using the supplied codegenerator.
     Lists, List Comprehensions, and Dictionaries are wrapped when
@@ -756,6 +756,15 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         filename = source.filename
         lineno = source.linenumber
 
+        if py is None:
+            py = source.py
+
+    if py is None:
+        if PY2:
+            py = 2
+        else:
+            py = 3
+
     if cache:
         key = (lineno, filename, str(source), mode, renpy.script.MAGIC)
 
@@ -776,31 +785,44 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
             py_compile_cache[key] = rv
             return rv
 
+    else:
+        key = None
+
     source = str(source)
     source = source.replace("\r", "")
 
     if mode == "eval":
         source = quote_eval(source)
 
+    line_offset = lineno - 1
+
     try:
-        line_offset = lineno - 1
 
         if mode == "hide":
             py_mode = "exec"
         else:
             py_mode = mode
 
-        if filename in py3_files:
+        if (not PY2) or (filename in py3_files):
 
             flags = py3_compile_flags
-            tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+
+            try:
+                tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+            except SyntaxError as orig_e:
+
+                try:
+                    fixed_source = renpy.compat.fixes.fix_tokens(source)
+                    tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
+                except:
+                    raise orig_e
 
         else:
 
             try:
                 flags = new_compile_flags
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
-            except:
+            except Exception:
                 flags = old_compile_flags
                 source = escape_unicode(source)
                 tree = compile(source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
@@ -962,31 +984,33 @@ class RevertableList(list):
 
     __delitem__ = mutator(list.__delitem__)
     if PY2:
-        __delslice__ = mutator(list.__delslice__)
+        __delslice__ = mutator(list.__delslice__) # type: ignore
     __setitem__ = mutator(list.__setitem__)
     if PY2:
-        __setslice__ = mutator(list.__setslice__)
+        __setslice__ = mutator(list.__setslice__) # type: ignore
     __iadd__ = mutator(list.__iadd__)
     __imul__ = mutator(list.__imul__)
     append = mutator(list.append)
     extend = mutator(list.extend)
     insert = mutator(list.insert)
-    pop = mutator(list.pop)
+    pop = mutator(list.pop) # type: ignore
     remove = mutator(list.remove)
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
 
-    def wrapper(method): # E0213 @NoSelf
+    def wrapper(method): # type: ignore
 
         def newmethod(*args, **kwargs):
-            l = method(*args, **kwargs)
+            l = method(*args, **kwargs) # type: ignore
             return RevertableList(l)
 
         return newmethod
 
-    __add__ = wrapper(list.__add__)
+    __add__ = wrapper(list.__add__) # type: ignore
     if PY2:
-        __getslice__ = wrapper(list.__getslice__)
+        __getslice__ = wrapper(list.__getslice__) # type: ignore
+
+    del wrapper
 
     def __getitem__(self, index):
         rv = list.__getitem__(self, index)
@@ -1002,7 +1026,7 @@ class RevertableList(list):
 
         return RevertableList(list.__mul__(self, other))
 
-    __rmul__ = __mul__
+    __rmul__ = __mul__ # type: ignore
 
     def copy(self):
         return self[:]
@@ -1100,6 +1124,11 @@ class RevertableDict(dict):
 
             return rv
 
+    else:
+        itervalues = dict.values
+        iterkeys = dict.keys
+        iteritems = dict.items
+
     def copy(self):
         rv = RevertableDict()
         rv.update(self)
@@ -1157,10 +1186,10 @@ class RevertableSet(set):
     union_update = mutator(set.update)
     update = mutator(set.update)
 
-    def wrapper(method): # @NoSelf
+    def wrapper(method): # type: ignore
 
         def newmethod(*args, **kwargs):
-            rv = method(*args, **kwargs)
+            rv = method(*args, **kwargs) # type: ignore
             if isinstance(rv, (set, frozenset)):
                 return RevertableSet(rv)
             else:
@@ -1168,15 +1197,15 @@ class RevertableSet(set):
 
         return newmethod
 
-    __and__ = wrapper(set.__and__)
-    __sub__ = wrapper(set.__sub__)
-    __xor__ = wrapper(set.__xor__)
-    __or__ = wrapper(set.__or__)
-    copy = wrapper(set.copy)
-    difference = wrapper(set.difference)
-    intersection = wrapper(set.intersection)
-    symmetric_difference = wrapper(set.symmetric_difference)
-    union = wrapper(set.union)
+    __and__ = wrapper(set.__and__) # type: ignore
+    __sub__ = wrapper(set.__sub__) # type: ignore
+    __xor__ = wrapper(set.__xor__) # type: ignore
+    __or__ = wrapper(set.__or__) # type: ignore
+    copy = wrapper(set.copy) # type: ignore
+    difference = wrapper(set.difference) # type: ignore
+    intersection = wrapper(set.intersection) # type: ignore
+    symmetric_difference = wrapper(set.symmetric_difference) # type: ignore
+    union = wrapper(set.union) # type: ignore
 
     del wrapper
 
@@ -1212,8 +1241,8 @@ class RevertableObject(object):
     def __delattr__(self, attr):
         object.__delattr__(self, attr)
 
-    __setattr__ = mutator(__setattr__)
-    __delattr__ = mutator(__delattr__)
+    __setattr__ = mutator(__setattr__) # type: ignore
+    __delattr__ = mutator(__delattr__) # type: ignore
 
     def _clean(self):
         return self.__dict__.copy()
@@ -1268,10 +1297,10 @@ class RollbackRandom(random.Random):
     setstate = mutator(random.Random.setstate)
 
     if PY2:
-        jumpahead = mutator(random.Random.jumpahead)
+        jumpahead = mutator(random.Random.jumpahead) # type: ignore
 
     getrandbits = mutator(random.Random.getrandbits)
-    seed = mutator(random.Random.seed)
+    seed = mutator(random.Random.seed) # type: ignore
     random = mutator(random.Random.random)
 
     def Random(self, seed=None):
@@ -1427,7 +1456,7 @@ class Rollback(renpy.object.Object):
         if version < 2:
             self.stores = { "store" : { } }
 
-            for i in self.store:
+            for i in self.store: # type: ignore
                 if len(i) == 2:
                     k, v = i
                     self.stores["store"][k] = v
@@ -2103,19 +2132,27 @@ class RollbackLog(renpy.object.Object):
         self.mutated.clear()
         begin_stores()
 
-        self.current = Rollback()
-        if self.log:
-            self.log.append(self.current)
-
         # Restart the context or the top context.
         if replace_context:
 
             if force_checkpoint:
                 renpy.game.contexts[0].force_checkpoint = True
 
+            self.current = Rollback()
+            self.current.context = renpy.game.contexts[0].rollback_copy()
+
+            if self.log is not None:
+                self.log.append(self.current)
+
             raise renpy.game.RestartTopContext()
 
         else:
+
+            self.current = Rollback()
+            self.current.context = renpy.game.context().rollback_copy()
+
+            if self.log is not None:
+                self.log.append(self.current)
 
             if force_checkpoint:
                 renpy.game.context().force_checkpoint = True

@@ -45,13 +45,14 @@ cdef class Polygon:
     cpdef void ensure_winding(Polygon self):
         """
         Checks to ensure that the winding of this polygon is what
-        Ren'Py expects (CCW). If not, rearranges the points top
+        Ren'Py expects (CCW). If not, rearranges the points to
         ensure the winding is correct.
         """
 
         cdef float ax, ay, bx, by
         cdef int i, j
         cdef Point2 t
+        cdef bint empty
 
         # Check each point after the second to see if it's on the right
         # side of the line between points 0 and 1.
@@ -59,12 +60,16 @@ cdef class Polygon:
         ax = self.point[1].x - self.point[0].x
         ay = self.point[1].y - self.point[0].y
 
+        empty = not (ax or ay)
+
         for 2 <= i < self.points:
 
             bx = self.point[i].x - self.point[0].x
             by = self.point[i].y - self.point[0].y
 
-            if (ax * by - bx * ay) > -0.000001:
+            empty = empty and not (bx or by)
+
+            if (not empty) and (ax * by - bx * ay) > -0.000001:
                 return
 
         # If we're here, the winding is bad, and needs to be fixed by swapping
@@ -81,12 +86,14 @@ cdef class Polygon:
             i += 1
             j -= 1
 
+        if empty:
+            self.points = 0
 
     @staticmethod
     def from_list(list l):
         cdef int i
 
-        cdef int points = len(l) / 2
+        cdef int points = len(l) // 2
 
         cdef Polygon rv = Polygon(points)
         rv.points = points
@@ -129,6 +136,12 @@ cdef class Polygon:
 
         self.ensure_winding()
         p.ensure_winding()
+
+        if self.points < 3:
+            return None
+
+        if p.points < 3:
+            return None
 
         rv = self
 
@@ -250,4 +263,3 @@ cdef Polygon intersectOnce(Point2 a0, Point2 a1, Polygon p):
         j = i
 
     return rv
-

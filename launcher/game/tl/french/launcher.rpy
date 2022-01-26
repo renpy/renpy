@@ -306,7 +306,7 @@
 
     # distribute_gui.rpy:194
     old "Add from clauses to calls, once"
-    new "Add from clauses to calls, once"
+    new "Ajouter des \"from\" aux \"call\""
 
     # distribute_gui.rpy:195
     old "Refresh"
@@ -314,7 +314,7 @@
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Télécharger (upload) sur itch.io"
+    new "Uploader sur itch.io"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
@@ -330,7 +330,7 @@
 
     # distribute_gui.rpy:241
     old "Add from clauses to calls"
-    new "Add from clauses to calls"
+    new "Ajouter des \"from\" aux \"call\""
 
     # distribute_gui.rpy:242
     old "Force Recompile"
@@ -342,7 +342,7 @@
 
     # distribute_gui.rpy:250
     old "Adding from clauses to call statements that do not have them."
-    new "Adding from clauses to call statements that do not have them."
+    new "Ajout de \"from\" aux \"call\" qui n'en ont pas."
 
     # distribute_gui.rpy:271
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
@@ -410,7 +410,7 @@
 
     # front_page.rpy:93
     old "refresh"
-    new "rafraichir"
+    new "rafraîchir"
 
     # front_page.rpy:120
     old "+ Create New Project"
@@ -561,8 +561,8 @@
     new "Le projet [project_name!q] existe déjà. Choisissez un nom de projet différent."
 
     # gui7.rpy:341
-    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "Quelle résolution souhaitez-vous utiliser pour votre projet ? Même si Ren’Py peut agrandir ou diminuer les fenêtres et leurs images à l’échelle, il s’agit là de l’échelle initiale, la taille à laquelle les composants doivent être dessinés et la taille de fenêtre pour lesquelles ils seront le plus précis.\n\nThe La valeur par défaut (1280x720) semble être un compromis raisonnable."
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "Quelle résolution souhaitez-vous utiliser pour votre projet ? Même si Ren’Py peut agrandir ou diminuer les fenêtres et leurs images à l’échelle, il s’agit là de l’échelle initiale, la taille à laquelle les composants doivent être dessinés et la taille de fenêtre pour lesquelles ils seront le plus précis.\n\nThe La valeur par défaut ([default_size[0]]x[default_size[1]]) semble être un compromis raisonnable."
 
     # gui7.rpy:389
     old "Creating the new project..."
@@ -654,11 +654,11 @@
 
     # ios.rpy:33
     old "Attempts to emulate an iPhone.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Tentatives pour émuler un iPhone.\n\nLe contact tactile est émulé via la souris, mais seulement si le bouton est maintenu pressé."
+    new "Tentative d'émuler un iPhone.\n\nLe contact tactile est émulé via la souris, mais seulement si le bouton est maintenu pressé."
 
     # ios.rpy:34
     old "Attempts to emulate an iPad.\n\nTouch input is emulated through the mouse, but only when the button is held down."
-    new "Tentatives pour émuler un iPad.\n\nLe contact tactile est émulé via la souris, mais seulement si le bouton est maintenu pressé."
+    new "Tentative d'émuler un iPad.\n\nLe contact tactile est émulé via la souris, mais seulement si le bouton est maintenu pressé."
 
     # ios.rpy:36
     old "Selects the directory where Xcode projects will be placed."
@@ -742,7 +742,7 @@
 
     # itch.rpy:99
     old "The butler program was not found."
-    new "Le programme coordonnateur(butler) n'a pas été trouvé."
+    new "Le programme butler n'a pas été trouvé."
 
     # itch.rpy:99
     old "Please install the itch.io app, which includes butler, and try again."
@@ -1074,11 +1074,11 @@
 
     # translations.rpy:344
     old "Strip text tags from the dialogue."
-    new "Retire les tags (balises) des dialogues."
+    new "Retire les text tags (balises) des dialogues."
 
     # translations.rpy:345
     old "Escape quotes and other special characters."
-    new "Protège (escape) les apostrophes et les autres caractères spéciaux."
+    new "Protège (échappe) les apostrophes et les autres caractères spéciaux."
 
     # translations.rpy:346
     old "Extract all translatable strings, not just dialogue."
@@ -1098,7 +1098,7 @@
 
     # updater.rpy:86
     old "The update channel controls the version of Ren'Py the updater will download. Please select an update channel:"
-    new "Le canal de mise à jour détermine la version de Ren’Py qui sera téléchargée. S’il vous plaît, sélectionnez un canal de mise à jour :"
+    new "Le canal de mise à jour détermine la version de Ren’Py qui sera téléchargée. Sélectionnez un canal de mise à jour :"
 
     # updater.rpy:91
     old "Release"
@@ -1274,7 +1274,7 @@
 
     # game/androidstrings.rpy:24
     old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
-    new "Quel est le nom du package?\n\nIl est généralement de la forme com.domain.program ou com.domain.email.program. Il doit uniquement contenir des lettres ASCII et des points. Il doit contenir au moins un point."
+    new "Quel est le nom du package ?\n\nIl est généralement de la forme com.domain.program ou com.domain.email.program. Il doit uniquement contenir des lettres ASCII et des points. Il doit contenir au moins un point."
 
     # game/androidstrings.rpy:25
     old "The package name may not be empty."
@@ -1654,7 +1654,7 @@
 
     # game/preferences.rpy:145
     old "Reset window size"
-    new "Réinisialiser la taille de la fenêtre"
+    new "Réinitialiser la taille de la fenêtre"
 
     # game/preferences.rpy:188
     old "Force new tutorial"
@@ -1871,3 +1871,43 @@
     # game/preferences.rpy:206
     old "Daily check for update"
     new "Vérification quotidienne des mises à jour"
+
+    # game/android.rpy:55
+    old "Lists the connected devices."
+    new "Liste les appareils connectés."
+
+    # game/android.rpy:58
+    old "Disconnects a device connected over Wi-Fi."
+    new "Déconnecte un appareil connecté via Wi-Fi."
+
+    # game/android.rpy:453
+    old "List Devices"
+    new "Lister les appareils"
+
+    # game/android.rpy:465
+    old "Wi-Fi Debugging Disconnect"
+    new "Debug : déconnexion Wi-Fi"
+
+    # game/android.rpy:603
+    old "This can be found in 'List Devices'."
+    new "Introuvable dans 'Lister les appareils'."
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    new "L'installation du bundle semble avoir échoué."
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    new "Le lancement de l'app semble avoir échoué."
+
+    # game/androidstrings.rpy:44
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new "La version de Java présente sur votre ordinateur ne semble pas être JDK 8, qui est la seule version supportée par le SDK Android. Si vous devez installer JDK 8, vous pouvez le télécharger ici :\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nVous pouvez aussi régler la variable d'environnement JAVA_HOME sur une autre version de Java."
+
+    # game/updater.rpy:109
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/doc/html/changelog.html}Regarder le changelog{/a}"
+
+    # game/updater.rpy:111
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Regarder le changelog{/a}"

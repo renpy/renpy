@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,16 +20,17 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 
 import pygame_sdl2 as pygame
 
 try:
     import xml.etree.ElementTree as etree
-except:
+except Exception:
     pass
 
-import renpy.display
+import renpy
 import renpy.text.ftfont as ftfont
 import renpy.text.textsupport as textsupport
 
@@ -65,15 +66,28 @@ class ImageFont(object):
 
     # Font global:
     # height - The line height, the height of each character cell.
+    height = 0
     # kerns - The kern between each pair of characters.
+    kerns = { } # type: dict[str, float]
+
     # default_kern - The default kern.
+    default_kern = 0.0
+
     # baseline - The y offset of the font baseline.
+    baseline = 0
 
     # Per-character:
     # width - The width of each character.
+    width = {} # type: dict[str, float]
+
     # advance - The advance of each character.
+    advance = {} # type: dict[str, float]
+
     # offsets - The x and y offsets of each character.
+    offsets = { } # type: dict[str, tuple[int, int]]
+
     # chars - A map from a character to the surface containing that character.
+    chars = { } # type: dict[str, pygame.surface.Surface]
 
     def glyphs(self, s):
 
@@ -336,6 +350,9 @@ def parse_bmfont_line(l):
     if w:
         line.append(w)
 
+    if not line:
+        line = [ "" ]
+
     map = dict(i.split("=", 1) for i in line[1:]) # @ReservedAssignment
     return line[0], map
 
@@ -484,7 +501,7 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
         set for a SFont is::
 
             ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?
-            @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \ ] ^ _
+            @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \\ ] ^ _
             ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } ~
     """
 
@@ -622,7 +639,7 @@ def load_face(fn):
 
             pygame.sysfont.initsysfonts()
 
-            for v in pygame.sysfont.Sysfonts.values():
+            for v in pygame.sysfont.Sysfonts.values(): # type: ignore
                 if v is not None:
                     for _flags, ffn in v.items():
                         for i in fonts:
@@ -859,6 +876,7 @@ class FontGroup(object):
         mark = 0
         pos = 0
 
+        font = None
         old_font = None
 
         if self.char_map:
@@ -886,4 +904,5 @@ class FontGroup(object):
 
             pos += 1
 
-        yield font, s[mark:]
+        if font is not None:
+            yield font, s[mark:]
