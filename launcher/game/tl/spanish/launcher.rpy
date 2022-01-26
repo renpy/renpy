@@ -1892,10 +1892,10 @@ translate spanish strings:
 
     # game/updater.rpy:109
     old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
-    new "• {a=https://www.renpy.org/doc/html/changelog.html}Ver registro de cambios{/a}"
+    new "• {a=https://www.renpy.org/doc/html/changelog.html}Ver el registro de cambios{/a}"
 
     # game/updater.rpy:111
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
-    new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Ver registro de cambios{/a}"
+    new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Ver el registro de cambios{/a}"
 
 
