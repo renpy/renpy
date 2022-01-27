@@ -113,3 +113,6 @@ CubismSdkForNative-4-*.zip
 
 # Old files.
 /0old
+
+# Works in progress, throwaway scripts, etc.
+/scratch

@@ -1124,6 +1124,11 @@ class RevertableDict(dict):
 
             return rv
 
+    else:
+        itervalues = dict.values
+        iterkeys = dict.keys
+        iteritems = dict.items
+
     def copy(self):
         rv = RevertableDict()
         rv.update(self)

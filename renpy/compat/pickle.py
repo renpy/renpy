@@ -19,6 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
 import renpy
@@ -63,33 +64,30 @@ else:
 
     def make_datetime(cls, *args, **kwargs):
         """
-        Makes a datetime.date, datetime.time, or date.timetime object from
-        a surrogateescaped str. This is used when unpickling a datetime object
-        that was first created in Python 2.
+        Makes a datetime.date, datetime.time, or datetime.datetime object
+        from a surrogateescaped str. This is used when unpickling a datetime
+        object that was first created in Python 2.
         """
 
         if (len(args) == 1) and isinstance(args[0], str):
             data = args[0].encode("utf-8", "surrogateescape")
             return cls.__new__(cls, data.decode("latin-1"))
 
-
         return cls.__new__(cls, *args, **kwargs)
 
-    unpickle_date = functools.partial(make_datetime, datetime.date)
-    unpickle_time = functools.partial(make_datetime, datetime.time)
-    unpickle_datetime = functools.partial(make_datetime, datetime.datetime)
-
     class Unpickler(pickle.Unpickler):
+        date = functools.partial(make_datetime, datetime.date)
+        time = functools.partial(make_datetime, datetime.time)
+        datetime = functools.partial(make_datetime, datetime.datetime)
 
         def find_class(self, module, name):
             if module == "datetime":
-
                 if name == "date":
-                    return unpickle_date
+                    return self.date
                 elif name == "time":
-                    return unpickle_time
+                    return self.time
                 elif name == "datetime":
-                    return unpickle_datetime
+                    return self.datetime
 
             return super().find_class(module, name)
 

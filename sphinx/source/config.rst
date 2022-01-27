@@ -294,34 +294,6 @@ Occasionally Used
 
     See :ref:`Automatic Voice <automatic-voice>` for more details.
 
-.. var:: config.automatic_images = None
-
-    If not None, this causes Ren'Py to automatically define
-    images.
-
-    When not set to None, this should be set to a list of
-    separators. (For example, ``[ ' ', '_', '/' ]``.)
-
-    Ren'Py will scan through the list of files on disk and in
-    archives. When it finds a file ending with .png or .jpg, it will
-    strip the extension, then break the name at separators, to create
-    an image name. If the name consists of at least two components,
-    and no image with that name already is defined, Ren'Py will define
-    that image to refer to a filename.
-
-    With the example list of separators, if your game directory
-    contains:
-
-    * eileen_happy.png, Ren'Py will define the image "eileen happy".
-    * lucy/mad.png, Ren'Py will define the image "lucy mad".
-    * mary.png, Ren'Py will do nothing. (As the image does not have two components.)
-
-.. var:: config.automatic_images_strip = [ ]
-
-    A list of strings giving prefixes that are stripped out when
-    defining automatic images. This can be used to remove directory
-    names, when directories contain images.
-
 .. var:: config.autosave_slots = 10
 
     The number of slots used by autosaves.
@@ -370,11 +342,6 @@ Occasionally Used
     The amount of time in seconds Ren'Py spends fading out music when the music is
     played due to a context change. (Usually, when the game is loaded.)
 
-.. var:: config.debug = False
-
-    Enables debugging functionality (mostly by turning some missing
-    files into errors.) This should always be turned off in a release.
-
 .. var:: config.debug_image_cache = False
 
     If True, Ren'Py will write information about the :ref:`image cache <images>`
@@ -382,8 +349,8 @@ Occasionally Used
 
 .. var:: config.debug_prediction = False
 
-    If True, Ren'Py will will write information about and errors that 
-    occur during prediction (of execution flow, images, and screens) to 
+    If True, Ren'Py will will write information about and errors that
+    occur during prediction (of execution flow, images, and screens) to
     log.txt and the console.
 
 .. var:: config.debug_sound = False
@@ -405,7 +372,7 @@ Occasionally Used
 
 .. var:: config.default_tag_layer = "master"
 
-    The layer an image is shown on if its tag is not found in config.tag_layer.
+    The layer an image is shown on if its tag is not found in :var:`config.tag_layer`.
 
 .. var:: config.default_transform = ...
 
@@ -520,14 +487,6 @@ Occasionally Used
     will get a bold italic version of vera, rather than a bold version
     of the italic vera.
 
-.. var:: config.game_menu = [ ... ]
-
-    This is used to customize the choices on the game menu. Please
-    read Main and Game Menus for more details on the contents of this
-    variable.
-
-    This is not used when the game menu is defined using screens.
-
 .. var:: config.game_menu_music = None
 
     If not None, a music file to play when at the game menu.
@@ -636,11 +595,6 @@ Occasionally Used
 
     It should return a string giving the name of a translation to use, or
     None to use the default translation.
-
-.. var:: config.main_menu = [ ... ]
-
-    The default main menu, when not using screens. For more details,
-    see Main and Game Menus.
 
 .. var:: config.main_menu_music = None
 
@@ -887,11 +841,13 @@ Occasionally Used
 
 .. var:: config.screen_height = 600
 
-    The height of the screen. Usually set by :func:`gui.init`.
+    The height of the screen. Usually set by :func:`gui.init` to
+    a much larger size.
 
 .. var:: config.screen_width = 800
 
-    The width of the screen. Usually set by :func:`gui.init`.
+    The width of the screen. Usually set by :func:`gui.init` to a much
+    larger size.
 
 .. var:: config.single_movie_channel = None
 
@@ -1186,18 +1142,10 @@ Rarely or Internally Used
     entirely, although we don't recommend that, as rollback is useful
     to let the user see text he skipped by mistake.
 
-.. var:: config.help = None
+.. var:: config.help_screen = "help"
 
-    This controls the functionality of the help system invoked by the
-    help button on the main and game menus, or by pressing F1 or
-    Command-?.
-
-    If None, the help system is disabled and does not show up on
-    menus.  If a string corresponding to a label found in the script,
-    that label is invoked in a new context. This allows you to define
-    an in-game help-screen.  Otherwise, this is interpreted as a
-    filename relative to the base directory, that is opened in a web
-    browser. If the file is not exist, the action is ignored.
+    The name of the screen shown by the :func:`Help` action, or by pressing
+    f1 on the keyboard.
 
 .. var:: config.hide = renpy.hide
 
@@ -1220,12 +1168,6 @@ Rarely or Internally Used
 
     If True, the order of substrings in the Side positions will be
     determine the order of children render.
-
-.. var:: config.imagemap_cache = True
-
-    If True, imagemap hotspots will be cached to PNG files,
-    reducing time and memory usage, but increasing the size of
-    the game on disk. Set this to False to disable this behavior.
 
 .. var:: config.implicit_with_none = True
 
@@ -1284,6 +1226,9 @@ Rarely or Internally Used
     screen. (The lowest layer is the first entry in the list.) Ren'Py
     uses the layers "master", "transient", "screens", and "overlay"
     internally, so they should always be in this list.
+
+    The :func:`renpy.add_layer` can add layers to this variable without
+    needing to know the original contents.
 
 .. var:: config.lint_hooks = ...
 
@@ -1390,7 +1335,7 @@ Rarely or Internally Used
     If True, Ren'Py will apply new-style (square-bracket)
     substitutions to all text displayed.
 
-.. var:: config.old_substitutions = False
+.. var:: config.old_substitutions = True
 
     If True, Ren'Py will apply old-style (percent) substitutions to
     text displayed by the :ref:`say <say-statement>` and :ref:`menu
@@ -1451,7 +1396,9 @@ Rarely or Internally Used
 
 .. var:: config.quit_on_mobile_background = False
 
-    If True, the mobile app will quit when it loses focus.
+    If True, the mobile app will quit when it loses focus, rather than
+    saving and restoring its state. (See also :var:`config.save_on_mobile_background`,
+    which controls this behavior.)
 
 .. var:: config.rollback_enabled = True
 
@@ -1500,11 +1447,11 @@ Rarely or Internally Used
 
 .. var:: config.save_dump = False
 
-   If set to True, Ren'Py will create the file save_dump.txt whenever it
-   saves a game. This file contains information about the objects contained
-   in the save file. Each line consists of a relative size estimate, the path
-   to the object, information about if the object is an alias, and a
-   representation of the object.
+    If set to True, Ren'Py will create the file save_dump.txt whenever it
+    saves a game. This file contains information about the objects contained
+    in the save file. Each line consists of a relative size estimate, the path
+    to the object, information about if the object is an alias, and a
+    representation of the object.
 
 .. var:: config.save_on_mobile_background = True
 
@@ -1617,13 +1564,13 @@ Rarely or Internally Used
     callbacks can be appended to this list, but the existing callbacks
     should not be removed.
 
-.. var:: config.start_interact_callbacks = ...
+.. var:: config.start_interact_callbacks = [ ... ]
 
     A list of functions that are called (without any arguments) when
     an interaction is started. These callbacks are not called when an
     interaction is restarted.
 
-.. var:: config.quit_callbacks = ...
+.. var:: config.quit_callbacks = [ ... ]
 
     A list of functions that are called (without any arguments) when
     Ren'Py terminates. This is intended to free resources, such as

@@ -341,8 +341,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         linear move.
         """
 
-        x = absolute.compute(x, self.parent_width)
-        y = absolute.compute(y, self.parent_height)
+        if self.parent_width is not None:
+            x = absolute.compute(x, self.parent_width)
+            y = absolute.compute(y, self.parent_height)
 
         self.target_x = x
         self.target_y = y
