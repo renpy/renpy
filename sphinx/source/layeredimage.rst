@@ -597,9 +597,9 @@ Several factors influence what gets displayed following a given ``show`` instruc
 To provide more clarity as to what happens in which order, this section showcases
 the life of a set of attributes, from the show instruction to the on-screen display.
 
-- The ``show`` instruction provides the initial set of attributes,
-  following the image tag.
-- If an :var:`adjust_attributes<config.adjust_attributes>` function exists to match
+- The ``show`` statement provides the initial set of attributes, following the
+  image tag.
+- If a :var:`config.adjust_attributes` function exists to match
   the image tag, it is called, and returns a potentially different set of attributes.
   If so, it replaces the former set, which is forgotten. This stage is not specific
   to layeredimages, because...
@@ -607,7 +607,7 @@ the life of a set of attributes, from the show instruction to the on-screen disp
   will be called to display. For that reason, the given set of attributes must lead
   to one, and only one, defined image (or layeredimage, Live2D...), using the
   behavior described in the :ref:`show statement section<show-statement>`.
-- Then, the provided attributes are confronted to the attributes defined in the
+- Then, the provided attributes are combined with the attributes defined in the
   layeredimage, discarding some previously shown attributes and conserving others.
   This is also the point where unrecognized attributes are detected and related
   errors are raised. If no such error is raised, the new attributes, along with
