@@ -770,6 +770,7 @@ class Transform(Container):
         return None
 
     def __call__(self, child=None, take_state=True, _args=None):
+        child = renpy.easy.displayable_or_none(child)
 
         if child is None:
             child = self.child
