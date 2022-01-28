@@ -597,14 +597,16 @@ Several factors influence what gets displayed following a given ``show`` instruc
 To provide more clarity as to what happens in which order, this section showcases
 the life of a set of attributes, from the show instruction to the on-screen display.
 
-- The ``show`` instruction provides the initial set of attributes, following the
-  image tag.
-- If an adjust_attributes function exists to match the image tag, it is called, and
-  returns a potentially different set of attributes. If so, it replaces the former
-  set, which is forgotten. This stage is not specific to layeredimages, because...
+- The ``show`` instruction provides the initial set of attributes,
+  following the image tag.
+- If an :var:`adjust_attributes<config.adjust_attributes>` function exists to match
+  the image tag, it is called, and returns a potentially different set of attributes.
+  If so, it replaces the former set, which is forgotten. This stage is not specific
+  to layeredimages, because...
 - ...It is only after this stage that renpy determines which image or layeredimage
   will be called to display. For that reason, the given set of attributes must lead
-  to one, and only one, defined image (or layeredimage, Live2D...).
+  to one, and only one, defined image (or layeredimage, Live2D...), using the
+  behavior described in the :ref:`show statement section<show-statement>`.
 - Then, the provided attributes are confronted to the attributes defined in the
   layeredimage, discarding some previously shown attributes and conserving others.
   This is also the point where unrecognized attributes are detected and related
@@ -617,9 +619,9 @@ the life of a set of attributes, from the show instruction to the on-screen disp
   That's why an attribute called but negated by such a clause will be considered
   active by renpy, and will for example become visible without having to be called
   again if at some point the condition of the if\_x clause is no longer fulfilled.
-- If an ``attribute_function`` has been provided to the layeredimage, it is called
+- If an attribute_function has been provided to the layeredimage, it is called
   with the set of remaining attributes. It returns a potentially different set of
   attributes.
 - This set is once again confronted with the incompatibility constraints of the
-  layeredimage, this time in full. That is the final stage, and surviving attributes
+  layeredimage, this time in full. That is the final stage, and remaining attributes
   are called into display.
