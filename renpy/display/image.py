@@ -938,8 +938,8 @@ class ShownImageInfo(renpy.object.Object):
                 defaults = f(name)
 
         # Add any defaults to the set of attributes a matching image may have.
-        if defaults:
-            optional += list(defaults)
+        if defaults is not None:
+            optional.extend(defaults)
 
         # The list of attributes a matching image must have.
         required = [ ]
