@@ -1155,7 +1155,6 @@ class SceneLists(renpy.object.Object):
         try:
             thing.visit_all(lambda d : None)
         except Exception:
-            print(renpy.config.developer)
             if renpy.config.developer:
                 raise
 
