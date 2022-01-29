@@ -600,13 +600,15 @@ the life of a set of attributes, from the show instruction to the on-screen disp
 - The ``show`` statement provides the initial set of attributes, following the
   image tag.
 - If a :var:`config.adjust_attributes` function exists to match
-  the image tag, it is called, and returns a potentially different set of attributes.
-  If so, it replaces the former set, which is forgotten. This stage is not specific
-  to layeredimages, because...
-- ...It is only after this stage that renpy determines which image or layeredimage
-  will be called to display. For that reason, the given set of attributes must lead
-  to one, and only one, defined image (or layeredimage, Live2D...), using the
-  behavior described in the :ref:`show statement section<show-statement>`.
+  the image tag, it is called, and returns a potentially different set of
+  attributes. If so, it replaces the former set, which is forgotten.
+- If a :var:`config.default_attributes` function exists and if its trigger
+  conditions are met, it is called and potentially adds attributes to the set.
+- The two previous stages are not specific to layeredimages, because it is only
+  after this stage that renpy determines which image or layeredimage
+  will be called to display. For that reason, the given set of attributes must
+  lead to one, and only one, defined image (or layeredimage, Live2D...), using
+  the behavior described in the :ref:`show statement section<show-statement>`.
 - Then, the provided attributes are combined with the attributes defined in the
   layeredimage, discarding some previously shown attributes and conserving others.
   This is also the point where unrecognized attributes are detected and related
