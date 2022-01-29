@@ -757,7 +757,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         img._unique()
 
     # Update the list of images we have ever seen.
-    renpy.game.persistent._seen_images[(str(i) for i in name)] = True
+    renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
 
     if tag and munge_name:
         name = (tag,) + name[1:]
@@ -2440,7 +2440,7 @@ def mark_image_seen(name):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    renpy.game.persistent._seen_images[(str(i) for i in name)] = True
+    renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
 
 
 def mark_image_unseen(name):
