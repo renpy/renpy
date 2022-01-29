@@ -924,8 +924,22 @@ class ShownImageInfo(renpy.object.Object):
 
         nametag = name[0]
 
-        # The set of attributes a matching image may have.
-        optional = list(wanted) + list(self.attributes.get((layer, tag), [ ]))
+        # Start building the set of attributes a matching image may have.
+        optional = list(wanted)
+
+        # Find any attributes applied previously.
+        defaults = self.attributes.get((layer, tag), None)
+
+        # If no record, it's the first show, so try to fetch defaults.
+        if defaults is None:
+            f = renpy.config.default_attribute_callbacks.get(name[0], None) \
+                or renpy.config.default_attribute_callbacks.get(None, None)
+            if f is not None:
+                defaults = f(name)
+
+        # Add any defaults to the set of attributes a matching image may have.
+        if defaults is not None:
+            optional.extend(defaults)
 
         # The list of attributes a matching image must have.
         required = [ ]

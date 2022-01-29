@@ -1149,8 +1149,14 @@ class SceneLists(renpy.object.Object):
             l.insert(add_index, sle)
 
         # By walking the tree of displayables we allow the displayables to
-        # capture the current state.
-        thing.visit_all(lambda d : None)
+        # capture the current state. In older code, we allow this to to fail.
+        # Errors might exist in older games, which are ignored when not in
+        # developer mode.
+        try:
+            thing.visit_all(lambda d : None)
+        except Exception:
+            if renpy.config.developer:
+                raise
 
     def hide_or_replace(self, layer, index, prefix):
         """
