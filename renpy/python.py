@@ -353,7 +353,19 @@ def reset_store_changes(name):
 # the rollback list before rollback or serialization.
 
 
-class NoRollback(object):
+class SlottedNoRollback(object):
+    """
+    :doc: norollback class
+
+    Instances of classes inheriting from this class do not participate in
+    rollback. Objects reachable through an instance of a SlottedNoRollback
+    class only participate in rollback if they are reachable through other
+    paths.
+    """
+    __slots__ = ()
+
+
+class NoRollback(SlottedNoRollback):
     """
     :doc: norollback class
 
@@ -382,7 +394,7 @@ def reached(obj, reachable, wait):
     if idobj in reachable:
         return
 
-    if isinstance(obj, (NoRollback, io.IOBase)): # @UndefinedVariable
+    if isinstance(obj, (SlottedNoRollback, io.IOBase)): # @UndefinedVariable
         reachable[idobj] = 0
         return
 
