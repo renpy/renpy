@@ -145,8 +145,7 @@ python early in layeredimage:
 
             d = renpy.displayable(d)
 
-            for i in self.at:
-                d = At(d, i)
+            d = At(d, *self.at)
 
             if self.group_args or self.transform_args:
                 d = Transform(d)
@@ -708,8 +707,7 @@ python early in layeredimage:
 
                 rv = Fixed(rv, text, fit_first=True)
 
-            for i in self.at:
-                rv = At(rv, i)
+            rv = At(rv, *self.at)
 
             if self.transform_args:
                 rv = Transform(child=rv, **self.transform_args)
