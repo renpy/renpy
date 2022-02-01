@@ -2,7 +2,7 @@
 
 python early in layeredimage:
 
-    from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval
+    from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
     from collections import OrderedDict
 
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
@@ -146,7 +146,7 @@ python early in layeredimage:
             d = renpy.displayable(d)
 
             for i in self.at:
-                d = i(d)
+                d = At(d, i)
 
             if self.group_args or self.transform_args:
                 d = Transform(d)
@@ -709,7 +709,7 @@ python early in layeredimage:
                 rv = Fixed(rv, text, fit_first=True)
 
             for i in self.at:
-                rv = i(rv)
+                rv = At(rv, i)
 
             if self.transform_args:
                 rv = Transform(child=rv, **self.transform_args)
