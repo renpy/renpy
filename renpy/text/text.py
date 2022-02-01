@@ -1430,17 +1430,10 @@ class Layout(object):
         Return the time of the first glyph that should be shown after st.
         """
 
-        for l in self.lines:
-            if not l.glyphs:
-                continue
-
-            if l.max_time > st:
-                break
-
-        else:
+        if st >= self.max_time:
             return None
-
-        return 0
+        else:
+            return 0
 
 
 # The maximum number of entries in the layout cache.
