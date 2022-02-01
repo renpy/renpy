@@ -143,8 +143,6 @@ python early in layeredimage:
             Wraps a displayable in the at list and transform arguments.
             """
 
-            d = renpy.displayable(d)
-
             d = At(d, *self.at)
 
             if self.group_args or self.transform_args:
