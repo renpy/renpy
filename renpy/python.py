@@ -355,7 +355,7 @@ def reset_store_changes(name):
 
 class SlottedNoRollback(object):
     """
-    :doc: slottednorollback class
+    :doc: norollback class
 
     Instances of classes inheriting from this class do not participate in
     rollback. Objects reachable through an instance of a SlottedNoRollback
