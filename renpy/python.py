@@ -362,7 +362,7 @@ class SlottedNoRollback(object):
     class only participate in rollback if they are reachable through other
     paths.
     """
-    __slots__ = tuple()
+    __slots__ = ()
 
 
 class NoRollback(SlottedNoRollback):
