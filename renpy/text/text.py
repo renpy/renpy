@@ -2003,10 +2003,14 @@ class Text(renpy.display.core.Displayable):
         if layout is None:
             return
 
-        if layout.redraw_typewriter(st) is None:
-            if self.slow:
+        if self.slow:
+            redraw = layout.redraw_typewriter(st)
+
+            if redraw is None:
                 self.call_slow_done(st)
                 self.slow = False
+            else:
+                renpy.display.render.redraw(self, 0)
 
         for d, xo, yo in self.displayable_offsets:
             rv = d.event(ev, x - xo, y - yo, st)
