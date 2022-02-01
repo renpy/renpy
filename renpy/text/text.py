@@ -1586,7 +1586,7 @@ class Text(renpy.display.core.Displayable):
         self.slow = slow
 
         # The callback to be called when slow-text mode ends.
-        self.slow_done = None # type:Callable|None
+        self.slow_done = slow_done # type:Callable|None
 
         # The ctc indicator associated with this text.
         self.ctc = None
