@@ -774,7 +774,7 @@ class Transform(Container):
         if child is None:
             child = self.child
 
-        if (child is not None) and getattr(child, '_duplicatable', False):
+        if getattr(child, '_duplicatable', False):
             child = child._duplicate(_args)
 
         rv = Transform(
