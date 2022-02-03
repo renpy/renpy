@@ -357,11 +357,14 @@ class SlottedNoRollback(object):
     """
     :doc: norollback class
 
-    Instances of classes inheriting from this class do not participate in
-    rollback. Objects reachable through an instance of a SlottedNoRollback
-    class only participate in rollback if they are reachable through other
-    paths.
-    """
+    Instances of classes inheriting from this class do not participate
+    in rollback. The difference between this and :class:`NoRollback` is that
+    this class does not have an associated dictionary, hence can be used
+    with ``__slots__`` to reduce memory usage.
+
+    Objects reachable through an instance of a NoRollback class only participate
+    in rollback if they are reachable through other paths.
+    """"
     __slots__ = ()
 
 
@@ -369,9 +372,10 @@ class NoRollback(SlottedNoRollback):
     """
     :doc: norollback class
 
-    Instances of classes inheriting from this class do not participate in
-    rollback. Objects reachable through an instance of a NoRollback class
-    only participate in rollback if they are reachable through other paths.
+    Instances of this class, and classes inheriting from this class,
+    do not participate in rollback. Objects reachable through an instance
+    of a NoRollback class only participate in rollback if they are
+    reachable through other paths.
     """
 
 # parents = [ ]
