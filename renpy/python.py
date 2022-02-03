@@ -364,7 +364,7 @@ class SlottedNoRollback(object):
 
     Objects reachable through an instance of a NoRollback class only participate
     in rollback if they are reachable through other paths.
-    """"
+    """
     __slots__ = ()
 
 
