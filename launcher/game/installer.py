@@ -23,6 +23,8 @@ import hashlib
 import os
 import time
 import requests
+import zipfile
+import tarfile
 
 from store import _, config, interface # type: ignore
 
@@ -55,6 +57,7 @@ def set_target(directory):
     programs are run.
     """
 
+    global target
     target = directory
 
 
@@ -138,7 +141,7 @@ def download(url, filename, hash=None):
                 if time.time() - progress_time > 0.1:
                     progress_time = time.time()
                     interface.processing(
-                        _("Downloading [installer.download_file]."),
+                        _("Downloading [installer.download_file]..."),
                         complete=downloaded, total=total_size)
 
     except requests.HTTPError as e:
@@ -148,8 +151,72 @@ def download(url, filename, hash=None):
         if not check_hash(filename, hash):
             interface.error(_("The downloaded file [installer.download_file] from [installer.download_url] is not correct."))
 
+class FixedZipFile(zipfile.ZipFile):
+    """
+    Patches zipfile.zipfile so it sets the executable bit when necessary.
+    """
+
+    def extract(self, member, path=None, pwd=None):
+
+        if not isinstance(member, zipfile.ZipInfo):
+            member = self.getinfo(member)
+
+        if path is None:
+            path = os.getcwd()
+
+        ret_val = self._extract_member(member, path, pwd) # type: ignore
+        attr = member.external_attr >> 16
+
+        if attr:
+            os.chmod(ret_val, attr)
+
+        return ret_val
+
+# The name of the archive being unpacked.
+unpack_archive = ""
+
+def unpack(archive, destination):
+    """
+    Unpacks `archive` to `destination`. `archive` should be the name of
+    a zip or (perhaps compressed) tar file. `destination` should be a
+    directory that the contents are unpacked into.
+    """
+
+    global unpack_archive
+    unpack_archive = archive
+
+    interface.processing(_("Unpacking [installer.unpack_archive]..."))
+
+    archive = temp(archive)
+    destination = path(destination)
+
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+
+    old_cwd = os.getcwd()
+
+    try:
+
+        os.chdir(destination)
+
+        if tarfile.is_tarfile(archive):
+            tar = tarfile.open(archive)
+            tar.extractall(".")
+            tar.close()
+
+        elif zipfile.is_zipfile(archive):
+            zip = FixedZipFile(archive)
+            zip.extractall(".")
+            zip.close()
+
+        else:
+            raise Exception("Unknown file type.")
+
+    finally:
+        os.chdir(old_cwd)
 
 
 def main():
     set_target("/tmp")
-    download("http://nightly.renpy.org/8-nightly-2022-01-30-50b188065/renpy-8-nightly-2022-01-30-50b188065-sdk.zip", "nightly.zip")
+    download("https://code.visualstudio.com/sha/download?build=stable&os=linux-x64", "vscode.tar.gz")
+    unpack("vscode.tar.gz", ".")
