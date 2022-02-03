@@ -25,26 +25,28 @@ import time
 import requests
 import zipfile
 import tarfile
+import shutil
 
 from store import _, config, interface # type: ignore
 
+temp_exists = False
 
-
-def temp(filename):
+def _ensure_temp():
     """
-    Converts filename into a path inside the temporary directory, creating
-    the extension temporary directory if necessary.
+    Ensures that the directories needed by the extension API are present.
     """
 
-    rv = os.path.join(config.renpy_base, "tmp", "extension", filename)
+    global temp_exists
 
-    try:
-        os.makedirs(os.path.dirname(rv))
-    except Exception:
-        pass
+    if temp_exists:
+        return
 
-    return rv
+    backups = os.path.join(config.renpy_base, "tmp", "installer", "backups")
 
+    if not os.path.exists(backups):
+        os.makedirs(os.path.dirname(backups))
+
+    temp_exists = True
 
 # The target directory that the extensions API operates on.
 target = None
@@ -61,23 +63,46 @@ def set_target(directory):
     target = directory
 
 
-def path(filename):
+def _path(filename):
     """
-    Returns a path to the filename inside the target directory.
+    Returns the full path to `filename`. If `filename` starts with the
+    prefix temp:, it's placed in the temp directory. If the filename
+    starts with backup, a backup filename is returned. Otherwise,
+    the path is interpreted relative to the target directory.
     """
+
+    _ensure_temp()
+
+    tempdir = os.path.join(config.renpy_base, "tmp", "installer")
+    backups = os.path.join(config.renpy_base, "tmp", "installer", "backups")
+
+    prefix, _, rest = filename.partition(":")
+
+    if prefix == "temp":
+        return os.path.join(tempdir, rest)
+
+    if prefix == "backup":
+        base = os.path.basename(rest.rpartition(":")[2])
+        return os.path.join(backups, base + "." + str(time.time()))
 
     if target is None:
         raise Exception("The target directory has not been set.")
 
     return os.path.join(target, filename)
 
+def _friendly(filename):
+    """
+    Returns a version of the filename without any leading prefix.
+    """
 
-def check_hash(filename, hashj):
+    return filename.rpartition(":")[2]
+
+
+def _check_hash(filename, hashj):
     """
     Returns a cryptographic hash of `filename`. `filename` should
     be a full path, one returned by temp or path.
     """
-
 
     try:
 
@@ -112,12 +137,12 @@ def download(url, filename, hash=None):
     global download_file
 
     download_url = url
-    download_file = filename
+    download_file = _friendly(filename)
 
-    filename = temp(filename)
+    filename = _path(filename)
 
     if hash is not None:
-        if check_hash(filename, hash):
+        if _check_hash(filename, hash):
             return
 
     progress_time = time.time()
@@ -148,10 +173,10 @@ def download(url, filename, hash=None):
         interface.error(_("Could not download [installer.download_file] from [installer.download_url]:\n{b}[installer.download_error]"))
 
     if hash is not None:
-        if not check_hash(filename, hash):
+        if not _check_hash(filename, hash):
             interface.error(_("The downloaded file [installer.download_file] from [installer.download_url] is not correct."))
 
-class FixedZipFile(zipfile.ZipFile):
+class _FixedZipFile(zipfile.ZipFile):
     """
     Patches zipfile.zipfile so it sets the executable bit when necessary.
     """
@@ -183,12 +208,12 @@ def unpack(archive, destination):
     """
 
     global unpack_archive
-    unpack_archive = archive
+    unpack_archive = _friendly(archive)
 
     interface.processing(_("Unpacking [installer.unpack_archive]..."))
 
-    archive = temp(archive)
-    destination = path(destination)
+    archive = _path(archive)
+    destination = _path(destination)
 
     if not os.path.exists(destination):
         os.makedirs(destination)
@@ -205,7 +230,7 @@ def unpack(archive, destination):
             tar.close()
 
         elif zipfile.is_zipfile(archive):
-            zip = FixedZipFile(archive)
+            zip = _FixedZipFile(archive)
             zip.extractall(".")
             zip.close()
 
@@ -216,7 +241,17 @@ def unpack(archive, destination):
         os.chdir(old_cwd)
 
 
+def remove(filename):
+    """
+    Removes a file or directory from the target directory, backing it up
+    the temporary directory.
+    """
+
+    shutil.move(_path(filename), _path("backup:" + filename))
+
+
 def main():
     set_target("/tmp")
-    download("https://code.visualstudio.com/sha/download?build=stable&os=linux-x64", "vscode.tar.gz")
-    unpack("vscode.tar.gz", ".")
+    download("https://code.visualstudio.com/sha/download?build=stable&os=linux-x64", "temp:vscode.tar.gz")
+    remove("VSCode-linux-x64")
+    unpack("temp:vscode.tar.gz", ".")
