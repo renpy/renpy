@@ -161,8 +161,8 @@ label _debugger_screen:
 
     python hide:
 
-        import repr
-        aRepr = repr.Repr()
+        import reprlib
+        aRepr = reprlib.Repr()
         aRepr.maxstring = 120
 
         entries = [ ]
