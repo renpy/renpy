@@ -681,14 +681,12 @@ class Channel(object):
         if not pcm_ok:
             return None
 
-        if self._number is None:
-            return None
-
-        rv = renpysound.playing_name(self.number)
+        rv = None
 
         with lock:
 
-            rv = renpysound.playing_name(self.number)
+            if self._number is not None:
+                rv = renpysound.playing_name(self.number)
 
             if rv is None and self.queue:
                 rv = self.queue[0].filename
