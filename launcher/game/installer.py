@@ -26,6 +26,8 @@ import requests
 import zipfile
 import tarfile
 import shutil
+import subprocess
+import renpy
 
 from store import _, config, interface # type: ignore
 
@@ -256,9 +258,57 @@ def move(old_filename, new_filename):
     remove(old_filename)
     shutil.move(_path(old_filename), _path(new_filename))
 
+def mkdir(dirname):
+    """
+    Makes the named directory.
+    """
+
+    if not os.path.exists(_path(dirname)):
+        os.makedirs(_path(dirname))
+
+def info(message, **kwargs):
+    """
+    Displays `message` to the user, asking them to click through or
+    cancel.
+    """
+
+    interface.info(message, cancel=Jump("front_page"), **kwargs)
+
+def processing(message, **kwargs):
+    """
+    Displays `message` to the user, without waiting.
+    """
+
+    interface.processing(message, **kwargs)
+
+install_args = [ ]
+install_error = ""
+
+def run(*args):
+    """
+    Runs a program with the given arguments, in the target directory.
+    """
+
+    global install_args
+    global install_error
+
+    args = [ renpy.exports.fsencode(i) for i in args ]
+
+    try:
+        subprocess.check_call(args, cwd=target)
+    except Exception as e:
+        install_args = args
+        install_error = str(e)
+
+        interface.error(_("Could not run [installer.install_args!r]:\n[installer.install_error]"))
+
+
 
 def main():
     set_target("/tmp")
     download("https://code.visualstudio.com/sha/download?build=stable&os=linux-x64", "temp:vscode.tar.gz")
     remove("VSCode-linux-x64")
     unpack("temp:vscode.tar.gz", ".")
+    mkdir("VSCode-linux-x64/data")
+    processing(_("Installing the Ren'Py extension."))
+    run("VSCode-linux-x64/bin/code", "--install-extension", "LuqueDaniel.languague-renpy")
