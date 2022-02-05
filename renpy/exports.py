@@ -1560,7 +1560,10 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     else:
         renpy.ui.saybehavior(afm=afm)
 
-    rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay)
+    try:
+        rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay)
+    except (renpy.game.JumpException, renpy.game.CallException) as e:
+        rv = e
 
     if checkpoint:
         renpy.exports.checkpoint(rv, keep_rollback=True, hard=renpy.config.pause_after_rollback or (delay is None))
@@ -1570,6 +1573,9 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
 
     if with_none:
         renpy.game.interface.do_with(None, None)
+
+    if isinstance(rv, (renpy.game.JumpException, renpy.game.CallException)):
+        raise rv
 
     return rv
 
