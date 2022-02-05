@@ -404,26 +404,26 @@ init python in project:
 
         def __init__(self):
 
-           # The projects directory.
-           self.projects_directory = ""
+            # The projects directory.
+            self.projects_directory = ""
 
-           # Normal projects, in alphabetical order by lowercase name.
-           self.projects = [ ]
+            # Normal projects, in alphabetical order by lowercase name.
+            self.projects = [ ]
 
-           # Template projects.
-           self.templates = [ ]
+            # Template projects.
+            self.templates = [ ]
 
-           # All projects - normal, template, and hidden.
-           self.all_projects = [ ]
+            # All projects - normal, template, and hidden.
+            self.all_projects = [ ]
 
-           # Directories that have been scanned.
-           self.scanned = set()
+            # Directories that have been scanned.
+            self.scanned = set()
 
-           # The tutorial game, and the language it's for.
-           self.tutoral = None
-           self.tutorial_language = "the meowing of a cat"
+            # The tutorial game, and the language it's for.
+            self.tutoral = None
+            self.tutorial_language = "the meowing of a cat"
 
-           self.scan()
+            self.scan()
 
         def scan(self):
             """
