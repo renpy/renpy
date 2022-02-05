@@ -240,7 +240,6 @@ def unpack(archive, destination):
     finally:
         os.chdir(old_cwd)
 
-
 def remove(filename):
     """
     Removes a file or directory from the target directory, backing it up
@@ -248,6 +247,14 @@ def remove(filename):
     """
 
     shutil.move(_path(filename), _path("backup:" + filename))
+
+def move(old_filename, new_filename):
+    """
+    Moves a filename from `old_filename` to `new_filename`.
+    """
+
+    remove(old_filename)
+    shutil.move(_path(old_filename), _path(new_filename))
 
 
 def main():
