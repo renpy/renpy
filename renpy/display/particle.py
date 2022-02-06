@@ -348,7 +348,7 @@ class SpriteManager(renpy.display.core.Displayable):
         self.children = [ ]
 
 
-class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):
+class Particles(renpy.display.core.Displayable, renpy.rollback.NoRollback):
     """
     Supports particle motion, using the old API.
     """
@@ -437,7 +437,7 @@ class Particles(renpy.display.core.Displayable, renpy.python.NoRollback):
         return [ self.sm ]
 
 
-class SnowBlossomFactory(renpy.python.NoRollback):
+class SnowBlossomFactory(renpy.rollback.NoRollback):
 
     rotate = False
 
@@ -504,7 +504,7 @@ class SnowBlossomFactory(renpy.python.NoRollback):
         return [ self.image ]
 
 
-class SnowBlossomParticle(renpy.python.NoRollback):
+class SnowBlossomParticle(renpy.rollback.NoRollback):
 
     def __init__(self, image, xspeed, yspeed, border, start, offset, fast, rotate):
 

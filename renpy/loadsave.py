@@ -371,7 +371,7 @@ def save(slotname, extra_info='', mutate_flag=False):
         renpy.persistent.update()
 
     if mutate_flag:
-        renpy.python.mutate_flag = False
+        renpy.revertable.mutate_flag = False
 
     roots = renpy.game.log.freeze(None)
 
@@ -401,7 +401,7 @@ def save(slotname, extra_info='', mutate_flag=False):
 
         reraise(t, e, tb)
 
-    if mutate_flag and renpy.python.mutate_flag:
+    if mutate_flag and renpy.revertable.mutate_flag:
         raise SaveAbort()
 
     screenshot = renpy.game.interface.get_screenshot()

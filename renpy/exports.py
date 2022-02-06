@@ -80,7 +80,7 @@ from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, 
 from renpy.loadsave import list_slots, newest_slot, slot_mtime, slot_json, slot_screenshot, force_autosave
 
 from renpy.python import py_eval as eval
-from renpy.python import rng as random
+from renpy.rollback import rng as random
 from renpy.atl import atl_warper
 from renpy.easy import predict, displayable, split_properties
 from renpy.parser import unelide_filename, get_parse_errors
