@@ -1791,7 +1791,7 @@ def get_all_labels():
         if isinstance(i, basestring):
             rv.append(i)
 
-    return renpy.python.RevertableSet(rv)
+    return renpy.revertable.RevertableSet(rv)
 
 
 def take_screenshot(scale=None, background=False):
@@ -2865,7 +2865,7 @@ def shown_window():
     renpy.game.context().scene_lists.shown_window = True
 
 
-class placement(renpy.python.RevertableObject):
+class placement(renpy.revertable.RevertableObject):
 
     def __init__(self, p):
         super(placement, self).__init__()
@@ -2956,12 +2956,12 @@ IgnoreEvent = renpy.display.core.IgnoreEvent
 redraw = renpy.display.render.redraw
 
 
-class Displayable(renpy.display.core.Displayable, renpy.python.RevertableObject):
+class Displayable(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     pass
 
 
-class Container(renpy.display.layout.Container, renpy.python.RevertableObject):
-    _list_type = renpy.python.RevertableList
+class Container(renpy.display.layout.Container, renpy.revertable.RevertableObject):
+    _list_type = renpy.revertable.RevertableList
 
 
 def get_roll_forward():
@@ -2973,7 +2973,7 @@ def cache_pin(*args):
     :undocumented: Cache pin is deprecated.
     """
 
-    new_pins = renpy.python.RevertableSet()
+    new_pins = renpy.revertable.RevertableSet()
 
     for i in args:
 
@@ -2992,7 +2992,7 @@ def cache_unpin(*args):
     :undocumented: Cache pin is deprecated.
     """
 
-    new_pins = renpy.python.RevertableSet()
+    new_pins = renpy.revertable.RevertableSet()
 
     for i in args:
 
@@ -3051,7 +3051,7 @@ def start_predict(*args):
     matches all files starting with concert in the images directory.
     """
 
-    new_predict = renpy.python.RevertableSet(renpy.store._predict_set)
+    new_predict = renpy.revertable.RevertableSet(renpy.store._predict_set)
 
     for i in args:
         for d in expand_predict(i):
@@ -3071,7 +3071,7 @@ def stop_predict(*args):
     Wildcard patterns can be used as described in :func:`renpy.start_predict`.
     """
 
-    new_predict = renpy.python.RevertableSet(renpy.store._predict_set)
+    new_predict = renpy.revertable.RevertableSet(renpy.store._predict_set)
 
     for i in args:
         for d in expand_predict(i):
@@ -3090,7 +3090,7 @@ def start_predict_screen(_screen_name, *args, **kwargs):
     of `_screen_name`. To stop predicting a screen, call :func:`renpy.stop_predict_screen`.
     """
 
-    new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)
+    new_predict = renpy.revertable.RevertableDict(renpy.store._predict_screen)
     new_predict[_screen_name] = (args, kwargs)
     renpy.store._predict_screen = new_predict
 
@@ -3102,7 +3102,7 @@ def stop_predict_screen(name):
     Causes Ren'Py to stop predicting the screen named `name`.
     """
 
-    new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)
+    new_predict = renpy.revertable.RevertableDict(renpy.store._predict_screen)
     new_predict.pop(name, None)
     renpy.store._predict_screen = new_predict
 

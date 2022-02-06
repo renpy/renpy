@@ -90,7 +90,7 @@ class ParameterInfo(object):
             best job it can.
         """
 
-        values = renpy.python.RevertableDict()
+        values = renpy.revertable.RevertableDict()
         rv = { }
 
         if args is None:
@@ -182,7 +182,7 @@ class ArgumentInfo(object):
         """
 
         args = [ ]
-        kwargs = renpy.python.RevertableDict()
+        kwargs = renpy.revertable.RevertableDict()
 
         for k, v in self.arguments:
             if k is not None:
@@ -2338,7 +2338,7 @@ class Default(Node):
         defaults_set = d.get("_defaults_set", None)
 
         if defaults_set is None:
-            d["_defaults_set"] = defaults_set = renpy.python.RevertableSet()
+            d["_defaults_set"] = defaults_set = renpy.revertable.RevertableSet()
             d.ever_been_changed.add("_defaults_set")
 
         if self.varname not in defaults_set:

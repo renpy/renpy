@@ -127,7 +127,7 @@ class QueueEntry(object):
         self.relative_volume = relative_volume
 
 
-class MusicContext(renpy.python.RevertableObject):
+class MusicContext(renpy.revertable.RevertableObject):
     """
     This stores information about the music in a game. This object
     participates in rollback, so when the user goes back in time, all
