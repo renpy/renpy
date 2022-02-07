@@ -340,7 +340,97 @@ def b(s):
         return s
 
 
+class LoadedVariables(ast.NodeVisitor):
+    """
+    This is used to implement find_loaded_variables.
+    """
+
+    def visit_Name(self, node):
+        if isinstance(node.ctx, ast.Load):
+            self.loaded.add(node.id)
+        elif isinstance(node.ctx, ast.Store):
+            self.stored.add(node.id)
+
+    def find(self, node):
+        self.loaded = set()
+        self.stored = set()
+
+        self.visit(node)
+
+        return self.loaded - self.stored
+
+# Given a comprehension or generator expression, returns the list of variables
+# that are loaded from external scopes.
+find_loaded_variables = LoadedVariables().find
+
+
 class WrapNode(ast.NodeTransformer):
+
+
+    def wrap_generator(self, node):
+        """
+        This wraps generators in lambdas, such that:
+
+            (i for i in l if i == b)
+
+        becomes:
+
+            (lambda l, b : (i for i in l if i == b))(l, b)
+
+        Why do this? It's because if b is a local, it's not present inside
+        the generator expression scope, and when compiled independently of
+        a larger scope, no cell is generated.
+        """
+
+        node = self.generic_visit(node)
+
+        variables = list(sorted(find_loaded_variables(node)))
+
+        lambda_args = [ ]
+        call_args =[ ]
+
+        for var in variables:
+            if PY2:
+                lambda_args.append(ast.Name(id=var, ctx=ast.Param()))
+            else:
+                lambda_args.append(ast.arg(arg=var))
+
+            call_args.append(ast.Name(id=var, ctx=ast.Load()))
+
+        if PY2:
+
+            return ast.Call(
+                func=ast.Lambda(
+                    args=ast.arguments(
+                        args=lambda_args,
+                        vararg=None,
+                        kwarg=None,
+                        defaults=[]
+                    ),
+                    body=node,
+                ),
+                args=call_args,
+                keywords=[ ],
+                starargs=None,
+                kwargs=None,
+            )
+
+        else:
+
+            return ast.Call(
+                func=ast.Lambda(
+                    args=ast.arguments(
+                        posonlyargs=[ ],
+                        args=lambda_args,
+                        kwonlyargs=[ ],
+                        kw_defaults=[ ],
+                        defaults=[ ],
+                    ),
+                    body=node,
+                ),
+                args=call_args,
+                keywords=[ ],
+            )
 
     def visit_ClassDef(self, n):
         n = self.generic_visit(n)
@@ -350,13 +440,16 @@ class WrapNode(ast.NodeTransformer):
 
         return n
 
+    def visit_GeneratorExp(self, node):
+        return self.wrap_generator(node)
+
     def visit_SetComp(self, n):
         return ast.Call(
             func=ast.Name(
                 id=b("__renpy__set__"),
                 ctx=ast.Load()
                 ),
-            args=[ self.generic_visit(n) ],
+            args=[ self.wrap_generator(n) ],
             keywords=[ ],
             starargs=None,
             kwargs=None)
@@ -374,12 +467,13 @@ class WrapNode(ast.NodeTransformer):
             kwargs=None)
 
     def visit_ListComp(self, n):
+
         return ast.Call(
             func=ast.Name(
                 id=b("__renpy__list__"),
                 ctx=ast.Load()
                 ),
-            args=[ self.generic_visit(n) ],
+            args=[ self.wrap_generator(n) ],
             keywords=[ ],
             starargs=None,
             kwargs=None)
@@ -404,7 +498,7 @@ class WrapNode(ast.NodeTransformer):
                 id=b("__renpy__dict__"),
                 ctx=ast.Load()
                 ),
-            args=[ self.generic_visit(n) ],
+            args=[ self.wrap_generator(n) ],
             keywords=[ ],
             starargs=None,
             kwargs=None)
