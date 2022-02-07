@@ -1897,5 +1897,17 @@ translate spanish strings:
     # game/updater.rpy:111
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Ver el registro de cambios{/a}"
+    
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    new "Descargando [extension.download_file]."
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    new "No se pudo descargar [extension.download_file] desde [extension.download_url]:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    new "El archivo descargado [extension.download_file] desde [extension.download_url] no es correcto."
 
 
