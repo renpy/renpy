@@ -288,12 +288,8 @@ For example::
         $ serial = mystore.serial()
 
 Named stores participate in save, load, and rollback in the same way
-that the default store does. The ``define`` statement can be used to
+that the default store does. The defined statement can be used to
 define names in a named store.
-
-For example::
-
-    define mystore.variable = 0
 
 
 .. _python-modules:
