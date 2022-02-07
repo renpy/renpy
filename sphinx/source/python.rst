@@ -287,10 +287,10 @@ For example::
     label start:
         $ serial = mystore.serial()
 
+
 Named stores participate in save, load, and rollback in the same way
 that the default store does. The defined statement can be used to
 define names in a named store.
-
 
 
 .. _python-modules:
