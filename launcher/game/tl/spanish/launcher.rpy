@@ -1904,10 +1904,10 @@ translate spanish strings:
 
     # game/installer.rpy:11
     old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
-    new "No se pudo descargar [extension.download_file] de [extension.download_url]:\n{b}[extension.download_error]"
+    new "No se pudo descargar [extension.download_file] desde [extension.download_url]:\n{b}[extension.download_error]"
 
     # game/installer.rpy:12
     old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
-    new "El archivo descargado [extension.download_file] de [extension.download_url] no es correcto."
+    new "El archivo descargado [extension.download_file] desde [extension.download_url] no es correcto."
 
 
