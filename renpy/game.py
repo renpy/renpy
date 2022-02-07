@@ -53,7 +53,7 @@ lint = False
 
 # The RollbackLog that keeps track of changes to the game state
 # and to the store.
-log = None # type: Optional[renpy.python.RollbackLog]
+log = None # type: renpy.rollback.RollbackLog|None
 
 # Some useful additional information about program execution that
 # can be added to the exception.
@@ -335,7 +335,7 @@ def call_in_new_context(label, *args, **kwargs):
         renpy.store._args = None
 
     if kwargs:
-        renpy.store._kwargs = renpy.python.RevertableDict(kwargs)
+        renpy.store._kwargs = renpy.revertable.RevertableDict(kwargs)
     else:
         renpy.store._kwargs = None
 

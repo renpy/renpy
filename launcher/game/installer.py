@@ -23,26 +23,32 @@ import hashlib
 import os
 import time
 import requests
+import zipfile
+import tarfile
+import shutil
+import subprocess
+import renpy
 
 from store import _, config, interface # type: ignore
 
+temp_exists = False
 
-
-def temp(filename):
+def _ensure_temp():
     """
-    Converts filename into a path inside the temporary directory, creating
-    the extension temporary directory if necessary.
+    Ensures that the directories needed by the extension API are present.
     """
 
-    rv = os.path.join(config.renpy_base, "tmp", "extension", filename)
+    global temp_exists
 
-    try:
-        os.makedirs(os.path.dirname(rv))
-    except Exception:
-        pass
+    if temp_exists:
+        return
 
-    return rv
+    backups = os.path.join(config.renpy_base, "tmp", "installer", "backups")
 
+    if not os.path.exists(backups):
+        os.makedirs(os.path.dirname(backups))
+
+    temp_exists = True
 
 # The target directory that the extensions API operates on.
 target = None
@@ -55,26 +61,50 @@ def set_target(directory):
     programs are run.
     """
 
+    global target
     target = directory
 
 
-def path(filename):
+def _path(filename):
     """
-    Returns a path to the filename inside the target directory.
+    Returns the full path to `filename`. If `filename` starts with the
+    prefix temp:, it's placed in the temp directory. If the filename
+    starts with backup, a backup filename is returned. Otherwise,
+    the path is interpreted relative to the target directory.
     """
+
+    _ensure_temp()
+
+    tempdir = os.path.join(config.renpy_base, "tmp", "installer")
+    backups = os.path.join(config.renpy_base, "tmp", "installer", "backups")
+
+    prefix, _, rest = filename.partition(":")
+
+    if prefix == "temp":
+        return os.path.join(tempdir, rest)
+
+    if prefix == "backup":
+        base = os.path.basename(rest.rpartition(":")[2])
+        return os.path.join(backups, base + "." + str(time.time()))
 
     if target is None:
         raise Exception("The target directory has not been set.")
 
     return os.path.join(target, filename)
 
+def _friendly(filename):
+    """
+    Returns a version of the filename without any leading prefix.
+    """
 
-def check_hash(filename, hashj):
+    return filename.rpartition(":")[2]
+
+
+def _check_hash(filename, hashj):
     """
     Returns a cryptographic hash of `filename`. `filename` should
     be a full path, one returned by temp or path.
     """
-
 
     try:
 
@@ -109,12 +139,12 @@ def download(url, filename, hash=None):
     global download_file
 
     download_url = url
-    download_file = filename
+    download_file = _friendly(filename)
 
-    filename = temp(filename)
+    filename = _path(filename)
 
     if hash is not None:
-        if check_hash(filename, hash):
+        if _check_hash(filename, hash):
             return
 
     progress_time = time.time()
@@ -138,18 +168,147 @@ def download(url, filename, hash=None):
                 if time.time() - progress_time > 0.1:
                     progress_time = time.time()
                     interface.processing(
-                        _("Downloading [installer.download_file]."),
+                        _("Downloading [installer.download_file]..."),
                         complete=downloaded, total=total_size)
 
     except requests.HTTPError as e:
         interface.error(_("Could not download [installer.download_file] from [installer.download_url]:\n{b}[installer.download_error]"))
 
     if hash is not None:
-        if not check_hash(filename, hash):
+        if not _check_hash(filename, hash):
             interface.error(_("The downloaded file [installer.download_file] from [installer.download_url] is not correct."))
+
+class _FixedZipFile(zipfile.ZipFile):
+    """
+    Patches zipfile.zipfile so it sets the executable bit when necessary.
+    """
+
+    def extract(self, member, path=None, pwd=None):
+
+        if not isinstance(member, zipfile.ZipInfo):
+            member = self.getinfo(member)
+
+        if path is None:
+            path = os.getcwd()
+
+        ret_val = self._extract_member(member, path, pwd) # type: ignore
+        attr = member.external_attr >> 16
+
+        if attr:
+            os.chmod(ret_val, attr)
+
+        return ret_val
+
+# The name of the archive being unpacked.
+unpack_archive = ""
+
+def unpack(archive, destination):
+    """
+    Unpacks `archive` to `destination`. `archive` should be the name of
+    a zip or (perhaps compressed) tar file. `destination` should be a
+    directory that the contents are unpacked into.
+    """
+
+    global unpack_archive
+    unpack_archive = _friendly(archive)
+
+    interface.processing(_("Unpacking [installer.unpack_archive]..."))
+
+    archive = _path(archive)
+    destination = _path(destination)
+
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+
+    old_cwd = os.getcwd()
+
+    try:
+
+        os.chdir(destination)
+
+        if tarfile.is_tarfile(archive):
+            tar = tarfile.open(archive)
+            tar.extractall(".")
+            tar.close()
+
+        elif zipfile.is_zipfile(archive):
+            zip = _FixedZipFile(archive)
+            zip.extractall(".")
+            zip.close()
+
+        else:
+            raise Exception("Unknown file type.")
+
+    finally:
+        os.chdir(old_cwd)
+
+def remove(filename):
+    """
+    Removes a file or directory from the target directory, backing it up
+    the temporary directory.
+    """
+
+    shutil.move(_path(filename), _path("backup:" + filename))
+
+def move(old_filename, new_filename):
+    """
+    Moves a filename from `old_filename` to `new_filename`.
+    """
+
+    remove(old_filename)
+    shutil.move(_path(old_filename), _path(new_filename))
+
+def mkdir(dirname):
+    """
+    Makes the named directory.
+    """
+
+    if not os.path.exists(_path(dirname)):
+        os.makedirs(_path(dirname))
+
+def info(message, **kwargs):
+    """
+    Displays `message` to the user, asking them to click through or
+    cancel.
+    """
+
+    interface.info(message, cancel=Jump("front_page"), **kwargs)
+
+def processing(message, **kwargs):
+    """
+    Displays `message` to the user, without waiting.
+    """
+
+    interface.processing(message, **kwargs)
+
+install_args = [ ]
+install_error = ""
+
+def run(*args):
+    """
+    Runs a program with the given arguments, in the target directory.
+    """
+
+    global install_args
+    global install_error
+
+    args = [ renpy.exports.fsencode(i) for i in args ]
+
+    try:
+        subprocess.check_call(args, cwd=target)
+    except Exception as e:
+        install_args = args
+        install_error = str(e)
+
+        interface.error(_("Could not run [installer.install_args!r]:\n[installer.install_error]"))
 
 
 
 def main():
     set_target("/tmp")
-    download("http://nightly.renpy.org/8-nightly-2022-01-30-50b188065/renpy-8-nightly-2022-01-30-50b188065-sdk.zip", "nightly.zip")
+    download("https://code.visualstudio.com/sha/download?build=stable&os=linux-x64", "temp:vscode.tar.gz")
+    remove("VSCode-linux-x64")
+    unpack("temp:vscode.tar.gz", ".")
+    mkdir("VSCode-linux-x64/data")
+    processing(_("Installing the Ren'Py extension."))
+    run("VSCode-linux-x64/bin/code", "--install-extension", "LuqueDaniel.languague-renpy")

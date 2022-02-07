@@ -180,7 +180,7 @@ class Context(renpy.object.Object):
             self.interacting = False
 
         if version < 5:
-            self.modes = renpy.python.RevertableList([ "start" ])
+            self.modes = renpy.revertable.RevertableList([ "start" ])
             self.use_modes = True
 
         if version < 6:
@@ -237,7 +237,7 @@ class Context(renpy.object.Object):
 
         self.rollback = rollback
         self.runtime = 0
-        self.info = renpy.python.RevertableObject()
+        self.info = renpy.revertable.RevertableObject()
         self.seen = False
 
         # True if there has just been an abnormal transfer of control,
@@ -313,7 +313,7 @@ class Context(renpy.object.Object):
                 self.scene_lists.clear(layer=i)
 
         # A list of modes that the context has been in.
-        self.modes = renpy.python.RevertableList([ "start" ])
+        self.modes = renpy.revertable.RevertableList([ "start" ])
         self.use_modes = True
 
         # The language we started with.

@@ -236,7 +236,8 @@ AudioData = renpy.audio.audio.AudioData
 
 Style = renpy.style.Style # type: ignore
 
-NoRollback = renpy.python.NoRollback
+SlottedNoRollback = renpy.rollback.SlottedNoRollback
+NoRollback = renpy.rollback.NoRollback
 
 class _layout_class(__builtins__["object"]):
     """

@@ -518,7 +518,7 @@ class Layout(object):
         width = min(32767, width)
         height = min(32767, height)
 
-        if drawable_res and (not size_only) and renpy.config.drawable_resolution_text:
+        if drawable_res and (not size_only) and renpy.config.use_drawable_resolution and renpy.config.drawable_resolution_text:
             # How much do we want to oversample the text by, compared to the
             # virtual resolution.
             self.oversample = renpy.display.draw.draw_per_virt

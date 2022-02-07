@@ -52,6 +52,9 @@ if PY2:
 else:
     from importlib.util import MAGIC_NUMBER as MAGIC
 
+# Change this to force a recompile when required.
+MAGIC += b'\x01'
+
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
 

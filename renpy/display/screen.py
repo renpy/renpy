@@ -353,7 +353,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         # The scope associated with this statement. This is passed in
         # as keyword arguments to the displayable.
-        self.scope = renpy.python.RevertableDict(scope)
+        self.scope = renpy.revertable.RevertableDict(scope)
 
         # The child associated with this screen.
         self.child = None # type: renpy.display.layout.MultiBox|None
@@ -404,7 +404,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # Should we transfer data from the old_screen? This becomes
         # true once this screen finishes updating for the first time,
         # and also while we're using something.
-        self.old_transfers = (old_screen and old_screen.screen_name == self.screen_name) 
+        self.old_transfers = (old_screen and old_screen.screen_name == self.screen_name)
 
         # The current transform event, and the last transform event to
         # be processed.

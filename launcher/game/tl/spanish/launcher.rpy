@@ -1808,7 +1808,7 @@ translate spanish strings:
 
     # game/gui7.rpy:311
     old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
-    new "size=-4}\n\nEsto no sobrescribirá gui/main_menu.png, gui/game_menu.png y gui/window_icon.png, pero creará archivos que no existen.{/size}"
+    new "{size=-4}\n\nEsto no sobrescribirá gui/main_menu.png, gui/game_menu.png y gui/window_icon.png, pero creará archivos que no existen.{/size}"
 
     # game/ios.rpy:339
     old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."

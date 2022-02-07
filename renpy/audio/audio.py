@@ -127,7 +127,7 @@ class QueueEntry(object):
         self.relative_volume = relative_volume
 
 
-class MusicContext(renpy.python.RevertableObject):
+class MusicContext(renpy.revertable.RevertableObject):
     """
     This stores information about the music in a game. This object
     participates in rollback, so when the user goes back in time, all
@@ -681,14 +681,12 @@ class Channel(object):
         if not pcm_ok:
             return None
 
-        if self._number is None:
-            return None
-
-        rv = renpysound.playing_name(self.number)
+        rv = None
 
         with lock:
 
-            rv = renpysound.playing_name(self.number)
+            if self._number is not None:
+                rv = renpysound.playing_name(self.number)
 
             if rv is None and self.queue:
                 rv = self.queue[0].filename

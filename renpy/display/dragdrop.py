@@ -57,7 +57,7 @@ def default_drop_allowable(drop, drags):
     return True
 
 
-class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
+class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     """
     :doc: drag_drop class
     :args: (d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=..., clicked=None, hovered=None, unhovered=None, mouse_drop=False, **properties)
@@ -788,7 +788,7 @@ class DragGroup(renpy.display.layout.MultiBox):
     z_serial = 0
     sorted = False
 
-    _list_type = renpy.python.RevertableList
+    _list_type = renpy.revertable.RevertableList
 
     def __init__(self, *children, **properties):
         properties.setdefault("style", "fixed")
@@ -804,11 +804,11 @@ class DragGroup(renpy.display.layout.MultiBox):
         self.sorted = False
 
         if isinstance(replaces, DragGroup):
-            self.positions = renpy.python.RevertableDict(replaces.positions)
+            self.positions = renpy.revertable.RevertableDict(replaces.positions)
             self.sensitive = replaces.sensitive
             self.z_serial = replaces.z_serial
         else:
-            self.positions = renpy.python.RevertableDict()
+            self.positions = renpy.revertable.RevertableDict()
             self.sensitive = True
             self.z_serial = 0
 
@@ -961,7 +961,7 @@ class DragGroup(renpy.display.layout.MultiBox):
         this DragGroup.
         """
 
-        return renpy.python.RevertableList(self.children)
+        return renpy.revertable.RevertableList(self.children)
 
     def get_child_by_name(self, name):
         """
