@@ -411,10 +411,54 @@ class RevertableSet(set):
         set.update(self, compressed)
 
 
-class RevertableObject(object):
+class RevertableObjectMeta(type):
+    def __new__(cls, name, bases, dct):
+        rv = super(RevertableObjectMeta, cls).__new__(cls, name, bases, dct)
+
+        # Collect all slots from type MRO
+        slots = set()
+        for t in rv.__mro__:
+            # Stop on object as it has no slots but it is special
+            if t is object:
+                break
+
+            if "__slots__" in t.__dict__:
+                slots.update(t.__slots__)
+            else:
+                slots.add("__dict__")
+
+        # If someone had implicit __weakref__, discard it
+        slots.discard("__weakref__")
+
+        def _clean(self):
+            rv = {}
+            for slot in slots:
+                if slot == "__dict__":
+                    rv[slot] = self.__dict__.copy()
+                elif hasattr(self, slot):
+                    rv[slot] = getattr(self, slot)
+
+            return rv
+        rv._clean = _clean
+
+        def _rollback(self, compressed):
+            for slot, value in compressed.items():
+                if slot == "__dict__":
+                    self.__dict__.clear()
+                    self.__dict__.update(value)
+                else:
+                    setattr(self, slot, value)
+        rv._rollback = _rollback
+
+        return rv
+
+
+class SlottedRevertableObject(object, metaclass=RevertableObjectMeta):
+    # __weakref__ should exist, so mutator can work
+    __slots__ = ("__weakref__", )
 
     def __new__(cls, *args, **kwargs):
-        self = super(RevertableObject, cls).__new__(cls)
+        self = super(SlottedRevertableObject, cls).__new__(cls)
 
         log = renpy.game.log
         if log is not None:
@@ -426,24 +470,17 @@ class RevertableObject(object):
         if (args or kwargs) and renpy.config.developer:
             raise TypeError("object() takes no parameters.")
 
-    def __setattr__(self, attr, value):
-        object.__setattr__(self, attr, value)
-
-    def __delattr__(self, attr):
-        object.__delattr__(self, attr)
-
-    __setattr__ = mutator(__setattr__) # type: ignore
-    __delattr__ = mutator(__delattr__) # type: ignore
-
-    def _clean(self):
-        return self.__dict__.copy()
+    __setattr__ = mutator(object.__setattr__) # type: ignore
+    __delattr__ = mutator(object.__delattr__) # type: ignore
 
     def _compress(self, clean):
         return clean
 
-    def _rollback(self, compressed):
-        self.__dict__.clear()
-        self.__dict__.update(compressed)
+
+class RevertableObject(SlottedRevertableObject):
+    """
+    Same as SlottedRevertableObject but with __dict__ machinery
+    """
 
 
 class RollbackRandom(random.Random):
