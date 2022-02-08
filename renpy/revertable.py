@@ -432,7 +432,18 @@ class SlottedRevertableObject(object):
         if (args or kwargs) and renpy.config.developer:
             raise TypeError("object() takes no parameters.")
 
+    # This method generates _clean and _rollback methods for classes
+    # with defined __slots__ so they participate in rollback.
+    # This do nothing in python2 as it was added in python 3.6.
     def __init_subclass__(cls):
+        # To take into account name mangling and also to work around
+        # the issue that __slots__ may be exhausted iterator, we check
+        # each field in type __dict__ to be a member_descriptor, which is not
+        # exported into builtins, so we get the type by hands.
+        class T(object):
+            __slots__ = "s"
+        member_descriptor_type = type(T.s)
+
         # Collect all slots from type MRO
         slots = set()
         for t in cls.__mro__:
@@ -440,14 +451,12 @@ class SlottedRevertableObject(object):
             if t is object:
                 break
 
-            t_slots = t.__dict__.get("__slots__", "__dict__")
-            if isinstance(t_slots, basestring):
-                t_slots = (t_slots, )
+            for key, value in t.__dict__.items():
+                if key == "__dict__":
+                    slots.add(key)
 
-            slots.update(t_slots)
-
-        # If someone had implicit __weakref__, discard it
-        slots.discard("__weakref__")
+                elif isinstance(value, member_descriptor_type):
+                    slots.add(key)
 
         # In case we have no attribute to rollback, we can use
         # already defined _clean and _rollback
@@ -466,20 +475,23 @@ class SlottedRevertableObject(object):
             code += "    rv = {}\n"
 
         for slot in slots:
-            code += "    rv['{0}'] = self.{0}\n".format(slot)
+            code += "    if hasattr(self, '{0}'):\n".format(slot)
+            code += "        rv['{0}'] = self.{0}\n".format(slot)
 
         code += "    return rv\n"
         code += "\n"
 
         code += "def _rollback(self, compressed):\n"
         for slot in slots:
-            code += "    self.{0} = compressed.pop('{0}')\n".format(slot)
+            code += "    if '{0}' in compressed:\n".format(slot)
+            code += "        self.{0} = compressed.pop('{0}')\n".format(slot)
 
         if has_dict:
             code += "    self.__dict__.clear()\n"
             code += "    self.__dict__.update(compressed)\n"
 
         code += "\n"
+        print(code)
 
         ns = {}
         exec(code, ns)
