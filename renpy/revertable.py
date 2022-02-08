@@ -411,51 +411,12 @@ class RevertableSet(set):
         set.update(self, compressed)
 
 
-class RevertableObjectMeta(type):
-    def __new__(cls, name, bases, dct):
-        rv = super(RevertableObjectMeta, cls).__new__(cls, name, bases, dct)
-
-        # Collect all slots from type MRO
-        slots = set()
-        for t in rv.__mro__:
-            # Stop on object as it has no slots but it is special
-            if t is object:
-                break
-
-            if "__slots__" in t.__dict__:
-                slots.update(t.__slots__)
-            else:
-                slots.add("__dict__")
-
-        # If someone had implicit __weakref__, discard it
-        slots.discard("__weakref__")
-
-        def _clean(self):
-            rv = {}
-            for slot in slots:
-                if slot == "__dict__":
-                    rv[slot] = self.__dict__.copy()
-                elif hasattr(self, slot):
-                    rv[slot] = getattr(self, slot)
-
-            return rv
-        rv._clean = _clean
-
-        def _rollback(self, compressed):
-            for slot, value in compressed.items():
-                if slot == "__dict__":
-                    self.__dict__.clear()
-                    self.__dict__.update(value)
-                else:
-                    setattr(self, slot, value)
-        rv._rollback = _rollback
-
-        return rv
-
-
-class SlottedRevertableObject(object, metaclass=RevertableObjectMeta):
+class SlottedRevertableObject(object):
     # __weakref__ should exist, so mutator can work
     __slots__ = ("__weakref__", )
+
+    # By default we have no attributes to revert
+    __revertable_slots = ()
 
     def __new__(cls, *args, **kwargs):
         self = super(SlottedRevertableObject, cls).__new__(cls)
@@ -470,17 +431,57 @@ class SlottedRevertableObject(object, metaclass=RevertableObjectMeta):
         if (args or kwargs) and renpy.config.developer:
             raise TypeError("object() takes no parameters.")
 
+    def __init_subclass__(cls):
+        # Collect all slots from type MRO
+        slots = set()
+        for t in cls.__mro__:
+            # Stop on object as it has no slots but it is special
+            if t is object:
+                break
+
+            t_slots = t.__dict__.get("__slots__", "__dict__")
+            if isinstance(t_slots, basestring):
+                t_slots = (t_slots, )
+
+            slots.update(t_slots)
+
+        # If someone had implicit __weakref__, discard it
+        slots.discard("__weakref__")
+        cls.__revertable_slots = slots
+
     __setattr__ = mutator(object.__setattr__) # type: ignore
     __delattr__ = mutator(object.__delattr__) # type: ignore
 
+    def _clean(self):
+        rv = {}
+        for slot in self.__revertable_slots:
+            if slot == "__dict__":
+                rv[slot] = self.__dict__.copy()
+            elif hasattr(self, slot):
+                rv[slot] = getattr(self, slot)
+
+        return rv
+
     def _compress(self, clean):
         return clean
+
+    def _rollback(self, compressed):
+        for slot, value in compressed.items():
+            if slot == "__dict__":
+                self.__dict__.clear()
+                self.__dict__.update(value)
+            else:
+                setattr(self, slot, value)
 
 
 class RevertableObject(SlottedRevertableObject):
     """
     Same as SlottedRevertableObject but with __dict__ machinery
     """
+
+    # In python 2 we do not have __init_subclass__ to inspect __slots__
+    # So at least we rollback __dict__ changes.
+    __revertable_slots = ("__dict__", )
 
 
 class RollbackRandom(random.Random):
