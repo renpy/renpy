@@ -242,11 +242,21 @@ def unpack(archive, destination):
     finally:
         os.chdir(old_cwd)
 
+def exists(filename):
+    """
+    Returns true if `filename` exists.
+    """
+
+    return os.path.exists(_path(filename))
+
 def remove(filename):
     """
     Removes a file or directory from the target directory, backing it up
     the temporary directory.
     """
+
+    if not exists(filename):
+        return
 
     shutil.move(_path(filename), _path("backup:" + filename))
 
@@ -255,7 +265,7 @@ def move(old_filename, new_filename):
     Moves a filename from `old_filename` to `new_filename`.
     """
 
-    remove(old_filename)
+    remove(new_filename)
     shutil.move(_path(old_filename), _path(new_filename))
 
 def mkdir(dirname):
@@ -305,10 +315,30 @@ def run(*args):
 
 
 def main():
-    set_target("/tmp")
-    download("https://code.visualstudio.com/sha/download?build=stable&os=linux-x64", "temp:vscode.tar.gz")
-    remove("VSCode-linux-x64")
-    unpack("temp:vscode.tar.gz", ".")
-    mkdir("VSCode-linux-x64/data")
-    processing(_("Installing the Ren'Py extension."))
-    run("VSCode-linux-x64/bin/code", "--install-extension", "LuqueDaniel.languague-renpy")
+    set_target(config.renpy_base)
+
+    if renpy.linux:
+
+        # Download vscode.
+        download("https://code.visualstudio.com/sha/download?build=stable&os=linux-x64", "temp:vscode.tar.gz")
+
+        # Back up the data directory.
+        remove("temp:vscode-data")
+        if exists("vscode/VSCode-linux-x64/data"):
+            move("vscode/VSCode-linux-x64/data", "temp:vscode-data")
+
+        # Unpack vscode.
+        mkdir("vscode")
+        remove("vscode/VSCode-linux-x64")
+        unpack("temp:vscode.tar.gz", "vscode")
+
+        # Restore the data directory.
+
+        if exists("temp:vscode-data"):
+            move("temp:vscode-data", "vscode/VSCode-linux-x64/data")
+        else:
+            mkdir("vscode/VSCode-linux-x64/data")
+
+        # Install the Ren'Py extension.
+        processing(_("Installing the Ren'Py extension."))
+        run("vscode/VSCode-linux-x64/bin/code", "--install-extension", "LuqueDaniel.languague-renpy")
