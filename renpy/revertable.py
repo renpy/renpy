@@ -438,11 +438,8 @@ class SlottedRevertableObject(object):
     def __init_subclass__(cls):
         # To take into account name mangling and also to work around
         # the issue that __slots__ may be exhausted iterator, we check
-        # each field in type __dict__ to be a member_descriptor, which is not
-        # exported into builtins, so we get the type by hands.
-        class T(object):
-            __slots__ = "s"
-        member_descriptor_type = type(T.s)
+        # each field in type __dict__ to be a MemberDescriptorType
+        member_descriptor_type = types.MemberDescriptorType
 
         # Collect all slots from type MRO
         slots = set()
