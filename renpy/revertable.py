@@ -412,11 +412,12 @@ class RevertableSet(set):
 
 
 class SlottedRevertableObject(object):
+    """
+    Base RenPy class that allow to rollback its attribute changes.
+    """
+
     # __weakref__ should exist, so mutator can work
     __slots__ = ("__weakref__", )
-
-    # By default we have no attributes to revert
-    __revertable_slots = ()
 
     def __new__(cls, *args, **kwargs):
         self = super(SlottedRevertableObject, cls).__new__(cls)
@@ -447,41 +448,69 @@ class SlottedRevertableObject(object):
 
         # If someone had implicit __weakref__, discard it
         slots.discard("__weakref__")
-        cls.__revertable_slots = slots
+
+        # In case we have no attribute to rollback, we can use
+        # already defined _clean and _rollback
+        if not slots:
+            return
+
+        has_dict = "__dict__" in slots
+        slots.discard("__dict__")
+
+        # Otherwise we generate clean and rollback methods so
+        # slots values are also participate in rollback
+        code = "def _clean(self):\n"
+        if has_dict:
+            code += "    rv = self.__dict__.copy()\n"
+        else:
+            code += "    rv = {}\n"
+
+        for slot in slots:
+            code += "    rv['{0}'] = self.{0}\n".format(slot)
+
+        code += "    return rv\n"
+        code += "\n"
+
+        code += "def _rollback(self, compressed):\n"
+        for slot in slots:
+            code += "    self.{0} = compressed.pop('{0}')\n".format(slot)
+
+        if has_dict:
+            code += "    self.__dict__.clear()\n"
+            code += "    self.__dict__.update(compressed)\n"
+
+        code += "\n"
+
+        ns = {}
+        exec(code, ns)
+        cls._clean = ns["_clean"]
+        cls._rollback = ns["_rollback"]
 
     __setattr__ = mutator(object.__setattr__) # type: ignore
     __delattr__ = mutator(object.__delattr__) # type: ignore
 
     def _clean(self):
-        rv = {}
-        for slot in self.__revertable_slots:
-            if slot == "__dict__":
-                rv[slot] = self.__dict__.copy()
-            elif hasattr(self, slot):
-                rv[slot] = getattr(self, slot)
-
-        return rv
+        return {}
 
     def _compress(self, clean):
         return clean
 
     def _rollback(self, compressed):
-        for slot, value in compressed.items():
-            if slot == "__dict__":
-                self.__dict__.clear()
-                self.__dict__.update(value)
-            else:
-                setattr(self, slot, value)
-
+        pass
 
 class RevertableObject(SlottedRevertableObject):
     """
     Same as SlottedRevertableObject but with __dict__ machinery
     """
 
-    # In python 2 we do not have __init_subclass__ to inspect __slots__
-    # So at least we rollback __dict__ changes.
-    __revertable_slots = ("__dict__", )
+    # Those exist explicitly, because in 2 python __init_subclass__
+    # doesn't exist, so the classes can rollback at least their __dict__.
+    def _clean(self):
+        return self.__dict__.copy()
+
+    def _rollback(self, compressed):
+        self.__dict__.clear()
+        self.__dict__.update(compressed)
 
 
 class RollbackRandom(random.Random):
