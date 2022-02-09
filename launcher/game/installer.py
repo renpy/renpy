@@ -30,7 +30,9 @@ import subprocess
 import renpy
 import stat
 
-from store import _, config, interface # type: ignore
+VERSION = 1
+
+from store import _, config, interface, project, Jump # type: ignore
 
 temp_exists = False
 
@@ -362,9 +364,48 @@ def run(*args, **kwargs):
 
         interface.error(_("Could not run [installer.install_args!r]:\n[installer.install_error]"))
 
+_renpy = renpy
+
+def manifest(url, renpy=False, insecure=False):
+    """
+    Executes the manifest at `url`.
+    """
+
+    import ecdsa
+
+    download(url, "temp:manifest.py")
+
+    with open(_path("temp:manifest.py"), "rb") as f:
+        manifest = f.read()
+
+    if not insecure:
+        download(url + ".sig", "temp:manifest.py.sig")
+
+        with open(_path("temp:manifest.py.sig"), "rb") as f:
+            sig = f.read()
+
+        key = ecdsa.VerifyingKey.from_pem(_renpy.exports.file("renpy_ecdsa_public.pem").read())
+
+        if not key.verify(sig, manifest):
+            error(_("The manifest signature is not valid."))
+            return
+
+    if renpy:
+        set_target(config.renpy_base)
+    else:
+        if project.current is None:
+            error(_("No project has been selected."))
+            return
+
+        set_target(project.current.path)
+
+    exec(manifest.decode("utf-8"), {}, {})
 
 
 def main():
+    manifest("http://update.renpy.org/extensions/vscode/vscode.py", renpy=True)
+
+def vscode():
     set_target(config.renpy_base)
 
     if renpy.linux:
