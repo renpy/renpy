@@ -95,6 +95,7 @@ def _path(filename):
 
     return os.path.join(target, filename)
 
+
 def _friendly(filename):
     """
     Returns a version of the filename without any leading prefix.
@@ -238,8 +239,10 @@ class _FixedZipFile(zipfile.ZipFile):
 
         return targetpath
 
+
 # The name of the archive being unpacked.
 unpack_archive = ""
+
 
 def unpack(archive, destination):
     """
@@ -281,12 +284,14 @@ def unpack(archive, destination):
     finally:
         os.chdir(old_cwd)
 
+
 def exists(filename):
     """
     Returns true if `filename` exists.
     """
 
     return os.path.exists(_path(filename))
+
 
 def remove(filename):
     """
@@ -299,6 +304,7 @@ def remove(filename):
 
     shutil.move(_path(filename), _path("backup:" + filename))
 
+
 def move(old_filename, new_filename):
     """
     Moves a filename from `old_filename` to `new_filename`.
@@ -306,6 +312,7 @@ def move(old_filename, new_filename):
 
     remove(new_filename)
     shutil.move(_path(old_filename), _path(new_filename))
+
 
 def mkdir(dirname):
     """
@@ -315,6 +322,7 @@ def mkdir(dirname):
     if not os.path.exists(_path(dirname)):
         os.makedirs(_path(dirname))
 
+
 def info(message, **kwargs):
     """
     Displays `message` to the user, asking them to click through or
@@ -323,12 +331,14 @@ def info(message, **kwargs):
 
     interface.info(message, cancel=Jump("front_page"), **kwargs)
 
+
 def processing(message, **kwargs):
     """
     Displays `message` to the user, without waiting.
     """
 
     interface.processing(message, **kwargs)
+
 
 def error(message, **kwargs):
     """
@@ -364,11 +374,19 @@ def run(*args, **kwargs):
 
         interface.error(_("Could not run [installer.install_args!r]:\n[installer.install_error]"))
 
+
 _renpy = renpy
 
 def manifest(url, renpy=False, insecure=False):
     """
     Executes the manifest at `url`.
+
+    `renpy`
+        If true, the manifest applies to Ren'Py. If False, the manifest applies
+        to the current project.
+
+    `insecure`
+        If true, verificaiton is disabled.
     """
 
     import ecdsa
@@ -402,5 +420,23 @@ def manifest(url, renpy=False, insecure=False):
     exec(manifest.decode("utf-8"), {}, {})
 
 
-def main():
-    manifest("http://update.renpy.org/extensions/vscode/vscode.py", renpy=True)
+def local_manifest(filename, renpy=False):
+    """
+    Executes the manifest in `filename`.
+
+    `renpy`
+        If true, the manifest applies to Ren'Py. If False, the manifest applies
+        to the current project.
+    """
+
+    if renpy:
+        set_target(config.renpy_base)
+    else:
+        if project.current is None:
+            error(_("No project has been selected."))
+            return
+
+        set_target(project.current.path)
+
+    with open(filename, "r") as f:
+        exec(f.read(), {}, {})
