@@ -44,6 +44,7 @@ set = __renpy__set__ # @ReservedAssignment
 Set = __renpy__set__
 
 from renpy.revertable import RevertableObject as object # @UnusedImport
+from renpy.revertable import SlottedRevertableObject as slotted_object
 
 from renpy.revertable import revertable_range as range # @UnusedImport
 from renpy.revertable import revertable_sorted as sorted # @UnusedImport

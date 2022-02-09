@@ -411,16 +411,17 @@ class RevertableSet(set):
         set.update(self, compressed)
 
 
-class SlottedRevertableObject(object):
+class BaseRevertableObject(object):
     """
-    Base RenPy class that allow to rollback its attribute changes.
+    Base RenPy general-purpose object class that track its attribute
+    changes so it participate in rollback.
     """
 
     # __weakref__ should exist, so mutator can work
     __slots__ = ("__weakref__", )
 
     def __new__(cls, *args, **kwargs):
-        self = super(SlottedRevertableObject, cls).__new__(cls)
+        self = super(BaseRevertableObject, cls).__new__(cls)
 
         log = renpy.game.log
         if log is not None:
@@ -432,74 +433,11 @@ class SlottedRevertableObject(object):
         if (args or kwargs) and renpy.config.developer:
             raise TypeError("object() takes no parameters.")
 
-    # This method generates _clean and _rollback methods for classes
-    # with defined __slots__ so they participate in rollback.
-    # This do nothing in python2 as it was added in python 3.6.
-    def __init_subclass__(cls):
-        # To take into account name mangling and also to work around
-        # the issue that __slots__ may be exhausted iterator, we check
-        # each field in type __dict__ to be a MemberDescriptorType
-        member_descriptor_type = types.MemberDescriptorType
-
-        # Collect all slots from type MRO
-        slots = set()
-        for t in cls.__mro__:
-            # Stop on object as it has no slots but it is special
-            if t is object:
-                break
-
-            for key, value in t.__dict__.items():
-                if key == "__dict__":
-                    slots.add(key)
-
-                elif isinstance(value, member_descriptor_type):
-                    slots.add(key)
-
-        # In case we have no attribute to rollback, we can use
-        # already defined _clean and _rollback
-        if not slots:
-            return
-
-        has_dict = "__dict__" in slots
-        slots.discard("__dict__")
-
-        # Otherwise we generate clean and rollback methods so
-        # slots values are also participate in rollback
-        code = "def _clean(self):\n"
-        if has_dict:
-            code += "    rv = self.__dict__.copy()\n"
-        else:
-            code += "    rv = {}\n"
-
-        for slot in slots:
-            code += "    if hasattr(self, '{0}'):\n".format(slot)
-            code += "        rv['{0}'] = self.{0}\n".format(slot)
-
-        code += "    return rv\n"
-        code += "\n"
-
-        code += "def _rollback(self, compressed):\n"
-        for slot in slots:
-            code += "    if '{0}' in compressed:\n".format(slot)
-            code += "        self.{0} = compressed.pop('{0}')\n".format(slot)
-
-        if has_dict:
-            code += "    self.__dict__.clear()\n"
-            code += "    self.__dict__.update(compressed)\n"
-
-        code += "\n"
-        print(code)
-
-        ns = {}
-        exec(code, ns)
-        cls._clean = ns["_clean"]
-        cls._rollback = ns["_rollback"]
-
     __setattr__ = mutator(object.__setattr__) # type: ignore
     __delattr__ = mutator(object.__delattr__) # type: ignore
 
     def _clean(self):
-        return {}
+        return None
 
     def _compress(self, clean):
         return clean
@@ -507,13 +445,67 @@ class SlottedRevertableObject(object):
     def _rollback(self, compressed):
         pass
 
-class RevertableObject(SlottedRevertableObject):
+
+class SlottedRevertableObject(BaseRevertableObject):
     """
-    Same as SlottedRevertableObject but with __dict__ machinery
+    Base RenPy class that don't have __dict__ itself, but allow to have __slots__.
     """
 
-    # Those exist explicitly, because in 2 python __init_subclass__
-    # doesn't exist, so the classes can rollback at least their __dict__.
+    __slots__ = ()
+
+    def __init_subclass__(cls):
+        if renpy.config.developer:
+            if hasattr(cls, "__getstate__"):
+                raise TypeError("slotted_object subclasses can't have "
+                                "__getstate__ method. Use __reduce__ instead.")
+
+            for slot in cls.__dict__.get("__slots__", ()):
+                if slot.startswith("__") and not slot.endswith("__"):
+                    raise ValueError("slotted_object __slots__ can not be mangled. "
+                                     "If you need it, mangle it by yourself.")
+
+    def _clean(self):
+        rv = object.__reduce_ex__(self, 2)[2]
+        # We need to make a copy of __dict__ to avoid its futher mutations.
+
+        # No attributes are set
+        if rv is None:
+            rv = { }
+
+        # Only __dict__ have attributes
+        elif isinstance(rv, dict):
+            rv = rv.copy()
+
+        # Only __slots__ have attributes
+        elif rv[0] is None:
+            rv = rv[1]
+
+        # Otherwise it is (__dict__, __slots__), so merge it together
+        else:
+            rv = dict(rv[0], **rv[1])
+
+        return rv
+
+    def _rollback(self, compressed):
+        if hasattr(self, "__dict__"):
+            self.__dict__.clear()
+
+        for k, v in compressed.items():
+            setattr(self, k, v)
+
+
+class RevertableObject(BaseRevertableObject):
+    """
+    Class that actually is object in RenPy. It has __dict__ and can not have __slots__.
+    """
+
+    __slots__ = ("__dict__", )
+
+    def __init_subclass__(cls):
+        if renpy.config.developer and cls.__dict__.get("__slots__"):
+            raise TypeError("object subclasses can't have __slots__. "
+                            "Use slotted_object instead.")
+
     def _clean(self):
         return self.__dict__.copy()
 
