@@ -28,6 +28,7 @@ import tarfile
 import shutil
 import subprocess
 import renpy
+import stat
 
 from store import _, config, interface # type: ignore
 
@@ -180,24 +181,60 @@ def download(url, filename, hash=None):
 
 class _FixedZipFile(zipfile.ZipFile):
     """
-    Patches zipfile.zipfile so it sets the executable bit when necessary.
+    A patched version of zipfile.ZipFile that adds support for:
+
+    * Unix permissions bits.
+    * Unix symbolic links.
     """
 
-    def extract(self, member, path=None, pwd=None):
+    def _extract_member(self, member, targetpath, pwd):
 
         if not isinstance(member, zipfile.ZipInfo):
             member = self.getinfo(member)
 
-        if path is None:
-            path = os.getcwd()
+        # build the destination pathname, replacing
+        # forward slashes to platform specific separators.
+        arcname = member.filename.replace('/', os.path.sep)
 
-        ret_val = self._extract_member(member, path, pwd) # type: ignore
+        if os.path.altsep:
+            arcname = arcname.replace(os.path.altsep, os.path.sep)
+        # interpret absolute pathname as relative, remove drive letter or
+        # UNC path, redundant separators, "." and ".." components.
+        arcname = os.path.splitdrive(arcname)[1]
+        invalid_path_parts = ('', os.path.curdir, os.path.pardir)
+        arcname = os.path.sep.join(x for x in arcname.split(os.path.sep) if x not in invalid_path_parts)
+
+        targetpath = os.path.join(targetpath, arcname)
+        targetpath = os.path.normpath(targetpath)
+
+        # Create all upper directories if necessary.
+        upperdirs = os.path.dirname(targetpath)
+        if upperdirs and not os.path.exists(upperdirs):
+            os.makedirs(upperdirs)
+
+        if member.is_dir():
+            if not os.path.isdir(targetpath):
+                os.mkdir(targetpath)
+            return targetpath
+
         attr = member.external_attr >> 16
 
-        if attr:
-            os.chmod(ret_val, attr)
+        if stat.S_ISLNK(attr):
 
-        return ret_val
+            with self.open(member, pwd=pwd) as source:
+                linkto = source.read()
+
+            os.symlink(linkto, targetpath)
+
+        else:
+
+            with self.open(member, pwd=pwd) as source, open(targetpath, "wb") as target:
+                shutil.copyfileobj(source, target)
+
+            if attr:
+                os.chmod(targetpath, attr)
+
+        return targetpath
 
 # The name of the archive being unpacked.
 unpack_archive = ""
@@ -291,6 +328,14 @@ def processing(message, **kwargs):
 
     interface.processing(message, **kwargs)
 
+def error(message, **kwargs):
+    """
+    Displays `message` to the user, as an error.
+    """
+
+    interface.error(message)
+
+
 install_args = [ ]
 install_error = ""
 
@@ -324,7 +369,6 @@ def main():
 
     if renpy.linux:
 
-
         # Download vscode.
         download("https://code.visualstudio.com/sha/download?build=stable&os=linux-x64", "temp:vscode-linux-x64.tar.gz")
 
@@ -339,7 +383,6 @@ def main():
         unpack("temp:vscode-linux-x64.tar.gz", "vscode")
 
         # Restore the data directory.
-
         if exists("temp:vscode-data"):
             move("temp:vscode-data", "vscode/VSCode-linux-x64/data")
         else:
@@ -378,3 +421,24 @@ def main():
         run("vscode/VSCode-win32-x64/Code.exe", "vscode/VSCode-win32-x64/resources/app/out/cli.js", "--ms-enable-electron-run-as-node",
             "--install-extension", "LuqueDaniel.languague-renpy",
             environ={ "VSCODE_DEV" : "", "ELECTRON_RUN_AS_NODE" : "1" })
+
+    elif renpy.macintosh:
+
+        download("https://code.visualstudio.com/sha/download?build=stable&os=darwin-universal", "temp:vscode-darwin-universal.zip")
+
+        # Unpack vscode.
+        mkdir("vscode")
+        remove("vscode/Visual Studio Code.app")
+        unpack("temp:vscode-darwin-universal.zip", "vscode")
+
+        # Create the data directory, if it doesn't exist.
+        mkdir("vscode/code-portable-data")
+
+        # Install the Ren'Py extension.
+        processing(_("Installing the Ren'Py extension."))
+        run("vscode/Visual Studio Code.app/Contents/MacOS/Electron", "vscode/Visual Studio Code.app/Contents/Resources/app/out/cli.js", "--ms-enable-electron-run-as-node",
+            "--install-extension", "LuqueDaniel.languague-renpy",
+            environ={ "VSCODE_DEV" : "", "ELECTRON_RUN_AS_NODE" : "1" })
+
+    else:
+        error(_("Visual Studio Code is not supported on your platform."))
