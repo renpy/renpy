@@ -48,8 +48,11 @@ def _ensure_temp():
 
     backups = os.path.join(config.renpy_base, "tmp", "installer", "backups")
 
-    if not os.path.exists(backups):
-        os.makedirs(os.path.dirname(backups))
+    try:
+        if not os.path.exists(backups):
+            os.makedirs(os.path.dirname(backups))
+    except:
+        pass
 
     temp_exists = True
 
