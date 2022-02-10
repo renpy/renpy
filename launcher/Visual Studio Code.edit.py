@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-import renpy.editor
+import renpy
 
 class Editor(renpy.editor.Editor):
 
@@ -10,16 +10,17 @@ class Editor(renpy.editor.Editor):
 
     def get_code(self):
         """
-        Returns the path to the code executable, if None.
+        Returns the path to the code executable.
         """
 
-        DIR = os.path.abspath(os.path.dirname(__file__))
+        RENPY_VSCODE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "vscode"))
 
         if renpy.windows:
-            code = "Code.exe"
+            code = os.path.join(RENPY_VSCODE, "VSCode-win32-x64", "bin", "code.cmd")
         elif renpy.macintosh:
-            DIR = os.path.abspath("/Applications")
-            code = os.path.join(DIR, "Visual Studio Code.app", "Contents", "Resources", "app", "bin", "code")
+            code = os.path.join(RENPY_VSCODE, "Visual Studio Code.app", "Contents", "Resources", "app", "bin", "code")
+        elif renpy.linux:
+            code = os.path.join(RENPY_VSCODE, "VSCode-linux-x64", "bin", "code")
         else:
             code = "code"
 
@@ -31,10 +32,6 @@ class Editor(renpy.editor.Editor):
         self.args.append(filename)
 
     def open_project(self, project):
-        if renpy.windows:
-            project = '"{}"'.format(project)
-        elif renpy.macintosh:
-            project = project.replace(' ', '\ ')
         self.args.append(project)
 
     def begin(self, new_window=False, **kwargs):
@@ -43,15 +40,17 @@ class Editor(renpy.editor.Editor):
     def end(self, **kwargs):
         self.args.reverse()
 
-        if renpy.macintosh:
-            code = self.get_code()
-            args = [ code ] + self.args
-            args = [ renpy.exports.fsencode(i) for i in args ]
-            subprocess.Popen(args)
+        code = self.get_code()
+        args = [ code, "-g" ] + self.args
+        args = [ renpy.exports.fsencode(i) for i in args ]
+
+        if renpy.windows:
+            CREATE_NO_WINDOW = 0x08000000
+            subprocess.Popen(args, creationflags=CREATE_NO_WINDOW)
         else:
-            args = self.args
-            args = [ renpy.exports.fsencode(i) for i in args ]
-            subprocess.call(["code", "-g", args], shell=True)
+            subprocess.Popen(args)
+
+
 
 def main():
     e = Editor()
