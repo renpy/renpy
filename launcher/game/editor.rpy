@@ -148,8 +148,30 @@ init 1 python in editor:
 
         fei = fancy_editors = [ ]
 
+        # Visual Studio Code
+        AD = _("A modern editor with many extensions including advanced Ren'Py integration.")
+
+        if renpy.windows:
+            installed = os.path.exists(os.path.join(config.basedir, "vscode/VSCode-win32-x64"))
+        elif renpy.macintosh:
+            installed = os.path.exists(os.path.join(config.basedir, "vscode/Visual Studio Code.app"))
+        else:
+            installed = os.path.exists(os.path.join(config.basedir, "vscode/VSCode-linux-x64"))
+
+        e = FancyEditorInfo(
+            0,
+            "Visual Studio Code",
+            AD,
+            "extension:vscode",
+            _("Up to 110 MB download required."),
+            None)
+
+        e.installed = e.installed and installed
+
+        fei.append(e)
+
         # Atom.
-        AD = _("(Recommended) A modern and approachable text editor.")
+        AD = _("A modern and approachable text editor.")
 
         if renpy.windows:
             dlc = "atom-windows"
@@ -162,7 +184,7 @@ init 1 python in editor:
             installed = os.path.exists(os.path.join(config.basedir, "atom/atom-linux-" + platform.machine()))
 
         e = FancyEditorInfo(
-            0,
+            1,
             "Atom",
             AD,
             dlc,
@@ -190,7 +212,7 @@ init 1 python in editor:
             None))
 
         for k in editors:
-            if k in [ "Atom", "jEdit", "System Editor", "None" ]:
+            if k in [ "Visual Studio Code", "Atom", "jEdit", "System Editor", "None" ]:
                 continue
 
             fei.append(FancyEditorInfo(
@@ -210,7 +232,8 @@ init 1 python in editor:
         # If we're in a linux distro or something, assume all editors work.
         if not updater.can_update():
             for i in fei:
-                i.installed = True
+                if i.dlc and not i.dlc.startswith("extension:"):
+                    i.installed = True
 
     def fancy_activate_editor(default=False):
         """
@@ -257,9 +280,12 @@ init 1 python in editor:
 
         if not fe.installed:
 
-            # We don't check the status of this because fancy_activate_editor
-            # will fail if the editor is not installed.
-            store.add_dlc(fe.dlc)
+            if fe.dlc.startswith("extension:"):
+                import installer
+                manifest = fe.dlc.partition(":")[2]
+                renpy.invoke_in_new_context(installer.manifest, "https://www.renpy.org/extensions/{}/{}.py".format(manifest, manifest), renpy=True)
+            else:
+                store.add_dlc(fe.dlc)
 
         persistent.editor = fe.name
         fancy_activate_editor()
