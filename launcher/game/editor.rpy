@@ -149,7 +149,8 @@ init 1 python in editor:
         fei = fancy_editors = [ ]
 
         # Visual Studio Code
-        AD = _("A modern editor with many extensions including advanced Ren'Py integration.")
+        AD1 = _("A modern editor with many extensions including advanced Ren'Py integration.")
+        AD2 = _("A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}")
 
         if renpy.windows:
             installed = os.path.exists(os.path.join(config.basedir, "vscode/VSCode-win32-x64"))
@@ -161,7 +162,7 @@ init 1 python in editor:
         e = FancyEditorInfo(
             0,
             "Visual Studio Code",
-            AD,
+            AD2 if installed else AD2,
             "extension:vscode",
             _("Up to 110 MB download required."),
             None)
@@ -547,6 +548,14 @@ screen editor:
 
 
     textbutton _("Cancel") action Return(False) style "l_left_button"
+
+label reinstall_vscode:
+    python hide:
+        manifest = "vscode"
+        renpy.invoke_in_new_context(installer.manifest, "https://www.renpy.org/extensions/{}/{}.py".format(manifest, manifest), renpy=True)
+
+    jump editor_preference
+
 
 label editor_preference:
     call screen editor
