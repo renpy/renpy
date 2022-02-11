@@ -241,7 +241,7 @@ class Drag(Node):
             points = [ renpy.test.testfocus.find_position(f, i) for i in points ]
 
             if len(points) < 2:
-                raise Exception("A drag requires at least two points.")
+                raise ValueError("A drag requires at least two points.")
 
             interpoints = [ ]
 
@@ -502,7 +502,7 @@ class Assert(Node):
 
     def __call__(self):
         if not renpy.python.py_eval(self.expr):
-            raise Exception("On line {}:{}, assertion {} failed.".format(self.filename, self.linenumber, self.expr))
+            raise AssertionError("On line {}:{}, assertion {} failed.".format(self.filename, self.linenumber, self.expr))
 
 
 class Jump(Node):
