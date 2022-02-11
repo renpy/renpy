@@ -1263,7 +1263,7 @@ screen notify(message):
     style_prefix "notify"
 
     frame at notify_appear:
-        text "[message!tq]"
+        text "[message!tqi]"
 
     timer 3.25 action Hide('notify')
 
