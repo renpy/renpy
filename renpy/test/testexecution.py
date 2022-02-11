@@ -196,4 +196,4 @@ def test_command():
     return True
 
 
-renpy.arguments.register_command("test", test_command)
+renpy.arguments.register_command("test", test_command, uses_display=True)
