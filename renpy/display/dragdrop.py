@@ -343,6 +343,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         if self.parent_width is not None:
             x = absolute.compute(x, self.parent_width)
+        if self.parent_height is not None:
             y = absolute.compute(y, self.parent_height)
 
         self.target_x = x
