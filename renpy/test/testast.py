@@ -49,7 +49,7 @@ class Node(object):
     """
     An AST node for a test script.
     """
-
+    __slots__ = ("filename", "linenumber")
     def __init__(self, loc):
         self.filename, self.linenumber = loc
 
@@ -91,7 +91,7 @@ class Node(object):
 
 
 class Pattern(Node):
-
+    __slots__ = ("pattern", "position", "always")
     position = None
     always = False
 
@@ -145,7 +145,7 @@ class Pattern(Node):
         return None
 
 class Click(Pattern):
-
+    __slots__ = "button"
     # The number of the button to click.
     button = 1
 
@@ -155,14 +155,14 @@ class Click(Pattern):
 
 
 class Move(Pattern):
-
+    __slots__ = ()
     def perform(self, x, y, state, t):
         move_mouse(x, y)
         return None
 
 
 class Scroll(Node):
-
+    __slots__ = "pattern"
     def __init__(self, loc, pattern=None):
         Node.__init__(self, loc)
         self.pattern = pattern
@@ -207,7 +207,7 @@ class Scroll(Node):
 
 
 class Drag(Node):
-
+    __slots__ = ("points", "pattern", "button", "steps")
     def __init__(self, loc, points):
         Node.__init__(self, loc)
         self.points = points
@@ -294,7 +294,7 @@ class Drag(Node):
 
 
 class Type(Pattern):
-
+    __slots__ = "keys"
     interval = .01
 
     def __init__(self, loc, keys):
@@ -319,7 +319,7 @@ class Type(Pattern):
 
 
 class Action(Node):
-
+    __slots__ = "expr"
     def __init__(self, loc, expr):
         Node.__init__(self, loc)
         self.expr = expr
@@ -346,7 +346,7 @@ class Action(Node):
 
 
 class Pause(Node):
-
+    __slots__ = "expr"
     def __init__(self, loc, expr):
         Node.__init__(self, loc)
         self.expr = expr
@@ -365,7 +365,7 @@ class Pause(Node):
 
 
 class Label(Node):
-
+    __slots__ = "name"
     def __init__(self, loc, name):
         Node.__init__(self, loc)
         self.name = name
@@ -391,7 +391,7 @@ class Until(Node):
     Executes `left` repeatedly until `right` is ready, then executes `right`
     once before quitting.
     """
-
+    __slots__ = ("left", "right")
     def __init__(self, loc, left, right):
         Node.__init__(self, loc)
         self.left = left
@@ -431,7 +431,7 @@ class If(Node):
     If `condition` is ready, runs the block. Otherwise, goes to the next
     statement.
     """
-
+    __slots__ = ("condition", "block")
     def __init__(self, loc, condition, block):
         Node.__init__(self, loc)
 
@@ -459,7 +459,7 @@ class If(Node):
 
 
 class Python(Node):
-
+    __slots__ = "code"
     def __init__(self, loc, code):
         Node.__init__(self, loc)
         self.code = code
@@ -482,7 +482,7 @@ class Python(Node):
 
 
 class Assert(Node):
-
+    __slots__ = "expr"
     def __init__(self, loc, expr):
         Node.__init__(self, loc)
         self.expr = expr
@@ -506,7 +506,7 @@ class Assert(Node):
 
 
 class Jump(Node):
-
+    __slots__ = "target"
     def __init__(self, loc, target):
         Node.__init__(self, loc)
 
@@ -518,7 +518,7 @@ class Jump(Node):
 
 
 class Call(Node):
-
+    __slots__ = "target"
     def __init__(self, loc, target):
         Node.__init__(self, loc)
 
@@ -544,7 +544,7 @@ class Call(Node):
 # Control structures.
 
 class Block(Node):
-
+    __slots__ = "block"
     def __init__(self, loc, block):
         Node.__init__(self, loc)
         self.block = block
