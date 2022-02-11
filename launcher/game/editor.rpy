@@ -161,7 +161,7 @@ init 1 python in editor:
 
         e = FancyEditorInfo(
             0,
-            "Visual Studio Code",
+            _("Visual Studio Code"),
             AD2 if installed else AD2,
             "extension:vscode",
             _("Up to 110 MB download required."),
@@ -186,7 +186,7 @@ init 1 python in editor:
 
         e = FancyEditorInfo(
             1,
-            "Atom",
+            _("Atom"),
             AD,
             dlc,
             _("Up to 150 MB download required."),
@@ -199,7 +199,7 @@ init 1 python in editor:
         # jEdit
         fei.append(FancyEditorInfo(
             2,
-            "jEdit",
+            _("jEdit"),
             _("A mature editor that requires Java."),
             "jedit",
             _("1.8 MB download required."),
@@ -208,12 +208,21 @@ init 1 python in editor:
 
         fei.append(FancyEditorInfo(
             3,
+            _("Visual Studio Code (System)"),
+            _("Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."),
+            ))
+
+        fei.append(FancyEditorInfo(
+            3,
             _("System Editor"),
             _("Invokes the editor your operating system has associated with .rpy files."),
             None))
 
+
+
+
         for k in editors:
-            if k in [ "Visual Studio Code", "Atom", "jEdit", "System Editor", "None" ]:
+            if k in [ "Visual Studio Code", "Visual Studio Code (System)", "Atom", "jEdit", "System Editor", "None" ]:
                 continue
 
             fei.append(FancyEditorInfo(
