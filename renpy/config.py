@@ -388,9 +388,9 @@ quit_action = None
 screenshot_crop = None
 
 # Various directories.
-gamedir = "" 
-basedir = "" 
-renpy_base = "" 
+gamedir = ""
+basedir = ""
+renpy_base = ""
 commondir = ""  # type: Optional[str]
 logdir = ""  # type: Optional[str] # Where log and error files go.
 
@@ -1198,9 +1198,12 @@ debug_prediction = False
 # Should mouse events that cause a window to gain focus be passed through.
 mouse_focus_clickthrough = False
 
-# Should the current displayable always run its unfocus handler, even when 
+# Should the current displayable always run its unfocus handler, even when
 # focus is taken away by default.
 always_unfocus = True
+
+# A list of callbacks that are called when the game exits.
+at_exit_callbacks = [ ]
 
 del os
 del collections

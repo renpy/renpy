@@ -1043,6 +1043,11 @@ Rarely or Internally Used
     data.rpa, patch01.rpa, and patch02.rpa, this variable will be
     populated with ``['patch02', 'patch01', 'data']``.
 
+.. var:: config.at_exit_callbacks = [ ]
+
+    A list of callbacks that are called when Ren'Py quits or restarts
+    the game. These callbacks should not interact with the user.
+
 .. var:: config.auto_choice_delay = None
 
     If not None, this variable gives a number of seconds that Ren'Py

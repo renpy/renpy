@@ -679,6 +679,10 @@ def main():
                 # Give Ren'Py a couple of seconds to finish saving.
                 renpy.loadsave.autosave_not_running.wait(3.0)
 
+                # Run the at exit callbacks.
+                for cb in renpy.config.at_exit_callbacks:
+                    cb()
+
     finally:
 
         gc.set_debug(0)
