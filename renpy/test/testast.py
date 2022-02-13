@@ -136,10 +136,7 @@ class Pattern(Node):
 
         f = renpy.test.testfocus.find_focus(self.pattern)
 
-        if f is not None:
-            return True
-        else:
-            return False
+        return (f is not None)
 
     def perform(self, x, y, state, t):
         return None
