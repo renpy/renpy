@@ -7,10 +7,13 @@ using the following audio file formats:
 * Opus
 * Ogg Vorbis
 * MP3
+* MP2
+* FLAC
 * WAV (uncompressed 16-bit signed PCM only)
 
 Opus and Ogg Vorbis may not be supported in WebKit-based web browsers,
-such as Safari, but are the best formats for other platforms.
+such as Safari, but are the best formats for other platforms. FLAC
+may not be supported either.
 
 Ren'Py supports an arbitrary number of audio channels. There are three
 normal channels defined by default:
@@ -132,7 +135,7 @@ A variable may be used instead of a string here. If a variable exists in the
 
     define audio.woof = "woof.mp23
 
-    # ... 
+    # ...
 
     play sound woof
 

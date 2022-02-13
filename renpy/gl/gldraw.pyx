@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -42,8 +42,8 @@ import time
 import math
 
 cimport renpy.display.render as render
-cimport gltexture
-import gltexture
+cimport renpy.gl.gltexture as gltexture
+import renpy.gl.gltexture as gltexture
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE, FLATTEN
@@ -225,7 +225,7 @@ cdef class GLDraw:
         try:
             self.rtt.init()
             self.environ.init()
-        except:
+        except Exception:
             renpy.display.interface.display_reset = True
 
     def resize(self):
@@ -1400,7 +1400,7 @@ cdef class Environ(object):
 # classes have been created.
 try:
     from . import glrtt_copy
-except:
+except Exception:
     glrtt_copy = None
 
 # Copy doesn't work on iOS.

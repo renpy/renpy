@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -94,7 +94,7 @@ cpdef get_style(name):
 
     try:
         parent = get_style(end)
-    except:
+    except Exception:
         raise Exception("Style %r does not exist." % name)
 
     rv = Style(parent, name=nametuple)
@@ -704,7 +704,7 @@ cpdef build_style(StyleCore s):
 
                 try:
                     pfw.function(s.cache, cache_priorities, priority, v)
-                except:
+                except Exception:
                     renpy.game.exception_info = "While processing the {} property of {}:".format(k, style_name_to_string(s.name))
                     raise
 
@@ -847,3 +847,13 @@ def restore(o):
         s.set_parent(parent)
         s.properties = copy_properties(properties)
 
+_types = """
+Style : Any
+prefixed_all_properties : set
+all_properties : dict[str, list[str]]
+prefix_priority : dict[str, int]
+prefix_alts : dict[str, list[str]]
+prefix_search : dict[str, list[str]]
+affects : dict[str, list[str]]
+styles: dict[str, Style]
+"""

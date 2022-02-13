@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,10 +24,8 @@
 # cropping and scaling).
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-import renpy.display
-import renpy.webloader
 
 import math
 import zipfile
@@ -36,6 +34,8 @@ import time
 import io
 import os.path
 
+import pygame_sdl2
+import renpy
 
 # This is an entry in the image cache.
 class CacheEntry(object):
@@ -277,19 +277,15 @@ class Cache(object):
         # Otherwise, we load the image ourselves.
         if ce is None:
 
-            try:
-                if image in self.pin_cache:
-                    surf = self.pin_cache[image]
-                else:
+            if image in self.pin_cache:
+                surf = self.pin_cache[image]
+            else:
 
-                    if not predict:
-                        with renpy.game.ExceptionInfo("While loading %r:", image):
-                            surf = image.load()
-                    else:
+                if not predict:
+                    with renpy.game.ExceptionInfo("While loading %r:", image):
                         surf = image.load()
-
-            except:
-                raise
+                else:
+                    surf = image.load()
 
             w, h = size = surf.get_size()
 
@@ -508,9 +504,9 @@ class Cache(object):
                 if image not in self.preload_blacklist:
                     try:
                         self.preload_texture(image)
-                    except:
+                    except Exception:
                         self.preload_blacklist.add(image)
-            except:
+            except Exception:
                 pass
 
         with self.lock:
@@ -546,7 +542,7 @@ class Cache(object):
                     surf = image.load()
                     self.pin_cache[image] = surf
                     renpy.display.draw.load_texture(surf)
-                except:
+                except Exception:
                     self.preload_blacklist.add(image)
 
     def add_load_log(self, filename):
@@ -609,7 +605,7 @@ class ImageBase(renpy.display.core.Displayable):
 
         return self.identity == other.identity
 
-    def load(self):
+    def load(self): # type:() -> pygame_sdl2.Surface
         """
         This function is called by the image cache code to cause this
         image to be loaded. It's expected that children of this class
@@ -631,6 +627,18 @@ class ImageBase(renpy.display.core.Displayable):
         """
 
         return [ ]
+
+    def get_hash(self): # type: () -> int
+        """
+        Returns a hash of the image that will change when the file on disk
+        changes.
+        """
+
+        return 0
+
+
+
+
 
 
 ignored_images = set()
@@ -663,17 +671,20 @@ class Image(ImageBase):
 
         cache.add_load_log(self.filename)
 
+
         try:
 
-            exception = None
+
             try:
                 filelike = renpy.loader.load(self.filename)
                 filename = self.filename
-            except renpy.webloader.DownloadNeeded as exception:
-                renpy.webloader.enqueue(exception.relpath, 'image', self.filename)
+                force_size = None
+            except renpy.webloader.DownloadNeeded as e:
+                renpy.webloader.enqueue(e.relpath, 'image', self.filename)
                 # temporary placeholder:
-                filelike = open(os.path.join('_placeholders', exception.relpath), 'rb')
+                filelike = open(os.path.join('_placeholders', e.relpath), 'rb')
                 filename = 'use_png_format.png'
+                force_size = e.size
 
             with filelike as f:
                 if unscaled:
@@ -681,9 +692,9 @@ class Image(ImageBase):
                 else:
                     surf = renpy.display.pgrender.load_image(f, filename)
 
-            if exception is not None:
+            if force_size is not None:
                 # avoid size-related exceptions (e.g. Crop on a smaller placeholder)
-                surf = renpy.display.pgrender.transform_scale(surf, exception.size)
+                surf = renpy.display.pgrender.transform_scale(surf, force_size)
 
             return surf
 
@@ -763,7 +774,7 @@ class ZipFileImage(ImageBase):
                 sio = io.BytesIO(data)
                 rv = renpy.display.pgrender.load_image(sio, self.filename)
             return rv
-        except:
+        except Exception:
             return renpy.display.pgrender.surface((2, 2), True)
 
     def predict_files(self):
@@ -1657,8 +1668,8 @@ im.matrix(%f, %f, %f, %f, %f.
         is ColorizeMatrix(black_color, white_color).
         """
 
-        (r0, g0, b0, _a0) = renpy.easy.color(black_color)
-        (r1, g1, b1, _a1) = renpy.easy.color(white_color)
+        (r0, g0, b0, _a0) = renpy.easy.color(black_color) # type: ignore
+        (r1, g1, b1, _a1) = renpy.easy.color(white_color) # type: ignore
 
         r0 /= 255.0
         g0 /= 255.0
@@ -1709,7 +1720,7 @@ def Color(im, color):
     black and white is the supplied color.
     """
 
-    r, g, b, a = renpy.easy.color(color)
+    r, g, b, a = renpy.easy.color(color) # type: ignore
 
     return Recolor(im, r, g, b, a)
 
@@ -1800,7 +1811,7 @@ class AlphaMask(ImageBase):
         self.mask = image(mask)
 
     def get_hash(self):
-        return self.base.get_hash() + self.image.get_hash()
+        return self.base.get_hash() + self.mask.get_hash()
 
     def load(self):
 

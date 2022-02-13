@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,14 +23,13 @@
 # renpy object, as well as the context object.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 from future.utils import reraise
 
 import sys
 import time
 
-import renpy.display
-import renpy.test
+import renpy
 
 import ast as pyast
 
@@ -151,6 +150,8 @@ class Context(renpy.object.Object):
 
     deferred_translate_identifier = None
 
+    predict_return_stack = None # type: list|None
+
     def __repr__(self):
 
         if not self.current:
@@ -166,7 +167,7 @@ class Context(renpy.object.Object):
 
     def after_upgrade(self, version):
         if version < 1:
-            self.scene_lists.image_predict_info = self.predict_info.images
+            self.scene_lists.image_predict_info = self.predict_info.images # type: ignore
 
         if version < 2:
             self.abnormal = False
@@ -179,11 +180,11 @@ class Context(renpy.object.Object):
             self.interacting = False
 
         if version < 5:
-            self.modes = renpy.python.RevertableList([ "start" ])
+            self.modes = renpy.revertable.RevertableList([ "start" ])
             self.use_modes = True
 
         if version < 6:
-            self.images = self.predict_info.images
+            self.images = self.predict_info.images # type: ignore
 
         if version < 7:
             self.init_phase = False
@@ -236,7 +237,7 @@ class Context(renpy.object.Object):
 
         self.rollback = rollback
         self.runtime = 0
-        self.info = renpy.python.RevertableObject()
+        self.info = renpy.revertable.RevertableObject()
         self.seen = False
 
         # True if there has just been an abnormal transfer of control,
@@ -263,7 +264,7 @@ class Context(renpy.object.Object):
         self.init_phase = False
 
         # When deferring a rollback, the arguments to pass to renpy.exports.rollback.
-        self.defer_rollback = None
+        self.defer_rollback = None # type: tuple[int, bool]|None
 
         # The exception handler that is called when an exception occurs while executing
         # code. If None, a default handler is used. This is reset when run is called.
@@ -312,11 +313,11 @@ class Context(renpy.object.Object):
                 self.scene_lists.clear(layer=i)
 
         # A list of modes that the context has been in.
-        self.modes = renpy.python.RevertableList([ "start" ])
+        self.modes = renpy.revertable.RevertableList([ "start" ])
         self.use_modes = True
 
         # The language we started with.
-        self.translate_language = renpy.game.preferences.language
+        self.translate_language = renpy.game.preferences.language # type: ignore
 
         # The identifier of the current translate block.
         self.translate_identifier = None
@@ -440,14 +441,14 @@ class Context(renpy.object.Object):
                 node = renpy.game.script.lookup(i)
                 if not node.filename.replace("\\", "/").startswith("common/"):
                     rv.append((node.filename, node.linenumber, "script call", None))
-            except:
+            except Exception:
                 pass
 
         try:
             node = renpy.game.script.lookup(self.current)
             if not node.filename.replace("\\", "/").startswith("common/"):
                 rv.append((node.filename, node.linenumber, "script", None))
-        except:
+        except Exception:
             pass
 
         return rv
@@ -620,7 +621,7 @@ class Context(renpy.object.Object):
                 renpy.store._kwargs = e.kwargs
 
             if self.seen:
-                renpy.game.persistent._seen_ever[self.current] = True # @UndefinedVariable
+                renpy.game.persistent._seen_ever[self.current] = True # type: ignore
                 renpy.game.seen_session[self.current] = True
 
             renpy.plog(2, "    end {} ({}:{})", type_node_name, this_node.filename, this_node.linenumber)
@@ -760,7 +761,7 @@ class Context(renpy.object.Object):
         Returns the node corresponding to `label`
         """
 
-        self.predict_return_stack = list(self.predict_return_stack)
+        self.predict_return_stack = list(self.predict_return_stack) # type: ignore
         self.predict_return_stack.append(return_site)
 
         return renpy.game.script.lookup(label)
@@ -836,7 +837,7 @@ class Context(renpy.object.Object):
                         nodes.append((n, self.images, self.predict_return_stack))
                         seen.add(n)
 
-            except:
+            except Exception:
 
                 if renpy.config.debug_prediction:
                     import traceback
@@ -866,7 +867,7 @@ class Context(renpy.object.Object):
             return False
 
         if ever:
-            seen = renpy.game.persistent._seen_ever # @UndefinedVariable
+            seen = renpy.game.persistent._seen_ever # type: ignore
         else:
             seen = renpy.game.seen_session
 
@@ -915,9 +916,9 @@ def run_context(top):
 
     while True:
 
-        try:
+        context = renpy.game.context()
 
-            context = renpy.game.context()
+        try:
 
             context.run()
 
@@ -937,6 +938,6 @@ def run_context(top):
             else:
                 raise
 
-        except:
+        except Exception:
             context.pop_all_dynamic()
             raise

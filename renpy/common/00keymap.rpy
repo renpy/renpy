@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -266,7 +266,7 @@ init -1600 python:
                 return
 
             webbrowser.open_new("file:///" + file_path)
-        except:
+        except Exception:
             pass
 
     import os
@@ -298,14 +298,14 @@ init -1600 python:
             dn = os.path.dirname(fn)
             if not os.path.exists(dn):
                 os.makedirs(dn)
-        except:
+        except Exception:
             pass
 
         try:
             if not renpy.screenshot(fn):
                 renpy.notify(__("Failed to save screenshot as %s.") % fn)
                 return
-        except:
+        except Exception:
             import traceback
             traceback.print_exc()
             renpy.notify(__("Failed to save screenshot as %s.") % fn)

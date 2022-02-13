@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -361,7 +361,7 @@ init -1500 python:
 
             try:
                 self.alt = __("Save slot %s: [text]") % (name,)
-            except:
+            except Exception:
                 self.alt = "Save slot %s: [text]" % (name,)
 
         def __call__(self):
@@ -442,7 +442,7 @@ init -1500 python:
 
             try:
                 self.alt = __("Load slot %s: [text]") % (name,)
-            except:
+            except Exception:
                 self.alt = "Load slot %s: [text]" % (name,)
 
         def __call__(self):
@@ -959,5 +959,5 @@ init 1050 python hide:
     if persistent._file_page not in config.file_page_names:
         try:
             int(persistent._file_page)
-        except:
+        except Exception:
             persistent._file_page = "1"

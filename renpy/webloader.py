@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -45,7 +45,7 @@ to_unlink = { }
 queue_lock = threading.RLock()
 
 if renpy.emscripten:
-    import emscripten, json
+    import emscripten, json # type: ignore
 
     # Space-efficient, copy-less download share
     # Note: could be reimplement with pyodide's jsproxy, but let's keep things small
@@ -87,7 +87,7 @@ if renpy.emscripten:
 };
 """)
 
-    class XMLHttpRequest(object):
+    class XMLHttpRequest(object): # type: ignore
         def __init__(self, filename):
             url = 'game/' + filename
             self.id = emscripten.run_script_int(
@@ -112,26 +112,22 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
     # simulate
     # Ex: rm -rf odrdtest-simu && unzip -d odrdtest-simu/ odrdtest-1.0-dists/odrdtest-1.0-web/game.zip && RENPY_SIMULATE_DOWNLOAD=1 ./renpy.sh odrdtest-simu
 
-    import urllib2, urllib, httplib, os, threading, time, random
-
+    import urllib, urllib.parse, random, requests
     class XMLHttpRequest(object):
         def __init__(self, filename):
             self.done = False
             self.error = None
-            url = 'http://127.0.0.1:8042/game/' + urllib.quote(filename)
-            req = urllib2.Request(url)
+            url = 'http://127.0.0.1:8042/game/' + urllib.parse.quote(filename)
             def thread_main():
                 try:
                     time.sleep(random.random() * 0.5)
-                    r = urllib2.urlopen(req)
+                    r = requests.get(url)
                     fullpath = os.path.join(renpy.config.gamedir, filename)
                     with queue_lock:
                         with open(fullpath, 'wb') as f:
-                            f.write(r.read())
-                except urllib2.URLError as e:
-                    self.error = str(e.reason)
-                except httplib.HTTPException as e:
-                    self.error = 'HTTPException'
+                            f.write(r.content)
+                except requests.RequestException as e:
+                    self.error = repr(e)
                 except Exception as e:
                     self.error = 'Error: ' + str(e)
                 self.done = True

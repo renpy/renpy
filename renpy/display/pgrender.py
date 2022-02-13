@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,13 +23,14 @@
 # ensures that returned surfaces have a 2px border around them.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+
 
 import sys
-import pygame_sdl2 as pygame
 import threading
-import renpy.display
-import renpy.audio
+
+import pygame_sdl2 as pygame
+import renpy
 
 
 # Sample surfaces, with and without alpha.
@@ -55,7 +56,7 @@ def set_rgba_masks():
 
     # Sort the components by absolute value.
     masks = list(sample_alpha.get_masks())
-    masks.sort(key=lambda a : abs(a))
+    masks.sort(key=abs)
 
     # Choose the masks.
     if sys.byteorder == 'big':
@@ -141,8 +142,6 @@ image_load_lock = threading.RLock()
 
 
 def load_image(f, filename):
-    global count
-
     _basename, _dot, ext = filename.rpartition('.')
 
     try:

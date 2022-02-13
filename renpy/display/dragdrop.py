@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,14 +23,14 @@
 # drag and drop.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
-import renpy.display
+import pygame_sdl2 as pygame
+
+import renpy
 from renpy.display.render import render, Render, redraw
 from renpy.display.core import absolute
 from renpy.display.behavior import map_event, run, run_unhovered
-
-import pygame_sdl2 as pygame
 
 
 def default_drag_group():
@@ -57,7 +57,7 @@ def default_drop_allowable(drop, drags):
     return True
 
 
-class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
+class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     """
     :doc: drag_drop class
     :args: (d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=..., clicked=None, hovered=None, unhovered=None, mouse_drop=False, **properties)
@@ -301,7 +301,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         self.target_at_delay = 0
 
         # The displayable we were last dropping on.
-        self.last_drop = None
+        self.last_drop = None # type: renpy.display.core.Displayable|None
 
         # Did we move over the course of this drag?
         self.drag_moved = False
@@ -341,10 +341,10 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         linear move.
         """
 
-        if type(x) is float:
+        if (type(x) is float) and self.parent_width is not None:
             x = int(x * self.parent_width)
 
-        if type(y) is float:
+        if (type(y) is float) and self.parent_height is not None:
             y = int(y * self.parent_height)
 
         self.target_x = x
@@ -519,8 +519,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
         else:
             # Snap in progress
             done = (at - self.at) / (self.target_at - self.at)
-            self.x = absolute(self.x + done * (self.target_x - self.x))
-            self.y = absolute(self.y + done * (self.target_y - self.y))
+            self.x = absolute(self.x + done * (self.target_x - self.x)) # type: ignore
+            self.y = absolute(self.y + done * (self.target_y - self.y)) # type: ignore
             redraw(self, 0)
 
         if self.draggable or self.clicked is not None:
@@ -546,7 +546,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             elif mask is not None:
                 try:
                     mask = renpy.display.render.render(mask, fw, fh, st, at)
-                except:
+                except Exception:
                     if callable(mask):
                         mask = mask
                     else:
@@ -582,14 +582,16 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             self.click_time = st
             renpy.game.interface.timeout(renpy.config.longpress_duration)
 
+        joined = [ ] # typing
+
         if grabbed:
             joined_offsets = self.drag_joined(self)
-            joined = [ i[0] for i in joined_offsets ]
+            joined = [ i[0] for i in joined_offsets ] # type: list[Drag]
 
         elif self.draggable and map_event(ev, "drag_activate"):
 
             joined_offsets = self.drag_joined(self)
-            joined = [ i[0] for i in joined_offsets ]
+            joined = [ i[0] for i in joined_offsets ] # type: list[Drag]
 
             if not joined:
                 raise renpy.display.core.IgnoreEvent()
@@ -662,13 +664,13 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
                 # Raise the joined items.
                 if self.drag_raise and self.drag_group is not None:
-                    self.drag_group.raise_children(joined)
+                    self.drag_group.raise_children(joined) # type: ignore
 
             if self.drag_moved:
-                for i, xo, yo in joined_offsets:
+                for i, xo, yo in joined_offsets: # type: ignore
 
-                    new_x = int(par_x - self.grab_x + xo)
-                    new_y = int(par_y - self.grab_y + yo)
+                    new_x = int(par_x - self.grab_x + xo) # type: ignore
+                    new_y = int(par_y - self.grab_y + yo) # type: ignore
 
                     if not self.drag_offscreen:
                         new_x = max(new_x, 0)
@@ -691,9 +693,9 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
 
         if (self.drag_group is not None) and self.drag_moved:
             if self.mouse_drop:
-                drop = self.drag_group.get_drop_at(joined, par_x, par_y)
+                drop = self.drag_group.get_drop_at(joined, par_x, par_y) # type: ignore
             else:
-                drop = self.drag_group.get_best_drop(joined)
+                drop = self.drag_group.get_best_drop(joined) # type: ignore
         else:
             drop = None
 
@@ -702,7 +704,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             if self.last_drop is not None:
                 self.last_drop.set_style_prefix("idle_", True)
 
-            self.last_drop = drop
+            self.last_drop = drop # type: ignore
 
         if self.drag_moved:
             self.update_style_prefix()
@@ -714,7 +716,7 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
             renpy.display.focus.set_grab(None)
 
             if drop is not None:
-                drop.set_style_prefix("idle_", True)
+                drop.set_style_prefix("idle_", True) # type: ignore
 
             for i in joined:
                 i.set_style_prefix("idle_", True)
@@ -735,8 +737,8 @@ class Drag(renpy.display.core.Displayable, renpy.python.RevertableObject):
                         return rv
 
                 # Call the drop callback.
-                if drop is not None and drop.dropped is not None:
-                    rv = run(drop.dropped, drop, joined)
+                if drop is not None and drop.dropped is not None: # type: ignore
+                    rv = run(drop.dropped, drop, joined) # type: ignore
                     if rv is not None:
                         return rv
 
@@ -786,7 +788,7 @@ class DragGroup(renpy.display.layout.MultiBox):
     z_serial = 0
     sorted = False
 
-    _list_type = renpy.python.RevertableList
+    _list_type = renpy.revertable.RevertableList
 
     def __init__(self, *children, **properties):
         properties.setdefault("style", "fixed")
@@ -802,11 +804,11 @@ class DragGroup(renpy.display.layout.MultiBox):
         self.sorted = False
 
         if isinstance(replaces, DragGroup):
-            self.positions = renpy.python.RevertableDict(replaces.positions)
+            self.positions = renpy.revertable.RevertableDict(replaces.positions)
             self.sensitive = replaces.sensitive
             self.z_serial = replaces.z_serial
         else:
-            self.positions = renpy.python.RevertableDict()
+            self.positions = renpy.revertable.RevertableDict()
             self.sensitive = True
             self.z_serial = 0
 
@@ -959,7 +961,7 @@ class DragGroup(renpy.display.layout.MultiBox):
         this DragGroup.
         """
 
-        return renpy.python.RevertableList(self.children)
+        return renpy.revertable.RevertableList(self.children)
 
     def get_child_by_name(self, name):
         """

@@ -26,6 +26,12 @@ for individual drags, or globally with::
 
 Both options reduce performance.
 
+The platform-specific directories inside lib/ have had name changes. The 
+``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This 
+change helps support the development of the Python 3 powered Ren'Py 8. 
+These directories are not documented, and may change between Ren'Py 
+versions, but we do guarantee that ``sys.excutable`` is set.
+
 
 .. _incompatible-7.4.11:
 

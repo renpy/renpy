@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -268,7 +268,7 @@ init python:
             try:
                 import webbrowser
                 webbrowser.open(target)
-            except:
+            except Exception:
                 pass
 
         if target.startswith("edit:"):
@@ -444,7 +444,7 @@ init python:
         def __call__(self):
             try:
                 renpy.launch_editor([ self.filename ], self.line, transient=1)
-            except:
+            except Exception:
                 pass
 
     class _CopyFile(Action):
@@ -535,7 +535,7 @@ init python:
         def __call__(self):
             try:
                 f = _console.enter
-            except:
+            except Exception:
                 return None
 
             return f()

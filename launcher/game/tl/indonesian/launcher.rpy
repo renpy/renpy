@@ -562,8 +562,8 @@ translate indonesian strings:
     new "[project_dir!q] sudah tersedia, silahkan buat nama proyek yang berbeda."
 
     # gui7.rpy:341
-    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "Resolusi apa yang harus di gunakan proyek? Ren'Py dapat mengubah ukuran jendela naik dan turun, ini adalah ukuran inisial dari jendela, ukuran yang menentukan aset manya yang harus di gambar, dan ukuran dimana aset akan menjadi lebih tajamm.\n\nSetelan default 1280x720 adalah ukuran yang paling bisa di kompromi."
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "Resolusi apa yang harus di gunakan proyek? Ren'Py dapat mengubah ukuran jendela naik dan turun, ini adalah ukuran inisial dari jendela, ukuran yang menentukan aset manya yang harus di gambar, dan ukuran dimana aset akan menjadi lebih tajamm.\n\nSetelan default [default_size[0]]x[default_size[1]] adalah ukuran yang paling bisa di kompromi."
 
     # gui7.rpy:389
     old "Creating the new project..."

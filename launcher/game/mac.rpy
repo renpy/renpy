@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,7 @@ init python hide:
     import os
 
     macapp = os.path.join(config.renpy_base, "renpy.app/Contents/MacOS")
-    maclib = os.path.join(config.renpy_base, "lib/mac-x86_64")
+    maclib = os.path.join(config.renpy_base, distribute.py("lib/py{major}-mac-x86_64"))
 
     if os.path.exists(maclib):
 
@@ -45,7 +45,7 @@ init python hide:
                     os.chmod(nfn, 0o755)
                     os.unlink(fn)
 
-            except:
+            except Exception:
                 pass
 
 

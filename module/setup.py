@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -37,7 +37,7 @@ os.chdir(BASE)
 # Create the gen directory if it doesn't exist.
 try:
     os.makedirs("gen")
-except:
+except Exception:
     pass
 
 # Generate styles.

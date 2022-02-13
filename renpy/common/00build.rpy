@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -92,15 +92,18 @@ init -1500 python in build:
         ( "lib/*/pythonw.exe", None),
 
         # Windows patterns.
-        ( "lib/windows-i686/**", "windows_i686"),
-        ( "lib/windows-x86_64/**", "windows"),
+        ( "lib/py*-windows-i686/**", "windows_i686"),
+        ( "lib/py*-windows-x86_64/**", "windows"),
 
         # Linux patterns.
-        ( "lib/linux-i686/**", "linux_i686"),
-        ( "lib/linux-*/**", "linux"),
+        ( "lib/py*-linux-i686/**", "linux_i686"),
+        ( "lib/py*-linux-*/**", "linux"),
 
-        # Mac patterns
-        ( "lib/mac-*/**", "mac"),
+        # Mac patterns.
+        ( "lib/py*-mac-*/**", "mac"),
+
+        # Old Python library.
+        ( "lib/python3.*/**" if PY2 else "lib/python2.*/**", None),
 
         # Shared patterns.
         ( "lib/**", "windows linux mac android ios"),
@@ -242,8 +245,8 @@ init -1500 python in build:
     xbit_patterns = [
         "**.sh",
 
-        "lib/linux-*/*",
-        "lib/mac-*/*",
+        "lib/py*-linux-*/*",
+        "lib/py*-mac-*/*",
 
         "**.app/Contents/MacOS/*",
         ]
