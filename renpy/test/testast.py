@@ -92,12 +92,12 @@ class Node(object):
 
 class Pattern(Node):
     __slots__ = ("pattern", "position", "always")
-    position = None
-    always = False
 
     def __init__(self, loc, pattern=None):
         Node.__init__(self, loc)
         self.pattern = pattern
+        self.position = None
+        self.always = False
 
     def start(self):
         return True
@@ -142,7 +142,6 @@ class Pattern(Node):
         return None
 
 class Click(Pattern):
-    __slots__ = "button"
     # The number of the button to click.
     button = 1
 
@@ -292,7 +291,7 @@ class Drag(Node):
 
 class Type(Pattern):
     __slots__ = "keys"
-    interval = .01
+    # interval = .01 # unused
 
     def __init__(self, loc, keys):
         Pattern.__init__(self, loc)
