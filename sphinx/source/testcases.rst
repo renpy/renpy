@@ -77,7 +77,6 @@ until statement
     executes the left one once ?
     basically an inline (do-?)while loop
 
-
 Clause statements
 =================
 
@@ -102,8 +101,9 @@ pause statement
 label statement
 ---------------
 ..
-    (check this) does not *do* anything
-    ready when execution just passes (or passed) the given label
+    does not *do* anything meaningful when executed
+    raises an exception if the provided label is not being passed or has not just been passed when it's executed
+    similar to an assert statement, except it's a clause and it only applies to label conditions
 
 drag statement
 --------------

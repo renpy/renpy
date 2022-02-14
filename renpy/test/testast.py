@@ -360,6 +360,8 @@ class Pause(Node):
             return None
 
 
+class LabelException(AssertionError): pass
+
 class Label(Node):
     __slots__ = "name"
     def __init__(self, loc, name):
@@ -372,8 +374,7 @@ class Label(Node):
     def execute(self, state, t):
         if self.name in renpy.test.testexecution.labels:
             return None
-        else:
-            return state
+        raise LabelException(self.name)
 
     def ready(self):
         return self.name in renpy.test.testexecution.labels
