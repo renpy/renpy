@@ -121,7 +121,7 @@ class Pattern(Node):
         else:
             x, y = renpy.test.testfocus.find_position(f, position)
 
-        if x is None:
+        if None in (x, y):
             if self.pattern:
                 return state
             else:
