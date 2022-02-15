@@ -33,6 +33,7 @@ fields = [
     "xdz", "ydz", "zdz", "wdz",
     "xdw", "ydw", "zdw", "wdw",
     ]
+# not the same as documented
 
 cdef inline bint absne(float a, float b):
     return abs(a - b) > .0001
@@ -176,13 +177,13 @@ cdef class Matrix:
 
     def __getitem__(Matrix self, int index):
         if 0 <= index < 16:
-            return self.m[index]
+            return self.m[(index%4)*4+index//4]
 
         raise IndexError("Matrix index out of range.")
 
     def __setitem__(Matrix self, int index, float value):
         if 0 <= index < 16:
-            self.m[index] = value
+            self.m[(index%4)*4+index//4] = value
             return
 
         raise IndexError("Matrix index out of range.")
@@ -196,7 +197,7 @@ cdef class Matrix:
             if y:
                 rv += "\n        "
             for 0 <= x < 4:
-                rv += "{:10.7f}, ".format(self.m[x + y * 4])
+                rv += "{:10.7f}, ".format(self.m[x * 4 + y])
 
         return rv + "])"
 
