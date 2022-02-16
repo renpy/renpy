@@ -72,8 +72,8 @@ init -1500 python in build:
 
     else:
         renpy_patterns = pattern_list([
-            ("renpy/__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), "renpy"),
-            ("renpy/__pycache__", "renpy"),
+            ("renpy**/__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), "renpy"),
+            ("renpy**/__pycache__", "renpy"),
         ])
 
         if os.path.exists(os.path.join(config.renpy_base, "renpy3.sh")):
