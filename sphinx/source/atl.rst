@@ -502,7 +502,7 @@ Function Statement
 ------------------
 
 The ``function`` statement allows ATL to use Python functions to control the ATL
-properties.
+properties. This takes function or the list of functions.
 
 .. productionlist:: atl
     atl_function : "function" `expression`
@@ -520,7 +520,8 @@ The functions have the same signature as those used with :func:`Transform`:
 * If the function returns a number, it will be called again after that
   number of seconds has elapsed. (0 seconds means to call the function as
   soon as possible.) If the function returns None, control will pass to the
-  next ATL statement.
+  next ATL statement. If the list of functions is used and some functions
+  return a number, the minimal number is used.
 
 This function should not have side effects other
 than changing the Transform object in the first argument, and may be

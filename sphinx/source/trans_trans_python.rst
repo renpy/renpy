@@ -36,8 +36,9 @@ The Python equivalent of an ATL transform is a Transform object.
         The child the transform applies to.
 
     `function`
-        If not none, this is a function that is called when the transform
-        is rendered. The function is called with three arguments:
+        If not none, this is a function or the list of function
+        these are called when the transform is rendered.
+        The function is called with three arguments:
 
         * The transform object.
         * The shown timebase, in seconds.
@@ -45,7 +46,8 @@ The Python equivalent of an ATL transform is a Transform object.
 
         The function should return a delay, in seconds, after which it will
         be called again, or None to be called again at the start of the next
-        interaction.
+        interaction. If the list of functions is used and some functions 
+        return a number, the minimal number is used.
 
         This function should not have side effects other
         than changing the Transform object in the first argument, and may be

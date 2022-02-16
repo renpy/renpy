@@ -1692,16 +1692,23 @@ class Function(Statement):
     def __init__(self, loc, function):
         super(Function, self).__init__(loc)
 
-        self.function = function
+        if function is None or isinstance(function, list):
+            self.function = function
+        else:
+            self.function = [function]
 
     def _handles_event(self, event):
         return True
 
     def execute(self, trans, st, state, events):
-        fr = self.function(trans, st, trans.at)
+        min_fr = None
+        for f in self.function:
+            fr = f(trans, st, trans.at)
+            if fr is not None and (min_fr is None or fr < min_fr):
+                min_fr = fr
 
-        if fr is not None:
-            return "continue", None, fr
+        if min_fr is not None:
+            return "continue", None, min_fr
         else:
             return "next", 0, None
 

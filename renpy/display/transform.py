@@ -438,7 +438,10 @@ class Transform(Container):
 
         super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args)
 
-        self.function = function
+        if function is None or isinstance(function, list):
+            self.function = function
+        else:
+            self.function = [function]
 
         child = renpy.easy.displayable_or_none(child)
         if child is not None:
@@ -674,7 +677,8 @@ class Transform(Container):
         d.replaced_response = True
 
         if d.function is not None:
-            d.function(d, st, at)
+            for f in d.function:
+                f(d, st, at)
         elif isinstance(d, ATLTransform):
             d.execute(d, st, at)
 
@@ -725,12 +729,16 @@ class Transform(Container):
         if self.arguments is not None:
             self.default_function(self, self.st, self.at)
 
+        min_fr = None
         if self.function is not None:
-            fr = self.function(self, self.st, self.at)
+            for f in self.function:
+                fr = f(self, self.st, self.at)
+                if fr is not None and (min_fr is None or fr < min_fr):
+                    min_fr = fr
 
             # Order a redraw, if necessary.
-            if fr is not None:
-                renpy.display.render.redraw(self, fr)
+            if min_fr is not None:
+                renpy.display.render.redraw(self, min_fr)
 
         self.active = True
 
