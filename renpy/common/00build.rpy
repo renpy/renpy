@@ -63,8 +63,8 @@ init -1500 python in build:
 
     if PY2:
         renpy_patterns = pattern_list([
-            ("renpy/**.pyo", "renpy"),
-            ("renpy/__pycache__", None),
+            ("renpy/**.pyo", "all"),
+            ("renpy/**__pycache__", None),
         ])
 
         if os.path.exists(os.path.join(config.renpy_base, "renpy2.sh")):
@@ -72,8 +72,8 @@ init -1500 python in build:
 
     else:
         renpy_patterns = pattern_list([
-            ("renpy**/__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), "renpy"),
-            ("renpy**/__pycache__", "renpy"),
+            ("renpy/**__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), "all"),
+            ("renpy/**__pycache__", "all"),
         ])
 
         if os.path.exists(os.path.join(config.renpy_base, "renpy3.sh")):
@@ -95,12 +95,14 @@ init -1500 python in build:
 
         ( "renpy/", "all"),
         ( "renpy/**.py", "renpy"),
-        ( "renpy/**.pyx", "renpy"),
-        ( "renpy/**.pyd", "renpy"),
-        ( "renpy/**.pxi", "renpy"),
 
+        ( "renpy/**.pyx", None),
+        ( "renpy/**.pyd", None),
+        ( "renpy/**.pxi", None),
         ( "renpy/**.pyc", None),
         ( "renpy/**.pyo", None),
+        ( "renpy/**.pyi", None),
+
         ( "renpy/common/", "all"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**.rpy", "renpy"),
