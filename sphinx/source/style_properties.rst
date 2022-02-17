@@ -774,7 +774,7 @@ buttons. :ref:`margin-style-properties` also form part of this group.
 .. style-property:: modal boolean or callable
 
     If True, the window is treated as modal. Events will stop propagating
-    through layers whole the mouse is within the window or button. If False,
+    through layers while the mouse is within the window or button. If False,
     the window is not modal.
 
     This may also be a callable function. If it is, the function is called
