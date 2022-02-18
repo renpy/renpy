@@ -3430,8 +3430,16 @@ class Interface(object):
                 renpy.display.draw.ready_one_texture()
                 step += 1
 
-            # Step 3: Predict more images.
+            # Step 3: Execute commands from JS (on emscripten)
             elif step == 3:
+
+                if expensive and renpy.emscripten:
+                    self.exec_js_cmd()
+
+                step += 1
+
+            # Step 4: Predict more images.
+            elif step == 4:
 
                 if not self.prediction_coroutine:
                     step += 1
@@ -3452,29 +3460,21 @@ class Interface(object):
                     if not expensive:
                         step += 1
 
-            # Step 4: Preload images (on emscripten)
-            elif step == 4:
+            # Step 5: Preload images (on emscripten)
+            elif step == 5:
 
                 if expensive and renpy.emscripten:
                     renpy.display.im.cache.preload_thread_pass()
 
                 step += 1
 
-            # Step 5: Autosave.
-            elif step == 5:
+            # Step 6: Autosave.
+            elif step == 6:
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()
                     renpy.persistent.check_update()
                     self.did_autosave = True
-
-                step += 1
-
-            # Step 6: Execute commands from JS (on emscripten)
-            elif step == 6:
-
-                if expensive and renpy.emscripten:
-                    self.exec_js_cmd()
 
                 step += 1
 
