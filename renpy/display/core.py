@@ -3470,6 +3470,14 @@ class Interface(object):
 
                 step += 1
 
+            # Step 6: Execute commands from JS (on emscripten)
+            elif step == 6:
+
+                if expensive and renpy.emscripten:
+                    self.exec_js_cmd()
+
+                step += 1
+
             else:
                 break
 
@@ -4288,3 +4296,34 @@ class Interface(object):
         """
 
         self.check_background_screenshot()
+
+    def exec_js_cmd(self):
+        """
+        Execute a command from JS if required (emscripten only).
+        """
+
+        if not renpy.emscripten:
+            # Allowing execution of untrusted Python statements from outside
+            # the browser would be a security risk
+            return
+
+        # Use a command file in MEMFS so that no sync is required
+        cmd_file = '/_js_cmd.py'
+
+        # Check if a command needs to be executed
+        if not os.path.exists(cmd_file):
+            return
+
+        # Read command file content
+        with open(cmd_file, "rt") as f:
+            cmd = f.read()
+
+        # Delete command file to prevent executing the same command again
+        os.unlink(cmd_file)
+
+        # Execute the command file content
+        try:
+            renpy.python.py_exec(cmd)
+        except Exception as e:
+            renpy.display.log.write(cmd)
+            renpy.display.log.write('Error while executing JS command: %s' % (e,))
