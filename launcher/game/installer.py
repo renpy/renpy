@@ -32,6 +32,9 @@ import stat
 
 VERSION = 1
 
+# True if the installer should run in quiet mode.
+quiet = False
+
 from store import _, config, interface, project, Jump # type: ignore
 
 temp_exists = False
@@ -174,14 +177,20 @@ def download(url, filename, hash=None):
 
                 if time.time() - progress_time > 0.1:
                     progress_time = time.time()
-                    interface.processing(
-                        _("Downloading [installer.download_file]..."),
-                        complete=downloaded, total=total_size)
+                    if not quiet:
+                        interface.processing(
+                            _("Downloading [installer.download_file]..."),
+                            complete=downloaded, total=total_size)
 
     except requests.HTTPError as e:
+        if not quiet:
+            raise
+
         interface.error(_("Could not download [installer.download_file] from [installer.download_url]:\n{b}[installer.download_error]"))
 
     if hash is not None:
+        if not quiet:
+            raise Exception("Hash check failed.")
         if not _check_hash(filename, hash):
             interface.error(_("The downloaded file [installer.download_file] from [installer.download_url] is not correct."))
 
@@ -257,7 +266,8 @@ def unpack(archive, destination):
     global unpack_archive
     unpack_archive = _friendly(archive)
 
-    interface.processing(_("Unpacking [installer.unpack_archive]..."))
+    if not quiet:
+        interface.processing(_("Unpacking [installer.unpack_archive]..."))
 
     archive = _path(archive)
     destination = _path(destination)
