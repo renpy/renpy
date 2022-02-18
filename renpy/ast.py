@@ -665,7 +665,7 @@ class Node(object):
         be executed after this one.
         """
 
-        raise Exception("Node subclass forgot to define execute.")
+        raise NotImplementedError("Node subclass forgot to define execute.")
 
     # def early_execute(self):
     #     """
@@ -719,7 +719,7 @@ class Node(object):
             text in the statement.
         """
 
-        raise Exception("Not Implemented")
+        raise NotImplementedError
 
     def analyze(self):
         """
