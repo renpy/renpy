@@ -23,6 +23,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 
+import random
 import renpy
 from renpy.test.testmouse import click_mouse, move_mouse
 
@@ -398,6 +399,23 @@ class Eval(Node):
         self.evaluated = True
         return bool(renpy.python.py_eval(self.expr))
 
+class Advance(Node):
+    __slots__ = ()
+    def start(self):
+        return True
+
+    def execute(self, state, t):
+        key = 'K_SPACE'
+        if key not in renpy.config.keymap["dismiss"]:
+            key = random.choice(renpy.config.keymap["dismiss"])
+        renpy.test.testkey.down(self, key)
+        renpy.test.testkey.up(self, key)
+        return None
+
+    def ready(self):
+        # ???
+        return True
+
 
 ################################################################################
 # Non-clause statements.
@@ -426,7 +444,7 @@ class Until(Node):
     def execute(self, state, t):
         child, child_state, start = state
 
-        if self.right.ready() and not (child is self.right):
+        if self.right.ready() and (child is not self.right):
             child = self.right
             child_state = None
 

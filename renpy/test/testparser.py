@@ -144,6 +144,9 @@ def parse_clause(l, loc):
     elif l.keyword("click"):
         return parse_click(l, loc, None)
 
+    elif l.keyword("advance"):
+        return testast.Advance(loc)
+
     elif l.keyword("scroll"):
         pattern = l.require(l.string)
         return testast.Scroll(loc, pattern)
