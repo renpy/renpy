@@ -42,14 +42,6 @@ Test statements
 ===============
 .. give an example for each one
 
-if statement
-------------
-..
-    not the same as the renpy or python versions :
-    it can't take all python values, only a test clause
-    the clause being ready is the actual condition for the block to execute or not
-    you can emulate a normal python/renpy if with ``if eval (expression)``
-
 python block statement
 ----------------------
 .. difference with the default python block statement, apart from the hide/store params ?
@@ -58,13 +50,33 @@ dollar line
 -----------
 .. same interrogations as with python blocks
 
+if statement
+------------
+This statement, like a python ``if`` statement, text a block.
+Unlike the Ren'py or python versions however, it only takes a test clause, instead of a general python expression.
+The provided clause being ready is the actual condition for the block to execute or not.
+
+A normal python/renpy ``if`` can be emulated using the ``eval`` clause : ::
+
+    if eval (persistent.should_advance and
+             i_should_advance["now"]):
+        advance
+
+..
+    there is no elif nor else clause
+
 assert statement
 ----------------
+Like a python assert, this statement raises an AssertionError if and when the value it is given does not
+evaluate to a true value. See the python documentation
+`regarding asserts <https://docs.python.org/reference/simple_stmts.html#the-assert-statement>`_ and
+about `boolean evaluation <https://docs.python.org/library/stdtypes.html#truth-value-testing>`_.
+
 ..
-    like a python assert, raises an AssertionError when the value it is given does not evaluate to a true value
-    links to python doc regarding asserts, and to stdtypes about boolean evaluation
-    note about regular asserts usually not working outside of this case in regular python blocks in renpy
-.. turn into a clause ?
+    .. note::
+
+        The regular ``assert`` python statement is not guaranteed to work in Ren'py. It was disabled in
+        version 7 and earlier.
 
 jump statement
 --------------
@@ -76,57 +88,66 @@ call statement
 
 clause statement
 ----------------
-..
-    takes a single clause (a way of saying-without-saying that clauses are statements)
+A clause can be given, just by itself.::
+
+    pause 5
 
 until statement
 ---------------
-..
-    between one left clause and one right clause, on a single line
-    executes the left clause until the right clause is ready
-    then executes the right clause once before returning
-    executes the left one once ?
-    basically an inline (do-?)while loop
+Takes two clauses, separated by the word ``until``.
+If and when the right clause is ready, executes it and passes to the next statement.
+If not, executes the left clause until the right clause is ready, then executes the right clause.
+
+This is basically an inline while loop.::
+
+    advance until "It's an interactive book."
 
 pass statement
 --------------
-..
-    a noop
+Does not do anything. It's a no-op, allowing empty testcases.
 
 exit statement
 --------------
-..
-    quits the game, ending the game without confirmation
+Quits the game without calling the confirmation screen.
+Does not save the game when quitting : ::
+
+    if eval persistent.quit_test_with action:
+        run Quit(True) # does not confirm, but autosaves
+    exit # neither confirms nor autosaves
 
 Test clauses
 ============
 
 Clauses have the property of being ready or not ready.
 They can be part of (test-)if or until statements, or they can be simply on their own (see above).
-A non-ready clause on its own will not cause an error when executed, at worse it will result in a noop.
+It is safe to evaluate the readiness of a clause which would raise an exception if executed when not ready.::
+
+    if label preferences:
+        "Dark theme"
 
 .. for each one, say what makes it ready
 
 run clause
 -------------
-..
-    executes the provided screen-language action (link to the doc page about actions)
-    ready if a button containing the action would be sensitive.
+Runs the provided :ref:`screen-language action <screen-actions>`.
+
+Ready if and when a button containing the provided action would be sensitive.
+
+.. does it accept a list of actions ?
 
 pause clause
 ---------------
-..
-    pauses for the given number of seconds
-    always ready
+Pauses for a given number of seconds. Always ready.
 
 label clause
 ---------------
-..
-    does not *do* anything meaningful when executed
-    raises an exception if the provided label is not being passed or has not just been passed when it's executed
-    watch out, pretty sensitive about "just being passed", adding a (test) timed pause before a working label
-    will make it fail
-    similar to an assert statement, except it's a clause and it only applies to label conditions
+This is a control, assert-like clause. It does not *do* anything when executed, but raises an
+exception if the given label has not been passed by the script since the last executed test statement (or clause).
+
+Attention, this means that a working label clause in a clause statement will be broken if, for example,
+a pause clause in a clause statement gets added before it.
+
+Ready if and when the provided label has just been passed.
 
 drag clause
 --------------
@@ -148,26 +169,30 @@ scroll clause
     ready when the target (pattern) is found
     If the target is a bar, scrolls it down a page. If already at the bottom, returns it to the top.
 
-.. propositions (still clauses but not approved or not implemented) :
-
-pass clause
---------------
-..
-    (proposed noop)
-    always ready
-
 eval clause
 -----------
-..
-    does not do anything meaningful when executed, even less than the label clause
-    is ready if and when the given value is true in a boolean way
+Does not do anything when executed. This clause only exists to live inside ``if`` and ``until`` statements.
+
+.. The provided expression can span on several lines, if wrapped in parentheses.
+
+Ready if and when the provided value is true, in a boolean context.
+
+.. note::
+
+    Differences between a dollar-line, the assert statement and the eval clause :
+
+    - A dollar-line executes any python statement, which does not necessarily have a value - for example
+      ``$ test_variable = 5`` - while the assert statement and the eval clause require an expression, a.k.a
+      something with a value.
+    - The assert statement controls whether the provided value is correct or not.
+    - The eval clause provides a value to an ``if`` or ``until`` statement.
 
 advance clause
 -----------------
-..
-    like the press of space in renpy
-    unready during a choice for example (only if that's detectable)
-    `advance until "A video game"`
+The equivalent of pressing space to advance (or "dismiss") in Ren'py.
+
+Ready when the game can be advanced that way, i.e in dialogues but not in the game menu for example.
+.. that remains to be implemented
 
 type clause
 --------------
@@ -187,8 +212,7 @@ string expression
 -----------------
 ..
     alias for the click statement, giving it a target
-    do something if/when the pattern is not found
-    instead of just blocking
+    raises an exception if the pattern is not found
 
 ..
     Their readiness condition (for type, move, clock and string) : it is ready if a pattern is not provided,
@@ -201,4 +225,4 @@ Patterns
 Some clauses take a pattern.
 The ``pattern`` property (or in the case of the string expression, the string itself) takes a string
 which resolves to a target found on the screen, based on the shorted match in the alt text of
-focusable screen elements.
+focusable screen elements. The search is case-insensitive.
