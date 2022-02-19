@@ -119,8 +119,8 @@ def find_position(f, position):
         f.w = renpy.config.screen_width
         f.h = renpy.config.screen_height
 
-    x = relative_position(x, posx, f.w) + f.x
-    y = relative_position(y, posy, f.h) + f.y
+    x = relative_position(x-f.x, posx, f.w) + f.x
+    y = relative_position(y-f.y, posy, f.h) + f.y
 
     for _i in range(100):
 
