@@ -1214,7 +1214,7 @@ Rarely or Internally Used
 
     This variable contains a keymap giving the keys and mouse buttons
     assigned to each possible operation. Please see the section on
-    Keymaps for more information.
+    :ref:`Keymaps <keymap>` for more information.
 
 .. var:: config.label_callback = None
 
