@@ -10,13 +10,14 @@
         jump
         call
         until
+        exit
         test clauses:
             run
             pause
             label
             drag
             scroll
-            numeric expression (proposed)
+            numeric expression (proposed) (nope)
             pass
             advance (proposed)
             type
@@ -34,7 +35,7 @@ Blah.
 .. introduce the testcase statement itself, like the `transform:` statement
 .. note about there being no return statement, unlike label the deindent closes the block
 
-Simple test statements
+Test statements
 ===============
 
 if statement
@@ -68,6 +69,11 @@ call statement
 
     .. reminding (for both jump and call) that there is no return statement in testcases
 
+clause statement
+----------------
+..
+    takes a single clause (a way of saying-without-saying that clauses are statements)
+
 until statement
 ---------------
 ..
@@ -87,11 +93,11 @@ exit statement
 ..
     quits the game, ending the game without confirmation
 
-Clause statements
-=================
+Test clauses
+============
 
-Test clauses are a subset of test statements, which have the property of being ready or not ready.
-They can be part of (test-)if or until statements, or they can be simply on their own.
+Clauses have the property of being ready or not ready.
+They can be part of (test-)if or until statements, or they can be simply on their own (see above).
 A non-ready clause on its own will not cause an error when executed, at worse it will result in a noop.
 
 .. for each one, say what makes it ready
