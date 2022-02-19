@@ -31,7 +31,8 @@
 Integrated test suite
 =====================
 
-Ren'py allows creators to put tests in their games to make sure that an alteration to the code didn't break the game.
+Ren'py allows creators to put tests in their games to make sure that an alteration to the code didn't break
+the game.
 Blah.
 
 .. introduce the testcase statement itself, like the `transform:` statement
@@ -105,27 +106,28 @@ A non-ready clause on its own will not cause an error when executed, at worse it
 
 .. for each one, say what makes it ready
 
-run statement
+run clause
 -------------
 ..
     executes the provided screen-language action (link to the doc page about actions)
     ready if a button containing the action would be sensitive.
 
-pause statement
+pause clause
 ---------------
 ..
     pauses for the given number of seconds
     always ready
 
-label statement
+label clause
 ---------------
 ..
     does not *do* anything meaningful when executed
     raises an exception if the provided label is not being passed or has not just been passed when it's executed
-    watch out, pretty sensitive about "just being passed", adding a (test) timed pause before a working label will make it fail
+    watch out, pretty sensitive about "just being passed", adding a (test) timed pause before a working label
+    will make it fail
     similar to an assert statement, except it's a clause and it only applies to label conditions
 
-drag statement
+drag clause
 --------------
 ..
     simulate the mouse dragging something from one place to another
@@ -138,7 +140,7 @@ drag statement
     ready if the thing it has been told to type in is found, or if no target has been given
     show example of ((None, 10), (None, 100)) being an only-vertical movement downwards
 
-scroll statement
+scroll clause
 ----------------
 ..
     takes a string giving it a pattern
@@ -147,41 +149,37 @@ scroll statement
 
 .. propositions (still clauses but not approved or not implemented) :
 
-numeric expression
-------------------
-.. (proposed alias to pause clause, may be integrated into expression)
-
-pass statement
+pass clause
 --------------
 ..
     (proposed noop)
     always ready
 
-advance statement
 eval clause
 -----------
 ..
     does not do anything meaningful when executed, even less than the label clause
     is ready if and when the given value is true in a boolean way
 
+advance clause
 -----------------
 ..
     like the press of space in renpy
     unready during a choice for example (only if that's detectable)
     `advance until "A video game"`
 
-type statement
+type clause
 --------------
 .. simulate a key-pressing or the typing of text
 
-move statement
+move clause
 --------------
 ..
     `move (position) [pattern (string)]`
     moves the virtual test mouse to the provided position, within the area targeted by the pattern
     or, if none is given, within the whole screen
 
-click statement
+click clause
 ---------------
 
 string expression
@@ -201,4 +199,5 @@ Patterns
 
 Some clauses take a pattern.
 The ``pattern`` property (or in the case of the string expression, the string itself) takes a string
-which resolves to a target found on the screen, based on the shorted match in the alt text of focusable screen elements.
+which resolves to a target found on the screen, based on the shorted match in the alt text of
+focusable screen elements.
