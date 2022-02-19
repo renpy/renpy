@@ -77,6 +77,11 @@ until statement
     executes the left one once ?
     basically an inline (do-?)while loop
 
+exit statement
+--------------
+..
+    quits the game, ending the game without confirmation
+
 Clause statements
 =================
 

@@ -566,3 +566,11 @@ class Block(Node):
             i += 1
 
         return i, start, s
+
+class Exit(Node):
+    __slots__ = ()
+    def start(self):
+        return True
+
+    def execute(self, state, t):
+        raise renpy.game.QuitException

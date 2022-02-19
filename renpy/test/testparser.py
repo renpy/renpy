@@ -197,6 +197,9 @@ def parse_statement(l, loc):
         target = l.require(l.name)
         return testast.Call(loc, target)
 
+    elif l.keyword('exit'):
+        return testast.Exit(loc)
+
     rv = parse_clause(l, loc)
 
     if l.keyword("until"):
