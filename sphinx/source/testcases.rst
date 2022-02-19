@@ -9,21 +9,23 @@
         assert
         jump
         call
+        clause
         until
+        pass
         exit
-        test clauses:
-            run
-            pause
-            label
-            drag
-            scroll
-            numeric expression (proposed) (nope)
-            pass
-            advance (proposed)
-            type
-            move
-            click
-            string expression
+    test clauses:
+        run
+        pause
+        label
+        drag
+        scroll
+        numeric expression (proposed) (nope)
+        pass
+        advance (proposed)
+        type
+        move
+        click
+        string expression
 
 =====================
 Integrated test suite
@@ -37,6 +39,7 @@ Blah.
 
 Test statements
 ===============
+.. give an example for each one
 
 if statement
 ------------
