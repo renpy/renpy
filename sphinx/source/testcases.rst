@@ -17,7 +17,7 @@
             drag
             scroll
             numeric expression (proposed)
-            pass (proposed)
+            pass
             advance (proposed)
             type
             move
@@ -76,6 +76,11 @@ until statement
     then executes the right clause once before returning
     executes the left one once ?
     basically an inline (do-?)while loop
+
+pass statement
+--------------
+..
+    a noop
 
 exit statement
 --------------

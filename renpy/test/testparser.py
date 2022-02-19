@@ -197,6 +197,9 @@ def parse_statement(l, loc):
         target = l.require(l.name)
         return testast.Call(loc, target)
 
+    elif l.keyword("pass"):
+        return testast.Pass(loc)
+
     elif l.keyword('exit'):
         return testast.Exit(loc)
 
