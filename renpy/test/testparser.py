@@ -119,6 +119,11 @@ def parse_clause(l, loc):
         name = l.require(l.name)
         return testast.Label(loc, name)
 
+    elif l.keyword('eval'):
+
+        source = l.require(l.simple_expression)
+        return testast.Eval(loc, source)
+
     elif l.keyword("type"):
 
         name = l.name()

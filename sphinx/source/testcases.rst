@@ -19,13 +19,13 @@
         label
         drag
         scroll
-        numeric expression (proposed) (nope)
         pass
         advance (proposed)
         type
         move
         click
         string expression
+        eval
 
 =====================
 Integrated test suite
@@ -158,6 +158,12 @@ pass statement
     always ready
 
 advance statement
+eval clause
+-----------
+..
+    does not do anything meaningful when executed, even less than the label clause
+    is ready if and when the given value is true in a boolean way
+
 -----------------
 ..
     like the press of space in renpy

@@ -379,6 +379,25 @@ class Label(Node):
     def ready(self):
         return self.name in renpy.test.testexecution.labels
 
+class Eval(Node):
+    __slots__ = ("expr", "evaluated")
+    def __init__(self, loc, expr):
+        Node.__init__(self, loc)
+        self.expr = expr
+        self.evaluated = False
+
+    def start(self):
+        return True
+
+    def execute(self, state, t):
+        if not self.evaluated: # check if this is necessary
+            self.ready()
+        return None
+
+    def ready(self):
+        self.evaluated = True
+        return bool(renpy.python.py_eval(self.expr))
+
 
 ################################################################################
 # Non-clause statements.
