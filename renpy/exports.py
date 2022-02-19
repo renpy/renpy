@@ -4432,6 +4432,19 @@ def set_focus(screen, id, layer="screens"): # @ReservedAssignment
     restart_interaction()
 
 
+def has_default_focus():
+    """
+    :doc: other
+
+    Returns true if the game can be advanced by clicking or pressing the
+    spacebar.
+
+    For example, it is True in a dialogue or a pause, and False in places
+    like the Game Menu.
+    """
+    return any(f.x is None for f in renpy.display.focus.focus_list)
+
+
 def check_permission(permission):
     """
     :doc: android_permission
