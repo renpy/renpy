@@ -48,6 +48,7 @@ if statement
     not the same as the renpy or python versions :
     it can't take all python values, only a test clause
     the clause being ready is the actual condition for the block to execute or not
+    you can emulate a normal python/renpy if with ``if eval (expression)``
 
 python block statement
 ----------------------
