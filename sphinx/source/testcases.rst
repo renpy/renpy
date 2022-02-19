@@ -88,7 +88,7 @@ call statement
 
 clause statement
 ----------------
-A clause can be given, just by itself.::
+A clause can be given, just by itself. ::
 
     pause 5
 
@@ -98,7 +98,7 @@ Takes two clauses, separated by the word ``until``.
 If and when the right clause is ready, executes it and passes to the next statement.
 If not, executes the left clause until the right clause is ready, then executes the right clause.
 
-This is basically an inline while loop.::
+This is basically an inline while loop. ::
 
     advance until "It's an interactive book."
 
@@ -111,7 +111,7 @@ exit statement
 Quits the game without calling the confirmation screen.
 Does not save the game when quitting : ::
 
-    if eval persistent.quit_test_with action:
+    if eval persistent.quit_test_with_action:
         run Quit(True) # does not confirm, but autosaves
     exit # neither confirms nor autosaves
 
@@ -120,7 +120,7 @@ Test clauses
 
 Clauses have the property of being ready or not ready.
 They can be part of (test-)if or until statements, or they can be simply on their own (see above).
-It is safe to evaluate the readiness of a clause which would raise an exception if executed when not ready.::
+It is safe to evaluate the readiness of a clause which could raise an exception if executed : ::
 
     if label preferences:
         "Dark theme"
@@ -192,6 +192,7 @@ advance clause
 The equivalent of pressing space to advance (or "dismiss") in Ren'py.
 
 Ready when the game can be advanced that way, i.e in dialogues but not in the game menu for example.
+
 .. that remains to be implemented
 
 type clause
