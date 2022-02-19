@@ -19,11 +19,10 @@
             numeric expression (proposed)
             pass (proposed)
             advance (proposed)
-            pattern clauses:
-                type
-                move
-                click
-                string expression
+            type
+            move
+            click
+            string expression
 
 =====================
 Integrated test suite
@@ -35,7 +34,7 @@ Blah.
 .. introduce the testcase statement itself, like the `transform:` statement
 .. note about there being no return statement, unlike label the deindent closes the block
 
-Test statements
+Simple test statements
 ===============
 
 if statement
@@ -59,6 +58,7 @@ assert statement
     like a python assert, raises an AssertionError when the value it is given does not evaluate to a true value
     links to python doc regarding asserts, and to stdtypes about boolean evaluation
     note about regular asserts usually not working outside of this case in regular python blocks in renpy
+.. turn into a clause ?
 
 jump statement
 --------------
@@ -108,6 +108,7 @@ label statement
 ..
     does not *do* anything meaningful when executed
     raises an exception if the provided label is not being passed or has not just been passed when it's executed
+    watch out, pretty sensitive about "just being passed", adding a (test) timed pause before a working label will make it fail
     similar to an assert statement, except it's a clause and it only applies to label conditions
 
 drag statement
@@ -149,21 +150,35 @@ advance statement
     unready during a choice for example (only if that's detectable)
     `advance until "A video game"`
 
-Pattern clauses
-===============
-
-Pattern clauses are a subset of clause statements. They share a number of things.
-
 type statement
 --------------
 .. simulate a key-pressing or the typing of text
 
 move statement
 --------------
+..
+    `move (position) [pattern (string)]`
+    moves the virtual test mouse to the provided position, within the area targeted by the pattern
+    or, if none is given, within the whole screen
 
 click statement
 ---------------
 
 string expression
 -----------------
-.. alias for the click statement, giving it a target
+..
+    alias for the click statement, giving it a target
+    do something if/when the pattern is not found
+    instead of just blocking
+
+..
+    Their readiness condition (for type, move, clock and string) : it is ready if a pattern is not provided,
+    or if one is provided and a suitable target is found on the screen.
+    For the clauses taking the ``always`` property, that property overrides the readiness of the clause.
+
+Patterns
+===============
+
+Some clauses take a pattern.
+The ``pattern`` property (or in the case of the string expression, the string itself) takes a string
+which resolves to a target found on the screen, based on the shorted match in the alt text of focusable screen elements.
