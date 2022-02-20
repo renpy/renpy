@@ -122,7 +122,7 @@ def find_position(f, position):
     x = relative_position(x-f.x, posx, f.w) + f.x
     y = relative_position(y-f.y, posy, f.h) + f.y
 
-    for _i in range(100):
+    for _i in range(renpy.test.testast._test.focus_trials):
 
         x = int(x)
         y = int(y)

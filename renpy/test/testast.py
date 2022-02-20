@@ -43,6 +43,9 @@ class TestSettings(renpy.object.Object):
         # How long should we wait for a transition before we proceed?
         self.transition_timeout = 5.0
 
+        # How many times should we try to find a good spot to place the mouse?
+        self.focus_trials = 100
+
 _test = TestSettings()
 
 
