@@ -1702,10 +1702,11 @@ class Function(Statement):
 
     def execute(self, trans, st, state, events):
         min_fr = None
-        for f in self.function:
-            fr = f(trans, st, trans.at)
-            if fr is not None and (min_fr is None or fr < min_fr):
-                min_fr = fr
+        if self.function is not None:
+            for f in self.function:
+                fr = f(trans, st, trans.at)
+                if fr is not None and (min_fr is None or fr < min_fr):
+                    min_fr = fr
 
         if min_fr is not None:
             return "continue", None, min_fr
