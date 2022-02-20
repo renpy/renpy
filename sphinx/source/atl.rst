@@ -502,7 +502,7 @@ Function Statement
 ------------------
 
 The ``function`` statement allows ATL to use Python functions to control the ATL
-properties. This takes function or the list of functions.
+properties. If not None, this takes function or the list of functions.
 
 .. productionlist:: atl
     atl_function : "function" `expression`
