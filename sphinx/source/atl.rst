@@ -521,7 +521,7 @@ The functions have the same signature as those used with :func:`Transform`:
   number of seconds has elapsed. (0 seconds means to call the function as
   soon as possible.) If the function returns None, control will pass to the
   next ATL statement. If the list of functions is used and some functions
-  return a number, the minimal number is used.
+  return a number, the minimum number is used.
 
 This function should not have side effects other
 than changing the Transform object in the first argument, and may be

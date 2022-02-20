@@ -47,7 +47,7 @@ The Python equivalent of an ATL transform is a Transform object.
         The function should return a delay, in seconds, after which it will
         be called again, or None to be called again at the start of the next
         interaction. If the list of functions is used and some functions 
-        return a number, the minimal number is used.
+        return a number, the minimum number is used.
 
         This function should not have side effects other
         than changing the Transform object in the first argument, and may be
