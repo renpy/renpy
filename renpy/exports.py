@@ -1850,6 +1850,9 @@ def reload_script():
 
     Causes Ren'Py to save the game, reload the script, and then load the
     save.
+
+    This should only be called during development. It works on Windows, macOS,
+    and Linux, but may not work on other platforms.
     """
 
     # Avoid reloading in a replay.
