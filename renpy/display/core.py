@@ -4303,25 +4303,18 @@ class Interface(object):
         """
 
         if not renpy.emscripten:
-            # Allowing execution of untrusted Python statements from outside
-            # the browser would be a security risk
             return
 
-        # Use a command file in MEMFS so that no sync is required
-        cmd_file = '/_js_cmd.py'
-
-        # Check if a command needs to be executed
-        if not os.path.exists(cmd_file):
+        # Retrieve the command to be executed from a global JS variable
+        # (an empty string is returned if the variable is not defined)
+        cmd = emscripten.run_script_string("window._renpy_cmd")
+        if len(cmd) == 0:
             return
 
-        # Read command file content
-        with open(cmd_file, "rt") as f:
-            cmd = f.read()
+        # Delete command variable to prevent executing the command again
+        emscripten.run_script("delete window._renpy_cmd")
 
-        # Delete command file to prevent executing the same command again
-        os.unlink(cmd_file)
-
-        # Execute the command file content
+        # Execute the command
         try:
             renpy.python.py_exec(cmd)
         except Exception as e:
