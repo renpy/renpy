@@ -20,7 +20,6 @@
         drag
         scroll
         pass
-        advance (proposed)
         type
         move
         click
@@ -60,7 +59,7 @@ A normal python/renpy ``if`` can be emulated using the ``eval`` clause : ::
 
     if eval (persistent.should_advance and
              i_should_advance["now"]):
-        advance
+        click
 
 ..
     there is no elif nor else clause
@@ -100,7 +99,7 @@ If not, executes the left clause until the right clause is ready, then executes 
 
 This is basically an inline while loop. ::
 
-    advance until "It's an interactive book."
+    click until "It's an interactive book."
 
 pass statement
 --------------
@@ -186,14 +185,6 @@ Ready if and when the provided value is true, in a boolean context.
       something with a value.
     - The assert statement controls whether the provided value is correct or not.
     - The eval clause provides a value to an ``if`` or ``until`` statement.
-
-advance clause
------------------
-The equivalent of pressing space to advance (or "dismiss") in Ren'py.
-
-Ready when the game can be advanced that way, i.e in dialogues but not in the game menu for example.
-
-.. that remains to be implemented
 
 type clause
 --------------

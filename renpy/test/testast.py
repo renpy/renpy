@@ -399,23 +399,6 @@ class Eval(Node):
         self.evaluated = True
         return bool(renpy.python.py_eval(self.expr))
 
-class Advance(Node):
-    __slots__ = ()
-    def start(self):
-        return True
-
-    def execute(self, state, t):
-        key = 'K_SPACE'
-        if key not in renpy.config.keymap["dismiss"]:
-            key = random.choice(renpy.config.keymap["dismiss"])
-        renpy.test.testkey.down(self, key)
-        renpy.test.testkey.up(self, key)
-        return None
-
-    def ready(self):
-        # ???
-        return True
-
 
 ################################################################################
 # Non-clause statements.
