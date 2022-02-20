@@ -218,3 +218,13 @@ Some clauses take a pattern.
 The ``pattern`` property (or in the case of the string expression, the string itself) takes a string
 which resolves to a target found on the screen, based on the shorted match in the alt text of
 focusable screen elements. The search is case-insensitive.
+
+..
+    If no pattern is given, the virtual test mouse is positioned to the last previous location where
+    a click happened. If that position lies on a focusable element, a random position in the screen
+    which does not overlap a focusable element is chosen instead.
+
+    If a pattern is given, the mouse is positioned to the last previous location where a click happened.
+    If that position does not lie inside the targeted element, a random position within it is chosen instead.
+
+.. :func:`has_default_focus`, simple accessor to whether a game can be advanced by a bare click or not

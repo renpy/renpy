@@ -42,6 +42,9 @@ def find_focus(pattern):
 
         if pattern is None:
             if f.x is None:
+                # one focus, at most, ever branches here
+                # the main "click to continue" one
+                # it's the only one, if any, to be retained in the matching list
                 return "default"
             else:
                 return None
@@ -71,8 +74,7 @@ def find_focus(pattern):
 
     # This gets the matching displayable with the shortest alt text, which
     # is likely what we want.
-    matching.sort(key=lambda a : (len(a[0]), a[0]))
-    return matching[0][1]
+    return min(matching, key=lambda a : (len(a[0]), a[0]))[1]
 
 
 def relative_position(x, posx, width):
