@@ -731,7 +731,7 @@ Occasionally Used
     implementation is :func:`renpy.display_notify`. This is intended
     to allow creators to intercept notifications.
 
-.. var:: config.optimize_texture_bounds = False
+.. var:: config.optimize_texture_bounds = True
 
     When True, Ren'Py will scan images to find the bounding box of the
     non-transparent pixels, and only load those pixels into a texture.
