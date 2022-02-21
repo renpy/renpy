@@ -580,7 +580,7 @@ label _filename_list:
 
         FILES_TXT = os.path.join(renpy.config.basedir, "files.txt")
 
-        with file(FILES_TXT, "w") as f:
+        with open(FILES_TXT, "w") as f:
             for dirname, dirs, files in os.walk(config.gamedir):
 
                 dirs.sort()
