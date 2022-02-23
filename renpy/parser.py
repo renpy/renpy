@@ -1812,6 +1812,9 @@ def parse_parameters(l):
                 default = l.delimited_python("),")
                 has_default = True
 
+                if not default.strip():
+                    l.error("empty parameter default")
+
             elif first_kwonly is None and has_default:
                 l.error("non-default argument follows default argument")
 
