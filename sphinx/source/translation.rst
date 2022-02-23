@@ -35,12 +35,25 @@ language. This is called the None language, regardless of what
 language it actually is. (For example, if the game was written in
 English, English will be the None language.)
 
-When the None language is selected, most of Ren'Py's translation
-functionality is disabled.
-
 Alternate languages are referred to by names which can double as
 Python identifiers (starts with a letter or underscore, followed by
 letters, numbers, and underscores).
+
+When the None language is selected, most of Ren'Py's translation
+functionality is disabled.
+
+A notable exception is for renpy's internal built-in strings, which
+are not found in your project's code yet will still be included in
+the distributed version of the game. An example of such strings are
+those found in the accessibility menu. You can find these strings in
+the ``game/tl/None/common.rpym`` file, whose only purposes are 1) to
+provide translations to these strings when the None language is not
+english, and 2) to allow creators to customize these strings for
+their game.
+
+The initial langage this file will translate the internal strings
+to, is the language of the launcher at the time when the project is
+created.
 
 Generating Translation Files
 ============================
