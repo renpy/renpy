@@ -104,13 +104,6 @@ else:
     sdl = [ 'SDL2' ]
     png = 'png'
 
-steam_sdk = os.environ.get("RENPY_STEAM_SDK", None)
-steam_platform = os.environ.get("RENPY_STEAM_PLATFORM", "")
-
-if steam_sdk:
-    setuplib.library_dirs.append("{}/redistributable_bin/{}".format(steam_sdk, steam_platform))
-    setuplib.include_dirs.append("{}/public".format(steam_sdk))
-
 cubism = os.environ.get("CUBISM", None)
 if cubism:
     setuplib.include_dirs.append("{}/Core/include".format(cubism))
@@ -146,8 +139,6 @@ cython(
         ("FRIBIDI_ENTRY", ""),
         ("HAVE_CONFIG_H", "1"),
         ])
-
-cython("_renpysteam", language="c++", compile_if=steam_sdk, libs=["steam_api"])
 
 # Sound.
 
