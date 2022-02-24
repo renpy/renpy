@@ -26,11 +26,6 @@ python early:
 
 init -1499 python in _renpysteam:
 
-    try:
-        import steamapi
-    except:
-        steamapi = None
-
     def retrieve_stats():
         """
         :doc: steam_stats
@@ -315,14 +310,6 @@ init -1499 python in _renpysteam:
         return steamapi.SteamUtils().BOverlayNeedsPresent()
 
 
-    try:
-        POSITION_TOP_LEFT = steamapi.k_EPositionTopLeft
-        POSITION_TOP_RIGHT = steamapi.k_EPositionTopRight
-        POSITION_BOTTOM_LEFT = steamapi.k_EPositionBottomLeft
-        POSITION_BOTTOM_RIGHT = steamapi.k_EPositionBottomRight
-    except:
-        pass
-
     def set_overlay_notification_position(position):
         """
         :doc: steam_overlay
@@ -358,15 +345,7 @@ init -1499 python in _renpysteam:
 
         steamapi.SteamFriends().ActivateGameOverlayToWebPage(url.encode("utf-8"))
 
-    try:
-        STORE_NONE = steamapi.k_EOverlayToStoreFlag_None
-        STORE_ADD_TO_CART = steamapi.k_EOverlayToStoreFlag_AddToCart
-        STORE_ADD_TO_CART_AND_SHOW = steamapi.k_EOverlayToStoreFlag_AddToCartAndShow
-    except:
-        pass
-
-
-    def activate_overlay_to_store(appid, flag=STORE_NONE):
+    def activate_overlay_to_store(appid, flag=None):
         """
         :doc: steam_overlay
 
@@ -376,8 +355,11 @@ init -1499 python in _renpysteam:
             The appid to open.
 
         `flag`
-            One of _renpysteam.STORE_NONE, .STORE_ADD_TO_CART, or .STORE_ADD_TO_CART_AND_SHOW.
+            One of achievements.steam.STORE_NONE, .STORE_ADD_TO_CART, or .STORE_ADD_TO_CART_AND_SHOW.
         """
+
+        if flag is None:
+            flag = STORE_NONE
 
         steamapi.SteamFriends().ActivateGameOverlayToStore(appid, flag)
 
@@ -523,6 +505,24 @@ init -1499 python in _renpysteam:
         if run_callbacks:
             steamapi.RunCallbacks()
 
+    def import_api():
+
+        global steamapi
+        import steamapi
+
+        global POSITION_TOP_LEFT, POSITION_TOP_RIGHT, POSITION_BOTTOM_LEFT, POSITION_BOTTOM_RIGHT
+
+        POSITION_TOP_LEFT = steamapi.k_EPositionTopLeft
+        POSITION_TOP_RIGHT = steamapi.k_EPositionTopRight
+        POSITION_BOTTOM_LEFT = steamapi.k_EPositionBottomLeft
+        POSITION_BOTTOM_RIGHT = steamapi.k_EPositionBottomRight
+
+        global STORE_NONE, STORE_ADD_TO_CART, STORE_ADD_TO_CART_AND_SHOW
+
+        STORE_NONE = steamapi.k_EOverlayToStoreFlag_None
+        STORE_ADD_TO_CART = steamapi.k_EOverlayToStoreFlag_AddToCart
+        STORE_ADD_TO_CART_AND_SHOW = steamapi.k_EOverlayToStoreFlag_AddToCartAndShow
+
 
 init -1499 python in achievement:
 
@@ -638,11 +638,7 @@ init -1499 python in achievement:
         global steam
         global steamapi
 
-        if not config.enable_steam:
-            return
-
         try:
-            import steamapi
             import sys
             import os
             import ctypes
@@ -657,16 +653,23 @@ init -1499 python in achievement:
                 dll_name = "libsteam_api.so"
 
             dll_path = os.path.join(os.path.dirname(sys.executable), dll_name)
-            dll = ctypes.cdll[dll_path]
-            steamapi.load(dll)
+            has_steam = os.path.exists(dll_path)
 
-            has_steam = True
+            if not config.enable_steam:
+                return
+
+            dll = ctypes.cdll[dll_path]
+
+            import steamapi
+            steamapi.load(dll)
 
             if not steamapi.Init():
                 raise Exception("Init returned false.")
 
             import store._renpysteam as steam
             sys.modules["_renpysteam"] = steam
+
+            steam.import_api()
 
             config.periodic_callbacks.append(steam.periodic)
             config.needs_redraw_callbacks.append(steam.overlay_needs_present)
