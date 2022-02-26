@@ -127,7 +127,7 @@ class Pattern(Node):
 
         if None in (x, y):
             if self.pattern:
-                return state
+                raise Exception("The specified pattern was not resolved to a target")
             else:
                 x, y = renpy.exports.get_mouse_pos()
 
