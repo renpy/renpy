@@ -1376,6 +1376,8 @@ early_developer = False
 # A function that returns the autosave prefix.
 autosave_prefix_callback = None
 
+# Functions called when a test ends - one way or another
+testcase_finally_callbacks = [ ]
 
 del os
 del collections
