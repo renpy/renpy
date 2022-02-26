@@ -366,8 +366,6 @@ class Pause(Node):
             return None
 
 
-class LabelException(AssertionError): pass
-
 class Label(Node):
     __slots__ = "name"
     def __init__(self, loc, name):
@@ -378,12 +376,11 @@ class Label(Node):
         return True
 
     def execute(self, state, t):
-        if self.name in renpy.test.testexecution.labels:
-            return None
-        raise LabelException(self.name)
+        return None
 
     def ready(self):
         return self.name in renpy.test.testexecution.labels
+
 
 class Eval(Node):
     __slots__ = ("expr", "evaluated")
@@ -510,28 +507,25 @@ class Python(Node):
         renpy.python.py_exec_bytecode(self.code.bytecode)
 
 
+class AssertError(AssertionError):pass
+
 class Assert(Node):
-    __slots__ = "expr"
-    def __init__(self, loc, expr):
+    __slots__ = "clause"
+    def __init__(self, loc, clause):
         Node.__init__(self, loc)
-        self.expr = expr
+        self.clause = clause
 
     def start(self):
-        renpy.test.testexecution.action = self
         return True
 
     def execute(self, state, t):
 
         self.report()
 
-        if renpy.test.testexecution.action:
-            return True
-        else:
-            return None
+        if not self.clause.ready():
+            raise AssertError("On line {}:{}, assertion {} failed.".format(self.filename, self.linenumber, self.clause))
 
-    def __call__(self):
-        if not renpy.python.py_eval(self.expr):
-            raise AssertionError("On line {}:{}, assertion {} failed.".format(self.filename, self.linenumber, self.expr))
+        return None
 
 
 class Jump(Node):

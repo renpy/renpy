@@ -191,8 +191,8 @@ def parse_statement(l, loc):
         return testast.Python(loc, code)
 
     elif l.keyword('assert'):
-        source = l.require(l.rest)
-        return testast.Assert(loc, source)
+        check = parse_clause(l, loc)
+        return testast.Assert(loc, check)
 
     elif l.keyword('jump'):
         target = l.require(l.name)

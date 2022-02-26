@@ -54,16 +54,28 @@ A normal python/renpy ``if`` can be emulated using the ``eval`` clause : ::
 
 assert statement
 ----------------
-Like a python assert, this statement raises an AssertionError if and when the value it is given does not
-evaluate to a true value. See the python documentation
+Similarly to a python assert, this statement takes a clause and raises an AssertError if the clause is not ready
+at the time when the assert statement executes.
+
+A python assert can be replicated with::
+
+    assert eval some_function(args)
+
+About python assert statements, see the python documentation
 `regarding asserts <https://docs.python.org/reference/simple_stmts.html#the-assert-statement>`_ and
 `about boolean evaluation <https://docs.python.org/library/stdtypes.html#truth-value-testing>`_.
 
-..
-    .. note::
+.. note::
 
-        The regular ``assert`` python statement is not guaranteed to work in Ren'py. It is disabled in
-        version 7 and earlier.
+    The regular ``assert`` python statement is not guaranteed to work in Ren'py. Notably, it is disabled in
+    version 7 and earlier.
+
+    Therefore, the following may not actually check what it's supposed to check::
+
+        $ assert some_function(args)
+
+    In some versions of renpy or depending on unpredictable conditions, ``some_function`` may not even be called.
+    The first assert example should be used instead.
 
 jump statement
 --------------
@@ -106,10 +118,10 @@ Does not save the game when quitting::
 
 Test clauses
 ============
-
 Clauses have the property of being ready or not ready.
-They can be part of (test-)if or until statements, or they can be simply on their own (see above).
-It is safe to evaluate the readiness of a clause which could raise an exception if executed : ::
+They can be part of ``if``, ``assert`` or ``until`` test statements, or they can be
+simply on their own (see above). It is safe to evaluate the readiness of a clause which could raise
+an exception if executed::
 
     if label preferences:
         "Dark theme"
@@ -170,32 +182,31 @@ This clause is always ready.
 
 label clause
 ---------------
-This is a control, assert-like clause. It does not *do* anything when executed, but raises an
-exception if the given label has not been passed by the script since the last executed test statement.
+Does not do anything when executed. This clause only exists to be used inside ``if`` and ``until`` statements.
+
+The label clause is ready if and when the provided label has been passed between the previous test statement
+and the one before.
 
 Attention, this means that the following example does not work::
 
     "play chapter 1"
     # passing the "chapter_1" label
     pause 1
-    label chapter_1
-
-.. a label clause statement placed directly after non-advancing statements, for example
-.. pause clauses or other label clauses
+    assert label chapter_1
 
 It will not work because no renpy label will have been reached between the pause statement
 and the label statement. The same happens in the following example::
 
     "play chapter 1"
     # passing the "chapter_1" label
-    label chapter_1
-    label chapter_1
+    assert label chapter_1
+    assert label chapter_1
 
 The chapter_1 label is not reached between the first label clause and the second label clause, therefore the
-second label clause fails. In both examples, the label clause would have worked if it were placed on its own
-directly after the ``"play chapter 1"`` statement (or after the comment, which doesn't count).
+second label clause fails. In both examples, the assert label statement would have worked if it were placed
+on its own, directly after the ``"play chapter 1"`` statement (or after the comment, which doesn't count).
 
-The label clause is ready if and when the provided label has just been passed.
+.. to jump, use ``run Jump("label_name")``
 
 drag clause
 --------------
