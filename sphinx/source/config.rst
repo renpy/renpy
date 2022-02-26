@@ -1879,6 +1879,14 @@ Rarely or Internally Used
     an interaction is started. These callbacks are not called when an
     interaction is restarted.
 
+.. var:: config.testcase_finally_callbacks = [ ... ]
+
+    A list of functions that are called (without any arguments) when
+    execution of testcases end - in a good way or not. This is intended
+    to free resources as well as cleaning up anything that may have been
+    modified for the purpose of the test, such as persistent or save
+    data.
+
 .. var:: config.quit_callbacks = [ ... ]
 
     A list of functions that are called (without any arguments) when
