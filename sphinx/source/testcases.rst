@@ -35,14 +35,15 @@ the game.
 Blah.
 
 Testcase statement
-------------------
+==================
 
 The ``testcase`` statement creates a named testcase, which is made of successive test statements.
 Testcases are similar to Ren'py :ref:`labels <labels-control-flow>`, with a few specificities:
+
 - The Testcase statement takes test statements, when the Ren'py label statement takes Ren'py code.
 - There is no testcase equivalent of the return statement: like in a ``def`` function definition,
   the removal of indentation and the end of the block closes the testcase.
-- There can be no test statement outside of a testcase block.::
+- There can be no test statement outside of a testcase block. ::
 
     testcase default:
         "Start"
