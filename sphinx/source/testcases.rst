@@ -184,7 +184,8 @@ This clause is always ready.
 
 label clause
 ---------------
-Does not do anything when executed. This clause only exists to be used inside ``if`` and ``until`` statements.
+Does not do anything when executed. This clause only exists to be used inside clause-taking test statements
+like ``assert``, ``if`` or ``until``.
 
 The label clause is ready if and when the provided label has been passed between the previous test statement
 and the one before.
@@ -232,7 +233,8 @@ scroll clause
 
 eval clause
 -----------
-Does not do anything when executed. This clause only exists to be used inside ``if`` and ``until`` statements.
+Does not do anything when executed. This clause only exists to be used inside clause-taking test statements
+like ``assert``, ``if`` or ``until``.
 
 .. The provided expression can span on several lines, if wrapped in parentheses.
 
