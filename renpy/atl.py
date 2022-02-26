@@ -1157,7 +1157,7 @@ class Interpolation(Statement):
         elif trans.atl_state is not None:
             first_frame = True
         elif st_or_at == 0:
-            first_frame = True
+            first_frame = st <= self.duration
         else:
             # This is the case when we're skipping through a displayable to
             # find the right time.
