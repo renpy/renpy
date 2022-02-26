@@ -126,6 +126,44 @@ It is safe to evaluate the readiness of a clause which could raise an exception 
 
 .. for each one, say what makes it ready
 
+click clause
+---------------
+
+Executes a simulated click on the screen.
+It takes these optional properties:
+
+- ``button`` specifies which button of the simulated mouse to be clicked.
+  1 is a left-click, 2 is a right-click, 3 is a scrollwheel-click, 4 and 5 are supported on some mouses.
+  Takes an integer and defaults to 1.
+- ``pos`` specifies where to click, as a pair of x/y coordinates.
+  Coordinates are taken relative to the screen. Floats between 0.0 and 1.0 are supported as a fraction
+  of the screen size in either dimension. ``absolute`` and other means of expressing positions
+  are not currently supported.
+
+.. ``always`` is not documented because useless in the case of the click clause by itself
+
+.. give example for both
+
+This clause is always ready.
+
+string expression clause
+------------------------
+
+This clause consists in a simple string, which is interpreted as a pattern (see the Patterns section below).
+This clause executes by clicking on the target identified by the pattern. If no target is found,
+an exception is raised, terminating the test.
+
+It takes three optional properties:
+
+- ``button`` - same as the click clause
+- ``pos`` - same as the click clause, but the position is relative to the focusable area of the target.
+  If the position is invalid, for example if a button is 100x100 pixels and the given ``pos`` is (105, 150),
+  the ``pos`` is ignored and a random position within the target is used instead.
+- ``always`` does not take a value. It overrides the readiness of the clause, making it always ready.
+
+This clause is ready if and when a suitable target is found on the screen, or if it is given
+the ``always`` property.
+
 run clause
 -------------
 Runs the provided :ref:`screen-language action <screen-actions>`.
@@ -190,6 +228,11 @@ type clause
 --------------
 .. simulate a key-pressing or the typing of text
 
+..
+    It is ready if a pattern is not provided,
+    or if one is provided and a suitable target is found on the screen.
+    For the clauses taking the ``always`` property, that property overrides the readiness of the clause.
+
 move clause
 --------------
 ..
@@ -197,17 +240,8 @@ move clause
     moves the virtual test mouse to the provided position, within the area targeted by the pattern
     or, if none is given, within the whole screen
 
-click clause
----------------
-
-string expression
------------------
 ..
-    alias for the click statement, giving it a target
-    raises an exception if the pattern is not found
-
-..
-    Their readiness condition (for type, move, clock and string) : it is ready if a pattern is not provided,
+    It is ready if a pattern is not provided,
     or if one is provided and a suitable target is found on the screen.
     For the clauses taking the ``always`` property, that property overrides the readiness of the clause.
 
@@ -218,6 +252,8 @@ Some clauses take a pattern.
 The ``pattern`` property (or in the case of the string expression, the string itself) takes a string
 which resolves to a target found on the screen, based on the shorted match in the alt text of
 focusable screen elements. The search is case-insensitive.
+
+.. does it take focus_mask into account ?
 
 ..
     If no pattern is given, the virtual test mouse is positioned to the last previous location where
