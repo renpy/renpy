@@ -1048,6 +1048,13 @@ Rarely or Internally Used
     A list of callbacks that are called when Ren'Py quits or restarts
     the game. These callbacks should not interact with the user.
 
+.. var:: config.atl_one_frame = True
+
+    If True (the default from Ren'py 6.99.13 on), pause and
+    interpolation statements in ATL will show at least one frame. When
+    a game doesn't expect this, it can show up as a series of rapidly
+    displayed single frames.
+
 .. var:: config.auto_choice_delay = None
 
     If not None, this variable gives a number of seconds that Ren'Py
