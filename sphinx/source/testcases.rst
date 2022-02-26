@@ -25,6 +25,18 @@ Testcases are similar to Ren'py :ref:`labels <labels-control-flow>`, with a few 
 
 The testcase named ``default`` is the one which will be executed by default.
 
+Note that when a testcase finishes executing, the game doesn't close itself - unless the ``exit`` statement is
+used. Instead, it just remains where it is in the game, awaiting user action.
+
+When that happens, or if the game quits before that happens (because of an ``exit`` or following an exception),
+the functions added to the :var:`config.testcase_finally_callbacks` list are called without
+arguments. This allows for clean-up code to be executed whatever may happen during the tests.
+
+.. should an exception during a callback call prevent subsequent callbacks from being called ?
+
+There is no equivalent for code being executed before the tests happens, since such code can be put inside
+a python block at the beginning of the testcase.
+
 Test statements
 ===============
 .. give an example for each one
@@ -43,7 +55,7 @@ This statement, like a python ``if`` statement, text a block.
 Unlike the Ren'py or python versions however, it only takes a test clause, instead of a general python expression.
 The provided clause being ready is the actual condition for the block to execute or not.
 
-A normal python/renpy ``if`` can be emulated using the ``eval`` clause : ::
+A normal python/renpy ``if`` can be replicated using the ``eval`` clause::
 
     if eval (persistent.should_advance and
              i_should_advance["now"]):
