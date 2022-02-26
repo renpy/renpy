@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -36,7 +36,7 @@ init -1 python in util:
 
             return [ i for i in os.listdir(d) if isinstance(i, str) ]
 
-        except:
+        except Exception:
             return [ ]
 
     def walk(directory, base=None):
@@ -75,4 +75,3 @@ init -1 python in util:
                 relfn = relfn.replace("\\", "/")
 
                 yield relfn, False
-

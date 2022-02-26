@@ -1,10 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from __future__ import print_function
 
-import os.path
+import os
 import re
 import codecs
+import datetime
+import pathlib
+
 
 ENDINGS = [
     ".rpy",
@@ -28,6 +31,9 @@ module/pysdlsound/__init__.py
 module/build/
 module/include/
 module/gen/
+module/gen3/
+module/gen-static/
+module/gen3-static/
 launcher/game/EasyDialogsResources.py
 launcher/game/EasyDialogsWin.py
 launcher/game/pefile.py
@@ -53,23 +59,22 @@ def process_file(fn):
     has_license = False
     first = True
 
-    with open(fn, "rb") as f:
+    with open(fn, "r") as f:
 
         for l in f:
             if fn.endswith(".rpy") or fn.endswith(".rpym"):
                 if first:
-                    if codecs.BOM_UTF8 not in l:
+                    if "\ufeff" not in l:
                         print("Missing BOM", fn)
                     first = False
                 else:
-                    if codecs.BOM_UTF8 in l:
+                    if "\ufeff" in l:
                         print("Extra BOM", fn)
 
                 first = False
 
-
             m = re.search(
-                r"Copyright (\d{4})-2015 Tom Rothamel",
+                r"Copyright (\d{4})-%d Tom Rothamel" % datetime.datetime.now().year,
                 l)
 
             if m:
@@ -91,8 +96,13 @@ def process(root):
             fn = os.path.join(dirname, fn)
             process_file(fn)
 
-process_file("renpy.py")
-process("renpy")
-process("module")
-process("launcher/game")
+if __name__ == "__main__":
 
+    os.chdir(pathlib.Path(__file__).absolute().parent.parent)
+
+    print(os.getcwd())
+
+    process_file("renpy.py")
+    process("renpy")
+    process("module")
+    process("launcher/game")

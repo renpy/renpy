@@ -74,7 +74,7 @@ statement, and removes the space key from that list. ::
         $ config.keymap['dismiss'].remove('K_SPACE')
 
 The default keymap is contained inside renpy/common/00keymap.rpy, and
-as of version 7.4.7 is as follows::
+as of version 7.4.11 is as follows::
 
     config.keymap = dict(
 

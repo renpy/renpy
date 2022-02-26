@@ -561,8 +561,8 @@
     new "Le projet [project_name!q] existe déjà. Choisissez un nom de projet différent."
 
     # gui7.rpy:341
-    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "Quelle résolution souhaitez-vous utiliser pour votre projet ? Même si Ren’Py peut agrandir ou diminuer les fenêtres et leurs images à l’échelle, il s’agit là de l’échelle initiale, la taille à laquelle les composants doivent être dessinés et la taille de fenêtre pour lesquelles ils seront le plus précis.\n\nThe La valeur par défaut (1280x720) semble être un compromis raisonnable."
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "Quelle résolution souhaitez-vous utiliser pour votre projet ? Même si Ren’Py peut agrandir ou diminuer les fenêtres et leurs images à l’échelle, il s’agit là de l’échelle initiale, la taille à laquelle les composants doivent être dessinés et la taille de fenêtre pour lesquelles ils seront le plus précis.\n\nThe La valeur par défaut ([default_size[0]]x[default_size[1]]) semble être un compromis raisonnable."
 
     # gui7.rpy:389
     old "Creating the new project..."

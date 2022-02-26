@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -37,7 +37,7 @@ os.chdir(BASE)
 # Create the gen directory if it doesn't exist.
 try:
     os.makedirs("gen")
-except:
+except Exception:
     pass
 
 # Generate styles.
@@ -104,13 +104,6 @@ else:
     sdl = [ 'SDL2' ]
     png = 'png'
 
-steam_sdk = os.environ.get("RENPY_STEAM_SDK", None)
-steam_platform = os.environ.get("RENPY_STEAM_PLATFORM", "")
-
-if steam_sdk:
-    setuplib.library_dirs.append("{}/redistributable_bin/{}".format(steam_sdk, steam_platform))
-    setuplib.include_dirs.append("{}/public".format(steam_sdk))
-
 cubism = os.environ.get("CUBISM", None)
 if cubism:
     setuplib.include_dirs.append("{}/Core/include".format(cubism))
@@ -146,8 +139,6 @@ cython(
         ("FRIBIDI_ENTRY", ""),
         ("HAVE_CONFIG_H", "1"),
         ])
-
-cython("_renpysteam", language="c++", compile_if=steam_sdk, libs=["steam_api"])
 
 # Sound.
 

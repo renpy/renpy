@@ -10,109 +10,109 @@ ehthumbs.db
 ehthumbs_vista.db
 [Dd]esktop.ini
 
-*.rpyc
-*.rpyb
-*.rpymc
+# Python related files.
 *.pyc
 *.pyo
+*.pyi
 
+# Editor files.
 *~
 *.bak
 
-saves
-tmp
-cache
-env
-.idea
+# Compiled Ren'Py files.
+*.rpyc
+*.rpyb
+*.rpymc
 
+# Ren'Py log files.
 log.txt
 errors.txt
 traceback.txt
+lint.txt
 
-styles.txt
+# Created directories.
+saves/
+tmp/
+cache/
 
-/gui/game/gui
-
-/android
-/build
-/dist
-/dists
-/renpy.app
-/renpy2.app
-/renpy3.app
-/jedit
-/lint.txt
-/renpy.code
-/*testing*
-/screenshot*
+# Executables.
 /renpy.exe
 /renpy2.exe
 /renpy3.exe
 /renpy-32.exe
+
 /renpy.sh
 /renpy2.sh
 /renpy3.sh
+
+/renpy2.app
+/renpy3.app
+
+# Libraries.
 /lib
-/lib.old
-/doc
-/.pydevproject
-/.pydevproject.bak
-/.project
-/.cproject
-/.settings
-/LICENSE.txt
-/templates/english/README.html
-/the_question/README.html
-/tutorial/README.html
-/renpy/angle/*.pyx
-/renpy/angle/*.pxd
-/renpy-ppc.zip
-/module/build
-/module/gen*
-/editra
-/atom
-/launcher/game/theme
-/launcher/game/script_version.rpy
 
-/dl
-renpy/vc_version.py
-.externalToolBuilders
+# Platforms.
 /rapt
-/evil
-/iaptest
-/pygame_sdl2
+/rapt2
+/rapt3
+
 /renios
-/steam_appid.txt
-/.coverage
-/id
-/ai
-/interface_7
-/htmlcov
-/the_question*/.android.json
-/WINDOWS.rst
-/old
+/renios2
+/renios3
 
-/*-all/
-/*-win/
-/*-mac/
-/*-linux*/
-/*-dists/
-doc-web
+/web
 
-sphinx/source/inc
-sphinx/source/thequestion.rst
-tutorial/game/tutorial_director.rpy
-launcher/theme
-module/emscripten-static/
-web/
+# Docs.
+/sphinx/source/inc
+/sphinx/source/thequestion.rst
+/doc
+/doc-web
+/LICENSE.txt
 
+# Gui template.
+/gui/game/gui
+
+# Editors.
+/jedit
+/atom
+
+# Generated source.
+/renpy/vc_version.py
+/module/gen/
+/module/gen3/
+/module/gen-static/
+/module/gen3-static/
+/tutorial/game/tutorial_director.rpy
+
+# Module build.
+/module/build
+/module/dist
+/module/emscripten-static
+
+# Download target.
+/dl
+
+# Pygame_sdl2.
+/pygame_sdl2
+
+# Steam.
+steam_appid.txt
+
+# Type analysis.
+/typings
+
+
+# Live2D
 cubism
-glexperiment
-live2d
-rapt2
-rapt3
-renios2
-renios3
-notarized
-
 CubismSdkForNative-4-*.zip
+
+# Created files.
+/launcher/theme
+/screenshot*
+.android.json
+
+# Old files.
+/0old
+
+# Works in progress, throwaway scripts, etc.
+/scratch

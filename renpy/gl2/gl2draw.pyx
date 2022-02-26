@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1339,3 +1339,7 @@ cdef class GL2DrawingContext:
 
 # A set of uniforms that are defined by Ren'Py, and shouldn't be set in ATL.
 standard_uniforms = { "u_transform", "u_time", "u_random" }
+
+_types = """
+standard_uniforms : set[str]
+"""

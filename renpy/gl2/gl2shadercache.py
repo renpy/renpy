@@ -3,7 +3,7 @@ import re
 import io
 import os
 
-import renpy.display
+import renpy
 
 # A map from shader part name to ShaderPart
 shader_part = { }
@@ -87,7 +87,7 @@ class ShaderPart(object):
 
             try:
                 priority = int(priority)
-            except:
+            except Exception:
                 shader = None
 
             if shader == "vertex":
@@ -322,14 +322,14 @@ class ShaderCache(object):
 
             try:
                 os.unlink(fn)
-            except:
+            except Exception:
                 pass
 
             os.rename(tmp, fn)
 
             self.dirty = False
 
-        except:
+        except Exception:
             renpy.display.log.write("Saving shaders to {!r}:".format(fn))
             renpy.display.log.exception()
 
@@ -342,7 +342,7 @@ class ShaderCache(object):
         try:
             with renpy.loader.load(self.filename) as f:
                 for l in f:
-                    l = l.strip()
+                    l = l.strip().decode("utf-8")
                     partnames = tuple(l.strip().split())
 
                     if not partnames:
@@ -354,11 +354,11 @@ class ShaderCache(object):
 
                     try:
                         self.get(partnames)
-                    except:
+                    except Exception:
                         renpy.display.log.write("Precompiling shader {!r}:".format(partnames))
                         renpy.display.log.exception()
                         self.missing.add(partnames)
-        except:
+        except Exception:
             renpy.display.log.write("Could not open {!r}:".format(self.filename))
             return
 
@@ -384,4 +384,3 @@ class ShaderCache(object):
         renpy.display.log.write("%s", name)
         renpy.display.log.write("%s", text)
         renpy.display.log.write("-" * 80)
-

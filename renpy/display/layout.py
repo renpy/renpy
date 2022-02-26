@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,10 +23,11 @@
 # the screen.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
 
+
+import renpy
 from renpy.display.render import render, Render
-import renpy.display
 
 
 def scale(num, base):
@@ -125,9 +126,9 @@ class Container(renpy.display.core.Displayable):
 
     def __init__(self, *args, **properties):
 
-        self.children = self._list_type()
-        self.child = None
-        self.offsets = self._list_type()
+        self.children = self._list_type() # type: list
+        self.child = None # type: renpy.display.core.Displayable|None
+        self.offsets = self._list_type() # type: list[tuple[int, int]]
 
         for i in args:
             self.add(i)
@@ -606,6 +607,12 @@ class MultiBox(Container):
     first = True
     order_reverse = False
     layout = None
+
+    _layer_at_list = None # type: list|None
+    _camera_list = None # type: list|None
+    layers = None # type: dict|None
+    raw_layers = None # type: dict|None
+
 
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
@@ -1444,7 +1451,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             else:
                 child = raw_child
 
-            if isinstance(self.child, Transform) and isinstance(child, Transform):
+            if isinstance(self.child, renpy.display.transform.Transform) and isinstance(child, renpy.display.transform.Transform):
                 child.take_state(self.child)
                 child.take_execution_state(self.child)
 
@@ -1480,7 +1487,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             else:
                 renpy.display.predict.displayable(child)
 
-        except:
+        except Exception:
             pass
 
     def get_placement(self):
@@ -1805,7 +1812,7 @@ class Side(Container):
         width = old_width
         height = old_height
 
-        self.offsets = [ None ] * len(self.children)
+        self.offsets = [ (0, 0) ] * len(self.children) # Fill temporarily.
 
         lefts = self.left_space
         rights = self.right_space
@@ -2150,7 +2157,7 @@ class AlphaMask(Container):
         rv = renpy.display.render.Render(w, h)
 
         rv.operation = renpy.display.render.IMAGEDISSOLVE
-        rv.operation_alpha = 1.0
+        rv.operation_alpha = True
         rv.operation_complete = 256.0 / (256.0 + 256.0)
         rv.operation_parameter = 256
 

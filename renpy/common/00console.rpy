@@ -667,7 +667,7 @@ init -1500 python in _console:
                 # Try to eval it.
                 try:
                     renpy.python.py_compile(code, 'eval')
-                except:
+                except Exception:
                     pass
                 else:
                     result = renpy.python.py_eval(code)
@@ -682,7 +682,7 @@ init -1500 python in _console:
                 # Try to exec it.
                 try:
                     renpy.python.py_compile(code, "exec")
-                except:
+                except Exception:
                     if error is None:
                         error = self.format_exception()
                 else:
@@ -697,7 +697,7 @@ init -1500 python in _console:
             except renpy.game.CONTROL_EXCEPTIONS:
                 raise
 
-            except:
+            except Exception:
                 import traceback
                 traceback.print_exc()
 
@@ -723,7 +723,7 @@ init -1500 python in _console:
                 renpy.rollback(checkpoints=0, force=True, greedy=False, current_label="_console")
             except renpy.game.CONTROL_EXCEPTIONS:
                 raise
-            except:
+            except Exception:
                 pass
 
         renpy.call_in_new_context("_console")
@@ -1037,7 +1037,7 @@ screen _trace_screen:
 
                         try:
                             value = repr_func(eval(expr))
-                        except:
+                        except Exception:
                             value = "eval failed"
                         del repr_func
 

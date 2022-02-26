@@ -1,5 +1,5 @@
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -136,7 +136,7 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
         try:
             f.seek(offset)
             face.offset = offset
-        except:
+        except Exception:
             traceback.print_exc()
             return -1
 
@@ -148,7 +148,7 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
 
             for i from 0 <= i < count:
                 buffer[i] = cbuf[i]
-        except:
+        except Exception:
             traceback.print_exc()
             return -1
 

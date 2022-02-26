@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,7 +25,6 @@
 # In this module, all files and paths are stored in unicode. Full paths
 # might include windows path separators (\), but archive paths and names we
 # deal with/match against use the unix separator (/).
-
 
 init python in distribute:
 
@@ -61,6 +60,17 @@ init python in distribute:
             major=sys.version_info.major,
             minor=sys.version_info.minor,
         )
+
+    # Going from 7.4 to 7.5 or 8.0, the library directory changed.
+    RENPY_PATCH = py("""\
+def change_renpy_executable():
+    import sys, os, renpy, site
+
+    if hasattr(site, "RENPY_PLATFORM") and hasattr(sys, "renpy_executable") and (renpy.linux or renpy.windows):
+        sys.renpy_executable = os.path.join(renpy.config.renpy_base, "lib", "py{major}-" + site.RENPY_PLATFORM, os.path.basename(sys.renpy_executable))
+
+change_renpy_executable()
+""")
 
     match_cache = { }
 
@@ -186,7 +196,7 @@ init python in distribute:
 
             key = (self.name, self.directory, self.executable)
 
-            hash.update(repr(key))
+            hash.update(repr(key).encode("utf-8"))
 
             if self.path is None:
                 return
@@ -201,9 +211,8 @@ init python in distribute:
                 digest = distributor.hash_cache[self.path]
             else:
                 digest = hash_file(self.path)
-                distributor.hash_cache[self.path] = digest
 
-            hash.update(digest)
+            hash.update(digest.encode("utf-8"))
 
     class FileList(list):
         """
@@ -496,7 +505,7 @@ init python in distribute:
             if not packagedest:
                 try:
                     os.makedirs(self.destination)
-                except:
+                except Exception:
                     pass
 
                 self.load_build_cache()
@@ -843,7 +852,7 @@ init python in distribute:
 
             tfn = self.temp_filename(list_name + "_hash.txt")
 
-            with open(tfn, "wb") as tf:
+            with open(tfn, "w") as tf:
                 tf.write(self.file_lists[list_name].hash(self))
 
             self.add_file("binary", "launcher/game/" + list_name + "_hash.txt", tfn)
@@ -864,7 +873,7 @@ init python in distribute:
                 data = f.read()
 
             with open(tmp_fn, "wb") as f:
-                f.write(b"#!/usr/bin/env python2\n")
+                f.write(b"#!/usr/bin/env python3\n")
                 f.write(data)
 
             self.add_file("source_only", "renpy.py", tmp_fn, True)
@@ -910,7 +919,13 @@ init python in distribute:
             plist.update(self.build.get("mac_info_plist", { }))
 
             rv = self.temp_filename("Info.plist")
-            plistlib.writePlist(plist, rv)
+
+            if PY2:
+                plistlib.writePlist(plist, rv)
+            else:
+                with open(rv, "wb") as f:
+                    plistlib.dump(plist, f)
+
             return rv
 
         def add_python(self):
@@ -930,11 +945,13 @@ init python in distribute:
 
             prefix = py("lib/py{major}-")
 
-            self.add_file(
-                linux_i686,
-                prefix + "linux-i686/" + self.executable_name,
-                os.path.join(config.renpy_base, prefix + "linux-i686/renpy"),
-                True)
+            if os.path.exists(linux_i686):
+
+                self.add_file(
+                    linux_i686,
+                    prefix + "linux-i686/" + self.executable_name,
+                    os.path.join(config.renpy_base, prefix + "linux-i686/renpy"),
+                    True)
 
             self.add_file(
                 linux,
@@ -1119,7 +1136,7 @@ init python in distribute:
             try:
                 import sys, os
                 isatty = os.isatty(sys.stdin.fileno())
-            except:
+            except Exception:
                 isatty = False
 
             if isatty:
@@ -1344,7 +1361,7 @@ init python in distribute:
 
             if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
 
-                with open(update_fn, "wb") as f:
+                with open(update_fn, "w") as f:
                     json.dump(update, f, indent=2)
 
                 if (not dlc) or (format == "update"):
@@ -1452,10 +1469,8 @@ init python in distribute:
 
             index = { }
 
-            # Ren'Py 7.4.1 forgot to include mac zsync, so it needs to be downloaded before the update
-            # can occur.
             if self.build['renpy']:
-                index["monkeypatch"] = "def mac_fix():\n    import renpy\n    if not renpy.macintosh:\n        return\n\n    import os\n    mac = os.path.join(renpy.config.renpy_base, \"lib\", \"mac-x86_64\")\n    zsync = os.path.join(mac, \"zsync\")\n\n    if not os.path.isdir(mac):\n        return\n\n    if os.path.isdir(zsync):\n        return\n\n    import requests\n\n    response = requests.get(\"https://www.renpy.org/dl/mac-fix/zsync\")\n\n    with open(zsync + \".new\", \"w\") as f:\n        f.write(response.content)\n    \n    os.chmod(zsync + \".new\", 0o755)\n    os.rename(zsync + \".new\", zsync)\n\nmac_fix()\n"
+                index["monkeypatch"] = RENPY_PATCH
 
             def add_variant(variant):
 
@@ -1483,7 +1498,7 @@ init python in distribute:
                     add_variant(p["name"])
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
-            with open(fn, "wb") as f:
+            with open(fn, "w") as f:
                 json.dump(index, f, indent=2)
 
 
@@ -1493,10 +1508,10 @@ init python in distribute:
 
             fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
 
-            with open(fn, "wb") as f:
+            with open(fn, "w", encoding="utf-8") as f:
                 for k, v in self.build_cache.items():
                     l = "\t".join([k, v[0], v[1]]) + "\n"
-                    f.write(l.encode("utf-8"))
+                    f.write(l)
 
         def load_build_cache(self):
             if not self.build['renpy']:

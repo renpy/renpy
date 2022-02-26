@@ -274,7 +274,7 @@ without quotes. ::
             who, what = o
             try:
                 eval(who)
-            except:
+            except Exception:
                 renpy.error("Character not defined: %s" % who)
 
             tte = renpy.check_text_tags(what)

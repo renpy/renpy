@@ -857,8 +857,8 @@
     new "[project_dir!q]는 이미 존재합니다. 다른 프로젝트 이름을 선택하세요."
 
     # game/gui7.rpy:358
-    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "프로젝트에서 어떤 해상도를 사용하나요? 렌파이가 창을 위아래로 확장 할 수 있지만, 이것은 창의 초기 크기, 에셋이 그려지는 크기, 애셋이 가장 선명하게 될 크기입니다.\n\n1280x720의 기본값은 적절한 절충안입니다."
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "프로젝트에서 어떤 해상도를 사용하나요? 렌파이가 창을 위아래로 확장 할 수 있지만, 이것은 창의 초기 크기, 에셋이 그려지는 크기, 애셋이 가장 선명하게 될 크기입니다.\n\n[default_size[0]]x[default_size[1]]의 기본값은 적절한 절충안입니다."
 
     # game/gui7.rpy:358
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."

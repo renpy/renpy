@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,7 +34,7 @@ init python:
     if renpy.macintosh:
         try:
             import pyobjus
-        except:
+        except ImportError:
             pass
 
 
@@ -50,7 +50,7 @@ init python:
 
             return True
 
-        except:
+        except Exception:
             return False
 
     def choose_directory(path):
@@ -72,7 +72,7 @@ init python:
         else:
             try:
                 default_path = os.path.dirname(os.path.abspath(config.renpy_base))
-            except:
+            except Exception:
                 default_path = os.path.abspath(config.renpy_base)
 
         if EasyDialogs:
@@ -129,7 +129,7 @@ init python:
                 choice = p.stdout.read()
                 code = p.wait()
 
-            except:
+            except Exception:
                 import traceback
                 traceback.print_exc()
 

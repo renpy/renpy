@@ -798,7 +798,7 @@ def AskFolder(
     callback = BrowseCallbackProc(BrowseCallback)
 
     browseInfo = BROWSEINFO()
-    browseInfo.pszDisplayName = ctypes.c_char_p('\0' * (MAX_PATH+1))
+    browseInfo.pszDisplayName = ctypes.c_char_p(b'\0' * (MAX_PATH+1))
     browseInfo.lpszTitle = message
     browseInfo.lpfn = callback
     #~ browseInfo.ulFlags = BIF_EDITBOX
@@ -809,7 +809,7 @@ def AskFolder(
     if not pidl:
         result = None
     else:
-        path = ctypes.c_char_p('\0' * (MAX_PATH+1))
+        path = ctypes.c_char_p(b'\0' * (MAX_PATH+1))
         shell32.SHGetPathFromIDList(pidl, path)
         ole32.CoTaskMemFree(pidl)
         result = path.value

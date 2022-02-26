@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -182,6 +182,13 @@ cdef class Live2DModel:
 
     cdef list meshes
 
+    _types = """
+        parameters : dict[str, Parameter]
+        parts : dict[str, Part]
+        parameter_groups : dict
+        opacity_groups : dict
+        """
+
     def __init__(self, fn):
         """
         Loads the Live2D model.
@@ -245,7 +252,7 @@ cdef class Live2DModel:
         self.parameters = { }
 
         for 0 <= i < self.parameter_count:
-            name = self.parameter_ids[i]
+            name = self.parameter_ids[i].decode("utf-8")
             self.parameters[name] = Parameter(
                 i, name,
                 self.parameter_minimum_values[i],
@@ -256,7 +263,7 @@ cdef class Live2DModel:
         self.parts = { }
 
         for 0 <= i < self.part_count:
-            name = self.part_ids[i]
+            name = self.part_ids[i].decode("utf-8")
             self.parts[name] = Part(i, name, self.part_opacities[i])
 
         self.opacity_groups = { }
