@@ -1,31 +1,5 @@
 .. _testcases:
 
-..
-    testcase statement
-    test statements:
-        if
-        python
-        $
-        assert
-        jump
-        call
-        clause
-        until
-        pass
-        exit
-    test clauses:
-        run
-        pause
-        label
-        drag
-        scroll
-        pass
-        type
-        move
-        click
-        string expression
-        eval
-
 =====================
 Integrated test suite
 =====================
@@ -122,11 +96,13 @@ Does not do anything. It's a no-op, allowing empty testcases.
 exit statement
 --------------
 Quits the game without calling the confirmation screen.
-Does not save the game when quitting : ::
+Does not save the game when quitting::
 
+    if eval need_to_confirm:
+        run Quit(confirm=True) # asks for confirmation, and autosaves
     if eval persistent.quit_test_with_action:
-        run Quit(True) # does not confirm, but autosaves
-    exit # neither confirms nor autosaves
+        run Quit(confirm=False) # does not ask, but still autosaves
+    exit # neither asks nor autosaves
 
 Test clauses
 ============
