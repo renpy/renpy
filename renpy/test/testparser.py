@@ -39,7 +39,7 @@ def parse_click(l, loc, target):
         elif l.keyword('pos'):
             rv.position = l.require(l.simple_expression)
 
-        elif l.keyword('always'):
+        elif (target is not None) and l.keyword('always'):
             rv.always = True
 
         else:
