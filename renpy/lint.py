@@ -785,6 +785,12 @@ def lint():
 
     print("\ufeff" + renpy.version + " lint report, generated at: " + time.ctime())
 
+    # Populate default statement values.
+    renpy.exports.execute_default_statement(True)
+
+    # Initialise store and values set by start callbacks.
+    renpy.exports.call_in_new_context('_start_store')
+
     # This supports check_hide.
     global image_prefixes
     image_prefixes = { }
