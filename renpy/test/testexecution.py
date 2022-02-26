@@ -162,7 +162,7 @@ def execute():
 
     if node is None:
         renpy.test.testmouse.reset()
-        for clbk in renpy.config.testcase_finally_callbacks:
+        for clbk in renpy.config.end_testcase_callbacks:
             clbk()
         return
 

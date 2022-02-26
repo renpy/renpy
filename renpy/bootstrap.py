@@ -309,7 +309,7 @@ You may be using a system install of python. Please run {0}.sh,
     finally:
 
         if renpy.test.testexecution.node is not None:
-            for clbk in renpy.config.testcase_finally_callbacks:
+            for clbk in renpy.config.end_testcase_callbacks:
                 clbk()
 
         if "RENPY_SHUTDOWN_TRACE" in os.environ:
