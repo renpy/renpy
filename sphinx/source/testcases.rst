@@ -82,12 +82,12 @@ assert statement
 Like a python assert, this statement raises an AssertionError if and when the value it is given does not
 evaluate to a true value. See the python documentation
 `regarding asserts <https://docs.python.org/reference/simple_stmts.html#the-assert-statement>`_ and
-about `boolean evaluation <https://docs.python.org/library/stdtypes.html#truth-value-testing>`_.
+`about boolean evaluation <https://docs.python.org/library/stdtypes.html#truth-value-testing>`_.
 
 ..
     .. note::
 
-        The regular ``assert`` python statement is not guaranteed to work in Ren'py. It was disabled in
+        The regular ``assert`` python statement is not guaranteed to work in Ren'py. It is disabled in
         version 7 and earlier.
 
 jump statement
@@ -106,8 +106,8 @@ A clause can be given, just by itself. ::
 
 until statement
 ---------------
-Takes two clauses, separated by the word ``until``.
-If and when the right clause is ready, executes it and passes to the next statement.
+This statement consists in two clauses, separated by the word ``until``.
+If and when the right clause is ready, executes it and passes control to the next statement.
 If not, executes the left clause until the right clause is ready, then executes the right clause.
 
 This is basically an inline while loop. ::
@@ -187,17 +187,38 @@ Ready if and when a button containing the provided action would be sensitive.
 
 pause clause
 ---------------
-Pauses for a given number of seconds. Always ready.
+Pauses for a given number of seconds.
+
+This clause is always ready.
 
 label clause
 ---------------
 This is a control, assert-like clause. It does not *do* anything when executed, but raises an
-exception if the given label has not been passed by the script since the last executed test statement (or clause).
+exception if the given label has not been passed by the script since the last executed test statement.
 
-Attention, this means that a working label clause in a clause statement will be broken if, for example,
-a pause clause in a clause statement gets added before it.
+Attention, this means that the following example does not work::
 
-Ready if and when the provided label has just been passed.
+    "play chapter 1"
+    # passing the "chapter_1" label
+    pause 1
+    label chapter_1
+
+.. a label clause statement placed directly after non-advancing statements, for example
+.. pause clauses or other label clauses
+
+It will not work because no renpy label will have been reached between the pause statement
+and the label statement. The same happens in the following example::
+
+    "play chapter 1"
+    # passing the "chapter_1" label
+    label chapter_1
+    label chapter_1
+
+The chapter_1 label is not reached between the first label clause and the second label clause, therefore the
+second label clause fails. In both examples, the label clause would have worked if it were placed on its own
+directly after the ``"play chapter 1"`` statement (or after the comment, which doesn't count).
+
+The label clause is ready if and when the provided label has just been passed.
 
 drag clause
 --------------
@@ -221,7 +242,7 @@ scroll clause
 
 eval clause
 -----------
-Does not do anything when executed. This clause only exists to live inside ``if`` and ``until`` statements.
+Does not do anything when executed. This clause only exists to be used inside ``if`` and ``until`` statements.
 
 .. The provided expression can span on several lines, if wrapped in parentheses.
 
