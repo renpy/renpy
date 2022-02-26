@@ -34,8 +34,21 @@ Ren'py allows creators to put tests in their games to make sure that an alterati
 the game.
 Blah.
 
-.. introduce the testcase statement itself, like the `transform:` statement
-.. note about there being no return statement, unlike label the deindent closes the block
+Testcase statement
+------------------
+
+The ``testcase`` statement creates a named testcase, which is made of successive test statements.
+Testcases are similar to Ren'py :ref:`labels <labels-control-flow>`, with a few specificities:
+- The Testcase statement takes test statements, when the Ren'py label statement takes Ren'py code.
+- There is no testcase equivalent of the return statement: like in a ``def`` function definition,
+  the removal of indentation and the end of the block closes the testcase.
+- There can be no test statement outside of a testcase block.::
+
+    testcase default:
+        "Start"
+        exit
+
+The testcase named ``default`` is the one which will be executed by default.
 
 Test statements
 ===============
