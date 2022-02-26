@@ -94,6 +94,8 @@ class Node(object):
         renpy.test.testexecution.node_loc = (self.filename, self.linenumber)
 
 
+class PatternException(ValueError):pass
+
 class Pattern(Node):
     __slots__ = ("pattern", "position", "always")
 
@@ -127,7 +129,7 @@ class Pattern(Node):
 
         if None in (x, y):
             if self.pattern:
-                raise Exception("The given {} pattern was not resolved to a target".format(self.pattern))
+                raise PatternException("The given {} pattern was not resolved to a target".format(self.pattern))
             else:
                 x, y = renpy.exports.get_mouse_pos()
 
