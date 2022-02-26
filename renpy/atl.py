@@ -1703,7 +1703,7 @@ class Function(Statement):
         if fr is not None:
             return "continue", None, fr
         else:
-            return "next", 0, None
+            return "next", st, None
 
 
 # This parses an ATL block.
