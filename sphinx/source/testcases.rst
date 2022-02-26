@@ -130,7 +130,6 @@ an exception if executed::
 
 click clause
 ---------------
-
 Executes a simulated click on the screen.
 It takes these optional properties:
 
@@ -148,12 +147,15 @@ It takes these optional properties:
 
 This clause is always ready.
 
+The :func:`has_default_focus` function is a helpful accessor to know whether a game can be advanced
+by a bare ``click`` clause statement or not. ::
+
+    click until eval (not has_default_focus())
+
 string expression clause
 ------------------------
-
 This clause consists in a simple string, which is interpreted as a pattern (see the Patterns section below).
-This clause executes by clicking on the target identified by the pattern. If no target is found,
-an exception is raised, terminating the test.
+It executes by simulating a click on the target identified by the pattern.
 
 It takes three optional properties:
 
@@ -270,19 +272,18 @@ move clause
 Patterns
 ===============
 
-Some clauses take a pattern.
+Some clauses take a pattern, which helps positioning the mouse or the location where a clause will do something.
 The ``pattern`` property (or in the case of the string expression, the string itself) takes a string
 which resolves to a target found on the screen, based on the shorted match in the alt text of
-focusable screen elements. The search is case-insensitive.
+focusable screen elements (typically, buttons). The search is case-insensitive.
 
-.. does it take focus_mask into account ?
+If no pattern is given, the virtual test mouse is positioned to the last previous location where
+a click happened, or to the specified position, if any. If that position lies on a focusable element,
+a random position in the screen which does not overlap a focusable element is chosen instead.
 
-..
-    If no pattern is given, the virtual test mouse is positioned to the last previous location where
-    a click happened. If that position lies on a focusable element, a random position in the screen
-    which does not overlap a focusable element is chosen instead.
+If a pattern is given, the mouse is positioned to the last previous location where a click happened,
+or to the specified position, if any. If that position does not lie inside the targeted element,
+a random position within it is chosen instead. To that end, things like focus_mask are taken into account.
 
-    If a pattern is given, the mouse is positioned to the last previous location where a click happened.
-    If that position does not lie inside the targeted element, a random position within it is chosen instead.
-
-.. :func:`has_default_focus`, simple accessor to whether a game can be advanced by a bare click or not
+If a pattern is given and if it does not resolve to a target at the time when the clause using it executes,
+an exception is raised (terminating the test).
