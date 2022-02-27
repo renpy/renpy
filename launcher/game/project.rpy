@@ -101,7 +101,7 @@ init python in project:
 
         def load_data(self):
             try:
-                with open(os.path.join(self.path, "project.json"), "rb") as f:
+                with open(os.path.join(self.path, "project.json"), "r") as f:
                     self.data = json.load(f)
             except Exception:
                 self.data = { }
@@ -114,7 +114,7 @@ init python in project:
             """
 
             try:
-                with open(os.path.join(self.path, "project.json"), "wb") as f:
+                with open(os.path.join(self.path, "project.json"), "w") as f:
                     json.dump(self.data, f)
             except Exception:
                 self.load_data()
