@@ -535,6 +535,15 @@ style return_button:
     yoffset gui.scale(-30)
 
 
+## alternate menu screen #######################################################
+##
+## This screen is used to display ShowAlternateMenu Action.
+
+    screen alternate_menu(button_list):
+        for text, action in button_list:
+            textbutton text action action
+
+
 ## About screen ################################################################
 ##
 ## This screen gives credit and copyright information about the game and
