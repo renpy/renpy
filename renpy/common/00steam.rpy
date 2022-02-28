@@ -24,7 +24,12 @@ python early:
     # Should steam be enabled?
     config.enable_steam = True
 
+    # The location of the steam keyboard.
+    config.steam_keyboard_location = (0.0, 0.0, 1.0, 0.5)
+
 init -1499 python in _renpysteam:
+
+    import collections
 
     def retrieve_stats():
         """
@@ -495,16 +500,7 @@ init -1499 python in _renpysteam:
 
         return renpy.exports.fsdecode(path.value)
 
-    run_callbacks = True
-
-    def periodic():
-        """
-        Called periodically to run Steam callbacks.
-        """
-
-        if run_callbacks:
-            steamapi.RunCallbacks()
-
+    ############################################ Import API after steam is found.
     def import_api():
 
         global steamapi
@@ -522,6 +518,39 @@ init -1499 python in _renpysteam:
         STORE_NONE = steamapi.k_EOverlayToStoreFlag_None
         STORE_ADD_TO_CART = steamapi.k_EOverlayToStoreFlag_AddToCart
         STORE_ADD_TO_CART_AND_SHOW = steamapi.k_EOverlayToStoreFlag_AddToCartAndShow
+
+
+
+    ################################################################## Callbacks
+
+    # A map from callback class name to a list of callables that will be called
+    # with the callback instance.
+
+    callback_handlers = collections.defaultdict(list)
+
+    did_text = False
+
+    def periodic():
+        """
+        Called periodically to run Steam callbacks.
+        """
+
+        for cb in steamapi.generate_callbacks():
+            print(type(cb).__name__)
+
+            for handler in callback_handlers.get(type(cb).__name__, [ ]):
+                handler(cb)
+
+    # import renpy
+    # if renpy.display.interface.text_rect and not did_text:
+    #     steamapi.SteamUtils().ShowFloatingGamepadTextInput(
+    #         steamapi.k_EFloatingGamepadTextInputModeModeSingleLine,
+    #         0, 0, 1280, 360)
+
+    #     did_text = True
+
+
+
 
 
 init -1499 python in achievement:
@@ -643,7 +672,7 @@ init -1499 python in achievement:
             import os
             import ctypes
 
-            if renpy.windows and (sys.maxint > (1 << 32)):
+            if renpy.windows and (sys.maxsize > (1 << 32)):
                 dll_name = "steam_api64.dll"
             elif renpy.windows:
                 dll_name = "steam_api.dll"
@@ -670,6 +699,7 @@ init -1499 python in achievement:
             sys.modules["_renpysteam"] = steam
 
             steam.import_api()
+            steamapi.init_callbacks()
 
             config.periodic_callbacks.append(steam.periodic)
             config.needs_redraw_callbacks.append(steam.overlay_needs_present)
