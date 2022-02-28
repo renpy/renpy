@@ -355,45 +355,47 @@ init -1500 python:
 
          """
         def __init__(self, button_list, menu_width=300, menu_height=200, style_prefix=None):
-            self.button_list = button_list
+            self.button_list = []
+            for text, action in button_list:
+                if not isinstance(action, list):
+                    action = [action]
+                action += [Hide("_alternate_menu")]
+                self.button_list.append((text, action))
             self.style_prefix = style_prefix
             self.menu_width = menu_width
             self.menu_height = menu_height
 
         def predict(self):
-            renpy.predict_screen("_alternate_menu", self.button_list, 
+            renpy.predict_screen("_alternate_menu", self.button_list, pos = (x, y), anchor=(xanchor, yanchor),
                 menu_width=self.menu_width, menu_height=self.menu_height, style_prefix=self.style_prefix, _transient=True)
 
         def __call__(self):
 
-            renpy.show_screen("_alternate_menu", self.button_list, 
+            x, y = renpy.get_mouse_pos()
+            if x + self.menu_width > config.screen_width:
+                xanchor = 1.0
+            else:
+                xanchor = 0.0
+            if y + self.menu_height > config.screen_height:
+                yanchor = 1.0
+            else:
+                yanchor = 0.0
+            renpy.show_screen("_alternate_menu", self.button_list, pos = (x, y), anchor=(xanchor, yanchor),
                 menu_width=self.menu_width, menu_height=self.menu_height, style_prefix=self.style_prefix, _transient=True)
             renpy.restart_interaction()
 
 
 init -1500:
 
-    screen _alternate_menu(button_list, menu_width=300, menu_height=200, style_prefix=None):
+    screen _alternate_menu(button_list, pos, anchor, menu_width=300, menu_height=200, style_prefix=None):
         key ["game_menu", "dismiss"] action Hide("_alternate_menu")
         modal True
 
-        $(x, y) = renpy.get_mouse_pos()
 
         frame:
             if style_prefix:
                 style_prefix style_prefix
-            pos (x, y)
-            if x + menu_width > config.screen_width:
-                xanchor 1.0
-            else:
-                xanchor 0.0
-            if y + menu_height > config.screen_height:
-                yanchor 1.0
-            else:
-                yanchor 0.0
+            pos pos
+            anchor anchor
             vbox:
-                xfill False
-                for text, action in button_list:
-                    if not isinstance(action, list):
-                        $action = [action]
-                    textbutton text action action+[Hide("_alternate_menu")]
+                use alternate_menu(button_list)
