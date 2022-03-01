@@ -652,6 +652,9 @@ one block should adjust horizontal position, and one should adjust vertical
 positions. (These may be the same block.) The angle and radius properties set
 both horizontal and vertical positions.
 
+The properties which are numerical type and not None also take relative value
+to the current value by adding property `rel_` prefix.
+
 .. transform-property:: pos
 
     :type: (position, position)
