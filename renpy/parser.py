@@ -1750,7 +1750,7 @@ def parse_parameters(l):
     names = set()
     def name_parsed(name, value):
         if name in names:
-            l.error("duplicate parameter '%s'" % name)
+            l.error("duplicate argument '%s'" % name)
         else:
             names.add(name)
 
@@ -1763,13 +1763,18 @@ def parse_parameters(l):
 
             extrakw = l.require(l.name)
 
+            if l.match(r'='):
+                l.error("var-keyword argument cannot have default value")
+
             name_parsed(extrakw, None)
 
             # Allow trailing comma
             l.match(r',')
 
             # extrakw is always last parameter
-            l.require('\)')
+            if not l.match('\)'):
+                l.error("arguments cannot follow var-keyword argument")
+
             break
 
         elif l.match(r'\*'):
@@ -1784,7 +1789,13 @@ def parse_parameters(l):
             extrapos = l.name()
 
             if extrapos is not None:
+                if l.match(r'='):
+                    l.error("var-positional argument cannot have default value")
+
                 name_parsed(extrapos, None)
+
+        elif l.match(r'/\*'):
+            l.error("expected comma between / and *")
 
         elif l.match('/'):
 
@@ -1795,7 +1806,7 @@ def parse_parameters(l):
                 l.error("/ may appear only once")
 
             elif not parameters:
-                l.error("at least one parameter must precede /")
+                l.error("at least one argument must precede /")
 
             last_posonly = parameters[-1][0]
 
