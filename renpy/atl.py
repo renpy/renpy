@@ -1270,10 +1270,9 @@ class Interpolation(Statement):
                             raise Exception("tuple isn't available for relative designation")
                         value += old_v
                         abs_values.append(value)
-                    abs_values = tuple(abs_values)
                 else:
                     abs_values = values
-                splines.append((name, [ getattr(trans.state, name) ] + values))
+                splines.append((name, [ getattr(trans.state, name) ] + abs_values))
 
             state = (linear, revolution, splines)
 
