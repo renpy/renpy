@@ -152,7 +152,10 @@ def start(index):
                 renpy.exports.write_log("Controller found in blocklist, not using.")
                 return
 
-    c.init()
+    try:
+        c.init()
+    except Exception:
+        renpy.display.log.exception()
 
     renpy.exports.restart_interaction()
 
