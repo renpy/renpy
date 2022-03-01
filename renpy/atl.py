@@ -950,7 +950,7 @@ class RawMultipurpose(RawStatement):
         properties = [ ]
 
         for name, expr in self.properties:
-            if name not in PROPERTIES:
+            if name not in PROPERTIES and (not name.startswith("rel_") or name[len("rel_"):] not in PROPERTIES):
                 raise Exception("ATL Property %s is unknown at runtime." % name)
 
             value = ctx.eval(expr)
@@ -959,7 +959,7 @@ class RawMultipurpose(RawStatement):
         splines = [ ]
 
         for name, exprs in self.splines:
-            if name not in PROPERTIES:
+            if name not in PROPERTIES and (not name.startswith("rel_") or name[len("rel_"):] not in PROPERTIES):
                 raise Exception("ATL Property %s is unknown at runtime." % name)
 
             values = [ ctx.eval(i) for i in exprs ]
@@ -1185,6 +1185,14 @@ class Interpolation(Statement):
             has_angle = False
 
             for k, v in self.properties:
+                if k.startswith("rel_"):
+                    k = k[len("rel_"):]
+                    old_v = getattr(trans.state, k)
+                    if old_v is None:
+                        old_v = getattr(trans.state, "inherited_" + k)
+                    if isinstance(v, tuple):
+                        raise Exception("tuple isn't available for relative designation")
+                    v += old_v
                 setattr(newts, k, v)
 
                 if k == "angle":
@@ -1251,6 +1259,20 @@ class Interpolation(Statement):
 
             # Figure out the splines.
             for name, values in self.splines:
+                if name.startswith("rel_"):
+                    name = name[len("rel_"):]
+                    abs_values = []
+                    for value in values:
+                        old_v = getattr(trans.state, name)
+                        if old_v is None:
+                            old_v = getattr(trans.state, "inherited_" + name)
+                        if isinstance(value, tuple):
+                            raise Exception("tuple isn't available for relative designation")
+                        value += old_v
+                        abs_values.append(value)
+                    abs_values = tuple(abs_values)
+                else:
+                    abs_values = values
                 splines.append((name, [ getattr(trans.state, name) ] + values))
 
             state = (linear, revolution, splines)
@@ -1259,6 +1281,14 @@ class Interpolation(Statement):
             # change from the old state.
             for k, v in self.properties:
                 if k not in linear:
+                    if k.startswith("rel_"):
+                        k = k[len("rel_"):]
+                        old_v = getattr(trans.state, k)
+                        if old_v is None:
+                            old_v = getattr(trans.state, "inherited_" + k)
+                        if isinstance(v, tuple):
+                            raise Exception("tuple isn't available for relative designation")
+                        v += old_v
                     setattr(trans.state, k, v)
 
         else:
@@ -1884,7 +1914,8 @@ def parse_atl(l):
 
                 prop = l.name()
 
-                if (prop in PROPERTIES) or (prop and prop.startswith("u_")):
+                if (prop in PROPERTIES) or (prop and (prop.startswith("u_") \
+                    or (prop.startswith("rel_") and prop[len("rel_"):] in PROPERTIES))):
 
                     expr = l.require(l.simple_expression)
 
