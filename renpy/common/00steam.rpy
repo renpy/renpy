@@ -705,6 +705,12 @@ init -1499 python in achievement:
             config.needs_redraw_callbacks.append(steam.overlay_needs_present)
             steam.set_overlay_notification_position(steam.POSITION_TOP_RIGHT)
 
+            if steamapi.SteamUtils().IsSteamInBigPictureMode():
+                config.variants.insert(0, "steam_big_picture")
+
+            if steamapi.SteamUtils().IsSteamRunningOnSteamDeck():
+                config.variants.insert(0, "steam_deck")
+
             backends.insert(0, SteamBackend())
             renpy.write_log("Initialized steam.")
 
