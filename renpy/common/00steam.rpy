@@ -24,9 +24,6 @@ python early:
     # Should steam be enabled?
     config.enable_steam = True
 
-    # The location of the steam keyboard.
-    config.steam_keyboard_location = (0.0, 0.0, 1.0, 0.5)
-
 init -1499 python in _renpysteam:
 
     import collections
@@ -493,7 +490,7 @@ init -1499 python in _renpysteam:
 
         path = create_strng_buffer(4096)
         size = c_ulonglong()
-        timestam = c_int()
+        timestamp = c_int()
 
         if not steamapi.SteamUGC().GetItemInstallInfo(item_id, byref(size), byref(path), 4096, byref(timestamp)):
             return None
@@ -519,16 +516,14 @@ init -1499 python in _renpysteam:
         STORE_ADD_TO_CART = steamapi.k_EOverlayToStoreFlag_AddToCart
         STORE_ADD_TO_CART_AND_SHOW = steamapi.k_EOverlayToStoreFlag_AddToCartAndShow
 
-
-
     ################################################################## Callbacks
 
     # A map from callback class name to a list of callables that will be called
     # with the callback instance.
 
+
     callback_handlers = collections.defaultdict(list)
 
-    did_text = False
 
     def periodic():
         """
@@ -536,21 +531,44 @@ init -1499 python in _renpysteam:
         """
 
         for cb in steamapi.generate_callbacks():
-            print(type(cb).__name__)
+            # print(type(cb).__name__, {k : getattr(cb, k) for k in dir(cb) if not k.startswith("_")})
 
             for handler in callback_handlers.get(type(cb).__name__, [ ]):
                 handler(cb)
 
-    # import renpy
-    # if renpy.display.interface.text_rect and not did_text:
-    #     steamapi.SteamUtils().ShowFloatingGamepadTextInput(
-    #         steamapi.k_EFloatingGamepadTextInputModeModeSingleLine,
-    #         0, 0, 1280, 360)
-
-    #     did_text = True
+        if renpy.variant("steam_deck"):
+            keyboard_periodic()
 
 
 
+    ################################################################## Keyboard
+
+    keyboard_showing = False
+
+    def keyboard_periodic():
+
+        global keyboard_showing
+
+        if not keyboard_showing and renpy.display.interface.text_rect:
+            x, y, w, h = (int(i) for i in renpy.display.interface.text_rect)
+
+            steamapi.SteamUtils().ShowFloatingGamepadTextInput(
+                steamapi.k_EFloatingGamepadTextInputModeModeSingleLine,
+                x, y, w, h)
+
+            keyboard_showing = True
+
+
+    def keyboard_dismissed(cb):
+        """
+        Called when the keyboard is dismissed.
+        """
+
+        global keyboard_showing
+
+        keyboard_showing = False
+
+    callback_handlers["FloatingGamepadTextInputDismissed_t"].append(keyboard_dismissed)
 
 
 init -1499 python in achievement:
