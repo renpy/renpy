@@ -2279,7 +2279,8 @@ class Text(renpy.display.core.Displayable):
 
         return tokens
 
-    def apply_custom_tags(self, tokens):
+    @staticmethod
+    def apply_custom_tags(tokens):
         """
         Apply new-style custom text tags.
         """
