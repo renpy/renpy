@@ -191,13 +191,13 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     been rendered, the following fields become available:
 
     `x`, `y`
-         The position of the Drag relative to its parent, in pixels.
+        The position of the Drag relative to its parent, in pixels.
 
     `start_x`, `start_y`
-         The dragg start position of the Drag relative to its parent, in pixels.
+        The drag start position of the Drag relative to its parent, in pixels.
 
     `w`, `h`
-         The width and height of the Drag's child, in pixels.
+        The width and height of the Drag's child, in pixels.
     """
 
     z = 0
@@ -209,6 +209,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     drag_offscreen = False
     activated = None
     alternate = None
+    dragging = None
 
     # The time a click started, or None if a click is not in progress.
     click_time = None
@@ -219,7 +220,6 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
                  draggable=True,
                  droppable=True,
                  drag_raise=True,
-                 dragging=None,
                  dragged=None,
                  dropped=None,
                  drop_allowable=default_drop_allowable,
@@ -234,6 +234,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
                  activated=None,
                  alternate=None,
                  style="drag",
+                 dragging=None,
                  **properties):
 
         super(Drag, self).__init__(style=style, **properties)
