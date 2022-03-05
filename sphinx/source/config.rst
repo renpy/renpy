@@ -593,6 +593,13 @@ Occasionally Used
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
 
+.. var:: config.lint_character_statistics = True
+
+    If true, and :var:`config.developer` is true, the lint report will include
+    statistics about the number of dialogue blocks spoken for each character.
+    The chanracter statistics are disabled when the game is packaged, to
+    prevent spoilers.
+
 .. var:: config.load_failed_label = None
 
     If a string, this is a label that is jumped to when a load fails because

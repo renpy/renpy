@@ -963,7 +963,7 @@ characters per block. """.format(
     lines.append("The game contains {0} menus, {1} images, and {2} screens.".format(
         humanize(menu_count), humanize(image_count), humanize(screen_count)))
 
-    if renpy.config.developer:
+    if renpy.config.developer and renpy.config.lint_character_statistics:
         lines.append(report_character_stats(charastats))
 
     # Format the lines and lists of lines.

@@ -1205,6 +1205,10 @@ always_unfocus = True
 # A list of callbacks that are called when the game exits.
 at_exit_callbacks = [ ]
 
+# Should character statistics be included in the lint report
+# when config.developer is true?
+lint_character_statistics = True
+
 del os
 del collections
 
