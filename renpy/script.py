@@ -49,11 +49,15 @@ BYTECODE_VERSION = 1
 if PY2:
     import imp
     MAGIC = imp.get_magic()
+
+    # Change this to force a recompile when required.
+    MAGIC += b'_v2.1'
+
 else:
     from importlib.util import MAGIC_NUMBER as MAGIC
 
-# Change this to force a recompile when required.
-MAGIC += b'\x01'
+    # Change this to force a recompile when required.
+    MAGIC += b'_v3.1'
 
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
