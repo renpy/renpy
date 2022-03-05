@@ -801,6 +801,8 @@ def lint():
     # The current count.
     counts = collections.defaultdict(Count)
 
+    charastats = collections.defaultdict(int)
+
     # The current language.
     language = None
 
@@ -841,6 +843,8 @@ def lint():
             check_say(node)
 
             counts[language].add(node.what)
+            if language is None:
+                charastats[node.who] += 1
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -928,9 +932,17 @@ characters per block. """.format(
     lines.append("The game contains {0} menus, {1} images, and {2} screens.".format(
         humanize(menu_count), humanize(image_count), humanize(screen_count)))
 
+    sl = ["Character stats for default language :"]
+    for cha, coun in sorted(charastats.items(), key=lambda a:-a[1]):
+        sl.append("    {0} : {1}".format(cha, humanize(coun)))
+    lines.append(sl)
+
     for l in lines:
-        for ll in textwrap.wrap(l, 78):
-            print(ll)
+        if not isinstance(l, (tuple, list)):
+            l = (l,)
+        for ll in l:
+            for lll in textwrap.wrap(ll, 78):
+                print(lll)
 
         print("")
 
