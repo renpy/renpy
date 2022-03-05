@@ -250,8 +250,8 @@ def image_exists_precise(name):
 
             try:
                 da = renpy.display.core.DisplayableArguments()
-                da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs) 
-                da.args = tuple(i for i in name[1:] if i in rest) 
+                da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs)
+                da.args = tuple(i for i in name[1:] if i in rest)
                 da.lint = True
                 d._duplicate(da)
             except Exception:
@@ -925,7 +925,7 @@ characters per block. """.format(
     print("")
 
     languages = list(counts)
-    languages.sort()
+    languages.sort(key=lambda a : "" if not a else a)
     for i in languages:
         report_language(i)
 
