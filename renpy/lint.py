@@ -764,6 +764,37 @@ def common(n):
     else:
         return False
 
+def report_character_stats(charastats):
+    """
+    Returns a list of character stat lines.
+    """
+
+    # Keep all the statistics in a list, so that it gets wrapped ionto a
+    rv = [ "Character statistics (for default language):" ]
+
+    count_to_char = collections.defaultdict(list)
+
+    for char, count in charastats.items():
+        count_to_char[count].append(char)
+
+    for count, chars in sorted(count_to_char.items(), reverse=True):
+        chars.sort()
+
+        if len(chars) == 1:
+            start = chars[0] + " has "
+        elif len(chars) == 2:
+            start = chars[0] + "  and " + chars[1] + " have "
+        else:
+            start = ", ".join(chars[:-1]) + ", and " + chars[-1] + " have "
+
+        rv.append(
+            " * " + start + humanize(count) +
+            (" block " if count == 1 else " blocks ") + "of dialogue" +
+            (" each." if len(chars) > 1 else ".")
+            )
+
+    return rv
+
 
 def lint():
     """
@@ -844,7 +875,7 @@ def lint():
 
             counts[language].add(node.what)
             if language is None:
-                charastats[node.who] += 1
+                charastats[node.who if node.who else 'narrator' ] += 1
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -932,17 +963,27 @@ characters per block. """.format(
     lines.append("The game contains {0} menus, {1} images, and {2} screens.".format(
         humanize(menu_count), humanize(image_count), humanize(screen_count)))
 
-    sl = ["Character stats for default language :"]
-    for cha, coun in sorted(charastats.items(), key=lambda a:-a[1]):
-        sl.append("    {0} : {1}".format(cha, humanize(coun)))
-    lines.append(sl)
+    if renpy.config.developer:
+        lines.append(report_character_stats(charastats))
 
+    # Format the lines and lists of lines.
     for l in lines:
         if not isinstance(l, (tuple, list)):
             l = (l,)
+
         for ll in l:
-            for lll in textwrap.wrap(ll, 78):
-                print(lll)
+
+            if ll.startswith(" * "):
+                prefix = " * "
+                altprefix = "   "
+                ll = ll[3:]
+            else:
+                prefix  = ""
+                altprefix = ""
+
+            for lll in textwrap.wrap(ll, 78 - len(prefix)):
+                print(prefix + lll)
+                prefix = altprefix
 
         print("")
 
