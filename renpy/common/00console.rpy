@@ -783,11 +783,21 @@ init -1500 python in _console:
 
     @command(_("stack: print the return stack"))
     def stack(l):
+        def fmt(entry):
+            name = "(anonymous)"
+            if isinstance(entry, str):
+                name = entry
+                lkp = renpy.game.script.lookup(entry)
+                filename, linenumber = lkp.filename, lkp.linenumber
+            else:
+                filename, linenumber = entry[0], entry[2]
+            return "{} <{}:{}>".format(name, filename, linenumber)
+
         rs = renpy.exports.get_return_stack()
         if rs:
-            print("Return stack (most recent call last):")
-            for el in rs:
-                print(el)
+            print("Return stack (most recent call last):\n")
+            for entry in rs:
+                print(fmt(entry))
         else:
             print("The return stack is empty.")
 
