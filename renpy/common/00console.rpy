@@ -788,8 +788,11 @@ init -1500 python in _console:
                 name = entry
             else:
                 name = "(anonymous)"
-            lkp = renpy.game.script.lookup(entry)
-            filename, linenumber = lkp.filename, lkp.linenumber
+            try:
+                lkp = renpy.game.script.lookup(entry)
+                filename, linenumber = lkp.filename, lkp.linenumber
+            except Exception:
+                filename = linenumber = "?"
             return "{} <{}:{}>".format(name, filename, linenumber)
 
         rs = renpy.exports.get_return_stack()
