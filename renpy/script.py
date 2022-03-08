@@ -277,7 +277,9 @@ class Script(object):
         script_files = self.script_files
 
         # Sort script files by filename.
-        script_files.sort()
+        # We need this key to prevet possible crash when comparing None to str
+        # during sorting
+        script_files.sort(key=lambda item: (item[0] or "") or (item[1] or ""))
 
         initcode = [ ]
 
