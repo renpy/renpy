@@ -781,6 +781,16 @@ init -1500 python in _console:
     def quit(l):
         renpy.jump("_console_return")
 
+    @command(_("stack: print the return stack"))
+    def stack(l):
+        rs = renpy.exports.get_return_stack()
+        if rs:
+            print("Return stack (most recent call last):")
+            for el in rs:
+                print(el)
+        else:
+            print("The return stack is empty.")
+
     @command(_("load <slot>: loads the game from slot"))
     def load(l):
         name = l.rest().strip()
