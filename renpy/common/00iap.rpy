@@ -568,10 +568,17 @@ init -1500 python in iap:
 
     def init():
         """
-        Called to initialize the IAP system.
+        :doc: iap
+
+        Initialize iap. This should be called after all calls to iap.register(),
+        but before any other iap function. If not called explicitly, this is
+        automatically called at the end of the initialization phase.
         """
 
         global backend
+
+        if not isinstance(backend, NoneBackend):
+            return
 
         if persistent._iap_purchases is None:
             persistent._iap_purchases = { }
