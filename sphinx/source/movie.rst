@@ -36,6 +36,9 @@ VP9, VP8, or Theora; Opus or Vorbis; and WebM, Matroska, or Ogg.)
 Movies can be displayed fullscreen or in a displayable. Fullscreen movies
 are more efficient.
 
+It depends on the ffmpeg native decoders whether movies with alpha channel work
+correctly. We recommend using mask or side_mask for that purpose.
+
 Movies are not supported on the Web platform.
 
 
