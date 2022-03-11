@@ -82,7 +82,7 @@ init -1499 python in _renpysteam:
 
         rv = c_bool(False)
 
-        if not steamapi.SteamUserStats().GetAchievement(name.encode("utf-8"), byref(c_bool)):
+        if not steamapi.SteamUserStats().GetAchievement(name.encode("utf-8"), byref(rv)):
             return None
 
         return rv.value
