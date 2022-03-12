@@ -101,9 +101,6 @@ def get_store_module(name):
 
 from renpy.pydict import DictItems, find_changes
 
-EMPTY_DICT = { }
-EMPTY_SET = set()
-
 
 class StoreDict(dict):
     """
@@ -161,7 +158,7 @@ class StoreDict(dict):
             self.old = new
 
         if rv is None:
-            return EMPTY_DICT, EMPTY_SET
+            return None
 
         delta_ebc = set()
 
