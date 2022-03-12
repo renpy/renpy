@@ -36,7 +36,7 @@ init 1000000 python:
 
     doc.check_dups()
 
-    console_commands = _console.help(None)
+    console_commands = _console.help(None, True)
     console_commands = "\n\n".join(console_commands.split("\n"))
     f = open("source/inc/console_commands", "w")
     f.write(console_commands)
