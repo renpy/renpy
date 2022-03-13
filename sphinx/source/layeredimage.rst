@@ -589,3 +589,41 @@ image, like this::
     image side augustina = LayeredImageProxy("augustina", Transform(crop=(0, 0, 362, 362), xoffset=-80))
 
 .. include:: inc/li_proxy
+
+Selecting attributes to display
+-------------------------------
+
+Several factors influence what gets displayed following a given ``show`` instruction.
+To provide more clarity as to what happens in which order, this section showcases
+the life of a set of attributes, from the show instruction to the on-screen display.
+
+- The ``show`` statement provides the initial set of attributes, following the
+  image tag.
+- If a :var:`config.adjust_attributes` function exists to match
+  the image tag, it is called, and returns a potentially different set of
+  attributes. If so, it replaces the former set, which is forgotten.
+- If a :var:`config.default_attributes` function exists and if its trigger
+  conditions are met, it is called and potentially adds attributes to the set.
+- The two previous stages are not specific to layeredimages, because it is only
+  after this stage that renpy determines which image or layeredimage
+  will be called to display. For that reason, the given set of attributes must
+  lead to one, and only one, defined image (or layeredimage, Live2D...), using
+  the behavior described in the :ref:`show statement section<show-statement>`.
+- Then, the provided attributes are combined with the attributes defined in the
+  layeredimage, discarding some previously shown attributes and conserving others.
+  This is also the point where unrecognized attributes are detected and related
+  errors are raised. If no such error is raised, the new attributes, along with
+  those which were not discarded, will be recognized by renpy as the set of
+  attributes associated with that image tag. This computing takes some of the
+  incompatibility constraints into account, but not all. For instance
+  incompatibilities due to attributes being in the same non-multiple group will
+  trigger at this point in time, but the if_any/if_all/if_not clauses will not.
+  That's why an attribute called but negated by such a clause will be considered
+  active by renpy, and will for example become visible without having to be called
+  again if at some point the condition of the if\_x clause is no longer fulfilled.
+- If an attribute_function has been provided to the layeredimage, it is called
+  with the set of remaining attributes. It returns a potentially different set of
+  attributes.
+- This set is once again confronted with the incompatibility constraints of the
+  layeredimage, this time in full. That is the final stage, and remaining attributes
+  are called into display.
