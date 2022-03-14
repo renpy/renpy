@@ -108,6 +108,8 @@ A clause can be given, just by itself. ::
 
     pause 5
 
+    click
+
 until statement
 ---------------
 This statement consists in two clauses, separated by the word ``until``.
@@ -255,8 +257,9 @@ scroll clause
 
 eval clause
 -----------
-Does not do anything when executed. This clause only exists to be used inside clause-taking test statements
-like ``assert``, ``if`` or ``until``.
+Does not do anything when executed, except evaluating the expression it is given. This clause only exists to be
+used inside clause-taking test statements like ``assert``, ``if`` or ``until``, effectively turning them into
+their non-clause-taking python equivalents.
 
 .. The provided expression can span on several lines, if wrapped in parentheses.
 
@@ -264,13 +267,21 @@ Ready if and when the provided value is true, in a boolean context.
 
 .. note::
 
-    Differences between a dollar-line, the assert statement and the eval clause :
+    Differences between a dollar-line and the eval clause :
 
     - A dollar-line executes any python statement, which does not necessarily have a value - for example
-      ``$ import math`` - while the assert statement and the eval clause require an expression, a.k.a
+      ``$ import math`` - while the eval clause require an expression, a.k.a
       something having a value.
-    - The assert statement controls whether the provided value is correct or not.
-    - The eval clause provides a value to an ``if`` or ``until`` statement.
+    - The eval clause provides a value to an ``if`` or ``until`` statement, while these statements can't take a
+      dollar sign, much less a dollar-line.
+
+..
+    When the returned value of a function call is to be ignored, both are technically equivalent::
+
+        $ print("Test 1")
+        eval print("Test 2")
+
+    This is because functions always return a value (None being a value), unless they raise an exception.
 
 type clause
 --------------

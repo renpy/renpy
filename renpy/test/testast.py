@@ -523,7 +523,7 @@ class Assert(Node):
         self.report()
 
         if not self.clause.ready():
-            raise AssertError("On line {}:{}, assertion {} failed.".format(self.filename, self.linenumber, self.clause))
+            raise AssertError("On line {}:{}, assertion of {} failed.".format(self.filename, self.linenumber, self.clause))
 
         return None
 
