@@ -287,7 +287,9 @@ init -1500 python in iap:
             rv = self.helper.formatPrice_(identifier)
 
             if rv is not None:
-                rv = rv.UTF8String().decode("utf-8")
+                rv = rv.UTF8String()
+                if isinstance(rv, bytes):
+                    rv = rv.decode("utf-8")
 
             return rv
 

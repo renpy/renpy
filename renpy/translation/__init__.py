@@ -917,8 +917,12 @@ def detect_user_locale():
         import pyobjus # type: ignore
         NSLocale = pyobjus.autoclass("NSLocale")
         languages = NSLocale.preferredLanguages()
-        locale_name = languages.objectAtIndex_(0).UTF8String().decode("utf-8")
-        locale_name.replace("-", "_")
+
+        locale_name = languages.objectAtIndex_(0).UTF8String()
+        if isinstance(locale_name, bytes):
+            locale_name = locale_name.decode("utf-8")
+
+        local_name = locale_name.replace("-", "_")
     else:
         locale_name = locale.getdefaultlocale()
         if locale_name is not None:
