@@ -14,10 +14,13 @@ Testcase statement
 The ``testcase`` statement creates a named testcase, which is made of successive test statements.
 Testcases are similar to Ren'py :ref:`labels <labels-control-flow>`, with a few specificities:
 
-- The Testcase statement takes test statements, when the Ren'py label statement takes Ren'py code.
-- There is no testcase equivalent of the return statement: like in a ``def`` function definition,
-  the removal of indentation and the end of the block closes the testcase.
-- There can be no test statement outside of a testcase block. ::
+- The Testcase statement takes test statements, the Ren'py label statement takes Ren'py code. Both are mutually
+  excusive.
+- There is no testcase equivalent of the return statement: like in a class or screen definition, the removal of
+  indentation and the end of the block closes the testcase.
+- There can be no test statement outside of a testcase block, while there can be Ren'py code oustside labels (in
+  init blocks for example).
+::
 
     testcase default:
         "Start"
@@ -25,17 +28,17 @@ Testcases are similar to Ren'py :ref:`labels <labels-control-flow>`, with a few 
 
 The testcase named ``default`` is the one which will be executed by default.
 
-Note that when a testcase finishes executing, the game doesn't close itself - unless the ``exit`` statement is
-used. Instead, it just remains where it is in the game, awaiting user action.
+Note that when a testcase finishes executing, the game doesn't close itself (unless the ``exit`` statement is
+used). Instead, it just remains where it is in the game, awaiting user action.
 
-When that happens, or if the game quits before that happens (because of an ``exit`` or following an exception),
-the functions added to the :var:`config.end_testcase_callbacks` list are called without
-arguments. This allows for clean-up code to be executed whatever may happen during the tests.
+When that happens, or if the game quits before that happens (because of an ``exit``, following
+an exception, or for another reason), the functions added to the :var:`config.end_testcase_callbacks` list are
+called without arguments. This allows for clean-up code to be executed whatever may happen during the tests.
 
 .. should an exception during a callback call prevent subsequent callbacks from being called ?
 
-There is no equivalent for code being executed before the tests happens, since such code can be put inside
-a python block at the beginning of the testcase.
+There is no equivalent callback for code being executed before the tests happens, as such code can simply be
+put inside a python block at the beginning of the testcase.
 
 The :func:`is_in_test` function is helpful to know whether a test is currently executing or not.
 
@@ -82,7 +85,7 @@ About python assert statements, see the python documentation
 .. note::
 
     The regular ``assert`` python statement is not guaranteed to work in Ren'py. Notably, it is disabled in
-    version 7 and earlier.
+    version 7, and in some versions before that.
 
     Therefore, the following may not actually check what it's supposed to check::
 
@@ -108,8 +111,8 @@ A clause can be given, just by itself. ::
 until statement
 ---------------
 This statement consists in two clauses, separated by the word ``until``.
-If and when the right clause is ready, executes it and passes control to the next statement.
-If not, executes the left clause until the right clause is ready, then executes the right clause.
+If and when the right clause is ready, it is executed and control is passed to the next statement.
+If not, the left clause is executed until the right clause is ready, then the right clause is executed.
 
 This is basically an inline while loop. ::
 
@@ -117,7 +120,10 @@ This is basically an inline while loop. ::
 
 pass statement
 --------------
-Does not do anything. It's a no-op, allowing empty testcases.
+Does not do anything. It's a no-op, allowing empty testcases. ::
+
+    testcase not_yet_implemented:
+        pass
 
 exit statement
 --------------
@@ -145,10 +151,11 @@ an exception if executed::
 click clause
 ---------------
 Executes a simulated click on the screen.
-It takes these optional properties:
+It takes the following optional properties:
 
-- ``button`` specifies which button of the simulated mouse to be clicked.
-  1 is a left-click, 2 is a right-click, 3 is a scrollwheel-click, 4 and 5 are supported on some mouses.
+- ``button`` specifies which button of the simulated mouse is to be clicked with.
+  1 is a left-click, 2 is a right-click, 3 is a scrollwheel-click, 4 and 5 are additional buttons on some mouses.
+  Normally only 1 and 2 trigger any response from renpy.
   Takes an integer and defaults to 1.
 - ``pos`` specifies where to click, as a pair of x/y coordinates.
   Coordinates are taken relative to the screen. Floats between 0.0 and 1.0 are supported as a fraction
@@ -157,12 +164,15 @@ It takes these optional properties:
 
 .. ``always`` is not documented because useless in the case of the click clause by itself
 
+Click behaves like a pattern-taking clause which would not be given a pattern : if no ``pos`` is provided, it will
+look for a neutral place where a click would not occur on a focusable element.
+
 .. give example for both
 
 This clause is always ready.
 
 The :func:`has_default_focus` function is a helpful accessor to know whether a game can be advanced
-by a bare ``click`` clause statement or not. ::
+by a bare ``click`` or not. ::
 
     click until eval (not has_default_focus())
 
@@ -209,8 +219,8 @@ Attention, this means that the following example does not work::
     pause 1
     assert label chapter_1
 
-It will not work because no renpy label will have been reached between the pause statement
-and the label statement. The same happens in the following example::
+It will not work because no renpy label will have been reached between the label statement and the preceding
+statement, which is the pause statement. The same happens in the following example::
 
     "play chapter 1"
     # passing the "chapter_1" label
@@ -257,8 +267,8 @@ Ready if and when the provided value is true, in a boolean context.
     Differences between a dollar-line, the assert statement and the eval clause :
 
     - A dollar-line executes any python statement, which does not necessarily have a value - for example
-      ``$ test_variable = 5`` - while the assert statement and the eval clause require an expression, a.k.a
-      something with a value.
+      ``$ import math`` - while the assert statement and the eval clause require an expression, a.k.a
+      something having a value.
     - The assert statement controls whether the provided value is correct or not.
     - The eval clause provides a value to an ``if`` or ``until`` statement.
 
@@ -286,8 +296,8 @@ move clause
 Patterns
 ===============
 
-Some clauses take a pattern, which helps positioning the mouse or the location where a clause will do something.
-The ``pattern`` property (or in the case of the string expression, the string itself) takes a string
+Some clauses take a pattern, which helps positioning the mouse or locating where a clause will do something.
+The ``pattern`` property (which in the case of the string expression clause, is the string itself) takes a string
 which resolves to a target found on the screen, based on the shorted match in the alt text of
 focusable screen elements (typically, buttons). The search is case-insensitive.
 
@@ -300,4 +310,5 @@ or to the specified position, if any. If that position does not lie inside the t
 a random position within it is chosen instead. To that end, things like focus_mask are taken into account.
 
 If a pattern is given and if it does not resolve to a target at the time when the clause using it executes,
-an exception is raised (terminating the test).
+an exception is raised (terminating the test). To test whether a given pattern resolves to a target at a given
+time, the readiness condition of a string expression clause can be evaluated inside an if statement.
