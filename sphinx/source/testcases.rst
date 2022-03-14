@@ -182,11 +182,9 @@ the ``always`` property.
 
 run clause
 -------------
-Runs the provided :ref:`screen-language action <screen-actions>`.
+Runs the provided :ref:`screen-language action <screen-actions>` or list of actions.
 
-Ready if and when a button containing the provided action would be sensitive.
-
-.. does it accept a list of actions ?
+Ready if and when a button containing the provided action (or list) would be sensitive.
 
 pause clause
 ---------------
