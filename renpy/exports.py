@@ -4298,6 +4298,16 @@ def add_to_all_stores(name, value):
             ns[name] = value
 
 
+def is_in_test():
+    """
+    :doc: other
+
+    Returns True if Ren'py is currently executing a testcase.
+    """
+
+    return (renpy.test.testexecution.node is not None)
+
+
 def get_zorder_list(layer):
     """
     :doc: image_func

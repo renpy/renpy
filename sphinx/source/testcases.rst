@@ -37,6 +37,8 @@ arguments. This allows for clean-up code to be executed whatever may happen duri
 There is no equivalent for code being executed before the tests happens, since such code can be put inside
 a python block at the beginning of the testcase.
 
+The :func:`is_in_test` function is helpful to know whether a test is currently executing or not.
+
 Test statements
 ===============
 .. give an example for each one
