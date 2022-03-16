@@ -26,6 +26,16 @@ for individual drags, or globally with::
 
 Both options reduce performance.
 
+The former "outline_scaling" style property is not documented anymore, and is now
+set to the value from what it default value used to be. Now, the window scaling factor
+is applied to the outline size, and then rounded to an integer. Reverting this means
+that the outline's size will usually be different based upon the size of the game's
+window, and between OSes behavior. To revert this, the outline_scaling property can be
+set to "step" for individual text elements, or globally with::
+
+    style default:
+        outline_scaling "step"
+
 The platform-specific directories inside lib/ have had name changes. The 
 ``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This 
 change helps support the development of the Python 3 powered Ren'Py 8. 
