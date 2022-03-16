@@ -623,7 +623,9 @@ Text Style Properties
         Best for text that uses thin outlines and text
         that uses multiple outlines. The window scaling factor is
         rounded down to an integer and applied to the outline size
-        and offsets.
+        and offsets. This ensures that multiple outlines all scale together,
+        without risk of eclipsing one another. This yields different visual
+        results depending on the size of the game window.
 
         The window scaling factor is always above 1.
 
