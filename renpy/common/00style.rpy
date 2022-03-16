@@ -150,7 +150,7 @@ init -1800:
         drop_shadow None
         drop_shadow_color (0, 0, 0, 255)
         outlines [ ]
-        outline_scaling "step"
+        outline_scaling "integer"
         minwidth 0
         text_align 0
         justify False
