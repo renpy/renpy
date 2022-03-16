@@ -428,7 +428,7 @@ class ScaledImageFont(ImageFont):
     def __init__(self, parent, factor):
 
         def scale(n):
-            return int(round(n * factor))
+            return round(n * factor)
 
         self.height = scale(parent.height)
         self.baseline = scale(parent.baseline)
