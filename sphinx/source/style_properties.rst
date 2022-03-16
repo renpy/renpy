@@ -606,6 +606,27 @@ Text Style Properties
 
     Outlines only work with TrueType fonts.
 
+.. style-property:: outline_scaling string
+
+    This determines how outline sizes or offsets are scaled when the
+    window is scaled.
+
+    ``"linear"``
+        The default, best for text with thick outlines. The window scaling factor
+        is applied to the outline size, and then rounded to an integer.
+        This looks better for thick outlines, but concentric outlines of similar
+        thickness may become indistinguishable.
+
+        The resulting width is always at least 1 pixel.
+
+    ``"step"``
+        Best for text that uses thin outlines and text
+        that uses multiple outlines. The window scaling factor is
+        rounded down to an integer and applied to the outline size
+        and offsets.
+
+        The window scaling factor is always above 1.
+
 .. style-property:: rest_indent int
 
     Specifies the number of pixels the second and later lines in a
