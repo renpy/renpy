@@ -153,6 +153,22 @@ else:
     range = builtins.range
 
 ################################################################################
+# Round.
+
+if PY2:
+    base_round = round
+
+    def round(number, ndigits=None):
+        try:
+            rv = base_round(number, ndigits or 0)
+        except Exception:
+            rv = number.__round__(number, digits or 0)
+        else:
+            if ndigits is None:
+                return int(rv)
+        return rv
+
+################################################################################
 # Allow TextIOWrapper to take utf8-bytes.
 
 if PY2:
@@ -174,7 +190,7 @@ if PY2:
 # Export functions.
 
 __all__ = [ "PY2", "open", "basestring", "str", "pystr", "range",
-            "bord", "bchr", "tobytes", "chr", "unicode", ]
+            "round", "bord", "bchr", "tobytes", "chr", "unicode", ]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ] # type: ignore
