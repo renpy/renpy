@@ -527,7 +527,7 @@ class Layout(object):
             self.reverse = renpy.display.draw.draw_to_virt
             self.forward = renpy.display.draw.virt_to_draw
 
-            self.outline_step = text.style.outline_scaling != "linear"
+            self.outline_step = text.style.outline_scaling == "step"
 
             self.pixel_perfect = True
 
