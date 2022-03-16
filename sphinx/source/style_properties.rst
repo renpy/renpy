@@ -624,7 +624,7 @@ Text Style Properties
         that uses multiple outlines. The window scaling factor is
         rounded down to an integer and applied to the outline size
         and offsets. This ensures that multiple outlines all scale together,
-        without risk of eclipsing one another. This yields different visual
+        without risk of eclipsing one another, but this yields different visual
         results depending on the size of the game window.
 
         The window scaling factor is always above 1.
