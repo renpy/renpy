@@ -155,20 +155,7 @@ else:
 ################################################################################
 # Round.
 
-base_round = round
-
-if PY2:
-    def round(number, ndigits=None):
-        try:
-            rv = base_round(number, ndigits or 0)
-        except Exception:
-            rv = number.__round__(number, ndigits or 0)
-        else:
-            if ndigits is None:
-                return int(rv)
-        return rv
-else:
-    round = base_round # for the import to work
+round = builtins.round
 
 ################################################################################
 # Allow TextIOWrapper to take utf8-bytes.
