@@ -162,7 +162,7 @@ if PY2:
         try:
             rv = base_round(number, ndigits or 0)
         except Exception:
-            rv = number.__round__(number, digits or 0)
+            rv = number.__round__(number, ndigits or 0)
         else:
             if ndigits is None:
                 return int(rv)
