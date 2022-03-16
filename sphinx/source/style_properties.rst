@@ -608,7 +608,7 @@ Text Style Properties
 
 .. style-property:: outline_scaling string
 
-    This determines how outline sizes or offsets are scaled when the
+    This determines how outline sizes and offsets are scaled when the
     window is scaled.
 
     ``"linear"``
