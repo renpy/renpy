@@ -19,6 +19,8 @@ The console can be used to:
 * Evaluate a Python expression or statement to see the result.
 * Trace Python expressions as the game progresses.
 
+.. include:: inc/console_commands
+
 Shift+E Editor Support
 ----------------------
 

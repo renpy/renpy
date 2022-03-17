@@ -745,7 +745,7 @@ init -1500 python in _console:
         return wrap
 
     @command(_("help: show this help"))
-    def help(l):
+    def help(l, doc_generate=False):
         keys = list(config.console_commands.keys())
         keys.sort()
 
@@ -758,7 +758,7 @@ init -1500 python in _console:
 
             rv += " " + __(f.help) + "\n"
 
-        if console.can_renpy():
+        if console.can_renpy() or doc_generate:
             rv += __(" <renpy script statement>: run the statement\n")
 
         rv += __(" <python expression or statement>: run the expression or statement")
