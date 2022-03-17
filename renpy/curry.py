@@ -79,7 +79,9 @@ class Partial(functools.partial):
 
     __slots__ = ("hash",)
 
-    hash = None
+    def __init__(self, *args, **kwargs):
+        super(Partial, self).__init__(*args, **kwargs)
+        self.hash = None
 
     def __repr__(self):
         return "<partial %s %r %r>" % (self.func, self.args, self.keywords)
