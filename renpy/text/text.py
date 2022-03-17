@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional, Callable
 
 import math
@@ -772,7 +773,7 @@ class Layout(object):
             maxx = target_x
             y = target_y
 
-            textsupport.offset_glyphs(all_glyphs, 0, int(round(splits_from.baseline * self.oversample)) - find_baseline())
+            textsupport.offset_glyphs(all_glyphs, 0, round(splits_from.baseline * self.oversample) - find_baseline())
 
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a
@@ -925,7 +926,7 @@ class Layout(object):
         if isinstance(n, renpy.display.core.absolute):
             return int(n)
 
-        return int(round(n * self.oversample))
+        return round(n * self.oversample)
 
     def scale_outline(self, n):
         if n is None:
@@ -945,7 +946,7 @@ class Layout(object):
             if n == 0:
                 return 0
 
-            rv = int(round(n * self.oversample))
+            rv = round(n * self.oversample)
 
             if n < 0 and rv > -1:
                 rv = -1
