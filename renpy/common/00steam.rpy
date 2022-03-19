@@ -24,9 +24,11 @@ python early:
     # Should steam be enabled?
     config.enable_steam = True
 
+
 init -1499 python in _renpysteam:
 
     import collections
+    import time
 
     def retrieve_stats():
         """
@@ -524,7 +526,6 @@ init -1499 python in _renpysteam:
 
     callback_handlers = collections.defaultdict(list)
 
-
     def periodic():
         """
         Called periodically to run Steam callbacks.
@@ -541,12 +542,22 @@ init -1499 python in _renpysteam:
 
     ################################################################## Keyboard
 
+    # True to show the keyboard once, False otherwise.
+    keyboard_mode = "always"
+
     # True if this is the start of a new interaction, and so the keyboard
     # should be shown if a text box appears.
     keyboard_primed = True
 
     # True if the keyboard is currently showing.
-    keyboard_showing = False
+    keyboard_showing = None
+
+    # Should the layers be shifted so the baseline is in view?
+    keyboard_shift = True
+
+    # Where the basline is shifted to on the screen. This is a floating point number,
+    # with 0.0 being the top of the screen and 1.0 being the bottom.
+    keyboard_baseline = 0.5
 
     def prime_keyboard():
         global keyboard_primed
@@ -558,16 +569,48 @@ init -1499 python in _renpysteam:
 
         global keyboard_showing
         global keyboard_primed
+        global keyboard_shift
+        global keyboard_baseline
 
-        if keyboard_primed and (not keyboard_showing) and renpy.display.interface.text_rect:
-            x, y, w, h = (int(i) for i in renpy.display.interface.text_rect)
+        if keyboard_mode == "never":
+            return
+        elif keyboard_mode == "always":
+            keyboard_primed = True
+        elif keyboard_mode != "once":
+            raise Exception("Bad keyboard_mode.")
+
+        keyboard_text_rect = renpy.display.interface.text_rect
+        _KeyboardShift.text_rect = keyboard_text_rect
+
+        if keyboard_primed and (keyboard_showing is None) and keyboard_text_rect:
+            x, y, w, h = (int(i) for i in keyboard_text_rect)
+
+            if keyboard_shift:
+                y  = int(renpy.exports.get_physical_size()[1] * keyboard_baseline) - h
 
             steamapi.SteamUtils().ShowFloatingGamepadTextInput(
                 steamapi.k_EFloatingGamepadTextInputModeModeSingleLine,
                 x, y, w, h)
 
-            keyboard_showing = True
+            print("Showing keyboard.")
+
+            keyboard_showing = time.time()
             keyboard_primed = False
+
+        if keyboard_shift and keyboard_showing and keyboard_text_rect:
+            for l in renpy.config.transient_layers + renpy.config.overlay_layers + renpy.config.context_clear_layers:
+                if not renpy.display.interface.ongoing_transition.get(l) is _KeyboardShift:
+                    renpy.display.interface.set_transition(_KeyboardShift, layer=l, force=True)
+                    renpy.exports.restart_interaction()
+
+        if keyboard_showing and not keyboard_text_rect:
+            steamapi.SteamUtils().DismissFloatingGamepadTextInput()
+
+        if keyboard_showing is None:
+            _KeyboardShift.last_offset = 0
+        else:
+            _KeyboardShift.rendered_offset = _KeyboardShift.last_offset
+
 
     def keyboard_dismissed(cb):
         """
@@ -575,11 +618,66 @@ init -1499 python in _renpysteam:
         """
 
         global keyboard_showing
-
-        keyboard_showing = False
+        keyboard_showing = None
 
     callback_handlers["FloatingGamepadTextInputDismissed_t"].append(keyboard_dismissed)
 
+    class _KeyboardShift(renpy.display.layout.Container):
+        """
+        This is a transition that shifts the screen up, intended for use only
+        with the steam deck keyboard.
+        """
+
+        # Store the text rectangle in the class, so it's not saved, and
+        # is available during render().
+        text_rect = None
+
+        # The last offset we computed.
+        last_offset = 0
+
+        # The offset we computed last time we rendered.
+        rendered_offset = 0
+
+        def __init__(self, new_widget, old_widget, **properties):
+            super(_KeyboardShift, self).__init__(**properties)
+
+            self.delay = 0
+            self.add(new_widget)
+
+        def render(self, width, height, st, at):
+            rv = renpy.display.render.Render(width, height)
+            cr = renpy.display.render.render(self.child, width, height, st, at)
+
+            if (keyboard_showing is not None) and self.text_rect:
+
+                yscale = renpy.config.screen_height / renpy.exports.get_physical_size()[1]
+                x, y, w, h = self.text_rect
+                y -= self.rendered_offset
+
+                text_baseline = y + h
+                desired_baseline = int(keyboard_baseline * renpy.config.screen_height)
+
+                offset = int(desired_baseline - text_baseline)
+                offset = min(0, offset)
+
+                done = (time.time() - keyboard_showing) / .3
+                done = min(1.0, done)
+                done = max(0.0, done)
+
+                if offset and done < 1.0:
+                    renpy.display.render.redraw(self, 0)
+
+                offset = int(offset * done)
+
+            else:
+                offset = 0
+
+            _KeyboardShift.last_offset = offset
+
+            rv.blit(cr, (0, offset))
+            self.offsets = [ (0, offset) ]
+
+            return rv
 
 init -1499 python in achievement:
 
