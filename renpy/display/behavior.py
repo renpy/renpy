@@ -1243,7 +1243,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             if i.endswith("color"):
                 caretprops[i] = properties[i]
 
-        caret = renpy.display.image.Solid(xsize=1, style=style, **caretprops)
+        caret = renpy.display.image.Solid(xysize=(1, renpy.store.preferences.font_size), style=style, **caretprops)
 
         if caret_blink:
             caret = CaretBlink(caret, caret_blink)
