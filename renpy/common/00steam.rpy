@@ -539,17 +539,27 @@ init -1499 python in _renpysteam:
         if renpy.variant("steam_deck"):
             keyboard_periodic()
 
-
-
     ################################################################## Keyboard
 
+    # True if this is the start of a new interaction, and so the keyboard
+    # should be shown if a text box appears.
+    keyboard_primed = True
+
+    # True if the keyboard is currently showing.
     keyboard_showing = False
+
+    def prime_keyboard():
+        global keyboard_primed
+        keyboard_primed = True
+
+    renpy.config.start_interact_callbacks.append(prime_keyboard)
 
     def keyboard_periodic():
 
         global keyboard_showing
+        global keyboard_primed
 
-        if not keyboard_showing and renpy.display.interface.text_rect:
+        if keyboard_primed and (not keyboard_showing) and renpy.display.interface.text_rect:
             x, y, w, h = (int(i) for i in renpy.display.interface.text_rect)
 
             steamapi.SteamUtils().ShowFloatingGamepadTextInput(
@@ -557,7 +567,7 @@ init -1499 python in _renpysteam:
                 x, y, w, h)
 
             keyboard_showing = True
-
+            keyboard_primed = False
 
     def keyboard_dismissed(cb):
         """
