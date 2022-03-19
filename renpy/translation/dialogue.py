@@ -207,7 +207,18 @@ class DialogueFile(object):
             if label is None:
                 label = ""
 
-            for n in t.block:
+            identifier = t.identifier.replace('.', '_')
+            language = renpy.game.preferences.language
+
+            tl = None
+            if language is not None:
+                tl = translator.language_translates.get((identifier, language), None)
+            if tl is None:
+                block = t.block
+            else:
+                block = tl.block
+
+            for n in block:
 
                 if isinstance(n, renpy.ast.Say):
 
@@ -269,10 +280,14 @@ class DialogueFile(object):
 
             stl = renpy.game.script.translator.strings[None] # @UndefinedVariable
 
+            # don't include s in common.rpym
             if s in stl.translations:
                 continue
 
+            # avoid to include same s
             stl.translations[s] = s
+
+            s = renpy.translation.translate_string(s)
 
             if self.notags:
                 s = notags_filter(s)
