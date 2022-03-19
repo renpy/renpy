@@ -209,7 +209,6 @@ class DialogueFile(object):
                 label = ""
 
             identifier = t.identifier.replace('.', '_')
-            language = renpy.game.preferences.language
 
             tl = None
             if self.language is not None:
