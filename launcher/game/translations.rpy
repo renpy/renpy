@@ -381,6 +381,21 @@ screen extract_dialogue:
                     textbutton _("Escape quotes and other special characters.") action ToggleField(persistent, "dialogue_escape") style "l_checkbox"
                     textbutton _("Extract all translatable strings, not just dialogue.") action ToggleField(persistent, "dialogue_strings") style "l_checkbox"
 
+                add SPACER
+                add SEPARATOR2
+
+                frame:
+                    style "l_indent"
+                    has vbox
+
+                    text _("Language:")
+
+                    input style "l_default":
+                        value FieldInputValue(persistent, "translate_language")
+                        size 24
+                        color INPUT_COLOR
+                        allow interface.TRANSLATE_LETTERS
+
 
     textbutton _("Cancel") action Jump("front_page") style "l_left_button"
     textbutton _("Continue") action Jump("start_extract_dialogue") style "l_right_button"
@@ -393,7 +408,9 @@ label start_extract_dialogue:
 
     python:
 
-        args = [ "dialogue" ]
+        language = persistent.translate_language
+
+        args = [ "dialogue", language]
 
         if persistent.dialogue_format == "txt":
             args.append("--text")
