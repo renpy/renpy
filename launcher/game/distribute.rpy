@@ -388,7 +388,7 @@ change_renpy_executable()
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None, force_format=None):
             """
             Distributes `project`.
 
@@ -422,7 +422,10 @@ change_renpy_executable()
 
             `macapp`
                 If given, the path to a macapp that's used instead of
-                the macapp
+                the macapp that's included with Ren'Py.
+
+            `force_format`
+                If given, forces the format of the distribution to be this.
             """
 
             # A map from a package to a unique update version hash.
@@ -582,7 +585,11 @@ change_renpy_executable()
 
             for p in build_packages:
 
-                for f in p["formats"]:
+                formats = p["formats"]
+                if force_format is not None:
+                    formats = [ force_format ]
+
+                for f in formats:
 
                     self.make_package(
                         p["name"],
@@ -1603,6 +1610,8 @@ change_renpy_executable()
         ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building all packages.")
         ap.add_argument("--no-archive", action="store_true", help="If given, files will not be added to archives.")
         ap.add_argument("--macapp", default=None, action="store", help="If given, the path to a signed and notarized mac app.")
+        ap.add_argument("--format", default=None, action="store", help="The format of package to build.")
+
         ap.add_argument("project", help="The path to the project directory.")
 
         args = ap.parse_args()
@@ -1614,7 +1623,7 @@ change_renpy_executable()
         else:
             packages = None
 
-        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest, macapp=args.macapp)
+        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest, macapp=args.macapp, force_format=args.format)
 
         return False
 
