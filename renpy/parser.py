@@ -736,6 +736,9 @@ class Lexer(object):
         location.
         """
 
+        if (self.line == -1) and self.block:
+            self.filename, self.number, self.text, self.subblock = self.block[0]
+
         raise ParseError(self.filename, self.number, msg, self.text, self.pos)
 
     def eol(self):
