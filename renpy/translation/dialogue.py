@@ -353,7 +353,7 @@ def dialogue_command():
 
         filename = os.path.normpath(filename)
         language = args.language
-        if language == "None":
+        if language in ("None", ""):
             language = None
         DialogueFile(filename, output, tdf=tdf, strings=args.strings,
                      notags=args.notags, escape=args.escape, language=language)

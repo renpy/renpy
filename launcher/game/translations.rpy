@@ -27,8 +27,7 @@ init python:
     if persistent.translate_language is None:
         persistent.translate_language = "english"
 
-    if persistent.extract_language is None:
-        persistent.extract_language = "None"
+    persistent.extract_language = persistent.extract_language or "None".
 
     if persistent.generate_empty_strings is None:
         persistent.generate_empty_strings = True
@@ -391,7 +390,7 @@ screen extract_dialogue:
                     style "l_indent"
                     has vbox
 
-                    text _("Language:")
+                    text _("Language (or None):")
 
                     input style "l_default":
                         value FieldInputValue(persistent, "extract_language")
