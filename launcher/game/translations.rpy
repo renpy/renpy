@@ -27,6 +27,9 @@ init python:
     if persistent.translate_language is None:
         persistent.translate_language = "english"
 
+    if persistent.extract_language is None:
+        persistent.extract_language = "None"
+
     if persistent.generate_empty_strings is None:
         persistent.generate_empty_strings = True
 
@@ -391,7 +394,7 @@ screen extract_dialogue:
                     text _("Language:")
 
                     input style "l_default":
-                        value FieldInputValue(persistent, "translate_language")
+                        value FieldInputValue(persistent, "extract_language")
                         size 24
                         color INPUT_COLOR
                         allow interface.TRANSLATE_LETTERS
@@ -408,7 +411,7 @@ label start_extract_dialogue:
 
     python:
 
-        language = persistent.translate_language
+        language = persistent.extract_language
 
         args = [ "dialogue", language]
 

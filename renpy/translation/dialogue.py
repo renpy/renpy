@@ -352,7 +352,11 @@ def dialogue_command():
             continue
 
         filename = os.path.normpath(filename)
-        DialogueFile(filename, output, tdf=tdf, strings=args.strings, notags=args.notags, escape=args.escape, language=args.language)
+        language = args.language
+        if language == "None":
+            language = None
+        DialogueFile(filename, output, tdf=tdf, strings=args.strings,
+                     notags=args.notags, escape=args.escape, language=language)
 
     return False
 
