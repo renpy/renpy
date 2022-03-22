@@ -1417,6 +1417,11 @@ def show_overlay_screens(suppress_overlay):
             if get_screen(i) is not None:
                 hide_screen(i)
 
+    for i in renpy.config.always_shown_screens:
+        if get_screen(i) is None:
+            show_screen(i)
+
+
 
 def per_frame():
     """

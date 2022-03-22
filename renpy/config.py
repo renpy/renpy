@@ -668,6 +668,9 @@ pass_joystick_events = False
 # A list of screens that should be shown when the overlay is enabled.
 overlay_screens = [ ]
 
+# A list of screens that should always be shown.
+always_shown_screens = [ ]
+
 # A map from tag to the default layer that tag should be displayed on.
 tag_layer = { }
 
