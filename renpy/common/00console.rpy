@@ -829,7 +829,9 @@ init -1500 python in _console:
         renpy.python.py_compile(expr, 'eval')
 
         traced_expressions.append(expr)
-        renpy.show_screen("_trace_screen")
+
+        if "_trace_screen" not in config.always_shown_screens:
+            config.always_shown_screens.append("_trace_screen")
 
     def renpy_watch(expr):
         """
@@ -860,6 +862,14 @@ init -1500 python in _console:
         if expr in traced_expressions:
             traced_expressions.remove(expr)
 
+        if not traced_expressions:
+
+            if "_trace_screen" in renpy.config.always_shown_screens:
+                config.always_shown_screens.remove("_trace_screen")
+
+            renpy.hide_screen("_trace_screen")
+
+
     def watch_after_load():
         if config.developer and traced_expressions:
             renpy.show_screen("_trace_screen")
@@ -886,6 +896,10 @@ init -1500 python in _console:
     @command(_("unwatchall: stop watching all expressions"))
     def unwatchall(l):
         traced_expressions[:] = [ ]
+
+        if "_trace_screen" in renpy.config.always_shown_screens:
+            config.always_shown_screens.remove("_trace_screen")
+
         renpy.hide_screen("_trace_screen")
 
     def renpy_unwatchall():
@@ -1018,7 +1032,7 @@ screen _console:
 
 default _console.traced_expressions = _console.TracedExpressionsList()
 
-screen _trace_screen:
+screen _trace_screen():
 
     zorder 1501
 
