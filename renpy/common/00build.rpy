@@ -453,6 +453,9 @@ init -1500 python in build:
     # A list of additional android permission names.
     android_permissions = [ ]
 
+    # Should the sdk-fonts directory be renamed to game?
+    _sdk_fonts = False
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -531,6 +534,8 @@ init -1500 python in build:
         rv["change_icon_i686"] = change_icon_i686
 
         rv["android_permissions"] = android_permissions
+
+        rv["_sdk_fonts"] = _sdk_fonts
 
         return rv
 

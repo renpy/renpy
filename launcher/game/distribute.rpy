@@ -214,6 +214,14 @@ change_renpy_executable()
 
             hash.update(digest.encode("utf-8"))
 
+        def reprefix(self, old, new):
+            rv = self.copy()
+
+            if self.name.startswith(old):
+                rv.name = new + self.name[len(old):]
+
+            return rv
+
     class FileList(list):
         """
         This represents a list of files that we know about.
@@ -381,6 +389,18 @@ change_renpy_executable()
                     no.append(f)
 
             return yes, no
+
+        def reprefix(self, old, new):
+            """
+            Returns a new file list with all the paths reprefixed.
+            """
+
+            rv = FileList()
+
+            for f in self:
+                rv.append(f.reprefix(old, new))
+
+            return rv
 
 
     class Distributor(object):
@@ -553,6 +573,10 @@ change_renpy_executable()
             # Add Ren'Py.
             self.reporter.info(_("Scanning Ren'Py files..."))
             self.scan_and_classify(config.renpy_base, build["renpy_patterns"])
+
+            if build["_sdk_fonts"]:
+                for k in list(self.file_lists.keys()):
+                    self.file_lists[k] = self.file_lists[k].reprefix("sdk-fonts", "game")
 
             # Add Python (with the same name as our executables)
             self.add_python()

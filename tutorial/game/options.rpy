@@ -154,8 +154,8 @@ init python:
 
     ## Add SDK Fonts.
     config.searchpath.append(config.renpy_base + "/sdk-fonts")
-    config.searchpath.append("sdk-fonts")
     build.classify_renpy("sdk-fonts/**", "all")
+    build._sdk_fonts = True
 
     ## The following functions take file patterns. File patterns are case-
     ## insensitive, and matched against the path relative to the base directory,
