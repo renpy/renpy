@@ -31,6 +31,9 @@ variant will be selected.
 Features
 --------
 
+The :func:`renpy.dynamic` function can now make variables in namespaces
+dynamic.
+
 The new :var:`config.always_shown_screens` variable allows one to define
 screens that are always shown (even in the main and game menus). See also
 the existing :var:`config.overlay_screens`.
