@@ -706,8 +706,14 @@ class HistoryEntry(renpy.object.Object):
     what = None
 
     def __eq__(self, other):
-        return self.who == other.who and self.what == other.what
-    
+        if isinstance(other, type(self)):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
+
+    def __hash__(self):
+        return hash(tuple(sorted(self.__dict__.items())))
+
     def __repr__(self):
         return "<History {!r} {!r}>".format(self.who, self.what)
 
