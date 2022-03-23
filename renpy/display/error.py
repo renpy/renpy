@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,10 +22,12 @@
 # This file contains code to handle GUI-based error reporting.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.display
+
 import os
+
+import renpy
 
 error_handled = False
 
@@ -34,9 +36,9 @@ error_handled = False
 
 
 def call_exception_screen(screen_name, **kwargs):
-    try:
+    old_quit = renpy.config.quit_action
 
-        old_quit = renpy.config.quit_action
+    try:
         renpy.config.quit_action = renpy.exports.quit
 
         for i in renpy.config.layers:
@@ -58,6 +60,8 @@ def init_display():
     The minimum amount of code required to init the display.
     """
 
+    renpy.config.gl2 = getattr(renpy.game.persistent, "_gl2", False)
+
     # Ensure we have correctly-typed preferences.
     renpy.game.preferences.check()
 
@@ -65,9 +69,11 @@ def init_display():
         renpy.config.init_system_styles()
 
     if not renpy.game.interface:
-        renpy.display.core.Interface().start()
+        renpy.display.core.Interface()
         renpy.loader.index_archives()
         renpy.display.im.cache.init()
+    else:
+        renpy.game.interface.start()
 
     renpy.ui.reset()
 
@@ -92,7 +98,7 @@ def report_exception(short, full, traceback_fn):
 
     error_dump()
 
-    if renpy.game.args.command != "run":  # @UndefinedVariable
+    if renpy.game.args.command != "run":
         return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
@@ -103,7 +109,7 @@ def report_exception(short, full, traceback_fn):
 
     try:
         init_display()
-    except:
+    except Exception:
         return True
 
     if renpy.display.draw is None:
@@ -126,7 +132,7 @@ def report_exception(short, full, traceback_fn):
 
         if renpy.game.context(-1).next_node is not None:
             ignore_action = renpy.ui.returns(False)
-    except:
+    except Exception:
         pass
 
     try:
@@ -141,13 +147,15 @@ def report_exception(short, full, traceback_fn):
             traceback_fn=traceback_fn,
             )
 
+        renpy.display.im.ignored_images |= renpy.display.im.images_to_ignore
+
         if renpy.store._ignore_action is not None:
             renpy.display.behavior.run(renpy.store._ignore_action)
 
     except renpy.game.CONTROL_EXCEPTIONS:
         raise
 
-    except:
+    except Exception:
         renpy.display.log.write("While handling exception:")
         renpy.display.log.exception()
         raise
@@ -165,13 +173,17 @@ def report_parse_errors(errors, error_fn):
 
     error_dump()
 
-    if renpy.game.args.command != "run":  # @UndefinedVariable
+    if renpy.game.args.command != "run": # @UndefinedVariable
         return True
 
     if "RENPY_SIMPLE_EXCEPTIONS" in os.environ:
         return True
 
     if not renpy.exports.has_screen("_parse_errors"):
+        return True
+
+    # ParseError before finishing loading the script
+    if renpy.config.savedir is None:
         return True
 
     init_display()
@@ -191,7 +203,7 @@ def report_parse_errors(errors, error_fn):
     except renpy.game.CONTROL_EXCEPTIONS:
         raise
 
-    except:
+    except Exception:
         renpy.display.log.write("While handling exception:")
         renpy.display.log.exception()
         raise

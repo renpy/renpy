@@ -5,7 +5,7 @@ translate piglatin demo_transitions_5bbc72fe:
     # e "Ren'Py ships with a large number of built-in transitions, and also includes classes that let you define your own."
     e "Enray'Ypay ipsshay ithway aay argelay umbernay ofay uiltbay-inay ansitionstray, anday alsoay includesay assesclay hattay etlay ouyay efineday ouryay ownay."
 
-# game/indepth_transitions.rpy:58
+# game/indepth_transitions.rpy:60
 translate piglatin demo_transitions_menu_3caf78d3:
 
     # e "What kind of transitions would you like demonstrated?" nointeract

@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,15 +20,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 from renpy.minstore import *
 
 # But please note that this will not be available in the body
 # of user code, unless we re-import it.
-import renpy.display
-import renpy.audio
-import renpy.text
+import renpy
 
 import renpy.display.im as im
 import renpy.display.anim as anim
@@ -106,7 +105,7 @@ class _Config(object):
             raise Exception('config.%s is not a known configuration variable.' % (name))
 
         if name == "script_version":
-            renpy.store._set_script_version(value) # E1101 @UndefinedVariable
+            renpy.store._set_script_version(value) # type: ignore
 
         if name == "developer":
             if value == "auto":
@@ -121,6 +120,7 @@ class _Config(object):
             raise Exception('Deleting configuration variables is not supported.')
         else:
             delattr(renpy.config, name)
+
 
 
 # The styles object.
@@ -187,6 +187,8 @@ Matrix = renpy.display.matrix.Matrix # @UndefinedVariable
 
 Live2D = renpy.gl2.live2d.Live2D
 
+Model = renpy.display.model.Model
+
 # Currying things.
 Alpha = renpy.curry.curry(renpy.display.layout.Alpha)
 Position = renpy.curry.curry(renpy.display.layout.Position)
@@ -233,10 +235,10 @@ AudioData = renpy.audio.audio.AudioData
 # NOTE: When exporting something from here, decide if we need to add it to
 # renpy.pyanalysis.pure_functions.
 
-Style = renpy.style.Style # @UndefinedVariable
+Style = renpy.style.Style # type: ignore
 
-NoRollback = renpy.python.NoRollback
-
+SlottedNoRollback = renpy.rollback.SlottedNoRollback
+NoRollback = renpy.rollback.NoRollback
 
 class _layout_class(__builtins__["object"]):
     """
@@ -326,10 +328,10 @@ def At(d, *args):
     the outermost transform is the rightmost argument. ::
 
         transform birds_transform:
-             xpos -200
-             linear 10 xpos 800
-             pause 20
-             repeat
+            xpos -200
+            linear 10 xpos 800
+            pause 20
+            repeat
 
         image birds = At("birds.png", birds_transform)
         """
@@ -350,12 +352,9 @@ def At(d, *args):
 Color = renpy.color.Color
 color = renpy.color.Color
 
-# Conveniently get rid of all the packages we had imported before.
-import renpy.exports as renpy # @Reimport
-
 # The default menu functions.
-menu = renpy.display_menu
-predict_menu = renpy.predict_menu
+menu = renpy.exports.display_menu
+predict_menu = renpy.exports.predict_menu
 
 # The default transition.
 default_transition = None
@@ -368,40 +367,40 @@ suppress_overlay = False
 
 # The default ADVCharacter.
 adv = ADVCharacter(None,
-                   who_prefix='',
-                   who_suffix='',
-                   what_prefix='',
-                   what_suffix='',
+                who_prefix='',
+                who_suffix='',
+                what_prefix='',
+                what_suffix='',
 
-                   show_function=renpy.show_display_say,
-                   predict_function=renpy.predict_show_display_say,
+                show_function=renpy.exports.show_display_say,
+                predict_function=renpy.exports.predict_show_display_say,
 
-                   condition=None,
-                   dynamic=False,
-                   image=None,
+                condition=None,
+                dynamic=False,
+                image=None,
 
-                   interact=True,
-                   slow=True,
-                   slow_abortable=True,
-                   afm=True,
-                   ctc=None,
-                   ctc_pause=None,
-                   ctc_timedpause=None,
-                   ctc_position="nestled",
-                   all_at_once=False,
-                   with_none=None,
-                   callback=None,
-                   type='say',
-                   advance=True,
+                interact=True,
+                slow=True,
+                slow_abortable=True,
+                afm=True,
+                ctc=None,
+                ctc_pause=None,
+                ctc_timedpause=None,
+                ctc_position="nestled",
+                all_at_once=False,
+                with_none=None,
+                callback=None,
+                type='say',
+                advance=True,
 
-                   who_style='say_label',
-                   what_style='say_dialogue',
-                   window_style='say_window',
-                   screen='say',
-                   mode='say',
-                   voice_tag=None,
+                who_style='say_label',
+                what_style='say_dialogue',
+                window_style='say_window',
+                screen='say',
+                mode='say',
+                voice_tag=None,
 
-                   kind=False)
+                kind=False)
 
 # predict_say and who are defined in 00library.rpy, but we add default
 # versions here in case there is a problem with initialization. (And
@@ -412,7 +411,7 @@ def predict_say(who, what):
     who = Character(who, kind=adv)
     try:
         who.predict(what)
-    except:
+    except Exception:
         pass
 
 
@@ -458,19 +457,11 @@ _ignore_action = None
 # The save slot that Ren'Py saves to on quit.
 _quit_slot = None
 
+# The directory in which Ren'Py saves screenshots.
+_screenshot_pattern = None
+
 # Make these available to user code.
 import sys
 import os
 
-
-def public_api():
-    ui
-    im
-    object
-    range
-    sorted
-    os
-    sys
-
-
-del public_api
+globals()["renpy"] = renpy.exports

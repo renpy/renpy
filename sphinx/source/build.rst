@@ -44,7 +44,7 @@ Basic Configuration
 
 The build process can be configured by setting variables and calling
 function that live in the build namespace. This must be done from
-inside an ``init python`` block. The default settings for these configurations are 
+inside an ``init python`` block. The default settings for these configurations are
 set in ``options.rpy``.
 
 There are a few basic variables and functions that many games will
@@ -98,8 +98,8 @@ icon.ico
 icon.icns
     The icon that is used on Macintosh.
 
-These icon files much be in specific formats. You'll need to use a
-program or web service (such as http://iconverticons.com/ ) to convert
+These icon files must be in specific formats. You'll need to use a
+program or web service (such as https://anyconv.com/png-to-ico-converter/ and https://anyconv.com/png-to-icns-converter/ ) to convert
 them.
 
 Classifying and Ignoring Files
@@ -153,7 +153,8 @@ Files that are not otherwise classified are placed in the "all" file
 list.
 
 To exclude files from distribution, classify them as None or the
-empty string.
+empty string. In this case, \* and \*\* at the end of the pattern
+must match at least one character.
 
 For example::
 
@@ -237,6 +238,41 @@ Please think twice about archiving your game. Keeping files open will
 help others run your game on future platforms – platforms that may not
 exist until after you're gone.
 
+.. _old-game:
+
+The Old-game Directory
+----------------------
+
+When making multiple releases, like when a game is distributed through
+early access or platforms like Patreon, it's necessary to keep the
+old .rpyc files around. The .rpyc files contain information that is
+necessary to ensure that saves can be loaded, and omitting these
+files can cause problems.
+
+At the same time, Ren'Py  will update the .rpyc files in the game
+directory when these files are changed, making the files unsuitable
+for inclusion in version control.
+
+To solve this problem, Ren'Py allows you to place the .rpyc files from
+a previous distribution into the old-game directory, which is alongside
+the game directory. The directory structure of old-game/ should match
+the directory structure of game/. For example, game/scripts/day1.rpyc
+should be moved to old-game/scripts/day1.rpyc. Files in old-game that are
+not .rpyc files are ignored.
+
+The advantage of using old-game is that the old-game .rpyc files can be
+checked in, and that Ren'Py will always start from a known source when
+generating .rpyc files. While this might not be necessary for a
+single-developer game with minor changes, old-game is useful for large
+multiple developer games.
+
+More information about how .rpyc files help with loading saves into changed
+games can be found at:
+
+* `Under the hood: .rpyc files <https://www.patreon.com/posts/under-hood-rpyc-23035810>`_
+* `Ren'Py developer update: February 20201 <https://www.patreon.com/posts/renpy-developer-48146908>`_
+
+
 Requirements
 ------------
 
@@ -246,21 +282,21 @@ visual novel.
 
 **Windows**
 
-* Version: Windows XP or higher.
+* Version: Windows Vista or higher.
 * CPU: 2.0 GHz Core 2 Duo
 * RAM: 2.0 GB
 * Graphics: OpenGL 2.0 or DirectX 9.0c
 
 **macOS**
 
-* Version: 10.6+
+* Version: 10.10+
 * CPU: 2.0 GHz Core 2 Duo (64 bit only)
 * RAM: 2.0 GB
 * Graphics: OpenGL 2.0
 
 **Linux**
 
-* Version: Ubuntu 12.04+
+* Version: Ubuntu 16.04+
 * CPU: 2.0 GHz Core 2 Duo
 * RAM: 2.0 GB
 * Graphics: OpenGL 2.0
@@ -279,11 +315,12 @@ Advanced Configuration
 
 The following variables provide further control of the build process:
 
-.. var:: build.exclude_empty_directories = True
 
-    If true, empty directories (including directories left empty by
-    file archiving) will be removed from generated packages. If false,
-    empty directories will be included.
+.. var:: build.allow_integrated_gpu = True
+
+    Allows Ren'Py to run on the integrated GPU on platforms that have both
+    integrated and discrete GPUs. Right now, this is only supported on Mac
+    OS X.
 
 .. var:: build.destination = "{directory_name}-dists"
 
@@ -302,11 +339,22 @@ The following variables provide further control of the build process:
     ``{version}``
         The value of build.version.
 
-.. var:: build.allow_integrated_gpu = True
+.. var:: build.change_icon_i686 = True
 
-    Allows Ren'Py to run on the integrated GPU on platforms that have both
-    integrated and discrete GPUs. Right now, this is only supported on Mac
-    OS X.
+    If True, and icon.ico exists, the icon of the 32-bit Windows executable
+    will be changed. If False, the icon will not be changed. Setting this
+    to False may prevent some antivirus programs from producing a false
+    positive for your game.
+
+.. var:: build.exclude_empty_directories = True
+
+    If true, empty directories (including directories left empty by
+    file archiving) will be removed from generated packages. If false,
+    empty directories will be included.
+.. var:: build.include_i686 = True
+
+    If true, files necessary to run on 32-bit x86 processors will be included
+    in the Linux and Mac builds. If False, these files will not be included.
 
 .. var:: build.include_old_themes = True
 
@@ -314,6 +362,11 @@ The following variables provide further control of the build process:
     6.99.9 will be included in the build. When false, such files are excluded.
 
     This is set to False when :func:`gui.init` is called.
+
+.. var:: build.include_update = False
+
+    When true, Ren'Py will produce the files required for the :ref:`updater <web-updater>`
+    to work.
 
 .. var:: build.itch_project = None
 
@@ -324,3 +377,10 @@ The following variables provide further control of the build process:
     Once this is set, after the distributions have been built, you can
     click "Build distributions", "Upload to itch.io" to cause an upload
     to occur.
+
+.. var:: build.mac_info_plist = { }
+
+    This is a dictionary mapping strings to strings, that can be used to
+    add or override keys in the mac's Info.plist file.
+
+

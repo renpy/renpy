@@ -131,7 +131,7 @@ Then it will open the script file in the editor.
 
 Once the editor opens, erase everything in script.rpy. We're starting
 from scratch, so you don't need what's there. Copy the example above into
-script.ry, and save it.
+script.rpy, and save it.
 
 You're now ready to run this example. Go back to the launcher, and
 choose "Launch Project". Ren'Py will start up. Notice how, without any
@@ -448,19 +448,19 @@ or mp3 format.
 For example::
 
     ###
-        play music "illurock.ogg"
+        play music "audio/illurock.ogg"
 
 When changing music, one can supply a ``fadeout`` and a ``fadein`` clause, which
 are used to fade out the old music and fade in the new music. ::
 
     ###
-        play music "illurock.ogg" fadeout 1.0 fadein 1.0
+        play music "audio/illurock.ogg" fadeout 1.0 fadein 1.0
 
 The ``queue music`` statement plays an audio file after the current file
 finishes playing. ::
 
     ###
-        queue music "next_track.opus"
+        queue music "audio/next_track.opus"
 
 Music can be stopped with the ``stop music`` statement, which can also
 optionally take a fadeout clause. ::
@@ -472,7 +472,20 @@ Sound effects can be played with the ``play sound`` statement. Unlike music, sou
 effects do not loop. ::
 
     ###
-        play sound "effect.ogg"
+        play sound "audio/effect.ogg"
+
+
+When a filename is in the "game/audio" directory, and the name without the
+file extension can be used as a Python variable (that is, it begins with
+a letter, and contains only letters, numbers, and underscores), it is possible
+to play that file without using quotes.
+
+For example, if "game/audio/illurock.ogg" exists, we can write::
+
+    ###
+        play music illurock
+
+See :ref:`the audio namespace <audio-namespace>` for more details.
 
 
 Pause Statement

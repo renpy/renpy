@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
@@ -126,7 +126,7 @@
 
     # 00console.rpy:255
     old "Press <esc> to exit console. Type help for help.\n"
-    new "Presiona <esc> para salir de la consola. Escribe 'help' para la ayuda.\n"
+    new "Presiona <esc> para salir de la consola. Escribe 'help' para obtener ayuda.\n"
 
     # 00console.rpy:259
     old "Ren'Py script enabled."
@@ -162,15 +162,15 @@
 
     # 00console.rpy:533
     old "load <slot>: loads the game from slot"
-    new "load <slot>: carga el juego desde el 'slot'"
+    new "load <slot>: carga el juego desde la ranura"
 
     # 00console.rpy:546
     old "save <slot>: saves the game in slot"
-    new "save <slot>: graba el juego en el 'slot'"
+    new "save <slot>: guarda el juego en la ranura"
 
     # 00console.rpy:557
     old "reload: reloads the game, refreshing the scripts"
-    new "reload: recarga el juego, actualizando los scripts"
+    new "reload: recarga el juego, actualizando los 'scripts'"
 
     # 00console.rpy:565
     old "watch <expression>: watch a python expression"
@@ -196,3 +196,14 @@
     old "long: Print the full representation of objects on the console."
     new "long: imprime la representación completa de los objetos en la consola."
 
+    # renpy/common/00console.rpy:814
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    new "watch <expression>: observa una expresión de Python\n watch short: hace que la representación de las expresiones rastreadas sea corta (predeterminado)\n watch long: hace que la representación de las expresiones rastreadas sea corta"
+
+    # renpy/common/00console.rpy:925
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    new "escape: habilita el escape de símbolos Unicode en cadenas Unicode."
+
+    # renpy/common/00console.rpy:929
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    new "unescape: Desactiva el escape de símbolos Unicode en cadenas Unicode y lo imprime como está (predeterminado)."

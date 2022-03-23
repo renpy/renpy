@@ -842,8 +842,8 @@ translate russian strings:
     new "[project_dir!q] уже существует. Выберите другое имя проекта."
 
     # gui7.rpy:358
-    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "Какое разрешение будет использовать ваш проект? Хотя Ren'Py может масштабировать окно, это будет целевой размер окна, по отношению к которому будут вырисовываться ресурсы, и на котором они будут наиболее чёткие.\n\nСтандартный 1280x720 — резонный компромисс."
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "Какое разрешение будет использовать ваш проект? Хотя Ren'Py может масштабировать окно, это будет целевой размер окна, по отношению к которому будут вырисовываться ресурсы, и на котором они будут наиболее чёткие.\n\nСтандартный [default_size[0]]x[default_size[1]] — резонный компромисс."
 
     # gui7.rpy:358
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
@@ -1604,3 +1604,255 @@ translate russian strings:
     # game/web.rpy:151
     old "Open build directory"
     new "Открыть папку сборки"
+
+    # game/androidstrings.rpy:47
+    old "Do you want to automatically update the Java source code?"
+    new "Вы хотите автоматически обновлять исходный код Java?"
+
+    # game/choose_directory.rpy:93
+    old "Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."
+    new "Ren'Py не смог запустить python с tkinter для выбора каталога. Пожалуйста, установите модуль python3-tk или tkinter."
+
+    # game/front_page.rpy:198
+    old "audio"
+    new "звук"
+
+    # game/install.rpy:33
+    old "Could not install [name!t], as a file matching [zipglob] was not found in the Ren'Py SDK directory."
+    new "Установка [name!t] провалилась, так как файл, соответствующий [zipglob] не был найден в папке Ren'Py SDK."
+
+    # game/install.rpy:76
+    old "Successfully installed [name!t]."
+    new "Успешно установлен [name!t]."
+
+    # game/install.rpy:104
+    old "Install Libraries"
+    new "Установка библиотек"
+
+    # game/install.rpy:119
+    old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
+    new "Этот экран позволяет установить библиотеки, которые не могут распространяться вместе с Ren'Py. Некоторые из этих библиотек могут потребовать от вас принятия сторонней лицензии для использования или распространения."
+
+    # game/install.rpy:131
+    old "Install Live2D Cubism SDK for Native"
+    new "Установить Live2D Cubism SDK for Native"
+
+    # game/install.rpy:134
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} добавляет поддержку отображения моделей Live2D. Поместите CubismSdkForNative-4-{i}версия{/i}.zip в папку Ren'Py SDK, а затем нажмите кнопку Установить. Для распространения игры с Live2D необходимо принять лицензию от Live2D, Inc."
+
+    # game/install.rpy:138
+    old "Open Ren'Py SDK Directory"
+    new "Открыть папку Ren'Py SDK"
+
+    # game/preferences.rpy:138
+    old "Install libraries"
+    new "Установить библиотеки"
+
+    # game/preferences.rpy:140
+    old "Reset window size"
+    new "Сбросить размер окна"
+
+    # game/install.rpy:144
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new "Live2D в Ren'Py не поддерживается на Web, Android x86_64 (включая эмуляторы и Chrome OS), а также должен добавлятся в iOS проекты вручную. Live2D должен быть установлен заново после обновления Ren'Py и/или установки пакета поддержки Android."
+
+    # game/install.rpy:151
+    old "Install Steam Support"
+    new "Установить поддержку Steam"
+
+    # game/install.rpy:160
+    old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
+    new "Перед установкой поддержки Steam убедитесь что вы являетесь {a=https://partner.steamgames.com/}партнёром Steam{/a}."
+
+    # game/install.rpy:172
+    old "Steam support has already been installed."
+    new "Поддержка Steam уже установлена."
+
+    # game/web.rpy:242
+    old "Preparing progressive download"
+    new "Подготовка прогрессивной загрузки"
+
+    # game/web.rpy:341
+    old "Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    new "Изображения и музыка могут загружаться во время игры. Будет создан файл 'progressive_download.txt', чтобы вы могли настроить такое поведение."
+
+    # game/androidstrings.rpy:21
+    old "The universal version works everywhere but is larger."
+    new "Универсальная версия работает на всех устройствах но занимает больше места."
+
+    # game/androidstrings.rpy:45
+    old "Automatically installing expansion APKs {a=https://issuetracker.google.com/issues/160942333}may not work on Android 11{/a}."
+    new "Автоматическая установка APK-расширения {a=https://issuetracker.google.com/issues/160942333}может не работать на Android 11{/a}."
+
+    # game/android.rpy:35
+    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Для сборки пакетов Android под Windows требуется 64-bit/x64 Java 8 Development Kit. JDK отличается от JRE, поэтому возможно, что у вас есть Java без JDK.\n\n{a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}Cкачайте и установите JDK{/a}, затем перезапустите лаунчер Ren'Py."
+
+    # game/android.rpy:38
+    old "RAPT has been installed, but a bundle key hasn't been configured. Please create a new key, or restore bundle.keystore."
+    new "RAPT был установлен, но ключ Bundle не был настроен. Пожалуйста, создайте новый ключ или восстановите bundle.keystore."
+
+    # game/android.rpy:40
+    old "Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores)."
+    new "Пожалуйста, выберите, хотите ли вы создать Play Bundle (для Google Play) или универсальный APK (для других магазинов приложений и распространения локально)."
+
+    # game/android.rpy:55
+    old "Lists the connected devices."
+    new "Список подключенных устройств."
+
+    # game/android.rpy:56
+    old "Pairs with a device over Wi-Fi, on Android 11+."
+    new "Сопряжение с устройством по Wi-Fi, на Android 11+"
+
+    # game/android.rpy:57
+    old "Connects to a device over Wi-Fi, on Android 11+."
+    new "Подключение к устройству по Wi-Fi, на Android 11+"
+
+    # game/android.rpy:58
+    old "Disconnects a device connected over Wi-Fi."
+    new "Отключение от устройства по Wi-Fi, на Android 11+"
+
+    # game/android.rpy:60
+    old "Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data."
+    new "Создает пакет приложений для Android (ABB), предназначенный для загрузки в Google Play. Он может включать до 2 ГБ данных."
+
+    # game/android.rpy:61
+    old "Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data."
+    new "Создает универсальный APK, предназначенный для магазинов, отличных от Google Play и локального распространения. Он может включать до 2 ГБ данных."
+
+    # game/android.rpy:396
+    old "Play Bundle"
+    new "Play Bundle"
+
+    # game/android.rpy:401
+    old "Universal APK"
+    new "Универсальный APK"
+
+    # game/android.rpy:451
+    old "List Devices"
+    new "Список устройств"
+
+    # game/android.rpy:455
+    old "Wi-Fi Debugging Pair"
+    new "Отладка сопряжения по Wi-Fi"
+
+    # game/android.rpy:459
+    old "Wi-Fi Debugging Connect"
+    new "Отладка подключения по Wi-Fi"
+
+    # game/android.rpy:463
+    old "Wi-Fi Debugging Disconnect"
+    new "Отладка отключения от Wi-Fi"
+
+    # game/android.rpy:562
+    old "Wi-Fi Pairing Code"
+    new "Код сопряжения по Wi-Fi"
+
+    # game/android.rpy:562
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."
+    new "Если поддерживается, это можно найти в 'Настройки разработчика', 'Отладка беспроводной сети', 'Сопряжение устройства кодом сопряжения'."
+
+    # game/android.rpy:569
+    old "Pairing Host & Port"
+    new "Сопряжение через хост и порт"
+
+    # game/android.rpy:585
+    old "IP Address & Port"
+    new "IP-адрес и порт"
+
+    # game/android.rpy:585
+    old "If supported, this can be found in 'Developer options', 'Wireless debugging'."
+    new "Если поддерживается, это можно найти в 'Настройки разработчика', 'Отладка беспроводной сети'."
+
+    # game/android.rpy:601
+    old "This can be found in 'List Devices'."
+    new "Это можно найти в 'Список устройств'."
+
+    # game/androidstrings.rpy:16
+    old "I'm installing the bundle."
+    new "Установка Bundle."
+
+    # game/androidstrings.rpy:17
+    old "Installing the bundle appears to have failed."
+    new "Установка Bundle, похоже, не удалась."
+
+    # game/androidstrings.rpy:19
+    old "Launching the app appears to have failed."
+    new "Запуск приложения, похоже, не удался."
+
+    # game/androidstrings.rpy:32
+    old "How much RAM do you want to allocate to Gradle?\n\nThis must be a positive integer number."
+    new "Сколько оперативной памяти вы хотите выделить Gradle?\n\nЭто должно быть целое положительное число."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers."
+    new "Размер оперативной памяти должен содержать только числа."
+
+    # game/androidstrings.rpy:43
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\nhttps://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Without a working JDK, I can't continue."
+    new "Не удалось использовать javac для компиляции тестового файла. Если вы еще не установили Java Development Kit, пожалуйста, скачайте его с:\n\nhttps://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot\n\nJDK отличается от JRE, поэтому возможно, что у вас есть Java без JDK. Без работающего JDK невозможно продолжить."
+
+    # game/androidstrings.rpy:44
+    old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
+    new "Версия Java на вашем компьютере, похоже, не JDK 8, которая является единственной версией, поддерживаемой Android SDK. Если вам нужно установить JDK 8, вы можете загрузить его с:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nВы также можете установить переменную среды JAVA_HOME, чтобы использовать другую версию Java."
+
+    # game/androidstrings.rpy:57
+    old "I can create an application signing key for you. This key is required to create Universal APK for sideloading and stores other than Google Play.\n\nDo you want to create a key?"
+    new "Я могу создать для вас ключ подписи приложения. Этот ключ необходим для создания универсального APK для магазинов, отличных от Google Play и для локального распространения.\n\nХотите создать ключ?"
+
+    # game/androidstrings.rpy:61
+    old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
+    new "Я могу создать для вас ключ подписи пакета. Этот ключ необходим для создания пакета приложения Android (AAB) для загрузки в Google Play.\n\n\nХотите создать ключ?"
+
+    # game/androidstrings.rpy:62
+    old "I will create the key in the bundle.keystore file.\n\nYou need to back this file up. If you lose it, you will not be able to upgrade your application.\n\nYou also need to keep the key safe. If evil people get this file, they could make fake versions of your application, and potentially steal your users' data.\n\nWill you make a backup of bundle.keystore, and keep it in a safe place?"
+    new "Я создам ключ в файле bundle.keystore.\n\nВам нужно создать резервную копию этого файла. Если вы потеряете его, вы не сможете обновить ваше приложение.\n\nВы также должны хранить ключ в безопасности. Если злоумышленники получат этот файл, они могут создать поддельную версию вашего приложения и, возможно, украсть данные ваших пользователей.\n\nСделаете ли вы резервную копию bundle.keystore и сохраните ее в безопасном месте?"
+
+    # game/androidstrings.rpy:63
+    old "Could not create bundle.keystore. Is keytool in your path?"
+    new "Не удалось создать bundle.keystore. Проверьте, есть ли keytool в path?"
+
+    # game/gui7.rpy:311
+    old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
+    new "{size=-4}\n\пЭто не перезапишет gui/main_menu.png, gui/game_menu.png, и gui/window_icon.png, но создаст несуществующие файлы.{/size}"
+
+    # game/ios.rpy:339
+    old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
+    new "Существуют проблемы с симулятором iOS на Apple Silicon. Пожалуйста, протестируйте на x86_64 или iOS-устройствах."
+
+    # game/preferences.rpy:206
+    old "Daily check for update"
+    new "Ежедневная проверка обновлений"
+
+    # game/preferences.rpy:210
+    old "Default theme"
+    new "Тема по умолчанию"
+
+    # game/preferences.rpy:212
+    old "Dark theme"
+    new "Тёмная тема"
+
+    # game/preferences.rpy:213
+    old "Custom theme"
+    new "Пользовательская тема"
+
+    # game/web.rpy:330
+    old "Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior."
+    new "Изображения и музыка могут быть загружаемы во время игры. В созданном файле 'progressive_download.txt', вы можете настроить это поведение."
+
+    # game/web.rpy:334
+    old "Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported."
+    new "Текущие ограничения веб-платформы означают, что загрузка больших изображений может привести к сбоям звука или частоты кадров, а также к снижению производительности в целом. Видео-файлы не поддерживаются."
+
+    # game/web.rpy:338
+    old "There are known issues with Safari and other Webkit-based browsers that may prevent games from running."
+    new "Существуют проблемы с Safari и другими браузерами на базе Webkit, которые могут не позволить запустить игру."
+
+    # game/updater.rpy:109
+    old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/doc/html/changelog.html}Посмотреть журнал изменений{/a}"
+
+    # game/updater.rpy:111
+    old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
+    new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Посмотреть журнал изменений{/a}"

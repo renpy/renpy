@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init -1900 python:
+init -1100 python:
 
     # This is called when script_version is set, to immediately
     # run code in response to a script_version change.
@@ -193,11 +193,44 @@ init -1900 python:
         if version <= (7, 3, 2):
             config.audio_directory = None
             config.early_start_store = True
+            config.compat_viewport_minimum = True
 
         if version <= (7, 3, 5):
             config.side_image_requires_attributes = False
             config.window_functions_set_auto = False
+            config.hw_video = True
+            config.who_what_sub_compat = 0
 
+        if version <= (7, 4, 0):
+            config.pause_with_transition = True
+
+        if version <= (7, 4, 2):
+            config.dismiss_blocking_transitions = False
+
+        if version <= (7, 4, 4):
+            config.pause_after_rollback = True
+            config.gl2 = False
+            config.gl_lod_bias = -1.0
+            config.who_what_sub_compat = 1
+
+        if version == (7, 4, 5):
+            config.scene_clears_layer_at_list = False
+
+        if version <= (7, 4, 6):
+            config.adjust_minimums = False
+            config.atl_start_on_show = False
+            config.input_caret_blink = False
+
+        if version <= (7, 4, 8):
+            config.relative_transform_size = False
+            config.tts_front_to_back = False
+
+        if version <= (7, 4, 10):
+            config.always_unfocus = False
+
+        if version <= (7, 5, 0):
+            style.drag.focus_mask = True
+            style.default.outline_scaling = "step"
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
@@ -210,10 +243,13 @@ python early hide:
             script_version = f.read()
         script_version = ast.literal_eval(script_version)
 
+        config.early_script_version = script_version
+
         if script_version <= (7, 2, 2):
             config.keyword_after_python = True
 
-    except:
+    except Exception:
+        config.early_script_version = None
         pass
 
 
@@ -224,7 +260,7 @@ init -1000 python hide:
             script_version = f.read()
         config.script_version = ast.literal_eval(script_version)
         renpy.write_log("Set script version to: %r", config.script_version)
-    except:
+    except Exception:
         pass
 
 
@@ -240,10 +276,10 @@ init -1000 python hide:
                 config.script_version = (6, 99, 12, 4)
 
             renpy.write_log("Set script version to: %r (alternate path)", config.script_version)
-    except:
+    except Exception:
         pass
 
-init 1900 python hide:
+init 1100 python hide:
 
     # This returns true if the script_version is <= the
     # script_version supplied. Give it the last script version

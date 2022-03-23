@@ -193,25 +193,18 @@ translate japanese strings:
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## itch.io project に関連付けられたユーザー名とプロジェクト名。二つの名前はスラッシュで分けてください。"
 
-
-
-translate japanese strings:
-
     # options.rpy:196
     old "## Set this to a string containing your Apple Developer ID Application to enable codesigning on the Mac. Be sure to change it to your own Apple-issued ID."
     new "## Mac のコード署名を有効にするために Apple Developer ID アプリケーション を含む文字列を設定します。必ず Apple が発行したあなたの ID に変更してください。"
-
-
-translate japanese strings:
 
     # options.rpy:81
     old "## Between screens of the game menu."
     new "## ゲームメニューのスクリーンを切り替える時のトランジション。"
 
-
-translate japanese strings:
-
     # options.rpy:31
     old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
     new "## About（バージョン情報）スクリーンに表示されるテキスト。トリプルクオートの間にテキストを入力します。段落の間には空行を挿入して下さい。"
 
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    new "## これらの3つの変数は、特に、どのミキサーがデフォルトでプレーヤーに表示されるかを制御します。これらのいずれかをFalseに設定すると、適切なミキサーが非表示になります。"

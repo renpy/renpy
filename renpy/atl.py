@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,12 +20,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
-
-import renpy.display
-from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import random
+
+import renpy
+from renpy.pyanalysis import Analysis, NOT_CONST, GLOBAL_CONST
 
 
 def compiling(loc):
@@ -85,7 +85,7 @@ def float_or_none(x):
     return float(x)
 
 
-def matrixcolor(x):
+def matrix(x):
     if x is None:
         return None
     elif callable(x):
@@ -95,68 +95,15 @@ def matrixcolor(x):
 
 
 def mesh(x):
-    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2mesh3.Mesh3, tuple)):
+    if isinstance(x, (renpy.gl2.gl2mesh2.Mesh2, renpy.gl2.gl2mesh3.Mesh3, tuple)):
         return x
 
     return bool(x)
 
 
 # A dictionary giving property names and the corresponding default
-# values.
-PROPERTIES = {
-    "pos" : (position, position),
-    "xpos" : position,
-    "ypos" : position,
-    "anchor" : (position, position),
-    "xanchor" : position,
-    "yanchor" : position,
-    "xaround" : position,
-    "yaround" : position,
-    "xanchoraround" : float,
-    "yanchoraround" : float,
-    "align" : (float, float),
-    "xalign" : float,
-    "yalign" : float,
-    "rotate" : float,
-    "rotate_pad" : bool,
-    "transform_anchor" : bool,
-    "xzoom" : float,
-    "yzoom" : float,
-    "zoom" : float,
-    "nearest" : bool_or_none,
-    "alpha" : float,
-    "additive" : float,
-    "around" : (position, position),
-    "alignaround" : (float, float),
-    "angle" : float,
-    "radius" : float,
-    "crop" : (float, float, float, float),
-    "crop_relative" : bool,
-    "xsize" : int,
-    "ysize" : int,
-    "size" : (int, int),
-    "fit" : str,
-    "maxsize" : (int, int),
-    "corner1" : (float, float),
-    "corner2" : (float, float),
-    "subpixel" : bool,
-    "delay" : float,
-    "xoffset" : float,
-    "yoffset" : float,
-    "offset" : (int, int),
-    "xcenter" : position,
-    "ycenter" : position,
-    "debug" : any_object,
-    "events" : bool,
-    "xpan" : float_or_none,
-    "ypan" : float_or_none,
-    "xtile" : int,
-    "ytile" : int,
-    "matrixcolor" : matrixcolor,
-    "shader" : any_object,
-    "mesh" : mesh,
-    "blur" : float_or_none,
-    }
+# values. This is massively added to by renpy.display.transform.
+PROPERTIES = { }
 
 
 def correct_type(v, b, ty):
@@ -179,7 +126,7 @@ def interpolate(t, a, b, type): # @ReservedAssignment
     """
 
     # Deal with booleans, nones, etc.
-    if b is None or isinstance(b, (bool, basestring, renpy.display.im.matrix)):
+    if b is None or isinstance(b, (bool, basestring, renpy.display.matrix.Matrix)):
         if t >= 1.0:
             return b
         else:
@@ -189,6 +136,9 @@ def interpolate(t, a, b, type): # @ReservedAssignment
     elif isinstance(b, tuple):
         if a is None:
             a = [ None ] * len(b)
+
+        if not isinstance(type, tuple):
+            type = (type,) * len(b)
 
         return tuple(interpolate(t, i, j, ty) for i, j, ty in zip(a, b, type))
 
@@ -249,18 +199,18 @@ def interpolate_spline(t, spline):
 
             # Catmull-Rom (re-adjust the control points)
             spline = ([spline[1], spline[0]]
-                    + list(spline[2:-2])
-                    + [spline[-1], spline[-2]])
+                    +list(spline[2:-2])
+                    +[spline[-1], spline[-2]])
 
             inner_spline_count = float(len(spline) - 3)
 
             # determine which spline values are relevant
-            sector = int(t // ( 1.0 / inner_spline_count ) + 1)
+            sector = int(t // (1.0 / inner_spline_count) + 1)
 
             # determine t for this sector
-            t = ( t % ( 1.0 / inner_spline_count ) ) * inner_spline_count
+            t = (t % (1.0 / inner_spline_count)) * inner_spline_count
 
-            rv = get_catmull_rom_value(t, *spline[sector-1:sector+3])
+            rv = get_catmull_rom_value(t, *spline[sector - 1:sector + 3])
 
     return correct_type(rv, spline[-1], position)
 
@@ -272,10 +222,11 @@ def get_catmull_rom_value(t, p_1, p0, p1, p2):
     """
     t = float(max(0.0, min(1.0, t)))
     return type(p0)(
-        (t * ((2-t)*t - 1) * p_1
-        + (t*t*(3*t - 5) + 2) * p0
-        + t*((4 - 3*t)*t + 1) * p1
-        + (t-1)*t*t * p2 ) / 2)
+        (t * ((2 - t) * t - 1) * p_1
+        +(t * t * (3 * t - 5) + 2) * p0
+        +t * ((4 - 3 * t) * t + 1) * p1
+        +(t - 1) * t * t * p2) / 2)
+
 
 # A list of atl transforms that may need to be compile.
 compile_queue = [ ]
@@ -385,12 +336,19 @@ class ATLTransformBase(renpy.object.Object):
         self.parent_transform = None
 
         # The offset between st and when this ATL block first executed.
-        self.atl_st_offset = 0
+        if renpy.config.atl_start_on_show:
+            self.atl_st_offset = None
+        else:
+            self.atl_st_offset = 0
 
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
     def _handles_event(self, event):
+
+        if (event == "replaced") and (self.atl_state is None):
+            return True
+
         if (self.block is not None) and (self.block._handles_event(event)):
             return True
 
@@ -417,9 +375,10 @@ class ATLTransformBase(renpy.object.Object):
         requires that t.atl is self.atl.
         """
 
-        super(ATLTransformBase, self).take_execution_state(t)
+        super(ATLTransformBase, self).take_execution_state(t) # type: ignore
 
         self.atl_st_offset = None
+        self.atl_state = None
 
         if self is t:
             return
@@ -433,7 +392,7 @@ class ATLTransformBase(renpy.object.Object):
         try:
             if not (t.context == self.context):
                 return
-        except:
+        except Exception:
             pass
 
         self.done = t.done
@@ -447,7 +406,6 @@ class ATLTransformBase(renpy.object.Object):
         self.at = t.at
         self.st_offset = t.st_offset
         self.at_offset = t.at_offset
-
         self.atl_st_offset = t.atl_st_offset
 
         if self.child is renpy.display.motion.null:
@@ -512,13 +470,13 @@ class ATLTransformBase(renpy.object.Object):
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
             child=child,
-            style=self.style_arg,
+            style=self.style_arg, # type: ignore
             context=context,
             parameters=parameters,
             _args=_args,
             )
 
-        rv.parent_transform = self
+        rv.parent_transform = self # type: ignore
         rv.take_state(self)
 
         return rv
@@ -647,7 +605,7 @@ class ATLTransformBase(renpy.object.Object):
         if block is None:
             block = self.compile()
 
-        return self.children + block.visit()
+        return self.children + block.visit() # type: ignore
 
 
 # The base class for raw ATL statements.
@@ -897,12 +855,16 @@ class Block(Statement):
                     loop_end = target - arg
                     duration = loop_end - loop_start
 
-                    if duration <= 0:
+                    if (state is None) and (duration <= 0):
                         raise Exception("ATL appears to be in an infinite loop.")
 
                     # Figure how many durations can occur between the
                     # start of the loop and now.
-                    new_repeats = int((target - loop_start) / duration)
+
+                    if duration:
+                        new_repeats = int((target - loop_start) / duration)
+                    else:
+                        new_repeats = 0
 
                     if count is not None:
                         if repeats + new_repeats >= count:
@@ -1047,7 +1009,7 @@ class RawMultipurpose(RawStatement):
         for expr, _with in self.expressions:
             try:
                 value = ctx.eval(expr)
-            except:
+            except Exception:
                 raise Exception("Could not evaluate expression %r when compiling ATL." % expr)
 
             if not isinstance(value, ATLTransformBase):
@@ -1092,7 +1054,7 @@ class RawMultipurpose(RawStatement):
 
             try:
                 i = ctx.eval(i)
-            except:
+            except Exception:
                 continue
 
             if isinstance(i, ATLTransformBase):
@@ -1101,7 +1063,7 @@ class RawMultipurpose(RawStatement):
 
             try:
                 renpy.easy.predict(i)
-            except:
+            except Exception:
                 continue
 
 # This lets us have an ATL transform as our child.
@@ -1220,12 +1182,27 @@ class Interpolation(Statement):
 
         warper = warpers.get(self.warper, self.warper)
 
-        if (self.warper != "instant") and (state is None) and (
-                (trans.atl_state is not None) or (trans.st == 0)
-                ):
-            first = True
+        if trans.atl.animation:
+            st_or_at = trans.at
         else:
-            first = False
+            st_or_at = trans.st
+
+        # True if we want want to make sure this interpolation is shown for at
+        # least one frame.
+        if self.warper == "instant":
+            first_frame = False
+        elif state is not None:
+            first_frame = False
+        elif (self.duration == 0) and (not self.properties and not self.revolution and not self.splines):
+            first_frame = True
+        elif trans.atl_state is not None:
+            first_frame = True
+        elif st_or_at == 0:
+            first_frame = True
+        else:
+            # This is the case when we're skipping through a displayable to
+            # find the right time.
+            first_frame = False
 
         if self.duration:
             complete = min(1.0, st / self.duration)
@@ -1349,7 +1326,7 @@ class Interpolation(Statement):
             value = interpolate_spline(complete, values)
             setattr(trans.state, name, value)
 
-        if ((not first) or (not renpy.config.atl_one_frame)) and (st >= self.duration):
+        if (st >= self.duration) and ((not first_frame) or (not renpy.config.atl_one_frame)):
             return "next", st - self.duration, None
         else:
             if not self.properties and not self.revolution and not self.splines:
@@ -1520,9 +1497,12 @@ class Choice(Statement):
 
         executing(self.loc)
 
+        choice = None # For typing purposes.
+
         if state is None:
 
             total = 0
+
             for chance, choice in self.choices:
                 total += chance
 
@@ -1640,15 +1620,22 @@ class On(Statement):
         # handle it.
         for event in events:
 
-            if event in self.handlers:
+            while event:
+                if event in self.handlers:
+                    break
 
-                # Do not allow people to abort the hide or replaced event.
-                lock_event = (name == "hide" and trans.hide_request) or (name == "replaced" and trans.replaced_request)
+                event = event.partition("_")[2]
 
-                if not lock_event:
-                    name = event
-                    start = st
-                    cstate = None
+            if not event:
+                continue
+
+            # Do not allow people to abort the hide or replaced event.
+            lock_event = (name == "hide" and trans.hide_request) or (name == "replaced" and trans.replaced_request)
+
+            if not lock_event:
+                name = event
+                start = st
+                cstate = None
 
         while True:
 

@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 import inspect
 import re
@@ -6,10 +6,14 @@ import collections
 import keyword
 import renpy.sl2
 import shutil
-import StringIO
+import io
 import os
+import textwrap
 
-import __builtin__
+try:
+    import builtins
+except ImportError:
+    import __builtin__ as builtins
 
 # Additional keywords in the Ren'Py script language.
 SCRIPT_KEYWORDS = """\
@@ -117,7 +121,7 @@ def sl2_regexps():
     style_part2 = "(?:" + "|".join(sorted(renpy.sl2.slparser.STYLE_PREFIXES)) + ")"
 
     items = list(groups.items())
-    items.sort(key=lambda a : ( tuple(sorted(a[1])), a[0][1] ) )
+    items.sort(key=lambda a : (tuple(sorted(a[1])), a[0][1]))
 
     for k, prefixes in items:
         names, style = k
@@ -198,7 +202,6 @@ def write_keywords():
 # that file.
 line_buffer = collections.defaultdict(list)
 
-
 # A map from id(o) to the names it's documented under.
 documented = collections.defaultdict(list)
 
@@ -221,6 +224,13 @@ def scan(name, o, prefix=""):
 
     if not doc:
         return
+
+    if doc[0] == ' ':
+        print("Bad docstring for ", name, repr(doc))
+
+    if re.match(r'[\w\.]+\(', doc):
+        doc = doc.partition("\n\n")[2]
+        doc = textwrap.dedent(doc)
 
     # Break up the doc string, scan it for specials.
     lines = [ ]
@@ -268,7 +278,7 @@ def scan(name, o, prefix=""):
 
             try:
                 args = inspect.getargspec(init)
-            except:
+            except Exception:
                 args = None
 
         elif inspect.isfunction(o):
@@ -301,8 +311,12 @@ def scan(name, o, prefix=""):
     lb.append(prefix + "")
 
     if inspect.isclass(o):
-        for i in dir(o):
-            scan(i, getattr(o, i), prefix + "    ")
+        if (name not in [ "Matrix", "OffsetMatrix", "RotateMatrix", "ScaleMatrix" ]):
+            for i in dir(o):
+                scan(i, getattr(o, i), prefix + "    ")
+
+    if name == "identity":
+        raise Exception("identity")
 
     documented_list.append(o)
     documented[id(o)].append(name)
@@ -319,14 +333,14 @@ def scan_section(name, o):
 
 def write_line_buffer():
 
-    for k, v in line_buffer.iteritems():
+    for k, v in line_buffer.items():
 
         # f = file("source/inc/" + k, "w")
 
-        f = StringIO.StringIO()
+        f = io.StringIO()
 
-        print(".. Automatically generated file - do not modify.", file=f)
-        print(file=f)
+        print(u".. Automatically generated file - do not modify.", file=f)
+        print(u"", file=f)
 
         for l in v:
             print(l, file=f)
@@ -386,8 +400,6 @@ def format_name(name):
 
 def write_reserved(module, dest, ignore_builtins):
 
-    print("Writing", dest)
-
     with open(dest, "w") as f:
 
         for i in sorted(dir(module)):
@@ -398,7 +410,7 @@ def write_reserved(module, dest, ignore_builtins):
             if i.startswith("_"):
                 continue
 
-            if ignore_builtins and hasattr(__builtin__, i):
+            if ignore_builtins and hasattr(builtins, i):
                 continue
 
             f.write("* " + format_name(i) + "\n")
@@ -413,8 +425,8 @@ def write_pure_const():
         for i in l:
             f.write("* " + format_name(i) + "\n")
 
-    pure = renpy.pyanalysis.pure_functions  # @UndefinedVariable
-    constants = renpy.pyanalysis.constants - pure  # @UndefinedVariable
+    pure = renpy.pyanalysis.pure_functions # @UndefinedVariable
+    constants = renpy.pyanalysis.constants - pure # @UndefinedVariable
 
     with open("source/inc/pure_vars", "w") as f:
         write_set(f, pure)

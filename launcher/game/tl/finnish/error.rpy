@@ -102,8 +102,8 @@ translate finnish strings:
     new "Kalibroidaan [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Paina tai liikuta [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Paina tai liikuta [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"

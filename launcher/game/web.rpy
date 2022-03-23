@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -104,7 +104,7 @@ init python:
                 + "# +/- type path\n"
                 + '- image game/gui/**\n'
                 + '+ image game/**\n'
-                + '+ music game/music/**\n'
+                + '+ music game/audio/**\n'
                 + '+ voice game/voice/**\n'
             )
 
@@ -311,17 +311,6 @@ screen web():
 
                         add SPACER
 
-                        text _("Support:")
-
-                        add HALF_SPACER
-
-                        frame style "l_indent":
-
-                            has vbox
-
-                            textbutton _("RenPyWeb Home") action OpenURL("https://renpy.beuc.net/")
-                            textbutton _("Beuc's Patreon") action OpenURL("https://www.beuc.net/donate/")
-
 
                 # Right side.
                 frame:
@@ -338,17 +327,25 @@ screen web():
                         style "l_indent"
                         has vbox
 
-                        text _("Images and musics can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior.")
+                        text _("Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior.")
 
                         add SPACER
 
-                        text _("Current limitations in the web platform mean that loading large images, audio files, or movies may cause audio or framerate glitches, and lower performance in general.")
+                        text _("Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported.")
+
+                        add SPACER
+
+                        text _("Changes to modern web browsers may prevent games from running, or may require the developer tools window to be open to run games. (We're working on it.)")
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
 
 
 
 label web:
+
+    if not PY2:
+        $ interface.info(_("This feature is not supported in Ren'Py 8."),  _("We hope to restore support in a future release of Ren'Py 8."))
+        return
 
     if WEB_PATH is None:
         $ interface.yesno(_("Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"), no=Jump("front_page"))

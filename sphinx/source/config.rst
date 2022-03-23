@@ -216,6 +216,21 @@ for more information on how to set defaults for various preferences.
 Occasionally Used
 -----------------
 
+.. var:: config.adjust_attributes = { }
+
+    If not None, this is a dictionary. When a statement or function that
+    contains image attributes executes or is predicted, the tag is
+    looked up in this dictionary. If it is not found, the None key
+    is looked up in this dictionary.
+
+    If either is found, they're expected to be a function. The function
+    is given an image name, a tuple consisting of the tag and any
+    attributes. It should return an adjusted tuple, which contains
+    and a potential new set of attributes.
+
+    As this function may be called during prediction, it must not rely
+    on any state.
+
 .. var:: config.after_load_callbacks = [ ... ]
 
     A list of functions that are called (with no arguments) when a load
@@ -226,6 +241,26 @@ Occasionally Used
     If not None, a function that is called with no arguments after a
     replay completes.
 
+.. var:: config.allow_underfull_grids = False
+
+    If True, Ren'Py will not require grids to be full in order to display.
+
+.. var:: config.always_shown_screens = [ ]
+
+    A list of names of screens that Ren'Py will always show, even in menus,
+    and when the interface is hidden. This is mostly used by Ren'Py, which
+    assumes this will be a list. The :var:`config.overlay_screens` list is
+    usually more appropriate.
+
+.. var:: config.audio_filename_callback = None
+
+    If not None, this is a function that is called with an audio filename,
+    and is expected to return a second audio filename, the latter of which
+    will be played.
+
+    This is intended for use when an a games has audio file formats changed,
+    but it's not destired to update the game script.
+
 .. var:: config.auto_channels = { "audio" : ( "sfx", "", ""  ) }
 
     This is used to define automatic audio channels. It's a map the
@@ -234,6 +269,14 @@ Occasionally Used
     * The mixer the channel uses.
     * A prefix that is given to files played on the channel.
     * A suffix that is given to files played on the channel.
+
+.. var:: config.auto_movie_channel = True
+
+    If True, and the `play` argument is give to :func:`Movie`, an
+    audio channel name is automatically generated for each movie.
+
+    :var:`config.single_movie_channel` takes precendece over this
+    variable.
 
 .. var:: config.auto_load = None
 
@@ -257,34 +300,6 @@ Occasionally Used
     voice audio.
 
     See :ref:`Automatic Voice <automatic-voice>` for more details.
-
-.. var:: config.automatic_images = None
-
-    If not None, this causes Ren'Py to automatically define
-    images.
-
-    When not set to None, this should be set to a list of
-    separators. (For example, ``[ ' ', '_', '/' ]``.)
-
-    Ren'Py will scan through the list of files on disk and in
-    archives. When it finds a file ending with .png or .jpg, it will
-    strip the extension, then break the name at separators, to create
-    an image name. If the name consists of at least two components,
-    and no image with that name already is defined, Ren'Py will define
-    that image to refer to a filename.
-
-    With the example list of separators, if your game directory
-    contains:
-
-    * eileen_happy.png, Ren'Py will define the image "eileen happy".
-    * lucy/mad.png, Ren'Py will define the image "lucy mad".
-    * mary.png, Ren'Py will do nothing. (As the image does not have two components.)
-
-.. var:: config.automatic_images_strip = [ ]
-
-    A list of strings giving prefixes that are stripped out when
-    defining automatic images. This can be used to remove directory
-    names, when directories contain images.
 
 .. var:: config.autosave_slots = 10
 
@@ -324,15 +339,26 @@ Occasionally Used
     Contains a list of screens that are removed when a context is copied
     for rollback or saving.
 
-.. var:: config.debug = False
+.. var:: config.context_fadein_music = 0
 
-    Enables debugging functionality (mostly by turning some missing
-    files into errors.) This should always be turned off in a release.
+    The amount of time in seconds Ren'Py spends fading in music when the music is
+    played due to a context change. (Usually, when the game is loaded.)
+
+.. var:: config.context_fadeout_music = 0
+
+    The amount of time in seconds Ren'Py spends fading out music when the music is
+    played due to a context change. (Usually, when the game is loaded.)
 
 .. var:: config.debug_image_cache = False
 
     If True, Ren'Py will write information about the :ref:`image cache <images>`
     to image_cache.txt.
+
+.. var:: config.debug_prediction = False
+
+    If True, Ren'Py will will write information about and errors that
+    occur during prediction (of execution flow, images, and screens) to
+    log.txt and the console.
 
 .. var:: config.debug_sound = False
 
@@ -351,9 +377,26 @@ Occasionally Used
     window to the window size, this can be used to report cases where the
     dialogue is too large for its window.
 
+.. var:: config.default_attribute_callbacks = { }
+
+    When a statement or function that contains image attributes executes or is
+    predicted, and the tag is not currently being shown, it's looked up in this
+    dictionary. If it is not found, the None key is looked up instead.
+
+    If either is found, they're expected to be a function. The function is
+    given an image name, a tuple consisting of the tag and any attributes. It
+    should return an iterable which contains any additional attributes to be
+    applied when an image is first shown.
+
+    The results of the function are treated as additive-only, and any explicit
+    conflicting or negative attributes will still take precedence.
+
+    As this function may be called during prediction, it must not rely on any
+    state.
+
 .. var:: config.default_tag_layer = "master"
 
-    The layer an image is shown on if its tag is not found in config.tag_layer.
+    The layer an image is shown on if its tag is not found in :var:`config.tag_layer`.
 
 .. var:: config.default_transform = ...
 
@@ -461,20 +504,12 @@ Occasionally Used
     you could write::
 
         init python:
-            config.font_replacement_map["Vera.ttf", False, True] = ("VeraIt.ttf", False, False).
+            config.font_replacement_map["Vera.ttf", False, True] = ("VeraIt.ttf", False, False)
 
     Please note that these mappings only apply to specific variants of
     a font. In this case, requests for a bold italic version of vera
     will get a bold italic version of vera, rather than a bold version
     of the italic vera.
-
-.. var:: config.game_menu = [ ... ]
-
-    This is used to customize the choices on the game menu. Please
-    read Main and Game Menus for more details on the contents of this
-    variable.
-
-    This is not used when the game menu is defined using screens.
 
 .. var:: config.game_menu_music = None
 
@@ -486,6 +521,11 @@ Occasionally Used
     This is mainly seen as the color of the letterbox or pillarbox
     edges drawn when aspect ratio of the window or monitor in fullscreen
     mode) does not match the aspect ratio of the game.
+
+.. var:: config.gl_lod_bias = -0.5
+
+    The default value of the :ref:`u_lod_bias <u-lod-bias>` uniform,
+    which controls the mipmap level Ren'Py uses.
 
 .. var:: config.gl_test_image = "black"
 
@@ -516,9 +556,8 @@ Occasionally Used
 .. var:: config.hw_video = False
 
     If true, hardware video playback will be used on mobile platforms. This
-    is faster, but only some formats are supported and only fullscreen video
-    is available. If false, software playback will be used, but it may be
-    too slow to be useful.
+    may be faster, but only some formats are supported and only fullscreen video
+    is available. If false, software playback will be used.
 
 .. var:: config.hyperlink_handlers = { ... }
 
@@ -552,17 +591,21 @@ Occasionally Used
     can be repeatedly loaded, hurting performance. If not none,
     :var:`config.image_cache_size` is used instead of this variable.
 
-.. var:: config.key_repeat = (.3, .03)
+.. var:: config.input_caret_blink = 1.0
 
-    Controls the rate of keyboard repeat. When key repeat is enabled, this
-    should be a tuple. The first item in the tuple is the delay before the
-    first repeat, and the second item is the delay between repeats. Both
-    are in seconds. If None, keyboard repeat is disabled.
+    If not False, sets the blinking period of the default caret, in seconds.
 
 .. var:: config.language = None
 
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
+
+.. var:: config.lint_character_statistics = True
+
+    If true, and :var:`config.developer` is true, the lint report will include
+    statistics about the number of dialogue blocks spoken for each character.
+    The chanracter statistics are disabled when the game is packaged, to
+    prevent spoilers.
 
 .. var:: config.load_failed_label = None
 
@@ -584,14 +627,13 @@ Occasionally Used
     It should return a string giving the name of a translation to use, or
     None to use the default translation.
 
-.. var:: config.main_menu = [ ... ]
-
-    The default main menu, when not using screens. For more details,
-    see Main and Game Menus.
-
 .. var:: config.main_menu_music = None
 
     If not None, a music file to play when at the main menu.
+
+.. var:: config.main_menu_music_fadein = 0.0
+
+    The number of seconds to take to fade in :var:`config.main_menu_music`.
 
 .. var:: config.menu_arguments_callback = None
 
@@ -657,7 +699,10 @@ Occasionally Used
     `xoffset`, `yoffset`) tuples, representing frames.
 
     `image`
-        The mouse cursor image.
+        The mouse cursor image. The maximum size for this image
+        varies based on the player's hardware. 32x32 is guaranteed
+        to work everywhere, while 64x64 works on most hardware. Larger
+        images may not work.
 
     `xoffset`
         The offset of the hotspot pixel from the left side of the
@@ -668,6 +713,18 @@ Occasionally Used
 
     The frames are played back at 20Hz, and the animation loops after
     all frames have been shown.
+
+.. var:: config.mouse_displayable = None
+
+    If not None, this should either be a displayable, or a callable that
+    returns a displayable. The callable may return None, in which case
+    Ren'Py proceeds if the displayable is None.
+
+    If a displayable is given, the mouse cursor is hidden, and the
+    displayable is shown above anything else. This displayable is
+    responsible for positioning and drawing a sythetic mouse
+    cursor, and so should probably be a :func:`MouseDisplayable`
+    or something very similar.
 
 .. var:: config.narrator_menu = False
 
@@ -688,7 +745,7 @@ Occasionally Used
     implementation is :func:`renpy.display_notify`. This is intended
     to allow creators to intercept notifications.
 
-.. var:: config.optimize_texture_bounds = False
+.. var:: config.optimize_texture_bounds = True
 
     When True, Ren'Py will scan images to find the bounding box of the
     non-transparent pixels, and only load those pixels into a texture.
@@ -703,6 +760,13 @@ Occasionally Used
     A list of screens that are displayed when the overlay is enabled,
     and hidden when the overlay is suppressed. (The screens are shown
     on the screens layer, not the overlay layer.)
+
+.. var:: config.pause_after_rollback = False
+
+    If False, the default, rolling back will skip any pauses (timed or
+    not) and stop only at other interactions such as dialogues, menus...
+    If True, renpy will include timeless pauses to the valid places a
+    rollback can take the user.
 
 .. var:: config.preload_fonts = [ ]
 
@@ -808,11 +872,20 @@ Occasionally Used
 
 .. var:: config.screen_height = 600
 
-    The height of the screen. Usually set by :func:`gui.init`.
+    The height of the screen. Usually set by :func:`gui.init` to
+    a much larger size.
 
 .. var:: config.screen_width = 800
 
-    The width of the screen. Usually set by :func:`gui.init`.
+    The width of the screen. Usually set by :func:`gui.init` to a much
+    larger size.
+
+.. var:: config.single_movie_channel = None
+
+    If not None, and the `play` argument is give to :func:`Movie`,
+    this is the name used for the channel the movie is played on.
+    This should not be "movie", as that name is reserved for
+    Ren'Py's internal use.
 
 .. var:: config.skip_sounds = False
 
@@ -834,7 +907,7 @@ Occasionally Used
     A dictionary mapping image tag strings to layer name strings. When
     an image is shown without a specific layer name, the image's tag is
     looked up in this dictionary to get the layer to show it on. If the
-    tag is not found here, :var:`config.default_tag_name` is used.
+    tag is not found here, :var:`config.default_tag_layer` is used.
 
 .. var:: config.tag_transform = { }
 
@@ -877,7 +950,7 @@ Occasionally Used
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
 
-.. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu' ]
+.. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu', "say-centered" ]
 
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.
@@ -962,7 +1035,12 @@ Rarely or Internally Used
 .. var:: config.allow_skipping = True
 
     If set to False, the user is not able to skip over the text of the
-    game.
+    game. See :var:`_skipping`.
+
+.. var:: config.allow_screensaver = True
+
+    If True, the screensaver may activite while the game is running. If
+    False, the screensaver is disabled.
 
 .. var:: config.archives = [ ]
 
@@ -978,6 +1056,11 @@ Rarely or Internally Used
     reverse ascii order. For example, if Ren'Py finds the files
     data.rpa, patch01.rpa, and patch02.rpa, this variable will be
     populated with ``['patch02', 'patch01', 'data']``.
+
+.. var:: config.at_exit_callbacks = [ ]
+
+    A list of callbacks that are called when Ren'Py quits or restarts
+    the game. These callbacks should not interact with the user.
 
 .. var:: config.auto_choice_delay = None
 
@@ -1013,6 +1096,11 @@ Rarely or Internally Used
     save time, the autosave occurs while the user is being prompted to confirm
     his or her decision.)
 
+.. var:: config.autosave_on_input = True
+
+    If True, Ren'Py will autosave when the user inputs text.
+    (When :func:`renpy.input` is called.)
+
 .. var:: config.character_callback = None
 
     The default value of the callback parameter of Character.
@@ -1029,6 +1117,13 @@ Rarely or Internally Used
 .. var:: config.context_clear_layers = [ 'screens' ]
 
     A list of layers that are cleared when entering a new context.
+
+.. var:: config.controller_blocklist = [ ... ]
+
+    A list of strings, where each string is matched against the GUID
+    of a game controller. These strings are mached as a prefix to the
+    controller GUID (which cand be found in log.txt), and if matched,
+    prevent the controller from being initialized.
 
 .. var:: config.exception_handler = None
 
@@ -1083,18 +1178,10 @@ Rarely or Internally Used
     entirely, although we don't recommend that, as rollback is useful
     to let the user see text he skipped by mistake.
 
-.. var:: config.help = None
+.. var:: config.help_screen = "help"
 
-    This controls the functionality of the help system invoked by the
-    help button on the main and game menus, or by pressing F1 or
-    Command-?.
-
-    If None, the help system is disabled and does not show up on
-    menus.  If a string corresponding to a label found in the script,
-    that label is invoked in a new context. This allows you to define
-    an in-game help-screen.  Otherwise, this is interpreted as a
-    filename relative to the base directory, that is opened in a web
-    browser. If the file is not exist, the action is ignored.
+    The name of the screen shown by the :func:`Help` action, or by pressing
+    f1 on the keyboard.
 
 .. var:: config.hide = renpy.hide
 
@@ -1117,12 +1204,6 @@ Rarely or Internally Used
 
     If True, the order of substrings in the Side positions will be
     determine the order of children render.
-
-.. var:: config.imagemap_cache = True
-
-    If True, imagemap hotspots will be cached to PNG files,
-    reducing time and memory usage, but increasing the size of
-    the game on disk. Set this to False to disable this behavior.
 
 .. var:: config.implicit_with_none = True
 
@@ -1147,7 +1228,7 @@ Rarely or Internally Used
 
     This variable contains a keymap giving the keys and mouse buttons
     assigned to each possible operation. Please see the section on
-    Keymaps for more information.
+    :ref:`Keymaps <keymap>` for more information.
 
 .. var:: config.label_callback = None
 
@@ -1181,6 +1262,9 @@ Rarely or Internally Used
     screen. (The lowest layer is the first entry in the list.) Ren'Py
     uses the layers "master", "transient", "screens", and "overlay"
     internally, so they should always be in this list.
+
+    The :func:`renpy.add_layer` can add layers to this variable without
+    needing to know the original contents.
 
 .. var:: config.lint_hooks = ...
 
@@ -1225,6 +1309,20 @@ Rarely or Internally Used
     shown to the user by :ref:`say <say-statement>` or :ref:`menu
     <menu-statement>` statements will be logged to this file.
 
+.. var:: config.mipmap_dissolves = False
+
+    The default value of the mipmap argument to :func:`Dissolve`,
+    :func:`ImageDissolve`, :func:`AlphaDissolve`, and :func:`AlphaMask`.
+
+.. var:: config.mipmap_movies = False
+
+    The default value of the mipmap argument to :func:`Movie`.
+
+.. var:: config.mipmap_text = False
+
+    The default value of the mipmap argument to :func:`Text`, including
+    text used in screen statements.
+
 .. var:: config.missing_image_callback = None
 
     If not None, this function is called when an attempt to load an
@@ -1242,6 +1340,11 @@ Rarely or Internally Used
     single parameter, the name of the missing label. It should return the
     name of a label to use as a replacement for the missing label, or None
     to cause Ren'Py to raise an exception.
+
+.. var:: config.mouse_focus_clickthrough = False
+
+    If true, clicks that cause a window to be focused will be processed
+    normally. If false, such clicks will be ignored.
 
 .. var:: config.mouse_hide_time = 30
 
@@ -1268,7 +1371,7 @@ Rarely or Internally Used
     If True, Ren'Py will apply new-style (square-bracket)
     substitutions to all text displayed.
 
-.. var:: config.old_substitutions = False
+.. var:: config.old_substitutions = True
 
     If True, Ren'Py will apply old-style (percent) substitutions to
     text displayed by the :ref:`say <say-statement>` and :ref:`menu
@@ -1285,6 +1388,11 @@ Rarely or Internally Used
     This is a list of all of the overlay layers. Overlay layers are
     cleared before the overlay functions are called. "overlay" should
     always be in this list.
+
+.. var:: config.pause_with_transition = False
+
+    If false, :func:`renpy.pause` is always, used by the ``pause`` statement.
+    If true, when given a delay, ``pause`` is equivalent to ``with Pause(...)``.
 
 .. var:: config.per_frame_screens = [ ... ]
 
@@ -1317,9 +1425,16 @@ Rarely or Internally Used
     If set to True, some profiling information will be output to
     stdout.
 
+.. var:: config.profile_init = 0.25
+
+    ``init`` and ``init python`` blocks taking longer than this amount of time
+    to run are reported to log file.
+
 .. var:: config.quit_on_mobile_background = False
 
-    If True, the mobile app will quit when it loses focus.
+    If True, the mobile app will quit when it loses focus, rather than
+    saving and restoring its state. (See also :var:`config.save_on_mobile_background`,
+    which controls this behavior.)
 
 .. var:: config.rollback_enabled = True
 
@@ -1368,11 +1483,11 @@ Rarely or Internally Used
 
 .. var:: config.save_dump = False
 
-   If set to True, Ren'Py will create the file save_dump.txt whenever it
-   saves a game. This file contains information about the objects contained
-   in the save file. Each line consists of a relative size estimate, the path
-   to the object, information about if the object is an alias, and a
-   representation of the object.
+    If set to True, Ren'Py will create the file save_dump.txt whenever it
+    saves a game. This file contains information about the objects contained
+    in the save file. Each line consists of a relative size estimate, the path
+    to the object, information about if the object is an alias, and a
+    representation of the object.
 
 .. var:: config.save_on_mobile_background = True
 
@@ -1418,6 +1533,11 @@ Rarely or Internally Used
     of filenames. The filenames may be absolute, or relative to
     config.renpy_base. The first filename that does not exist is used as the
     name of the screenshot.
+
+    Directories are created if they do not exist.
+
+    See also :var:`_screenshot_pattern`, which is used in preference to this
+    variable if not None.
 
 .. var:: config.script_version = None
 
@@ -1480,11 +1600,17 @@ Rarely or Internally Used
     callbacks can be appended to this list, but the existing callbacks
     should not be removed.
 
-.. var:: config.start_interact_callbacks = ...
+.. var:: config.start_interact_callbacks = [ ... ]
 
     A list of functions that are called (without any arguments) when
     an interaction is started. These callbacks are not called when an
     interaction is restarted.
+
+.. var:: config.quit_callbacks = [ ... ]
+
+    A list of functions that are called (without any arguments) when
+    Ren'Py terminates. This is intended to free resources, such as
+    opened files or started threads.
 
 .. var:: config.top_layers = [ ]
 

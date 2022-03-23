@@ -6,7 +6,6 @@ We're in the process of migrating the documentation over to a new
 tool. As not every page has been migrated yet, this exists to document
 new functionality that has no other place to go.
 
-.. include:: inc/other
 
 Ren'Py Version
 --------------
@@ -43,31 +42,31 @@ it's running on.
 
 .. var:: renpy.windows
 
-    True when running on Windows.
+    Has a true value when running on Windows.
 
 .. var:: renpy.macintosh
 
-    True when running on macOS.
+    Has a true value when running on macOS.
 
 .. var:: renpy.linux
 
-    True when running on Linux or other POSIX-like operating systems.
+    Has a true value when running on Linux or other POSIX-like operating systems.
 
 .. var:: renpy.android
 
-    True when running on Android.
+    Has a true value when running on Android.
 
 .. var:: renpy.ios
 
-    True when running on iOS.
+    Has a true value when running on iOS.
 
 .. var:: renpy.emscripten
 
-    True when running in the browser.
+    Has a true value when running in the browser.
 
 .. var:: renpy.mobile
 
-    True when running on Android or iOS or in the browser.
+    Has a true value when running on Android or iOS or in the browser.
 
 These are only set when running on the actual devices, not when running on
 in the emulators. These are more intended for use in platform-specific
@@ -127,3 +126,54 @@ It should be used instead of the standard Python random module. ::
 
 Returns a new random number generator object separate from the main one, seeded
 with the specified value if provided.
+
+.. _SDL:
+
+SDL
+----
+
+These functions let you use the Python ctypes module to call functions in
+the SDL dll. There are no guarantees as to the version of SDL2 that's included
+with Ren'Py, including which features will or will not be compiled in. These
+functions may fail on platforms that can otherwise run Ren'Py, and so it's
+important to check for None before proceeding.
+
+.. include:: inc/sdl
+
+::
+
+    init python:
+
+        import ctypes
+
+        def get_window_position():
+            """
+            Retrieves the position of the window from SDL2.  Returns
+            the (x, y) of the upper left corner of the window, or
+            (0, 0) if it's not known.
+            """
+
+            sdl = renpy.get_sdl_dll()
+
+            if sdl is None:
+                return (0, 0)
+
+            win = renpy.get_sdl_window_pointer()
+
+            if win is None:
+                return (0, 0)
+
+            SDL_GetWindowPosition = sdl.SDL_GetWindowPosition
+
+            x = ctypes.c_int()
+            y = ctypes.c_int()
+
+            SDL_GetWindowPosition(win, ctypes.byref(x), ctypes.byref(y))
+
+
+
+
+Miscellaneous
+-------------
+
+.. include:: inc/other

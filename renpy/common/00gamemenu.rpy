@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -169,7 +169,7 @@ label _game_menu(*args, _game_menu_screen=_game_menu_screen, **kwargs):
         jump expression "game_menu"
 
     if renpy.has_screen(_game_menu_screen):
-        $ renpy.show_screen(_game_menu_screen, *args, **kwargs)
+        $ renpy.show_screen(_game_menu_screen, *args, _transient=True, **kwargs)
         $ ui.interact()
         jump _noisy_return
 

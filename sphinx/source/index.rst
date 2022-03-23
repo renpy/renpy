@@ -15,7 +15,11 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
 
     简体中文的文档请参考这里：
 
-        https://www.renpy.cn/doc/index.html
+        https://renpy.cn/doc/
+
+    繁體中文的文件請參考這裡：
+
+        https://renpy.cn/doc-tw/
 
 Getting Started
 ---------------
@@ -56,6 +60,8 @@ Text, Displayables, Transforms, and Transitions
    atl
    matrixcolor
    layeredimage
+   3dstage
+   live2d
 
 Customizing Ren'Py
 ------------------
@@ -72,6 +78,7 @@ Customizing Ren'Py
    config
    preferences
    store_variables
+   mouse
 
 Tools
 -----
@@ -113,12 +120,14 @@ Python and Ren'Py
    gui_advanced
    screen_python
    modes
-   udd
+   cdd
    cds
    custom_text_tags
    character_callbacks
    file_python
    color_class
+   matrix
+   model
    other
 
 Building, Updating, and Other Platforms
@@ -163,6 +172,7 @@ Changes, License, and Credits
    :maxdepth: 1
 
    changelog
+   changelog6
    incompatible
    distributor
    license

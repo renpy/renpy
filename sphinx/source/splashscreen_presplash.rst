@@ -1,6 +1,8 @@
 Splashscreen and Presplash
 ==========================
 
+.. _adding-a-splashscreen:
+
 Adding a Splashscreen
 ---------------------
 A splash screen is an image or movie that appears when the game is starting up
@@ -95,18 +97,22 @@ how things could look below:
 
     .. figure:: presplash/presplash_background_1.png
         :width: 100%
+
         An example of how the progress bar background could look.
 
     .. figure:: presplash/presplash_foreground_1.png
         :width: 100%
+
         An example of how the progress bar foreground could look.
 
     .. figure:: presplash/presplash_background_2.png
         :width: 100%
+
         An slightly more elaborate example of how the progress bar background
         could look.
 
     .. figure:: presplash/presplash_foreground_2.png
         :width: 100%
+
         An slightly more elaborate example of how the progress bar foreground
         could look.

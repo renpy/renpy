@@ -37,9 +37,6 @@ cdef class GL2Draw:
     cdef public tuple drawable_size
     cdef public tuple virtual_box
     cdef public tuple physical_box
-    cdef object mouse_old_visible
-    cdef object mouse_info
-    cdef object texture_cache
     cdef double last_redraw_time
     cdef double redraw_period
     cdef public dict info
@@ -62,13 +59,13 @@ cdef class GL2Draw:
 
     # The matrix that goes from drawable space to the window. This isn't used
     # directly, it's used to determine if something is being drawn in a wa
-    # that it shoudl be lined up with pixels.
+    # that it should be lined up with pixels.
     cdef public Matrix draw_transform
 
     cdef public int fast_redraw_frames
 
     # The color texture object used for offscreen rendering.
-    cdef GLuint color_texture
+    cdef GLuint color_renderbuffer
 
     # The depth renderbuffer object used for offscreen rendering.
     cdef GLuint depth_renderbuffer

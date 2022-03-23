@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,12 +20,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 import os
 import re
 
-import renpy.translation
+import renpy
 
 ################################################################################
 
@@ -33,8 +35,8 @@ STRING_RE = r"""(?x)
 \b_[_p]?\s*\(\s*[uU]?(
 \"\"\"(?:\\.|\\\n|\"{1,2}|[^\\"])*?\"\"\"
 |'''(?:\\.|\\\n|\'{1,2}|[^\\'])*?'''
-|"(?:\\.|[^\\"])*"
-|'(?:\\.|[^\\'])*'
+|"(?:\\.|\\\n|[^\\"])*"
+|'(?:\\.|\\\n|[^\\'])*'
 )\s*\)
 """
 
@@ -45,7 +47,6 @@ REGULAR_PRIORITIES = [
     ("screens.rpy", 30, "screens.rpy"),
     ("", 100, "launcher.rpy"),
 ]
-
 
 COMMON_PRIORITIES = [
     ("_compat/", 420, "obsolete.rpy"),
@@ -98,6 +99,9 @@ class String(object):
         for prefix, priority, launcher_file in pl:
             if self.elided.startswith(prefix):
                 break
+        else:
+            priority = 500
+            launcher_file = "unknown.rpy"
 
         self.priority = priority
         self.sort_key = (priority, self.filename, self.line)
@@ -119,7 +123,7 @@ def scan_strings(filename):
 
     rv = [ ]
 
-    for line, s in renpy.game.script.translator.additional_strings[filename]:  # @UndefinedVariable
+    for line, s in renpy.game.script.translator.additional_strings[filename]: # @UndefinedVariable
         rv.append(String(filename, line, s, False))
 
     for _filename, lineno, text in renpy.parser.list_logical_lines(filename):

@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
@@ -489,6 +488,14 @@ translate french strings:
     old "self voicing"
     new "self voicing"
 
+    # renpy/common/00preferences.rpy:388
+    old "self voicing volume drop"
+    new "self voicing volume drop"
+
+    # renpy/common/00preferences.rpy:430
+    old "font transform"
+    new "font transform"
+
     # 00preferences.rpy:355
     old "clipboard voicing"
     new "clipboard voicing"
@@ -823,29 +830,41 @@ translate french strings:
     old "Automatically Choose"
     new "Choix automatique"
 
-    # 00gltest.rpy:79
-    old "Force Angle/DirectX Renderer"
-    new "Forcer le rendu « Angle/DirectX »"
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "Forcer le rendu GL"
 
-    # 00gltest.rpy:83
-    old "Force OpenGL Renderer"
-    new "Forcer le rendu « OpenGL »"
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "Forcer le rendu ANGLE"
 
-    # 00gltest.rpy:87
-    old "Force Software Renderer"
-    new "Forcer le rendu logiciel"
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "Forcer le rendu GLES"
 
-    # 00gltest.rpy:93
-    old "NPOT"
-    new "NPOT"
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "Forcer le rendu GL2"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "Forcer le rendu ANGLE2"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "Forcer le rendu GLES2"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "Activer (sans liste noire)"
 
     # 00gltest.rpy:97
     old "Enable"
-    new "Actif"
+    new "Activer"
 
     # 00gltest.rpy:101
     old "Disable"
-    new "Désactivé"
+    new "Désactiver"
 
     # 00gltest.rpy:131
     old "Powersave"
@@ -883,29 +902,13 @@ translate french strings:
     old "This computer is using software rendering."
     new "Cet ordinateur utilise le rendu logiciel."
 
-    # 00gltest.rpy:220
-    old "This computer is not using shaders."
-    new "Cet ordinateur n’utilise pas les « shaders »."
-
-    # 00gltest.rpy:222
-    old "This computer is displaying graphics slowly."
-    new "Cet ordinateur affiche les graphismes lentement."
-
     # 00gltest.rpy:224
     old "This computer has a problem displaying graphics: [problem]."
     new "Cet ordinateur rencontre un problème pour afficher les graphismes: [problem]."
 
-    # 00gltest.rpy:229
-    old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
-    new "Les pilotes graphiques ne sont peut-être pas à jour ou ne fonctionnent pas correctement. Cela peut provoquer des lenteurs ou des erreurs d’affichage. La mise à jour de DirectX pourrait résoudre ce problème."
-
     # 00gltest.rpy:231
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display."
     new "Les pilotes graphiques ne sont peut-être pas à jour ou n’opèrent pas correctement. Cela peut provoquer des lenteurs ou des erreurs d'affichage."
-
-    # 00gltest.rpy:236
-    old "Update DirectX"
-    new "Mettre à jour DirectX"
 
     # 00gltest.rpy:242
     old "Continue, Show this warning again"
@@ -915,25 +918,21 @@ translate french strings:
     old "Continue, Don't show warning again"
     new "Continuer et ne plus afficher cet avertissement."
 
-    # 00gltest.rpy:264
-    old "Updating DirectX."
-    new "Mise à jour de DirectX."
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    new "Ce jeu requiert GL2 et ne peut être initialisé."
 
-    # 00gltest.rpy:268
-    old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
-    new "L’installation de DirectX via le web a été lancée. Il se peut que l’application soit minimisée et uniquement présente dans la barre des tâches. Suivez les instructions pour installer DirectX."
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "Le fichier {a=edit:1:log.txt}log.txt{/a} peut contenir des informations pour vous aider à déterminer ce qui ne va pas avec votre ordinateur."
 
-    # 00gltest.rpy:272
-    old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}Note :{/b} Par défaut, l’installation de Microsoft DirectX via le web va installer la barre d'outils « Bing ». Pensez à décocher la case appropriée si vous ne voulez pas de cette barre d'outils."
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Vous trouverez de plus amples informations pour corriger ceci dans la {a=[url]}documentation{/a}."
 
-    # 00gltest.rpy:276
-    old "When setup finishes, please click below to restart this program."
-    new "Quand l’installation sera terminée, cliquez ci-dessous pour redémarrer ce programme."
-
-    # 00gltest.rpy:278
-    old "Restart"
-    new "Redémarrer"
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    new "Changer les options de rendu"
 
     # 00gamepad.rpy:32
     old "Select Gamepad to Calibrate"
@@ -947,9 +946,9 @@ translate french strings:
     old "Calibrating [name] ([i]/[total])"
     new "Calibrage de [name] ([i]/[total])"
 
-    # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Pressez ou déplacez le [kind] [control!r]."
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "Pressez ou déplacez le [kind] '[control!s]'."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -1081,9 +1080,13 @@ translate french strings:
     old "Debug"
     new "Débogage"
 
-    # renpy/common/00preferences.rpy:430
-    old "font transform"
-    new "font transform"
+    # renpy/common/00accessibility.rpy:193
+    old "Self-Voicing Volume Drop"
+    new "Baisse de volume pendant la lecture vocale"
+
+    # renpy/common/00accessibility.rpy:202
+    old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
+    new "Les options de ce menu ont pour but d'améliorer l'accessibilité. Cela peut ne pas fonctionner avec tous les jeux, et certaines combinaisons peuvent rendre le jeu injouable. Ce n'est pas un problème dans le jeu ou son moteur. Pour de meilleurs résultats lors d'un changement de police, ciblez une taille de texte identique à l'originale."
 
     # renpy/common/00preferences.rpy:433
     old "font size"
@@ -1092,6 +1095,10 @@ translate french strings:
     # renpy/common/00preferences.rpy:441
     old "font line spacing"
     new "font line spacing"
+
+    # renpy/common/00preferences.rpy:464
+    old "system cursor"
+    new "system cursor"
 
     # renpy/common/_errorhandling.rpym:542
     old "Copy BBCode"
@@ -1117,3 +1124,38 @@ translate french strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Copie le fichier errors.txt dans le presse-papier au format Markdown pour Discord."
 
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "Texte à contraste élevé"
+
+    # renpy/common/00preferences.rpy:487
+    old "renderer menu"
+    new "menu de rendu"
+
+    # renpy/common/00preferences.rpy:490
+    old "accessibility menu"
+    new "menu d'accessibilité"
+
+    # renpy/common/00preferences.rpy:493
+    old "high contrast text"
+    new "texte à contraste élevé"
+
+    # renpy/common/_developer/developer.rpym:63
+    old "Image Attributes"
+    new "Attributs de l'image"
+
+    # renpy/common/_developer/developer.rpym:90
+    old "[name] [attributes] (hidden)"
+    new "[name] [attributes] (caché)"
+
+    # renpy/common/_developer/developer.rpym:94
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:154
+    old "Hide deleted"
+    new "Masquer supprimés"
+
+    # renpy/common/_developer/developer.rpym:154
+    old "Show deleted"
+    new "Montrer supprimés"

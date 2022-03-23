@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -49,6 +49,29 @@ init -1500:
     # remain available.
     screen _choose_renderer:
 
+        $ gl = False
+        $ gles = False
+        $ angle = False
+
+        if renpy.android or renpy.ios or renpy.emscripten:
+            $ gles = True
+
+        elif renpy.windows:
+            $ gl = True
+            $ angle = True
+
+        elif renpy.macintosh:
+            $ gl = True
+
+        elif renpy.linux:
+            $ gl = True
+            $ gles = True
+
+        else:
+            $ gl = True
+            $ gles = True
+
+
         frame:
             style_group ""
 
@@ -73,17 +96,25 @@ init -1500:
 
                     if not config.gl2:
 
-                        if renpy.renpy.windows:
+                        if gl:
+                            textbutton _("Force GL Renderer"):
+                                action _SetRenderer("gl")
+                                style_suffix "radio_button"
+
+                        if angle:
                             textbutton _("Force ANGLE Renderer"):
                                 action _SetRenderer("angle")
                                 style_suffix "radio_button"
 
-                        textbutton _("Force GL Renderer"):
-                            action _SetRenderer("gl")
-                            style_suffix "radio_button"
+                        if gles:
+                            textbutton _("Force GLES Renderer"):
+                                action _SetRenderer("gles")
+                                style_suffix "radio_button"
 
-                        textbutton _("Force GLES Renderer"):
-                            action _SetRenderer("gles")
+
+                    if gl:
+                        textbutton _("Force GL2 Renderer"):
+                            action _SetRenderer("gl2")
                             style_suffix "radio_button"
 
                     if renpy.renpy.windows:
@@ -91,20 +122,20 @@ init -1500:
                             action _SetRenderer("angle2")
                             style_suffix "radio_button"
 
-                    textbutton _("Force GL2 Renderer"):
-                        action _SetRenderer("gl2")
-                        style_suffix "radio_button"
-
-                    textbutton _("Force GLES2 Renderer"):
-                        action _SetRenderer("gles2")
-                        style_suffix "radio_button"
-
+                    if gles:
+                        textbutton _("Force GLES2 Renderer"):
+                            action _SetRenderer("gles2")
+                            style_suffix "radio_button"
 
                     null height 10
 
                     label _("Gamepad")
 
                     null height 10
+
+                    textbutton _("Enable (No Blocklist)"):
+                        action SetField(_preferences, "pad_enabled", "all")
+                        style_suffix "radio_button"
 
                     textbutton _("Enable"):
                         action SetField(_preferences, "pad_enabled", True)
@@ -225,6 +256,10 @@ init -1500:
 
             null height 10
 
+            text _("The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer.")
+
+            null height 10
+
             if url:
                 text _("More details on how to fix this can be found in the {a=[url]}documentation{/a}.") substitute True
 
@@ -314,7 +349,7 @@ init -1500 python:
 
         renderer_info = renpy.get_renderer_info()
 
-        # Software renderer check.
+         # Software renderer check.
         if config.renderer != "sw" and renderer_info["renderer"] == "sw":
             problem = "sw"
             allow_continue = False
@@ -343,6 +378,9 @@ init -1500 python:
 
 
 label _gl_test:
+
+    if renpy.session.get("_keep_renderer", False):
+        return
 
     # Show the test image.
     scene black

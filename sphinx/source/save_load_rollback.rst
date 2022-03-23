@@ -1,3 +1,5 @@
+.. _save-load-rollback:
+
 =============================
 Saving, Loading, and Rollback
 =============================
@@ -10,10 +12,9 @@ rolls back.
 
 
 .. note::
-
-  While we usually attempt to keep save compatibility between releases, this
-  compatibility is not guaranteed. We may decide to break save-compatibility
-  if doing so provides a sufficiently large benefit.
+    While we usually attempt to keep save compatibility between releases, this
+    compatibility is not guaranteed. We may decide to break save-compatibility
+    if doing so provides a sufficiently large benefit.
 
 What is Saved
 =============
@@ -36,25 +37,28 @@ the game began, and all objects reachable from those variables. Note that it's
 the change to the variables that matters – changes to fields in objects will
 not cause those objects to be saved.
 
+Variables set using the :ref:`default statement <default-statement>` will
+always be saved.
+
 In this example::
 
     define a = 1
     define o = object()
+    default c = 17
 
     label start:
          $ b = 1
          $ o.value = 42
 
-only `b` will be saved. A will not be saved because it does not change once
+only `b` and `c` will be saved. `A` will not be saved because it does not change once
 the game begins. `O` is not saved because it does not change – the object it
 refers to changes, but the variable itself does not.
-
 
 What isn't Saved
 ================
 
-Python variables that are not changed before the game begins will not be
-saved. This can be a major problem if a variable that is saved and one that is
+Python variables that are not changed after the game begins will not be
+saved. This can be a major problem if a variable that is not saved and one that is
 refer to the same object. (Alias the object.) In this example::
 
     init python:
@@ -126,7 +130,7 @@ Ren'Py script – rather than Python – to loop avoids this problem.::
         "The count is now [i]."
 
 
-What Ren'Py can Save
+What Ren'Py Can Save
 ====================
 
 Ren'Py uses the Python pickle system to save game state. This module can
@@ -139,19 +143,71 @@ save:
   original names.
 * Character, Displayable, Transform, and Transition objects.
 
+.. _cant-save:
+
+What Ren'Py Can't Save
+======================
+
 There are certain types that cannot be pickled:
 
 * Render objects.
 * Iterator objects.
+* Generator objects.
+* Coroutine tasks and futures, like those created with ``async`` and ``await``.
 * File-like objects.
+* Network sockets, and objects that enclose them.
 * Inner functions and lambdas.
 
-By default, Ren'Py uses the cPickle module to save the game. Setting
-:var:`config.use_cpickle` to False will make Ren'Py use the pickle
-module instead. This makes the game slower, but is better at reporting
-save errors under Python 2.x. Note that this setting has no effect on
-Python 3, as the system chooses the implementation transparently in
-that case.
+This may not be an exhaustive list.
+
+Objects that can't be pickled can still be used, provided that their use
+is combined to namespaces that aren't saved by Ren'Py (like init variables,
+namespaces inside functions,  or ``python hide`` blocks.)
+
+For example, using a file object like::
+
+    $ monika_file = open(config.gamedir + "/monika.chr", "w")
+    $ monika_file.write("Do not delete.\r\n")
+    $ monika_file.close()
+
+Won't work, as ``f`` could be saved between any of the three Python statements.
+Putting this in a ``python hide`` block will work::
+
+    python hide:
+
+        monika_file = open(config.gamedir + "/monika.chr", "w")
+        monika_file.write("Do not delete.\r\n")
+        monika_file.close()
+
+(Of course, using the python ``with`` statement would be cleaner.) ::
+
+    python hide:
+
+        with open(config.gamedir + "/monika.chr", "w") as monika_file:
+            monika_file.write("Do not delete.\r\n")
+
+Coroutines, like those made with ``async``, ``await``, or the ``asyncio``
+are similar. If you have::
+
+    init python:
+
+        import asyncio
+
+        async def sleep_func():
+            await asyncio.sleep(1)
+            await asyncio.sleep(1)
+
+then::
+
+    $ sleep_task = sleep_func()
+    $ asyncio.run(sleep_task)
+
+will have problems, since `sleep_task` can't be saved. But if it's not assigned
+to a variable::
+
+    $ asyncio.run(sleep_func())
+
+will run fine.
 
 
 Save Functions and Variables
@@ -370,7 +426,7 @@ Example::
             hotspot (8, 200, 78, 78) action ui.ChoiceJump("swimming", "go_swimming", block_all=False)
             hotspot (204, 50, 78, 78) action ui.ChoiceJump("science", "go_science_club", block_all=False)
             hotspot (452, 79, 78, 78) action ui.ChoiceJump("art", "go_art_lessons", block_all=False)
-            hotspot (602, 316, 78, 78) action uiChoiceJump("home", "go_home", block_all=False)
+            hotspot (602, 316, 78, 78) action ui.ChoiceJump("home", "go_home", block_all=False)
 
 Example::
 
@@ -421,4 +477,3 @@ For example::
         $ o.value += 1
 
         "o.value is [o.value]. It will increase each time you rolllback and then click ahead."
-

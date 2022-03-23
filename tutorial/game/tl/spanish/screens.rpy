@@ -199,7 +199,7 @@ translate spanish strings:
 
     # screens.rpy:1040
     old "Advances dialogue without selecting choices."
-    new "Avanza el dilogo sin seleccionar opciones."
+    new "Avanza el diálogo sin seleccionar opciones."
 
     # screens.rpy:1043
     old "Arrow Keys"
@@ -325,3 +325,6 @@ translate spanish strings:
     old "Menu"
     new "Menú"
 
+    # game/screens.rpy:1083
+    old "Opens the accessibility menu."
+    new "Abre el menú de accesibilidad."

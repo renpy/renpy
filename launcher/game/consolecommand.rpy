@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -33,15 +33,15 @@ init python:
 
             if renpy.macintosh:
                 fn = "console.command"
-                nl = "\n"
-                prefix = "#!/bin/bash"
+                nl = b"\n"
+                prefix = "#!/bin/sh"
             elif renpy.windows:
                 fn = "console.bat"
-                nl = "\r\n"
+                nl = b"\r\n"
                 prefix = "@echo off"
             else:
                 fn = "console.sh"
-                nl = "\n"
+                nl = b"\n"
                 prefix = "#!/bin/bash"
 
 
@@ -49,16 +49,23 @@ init python:
             self.f = open(self.fn, "wb")
             self.nl = nl
 
-
-            self.f.write(renpy.fsencode(prefix) + nl)
+            self.f.write(renpy.fsencode(prefix, force=True) + nl)
 
         def add(self, *args):
             """
             Adds a command to be run.
             """
 
-            args = [ '"{}"'.format(renpy.fsencode(i)) for i in args]
-            self.f.write(" ".join(args) + self.nl)
+            args = [ b'"' + renpy.fsencode(i, force=True) + b'"' for i in args]
+            self.f.write(b" ".join(args) + self.nl)
+
+        def write(self, *args):
+            """
+            Adds a command to be run.
+            """
+
+            args = [ renpy.fsencode(i, force=True) for i in args]
+            self.f.write(b" ".join(args) + self.nl)
 
         def run(self):
             """
@@ -66,21 +73,19 @@ init python:
             """
 
             if renpy.windows:
-                self.add("pause")
+                self.write("pause")
             elif renpy.linux:
                 self.add("echo", "Press enter to close this window...")
-                self.add("read")
+                self.write("read")
 
             self.f.close()
             os.chmod(self.fn, 0o755)
 
-            command = renpy.fsencode('"{}"'.format(self.fn.replace("\"", "\\\"")))
-
-            if renpy.windows:
-                subprocess.Popen([ command ], shell=True)
-            elif renpy.macintosh:
-                subprocess.Popen([ "open", "-a", "Terminal", command ])
-            else:
+            if renpy.linux:
+                command = renpy.fsencode('"{}"'.format(self.fn.replace("\"", "\\\"")))
                 subprocess.Popen([ "x-terminal-emulator", "-e", command ])
+            else:
+                command = renpy.fsencode(self.fn)
+                os.startfile(command)
 
             interface.interaction(_("INFORMATION"), _("The command is being run in a new operating system console window."), pause=2.5)

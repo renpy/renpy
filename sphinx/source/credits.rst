@@ -12,14 +12,15 @@ missing some names in my logs. If this applies to you, please
 accept my apologies and email pytom at bishoujo.us so I can fix
 the omission in future versions.
 
-
-
 * Absinthe
 * Aenakume
+* Ajkahn96
 * Aleema
 * Alessio
 * Alexandre Tranchant
 * Alisha Taylor
+* Andrej
+* Andrí Wilford
 * Andy_kl
 * Apricotorange
 * Arda Güler
@@ -32,13 +33,20 @@ the omission in future versions.
 * BlackDragonHunt/Mangagamer
 * Bryan Tsang
 * Carl
+* Capntrips
 * Caryoscelus
 * CensoredUsername (C)
+* Charles Surett
+* Cherie Davidson
 * Chris Mear
 * Christian Koepp
 * Civalin
+* CobaltCore
+* CodePsy
 * Craig P. Donson
+* 被诅咒的章鱼
 * DaFool
+* Daniel Conley
 * Daniel Luque
 * David Gowers
 * Deji
@@ -46,6 +54,7 @@ the omission in future versions.
 * Denzil
 * Derik
 * Diapolo10
+* Dogtopus
 * Doomfest
 * Donghyeok Tak
 * DragoonHP
@@ -63,12 +72,18 @@ the omission in future versions.
 * Felix Lampe
 * Franck_v
 * Frédéric Chapoton
+* GanstaKingofSA
 * Gas
 * George Economidis
+* GimmiRuski
+* GiovanH
 * Giuseppe Bertone
+* Gouvernathor
+* Gratusfr
 * Gregory Pease
 * Grey
 * Gustavo Carvalho
+* Hanaka
 * Helloise
 * Hentai Senshi
 * Herpior
@@ -76,6 +91,7 @@ the omission in future versions.
 * Hixbooks
 * Huang Junjie
 * Huanxuantian
+* Hyper Sonic
 * Ian Leslie
 * Jackmcbarn
 * JaHIY
@@ -83,43 +99,63 @@ the omission in future versions.
 * James Broadhead
 * James Pearson Hughes
 * Jan Beich
+* Jan Masek
 * Javimat
+* Joaquin Garmendia Cabrera
 * Joshua Fehler
+* Joshua Stone
 * Julian Uy
+* Jürg Billeter
 * Kalawore
+* Kapil Gain
 * Kathryn
 * Kevin Turner
+* KG
 * Kinsman
 * Kobaltcore
 * Koichi "vbkaisetsu" Akabe
 * Konstantin Mozheyko
 * Konstantin Nikolayev
+* KorDen
 * Kuroonehalf
 * Kyouryuukunn
 * Lapalissiano
 * Lee Yunseok
+* Lent1
+* Lezalith
+* Loliconazter
+* Liu Wenyuan
 * Lore
+* Lucas Ramage
+* Maciej Katafiasz
 * Maissara Moustafa
 * Mal Graty
 * Marcel
+* Mason Chou
 * Markus Koschany
 * Max le Fou
 * Maxwell Paul Brickner
 * Meithal
 * Merumelu
+* Midgethetree
 * mikey (ATP Projects)
 * Morgan Willcock
 * Moshibit
 * MrStalker
 * Mugenjohncel (Uncle Mugen)
 * Muhammad Nur Hidayat Yasuyoshi
+* Multimokia
+* Neotus
+* Neyunse
 * NetGenSuperstar
+* 逆转咸鱼
 * NoJoker
 * Nolanlemahn
 * Nxcrft
 * Nyaatrap
 * Oshi-Shinobu
 * Patrick Dawson
+* Paul J Martinez
 * Paul Morio
 * Pavel Langwell
 * Peter DeVita
@@ -134,6 +170,8 @@ the omission in future versions.
 * Remix
 * Ren
 * Renoa
+* Reptile
+* Ruben Jesus Garcia-Hernandez
 * Ria-kon
 * Ricardo Pérez
 * Rikxz
@@ -147,6 +185,7 @@ the omission in future versions.
 * Shayne Officer
 * Shehriyar Qureshi
 * Shiz
+* Siege-Wizard
 * SleepKirby
 * Spiky Caterpillar
 * Susnux

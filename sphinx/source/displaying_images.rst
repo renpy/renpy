@@ -193,9 +193,14 @@ The show statement takes the following properties:
     left-to-right order.
 
     If no at clause is given, Ren'Py will retain any existing
-    transform that has been applied to the image. If no transform
-    exists, the image will be displayed using the :var:`default`
+    transform that has been applied to the image, if they were
+    created with ATL or with :class:`Transform`. If no transform
+    is specified, the image will be displayed using the :var:`default`
     transform.
+
+    See the section on :ref:`replacing transforms <replacing-transforms>`
+    for information about how replacing the transforms associated with
+    a tag can change the transform properties.
 
 ``behind``
     Takes a comma-separated list of one or more names. Each name is
@@ -250,20 +255,11 @@ For example::
 
     show expression "moon.png" as moon
 
-**Show Layer.**
-The show layer statement allows one to apply a transform or ATL transform to an
-entire layer (such as "master"), using syntax like::
+** Show Layer.**
+The ``show layer`` statement is discussed alongside the camera statement,
+below.
 
-    show layer master at flip
 
-or::
-
-    show layer master:
-        xalign 0.5 yalign 0.5 rotate 180
-
-To stop applying transforms to the layer, use::
-
-    show layer master
 
 
 .. _scene-statement:
@@ -424,6 +420,45 @@ is equivalent to::
     with None
     show lucy mad at right
     with dissolve
+
+Camera and Show Layer Statements
+================================
+
+The ``camera`` statement allows one to apply a transform or ATL transform to an
+entire layer (such as "master"), using syntax like::
+
+    camera at flip
+
+or::
+
+    camera:
+        xalign 0.5 yalign 0.5 rotate 180
+
+To stop applying transforms to the layer, use::
+
+    camera
+
+The camera statement takes an optional layer name, between ``camera`` and
+``at`` or ``:``. ::
+
+    camera mylayer at flip
+
+The ``show layer`` statement is an older version of ``camera``, with some
+differences, that is still useful. ::
+
+
+    show layer master:
+        blur 10
+
+The differences are:
+
+* The transforms applied with ``show layer`` are cleared at the
+  next ``scene`` statement, while ``camera`` transforms last until
+  explicitly cleared.
+
+* ``show layer`` requires a layer name, while ``camera`` defaults to the
+  master layer.
+
 
 Hide and Show Window
 ====================

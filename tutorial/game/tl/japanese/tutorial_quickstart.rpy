@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/tutorial_quickstart.rpy:28
 translate japanese tutorial_create_27048c11:
 
@@ -442,19 +441,19 @@ translate japanese tutorial_simple_positions_b492e793:
 translate japanese tutorial_simple_positions_04e3bc44:
 
     # e "The first way to do it is to show an image followed by a colon. Then indented on the next couple of lines are the xalign and yalign transform properties."
-    e "最初に、コロンが続く画像を表示します。そしてインデントして次の2行にxalignとyalign変換プロパティーを記述します。"
+    e "最初に、コロンが続く画像を表示します。そしてインデントして次の2行にxalignとyalign transformプロパティーを記述します。"
 
 # game/tutorial_quickstart.rpy:293
 translate japanese tutorial_simple_positions_3ecad5f8:
 
     # e "Each of the transform properties is a name followed by a value. For xalign and yalign, the values are numbers."
-    e "各変換プロパティーは名前の後に値が続きます。xalignとyalignでは、値は数値です。"
+    e "各transformプロパティーは名前の後に値が続きます。xalignとyalignでは、値は数値です。"
 
 # game/tutorial_quickstart.rpy:295
 translate japanese tutorial_simple_positions_61c1b124:
 
     # e "The xalign transform property is the important one, as it controls where the image is placed horizontally on the screen."
-    e "xalign変換プロパティーは重要な一つで、画像が画面の水平方向のどこに配置されるかを制御します。"
+    e "xalign transformプロパティーは重要な一つで、画像が画面の水平方向のどこに配置されるかを制御します。"
 
 # game/tutorial_quickstart.rpy:305
 translate japanese tutorial_simple_positions_67ebea97:
@@ -490,37 +489,37 @@ translate japanese tutorial_simple_positions_4cd917f6:
 translate japanese tutorial_simple_positions_fbd1a3eb:
 
     # e "While being able to write positions like this is useful, having to repeatedly do so isn't. So Ren'Py lets you define a transform once, and reuse it."
-    e "このように位置を記述できるのは便利ですが、何度も繰り返えさなければいけません。そこでRen'Pyでは一回変換を定義してそれを再利用します。"
+    e "このように位置を記述できるのは便利ですが、何度も繰り返えさなければいけません。そこでRen'Pyでは一度Transformを定義したらそれを再利用します。"
 
 # game/tutorial_quickstart.rpy:345
 translate japanese tutorial_simple_positions_2377e3b3:
 
     # e "Usually transforms are defined at the top of a file, right after the characters. But it doesn't matter to Ren'Py where you define them."
-    e "通常、変換はファイルの最初、キャラクター定義のすぐ後で定義されますが、どこで定義するかはRen'Pyでは問題になりません。"
+    e "通常、Transformはファイルの最初、キャラクター定義のすぐ後で定義されますが、どこで定義するかはRen'Pyでは問題になりません。"
 
 # game/tutorial_quickstart.rpy:347
 translate japanese tutorial_simple_positions_3ce7e367:
 
     # e "The transform is given a name, slightleft, and then the xalign and yalign properties."
-    e "この変換には名前 slightleft が指定され、その後にxalignとyalignのプロパティーが続きます。"
+    e "このTransformには名前 slightleft が指定され、その後にxalignとyalignのプロパティーが続きます。"
 
 # game/tutorial_quickstart.rpy:355
 translate japanese tutorial_simple_positions_82d640d9:
 
     # e "Once a transform has been defined, you can use it in the at clause of the show statement."
-    e "一回変換が定義されると、showステートメントのat節で使用できるようになります。"
+    e "一度Transformが定義されると、showステートメントのat節で使用できるようになります。"
 
 # game/tutorial_quickstart.rpy:360
 translate japanese tutorial_simple_positions_16b66785:
 
     # e "Transforms are sticky. If you replace an image without using a transform, Ren'Py will keep the same transforms it had been using."
-    e "変換はねちっこいものです。変換を使用せずにある画像を置き換えると、Ren'Pyは前の画像が使っていた変換を維持します。"
+    e "Transformはねちっこいものです。Transformを使用せずにある画像を置き換えると、Ren'Pyは前の画像が使っていたTransformを維持します。"
 
 # game/tutorial_quickstart.rpy:364
 translate japanese tutorial_simple_positions_5d5e0cfd:
 
     # e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms and Animation, and Transform Properties."
-    e "もちろん、変換にはもっと多くがありますが、詳しくは位置プロパティーと変換とアニメーション、変換プロパティーの項を参照してください"
+    e "もちろん、Transformにはもっと多くがありますが、詳しくは位置プロパティーとTransformとアニメーション、Transformプロパティーの項を参照してください"
 
 # game/tutorial_quickstart.rpy:366
 translate japanese tutorial_simple_positions_e65da9bf:
@@ -861,4 +860,16 @@ translate japanese strings:
     # game/tutorial_quickstart.rpy:591
     old "Guy Shy"
     new "恥しがりや"
+
+# game/tutorial_quickstart.rpy:246
+translate japanese tutorial_images_a5e7eb24:
+
+    # e "The show statement adds a new image on top of all the other images on the screen."
+    e "showステートメントはその画面の他のすべての画像の一番上に新しい画像を追加します"
+
+# game/tutorial_quickstart.rpy:248
+translate japanese tutorial_images_86e11de2:
+
+    # e "If there is already an image with the same tag, the new image is used to replace the old one."
+    e "同じタグの画像が既にあった場合は、古い画像が新しい画像に置き換えられます。"
 

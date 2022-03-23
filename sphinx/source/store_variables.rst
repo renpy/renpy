@@ -21,6 +21,12 @@ and rolled-back when rollback occurs.
     set to False during the splashscreen, and is ignored when in the main
     menu.
 
+.. var:: default_mouse
+
+    This is undefined by default. If defined, and if :var:`config.mouse` is
+    set at game startup, this is a key that is used to look up a mouse cursor
+    in config.mouse when the current cursor does not exist, or is the default.
+
 .. var:: _dismiss_pause = True
 
     If True, the player can dismiss pauses and transitions.
@@ -126,6 +132,12 @@ and rolled-back when rollback occurs.
 .. var:: save_name = ""
 
     A save name that is included with saves.
+
+.. var:: _screenshot_pattern = None
+
+    If not None, this string is used in preference to :var:`config.screenshot_pattern`
+    to determine the filename of a screenshot. Please see the documentation for
+    that variable for the format of the string.
 
 .. var:: _skipping = True
 

@@ -556,6 +556,8 @@ init -1500 python in _console:
 
                 return rv
 
+            renpy.ui.reset()
+
             renpy.game.context().exception_handler = None
 
             renpy.show_screen("_console", lines=self.lines[:-1], default=self.lines[-1], history=self.history, _transient=True)
@@ -665,7 +667,7 @@ init -1500 python in _console:
                 # Try to eval it.
                 try:
                     renpy.python.py_compile(code, 'eval')
-                except:
+                except Exception:
                     pass
                 else:
                     result = renpy.python.py_eval(code)
@@ -680,7 +682,7 @@ init -1500 python in _console:
                 # Try to exec it.
                 try:
                     renpy.python.py_compile(code, "exec")
-                except:
+                except Exception:
                     if error is None:
                         error = self.format_exception()
                 else:
@@ -695,7 +697,7 @@ init -1500 python in _console:
             except renpy.game.CONTROL_EXCEPTIONS:
                 raise
 
-            except:
+            except Exception:
                 import traceback
                 traceback.print_exc()
 
@@ -721,7 +723,7 @@ init -1500 python in _console:
                 renpy.rollback(checkpoints=0, force=True, greedy=False, current_label="_console")
             except renpy.game.CONTROL_EXCEPTIONS:
                 raise
-            except:
+            except Exception:
                 pass
 
         renpy.call_in_new_context("_console")
@@ -743,7 +745,7 @@ init -1500 python in _console:
         return wrap
 
     @command(_("help: show this help"))
-    def help(l):
+    def help(l, doc_generate=False):
         keys = list(config.console_commands.keys())
         keys.sort()
 
@@ -756,7 +758,7 @@ init -1500 python in _console:
 
             rv += " " + __(f.help) + "\n"
 
-        if console.can_renpy():
+        if console.can_renpy() or doc_generate:
             rv += __(" <renpy script statement>: run the statement\n")
 
         rv += __(" <python expression or statement>: run the expression or statement")
@@ -827,7 +829,9 @@ init -1500 python in _console:
         renpy.python.py_compile(expr, 'eval')
 
         traced_expressions.append(expr)
-        renpy.show_screen("_trace_screen")
+
+        if "_trace_screen" not in config.always_shown_screens:
+            config.always_shown_screens.append("_trace_screen")
 
     def renpy_watch(expr):
         """
@@ -858,6 +862,14 @@ init -1500 python in _console:
         if expr in traced_expressions:
             traced_expressions.remove(expr)
 
+        if not traced_expressions:
+
+            if "_trace_screen" in renpy.config.always_shown_screens:
+                config.always_shown_screens.remove("_trace_screen")
+
+            renpy.hide_screen("_trace_screen")
+
+
     def watch_after_load():
         if config.developer and traced_expressions:
             renpy.show_screen("_trace_screen")
@@ -884,6 +896,10 @@ init -1500 python in _console:
     @command(_("unwatchall: stop watching all expressions"))
     def unwatchall(l):
         traced_expressions[:] = [ ]
+
+        if "_trace_screen" in renpy.config.always_shown_screens:
+            config.always_shown_screens.remove("_trace_screen")
+
         renpy.hide_screen("_trace_screen")
 
     def renpy_unwatchall():
@@ -1016,7 +1032,7 @@ screen _console:
 
 default _console.traced_expressions = _console.TracedExpressionsList()
 
-screen _trace_screen:
+screen _trace_screen():
 
     zorder 1501
 
@@ -1035,7 +1051,7 @@ screen _trace_screen:
 
                         try:
                             value = repr_func(eval(expr))
-                        except:
+                        except Exception:
                             value = "eval failed"
                         del repr_func
 
@@ -1050,7 +1066,11 @@ label _console:
 
     while True:
         python in _console:
-            console.interact()
+            try:
+                console.interact()
+            finally:
+                renpy.game.context().force_checkpoint = True
+                renpy.exports.checkpoint(hard="not_greedy")
 
 label _console_return:
     return

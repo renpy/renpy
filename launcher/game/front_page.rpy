@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,6 +22,8 @@
 define PROJECT_ADJUSTMENT = ui.adjustment()
 
 init python:
+
+    import datetime
 
     import os
     import subprocess
@@ -55,7 +57,7 @@ init python:
                 else:
                     subprocess.Popen([ "xdg-open", directory ])
 
-            except:
+            except Exception:
                 pass
 
     # Used for testing.
@@ -249,7 +251,10 @@ screen front_page_project:
 
                 textbutton _("Android") action Jump("android")
                 textbutton _("iOS") action Jump("ios")
-                textbutton _("Web") + " " + _("(Beta)") action Jump("web")
+                textbutton _("Web") + " " + _("(Beta)") action Jump("web"):
+                    if not PY2:
+                        text_color DISABLED
+
                 textbutton _("Generate Translations") action Jump("translate")
                 textbutton _("Extract Dialogue") action Jump("extract_dialogue")
 
@@ -260,7 +265,16 @@ label start:
     show screen bottom_info
     $ dmgcheck()
 
+    jump expression renpy.session.pop("launcher_start_label", "front_page")
+
+default persistent.has_update = False
+
 label front_page:
+    if persistent.daily_update_check and ((not persistent.last_update_check) or (datetime.date.today() > persistent.last_update_check)):
+        python hide:
+            persistent.last_update_check = datetime.date.today()
+            renpy.invoke_in_thread(fetch_update_channels)
+
     call screen front_page
     jump front_page
 

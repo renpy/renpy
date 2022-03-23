@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # screens.rpy:9
     old "## Styles"
@@ -640,3 +639,83 @@ translate french strings:
     # screens.rpy:1429
     old "Menu"
     new "Menu"
+
+    # gui/game/screens.rpy:114
+    old "## If there's a side image, display it above the text. Do not display on the phone variant - there's no room."
+    new "## Si il y a une side image, l'afficher au-dessus du texte. Ne pas l'afficher sur la version téléphone - pas assez de place."
+
+    # gui/game/screens.rpy:120
+    old "## Make the namebox available for styling through the Character object."
+    new "## Rendre la boîte du nom personnalisable à travers l'objet Character."
+
+    # gui/game/screens.rpy:172
+    old "## https://www.renpy.org/doc/html/screen_special.html#input"
+    new "## https://www.renpy.org/doc/html/screen_special.html#input"
+
+    # gui/game/screens.rpy:205
+    old "## https://www.renpy.org/doc/html/screen_special.html#choice"
+    new "## https://www.renpy.org/doc/html/screen_special.html#choice"
+
+    # gui/game/screens.rpy:245
+    old "## Ensure this appears on top of other screens."
+    new "## Assure qu'il apparaît au-dessus des autres screens."
+
+    # gui/game/screens.rpy:284
+    old "## Main and Game Menu Screens"
+    new "## Screens du menu principal et du menu de jeu"
+
+    # gui/game/screens.rpy:333
+    old "## The quit button is banned on iOS and unnecessary on Android and Web."
+    new "## Le bouton pour quitter est banni sur iOS et inutile sur Android et sur le Web."
+
+    # gui/game/screens.rpy:352
+    old "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+    new "## https://www.renpy.org/doc/html/screen_special.html#main-menu"
+
+    # gui/game/screens.rpy:356
+    old "## This ensures that any other menu screen is replaced."
+    new "## Ceci assure que tout autre screen de menu est remplacé."
+
+    # gui/game/screens.rpy:361
+    old "## This empty frame darkens the main menu."
+    new "## Cette frame vide obscurcit le menu principal."
+
+    # gui/game/screens.rpy:433
+    old "## Reserve space for the navigation section."
+    new "## Réserve de l'expace pour la section de navigation."
+
+    # gui/game/screens.rpy:612
+    old "## The page name, which can be edited by clicking on a button."
+    new "## Le nom de la page, qui peut être modifié en cliquant sur un bouton."
+
+    # gui/game/screens.rpy:669
+    old "## range(1, 10) gives the numbers from 1 to 9."
+    new "## range(1, 10) donne les nombres de 1 à 9."
+
+    # gui/game/screens.rpy:919
+    old "## This determines what tags are allowed to be displayed on the history screen."
+    new "## Ceci détermine quels tags peuvent être affichés sur le screen de l'historique."
+
+    # gui/game/screens.rpy:1063
+    old "Mouse Wheel Up\nClick Rollback Side"
+    new "Molette vers le haut\nClic sur le côté du Rollback"
+
+    # gui/game/screens.rpy:1078
+    old "Left Trigger\nLeft Shoulder"
+    new "Gâchettes gauche"
+
+    # gui/game/screens.rpy:1135
+    old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+    new "## https://www.renpy.org/doc/html/screen_special.html#confirm"
+
+    # gui/game/screens.rpy:1244
+    old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
+    new "## Nous devons utiliser une police qui a le glyphe BLACK RIGHT-POINTING SMALL TRIANGLE."
+
+    # gui/game/screens.rpy:1292
+    old "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+    new "## https://www.renpy.org/doc/html/screen_special.html#nvl"
+
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    new "Ouvre le menu d'accessibilité."

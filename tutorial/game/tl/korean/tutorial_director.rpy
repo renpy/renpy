@@ -3,7 +3,7 @@
 translate korean director_e4543d9b:
 
     # e "There are a few tools you can access by pressing the right commands on the keyboard."
-    e "키보드에서 명령으로 액세스할 수 있는 몇 가지 도구가 있어."
+    e "키보드에서 바로 명령할 수 있는 몇 가지 도구가 있어."
 
 # game/tutorial_director.rpy:7
 translate korean director_ebf40500:
@@ -45,7 +45,7 @@ translate korean director_62734181:
 translate korean director_aec4c7d4:
 
     # e "You'll need to make your own project, and try it out there. But I can tell you how to use it."
-    e "너는 프로젝트를 만들고 그것을 시도해야 할 거야. 그전에 사용법을 알려줄게."
+    e "프로젝트를 직접 만든 다음 시도해 봐. 그 전에, 우선 사용법을 알려줄게."
 
 # game/tutorial_director.rpy:29
 translate korean director_453d4d67:
@@ -93,7 +93,7 @@ translate korean director_292d58b5:
 translate korean director_c875c1a7:
 
     # e "You can edit or remove statements with the pencil icon. You can move me to the right by editing the show statement, then clicking '(transform)', 'right', and 'Change'."
-    e "연필 아이콘으로 명령문을 편집하거나 제거할 수 있어. show 문을 편집하고 '(변형)', 'right'및 '교체'를 클릭하여 나를 오른쪽으로 이동할 수 있어."
+    e "연필 아이콘으로 명령문을 편집하거나 제거할 수 있어. show 문을 편집하고 '(transform)', 'right' 및 'change'를 클릭하여 나를 오른쪽으로 이동할 수 있어."
 
 # game/tutorial_director.rpy:54
 translate korean director_4e04a74e:
@@ -105,7 +105,7 @@ translate korean director_4e04a74e:
 translate korean director_1364b336:
 
     # l "Finally, I get some more screen time!"
-    l "마침내, 나는 더 많은 샷을 받을 수 있어!"
+    l "야호, 내 분량이 더 많아졌다!"
 
 # game/tutorial_director.rpy:69
 translate korean director_c6dd0c81:
@@ -117,11 +117,11 @@ translate korean director_c6dd0c81:
 translate korean director_9d03b14b:
 
     # e "However, we reset this tutorial when the game restarts, so you can try again from a clean slate. That won't happen with your own visual novel."
-    e "그런데, 게임이 다시 시작될 때 이 길라잡이를 다시 설정하기 때문에 깨끗한 슬레이트에서 다시 시도할 수 있어. 실제 네 시각 소설이 아닌 자습용이니까."
+    e "하지만, 이 길라잡이는 게임이 다시 시작될 때마다 재설정되기 때문에, 깨끗한 슬레이트에서 여러 번 다시 시도해볼 수 있어. 실제 네 비주얼 노벨이 아닌 자습용이니까."
 
 # game/tutorial_director.rpy:73
 translate korean director_dbfa07b2:
 
     # e "I hope these tools make developing your visual novel that much easier."
-    e "이 도구로 시각 소설을 훨씬 쉽게 개발할 수 있기를 기대할게."
+    e "이 도구로 비주얼 노벨을 훨씬 쉽게 개발할 수 있기를 기대할게."
 

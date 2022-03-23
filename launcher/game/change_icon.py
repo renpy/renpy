@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,15 +23,16 @@
 # Contains a reasonable description of the format.
 
 from __future__ import print_function
+from renpy.compat import bchr, chr, str, PY2
 
 import struct
 import sys
 import array
-import pefile # @UnresolvedImport
+import pefile
+
 
 # This class performs various operations on memory-loaded binary files,
 # including modifications.
-
 
 class BinFile(object):
 
@@ -67,7 +68,7 @@ class BinFile(object):
 
         rv = u""
         for _i in range(c):
-            rv += unichr(self.u16())
+            rv += chr(self.u16())
 
         return rv
 
@@ -75,14 +76,24 @@ class BinFile(object):
         self.addr = addr
 
     def tostring(self):
-        return self.a.tostring()
+        if PY2:
+            return self.a.tostring() # type: ignore
+        else:
+            return self.a.tobytes()
 
     def substring(self, start, len): # @ReservedAssignment
-        return self.a[start:start + len].tostring()
+        if PY2:
+            return self.a[start:start + len].tostring() # type: ignore
+        else:
+            return self.a[start:start + len].tobytes()
 
     def __init__(self, data):
-        self.a = array.array(b'B')
-        self.a.fromstring(data)
+        self.a = array.array('B')
+
+        if PY2:
+            self.a.fromstring(data) # type: ignore
+        else:
+            self.a.frombytes(data)
 
 ##############################################################################
 # These functions parse data out of the file. In these functions, offset is
@@ -106,7 +117,7 @@ def parse_data(bf, offset):
 
     bf.seek(data_offset - resource_virtual)
     for _i in range(data_len):
-        l.append(chr(bf.u8()))
+        l.append(bchr(bf.u8()))
 
     return (code_page, b"".join(l))
 
@@ -210,8 +221,8 @@ class Packer(object):
         return rv
 
     def pack_dict(self, d, offset):
-        name_entries = sorted((a, b) for a, b in d.iteritems() if isinstance(a, unicode))
-        id_entries = sorted((a, b) for a, b in d.iteritems() if isinstance(a, int))
+        name_entries = sorted((a, b) for a, b in d.items() if isinstance(a, str))
+        id_entries = sorted((a, b) for a, b in d.items() if isinstance(a, int))
 
         rv = struct.pack("<IIHHHH", 0, 0, 4, 0, len(name_entries), len(id_entries))
 
@@ -220,7 +231,7 @@ class Packer(object):
         rest = b""
 
         for (name, value) in name_entries + id_entries:
-            if isinstance(name, unicode):
+            if isinstance(name, str):
                 name = 0x80000000 | self.pack_name(name)
 
             if isinstance(value, dict):
@@ -268,14 +279,17 @@ def load_icon(fn):
         if not f.u32():
             f.set_u32(offset + 20, 0)
 
-        rv[3][i + 1] = { 0 : (1252, f.substring(offset, size)) }
+        #rv[3][i + 1] = { 0 : (1252, f.substring(offset, size)) }
+        #I do not have justification for the 0x0409 entry ID, other than copying what other files do. Same for codepage of 0
+        rv[3][i + 1] = { 1033 : (0, f.substring(offset, size)) }
 
         group += struct.pack("BBBBHHIH", width, height, colors, reserved,
                              planes, bpp, size, i + 1)
 
         f.seek(addr)
 
-    rv[14] = { 1 : { 0 : (1252, group) } }
+    #rv[14] = { 1 : { 0 : (1252, group) } }
+    rv[14] = { 1 : { 1033 : (0, group) } }
 
     return rv
 
@@ -305,6 +319,20 @@ def change_icons(oldexe, icofn):
     basedata = f.read(base)
     data = f.read(physize)
 
+    #Symbol table, I could not understand so well
+    #  Some analysis and the little I could find on how the symbol tables were layed out show that the PE table is in two sections. One is
+    # a list of NumberOfSymbols*(18 bytes) symbol entries, followed immediately by a string table who's length is specified in the 4 bytes following the symbol structure list
+    #Again, the information *seems* to indicate that this will always follow the entire block of all sections (so be at the end of the file)
+
+
+    ######
+    # As a related note, apparently this flag has been deprecated, but appears to be set (I think ..) in the renpy.exe that is used to build from..
+    # no idea of a consequence, just an observation
+    # https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#characteristics , see "IMAGE_FILE_LINE_NUMS_STRIPPED" :
+    #	COFF line numbers have been removed. This flag is deprecated and should be zero.
+    # In renpy.exe, this 2-byte  flag is @ 0x096 and 0x097  in little-endian
+    ######
+
     f.close()
 
     bf = BinFile(data)
@@ -316,42 +344,81 @@ def change_icons(oldexe, icofn):
 
     rsrc = Packer().pack(resources)
 
-    newsize = len(rsrc)
+    newExactSize = len(rsrc)
 
-    if newsize < physize:
+    #From note about flags above regarding image flags. These two should be 0
+    pe.FILE_HEADER.Characteristics = pe.FILE_HEADER.Characteristics & (~pefile.IMAGE_CHARACTERISTICS["IMAGE_FILE_LINE_NUMS_STRIPPED"])
+    pe.FILE_HEADER.Characteristics = pe.FILE_HEADER.Characteristics & (~pefile.IMAGE_CHARACTERISTICS["IMAGE_FILE_LOCAL_SYMS_STRIPPED"])
 
-        rsrc += b"\0" * (physize - newsize)
+    #Per docs, symbol table can just be removed
+    #https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#coff-file-header-object-and-image  see "PointerToSymbolTable"  and  "NumberOfSymbols "
 
-        return basedata + rsrc
+    pe.FILE_HEADER.PointerToSymbolTable = 0
+    pe.FILE_HEADER.NumberOfSymbols = 0
 
-    else:
+    #####
+    # Alignment requirements as I understand them
+    #
+    # SectionAlignment (misnomer.. 'memory' alignment) = 4096
+    # FileAlignment = 512
+    #
+    #  Section, SizeOfRawData = multiple of FileAlignment   (On Disk size)
+    #  Scetion, VirtualSize   is  NOT aligned to any specific number, and rwdata may be > than this due to its alignment requirement  (In memory size)
+    #
+    #  the resource section should be padded out to meet the alignment requirement of  SizeOfRawData = multiple of FileAlignment  (So, in the file, since on disk)
+    #
+    #####
+    #  RVA table virt address and size = that in the section header
+    #
+    #####
+    # SizeOfImage  must be aligned to SectionAlignment  (memory alignment)
+    #   There is NO padding needed, the image size number simply needs to be aligned to >= the
 
-        alignment = pe.OPTIONAL_HEADER.SectionAlignment
+    memoryalignment = pe.OPTIONAL_HEADER.SectionAlignment
+    filealignment = pe.OPTIONAL_HEADER.FileAlignment
 
-        # print("Alignment is", alignment)
+    rsrc_section.Misc_VirtualSize = newExactSize
+    rsrc_section.Misc_PhysicalAddress = newExactSize
+    rsrc_section.Misc = newExactSize
 
-        if len(rsrc) % alignment:
-            pad = alignment - (len(rsrc) % alignment)
-            padding = b"\0" * (pad / 8 + 1)
-            padding = padding[:pad]
-            rsrc += padding
+    #Size of resource section (and pointer, but we're not changing anything 'above' resource) is the same as virtual address in the section table
+    # https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#optional-header-data-directories-image-only
+    pe.OPTIONAL_HEADER.DATA_DIRECTORY[2].Size = rsrc_section.Misc_VirtualSize
 
-        newsize = len(rsrc)
-        delta = newsize - physize
 
-        rsrc_section.Misc_VirtualSize += delta
-        rsrc_section.Misc_PhysicalAddress += delta
-        rsrc_section.Misc += delta
-        rsrc_section.SizeOfRawData += delta
+    #Alignment for raw data
+    if len(rsrc) % filealignment:
+        pad = filealignment - (len(rsrc) % filealignment)
+        padding = b"\0" * (pad)
+        padding = padding[:pad]
+        rsrc += padding
+    rsrc_section.SizeOfRawData = len(rsrc)
 
-        pe.OPTIONAL_HEADER.SizeOfInitializedData += delta
 
-        # Resource size.
-        pe.OPTIONAL_HEADER.DATA_DIRECTORY[2].Size += delta
+    #Image size is the memory size of all sections + all headers, padded to memory alignment.
+    #There's alread a header size, and this isn't changing headers, so just add.
+    #imageSize = pe.OPTIONAL_HEADER.ImageBase + pe.OPTIONAL_HEADER.SizeOfHeaders
+    imageSize = pe.OPTIONAL_HEADER.SizeOfHeaders
+    for s in pe.sections:
+        sectionSize = s.Misc_VirtualSize
+        #Align every section, so add padding to size
+        pad = 0
+        if sectionSize % memoryalignment:
+            pad = memoryalignment - (sectionSize % memoryalignment)
+        imageSize += (sectionSize + pad)
+    pad = 0
+    if imageSize % memoryalignment:
+        pad = memoryalignment - (imageSize % memoryalignment)
+    pe.OPTIONAL_HEADER.SizeOfImage = imageSize + pad
 
-        pe.OPTIONAL_HEADER.SizeOfImage += delta
 
-        return pe.write()[:base] + rsrc
+    #The symbol table is simply left off. Its size DOES factor into ImageSize, but we didn't calculate it above, so fine
+    #Correctly checksum the file. The entire file is involved in the calculation, so a new PE object must be generated for the calculation to work against
+    newFile = pe.write()[:base] + rsrc
+    newpe = pefile.PE(data=bytes(newFile))
+    newpe.OPTIONAL_HEADER.CheckSum = newpe.generate_checksum()
+
+    return bytes(newpe.write())
 
 
 if __name__ == "__main__":

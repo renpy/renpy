@@ -9,11 +9,8 @@ cd "$SPHINX"
 # Make the inc folder.
 mkdir -p source/inc
 
-# Delete .pyo files, which could not include docstrings.
-find ../renpy -name \*.pyo -delete
-
 # Run a Ren'Py game that generates documentation.
-../renpy.sh .
+python ../renpy.py .
 
 # Clear out generated images.
 rm -Rf ../doc-web/_images || true

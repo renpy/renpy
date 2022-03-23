@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,7 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 from renpy.sl2.slparser import Keyword, Style, PrefixStyle
 
@@ -57,12 +59,12 @@ position_property_names = [
     "debug",
     ]
 
-position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip") ]
-text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ]
-side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ] + [ Keyword("tooltip") ]
-viewport_position_properties = [ PrefixStyle("viewport_", i) for i in position_property_names ]
-scrollbar_position_properties = [ PrefixStyle("scrollbar_", i) for i in position_property_names ] + [ Keyword("tooltip") ]
-vscrollbar_position_properties = [ PrefixStyle("vscrollbar_", i) for i in position_property_names ] + [ Keyword("tooltip") ]
+position_properties = [ Style(i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
+text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ] # type: ignore
+side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
+viewport_position_properties = [ PrefixStyle("viewport_", i) for i in position_property_names ] # type: ignore
+scrollbar_position_properties = [ PrefixStyle("scrollbar_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
+vscrollbar_position_properties = [ PrefixStyle("vscrollbar_", i) for i in position_property_names ] + [ Keyword("tooltip") ] # type: ignore
 
 text_property_names = [
     "antialias",
@@ -99,6 +101,7 @@ text_property_names = [
     "underline",
     "hinting",
     "adjust_spacing",
+    "mipmap",
     ]
 
 text_properties = [ Style(i) for i in text_property_names ]
@@ -128,6 +131,7 @@ window_properties = [ Style(i) for i in [
     "background",
     "foreground",
     "size_group",
+    "modal",
     ] ] + margin_properties + padding_properties
 
 button_properties = [ Style(i) for i in [
@@ -147,10 +151,9 @@ button_properties = [ Style(i) for i in [
         Keyword("sensitive"),
         Keyword("keysym"),
         Keyword("alternate_keysym"),
-    ]
+    ] # type: ignore
 
-
-bar_property_names =  [
+bar_property_names = [
     "bar_vertical",
     "bar_invert",
     "bar_resizing",
@@ -195,7 +198,6 @@ grid_properties = [ Style(i) for i in [
     "xspacing",
     "yspacing",
     ] ] + margin_properties
-
 
 ui_properties = [
     Keyword("at"),

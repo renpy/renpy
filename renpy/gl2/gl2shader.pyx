@@ -5,6 +5,8 @@ from renpy.gl2.gl2mesh cimport Mesh
 from renpy.gl2.gl2texture cimport GLTexture
 from renpy.display.matrix cimport Matrix
 
+import renpy
+import random
 
 class ShaderError(Exception):
     pass
@@ -18,16 +20,14 @@ GLSL_PRECISIONS = {
 
 
 cdef class Uniform:
-    cdef Program program
     cdef GLint location
     cdef bint ready
 
     def __init__(self, program, location):
-        self.program = program
         self.location = location
         self.ready = False
 
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         return
 
     cdef void finish(self):
@@ -35,23 +35,23 @@ cdef class Uniform:
         return
 
 cdef class UniformFloat(Uniform):
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glUniform1f(self.location, data)
 
 cdef class UniformVec2(Uniform):
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glUniform2f(self.location, data[0], data[1])
 
 cdef class UniformVec3(Uniform):
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glUniform3f(self.location, data[0], data[1], data[2])
 
 cdef class UniformVec4(Uniform):
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glUniform4f(self.location, data[0], data[1], data[2], data[3])
 
 cdef class UniformMat4(Uniform):
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glUniformMatrix4fv(self.location, 1, GL_FALSE, (<Matrix> data).m)
 
 cdef class UniformSampler2D(Uniform):
@@ -62,13 +62,13 @@ cdef class UniformSampler2D(Uniform):
         self.sampler = program.samplers
         program.samplers += 1
 
-    cdef void assign(self, data):
+    cdef void assign(self, program, data):
         glActiveTexture(GL_TEXTURE0 + self.sampler)
         glUniform1i(self.location, self.sampler)
 
         if isinstance(data, GLTexture):
             glBindTexture(GL_TEXTURE_2D, data.number)
-            self.program.set_uniform("res{}".format(self.sampler), (data.texture_width, data.texture_height))
+            program.set_uniform("res{}".format(self.sampler), (data.texture_width, data.texture_height))
         else:
             glBindTexture(GL_TEXTURE_2D, data)
 
@@ -175,13 +175,13 @@ cdef class Program:
                 raise ShaderError("Spurious tokens after the name in '{}'. Arrays are not supported in Ren'Py.".format(l))
 
             if storage == "uniform":
-                location = glGetUniformLocation(self.program, name)
+                location = glGetUniformLocation(self.program, name.encode("utf-8"))
 
                 if location >= 0:
                     self.uniforms[name] = types[type](self, location)
 
             else:
-                location = glGetAttribLocation(self.program, name)
+                location = glGetAttribLocation(self.program, name.encode("utf-8"))
 
                 if location >= 0:
                     self.attributes.append(Attribute(name, location, types[type]))
@@ -190,6 +190,8 @@ cdef class Program:
         """
         This loads a shader into the GPU, and returns the number.
         """
+
+        source = source.encode("utf-8")
 
         cdef GLuint shader
         cdef GLchar *source_ptr = <char *> source
@@ -247,7 +249,19 @@ cdef class Program:
         self.find_variables(self.fragment)
 
     def missing(self, kind, name):
-        raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
+        cdef GLfloat viewport[4]
+
+        if name == "u_lod_bias":
+            self.set_uniform("u_lod_bias", float(renpy.config.gl_lod_bias))
+        elif name == "u_time":
+            self.set_uniform("u_time", (renpy.display.interface.frame_time - renpy.display.interface.init_time) % 86400)
+        elif name == "u_random":
+            self.set_uniform("u_random", (random.random(), random.random(), random.random(), random.random()))
+        elif name == "u_viewport":
+            glGetFloatv(GL_VIEWPORT, viewport)
+            self.set_uniform("u_viewport", (viewport[0], viewport[1], viewport[2], viewport[3]))
+        else:
+            raise Exception("Shader {} has not been given {} {}.".format(self.name, kind, name))
 
     def start(self):
         glUseProgram(self.program)
@@ -258,7 +272,7 @@ cdef class Program:
         if u is None:
             return
 
-        u.assign(value)
+        u.assign(self, value)
         u.ready = True
 
     def set_uniforms(self, dict uniforms):
@@ -269,7 +283,7 @@ cdef class Program:
             if u is None:
                 continue
 
-            u.assign(value)
+            u.assign(self, value)
             u.ready = True
 
     def draw(self, Mesh mesh, dict properties):
@@ -277,6 +291,9 @@ cdef class Program:
         cdef Attribute a
         cdef Uniform u
         cdef int i
+
+        if not mesh.triangles:
+            return
 
         # Set up the attributes.
         for a in self.attributes:
@@ -295,21 +312,41 @@ cdef class Program:
             if not u.ready:
                 self.missing("uniform", name)
 
-        if "texture_scaling" in properties:
-            magnify, minify = TEXTURE_SCALING[properties["texture_scaling"]]
+        if len(properties) > 1:
 
-            for 0 <= i < self.samplers:
-                glActiveTexture(GL_TEXTURE0 + i)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify)
+            if "color_mask" in properties:
+                mask_r, mask_g, mask_b, mask_a = properties["color_mask"]
+                glColorMask(mask_r, mask_g, mask_b, mask_a)
+
+            if "texture_scaling" in properties:
+                magnify, minify = TEXTURE_SCALING[properties["texture_scaling"]]
+
+                for 0 <= i < self.samplers:
+                    glActiveTexture(GL_TEXTURE0 + i)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnify)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minify)
+
+            if "blend_func" in properties:
+                rgb_eq, src_rgb, dst_rgb, alpha_eq, src_alpha, dst_alpha = properties["blend_func"]
+                glBlendEquationSeparate(rgb_eq, alpha_eq)
+                glBlendFuncSeparate(src_rgb, dst_rgb, src_alpha, dst_alpha)
 
         glDrawElements(GL_TRIANGLES, 3 * mesh.triangles, GL_UNSIGNED_SHORT, mesh.triangle)
 
-        if "texture_scaling" in properties:
-            for 0 <= i < self.samplers:
-                glActiveTexture(GL_TEXTURE0 + i)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+        if len(properties) > 1:
+
+            if "texture_scaling" in properties:
+                for 0 <= i < self.samplers:
+                    glActiveTexture(GL_TEXTURE0 + i)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+                    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+
+            if "color_mask" in properties:
+                glColorMask(True, True, True, True)
+
+            if "blend_func" in properties:
+                glBlendEquation(GL_FUNC_ADD)
+                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
 
     def finish(Program self):
@@ -321,5 +358,3 @@ cdef class Program:
 
         for u in self.uniforms.itervalues():
             u.finish()
-
-

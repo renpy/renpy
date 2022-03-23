@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -150,7 +150,7 @@ init -1800:
         drop_shadow None
         drop_shadow_color (0, 0, 0, 255)
         outlines [ ]
-        outline_scaling "step"
+        outline_scaling "linear"
         minwidth 0
         text_align 0
         justify False
@@ -179,6 +179,7 @@ init -1800:
         ymargin 0
         xfill False
         yfill False
+        modal False
 
         # Size properties
         xminimum 0
@@ -194,6 +195,7 @@ init -1800:
         xoffset 0
         yoffset 0
         subpixel False
+        mipmap None
 
         # Sound properties
         activate_sound None
@@ -360,7 +362,7 @@ init -1800:
         yfill False
 
     style drag:
-        focus_mask True
+        focus_mask None
 
     # Out-of-game menu root windows
 

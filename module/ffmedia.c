@@ -8,10 +8,7 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
-#if defined(__arm__) && !(__MACOS__ || __IPHONEOS__)
-#define USE_MEMALIGN
 #include <stdlib.h>
-#endif
 
 /* Should a mono channel be split into two equal stero channels (true) or
  * should the energy be split onto two stereo channels with 1/2 the energy
@@ -34,13 +31,19 @@ const int BPS = 4; // Bytes per sample.
 
 const int FRAMES = 3;
 
+// The alignment of each row of pixels.
+const int ROW_ALIGNMENT = 16;
+
 // The number of pixels on each side. This has to be greater that 0 (since
 // Ren'Py needs some padding), FRAME_PADDING * BPS has to be a multiple of
 // 16 (alignment issues on ARM NEON), and has to match the crop in the
 // read_video function of renpysound.pyx.
-const int FRAME_PADDING = 4;
+const int FRAME_PADDING = ROW_ALIGNMENT / 4;
 
 const int SPEED = 1;
+
+// How many seconds early can frames be delivered?
+static const double frame_early_delivery = .005;
 
 static SDL_Surface *rgb_surface = NULL;
 static SDL_Surface *rgba_surface = NULL;
@@ -141,11 +144,15 @@ typedef struct SurfaceQueueEntry {
 
 typedef struct MediaState {
 
+    /* The next entry in a list of MediaStates */
+    struct MediaState *next;
+
+    /* The thread associated with decoding this media. */
+    SDL_Thread *thread;
 
 	/* The condition and lock. */
 	SDL_cond* cond;
 	SDL_mutex* lock;
-
 
 	SDL_RWops *rwops;
 	char *filename;
@@ -154,12 +161,6 @@ typedef struct MediaState {
 	 * True if we this stream should have video.
 	 */
 	int want_video;
-
-	/*
-	 * This becomes true when the decode thread starts, when
-	 * it is the decode thread's job to deallocate this object.
-	 */
-	int started;
 
 	/* This becomes true once the decode thread has finished initializing
 	 * and the readers and writers can do their thing.
@@ -257,16 +258,30 @@ typedef struct MediaState {
 	/* Are frame drops allowed? */
 	int frame_drops;
 
+	/* The time the pause happened, or 0 if we're not paused. */
+	double pause_time;
+
+	/* The offset between now and the time of the current frame, at least for video. */
+	double time_offset;
+
+
 } MediaState;
 
 static AVFrame *dequeue_frame(FrameQueue *fq);
 static void free_packet_queue(PacketQueue *pq);
 static SurfaceQueueEntry *dequeue_surface(SurfaceQueueEntry **queue);
 
-static void deallocate(MediaState *ms) {
-	/* Destroy video stuff. */
 
-	while (1) {
+/* A queue of MediaState objects that are awaiting deallocation.*/
+static MediaState *deallocate_queue = NULL;
+
+/* A mutex that discards deallocate_queue. */
+SDL_mutex *deallocate_mutex = NULL;
+
+/* Deallocates a single MediaState. */
+static void deallocate(MediaState *ms) {
+
+    while (1) {
 		SurfaceQueueEntry *sqe = dequeue_surface(&ms->surface_queue);
 
 		if (! sqe) {
@@ -324,11 +339,6 @@ static void deallocate(MediaState *ms) {
 	}
 
 	if (ms->ctx) {
-		for (int i = 0; i < ms->ctx->nb_streams; i++) {
-			if (ms->ctx->streams[i]->codec) {
-				avcodec_close(ms->ctx->streams[i]->codec);
-			}
-		}
 
 		if (ms->ctx->pb) {
 			if (ms->ctx->pb->buffer) {
@@ -356,7 +366,34 @@ static void deallocate(MediaState *ms) {
 	if (ms->filename) {
 		av_free(ms->filename);
 	}
-	av_free(ms);
+
+	/* Add this MediaState to a queue to have its thread ended, and the MediaState
+	 * deactivated.
+	 */
+	SDL_LockMutex(deallocate_mutex);
+    ms->next = deallocate_queue;
+    deallocate_queue = ms;
+    SDL_UnlockMutex(deallocate_mutex);
+
+}
+
+/* Perform the portion of deallocation that's been deferred to the main thread. */
+static void deallocate_deferred() {
+
+    SDL_LockMutex(deallocate_mutex);
+
+    while (deallocate_queue) {
+        MediaState *ms = deallocate_queue;
+        deallocate_queue = ms->next;
+
+        if (ms->thread) {
+            SDL_WaitThread(ms->thread, NULL);
+        }
+
+        av_free(ms);
+    }
+
+    SDL_UnlockMutex(deallocate_mutex);
 }
 
 static void enqueue_frame(FrameQueue *fq, AVFrame *frame) {
@@ -521,39 +558,99 @@ static int read_packet(MediaState *ms, PacketQueue *pq, AVPacket *pkt) {
 
 static AVCodecContext *find_context(AVFormatContext *ctx, int index) {
 
+    AVDictionary *opts = NULL;
+
 	if (index == -1) {
 		return NULL;
 	}
 
-	AVCodec *codec;
+	AVCodec *codec = NULL;
 	AVCodecContext *codec_ctx = NULL;
-	AVCodecContext *codec_ctx_orig = ctx->streams[index]->codec;
 
-	codec = avcodec_find_decoder(codec_ctx_orig->codec_id);
-
-	if (codec == NULL) {
-		return NULL;
-	}
-
-	codec_ctx = avcodec_alloc_context3(codec);
+	codec_ctx = avcodec_alloc_context3(NULL);
 
 	if (codec_ctx == NULL) {
 		return NULL;
 	}
 
-	if (avcodec_copy_context(codec_ctx, codec_ctx_orig)) {
+	if (avcodec_parameters_to_context(codec_ctx, ctx->streams[index]->codecpar) < 0) {
 		goto fail;
 	}
 
-	if (avcodec_open2(codec_ctx, codec, NULL)) {
+	codec_ctx->pkt_timebase = ctx->streams[index]->time_base;
+
+    codec = avcodec_find_decoder(codec_ctx->codec_id);
+
+    if (codec == NULL) {
+        goto fail;
+    }
+
+    codec_ctx->codec_id = codec->id;
+
+    av_dict_set(&opts, "threads", "auto", 0);
+    av_dict_set(&opts, "refcounted_frames", "0", 0);
+
+	if (avcodec_open2(codec_ctx, codec, &opts)) {
 		goto fail;
 	}
 
 	return codec_ctx;
 
 fail:
+
+    av_dict_free(&opts);
+
 	avcodec_free_context(&codec_ctx);
 	return NULL;
+}
+
+
+/**
+ * Given a packet, decodes a frame if possible. This is intended to be a drop-in replacement
+ * for the now deprecated avcodec_decode_audio4/video2 APIs.
+ *
+ * \param[in]   context     The context the decoding is done in.
+ * \param[out]  frame       A frame that is updated with the decoded data.
+ * \param[out]  got_frame   Set to 1 if a frame was decoded, 0 if not.
+ * \param[in]   pkt         The packet data to present.
+ *
+ * Returns pkt->size if the packet was consumed, 0 if not, or < 0 on error (including
+ * end of file.)
+ */
+static int decode_common(AVCodecContext *context, AVFrame *frame, int *got_frame, AVPacket *pkt) {
+
+    int ret;
+    int rv = 0;
+
+    if (pkt) {
+        ret = avcodec_send_packet(context, pkt);
+
+        if (ret >= 0) {
+            rv = pkt->size;
+        } else if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
+            rv = 0;
+        } else {
+           return ret;
+        }
+    }
+
+    ret = avcodec_receive_frame(context, frame);
+
+    if (ret >= 0) {
+        *got_frame = 1;
+    } else if (ret == AVERROR(EAGAIN)) {
+        *got_frame = 0;
+    } else if (ret == AVERROR_EOF) {
+        *got_frame = 0;
+        if (!pkt || pkt->size == 0) {
+            return ret;
+        }
+    } else {
+        *got_frame = 0;
+        return ret;
+    }
+
+    return rv;
 }
 
 
@@ -596,7 +693,7 @@ static void decode_audio(MediaState *ms) {
 
 		do {
 			int got_frame;
-			int read_size = avcodec_decode_audio4(ms->audio_context, ms->audio_decode_frame, &got_frame, &pkt_temp);
+			int read_size = decode_common(ms->audio_context, ms->audio_decode_frame, &got_frame, &pkt_temp);
 
 			if (read_size < 0) {
 
@@ -656,7 +753,7 @@ static void decode_audio(MediaState *ms) {
 				continue;
 			}
 
-			double start = av_frame_get_best_effort_timestamp(ms->audio_decode_frame) * timebase;
+			double start = ms->audio_decode_frame->best_effort_timestamp * timebase;
 			double end = start + 1.0 * converted_frame->nb_samples / audio_sample_rate;
 
 			SDL_LockMutex(ms->lock);
@@ -726,7 +823,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		}
 
 		int got_frame = 0;
-		int read_size = avcodec_decode_video2(ms->video_context, ms->video_decode_frame, &got_frame, &ms->video_pkt_tmp);
+		int read_size = decode_common(ms->video_context, ms->video_decode_frame, &got_frame, &ms->video_pkt_tmp);
 
 		if (read_size < 0) {
 			ms->video_finished = 1;
@@ -747,8 +844,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 
 	}
 
-	double pts = av_frame_get_best_effort_timestamp(ms->video_decode_frame) \
-			* av_q2d(ms->ctx->streams[ms->video_stream]->time_base);
+	double pts = ms->video_decode_frame->best_effort_timestamp * av_q2d(ms->ctx->streams[ms->video_stream]->time_base);
 
 	if (pts < ms->skip) {
 		return NULL;
@@ -799,19 +895,21 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		return NULL;
 	}
 	rv->w = ms->video_decode_frame->width + FRAME_PADDING * 2;
-	rv->pitch = rv->w * sample->format->BytesPerPixel;
 	rv->h = ms->video_decode_frame->height + FRAME_PADDING * 2;
 
-	// We have to use SDL_calloc here, since SDL frees these pixels. This
-	// Should be
+	rv->pitch = rv->w * sample->format->BytesPerPixel;
 
+	if (rv->pitch % ROW_ALIGNMENT) {
+	    rv->pitch += ROW_ALIGNMENT - (rv->pitch % ROW_ALIGNMENT);
+	}
 
-#ifdef USE_MEMALIGN
-    posix_memalign(&rv->pixels, 16, rv->pitch * rv->h);
-    memset(rv->pixels, 0, rv->pitch * rv->h);
+#if defined(_WIN32)
+    rv->pixels = SDL_calloc(rv->pitch * rv->h, 1);
 #else
-    rv->pixels = SDL_calloc(1, rv->pitch * rv->h);
+    posix_memalign(&rv->pixels, ROW_ALIGNMENT, rv->pitch * rv->h);
 #endif
+
+    memset(rv->pixels, 0, rv->pitch * rv->h);
 
 	rv->format = sample->format;
 	rv->next = NULL;
@@ -900,6 +998,12 @@ int media_video_ready(struct MediaState *ms) {
 		goto done;
 	}
 
+	if (ms->pause_time > 0) {
+	    goto done;
+	}
+
+	double offset_time = current_time - ms->time_offset;
+
 	/*
 	 * If we have an obsolete frame, drop it.
 	 */
@@ -929,7 +1033,7 @@ int media_video_ready(struct MediaState *ms) {
 
 	if (ms->surface_queue) {
 		if (ms->video_pts_offset) {
-			if (ms->surface_queue->pts + ms->video_pts_offset <= current_time) {
+			if (ms->surface_queue->pts + ms->video_pts_offset <= offset_time + frame_early_delivery) {
 				rv = 1;
 			}
 		} else {
@@ -960,6 +1064,8 @@ SDL_Surface *media_read_video(MediaState *ms) {
 		return NULL;
 	}
 
+	double offset_time = current_time - ms->time_offset;
+
 	SDL_LockMutex(ms->lock);
 
 #ifndef __EMSCRIPTEN__
@@ -968,15 +1074,19 @@ SDL_Surface *media_read_video(MediaState *ms) {
 	}
 #endif
 
+	if (ms->pause_time > 0) {
+	    goto done;
+	}
+
 	if (!ms->surface_queue_size) {
 		goto done;
 	}
 
 	if (ms->video_pts_offset == 0.0) {
-		ms->video_pts_offset = current_time - ms->surface_queue->pts;
+		ms->video_pts_offset = offset_time - ms->surface_queue->pts;
 	}
 
-	if (ms->surface_queue->pts + ms->video_pts_offset <= current_time) {
+	if (ms->surface_queue->pts + ms->video_pts_offset <= offset_time + frame_early_delivery) {
 		sqe = dequeue_surface(&ms->surface_queue);
 		ms->surface_queue_size -= 1;
 
@@ -987,7 +1097,7 @@ done:
     /* Only signal if we've consumed something. */
 	if (sqe) {
 		ms->needs_decode = 1;
-		ms->video_read_time = current_time;
+		ms->video_read_time = offset_time;
 		SDL_CondBroadcast(ms->cond);
 	}
 
@@ -1049,13 +1159,13 @@ static int decode_thread(void *arg) {
 	ms->audio_stream = -1;
 
 	for (int i = 0; i < ctx->nb_streams; i++) {
-		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+		if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
 			if (ms->want_video && ms->video_stream == -1) {
 				ms->video_stream = i;
 			}
 		}
 
-		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+		if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
 			if (ms->audio_stream == -1) {
 				ms->audio_stream = i;
 			}
@@ -1211,13 +1321,13 @@ static int decode_sync_start(void *arg) {
 	ms->audio_stream = -1;
 
 	for (int i = 0; i < ctx->nb_streams; i++) {
-		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
+		if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
 			if (ms->want_video && ms->video_stream == -1) {
 				ms->video_stream = i;
 			}
 		}
 
-		if (ctx->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+		if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
 			if (ms->audio_stream == -1) {
 				ms->audio_stream = i;
 			}
@@ -1414,17 +1524,16 @@ void media_start(MediaState *ms) {
 
 	snprintf(buf, 1024, "decode: %s", ms->filename);
 	SDL_Thread *t = SDL_CreateThread(decode_thread, buf, (void *) ms);
-
-	if (t) {
-		ms->started = 1;
-		SDL_DetachThread(t);
-	}
+	ms->thread = t;
 #endif
 }
 
 
 MediaState *media_open(SDL_RWops *rwops, const char *filename) {
-	MediaState *ms = av_calloc(1, sizeof(MediaState));
+
+    deallocate_deferred();
+
+    MediaState *ms = av_calloc(1, sizeof(MediaState));
 	if (ms == NULL) {
 		return NULL;
 	}
@@ -1477,7 +1586,6 @@ void media_start_end(MediaState *ms, double start, double end) {
 	}
 }
 
-
 /**
  * Marks the channel as having video.
  */
@@ -1486,9 +1594,18 @@ void media_want_video(MediaState *ms, int video) {
 	ms->frame_drops = (video != 2);
 }
 
+void media_pause(MediaState *ms, int pause) {
+    if (pause && (ms->pause_time == 0)) {
+        ms->pause_time = current_time;
+    } else if ((!pause) && (ms->pause_time > 0)) {
+        ms->time_offset += current_time - ms->pause_time;
+        ms->pause_time = 0;
+    }
+}
+
 void media_close(MediaState *ms) {
 
-	if (!ms->started) {
+	if (!ms->thread) {
 		deallocate(ms);
 		return;
 	}
@@ -1517,10 +1634,10 @@ void media_sample_surfaces(SDL_Surface *rgb, SDL_Surface *rgba) {
 
 void media_init(int rate, int status, int equal_mono) {
 
+    deallocate_mutex = SDL_CreateMutex();
+
 	audio_sample_rate = rate / SPEED;
 	audio_equal_mono = equal_mono;
-
-    av_register_all();
 
     if (status) {
         av_log_set_level(AV_LOG_INFO);

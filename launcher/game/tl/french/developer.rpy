@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
@@ -99,7 +98,7 @@ translate french strings:
 
     # _developer/inspector.rpym:139
     old "displayable:"
-    new "affichable:"
+    new "affichable :"
 
     # _developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
@@ -131,15 +130,15 @@ translate french strings:
 
     # 00console.rpy:403
     old "commands:\n"
-    new "commandes:\n"
+    new "commandes :\n"
 
     # 00console.rpy:413
     old " <renpy script statement>: run the statement\n"
-    new " <renpy script statement>: Exécuter cette déclaration\n"
+    new " <renpy script statement> : Exécuter cette déclaration\n"
 
     # 00console.rpy:415
     old " <python expression or statement>: run the expression or statement"
-    new " <python expression or statement>: Exécuter cette expression ou cette déclaration"
+    new " <python expression or statement> : Exécuter cette expression ou cette déclaration"
 
     # 00console.rpy:423
     old "clear: clear the console history"
@@ -147,33 +146,52 @@ translate french strings:
 
     # 00console.rpy:427
     old "exit: exit the console"
-    new "exit: quitter la console"
+    new "exit : quitter la console"
 
     # 00console.rpy:435
     old "load <slot>: loads the game from slot"
-    new "load <slot>: charger la partie de cet emplacement"
+    new "load <slot> : charger la partie de cet emplacement"
 
     # 00console.rpy:448
     old "save <slot>: saves the game in slot"
-    new "save <slot>: sauvegarder la partie dans cet emplacement "
+    new "save <slot> : sauvegarder la partie dans cet emplacement "
 
     # 00console.rpy:459
     old "reload: reloads the game, refreshing the scripts"
-    new "reload: Recharge le jeu, rafraîchit les scripts"
+    new "reload : Recharge le jeu, rafraîchit les scripts"
 
     # 00console.rpy:467
     old "watch <expression>: watch a python expression"
-    new "watch <expression>: surveiller une expression Python"
+    new "watch <expression> : surveiller une expression Python"
 
     # 00console.rpy:493
     old "unwatch <expression>: stop watching an expression"
-    new "unwatch <expression>: Arrêter la surveillance d’une expression Python"
+    new "unwatch <expression> : arrêter la surveillance d’une expression Python"
 
     # 00console.rpy:519
     old "unwatchall: stop watching all expressions"
-    new "unwatchall: Arrêter de surveiller toutes les expressions"
+    new "unwatchall : arrêter de surveiller toutes les expressions"
 
     # 00console.rpy:536
     old "jump <label>: jumps to label"
-    new "jump <label>: Saute jusqu’au label"
+    new "jump <label> : saute jusqu’au label"
 
+    # renpy/common/00console.rpy:814
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    new "watch <expression> : surveille une expression python\n watch short: raccourcit la représentation des expressions (par défaut)\n watch long : affiche la totalité des expressions surveillées"
+
+    # renpy/common/00console.rpy:917
+    old "short: Shorten the representation of objects on the console (default)."
+    new "short : Raccourcit la représentation des objets sur la console (par défaut)."
+
+    # renpy/common/00console.rpy:921
+    old "long: Print the full representation of objects on the console."
+    new "long : Affiche la representation entière des objets dans la console."
+
+    # renpy/common/00console.rpy:925
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    new "escape : Active l'échappage des symboles unicode dans les chaînes de caractères unicode."
+
+    # renpy/common/00console.rpy:929
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    new "unescape : Désactive l'échappage des symboles unicode dans les chaînes de caractères unicode et les affiche telles quelles (par défaut)."

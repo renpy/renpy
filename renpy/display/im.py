@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,10 +24,9 @@
 # cropping and scaling).
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.display
-import renpy.webloader
+
 
 import math
 import zipfile
@@ -36,6 +35,8 @@ import time
 import io
 import os.path
 
+import pygame_sdl2
+import renpy
 
 # This is an entry in the image cache.
 class CacheEntry(object):
@@ -115,7 +116,7 @@ class Cache(object):
 
         # The preload thread.
         self.preload_thread = threading.Thread(target=self.preload_thread_main, name="preloader")
-        self.preload_thread.setDaemon(True)
+        self.preload_thread.daemon = True
         self.preload_thread.start()
 
         # Have we been added this tick?
@@ -136,13 +137,14 @@ class Cache(object):
         cache, in pixels.
         """
 
-        rv = sum(i.size() for i in self.cache.values())
+        with self.lock:
+            rv = sum(i.size() for i in self.cache.values())
 
-#         print("Total cache size: {:.1f}/{:.1f} MB (Textures {:.1f} MB)".format(
-#             4.0 * rv / 1024 / 1024,
-#             4.0 * self.cache_limit / 1024 / 1024,
-#             1.0 * renpy.exports.get_texture_size()[0] / 1024 / 1024,
-#             ))
+        # print("Total cache size: {:.1f}/{:.1f} MB (Textures {:.1f} MB)".format(
+        #     4.0 * rv / 1024 / 1024,
+        #     4.0 * self.cache_limit / 1024 / 1024,
+        #     1.0 * renpy.exports.get_texture_size()[0] / 1024 / 1024,
+        #     ))
 
         return rv
 
@@ -154,7 +156,9 @@ class Cache(object):
 
         start = self.time - generations
 
-        rv = sum(i.size() for i in self.cache.values() if i.time > start)
+        with self.lock:
+            rv = sum(i.size() for i in self.cache.values() if i.time > start)
+
         return rv
 
     def init(self):
@@ -169,7 +173,7 @@ class Cache(object):
             self.cache_limit = int(renpy.config.image_cache_size_mb * 1024 * 1024 // 4)
 
     def quit(self): # @ReservedAssignment
-        if not self.preload_thread.isAlive():
+        if not self.preload_thread.is_alive():
             return
 
         with self.preload_lock:
@@ -193,6 +197,22 @@ class Cache(object):
         self.added.clear()
 
         self.lock.release()
+
+    def get_renders(self):
+        """
+        Get a list of Renders in the image cache, where ce.texture is a Render.
+        """
+
+        Render = renpy.display.render.Render
+
+        rv = [ ]
+
+        with self.lock:
+            for ce in self.cache.values():
+                if isinstance(ce.texture, Render):
+                    rv.append(ce.texture)
+
+        return rv
 
     # Increments time, and clears the list of images to be
     # preloaded.
@@ -223,10 +243,10 @@ class Cache(object):
         if render:
             texture = True
 
-        optimize_bounds = renpy.config.optimize_texture_bounds
+        optimize_bounds = renpy.config.optimize_texture_bounds and image.optimize_bounds
 
         if not isinstance(image, ImageBase):
-            raise Exception("Expected an image of some sort, but got" + str(image) + ".")
+            raise Exception("Expected an image of some sort, but got" + repr(image) + ".")
 
         if not image.cache:
             surf = image.load()
@@ -258,24 +278,21 @@ class Cache(object):
         # Otherwise, we load the image ourselves.
         if ce is None:
 
-            try:
-                if image in self.pin_cache:
-                    surf = self.pin_cache[image]
-                else:
+            if image in self.pin_cache:
+                surf = self.pin_cache[image]
+            else:
 
-                    if not predict:
-                        with renpy.game.ExceptionInfo("While loading %r:", image):
-                            surf = image.load()
-                    else:
+                if not predict:
+                    with renpy.game.ExceptionInfo("While loading %r:", image):
                         surf = image.load()
+                else:
+                    surf = image.load()
 
-            except:
-                raise
-
-            w, h = surf.get_size()
+            w, h = size = surf.get_size()
 
             if optimize_bounds:
                 bounds = tuple(surf.get_bounding_rect())
+                bounds = expands_bounds(bounds, size, renpy.config.expand_texture_bounds)
                 w = bounds[2]
                 h = bounds[3]
             else:
@@ -393,8 +410,10 @@ class Cache(object):
                 to_flush.append(ce)
 
         for ce in to_flush:
-            renpy.exports.redraw(ce.what, 0)
             self.kill(ce)
+
+        if to_flush:
+            renpy.display.render.free_memory()
 
     def preload_texture(self, im):
         """
@@ -486,9 +505,9 @@ class Cache(object):
                 if image not in self.preload_blacklist:
                     try:
                         self.preload_texture(image)
-                    except:
+                    except Exception:
                         self.preload_blacklist.add(image)
-            except:
+            except Exception:
                 pass
 
         with self.lock:
@@ -524,7 +543,7 @@ class Cache(object):
                     surf = image.load()
                     self.pin_cache[image] = surf
                     renpy.display.draw.load_texture(surf)
-                except:
+                except Exception:
                     self.preload_blacklist.add(image)
 
     def add_load_log(self, filename):
@@ -560,6 +579,8 @@ class ImageBase(renpy.display.core.Displayable):
 
     __version__ = 1
 
+    optimize_bounds = False
+
     def after_upgrade(self, version):
         if version < 1:
             self.cache = True
@@ -568,6 +589,7 @@ class ImageBase(renpy.display.core.Displayable):
 
         self.rle = properties.pop('rle', None)
         self.cache = properties.pop('cache', True)
+        self.optimize_bounds = properties.pop('optimize_bounds', True)
 
         properties.setdefault('style', 'image')
 
@@ -584,10 +606,7 @@ class ImageBase(renpy.display.core.Displayable):
 
         return self.identity == other.identity
 
-    def __repr__(self):
-        return "<" + " ".join([repr(i) for i in self.identity]) + ">"
-
-    def load(self):
+    def load(self): # type:() -> pygame_sdl2.Surface
         """
         This function is called by the image cache code to cause this
         image to be loaded. It's expected that children of this class
@@ -610,6 +629,22 @@ class ImageBase(renpy.display.core.Displayable):
 
         return [ ]
 
+    def get_hash(self): # type: () -> int
+        """
+        Returns a hash of the image that will change when the file on disk
+        changes.
+        """
+
+        return 0
+
+
+
+
+
+
+ignored_images = set()
+images_to_ignore = set()
+
 
 class Image(ImageBase):
     """
@@ -624,11 +659,11 @@ class Image(ImageBase):
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
 
-    def __unicode__(self):
+    def _repr_info(self):
         if len(self.filename) < 20:
-            return u"Image %r" % self.filename
+            return repr(self.filename)
         else:
-            return u"Image \u2026%s" % self.filename[-20:]
+            return repr("\u2026"+self.filename[-20:])
 
     def get_hash(self):
         return renpy.loader.get_hash(self.filename)
@@ -637,17 +672,20 @@ class Image(ImageBase):
 
         cache.add_load_log(self.filename)
 
+
         try:
 
-            exception = None
+
             try:
                 filelike = renpy.loader.load(self.filename)
                 filename = self.filename
-            except renpy.webloader.DownloadNeeded as exception:
-                renpy.webloader.enqueue(exception.relpath, 'image', self.filename)
+                force_size = None
+            except renpy.webloader.DownloadNeeded as e:
+                renpy.webloader.enqueue(e.relpath, 'image', self.filename)
                 # temporary placeholder:
-                filelike = open(os.path.join('_placeholders', exception.relpath), 'rb')
+                filelike = open(os.path.join('_placeholders', e.relpath), 'rb')
                 filename = 'use_png_format.png'
+                force_size = e.size
 
             with filelike as f:
                 if unscaled:
@@ -655,9 +693,9 @@ class Image(ImageBase):
                 else:
                     surf = renpy.display.pgrender.load_image(f, filename)
 
-            if exception is not None:
+            if force_size is not None:
                 # avoid size-related exceptions (e.g. Crop on a smaller placeholder)
-                surf = renpy.display.pgrender.transform_scale(surf, exception.size)
+                surf = renpy.display.pgrender.transform_scale(surf, force_size)
 
             return surf
 
@@ -670,7 +708,15 @@ class Image(ImageBase):
 
                 return im.load()
 
-            raise
+            else:
+
+                if self.filename not in ignored_images:
+                    images_to_ignore.add(self.filename)
+                    raise e
+                else:
+                    return Image("_missing_image.png").load()
+
+            raise e
 
     def predict_files(self):
 
@@ -706,8 +752,8 @@ class Data(ImageBase):
         self.data = data
         self.filename = filename
 
-    def __unicode__(self):
-        return u"im.Data(%r)" % self.filename
+    def _repr_info(self):
+        return repr(self.filename)
 
     def load(self):
         f = io.BytesIO(self.data)
@@ -729,7 +775,7 @@ class ZipFileImage(ImageBase):
                 sio = io.BytesIO(data)
                 rv = renpy.display.pgrender.load_image(sio, self.filename)
             return rv
-        except:
+        except Exception:
             return renpy.display.pgrender.surface((2, 2), True)
 
     def predict_files(self):
@@ -871,6 +917,9 @@ class FactorScale(ImageBase):
     ::
 
         image logo doubled = im.FactorScale("logo.png", 1.5)
+
+    The same effect can now be achieved with the :tpref:`zoom` or the
+    :tpref:`xzoom` and :tpref:`yzoom` transform properties.
     """
 
     def __init__(self, im, width, height=None, bilinear=True, **properties):
@@ -928,6 +977,10 @@ class Flip(ImageBase):
     ::
 
         image eileen flip = im.Flip("eileen_happy.png", vertical=True)
+
+    The same effect can now be achieved by setting
+    :tpref:`xzoom` (for horizontal flip)
+    or :tpref:`yzoom` (for vertical flip) to a negative value.
     """
 
     def __init__(self, im, horizontal=False, vertical=False, **properties):
@@ -1014,6 +1067,8 @@ class Crop(ImageBase):
     ::
 
         image logo crop = im.Crop("logo.png", (0, 0, 100, 307))
+
+    The same effect can now be achieved by setting the :tpref:`crop` transform property.
     """
 
     def __init__(self, im, x, y=None, w=None, h=None, **properties):
@@ -1207,6 +1262,8 @@ class Blur(ImageBase):
     ::
 
         image logo blurred = im.Blur("logo.png", 1.5)
+
+    The same effect can now be achieved with the :tpref:`blur` transform property.
     """
 
     def __init__(self, im, xrad, yrad=None, **properties):
@@ -1405,6 +1462,9 @@ im.matrix(%f, %f, %f, %f, %f.
 
         Returns an identity matrix, one that does not change color or
         alpha.
+
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
+        is IdentityMatrix().
         """
 
         return matrix(1, 0, 0, 0, 0,
@@ -1433,6 +1493,9 @@ im.matrix(%f, %f, %f, %f, %f.
             of an NTSC television signal. Since the human eye is
             mostly sensitive to green, more of the green channel is
             kept then the other two channels.
+
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
+        is SaturationMatrix(value, desat).
         """
 
         r, g, b = desat
@@ -1454,6 +1517,9 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that desaturates the image (makes it
         grayscale). This is equivalent to calling
         im.matrix.saturation(0).
+
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
+        is SaturationMatrix(0).
         """
 
         return matrix.saturation(0.0)
@@ -1470,6 +1536,9 @@ im.matrix(%f, %f, %f, %f, %f.
         placed into the final image. (For example, if `r` is .5, and
         the value of the red channel is 100, the transformed color
         will have a red value of 50.)
+
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
+        is TintMatrix(Color((r, g, b))).
         """
 
         return matrix(r, 0, 0, 0, 0,
@@ -1485,6 +1554,9 @@ im.matrix(%f, %f, %f, %f, %f.
 
         Returns an im.matrix that inverts the red, green, and blue
         channels of the image without changing the alpha channel.
+
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
+        is InvertMatrix(1.0).
         """
 
         return matrix(-1, 0, 0, 0, 1,
@@ -1504,6 +1576,9 @@ im.matrix(%f, %f, %f, %f, %f.
             The amount of change in image brightness. This should be
             a number between -1 and 1, with -1 the darkest possible
             image and 1 the brightest.
+
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
+        is BrightnessMatrix(b).
         """
 
         return matrix(1, 0, 0, 0, b,
@@ -1519,6 +1594,9 @@ im.matrix(%f, %f, %f, %f, %f.
 
         Returns an im.matrix that alters the opacity of an image. An
         `o` of 0.0 is fully transparent, while 1.0 is fully opaque.
+
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
+        is OpacityMatrix(o).
         """
 
         return matrix(1, 0, 0, 0, 0,
@@ -1535,6 +1613,9 @@ im.matrix(%f, %f, %f, %f, %f.
         Returns an im.matrix that alters the contrast of an image. `c` should
         be greater than 0.0, with values between 0.0 and 1.0 decreasing contrast, and
         values greater than 1.0 increasing contrast.
+
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
+        is ContrastMatrix(c).
         """
 
         return matrix.brightness(-.5) * matrix.tint(c, c, c) * matrix.brightness(.5)
@@ -1548,6 +1629,9 @@ im.matrix(%f, %f, %f, %f, %f.
 
         Returns an im.matrix that rotates the hue by `h` degrees, while
         preserving luminosity.
+
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
+        is HueMatrix(h).
         """
 
         h = h * math.pi / 180
@@ -1580,10 +1664,13 @@ im.matrix(%f, %f, %f, %f, %f.
                 "bwlogo.png",
                 im.matrix.colorize("#f00", "#00f"))
 
+
+        A suitable equivalent for the :tpref:`matrixcolor` transform property
+        is ColorizeMatrix(black_color, white_color).
         """
 
-        (r0, g0, b0, _a0) = renpy.easy.color(black_color)
-        (r1, g1, b1, _a1) = renpy.easy.color(white_color)
+        (r0, g0, b0, _a0) = renpy.easy.color(black_color) # type: ignore
+        (r1, g1, b1, _a1) = renpy.easy.color(white_color) # type: ignore
 
         r0 /= 255.0
         g0 /= 255.0
@@ -1605,6 +1692,9 @@ def Grayscale(im, desat=(0.2126, 0.7152, 0.0722), **properties):
 
     An image manipulator that creates a desaturated version of the image
     manipulator `im`.
+
+    The same effect can now be achieved by supplying SaturationMatrix(0)
+    to the :tpref:`matrixcolor` transform property.
     """
 
     return MatrixColor(im, matrix.saturation(0.0, desat), **properties)
@@ -1617,6 +1707,9 @@ def Sepia(im, tint=(1.0, .94, .76), desat=(0.2126, 0.7152, 0.0722), **properties
 
     An image manipulator that creates a sepia-toned version of the image
     manipulator `im`.
+
+    The same effect can now be achieved by supplying SepiaMatrix()
+    to the :tpref:`matrixcolor` transform property.
     """
 
     return MatrixColor(im, matrix.saturation(0.0, desat) * matrix.tint(tint[0], tint[1], tint[2]), **properties)
@@ -1628,7 +1721,7 @@ def Color(im, color):
     black and white is the supplied color.
     """
 
-    r, g, b, a = renpy.easy.color(color)
+    r, g, b, a = renpy.easy.color(color) # type: ignore
 
     return Recolor(im, r, g, b, a)
 
@@ -1656,6 +1749,8 @@ class Tile(ImageBase):
     `size`
         If not None, a (width, height) tuple. If None, this defaults to
         (:var:`config.screen_width`, :var:`config.screen_height`).
+
+    The same effect can now be achieved with Tile(im, size=size)
     """
 
     def __init__(self, im, size=None, **properties):
@@ -1717,7 +1812,7 @@ class AlphaMask(ImageBase):
         self.mask = image(mask)
 
     def get_hash(self):
-        return self.base.get_hash() + self.image.get_hash()
+        return self.base.get_hash() + self.mask.get_hash()
 
     def load(self):
 
@@ -1741,13 +1836,18 @@ def image(arg, loose=False, **properties):
     """
     :doc: im_image
     :name: Image
-    :args: (filename, **properties)
+    :args: (filename, *, optimize_bounds=True, **properties)
 
     Loads an image from a file. `filename` is a
     string giving the name of the file.
 
     `filename` should be a JPEG or PNG file with an appropriate
     extension.
+
+    If optimize_bounds is True, only the portion of the image that
+    inside the bounding box of non-transparent pixels is loaded into
+    GPU memory. (The only reason to set this to False is when using an
+    image as input to a shader.)
     """
 
     """
@@ -1786,6 +1886,22 @@ def image(arg, loose=False, **properties):
         raise Exception("Expected an image, but got a general displayable.")
     else:
         raise Exception("Could not construct image from argument.")
+
+
+def expands_bounds(bounds, size, amount):
+    """
+    This expands the rectangle bounds by amount, while ensure it fits inside size.
+    """
+
+    x, y, w, h = bounds
+    sx, sy = size
+
+    x0 = max(0, x - amount)
+    y0 = max(0, y - amount)
+    x1 = min(sx, x + w + amount)
+    y1 = min(sy, y + h + amount)
+
+    return (x0, y0, x1 - x0, y1 - y0)
 
 
 def load_image(im):

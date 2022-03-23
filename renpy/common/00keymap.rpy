@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -77,10 +77,14 @@ init -1600 python:
         input_up = [ 'K_UP', 'repeat_K_UP' ],
         input_down = [ 'K_DOWN', 'repeat_K_DOWN' ],
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
-        input_home = [ 'K_HOME' ],
-        input_end = [ 'K_END' ],
+        input_home = [ 'K_HOME', 'meta_K_LEFT' ],
+        input_end = [ 'K_END', 'meta_K_RIGHT' ],
         input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c' ],
         input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v' ],
+        input_jump_word_left = [ 'osctrl_K_LEFT' ],
+        input_jump_word_right = [ 'osctrl_K_RIGHT' ],
+        input_delete_word = [ 'osctrl_K_BACKSPACE' ],
+        input_delete_full = [ 'meta_K_BACKSPACE' ],
 
         # Viewport.
         viewport_leftarrow = [ 'K_LEFT', 'repeat_K_LEFT' ],
@@ -143,12 +147,17 @@ init -1600 python:
         "pad_lefttrigger_pos" : [ "rollback", ],
         "pad_back_press" : [ "rollback", ],
 
+        "repeat_pad_leftshoulder_press" : [ "rollback", ],
+        "repeat_pad_lefttrigger_pos" : [ "rollback", ],
+        "repeat_pad_back_press" : [ "rollback", ],
+
         "pad_guide_press" : [ "game_menu", ],
         "pad_start_press" : [ "game_menu", ],
 
         "pad_y_press" : [ "hide_windows", ],
 
         "pad_rightshoulder_press" : [ "rollforward", ],
+        "repeat_pad_rightshoulder_press" : [ "rollforward", ],
 
         "pad_righttrigger_pos" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate" ],
         "pad_a_press" : [ "dismiss", "button_select", "bar_activate", "bar_deactivate"],
@@ -169,6 +178,22 @@ init -1600 python:
         "pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
         "pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
         "pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+
+        "repeat_pad_dpleft_press" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "repeat_pad_leftx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+        "repeat_pad_rightx_neg" : [ "focus_left", "bar_left", "viewport_leftarrow" ],
+
+        "repeat_pad_dpright_press" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "repeat_pad_leftx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+        "repeat_pad_rightx_pos" : [ "focus_right", "bar_right", "viewport_rightarrow" ],
+
+        "repeat_pad_dpup_press" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "repeat_pad_lefty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+        "repeat_pad_righty_neg" : [ "focus_up", "bar_up", "viewport_uparrow" ],
+
+        "repeat_pad_dpdown_press" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "repeat_pad_lefty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
+        "repeat_pad_righty_pos" : [ "focus_down", "bar_down", "viewport_downarrow" ],
     }
 
     # Should we use the autoreload system?
@@ -217,14 +242,13 @@ init -1600 python:
 
     def _help(help=None):
 
-        if config.help_screen and renpy.has_screen(config.help_screen):
-            renpy.run(ShowMenu(config.help_screen))
-            return
-
         if help is None:
             help = config.help
 
         if help is None:
+            if config.help_screen and renpy.has_screen(config.help_screen):
+                renpy.run(ShowMenu(config.help_screen))
+
             return
 
         if renpy.has_label(help):
@@ -242,7 +266,7 @@ init -1600 python:
                 return
 
             webbrowser.open_new("file:///" + file_path)
-        except:
+        except Exception:
             pass
 
     import os
@@ -260,10 +284,12 @@ init -1600 python:
         if renpy.macapp:
             dest = os.path.expanduser(b"~/Desktop")
 
+        pattern = renpy.store._screenshot_pattern or config.screenshot_pattern
+
         # Try to pick a filename.
         i = 1
         while True:
-            fn = os.path.join(dest, config.screenshot_pattern % i)
+            fn = os.path.join(dest, pattern % i)
             if not os.path.exists(fn):
                 break
             i += 1
@@ -272,14 +298,14 @@ init -1600 python:
             dn = os.path.dirname(fn)
             if not os.path.exists(dn):
                 os.makedirs(dn)
-        except:
+        except Exception:
             pass
 
         try:
             if not renpy.screenshot(fn):
                 renpy.notify(__("Failed to save screenshot as %s.") % fn)
                 return
-        except:
+        except Exception:
             import traceback
             traceback.print_exc()
             renpy.notify(__("Failed to save screenshot as %s.") % fn)
@@ -423,6 +449,11 @@ label _hide_windows:
 
     if _windows_hidden:
         return
+
+    if renpy.has_label("hide_windows"):
+        call hide_windows
+        if _return:
+            return
 
     python:
         _windows_hidden = True

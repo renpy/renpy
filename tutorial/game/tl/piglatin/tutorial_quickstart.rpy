@@ -378,16 +378,16 @@ translate piglatin tutorial_images_1a4660b9:
     e "Hetay cenesay atementstay earsclay hetay creensay, anday hentay addsay aay ackgroundbay imageay."
 
 # game/tutorial_quickstart.rpy:246
-translate piglatin tutorial_images_672c8cb8:
+translate piglatin tutorial_images_a5e7eb24:
 
-    # e "The show statement adds a background image on top of all the other images on the screen."
-    e "Hetay owshay atementstay addsay aay ackgroundbay imageay onay optay ofay allay hetay otheray imagesay onay hetay creensay."
+    # e "The show statement adds a new image on top of all the other images on the screen."
+    e "Hetay owshay atementstay addsay aay ewnay imageay onay optay ofay allay hetay otheray imagesay onay hetay creensay."
 
 # game/tutorial_quickstart.rpy:248
-translate piglatin tutorial_images_2fc7baee:
+translate piglatin tutorial_images_86e11de2:
 
-    # e "If there was already an image with the same tag, the new image is used to replace the old one."
-    e "Fiay heretay asway alreadyay anay imageay ithway hetay amesay agtay, hetay ewnay imageay isay useday otay eplaceray hetay olday oneay."
+    # e "If there is already an image with the same tag, the new image is used to replace the old one."
+    e "Fiay heretay isay alreadyay anay imageay ithway hetay amesay agtay, hetay ewnay imageay isay useday otay eplaceray hetay olday oneay."
 
 # game/tutorial_quickstart.rpy:250
 translate piglatin tutorial_images_802825f2:
@@ -767,7 +767,7 @@ translate piglatin choice1_done_819e234a:
     # e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
     e "Erehay'say anay exampleay hattay owsshay owhay eway ancay esttay aay agflay, anday oday ifferentday hingstay ifay itay isay uetray oray otnay."
 
-# game/tutorial_quickstart.rpy:559
+# game/tutorial_quickstart.rpy:560
 translate piglatin choice1_done_461e6a59:
 
     # e "Finally, this shows how you can show dialogue and menus at the same time. Understand?" nointeract

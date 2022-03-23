@@ -3,7 +3,7 @@
 translate korean demo_transitions_5bbc72fe:
 
     # e "Ren'Py ships with a large number of built-in transitions, and also includes classes that let you define your own."
-    e "렌파이에는 많은 수의 전환이 내장돼 있고, 사용자가 직접 정의할 수 있는 클래스도 있어."
+    e "렌파이에는 많은 수의 전환(transition)이 내장돼 있고, 사용자가 직접 정의할 수 있는 클래스도 있어."
 
 # game/indepth_transitions.rpy:58
 translate korean demo_transitions_menu_3caf78d3:
@@ -15,7 +15,7 @@ translate korean demo_transitions_menu_3caf78d3:
 translate korean demo_simple_transitions_2b4fbae3:
 
     # e "Okay, I can tell you about simple transitions. We call them simple because they don't take much in the way of configuration."
-    e "좋아, 간단한 전환에 대해 알려줄게. 많은 설정을 하지 않을 것이기 때문에 간단하다고 부를 거야."
+    e "좋아, 간단한 전환에 대해 알려줄게. 많이 변형하지 않을 거라서 간단하다고 불러."
 
 # game/indepth_transitions.rpy:97
 translate korean demo_simple_transitions_4b235ac2:
@@ -99,31 +99,31 @@ translate korean demo_simple_transitions_fbf11906:
 translate korean demo_simple_transitions_51c1c5b8:
 
     # e "I was about to demonstrate 'vpunch'... well, I guess I just did."
-    e "나는 'vpunch'를 보여주려 했어. 잘 한 것 같아..."
+    e "방금 'vpunch'를 보여주려 한 건데... 잘 한 것 같네."
 
 # game/indepth_transitions.rpy:154
 translate korean demo_simple_transitions_57f19473:
 
     # e "We can also shake the screen horizontally, with 'hpunch'. These were defined using the 'Move' function."
-    e "'hpunch'로 화면을 수평으로 흔들 수도 있어. 이것들은 'Move' 기능을 사용해 정의됐지."
+    e "'hpunch'로 화면을 수평으로 흔들 수도 있어. 모두 'Move' 기능을 사용해 정의됐지."
 
 # game/indepth_transitions.rpy:156
 translate korean demo_simple_transitions_fce83e12:
 
     # e "There's also the 'move' transition, which is confusingly enough defined using the 'MoveTransition' function."
-    e "'MoveTransition'기능을 사용하여 혼란스럽게 정의된 이동(move) 전환도 있습니다."
+    e "'MoveTransition'기능을 사용하여 혼란스럽게 정의된 이동(move) 전환도 있어."
 
 # game/indepth_transitions.rpy:164
 translate korean demo_simple_transitions_1050b6a4:
 
     # e "The 'move' transition finds images that have changed placement, and slides them to their new place. It's an easy way to get motion in your game."
-    e "'이동' 전환은 위치가 변경된 이미지를 찾아서 새 위치로 슬라이드해. 게임에서 동작을 얻는 쉬운 방법이지."
+    e "'이동' 전환은 위치가 변경된 이미지를 찾아서 새 위치로 슬라이드해. 게임에서 뭔가를 움직이는 쉬운 방법이지."
 
 # game/indepth_transitions.rpy:168
 translate korean demo_simple_transitions_dc776e59:
 
     # e "That's it for the simple transitions."
-    e "그건 간단한 변환을 위한 거야."
+    e "간단한 변환을 위한 거야."
 
 # game/indepth_transitions.rpy:175
 translate korean demo_imagedissolve_transitions_2db67018:
@@ -159,7 +159,7 @@ translate korean demo_imagedissolve_transitions_12e2e0d0:
 translate korean demo_imagedissolve_transitions_bbf73d1c:
 
     # e "I'm not sure why anyone would want to use it, but it was used in some translated games, so we added it."
-    e "나는 왜 누군가가 그것을 사용하고 싶어하는지 모르겠지만, 번역된 몇몇 게임에서 사용되었기 때문에 그것을 추가했어."
+    e "대체 왜, 누가 이런 걸 사용하고 싶어하는지 모르겠지만, 몇몇 번역된 게임에서 쓰였기 때문에 추가했어."
 
 # game/indepth_transitions.rpy:207
 translate korean demo_imagedissolve_transitions_0ab2902d:
@@ -171,7 +171,7 @@ translate korean demo_imagedissolve_transitions_0ab2902d:
 translate korean demo_imagedissolve_transitions_54aa9bf9:
 
     # e "These ones require an image the size of the screen, and so we couldn't include them as the size of the screen can change from game to game."
-    e "이러한 것들은 화면 크기의 이미지를 필요로 하기 때문에 화면 크기가 게임마다 다를 수 있어서 라이브러리에 포함시킬 수 없었어."
+    e "이런 것들은 화면 크기의 이미지를 필요로 하기 때문에, 라이브러리에 포함시킬 수 없었어. 화면 크기는 게임마다 다를 수 있으니까."
 
 # game/indepth_transitions.rpy:215
 translate korean demo_imagedissolve_transitions_ca316184:
@@ -213,7 +213,7 @@ translate korean demo_imagedissolve_transitions_72ba11d4:
 translate korean demo_imagedissolve_transitions_fc3b3339:
 
     # e "When we use an ImageDissolve, the white will dissolve in first, followed by progressively darker colors. Let's try it."
-    e "우리가 이미지디졸브를 사용할 때, 흰색이 먼저 디졸브되고, 점차 어두운 색이 뒤를 따르게 돼. 한번 해보자."
+    e "우리가 이미지디졸브를 사용할 때, 흰색이 먼저 디졸브되고, 점차 어두운 색이 뒤따르게 돼. 한번 해보자."
 
 # game/indepth_transitions.rpy:255
 translate korean demo_imagedissolve_transitions_4327dca2:
@@ -237,13 +237,13 @@ translate korean demo_imagedissolve_transitions_20d9cf6c:
 translate korean demo_imagedissolve_transitions_906f7800:
 
     # e "A dissolve only seems to affect parts of the scene that have changed..."
-    e "디졸브는 변경된 장면에만 영향을 미치는 것 같아..."
+    e "디졸브는 변경된 장면에만 영향을 미치는 것처럼 보여..."
 
 # game/indepth_transitions.rpy:277
 translate korean demo_imagedissolve_transitions_4b557a29:
 
     # e "... which is how we apply the teleport effect to a single character."
-    e "... 우리가 텔레포트 효과를 한 캐리터에 적용하는 방법이야."
+    e "... 텔레포트 효과를 한 캐릭터에 적용하는 방법이야."
 
 # game/indepth_transitions.rpy:285
 translate korean demo_cropmove_transitions_1711a91e:
@@ -255,7 +255,7 @@ translate korean demo_cropmove_transitions_1711a91e:
 translate korean demo_cropmove_transitions_6d82cfd7:
 
     # e "I'll stand offscreen, so you can see some of its modes. I'll read out the mode name after each transition."
-    e "나는 화면에서 벗어날 거야, 그것으로 너는 그것의 모드 일부를 볼 수 있어. 각각의 전환 후에 모드 이름을 읽어줄게."
+    e "내가 화면에서 벗어날 거고, 너는 각각의 모드의 이름을 볼 수 있어. 각각의 전환 후에 모드 이름을 읽어줄게."
 
 # game/indepth_transitions.rpy:296
 translate korean demo_cropmove_transitions_4427c78c:
@@ -363,7 +363,7 @@ translate korean demo_cropmove_transitions_016a1e0a:
 translate korean demo_cropmove_transitions_08d753ed:
 
     # e "It's enough to make you feel a bit dizzy."
-    e "조금 어지러움을 느끼기엔 충분하지."
+    e "충분히 어지러웠던 것 같네."
 
 # game/indepth_transitions.rpy:393
 translate korean demo_pushmove_transitions_003e506d:
@@ -447,7 +447,7 @@ translate korean demo_movetransition_bbb75540:
 translate korean demo_movetransition_dc5ccd54:
 
     # e "And that's all there is."
-    e "그리고 그게 다야."
+    e "그리고 이게 다야."
 
 # game/indepth_transitions.rpy:508
 translate korean demo_alphadissolve_51613c02:

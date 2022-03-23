@@ -25,7 +25,7 @@ five things that can be provided:
   where each component is an integer between 0 and 255. Colors are
   passed to :func:`Solid`.
 * An image name. Any other string is interpreted as a reference to an
-  image defined with the image statement.
+  image defined with the image statement, or if none exist, to a filename.
 * A list. If a list is provided, each item is expanded as described
   below, and checked to see if it matches a filename or image name.
   If so, expansion stops and the matched thing is then processed
@@ -38,7 +38,7 @@ string is given, a dynamic image is created. A dynamic image has
 of each interaction (such as say statements and menus). The resulting
 string is processed according to the rules above.
 
-When a string has "[prefix_]" in it, that substitution is replaced with
+When a string has "[prefix\_]" in it, that substitution is replaced with
 each of the style prefixes associated with the current displayable.
 
 .. _images:
@@ -196,9 +196,9 @@ These displayables are used to create certain visual effects.
 .. include:: inc/disp_effects
 
 Image Manipulators
-------------------
+-------------------
 
-An image manipulator is a displayable that takes an image or image
+An :ref:`image manipulator <image-manipulator>` is a displayable that takes an image or image
 manipulator, and either loads it or performs an operation on it.
 Image manipulators can only take images or other
 image manipulators as input.
@@ -207,37 +207,15 @@ An image manipulator can be used any place a displayable can, but not
 vice-versa. An :func:`Image` is a kind of image manipulator, so an
 Image can be used whenever an image manipulator is required.
 
-With the few exceptions listed below, the use of image manipulators is
+The use of image manipulators is
 historic. A number of image manipulators that had been documented in the
 past should no longer be used, as they suffer from inherent problems.
-In many cases, the :func:`Transform` displayable provides similar
-functionality in a more general manner, while fixing the problems.
+In any case except for :func:`im.Data`, the :func:`Transform` displayable provides
+similar functionality in a more general manner, while fixing the problems,
+although it sometimes requires gl2 to be enabled.
 
-.. include:: inc/im_im
-
-im.MatrixColor
---------------
-
-The im.MatrixColor image manipulator is an image manipulator that uses
-a matrix to control how the colors of an image are transformed. The
-matrix used can be an im.matrix object, which encodes a 5x5 matrix in
-an object that supports matrix multiplication, and is returned by a
-series of functions. im.matrix objects may be multiplied together to
-yield a second object that performs both operations. For example::
-
-    image city blue = im.MatrixColor(
-        "city.jpg",
-        im.matrix.desaturate() * im.matrix.tint(0.9, 0.9, 1.0))
-
-first desaturates the image, and then tints it blue. When the
-intermediate image is not needed, multiplying matrices is far
-more efficient, in both time and image cache space, than using
-two im.MatrixColors.
-
-The im.MatrixColor image manipulator has been replaced by Transforms
-and ATL transforms that specify the matrixcolor property.
-
-.. include:: inc/im_matrixcolor
+For the list of image manipulators, see the :ref:`image manipulator <image-manipulator>`
+documentation.
 
 Placeholders
 ------------

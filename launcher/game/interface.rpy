@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -126,7 +126,10 @@ screen bottom_info:
                     xalign 1.0
 
                     if ability.can_update:
-                        textbutton _("update") action Jump("update") style "l_link"
+                        textbutton _("update") action Jump("update") style "l_link":
+                            if persistent.has_update:
+                                text_color "#F96854"
+                                text_hover_color Color("#F96854").tint(.8)
 
                     textbutton _("preferences") style "l_link" action Jump("preferences")
                     textbutton _("quit") style "l_link" action Quit(confirm=False)
@@ -434,7 +437,7 @@ init python in interface:
 
                 try:
                     rv.encode("ascii")
-                except:
+                except Exception:
                     error(_("File and directory names must consist of ASCII characters."), label=None)
                     continue
 

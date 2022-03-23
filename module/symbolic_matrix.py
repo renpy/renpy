@@ -1,7 +1,6 @@
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 from sympy import symbols, Matrix, pi, cos, sin, simplify
 import io
-
 
 matrix_names = [
     "xdx",
@@ -36,8 +35,6 @@ def prefixed_matrix(prefix):
 ###############################################################################
 
 
-import cStringIO
-
 generators = [ ]
 
 
@@ -45,10 +42,10 @@ class Generator(object):
 
     def __init__(self, name, docs):
 
-        self.pyd_f = cStringIO.StringIO()
-        self.pyx_f = cStringIO.StringIO()
+        self.pyd_f = io.StringIO()
+        self.pyx_f = io.StringIO()
 
-        self.f = cStringIO.StringIO()
+        self.f = io.StringIO()
 
         self.name = name
         self.docs = docs
@@ -191,6 +188,12 @@ def rotate(g):
 
     `x`, `y`, `x`
         The amount to rotate around the origin, in degrees.
+
+    The rotations are applied in order:
+
+    * A clockwise rotation by `x` degrees in the Y/Z plane.
+    * A clockwise rotation by `y` degrees in the Z/X plane.
+    * A clockwise rotation by `z` degrees in the X/Y plane.
     """
 
     x, y, z = g.parameters("x y z")
@@ -278,7 +281,7 @@ def perspective(g):
     projection = Matrix(4, 4, [
         2.0 * p / w, 0.0, 0.0, 0.0,
         0.0, 2.0 * p / h, 0.0, 0.0,
-        0.0, 0.0, -(f+n)/(f-n), -2 * f * n / (f - n),
+        0.0, 0.0, -(f + n) / (f - n), -2 * f * n / (f - n),
         0.0, 0.0, -1.0, 0.0,
     ])
 

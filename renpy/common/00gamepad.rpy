@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -55,13 +55,15 @@ screen _gamepad_control(name, control, kind, mappings, back, i, total):
 
         null height 20
 
-        text _("Press or move the [control!r] [kind].")
-
+        text _("Press or move the '[control!s]' [kind].")
 
         null height 20
 
         hbox:
+            spacing gui._scale(25)
+
             textbutton _("Cancel") action Return("cancel")
+
             if len(mappings) >= 2:
                 textbutton _("Skip (A)") action Return("skip")
 
@@ -128,7 +130,7 @@ init -1200 python in _gamepad:
                     j.init()
                     name = j.get_name()
                     j.quit()
-                except:
+                except Exception:
                     continue
 
                 if name is None:
@@ -269,4 +271,3 @@ init -1200 python:
             return ui.invokesinnewcontext(_gamepad.calibrate)
         else:
             return None
-

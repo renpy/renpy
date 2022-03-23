@@ -3,7 +3,7 @@ import re
 import io
 import os
 
-import renpy.display
+import renpy
 
 # A map from shader part name to ShaderPart
 shader_part = { }
@@ -11,7 +11,10 @@ shader_part = { }
 
 def register_shader(name, **kwargs):
     """
-    This registers a part of a shader. Shader parts have a name, and then
+    :doc: register_shader
+
+    This registers a shader part. This takes `name`, and then
+    keyword arguments.
 
     `name`
         A string giving the name of the shader part. Names starting with an
@@ -24,7 +27,7 @@ def register_shader(name, **kwargs):
 
             variables='''
             uniform sampler2D tex0;
-            attribute vec2 tex_coord;
+            attribute vec2 a_tex_coord;
             varying vec2 v_tex_coord;
             '''
 
@@ -84,7 +87,7 @@ class ShaderPart(object):
 
             try:
                 priority = int(priority)
-            except:
+            except Exception:
                 shader = None
 
             if shader == "vertex":
@@ -124,6 +127,8 @@ class ShaderPart(object):
 
             if kind == "uniform":
                 renpy.display.transform.add_uniform(name)
+
+        self.raw_variables = variables
 
 
 # A map from a tuple giving the parts that comprise a shader, to the Shader
@@ -317,14 +322,14 @@ class ShaderCache(object):
 
             try:
                 os.unlink(fn)
-            except:
+            except Exception:
                 pass
 
             os.rename(tmp, fn)
 
             self.dirty = False
 
-        except:
+        except Exception:
             renpy.display.log.write("Saving shaders to {!r}:".format(fn))
             renpy.display.log.exception()
 
@@ -337,7 +342,7 @@ class ShaderCache(object):
         try:
             with renpy.loader.load(self.filename) as f:
                 for l in f:
-                    l = l.strip()
+                    l = l.strip().decode("utf-8")
                     partnames = tuple(l.strip().split())
 
                     if not partnames:
@@ -349,11 +354,11 @@ class ShaderCache(object):
 
                     try:
                         self.get(partnames)
-                    except:
+                    except Exception:
                         renpy.display.log.write("Precompiling shader {!r}:".format(partnames))
                         renpy.display.log.exception()
                         self.missing.add(partnames)
-        except:
+        except Exception:
             renpy.display.log.write("Could not open {!r}:".format(self.filename))
             return
 
@@ -370,7 +375,7 @@ class ShaderCache(object):
         Logs the shader text to the log.
         """
 
-        if not renpy.config.developer:
+        if not renpy.config.log_gl_shaders:
             return
 
         name = kind + " " + ", ".join(partnames) + " "
@@ -379,4 +384,3 @@ class ShaderCache(object):
         renpy.display.log.write("%s", name)
         renpy.display.log.write("%s", text)
         renpy.display.log.write("-" * 80)
-

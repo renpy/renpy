@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,14 +20,15 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 import renpy
 
 import os
 
 from renpy.translation import quote_unicode
-from renpy.translation.generation import scan_strings
 
 
 def create_dialogue_map(language):
@@ -150,9 +151,13 @@ def notags_filter(s):
     return square_pass(s)
 
 
+def what_filter(s):
+    return "[what]"
+
+
 class DialogueFile(object):
 
-    def __init__(self, filename, output, tdf=True, strings=False, notags=True, escape=True):  # @ReservedAssignment
+    def __init__(self, filename, output, tdf=True, strings=False, notags=True, escape=True): # @ReservedAssignment
         """
         `filename`
             The file we're extracting dialogue from.
@@ -173,7 +178,7 @@ class DialogueFile(object):
 
         self.filename = filename
 
-        commondir = os.path.normpath(renpy.config.commondir)
+        commondir = os.path.normpath(renpy.config.commondir) # type: ignore
 
         if filename.startswith(commondir):
             return
@@ -232,6 +237,7 @@ class DialogueFile(object):
                             what,
                             n.filename,
                             str(n.linenumber),
+                            n.get_code(what_filter)
                             ])
 
                     else:
@@ -246,7 +252,7 @@ class DialogueFile(object):
                 lines.sort(key=lambda x: int(x[4]))
 
         for line in lines:
-            self.f.write("\t".join(line).encode("utf-8") + "\n")
+            self.f.write("\t".join(line) + "\n")
 
     def get_strings(self):
         """
@@ -257,9 +263,12 @@ class DialogueFile(object):
 
         filename = renpy.parser.elide_filename(self.filename)
 
-        for line, s in scan_strings(self.filename):
+        for ss in renpy.translation.scanstrings.scan_strings(self.filename):
 
-            stl = renpy.game.script.translator.strings[None]  # @UndefinedVariable
+            line = ss.line
+            s = ss.text
+
+            stl = renpy.game.script.translator.strings[None] # @UndefinedVariable
 
             if s in stl.translations:
                 continue
@@ -313,9 +322,10 @@ def dialogue_command():
                 "Dialogue",
                 "Filename",
                 "Line Number",
+                "Ren'Py Script",
                 ]
 
-            f.write("\t".join(line).encode("utf-8") + "\n")
+            f.write("\t".join(line) + "\n")
 
     for dirname, filename in renpy.loader.listdirfiles():
         if dirname is None:

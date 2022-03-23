@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,29 +26,48 @@
 
 import sys
 
-# Python3 and Python2-style imports.
-try:
-    from tkinter import Tk
-    from tkinter.filedialog import askdirectory
-except ImportError:
-    from Tkinter import Tk
-    from tkFileDialog import askdirectory
 
-# Binary mode stdout for python3.
-try:
-    sys.stdout = sys.stdout.buffer
-except:
-    pass
+# Gtk generally has better support than TKinter on various Linux distributions
+def gtk_select_directory(title):
+    dialog = Gtk.FileChooserNative(title=title,
+                                   action=Gtk.FileChooserAction.SELECT_FOLDER)
 
-# Create the TK canvas.
+    dialog.run()
 
-if __name__ == "__main__":
+    return dialog.get_filename()
+
+
+# Fall back to TKinter if Gtk isn't available
+def tk_select_directory(initialdir, title):
     root = Tk()
     root.withdraw()
 
-    result = askdirectory(initialdir=sys.argv[1], parent=root, title="Select Ren'Py Projects Directory")
+    return askdirectory(initialdir=initialdir, parent=root, title=title)
 
-    if result == ():
-        result = ""
 
-    sys.stdout.write(result.encode("utf8"))
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+
+    def select_directory(title):
+        result = gtk_select_directory(title)
+
+        return result if result else ''
+
+except Exception:
+# Python3 and Python2-style imports.
+    try:
+        from tkinter import Tk
+        from tkinter.filedialog import askdirectory
+    except ImportError:
+        from Tkinter import Tk
+        from tkFileDialog import askdirectory
+
+    def select_directory(title):
+        return tk_select_directory(title, sys.argv[1])
+
+if __name__ == '__main__':
+    directory = select_directory('Select Ren\'Py Projects Directory')
+
+    sys.stdout.write(directory)

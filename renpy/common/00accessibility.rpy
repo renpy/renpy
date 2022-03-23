@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -57,8 +57,18 @@ init -1500 python:
 
             return c(what, interact=interact)
 
+    def alt_statement_name():
+        if _preferences.self_voicing:
+            return "say"
+        else:
+            return "say-condition-false"
+
+    alt.statement_name = alt_statement_name
+    del alt_statement_name
+
     # Old name for alt.
     sv = alt
+
 
 
 init -1500 python hide:
@@ -164,6 +174,18 @@ screen _accessibility():
                     textbutton _("Reset"):
                         alt "reset font line spacing"
                         action Preference("font line spacing", 1.0)
+
+                    null height 10
+
+                    label _("High Contrast Text")
+
+                    textbutton _("Enable"):
+                        action Preference("high contrast text", "enable")
+                        style_suffix "radio_button"
+
+                    textbutton _("Disable"):
+                        action Preference("high contrast text", "disable")
+                        style_suffix "radio_button"
 
 
                 vbox:

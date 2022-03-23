@@ -540,6 +540,11 @@ cdef Mesh2 crop_mesh(Mesh2 m, Polygon p):
     cdef int i
     cdef int j
 
+    p.ensure_winding()
+
+    if p.points < 3:
+        return Mesh2(m.layout, 0, 0)
+
     rv = m
 
     j = p.points - 1

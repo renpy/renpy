@@ -287,7 +287,7 @@ translate indonesian strings:
 
     # screens.rpy:738
     old "Display"
-    new "Tampilam"
+    new "Tampilan"
 
     # screens.rpy:739
     old "Window"
@@ -351,7 +351,7 @@ translate indonesian strings:
 
     # screens.rpy:795
     old "Voice Volume"
-    new "Volume Suara"
+    new "Volume Vokal"
 
     # screens.rpy:806
     old "Mute All"
@@ -359,7 +359,7 @@ translate indonesian strings:
 
     # screens.rpy:882
     old "## History screen"
-    new "## Layar History"
+    new "## Layar Riwayat"
 
     # screens.rpy:884
     old "## This is a screen that displays the dialogue history to the player. While there isn't anything special about this screen, it does have to access the dialogue history stored in _history_list."
@@ -398,7 +398,7 @@ translate indonesian strings:
 
     # screens.rpy:987
     old "Mouse"
-    new "Mouse"
+    new "Tetikus"
 
     # screens.rpy:990
     old "Gamepad"
@@ -682,7 +682,7 @@ translate indonesian strings:
 
     # screens.rpy:1233
     old "## We have to use a font that has the BLACK RIGHT-POINTING SMALL TRIANGLE glyph in it."
-    new "## Kami harus menggunakan font yang mempunyai glyph BLACK RIGHT-POINTING SMALL TRIANGLE di dalam nya."
+    new "## Kami harus menggunakan font yang mempunyai glyph BLACK RIGHT-POINTING SMALL TRIANGLE didalamnya."
 
 
 translate indonesian strings:

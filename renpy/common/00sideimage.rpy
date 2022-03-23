@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,10 +27,6 @@ init -1650 python:
     # A tag to use. This can be used to force the side image to only be of the
     # main character.
     config.side_image_tag = None
-
-    # If True, the side image will only be shown if an image with the same tag
-    # is not shown.
-    config.side_image_only_not_showing = False
 
     # A transform to use when the side image changes to that of a different
     # character.

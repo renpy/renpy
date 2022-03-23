@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,6 +26,7 @@ init -1500 python in build:
 
     from store import config
 
+    import sys, os
 
     def make_file_lists(s):
         """
@@ -45,7 +46,6 @@ init -1500 python in build:
         raise Exception("Expected a string, list, or None.")
 
 
-
     def pattern_list(l):
         """
         Apply file_lists to the second argument of each tuple in a list.
@@ -58,8 +58,30 @@ init -1500 python in build:
 
         return rv
 
+
+    renpy_sh = "renpy.sh"
+
+    if PY2:
+        renpy_patterns = pattern_list([
+            ("renpy/**.pyo", "all"),
+            ("renpy/**__pycache__", None),
+        ])
+
+        if os.path.exists(os.path.join(config.renpy_base, "renpy2.sh")):
+            renpy_sh = "renpy2.sh"
+
+    else:
+        renpy_patterns = pattern_list([
+            ("renpy/**__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), "all"),
+            ("renpy/**__pycache__", "all"),
+        ])
+
+        if os.path.exists(os.path.join(config.renpy_base, "renpy3.sh")):
+            renpy_sh = "renpy3.sh"
+
+
     # Patterns that are used to classify Ren'Py.
-    renpy_patterns = pattern_list([
+    renpy_patterns.extend(pattern_list([
         ( "**~", None),
         ( "**/#*", None),
         ( "**/.*", None),
@@ -67,15 +89,20 @@ init -1500 python in build:
         ( "**.new", None),
         ( "**.rpa", None),
 
-        ( "**/*.pyc", None),
+        ( "**/steam_appid.txt", None),
 
         ( "renpy.py", "all"),
 
         ( "renpy/", "all"),
         ( "renpy/**.py", "renpy"),
-        ( "renpy/**.pyx", "renpy"),
-        ( "renpy/**.pyd", "renpy"),
-        ( "renpy/**.pxi", "renpy"),
+
+        ( "renpy/**.pyx", None),
+        ( "renpy/**.pyd", None),
+        ( "renpy/**.pxi", None),
+        ( "renpy/**.pyc", None),
+        ( "renpy/**.pyo", None),
+        ( "renpy/**.pyi", None),
+
         ( "renpy/common/", "all"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**.rpy", "renpy"),
@@ -89,20 +116,29 @@ init -1500 python in build:
         ( "lib/*/renpy.exe", None),
         ( "lib/*/pythonw.exe", None),
 
+        # Ignore the wrong Python.
+        ( "lib/py3-*/" if PY2 else "lib/py2-*/", None),
+
         # Windows patterns.
-        ( "lib/windows-i686/**", "windows"),
-        ( "lib/windows-x86_64/**", "windows"),
+        ( "lib/py*-windows-i686/**", "windows_i686"),
+        ( "lib/py*-windows-x86_64/**", "windows"),
 
         # Linux patterns.
-        ( "lib/linux-*/**", "linux"),
+        ( "lib/py*-linux-i686/**", "linux_i686"),
+        ( "lib/py*-linux-*/**", "linux"),
 
-        # Mac patterns
-        ( "lib/mac-x86_64/**", "mac"),
+        # Mac patterns.
+        ( "lib/py*-mac-*/**", "mac"),
+
+        # Old Python library.
+        ( "lib/python3.*/**" if PY2 else "lib/python2.*/**", None),
 
         # Shared patterns.
-        ( "/lib/**", "windows linux mac android ios"),
-        ( "renpy.sh", "linux mac"),
-    ])
+        ( "lib/**", "windows linux mac android ios"),
+        ( renpy_sh, "linux mac"),
+    ]))
+
+
 
     def classify_renpy(pattern, groups):
         """
@@ -126,6 +162,8 @@ init -1500 python in build:
         ("common/", None),
         ("update/", None),
 
+        ("old-game/", None),
+
         ("icon.ico", None),
         ("icon.icns", None),
         ("project.json", None),
@@ -138,6 +176,7 @@ init -1500 python in build:
         ("dialogue.txt", None),
         ("dialogue.tab", None),
         ("profile_screen.txt", None),
+
         ("files.txt", None),
         ("memory.txt", None),
 
@@ -148,6 +187,8 @@ init -1500 python in build:
         ("archived/", None),
         ("launcherinfo.py", None),
         ("android.txt", None),
+
+        ("game/presplash*.*", "all"),
 
         (".android.json", "android"),
         ("android-*.png", "android"),
@@ -162,6 +203,8 @@ init -1500 python in build:
         ("web-presplash.jpg", "web"),
         ("web-presplash.webp", "web"),
         ("progressive_download.txt", "web"),
+
+        ("steam_appid.txt", None),
 
         ])
 
@@ -232,8 +275,8 @@ init -1500 python in build:
     xbit_patterns = [
         "**.sh",
 
-        "lib/linux-*/*",
-        "lib/mac-*/*",
+        "lib/py*-linux-*/*",
+        "lib/py*-mac-*/*",
 
         "**.app/Contents/MacOS/*",
         ]
@@ -326,14 +369,14 @@ init -1500 python in build:
         packages.append(d)
 
     package("pc", "zip", "windows linux renpy all", "PC: Windows and Linux")
-    package("linux", "tar.bz2", "linux renpy all", "Linux x86/x86_64")
-    package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh x86_64")
-    package("win", "zip", "windows renpy all", "Windows x86/x86_64")
+    package("linux", "tar.bz2", "linux renpy all", "Linux")
+    package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh")
+    package("win", "zip", "windows renpy all", "Windows")
     package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
     package("steam", "zip", "windows linux mac renpy all", hidden=True)
     package("android", "directory", "android all", hidden=True, update=False, dlc=True)
     package("ios", "directory", "ios all", hidden=True, update=False, dlc=True)
-    package("web", "zip", "web all", update=False, dlc=True)
+    package("web", "zip", "web all", hidden=True, update=False, dlc=True)
 
     # Data that we expect the user to set.
 
@@ -392,9 +435,26 @@ init -1500 python in build:
     # The command used to sign a dmg.
     mac_codesign_dmg_command = [ "/usr/bin/codesign", "--timestamp", "-s", "{identity}", "-f", "{dmg}" ]
 
+    # Additional or Override keys to add to the Info.plist.
+    mac_info_plist = { }
+
     # Do we want to add the script_version file?
     script_version = True
 
+    # A list of file lists to merge.
+    merge = [ ]
+
+    # Do we want to include the i686 binaries?
+    include_i686 = True
+
+    # Do we want to change the icon on the i686 binaries?
+    change_icon_i686 = True
+
+    # A list of additional android permission names.
+    android_permissions = [ ]
+
+    # Should the sdk-fonts directory be renamed to game?
+    _sdk_fonts = False
 
     # This function is called by the json_dump command to dump the build data
     # into the json file.
@@ -461,6 +521,21 @@ init -1500 python in build:
             rv["mac_codesign_command"] = mac_codesign_command
             rv["mac_create_dmg_command"] = mac_create_dmg_command
             rv["mac_codesign_dmg_command"] = mac_codesign_dmg_command
+
+        rv["mac_info_plist"] = mac_info_plist
+
+        rv["merge"] = list(merge)
+
+        if include_i686:
+           rv['merge'].append(("linux_i686", "linux"))
+           rv['merge'].append(("windows_i686", "windows"))
+
+        rv["include_i686"] = include_i686
+        rv["change_icon_i686"] = change_icon_i686
+
+        rv["android_permissions"] = android_permissions
+
+        rv["_sdk_fonts"] = _sdk_fonts
 
         return rv
 

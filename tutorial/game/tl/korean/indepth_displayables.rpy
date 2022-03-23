@@ -9,7 +9,7 @@ translate korean simple_displayables_db46fd25:
 translate korean simple_displayables_bfe78cb7:
 
     # e "The image statement is used to give an image name to a displayable. The easy way is to simply give an image filename."
-    e "이미지(image) 문은 디스플레이어블에 이미지 이름을 부여하는 데 사용돼. 간단하게는 이미지 파일을 지정하는 쉬운 방법이 있어."
+    e "이미지(image) 구문은 디스플레이어블에 이미지 이름을 부여하는 데 사용돼. 간단하게는 이미지 파일을 지정하는 쉬운 방법이 있어."
 
 # game/indepth_displayables.rpy:29
 translate korean simple_displayables_cef4598b:
@@ -27,7 +27,7 @@ translate korean simple_displayables_a661fb63:
 translate korean simple_displayables_7f2efb23:
 
     # e "Three or six digit colors are opaque, containing red, green, and blue values. The four and eight digit versions append alpha, allowing translucent colors."
-    e "3 또는 6자리 색상은 불투명하며 빨강, 초록 및 파랑 값을 포함해. 4자리 및 8자리 버전은 알파를 추가하여 반투명 색상을 허용하지."
+    e "3자리 또는 6자리 색상은 불투명하고, 빨강, 초록, 파랑 값을 포함해. 4자리 또는 8자리 색상은 알파 값을 포함해 반투명 색상을 허용하지."
 
 # game/indepth_displayables.rpy:53
 translate korean simple_displayables_9cd108c6:
@@ -99,7 +99,7 @@ translate korean simple_displayables_ae3f35f5:
 translate korean simple_displayables_de555a92:
 
     # e "You can even write custom displayables for minigames, if you're proficient at Python. But for many visual novels, these will be all you'll need."
-    e "파이썬을 능숙하게 사용한다면, 미니 게임용 커스텀 디스플레이어블을 작성할 수도 있어. 그러나 많은 시각 소설을 위해, 이것들은 네가 필요로 하는 모든 것이 될 거야."
+    e "파이썬을 능숙하게 사용한다면, 미니 게임용 커스텀 디스플레이어블을 작성할 수도 있어. 하지만 대부분의 비주얼 노벨에선, 여기까지가 너에게 필요한 내용 전부야."
 
 translate korean strings:
 

@@ -38,9 +38,6 @@ keybindings work:
      save the game. If necessary, the save will be automatically
      loaded when the user returns to the game.
 
-`Menu`
-     Brings up the in-game menu, and returns to the game.
-
 `Back`
      Rolls back.
 
@@ -61,11 +58,6 @@ due to the Android software and hardware are:
   only produce mouse events when the user is actively touching the
   screen.
 
-* Movie playback in fullscreen mode can only use
-  media formats that are supported by Android devices. See
-  `this page <http://developer.android.com/guide/appendix/media-formats.html>`_
-  for a list of supported video formats.
-
 * Text input (such as :func:`renpy.input`) is limited to the input methods
   that do not require completions to work. (Western languages probably work,
   while other languages might not.)
@@ -83,6 +75,10 @@ To help you adapt to these differences, Ren'Py for Android
 automatically selects screen variants based on the
 device's screen size and capabilities. See :ref:`screen-variants` for
 more information.
+
+Due to the security policy of mobile devices, MultiPersistent functionality
+is limited only to this game and its updates, i.e. it cannot be shared by
+another game.
 
 
 Testing and Emulation
@@ -155,10 +151,10 @@ before you can build packages:
 
 **Java Development Kit.**
 The Java Development Kit (JDK) contains several tools that are used by
-|PGS4A|, including the tools used to generate keys and sign
+RAPT, including the tools used to generate keys and sign
 packages. It can be downloaded from:
 
-    http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+    https://adoptopenjdk.net/releases.html?variant=openjdk8&jvmVariant=hotspot
 
 You'll need version 8 of the JDK.
 
@@ -206,11 +202,14 @@ warnings about licenses, and ask if you want it to generate a key.
    passphrase. You should really use keytool to generate your own
    signing keys.
 
-    http://docs.oracle.com/javase/7/docs/technotes/tools/windows/keytool.html
+    https://developer.android.com/studio/publish/app-signing?hl=fr#generate-key
 
-   At the very least, you should keep the android.keystore file in
+   At the very least, you should keep the android.keystore and bundle.keystore files in
    a safe place. You should also back it up, because without the
    key, you won't be able to upload the generated applications.
+
+When creating Android keys, Ren'Py will back them up to the same place it
+backs up script files. This isn't a substitute for making your own backups.
 
 If you don't want to download the SDK each time, you can create a file
 named sdk.txt containing a single line that is the path to the
@@ -230,26 +229,33 @@ previous choices will be remembered.
 Step 4: Build and Install the Package
 -------------------------------------
 
-Finally, you can build and install the package. This is done with a
-by connecting your Android device to your computer, and choosing
-"Build & Install" from the Android screen of the Ren'Py launcher.
-(The first time you install, your Android device may ask you
-to authorize your computer to install applications.)
+Finally, you can build and install the package.  You'll first want to
+choose between one of the two release modes:
 
-If you'd rather copy the game's apk file to your Android device manually,
-choose "Build Package" from the Android screen of the Ren'Py launcher. Then
-navigate to the 'bin' directory underneath the RAPT directory and copy the
-appropriate file to your Android device. You will then need to find
-the .apk file in your Android device using a file manager application and
-open it to install the game.
+Play Bundle
+    Play bundle releases are in the Android App Bundle (AAB) format,
+    and are suitable only for upload to the Google Play store, though
+    such releases can also be installed on Play-enabled Android devices.
 
-Ren'Py allows you to select between two release modes, Debug and Release.
-The debug mode is useful for testing, as it allows you to easily use Android
-studio to view the logs or files on the device. Release produces a version
-of the app suitable to upload to the various stores.
+    Play bundles may be up to 2 GB in size, but this is divided into
+    4 500MB fast-follow pack files, with each file in your game assigned
+    to one of the four bundles. This may be an issue with four files -
+    a game won't be able to fit 5 files of 300 MB in size, as there will
+    only be room for one in each of the four pack files.
 
-You will need to uninstall the app when switching between debug and
-release builds.
+Universal APK
+    Universal APK release are suitable for direct installation onto
+    Android devices, either through Ren'Py, ADB, non-Play app stores,
+    or sideloading through the web.
+
+    Universal APKs can be up to 2 GB in size, with no restrictions on
+    the contents.
+
+There are three commands which allow you to perform various combinations
+of building the package, installing it on your device, and launching the
+application for testing.
+
+You may need to uninstall the app when switching between release modes.
 
 
 Icon and Presplash Images
@@ -296,48 +302,74 @@ it will unpack supporting files, which make take some time.
 
 android-presplash.jpg
     The image that's used when the app is loading. This should be surrounded
-    by a monocolored border. That border is expanded to fill the screen.
+    by 1px of a monocolored border. When displayed, the image is scaled to
+    fit available space while preserving aspect ratio, and the rest of the
+    screen is filled with the border color.
+
+android-downloading.jpg
+    The image thjat's used when the app is downloading assets from Google
+    Play Asset delivery. This should be surrounded
+    by 1px of a monocolored border. When displayed, the image is scaled to
+    fit available space while preserving aspect ratio, and the rest of the
+    screen is filled with the border color.
+
+    A 20px-high progress bar is displayed 20px from the bottom, left, and
+    right sides of the screen, showing download progress.
+
+.. _pyjnius:
+
+Pyjnius
+=======
+
+When running on Android, a version of the `Pyjnius <https://pyjnius.readthedocs.io/en/stable/>`_
+library is available. This allows advanced creators to call into the Android
+libraries.
+
+It may be necessary to get the main activity. It can be found in the mActivity
+field in the org.renpy.android.PythonSDLActivity class. For example::
+
+    init python:
+        if renpy.android:
+            import jinus
+            mActivity = jnius.autoclass("org.renpy.android.PythonSDLActivity")
+        else:
+            mActivity = None
 
 
-.. _expansion-apk:
+.. _android-permissions:
 
-Google Play Expansion APKs
-==========================
+Permissions
+===========
 
-Ren'Py optionally supports the use of expansion APKs when used on a device
-supporting Google Play. Expansion APKs allow Google Play to host games
-larger than 50MB in size. Please see:
+While Ren'Py doesn't require additional permissions to run, if your
+game uses Pyjnius to call into Android, it might be necessary to
+request permissions. Ren'Py has a variable and two functions to
+interact with the Android permissions system.
 
-    http://developer.android.com/google/play/expansion-files.html
+.. var:: build.android_permissions = [ ]
 
-For information about expansion APKs work. Right now, only the
-main expansion APK is supported, giving a 2GB limit. When an Expansion
-APK is created, all game files will be placed in the
-expansion APK. Ren'Py will transparently use these files.
+    This is a list of strings, with each string giving the full name
+    of an Android permission. For example, "android.permission.WRITE_EXTERNAL_STORAGE".
+    This simply declares that the application might request these permissions, it's
+    necessary to use renpy.check_permission and renpy.request_permission as necessary
+    to request the permission.
 
-To configure your game to use Expansion APKs, you'll need to set two
-variables:
+.. include: inc/android_permission
 
-.. var:: build.google_play_key = "..."
 
-    This is the Google Play license key associated with your application,
-    which can be found on the "Services & APIs" tab associated with
-    your application in the Google Play developer console. (Be sure to
-    remove all spaces and newlines from the key.)
+Transferring Files to and From Android
+======================================
 
-.. var:: build.google_play_salt = ( ... )
+When your Android device is connected to your computer over USB, and configured
+to allow access to file storage, there are some directories that files can be
+placed in. (This assumes that your game's package is org.renpy.mygame, but it will
+almost certainly be different.)
 
-    This should be a tuple of 20 bytes, where each byte is represented as
-    an integer between -128 and 127. This is used to encrypt license
-    information returned from Google Play.
+Android/data/org.renpy.mygame/files/saves
+    This contains the game's save files.
 
-    A valid (if insecure) value for this variable is::
+Android/data/org.renpy.mygame/files/game
+    This might not exist, in which case you may create it. Files in this directory
+    are loaded in preference to files in the androids packages, which means that
+    patches can be placed in this directory.
 
-        (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19)
-
-RAPT will place the expansion APK on the device when installing
-the APK package on the device. The expansion APK will be an .obb file
-found inside the bin subdirectory of the RAPT directory.
-
-In normal operation, Google Play will place the expansion APK on the
-device automatically when the user installs the application.

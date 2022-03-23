@@ -121,10 +121,9 @@ novel kinds of value a style property can expect.
         containing area. For example, 0.5 is a point halfway between the
         sides of the containing area, while 1.0 is on the right or bottom
         side.
-    renpy.absolute (like renpy.absolute(100.25))
-        A ``renpy.absolute`` number is interpreted as the number of pixels
-        from the left or top side of the screen, when using subpixel-precise
-        rendering.
+    absolute (like absolute(100.25))
+        An ``absolute`` number is interpreted as the number of pixels from the
+        left or top side of the screen, when using subpixel-precise rendering.
 
 `displayable`
     Any displayable. If a displayable contains a "[prefix\_]" substitution,
@@ -398,6 +397,15 @@ or on the screen when not inside a layout.
 
     This will not work with all displayables and all layouts.
 
+.. style-property:: mipmap boolean or None
+
+    This controls if textures created by this displayable are mipmapped.
+    This applies only to certain displayables, including :func:`Text`,
+    :func:`Movie`, and dissolves.
+
+    If None, the default for this is taken from config variables such
+    as :var:`config.mipmap_text`, :var:`config.mipmap_movies`, and
+    :var:`config.mipmap_dissolves`.
 
 .. _text-style-properties:
 
@@ -447,7 +455,7 @@ Text Style Properties
 
     If not None, this should be a displayable. The input widget will
     use this as the caret at the end of the text. If None, a 1 pixel
-    wide line is used as the caret.
+    wide blinking line is used as the caret.
 
 .. style-property:: color color
 
@@ -600,24 +608,26 @@ Text Style Properties
 
 .. style-property:: outline_scaling string
 
-    This determines how outline suzels or offsets are scaled when the
+    This determines how outline sizes and offsets are scaled when the
     window is scaled.
 
-    ``"step"``
-        The default, best for text that uses thin outlines and text
-        that uses multiple outlines. The window scaling factor is
-        rounded down to an integer and applied ot the outline size
-        and offsets.
-
-        The window scaling factor is always above 1.
-
     ``"linear"``
-        Best for text with thick outlines. The window scaling factor
+        The default, best for text with thick outlines. The window scaling factor
         is applied to the outline size, and then rounded to an integer.
-        This looks better for thick outlines, but small outlines can
-        dissappear.
+        This looks better for thick outlines, but concentric outlines of similar
+        thickness may become indistinguishable.
 
         The resulting width is always at least 1 pixel.
+
+    ``"step"``
+        Best for text that uses thin outlines and text
+        that uses multiple outlines. The window scaling factor is
+        rounded down to an integer and applied to the outline size
+        and offsets. This ensures that multiple outlines all scale together,
+        without risk of eclipsing one another, but this yields different visual
+        results depending on the size of the game window.
+
+        The window scaling factor is always above 1.
 
 .. style-property:: rest_indent int
 
@@ -763,6 +773,18 @@ buttons. :ref:`margin-style-properties` also form part of this group.
     If not None, this should be a string. Ren'Py will render all
     windows with the same size_group value at the same size.
 
+.. style-property:: modal boolean or callable
+
+    If True, the window is treated as modal. Events will stop propagating
+    through layers while the mouse is within the window or button. If False,
+    the window is not modal.
+
+    This may also be a callable function. If it is, the function is called
+    with (ev, x, y, w, h), where `ev` is either a pygame event, or None to
+    represent a generic mouse event; `x` and `y` are coordinates relative
+    to the window, and `w` and `h` are the height and width of the window.
+    If the callable returns true, the windows is treated as modal. If it
+    returns false, it is not.
 
 .. _button-style-properties:
 
@@ -979,6 +1001,13 @@ These are used for the horizontal and vertical box layouts.
     or columns. (So it is the vertical spacing between lines in a wrapped
     hbox, and the horizontal spacing between columns in a wrapped vbox.)
 
+.. style-property:: order_reverse boolean
+
+    If False, the default, the items in the box will be drawn first-to-last,
+    with the first item in the box being below the second, and so on. If True,
+    this order will be reversed, and the first item in the box will be above
+    all other items in the box.
+
 
 .. _grid-style-properties:
 
@@ -1026,13 +1055,6 @@ These are used with the fixed layout.
 
     If True, the size of the fixed layout is shrunk vertically to match the
     bottom side of the bottommost child of the fixed.
-
-.. style-property:: order_reverse boolean
-
-    If False, the default, the items in the box will be drawn first-to-last,
-    with the first item in the box being below the second, and so on. If True,
-    this order will be reversed, and the first item in the box will be above
-    all other items in the box.
 
 
 .. _margin-style-properties:

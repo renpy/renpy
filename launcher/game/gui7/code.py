@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -323,6 +323,9 @@ class CodeGenerator(object):
 
                     m = re.match(r'## ?([ *]*)(.*)', s)
 
+                    if m is None:
+                        raise Exception("Comment translation doesn't start with '## ': {}".format(s))
+
                     prefix = m.group(1)
                     empty = ' ' * len(prefix)
                     rest = m.group(2)
@@ -353,7 +356,7 @@ class CodeGenerator(object):
     def copy_files(self):
 
         for src, dst in language_copies[self.p.language]:
-            src = os.path.join(renpy.config.gamedir, src)
+            src = os.path.join(renpy.config.renpy_base, src)
             dst = os.path.join(self.p.prefix, dst)
 
             if os.path.exists(dst):

@@ -1,8 +1,10 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 import renpy
-import pyobjus # @UnresolvedImport
+import pyobjus # type: ignore
 
 from renpy.audio.audio import MusicContext
 
@@ -161,7 +163,7 @@ class IOSVideoChannel(object):
         self.stop()
         self.queue = [ ]
 
-    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False):
+    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
         self.queue.extend(filenames)
 
     def pause(self):

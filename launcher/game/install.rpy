@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -60,7 +60,10 @@ init python:
             dstfn = os.path.join(config.renpy_base, dstfn)
 
             if not os.path.exists(os.path.dirname(dstfn)):
-                continue
+                try:
+                    os.makedirs(os.path.dirname(dstfn))
+                except Exception:
+                    pass
 
             renpy.write_log(fn + " -> " + dstfn)
 
@@ -70,7 +73,7 @@ init python:
 
             try:
                 os.chmod(dstfn, 0o755)
-            except:
+            except Exception:
                 pass
 
         interface.info(_("Successfully installed [name!t]."), name=name)
@@ -85,6 +88,12 @@ label install_live2d:
             (r".*/Core/dll/windows/x86/(Live2DCubismCore.dll)", r"lib/windows-i686/\1"),
             (r".*/Core/dll/macos/(libLive2DCubismCore.dylib)", r"lib/mac-x86_64/\1"),
             (r".*/Core/dll/experimental/rpi/(libLive2DCubismCore.so)", r"lib/linux-armv7l/\1"),
+
+            (r".*/Core/dll/android/(armeabi-v7a/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
+            (r".*/Core/dll/android/(arm64-v8a/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
+
+            # This doesn't exist yet.
+            # (r".*/Core/dll/android/(x86_64/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
         ]
 
         install_from_zip("Live2D Cubism SDK for Native", "CubismSdkForNative-4-*.zip", patterns)
@@ -122,7 +131,7 @@ screen install():
 
                         add SPACER
 
-                        textbutton "Install Live2D Cubism SDK for Native":
+                        textbutton _("Install Live2D Cubism SDK for Native"):
                             action Jump("install_live2d")
 
                         add HALF_SPACER
@@ -133,6 +142,38 @@ screen install():
 
                             text _("The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc.")
 
+                            add SPACER
+
+                            text _("Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support.")
+
+                        add SPACER
+
+
+                        if not achievement.has_steam:
+
+                            textbutton _("Install Steam Support"):
+                                action Jump("install_steam")
+
+                            add HALF_SPACER
+
+                            frame:
+                                style "l_indent"
+                                has vbox
+
+                                text _("Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}.")
+
+                        else:
+
+                            textbutton _("Install Steam Support")
+
+                            add HALF_SPACER
+
+                            frame:
+                                style "l_indent"
+                                has vbox
+
+                                text _("Steam support has already been installed.")
+
 
     textbutton _("Cancel") action Return(False) style "l_left_button"
     textbutton _("Open Ren'Py SDK Directory") action OpenDirectory(config.renpy_base, absolute=True) style "l_right_button"
@@ -142,3 +183,7 @@ screen install():
 label install:
     call screen install
     jump preferences
+
+label install_steam:
+    $ add_dlc("steam", restart=True)
+    jump install

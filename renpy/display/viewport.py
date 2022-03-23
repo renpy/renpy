@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,10 +23,13 @@
 # the screen.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.display
+
+import math
+
 import pygame_sdl2 as pygame
+import renpy
 
 
 def edgescroll_proportional(n):
@@ -65,14 +68,6 @@ class Viewport(renpy.display.layout.Container):
             self.edge_yspeed = 0
             self.edge_last_st = None
 
-        if version < 4:
-            self.xadjustment_param = None
-            self.yadjustment_param = None
-            self.offsets_param = (None, None)
-            self.set_adjustments_param = True
-            self.xinitial_param = None
-            self.yinitial_param = None
-
         if version < 5:
             self.focusable = self.draggable
 
@@ -95,17 +90,30 @@ class Viewport(renpy.display.layout.Container):
                  **properties):
 
         super(Viewport, self).__init__(style=style, **properties)
+
         if child is not None:
             self.add(child)
 
-        self.xadjustment_param = xadjustment
-        self.yadjustment_param = yadjustment
-        self.offsets_param = offsets
-        self.set_adjustments_param = set_adjustments
-        self.xinitial_param = xinitial
-        self.yinitial_param = yinitial
+        if xadjustment is None:
+            self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
+        else:
+            self.xadjustment = xadjustment
 
-        self._show()
+        if yadjustment is None:
+            self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
+        else:
+            self.yadjustment = yadjustment
+
+        if self.xadjustment.adjustable is None:
+            self.xadjustment.adjustable = True
+
+        if self.yadjustment.adjustable is None:
+            self.yadjustment.adjustable = True
+
+        self.set_adjustments = set_adjustments
+
+        self.xoffset = offsets[0] if (offsets[0] is not None) else xinitial
+        self.yoffset = offsets[1] if (offsets[1] is not None) else yinitial
 
         if isinstance(replaces, Viewport) and replaces.offsets:
             self.xadjustment.range = replaces.xadjustment.range
@@ -116,7 +124,7 @@ class Viewport(renpy.display.layout.Container):
             self.yoffset = replaces.yoffset
             self.drag_position = replaces.drag_position
         else:
-            self.drag_position = None
+            self.drag_position = None # type: tuple[int, int]|None
 
         self.child_width, self.child_height = child_size
 
@@ -157,29 +165,6 @@ class Viewport(renpy.display.layout.Container):
             self.edge_speed = 0
             self.edge_function = edgescroll_proportional
 
-    def _show(self):
-        if self.xadjustment_param is None:
-            self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
-        else:
-            self.xadjustment = self.xadjustment_param
-
-        if self.yadjustment_param is None:
-            self.yadjustment = renpy.display.behavior.Adjustment(1, 0)
-        else:
-            self.yadjustment = self.yadjustment_param
-
-        if self.xadjustment.adjustable is None:
-            self.xadjustment.adjustable = True
-
-        if self.yadjustment.adjustable is None:
-            self.yadjustment.adjustable = True
-
-        self.set_adjustments = self.set_adjustments_param
-
-        offsets = self.offsets_param
-        self.xoffset = offsets[0] if (offsets[0] is not None) else self.xinitial_param
-        self.yoffset = offsets[1] if (offsets[1] is not None) else self.yinitial_param
-
     def per_interact(self):
         self.xadjustment.register(self)
         self.yadjustment.register(self)
@@ -195,8 +180,13 @@ class Viewport(renpy.display.layout.Container):
         The returned offsets will be negative or zero.
         """
 
+        cw = int(math.ceil(cw))
+        ch = int(math.ceil(ch))
+
         width = self.width
         height = self.height
+
+        xminimum, yminimum = renpy.display.layout.xyminimums(self.style, width, height)
 
         if not self.style.xfill:
             width = min(cw, width)
@@ -204,8 +194,8 @@ class Viewport(renpy.display.layout.Container):
         if not self.style.yfill:
             height = min(ch, height)
 
-        width = max(width, self.style.xminimum)
-        height = max(height, self.style.yminimum)
+        width = max(width, xminimum)
+        height = max(height, yminimum)
 
         if (not renpy.display.render.sizing) and self.set_adjustments:
 
@@ -251,6 +241,9 @@ class Viewport(renpy.display.layout.Container):
         cyo = -int(self.yadjustment.value)
 
         self._clipping = (cw > width) or (ch > height)
+
+        self.width = width
+        self.height = height
 
         return cxo, cyo, width, height
 
@@ -324,7 +317,7 @@ class Viewport(renpy.display.layout.Container):
                 self.yadjustment.change(yvalue)
                 raise renpy.display.core.IgnoreEvent()
 
-            oldx, oldy = self.drag_position
+            oldx, oldy = self.drag_position # type: ignore
             dx = x - oldx
             dy = y - oldy
 
@@ -342,7 +335,7 @@ class Viewport(renpy.display.layout.Container):
                 self.yadjustment.change(new_yvalue)
                 newy = y
 
-            self.drag_position = (newx, newy)  # W0201
+            self.drag_position = (newx, newy) # W0201
 
         if not ((0 <= x < self.width) and (0 <= y <= self.height)):
             self.edge_xspeed = 0
@@ -370,7 +363,7 @@ class Viewport(renpy.display.layout.Container):
                 adjustment = self.yadjustment
                 change = False
 
-            if renpy.display.behavior.map_event(ev, 'viewport_up'):
+            if renpy.display.behavior.map_event(ev, 'viewport_wheelup'):
 
                 if change and (adjustment.value == 0):
                     return None
@@ -381,7 +374,7 @@ class Viewport(renpy.display.layout.Container):
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
-            if renpy.display.behavior.map_event(ev, 'viewport_down'):
+            if renpy.display.behavior.map_event(ev, 'viewport_wheeldown'):
 
                 if change and (adjustment.value == adjustment.range):
                     return None
@@ -513,7 +506,7 @@ class Viewport(renpy.display.layout.Container):
 
 
 # For compatibility with old saves.
-renpy.display.layout.Viewport = Viewport
+renpy.display.layout.Viewport = Viewport # type: ignore
 
 
 class VPGrid(Viewport):
@@ -554,7 +547,7 @@ class VPGrid(Viewport):
         rows = self.grid_rows
 
         if cols is None:
-            cols = lc // rows
+            cols = lc // rows # type: ignore
             if rows * cols < lc:
                 cols += 1
 

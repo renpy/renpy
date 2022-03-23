@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,7 +34,7 @@ init -1200 python:
     def _try_eval(e, what):
         try:
             return _audio_eval(e)
-        except:
+        except Exception:
             renpy.error('unable to evaluate %s %r' % (what, e))
 
 python early hide:
@@ -153,7 +153,7 @@ python early hide:
                 try:
                     if not renpy.music.playable(fn, channel):
                         renpy.error("%r is not loadable" % fn)
-                except:
+                except Exception:
                     pass
 
     renpy.register_statement('play music',
@@ -175,6 +175,7 @@ python early hide:
         channel = None
         loop = None
         volume = "1.0"
+        fadein = "0"
 
         while not l.eol():
 
@@ -197,9 +198,16 @@ python early hide:
                 volume = l.simple_expression()
                 continue
 
+            if l.keyword('fadein'):
+                fadein = l.simple_expression()
+                if fadein is None:
+                    renpy.error('expected simple expression')
+
+                continue
+
             renpy.error('expected end of line')
 
-        return dict(file=file, channel=channel, loop=loop, volume=volume)
+        return dict(file=file, channel=channel, loop=loop, volume=volume, fadein=fadein)
 
     def execute_queue_music(p):
         if p["channel"] is not None:
@@ -211,7 +219,9 @@ python early hide:
             _audio_eval(p["file"]),
             channel=channel,
             loop=p.get("loop", None),
-            relative_volume=eval(p.get("volume", "1.0")))
+            relative_volume=eval(p.get("volume", "1.0")),
+            fadein=eval(p.get("fadein", "0")),
+            )
 
 
     renpy.register_statement('queue music',
@@ -416,6 +426,9 @@ python early hide:
     ##########################################################################
     # Pause statement.
 
+    # Should the pause statement use the pause Transition?
+    config.pause_with_transition = False
+
     def parse_pause(l):
 
         delay = l.simple_expression()
@@ -434,10 +447,12 @@ python early hide:
 
         if p["delay"]:
             delay = eval(p["delay"])
-            renpy.with_statement(Pause(delay))
+            if config.pause_with_transition:
+                renpy.with_statement(Pause(delay))
+            else:
+                renpy.pause(delay)
         else:
             renpy.pause()
-
 
     renpy.register_statement('pause',
                               parse=parse_pause,
@@ -453,7 +468,7 @@ python early hide:
     # Should we predict screens?
     config.predict_screen_statements = True
 
-    def warp_true():
+    def warp_true(p):
         return True
 
     def parse_show_call_screen(l):

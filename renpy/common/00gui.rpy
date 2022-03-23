@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,12 +21,13 @@
 
 init -1100 python in gui:
     from store import config, layout, _preferences, Frame, Null, persistent, Action, DictEquality
+    import math
 
     config.translate_clean_stores.append("gui")
 
     _null = Null()
 
-    def init(width, height):
+    def init(width, height, fov=75):
         """
         :doc: gui
 
@@ -37,6 +38,9 @@ init -1100 python in gui:
 
         `height`
             The height of the default window.
+
+        `fov`
+            The field of view of the 3d stage.
         """
 
         if (not renpy.is_init_phase()) and config.developer:
@@ -44,6 +48,10 @@ init -1100 python in gui:
 
         config.screen_width = width
         config.screen_height = height
+
+        z = (width / 2) / math.tan(math.radians(fov / 2))
+
+        config.perspective = (100.0, z, 100000.0)
 
         layout.defaults()
 
@@ -68,6 +76,36 @@ init -1100 python in gui:
         if persistent._gui_preference_default is None:
             persistent._gui_preference_default = { }
 
+    # A list of variant, function tuples.
+    variant_functions = [ ]
+
+    def variant(f, variant=None):
+        """
+        :doc: gui
+
+        A decorator that causes a function to be called when the gui is first
+        initialized, and again each time the gui is rebuilt.  This is intended
+        to be used as a function decorator,  of the form::
+
+            @gui.variant
+            def small():
+                gui.text_size = 30
+                # ...
+
+        It can also be called with `f` (a function) and `variant` (a string),
+        giving the variant name.
+        """
+
+        if variant is None:
+            variant = f.__name__
+
+        variant_functions.append((variant, f))
+
+        if renpy.variant(variant):
+            f()
+
+        return f
+
     def rebuild():
         """
         :doc: gui
@@ -77,7 +115,16 @@ init -1100 python in gui:
         Note: This is a very slow function.
         """
 
+        global variant_functions
+        old_variant_functions = variant_functions
+
         renpy.ast.redefine([ "store.gui" ])
+
+        variant_functions = old_variant_functions
+
+        for variant, f in variant_functions:
+            if renpy.variant(variant):
+                f()
 
         for i in config.translate_clean_stores:
             renpy.python.clean_store_backup.backup_one("store." + i)
@@ -138,7 +185,9 @@ init -1100 python in gui:
             prefs = persistent._gui_preference
 
             prefs[self.name] = self.value
-            rebuild()
+
+            if self.rebuild:
+                rebuild()
 
         def get_selected(self):
             prefs = persistent._gui_preference
@@ -177,7 +226,8 @@ init -1100 python in gui:
             else:
                 prefs[self.name] = self.a
 
-            rebuild()
+            if self.rebuild:
+                rebuild()
 
         def get_selected(self):
             prefs = persistent._gui_preference
@@ -424,7 +474,7 @@ init -1100 python in gui:
 
                 try:
                     os.makedirs(dn, 0o777)
-                except:
+                except Exception:
                     pass
 
                 if os.path.exists(fn):
@@ -442,12 +492,7 @@ init -1100 python in gui:
                     if not gui._skip_backup:
                         os.rename(fn, bfn)
 
-                import cStringIO
-                sio = cStringIO.StringIO()
-                renpy.display.module.save_png(s, sio, 3)
-
-                with open(fn, "wb") as f:
-                    f.write(sio.getvalue())
+                pygame_sdl2.image.save(s, fn, 3)
 
             def fill(self, color=None):
                 if color is None:
@@ -574,11 +619,3 @@ init -1100 python in gui:
         return False
 
     renpy.arguments.register_command("gui_images", _gui_images)
-
-
-
-
-
-
-
-

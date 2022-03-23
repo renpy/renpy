@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -118,6 +118,8 @@ class Motion(object):
         self.curves = { }
         self.fades = { }
 
+        y = 0
+
         for curve in j["Curves"]:
             target = curve["Target"]
             name = curve["Id"]
@@ -127,6 +129,8 @@ class Motion(object):
             y0 = s.pop(0)
 
             segments = [ ]
+
+            curve_duration = 0.0
 
             while s:
 
@@ -166,25 +170,39 @@ class Motion(object):
                 x0 = x
                 y0 = y
 
+                curve_duration += segments[-1].duration
+
+            if curve_duration < self.duration:
+                segments.append(Step(curve_duration, y0, self.duration, y))
+
             self.curves[target, name] = segments
             self.fades[target, name] = (
                 curve.get("FadeInTime", fadein),
                 curve.get("FadeOutTime", fadeout),
                 )
 
-    def get(self, st, fade_st):
+    def get(self, st, fade_st, do_fade_in, do_fade_out):
         """
         Returns a dictionary where the keys are the type of parameter and the
         parameter name, and the values are the blend factor and value.
         """
 
-        st = st % self.duration
+        if st == self.duration:
+            st = self.duration
+        else:
+            st = st % self.duration
 
         rv = { }
 
         for k, segments in self.curves.items():
 
             fadein, fadeout = self.fades[k]
+
+            if not do_fade_in:
+                fadein = 0.0
+
+            if not do_fade_out:
+                fadeout = 0.0
 
             factor = 1.0
 
@@ -203,18 +221,24 @@ class Motion(object):
             factor = max(factor, 0.0)
 
             t = st
+            i = None
 
             for i in segments:
-                if t < i.duration:
+                if t <= i.duration:
                     rv[k] = (factor, i.get(t))
 
                     break
 
                 t -= i.duration
 
+            else:
+                if i is not None:
+                    t = i.duration
+                    rv[k] = (factor, i.get(t))
+
         return rv
 
-    def wait(self, st, fade_st):
+    def wait(self, st, fade_st, do_fade_in, do_fade_out):
         """
         Returns how much time should pass until this displayable needs to be
         redrawn.
@@ -227,6 +251,9 @@ class Motion(object):
         for k, segments in self.curves.items():
 
             fadeout = self.fades[k][1]
+
+            if not do_fade_out:
+                fadeout = 0
 
             factor = 1.0
 
@@ -247,7 +274,7 @@ class Motion(object):
             t = st
 
             for i in segments:
-                if t < i.duration:
+                if t <= i.duration:
                     rv = min(rv, i.wait(t))
                     break
 
@@ -266,8 +293,8 @@ class NullMotion(object):
 
     duration = 1.0
 
-    def get(self, st, fade_st):
+    def get(self, st, fade_st, do_fade_in, do_fade_out):
         return { }
 
-    def wait(self, st, fade_st):
+    def wait(self, st, fade_st, do_fade_in, do_fade_out):
         return max(1.0 - st, 0)

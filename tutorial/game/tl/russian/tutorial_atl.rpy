@@ -308,7 +308,7 @@ translate russian tutorial_atl_da7a7759:
 # game/tutorial_atl.rpy:480
 translate russian tutorial_atl_1dd345c6:
 
-    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though a click your click stopped the motion, the image remains in the same place."
+    # e "When ATL is used as part of a show statement, values of properties exist even when the transform is changed. So even though your click stopped the motion, the image remains in the same place."
     e "Когда ATL используется как часть оператора show, значения параметров сохраняются даже при изменении трансформации. Так что даже после остановки анимации картинка всего-лишь чуть-чуть сместилась вниз со своей последней позиции."
 
 # game/tutorial_atl.rpy:488

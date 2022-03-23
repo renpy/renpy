@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -152,6 +152,33 @@ init python:
 
         ios_populate(p, gui=gui, target=target)
 
+
+    def eliminate_pycache(directory):
+        """
+        Eliminates the __pycache__ directory, and moves the files in it up a level,
+        renaming them to remove the cache tag.
+        """
+
+        print("Eliminating __pycache__...")
+
+        if PY2:
+            return
+
+        import pathlib
+        import sys
+
+        paths = list(pathlib.Path(directory).glob("**/__pycache__/*.pyc"))
+
+        for p in paths:
+            name = p.stem.partition(".")[0]
+            p.rename(p.parent.parent / (name + ".pyc"))
+
+        paths = list(pathlib.Path(directory).glob("**/__pycache__"))
+
+        for p in paths:
+            p.rmdir()
+
+
     def ios_populate(p=None, gui=True, target=None):
         """
         This actually builds the package.
@@ -180,6 +207,8 @@ init python:
             packagedest=dist,
             report_success=False,
             )
+
+        eliminate_pycache(dist)
 
         main_fn = os.path.join(dist, "main.py")
 
@@ -212,8 +241,8 @@ init python:
 
     def launch_xcode():
         dist = xcode_project(None)
-        base = os.path.basename(dist)
-        xcodeproj = "{}/{}.xcodeproj".format(dist, base)
+        name = project.current.dump.get("name", None)
+        xcodeproj = "{}/{}.xcodeproj".format(dist, name)
 
         subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
 
@@ -300,22 +329,6 @@ screen ios:
                                     action IOSIfState(state, IOS_OK, launch_xcode)
                                     hovered tt.Action(IOS_XCODE_TEXT)
 
-#                             textbutton _("Configure"):
-#                                 action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
-#                                 hovered tt.Action(CONFIGURE_TEXT)
-#
-#                             textbutton _("Build Package"):
-#                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build"))
-#                                 hovered tt.Action(BUILD_TEXT)
-#
-#                             textbutton _("Build & Install"):
-#                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_and_install"))
-#                                 hovered tt.Action(BUILD_AND_INSTALL_TEXT)
-#
-#                             textbutton _("Build, Install & Launch"):
-#                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_install_and_launch"))
-#                                 hovered tt.Action(BUILD_INSTALL_AND_LAUNCH_TEXT)
-
                     add SPACER
                     add SEPARATOR2
 
@@ -349,6 +362,10 @@ screen ios:
                     frame:
                         style "l_indent"
                         has vbox
+
+                        add SPACER
+
+                        text _("There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices.")
 
                         add SPACER
 
@@ -427,4 +444,3 @@ init python:
         return False
 
     renpy.arguments.register_command("ios_populate", ios_populate_command)
-

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -275,6 +275,8 @@ label build_update_dump:
 label build_distributions:
 
     call build_update_dump
+
+label post_build:
 
     if not project.current.dump["build"]["directory_name"]:
         jump build_missing

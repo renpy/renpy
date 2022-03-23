@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -80,21 +80,31 @@ init -1500 python:
         A version of strftime that's meant to work with Ren'Py's translation
         system.
         """
-        rv = format
 
         month = t[1] - 1
         wday = t[6]
 
-        rv = rv.replace("%a", __(_weekday_name_short[wday]))
-        rv = rv.replace("%A", __(_weekday_name_long[wday]))
-        rv = rv.replace("%b", __(_month_name_short[month]))
-        rv = rv.replace("%B", __(_month_name_long[month]))
+        import re
+        import time
 
-        if "%" in rv:
-            import time
-            rv = time.strftime(rv, t)
+        rv = [ ]
 
-        return rv
+        for i in re.split(r'(%[-_^#]?[0-9]*[a-zA-Z])', format):
+
+            if i == "%a":
+                rv.append(__(_weekday_name_short[wday]))
+            elif i == "%A":
+                rv.append(__(_weekday_name_long[wday]))
+            elif i == "%b":
+                rv.append(__(_month_name_short[month]))
+            elif i == "%B":
+                rv.append(__(_month_name_long[month]))
+            elif "%" in i:
+                rv.append(time.strftime(i, t))
+            else:
+                rv.append(i)
+
+        return "".join(rv)
 
 
     ##########################################################################
@@ -351,7 +361,7 @@ init -1500 python:
 
             try:
                 self.alt = __("Save slot %s: [text]") % (name,)
-            except:
+            except Exception:
                 self.alt = "Save slot %s: [text]" % (name,)
 
         def __call__(self):
@@ -432,7 +442,7 @@ init -1500 python:
 
             try:
                 self.alt = __("Load slot %s: [text]") % (name,)
-            except:
+            except Exception:
                 self.alt = "Load slot %s: [text]" % (name,)
 
         def __call__(self):
@@ -508,9 +518,6 @@ init -1500 python:
 
         def get_sensitive(self):
             return renpy.can_load(__slotname(self.name, self.page, self.slot))
-
-        def get_selected(self):
-            return __newest_slot() == __slotname(self.name, self.page, self.slot)
 
 
     def FileAction(name, page=None, **kwargs):
@@ -820,9 +827,9 @@ init -1500 python:
 
     class FilePagePrevious(Action, DictEquality):
         """
-         :doc: file_action
+        :doc: file_action
 
-         Goes to the previous file page, if possible.
+        Goes to the previous file page, if possible.
 
         `max`
             If set, this should be an integer that gives the number of
@@ -839,8 +846,7 @@ init -1500 python:
         `quick`
             If true, this can bring the player to
             the page of automatic saves.
-
-         """
+        """
 
         alt = _("Previous file page.")
 
@@ -953,6 +959,5 @@ init 1050 python hide:
     if persistent._file_page not in config.file_page_names:
         try:
             int(persistent._file_page)
-        except:
+        except Exception:
             persistent._file_page = "1"
-

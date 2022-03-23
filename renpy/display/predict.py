@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,9 +22,11 @@
 # This file contains the routines that manage image prediction.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.display
+
+
+import renpy
 
 # Called to indicate an image should be loaded or preloaded. This is
 # a function that takes an image manipulator, set by reset and predict,
@@ -127,7 +129,7 @@ def prediction_coroutine(root_widget):
             for sle in l:
                 try:
                     displayable(sle.displayable)
-                except:
+                except Exception:
                     pass
 
     else:
@@ -142,11 +144,14 @@ def prediction_coroutine(root_widget):
     predicting = True
 
     for i in renpy.config.expensive_predict_callbacks:
-        i()
+        done = False
+        while not done:
+            if not i():
+                done = True
 
-        predicting = False
-        yield False
-        predicting = True
+            predicting = False
+            yield False
+            predicting = True
 
     predicted_screens = [ ]
 
@@ -168,8 +173,8 @@ def prediction_coroutine(root_widget):
 
     try:
         root_widget.visit_all(lambda i : i.predict_one_action())
-    except:
-        if renpy.config.debug_image_cache:
+    except Exception:
+        if renpy.config.debug_prediction:
             import traceback
 
             print("While predicting actions.")

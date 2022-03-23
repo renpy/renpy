@@ -39,7 +39,12 @@ and invoke many other actions. A game-maker can also write new actions
 in Python.
 
 Screens are updated at the start of each interaction, and each time an
-interaction is restarted.
+interaction is restarted. Note that a ``with None`` statement does not
+cause an interaction to happen, and hence won't update a screen.
+
+A screen has a scope associated with it, giving values to some
+variables. When a variable is accessed by a screen, it's first looked
+up in the scope, and then looked up as a global variable.
 
 **Screens must not cause side effects that are visible from
 outside the screen.** Ren'Py will run a screen multiple times, as
@@ -48,9 +53,13 @@ prediction process, before the screen is first shown. As a result, if
 running a screen has side effects, those side effects may occur at
 unpredictable times.
 
-A screen has a scope associated with it, giving values to some
-variables. When a variable is accessed by a screen, it's first looked
-up in the scope, and then looked up as a global variable.
+**Using Python generators in screens may cause unpredictable results.**
+This traces back to an issue with the way the Python interpreter compiles
+Python source code that will be used in a screen context. Generators
+can be used in Python functions called from a screen, but not in the
+screen itself.
+
+
 
 Screen Language
 ===============
@@ -77,8 +86,8 @@ two parameters, `who` and `what`.
 
 The screen contains a window, which has been given the id of
 "window". This window contains a vertical box, and the spacing inside
-that box is 10 pixels. It contains two text fields, one of the name of
-the speaker, and the other with the speaker's id.
+that box is 10 pixels. It contains two text fields, one displaying the name of
+the speaker, and the displaying what is being spoken.
 
 Screen Language Syntax
 ----------------------
@@ -116,7 +125,8 @@ expression. It takes the following properties:
 `modal`
     If True, the screen is modal. A modal screen prevents the user
     from interacting with displayables below it, except
-    for the default keymap.
+    for the default keymap. This is evaluated once, when the
+    game starts.
 
 `sensitive`
     An expression that determines whether the screen is sensitive or not.
@@ -283,26 +293,6 @@ name, without any quotes. The displayable that the statement creates is
 assigned to the variable. (An example can be found in :ref:`the drag and drop
 documentation <as-example>`.)
 
-.. _sl-add:
-
-Add
----
-
-Adds an image or other displayable to the screen. This optionally
-takes :ref:`transform properties <transform-properties>`. If at least
-one transform property is given, a :class:`Transform` is created to wrap the
-image, and the properties are given to the transform.
-
-If the displayable is None, nothing is added to the screen.
-
-This does not take any children.
-
-::
-
-    screen add_test():
-        add "logo.png" xalign 1.0 yalign 0.0
-
-
 .. _sl-bar:
 
 Bar
@@ -312,7 +302,7 @@ Creates a horizontally-oriented bar that can be used to view or adjust
 data. It takes the following properties:
 
 `value`
-    The current value of the bar. This can be either a :ref:`bar value <input-values>`
+    The current value of the bar. This can be either a :ref:`bar value <bar-values>`
     object, or a number.
 
 `range`
@@ -332,6 +322,10 @@ data. It takes the following properties:
 `unhovered`
     An action to run when the bar loses focus.
 
+`released`
+    An action to run when the bar button is released. This will be invoked
+    even if the bar has not changed its value.
+
 One of `value` or `adjustment` must be given. In addition, this
 function takes:
 
@@ -347,7 +341,7 @@ This does not take children.
         frame:
             has vbox
 
-            bar value Preference("sound volume")
+            bar value Preference("sound volume") released Play("sound", "audio/sample_sound.ogg")
             bar value Preference("music volume")
             bar value Preference("voice volume")
 
@@ -678,6 +672,14 @@ The input statement takes no parameters, and the following properties:
     A Python function that is called with what the user has typed,
     when the string changes.
 
+`mask`
+    If given, a string that replaces each displayable character in
+    the text. This can be used to mask out a password.
+
+`caret_blink`
+    If not False, the blinking period of the default caret.
+    Overrides :var:`config.input_caret_blink`.
+
 
 It also takes:
 
@@ -702,9 +704,9 @@ This does not take any children.
 Key
 ---
 
-This creates a keybinding that runs an action when a key is
-pressed. Key is used in a loose sense here, as it also allows joystick
-and mouse events.
+This creates a keybinding that runs an action when a key is pressed,
+or one of the keys in a given list. Key is used in a loose sense here,
+as it also allows joystick and mouse events.
 
 Key takes one positional parameter, a string giving the key to
 bind. See the :ref:`keymap` section for a description of available
@@ -721,7 +723,7 @@ It takes no children.
     screen keymap_screen():
         key "game_menu" action ShowMenu('save')
         key "p" action ShowMenu('preferences')
-        key "s" action Screenshot()
+        key ["s", "w"] action Screenshot()
 
 
 .. _sl-label:
@@ -1465,6 +1467,34 @@ This does not take children.
 Hotbars should be given the ``alt`` style property to allow Ren'Py's
 self-voicing feature to work.
 
+Add Statement
+=============
+
+The add statement is a bit special, as it adds an already-exising displayble
+to the screen. As a result, it doesn't take the properties common to the
+user interface statements.
+
+.. _sl-add:
+
+Add
+---
+
+Adds an image or other displayable to the screen. This optionally
+takes :ref:`transform properties <transform-properties>`. If at least
+one transform property is given, a :class:`Transform` is created to wrap the
+image, and the properties are given to the transform.
+
+If the displayable is None, nothing is added to the screen.
+
+This does not take any children.
+
+::
+
+    screen add_test():
+        add "logo.png" xalign 1.0 yalign 0.0
+
+
+
 
 Advanced Displayables
 =====================
@@ -1937,15 +1967,23 @@ This can be used to display an imagemap. The imagemap can place a
 value into the ``_return`` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
-The call screen statement takes an optional ``nopredict`` keyword, that
+The call screen statement takes an optional ``nopredict`` keyword, which
 prevents screen prediction from occurring. During screen prediction,
 arguments to the screen are evaluated. Please ensure that evaluating
 the screen arguments does not cause unexpected side-effects to occur.
 
-The call screen statement takes an optional ``with`` keyword, followed
-by a transition. The transition takes place when the screen is first
-displayed. A with statement after the transition runs after the screen
-is hidden, provided control is not transferred.
+In a call screen statement, the ``with`` clause causes a transition
+to occur when the screen is shown.
+
+Since calling a screen is an interaction, and interactions trigger
+an implicit ``with None``, using a ``with`` statement after the
+``call screen`` instruction won't make the screen disappear using the
+transition, as the screen will already will be gone. To disable the
+implicit ``with None`` transition, pass the ``_with_none=False``
+special keyword argument to the screen, as in the example below.
+
+Other ways of triggering transitions also work, such as the
+``[ With(dissolve), Return() ]`` action list.
 
 .. warning::
 
@@ -1958,9 +1996,14 @@ is hidden, provided control is not transferred.
 
     call screen my_screen(side_effect_function()) nopredict
 
-    # Shows the screen with dissolve and hides it with fade.
+    # Shows the screen with dissolve
     call screen my_other_screen with dissolve
-    with fade
+    # The screens instantly hides with None, then the pixellate transition executes
+    with pixellate
+
+    # Shows the screen with dissolve and hides it with pixellate.
+    call screen my_other_screen(_with_none=False) with dissolve
+    with pixellate
 
 .. _screen-variants:
 
@@ -1987,66 +2030,72 @@ If the environment variable is not present, a list of variants is
 built up automatically, by going through the following list in order
 and choosing the entries that apply to the current platform.
 
+``"steam_deck"``
+    True if running on a Steam Deck or equivalent hardware.
+
+``"steam_big_picture"``
+    True if running in Steam Big Picture mode.
+
 ``"large"``
-   A screen large enough that relatively small text can be
-   comfortably read, and buttons can be easily clicked. This
-   is used for computer screens.
+    A screen large enough that relatively small text can be
+    comfortably read, and buttons can be easily clicked. This
+    is used for computer screens.
 
 ``"medium"``
-   A screen where smallish text can be read, but buttons may
-   need to grow in size so they can be comfortably pressed.
-   This is used for tablets.
+    A screen where smallish text can be read, but buttons may
+    need to grow in size so they can be comfortably pressed.
+    This is used for tablets.
 
 ``"small"``
-   A screen where text must be expanded in order to be read. This
-   is used for phones and televisions. (A television might be
-   physically large, but it's often far away, making it hard
-   to read.)
+    A screen where text must be expanded in order to be read. This
+    is used for phones and televisions. (A television might be
+    physically large, but it's often far away, making it hard
+    to read.)
 
 ``"tablet"``
-   Defined on touchscreen based devices where the screen has a
-   diagonal size of 6 inches or more. (In general, ``"medium"`` should
-   be used instead of ``"tablet"``.)
+    Defined on touchscreen based devices where the screen has a
+    diagonal size of 6 inches or more. (In general, ``"medium"`` should
+    be used instead of ``"tablet"``.)
 
 ``"phone"``
-   Defined on touchscreen-based devices where the diagonal size of
-   the screen is less than 6 inches. On such a small device, it's
-   important to make buttons large enough a user can easily choose
-   them. (In general, ``"small"`` should be used instead of ``"phone"``.)
+    Defined on touchscreen-based devices where the diagonal size of
+    the screen is less than 6 inches. On such a small device, it's
+    important to make buttons large enough a user can easily choose
+    them. (In general, ``"small"`` should be used instead of ``"phone"``.)
 
 ``"touch"``
-   Defined on touchscreen-based devices.
+    Defined on touchscreen-based devices.
 
 ``"tv"``
-   Defined on television-based devices.
-
-``"ouya"``
-   Defined on the OUYA console. (``"tv"`` and ``"small"`` are also defined.)
+    Defined on television-based devices.
 
 ``"firetv"``
-   Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
+    Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
+
+``"chromeos"``
+    Defined when running as an Android app on a Chromebook.
 
 ``"android"``
-   Defined on all Android devices.
+    Defined on all Android devices.
 
 ``"ios"``
-   Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
-   are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
-   also defined).
+    Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
+    are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
+    also defined).
 
 ``"mobile"``
-   Defined on mobile platforms, such as Android, iOS and mobile web browsers.
+    Defined on mobile platforms, such as Android, iOS and mobile web browsers.
 
 ``"pc"``
-   Defined on Windows, Mac OS X, and Linux. A PC is expected to have
-   a mouse and keyboard present, to allow buttons to be hovered, and
-   to allow precise pointing.
+    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
+    a mouse and keyboard present, to allow buttons to be hovered, and
+    to allow precise pointing.
 
 ``"web"``
-   Defined when running inside a web browser.
+    Defined when running inside a web browser.
 
 ``None``
-   Always defined.
+    Always defined.
 
 An example of defining a screen variant is:
 

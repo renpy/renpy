@@ -35,12 +35,23 @@ language. This is called the None language, regardless of what
 language it actually is. (For example, if the game was written in
 English, English will be the None language.)
 
-When the None language is selected, most of Ren'Py's translation
-functionality is disabled.
-
 Alternate languages are referred to by names which can double as
 Python identifiers (starts with a letter or underscore, followed by
 letters, numbers, and underscores).
+
+When the None language is selected, most of Ren'Py's translation
+functionality is disabled, with the notable exception of Renpy's
+internal built-in strings, from the accessibility menu for example.
+Theses strings are not found in your project's code, yet they will
+still be included in the distributed version of the game. You can
+find them in the ``game/tl/None/common.rpym`` file, whose only
+purposes are 1) to provide translations to these strings when the None
+language is not english, and 2) to allow creators to customize these
+strings for their game.
+
+The language of the launcher at the time when the project is
+created will be the language this file will initially translate the
+internal strings to.
 
 Generating Translation Files
 ============================
@@ -189,9 +200,20 @@ into::
     translate piglatin start_36562aba:
 
         # e "You scored [points] points!"
-        e $ latin_points = to_roman_numerals(points)
+        $ latin_points = to_roman_numerals(points)
         e "Ouyay oredscay [latin_points] ointspay!"
 
+Sometimes it might be desirable to change a line of
+dialogue in the original language, without requiring
+the translators to retranslate the line. For example,
+a typo in English is unlikely to have surved the process
+of being translated into Russian.
+
+This can be done by including an ``id`` clause as part of the
+say statement, giving the translation ID to use for this
+statement. For example:
+
+    e "This used to have a typo." id start_61b861a2
 
 Tips
 ----

@@ -2,12 +2,18 @@ Audio
 =======
 
 Ren'Py supports playing music and sound effects in the background,
-using the following audio file formats
+using the following audio file formats:
 
 * Opus
 * Ogg Vorbis
 * MP3
-* WAV (uncompressed PCM only)
+* MP2
+* FLAC
+* WAV (uncompressed 16-bit signed PCM only)
+
+Opus and Ogg Vorbis may not be supported in WebKit-based web browsers,
+such as Safari, but are the best formats for other platforms. FLAC
+may not be supported either.
 
 Ren'Py supports an arbitrary number of audio channels. There are three
 normal channels defined by default:
@@ -81,6 +87,13 @@ time::
         play audio "sfx1.opus"
         play audio "sfx2.opus"
 
+A variable may be used instead of a string here. If a variable exists in the
+:ref:`audio namespace <audio-namespace>`, it's used in preference to the default namespace::
+
+        play music illurock
+
+Files placed into the audio namespace may automatically define variables that can
+be used like this.
 
 Stop Statement
 --------------
@@ -100,7 +113,7 @@ The ``queue`` statement is used to queue up audio files. They will be played whe
 the channel finishes playing the currently playing file.
 
 The queue statement begins with keyword ``queue``, followed by the the name of a
-channel to play sound on. It optionally takes the ``loop`` and ``noloop`` clauses. ::
+channel to play sound on. It optionally takes the ``fadein``, ``loop`` and ``noloop`` clauses. ::
 
         queue sound "woof.mp3"
         queue music [ "a.ogg", "b.ogg" ]
@@ -113,9 +126,18 @@ Queue also takes the ``volume`` clause. ::
         queue sound "woof.mp3" volume 1.0
 
 When multiple queue statements are given without an interaction between them,
-all sound files are added to the queue. After an interaction has occured, the
+all sound files are added to the queue. After an interaction has occurred, the
 first queue statement clears the queue, unless it has already been cleared by
 a play or stop statement.
+
+A variable may be used instead of a string here. If a variable exists in the
+:ref:`audio namespace <audio-namespace>`, it's used in preference to the default namespace::
+
+    define audio.woof = "woof.mp23
+
+    # ...
+
+    play sound woof
 
 The advantage of using these statements is that your program will be checked for
 missing sound and music files when lint is run. The functions below exist to allow
@@ -160,6 +182,25 @@ will play 10.5 seconds of waves.opus, starting at the 5 second mark. The stateme
 will play song.opus all the way through once, then loop back to the 6.333
 second mark before playing it again all the way through to the end.
 
+.. _sync-start:
+
+Sync Start Position
+-------------------
+
+The position in the file at which the clip begins playing can also be synced to
+another channel with a currently-playing track using a filename like
+"<sync channelname>track.opus", where channelname is the name of the channel,
+which could be music, sound, or any other registered channels.
+
+This can be used to sync multi-layered looping tracks together. For example::
+
+        play music_2 [ "<sync music_1>layer_2.opus", "layer_2.opus" ]
+
+Will play layer_2.opus with the start time synced to the current track in
+channel music_1 in the first iteration, before playing the whole track in
+subsequent iterations. (By default, the layer_2.opus start time will remain
+modified even in subsequent iterations in the loop.)
+
 .. _silence:
 
 Playing Silence
@@ -191,7 +232,7 @@ and then use::
 
     play music sunflower
 
-Ren'Py will also automatically place sound files in the audio name face,
+Ren'Py will also automatically place sound files in the audio namespace,
 if found in the ``game/audio`` directory. Files in this directory with a
 supported extension (currently, .wav, .mp2, .mp3, .ogg, and .opus) have the
 extension stripped, the rest of the filename forced to lower case, and are

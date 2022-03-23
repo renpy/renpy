@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-12 23:03
-
+﻿
 translate japanese strings:
 
     # renpy/common/00accessibility.rpy:28
@@ -60,11 +59,11 @@ translate japanese strings:
 
     # renpy/common/00accessibility.rpy:136
     old "DejaVu Sans"
-    new ""
+    new "DejaVu Sans"
 
     # renpy/common/00accessibility.rpy:140
     old "Opendyslexic"
-    new ""
+    new "Opendyslexic"
 
     # renpy/common/00accessibility.rpy:146
     old "Text Size Scaling"
@@ -100,7 +99,7 @@ translate japanese strings:
 
     # renpy/common/00accessibility.rpy:191
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new ""
+    new "このメニューのオプションはアクセス性を改善するためのものです。すべてのゲームで動作するわけではなく、特定の組合せではゲームを正常にレンダリングしないでしょう。これはゲームやエンジンの問題ではありません。フォント変更時に最良の結果を得るには、テキストサイズをオリジナルのままにしてください。"
 
     # renpy/common/00action_file.rpy:26
     old "{#weekday}Monday"
@@ -312,11 +311,11 @@ translate japanese strings:
 
     # renpy/common/00director.rpy:1481
     old "⬆"
-    new ""
+    new "⬆"
 
     # renpy/common/00director.rpy:1487
     old "⬇"
-    new ""
+    new "⬇"
 
     # renpy/common/00director.rpy:1551
     old "Done"
@@ -324,31 +323,31 @@ translate japanese strings:
 
     # renpy/common/00director.rpy:1561
     old "(statement)"
-    new ""
+    new "(statement)"
 
     # renpy/common/00director.rpy:1562
     old "(tag)"
-    new ""
+    new "(tag)"
 
     # renpy/common/00director.rpy:1563
     old "(attributes)"
-    new ""
+    new "(attributes)"
 
     # renpy/common/00director.rpy:1564
     old "(transform)"
-    new ""
+    new "(transform)"
 
     # renpy/common/00director.rpy:1589
     old "(transition)"
-    new ""
+    new "(transition)"
 
     # renpy/common/00director.rpy:1601
     old "(channel)"
-    new ""
+    new "(channel)"
 
     # renpy/common/00director.rpy:1602
     old "(filename)"
-    new ""
+    new "(filename)"
 
     # renpy/common/00director.rpy:1631
     old "Change"
@@ -536,7 +535,7 @@ translate japanese strings:
 
     # renpy/common/00preferences.rpy:363
     old "voice sustain"
-    new ""
+    new "ボイスを続ける"
 
     # renpy/common/00preferences.rpy:372
     old "self voicing"
@@ -680,11 +679,11 @@ translate japanese strings:
 
     # renpy/common/_developer/developer.rpym:90
     old "[name] [attributes] (hidden)"
-    new ""
+    new "[name] [attributes] (hidden)"
 
     # renpy/common/_developer/developer.rpym:94
     old "[name] [attributes]"
-    new ""
+    new "[name] [attributes]"
 
     # renpy/common/_developer/developer.rpym:143
     old "Nothing to inspect."
@@ -736,11 +735,11 @@ translate japanese strings:
 
     # renpy/common/_developer/developer.rpym:649
     old "✔ "
-    new ""
+    new "✔ "
 
     # renpy/common/_developer/developer.rpym:652
     old "✘ "
-    new ""
+    new "✘ "
 
     # renpy/common/_developer/developer.rpym:657
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
@@ -784,11 +783,11 @@ translate japanese strings:
 
     # renpy/common/_layout/classic_load_save.rpym:170
     old "a"
-    new ""
+    new "a"
 
     # renpy/common/_layout/classic_load_save.rpym:179
     old "q"
-    new ""
+    new "q"
 
     # renpy/common/00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
@@ -924,7 +923,7 @@ translate japanese strings:
 
     # renpy/common/00gltest.rpy:93
     old "NPOT"
-    new ""
+    new "NPOT"
 
     # renpy/common/00gltest.rpy:97
     old "Enable"
@@ -944,11 +943,11 @@ translate japanese strings:
 
     # renpy/common/00gltest.rpy:153
     old "60"
-    new ""
+    new "60"
 
     # renpy/common/00gltest.rpy:157
     old "30"
-    new ""
+    new "30"
 
     # renpy/common/00gltest.rpy:163
     old "Tearing"
@@ -1031,8 +1030,8 @@ translate japanese strings:
     new "キャリブレート [name] ([i]/[total])"
 
     # renpy/common/00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "[control!r] [kind] を押すか、倒すかしてください。"
+    old "Press or move the [control!s] [kind]."
+    new "[control!s] [kind] を押すか、倒すかしてください。"
 
     # renpy/common/00gamepad.rpy:66
     old "Skip (A)"
@@ -1125,4 +1124,51 @@ translate japanese strings:
     # renpy/common/_errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "クリップボードに errors.txt を Discord に適した Markdown 形式でコピーする。"
+
+
+translate japanese strings:
+
+    # renpy/common/00accessibility.rpy:193
+    old "Self-Voicing Volume Drop"
+    new "自己発話音量"
+
+    # renpy/common/00preferences.rpy:384
+    old "self voicing volume drop"
+    new "セルフボイシングボリュームを下げる"
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "GLレンダリングを強制"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "ANGLEレンダリングを強制"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "GLESレンダリングを強制"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "GL2レンダリングを強制"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "ANGLE2レンダリングを強制"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "GLES2レンダリングを強制"
+
+    # renpy/common/00gltest.rpy:245
+    old "This game requires use of GL2 that can't be initialised."
+    new "このゲームはGL2を必要としますが初期化できません。"
+
+    # renpy/common/00gltest.rpy:256
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "詳しい修正方法は{a=[url]}documentation{/a}を参照してください。"
+
+    # renpy/common/00gltest.rpy:273
+    old "Change render options"
+    new "レンダリング設定を変更"
 

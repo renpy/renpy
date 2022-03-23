@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,7 +32,7 @@ init -1200 python:
     config.window_auto_show = [ "say", "menu-with-caption" ]
 
     # A list of statements that cause the window to be auto-hidden.
-    config.window_auto_hide = [ "scene", "call screen", "menu" ]
+    config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered" ]
 
     config.window_functions_set_auto = True
 
@@ -108,10 +108,10 @@ init -1200 python:
             return
 
         if statement in config.window_auto_hide:
-            _window_hide()
+            _window_hide(auto=True)
 
         if statement in config.window_auto_show:
-            _window_show()
+            _window_show(auto=True)
 
     config.statement_callbacks.append(_window_auto_callback)
 
@@ -196,20 +196,23 @@ python early hide:
             trans = eval(p["show"])
             _window_show(trans, auto=True)
 
+    def warp_true(p):
+        return True
+
 
     renpy.register_statement('window show',
                               parse=parse_window,
                               execute=execute_window_show,
                               lint=lint_window,
-                              warp=lambda : True)
+                              warp=warp_true)
 
     renpy.register_statement('window hide',
                               parse=parse_window,
                               execute=execute_window_hide,
                               lint=lint_window,
-                              warp=lambda : True)
+                              warp=warp_true)
 
     renpy.register_statement('window auto',
                              parse=parse_window_auto,
                              execute=execute_window_auto,
-                             warp=lambda : True)
+                             warp=warp_true)

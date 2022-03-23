@@ -201,3 +201,6 @@ translate russian strings:
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Имя пользователя и название проекта, ассоциированные с проектом на itch.io, разделённые дробью."
 
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    new "## Эти три переменные управляют, среди прочего, тем, какие микшеры показываются игроку по умолчанию. Установка одной из них в False скроет соответствующий микшер."

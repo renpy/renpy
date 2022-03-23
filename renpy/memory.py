@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,8 @@
 # called by default, but can be used when problems occur.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import time
 import weakref
@@ -36,6 +37,26 @@ import inspect
 import renpy
 
 memory_log = renpy.log.open("memory")
+
+# Names that are intended to be constant containers and may be skipped during profiling.
+constant_containers = {
+    "renpy.game.script",
+    "renpy.display.image.images",
+    "renpy.display.image.image_attributes",
+    "renpy.python.py_compile_cache",
+    "renpy.python.old_py_compile_cache",
+    "renpy.python.store_dicts",
+    "renpy.python.store_modules",
+    "renpy.pyanalysis.ccache",
+    "renpy.gl2.live2d.common_cache",
+    "renpy.sl2.slast.scache",
+    "renpy.sl2.slast.ccache",
+    "renpy.sl2.slparser.all_statements",
+    "renpy.screenlang.all_statements",
+    "renpy.display.screen.screens_at_sort",
+    "renpy.display.screen.screens",
+    "renpy.display.screen.screens_by_name",
+}
 
 
 def print_garbage(gen):
@@ -56,7 +77,7 @@ def print_garbage(gen):
 
         try:
             suffix = " (" + inspect.getfile(i) + ")"
-        except:
+        except Exception:
             pass
 
         print(" -", prefix + repr(i)[:160] + suffix)
@@ -124,8 +145,8 @@ def cycle_finder(o, name):
         else:
 
             try:
-                reduction = o.__reduce_ex__(2)
-            except:
+                reduction = o.__reduce_ex__(2) # type: ignore
+            except Exception:
                 reduction = [ ]
 
             # Gets an element from the reduction, or o if we don't have
@@ -143,10 +164,10 @@ def cycle_finder(o, name):
             else:
                 visit(ido, state, path + ".__getstate__()")
 
-            for i, oo in enumerate(get(3, [])):
+            for i, oo in enumerate(get(3, [])): # type: ignore
                 visit(ido, oo, "{0}[{1}]".format(path, i))
 
-            for i in get(4, []):
+            for i in get(4, []): # type: ignore
 
                 if len(i) != 2:
                     continue
@@ -212,11 +233,6 @@ def walk_memory(roots, seen=None):
     # A map from root_name to total_size.
     size = collections.defaultdict(int)
 
-    def add(name, o):
-        """
-        Adds o to the worklist if it's not in seen.
-        """
-
     for name, o in roots:
         id_o = id(o)
 
@@ -253,7 +269,7 @@ def walk_memory(roots, seen=None):
     return size, seen
 
 
-def profile_memory_common(packages=[ "renpy", "store" ]):
+def profile_memory_common(packages=[ "renpy", "store" ], skip_constants=False):
     """
     Profiles object, surface, and texture memory used in the renpy and store
     packages.
@@ -283,12 +299,17 @@ def profile_memory_common(packages=[ "renpy", "store" ]):
             continue
 
         for name, o in mod.__dict__.items():
-            roots.append((mod_name + "." + name, o))
+            name = mod_name + "." + name
+
+            if skip_constants and name in constant_containers:
+                continue
+
+            roots.append((name, o))
 
     return walk_memory(roots)
 
 
-def profile_memory(fraction=1.0, minimum=0):
+def profile_memory(fraction=1.0, minimum=0, skip_constants=False):
     """
     :doc: memory
 
@@ -309,6 +330,10 @@ def profile_memory(fraction=1.0, minimum=0):
         If a name is accounted less than `minimum` bytes of memory, it will
         not be printed.
 
+    `skip_constants`
+        If True, the profiler will skip scanning of large Ren'Py's containers,
+        that are intended to be immutable after startup.
+
     As it has to scan all memory used by Ren'Py, this function may take a
     long time to complete.
     """
@@ -318,7 +343,7 @@ def profile_memory(fraction=1.0, minimum=0):
     write("Memory profile at " + time.ctime() + ":")
     write("")
 
-    usage = [ (v, k) for (k, v) in profile_memory_common()[0].items() ]
+    usage = [ (v, k) for (k, v) in profile_memory_common(skip_constants=skip_constants)[0].items() ]
     usage.sort()
 
     # The total number of bytes allocated.
@@ -344,7 +369,7 @@ old_usage = { }
 old_total = 0
 
 
-def diff_memory(update=True):
+def diff_memory(update=True, skip_constants=False):
     """
     :doc: memory
 
@@ -356,6 +381,10 @@ def diff_memory(update=True):
     that the memory is reachable from. If an object is reachable from more
     than one name, it's assigned to the name it's most directly reachable
     from.
+
+    `skip_constants`
+        If True, the profiler will skip scanning of large Ren'Py's containers,
+        that are intended to be immutable after startup.
 
     As it has to scan all memory used by Ren'Py, this function may take a
     long time to complete.
@@ -369,7 +398,7 @@ def diff_memory(update=True):
     write("Memory diff at " + time.ctime() + ":")
     write("")
 
-    usage = profile_memory_common()[0]
+    usage = profile_memory_common(skip_constants=skip_constants)[0]
     total = sum(usage.values())
 
     diff = [ ]
@@ -469,21 +498,17 @@ def profile_rollback():
     write("")
 
 
-################################################################################
-# Legacy memory debug functions
-################################################################################
-
 def find_parents(cls):
     """
     Finds the parents of every object of type `cls`.
     """
 
-    # GC to save memory.
-    gc.collect()
+    if gc.garbage:
+        del gc.garbage[:]
 
     objs = gc.get_objects()
 
-    def print_path(o):
+    def print_path(o, objs):
 
         prefix = ""
 
@@ -491,18 +516,21 @@ def find_parents(cls):
         queue = [ ]
         objects = [ ]
 
+        last = None
+
         for _i in range(30):
 
             objects.append(o)
+            last = o
 
-            print(prefix + str(id(o)), type(o), end=' ')
+            print(prefix + "%x" % id(o), "(%d referrers)" % len(gc.get_referrers(o)), type(o), end=' ')
 
             try:
                 if isinstance(o, dict) and "__name__" in o:
                     print("with name", o["__name__"])
                 else:
-                    print(repr(o))  # [:1000]
-            except:
+                    print(repr(o))
+            except Exception:
                 print("Bad repr.")
 
             found = False
@@ -515,7 +543,7 @@ def find_parents(cls):
                 continue
 
             if isinstance(o, weakref.WeakKeyDictionary):
-                for k, v in o.data.items():
+                for k, v in o.items():
                     if v is objects[-4]:
                         k = k()
                         seen.add(id(k))
@@ -545,13 +573,18 @@ def find_parents(cls):
 
             o, prefix = queue.pop()
 
+        for i in gc.get_referrers(last):
+            print(prefix + "<- %x" % id(i), type(i))
+
+        del objects[:]
+
     for o in objs:
         if isinstance(o, cls):
-            import random
-            if random.random() < .1:
 
-                print()
-                print("===================================================")
-                print()
+            print()
+            print("===================================================")
+            print()
 
-                print_path(o)
+            print_path(o, objs)
+
+    del objs[:]

@@ -672,3 +672,7 @@ translate russian strings:
     # screens.rpy:1431
     old "Menu"
     new "Меню"
+
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    new "Открывает меню специальных возможностей."

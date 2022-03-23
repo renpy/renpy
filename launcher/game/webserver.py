@@ -61,13 +61,13 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         path = self.translate_path(self.path)
         f = None
         if os.path.isdir(path):
-            parts = urlparse.urlsplit(self.path)
+            parts = urllib.parse.urlsplit(self.path)
             if not parts.path.endswith('/'):
                 # redirect browser - doing basically what apache does
                 self.send_response(301)
                 new_parts = (parts[0], parts[1], parts[2] + '/',
                              parts[3], parts[4])
-                new_url = urlparse.urlunsplit(new_parts)
+                new_url = urllib.parse.urlunsplit(new_parts)
                 self.send_header("Location", new_url)
                 self.end_headers()
                 return None
@@ -99,7 +99,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
             self.end_headers()
             return f
-        except:
+        except Exception:
             f.close()
             raise
 

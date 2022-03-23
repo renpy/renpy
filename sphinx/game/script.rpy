@@ -1,6 +1,8 @@
 init 1000000 python:
     import doc
-    import __builtin__
+    import shaderdoc
+
+    shaderdoc.shaders()
 
     doc.scan_section("", renpy.store)
     doc.scan_section("renpy.", renpy)
@@ -17,12 +19,13 @@ init 1000000 python:
     doc.scan_section("achievement.", achievement)
     doc.scan_section("gui.", gui)
     doc.scan_section("layeredimage.", layeredimage)
+    doc.scan_section("Matrix.", Matrix)
 
     doc.write_line_buffer()
     doc.write_keywords()
 
     doc.scan_docs()
-    doc.write_reserved(__builtin__, "source/inc/reserved_builtins", False)
+    doc.write_reserved(doc.builtins, "source/inc/reserved_builtins", False)
     doc.write_reserved(store, "source/inc/reserved_renpy", True)
 
     doc.write_pure_const()
@@ -33,5 +36,10 @@ init 1000000 python:
 
     doc.check_dups()
 
-    raise SystemExit
+    console_commands = _console.help(None, True)
+    console_commands = "\n\n".join(console_commands.split("\n"))
+    f = open("source/inc/console_commands", "w")
+    f.write(console_commands)
+    f.close()
 
+    raise SystemExit

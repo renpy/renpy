@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -55,12 +55,7 @@ init -1500 python:
                     to use. If the image name begins with "bg", "cg", or
                     "event", uses 'bg'.
 
-                    Otherwise, contacts a web service to guess gender from
-                    the character's name, and uses that. (The 'girl' placeholder
-                    is used when the service can't guess.)
-
-                    The webservice will only be contacted when :var:`config.developer`
-                    is True.
+                    Otherwise, the 'girl' placeholder is used.
 
             `full`
                 If true, a full-body sprite is used. Otherwise, a 3/4 sprite
@@ -117,7 +112,7 @@ init -1500 python:
 #                     rv = "boy"
 #                 else:
 #                     rv = "girl"
-#             except:
+#             except Exception:
 #                 rv = "girl"
 
             rv = "girl"

@@ -70,6 +70,7 @@ MediaState *media_open(SDL_RWops *, const char *);
 void media_want_video(MediaState *, int);
 void media_start_end(MediaState *, double, double);
 void media_start(MediaState *);
+void media_pause(MediaState *, int);
 void media_close(MediaState *);
 
 int media_read_audio(struct MediaState *is, Uint8 *stream, int len);
@@ -496,6 +497,10 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 c->queued_tight = 0;
                 c->queued_start_ms = 0;
 
+                if (c->playing_fadein) {
+                    old_tight = 0;
+                }
+
                 UNLOCK_NAME()
 
                 start_sample(c, ! old_tight);
@@ -523,7 +528,13 @@ static int check_channel(int c) {
     }
 
     if (c >= num_channels) {
-        channels = realloc(channels, sizeof(struct Channel) * (c + 1));
+        struct Channel *extended_channels = realloc(channels, sizeof(struct Channel) * (c + 1));
+        if (extended_channels == NULL) {
+            error(RPS_ERROR);
+            error_msg = "Unable to allocate additional channels.";
+            return -1;
+        }
+        channels = extended_channels;
 
         for (i = num_channels; i <= c; i++) {
 
@@ -868,11 +879,15 @@ void RPS_pause(int channel, int pause) {
 
     c->paused = pause;
 
+    if (c->playing) {
+        media_pause(c->playing, pause);
+    }
+
     error(SUCCESS);
 
 }
 
-void RPS_unpause_all(void) {
+void RPS_unpause_all_at_start(void) {
 
     int i;
 
@@ -880,7 +895,7 @@ void RPS_unpause_all(void) {
     Py_BEGIN_ALLOW_THREADS
 
     for (i = 0; i < num_channels; i++) {
-        if (channels[i].playing && channels[i].paused) {
+        if (channels[i].playing && channels[i].paused && channels[i].pos == 0) {
             media_wait_ready(channels[i].playing);
         }
     }
@@ -888,7 +903,10 @@ void RPS_unpause_all(void) {
     Py_END_ALLOW_THREADS
 
     for (i = 0; i < num_channels; i++) {
-        channels[i].paused = 0;
+        if (channels[i].playing && channels[i].pos == 0) {
+            channels[i].paused = 0;
+            media_pause(channels[i].playing, 0);
+        }
     }
 
     error(SUCCESS);

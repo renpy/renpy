@@ -88,8 +88,23 @@ div.section {
     position: fixed;
 	max-height: 82vh;
     overflow-y: auto;
-    width: 263px;
 }
+
+
+@media (max-width: 992px) {
+#sidebar {
+    visibility: hidden;
+}
+}
+
+@media (max-width: 1200px) {
+#sidebar {
+    margin-right: 3em;
+}
+}
+
+￼
+￼
 
 dl.var dt {
 	font-weight: inherit;

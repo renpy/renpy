@@ -102,8 +102,8 @@ translate japanese strings:
     new "キャリブレート [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "[control!r] [kind] を押すか、倒すかしてください。"
+    old "Press or move the [control!s] [kind]."
+    new "[control!s] [kind] を押すか、倒すかしてください。"
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -259,3 +259,53 @@ translate japanese strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "クリップボードに errors.txt を Discord に適した Markdown 形式でコピーする。"
 
+
+translate japanese strings:
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "GLレンダリングを強制"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "ANGLEレンダリングを強制"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "GLESレンダリングを強制"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "GL2レンダリングを強制"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "ANGLE2レンダリングを強制"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "GLES2レンダリングを強制"
+
+    # renpy/common/00gltest.rpy:245
+    old "This game requires use of GL2 that can't be initialised."
+    new "このゲームはGL2を必要としますが初期化できません。"
+
+    # renpy/common/00gltest.rpy:256
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "詳しい修正方法は{a=[url]}documentation{/a}を参照してください。"
+
+    # renpy/common/00gltest.rpy:273
+    old "Change render options"
+    new "レンダリング設定を変更"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "有効 (ブロックリスト無効化)"
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "{a=edit:1:log.txt}log.txt{/a} ファイルにある情報は何があなたのコンピュータで問題になっているか探る手助けになるでしょう"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "'[control!s]' [kind] を押すか動かしてください"

@@ -1,6 +1,6 @@
 #@PydevCodeAnalysisIgnore
 #cython: profile=False
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,7 @@
 from __future__ import print_function
 
 from renpy.uguu.gl cimport *
-from gldraw cimport *
+from renpy.gl.gldraw cimport *
 
 from sdl2 cimport *
 from pygame_sdl2 cimport *
@@ -124,6 +124,9 @@ def test_texture_sizes(Environ environ, draw):
 
     renpy.display.log.write("- Hardware max texture size: %d", hw_max_size)
     hw_max_size = min(2048, hw_max_size)
+
+    if renpy.session.get("gl_did_texture_text", False):
+        return True
 
     SIZES = [ ]
 
@@ -241,6 +244,8 @@ def test_texture_sizes(Environ environ, draw):
     if not SIZES:
         renpy.display.log.write("Textures are not rendering properly.")
         return False
+
+    renpy.session["gl_did_texture_text"] = True
 
     SIZES.reverse()
     return True
@@ -913,7 +918,7 @@ def texture_grid_from_surface(surf, transient):
     rv.rows, texrows = compute_tiling(height, max_size, fill_factor)
 
     for rv_row, texrow in zip(rv.rows, texrows):
-        border_top, _, border_bottom = rv_row
+        border_y, _, _ = rv_row
         y, height, texheight = texrow
 
         row = [ ]
@@ -921,12 +926,12 @@ def texture_grid_from_surface(surf, transient):
         colnum = 0
 
         for rv_col, texcol in zip(rv.columns, texcolumns):
-            border_left, _, border_right = rv_col
+            border_x, _, _ = rv_col
             x, width, texwidth = texcol
 
             tex = alloc_texture(texwidth, texheight)
             tex.load_surface(surf, x, y, width, height,
-                             border_left, border_top, border_right, border_bottom)
+                             border_x, border_y, border_x, border_y)
 
             row.append(tex)
 
@@ -1599,4 +1604,3 @@ cdef void draw_rectangle(
     environ.set_vertex(vcoords)
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4)
-

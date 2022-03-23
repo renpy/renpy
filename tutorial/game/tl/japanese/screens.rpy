@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 translate japanese strings:
 
     # game/screens.rpy:261
@@ -72,11 +71,11 @@ translate japanese strings:
 
     # game/screens.rpy:566
     old "Version [config.version!t]\n"
-    new ""
+    new "Version [config.version!t]\n"
 
     # game/screens.rpy:572
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
-    new ""
+    new "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
 
     # game/screens.rpy:612
     old "Page {}"
@@ -100,19 +99,19 @@ translate japanese strings:
 
     # game/screens.rpy:671
     old "<"
-    new ""
+    new "<"
 
     # game/screens.rpy:674
     old "{#auto_page}A"
-    new ""
+    new "{#auto_page}A"
 
     # game/screens.rpy:677
     old "{#quick_page}Q"
-    new ""
+    new "{#quick_page}Q"
 
     # game/screens.rpy:683
     old ">"
-    new ""
+    new ">"
 
     # game/screens.rpy:745
     old "Display"
@@ -136,11 +135,11 @@ translate japanese strings:
 
     # game/screens.rpy:766
     old "Examples"
-    new ""
+    new "Examples"
 
     # game/screens.rpy:775
     old "Language"
-    new ""
+    new "言語"
 
     # game/screens.rpy:798
     old "Text Speed"
@@ -188,7 +187,7 @@ translate japanese strings:
 
     # game/screens.rpy:1039
     old "Enter"
-    new ""
+    new "Enter"
 
     # game/screens.rpy:1040
     old "Advances dialogue and activates the interface."
@@ -196,7 +195,7 @@ translate japanese strings:
 
     # game/screens.rpy:1043
     old "Space"
-    new ""
+    new "Space"
 
     # game/screens.rpy:1044
     old "Advances dialogue without selecting choices."
@@ -212,7 +211,7 @@ translate japanese strings:
 
     # game/screens.rpy:1051
     old "Escape"
-    new ""
+    new "Escape"
 
     # game/screens.rpy:1052
     old "Accesses the game menu."
@@ -220,7 +219,7 @@ translate japanese strings:
 
     # game/screens.rpy:1055
     old "Ctrl"
-    new ""
+    new "Ctrl"
 
     # game/screens.rpy:1056
     old "Skips dialogue while held down."
@@ -228,7 +227,7 @@ translate japanese strings:
 
     # game/screens.rpy:1059
     old "Tab"
-    new ""
+    new "Tab"
 
     # game/screens.rpy:1060
     old "Toggles dialogue skipping."
@@ -236,7 +235,7 @@ translate japanese strings:
 
     # game/screens.rpy:1063
     old "Page Up"
-    new ""
+    new "Page Up"
 
     # game/screens.rpy:1064
     old "Rolls back to earlier dialogue."
@@ -244,7 +243,7 @@ translate japanese strings:
 
     # game/screens.rpy:1067
     old "Page Down"
-    new ""
+    new "Page Down"
 
     # game/screens.rpy:1068
     old "Rolls forward to later dialogue."
@@ -325,4 +324,8 @@ translate japanese strings:
     # game/screens.rpy:1465
     old "Menu"
     new "メニュー"
+
+    # game/screens.rpy:1083
+    old "Opens the accessibility menu."
+    new "アクセス性メニューを開きます。"
 

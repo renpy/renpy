@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,6 +29,9 @@
 # appropriate.
 
 init -1 python hide:
+
+    # Update the searchpath to find additional fonts.
+    config.searchpath.append(config.renpy_base + "/sdk-fonts")
 
     # Should we enable the use of developer tools? This should be
     # set to False before the game is released, so the user can't
@@ -246,8 +249,8 @@ init python:
     # Mac signing options.
     import os
     build.mac_identity = os.environ.get("RENPY_MAC_IDENTITY", None)
-    build.mac_codesign_command = [ "/home/tom/ab/renpy-deps/mac/mac_sign_client.sh", "{identity}", "{app}" ]
-    build.mac_create_dmg_command = [ "/home/tom/ab/renpy-deps/mac/mac_dmg_client.sh", "{identity}", "{volname}", "{sourcedir}", "{dmg}" ]
+    build.mac_codesign_command = [ config.renpy_base + "/scripts/mac/mac_sign_client.sh", "{identity}", "{app}" ]
+    build.mac_create_dmg_command = [ config.renpy_base + "/scripts/mac/mac_dmg_client.sh", "{identity}", "{volname}", "{sourcedir}", "{dmg}" ]
     build.mac_codesign_dmg_command = [ "/bin/true" ]
 
 
@@ -280,9 +283,10 @@ init python:
         with open(os.path.join(config.renpy_base, "atom", "executable.txt")) as f:
             for l in f:
                 build.executable(l.strip())
-    except:
+    except Exception:
         pass
 
+    build.classify_renpy("rapt/**/libLive2DCubismCore.so", None)
     build.classify_renpy("rapt/**", "rapt")
     build.executable("rapt/prototype/gradlew")
 
@@ -301,11 +305,11 @@ init python:
     build.classify_renpy("**.old", None)
     build.classify_renpy("**.new", None)
     build.classify_renpy("**.bak", None)
-    build.classify_renpy("**.pyc", None)
 
     build.classify_renpy("**/log.txt", None)
     build.classify_renpy("**/traceback.txt", None)
     build.classify_renpy("**/errors.txt", None)
+    build.classify_renpy("**/steam_appid.txt", None)
     build.classify_renpy("**/saves/", None)
     build.classify_renpy("**/tmp/", None)
     build.classify_renpy("**/.Editra", None)
@@ -320,7 +324,15 @@ init python:
         else goes into source.
         """
 
-        build.classify_renpy(pattern + "/**.pyo", binary)
+        if PY2:
+            build.classify_renpy(pattern + "/__pycache__/", None)
+            build.classify_renpy(pattern + "/**.pyo", binary)
+        else:
+            build.classify_renpy(pattern + "/__pycache__/", binary)
+            build.classify_renpy(pattern + "/__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), binary)
+            build.classify_renpy(pattern + "/**.pyc", binary)
+            build.classify_renpy(pattern + "/**.pyo", None)
+
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
         build.classify_renpy(pattern + "/**/cache/*", binary)
@@ -340,6 +352,9 @@ init python:
     source_and_binary("the_question")
     source_and_binary("tutorial")
 
+    # extra fonts.
+    build.classify_renpy("sdk-fonts/**", "source")
+
     # docs.
     build.classify_renpy("doc/", "source")
     build.classify_renpy("doc/.doctrees/", None)
@@ -358,8 +373,7 @@ init python:
     # module.
     build.classify_renpy("module/", "source")
     build.classify_renpy("module/*.c", "source")
-    build.classify_renpy("module/gen/", "source")
-    build.classify_renpy("module/gen/*.c", "source")
+    build.classify_renpy("module/gen/", None)
     build.classify_renpy("module/*.h", "source")
     build.classify_renpy("module/*.py*", "source")
     build.classify_renpy("module/include/", "source")
@@ -371,13 +385,23 @@ init python:
     build.classify_renpy("module/fribidi-src/**", "source")
 
     # all-platforms binary.
-    build.classify_renpy("lib/**/_renpysteam*", None)
+    build.classify_renpy("lib/**/_renpysteam*", "steam")
+    build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
-    build.classify_renpy("lib/**/*steam_api*", None)
-    build.classify_renpy("lib/linux-armv7l/", "raspi")
-    build.classify_renpy("lib/linux-armv7l/**", "raspi")
-    build.classify_renpy("lib/**", "binary")
-    build.classify_renpy("renpy.sh", "binary")
+    build.classify_renpy("lib/*linux-armv7l/", "raspi")
+    build.classify_renpy("lib/*linux-armv7l/**", "raspi")
+
+    if PY2:
+        source_and_binary("lib/py2-**", "binary", "binary")
+        source_and_binary("lib/python2**", "binary", "binary")
+        build.classify_renpy("renpy2.sh", "binary")
+    else:
+        source_and_binary("lib/py3-**", "binary", "binary")
+        source_and_binary("lib/python3**", "binary", "binary")
+        build.classify_renpy("renpy3.sh", "binary")
+
+    build.classify_renpy("lib/", "binary")
+
     # renpy.app is now built from scratch from distribute.rpy.
 
     # jedit rules.
@@ -389,6 +413,7 @@ init python:
     build.package("sdk", "zip tar.bz2 dmg", "source binary")
     build.package("source", "tar.bz2", "source source_only", update=False)
     build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
+    build.package("steam", "zip", "steam", dlc=True)
 
     build.package("jedit", "zip", "jedit", dlc=True)
 
@@ -404,5 +429,13 @@ init python:
 # Enable the special launcher translation mode.
 define config.translate_launcher = True
 
+# Allow clicks that focus the window to be processed.
+define config.mouse_focus_clickthrough = True
+
 # Reduce the rate of screen updates.
 default preferences.gl_powersave = True
+
+
+# Disable steam.
+python early:
+    config.enable_steam = False

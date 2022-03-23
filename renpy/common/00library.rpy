@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -49,7 +49,7 @@ init -1700 python:
 
                 return False
 
-            except:
+            except Exception:
                 if config.debug_equality:
                     raise
 
@@ -88,7 +88,7 @@ init -1700 python:
 
                 return True
 
-            except:
+            except Exception:
 
                 if config.debug_equality:
                     raise
@@ -122,7 +122,7 @@ init -1700 python:
         try:
             who = _last_say_who
             who = renpy.eval_who(who)
-        except:
+        except Exception:
             who = None
 
         if who is None:
@@ -260,7 +260,7 @@ init -1700 python:
         who = Character(who, kind=name_only)
         try:
             who.predict(what)
-        except:
+        except Exception:
             pass
 
     def say(who, what, interact=True, *args, **kwargs):
@@ -366,8 +366,19 @@ wipeup
 zoomin
 zoominout
 zoomout
+
+_autosave
+_confirm_quit
+_dismiss_pause
+_game_menu_screen
+_ignore_action
+_quit_slot
+_rollback
+_skipping
+_window_subtitle
 """.split():
 
+        # _history, history_list, and _version are set later, so aren't included.
         renpy.lint.renpy_builtins.remove(i)
 
     del i

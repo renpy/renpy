@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,10 +27,11 @@
 # updating.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.display
-import renpy.test
+from typing import Optional
+
+import renpy
 
 import hashlib
 import re
@@ -90,7 +91,7 @@ class ParameterInfo(object):
             best job it can.
         """
 
-        values = renpy.python.RevertableDict()
+        values = renpy.revertable.RevertableDict()
         rv = { }
 
         if args is None:
@@ -182,7 +183,7 @@ class ArgumentInfo(object):
         """
 
         args = [ ]
-        kwargs = renpy.python.RevertableDict()
+        kwargs = renpy.revertable.RevertableDict()
 
         for k, v in self.arguments:
             if k is not None:
@@ -233,12 +234,14 @@ class PyExpr(str):
     __slots__ = [
         'filename',
         'linenumber',
+        'py',
         ]
 
-    def __new__(cls, s, filename, linenumber):
+    def __new__(cls, s, filename, linenumber, py=3):
         self = str.__new__(cls, s)
         self.filename = filename
         self.linenumber = linenumber
+        self.py = py
 
         # Queue the string for precompilation.
         if self and (renpy.game.script.all_pyexpr is not None):
@@ -247,7 +250,7 @@ class PyExpr(str):
         return self
 
     def __getnewargs__(self):
-        return (str(self), self.filename, self.linenumber) # E1101
+        return (str(self), self.filename, self.linenumber, self.py)
 
 
 def probably_side_effect_free(expr):
@@ -268,13 +271,19 @@ class PyCode(object):
         'mode',
         'bytecode',
         'hash',
+        'py',
         ]
 
     def __getstate__(self):
-        return (1, self.source, self.location, self.mode)
+        return (1, self.source, self.location, self.mode, self.py)
 
     def __setstate__(self, state):
-        (_, self.source, self.location, self.mode) = state
+        if len(state) == 4:
+            (_, self.source, self.location, self.mode) = state
+            self.py = 2
+        else:
+            (_, self.source, self.location, self.mode, self.py) = state
+
         self.bytecode = None
 
         if renpy.game.script.record_pycode:
@@ -284,6 +293,11 @@ class PyCode(object):
 
         if isinstance(source, PyExpr):
             loc = (source.filename, source.linenumber, source)
+
+        if PY2:
+            self.py = 2
+        else:
+            self.py = 3
 
         # The source code.
         self.source = source
@@ -305,14 +319,14 @@ class PyCode(object):
         try:
             if self.hash is not None:
                 return self.hash
-        except:
+        except Exception:
             pass
 
         code = self.source
         if isinstance(code, renpy.python.ast.AST): # @UndefinedVariable
             code = renpy.python.ast.dump(code) # @UndefinedVariable
 
-        self.hash = bchr(renpy.bytecode_version) + hashlib.md5((repr(self.location) + code).encode("utf-8")).digest()
+        self.hash = bchr(renpy.bytecode_version) + hashlib.md5((repr(self.location) + code).encode("utf-8")).digest() # type:ignore
         return self.hash
 
 
@@ -338,6 +352,9 @@ class Scry(object):
     predict, this tries to only get things we _know_ will happen.
     """
 
+    _next = None # type: Optional[Node]
+    interacts = None # type: Optional[bool]
+
     # By default, all attributes are None.
     def __getattr__(self, name):
         return None
@@ -348,7 +365,7 @@ class Scry(object):
         else:
             try:
                 return self._next.scry()
-            except:
+            except Exception:
                 return None
 
 
@@ -414,16 +431,16 @@ class Node(object):
 
         f(self)
 
-    def get_init(self):
-        """
-        Returns a node that should be run at init time (that is, before
-        the normal start of the script.), or None if this node doesn't
-        care to suggest one.
+    # def get_init(self):
+    #     """
+    #     Returns a node that should be run at init time (that is, before
+    #     the normal start of the script.), or None if this node doesn't
+    #     care to suggest one.
 
-        (The only class that needs to override this is Init.)
-        """
+    #     (The only class that needs to override this is Init.)
+    #     """
 
-        return None
+    #     return None
 
     # get_init is only present on statements that define it.
     get_init = None
@@ -457,10 +474,10 @@ class Node(object):
 
         raise Exception("Node subclass forgot to define execute.")
 
-    def early_execute(self):
-        """
-        Called when the module is loaded.
-        """
+    # def early_execute(self):
+    #     """
+    #     Called when the module is loaded.
+    #     """
 
     # early_execute is only present on statements that define it.
     early_execute = None
@@ -484,7 +501,7 @@ class Node(object):
         """
 
         rv = Scry()
-        rv._next = self.next # W0201
+        rv._next = self.next # type: ignore
         return rv
 
     def restructure(self, callback):
@@ -536,16 +553,15 @@ def say_menu_with(expression, callback):
 
     if expression is not None:
         what = renpy.python.py_eval(expression)
-    elif renpy.store.default_transition and renpy.game.preferences.transitions == 2: # @UndefinedVariable
-        what = renpy.store.default_transition
+    elif renpy.store.default_transition and renpy.game.preferences.transitions == 2: # type: ignore
+        what = renpy.store.default_transition # type: ignore
     else:
         return
 
     if not what:
         return
 
-    if renpy.game.preferences.transitions: # @UndefinedVariable
-        # renpy.game.interface.set_transition(what)
+    if renpy.game.preferences.transitions: # type: ignore
         callback(what)
 
 
@@ -570,7 +586,7 @@ def eval_who(who, fast=None):
 
     try:
         return renpy.python.py_eval(who)
-    except:
+    except Exception:
         raise Exception("Sayer '%s' is not defined." % who)
 
 
@@ -586,6 +602,7 @@ class Say(Node):
         'arguments',
         'temporary_attributes',
         'rollback',
+        'identifier',
         ]
 
     def diff_info(self):
@@ -600,7 +617,7 @@ class Say(Node):
         self.rollback = "normal"
         return self
 
-    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None):
+    def __init__(self, loc, who, what, with_, interact=True, attributes=None, arguments=None, temporary_attributes=None, identifier=None):
 
         super(Say, self).__init__(loc)
 
@@ -628,6 +645,10 @@ class Say(Node):
         # Ditto for temporary attributes.
         self.temporary_attributes = temporary_attributes
 
+        # If given, write in the identifier.
+        if identifier is not None:
+            self.identifier = identifier
+
     def get_code(self, dialogue_filter=None):
         rv = [ ]
 
@@ -650,19 +671,23 @@ class Say(Node):
         if not self.interact:
             rv.append("nointeract")
 
-        if self.with_:
-            rv.append("with")
-            rv.append(self.with_)
+        if getattr(self, "identifier", None):
+            rv.append("id")
+            rv.append(getattr(self, "identifier", None))
 
         if self.arguments:
             rv.append(self.arguments.get_code())
+
+        # This has to be at the end.
+        if self.with_:
+            rv.append("with")
+            rv.append(self.with_)
 
         return " ".join(rv)
 
     def execute(self):
 
         next_node(self.next)
-        statement_name("say")
 
         try:
 
@@ -670,6 +695,16 @@ class Say(Node):
             renpy.game.context().temporary_attributes = self.temporary_attributes
 
             who = eval_who(self.who, self.who_fast)
+
+            if who is not None:
+                stmt_name = getattr(who, "statement_name", "say")
+
+                if callable(stmt_name):
+                    stmt_name = stmt_name()
+
+                statement_name(stmt_name)
+            else:
+                statement_name("say")
 
             if not (
                     (who is None) or
@@ -682,13 +717,13 @@ class Say(Node):
             if renpy.config.say_menu_text_filter:
                 what = renpy.config.say_menu_text_filter(what) # E1102
 
-            renpy.store._last_raw_what = what
+            renpy.store._last_raw_what = what # type: ignore
 
             if self.arguments is not None:
                 args, kwargs = self.arguments.evaluate()
             else:
-                args = tuple()
-                kwargs = dict()
+                args = ()
+                kwargs = {}
 
             kwargs.setdefault("interact", self.interact)
 
@@ -713,6 +748,7 @@ class Say(Node):
         try:
 
             renpy.game.context().say_attributes = self.attributes
+            renpy.game.context().temporary_attributes = self.temporary_attributes
 
             who = eval_who(self.who, self.who_fast)
 
@@ -741,13 +777,13 @@ class Say(Node):
         if self.interact:
             renpy.exports.scry_say(who, rv)
         else:
-            rv.interacts = False
+            rv.interacts = False # type: ignore
 
         return rv
 
 
 # Copy the descriptor.
-setattr(Say, "with", Say.with_) # E1101
+setattr(Say, "with", Say.with_) # type: ignore
 
 
 class Init(Node):
@@ -1081,7 +1117,7 @@ def predict_imspec(imspec, scene=False, atl=None):
     elif len(imspec) == 6:
         name, expression, tag, at_expr_list, layer, _zorder = imspec
 
-    elif len(imspec) == 3:
+    else:
         name, at_expr_list, layer = imspec
         tag = None
         expression = None
@@ -1090,7 +1126,7 @@ def predict_imspec(imspec, scene=False, atl=None):
         try:
             img = renpy.python.py_eval(expression)
             img = renpy.easy.displayable(img)
-        except:
+        except Exception:
             return
     else:
         img = None
@@ -1099,13 +1135,13 @@ def predict_imspec(imspec, scene=False, atl=None):
     for i in at_expr_list:
         try:
             at_list.append(renpy.python.py_eval(i))
-        except:
+        except Exception:
             pass
 
     if atl is not None:
         try:
             at_list.append(renpy.display.motion.ATLTransform(atl))
-        except:
+        except Exception:
             pass
 
     layer = renpy.exports.default_layer(layer, tag or name, expression)
@@ -1125,7 +1161,7 @@ def show_imspec(imspec, atl=None):
         name, expression, tag, at_list, layer, zorder = imspec
         behind = [ ]
 
-    elif len(imspec) == 3:
+    else:
         name, at_list, layer = imspec
         expression = None
         tag = None
@@ -1236,6 +1272,46 @@ class ShowLayer(Node):
             self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
+class Camera(Node):
+
+    warp = True
+
+    __slots__ = [
+        'layer',
+        'at_list',
+        'atl',
+        ]
+
+    def __init__(self, loc, layer, at_list, atl):
+        super(Camera, self).__init__(loc)
+
+        self.layer = layer
+        self.at_list = at_list
+        self.atl = atl
+
+    def diff_info(self):
+        return (ShowLayer, self.layer)
+
+    def execute(self):
+        next_node(self.next)
+        statement_name("show layer")
+
+        at_list = [ renpy.python.py_eval(i) for i in self.at_list ]
+
+        if self.atl is not None:
+            atl = renpy.display.motion.ATLTransform(self.atl)
+            at_list.append(atl)
+
+        renpy.exports.layer_at_list(at_list, layer=self.layer, camera=True)
+
+    def predict(self):
+        return [ self.next ]
+
+    def analyze(self):
+        if self.atl is not None:
+            self.atl.mark_constant()
+
+
 class Scene(Node):
 
     __slots__ = [
@@ -1314,24 +1390,25 @@ class Hide(Node):
 
     def predict(self):
 
-        if len(self.imspec) == 3:
+        if len(self.imspec) == 7:
+            name, _expression, tag, _at_list, layer, _zorder, _behind = self.imspec
+
+        elif len(self.imspec) == 6:
+            name, _expression, tag, _at_list, layer, _zorder = self.imspec
+            _behind = None
+        else:
             name, _at_list, layer = self.imspec
             tag = None
             _expression = None
             _zorder = None
             _behind = None
-        elif len(self.imspec) == 6:
-            name, _expression, tag, _at_list, layer, _zorder = self.imspec
-            _behind = None
-        elif len(self.imspec) == 7:
-            name, _expression, tag, _at_list, layer, _zorder, _behind = self.imspec
 
         if tag is None:
             tag = name[0]
 
         layer = renpy.exports.default_layer(layer, tag)
 
-        renpy.game.context().images.predict_hide(tag, layer)
+        renpy.game.context().images.predict_hide(layer, (tag,))
 
         return [ self.next ]
 
@@ -1340,15 +1417,15 @@ class Hide(Node):
         next_node(self.next)
         statement_name("hide")
 
-        if len(self.imspec) == 3:
+        if len(self.imspec) == 7:
+            name, _expression, tag, _at_list, layer, _zorder, _behind = self.imspec
+        elif len(self.imspec) == 6:
+            name, _expression, tag, _at_list, layer, _zorder = self.imspec
+        else:
             name, _at_list, layer = self.imspec
             _expression = None
             tag = None
             _zorder = 0
-        elif len(self.imspec) == 6:
-            name, _expression, tag, _at_list, layer, _zorder = self.imspec
-        elif len(self.imspec) == 7:
-            name, _expression, tag, _at_list, layer, _zorder, _behind = self.imspec
 
         layer = renpy.exports.default_layer(layer, tag or name)
 
@@ -1401,7 +1478,7 @@ class With(Node):
             if trans:
                 renpy.display.predict.displayable(trans(old_widget=None, new_widget=None))
 
-        except:
+        except Exception:
             pass
 
         return [ self.next ]
@@ -1461,7 +1538,7 @@ class Call(Node):
 
             try:
                 label = renpy.python.py_eval(label)
-            except:
+            except Exception:
                 return [ ]
 
             if not renpy.game.script.has_label(label):
@@ -1629,7 +1706,7 @@ class Menu(Node):
                 if self.item_arguments and (self.item_arguments[i] is not None):
                     item_arguments.append(self.item_arguments[i].evaluate())
                 else:
-                    item_arguments.append((tuple(), dict()))
+                    item_arguments.append(((), {}))
 
         if narration:
             renpy.exports.say(None, "\n".join(narration), interact=False)
@@ -1671,7 +1748,7 @@ class Menu(Node):
                 callback(block)
 
 
-setattr(Menu, "with", Menu.with_) # E1101
+setattr(Menu, "with", Menu.with_) # type: ignore
 
 
 # Goto is considered harmful. So we decided to name it "jump"
@@ -1721,7 +1798,7 @@ class Jump(Node):
 
             try:
                 label = renpy.python.py_eval(label)
-            except:
+            except Exception:
                 return [ ]
 
             if not renpy.game.script.has_label(label):
@@ -1891,7 +1968,7 @@ class UserStatement(Node):
     def __init__(self, loc, line, block, parsed):
 
         super(UserStatement, self).__init__(loc)
-        self.code_block = None
+        self.code_block = None # type: Optional[list]
         self.parsed = parsed
         self.line = line
         self.block = block
@@ -2058,11 +2135,15 @@ def create_store(name):
 
 
 class StoreNamespace(object):
+    pure = True
 
     def __init__(self, store):
         self.store = store
 
     def set(self, name, value):
+        renpy.python.store_dicts[self.store][name] = value
+
+    def set_default(self, name, value):
         renpy.python.store_dicts[self.store][name] = value
 
     def get(self, name):
@@ -2083,7 +2164,14 @@ def get_namespace(store):
 
 # Config variables that are set twice - once when the rpy is first loaded,
 # and then again at init time.
-EARLY_CONFIG = { "save_directory", "allow_duplicate_labels", "keyword_after_python" }
+EARLY_CONFIG = {
+    "save_directory",
+    "allow_duplicate_labels",
+    "keyword_after_python",
+    "steam_appid",
+    "name",
+    "version",
+}
 
 define_statements = [ ]
 
@@ -2149,7 +2237,9 @@ class Define(Node):
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
         if self.operator == "=" and self.index is None:
-            renpy.exports.pure(self.store + "." + self.varname)
+            ns, _special = get_namespace(self.store)
+            if getattr(ns, "pure", True):
+                renpy.exports.pure(self.store + "." + self.varname)
 
         self.set()
 
@@ -2161,6 +2251,9 @@ class Define(Node):
         self.set()
 
     def set(self):
+
+        key = None
+        new = None
 
         value = renpy.python.py_eval_bytecode(self.code.bytecode)
         ns, _special = get_namespace(self.store)
@@ -2257,7 +2350,7 @@ class Default(Node):
         defaults_set = d.get("_defaults_set", None)
 
         if defaults_set is None:
-            d["_defaults_set"] = defaults_set = renpy.python.RevertableSet()
+            d["_defaults_set"] = defaults_set = renpy.revertable.RevertableSet()
             d.ever_been_changed.add("_defaults_set")
 
         if self.varname not in defaults_set:
@@ -2286,10 +2379,9 @@ class Screen(Node):
 
     def __init__(self, loc, screen):
         """
-        @param name: The name of the image being defined.
-
-        @param expr: An expression yielding a Displayable that is
-        assigned to the image.
+        @param screen: The screen object being defined.
+        In SL1, an instance of screenlang.ScreenLangScreen.
+        In SL2, an instance of sl2.slast.SLScreen.
         """
 
         super(Screen, self).__init__(loc)
@@ -2377,8 +2469,8 @@ class Translate(Node):
             next_node(self.next)
             raise Exception("Translation nodes cannot be run directly.")
 
-        if self.identifier not in renpy.game.persistent._seen_translates: # @UndefinedVariable
-            renpy.game.persistent._seen_translates.add(self.identifier) # @UndefinedVariable
+        if self.identifier not in renpy.game.persistent._seen_translates: # type: ignore
+            renpy.game.persistent._seen_translates.add(self.identifier) # type: ignore
             renpy.game.seen_translates_count += 1
             renpy.game.new_translates_count += 1
 
@@ -2413,9 +2505,6 @@ class EndTranslate(Node):
     """
 
     rollback = "never"
-
-    def __init__(self, loc):
-        super(EndTranslate, self).__init__(loc)
 
     def diff_info(self):
         return (EndTranslate,)
@@ -2595,7 +2684,7 @@ class Style(Node):
             if not renpy.exports.variant(variant):
                 return
 
-        s = renpy.style.get_or_create_style(self.style_name) # @UndefinedVariable
+        s = renpy.style.get_or_create_style(self.style_name)
 
         if self.clear:
             s.clear()

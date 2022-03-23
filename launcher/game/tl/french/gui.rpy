@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # gui.rpy:2
     old "## Initialization"
@@ -409,3 +408,50 @@ translate french strings:
     old "## Quick buttons."
     new "## Bouton d’accès rapide."
 
+    # gui/game/gui.rpy:5
+    old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
+    new "## L'instruction init offset fait exécuter les instructions d'initialisation de ce fichier tavant les instructions init des autres fichiers."
+
+    # gui/game/gui.rpy:17
+    old "## GUI Configuration Variables"
+    new "## Variables de Configuration du GUI"
+
+    # gui/game/gui.rpy:165
+    old "## The color of button text in various states."
+    new "## La couleur du texte des boutons dans différents états."
+
+    # gui/game/gui.rpy:171
+    old "## The horizontal alignment of the button text. (0.0 is left, 0.5 is center, 1.0 is right)."
+    new "## L'alignement horizontal du texte des boutons. (0.0 est à gauche, 0.5 est au centre, 1.0 est à droite)."
+
+    # gui/game/gui.rpy:276
+    old "## The position of the main menu text."
+    new "## La position du texte du menu principal."
+
+    # gui/game/gui.rpy:285
+    old "## Generic frames."
+    new "## Frames génériques."
+
+    # gui/game/gui.rpy:305
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    new "## Le GUI par défaut utilise uniquement des sliders et des barres de scrolling verticales. Toutes les autres barres ne sont utilisées que dans des screens écrits par l'utilisateur."
+
+    # gui/game/gui.rpy:366
+    old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    new "## Le nombre maximum d'entrées en mode NVL que Ren'Py affichera. Quand plus d'entrées sont affichées, les plus anciennes seront retirées."
+
+    # gui/game/gui.rpy:402
+    old "## Localization"
+    new "## Localisation (traduction et adaptation aux langues et cultures)"
+
+    # gui/game/gui.rpy:404
+    old "## This controls where a line break is permitted. The default is suitable for most languages. A list of available values can be found at https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+    new "## Ceci contrôle où un saut de ligne est autorisé. La valeur par défaut convient à la plupart des langues. Une liste des valeurs disponible peut être trouvée sur https://www.renpy.org/doc/html/style_properties.html#style-property-language"
+
+    # gui/game/gui.rpy:412
+    old "## Mobile devices"
+    new "## Appareils mobiles"
+
+    # gui/game/gui.rpy:441
+    old "## Change the size and spacing of various things."
+    new "## Changer la taille et l'espacement de diverses choses."

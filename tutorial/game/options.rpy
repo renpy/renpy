@@ -152,6 +152,11 @@ define config.window_icon = "gui/window_icon.png"
 
 init python:
 
+    ## Add SDK Fonts.
+    config.searchpath.append(config.renpy_base + "/sdk-fonts")
+    build.classify_renpy("sdk-fonts/**", "all")
+    build._sdk_fonts = True
+
     ## The following functions take file patterns. File patterns are case-
     ## insensitive, and matched against the path relative to the base directory,
     ## with and without a leading /. If multiple patterns match, the first is
@@ -199,3 +204,21 @@ init python:
 ## by a slash.
 
 # define build.itch_project = "renpytom/test-project"
+
+
+init python hide:
+    import datetime
+
+    today = datetime.date.today()
+    if (today.month == 3) and (today.day == 19):
+
+        # A cat, not a mouse.
+        config.mouse = { 'default' : [
+            ("gui/mouse0.png", 0, 0),
+            ("gui/mouse1.png", 0, 0),
+            ("gui/mouse2.png", 0, 0),
+            ("gui/mouse1.png", 0, 0),
+        ] * 2 + [
+            ("gui/mouse0.png", 0, 0),
+        ] * (10 * 20)
+}

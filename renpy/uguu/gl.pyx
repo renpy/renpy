@@ -1,4 +1,6 @@
-from sdl2 cimport SDL_GL_GetProcAddress
+from sdl2 cimport SDL_GL_GetProcAddress, SDL_GetError
+
+found_functions = set()
 
 cdef void *find_gl_command(names):
 
@@ -8,9 +10,35 @@ cdef void *find_gl_command(names):
         rv = SDL_GL_GetProcAddress(i)
 
         if rv != NULL:
+            found_functions.add(names[0].decode("utf-8"))
             return rv
 
-    raise Exception("{} not found.".format(names[0]))
+    import renpy
+    renpy.display.log.write("UGUU couldn't find {}: {}".format(names[0], SDL_GetError()))
+
+    return NULL
+
+def clear_missing_functions():
+    global found_functions
+    found_functions = set()
+
+def check_missing_functions(required):
+    import renpy
+
+    required = set(required)
+
+    missing_required = list(required - found_functions)
+    missing_required.sort()
+
+    if missing_required:
+
+        renpy.display.log.write("The following gl functions are missing:")
+        for i in missing_required:
+            renpy.display.log.write("- %s", i)
+
+        return True
+    else:
+        return False
 
 
 
@@ -635,10 +663,10 @@ def load():
     glBindBufferRange = <glBindBufferRange_type> find_gl_command([b'glBindBufferRange', b'glBindBufferRangeEXT', b'glBindBufferRangeNV'])
 
     global glBindFramebuffer
-    glBindFramebuffer = <glBindFramebuffer_type> find_gl_command([b'glBindFramebuffer'])
+    glBindFramebuffer = <glBindFramebuffer_type> find_gl_command([b'glBindFramebuffer', b'glBindFramebufferEXT'])
 
     global glBindRenderbuffer
-    glBindRenderbuffer = <glBindRenderbuffer_type> find_gl_command([b'glBindRenderbuffer'])
+    glBindRenderbuffer = <glBindRenderbuffer_type> find_gl_command([b'glBindRenderbuffer', b'glBindRenderbufferEXT'])
 
     global glBindTexture
     glBindTexture = <glBindTexture_type> find_gl_command([b'glBindTexture', b'glBindTextureEXT'])

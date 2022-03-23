@@ -21,7 +21,7 @@
 
 from renpy.uguu.gl cimport *
 from renpy.gl2.gl2shader cimport Program
-from renpy.gl2.gl2model cimport Model
+from renpy.gl2.gl2model cimport GL2Model
 from renpy.gl2.gl2draw cimport GL2Draw
 
 cdef class TextureLoader:
@@ -52,7 +52,7 @@ cdef class TextureLoader:
     cdef GLfloat max_anisotropy
 
 
-cdef class GLTexture(Model):
+cdef class GLTexture(GL2Model):
 
     # The number of the texture in OpenGL.
     cdef public unsigned int number
@@ -66,7 +66,6 @@ cdef class GLTexture(Model):
 
     # The texture loader associated with this texture.
     cdef TextureLoader loader
-
 
     # The width and height of the texture. (Which may be a different size
     # than the model, if the texture is being rendered in the drawable

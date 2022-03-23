@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,9 +22,11 @@
 # Other text-related things.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.text
+
+
+import renpy
 
 from renpy.text.textsupport import TAG, PARAGRAPH
 import renpy.text.textsupport as textsupport
@@ -179,6 +181,9 @@ def filter_alt_text(s):
 
     tokens = textsupport.tokenize(str(s))
 
+    if renpy.config.custom_text_tags or renpy.config.self_closing_custom_text_tags or (renpy.config.replace_text is not None):
+        tokens = renpy.text.text.Text.apply_custom_tags(tokens)
+
     rv = [ ]
 
     active = set()
@@ -239,6 +244,9 @@ class ParameterizedText(object):
     _duplicatable = True
 
     def _duplicate(self, args):
+
+        if args.lint:
+            return renpy.text.text.Text("", style=self.style, **self.properties)
 
         if len(args.args) == 0:
             raise Exception("'%s' takes a single string parameter." % ' '.join(args.name))

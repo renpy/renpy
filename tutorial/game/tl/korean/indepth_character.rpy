@@ -15,19 +15,19 @@ translate korean demo_character_d7908a94:
 translate korean demo_character_275ef8b9:
 
     # e "Each statement creates a Character object, and gives it a single argument, a name. If the name is None, no name is displayed."
-    e "각각의 구절은 캐릭터 객체를 생성하고 하나의 인자인 이름을 주는데, 이름이 None이면 표시되는 이름이 없게 돼."
+    e "각각의 구문은 캐릭터 객체를 생성하고 이름 인자 한 개를 전달하는데, 만약 이름이 None이면 표시되는 이름이 없게 돼."
 
 # game/indepth_character.rpy:21
 translate korean demo_character_a63aea0c:
 
     # e "This can be followed by named arguments that set properties of the character. A named argument is a property name, an equals sign, and a value."
-    e "이 다음에는 캐릭터의 속성을 설정하는 인수가 올 수 있어. 정의된 인수는 특성 이름과 등호, 값이야."
+    e "이 다음에는 캐릭터의 속성을 설정하는 인자가 올 수 있어. 정의된 인수는 특성 이름과 등호, 값이야."
 
 # game/indepth_character.rpy:23
 translate korean demo_character_636a502e:
 
     # e "Multiple arguments should be separated with commas, like they are here. Let's see those characters in action."
-    e "여러 개의 인수는 여기에 있는 것처럼 쉼표로 구분해야 해. 이제 행동하는 캐릭터를 보도록 하자."
+    e "여러 개의 인자는 여기에 있는 것처럼 쉼표로 구분해야 해. 이제 캐릭터의 행동을 보도록 하자."
 
 # game/indepth_character.rpy:27
 translate korean demo_character_44b54e1d:
@@ -45,7 +45,7 @@ translate korean demo_character_a9646dd8:
 translate korean demo_character_79793208:
 
     # e "This example shows how the name Character is a bit of a misnomer. Here, we have multiple Characters in use, but you see it as me speaking."
-    e "이 예제는 약간의 잘못된 캐릭터를 보여주고 있어. 여기서 우리는 여러 캐릭터를 사용하고 있지만, 네게는 단지 내가 말하는 것처럼 보였을 거야."
+    e "이 예제는 약간 잘못된 캐릭터를 보여주고 있어. 여기서 우리는 여러 캐릭터를 사용하고 있지만, 네게는 단지 내가 말하는 것처럼 보였을 거야."
 
 # game/indepth_character.rpy:33
 translate korean demo_character_5d5d7482:
@@ -195,13 +195,13 @@ translate korean demo_character_f9b0052f:
 translate korean demo_character_6dfce4b7:
 
     # l8 "Like this! Finally I get some more dialogue around here."
-    l8 "이처럼 말야! 마지막으로 여기에서 좀 더 대화를 나눴어."
+    l8 "이렇게 말야! 마지막으로 여기에서 좀 더 대화를 나눴어."
 
 # game/indepth_character.rpy:157
 translate korean demo_character_68d9e46c:
 
     # e "The last thing you have to know is that there's a special character, narrator, that speaks narration. Got it?"
-    e "마지막으로 알아야 할 것은 내레이션을 말하는 특수 캐릭터, 내레이터야. 알겟지?"
+    e "마지막으로 알아야 할 것은 내레이션을 말하는 특수 캐릭터, 내레이터야. 알겠지?"
 
 # game/indepth_character.rpy:159
 translate korean demo_character_0c8f314a:

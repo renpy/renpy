@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/indepth_character.rpy:11
 translate japanese demo_character_e7e1b1bb:
 

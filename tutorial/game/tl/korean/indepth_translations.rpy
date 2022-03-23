@@ -3,7 +3,7 @@
 translate korean translations_c4ef181f:
 
     # e "Ren'Py includes support for translating your game into languages other than the one it was originally written in."
-    e "렌파이는 처음에 작성한 언어가 아닌 다른 언어로 게임을 번역할 수 있도록 지원을 포함하고 있어."
+    e "렌파이는 처음에 작성한 언어가 아닌 다른 언어로 게임을 번역할 수 있도록 지원하고 있어."
 
 # game/indepth_translations.rpy:14
 translate korean translations_20b9a600:
@@ -15,13 +15,13 @@ translate korean translations_20b9a600:
 translate korean translations_07c7643c:
 
     # e "While Ren'Py can find dialogue and menu choice strings for you, you'll have to indicate which other strings need translation."
-    e "렌파이는 지문과 분기 선택 문자열을 찾을 수 있지만 번역이 필요한 다른 문자열을 표시해야 해."
+    e "렌파이가 지문과 분기 선택 문자열을 찾을 수 있긴 하지만, 번역이 필요한 다른 문자열을 표시해줄 필요가 있어."
 
 # game/indepth_translations.rpy:20
 translate korean translations_317d73e5:
 
     # e "For example, here is how we define a character and her name."
-    e "이건 우리가 어떻게 캐릭터와 이름을 정의하는지에 대한 예야."
+    e "이건 캐릭터와 이름을 정의하는 방법에 대한 예시야."
 
 # game/indepth_translations.rpy:24
 translate korean translations_ab0f3c94:
@@ -33,7 +33,7 @@ translate korean translations_ab0f3c94:
 translate korean translations_c81acfc7:
 
     # e "Notice how we don't translate the reddish color that we use for her name. That stays the same for all languages."
-    e "우리가 그녀의 이름으로 사용하는 붉은 색을 어떻게 번역하지 않는지 주목해. 그것은 모든 언어에 대해 동일하게 유지돼."
+    e "그녀의 이름으로 사용하는 붉은 색을 번역하지 않는 방법에 주목해. 모든 언어에 대해 똑같은 방법이야."
 
 # game/indepth_translations.rpy:33
 translate korean translations_8272a0ef:
@@ -45,25 +45,25 @@ translate korean translations_8272a0ef:
 translate korean translations_fde34832:
 
     # e "After you type in the name of the language you'll be translating to, choosing Generate Translations will scan your game and create translation files."
-    e "번역할 언어의 이름을 입력하고 번역파일 만들기를 선택하면 게임을 조사하고 번역 파일을 만들 거야."
+    e "번역할 언어의 이름을 입력하고 번역파일 만들기를 선택하면, 게임을 스캔한 뒤 번역 파일을 만들 거야."
 
 # game/indepth_translations.rpy:37
 translate korean translations_e2ebb4af:
 
     # e "The files will be generated in game/tl/language, where language is the name of the language you typed in."
-    e "파일들은 네가 언어의 이름으로 입력한 이름으로 game/tl/언어에 생성될 거야."
+    e "파일들은 네가 언어의 이름으로 입력한 이름으로 game/tl/language에 생성될 거야."
 
 # game/indepth_translations.rpy:39
 translate korean translations_28ec40b9:
 
     # e "You'll need to edit those files to include translations for everything in your game."
-    e "게임이 모든 내용을 번역본에 포함하도록 파일을 편집해야 해."
+    e "게임의 모든 내용이 번역본에 포함되도록 파일을 편집해야 돼."
 
 # game/indepth_translations.rpy:41
 translate korean translations_f6d3fd2d:
 
     # e "If you want to localize image files, you can also place them in game/tl/language."
-    e "만약에 이미지 파일의 현지화를 원한다면, 이미지 파일들을 game/tl/언어에 같은 이름의 파일을 넣으면 돼."
+    e "만약 이미지 파일의 현지화를 원한다면, 이미지 파일들을 game/tl/language에 같은 이름의 파일을 넣으면 돼."
 
 # game/indepth_translations.rpy:48
 translate korean translations_71bf6e72:
@@ -87,13 +87,13 @@ translate korean translations_a0042025:
 translate korean translations_b10990ce:
 
     # e "If you need to add new files, such as font files, you can place them into the game/tl/language directory where Ren'Py will find them."
-    e "글꼴 파일과 같은 새 파일을 추가해야 하는 경우에는 렌파이가 찾을 수 있게 game/tl/언어 디렉토리에 저장할 수 있어."
+    e "글꼴 파일과 같은 새 파일을 추가해야 하는 경우에는 렌파이가 찾을 수 있게 game/tl/language 디렉토리에 저장할 수 있어."
 
 # game/indepth_translations.rpy:58
 translate korean translations_01fcacc2:
 
     # e "Finally, you'll have to add support for picking the language of the game. That usually goes into the preferences screen, found in screens.rpy."
-    e "마지막으로 게임 언어 선택에 대한 지원을 추가해야 해. 일반적으로 screen.rpy에 있는 preferences 스크린에 작성할 수 있어."
+    e "마지막으로 게임 언어 선택 기능을 추가해야 돼. 일반적으로 screen.rpy에 있는 preferences 스크린에 작성할 수 있어."
 
 # game/indepth_translations.rpy:60
 translate korean translations_a91befcc:
@@ -105,5 +105,5 @@ translate korean translations_a91befcc:
 translate korean translations_9b7d6401:
 
     # e "The None language is special, as it's the default language that the visual novel was written in. Since this tutorial was written in English, Language(None) selects English."
-    e "None 언어는 시각 소설이 작성된 기본 언어이기 때문에 특별해. 이 길라잡이는 영어를 기본으로 작성되었으므로 English는 Language(None)을 선택해."
+    e "None 언어는 비주얼 노벨이 작성된 기본 언어이기 때문에 특별해. 이 길라잡이는 영어를 기본으로 작성되었으므로 English는 Language(None)을 선택해."
 

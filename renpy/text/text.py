@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,10 +20,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+from typing import Optional, Callable
 
 import math
-import renpy.display
+
+import pygame_sdl2
+import renpy
 
 from renpy.text.textsupport import TAG, TEXT, PARAGRAPH, DISPLAYABLE
 
@@ -135,7 +139,6 @@ def outline_blits(blits, outline):
 
     return rv
 
-
 class DrawInfo(object):
     """
     This object is supplied as a parameter to the draw method of the various
@@ -157,6 +160,10 @@ class DrawInfo(object):
 
     # No implementation, this is set up in the layout object.
 
+    surface = None # type: Optional[pygame_sdl2.surface.Surface]
+    override_color = None # type: Optional[tuple[int, int, int, int]]
+    outline = 0 # type: float
+    displayable_blits = None # type: Optional[list[tuple[renpy.display.core.Displayable, int, int]]]
 
 class TextSegment(object):
     """
@@ -391,7 +398,7 @@ class SpaceSegment(object):
 
 class DisplayableSegment(object):
     """
-    A segment that's used to render horizontal or vertical whitespace.
+    A segment that's used to render displayables.
     """
 
     def __init__(self, ts, d, renders):
@@ -404,6 +411,9 @@ class DisplayableSegment(object):
         rend = renders[d]
 
         self.width, self.height = rend.get_size()
+
+        if isinstance(d, renpy.display.behavior.CaretBlink):
+            self.width = 0
 
         self.hyperlink = ts.hyperlink
         self.cps = ts.cps
@@ -441,7 +451,6 @@ class DisplayableSegment(object):
         glyph = glyphs[0]
 
         if di.displayable_blits is not None:
-
             di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.width, glyph.ascent, glyph.line_spacing, glyph.time))
 
     def assign_times(self, gt, glyphs):
@@ -510,7 +519,7 @@ class Layout(object):
         width = min(32767, width)
         height = min(32767, height)
 
-        if drawable_res and (not size_only) and renpy.config.drawable_resolution_text:
+        if drawable_res and (not size_only) and renpy.config.use_drawable_resolution and renpy.config.drawable_resolution_text:
             # How much do we want to oversample the text by, compared to the
             # virtual resolution.
             self.oversample = renpy.display.draw.draw_per_virt
@@ -519,7 +528,7 @@ class Layout(object):
             self.reverse = renpy.display.draw.draw_to_virt
             self.forward = renpy.display.draw.virt_to_draw
 
-            self.outline_step = text.style.outline_scaling != "linear"
+            self.outline_step = text.style.outline_scaling == "step"
 
             self.pixel_perfect = True
 
@@ -553,11 +562,12 @@ class Layout(object):
         # data from one Layout to another.
         self.paragraph_glyphs = [ ]
 
-        width = self.scale_int(width)
-        height = self.scale_int(height)
-
+        # The virtual width and height offered to this Layout.
         self.width = width
         self.height = height
+
+        width = self.scale_int(width)
+        height = self.scale_int(height)
 
         # Figure out outlines and other info.
         outlines, xborder, yborder, xoffset, yoffset = self.figure_outlines(style)
@@ -763,7 +773,7 @@ class Layout(object):
             maxx = target_x
             y = target_y
 
-            textsupport.offset_glyphs(all_glyphs, 0, int(round(splits_from.baseline * self.oversample)) - find_baseline())
+            textsupport.offset_glyphs(all_glyphs, 0, round(splits_from.baseline * self.oversample) - find_baseline())
 
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a
@@ -808,18 +818,45 @@ class Layout(object):
             if key in self.textures:
                 continue
 
-            # Create the texture.
-            surf = renpy.display.pgrender.surface((sw + o, sh + o), True)
-
-            di.surface = surf
-            di.override_color = color
-            di.outline = o
-
             if color == None:
                 self.displayable_blits = [ ]
                 di.displayable_blits = self.displayable_blits
             else:
                 di.displayable_blits = None
+
+            # Create the texture.
+
+            tw = int(sw + o)
+            th = int(sh + o)
+
+            # If not a multiple of 32, round up.
+            tw = (tw | 0x1f) + 1 if (tw & 0x1f) else tw
+            th = (th | 0x1f) + 1 if (th & 0x1f) else th
+
+            surf = renpy.display.pgrender.surface((tw, th), True)
+
+            if renpy.game.preferences.high_contrast:
+                if color:
+                    surf.fill(color)
+                else:
+                    prefix = style.prefix
+                    prefix_color = style.color
+                    style.set_prefix("idle_")
+                    idle_color = style.color
+                    style.set_prefix(prefix)
+
+                    color = (255, 255, 255, 255)
+
+                    if idle_color != prefix_color:
+
+                        if "hover" in prefix:
+                            color = (255, 255, 224, 255)
+                        elif "selected" in style.prefix:
+                            color = (224, 255, 255, 255)
+
+            di.surface = surf
+            di.override_color = color
+            di.outline = o
 
             for ts, glyphs in par_seg_glyphs:
                 if ts is self.end_segment:
@@ -831,7 +868,7 @@ class Layout(object):
                 self.make_alignment_grid(surf)
 
             renpy.display.draw.mutated_surface(surf)
-            tex = renpy.display.draw.load_texture(surf)
+            tex = renpy.display.draw.load_texture(surf, properties={ "mipmap" : renpy.config.mipmap_text if (style.mipmap is None) else style.mipmap })
 
             self.textures[key] = tex
 
@@ -889,7 +926,7 @@ class Layout(object):
         if isinstance(n, renpy.display.core.absolute):
             return int(n)
 
-        return int(round(n * self.oversample))
+        return round(n * self.oversample)
 
     def scale_outline(self, n):
         if n is None:
@@ -903,7 +940,7 @@ class Layout(object):
             if self.oversample < 1:
                 return n
 
-            return n * int(self.oversample)
+            return int(n * int(self.oversample))
 
         else:
             if n == 0:
@@ -962,7 +999,7 @@ class Layout(object):
                 if isinstance(i[0], (TextSegment, SpaceSegment, DisplayableSegment)):
                     return
 
-            line.extend(tss[-1].subsegment(u"\u200B"))
+            line.extend(tss[-1].subsegment(u"\u200B")) # type: ignore
 
         for type, text in tokens: # @ReservedAssignment
 
@@ -980,6 +1017,11 @@ class Layout(object):
                     continue
 
                 elif type == TEXT:
+
+                    if (text_displayable.mask is not None):
+                        if text != u"\u200b":
+                            text = text_displayable.mask * len(text)
+
                     line.extend(tss[-1].subsegment(text))
                     continue
 
@@ -995,6 +1037,12 @@ class Layout(object):
                     tss.pop()
 
                     if not tss:
+
+                        tag = tag[1:]
+
+                        if not renpy.text.extras.text_tags.get(tag, True):
+                            raise Exception("{/%s} isn't valid, since the %s text tag doesn't take a close tag." % (tag, tag))
+
                         raise Exception("%r closes a text tag that isn't open." % text)
 
                 elif tag == "_start":
@@ -1217,7 +1265,7 @@ class Layout(object):
                 else:
                     raise Exception("Unknown text tag %r" % text)
 
-            except:
+            except Exception:
                 renpy.game.exception_info = "While processing text tag {{{!s}}} in {!r}.:".format(text, text_displayable.get_all_text())
                 raise
 
@@ -1260,7 +1308,7 @@ class Layout(object):
         style_outlines = style.outlines
         dslist = style.drop_shadow
 
-        if not style_outlines and not dslist:
+        if (not style_outlines) and (not dslist) and not renpy.game.preferences.high_contrast:
             return [ (0, None, 0, 0) ], 0, 0, 0, 0
 
         outlines = [ ]
@@ -1301,6 +1349,9 @@ class Layout(object):
                 bottom = b
 
         outlines.append((0, None, 0, 0))
+
+        if renpy.game.preferences.high_contrast:
+            outlines = [ (2, (0, 0, 0, 255), 0, 0), (0, None, 0, 0) ]
 
         return outlines, right - left, bottom - top, -left, -top
 
@@ -1380,17 +1431,10 @@ class Layout(object):
         Return the time of the first glyph that should be shown after st.
         """
 
-        for l in self.lines:
-            if not l.glyphs:
-                continue
-
-            if l.max_time > st:
-                break
-
-        else:
+        if st >= self.max_time:
             return None
-
-        return 0
+        else:
+            return 0
 
 
 # The maximum number of entries in the layout cache.
@@ -1440,8 +1484,8 @@ def text_tick():
     slow_text = [ ]
 
 
-VERT_REVERSE = renpy.display.render.Matrix2D(0, -1, 1, 0)
-VERT_FORWARD = renpy.display.render.Matrix2D(0, 1, -1, 0)
+VERT_REVERSE = renpy.display.matrix.Matrix2D(0, -1, 1, 0)
+VERT_FORWARD = renpy.display.matrix.Matrix2D(0, 1, -1, 0)
 
 
 class Text(renpy.display.core.Displayable):
@@ -1449,7 +1493,7 @@ class Text(renpy.display.core.Displayable):
     """
     :name: Text
     :doc: text
-    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, **properties)
+    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, mipmap=None, **properties)
 
     A displayable that displays text on the screen.
 
@@ -1478,6 +1522,8 @@ class Text(renpy.display.core.Displayable):
     locked = False
 
     language = None
+    mask = None
+    last_ctc = None
 
     def after_upgrade(self, version):
 
@@ -1495,7 +1541,7 @@ class Text(renpy.display.core.Displayable):
             self.end = None
             self.dirty = True
 
-    def __init__(self, text, slow=None, scope=None, substitute=None, slow_done=None, replaces=None, **properties):
+    def __init__(self, text, slow=None, scope=None, substitute=None, slow_done=None, replaces=None, mask=None, **properties):
 
         super(Text, self).__init__(**properties)
 
@@ -1519,7 +1565,10 @@ class Text(renpy.display.core.Displayable):
         self.dirty = True
 
         # The text, after substitutions.
-        self.text = None
+        self.text = None # type: list|None
+
+        # A mask, for passwords and such.
+        self.mask = mask
 
         # Sets the text we're showing, and performs substitutions.
         self.set_text(text, scope, substitute)
@@ -1531,17 +1580,17 @@ class Text(renpy.display.core.Displayable):
         self.slow = slow
 
         # The callback to be called when slow-text mode ends.
-        self.slow_done = None
+        self.slow_done = slow_done # type:Callable|None
 
         # The ctc indicator associated with this text.
         self.ctc = None
 
         # The index of the start and end strings in the first segment of text.
         # (None to show the whole text.)
-        self.start = None
-        self.end = None
+        self.start = None # type: int|None
+        self.end = None # type: int|None
 
-        if replaces is not None:
+        if isinstance(replaces, Text):
             self.slow = replaces.slow
             self.slow_done = replaces.slow_done
             self.ctc = replaces.ctc
@@ -1583,19 +1632,18 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
-    def __unicode__(self):
+    def _repr_info(self):
         s = ""
 
         for i in self.text:
             if isinstance(i, basestring):
-                s += i
+                s += i # type: ignore
 
             if len(s) > 25:
                 s = s[:24] + u"\u2026"
                 break
 
-        s = s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n")
-        return u"Text \"{}\"".format(s)
+        return repr(s)
 
     def get_all_text(self):
         """
@@ -1605,7 +1653,7 @@ class Text(renpy.display.core.Displayable):
 
         for i in self.text:
             if isinstance(i, basestring):
-                s += i
+                s += i # type: ignore
 
         return s
 
@@ -1677,6 +1725,10 @@ class Text(renpy.display.core.Displayable):
         self.ctc = ctc
         self.dirty = True
 
+    def set_last_ctc(self, last_ctc):
+        self.last_ctc = last_ctc
+        self.dirty = True
+
     def update(self):
         """
         This needs to be called after text has been updated, but before
@@ -1725,7 +1777,16 @@ class Text(renpy.display.core.Displayable):
         else:
             # Add the CTC.
             if self.ctc is not None:
-                text.append(self.ctc)
+                if isinstance(self.ctc, list):
+                    text.extend(self.ctc)
+                else:
+                    text.append(self.ctc)
+
+        if self.last_ctc is not None:
+            if isinstance(self.last_ctc, list):
+                text.extend(self.last_ctc)
+            else:
+                text.append(self.last_ctc)
 
         # Tokenize the text.
         tokens = self.tokenize(text)
@@ -1753,7 +1814,7 @@ class Text(renpy.display.core.Displayable):
         if self.dirty or self.displayables is None:
             self.update()
 
-        return list(self.displayables)
+        return list(self.displayables) # type: ignore
 
     def _tts(self):
 
@@ -1767,6 +1828,7 @@ class Text(renpy.display.core.Displayable):
             rv.append(i)
 
         rv = "".join(rv)
+        rv, _, _ = rv.partition("{done}")
         _, _, rv = rv.rpartition("{fast}")
 
         rv = renpy.text.extras.filter_alt_text(rv)
@@ -1778,7 +1840,7 @@ class Text(renpy.display.core.Displayable):
 
         return rv
 
-    _tts_all = _tts
+    _tts_all = _tts # type: ignore
 
     def kill_layout(self):
         """
@@ -1935,10 +1997,14 @@ class Text(renpy.display.core.Displayable):
         if layout is None:
             return
 
-        if layout.redraw_typewriter(st) is None:
-            if self.slow:
+        if self.slow:
+            redraw = layout.redraw_typewriter(st)
+
+            if redraw is None:
                 self.call_slow_done(st)
                 self.slow = False
+            else:
+                renpy.display.render.redraw(self, 0)
 
         for d, xo, yo in self.displayable_offsets:
             rv = d.event(ev, x - xo, y - yo, st)
@@ -2214,7 +2280,8 @@ class Text(renpy.display.core.Displayable):
 
         return tokens
 
-    def apply_custom_tags(self, tokens):
+    @staticmethod
+    def apply_custom_tags(tokens):
         """
         Apply new-style custom text tags.
         """

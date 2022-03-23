@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # 00gltest.rpy:70
     old "Renderer"
@@ -10,15 +10,15 @@
 
     # 00gltest.rpy:79
     old "Force Angle/DirectX Renderer"
-    new "Forzar 'Angle/DirectX Renderer'"
+    new "Forzar renderizador 'Angle/DirectX'"
 
     # 00gltest.rpy:83
     old "Force OpenGL Renderer"
-    new "Forzar 'OpenGL Renderer'"
+    new "Forzar renderizador 'OpenGL'"
 
     # 00gltest.rpy:87
     old "Force Software Renderer"
-    new "Forzar 'Software Renderer'"
+    new "Forzar renderizado por software"
 
     # 00gltest.rpy:93
     old "NPOT"
@@ -34,7 +34,7 @@
 
     # 00gltest.rpy:145
     old "Framerate"
-    new "Cuadros por s."
+    new "Cuadros por segundo"
 
     # 00gltest.rpy:149
     old "Screen"
@@ -62,11 +62,11 @@
 
     # 00gltest.rpy:218
     old "This computer is using software rendering."
-    new "Este ordenador usa 'software rendering'."
+    new "Este ordenador usa 'software' de renderizado."
 
     # 00gltest.rpy:220
     old "This computer is not using shaders."
-    new "Este ordenador no usa 'shaders'."
+    new "Este ordenador no usa sombreadores."
 
     # 00gltest.rpy:222
     old "This computer is displaying graphics slowly."
@@ -74,7 +74,7 @@
 
     # 00gltest.rpy:224
     old "This computer has a problem displaying graphics: [problem]."
-    new "Este ordenador tiene un problema mostrando los gráficos: [problem]."
+    new "Este ordenador tiene un problema al mostrar los gráficos: [problem]."
 
     # 00gltest.rpy:229
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."
@@ -129,12 +129,12 @@
     new "Calibrando [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Pulsa o mueve: [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Pulsa o mueve: [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Salto (A)"
+    new "Saltar (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
@@ -186,7 +186,7 @@
 
     # _errorhandling.rpym:598
     old "Reloads the game from disk, saving and restoring game state if possible."
-    new "Recarga el juego del disco, guardando y restaurando la partida si es posible."
+    new "Recarga el juego desde el disco, guardando y restaurando la partida si es posible."
 
     # _errorhandling.rpym:601
     old "Console"
@@ -235,4 +235,52 @@
     # _errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Copia el archivo errors.txt al portapapeles como Markdown para Discord."
+
+    # renpy/common/00gltest.rpy:77
+    old "Force ANGLE Renderer"
+    new "Forzar renderizador ANGLE"
+
+    # renpy/common/00gltest.rpy:81
+    old "Force GL Renderer"
+    new "Forzar renderizador GL"
+
+    # renpy/common/00gltest.rpy:85
+    old "Force GLES Renderer"
+    new "Forzar renderizador GLES"
+
+    # renpy/common/00gltest.rpy:90
+    old "Force ANGLE2 Renderer"
+    new "Forzar renderizador ANGLE2"
+
+    # renpy/common/00gltest.rpy:94
+    old "Force GL2 Renderer"
+    new "Forzar renderizador GL2"
+
+    # renpy/common/00gltest.rpy:98
+    old "Force GLES2 Renderer"
+    new "Forzar renderizador GLES2"
+
+    # renpy/common/00gltest.rpy:218
+    old "This game requires use of GL2 that can't be initialised."
+    new "Este juego requiere el uso de GL2, el cual no se puede iniciar."
+
+    # renpy/common/00gltest.rpy:229
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Puedes encontrar más detalles sobre cómo solucionar este problema en la {a=[url]} documentación {/a}."
+
+    # renpy/common/00gltest.rpy:246
+    old "Change render options"
+    new "Cambiar las opciones de renderizado"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "Presiona o mueve el '[control!s]' [kind]."
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "Habilitar (sin Blocklist)"
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "El archivo {a=edit:1:log.txt}log.txt{/a} puede contener información para ayudarte a encontrar el problema en tu ordenador."
 

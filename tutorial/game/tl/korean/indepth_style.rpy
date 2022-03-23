@@ -3,7 +3,7 @@
 translate korean new_gui_17a0326e:
 
     # e "When you create a new project, Ren'Py will automatically create a GUI - a Graphical User Interface - for it."
-    e "새로운 프로젝트를 만들 때, 렌파이는 프로젝트를 위한 GUI-그래픽 유저 인터페이스-를 자동으로 생성할 거야."
+    e "새로운 프로젝트를 만들 때, 렌파이는 프로젝트를 위한 GUI(그래픽 유저 인터페이스)를 자동으로 생성할 거야."
 
 # game/indepth_style.rpy:42
 translate korean new_gui_12c814ed:
@@ -15,19 +15,19 @@ translate korean new_gui_12c814ed:
 translate korean new_gui_0a2a73bb:
 
     # e "The default GUI is meant to be nice enough for a simple project. With a few small changes, it's what you're seeing in this game."
-    e "기본 GUI는 몇 가지 작은 변화와 함께 단순한 프로젝트에 사용하기 충분해. 네가 이 길라잡이에서 보고 있는 것도 GUI야."
+    e "기본 GUI는 몇 가지 작은 변화만 줘 가며, 단순한 프로젝트에 사용하기 충분해. 네가 이 길라잡이에서 보고 있는 것도 GUI야."
 
 # game/indepth_style.rpy:46
 translate korean new_gui_22adf68e:
 
     # e "The GUI is also meant to be easy for an intermediate creator to customize. Customizing the GUI consists of changing the image files in the gui directory, and changing variables in gui.rpy."
-    e "GUI는 제작자가 쉽게 사용자 정의할 수 있도록 제작됐어. GUI를 사용자 정의하는 작업은 gui 디렉토리의 이미지 파일을 변경하고 gui.rpy의 변수를 변경하는 것으로 가능해."
+    e "GUI는 제작자가 쉽게 사용자 정의할 수 있도록 제작됐어. GUI를 사용자 정의하려면 gui 디렉토리의 이미지 파일을 변경하고 gui.rpy의 변수를 변경하면 돼."
 
 # game/indepth_style.rpy:48
 translate korean new_gui_da21de30:
 
     # e "At the same time, even when customized, the default GUI might be too recognizable for an extremely polished game. That's why we've made it easy to totally replace."
-    e "동시에, 사용자 정의된 극도로 세련된 게임의 경우에도 기본 GUI가 잘 인식 될 수 있어. 그게 우리가 그것을 완전히 교체하기 쉽게 만든 이유야."
+    e "동시에, 엄청 커스텀된 세련된 게임에서도 기본 GUI는 잘 인식될 수 있어. 그게 우리가 그걸 완전히 교체하기 쉽게 만든 이유야."
 
 # game/indepth_style.rpy:50
 translate korean new_gui_45765574:
@@ -39,13 +39,13 @@ translate korean new_gui_45765574:
 translate korean styles_fa345a38:
 
     # e "Ren'Py has a powerful style system that controls what displayables look like."
-    e "렌파이는 디스플레이어블의 생김새를 제어하는 ​​강력한 스타일 시스템을 갖추고 있어."
+    e "렌파이는 디스플레이어블의 생김새를 제어하는 강력한 스타일 시스템을 갖추고 있어."
 
 # game/indepth_style.rpy:60
 translate korean styles_6189ee12:
 
     # e "While the default GUI uses variables to provide styles with sensible defaults, if you're replacing the GUI or creating your own screens, you'll need to learn about styles yourself."
-    e "기본 GUI가 스타일을 현명한 기본값으로 제공하기 위해 변수를 사용하지만, GUI를 바꾸거나 자신만의 스크린을 만들려면 스타일에 대해 알아야 해."
+    e "기본 GUI가 스타일을 괜찮은 기본값으로 제공하기 위해 변수를 사용하지만, GUI를 바꾸거나 자신만의 스크린을 만들려면 스타일에 대해 알아야 해."
 
 # game/indepth_style.rpy:66
 translate korean styles_menu_a4a6913e:
@@ -57,13 +57,13 @@ translate korean styles_menu_a4a6913e:
 translate korean style_basics_9a79ef89:
 
     # e "Styles let a displayable look different from game to game, or even inside the same game."
-    e "스타일을 통해 게임마다 또는 동일한 게임 내에서 보이는 디스플레이어블이 달라지게 돼."
+    e "스타일을 통해 게임마다, 또는 동일한 게임 내에서 보이는 디스플레이어블이 달라지게 돼."
 
 # game/indepth_style.rpy:103
 translate korean style_basics_48777f2c:
 
     # e "Both of these buttons use the same displayables. But since different styles have been applied, the buttons look different from each other."
-    e "이 두 버튼은 동일한 디스플레이어블을 사용해. 그러나 서로 다른 스타일이 적용되었기 때문에 버튼이 서로 다르게 보이지."
+    e "이 두 버튼은 동일한 디스플레이어블을 사용해. 하지만 서로 다른 스타일이 적용되었기 때문에 버튼이 서로 다르게 보이지."
 
 # game/indepth_style.rpy:108
 translate korean style_basics_57704d8c:
@@ -87,19 +87,19 @@ translate korean style_basics_67e48162:
 translate korean style_basics_03516b4a:
 
     # e "The next is as part of a displayable created in an image statement. Style properties are just arguments to the displayable."
-    e "다음은 이미지 문에서 생성된 디스플레이어블의 일부야. 스타일 속성은 디스플레이어블에 대한 인수일 뿐이야."
+    e "다음은 이미지 구문에서 생성된 디스플레이어블의 일부야. 스타일 속성은 디스플레이어블에 대한 인자일 뿐이야."
 
 # game/indepth_style.rpy:160
 translate korean style_basics_ccc0d1ca:
 
     # egreen "Style properties can also be given as arguments when defining a character."
-    egreen "스타일 속성은 캐릭터를 정의할 때 인수로 지정할 수도 있어."
+    egreen "스타일 속성은 캐릭터를 정의할 때 인자로 지정할 수도 있어."
 
 # game/indepth_style.rpy:162
 translate korean style_basics_013ab314:
 
     # egreen "Arguments beginning with who_ are style properties applied to the character's name, while those beginning with what_ are applied to the character's dialogue."
-    egreen "who_로 시작하는 인수는 캐릭터의 이름에 적용되는 스타일 속성이고 what_으로 시작하는 인수는 캐릭터의 대사에 적용돼."
+    egreen "who_로 시작하는 인수는 캐릭터의 이름에 적용되는 스타일 속성이고 what_으로 시작하는 인자는 캐릭터의 대사에 적용돼."
 
 # game/indepth_style.rpy:164
 translate korean style_basics_dbe80939:
@@ -195,7 +195,7 @@ translate korean style_general_81f3c8ff:
 translate korean style_general_a8d99699:
 
     # e "Every displayable takes the position properties, which control where it can be placed on screen. Since I've already mentioned them, I won't repeat them here."
-    e "모든 디스플레이어블은 화면에 배치할 수 있는 위치를 제어하는 ​​위치 속성을 사용해. 이미 언급했으니까 반복하지 않을게."
+    e "모든 디스플레이어블은 화면에 배치할 수 있는 위치를 제어하는 위치 속성을 사용해. 이미 언급했으니까 반복하지 않을게."
 
 # game/indepth_style.rpy:275
 translate korean style_general_58d4a18f:
@@ -709,7 +709,7 @@ translate korean strings:
 
     # indepth_style.rpy:22
     old "Button 2"
-    new "{font=../../launcher/game/fonts/SourceHanSansLite.ttf}버튼 2{/font}"
+    new "{font=SourceHanSansLite.ttf}버튼 2{/font}"
 
     # indepth_style.rpy:66
     old "Style basics."
@@ -806,4 +806,3 @@ translate korean strings:
     # indepth_style.rpy:886
     old "Sixth Child"
     new "여섯 번째 자식"
-

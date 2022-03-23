@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -46,6 +46,7 @@ the queued file. The queued file begins playing when the current file ends
 or is stopped.
 """
 
+# When changing this API, change webaudio.py, too!
 
 from __future__ import print_function
 
@@ -62,7 +63,7 @@ cdef extern from "renpysound_core.h":
     object RPS_playing_name(int channel)
     void RPS_fadeout(int channel, int ms)
     void RPS_pause(int channel, int pause)
-    void RPS_unpause_all()
+    void RPS_unpause_all_at_start()
     int RPS_get_pos(int channel)
     double RPS_get_duration(int channel)
     void RPS_set_endevent(int channel, int event)
@@ -108,7 +109,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         If True, playback is paused rather than started.
 
     `fadein`
-        The time it should take the fade the music in.
+        The time it should take the fade the music in, in seconds.
 
     `tight`
         If true, the file is played in tight mode. This means that fadeouts
@@ -120,7 +121,6 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     `end`
         A time in the file to end playing.    `
     """
-
 
     cdef SDL_RWops *rw
 
@@ -140,7 +140,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_play(channel, rw, name, name, fadein, tight, pause, start, end)
+    RPS_play(channel, rw, name, name, fadein * 1000, tight, pause, start, end)
     check_error()
 
 def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
@@ -164,7 +164,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_queue(channel, rw, name, name, fadein, tight, start, end)
+    RPS_queue(channel, rw, name, name, fadein * 1000, tight, start, end)
     check_error()
 
 def stop(channel):
@@ -224,12 +224,12 @@ def unpause(channel):
     RPS_pause(channel, 0)
     check_error()
 
-def unpause_all():
+def unpause_all_at_start():
     """
-    Unpauses all channels that are paused.
+    Unpauses all channels that are paused at the start.
     """
 
-    RPS_unpause_all()
+    RPS_unpause_all_at_start()
 
 def fadeout(channel, delay):
     """
@@ -249,16 +249,16 @@ def busy(channel):
 
 def get_pos(channel):
     """
-    Returns the position of the audio file playing in `channel`. Returns None
-    if not file is is playing or it is not known.
+    Returns the position of the audio file playing in `channel`, in seconds.
+    Returns None if not file is is playing or it is not known.
     """
 
-    return RPS_get_pos(channel)
+    return RPS_get_pos(channel) / 1000.0
 
 def get_duration(channel):
     """
-    Reutrns the duration of the audio file playing in `channel`, or None if no
-    file is playing or it is not known.
+    Returns the duration of the audio file playing in `channel`, in seconds, or
+    None if no file is playing or it is not known.
     """
 
     return RPS_get_duration(channel)
@@ -335,7 +335,10 @@ def read_video(channel):
 
     # Remove padding from the edges of the surface.
     w, h = rv.get_size()
-    return rv.subsurface((4, 4, w-8, h-8))
+
+    # This has to be set to the same number it is in ffmedia.c
+    FRAME_PADDING = 4
+    return rv.subsurface((FRAME_PADDING, FRAME_PADDING, w - FRAME_PADDING * 2, h - FRAME_PADDING * 2))
 
 # No video will be played from this channel.
 NO_VIDEO = 0
@@ -425,3 +428,5 @@ def sample_surfaces(rgb, rgba):
     rgba_surface = rgb
 
     RPS_sample_surfaces(rgb, rgba)
+
+# When changing this API, change webaudio.py, too!

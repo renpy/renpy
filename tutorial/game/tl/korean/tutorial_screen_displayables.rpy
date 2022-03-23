@@ -417,7 +417,7 @@ translate korean swimming_405542a5:
 translate korean swimming_264b5873:
 
     # e "Swimming seems like a lot of fun, but I didn't bring my bathing suit with me."
-    e "수영은 정말 재밌지만, 나는 오늘 수영복을 가져오지 않았어."
+    e "수영은 정말 재밌지만, 오늘 수영복을 가져오지 않았어."
 
 # game/tutorial_screen_displayables.rpy:665
 translate korean science_83e5c0cc:
@@ -429,19 +429,19 @@ translate korean science_83e5c0cc:
 translate korean science_319cdf4b:
 
     # e "I've heard that some schools have a competitive science team, but to me research is something that can't be rushed."
-    e "몇몇 학교는 경쟁적인 과학 팀을 가지고 있다고 들었지만, 나에게 있어 연구는 서둘러서는 안 되는 거야."
+    e "몇몇 학교는 경쟁적인 과학 팀을 가지고 있다고 들었지만, 나에게 있어 연구란 서둘러서는 안 되는 거라구."
 
 # game/tutorial_screen_displayables.rpy:672
 translate korean art_d2a94440:
 
     # e "You chose art."
-    e "아트를 선택했어."
+    e "예술을 선택했어."
 
 # game/tutorial_screen_displayables.rpy:674
 translate korean art_e6af6f1d:
 
     # e "Really good background art is hard to make, which is why so many games use filtered photographs. Maybe you can change that."
-    e "정말 좋은 배경 아트는 만들기 어려워. 그래서 많은 게임들이 필터링된 사진을 사용하지. 어쩌면 너는 그것을 바꿀 수 있을지도."
+    e "정말 좋은 배경 아트는 만들기 어려워. 그래서 많은 게임들이 필터링한 사진을 사용하지. 너라면 바꿀 수 있을지도."
 
 # game/tutorial_screen_displayables.rpy:680
 translate korean home_373ea9a5:

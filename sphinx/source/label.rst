@@ -44,6 +44,13 @@ are processed as described in :pep:`3102`, with two exceptions:
 * The values of default parameters are evaluated at call time.
 * The variables are dynamically, rather than lexically, scoped.
 
+When a variable is dynamically scoped, its value lasts until a return
+statement following the label. It doesn't generally make sense to
+have a label with parameters that is reached by a jump or a previous
+statement. For an example of labels with parameters, see the
+:ref:`call statement <call-statement>`.
+
+
 .. _jump-statement:
 
 Jump Statement
@@ -84,13 +91,17 @@ statement with the given name as the statement immediately following the call
 statement. An explicit label helps to ensure that saved games with return
 stacks can return to the proper place when loaded on a changed script. ::
 
-    e "First, we will call a subroutine."
+    label start:
 
-    call subroutine
+        e "First, we will call a subroutine."
 
-    call subroutine(2)
+        call subroutine
 
-    call expression "sub" + "routine" pass (count=3)
+        call subroutine(2)
+
+        call expression "sub" + "routine" pass (count=3)
+
+        return
 
     # ...
 
@@ -139,7 +150,7 @@ The following labels are used by Ren'Py:
 
 ``splashscreen``
     If it exists, this label is called when the game is first run, before
-    showing the main menu. Please see :ref:`Adding a Splashscreen <adding_a_splashscreen>`.
+    showing the main menu. Please see :ref:`Adding a Splashscreen <adding-a-splashscreen>`.
 
 ``before_main_menu``
     If it exists, this label is called before the main menu. It is used in
@@ -158,6 +169,12 @@ The following labels are used by Ren'Py:
 ``after_warp``
     If it is existed, this label is called after a warp but before the warped-to
     statement executes. Please see :ref:`Warping to a line <warping_to_a_line>`.
+
+``hide_windows``
+    If it exists, this label is called when the player hides the windows with
+    the right mouse button or the H key. If this returns true, the hide is
+    cancelled (it's assumed the hide has occurred). Otherwise, the hide
+    continues.
 
 Labels & Control Flow Functions
 -------------------------------

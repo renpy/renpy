@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -36,7 +36,12 @@ init python:
         rv = [ ( "English", None) ]
 
         for i in languages:
-            rv.append((i.replace("_", " ").title(), i))
+            rv.append((i.title(), i))
+
+        for i in (("Schinese", "schinese"), ("Tchinese", "tchinese")):
+            if i in rv:
+                rv.remove(i)
+                rv.append(({"schinese": "Simplified Chinese", "tchinese": "Traditional Chinese"}.get(i[1]), i[1]))
 
         rv.sort()
 
@@ -48,9 +53,15 @@ init python:
 
     show_legacy = os.path.exists(os.path.join(config.renpy_base, "templates", "english", "game", "script.rpy"))
 
+    class RestartAtPreferences(Action):
+        def __call__(self):
+            renpy.session["launcher_start_label"] = "preferences"
+            renpy.utter_restart()
+
 default persistent.legacy = False
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
+default persistent.daily_update_check = False
 
 screen preferences:
 
@@ -190,6 +201,16 @@ screen preferences:
                                 textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
 
                         textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
+
+                        if ability.can_update:
+                            textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
+
+                        add HALF_SPACER
+
+                        textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
+                        # textbutton _("Clear theme") style "l_checkbox" action [SetField(persistent, "theme", "clear", None), RestartAtPreferences() ]
+                        textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark", None), RestartAtPreferences()]
+                        textbutton _("Custom theme") style "l_checkbox" action [SetField(persistent, "theme", "custom", None), RestartAtPreferences()]
 
 
                 if translations:

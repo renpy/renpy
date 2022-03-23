@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,12 +24,13 @@
 init -1500 python:
     import math as _math
 
-    class ColorMatrix(object):
+    class _BaseMatrix(object):
         """
         :undocumented:
 
         Documented in text. The base class for various *Matrix classes
-        that are intended to return a Matrix that transforms colors.
+        that are intended to return a Matrix, both ColorMatrix and
+        TransformMatrix.
         """
 
         def __init__(self, value=1.0):
@@ -54,6 +55,16 @@ init -1500 python:
 
         def __ne__(self, other):
             return not (self == other)
+
+    class ColorMatrix(_BaseMatrix):
+        """
+        :undocumented:
+
+        Documented in text. The base class for various *Matrix classes
+        that are intended to return a Matrix that transforms colors.
+        """
+
+        pass
 
     class _MultiplyMatrix(ColorMatrix):
         """
@@ -145,27 +156,35 @@ init -1500 python:
         """
 
         def __init__(self, color):
-            self.color = renpy.easy.color(color)
+            self.color = Color(color)
 
         def __call__(self, other, done):
+
             if type(other) is not type(self):
-                r, g, b = self.color.rgb
-                a = self.color.alpha
+
+                # When not using an old color, we can take
+                # r, g, b, and a from self.color.
+                r, g, b, a = self.color.rgba
+
             else:
-                oldr, oldg, oldb = other.color.rgb
-                olda = other.color.alpha
-                r, g, b = self.color.rgb
-                a = self.color.alpha
+
+                # Otherwise, we have to extract from self.color
+                # and other.color, and interpolate the results.
+                oldr, oldg, oldb, olda = other.color.rgba
+                r, g, b, a = self.color.rgba
 
                 r = oldr + (r - oldr) * done
                 g = oldg + (g - oldg) * done
                 b = oldb + (b - oldb) * done
                 a = olda + (a - olda) * done
 
+            # To properly handle premultiplied alpha, the color channels
+            # have to be multiplied by the alpha channel.
             r *= a
             g *= a
             b *= a
 
+            # Return a Matrix.
             return Matrix([ r, 0, 0, 0,
                             0, g, 0, 0,
                             0, 0, b, 0,
@@ -201,51 +220,39 @@ init -1500 python:
 
         `value`
             The amount the alpha channel should be multiplied by,
-            a number betwen 0.0 and 1.0.
+            a number between 0.0 and 1.0.
         """
 
         def get(self, value):
 
-            return Matrix([ 1, 0, 0, 0,
-                            0, 1, 0, 0,
-                            0, 0, 1, 0,
+            return Matrix([ value, 0, 0, 0,
+                            0, value, 0, 0,
+                            0, 0, value, 0,
                             0, 0, 0, value, ])
 
 
 
     class ContrastMatrix(ColorMatrix):
+        """
+        :doc: colormatrix
+
+        A ColorMatrix that can be used with :tpref:`matrixcolor` to change
+        the brightness of an image, while leaving the Alpha channel
+        alone.
+
+        `value`
+            The contrast value. Values between 0.0 and 1.0 decrease
+            the contrast, while values above 1.0 increase the contrast.
+        """
 
         def get(self, value):
-            """
-            :doc: colormatrix
+            d = value
+            v = value / -2.0 + .5
 
-            A ColorMatrix that can be used with :tpref:`matrixcolor` to change
-            the brightness of an image, while leaving the Alpha channel
-            alone.
-
-            `value`
-                The contrast value. Values between 0.0 and 1.0 decrease
-                the contrast, while values above 1.0 increase the contrast.
-            """
-
-            v = value
-
-            step1 = Matrix([ 1, 0, 0, -.5,
-                             0, 1, 0, -.5,
-                             0, 0, 1, -.5,
-                             0, 0, 0, 1, ])
-
-            step2 = Matrix([ v, 0, 0, 0,
-                             0, v, 0, 0,
-                             0, 0, v, 0,
-                             0, 0, 0, 1, ])
-
-            step3 = Matrix([ 1, 0, 0, -.5,
-                             0, 1, 0, -.5,
-                             0, 0, 1, -.5,
-                             0, 0, 0, 1, ])
-
-            return step3 * step2 * step1
+            return Matrix([ d, 0, 0, v,
+                            0, d, 0, v,
+                            0, 0, d, v,
+                            0, 0, 0, 1, ])
 
 
     class ColorizeMatrix(ColorMatrix):

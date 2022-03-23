@@ -122,6 +122,8 @@ names used in the default preferences screen.
 
 .. include:: inc/preference_action
 
+.. include:: inc/preference_functions
+
 Gamepad
 -------
 

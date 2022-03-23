@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # options.rpy:1
     old "## This file contains options that can be changed to customize your game."
@@ -45,9 +44,9 @@ translate french strings:
     old "## Sounds and music"
     new "## Sons et musiques"
 
-    # options.rpy:46
-    old "## These three variables control which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
-    new "## Ces trois variables contrôlent quels mixeurs sont affichés au joueur par défaut. Configurer l’un de ceux-ci à False (Faux) cachera le mixeur concerné."
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    new "## Ces trois variables contrôlent, entre autres, quels mixeurs sont affichés au joueur par défaut. Configurer l’un de ceux-ci à False (Faux) cachera le mixeur concerné."
 
     # options.rpy:55
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
@@ -192,3 +191,15 @@ translate french strings:
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Le nom d’utilisateur et du projet associé au projet itch.io, séparé par un slash."
+
+    # gui/game/options.rpy:31
+    old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
+    new "## Texte placé sur l'écran \"À propos\" du jeu. Placez le texte entre triples guillemets, et laissez une ligne entre les paragraphes."
+
+    # gui/game/options.rpy:82
+    old "## Between screens of the game menu."
+    new "## Entre les écrans du menu du jeu."
+
+    # gui/game/options.rpy:152
+    old "## Icon"
+    new "## Icône"

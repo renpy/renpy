@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,10 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.display
-import renpy.text
+
 import codecs
 import time
 import re
@@ -31,6 +30,8 @@ import sys
 import collections
 import textwrap
 import builtins
+
+import renpy
 
 python_builtins = set(dir(builtins))
 renpy_builtins = set()
@@ -56,6 +57,9 @@ report_node = None
 all_define_statments = {}
 all_default_statements = {}
 
+# True if at east one error was reported, false otherwise.
+error_reported = False
+
 # Reports a message to the user.
 
 
@@ -66,8 +70,11 @@ def report(msg, *args):
         out = ""
 
     out += msg % args
-    print()
-    print(out.encode('utf-8'))
+    print("")
+    print(out)
+
+    global error_reported
+    error_reported = True
 
 
 added = { }
@@ -150,7 +157,7 @@ def try_compile(where, expr, additional=None):
 
     try:
         renpy.python.py_compile_eval_bytecode(expr)
-    except:
+    except Exception:
         report("'%s' could not be compiled as a python expression, %s.", expr, where)
         if additional:
             add(additional)
@@ -248,7 +255,7 @@ def image_exists_precise(name):
                 da.args = tuple(i for i in name[1:] if i in rest)
                 da.lint = True
                 d._duplicate(da)
-            except:
+            except Exception:
                 continue
 
         precise_cache.add(name)
@@ -264,6 +271,11 @@ def image_exists(name, expression, tag, precise=True):
     """
     Checks a scene or show statement for image existence.
     """
+
+    orig = name
+    f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
+    if f is not None:
+        name = f(name)
 
     # Add the tag to the set of known tags.
     tag = tag or name[0]
@@ -281,7 +293,7 @@ def image_exists(name, expression, tag, precise=True):
     if image_exists_precise(name):
         return
 
-    report("'%s' is not an image.", " ".join(name))
+    report("'%s' is not an image.", " ".join(orig))
 
 
 # Only check each file once.
@@ -317,7 +329,7 @@ def check_displayable(what, d):
     try:
         if isinstance(d, renpy.display.core.Displayable):
             d.visit_all(lambda a: a.predict_one())
-    except:
+    except Exception:
         pass
 
     for fn in files:
@@ -334,7 +346,7 @@ def check_image(node):
 
 def imspec(t):
     if len(t) == 3:
-        return t[0], None, None, t[1], t[2], 0
+        return t[0], None, None, t[1], t[2], 0, None
     if len(t) == 6:
         return t[0], t[1], t[2], t[3], t[4], t[5], None
     else:
@@ -404,14 +416,25 @@ def check_user(node):
 
     try:
         node.get_next()
-    except:
+    except Exception:
         report("Didn't properly report what the next statement should be.")
 
 
+def quote_text(s):
+
+    s = s.replace("\\", "\\\\")
+    s = s.replace("\"", "\\\"")
+    s = s.replace("\t", "\\t")
+    s = s.replace("\n", "\\n")
+
+    return "\"" + s + "\""
+
+
 def text_checks(s):
+
     msg = renpy.text.extras.check_text_tags(s)
     if msg:
-        report("%s (in %s)", msg, repr(s)[1:])
+        report("%s (in %s)", msg, quote_text(s))
 
     if "%" in s and renpy.config.old_substitutions:
 
@@ -438,7 +461,7 @@ def text_checks(s):
                 elif c in "diouxXeEfFgGcrs%":
                     state = 0
                 else:
-                    report("Unknown string format code '%s' (in %s)", fmt, repr(s)[1:])
+                    report("Unknown string format code '%s' (in %s)", fmt, quote_text(s))
                     state = 0
 
             # In a mapping key.
@@ -448,7 +471,7 @@ def text_checks(s):
                     state = 1
 
         if state != 0:
-            report("Unterminated string format code '%s' (in %s)", fmt, repr(s)[1:])
+            report("Unterminated string format code '%s' (in %s)", fmt, quote_text(s))
 
 
 def check_say(node):
@@ -456,10 +479,12 @@ def check_say(node):
     if node.who:
         try:
             char = renpy.ast.eval_who(node.who)
-        except:
+        except Exception:
             report("Could not evaluate '%s' in the who part of a say statement.", node.who)
             add("Perhaps you forgot to define a character?")
             char = None
+    else:
+        char = None
 
     if node.with_:
         try_eval("the with clause of a say statement", node.with_, "Perhaps you forgot to declare, or misspelled, a transition?")
@@ -476,21 +501,22 @@ def check_say(node):
     if not isinstance(char, renpy.character.ADVCharacter):
         return
 
-    if node.attributes is None:
-        return
-
     if char.image_tag is None:
         return
 
-    name = (char.image_tag,) + node.attributes
+    for attributes in (node.attributes, node.temporary_attributes):
+        if attributes is None:
+            continue
 
-    if image_exists_imprecise(name):
-        return
+        name = (char.image_tag,) + attributes
 
-    if image_exists_imprecise(('side',) + name):
-        return
+        if image_exists_imprecise(name):
+            continue
 
-    report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
+        if image_exists_imprecise(('side',) + name):
+            continue
+
+        report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
 
 
 def check_menu(node):
@@ -560,6 +586,8 @@ def check_redefined(node, kind):
 
         if not (node.operator == "=" and node.index is None):
             return
+    else:
+        return
 
     # Combine store name and varname
 
@@ -600,7 +628,7 @@ def check_style_property_displayable(name, property, d):
 
     def sort_short(l):
         l = list(l)
-        l.sort(key=lambda a: len(a))
+        l.sort(key=len)
         return l
 
     alts = sort_short(renpy.style.prefix_alts)
@@ -697,7 +725,7 @@ def check_filename_encodings():
         try:
             filename.encode("ascii")
             continue
-        except:
+        except Exception:
             pass
 
         report("%s contains non-ASCII characters in its filename.", filename)
@@ -737,6 +765,37 @@ def common(n):
     else:
         return False
 
+def report_character_stats(charastats):
+    """
+    Returns a list of character stat lines.
+    """
+
+    # Keep all the statistics in a list, so that it gets wrapped ionto a
+    rv = [ "Character statistics (for default language):" ]
+
+    count_to_char = collections.defaultdict(list)
+
+    for char, count in charastats.items():
+        count_to_char[count].append(char)
+
+    for count, chars in sorted(count_to_char.items(), reverse=True):
+        chars.sort()
+
+        if len(chars) == 1:
+            start = chars[0] + " has "
+        elif len(chars) == 2:
+            start = chars[0] + "  and " + chars[1] + " have "
+        else:
+            start = ", ".join(chars[:-1]) + ", and " + chars[-1] + " have "
+
+        rv.append(
+            " * " + start + humanize(count) +
+            (" block " if count == 1 else " blocks ") + "of dialogue" +
+            (" each." if len(chars) > 1 else ".")
+            )
+
+    return rv
+
 
 def lint():
     """
@@ -746,11 +805,12 @@ def lint():
 
     ap = renpy.arguments.ArgumentParser(description="Checks the script for errors and prints script statistics.", require_command=False)
     ap.add_argument("filename", nargs='?', action="store", help="The file to write to.")
+    ap.add_argument("--error-code", action="store_true", help="If given, the error code is 0 if the game has no lint errros, 1 if lint errors are found.")
 
     args = ap.parse_args()
 
     if args.filename:
-        f = codecs.open(args.filename, "w", encoding="utf-8")
+        f = open(args.filename, "w", encoding="utf-8")
         sys.stdout = f
 
     renpy.game.lint = True
@@ -768,10 +828,12 @@ def lint():
     # them. We sort them in filename, linenumber order.
 
     all_stmts = list(renpy.game.script.all_stmts)
-    all_stmts.sort(key=lambda n : (n.filename, n.linenumber))
+    all_stmts.sort(key=lambda n : n.filename)
 
     # The current count.
     counts = collections.defaultdict(Count)
+
+    charastats = collections.defaultdict(int)
 
     # The current language.
     language = None
@@ -813,6 +875,8 @@ def lint():
             check_say(node)
 
             counts[language].add(node.what)
+            if language is None:
+                charastats[node.who if node.who else 'narrator' ] += 1
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -887,34 +951,55 @@ characters per block. """.format(
 
         lines.append(s)
 
-    print()
-    print()
+    print("")
+    print("")
     print("Statistics:")
-    print()
+    print("")
 
     languages = list(counts)
-    languages.sort()
+    languages.sort(key=lambda a : "" if not a else a)
     for i in languages:
         report_language(i)
 
     lines.append("The game contains {0} menus, {1} images, and {2} screens.".format(
         humanize(menu_count), humanize(image_count), humanize(screen_count)))
 
-    for l in lines:
-        for ll in textwrap.wrap(l, 78):
-            print(ll.encode("utf-8"))
+    if renpy.config.developer and renpy.config.lint_character_statistics:
+        lines.append(report_character_stats(charastats))
 
-        print()
+    # Format the lines and lists of lines.
+    for l in lines:
+        if not isinstance(l, (tuple, list)):
+            l = (l,)
+
+        for ll in l:
+
+            if ll.startswith(" * "):
+                prefix = " * "
+                altprefix = "   "
+                ll = ll[3:]
+            else:
+                prefix  = ""
+                altprefix = ""
+
+            for lll in textwrap.wrap(ll, 78 - len(prefix)):
+                print(prefix + lll)
+                prefix = altprefix
+
+        print("")
 
     for i in renpy.config.lint_stats_callbacks:
         i()
 
-    print()
+    print("")
     if renpy.config.developer and (renpy.config.original_developer != "auto"):
         print("Remember to set config.developer to False before releasing.")
-        print()
+        print("")
 
     print("Lint is not a substitute for thorough testing. Remember to update Ren'Py")
     print("before releasing. New releases fix bugs and improve compatibility.")
+
+    if error_reported and args.error_code:
+        renpy.exports.quit(status=1)
 
     return False

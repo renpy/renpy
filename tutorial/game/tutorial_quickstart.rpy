@@ -243,9 +243,9 @@ label tutorial_images:
 
     e "The scene statement clears the screen, and then adds a background image."
 
-    e "The show statement adds a background image on top of all the other images on the screen."
+    e "The show statement adds a new image on top of all the other images on the screen."
 
-    e "If there was already an image with the same tag, the new image is used to replace the old one."
+    e "If there is already an image with the same tag, the new image is used to replace the old one."
 
     e "Changes to the list of shown images take place instantly, so in the example, the user won't see the background by itself."
 

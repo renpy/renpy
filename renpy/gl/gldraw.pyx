@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,7 +32,7 @@ import_pygame_sdl2()
 
 import renpy
 import renpy.uguu.gl
-import renpy.uguu.angle
+import renpy.gl.glfunctions
 import pygame_sdl2 as pygame
 import os
 import os.path
@@ -42,8 +42,8 @@ import time
 import math
 
 cimport renpy.display.render as render
-cimport gltexture
-import gltexture
+cimport renpy.gl.gltexture as gltexture
+import renpy.gl.gltexture as gltexture
 
 # Cache various externals, so we can use them more efficiently.
 cdef int DISSOLVE, IMAGEDISSOLVE, PIXELLATE, FLATTEN
@@ -88,12 +88,6 @@ cdef class GLDraw:
 
         # The physical size of the window we got.
         self.physical_size = None
-
-        # Is the mouse currently visible?
-        self.mouse_old_visible = None
-
-        # The (x, y) and texture of the software mouse.
-        self.mouse_info = (0, 0, None)
 
         # This is used to cache the surface->texture operation.
         self.texture_cache = weakref.WeakKeyDictionary()
@@ -152,6 +146,9 @@ cdef class GLDraw:
         self.environ.deinit()
         self.rtt.deinit()
 
+        gltexture.dealloc_textures()
+        gltexture.free_texture_numbers()
+
         if renpy.android or renpy.ios:
             pygame.display.get_window().recreate_gl_context()
 
@@ -159,17 +156,17 @@ cdef class GLDraw:
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
         # Get the size of the created screen.
-        pwidth, pheight = pygame.display.get_size()
+        pwidth, pheight = renpy.display.core.get_size()
         vwidth, vheight = self.virtual_size
 
         renpy.game.preferences.fullscreen = fullscreen
         renpy.game.interface.fullscreen = fullscreen
 
-        if not fullscreen:
-            renpy.game.preferences.physical_size = pwidth, pheight
-
         self.physical_size = (pwidth, pheight)
         self.drawable_size = pygame.display.get_drawable_size()
+
+        if not fullscreen:
+            renpy.game.preferences.physical_size = self.get_physical_size()
 
         renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
 
@@ -225,11 +222,11 @@ cdef class GLDraw:
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
-        # Prepare a mouse display.
-        self.mouse_old_visible = None
-
-        self.rtt.init()
-        self.environ.init()
+        try:
+            self.rtt.init()
+            self.environ.init()
+        except Exception:
+            renpy.display.interface.display_reset = True
 
     def resize(self):
 
@@ -238,8 +235,15 @@ cdef class GLDraw:
         if renpy.android or renpy.ios:
             fullscreen = True
 
-        width = renpy.game.preferences.physical_size[0] or self.virtual_size[0]
-        height = renpy.game.preferences.physical_size[1] or self.virtual_size[1]
+        if renpy.game.preferences.physical_size:
+            width = renpy.game.preferences.physical_size[0] or self.virtual_size[0]
+            height = renpy.game.preferences.physical_size[1] or self.virtual_size[1]
+        else:
+            width = self.virtual_size[0]
+            height = self.virtual_size[1]
+
+        width *= self.dpi_scale
+        height *= self.dpi_scale
 
         max_w, max_h = self.info["max_window_size"]
         width = min(width, max_w)
@@ -257,7 +261,7 @@ cdef class GLDraw:
 
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
-        size = pygame.display.get_size()
+        size = renpy.display.core.get_size()
 
         if force or (fullscreen != renpy.display.interface.fullscreen) or (size != self.physical_size):
             renpy.display.interface.before_resize()
@@ -291,8 +295,6 @@ cdef class GLDraw:
         else:
             fullscreen = renpy.game.preferences.fullscreen
 
-        renpy.display.log.write("")
-
         self.virtual_size = virtual_size
 
         vwidth, vheight = virtual_size
@@ -321,27 +323,35 @@ cdef class GLDraw:
 
         renpy.display.log.write("primary display bounds: %r", bounds)
 
-        head_full_w = bounds[2]
         head_w = bounds[2] - 102
         head_h = bounds[3] - 102
 
         # Figure out the default window size.
-        bound_w = min(vwidth, visible_w, head_w)
-        bound_h = min(vwidth, visible_h, head_h)
+        bound_w = min(visible_w, head_w)
+        bound_h = min(visible_h, head_h)
 
         self.info["max_window_size"] = (
-            int(round(min(bound_h * virtual_ar, bound_w))),
-            int(round(min(bound_w / virtual_ar, bound_h))),
+            round(min(bound_h * virtual_ar, bound_w)),
+            round(min(bound_w / virtual_ar, bound_h)),
             )
 
         if renpy.windows or renpy.linux or renpy.macintosh:
 
-            pwidth = min(visible_w, pwidth, head_w)
-            pheight = min(visible_h, pheight, head_h)
-            pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
+            # Are we maximized?
+            old_surface = pygame.display.get_surface()
+            if old_surface is not None:
+                maximized = old_surface.get_flags() & pygame.WINDOW_MAXIMIZED
+            else:
+                maximized = False
 
-        pwidth = int(round(pwidth))
-        pheight = int(round(pheight))
+            if not maximized:
+
+                pwidth = min(visible_w, pwidth, head_w)
+                pheight = min(visible_h, pheight, head_h)
+                pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
+
+        pwidth = round(pwidth)
+        pheight = round(pheight)
 
         pwidth = max(pwidth, 256)
         pheight = max(pheight, 256)
@@ -369,12 +379,6 @@ cdef class GLDraw:
 
         renpy.display.log.write("swap interval: %r frames", vsync)
 
-        # Angle or GL?
-        if self.angle:
-            renpy.uguu.angle.load_angle()
-        else:
-            renpy.uguu.angle.load_gl()
-
         # Set the display mode.
 
         pygame.display.gl_reset_attributes()
@@ -384,6 +388,7 @@ cdef class GLDraw:
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 2);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 0);
             pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_ES)
+
         else:
             pygame.display.hint("SDL_OPENGL_ES_DRIVER", "0")
 
@@ -416,6 +421,9 @@ cdef class GLDraw:
             pygame.display.gl_set_attribute(pygame.GL_SWAP_CONTROL, vsync)
             pygame.display.gl_set_attribute(pygame.GL_ALPHA_SIZE, 8)
 
+        if renpy.config.gl_set_attributes is not None:
+            renpy.config.gl_set_attributes()
+
         self.window = None
 
         if (self.window is None) and fullscreen:
@@ -435,11 +443,11 @@ cdef class GLDraw:
                 renpy.display.log.write("Could not get pygame screen: %r", e)
                 return False
 
-        if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+        renpy.uguu.gl.clear_missing_functions()
+        renpy.uguu.gl.load()
+        if renpy.uguu.gl.check_missing_functions(renpy.gl.glfunctions.required_functions):
             self.quit()
             return False
-
-        renpy.uguu.gl.load()
 
         # Log the GL version.
         renderer = <char *> glGetString(GL_RENDERER)
@@ -464,10 +472,16 @@ cdef class GLDraw:
         extensions_string = <char *> glGetString(GL_EXTENSIONS)
         extensions = set(i.decode("utf-8") for i in extensions_string.split(b" "))
 
-        renpy.display.log.write("Extensions:")
+        if renpy.config.log_gl_extensions:
 
-        for i in sorted(extensions):
-            renpy.display.log.write("    %s", i)
+            renpy.display.log.write("Extensions:")
+
+            for i in sorted(extensions):
+                renpy.display.log.write("    %s", i)
+
+        if "RENPY_FAIL_" + self.info["renderer"].upper() in os.environ:
+            self.quit()
+            return False
 
         def use_subsystem(module, envvar, envval, *req_ext):
             """
@@ -611,12 +625,6 @@ cdef class GLDraw:
             rv = True
         elif first_pass:
             rv = True
-        else:
-            # Redraw if the mouse moves.
-            mx, my, tex = self.mouse_info
-
-            if tex and (mx, my) != pygame.mouse.get_pos():
-                rv = True
 
         # Handle fast redraw.
         if rv:
@@ -639,7 +647,7 @@ cdef class GLDraw:
         if surf in self.texture_cache:
             del self.texture_cache[surf]
 
-    def load_texture(self, surf, transient=False):
+    def load_texture(self, surf, transient=False, properties={}):
         """
         Loads a texture into memory.
         """
@@ -728,8 +736,6 @@ cdef class GLDraw:
         else:
             reverse = IDENTITY
 
-        surftree.is_opaque()
-
         self.draw_render_textures(surftree, 0)
 
         xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
@@ -766,8 +772,6 @@ cdef class GLDraw:
 
         if flip:
 
-            self.draw_mouse()
-
             start = time.time()
 
             renpy.plog(1, "flip")
@@ -775,7 +779,6 @@ cdef class GLDraw:
             try:
                 pygame.display.flip()
             except pygame.error:
-                print("Flip failed.")
                 renpy.game.interface.display_reset = True
 
             end = time.time()
@@ -826,7 +829,7 @@ cdef class GLDraw:
             non_aligned |= (rend.forward.xdy != 0)
             non_aligned |= (rend.forward.ydy != 0)
 
-        for child, cxo, cyo, focus, main in rend.visible_children:
+        for child, cxo, cyo, focus, main in rend.children:
 
             self.draw_render_textures(child, non_aligned)
 
@@ -873,8 +876,8 @@ cdef class GLDraw:
             if isinstance(what, gltexture.TextureGrid):
 
                 if (not subpixel) and reverse.is_unit_aligned():
-                    xo = round(xo)
-                    yo = round(yo)
+                    xo = float(round(xo))
+                    yo = float(round(yo))
 
                 self.set_clip(clip)
 
@@ -1049,7 +1052,7 @@ cdef class GLDraw:
         else:
             child_reverse = reverse
 
-        for child, cx, cy, focus, main in rend.visible_children:
+        for child, cx, cy, focus, main in rend.children:
 
             # The type of cx and cy depends on if this is a subpixel blit or not.
             if type(cx) is float:
@@ -1085,9 +1088,6 @@ cdef class GLDraw:
             clip = self.default_clip
 
             self.draw_transformed(what, clip, 0, 0, 1.0, 1.0, self.virt_to_draw, renpy.config.nearest_neighbor, False)
-
-        if isinstance(what, render.Render):
-            what.is_opaque()
 
         rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
@@ -1170,9 +1170,6 @@ cdef class GLDraw:
 
             draw.draw_transformed(what, clip, 0, 0, 1.0, 1.0, reverse, renpy.config.nearest_neighbor, False)
 
-        if isinstance(what, render.Render):
-            what.is_opaque()
-
         rv = gltexture.texture_grid_from_drawing(width, height, draw_func, self.rtt, self.environ)
 
         what.half_cache = rv
@@ -1200,11 +1197,6 @@ cdef class GLDraw:
 
         x = int(x)
         y = int(y)
-
-        x = max(0, x)
-        x = min(vw, x)
-        y = max(0, y)
-        y = min(vh, y)
 
         return x, y
 
@@ -1241,47 +1233,6 @@ cdef class GLDraw:
     def set_mouse_pos(self, x, y):
         x, y = self.untranslate_point(x, y)
         pygame.mouse.set_pos([x, y])
-
-    # Private.
-    def draw_mouse(self):
-
-        hardware, mx, my, tex = renpy.game.interface.get_mouse_info()
-
-        self.mouse_info = (mx, my, tex)
-
-        if self.mouse_old_visible != hardware:
-            pygame.mouse.set_visible(hardware)
-            self.mouse_old_visible = hardware
-
-        if not tex:
-            return
-
-        x, y = pygame.mouse.get_pos()
-
-        x -= mx
-        y -= my
-
-        pw, ph = self.physical_size
-        pbx, pby, pbw, pbh = self.physical_box
-
-        xmul = 1.0 * self.drawable_size[0] / self.physical_size[0]
-        ymul = 1.0 * self.drawable_size[1] / self.physical_size[1]
-
-        self.environ.viewport(0, 0, xmul * pw, ymul * ph)
-        self.environ.ortho(0, pw, ph, 0, -1.0, 1.0)
-
-        self.clip_mode_screen()
-        self.set_clip((-pbx, -pby, pw, ph))
-
-        gltexture.blit(
-            tex,
-            x,
-            y,
-            IDENTITY,
-            1.0,
-            1.0,
-            self.environ,
-            False)
 
     def screenshot(self, surftree):
         cdef unsigned char *pixels
@@ -1352,8 +1303,6 @@ cdef class GLDraw:
         y = int(y / self.dpi_scale)
 
         return (x, y)
-
-
 
 
 class Rtt(object):
@@ -1451,7 +1400,7 @@ cdef class Environ(object):
 # classes have been created.
 try:
     from . import glrtt_copy
-except:
+except Exception:
     glrtt_copy = None
 
 # Copy doesn't work on iOS.

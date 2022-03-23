@@ -130,8 +130,8 @@ translate russian strings:
     new "Калибрую [name] ([i]/[total])"
 
     # 00gamepad.rpy:58
-    old "Press or move the [control!r] [kind]."
-    new "Нажмите или передвиньте [control!r] [kind]."
+    old "Press or move the [control!s] [kind]."
+    new "Нажмите или передвиньте [control!s] [kind]."
 
     # 00gamepad.rpy:66
     old "Skip (A)"
@@ -236,3 +236,51 @@ translate russian strings:
     # _errorhandling.rpym:687
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Копирует файл errors.txt в буфер обмена как Markdown для Дискорда."
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "Принудительный GL рендеринг"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "Принудительный ANGLE рендеринг"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "Принудительный GLES рендеринг"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "Принудительный GL2 рендеринг"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "Принудительный ANGLE2 рендеринг"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "Принудительный GLES2 рендеринг"
+
+    # renpy/common/00gltest.rpy:245
+    old "This game requires use of GL2 that can't be initialised."
+    new "Эта игра требует использование GL2 который не может быть инициализирован."
+
+    # renpy/common/00gltest.rpy:256
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Больше информации о том как это может быть исправлено смотрите в {a=[url]}документации{/a}."
+
+    # renpy/common/00gltest.rpy:273
+    old "Change render options"
+    new "Изменить настройки рендеринга"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "Нажмите или сдвиньте [kind] '[control!s]'"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "Включить (игнорировать блоклист)"
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "Файл {a=edit:1:log.txt}log.txt{/a} может содержать информацию, которая поможет вам определить, что не так с вашим компьютером."

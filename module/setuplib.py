@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,6 +27,7 @@ from __future__ import print_function
 import os
 import sys
 import re
+import threading
 
 import distutils.core
 
@@ -199,8 +200,11 @@ def cmodule(name, source, libs=[], define_macros=[], includes=[], language="c"):
         ))
 
 
+# A list of cython files that were necessary to generate.
 necessary_gen = [ ]
 
+# A list of cython generation commands that will be run in parallel.
+generate_cython_queue = [ ]
 
 def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros=[], pyx=None, language="c"):
     """
@@ -296,82 +300,7 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
     if out_of_date:
         print(name, "is out of date.")
 
-        try:
-            import subprocess
-
-            if language == "c++":
-                lang_args = [ "--cplus" ]
-            else:
-                lang_args = [ ]
-
-            if "RENPY_ANNOTATE_CYTHON" in os.environ:
-                annotate = [ "-a" ]
-            else:
-                annotate = [ ]
-
-            if mod_coverage:
-                coverage_args = [ "-X", "linetrace=true" ]
-            else:
-                coverage_args = [ ]
-
-            subprocess.check_call([
-                cython_command,
-                "-Iinclude",
-                "-I" + gen,
-                "-I..",
-                ] + annotate + lang_args + coverage_args + [
-                fn,
-                "-o",
-                c_fn])
-
-            # Fix-up source for static loading
-            if static:
-
-                parent_module = '.'.join(split_name[:-1])
-                parent_module_identifier = parent_module.replace('.', '_')
-
-                with open(c_fn, 'r') as f:
-                    ccode = f.read()
-
-                with open(c_fn + ".dynamic", 'w') as f:
-                    f.write(ccode)
-
-                if len(split_name) > 1:
-
-                    ccode = re.sub('Py_InitModule4\("([^"]+)"', 'Py_InitModule4("' + parent_module + '.\\1"', ccode) # Py2
-                    ccode = re.sub('(__pyx_moduledef.*?"){}"'.format(re.escape(split_name[-1])), '\\1' + '.'.join(split_name) + '"', ccode, count=1, flags=re.DOTALL) # Py3
-                    ccode = re.sub('^__Pyx_PyMODINIT_FUNC init', '__Pyx_PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py2 Cython 0.28+
-                    ccode = re.sub('^__Pyx_PyMODINIT_FUNC PyInit_', '__Pyx_PyMODINIT_FUNC PyInit_' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py3 Cython 0.28+
-                    ccode = re.sub('^PyMODINIT_FUNC init', 'PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py2 Cython 0.25.2
-
-                cname = "_".join(split_name)
-
-                ccode += """
-
-static struct _inittab CNAME_inittab[] = {
-#if PY_MAJOR_VERSION < 3
-    { "PYNAME", initCNAME },
-#else
-    { "PYNAME", PyInit_CNAME },
-#endif
-    { NULL, NULL },
-};
-
-static void CNAME_constructor(void) __attribute__((constructor));
-
-static void CNAME_constructor(void) {
-    PyImport_ExtendInittab(CNAME_inittab);
-}
-""".replace("PYNAME", name).replace("CNAME", cname)
-
-                with open(c_fn, 'w') as f:
-                    f.write(ccode)
-
-        except subprocess.CalledProcessError as e:
-            print()
-            print(str(e))
-            print()
-            sys.exit(-1)
+        generate_cython_queue.append((name, language, mod_coverage, split_name, fn, c_fn))
 
     # Build the module normally once we have the c file.
     if compile_if:
@@ -380,6 +309,98 @@ static void CNAME_constructor(void) {
             define_macros = define_macros + [ ("CYTHON_TRACE", "1") ]
 
         cmodule(name, [ c_fn ] + source, libs=libs, includes=includes, define_macros=define_macros, language=language)
+
+lock = threading.Condition()
+cython_failure = False
+
+def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
+    import subprocess
+    global cython_failure
+
+    if language == "c++":
+        lang_args = [ "--cplus" ]
+    else:
+        lang_args = [ ]
+
+    if "RENPY_ANNOTATE_CYTHON" in os.environ:
+        annotate = [ "-a" ]
+    else:
+        annotate = [ ]
+
+    if mod_coverage:
+        coverage_args = [ "-X", "linetrace=true" ]
+    else:
+        coverage_args = [ ]
+
+    p = subprocess.Popen([
+            cython_command,
+            "-Iinclude",
+            "-I" + gen,
+            "-I..",
+            "--3str",
+            ] + annotate + lang_args + coverage_args + [
+            "-X", "profile=False",
+            "-X", "embedsignature=True",
+            fn,
+            "-o",
+            c_fn], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    stdout, stderr = p.communicate()
+
+    with lock:
+        print("-", name, "-" * (76 - len(name)))
+        if stdout:
+            print(stdout.decode("utf-8", "surrogateescape"))
+            print("")
+
+    if p.returncode:
+        cython_failure = True
+        return
+
+    # Fix-up source for static loading
+    if static:
+        parent_module = '.'.join(split_name[:-1])
+        parent_module_identifier = parent_module.replace('.', '_')
+
+        with open(c_fn, 'r') as f:
+            ccode = f.read()
+
+        with open(c_fn + ".dynamic", 'w') as f:
+            f.write(ccode)
+
+        if len(split_name) > 1:
+            ccode = re.sub(r'Py_InitModule4\("([^"]+)"', 'Py_InitModule4("' + parent_module + '.\\1"', ccode) # Py2
+            ccode = re.sub(r'(__pyx_moduledef.*?"){}"'.format(re.escape(split_name[-1])), '\\1' + '.'.join(split_name) + '"', ccode, count=1, flags=re.DOTALL) # Py3
+            ccode = re.sub(r'^__Pyx_PyMODINIT_FUNC init', '__Pyx_PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py2 Cython 0.28+
+            ccode = re.sub(r'^__Pyx_PyMODINIT_FUNC PyInit_', '__Pyx_PyMODINIT_FUNC PyInit_' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py3 Cython 0.28+
+            ccode = re.sub(r'^PyMODINIT_FUNC init', 'PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py2 Cython 0.25.2
+
+        with open(c_fn, 'w') as f:
+            f.write(ccode)
+
+def generate_all_cython():
+    """
+    Run all of the cython that needs to be generated.
+    """
+
+    threads = [ ]
+
+    for args in generate_cython_queue:
+
+        if "RENPY_CYTHON_SINGLETHREAD" in os.environ:
+            generate_cython(*args)
+            if cython_failure:
+                sys.exit(1)
+        else:
+            t = threading.Thread(target=generate_cython, args=args)
+            t.start()
+            threads.append(t)
+
+    for t in threads:
+        t.join()
+
+    if cython_failure:
+        sys.exit(1)
 
 
 def find_unnecessary_gen():

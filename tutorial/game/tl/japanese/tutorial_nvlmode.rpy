@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/tutorial_nvlmode.rpy:17
 translate japanese tutorial_nvlmode_76b2fe88:
 

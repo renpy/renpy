@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,6 +25,22 @@ init python:
     import os
     import threading
     import time
+
+    ssl_context_cache = None
+
+    def ssl_context():
+        """
+        Returns the SSL context.
+        """
+
+        global ssl_context_cache
+
+        if ssl_context_cache is None:
+            import ssl
+            import certifi
+            ssl_context_cache = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=certifi.where())
+
+        return ssl_context_cache
 
     class Downloader(object):
 
@@ -57,9 +73,7 @@ init python:
             try:
                 # Open the URL.
 
-                import ssl
-                context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=renpy.loader.transfn("cacert.pem"))
-                self.urlfile = urllib.request.urlopen(url, context=context)
+                self.urlfile = urllib.request.urlopen(url, context=ssl_context())
 
                 t = threading.Thread(target=self.thread)
                 t.daemon = True

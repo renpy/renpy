@@ -1,4 +1,4 @@
-# Copyright 2004-2020 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,11 +20,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.display
-import renpy.audio
+
 import collections
+
+import renpy
 
 # The movie displayable that's currently being shown on the screen.
 current_movie = None
@@ -80,7 +81,6 @@ def movie_start(filename, size=None, loops=0):
 
 movie_start_fullscreen = movie_start
 movie_start_displayable = movie_start
-
 
 # A map from a channel name to the movie texture that is being displayed
 # on that channel.
@@ -138,10 +138,13 @@ def interact():
     return fullscreen
 
 
-def get_movie_texture(channel, mask_channel=None, side_mask=False):
+def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
 
     if not renpy.audio.music.get_playing(channel):
         return None, False
+
+    if mipmap is None:
+        mipmap = renpy.config.mipmap_movies
 
     c = renpy.audio.music.get_channel(channel)
     surf = c.read_video()
@@ -175,7 +178,7 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False):
 
     if surf is not None:
         renpy.display.render.mutated_surface(surf)
-        tex = renpy.display.draw.load_texture(surf, True)
+        tex = renpy.display.draw.load_texture(surf, True, { "mipmap" : mipmap })
         texture[channel] = tex
         new = True
     else:
@@ -199,14 +202,14 @@ def render_movie(channel, width, height):
     dh = scale * sh
 
     rv = renpy.display.render.Render(width, height)
-    rv.forward = renpy.display.render.Matrix2D(1.0 / scale, 0.0, 0.0, 1.0 / scale)
-    rv.reverse = renpy.display.render.Matrix2D(scale, 0.0, 0.0, scale)
+    rv.forward = renpy.display.matrix.Matrix2D(1.0 / scale, 0.0, 0.0, 1.0 / scale)
+    rv.reverse = renpy.display.matrix.Matrix2D(scale, 0.0, 0.0, scale)
     rv.blit(tex, (int((width - dw) / 2), int((height - dh) / 2)))
 
     return rv
 
 
-def default_play_callback(old, new):  # @UnusedVariable
+def default_play_callback(old, new): # @UnusedVariable
 
     renpy.audio.music.play(new._play, channel=new.channel, loop=new.loop, synchro_start=True)
 
@@ -234,8 +237,9 @@ class Movie(renpy.display.core.Displayable):
     `channel`
         The audio channel associated with this movie. When a movie file
         is played on that channel, it will be displayed in this Movie
-        displayable. If this is not given, and the `play` is provided,
-        a channel name is automatically selected.
+        displayable. If this is left at the default of "movie", and `play`
+        is provided, a channel name is automatically selected, using
+        :var:`config.single_movie_channel` and :var:`config.auto_movie_channel`.
 
     `play`
         If given, this should be the path to a movie file. The movie
@@ -260,7 +264,7 @@ class Movie(renpy.display.core.Displayable):
 
     `mask_channel`
         The channel the alpha mask video is played on. If not given,
-        defaults to `channel`\ _mask. (For example, if `channel` is "sprite",
+        defaults to `channel`\\_mask. (For example, if `channel` is "sprite",
         `mask_channel` defaults to "sprite_mask".)
 
     `start_image`
@@ -275,7 +279,7 @@ class Movie(renpy.display.core.Displayable):
         preference if video is too taxing for their system. The image will
         also be used if the video plays, and then the movie ends.
 
-    ``play_callback``
+    `play_callback`
         If not None, a function that's used to start the movies playing.
         (This may do things like queue a transition between sprites, if
         desired.) It's called with the following arguments:
@@ -300,14 +304,10 @@ class Movie(renpy.display.core.Displayable):
                 if new.mask:
                     renpy.music.play(new.mask, channel=new.mask_channel, loop=new.loop, synchro_start=True)
 
-        `loop`
-            If False, the movie will not loop. If `image` is defined, the image
-            will be displayed when the movie ends. Otherwise, the movie will
-            become transparent.
-
-
-
-    This displayable will be transparent when the movie is not playing.
+    `loop`
+        If False, the movie will not loop. If `image` is defined, the image
+        will be displayed when the movie ends. Otherwise, the displayable will
+        become transparent.
     """
 
     fullscreen = False
@@ -343,9 +343,9 @@ class Movie(renpy.display.core.Displayable):
     def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, **properties):
         super(Movie, self).__init__(**properties)
 
-        global auto_channel_serial
-
-        if channel == "movie" and play and renpy.config.auto_movie_channel:
+        if channel == "movie" and play and renpy.config.single_movie_channel:
+            channel = renpy.config.single_movie_channel
+        elif channel == "movie" and play and renpy.config.auto_movie_channel:
             channel = "movie_{}_{}".format(play, mask)
 
         self.size = size
@@ -403,7 +403,7 @@ class Movie(renpy.display.core.Displayable):
 
         if self.size is None:
 
-            tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask)
+            tex, _ = get_movie_texture(self.channel, self.mask_channel, self.side_mask, self.style.mipmap)
 
             if (not not_playing) and (tex is not None):
                 width, height = tex.get_size()

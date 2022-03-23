@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2020-02-15 11:18
-
+﻿
 # game/indepth_translations.rpy:12
 translate japanese translations_c4ef181f:
 

@@ -3,7 +3,7 @@
 translate korean a_label_8d79d234:
 
     # e "You just clicked to jump to a label."
-    e "조금 전의 클릭으로 레이블로 점프했어."
+    e "방금 전의 클릭으로 레이블로 점프했어."
 
 # game/indepth_text.rpy:28
 translate korean text_578c4060:
@@ -21,7 +21,7 @@ translate korean text_60750345:
 translate korean text_5e1a6ee8:
 
     # e "That's what text tags are for."
-    e "그럴 때 필요한 것이 바로 텍스트 태그(taxe tag)야."
+    e "그럴 때 필요한 것이 바로 텍스트 태그(text tag)야."
 
 # game/indepth_text.rpy:37
 translate korean text_38c63ec8:
@@ -39,7 +39,7 @@ translate korean text_1760f9c8:
 translate korean text_a620251f:
 
     # e "The a text tag can {a=https://www.renpy.org}link to a website{/a} or {a=jump:a_label}jump to a label{/a}."
-    e "글자 태그는 {a=https://www.renpy.org}누리집 이동{/a}이나 {a=jump:a_label}a 레이블로 점프{/a}가 될 수 있어."
+    e "글자 태그로 {a=https://www.renpy.org}웹사이트로 이동{/a}하거나 {a=jump:a_label}a 레이블로 점프{/a}할 수도 있어."
 
 # game/indepth_text.rpy:49
 translate korean after_a_label_d22d5f4a:
@@ -81,13 +81,13 @@ translate korean after_a_label_d43417d7:
 translate korean after_a_label_f24052f9:
 
     # e "The k tag changes kerning. It can space the letters of a word {k=-.5}closer together{/k} or {k=.5}farther apart{/k}."
-    e "k 태그는 자간을 변경해. 그것은 단어들을 {k=-.5}서로 가깝게 놓거나{/k} {k=1.5}멀리 떨어뜨려 놓을 수 있어{/k}."
+    e "k 태그는 자간을 변경해. 단어들을 {k=-.5}서로 가깝게 놓거나{/k} {k=1.5}멀리 떨어뜨려 놓을 수 있어{/k}."
 
 # game/indepth_text.rpy:76
 translate korean after_a_label_2310b922:
 
     # e "The size tag changes the size of text. It can make text {size=+10}bigger{/size} or {size=-10}smaller{/size}, or set it to a {size=30}fixed size{/size}."
-    e "크기(size) 태그는 글자의 크기를 바꿔. 그것은 글자를 {size=+10}크게 만들거나{/size} {size=-10}작게{/size}, 혹은 {size=30}고정된 크기{/size}로 만들 수 있지."
+    e "크기(size) 태그는 글자의 크기를 바꿔. 글자를 {size=+10}크게 만들거나{/size} {size=-10}작게{/size}, 혹은 {size=30}고정된 크기{/size}로 만들 수 있지."
 
 # game/indepth_text.rpy:81
 translate korean after_a_label_f566abf2:
@@ -165,7 +165,7 @@ translate korean after_a_label_c90f24a8:
 translate korean after_a_label_fb106a95:
 
     # e "Finally, certain characters are special. [[, {{, and \\ need to be doubled if included in text. The %% character should be doubled if used in dialogue."
-    e "마지막으로, 특수 문자는 특별해. [[, {{, 그리고 \\는 글자에 포함된 경우 두 번을 써야 해. %% 문자를 대사에 사용할 경우 두 번을 써야 하지."
+    e "마지막으로, 어떤 문자는 특별하게 다뤄져. [[, {{, 그리고 \\는 글자에 포함된 경우 두 번을 써야 해. %% 문자를 대사에 사용할 경우 두 번을 써야 하지."
 
 translate korean strings:
 

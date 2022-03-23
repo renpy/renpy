@@ -12,6 +12,163 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+
+7.5.0
+-----
+
+The :propref:`focus_mask` style property now defaults to None for drag displayables.
+This improves performance, but means that the displayable can be dragged by
+transparent pixels. To revert this, the focus_mask property can be set to True
+for individual drags, or globally with::
+
+    style drag:
+        focus_mask True
+
+Both options reduce performance.
+
+The :propref:`outline_scaling` style property now defaults to "linear". This means
+the window scaling factor is applied to the outline size, and then rounded to an
+integer. This can cause multiple outlines of similar sizes to disappear. To revert
+this, the outline_scaling property can be set to "step" for individual text elements,
+or globally with::
+
+    style default:
+        outline_scaling "step"
+
+The platform-specific directories inside lib/ have had name changes. The 
+``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This 
+change helps support the development of the Python 3 powered Ren'Py 8. 
+These directories are not documented, and may change between Ren'Py 
+versions, but we do guarantee that ``sys.excutable`` is set.
+
+
+.. _incompatible-7.4.11:
+
+7.4.11
+------
+
+Ren'Py will now run a button's unhovered property even when focus is 
+changed by default, such as when a screen is shown or unshown. To 
+revert to the old behavior, use::
+
+    define config.always_unfocus = False
+
+.. _incompatible-7.4.9:
+
+7.4.9
+-----
+
+Ren'Py will now interpret floating point numbers given to a Transform's
+:tpref:`xsize` or :tpref:`ysize` properties as a size relative to the area
+available to the Transform. To revert this change::
+
+    define config.relative_transform_size = False
+
+The order in which Ren'Py's self-voicing reads out layers, screens, and displayables
+in screens has changed so that screens and displayables closest to the player
+are read first. To revert to the old order::
+
+    define config.tts_front_to_back = False
+
+
+.. _incompatible-7.4.7:
+
+7.4.7
+-----
+
+When :propref:`xminimum` and :propref:`xmaximum` are both floats, the
+minimum is interpreted as being a fraction of the available area. This
+means that :propref:`xsize` will have the expected result when being
+given a float. This may cause some displayables to change size. To revert
+this change::
+
+    define config.adjust_minimums = False
+
+An ATL displayable will now start its animation when it first
+appears, rather than when the screen itself is shown. To revert this change::
+
+    define config.atl_start_on_show = False
+
+Input carets now blink by default. To change this::
+
+    define config.input_caret_blink = False
+
+
+.. _incompatible-7.4.6:
+
+7.4.6
+-----
+
+The change regarding the layer at list in 7.4.5 was reverted. The new ``camera``
+statement defaults to the new semantics, while leaving ``show layer`` alone.
+
+.. _incompatible-7.4.5:
+
+
+7.4.5
+------
+
+Games produced with this version use the model-based renderer by default.
+To disable the model-based renderer, use::
+
+    define config.gl2 = False
+
+**Reverted in 7.4.6**
+The ``scene`` statement no longer clears the layer at list. To clear the
+layer at list, use::
+
+    show layer master
+
+Where "master" is the name of the layer. Alternatively, the old behavior
+can be restored with::
+
+    define config.scene_clears_layer_at_list = True
+
+
+.. _incompatible-7.4.3:
+
+7.4.3
+-----
+
+It is now possible to click to dismiss transitions introduced with
+:func:`renpy.transition`, and places that use it like the ``with`` clause
+of say or ``call screen`` statement. To prevent this, use::
+
+    define config.dismiss_blocking_transitions = False
+
+
+.. _incompatible-7.4.1:
+
+7.4.1
+-----
+
+Pause with a delay now uses :func:`renpy.pause` rather than ``with Pause(...)``.
+This means that the user will have to click to bypass multiple pauses in a row.
+To revert to the old behavior, use::
+
+    define config.pause_with_transition = True
+
+
+.. _incompatible-7.4:
+
+7.4
+---
+
+Mobile platforms now use hardware, rather than software, video playback.
+To restore the old behavior, use::
+
+    define config.hw_video = True
+
+Ren'Py will now only show side images if with at least one attribute in
+addition to the image tag. To disable this, use::
+
+    define config.side_image_requires_attributes = False
+
+
+While setting config variables, like :var:`config.mouse`, outside of the init
+phase was never supported, it will not work in 7.4. Consider using the
+:var:`default_mouse` variable to set a custom mouse cursor, instead.
+
 .. _incompatible-7.3.3:
 
 7.3.3
@@ -22,9 +179,16 @@ after ``default`` statements in all cases. To restore the old behavior
 (where callbacks were run before ``default`` statements during game
 but not replay start), use::
 
-    define config.early_start_callbacks = True
+    define config.early_start_store = True
 
+When given to a viewport or vpgrid with scrollbars, the minimum, xminimum,
+and yminimum side properties now apply to the side containing the scrollbars
+and viewport, and not solely the viewport.
 
+To work around this, either use ``viewport_minimum``, ``viewport_xminimum``,
+and ``viewport_yminimum``, or include::
+
+    define config.compat_viewport_minimum = True
 
 .. _incompatible-7.3.0:
 
