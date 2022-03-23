@@ -1309,7 +1309,7 @@ class Camera(Node):
 
     def analyze(self):
         if self.atl is not None:
-            self.atl.mark_constant()
+            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
 class Scene(Node):
