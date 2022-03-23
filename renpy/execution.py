@@ -362,6 +362,9 @@ class Context(renpy.object.Object):
 
             if i in store:
                 self.dynamic_stack[index][i] = store[i]
+            elif "." in i:
+                field, _, v = i.partition(".")
+                self.dynamic_stack[index][i] = store[field].__dict__[v]
             else:
                 self.dynamic_stack[index][i] = Delete()
 
@@ -374,11 +377,16 @@ class Context(renpy.object.Object):
         if not self.dynamic_stack:
             return
 
-        store = renpy.store.__dict__
+        _store = renpy.store.__dict__
 
         dynamic = self.dynamic_stack.pop()
 
         for k, v in dynamic.items():
+            if "." in k:
+                field, _, k = k.partition(".")
+                store = _store[field].__dict__
+            else:
+                store = _store
             if isinstance(v, Delete):
                 store.pop(k, None)
             else:
