@@ -705,6 +705,9 @@ class HistoryEntry(renpy.object.Object):
     who = None
     what = None
 
+    def __eq__(self, other):
+        return self.who == other.who and self.what == other.what
+    
     def __repr__(self):
         return "<History {!r} {!r}>".format(self.who, self.what)
 
