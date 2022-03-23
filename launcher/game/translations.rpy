@@ -27,7 +27,7 @@ init python:
     if persistent.translate_language is None:
         persistent.translate_language = "english"
 
-    persistent.extract_language = persistent.extract_language or "None".
+    persistent.extract_language = persistent.extract_language or "None"
 
     if persistent.generate_empty_strings is None:
         persistent.generate_empty_strings = True
