@@ -400,7 +400,18 @@ class SLBlock(SLNode):
         if self.atl_transform is not None:
             self.has_keyword = True
 
-            self.atl_transform.mark_constant()
+            # We use screen analysis object, since it
+            # have all knowlege about our constants
+            self.atl_transform.mark_constant(analysis)
+
+            # We can only be a constant if we do not rely
+            # on screen arguments or other internal variables.
+            # So we can pass an empty context for compilation.
+            if self.atl_transform.constant == GLOBAL_CONST:
+                self.atl_transform.compile_block()
+
+            # Check constant again after compilation try,
+            # this set its constant to NOT_CONST if failed.
             const = self.atl_transform.constant
             self.constant = min(self.constant, const)
 
