@@ -30,6 +30,9 @@
 
 init -1 python hide:
 
+    # Update the searchpath to find additional fonts.
+    config.searchpath.append(config.renpy_base + "/sdk-fonts")
+
     # Should we enable the use of developer tools? This should be
     # set to False before the game is released, so the user can't
     # cheat using developer tools.
@@ -348,6 +351,9 @@ init python:
 
     source_and_binary("the_question")
     source_and_binary("tutorial")
+
+    # extra fonts.
+    build.classify_renpy("sdk-fonts/**", "source")
 
     # docs.
     build.classify_renpy("doc/", "source")
