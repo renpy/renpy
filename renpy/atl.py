@@ -464,6 +464,9 @@ class ATLTransformBase(renpy.object.Object):
         if child is None:
             child = self.child
 
+        if getattr(child, '_duplicatable', False):
+            child = child._duplicate(_args)
+
         # Create a new ATL Transform.
         parameters = renpy.ast.ParameterInfo({ }, positional, None, None)
 
