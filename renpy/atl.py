@@ -964,6 +964,9 @@ class RawMultipurpose(RawStatement):
             else:
                 transition = None
 
+            if child is None:
+                return Block(self.loc, [ ])
+
             if isinstance(child, (int, float)):
                 return Interpolation(self.loc, "pause", child, [ ], None, 0, [ ])
 

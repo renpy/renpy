@@ -246,7 +246,9 @@ expression.
 .. productionlist:: atl
     atl_expression :  `simple_expression` ("with" `simple_expression`)?
 
-There are three things the first simple expression may evaluate to:
+There are four things the first simple expression may evaluate to:
+
+* If it's None, it behaves like a ``pass`` statement.
 
 * If it's a transform, that transform is executed. With clauses are ignored
   when a transform is supplied.
@@ -1131,8 +1133,8 @@ both horizontal and vertical positions.
     :type: (position, position) or None
     :default: None
 
-    This clips the child of this transform to the given size. Integers are 
-    interpreted as pixels, while floats are interpreted as relative to the 
+    This clips the child of this transform to the given size. Integers are
+    interpreted as pixels, while floats are interpreted as relative to the
     width and height of the child being clipped.
 
 
