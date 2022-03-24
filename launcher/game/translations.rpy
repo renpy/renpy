@@ -27,8 +27,6 @@ init python:
     if persistent.translate_language is None:
         persistent.translate_language = "english"
 
-    persistent.extract_language = persistent.extract_language or "None"
-
     if persistent.generate_empty_strings is None:
         persistent.generate_empty_strings = True
 
@@ -404,6 +402,7 @@ screen extract_dialogue:
 
 label extract_dialogue:
 
+    $persistent.extract_language = persistent.extract_language or "None"
     call screen extract_dialogue
 
 label start_extract_dialogue:
