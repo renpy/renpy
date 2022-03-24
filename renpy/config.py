@@ -1213,6 +1213,9 @@ at_exit_callbacks = [ ]
 # when config.developer is true?
 lint_character_statistics = True
 
+# Enables `define persistent.var', pre 7.5 behavior
+allow_define_persistent = False
+
 del os
 del collections
 

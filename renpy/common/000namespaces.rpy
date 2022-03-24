@@ -20,8 +20,10 @@
         pure = False
 
         def set(self, name, value):
-            if getattr(persistent, name) is None:
-                setattr(persistent, name, value)
+            if config.allow_define_persistent:
+                self.set_default(persistent, name, value)
+            else:
+                raise Exception("The define statement can not be used with the persistent namespace.")
 
         def set_default(self, name, value):
             if getattr(persistent, name) is None:

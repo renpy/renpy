@@ -248,6 +248,9 @@ python early hide:
         if script_version <= (7, 2, 2):
             config.keyword_after_python = True
 
+        if script_version <= (7, 4, 11):
+            config.allow_define_persistent = True
+
     except Exception:
         config.early_script_version = None
         pass
