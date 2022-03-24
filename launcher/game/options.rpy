@@ -273,7 +273,6 @@ init python:
     # Atom rules. These have to be very early, since Atom uses names like
     # tmp for packages.
     build.classify_renpy("atom/", "atom-all source_only")
-    build.classify_renpy("atom/Atom.edit.py", "atom-all source_only")
     build.classify_renpy("atom/default-dot-atom/**", "atom-all")
     build.classify_renpy("atom/atom-windows/**", "atom-windows")
     build.classify_renpy("atom/Atom.app/**", "atom-mac")
