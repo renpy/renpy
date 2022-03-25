@@ -201,7 +201,7 @@ init -1500 python:
             The time it will take for the gallery to advance between images
             in slideshow mode.
 
-        .. image_screen:: "_gallery"
+        .. attribute:: image_screen = "_gallery"
 
             The screen that is used to show individual images in this gallery.
             This screen is supplied the following keyword arguments:

@@ -67,8 +67,8 @@ init 1 python in editor:
         ei = EditorInfo(filename)
 
         if ei.name in editors:
-           if editors[ei.name].mtime >= ei.mtime:
-               return
+            if editors[ei.name].mtime >= ei.mtime:
+                return
 
         editors[ei.name] = ei
 

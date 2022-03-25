@@ -132,7 +132,6 @@ The interpolation statement is the main way that ATL controls transformations.
                    : | simple_expression )*
 
 .. productionlist:: atl
-
     atl_interp : ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )? `atl_properties`
                : | ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )? ":"
                :    `atl_properties`

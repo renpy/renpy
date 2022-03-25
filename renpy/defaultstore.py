@@ -322,6 +322,7 @@ def AlphaBlend(control, old, new, alpha=False):
 def At(d, *args):
     """
     :doc: disp_at
+    :name: At
 
     Given a displayable `d`, applies each of the transforms in `args`
     to it. The transforms are applied in left-to-right order, so that

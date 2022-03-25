@@ -335,7 +335,7 @@ python early:
 
 
 # A preference that controls if translations are shown.
-define persistent.show_translation_marker = False
+default persistent.show_translation_marker = False
 
 init python:
 

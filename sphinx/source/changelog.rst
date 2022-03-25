@@ -28,7 +28,7 @@ Image Gallery
 The :class:`Gallery` class now has a new field, `image_screen`, that can be
 used to customize how gallery image are displayed.
 
-The :method:`Gallery.image` and :method:`Gallery.unlock_image` methods now
+The :func:`Gallery.image` and :func:`Gallery.unlock_image` methods now
 take keywork arguments beginning with `show\_`. These arguments have the
 `show\_` prefix stripped, and are then passed to the Gallery.image_screen
 as additional keyword arguments. This can be used to include additional
