@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,14 +22,15 @@
 # This file handles imagemap caching.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import pygame_sdl2 as pygame
-import renpy.display
-
-from renpy.display.render import render
 
 import hashlib
+
+import pygame_sdl2 as pygame
+import renpy
+from renpy.display.render import render
+
 
 # A list of cache images we've already written.
 cached = set()
@@ -95,7 +96,7 @@ class ImageMapCache(renpy.object.Object):
 
         # A list that, for each hotspot, gives the rectangle in the cache
         # image corresponding to that hotspot.
-        self.cache_rect = None
+        self.cache_rect = None # type: list[None|tuple[int, int, int, int]]|None
 
         # The size of the cache.
         self.cache_width = None
@@ -138,7 +139,7 @@ class ImageMapCache(renpy.object.Object):
     def layout(self):
         self.areas.sort()
         self.areas.reverse()
-        self.cache_rect = [ None ] * len(self.areas)
+        self.cache_rect = [ None ] * len(self.areas) # type: ignore
 
         # The width of the cache image.
         width = self.areas[0][0]
@@ -154,7 +155,7 @@ class ImageMapCache(renpy.object.Object):
                 line_height = 0
                 x = 0
 
-            self.cache_rect[i] = (x+1, y+1, w-2, h-2)
+            self.cache_rect[i] = (x+1, y+1, w-2, h-2) # type: ignore
 
             x += w
             if line_height < h:
@@ -178,7 +179,7 @@ class ImageMapCache(renpy.object.Object):
         cache = pygame.Surface((self.cache_width, self.cache_height), pygame.SRCALPHA, 32)
 
         for i, (d, rect) in enumerate(self.imagerect):
-            x, y, _w, _h = self.cache_rect[i]
+            x, y, _w, _h = self.cache_rect[i] # type: ignore
 
             surf = renpy.display.im.cache.get(d).subsurface(rect)
             cache.blit(surf, (x, y))
@@ -215,7 +216,7 @@ class ImageMapCache(renpy.object.Object):
         if renpy.config.developer:
             try:
                 self.write_cache(filename)
-            except:
+            except Exception:
                 pass
 
         if renpy.loader.loadable(filename):

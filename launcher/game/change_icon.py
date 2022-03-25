@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,15 +23,16 @@
 # Contains a reasonable description of the format.
 
 from __future__ import print_function
+from renpy.compat import bchr, chr, str, PY2
 
 import struct
 import sys
 import array
-import pefile # @UnresolvedImport
+import pefile
+
 
 # This class performs various operations on memory-loaded binary files,
 # including modifications.
-
 
 class BinFile(object):
 
@@ -67,7 +68,7 @@ class BinFile(object):
 
         rv = u""
         for _i in range(c):
-            rv += unichr(self.u16())
+            rv += chr(self.u16())
 
         return rv
 
@@ -75,14 +76,24 @@ class BinFile(object):
         self.addr = addr
 
     def tostring(self):
-        return self.a.tostring()
+        if PY2:
+            return self.a.tostring() # type: ignore
+        else:
+            return self.a.tobytes()
 
     def substring(self, start, len): # @ReservedAssignment
-        return self.a[start:start + len].tostring()
+        if PY2:
+            return self.a[start:start + len].tostring() # type: ignore
+        else:
+            return self.a[start:start + len].tobytes()
 
     def __init__(self, data):
-        self.a = array.array(b'B')
-        self.a.fromstring(data)
+        self.a = array.array('B')
+
+        if PY2:
+            self.a.fromstring(data) # type: ignore
+        else:
+            self.a.frombytes(data)
 
 ##############################################################################
 # These functions parse data out of the file. In these functions, offset is
@@ -106,7 +117,7 @@ def parse_data(bf, offset):
 
     bf.seek(data_offset - resource_virtual)
     for _i in range(data_len):
-        l.append(chr(bf.u8()))
+        l.append(bchr(bf.u8()))
 
     return (code_page, b"".join(l))
 
@@ -210,8 +221,8 @@ class Packer(object):
         return rv
 
     def pack_dict(self, d, offset):
-        name_entries = sorted((a, b) for a, b in d.iteritems() if isinstance(a, unicode))
-        id_entries = sorted((a, b) for a, b in d.iteritems() if isinstance(a, int))
+        name_entries = sorted((a, b) for a, b in d.items() if isinstance(a, str))
+        id_entries = sorted((a, b) for a, b in d.items() if isinstance(a, int))
 
         rv = struct.pack("<IIHHHH", 0, 0, 4, 0, len(name_entries), len(id_entries))
 
@@ -220,7 +231,7 @@ class Packer(object):
         rest = b""
 
         for (name, value) in name_entries + id_entries:
-            if isinstance(name, unicode):
+            if isinstance(name, str):
                 name = 0x80000000 | self.pack_name(name)
 
             if isinstance(value, dict):
@@ -318,8 +329,8 @@ def change_icons(oldexe, icofn):
     # As a related note, apparently this flag has been deprecated, but appears to be set (I think ..) in the renpy.exe that is used to build from..
     # no idea of a consequence, just an observation
     # https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#characteristics , see "IMAGE_FILE_LINE_NUMS_STRIPPED" :
-    #	COFF line numbers have been removed. This flag is deprecated and should be zero. 
-    # In renpy.exe, this 2-byte  flag is @ 0x096 and 0x097  in little-endian  
+    #	COFF line numbers have been removed. This flag is deprecated and should be zero.
+    # In renpy.exe, this 2-byte  flag is @ 0x096 and 0x097  in little-endian
     ######
 
     f.close()
@@ -338,10 +349,10 @@ def change_icons(oldexe, icofn):
     #From note about flags above regarding image flags. These two should be 0
     pe.FILE_HEADER.Characteristics = pe.FILE_HEADER.Characteristics & (~pefile.IMAGE_CHARACTERISTICS["IMAGE_FILE_LINE_NUMS_STRIPPED"])
     pe.FILE_HEADER.Characteristics = pe.FILE_HEADER.Characteristics & (~pefile.IMAGE_CHARACTERISTICS["IMAGE_FILE_LOCAL_SYMS_STRIPPED"])
-    
+
     #Per docs, symbol table can just be removed
     #https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#coff-file-header-object-and-image  see "PointerToSymbolTable"  and  "NumberOfSymbols "
-    
+
     pe.FILE_HEADER.PointerToSymbolTable = 0
     pe.FILE_HEADER.NumberOfSymbols = 0
 
@@ -361,7 +372,7 @@ def change_icons(oldexe, icofn):
     #
     #####
     # SizeOfImage  must be aligned to SectionAlignment  (memory alignment)
-    #   There is NO padding needed, the image size number simply needs to be aligned to >= the 
+    #   There is NO padding needed, the image size number simply needs to be aligned to >= the
 
     memoryalignment = pe.OPTIONAL_HEADER.SectionAlignment
     filealignment = pe.OPTIONAL_HEADER.FileAlignment
@@ -404,11 +415,10 @@ def change_icons(oldexe, icofn):
     #The symbol table is simply left off. Its size DOES factor into ImageSize, but we didn't calculate it above, so fine
     #Correctly checksum the file. The entire file is involved in the calculation, so a new PE object must be generated for the calculation to work against
     newFile = pe.write()[:base] + rsrc
-    newpe = pefile.PE(data=newFile)
+    newpe = pefile.PE(data=bytes(newFile))
     newpe.OPTIONAL_HEADER.CheckSum = newpe.generate_checksum()
 
-    return newpe.write()
-
+    return bytes(newpe.write())
 
 
 if __name__ == "__main__":

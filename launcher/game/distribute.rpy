@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,7 +26,6 @@
 # might include windows path separators (\), but archive paths and names we
 # deal with/match against use the unix separator (/).
 
-
 init python in distribute:
 
     from store import config, persistent
@@ -51,6 +50,27 @@ init python in distribute:
     import plistlib
     import time
     import shutil
+
+    def py(s):
+        """
+        Formats a string with information about the python version.
+        """
+
+        return s.format(
+            major=sys.version_info.major,
+            minor=sys.version_info.minor,
+        )
+
+    # Going from 7.4 to 7.5 or 8.0, the library directory changed.
+    RENPY_PATCH = py("""\
+def change_renpy_executable():
+    import sys, os, renpy, site
+
+    if hasattr(site, "RENPY_PLATFORM") and hasattr(sys, "renpy_executable") and (renpy.linux or renpy.windows):
+        sys.renpy_executable = os.path.join(renpy.config.renpy_base, "lib", "py{major}-" + site.RENPY_PLATFORM, os.path.basename(sys.renpy_executable))
+
+change_renpy_executable()
+""")
 
     match_cache = { }
 
@@ -176,7 +196,7 @@ init python in distribute:
 
             key = (self.name, self.directory, self.executable)
 
-            hash.update(repr(key))
+            hash.update(repr(key).encode("utf-8"))
 
             if self.path is None:
                 return
@@ -191,9 +211,16 @@ init python in distribute:
                 digest = distributor.hash_cache[self.path]
             else:
                 digest = hash_file(self.path)
-                distributor.hash_cache[self.path] = digest
 
-            hash.update(digest)
+            hash.update(digest.encode("utf-8"))
+
+        def reprefix(self, old, new):
+            rv = self.copy()
+
+            if self.name.startswith(old):
+                rv.name = new + self.name[len(old):]
+
+            return rv
 
     class FileList(list):
         """
@@ -315,11 +342,11 @@ init python in distribute:
 
             for f in list(self):
 
-                if f.name.startswith("lib/python2.7") and (not duplicate):
+                if f.name.startswith("lib/python") and (not duplicate):
                     name = app + "/Contents/Resources/" + f.name
 
-                elif f.name.startswith("lib/mac-x86_64"):
-                    name = app + "/Contents/MacOS/" + f.name[15:]
+                elif f.name.startswith(py("lib/py{major}-mac-x86_64")):
+                    name = app + "/Contents/MacOS/" + f.name[19:]
 
                 else:
                     continue
@@ -363,13 +390,25 @@ init python in distribute:
 
             return yes, no
 
+        def reprefix(self, old, new):
+            """
+            Returns a new file list with all the paths reprefixed.
+            """
+
+            rv = FileList()
+
+            for f in self:
+                rv.append(f.reprefix(old, new))
+
+            return rv
+
 
     class Distributor(object):
         """
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None, force_format=None):
             """
             Distributes `project`.
 
@@ -403,7 +442,10 @@ init python in distribute:
 
             `macapp`
                 If given, the path to a macapp that's used instead of
-                the macapp
+                the macapp that's included with Ren'Py.
+
+            `force_format`
+                If given, forces the format of the distribution to be this.
             """
 
             # A map from a package to a unique update version hash.
@@ -486,7 +528,7 @@ init python in distribute:
             if not packagedest:
                 try:
                     os.makedirs(self.destination)
-                except:
+                except Exception:
                     pass
 
                 self.load_build_cache()
@@ -532,6 +574,10 @@ init python in distribute:
             self.reporter.info(_("Scanning Ren'Py files..."))
             self.scan_and_classify(config.renpy_base, build["renpy_patterns"])
 
+            if build["_sdk_fonts"]:
+                for k in list(self.file_lists.keys()):
+                    self.file_lists[k] = self.file_lists[k].reprefix("sdk-fonts", "game")
+
             # Add Python (with the same name as our executables)
             self.add_python()
 
@@ -556,15 +602,18 @@ init python in distribute:
             self.merge_file_lists()
 
             # Rename the executable-like files.
-            if not build['renpy']:
-                self.rename()
+            self.rename()
 
             # The time of the update version.
             self.update_version = int(time.time())
 
             for p in build_packages:
 
-                for f in p["formats"]:
+                formats = p["formats"]
+                if force_format is not None:
+                    formats = [ force_format ]
+
+                for f in formats:
 
                     self.make_package(
                         p["name"],
@@ -834,7 +883,7 @@ init python in distribute:
 
             tfn = self.temp_filename(list_name + "_hash.txt")
 
-            with open(tfn, "wb") as tf:
+            with open(tfn, "w") as tf:
                 tf.write(self.file_lists[list_name].hash(self))
 
             self.add_file("binary", "launcher/game/" + list_name + "_hash.txt", tfn)
@@ -855,7 +904,7 @@ init python in distribute:
                 data = f.read()
 
             with open(tmp_fn, "wb") as f:
-                f.write(b"#!/usr/bin/env python2\n")
+                f.write(b"#!/usr/bin/env python3\n")
                 f.write(data)
 
             self.add_file("source_only", "renpy.py", tmp_fn, True)
@@ -901,7 +950,13 @@ init python in distribute:
             plist.update(self.build.get("mac_info_plist", { }))
 
             rv = self.temp_filename("Info.plist")
-            plistlib.writePlist(plist, rv)
+
+            if PY2:
+                plistlib.writePlist(plist, rv)
+            else:
+                with open(rv, "wb") as f:
+                    plistlib.dump(plist, f)
+
             return rv
 
         def add_python(self):
@@ -919,35 +974,38 @@ init python in distribute:
                 mac = 'mac'
                 raspi = 'linux'
 
-            self.add_file(
-                linux_i686,
-                "lib/linux-i686/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/linux-i686/renpy"),
-                True)
+            prefix = py("lib/py{major}-")
+
+            if os.path.exists(linux_i686):
+
+                self.add_file(
+                    linux_i686,
+                    prefix + "linux-i686/" + self.executable_name,
+                    os.path.join(config.renpy_base, prefix + "linux-i686/renpy"),
+                    True)
 
             self.add_file(
                 linux,
-                "lib/linux-x86_64/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/linux-x86_64/renpy"),
+                prefix + "linux-x86_64/" + self.executable_name,
+                os.path.join(config.renpy_base, prefix + "linux-x86_64/renpy"),
                 True)
 
-            armfn = os.path.join(config.renpy_base, "lib/linux-armv7l/renpy")
+            armfn = os.path.join(config.renpy_base, prefix + "linux-armv7l/renpy")
 
             if os.path.exists(armfn):
 
                 self.add_file(
                     raspi,
-                    "lib/linux-armv7l/" + self.executable_name,
+                    prefix + "linux-armv7l/" + self.executable_name,
                     armfn,
                     True)
 
 
             self.add_file(
                 mac,
-                "lib/mac-x86_64/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/mac-x86_64/renpy"),
+                prefix + "mac-x86_64/" + self.executable_name,
+                os.path.join(config.renpy_base, prefix + "mac-x86_64/renpy"),
                 True)
-
 
         def add_mac_files(self):
             """
@@ -967,9 +1025,11 @@ init python in distribute:
 
             plist_fn = self.write_plist()
             self.add_file(filelist, contents + "/Info.plist", plist_fn)
+
             self.add_file(filelist,
                 contents + "/MacOS/" + self.executable_name,
-                os.path.join(config.renpy_base, "lib/mac-x86_64/renpy"))
+                os.path.join(config.renpy_base, py("lib/py{major}-mac-x86_64/renpy")))
+
 
             custom_fn = os.path.join(self.project.path, "icon.icns")
             default_fn = os.path.join(config.renpy_base, "launcher/icon.icns")
@@ -986,8 +1046,8 @@ init python in distribute:
 
             if not self.build['renpy']:
                 self.add_directory(filelist, contents + "/MacOS/lib")
-                self.add_directory(filelist, contents + "/MacOS/lib/mac-x86_64")
-                self.add_directory(filelist, contents + "/Resources/lib/python2.7")
+                self.add_directory(filelist, contents + py("/MacOS/lib/py{major}-mac-x86_64"))
+                self.add_directory(filelist, contents + py("/Resources/lib/python{major}.{minor}"))
 
             self.file_lists[filelist].mac_lib_transform(self.app, self.build['renpy'])
 
@@ -1033,12 +1093,20 @@ init python in distribute:
                 if os.path.exists(tmp):
                     self.add_file(fl, dst, tmp)
 
-            if self.build["include_i686"]:
-                write_exe("lib/windows-i686/renpy.exe", self.exe32, self.exe32, windows_i686)
-                write_exe("lib/windows-i686/pythonw.exe", "lib/windows-i686/pythonw.exe", "pythonw-32.exe", windows_i686)
+            if PY2:
 
-            write_exe("lib/windows-x86_64/renpy.exe", self.exe, self.exe, windows)
-            write_exe("lib/windows-x86_64/pythonw.exe", "lib/windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
+                if self.build["include_i686"]:
+                    write_exe("lib/py2-windows-i686/renpy.exe", self.exe32, self.exe32, windows_i686)
+                    write_exe("lib/py2-windows-i686/pythonw.exe", "lib/py2-windows-i686/pythonw.exe", "pythonw-32.exe", windows_i686)
+
+                write_exe("lib/py2-windows-x86_64/renpy.exe", self.exe, self.exe, windows)
+                write_exe("lib/py2-windows-x86_64/pythonw.exe", "lib/py2-windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
+
+            else:
+
+                write_exe("lib/py3-windows-x86_64/renpy.exe", self.exe, self.exe, windows)
+                write_exe("lib/py3-windows-x86_64/pythonw.exe", "lib/py3-windows-x86_64/pythonw.exe", "pythonw-64.exe", windows)
+
 
         def add_main_py(self):
             if self.build['renpy']:
@@ -1065,11 +1133,15 @@ init python in distribute:
             Rename files in all lists to match the executable names.
             """
 
+            major_sh = py("renpy{major}.sh")
+
             def rename_one(fn):
                 parts = fn.split('/')
                 p = parts[0]
 
-                if p == "renpy.sh":
+                if p == major_sh:
+                    p = self.sh
+                elif p == "renpy.sh":
                     p = self.sh
                 elif p == "renpy.py":
                     p = self.py
@@ -1095,7 +1167,7 @@ init python in distribute:
             try:
                 import sys, os
                 isatty = os.isatty(sys.stdin.fileno())
-            except:
+            except Exception:
                 isatty = False
 
             if isatty:
@@ -1188,13 +1260,13 @@ init python in distribute:
         def workaround_mac_notarization(self, fl):
             """
             This works around mac notarization by compressing the unsigned,
-            un-notarized, binaries in lib/mac-x86_64.
+            un-notarized, binaries in lib/py3-mac-x86_64.
             """
 
             fl = fl.copy()
 
             for f in fl:
-                if "/lib/mac-x86_64/" in f.name:
+                if py("/lib/py{major}-mac-x86_64/") in f.name:
                     with open(f.path, "rb") as inf:
                         data = inf.read()
 
@@ -1320,7 +1392,7 @@ init python in distribute:
 
             if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
 
-                with open(update_fn, "wb") as f:
+                with open(update_fn, "w") as f:
                     json.dump(update, f, indent=2)
 
                 if (not dlc) or (format == "update"):
@@ -1428,10 +1500,8 @@ init python in distribute:
 
             index = { }
 
-            # Ren'Py 7.4.1 forgot to include mac zsync, so it needs to be downloaded before the update
-            # can occur.
             if self.build['renpy']:
-                index["monkeypatch"] = "def mac_fix():\n    import renpy\n    if not renpy.macintosh:\n        return\n\n    import os\n    mac = os.path.join(renpy.config.renpy_base, \"lib\", \"mac-x86_64\")\n    zsync = os.path.join(mac, \"zsync\")\n\n    if not os.path.isdir(mac):\n        return\n\n    if os.path.isdir(zsync):\n        return\n\n    import requests\n\n    response = requests.get(\"https://www.renpy.org/dl/mac-fix/zsync\")\n\n    with open(zsync + \".new\", \"w\") as f:\n        f.write(response.content)\n    \n    os.chmod(zsync + \".new\", 0o755)\n    os.rename(zsync + \".new\", zsync)\n\nmac_fix()\n"
+                index["monkeypatch"] = RENPY_PATCH
 
             def add_variant(variant):
 
@@ -1459,7 +1529,7 @@ init python in distribute:
                     add_variant(p["name"])
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
-            with open(fn, "wb") as f:
+            with open(fn, "w") as f:
                 json.dump(index, f, indent=2)
 
 
@@ -1469,10 +1539,10 @@ init python in distribute:
 
             fn = renpy.fsencode(os.path.join(self.destination, ".build_cache"))
 
-            with open(fn, "wb") as f:
+            with open(fn, "w", encoding="utf-8") as f:
                 for k, v in self.build_cache.items():
                     l = "\t".join([k, v[0], v[1]]) + "\n"
-                    f.write(l.encode("utf-8"))
+                    f.write(l)
 
         def load_build_cache(self):
             if not self.build['renpy']:
@@ -1564,6 +1634,8 @@ init python in distribute:
         ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building all packages.")
         ap.add_argument("--no-archive", action="store_true", help="If given, files will not be added to archives.")
         ap.add_argument("--macapp", default=None, action="store", help="If given, the path to a signed and notarized mac app.")
+        ap.add_argument("--format", default=None, action="store", help="The format of package to build.")
+
         ap.add_argument("project", help="The path to the project directory.")
 
         args = ap.parse_args()
@@ -1575,7 +1647,7 @@ init python in distribute:
         else:
             packages = None
 
-        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest, macapp=args.macapp)
+        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest, macapp=args.macapp, force_format=args.format)
 
         return False
 

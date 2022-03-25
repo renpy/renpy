@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,11 +23,10 @@
 # Definitions of screen language statements.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.display
-import renpy.text.text
-import renpy.sl2
+
+import renpy
 
 from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
 from renpy.sl2.slparser import DisplayableParser, many
@@ -77,6 +76,8 @@ class ShowIf(renpy.display.layout.Container):
 
     def render(self, width, height, st, at):
 
+        cr = None
+
         if isinstance(self.child, renpy.display.motion.Transform):
             if self.condition or self.show_child:
                 cr = renpy.display.render.render(self.child, width, height, st, at)
@@ -86,6 +87,7 @@ class ShowIf(renpy.display.layout.Container):
                 cr = renpy.display.render.render(self.child, width, height, st, at)
                 self.show_child = True
             else:
+                cr = None
                 self.show_child = False
 
         if self.show_child:
@@ -472,6 +474,7 @@ Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")
 Keyword("drag_raise")
+Keyword("dragging")
 Keyword("dragged")
 Keyword("dropped")
 Keyword("drop_allowable")

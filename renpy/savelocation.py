@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,13 +25,15 @@
 # The current save location is stored in the location variable in loadsave.py.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 import os
 import zipfile
 import json
 
-import renpy.display
+import renpy
 import threading
 
 from renpy.loadsave import clear_slot, safe_rename
@@ -56,7 +58,7 @@ class FileLocation(object):
         # Make the save directory.
         try:
             os.makedirs(self.directory)
-        except:
+        except Exception:
             pass
 
         renpy.util.expose_directory(self.directory)
@@ -71,7 +73,7 @@ class FileLocation(object):
             os.unlink(fn)
 
             self.active = True
-        except:
+        except Exception:
             self.active = False
 
         # A map from slotname to the mtime of that slot.
@@ -99,7 +101,7 @@ class FileLocation(object):
         """
 
         if renpy.emscripten:
-            import emscripten # @UnresolvedImport
+            import emscripten # type: ignore
             emscripten.syncfs()
 
     def scan(self):
@@ -126,7 +128,7 @@ class FileLocation(object):
 
                 try:
                     new_mtimes[slotname] = os.path.getmtime(os.path.join(self.directory, fn))
-                except:
+                except Exception:
                     pass
 
             self.mtimes = new_mtimes
@@ -199,17 +201,17 @@ class FileLocation(object):
                         data = zf.read("json")
                         data = json.loads(data)
                         return data
-                    except:
+                    except Exception:
                         pass
 
                     try:
                         extra_info = zf.read("extra_info").decode("utf-8")
                         return { "_save_name" : extra_info }
-                    except:
+                    except Exception:
                         pass
 
                     return { }
-            except:
+            except Exception:
                 return None
 
     def screenshot(self, slotname):
@@ -232,10 +234,10 @@ class FileLocation(object):
                     try:
                         png = False
                         zf.getinfo('screenshot.tga')
-                    except:
+                    except Exception:
                         png = True
                         zf.getinfo('screenshot.png')
-            except:
+            except Exception:
                 return None
 
             if png:
@@ -287,13 +289,9 @@ class FileLocation(object):
             if not os.path.exists(old):
                 return
 
-            os.rename(old, old + ".tmp")
-            old = old + ".tmp"
-
-            if os.path.exists(new):
-                os.unlink(new)
-
-            os.rename(old, new)
+            old_tmp = old + tmp
+            safe_rename(old, old_tmp)
+            safe_rename(old_tmp, new)
             renpy.util.expose_file(new)
 
             self.sync()
@@ -366,7 +364,7 @@ class FileLocation(object):
             os.unlink(self.persistent)
 
             self.sync()
-        except:
+        except Exception:
             pass
 
     def __eq__(self, other):
@@ -394,7 +392,7 @@ class MultiLocation(object):
     def newest(self, slotname):
         """
         Returns the location containing the slotname with the newest
-        mtime. Returns None of the slot is empty.
+        mtime. Returns None if the slot is empty.
         """
 
         mtime = -1
@@ -468,7 +466,7 @@ class MultiLocation(object):
 
     def load(self, slotname):
         l = self.newest(slotname)
-        return l.load(slotname)
+        return l.load(slotname) # type: ignore
 
     def unlink(self, slotname):
         for l in self.active_locations():
@@ -536,7 +534,7 @@ def run_scan_thread():
 
         try:
             renpy.loadsave.location.scan() # @UndefinedVariable
-        except:
+        except Exception:
             pass
 
         with scan_thread_condition:
@@ -550,7 +548,8 @@ def quit(): # @ReservedAssignment
         quit_scan_thread = True
         scan_thread_condition.notify_all()
 
-    scan_thread.join()
+    if scan_thread is not None:
+        scan_thread.join()
 
 
 def init():

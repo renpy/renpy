@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Fixes line endings and adds UTF-8 BOM to all rpy files in a
 # directory.
 
@@ -7,7 +9,7 @@ import sys
 
 
 def process(fn):
-    with open(fn, "rb") as f:
+    with open(fn, "r") as f:
         data = f.read()
 
     data = data.decode("utf-8")
@@ -16,7 +18,7 @@ def process(fn):
     data = u"\ufeff" + data
     data = data.encode("utf-8")
 
-    with open(fn, "wb") as f:
+    with open(fn, "w") as f:
         f.write(data)
 
 

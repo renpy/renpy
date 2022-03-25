@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,7 +20,9 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 
 import os
@@ -98,12 +100,12 @@ class SystemEditor(Editor):
 
         try:
             if renpy.windows:
-                os.startfile(filename)  # @UndefinedVariable
+                os.startfile(filename) # type: ignore
             elif renpy.macintosh:
-                subprocess.call([ "open", filename ])  # @UndefinedVariable
+                subprocess.call([ "open", filename ])
             elif renpy.linux:
-                subprocess.call([ "xdg-open", filename ])  # @UndefinedVariable
-        except:
+                subprocess.call([ "xdg-open", filename ])
+        except Exception:
             traceback.print_exc()
 
 
@@ -135,7 +137,7 @@ def init():
     exec(code, scope, scope)
 
     if "Editor" in scope:
-        editor = scope["Editor"]()
+        editor = scope["Editor"]() # type: ignore
         return
 
     raise Exception("{0} did not define an Editor class.".format(path))
@@ -169,6 +171,6 @@ def launch_editor(filenames, line=1, transient=False):
 
         return True
 
-    except:
+    except Exception:
         traceback.print_exc()
         return False

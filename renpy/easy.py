@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,13 +22,14 @@
 # Functions that make the user's life easier.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+from typing import Any
 
-import renpy.display
-import renpy.styledata
 import contextlib
 import time
+
+import renpy
 
 Color = renpy.color.Color
 color = renpy.color.Color
@@ -52,7 +53,7 @@ def lookup_displayable_prefix(d):
     return displayable(fn(arg))
 
 
-def displayable_or_none(d, scope=None, dynamic=True):
+def displayable_or_none(d, scope=None, dynamic=True): # type: (Any, dict|None, bool) -> renpy.display.core.Displayable|None
 
     if isinstance(d, renpy.display.core.Displayable):
         return d
@@ -78,10 +79,10 @@ def displayable_or_none(d, scope=None, dynamic=True):
             return renpy.store.ImageReference(tuple(d.split()))
 
     if isinstance(d, Color):
-        return renpy.store.Solid(d)
+        return renpy.store.Solid(d) # type: ignore
 
     if isinstance(d, list):
-        return renpy.display.image.DynamicImage(d, scope=scope)
+        return renpy.display.image.DynamicImage(d, scope=scope) # type: ignore
 
     # We assume the user knows what he's doing in this case.
     if hasattr(d, '_duplicate'):
@@ -93,7 +94,7 @@ def displayable_or_none(d, scope=None, dynamic=True):
     raise Exception("Not a displayable: %r" % (d,))
 
 
-def displayable(d, scope=None):
+def displayable(d, scope=None): # type(d, dict|None=None) -> renpy.display.core.Displayable|None
     """
     :doc: udd_utility
     :name: renpy.displayable
@@ -139,7 +140,7 @@ def displayable(d, scope=None):
     raise Exception("Not a displayable: %r" % (d,))
 
 
-def dynamic_image(d, scope=None, prefix=None, search=None):
+def dynamic_image(d, scope=None, prefix=None, search=None): # type: (Any, dict|None, str|None, list|None) -> renpy.display.core.Displayable|None
     """
     Substitutes a scope into `d`, then returns a displayable.
 
@@ -198,14 +199,12 @@ def dynamic_image(d, scope=None, prefix=None, search=None):
             if search is not None:
                 search.append(rv)
 
-    else:
+    rv = d[-1]
 
-        rv = d[-1]
+    if find(rv):
+        return displayable_or_none(rv, dynamic=False)
 
-        if find(rv):
-            return displayable_or_none(rv, dynamic=False)
-
-        return None
+    return None
 
 
 def predict(d):

@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,13 +24,14 @@
 # going on.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import pygame_sdl2
-import os.path
+
+import os
 import sys
 import time
 
+import pygame_sdl2
 import renpy
 
 # The window.
@@ -97,9 +98,8 @@ def start(basedir, gamedir):
     if renpy.windows:
 
         import ctypes
-        from ctypes import c_void_p, c_int
 
-        ctypes.windll.user32.SetProcessDPIAware()
+        ctypes.windll.user32.SetProcessDPIAware() # type: ignore
 
     pygame_sdl2.display.init()
 
@@ -108,7 +108,7 @@ def start(basedir, gamedir):
     if presplash_fn:
         presplash = pygame_sdl2.image.load(presplash_fn)
     else:
-        presplash = ProgressBar(foreground_fn, background_fn)
+        presplash = ProgressBar(foreground_fn, background_fn) # type: ignore
         progress_bar = presplash
 
     global window

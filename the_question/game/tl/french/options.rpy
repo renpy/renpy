@@ -1,5 +1,4 @@
-﻿
-translate french strings:
+﻿translate french strings:
 
     # options.rpy:15
     old "The Question"

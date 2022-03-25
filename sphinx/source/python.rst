@@ -9,8 +9,22 @@ support can be used for many things, from setting a flag to creating
 new displayables. This chapter covers ways in which Ren'Py scripts can
 directly invoke Python, through the various Python statements.
 
-Ren'Py currently supports Python 2.7, though we strongly recommend you write
-Python that runs in Python 2 and Python 3.
+Ren'Py 7 supports Python 2.7. Ren'Py 8 supports Python 3.9.
+
+.. note::
+    If you know Python, you'll be able to take advantage of that. However,
+    not everything you know about Python will apply directly. For example.
+    Python packages that don't ship with Ren'Py may not work inside Ren'Py.
+
+    There are also some Python constructs that work, but may lead to problems
+    in saving. Please read the :ref:`save, load, and rollback <save-load-rollback>` page
+    for more details, especially the section on :ref:`what can't be saved <cant-save>`.
+    (You need to be careful with files, sockets, iterators, task, futures, and
+    generators.)
+
+    Finally, while many statements have Python equivalents, those equivalents
+    can be inferior. For example, Ren'Py can predict the ``show`` statement,
+    and load images early, but it can't predict the :func:`renpy.show` function.
 
 .. _python-statement:
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,8 @@
 # called when parsing is necessary, and creates an AST from the script.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import codecs
 import re
@@ -31,11 +32,8 @@ import os
 import time
 import contextlib
 
-import renpy.display
-import renpy.test
-
+import renpy
 import renpy.ast as ast
-import renpy.sl2
 
 # A list of parse error messages.
 parse_errors = [ ]
@@ -54,8 +52,7 @@ def get_line_text(filename, lineno):
 
     try:
         line = linecache.getline(full_filename, lineno) or "\n"
-        line = line.decode("utf-8")
-    except:
+    except Exception:
         line = "\n"
 
     return line
@@ -136,13 +133,13 @@ def unicode_filename(fn):
     # Windows.
     try:
         return fn.decode("mbcs")
-    except:
+    except Exception:
         pass
 
     # Mac and (sane) Unix
     try:
         return fn.decode("utf-8")
-    except:
+    except Exception:
         pass
 
     # Insane systems, mojibake.
@@ -267,6 +264,9 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
     renpy.scriptedit.files.add(filename)
 
+    line = 0
+    start_number = 0
+
     # Looping over the lines in the file.
     while pos < len_data:
 
@@ -297,7 +297,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                 line = ''.join(line)
 
                 # If not blank...
-                if not re.match(u"^\s*$", line):
+                if not re.match(r"^\s*$", line):
 
                     # Add to the results.
                     rv.append((filename, start_number, line))
@@ -736,6 +736,9 @@ class Lexer(object):
         location.
         """
 
+        if (self.line == -1) and self.block:
+            self.filename, self.number, self.text, self.subblock = self.block[0]
+
         raise ParseError(self.filename, self.number, msg, self.text, self.pos)
 
     def eol(self):
@@ -845,7 +848,7 @@ class Lexer(object):
 
             # Collapse runs of whitespace into single spaces.
             s = re.sub(r'\s+', ' ', s)
-            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
+            s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
 
         return s
 
@@ -910,7 +913,7 @@ class Lexer(object):
                     continue
 
                 s = re.sub(r'\s+', ' ', s)
-                s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s)
+                s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
 
                 rv.append(s)
 
@@ -1000,7 +1003,7 @@ class Lexer(object):
 
         if not global_name:
             # .local label
-            if not self.match('\.') or not self.global_label:
+            if not self.match(r'\.') or not self.global_label:
                 self.pos = old_pos
                 return None
             global_name = self.global_label
@@ -1009,7 +1012,7 @@ class Lexer(object):
                 self.pos = old_pos
                 return None
         else:
-            if self.match('\.'):
+            if self.match(r'\.'):
                 # full global.local name
                 if declare and global_name != self.global_label:
                     self.pos = old_pos
@@ -1718,69 +1721,122 @@ def parse_menu(stmtl, loc, arguments):
 
 
 def parse_parameters(l):
-
-    parameters = [ ]
-    positional = [ ]
-    extrapos = None
-    extrakw = None
-
-    add_positional = True
-
-    names = set()
+    """
+    Parse a list of parameters according to PEP 570 semantic, if one is present.
+    """
 
     if not l.match(r'\('):
         return None
 
+    # Result list of parameters, by (name, default value) pairs
+    parameters = [ ]
+
+    positional = [ ]
+
+    # Name of parameter that is starred
+    extrapos = None
+
+    # Name of parameter that is double starred
+    extrakw = None
+
+    # Name of parameter that is last positional-only
+    last_posonly = None
+
+    # Name of parameter that is first keyword-only
+    first_kwonly = None
+
+    add_positional = True
+
+    pending_kwonly = False
+
+    has_default = False
+
+    names = set()
+    def name_parsed(name, value):
+        if name in names:
+            l.error("duplicate argument '%s'" % name)
+        else:
+            names.add(name)
+
     while True:
 
-        if l.match('\)'):
+        if l.match(r'\)'):
             break
 
         if l.match(r'\*\*'):
 
-            if extrakw is not None:
-                l.error('a label may have only one ** parameter')
-
             extrakw = l.require(l.name)
 
-            if extrakw in names:
-                l.error('parameter %s appears twice.' % extrakw)
+            if l.match(r'='):
+                l.error("var-keyword argument cannot have default value")
 
-            names.add(extrakw)
+            name_parsed(extrakw, None)
+
+            # Allow trailing comma
+            l.match(r',')
+
+            # extrakw is always last parameter
+            if not l.match('\)'):
+                l.error("arguments cannot follow var-keyword argument")
+
+            break
 
         elif l.match(r'\*'):
 
-            if not add_positional:
-                l.error('a label may have only one * parameter')
+            if first_kwonly or pending_kwonly:
+                l.error("* may appear only once")
 
             add_positional = False
+
+            pending_kwonly = True
 
             extrapos = l.name()
 
             if extrapos is not None:
+                if l.match(r'='):
+                    l.error("var-positional argument cannot have default value")
 
-                if extrapos in names:
-                    l.error('parameter %s appears twice.' % extrapos)
+                name_parsed(extrapos, None)
 
-                names.add(extrapos)
+        elif l.match(r'/\*'):
+            l.error("expected comma between / and *")
+
+        elif l.match('/'):
+
+            if first_kwonly or pending_kwonly:
+                l.error("/ must be ahead of *")
+
+            elif last_posonly is not None:
+                l.error("/ may appear only once")
+
+            elif not parameters:
+                l.error("at least one argument must precede /")
+
+            last_posonly = parameters[-1][0]
 
         else:
 
             name = l.require(l.name)
 
-            if name in names:
-                l.error('parameter %s appears twice.' % name)
-
-            names.add(name)
+            if pending_kwonly:
+                pending_kwonly = False
+                first_kwonly = name
 
             if l.match(r'='):
                 l.skip_whitespace()
                 default = l.delimited_python("),")
+                has_default = True
+
                 if not default.strip():
-                    l.error("Empty parameter default.")
+                    l.error("empty parameter default")
+
+            elif first_kwonly is None and has_default:
+                l.error("non-default argument follows default argument")
+
             else:
                 default = None
 
+            name_parsed(name, default)
             parameters.append((name, default))
 
             if add_positional:
@@ -1791,64 +1847,74 @@ def parse_parameters(l):
 
         l.require(r',')
 
-    return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw)
+    if pending_kwonly and extrapos is None:
+        l.error("named arguments must follow bare *")
+
+    return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw, last_posonly, first_kwonly)
 
 
 def parse_arguments(l):
     """
-    Parse a list of arguments, if one is present.
+    Parse a list of arguments according to PEP 448 semantics, if one is present.
     """
-
-    arguments = [ ]
-    extrakw = None
-    extrapos = None
-
-    has_kw = False
 
     if not l.match(r'\('):
         return None
 
-    while True:
+    arguments = [ ]
+    starred_indexes = set()
+    doublestarred_indexes = set()
 
-        if l.match('\)'):
+    index = 0
+    keyword_parsed = False
+    names = set()
+
+    while True:
+        expect_starred = False
+        expect_doublestarred = False
+        name = None
+
+        if l.match(r'\)'):
             break
 
         if l.match(r'\*\*'):
-
-            if extrakw is not None:
-                l.error('a call may have only one ** argument')
-
-            extrakw = l.delimited_python("),")
+            expect_doublestarred = True
+            doublestarred_indexes.add(index)
 
         elif l.match(r'\*'):
-            if extrapos is not None:
-                l.error('a call may have only one * argument')
+            expect_starred = True
+            starred_indexes.add(index)
 
-            extrapos = l.delimited_python("),")
+        state = l.checkpoint()
 
-        else:
-
-            state = l.checkpoint()
-
+        if not (expect_starred or expect_doublestarred):
             name = l.name()
-            if not (name and l.match(r'=')):
+
+            if name and l.match(r'='):
+                if name in names:
+                    l.error("keyword argument repeated: '%s'" % name)
+                else:
+                    names.add(name)
+                keyword_parsed = True
+
+            elif keyword_parsed:
+                l.error("positional argument follows keyword argument")
+
+            # If we have not '=' after name, the name itself may be expression.
+            else:
                 l.revert(state)
                 name = None
 
-            if name:
-                has_kw = True
-            elif has_kw:
-                l.error("positional argument follows keyword argument")
-
-            l.skip_whitespace()
-            arguments.append((name, l.delimited_python("),")))
+        l.skip_whitespace()
+        arguments.append((name, l.delimited_python("),")))
 
         if l.match(r'\)'):
             break
 
         l.require(r',')
+        index += 1
 
-    return renpy.ast.ArgumentInfo(arguments, extrapos, extrakw)
+    return renpy.ast.ArgumentInfo(arguments, starred_indexes, doublestarred_indexes)
 
 ##############################################################################
 # The parse trie.
@@ -2052,7 +2118,7 @@ def call_statement(l, loc):
 
     arguments = parse_arguments(l)
 
-    rv = [ ast.Call(loc, target, expression, arguments) ]
+    rv = [ ast.Call(loc, target, expression, arguments) ] # type: list[ast.Call|ast.Label|ast.Pass]
 
     if l.keyword('from'):
         name = l.require(l.label_name_declare)
@@ -2432,8 +2498,9 @@ def init_statement(l, loc):
 
     else:
 
+        old_init = l.init
+
         try:
-            old_init = l.init
             l.init = True
 
             block = [ parse_statement(l) ]
@@ -2554,7 +2621,7 @@ def translate_strings(init_loc, language, l):
         try:
             bc = compile(s, "<string>", "eval", renpy.python.new_compile_flags, 1)
             return eval(bc, renpy.store.__dict__)
-        except:
+        except Exception:
             ll.error('could not parse string')
 
     while ll.advance():
@@ -2568,7 +2635,7 @@ def translate_strings(init_loc, language, l):
 
             try:
                 old = parse_string(ll.rest())
-            except:
+            except Exception:
                 ll.error("Could not parse string.")
 
         elif ll.keyword('new'):
@@ -2577,10 +2644,12 @@ def translate_strings(init_loc, language, l):
                 ll.error('no string to translate')
 
             newloc = ll.get_location()
+
             try:
                 new = parse_string(ll.rest())
-            except:
+            except Exception:
                 ll.error("Could not parse string.")
+                new = None
 
             block.append(renpy.ast.TranslateString(loc, language, old, new, newloc))
 
@@ -2617,8 +2686,9 @@ def translate_statement(l, loc):
         return translate_strings(loc, language, l)
 
     elif identifier == "python":
+        old_init = l.init
+
         try:
-            old_init = l.init
             l.init = True
 
             block = [ python_statement(l, loc) ]
@@ -2627,8 +2697,9 @@ def translate_statement(l, loc):
             l.init = old_init
 
     elif identifier == "style":
+        old_init = l.init
+
         try:
-            old_init = l.init
             l.init = True
 
             block = [ style_statement(l, loc) ]
@@ -2665,18 +2736,18 @@ def style_statement(l, loc):
             if parent is not None:
                 l.error("parent clause appears twice.")
 
-            rv.parent = l.require(l.word)
+            rv.parent = l.require(l.word) # type: ignore
             return True
 
         if l.keyword("clear"):
-            rv.clear = True
+            rv.clear = True # type: ignore
             return True
 
         if l.keyword("take"):
-            if rv.take is not None:
+            if rv.take is not None: # type: ignore
                 l.error("take clause appears twice.")
 
-            rv.take = l.require(l.name)
+            rv.take = l.require(l.name) # type: ignore
             return True
 
         if l.keyword("del"):
@@ -2685,14 +2756,14 @@ def style_statement(l, loc):
             if propname not in renpy.style.prefixed_all_properties: # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
-            rv.delattr.append(propname)
+            rv.delattr.append(propname) # type: ignore
             return True
 
         if l.keyword("variant"):
-            if rv.variant is not None:
+            if rv.variant is not None: # type: ignore
                 l.error("variant clause appears twice.")
 
-            rv.variant = l.require(l.simple_expression)
+            rv.variant = l.require(l.simple_expression) # type: ignore
 
             return True
 
@@ -2702,10 +2773,10 @@ def style_statement(l, loc):
             if (propname != "properties") and (propname not in renpy.style.prefixed_all_properties): # @UndefinedVariable
                 l.error("style property %s is not known." % propname)
 
-            if propname in rv.properties:
+            if propname in rv.properties: # type: ignore
                 l.error("style property %s appears twice." % propname)
 
-            rv.properties[propname] = l.require(l.simple_expression)
+            rv.properties[propname] = l.require(l.simple_expression) # type: ignore
 
             return True
 
@@ -2997,7 +3068,7 @@ def report_parse_errors():
             try:
                 print("")
                 print(i)
-            except:
+            except Exception:
                 pass
 
         print("", file=f)
@@ -3007,9 +3078,9 @@ def report_parse_errors():
     renpy.display.error.report_parse_errors(full_text, error_fn)
 
     try:
-        if renpy.game.args.command == "run": # @UndefinedVariable
+        if renpy.game.args.command == "run": # type: ignore
             renpy.exports.launch_editor([ error_fn ], 1, transient=1)
-    except:
+    except Exception:
         pass
 
     return True

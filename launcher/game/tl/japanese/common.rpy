@@ -333,9 +333,6 @@ translate japanese strings:
     old "return"
     new "戻る"
 
-
-translate japanese strings:
-
     # 00director.rpy:689
     old "The interactive director is not enabled here."
     new "ここではインタラクティブディレクターは使えません"
@@ -420,9 +417,6 @@ translate japanese strings:
     old "Interactive Director (D)"
     new "インタラクティブディレクター(D)"
 
-
-translate japanese strings:
-
     # 00keymap.rpy:254
     old "Failed to save screenshot as %s."
     new "ファイル名 %s のスクリーンショットの保存に失敗しました。"
@@ -438,9 +432,6 @@ translate japanese strings:
     # _developer\developer.rpym:569
     old "{size_mb:,.1f} MB in {count} textures."
     new "{size_mb:,.1f} MB in {count} textures."
-
-
-translate japanese strings:
 
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
@@ -778,14 +769,31 @@ translate japanese strings:
     old "Show deleted"
     new "消去済みを表示する"
 
-
-translate japanese strings:
-
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing Volume Drop"
-    new "自己発話音量"
+    new "セルフボイシングボリューム低減"
 
     # renpy/common/00preferences.rpy:384
     old "self voicing volume drop"
     new "セルフボイシングボリュームを下げる"
+
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "ハイコントラストテキスト"
+
+    # renpy/common/00preferences.rpy:478
+    old "system cursor"
+    new "システムカーソル"
+
+    # renpy/common/00preferences.rpy:487
+    old "renderer menu"
+    new "レンダーメニュー"
+
+    # renpy/common/00preferences.rpy:490
+    old "accessibility menu"
+    new "アクセス性メニュー"
+
+    # renpy/common/00preferences.rpy:493
+    old "high contrast text"
+    new "ハイコントラストテキスト"
 

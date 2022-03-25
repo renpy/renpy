@@ -1,5 +1,5 @@
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,7 +28,7 @@ import_pygame_sdl2()
 
 from freetype cimport *
 from ttgsubtable cimport *
-from textsupport cimport Glyph, SPLIT_INSTEAD
+from renpy.text.textsupport cimport Glyph, SPLIT_INSTEAD
 import traceback
 import sys
 
@@ -136,7 +136,7 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
         try:
             f.seek(offset)
             face.offset = offset
-        except:
+        except Exception:
             traceback.print_exc()
             return -1
 
@@ -148,7 +148,7 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
 
             for i from 0 <= i < count:
                 buffer[i] = cbuf[i]
-        except:
+        except Exception:
             traceback.print_exc()
             return -1
 
@@ -434,7 +434,7 @@ cdef class FTFont:
 
             if self.italic:
                 shear.xx = 1 << 16
-                shear.xy = (207 << 16) / 1000 # taken from SDL_ttf.
+                shear.xy = (207 << 16) // 1000 # taken from SDL_ttf.
                 shear.yx = 0
                 shear.yy = 1 << 16
 
@@ -446,14 +446,14 @@ cdef class FTFont:
                 if glyph_rotate == 1:
                     FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, metrics.vertBearingX - metrics.horiBearingX, -metrics.vertBearingY - metrics.horiBearingY)
                 else:
-                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance / 2, -face.bbox.yMax)
+                    FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, -metrics.horiAdvance // 2, -face.bbox.yMax)
                 shear.xx = 0
                 shear.xy = -(1 << 16)
                 shear.yx = 1 << 16
                 shear.yy = 0
                 FT_Outline_Transform(&(<FT_OutlineGlyph> g).outline, &shear)
                 # set vertical baseline to a half of the height
-                FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.yMax + face.bbox.yMin) / 2)
+                FT_Outline_Translate(&(<FT_OutlineGlyph> g).outline, 0, (face.bbox.yMax + face.bbox.yMin) // 2)
 
             if self.stroker != NULL:
                 # FT_Glyph_StrokeBorder(&g, self.stroker, 0, 1)
@@ -479,7 +479,7 @@ cdef class FTFont:
             FT_Bitmap_Copy(library, &(bg.bitmap), &(rv.bitmap))
 
         if self.bold:
-            overhang = face.size.metrics.y_ppem / 10
+            overhang = face.size.metrics.y_ppem // 10
 
             FT_Bitmap_Embolden(
                 library,
@@ -500,8 +500,8 @@ cdef class FTFont:
         else:
             rv.advance = face.glyph.metrics.horiAdvance / 64.0 + self.expand + overhang
 
-        rv.bitmap_left = bg.left + self.expand / 2
-        rv.bitmap_top = bg.top - self.expand / 2
+        rv.bitmap_left = bg.left + self.expand // 2
+        rv.bitmap_top = bg.top - self.expand // 2
 
         rv.width = rv.bitmap.width + rv.bitmap_left
 
@@ -815,8 +815,8 @@ cdef class FTFont:
 
             # Strikethrough.
             if strikethrough:
-                ly = y - self.ascent + self.height / 2
-                lh = self.height / 10
+                ly = y - self.ascent + self.height // 2
+                lh = self.height // 10
                 if lh < 1:
                     lh = 1
 
@@ -828,4 +828,3 @@ cdef class FTFont:
                         line[1] = Sg
                         line[2] = Sb
                         line[3] = Sa
-

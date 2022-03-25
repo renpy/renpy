@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,42 +20,44 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from renpy.compat import compat_open as open
-from renpy.compat import compat_open as file
+
+xrange = range
 
 unicode = str # @ReservedAssignment
 
 python_list = _list = list
 python_dict = _dict = dict
-python_object = _object = object
+python_object = _object = object # type: ignore
 python_set = _set = set
 
 _type = type
 
-from renpy.python import RevertableList as __renpy__list__
+from renpy.revertable import RevertableList as __renpy__list__
 list = __renpy__list__ # @ReservedAssignment
 
-from renpy.python import RevertableDict as __renpy__dict__
+from renpy.revertable import RevertableDict as __renpy__dict__
 dict = __renpy__dict__ # @ReservedAssignment
 
-from renpy.python import RevertableSet as __renpy__set__
+from renpy.revertable import RevertableSet as __renpy__set__
 set = __renpy__set__ # @ReservedAssignment
 Set = __renpy__set__
 
-from renpy.python import RevertableObject as object # @UnusedImport
+from renpy.revertable import RevertableObject as object # @UnusedImport
 
-from renpy.python import revertable_range as range # @UnusedImport
-from renpy.python import revertable_sorted as sorted # @UnusedImport
+from renpy.revertable import revertable_range as range # @UnusedImport
+from renpy.revertable import revertable_sorted as sorted # @UnusedImport
 
 import renpy.ui as ui # @UnusedImport
-import renpy.exports as renpy # @Reimport @UnusedImport
 from renpy.translation import translate_string as __ # @UnusedImport
 
 from renpy.python import store_eval as eval
 
 from renpy.display.core import absolute
+
+import renpy
+globals()["renpy"] = renpy.exports
 
 _print = print
 
@@ -68,7 +70,7 @@ def print(*args, **kwargs):
     at the start of the next statement, so that it can't be rolled past.
     """
 
-    renpy.game.context().force_checkpoint = True
+    renpy.game.context().force_checkpoint = True # type: ignore
     _print(*args, **kwargs)
 
 
@@ -183,4 +185,4 @@ __all__ = [
     ]
 
 if PY2:
-    __all__ = [ bytes(i) for i in __all__ ]
+    __all__ = [ bytes(i) for i in __all__ ] # type: ignore

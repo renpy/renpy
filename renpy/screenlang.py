@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,10 +20,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 
-import renpy.display
+import renpy
 import contextlib
 
 # Grab the python versions of the parser and ast modules.
@@ -220,7 +220,7 @@ class Parser(object):
                 if c is None:
                     l.error('Expected screen language statement.')
 
-                rv.extend(c)
+                rv.extend(c) # type: ignore
                 count += 1
 
         return rv
@@ -239,10 +239,10 @@ class Parser(object):
         except SyntaxError as e:
             raise renpy.parser.ParseError(
                 filename,
-                lineno + e[1][1] - 1,
+                lineno + e.args[1][1] - 1,
                 "Syntax error while parsing python expression.",
-                e[1][3],
-                e[1][2])
+                e.args[1][3],
+                e.args[1][2])
 
         increment_lineno(rv, lineno-1)
 
@@ -263,10 +263,10 @@ class Parser(object):
 
             raise renpy.parser.ParseError(
                 filename,
-                lineno + e[1][1] - 1,
+                lineno + e.args[1][1] - 1,
                 "Syntax error while parsing python code.",
-                e[1][3],
-                e[1][2])
+                e.args[1][3],
+                e.args[1][2])
 
         increment_lineno(rv, lineno-1)
 
@@ -447,7 +447,7 @@ class FunctionStatementParser(Parser):
                         rv.pop()
 
                         rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, child_index)))
-                        rv.extend(c)
+                        rv.extend(c) # type: ignore
 
                         needs_close = False
 
@@ -641,7 +641,7 @@ ui_properties = [
 
 
 def add(thing):
-    parser.add(thing)
+    parser.add(thing) # type: ignore
 
 
 ##############################################################################
@@ -883,6 +883,7 @@ Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")
 Keyword("drag_raise")
+Keyword("dragging")
 Keyword("dragged")
 Keyword("dropped")
 Keyword("drop_allowable")
@@ -914,9 +915,6 @@ add(position_properties)
 
 class PassParser(Parser):
 
-    def __init__(self, name):
-        super(PassParser, self).__init__(name)
-
     def parse(self, l, name):
         return self.parse_exec("pass", l.number)
 
@@ -925,9 +923,6 @@ PassParser("pass")
 
 
 class DefaultParser(Parser):
-
-    def __init__(self, name):
-        super(DefaultParser, self).__init__(name)
 
     def parse(self, l, name):
 
@@ -1267,7 +1262,7 @@ class ScreenLangScreen(renpy.object.Object):
             values = renpy.ast.apply_arguments(self.parameters, args, kwargs)
             scope.update(values)
 
-        renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope)
+        renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope) # type: ignore
 
 
 class ScreenParser(Parser):
@@ -1306,7 +1301,7 @@ class ScreenParser(Parser):
         lineno = l.number
 
         screen.name = l.require(l.word)
-        screen.parameters = renpy.parser.parse_parameters(l)
+        screen.parameters = renpy.parser.parse_parameters(l) # type: ignore
 
         while parse_keyword(l):
             continue
@@ -1338,7 +1333,7 @@ class ScreenParser(Parser):
                 if c is None:
                     l.error('Expected a screen language statement.')
 
-                rv.extend(c)
+                rv.extend(c) # type: ignore
                 count += 1
 
         node = ast.Module(body=rv, lineno=lineno, col_offset=0)
@@ -1358,7 +1353,7 @@ class ScreenParser(Parser):
 #        print screen.name, "-----------------------------------------"
 #        unparse.Unparser(node)
 
-        screen.code = renpy.ast.PyCode(node, location, 'exec')
+        screen.code = renpy.ast.PyCode(node, location, 'exec') # type: ignore
 
         return screen
 
