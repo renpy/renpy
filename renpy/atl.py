@@ -1896,46 +1896,61 @@ def parse_atl(l):
 
             rm.add_warper(warper, duration, warp_function)
 
+            ll = l
+            has_block = False
+
             # Now, look for properties and simple_expressions.
             while True:
+
+                if (warper is not None) and (not has_block) and ll.match(':'):
+                    ll.expect_eol()
+                    ll.expect_block("ATL")
+                    has_block = True
+                    ll = l.subblock_lexer()
+                    ll.advance()
+                    ll.expect_noblock("ATL")
+
+                if has_block and ll.eol():
+                    ll.advance()
+                    ll.expect_noblock("ATL")
 
                 # Update expression status.
                 last_expression = this_expression
                 this_expression = False
 
-                if l.keyword('pass'):
+                if ll.keyword('pass'):
                     continue
 
                 # Parse revolution keywords.
-                if l.keyword('clockwise'):
+                if ll.keyword('clockwise'):
                     rm.add_revolution('clockwise')
                     continue
 
-                if l.keyword('counterclockwise'):
+                if ll.keyword('counterclockwise'):
                     rm.add_revolution('counterclockwise')
                     continue
 
-                if l.keyword('circles'):
+                if ll.keyword('circles'):
                     expr = l.require(l.simple_expression)
                     rm.add_circles(expr)
                     continue
 
                 # Try to parse a property.
-                cp = l.checkpoint()
+                cp = ll.checkpoint()
 
-                prop = l.name()
+                prop = ll.name()
 
                 if (prop in PROPERTIES) or (prop and prop.startswith("u_")):
 
-                    expr = l.require(l.simple_expression)
+                    expr = ll.require(ll.simple_expression)
 
                     # We either have a property or a spline. It's the
                     # presence of knots that determine which one it is.
 
                     knots = [ ]
 
-                    while l.keyword('knot'):
-                        knots.append(l.require(l.simple_expression))
+                    while ll.keyword('knot'):
+                        knots.append(ll.require(ll.simple_expression))
 
                     if knots:
                         knots.append(expr)
@@ -1948,26 +1963,27 @@ def parse_atl(l):
                 # Otherwise, try to parse it as a simple expressoon,
                 # with an optional with clause.
 
-                l.revert(cp)
+                ll.revert(cp)
 
-                expr = l.simple_expression()
+                expr = ll.simple_expression()
 
                 if not expr:
                     break
 
                 if last_expression:
-                    l.error('ATL statement contains two expressions in a row; is one of them a misspelled property? If not, separate them with pass.')
+                    ll.error('ATL statement contains two expressions in a row; is one of them a misspelled property? If not, separate them with pass.')
 
                 this_expression = True
 
-                if l.keyword("with"):
-                    with_expr = l.require(l.simple_expression)
+                if ll.keyword("with"):
+                    with_expr = ll.require(ll.simple_expression)
                 else:
                     with_expr = None
 
                 rm.add_expression(expr, with_expr)
 
-            l.expect_noblock('ATL')
+            if not has_block:
+                l.expect_noblock('ATL')
 
             statements.append(rm)
 

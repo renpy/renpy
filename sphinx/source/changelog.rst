@@ -8,6 +8,20 @@ Changelog (Ren'Py 7.x-)
 7.5 / 8.0
 =========
 
+ATL
+---
+
+It's now possible to include a block as part of an ATL interpolation.
+This means that::
+
+    linear 2.0:
+        xalign 1.0
+        yalign 1.0
+
+is now allowed, and equivalent to::
+
+    linear 2.0 xalign 1.0 yalign 1.0
+
 Image Gallery
 -------------
 
@@ -26,7 +40,6 @@ ChromeOS
 
 When running as an Android application on a ChromeOS device, the "chromeos"
 variant will be selected.
-
 
 Features
 --------
