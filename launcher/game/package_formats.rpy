@@ -129,7 +129,7 @@ init python in distribute:
 
             def write_with_info(self, zinfo, filename):
 
-                if zinfo.is_dir():
+                if zinfo.filename.endswith("/"):
                     data = b''
                 else:
                     with open(filename, "rb") as f:

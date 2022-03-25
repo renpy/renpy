@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional
 
 import renpy
@@ -1415,6 +1416,11 @@ def show_overlay_screens(suppress_overlay):
         for i in renpy.config.overlay_screens:
             if get_screen(i) is not None:
                 hide_screen(i)
+
+    for i in renpy.config.always_shown_screens:
+        if get_screen(i) is None:
+            show_screen(i)
+
 
 
 def per_frame():

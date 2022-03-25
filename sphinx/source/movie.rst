@@ -36,6 +36,14 @@ VP9, VP8, or Theora; Opus or Vorbis; and WebM, Matroska, or Ogg.)
 Movies can be displayed fullscreen or in a displayable. Fullscreen movies
 are more efficient.
 
+Ren'Py's movie decoder does not support movies with alpha channels, but the
+`side_mask` parameter of the :func:`Movie` displayable can be used for that
+purpose. Here is an example of hhow to use ffmpeg to create a webm file with
+a side-by-side mask from a mov file with an alpha channel. ::
+
+        ffmpeg -i original.mov -filter:v alphaextract mask.mov
+        ffmpeg -i original.mov -i mask.mov -filter_complex "hstack" -codec:v vp8 -crf 10 output.webm
+
 Movies are not supported on the Web platform.
 
 

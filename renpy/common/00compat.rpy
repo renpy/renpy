@@ -231,6 +231,7 @@ init -1100 python:
         if version <= (7, 5, 0):
             config.allow_unfull_vpgrids = True
             style.drag.focus_mask = True
+            style.default.outline_scaling = "step"
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

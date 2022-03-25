@@ -24,7 +24,8 @@
 # methods that perform standard tasks, like the say and menu methods.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional, List
 
 
@@ -667,6 +668,9 @@ pass_joystick_events = False
 # A list of screens that should be shown when the overlay is enabled.
 overlay_screens = [ ]
 
+# A list of screens that should always be shown.
+always_shown_screens = [ ]
+
 # A map from tag to the default layer that tag should be displayed on.
 tag_layer = { }
 
@@ -1204,6 +1208,10 @@ always_unfocus = True
 
 # A list of callbacks that are called when the game exits.
 at_exit_callbacks = [ ]
+
+# Should character statistics be included in the lint report
+# when config.developer is true?
+lint_character_statistics = True
 
 # Should vpgrids be allowed to raise under/overfull errors ?
 allow_unfull_vpgrids = False

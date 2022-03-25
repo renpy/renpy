@@ -27,7 +27,8 @@
 # updating.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional
 
 import renpy
@@ -62,7 +63,10 @@ class ParameterInfo(object):
     label.
     """
 
-    def __init__(self, parameters, positional, extrapos, extrakw):
+    positional_only = [ ]
+    keyword_only = [ ]
+
+    def __init__(self, parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
 
         # A list of parameter name, default value pairs.
         self.parameters = parameters
@@ -79,6 +83,37 @@ class ParameterInfo(object):
         # any. None if no such variable exists.
         self.extrakw = extrakw
 
+        # A parameters that is positional-only, see
+        # https://www.python.org/dev/peps/pep-0570/
+        # None if / not presets.
+        if last_posonly is None:
+            self.positional_only = [ ]
+
+        else:
+            rv = [ ]
+            for param in parameters:
+                rv.append(param)
+                if param[0] == last_posonly:
+                    break
+
+            self.positional_only = rv
+
+        # A parameters that is keyword-only, see
+        # https://www.python.org/dev/peps/pep-3102/
+        # None if * or *args not preset, or there are no parameters afterwards.
+        if first_kwonly is None:
+            self.keyword_only = [ ]
+
+        else:
+            rv = [ ]
+            for param in reversed(parameters):
+                rv.append(param)
+                if param[0] == first_kwonly:
+                    break
+
+            rv.reverse()
+            self.keyword_only = rv
+
     def apply(self, args, kwargs, ignore_errors=False):
         """
         Applies `args` and `kwargs` to these parameters. Returns
@@ -90,60 +125,160 @@ class ParameterInfo(object):
             best job it can.
         """
 
-        values = renpy.revertable.RevertableDict()
         rv = { }
 
         if args is None:
-            args = ()
+            args = [ ]
 
         if kwargs is None:
-            kwargs = { }
+            kwargs = renpy.python.RevertableDict()
+        else:
+            # Prevent original kwargs changes
+            kwargs = kwargs.copy()
 
-        for name, value in zip(self.positional, args):
-            if name in values:
-                if not ignore_errors:
-                    raise Exception("Parameter %s has two values." % name)
+        parameters = self.parameters
+        # Handle empty parameters in a fast way
+        if not parameters:
 
-            values[name] = value
+            if self.extrakw:
+                rv[self.extrakw] = kwargs
 
-        extrapos = tuple(args[len(self.positional):])
+            elif kwargs and (not ignore_errors):
+                if not kwargs.pop("_ignore_extra_kwargs", False):
+                    raise TypeError(
+                        "Unexpected keyword arguments: %s" %
+                        ", ".join("'%s'" % i for i in kwargs))
 
-        for name, value in kwargs.items():
-            if name in values:
-                if not ignore_errors:
-                    raise Exception("Parameter %s has two values." % name)
+            if self.extrapos:
+                rv[self.extrapos] = tuple(args)
 
-            values[name] = value
+            elif args and (not ignore_errors):
+                raise TypeError("Too many arguments in call (expected 0, got %d)." % len(args))
 
-        for name, default in self.parameters:
+            return rv
 
-            if name not in values:
-                if default is None:
-                    if not ignore_errors:
-                        raise Exception("Required parameter %s has no value." % name)
-                else:
+        # Fill positional-only slots and check whether its passed as keyword
+        slots = iter(self.positional_only)
+        argsi = iter(args)
+        missed_pos = [ ]
+        posonly_keyword = [ ]
+        for value in argsi:
+            try:
+                name, _ = next(slots)
+            except StopIteration:
+                argsi = iter([ value ] + list(argsi))
+                break
+
+            if name in kwargs:
+                posonly_keyword.append(name)
+
+            rv[name] = value
+
+        # Some parameters left
+        else:
+            for name, default in slots:
+                if name in kwargs:
+                    posonly_keyword.append(name)
+
+                if default is not None:
                     rv[name] = renpy.python.py_eval(default)
+                else:
+                    missed_pos.append(name)
 
+            argsi = iter([])
+
+        # Report positional-only as keyword if we have not **kwargs
+        if posonly_keyword and self.extrakw is None:
+            if not ignore_errors:
+                raise TypeError(
+                    "Some positional-only arguments passed as keyword arguments: %s" %
+                    ", ".join("'%s'" % i for i in posonly_keyword))
             else:
-                rv[name] = values[name]
-                del values[name]
+                for name in posonly_keyword:
+                    kwargs.pop(name)
 
-        # Now, values has the left-over keyword arguments, and extrapos
-        # has the left-over positional arguments.
+        # Fill positional_or_keyword slots with left args
+        poskw_slots = parameters[len(self.positional_only):-len(self.keyword_only) or None]
+        slots = iter(poskw_slots)
+        extraargs = [ ]
+        duplicated_names = [ ]
+        for value in argsi:
+            try:
+                name, _ = next(slots)
+            except StopIteration:
+                extraargs = [ value ] + list(argsi)
+                break
+
+            rv[name] = value
+
+            if name in kwargs:
+                kwargs.pop(name)
+                duplicated_names.append(name)
+
+        # Some parameters left
+        else:
+            for name, default in slots:
+                if name in kwargs:
+                    rv[name] = kwargs.pop(name)
+                elif default is not None:
+                    rv[name] = renpy.python.py_eval(default)
+                else:
+                    missed_pos.append(name)
+
+        # Report missing positional parameters
+        if missed_pos and (not ignore_errors):
+            raise TypeError(
+                "Missing required positional arguments: %s" %
+                ", ".join("'%s'" % i for i in missed_pos))
 
         if self.extrapos:
-            rv[self.extrapos] = extrapos
-        elif extrapos and not ignore_errors:
-            raise Exception("Too many arguments in call (expected %d, got %d)." % (len(self.positional), len(args)))
+            rv[self.extrapos] = tuple(extraargs)
+
+        # Report extra positional arguments
+        elif extraargs and (not ignore_errors):
+            positional = self.positional_only + poskw_slots
+            required = len([i for i in positional if i[1] is None])
+            total = len(positional)
+
+            if total == required:
+                expected = str(total)
+            else:
+                expected = "from %d to %d" % (required, total)
+
+            raise TypeError(
+                "Too many arguments in call (expected %s, got %d)." %
+                (expected, len(args)))
+
+        # Report duplicated positional parameters
+        if duplicated_names and (not ignore_errors):
+            raise TypeError(
+                "Got multiple values for arguments: %s" %
+                ", ".join("'%s'" % i for i in duplicated_names))
+
+        # Fill keyword-only parameters
+        missed_kw = [ ]
+        for name, default in self.keyword_only:
+            if name in kwargs:
+                rv[name] = kwargs.pop(name)
+            elif default is not None:
+                rv[name] = renpy.python.py_eval(default)
+            else:
+                missed_kw.append(name)
+
+        # Report missing keyword-only parameters
+        if missed_kw and (not ignore_errors):
+            raise TypeError(
+                "Missing required keyword-only arguments: %s" %
+                ", ".join("'%s'" % i for i in missed_kw))
 
         if self.extrakw:
-            rv[self.extrakw] = values
+            rv[self.extrakw] = kwargs
 
-        elif values.get("_ignore_extra_kwargs", False):
-            pass
-
-        elif values and (not ignore_errors):
-            raise Exception("Unknown keyword arguments: %s" % (", ".join(list(values.keys()))))
+        elif kwargs and (not ignore_errors):
+            if not kwargs.pop("_ignore_extra_kwargs", False):
+                raise TypeError(
+                    "Unexpected keyword arguments: %s" %
+                    ", ".join("'%s'" % i for i in kwargs))
 
         return rv
 
@@ -151,7 +286,7 @@ class ParameterInfo(object):
 def apply_arguments(parameters, args, kwargs, ignore_errors=False):
 
     if parameters is None:
-        if args or kwargs:
+        if (args or kwargs) and not ignore_errors:
             raise Exception("Arguments supplied, but parameter list not present")
         else:
             return { }
@@ -159,42 +294,63 @@ def apply_arguments(parameters, args, kwargs, ignore_errors=False):
     return parameters.apply(args, kwargs, ignore_errors)
 
 
-class ArgumentInfo(object):
+class ArgumentInfo(renpy.object.Object):
 
-    def __init__(self, arguments, extrapos, extrakw):
+    __version__ = 1
+    starred_indexes = set()
+    doublestarred_indexes = set()
+
+    def after_upgrade(self, version):
+        if version < 1:
+            arguments = self.arguments
+            extrapos = self.extrapos
+            extrakw = self.extrakw
+            length = len(arguments) + bool(extrapos) + bool(extrakw)
+            if extrapos:
+                self.starred_indexes = { length - 1 }
+                arguments.append((None, extrapos))
+
+            if extrakw:
+                self.doublestarred_indexes = { length - 1 }
+                arguments.append((None, extrakw))
+
+            if extrapos and extrakw:
+                self.starred_indexes = { length - 2 }
+
+    def __init__(self, arguments, starred_indexes=None, doublestarred_indexes=None):
 
         # A list of (keyword, expression) pairs. If an argument doesn't
         # have a keyword, it's thought of as positional.
         self.arguments = arguments
 
-        # An expression giving extra positional arguments being
-        # supplied to this function.
-        self.extrapos = extrapos
+        # Indexes of arguments to be considered as * unpacking
+        self.starred_indexes = starred_indexes or set()
 
-        # An expression giving extra keyword arguments that need
-        # to be supplied to this function.
-        self.extrakw = extrakw
+        # Indexes of arguments to be considered as ** unpacking.
+        self.doublestarred_indexes = doublestarred_indexes or set()
 
     def evaluate(self, scope=None):
         """
-        Evaluates the arguments, returning a list of arguments and a
+        Evaluates the arguments, returning a tuple of arguments and a
         dictionary of keyword arguments.
         """
 
         args = [ ]
         kwargs = renpy.revertable.RevertableDict()
 
-        for k, v in self.arguments:
-            if k is not None:
-                kwargs[k] = renpy.python.py_eval(v, locals=scope)
+        for i, (k, v) in enumerate(self.arguments):
+            value = renpy.python.py_eval(v, locals=scope)
+
+            if i in self.starred_indexes:
+                args.extend(value)
+
+            elif i in self.doublestarred_indexes:
+                kwargs.update(value)
+
+            elif k is not None:
+                kwargs[k] = value
             else:
-                args.append(renpy.python.py_eval(v, locals=scope))
-
-        if self.extrapos is not None:
-            args.extend(renpy.python.py_eval(self.extrapos, locals=scope))
-
-        if self.extrakw is not None:
-            kwargs.update(renpy.python.py_eval(self.extrakw, locals=scope))
+                args.append(value)
 
         return tuple(args), kwargs
 
@@ -202,17 +358,18 @@ class ArgumentInfo(object):
 
         l = [ ]
 
-        for keyword, expression in self.arguments:
-            if keyword is not None:
+        for i, (keyword, expression) in enumerate(self.arguments):
+
+            if i in self.starred_indexes:
+                l.append("*" + expression)
+
+            elif i in self.doublestarred_indexes:
+                l.append("**" + expression)
+
+            elif keyword is not None:
                 l.append("{}={}".format(keyword, expression))
             else:
                 l.append(expression)
-
-        if self.extrapos is not None:
-            l.append("*" + self.extrapos)
-
-        if self.extrakw is not None:
-            l.append("**" + self.extrakw)
 
         return "(" + ", ".join(l) + ")"
 
@@ -1047,7 +1204,9 @@ class Image(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.mark_constant()
+            # ATL images must participate with the game defined
+            # constant names. So, we pass empty parameters to enable it.
+            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
 class Transform(Node):
@@ -1093,7 +1252,13 @@ class Transform(Node):
         setattr(renpy.store, self.varname, trans)
 
     def analyze(self):
-        self.atl.mark_constant()
+
+        parameters = getattr(self, "parameters", None)
+
+        if parameters is None:
+            parameters = Transform.default_parameters
+
+        self.atl.analyze(parameters)
 
 
 def predict_imspec(imspec, scene=False, atl=None):
@@ -1217,7 +1382,10 @@ class Show(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.mark_constant()
+            # ATL block defined for show, scene or show layer statements
+            # must participate with the game defined constant names.
+            # So, we pass empty parameters to enable it.
+            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
 class ShowLayer(Node):
@@ -1257,7 +1425,7 @@ class ShowLayer(Node):
 
     def analyze(self):
         if self.atl is not None:
-            self.atl.mark_constant()
+            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
 class Camera(Node):
@@ -1297,7 +1465,7 @@ class Camera(Node):
 
     def analyze(self):
         if self.atl is not None:
-            self.atl.mark_constant()
+            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
 class Scene(Node):
@@ -1351,7 +1519,7 @@ class Scene(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.mark_constant()
+            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
 
 
 class Hide(Node):

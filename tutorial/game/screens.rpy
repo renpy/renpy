@@ -776,9 +776,9 @@ screen preferences():
                     textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                     textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
-                    textbutton "한국어" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("korean")
-                    textbutton "日本語" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("japanese")
-                    textbutton "简体中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("schinese")
+                    textbutton "한국어" text_font "SourceHanSansLite.ttf" action Language("korean")
+                    textbutton "日本語" text_font "SourceHanSansLite.ttf" action Language("japanese")
+                    textbutton "简体中文" text_font "SourceHanSansLite.ttf" action Language("schinese")
 
                     # This should be last.
                     textbutton "Pig Latin" text_font "DejaVuSans.ttf" action Language("piglatin")

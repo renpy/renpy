@@ -22,7 +22,8 @@
 # This contains various Displayables that handle events.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import math
 import re
@@ -1242,7 +1243,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             if i.endswith("color"):
                 caretprops[i] = properties[i]
 
-        caret = renpy.display.image.Solid(xsize=1, style=style, **caretprops)
+        caret = renpy.display.image.Solid(xysize=(1, renpy.store.preferences.font_size), style=style, **caretprops)
 
         if caret_blink:
             caret = CaretBlink(caret, caret_blink)

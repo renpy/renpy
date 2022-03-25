@@ -3,9 +3,23 @@ Changelog (Ren'Py 7.x-)
 =======================
 
 .. _renpy-7.5.0:
+.. _renpy-8.0.0:
 
-7.5
-===
+7.5 / 8.0
+=========
+
+Image Gallery
+-------------
+
+The :class:`Gallery` class now has a new field, `image_screen`, that can be
+used to customize how gallery image are displayed.
+
+The :method:`Gallery.image` and :method:`Gallery.unlock_image` methods now
+take keywork arguments beginning with `show\_`. These arguments have the
+`show\_` prefix stripped, and are then passed to the Gallery.image_screen
+as additional keyword arguments. This can be used to include additional
+information with the images in the gallery.
+
 
 ChromeOS
 --------
@@ -17,14 +31,21 @@ variant will be selected.
 Features
 --------
 
-The new :tpref:`clip` transform property makes it easy to clip a transform 
+The :func:`renpy.dynamic` function can now make variables in namespaces
+dynamic.
+
+The new :var:`config.always_shown_screens` variable allows one to define
+screens that are always shown (even in the main and game menus). See also
+the existing :var:`config.overlay_screens`.
+
+The new :tpref:`clip` transform property makes it easy to clip a transform
 down to a specified size.
 
-The location and size of the OpenGL viewport is made available to shaders as 
+The location and size of the OpenGL viewport is made available to shaders as
 u_viewport.
 
 The new RENPY_PATH_TO_SAVES environment variable makes it possible to control
-where Ren'Py places system-level saves. The RENPY_MULTIPERSISTENT variable has 
+where Ren'Py places system-level saves. The RENPY_MULTIPERSISTENT variable has
 been documented, and controls the same thing with multipersistent data.
 
 The :propref:`focus_mask` style property now defaults to None for drag displayables.
@@ -59,10 +80,10 @@ Playing or stopping music on a channel now unpauses that channel.
 The gui.variant Decorator
 -------------------------
 
-A new gui.variant decorator has been added to Ren'Py. This should be used 
+A new gui.variant decorator has been added to Ren'Py. This should be used
 to decorate a function with the name of a variant, and causes that function
-to be run, if the variant is active, when the game is first started, and then 
-each time the gui is rebuilt (which happens when :func:`gui.rebuild` is called, 
+to be run, if the variant is active, when the game is first started, and then
+each time the gui is rebuilt (which happens when :func:`gui.rebuild` is called,
 when a gui preference is changed, or when the translation changes.)
 
 This is expected to be used like::
@@ -95,13 +116,13 @@ Fixes
 The new :var:`config.mouse_focus_clickthrough` variable determines if clicks that
 cause the game window to be focused will be processed normally.
 
-The launcher now runs with :var:`config.mouse_focus_clickthrough` true, which 
+The launcher now runs with :var:`config.mouse_focus_clickthrough` true, which
 means that it will only take a single click to launch the game.
 
 The `caret_blink` property of Input is now exposed through screen language.
 
 When a Live2D motion contains a curve with a shorter duration then the motion
-it is part of, the last value of the curve is retained to the end of the 
+it is part of, the last value of the curve is retained to the end of the
 motion.
 
 Rare issues with a displayable being replaced by a displayable of a different
@@ -113,74 +134,74 @@ Modal displayables now prevent pauses from ending.
 An issue that could cause images to not display in some cases (when a displayable
 was invalidated) has been fixed.
 
-Starting a movie no longer causes paused sounds to unpause. 
+Starting a movie no longer causes paused sounds to unpause.
 
-AudioData objects are no longer stored in the persistent data. Such objects 
-are removed when persistent data is loaded, if present. 
+AudioData objects are no longer stored in the persistent data. Such objects
+are removed when persistent data is loaded, if present.
 
-Platform variables like renpy.android and renpy.ios are now set to follow 
+Platform variables like renpy.android and renpy.ios are now set to follow
 the emulated platform, when Ren'Py is emulating ios or android.
 
 When in the iOS and Android emulator, the mobile rollback side is used.
 
-Ren'Py will now always run an `unhovered` action when a displayable (or its 
+Ren'Py will now always run an `unhovered` action when a displayable (or its
 replacement) remains shown, and the focus changes. Previously, the unhovered
 action would not run when the loss of focus was caused by showing a second
 screen.
 
 When :var:`config.log` is true, the selected choice is now logged properly.
 
-The new :func:`gui.variant` function makes it possible to work around 
-an issue in the standard gui where the calling :func:`gui.rebuild` would cause 
-gui variants to reset. 
+The new :func:`gui.variant` function makes it possible to work around
+an issue in the standard gui where the calling :func:`gui.rebuild` would cause
+gui variants to reset.
 
 The web browser now checks for progressively downloaded images once per
 frame, allowing images to be loaded into the middle of an animation.
 
-Live2D now uses saturation arithmetic to combine motion fadeins and fadeouts, 
-such that if the fadein contributes 80% of a parameter value, and the 
-fadeout contributes 20% of the value, 100% of the value comes from 
-the two motions. (Previously, the fadein and fadeout were applied 
-independently, such that together, the fadein and fadeout would 
-contribute 84% of the value, with the remaining 16% taken from 
+Live2D now uses saturation arithmetic to combine motion fadeins and fadeouts,
+such that if the fadein contributes 80% of a parameter value, and the
+fadeout contributes 20% of the value, 100% of the value comes from
+the two motions. (Previously, the fadein and fadeout were applied
+independently, such that together, the fadein and fadeout would
+contribute 84% of the value, with the remaining 16% taken from
 the default.)
 
 When fading from one sequence of Live2D motions to another, the original
-sequence ends when a motion fades out. 
+sequence ends when a motion fades out.
 
-When preserving screens in the old state for a transition, the later_at_list 
-and camera lists are taken from the old state, preventing unexpected changes. 
+When preserving screens in the old state for a transition, the later_at_list
+and camera lists are taken from the old state, preventing unexpected changes.
 
-The :tpref:`gl_depth` property now causes Ren'Py to use GL_LEQUALS, 
+The :tpref:`gl_depth` property now causes Ren'Py to use GL_LEQUALS,
 which more closely matches Ren'Py's semantics.
 
-The 4-component constructor for matrices has been fixed. 
+The 4-component constructor for matrices has been fixed.
 
-Ren'Py now cleans out the android build directories when producing a Android 
-App Bundle (AAB) file, preventing problems that might be caused when packaging 
+Ren'Py now cleans out the android build directories when producing a Android
+App Bundle (AAB) file, preventing problems that might be caused when packaging
 multiple games, or a single game where files are deleted.
 
 Live2d now properly handles seamless animation when the same motion is repeated
 in a displayable. (For example, ``show eileen m1 m1 m2`` where ``m1`` is seamless.)
 
 Mouse motion is now tracked on Chrome OS devices. This prevents the mouse cursor
-from being hidden between clicks. 
+from being hidden between clicks.
 
-An issue with windows partially rendering on ChromeOS has been resolved. 
+An issue with windows partially rendering on ChromeOS has been resolved.
 
-An issue with transcludes in screens has been fixed. 
+An issue with transcludes in screens has been fixed.
 
-An issue that could prevent a transform with both :tpref:`perspective` and 
+An issue that could prevent a transform with both :tpref:`perspective` and
 :tpref:`mesh` true from displaying has been fixed.
 
-Buttons now only propagate transform state to direct children, not to 
+Buttons now only propagate transform state to direct children, not to
 children accessed through ImageReferences.
 
-The ``repeat_`` modifier can now be applied to gamepad events. 
+The ``repeat_`` modifier can now be applied to gamepad events.
 
-A new :var:`config.debug_prediction` variable has been split out of 
-:var:`config.debug_image_cache`. This controls the logging of 
-prediction errors to the console and log.txt, making the latter 
+A new :var:`config.debug_prediction` variable has been split out of
+:var:`config.debug_image_cache`. This controls the logging of
+prediction errors to the console and log.txt, making the latter
 variable act as documented.
 
 Translations

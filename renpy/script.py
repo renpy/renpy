@@ -23,7 +23,8 @@
 # Ren'Py script.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 
 import renpy
@@ -49,11 +50,15 @@ BYTECODE_VERSION = 1
 if PY2:
     import imp
     MAGIC = imp.get_magic()
+
+    # Change this to force a recompile when required.
+    MAGIC += b'_v2.1'
+
 else:
     from importlib.util import MAGIC_NUMBER as MAGIC
 
-# Change this to force a recompile when required.
-MAGIC += b'\x01'
+    # Change this to force a recompile when required.
+    MAGIC += b'_v3.1'
 
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
@@ -273,7 +278,9 @@ class Script(object):
         script_files = self.script_files
 
         # Sort script files by filename.
-        script_files.sort()
+        # We need this key to prevet possible crash when comparing None to str
+        # during sorting
+        script_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
 
         initcode = [ ]
 

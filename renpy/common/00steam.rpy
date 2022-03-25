@@ -24,7 +24,11 @@ python early:
     # Should steam be enabled?
     config.enable_steam = True
 
+
 init -1499 python in _renpysteam:
+
+    import collections
+    import time
 
     def retrieve_stats():
         """
@@ -80,7 +84,7 @@ init -1499 python in _renpysteam:
 
         rv = c_bool(False)
 
-        if not steamapi.SteamUserStats().GetAchievement(name.encode("utf-8"), byref(c_bool)):
+        if not steamapi.SteamUserStats().GetAchievement(name.encode("utf-8"), byref(rv)):
             return None
 
         return rv.value
@@ -488,23 +492,14 @@ init -1499 python in _renpysteam:
 
         path = create_strng_buffer(4096)
         size = c_ulonglong()
-        timestam = c_int()
+        timestamp = c_int()
 
         if not steamapi.SteamUGC().GetItemInstallInfo(item_id, byref(size), byref(path), 4096, byref(timestamp)):
             return None
 
         return renpy.exports.fsdecode(path.value)
 
-    run_callbacks = True
-
-    def periodic():
-        """
-        Called periodically to run Steam callbacks.
-        """
-
-        if run_callbacks:
-            steamapi.RunCallbacks()
-
+    ############################################ Import API after steam is found.
     def import_api():
 
         global steamapi
@@ -523,6 +518,166 @@ init -1499 python in _renpysteam:
         STORE_ADD_TO_CART = steamapi.k_EOverlayToStoreFlag_AddToCart
         STORE_ADD_TO_CART_AND_SHOW = steamapi.k_EOverlayToStoreFlag_AddToCartAndShow
 
+    ################################################################## Callbacks
+
+    # A map from callback class name to a list of callables that will be called
+    # with the callback instance.
+
+
+    callback_handlers = collections.defaultdict(list)
+
+    def periodic():
+        """
+        Called periodically to run Steam callbacks.
+        """
+
+        for cb in steamapi.generate_callbacks():
+            # print(type(cb).__name__, {k : getattr(cb, k) for k in dir(cb) if not k.startswith("_")})
+
+            for handler in callback_handlers.get(type(cb).__name__, [ ]):
+                handler(cb)
+
+        if renpy.variant("steam_deck"):
+            keyboard_periodic()
+
+    ################################################################## Keyboard
+
+    # True to show the keyboard once, False otherwise.
+    keyboard_mode = "always"
+
+    # True if this is the start of a new interaction, and so the keyboard
+    # should be shown if a text box appears.
+    keyboard_primed = True
+
+    # True if the keyboard is currently showing.
+    keyboard_showing = None
+
+    # Should the layers be shifted so the baseline is in view?
+    keyboard_shift = True
+
+    # Where the basline is shifted to on the screen. This is a floating point number,
+    # with 0.0 being the top of the screen and 1.0 being the bottom.
+    keyboard_baseline = 0.5
+
+    def prime_keyboard():
+        global keyboard_primed
+        keyboard_primed = True
+
+    renpy.config.start_interact_callbacks.append(prime_keyboard)
+
+    def keyboard_periodic():
+
+        global keyboard_showing
+        global keyboard_primed
+        global keyboard_shift
+        global keyboard_baseline
+
+        if keyboard_mode == "never":
+            return
+        elif keyboard_mode == "always":
+            keyboard_primed = True
+        elif keyboard_mode != "once":
+            raise Exception("Bad keyboard_mode.")
+
+        keyboard_text_rect = renpy.display.interface.text_rect
+        _KeyboardShift.text_rect = keyboard_text_rect
+
+        if keyboard_primed and (keyboard_showing is None) and keyboard_text_rect:
+            x, y, w, h = (int(i) for i in keyboard_text_rect)
+
+            if keyboard_shift:
+                y  = int(renpy.exports.get_physical_size()[1] * keyboard_baseline) - h
+
+            steamapi.SteamUtils().ShowFloatingGamepadTextInput(
+                steamapi.k_EFloatingGamepadTextInputModeModeSingleLine,
+                x, y, w, h)
+
+            print("Showing keyboard.")
+
+            keyboard_showing = time.time()
+            keyboard_primed = False
+
+        if keyboard_shift and keyboard_showing and keyboard_text_rect:
+            for l in renpy.config.transient_layers + renpy.config.overlay_layers + renpy.config.context_clear_layers:
+                if not renpy.display.interface.ongoing_transition.get(l) is _KeyboardShift:
+                    renpy.display.interface.set_transition(_KeyboardShift, layer=l, force=True)
+                    renpy.exports.restart_interaction()
+
+        if keyboard_showing and not keyboard_text_rect:
+            steamapi.SteamUtils().DismissFloatingGamepadTextInput()
+
+        if keyboard_showing is None:
+            _KeyboardShift.last_offset = 0
+        else:
+            _KeyboardShift.rendered_offset = _KeyboardShift.last_offset
+
+
+    def keyboard_dismissed(cb):
+        """
+        Called when the keyboard is dismissed.
+        """
+
+        global keyboard_showing
+        keyboard_showing = None
+
+    callback_handlers["FloatingGamepadTextInputDismissed_t"].append(keyboard_dismissed)
+
+    class _KeyboardShift(renpy.display.layout.Container):
+        """
+        This is a transition that shifts the screen up, intended for use only
+        with the steam deck keyboard.
+        """
+
+        # Store the text rectangle in the class, so it's not saved, and
+        # is available during render().
+        text_rect = None
+
+        # The last offset we computed.
+        last_offset = 0
+
+        # The offset we computed last time we rendered.
+        rendered_offset = 0
+
+        def __init__(self, new_widget, old_widget, **properties):
+            super(_KeyboardShift, self).__init__(**properties)
+
+            self.delay = 0
+            self.add(new_widget)
+
+        def render(self, width, height, st, at):
+            rv = renpy.display.render.Render(width, height)
+            cr = renpy.display.render.render(self.child, width, height, st, at)
+
+            if (keyboard_showing is not None) and self.text_rect:
+
+                yscale = renpy.config.screen_height / renpy.exports.get_physical_size()[1]
+                x, y, w, h = self.text_rect
+                y -= self.rendered_offset
+
+                text_baseline = y + h
+                desired_baseline = int(keyboard_baseline * renpy.config.screen_height)
+
+                offset = int(desired_baseline - text_baseline)
+                offset = min(0, offset)
+
+                done = (time.time() - keyboard_showing) / .3
+                done = min(1.0, done)
+                done = max(0.0, done)
+
+                if offset and done < 1.0:
+                    renpy.display.render.redraw(self, 0)
+
+                offset = int(offset * done)
+
+            else:
+                offset = 0
+
+            _KeyboardShift.last_offset = offset
+
+            rv.blit(cr, (0, offset))
+            self.offsets = [ (0, offset) ]
+
+            return rv
 
 init -1499 python in achievement:
 
@@ -614,7 +769,10 @@ init -1499 python in achievement:
 
         import os, sys
 
-        if config.early_script_version is not None:
+        try:
+            if config.early_script_version is not None:
+                return
+        except:
             return
 
         if config.steam_appid is None:
@@ -643,7 +801,7 @@ init -1499 python in achievement:
             import os
             import ctypes
 
-            if renpy.windows and (sys.maxint > (1 << 32)):
+            if renpy.windows and (sys.maxsize > (1 << 32)):
                 dll_name = "steam_api64.dll"
             elif renpy.windows:
                 dll_name = "steam_api.dll"
@@ -670,10 +828,17 @@ init -1499 python in achievement:
             sys.modules["_renpysteam"] = steam
 
             steam.import_api()
+            steamapi.init_callbacks()
 
             config.periodic_callbacks.append(steam.periodic)
             config.needs_redraw_callbacks.append(steam.overlay_needs_present)
             steam.set_overlay_notification_position(steam.POSITION_TOP_RIGHT)
+
+            if steamapi.SteamUtils().IsSteamInBigPictureMode():
+                config.variants.insert(0, "steam_big_picture")
+
+            if steamapi.SteamUtils().IsSteamRunningOnSteamDeck():
+                config.variants.insert(0, "steam_deck")
 
             backends.insert(0, SteamBackend())
             renpy.write_log("Initialized steam.")

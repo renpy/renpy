@@ -181,8 +181,8 @@ cdef class GL2Draw:
         bound_h = min(visible_h, head_h)
 
         self.info["max_window_size"] = (
-            int(round(min(bound_h * virtual_ar, bound_w))),
-            int(round(min(bound_w / virtual_ar, bound_h))),
+            round(min(bound_h * virtual_ar, bound_w)),
+            round(min(bound_w / virtual_ar, bound_h)),
             )
 
         if (not renpy.mobile) and (not maximized):
@@ -198,8 +198,8 @@ cdef class GL2Draw:
             pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
 
         # Limit to integers.
-        pwidth = int(round(pwidth))
-        pheight = int(round(pheight))
+        pwidth = round(pwidth)
+        pheight = round(pheight)
 
         # Keep a minimum size.
         pwidth = max(pwidth, 256)

@@ -162,6 +162,11 @@ define config.window_icon = "gui/window_icon.png"
 
 init python:
 
+    # SDK Fonts.
+    config.searchpath.append(config.renpy_base + "/sdk-fonts")
+    build.classify_renpy("sdk-fonts/**", "all")
+    build._sdk_fonts = True
+
     ## The following functions take file patterns. File patterns are case-
     ## insensitive, and matched against the path relative to the base directory,
     ## with and without a leading /. If multiple patterns match, the first is

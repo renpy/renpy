@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import os
 
@@ -152,7 +153,10 @@ def start(index):
                 renpy.exports.write_log("Controller found in blocklist, not using.")
                 return
 
-    c.init()
+    try:
+        c.init()
+    except Exception:
+        renpy.display.log.exception()
 
     renpy.exports.restart_interaction()
 

@@ -24,7 +24,8 @@
 # game state to some time in the past.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional
 
 import marshal
@@ -561,7 +562,9 @@ class RollbackLog(renpy.object.Object):
         # Update self.current.stores with the changes from each store.
         # Also updates .ever_been_changed.
         for name, sd in renpy.python.store_dicts.items():
-            self.current.stores[name], self.current.delta_ebc[name] = sd.get_changes(begin)
+            delta = sd.get_changes(begin)
+            if delta:
+                self.current.stores[name], self.current.delta_ebc[name] = delta
 
         # Update the list of mutated objects and what we need to do to
         # restore them.

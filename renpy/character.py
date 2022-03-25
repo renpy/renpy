@@ -22,7 +22,8 @@
 # The Character object (and friends).
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Any
 
 import renpy
@@ -703,6 +704,15 @@ class HistoryEntry(renpy.object.Object):
     multiple = None
     who = None
     what = None
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
+
+    def __hash__(self):
+        return hash(tuple(sorted(self.__dict__.items())))
 
     def __repr__(self):
         return "<History {!r} {!r}>".format(self.who, self.what)

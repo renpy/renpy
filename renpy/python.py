@@ -24,7 +24,8 @@
 # game state to some time in the past.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional
 
 
@@ -101,9 +102,6 @@ def get_store_module(name):
 
 from renpy.pydict import DictItems, find_changes
 
-EMPTY_DICT = { }
-EMPTY_SET = set()
-
 
 class StoreDict(dict):
     """
@@ -161,7 +159,7 @@ class StoreDict(dict):
             self.old = new
 
         if rv is None:
-            return EMPTY_DICT, EMPTY_SET
+            return None
 
         delta_ebc = set()
 

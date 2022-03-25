@@ -227,7 +227,7 @@ class _FixedZipFile(zipfile.ZipFile):
         if upperdirs and not os.path.exists(upperdirs):
             os.makedirs(upperdirs)
 
-        if member.is_dir():
+        if member.filename.endswith("/"):
             if not os.path.isdir(targetpath):
                 os.mkdir(targetpath)
             return targetpath

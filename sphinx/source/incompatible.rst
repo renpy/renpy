@@ -28,6 +28,15 @@ for individual drags, or globally with::
 
 Both options reduce performance.
 
+The :propref:`outline_scaling` style property now defaults to "linear". This means
+the window scaling factor is applied to the outline size, and then rounded to an
+integer. This can cause multiple outlines of similar sizes to disappear. To revert
+this, the outline_scaling property can be set to "step" for individual text elements,
+or globally with::
+
+    style default:
+        outline_scaling "step"
+
 The platform-specific directories inside lib/ have had name changes. The 
 ``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This 
 change helps support the development of the Python 3 powered Ren'Py 8. 

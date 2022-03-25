@@ -94,9 +94,13 @@ def path_to_saves(gamedir, save_directory=None):
 
         # url.path seems to change type based on iOS version, for some reason.
         try:
-            rv = url.path().UTF8String().decode("utf-8")
+            rv = url.path().UTF8String()
         except Exception:
-            rv = url.path.UTF8String().decode("utf-8")
+            rv = url.path.UTF8String()
+
+
+        if isinstance(rv, bytes):
+            rv = rv.decode("utf-8")
 
         print("Saving to", rv)
         return rv

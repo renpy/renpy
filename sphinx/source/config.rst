@@ -245,6 +245,13 @@ Occasionally Used
 
     If True, Ren'Py will not require grids to be full in order to display.
 
+.. var:: config.always_shown_screens = [ ]
+
+    A list of names of screens that Ren'Py will always show, even in menus,
+    and when the interface is hidden. This is mostly used by Ren'Py, which
+    assumes this will be a list. The :var:`config.overlay_screens` list is
+    usually more appropriate.
+
 .. var:: config.audio_filename_callback = None
 
     If not None, this is a function that is called with an audio filename,
@@ -592,6 +599,13 @@ Occasionally Used
 
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
+
+.. var:: config.lint_character_statistics = True
+
+    If true, and :var:`config.developer` is true, the lint report will include
+    statistics about the number of dialogue blocks spoken for each character.
+    The chanracter statistics are disabled when the game is packaged, to
+    prevent spoilers.
 
 .. var:: config.load_failed_label = None
 

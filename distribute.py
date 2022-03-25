@@ -44,6 +44,16 @@ def copy_tutorial_file(src, dest):
                 if copy:
                     df.write(l)
 
+def link_directory(dirname):
+    dn = os.path.join(ROOT, dirname)
+
+    if os.path.exists(dn):
+        os.unlink(dn)
+
+    if PY2:
+        os.symlink(dn + "2", dn)
+    else:
+        os.symlink(dn + "3", dn)
 
 def main():
 
@@ -62,8 +72,15 @@ def main():
     ap.add_argument("--nosign", action="store_false", dest="sign")
     ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
+    ap.add_argument("--link-directories", action="store_true")
 
     args = ap.parse_args()
+
+    link_directory("rapt")
+    link_directory("renios")
+
+    if args.link_directories:
+        return
 
     if args.sign:
         os.environ["RENPY_MAC_IDENTITY"] = "Developer ID Application: Tom Rothamel (XHTE5H7Z79)"
