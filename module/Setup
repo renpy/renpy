@@ -1,5 +1,6 @@
 _renpy gen/_renpy.c IMG_savepng.c core.c
 _renpybidi gen/_renpybidi.c renpybidicore.c
+_renpytfd gen/_renpytfd.c tinyfiledialogs/tinyfiledialogs.c
 renpy.audio.renpysound gen/renpy.audio.renpysound.c renpysound_core.c ffmedia.c
 renpy.parsersupport gen/renpy.parsersupport.c
 renpy.pydict gen/renpy.pydict.c

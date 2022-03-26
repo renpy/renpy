@@ -66,8 +66,11 @@ setuplib.extra_link_args = [ ]
 if platform.win32_ver()[0]:
     windows = True
     setuplib.extra_compile_args.append("-fno-strict-aliasing")
+    tfd_libs = [ "comdlg32", "ole32" ]
+
 else:
     windows = False
+    tfd_libs = [ ]
 
 if raspi:
     setuplib.extra_compile_args.append("-DRASPBERRY_PI")
@@ -139,6 +142,8 @@ cython(
         ("FRIBIDI_ENTRY", ""),
         ("HAVE_CONFIG_H", "1"),
         ])
+
+cython("_renpytfd", [ "tinyfiledialogs/tinyfiledialogs.c" ], libs=tfd_libs)
 
 # Sound.
 
