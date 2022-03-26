@@ -85,7 +85,7 @@ def polar_to_cartesian(angle, radius, xaround, yaround):
 
 def first_not_none(*args):
     """
-    Returns the first argument that is not None, or the last argument if 
+    Returns the first argument that is not None, or the last argument if
     all are None.
     """
 
@@ -418,7 +418,7 @@ class Transform(Container):
 
     # Compatibility with old versions of the class.
     active = False
-    children = [ ] 
+    children = [ ]
     arguments = DEFAULT_ARGUMENTS
 
     # Default before we set this.
@@ -431,13 +431,14 @@ class Transform(Container):
                  focus=None,
                  default=False,
                  _args=None,
+                 alt=None,
 
                  **kwargs):
 
         self.kwargs = kwargs
         self.style_arg = style
 
-        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args)
+        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args, alt=alt)
 
         self.function = function
 
