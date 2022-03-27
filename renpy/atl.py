@@ -276,7 +276,7 @@ class Context(object):
 class ATLTransformBase(renpy.object.Object):
 
     # Compatibility with older saves.
-    parameters = renpy.ast.ParameterInfo([ ], [ ], None, None)
+    parameters = renpy.ast.EMPTY_PARAMETERS
     parent_transform = None
     atl_st_offset = 0
 
@@ -465,7 +465,7 @@ class ATLTransformBase(renpy.object.Object):
             child = self.child
 
         # Create a new ATL Transform.
-        parameters = renpy.ast.ParameterInfo({ }, positional, None, None)
+        parameters = renpy.ast.EMPTY_PARAMETERS
 
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
