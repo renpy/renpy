@@ -209,7 +209,7 @@ happens in the case of a game distributed in a web version. If your game should 
 to work even without Live2D, you could use a wrapper or workaround, for example::
 
     init python:
-        def MyLive2D(*args, **kwargs, fallback=Placeholder(text="no live2d")):
+        def MyLive2D(*args, fallback=Placeholder(text="no live2d"), **kwargs):
             if renpy.has_live2d():
                  return Live2D(*args, **kwargs)
             else:
