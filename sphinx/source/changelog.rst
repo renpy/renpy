@@ -44,6 +44,9 @@ variant will be selected.
 Features
 --------
 
+:func:`Placeholder` now takes a `text` argument, that overrides the
+automatically determined text with something the creator specifies.
+
 The :func:`renpy.dynamic` function can now make variables in namespaces
 dynamic.
 
