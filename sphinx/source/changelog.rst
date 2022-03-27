@@ -58,6 +58,12 @@ children is not a multiple of the specified value.
 Features
 --------
 
+The screen language ``add`` statement now takes an `alt` property,
+making it possible to write::
+
+    screen test():
+        add "icon.png" alt "The Icon"
+
 The :func:`Hide` action now takes None for the screen name, to hide
 the current screen.
 
