@@ -466,6 +466,7 @@ for name in [ "add", "image" ]:
     Positional("im")
     Keyword("at")
     Keyword("id")
+    Keyword("alt")
     for i in renpy.atl.PROPERTIES:
         Style(i)
 
