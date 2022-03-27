@@ -171,16 +171,25 @@ def elide_filename(fn):
     or relative to the Ren'Py directory.
     """
 
-    original_fn = fn
     fn = fn.replace("\\", "/")
 
-    for d in [ renpy.config.basedir, renpy.config.renpy_base ]:
-        d = os.path.abspath(d).replace("\\", "/") + "/"
+    basedir = os.path.abspath(renpy.config.basedir).replace("\\", "/") + "/"
+    renpy_base = os.path.abspath(renpy.config.renpy_base).replace("\\", "/") + "/"
+
+    # This is SDK inside the project, for some reason, or it is the same path
+    if renpy_base.startswith(basedir):
+        dirs = [renpy_base, basedir]
+
+    # This is a projects dir inside SDK or it's different paths
+    else:
+        dirs = [basedir, renpy_base]
+
+    for d in dirs:
         if fn.startswith(d):
             rv = fn[len(d):]
             break
     else:
-        rv = original_fn.replace("\\", "/")
+        rv = fn
 
     return rv
 
