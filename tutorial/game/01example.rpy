@@ -444,14 +444,14 @@ init python:
 
             last_blank = not i
 
+            i = regex.sub(translate, i)
+
+            if not (persistent.show_translation_marker or showtrans):
+                i = re.sub(r'__?\((".*?")\)', r'\1', i)
+                i = re.sub(r"__?\(('.*?')\)", r'\1', i)
+                i = i.replace("!t]", "]")
+
             if not raw:
-                i = regex.sub(translate, i)
-
-                if not (persistent.show_translation_marker or showtrans):
-                    i = re.sub(r'__?\((".*?")\)', r'\1', i)
-                    i = re.sub(r"__?\(('.*?')\)", r'\1', i)
-                    i = i.replace("!t]", "]")
-
                 i = quote(i)
                 i = regex.sub(colorize, i)
 
