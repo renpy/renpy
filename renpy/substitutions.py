@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,9 @@
 # operations.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 import renpy
 import string
@@ -267,8 +269,8 @@ def substitute(s, scope=None, force=False, translate=True):
         kwargs = renpy.store.__dict__ # @UndefinedVariable
 
     try:
-        s = formatter.vformat(s, (), kwargs)
-    except:
+        s = formatter.vformat(s, (), kwargs) # type: ignore
+    except Exception:
         if renpy.display.predict.predicting: # @UndefinedVariable
             return " ", True
         raise

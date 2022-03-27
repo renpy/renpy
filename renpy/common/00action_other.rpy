@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -35,7 +35,7 @@ init -1500 python:
 
             try:
                 self.alt = action.alt
-            except:
+            except Exception:
                 pass
 
         def __call__(self):
@@ -173,7 +173,7 @@ init -1500 python:
             try:
                 import webbrowser
                 webbrowser.open_new(self.url)
-            except:
+            except Exception:
                 pass
 
     class With(Action, DictEquality):

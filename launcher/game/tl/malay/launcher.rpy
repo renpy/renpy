@@ -601,8 +601,8 @@
     new "[project_dir!q] sudah wujud. Sila pilih nama projek yang lain."
 
     # gui7.rpy:358
-    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "Peleraian apakah yang projek ini patut guna? Walaupun Ren'Py boleh menyesuai naikkan dan menyesuai turunkan saiz tetingkap, ini ialah saiz awal tetingkap, saiz di mana aset perlu dilukis, dan saiz di mana aset menjadi paling tajam.\n\nNilai lalai 1280x720 ialah kompromi yang munasabah."
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "Peleraian apakah yang projek ini patut guna? Walaupun Ren'Py boleh menyesuai naikkan dan menyesuai turunkan saiz tetingkap, ini ialah saiz awal tetingkap, saiz di mana aset perlu dilukis, dan saiz di mana aset menjadi paling tajam.\n\nNilai lalai [default_size[0]]x[default_size[1]] ialah kompromi yang munasabah."
 
     # gui7.rpy:358
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."

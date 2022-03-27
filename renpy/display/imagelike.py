@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,14 +19,16 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
-
-import renpy.display
-from renpy.display.render import render, Render, Matrix2D
-
 # This file contains displayables that are image-like, because they take
 # up a rectangular area of the screen, and do not respond to input.
+
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+import renpy
+from renpy.display.render import render, Render
+from renpy.display.matrix import Matrix2D
 
 
 class Solid(renpy.display.core.Displayable):
@@ -189,10 +191,10 @@ class Frame(renpy.display.core.Displayable):
 
     def after_upgrade(self, version):
         if version < 2:
-            self.left = self.xborder
-            self.right = self.xborder
-            self.top = self.yborder
-            self.bottom = self.yborder
+            self.left = self.xborder # type: ignore
+            self.right = self.xborder # type: ignore
+            self.top = self.yborder # type: ignore
+            self.bottom = self.yborder # type: ignore
 
     def __init__(self, image, left=None, top=None, right=None, bottom=None,
                  xborder=0, yborder=0, bilinear=True, tile=False,

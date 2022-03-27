@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,16 +20,17 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+from typing import Any
 
 # This file contains displayables that move, zoom, rotate, or otherwise
 # transform displayables. (As well as displayables that support them.)
 import math
 import types # @UnresolvedImport
 
-import renpy.display # @UnusedImport
+import renpy
 from renpy.display.layout import Container
-
 from renpy.display.accelerator import transform_render
 from renpy.atl import position, any_object, bool_or_none, float_or_none, matrix, mesh
 
@@ -84,13 +85,15 @@ def polar_to_cartesian(angle, radius, xaround, yaround):
 
 def first_not_none(*args):
     """
-    Returns the first argument that is not None.
+    Returns the first argument that is not None, or the last argument if
+    all are None.
     """
 
     for i in args:
         if i is not None:
             return i
-    return i
+
+    return args[-1]
 
 
 class TransformState(renpy.object.Object):
@@ -125,7 +128,7 @@ class TransformState(renpy.object.Object):
         self.last_angle = ts.last_angle
 
         # Set the position and anchor to None, so inheritance works.
-        if self.perspective is None:
+        if self.perspective is None: # type: ignore
             self.xpos = None
             self.ypos = None
             self.xanchor = None
@@ -175,7 +178,7 @@ class TransformState(renpy.object.Object):
 
     def get_placement(self, cxoffset=0, cyoffset=0):
 
-        if self.perspective is not None:
+        if self.perspective is not None: # type: ignore
             return (
                 0,
                 0,
@@ -372,15 +375,15 @@ class Transform(Container):
             self.active = False
             self.state = TransformState()
 
-            self.state.xpos = self.xpos or 0
-            self.state.ypos = self.ypos or 0
-            self.state.xanchor = self.xanchor or 0
-            self.state.yanchor = self.yanchor or 0
-            self.state.alpha = self.alpha
-            self.state.rotate = self.rotate
-            self.state.zoom = self.zoom
-            self.state.xzoom = self.xzoom
-            self.state.yzoom = self.yzoom
+            self.state.xpos = self.xpos or 0 # type: ignore
+            self.state.ypos = self.ypos or 0 # type: ignore
+            self.state.xanchor = self.xanchor or 0 # type: ignore
+            self.state.yanchor = self.yanchor or 0 # type: ignore
+            self.state.alpha = self.alpha # type: ignore
+            self.state.rotate = self.rotate # type: ignore
+            self.state.zoom = self.zoom # type: ignore
+            self.state.xzoom = self.xzoom # type: ignore
+            self.state.yzoom = self.yzoom # type: ignore
 
             self.hide_request = False
             self.hide_response = True
@@ -415,7 +418,7 @@ class Transform(Container):
 
     # Compatibility with old versions of the class.
     active = False
-    children = False
+    children = [ ]
     arguments = DEFAULT_ARGUMENTS
 
     # Default before we set this.
@@ -428,13 +431,14 @@ class Transform(Container):
                  focus=None,
                  default=False,
                  _args=None,
+                 alt=None,
 
                  **kwargs):
 
         self.kwargs = kwargs
         self.style_arg = style
 
-        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args)
+        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args, alt=alt)
 
         self.function = function
 
@@ -442,7 +446,7 @@ class Transform(Container):
         if child is not None:
             self.add(child)
 
-        self.state = TransformState()
+        self.state = TransformState() # type: Any
 
         if kwargs:
 
@@ -483,7 +487,8 @@ class Transform(Container):
             self.arguments = None
 
         # This is the matrix transforming our coordinates into child coordinates.
-        self.forward = None
+        self.forward = None # type: renpy.display.matrix.Matrix|None
+        self.reverse = None # type: renpy.display.matrix.Matrix|None
 
         # Have we called the function at least once?
         self.active = False
@@ -506,6 +511,9 @@ class Transform(Container):
         self.at_offset = 0
 
         self.child_st_base = 0
+
+        self.child_size = (0, 0)
+        self.render_size = (0, 0)
 
     def visit(self):
         if self.child is None:
@@ -657,7 +665,7 @@ class Transform(Container):
         d.at_offset = self.at_offset
 
         if isinstance(self, ATLTransform):
-            d.atl_st_offset = self.atl_st_offset if (self.atl_st_offset is not None) else self.st_offset
+            d.atl_st_offset = self.atl_st_offset if (self.atl_st_offset is not None) else self.st_offset # type: ignore
 
         if kind == "hide":
             d.hide_request = True
@@ -737,7 +745,7 @@ class Transform(Container):
         if self.hide_request:
             return None
 
-        if not self.state.events:
+        if not self.state.events: # type: ignore
             return
 
         children = self.children
@@ -768,7 +776,7 @@ class Transform(Container):
         if child is None:
             child = self.child
 
-        if (child is not None) and (child._duplicatable):
+        if getattr(child, '_duplicatable', False):
             child = child._duplicate(_args)
 
         rv = Transform(

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -52,7 +52,7 @@ class ImageGenerator(object):
 
         try:
             os.mkdir(self.prefix, 0o777)
-        except:
+        except Exception:
             pass
 
         self.full_width = self.width / self.scale
@@ -121,7 +121,7 @@ class ImageGenerator(object):
 
         try:
             os.makedirs(dn, 0o777)
-        except:
+        except Exception:
             pass
 
         if os.path.exists(fn):
@@ -145,12 +145,7 @@ class ImageGenerator(object):
             if not self.p.skip_backup:
                 os.rename(fn, bfn)
 
-        import cStringIO
-        sio = cStringIO.StringIO()
-        renpy.display.module.save_png(s, sio, 3)
-
-        with open(fn, "wb") as f:
-            f.write(sio.getvalue())
+        pygame_sdl2.image.save(s, fn, 3)
 
     def make_surface(self, width, height):
         return pygame_sdl2.Surface((width, height), pygame_sdl2.SRCALPHA)

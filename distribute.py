@@ -1,7 +1,11 @@
 #!/home/tom/ab/renpy/lib/py2-linux-x86_64/python -O
 
 # Builds a distribution of Ren'Py.
-from __future__ import print_function
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+
+import future.standard_library
+import future.utils
+PY2 = future.utils.PY2
 
 import sys
 import os
@@ -10,18 +14,16 @@ import shutil
 import subprocess
 import argparse
 import time
+import collections
+
 
 try:
     # reload is built-in in Python 2, in importlib in Python 3
-    reload
+    reload # type: ignore
 except NameError:
     from importlib import reload
 
-if not sys.flags.optimize:
-    raise Exception("Optimization disabled.")
-
 ROOT = os.path.dirname(os.path.abspath(__file__))
-
 
 def copy_tutorial_file(src, dest):
     """
@@ -32,7 +34,7 @@ def copy_tutorial_file(src, dest):
     # True if we want to copy the line.
     copy = True
 
-    with open(src, "rb") as sf, open(dest, "wb") as df:
+    with open(src, "r") as sf, open(dest, "w") as df:
         for l in sf:
             if "# tutorial-only" in l:
                 copy = False
@@ -42,12 +44,22 @@ def copy_tutorial_file(src, dest):
                 if copy:
                     df.write(l)
 
+def link_directory(dirname):
+    dn = os.path.join(ROOT, dirname)
+
+    if os.path.exists(dn):
+        os.unlink(dn)
+
+    if PY2:
+        os.symlink(dn + "2", dn)
+    else:
+        os.symlink(dn + "3", dn)
 
 def main():
 
     start = time.time()
 
-    if not sys.flags.optimize:
+    if PY2 and not sys.flags.optimize:
         raise Exception("Not running with python optimization.")
 
     ap = argparse.ArgumentParser()
@@ -60,8 +72,15 @@ def main():
     ap.add_argument("--nosign", action="store_false", dest="sign")
     ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
+    ap.add_argument("--link-directories", action="store_true")
 
     args = ap.parse_args()
+
+    link_directory("rapt")
+    link_directory("renios")
+
+    if args.link_directories:
+        return
 
     if args.sign:
         os.environ["RENPY_MAC_IDENTITY"] = "Developer ID Application: Tom Rothamel (XHTE5H7Z79)"
@@ -76,18 +95,24 @@ def main():
     if args.version is None:
         args.version = ".".join(str(i) for i in renpy.version_tuple[:-1]) # @UndefinedVariable
 
-    match_version = ".".join(str(i) for i in renpy.version_tuple[:2]) # @UndefinedVariable
+    try:
+        s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", ]).decode("utf-8").strip()
+        parts = s.strip().split("-")
+        dirty = "dirty" in parts
 
-    s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", "--match", "start-" + match_version ])
-    parts = s.strip().split("-")
+        commits_per_day = collections.defaultdict(int)
 
-    if len(parts) <= 3:
+        for i in subprocess.check_output([ "git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d", "--follow", "HEAD", "--", "." ]).decode("utf-8").split():
+            commits_per_day[i[2:]] += 1
+
+        if dirty:
+            key = time.strftime("%Y%m%d")[2:]
+            vc_version = "{}{:02d}".format(key, commits_per_day[key] + 1)
+        else:
+            key = max(commits_per_day.keys())
+            vc_version = "{}{:02d}".format(key, commits_per_day[key])
+    except:
         vc_version = 0
-    else:
-        vc_version = int(parts[2])
-
-    if parts[-1] == "dirty":
-        vc_version += 1
 
     with open("renpy/vc_version.py", "w") as f:
         import socket
@@ -103,7 +128,7 @@ def main():
 
     try:
         reload(sys.modules['renpy.vc_version']) # @UndefinedVariable
-    except:
+    except Exception:
         import renpy.vc_version # @UnusedImport
 
     reload(sys.modules['renpy'])
@@ -127,19 +152,24 @@ def main():
 
     print("Version {} ({})".format(args.version, full_version))
 
+    if sys.version_info[0] >= 3:
+        renpy_sh = "./renpy3.sh"
+    else:
+        renpy_sh = "./renpy2.sh"
+
     # Perhaps autobuild.
     if "RENPY_BUILD_ALL" in os.environ:
         print("Autobuild...")
         subprocess.check_call(["scripts/autobuild.sh"])
 
     # Compile all the python files.
-    compileall.compile_dir("renpy/", ddir="renpy/", force=1, quiet=1)
+    compileall.compile_dir("renpy/", ddir="renpy/", force=True, quiet=1)
 
     # Compile the various games.
     if not args.fast:
         for i in [ 'tutorial', 'launcher', 'the_question' ]:
             print("Compiling", i)
-            subprocess.check_call(["./renpy.sh", i, "quit" ])
+            subprocess.check_call([renpy_sh, i, "quit" ])
 
     # Kick off the rapt build.
     if not args.fast:
@@ -148,8 +178,8 @@ def main():
 
         sys.path.insert(0, os.path.join(ROOT, "rapt", "buildlib"))
 
-        import rapt.interface # @UnresolvedImport
-        import rapt.build # @UnresolvedImport
+        import rapt.interface # type: ignore
+        import rapt.build # type: ignore
 
         interface = rapt.interface.Interface()
         rapt.build.distclean(interface)
@@ -162,10 +192,11 @@ def main():
     if not os.path.exists(destination):
         os.makedirs(destination)
 
+
     if args.fast:
 
         cmd = [
-            "./renpy.sh",
+            renpy_sh,
             "launcher",
             "distribute",
             "launcher",
@@ -178,7 +209,7 @@ def main():
 
     else:
         cmd = [
-            "./renpy.sh",
+            renpy_sh,
             "launcher",
             "distribute",
             "launcher",
@@ -239,7 +270,7 @@ def main():
         sys.stdout.write("Creating -sdk.7z")
 
         p = subprocess.Popen([ "7z", "a", sdk + ".7z", sdk], stdout=subprocess.PIPE)
-        for i, _l in enumerate(p.stdout):
+        for i, _l in enumerate(p.stdout): # type: ignore
             if i % 10 != 0:
                 continue
 

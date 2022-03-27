@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,9 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.translation
 
 import re
 import os
@@ -30,6 +29,7 @@ import time
 import collections
 import shutil
 
+import renpy
 from renpy.translation import quote_unicode
 from renpy.parser import elide_filename
 
@@ -95,7 +95,7 @@ def open_tl_file(fn):
 
         try:
             os.makedirs(dn)
-        except:
+        except Exception:
             pass
 
         f = open(fn, "a", encoding="utf-8")
@@ -128,7 +128,7 @@ def shorten_filename(filename):
     if the filename is in the common directory.
     """
 
-    commondir = os.path.normpath(renpy.config.commondir)
+    commondir = os.path.normpath(renpy.config.commondir) # type: ignore
     gamedir = os.path.normpath(renpy.config.gamedir)
 
     if filename.startswith(commondir):
@@ -154,7 +154,7 @@ def write_translates(filename, language, filter): # @ReservedAssignment
     if common:
         return
 
-    tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, fn)
+    tl_filename = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, fn) # type: ignore
 
     if tl_filename[-1] == "m":
         tl_filename = tl_filename[:-1]

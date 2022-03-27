@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,7 +34,7 @@ init -1200 python:
     def _try_eval(e, what):
         try:
             return _audio_eval(e)
-        except:
+        except Exception:
             renpy.error('unable to evaluate %s %r' % (what, e))
 
 python early hide:
@@ -153,7 +153,7 @@ python early hide:
                 try:
                     if not renpy.music.playable(fn, channel):
                         renpy.error("%r is not loadable" % fn)
-                except:
+                except Exception:
                     pass
 
     renpy.register_statement('play music',

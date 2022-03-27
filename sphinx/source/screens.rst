@@ -2030,69 +2030,72 @@ If the environment variable is not present, a list of variants is
 built up automatically, by going through the following list in order
 and choosing the entries that apply to the current platform.
 
+``"steam_deck"``
+    True if running on a Steam Deck or equivalent hardware.
+
+``"steam_big_picture"``
+    True if running in Steam Big Picture mode.
+
 ``"large"``
-   A screen large enough that relatively small text can be
-   comfortably read, and buttons can be easily clicked. This
-   is used for computer screens.
+    A screen large enough that relatively small text can be
+    comfortably read, and buttons can be easily clicked. This
+    is used for computer screens.
 
 ``"medium"``
-   A screen where smallish text can be read, but buttons may
-   need to grow in size so they can be comfortably pressed.
-   This is used for tablets.
+    A screen where smallish text can be read, but buttons may
+    need to grow in size so they can be comfortably pressed.
+    This is used for tablets.
 
 ``"small"``
-   A screen where text must be expanded in order to be read. This
-   is used for phones and televisions. (A television might be
-   physically large, but it's often far away, making it hard
-   to read.)
+    A screen where text must be expanded in order to be read. This
+    is used for phones and televisions. (A television might be
+    physically large, but it's often far away, making it hard
+    to read.)
 
 ``"tablet"``
-   Defined on touchscreen based devices where the screen has a
-   diagonal size of 6 inches or more. (In general, ``"medium"`` should
-   be used instead of ``"tablet"``.)
+    Defined on touchscreen based devices where the screen has a
+    diagonal size of 6 inches or more. (In general, ``"medium"`` should
+    be used instead of ``"tablet"``.)
 
 ``"phone"``
-   Defined on touchscreen-based devices where the diagonal size of
-   the screen is less than 6 inches. On such a small device, it's
-   important to make buttons large enough a user can easily choose
-   them. (In general, ``"small"`` should be used instead of ``"phone"``.)
+    Defined on touchscreen-based devices where the diagonal size of
+    the screen is less than 6 inches. On such a small device, it's
+    important to make buttons large enough a user can easily choose
+    them. (In general, ``"small"`` should be used instead of ``"phone"``.)
 
 ``"touch"``
-   Defined on touchscreen-based devices.
+    Defined on touchscreen-based devices.
 
 ``"tv"``
-   Defined on television-based devices.
-
-``"ouya"``
-   Defined on the OUYA console. (``"tv"`` and ``"small"`` are also defined.)
+    Defined on television-based devices.
 
 ``"firetv"``
-   Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
+    Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
 
 ``"chromeos"``
-   Defined when running as an Android app on a Chromebook.
+    Defined when running as an Android app on a Chromebook.
 
 ``"android"``
-   Defined on all Android devices.
+    Defined on all Android devices.
 
 ``"ios"``
-   Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
-   are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
-   also defined).
+    Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
+    are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
+    also defined).
 
 ``"mobile"``
-   Defined on mobile platforms, such as Android, iOS and mobile web browsers.
+    Defined on mobile platforms, such as Android, iOS and mobile web browsers.
 
 ``"pc"``
-   Defined on Windows, Mac OS X, and Linux. A PC is expected to have
-   a mouse and keyboard present, to allow buttons to be hovered, and
-   to allow precise pointing.
+    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
+    a mouse and keyboard present, to allow buttons to be hovered, and
+    to allow precise pointing.
 
 ``"web"``
-   Defined when running inside a web browser.
+    Defined when running inside a web browser.
 
 ``None``
-   Always defined.
+    Always defined.
 
 An example of defining a screen variant is:
 

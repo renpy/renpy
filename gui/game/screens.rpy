@@ -928,8 +928,6 @@ style history_name is gui_label
 style history_name_text is gui_label_text
 style history_text is gui_text
 
-style history_text is gui_text
-
 style history_label is gui_label
 style history_label_text is gui_label_text
 

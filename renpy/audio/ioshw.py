@@ -1,8 +1,10 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 import renpy
-import pyobjus # @UnresolvedImport
+import pyobjus # type: ignore
 
 from renpy.audio.audio import MusicContext
 

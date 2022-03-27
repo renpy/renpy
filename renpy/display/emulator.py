@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,12 +22,14 @@
 # This file contains code to emulate various other devices on the PC.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.display
 
 import os
+
 import pygame_sdl2 as pygame
+import renpy
+
 
 # The function that's called to perform the emulation. This function has
 # the signature of null_emulator.
@@ -176,10 +178,10 @@ def early_init_emulator():
 
     if name:
 
-        renpy.exports.windows = False
-        renpy.exports.linux = False
-        renpy.exports.macintosh = False
-        renpy.exports.web = False
-        renpy.exports.android = renpy.exports.variant("android")
-        renpy.exports.ios = renpy.exports.variant("ios")
-        renpy.exports.mobile = renpy.exports.android or renpy.exports.ios  # @UndefinedVariable
+        renpy.exports.windows = False # type: ignore
+        renpy.exports.linux = False # type: ignore
+        renpy.exports.macintosh = False # type: ignore
+        renpy.exports.web = False # type: ignore
+        renpy.exports.android = renpy.exports.variant("android") # type: ignore
+        renpy.exports.ios = renpy.exports.variant("ios") # type: ignore
+        renpy.exports.mobile = renpy.exports.android or renpy.exports.ios  # type: ignore

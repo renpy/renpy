@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,10 +20,13 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 import collections
-import renpy.sl2
+
+import renpy
 import renpy.sl2.slast as slast
 
 from ast import literal_eval
@@ -272,7 +275,7 @@ class Parser(object):
             if (not keyword) and (not renpy.config.keyword_after_python):
                 try:
                     literal_eval(expr)
-                except:
+                except Exception:
                     l.error("a non-constant keyword argument like '%s %s' is not allowed after a python block." % (name, expr))
 
             target.keyword.append((name, expr))
@@ -994,7 +997,7 @@ class ScreenParser(Parser):
         screen = slast.SLScreen(loc)
 
         screen.name = l.require(l.word)
-        screen.parameters = renpy.parser.parse_parameters(l)
+        screen.parameters = renpy.parser.parse_parameters(l) # type: ignore
 
         self.parse_contents(l, screen, can_tag=True)
 

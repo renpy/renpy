@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -57,7 +57,7 @@ init python:
                 else:
                     subprocess.Popen([ "xdg-open", directory ])
 
-            except:
+            except Exception:
                 pass
 
     # Used for testing.
@@ -251,7 +251,10 @@ screen front_page_project:
 
                 textbutton _("Android") action Jump("android")
                 textbutton _("iOS") action Jump("ios")
-                textbutton _("Web") + " " + _("(Beta)") action Jump("web")
+                textbutton _("Web") + " " + _("(Beta)") action Jump("web"):
+                    if not PY2:
+                        text_color DISABLED
+
                 textbutton _("Generate Translations") action Jump("translate")
                 textbutton _("Extract Dialogue") action Jump("extract_dialogue")
 

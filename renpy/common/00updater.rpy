@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -54,7 +54,7 @@ init -1500 python in updater:
 
     try:
         import rsa
-    except:
+    except Exception:
         rsa = None
 
     from renpy.exports import fsencode
@@ -105,27 +105,26 @@ init -1500 python in updater:
         time.sleep(3)
 
         try:
-            log = file(DEFERRED_UPDATE_LOG, "ab")
-        except:
+            log = open(DEFERRED_UPDATE_LOG, "a")
+        except Exception:
             log = io.BytesIO()
 
         with log:
-            with open(DEFERRED_UPDATE_FILE, "rb") as f:
+            with open(DEFERRED_UPDATE_FILE, "r") as f:
                 for l in f:
 
                     l = l.rstrip("\r\n")
-                    l = l.decode("utf-8")
 
-                    log.write(l.encode("utf-8"))
+                    log.write(l)
 
                     try:
                         process_deferred_line(l)
-                    except:
+                    except Exception:
                         traceback.print_exc(file=log)
 
             try:
                 os.unlink(DEFERRED_UPDATE_FILE)
-            except:
+            except Exception:
                 traceback.print_exc(file=log)
 
     # Process deferred updates on startup, if any exist.
@@ -324,8 +323,8 @@ init -1500 python in updater:
 
             # The logfile that update errors are written to.
             try:
-                self.log = open(os.path.join(self.updatedir, "log.txt"), "wb")
-            except:
+                self.log = open(os.path.join(self.updatedir, "log.txt"), "w")
+            except Exception:
                 self.log = None
 
             self.simulate = simulate
@@ -358,7 +357,7 @@ init -1500 python in updater:
                     self.log.flush()
 
             except UpdateError as e:
-                self.message = e.message
+                self.message = e.args[0]
                 self.can_cancel = True
                 self.can_proceed = False
                 self.state = self.ERROR
@@ -457,7 +456,7 @@ init -1500 python in updater:
 
                     try:
                         self.download(i)
-                    except:
+                    except Exception:
                         self.download(i, standalone=True)
 
                 else:
@@ -651,7 +650,7 @@ init -1500 python in updater:
                 try:
                     os.rename(path, path + ".old")
                     os.unlink(path + ".old")
-                except:
+                except Exception:
                     pass
 
         def rename(self, old, new):
@@ -663,12 +662,12 @@ init -1500 python in updater:
             try:
                 os.rename(old, new)
                 return
-            except:
+            except Exception:
                 pass
 
             try:
                 os.unlink(new)
-            except:
+            except Exception:
                 pass
 
             os.rename(old, new)
@@ -703,18 +702,18 @@ init -1500 python in updater:
             if not os.path.exists(fn):
                 raise UpdateError(_("Either this project does not support updating, or the update status file was deleted."))
 
-            with open(fn, "rb") as f:
+            with open(fn, "r") as f:
                 self.current_state = json.load(f)
 
         def test_write(self):
             fn = os.path.join(self.updatedir, "test.txt")
 
             try:
-                with open(fn, "wb") as f:
+                with open(fn, "w") as f:
                     f.write("Hello, World.")
 
                 os.unlink(fn)
-            except:
+            except Exception:
                 raise UpdateError(_("This account does not have permission to perform an update."))
 
             if not self.log:
@@ -729,20 +728,23 @@ init -1500 python in updater:
             fn = os.path.join(self.updatedir, "updates.json")
             urlretrieve(self.url, fn)
 
+            with open(fn, "r") as f:
+                self.updates = json.load(f)
+
             with open(fn, "rb") as f:
                 updates_json = f.read()
-                self.updates = json.loads(updates_json)
 
             if self.public_key is not None:
                 fn = os.path.join(self.updatedir, "updates.json.sig")
                 urlretrieve(self.url + ".sig", fn)
 
                 with open(fn, "rb") as f:
-                    signature = f.read().decode("base64")
+                    import codecs
+                    signature = codecs.decode(f.read(), "base64")
 
                 try:
                     rsa.verify(updates_json, signature, self.public_key)
-                except:
+                except Exception:
                     raise UpdateError(_("Could not verify update signature."))
 
                 if "monkeypatch" in self.updates:
@@ -884,7 +886,7 @@ init -1500 python in updater:
             for i in range(0, len(data), 4):
                 try:
                     sums.append(struct.unpack("<I", data[i:i+4])[0])
-                except:
+                except Exception:
                     pass
 
             f.close()
@@ -896,12 +898,12 @@ init -1500 python in updater:
             # May not exist, but if it does, we want to delete it.
             try:
                 os.unlink(zsync_fn + ".part")
-            except:
+            except Exception:
                 pass
 
             try:
                 os.unlink(new_fn)
-            except:
+            except Exception:
                 pass
 
             cmd = [
@@ -963,8 +965,8 @@ init -1500 python in updater:
                     break
 
                 try:
-                    f = file(new_fn + ".part", "rb")
-                except:
+                    f = open(new_fn + ".part", "rb")
+                except Exception:
                     self.log.write("partfile does not exist\n")
                     continue
 
@@ -1055,7 +1057,7 @@ init -1500 python in updater:
 
             try:
                 os.unlink(new_fn)
-            except:
+            except Exception:
                 pass
 
             zsync_url = self.updates[module]["zsync_url"][:-6] + ".update.gz"
@@ -1071,7 +1073,7 @@ init -1500 python in updater:
 
             try:
                 length = int(resp.headers.get("Content-Length", "20000000"))
-            except:
+            except Exception:
                 length = 20000000
 
             done = 0
@@ -1172,7 +1174,7 @@ init -1500 python in updater:
                     if info.isdir():
                         try:
                             os.makedirs(path)
-                        except:
+                        except Exception:
                             pass
 
                         continue
@@ -1183,7 +1185,7 @@ init -1500 python in updater:
                     # Extract regular files.
                     tff = tf.extractfile(info)
                     new_path = path + ".new"
-                    with file(new_path, "wb") as f:
+                    with open(new_path, "wb") as f:
                         while True:
                             data = tff.read(1024 * 1024)
                             if not data:
@@ -1199,7 +1201,7 @@ init -1500 python in updater:
                             os.umask(umask)
 
                             os.chmod(new_path, 0o777 & (~umask))
-                        except:
+                        except Exception:
                             pass
 
                     self.moves.append(path)
@@ -1214,16 +1216,16 @@ init -1500 python in updater:
                 self.unlink(path)
 
                 if os.path.exists(path):
-                    self.log.write("could not rename file %s" % path.encode("utf-8"))
+                    self.log.write("could not rename file %s" % path)
 
-                    with open(DEFERRED_UPDATE_FILE, "ab") as f:
-                        f.write("R " + path.encode("utf-8") + "\r\n")
+                    with open(DEFERRED_UPDATE_FILE, "a") as f:
+                        f.write("R " + path + "\r\n")
 
                     continue
 
                 try:
                     os.rename(path + ".new", path)
-                except:
+                except Exception:
                     pass
 
         def delete_obsolete(self):
@@ -1261,14 +1263,14 @@ init -1500 python in updater:
                 self.unlink(i)
 
                 if os.path.exists(i):
-                    self.log.write("could not delete file %s" % i.encode("utf-8"))
-                    with open(DEFERRED_UPDATE_FILE, "wb") as f:
-                        f.write("D " + i.encode("utf-8") + "\r\n")
+                    self.log.write("could not delete file %s" % i)
+                    with open(DEFERRED_UPDATE_FILE, "w") as f:
+                        f.write("D " + i + "\r\n")
 
             for i in old_directories:
                 try:
                     os.rmdir(i)
-                except:
+                except Exception:
                     pass
 
         def save_state(self):
@@ -1278,7 +1280,7 @@ init -1500 python in updater:
 
             fn = os.path.join(self.updatedir, "current.json")
 
-            with open(fn, "wb") as f:
+            with open(fn, "w") as f:
                 json.dump(self.new_state, f)
 
         def clean(self, fn):
@@ -1290,7 +1292,7 @@ init -1500 python in updater:
             if os.path.exists(fn):
                 try:
                     os.unlink(fn)
-                except:
+                except Exception:
                     pass
 
         def clean_old(self):
@@ -1328,7 +1330,7 @@ init -1500 python in updater:
         if not os.path.exists(fn):
             return None
 
-        with open(fn, "rb") as f:
+        with open(fn, "r") as f:
             state = json.load(f)
 
         installed_state_cache = state

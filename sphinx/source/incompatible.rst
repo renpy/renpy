@@ -13,6 +13,8 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-7.5.0:
+
 7.5.0
 -----
 
@@ -26,11 +28,24 @@ for individual drags, or globally with::
 
 Both options reduce performance.
 
+The :propref:`outline_scaling` style property now defaults to "linear". This means
+the window scaling factor is applied to the outline size, and then rounded to an
+integer. This can cause multiple outlines of similar sizes to disappear. To revert
+this, the outline_scaling property can be set to "step" for individual text elements,
+or globally with::
+
+    style default:
+        outline_scaling "step"
+
 The platform-specific directories inside lib/ have had name changes. The 
 ``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This 
 change helps support the development of the Python 3 powered Ren'Py 8. 
 These directories are not documented, and may change between Ren'Py 
 versions, but we do guarantee that ``sys.excutable`` is set.
+
+Vpgrids cannot be overfull anymore, and can only be underfull if the
+``allow_underfull`` property is passed, or if :var:`config.allow_underfull_grids` is
+set to True.
 
 
 .. _incompatible-7.4.11:
@@ -40,7 +55,7 @@ versions, but we do guarantee that ``sys.excutable`` is set.
 
 Ren'Py will now run a button's unhovered property even when focus is 
 changed by default, such as when a screen is shown or unshown. To 
-revert to the old behavior, use:
+revert to the old behavior, use::
 
     define config.always_unfocus = False
 

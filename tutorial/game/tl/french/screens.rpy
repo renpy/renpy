@@ -324,3 +324,7 @@ translate french strings:
     # screens.rpy:1456
     old "Menu"
     new "Menu"
+
+    # game/screens.rpy:1083
+    old "Opens the accessibility menu."
+    new "Ouvre le menu d'accessibilité."

@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,10 @@
 # methods that perform standard tasks, like the say and menu methods.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+from typing import Optional, List
+
 
 import collections
 import os
@@ -343,7 +346,7 @@ auto_save_extra_info = None
 
 # The directory (underneath ~/RenPy, ~/Library/RenPy, or ~/.renpy) where the
 # game-specific data is saved.
-save_directory = None
+save_directory = None # type: str
 
 # These are used to deal with the case where a picture is missing.
 missing_scene = None
@@ -386,11 +389,11 @@ quit_action = None
 screenshot_crop = None
 
 # Various directories.
-gamedir = None
-basedir = None
-renpy_base = None
-commondir = None
-logdir = None # Where log and error files go.
+gamedir = ""
+basedir = ""
+renpy_base = ""
+commondir = ""  # type: Optional[str]
+logdir = ""  # type: Optional[str] # Where log and error files go.
 
 # Should we enable OpenGL mode?
 gl_enable = True
@@ -428,7 +431,7 @@ choice_screen_chosen = True
 narrator_menu = False
 
 # A list of screen variants to use.
-variants = [ None ]
+variants = [ None ] # type: List
 
 # A function from (auto_parameter, variant) -> displayable.
 imagemap_auto_function = None
@@ -664,6 +667,9 @@ pass_joystick_events = False
 
 # A list of screens that should be shown when the overlay is enabled.
 overlay_screens = [ ]
+
+# A list of screens that should always be shown.
+always_shown_screens = [ ]
 
 # A map from tag to the default layer that tag should be displayed on.
 tag_layer = { }
@@ -1147,6 +1153,10 @@ gl_lod_bias = -.5
 # of that tag.
 adjust_attributes = { }
 
+# A dictionary from a tag to a function that produces default attributes
+# for that tag.
+default_attribute_callbacks = { }
+
 # The compatibility mode for who/what substitutions.
 # 0: ver < 7.4
 # 1: 7.4 <= ver <= 7.4.4
@@ -1192,16 +1202,26 @@ debug_prediction = False
 # Should mouse events that cause a window to gain focus be passed through.
 mouse_focus_clickthrough = False
 
-# Should the current displayable always run its unfocus handler, even when 
+# Should the current displayable always run its unfocus handler, even when
 # focus is taken away by default.
 always_unfocus = True
+
+# A list of callbacks that are called when the game exits.
+at_exit_callbacks = [ ]
+
+# Should character statistics be included in the lint report
+# when config.developer is true?
+lint_character_statistics = True
+
+# Should vpgrids be allowed to raise under/overfull errors ?
+allow_unfull_vpgrids = False
 
 del os
 del collections
 
 
 def init():
-    import renpy.display
+    import renpy
 
     global scene
     scene = renpy.exports.scene
@@ -1224,7 +1244,7 @@ def init():
         (r'\.(mp2|mp3|ogg|opus|wav)$', renpy.audio.audio.autoreload),
         ]
 
-    from renpy.uguu import GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_DST_COLOR, GL_MIN, GL_MAX
+    from renpy.uguu import GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_DST_COLOR, GL_MIN, GL_MAX # type: ignore
 
     gl_blend_func["normal"] = (GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_FUNC_ADD, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
     gl_blend_func["add"] = (GL_FUNC_ADD, GL_ONE, GL_ONE, GL_FUNC_ADD, GL_ZERO, GL_ONE)

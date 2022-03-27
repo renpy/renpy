@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,24 +19,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-
-
 init python:
 
-    if renpy.windows:
-        import EasyDialogsWin as EasyDialogs
-    else:
-        EasyDialogs = None
-
-    pyobjus = None
-
-    if renpy.macintosh:
-        try:
-            import pyobjus
-        except:
-            pass
-
+    try:
+        import _renpytfd
+    except Exception:
+        _renpytfd = None
 
     def directory_is_writable(path):
         test = os.path.join(path, "renpy test do not use")
@@ -50,7 +38,7 @@ init python:
 
             return True
 
-        except:
+        except Exception:
             return False
 
     def choose_directory(path):
@@ -72,78 +60,11 @@ init python:
         else:
             try:
                 default_path = os.path.dirname(os.path.abspath(config.renpy_base))
-            except:
+            except Exception:
                 default_path = os.path.abspath(config.renpy_base)
 
-        if EasyDialogs:
-
-            choice = EasyDialogs.AskFolder(defaultLocation=default_path, wanted=unicode)
-
-            if choice is not None:
-                path = choice
-            else:
-                path = None
-
-        elif pyobjus:
-
-            from pyobjus import autoclass
-            from pyobjus.dylib_manager import load_framework, INCLUDE
-
-            load_framework(INCLUDE.AppKit)
-            NSURL = autoclass('NSURL')
-            NSOpenPanel = autoclass('NSOpenPanel')
-
-            panel = NSOpenPanel.openPanel()
-            panel.setCanChooseDirectories_(True)
-            panel.setCanChooseFiles_(False)
-            panel.setCanCreateDirectories_(True)
-
-            if default_path:
-                url = NSURL.fileURLWithPath_(default_path)
-                panel.setDirectoryURL_(url)
-
-            if panel.runModal():
-                path = panel.filename().UTF8String().decode("utf-8")
-            else:
-                path = None
-
-        else:
-
-            try:
-
-                if renpy.macintosh:
-                    # tkinter is broken on Python 3, so use it as a last resort - maybe apple fixed it?
-                    system_pythons = [ "/usr/bin/python2", "/usr/bin/python", "/usr/bin/python3" ]
-                else:
-                    system_pythons = [ "/usr/bin/python3", "/usr/bin/python2", "/usr/bin/python" ]
-
-                for system_python in system_pythons:
-                    if os.path.exists(system_python):
-                        break
-                else:
-                    system_python = system_pythons[0]
-
-                cmd = [ system_python, os.path.join(config.gamedir, "tkaskdir.py"), renpy.fsencode(default_path) ]
-
-                p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-                choice = p.stdout.read()
-                code = p.wait()
-
-            except:
-                import traceback
-                traceback.print_exc()
-
-                code = 0
-                choice = ""
-                path = None
-
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."), label=None)
-
-            if code:
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python3-tk or tkinter package."), label=None)
-
-            elif choice:
-                path = choice.decode("utf-8")
+        if _renpytfd:
+            path = _renpytfd.selectFolderDialog(__("Select Projects Directory"), default_path)
 
         is_default = False
 
