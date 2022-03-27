@@ -143,7 +143,8 @@ cython(
         ("HAVE_CONFIG_H", "1"),
         ])
 
-cython("_renpytfd", [ "tinyfiledialogs/tinyfiledialogs.c" ], libs=tfd_libs)
+if not (android or ios or emscripten):
+    cython("_renpytfd", [ "tinyfiledialogs/tinyfiledialogs.c" ], libs=tfd_libs)
 
 # Sound.
 
