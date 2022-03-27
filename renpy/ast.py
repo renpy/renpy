@@ -2289,9 +2289,10 @@ def create_store(name):
     if name in renpy.config.special_namespaces:
         return
 
-    i = name.find('.', 6) # next dot after "store."
-    if i > 0 and name[:i] in renpy.config.special_namespaces:
-        raise Exception('Creating stores within the {} namespace is not supported.'.format(name[6:i]))
+    # Take first two components of dot-joined name
+    maybe_special = ".".join(name.split(".")[:2])
+    if maybe_special in renpy.config.special_namespaces:
+        raise Exception('Creating stores within the {} namespace is not supported.'.format(maybe_special))
 
     renpy.python.create_store(name)
 
