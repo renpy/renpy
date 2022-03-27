@@ -2286,15 +2286,14 @@ class PostUserStatement(Node):
 
 
 def create_store(name):
-    overname = name
-    while '.' in overname:
-        overname, _, _ = overname.rpartition('.')
-        if overname in renpy.config.special_namespaces:
-            renpy.config.special_namespaces[overname].create_store(name[len(overname):])
-            return
+    if name in renpy.config.special_namespaces:
+        return
 
-    if name not in renpy.config.special_namespaces:
-        renpy.python.create_store(name)
+    i = name.find('.', 6) # next dot after "store."
+    if i > 0 and name[:i] in renpy.config.special_namespaces:
+        raise Exception('Creating stores within the {} namespace is not supported.'.format(name[6:i]))
+
+    renpy.python.create_store(name)
 
 
 class StoreNamespace(object):
