@@ -13,6 +13,8 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-7.5.0:
+
 7.5.0
 -----
 
@@ -40,6 +42,10 @@ The platform-specific directories inside lib/ have had name changes. The
 change helps support the development of the Python 3 powered Ren'Py 8. 
 These directories are not documented, and may change between Ren'Py 
 versions, but we do guarantee that ``sys.excutable`` is set.
+
+Vpgrids cannot be overfull anymore, and can only be underfull if the
+``allow_underfull`` property is passed, or if :var:`config.allow_underfull_grids` is
+set to True.
 
 
 .. _incompatible-7.4.11:

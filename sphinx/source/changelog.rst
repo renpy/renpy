@@ -68,8 +68,22 @@ The :propref:`focus_mask` style property now defaults to None for drag displayab
 This improves performance, but means that the displayable can be dragged by
 transparent pixels.
 
-Changes
--------
+Grids and vpgrids
+-----------------
+
+Having an overfull vpgrid - when both ``rows`` and ``cols`` are specified - is now
+disallowed.
+
+Having an underfull vpgrid now raises an error unless the warning is opted-out using
+either the ``allow_underfull`` property or :var:`config.allow_underfull_grids`, the
+former taking precedence on the latter.
+A vpgrid with both cols and rows specified is underfull if and when it has less than
+rows*cols children.
+A vpgrid with either cols or rows specified is underfull if and when its number of
+children is not a multiple of the specified value.
+
+Other changes
+-------------
 
 Playing or stopping music on a channel now unpauses that channel.
 

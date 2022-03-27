@@ -1213,6 +1213,9 @@ at_exit_callbacks = [ ]
 # when config.developer is true?
 lint_character_statistics = True
 
+# Should vpgrids be allowed to raise under/overfull errors ?
+allow_unfull_vpgrids = False
+
 del os
 del collections
 
