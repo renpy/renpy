@@ -191,26 +191,37 @@ init -1500 python:
         :doc: control_action
 
         This causes the screen named `screen` to be hidden, if it is shown.
+        Otherwise if `screen` is None, the current screen is used instead.
 
         `transition`
             If not None, a transition that occurs when hiding the screen.
 
         `_layer`
             This is passed as the layer argument to :func:`renpy.hide_screen`.
+            Ignored if `screen` is None.
         """
 
         _layer = None
 
-        def __init__(self, screen, transition=None, _layer=None):
+        def __init__(self, screen=None, transition=None, _layer=None):
             self.screen = screen
             self.transition = transition
             self._layer = _layer
 
         def __call__(self):
-            renpy.hide_screen(self.screen, layer=self._layer)
+            if self.screen is None:
+                cs = renpy.current_screen()
+
+                if cs is None:
+                    return
+
+                renpy.hide_screen(cs.screen_name, layer=cs.layer)
+
+            else:
+                renpy.hide_screen(self.screen, layer=self._layer)
 
             if self.transition is not None:
                 renpy.transition(self.transition)
 
             renpy.restart_interaction()
-
+            
