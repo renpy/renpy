@@ -58,6 +58,9 @@ children is not a multiple of the specified value.
 Features
 --------
 
+The :func:`Hide` action now takes None for the screen name, to hide
+the current screen.
+
 :func:`Placeholder` now takes a `text` argument, that overrides the
 automatically determined text with something the creator specifies.
 
