@@ -1130,6 +1130,15 @@ both horizontal and vertical positions.
     This requires model-based rendering to be enabled by setting :var:`config.gl2` to
     True.
 
+.. transform-property:: matrixcolor_info
+
+    :type: list
+    :default: None
+
+    If not None, This gives list that includes a tuple of MatrixColor object
+    and that parameters in the given order. This is just for informational
+    purposes only and it makes no sense to change this property.
+
 .. transform-property:: blur
 
     :type: None or float

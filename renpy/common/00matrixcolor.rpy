@@ -44,6 +44,14 @@ init -1500 python:
             value = other.value + (self.value - other.value) * done
             return self.get(value)
 
+        def get_info(self, other, done):
+
+            if type(other) is not type(self):
+                return [(self, self.value)]
+
+            value = other.value + (self.value - other.value) * done
+            return [(self, value)]
+
         def __mul__(self, other):
             return _MultiplyMatrix(self, other)
 
@@ -83,6 +91,12 @@ init -1500 python:
                 return self.left(None, 1.0) * self.right(None, 1.0)
 
             return self.left(other.left, done) * self.right(other.right, done)
+
+        def get_info(self, other, done):
+            if type(other) is not type(self):
+                return self.left.get_info(None, 1.0) + self.right.get_info(None, 1.0)
+
+            return self.left.get_info(other.left, done) + self.right.get_info(other.right, done)
 
 
     class IdentityMatrix(ColorMatrix):

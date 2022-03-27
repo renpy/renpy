@@ -1301,6 +1301,10 @@ class Interpolation(Statement):
             for k, v in self.properties:
                 if k not in linear:
                     setattr(trans.state, k, v)
+                if k in ("matrixcolor", "matrixtransform"):
+                    k2 = k + "_info"
+                    info = v.get_info(None, None)
+                    setattr(trans.state, k2, info)
 
         else:
             linear, revolution, splines = state
@@ -1310,6 +1314,11 @@ class Interpolation(Statement):
             value = interpolate(complete, old, new, PROPERTIES[k])
 
             setattr(trans.state, k, value)
+            if k in ("matrixcolor", "matrixtransform"):
+                k2 = k + "_info"
+                old_origin = getattr(old, "origin", None)
+                info = new.get_info(old_origin, complete)
+                setattr(trans.state, k2, info)
 
         # Handle the revolution.
         if revolution is not None:

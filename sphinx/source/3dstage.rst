@@ -292,6 +292,15 @@ The following transform properties are used by the 3D Stage.
     of the child of the transform. The transformation goes from the coordinates
     used by the screen to the coordinates used by the child of the transform.
 
+.. transform-property:: matrixtransform_info
+
+    :type: list
+    :default: None
+
+    If not None, This gives list that includes a tuple of TransformMatrix
+    object and that parameters in the given order. This is just for
+    informational purposes only and it makes no sense to change this property.
+
 .. transform-property:: perspective
 
     :type: True or False or Float or (Float, Float, Float)

@@ -49,6 +49,14 @@ init -1400 python:
                 args = tuple(a + (b - a) * done for a, b in zip(other.args, self.args))
                 return self.function(*args)
 
+        def get_info(self, other, done):
+
+            if type(other) is not type(self):
+                return [(self, self.args)]
+            else:
+                args = tuple(a + (b - a) * done for a, b in zip(other.args, self.args))
+                return [(self, args)]
+
         @staticmethod
         def _document(function):
             if not function:
