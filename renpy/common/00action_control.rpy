@@ -190,8 +190,11 @@ init -1500 python:
         """
         :doc: control_action
 
-        This causes the screen named `screen` to be hidden, if it is shown.
-        Otherwise if `screen` is None, the current screen is used instead.
+        This causes a screen to be hidden if it is shown.
+
+        `screen`
+            Either a string giving the name of the screen to be hidden, or
+            None to hide the current screen.
 
         `transition`
             If not None, a transition that occurs when hiding the screen.
@@ -224,4 +227,3 @@ init -1500 python:
                 renpy.transition(self.transition)
 
             renpy.restart_interaction()
-            
