@@ -157,7 +157,7 @@ def what_filter(s):
 
 class DialogueFile(object):
 
-    def __init__(self, filename, output, tdf=True, strings=False, notags=True, escape=True): # @ReservedAssignment
+    def __init__(self, filename, output, tdf=True, strings=False, notags=True, escape=True, language=None): # @ReservedAssignment
         """
         `filename`
             The file we're extracting dialogue from.
@@ -187,6 +187,7 @@ class DialogueFile(object):
         self.notags = notags
         self.escape = escape
         self.strings = strings
+        self.language = language
 
         self.f = open(output, "a", encoding="utf-8")
 
@@ -208,7 +209,17 @@ class DialogueFile(object):
             if label is None:
                 label = ""
 
-            for n in t.block:
+            identifier = t.identifier.replace('.', '_')
+
+            tl = None
+            if self.language is not None:
+                tl = translator.language_translates.get((identifier, self.language), None)
+            if tl is None:
+                block = t.block
+            else:
+                block = tl.block
+
+            for n in block:
 
                 if isinstance(n, renpy.ast.Say):
 
@@ -270,10 +281,14 @@ class DialogueFile(object):
 
             stl = renpy.game.script.translator.strings[None] # @UndefinedVariable
 
+            # don't include s in common.rpym
             if s in stl.translations:
                 continue
 
+            # avoid to include same s
             stl.translations[s] = s
+
+            s = renpy.translation.translate_string(s, self.language)
 
             if self.notags:
                 s = notags_filter(s)
@@ -302,6 +317,7 @@ def dialogue_command():
     """
 
     ap = renpy.arguments.ArgumentParser(description="Generates or updates translations.")
+    ap.add_argument("language", help="The language to extract dialogue for.")
     ap.add_argument("--text", help="Output the dialogue as plain text, instead of a tab-delimited file.", dest="text", action="store_true")
     ap.add_argument("--strings", help="Output all translatable strings, not just dialogue.", dest="strings", action="store_true")
     ap.add_argument("--notags", help="Strip text tags from the dialogue.", dest="notags", action="store_true")
@@ -337,7 +353,11 @@ def dialogue_command():
             continue
 
         filename = os.path.normpath(filename)
-        DialogueFile(filename, output, tdf=tdf, strings=args.strings, notags=args.notags, escape=args.escape)
+        language = args.language
+        if language in ("None", ""):
+            language = None
+        DialogueFile(filename, output, tdf=tdf, strings=args.strings,
+                     notags=args.notags, escape=args.escape, language=language)
 
     return False
 
