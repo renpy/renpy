@@ -34,7 +34,6 @@ take keywork arguments beginning with `show\_`. These arguments have the
 as additional keyword arguments. This can be used to include additional
 information with the images in the gallery.
 
-
 ChromeOS
 --------
 
@@ -93,6 +92,10 @@ transparent pixels.
 
 Other changes
 -------------
+
+The :propref:`adjust_spacing` property is now set to False for dialogue and
+narration in new games. This might cause the spacing of text to change, when
+the game is resized, in exchange for keeping it stable when extend is used.
 
 Playing or stopping music on a channel now unpauses that channel.
 
