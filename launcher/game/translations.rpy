@@ -388,7 +388,7 @@ screen extract_dialogue:
                     style "l_indent"
                     has vbox
 
-                    text _("Language (or None):")
+                    text _("Language (or None for the default language):")
 
                     input style "l_default":
                         value FieldInputValue(persistent, "extract_language")

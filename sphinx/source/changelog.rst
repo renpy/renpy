@@ -57,6 +57,9 @@ children is not a multiple of the specified value.
 Features
 --------
 
+It is now possible to select a language other than the default when
+extracting dialogue.
+
 The screen language ``add`` statement now takes an `alt` property,
 making it possible to write::
 
