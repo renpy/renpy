@@ -293,7 +293,9 @@ For example::
 
 
 Named stores participate in save, load, and rollback in the same way
-that the default store does.
+that the default store does. Special namespaces such as ``persistent``,
+``config``, ``renpy``... do not and never have supported substore creation
+within them.
 
 
 .. _python-modules:
