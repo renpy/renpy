@@ -1216,6 +1216,10 @@ lint_character_statistics = True
 # Should vpgrids be allowed to raise under/overfull errors ?
 allow_unfull_vpgrids = False
 
+# What should be the default value of the crop_relative tpref ?
+crop_relative_default = True
+
+
 del os
 del collections
 
