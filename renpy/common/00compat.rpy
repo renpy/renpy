@@ -258,7 +258,7 @@ init -1000 python hide:
     try:
         import ast
         with renpy.file("script_version.txt") as f:
-            script_version = f.read()
+            script_version = f.read().decode("utf-8")
         config.script_version = ast.literal_eval(script_version)
         renpy.write_log("Set script version to: %r", config.script_version)
     except Exception:
