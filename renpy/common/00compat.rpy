@@ -255,6 +255,8 @@ python early hide:
 
 
 init -1000 python hide:
+    import re
+
     try:
         import ast
         with renpy.file("script_version.txt") as f:
@@ -264,9 +266,11 @@ init -1000 python hide:
     except Exception:
         pass
 
-
     # 6.99.12.4 didn't add script_version.txt, so we read it from renpy/__init__.py
     # if that exists.
+    #
+    # For really old version, script_version may not be set, so try to read it out of
+    # the renpy that came with the game.
     try:
         if config.script_version is None:
             init_py = os.path.join(renpy.config.basedir, "renpy", "__init__.py")
@@ -275,10 +279,18 @@ init -1000 python hide:
 
             if "version_tuple = (6, 99, 12, 4, vc_version)" in data:
                 config.script_version = (6, 99, 12, 4)
+            elif config.renpy_base != config.basedir:
+                for l in data.splitlines():
+                    m = re.match(r"version = \"Ren'Py ([\.\d]+)", l)
+                    if m:
+                        config.script_version = tuple(int(i) for i in m.group(1).split("."))
+
+
 
             renpy.write_log("Set script version to: %r (alternate path)", config.script_version)
     except Exception:
         pass
+
 
 init 1100 python hide:
 
