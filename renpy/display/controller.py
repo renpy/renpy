@@ -69,6 +69,13 @@ def init():
     except Exception:
         renpy.display.log.exception()
 
+    if not renpy.display.interface.safe_mode:
+        try:
+            for i in range(pygame_sdl2.controller.get_count()):
+                start(i)
+        except Exception:
+            renpy.display.log.exception()
+
 
 # A map from controller index to controller object.
 controllers = { }
@@ -143,7 +150,10 @@ def start(index):
     """
 
     quit(index)
-    controllers[index] = c = Controller(index)
+    c = Controller(index)
+
+    if not c.is_controller():
+        return
 
     renpy.exports.write_log("controller: %r %r %r" % (c.get_guid_string(), c.get_name(), c.is_controller()))
 
@@ -155,6 +165,7 @@ def start(index):
 
     try:
         c.init()
+        controllers[index] = c
     except Exception:
         renpy.display.log.exception()
 
