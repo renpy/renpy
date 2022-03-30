@@ -96,6 +96,9 @@ transparent pixels.
 Other changes
 -------------
 
+The :func:`VariableValue`, :func:`FieldValue`, and :func:`DictValue` Bar Values
+can now call :func:`Return`, to cause the interaction to return a specific value.
+
 The :propref:`adjust_spacing` property is now set to False for dialogue and
 narration in new games. This might cause the spacing of text to change, when
 the game is resized, in exchange for keeping it stable when extend is used.
