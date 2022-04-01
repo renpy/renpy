@@ -115,12 +115,12 @@ def popen_del(self, *args, **kwargs):
 
     return
 
-
 def bootstrap(renpy_base):
 
-    global renpy # W0602
+    global renpy
 
-    import renpy.log # @UnusedImport
+    import renpy.config
+    import renpy.log
 
     # Remove a legacy environment setting.
     if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
