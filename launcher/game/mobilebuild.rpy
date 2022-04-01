@@ -99,6 +99,10 @@ init -1 python:
             interface.processing(prompt, pause=False)
             self.log(prompt)
 
+        def open_directory(self, directory, prompt):
+            renpy.run(store.OpenDirectory(directory))
+            interface.info(prompt)
+
         def yesno(self, prompt, submessage=None):
             return interface.yesno(prompt, submessage=submessage)
 
