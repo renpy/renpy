@@ -240,8 +240,6 @@ class Viewport(renpy.display.layout.Container):
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
 
-        self._clipping = (cw > width) or (ch > height)
-
         self.width = width
         self.height = height
 
