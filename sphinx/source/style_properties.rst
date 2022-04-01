@@ -804,7 +804,8 @@ Button Style Properties
 
 .. style-property:: activate_sound string
 
-    A sound that is played when the button is clicked.
+    A sound that is played when the button is activated (clicked). This is also
+    played when a bar or drag is activated.
 
 .. style-property:: mouse string
 

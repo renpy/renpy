@@ -96,6 +96,8 @@ transparent pixels.
 Other changes
 -------------
 
+The :propref:`activate_sound` plays when activating a drag displayable.
+
 The :func:`VariableValue`, :func:`FieldValue`, and :func:`DictValue` Bar Values
 can now call :func:`Return`, to cause the interaction to return a specific value.
 

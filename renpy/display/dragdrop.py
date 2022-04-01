@@ -630,6 +630,8 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
             grabbed = True
 
+            renpy.exports.play(self.style.activate_sound)
+
         elif (self.alternate is not None) and map_event(ev, "button_alternate"):
             rv = run(self.alternate)
             if rv is not None:
