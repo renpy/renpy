@@ -51,16 +51,16 @@ def link_directory(dirname):
         os.unlink(dn)
 
     if PY2:
-        os.symlink(dn + "2", dn)
+        source = dn + "2"
     else:
-        os.symlink(dn + "3", dn)
+        source = dn + "3"
+
+    if os.path.exists(source):
+        os.symlink(source, dn)
 
 def main():
 
     start = time.time()
-
-    if PY2 and not sys.flags.optimize:
-        raise Exception("Not running with python optimization.")
 
     ap = argparse.ArgumentParser()
     ap.add_argument("version", nargs="?")
@@ -84,6 +84,9 @@ def main():
 
     if args.sign:
         os.environ["RENPY_MAC_IDENTITY"] = "Developer ID Application: Tom Rothamel (XHTE5H7Z79)"
+
+    if PY2 and not sys.flags.optimize:
+        raise Exception("Not running with python optimization.")
 
     # Revision updating is done early, so we can do it even if the rest
     # of the program fails.
