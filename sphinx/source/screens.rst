@@ -169,6 +169,15 @@ A screen can take a parameter list::
    screen center_text(s, size=42):
         text s size size
 
+If a screen has no parameters, it still should be given empty
+parentheses. If any other screen ``use``\ s a screen with no
+parentheses, the difference in behavior are described in the section
+concerning :ref:`the use statement <sl-use>`. If no other screen
+``use`` a given screen, not giving parentheses to that screen leads to
+pure inefficiency in the way Ren'py works internally, see the
+:ref:`screen optimization section <screen-optimization>` concerning
+parameters.
+
 
 User Interface Statements
 =========================
@@ -1684,12 +1693,10 @@ The ``use`` statement allows a screen to include another. The use
 statement takes the name of the screen to use. This can optionally be
 followed by an argument list, in parenthesis.
 
-If the used screen includes parameters, its scope is initialized to the
-result of assigning the arguments to those parameters. Otherwise, it
-is passed the scope of the current screen, updated with any keyword
-arguments passed to the screen.
-
-::
+If the used screen has no parentheses, it has read and write access
+to the scope of the current screen, updated with any keyword arguments
+passed via the ``use`` statement. Otherwise, its scope is initialized
+to the result of assigning the arguments to those parameters. ::
 
     screen file_slot(slot):
         button:
