@@ -2296,7 +2296,8 @@ def create_store(name):
     # Take first two components of dot-joined name
     maybe_special = ".".join(name.split(".")[:2])
     if maybe_special in renpy.config.special_namespaces:
-        raise Exception('Creating stores within the {} namespace is not supported.'.format(maybe_special[6:]))
+        if not renpy.config.special_namespaces[maybe_special].allow_child_namespaces:
+            raise Exception('Creating stores within the {} namespace is not supported.'.format(maybe_special[6:]))
 
     renpy.python.create_store(name)
 

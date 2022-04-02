@@ -23,6 +23,7 @@ python early hide:
 
     class _ObjectNamespace(object):
         pure = True
+        allow_child_namespaces = False
 
         def __init__(self, nso, name):
             self.nso = nso
@@ -39,6 +40,7 @@ python early hide:
 
     class _PersistentNamespace(object):
         pure = False
+        allow_child_namespaces = False
 
         def set(self, name, value):
             if getattr(persistent, name) is None:
@@ -53,6 +55,7 @@ python early hide:
 
     class _ErrorNamespace(object):
         pure = False
+        allow_child_namespaces = False
 
         def __init__(self, name):
             self.name = name
@@ -68,6 +71,7 @@ python early hide:
 
     class _PreferencesNamespace(object):
         pure = False
+        allow_child_namespaces = False
 
         def set(self, name, value):
             raise Exception("The define statement can not be used with the preferences namespace.")
@@ -102,6 +106,7 @@ python early hide:
 
     class _GuiNamespace(object):
         pure = True
+        allow_child_namespaces = True
 
         def set(self, name, value):
             setattr(gui, name, value)
