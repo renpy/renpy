@@ -288,8 +288,15 @@ For example::
             serial_number += 1
             return serial_number
 
+    default character_stats.chloe_substore.friends = {"Eileen",}
+
     label start:
         $ serial = mystore.serial()
+
+        if "Lucy" in character_stats.chloe_substore.friends:
+            chloe "Lucy is my friend !"
+        elif character_stats.chloe_substore.friends:
+            chelo "I have friends, but Lucy is not one of them."
 
 
 Named stores participate in save, load, and rollback in the same way
