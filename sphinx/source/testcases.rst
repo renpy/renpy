@@ -16,7 +16,7 @@ Testcases are similar to Ren'py :ref:`labels <labels-control-flow>`, with a few 
 
 - The Testcase statement takes test statements, the Ren'py label statement takes Ren'py code. Both are mutually
   excusive.
-- There is no testcase equivalent of the return statement: like in a class or screen definition, the removal of
+- There is no testcase equivalent of the return statement: like in a python block, the removal of
   indentation and the end of the block closes the testcase.
 - There can be no test statement outside of a testcase block, while there can be Ren'py code oustside labels (in
   init blocks for example).
@@ -46,13 +46,12 @@ Test statements
 ===============
 .. give an example for each one
 
-python block statement
-----------------------
-.. difference with the default python block statement, apart from the hide/store params ?
+python blocks and dollar-lines
+------------------------------
+A :ref:`python block <python-statement>` or a :ref:`dollar-line` can be added within a testcase.
+Unlike in normal Ren'py code, the python blocks don't take the ``in substore`` or ``hide`` parameters.
 
-dollar line
------------
-.. same interrogations as with python blocks
+.. difference with the default python blocks and dollar lines, apart from the hide/store params ?
 
 if statement
 ------------
@@ -104,7 +103,9 @@ jump statement
 call statement
 --------------
 
-    .. reminder that there is no return statement in testcases
+.. reminder that there is no return statement in testcases
+
+.. to jump to a renpy label, use the run clause:: run Jump("label_name")
 
 clause statement
 ----------------
@@ -240,9 +241,12 @@ The chapter_1 label is not reached between the first label clause and the second
 second label clause fails (technically, the clause is not ready and the assert fails).
 
 In both examples, the assert label statement would have worked if it were placed on its own, directly after the
-``"play chapter 1"`` string-expression statement (or after the comment, which doesn't count).
+``"play chapter 1"`` string-expression statement (or after the comment, which doesn't count)::
 
-.. to jump, use ``run Jump("label_name")``
+    "play chapter 1"
+    # passing the "chapter_1" label
+    assert label chapter_1
+    # all fine
 
 .. warning disambiguation, link to both renpy label and SL label
 
