@@ -94,13 +94,20 @@ class Node(object):
         renpy.test.testexecution.node_loc = (self.filename, self.linenumber)
 
 
+class Clause(Node):
+    __slots__ = ()
+
+    def repr(self):
+        return "<{} test clause>".format(type(self).__name__)
+
+
 class PatternException(ValueError):pass
 
-class Pattern(Node):
+class Pattern(Clause):
     __slots__ = ("pattern", "position", "always")
 
     def __init__(self, loc, pattern=None):
-        Node.__init__(self, loc)
+        super(Pattern, self).__init__(self, loc)
         self.pattern = pattern
         self.position = None
         self.always = False
@@ -129,9 +136,8 @@ class Pattern(Node):
 
         if None in (x, y):
             if self.pattern:
-                raise PatternException("The given {} pattern was not resolved to a target".format(self.pattern))
-            else:
-                x, y = renpy.exports.get_mouse_pos()
+                raise PatternException("The given {!r} pattern was not resolved to a target".format(self.pattern))
+            x, y = renpy.exports.get_mouse_pos()
 
         return self.perform(x, y, state, t)
 
@@ -163,10 +169,10 @@ class Move(Pattern):
         return None
 
 
-class Scroll(Node):
+class Scroll(Clause):
     __slots__ = "pattern"
     def __init__(self, loc, pattern=None):
-        Node.__init__(self, loc)
+        super(Scroll, self).__init__(self, loc)
         self.pattern = pattern
 
     def start(self):
@@ -208,10 +214,10 @@ class Scroll(Node):
             return False
 
 
-class Drag(Node):
+class Drag(Clause):
     __slots__ = ("points", "pattern", "button", "steps")
     def __init__(self, loc, points):
-        Node.__init__(self, loc)
+        super(Drag, self).__init__(self, loc)
         self.points = points
 
         self.pattern = None
@@ -320,10 +326,13 @@ class Type(Pattern):
         return state + 1
 
 
-class Action(Node):
+class Action(Clause):
+    """
+    This is for the `run` keyword
+    """
     __slots__ = "expr"
     def __init__(self, loc, expr):
-        Node.__init__(self, loc)
+        super(Action, self).__init__(self, loc)
         self.expr = expr
 
     def start(self):
@@ -347,10 +356,10 @@ class Action(Node):
         return renpy.display.behavior.is_sensitive(action)
 
 
-class Pause(Node):
+class Pause(Clause):
     __slots__ = "expr"
     def __init__(self, loc, expr):
-        Node.__init__(self, loc)
+        super(Action, self).__init__(self, loc)
         self.expr = expr
 
     def start(self):
@@ -366,10 +375,10 @@ class Pause(Node):
             return None
 
 
-class Label(Node):
+class Label(Clause):
     __slots__ = "name"
     def __init__(self, loc, name):
-        Node.__init__(self, loc)
+        super(Label, self).__init__(self, loc)
         self.name = name
 
     def start(self):
@@ -382,10 +391,10 @@ class Label(Node):
         return self.name in renpy.test.testexecution.labels
 
 
-class Eval(Node):
+class Eval(Clause):
     __slots__ = ("expr", "evaluated")
     def __init__(self, loc, expr):
-        Node.__init__(self, loc)
+        super(Eval, self).__init__(self, loc)
         self.expr = expr
         self.evaluated = False
 
@@ -414,8 +423,8 @@ class Pass(Node):
 
 class Until(Node):
     """
-    Executes `left` repeatedly until `right` is ready, then executes `right`
-    once before quitting.
+    Executes `left` repeatedly until `right` is ready (and unless it already is),
+    then executes `right` once before quitting.
     """
     __slots__ = ("left", "right")
     def __init__(self, loc, left, right):
@@ -523,7 +532,9 @@ class Assert(Node):
         self.report()
 
         if not self.clause.ready():
-            raise AssertError("On line {}:{}, assertion of {} failed.".format(self.filename, self.linenumber, self.clause))
+            raise AssertError("On line {}:{}, assertion of {} failed.".format(self.filename,
+                                                                              self.linenumber,
+                                                                              self.clause))
 
         return None
 
