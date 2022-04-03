@@ -97,7 +97,7 @@ class Node(object):
 class Clause(Node):
     __slots__ = ()
 
-    def repr(self):
+    def __repr__(self):
         return "<{} test clause>".format(type(self).__name__)
 
 
