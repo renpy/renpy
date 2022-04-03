@@ -56,9 +56,13 @@ dollar line
 
 if statement
 ------------
-This statement, like a python ``if`` statement, text a block.
+This statement, like a python ``if`` statement, takes a block.
 Unlike the Ren'py or python versions however, it only takes a test clause, instead of a general python expression.
 The provided clause being ready is the actual condition for the block to execute or not.
+Example::
+
+    if label "chapter_five":
+        exit
 
 A normal python/renpy ``if`` can be replicated using the ``eval`` clause::
 
@@ -100,7 +104,7 @@ jump statement
 call statement
 --------------
 
-    .. reminding (for both jump and call) that there is no return statement in testcases
+    .. reminder that there is no return statement in testcases
 
 clause statement
 ----------------
@@ -206,12 +210,14 @@ Pauses for a given number of seconds.
 
 This clause is always ready.
 
+.. link to renpy pause statement and ATL pause statement
+
 label clause
 ---------------
 Does not do anything when executed. This clause only exists to be used inside clause-taking test statements
 like ``assert``, ``if`` or ``until``.
 
-The label clause is ready if and when the provided label has been passed between the previous test statement
+The label clause is ready if and when the provided label has been passed between the current test statement
 and the one before.
 
 Attention, this means that the following example does not work::
@@ -221,8 +227,9 @@ Attention, this means that the following example does not work::
     pause 1
     assert label chapter_1
 
-It will not work because no renpy label will have been reached between the label statement and the preceding
-statement, which is the pause statement. The same happens in the following example::
+It will not work because no renpy label will have been reached between the statement containing the label clause
+and the preceding statement. In this case, these are the assert statement and the pause statement, respectively.
+The same happens in the following example::
 
     "play chapter 1"
     # passing the "chapter_1" label
@@ -230,10 +237,14 @@ statement, which is the pause statement. The same happens in the following examp
     assert label chapter_1
 
 The chapter_1 label is not reached between the first label clause and the second label clause, therefore the
-second label clause fails. In both examples, the assert label statement would have worked if it were placed
-on its own, directly after the ``"play chapter 1"`` statement (or after the comment, which doesn't count).
+second label clause fails (technically, the clause is not ready and the assert fails).
+
+In both examples, the assert label statement would have worked if it were placed on its own, directly after the
+``"play chapter 1"`` string-expression statement (or after the comment, which doesn't count).
 
 .. to jump, use ``run Jump("label_name")``
+
+.. warning disambiguation, link to both renpy label and SL label
 
 drag clause
 --------------
@@ -248,6 +259,8 @@ drag clause
     ready if the thing it has been told to type in is found, or if no target has been given
     show example of ((None, 10), (None, 100)) being an only-vertical movement downwards
 
+.. warning disambiguation ? probably not necessary
+
 scroll clause
 ----------------
 ..
@@ -258,8 +271,8 @@ scroll clause
 eval clause
 -----------
 Does not do anything when executed, except evaluating the expression it is given. This clause only exists to be
-used inside clause-taking test statements like ``assert``, ``if`` or ``until``, effectively turning them into
-their non-clause-taking python equivalents.
+used inside clause-taking test statements like ``assert``, ``if`` or ``until``, effectively turning ``assert`` and
+``if`` into their non-clause-taking python equivalents.
 
 .. The provided expression can span on several lines, if wrapped in parentheses.
 
@@ -283,6 +296,10 @@ Ready if and when the provided value is true, in a boolean context.
 
     This is because functions always return a value (None being a value), unless they raise an exception.
 
+..
+    warning disambiguation this is also a python builtin
+    say it's not a good idea to use it
+
 type clause
 --------------
 .. simulate a key-pressing or the typing of text
@@ -291,6 +308,10 @@ type clause
     It is ready if a pattern is not provided,
     or if one is provided and a suitable target is found on the screen.
     For the clauses taking the ``always`` property, that property overrides the readiness of the clause.
+
+..
+    warning disambiguation this is also a python builtin
+    link to python doc
 
 move clause
 --------------
