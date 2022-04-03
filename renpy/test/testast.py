@@ -98,7 +98,7 @@ class Clause(Node):
     __slots__ = ()
 
     def __repr__(self):
-        return "<{} test clause>".format(type(self).__name__)
+        return "<{} test clause>".format(type(self).__name__.lower())
 
 
 class PatternException(ValueError):pass
