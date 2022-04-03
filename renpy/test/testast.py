@@ -107,7 +107,7 @@ class Pattern(Clause):
     __slots__ = ("pattern", "position", "always")
 
     def __init__(self, loc, pattern=None):
-        super(Pattern, self).__init__(self, loc)
+        super(Pattern, self).__init__(loc)
         self.pattern = pattern
         self.position = None
         self.always = False
@@ -172,7 +172,7 @@ class Move(Pattern):
 class Scroll(Clause):
     __slots__ = "pattern"
     def __init__(self, loc, pattern=None):
-        super(Scroll, self).__init__(self, loc)
+        super(Scroll, self).__init__(loc)
         self.pattern = pattern
 
     def start(self):
@@ -217,7 +217,7 @@ class Scroll(Clause):
 class Drag(Clause):
     __slots__ = ("points", "pattern", "button", "steps")
     def __init__(self, loc, points):
-        super(Drag, self).__init__(self, loc)
+        super(Drag, self).__init__(loc)
         self.points = points
 
         self.pattern = None
@@ -332,7 +332,7 @@ class Action(Clause):
     """
     __slots__ = "expr"
     def __init__(self, loc, expr):
-        super(Action, self).__init__(self, loc)
+        super(Action, self).__init__(loc)
         self.expr = expr
 
     def start(self):
@@ -359,7 +359,7 @@ class Action(Clause):
 class Pause(Clause):
     __slots__ = "expr"
     def __init__(self, loc, expr):
-        super(Action, self).__init__(self, loc)
+        super(Pause, self).__init__(loc)
         self.expr = expr
 
     def start(self):
@@ -378,7 +378,7 @@ class Pause(Clause):
 class Label(Clause):
     __slots__ = "name"
     def __init__(self, loc, name):
-        super(Label, self).__init__(self, loc)
+        super(Label, self).__init__(loc)
         self.name = name
 
     def start(self):
@@ -394,7 +394,7 @@ class Label(Clause):
 class Eval(Clause):
     __slots__ = ("expr", "evaluated")
     def __init__(self, loc, expr):
-        super(Eval, self).__init__(self, loc)
+        super(Eval, self).__init__(loc)
         self.expr = expr
         self.evaluated = False
 
