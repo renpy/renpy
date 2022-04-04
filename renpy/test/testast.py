@@ -412,6 +412,98 @@ class Eval(Clause):
 
 
 ################################################################################
+# Boolean proxy clauses
+
+class Not(Clause):
+    __slots__ = "clause"
+    def __init__(self, loc, clause):
+        super(Not, self).__init__(loc)
+        self.clause = clause
+
+    def start(self):
+        return True
+
+    def execute(self):
+        """
+        The code executing us should evaluate our readiness (as for all clauses),
+        that's not the responsibility of the Not clause.
+        """
+        return self.clause.execute()
+
+    def ready(self):
+        return not self.clause.ready()
+
+class And(Clause):
+    __slots__ = ("left", "right", "left_ready", "right_ready")
+    def __init__(self, loc, left, right):
+        super(And, self).__init__(loc)
+        self.left = left
+        self.right = right
+        self.left_ready = self.right_ready = None
+
+    def start(self):
+        return True
+
+    def execute(self):
+        """
+        Executes both if both are ready, otherwise the left one.
+        """
+        if None in (self.left_ready, self.right_ready):
+            self.ready()
+
+        self.left.execute()
+
+        if self.left_ready and self.right_ready:
+            self.right.execute()
+
+    def ready(self):
+        """
+        Memorizes the computed values.
+        Effectively returns self.left.ready() and self.right.ready().
+        """
+        self.left_ready = self.left.ready()
+        if not self.left_ready:
+            return self.left_ready
+        self.right_ready = self.right.ready()
+        return self.left_ready and self.right_ready
+
+class Or(Clause):
+    __slots__ = ("left", "right", "left_ready", "right_ready")
+    def __init__(self, loc, left, right):
+        super(Or, self).__init__(loc)
+        self.left = left
+        self.right = right
+        self.left_ready = self.right_ready = None
+
+    def start(self):
+        return True
+
+    def execute(self):
+        """
+        Executes the ready one(s), if any, otherwise the right one.
+        """
+        if None in (self.left_ready, self.right_ready):
+            self.ready()
+
+        if self.left_ready:
+            self.left.execute()
+
+        if self.right_ready or not self.left_ready:
+            self.right.execute()
+
+    def ready(self):
+        """
+        Memorizes the computed values.
+        Effectively returns self.left.ready() or self.right.ready().
+        """
+        self.left_ready = self.left.ready()
+        if self.left_ready:
+            return self.left_ready
+        self.right_ready = self.right.ready()
+        return self.left_ready or self.right_ready
+
+
+################################################################################
 # Non-clause statements.
 
 class Pass(Node):
