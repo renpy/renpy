@@ -277,6 +277,9 @@ class Script(object):
 
         script_files = self.script_files
 
+        if renpy.game.args.log_load_script:
+            print("Loading script files 0/%i" % len(script_files), end="")
+
         # Sort script files by filename.
         # We need this key to prevet possible crash when comparing None to str
         # during sorting
@@ -284,7 +287,7 @@ class Script(object):
 
         initcode = [ ]
 
-        for fn, dir in script_files: # @ReservedAssignment
+        for i, (fn, dir) in enumerate(script_files, start=1): # @ReservedAssignment
             # Mitigate "busy script" warning from the browser
             if renpy.emscripten:
                 import emscripten # type: ignore
@@ -294,7 +297,13 @@ class Script(object):
             # our process as unresponsive by OS
             renpy.display.presplash.pump_window()
 
+            if renpy.game.args.log_load_script:
+                print("\rLoading script files %i/%i" % (i, len(script_files)), end="")
+
             self.load_appropriate_file(".rpyc", ".rpy", dir, fn, initcode)
+
+        if renpy.game.args.log_load_script:
+            print()
 
         # Make the sort stable.
         initcode = [ (prio, index, code) for index, (prio, code) in
