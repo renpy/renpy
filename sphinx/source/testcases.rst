@@ -48,10 +48,21 @@ Test statements
 
 python blocks and dollar-lines
 ------------------------------
-A :ref:`python block <python-statement>` or a :ref:`dollar-line` can be added within a testcase.
-Unlike in normal Ren'py code, the python blocks don't take the ``in substore`` or ``hide`` parameters.
+A :ref:`python block <python-statement>` or a :ref:`dollar-line` can be added within a testcase. Unlike in normal
+Ren'py code, the python blocks don't take the ``in substore`` parameter, but it does take the ``hide`` parameter.
+They (both) allow execution of arbitrary python code.
 
-.. difference with the default python blocks and dollar lines, apart from the hide/store params ?
+It should be noted that init code gets executed before the test occurs, so functions and classes defined in
+``init python`` blocks can be called in test python blocks and in test dollar-lines. For example::
+
+    init python in test:
+        def afunction():
+            if renpy.is_in_test():
+                return "test"
+            return "not test"
+
+    testcase default:
+        $ print(test.afunction()) # for the console
 
 if statement
 ------------
@@ -69,8 +80,7 @@ A normal python/renpy ``if`` can be replicated using the ``eval`` clause::
              i_should_advance["now"]):
         click
 
-..
-    there is no elif nor else clause
+.. there is no elif nor else clause
 
 assert statement
 ----------------
@@ -95,7 +105,7 @@ About python assert statements, see the python documentation
         $ assert some_function(args)
 
     In some versions of renpy or depending on unpredictable conditions, ``some_function`` may not even be called.
-    The first assert example should be used instead.
+    The assert test statement should be used instead.
 
 jump statement
 --------------
@@ -112,17 +122,18 @@ clause statement
 A clause can be given, just by itself. ::
 
     pause 5
-
     click
 
 until statement
 ---------------
 This statement consists in two clauses, separated by the word ``until``.
 If and when the right clause is ready, it is executed and control is passed to the next statement.
-If not, the left clause is executed until the right clause is ready, then the right clause is executed.
+Otherwise, the left clause is executed until the right clause is ready, and then the right clause is executed.
 
 This is basically an inline while loop. ::
 
+    click until eval renpy.get_screen("choice")
+    "ask her right"
     click until "It's an interactive book."
 
 pass statement
@@ -145,13 +156,9 @@ Does not save the game when quitting::
 
 Test clauses
 ============
-Clauses have the property of being ready or not ready.
-They can be part of ``if``, ``assert`` or ``until`` test statements, or they can be
-simply on their own (see above). It is safe to evaluate the readiness of a clause which could raise
-an exception if executed::
-
-    if label preferences:
-        "Dark theme"
+Clauses are defined by two things: what it does when they are executed, and under what circumstances they are
+ready. They can be part of ``if``, ``assert`` or ``until`` test statements, or they can simply be given on their
+own (see above).
 
 .. for each one, say what makes it ready
 
@@ -163,7 +170,7 @@ It takes the following optional properties:
 - ``button`` specifies which button of the simulated mouse is to be clicked with.
   1 is a left-click, 2 is a right-click, 3 is a scrollwheel-click, 4 and 5 are additional buttons on some mouses.
   Normally only 1 and 2 trigger any response from renpy.
-  Takes an integer and defaults to 1.
+  It takes an integer and defaults to 1.
 - ``pos`` specifies where to click, as a pair of x/y coordinates.
   Coordinates are taken relative to the screen. Floats between 0.0 and 1.0 are supported as a fraction
   of the screen size in either dimension. ``absolute`` and other means of expressing positions
@@ -171,21 +178,21 @@ It takes the following optional properties:
 
 .. ``always`` is not documented because useless in the case of the click clause by itself
 
-Click behaves like a pattern-taking clause which would not be given a pattern : if no ``pos`` is provided, it will
-look for a neutral place where a click would not occur on a focusable element.
+Click behaves like a :ref:`pattern <test-pattern>`\ -taking clause which would not be given a pattern: if no
+``pos`` is provided, it will look for a neutral place where a click would not occur on a focusable element.
 
 .. give example for both
 
 This clause is always ready.
 
 The :func:`has_default_focus` function is a helpful accessor to know whether a game can be advanced
-by a bare ``click`` or not. ::
+by a bare ``click`` clause or not::
 
     click until eval (not has_default_focus())
 
 string expression clause
 ------------------------
-This clause consists in a simple string, which is interpreted as a pattern (see the Patterns section below).
+This clause consists in a simple string, which is interpreted as a :ref:`pattern <test-pattern>`.
 It executes by simulating a click on the target identified by the pattern.
 
 It takes three optional properties:
@@ -193,21 +200,23 @@ It takes three optional properties:
 - ``button`` - same as the click clause
 - ``pos`` - same as the click clause, but the position is relative to the focusable area of the target.
   If the position is invalid, for example if a button is 100x100 pixels and the given ``pos`` is (105, 150),
-  the ``pos`` is ignored and a random position within the target is used instead.
+  then the ``pos`` is ignored and a random position within the target is used instead.
 - ``always`` does not take a value. It overrides the readiness of the clause, making it always ready.
 
-This clause is ready if and when a suitable target is found on the screen, or if it is given
+This clause is ready if and when its pattern resolves to a suitable target found on the screen, or if it is given
 the ``always`` property.
 
 run clause
 -------------
-Runs the provided :ref:`screen-language action <screen-actions>` or list of actions.
+Runs the provided :ref:`screen-language action <screen-actions>` (or list of actions).
 
 Ready if and when a button containing the provided action (or list) would be sensitive.
 
 pause clause
 ---------------
-Pauses for a given number of seconds.
+Pauses test execution for a given number of seconds::
+
+    pause 5.0
 
 This clause is always ready.
 
@@ -241,14 +250,17 @@ The chapter_1 label is not reached between the first label clause and the second
 second label clause fails (technically, the clause is not ready and the assert fails).
 
 In both examples, the assert label statement would have worked if it were placed on its own, directly after the
-``"play chapter 1"`` string-expression statement (or after the comment, which doesn't count)::
+``"play chapter 1"`` string-expression statement (or after the comment, which doesn't count as a statement)::
 
     "play chapter 1"
     # passing the "chapter_1" label
     assert label chapter_1
     # all fine
 
-.. warning disambiguation, link to both renpy label and SL label
+.. warning::
+
+    This clause should not be confused with the Ren'py native :ref:`label` statement it refers to, or with the
+    unrelated :ref:`screen-language label element <sl-label>`.
 
 drag clause
 --------------
@@ -274,13 +286,14 @@ scroll clause
 
 eval clause
 -----------
-Does not do anything when executed, except evaluating the expression it is given. This clause only exists to be
-used inside clause-taking test statements like ``assert``, ``if`` or ``until``, effectively turning ``assert`` and
-``if`` into their non-clause-taking python equivalents.
+This clause is ready if and when the provided expression evaluates to a true value, in a boolean context.
 
-.. The provided expression can span on several lines, if wrapped in parentheses.
+When executed, does not do anything other than evaluating the expression it is given. This clause exists only to
+be used inside clause-taking test statements like ``assert``, ``if`` or ``until``, effectively turning ``assert``
+and ``if`` into their non-clause-taking python equivalents::
 
-Ready if and when the provided value is true, in a boolean context.
+    assert eval (renpy.is_in_test() and
+                 ("Ren'py" in renpy.version_string))
 
 .. note::
 
@@ -300,10 +313,6 @@ Ready if and when the provided value is true, in a boolean context.
 
     This is because functions always return a value (None being a value), unless they raise an exception.
 
-..
-    warning disambiguation this is also a python builtin
-    say it's not a good idea to use it
-
 type clause
 --------------
 .. simulate a key-pressing or the typing of text
@@ -314,8 +323,7 @@ type clause
     For the clauses taking the ``always`` property, that property overrides the readiness of the clause.
 
 ..
-    warning disambiguation this is also a python builtin
-    link to python doc
+    warning disambiguation this has nothing to do with the python builtin
 
 move clause
 --------------
@@ -329,11 +337,13 @@ move clause
     or if one is provided and a suitable target is found on the screen.
     For the clauses taking the ``always`` property, that property overrides the readiness of the clause.
 
+.. _test-pattern:
+
 Patterns
 ===============
 
-Some clauses take a pattern, which helps positioning the mouse or locating where a clause will do something.
-The ``pattern`` property (which in the case of the string expression clause, is the string itself) takes a string
+Some clauses take a pattern, which helps positioning the mouse or locating where a clause will do what it does.
+The ``pattern`` property takes a string (which in the case of the string expression clause, is the string itself)
 which resolves to a target found on the screen, based on the shorted match in the alt text of
 focusable screen elements (typically, buttons). The search is case-insensitive.
 
@@ -347,4 +357,7 @@ a random position within it is chosen instead. To that end, things like focus_ma
 
 If a pattern is given and if it does not resolve to a target at the time when the clause using it executes,
 an exception is raised (terminating the test). To test whether a given pattern resolves to a target at a given
-time, the readiness condition of a string expression clause can be evaluated inside an if statement.
+time, the readiness condition of a string expression clause can be evaluated inside an if statement::
+
+    if "ask her right": # if there is a focusable element containing that text on screen
+        # add a clause using that pattern
