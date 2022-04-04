@@ -470,6 +470,9 @@ def autosave():
     if not renpy.config.autosave_frequency:
         return
 
+    if not renpy.config.has_autosave:
+        return
+
     # That is, autosave is running.
     if not autosave_not_running.is_set():
         return
