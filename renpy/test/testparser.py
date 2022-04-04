@@ -103,8 +103,31 @@ def parse_drag(l, loc):
     return rv
 
 
+def parse_not(l, loc):
+    if l.keyword("not"):
+        return testast.Not(loc, parse_not(l, loc))
+    else:
+        return parse_clause(l, loc)
+
+def parse_and(l, loc):
+    rv = parse_not(l, loc)
+    while l.keyword("and"):
+        rv = testast.And(loc, rv, parse_not(l, loc))
+    return rv
+
+def parse_or(l, loc):
+    rv = parse_and(l, loc)
+    while l.keyword("or"):
+        rv = testast.Or(loc, rv, parse_and(l, loc))
+    return rv
+
 def parse_clause(l, loc):
-    if l.keyword("run"):
+    if l.match(r'\('):
+        rv = parse_or(l, loc)
+        l.require(r'\)')
+        return rv
+
+    elif l.keyword("run"):
 
         expr = l.require(l.simple_expression)
         return testast.Action(loc, expr)
