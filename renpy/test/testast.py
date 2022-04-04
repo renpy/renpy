@@ -403,12 +403,12 @@ class Not(Clause):
         super(Not, self).__init__(loc)
         self.clause = clause
 
-    def execute(self):
+    def execute(self, state, t):
         """
         The code executing us should evaluate our readiness (as for all clauses),
         that's not the responsibility of the Not clause.
         """
-        return self.clause.execute()
+        return self.clause.execute(state, t)
 
     def ready(self):
         return not self.clause.ready()
@@ -421,17 +421,17 @@ class And(Clause):
         self.right = right
         self.left_ready = self.right_ready = None
 
-    def execute(self):
+    def execute(self, state, t):
         """
         Executes both if both are ready, otherwise the left one.
         """
         if None in (self.left_ready, self.right_ready):
             self.ready()
 
-        self.left.execute()
+        self.left.execute(state, t)
 
         if self.left_ready and self.right_ready:
-            self.right.execute()
+            self.right.execute(state, t)
 
     def ready(self):
         """
@@ -452,7 +452,7 @@ class Or(Clause):
         self.right = right
         self.left_ready = self.right_ready = None
 
-    def execute(self):
+    def execute(self, state, t):
         """
         Executes the ready one(s), if any, otherwise the right one.
         """
@@ -460,10 +460,10 @@ class Or(Clause):
             self.ready()
 
         if self.left_ready:
-            self.left.execute()
+            self.left.execute(state, t)
 
         if self.right_ready or not self.left_ready:
-            self.right.execute()
+            self.right.execute(state, t)
 
     def ready(self):
         """
