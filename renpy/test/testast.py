@@ -494,10 +494,11 @@ class If(Node):
 
 
 class Python(Node):
-    __slots__ = "code"
-    def __init__(self, loc, code):
+    __slots__ = ("code", "hide")
+    def __init__(self, loc, code, hide=False):
         Node.__init__(self, loc)
         self.code = code
+        self.hide = hide
 
     def start(self):
         renpy.test.testexecution.action = self
@@ -513,7 +514,7 @@ class Python(Node):
             return None
 
     def __call__(self):
-        renpy.python.py_exec_bytecode(self.code.bytecode)
+        renpy.python.py_exec_bytecode(self.code.bytecode, self.hide)
 
 
 class AssertError(AssertionError):pass

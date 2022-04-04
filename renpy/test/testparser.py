@@ -161,14 +161,16 @@ def parse_statement(l, loc):
 
     if l.keyword('python'):
 
+        hide = l.keyword('hide')
+
         l.require(':')
 
         l.expect_block("python block")
 
         source = l.python_block()
 
-        code = renpy.ast.PyCode(source, loc)
-        return testast.Python(loc, code)
+        code = renpy.ast.PyCode(source, loc, 'hide' if hide else 'exec')
+        return testast.Python(loc, code, hide)
 
     if l.keyword("if"):
         l.expect_block("if block")
