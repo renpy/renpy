@@ -64,6 +64,7 @@ class Node(object):
         This is expected to return a state, or None to advance to the next
         node.
         """
+        return True
 
     def execute(self, state, t):
         """
@@ -75,14 +76,12 @@ class Node(object):
         `t`
             The time since start was called.
         """
-
         return state
 
     def ready(self):
         """
         Returns True if this node is ready to execute, or False otherwise.
         """
-
         return True
 
     def report(self):
@@ -90,7 +89,6 @@ class Node(object):
         Reports the location of this statement. This should only be called
         in the execute method of leaf nodes of the test tree.
         """
-
         renpy.test.testexecution.node_loc = (self.filename, self.linenumber)
 
 
@@ -111,9 +109,6 @@ class Pattern(Clause):
         self.pattern = pattern
         self.position = None
         self.always = False
-
-    def start(self):
-        return True
 
     def execute(self, state, t):
 
@@ -175,9 +170,6 @@ class Scroll(Clause):
         super(Scroll, self).__init__(loc)
         self.pattern = pattern
 
-    def start(self):
-        return True
-
     def execute(self, state, t):
 
         self.report()
@@ -223,9 +215,6 @@ class Drag(Clause):
         self.pattern = None
         self.button = 1
         self.steps = 10
-
-    def start(self):
-        return True
 
     def execute(self, state, t):
 
@@ -381,9 +370,6 @@ class Label(Clause):
         super(Label, self).__init__(loc)
         self.name = name
 
-    def start(self):
-        return True
-
     def execute(self, state, t):
         return None
 
@@ -397,9 +383,6 @@ class Eval(Clause):
         super(Eval, self).__init__(loc)
         self.expr = expr
         self.evaluated = False
-
-    def start(self):
-        return True
 
     def execute(self, state, t):
         if not self.evaluated: # check if this is necessary
@@ -420,9 +403,6 @@ class Not(Clause):
         super(Not, self).__init__(loc)
         self.clause = clause
 
-    def start(self):
-        return True
-
     def execute(self):
         """
         The code executing us should evaluate our readiness (as for all clauses),
@@ -440,9 +420,6 @@ class And(Clause):
         self.left = left
         self.right = right
         self.left_ready = self.right_ready = None
-
-    def start(self):
-        return True
 
     def execute(self):
         """
@@ -475,9 +452,6 @@ class Or(Clause):
         self.right = right
         self.left_ready = self.right_ready = None
 
-    def start(self):
-        return True
-
     def execute(self):
         """
         Executes the ready one(s), if any, otherwise the right one.
@@ -508,8 +482,6 @@ class Or(Clause):
 
 class Pass(Node):
     __slots__ = ()
-    def start(self):
-        return True
     def execute(self, state, t):
         return None
 
@@ -617,9 +589,6 @@ class Assert(Node):
         Node.__init__(self, loc)
         self.clause = clause
 
-    def start(self):
-        return True
-
     def execute(self, state, t):
 
         self.report()
@@ -699,8 +668,5 @@ class Block(Node):
 
 class Exit(Node):
     __slots__ = ()
-    def start(self):
-        return True
-
     def execute(self, state, t):
         raise renpy.game.QuitException
