@@ -67,9 +67,9 @@ init -1500 python:
                 If true, the sprite is flipped horizontally.
 
             `text`
-￼                If provided, no other text than this will be displayed on the
-￼                placeholder. If not, the text will reflect the show
-￼                instruction that was used to display it.
+                 If provided, no other text than this will be displayed on the
+                 placeholder. If not, the text will reflect the show
+                 instruction that was used to display it.
             """
 
             super(Placeholder, self).__init__(**properties)
