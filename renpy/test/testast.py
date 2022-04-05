@@ -416,31 +416,36 @@ class Not(Clause):
     def ready(self):
         return not self.clause.ready()
 
-class And(Clause):
-    __slots__ = ("left", "right", "left_ready", "right_ready", "left_state", "right_state")
+class Binary(Clause):
+    __slots__ = ("left", "right",
+                 "left_ready", "right_ready",
+                 "left_state", "right_state")
+
     def __init__(self, loc, left, right):
-        super(And, self).__init__(loc)
+        super(Binary, self).__init__(loc)
         self.left = left
         self.right = right
         self.left_ready = self.right_ready = None
+
+    def start(self):
+        if None in (self.left_ready, self.right_ready):
+            self.ready()
+        self.left_state = self.left.start()
+        self.right_state = self.right.start()
+        return self.state()
+
+class And(Binary):
+    __slots__ = ()
 
     def state(self):
         if (self.left_state is None) and (self.right_state is None):
             return None
         return True
 
-    def start(self):
-        self.left_state = self.left.start()
-        self.right_state = self.right.start()
-        return self.state()
-
     def execute(self, state, t):
         """
         Executes both if both are ready, otherwise the left one.
         """
-        if None in (self.left_ready, self.right_ready):
-            self.ready()
-
         if self.left_state is not None:
             self.left_state = self.left.execute(self.left_state, t)
 
@@ -460,35 +465,22 @@ class And(Clause):
         self.right_ready = self.right.ready()
         return self.left_ready and self.right_ready
 
-class Or(Clause):
-    __slots__ = ("left", "right", "left_ready", "right_ready", "left_state", "right_state")
-    def __init__(self, loc, left, right):
-        super(Or, self).__init__(loc)
-        self.left = left
-        self.right = right
-        self.left_ready = self.right_ready = None
+class Or(Binary):
+    __slots__ = ()
 
     def state(self):
         if (self.left_state is None) or (self.right_state is None):
             return None
         return True
 
-    def start(self):
-        self.left_state = self.left.start()
-        self.right_state = self.right.start()
-        return self.state()
-
     def execute(self, state, t):
         """
         Executes the ready one(s), if any, otherwise the right one.
         """
-        if None in (self.left_ready, self.right_ready):
-            self.ready()
-
         if self.left_ready and (self.left_state is not None):
             self.left_state = self.left.execute(self.left_state, t)
 
-        if (self.right_ready or not self.left_ready) and self.right_state is not None:
+        if (self.right_ready or not self.left_ready) and (self.right_state is not None):
             self.right_state = self.right.execute(self.right_state, t)
 
         return self.state()
