@@ -630,6 +630,8 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
             grabbed = True
 
+            renpy.exports.play(self.style.activate_sound)
+
         elif (self.alternate is not None) and map_event(ev, "button_alternate"):
             rv = run(self.alternate)
             if rv is not None:
@@ -844,7 +846,6 @@ class DragGroup(renpy.display.layout.MultiBox):
         if not isinstance(child, Drag):
             raise Exception("Only drags can be added to a drag group.")
 
-        child.drag_group = self
         super(DragGroup, self).add(child)
 
         self.sorted = False
@@ -863,6 +864,9 @@ class DragGroup(renpy.display.layout.MultiBox):
         super(DragGroup, self).remove(child)
 
     def render(self, width, height, st, at):
+
+        for i in self.children:
+            i.drag_group = self
 
         if not self.sorted:
             self.children.sort(key=lambda i : i.z)

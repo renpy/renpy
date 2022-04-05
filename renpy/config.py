@@ -305,6 +305,9 @@ character_callback = None
 # Character callback list.
 all_character_callbacks = [ ]
 
+# Should autsave be enabled?
+has_autosave = True
+
 # The number of autosave slots we have.
 autosave_slots = 10
 
