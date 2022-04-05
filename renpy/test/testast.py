@@ -460,8 +460,6 @@ class And(Binary):
         Effectively returns self.left.ready() and self.right.ready().
         """
         self.left_ready = self.left.ready()
-        if not self.left_ready:
-            return self.left_ready
         self.right_ready = self.right.ready()
         return self.left_ready and self.right_ready
 
@@ -491,8 +489,6 @@ class Or(Binary):
         Effectively returns self.left.ready() or self.right.ready().
         """
         self.left_ready = self.left.ready()
-        if self.left_ready:
-            return self.left_ready
         self.right_ready = self.right.ready()
         return self.left_ready or self.right_ready
 
