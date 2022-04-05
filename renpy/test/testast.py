@@ -428,8 +428,6 @@ class Binary(Clause):
         self.left_ready = self.right_ready = None
 
     def start(self):
-        if None in (self.left_ready, self.right_ready):
-            self.ready()
         self.left_state = self.left.start()
         self.right_state = self.right.start()
         return self.state()
@@ -446,6 +444,8 @@ class And(Binary):
         """
         Executes both if both are ready, otherwise the left one.
         """
+        self.ready()
+
         if self.left_state is not None:
             self.left_state = self.left.execute(self.left_state, t)
 
@@ -475,6 +475,8 @@ class Or(Binary):
         """
         Executes the ready one(s), if any, otherwise the right one.
         """
+        self.ready()
+
         if self.left_ready and (self.left_state is not None):
             self.left_state = self.left.execute(self.left_state, t)
 
