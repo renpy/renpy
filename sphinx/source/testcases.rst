@@ -38,7 +38,7 @@ called without arguments. This allows for clean-up code to be executed whatever 
 .. should an exception during a callback call prevent subsequent callbacks from being called ?
 
 There is no equivalent callback for code being executed before the tests happens, as such code can simply be
-put inside a python block at the beginning of the testcase.
+put inside a python block at the beginning of the testcase, or in ``init python`` blocks.
 
 The :func:`is_in_test` function is helpful to know whether a test is currently executing or not.
 

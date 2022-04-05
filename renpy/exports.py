@@ -4303,6 +4303,7 @@ def is_in_test():
     :doc: other
 
     Returns True if Ren'py is currently executing a testcase.
+    This always returns False at init time.
     """
 
     return (renpy.test.testexecution.node is not None)
