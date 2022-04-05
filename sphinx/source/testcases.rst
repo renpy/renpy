@@ -337,6 +337,26 @@ move clause
     or if one is provided and a suitable target is found on the screen.
     For the clauses taking the ``always`` property, that property overrides the readiness of the clause.
 
+Boolean clause operations
+-------------------------
+Test clauses support the ``not``, ``and`` and ``or`` operators: an expression containing clauses linked with these
+operators can be provided in lieu of a single clause. That expression must always be enclosed in parentheses.
+
+The readiness of a boolean clause expression is the computation of the readiness of the clauses it contains:
+``(not a)`` is ready if and when ``a`` is not ready, ``(a and b)`` is ready when both ``a`` and ``b`` are ready,
+and ``(a or b)`` is ready when either ``a`` or ``b`` is ready.
+
+What happens when boolean clause operations execute is a little more complex. When executed:
+- ``not`` just executes its clause.
+- ``and`` executes both clauses if both are ready, and the left one otherwise.
+- ``or`` executes its ready clause(s), if any, and the right one otherwise.
+
+More information can be found in the python documentation
+`regarding these operators <https://docs.python.org/3/reference/expressions.html#boolean-operations>`_ as for why
+it works that way.
+The readiness and the behavior of such expressions when executed can be inferred by replacing each clause in the
+expression with its respective readiness, and working out which of the clause is the result of the operation.
+
 .. _test-pattern:
 
 Patterns
