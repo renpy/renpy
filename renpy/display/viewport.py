@@ -673,4 +673,4 @@ class VPGrid(Viewport):
             if not allow_underfull:
                 raise exc
             for _ in range(delta):
-                self.add(Null())
+                self.add(renpy.display.layout.Null())
