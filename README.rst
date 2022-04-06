@@ -90,13 +90,6 @@ install the modules that support Ren'Py::
     python setup.py install
     popd
 
-For Japanese language support (used in the testcases project), check for the file::
-    
-    renpy/launcher/game/fonts/MTLc3m.ttf
-
-    If not present, then copy or link it from where it is installed on the system
-    (apt-file search MTLc3m.ttf) the proper location
-
 Ren'Py will be installed into the activated virtualenv. It can then be run
 using the command::
 
