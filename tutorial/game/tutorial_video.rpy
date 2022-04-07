@@ -1,9 +1,8 @@
 ﻿# This file contains demonstrations of Ren'Py's multimedia
-# support. Right now, this is just showing off sound and music, but
-# Ren'Py does support movies, and we'll add them sometime later.
+# support. 
 
 example movie_image:
-    image launch = Movie(play="oa4_launch.webm", pos=(10, 10), anchor=(0, 0))
+    image launch = Movie(play="oa4_launch.webm", pos=(10, 10), anchor=(0, 0), image="target1.png")
 
 label tutorial_video:
 

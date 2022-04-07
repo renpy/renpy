@@ -21,6 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+from renpy.loader import loadable
 
 
 import collections
@@ -60,7 +61,7 @@ def movie_start(filename, size=None, loops=0):
     This starts a movie playing.
     """
 
-    if renpy.game.less_updates:
+    if renpy.game.less_updates or (not loadable(filename)):
         return
 
     global default_size
@@ -342,6 +343,10 @@ class Movie(renpy.display.core.Displayable):
 
     def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, **properties):
         super(Movie, self).__init__(**properties)
+
+        if play:
+            if not loadable(play):
+                play = None
 
         if channel == "movie" and play and renpy.config.single_movie_channel:
             channel = renpy.config.single_movie_channel
