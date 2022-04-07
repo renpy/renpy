@@ -329,10 +329,10 @@ class Movie(renpy.display.core.Displayable):
     def after_setstate(self):
         play = self._base_play or self._play
         if (play is not None) and renpy.loader.loadable(play):
-            self._hidden_play = self._play = play
+            self._base_play = self._play = play
         else:
             self._play = None
-            self._hidden_play = play
+            self._base_play = play
 
     def ensure_channel(self, name):
 
@@ -361,7 +361,7 @@ class Movie(renpy.display.core.Displayable):
         self.channel = channel
         self.loop = loop
 
-        self._hidden_play = play
+        self._base_play = play
         if (play is not None) and renpy.loader.loadable(play):
             self._play = play
 
