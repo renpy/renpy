@@ -175,19 +175,6 @@ cdef class Matrix:
 
         return rv
 
-    def __getitem__(Matrix self, int index):
-        if 0 <= index < 16:
-            return self.m[(index%4)*4+index//4]
-
-        raise IndexError("Matrix index out of range.")
-
-    def __setitem__(Matrix self, int index, float value):
-        if 0 <= index < 16:
-            self.m[(index%4)*4+index//4] = value
-            return
-
-        raise IndexError("Matrix index out of range.")
-
     def __repr__(Matrix self):
         cdef int x, y
 
