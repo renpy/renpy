@@ -228,10 +228,12 @@ init -1100 python:
         if version <= (7, 4, 10):
             config.always_unfocus = False
 
-        if version <= (7, 5, 0):
+        if version <= (7, 4, 11):
             config.allow_unfull_vpgrids = True
             style.drag.focus_mask = True
             style.default.outline_scaling = "step"
+            config.box_skip_false_showif = True
+
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

@@ -1219,6 +1219,10 @@ lint_character_statistics = True
 # Should vpgrids be allowed to raise under/overfull errors ?
 allow_unfull_vpgrids = False
 
+# Should vbox and hbox skip false showifs?
+box_skip_false_showif = True
+
+
 del os
 del collections
 
