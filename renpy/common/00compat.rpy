@@ -232,7 +232,7 @@ init -1100 python:
             config.allow_unfull_vpgrids = True
             style.drag.focus_mask = True
             style.default.outline_scaling = "step"
-            config.box_skip_false_showif = True
+            config.box_skip_false_showif = False
 
 
     # The version of Ren'Py this script is intended for, or
