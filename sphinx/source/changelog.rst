@@ -44,7 +44,7 @@ Boxes, Grids and Vpgrids
 ------------------------
 
 A :ref:`showif <sl-showif>` statement inside a :ref:`vbox <sl-vbox>` or :ref:`hbox <sl-hbox>`
-will not be surrounded with :tpref:`spacing` when the condition is false and the child
+will not be surrounded with :propref:`spacing` when the condition is false and the child
 displayable is not shown.
 
 Having an overfull vpgrid - when both ``rows`` and ``cols`` are specified - is now
