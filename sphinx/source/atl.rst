@@ -939,11 +939,12 @@ both horizontal and vertical positions.
 
     If None or "child", relative components of crop (see
     :ref:`the position types documentation <position-types>`) are
-    considered relatively to the width and height of the source image.
+    considered relatively to the width and height of the source image,
+    like ``anchor`` does it.
 
-    If "room", they are considered relatively to the available room in
-    the context where the source image is displayed (typically the size
-    of the screen).
+    If "area", they are considered relatively to the available containing
+    area in the context where the source image is displayed (typically
+    the size of the screen), like ``pos`` does it.
 
     If all elements of ``crop`` are ints or ``absolute``s, this property
     has no effect.
