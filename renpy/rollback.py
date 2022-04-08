@@ -670,7 +670,8 @@ class RollbackLog(renpy.object.Object):
         if self.checkpointing_suspended:
             hard = False
 
-        self.retain_after_load_flag = False
+        if hard:
+            self.retain_after_load_flag = False
 
         if self.current.checkpoint:
             return
@@ -747,6 +748,13 @@ class RollbackLog(renpy.object.Object):
 
         self.retain_after_load_flag = True
         self.current.retain_after_load = True
+
+        for rb in reversed(self.log):
+            if rb.hard_checkpoint:
+                break
+
+            rb.retain_after_load = True
+
         renpy.game.context().force_checkpoint = True
 
     def fix_rollback(self):

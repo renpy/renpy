@@ -59,9 +59,6 @@ init -1700 python:
     # to the main menu.
     config.end_game_transition = None
 
-    # basics: True if autosave should be used.
-    config.has_autosave = True
-
     # basics: True if quicksave has been enabled.
     config.has_quicksave = True
 

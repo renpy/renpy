@@ -275,7 +275,11 @@ init python in project:
 
             if wait:
                 if p.wait():
-                    interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
+
+                    if args and not self.is_writeable():
+                        interface.error(_("Launching the project failed."), _("This may be because the project is not writeable."))
+                    else:
+                        interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
 
             renpy.not_infinite_loop(30)
 
@@ -394,6 +398,14 @@ init python in project:
             """
 
             return os.path.exists(os.path.join(self.path, fn))
+
+        def is_writeable(self):
+            """
+            Returns true if it's possible to write a file in the projects
+            directory.
+            """
+
+            return os.access(self.path, os.W_OK)
 
 
     class ProjectManager(object):

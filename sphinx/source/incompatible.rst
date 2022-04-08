@@ -13,10 +13,16 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-8.0.0:
 .. _incompatible-7.5.0:
 
-7.5.0
------
+7.5.0/8.0.0
+-----------
+
+Showif statements no longer take up space inside a vbox or hbox when the
+condition is false and the child is hidden. To revert this change::
+
+    define config.box_skip_false_showif = False
 
 The :propref:`focus_mask` style property now defaults to None for drag displayables.
 This improves performance, but means that the displayable can be dragged by
@@ -37,11 +43,11 @@ or globally with::
     style default:
         outline_scaling "step"
 
-The platform-specific directories inside lib/ have had name changes. The 
-``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This 
-change helps support the development of the Python 3 powered Ren'Py 8. 
-These directories are not documented, and may change between Ren'Py 
-versions, but we do guarantee that ``sys.excutable`` is set.
+The platform-specific directories inside lib/ have had name changes. The
+``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This
+change helps support the development of the Python 3 powered Ren'Py 8.
+These directories are not documented, and may change between Ren'Py
+versions, but we do guarantee that ``sys.executable`` is set.
 
 Vpgrids cannot be overfull anymore, and can only be underfull if the
 ``allow_underfull`` property is passed, or if :var:`config.allow_underfull_grids` is
@@ -53,8 +59,8 @@ set to True.
 7.4.11
 ------
 
-Ren'Py will now run a button's unhovered property even when focus is 
-changed by default, such as when a screen is shown or unshown. To 
+Ren'Py will now run a button's unhovered property even when focus is
+changed by default, such as when a screen is shown or unshown. To
 revert to the old behavior, use::
 
     define config.always_unfocus = False

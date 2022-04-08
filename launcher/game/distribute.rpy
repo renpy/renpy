@@ -1653,6 +1653,52 @@ change_renpy_executable()
 
     renpy.arguments.register_command("distribute", distribute_command)
 
+
+    def update_old_game(project, reporter, compile):
+        if compile:
+            reporter.info(_("Recompiling all rpy files into rpyc files..."))
+            project.launch([ "compile", "--keep-orphan-rpyc" ], wait=True)
+
+        files = [fn + "c" for fn in project.script_files()
+                 if fn.startswith("game/") and project.exists(fn + "c")]
+        len_files = len(files)
+
+        if not files:
+            return
+
+        TEMP_OLD_GAME_DIR = project.temp_filename("old-game")
+        if os.path.isdir(TEMP_OLD_GAME_DIR):
+            shutil.rmtree(TEMP_OLD_GAME_DIR)
+
+        for i, src in enumerate(files):
+            reporter.progress(_("Copying files..."), i, len_files)
+            dst = project.temp_filename("old-" + src)
+            try:
+                os.makedirs(os.path.dirname(dst))
+            except:
+                pass
+            shutil.copyfile(os.path.join(project.path, src), dst)
+
+        reporter.progress_done()
+
+        OLD_GAME_DIR = os.path.join(project.path, "old-game")
+        if os.path.isdir(OLD_GAME_DIR):
+            shutil.rmtree(OLD_GAME_DIR)
+
+        shutil.copytree(TEMP_OLD_GAME_DIR, OLD_GAME_DIR)
+
+    def update_old_game_command():
+        ap = renpy.arguments.ArgumentParser("Back-ups all rpyc files into old-game directory.")
+        ap.add_argument("project", help="The path to the project directory.")
+
+        args = ap.parse_args()
+
+        update_old_game(project.Project(args.project), TextReporter(), True)
+
+        return False
+
+    renpy.arguments.register_command("update_old_game", update_old_game_command)
+
 label distribute:
 
     python hide:
@@ -1667,3 +1713,8 @@ label distribute:
 
 
     jump post_build
+
+label update_old_game:
+    python hide:
+        distribute.update_old_game(project.current, distribute.GuiReporter(), False)
+    return

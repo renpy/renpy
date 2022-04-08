@@ -305,6 +305,9 @@ character_callback = None
 # Character callback list.
 all_character_callbacks = [ ]
 
+# Should autsave be enabled?
+has_autosave = True
+
 # The number of autosave slots we have.
 autosave_slots = 10
 
@@ -1215,6 +1218,9 @@ lint_character_statistics = True
 
 # Should vpgrids be allowed to raise under/overfull errors ?
 allow_unfull_vpgrids = False
+
+# Should vbox and hbox skip false showifs?
+box_skip_false_showif = True
 
 # What should be the default value of the crop_relative tpref ?
 crop_relative_default = True

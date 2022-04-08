@@ -21,7 +21,7 @@ init python:
 
     renpy.arguments.register_command("auto", auto_command)
 
-    JAPANESE = "../../launcher/game/fonts/MTLc3m.ttf"
+    JAPANESE = "../../sdk-fonts/SourceHanSansLite.ttf"
 
 image eileen happy = "eileen_happy.png"
 image eileen vhappy = "eileen_vhappy.png"
@@ -91,7 +91,7 @@ screen vtext_test:
     text "「可愛いね〜」と、彼女は言った。":
         vertical True
         font JAPANESE
-        xpos 400 ypos 200
+        xpos 400 ypos 100
         xanchor 0.5
         yanchor 0.0
 
@@ -115,7 +115,7 @@ screen text1:
             drop_shadow_color "#000"
 
         text "Testing outlines.":
-           outlines [ (2, "#000", 0, 0) ]
+            outlines [ (2, "#000", 0, 0) ]
 
         text "Testing changing the kerning value, with AA turned off.":
             kerning 2

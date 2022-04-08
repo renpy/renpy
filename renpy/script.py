@@ -355,7 +355,7 @@ class Script(object):
                 old = old_stmts[oldl + i]
                 new = new_stmts[newl + i]
 
-                if (new.name is None) and (new.name not in used_names):
+                if (new.name is None) and (old.name not in used_names):
                     new.name = old.name
                     used_names.add(new.name)
 

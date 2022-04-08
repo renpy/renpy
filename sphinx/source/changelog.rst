@@ -40,8 +40,12 @@ ChromeOS
 When running as an Android application on a ChromeOS device, the "chromeos"
 variant will be selected.
 
-Grids and Vpgrids
------------------
+Boxes, Grids and Vpgrids
+------------------------
+
+A :ref:`showif <sl-showif>` statement inside a :ref:`vbox <sl-vbox>` or :ref:`hbox <sl-hbox>`
+will not be surrounded with :propref:`spacing` when the condition is false and the child
+displayable is not shown.
 
 Having an overfull vpgrid - when both ``rows`` and ``cols`` are specified - is now
 disallowed.
@@ -95,6 +99,11 @@ transparent pixels.
 
 Other changes
 -------------
+
+The :propref:`activate_sound` plays when activating a drag displayable.
+
+The :func:`VariableValue`, :func:`FieldValue`, and :func:`DictValue` Bar Values
+can now call :func:`Return`, to cause the interaction to return a specific value.
 
 The :propref:`adjust_spacing` property is now set to False for dialogue and
 narration in new games. This might cause the spacing of text to change, when

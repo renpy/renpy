@@ -276,7 +276,7 @@ class Context(object):
 class ATLTransformBase(renpy.object.Object):
 
     # Compatibility with older saves.
-    parameters = renpy.ast.ParameterInfo([ ], [ ], None, None)
+    parameters = renpy.ast.EMPTY_PARAMETERS
     parent_transform = None
     atl_st_offset = 0
 
@@ -464,8 +464,11 @@ class ATLTransformBase(renpy.object.Object):
         if child is None:
             child = self.child
 
+        if getattr(child, '_duplicatable', False):
+            child = child._duplicate(_args)
+
         # Create a new ATL Transform.
-        parameters = renpy.ast.ParameterInfo({ }, positional, None, None)
+        parameters = renpy.ast.EMPTY_PARAMETERS
 
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
@@ -1198,7 +1201,7 @@ class Interpolation(Statement):
         elif trans.atl_state is not None:
             first_frame = True
         elif st_or_at == 0:
-            first_frame = True
+            first_frame = st <= self.duration
         else:
             # This is the case when we're skipping through a displayable to
             # find the right time.
@@ -1744,7 +1747,7 @@ class Function(Statement):
         if fr is not None:
             return "continue", None, fr
         else:
-            return "next", 0, None
+            return "next", st, None
 
 
 # This parses an ATL block.

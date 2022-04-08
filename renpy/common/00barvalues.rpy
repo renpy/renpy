@@ -181,7 +181,7 @@ init -1500 python:
             self.dict[self.key] = value
             renpy.restart_interaction()
 
-            renpy.run(self.action)
+            return renpy.run(self.action)
 
         def get_adjustment(self):
 
@@ -276,7 +276,7 @@ init -1500 python:
             setattr(self.object, self.field, value)
             renpy.restart_interaction()
 
-            renpy.run(self.action)
+            return renpy.run(self.action)
 
         def get_adjustment(self):
 
@@ -401,7 +401,7 @@ init -1500 python:
             cs.scope[self.variable] = value
             renpy.restart_interaction()
 
-            renpy.run(self.action)
+            return renpy.run(self.action)
 
         def get_adjustment(self):
 

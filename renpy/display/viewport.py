@@ -240,8 +240,6 @@ class Viewport(renpy.display.layout.Container):
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
 
-        self._clipping = (cw > width) or (ch > height)
-
         self.width = width
         self.height = height
 
@@ -675,4 +673,4 @@ class VPGrid(Viewport):
             if not allow_underfull:
                 raise exc
             for _ in range(delta):
-                self.add(Null())
+                self.add(renpy.display.layout.Null())
