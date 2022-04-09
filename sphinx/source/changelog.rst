@@ -83,9 +83,6 @@ The new :var:`config.always_shown_screens` variable allows one to define
 screens that are always shown (even in the main and game menus). See also
 the existing :var:`config.overlay_screens`.
 
-The new :tpref:`clip` transform property makes it easy to clip a transform
-down to a specified size.
-
 The location and size of the OpenGL viewport is made available to shaders as
 u_viewport.
 
