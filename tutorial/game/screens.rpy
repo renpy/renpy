@@ -740,17 +740,20 @@ screen preferences():
                 if renpy.variant("pc") or renpy.variant("web"):
 
                     vbox:
-                        style_prefix "radio"
-                        label _("Display")
-                        textbutton _("Window") action Preference("display", "window")
-                        textbutton _("Fullscreen") action Preference("display", "fullscreen")
+                        spacing 12
 
-#                 vbox:
-#                     style_prefix "radio"
-#                     label _("Rollback Side")
-#                     textbutton _("Disable") action Preference("rollback side", "disable")
-#                     textbutton _("Left") action Preference("rollback side", "left")
-#                     textbutton _("Right") action Preference("rollback side", "right")
+                        vbox:
+                            style_prefix "radio"
+                            label _("Display")
+                            textbutton _("Window") action Preference("display", "window")
+                            textbutton _("Fullscreen") action Preference("display", "fullscreen")
+
+                        vbox:
+
+                            style_prefix "check"
+                            label _("Examples")
+                            textbutton _("Translations") action ToggleField(persistent, "show_translation_marker")
+
 
                 vbox:
                     style_prefix "check"
@@ -759,11 +762,6 @@ screen preferences():
                     textbutton _("After Choices") action Preference("after choices", "toggle")
                     textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
 
-
-                vbox:
-                    style_prefix "check"
-                    label _("Examples")
-                    textbutton _("Translations") action ToggleField(persistent, "show_translation_marker")
 
 #begin language_picker
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be
@@ -778,6 +776,11 @@ screen preferences():
                     textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                     textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
+
+                vbox:
+                    style_prefix "radio"
+                    label _(" ")
+
                     textbutton "한국어" text_font "SourceHanSansLite.ttf" action Language("korean")
                     textbutton "日本語" text_font "SourceHanSansLite.ttf" action Language("japanese")
                     textbutton "简体中文" text_font "SourceHanSansLite.ttf" action Language("schinese")
