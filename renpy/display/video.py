@@ -313,6 +313,7 @@ class Movie(renpy.display.core.Displayable):
     fullscreen = False
     channel = "movie"
     _play = None
+    _base_play = None
 
     mask = None
     mask_channel = None
@@ -324,6 +325,14 @@ class Movie(renpy.display.core.Displayable):
     play_callback = None
 
     loop = True
+
+    def after_setstate(self):
+        play = self._base_play or self._play
+        if (play is not None) and renpy.loader.loadable(play):
+            self._base_play = self._play = play
+        else:
+            self._play = None
+            self._base_play = play
 
     def ensure_channel(self, name):
 
@@ -350,8 +359,11 @@ class Movie(renpy.display.core.Displayable):
 
         self.size = size
         self.channel = channel
-        self._play = play
         self.loop = loop
+
+        self._base_play = play
+        if (play is not None) and renpy.loader.loadable(play):
+            self._play = play
 
         if side_mask:
             mask = None
