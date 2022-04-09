@@ -1143,16 +1143,6 @@ both horizontal and vertical positions.
     This requires model-based rendering to be enabled by setting :var:`config.gl2` to
     True.
 
-.. transform-property:: clip
-
-    :type: (position, position) or None
-    :default: None
-
-    This clips the child of this transform to the given size. Integers are
-    interpreted as pixels, while floats are interpreted as relative to the
-    width and height of the child being clipped.
-
-
 There are also several sets of transform properties that are documented elsewhere:
 
 3D Stage properties:
@@ -1183,7 +1173,6 @@ These properties are applied in the following order:
 #. nearest, blend, alpha, additive, shader.
 #. matrixcolor
 #. GL Properties, Uniforms
-#. clip
 #. position properties
 
 Circular Motion
