@@ -107,7 +107,7 @@ using config variables.
 
 .. var:: config.side_image_null = Null()
 
-    The Null displayable to use when not displaying a side image. This
+    The Null displayable to use when not displaying a side image. This can
     be changed, but only to other Null objects. One reason for doing so
     would be to set the side of the Null (eg. ``Null(width=200, height=150)``)
     to prevent dissolves from being cut off.
