@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional
 
 import renpy
@@ -322,6 +323,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.base_widgets = { }
         self.old_widgets = None
         self.old_transforms = None
+        self.old_transfers = False
         self.hidden_widgets = { }
         self.cache = { }
         self.phase = UPDATE
@@ -353,7 +355,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         # The scope associated with this statement. This is passed in
         # as keyword arguments to the displayable.
-        self.scope = renpy.python.RevertableDict(scope)
+        self.scope = renpy.revertable.RevertableDict(scope)
 
         # The child associated with this screen.
         self.child = None # type: renpy.display.layout.MultiBox|None
@@ -404,7 +406,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # Should we transfer data from the old_screen? This becomes
         # true once this screen finishes updating for the first time,
         # and also while we're using something.
-        self.old_transfers = (old_screen and old_screen.screen_name == self.screen_name) 
+        self.old_transfers = (old_screen and old_screen.screen_name == self.screen_name)
 
         # The current transform event, and the last transform event to
         # be processed.
@@ -1415,6 +1417,11 @@ def show_overlay_screens(suppress_overlay):
         for i in renpy.config.overlay_screens:
             if get_screen(i) is not None:
                 hide_screen(i)
+
+    for i in renpy.config.always_shown_screens:
+        if get_screen(i) is None:
+            show_screen(i)
+
 
 
 def per_frame():

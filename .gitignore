@@ -45,8 +45,11 @@ cache/
 /renpy2.sh
 /renpy3.sh
 
+/renpy.app
 /renpy2.app
 /renpy3.app
+
+/7z.sfx
 
 # Libraries.
 /lib
@@ -75,6 +78,7 @@ cache/
 # Editors.
 /jedit
 /atom
+/vscode
 
 # Generated source.
 /renpy/vc_version.py
@@ -97,10 +101,10 @@ cache/
 
 # Steam.
 steam_appid.txt
+/steamapi.py
 
 # Type analysis.
 /typings
-
 
 # Live2D
 cubism
@@ -110,6 +114,7 @@ CubismSdkForNative-4-*.zip
 /launcher/theme
 /screenshot*
 .android.json
+
 
 # Old files.
 /0old

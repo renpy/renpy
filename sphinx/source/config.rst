@@ -228,8 +228,8 @@ Occasionally Used
     attributes. It should return an adjusted tuple, which contains
     and a potential new set of attributes.
 
-    As this function may be called during prediction, it should not
-    rely on the image's state.
+    As this function may be called during prediction, it must not rely
+    on any state.
 
 .. var:: config.after_load_callbacks = [ ... ]
 
@@ -244,6 +244,13 @@ Occasionally Used
 .. var:: config.allow_underfull_grids = False
 
     If True, Ren'Py will not require grids to be full in order to display.
+
+.. var:: config.always_shown_screens = [ ]
+
+    A list of names of screens that Ren'Py will always show, even in menus,
+    and when the interface is hidden. This is mostly used by Ren'Py, which
+    assumes this will be a list. The :var:`config.overlay_screens` list is
+    usually more appropriate.
 
 .. var:: config.audio_filename_callback = None
 
@@ -369,6 +376,23 @@ Occasionally Used
     the :propref:`xmaximum` and :propref:`ymaximum` style properties of the dialogue
     window to the window size, this can be used to report cases where the
     dialogue is too large for its window.
+
+.. var:: config.default_attribute_callbacks = { }
+
+    When a statement or function that contains image attributes executes or is
+    predicted, and the tag is not currently being shown, it's looked up in this
+    dictionary. If it is not found, the None key is looked up instead.
+
+    If either is found, they're expected to be a function. The function is
+    given an image name, a tuple consisting of the tag and any attributes. It
+    should return an iterable which contains any additional attributes to be
+    applied when an image is first shown.
+
+    The results of the function are treated as additive-only, and any explicit
+    conflicting or negative attributes will still take precedence.
+
+    As this function may be called during prediction, it must not rely on any
+    state.
 
 .. var:: config.default_tag_layer = "master"
 
@@ -576,6 +600,13 @@ Occasionally Used
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
 
+.. var:: config.lint_character_statistics = True
+
+    If true, and :var:`config.developer` is true, the lint report will include
+    statistics about the number of dialogue blocks spoken for each character.
+    The chanracter statistics are disabled when the game is packaged, to
+    prevent spoilers.
+
 .. var:: config.load_failed_label = None
 
     If a string, this is a label that is jumped to when a load fails because
@@ -714,7 +745,7 @@ Occasionally Used
     implementation is :func:`renpy.display_notify`. This is intended
     to allow creators to intercept notifications.
 
-.. var:: config.optimize_texture_bounds = False
+.. var:: config.optimize_texture_bounds = True
 
     When True, Ren'Py will scan images to find the bounding box of the
     non-transparent pixels, and only load those pixels into a texture.
@@ -876,7 +907,7 @@ Occasionally Used
     A dictionary mapping image tag strings to layer name strings. When
     an image is shown without a specific layer name, the image's tag is
     looked up in this dictionary to get the layer to show it on. If the
-    tag is not found here, :var:`config.default_tag_name` is used.
+    tag is not found here, :var:`config.default_tag_layer` is used.
 
 .. var:: config.tag_transform = { }
 
@@ -1025,6 +1056,11 @@ Rarely or Internally Used
     reverse ascii order. For example, if Ren'Py finds the files
     data.rpa, patch01.rpa, and patch02.rpa, this variable will be
     populated with ``['patch02', 'patch01', 'data']``.
+
+.. var:: config.at_exit_callbacks = [ ]
+
+    A list of callbacks that are called when Ren'Py quits or restarts
+    the game. These callbacks should not interact with the user.
 
 .. var:: config.auto_choice_delay = None
 
@@ -1192,7 +1228,7 @@ Rarely or Internally Used
 
     This variable contains a keymap giving the keys and mouse buttons
     assigned to each possible operation. Please see the section on
-    Keymaps for more information.
+    :ref:`Keymaps <keymap>` for more information.
 
 .. var:: config.label_callback = None
 

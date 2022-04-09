@@ -155,6 +155,8 @@ style say_dialogue:
     xsize gui.dialogue_width
     ypos gui.dialogue_ypos
 
+    adjust_spacing False
+
 
 ## Input screen ################################################################
 ##
@@ -776,38 +778,36 @@ screen preferences():
                         textbutton _("Fullscreen") action Preference("display", "fullscreen")
 
                 vbox:
-                    style_prefix "radio"
-                    label _("Rollback Side")
-                    textbutton _("Disable") action Preference("rollback side", "disable")
-                    textbutton _("Left") action Preference("rollback side", "left")
-                    textbutton _("Right") action Preference("rollback side", "right")
-
-                vbox:
                     style_prefix "check"
                     label _("Skip")
                     textbutton _("Unseen Text") action Preference("skip", "toggle")
                     textbutton _("After Choices") action Preference("after choices", "toggle")
                     textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
 
-                if renpy.loadable("../../launcher/game/fonts/SourceHanSansLite.ttf"):
+                ## Additional vboxes of type "radio_pref" or "check_pref" can be
+                ## added here, to add additional creator-defined preferences.
 
 #begin language_picker
-                    ## Additional vboxes of type "radio_pref" or "check_pref" can be
-                    ## added here, to add additional creator-defined preferences.
 
-                    vbox:
-                        style_prefix "radio"
-                        label _("Language")
+                vbox:
+                    style_prefix "radio"
+                    label _("Language")
 
-                        textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
-                        textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
-                        textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
-                        textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
-                        textbutton "한국어" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("korean")
-                        textbutton "简体中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("schinese")
-                        textbutton "繁體中文" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("tchinese")
-                        textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
-                        textbutton "日本語" text_font "../../launcher/game/fonts/SourceHanSansLite.ttf" action Language("japanese")
+                    textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
+                    textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
+                    textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+                    textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
+                    textbutton "한국어" text_font "SourceHanSansLite.ttf" action Language("korean")
+
+                vbox:
+                    style_prefix "radio"
+                    label _(" ")
+
+
+                    textbutton "简体中文" text_font "SourceHanSansLite.ttf" action Language("schinese")
+                    textbutton "繁體中文" text_font "SourceHanSansLite.ttf" action Language("tchinese")
+                    textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
+                    textbutton "日本語" text_font "SourceHanSansLite.ttf" action Language("japanese")
 
 #end language_picker
 

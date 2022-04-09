@@ -66,8 +66,11 @@ setuplib.extra_link_args = [ ]
 if platform.win32_ver()[0]:
     windows = True
     setuplib.extra_compile_args.append("-fno-strict-aliasing")
+    tfd_libs = [ "comdlg32", "ole32" ]
+
 else:
     windows = False
+    tfd_libs = [ ]
 
 if raspi:
     setuplib.extra_compile_args.append("-DRASPBERRY_PI")
@@ -103,13 +106,6 @@ if android:
 else:
     sdl = [ 'SDL2' ]
     png = 'png'
-
-steam_sdk = os.environ.get("RENPY_STEAM_SDK", None)
-steam_platform = os.environ.get("RENPY_STEAM_PLATFORM", "")
-
-if steam_sdk:
-    setuplib.library_dirs.append("{}/redistributable_bin/{}".format(steam_sdk, steam_platform))
-    setuplib.include_dirs.append("{}/public".format(steam_sdk))
 
 cubism = os.environ.get("CUBISM", None)
 if cubism:
@@ -147,7 +143,8 @@ cython(
         ("HAVE_CONFIG_H", "1"),
         ])
 
-cython("_renpysteam", language="c++", compile_if=steam_sdk, libs=["steam_api"])
+if not (android or ios or emscripten):
+    cython("_renpytfd", [ "tinyfiledialogs/tinyfiledialogs.c" ], libs=tfd_libs)
 
 # Sound.
 

@@ -26,6 +26,7 @@ init -1500 python in build:
 
     from store import config
 
+    import sys, os
 
     def make_file_lists(s):
         """
@@ -45,7 +46,6 @@ init -1500 python in build:
         raise Exception("Expected a string, list, or None.")
 
 
-
     def pattern_list(l):
         """
         Apply file_lists to the second argument of each tuple in a list.
@@ -58,8 +58,30 @@ init -1500 python in build:
 
         return rv
 
+
+    renpy_sh = "renpy.sh"
+
+    if PY2:
+        renpy_patterns = pattern_list([
+            ("renpy/**.pyo", "all"),
+            ("renpy/**__pycache__", None),
+        ])
+
+        if os.path.exists(os.path.join(config.renpy_base, "renpy2.sh")):
+            renpy_sh = "renpy2.sh"
+
+    else:
+        renpy_patterns = pattern_list([
+            ("renpy/**__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), "all"),
+            ("renpy/**__pycache__", "all"),
+        ])
+
+        if os.path.exists(os.path.join(config.renpy_base, "renpy3.sh")):
+            renpy_sh = "renpy3.sh"
+
+
     # Patterns that are used to classify Ren'Py.
-    renpy_patterns = pattern_list([
+    renpy_patterns.extend(pattern_list([
         ( "**~", None),
         ( "**/#*", None),
         ( "**/.*", None),
@@ -67,17 +89,20 @@ init -1500 python in build:
         ( "**.new", None),
         ( "**.rpa", None),
 
-        ( "**/*.pyc", None),
-
         ( "**/steam_appid.txt", None),
 
         ( "renpy.py", "all"),
 
         ( "renpy/", "all"),
         ( "renpy/**.py", "renpy"),
-        ( "renpy/**.pyx", "renpy"),
-        ( "renpy/**.pyd", "renpy"),
-        ( "renpy/**.pxi", "renpy"),
+
+        ( "renpy/**.pyx", None),
+        ( "renpy/**.pyd", None),
+        ( "renpy/**.pxi", None),
+        ( "renpy/**.pyc", None),
+        ( "renpy/**.pyo", None),
+        ( "renpy/**.pyi", None),
+
         ( "renpy/common/", "all"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**.rpy", "renpy"),
@@ -90,6 +115,9 @@ init -1500 python in build:
         ( "lib/*/renpy", None),
         ( "lib/*/renpy.exe", None),
         ( "lib/*/pythonw.exe", None),
+
+        # Ignore the wrong Python.
+        ( "lib/py3-*/" if PY2 else "lib/py2-*/", None),
 
         # Windows patterns.
         ( "lib/py*-windows-i686/**", "windows_i686"),
@@ -107,8 +135,10 @@ init -1500 python in build:
 
         # Shared patterns.
         ( "lib/**", "windows linux mac android ios"),
-        ( "renpy.sh", "linux mac"),
-    ])
+        ( renpy_sh, "linux mac"),
+    ]))
+
+
 
     def classify_renpy(pattern, groups):
         """
@@ -423,6 +453,9 @@ init -1500 python in build:
     # A list of additional android permission names.
     android_permissions = [ ]
 
+    # Should the sdk-fonts directory be renamed to game?
+    _sdk_fonts = False
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -501,6 +534,8 @@ init -1500 python in build:
         rv["change_icon_i686"] = change_icon_i686
 
         rv["android_permissions"] = android_permissions
+
+        rv["_sdk_fonts"] = _sdk_fonts
 
         return rv
 

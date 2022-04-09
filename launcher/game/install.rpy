@@ -82,12 +82,17 @@ init python:
 label install_live2d:
     python hide:
 
+        if PY2:
+            _prefix = r"lib/py2-"
+        else:
+            _prefix = r"lib/py3-"
+
         patterns = [
-            (r".*/Core/dll/linux/x86_64/(libLive2DCubismCore.so)", r"lib/linux-x86_64/\1"),
-            (r".*/Core/dll/windows/x86_64/(Live2DCubismCore.dll)", r"lib/windows-x86_64/\1"),
-            (r".*/Core/dll/windows/x86/(Live2DCubismCore.dll)", r"lib/windows-i686/\1"),
-            (r".*/Core/dll/macos/(libLive2DCubismCore.dylib)", r"lib/mac-x86_64/\1"),
-            (r".*/Core/dll/experimental/rpi/(libLive2DCubismCore.so)", r"lib/linux-armv7l/\1"),
+            (r".*/Core/dll/linux/x86_64/(libLive2DCubismCore.so)", _prefix + r"linux-x86_64/\1"),
+            (r".*/Core/dll/windows/x86_64/(Live2DCubismCore.dll)", _prefix + r"windows-x86_64/\1"),
+            (r".*/Core/dll/windows/x86/(Live2DCubismCore.dll)", _prefix + r"windows-i686/\1"),
+            (r".*/Core/dll/macos/(libLive2DCubismCore.dylib)", _prefix + r"mac-x86_64/\1"),
+            (r".*/Core/dll/experimental/rpi/(libLive2DCubismCore.so)", _prefix + r"linux-armv7l/\1"),
 
             (r".*/Core/dll/android/(armeabi-v7a/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
             (r".*/Core/dll/android/(arm64-v8a/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),

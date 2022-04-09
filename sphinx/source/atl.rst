@@ -125,12 +125,17 @@ Interpolation Statement
 The interpolation statement is the main way that ATL controls transformations.
 
 .. productionlist:: atl
-    atl_interp : ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )?
-               : ( `property` `simple_expression` ( "knot" `simple_expression` )*
-               : | "clockwise"
-               : | "counterclockwise"
-               : | "circles" simple_expression
-               : | simple_expression )*
+    atl_properties : ( `property` `simple_expression` ( "knot" `simple_expression` )*
+                   : | "clockwise"
+                   : | "counterclockwise"
+                   : | "circles" simple_expression
+                   : | simple_expression )*
+
+.. productionlist:: atl
+    atl_interp : ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )? `atl_properties`
+               : | ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )? ":"
+               :    `atl_properties`
+
 
 The first part of the interpolation statement is used to select a function
 that time-warps the interpolation. (That is, a function from linear time to
@@ -171,31 +176,43 @@ a single interpolation statement, without a warper, splines, or circular
 motion. The properties from the transform are processed as if they were
 included in this statement.
 
+A warper may be followed by a colon (:). In this case, it may be followed
+by one or more lines containing the clauses available above. This lets
+an ATL interpolation apply to multiple lines of properties.
+
 Some sample interpolations are::
 
     show logo base:
-         # Show the logo at the upper right side of the screen.
-         xalign 1.0 yalign 0.0
+        # Show the logo at the upper right side of the screen.
+        xalign 1.0 yalign 0.0
 
-         # Take 1.0 seconds to move things back to the left.
-         linear 1.0 xalign 0.0
+        # Take 1.0 seconds to move things back to the left.
+        linear 1.0 xalign 0.0
 
-         # Take 1.0 seconds to move things to the location specified in the
-         # truecenter transform. Use the ease warper to do this.
-         ease 1.0 truecenter
+        # Take 1.0 seconds to move things to the location specified in the
+        # truecenter transform. Use the ease warper to do this.
+        ease 1.0 truecenter
 
-         # Just pause for a second.
-         pause 1.0
+        # Just pause for a second.
+        pause 1.0
 
-         # Set the location to circle around.
-         alignaround (.5, .5)
+        # Set the location to circle around.
+        alignaround (.5, .5)
 
-         # Use circular motion to bring us to spiral out to the top of
-         # the screen. Take 2 seconds to do so.
-         linear 2.0 yalign 0.0 clockwise circles 3
+        # Use circular motion to bring us to spiral out to the top of
+        # the screen. Take 2 seconds to do so.
+        linear 2.0 yalign 0.0 clockwise circles 3
 
-         # Use a spline motion to move us around the screen.
-         linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
+        # Use a spline motion to move us around the screen.
+        linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
+
+         # Changes xalign and yalign at thje same time.
+         linear 2.0 xalign 1.0 yalign 1.0
+
+         # The same thing, using a block.
+         linear 2.0:
+            xalign 1.0
+            yalign 1.0
 
 An important special case is that the pause warper, followed by a time and
 nothing else, causes ATL execution to pause for that amount of time.
@@ -1128,16 +1145,6 @@ both horizontal and vertical positions.
     This requires model-based rendering to be enabled by setting :var:`config.gl2` to
     True.
 
-.. transform-property:: clip
-
-    :type: (position, position) or None
-    :default: None
-
-    This clips the child of this transform to the given size. Integers are 
-    interpreted as pixels, while floats are interpreted as relative to the 
-    width and height of the child being clipped.
-
-
 There are also several sets of transform properties that are documented elsewhere:
 
 3D Stage properties:
@@ -1168,7 +1175,6 @@ These properties are applied in the following order:
 #. nearest, blend, alpha, additive, shader.
 #. matrixcolor
 #. GL Properties, Uniforms
-#. clip
 #. position properties
 
 Circular Motion

@@ -23,7 +23,8 @@
 # called when parsing is necessary, and creates an AST from the script.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import codecs
 import re
@@ -170,16 +171,25 @@ def elide_filename(fn):
     or relative to the Ren'Py directory.
     """
 
-    original_fn = fn
     fn = fn.replace("\\", "/")
 
-    for d in [ renpy.config.basedir, renpy.config.renpy_base ]:
-        d = os.path.abspath(d).replace("\\", "/") + "/"
+    basedir = os.path.abspath(renpy.config.basedir).replace("\\", "/") + "/"
+    renpy_base = os.path.abspath(renpy.config.renpy_base).replace("\\", "/") + "/"
+
+    # This is SDK inside the project, for some reason, or it is the same path
+    if renpy_base.startswith(basedir):
+        dirs = [renpy_base, basedir]
+
+    # This is a projects dir inside SDK or it's different paths
+    else:
+        dirs = [basedir, renpy_base]
+
+    for d in dirs:
         if fn.startswith(d):
             rv = fn[len(d):]
             break
     else:
-        rv = original_fn.replace("\\", "/")
+        rv = fn
 
     return rv
 
@@ -734,6 +744,9 @@ class Lexer(object):
         Convenience function for reporting a parse error at the current
         location.
         """
+
+        if (self.line == -1) and self.block:
+            self.filename, self.number, self.text, self.subblock = self.block[0]
 
         raise ParseError(self.filename, self.number, msg, self.text, self.pos)
 
@@ -1717,18 +1730,42 @@ def parse_menu(stmtl, loc, arguments):
 
 
 def parse_parameters(l):
-
-    parameters = [ ]
-    positional = [ ]
-    extrapos = None
-    extrakw = None
-
-    add_positional = True
-
-    names = set()
+    """
+    Parse a list of parameters according to PEP 570 semantic, if one is present.
+    """
 
     if not l.match(r'\('):
         return None
+
+    # Result list of parameters, by (name, default value) pairs
+    parameters = [ ]
+
+    positional = [ ]
+
+    # Name of parameter that is starred
+    extrapos = None
+
+    # Name of parameter that is double starred
+    extrakw = None
+
+    # Name of parameter that is last positional-only
+    last_posonly = None
+
+    # Name of parameter that is first keyword-only
+    first_kwonly = None
+
+    add_positional = True
+
+    pending_kwonly = False
+
+    has_default = False
+
+    names = set()
+    def name_parsed(name, value):
+        if name in names:
+            l.error("duplicate argument '%s'" % name)
+        else:
+            names.add(name)
 
     while True:
 
@@ -1737,49 +1774,78 @@ def parse_parameters(l):
 
         if l.match(r'\*\*'):
 
-            if extrakw is not None:
-                l.error('a label may have only one ** parameter')
-
             extrakw = l.require(l.name)
 
-            if extrakw in names:
-                l.error('parameter %s appears twice.' % extrakw)
+            if l.match(r'='):
+                l.error("var-keyword argument cannot have default value")
 
-            names.add(extrakw)
+            name_parsed(extrakw, None)
+
+            # Allow trailing comma
+            l.match(r',')
+
+            # extrakw is always last parameter
+            if not l.match('\)'):
+                l.error("arguments cannot follow var-keyword argument")
+
+            break
 
         elif l.match(r'\*'):
 
-            if not add_positional:
-                l.error('a label may have only one * parameter')
+            if first_kwonly or pending_kwonly:
+                l.error("* may appear only once")
 
             add_positional = False
+
+            pending_kwonly = True
 
             extrapos = l.name()
 
             if extrapos is not None:
+                if l.match(r'='):
+                    l.error("var-positional argument cannot have default value")
 
-                if extrapos in names:
-                    l.error('parameter %s appears twice.' % extrapos)
+                name_parsed(extrapos, None)
 
-                names.add(extrapos)
+        elif l.match(r'/\*'):
+            l.error("expected comma between / and *")
+
+        elif l.match('/'):
+
+            if first_kwonly or pending_kwonly:
+                l.error("/ must be ahead of *")
+
+            elif last_posonly is not None:
+                l.error("/ may appear only once")
+
+            elif not parameters:
+                l.error("at least one argument must precede /")
+
+            last_posonly = parameters[-1][0]
 
         else:
 
             name = l.require(l.name)
 
-            if name in names:
-                l.error('parameter %s appears twice.' % name)
-
-            names.add(name)
+            if pending_kwonly:
+                pending_kwonly = False
+                first_kwonly = name
 
             if l.match(r'='):
                 l.skip_whitespace()
                 default = l.delimited_python("),")
+                has_default = True
+
                 if not default.strip():
-                    l.error("Empty parameter default.")
+                    l.error("empty parameter default")
+
+            elif first_kwonly is None and has_default:
+                l.error("non-default argument follows default argument")
+
             else:
                 default = None
 
+            name_parsed(name, default)
             parameters.append((name, default))
 
             if add_positional:
@@ -1790,64 +1856,74 @@ def parse_parameters(l):
 
         l.require(r',')
 
-    return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw)
+    if pending_kwonly and extrapos is None:
+        l.error("named arguments must follow bare *")
+
+    return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw, last_posonly, first_kwonly)
 
 
 def parse_arguments(l):
     """
-    Parse a list of arguments, if one is present.
+    Parse a list of arguments according to PEP 448 semantics, if one is present.
     """
-
-    arguments = [ ]
-    extrakw = None
-    extrapos = None
-
-    has_kw = False
 
     if not l.match(r'\('):
         return None
 
+    arguments = [ ]
+    starred_indexes = set()
+    doublestarred_indexes = set()
+
+    index = 0
+    keyword_parsed = False
+    names = set()
+
     while True:
+        expect_starred = False
+        expect_doublestarred = False
+        name = None
 
         if l.match(r'\)'):
             break
 
         if l.match(r'\*\*'):
-
-            if extrakw is not None:
-                l.error('a call may have only one ** argument')
-
-            extrakw = l.delimited_python("),")
+            expect_doublestarred = True
+            doublestarred_indexes.add(index)
 
         elif l.match(r'\*'):
-            if extrapos is not None:
-                l.error('a call may have only one * argument')
+            expect_starred = True
+            starred_indexes.add(index)
 
-            extrapos = l.delimited_python("),")
+        state = l.checkpoint()
 
-        else:
-
-            state = l.checkpoint()
-
+        if not (expect_starred or expect_doublestarred):
             name = l.name()
-            if not (name and l.match(r'=')):
+
+            if name and l.match(r'='):
+                if name in names:
+                    l.error("keyword argument repeated: '%s'" % name)
+                else:
+                    names.add(name)
+                keyword_parsed = True
+
+            elif keyword_parsed:
+                l.error("positional argument follows keyword argument")
+
+            # If we have not '=' after name, the name itself may be expression.
+            else:
                 l.revert(state)
                 name = None
 
-            if name:
-                has_kw = True
-            elif has_kw:
-                l.error("positional argument follows keyword argument")
-
-            l.skip_whitespace()
-            arguments.append((name, l.delimited_python("),")))
+        l.skip_whitespace()
+        arguments.append((name, l.delimited_python("),")))
 
         if l.match(r'\)'):
             break
 
         l.require(r',')
+        index += 1
 
-    return renpy.ast.ArgumentInfo(arguments, extrapos, extrakw)
+    return renpy.ast.ArgumentInfo(arguments, starred_indexes, doublestarred_indexes)
 
 ##############################################################################
 # The parse trie.

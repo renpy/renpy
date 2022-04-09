@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import os
 
@@ -36,13 +37,13 @@ import renpy
 def load_mappings():
 
     try:
-        with renpy.loader.load("renpycontrollerdb.txt") as f:
+        with renpy.loader.load("renpycontrollerdb.txt", "rb") as f:
             pygame_sdl2.controller.add_mappings(f)
     except Exception:
         pass
 
     try:
-        with renpy.loader.load("gamecontrollerdb.txt") as f:
+        with renpy.loader.load("gamecontrollerdb.txt", "rb") as f:
             pygame_sdl2.controller.add_mappings(f)
     except Exception:
         pass
@@ -67,6 +68,13 @@ def init():
         load_mappings()
     except Exception:
         renpy.display.log.exception()
+
+    if not renpy.display.interface.safe_mode:
+        try:
+            for i in range(pygame_sdl2.controller.get_count()):
+                start(i)
+        except Exception:
+            renpy.display.log.exception()
 
 
 # A map from controller index to controller object.
@@ -142,7 +150,10 @@ def start(index):
     """
 
     quit(index)
-    controllers[index] = c = Controller(index)
+    c = Controller(index)
+
+    if not c.is_controller():
+        return
 
     renpy.exports.write_log("controller: %r %r %r" % (c.get_guid_string(), c.get_name(), c.is_controller()))
 
@@ -152,7 +163,11 @@ def start(index):
                 renpy.exports.write_log("Controller found in blocklist, not using.")
                 return
 
-    c.init()
+    try:
+        c.init()
+        controllers[index] = c
+    except Exception:
+        renpy.display.log.exception()
 
     renpy.exports.restart_interaction()
 

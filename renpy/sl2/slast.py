@@ -26,7 +26,8 @@
 # field is copied in the copy() method.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional, Any
 
 from renpy.compat.pickle import loads, dumps
@@ -399,7 +400,18 @@ class SLBlock(SLNode):
         if self.atl_transform is not None:
             self.has_keyword = True
 
-            self.atl_transform.mark_constant()
+            # We use screen analysis object, since it
+            # have all knowlege about our constants
+            self.atl_transform.mark_constant(analysis)
+
+            # We can only be a constant if we do not rely
+            # on screen arguments or other internal variables.
+            # So we can pass an empty context for compilation.
+            if self.atl_transform.constant == GLOBAL_CONST:
+                self.atl_transform.compile_block()
+
+            # Check constant again after compilation try,
+            # this set its constant to NOT_CONST if failed.
             const = self.atl_transform.constant
             self.constant = min(self.constant, const)
 

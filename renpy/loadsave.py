@@ -22,7 +22,8 @@
 # This file contains functions that load and save the game state.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from future.utils import reraise
 
 from typing import Optional
@@ -365,8 +366,14 @@ def save(slotname, extra_info='', mutate_flag=False):
     :func:`renpy.take_screenshot` should be called before this function.
     """
 
+    # Update persistent file, if needed. This is for the web and mobile
+    # platforms, to make sure the persistent file is updated whenever the
+    # game is saved. (But not auto-saved, for performance reasons.)
+    if not mutate_flag:
+        renpy.persistent.update()
+
     if mutate_flag:
-        renpy.python.mutate_flag = False
+        renpy.revertable.mutate_flag = False
 
     roots = renpy.game.log.freeze(None)
 
@@ -396,7 +403,7 @@ def save(slotname, extra_info='', mutate_flag=False):
 
         reraise(t, e, tb)
 
-    if mutate_flag and renpy.python.mutate_flag:
+    if mutate_flag and renpy.revertable.mutate_flag:
         raise SaveAbort()
 
     screenshot = renpy.game.interface.get_screenshot()
@@ -461,6 +468,9 @@ def autosave():
     global autosave_counter
 
     if not renpy.config.autosave_frequency:
+        return
+
+    if not renpy.config.has_autosave:
         return
 
     # That is, autosave is running.

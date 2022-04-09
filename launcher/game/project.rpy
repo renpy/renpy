@@ -101,7 +101,7 @@ init python in project:
 
         def load_data(self):
             try:
-                with open(os.path.join(self.path, "project.json"), "rb") as f:
+                with open(os.path.join(self.path, "project.json"), "r") as f:
                     self.data = json.load(f)
             except Exception:
                 self.data = { }
@@ -114,7 +114,7 @@ init python in project:
             """
 
             try:
-                with open(os.path.join(self.path, "project.json"), "wb") as f:
+                with open(os.path.join(self.path, "project.json"), "w") as f:
                     json.dump(self.data, f)
             except Exception:
                 self.load_data()
@@ -275,7 +275,11 @@ init python in project:
 
             if wait:
                 if p.wait():
-                    interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
+
+                    if args and not self.is_writeable():
+                        interface.error(_("Launching the project failed."), _("This may be because the project is not writeable."))
+                    else:
+                        interface.error(_("Launching the project failed."), _("Please ensure that your project launches normally before running this command."))
 
             renpy.not_infinite_loop(30)
 
@@ -395,6 +399,14 @@ init python in project:
 
             return os.path.exists(os.path.join(self.path, fn))
 
+        def is_writeable(self):
+            """
+            Returns true if it's possible to write a file in the projects
+            directory.
+            """
+
+            return os.access(self.path, os.W_OK)
+
 
     class ProjectManager(object):
         """
@@ -404,26 +416,26 @@ init python in project:
 
         def __init__(self):
 
-           # The projects directory.
-           self.projects_directory = ""
+            # The projects directory.
+            self.projects_directory = ""
 
-           # Normal projects, in alphabetical order by lowercase name.
-           self.projects = [ ]
+            # Normal projects, in alphabetical order by lowercase name.
+            self.projects = [ ]
 
-           # Template projects.
-           self.templates = [ ]
+            # Template projects.
+            self.templates = [ ]
 
-           # All projects - normal, template, and hidden.
-           self.all_projects = [ ]
+            # All projects - normal, template, and hidden.
+            self.all_projects = [ ]
 
-           # Directories that have been scanned.
-           self.scanned = set()
+            # Directories that have been scanned.
+            self.scanned = set()
 
-           # The tutorial game, and the language it's for.
-           self.tutoral = None
-           self.tutorial_language = "the meowing of a cat"
+            # The tutorial game, and the language it's for.
+            self.tutoral = None
+            self.tutorial_language = "the meowing of a cat"
 
-           self.scan()
+            self.scan()
 
         def scan(self):
             """

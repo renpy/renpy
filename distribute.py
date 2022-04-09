@@ -44,13 +44,23 @@ def copy_tutorial_file(src, dest):
                 if copy:
                     df.write(l)
 
+def link_directory(dirname):
+    dn = os.path.join(ROOT, dirname)
+
+    if os.path.exists(dn):
+        os.unlink(dn)
+
+    if PY2:
+        source = dn + "2"
+    else:
+        source = dn + "3"
+
+    if os.path.exists(source):
+        os.symlink(source, dn)
 
 def main():
 
     start = time.time()
-
-    if PY2 and not sys.flags.optimize:
-        raise Exception("Not running with python optimization.")
 
     ap = argparse.ArgumentParser()
     ap.add_argument("version", nargs="?")
@@ -62,11 +72,21 @@ def main():
     ap.add_argument("--nosign", action="store_false", dest="sign")
     ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
+    ap.add_argument("--link-directories", action="store_true")
 
     args = ap.parse_args()
 
+    link_directory("rapt")
+    link_directory("renios")
+
+    if args.link_directories:
+        return
+
     if args.sign:
         os.environ["RENPY_MAC_IDENTITY"] = "Developer ID Application: Tom Rothamel (XHTE5H7Z79)"
+
+    if PY2 and not sys.flags.optimize:
+        raise Exception("Not running with python optimization.")
 
     # Revision updating is done early, so we can do it even if the rest
     # of the program fails.

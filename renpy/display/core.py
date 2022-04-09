@@ -23,7 +23,8 @@
 # window.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional, Tuple
 
 from collections import namedtuple
@@ -435,6 +436,9 @@ class Displayable(renpy.object.Object):
 
     # Does this displayable have a tooltip?
     _tooltip = None
+
+    # Should hbox and vbox skip this displayable?
+    _box_skip = False
 
     # Used by a transition (or transition-like object) to determine how long to
     # delay for.
@@ -1253,8 +1257,14 @@ class SceneLists(renpy.object.Object):
             l.insert(add_index, sle)
 
         # By walking the tree of displayables we allow the displayables to
-        # capture the current state.
-        thing.visit_all(lambda d : None)
+        # capture the current state. In older code, we allow this to to fail.
+        # Errors might exist in older games, which are ignored when not in
+        # developer mode.
+        try:
+            thing.visit_all(lambda d : None)
+        except Exception:
+            if renpy.config.developer:
+                raise
 
     def hide_or_replace(self, layer, index, prefix):
         """
@@ -2315,6 +2325,7 @@ class Interface(object):
             self.check_android_start()
 
         # Initialize audio.
+        pygame.display.hint("SDL_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
         pygame.display.hint("SDL_AUDIO_DEVICE_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
 
         renpy.audio.audio.init()
@@ -3528,8 +3539,16 @@ class Interface(object):
                 renpy.display.draw.ready_one_texture()
                 step += 1
 
-            # Step 3: Predict more images.
+            # Step 3: Execute commands from JS (on emscripten)
             elif step == 3:
+
+                if expensive and renpy.emscripten:
+                    self.exec_js_cmd()
+
+                step += 1
+
+            # Step 4: Predict more images.
+            elif step == 4:
 
                 if not self.prediction_coroutine:
                     step += 1
@@ -3550,16 +3569,16 @@ class Interface(object):
                     if not expensive:
                         step += 1
 
-            # Step 4: Preload images (on emscripten)
-            elif step == 4:
+            # Step 5: Preload images (on emscripten)
+            elif step == 5:
 
                 if expensive and renpy.emscripten:
                     renpy.display.im.cache.preload_thread_pass()
 
                 step += 1
 
-            # Step 5: Autosave.
-            elif step == 5:
+            # Step 6: Autosave.
+            elif step == 6:
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()
@@ -4386,3 +4405,27 @@ class Interface(object):
         """
 
         self.check_background_screenshot()
+
+    def exec_js_cmd(self):
+        """
+        Execute a command from JS if required (emscripten only).
+        """
+
+        if not renpy.emscripten:
+            return
+
+        # Retrieve the command to be executed from a global JS variable
+        # (an empty string is returned if the variable is not defined)
+        cmd = emscripten.run_script_string("window._renpy_cmd")
+        if len(cmd) == 0:
+            return
+
+        # Delete command variable to prevent executing the command again
+        emscripten.run_script("delete window._renpy_cmd")
+
+        # Execute the command
+        try:
+            renpy.python.py_exec(cmd)
+        except Exception as e:
+            renpy.display.log.write(cmd)
+            renpy.display.log.write('Error while executing JS command: %s' % (e,))

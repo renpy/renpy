@@ -23,7 +23,8 @@
 # the renpy namespace. (So renpy.say, renpy.pause, and so on.)
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 
 import re
@@ -80,7 +81,7 @@ from renpy.loadsave import load, save, list_saved_games, can_load, rename_save, 
 from renpy.loadsave import list_slots, newest_slot, slot_mtime, slot_json, slot_screenshot, force_autosave
 
 from renpy.python import py_eval as eval
-from renpy.python import rng as random
+from renpy.rollback import rng as random
 from renpy.atl import atl_warper
 from renpy.easy import predict, displayable, split_properties
 from renpy.parser import unelide_filename, get_parse_errors
@@ -757,7 +758,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         img._unique()
 
     # Update the list of images we have ever seen.
-    renpy.game.persistent._seen_images[name] = True # type: ignore
+    renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
 
     if tag and munge_name:
         name = (tag,) + name[1:]
@@ -1560,7 +1561,10 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
     else:
         renpy.ui.saybehavior(afm=afm)
 
-    rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay)
+    try:
+        rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay)
+    except (renpy.game.JumpException, renpy.game.CallException) as e:
+        rv = e
 
     if checkpoint:
         renpy.exports.checkpoint(rv, keep_rollback=True, hard=renpy.config.pause_after_rollback or (delay is None))
@@ -1570,6 +1574,9 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
 
     if with_none:
         renpy.game.interface.do_with(None, None)
+
+    if isinstance(rv, (renpy.game.JumpException, renpy.game.CallException)):
+        raise rv
 
     return rv
 
@@ -1785,7 +1792,7 @@ def get_all_labels():
         if isinstance(i, basestring):
             rv.append(i)
 
-    return renpy.python.RevertableSet(rv)
+    return renpy.revertable.RevertableSet(rv)
 
 
 def take_screenshot(scale=None, background=False):
@@ -1844,6 +1851,9 @@ def reload_script():
 
     Causes Ren'Py to save the game, reload the script, and then load the
     save.
+
+    This should only be called during development. It works on Windows, macOS,
+    and Linux, but may not work on other platforms.
     """
 
     # Avoid reloading in a replay.
@@ -2363,7 +2373,7 @@ def mark_label_seen(label):
     Marks the named label as if it has been already executed on the current user's
     system.
     """
-    renpy.game.persistent._seen_ever[label] = True # type: ignore
+    renpy.game.persistent._seen_ever[str(label)] = True # type: ignore
 
 
 def mark_label_unseen(label):
@@ -2440,7 +2450,7 @@ def mark_image_seen(name):
     if not isinstance(name, tuple):
         name = tuple(name.split())
 
-    renpy.game.persistent._seen_images[name] = True # type: ignore
+    renpy.game.persistent._seen_images[tuple(str(i) for i in name)] = True
 
 
 def mark_image_unseen(name):
@@ -2859,7 +2869,7 @@ def shown_window():
     renpy.game.context().scene_lists.shown_window = True
 
 
-class placement(renpy.python.RevertableObject):
+class placement(renpy.revertable.RevertableObject):
 
     def __init__(self, p):
         super(placement, self).__init__()
@@ -2950,12 +2960,12 @@ IgnoreEvent = renpy.display.core.IgnoreEvent
 redraw = renpy.display.render.redraw
 
 
-class Displayable(renpy.display.core.Displayable, renpy.python.RevertableObject):
+class Displayable(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     pass
 
 
-class Container(renpy.display.layout.Container, renpy.python.RevertableObject):
-    _list_type = renpy.python.RevertableList
+class Container(renpy.display.layout.Container, renpy.revertable.RevertableObject):
+    _list_type = renpy.revertable.RevertableList
 
 
 def get_roll_forward():
@@ -2967,7 +2977,7 @@ def cache_pin(*args):
     :undocumented: Cache pin is deprecated.
     """
 
-    new_pins = renpy.python.RevertableSet()
+    new_pins = renpy.revertable.RevertableSet()
 
     for i in args:
 
@@ -2986,7 +2996,7 @@ def cache_unpin(*args):
     :undocumented: Cache pin is deprecated.
     """
 
-    new_pins = renpy.python.RevertableSet()
+    new_pins = renpy.revertable.RevertableSet()
 
     for i in args:
 
@@ -3045,7 +3055,7 @@ def start_predict(*args):
     matches all files starting with concert in the images directory.
     """
 
-    new_predict = renpy.python.RevertableSet(renpy.store._predict_set)
+    new_predict = renpy.revertable.RevertableSet(renpy.store._predict_set)
 
     for i in args:
         for d in expand_predict(i):
@@ -3065,7 +3075,7 @@ def stop_predict(*args):
     Wildcard patterns can be used as described in :func:`renpy.start_predict`.
     """
 
-    new_predict = renpy.python.RevertableSet(renpy.store._predict_set)
+    new_predict = renpy.revertable.RevertableSet(renpy.store._predict_set)
 
     for i in args:
         for d in expand_predict(i):
@@ -3084,7 +3094,7 @@ def start_predict_screen(_screen_name, *args, **kwargs):
     of `_screen_name`. To stop predicting a screen, call :func:`renpy.stop_predict_screen`.
     """
 
-    new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)
+    new_predict = renpy.revertable.RevertableDict(renpy.store._predict_screen)
     new_predict[_screen_name] = (args, kwargs)
     renpy.store._predict_screen = new_predict
 
@@ -3096,7 +3106,7 @@ def stop_predict_screen(name):
     Causes Ren'Py to stop predicting the screen named `name`.
     """
 
-    new_predict = renpy.python.RevertableDict(renpy.store._predict_screen)
+    new_predict = renpy.revertable.RevertableDict(renpy.store._predict_screen)
     new_predict.pop(name, None)
     renpy.store._predict_screen = new_predict
 

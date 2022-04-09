@@ -22,7 +22,8 @@
 # Other text-related things.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 
 import renpy
@@ -179,6 +180,9 @@ def filter_alt_text(s):
     """
 
     tokens = textsupport.tokenize(str(s))
+
+    if renpy.config.custom_text_tags or renpy.config.self_closing_custom_text_tags or (renpy.config.replace_text is not None):
+        tokens = renpy.text.text.Text.apply_custom_tags(tokens)
 
     rv = [ ]
 

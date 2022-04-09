@@ -153,6 +153,11 @@ else:
     range = builtins.range
 
 ################################################################################
+# Round.
+
+round = builtins.round
+
+################################################################################
 # Allow TextIOWrapper to take utf8-bytes.
 
 if PY2:
@@ -174,7 +179,7 @@ if PY2:
 # Export functions.
 
 __all__ = [ "PY2", "open", "basestring", "str", "pystr", "range",
-            "bord", "bchr", "tobytes", "chr", "unicode", ]
+            "round", "bord", "bchr", "tobytes", "chr", "unicode", ]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ] # type: ignore

@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 
 import renpy
@@ -917,8 +918,12 @@ def detect_user_locale():
         import pyobjus # type: ignore
         NSLocale = pyobjus.autoclass("NSLocale")
         languages = NSLocale.preferredLanguages()
-        locale_name = languages.objectAtIndex_(0).UTF8String().decode("utf-8")
-        locale_name.replace("-", "_")
+
+        locale_name = languages.objectAtIndex_(0).UTF8String()
+        if isinstance(locale_name, bytes):
+            locale_name = locale_name.decode("utf-8")
+
+        local_name = locale_name.replace("-", "_")
     else:
         locale_name = locale.getdefaultlocale()
         if locale_name is not None:

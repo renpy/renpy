@@ -23,7 +23,8 @@
 # Definitions of screen language statements.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import renpy
 
@@ -67,6 +68,10 @@ class ShowIf(renpy.display.layout.Container):
                 self.pending_event = replaces.pending_event
 
             self.show_child = replaces.show_child
+
+    @property
+    def _box_skip(self):
+        return (not self.show_child) and renpy.config.box_skip_false_showif
 
     def per_interact(self):
         if self.pending_event:
@@ -377,6 +382,7 @@ add(viewport_position_properties)
 DisplayableParser("vpgrid", sl2vpgrid, "vpgrid", many, replaces=True, pass_context=True)
 Keyword("rows")
 Keyword("cols")
+Keyword("allow_underfull")
 Keyword("child_size")
 Keyword("mousewheel")
 Keyword("arrowkeys")
@@ -464,6 +470,7 @@ for name in [ "add", "image" ]:
     Positional("im")
     Keyword("at")
     Keyword("id")
+    Keyword("alt")
     for i in renpy.atl.PROPERTIES:
         Style(i)
 
@@ -473,6 +480,7 @@ Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")
 Keyword("drag_raise")
+Keyword("dragging")
 Keyword("dragged")
 Keyword("dropped")
 Keyword("drop_allowable")

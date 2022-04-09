@@ -31,7 +31,7 @@ init -1 python:
 
     from store import config
 
-    def translate_font(language, font, path=None):
+    def translate_font(language, font):
         """
         Selects the font file that is used when translating `language`.
 
@@ -39,26 +39,17 @@ init -1 python:
             Is the name of the font file used for both the launcher and
             the new GUI template. This should be a string giving the name
             of the font file.
-
-        `path`
-            The path to the font file, relative to the launcher's game
-            directory. If not given, defaults to fonts.
         """
 
-        if path is None:
-            path = "fonts"
-
-        fullfont = path + "/" + font
-
         def callback():
-            gui.REGULAR_FONT = fullfont
-            gui.LIGHT_FONT = fullfont
+            gui.REGULAR_FONT = font
+            gui.LIGHT_FONT = font
             gui.REGULAR_BOLD = True
 
-            style._default.font = fullfont
-            style.default.font = fullfont
+            style._default.font = font
+            style.default.font = font
 
-            gui.system_font = fullfont
+            gui.system_font = font
             gui.project_system_font = font
 
         config.language_callbacks[language].append(callback)
@@ -66,7 +57,7 @@ init -1 python:
         def s(s):
             return '"' + s + '"'
 
-        gui7.translate_copy(language, fullfont, font)
+        gui7.translate_copy(language, "sdk-fonts/" + font, font)
         gui7.translate_define(language, "gui.text_font", s(font))
         gui7.translate_define(language, "gui.name_text_font", s(font))
         gui7.translate_define(language, "gui.interface_text_font", s(font))

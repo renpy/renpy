@@ -39,7 +39,7 @@ declared in or by their full name, consisting of global and local name parts: ::
         jump global_label.local_name
 
 The label statement may take an optional list of parameters. These parameters
-are processed as described in :pep:`3102`, with two exceptions:
+are processed as described in :pep:`570`, with two exceptions:
 
 * The values of default parameters are evaluated at call time.
 * The variables are dynamically, rather than lexically, scoped.
@@ -112,7 +112,7 @@ stacks can return to the proper place when loaded on a changed script. ::
 
         return
 
-The call statement may take arguments, which are processed as described in :pep:`3102`.
+The call statement may take arguments, which are processed as described in :pep:`448`.
 
 When using a call expression with an arguments list, the ``pass`` keyword must
 be inserted between the expression and the arguments list. Otherwise, the
