@@ -778,13 +778,6 @@ screen preferences():
                         textbutton _("Fullscreen") action Preference("display", "fullscreen")
 
                 vbox:
-                    style_prefix "radio"
-                    label _("Rollback Side")
-                    textbutton _("Disable") action Preference("rollback side", "disable")
-                    textbutton _("Left") action Preference("rollback side", "left")
-                    textbutton _("Right") action Preference("rollback side", "right")
-
-                vbox:
                     style_prefix "check"
                     label _("Skip")
                     textbutton _("Unseen Text") action Preference("skip", "toggle")
