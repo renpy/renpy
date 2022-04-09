@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,7 +29,7 @@ cdef extern from "fribidi.h":
     int FRIBIDI_TYPE_WL
 
 cdef extern from "renpybidicore.h":
-    object renpybidi_log2vis(unicode, int *)
+    object renpybidi_log2vis(object, int *)
 
 WLTR = FRIBIDI_TYPE_WL
 LTR = FRIBIDI_TYPE_LTR
@@ -38,8 +38,7 @@ RTL = FRIBIDI_TYPE_RTL
 WRTL = FRIBIDI_TYPE_WR
 
 
-def log2vis(unicode s, int direction=FRIBIDI_TYPE_ON):
+def log2vis(s, int direction=FRIBIDI_TYPE_ON):
 
     s = renpybidi_log2vis(s, &direction)
     return s, direction
-

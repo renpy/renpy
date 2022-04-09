@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,10 +23,12 @@
 # the screen.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+
+
+import renpy
 from renpy.display.render import render, Render
-import renpy.display
 
 
 def scale(num, base):
@@ -125,9 +127,9 @@ class Container(renpy.display.core.Displayable):
 
     def __init__(self, *args, **properties):
 
-        self.children = self._list_type()
-        self.child = None
-        self.offsets = self._list_type()
+        self.children = self._list_type() # type: list
+        self.child = None # type: renpy.display.core.Displayable|None
+        self.offsets = self._list_type() # type: list[tuple[int, int]]
 
         for i in args:
             self.add(i)
@@ -535,26 +537,26 @@ class Grid(Container):
 
         return rv
 
+    def add(self, d):
+        super(Grid, self).add(d)
+
+        if len(self.children) > (self.cols * self.rows):
+            raise Exception("Grid overfull.")
+
     def per_interact(self):
         super(Grid, self).per_interact()
 
         delta = (self.cols * self.rows) - len(self.children)
-        if delta == 0:
-            return
-
-        elif delta < 0:
-            raise Exception("Grid overfull.")
-
-        if self.allow_underfull is None:
-            allow_underfull = renpy.config.allow_underfull_grids
-        else:
+        if delta > 0:
             allow_underfull = self.allow_underfull
+            if allow_underfull is None:
+                allow_underfull = renpy.config.allow_underfull_grids
 
-        if not allow_underfull:
-            raise Exception("Grid not completely full.")
-        else:
-            for _ in range(delta):
-                self.add(Null())
+            if not allow_underfull:
+                raise Exception("Grid not completely full.")
+            else:
+                for _ in range(delta):
+                    self.add(Null())
 
 
 class IgnoreLayers(Exception):
@@ -606,6 +608,12 @@ class MultiBox(Container):
     first = True
     order_reverse = False
     layout = None
+
+    _layer_at_list = None # type: list|None
+    _camera_list = None # type: list|None
+    layers = None # type: dict|None
+    raw_layers = None # type: dict|None
+
 
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
@@ -938,9 +946,11 @@ class MultiBox(Container):
             xfill = max(0, xfill)
             yfill = max(0, yfill)
 
-            if line:
-                xperchild = xfill // len(line)
-                yperchild = yfill // len(line)
+            line_count = len([i for i in line if not i[0]._box_skip])
+
+            if line_count > 0:
+                xperchild = xfill // line_count
+                yperchild = yfill // line_count
             else:
                 xperchild = 0
                 yperchild = 0
@@ -948,16 +958,23 @@ class MultiBox(Container):
             maxxout = maxx
             maxyout = maxy
 
-            for i, (child, x, y, surf) in enumerate(line):
+            i = 0
+
+            for child, x, y, surf in line:
+
                 sw, sh = surf.get_size()
                 sw = max(line_width, sw)
                 sh = max(line_height, sh)
 
-                x += i * xperchild
-                y += i * yperchild
+                if not child._box_skip:
 
-                sw += xperchild
-                sh += yperchild
+                    x += i * xperchild
+                    y += i * yperchild
+
+                    sw += xperchild
+                    sh += yperchild
+
+                    i += 1
 
                 placements.append((child, x, y, sw, sh, surf))
 
@@ -986,6 +1003,9 @@ class MultiBox(Container):
                 target_width = xminimum
 
             for d, padding, cst, cat in zip(children, spacings, csts, cats):
+
+                if d._box_skip:
+                    padding = 0
 
                 if box_wrap:
                     rw = width
@@ -1028,6 +1048,9 @@ class MultiBox(Container):
                 target_height = yminimum
 
             for d, padding, cst, cat in zip(children, spacings, csts, cats):
+
+                if d._box_skip:
+                    padding = 0
 
                 if box_wrap:
                     rh = height
@@ -1444,7 +1467,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             else:
                 child = raw_child
 
-            if isinstance(self.child, Transform) and isinstance(child, Transform):
+            if isinstance(self.child, renpy.display.transform.Transform) and isinstance(child, renpy.display.transform.Transform):
                 child.take_state(self.child)
                 child.take_execution_state(self.child)
 
@@ -1480,7 +1503,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
             else:
                 renpy.display.predict.displayable(child)
 
-        except:
+        except Exception:
             pass
 
     def get_placement(self):
@@ -1805,7 +1828,7 @@ class Side(Container):
         width = old_width
         height = old_height
 
-        self.offsets = [ None ] * len(self.children)
+        self.offsets = [ (0, 0) ] * len(self.children) # Fill temporarily.
 
         lefts = self.left_space
         rights = self.right_space
@@ -2150,7 +2173,7 @@ class AlphaMask(Container):
         rv = renpy.display.render.Render(w, h)
 
         rv.operation = renpy.display.render.IMAGEDISSOLVE
-        rv.operation_alpha = 1.0
+        rv.operation_alpha = True
         rv.operation_complete = 256.0 / (256.0 + 256.0)
         rv.operation_parameter = 256
 

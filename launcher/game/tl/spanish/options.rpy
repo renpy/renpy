@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # options.rpy:1
     old "## This file contains options that can be changed to customize your game."
@@ -22,11 +22,11 @@
 
     # options.rpy:17
     old "Ren'Py 7 Default GUI"
-    new "Ren'Py 7 Default GUI"
+    new "Interfaz por defecto de Ren'Py 7"
 
     # options.rpy:20
     old "## Determines if the title given above is shown on the main menu screen. Set this to False to hide the title."
-    new "## Determina si el título dado más arriba se muestra en el menú principal. Ajústalo a 'False' para esconder el título."
+    new "## Determina si el título dado más arriba se muestra en el menú principal. Ajústalo a 'False' para ocultar el título."
 
     # options.rpy:26
     old "## The version of the game."
@@ -46,7 +46,7 @@
 
     # options.rpy:47
     old "## These three variables control which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
-    new "## Estas tres variables controlan los mezcladores mostrados por defecto al jugador. Ajustar alguno a 'False' para esconderlo."
+    new "## Estas tres variables controlan los mezcladores mostrados por defecto al jugador. Ajustar alguno a 'False' lo ocultará."
 
     # options.rpy:56
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
@@ -138,11 +138,11 @@
 
     # options.rpy:152
     old "## Icon"
-    new "## Ícono"
+    new "## Icono"
 
     # options.rpy:154
     old "## The icon displayed on the taskbar or dock."
-    new "## El ícono mostrado en la barra de tareas."
+    new "## El icono mostrado en la barra de tareas."
 
     # options.rpy:159
     old "## Build configuration"

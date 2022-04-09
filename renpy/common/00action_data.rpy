@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -46,7 +46,7 @@ init -1600 python:
         try:
             obj = __get_field(obj, fields, kind)
             setattr(obj, attr, value)
-        except:
+        except Exception:
             raise NameError("The {} {} does not exist.".format(kind, name))
 
     @renpy.pure
@@ -126,6 +126,10 @@ init -1600 python:
 
         Causes the variable `name` associated with the current screen to
         be set to `value`.
+        In a ``use``\ d screen, this action sets the variable in the context
+        of the screen containing the ``use``\ d one(s).
+        To set variables within a ``use``\ d screen, and only in that
+        case, use :func:`SetLocalVariable` instead.
         """
 
         identity_fields = [ "value" ]
@@ -165,11 +169,13 @@ init -1600 python:
         Causes the variable `name` to be set to `value` in the current
         local context.
 
-        This function is only useful in a screen that has been use by
-        another scene, as it provides a way of setting the value of a
+        This function is only useful in a screen that has been ``use``\ d by
+        another screen, as it provides a way of setting the value of a
         variable inside the used screen. In all other cases,
         :func:`SetScreenVariable` should be preferred, as it allows more
         of the screen to be cached.
+
+        For more information, see :ref:`sl-use`.
 
         This must be created in the context that the variable is set
         in - it can't be passed in from somewhere else.
@@ -310,11 +316,13 @@ init -1600 python:
 
         Toggles the value of `name` in the current local context.
 
-        This function is only useful in a screen that has been use by
-        another scene, as it provides a way of setting the value of a
+        This function is only useful in a screen that has been ``use``\ d by
+        another screen, as it provides a way of setting the value of a
         variable inside the used screen. In all other cases,
         :func:`ToggleScreenVariable` should be preferred, as it allows more
         of the screen to be cached.
+
+        For more information, see :ref:`sl-use`.
 
         This must be created in the context that the variable is set
         in - it can't be passed in from somewhere else.
@@ -330,15 +338,19 @@ init -1600 python:
     @renpy.pure
     class ToggleScreenVariable(Action, FieldEquality):
         """
-         :doc: data_action
+        :doc: data_action
 
-         Toggles the value of the variable `name` in the current screen.
+        Toggles the value of the variable `name` in the current screen.
+        In a ``use``\ d screen, this action accesses and sets the given variable
+        in the context of the screen containing the ``use``\ d one(s).
+        To access and set variables within a ``use``\ d screen, and only in that
+        case, use :func:`ToggleLocalVariable` instead.
 
-         `true_value`
-             If not None, then this is the true value used.
-         `false_value`
-             If not None, then this is the false value used.
-         """
+        `true_value`
+            If not None, then this is the true value used.
+        `false_value`
+            If not None, then this is the false value used.
+        """
 
         equality_fields = [ "name", "true_value", "false_value" ]
 

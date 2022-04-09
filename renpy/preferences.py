@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,10 +20,12 @@
 # WITH THE SOFTWARE OR THE USE
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 import copy
-import renpy.audio
+import renpy
 
 pad_bindings = {
     "pad_leftshoulder_press" : [ "rollback", ],
@@ -175,6 +177,47 @@ class Preferences(renpy.object.Object):
     """
     __version__ = len(all_preferences)
 
+    # Default values, for typing purposes.
+    if 1 == 0:
+
+        fullscreen = False
+        skip_unseen = False
+        text_cps = 0
+        afm_time = 0
+        afm_enable = True
+        using_afm_enable = False
+        voice_sustain = False
+        mouse_move = False
+        show_empty_window = True
+        wait_voice = True
+        afm_after_click = False
+        transitions = 2
+        video_image_fallback = False
+        skip_after_choices = False
+        volumes = {}
+        mute = {}
+        joymap = {}
+        physical_size = None
+        virtual_size = None
+        renderer = u'auto'
+        performance_test = True
+        language = None
+        self_voicing = False
+        self_voicing_volume_drop = 0.5
+        emphasize_audio = False
+        pad_enabled = True
+        mobile_rollback_side = u'disable'
+        desktop_rollback_side = u'disable'
+        gl_npot = True
+        gl_powersave = True
+        gl_framerate = None
+        gl_tearing = False
+        font_transform = None
+        font_size = 1.0
+        font_line_spacing = 1.0
+        system_cursor = False
+        high_contrast = False
+
     def init(self):
         """
         Initializes the preference that have not been set.
@@ -255,5 +298,5 @@ class Preferences(renpy.object.Object):
         return not (self == other)
 
 
-renpy.game.Preferences = Preferences
+renpy.game.Preferences = Preferences # type: ignore
 renpy.game.preferences = Preferences()

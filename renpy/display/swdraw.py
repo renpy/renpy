@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,14 +20,16 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import renpy.display
-import pygame_sdl2 as pygame
+
+
 import math
 import time
 import os
 
+import pygame_sdl2 as pygame
+import renpy
 from renpy.display.render import blit_lock, IDENTITY, BLIT, DISSOLVE, IMAGEDISSOLVE, PIXELLATE, FLATTEN
 
 
@@ -546,7 +548,7 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         if clip:
 
             dest.blits.append(
-                (minx, miny, maxx + dx0, maxy + dy0, clip, what,
+                (minx, miny, maxx + dx0, maxy + dy0, clip, what, # type: ignore
                  (cx, cy,
                   forward.xdx, forward.ydx,
                   forward.xdy, forward.ydy,
@@ -716,8 +718,8 @@ class SWDraw(object):
         width, height = virtual_size
 
         # Set up scaling, if necessary.
-        screen_width = self.display_info.current_w
-        screen_height = self.display_info.current_h
+        screen_width = self.display_info.current_w # type: ignore
+        screen_height = self.display_info.current_h # type: ignore
 
         scale_factor = min(1.0 * screen_width / width, 1.0 * screen_height / height, 1.0)
         if "RENPY_SCALE_FACTOR" in os.environ:
@@ -772,7 +774,7 @@ class SWDraw(object):
         return (x, y)
 
     def mouse_event(self, ev):
-        x, y = getattr(ev, 'pos', pygame.mouse.get_pos())
+        x, y = getattr(ev, 'pos', pygame.mouse.get_pos()) # type: ignore
 
         x /= self.scale_factor
         y /= self.scale_factor

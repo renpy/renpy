@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -33,6 +33,7 @@ fields = [
     "xdz", "ydz", "zdz", "wdz",
     "xdw", "ydw", "zdw", "wdw",
     ]
+# not the same as documented
 
 cdef inline bint absne(float a, float b):
     return abs(a - b) > .0001
@@ -94,6 +95,9 @@ cdef class Matrix:
             0.0, 0.0, 1.0, 0.0,
             0.0, 0.0, 0.0, 1.0,
     """
+
+    _types = "".join(["{} : float\n".format(i) for i in fields])
+
 
     def __init__(Matrix self, l):
 
@@ -171,19 +175,6 @@ cdef class Matrix:
 
         return rv
 
-    def __getitem__(Matrix self, int index):
-        if 0 <= index < 16:
-            return self.m[index]
-
-        raise IndexError("Matrix index out of range.")
-
-    def __setitem__(Matrix self, int index, float value):
-        if 0 <= index < 16:
-            self.m[index] = value
-            return
-
-        raise IndexError("Matrix index out of range.")
-
     def __repr__(Matrix self):
         cdef int x, y
 
@@ -193,7 +184,7 @@ cdef class Matrix:
             if y:
                 rv += "\n        "
             for 0 <= x < 4:
-                rv += "{:10.7f}, ".format(self.m[x + y * 4])
+                rv += "{:10.7f}, ".format(self.m[x * 4 + y])
 
         return rv + "])"
 

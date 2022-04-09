@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -594,19 +594,6 @@ def transform_render(self, widtho, heighto, st, at):
     # Clipping.
     rv.xclipping = clipping
     rv.yclipping = clipping
-
-    if state.clip:
-        xclip = state.clip[0]
-        yclip = state.clip[1]
-
-        if isinstance(xclip, float):
-            xclip *= rv.width
-        if isinstance(yclip, float):
-            yclip *= rv.height
-
-        rv = rv.subsurface((0, 0, xclip, yclip))
-
-        width, height = xclip, yclip
 
     self.offsets = [ pos ]
     self.render_size = (width, height)

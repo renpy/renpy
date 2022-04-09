@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -335,13 +335,17 @@ screen web():
 
                         add SPACER
 
-                        text _("There are known issues with Safari and other Webkit-based browsers that may prevent games from running.")
+                        text _("Changes to modern web browsers may prevent games from running, or may require the developer tools window to be open to run games. (We're working on it.)")
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
 
 
 
 label web:
+
+    if not PY2:
+        $ interface.info(_("This feature is not supported in Ren'Py 8."),  _("We hope to restore support in a future release of Ren'Py 8."))
+        return
 
     if WEB_PATH is None:
         $ interface.yesno(_("Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"), no=Jump("front_page"))

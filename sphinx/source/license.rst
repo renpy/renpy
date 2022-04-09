@@ -58,8 +58,8 @@ Ren'Py binaries can include source code from the following projects:
 * urllib3 (MIT License)
 * chardet (GNU LGPL)
 * libusb (GNU LGPL)
-
-
+* tinyfiledialogs (Zlib License)
+s
 For the purposes of LGPL compliance, all source code that Ren'Py depends
 on is located in one of the following repositories:
 
@@ -1624,4 +1624,3 @@ Mozilla Public License 2.0
 
       This Source Code Form is "Incompatible With Secondary Licenses", as
       defined by the Mozilla Public License, v. 2.0.
-

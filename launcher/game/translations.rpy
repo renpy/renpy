@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -54,7 +54,7 @@ init python:
 
             try:
                 os.makedirs(os.path.join(config.basedir, "tmp"))
-            except:
+            except Exception:
                 pass
 
             write_test = os.path.join(tempdir, "writetest.txt")
@@ -67,7 +67,7 @@ init python:
 
             os.unlink(write_test)
 
-        except:
+        except Exception:
             tempdir = tempfile.mkdtemp()
 
         strings_json = os.path.join(tempdir, "strings.json")
@@ -381,19 +381,37 @@ screen extract_dialogue:
                     textbutton _("Escape quotes and other special characters.") action ToggleField(persistent, "dialogue_escape") style "l_checkbox"
                     textbutton _("Extract all translatable strings, not just dialogue.") action ToggleField(persistent, "dialogue_strings") style "l_checkbox"
 
+                add SPACER
+                add SEPARATOR2
+
+                frame:
+                    style "l_indent"
+                    has vbox
+
+                    text _("Language (or None for the default language):")
+
+                    input style "l_default":
+                        value FieldInputValue(persistent, "extract_language")
+                        size 24
+                        color INPUT_COLOR
+                        allow interface.TRANSLATE_LETTERS
+
 
     textbutton _("Cancel") action Jump("front_page") style "l_left_button"
     textbutton _("Continue") action Jump("start_extract_dialogue") style "l_right_button"
 
 label extract_dialogue:
 
+    $persistent.extract_language = persistent.extract_language or "None"
     call screen extract_dialogue
 
 label start_extract_dialogue:
 
     python:
 
-        args = [ "dialogue" ]
+        language = persistent.extract_language
+
+        args = [ "dialogue", language]
 
         if persistent.dialogue_format == "txt":
             args.append("--text")

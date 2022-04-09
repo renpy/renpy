@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,12 +27,13 @@
 # All functions in the is file should be documented in the wiki.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+from typing import Optional
 
 import sys
-import renpy.display
-import renpy.text
 
+import renpy
 from renpy.display.behavior import is_selected, is_sensitive
 
 ##############################################################################
@@ -84,7 +85,7 @@ class BarValue(renpy.object.Object):
     def periodic(self, st):
         return
 
-    def get_adjustment(self):
+    def get_adjustment(self): # type: (BarValue) -> renpy.display.behavior.Adjustment
         raise Exception("Not implemented")
 
     def get_style(self):
@@ -396,7 +397,7 @@ def reopen(w, clear):
 
 
 def context_enter(w):
-    if isinstance(renpy.ui.stack[-1], renpy.ui.Many) and renpy.ui.stack[-1].displayable is w:
+    if isinstance(renpy.ui.stack[-1], renpy.ui.Many) and renpy.ui.stack[-1].displayable is w: # type: ignore
         return
 
     raise Exception("%r cannot be used as a context manager.", type(w).__name__)
@@ -433,21 +434,21 @@ def prefixed_style(style_suffix):
 
 # The screen we're using as we add widgets. None if there isn't a
 # screen.
-screen = None
+screen = None # type: renpy.display.screen.ScreenDisplayable|None
 
 
 class Wrapper(renpy.object.Object):
 
     def __reduce__(self):
         if PY2:
-            return bytes(self.name)
+            return bytes(self.name) # type: ignore
         else:
             return self.name
 
     def __init__(self, function, one=False, many=False, imagemap=False, replaces=False, style=None, **kwargs):
 
         # The name assigned to this wrapper. This is used to serialize us correctly.
-        self.name = None
+        self.name = ''
 
         # The function to call.
         self.function = function
@@ -511,7 +512,7 @@ class Wrapper(renpy.object.Object):
                 do_add = False
 
         if old_transfers:
-            old_main = screen.old_widgets.get(widget_id, None)
+            old_main = screen.old_widgets.get(widget_id, None) # type: ignore
 
             if self.replaces and old_main is not None:
                 keyword["replaces"] = old_main
@@ -529,7 +530,7 @@ class Wrapper(renpy.object.Object):
             etype, e, tb = sys.exc_info(); etype
 
             if tb.tb_next is None:
-                e.args = (e.args[0].replace("__call__", "ui." + self.name),)
+                e.args = (e.args[0].replace("__call__", "ui." + self.name),) # type: ignore
 
             del tb # Important! Prevents memory leaks via our frame.
             raise
@@ -537,7 +538,7 @@ class Wrapper(renpy.object.Object):
         main = w._main or w
 
         # Migrate the focus.
-        if (old_main is not None) and (not screen.hiding):
+        if (old_main is not None) and (not screen.hiding): # type: ignore
             renpy.display.focus.replaced_by[id(old_main)] = main
 
         # Wrap the displayable based on the at_list and at_stack.
@@ -558,9 +559,9 @@ class Wrapper(renpy.object.Object):
 
         # Update the stack, as necessary.
         if self.one:
-            stack.append(One(w, style_prefix))
+            stack.append(One(w, style_prefix)) # type: ignore
         elif self.many:
-            stack.append(Many(w, self.imagemap, style_prefix))
+            stack.append(Many(w, self.imagemap, style_prefix)) # type:ignore
 
         # If we have an widget_id, record the displayable, the transform,
         # and maybe take the state from a previous transform.
@@ -706,7 +707,7 @@ class ChoiceActionBase(Action):
         if not self.location:
             return None
 
-        return renpy.game.persistent._chosen
+        return renpy.game.persistent._chosen # type: ignore
 
     def get_chosen(self):
         if self.chosen is None:
@@ -990,7 +991,7 @@ def _textbutton(label, clicked=None, style=None, text_style=None, substitute=Tru
     rv = renpy.display.behavior.Button(style=style, clicked=clicked, **button_kwargs)
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
     rv.add(text)
-    rv._main = text
+    rv._main = text # type: ignore
     rv._composite_parts = [ text ]
     return rv
 
@@ -1011,7 +1012,7 @@ def _label(label, style=None, text_style=None, substitute=True, scope=None, **kw
     rv = renpy.display.layout.Window(None, style=style, **label_kwargs)
     text = renpy.text.text.Text(label, style=text_style, substitute=substitute, scope=scope, **text_kwargs)
     rv.add(text)
-    rv._main = text
+    rv._main = text # type: ignore
     rv._composite_parts = [ text ]
     return rv
 
@@ -1282,7 +1283,7 @@ def _imagemap(ground=None, hover=None, insensitive=None, idle=None, selected_hov
     rv.add(box)
     parts.append(box)
 
-    rv._main = box
+    rv._main = box # type: ignore
     rv._composite_parts = parts
 
     return rv
@@ -1420,7 +1421,7 @@ def _jumps(label, transition=None):
     if transition is not None:
         renpy.exports.transition(transition)
 
-    raise renpy.exports.jump(label)
+    renpy.exports.jump(label)
 
 
 jumps = renpy.curry.curry(_jumps)
@@ -1470,7 +1471,10 @@ def screen_id(id_, d):
     if screen is None:
         raise Exception("ui.screen_id must be called from within a screen.")
 
-    screen.widget_id[id_] = d
+    screen.widgets[id_] = d._main or d
+    screen.base_widgets[id_] = d
+
+
 
 ##############################################################################
 # Postamble

@@ -84,10 +84,11 @@ Tools
 -----
 
 .. toctree::
-    :maxdepth: 1
+   :maxdepth: 1
 
-    developer_tools
-    director
+   launcher
+   developer_tools
+   director
 
 Other Functionality
 -------------------
@@ -197,4 +198,3 @@ Example Scripts
 
    thequestion
    thequestion_nvl
-

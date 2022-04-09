@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,38 +20,38 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-import pygame_sdl2.controller
-import renpy.display
 
+import os
+
+import pygame_sdl2
 from pygame_sdl2 import CONTROLLERDEVICEADDED, CONTROLLERDEVICEREMOVED
 from pygame_sdl2 import CONTROLLERAXISMOTION, CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP
 from pygame_sdl2.controller import Controller, get_string_for_axis, get_string_for_button
-
 import pygame_sdl2 as pygame
 
-import os
+import renpy
 
 
 def load_mappings():
 
     try:
-        with renpy.loader.load("renpycontrollerdb.txt") as f:
+        with renpy.loader.load("renpycontrollerdb.txt", "rb") as f:
             pygame_sdl2.controller.add_mappings(f)
-    except:
+    except Exception:
         pass
 
     try:
-        with renpy.loader.load("gamecontrollerdb.txt") as f:
+        with renpy.loader.load("gamecontrollerdb.txt", "rb") as f:
             pygame_sdl2.controller.add_mappings(f)
-    except:
+    except Exception:
         pass
 
     try:
         with open(os.path.join(renpy.config.renpy_base, "gamecontrollerdb.txt"), "rb") as f:
             pygame_sdl2.controller.add_mappings(f)
-    except:
+    except Exception:
         pass
 
 
@@ -66,8 +66,15 @@ def init():
     try:
         pygame_sdl2.controller.init()
         load_mappings()
-    except:
+    except Exception:
         renpy.display.log.exception()
+
+    if not renpy.display.interface.safe_mode:
+        try:
+            for i in range(pygame_sdl2.controller.get_count()):
+                start(i)
+        except Exception:
+            renpy.display.log.exception()
 
 
 # A map from controller index to controller object.
@@ -143,7 +150,10 @@ def start(index):
     """
 
     quit(index)
-    controllers[index] = c = Controller(index)
+    c = Controller(index)
+
+    if not c.is_controller():
+        return
 
     renpy.exports.write_log("controller: %r %r %r" % (c.get_guid_string(), c.get_name(), c.is_controller()))
 
@@ -153,7 +163,11 @@ def start(index):
                 renpy.exports.write_log("Controller found in blocklist, not using.")
                 return
 
-    c.init()
+    try:
+        c.init()
+        controllers[index] = c
+    except Exception:
+        renpy.display.log.exception()
 
     renpy.exports.restart_interaction()
 

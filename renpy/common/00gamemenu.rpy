@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -58,9 +58,6 @@ init -1700 python:
     # menus: Transition that's used at the end of the game, when returning
     # to the main menu.
     config.end_game_transition = None
-
-    # basics: True if autosave should be used.
-    config.has_autosave = True
 
     # basics: True if quicksave has been enabled.
     config.has_quicksave = True

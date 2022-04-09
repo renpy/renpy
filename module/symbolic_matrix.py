@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 from sympy import symbols, Matrix, pi, cos, sin, simplify
 import io
 
@@ -35,8 +35,6 @@ def prefixed_matrix(prefix):
 ###############################################################################
 
 
-import cStringIO
-
 generators = [ ]
 
 
@@ -44,10 +42,10 @@ class Generator(object):
 
     def __init__(self, name, docs):
 
-        self.pyd_f = cStringIO.StringIO()
-        self.pyx_f = cStringIO.StringIO()
+        self.pyd_f = io.StringIO()
+        self.pyx_f = io.StringIO()
 
-        self.f = cStringIO.StringIO()
+        self.f = io.StringIO()
 
         self.name = name
         self.docs = docs

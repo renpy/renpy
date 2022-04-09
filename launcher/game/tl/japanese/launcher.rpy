@@ -562,8 +562,8 @@ translate japanese strings:
     new "[project_dir!q] は既に存在します。違う名前を選択してください。"
 
     # gui7.rpy:341
-    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
-    new "どの解像度をこのプロジェクトに使用しますか？ Ren'py はウィンドウを拡大縮小することができますが、この設定は最初のウィンドウサイズ、描画される各アセットのサイズ、アセットが最もシャープに見えるサイズを決定します。\n\nデフォルトの 1280x720 が理にかなった推奨サイズです。"
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "どの解像度をこのプロジェクトに使用しますか？ Ren'py はウィンドウを拡大縮小することができますが、この設定は最初のウィンドウサイズ、描画される各アセットのサイズ、アセットが最もシャープに見えるサイズを決定します。\n\nデフォルトの [default_size[0]]x[default_size[1]] が理にかなった推奨サイズです。"
 
     # gui7.rpy:389
     old "Creating the new project..."
@@ -1091,7 +1091,7 @@ translate japanese strings:
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py は台詞の抽出を終了しました。抽出した台詞は、base ディレクトリーの、[persistent.dialogue_format] にあります。"
+    new "Ren'Py は台詞の抽出を終了しました。抽出した台詞は、ディレクトリーの base.[persistent.dialogue_format] にあります。"
 
     # updater.rpy:75
     old "Select Update Channel"
@@ -1928,4 +1928,10 @@ translate japanese strings:
     # game/android.rpy:398
     old "Play Bundle"
     new "Play Bundle"
+
+translate japanese strings:
+
+    # game/gui7.rpy:340
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
+    new "プロジェクトはどの解像度を使用しますか? Ren'Py ではウィンドウの拡大縮小ができますが、これはウィンドウの初期サイズであり、もっともアセットがシャープに描画されるサイズです。\n\nデフォルトの1280x720が合理的な妥当な案です。"
 

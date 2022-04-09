@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,10 +19,6 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-python early:
-
-    # Should steam be enabled?
-    config.enable_steam = True
 
 init -1500 python in achievement:
     from store import persistent, renpy, config, Action
@@ -152,133 +148,7 @@ init -1500 python in achievement:
 
     backends.append(PersistentBackend())
 
-    steam_maximum_framerate = 15
-
-    # The position of the steam notification popup. One of "top left", "top right",
-    # "bottom left", or "bottom right".
-    steam_position = None
-
-    class SteamBackend(Backend):
-        """
-        A backend that sends achievements to Steam. This is only used if steam
-        has loaded and initialized successfully.
-        """
-
-        def __init__(self):
-            # A map from achievement name to steam name.
-            self.names = { }
-            self.stats = { }
-
-            steam.retrieve_stats()
-            renpy.maximum_framerate(steam_maximum_framerate)
-
-        def register(self, name, steam=None, steam_stat=None, stat_max=None, stat_modulo=1, **kwargs):
-            if steam is not None:
-                self.names[name] = steam
-
-            self.stats[name] = (steam_stat, stat_max, stat_modulo)
-
-        def grant(self, name):
-            name = self.names.get(name, name)
-
-            renpy.maximum_framerate(steam_maximum_framerate)
-            steam.grant_achievement(name)
-            steam.store_stats()
-
-        def clear(self, name):
-            name = self.names.get(name, name)
-
-            steam.clear_achievement(name)
-            steam.store_stats()
-
-        def clear_all(self):
-            for i in steam.list_achievements():
-                steam.clear_achievement(i)
-
-            steam.store_stats()
-
-        def progress(self, name, completed):
-
-            orig_name = name
-
-            completed = int(completed)
-
-            if name not in self.stats:
-                if config.developer:
-                    raise Exception("To report progress, you must register {} with a stat_max.".format(name))
-                else:
-                    return
-
-            current = persistent._achievement_progress.get(name, 0)
-
-            steam_stat, stat_max, stat_modulo = self.stats[name]
-
-            name = self.names.get(name, name)
-
-            if (current is not None) and (current >= completed):
-                return
-
-            renpy.maximum_framerate(steam_maximum_framerate)
-
-            if completed >= stat_max:
-                steam.grant_achievement(name)
-            else:
-                if (stat_modulo is None) or (completed % stat_modulo) == 0:
-                    steam.indicate_achievement_progress(name, completed, stat_max)
-
-            steam.store_stats()
-
-        def has(self, name):
-            name = self.names.get(name, name)
-
-            return steam.get_achievement(name)
-
-    def steam_preinit():
-        """
-        This runs before steam.init(), and sets up the steam_appid
-        from config.steam_appid.
-        """
-
-        import os, sys
-
-        if config.early_script_version is not None:
-            return
-
-        if config.steam_appid is None:
-            return
-
-        with open(os.path.join(os.path.dirname(sys.executable), "steam_appid.txt"), "w") as f:
-            f.write(str(config.steam_appid) + "\n")
-
-    # Are the steam libraries installed? Used by the launcher.
-    has_steam = False
-
-    try:
-        import _renpysteam as steam
-        has_steam = True
-        renpy.write_log("Imported steam.")
-    except Exception as e:
-        steam = None
-        renpy.write_log("Importing _renpysteam: %r", e)
-
-    if steam is not None:
-
-        want_version = 2
-
-        if steam.version < want_version:
-            raise Exception("_renpysteam module is too old. (want version %d, got %d)" % (steam.version, want_version))
-
-        steam_preinit()
-
-        if not config.enable_steam:
-            steam = None
-        elif steam.init():
-            renpy.write_log("Initialized steam.")
-            backends.insert(0, SteamBackend())
-        else:
-            renpy.write_log("Failed to initialize steam.")
-            steam = None
-
+    # The Steam back-end has been moved to 00steam.rpy.
 
     def register(name, **kwargs):
         """
@@ -423,16 +293,3 @@ init -1500 python in achievement:
                     if not i.has(a):
                         return True
             return False
-
-init 1500 python in achievement:
-
-    # Steam position.
-    if steam is not None:
-        if steam_position == "top left":
-            steam.set_overlay_notification_position(steam.POSITION_TOP_LEFT)
-        elif steam_position == "top right":
-            steam.set_overlay_notification_position(steam.POSITION_TOP_RIGHT)
-        elif steam_position == "bottom left":
-            steam.set_overlay_notification_position(steam.POSITION_BOTTOM_LEFT)
-        elif steam_position == "bottom right":
-            steam.set_overlay_notification_position(steam.POSITION_BOTTOM_RIGHT)

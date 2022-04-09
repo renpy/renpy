@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -99,7 +99,7 @@ class GuiParameters(object):
 
         GOOD_CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
 
-        simple_name = "".join(i for i in name if i in GOOD_CHARACTERS).encode("ascii")
+        simple_name = "".join(i for i in name if i in GOOD_CHARACTERS)
 
         if not simple_name:
             simple_name = "game"

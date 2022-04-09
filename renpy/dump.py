@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,9 @@
 # including how to navigate around the game.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 
 import inspect
 import json
@@ -76,7 +78,7 @@ def dump(error):
 
     completed_dump = True
 
-    if not args.json_dump:
+    if not args.json_dump: # type: ignore
         return
 
     def name_filter(name, filename): # @ReservedAssignment
@@ -86,7 +88,7 @@ def dump(error):
 
         filename = filename.replace("\\", "/")
 
-        if name.startswith("_") and not args.json_dump_private:
+        if name.startswith("_") and not args.json_dump_private: # type: ignore
             if name.startswith("__") and name.endswith("__"):
                 pass
             else:
@@ -96,7 +98,7 @@ def dump(error):
             return False
 
         if filename.startswith("common/") or filename.startswith("renpy/common/"):
-            return args.json_dump_common
+            return args.json_dump_common # type: ignore
 
         if not filename.startswith("game/"):
             return False
@@ -210,7 +212,7 @@ def dump(error):
                         continue
 
                     code[prefix + name] = [ filename, line ]
-                except:
+                except Exception:
                     continue
 
             if inspect.isclass(o):
@@ -233,23 +235,23 @@ def dump(error):
                             continue
 
                         code[prefix + name + "." + methname] = [ filename, line ]
-                    except:
+                    except Exception:
                         continue
 
     # Add the build info from 00build.rpy, if it's available.
     try:
-        result["build"] = renpy.store.build.dump() # @UndefinedVariable
-    except:
+        result["build"] = renpy.store.build.dump() # type: ignore
+    except Exception:
         pass
 
-    filename = renpy.exports.fsdecode(args.json_dump)
+    filename = renpy.exports.fsdecode(args.json_dump) # type: ignore
 
     if filename != "-":
         new = filename + ".new"
 
         if PY2:
             with open(new, "wb") as f:
-                json.dump(result, f)
+                json.dump(result, f) # type: ignore
         else:
             with open(new, "w") as f:
                 json.dump(result, f)

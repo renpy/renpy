@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -33,7 +33,7 @@ def expose_file(fn):
 
         try:
             os.chmod(fn, 0o660)
-        except:
+        except Exception:
             pass
 
 
@@ -47,5 +47,5 @@ def expose_directory(dn):
 
         try:
             os.chmod(dn, 0o770)
-        except:
+        except Exception:
             pass

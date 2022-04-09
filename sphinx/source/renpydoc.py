@@ -2,8 +2,10 @@
 from __future__ import print_function
 from pygments.lexers.agile import PythonLexer
 from pygments.token import Token, Name, Operator
+import sys
 
 import keywords
+
 
 KEYWORDS = set(keywords.keywords)
 PROPERTIES = set(keywords.properties)
@@ -88,7 +90,10 @@ class PythonIndex(sphinx.domains.Index):
 
         entries = [ ]
 
-        for name, (docname, kind) in self.domain.data['objects'].iteritems():
+        for name, oe in self.domain.data['objects'].items():
+
+            docname = oe[0]
+            kind = oe[1]
 
             if kind == "function" or kind == "class":
                 entries.append((name, 0, docname, name, None, None, ''))
@@ -103,7 +108,7 @@ class PythonIndex(sphinx.domains.Index):
 
             content[c].append((name, subtype, docname, anchor, extra, qualifier, descr))
 
-        for i in content.itervalues():
+        for i in content.values():
             i.sort()
 
         # self.domain.data['labels']["py-function-class-index"] = ("py-function-class-index", '', self.localname)
@@ -125,7 +130,7 @@ class CustomIndex(sphinx.domains.Index):
 
         entries = [ ]
 
-        for (kind, name), (docname, anchor) in self.domain.data["objects"].iteritems():
+        for (kind, name), (docname, anchor) in self.domain.data["objects"].items():
 
             if self.kind != kind:
                 continue
@@ -145,7 +150,7 @@ class CustomIndex(sphinx.domains.Index):
 
             content[c].append((name, subtype, docname, anchor, extra, qualifier, descr))
 
-        for i in content.itervalues():
+        for i in content.values():
             i.sort()
 
         self.domain.data['labels'][self.kind + "-index"] = ("std-" + self.kind + "-index", '', self.localname)
@@ -166,7 +171,11 @@ def add_index(app, domain, object_type, title):
 
 def setup(app):
     # app.add_description_unit('property', 'propref')
-    app.add_lexer('renpy', RenPyLexer())
+
+    if sys.version_info[0] == 2:
+        app.add_lexer("renpy", RenPyLexer())
+    else:
+        app.add_lexer('renpy', RenPyLexer)
     app.add_object_type("var", "var", "single: %s (variable)", parse_node=parse_var_node)
     app.add_object_type("style-property", "propref", "single: %s (style property)", parse_node=parse_style_node)
     app.add_object_type("transform-property", "tpref", "single: %s (transform property)")

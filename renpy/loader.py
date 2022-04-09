@@ -1,4 +1,4 @@
-# Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,10 +20,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+from typing import Optional
 
 import renpy
-import os.path
+import os
 import sys
 import types
 import threading
@@ -56,7 +58,7 @@ def get_path(fn):
     try:
         if not os.path.exists(dn):
             os.makedirs(dn)
-    except:
+    except Exception:
         pass
 
     return fn
@@ -65,7 +67,7 @@ def get_path(fn):
 
 
 if renpy.android:
-    import android.apk
+    import android.apk # type: ignore
 
     expansion = os.environ.get("ANDROID_EXPANSION", None)
     if expansion is not None:
@@ -112,6 +114,8 @@ class RPAv3ArchiveHandler(object):
     Archive handler handling RPAv3 archives.
     """
 
+    archive_extension = ".rpa"
+
     @staticmethod
     def get_supported_extensions():
         return [ ".rpa" ]
@@ -128,6 +132,15 @@ class RPAv3ArchiveHandler(object):
         infile.seek(offset)
         index = loads(zlib.decompress(infile.read()))
 
+        def start_to_bytes(s):
+            if not s:
+                return b''
+
+            if not isinstance(s, bytes):
+                s = s.encode("latin-1")
+
+            return s
+
         # Deobfuscate the index.
 
         for k in index.keys():
@@ -135,7 +148,8 @@ class RPAv3ArchiveHandler(object):
             if len(index[k][0]) == 2:
                 index[k] = [ (offset ^ key, dlen ^ key) for offset, dlen in index[k] ]
             else:
-                index[k] = [ (offset ^ key, dlen ^ key, start) for offset, dlen, start in index[k] ]
+                index[k] = [ (offset ^ key, dlen ^ key, start_to_bytes(start)) for offset, dlen, start in index[k] ]
+
         return index
 
 
@@ -146,6 +160,8 @@ class RPAv2ArchiveHandler(object):
     """
     Archive handler handling RPAv2 archives.
     """
+
+    archive_extension = ".rpa"
 
     @staticmethod
     def get_supported_extensions():
@@ -172,6 +188,8 @@ class RPAv1ArchiveHandler(object):
     """
     Archive handler handling RPAv1 archives.
     """
+
+    archive_extension = ".rpa"
 
     @staticmethod
     def get_supported_extensions():
@@ -231,7 +249,7 @@ def index_archives():
             try:
                 fn = transfn(prefix + ext)
                 f = open(fn, "rb")
-            except:
+            except Exception:
                 continue
             with f:
                 file_header = f.read(max_header_length)
@@ -241,7 +259,7 @@ def index_archives():
                         if file_header.startswith(header):
                             f.seek(0, 0)
                             index = handler.read_index(f)
-                            archives.append((prefix + ext, index))
+                            archives.append((prefix + handler.archive_extension, index))
                             archive_handled = True
                             break
                     if archive_handled == True:
@@ -266,7 +284,7 @@ def walkdir(dir): # @ReservedAssignment
 
         try:
             i = renpy.exports.fsdecode(i)
-        except:
+        except Exception:
             continue
 
         if os.path.isdir(dir + "/" + i):
@@ -370,7 +388,7 @@ def scandirfiles_from_remote_file(add, seen):
     index_filename = os.path.join(renpy.config.gamedir, 'renpyweb_remote_files.txt')
     if os.path.exists(index_filename):
         files = game_files
-        with open(index_filename, 'rb') as remote_index:
+        with open(index_filename, 'r') as remote_index:
             while True:
                 f = remote_index.readline()
                 metadata = remote_index.readline()
@@ -489,7 +507,7 @@ class SubFile(object):
             rv2 = self.f.read(length)
             self.offset += len(rv2)
         else:
-            rv2 = ""
+            rv2 = b""
 
         return (rv1 + rv2)
 
@@ -506,12 +524,12 @@ class SubFile(object):
 
         # If we're in the start, then read the line ourselves.
         if self.offset < len(self.start):
-            rv = ''
+            rv = b''
 
             while length:
-                c = self.read(1)
+                c = self.read(1) # type: bytes
                 rv += c
-                if c == '\n':
+                if c == b'\n':
                     break
                 length -= 1
 
@@ -535,7 +553,7 @@ class SubFile(object):
 
             if length is not None:
                 length -= len(l)
-                if l < 0:
+                if length < 0:
                     break
 
             rv.append(l)
@@ -594,7 +612,7 @@ class SubFile(object):
         raise Exception("Write not supported by SubFile")
 
 
-open_file = open
+open_file = open # type: ignore
 
 if "RENPY_FORCE_SUBFILE" in os.environ:
 
@@ -605,7 +623,7 @@ if "RENPY_FORCE_SUBFILE" in os.environ:
         length = f.tell()
         f.seek(0, 0)
 
-        return SubFile(f, 0, length, '')
+        return SubFile(f, 0, length, b'')
 
 # A list of callbacks to open an open python file object of the given type.
 file_open_callbacks = [ ]
@@ -649,7 +667,7 @@ def load_from_filesystem(name):
         try:
             fn = transfn(name)
             return open_file(fn, "rb")
-        except:
+        except Exception:
             pass
 
     return None
@@ -682,7 +700,6 @@ def load_from_archive(name):
     """
     Returns an open python file object of the given type from an archive file.
     """
-
     for prefix, index in archives:
         if not name in index:
             continue
@@ -759,7 +776,7 @@ def get_prefixes(tl=True):
     rv = [ ]
 
     if tl:
-        language = renpy.game.preferences.language # @UndefinedVariable
+        language = renpy.game.preferences.language # type: ignore
     else:
         language = None
 
@@ -807,7 +824,7 @@ def loadable_core(name):
         transfn(name)
         loadable_cache[name] = True
         return True
-    except:
+    except Exception:
         pass
 
     for apk in apks:
@@ -873,7 +890,7 @@ def transfn(name):
 hash_cache = dict()
 
 
-def get_hash(name):
+def get_hash(name): # type: (str) -> int
     """
     Returns the time the file m was last modified, or 0 if it
     doesn't exist or is archived.
@@ -896,7 +913,7 @@ def get_hash(name):
 
             rv = zlib.adler32(data, rv)
 
-    except:
+    except Exception:
         pass
 
     hash_cache[name] = rv
@@ -915,7 +932,7 @@ class RenpyImporter(object):
     def __init__(self, prefix=""):
         self.prefix = prefix
 
-    def translate(self, fullname, prefix=None):
+    def translate(self, fullname, prefix=None): # type: (str, Optional[str]) -> str
 
         if prefix is None:
             prefix = self.prefix
@@ -926,7 +943,7 @@ class RenpyImporter(object):
 
             fn = prefix + fullname.replace(".", "/")
 
-        except:
+        except Exception:
             # raise Exception("Could importer-translate %r + %r" % (prefix, fullname))
             return None
 
@@ -973,11 +990,11 @@ class RenpyImporter(object):
 
                 code = compile(source, filename, 'exec', renpy.python.old_compile_flags, 1)
                 break
-            except:
+            except Exception:
                 if encoding == "latin-1":
                     raise
 
-        exec(code, mod.__dict__)
+        exec(code, mod.__dict__) # type: ignore
 
         return sys.modules[fullname]
 
@@ -1000,7 +1017,10 @@ def add_python_directory(path):
     if path and not path.endswith("/"):
         path = path + "/"
 
-    sys.meta_path.insert(0, RenpyImporter(path))
+    sys.meta_path.insert(0, RenpyImporter(path)) # type: ignore
+    # per: https://docs.python.org/3/library/sys.html#sys.meta_path,
+    # objects in sys.meta_path may have just find_module, and find_spec
+    # is synthesized.
 
 
 def init_importer():
@@ -1042,7 +1062,7 @@ def auto_mtime(fn):
 
     try:
         return os.path.getmtime(fn)
-    except:
+    except Exception:
         return None
 
 
