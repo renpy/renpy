@@ -96,11 +96,16 @@ init -1500 python in build:
         ( "renpy/", "all"),
         ( "renpy/**.py", "renpy"),
 
-        ( "renpy/**.pyx", None),
+        # Ignore Cython source files.
         ( "renpy/**.pxd", None),
         ( "renpy/**.pxi", None),
+        ( "renpy/**.pyx", None),
+
+        # Ignore legacy Python bytcode files (unless allowed above).
         ( "renpy/**.pyc", None),
         ( "renpy/**.pyo", None),
+
+        # Ignore Python interface files.
         ( "renpy/**.pyi", None),
 
         ( "renpy/common/", "all"),
