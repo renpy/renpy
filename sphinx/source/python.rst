@@ -9,8 +9,22 @@ support can be used for many things, from setting a flag to creating
 new displayables. This chapter covers ways in which Ren'Py scripts can
 directly invoke Python, through the various Python statements.
 
-Ren'Py currently supports Python 2.7, though we strongly recommend you write
-Python that runs in Python 2 and Python 3.
+Ren'Py 7 supports Python 2.7. Ren'Py 8 supports Python 3.9.
+
+.. note::
+    If you know Python, you'll be able to take advantage of that. However,
+    not everything you know about Python will apply directly. For example.
+    Python packages that don't ship with Ren'Py may not work inside Ren'Py.
+
+    There are also some Python constructs that work, but may lead to problems
+    in saving. Please read the :ref:`save, load, and rollback <save-load-rollback>` page
+    for more details, especially the section on :ref:`what can't be saved <cant-save>`.
+    (You need to be careful with files, sockets, iterators, task, futures, and
+    generators.)
+
+    Finally, while many statements have Python equivalents, those equivalents
+    can be inferior. For example, Ren'Py can predict the ``show`` statement,
+    and load images early, but it can't predict the :func:`renpy.show` function.
 
 .. _python-statement:
 
@@ -133,7 +147,8 @@ is equivalent to::
         e = Character("Eileen")
 
 The define statement can take an optional named store (see below), by
-prepending it to the variable name with a dot. For example::
+prepending it to the variable name with a dot. The store is created
+if it doesn't already exist. For example::
 
     define character.e = Character("Eileen")
 
@@ -181,7 +196,8 @@ When the variable ``points`` is not defined at game load, it's equivalent to::
         $ points = 0
 
 The default statement can take an optional named store (see below), by
-prepending it to the variable name with a dot. For example::
+prepending it to the variable name with a dot. The store is created
+if it doesn't already exist. For example::
 
     default schedule.day = 0
 
@@ -257,6 +273,8 @@ Named stores can be accessed by supplying the ``in`` clause to
 store. Each store corresponds to a Python module. The default store is
 ``store``, while a named store is accessed as ``store.name``. Names in
 the modules can be imported using the Python ``from`` statement.
+Named stores can be created using ``init python in`` blocks, or using
+default or define statements.
 
 For example::
 
@@ -270,13 +288,21 @@ For example::
             serial_number += 1
             return serial_number
 
+    default character_stats.chloe_substore.friends = {"Eileen",}
+
     label start:
         $ serial = mystore.serial()
 
+        if "Lucy" in character_stats.chloe_substore.friends:
+            chloe "Lucy is my friend !"
+        elif character_stats.chloe_substore.friends:
+            chelo "I have friends, but Lucy is not one of them."
+
 
 Named stores participate in save, load, and rollback in the same way
-that the default store does. The defined statement can be used to
-define names in a named store.
+that the default store does. Special namespaces such as ``persistent``,
+``config``, ``renpy``... do not and never have supported substore creation
+within them.
 
 
 .. _python-modules:

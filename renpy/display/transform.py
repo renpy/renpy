@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Any
 
 # This file contains displayables that move, zoom, rotate, or otherwise
@@ -84,7 +85,7 @@ def polar_to_cartesian(angle, radius, xaround, yaround):
 
 def first_not_none(*args):
     """
-    Returns the first argument that is not None, or the last argument if 
+    Returns the first argument that is not None, or the last argument if
     all are None.
     """
 
@@ -417,7 +418,7 @@ class Transform(Container):
 
     # Compatibility with old versions of the class.
     active = False
-    children = [ ] 
+    children = [ ]
     arguments = DEFAULT_ARGUMENTS
 
     # Default before we set this.
@@ -430,13 +431,14 @@ class Transform(Container):
                  focus=None,
                  default=False,
                  _args=None,
+                 alt=None,
 
                  **kwargs):
 
         self.kwargs = kwargs
         self.style_arg = style
 
-        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args)
+        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args, alt=alt)
 
         self.function = function
 
@@ -774,7 +776,7 @@ class Transform(Container):
         if child is None:
             child = self.child
 
-        if (child is not None) and (child._duplicatable):
+        if getattr(child, '_duplicatable', False):
             child = child._duplicate(_args)
 
         rv = Transform(
@@ -986,7 +988,6 @@ add_property("additive", float, 0.0)
 add_property("alpha", float, 1.0)
 add_property("blend", any_object, None)
 add_property("blur", float_or_none, None)
-add_property("clip", (position, position), None)
 add_property("corner1", (float, float), None)
 add_property("corner2", (float, float), None)
 add_property("crop", (float, float, float, float), None)

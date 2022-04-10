@@ -435,20 +435,20 @@ init -1400:
 
         swing = Swing()
 
-init -1400:
+init -1400 python:
 
     # The default narrator.
-    define _narrator = Character(None, kind=adv, what_style='say_thought')
-    define centered = Character(None, what_style="centered_text", window_style="centered_window", statement_name="say-centered")
-    define vcentered = Character(None, what_style="centered_vtext", window_style="centered_window", statement_name="say-centered")
+    _narrator = Character(None, kind=adv, what_style='say_thought')
+    adv_narrator = _narrator
+
+    # Centered characters.
+    centered = Character(None, what_style="centered_text", window_style="centered_window", statement_name="say-centered")
+    vcentered = Character(None, what_style="centered_vtext", window_style="centered_window", statement_name="say-centered")
 
 
 init 1400 python:
     if not hasattr(store, 'narrator'):
         narrator = _narrator
-
-    renpy.pure('narrator')
-    renpy.pure('name_only')
 
     # This is necessary to ensure that config.default_transform works.
     if config.default_transform:

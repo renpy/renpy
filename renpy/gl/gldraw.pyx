@@ -331,8 +331,8 @@ cdef class GLDraw:
         bound_h = min(visible_h, head_h)
 
         self.info["max_window_size"] = (
-            int(round(min(bound_h * virtual_ar, bound_w))),
-            int(round(min(bound_w / virtual_ar, bound_h))),
+            round(min(bound_h * virtual_ar, bound_w)),
+            round(min(bound_w / virtual_ar, bound_h)),
             )
 
         if renpy.windows or renpy.linux or renpy.macintosh:
@@ -350,8 +350,8 @@ cdef class GLDraw:
                 pheight = min(visible_h, pheight, head_h)
                 pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
 
-        pwidth = int(round(pwidth))
-        pheight = int(round(pheight))
+        pwidth = round(pwidth)
+        pheight = round(pheight)
 
         pwidth = max(pwidth, 256)
         pheight = max(pheight, 256)
@@ -876,8 +876,8 @@ cdef class GLDraw:
             if isinstance(what, gltexture.TextureGrid):
 
                 if (not subpixel) and reverse.is_unit_aligned():
-                    xo = round(xo)
-                    yo = round(yo)
+                    xo = float(round(xo))
+                    yo = float(round(yo))
 
                 self.set_clip(clip)
 

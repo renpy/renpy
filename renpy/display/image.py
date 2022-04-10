@@ -24,7 +24,8 @@
 # of the stuff thar uses images remaining.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 
 import renpy
@@ -900,7 +901,7 @@ class ShownImageInfo(renpy.object.Object):
 
         self.shown.discard((layer, tag))
 
-    def apply_attributes(self, layer, tag, name, wanted=[], remove=[]):
+    def apply_attributes(self, layer, tag, name):
         """
         Given a layer, tag, and an image name (with attributes),
         returns the canonical name of an image, if one exists. Raises
@@ -916,7 +917,7 @@ class ShownImageInfo(renpy.object.Object):
             layer = renpy.config.tag_layer.get(tag, "master")
 
         # If the name matches one that exactly exists, return it.
-        if (name in images) and not (wanted or remove):
+        if name in images:
             ca = getattr(images[name], "_choose_attributes", None)
 
             if ca is None:
@@ -924,8 +925,18 @@ class ShownImageInfo(renpy.object.Object):
 
         nametag = name[0]
 
-        # The set of attributes a matching image may have.
-        optional = list(wanted) + list(self.attributes.get((layer, tag), [ ]))
+        # Find any attributes applied previously.
+        defaults = self.attributes.get((layer, tag), None)
+
+        # If no record, it's the first show, so try to fetch defaults.
+        if defaults is None:
+            f = renpy.config.default_attribute_callbacks.get(name[0], None) \
+                or renpy.config.default_attribute_callbacks.get(None, None)
+            if f is not None:
+                defaults = f(name)
+
+        # The list of attributes a matching image may have.
+        optional = list(defaults) if defaults else [ ]
 
         # The list of attributes a matching image must have.
         required = [ ]
@@ -943,10 +954,6 @@ class ShownImageInfo(renpy.object.Object):
 
             else:
                 required.append(i)
-
-        for i in remove:
-            if i in optional:
-                optional.remove(i)
 
         return self.choose_image(nametag, required, optional, name)
 

@@ -20,14 +20,16 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-from typing import Optional
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+from typing import Optional
 
 import os
 import sys
 import subprocess
 import io
+
+import __main__
 
 # Encoding and sys.stderr/stdout handling ######################################
 
@@ -114,12 +116,12 @@ def popen_del(self, *args, **kwargs):
 
     return
 
-
 def bootstrap(renpy_base):
 
-    global renpy # W0602
+    global renpy
 
-    import renpy.log # @UnusedImport
+    import renpy.config
+    import renpy.log
 
     # Remove a legacy environment setting.
     if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
@@ -182,28 +184,7 @@ def bootstrap(renpy_base):
         if not os.path.exists(basedir + "/game"):
             os.mkdir(basedir + "/game", 0o777)
 
-    gamedirs = [ name ]
-    game_name = name
-
-    while game_name:
-        prefix = game_name[0]
-        game_name = game_name[1:]
-
-        if prefix == ' ' or prefix == '_':
-            gamedirs.append(game_name)
-
-    gamedirs.extend([ 'game', 'data', 'launcher/game' ])
-
-    for i in gamedirs:
-
-        if i == "renpy":
-            continue
-
-        gamedir = basedir + "/" + i
-        if os.path.isdir(gamedir):
-            break
-    else:
-        gamedir = basedir
+    gamedir = __main__.path_to_gamedir(basedir, name)
 
     sys.path.insert(0, basedir)
 

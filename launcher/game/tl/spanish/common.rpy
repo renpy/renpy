@@ -1,4 +1,4 @@
-﻿translate spanish strings:
+translate spanish strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
@@ -158,7 +158,7 @@
 
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
-    new "Grabar partida %s: [text]"
+    new "Guardar partida %s: [text]"
 
     # 00action_file.rpy:459
     old "Delete slot [text]"
@@ -166,15 +166,15 @@
 
     # 00action_file.rpy:539
     old "File page auto"
-    new "Página grabado automático"
+    new "Página de guardado automático"
 
     # 00action_file.rpy:541
     old "File page quick"
-    new "Página grabado rápido"
+    new "Página de guardado rápido"
 
     # 00action_file.rpy:543
     old "File page [text]"
-    new "Página grabación [text]"
+    new "Página de archivos [text]"
 
     # 00action_file.rpy:733
     old "Next file page."
@@ -186,11 +186,11 @@
 
     # 00action_file.rpy:858
     old "Quick save complete."
-    new "Grabar rápido completo."
+    new "Guardado rápido completado."
 
     # 00action_file.rpy:876
     old "Quick save."
-    new "Grabado rápido."
+    new "Guardado rápido."
 
     # 00action_file.rpy:895
     old "Quick load."
@@ -322,7 +322,7 @@
 
     # 00gui.rpy:377
     old "Are you sure you want to begin skipping?"
-    new "¿Seguro que quieres empezar el modo salto?"
+    new "¿Seguro que quieres empezar el modo salto de escenas?"
 
     # 00gui.rpy:378
     old "Are you sure you want to skip to the next choice?"
@@ -334,7 +334,7 @@
 
     # 00keymap.rpy:258
     old "Failed to save screenshot as %s."
-    new "No se pudo salvar la captura de pantalla como %s."
+    new "No se pudo guardar la captura de pantalla como %s."
 
     # 00keymap.rpy:270
     old "Saved screenshot as %s."
@@ -394,7 +394,7 @@
 
     # 00library.rpy:279
     old "This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}."
-    new "Este programa contiene software libre sujeto a diversas licencias que incluyen la licencia MIT y la {i}GNU Lesser General Public License{/i} (Licencia Pública General Reducida de GNU). Puedes encontrar la lista completa de software, con enlaces al código fuente completo, {a=https://www.renpy.org/l/license}aquí (en inglés){/a}."
+    new "Este programa contiene {i}software{/i} libre sujeto a diversas licencias, incluidas la licencia MIT y la {i}GNU Lesser General Public License{/i} (Licencia Pública General Reducida de GNU). Puedes encontrar la lista completa de {i}software{/i}, con enlaces al código fuente completo, {a=https://www.renpy.org/l/license}aquí (en inglés){/a}."
 
     # 00preferences.rpy:207
     old "display"
@@ -406,7 +406,7 @@
 
     # 00preferences.rpy:228
     old "skip transitions"
-    new "salta transiciones"
+    new "saltar transiciones"
 
     # 00preferences.rpy:230
     old "video sprites"
@@ -414,7 +414,7 @@
 
     # 00preferences.rpy:239
     old "show empty window"
-    new "muestra ventana vacía"
+    new "mostrar ventana vacía"
 
     # 00preferences.rpy:248
     old "text speed"
@@ -422,51 +422,51 @@
 
     # 00preferences.rpy:256
     old "joystick"
-    new "joystick"
+    new "mando"
 
     # 00preferences.rpy:256
     old "joystick..."
-    new "joystick..."
+    new "mando..."
 
     # 00preferences.rpy:263
     old "skip"
-    new "salta"
+    new "saltar"
 
     # 00preferences.rpy:266
     old "skip unseen [text]"
-    new "salta no visto [text]"
+    new "saltar no visto [text]"
 
     # 00preferences.rpy:271
     old "skip unseen text"
-    new "salva texto no visto"
+    new "saltar texto no visto"
 
     # 00preferences.rpy:273
     old "begin skipping"
-    new "comienza salto"
+    new "comenzar salto"
 
     # 00preferences.rpy:277
     old "after choices"
-    new "tras las opciones"
+    new "tras elecciones"
 
     # 00preferences.rpy:284
     old "skip after choices"
-    new "salta tras las opciones"
+    new "saltar tras elecciones"
 
     # 00preferences.rpy:286
     old "auto-forward time"
-    new "tiempo auto-avance"
+    new "tiempo de autoavance"
 
     # 00preferences.rpy:300
     old "auto-forward"
-    new "auto-avance"
+    new "autoavance"
 
     # 00preferences.rpy:307
     old "Auto forward"
-    new "Auto avance"
+    new "Autoavance"
 
     # 00preferences.rpy:310
     old "auto-forward after click"
-    new "auto-avance después del clic"
+    new "autoavanzar después del clic"
 
     # 00preferences.rpy:319
     old "automatic move"
@@ -474,39 +474,39 @@
 
     # 00preferences.rpy:328
     old "wait for voice"
-    new "espera la voz"
+    new "esperar la voz"
 
     # 00preferences.rpy:337
     old "voice sustain"
-    new "mantén voz"
+    new "mantener voz"
 
     # 00preferences.rpy:346
     old "self voicing"
-    new "auto voz"
+    new "autovoz"
 
     # 00preferences.rpy:355
     old "clipboard voicing"
-    new "voz en clipboard"
+    new "voz en portapapeles"
 
     # 00preferences.rpy:364
     old "debug voicing"
-    new "debug voz"
+    new "depurar voz"
 
     # 00preferences.rpy:373
     old "emphasize audio"
-    new "enfatiza audio"
+    new "enfatizar audio"
 
     # 00preferences.rpy:382
     old "rollback side"
-    new "lado retroceso"
+    new "lado de retroceso"
 
     # 00preferences.rpy:392
     old "gl powersave"
-    new "gl ahorro energía"
+    new "gl ahorro de energía"
 
     # 00preferences.rpy:398
     old "gl framerate"
-    new "gl cuadros por s."
+    new "gl cuadros por segundo"
 
     # 00preferences.rpy:401
     old "gl tearing"
@@ -514,31 +514,31 @@
 
     # 00preferences.rpy:413
     old "music volume"
-    new "volumen música"
+    new "volumen de música"
 
     # 00preferences.rpy:414
     old "sound volume"
-    new "volumen sonido"
+    new "volumen de sonido"
 
     # 00preferences.rpy:415
     old "voice volume"
-    new "volumen voz"
+    new "volumen de voz"
 
     # 00preferences.rpy:416
     old "mute music"
-    new "silencia música"
+    new "silenciar música"
 
     # 00preferences.rpy:417
     old "mute sound"
-    new "silencia sonido"
+    new "silenciar sonido"
 
     # 00preferences.rpy:418
     old "mute voice"
-    new "silencia voz"
+    new "silenciar voz"
 
     # 00preferences.rpy:419
     old "mute all"
-    new "silencia todo"
+    new "silenciar todo"
 
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
@@ -546,7 +546,7 @@
 
     # 00preferences.rpy:502
     old "Self-voicing would say \"[renpy.display.tts.last]\". Press 'alt+shift+V' to disable."
-    new "Voz automática dirà \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivar."
+    new "Voz automática dirá \"[renpy.display.tts.last]\". Pulsa 'alt+shift+V' para desactivarla."
 
     # 00preferences.rpy:504
     old "Self-voicing enabled. Press 'v' to disable."
@@ -554,11 +554,11 @@
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
-    new "Contactando App Store\nPor favor, espera..."
+    new "Contactando con App Store\nPor favor, espera..."
 
     # 00updater.rpy:372
     old "The Ren'Py Updater is not supported on mobile devices."
-    new "El Actualizador de Ren'Py no es compatible con dispositivos móviles."
+    new "El actualizador de Ren'Py no es compatible con dispositivos móviles."
 
     # 00updater.rpy:491
     old "An error is being simulated."
@@ -652,11 +652,11 @@ translate spanish strings:
 
     # 00accessibility.rpy:76
     old "Font Override"
-    new "Cambiar Fuente"
+    new "Sobreescribir fuente"
 
     # 00accessibility.rpy:80
     old "Default"
-    new "por Defecto"
+    new "Por defecto"
 
     # 00accessibility.rpy:84
     old "DejaVu Sans"
@@ -668,7 +668,7 @@ translate spanish strings:
 
     # 00accessibility.rpy:94
     old "Text Size Scaling"
-    new "Escala del tamaño del texto"
+    new "Escalado del tamaño del texto"
 
     # 00accessibility.rpy:100
     old "Reset"
@@ -676,11 +676,11 @@ translate spanish strings:
 
     # 00accessibility.rpy:105
     old "Line Spacing Scaling"
-    new "Escala del espacio de línea"
+    new "Escalado del espacio de línea"
 
     # 00accessibility.rpy:117
     old "Self-Voicing"
-    new "Voz-automática"
+    new "Voz automática"
 
     # 00accessibility.rpy:121
     old "Off"
@@ -716,7 +716,7 @@ translate spanish strings:
 
     # _developer\developer.rpym:63
     old "Image Attributes"
-    new "Atrubutos de Imagen"
+    new "Atributos de imagen"
 
     # _developer\developer.rpym:90
     old "[name] [attributes] (hidden)"
@@ -728,7 +728,7 @@ translate spanish strings:
 
     # _developer\developer.rpym:154
     old "Hide deleted"
-    new "Oculultar borrados"
+    new "Ocultar borrados"
 
     # _developer\developer.rpym:154
     old "Show deleted"
@@ -736,15 +736,15 @@ translate spanish strings:
 
     # renpy/common/00accessibility.rpy:146
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
-    new "Las opciones en este menú están destinadas a mejorar la accesibilidad. Es posible que no funcionen con todos los juegos, y algunas combinaciones de opciones pueden hacer que el juego no se pueda jugar. Esto no es un problema con el juego o el motor. Para obtener los mejores resultados al cambiar las fuentes, intente mantener el tamaño del texto igual al original."
+    new "Las opciones en este menú están destinadas a mejorar la accesibilidad. Es posible que no funcionen con todos los juegos, y algunas combinaciones de opciones pueden hacer que el juego no se pueda jugar. Esto no es un problema con el juego o el motor. Para obtener los mejores resultados al cambiar las fuentes, intenta mantener el tamaño del texto igual al original."
 
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing Volume Drop"
-    new "Caída de Volumen de Voz Automática"
+    new "Caída de volumen de voz automática"
 
     # renpy/common/00preferences.rpy:384
     old "self voicing volume drop"
-    new "caída de volumen de voz automática"
+    new "Caída de volumen de voz automática"
 
     # renpy/common/00preferences.rpy:464
     old "system cursor"
@@ -752,7 +752,7 @@ translate spanish strings:
 
     # renpy/common/00accessibility.rpy:180
     old "High Contrast Text"
-    new "Texto de Alto Contraste"
+    new "Texto de alto contraste"
 
     # renpy/common/00preferences.rpy:487
     old "renderer menu"

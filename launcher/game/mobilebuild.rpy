@@ -99,6 +99,10 @@ init -1 python:
             interface.processing(prompt, pause=False)
             self.log(prompt)
 
+        def open_directory(self, directory, prompt):
+            renpy.run(store.OpenDirectory(directory))
+            interface.info(prompt)
+
         def yesno(self, prompt, submessage=None):
             return interface.yesno(prompt, submessage=submessage)
 
@@ -155,12 +159,11 @@ init -1 python:
 
             try:
                 while self.run_yes:
-                    self.process.stdin.write('y\n')
+                    self.process.stdin.write(b'y\n')
                     self.process.stdin.flush()
                     time.sleep(.2)
             except Exception:
-                import traceback
-                traceback.print_exc()
+                pass
 
         def call(self, cmd, cancel=False, use_path=False, yes=False):
 
@@ -172,7 +175,7 @@ init -1 python:
 
             f = open(self.filename, "ab")
 
-            f.write("\n\n\n")
+            f.write(b"\n\n\n")
 
             if cancel:
                 cancel_action = self.cancel
@@ -216,7 +219,11 @@ init -1 python:
                 if yes and self.yes_thread:
                     self.run_yes = False
                     self.yes_thread.join()
-                    self.process.stdin.close()
+
+                    try:
+                        self.process.stdin.close()
+                    except:
+                        pass
 
                 self.process = None
                 self.yes_thread = None

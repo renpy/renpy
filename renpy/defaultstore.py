@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 from renpy.minstore import *
 
@@ -236,7 +237,8 @@ AudioData = renpy.audio.audio.AudioData
 
 Style = renpy.style.Style # type: ignore
 
-NoRollback = renpy.python.NoRollback
+SlottedNoRollback = renpy.rollback.SlottedNoRollback
+NoRollback = renpy.rollback.NoRollback
 
 class _layout_class(__builtins__["object"]):
     """
@@ -320,6 +322,7 @@ def AlphaBlend(control, old, new, alpha=False):
 def At(d, *args):
     """
     :doc: disp_at
+    :name: At
 
     Given a displayable `d`, applies each of the transforms in `args`
     to it. The transforms are applied in left-to-right order, so that

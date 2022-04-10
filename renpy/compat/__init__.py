@@ -118,8 +118,12 @@ str = future.utils.text_type # @ReservedAssignment
 unicode = future.utils.text_type # @ReservedAssignment
 
 bord = future.utils.bord
-def bchr(i): # types: (int) -> bytes
-    return bytes([i])
+
+if PY2:
+    bchr = chr # type: ignore
+else:
+    def bchr(i): # type: (int) -> bytes
+        return bytes([i])
 tobytes = future.utils.tobytes
 
 from future.builtins import chr
@@ -149,6 +153,11 @@ else:
     range = builtins.range
 
 ################################################################################
+# Round.
+
+round = builtins.round
+
+################################################################################
 # Allow TextIOWrapper to take utf8-bytes.
 
 if PY2:
@@ -170,7 +179,7 @@ if PY2:
 # Export functions.
 
 __all__ = [ "PY2", "open", "basestring", "str", "pystr", "range",
-            "bord", "bchr", "tobytes", "chr", "unicode", ]
+            "round", "bord", "bchr", "tobytes", "chr", "unicode", ]
 
 if PY2:
     __all__ = [ bytes(i) for i in __all__ ] # type: ignore

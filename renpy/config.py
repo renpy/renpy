@@ -24,7 +24,8 @@
 # methods that perform standard tasks, like the say and menu methods.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional, List
 
 
@@ -304,6 +305,9 @@ character_callback = None
 # Character callback list.
 all_character_callbacks = [ ]
 
+# Should autsave be enabled?
+has_autosave = True
+
 # The number of autosave slots we have.
 autosave_slots = 10
 
@@ -388,9 +392,9 @@ quit_action = None
 screenshot_crop = None
 
 # Various directories.
-gamedir = "" 
-basedir = "" 
-renpy_base = "" 
+gamedir = ""
+basedir = ""
+renpy_base = ""
 commondir = ""  # type: Optional[str]
 logdir = ""  # type: Optional[str] # Where log and error files go.
 
@@ -666,6 +670,9 @@ pass_joystick_events = False
 
 # A list of screens that should be shown when the overlay is enabled.
 overlay_screens = [ ]
+
+# A list of screens that should always be shown.
+always_shown_screens = [ ]
 
 # A map from tag to the default layer that tag should be displayed on.
 tag_layer = { }
@@ -1149,6 +1156,10 @@ gl_lod_bias = -.5
 # of that tag.
 adjust_attributes = { }
 
+# A dictionary from a tag to a function that produces default attributes
+# for that tag.
+default_attribute_callbacks = { }
+
 # The compatibility mode for who/what substitutions.
 # 0: ver < 7.4
 # 1: 7.4 <= ver <= 7.4.4
@@ -1194,9 +1205,23 @@ debug_prediction = False
 # Should mouse events that cause a window to gain focus be passed through.
 mouse_focus_clickthrough = False
 
-# Should the current displayable always run its unfocus handler, even when 
+# Should the current displayable always run its unfocus handler, even when
 # focus is taken away by default.
 always_unfocus = True
+
+# A list of callbacks that are called when the game exits.
+at_exit_callbacks = [ ]
+
+# Should character statistics be included in the lint report
+# when config.developer is true?
+lint_character_statistics = True
+
+# Should vpgrids be allowed to raise under/overfull errors ?
+allow_unfull_vpgrids = False
+
+# Should vbox and hbox skip false showifs?
+box_skip_false_showif = True
+
 
 del os
 del collections

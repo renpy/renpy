@@ -169,6 +169,15 @@ A screen can take a parameter list::
    screen center_text(s, size=42):
         text s size size
 
+If a screen has no parameters, it still should be given empty
+parentheses. If any other screen ``use``\ s a screen with no
+parentheses, the difference in behavior are described in the section
+concerning :ref:`the use statement <sl-use>`. If no other screen
+``use`` a given screen, not giving parentheses to that screen leads to
+pure inefficiency in the way Ren'py works internally, see the
+:ref:`screen optimization section <screen-optimization>` concerning
+parameters.
+
 
 User Interface Statements
 =========================
@@ -1133,17 +1142,21 @@ following properties:
 `xadjustment`
     The :func:`ui.adjustment` used for the x-axis of the
     viewport. When omitted, a new adjustment is created.
+
 `yadjustment`
     The :func:`ui.adjustment` used for the y-axis of the
     viewport. When omitted, a new adjustment is created.
+
 `xinitial`
     The initial horizontal offset of the viewport. This may be an integer
     giving the number of pixels, or a float giving a fraction of the
     possible offset.
+
 `yinitial`
     The initial vertical offset of the viewport. This may be an integer
     giving the number of pixels, or a float giving a fraction of the
     possible offset.
+
 `scrollbars`
     If not None, scrollbars are added along with this viewport.
     This works by creating a side layout, and placing the created
@@ -1153,13 +1166,23 @@ following properties:
     viewport. If `scrollbars` is "both", both horizontal and vertical
     scrollbars are created.
 
-    If `scrollbars` is not None, the viewport takes properties prefixed
-    with "side_". These are passed to the created side layout.
+    When `scrollbars` is not None, the `vpgrid` takes prefixed properties:
+
+    * Properties beginning with ``viewport_`` are passed to the viewport.
+    * Properties beginning with ``side_`` are passed to the side.
+    * Properties beginning with ``scrollbar_`` are passed to the horizontal scrollbar, if it exists.
+    * Properties beginning with ``vscrollbar_`` are passed to the verical scrollbar, if it exists.
+
+    Unprefixed properties are also accepted. :ref:`position-style-properties` are
+    passed to the side, while other unprefixed properties are supplied to the
+    viewport.
+
 `arrowkeys`
     If true, the viewport can be scrolled with the left, right, up, and down
     arrow keys. This takes precedence over the usual function of these keys,
     which is changing focus. However, the arrow keys will change focus when the
     viewport reaches its limits.
+
 `pagekeys`
     If true, the viewport can be scrolled up and down by the pageup and
     pagedown keys. This disables the usual functionality of these keys,
@@ -1231,6 +1254,10 @@ and the following groups of style properties:
 * :ref:`position-style-properties`
 * :ref:`grid-style-properties`
 
+When the `scrollbar` property is given, prefixed properties are passed to
+the vpgrid in the same way as they are with viewports. (Properties prefixed
+with ``viewport_`` are passed to the vpgrid itself.)
+
 ::
 
     screen vpgrid_test():
@@ -1244,9 +1271,9 @@ and the following groups of style properties:
 
             scrollbars "vertical"
 
-            # Since we have scrollbars, we have to position the side, rather
-            # than the vpgrid proper.
-            side_xalign 0.5
+            # Since we have scrollbars, this positions the side, rather than
+            # the vpgrid.
+            xalign 0.5
 
             for i in range(1, 100):
 
@@ -1684,12 +1711,10 @@ The ``use`` statement allows a screen to include another. The use
 statement takes the name of the screen to use. This can optionally be
 followed by an argument list, in parenthesis.
 
-If the used screen includes parameters, its scope is initialized to the
-result of assigning the arguments to those parameters. Otherwise, it
-is passed the scope of the current screen, updated with any keyword
-arguments passed to the screen.
-
-::
+If the used screen has no parentheses, it has read and write access
+to the scope of the current screen, updated with any keyword arguments
+passed via the ``use`` statement. Otherwise, its scope is initialized
+to the result of assigning the arguments to those parameters. ::
 
     screen file_slot(slot):
         button:
@@ -2030,69 +2055,72 @@ If the environment variable is not present, a list of variants is
 built up automatically, by going through the following list in order
 and choosing the entries that apply to the current platform.
 
+``"steam_deck"``
+    True if running on a Steam Deck or equivalent hardware.
+
+``"steam_big_picture"``
+    True if running in Steam Big Picture mode.
+
 ``"large"``
-   A screen large enough that relatively small text can be
-   comfortably read, and buttons can be easily clicked. This
-   is used for computer screens.
+    A screen large enough that relatively small text can be
+    comfortably read, and buttons can be easily clicked. This
+    is used for computer screens.
 
 ``"medium"``
-   A screen where smallish text can be read, but buttons may
-   need to grow in size so they can be comfortably pressed.
-   This is used for tablets.
+    A screen where smallish text can be read, but buttons may
+    need to grow in size so they can be comfortably pressed.
+    This is used for tablets.
 
 ``"small"``
-   A screen where text must be expanded in order to be read. This
-   is used for phones and televisions. (A television might be
-   physically large, but it's often far away, making it hard
-   to read.)
+    A screen where text must be expanded in order to be read. This
+    is used for phones and televisions. (A television might be
+    physically large, but it's often far away, making it hard
+    to read.)
 
 ``"tablet"``
-   Defined on touchscreen based devices where the screen has a
-   diagonal size of 6 inches or more. (In general, ``"medium"`` should
-   be used instead of ``"tablet"``.)
+    Defined on touchscreen based devices where the screen has a
+    diagonal size of 6 inches or more. (In general, ``"medium"`` should
+    be used instead of ``"tablet"``.)
 
 ``"phone"``
-   Defined on touchscreen-based devices where the diagonal size of
-   the screen is less than 6 inches. On such a small device, it's
-   important to make buttons large enough a user can easily choose
-   them. (In general, ``"small"`` should be used instead of ``"phone"``.)
+    Defined on touchscreen-based devices where the diagonal size of
+    the screen is less than 6 inches. On such a small device, it's
+    important to make buttons large enough a user can easily choose
+    them. (In general, ``"small"`` should be used instead of ``"phone"``.)
 
 ``"touch"``
-   Defined on touchscreen-based devices.
+    Defined on touchscreen-based devices.
 
 ``"tv"``
-   Defined on television-based devices.
-
-``"ouya"``
-   Defined on the OUYA console. (``"tv"`` and ``"small"`` are also defined.)
+    Defined on television-based devices.
 
 ``"firetv"``
-   Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
+    Defined on the Amazon Fire TV console. (``"tv"`` and ``"small"`` are also defined.)
 
 ``"chromeos"``
-   Defined when running as an Android app on a Chromebook.
+    Defined when running as an Android app on a Chromebook.
 
 ``"android"``
-   Defined on all Android devices.
+    Defined on all Android devices.
 
 ``"ios"``
-   Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
-   are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
-   also defined).
+    Defined on iOS devices, like the iPad (where ``"tablet"`` and ``"medium"``
+    are also defined) and the iPhone (where ``"phone"`` and ``"small"`` are
+    also defined).
 
 ``"mobile"``
-   Defined on mobile platforms, such as Android, iOS and mobile web browsers.
+    Defined on mobile platforms, such as Android, iOS and mobile web browsers.
 
 ``"pc"``
-   Defined on Windows, Mac OS X, and Linux. A PC is expected to have
-   a mouse and keyboard present, to allow buttons to be hovered, and
-   to allow precise pointing.
+    Defined on Windows, Mac OS X, and Linux. A PC is expected to have
+    a mouse and keyboard present, to allow buttons to be hovered, and
+    to allow precise pointing.
 
 ``"web"``
-   Defined when running inside a web browser.
+    Defined when running inside a web browser.
 
 ``None``
-   Always defined.
+    Always defined.
 
 An example of defining a screen variant is:
 

@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import builtins
 
@@ -370,28 +371,6 @@ class Analysis(object):
         object equality.
         """
 
-        def check_slice(slice): # @ReservedAssignment
-
-            if isinstance(slice, ast.Index):
-                return check_node(slice.value)
-
-            elif isinstance(slice, ast.Slice):
-                consts = [ ]
-
-                if slice.lower:
-                    consts.append(check_node(slice.lower))
-                if slice.upper:
-                    consts.append(check_node(slice.upper))
-                if slice.step:
-                    consts.append(check_node(slice.step))
-
-                if not consts:
-                    return GLOBAL_CONST
-                else:
-                    return min(consts)
-
-            return NOT_CONST
-
         def check_name(node):
             """
             Check nodes that make up a name. This returns a pair:
@@ -438,10 +417,9 @@ class Analysis(object):
 
         def check_node(node):
             """
-            Returns true if the ast node `node` is constant.
+            When given `node`, part of a Python expression, returns how
+            const the expression is.
             """
-            if not PY2:
-                return NOT_CONST
 
             # This handles children that do not exist.
             if node is None:
@@ -449,17 +427,15 @@ class Analysis(object):
 
             # PY3: see if there are new node types.
 
-            if isinstance(node, (ast.Num, ast.Str)):
+
+            if isinstance(node, ast.Constant):
                 return GLOBAL_CONST
-
-            elif isinstance(node, (ast.List, ast.Tuple)):
-                return check_nodes(node.elts)
-
-            elif isinstance(node, (ast.Attribute, ast.Name)):
-                return check_name(node)[0]
 
             elif isinstance(node, ast.BoolOp):
                 return check_nodes(node.values)
+
+            elif isinstance(node, ast.NamedExpr):
+                return check_node(node.value)
 
             elif isinstance(node, ast.BinOp):
                 return min(
@@ -470,26 +446,8 @@ class Analysis(object):
             elif isinstance(node, ast.UnaryOp):
                 return check_node(node.operand)
 
-            elif isinstance(node, ast.Call):
-                const, name = check_name(node.func)
 
-                # The function must have a name, and must be declared pure.
-                if (const != GLOBAL_CONST) or (name not in self.pure_functions):
-                    return NOT_CONST
-
-                consts = [ ]
-
-                # Arguments and keyword arguments must be pure.
-                consts.append(check_nodes(node.args))
-                consts.append(check_nodes(i.value for i in node.keywords))
-
-                if node.starargs is not None:
-                    consts.append(check_node(node.starargs))
-
-                if node.kwargs is not None:
-                    consts.append(check_node(node.kwargs))
-
-                return min(consts)
+            # ast.Lambda is NOT_CONST.
 
             elif isinstance(node, ast.IfExp):
                 return min(
@@ -497,6 +455,7 @@ class Analysis(object):
                     check_node(node.body),
                     check_node(node.orelse),
                     )
+
 
             elif isinstance(node, ast.Dict):
                 return min(
@@ -507,20 +466,66 @@ class Analysis(object):
             elif isinstance(node, ast.Set):
                 return check_nodes(node.elts)
 
+
+            # ast.ListComp is NOT_CONST.
+            # ast.SetComp is NOT_CONST.
+            # ast.DictComp is NOT_CONST.
+
+            # ast.GeneratorExp is NOT_CONST.
+
+            # ast.Await is NOT_CONST.
+            # ast.Yield is NOT_CONST.
+            # ast.YieldFrom is NOT_CONST.
+
             elif isinstance(node, ast.Compare):
                 return min(
                     check_node(node.left),
                     check_nodes(node.comparators),
                     )
 
-            elif isinstance(node, ast.Repr):
-                return check_node(node.value)
+            elif isinstance(node, ast.Call):
+                const, name = check_name(node.func)
+
+                # The function must have a name, and must be declared pure.
+                if (const != GLOBAL_CONST) or (name not in self.pure_functions):
+                    return NOT_CONST
+
+                return min(
+                    check_nodes(node.args),
+                    check_nodes(i.value for i in node.keywords),
+                )
+
+
+            elif isinstance(node, ast.FormattedValue):
+                return min(
+                    check_node(node.value),
+                    check_node(node.format_spec),
+                )
+
+            elif isinstance(node, ast.JoinedStr):
+                return check_nodes(node.values)
+
+            elif isinstance(node, (ast.Attribute, ast.Name)):
+                return check_name(node)[0]
 
             elif isinstance(node, ast.Subscript):
                 return min(
                     check_node(node.value),
-                    check_slice(node.slice),
+                    check_node(node.slice),
                     )
+
+            elif isinstance(node, ast.Starred):
+                return check_node(node.value)
+
+            elif isinstance(node, (ast.List, ast.Tuple)):
+                return check_nodes(node.elts)
+
+            elif isinstance(node, ast.Slice):
+                return min(
+                    check_node(node.lower),
+                    check_node(node.upper),
+                    check_node(node.step),
+                )
 
             return NOT_CONST
 
@@ -580,6 +585,7 @@ class PyAnalysis(ast.NodeVisitor):
 
         self.analysis = analysis
 
+    # Expressions that assign names.
     def visit_Name(self, node):
 
         if isinstance(node.ctx, ast.AugStore):
@@ -590,6 +596,32 @@ class PyAnalysis(ast.NodeVisitor):
                 self.analysis.mark_constant(node.id)
             else:
                 self.analysis.mark_not_constant(node.id)
+
+    def visit_NamedExpr(self, node):
+
+        const = self.analysis.is_constant(node.value)
+        self.analysis.push_control(const, False)
+
+        self.generic_visit(node)
+
+        self.analysis.pop_control()
+
+
+    # Statements that assign names or control constness.
+    def visit_FunctionDef(self, node):
+        self.analysis.mark_constant(node.name)
+
+    def visit_AsyncFunctionDef(self, node):
+        self.analysis.mark_constant(node.name)
+
+    def visit_ClassDef(self, node):
+        self.analysis.mark_constant(node.name)
+
+    # Return can't assign a name.
+
+    # Delete doesn't assign a name - so it would be something else making
+    # the name non-const, not delete.
+
 
     def visit_Assign(self, node):
 
@@ -608,6 +640,15 @@ class PyAnalysis(ast.NodeVisitor):
 
         self.analysis.pop_control()
 
+    def visit_AnnAssign(self, node):
+
+        const = self.analysis.is_constant(node.value)
+        self.analysis.push_control(const, False)
+
+        self.generic_visit(node)
+
+        self.analysis.pop_control()
+
     def visit_For(self, node):
 
         const = self.analysis.is_constant(node.iter)
@@ -615,12 +656,15 @@ class PyAnalysis(ast.NodeVisitor):
         self.analysis.push_control(const=const, loop=True)
         old_const = self.analysis.control.const
 
-        self.generic_visit(node)
+        self.generic_visit(node) # All nodes in the loop depend on node.test.
 
         if self.analysis.control.const != old_const:
             self.generic_visit(node)
 
         self.analysis.pop_control()
+
+    def visit_AsyncFor(self, node):
+        return self.visit_For(node)
 
     def visit_While(self, node):
 
@@ -629,7 +673,7 @@ class PyAnalysis(ast.NodeVisitor):
         self.analysis.push_control(const=const, loop=True)
         old_const = self.analysis.control.const
 
-        self.generic_visit(node)
+        self.generic_visit(node) # All nodes in the loop depend on node.test.
 
         if self.analysis.control.const != old_const:
             self.generic_visit(node)
@@ -644,9 +688,45 @@ class PyAnalysis(ast.NodeVisitor):
 
         self.analysis.pop_control()
 
+    # Nothing special for visit_With or visit_AsyncWith, when withitem is
+    # defined as below.
+
+    def visit_withitem(self, node):
+
+        const = self.analysis.is_constant(node.context_expr)
+        self.visit(node.context_expr)
+
+        self.analysis.push_control(const, False)
+        self.visit(node.optional_vars)
+        self.analysis.pop_control()
+
+    # Match is barely implemented. We assume that it's always going to be
+    # performed on something non-constant, which means that every variable
+    # assigned inside the match is also non-constant. This is probably a
+    # reasonable assumption.
+    def visit_Match(self, node):
+        self.analysis.push_control(False)
+        self.generic_visit(node)
+        self.analysis.pop_control()
+
+    def visit_Try(self, node):
+
+        for i in node.handlers:
+            if i.name:
+                self.analysis.mark_not_constant(i.name)
+
+        self.generic_visit(node)
+
+    # Import and Import from can only assign to a variable in a way that
+    # keeps it constant.
+
+    # Global and NonLocal only make sense inside Python functions, and we don't
+    # analyze Python functions.
+
+    # Expr can be ignored, as it can't assign.
+
     # The continue and break statements should be pretty rare, so if they
     # occur, we mark everything later in the loop as non-const.
-
     def visit_Break(self, node):
         self.analysis.exit_loop()
 
@@ -731,7 +811,7 @@ class CompilerCache(object):
 ccache = CompilerCache()
 new_ccache = CompilerCache()
 
-CACHE_FILENAME = "cache/pyanalysis.rpyb"
+CACHE_FILENAME = "cache/py3analysis.rpyb"
 
 
 def load_cache():

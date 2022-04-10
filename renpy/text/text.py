@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional, Callable
 
 import math
@@ -518,7 +519,7 @@ class Layout(object):
         width = min(32767, width)
         height = min(32767, height)
 
-        if drawable_res and (not size_only) and renpy.config.drawable_resolution_text:
+        if drawable_res and (not size_only) and renpy.config.use_drawable_resolution and renpy.config.drawable_resolution_text:
             # How much do we want to oversample the text by, compared to the
             # virtual resolution.
             self.oversample = renpy.display.draw.draw_per_virt
@@ -527,7 +528,7 @@ class Layout(object):
             self.reverse = renpy.display.draw.draw_to_virt
             self.forward = renpy.display.draw.virt_to_draw
 
-            self.outline_step = text.style.outline_scaling != "linear"
+            self.outline_step = text.style.outline_scaling == "step"
 
             self.pixel_perfect = True
 
@@ -772,7 +773,7 @@ class Layout(object):
             maxx = target_x
             y = target_y
 
-            textsupport.offset_glyphs(all_glyphs, 0, int(round(splits_from.baseline * self.oversample)) - find_baseline())
+            textsupport.offset_glyphs(all_glyphs, 0, round(splits_from.baseline * self.oversample) - find_baseline())
 
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a
@@ -925,7 +926,7 @@ class Layout(object):
         if isinstance(n, renpy.display.core.absolute):
             return int(n)
 
-        return int(round(n * self.oversample))
+        return round(n * self.oversample)
 
     def scale_outline(self, n):
         if n is None:
@@ -945,7 +946,7 @@ class Layout(object):
             if n == 0:
                 return 0
 
-            rv = int(round(n * self.oversample))
+            rv = round(n * self.oversample)
 
             if n < 0 and rv > -1:
                 rv = -1
@@ -1430,17 +1431,10 @@ class Layout(object):
         Return the time of the first glyph that should be shown after st.
         """
 
-        for l in self.lines:
-            if not l.glyphs:
-                continue
-
-            if l.max_time > st:
-                break
-
-        else:
+        if st >= self.max_time:
             return None
-
-        return 0
+        else:
+            return 0
 
 
 # The maximum number of entries in the layout cache.
@@ -1586,7 +1580,7 @@ class Text(renpy.display.core.Displayable):
         self.slow = slow
 
         # The callback to be called when slow-text mode ends.
-        self.slow_done = None # type:Callable|None
+        self.slow_done = slow_done # type:Callable|None
 
         # The ctc indicator associated with this text.
         self.ctc = None
@@ -2003,10 +1997,14 @@ class Text(renpy.display.core.Displayable):
         if layout is None:
             return
 
-        if layout.redraw_typewriter(st) is None:
-            if self.slow:
+        if self.slow:
+            redraw = layout.redraw_typewriter(st)
+
+            if redraw is None:
                 self.call_slow_done(st)
                 self.slow = False
+            else:
+                renpy.display.render.redraw(self, 0)
 
         for d, xo, yo in self.displayable_offsets:
             rv = d.event(ev, x - xo, y - yo, st)
@@ -2282,7 +2280,8 @@ class Text(renpy.display.core.Displayable):
 
         return tokens
 
-    def apply_custom_tags(self, tokens):
+    @staticmethod
+    def apply_custom_tags(tokens):
         """
         Apply new-style custom text tags.
         """

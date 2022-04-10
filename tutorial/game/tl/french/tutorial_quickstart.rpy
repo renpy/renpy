@@ -378,7 +378,7 @@ translate french tutorial_images_1a4660b9:
     e "La déclaration 'scene' vide l’écran et ajoute une image d’arrière-plan."
 
 # game/tutorial_quickstart.rpy:246
-translate french tutorial_images_672c8cb8:
+translate french tutorial_images_a5e7eb24:
 
     # e "The show statement adds a background image on top of all the other images on the screen."
     e "La déclaration 'show' ajoute une image au dessus de toutes les images déjà à l’écran."
@@ -795,7 +795,7 @@ translate french menu3_done_47fa2268:
 translate french menu3_done_826a600b:
 
     # e "One of Ren'Py's big advantages is the flexibility using a scripting language like Python provides us. It lets us easily scale from kinetic novels to complex simulation games."
-    e "La fléxibilité est l’un des gros avantages de Ren’Py, elle est apportée par le langage de script Python. Il nous permet de transformer facilement un roman kinétique en un jeu de simulation complexe."
+    e "La flexibilité est l’un des gros avantages de Ren’Py, elle est apportée par le langage de script Python. Il nous permet de transformer facilement un roman kinétique en un jeu de simulation complexe."
 
 # game/tutorial_quickstart.rpy:585
 translate french tutorial_input_066611c5:
@@ -860,3 +860,15 @@ translate french strings:
     # tutorial_quickstart.rpy:591
     old "Guy Shy"
     new "Homme timide"
+
+# game/tutorial_quickstart.rpy:248
+translate french tutorial_images_86e11de2:
+
+    # e "If there is already an image with the same tag, the new image is used to replace the old one."
+    e "Si une image a déjà le même tag, la nouvelle image remplace l'ancienne."
+
+# game/tutorial_quickstart.rpy:449
+translate french tutorial_music_a2ffbe9b:
+
+    # e "Let's check out some of the commands that can affect the music channel."
+    e "Allons voir quelques commandes qui s'appliquent à la piste de musique."

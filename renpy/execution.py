@@ -23,7 +23,8 @@
 # renpy object, as well as the context object.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from future.utils import reraise
 
 import sys
@@ -180,7 +181,7 @@ class Context(renpy.object.Object):
             self.interacting = False
 
         if version < 5:
-            self.modes = renpy.python.RevertableList([ "start" ])
+            self.modes = renpy.revertable.RevertableList([ "start" ])
             self.use_modes = True
 
         if version < 6:
@@ -237,7 +238,7 @@ class Context(renpy.object.Object):
 
         self.rollback = rollback
         self.runtime = 0
-        self.info = renpy.python.RevertableObject()
+        self.info = renpy.revertable.RevertableObject()
         self.seen = False
 
         # True if there has just been an abnormal transfer of control,
@@ -313,7 +314,7 @@ class Context(renpy.object.Object):
                 self.scene_lists.clear(layer=i)
 
         # A list of modes that the context has been in.
-        self.modes = renpy.python.RevertableList([ "start" ])
+        self.modes = renpy.revertable.RevertableList([ "start" ])
         self.use_modes = True
 
         # The language we started with.
@@ -347,8 +348,6 @@ class Context(renpy.object.Object):
         their current value (if not already dynamic in the current call).
         """
 
-        store = renpy.store.__dict__
-
         if context:
             index = 0
         else:
@@ -359,8 +358,20 @@ class Context(renpy.object.Object):
             if i in self.dynamic_stack[index]:
                 continue
 
-            if i in store:
-                self.dynamic_stack[index][i] = store[i]
+            name = i
+            store = renpy.store.__dict__
+
+            while "." in name:
+                storename, _, name = name.partition(".")
+                storemodule = store.get(storename, None)
+
+                if not isinstance(storemodule, renpy.python.StoreModule):
+                    raise Exception("{} is not a valid namespace.".format(i.rpartition(".")[0]))
+
+                store = storemodule.__dict__
+
+            if name in store:
+                self.dynamic_stack[index][i] = store[name]
             else:
                 self.dynamic_stack[index][i] = Delete()
 
@@ -373,11 +384,15 @@ class Context(renpy.object.Object):
         if not self.dynamic_stack:
             return
 
-        store = renpy.store.__dict__
-
         dynamic = self.dynamic_stack.pop()
 
         for k, v in dynamic.items():
+            store = renpy.store.__dict__
+
+            while "." in k:
+                namespace, _, k = k.partition(".")
+                store = store[namespace].__dict__
+
             if isinstance(v, Delete):
                 store.pop(k, None)
             else:

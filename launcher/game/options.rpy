@@ -30,6 +30,9 @@
 
 init -1 python hide:
 
+    # Update the searchpath to find additional fonts.
+    config.searchpath.append(config.renpy_base + "/sdk-fonts")
+
     # Should we enable the use of developer tools? This should be
     # set to False before the game is released, so the user can't
     # cheat using developer tools.
@@ -269,8 +272,7 @@ init python:
 
     # Atom rules. These have to be very early, since Atom uses names like
     # tmp for packages.
-    build.classify_renpy("atom/", "atom-all source_only")
-    build.classify_renpy("atom/Atom.edit.py", "atom-all source_only")
+    build.classify_renpy("atom/", "atom-all")
     build.classify_renpy("atom/default-dot-atom/**", "atom-all")
     build.classify_renpy("atom/atom-windows/**", "atom-windows")
     build.classify_renpy("atom/Atom.app/**", "atom-mac")
@@ -349,6 +351,9 @@ init python:
     source_and_binary("the_question")
     source_and_binary("tutorial")
 
+    # extra fonts.
+    build.classify_renpy("sdk-fonts/**", "source")
+
     # docs.
     build.classify_renpy("doc/", "source")
     build.classify_renpy("doc/.doctrees/", None)
@@ -379,19 +384,18 @@ init python:
     build.classify_renpy("module/fribidi-src/**", "source")
 
     # all-platforms binary.
-    build.classify_renpy("lib/**/_renpysteam*", "steam")
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
     build.classify_renpy("lib/*linux-armv7l/", "raspi")
     build.classify_renpy("lib/*linux-armv7l/**", "raspi")
 
     if PY2:
-        source_and_binary("lib/py2-**")
-        source_and_binary("lib/python2**")
+        source_and_binary("lib/py2-**", "binary", "binary")
+        source_and_binary("lib/python2**", "binary", "binary")
         build.classify_renpy("renpy2.sh", "binary")
     else:
-        source_and_binary("lib/py3-**")
-        source_and_binary("lib/python3**")
+        source_and_binary("lib/py3-**", "binary", "binary")
+        source_and_binary("lib/python3**", "binary", "binary")
         build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")

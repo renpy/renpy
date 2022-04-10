@@ -12,7 +12,11 @@ Persistent data is loaded when Ren'Py starts, and when Ren'Py detects
 that the persistent data has been updated on disk.
 
 The persistent object is special in that an access to an undefined field will
-have a None value, rather than causing an exception.
+have a None value, rather than causing an exception. If something other than
+None is to be the default of a persistent value,
+the :ref:`default <default-statement>` statement should be used::
+
+    default persistent.main_background = "princess_not_saved"
 
 An example use of persistent is the creation of an unlockable image gallery.
 This is done by storing a flag in persistent that determines if the gallery has

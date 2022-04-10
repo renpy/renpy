@@ -214,6 +214,14 @@ change_renpy_executable()
 
             hash.update(digest.encode("utf-8"))
 
+        def reprefix(self, old, new):
+            rv = self.copy()
+
+            if self.name.startswith(old):
+                rv.name = new + self.name[len(old):]
+
+            return rv
+
     class FileList(list):
         """
         This represents a list of files that we know about.
@@ -382,13 +390,25 @@ change_renpy_executable()
 
             return yes, no
 
+        def reprefix(self, old, new):
+            """
+            Returns a new file list with all the paths reprefixed.
+            """
+
+            rv = FileList()
+
+            for f in self:
+                rv.append(f.reprefix(old, new))
+
+            return rv
+
 
     class Distributor(object):
         """
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None, force_format=None):
             """
             Distributes `project`.
 
@@ -422,7 +442,10 @@ change_renpy_executable()
 
             `macapp`
                 If given, the path to a macapp that's used instead of
-                the macapp
+                the macapp that's included with Ren'Py.
+
+            `force_format`
+                If given, forces the format of the distribution to be this.
             """
 
             # A map from a package to a unique update version hash.
@@ -551,6 +574,10 @@ change_renpy_executable()
             self.reporter.info(_("Scanning Ren'Py files..."))
             self.scan_and_classify(config.renpy_base, build["renpy_patterns"])
 
+            if build["_sdk_fonts"]:
+                for k in list(self.file_lists.keys()):
+                    self.file_lists[k] = self.file_lists[k].reprefix("sdk-fonts", "game")
+
             # Add Python (with the same name as our executables)
             self.add_python()
 
@@ -582,7 +609,11 @@ change_renpy_executable()
 
             for p in build_packages:
 
-                for f in p["formats"]:
+                formats = p["formats"]
+                if force_format is not None:
+                    formats = [ force_format ]
+
+                for f in formats:
 
                     self.make_package(
                         p["name"],
@@ -1603,6 +1634,8 @@ change_renpy_executable()
         ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building all packages.")
         ap.add_argument("--no-archive", action="store_true", help="If given, files will not be added to archives.")
         ap.add_argument("--macapp", default=None, action="store", help="If given, the path to a signed and notarized mac app.")
+        ap.add_argument("--format", default=None, action="store", help="The format of package to build.")
+
         ap.add_argument("project", help="The path to the project directory.")
 
         args = ap.parse_args()
@@ -1614,11 +1647,57 @@ change_renpy_executable()
         else:
             packages = None
 
-        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest, macapp=args.macapp)
+        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest, macapp=args.macapp, force_format=args.format)
 
         return False
 
     renpy.arguments.register_command("distribute", distribute_command)
+
+
+    def update_old_game(project, reporter, compile):
+        if compile:
+            reporter.info(_("Recompiling all rpy files into rpyc files..."))
+            project.launch([ "compile", "--keep-orphan-rpyc" ], wait=True)
+
+        files = [fn + "c" for fn in project.script_files()
+                 if fn.startswith("game/") and project.exists(fn + "c")]
+        len_files = len(files)
+
+        if not files:
+            return
+
+        TEMP_OLD_GAME_DIR = project.temp_filename("old-game")
+        if os.path.isdir(TEMP_OLD_GAME_DIR):
+            shutil.rmtree(TEMP_OLD_GAME_DIR)
+
+        for i, src in enumerate(files):
+            reporter.progress(_("Copying files..."), i, len_files)
+            dst = project.temp_filename("old-" + src)
+            try:
+                os.makedirs(os.path.dirname(dst))
+            except:
+                pass
+            shutil.copyfile(os.path.join(project.path, src), dst)
+
+        reporter.progress_done()
+
+        OLD_GAME_DIR = os.path.join(project.path, "old-game")
+        if os.path.isdir(OLD_GAME_DIR):
+            shutil.rmtree(OLD_GAME_DIR)
+
+        shutil.copytree(TEMP_OLD_GAME_DIR, OLD_GAME_DIR)
+
+    def update_old_game_command():
+        ap = renpy.arguments.ArgumentParser("Back-ups all rpyc files into old-game directory.")
+        ap.add_argument("project", help="The path to the project directory.")
+
+        args = ap.parse_args()
+
+        update_old_game(project.Project(args.project), TextReporter(), True)
+
+        return False
+
+    renpy.arguments.register_command("update_old_game", update_old_game_command)
 
 label distribute:
 
@@ -1634,3 +1713,8 @@ label distribute:
 
 
     jump post_build
+
+label update_old_game:
+    python hide:
+        distribute.update_old_game(project.current, distribute.GuiReporter(), False)
+    return

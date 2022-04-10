@@ -10,6 +10,10 @@
 
 #include <stdlib.h>
 
+#ifndef _WIN32
+#define USE_POSIX_MEMALIGN
+#endif
+
 /* Should a mono channel be split into two equal stero channels (true) or
  * should the energy be split onto two stereo channels with 1/2 the energy
  * (false).
@@ -289,7 +293,11 @@ static void deallocate(MediaState *ms) {
 		}
 
 		if (sqe->pixels) {
+#ifndef USE_POSIX_MEMALIGN
 			SDL_free(sqe->pixels);
+#else
+			free(sqe->pixels);
+#endif
 		}
 		av_free(sqe);
 	}
@@ -903,13 +911,12 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	    rv->pitch += ROW_ALIGNMENT - (rv->pitch % ROW_ALIGNMENT);
 	}
 
-#if defined(_WIN32)
+#ifndef USE_POSIX_MEMALIGN
     rv->pixels = SDL_calloc(rv->pitch * rv->h, 1);
 #else
     posix_memalign(&rv->pixels, ROW_ALIGNMENT, rv->pitch * rv->h);
-#endif
-
     memset(rv->pixels, 0, rv->pitch * rv->h);
+#endif
 
 	rv->format = sample->format;
 	rv->next = NULL;
@@ -1019,7 +1026,13 @@ int media_video_ready(struct MediaState *ms) {
 			SurfaceQueueEntry *sqe = dequeue_surface(&ms->surface_queue);
 			ms->surface_queue_size -= 1;
 
-			SDL_free(sqe->pixels);
+			if (sqe->pixels) {
+#ifndef USE_POSIX_MEMALIGN
+				SDL_free(sqe->pixels);
+#else
+				free(sqe->pixels);
+#endif
+			}
 			av_free(sqe);
 
 			consumed = 1;

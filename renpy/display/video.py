@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import collections
 
@@ -312,6 +313,7 @@ class Movie(renpy.display.core.Displayable):
     fullscreen = False
     channel = "movie"
     _play = None
+    _original_play = None
 
     mask = None
     mask_channel = None
@@ -323,6 +325,14 @@ class Movie(renpy.display.core.Displayable):
     play_callback = None
 
     loop = True
+
+    def after_setstate(self):
+        play = self._original_play or self._play
+        if (play is not None) and renpy.loader.loadable(play):
+            self._original_play = self._play = play
+        else:
+            self._play = None
+            self._original_play = play
 
     def ensure_channel(self, name):
 
@@ -349,8 +359,11 @@ class Movie(renpy.display.core.Displayable):
 
         self.size = size
         self.channel = channel
-        self._play = play
         self.loop = loop
+
+        self._original_play = play
+        if (play is not None) and renpy.loader.loadable(play):
+            self._play = play
 
         if side_mask:
             mask = None
