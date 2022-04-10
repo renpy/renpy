@@ -1275,7 +1275,7 @@ with ``viewport_`` are passed to the vpgrid itself.)
             # the vpgrid.
             xalign 0.5
 
-            for i in range(1, 100):
+            for i in range(1, 101):
 
                 textbutton "Button [i]":
                     xysize (200, 50)
