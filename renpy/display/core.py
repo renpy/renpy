@@ -333,6 +333,9 @@ class Displayable(renpy.object.Object):
     # Does this displayable have a tooltip?
     _tooltip = None
 
+    # Should hbox and vbox skip this displayable?
+    _box_skip = False
+
     # Used by a transition (or transition-like object) to determine how long to
     # delay for.
     delay = None # type: float|None

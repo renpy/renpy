@@ -323,6 +323,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.base_widgets = { }
         self.old_widgets = None
         self.old_transforms = None
+        self.old_transfers = False
         self.hidden_widgets = { }
         self.cache = { }
         self.phase = UPDATE

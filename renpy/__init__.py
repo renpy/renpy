@@ -657,11 +657,6 @@ def reload_all():
             del sys.modules[i]
 
         elif any(issubmodule(i, m) for m in reload_modules):
-            m = sys.modules[i]
-
-            if m is not None:
-                m.__dict__.clear()
-
             del sys.modules[i]
 
     # Restore the state of all modules from backup.

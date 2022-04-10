@@ -169,6 +169,15 @@ A screen can take a parameter list::
    screen center_text(s, size=42):
         text s size size
 
+If a screen has no parameters, it still should be given empty
+parentheses. If any other screen ``use``\ s a screen with no
+parentheses, the difference in behavior are described in the section
+concerning :ref:`the use statement <sl-use>`. If no other screen
+``use`` a given screen, not giving parentheses to that screen leads to
+pure inefficiency in the way Ren'py works internally, see the
+:ref:`screen optimization section <screen-optimization>` concerning
+parameters.
+
 
 User Interface Statements
 =========================
@@ -1133,17 +1142,21 @@ following properties:
 `xadjustment`
     The :func:`ui.adjustment` used for the x-axis of the
     viewport. When omitted, a new adjustment is created.
+
 `yadjustment`
     The :func:`ui.adjustment` used for the y-axis of the
     viewport. When omitted, a new adjustment is created.
+
 `xinitial`
     The initial horizontal offset of the viewport. This may be an integer
     giving the number of pixels, or a float giving a fraction of the
     possible offset.
+
 `yinitial`
     The initial vertical offset of the viewport. This may be an integer
     giving the number of pixels, or a float giving a fraction of the
     possible offset.
+
 `scrollbars`
     If not None, scrollbars are added along with this viewport.
     This works by creating a side layout, and placing the created
@@ -1153,13 +1166,23 @@ following properties:
     viewport. If `scrollbars` is "both", both horizontal and vertical
     scrollbars are created.
 
-    If `scrollbars` is not None, the viewport takes properties prefixed
-    with "side_". These are passed to the created side layout.
+    When `scrollbars` is not None, the `vpgrid` takes prefixed properties:
+
+    * Properties beginning with ``viewport_`` are passed to the viewport.
+    * Properties beginning with ``side_`` are passed to the side.
+    * Properties beginning with ``scrollbar_`` are passed to the horizontal scrollbar, if it exists.
+    * Properties beginning with ``vscrollbar_`` are passed to the verical scrollbar, if it exists.
+
+    Unprefixed properties are also accepted. :ref:`position-style-properties` are
+    passed to the side, while other unprefixed properties are supplied to the
+    viewport.
+
 `arrowkeys`
     If true, the viewport can be scrolled with the left, right, up, and down
     arrow keys. This takes precedence over the usual function of these keys,
     which is changing focus. However, the arrow keys will change focus when the
     viewport reaches its limits.
+
 `pagekeys`
     If true, the viewport can be scrolled up and down by the pageup and
     pagedown keys. This disables the usual functionality of these keys,
@@ -1231,6 +1254,10 @@ and the following groups of style properties:
 * :ref:`position-style-properties`
 * :ref:`grid-style-properties`
 
+When the `scrollbar` property is given, prefixed properties are passed to
+the vpgrid in the same way as they are with viewports. (Properties prefixed
+with ``viewport_`` are passed to the vpgrid itself.)
+
 ::
 
     screen vpgrid_test():
@@ -1244,9 +1271,9 @@ and the following groups of style properties:
 
             scrollbars "vertical"
 
-            # Since we have scrollbars, we have to position the side, rather
-            # than the vpgrid proper.
-            side_xalign 0.5
+            # Since we have scrollbars, this positions the side, rather than
+            # the vpgrid.
+            xalign 0.5
 
             for i in range(1, 100):
 
@@ -1684,12 +1711,10 @@ The ``use`` statement allows a screen to include another. The use
 statement takes the name of the screen to use. This can optionally be
 followed by an argument list, in parenthesis.
 
-If the used screen includes parameters, its scope is initialized to the
-result of assigning the arguments to those parameters. Otherwise, it
-is passed the scope of the current screen, updated with any keyword
-arguments passed to the screen.
-
-::
+If the used screen has no parentheses, it has read and write access
+to the scope of the current screen, updated with any keyword arguments
+passed via the ``use`` statement. Otherwise, its scope is initialized
+to the result of assigning the arguments to those parameters. ::
 
     screen file_slot(slot):
         button:

@@ -34,15 +34,18 @@ take keywork arguments beginning with `show\_`. These arguments have the
 as additional keyword arguments. This can be used to include additional
 information with the images in the gallery.
 
-
 ChromeOS
 --------
 
 When running as an Android application on a ChromeOS device, the "chromeos"
 variant will be selected.
 
-Grids and Vpgrids
------------------
+Boxes, Grids and Vpgrids
+------------------------
+
+A :ref:`showif <sl-showif>` statement inside a :ref:`vbox <sl-vbox>` or :ref:`hbox <sl-hbox>`
+will not be surrounded with :propref:`spacing` when the condition is false and the child
+displayable is not shown.
 
 Having an overfull vpgrid - when both ``rows`` and ``cols`` are specified - is now
 disallowed.
@@ -57,6 +60,9 @@ children is not a multiple of the specified value.
 
 Features
 --------
+
+It is now possible to select a language other than the default when
+extracting dialogue.
 
 The screen language ``add`` statement now takes an `alt` property,
 making it possible to write::
@@ -77,9 +83,6 @@ The new :var:`config.always_shown_screens` variable allows one to define
 screens that are always shown (even in the main and game menus). See also
 the existing :var:`config.overlay_screens`.
 
-The new :tpref:`clip` transform property makes it easy to clip a transform
-down to a specified size.
-
 The location and size of the OpenGL viewport is made available to shaders as
 u_viewport.
 
@@ -93,6 +96,15 @@ transparent pixels.
 
 Other changes
 -------------
+
+The :propref:`activate_sound` plays when activating a drag displayable.
+
+The :func:`VariableValue`, :func:`FieldValue`, and :func:`DictValue` Bar Values
+can now call :func:`Return`, to cause the interaction to return a specific value.
+
+The :propref:`adjust_spacing` property is now set to False for dialogue and
+narration in new games. This might cause the spacing of text to change, when
+the game is resized, in exchange for keeping it stable when extend is used.
 
 Playing or stopping music on a channel now unpauses that channel.
 

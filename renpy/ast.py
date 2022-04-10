@@ -374,6 +374,10 @@ class ArgumentInfo(renpy.object.Object):
         return "(" + ", ".join(l) + ")"
 
 
+EMPTY_PARAMETERS = ParameterInfo([ ], [ ], None, None, None, None)
+EMPTY_ARGUMENTS = ArgumentInfo([ ], None, None)
+
+
 def __newobj__(cls, *args):
     return cls.__new__(cls, *args)
 
@@ -1206,7 +1210,7 @@ class Image(Node):
         if getattr(self, 'atl', None) is not None:
             # ATL images must participate with the game defined
             # constant names. So, we pass empty parameters to enable it.
-            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
+            self.atl.analyze(EMPTY_PARAMETERS)
 
 
 class Transform(Node):
@@ -1223,7 +1227,7 @@ class Transform(Node):
         'parameters',
         ]
 
-    default_parameters = ParameterInfo([ ], [ ], None, None)
+    default_parameters = EMPTY_PARAMETERS
 
     def __init__(self, loc, name, atl=None, parameters=default_parameters):
 
@@ -1385,7 +1389,7 @@ class Show(Node):
             # ATL block defined for show, scene or show layer statements
             # must participate with the game defined constant names.
             # So, we pass empty parameters to enable it.
-            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
+            self.atl.analyze(EMPTY_PARAMETERS)
 
 
 class ShowLayer(Node):
@@ -1425,7 +1429,7 @@ class ShowLayer(Node):
 
     def analyze(self):
         if self.atl is not None:
-            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
+            self.atl.analyze(EMPTY_PARAMETERS)
 
 
 class Camera(Node):
@@ -1465,7 +1469,7 @@ class Camera(Node):
 
     def analyze(self):
         if self.atl is not None:
-            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
+            self.atl.analyze(EMPTY_PARAMETERS)
 
 
 class Scene(Node):
@@ -1519,7 +1523,7 @@ class Scene(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.analyze(ParameterInfo([ ], [ ], None, None))
+            self.atl.analyze(EMPTY_PARAMETERS)
 
 
 class Hide(Node):
@@ -2286,15 +2290,16 @@ class PostUserStatement(Node):
 
 
 def create_store(name):
-    overname = name
-    while '.' in overname:
-        overname, _, _ = overname.rpartition('.')
-        if overname in renpy.config.special_namespaces:
-            renpy.config.special_namespaces[overname].create_store(name[len(overname):])
-            return
+    if name in renpy.config.special_namespaces:
+        return
 
-    if name not in renpy.config.special_namespaces:
-        renpy.python.create_store(name)
+    # Take first two components of dot-joined name
+    maybe_special = ".".join(name.split(".")[:2])
+    if maybe_special in renpy.config.special_namespaces:
+        if not renpy.config.special_namespaces[maybe_special].allow_child_namespaces:
+            raise Exception('Creating stores within the {} namespace is not supported.'.format(maybe_special[6:]))
+
+    renpy.python.create_store(name)
 
 
 class StoreNamespace(object):

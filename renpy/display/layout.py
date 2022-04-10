@@ -946,9 +946,11 @@ class MultiBox(Container):
             xfill = max(0, xfill)
             yfill = max(0, yfill)
 
-            if line:
-                xperchild = xfill // len(line)
-                yperchild = yfill // len(line)
+            line_count = len([i for i in line if not i[0]._box_skip])
+
+            if line_count > 0:
+                xperchild = xfill // line_count
+                yperchild = yfill // line_count
             else:
                 xperchild = 0
                 yperchild = 0
@@ -956,16 +958,23 @@ class MultiBox(Container):
             maxxout = maxx
             maxyout = maxy
 
-            for i, (child, x, y, surf) in enumerate(line):
+            i = 0
+
+            for child, x, y, surf in line:
+
                 sw, sh = surf.get_size()
                 sw = max(line_width, sw)
                 sh = max(line_height, sh)
 
-                x += i * xperchild
-                y += i * yperchild
+                if not child._box_skip:
 
-                sw += xperchild
-                sh += yperchild
+                    x += i * xperchild
+                    y += i * yperchild
+
+                    sw += xperchild
+                    sh += yperchild
+
+                    i += 1
 
                 placements.append((child, x, y, sw, sh, surf))
 
@@ -994,6 +1003,9 @@ class MultiBox(Container):
                 target_width = xminimum
 
             for d, padding, cst, cat in zip(children, spacings, csts, cats):
+
+                if d._box_skip:
+                    padding = 0
 
                 if box_wrap:
                     rw = width
@@ -1036,6 +1048,9 @@ class MultiBox(Container):
                 target_height = yminimum
 
             for d, padding, cst, cat in zip(children, spacings, csts, cats):
+
+                if d._box_skip:
+                    padding = 0
 
                 if box_wrap:
                     rh = height

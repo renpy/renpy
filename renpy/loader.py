@@ -114,6 +114,8 @@ class RPAv3ArchiveHandler(object):
     Archive handler handling RPAv3 archives.
     """
 
+    archive_extension = ".rpa"
+
     @staticmethod
     def get_supported_extensions():
         return [ ".rpa" ]
@@ -159,6 +161,8 @@ class RPAv2ArchiveHandler(object):
     Archive handler handling RPAv2 archives.
     """
 
+    archive_extension = ".rpa"
+
     @staticmethod
     def get_supported_extensions():
         return [ ".rpa" ]
@@ -184,6 +188,8 @@ class RPAv1ArchiveHandler(object):
     """
     Archive handler handling RPAv1 archives.
     """
+
+    archive_extension = ".rpa"
 
     @staticmethod
     def get_supported_extensions():
@@ -253,7 +259,7 @@ def index_archives():
                         if file_header.startswith(header):
                             f.seek(0, 0)
                             index = handler.read_index(f)
-                            archives.append((prefix + ext, index))
+                            archives.append((prefix + handler.archive_extension, index))
                             archive_handled = True
                             break
                     if archive_handled == True:
@@ -694,7 +700,6 @@ def load_from_archive(name):
     """
     Returns an open python file object of the given type from an archive file.
     """
-
     for prefix, index in archives:
         if not name in index:
             continue

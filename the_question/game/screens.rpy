@@ -155,6 +155,8 @@ style say_dialogue:
     xsize gui.dialogue_width
     ypos gui.dialogue_ypos
 
+    adjust_spacing False
+
 
 ## Input screen ################################################################
 ##
@@ -776,13 +778,6 @@ screen preferences():
                         textbutton _("Fullscreen") action Preference("display", "fullscreen")
 
                 vbox:
-                    style_prefix "radio"
-                    label _("Rollback Side")
-                    textbutton _("Disable") action Preference("rollback side", "disable")
-                    textbutton _("Left") action Preference("rollback side", "left")
-                    textbutton _("Right") action Preference("rollback side", "right")
-
-                vbox:
                     style_prefix "check"
                     label _("Skip")
                     textbutton _("Unseen Text") action Preference("skip", "toggle")
@@ -803,6 +798,12 @@ screen preferences():
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                     textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
                     textbutton "한국어" text_font "SourceHanSansLite.ttf" action Language("korean")
+
+                vbox:
+                    style_prefix "radio"
+                    label _(" ")
+
+
                     textbutton "简体中文" text_font "SourceHanSansLite.ttf" action Language("schinese")
                     textbutton "繁體中文" text_font "SourceHanSansLite.ttf" action Language("tchinese")
                     textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
