@@ -97,7 +97,7 @@ init -1500 python in build:
         ( "renpy/**.py", "renpy"),
 
         ( "renpy/**.pyx", None),
-        ( "renpy/**.pyd", None),
+        ( "renpy/**.pxd", None),
         ( "renpy/**.pxi", None),
         ( "renpy/**.pyc", None),
         ( "renpy/**.pyo", None),
