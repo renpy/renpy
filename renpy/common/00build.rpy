@@ -243,7 +243,7 @@ init -1500 python in build:
         Removes the pattern from the list.
         """
 
-        l[:] = [ (p, fl) for i in l if p != pattern ]
+        l[:] = [ (p, fl) for p, fl in l if p != pattern ]
 
     # Archiving.
 
