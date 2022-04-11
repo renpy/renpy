@@ -22,6 +22,9 @@ is now allowed, and equivalent to::
 
     linear 2.0 xalign 1.0 yalign 1.0
 
+Information about :ref:`ATL Transitions <atl-transitions>` and :ref:`Special ATL Keyword Parameters <atl-keyword-parameters>`
+has been added to the documentation.
+
 Image Gallery
 -------------
 

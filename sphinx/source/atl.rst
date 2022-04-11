@@ -1287,3 +1287,78 @@ multiple ways - for example, :tpref:`xalign` sets xpos and xanchor.
 Finally, when a ``show`` statement does not include an ``at`` clause, the
 same displayables are used, so no inheritence is necessary. To prevent inheritance,
 show and then hide the displayable.
+
+.. _atl-transititions:
+
+ATL Transitions
+===============
+
+It's possible to use an ATL transform to define a transition. These transitions
+accept the `old_widget` and `new_widget` arguments, which are given displayables
+that are transitioned from and to, respectively.
+
+An ATL transition must set the :tpref:`delay` property to the number of seconds
+the transition lasts for. It may user the :tpref:`events` property to prevent
+the old displayable from receiving events. ::
+
+    transform spin(duration=1.0, new_widget=None, old_widget=None):
+
+        # Set how long this transform will take to complete.
+        delay duration
+
+        # Center it.
+        xcenter 0.5
+        ycenter 0.5
+
+        # Spin the old displayable.
+        old_widget
+        events False
+        rotate 0.0
+        easeout (duration / 2) rotate 360.0
+
+        # Spin the new displayable.
+        new_widget
+        events True
+        easein (duration / 2) rotate 720.0
+
+
+.. _atl-keyword-parameters:
+
+Special ATL Keyword Parameters
+==============================
+
+There are several parameters that Ren'Py will supply to ATL, in certain
+contexts, if the parameter is in the parameter list.
+
+`child`
+    When ATL is used as a transform, the child parameter is given the original
+    child that the transform is applied to. This allows the child to be referred
+    to explicitly. For example, it becomes possible to swap between the s
+    supplied child and another displayable::
+
+        transform lucy_jump_scare(child):
+            child      # Show the original child.
+            pause 5
+            "lucy mad" # Jump scare.
+            pause .2
+            child      # Go back to the original child.
+
+    If can also be used to place the original child inside a ``contains``
+    block::
+
+        transform marquee(width, height=1.0, duration=2.0, child=None):
+            xcenter 0.5
+            ycenter 0.5
+
+            crop_relative True
+            crop (0, 0, 0.5, 500)
+
+            contains:
+                child
+                xanchor 0.0 xpos 1.0
+                linear duration xanchor 1.0 xpos 0.0
+
+
+`old_widget`, `new_widget`
+    When an ATL block is used as a transition, these are given displayables
+    that are transitioned from and to, respectively.
