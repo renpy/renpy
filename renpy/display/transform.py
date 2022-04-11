@@ -928,8 +928,8 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         return repr((self.child, self.atl.loc))
 
 
-# Names of transform properties, and if the property should be handles with
-# diff2 or diff2.
+# Names of transform properties, and if the property should be handled with
+# diff2 or diff4.
 all_properties = set()
 diff2_properties = set()
 diff4_properties = set()
@@ -991,7 +991,7 @@ add_property("blur", float_or_none, None)
 add_property("corner1", (float, float), None)
 add_property("corner2", (float, float), None)
 add_property("crop", (float, float, float, float), None)
-add_property("crop_relative", bool, False)
+add_property("crop_relative", any_object, None)
 add_property("debug", any_object, None)
 add_property("delay", float, 0)
 add_property("events", bool, True)

@@ -279,7 +279,12 @@ def transform_render(self, widtho, heighto, st, at):
 
     if crop is not None:
 
-        if state.crop_relative:
+        crop_relative = state.crop_relative
+
+        if crop_relative is None:
+            crop_relative = config.crop_relative_default
+
+        if crop_relative:
             x, y, w, h = crop
 
             def relative(n, base, limit):
@@ -288,10 +293,15 @@ def transform_render(self, widtho, heighto, st, at):
                 else:
                     return min(int(n * base), limit)
 
-            x = relative(x, width, width)
-            y = relative(y, height, height)
-            w = relative(w, width, width - x)
-            h = relative(h, height, height - y)
+            if crop_relative == "area":
+                crop_xroom, crop_yroom = widtho, heighto
+            else:
+                crop_xroom, crop_yroom = width, height
+
+            x = relative(x, crop_xroom, crop_xroom)
+            y = relative(y, crop_yroom, crop_yroom)
+            w = relative(w, crop_xroom, crop_xroom - x)
+            h = relative(h, crop_yroom, crop_yroom - y)
 
             crop = (x, y, w, h)
 
