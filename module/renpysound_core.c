@@ -988,7 +988,7 @@ void RPS_set_endevent(int channel, int event) {
 
 /*
  * This sets the natural volume of the channel. (This may not take
- * effect immediately if a fade is going on.)
+ * effect immediately if a fadeout is going on.)
  */
 void RPS_set_volume(int channel, float volume) {
     struct Channel *c;
@@ -998,11 +998,33 @@ void RPS_set_volume(int channel, float volume) {
     }
 
     c = &channels[channel];
-    c->volume = (int) (volume * MAXVOLUME);
+
+    int old_volume = c->volume;
+    int new_volume = (int) (volume * MAXVOLUME);
+
+    c->volume = new_volume;
+
+    if (c->fade_step_len) {
+
+        if (c->fade_delta > 0) {
+            int fade_samples_remaining = c->fade_step_len * (old_volume - c->fade_vol);
+            c->fade_vol = new_volume * c->fade_vol / old_volume;
+            c->fade_step_len = fade_samples_remaining / (new_volume - c->fade_vol);
+            c->fade_step_len &= ~0x7; // Even sample.
+            c->fade_delta = 1;
+        }
+
+        if (c->fade_delta < 0) {
+            int fade_samples_remaining = c->fade_step_len * c->fade_vol;
+            c->fade_vol = new_volume * c->fade_vol / old_volume;
+            c->fade_step_len = fade_samples_remaining /  c->fade_vol;
+            c->fade_step_len &= ~0x7; // Even sample.
+            c->fade_delta = -1;
+        }
+    }
 
     error(SUCCESS);
 }
-
 
 
 float RPS_get_volume(int channel) {
