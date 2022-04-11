@@ -282,7 +282,7 @@ def transform_render(self, widtho, heighto, st, at):
         crop_relative = state.crop_relative
 
         if crop_relative is None:
-            crop_relative = config.crop_relative_default
+            crop_relative = renpy.config.crop_relative_default
 
         if crop_relative:
             x, y, w, h = crop
