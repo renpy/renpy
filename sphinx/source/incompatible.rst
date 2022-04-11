@@ -43,6 +43,17 @@ or globally with::
     style default:
         outline_scaling "step"
 
+The :tpref:`crop_relative` transform property now take string values instead of
+booleans. The behavior associated with the former True value is now the default
+behavior. Absolute numbers of pixels to set the cropping should be expressed with
+ints or ``absolute`` numbers. To revert to the former default behavior, which casts
+floats to an absolute number of pixels, use::
+
+    define config.crop_relative_default = False
+
+However, be warned that like most things documented only on this page, this will
+conflict with - and cannot be used at the same time as - some other new features.
+
 The platform-specific directories inside lib/ have had name changes. The
 ``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This
 change helps support the development of the Python 3 powered Ren'Py 8.
