@@ -265,9 +265,10 @@ expression.
 
 There are three things the first simple expression may evaluate to:
 
-* If it's an ATL transform, and that ATL transform has not been supplied
-  any arguments (include a child), the ATL transform is included at the
-  location of the block. The ``with`` clause is ignored.
+* If it's an ATL transform, and that ATL transform has **not** been supplied
+  a child (through being called as a transform or transition, or
+  with a `child` or `old_widget` argument), the ATL transform is
+  included at the location of the block. The ``with`` clause is ignored.
 
 * If it's an integer or floating point number,  it's taken as a number of
   seconds to pause execution for. The ``with`` clause is ignored.
