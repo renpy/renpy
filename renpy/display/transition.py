@@ -338,7 +338,7 @@ class Dissolve(Transition):
 
     When the dissolve will be scaled to less than half its natural size, the
     :propref:`mipmap` style property can be set to True. This will cause mipmaps
-    to be generated, which will make the dissolve more consume more GPU resources,
+    to be generated, which will make the dissolve consume more GPU resources,
     but will reduce artifacts.
     """
 
@@ -452,7 +452,7 @@ class ImageDissolve(Transition):
 
     When the dissolve will be scaled to less than half its natural size, the
     :propref:`mipmap` style property can be set to True. This will cause mipmaps
-    to be generated, which will make the dissolve more consume more GPU resources,
+    to be generated, which will make the dissolve consume more GPU resources,
     but will reduce artifacts.
     """
 
@@ -624,7 +624,7 @@ class AlphaDissolve(Transition):
 
     When the dissolve will be scaled to less than half its natural size, the
     :propref:`mipmap` style property can be set to True. This will cause mipmaps
-    to be generated, which will make the dissolve more consume more GPU resources,
+    to be generated, which will make the dissolve consume more GPU resources,
     but will reduce artifacts.
      """
 
