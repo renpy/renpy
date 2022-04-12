@@ -336,7 +336,7 @@ class Dissolve(Transition):
         function that takes a fractional time between 0.0 and 1.0, and returns
         a number in the same range.
 
-    When the dissolve will be caled to less thna half its natural size, the
+    When the dissolve will be scaled to less than half its natural size, the
     :propref:`mipmap` style property can be set to True. This will cause mipmaps
     to be generated, which will make the dissolve more consume more GPU resources,
     but will reduce artifacts.
@@ -450,7 +450,7 @@ class ImageDissolve(Transition):
         define circirisin = ImageDissolve("circiris.png", 1.0, reverse=True)
         define circiristbigramp = ImageDissolve("circiris.png", 1.0, ramplen=256)
 
-    When the dissolve will be caled to less thna half its natural size, the
+    When the dissolve will be scaled to less than half its natural size, the
     :propref:`mipmap` style property can be set to True. This will cause mipmaps
     to be generated, which will make the dissolve more consume more GPU resources,
     but will reduce artifacts.
@@ -622,7 +622,7 @@ class AlphaDissolve(Transition):
         from the old image, while transparent areas are taken from the
         new image.
 
-    When the dissolve will be caled to less thna half its natural size, the
+    When the dissolve will be scaled to less than half its natural size, the
     :propref:`mipmap` style property can be set to True. This will cause mipmaps
     to be generated, which will make the dissolve more consume more GPU resources,
     but will reduce artifacts.
