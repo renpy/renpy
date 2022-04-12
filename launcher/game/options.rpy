@@ -393,8 +393,6 @@ init python:
     build.classify_renpy("lib/*linux-armv7l/", "raspi")
     build.classify_renpy("lib/*linux-armv7l/**", "raspi")
 
-    build.classify_renpy("lib/**/__pycache__/", None)
-
     if PY2:
         source_and_binary("lib/py2-**", "binary", "binary")
         source_and_binary("lib/python2**", "binary", "binary")
