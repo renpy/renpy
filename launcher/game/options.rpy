@@ -323,16 +323,27 @@ init python:
         else goes into source.
         """
 
-        if not py:
-            build.classify_renpy(pattern + "/**__pycache__/", None)
-            build.classify_renpy(pattern + "/**.pyc", None)
-            build.classify_renpy(pattern + "/**.pyo", None)
-        elif PY2:
-            build.classify_renpy(pattern + "/**__pycache__/", None)
-            build.classify_renpy(pattern + "/**.pyo", binary)
-        else:
+        if py is True:
+            py = 'pyo' if PY2 else 'pycache'
+
+        if py == 'pycache':
             build.classify_renpy(pattern + "/**__pycache__/", binary)
             build.classify_renpy(pattern + "/**__pycache__/*.{}.pyc".format(sys.implementation.cache_tag), binary)
+            build.classify_renpy(pattern + "/**.pyc", None)
+            build.classify_renpy(pattern + "/**.pyo", None)
+
+        elif py == 'pyc':
+            build.classify_renpy(pattern + "/**__pycache__/", None)
+            build.classify_renpy(pattern + "/**.pyc", binary)
+            build.classify_renpy(pattern + "/**.pyo", None)
+
+        elif py == 'pyo':
+            build.classify_renpy(pattern + "/**__pycache__/", None)
+            build.classify_renpy(pattern + "/**.pyc", None)
+            build.classify_renpy(pattern + "/**.pyo", binary)
+
+        else:
+            build.classify_renpy(pattern + "/**__pycache__/", None)
             build.classify_renpy(pattern + "/**.pyc", None)
             build.classify_renpy(pattern + "/**.pyo", None)
 
@@ -399,7 +410,7 @@ init python:
         build.classify_renpy("renpy2.sh", "binary")
     else:
         source_and_binary("lib/py3-**", "binary", "binary")
-        source_and_binary("lib/python3**", "binary", "binary")
+        source_and_binary("lib/python3**", "binary", "binary", py='pyc')
         build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
