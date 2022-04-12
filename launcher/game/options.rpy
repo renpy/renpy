@@ -316,20 +316,24 @@ init python:
 
     # main source.
 
-    def source_and_binary(pattern, source="source", binary="binary"):
+    def source_and_binary(pattern, source="source", binary="binary", py=True):
         """
         Classifies source and binary files beginning with `pattern`.
         .pyo, .rpyc, .rpycm, and .rpyb go into binary, everything
         else goes into source.
         """
 
-        if PY2:
-            build.classify_renpy(pattern + "/__pycache__/", None)
+        if not py:
+            build.classify_renpy(pattern + "/**__pycache__/", None)
+            build.classify_renpy(pattern + "/**.pyc", None)
+            build.classify_renpy(pattern + "/**.pyo", None)
+        elif PY2:
+            build.classify_renpy(pattern + "/**__pycache__/", None)
             build.classify_renpy(pattern + "/**.pyo", binary)
         else:
-            build.classify_renpy(pattern + "/__pycache__/", binary)
-            build.classify_renpy(pattern + "/__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), binary)
-            build.classify_renpy(pattern + "/**.pyc", binary)
+            build.classify_renpy(pattern + "/**__pycache__/", binary)
+            build.classify_renpy(pattern + "/**__pycache__/*.{}.pyc".format(sys.implementation.cache_tag), binary)
+            build.classify_renpy(pattern + "/**.pyc", None)
             build.classify_renpy(pattern + "/**.pyo", None)
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
@@ -345,8 +349,8 @@ init python:
     build.classify_renpy("launcher/game/theme/", None)
     build.classify_renpy("gui/game/gui/", None)
 
-    source_and_binary("launcher")
-    source_and_binary("gui", binary=None)
+    source_and_binary("launcher", py=False)
+    source_and_binary("gui", binary=None, py=False)
 
     source_and_binary("the_question")
     source_and_binary("tutorial")
@@ -388,6 +392,8 @@ init python:
     build.classify_renpy("lib/**/*Live2D*", None)
     build.classify_renpy("lib/*linux-armv7l/", "raspi")
     build.classify_renpy("lib/*linux-armv7l/**", "raspi")
+
+    build.classify_renpy("lib/**/__pycache__/", None)
 
     if PY2:
         source_and_binary("lib/py2-**", "binary", "binary")
