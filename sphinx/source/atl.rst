@@ -265,19 +265,23 @@ expression.
 
 There are three things the first simple expression may evaluate to:
 
-* If it's a transform, that transform is executed. With clauses are ignored
-  when a transform is supplied.
+* If it's an ATL transform, and that ATL transform has not been supplied
+  any arguments (include a child), the ATL transform is included at the
+  location of the block. The ``with`` clause is ignored.
 
 * If it's an integer or floating point number,  it's taken as a number of
-  seconds to pause execution for.
+  seconds to pause execution for. The ``with`` clause is ignored.
 
 * Otherwise, the expression is interpreted to be a displayable. This
   displayable replaces the child of the transform when this clause executes,
-  making it useful for animation. If a with clause is present, the second
+  making it useful for animation. If a ``with`` clause is present, the second
   expression is evaluated as a transition, and the transition is applied to
   the old and new displayables.
 
 ::
+
+    transform move_right:
+        linear 1.0 xalign 1.0
 
     image atl example:
          # Display logo_base.png
