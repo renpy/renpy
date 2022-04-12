@@ -1,4 +1,4 @@
-#!/home/tom/ab/renpy/lib/py2-linux-x86_64/python -O
+#!/home/tom/ab/renpy/lib/py3-linux-x86_64/python
 
 # Builds a distribution of Ren'Py.
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
@@ -15,7 +15,6 @@ import subprocess
 import argparse
 import time
 import collections
-
 
 try:
     # reload is built-in in Python 2, in importlib in Python 3
@@ -87,6 +86,9 @@ def main():
 
     if PY2 and not sys.flags.optimize:
         raise Exception("Not running with python optimization.")
+
+    if not os.path.abspath(sys.executable).startswith(ROOT + "/lib"):
+        raise Exception("Distribute must be run with the python in lib/.")
 
     # Revision updating is done early, so we can do it even if the rest
     # of the program fails.
