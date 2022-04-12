@@ -443,6 +443,9 @@ class ATLTransformBase(renpy.object.Object):
             if name in kwargs:
                 raise Exception('Parameter %r is used as both a positional and keyword argument to a transition.' % name)
 
+            if (name == "child") or (name == "old_widget"):
+                child = v
+
             context[name] = value
 
         if args:
@@ -450,6 +453,9 @@ class ATLTransformBase(renpy.object.Object):
 
         # Handle keyword arguments.
         for k, v in kwargs.items():
+
+            if k == "old_widget":
+                child = v
 
             if k in positional:
                 positional.remove(k)
@@ -972,7 +978,7 @@ class RawMultipurpose(RawStatement):
 
             child = renpy.easy.displayable(child)
 
-            if isinstance(child, ATLTransformBase):
+            if isinstance(child, ATLTransformBase) and (child.child is None):
                 child.compile()
                 return child.get_block()
             else:
