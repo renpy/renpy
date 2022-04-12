@@ -162,6 +162,16 @@ be the same size. ::
     define config.side_image_same_transform = same_transform
 
 
+When the :func:`SideImage` is scaled down, it might make sense to enable
+mipmapping in the :func:`Dissolve`::
+
+    transform same_transform(old, new):
+        old
+        new with Dissolve(0.2, alpha=True, mipmap=True)
+
+    define config.side_image_same_transform = same_transform
+
+
 Leaving Room / Customization
 ----------------------------
 
