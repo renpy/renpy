@@ -2531,7 +2531,7 @@ def get_at_list(name, layer=None, camera=False):
     tag = name[0]
     layer = default_layer(layer, tag)
 
-    return renpy.game.context().scene_lists.at_list[layer].get(tag, None)
+    return list(renpy.game.context().scene_lists.at_list[layer].get(tag, None))
 
 
 def show_layer_at(at_list, layer='master', reset=True, camera=False):
