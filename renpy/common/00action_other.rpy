@@ -91,7 +91,7 @@ init -1500 python:
             self.expression = expression
 
             if isinstance(expression, Action):
-                for i in [ "get_selected", "get_sensitive", "get_tooltip", "periodic", "unhovered", "unhovered" ]:
+                for i in ("get_selected", "get_sensitive", "get_tooltip", "periodic", "unhovered"):
                     setattr(self, i, getattr(expression, i, None))
 
         def __call__(self):
@@ -124,7 +124,7 @@ init -1500 python:
             self.expression = expression
 
             if isinstance(expression, Action):
-                for i in [ "get_selected", "get_sensitive", "get_tooltip", "periodic", "unhovered", "unhovered" ]:
+                for i in ("get_selected", "get_sensitive", "get_tooltip", "periodic", "unhovered"):
                     setattr(self, i, getattr(expression, i, None))
 
         def __call__(self):
