@@ -2123,6 +2123,7 @@ class Flatten(Container):
 
         rv.mesh = True
         rv.add_shader("renpy.texture")
+        rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
 
         self.offsets = [ (0, 0) ]
 
