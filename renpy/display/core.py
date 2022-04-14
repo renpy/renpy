@@ -3425,7 +3425,7 @@ class Interface(object):
 
         while True:
 
-            if self.event_peek():
+            if self.event_peek() and not self.force_prediction:
                 break
 
             if not (can_block and expensive):

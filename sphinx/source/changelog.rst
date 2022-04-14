@@ -64,6 +64,10 @@ children is not a multiple of the specified value.
 Features
 --------
 
+The new `predict` argument to :func:`renpy.pause` makes it possible to pause
+until image prediction is finished, including prediction caused by
+:func:`renpy.start_predict` and :func:`renpy.start_predict_screen`.
+
 It is now possible to select a language other than the default when
 extracting dialogue.
 

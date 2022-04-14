@@ -1485,16 +1485,18 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     return rv
 
 
-def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
+def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None):
     """
     :doc: other
-    :args: (delay=None, hard=False)
+    :args: (delay=None, hard=False, predict=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
 
     `delay`
         If given, the number of seconds Ren'Py should pause for.
+
+    The following should be given as keyword arguments:
 
     `hard`
         This must be given as a keyword argument. When True, Ren'Py may prevent
@@ -1513,6 +1515,15 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
         player.
 
         tl;dr - Don't use renpy.pause with hard=True.
+
+    `predict`
+        If True, Ren'Py will end the pause when all prediction, including
+        prediction scheduled with :func:`renpy.start_predict` and
+        :func:`renpy.start_predict_screen`, has been finished.
+
+        This also causes Ren'Py to prioritize prediction over display smoothness
+        for the duration of the pause. Because of that, it's recommended to not
+        display animations during prediction.
     """
 
     if renpy.config.skipping == "fast":
@@ -1560,6 +1571,10 @@ def pause(delay=None, music=None, with_none=None, hard=False, checkpoint=None):
         renpy.ui.saybehavior(afm=afm, dismiss='dismiss_hard_pause', dismiss_unfocused=[])
     else:
         renpy.ui.saybehavior(afm=afm)
+
+    if predict:
+        renpy.display.interface.force_prediction = True
+        renpy.ui.add(renpy.display.behavior.PredictPauseBehavior())
 
     try:
         rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay)
@@ -3058,6 +3073,9 @@ def start_predict(*args):
         $ renpy.start_predict("images/concert*.*")
 
     matches all files starting with concert in the images directory.
+
+    Prediction will occur during normal gameplay. To wait for prediction
+    to complete, use the `predict` argument to :func:`renpy.pause`.
     """
 
     new_predict = renpy.revertable.RevertableSet(renpy.store._predict_set)
@@ -3097,6 +3115,9 @@ def start_predict_screen(_screen_name, *args, **kwargs):
     Causes Ren'Py to start predicting the screen named `_screen_name`
     with the given arguments. This replaces any previous prediction
     of `_screen_name`. To stop predicting a screen, call :func:`renpy.stop_predict_screen`.
+
+    Prediction will occur during normal gameplay. To wait for prediction
+    to complete, use the `predict` argument to :func:`renpy.pause`.
     """
 
     new_predict = renpy.revertable.RevertableDict(renpy.store._predict_screen)
