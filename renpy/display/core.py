@@ -2139,6 +2139,11 @@ class Interface(object):
         # Is this the first frame?
         self.first_frame = True
 
+        # Should prediction be forced? This causes the prediction coroutine to
+        # be prioritized, and is set to False when it's done, when preloading
+        # is done, or at the end of the interaction.
+        self.force_prediction = False
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -3351,6 +3356,8 @@ class Interface(object):
 
         finally:
 
+            self.force_prediction = False
+
             context.interacting = False
 
             # Clean out transient stuff at the end of an interaction.
@@ -3484,6 +3491,11 @@ class Interface(object):
                 step += 1
 
             else:
+
+                # Check to see if preloading has finished
+                if renpy.display.im.cache.done():
+                    self.force_prediction = False
+
                 break
 
         if expensive:
@@ -3987,8 +3999,13 @@ class Interface(object):
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
 
-                if can_block or (frame >= renpy.config.idle_frame):
+                if can_block or (frame >= renpy.config.idle_frame) or (self.force_prediction):
                     expensive = not (needs_redraw or (_redraw_in < .2) or (_timeout_in < .2) or renpy.display.video.playing())
+
+                    if self.force_prediction:
+                        expensive = True
+                        can_block = True
+
                     self.idle_frame(can_block, expensive)
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
