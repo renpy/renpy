@@ -382,7 +382,7 @@ class RevertableSet(set):
 
         def newmethod(*args, **kwargs):
             rv = method(*args, **kwargs) # type: ignore
-            if isinstance(rv, (set, frozenset)):
+            if isinstance(rv, set):
                 return RevertableSet(rv)
             else:
                 return rv
