@@ -537,7 +537,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
                 rv.raw_layers[layer] = d
                 rv.layers[layer] = f
-                rv.add(f)
+                rv.add(f, True, True)
 
             return rv
 
