@@ -104,6 +104,10 @@ transparent pixels.
 Other changes
 -------------
 
+A :func:`Character` defined with `interact` false, or otherwise used in a
+non-interactive way will now cause an automatic voice line to play, if the
+relevant file exists.
+
 When ``window auto`` displays the window before a say or menu-with-caption
 statement, Ren'Py will automatically determine if the character to speak
 uses NVL or ADV, and will display the correct window. Previously, the last

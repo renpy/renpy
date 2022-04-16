@@ -1225,6 +1225,9 @@ box_skip_false_showif = True
 # What should be the default value of the crop_relative tpref ?
 crop_relative_default = True
 
+# A list of functions that are called when a character is called with
+# interact=False
+nointeract_callbacks = [ ]
 
 del os
 del collections
