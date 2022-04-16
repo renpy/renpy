@@ -131,6 +131,16 @@ Variables that have their value set in an init python block are not
 saved, loaded, and do not participate in rollback. Therefore, these
 variables should not be changed after init is over.
 
+.. warning::
+
+    Classes created within Ren'py and inheriting nothing or explicitely
+    inheriting ``object``, and subclasses of these classes, do not support
+    ``__slots__``. Trying to do so will misbehave with rollback in older
+    versions of renpy, and will raise errors in newer versions.
+
+    In order to have slotted classes, creators should explicitely subclass
+    ``python_object``, which in return doesn't support rollback at all.
+
 .. _define-statement:
 
 Define Statement
