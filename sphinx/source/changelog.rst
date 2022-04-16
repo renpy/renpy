@@ -104,6 +104,11 @@ transparent pixels.
 Other changes
 -------------
 
+When ``window auto`` displays the window before a say or menu-with-caption
+statement, Ren'Py will automatically determine if the character to speak
+uses NVL or ADV, and will display the correct window. Previously, the last
+character in a say statement was used.
+
 The :propref:`activate_sound` plays when activating a drag displayable.
 
 The :func:`VariableValue`, :func:`FieldValue`, and :func:`DictValue` Bar Values
