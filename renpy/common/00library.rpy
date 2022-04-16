@@ -119,11 +119,15 @@ init -1700 python:
 
     def _default_empty_window():
 
-        try:
-            who = _last_say_who
-            who = renpy.eval_who(who)
-        except Exception:
-            who = None
+        scry = renpy.scry()
+        if scry.say or scry.menu_with_caption:
+            who = renpy.next_who()
+        else:
+            try:
+                who = _last_say_who
+                who = renpy.eval_who(who)
+            except Exception:
+                who = None
 
         if who is None:
             who = narrator
