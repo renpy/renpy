@@ -133,13 +133,13 @@ variables should not be changed after init is over.
 
 .. warning::
 
-    Classes created within Ren'py and inheriting nothing or explicitely
+    Classes created within Ren'py and inheriting nothing or explicitly
     inheriting ``object``, and subclasses of these classes, do not support
     ``__slots__``. Trying to do so will misbehave with rollback in older
     versions of renpy, and will raise errors in newer versions.
 
-    In order to have slotted classes, creators should explicitely subclass
-    ``python_object``, which in return doesn't support rollback at all.
+    In order to have slotted classes, creators should explicitly subclass
+    ``python_object``, which doesn't support rollback.
 
 .. _define-statement:
 
