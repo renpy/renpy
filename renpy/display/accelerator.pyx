@@ -293,15 +293,10 @@ def transform_render(self, widtho, heighto, st, at):
                 else:
                     return min(int(n * base), limit)
 
-            if crop_relative == "area":
-                crop_xroom, crop_yroom = widtho, heighto
-            else:
-                crop_xroom, crop_yroom = width, height
-
-            x = relative(x, crop_xroom, crop_xroom)
-            y = relative(y, crop_yroom, crop_yroom)
-            w = relative(w, crop_xroom, crop_xroom - x)
-            h = relative(h, crop_yroom, crop_yroom - y)
+            x = relative(x, width, width)
+            y = relative(y, height, height)
+            w = relative(w, width, width - x)
+            h = relative(h, height, height - y)
 
             crop = (x, y, w, h)
 
