@@ -413,9 +413,12 @@ class RevertableSet(set):
 
 
 class RevertableObject(object):
-    # All RenPy's objects have  __dict__ for fast rollback
-    # __weakref__ should exist, so mutator can work
-    __slots__ = ("__weakref__", "__dict__")
+    # All RenPy's objects have  __dict__, so _rollback is fast, i.e
+    # one update, not iterating over all attributes.
+    # __weakref__ should exist, so mutator can work.
+    # Other slots are forbidden because they cannot be reverted in easy way.
+    # For more details, see https://github.com/renpy/renpy/pull/3282
+    # __slots__ = ("__weakref__", "__dict__")
 
     def __new__(cls, *args, **kwargs):
         self = super(RevertableObject, cls).__new__(cls)
