@@ -1172,6 +1172,9 @@ compat_viewport_minimum = False
 # Should webaudio be used on the web platform?
 webaudio = True
 
+# A list of audio types that are required to fully enable webaudio.
+webaudio_required_types = [ "audio/ogg", "audio/mp3" ]
+
 # If not None, a callback that can be used to alter audio filenames.
 audio_filename_callback = None
 

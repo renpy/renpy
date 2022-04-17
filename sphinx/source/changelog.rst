@@ -43,6 +43,18 @@ ChromeOS
 When running as an Android application on a ChromeOS device, the "chromeos"
 variant will be selected.
 
+Web
+---
+
+The new :var:`config.webaudio_required_types` variable can be given a list of
+mime types of audio files used by the game. Ren'Py will only use the web
+browser's Web Audio system for playback if all of the mime types are supported
+in the browser. If not, webasm is used for playback, which is more likely to
+cause skipping if the computer is slow.
+
+The config.webaudio_required_types variable is intended to allow games using ogg
+or opus audio to run on Safari, and can be changed if a game only uses mp3 audio.
+
 Boxes, Grids and Vpgrids
 ------------------------
 

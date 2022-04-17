@@ -399,6 +399,22 @@ renpyAudio.tts = (s) => {
     speechSynthesis.speak(u);
 };
 
+renpyAudio.can_play_types = (l) => {
+    let a = document.createElement("audio");
+
+    for (let i of l) {
+        if (!a.canPlayType(i)) {
+            console.log("Can't play", i);
+            return 0;
+        } else {
+            console.log("Can play", i);
+        }
+    }
+
+    return 1;
+}
+
+
 if (context.state == "suspended") {
     let unlockContext = () => {
         context.resume().then(() => {

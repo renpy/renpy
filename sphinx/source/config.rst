@@ -950,6 +950,21 @@ Occasionally Used
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
 
+.. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mp3" ]
+
+    When running on the web platform, Ren'Py will check the browser to
+    see if it can play audio files of these mime types. If the browser
+    can, it is used to play the files. If not, a slower and potentially skip
+    prone wasm decoder is used.
+
+    By default, the browser's web audio system is used on Chrome and Firefox,
+    and wasm is used on safari. If your game only uses mp3 audio, this can
+    be changed using ::
+
+        define config.webaudio_required_types = [ "audio/mp3" ]
+
+    To used the faster web audio system on Safari as well.
+
 .. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu', "say-centered" ]
 
     A list of statements that cause ``window auto`` to hide the empty

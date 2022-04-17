@@ -297,6 +297,22 @@ def set_video(channel, video):
     return
 
 
+loaded = False
+
+def load_script():
+    """
+    Loads the javascript required for webaudio to work.
+    """
+
+    global loaded
+
+    if not loaded:
+        js = renpy.loader.load("_audio.js").read()
+        emscripten.run_script(js)
+
+    loaded = True
+
+
 def init(freq, stereo, samples, status=False, equal_mono=False):
     """
     Initializes the audio system with the given parameters. The parameter are
@@ -317,10 +333,7 @@ def init(freq, stereo, samples, status=False, equal_mono=False):
     `
     """
 
-    renpy.config.debug_sound = True
-
-    js = renpy.loader.load("_audio.js").read()
-    emscripten.run_script(js)
+    load_script()
 
     return True
 
@@ -350,3 +363,14 @@ def sample_surfaces(rgb, rgba):
     """
 
     return
+
+
+def can_play_types(types):
+    """
+    Webaudio-specific. Returns 1 if the audio system can play all the mime
+    types in the list, 0 if it cannot.
+    """
+
+    load_script()
+
+    return call_int("can_play_types", types)
