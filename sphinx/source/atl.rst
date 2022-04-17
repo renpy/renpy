@@ -1011,35 +1011,6 @@ both horizontal and vertical positions.
         - As for ``cover``, but will never decrease the size of the
           displayable.
 
-.. transform-property:: size
-
-    :type: None or (int, int)
-    :default: None
-
-    If not None, causes the displayable to be scaled to the given
-    size.
-
-    This is affected by the :tpref:`fit` property.
-
-    .. warning::
-
-        This property is deprecated. Use :tpref:`xysize` instead.
-
-.. transform-property:: maxsize
-
-    :type: None or (int, int)
-    :default: None
-
-    If not None, causes the displayable to be scaled so that it fits
-    within a box of this size, while preserving aspect ratio. (Note that
-    this means that one of the dimensions may be smaller than the size
-    of this box.)
-
-    .. warning::
-
-        This property is deprecated. Consider using :tpref:`xysize` in
-        conjuction with :tpref:`fit` and the value ``contain``.
-
 .. transform-property:: subpixel
 
     :type: boolean
