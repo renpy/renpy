@@ -43,11 +43,10 @@ or globally with::
     style default:
         outline_scaling "step"
 
-The :tpref:`crop_relative` transform property now take string values instead of
-booleans. The behavior associated with the former True value is now the default
-behavior. Absolute numbers of pixels to set the cropping should be expressed with
-ints or ``absolute`` numbers. To revert to the former default behavior, which casts
-floats to an absolute number of pixels, use::
+The :tpref:`crop_relative` transform property now defaults to True instead of False.
+Absolute numbers of pixels to set the cropping should be expressed with ints or
+``absolute`` numbers. To revert to the former default behavior, which casts floats to
+an absolute number of pixels, use::
 
     define config.crop_relative_default = False
 
