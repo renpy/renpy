@@ -937,15 +937,6 @@ both horizontal and vertical positions.
 
     If corners and crop are given, crop takes priority over corners.
 
-.. transform-property:: crop_relative
-
-    :type: boolean
-    :default: True
-
-    If False, float components of crop are interpreted as an absolute
-    number of pixels, instead of a fraction of the width and height of
-    the source image.
-
 .. transform-property:: corner1
 
     :type: None or (int, int)
@@ -1176,6 +1167,50 @@ These properties are applied in the following order:
 #. matrixcolor
 #. GL Properties, Uniforms
 #. position properties
+
+Deprecated Transform Properties
+===============================
+
+.. warning::
+
+    The following properties should not be used in modern games, as they may
+    conflict with more recent features. They are only kept here for compatibility,
+    along with the new way of achieving the same behavior.
+
+.. transform-property:: crop_relative
+
+    :type: boolean
+    :default: True
+
+    If False, float components of :tpref:`crop` are interpreted as an absolute
+    number of pixels, instead of a fraction of the width and height of
+    the source image.
+
+    If an absolute number of pixel is to be expressed, ``absolute`` instances
+    should be provided to the :tpref:`crop` property instead of using the
+    crop_relative property. If necessary, values of dubious type can be wrapped
+    in the ``absolute`` callable.
+
+.. transform-property:: size
+
+    :type: None or (int, int)
+    :default: None
+
+    This is an older version of :tpref:`xysize` interpreting floating-point values
+    as an absolute number of pixels.
+
+.. transform-property:: maxsize
+
+    :type: None or (int, int)
+    :default: None
+
+    If not None, causes the displayable to be scaled so that it fits
+    within a box of this size, while preserving aspect ratio. (Note that
+    this means that one of the dimensions may be smaller than the size
+    of this box.)
+
+    To achieve the same result, give the values to the :tpref:`xysize` property, and
+    set the :tpref:`fit` property to the value "contain".
 
 Circular Motion
 ===============
