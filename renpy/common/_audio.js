@@ -60,6 +60,32 @@ let get_channel = (channel) => {
     return c;
 };
 
+let interpolate = (a, b, done) => {
+    return a + (b - a) * done;
+}
+
+/**
+ * Given an audio parameter, linearly ramps it from start to end over
+ * duration seconds.
+ */
+let linearRampToValue = (param, start, end, duration) => {
+    param.cancelScheduledValues(context.currentTime);
+
+    let points = 30;
+
+    for (let i = 0; i <= points; i++) {
+        let done = i / points;
+        param.setValueAtTime(interpolate(start, end, done), context.currentTime + interpolate(0, duration, done));
+    }
+}
+
+/**
+ * Given an audio parameter, sets it to the given value.
+ */
+let setValue= (param, value) => {
+    param.cancelScheduledValues(context.currentTime);
+    param.setValueAtTime(value, context.currentTime);
+}
 
 /**
  * Attempts to start playing channel `c`.
@@ -73,7 +99,7 @@ let start_playing = (c) => {
     }
 
     if (p.started !== null) {
-        return; 
+        return;
     }
 
     if (p.source === null) {
@@ -88,15 +114,10 @@ let start_playing = (c) => {
     p.source.connect(c.destination);
 
     if (p.fadeout === null) {
-        let value = c.fade_volume.gain.value;
-        c.fade_volume.gain.cancelScheduledValues(context.currentTime);
-        c.fade_volume.gain.value = value;
-
         if (p.fadein > 0) {
-            c.fade_volume.gain.value = 0.01;
-            c.fade_volume.gain.linearRampToValueAtTime(1.0, context.currentTime + p.fadein);
+            linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 1.0, p.fadein);
         } else {
-            c.fade_volume.gain.value = 1.0;
+            setValue(c.fade_volume.gain, 1.0);
         }
     }
 
@@ -107,10 +128,7 @@ let start_playing = (c) => {
     }
 
     if (p.fadeout !== null) {
-        let value = c.fade_volume.gain.value;
-        c.fade_volume.gain.cancelScheduledValues(context.currentTime);
-        c.fade_volume.gain.value = value;
-        c.fade_volume.gain.linearRampToValueAtTime(0.0, context.currentTime + p.fadeout);
+        linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, p.fadeout);
         c.playing.source.stop(context.currentTime + p.fadeout);
     }
 
@@ -120,7 +138,7 @@ let start_playing = (c) => {
 
 
 let pause_playing = (c) => {
-    
+
     if (c.paused) {
         return;
     }
@@ -140,7 +158,7 @@ let pause_playing = (c) => {
     if (p.started === null) {
         return;
     }
-    
+
     p.source.stop()
     p.start += (context.currentTime - p.started);
     p.started = null;
@@ -170,7 +188,7 @@ let on_end = (c) => {
     if (c.playing !== null && c.playing.started !== null) {
         stop_playing(c);
     }
-    
+
     start_playing(c);
 };
 
@@ -182,12 +200,12 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end) => 
     let c = get_channel(channel);
     let array = FS.readFile(file);
 
-    let q = { 
-        source : null, 
+    let q = {
+        source : null,
         buffer : null,
-        name : name, 
-        start : start, 
-        end : end, 
+        name : name,
+        start : start,
+        end : end,
         started : null,
         fadein : fadein,
         fadeout: null,
@@ -213,7 +231,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end) => 
 
         start_playing(c);
     }, () => {
-        console.log(`The audio data in ${file} could not be decoded. The file format may not be supported by this browser.`);   
+        console.log(`The audio data in ${file} could not be decoded. The file format may not be supported by this browser.`);
     });
 };
 
@@ -249,10 +267,7 @@ renpyAudio.fadeout = (channel, delay) => {
 
     let p = c.playing;
 
-    let value = c.fade_volume.gain.value;
-    c.fade_volume.gain.cancelScheduledValues(context.currentTime);
-    c.fade_volume.gain.value = value;
-    c.fade_volume.gain.linearRampToValueAtTime(0.0, context.currentTime + delay);
+    linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, delay);
     p.source.stop(context.currentTime + delay);
 
     if (c.queued === null || !c.queued.tight) {
@@ -269,8 +284,6 @@ renpyAudio.fadeout = (channel, delay) => {
 
 };
 
-// let oldChannel7 = -1;
-
 renpyAudio.queue_depth = (channel) => {
     let rv = 0;
     let c = get_channel(channel);
@@ -282,12 +295,6 @@ renpyAudio.queue_depth = (channel) => {
     if (c.queued !== null) {
         rv += 1;
     }
-
-    // if (channel == 7 && oldChannel7 != rv) {
-    //     console.log(c.playing, c.queued);
-    //     console.log("queue_depth", rv);
-    //     oldChannel7 = rv;
-    // }
 
     return rv;
 };
@@ -305,7 +312,7 @@ renpyAudio.playing_name = (channel) => {
 
 
 renpyAudio.pause = (channel) => {
-    
+
     let c = get_channel(channel);
     pause_playing(c);
 };
@@ -359,7 +366,7 @@ renpyAudio.get_duration = (channel) => {
 
 renpyAudio.set_volume = (channel, volume) => {
     let c = get_channel(channel);
-    c.primary_volume.gain.value = volume;
+    setValue(c.volume.gain, volume);
 };
 
 
@@ -367,10 +374,7 @@ renpyAudio.set_secondary_volume = (channel, volume, delay) => {
     let c = get_channel(channel);
     let control = c.secondary_volume.gain;
 
-    let value = control.value;
-    control.cancelScheduledValues(context.currentTime);
-    control.value = value;
-    control.linearRampToValueAtTime(volume, context.currentTime + delay);
+    linearRampToValue(control, control.value, volume, delay);
 };
 
 
@@ -384,10 +388,7 @@ renpyAudio.set_pan = (channel, pan, delay) => {
     let c = get_channel(channel);
     let control = c.stereo_pan.pan;
 
-    let value = control.value;
-    control.cancelScheduledValues(context.currentTime);
-    control.value = value;
-    control.linearRampToValueAtTime(pan, context.currentTime + delay);
+    linearRampToValue(control, control.value, volume, delay);
 };
 
 renpyAudio.tts = (s) => {
