@@ -14,6 +14,9 @@ python early in layeredimage:
     # This is the default value for predict_all given to conditions.
     predict_all = False
 
+    # Should the full size of the screen be offered to a LayeredImage?
+    config.layeredimage_offer_screen = True
+
     def format_function(what, name, group, variant, attribute, image, image_format, **kwargs):
         """
         :doc: li_ff
@@ -673,6 +676,9 @@ python early in layeredimage:
                         unknown.discard(a.variant)
 
             rv = Fixed(**self.fixed_args)
+
+            if config.layeredimage_offer_screen:
+                rv._offer_size = (config.screen_width, config.screen_height)
 
             for i in self.layers:
                 d = i.get_displayable(attributes)

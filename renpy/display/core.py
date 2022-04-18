@@ -336,6 +336,10 @@ class Displayable(renpy.object.Object):
     # Should hbox and vbox skip this displayable?
     _box_skip = False
 
+    # If not None, this should be a (width, height) tuple that overrides the
+    # amount of space offered to the displayable.
+    _offer_size = None
+
     # Used by a transition (or transition-like object) to determine how long to
     # delay for.
     delay = None # type: float|None
