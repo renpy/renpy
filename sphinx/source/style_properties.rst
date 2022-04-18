@@ -536,6 +536,9 @@ Text Style Properties
         Allows breaking only at whitespace. Suitable for most
         languages.
 
+    ``"anywhere"``
+        Allows breaking at anywhere without ruby.
+
     The three Japanese breaking modes are taken from the `CSS3 text module <http://www.w3.org/TR/css3-text/#line-break>`_.
 
 .. style-property:: layout string
