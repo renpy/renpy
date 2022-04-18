@@ -554,6 +554,11 @@ python early in layeredimage:
             have been chosen. It can be used to express complex dependencies between attributes
             or select attributes at random.
 
+        `offer_screen`
+            Sets whether the available room is taken into acount as for how children
+            are placed and how they are sized (when they have variable size). If None,
+            defaults to ``config.layeredimage_offer_screen``.
+
         Additional keyword arguments may contain transform properties. If
         any are present, a transform is created that wraps the result image.
         Remaining keyword arguments are passed to a Fixed that is created to hold
