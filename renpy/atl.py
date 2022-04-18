@@ -444,7 +444,7 @@ class ATLTransformBase(renpy.object.Object):
                 raise Exception('Parameter %r is used as both a positional and keyword argument to a transition.' % name)
 
             if (name == "child") or (name == "old_widget"):
-                child = v
+                child = value
 
             context[name] = value
 

@@ -303,8 +303,8 @@ class ArgumentInfo(renpy.object.Object):
     def after_upgrade(self, version):
         if version < 1:
             arguments = self.arguments
-            extrapos = self.extrapos
-            extrakw = self.extrakw
+            extrapos = self.extrapos # type: ignore
+            extrakw = self.extrakw # type: ignore
             length = len(arguments) + bool(extrapos) + bool(extrakw)
             if extrapos:
                 self.starred_indexes = { length - 1 }
@@ -512,8 +512,12 @@ class Scry(object):
     predict, this tries to only get things we _know_ will happen.
     """
 
-    _next = None # type: Optional[Node]
-    interacts = None # type: Optional[bool]
+    _next = None # type: Node|None
+    interacts = None # type: bool|None
+
+    say = False # type: bool|None
+    menu_with_caption = False # type: bool|None
+    who = None # type: str|None
 
     # By default, all attributes are None.
     def __getattr__(self, name):
