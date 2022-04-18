@@ -682,7 +682,7 @@ class Layout(object):
                 elif language == "japanese-strict":
                     textsupport.annotate_unicode(par_glyphs, False, 3)
                 elif language == "anywhere":
-                    textsupport.annotate_anywhere(par_glyphs, False, 3)
+                    textsupport.annotate_anywhere(par_glyphs)
                 else:
                     raise Exception("Unknown language: {0}".format(language))
 
