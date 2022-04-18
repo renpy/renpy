@@ -1270,6 +1270,12 @@ Rarely or Internally Used
     If a layer is not mentioned in config.layer_clipping, then it is
     assumed to take up the full screen.
 
+.. var:: config.layeredimage_offer_screen = True
+
+    This variable sets the default value for the ``offer_screen`` property
+    of layeredimages. See :ref:`the related section <layeredimage>`
+    for more information.
+
 .. var:: config.layers = [ 'master', 'transient', 'screens', 'overlay' ]
 
     This variable gives a list of all of the layers that Ren'Py knows
