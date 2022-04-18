@@ -14,9 +14,6 @@ python early in layeredimage:
     # This is the default value for predict_all given to conditions.
     predict_all = False
 
-    # Should the full size of the screen be offered to a LayeredImage?
-    config.layeredimage_offer_screen = True
-
     def format_function(what, name, group, variant, attribute, image, image_format, **kwargs):
         """
         :doc: li_ff
@@ -573,13 +570,15 @@ python early in layeredimage:
 
         attribute_function = None
         transform_args = { }
+        offer_screen = None
 
-        def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, **kwargs):
+        def __init__(self, attributes, at=[], name=None, image_format=None, format_function=None, attribute_function=None, offer_screen=None, **kwargs):
 
             self.name = name
             self.image_format = image_format
             self.format_function = format_function
             self.attribute_function = attribute_function
+            self.offer_screen = offer_screen
 
             self.attributes = [ ]
             self.layers = [ ]
@@ -677,7 +676,10 @@ python early in layeredimage:
 
             rv = Fixed(**self.fixed_args)
 
-            if config.layeredimage_offer_screen:
+            offer_screen = self.offer_screen
+            if offer_screen is None:
+                offer_screen = config.layeredimage_offer_screen
+            if offer_screen:
                 rv._offer_size = (config.screen_width, config.screen_height)
 
             for i in self.layers:
@@ -1067,7 +1069,7 @@ python early in layeredimage:
 
             else:
 
-                while parse_property(ll, rv, [ "image_format", "format_function", "attribute_function", "at" ] +
+                while parse_property(ll, rv, [ "image_format", "format_function", "attribute_function", "offer_screen", "at" ] +
                     renpy.sl2.slproperties.position_property_names +
                     renpy.sl2.slproperties.box_property_names +
                     ATL_PROPERTIES
