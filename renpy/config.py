@@ -1232,6 +1232,9 @@ crop_relative_default = True
 # interact=False
 nointeract_callbacks = [ ]
 
+# Should the full size of the screen be offered to a LayeredImage?
+layeredimage_offer_screen = True
+
 del os
 del collections
 
