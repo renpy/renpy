@@ -1204,7 +1204,7 @@ class Interpolation(Statement):
             first_frame = False
         elif (self.duration == 0) and (not self.properties and not self.revolution and not self.splines):
             first_frame = True
-        elif trans.atl_state is not None:
+        elif trans.atl_state is None:
             first_frame = True
         elif st_or_at == 0:
             first_frame = st <= self.duration
