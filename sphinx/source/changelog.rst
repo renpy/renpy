@@ -93,6 +93,10 @@ with the new :var:`config.call_screen_roll_forward` variable.
 Features
 --------
 
+The new "anywhere" value of the :propref:`language` style property
+allows Ren'Py to break anywhere in a string, for when keeping to
+a fixed with is the most important aspect of breaking.
+
 The new `predict` argument to :func:`renpy.pause` makes it possible to pause
 until image prediction is finished, including prediction caused by
 :func:`renpy.start_predict` and :func:`renpy.start_predict_screen`.
