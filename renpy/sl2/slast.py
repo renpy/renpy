@@ -2244,6 +2244,7 @@ class SLScreen(SLBlock):
 
     layer = "'screens'"
     sensitive = "True"
+    roll_forward = "None"
 
     def __init__(self, loc):
 
@@ -2314,6 +2315,7 @@ class SLScreen(SLBlock):
             location=self.location,
             layer=renpy.python.py_eval(self.layer),
             sensitive=self.sensitive,
+            roll_forward=renpy.python.py_eval(self.roll_forward),
             )
 
     def analyze(self, analysis):

@@ -1116,6 +1116,11 @@ Rarely or Internally Used
     If True, Ren'Py will autosave when the user inputs text.
     (When :func:`renpy.input` is called.)
 
+.. var:: config.call_screen_roll_forward = False
+
+    The value is used when the `roll_forward` property of
+    a screen is None.
+
 .. var:: config.character_callback = None
 
     The default value of the callback parameter of Character.

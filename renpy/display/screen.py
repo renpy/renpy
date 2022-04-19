@@ -202,6 +202,7 @@ class Screen(renpy.object.Object):
     """
 
     sensitive = "True"
+    roll_forward = None
 
     def __init__(self,
                  name,
@@ -214,7 +215,8 @@ class Screen(renpy.object.Object):
                  parameters=False,
                  location=None,
                  layer="screens",
-                 sensitive="True"):
+                 sensitive="True",
+                 roll_forward=None):
 
         # The name of this screen.
         if isinstance(name, basestring):
@@ -265,6 +267,11 @@ class Screen(renpy.object.Object):
 
         # Is this screen sensitive? An expression.
         self.sensitive = sensitive
+
+        # Does the screen participate in roll_forward when used with the
+        # call screen statement? True for yes, False for no, None for
+        # config.call_screen_roll_forward.
+        self.roll_forward = roll_forward
 
         global prepared
         global analyzed
@@ -1088,6 +1095,25 @@ def has_screen(name):
         return True
     else:
         return False
+
+
+def get_screen_roll_forward(screen_name):
+    """
+    Given a screeen name, determines if roll forward is enable for the
+    screen.
+    """
+
+    name = screen_name
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    screen = get_screen_variant(name[0])
+
+    if screen is None:
+        raise Exception("Screen %s is not known.\n" % (name[0],))
+
+    return screen.roll_forward
 
 
 def show_screen(_screen_name, *_args, **kwargs):

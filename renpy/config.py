@@ -1235,6 +1235,9 @@ nointeract_callbacks = [ ]
 # Should the full size of the screen be offered to a LayeredImage?
 layeredimage_offer_screen = True
 
+# The default for rolling forward in call screen.
+call_screen_roll_forward = False
+
 del os
 del collections
 
