@@ -95,7 +95,7 @@ Features
 
 The new "anywhere" value of the :propref:`language` style property
 allows Ren'Py to break anywhere in a string, for when keeping to
-a fixed with is the most important aspect of breaking.
+a fixed width is the most important aspect of breaking.
 
 The new `predict` argument to :func:`renpy.pause` makes it possible to pause
 until image prediction is finished, including prediction caused by
