@@ -4177,7 +4177,17 @@ class Interface(object):
 
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
-
+                    
+                    # If the window becomes inactive as a result of this event
+                    # pause the audio according to preference
+                    if not renpy.game.preferences.audio_when_minimized:
+                        if not pygame.display.get_active():
+                            renpy.audio.audio.pause_all()
+                        # If the window had not gone inactive or has regained activity
+                        # unpause the audio
+                        else:
+                            renpy.audio.audio.unpause_all()
+                    
                     pygame.key.set_mods(0)
 
                 # This returns the event location. It also updates the
