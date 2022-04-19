@@ -27,7 +27,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 
 
-import pygame_sdl2; pygame_sdl2
+import pygame_sdl2
 import renpy
 import _renpy
 

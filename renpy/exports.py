@@ -133,63 +133,6 @@ import threading
 import fnmatch
 
 
-def public_api():
-    """
-    :undocumented:
-
-    This does nothing, except to make warnings about unused imports go away.
-    """
-    ParameterizedText, filter_text_tags
-    register_sfont, register_mudgefont, register_bmfont
-    Keymap
-    run, run_action, run_unhovered, run_periodic, map_event
-    Minigame
-    curry, partial
-    play
-    movie_start_fullscreen, movie_start_displayable, movie_stop
-    load, save, list_saved_games, can_load, rename_save, copy_save, unlink_save, scan_saved_game
-    list_slots, newest_slot, slot_mtime, slot_json, slot_screenshot, force_autosave
-    eval
-    random
-    atl_warper
-    show_display_say, predict_show_display_say, display_say
-    sound
-    music
-    time
-    define_screen, show_screen, hide_screen, use_screen, has_screen
-    current_screen, get_screen, get_widget, profile_screen, get_widget_properties
-    focus_coordinates
-    predict, predict_screen
-    displayable, split_properties
-    unelide_filename, get_parse_errors
-    change_language, known_languages, translate_string
-    transform_text
-    language_tailor
-    register_persistent
-    register_statement
-    check_text_tags
-    map_event, queue_event, clear_keymap_cache
-    const, pure, not_const
-    image_exists, has_image, list_images
-    get_available_image_tags, get_available_image_attributes, check_image_attributes, get_ordered_image_attributes
-    get_registered_image
-    load_image, load_surface
-    profile_memory, diff_memory, profile_rollback
-    TEXT_TAG
-    TEXT_TEXT
-    TEXT_PARAGRAPH
-    TEXT_DISPLAYABLE
-    not_infinite_loop
-    register_sl_statement, register_sl_displayable
-    eval_who
-    is_selected, is_sensitive
-    add_python_directory
-    try_compile, try_eval
-    register_shader, has_live2d
-
-
-del public_api
-
 # The number of bits in the architecture.
 if sys.maxsize > (2 << 32):
     bits = 64

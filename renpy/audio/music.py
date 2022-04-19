@@ -32,7 +32,6 @@ from renpy.audio.audio import get_channel, get_serial
 
 # Part of the public api:
 from renpy.audio.audio import register_channel, alias_channel
-register_channel; alias_channel
 
 
 def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False, relative_volume=1.0):
