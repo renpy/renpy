@@ -133,6 +133,13 @@ transparent pixels.
 Other changes
 -------------
 
+Layered images are now offered the the full size of the screen whenever
+rendered. Previously, when a layered image was used inside a layout (like
+hbox, vbox, side, and others), the space offered to the layered image
+could change, and relative positions could also change. (This is unlikely,
+but happened at least once.) The new `offer_screen` property of layered images
+controls this behavior.
+
 A :func:`Character` defined with `interact` false, or otherwise used in a
 non-interactive way will now cause an automatic voice line to play, if the
 relevant file exists.
