@@ -268,7 +268,7 @@ of combinations of layers.
 Statement Reference
 -------------------
 
-Note that with the conditions in the ``if`` statement, all expressions are
+Note that with the exception of the conditions in the ``if`` statement, all expressions are
 evaluated at init time, when the layered image is first defined.
 
 Layeredimage
