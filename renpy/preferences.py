@@ -170,6 +170,8 @@ Preference("system_cursor", False)
 # Do we force high contrast text?
 Preference("high_contrast", False)
 
+# Should sound continue playing when the window is minimized?
+Preference("audio_when_minimized", False)
 
 class Preferences(renpy.object.Object):
     """
@@ -217,6 +219,7 @@ class Preferences(renpy.object.Object):
         font_line_spacing = 1.0
         system_cursor = False
         high_contrast = False
+        audio_when_minimized = False
 
     def init(self):
         """
