@@ -29,7 +29,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional
+from typing import Optional, Any
 
 import renpy
 
@@ -1375,7 +1375,7 @@ class Show(Node):
         super(Show, self).__init__(loc)
 
         self.imspec = imspec
-        self.atl = atl
+        self.atl = atl # type: Any
 
     def diff_info(self):
         return (Show, tuple(self.imspec[0]))
@@ -1499,7 +1499,7 @@ class Scene(Node):
 
         self.imspec = imgspec
         self.layer = layer
-        self.atl = atl
+        self.atl = atl # type: Any
 
     def diff_info(self):
 

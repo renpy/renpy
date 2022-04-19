@@ -940,7 +940,7 @@ class SceneLists(renpy.object.Object):
             self.music = None
             self.focused = None
 
-    def replace_transient(self, prefix="hide"):
+    def replace_transient(self, prefix="hide"): # type: (str|None) -> None
         """
         Replaces the contents of the transient display list with
         a copy of the master display list. This is used after a
@@ -1256,7 +1256,7 @@ class SceneLists(renpy.object.Object):
 
             self.hide_or_replace(layer, i, "hide")
 
-    def remove(self, layer, thing, prefix="hide"):
+    def remove(self, layer, thing, prefix="hide"): # type: (str, str|tuple|Displayable, str|None) -> None
         """
         Thing is either a key or a displayable. This iterates through the
         named layer, searching for entries matching the thing.
@@ -3516,7 +3516,7 @@ class Interface(object):
                       preloads=[],
                       roll_forward=None,
                       pause=False,
-                      pause_start=0,
+                      pause_start=0.0,
                       ):
         """
         This handles one cycle of displaying an image to the user,

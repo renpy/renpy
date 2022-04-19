@@ -1785,7 +1785,7 @@ def parse_parameters(l):
             l.match(r',')
 
             # extrakw is always last parameter
-            if not l.match('\)'):
+            if not l.match(r'\)'):
                 l.error("arguments cannot follow var-keyword argument")
 
             break
@@ -1831,6 +1831,8 @@ def parse_parameters(l):
                 pending_kwonly = False
                 first_kwonly = name
 
+            default = None
+
             if l.match(r'='):
                 l.skip_whitespace()
                 default = l.delimited_python("),")
@@ -1841,9 +1843,6 @@ def parse_parameters(l):
 
             elif first_kwonly is None and has_default:
                 l.error("non-default argument follows default argument")
-
-            else:
-                default = None
 
             name_parsed(name, default)
             parameters.append((name, default))
@@ -3088,7 +3087,7 @@ def report_parse_errors():
 
     try:
         if renpy.game.args.command == "run": # type: ignore
-            renpy.exports.launch_editor([ error_fn ], 1, transient=1)
+            renpy.exports.launch_editor([ error_fn ], 1, transient=True)
     except Exception:
         pass
 

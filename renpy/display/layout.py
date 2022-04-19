@@ -96,7 +96,7 @@ class Null(renpy.display.core.Displayable):
         rv = renpy.display.render.Render(self.width, self.height)
 
         if self.focusable:
-            rv.add_focus(self, None, None, None, None, None)
+            rv.add_focus(self, None, None, None, None, None) # type: ignore
 
         return rv
 

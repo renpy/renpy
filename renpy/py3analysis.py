@@ -649,7 +649,7 @@ class PyAnalysis(ast.NodeVisitor):
 
         self.analysis.pop_control()
 
-    def visit_For(self, node):
+    def visit_For(self, node): # type: (ast.For|ast.AsyncFor) -> None
 
         const = self.analysis.is_constant(node.iter)
 
@@ -697,7 +697,10 @@ class PyAnalysis(ast.NodeVisitor):
         self.visit(node.context_expr)
 
         self.analysis.push_control(const, False)
-        self.visit(node.optional_vars)
+
+        if node.optional_vars is not None:
+            self.visit(node.optional_vars)
+
         self.analysis.pop_control()
 
     # Match is barely implemented. We assume that it's always going to be
@@ -837,7 +840,7 @@ def save_cache():
         return
 
     try:
-        data = zlib.compress(dumps(new_ccache, 2), 3)
+        data = zlib.compress(dumps(new_ccache, True), 3)
 
         with open(renpy.loader.get_path(CACHE_FILENAME), "wb") as f:
             f.write(data)

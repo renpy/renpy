@@ -650,6 +650,7 @@ class VPGrid(Viewport):
         super(VPGrid, self).per_interact()
 
         exc = None
+        delta = 0
 
         if None not in (self.grid_cols, self.grid_rows):
             delta = (self.grid_cols * self.grid_rows) - len(self.children)
@@ -672,5 +673,6 @@ class VPGrid(Viewport):
 
             if not allow_underfull:
                 raise exc
+
             for _ in range(delta):
                 self.add(renpy.display.layout.Null())

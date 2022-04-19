@@ -939,7 +939,7 @@ uniforms = set()
 gl_properties = set()
 
 
-def add_property(name, atl=any_object, default=None, diff=2):
+def add_property(name, atl=any_object, default=None, diff=2): # type: (str, Any, Any, int|None) -> None
     """
     Adds an ATL property.
     """
