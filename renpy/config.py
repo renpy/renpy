@@ -1232,6 +1232,9 @@ crop_relative_default = True
 # interact=False
 nointeract_callbacks = [ ]
 
+# The default for rolling forward in call screen.
+call_screen_roll_forward = False
+
 del os
 del collections
 

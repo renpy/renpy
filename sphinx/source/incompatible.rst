@@ -19,6 +19,13 @@ such changes only take effect when the GUI is regenerated.
 7.5.0/8.0.0
 -----------
 
+Screens called by ``call screen`` no longer support roll forward by default.
+See :ref:`the changelog <call-screen-roll-forward>` for the problems it can
+cause. Roll forward can be enabled on a per screen basis with the `roll_forward` property,
+or for all screens with:
+
+    define config.call_screen_roll_forward = True
+
 Showif statements no longer take up space inside a vbox or hbox when the
 condition is false and the child is hidden. To revert this change::
 

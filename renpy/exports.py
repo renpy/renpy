@@ -3171,6 +3171,15 @@ def call_screen(_screen_name, *args, **kwargs):
 
     roll_forward = renpy.exports.roll_forward_info()
 
+    # If roll
+    can_roll_forward = renpy.display.screen.get_screen_roll_forward(_screen_name)
+
+    if can_roll_forward is None:
+        can_roll_forward = renpy.config.call_screen_roll_forward
+
+    if not can_roll_forward:
+        roll_forward = None
+
     try:
         rv = renpy.ui.interact(mouse="screen", type="screen", roll_forward=roll_forward)
     except (renpy.game.JumpException, renpy.game.CallException) as e:

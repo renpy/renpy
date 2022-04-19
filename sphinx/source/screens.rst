@@ -155,6 +155,18 @@ expression. It takes the following properties:
     A string giving the name of the layer the screen is shown on by
     default.
 
+`roll_forward`
+    If true, roll forward will be enabled when the screen is used in a
+    ``call screen`` statement. If false, roll forward is disable, and
+    if None, the value of :var:`config.call_screen_roll_forward` is
+    used.
+
+    When roll forwarding from a ``call screen`` statement, return values
+    and terminal jumps are preserved, but other side effects will not
+    occur. This means that if the screen consists entirely of :func:`Jump`
+    and :func:`Return` actions, it's safe to enable `roll_forward`. Other
+    actions may have side-effects that will not occur duting the `roll_forward`.
+
 ::
 
    screen hello_world():

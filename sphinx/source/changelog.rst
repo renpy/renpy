@@ -73,6 +73,23 @@ A vpgrid with both cols and rows specified is underfull if and when it has less 
 rows \* cols children. A vpgrid with either cols or rows specified is underfull if and when its number of
 children is not a multiple of the specified value.
 
+.. _call-screen-roll-forward:
+
+Call Screen and Roll Forward
+----------------------------
+
+The roll forward feature has been disabled by default in the ``call screen``
+statement, as it's unsafe and confusing in the general case. The problem is
+that the only side-effect of a screen that roll-forward preserves is the return
+value of the screen, or the jump location if a screen jumps. Actions with other
+side effects, like changing variables or playing music, were not preserved
+through a roll forwards.
+
+Roll forward may be safe for a particular screen, and so can be enabled
+on a per-screen basis by enabling the new `roll_forward` property on the
+screen. If all screens in your game support roll forward, it can be enabled
+with the new :var:`config.call_screen_roll_forward` variable.
+
 Features
 --------
 
