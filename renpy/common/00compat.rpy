@@ -233,6 +233,7 @@ init -1100 python:
             style.drag.focus_mask = True
             style.default.outline_scaling = "step"
             config.box_skip_false_showif = False
+            config.crop_relative_default = False
 
 
     # The version of Ren'Py this script is intended for, or

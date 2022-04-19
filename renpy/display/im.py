@@ -131,6 +131,14 @@ class Cache(object):
         # This is only updated when config.developer is True.
         self.load_log = [ ]
 
+    def done(self):
+        """
+        Returns true if the cache does not have any images to preload.
+        """
+
+        with self.preload_lock:
+            return not self.preloads
+
     def get_total_size(self):
         """
         Returns the total size of the surfaces and textures that make up the

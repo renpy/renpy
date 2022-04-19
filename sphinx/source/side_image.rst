@@ -107,7 +107,7 @@ using config variables.
 
 .. var:: config.side_image_null = Null()
 
-    The Null displayable to use when not displaying a side image. This
+    The Null displayable to use when not displaying a side image. This can
     be changed, but only to other Null objects. One reason for doing so
     would be to set the side of the Null (eg. ``Null(width=200, height=150)``)
     to prevent dissolves from being cut off.
@@ -158,6 +158,16 @@ be the same size. ::
     transform same_transform(old, new):
         old
         new with Dissolve(0.2, alpha=True)
+
+    define config.side_image_same_transform = same_transform
+
+
+When the :func:`SideImage` is scaled down, it might make sense to enable
+mipmapping in the :func:`Dissolve`::
+
+    transform same_transform(old, new):
+        old
+        new with Dissolve(0.2, alpha=True, mipmap=True)
 
     define config.side_image_same_transform = same_transform
 

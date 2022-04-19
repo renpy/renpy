@@ -119,18 +119,19 @@ Showing and Hiding the NVL-mode Window
 --------------------------------------
 
 The NVL-mode window can be controlled with the standard ``window show``
-and ``window hide`` statements. To enable this, add the following
-to your game::
+and ``window hide`` statements. To select the default transitions to be
+used for showing and hiding the window, add the following to your game::
 
     init python:
-        config.empty_window = nvl_show_core
         config.window_hide_transition = dissolve
         config.window_show_transition = dissolve
 
-Setting :var:`config.empty_window` to ``nvl_show_core``
-will cause the NVL-mode window to be displayed during a
-transition. (The last two lines select the default transitions to be
-used for showing and hiding the window.)
+The default :var:`config.empty_window` should select appropriate window
+automatically, but setting :var:`config.empty_window` to ``nvl_show_core``
+will force the NVL-mode window to be displayed during a transition.::
+
+    init python:
+        config.empty_window = nvl_show_core
 
 An example of using the window commands to show and hide the window is::
 

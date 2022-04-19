@@ -933,6 +933,8 @@ class Say(Node):
         rv = Node.scry(self)
 
         who = eval_who(self.who, self.who_fast)
+        rv.who = who
+        rv.say = True
 
         if self.interact:
             renpy.exports.scry_say(who, rv)
@@ -1900,6 +1902,8 @@ class Menu(Node):
         rv = Node.scry(self)
         rv._next = None
         rv.interacts = True
+        if self.has_caption:
+            rv.menu_with_caption = True
         return rv
 
     def restructure(self, callback):

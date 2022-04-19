@@ -22,6 +22,9 @@ is now allowed, and equivalent to::
 
     linear 2.0 xalign 1.0 yalign 1.0
 
+Information about :ref:`ATL Transitions <atl-transitions>` and :ref:`Special ATL Keyword Parameters <atl-keyword-parameters>`
+has been added to the documentation.
+
 Image Gallery
 -------------
 
@@ -39,6 +42,18 @@ ChromeOS
 
 When running as an Android application on a ChromeOS device, the "chromeos"
 variant will be selected.
+
+Web
+---
+
+The new :var:`config.webaudio_required_types` variable can be given a list of
+mime types of audio files used by the game. Ren'Py will only use the web
+browser's Web Audio system for playback if all of the mime types are supported
+in the browser. If not, webasm is used for playback, which is more likely to
+cause skipping if the computer is slow.
+
+The config.webaudio_required_types variable is intended to allow games using ogg
+or opus audio to run on Safari, and can be changed if a game only uses mp3 audio.
 
 Boxes, Grids and Vpgrids
 ------------------------
@@ -60,6 +75,10 @@ children is not a multiple of the specified value.
 
 Features
 --------
+
+The new `predict` argument to :func:`renpy.pause` makes it possible to pause
+until image prediction is finished, including prediction caused by
+:func:`renpy.start_predict` and :func:`renpy.start_predict_screen`.
 
 It is now possible to select a language other than the default when
 extracting dialogue.
@@ -96,6 +115,15 @@ transparent pixels.
 
 Other changes
 -------------
+
+A :func:`Character` defined with `interact` false, or otherwise used in a
+non-interactive way will now cause an automatic voice line to play, if the
+relevant file exists.
+
+When ``window auto`` displays the window before a say or menu-with-caption
+statement, Ren'Py will automatically determine if the character to speak
+uses NVL or ADV, and will display the correct window. Previously, the last
+character in a say statement was used.
 
 The :propref:`activate_sound` plays when activating a drag displayable.
 

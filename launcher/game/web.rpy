@@ -333,18 +333,13 @@ screen web():
 
                         text _("Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported.")
 
-                        add SPACER
-
-                        text _("Changes to modern web browsers may prevent games from running, or may require the developer tools window to be open to run games. (We're working on it.)")
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
-
-
 
 label web:
 
     if not PY2:
-        $ interface.info(_("This feature is not supported in Ren'Py 8."),  _("We hope to restore support in a future release of Ren'Py 8."))
+        $ interface.info(_("This feature is not supported in Ren'Py 8."),  _("We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."))
         return
 
     if WEB_PATH is None:

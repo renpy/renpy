@@ -1171,7 +1171,7 @@ static int decode_thread(void *arg) {
 	ms->video_stream = -1;
 	ms->audio_stream = -1;
 
-	for (int i = 0; i < ctx->nb_streams; i++) {
+	for (unsigned int i = 0; i < ctx->nb_streams; i++) {
 		if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
 			if (ms->want_video && ms->video_stream == -1) {
 				ms->video_stream = i;
@@ -1333,7 +1333,7 @@ static int decode_sync_start(void *arg) {
 	ms->video_stream = -1;
 	ms->audio_stream = -1;
 
-	for (int i = 0; i < ctx->nb_streams; i++) {
+	for (unsigned int i = 0; i < ctx->nb_streams; i++) {
 		if (ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
 			if (ms->want_video && ms->video_stream == -1) {
 				ms->video_stream = i;
@@ -1439,7 +1439,7 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 	int rv = 0;
 
 	if (ms->audio_duration >= 0) {
-		unsigned int remaining = (ms->audio_duration - ms->audio_read_samples) * BPS;
+		int remaining = (ms->audio_duration - ms->audio_read_samples) * BPS;
 		if (len > remaining) {
 			len = remaining;
 		}
@@ -1659,5 +1659,3 @@ void media_init(int rate, int status, int equal_mono) {
     }
 
 }
-
-

@@ -140,6 +140,9 @@ class ScriptTranslator(object):
                 for i in n.items:
                     s = i[0]
 
+                    if renpy.config.old_substitutions:
+                        s = s.replace("%%", "%")
+
                     if s is None:
                         continue
 

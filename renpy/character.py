@@ -469,6 +469,11 @@ def display_say(
         renpy.exports.with_statement(None)
         return
 
+    # If we're not interacting, call the noniteractive_callbacks.
+    if interact is False:
+        for i in renpy.config.nointeract_callbacks:
+            i()
+
     # Figure out the callback(s) we want to use.
     if callback is None:
         if renpy.config.character_callback:

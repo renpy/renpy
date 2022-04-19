@@ -413,6 +413,12 @@ class RevertableSet(set):
 
 
 class RevertableObject(object):
+    # All RenPy's objects have  __dict__, so _rollback is fast, i.e
+    # one update, not iterating over all attributes.
+    # __weakref__ should exist, so mutator can work.
+    # Other slots are forbidden because they cannot be reverted in easy way.
+    # For more details, see https://github.com/renpy/renpy/pull/3282
+    # __slots__ = ("__weakref__", "__dict__")
 
     def __new__(cls, *args, **kwargs):
         self = super(RevertableObject, cls).__new__(cls)
@@ -427,14 +433,13 @@ class RevertableObject(object):
         if (args or kwargs) and renpy.config.developer:
             raise TypeError("object() takes no parameters.")
 
-    def __setattr__(self, attr, value):
-        object.__setattr__(self, attr, value)
+    def __init_subclass__(cls):
+        if renpy.config.developer and "__slots__" in cls.__dict__:
+            raise TypeError("Classes with __slots__ do not support rollback."
+                            "To create a class with slots, inherit from python_object instead.")
 
-    def __delattr__(self, attr):
-        object.__delattr__(self, attr)
-
-    __setattr__ = mutator(__setattr__) # type: ignore
-    __delattr__ = mutator(__delattr__) # type: ignore
+    __setattr__ = mutator(object.__setattr__) # type: ignore
+    __delattr__ = mutator(object.__delattr__) # type: ignore
 
     def _clean(self):
         return self.__dict__.copy()

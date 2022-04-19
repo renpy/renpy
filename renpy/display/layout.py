@@ -732,7 +732,20 @@ class MultiBox(Container):
             return super(MultiBox, self).__repr__().replace("MultiBox", classname)
         return super(MultiBox, self).__repr__()
 
-    def add(self, widget, start_time=None, anim_time=None): # W0221
+    def add(self, widget, start_time=None, anim_time=None):
+        """
+        Adds a displayable to this box.
+
+        `start_time`
+            The wall time when this displayable was first shown. Can also
+            be None to set start_time when this box is rendered or True to
+            pass st from this box. (The last is used by the MoveTransition.)
+
+        `anim_time`
+            Same thing, in the animation timebase.
+        """
+
+
         super(MultiBox, self).add(widget)
         self.start_times.append(start_time)
         self.anim_times.append(anim_time)
@@ -750,12 +763,32 @@ class MultiBox(Container):
     def update_times(self):
 
         it = renpy.game.interface.interact_time
-
-        self.start_times = [ i or it for i in self.start_times ]
-        self.anim_times = [ i or it for i in self.anim_times ]
-
         if it is None:
-            self.first = True
+            return
+
+        new_start_times = [ ]
+        new_anim_times = [ ]
+
+        for i in self.start_times:
+            if i is None:
+                i = it
+            elif i is True:
+                i = True
+
+            new_start_times.append(i)
+
+        for i in self.anim_times:
+            if i is None:
+                i = it
+            elif i is True:
+                i = True
+
+            new_anim_times.append(i)
+
+        self.start_times = new_start_times
+        self.anim_times = new_anim_times
+
+        self.first = False
 
     def render(self, width, height, st, at):
 
@@ -773,24 +806,28 @@ class MultiBox(Container):
         if miny is not None:
             height = max(height, scale(miny, height))
 
-        if self.first:
-
-            self.first = False
-
-            if adjust_times:
-                self.update_times()
+        if self.first and adjust_times:
+            self.update_times()
 
         layout = self.style.box_layout
 
         if layout is None:
             layout = self.default_layout
 
+        def adjust(t, frame_time, timebase):
+            if t is None:
+                return 0
+            elif t is True:
+                return timebase
+            else:
+                return frame_time - t
+
         # Handle time adjustment, store the results in csts and cats.
         if adjust_times:
-            t = renpy.game.interface.frame_time
+            frame_time = renpy.game.interface.frame_time
 
-            csts = [ 0 if (start is None) else (t - start) for start in self.start_times ]
-            cats = [ 0 if (anim is None) else (t - anim) for anim in self.anim_times ]
+            csts = [ adjust(start, frame_time, st) for start in self.start_times ]
+            cats = [ adjust(anim, frame_time, at) for anim in self.anim_times ]
 
         else:
             csts = [ st ] * len(self.children)
@@ -1102,9 +1139,6 @@ class MultiBox(Container):
 
         # Do we need to adjust the child times due to our being a layer?
         if self.first:
-
-            self.first = False
-
             if self.layer_name or (self.layers is not None):
                 self.update_times()
 
@@ -2116,6 +2150,7 @@ class Flatten(Container):
 
         rv.mesh = True
         rv.add_shader("renpy.texture")
+        rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
 
         self.offsets = [ (0, 0) ]
 

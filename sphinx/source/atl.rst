@@ -265,19 +265,24 @@ expression.
 
 There are three things the first simple expression may evaluate to:
 
-* If it's a transform, that transform is executed. With clauses are ignored
-  when a transform is supplied.
+* If it's an ATL transform, and that ATL transform has **not** been supplied
+  a child (through being called as a transform or transition, or
+  with a `child` or `old_widget` argument), the ATL transform is
+  included at the location of the expression. The ``with`` clause is ignored.
 
 * If it's an integer or floating point number,  it's taken as a number of
-  seconds to pause execution for.
+  seconds to pause execution for. The ``with`` clause is ignored.
 
 * Otherwise, the expression is interpreted to be a displayable. This
   displayable replaces the child of the transform when this clause executes,
-  making it useful for animation. If a with clause is present, the second
+  making it useful for animation. If a ``with`` clause is present, the second
   expression is evaluated as a transition, and the transition is applied to
   the old and new displayables.
 
 ::
+
+    transform move_right:
+        linear 1.0 xalign 1.0
 
     image atl example:
          # Display logo_base.png
@@ -926,25 +931,30 @@ both horizontal and vertical positions.
 
 .. transform-property:: crop
 
-    :type: None or (int, int, int, int) or (float, float, float, float)
+    :type: None or (position, position, position, position)
     :default: None
 
     If not None, causes the displayable to be cropped to the given
     box. The box is specified as a tuple of (x, y, width, height).
-    If floats are given and ``crop_relative`` is true, the components are
-    taken as a fraction of the width and hight of the source image.
-    Otherwise, the components are considered to be an absolute number
-    of pixels.
 
     If corners and crop are given, crop takes priority over corners.
 
 .. transform-property:: crop_relative
 
-    :type: boolean
-    :default: False
+    :type: None or string
+    :default: None
 
-    If True, float components of crop are take as a fraction of the width
-    and height of the source image.
+    If None or "child", relative components of crop (see
+    :ref:`the position types documentation <position-types>`) are
+    considered relatively to the width and height of the source image,
+    like ``anchor`` does it.
+
+    If "area", they are considered relatively to the available containing
+    area in the context where the source image is displayed (typically
+    the size of the screen), like ``pos`` does it.
+
+    If all elements of ``crop`` are ints or ``absolute``s, this property
+    has no effect.
 
 .. transform-property:: corner1
 
@@ -1284,3 +1294,78 @@ multiple ways - for example, :tpref:`xalign` sets xpos and xanchor.
 Finally, when a ``show`` statement does not include an ``at`` clause, the
 same displayables are used, so no inheritence is necessary. To prevent inheritance,
 show and then hide the displayable.
+
+.. _atl-transititions:
+
+ATL Transitions
+===============
+
+It's possible to use an ATL transform to define a transition. These transitions
+accept the `old_widget` and `new_widget` arguments, which are given displayables
+that are transitioned from and to, respectively.
+
+An ATL transition must set the :tpref:`delay` property to the number of seconds
+the transition lasts for. It may user the :tpref:`events` property to prevent
+the old displayable from receiving events. ::
+
+    transform spin(duration=1.0, new_widget=None, old_widget=None):
+
+        # Set how long this transform will take to complete.
+        delay duration
+
+        # Center it.
+        xcenter 0.5
+        ycenter 0.5
+
+        # Spin the old displayable.
+        old_widget
+        events False
+        rotate 0.0
+        easeout (duration / 2) rotate 360.0
+
+        # Spin the new displayable.
+        new_widget
+        events True
+        easein (duration / 2) rotate 720.0
+
+
+.. _atl-keyword-parameters:
+
+Special ATL Keyword Parameters
+==============================
+
+There are several parameters that Ren'Py will supply to ATL, in certain
+contexts, if the parameter is in the parameter list.
+
+`child`
+    When ATL is used as a transform, the child parameter is given the original
+    child that the transform is applied to. This allows the child to be referred
+    to explicitly. For example, it becomes possible to swap between the s
+    supplied child and another displayable::
+
+        transform lucy_jump_scare(child):
+            child      # Show the original child.
+            pause 5
+            "lucy mad" # Jump scare.
+            pause .2
+            child      # Go back to the original child.
+
+    If can also be used to place the original child inside a ``contains``
+    block::
+
+        transform marquee(width, height=1.0, duration=2.0, child=None):
+            xcenter 0.5
+            ycenter 0.5
+
+            crop_relative True
+            crop (0, 0, 0.5, 500)
+
+            contains:
+                child
+                xanchor 0.0 xpos 1.0
+                linear duration xanchor 1.0 xpos 0.0
+
+
+`old_widget`, `new_widget`
+    When an ATL block is used as a transition, these are given displayables
+    that are transitioned from and to, respectively.

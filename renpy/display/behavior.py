@@ -532,6 +532,23 @@ class PauseBehavior(renpy.display.layout.Null):
         renpy.game.interface.timeout(max(self.delay - st, 0))
 
 
+class PredictPauseBehavior(renpy.display.layout.Null):
+    """
+    This behavior implements a pause that will last until Interface.force_prediction
+    becomes False, meaning that everything that can be predicted has been predicted
+    and loaded.
+    """
+
+    def __init__(self, **properties):
+        super(PredictPauseBehavior, self).__init__(**properties)
+
+    def event(self, ev, x, y, st):
+
+        if not renpy.display.interface.force_prediction:
+            return False
+
+        renpy.game.interface.timeout(0)
+
 class SoundStopBehavior(renpy.display.layout.Null):
     """
     This is a class implementing the sound stop behavior,

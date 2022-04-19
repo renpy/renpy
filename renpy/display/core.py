@@ -440,6 +440,10 @@ class Displayable(renpy.object.Object):
     # Should hbox and vbox skip this displayable?
     _box_skip = False
 
+    # If not None, this should be a (width, height) tuple that overrides the
+    # amount of space offered to the displayable.
+    _offer_size = None
+
     # Used by a transition (or transition-like object) to determine how long to
     # delay for.
     delay = None # type: float|None
@@ -2243,6 +2247,11 @@ class Interface(object):
         # Is this the first frame?
         self.first_frame = True
 
+        # Should prediction be forced? This causes the prediction coroutine to
+        # be prioritized, and is set to False when it's done, when preloading
+        # is done, or at the end of the interaction.
+        self.force_prediction = False
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -3455,6 +3464,8 @@ class Interface(object):
 
         finally:
 
+            self.force_prediction = False
+
             context.interacting = False
 
             # Clean out transient stuff at the end of an interaction.
@@ -3522,7 +3533,7 @@ class Interface(object):
 
         while True:
 
-            if self.event_peek():
+            if self.event_peek() and not self.force_prediction:
                 break
 
             if not (can_block and expensive):
@@ -3588,6 +3599,11 @@ class Interface(object):
                 step += 1
 
             else:
+
+                # Check to see if preloading has finished
+                if renpy.display.im.cache.done():
+                    self.force_prediction = False
+
                 break
 
         if expensive:
@@ -4091,8 +4107,13 @@ class Interface(object):
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
 
-                if can_block or (frame >= renpy.config.idle_frame):
+                if can_block or (frame >= renpy.config.idle_frame) or (self.force_prediction):
                     expensive = not (needs_redraw or (_redraw_in < .2) or (_timeout_in < .2) or renpy.display.video.playing())
+
+                    if self.force_prediction:
+                        expensive = True
+                        can_block = True
+
                     self.idle_frame(can_block, expensive)
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
@@ -4183,7 +4204,13 @@ class Interface(object):
                     # Clear the mods when the keymap is changed, such as when
                     # an IME is selected. This fixes a problem on Windows 10 where
                     # super+space won't unset super.
-                    pygame.key.set_mods(0)
+
+                    # This only happens when the GUI key is down, as shift can
+                    # also change the keymap.
+
+                    if pygame.key.get_mods() & pygame.KMOD_GUI:
+                        pygame.key.set_mods(0)
+
                     continue
 
                 elif self.text_editing and ev.type in [ pygame.KEYDOWN, pygame.KEYUP ]:

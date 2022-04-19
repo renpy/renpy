@@ -11,9 +11,10 @@ using the following audio file formats:
 * FLAC
 * WAV (uncompressed 16-bit signed PCM only)
 
-Opus and Ogg Vorbis may not be supported in WebKit-based web browsers,
-such as Safari, but are the best formats for other platforms. FLAC
-may not be supported either.
+On the web browser, Ren'Py will check a list of audio formats, and
+enable a mode that is faster and less prone to skipping if the web
+browser supports all modes on the list. If your game is using only
+mp3s, and skips on Safari, then consider changing :var:`config.webaudio_required_types`.
 
 Ren'Py supports an arbitrary number of audio channels. There are three
 normal channels defined by default:
@@ -46,7 +47,7 @@ the three music/sound statements.
 
 
 Play Statement
-------------------
+--------------
 
 The ``play`` statement is used to play sound and music. If a file is
 currently playing on a normal channel, it is interrupted and replaced with

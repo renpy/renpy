@@ -320,7 +320,7 @@ class Pixellate(Transition):
 class Dissolve(Transition):
     """
     :doc: transition function
-    :args: (time, alpha=False, time_warp=None)
+    :args: (time, alpha=False, time_warp=None, **properties)
     :name: Dissolve
 
     Returns a transition that dissolves from the old scene to the new scene.
@@ -335,6 +335,11 @@ class Dissolve(Transition):
         A function that adjusts the timeline. If not None, this should be a
         function that takes a fractional time between 0.0 and 1.0, and returns
         a number in the same range.
+
+    When the dissolve will be scaled to less than half its natural size, the
+    :propref:`mipmap` style property can be set to True. This will cause mipmaps
+    to be generated, which will make the dissolve consume more GPU resources,
+    but will reduce artifacts.
     """
 
     __version__ = 1
@@ -406,7 +411,7 @@ class Dissolve(Transition):
 class ImageDissolve(Transition):
     """
     :doc: transition function
-    :args: (image, time, ramplen=8, reverse=False, alpha=True, time_warp=None)
+    :args: (image, time, ramplen=8, reverse=False, alpha=True, time_warp=None, **properties)
     :name: ImageDissolve
 
     Returns a transition that dissolves the old scene into the new scene, using
@@ -444,6 +449,11 @@ class ImageDissolve(Transition):
         define circirisout = ImageDissolve("circiris.png", 1.0)
         define circirisin = ImageDissolve("circiris.png", 1.0, reverse=True)
         define circiristbigramp = ImageDissolve("circiris.png", 1.0, ramplen=256)
+
+    When the dissolve will be scaled to less than half its natural size, the
+    :propref:`mipmap` style property can be set to True. This will cause mipmaps
+    to be generated, which will make the dissolve consume more GPU resources,
+    but will reduce artifacts.
     """
 
     __version__ = 1
@@ -591,7 +601,7 @@ class ImageDissolve(Transition):
 class AlphaDissolve(Transition):
     """
     :doc: transition function
-    :args: (control, delay=0.0, alpha=False, reverse=False)
+    :args: (control, delay=0.0, alpha=False, reverse=False, **properties)
 
     Returns a transition that uses a control displayable (almost always some
     sort of animated transform) to transition from one screen to another. The
@@ -611,6 +621,11 @@ class AlphaDissolve(Transition):
         If true, the alpha channel is reversed. Opaque areas are taken
         from the old image, while transparent areas are taken from the
         new image.
+
+    When the dissolve will be scaled to less than half its natural size, the
+    :propref:`mipmap` style property can be set to True. This will cause mipmaps
+    to be generated, which will make the dissolve consume more GPU resources,
+    but will reduce artifacts.
      """
 
     mipmap = None

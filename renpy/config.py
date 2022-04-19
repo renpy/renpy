@@ -1172,6 +1172,9 @@ compat_viewport_minimum = False
 # Should webaudio be used on the web platform?
 webaudio = True
 
+# A list of audio types that are required to fully enable webaudio.
+webaudio_required_types = [ "audio/ogg", "audio/mp3" ]
+
 # If not None, a callback that can be used to alter audio filenames.
 audio_filename_callback = None
 
@@ -1222,6 +1225,12 @@ allow_unfull_vpgrids = False
 # Should vbox and hbox skip false showifs?
 box_skip_false_showif = True
 
+# What should be the default value of the crop_relative tpref ?
+crop_relative_default = True
+
+# A list of functions that are called when a character is called with
+# interact=False
+nointeract_callbacks = [ ]
 
 del os
 del collections

@@ -223,6 +223,9 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     xmaximum = style.xmaximum
     ymaximum = style.ymaximum
 
+    if d._offer_size is not None:
+        width, height = d._offer_size
+
     # TODO: check this regarding the new absolute.compute
     if xmaximum is not None:
         if isinstance(xmaximum, float):
