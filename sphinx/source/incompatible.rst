@@ -71,6 +71,18 @@ Vpgrids cannot be overfull anymore, and can only be underfull if the
 ``allow_underfull`` property is passed, or if :var:`config.allow_underfull_grids` is
 set to True.
 
+The way :ref:`layeredimages <layered-images>` place their children, and how children
+with variable size are sized, has changed. Instead of taking into account the available
+area in the context the layeredimage is displayed, it now presumes the size of the
+screen is available, unless an explicit size has been given with :tpref:`xsize`,
+:tpref:`ysize` or :tpref:`xysize`. To revert to the old behavior, where a layeredimage
+can display differently in different contexts, you can use::
+
+    define config.layeredimage_offer_screen = False
+
+Or you can also toggle it for specific layeredimages by passing them the
+``offer_screen`` property.
+
 
 .. _incompatible-7.4.11:
 

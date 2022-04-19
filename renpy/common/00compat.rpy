@@ -234,6 +234,7 @@ init -1100 python:
             style.default.outline_scaling = "step"
             config.box_skip_false_showif = False
             config.crop_relative_default = False
+            config.layeredimage_offer_screen = False
 
 
     # The version of Ren'Py this script is intended for, or
