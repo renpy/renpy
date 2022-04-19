@@ -937,23 +937,6 @@ both horizontal and vertical positions.
 
     If corners and crop are given, crop takes priority over corners.
 
-.. transform-property:: crop_relative
-
-    :type: None or string
-    :default: None
-
-    If None or "child", relative components of crop (see
-    :ref:`the position types documentation <position-types>`) are
-    considered relatively to the width and height of the source image,
-    like ``anchor`` does it.
-
-    If "area", they are considered relatively to the available containing
-    area in the context where the source image is displayed (typically
-    the size of the screen), like ``pos`` does it.
-
-    If all elements of ``crop`` are ints or ``absolute``s, this property
-    has no effect.
-
 .. transform-property:: corner1
 
     :type: None or (int, int)
@@ -1027,35 +1010,6 @@ both horizontal and vertical positions.
       * - ``scale-up``
         - As for ``cover``, but will never decrease the size of the
           displayable.
-
-.. transform-property:: size
-
-    :type: None or (int, int)
-    :default: None
-
-    If not None, causes the displayable to be scaled to the given
-    size.
-
-    This is affected by the :tpref:`fit` property.
-
-    .. warning::
-
-        This property is deprecated. Use :tpref:`xysize` instead.
-
-.. transform-property:: maxsize
-
-    :type: None or (int, int)
-    :default: None
-
-    If not None, causes the displayable to be scaled so that it fits
-    within a box of this size, while preserving aspect ratio. (Note that
-    this means that one of the dimensions may be smaller than the size
-    of this box.)
-
-    .. warning::
-
-        This property is deprecated. Consider using :tpref:`xysize` in
-        conjuction with :tpref:`fit` and the value ``contain``.
 
 .. transform-property:: subpixel
 
@@ -1184,6 +1138,50 @@ These properties are applied in the following order:
 #. matrixcolor
 #. GL Properties, Uniforms
 #. position properties
+
+Deprecated Transform Properties
+===============================
+
+.. warning::
+
+    The following properties should not be used in modern games, as they may
+    conflict with more recent features. They are only kept here for compatibility,
+    along with the new way of achieving the same behavior.
+
+.. transform-property:: crop_relative
+
+    :type: boolean
+    :default: True
+
+    If False, float components of :tpref:`crop` are interpreted as an absolute
+    number of pixels, instead of a fraction of the width and height of
+    the source image.
+
+    If an absolute number of pixel is to be expressed, ``absolute`` instances
+    should be provided to the :tpref:`crop` property instead of using the
+    crop_relative property. If necessary, values of dubious type can be wrapped
+    in the ``absolute`` callable.
+
+.. transform-property:: size
+
+    :type: None or (int, int)
+    :default: None
+
+    This is an older version of :tpref:`xysize` interpreting floating-point values
+    as an absolute number of pixels.
+
+.. transform-property:: maxsize
+
+    :type: None or (int, int)
+    :default: None
+
+    If not None, causes the displayable to be scaled so that it fits
+    within a box of this size, while preserving aspect ratio. (Note that
+    this means that one of the dimensions may be smaller than the size
+    of this box.)
+
+    To achieve the same result, give the values to the :tpref:`xysize` property, and
+    set the :tpref:`fit` property to the value "contain".
 
 Circular Motion
 ===============
