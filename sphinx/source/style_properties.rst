@@ -1061,11 +1061,11 @@ These are used with the fixed layout.
     bottom side of the bottommost child of the fixed.
 
 Note that children with relative positions or variable sizes can
-induce surprising behavior with boxes, when these properties are
-applied. This is because the children are placed and sized as if
+induce surprising behavior with Fixeds, when these properties are
+applied. This is because the children are first placed and sized as if
 these properties didn't exist, and only then, from the way the children
 are placed and sized, do these properties apply and set the dimentions
-of the box.
+of the Fixed.
 
 
 .. _margin-style-properties:
