@@ -494,6 +494,75 @@ class WrapNode(ast.NodeTransformer):
             finalbody=list_stmts,
             )
 
+    def wrap_starred_for(self, node):
+        starred = find_starred_variables([ node.target ])
+
+        if not starred:
+            return node
+
+        for var in starred:
+
+            call = ast.Call(
+                func=ast.Name(
+                    id=b("__renpy__list__"),
+                    ctx=ast.Load()
+                    ),
+                args=[
+                    ast.Name(id=var, ctx=ast.Load())
+                ],
+                keywords=[ ],
+                starargs=None,
+                kwargs=None)
+
+            assign = ast.Assign(
+                targets=[ ast.Name(id=var, ctx=ast.Store()) ],
+                value=call,
+            )
+
+            node.body.insert(0, assign)
+
+        return node
+
+
+    def wrap_starred_with(self, node):
+
+        optional_vars = [ ]
+
+        for i in node.items:
+            if i.optional_vars is not None:
+                optional_vars.append(i.optional_vars)
+
+        if not optional_vars:
+            return node
+
+        starred = find_starred_variables(optional_vars)
+
+        if not starred:
+            return node
+
+        for var in starred:
+
+            call = ast.Call(
+                func=ast.Name(
+                    id=b("__renpy__list__"),
+                    ctx=ast.Load()
+                    ),
+                args=[
+                    ast.Name(id=var, ctx=ast.Load())
+                ],
+                keywords=[ ],
+                starargs=None,
+                kwargs=None)
+
+            assign = ast.Assign(
+                targets=[ ast.Name(id=var, ctx=ast.Store()) ],
+                value=call,
+            )
+
+            node.body.insert(0, assign)
+
+        return node
+
     def visit_Assign(self, n):
         n = self.generic_visit(n)
         return self.wrap_starred_assign(n, n.targets) # type: ignore
@@ -501,6 +570,22 @@ class WrapNode(ast.NodeTransformer):
     def visit_AnnAssign(self, n):
         n = self.generic_visit(n)
         return self.wrap_starred_assign(n, [ n.target ]) # type: ignore
+
+    def visit_For(self, n):
+        n = self.generic_visit(n)
+        return self.wrap_starred_for(n)
+
+    def visit_AsyncFor(self, n):
+        n = self.generic_visit(n)
+        return self.wrap_starred_for(n)
+
+    def visit_With(self, n):
+        n = self.generic_visit(n)
+        return self.wrap_starred_with(n)
+
+    def visit_AsyncWith(self, n):
+        n = self.generic_visit(n)
+        return self.wrap_starred_with(n)
 
     def visit_ClassDef(self, n):
         n = self.generic_visit(n)
