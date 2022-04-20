@@ -1060,6 +1060,13 @@ These are used with the fixed layout.
     If True, the size of the fixed layout is shrunk vertically to match the
     bottom side of the bottommost child of the fixed.
 
+Note that children with relative positions or variable sizes can
+induce surprising behavior with boxes, when these properties are
+applied. This is because the children are placed and sized as if
+these properties didn't exist, and only then, from the way the children
+are placed and sized, do these properties apply and set the dimentions
+of the box.
+
 
 .. _margin-style-properties:
 
