@@ -314,7 +314,7 @@ cases where you'll get an object that may not participate in rollback are:
 
 * Calling methods on built-in types, like the str.split method.
 * When the object is created in a Python module that's been imported, and
-  then return to Ren'Py. (For example, an instance of collection.defaultdict
+  then return to Ren'Py. (For example, an instance of collections.defaultdict
   won't participate in rollback.)
 * Objects returned from Ren'Py's API, unless documented otherwise.
 
