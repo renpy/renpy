@@ -134,7 +134,7 @@ a play or stop statement.
 A variable may be used instead of a string here. If a variable exists in the
 :ref:`audio namespace <audio-namespace>`, it's used in preference to the default namespace::
 
-    define audio.woof = "woof.mp23
+    define audio.woof = "woof.mp3"
 
     # ...
 
