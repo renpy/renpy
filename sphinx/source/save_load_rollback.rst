@@ -296,8 +296,9 @@ found inside Ren'Py script files in the following way.
   the revertable equivalent.
 * Other python syntax, such as extended unpacking, that can create lists,
   dicts, or sets converts the result to the revertable equivalent. However,
-  for performance reasons, starred parameters to functions and methods
-  are not converted to revertable objects.
+  for performance reasons, double-starred parameters to functions and methods
+  (that create dictionaries of extra keyword arguments) are not converted
+  to revertable objects.
 * Classes that do not inherit from any other types automatically inherit
   from the revertable object.
 
@@ -313,7 +314,8 @@ cases where you'll get an object that may not participate in rollback are:
 
 * Calling methods on built-in types, like the str.split method.
 * When the object is created in a Python module that's been imported, and
-  then return to Ren'Py.
+  then return to Ren'Py. (For example, an instance of collection.defaultdict
+  won't participate in rollback.)
 * Objects returned from Ren'Py's API, unless documented otherwise.
 
 If such data needs to participate in rollback, it may make sense to convert
