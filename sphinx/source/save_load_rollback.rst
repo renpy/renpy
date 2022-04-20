@@ -285,7 +285,7 @@ In more detail, inside the stores
 that Python embedded inside Ren'Py scripts run in, the object, list, dict, and
 set types have been replaced with equivalent types that are revertable. Objects
 that inherit from these types are also revertable. The :class:`renpy.Displayable`
-type inherits from the
+type inherits from the revertable object type.
 
 To make the use of revertable objects more convenient, Ren'Py modifies Python
 found inside Ren'Py script files in the following way.
