@@ -141,11 +141,17 @@ def reached(obj, reachable, wait):
     except Exception:
         pass
 
+    # Below this, we only consider containers with a defined size.
     try:
-        # Treat as iterable
-        if not isinstance(obj, basestring):
-            for v in obj.__iter__():
-                reached(v, reachable, wait)
+        if not len(obj) or (not isinstance(obj, basestring)):
+            return
+    except:
+        return
+
+    try:
+        # Treat as iterable.
+        for v in obj.__iter__():
+            reached(v, reachable, wait)
     except Exception:
         pass
 
@@ -155,8 +161,6 @@ def reached(obj, reachable, wait):
             reached(v, reachable, wait)
     except Exception:
         pass
-
-    # parents.pop()
 
 
 def reached_vars(store, reachable, wait):
