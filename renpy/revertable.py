@@ -79,7 +79,7 @@ if PY2:
     def _method_wrapper(method):
         return functools.wraps(method, ("__name__", "__doc__"), ())
 else:
-    _method_wrapper = functools.wraps
+    _method_wrapper = functools.wraps # type: ignore
 
 def mutator(method):
 
