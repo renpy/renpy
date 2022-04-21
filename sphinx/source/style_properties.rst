@@ -1050,6 +1050,8 @@ These are used with the fixed layout.
     (the fixed will fill the screen vertically). Similarly, "height" only changes
     the height.
 
+    The position of the child is ignored for the purpose of fit\_first.
+
 .. style-property:: xfit boolean
 
     If True, the size of the fixed layout is shrunk horizontally to match the
@@ -1060,13 +1062,10 @@ These are used with the fixed layout.
     If True, the size of the fixed layout is shrunk vertically to match the
     bottom side of the bottommost child of the fixed.
 
-Note that applying these properties to Fixeds do not make them
-independent from the size of the area available to them, in particular
-when they are given children with relative positions or variable sizes.
-This is because the children are first placed and sized as if these
-properties didn't exist, and only then, from the way they are placed
-and sized, do these properties compute and set the dimensions of
-the Fixed.
+When these properties are supplied, the children of the fixed are first
+offered the full area given to the fixed by its parent. Once the size
+and placement of the children are known, these properties are then used
+to select the size of the fixed.
 
 
 .. _margin-style-properties:
