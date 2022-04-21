@@ -174,31 +174,6 @@ mipmapping in the :func:`Dissolve`::
 
     define config.side_image_same_transform = same_transform
 
-
-Leaving Room / Customization
-----------------------------
-
-By default, the entire width of the screen is taken up by the text. If one
-tries to display a side image, it will be displayed on top of the text. To
-fix this, one should include margin or padding on the appropriate side of
-the text window::
-
-    style window:
-        left_padding 150
-
-The position of the side image can be changed by customizing the ``say``
-or ``nvl`` screens. Both include the line::
-
-    add SideImage() xalign 0.0 yalign 1.0
-
-By changing the :propref:`xalign` and :propref:`yalign` properties, you can control the positioning
-of the side image on the screen.
-
-Finally, the :func:`SideImage` function returns, as a displayable, the
-current side image. This can be used as part of more advanced screen
-customization.
-
-
 Functions
 ---------
 
