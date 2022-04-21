@@ -138,7 +138,7 @@ def reached(obj, reachable, wait):
 
     # Below this, we only consider containers with a defined size.
     try:
-        if not len(obj) or (not isinstance(obj, basestring)):
+        if (not len(obj)) or isinstance(obj, basestring):
             return
     except:
         return
