@@ -458,11 +458,13 @@ class WrapNode(ast.NodeTransformer):
 
     def wrap_starred_assign(self, n, targets):
 
+        if PY2:
+            return n
+
         starred = find_starred_variables(targets)
 
         if not starred:
             return n
-
 
         list_stmts = [ ]
 
@@ -495,6 +497,10 @@ class WrapNode(ast.NodeTransformer):
             )
 
     def wrap_starred_for(self, node):
+
+        if PY2:
+            return node
+
         starred = find_starred_variables([ node.target ])
 
         if not starred:
@@ -525,6 +531,9 @@ class WrapNode(ast.NodeTransformer):
 
 
     def wrap_starred_with(self, node):
+
+        if PY2:
+            return node
 
         optional_vars = [ ]
 
