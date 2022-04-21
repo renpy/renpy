@@ -104,6 +104,9 @@ class AlwaysRollback(renpy.revertable.RevertableObject):
         return self
 
 
+NOROLLBACK_TYPES = tuple() # type: tuple[type, type, type]
+
+
 def reached(obj, reachable, wait):
     """
     @param obj: The object that was reached.
@@ -121,18 +124,10 @@ def reached(obj, reachable, wait):
     if idobj in reachable:
         return
 
-    if isinstance(obj, (SlottedNoRollback, io.IOBase)): # @UndefinedVariable
-        reachable[idobj] = 0
+    reachable[idobj] = obj
+
+    if isinstance(obj, NOROLLBACK_TYPES):
         return
-
-    reachable[idobj] = 1
-
-    # Since the store module is the roots, there's no need to
-    # look into it.
-    if isinstance(obj, renpy.python.StoreModule):
-        return
-
-    # parents.append(obj)
 
     try:
         # Treat as fields, indexed by strings.
@@ -168,9 +163,11 @@ def reached_vars(store, reachable, wait):
     Marks everything reachable from the variables in the store
     or from the context info objects as reachable.
 
-    @param store: A map from variable name to variable value.
-    @param reachable: A dictionary mapping reached object ids to
-    the path by which the object was reached.
+    `store`
+        A map from variable name to variable value.
+
+    `reachable`
+        A dictionary that will be filled in with a map from id(obj) to obj.
     """
 
     for v in store.values():
@@ -331,7 +328,7 @@ class Rollback(renpy.object.Object):
 
                 id_o = id(o)
 
-                if (id_o not in seen) and reachable.get(id_o, 0):
+                if (id_o not in seen) and not isinstance(reachable.get(id_o, None), NOROLLBACK_TYPES):
                     seen.add(id_o)
                     objects_changed = True
 
@@ -630,6 +627,11 @@ class RollbackLog(renpy.object.Object):
         are no changes queued up.
         """
 
+        # This needs to be set late, so that StoreModule is available.
+
+        global NOROLLBACK_TYPES
+        NOROLLBACK_TYPES = (renpy.python.StoreModule, SlottedNoRollback, io.IOBase)
+
         reachable = { }
 
         reached_vars(roots, reachable, wait)
@@ -640,6 +642,9 @@ class RollbackLog(renpy.object.Object):
         for i in revlog:
             if not i.purge_unreachable(reachable, wait):
                 break
+
+        # Break any cycles.
+        reachable.clear()
 
     def in_rollback(self):
         if self.forward:
