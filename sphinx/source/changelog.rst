@@ -25,6 +25,11 @@ is now allowed, and equivalent to::
 Information about :ref:`ATL Transitions <atl-transitions>` and :ref:`Special ATL Keyword Parameters <atl-keyword-parameters>`
 has been added to the documentation.
 
+The ``pause 0`` statement has been special-cased to always display one frame,
+and is the only way to guarantee at least one frame is displayed. Since 6.99.13,
+Ren'Py has been trying various methods to guarantee single frame display, and
+many of which led to visual glitches.
+
 Image Gallery
 -------------
 
@@ -92,6 +97,10 @@ with the new :var:`config.call_screen_roll_forward` variable.
 
 Features
 --------
+
+The :ref:`key <sl-key>` displayable now supports a `capture`
+property, which controls if the pressed key is handled further
+it does not end an interaction.
 
 The new "anywhere" value of the :propref:`language` style property
 allows Ren'Py to break anywhere in a string, for when keeping to
