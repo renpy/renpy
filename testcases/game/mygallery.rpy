@@ -33,6 +33,7 @@ screen gallery:
         textbutton "b0" action g.Action("b0")
         textbutton "b1" action g.Action("b1")
         textbutton "b2" action g.Action("b2")
+        textbutton "Done" action Return()
 
 label gallery:
     show b0 green
