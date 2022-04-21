@@ -451,13 +451,16 @@ class Keymap(renpy.display.layout.Null):
     k_constant from pygame.constants, or the unicode for the key.
     """
 
-    def __init__(self, replaces=None, activate_sound=None, **keymap):
+    capture = True
+
+    def __init__(self, replaces=None, activate_sound=None, capture=True, **keymap):
         if activate_sound is not None:
             super(Keymap, self).__init__(style='default', activate_sound=activate_sound)
         else:
             super(Keymap, self).__init__(style='default')
 
         self.keymap = keymap
+        self.capture = capture
 
     def event(self, ev, x, y, st):
 
@@ -472,7 +475,8 @@ class Keymap(renpy.display.layout.Null):
                 if rv is not None:
                     return rv
 
-                raise renpy.display.core.IgnoreEvent()
+                if self.capture:
+                    raise renpy.display.core.IgnoreEvent()
 
     def predict_one_action(self):
         for i in self.keymap.values():

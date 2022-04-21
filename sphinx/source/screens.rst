@@ -737,6 +737,12 @@ keysyms. It takes one property:
     This gives an action that is run when the key is pressed. This
     property is mandatory.
 
+`capture`
+    If true, the default, the event will capture, and will not be
+    processed by other displayables. If false and the action does
+    not end the interaction, the event will be procssed by other
+    displayables.
+
 It takes no children.
 
 ::

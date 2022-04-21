@@ -654,14 +654,14 @@ pausebehavior = Wrapper(renpy.display.behavior.PauseBehavior)
 soundstopbehavior = Wrapper(renpy.display.behavior.SoundStopBehavior)
 
 
-def _key(key, action=None, activate_sound=None):
+def _key(key, action=None, activate_sound=None, capture=True):
 
     if isinstance(key, (list, tuple)):
         keymap = {k: action for k in key}
     else:
         keymap = {key: action}
 
-    return renpy.display.behavior.Keymap(activate_sound=activate_sound, **keymap)
+    return renpy.display.behavior.Keymap(activate_sound=activate_sound, capture=capture, **keymap)
 
 
 key = Wrapper(_key)
