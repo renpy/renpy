@@ -78,13 +78,16 @@ For example::
 
         p concerned "This is shown with 'side player concerned'."
 
-Variations
-----------
+Config and Store Variables
+--------------------------
 
 There are a number of attributes of side images that can be controlled
 using config variables.
 
+.. var:: _side_image_tag = None
 .. var:: config.side_image_tag = None
+
+    If _side_image_tag is not None, it takes preference over config.side_image_tag.
 
     If this is given, then the side image will track the given image tag,
     rather than the image associated with currently speaking character. For example,
@@ -92,9 +95,7 @@ using config variables.
     ::
 
         define e = Character("Eileen", image="eileen")
-
-        init python:
-             config.side_image_tag = "eileen"
+        define config.side_image_tag = "eileen"
 
     Will make the side image track the "eileen" image tag, which is associated
     with the ``e`` character.
@@ -104,7 +105,11 @@ using config variables.
     When set to true, the side image will only show if an image with that tag
     is not already being shown on the screen.
 
+.. var:: _side_image_prefix_tag = None
 .. var:: config.side_image_prefix_tag = 'side'
+
+    If _side_image_prefix_tag is not None, it takes preference over
+    config.side_image_prefix_tag.
 
     The prefix that is used when searching for a side image.
 
