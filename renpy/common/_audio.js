@@ -366,7 +366,7 @@ renpyAudio.get_duration = (channel) => {
 
 renpyAudio.set_volume = (channel, volume) => {
     let c = get_channel(channel);
-    setValue(c.volume.gain, volume);
+    setValue(c.primary_volume.gain, volume);
 };
 
 
