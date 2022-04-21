@@ -72,10 +72,18 @@ copyreg._reconstructor = _reconstructor # type: ignore
 # this to check to see if a background-save is valid.
 mutate_flag = True
 
+# In Python 2 functools.wraps does not check for the existence of WRAPPER_ASSIGNMENTS elements,
+# so for the C-defined methods we have AttributeError: 'method_descriptor' object has no attribute '__module__'.
+# To work around this, we only keep attributes that surely exist.
+if PY2:
+    def _method_wrapper(method):
+        return functools.wraps(method, ("__name__", "__doc__"), ())
+else:
+    _method_wrapper = functools.wraps
 
 def mutator(method):
 
-    @functools.wraps(method, ("__name__", "__doc__"), ())
+    @_method_wrapper(method)
     def do_mutation(self, *args, **kwargs):
 
         global mutate_flag
@@ -192,6 +200,7 @@ class RevertableList(list):
 
     def wrapper(method): # type: ignore
 
+        @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             l = method(*args, **kwargs) # type: ignore
             return RevertableList(l)
@@ -380,6 +389,7 @@ class RevertableSet(set):
 
     def wrapper(method): # type: ignore
 
+        @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             rv = method(*args, **kwargs) # type: ignore
             if isinstance(rv, set):
