@@ -832,8 +832,13 @@ Button Style Properties
         If a non-displayable callable (like a function, method, or object
         with a ``__call__`` method) is given, the function is called with two
         arguments, the x and y offset from the top-left corner of the
-        displayable. If the function returns True, the displayable is
-        focused.
+        displayable.
+
+        If the function returns a callable when called with two arguments,
+        that callable is called with four arguments - the x and y offsets, and the width
+        and height of the displayable.
+
+        If the function returns true, the displayable is focused.
     None
         If none is given, the entire button can be focused.
 
