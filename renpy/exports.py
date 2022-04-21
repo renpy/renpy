@@ -592,7 +592,8 @@ def set_tag_attributes(name, layer=None):
     tag = name[0]
     name = renpy.game.context().images.apply_attributes(layer, tag, name)
 
-    renpy.game.context().images.predict_show(layer, name, False)
+    if name is not None:
+        renpy.game.context().images.predict_show(layer, name, False)
 
 
 def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
@@ -3341,10 +3342,12 @@ def get_side_image(prefix_tag, image_tag=None, not_showing=None, layer=None):
 
     It begins by determining a set of image attributes. If `image_tag` is
     given, it gets the image attributes from the tag. Otherwise, it gets
-    them from the currently showing character.
+    them from the currently showing character. If no attributes are available
+    for the tag, this returns None.
 
-    It then looks up an image with the tag `prefix_tag` and those attributes,
-    and returns it if it exists.
+    It then looks up an image with the tag `prefix_tag`, and the image tage (either
+    from `image_tag` or the currently showing character) and the set of image
+    attributes as attributes. If such an image exists, it's returned.
 
     If not_showing is True, this only returns a side image if the image the
     attributes are taken from is not on the screen. If Nome, the value

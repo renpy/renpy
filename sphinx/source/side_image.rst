@@ -17,6 +17,9 @@ When a character with a linked image tag speaks, Ren'Py creates a pool of
 image attributes. The linked image tag is added to this pool, as are the
 current image attributes that are associated with that tag.
 
+In addition to the tag, there must be at least one attribute in the pool.
+If not, no side image is shown.
+
 To determine the side image associated with a tag, Ren'Py tries to find
 an image with the tag "side", and the largest number of attributes from
 the pool. If no image can be found, or more than one image has the same
