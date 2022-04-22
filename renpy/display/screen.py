@@ -308,6 +308,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         'children',
         'transforms',
         'widgets',
+        'base_widgets',
         'old_widgets',
         'hidden_widgets',
         'old_transforms',
@@ -322,6 +323,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
     transient = False
 
     def after_setstate(self):
+
+        print(repr(self.base_widgets))
+
+
         self.screen = get_screen_variant(self.screen_name[0])
         self.child = None
         self.children = [ ]

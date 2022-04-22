@@ -130,9 +130,20 @@ def reached(obj, reachable, wait):
         return
 
     try:
-        # Treat as fields, indexed by strings.
-        for v in vars(obj).values():
-            reached(v, reachable, wait)
+        nosave = getattr(obj, "nosave", None)
+
+        if nosave is not None:
+            for k, v in vars(obj).items():
+                if k not in nosave:
+                    reached(v, reachable, wait)
+
+        else:
+
+            # Fields have to be indexed by strings, so no need to check if
+            # the filed is reached.
+            for v in vars(obj).values():
+                reached(v, reachable, wait)
+
     except Exception:
         pass
 
@@ -999,6 +1010,7 @@ class RollbackLog(renpy.object.Object):
         # Purge unreachable objects, so we don't save them.
         self.complete(False)
         roots = self.get_roots()
+
         self.purge_unreachable(roots, wait=wait)
 
         # The current is not purged.
