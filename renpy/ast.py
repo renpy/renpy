@@ -2532,12 +2532,6 @@ class Default(Node):
             if fullname in renpy.python.store_dicts.keys():
                 raise Exception("The {} default variable is shadowing a store with the same name.".format(fullname))
 
-            store = self.store
-            while '.' in store:
-                store, _, lastorname = store.rpartition('.')
-                if lastorname in renpy.python.store_dicts[store].get("_defaults_set", ()):
-                    raise Exception("The {}.{} default variable is shadowing the {} store.".format(store, lastorname, self.store))
-
         if start or (self.varname not in d.ever_been_changed):
             d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
 
