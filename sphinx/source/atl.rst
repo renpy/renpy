@@ -959,7 +959,8 @@ both horizontal and vertical positions.
     :default: None
 
     If not None, causes the displayable to be scaled to the given
-    size.
+    size. This is equivalent to setting the :tpref:`xsize` and
+    :tpref:`ysize` properties to the first and second components.
 
     This is affected by the :tpref:`fit` property.
 
@@ -983,15 +984,16 @@ both horizontal and vertical positions.
 
 .. transform-property:: fit
 
-   :type: None or string
-   :default: None
+    :type: None or string
+    :default: None
 
-   Causes the displayable to be sized according to the table below. In
-   this context "dimensions" refers to one or more of ``xsize`` and
-   ``ysize`` that are not None.
+    Causes the displayable to be sized according to the table below.
+    In the context of the table, "dimensions" represent the are the
+    :tpref:`xsize` and :tpref:`ysize` supplied to this transform.
 
-   If ``fit`` is not None, and if neither ``xsize`` not ``ysize`` are
-   set, the "dimensions" are those the containing area.
+    If fit is not None, and the either or both dimensions is None,
+    the dimension will take its size from the size of the
+    containing area.
 
    .. list-table::
       :widths: 15 85
