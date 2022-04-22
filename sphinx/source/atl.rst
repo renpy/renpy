@@ -986,9 +986,12 @@ both horizontal and vertical positions.
    :type: None or string
    :default: None
 
-   If not None, causes the displayable to be sized according to the
-   table below. In this context "dimensions" refers to one or more of ``xsize`` and
+   Causes the displayable to be sized according to the table below. In
+   this context "dimensions" refers to one or more of ``xsize`` and
    ``ysize`` that are not None.
+
+   If ``fit`` is not None, and if neither ``xsize`` not ``ysize`` are
+   set, the "dimensions" are those the containing area.
 
    .. list-table::
       :widths: 15 85
