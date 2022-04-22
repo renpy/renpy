@@ -2530,7 +2530,7 @@ class Default(Node):
         if start and (renpy.config.developer is True):
             fullname = '.'.join((self.store, self.varname))
             if fullname in renpy.python.store_dicts:
-                raise Exception("The {} default variable is shadowing a store with the same name.".format(fullname))
+                raise Exception("{} is being given a default, but a store with that name already exists.".format(fullname))
 
         if start or (self.varname not in d.ever_been_changed):
             d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
