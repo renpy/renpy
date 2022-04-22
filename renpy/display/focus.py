@@ -222,6 +222,12 @@ def focus_coordinates():
 # A map from id(displayable) to the displayable that replaces it.
 replaced_by = { }
 
+# Set to true after a modal screen.
+after_modal = False
+
+def mark_modal():
+    global after_modal
+    after_modal = True
 
 def before_interact(roots):
     """
@@ -231,12 +237,15 @@ def before_interact(roots):
 
     global override
     global grab
+    global after_modal
+
+    after_modal = False
 
     # a list of focusable, name, screen tuples.
     fwn = [ ]
 
     def callback(f, n):
-        fwn.append((f, n, renpy.display.screen._current_screen))
+        fwn.append((f, n, renpy.display.screen._current_screen, after_modal))
 
     for root in roots:
         try:
@@ -252,7 +261,7 @@ def before_interact(roots):
 
     for fwn_tuple in fwn:
 
-        f, n, screen = fwn_tuple
+        f, n, screen, after_modal = fwn_tuple
 
         serial = namecount.get(n, 0)
         namecount[n] = serial + 1
@@ -296,7 +305,10 @@ def before_interact(roots):
     if current is not None:
         current_name = current.full_focus_name
 
-        for f, n, screen in fwn:
+        for f, n, screen, modal in fwn:
+            if modal:
+                continue
+
             if f.full_focus_name == current_name:
                 current = f
                 set_focused(f, argument, screen)
@@ -312,7 +324,10 @@ def before_interact(roots):
 
         defaults = [ ]
 
-        for f, n, screen in fwn:
+        for f, n, screen, modal in fwn:
+            if modal:
+                continue
+
             if f.default:
                 defaults.append((f.default, f, screen))
 
@@ -330,7 +345,7 @@ def before_interact(roots):
 
     # Finally, mark the current widget as the focused widget, and
     # all other widgets as unfocused.
-    for f, n, screen in fwn:
+    for f, n, screen, modal in fwn:
         if f is not current:
             renpy.display.screen.push_current_screen(screen)
             try:

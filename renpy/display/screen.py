@@ -473,7 +473,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             pop_current_screen()
 
         if self.modal and not callable(self.modal):
-            raise renpy.display.layout.IgnoreLayers()
+            renpy.display.focus.mark_modal()
 
     def copy(self):
         rv = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
