@@ -988,12 +988,16 @@ both horizontal and vertical positions.
     :default: None
 
     Causes the displayable to be sized according to the table below.
-    In the context of the table, "dimensions" represent the are the
-    :tpref:`xsize` and :tpref:`ysize` supplied to this transform.
+    In the context of the the table below, the "dimensions" are:
 
-    If fit is not None, and the either or both dimensions is None,
-    the dimension will take its size from the size of the
-    containing area.
+    * If both :tpref:`xsize` and :tpref:`ysize` are not None, both sizes
+      are used as the dimensions.
+    * If only one of those properties is not None, it is used as the
+      sole dimension.
+    * Otherwise, if fit is not None the area that the Transform is
+      contained in is used as the dimensions.
+
+    If fit, xsize, and ysize are all None, this property does not apply.
 
    .. list-table::
       :widths: 15 85
