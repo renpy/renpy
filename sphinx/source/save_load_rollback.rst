@@ -422,10 +422,10 @@ possible to make a different choice.
 There are some caveats to consider when designing a game for
 fix_rollback. Ren'Py will automatically take care of locking any data
 that is given to :func:`checkpoint`. However, due to the generic nature
-of Ren'Py, it is possible to write Python that bypasses this and
-changes things in ways that may have unpredictable results. It is up
-to the game designer to block rollback at problematic locations or
-write additional Python to deal with it.
+of Ren'Py, it is possible to write scripts that bypass this and
+change things in ways that may have unpredictable results.  Most notably,
+``call screen`` doesn't work well with fixed rollback. It is up
+to the creator to block rollback at problematic locations.
 
 The internal user interaction options for menus, :func:`renpy.input`
 and :func:`renpy.imagemap` are designed to fully work with fix_rollback.
