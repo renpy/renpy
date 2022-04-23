@@ -125,24 +125,12 @@ is equivalent to::
         show eileen happy
         e "But it's just a passing thing."
 
-
-When the image attribute begins with an @, the change is temporary, and
-reverts to the previously displaying image at the end of the line of dialogue.
+In the above example, the ``mad`` and ``happy`` replace one another.
+But it is possible to revert to a ``happy``\ -less eileen without specifying
+the ``mad`` attribute. An attribute name prepended with the minus sign ( - )
+has that effect, just as it does with the :ref:`show statement <show-statement>`.
 
 For example::
-
-    define e = Character("Eileen", image="eileen")
-
-    label start:
-
-        show eileen mad
-        e "I'm a little upset at you."
-
-        e @ happy "That's funny."
-
-        e "But don't think it gets you out of hot water."
-
-is equivalent to::
 
     define e = Character("Eileen")
 
@@ -154,13 +142,34 @@ is equivalent to::
         show eileen happy
         e "That's funny."
 
-        show eileen mad
-        e "But don't think it gets you out of hot water."
+        show eileen -happy
+        e "I'm not sure what to think now."
 
-The two syntaxes can be combined, with the permanent changes coming before
-the @ and the temporary ones coming after. ::
+When an @ is included in the list of attributes, any element placed after it
+has an only temporary effect, and is reverted at the end of the line of dialogue.
+
+For example, the following code is equivalent to the previous example::
+
+    define e = Character("Eileen", image="eileen")
+
+    label start:
+
+        show eileen mad
+        e "I'm a little upset at you."
+
+        e @ happy "That's funny."
+
+        e "I'm not sure what to think now."
+
+A single line can combine permanent changes coming before
+the @, and temporary ones coming after. ::
 
     e happy @ vhappy "Really! That changes everything."
+
+The minus sign can also be used after the @ sign::
+
+    e @ right -mad "My anger is temporarily suspended..."
+    e "HOWEVER !"
 
 To cause a transition to occur whenever the images are changed in this way, set
 :var:`config.say_attribute_transition` to a transition. For more control,
