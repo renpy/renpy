@@ -244,7 +244,25 @@ Some example show statements are::
     # Show an image on a user-defined layer.
     show moon onlayer user_layer
 
-**Show Expression.**
+Attributes management
+---------------------
+
+As shown above, attributes can be set, added and replaced.
+
+They can also be removed using the minus sign::
+
+     # show susan being neutral
+     show susan
+
+     # show susan being happy
+     show susan happy
+
+     # show susan being neutral again
+     show susan -happy
+
+Show expression
+---------------
+
 A variant of the show statement replaces the image name with the
 keyword ``expression``, followed by a simple expression. The
 expression must evaluate to a displayable, and the displayable
