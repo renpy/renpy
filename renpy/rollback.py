@@ -523,15 +523,14 @@ class RollbackLog(renpy.object.Object):
             self.log.pop(0)
 
         # check for the end of fixed rollback
-        if self.log and self.log[-1] == self.current:
-
-            if self.current.context.current == self.fixed_rollback_boundary:
+        if len(self.log) >= 2:
+            if self.log[-2].context.current == self.fixed_rollback_boundary:
                 self.rollback_is_fixed = False
 
-            elif self.rollback_is_fixed and not self.forward:
-                # A lack of rollback data in fixed rollback mode ends rollback.
-                self.fixed_rollback_boundary = self.current.context.current
-                self.rollback_is_fixed = False
+        # A lack of rollback data in fixed rollback mode ends rollback.
+        if self.rollback_is_fixed and not self.forward:
+            self.fixed_rollback_boundary = self.current.context.current
+            self.rollback_is_fixed = False
 
         self.current = Rollback()
         self.current.retain_after_load = self.retain_after_load_flag
@@ -780,6 +779,7 @@ class RollbackLog(renpy.object.Object):
     def fix_rollback(self):
         if not self.rollback_is_fixed and len(self.log) > 1:
             self.fixed_rollback_boundary = self.log[-2].context.current
+        renpy.game.context().force_checkpoint = True
 
     def can_rollback(self):
         """
