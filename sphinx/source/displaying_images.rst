@@ -273,7 +273,9 @@ For example::
 
     show expression "moon.png" as moon
 
-** Show Layer.**
+Show Layer
+----------
+
 The ``show layer`` statement is discussed alongside the camera statement,
 below.
 
