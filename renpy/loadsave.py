@@ -719,6 +719,10 @@ def slot_json(slotname):
 
     Returns the json information for `slotname`, or None if the slot is
     empty.
+
+    Much like the ``d`` argument to the :func:``config.save_json_callback``
+    function, it will be returned as a dictionary. More precisely, the
+    dictionary will contain the same data as it did when the game was saved.
     """
 
     return get_cache(slotname).get_json()
