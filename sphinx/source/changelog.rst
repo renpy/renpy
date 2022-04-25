@@ -173,8 +173,11 @@ the game is resized, in exchange for keeping it stable when extend is used.
 
 Playing or stopping music on a channel now unpauses that channel.
 
-.. _renpy-7.4.11:
+The new :var:`preferences.audio_when_minimized` preference now enables the
+audio of the game to be paused when the window is minimized.
 
+
+.. _renpy-7.4.11:
 
 7.4.11
 ======
@@ -2154,7 +2157,7 @@ The :ref:`input <sl-input>` displayable now takes a new `copypaste`
 property, which when true allows copying with ctrl+C and pasting with
 ctrl+V. This is enabled in the console and launcher.
 
-:func:`Preference("display", "window")` now avoids creating a window bigger
+:func:`rence("display", "window")` now avoids creating a window bigger
 than the screen, and will be selected if the current window size is the
 maximum window size, if the size selected with :func:`gui.init` is bigger
 than the maximum window size.
