@@ -99,6 +99,7 @@ def first_not_none(*args):
 class TransformState(renpy.object.Object):
 
     last_angle = None
+    last_events = True
 
     def __init__(self):
 
@@ -126,6 +127,7 @@ class TransformState(renpy.object.Object):
             d[k] = getattr(ts, k)
 
         self.last_angle = ts.last_angle
+        self.last_events = ts.last_events
 
         # Set the position and anchor to None, so inheritance works.
         if self.perspective is None: # type: ignore
@@ -736,6 +738,11 @@ class Transform(Container):
 
         self.active = True
 
+        if self.state.last_events != self.state.events:
+            if self.state.events:
+                renpy.game.interface.timeout(0)
+            self.state.last_events = self.state.events
+
     # The render method is now defined in accelerator.pyx.
     def render(self, width, height, st, at):
         return transform_render(self, width, height, st, at)
@@ -923,6 +930,12 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
             renpy.display.render.redraw(self, fr)
 
         self.active = True
+
+        if self.state.last_events != self.state.events:
+            if self.state.events:
+                renpy.game.interface.timeout(0)
+            self.state.last_events = self.state.events
+
 
     def _repr_info(self):
         return repr((self.child, self.atl.loc))
