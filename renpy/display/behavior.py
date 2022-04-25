@@ -2283,6 +2283,15 @@ class Timer(renpy.display.layout.Null):
         else:
             self.state = TimerState()
 
+    def render(self, width, height, st, at):
+
+        if not self.state.started:
+            self.state.started = True
+            self.state.next_event = st + self.delay
+            renpy.game.interface.timeout(st)
+
+        return super(Timer, self).render(width, height, st, at)
+
     def event(self, ev, x, y, st):
 
         if ev.type == renpy.display.core.TIMEEVENT and ev.modal:
