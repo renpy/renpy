@@ -53,7 +53,8 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
-        fadeout time is taken from config.fade_music.
+        fadeout time is taken from config.fade_music. This is ignored if
+        the channel is paused when the music is played.
 
     `synchro_start`
         Ren'Py will ensure that all channels of with synchro_start set to true
@@ -92,6 +93,9 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
     if isinstance(filenames, basestring):
         filenames = [ filenames ]
+
+    if get_pause(channel=channel):
+        fadeout = 0
 
     with renpy.audio.audio.lock:
 
@@ -271,7 +275,8 @@ def stop(channel="music", fadeout=None):
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
-        fadeout time is taken from config.fade_music.
+        fadeout time is taken from config.fade_music. This is ignored if
+        the channel is paused.
 
 
     """
