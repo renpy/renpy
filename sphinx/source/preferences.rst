@@ -153,6 +153,12 @@ can then change it again.)
     :var:`config.mouse` value. If False, it will not. The equivalent of the
     "system cursor" preference.
 
+.. var:: preferences.audio_when_minimized = False
+
+    If True, audio channels are not stopped from playing when the window is
+    minimized. If False audio channels will be stopped when the window is minimized. 
+    The equivalent of the "audio when minimized" preference.
+
 Mixer Functions
 ---------------
 

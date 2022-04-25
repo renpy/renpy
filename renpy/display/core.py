@@ -2014,6 +2014,9 @@ class Interface(object):
         # Should we clear the screenshot at the start of the next interaction?
         self.clear_screenshot = False
 
+        # Is our audio paused?
+        self.audio_paused = False
+
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
@@ -4177,7 +4180,19 @@ class Interface(object):
 
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
-
+                    
+                    # If the window becomes inactive as a result of this event
+                    # pause the audio according to preference
+                    if not renpy.game.preferences.audio_when_minimized:
+                        if not pygame.display.get_active() and not self.audio_paused:
+                            renpy.audio.audio.pause_all()
+                            self.audio_paused = True
+                        # If the window had not gone inactive or has regained activity
+                        # unpause the audio
+                        elif pygame.display.get_active() and self.audio_paused:
+                            renpy.audio.audio.unpause_all()
+                            self.audio_paused = False
+                    
                     pygame.key.set_mods(0)
 
                 # This returns the event location. It also updates the
