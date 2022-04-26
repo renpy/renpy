@@ -1039,6 +1039,9 @@ class ImageButton(Button):
     Used to implement the guts of an image button.
     """
 
+    imagebutton_child = None
+    imagebutton_raw_child = None
+
     def __init__(self,
                  idle_image,
                  hover_image=None,
@@ -1084,7 +1087,19 @@ class ImageButton(Button):
         return list(self.state_children.values())
 
     def get_child(self):
-        return self.style.child or self.state_children[self.style.prefix]
+
+        raw_child = self.style.child or self.state_children[self.style.prefix]
+
+        if raw_child is not self.imagebutton_raw_child:
+            self.imagebutton_raw_child = raw_child
+
+            if raw_child._duplicatable:
+                self.imagebutton_child = raw_child._duplicate(None)
+                self.imagebutton_child._unique()
+            else:
+                self.imagebutton_child = raw_child
+
+        return self.imagebutton_child
 
 
 # This is used for an input that takes its focus from a button.
