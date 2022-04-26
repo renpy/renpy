@@ -562,6 +562,11 @@ def check_if(node):
 
 
 def check_define(node, kind):
+
+    if node.store == "store.persistent" and kind == "define":
+        report("Define should not be used with a persistent variable. Use default persistent.%s = ... instead.", node.varname)
+        return
+
     if node.store != 'store':
         return
 
