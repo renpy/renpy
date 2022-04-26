@@ -1335,6 +1335,11 @@ Rarely or Internally Used
     shown to the user by :ref:`say <say-statement>` or :ref:`menu
     <menu-statement>` statements will be logged to this file.
 
+.. var:: config.main_menu_stop_channels = [ "movie", "sound", "voice" ]
+
+    A list of channels that are stopped when entering or returning to the
+    main menu.
+
 .. var:: config.mipmap_dissolves = False
 
     The default value of the mipmap argument to :func:`Dissolve`,

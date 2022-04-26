@@ -19,10 +19,16 @@ such changes only take effect when the GUI is regenerated.
 7.5.0/8.0.0
 -----------
 
+The sound and voice channels are now stopped when ending the main menu.
+To revert to the prior behavior (only the movie channel was stopped, add
+to your game::
+
+    define config.main_menu_stop_channels = [ "movie" ]
+
 Screens called by ``call screen`` no longer support roll forward by default.
 See :ref:`the changelog <call-screen-roll-forward>` for the problems it can
 cause. Roll forward can be enabled on a per screen basis with the `roll_forward` property,
-or for all screens with:
+or for all screens with::
 
     define config.call_screen_roll_forward = True
 

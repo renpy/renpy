@@ -65,6 +65,9 @@ init -1600 python hide:
     # When should start_store happen?
     config.early_start_store = False
 
+    # A list of channes to stop playing when entering the main menu.
+    config.main_menu_stop_channels = [ "sound", "voice", "movie" ]
+
 init -1600 python:
 
     def _init_language():
@@ -229,6 +232,10 @@ label _start:
     $ _old_history = _history
     $ _history = False
 
+    python hide:
+        for i in config.main_menu_stop_channels:
+            renpy.music.stop(channel=i, fadeout=0.0)
+
     if renpy.has_label("splashscreen") and (not _restart) and (not renpy.os.environ.get("RENPY_SKIP_SPLASHSCREEN", None)):
         call _splashscreen from _call_splashscreen_1
 
@@ -243,8 +250,6 @@ label _start:
         $ renpy.music.play(config.main_menu_music, if_changed=True, fadein=config.main_menu_music_fadein)
     else:
         $ renpy.music.stop()
-
-    $ renpy.music.stop(channel="movie")
 
     scene black
 

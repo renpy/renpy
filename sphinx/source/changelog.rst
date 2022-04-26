@@ -146,6 +146,9 @@ transparent pixels.
 Other changes
 -------------
 
+The new :var:`config.main_menu_stop_channels` variable controls the
+channels that are stopped when entering the main menu.
+
 Layered images are now offered the the full size of the screen whenever
 rendered. Previously, when a layered image was used inside a layout (like
 hbox, vbox, side, and others), the space offered to the layered image
