@@ -851,6 +851,19 @@ Occasionally Used
     beginning with an underscore ``_``. These keys are used by Ren'Py,
     and should not be changed.
 
+    For example::
+
+        init python:
+            def jsoncallback(d):
+                d["playername"] = player_name
+
+            config.save_json_callback.append(jsoncallback)
+
+    ``FileJson(slot)`` and ``renpy.slot_json(slot)`` will recover the state
+    of the ``d`` dict-like object as it was at the moment the game was saved.
+    The value of the ``player_name`` variable at the moment the game was saved
+    is also accessible by ``FileJson(slot, "playername")``.
+
 .. var:: config.say_arguments_callback = None
 
     If not None, this should be a function that takes the speaking character,
