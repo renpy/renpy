@@ -20,7 +20,7 @@ such changes only take effect when the GUI is regenerated.
 -----------
 
 The sound and voice channels are now stopped when ending the main menu.
-To revert to the prior behavior (only the movie channel was stopped, add
+To revert to the prior behavior (only the movie channel was stopped), add
 to your game::
 
     define config.main_menu_stop_channels = [ "movie" ]
