@@ -329,6 +329,10 @@ screen ios:
                                     action IOSIfState(state, IOS_OK, launch_xcode)
                                     hovered tt.Action(IOS_XCODE_TEXT)
 
+                            add SPACER
+
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
+
                     add SPACER
                     add SEPARATOR2
 

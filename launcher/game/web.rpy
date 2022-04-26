@@ -309,7 +309,9 @@ screen web():
                             textbutton _("Open in Browser") action Jump("web_start")
                             textbutton _("Open build directory") action Jump("open_build_directory")
 
-                        add SPACER
+                            add SPACER
+
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
 
                 # Right side.

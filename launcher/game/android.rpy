@@ -419,9 +419,9 @@ screen android:
                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_install_and_launch"))
                                 hovered tt.Action(BUILD_INSTALL_AND_LAUNCH_TEXT)
 
-#                     add SPACER
-#                     add SEPARATOR2
+                            add SPACER
 
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
 
                 # Right side.
