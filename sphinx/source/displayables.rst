@@ -25,10 +25,8 @@ five things that can be provided:
   where each component is an integer between 0 and 255. Colors are
   passed to :func:`Solid`.
 * An image name. Any other string is interpreted as a reference to an
-  image defined with the image statement.
-* An auto-defined image name, matching a file from the
-  :ref:`image directory <images-directory>`. See that section of the doc as to
-  how this works.
+  image, either defined with the image statement or auto-defined from
+  the :ref:`image directory <images-directory>`.
 * A list. If a list is provided, each item is expanded as described
   below, and checked to see if it matches a filename or image name.
   If so, expansion stops and the matched thing is then processed
