@@ -50,7 +50,7 @@ def call_str(function, *args):
     return rv
 
 
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0):
+def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -73,6 +73,9 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
     `end`
         A time in the file to end playing.    `
+
+    `relative_volume`
+        A number between 0 and 1 that controls the relative volume of this file
     """
 
     try:
@@ -81,10 +84,10 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         return
 
     call("stop", channel)
-    call("queue", channel, file, name, paused, fadein, tight, start, end)
+    call("queue", channel, file, name, paused, fadein, tight, start, end, relative_volume)
 
 
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
+def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -97,7 +100,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     except Exception:
         return
 
-    call("queue", channel, file, name, False, fadein, tight, start, end)
+    call("queue", channel, file, name, False, fadein, tight, start, end, relative_volume)
 
 
 def stop(channel):
