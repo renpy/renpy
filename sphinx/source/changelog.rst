@@ -1537,7 +1537,7 @@ The ``define`` statement can now be used to set a key in a dictionary. ::
 The ``define`` statement can take += and \|=, to apply the appropriate
 update operators. ::
 
-    define config.keymap['dismiss'] = [ 'K_KP_PLUS' ]
+    define config.keymap['dismiss'] += [ 'K_KP_PLUS' ]
 
     # This assumes endings is a set.
     define endings |= { "best" }
