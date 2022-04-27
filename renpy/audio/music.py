@@ -138,9 +138,11 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
             if loop:
                 ctx.last_filenames = filenames
                 ctx.last_tight = tight
+                ctx.last_relative_volume = relative_volume
             else:
                 ctx.last_filenames = [ ]
                 ctx.last_tight = False
+                ctx.last_relative_volume = 1.0
 
             ctx.pause = False
 
@@ -234,9 +236,11 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
             if loop:
                 ctx.last_filenames = filenames
                 ctx.last_tight = tight
+                ctx.last_relative_volume = relative_volume
             else:
                 ctx.last_filenames = [ ]
                 ctx.last_tight = False
+                ctx.last_relative_volume = 1.0
 
             ctx.pause = False
 
