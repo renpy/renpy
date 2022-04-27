@@ -1080,16 +1080,14 @@ both horizontal and vertical positions.
     :type: int
     :default: 1
 
-    The number of times to tile the image horizontally. (This is ignored when
-    xpan is given.)
+    The number of times to tile the image horizontally.
 
 .. transform-property:: ytile
 
     :type: int
     :default: 1
 
-    The number of times to tile the image vertically. (This is ignored when
-    ypan is given.)
+    The number of times to tile the image vertically.
 
 .. transform-property:: matrixcolor
 
@@ -1132,12 +1130,12 @@ Uniforms:
 
 These properties are applied in the following order:
 
-#. tile
 #. mesh, blur
+#. tile
+#. pan
 #. crop, corner1, corner2
 #. xysize, size, maxsize
 #. zoom, xzoom, yzoom
-#. pan
 #. rotate
 #. zpos
 #. matrixtransform, matrixanchor

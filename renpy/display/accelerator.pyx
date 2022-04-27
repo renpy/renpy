@@ -200,12 +200,7 @@ def transform_render(self, widtho, heighto, st, at):
     xpan = state.xpan
     ypan = state.ypan
 
-    if xpan is not None:
-        xtile = 2
-
-    if ypan is not None:
-        ytile = 2
-
+    # Tiling.
     if (xtile != 1) or (ytile != 1):
         tcr = renpy.display.render.Render(cwidth * xtile, cheight * ytile)
 
@@ -215,6 +210,7 @@ def transform_render(self, widtho, heighto, st, at):
 
         cr = tcr
 
+    # Panning.
     if (xpan is not None) or (ypan is not None):
 
         if xpan is not None:
@@ -233,7 +229,16 @@ def transform_render(self, widtho, heighto, st, at):
             pan_y = 0
             pan_h = cr.height
 
-        cr = cr.subsurface((pan_x, pan_y, pan_w, pan_h))
+        tcr = renpy.display.render.Render(pan_w, pan_h)
+
+        for xpano in [ 0, cwidth ] if (xpan is not None) else [ 0 ]:
+            for ypano in [ 0, cheight ] if (ypan is not None) else [ 0 ]:
+                tcr.subpixel_blit(cr, (xpano - pan_x, ypano - pan_y))
+
+        tcr.xclipping = True
+        tcr.yclipping = True
+
+        cr = tcr
 
     mesh = state.mesh
     blur = state.blur or None
