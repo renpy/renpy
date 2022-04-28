@@ -2028,6 +2028,9 @@ def transition(trans, layer=None, always=False, force=False):
     if (not always) and not renpy.game.preferences.transitions: # type: ignore
         trans = None
 
+    if renpy.config.skipping:
+        trans = None
+
     renpy.game.interface.set_transition(trans, layer, force=force)
 
 
