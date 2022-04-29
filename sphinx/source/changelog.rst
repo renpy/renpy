@@ -30,6 +30,9 @@ and is the only way to guarantee at least one frame is displayed. Since 6.99.13,
 Ren'Py has been trying various methods to guarantee single frame display, and
 many of which led to visual glitches.
 
+When an ATL image is used as one of the children of an image button, its
+shown time begins each time it is shown.
+
 Image Gallery
 -------------
 
