@@ -903,6 +903,7 @@ class Say(Node):
         finally:
             renpy.game.context().say_attributes = None
             renpy.game.context().temporary_attributes = None
+            renpy.store._last_raw_what = "" # type: ignore
 
     def predict(self):
 
@@ -1834,7 +1835,7 @@ class Menu(Node):
 
         next_node(self.next)
 
-        if self.has_caption:
+        if self.has_caption or renpy.config.choice_empty_window:
             statement_name("menu-with-caption")
         else:
             statement_name("menu")
