@@ -101,6 +101,15 @@ with the new :var:`config.call_screen_roll_forward` variable.
 Features
 --------
 
+The new :var:`config.choice_empty_window` variable can customize
+the empty window that is shown when a choice menu is displayed. The intended
+use is::
+
+    define config.choice_empty_window = extend
+
+Which repeats the last line of dialogue as the caption of the
+choice menu.
+
 The :ref:`key <sl-key>` displayable now supports a `capture`
 property, which controls if the pressed key is handled further
 it does not end an interaction.

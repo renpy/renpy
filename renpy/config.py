@@ -1238,6 +1238,10 @@ layeredimage_offer_screen = True
 # The default for rolling forward in call screen.
 call_screen_roll_forward = False
 
+# A function that's called with ("", interact=False) when no window is
+# displayed during a choice menu.
+choice_empty_window = None
+
 del os
 del collections
 

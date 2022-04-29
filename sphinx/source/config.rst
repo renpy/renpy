@@ -1138,6 +1138,22 @@ Rarely or Internally Used
 
     The default value of the callback parameter of Character.
 
+.. var:: config.choice_empty_window = None
+
+    If not None, and a choice menu (usually invoked with the ``menu``
+    statement) does not have a caption, this function is called with
+    the arguments ("", interact=False).
+
+    The expected use of this is::
+
+        define config.choice_empty_window = extend
+
+    Doing this displays repeats the last line of dialogue as the
+    caption of the menu, if no other caption is given.
+
+    Other implementations are possible, but it's assumed that this will
+    always display a dialogue window.
+
 .. var:: config.choice_layer = "screens"
 
     The layer the choice screen (used by the menu statement) is shown on.

@@ -1120,6 +1120,10 @@ def display_menu(items,
         renpy.exports.mode(mode)
         choice_for_skipping()
 
+        if not predict_only:
+            if renpy.config.choice_empty_window and (not renpy.game.context().scene_lists.shown_window):
+                renpy.config.choice_empty_window("", interact=False)
+
     choices = [ ]
 
     for _, val in items:
