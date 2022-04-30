@@ -101,6 +101,10 @@ with the new :var:`config.call_screen_roll_forward` variable.
 Features
 --------
 
+A button to clean the Ren'Py temporary directory has been added
+to the preferences screen of the launcher. This can remove these
+files to reduce the space Ren'Py requires.
+
 The new :var:`config.choice_empty_window` variable can customize
 the empty window that is shown when a choice menu is displayed. The intended
 use is::

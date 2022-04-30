@@ -158,6 +158,7 @@ screen preferences:
                         textbutton _("Install libraries") style "l_nonbox" action Jump("install")
                         textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
                         textbutton _("Reset window size") style "l_nonbox" action Preference("display", 1.0)
+                        textbutton _("Clean temporary files") style "l_nonbox" action Jump("clean_tmp")
 
 
                 frame:
@@ -256,6 +257,14 @@ screen preferences:
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
+
+label clean_tmp:
+    python hide:
+        installer.processing(_("Cleaning temporary files..."))
+        installer._clean("renpy:tmp", 0)
+        time.sleep(0.5)
+
+    jump preferences
 
 label projects_directory_preference:
     call choose_projects_directory
