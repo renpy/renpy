@@ -61,7 +61,16 @@ init python:
 default persistent.legacy = False
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
-default persistent.daily_update_check = False
+default persistent.daily_update_check = True
+default persistent.daily_update_check_once = False
+
+# Keep the default update check from triggering until tomorrow.
+default persistent.last_update_check = datetime.date.today()
+
+init python:
+    if not persistent.daily_update_check_once:
+        persistent.daily_update_check_once = True
+        persistent.daily_update_check = True
 
 screen preferences:
 
