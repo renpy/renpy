@@ -27,47 +27,25 @@ import functools
 
 
 class Curry(object):
-    # essentialy the same as Partial, kept for compatibility
+    """
+    :undocumented:
 
-    hash = None
+    Compatibilty class that exists solely to deserialise instances from
+    old saves into instances of the replacement Partial type below.
+    """
 
-    def __init__(self, callable, *args, **kwargs):  # @ReservedAssignment
-        self.callable = callable
-        self.args = args
-        self.kwargs = kwargs
-        self.__doc__ = getattr(self.callable, "__doc__", None)
-        self.__name__ = getattr(self.callable, "__name__", None)
+    def __new__(cls, *args, **kwargs):
+        if not args: # probably unpickling, pass arbitrary callable
+            args = (hash,)
 
-    def __call__(self, *args, **kwargs):
+        rv = Partial(*args, **kwargs)
+        rv.__setstate__ = cls.__setstate__.__get__(rv)
 
-        merged_kwargs = dict(self.kwargs)
-        merged_kwargs.update(kwargs)
+        return rv
 
-        return self.callable(*(self.args + args), **merged_kwargs)
-
-    def __repr__(self):
-        return "<curry %s %r %r>" % (self.callable, self.args, self.kwargs)
-
-    def __eq__(self, other):
-
-        return (
-            isinstance(other, Curry) and
-            self.callable == other.callable and
-            self.args == other.args and
-            self.kwargs == other.kwargs)
-
-    def __ne__(self, other):
-        return not (self == other)
-
-    def __hash__(self):
-
-        if self.hash is None:
-            self.hash = hash(self.callable) ^ hash(self.args)
-
-            for i in self.kwargs.items():
-                self.hash ^= hash(i)
-
-        return self.hash
+    def __setstate__(self, state):
+        state = (state.pop('callable'), state.pop('args'), state.pop('kwargs'), state)
+        return super(Partial, self).__setstate__(state)
 
 
 class Partial(functools.partial):
