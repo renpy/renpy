@@ -77,19 +77,16 @@ class Partial(functools.partial):
     supplied to the call.
     """
 
-    __slots__ = ("hash",)
-
+    __slots__ = ('hash',)
 
     def __repr__(self):
         return "<partial %s %r %r>" % (self.func, self.args, self.keywords)
 
     def __eq__(self, other):
-
-        return (
-            isinstance(other, Partial) and
-            self.func == other.func and
-            self.args == other.args and
-            self.keywords == other.keywords)
+        return (isinstance(other, Partial) and
+                self.func == other.func and
+                self.args == other.args and
+                self.keywords == other.keywords)
 
     def __ne__(self, other):
         return not (self == other)
