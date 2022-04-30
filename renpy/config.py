@@ -431,7 +431,7 @@ predict_screens = True
 choice_screen_chosen = True
 
 # Should the narrator speak menu labels?
-narrator_menu = False
+narrator_menu = True
 
 # A list of screen variants to use.
 variants = [ None ] # type: List

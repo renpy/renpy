@@ -235,6 +235,7 @@ init -1100 python:
             config.box_skip_false_showif = False
             config.crop_relative_default = False
             config.layeredimage_offer_screen = False
+            config.narrator_menu = False
 
 
     # The version of Ren'Py this script is intended for, or

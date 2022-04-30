@@ -726,10 +726,9 @@ Occasionally Used
     cursor, and so should probably be a :func:`MouseDisplayable`
     or something very similar.
 
-.. var:: config.narrator_menu = False
+.. var:: config.narrator_menu = True
 
-    (This is set to True by the default screens.rpy file.) If true,
-    then narration inside a menu is displayed using the narrator
+    If true, narration inside a menu is displayed using the narrator
     character. Otherwise, narration is displayed as captions
     within the menu itself.
 

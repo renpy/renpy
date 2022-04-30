@@ -19,6 +19,12 @@ such changes only take effect when the GUI is regenerated.
 7.5.0/8.0.0
 -----------
 
+The :var:`config.narrator_menu` variable now defaults to True. It's been
+set to true in the default screens.rpy for some time. In the unlikely event
+it was false in your game, restore the old behavior with::
+
+    define config.narrator_menu = False
+
 The sound and voice channels are now stopped when ending the main menu.
 To revert to the prior behavior (only the movie channel was stopped), add
 to your game::
