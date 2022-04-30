@@ -79,9 +79,6 @@ class Partial(functools.partial):
 
     __slots__ = ("hash",)
 
-    def __init__(self, *args, **kwargs):
-        super(Partial, self).__init__(*args, **kwargs)
-        self.hash = None
 
     def __repr__(self):
         return "<partial %s %r %r>" % (self.func, self.args, self.keywords)
@@ -98,14 +95,17 @@ class Partial(functools.partial):
         return not (self == other)
 
     def __hash__(self):
+        _hash = getattr(self, 'hash', None)
 
-        if self.hash is None:
-            self.hash = hash(self.func) ^ hash(self.args)
+        if _hash is None:
+            _hash = hash(self.func) ^ hash(self.args)
 
             for i in self.keywords.items():
-                self.hash ^= hash(i)
+                _hash ^= hash(i)
 
-        return self.hash
+            setattr(self, 'hash', _hash)
+
+        return _hash
 
 
 def curry(fn):
