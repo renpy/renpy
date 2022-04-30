@@ -29,7 +29,6 @@ init python in interface:
     import contextlib
 
     RENPY_URL = "http://www.renpy.org"
-    RENPY_GAMES_URL = "http://games.renpy.org"
     DOC_PATH = os.path.join(config.renpy_base, "doc/index.html")
     DOC_URL = "http://www.renpy.org/doc/html/"
 
@@ -89,6 +88,10 @@ init python in interface:
         finally:
             links = True
 
+    # Version.
+    import re
+    version = re.sub(r'\.\d+(\w*)$', r'\1', renpy.version())
+
 # This displays the bottom of the screen. If the tooltip is not None, this displays the
 # tooltip. Otherwise, it displays a list of links (to various websites, and to the
 # preferences and update screen), or is just blank.
@@ -118,8 +121,7 @@ screen bottom_info:
                     spacing INDENT
                     textbutton _("Documentation") style "l_link" action interface.OpenDocumentation()
                     textbutton _("Ren'Py Website") style "l_link" action OpenURL(interface.RENPY_URL)
-                    textbutton _("Ren'Py Games List") style "l_link" action OpenURL(interface.RENPY_GAMES_URL)
-                    textbutton _("About") style "l_link" action Jump("about")
+                    textbutton _("[interface.version]") style "l_link" action Jump("about")
 
                 hbox:
                     spacing INDENT
