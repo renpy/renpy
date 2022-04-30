@@ -57,6 +57,8 @@ init python:
     CONNECT_TEXT = _("Connects to a device over Wi-Fi, on Android 11+.")
     DISCONNECT_TEXT = _("Disconnects a device connected over Wi-Fi.")
 
+    CLEAN_TEXT = _("Removes Android temporary files.")
+
     PLAY_BUNDLE_TEXT = _("Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data.")
     UNIVERSAL_APK_TEXT = _("Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data.")
 
@@ -466,7 +468,9 @@ screen android:
                                 action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_disconnect"))
                                 hovered tt.Action(DISCONNECT_TEXT)
 
-
+                            textbutton _("Clean"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_clean"))
+                                hovered tt.Action(CLEAN_TEXT)
 
                     add SPACER
                     add SEPARATOR2
@@ -610,6 +614,38 @@ label android_disconnect:
         cc = ConsoleCommand()
         cc.add(rapt.plat.adb, "disconnect", host)
         cc.run()
+
+    jump android
+
+label android_clean:
+
+    python hide:
+        import shutil
+        import time
+
+        interface = MobileInterface("android")
+        interface.info(_("Cleaning up Android project."))
+
+        # Get the android json file, for the update_always key.
+        filename = os.path.join(project.current.path, ".android.json")
+        with open(filename, "rb") as f:
+            android_json = json.load(f)
+
+        # Clean up the files.
+        def clean(path):
+            if os.path.exists(path):
+                shutil.rmtree(path)
+
+        clean(rapt.plat.path("bin"))
+
+        if android_json.get("update_always", True):
+            clean(rapt.plat.path("project"))
+
+        clean(project.current.temp_filename("android.dist"))
+
+        # This can go really fast, so pause so it looks like something is happening.
+        time.sleep(.5)
+
 
     jump android
 
