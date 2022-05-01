@@ -35,10 +35,13 @@ class Curry(object):
     """
 
     def __new__(cls, *args, **kwargs):
-        if not args: # probably unpickling, pass arbitrary callable
-            args = (hash,)
+        if args:
+            return Partial(*args, **kwargs)
 
-        rv = Partial(*args, **kwargs)
+        # No args supplied, so likely we're trying to unpickle an instance
+        # from an old save. Create a new Partial with an arbitrary function
+        # which will be updated in a moment by __setstate__.
+        rv = Partial(hash)
         rv.__setstate__ = cls.__setstate__.__get__(rv)
 
         return rv
