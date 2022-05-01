@@ -47,6 +47,7 @@ class Curry(object):
         return rv
 
     def __setstate__(self, state):
+        state.pop('hash', None)
         state = (state.pop('callable'), state.pop('args'), state.pop('kwargs'), state)
         return super(Partial, self).__setstate__(state)
 
