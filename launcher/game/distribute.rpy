@@ -643,7 +643,7 @@ change_renpy_executable()
                 self.reporter.info(_("All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."))
 
             if open_directory:
-                store.OpenDirectory(self.destination)()
+                renpy.run(store.OpenDirectory(self.destination, absolute=True))
 
         def scan_and_classify(self, directory, patterns):
             """

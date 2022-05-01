@@ -649,6 +649,48 @@ init -1500 python:
                 adjustment.change(adjustment.value + delta * self.amount)
 
 
+    @renpy.pure
+    class OpenDirectory(Action, DictEquality):
+        """
+        :doc: other_action
+        :args: (directory)
+
+        Opens `directory` in a file browser. `directory` is relative to
+        the config.basedir.
+        """
+
+        alt = _("Open [text] directory.")
+
+        def __init__(self, directory, absolute=False):
+            import os
+
+            if absolute:
+                self.directory = directory
+            else:
+                self.directory = os.path.join(config.basedir, directory)
+
+        def get_sensitive(self):
+            import os
+
+            return os.path.exists(self.directory)
+
+        def __call__(self):
+            import os
+            import subprocess
+
+            try:
+                directory = renpy.fsencode(self.directory)
+
+                if renpy.windows:
+                    os.startfile(directory)
+                elif renpy.macintosh:
+                    subprocess.Popen([ "open", directory ])
+                else:
+                    subprocess.Popen([ "xdg-open", directory ])
+
+            except Exception:
+                pass
+
 init -1500:
 
     transform _notify_transform:

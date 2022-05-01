@@ -283,7 +283,8 @@ init python:
                     pass
 
             if opendir:
-                store.OpenDirectory(dir_to_open)()
+                dir_to_open = os.path.join(p.path, dir_to_open)
+                renpy.run(store.OpenDirectory(dir_to_open, absolute=True))
 
 
         with interface.nolinks():
