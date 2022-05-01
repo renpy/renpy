@@ -627,20 +627,50 @@ label android_clean:
         interface.info(_("Cleaning up Android project."))
 
         # Get the android json file, for the update_always key.
-        filename = os.path.join(project.current.path, ".android.json")
-        with open(filename, "rb") as f:
-            android_json = json.load(f)
+        try:
+            filename = os.path.join(project.current.path, ".android.json")
+            with open(filename, "rb") as f:
+                android_json = json.load(f)
+        except Exception:
+            android_json = {}
 
         # Clean up the files.
         def clean(path):
             if os.path.exists(path):
                 shutil.rmtree(path)
 
-        clean(rapt.plat.path("bin"))
-
         if android_json.get("update_always", True):
+
+            try:
+                with open(rapt.plat.path("project/local.properties"), "r") as f:
+                    local_properties = f.read()
+            except Exception:
+                local_properties = None
+
+            try:
+                with open(rapt.plat.path("project/bundle.properties"), "r") as f:
+                    bundle_properties = f.read()
+            except Exception:
+                local_properties = None
+
             clean(rapt.plat.path("project"))
 
+            if local_properties or bundle_properties:
+
+                os.mkdir(rapt.plat.path("project"))
+
+            if local_properties:
+
+                with open(rapt.plat.path("project/local.properties"), "w") as f:
+                    f.write(local_properties)
+
+            if bundle_properties:
+
+                with open(rapt.plat.path("project/bundle.properties"), "w") as f:
+                    f.write(bundle_properties)
+
+
+        clean(rapt.plat.path("bin"))
         clean(project.current.temp_filename("android.dist"))
 
         # This can go really fast, so pause so it looks like something is happening.
