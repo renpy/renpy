@@ -151,6 +151,25 @@ TintMatrix class. ::
                             0, 0, b, 0,
                             0, 0, 0, a ])
 
+
+**Structural Similarity.**
+In ATL, interpolating a the :tpref:`matrixcolor` property requires the
+use of ColorMatrixes that have structural similarity. That means the same
+types of ColorMatrix, multiplied together in the same order.
+
+As an example, the following will interpolate from normal to a desaturated
+blue tint, and then return to normal.
+
+    show eileen happy at center:
+        matrixcolor TintMatrix("#ffffff") * SaturationMatrix(1.0)
+        linear 2.0 matrixcolor TintMatrix("#ccccff") * SaturationMatrix(0.0)
+        linear 2.0 matrixcolor TintMatrix("#ffffff") * SaturationMatrix(1.0)
+
+While the first setting of matrixcolor may seem unnecessary, it is required
+to provide a base for the first linear interpolation. If it wasn't present, that
+interpolation would be skipped.
+
+
 Built-In ColorMatrix Subclasses
 -------------------------------
 
@@ -158,6 +177,3 @@ The following is the list of ColorMatrix subclasses that are built into
 Ren'Py.
 
 .. include:: inc/colormatrix
-
-
-
