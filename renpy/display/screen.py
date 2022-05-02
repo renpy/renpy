@@ -437,8 +437,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # The lifecycle phase we are in - one of PREDICT, SHOW, UPDATE, or HIDE.
         self.phase = PREDICT
 
+    @property
+    def name(self):
+        return " ".join(self.screen_name)
+
     def _repr_info(self):
-        return repr(" ".join(self.screen_name))
+        return self.name
 
     def visit(self):
         return [ self.child ]
@@ -1056,6 +1060,20 @@ def get_screen(name, layer=None):
         else:
             text "The say screen is hidden."
 
+    The ScreenDisplayable objects returnd by this function have the following
+    documented fields:
+
+    ``ScreenDisplayable.layer``
+
+        The layer the screen is being displayed on.
+
+    ``ScreenDisplayable.name``
+
+        The name of the screen.
+
+    ``ScreenDisplayable.zorder``
+
+        The zorder the screen is being displayed at.
     """
 
     if layer is None:
@@ -1326,6 +1344,16 @@ def use_screen(_screen_name, *_args, **kwargs):
 
 
 def current_screen(): # type: () -> ScreenDisplayable|None
+    """
+    :doc: screens
+    :name: renpy.current_screen
+
+    Returns the ScreendDisplayable corresponding to the screen currently being
+    updated, rendered, or processing an
+
+    See :func:`get_screen` for documented fields on ScreenDisplayable.
+    """
+
     return _current_screen
 
 
