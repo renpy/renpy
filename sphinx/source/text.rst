@@ -223,7 +223,7 @@ Tags that apply to all text are:
 
 .. text-tag:: alt
 
-    The alt tag prevents text from being rendered, while still maing the
+    The alt tag prevents text from being rendered, while still making the
     text available for the text-to-speech system. ::
 
        g "Good to see you! {image=heart.png}{alt}heart{/alt}"
