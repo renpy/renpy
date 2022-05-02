@@ -16,11 +16,12 @@
     # Colors for the scrollbar thumb.
     custom_scrollbar_idle = "#dfdfdf"
     custom_scrollbar_hover = "#d86b45"
+
     # An image used as a separator pattern.
     custom_pattern = "images/pattern.png"
 
     # A displayable used for the background of everything.
-    custom_background = "images/background.png"
+    custom_background = "skin/skin_background.jpg"
 
     # A displayable used for the background of the projects list.
     custom_projects_window = Null()
@@ -39,4 +40,6 @@
 
     # A displayable used for the background of windows
     # containing commands, preferences, and navigation info.
-    custom_window = Frame(Fixed(Solid(custom_reverse_idle, xsize=4, xalign=0), Solid(custom_info_window, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
+
+    # custom_window = Frame(Fixed(Solid(custom_reverse_idle, xsize=4, xalign=0), Solid(custom_info_window, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
+    custom_window = Null()
