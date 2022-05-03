@@ -25,41 +25,6 @@ init python:
 
     import datetime
 
-    import os
-    import subprocess
-
-    class OpenDirectory(Action):
-        """
-        Opens `directory` in a file browser. `directory` is relative to
-        the project root.
-        """
-
-        alt = _("Open [text] directory.")
-
-        def __init__(self, directory, absolute=False):
-            if absolute:
-                self.directory = directory
-            else:
-                self.directory = os.path.join(project.current.path, directory)
-
-        def get_sensitive(self):
-            return os.path.exists(self.directory)
-
-        def __call__(self):
-
-            try:
-                directory = renpy.fsencode(self.directory)
-
-                if renpy.windows:
-                    os.startfile(directory)
-                elif renpy.macintosh:
-                    subprocess.Popen([ "open", directory ])
-                else:
-                    subprocess.Popen([ "xdg-open", directory ])
-
-            except Exception:
-                pass
-
     # Used for testing.
     def Relaunch():
         renpy.quit(relaunch=True)
@@ -194,11 +159,11 @@ screen front_page_project:
                 frame style "l_indent":
                     has vbox
 
-                    textbutton _("game") action OpenDirectory("game")
-                    textbutton _("base") action OpenDirectory(".")
-                    textbutton _("images") action OpenDirectory("game/images")
-                    textbutton _("audio") action OpenDirectory("game/audio")
-                    textbutton _("gui") action OpenDirectory("game/gui")
+                    textbutton _("game") action OpenDirectory(os.path.join(p.path, "game"), absolute=True)
+                    textbutton _("base") action OpenDirectory(os.path.join(p.path, "."), absolute=True)
+                    textbutton _("images") action OpenDirectory(os.path.join(p.path, "game/images"), absolute=True)
+                    textbutton _("audio") action OpenDirectory(os.path.join(p.path, "game/audio"), absolute=True)
+                    textbutton _("gui") action OpenDirectory(os.path.join(p.path, "game/gui"), absolute=True)
 
             vbox:
                 if persistent.show_edit_funcs:

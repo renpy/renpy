@@ -365,7 +365,7 @@ label web_launch:
 
 label open_build_directory():
     $ project.current.update_dump(True, gui=True)
-    $ OpenDirectory(get_web_destination(project.current))()
+    $ renpy.run(OpenDirectory(get_web_destination(project.current), absolute=True))
     jump web
 
 label web_start:
