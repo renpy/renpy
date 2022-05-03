@@ -651,11 +651,17 @@ label android_clean:
                 with open(rapt.plat.path("project/bundle.properties"), "r") as f:
                     bundle_properties = f.read()
             except Exception:
-                local_properties = None
+                bundle_properties = None
+
+            try:
+                with open(rapt.plat.path("project/gradle.properties"), "r") as f:
+                    gradle_properties = f.read()
+            except Exception:
+                gradle_properties = None
 
             clean(rapt.plat.path("project"))
 
-            if local_properties or bundle_properties:
+            if local_properties or bundle_properties or gradle_properties:
 
                 os.mkdir(rapt.plat.path("project"))
 
@@ -669,6 +675,10 @@ label android_clean:
                 with open(rapt.plat.path("project/bundle.properties"), "w") as f:
                     f.write(bundle_properties)
 
+            if gradle_properties:
+
+                with open(rapt.plat.path("project/gradle.properties"), "w") as f:
+                    f.write(gradle_properties)
 
         clean(rapt.plat.path("bin"))
         clean(project.current.temp_filename("android.dist"))
