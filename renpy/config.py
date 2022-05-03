@@ -1242,6 +1242,7 @@ call_screen_roll_forward = False
 # displayed during a choice menu.
 choice_empty_window = None
 
+
 del os
 del collections
 

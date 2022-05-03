@@ -2225,3 +2225,88 @@ class AlphaMask(Container):
         self.offsets = [ (0, 0), (0, 0) ]
 
         return rv
+
+
+class NearRect(Container):
+
+    def __init__(self, child=None, rect=None, prefer_top=False, **properties):
+        """
+        This lays a child above or below a supplied rectangle.
+
+        `rect`
+            The rectangle to place the child near.
+
+        `prefer_top`
+            If true, the child is placed above the rectangle, if there is
+            room.
+        """
+
+        super(NearRect, self).__init__(**properties)
+
+        if rect is None:
+            raise Exception("NearbyRect requires a rect to be nearby.")
+
+        self.parent_rect = rect
+        self.prefer_top = prefer_top
+
+        if child is not None:
+            self.add(child)
+
+    def render(self, width, height, st, at):
+
+        px, py, pw, ph = self.parent_rect
+
+        # Determine the available area.
+        avail_w = width
+        avail_h = max(py, height - py - ph)
+
+        # Render thje child, and get its size.
+        cr = renpy.display.render.render(self.child, avail_w, avail_h, st, at)
+        cw, ch = cr.get_size()
+
+        # Work out the placement.
+        xpos, _ypos, xanchor, _yanchor, xoffset, yoffset, _subpixel = self.child.get_placement()
+
+        if xpos is None:
+            xpos = 0
+        if xanchor is None:
+            xanchor = 0
+        if xoffset is None:
+            xoffset = 0
+        if yoffset is None:
+            yoffset = 0
+
+        # Y positioning.
+        if self.prefer_top and (ch < py):
+            layout_y = py - ch
+        elif ch < (height - pw - ph):
+            layout_y = py + ph
+        else:
+            layout_y = py - ch
+
+        # Initial x positioning - using a variant of the layout algorithm.
+        if isinstance(xpos, float):
+            xpos = xpos * pw
+
+        if isinstance(xanchor, float):
+            xanchor = xanchor * cw
+
+        layout_x = px + xpos - xanchor
+
+        # Final x positioning - make sure the child fits inside the screen.
+        if layout_x + cw > width:
+            layout_x = width - cw
+
+        if layout_x < 0:
+            layout_x = 0
+
+        # Apply offsets.
+        layout_x += xoffset
+        layout_y += yoffset
+
+        rv = renpy.display.render.Render(width, height)
+
+        rv.blit(cr, (layout_x, layout_y))
+        self.offsets = [ (layout_x, layout_y) ]
+
+        return rv
