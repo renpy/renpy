@@ -691,6 +691,48 @@ init -1500 python:
             except Exception:
                 pass
 
+    @renpy.pure
+    class CaptureFocus(Action, DictEquality):
+        """
+        :doc: focus_action
+
+        If a displayable is focused when this action is run, the rectangle
+        containing that displayable is stored with the name `name`. This
+        rectange can then be retrieved with the :func:`GetFocusRect` action,
+        or the `focus` property of the :ref:`nearrect` displayable.
+
+        If no displayable is focused, the previous capture with that name
+        is removed.
+
+        `name`
+            The name of the focus rectangle to store. This should be a string.
+            The name "tooltip" is special, as it is automatically captured
+            when the tooltip is changed.
+        """
+
+        def __init__(self, name="default"):
+            self.name = name
+
+        def __call__(self):
+            renpy.capture_focus(self.name)
+
+    def GetFocusRect(name="default"):
+        """
+        :doc: focus_action
+
+        If a focus rectange with the given name has been stored (either with
+        :func:`CaptureFocus`, or automatically by a tooltip, returns the
+        a (x, y, h, w) rectangle. Otherwise, returns None.
+
+        `name`
+            The name of the focus rectangle to retrieve. The name "tooltip"
+            is special, as it is automatically captured when the tooltip is
+            changed.
+        """
+
+        return renpy.get_focus_rect(name)
+
+
 init -1500:
 
     transform _notify_transform:

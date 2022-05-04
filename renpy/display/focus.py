@@ -34,7 +34,7 @@ import renpy
 
 focus_storage = { }
 
-def capture_focus(name=None):
+def capture_focus(name="default"):
     """
     :doc: other
 
@@ -45,7 +45,7 @@ def capture_focus(name=None):
     Captured focuses are not saved when the game is saveed.
 
     `name`
-        Should be a string or None. The name "tooltip" is special, as it's
+        Should be a string. The name "tooltip" is special, as it's
         automatically captured when a displayable with a tooltip gains focus.
     """
 
@@ -59,7 +59,7 @@ def capture_focus(name=None):
     else:
         focus_storage.pop(name, None)
 
-def get_focus_rect(name=None):
+def get_focus_rect(name="default"):
     """
     :undocumented:
 
