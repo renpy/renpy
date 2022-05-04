@@ -32,7 +32,7 @@ from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
 from renpy.sl2.slparser import DisplayableParser, many
 
 from renpy.sl2.slproperties import text_properties, box_properties, window_properties
-from renpy.sl2.slproperties import bar_properties, button_properties
+from renpy.sl2.slproperties import bar_properties, button_properties, position_properties
 from renpy.sl2.slproperties import text_position_properties, text_text_properties
 from renpy.sl2.slproperties import side_position_properties
 from renpy.sl2.slproperties import scrollbar_bar_properties, scrollbar_position_properties
@@ -152,6 +152,7 @@ add(grid_properties)
 DisplayableParser("side", renpy.display.layout.Side, "side", many)
 Positional("positions")
 Style("spacing")
+
 
 # Omit sizer, as we can always just put an xmaximum and ymaximum on an item.
 
@@ -507,6 +508,14 @@ Style("focus_mask")
 DisplayableParser("on", renpy.display.behavior.OnEvent, None, 0)
 Positional("event")
 Keyword("action")
+
+
+DisplayableParser("nearrect", renpy.display.layout.NearRect, "default", 1)
+Keyword("rect")
+Keyword("focus")
+Keyword("prefer_top")
+add(position_properties)
+
 
 # Ensure that Parsers are no longer added automatically.
 renpy.sl2.slparser.parser = None

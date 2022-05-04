@@ -2228,18 +2228,18 @@ class AlphaMask(Container):
 
 
 class NearRect(Container):
+    """
+    This lays a child above or below a supplied rectangle.
+
+    `rect`
+        The rectangle to place the child near.
+
+    `prefer_top`
+        If true, the child is placed above the rectangle, if there is
+        room.
+    """
 
     def __init__(self, child=None, rect=None, prefer_top=False, **properties):
-        """
-        This lays a child above or below a supplied rectangle.
-
-        `rect`
-            The rectangle to place the child near.
-
-        `prefer_top`
-            If true, the child is placed above the rectangle, if there is
-            room.
-        """
 
         super(NearRect, self).__init__(**properties)
 
