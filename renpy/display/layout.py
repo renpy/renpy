@@ -2239,14 +2239,19 @@ class NearRect(Container):
         room.
     """
 
-    def __init__(self, child=None, rect=None, prefer_top=False, **properties):
+    def __init__(self, child=None, rect=None, focus=None, prefer_top=False, **properties):
 
         super(NearRect, self).__init__(**properties)
 
-        if rect is None:
-            raise Exception("NearbyRect requires a rect to be nearby.")
+        if focus is not None:
+            rect = renpy.display.focus.get_focus_rect(focus)
+
+
+        if (focus is None) and (rect is None):
+            raise Exception("A NearRect requires either a focus or a rect parameter.")
 
         self.parent_rect = rect
+        self.focus = focus
         self.prefer_top = prefer_top
 
         if child is not None:
@@ -2254,7 +2259,19 @@ class NearRect(Container):
 
     def render(self, width, height, st, at):
 
-        px, py, pw, ph = self.parent_rect
+        rv = renpy.display.render.Render(width, height)
+
+        if self.focus:
+            rect = renpy.display.focus.get_focus_rect(self.focus)
+        else:
+            rect = self.parent_rect
+
+        if rect is None:
+            self.offsets = [ None ]
+
+            return rv
+
+        px, py, pw, ph = rect
 
         # Determine the available area.
         avail_w = width
@@ -2303,8 +2320,6 @@ class NearRect(Container):
         # Apply offsets.
         layout_x += xoffset
         layout_y += yoffset
-
-        rv = renpy.display.render.Render(width, height)
 
         rv.blit(cr, (layout_x, layout_y))
         self.offsets = [ (layout_x, layout_y) ]
