@@ -30,6 +30,44 @@ import operator
 import pygame_sdl2 as pygame
 import renpy
 
+# The focus storage api.
+
+focus_storage = { }
+
+def capture_focus(name=None):
+    """
+    :doc: other
+
+    If a displayable is currently focused, captured the rectangular bounding
+    box of that displayable, and stores it with `name`. If not, removes any
+    focus stored with `name`.
+
+    Captured focuses are not saved when the game is saveed.
+
+    `name`
+        Should be a string or None. The name "tooltip" is special, as it's
+        automatically captured when a displayable with a tooltip gains focus.
+    """
+
+    rect = focus_coordinates()
+
+    if rect[0] is None:
+        rect = None
+
+    if rect is not None:
+        focus_storage[name] = rect
+    else:
+        focus_storage.pop(name, None)
+
+def get_focus_rect(name=None):
+    """
+    :undocumented:
+
+    Returns the captured focus. Used in the implementation of FocusRect.
+    """
+
+    return focus_storage.get(name, None)
+
 
 class Focus(object):
 
@@ -114,6 +152,7 @@ def set_focused(widget, arg, screen):
 
     if tooltip != new_tooltip:
         tooltip = new_tooltip
+        capture_focus("tooltip")
         renpy.exports.restart_interaction()
 
 
