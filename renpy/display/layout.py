@@ -552,6 +552,9 @@ class Grid(Container):
             if allow_underfull is None:
                 allow_underfull = renpy.config.allow_underfull_grids
 
+            if not renpy.config.developer:
+                allow_underfull = True
+
             if not allow_underfull:
                 raise Exception("Grid not completely full.")
             else:

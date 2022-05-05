@@ -671,6 +671,9 @@ class VPGrid(Viewport):
             if allow_underfull is None:
                 allow_underfull = renpy.config.allow_underfull_grids or renpy.config.allow_unfull_vpgrids
 
+            if not renpy.config.developer:
+                allow_underfull = True
+
             if not allow_underfull:
                 raise exc
 
