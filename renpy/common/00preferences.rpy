@@ -164,7 +164,7 @@ init -1500 python:
          * Preference("all mute", "disable") - Unmute all mixers.
          * Preference("all mute", "toggle") - Toggle mute of all mixers.
 
-         * Preference("master volume", 0.5) - Set the adjustment applied to all channel.
+         * Preference("master volume", 0.5) - Set the adjustment applied to all channels.
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
          * Preference("voice volume", 0.5) - Set the voice volume.
@@ -547,7 +547,7 @@ init -1500 python:
                 if value is None:
                     return MixerValue(mixer), alt
                 else:
-                    return SetField(_preferences, "master_volume", value), __(alt) + " [text]"
+                    return SetMixer(mixer, value), __(alt) + " [text]"
 
             if n[-1] == "mute":
                 if len(n) == 3 and n[0] == "mixer":

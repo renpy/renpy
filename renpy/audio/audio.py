@@ -1096,7 +1096,7 @@ def periodic_pass():
             for c in all_channels:
                 c.synchro_start = False
 
-    except:
+    except Exception:
         if renpy.config.debug_sound:
             raise
 
