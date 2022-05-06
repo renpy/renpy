@@ -164,6 +164,7 @@ init -1500 python:
          * Preference("all mute", "disable") - Unmute all mixers.
          * Preference("all mute", "toggle") - Toggle mute of all mixers.
 
+         * Preference("master volume", 0.5) - Set the adjustment applied to all channels.
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
          * Preference("voice volume", 0.5) - Set the voice volume.
@@ -226,6 +227,7 @@ init -1500 python:
 
          * Preference("text speed")
          * Preference("auto-forward time")
+         * Preference("master volume")
          * Preference("music volume")
          * Preference("sound volume")
          * Preference("voice volume")
@@ -511,18 +513,22 @@ init -1500 python:
                 elif value == "toggle":
                     return SetField(_preferences, "audio_when_minimized")
 
+
             mixer_names = {
+                "master" : "master",
                 "music" : "music",
                 "sound" : "sfx",
                 "voice" : "voice",
-                "all" : _preferences.get_all_mixers(),
+                "all" : _preferences.get_all_mixers() + ["master"],
             }
 
             # Make these available to the translation system
             if False:
+                _("master volume")
                 _("music volume")
                 _("sound volume")
                 _("voice volume")
+                _("mute master")
                 _("mute music")
                 _("mute sound")
                 _("mute voice")
