@@ -287,7 +287,7 @@ class Preferences(renpy.object.Object):
         return self.mute[mixer]
 
     def init_mixers(self):
-        for i in renpy.audio.music.get_all_mixers():
+        for i in renpy.audio.music.get_all_mixers() + ["master"]:
             self.volumes.setdefault(i, 1.0)
             self.mute.setdefault(i, False)
 
