@@ -1020,6 +1020,7 @@ def quit(): # @ReservedAssignment
 pcm_volume = None
 
 old_emphasized = False
+old_master_vol = False
 
 
 def periodic_pass():
@@ -1031,6 +1032,7 @@ def periodic_pass():
     """
 
     global old_emphasized
+    global old_master_vol
 
     if not pcm_ok:
         return False
@@ -1051,21 +1053,25 @@ def periodic_pass():
         if not renpy.game.preferences.emphasize_audio:
             emphasized = False
 
-        if emphasized and not old_emphasized:
-            vol = renpy.config.emphasize_audio_volume
-        elif not emphasized and old_emphasized:
-            vol = 1.0
+        master_vol = renpy.game.preferences.volumes.get("master", 1.0)
+        if emphasized:
+            vol = renpy.config.emphasize_audio_volume * master_vol
         else:
-            vol = None
+            vol = 1.0 * master_vol
+
+        for c in all_channels:
+            if c in emphasize_channels:
+                c.set_secondary_volume(master_vol, 0)
+                continue
+
+            if emphasized == old_emphasized:
+                if master_vol != old_master_vol:
+                    c.set_secondary_volume(vol, 0)
+            else:
+                c.set_secondary_volume(vol, renpy.config.emphasize_audio_time)
 
         old_emphasized = emphasized
-
-        if vol is not None:
-            for c in all_channels:
-                if c in emphasize_channels:
-                    continue
-
-                c.set_secondary_volume(vol, renpy.config.emphasize_audio_time)
+        old_master_vol = master_vol
 
         for c in all_channels:
             c.periodic()
@@ -1090,7 +1096,7 @@ def periodic_pass():
             for c in all_channels:
                 c.synchro_start = False
 
-    except Exception:
+    except:
         if renpy.config.debug_sound:
             raise
 
