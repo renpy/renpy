@@ -144,6 +144,10 @@ init -1500 python:
          * Preference("voice sustain", "disable") - Don't sustain voice past the current interaction.
          * Preference("voice sustain", "toggle")  - Toggle voice sustain.
 
+         * Preference("master mute", "enable") - Mute master.
+         * Preference("master mute", "disable") - Un-mute master.
+         * Preference("master mute", "toggle") - Toggle master.
+
          * Preference("music mute", "enable") - Mute the music mixer.
          * Preference("music mute", "disable") - Un-mute the music mixer.
          * Preference("music mute", "toggle") - Toggle music mute.
