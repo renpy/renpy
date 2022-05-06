@@ -1020,7 +1020,7 @@ def quit(): # @ReservedAssignment
 pcm_volume = None
 
 old_emphasized = False
-old_master_vol = False
+old_master_vol = None
 
 
 def periodic_pass():
