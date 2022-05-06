@@ -1007,7 +1007,7 @@ Occasionally Used
 
     If None, the default, this defaults to the value of :var:`config.name`.
 
-.. var:: config.show_volume_in_mute = False
+.. var:: config.preserve_volume_when_muted = False
 
     If False, the default, the volume of channels are shown as 0 and
     changing it disables mute when the channel is mute.

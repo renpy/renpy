@@ -260,7 +260,7 @@ class Preferences(renpy.object.Object):
         self.init()
 
     def set_volume(self, mixer, volume):
-        if not renpy.config.show_volume_in_mute and volume != 0:
+        if not renpy.config.preserve_volume_when_muted and volume != 0:
             self.mute[mixer] = False
 
         self.volumes[mixer] = volume
@@ -269,7 +269,7 @@ class Preferences(renpy.object.Object):
         if mixer not in self.volumes:
             return 0.0
 
-        if not renpy.config.show_volume_in_mute and self.mute.get(mixer, False):
+        if not renpy.config.preserve_volume_when_muted and self.mute.get(mixer, False):
             return 0.0
 
         return self.volumes[mixer]
@@ -277,7 +277,7 @@ class Preferences(renpy.object.Object):
     def set_mute(self, mixer, mute):
         self.mute[mixer] = mute
 
-        if not renpy.config.show_volume_in_mute:
+        if not renpy.config.preserve_volume_when_muted:
             if (not mute) and (self.volumes.get(mixer, 1.0) == 0.0):
                 self.volumes[mixer] = 1.0
 
