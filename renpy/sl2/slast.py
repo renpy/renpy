@@ -1968,6 +1968,10 @@ class SLUse(SLNode):
         if not isinstance(self.target, renpy.ast.PyExpr):
             callback(self.target)
 
+        if self.block is not None:
+            self.block.used_screens(callback)
+
+
     def has_transclude(self):
         if self.block:
             return self.block.has_transclude()
@@ -2218,6 +2222,10 @@ class SLCustomUse(SLNode):
 
     def used_screens(self, callback):
         callback(self.target)
+
+        if self.block is not None:
+            self.block.used_screens(callback)
+
 
     def has_transclude(self):
         return self.block.has_transclude()
