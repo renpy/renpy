@@ -715,6 +715,58 @@ class SayBehavior(renpy.display.layout.Null):
 
         return None
 
+
+class DismissBehavior(renpy.display.core.Displayable):
+    """
+    This is used to implement the dismiss screen language statement.
+    """
+
+    focusable = True
+
+    def __init__(self, action=None, modal=True, **properties):
+        super(DismissBehavior, self).__init__(**properties)
+
+        self.action = action
+        self.modal = modal
+
+    def _tts(self):
+        return ""
+
+    def _tts_all(self):
+        rv = self._tts_common(alt(self.action))
+        return rv
+
+    def find_focusable(self, callback, focus_name):
+        super(DismissBehavior, self).find_focusable(callback, focus_name)
+
+        if self.modal and not callable(self.modal):
+            renpy.display.focus.mark_modal()
+
+    def render(self, width, height, st, at):
+        rv = renpy.display.render.Render(0, 0)
+
+        rv.add_focus(self, None, None, None, None, None) # type: ignore
+
+        if self.modal and not callable(self.modal):
+            self.modal = True
+
+        return rv
+
+    def event(self, ev, x, y, st):
+
+        if self.is_focused() and map_event(ev, "dismiss"):
+            renpy.exports.play(self.style.activate_sound)
+            rv = run(self.action)
+
+            if rv is not None:
+                return rv
+            else:
+                raise renpy.display.core.IgnoreEvent()
+
+        if renpy.display.layout.check_modal(self.modal, ev, x, y, None, None):
+            raise renpy.display.layout.IgnoreLayers()
+
+
 ##############################################################################
 # Button
 

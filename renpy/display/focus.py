@@ -261,7 +261,8 @@ def focus_coordinates():
 # A map from id(displayable) to the displayable that replaces it.
 replaced_by = { }
 
-# Set to true after a modal screen.
+# Set to True after a modal screen or a fullscreen modal displayable,
+# to prevent focuses after this from gaining the default focus.
 after_modal = False
 
 def mark_modal():

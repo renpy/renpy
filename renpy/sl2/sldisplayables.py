@@ -496,6 +496,7 @@ Keyword("focus_mask")
 Keyword("mouse_drop")
 Keyword("alternate")
 Style("child")
+Style("sound")
 
 DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
 Keyword("min_overlap")
@@ -515,6 +516,13 @@ Keyword("rect")
 Keyword("focus")
 Keyword("prefer_top")
 add(position_properties)
+
+DisplayableParser("dismiss", renpy.display.behavior.DismissBehavior , "default", 0)
+Keyword("action")
+Keyword("modal")
+Style("alt")
+Style("sound")
+Style("debug")
 
 
 # Ensure that Parsers are no longer added automatically.
