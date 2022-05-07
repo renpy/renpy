@@ -1350,7 +1350,6 @@ class Window(Container):
                 height = min(height, ymaximum)
 
         rv = renpy.display.render.Render(width, height)
-        rv.modal = self.style.modal
 
         # Draw the background. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
