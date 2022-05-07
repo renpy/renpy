@@ -605,6 +605,7 @@ class DisplayableParser(Parser):
             replaces=self.replaces,
             default_keywords=self.default_keywords,
             hotspot=self.hotspot,
+            name=self.name,
             )
 
         for _i in self.positional:
