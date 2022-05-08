@@ -66,9 +66,10 @@ or opus audio to run on Safari, and can be changed if a game only uses mp3 audio
 Boxes, Grids and Vpgrids
 ------------------------
 
-A :ref:`showif <sl-showif>` statement inside a :ref:`vbox <sl-vbox>` or :ref:`hbox <sl-hbox>`
-will not be surrounded with :propref:`spacing` when the condition is false and the child
-displayable is not shown.
+Displayables that take up no space (like a false :ref:`showif <sl-showif>`,
+:ref:`key <sl-key>`, or :ref:`key <sl-timer>`) inside a :ref:`vbox <sl-vbox>` or :ref:`hbox <sl-hbox>`
+will not be surrounded with :propref:`spacing`. These displayables still take
+up space in other layouts, such as grids.
 
 Having an overfull vpgrid - when both ``rows`` and ``cols`` are specified - is now
 disallowed.
@@ -161,6 +162,11 @@ transparent pixels.
 
 Other changes
 -------------
+
+The behavior of modal :ref:`frames <sl-frame>` has been changed. A modal
+frame now blocks mouse events when inside the frame, and blocks focus from
+being transferred to displayables fully behind the frame, while allowing focus
+to be given to other displayables.
 
 The new :var:`config.main_menu_stop_channels` variable controls the
 channels that are stopped when entering the main menu.

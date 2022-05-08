@@ -38,10 +38,11 @@ or for all screens with::
 
     define config.call_screen_roll_forward = True
 
-Showif statements no longer take up space inside a vbox or hbox when the
-condition is false and the child is hidden. To revert this change::
+Key and timer statements no longer take up space inside a vbox or hbox, and
+the showif statement does not take up space when its child is hidden. To revert
+this change::
 
-    define config.box_skip_false_showif = False
+    define config.box_skip = False
 
 The :propref:`focus_mask` style property now defaults to None for drag displayables.
 This improves performance, but means that the displayable can be dragged by
