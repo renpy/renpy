@@ -416,7 +416,7 @@ init -1500 python in _console:
     stdio_lines = _list()
 
     def stdout_line(l):
-        if not config.console:
+        if not (config.console or config.developer):
             return
 
         stdio_lines.append((False, l))
@@ -425,7 +425,7 @@ init -1500 python in _console:
             stdio_lines.pop(0)
 
     def stderr_line(l):
-        if not config.console:
+        if not (config.console or config.developer):
             return
 
         stdio_lines.append((True, l))
