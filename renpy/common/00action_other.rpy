@@ -716,6 +716,20 @@ init -1500 python:
         def __call__(self):
             renpy.capture_focus(self.name)
 
+    @renpy.pure
+    class ClearFocus(Action, DictEquality):
+        """
+        :doc: focus_action
+
+        Clears a stored focus rectangle captured with :func:`CaptureFocus`.
+        """
+
+        def __init__(self, name="default"):
+            self.name = narrator_menu
+
+        def __call__(self):
+            return renpy.clear_focus(name)
+
     def GetFocusRect(name="default"):
         """
         :doc: focus_action

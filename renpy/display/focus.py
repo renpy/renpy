@@ -60,6 +60,16 @@ def capture_focus(name="default"):
         focus_storage.pop(name, None)
 
 
+def clear_focus(name="default"):
+    """
+    :doc: other
+
+    Clear the captured focus with `name`.
+    """
+
+    focus_storage.pop(name, None)
+
+
 def get_focus_rect(name="default"):
     """
     :undocumented:

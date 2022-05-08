@@ -65,7 +65,7 @@ from renpy.display.screen import define_screen, show_screen, hide_screen, use_sc
 from renpy.display.screen import has_screen, get_screen, get_displayable, get_widget, ScreenProfile as profile_screen
 from renpy.display.screen import get_displayable_properties, get_widget_properties
 
-from renpy.display.focus import focus_coordinates, capture_focus, get_focus_rect
+from renpy.display.focus import focus_coordinates, capture_focus, clear_focus, get_focus_rect
 from renpy.display.predict import screen as predict_screen
 
 from renpy.display.image import image_exists, image_exists as has_image, list_images
