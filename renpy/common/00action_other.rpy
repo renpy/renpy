@@ -715,6 +715,7 @@ init -1500 python:
 
         def __call__(self):
             renpy.capture_focus(self.name)
+            renpy.restart_interaction()
 
     @renpy.pure
     class ClearFocus(Action, DictEquality):
@@ -728,7 +729,8 @@ init -1500 python:
             self.name = name
 
         def __call__(self):
-            return renpy.clear_focus(name)
+            renpy.clear_capture_focus(self.name)
+            renpy.restart_interaction()
 
     def GetFocusRect(name="default"):
         """

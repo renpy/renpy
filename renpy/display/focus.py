@@ -60,7 +60,7 @@ def capture_focus(name="default"):
         focus_storage.pop(name, None)
 
 
-def clear_focus(name="default"):
+def clear_capture_focus(name="default"):
     """
     :doc: other
 
