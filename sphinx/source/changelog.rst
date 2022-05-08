@@ -66,8 +66,8 @@ or opus audio to run on Safari, and can be changed if a game only uses mp3 audio
 Boxes, Grids and Vpgrids
 ------------------------
 
-Displayables that take up no space (like a false :ref:`showif <sl-showif>`,
-:ref:`key <sl-key>`, or :ref:`key <sl-timer>`) inside a :ref:`vbox <sl-vbox>` or :ref:`hbox <sl-hbox>`
+Displayables that take up no space (like :ref:`key <sl-key>`, :ref:`timer <sl-timer>`
+or a false :ref:`showif <sl-showif>`) inside a :ref:`vbox <sl-vbox>` or :ref:`hbox <sl-hbox>`
 will not be surrounded with :propref:`spacing`. These displayables still take
 up space in other layouts, such as grids.
 
