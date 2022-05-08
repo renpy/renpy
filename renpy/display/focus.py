@@ -101,6 +101,25 @@ class Focus(object):
             self.h,
             self.screen)
 
+    def inside(self, rect):
+        """
+        Returns true if this focus is entirely contained inside the given
+        rectangle.
+        """
+
+        minx, miny, w, h = rect
+
+        maxx = minx + w
+        maxy = miny + h
+
+        if self.x is None:
+            return False
+
+        if (minx <= self.x < maxx) and (miny <= self.y < maxy) and (minx <= self.x + self.w < maxx) and (miny <= self.y + self.h < maxy):
+            return True
+
+        return False
+
 
 # The current focus argument.
 argument = None
