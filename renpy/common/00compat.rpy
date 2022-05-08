@@ -232,7 +232,7 @@ init -1100 python:
             config.allow_unfull_vpgrids = True
             style.drag.focus_mask = True
             style.default.outline_scaling = "step"
-            config.box_skip_false_showif = False
+            config.box_skip = False
             config.crop_relative_default = False
             config.layeredimage_offer_screen = False
             config.narrator_menu = False

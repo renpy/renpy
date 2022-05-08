@@ -25,7 +25,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
+import pygame
 
 import renpy
 from renpy.display.render import render, Render
@@ -986,7 +986,10 @@ class MultiBox(Container):
             xfill = max(0, xfill)
             yfill = max(0, yfill)
 
-            line_count = len([i for i in line if not i[0]._box_skip])
+            if renpy.config.box_skip:
+                line_count = len([i for i in line if not i[0]._box_skip])
+            else:
+                line_count = len(line)
 
             if line_count > 0:
                 xperchild = xfill // line_count
@@ -1006,7 +1009,7 @@ class MultiBox(Container):
                 sw = max(line_width, sw)
                 sh = max(line_height, sh)
 
-                if not child._box_skip:
+                if (not child._box_skip) or (not renpy.config.box_skip):
 
                     x += i * xperchild
                     y += i * yperchild
@@ -1044,7 +1047,7 @@ class MultiBox(Container):
 
             for d, padding, cst, cat in zip(children, spacings, csts, cats):
 
-                if d._box_skip:
+                if d._box_skip and renpy.config.box_skip:
                     padding = 0
 
                 if box_wrap:
@@ -1089,7 +1092,7 @@ class MultiBox(Container):
 
             for d, padding, cst, cat in zip(children, spacings, csts, cats):
 
-                if d._box_skip:
+                if d._box_skip and renpy.config.box_skip:
                     padding = 0
 
                 if box_wrap:
@@ -1350,7 +1353,10 @@ class Window(Container):
                 height = min(height, ymaximum)
 
         rv = renpy.display.render.Render(width, height)
+
         rv.modal = self.style.modal
+        if rv.modal and not callable(rv.modal):
+            rv.modal = "window"
 
         # Draw the background. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
@@ -1393,8 +1399,9 @@ class Window(Container):
             return rv
 
         w, h = self.window_size
-        if check_modal(self.style.modal, ev, x, y, w, h):
-            raise IgnoreLayers()
+        if ev.type in ( pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION ):
+            if check_modal(self.style.modal, ev, x, y, w, h):
+                raise IgnoreLayers()
 
         return None
 

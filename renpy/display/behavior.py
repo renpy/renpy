@@ -452,6 +452,7 @@ class Keymap(renpy.display.layout.Null):
     """
 
     capture = True
+    _box_skip = True
 
     def __init__(self, replaces=None, activate_sound=None, capture=True, **keymap):
         if activate_sound is not None:
@@ -2315,6 +2316,7 @@ class Timer(renpy.display.layout.Null):
     __version__ = 1
 
     started = False
+    _box_skip = True
 
     def after_upgrade(self, version):
         if version < 1:
