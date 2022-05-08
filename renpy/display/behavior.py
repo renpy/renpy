@@ -727,6 +727,10 @@ class DismissBehavior(renpy.display.core.Displayable):
     def __init__(self, action=None, modal=True, **properties):
         super(DismissBehavior, self).__init__(**properties)
 
+
+        if action is None:
+            raise Exception("Dismiss requires an action.")
+
         self.action = action
         self.modal = modal
 

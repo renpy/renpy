@@ -59,6 +59,7 @@ def capture_focus(name="default"):
     else:
         focus_storage.pop(name, None)
 
+
 def get_focus_rect(name="default"):
     """
     :undocumented:
