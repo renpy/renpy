@@ -1222,7 +1222,33 @@ cdef class Render:
             screen = self.focus_screen
 
         if self.modal:
-            focuses[:] = [ ]
+
+            if self.modal == "window":
+
+                x1, y1 = transform.transform(0, 0)
+                x2, y2 = transform.transform(self.width, self.height)
+
+                minx = min(x1, x2)
+                maxx = max(x1, x2)
+                miny = min(y1, y2)
+                maxy = max(y1, y2)
+
+                new_focuses = [ ]
+
+                rect = (minx, miny, maxx - minx, maxy - miny)
+
+                for f in focuses:
+
+                    if f.inside(rect):
+                        continue
+
+                    new_focuses.append(f)
+
+                focuses[:] = new_focuses
+
+            elif not callable(self.modal):
+
+                focuses[:] = [ ]
 
         if self.focuses:
 
