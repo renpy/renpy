@@ -725,7 +725,7 @@ init -1500 python:
         """
 
         def __init__(self, name="default"):
-            self.name = narrator_menu
+            self.name = name
 
         def __call__(self):
             return renpy.clear_focus(name)
