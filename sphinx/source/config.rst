@@ -773,6 +773,12 @@ Occasionally Used
     load when starting up. Including the name of a font here can prevent
     Ren'Py from pausing when introducing a new typeface.
 
+.. var:: config.preserve_volume_when_muted = False
+
+    If False, the default, the volume of channels are shown as 0 and
+    changing it disables mute when the channel is mute.
+    Otherwise, It is shown and adjustable while keeping mute.
+
 .. var:: config.python_callbacks = [ ]
 
     A list of functions. The functions in this list are called, without
@@ -1006,12 +1012,6 @@ Occasionally Used
     the full title of the window.
 
     If None, the default, this defaults to the value of :var:`config.name`.
-
-.. var:: config.preserve_volume_when_muted = False
-
-    If False, the default, the volume of channels are shown as 0 and
-    changing it disables mute when the channel is mute.
-    Otherwise, It is shown and adjustable while keeping mute.
 
 
 

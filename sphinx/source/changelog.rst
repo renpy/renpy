@@ -102,6 +102,9 @@ with the new :var:`config.call_screen_roll_forward` variable.
 Features
 --------
 
+The new  :var:`config.preserve_volume_when_muted` variable causes
+Ren'Py to show the current volume when channels are muted.
+
 A button to clean the Ren'Py temporary directory has been added
 to the preferences screen of the launcher. This can remove these
 files to reduce the space Ren'Py requires.
