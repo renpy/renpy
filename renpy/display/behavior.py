@@ -748,7 +748,7 @@ class DismissBehavior(renpy.display.core.Displayable):
         rv.add_focus(self, None, None, None, None, None) # type: ignore
 
         if self.modal and not callable(self.modal):
-            self.modal = True
+            rv.modal = True
 
         return rv
 
