@@ -422,6 +422,60 @@ It takes one children. If zero, two, or more children are supplied,
 they are implicitly added to a fixed, which is added to the button.
 
 
+.. _sl-dismiss:
+
+Dismiss
+-------
+
+The dismiss statement creates a dismiss displayable, which is a highly
+specialized displayable gains focus when no other displayable has focus,
+and and runs an action when it's activated. In this regard, it works
+very similar to the behavior of the say statement.
+
+This is rarely used, and is mostly used to allow a modal frame to be
+dismissed when the player clicks outside it, as might be the case
+with a popup window.
+
+This takes the following properties:
+
+`action`
+    The action performed when the dismiss is activated. This property is
+    required.
+
+`modal`
+    By default, the dimiss is modal, preventing events from being processed
+    by displayables "behind" it.
+
+It also takes:
+
+* :ref:`Common Properties <common-properties>`
+* The :propref:`hover_sound` and :propref:`activate_sound` style properties.
+
+Here's an example of dismiss being used::
+
+    screen dismiss_test():
+
+        dismiss action Return()
+
+        frame:
+            modal True
+
+            align (.5, .3)
+            padding (20, 20)
+
+            has vbox
+
+            text "This is a very important message.":
+                xalign 0.5
+                text_align 0.5
+
+            # Dismiss can be confusing on its own, so we'll add a button as well.
+            textbutton "Dismiss":
+                xalign 0.5
+                action Return()
+
+See also how dissmiss is used in conjuction with :ref:`nearrect <sl-nearrect>`.
+
 .. _sl-fixed:
 
 Fixed
@@ -875,6 +929,11 @@ Nearrect takes the following properties:
 
 `prefer_top`
     If given, positioning the child above the focus rect is preferred.
+
+It also takes:
+
+* :ref:`Common Properties <common-properties>`
+* :ref:`position-style-properties`
 
 Nearrect differes from the other layouts in that it positions its child near
 the given rectangle, rather than inside it. The child is first rendered with
