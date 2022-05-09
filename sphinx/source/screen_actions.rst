@@ -67,6 +67,12 @@ Audio Actions
 
 .. include:: inc/audio_action
 
+
+Focus Actions
+-------------
+
+.. include:: inc/focus_action
+
 Other Actions
 -------------
 
