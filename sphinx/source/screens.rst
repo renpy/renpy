@@ -474,7 +474,7 @@ Here's an example of dismiss being used::
                 xalign 0.5
                 action Return()
 
-See also how dissmiss is used in conjuction with :ref:`nearrect <sl-nearrect>`.
+See also how dismiss is used in conjuction with :ref:`nearrect <sl-nearrect>`.
 
 .. _sl-fixed:
 
@@ -926,6 +926,9 @@ Nearrect takes the following properties:
     If given, this should be a string. This string is passed to the equivalent of
     :func:`GetFocusRect` to find the rectangle. If a focus rectangle with that
     name is not found, the child is rendered.
+
+    Passing "tooltip" to this uses the location of the last displayable that
+    was focused while displaying a tooltip.
 
 `prefer_top`
     If given, positioning the child above the focus rect is preferred.
