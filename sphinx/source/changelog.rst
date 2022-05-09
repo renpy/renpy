@@ -186,6 +186,13 @@ transparent pixels.
 Other changes
 -------------
 
+All position properties can now be supplied as gui variables to buttons.
+For example::
+
+    define gui.navigation_button_text_hover_yoffset = -3
+
+now works.
+
 The behavior of modal :ref:`frames <sl-frame>` has been changed. A modal
 frame now blocks mouse events when inside the frame, and blocks focus from
 being transferred to displayables fully behind the frame, while allowing focus

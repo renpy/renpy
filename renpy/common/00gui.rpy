@@ -366,7 +366,9 @@ init -1100 python in gui:
         selected_color
             To gui.kind_text_selected_color, if it exists.
 
-        All other :ref:`text style properties <text-style-properties>` are also available. For
+        All other :ref:`text style properties <text-style-properties>`
+        and :ref:`position style properties <position-style-properties>`
+        are also available. For
         example, gui.kind_text_outlines sets the outlines style property,
         gui.kind_text_kerning sets kerning, and so on.
         """
@@ -403,7 +405,7 @@ init -1100 python in gui:
                     rv["layout"] = "subtitle"
 
         for prefix in renpy.sl2.slparser.STYLE_PREFIXES:
-            for property in renpy.sl2.slproperties.text_property_names:
+            for property in renpy.sl2.slproperties.text_property_names + renpy.sl2.slproperties.position_property_names:
                 prop = prefix + property
 
                 text_prop = "text_" + prop
