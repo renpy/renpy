@@ -852,6 +852,100 @@ take up the entire screen, a less useful behavior.
     label start:
         show screen button_overlay
 
+.. _sl-nearrect:
+
+Nearrect
+--------
+
+The ``nearrect`` statement takes a single child, and lays that child out
+at a location near a rectangle. Usually, this is a rectangle focus captured using
+the :func:`CaptureFocus` action. This can be used for tooltips and dropdown or
+pulldown menus.
+
+Nearrect takes the following properties:
+
+`rect`
+    If given, this should be an (x, y, w, h) rectangle that the child is
+    positioned relative to, as described below.
+
+`focus`
+    If given, this should be a string. This string is passed to the equivalent of
+    :func:`GetFocusRect` to find the rectangle. If a focus rectangle with that
+    name is not found, the child is rendered.
+
+`prefer_top`
+    If given, positioning the child above the focus rect is preferred.
+
+Nearrect differes from the other layouts in that it positions its child near
+the given rectangle, rather than inside it. The child is first rendered with
+the full width available, and the maximum of the height above and height below
+the rectangle. The y position is then computed as followed.
+
+* If the child will fit above the rectangle and `prefer_top` is given, the child
+  is positioned directly abover the rectangle.
+* Otherwise, if the child can fit beklow the rectangle, it's positioned directly
+  below the rectangle.
+* Otherwise, the child is positioned directly above the rectangle.
+
+The x positioning is computed using the normal rules, using the :propref:`xpos`
+and :propref:`xanchor` properties of the child, and properties that set them,
+such as :propref:`xalign`. The pos properties are relative to the x coordinate
+of the rectangle, and in the case of a floating point number, the width.
+
+At the end of positioning, the :propref:`xoffset` and :propref:`yoffset`
+properties are applied as normal.
+
+One use of nearrect is for dropdown menus::
+
+    default difficulty = "Easy"
+
+    screen select_difficulty():
+
+        # This frame can be a very complex layout, if required.
+        frame:
+            align (.5, .3)
+            padding (20, 20)
+
+            has vbox
+
+            # This is the button that is clicked to enable the dropdown,
+            textbutton "Difficulty: [difficulty]":
+
+                # This action captures the focus rectangle, and in doing so,
+                # displays the dropdown.
+                action CaptureFocus("diff_drop")
+
+            textbutton "Done":
+                action Return()
+
+        # All sorts of other screen elements could be here, but the nearrect needs
+        # be at the top level, and the last thing show, apart from its child.
+
+        # If a focus has been captured, display the dropdown.
+        if GetFocusRect("diff_drop"):
+
+            # If the player clicks outside the frame, dismiss the dropdown.
+            # The ClearFocus action dismisses this dropdown.
+            dismiss action ClearFocus("diff_drop")
+
+            # This positions the displayable near (usually under) the button above.
+            nearrect:
+                focus "diff_drop"
+
+                # Finally, this frame contains the choices in the dropdown, with
+                # each using ClearFocus to dismiss the dropdown.
+                frame:
+                    modal True
+
+                    has vbox
+
+                    textbutton "Easy" action [ SetVariable("difficulty", "Easy"), ClearFocus("diff_drop") ]
+                    textbutton "Medium" action [ SetVariable("difficulty", "Medium"), ClearFocus("diff_drop") ]
+                    textbutton "Hard" action [ SetVariable("difficulty", "Hard"), ClearFocus("diff_drop") ]
+                    textbutton "Nightmare" action [ SetVariable("difficulty", "Nightmare"), ClearFocus("diff_drop") ]
+
+Dropdowns may beenefit from improved styling, which isn't done here.
+
 
 .. _sl-null:
 
