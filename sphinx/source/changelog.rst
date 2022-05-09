@@ -17,7 +17,8 @@ drop-down menus, pulldown menus, and tooltips.
 
 The :ref:`dismiss <sl-dismiss>` displayable is generally used behind a
 modal frame, and causes an action to run when it is activated. This allows,
-among other things, a behavior where if the player clicks outside the frame, it's hidd
+among other things, a behavior where if the player clicks outside the frame,
+the frame gets hidden.
 
 The :ref:`nearrec <sl-nearrect>` displayable lays out a displayable either
 above or below a rectangle on the screen. This can be used to display a
@@ -25,8 +26,8 @@ tooltip above a button, or a drop-down menu below it. (An example of
 a drop-down menu is documented with nearrect, and an exampler of tooltip
 usage is with :ref:`tooltips <tooltips>`.
 
-The rectangles that nearrect places things by can be captured by the new
-:func:`CaptureFocus` action, which captures the location of the current
+The rectangles aside of which the nearrect places things can be captured by
+the new :func:`CaptureFocus` action, which captures the location of the current
 button on the screen. After being captured, the :func:`GetFocusRect` function
 can get the focus rectangle, and the :func:`ClearFocus` can clear the
 captured focus.
