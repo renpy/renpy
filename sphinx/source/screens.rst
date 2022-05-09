@@ -427,12 +427,12 @@ they are implicitly added to a fixed, which is added to the button.
 Dismiss
 -------
 
-The dismiss statement creates a dismiss displayable, which is a highly
-specialized displayable gains focus when no other displayable has focus,
-and and runs an action when it's activated. In this regard, it works
-very similar to the behavior of the say statement.
+The dismiss statement creates the highly specialized dismiss displayable,
+which gains focus when no other displayable has focus,
+and runs an action when it's activated. In this regard, it works
+very similarly to the behavior of the say statement.
 
-This is rarely used, and is mostly used to allow a modal frame to be
+This is rarely used, and mostly to allow a modal frame to be
 dismissed when the player clicks outside it, as might be the case
 with a popup window.
 
@@ -1006,7 +1006,7 @@ One use of nearrect is for dropdown menus::
                     textbutton "Hard" action [ SetVariable("difficulty", "Hard"), ClearFocus("diff_drop") ]
                     textbutton "Nightmare" action [ SetVariable("difficulty", "Nightmare"), ClearFocus("diff_drop") ]
 
-Dropdowns may beenefit from improved styling, which isn't done here.
+Dropdowns may benefit from improved styling, which isn't done here.
 
 
 .. _sl-null:
