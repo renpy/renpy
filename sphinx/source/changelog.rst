@@ -123,6 +123,10 @@ with the new :var:`config.call_screen_roll_forward` variable.
 Features
 --------
 
+There is a new "main" volume that can be accessed through :func:`Preferences`.
+The main volume is multiplied with all the other volumes to globally reduce
+the volume of the game.
+
 The new  :var:`config.preserve_volume_when_muted` variable causes
 Ren'Py to show the current volume when channels are muted.
 
