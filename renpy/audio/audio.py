@@ -418,12 +418,13 @@ class Channel(object):
         # Update the channel volume.
 
         mixer_volume = renpy.game.preferences.volumes.get(self.mixer, 1.0)
+        main_volume = renpy.game.preferences.volumes.get("main", 1.0)
 
         if renpy.game.preferences.self_voicing:
             if self.mixer not in renpy.config.voice_mixers:
                 mixer_volume = mixer_volume * renpy.game.preferences.self_voicing_volume_drop
 
-        vol = self.chan_volume * mixer_volume
+        vol = self.chan_volume * mixer_volume * main_volume
 
         if renpy.game.preferences.mute.get(self.mixer, False):
             vol = 0.0

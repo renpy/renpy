@@ -144,6 +144,10 @@ init -1500 python:
          * Preference("voice sustain", "disable") - Don't sustain voice past the current interaction.
          * Preference("voice sustain", "toggle")  - Toggle voice sustain.
 
+         * Preference("main mute", "enable") - Mute main.
+         * Preference("main mute", "disable") - Un-mute main.
+         * Preference("main mute", "toggle") - Toggle main.
+
          * Preference("music mute", "enable") - Mute the music mixer.
          * Preference("music mute", "disable") - Un-mute the music mixer.
          * Preference("music mute", "toggle") - Toggle music mute.
@@ -164,6 +168,7 @@ init -1500 python:
          * Preference("all mute", "disable") - Unmute all mixers.
          * Preference("all mute", "toggle") - Toggle mute of all mixers.
 
+         * Preference("main volume", 0.5) - Set the adjustment applied to all channels.
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
          * Preference("voice volume", 0.5) - Set the voice volume.
@@ -226,6 +231,7 @@ init -1500 python:
 
          * Preference("text speed")
          * Preference("auto-forward time")
+         * Preference("main volume")
          * Preference("music volume")
          * Preference("sound volume")
          * Preference("voice volume")
@@ -511,18 +517,22 @@ init -1500 python:
                 elif value == "toggle":
                     return SetField(_preferences, "audio_when_minimized")
 
+
             mixer_names = {
+                "main" : "main",
                 "music" : "music",
                 "sound" : "sfx",
                 "voice" : "voice",
-                "all" : _preferences.get_all_mixers(),
+                "all" : _preferences.get_all_mixers() + ["main"],
             }
 
             # Make these available to the translation system
             if False:
+                _("main volume")
                 _("music volume")
                 _("sound volume")
                 _("voice volume")
+                _("mute main")
                 _("mute music")
                 _("mute sound")
                 _("mute voice")
