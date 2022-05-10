@@ -119,7 +119,7 @@ def curry(fn):
 
     rv = Partial(Partial, fn)
     rv.__doc__ = getattr(fn, "__doc__", None)
-    rv.__name__ = getattr(fn, "__name__", None)
+    rv.__name__ = getattr(fn, "__name__", None) # type: ignore
     return rv
 
 

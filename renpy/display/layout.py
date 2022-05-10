@@ -1356,7 +1356,7 @@ class Window(Container):
 
         rv.modal = self.style.modal
         if rv.modal and not callable(rv.modal):
-            rv.modal = "window"
+            rv.modal = "window" # type: ignore
 
         # Draw the background. The background should render at exactly the
         # requested size. (That is, be a Frame or a Solid).
@@ -2261,7 +2261,7 @@ class NearRect(Container):
             raise Exception("A NearRect requires either a focus or a rect parameter.")
 
         self.parent_rect = rect
-        self.focus = focus
+        self.focus_rect = focus
         self.prefer_top = prefer_top
 
         if child is not None:
@@ -2272,12 +2272,12 @@ class NearRect(Container):
         rv = renpy.display.render.Render(width, height)
 
         if self.focus:
-            rect = renpy.display.focus.get_focus_rect(self.focus)
+            rect = renpy.display.focus.get_focus_rect(self.focus_rect)
         else:
             rect = self.parent_rect
 
         if rect is None:
-            self.offsets = [ None ]
+            self.offsets = [ None ] # type: ignore
 
             return rv
 
