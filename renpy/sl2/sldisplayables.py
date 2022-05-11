@@ -468,7 +468,7 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
 
 
 for name in [ "add", "image" ]:
-    DisplayableParser(name, sl2add, None, 0, replaces=True, default_properties=False, scope=True)
+    DisplayableParser(name, sl2add, None, 0, replaces=True, default_properties=False, scope=True, unique=False)
     Positional("im")
     Keyword("at")
     Keyword("id")

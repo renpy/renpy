@@ -634,10 +634,12 @@ class SLDisplayable(SLBlock):
     variable = None
     name = ""
 
+    unique = False
+
     # A list of variables that are locally constant.
     local_constant = [ ]
 
-    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False, variable=None, name=""):
+    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False, variable=None, name="", unique=True):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -692,6 +694,7 @@ class SLDisplayable(SLBlock):
         self.replaces = replaces
         self.default_keywords = default_keywords
         self.variable = variable
+        self.unique = self.unique
 
         # Positional argument expressions.
         self.positional = [ ]
@@ -713,6 +716,7 @@ class SLDisplayable(SLBlock):
         rv.variable = self.variable # type: ignore
         rv.positional = self.positional # type: ignore
         rv.name = self.name # type: ignore
+        rv.unique = self.unique # type: ignore
 
         return rv
 
@@ -996,6 +1000,7 @@ class SLDisplayable(SLBlock):
                     keywords['context'] = ctx
 
                 d = self.displayable(*positional, **keywords)
+                d._unique()
                 main = d._main or d
 
                 main._location = self.location

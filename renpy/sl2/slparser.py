@@ -422,7 +422,7 @@ many = renpy.object.Sentinel("many")
 def register_sl_displayable(*args, **kwargs):
     """
     :doc: custom_sl class
-    :args: (name, displayable, style, nchildren=0, scope=False, replaces=False, default_keywords={}, default_properties=True)
+    :args: (name, displayable, style, nchildren=0, scope=False, replaces=False, default_keywords={}, default_properties=True, unique=False)
 
     Registers a screen language statement that creates a displayable.
 
@@ -458,6 +458,10 @@ def register_sl_displayable(*args, **kwargs):
         "many"
             The displayable takes more than one child.
 
+
+    `unique`
+        This should be set to true if the function returns a  displayable with
+        no other references to it.
 
     The following arguments should be passed in using keyword arguments:
 
@@ -514,6 +518,8 @@ def register_sl_displayable(*args, **kwargs):
         also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
     """
 
+    kwargs.setdefault("unique", False)
+
     rv = DisplayableParser(*args, **kwargs)
 
     for i in childbearing_statements:
@@ -537,7 +543,7 @@ class DisplayableParser(Parser):
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False,
                  pass_context=False, imagemap=False, replaces=False, default_keywords={},
-                 hotspot=False, default_properties=True):
+                 hotspot=False, default_properties=True, unique=False):
         """
         `scope`
             If true, the scope is passed into the displayable functionas a keyword
@@ -581,6 +587,7 @@ class DisplayableParser(Parser):
         self.replaces = replaces
         self.default_keywords = default_keywords
         self.variable = True
+        self.unique = unique
 
         Keyword("arguments")
         Keyword("properties")
@@ -606,6 +613,7 @@ class DisplayableParser(Parser):
             default_keywords=self.default_keywords,
             hotspot=self.hotspot,
             name=self.name,
+            unique=self.unique,
             )
 
         for _i in self.positional:
