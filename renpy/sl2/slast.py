@@ -694,7 +694,7 @@ class SLDisplayable(SLBlock):
         self.replaces = replaces
         self.default_keywords = default_keywords
         self.variable = variable
-        self.unique = self.unique
+        self.unique = unique
 
         # Positional argument expressions.
         self.positional = [ ]
