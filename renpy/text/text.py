@@ -1990,7 +1990,6 @@ class Text(renpy.display.core.Displayable):
             for i in slow_text:
                 if i.slow:
                     i.call_slow_done(st)
-                    i.slow = False
 
             raise renpy.display.core.IgnoreEvent()
 
@@ -1998,15 +1997,6 @@ class Text(renpy.display.core.Displayable):
 
         if layout is None:
             return
-
-        if self.slow:
-            redraw = layout.redraw_typewriter(st)
-
-            if redraw is None:
-                self.call_slow_done(st)
-                self.slow = False
-            else:
-                renpy.display.render.redraw(self, 0)
 
         for d, xo, yo in self.displayable_offsets:
             rv = d.event(ev, x - xo, y - yo, st)
@@ -2240,9 +2230,9 @@ class Text(renpy.display.core.Displayable):
         # Figure out if we need to redraw or call slow_done.
         if self.slow:
             if redraw is not None:
-                renpy.display.render.redraw(self, redraw)
+                renpy.display.render.redraw(self, max(redraw, 0))
             else:
-                renpy.display.interface.timeout(0)
+                self.call_slow_done(st)
 
         rv.forward = layout.forward
         rv.reverse = layout.reverse
