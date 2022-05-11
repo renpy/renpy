@@ -1652,7 +1652,15 @@ def parse_menu(stmtl, loc, arguments):
         state = l.checkpoint()
 
         who = l.simple_expression()
-        what = l.string()
+
+        attributes = say_attributes(l)
+
+        if l.match(r'\@'):
+            temporary_attributes = say_attributes(l)
+        else:
+            temporary_attributes = None
+
+        what = l.triple_string() or l.string()
 
         if who is not None and what is not None:
 
@@ -1662,7 +1670,7 @@ def parse_menu(stmtl, loc, arguments):
             if say_ast:
                 l.error("Only one say menuitem may exist per menu.")
 
-            say_ast = finish_say(l, l.get_location(), who, what, interact=False)
+            say_ast = finish_say(l, l.get_location(), who, what, attributes, temporary_attributes, interact=False)
 
             l.expect_eol()
             l.expect_noblock("say menuitem")

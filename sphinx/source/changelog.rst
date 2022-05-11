@@ -191,6 +191,9 @@ transparent pixels.
 Other changes
 -------------
 
+Say statements used as menu captions can now take permanent and temporary
+image attributes, just like say statements elsewhere.
+
 All position properties can now be supplied as gui variables to buttons.
 For example::
 
