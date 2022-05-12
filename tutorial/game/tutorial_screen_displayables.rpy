@@ -470,7 +470,7 @@ label button_displayables:
                         text _("Heal") style "button_text" yalign 0.5
                         bar value AnimatedValue(health, 100, 1.0) yalign 0.5 xsize 200
 
-    e "A button takes another displayable as children. Since that child can be a layout, it can take as many children as you want."
+    e "A button takes another displayable as a child. Since that child can be a layout, it can take as many children as you want."
 
     example large:
         screen textbutton_example():
