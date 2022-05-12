@@ -173,7 +173,7 @@ label add_displayable:
                 xalign 0.5 ypos 50
                 add "images/logo base.png"
 
-    e "An image can also be referred to by it's filename, relative to the game directory."
+    e "An image can also be referred to by its filename, relative to the game directory."
 
     example large:
 
@@ -233,7 +233,7 @@ label text_displayable:
 
     e "The text displayable can also interpolate values enclosed in square brackets."
 
-    e "When text is displayed in a screen using the text statement variables defined in the screen take precedence over those defined outside it."
+    e "When text is displayed in a screen using the text statement, variables defined in the screen take precedence over those defined outside it."
 
     e "Those variables may be parameters given to the screen, defined with the default or python statements, or set using the SetScreenVariable action."
 
@@ -470,7 +470,7 @@ label button_displayables:
                         text _("Heal") style "button_text" yalign 0.5
                         bar value AnimatedValue(health, 100, 1.0) yalign 0.5 xsize 200
 
-    e "A button takes another displayable as children. Since that child can be a layout, it can takes as many children as you want."
+    e "A button takes another displayable as children. Since that child can be a layout, it can take as many children as you want."
 
     example large:
         screen textbutton_example():
@@ -601,7 +601,7 @@ label bar_displayables:
 
     e "The top style is the 'bar' style. It's used to display values that the player can't adjust, like a life or progress bar."
 
-    e "The middle stye is the 'slider' value. It's used for values the player is expected to adjust, like a volume preference."
+    e "The middle style is the 'slider' value. It's used for values the player is expected to adjust, like a volume preference."
 
     e "Finally, the bottom style is the 'scrollbar' style, which is used for horizontal scrollbars. When used as a scrollbar, the thumb in the center changes size to reflect the visible area of a viewport."
 
