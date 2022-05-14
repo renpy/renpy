@@ -236,6 +236,11 @@ Occasionally Used
     A list of functions that are called (with no arguments) when a load
     occurs.
 
+    If these callbacks change data (for example, migrating data from an
+    old version of the game), :func:`renpy.block_rollback` should be
+    called to prevent the player from rolling back and reverting
+    the changes.
+
 .. var:: config.after_replay_callback = None
 
     If not None, a function that is called with no arguments after a

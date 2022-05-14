@@ -188,7 +188,7 @@ The :propref:`focus_mask` style property now defaults to None for drag displayab
 This improves performance, but means that the displayable can be dragged by
 transparent pixels.
 
-Other changes
+Other Changes
 -------------
 
 Say statements used as menu captions can now take permanent and temporary

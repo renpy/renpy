@@ -19,6 +19,14 @@ such changes only take effect when the GUI is regenerated.
 7.5.0/8.0.0
 -----------
 
+The behavior of Ren'Py changed sometime in the 7.4 series, such that
+rollback through a load behaved correctly, and reverted the changes
+peformed in the ``after_load`` label, and by :var:`config.after_load_callbacks`.
+(The previous behavior was undefined, with some changes reverted and some not,
+leaving the game in an inconsistent state.) If your game has to migrate
+data after a load, it's now recommended to call :func:`renpy.block_rollback`
+to prevent the changes from being rolled back.
+
 The :var:`config.narrator_menu` variable now defaults to True. It's been
 set to true in the default screens.rpy for some time. In the unlikely event
 it was false in your game, restore the old behavior with::
