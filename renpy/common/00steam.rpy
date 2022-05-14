@@ -840,6 +840,12 @@ init -1499 python in achievement:
             if steamapi.SteamUtils().IsSteamRunningOnSteamDeck():
                 config.variants.insert(0, "steam_deck")
 
+                if "large" in config.variants:
+                    config.variants.remove("large")
+
+                config.variants.append("medium")
+                config.variants.append("touch")
+
             backends.insert(0, SteamBackend())
             renpy.write_log("Initialized steam.")
 
