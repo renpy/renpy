@@ -800,7 +800,7 @@ class Transform(Container):
         if self._duplicatable:
 
             if self.child is not None:
-                self.child = self.child._unique()
+                self.child._unique()
 
             self._duplicatable = False
 
