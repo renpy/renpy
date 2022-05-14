@@ -833,12 +833,6 @@ class Button(renpy.display.layout.Window):
 
         self._duplicatable = False
 
-    def _duplicate(self, args):
-        if args and args.args:
-            args.extraneous()
-
-        return self
-
     def _get_tooltip(self):
         if self._tooltip is not None:
             return self._tooltip

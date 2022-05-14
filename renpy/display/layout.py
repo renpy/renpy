@@ -166,12 +166,16 @@ class Container(renpy.display.core.Displayable):
         rv._duplicatable = False
 
         for i in rv.children:
-            i._unique()
-
             if i._duplicatable:
                 rv._duplicatable = True
 
         return rv
+
+    def _unique(self):
+        for i in self.children:
+            i._unique()
+
+        self._duplicatable = False
 
     def _in_current_store(self):
 

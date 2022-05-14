@@ -449,7 +449,6 @@ class ImageReference(renpy.display.core.Displayable):
                 rv.name = rv.name._duplicate(args)
 
         rv.find_target()
-        rv._duplicatable = rv.target._duplicatable # type: ignore
 
         return rv
 
@@ -458,7 +457,8 @@ class ImageReference(renpy.display.core.Displayable):
         if self.target is None:
             self.find_target()
 
-        self._duplicatable = self.target._duplicatable
+        self.target._unique()
+        self._duplicatable = False
 
     def _in_current_store(self):
 
@@ -667,6 +667,9 @@ class DynamicImage(renpy.display.core.Displayable):
         if raw_target._duplicatable:
             target = raw_target._duplicate(self._args)
 
+            if not self._duplicatable:
+                self.target._unique()
+
         self.raw_target = raw_target
         self.target = target
 
@@ -685,6 +688,8 @@ class DynamicImage(renpy.display.core.Displayable):
 
         return True
 
+    _duplicatable = True
+
     def _duplicate(self, args):
 
         if args and args.args:
@@ -696,6 +701,11 @@ class DynamicImage(renpy.display.core.Displayable):
         # This does not set _duplicatable, since it should always remain the
         # same.
         return rv
+
+    def _unique(self):
+        if self.target is not None:
+            self.target._unique()
+            self._duplicatable = False
 
     def _in_current_store(self):
         rv = self._copy()

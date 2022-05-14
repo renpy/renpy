@@ -415,11 +415,11 @@ class Displayable(renpy.object.Object):
 
     def _unique(self):
         """
-        This is called when a displayable is "born" unique, which occurs
-        when there is only a single reference to it. What it does is to
-        manage the _duplicatable flag - setting it false unless one of
-        the displayable's children happens to be duplicatable.
+        This is called when a displayable is "unique", meaning there will
+        only be one reference to it, ever, from the tree of displayables.
         """
+
+        self._duplicatable = False
 
         return
 
@@ -4180,7 +4180,7 @@ class Interface(object):
 
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
-                    
+
                     # If the window becomes inactive as a result of this event
                     # pause the audio according to preference
                     if not renpy.game.preferences.audio_when_minimized:
@@ -4192,7 +4192,7 @@ class Interface(object):
                         elif pygame.display.get_active() and self.audio_paused:
                             renpy.audio.audio.unpause_all()
                             self.audio_paused = False
-                    
+
                     pygame.key.set_mods(0)
 
                 # This returns the event location. It also updates the

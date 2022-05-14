@@ -701,10 +701,9 @@ class Transform(Container):
 
         if duplicate and child._duplicatable:
             child = child._duplicate(self._args)
-            child._unique()
 
-        if child._duplicatable:
-            self._duplicatable = True
+            if not self._duplicatable:
+                child._unique()
 
         self.child = child
         self.children = [ child ]
@@ -798,9 +797,11 @@ class Transform(Container):
         return rv
 
     def _unique(self):
-        if self.child and self.child._duplicatable:
-            self._duplicatable = True
-        else:
+        if self._duplicatable:
+
+            if self.child is not None:
+                self.child = self.child._unique()
+
             self._duplicatable = False
 
     def get_placement(self):
@@ -884,7 +885,6 @@ class Transform(Container):
 
         rv = self(_args=args)
         rv.take_execution_state(self)
-        rv._unique()
 
         return rv
 
