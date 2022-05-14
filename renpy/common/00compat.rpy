@@ -236,6 +236,7 @@ init -1100 python:
             config.crop_relative_default = False
             config.layeredimage_offer_screen = False
             config.narrator_menu = False
+            config.gui_text_position_properties = False
 
 
     # The version of Ren'Py this script is intended for, or
