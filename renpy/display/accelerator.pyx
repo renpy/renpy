@@ -265,6 +265,7 @@ def transform_render(self, widtho, heighto, st, at):
     yo = 0
 
     crop = state.crop
+    crop_relative = state.crop_relative
 
     # Cropping.
     if (state.corner1 is not None) and (crop is None) and (state.corner2 is not None):
@@ -282,9 +283,10 @@ def transform_render(self, widtho, heighto, st, at):
 
         crop = (x1, y1, x2-x1, y2-y1)
 
-    if crop is not None:
+        if crop_relative is None:
+            crop_relative = any(isinstance(i, float) for i in crop)
 
-        crop_relative = state.crop_relative
+    if crop is not None:
 
         if crop_relative is None:
             crop_relative = renpy.config.crop_relative_default
