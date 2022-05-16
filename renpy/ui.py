@@ -527,7 +527,7 @@ class Wrapper(renpy.object.Object):
         try:
             w = self.function(*args, **keyword)
         except TypeError as e:
-            etype, e, tb = sys.exc_info(); etype
+            etype, e, tb = sys.exc_info()
 
             if tb.tb_next is None:
                 e.args = (e.args[0].replace("__call__", "ui." + self.name),) # type: ignore
@@ -654,14 +654,14 @@ pausebehavior = Wrapper(renpy.display.behavior.PauseBehavior)
 soundstopbehavior = Wrapper(renpy.display.behavior.SoundStopBehavior)
 
 
-def _key(key, action=None, activate_sound=None):
+def _key(key, action=None, activate_sound=None, capture=True):
 
     if isinstance(key, (list, tuple)):
         keymap = {k: action for k in key}
     else:
         keymap = {key: action}
 
-    return renpy.display.behavior.Keymap(activate_sound=activate_sound, **keymap)
+    return renpy.display.behavior.Keymap(activate_sound=activate_sound, capture=capture, **keymap)
 
 
 key = Wrapper(_key)

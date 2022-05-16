@@ -451,13 +451,17 @@ class Keymap(renpy.display.layout.Null):
     k_constant from pygame.constants, or the unicode for the key.
     """
 
-    def __init__(self, replaces=None, activate_sound=None, **keymap):
+    capture = True
+    _box_skip = True
+
+    def __init__(self, replaces=None, activate_sound=None, capture=True, **keymap):
         if activate_sound is not None:
             super(Keymap, self).__init__(style='default', activate_sound=activate_sound)
         else:
             super(Keymap, self).__init__(style='default')
 
         self.keymap = keymap
+        self.capture = capture
 
     def event(self, ev, x, y, st):
 
@@ -472,7 +476,8 @@ class Keymap(renpy.display.layout.Null):
                 if rv is not None:
                     return rv
 
-                raise renpy.display.core.IgnoreEvent()
+                if self.capture:
+                    raise renpy.display.core.IgnoreEvent()
 
     def predict_one_action(self):
         for i in self.keymap.values():
@@ -711,6 +716,62 @@ class SayBehavior(renpy.display.layout.Null):
 
         return None
 
+
+class DismissBehavior(renpy.display.core.Displayable):
+    """
+    This is used to implement the dismiss screen language statement.
+    """
+
+    focusable = True
+
+    def __init__(self, action=None, modal=True, **properties):
+        super(DismissBehavior, self).__init__(**properties)
+
+
+        if action is None:
+            raise Exception("Dismiss requires an action.")
+
+        self.action = action
+        self.modal = modal
+
+    def _tts(self):
+        return ""
+
+    def _tts_all(self):
+        rv = self._tts_common(alt(self.action))
+        return rv
+
+    def find_focusable(self, callback, focus_name):
+        super(DismissBehavior, self).find_focusable(callback, focus_name)
+
+        if self.modal and not callable(self.modal):
+            renpy.display.focus.mark_modal()
+
+    def render(self, width, height, st, at):
+        rv = renpy.display.render.Render(0, 0)
+
+        rv.add_focus(self, None, None, None, None, None) # type: ignore
+
+        if self.modal and not callable(self.modal):
+            rv.modal = True
+
+        return rv
+
+    def event(self, ev, x, y, st):
+
+        if self.is_focused() and map_event(ev, "dismiss"):
+            renpy.exports.play(self.style.activate_sound)
+            rv = run(self.action)
+
+            if rv is not None:
+                return rv
+            else:
+                raise renpy.display.core.IgnoreEvent()
+
+        if renpy.display.layout.check_modal(self.modal, ev, x, y, None, None):
+            raise renpy.display.layout.IgnoreLayers()
+
+
 ##############################################################################
 # Button
 
@@ -771,12 +832,6 @@ class Button(renpy.display.layout.Window):
         self.time_policy_data = None
 
         self._duplicatable = False
-
-    def _duplicate(self, args):
-        if args and args.args:
-            args.extraneous()
-
-        return self
 
     def _get_tooltip(self):
         if self._tooltip is not None:
@@ -1035,6 +1090,9 @@ class ImageButton(Button):
     Used to implement the guts of an image button.
     """
 
+    imagebutton_child = None
+    imagebutton_raw_child = None
+
     def __init__(self,
                  idle_image,
                  hover_image=None,
@@ -1080,7 +1138,19 @@ class ImageButton(Button):
         return list(self.state_children.values())
 
     def get_child(self):
-        return self.style.child or self.state_children[self.style.prefix]
+
+        raw_child = self.style.child or self.state_children[self.style.prefix]
+
+        if raw_child is not self.imagebutton_raw_child:
+            self.imagebutton_raw_child = raw_child
+
+            if raw_child._duplicatable:
+                self.imagebutton_child = raw_child._duplicate(None)
+                self.imagebutton_child._unique()
+            else:
+                self.imagebutton_child = raw_child
+
+        return self.imagebutton_child
 
 
 # This is used for an input that takes its focus from a button.
@@ -2244,6 +2314,7 @@ class Timer(renpy.display.layout.Null):
     __version__ = 1
 
     started = False
+    _box_skip = True
 
     def after_upgrade(self, version):
         if version < 1:
@@ -2278,6 +2349,15 @@ class Timer(renpy.display.layout.Null):
             self.state = replaces.state
         else:
             self.state = TimerState()
+
+    def render(self, width, height, st, at):
+
+        if not self.state.started:
+            self.state.started = True
+            self.state.next_event = st + self.delay
+            renpy.game.interface.timeout(st)
+
+        return super(Timer, self).render(width, height, st, at)
 
     def event(self, ev, x, y, st):
 

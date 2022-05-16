@@ -868,6 +868,42 @@ init -1500 python in updater:
                     else:
                         tf.addfile(info)
 
+        def split_inputs(self, sfn):
+            """
+            Given an input file `sfn`, returns a list of option arguments and
+            input files that can be supplied to zsync.
+            """
+
+            size = os.path.getsize(sfn)
+
+            if size < (1 << 30):
+                return [ "-i", sfn ]
+
+            rv = [ ]
+
+            with open(sfn, "rb") as f:
+                count = 0
+
+                while count * (1 << 30) < size:
+                    count += 1
+
+                    out_fn = sfn + "." + str(count)
+
+                    with open(out_fn, "wb") as out_f:
+
+                        for i in range(1 << 4):
+
+                            data = f.read(1 << 26)
+
+                            if not data:
+                                break
+
+                            out_f.write(data)
+
+                    rv.extend([ "-i", out_fn ])
+
+            return rv
+
         def download(self, module, standalone=False):
             """
             Uses zsync to download the module.
@@ -920,13 +956,11 @@ init -1500 python in updater:
                 self.rename(new_fn + ".part", new_fn + ".part.old")
 
                 if not standalone:
-                    cmd.append("-i")
-                    cmd.append(new_fn + ".part.old")
+                    cmd.extend(self.split_inputs(new_fn + ".part.old"))
 
             if not standalone:
                 for i in self.modules:
-                    cmd.append("-i")
-                    cmd.append(self.update_filename(module, False))
+                    cmd.extend(self.split_inputs(self.update_filename(i, False)))
 
             cmd.append(urlparse.urljoin(self.url, self.updates[module]["zsync_url"]))
 

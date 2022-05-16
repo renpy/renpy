@@ -229,6 +229,23 @@ about them being applied right to left. In this example::
 The image will be shifted up by 300 pixels, and then will be rotated around
 the X axis.
 
+**Structural Similarity.**
+In ATL, interpolating a the :tpref:`matrixtransform` property requires the
+use of TransformMatrixes that have structural similarity. That means the same
+types of TransformMatrix, multiplied together in the same order.
+
+As an example, the following will rotate and offset, then move back::
+
+    show eileen happy at center:
+        matrixtransform RotateMatrix(0, 0, 0) * OffsetMatrix(0, 0, 0)
+        linear 2.0 matrixtransform RotateMatrix(45, 0, 0) * OffsetMatrix(0, -300, 0)
+        linear 2.0 matrixtransform RotateMatrix(0, 0, 0) * OffsetMatrix(0, 0, 0)
+
+While the first setting of matrixtransform may seem unnecessary, it is required
+to provide a base for the first linear interpolation. If it wasn't present, that
+interpolation would be skipped.
+
+
 TransformMatrix
 ---------------
 
@@ -292,6 +309,10 @@ The following transform properties are used by the 3D Stage.
     of the child of the transform. The transformation goes from the coordinates
     used by the screen to the coordinates used by the child of the transform.
 
+    Interpolations involving this property are only supported when using a
+    TransformMatrix, and when the TransformMatrix values are structurally similar,
+    as described above.
+
 .. transform-property:: perspective
 
     :type: True or False or Float or (Float, Float, Float)
@@ -337,8 +358,3 @@ The following transform properties are used by the 3D Stage.
     The intended use for this is in displaying a background with a negative `zpos`, which
     would normally make the background small. Setting this to true means that the background
     will be displayed at 1:1 size.
-
-
-
-
-

@@ -52,7 +52,7 @@ the command::
     apt-get install virtualenvwrapper python-dev libavcodec-dev libavformat-dev \
         libavresample-dev libswresample-dev libswscale-dev libfreetype6-dev libglew1.6-dev \
         libfribidi-dev libsdl2-dev libsdl2-image-dev libsdl2-gfx-dev \
-        libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev fonts-motoya-l-cedar
+        libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev
 
 We strongly suggest installing the Ren'Py modules into a Python
 virtualenv. To create a new virtualenv, open a new terminal and run::

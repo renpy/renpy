@@ -218,11 +218,6 @@ screen choice(items):
             textbutton i.caption action i.action
 
 
-## When this is true, menu captions will be spoken by the narrator. When false,
-## menu captions will be displayed as empty buttons.
-define config.narrator_menu = True
-
-
 style choice_vbox is vbox
 style choice_button is button
 style choice_button_text is button_text

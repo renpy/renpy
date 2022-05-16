@@ -560,6 +560,9 @@ Text Style Properties
         Allows breaking only at whitespace. Suitable for most
         languages.
 
+    ``"anywhere"``
+        Allows breaking at anywhere without ruby.
+
     The three Japanese breaking modes are taken from the `CSS3 text module <http://www.w3.org/TR/css3-text/#line-break>`_.
 
 .. style-property:: layout string
@@ -853,8 +856,13 @@ Button Style Properties
         If a non-displayable callable (like a function, method, or object
         with a ``__call__`` method) is given, the function is called with two
         arguments, the x and y offset from the top-left corner of the
-        displayable. If the function returns True, the displayable is
-        focused.
+        displayable.
+
+        If the function returns a callable when called with two arguments,
+        that callable is called with four arguments - the x and y offsets, and the width
+        and height of the displayable.
+
+        If the function returns true, the displayable is focused.
     None
         If none is given, the entire button can be focused.
 
@@ -1071,6 +1079,8 @@ These are used with the fixed layout.
     (the fixed will fill the screen vertically). Similarly, "height" only changes
     the height.
 
+    The position of the child is ignored for the purpose of fit\_first.
+
 .. style-property:: xfit boolean
 
     If True, the size of the fixed layout is shrunk horizontally to match the
@@ -1080,6 +1090,11 @@ These are used with the fixed layout.
 
     If True, the size of the fixed layout is shrunk vertically to match the
     bottom side of the bottommost child of the fixed.
+
+When these properties are supplied, the children of the fixed are first
+offered the full area given to the fixed by its parent. Once the size
+and placement of the children are known, these properties are then used
+to select the size of the fixed.
 
 
 .. _margin-style-properties:

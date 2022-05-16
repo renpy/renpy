@@ -30,6 +30,55 @@ import operator
 import pygame_sdl2 as pygame
 import renpy
 
+# The focus storage api.
+
+focus_storage = { }
+
+def capture_focus(name="default"):
+    """
+    :doc: other
+
+    If a displayable is currently focused, captured the rectangular bounding
+    box of that displayable, and stores it with `name`. If not, removes any
+    focus stored with `name`.
+
+    Captured focuses are not saved when the game is saveed.
+
+    `name`
+        Should be a string. The name "tooltip" is special, as it's
+        automatically captured when a displayable with a tooltip gains focus.
+    """
+
+    rect = focus_coordinates()
+
+    if rect[0] is None:
+        rect = None
+
+    if rect is not None:
+        focus_storage[name] = rect
+    else:
+        focus_storage.pop(name, None)
+
+
+def clear_capture_focus(name="default"):
+    """
+    :doc: other
+
+    Clear the captured focus with `name`.
+    """
+
+    focus_storage.pop(name, None)
+
+
+def get_focus_rect(name="default"):
+    """
+    :undocumented:
+
+    Returns the captured focus. Used in the implementation of FocusRect.
+    """
+
+    return focus_storage.get(name, None)
+
 
 class Focus(object):
 
@@ -62,6 +111,25 @@ class Focus(object):
             self.w,
             self.h,
             self.screen)
+
+    def inside(self, rect):
+        """
+        Returns true if this focus is entirely contained inside the given
+        rectangle.
+        """
+
+        minx, miny, w, h = rect
+
+        maxx = minx + w
+        maxy = miny + h
+
+        if self.x is None:
+            return False
+
+        if (minx <= self.x < maxx) and (miny <= self.y < maxy) and (minx <= self.x + self.w < maxx) and (miny <= self.y + self.h < maxy):
+            return True
+
+        return False
 
 
 # The current focus argument.
@@ -114,6 +182,7 @@ def set_focused(widget, arg, screen):
 
     if tooltip != new_tooltip:
         tooltip = new_tooltip
+        capture_focus("tooltip")
         renpy.exports.restart_interaction()
 
 
@@ -222,6 +291,13 @@ def focus_coordinates():
 # A map from id(displayable) to the displayable that replaces it.
 replaced_by = { }
 
+# Set to True after a modal screen or a fullscreen modal displayable,
+# to prevent focuses after this from gaining the default focus.
+after_modal = False
+
+def mark_modal():
+    global after_modal
+    after_modal = True
 
 def before_interact(roots):
     """
@@ -231,12 +307,15 @@ def before_interact(roots):
 
     global override
     global grab
+    global after_modal
+
+    after_modal = False
 
     # a list of focusable, name, screen tuples.
     fwn = [ ]
 
     def callback(f, n):
-        fwn.append((f, n, renpy.display.screen._current_screen))
+        fwn.append((f, n, renpy.display.screen._current_screen, after_modal))
 
     for root in roots:
         try:
@@ -252,7 +331,7 @@ def before_interact(roots):
 
     for fwn_tuple in fwn:
 
-        f, n, screen = fwn_tuple
+        f, n, screen, after_modal = fwn_tuple
 
         serial = namecount.get(n, 0)
         namecount[n] = serial + 1
@@ -296,7 +375,10 @@ def before_interact(roots):
     if current is not None:
         current_name = current.full_focus_name
 
-        for f, n, screen in fwn:
+        for f, n, screen, modal in fwn:
+            if modal:
+                continue
+
             if f.full_focus_name == current_name:
                 current = f
                 set_focused(f, argument, screen)
@@ -312,7 +394,10 @@ def before_interact(roots):
 
         defaults = [ ]
 
-        for f, n, screen in fwn:
+        for f, n, screen, modal in fwn:
+            if modal:
+                continue
+
             if f.default:
                 defaults.append((f.default, f, screen))
 
@@ -330,7 +415,7 @@ def before_interact(roots):
 
     # Finally, mark the current widget as the focused widget, and
     # all other widgets as unfocused.
-    for f, n, screen in fwn:
+    for f, n, screen, modal in fwn:
         if f is not current:
             renpy.display.screen.push_current_screen(screen)
             try:

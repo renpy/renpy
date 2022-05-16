@@ -237,7 +237,7 @@ def report_exception(e, editor=True):
 
         try:
             if editor and ((renpy.game.args.command == "run") or (renpy.game.args.errors_in_editor)): # type: ignore
-                renpy.exports.launch_editor([ traceback_fn ], 1, transient=1)
+                renpy.exports.launch_editor([ traceback_fn ], 1, transient=True)
         except Exception:
             pass
 

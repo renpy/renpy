@@ -19,11 +19,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init -1100 python in gui:
+init -1150 python in gui:
     from store import config, layout, _preferences, Frame, Null, persistent, Action, DictEquality
     import math
 
     config.translate_clean_stores.append("gui")
+
+    config.gui_text_position_properties = True
 
     _null = Null()
 
@@ -366,7 +368,10 @@ init -1100 python in gui:
         selected_color
             To gui.kind_text_selected_color, if it exists.
 
-        All other :ref:`text style properties <text-style-properties>` are also available. For
+        All other :ref:`text style properties <text-style-properties>`
+        are available. When `kind` is not None,
+        :ref:`position style properties <position-style-properties>`
+        are also available. For
         example, gui.kind_text_outlines sets the outlines style property,
         gui.kind_text_kerning sets kerning, and so on.
         """
@@ -402,8 +407,14 @@ init -1100 python in gui:
                 if (xalign > 0) and (xalign < 1):
                     rv["layout"] = "subtitle"
 
+        if (kind is not None) and config.gui_text_position_properties:
+            property_names = renpy.sl2.slproperties.text_property_names + renpy.sl2.slproperties.position_property_names
+        else:
+            property_names = renpy.sl2.slproperties.text_property_names
+
         for prefix in renpy.sl2.slparser.STYLE_PREFIXES:
-            for property in renpy.sl2.slproperties.text_property_names:
+            for property in property_names:
+
                 prop = prefix + property
 
                 text_prop = "text_" + prop

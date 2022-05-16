@@ -8,6 +8,30 @@ Changelog (Ren'Py 7.x-)
 7.5 / 8.0
 =========
 
+
+Dismiss, Nearrect, and Focus Rectangles
+---------------------------------------
+
+Two new displayables have been added to Ren'Py to help use cases like
+drop-down menus, pulldown menus, and tooltips.
+
+The :ref:`dismiss <sl-dismiss>` displayable is generally used behind a
+modal frame, and causes an action to run when it is activated. This allows,
+among other things, a behavior where if the player clicks outside the frame,
+the frame gets hidden.
+
+The :ref:`nearrec <sl-nearrect>` displayable lays out a displayable either
+above or below a rectangle on the screen. This can be used to display a
+tooltip above a button, or a drop-down menu below it. (An example of
+a drop-down menu is documented with nearrect, and an exampler of tooltip
+usage is with :ref:`tooltips <tooltips>`.
+
+The rectangles aside of which the nearrect places things can be captured by
+the new :func:`CaptureFocus` action, which captures the location of the current
+button on the screen. After being captured, the :func:`GetFocusRect` function
+can get the focus rectangle, and the :func:`ClearFocus` can clear the
+captured focus.
+
 ATL
 ---
 
@@ -25,6 +49,14 @@ is now allowed, and equivalent to::
 Information about :ref:`ATL Transitions <atl-transitions>` and :ref:`Special ATL Keyword Parameters <atl-keyword-parameters>`
 has been added to the documentation.
 
+The ``pause 0`` statement has been special-cased to always display one frame,
+and is the only way to guarantee at least one frame is displayed. Since 6.99.13,
+Ren'Py has been trying various methods to guarantee single frame display, and
+many of which led to visual glitches.
+
+When an ATL image is used as one of the children of an image button, its
+shown time begins each time it is shown.
+
 Image Gallery
 -------------
 
@@ -37,14 +69,8 @@ take keywork arguments beginning with `show\_`. These arguments have the
 as additional keyword arguments. This can be used to include additional
 information with the images in the gallery.
 
-ChromeOS
---------
-
-When running as an Android application on a ChromeOS device, the "chromeos"
-variant will be selected.
-
-Web
----
+Web and ChromeOS
+----------------
 
 The new :var:`config.webaudio_required_types` variable can be given a list of
 mime types of audio files used by the game. Ren'Py will only use the web
@@ -55,12 +81,16 @@ cause skipping if the computer is slow.
 The config.webaudio_required_types variable is intended to allow games using ogg
 or opus audio to run on Safari, and can be changed if a game only uses mp3 audio.
 
+When running as an Android application on a ChromeOS device, the "chromeos"
+variant will be selected.
+
 Boxes, Grids and Vpgrids
 ------------------------
 
-A :ref:`showif <sl-showif>` statement inside a :ref:`vbox <sl-vbox>` or :ref:`hbox <sl-hbox>`
-will not be surrounded with :propref:`spacing` when the condition is false and the child
-displayable is not shown.
+Displayables that take up no space (like :ref:`key <sl-key>`, :ref:`timer <sl-timer>`
+or a false :ref:`showif <sl-showif>`) inside a :ref:`vbox <sl-vbox>` or :ref:`hbox <sl-hbox>`
+will not be surrounded with :propref:`spacing`. These displayables still take
+up space in other layouts, such as grids.
 
 Having an overfull vpgrid - when both ``rows`` and ``cols`` are specified - is now
 disallowed.
@@ -73,8 +103,53 @@ A vpgrid with both cols and rows specified is underfull if and when it has less 
 rows \* cols children. A vpgrid with either cols or rows specified is underfull if and when its number of
 children is not a multiple of the specified value.
 
+.. _call-screen-roll-forward:
+
+Call Screen and Roll Forward
+----------------------------
+
+The roll forward feature has been disabled by default in the ``call screen``
+statement, as it's unsafe and confusing in the general case. The problem is
+that the only side-effect of a screen that roll-forward preserves is the return
+value of the screen, or the jump location if a screen jumps. Actions with other
+side effects, like changing variables or playing music, were not preserved
+through a roll forwards.
+
+Roll forward may be safe for a particular screen, and so can be enabled
+on a per-screen basis by enabling the new `roll_forward` property on the
+screen. If all screens in your game support roll forward, it can be enabled
+with the new :var:`config.call_screen_roll_forward` variable.
+
 Features
 --------
+
+There is a new "main" volume that can be accessed through :func:`Preferences`.
+The main volume is multiplied with all the other volumes to globally reduce
+the volume of the game.
+
+The new  :var:`config.preserve_volume_when_muted` variable causes
+Ren'Py to show the current volume when channels are muted.
+
+A button to clean the Ren'Py temporary directory has been added
+to the preferences screen of the launcher. This can remove these
+files to reduce the space Ren'Py requires.
+
+The new :var:`config.choice_empty_window` variable can customize
+the empty window that is shown when a choice menu is displayed. The intended
+use is::
+
+    define config.choice_empty_window = extend
+
+Which repeats the last line of dialogue as the caption of the
+choice menu.
+
+The :ref:`key <sl-key>` displayable now supports a `capture`
+property, which controls if the pressed key is handled further
+it does not end an interaction.
+
+The new "anywhere" value of the :propref:`language` style property
+allows Ren'Py to break anywhere in a string, for when keeping to
+a fixed width is the most important aspect of breaking.
 
 The new `predict` argument to :func:`renpy.pause` makes it possible to pause
 until image prediction is finished, including prediction caused by
@@ -113,8 +188,33 @@ The :propref:`focus_mask` style property now defaults to None for drag displayab
 This improves performance, but means that the displayable can be dragged by
 transparent pixels.
 
-Other changes
+Other Changes
 -------------
+
+Say statements used as menu captions can now take permanent and temporary
+image attributes, just like say statements elsewhere.
+
+All position properties can now be supplied as gui variables to buttons.
+For example::
+
+    define gui.navigation_button_text_hover_yoffset = -3
+
+now works.
+
+The behavior of modal :ref:`frames <sl-frame>` has been changed. A modal
+frame now blocks mouse events when inside the frame, and blocks focus from
+being transferred to displayables fully behind the frame, while allowing focus
+to be given to other displayables.
+
+The new :var:`config.main_menu_stop_channels` variable controls the
+channels that are stopped when entering the main menu.
+
+Layered images are now offered the the full size of the screen whenever
+rendered. Previously, when a layered image was used inside a layout (like
+hbox, vbox, side, and others), the space offered to the layered image
+could change, and relative positions could also change. (This is unlikely,
+but happened at least once.) The new `offer_screen` property of layered images
+controls this behavior.
 
 A :func:`Character` defined with `interact` false, or otherwise used in a
 non-interactive way will now cause an automatic voice line to play, if the
@@ -136,8 +236,11 @@ the game is resized, in exchange for keeping it stable when extend is used.
 
 Playing or stopping music on a channel now unpauses that channel.
 
-.. _renpy-7.4.11:
+The new :var:`preferences.audio_when_minimized` preference now enables the
+audio of the game to be paused when the window is minimized.
 
+
+.. _renpy-7.4.11:
 
 7.4.11
 ======
@@ -1494,7 +1597,7 @@ The ``define`` statement can now be used to set a key in a dictionary. ::
 The ``define`` statement can take += and \|=, to apply the appropriate
 update operators. ::
 
-    define config.keymap['dismiss'] = [ 'K_KP_PLUS' ]
+    define config.keymap['dismiss'] += [ 'K_KP_PLUS' ]
 
     # This assumes endings is a set.
     define endings |= { "best" }
@@ -2117,7 +2220,7 @@ The :ref:`input <sl-input>` displayable now takes a new `copypaste`
 property, which when true allows copying with ctrl+C and pasting with
 ctrl+V. This is enabled in the console and launcher.
 
-:func:`Preference("display", "window")` now avoids creating a window bigger
+``Preference("display", "window")`` now avoids creating a window bigger
 than the screen, and will be selected if the current window size is the
 maximum window size, if the size selected with :func:`gui.init` is bigger
 than the maximum window size.

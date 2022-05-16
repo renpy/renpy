@@ -236,6 +236,11 @@ Occasionally Used
     A list of functions that are called (with no arguments) when a load
     occurs.
 
+    If these callbacks change data (for example, migrating data from an
+    old version of the game), :func:`renpy.block_rollback` should be
+    called to prevent the player from rolling back and reverting
+    the changes.
+
 .. var:: config.after_replay_callback = None
 
     If not None, a function that is called with no arguments after a
@@ -726,10 +731,9 @@ Occasionally Used
     cursor, and so should probably be a :func:`MouseDisplayable`
     or something very similar.
 
-.. var:: config.narrator_menu = False
+.. var:: config.narrator_menu = True
 
-    (This is set to True by the default screens.rpy file.) If true,
-    then narration inside a menu is displayed using the narrator
+    If true, narration inside a menu is displayed using the narrator
     character. Otherwise, narration is displayed as captions
     within the menu itself.
 
@@ -773,6 +777,12 @@ Occasionally Used
     A list of the names of TrueType and OpenType fonts that Ren'Py should
     load when starting up. Including the name of a font here can prevent
     Ren'Py from pausing when introducing a new typeface.
+
+.. var:: config.preserve_volume_when_muted = False
+
+    If False, the default, the volume of channels are shown as 0 and
+    changing it disables mute when the channel is mute.
+    Otherwise, It is shown and adjustable while keeping mute.
 
 .. var:: config.python_callbacks = [ ]
 
@@ -850,6 +860,19 @@ Occasionally Used
     The dictionary passed to the callbacks may have already have keys
     beginning with an underscore ``_``. These keys are used by Ren'Py,
     and should not be changed.
+
+    For example::
+
+        init python:
+            def jsoncallback(d):
+                d["playername"] = player_name
+
+            config.save_json_callback.append(jsoncallback)
+
+    ``FileJson(slot)`` and ``renpy.slot_json(slot)`` will recover the state
+    of the ``d`` dict-like object as it was at the moment the game was saved.
+    The value of the ``player_name`` variable at the moment the game was saved
+    is also accessible by ``FileJson(slot, "playername")``.
 
 .. var:: config.say_arguments_callback = None
 
@@ -1116,9 +1139,30 @@ Rarely or Internally Used
     If True, Ren'Py will autosave when the user inputs text.
     (When :func:`renpy.input` is called.)
 
+.. var:: config.call_screen_roll_forward = False
+
+    The value is used when the `roll_forward` property of
+    a screen is None.
+
 .. var:: config.character_callback = None
 
     The default value of the callback parameter of Character.
+
+.. var:: config.choice_empty_window = None
+
+    If not None, and a choice menu (usually invoked with the ``menu``
+    statement) does not have a caption, this function is called with
+    the arguments ("", interact=False).
+
+    The expected use of this is::
+
+        define config.choice_empty_window = extend
+
+    Doing this displays repeats the last line of dialogue as the
+    caption of the menu, if no other caption is given.
+
+    Other implementations are possible, but it's assumed that this will
+    always display a dialogue window.
 
 .. var:: config.choice_layer = "screens"
 
@@ -1270,6 +1314,12 @@ Rarely or Internally Used
     If a layer is not mentioned in config.layer_clipping, then it is
     assumed to take up the full screen.
 
+.. var:: config.layeredimage_offer_screen = True
+
+    This variable sets the default value for the ``offer_screen`` property
+    of layeredimages. See :ref:`the related section <layeredimage>`
+    for more information.
+
 .. var:: config.layers = [ 'master', 'transient', 'screens', 'overlay' ]
 
     This variable gives a list of all of the layers that Ren'Py knows
@@ -1323,6 +1373,11 @@ Rarely or Internally Used
     If not None, this is expected to be a filename. Much of the text
     shown to the user by :ref:`say <say-statement>` or :ref:`menu
     <menu-statement>` statements will be logged to this file.
+
+.. var:: config.main_menu_stop_channels = [ "movie", "sound", "voice" ]
+
+    A list of channels that are stopped when entering or returning to the
+    main menu.
 
 .. var:: config.mipmap_dissolves = False
 

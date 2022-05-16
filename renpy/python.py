@@ -26,7 +26,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional
+from typing import Optional, Any
 
 
 # Import the python ast module, not ours.
@@ -362,6 +362,32 @@ class LoadedVariables(ast.NodeVisitor):
 find_loaded_variables = LoadedVariables().find
 
 
+class StarredVariables(ast.NodeVisitor):
+    """
+    Return a list of variables that are set using starred assignment, and hence
+    need to be wrapped in RevertableList.
+    """
+
+    def visit_Starred(self, node):
+        if isinstance(node.value, ast.Name) and isinstance(node.value.ctx, ast.Store):
+            self.starred.add(node.value.id)
+
+    def visit_Name(self, node):
+        if isinstance(node.ctx, ast.Store):
+            self.starred.discard(node.id)
+
+    def find(self, targets):
+        self.starred = set()
+
+        for i in targets:
+            self.visit(i)
+
+        return self.starred
+
+# Given an assignment target list, return a list of variables that are set using
+# starred assignment.
+find_starred_variables = StarredVariables().find
+
 class WrapNode(ast.NodeTransformer):
 
 
@@ -429,6 +455,146 @@ class WrapNode(ast.NodeTransformer):
                 args=call_args,
                 keywords=[ ],
             )
+
+    def wrap_starred_assign(self, n, targets):
+
+        if PY2:
+            return n
+
+        starred = find_starred_variables(targets)
+
+        if not starred:
+            return n
+
+        list_stmts = [ ]
+
+        for var in starred:
+
+            call = ast.Call(
+                func=ast.Name(
+                    id=b("__renpy__list__"),
+                    ctx=ast.Load()
+                    ),
+                args=[
+                    ast.Name(id=var, ctx=ast.Load())
+                ],
+                keywords=[ ],
+                starargs=None,
+                kwargs=None)
+
+            assign = ast.Assign(
+                targets=[ ast.Name(id=var, ctx=ast.Store()) ],
+                value=call,
+            )
+
+            list_stmts.append(assign)
+
+        return ast.Try(
+            body=[ n ],
+            handlers=[ ],
+            orelse=[ ],
+            finalbody=list_stmts,
+            )
+
+    def wrap_starred_for(self, node):
+
+        if PY2:
+            return node
+
+        starred = find_starred_variables([ node.target ])
+
+        if not starred:
+            return node
+
+        for var in starred:
+
+            call = ast.Call(
+                func=ast.Name(
+                    id=b("__renpy__list__"),
+                    ctx=ast.Load()
+                    ),
+                args=[
+                    ast.Name(id=var, ctx=ast.Load())
+                ],
+                keywords=[ ],
+                starargs=None,
+                kwargs=None)
+
+            assign = ast.Assign(
+                targets=[ ast.Name(id=var, ctx=ast.Store()) ],
+                value=call,
+            )
+
+            node.body.insert(0, assign)
+
+        return node
+
+
+    def wrap_starred_with(self, node):
+
+        if PY2:
+            return node
+
+        optional_vars = [ ]
+
+        for i in node.items:
+            if i.optional_vars is not None:
+                optional_vars.append(i.optional_vars)
+
+        if not optional_vars:
+            return node
+
+        starred = find_starred_variables(optional_vars)
+
+        if not starred:
+            return node
+
+        for var in starred:
+
+            call = ast.Call(
+                func=ast.Name(
+                    id=b("__renpy__list__"),
+                    ctx=ast.Load()
+                    ),
+                args=[
+                    ast.Name(id=var, ctx=ast.Load())
+                ],
+                keywords=[ ],
+                starargs=None,
+                kwargs=None)
+
+            assign = ast.Assign(
+                targets=[ ast.Name(id=var, ctx=ast.Store()) ],
+                value=call,
+            )
+
+            node.body.insert(0, assign)
+
+        return node
+
+    def visit_Assign(self, n):
+        n = self.generic_visit(n)
+        return self.wrap_starred_assign(n, n.targets) # type: ignore
+
+    def visit_AnnAssign(self, n):
+        n = self.generic_visit(n)
+        return self.wrap_starred_assign(n, [ n.target ]) # type: ignore
+
+    def visit_For(self, n):
+        n = self.generic_visit(n)
+        return self.wrap_starred_for(n)
+
+    def visit_AsyncFor(self, n):
+        n = self.generic_visit(n)
+        return self.wrap_starred_for(n)
+
+    def visit_With(self, n):
+        n = self.generic_visit(n)
+        return self.wrap_starred_with(n)
+
+    def visit_AsyncWith(self, n):
+        n = self.generic_visit(n)
+        return self.wrap_starred_with(n)
 
     def visit_ClassDef(self, n):
         n = self.generic_visit(n)

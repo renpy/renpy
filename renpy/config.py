@@ -431,7 +431,7 @@ predict_screens = True
 choice_screen_chosen = True
 
 # Should the narrator speak menu labels?
-narrator_menu = False
+narrator_menu = True
 
 # A list of screen variants to use.
 variants = [ None ] # type: List
@@ -977,6 +977,9 @@ ftfont_vertical_extent_scale = { }
 # The default shader.
 default_shader = "renpy.geometry"
 
+# If True, the volume of a channel is shown when it is mute.
+preserve_volume_when_muted = False
+
 
 def say_attribute_transition_callback(*args):
     """
@@ -1222,8 +1225,8 @@ lint_character_statistics = True
 # Should vpgrids be allowed to raise under/overfull errors ?
 allow_unfull_vpgrids = False
 
-# Should vbox and hbox skip false showifs?
-box_skip_false_showif = True
+# Should vbox and hbox skip non-visible children?
+box_skip = True
 
 # What should be the default value of the crop_relative tpref ?
 crop_relative_default = True
@@ -1231,6 +1234,17 @@ crop_relative_default = True
 # A list of functions that are called when a character is called with
 # interact=False
 nointeract_callbacks = [ ]
+
+# Should the full size of the screen be offered to a LayeredImage?
+layeredimage_offer_screen = True
+
+# The default for rolling forward in call screen.
+call_screen_roll_forward = False
+
+# A function that's called with ("", interact=False) when no window is
+# displayed during a choice menu.
+choice_empty_window = None
+
 
 del os
 del collections

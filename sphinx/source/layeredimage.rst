@@ -268,7 +268,7 @@ of combinations of layers.
 Statement Reference
 -------------------
 
-Note that with the conditions in the ``if`` statement, all expressions are
+Note that with the exception of the conditions in the ``if`` statement, all expressions are
 evaluated at init time, when the layered image is first defined.
 
 Layeredimage
@@ -297,6 +297,17 @@ Layeredimage takes the following properties:
 
 `at`
     A transform or list of transforms that are applied to the layered image.
+
+`offer_screen`
+    If this is True, the layeredimage will place its children, and size its
+    children with variable size, like it was given an area matching the whole
+    screen of the game. If it is False, the said behaviors will be done while
+    taking into account the available area, which for example will be smaller
+    in an hbox containing other elements, and the display of the layeredimage
+    will not be consistent every time it is shown.
+
+    If None, the default, falls back to :var:`config.layeredimage_offer_screen`,
+    which defaults to True.
 
 Attribute
 ^^^^^^^^^

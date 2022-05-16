@@ -519,11 +519,11 @@ class Displayable(renpy.object.Object):
 
     def _unique(self):
         """
-        This is called when a displayable is "born" unique, which occurs
-        when there is only a single reference to it. What it does is to
-        manage the _duplicatable flag - setting it false unless one of
-        the displayable's children happens to be duplicatable.
+        This is called when a displayable is "unique", meaning there will
+        only be one reference to it, ever, from the tree of displayables.
         """
+
+        self._duplicatable = False
 
         return
 
@@ -1044,7 +1044,7 @@ class SceneLists(renpy.object.Object):
             self.music = None
             self.focused = None
 
-    def replace_transient(self, prefix="hide"):
+    def replace_transient(self, prefix="hide"): # type: (str|None) -> None
         """
         Replaces the contents of the transient display list with
         a copy of the master display list. This is used after a
@@ -1360,7 +1360,7 @@ class SceneLists(renpy.object.Object):
 
             self.hide_or_replace(layer, i, "hide")
 
-    def remove(self, layer, thing, prefix="hide"):
+    def remove(self, layer, thing, prefix="hide"): # type: (str, str|tuple|Displayable, str|None) -> None
         """
         Thing is either a key or a displayable. This iterates through the
         named layer, searching for entries matching the thing.
@@ -2117,6 +2117,9 @@ class Interface(object):
 
         # Should we clear the screenshot at the start of the next interaction?
         self.clear_screenshot = False
+
+        # Is our audio paused?
+        self.audio_paused = False
 
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
@@ -3620,7 +3623,7 @@ class Interface(object):
                       preloads=[],
                       roll_forward=None,
                       pause=False,
-                      pause_start=0,
+                      pause_start=0.0,
                       ):
         """
         This handles one cycle of displaying an image to the user,
@@ -4281,6 +4284,18 @@ class Interface(object):
 
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
+
+                    # If the window becomes inactive as a result of this event
+                    # pause the audio according to preference
+                    if not renpy.game.preferences.audio_when_minimized:
+                        if not pygame.display.get_active() and not self.audio_paused:
+                            renpy.audio.audio.pause_all()
+                            self.audio_paused = True
+                        # If the window had not gone inactive or has regained activity
+                        # unpause the audio
+                        elif pygame.display.get_active() and self.audio_paused:
+                            renpy.audio.audio.unpause_all()
+                            self.audio_paused = False
 
                     pygame.key.set_mods(0)
 

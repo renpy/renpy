@@ -356,7 +356,7 @@ Image and File Translations
 ===========================
 
 When translating a game, it may be necessary to replace a file
-with a translate version. For example, if an image contains text, it
+with a translated version. For example, if an image contains text, it
 might make sense to replace it with a version of the image where the
 text is in another language.
 
@@ -365,6 +365,9 @@ image. For example, if the "piglatin" language is in use, and
 "library.png" is loaded, Ren'Py will use "game/tl/piglatin/library.png"
 in preference to "game/library.png".
 
+If the file is in a directory under game, that directory should be
+included underneath the language. For example, the file "game/gui/main_menu.png"
+can be translated by creating the file "game/tl/piglatin/gui/main_menu.png".
 
 Style Translations
 ==================

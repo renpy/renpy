@@ -61,7 +61,16 @@ init python:
 default persistent.legacy = False
 default persistent.force_new_tutorial = False
 default persistent.sponsor_message = True
-default persistent.daily_update_check = False
+default persistent.daily_update_check = True
+default persistent.daily_update_check_once = False
+
+# Keep the default update check from triggering until tomorrow.
+default persistent.last_update_check = datetime.date.today()
+
+init python:
+    if not persistent.daily_update_check_once:
+        persistent.daily_update_check_once = True
+        persistent.daily_update_check = True
 
 screen preferences:
 
@@ -149,6 +158,7 @@ screen preferences:
                         textbutton _("Install libraries") style "l_nonbox" action Jump("install")
                         textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
                         textbutton _("Reset window size") style "l_nonbox" action Preference("display", 1.0)
+                        textbutton _("Clean temporary files") style "l_nonbox" action Jump("clean_tmp")
 
 
                 frame:
@@ -247,6 +257,14 @@ screen preferences:
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
+
+label clean_tmp:
+    python hide:
+        installer.processing(_("Cleaning temporary files..."))
+        installer._clean("renpy:tmp", 0)
+        time.sleep(0.5)
+
+    jump preferences
 
 label projects_directory_preference:
     call choose_projects_directory

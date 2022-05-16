@@ -26,6 +26,7 @@ init -1650 python:
 
     # A tag to use. This can be used to force the side image to only be of the
     # main character.
+    _side_image_tag = None
     config.side_image_tag = None
 
     # A transform to use when the side image changes to that of a different
@@ -43,6 +44,9 @@ init -1650 python:
     _side_image_raw = config.side_image_null
     _side_image = config.side_image_null
 
+    # An override for config.side_image_prefix_tag.
+    _side_image_prefix_tag = None
+
     def _side_per_interact():
         """
         Called once per interaction to update the side image.
@@ -53,7 +57,10 @@ init -1650 python:
 
         old = _side_image_raw
 
-        new = renpy.get_side_image(config.side_image_prefix_tag, image_tag=config.side_image_tag, not_showing=config.side_image_only_not_showing)
+        side_image_tag = _side_image_tag if _side_image_tag is not None else config.side_image_tag
+        side_image_prefix_tag = _side_image_prefix_tag if _side_image_prefix_tag is not None else config.side_image_prefix_tag
+
+        new = renpy.get_side_image(side_image_prefix_tag, image_tag=side_image_tag, not_showing=config.side_image_only_not_showing)
 
         if new is None:
             new = config.side_image_null
@@ -99,4 +106,3 @@ init 1650 python:
     _side_image_old = config.side_image_null
     _side_image_raw = config.side_image_null
     _side_image = config.side_image_null
-

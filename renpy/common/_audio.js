@@ -46,6 +46,7 @@ let get_channel = (channel) => {
         fade_volume : context.createGain(),
         primary_volume : context.createGain(),
         secondary_volume : context.createGain(),
+        relative_volume : context.createGain(),
         paused : false,
     };
 
@@ -53,7 +54,8 @@ let get_channel = (channel) => {
     c.stereo_pan.connect(c.fade_volume);
     c.fade_volume.connect(c.primary_volume);
     c.primary_volume.connect(c.secondary_volume);
-    c.secondary_volume.connect(context.destination);
+    c.secondary_volume.connect(c.relative_volume);
+    c.relative_volume.connect(context.destination);
 
     channels[channel] = c;
 
@@ -132,6 +134,8 @@ let start_playing = (c) => {
         c.playing.source.stop(context.currentTime + p.fadeout);
     }
 
+    setValue(c.relative_volume.gain, p.relative_volume);
+
     p.started = context.currentTime;
     p.started_once = true;
 };
@@ -195,7 +199,7 @@ let on_end = (c) => {
 renpyAudio = { };
 
 
-renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end) => {
+renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, relative_volume) => {
 
     let c = get_channel(channel);
     let array = FS.readFile(file);
@@ -206,6 +210,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end) => 
         name : name,
         start : start,
         end : end,
+        relative_volume : relative_volume,
         started : null,
         fadein : fadein,
         fadeout: null,
@@ -366,7 +371,7 @@ renpyAudio.get_duration = (channel) => {
 
 renpyAudio.set_volume = (channel, volume) => {
     let c = get_channel(channel);
-    setValue(c.volume.gain, volume);
+    setValue(c.primary_volume.gain, volume);
 };
 
 

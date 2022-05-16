@@ -224,7 +224,7 @@ You may be using a system install of python. Please run {0}.sh,
 
     # Ditto for the Ren'Py module.
     try:
-        import _renpy; _renpy
+        import _renpy
     except Exception:
         print("""\
 Could not import _renpy. Please ensure that this program has been built

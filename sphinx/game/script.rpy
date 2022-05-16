@@ -2,7 +2,13 @@ init 1000000 python:
     import doc
     import shaderdoc
 
-    shaderdoc.shaders()
+    srcdir = 'source'
+    if os.path.isdir('sphinx') and os.path.split(os.getcwd())[-1] == 'renpy':
+        srcdir = os.path.join('sphinx', 'source') # ran from renpy/. cwd using sphinx in-game project
+
+    incdir = os.path.join(srcdir, 'inc')        
+
+    shaderdoc.shaders(incdir=incdir)
 
     doc.scan_section("", renpy.store)
     doc.scan_section("renpy.", renpy)
@@ -21,25 +27,24 @@ init 1000000 python:
     doc.scan_section("layeredimage.", layeredimage)
     doc.scan_section("Matrix.", Matrix)
 
-    doc.write_line_buffer()
-    doc.write_keywords()
+    doc.write_line_buffer(incdir=incdir)
+    doc.write_keywords(srcdir=srcdir)
 
-    doc.scan_docs()
-    doc.write_reserved(doc.builtins, "source/inc/reserved_builtins", False)
-    doc.write_reserved(store, "source/inc/reserved_renpy", True)
+    doc.scan_docs(srcdir=srcdir, incdir=incdir)
+    doc.write_reserved(doc.builtins, os.path.join(incdir, "reserved_builtins"), False)
+    doc.write_reserved(store, os.path.join(incdir, "reserved_renpy"), True)
 
-    doc.write_pure_const()
+    doc.write_pure_const(incdir=incdir)
 
-    doc.write_easings(_warper)
+    doc.write_easings(_warper, incdir=incdir)
 
-    doc.write_tq()
+    doc.write_tq(srcdir=srcdir)
 
     doc.check_dups()
 
     console_commands = _console.help(None, True)
     console_commands = "\n\n".join(console_commands.split("\n"))
-    f = open("source/inc/console_commands", "w")
-    f.write(console_commands)
-    f.close()
-
+    with open(os.path.join(incdir, "console_commands"), "w") as f:
+        f.write(console_commands)
+    
     raise SystemExit

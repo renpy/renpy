@@ -1652,7 +1652,15 @@ def parse_menu(stmtl, loc, arguments):
         state = l.checkpoint()
 
         who = l.simple_expression()
-        what = l.string()
+
+        attributes = say_attributes(l)
+
+        if l.match(r'\@'):
+            temporary_attributes = say_attributes(l)
+        else:
+            temporary_attributes = None
+
+        what = l.triple_string() or l.string()
 
         if who is not None and what is not None:
 
@@ -1662,7 +1670,7 @@ def parse_menu(stmtl, loc, arguments):
             if say_ast:
                 l.error("Only one say menuitem may exist per menu.")
 
-            say_ast = finish_say(l, l.get_location(), who, what, interact=False)
+            say_ast = finish_say(l, l.get_location(), who, what, attributes, temporary_attributes, interact=False)
 
             l.expect_eol()
             l.expect_noblock("say menuitem")
@@ -1785,7 +1793,7 @@ def parse_parameters(l):
             l.match(r',')
 
             # extrakw is always last parameter
-            if not l.match('\)'):
+            if not l.match(r'\)'):
                 l.error("arguments cannot follow var-keyword argument")
 
             break
@@ -1831,6 +1839,8 @@ def parse_parameters(l):
                 pending_kwonly = False
                 first_kwonly = name
 
+            default = None
+
             if l.match(r'='):
                 l.skip_whitespace()
                 default = l.delimited_python("),")
@@ -1841,9 +1851,6 @@ def parse_parameters(l):
 
             elif first_kwonly is None and has_default:
                 l.error("non-default argument follows default argument")
-
-            else:
-                default = None
 
             name_parsed(name, default)
             parameters.append((name, default))
@@ -3088,7 +3095,7 @@ def report_parse_errors():
 
     try:
         if renpy.game.args.command == "run": # type: ignore
-            renpy.exports.launch_editor([ error_fn ], 1, transient=1)
+            renpy.exports.launch_editor([ error_fn ], 1, transient=True)
     except Exception:
         pass
 

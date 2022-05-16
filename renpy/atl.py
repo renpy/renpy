@@ -444,7 +444,7 @@ class ATLTransformBase(renpy.object.Object):
                 raise Exception('Parameter %r is used as both a positional and keyword argument to a transition.' % name)
 
             if (name == "child") or (name == "old_widget"):
-                child = v
+                child = value
 
             context[name] = value
 
@@ -474,7 +474,7 @@ class ATLTransformBase(renpy.object.Object):
             child = child._duplicate(_args)
 
         # Create a new ATL Transform.
-        parameters = renpy.ast.EMPTY_PARAMETERS
+        parameters = renpy.ast.ParameterInfo([ ], positional, None, None)
 
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,
@@ -1196,22 +1196,12 @@ class Interpolation(Statement):
         else:
             st_or_at = trans.st
 
-        # True if we want want to make sure this interpolation is shown for at
-        # least one frame.
-        if self.warper == "instant":
-            first_frame = False
-        elif state is not None:
-            first_frame = False
-        elif (self.duration == 0) and (not self.properties and not self.revolution and not self.splines):
-            first_frame = True
-        elif trans.atl_state is not None:
-            first_frame = True
-        elif st_or_at == 0:
-            first_frame = st <= self.duration
+        # Special case `pause 0` to always display a frame. This is intended to
+        # support single-frame animations that shouldn't skip.
+        if self.warper == "pause" and self.duration == 0 and renpy.config.atl_one_frame:
+            force_frame = True
         else:
-            # This is the case when we're skipping through a displayable to
-            # find the right time.
-            first_frame = False
+            force_frame = False
 
         if self.duration:
             complete = min(1.0, st / self.duration)
@@ -1335,7 +1325,7 @@ class Interpolation(Statement):
             value = interpolate_spline(complete, values)
             setattr(trans.state, name, value)
 
-        if (st >= self.duration) and ((not first_frame) or (not renpy.config.atl_one_frame)):
+        if (st >= self.duration) and (not force_frame):
             return "next", st - self.duration, None
         else:
             if not self.properties and not self.revolution and not self.splines:

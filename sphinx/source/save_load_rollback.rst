@@ -220,6 +220,9 @@ There is one variable that is used by the high-level save system:
    This is a string that is stored with each save. It can be used to give
    a name to the save, to help users tell them apart.
 
+   More per-save data customization can be done with the Json supplementary
+   data system, see :var:`config.save_json_callbacks`.
+
 There are a number of high-level save actions and functions defined in the
 :ref:`screen actions <screen-actions>`. In addition, there are the following
 low-level save and load actions.
@@ -261,6 +264,7 @@ For example::
 
 .. include:: inc/retain_after_load
 
+
 Rollback
 ========
 
@@ -269,6 +273,61 @@ much the same way as undo/redo systems that are available in most
 modern applications. While the system takes care of maintaining the
 visuals and game variables during rollback events, there are several
 things that should be considered while creating a game.
+
+
+What Data is Rolled Back?
+==========================
+
+Rollback affects variables that have been changed after the init phase, and
+objects of revertable types reachable from those variables. The short version
+is that lists, dicts, and sets created in Ren'Py script are revertable as are
+instances of classes defined in Ren'Py scripts. Data created inside Python
+or inside Ren'Py usually isn't revertable.
+
+In more detail, inside the stores
+that Python embedded inside Ren'Py scripts run in, the object, list, dict, and
+set types have been replaced with equivalent types that are revertable. Objects
+that inherit from these types are also revertable. The :class:`renpy.Displayable`
+type inherits from the revertable object type.
+
+To make the use of revertable objects more convenient, Ren'Py modifies Python
+found inside Ren'Py script files in the following way.
+
+* Literal lists, dicts, and sets are automatically converted to the
+  revertable equivalent.
+* List, dict, and set comprehensions are also automatically converted to
+  the revertable equivalent.
+* Other python syntax, such as extended unpacking, that can create lists,
+  dicts, or sets converts the result to the revertable equivalent. However,
+  for performance reasons, double-starred parameters to functions and methods
+  (that create dictionaries of extra keyword arguments) are not converted
+  to revertable objects.
+* Classes that do not inherit from any other types automatically inherit
+  from the revertable object.
+
+In addition:
+
+* The methods and operators of revertable types have been modified to return
+  revertable objects when a list, dict, or set is produced.
+* Built in functions that return lists, dicts, and sets return a revertable
+  equivalent.
+
+Calling into Python code will not generally produce a revertable object. Some
+cases where you'll get an object that may not participate in rollback are:
+
+* Calling methods on built-in types, like the str.split method.
+* When the object is created in a Python module that's been imported, and
+  then return to Ren'Py. (For example, an instance of collections.defaultdict
+  won't participate in rollback.)
+* Objects returned from Ren'Py's API, unless documented otherwise.
+
+If such data needs to participate in rollback, it may make sense to convert
+it to a type that does partipate. For example::
+
+    # Calling list inside Python-in-Ren'Py converts a non-revertable list
+    # into a revertable one.
+    $ attrs = list(renpy.get_attributes("eileen"))
+
 
 Supporting Rollback and Roll Forward
 ====================================
@@ -366,10 +425,10 @@ possible to make a different choice.
 There are some caveats to consider when designing a game for
 fix_rollback. Ren'Py will automatically take care of locking any data
 that is given to :func:`checkpoint`. However, due to the generic nature
-of Ren'Py, it is possible to write Python that bypasses this and
-changes things in ways that may have unpredictable results. It is up
-to the game designer to block rollback at problematic locations or
-write additional Python to deal with it.
+of Ren'Py, it is possible to write scripts that bypass this and
+change things in ways that may have unpredictable results.  Most notably,
+``call screen`` doesn't work well with fixed rollback. It is up
+to the creator to block rollback at problematic locations.
 
 The internal user interaction options for menus, :func:`renpy.input`
 and :func:`renpy.imagemap` are designed to fully work with fix_rollback.

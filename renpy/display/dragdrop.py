@@ -80,8 +80,8 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     * ``idle`` - otherwise.
 
     The drag handle is a rectangle inside the child. The mouse must be over
-    a non-transparent pixel inside the drag handle for dragging or clicking
-    to occur.
+    a pixel inside the drag handle for dragging or clicking to occur. If the
+    :propref:`focus_mask` property is True, that pixel must not be transparent.
 
     A newly-created draggable is added to the default DragGroup. A draggable
     can only be in a single DragGroup - if it's added to a second group,
@@ -122,7 +122,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
     `dragging`
         A callback (or list of callbacks) that is called when the Drag is being
-        dragged. It is called with one argument, a a list of Drags that are
+        dragged. It is called with one argument, a list of Drags that are
         being dragged. If the callback returns a value other than None, that
         value is returned as the result of the interaction.
 
@@ -803,7 +803,7 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     `min_overlap`
         An integer which means the minimum number of pixels at the
-        overlap so that drop will be allow.
+        overlap for the drop to be allowed.
     """
 
     z_serial = 0
@@ -991,7 +991,7 @@ class DragGroup(renpy.display.layout.MultiBox):
         :doc: drag_drop method
 
         Returns the first child of this DragGroup that has a drag_name
-        of name.
+        of `name`.
         """
 
         for i in self.children:

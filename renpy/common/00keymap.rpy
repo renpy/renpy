@@ -261,6 +261,10 @@ init -1600 python:
             import webbrowser
             import os
 
+            if help.startswith('http://') or help.startswith('https://'):
+                webbrowser.open_new(help)
+                return
+
             file_path = os.path.join(config.basedir, help)
             if not os.path.isfile(file_path):
                 return

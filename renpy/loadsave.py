@@ -80,7 +80,11 @@ def save_dump(roots, log):
             o_repr = "<" + o.__class__.__name__ + ">"
 
         elif isinstance(o, types.MethodType):
-            o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__func__.__name__)
+
+            if PY2:
+                o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__func__.__name__) # type: ignore
+            else:
+                o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
 
         elif isinstance(o, object):
             o_repr = "<{0}>".format(type(o).__name__)
@@ -715,6 +719,10 @@ def slot_json(slotname):
 
     Returns the json information for `slotname`, or None if the slot is
     empty.
+
+    Much like the ``d`` argument to the :var:`config.save_json_callback`
+    function, it will be returned as a dictionary. More precisely, the
+    dictionary will contain the same data as it did when the game was saved.
     """
 
     return get_cache(slotname).get_json()

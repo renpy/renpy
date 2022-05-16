@@ -1,3 +1,4 @@
+# coding=utf-8
 # Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
@@ -317,6 +318,30 @@ class SLNode(object):
 
         return False
 
+    def dump_const(self):
+        """
+        Dumps a tree-representation of this node, to help determine what
+        Ren'Py is treating as const and not.
+        """
+
+        raise Exception("dump_const not implemented by " + type(self).__name__)
+
+    def dc(self, prefix, text, *args):
+        """
+        Adds a line of const dump information to the debug log.
+        """
+
+        if self.constant == GLOBAL_CONST:
+            const_type = "global "
+        elif self.constant == LOCAL_CONST:
+            const_type = "local  "
+        else:
+            const_type = "not    "
+
+        formatted = text.format(*args)
+
+        profile_log.write("%s", "    {}{}{} ({}:{})".format(const_type, prefix, formatted, self.location[0], self.location[1]))
+
 
 # A sentinel used to indicate a keyword argument was not given.
 NotGiven = renpy.object.Sentinel("NotGiven")
@@ -528,6 +553,12 @@ class SLBlock(SLNode):
 
         return False
 
+    def dump_const(self, prefix):
+        self.dc(prefix, "block")
+
+        for i in self.children:
+            i.dump_const(prefix + "  ")
+
 
 list_or_tuple = (list, tuple)
 
@@ -601,11 +632,14 @@ class SLDisplayable(SLBlock):
 
     hotspot = False
     variable = None
+    name = ""
+
+    unique = False
 
     # A list of variables that are locally constant.
     local_constant = [ ]
 
-    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False, variable=None):
+    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False, variable=None, name="", unique=True):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -642,6 +676,9 @@ class SLDisplayable(SLBlock):
 
         `variable`
             A variable that the main displayable is assigned to.
+
+        `name`
+            The name of the displayable, used for debugging.
         """
 
         SLBlock.__init__(self, loc)
@@ -657,9 +694,12 @@ class SLDisplayable(SLBlock):
         self.replaces = replaces
         self.default_keywords = default_keywords
         self.variable = variable
+        self.unique = unique
 
         # Positional argument expressions.
         self.positional = [ ]
+
+        self.name = name
 
     def copy(self, transclude):
         rv = self.instantiate(transclude)
@@ -675,6 +715,8 @@ class SLDisplayable(SLBlock):
         rv.default_keywords = self.default_keywords # type: ignore
         rv.variable = self.variable # type: ignore
         rv.positional = self.positional # type: ignore
+        rv.name = self.name # type: ignore
+        rv.unique = self.unique # type: ignore
 
         return rv
 
@@ -958,6 +1000,7 @@ class SLDisplayable(SLBlock):
                     keywords['context'] = ctx
 
                 d = self.displayable(*positional, **keywords)
+                d._unique()
                 main = d._main or d
 
                 main._location = self.location
@@ -1270,6 +1313,12 @@ class SLDisplayable(SLBlock):
         for i in self.children:
             i.copy_on_change(cache)
 
+    def dump_const(self, prefix):
+        self.dc(prefix, self.name)
+
+        for i in self.children:
+            i.dump_const(prefix + "  ")
+
 
 class SLIf(SLNode):
     """
@@ -1420,6 +1469,21 @@ class SLIf(SLNode):
     def keyword_exist(self, name):
         return any(i[1].keyword_exist(name) for i in self.entries)
 
+    def dump_const(self, prefix):
+
+        first = True
+
+        for cond, block in self.entries:
+
+            if first:
+                self.dc(prefix, "if {}", cond)
+            else:
+                self.dc(prefix, "elif {}", cond)
+
+            first = False
+
+            for i in block.children:
+                i.dump_const(prefix + "  ")
 
 class SLShowIf(SLNode):
     """
@@ -1512,6 +1576,21 @@ class SLShowIf(SLNode):
     def has_python(self):
         return any(i[1].has_python() for i in self.entries)
 
+    def dump_const(self, prefix):
+
+        first = True
+
+        for cond, block in self.entries:
+
+            if first:
+                self.dc(prefix, "showif {}", cond)
+            else:
+                self.dc(prefix, "else {}", cond)
+
+            first = False
+
+            for i in block.children:
+                i.dump_const(prefix + "  ")
 
 class SLFor(SLBlock):
     """
@@ -1661,6 +1740,12 @@ class SLFor(SLBlock):
             for i in self.children:
                 i.copy_on_change(child_cache)
 
+    def dump_const(self, prefix):
+
+        self.dc(prefix, "for {} in {}", self.variable, self.expression)
+
+        for i in self.children:
+            i.dump_const(prefix + "  ")
 
 class SLPython(SLNode):
 
@@ -1690,6 +1775,9 @@ class SLPython(SLNode):
     def has_python(self):
         return True
 
+    def dump(self, prefix):
+        self.dc(prefix, "python")
+
 
 class SLPass(SLNode):
 
@@ -1700,6 +1788,9 @@ class SLPass(SLNode):
         rv = self.instantiate(transclude)
 
         return rv
+
+    def dump_const(self, prefix):
+        self.dc(prefix, "pass")
 
 
 class SLDefault(SLNode):
@@ -1738,6 +1829,8 @@ class SLDefault(SLNode):
     def has_python(self):
         return True
 
+    def dump_const(self, prefix):
+        self.dc(prefix, "default {} = {}", self.variable, self.expression)
 
 class SLUse(SLNode):
 
@@ -1835,6 +1928,7 @@ class SLUse(SLNode):
 
             self.constant = min(self.constant, self.ast.constant)
 
+
     def execute_use_screen(self, context):
 
         # Create an old-style displayable name for this call site.
@@ -1857,6 +1951,7 @@ class SLUse(SLNode):
     def execute(self, context):
 
         if isinstance(self.target, renpy.ast.PyExpr):
+
             target_name = eval(self.target, context.globals, context.scope)
             target = renpy.display.screen.get_screen_variant(target_name)
 
@@ -1968,12 +2063,28 @@ class SLUse(SLNode):
         if not isinstance(self.target, renpy.ast.PyExpr):
             callback(self.target)
 
+        if self.block is not None:
+            self.block.used_screens(callback)
+
     def has_transclude(self):
         if self.block:
             return self.block.has_transclude()
         else:
             return False
 
+    def dump_const(self, prefix):
+        self.dc(prefix, "use", self.target)
+
+        for i in self.ast.children:
+            if self.block:
+                i.dump_const(prefix + "│ ")
+            else:
+                i.dump_const(prefix + "  ")
+
+        if self.block:
+            self.dc(prefix, "└ (transclude block)")
+            for i in self.block.children:
+                i.dump_const(prefix + "  ")
 
 class SLTransclude(SLNode):
 
@@ -2032,6 +2143,8 @@ class SLTransclude(SLNode):
     def has_transclude(self):
         return True
 
+    def dump_const(self, prefix):
+        self.dc(prefix, "transclude")
 
 class SLCustomUse(SLNode):
     """This represents special use screen statement defined
@@ -2219,8 +2332,27 @@ class SLCustomUse(SLNode):
     def used_screens(self, callback):
         callback(self.target)
 
+        if self.block is not None:
+            self.block.used_screens(callback)
+
+
     def has_transclude(self):
         return self.block.has_transclude()
+
+
+    def dump_const(self, prefix):
+        self.dc(prefix, "custom-use", self.target)
+
+        for i in self.ast.children:
+            if self.block:
+                i.dump_const(prefix + "│ ")
+            else:
+                i.dump_const(prefix + "  ")
+
+        if self.block:
+            self.dc("prefix", "└ (transclude block)")
+            for i in self.block.children:
+                i.dump_const(prefix + "  ")
 
 
 class SLScreen(SLBlock):
@@ -2244,6 +2376,7 @@ class SLScreen(SLBlock):
 
     layer = "'screens'"
     sensitive = "True"
+    roll_forward = "None"
 
     def __init__(self, loc):
 
@@ -2314,6 +2447,7 @@ class SLScreen(SLBlock):
             location=self.location,
             layer=renpy.python.py_eval(self.layer),
             sensitive=self.sensitive,
+            roll_forward=renpy.python.py_eval(self.roll_forward),
             )
 
     def analyze(self, analysis):
@@ -2393,6 +2527,12 @@ class SLScreen(SLBlock):
             not_constants = list(self.const_ast.analysis.not_constant)
             not_constants.sort()
             profile_log.write('    not_const: %s', " ".join(not_constants))
+
+            profile_log.write('')
+
+            self.const_ast.dump_const("")
+
+            profile_log.write('')
 
     def execute(self, context):
         self.const_ast.keywords(context)

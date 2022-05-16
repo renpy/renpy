@@ -954,23 +954,34 @@ class UseParser(Parser):
 
         args = renpy.parser.parse_arguments(l)
 
+        extrapos = None
+        extrakw = None
+
         if args:
 
+            index = 0
+
             for k, v in args.arguments:
-                if k is None:
+
+                if index in args.starred_indexes:
+                    extrapos = v
+                elif index in args.doublestarred_indexes:
+                    extrakw = v
+                elif k is None:
                     code += ", (%s)" % v
                 else:
                     code += ", %s=(%s)" % (k, v)
+
+                index += 1
 
         code += ", _name=%s, _scope=_scope" % name
 
         if args:
 
-            if args.extrapos:
-                code += ", *(%s)" % args.extrapos
-
-            if args.extrakw:
-                code += ", **(%s)" % args.extrakw
+            if extrapos:
+                code += ", *(%s)" % extrapos
+            if extrakw:
+                code += ", **(%s)" % extrakw
 
         code += ")"
 

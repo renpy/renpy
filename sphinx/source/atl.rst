@@ -939,38 +939,23 @@ both horizontal and vertical positions.
 
     If corners and crop are given, crop takes priority over corners.
 
-.. transform-property:: crop_relative
-
-    :type: None or string
-    :default: None
-
-    If None or "child", relative components of crop (see
-    :ref:`the position types documentation <position-types>`) are
-    considered relatively to the width and height of the source image,
-    like ``anchor`` does it.
-
-    If "area", they are considered relatively to the available containing
-    area in the context where the source image is displayed (typically
-    the size of the screen), like ``pos`` does it.
-
-    If all elements of ``crop`` are ints or ``absolute``s, this property
-    has no effect.
-
 .. transform-property:: corner1
 
-    :type: None or (int, int)
+    :type: None or (position, position)
     :default: None
 
     If not None, gives the upper-left corner of the crop box. Crop takes
-    priority over corners.
+    priority over corners. When a float, and crop_relative is enabled,
+    this is relative to the size of the child.
 
 .. transform-property:: corner2
 
-    :type: None or (int, int)
+    :type: None or (position, position)
     :default: None
 
     If not None, gives the lower right corner of the crop box. Cropt takes
-    priority over corners.
+    priority over corners. When a float, and crop_relativer is enabled, this
+    is relative to the size of the child.
 
 .. transform-property:: xysize
 
@@ -978,7 +963,8 @@ both horizontal and vertical positions.
     :default: None
 
     If not None, causes the displayable to be scaled to the given
-    size.
+    size. This is equivalent to setting the :tpref:`xsize` and
+    :tpref:`ysize` properties to the first and second components.
 
     This is affected by the :tpref:`fit` property.
 
@@ -1002,12 +988,20 @@ both horizontal and vertical positions.
 
 .. transform-property:: fit
 
-   :type: None or string
-   :default: None
+    :type: None or string
+    :default: None
 
-   If not None, causes the displayable to be sized according to the
-   table below. In this context "dimensions" refers to one or more of ``xsize`` and
-   ``ysize`` that are not None.
+    Causes the displayable to be sized according to the table below.
+    In the context of the the table below, the "dimensions" are:
+
+    * If both :tpref:`xsize` and :tpref:`ysize` are not None, both sizes
+      are used as the dimensions.
+    * If only one of those properties is not None, it is used as the
+      sole dimension.
+    * Otherwise, if fit is not None the area that the Transform is
+      contained in is used as the dimensions.
+
+    If fit, xsize, and ysize are all None, this property does not apply.
 
    .. list-table::
       :widths: 15 85
@@ -1029,35 +1023,6 @@ both horizontal and vertical positions.
       * - ``scale-up``
         - As for ``cover``, but will never decrease the size of the
           displayable.
-
-.. transform-property:: size
-
-    :type: None or (int, int)
-    :default: None
-
-    If not None, causes the displayable to be scaled to the given
-    size.
-
-    This is affected by the :tpref:`fit` property.
-
-    .. warning::
-
-        This property is deprecated. Use :tpref:`xysize` instead.
-
-.. transform-property:: maxsize
-
-    :type: None or (int, int)
-    :default: None
-
-    If not None, causes the displayable to be scaled so that it fits
-    within a box of this size, while preserving aspect ratio. (Note that
-    this means that one of the dimensions may be smaller than the size
-    of this box.)
-
-    .. warning::
-
-        This property is deprecated. Consider using :tpref:`xysize` in
-        conjuction with :tpref:`fit` and the value ``contain``.
 
 .. transform-property:: subpixel
 
@@ -1119,16 +1084,14 @@ both horizontal and vertical positions.
     :type: int
     :default: 1
 
-    The number of times to tile the image horizontally. (This is ignored when
-    xpan is given.)
+    The number of times to tile the image horizontally.
 
 .. transform-property:: ytile
 
     :type: int
     :default: 1
 
-    The number of times to tile the image vertically. (This is ignored when
-    ypan is given.)
+    The number of times to tile the image vertically.
 
 .. transform-property:: matrixcolor
 
@@ -1136,8 +1099,9 @@ both horizontal and vertical positions.
     :default: None
 
     If not None, the value of this property is used to recolor everything
-    that children of this transform draw. See :ref:`matrixcolor` for more
-    information.
+    that children of this transform draw. Interpolation is only supported
+    when MatrixColors are used, and the MatrixColors are structurally similar.
+    See :ref:`matrixcolor` for more information.
 
     This requires model-based rendering to be enabled by setting :var:`config.gl2` to
     True.
@@ -1171,12 +1135,12 @@ Uniforms:
 
 These properties are applied in the following order:
 
-#. tile
 #. mesh, blur
+#. tile
+#. pan
 #. crop, corner1, corner2
 #. xysize, size, maxsize
 #. zoom, xzoom, yzoom
-#. pan
 #. rotate
 #. zpos
 #. matrixtransform, matrixanchor
@@ -1186,6 +1150,50 @@ These properties are applied in the following order:
 #. matrixcolor
 #. GL Properties, Uniforms
 #. position properties
+
+Deprecated Transform Properties
+===============================
+
+.. warning::
+
+    The following properties should not be used in modern games, as they may
+    conflict with more recent features. They are only kept here for compatibility,
+    along with the new way of achieving the same behavior.
+
+.. transform-property:: crop_relative
+
+    :type: boolean
+    :default: True
+
+    If False, float components of :tpref:`crop` are interpreted as an absolute
+    number of pixels, instead of a fraction of the width and height of
+    the source image.
+
+    If an absolute number of pixel is to be expressed, ``absolute`` instances
+    should be provided to the :tpref:`crop` property instead of using the
+    crop_relative property. If necessary, values of dubious type can be wrapped
+    in the ``absolute`` callable.
+
+.. transform-property:: size
+
+    :type: None or (int, int)
+    :default: None
+
+    This is an older version of :tpref:`xysize` interpreting floating-point values
+    as an absolute number of pixels.
+
+.. transform-property:: maxsize
+
+    :type: None or (int, int)
+    :default: None
+
+    If not None, causes the displayable to be scaled so that it fits
+    within a box of this size, while preserving aspect ratio. (Note that
+    this means that one of the dimensions may be smaller than the size
+    of this box.)
+
+    To achieve the same result, give the values to the :tpref:`xysize` property, and
+    set the :tpref:`fit` property to the value "contain".
 
 Circular Motion
 ===============

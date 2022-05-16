@@ -202,6 +202,7 @@ class Screen(renpy.object.Object):
     """
 
     sensitive = "True"
+    roll_forward = None
 
     def __init__(self,
                  name,
@@ -214,7 +215,8 @@ class Screen(renpy.object.Object):
                  parameters=False,
                  location=None,
                  layer="screens",
-                 sensitive="True"):
+                 sensitive="True",
+                 roll_forward=None):
 
         # The name of this screen.
         if isinstance(name, basestring):
@@ -266,6 +268,11 @@ class Screen(renpy.object.Object):
         # Is this screen sensitive? An expression.
         self.sensitive = sensitive
 
+        # Does the screen participate in roll_forward when used with the
+        # call screen statement? True for yes, False for no, None for
+        # config.call_screen_roll_forward.
+        self.roll_forward = roll_forward
+
         global prepared
         global analyzed
 
@@ -301,6 +308,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         'children',
         'transforms',
         'widgets',
+        'base_widgets',
         'old_widgets',
         'hidden_widgets',
         'old_transforms',
@@ -429,8 +437,12 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # The lifecycle phase we are in - one of PREDICT, SHOW, UPDATE, or HIDE.
         self.phase = PREDICT
 
+    @property
+    def name(self):
+        return " ".join(self.screen_name)
+
     def _repr_info(self):
-        return repr(" ".join(self.screen_name))
+        return self.name
 
     def visit(self):
         return [ self.child ]
@@ -466,7 +478,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
             pop_current_screen()
 
         if self.modal and not callable(self.modal):
-            raise renpy.display.layout.IgnoreLayers()
+            renpy.display.focus.mark_modal()
 
     def copy(self):
         rv = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
@@ -1048,6 +1060,20 @@ def get_screen(name, layer=None):
         else:
             text "The say screen is hidden."
 
+    The ScreenDisplayable objects returnd by this function have the following
+    documented fields:
+
+    ``ScreenDisplayable.layer``
+
+        The layer the screen is being displayed on.
+
+    ``ScreenDisplayable.name``
+
+        The name of the screen.
+
+    ``ScreenDisplayable.zorder``
+
+        The zorder the screen is being displayed at.
     """
 
     if layer is None:
@@ -1088,6 +1114,25 @@ def has_screen(name):
         return True
     else:
         return False
+
+
+def get_screen_roll_forward(screen_name):
+    """
+    Given a screeen name, determines if roll forward is enable for the
+    screen.
+    """
+
+    name = screen_name
+
+    if not isinstance(name, tuple):
+        name = tuple(name.split())
+
+    screen = get_screen_variant(name[0])
+
+    if screen is None:
+        raise Exception("Screen %s is not known.\n" % (name[0],))
+
+    return screen.roll_forward
 
 
 def show_screen(_screen_name, *_args, **kwargs):
@@ -1299,6 +1344,16 @@ def use_screen(_screen_name, *_args, **kwargs):
 
 
 def current_screen(): # type: () -> ScreenDisplayable|None
+    """
+    :doc: screens
+    :name: renpy.current_screen
+
+    Returns the ScreendDisplayable corresponding to the screen currently being
+    updated, rendered, or processing an
+
+    See :func:`get_screen` for documented fields on ScreenDisplayable.
+    """
+
     return _current_screen
 
 

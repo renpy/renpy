@@ -309,7 +309,9 @@ screen web():
                             textbutton _("Open in Browser") action Jump("web_start")
                             textbutton _("Open build directory") action Jump("open_build_directory")
 
-                        add SPACER
+                            add SPACER
+
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
 
                 # Right side.
@@ -363,7 +365,7 @@ label web_launch:
 
 label open_build_directory():
     $ project.current.update_dump(True, gui=True)
-    $ OpenDirectory(get_web_destination(project.current))()
+    $ renpy.run(OpenDirectory(get_web_destination(project.current), absolute=True))
     jump web
 
 label web_start:

@@ -672,11 +672,10 @@ def display_say(
     if final:
 
         if not dtt.no_wait:
-            if checkpoint:
-                if exception is None:
-                    renpy.exports.checkpoint(True)
-                else:
-                    renpy.exports.checkpoint(exception)
+            if exception is None:
+                renpy.exports.checkpoint(True, hard=checkpoint)
+            else:
+                renpy.exports.checkpoint(exception)
 
         else:
             renpy.game.after_rollback = after_rollback

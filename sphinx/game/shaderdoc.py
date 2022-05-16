@@ -1,11 +1,11 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 
+import os
 import renpy
-import sys
 import textwrap
 
 
-def shaders():
+def shaders(incdir="source/inc"):
 
     def p(s):
         print(s, file=outf)
@@ -15,7 +15,7 @@ def shaders():
         for i in s.split("\n"):
             print("    " + i, file=outf)
 
-    with open("source/inc/shadersource", "w") as outf:
+    with open(os.path.join(incdir, "shadersource"), "w") as outf:
 
         parts = list(renpy.gl2.gl2shadercache.shader_part.values())
 

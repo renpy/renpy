@@ -900,7 +900,7 @@ class Context(renpy.object.Object):
 
         self.defer_rollback = None
 
-        renpy.exports.rollback(force, checkpoints)
+        renpy.exports.rollback(bool(force), checkpoints)
 
     def get_return_stack(self):
         return list(self.return_stack)

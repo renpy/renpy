@@ -19,10 +19,38 @@ such changes only take effect when the GUI is regenerated.
 7.5.0/8.0.0
 -----------
 
-Showif statements no longer take up space inside a vbox or hbox when the
-condition is false and the child is hidden. To revert this change::
+The behavior of Ren'Py changed sometime in the 7.4 series, such that
+rollback through a load behaved correctly, and reverted the changes
+peformed in the ``after_load`` label, and by :var:`config.after_load_callbacks`.
+(The previous behavior was undefined, with some changes reverted and some not,
+leaving the game in an inconsistent state.) If your game has to migrate
+data after a load, it's now recommended to call :func:`renpy.block_rollback`
+to prevent the changes from being rolled back.
 
-    define config.box_skip_false_showif = False
+The :var:`config.narrator_menu` variable now defaults to True. It's been
+set to true in the default screens.rpy for some time. In the unlikely event
+it was false in your game, restore the old behavior with::
+
+    define config.narrator_menu = False
+
+The sound and voice channels are now stopped when ending the main menu.
+To revert to the prior behavior (only the movie channel was stopped), add
+to your game::
+
+    define config.main_menu_stop_channels = [ "movie" ]
+
+Screens called by ``call screen`` no longer support roll forward by default.
+See :ref:`the changelog <call-screen-roll-forward>` for the problems it can
+cause. Roll forward can be enabled on a per screen basis with the `roll_forward` property,
+or for all screens with::
+
+    define config.call_screen_roll_forward = True
+
+Key and timer statements no longer take up space inside a vbox or hbox, and
+the showif statement does not take up space when its child is hidden. To revert
+this change::
+
+    define config.box_skip = False
 
 The :propref:`focus_mask` style property now defaults to None for drag displayables.
 This improves performance, but means that the displayable can be dragged by
@@ -43,16 +71,17 @@ or globally with::
     style default:
         outline_scaling "step"
 
-The :tpref:`crop_relative` transform property now take string values instead of
-booleans. The behavior associated with the former True value is now the default
-behavior. Absolute numbers of pixels to set the cropping should be expressed with
-ints or ``absolute`` numbers. To revert to the former default behavior, which casts
-floats to an absolute number of pixels, use::
+The :tpref:`crop_relative` transform property now defaults to True instead of False.
+Absolute numbers of pixels to set the cropping should be expressed with ints or
+``absolute`` numbers. To revert to the former default behavior, which casts floats to
+an absolute number of pixels, use::
 
     define config.crop_relative_default = False
 
 However, be warned that like most things documented only on this page, this will
 conflict with - and cannot be used at the same time as - some other new features.
+This setting applies to :tpref:`crop`, and also now to :tpref:`corner1` and
+:tpref:`corner2`.
 
 The platform-specific directories inside lib/ have had name changes. The
 ``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This
@@ -63,6 +92,18 @@ versions, but we do guarantee that ``sys.executable`` is set.
 Vpgrids cannot be overfull anymore, and can only be underfull if the
 ``allow_underfull`` property is passed, or if :var:`config.allow_underfull_grids` is
 set to True.
+
+The way :ref:`layered images <layered-images>` place their children, and how children
+with variable size are sized, has changed. Instead of taking into account the available
+area in the context the layeredimage is displayed, it now presumes the size of the
+screen is available, unless an explicit size has been given with :tpref:`xsize`,
+:tpref:`ysize` or :tpref:`xysize`. To revert to the old behavior, where a layeredimage
+can display differently in different contexts, you can use::
+
+    define config.layeredimage_offer_screen = False
+
+Or you can also toggle it for specific layeredimages by passing them the
+``offer_screen`` property.
 
 
 .. _incompatible-7.4.11:

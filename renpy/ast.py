@@ -29,7 +29,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional
+from typing import Optional, Any
 
 import renpy
 
@@ -303,8 +303,8 @@ class ArgumentInfo(renpy.object.Object):
     def after_upgrade(self, version):
         if version < 1:
             arguments = self.arguments
-            extrapos = self.extrapos
-            extrakw = self.extrakw
+            extrapos = self.extrapos # type: ignore
+            extrakw = self.extrakw # type: ignore
             length = len(arguments) + bool(extrapos) + bool(extrakw)
             if extrapos:
                 self.starred_indexes = { length - 1 }
@@ -512,8 +512,12 @@ class Scry(object):
     predict, this tries to only get things we _know_ will happen.
     """
 
-    _next = None # type: Optional[Node]
-    interacts = None # type: Optional[bool]
+    _next = None # type: Node|None
+    interacts = None # type: bool|None
+
+    say = False # type: bool|None
+    menu_with_caption = False # type: bool|None
+    who = None # type: str|None
 
     # By default, all attributes are None.
     def __getattr__(self, name):
@@ -899,6 +903,7 @@ class Say(Node):
         finally:
             renpy.game.context().say_attributes = None
             renpy.game.context().temporary_attributes = None
+            renpy.store._last_raw_what = "" # type: ignore
 
     def predict(self):
 
@@ -1371,7 +1376,7 @@ class Show(Node):
         super(Show, self).__init__(loc)
 
         self.imspec = imspec
-        self.atl = atl
+        self.atl = atl # type: Any
 
     def diff_info(self):
         return (Show, tuple(self.imspec[0]))
@@ -1495,7 +1500,7 @@ class Scene(Node):
 
         self.imspec = imgspec
         self.layer = layer
-        self.atl = atl
+        self.atl = atl # type: Any
 
     def diff_info(self):
 
@@ -1830,7 +1835,7 @@ class Menu(Node):
 
         next_node(self.next)
 
-        if self.has_caption:
+        if self.has_caption or renpy.config.choice_empty_window:
             statement_name("menu-with-caption")
         else:
             statement_name("menu")
@@ -2525,19 +2530,23 @@ class Default(Node):
             d["_defaults_set"] = defaults_set = renpy.revertable.RevertableSet()
             d.ever_been_changed.add("_defaults_set")
 
-        if self.varname not in defaults_set:
-
-            if start or (self.varname not in d.ever_been_changed):
-                d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
-
-            d.ever_been_changed.add(self.varname)
-
-            defaults_set.add(self.varname)
-
-        else:
-
+        if self.varname in defaults_set:
             if start and renpy.config.developer:
                 raise Exception("{}.{} is being given a default a second time.".format(self.store, self.varname))
+            return
+
+        # do the variable shadowing if not in this case, for compatibility reasons
+        if start and (renpy.config.developer is True):
+            fullname = '.'.join((self.store, self.varname))
+            if fullname in renpy.python.store_dicts:
+                raise Exception("{} is being given a default, but a store with that name already exists.".format(fullname))
+
+        if start or (self.varname not in d.ever_been_changed):
+            d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
+
+        d.ever_been_changed.add(self.varname)
+
+        defaults_set.add(self.varname)
 
     def report_traceback(self, name, last):
         return [ (self.filename, self.linenumber, name, None) ]

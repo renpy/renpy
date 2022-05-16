@@ -72,10 +72,18 @@ copyreg._reconstructor = _reconstructor # type: ignore
 # this to check to see if a background-save is valid.
 mutate_flag = True
 
+# In Python 2 functools.wraps does not check for the existence of WRAPPER_ASSIGNMENTS elements,
+# so for the C-defined methods we have AttributeError: 'method_descriptor' object has no attribute '__module__'.
+# To work around this, we only keep attributes that surely exist.
+if PY2:
+    def _method_wrapper(method):
+        return functools.wraps(method, ("__name__", "__doc__"), ())
+else:
+    _method_wrapper = functools.wraps # type: ignore
 
 def mutator(method):
 
-    @functools.wraps(method, ("__name__", "__doc__"), ())
+    @_method_wrapper(method)
     def do_mutation(self, *args, **kwargs):
 
         global mutate_flag
@@ -192,6 +200,7 @@ class RevertableList(list):
 
     def wrapper(method): # type: ignore
 
+        @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             l = method(*args, **kwargs) # type: ignore
             return RevertableList(l)
@@ -380,9 +389,10 @@ class RevertableSet(set):
 
     def wrapper(method): # type: ignore
 
+        @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             rv = method(*args, **kwargs) # type: ignore
-            if isinstance(rv, (set, frozenset)):
+            if isinstance(rv, set):
                 return RevertableSet(rv)
             else:
                 return rv
@@ -452,6 +462,18 @@ class RevertableObject(object):
         self.__dict__.update(compressed)
 
 
+def checkpointing(method):
+
+    @_method_wrapper(method)
+    def do_checkpoint(self, *args, **kwargs):
+
+        renpy.game.context().force_checkpoint = True
+
+        return method(self, *args, **kwargs)
+
+    return do_checkpoint
+
+
 class RollbackRandom(random.Random):
     """
     This is used for Random objects returned by renpy.random.Random.
@@ -474,14 +496,14 @@ class RollbackRandom(random.Random):
     def _rollback(self, compressed):
         super(RollbackRandom, self).setstate(compressed)
 
-    setstate = mutator(random.Random.setstate)
+    setstate = checkpointing(mutator(random.Random.setstate))
 
     if PY2:
-        jumpahead = mutator(random.Random.jumpahead) # type: ignore
+        jumpahead = checkpointing(mutator(random.Random.jumpahead)) # type: ignore
 
-    getrandbits = mutator(random.Random.getrandbits)
-    seed = mutator(random.Random.seed) # type: ignore
-    random = mutator(random.Random.random)
+    getrandbits = checkpointing(mutator(random.Random.getrandbits))
+    seed = checkpointing(mutator(random.Random.seed)) # type: ignore
+    random = checkpointing(mutator(random.Random.random))
 
     def Random(self, seed=None):
         """
@@ -494,7 +516,6 @@ class RollbackRandom(random.Random):
         new = RollbackRandom()
         new.seed(seed)
         return new
-
 
 class DetRandom(random.Random):
     """
@@ -516,6 +537,8 @@ class DetRandom(random.Random):
 
         if log.current is not None:
             log.current.random.append(rv)
+
+        renpy.game.context().force_checkpoint = True
 
         return rv
 

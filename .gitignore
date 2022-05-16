@@ -111,7 +111,6 @@ cubism
 CubismSdkForNative-4-*.zip
 
 # Created files.
-/launcher/theme
 /screenshot*
 .android.json
 

@@ -361,8 +361,10 @@ init -1500 python:
                 if page:
                     checkpoint = True
                 else:
-                    if renpy.in_rollback():
+                    if renpy.roll_forward_info() is not None:
+                        renpy.checkpoint(renpy.roll_forward_info(), hard=False)
                         return
+
                     checkpoint = False
             else:
                 checkpoint = True

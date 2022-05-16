@@ -75,6 +75,19 @@ given, the default of the channel is used. ::
         "We can also play a list of sounds, or music."
         play music [ "a.ogg", "b.ogg" ] fadeout 1.0 fadein 1.0
 
+When the ``if_changed`` clause is provided, and if the given track is currently playing
+on the channel, the play instruction doesn't interrupt it. ::
+
+        label market_side:
+            play music market
+            "We're entering the market."
+            jump market_main
+
+        label market_main:
+            play music market if_changed
+            "Maybe we just entered the market, maybe we were already there."
+            "If we were already there, the music didn't stop and start over, it just continued."
+
 The ``volume`` clause is also optional, and specifies a relative volume for
 the track, between 0.0 and 1.0. This makes it possible to adjust the volume a
 track is played at, each time it's played. ::
@@ -134,7 +147,7 @@ a play or stop statement.
 A variable may be used instead of a string here. If a variable exists in the
 :ref:`audio namespace <audio-namespace>`, it's used in preference to the default namespace::
 
-    define audio.woof = "woof.mp23
+    define audio.woof = "woof.mp3"
 
     # ...
 

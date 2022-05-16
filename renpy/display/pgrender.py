@@ -85,14 +85,14 @@ class Surface(pygame.Surface):
         return copy_surface(self, False)
 
     def copy(self):
-        return copy_surface(self, self)
+        return copy_surface(self, self) # type:ignore
 
     def subsurface(self, rect):
         rv = pygame.Surface.subsurface(self, rect)
         return rv
 
 
-def surface(rect, alpha):
+def surface(rect, alpha): # (tuple, bool|Surface) -> Surface
     """
     Constructs a new surface. The allocated surface is actually a subsurface
     of a surface that has a 2 pixel border in all directions.
@@ -113,14 +113,14 @@ def surface(rect, alpha):
     if sample is None:
         sample = pygame.Surface((4, 4), pygame.SRCALPHA, 32)
 
-    surf = Surface((width + 4, height + 4), 0, sample)
+    surf = Surface((width + 4, height + 4), 0, sample) # type:ignore
     return surf.subsurface((2, 2, width, height))  # E1101
 
 
 surface_unscaled = surface
 
 
-def copy_surface(surf, alpha=True):
+def copy_surface(surf, alpha=True): # (Surface, bool|Surface) -> Surface
     """
     Creates a copy of the surface.
     """

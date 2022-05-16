@@ -179,6 +179,25 @@ def annotate_western(list glyphs):
         else:
             g.split = SPLIT_NONE
 
+
+def annotate_anywhere(list glyphs):
+    """
+    allow all characters without ruby to be used for linebreaking.
+    """
+
+    cdef Glyph g
+
+    for g in glyphs:
+
+        # Don't split ruby.
+        if g.ruby != RUBY_NONE:
+            continue
+
+        if g.character == 0x20 or g.character == 0x200b:
+            g.split = SPLIT_INSTEAD
+        else:
+            g.split = SPLIT_BEFORE
+
 # This is used to tailor the unicode break algorithm. If a character in this
 # array is mapped to not
 cdef char break_tailor[65536]

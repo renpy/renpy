@@ -32,7 +32,6 @@ from renpy.audio.audio import get_channel, get_serial
 
 # Part of the public api:
 from renpy.audio.audio import register_channel, alias_channel
-register_channel; alias_channel
 
 
 def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False, relative_volume=1.0):
@@ -54,7 +53,8 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
-        fadeout time is taken from config.fade_music.
+        fadeout time is taken from config.fade_music. This is ignored if
+        the channel is paused when the music is played.
 
     `synchro_start`
         Ren'Py will ensure that all channels of with synchro_start set to true
@@ -93,6 +93,9 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
     if isinstance(filenames, basestring):
         filenames = [ filenames ]
+
+    if get_pause(channel=channel):
+        fadeout = 0
 
     with renpy.audio.audio.lock:
 
@@ -135,9 +138,11 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
             if loop:
                 ctx.last_filenames = filenames
                 ctx.last_tight = tight
+                ctx.last_relative_volume = relative_volume
             else:
                 ctx.last_filenames = [ ]
                 ctx.last_tight = False
+                ctx.last_relative_volume = 1.0
 
             ctx.pause = False
 
@@ -231,9 +236,11 @@ def queue(filenames, channel="music", loop=None, clear_queue=True, fadein=0, tig
             if loop:
                 ctx.last_filenames = filenames
                 ctx.last_tight = tight
+                ctx.last_relative_volume = relative_volume
             else:
                 ctx.last_filenames = [ ]
                 ctx.last_tight = False
+                ctx.last_relative_volume = 1.0
 
             ctx.pause = False
 
@@ -272,7 +279,8 @@ def stop(channel="music", fadeout=None):
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
-        fadeout time is taken from config.fade_music.
+        fadeout time is taken from config.fade_music. This is ignored if
+        the channel is paused.
 
 
     """
