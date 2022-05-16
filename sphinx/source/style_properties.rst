@@ -319,10 +319,10 @@ or on the screen when not inside a layout.
     Gives a number of pixels that are added to the vertical position
     computed using ypos and yalign.
 
-.. style-property:: offset tuple of (position, position)
+.. style-property:: offset tuple of (int, int)
 
-    Equivalent to setting xpos to the first component of the tuple,
-    and ypos to the second component of the tuple.
+    Equivalent to setting xoffset to the first component of the tuple,
+    and yoffset to the second component of the tuple.
 
 .. style-property:: xmaximum int
 
