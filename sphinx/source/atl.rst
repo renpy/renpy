@@ -939,19 +939,21 @@ both horizontal and vertical positions.
 
 .. transform-property:: corner1
 
-    :type: None or (int, int)
+    :type: None or (position, position)
     :default: None
 
     If not None, gives the upper-left corner of the crop box. Crop takes
-    priority over corners.
+    priority over corners. When a float, and crop_relative is enabled,
+    this is relative to the size of the child.
 
 .. transform-property:: corner2
 
-    :type: None or (int, int)
+    :type: None or (position, position)
     :default: None
 
     If not None, gives the lower right corner of the crop box. Cropt takes
-    priority over corners.
+    priority over corners. When a float, and crop_relativer is enabled, this
+    is relative to the size of the child.
 
 .. transform-property:: xysize
 

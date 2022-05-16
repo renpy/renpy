@@ -80,6 +80,8 @@ an absolute number of pixels, use::
 
 However, be warned that like most things documented only on this page, this will
 conflict with - and cannot be used at the same time as - some other new features.
+This setting applies to :tpref:`crop`, and also now to :tpref:`corner` and
+:tpref:`corner`.
 
 The platform-specific directories inside lib/ have had name changes. The
 ``lib/windows-x86_64`` directory is now ``lib/py2-windows-x86_64``. This
