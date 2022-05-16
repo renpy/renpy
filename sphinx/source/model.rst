@@ -340,9 +340,9 @@ The following uniforms are made available to all Models.
     likelyhood) different from frame to frame.
 
 ``vec4 u_viewport``
-    This gives the current viewport being drawn into. u_viewport.xy is 
+    This gives the current viewport being drawn into. u_viewport.xy is
     are the coordinates of the bottom-left corner of the viewport, relative
-    to the bottom-left corner of the window. u_viewport.pq is the width 
+    to the bottom-left corner of the window. u_viewport.pq is the width
     and height of the viewport.
 
 ``sampler2D tex0``, ``sampler2D tex1``, ``sampler2D tex2``
@@ -419,9 +419,10 @@ The following properties only take effect when a texture is being created,
 by a Transform with :tpref:`mesh` set, or by :func:`Model`, where these
 can be supplied the property method.
 
-``gl_mipmap``
-    If supplied, this determines if the textures supplied to a mesh are
-    created with mipmaps. This defaults to true.
+``gl_drawable_resolution``
+    If true or not set, the texture is rendered at the same resolution
+    as the window displaying the game. If false, it's rendered at the
+    virtual resolution of the displayable.
 
 ``gl_anisotropic``
     If supplied, this determines if the textures applied to a mesh are
@@ -431,6 +432,10 @@ can be supplied the property method.
 
     This defaults to true. Ren'Py sets this to False for certain effects,
     like the Pixellate transition.
+
+``gl_mipmap``
+    If supplied, this determines if the textures supplied to a mesh are
+    created with mipmaps. This defaults to true.
 
 ``gl_texture_wrap``
     When supplied, this determines how the textures applied to a mesh

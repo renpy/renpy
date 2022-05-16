@@ -308,7 +308,12 @@ cdef class GLTexture(GL2Model):
         tw = round(tw)
         th = round(th)
 
-        cw, ch = draw.draw_to_virt.transform(tw, th)
+        drawable = properties.get("drawable_resolution", True)
+
+        if drawable:
+            cw, ch = draw.draw_to_virt.transform(tw, th)
+        else:
+            cw, ch = tw, th
 
         tw = min(tw, loader.max_texture_width)
         th = min(th, loader.max_texture_height)

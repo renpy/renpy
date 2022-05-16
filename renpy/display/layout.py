@@ -2153,12 +2153,22 @@ class Flatten(Container):
 
     Flatten is a relatively expensive operation, and so should only be used
     when absolutely required.
+
+    `drawable_resolution`
+        Defaults to true, which is usually the right choice, but may cause
+        the texture to be had different artifacts when scaled than the
+        textures that make it up. Setting this to False will change the
+        artifacts, which may be more pleasing in some cases.
     """
 
-    def __init__(self, child, **properties):
+    drawable_resolution = True
+
+    def __init__(self, child, drawable_resolution=True, **properties):
         super(Flatten, self).__init__(**properties)
 
         self.add(child)
+
+        self.drawable_resolution = drawable_resolution
 
     def render(self, width, height, st, at):
         cr = renpy.display.render.render(self.child, width, height, st, at)
@@ -2172,6 +2182,7 @@ class Flatten(Container):
         rv.mesh = True
         rv.add_shader("renpy.texture")
         rv.add_property("mipmap", renpy.config.mipmap_dissolves if (self.style.mipmap is None) else self.style.mipmap)
+        rv.add_property("drawable_resolution", self.drawable_resolution)
 
         self.offsets = [ (0, 0) ]
 
