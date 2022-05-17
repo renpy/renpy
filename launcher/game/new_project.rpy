@@ -74,7 +74,7 @@ label new_project:
                 cancel=Jump("front_page"),
                 )
         else:
-            new_project_language = renpy.translate_string(_preferences.language or "English")
+            new_project_language = __("{#language name and font}")
             gui_kind = "new_gui_project"
 
             # When translating this, feel free to replace [new_project_language] with the translation of your language.
