@@ -51,6 +51,9 @@ python early hide:
                 setattr(persistent, name, value)
 
         def get(self, name):
+            if config.developer:
+                raise Exception("Using define with the persistent namespace is obsolete - use `default.persistent = ...` instead. Updating persistent variables with define is not supported.")
+
             return getattr(persistent, name)
 
     class _ErrorNamespace(object):
