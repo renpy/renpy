@@ -1,5 +1,7 @@
-﻿
-translate finnish strings:
+﻿translate finnish strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "Suomi"
 
     # about.rpy:39
     old "[version!q]"
@@ -1184,4 +1186,3 @@ translate finnish strings:
     # updater.rpy:195
     old "Proceed"
     new "Jatka"
-
