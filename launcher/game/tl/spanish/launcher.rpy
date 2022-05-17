@@ -1910,4 +1910,100 @@ translate spanish strings:
     old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
     new "El archivo descargado [extension.download_file] desde [extension.download_url] no es correcto."
 
+    # game/android.rpy:60
+    old "Removes Android temporary files."
+    new "Elimina los archivos temporales de Android."
+
+    # game/android.rpy:472
+    old "Clean"
+    new "Limpiar"
+
+    # game/android.rpy:628
+    old "Cleaning up Android project."
+    new "Limpieando el proyecto de Android."
+
+    # game/androidstrings.rpy:43
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    new "No pude usar javac para compilar un archivo de prueba. Si aún no has instalado el kit de desarrollo de Java, descárgalo de:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nEl JDK es diferente del JRE, por lo que es posible que tenga Java sin tener el JDK. Asegúrese de haber instalado las 'claves de registro de JavaSoft (Oracle)'.\n\nSin un JDK que funcione, no puedo continuar."
+
+    # game/androidstrings.rpy:64
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    new "Abrí el directorio que contiene android.keystore y bundle.keystore. Por favor, haz una copia de seguridad y guárdalos en un lugar seguro."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    new "Seleccionar directorio de proyectos"
+
+    # game/distribute.rpy:1674
+    old "Copying files..."
+    new "Copiando archivos..."
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    new "Actualizar juego antiguo"
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    new "Un editor moderno con muchas extensiones, incluida la integración avanzada de Ren'Py."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    new "Un editor moderno con muchas extensiones, incluida la integración avanzada de Ren'Py.\n{a=jump:reinstall_vscode}Actualice Visual Studio Code a la última versión.{/a}"
+
+    # game/editor.rpy:162
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:162
+    old "Up to 110 MB download required."
+    new "Requiere descargar hasta 110 MB."
+
+    # game/editor.rpy:175
+    old "A modern and approachable text editor."
+    new "Un editor de texto moderno y accesible."
+
+    # game/editor.rpy:187
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:200
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:209
+    old "Visual Studio Code (System)"
+    new "Visual Studio Code (Sistema)"
+
+    # game/editor.rpy:209
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    new "Utiliza una copia de Visual Studio Code que ha instalado fuera de Ren'Py. Se recomienda que instale la extensión language-renpy para agregar soporte para archivos Ren'Py."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/preferences.rpy:161
+    old "Clean temporary files"
+    new "Limpiar archivos temporales"
+
+    # game/preferences.rpy:263
+    old "Cleaning temporary files..."
+    new "Limpiando archivos temporales..."
+
+    # game/project.rpy:280
+    old "This may be because the project is not writeable."
+    new "Esto puede deberse a que el proyecto no se puede escribir."
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    new "Idioma (o Ninguno para el idioma predeterminado):"
+
+    # game/web.rpy:344
+    old "This feature is not supported in Ren'Py 8."
+    new "Esta característica no es compatible con Ren'Py 8."
+
+    # game/web.rpy:344
+    old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
+    new "Restauraremos el soporte en una versión futura de Ren'Py 8. Hasta entonces, use Ren'Py 7 para soporte web."
+    
 

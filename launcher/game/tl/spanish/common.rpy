@@ -765,3 +765,15 @@ translate spanish strings:
     # renpy/common/00preferences.rpy:493
     old "high contrast text"
     new "texto de alto contraste"
+    
+    # renpy/common/00preferences.rpy:511
+    old "audio when minimized"
+    new "audio cuando está minimizado"
+
+    # renpy/common/00preferences.rpy:531
+    old "main volume"
+    new "volumen principal"
+
+    # renpy/common/00preferences.rpy:535
+    old "mute main"
+    new "silenciar volumen principal"
