@@ -1,4 +1,7 @@
-translate schinese strings:
+﻿translate schinese strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=SourceHanSansLite.ttf}简体中文{/font}"
 
     # game/about.rpy:39
     old "[version!q]"
