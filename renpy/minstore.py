@@ -152,8 +152,7 @@ def input(*args, **kwargs):
 
     raise Exception("The Python input and raw_input functions do not work with Ren'Py. Please use the renpy.input function instead.")
 
-if PY2:
-    raw_input = input
+raw_input = input
 
 
 __all__ = [
