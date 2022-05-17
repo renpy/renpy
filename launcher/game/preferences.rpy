@@ -34,7 +34,7 @@ init python:
             return None
 
 
-        rv = [(i, renpy.translate_string(i, i)) for i in languages if i != 'piglatin']
+        rv = [(i, renpy.translate_string("{#language name and font}", i)) for i in languages if i != 'piglatin']
 
         rv.sort()
 
@@ -269,60 +269,63 @@ label preferences:
     jump preferences
 
 
+translate None strings:
+    old "{#language name and font}"
+    new "English"
 translate arabic strings:
-    old "arabic"
+    old "{#language name and font}"
     new "{font=DejaVuSans.ttf}العربية{/font}"
 translate finnish strings:
-    old "finnish"
+    old "{#language name and font}"
     new "Suomi"
 translate french strings:
-    old "french"
+    old "{#language name and font}"
     new "{font=fonts/Roboto-Light.ttf}Français{/font}"
 translate german strings:
-    old "german"
+    old "{#language name and font}"
     new "Deutsch"
 translate greek strings:
-    old "greek"
+    old "{#language name and font}"
     new "{font=fonts/Roboto-Light.ttf}Ελληνικά{/font}"
 translate indonesian strings:
-    old "indonesian"
+    old "{#language name and font}"
     new "Bahasa Indonesia"
 translate italian strings:
-    old "italian"
+    old "{#language name and font}"
     new "Italiano"
 translate japanese strings:
-    old "japanese"
+    old "{#language name and font}"
     new "{font=SourceHanSansLite.ttf}日本語{/font}"
 translate korean strings:
-    old "korean"
+    old "{#language name and font}"
     new "{font=SourceHanSansLite.ttf}한국어{/font}"
 translate malay strings:
-    old "malay"
+    old "{#language name and font}"
     new "Bahasa Melayu"
 translate piglatin strings:
-    old "piglatin"
+    old "{#language name and font}"
     new "Pig Latin"
 translate polish strings:
-    old "polish"
+    old "{#language name and font}"
     new "Polski"
 translate portuguese strings:
-    old "portuguese"
+    old "{#language name and font}"
     new "{font=fonts/Roboto-Light.ttf}Português{/font}"
 translate russian strings:
-    old "russian"
+    old "{#language name and font}"
     new "{font=fonts/Roboto-Light.ttf}Русский{/font}"
 translate schinese strings:
-    old "schinese"
+    old "{#language name and font}"
     new "{font=SourceHanSansLite.ttf}简体中文{/font}"
 translate spanish strings:
-    old "spanish"
+    old "{#language name and font}"
     new "{font=fonts/Roboto-Light.ttf}Español{/font}"
 translate tchinese strings:
-    old "tchinese"
+    old "{#language name and font}"
     new "{font=SourceHanSansLite.ttf}文言文{/font}"
 translate turkish strings:
-    old "turkish"
+    old "{#language name and font}"
     new "{font=fonts/Roboto-Light.ttf}Türkçe{/font}"
 translate vietnamese strings:
-    old "vietnamese"
+    old "{#language name and font}"
     new "{font=fonts/Roboto-Light.ttf}Tiếng Việt{/font}"
