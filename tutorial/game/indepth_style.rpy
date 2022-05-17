@@ -193,7 +193,7 @@ label style_basics:
 
     e "Each displayable has a default style name. By default, it's usually the lower-case displayable name, like 'text' for Text, or 'button' for buttons."
 
-    e "In a screen, a displayable can be given the style_prefix property to give a prefix for that displayable and it's children."
+    e "In a screen, a displayable can be given the style_prefix property to give a prefix for that displayable and its children." id style_basics_35db9a05
 
     e "For example, a text displayable with a style_prefix of 'help' will be given the style 'help_text'."
 
@@ -590,9 +590,9 @@ label style_button:
     show screen button('example_button')
     with dissolve
 
-    e "I'll start off with this style, which everything will inherit from. To make our lives easier, it inherits from the default style, rather than the customizes buttons in this game's GUI."
+    e "I'll start off with this style, which everything will inherit from. To make our lives easier, it inherits from the default style, rather than the customized buttons in this game's GUI." id style_button_9b53ce93
 
-    e "The first style property is the background property. It adds a background to the a button or window. Since this is a button, idle and hover variants choose different backgrounds when focused."
+    e "The first style property is the background property. It adds a background to a button or window. Since this is a button, idle and hover variants choose different backgrounds when focused." id style_button_aece4a8c
 
     e "We also center the two buttons, using the xalign position property."
 
@@ -814,7 +814,7 @@ label style_bar:
 
     show screen bar('thumb_bar')
 
-    e "The thumb style property gives a thumb image, that's placed based on the bars value. In the case of a scrollbar, it's resized if possible."
+    e "The thumb style property gives a thumb image, that's placed based on the bar's value. In the case of a scrollbar, it's resized if possible." id style_bar_7d361bac
 
     e "Here, we use it with the base_bar style property, which sets both bar images to the same displayable."
 
