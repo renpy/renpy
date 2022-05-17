@@ -785,3 +785,15 @@ translate french strings:
     # renpy/common/00preferences.rpy:493
     old "high contrast text"
     new "texte en contraste élevé"
+
+    # renpy/common/00preferences.rpy:511
+    old "audio when minimized"
+    new "audio quand minimisé"
+
+    # renpy/common/00preferences.rpy:531
+    old "main volume"
+    new "volume principal"
+
+    # renpy/common/00preferences.rpy:535
+    old "mute main"
+    new "sourdine générale"

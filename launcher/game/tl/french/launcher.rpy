@@ -1911,3 +1911,111 @@
     # game/updater.rpy:111
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Regarder le changelog{/a}"
+
+    # game/android.rpy:60
+    old "Removes Android temporary files."
+    new "Retirer les fichiers temporaires Android."
+
+    # game/android.rpy:472
+    old "Clean"
+    new "Nettoyer"
+
+    # game/android.rpy:628
+    old "Cleaning up Android project."
+    new "Nettoyage du projet Android."
+
+    # game/androidstrings.rpy:43
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    new "Impossible d'utiliser javac pour compiler un fichier de test. Si vous n'avez pas installé Java Development Kit, téléchargez-le ici :\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nLe JDK est différent du JRE, donc il est possible d'avoir Java sans avoir le JDK. Vérifiez que vous avez installé les 'JavaSoft (Oracle) registry keys'.\n\nSans un JDK fonctionnel, je ne peux pas continuer."
+
+    # game/androidstrings.rpy:64
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    new "J'ai ouvert le répertoire contenant android.keystore et bundle.keystore. Sauvegardez-les, et gardez-les dans un endroit sûr."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    new "Sélectionner le répertoire des Projets"
+
+    # game/distribute.rpy:1674
+    old "Copying files..."
+    new "Copie des fichiers..."
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    new "Mettre à jour old-game"
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    new "Un éditeur moderne avec beaucoup d'extensions, y compris des intégrations Ren'Py avancées."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    new "Un éditeur moderne avec beaucoup d'extensions, y compris des intégrations Ren'Py avancées.\n{a=jump:reinstall_vscode}Mettez Visual Studio Code à jour.{/a}"
+
+    # game/editor.rpy:162
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:162
+    old "Up to 110 MB download required."
+    new "Jusqu'à 110 Mo nécessaires pour le téléchargement."
+
+    # game/editor.rpy:175
+    old "A modern and approachable text editor."
+    new "Un éditeur de texte moderne et accessible."
+
+    # game/editor.rpy:187
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:200
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:209
+    old "Visual Studio Code (System)"
+    new "Visual Studio Code (Système)"
+
+    # game/editor.rpy:209
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    new "Utilise une copie de Visual Studio Code que vous avez installé en-dehors de Ren'Py. Il est recommandé d'installer l'extension language-renpy pour ajouter la gestion des fichiers Ren'Py."
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    new "Téléchargement de [extension.download_file]."
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    new "Impossible de télécharger [extension.download_file] depuis [extension.download_url]:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    new "le fichier [extension.download_file] téléchargé depuis [extension.download_url] est incorrect."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/preferences.rpy:154
+    old "Clean temporary files"
+    new "Nettoyer les fichiers temporaires"
+
+    # game/preferences.rpy:256
+    old "Cleaning temporary files..."
+    new "Nettoyage des fichiers temporaires..."
+
+    # game/project.rpy:280
+    old "This may be because the project is not writeable."
+    new "Il est possible que le projet ne soit pas accessible en écriture."
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    new "Langue (or None pour la langue par défaut):"
+
+    # game/web.rpy:344
+    old "This feature is not supported in Ren'Py 8."
+    new "Cette fonctionnalité n'est pas supportée dans Ren'Py 8."
+
+    # game/web.rpy:344
+    old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
+    new "La version web sera supportée à nouveau dans une future version de Ren'Py 8. En attendant, utilisez Ren'Py 7 pour des distributions web."
