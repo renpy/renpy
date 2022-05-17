@@ -1,5 +1,7 @@
-﻿
-translate polish strings:
+﻿translate polish strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "Polski"
 
     # game/about.rpy:39
     old "[version!q]"
@@ -1652,4 +1654,3 @@ translate polish strings:
     # game/web.rpy:347
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Zanim zaczniesz pakować aplikacje internetowe, musisz pobrać pakiet RenPyWeb (wsparcie internetowe Ren'Py). Czy chcesz teraz pobrać RenPyWeb?"
-
