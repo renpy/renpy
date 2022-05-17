@@ -253,7 +253,7 @@ screen preferences:
                                 # frame style "l_indent":
 
                                 for tlname, tlvalue in translations:
-                                    textbutton tlname action [ Language(tlvalue), project.SelectTutorial(True) ] style "l_list"
+                                    textbutton renpy.translate_string(tlname, tlvalue) action [ Language(tlvalue), project.SelectTutorial(True) ] style "l_list"
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
