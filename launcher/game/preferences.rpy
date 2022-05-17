@@ -33,21 +33,14 @@ init python:
         if not languages:
             return None
 
-        rv = [ ( "English", None) ]
 
-        for i in languages:
-            rv.append((i.title(), i))
-
-        for i in (("Schinese", "schinese"), ("Tchinese", "tchinese")):
-            if i in rv:
-                rv.remove(i)
-                rv.append(({"schinese": "Simplified Chinese", "tchinese": "Traditional Chinese"}.get(i[1]), i[1]))
+        rv = [(i, renpy.translate_string(i, i)) for i in languages if i != 'piglatin']
 
         rv.sort()
 
-        if ("Piglatin", "piglatin") in rv:
-            rv.remove(("Piglatin", "piglatin"))
-            rv.append(("Pig Latin", "piglatin"))
+        rv.insert(0, (None, "English"))
+
+        rv.append(("piglatin", "Pig Latin"))
 
         return rv
 
@@ -252,8 +245,8 @@ screen preferences:
 
                                 # frame style "l_indent":
 
-                                for tlname, tlvalue in translations:
-                                    textbutton renpy.translate_string(tlname, tlvalue) action [ Language(tlvalue), project.SelectTutorial(True) ] style "l_list"
+                                for tlid, tlname in translations:
+                                    textbutton tlname action [ Language(tlid), project.SelectTutorial(True) ] style "l_list"
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
@@ -274,3 +267,62 @@ label projects_directory_preference:
 label preferences:
     call screen preferences
     jump preferences
+
+
+translate arabic strings:
+    old "arabic"
+    new "{font=DejaVuSans.ttf}العربية{/font}"
+translate finnish strings:
+    old "finnish"
+    new "Suomi"
+translate french strings:
+    old "french"
+    new "{font=fonts/Roboto-Light.ttf}Français{/font}"
+translate german strings:
+    old "german"
+    new "Deutsch"
+translate greek strings:
+    old "greek"
+    new "{font=fonts/Roboto-Light.ttf}Ελληνικά{/font}"
+translate indonesian strings:
+    old "indonesian"
+    new "Bahasa Indonesia"
+translate italian strings:
+    old "italian"
+    new "Italiano"
+translate japanese strings:
+    old "japanese"
+    new "{font=SourceHanSansLite.ttf}日本語{/font}"
+translate korean strings:
+    old "korean"
+    new "{font=SourceHanSansLite.ttf}한국어{/font}"
+translate malay strings:
+    old "malay"
+    new "Bahasa Melayu"
+translate piglatin strings:
+    old "piglatin"
+    new "Pig Latin"
+translate polish strings:
+    old "polish"
+    new "Polski"
+translate portuguese strings:
+    old "portuguese"
+    new "{font=fonts/Roboto-Light.ttf}Português{/font}"
+translate russian strings:
+    old "russian"
+    new "{font=fonts/Roboto-Light.ttf}Русский{/font}"
+translate schinese strings:
+    old "schinese"
+    new "{font=SourceHanSansLite.ttf}简体中文{/font}"
+translate spanish strings:
+    old "spanish"
+    new "{font=fonts/Roboto-Light.ttf}Español{/font}"
+translate tchinese strings:
+    old "tchinese"
+    new "{font=SourceHanSansLite.ttf}文言文{/font}"
+translate turkish strings:
+    old "turkish"
+    new "{font=fonts/Roboto-Light.ttf}Türkçe{/font}"
+translate vietnamese strings:
+    old "vietnamese"
+    new "{font=fonts/Roboto-Light.ttf}Tiếng Việt{/font}"
