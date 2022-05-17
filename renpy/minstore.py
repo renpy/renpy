@@ -145,6 +145,16 @@ def _p(s):
     rv += " ".join(para)
     return rv
 
+def input(*args, **kwargs):
+    """
+    :undocumented:
+    """
+
+    raise Exception("The Python input and raw_input functions do not work with Ren'Py. Please use the renpy.input function instead.")
+
+if PY2:
+    raw_input = input
+
 
 __all__ = [
     'PY2',
@@ -167,6 +177,7 @@ __all__ = [
     'bord',
     'dict',
     'eval',
+    'input',
     'list',
     'object',
     'open',
@@ -176,6 +187,7 @@ __all__ = [
     'python_object',
     'python_set',
     'range',
+    'raw_input',
     'set',
     'sorted',
     'str',
