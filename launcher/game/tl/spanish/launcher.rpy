@@ -1956,7 +1956,7 @@ translate spanish strings:
 
     # game/editor.rpy:162
     old "Up to 110 MB download required."
-    new "Requiere descargar de hasta 110 MB."
+    new "Requiere descargar hasta 110 MB."
 
     # game/editor.rpy:175
     old "A modern and approachable text editor."
