@@ -270,62 +270,6 @@ label preferences:
 
 
 translate None strings:
+    # game/new_project.rpy:77
     old "{#language name and font}"
     new "English"
-translate arabic strings:
-    old "{#language name and font}"
-    new "{font=DejaVuSans.ttf}العربية{/font}"
-translate finnish strings:
-    old "{#language name and font}"
-    new "Suomi"
-translate french strings:
-    old "{#language name and font}"
-    new "{font=fonts/Roboto-Light.ttf}Français{/font}"
-translate german strings:
-    old "{#language name and font}"
-    new "Deutsch"
-translate greek strings:
-    old "{#language name and font}"
-    new "{font=fonts/Roboto-Light.ttf}Ελληνικά{/font}"
-translate indonesian strings:
-    old "{#language name and font}"
-    new "Bahasa Indonesia"
-translate italian strings:
-    old "{#language name and font}"
-    new "Italiano"
-translate japanese strings:
-    old "{#language name and font}"
-    new "{font=SourceHanSansLite.ttf}日本語{/font}"
-translate korean strings:
-    old "{#language name and font}"
-    new "{font=SourceHanSansLite.ttf}한국어{/font}"
-translate malay strings:
-    old "{#language name and font}"
-    new "Bahasa Melayu"
-translate piglatin strings:
-    old "{#language name and font}"
-    new "Pig Latin"
-translate polish strings:
-    old "{#language name and font}"
-    new "Polski"
-translate portuguese strings:
-    old "{#language name and font}"
-    new "{font=fonts/Roboto-Light.ttf}Português{/font}"
-translate russian strings:
-    old "{#language name and font}"
-    new "{font=fonts/Roboto-Light.ttf}Русский{/font}"
-translate schinese strings:
-    old "{#language name and font}"
-    new "{font=SourceHanSansLite.ttf}简体中文{/font}"
-translate spanish strings:
-    old "{#language name and font}"
-    new "{font=fonts/Roboto-Light.ttf}Español{/font}"
-translate tchinese strings:
-    old "{#language name and font}"
-    new "{font=SourceHanSansLite.ttf}文言文{/font}"
-translate turkish strings:
-    old "{#language name and font}"
-    new "{font=fonts/Roboto-Light.ttf}Türkçe{/font}"
-translate vietnamese strings:
-    old "{#language name and font}"
-    new "{font=fonts/Roboto-Light.ttf}Tiếng Việt{/font}"
