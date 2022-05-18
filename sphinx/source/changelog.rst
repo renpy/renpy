@@ -80,6 +80,10 @@ Ren'Py 8.0 ships with Python 3.9.10, and is available on the Windows,
 macOS, Linux, Android, and iOS platforms. The web platform will
 be supported in a future release.
 
+When running under Ren'Py 8, Ren'Py now runs without the equivalent of the
+Python ``-O`` flag. This means that docstrings and yield statements are
+available.
+
 Our experience is that many games run unchanged under Python 3, especially
 games that use Python primarily through the Ren'Py API, to manage
 game state. Ren'Py 8 has been used to run unmodified Ren'Py games
@@ -216,8 +220,8 @@ button on the screen. After being captured, the :func:`GetFocusRect` function
 can get the focus rectangle, and the :func:`ClearFocus` can clear the
 captured focus.
 
-ATL
----
+ATL and Transforms
+------------------
 
 It's now possible to include a block as part of an ATL interpolation.
 This means that::
@@ -240,6 +244,9 @@ many of which led to visual glitches.
 
 When an ATL image is used as one of the children of an image button, its
 shown time begins each time it is shown.
+
+The default for the :tpref:`crop_relative` transform property has been changed to
+True.
 
 Image Gallery
 -------------
@@ -354,12 +361,25 @@ The new RENPY_PATH_TO_SAVES environment variable makes it possible to control
 where Ren'Py places system-level saves. The RENPY_MULTIPERSISTENT variable has
 been documented, and controls the same thing with multipersistent data.
 
+The new :var:`config.at_exit_callbacks` function are called when the game
+quits.
+
+The :func:`HideSelf` action can be used by a screen to hide itself.
+
+The :var:`config.default_attribute_callbacks` variable allows a game to
+specify default attributes for a tag that are used when other attributes
+do not conflict.
+
+
+Other Changes
+-------------
+
 The :propref:`focus_mask` style property now defaults to None for drag displayables.
 This improves performance, but means that the displayable can be dragged by
 transparent pixels.
 
-Other Changes
--------------
+When adding files to the audio namespace, Ren'Py now scans for flac
+files.
 
 Say statements used as menu captions can now take permanent and temporary
 image attributes, just like say statements elsewhere.
@@ -408,6 +428,23 @@ Playing or stopping music on a channel now unpauses that channel.
 
 The new :var:`preferences.audio_when_minimized` preference now enables the
 audio of the game to be paused when the window is minimized.
+
+The default for :propref:`outline_scaling` is now "linear".
+
+Many translations have been updated.
+
+Versioning
+----------
+
+Ren'Py's full version numbers are now of the form major.minor.patch.YYMMDDCCnu,
+where:
+
+* YY is the two digit year of the latest commit.
+* MM is the month of the commit.
+* DD is the day of the commit
+* CC is the commit number on that day
+* n is present if this is a nightly build.
+* u is present if this is an unofficial build.
 
 
 .. _renpy-7.4.11:

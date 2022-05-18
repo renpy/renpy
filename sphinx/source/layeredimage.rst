@@ -613,7 +613,7 @@ the life of a set of attributes, from the show instruction to the on-screen disp
 - If a :var:`config.adjust_attributes` function exists to match
   the image tag, it is called, and returns a potentially different set of
   attributes. If so, it replaces the former set, which is forgotten.
-- If a :var:`config.default_attributes` function exists and if its trigger
+- If a :var:`config.default_attribute_callbacks` function exists and if its trigger
   conditions are met, it is called and potentially adds attributes to the set.
 - The two previous stages are not specific to layeredimages, because it is only
   after this stage that renpy determines which image or layeredimage
