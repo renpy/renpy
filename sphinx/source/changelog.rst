@@ -39,7 +39,7 @@ games are:
   way that interpolation works in Ren'Py dialogue. This is only available
   in Python, however, and not in most purely Ren'Py statements.
 
-There are a huge amount of other improvements in the ten major release of
+There are a huge number of other improvements in the ten major releases of
 Python between 2.7 and 3.9, so be sure to read the above and other Python
 documentation to find out everything that's improved.
 
