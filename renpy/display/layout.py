@@ -1420,7 +1420,9 @@ class DynamicDisplayable(renpy.display.core.Displayable):
     :doc: disp_dynamic
 
     A displayable that can change its child based on a Python
-    function, over the course of an interaction.
+    function, over the course of an interaction. It does not
+    take any properties, as its layout is controlled by the
+    properties of the child displayable it returns.
 
     `function`
         A function that is called with the arguments:
