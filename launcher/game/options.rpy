@@ -448,6 +448,8 @@ define config.mouse_focus_clickthrough = True
 # Reduce the rate of screen updates.
 default preferences.gl_powersave = True
 
+# Enable rtl.
+define config.rtl = True
 
 # Disable steam.
 python early:

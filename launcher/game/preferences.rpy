@@ -33,14 +33,13 @@ init python:
         if not languages:
             return None
 
+        languages.remove("piglatin")
 
-        rv = [(i, renpy.translate_string("{#language name and font}", i)) for i in languages if i != 'piglatin']
-
-        rv.sort()
+        rv = [(i, renpy.translate_string("{#language name and font}", i)) for i in languages ]
+        rv.sort(key=lambda a : renpy.filter_text_tags(a[1], allow=[]).lower())
 
         rv.insert(0, (None, "English"))
-
-        rv.append(("piglatin", "Pig Latin"))
+        rv.append(("piglatin", "Igpay Atinlay"))
 
         return rv
 
