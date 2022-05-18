@@ -27,16 +27,17 @@ so please check that and other Python websites for descriptions.
 That being said, a few things made available to the Python in your Ren'Py
 games are:
 
-* The ability to annotate functions arguments and return values with type
-  information. (This is only supported in Python.)
-
 * Functions can have keyword-only parameters. (These are also supported
   in parameter lists for labels, transforms, and screens.)
 
-* Formatted string literals can now be used in Python code. These are
-  strings like ``f"characters/{character}.chr"``, where the text in
+* The ability to annotate functions arguments and return values with type
+  information. (This is only supported in Python.)
+
+* Formatted string literals can now be used. These
+  are strings like ``f"characters/{character}.chr"``, where the text in
   braces is replaced by a formatted Python variable, similarly to the
-  way that interpolation works in Ren'Py dialogue.
+  way that interpolation works in Ren'Py dialogue. This is only available
+  in Python, however, and not in most purely Ren'Py statements.
 
 There are a huge other improvements in the ten major release of Python
 between 2.7 and 3.9, so be sure to read the above and other Python
@@ -50,7 +51,7 @@ There are a few things that may need to be converted if you used advanced
 Python.
 
 * In Python 3, division always returns a float, rather than an integer.
-  (for example, ``3 / 2`` is now 1.5 rather than 1.) The ``//`` operator
+  (for example, ``3 / 2`` is now 1.5 rather than 1). The ``//`` operator
   divides as an integer. This change can affect Ren'Py positioning,
   where floats are treated differently from integers.
 
@@ -81,7 +82,7 @@ macOS, Linux, Android, and iOS platforms. The web platform will
 be supported in a future release.
 
 When running under Ren'Py 8, Ren'Py now runs without the equivalent of the
-Python ``-O`` flag. This means that docstrings and yield statements are
+Python ``-O`` flag. This means that docstrings and assert statements are
 available.
 
 Our experience is that many games run unchanged under Python 3, especially
