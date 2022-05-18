@@ -502,7 +502,7 @@ init -1500 python:
         def __call__(self):
             renpy.queue_event(self.event, up=self.up)
 
-
+    @renpy.pure
     class Function(Action, DictEquality):
         """
         :doc: other_action
