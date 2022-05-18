@@ -24,11 +24,11 @@ init -1500 python:
     @renpy.pure
     class InvertSelected(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         This inverts the selection state of the provided action, while
-         proxying over all of the other methods.
-         """
+        This inverts the selection state of the provided action, while
+        proxying over all of the other methods.
+        """
 
         def __init__(self, action):
             self.action = action
@@ -56,13 +56,13 @@ init -1500 python:
     @renpy.pure
     def If(expression, true=None, false=None):
         """
-         :doc: other_action
+        :doc: other_action
 
-         This returns `true` if `expression` is true, and `false`
-         otherwise. Use this to select an action based on an expression.
-         Note that the default, None, can be used as an action that causes
-         a button to be disabled.
-         """
+        This returns `true` if `expression` is true, and `false`
+        otherwise. Use this to select an action based on an expression.
+        Note that the default, None, can be used as an action that causes
+        a button to be disabled.
+        """
 
         if expression:
             return true
@@ -138,10 +138,10 @@ init -1500 python:
     @renpy.pure
     class Screenshot(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         Takes a screenshot.
-         """
+        Takes a screenshot.
+        """
 
         def __call__(self):
             _screenshot()
@@ -149,10 +149,11 @@ init -1500 python:
     @renpy.pure
     class HideInterface(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         Causes the interface to be hidden until the user clicks.
-         """
+        Causes the interface to be hidden until the user clicks.
+        This is typically what happens when hitting the H key in a Ren'Py game.
+        """
 
         def __call__(self):
             renpy.call_in_new_context("_hide_windows")
@@ -178,10 +179,10 @@ init -1500 python:
 
     class With(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         Causes `transition` to occur.
-         """
+        Causes `transition` to occur.
+        """
 
         def __init__(self, transition):
             self.transition = transition
@@ -193,10 +194,10 @@ init -1500 python:
     @renpy.pure
     class Notify(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         Displays `message` using :func:`renpy.notify`.
-         """
+        Displays `message` using :func:`renpy.notify`.
+        """
 
         def __init__(self, message):
             self.message = message
@@ -211,12 +212,13 @@ init -1500 python:
     class Rollback(Action, DictEquality):
         """
         :doc: other_action
+        :args: (*args, force="menu", **kwargs)
 
         This action causes a rollback to occur, when a rollback is possible.
         Otherwise, nothing happens.
 
-        The arguments are given to :func:`renpy.rollback`, except that the
-        `force` argument defaults to "menu".
+        The arguments are given to :func:`renpy.rollback`. This includes the
+        `force` argument which here defaults to "menu".
         """
 
         args = tuple()
