@@ -365,7 +365,8 @@ where Ren'Py places system-level saves. The RENPY_MULTIPERSISTENT variable has
 been documented, and controls the same thing with multipersistent data.
 
 The new :var:`config.at_exit_callbacks` function are called when the game
-quits.
+quits. This is intended to allow the game to save additional data created
+by the developer.
 
 The :func:`HideSelf` action can be used by a screen to hide itself.
 
