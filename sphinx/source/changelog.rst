@@ -148,6 +148,9 @@ cause skipping if the computer is slow.
 The config.webaudio_required_types variable is intended to allow games using ogg
 or opus audio to run on Safari, and can be changed if a game only uses mp3 audio.
 
+When importing save files into a web distribution, Ren'Py will now refresh
+the list of save files without a restart.
+
 When running as an Android application on a ChromeOS device, the "chromeos"
 variant will be selected.
 
@@ -430,6 +433,9 @@ The new :var:`preferences.audio_when_minimized` preference now enables the
 audio of the game to be paused when the window is minimized.
 
 The default for :propref:`outline_scaling` is now "linear".
+
+The version of SDL used by Ren'Py has been upgraded to 2.0.20 on non-web
+platforms.
 
 Many translations have been updated.
 
