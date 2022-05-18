@@ -1579,10 +1579,10 @@ Rarely or Internally Used
 
 .. var:: config.scene = renpy.scene
 
-    A function that's used in place of renpy.scene by the :ref:`scene
+    A function that's used in place of :func:`renpy.scene` by the :ref:`scene
     statement <scene-statement>`. Note that this is used to clear the screen,
-    and config.show is used to show a new image. This should have the same
-    signature as renpy.scene.
+    and :var:`config.show` is used to show a new image. This should have the same
+    signature as :func:`renpy.scene`.
 
 .. var:: config.screenshot_callback = ...
 
@@ -1632,9 +1632,9 @@ Rarely or Internally Used
 
 .. var:: config.show = renpy.show
 
-    A function that is used in place of renpy.show by the :ref:`show
+    A function that is used in place of :func:`renpy.show` by the :ref:`show
     <show-statement>` and :ref:`scene <scene-statement>` statements. This
-    should have the same signature as renpy.show.
+    should have the same signature as :func:`renpy.show`.
 
 .. var:: config.skip_delay = 75
 
