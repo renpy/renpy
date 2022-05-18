@@ -392,8 +392,8 @@ translate piglatin tutorial_atl_2e9d63ea:
 # game/tutorial_atl.rpy:573
 translate piglatin tutorial_atl_ddc55039:
 
-    # e "The simplest thing we can to is to statically position an image. This is done by giving the names of the position properties, followed by the property values."
-    e "Hetay implestsay hingtay eway ancay otay isay otay aticallystay ositionpay anay imageay. Histay isay oneday ybay ivinggay hetay amesnay ofay hetay ositionpay ropertiespay, ollowedfay ybay hetay ropertypay aluesvay."
+    # e "The simplest thing we can do is to statically position an image. This is done by giving the names of the position properties, followed by the property values." id tutorial_atl_ddc55039
+    e "Hetay implestsay hingtay eway ancay oday isay otay aticallystay ositionpay anay imageay. Histay isay oneday ybay ivinggay hetay amesnay ofay hetay ositionpay ropertiespay, ollowedfay ybay hetay ropertypay aluesvay." id tutorial_atl_ddc55039
 
 # game/tutorial_atl.rpy:578
 translate piglatin tutorial_atl_43516492:
