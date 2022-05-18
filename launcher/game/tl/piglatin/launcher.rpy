@@ -1,5 +1,7 @@
-﻿
-translate piglatin strings:
+﻿translate piglatin strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "Pig Latin"
 
     # game/about.rpy:39
     old "[version!q]"
@@ -1688,4 +1690,3 @@ translate piglatin strings:
     # game/web.rpy:347
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Eforebay ackagingpay ebway appsay, ouyay'llay eednay otay ownloadday Enpywebray, Enray'Ypay'say ebway upportsay. Ouldway ouyay ikelay otay ownloadday Enpywebray ownay?"
-

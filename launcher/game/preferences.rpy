@@ -33,21 +33,14 @@ init python:
         if not languages:
             return None
 
-        rv = [ ( "English", None) ]
 
-        for i in languages:
-            rv.append((i.title(), i))
-
-        for i in (("Schinese", "schinese"), ("Tchinese", "tchinese")):
-            if i in rv:
-                rv.remove(i)
-                rv.append(({"schinese": "Simplified Chinese", "tchinese": "Traditional Chinese"}.get(i[1]), i[1]))
+        rv = [(i, renpy.translate_string("{#language name and font}", i)) for i in languages if i != 'piglatin']
 
         rv.sort()
 
-        if ("Piglatin", "piglatin") in rv:
-            rv.remove(("Piglatin", "piglatin"))
-            rv.append(("Pig Latin", "piglatin"))
+        rv.insert(0, (None, "English"))
+
+        rv.append(("piglatin", "Pig Latin"))
 
         return rv
 
@@ -252,8 +245,8 @@ screen preferences:
 
                                 # frame style "l_indent":
 
-                                for tlname, tlvalue in translations:
-                                    textbutton tlname action [ Language(tlvalue), project.SelectTutorial(True) ] style "l_list"
+                                for tlid, tlname in translations:
+                                    textbutton tlname action [ Language(tlid), project.SelectTutorial(True) ] style "l_list"
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
@@ -274,3 +267,9 @@ label projects_directory_preference:
 label preferences:
     call screen preferences
     jump preferences
+
+
+translate None strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "English"

@@ -1,4 +1,7 @@
 translate spanish strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=fonts/Roboto-Light.ttf}Español{/font}"
 
     # about.rpy:39
     old "[version!q]"
@@ -1897,7 +1900,7 @@ translate spanish strings:
     # game/updater.rpy:111
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Ver el registro de cambios{/a}"
-    
+
     # game/installer.rpy:10
     old "Downloading [extension.download_file]."
     new "Descargando [extension.download_file]."
