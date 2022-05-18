@@ -5,8 +5,114 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-7.5.0:
 .. _renpy-8.0.0:
 
-7.5 / 8.0
+8.0 / 7.5
 =========
+
+Python 3 Support (Ren'Py 8.0 Only)
+----------------------------------
+
+Ren'Py 8.0 runs under Python 3, the latest major version of the Python
+language.
+
+If your game uses minimal Python (for example, just storing character
+names and flags), it should work the same as it did before. Otherwise,
+please read on.
+
+The move to Python 3 makes over a decade of Python language and
+library improvements available to the Ren'Py developer, as described
+in the :ref:`What's new in Python <https://docs.python.org/3.9/whatsnew/index.html>`_
+documentation. There are far too many changes in Python 3 to include here,
+so please check that and other Python websites for descriptions.
+
+That being said, a few things made available to the Python in your Ren'Py
+games are:
+
+* The ability to annotate functions arguments and return values with type
+  information. (This is only supported in Python.)
+
+* Functions can have keyword-only parameters. (These are also supported
+  in parameter lists for labels, transforms, and screens.)
+
+* Formatted string literals can now be used in Python code. These are
+  strings like ``f"characters/{character}.chr"``, where the text in
+  braces is replaced by a formatted Python variable, similarly to the
+  way that interpolation works in Ren'Py dialogue.
+
+There are a huge other improvements in the ten major release of Python
+between 2.7 and 3.9, so be sure to read the above and other Python
+documentation to find out everything that's improved.
+
+One of the greatest advantages is that this moves Ren'Py off Python 2.7,
+which is no longer supported by the Python Software Foundation, and so
+the move to Ren'Py 8.0 helps secure Ren'Py's future.
+
+There are a few things that may need to be converted if you used advanced
+Python.
+
+* In Python 3, division always returns a float, rather than an interger.
+  (for example, ``3 / 2`` is now 1.5 rather than 1.) The ``//`` operator
+  divides as an integer. This change can affect Ren'Py positioning,
+  where floats are treated differently from integers.
+
+* In Python 3, the keys, items, and values methods of dictionaries now
+  return views, not lists. The iterkeys, iteritems, and itervalues
+  methods are not supported. The xrange method is gone, and range
+  no longer returns a list.
+
+* Except clauses now must be written like ``except Exception as e:``,
+  as the old syntax, ``except Exception, e:`` is not supported.
+
+* All strings are now unicode by default (Ren'Py has been forcing this
+  for several years), and files are opened in text mode by default.
+  (However, :func:`renpy.file` opens files in binary mode.)
+
+* Many Python modules have been renamed.
+
+This is not an exhaustive list.
+
+Ren'Py ships with a cut-down version of the Python Standard library, so
+not every Python module is available in Ren'Py. Please let us know if there
+is something missing you have a good use for, especially if that module
+does not require a library dependency. While ``async`` and ``await``
+are available, Ren'Py doesn't directly support coroutines.
+
+Ren'Py 8.0 ships with Python 3.9.10, and is available on the Windows,
+macOS, Linux, Android, and iOS platforms. The web platform will
+be supported in a future release.
+
+Our experience is that many games run unchanged under Python 3, especially
+games that use Python primarily through the Ren'Py API, to manage
+game state. Ren'Py 8 has been used to run unmodified Ren'Py games
+going back to the year 2006.
+
+
+Continued Python 2.7 Support (Ren'Py 7.5)
+-----------------------------------------
+
+Ren'Py 7.5 is being released at the same time as Ren'Py 8.0, to continue
+to provide a version of Ren'Py that runs on Python 2.7, as a way of
+supporting games in development (or being maintained after release)
+that still require Python 2.7.
+
+In this release, Ren'Py 7.5 also supports the web platform, which
+Ren'Py 8.0 does not yet support.
+
+For this release, Ren'Py 7.5 and Ren'Py 8.0 should support the same
+set of of features.
+
+We plan to continue to support Ren'Py 7.x until we see that the community
+has moved to Ren'Py 8.x, or until changes to the Python ecosystem mean
+that supporting Ren'Py on Python 2 is no longer tenable.
+
+Please test your games on Ren'Py 8 - for many games, few to no changes
+will be needed. If for some reason you can't port your game to Ren'Py
+8, please let us know what is holding you back.
+
+
+
+
+
+
 
 
 Dismiss, Nearrect, and Focus Rectangles
@@ -120,8 +226,8 @@ on a per-screen basis by enabling the new `roll_forward` property on the
 screen. If all screens in your game support roll forward, it can be enabled
 with the new :var:`config.call_screen_roll_forward` variable.
 
-Features
---------
+New Features
+------------
 
 There is a new "main" volume that can be accessed through :func:`Preferences`.
 The main volume is multiplied with all the other volumes to globally reduce
