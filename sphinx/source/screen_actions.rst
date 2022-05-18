@@ -65,8 +65,8 @@ take the `name` and `page` arguments.
 Audio Actions
 -------------
 
-The concept of channels and how they work is explained
-at :ref:`audio`.
+The concept of channels and how they work, as well as most information
+about audio in Ren'Py, is explained at :ref:`audio`.
 
 .. include:: inc/audio_action
 
