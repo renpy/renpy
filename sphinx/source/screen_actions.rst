@@ -65,6 +65,9 @@ take the `name` and `page` arguments.
 Audio Actions
 -------------
 
+The concept of channels and how they work is explained
+at :ref:`audio`.
+
 .. include:: inc/audio_action
 
 
