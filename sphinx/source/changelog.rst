@@ -49,7 +49,7 @@ the move to Ren'Py 8.0 helps secure Ren'Py's future.
 There are a few things that may need to be converted if you used advanced
 Python.
 
-* In Python 3, division always returns a float, rather than an interger.
+* In Python 3, division always returns a float, rather than an integer.
   (for example, ``3 / 2`` is now 1.5 rather than 1.) The ``//`` operator
   divides as an integer. This change can affect Ren'Py positioning,
   where floats are treated differently from integers.
@@ -109,10 +109,88 @@ will be needed. If for some reason you can't port your game to Ren'Py
 8, please let us know what is holding you back.
 
 
+Platform Support Changes (Ren'Py 8)
+-----------------------------------
+
+With the move to Ren'Py 8, we are removing support for the
+following platforms:
+
+* 32-bit x86 Windows (i686)
+* 32-bit x86 Linux (i686)
+* 32-bit ARM Linux (armv7l)
+
+This reflects the obsolescence of 32-bit computing. These platforms remain
+supported by Ren'Py 7.5, but the effort to port new software to old platforms
+didn't feel justified.
 
 
+Web and ChromeOS
+----------------
+
+The web platform is currently only supported on Ren'Py 7.5.
+
+Changes to the Safari and Chrome web browsers increased the memory Ren'Py
+used by about 50 times, causing RangeErrors when the web browser ran out
+of stack memory. Ren'Py 7.5 includes changes to reduces the amount of
+memory used inside web browsers. As a result, Ren'Py now runs again
+inside Chrome and Safari, including on iOS devices.
+
+The new :var:`config.webaudio_required_types` variable can be given a list of
+mime types of audio files used by the game. Ren'Py will only use the web
+browser's Web Audio system for playback if all of the mime types are supported
+in the browser. If not, webasm is used for playback, which is more likely to
+cause skipping if the computer is slow.
+
+The config.webaudio_required_types variable is intended to allow games using ogg
+or opus audio to run on Safari, and can be changed if a game only uses mp3 audio.
+
+When running as an Android application on a ChromeOS device, the "chromeos"
+variant will be selected.
 
 
+Steam, Steam Deck, and Epic Games Store
+---------------------------------------
+
+This release includes rewritten Steam support, provided by a new
+ctypes-based binding that gives access to the entire Steamworks API,
+including callbacks. While the Steam support available through the
+:ref:`achievement module <achievement>`_ remains unchanged, this
+gives advanced Python programmers access to more Steam functionality.
+
+When Steam is active, Ren'Py will now enable the "steam" variant.
+
+This release includes built-in support for the Steam Deck hardware.
+The support includes the ability to automatically display the
+on-screen keyboard when :func:`renpy.input` is called.
+The steam deck also causes Ren'Py to enable the "steam_deck",
+"steam", "medium", and "touch" variants.
+
+We have a `Ren'Py on Steam Deck Guide <https://github.com/renpy/steam-deck-guide>`_
+to help you get your game certified on that platform. Thanks go to Valve for
+supplying a Steam Deck to test on.
+
+Ren'Py now includes support for being launched by the Epic Games Store,
+by ignoring various command line arguments supplied by EGS.
+
+
+Visual Studio Code
+------------------
+
+Ren'Py now includes support for downloading and using Visual Studio Code,
+including downloading the `Ren'Py Language <https://marketplace.visualstudio.com/items?itemName=LuqueDaniel.languague-renpy>`_
+extension.
+
+The Ren'Py Language extension provides rich support for Ren'Py, including
+syntax highlighting, snippets, completion, color previews, documentation,
+go to definition, function signatures, error diagnostics, outlining,
+and more.
+
+Visual Studio Code also has a large system of extensions, including
+spell-checkers, that can be used with with the Ren'Py Language extension.
+
+Visual Studio Code can be activated by going to the editor preferences
+and choosing to download it. It's also possible to configure Ren'Py
+to use a system install of Ren'Py with extensions that you choose.
 
 
 Dismiss, Nearrect, and Focus Rectangles
@@ -126,10 +204,10 @@ modal frame, and causes an action to run when it is activated. This allows,
 among other things, a behavior where if the player clicks outside the frame,
 the frame gets hidden.
 
-The :ref:`nearrec <sl-nearrect>` displayable lays out a displayable either
+The :ref:`nearrect <sl-nearrect>` displayable lays out a displayable either
 above or below a rectangle on the screen. This can be used to display a
 tooltip above a button, or a drop-down menu below it. (An example of
-a drop-down menu is documented with nearrect, and an exampler of tooltip
+a drop-down menu is documented with nearrect, and an example of tooltip
 usage is with :ref:`tooltips <tooltips>`.
 
 The rectangles aside of which the nearrect places things can be captured by
@@ -170,25 +248,11 @@ The :class:`Gallery` class now has a new field, `image_screen`, that can be
 used to customize how gallery image are displayed.
 
 The :func:`Gallery.image` and :func:`Gallery.unlock_image` methods now
-take keywork arguments beginning with `show\_`. These arguments have the
+take keyword arguments beginning with `show\_`. These arguments have the
 `show\_` prefix stripped, and are then passed to the Gallery.image_screen
 as additional keyword arguments. This can be used to include additional
 information with the images in the gallery.
 
-Web and ChromeOS
-----------------
-
-The new :var:`config.webaudio_required_types` variable can be given a list of
-mime types of audio files used by the game. Ren'Py will only use the web
-browser's Web Audio system for playback if all of the mime types are supported
-in the browser. If not, webasm is used for playback, which is more likely to
-cause skipping if the computer is slow.
-
-The config.webaudio_required_types variable is intended to allow games using ogg
-or opus audio to run on Safari, and can be changed if a game only uses mp3 audio.
-
-When running as an Android application on a ChromeOS device, the "chromeos"
-variant will be selected.
 
 Boxes, Grids and Vpgrids
 ------------------------
