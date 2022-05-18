@@ -39,8 +39,8 @@ games are:
   way that interpolation works in Ren'Py dialogue. This is only available
   in Python, however, and not in most purely Ren'Py statements.
 
-There are a huge other improvements in the ten major release of Python
-between 2.7 and 3.9, so be sure to read the above and other Python
+There are a huge amount of other improvements in the ten major release of
+Python between 2.7 and 3.9, so be sure to read the above and other Python
 documentation to find out everything that's improved.
 
 One of the greatest advantages is that this moves Ren'Py off Python 2.7,
@@ -368,8 +368,6 @@ been documented, and controls the same thing with multipersistent data.
 The new :var:`config.at_exit_callbacks` function are called when the game
 quits. This is intended to allow the game to save additional data created
 by the developer.
-
-The :func:`HideSelf` action can be used by a screen to hide itself.
 
 The :var:`config.default_attribute_callbacks` variable allows a game to
 specify default attributes for a tag that are used when other attributes
