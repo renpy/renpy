@@ -1495,7 +1495,7 @@ class Text(renpy.display.core.Displayable):
     """
     :name: Text
     :doc: text
-    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, mipmap=None, **properties)
+    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, **properties)
 
     A displayable that displays text on the screen.
 
@@ -1519,6 +1519,10 @@ class Text(renpy.display.core.Displayable):
     `slow_done`
         If not None, and if slow text mode is enabled (see the `slow` parameter), this is a
         function or callable which is called with no arguments when the text finishes displaying.
+
+    `\**properties`
+        Like other Displayables, Text takes style properties, including (among many others) the
+        :propref:`mipmap` property.
     """
 
     __version__ = 4
