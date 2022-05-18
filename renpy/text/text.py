@@ -1515,6 +1515,10 @@ class Text(renpy.display.core.Displayable):
     `substitute`
         If true, text interpolation occurs. If false, it will not occur. If
         None, they are controlled by :var:`config.new_substitutions`.
+
+    `slow_done`
+        If not None, and if slow text mode is enabled (see the `slow` parameter), this is a
+        function or callable which is called with no arguments when the text finishes displaying.
     """
 
     __version__ = 4
