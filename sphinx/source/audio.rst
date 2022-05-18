@@ -263,6 +263,12 @@ as Python variables. For example, "my song.mp3", "8track.opus", and
 "this-is-a-song.ogg" won't work.
 
 
+Actions
+-------
+
+See :ref:`audio-actions`.
+
+
 Functions
 ---------
 
