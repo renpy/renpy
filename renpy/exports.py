@@ -1087,7 +1087,7 @@ def display_menu(items,
     """
     :doc: se_menu
     :name: renpy.display_menu
-    :args: (items, interact=True, screen="choice")
+    :args: (items, *, interact=True, screen="choice")
 
     This displays a menu to the user. `items` should be a list of 2-item tuples.
     In each tuple, the first item is a textual label, and the second item is
@@ -1436,7 +1436,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None):
     """
     :doc: other
-    :args: (delay=None, hard=False, predict=False)
+    :args: (delay=None, *, hard=False, predict=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -1902,6 +1902,7 @@ def jump_out_of_context(label):
 def call(label, *args, **kwargs):
     """
     :doc: se_call
+    :args: (label, *args, from_current=False, **kwargs)
 
     Causes the current Ren'Py statement to terminate, and a jump to a
     `label` to occur. When the jump returns, control will be passed
