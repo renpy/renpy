@@ -175,10 +175,12 @@ class Formatter(string.Formatter):
         if conversion is None:
             return value
 
+        conversion = conversion.replace("!", "")
+
         if not conversion:
             raise ValueError("Conversion specifier can't be empty.")
 
-        if set(conversion) - set("rstqulci!"):
+        if set(conversion) - set("rstqulci"):
             raise ValueError("Unknown symbols in conversion specifier, this must use only the \"rstqulci\".")
 
         if "r" in conversion:
@@ -214,7 +216,7 @@ class Formatter(string.Formatter):
             value = value.lower()
 
         if "c" in conversion and value:
-            value = value[0].upper() + value[1:]
+            value = value[0].capitalize() + value[1:]
 
         return value
 
