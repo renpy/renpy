@@ -69,7 +69,7 @@ init -1500 python:
         """
         :doc: control_action
 
-        Causes control to transfer to `label`.
+        Causes control to transfer to `label`, given as a string.
         """
 
         def __init__(self, label):
@@ -83,8 +83,8 @@ init -1500 python:
         """
         :doc: control_action
 
-        Ends the current statement, and calls `label`. Arguments and
-        keyword arguments are passed to :func:`renpy.call`.
+        Ends the current statement, and calls `label`, given as a string.
+        Arguments and keyword arguments are passed to :func:`renpy.call`.
         """
 
         args = tuple()
@@ -174,14 +174,14 @@ init -1500 python:
     @renpy.pure
     def ShowTransient(screen, transition=None, *args, **kwargs):
         """
-         :doc: control_action
+        :doc: control_action
 
-         Shows a transient screen. A transient screen will be hidden when
-         the current interaction completes. The arguments are
-         passed to the screen being shown.
+        Shows a transient screen. A transient screen will be hidden when
+        the current interaction completes. The arguments are
+        passed to the screen being shown.
 
-         If not None, `transition` is use to show the new screen.
-         """
+        If not None, `transition` is use to show the new screen.
+        """
 
         return Show(screen, transition, _transient=True, *args, **kwargs)
 
