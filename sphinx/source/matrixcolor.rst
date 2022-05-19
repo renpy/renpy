@@ -152,13 +152,15 @@ TintMatrix class. ::
                             0, 0, 0, a ])
 
 
-**Structural Similarity.**
+Structural Similarity
+^^^^^^^^^^^^^^^^^^^^^^
+
 In ATL, interpolating a the :tpref:`matrixcolor` property requires the
 use of ColorMatrixes that have structural similarity. That means the same
 types of ColorMatrix, multiplied together in the same order.
 
 As an example, the following will interpolate from normal to a desaturated
-blue tint, and then return to normal.
+blue tint, and then return to normal. ::
 
     show eileen happy at center:
         matrixcolor TintMatrix("#ffffff") * SaturationMatrix(1.0)
