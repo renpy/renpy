@@ -253,7 +253,8 @@ A track's relative volume is set with the ``volume`` clause of the :ref:`play-st
 In addition to these volume values, there is the mute flag of the mixer which
 the channel relates to. If enabled, it will reduce the played volume to 0.
 They can be set using the :func:`SetMute` or :func:`ToggleMute` actions, or
-using the :func:`Preference` action with the "mixer <mixer> mute" key.
+using the :func:`Preference` action with the "mixer <mixer> mute" key, or using
+the :func:`preferences.set_mute` function.
 
 .. _silence:
 
