@@ -20,6 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init python:
+    from math import ceil
+
     if persistent.show_edit_funcs is None:
         persistent.show_edit_funcs = True
 
@@ -41,7 +43,8 @@ init python:
         rv.insert(0, (None, "English"))
         rv.append(("piglatin", "Igpay Atinlay"))
 
-        return rv
+        bound = ceil(len(rv)/3.)
+        return (rv[:bound], rv[bound:2*bound], rv[2*bound:])
 
     show_legacy = os.path.exists(os.path.join(config.renpy_base, "templates", "english", "game", "script.rpy"))
 
@@ -169,24 +172,14 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            vpgrid:
-                                cols 3
-                                allow_underfull True
-
-                                xfill True
-
-                                scrollbars "vertical"
-                                mousewheel True
-
-                                # has vbox
-
-                                # frame style "l_indent":
-
-                                for tlid, tlname in translations:
-                                    textbutton tlname:
-                                        xmaximum (TWOTHIRDS // 3)
-                                        action [ Language(tlid), project.SelectTutorial(True) ]
-                                        style "l_list"
+                            hbox:
+                                for tran in translations:
+                                    vbox:
+                                        for tlid, tlname in tran:
+                                            textbutton tlname:
+                                                xmaximum (TWOTHIRDS//3)
+                                                action [Language(tlid), project.SelectTutorial(True)]
+                                                style "l_list"
 
                 elif preference_tab == "options":
 
