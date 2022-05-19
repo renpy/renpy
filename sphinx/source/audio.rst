@@ -29,7 +29,7 @@ one audio file at a time. New normal channels can be registered with
 
 The Music Volume, Sound Volume, and Voice Volume settings
 of the in-game preferences menu are used to set individual
-volumes for these channels.
+volumes for these channels. See :ref:`volume` for more information.
 
 In addition to the normal channel, there is one special channel, ``audio``.
 The audio channel supports playing back multiple audio files at one time,
@@ -214,6 +214,49 @@ Will play layer_2.opus with the start time synced to the current track in
 channel music_1 in the first iteration, before playing the whole track in
 subsequent iterations. (By default, the layer_2.opus start time will remain
 modified even in subsequent iterations in the loop.)
+
+.. _volume:
+
+Volume
+------
+
+The volume at which a given track is going to be played depends on a number
+of variables:
+
+- the main mixer's volume
+- the volume of the mixer which the channel relates to
+- the volume of the channel
+- the relative volume of the track itself
+
+These four volume values are values between 0 and 1, and their
+multiplication results in the volume the track will be played at.
+
+For example, if the main volume is 80% (or 0.8), the mixer's volume is 100%,
+the channel volume is 50% (0.5) and the track's relative volume is 25% (0.25),
+the resulting volume is .8\*1.\*.5\*.25 = .1, so 10%.
+
+The mixers' volumes can be set using :func:`preferences.set_volume`, or
+using the :func:`Preference` action with the "mixer <mixer> volume" key.
+The "audio" and "sound" channels relate to the "sfx" mixer, the "music" channel
+to the "music" mixer and the "voice" channel to the "voice" mixer.
+
+A channel's volume can be set using :func:`renpy.music.set_volume`. It is only
+useful when several channels use the same mixer - which isn't the case by
+default, unless you register additional channels with :func:`renpy.music.register_channel`.
+The ``mixer`` parameter that function takes sets the mixer to which the
+registered channel relates, creating it in the process if it doesn't already exist.
+
+A track's relative volume is set with the ``volume`` clause of the :ref:`play-statement`.
+
+
+In addition to these volume values, there are the mute flags:
+
+- the main mixer's mute flag
+- the mute flag of the mixer which the channel relates to
+
+Any of these will reduce the played volume to 0. They can be set using the
+:func:`SetMute` or :func:`ToggleMute` actions, or using the :func:`Preference`
+action with the "mixer <mixer> mute" key.
 
 .. _silence:
 
