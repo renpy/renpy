@@ -801,6 +801,7 @@ def register_channel(name,
     This registers a new audio channel named `name`. Audio can then be
     played on the channel by supplying the channel name to the play or
     queue statements.
+
     `name`
         The name of the channel.
 
