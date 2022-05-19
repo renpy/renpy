@@ -68,8 +68,13 @@ init python:
 default preference_tab = "general"
 
 screen preferences():
+    $ from math import ceil
 
     default translations = scan_translations()
+    default tranbound = ceil(len(translations)/3.)
+    default tran1 = translations[:tranbound]
+    default tran2 = translations[tranbound:2*tranbound]
+    default tran3 = translations[2*tranbound:]
 
     frame:
         style_group "l"
@@ -169,24 +174,14 @@ screen preferences():
 
                             add HALF_SPACER
 
-                            vpgrid:
-                                cols 3
-                                allow_underfull True
-
-                                xfill True
-
-                                scrollbars "vertical"
-                                mousewheel True
-
-                                # has vbox
-
-                                # frame style "l_indent":
-
-                                for tlid, tlname in translations:
-                                    textbutton tlname:
-                                        xmaximum (TWOTHIRDS // 3)
-                                        action [ Language(tlid), project.SelectTutorial(True) ]
-                                        style "l_list"
+                            hbox:
+                                for tran in (tran1, tran2, tran3):
+                                    vbox:
+                                        for tlid, tlname in tran:
+                                            textbutton tlname:
+                                                xmaximum (TWOTHIRDS//3)
+                                                action [Language(tlid), project.SelectTutorial(True)]
+                                                style "l_list"
 
                 elif preference_tab == "options":
 
