@@ -17,6 +17,9 @@ class Editor(renpy.editor.Editor):
 
         if system:
 
+            if "RENPY_VSCODE" in os.environ:
+                return os.environ["RENPY_VSCODE"]
+
             if renpy.windows:
                 return "code.cmd"
 
