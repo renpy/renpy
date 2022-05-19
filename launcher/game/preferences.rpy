@@ -20,6 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 init python:
+    from math import ceil
+
     if persistent.show_edit_funcs is None:
         persistent.show_edit_funcs = True
 
@@ -41,7 +43,8 @@ init python:
         rv.insert(0, (None, "English"))
         rv.append(("piglatin", "Igpay Atinlay"))
 
-        return rv
+        bound = ceil(len(rv)/3.)
+        return (rv[:bound], rv[bound:2*bound], rv[2*bound:])
 
     show_legacy = os.path.exists(os.path.join(config.renpy_base, "templates", "english", "game", "script.rpy"))
 
@@ -68,13 +71,8 @@ init python:
 default preference_tab = "general"
 
 screen preferences():
-    $ from math import ceil
 
     default translations = scan_translations()
-    default tranbound = ceil(len(translations)/3.)
-    default tran1 = translations[:tranbound]
-    default tran2 = translations[tranbound:2*tranbound]
-    default tran3 = translations[2*tranbound:]
 
     frame:
         style_group "l"
@@ -175,7 +173,7 @@ screen preferences():
                             add HALF_SPACER
 
                             hbox:
-                                for tran in (tran1, tran2, tran3):
+                                for tran in translations:
                                     vbox:
                                         for tlid, tlname in tran:
                                             textbutton tlname:
