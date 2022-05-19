@@ -229,7 +229,9 @@ about them being applied right to left. In this example::
 The image will be shifted up by 300 pixels, and then will be rotated around
 the X axis.
 
-**Structural Similarity.**
+Structural Similarity
+^^^^^^^^^^^^^^^^^^^^^^
+
 In ATL, interpolating a the :tpref:`matrixtransform` property requires the
 use of TransformMatrixes that have structural similarity. That means the same
 types of TransformMatrix, multiplied together in the same order.
