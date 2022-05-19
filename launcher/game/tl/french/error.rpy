@@ -46,7 +46,7 @@
 
     # 00gltest.rpy:152
     old "This computer has a problem displaying graphics: [problem]."
-    new "Cet ordinateur rencontre un problème pour afficher les graphismes: [problem]."
+    new "Cet ordinateur rencontre un problème pour afficher les graphismes : [problem]."
 
     # 00gltest.rpy:157
     old "Its graphics drivers may be out of date or not operating correctly. This can lead to slow or incorrect graphics display. Updating DirectX could fix this problem."

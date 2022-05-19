@@ -42,15 +42,15 @@
 
     # _developer/developer.rpym:217
     old "Return to the developer menu"
-    new "Retourner au menu du développeur"
+    new "Retourner au menu de développeur"
 
     # _developer/developer.rpym:373
     old "Rectangle: %r"
-    new "Rectangle: %r"
+    new "Rectangle : %r"
 
     # _developer/developer.rpym:378
     old "Mouse position: %r"
-    new "Mouse position: %r"
+    new "Position de la souris : %r"
 
     # _developer/developer.rpym:383
     old "Right-click or escape to quit."
@@ -78,7 +78,7 @@
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
-    new "Inspecteur affichable"
+    new "Inspecteur de displayables"
 
     # _developer/inspector.rpym:61
     old "Size"
@@ -98,11 +98,11 @@
 
     # _developer/inspector.rpym:139
     old "displayable:"
-    new "affichable :"
+    new "displayable :"
 
     # _developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
-    new "        (Aucune propriété n’affecte l’affichage)"
+    new "        (Aucune propriété ne s'applique au displayable)"
 
     # _developer/inspector.rpym:147
     old "        (default properties omitted)"
@@ -114,7 +114,7 @@
 
     # 00console.rpy:182
     old "Press <esc> to exit console. Type help for help.\n"
-    new "Pressez « Echap » pour quitter la console. Pressez « Aide » pour afficher l’aide.\n"
+    new "Appuyez sur Échap pour quitter la console. Écrivez help pour afficher l’aide.\n"
 
     # 00console.rpy:186
     old "Ren'Py script enabled."
@@ -126,7 +126,7 @@
 
     # 00console.rpy:398
     old "help: show this help"
-    new "aide: Afficher cette aide"
+    new "aide : afficher cette aide"
 
     # 00console.rpy:403
     old "commands:\n"
@@ -134,15 +134,15 @@
 
     # 00console.rpy:413
     old " <renpy script statement>: run the statement\n"
-    new " <renpy script statement> : Exécuter cette déclaration\n"
+    new " <renpy script statement> : exécuter cette déclaration\n"
 
     # 00console.rpy:415
     old " <python expression or statement>: run the expression or statement"
-    new " <python expression or statement> : Exécuter cette expression ou cette déclaration"
+    new " <expression ou instruction python> : exécuter cette expression ou cette instruction"
 
     # 00console.rpy:423
     old "clear: clear the console history"
-    new "clear: Purger l’historique de la console"
+    new "clear : effacer l’historique de la console"
 
     # 00console.rpy:427
     old "exit: exit the console"
@@ -158,7 +158,7 @@
 
     # 00console.rpy:459
     old "reload: reloads the game, refreshing the scripts"
-    new "reload : Recharge le jeu, rafraîchit les scripts"
+    new "reload : recharge le jeu, rafraîchit les scripts"
 
     # 00console.rpy:467
     old "watch <expression>: watch a python expression"
@@ -178,7 +178,7 @@
 
     # renpy/common/00console.rpy:814
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
-    new "watch <expression> : surveille une expression python\n watch short: raccourcit la représentation des expressions (par défaut)\n watch long : affiche la totalité des expressions surveillées"
+    new "watch <expression> : surveille une expression python\n watch short : raccourcit la représentation des expressions (par défaut)\n watch long : affiche la totalité des expressions surveillées"
 
     # renpy/common/00console.rpy:917
     old "short: Shorten the representation of objects on the console (default)."
@@ -198,4 +198,4 @@
 
     # renpy/common/00console.rpy:784
     old "stack: print the return stack"
-    new "stack: affiche la pile de retour"
+    new "stack : affiche la pile de retour"

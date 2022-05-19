@@ -109,7 +109,7 @@
 
     # android.rpy:304
     old "Android: [project.current.name!q]"
-    new "Android: [project.current.name!q]"
+    new "Android : [project.current.name!q]"
 
     # android.rpy:324
     old "Emulation:"
@@ -473,7 +473,7 @@
 
     # front_page.rpy:223
     old "Navigate Script"
-    new "Naviguer dans le script"
+    new "Parcourir le script"
 
     # front_page.rpy:234
     old "Check Script (Lint)"
@@ -689,7 +689,7 @@
 
     # ios.rpy:211
     old "iOS: [project.current.name!q]"
-    new "iOS: [project.current.name!q]"
+    new "iOS : [project.current.name!q]"
 
     # ios.rpy:240
     old "iPhone"
@@ -889,7 +889,7 @@
 
     # preferences.rpy:111
     old "Text Editor:"
-    new "Éditeur :"
+    new "Éditeur de texte :"
 
     # preferences.rpy:117
     old "Text editor: [text]"
@@ -897,7 +897,7 @@
 
     # preferences.rpy:133
     old "Update Channel:"
-    new "Version"
+    new "Type de version :"
 
     # preferences.rpy:153
     old "Navigation Options:"
@@ -1061,7 +1061,7 @@
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
-    new "Extraire le dialogue : [project.current.name!q]"
+    new "Extraire les dialogues : [project.current.name!q]"
 
     # translations.rpy:322
     old "Format:"
@@ -1593,7 +1593,7 @@
 
     # game/install.rpy:110
     old "Install Libraries"
-    new "Installer les Bibliothèques"
+    new "Installer des bibliothèques"
 
     # game/install.rpy:125
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
@@ -1989,7 +1989,7 @@
 
     # game/installer.rpy:11
     old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
-    new "Impossible de télécharger [extension.download_file] depuis [extension.download_url]:\n{b}[extension.download_error]"
+    new "Impossible de télécharger [extension.download_file] depuis [extension.download_url] :\n{b}[extension.download_error]"
 
     # game/installer.rpy:12
     old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
@@ -2013,7 +2013,7 @@
 
     # game/translations.rpy:391
     old "Language (or None for the default language):"
-    new "Langue (or None pour la langue par défaut):"
+    new "Langue (or None pour la langue par défaut) :"
 
     # game/web.rpy:344
     old "This feature is not supported in Ren'Py 8."
@@ -2022,3 +2022,23 @@
     # game/web.rpy:344
     old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
     new "La version web sera supportée à nouveau dans une future version de Ren'Py 8. En attendant, utilisez Ren'Py 7 pour des distributions web."
+
+    # game/preferences.rpy:104
+    old "General"
+    new "Général"
+
+    # game/preferences.rpy:105
+    old "Options"
+    new "Options"
+
+    # game/preferences.rpy:244
+    old "Launcher Theme:"
+    new "Thème du lanceur :"
+
+    # game/preferences.rpy:254
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    new "Plus d'informations sur comment créer un thème personnalisé se trouvent {a=https://www.renpy.org/doc/html/skins.html}dans la documentation de Ren'Py{/a}."
+
+    # game/preferences.rpy:271
+    old "Install Libraries:"
+    new "Installer des bibliothèques :"

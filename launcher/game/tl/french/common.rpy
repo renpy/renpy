@@ -428,11 +428,11 @@ translate french strings:
 
     # renpy/common/00action_file.rpy:353
     old "Save slot %s: [text]"
-    new "Sauvegarder %s: [text]"
+    new "Sauvegarder %s : [text]"
 
     # renpy/common/00action_file.rpy:434
     old "Load slot %s: [text]"
-    new "Charger %s: [text]"
+    new "Charger %s : [text]"
 
     # renpy/common/00action_file.rpy:487
     old "Delete slot [text]"
@@ -528,7 +528,7 @@ translate french strings:
 
     # renpy/common/00director.rpy:1674
     old "Statement:"
-    new "Statement :"
+    new "Instruction :"
 
     # renpy/common/00director.rpy:1695
     old "Tag:"
@@ -544,7 +544,7 @@ translate french strings:
 
     # renpy/common/00director.rpy:1748
     old "Behind:"
-    new "Sous :"
+    new "Derrière :"
 
     # renpy/common/00director.rpy:1767
     old "Transition:"
@@ -552,7 +552,7 @@ translate french strings:
 
     # renpy/common/00director.rpy:1785
     old "Channel:"
-    new "Channel :"
+    new "Piste :"
 
     # renpy/common/00director.rpy:1803
     old "Audio Filename:"
@@ -760,7 +760,7 @@ translate french strings:
 
     # renpy/common/_developer/developer.rpym:506
     old "Type to filter: "
-    new "Type à filtrer : "
+    new "Écrire pour filtrer : "
 
     # renpy/common/_developer/developer.rpym:631
     old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
