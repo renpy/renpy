@@ -64,9 +64,12 @@ init python:
         persistent.daily_update_check_once = True
         persistent.daily_update_check = True
 
-screen preferences:
 
-    $ translations = scan_translations()
+default preference_tab = "general"
+
+screen preferences():
+
+    default translations = scan_translations()
 
     frame:
         style_group "l"
@@ -93,159 +96,214 @@ screen preferences:
                     # Projects directory selection.
                     add SEPARATOR2
 
-                    frame:
-                        style "l_indent"
-                        yminimum 75
-                        has vbox
+                    add HALF_SPACER
 
-                        text _("Projects Directory:")
-
-                        add HALF_SPACER
-
-
-                        frame style "l_indent":
-                            if persistent.projects_directory:
-                                textbutton _("[persistent.projects_directory!q]"):
-                                    action Jump("projects_directory_preference")
-                                    alt _("Projects directory: [text]")
-                            else:
-                                textbutton _("Not Set"):
-                                    action Jump("projects_directory_preference")
-                                    alt _("Projects directory: [text]")
+                    textbutton _("General") action SetVariable("preference_tab", "general") style "l_list"
+                    textbutton _("Options") action SetVariable("preference_tab", "options") style "l_list"
+                    textbutton _("Theme") action SetVariable("preference_tab", "theme") style "l_list"
+                    textbutton _("Install Libraries") action SetVariable("preference_tab", "install") style "l_list"
+                    textbutton _("Actions") action SetVariable("preference_tab", "actions") style "l_list"
 
 
-                    add SPACER
-
-                    # Text editor selection.
-                    add SEPARATOR2
+                if preference_tab == "general":
 
                     frame:
                         style "l_indent"
-                        yminimum 75
-                        has vbox
-
-                        text _("Text Editor:")
-
-                        add HALF_SPACER
-
-                        frame style "l_indent":
-                            if persistent.editor:
-                                textbutton persistent.editor action Jump("editor_preference") alt _("Text editor: [text]")
-                            else:
-                                textbutton _("Not Set") action Jump("editor_preference") alt _("Text editor: [text]")
-
-                    add SPACER
-
-                    add SEPARATOR2
-
-                    frame:
-                        style "l_indent"
-                        yminimum 75
-                        has vbox
-
-                        text _("Actions:")
-
-                        add HALF_SPACER
-
-                        textbutton _("Install libraries") style "l_nonbox" action Jump("install")
-                        textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
-                        textbutton _("Reset window size") style "l_nonbox" action Preference("display", 1.0)
-                        textbutton _("Clean temporary files") style "l_nonbox" action Jump("clean_tmp")
-
-
-                frame:
-                    style "l_indent"
-                    xmaximum ONETHIRD
-                    xfill True
-
-                    has vbox
-                    add SEPARATOR2
-
-                    frame:
-                        style "l_indent"
-                        yminimum 75
-                        has vbox
-
-                        text _("Navigation Options:")
-
-                        add HALF_SPACER
-
-                        textbutton _("Include private names") style "l_checkbox" action ToggleField(persistent, "navigate_private")
-                        textbutton _("Include library names") style "l_checkbox" action ToggleField(persistent, "navigate_library")
-
-                    add SPACER
-                    add SEPARATOR2
-
-                    frame:
-                        style "l_indent"
-                        yminimum 75
-                        has vbox
-
-                        text _("Launcher Options:")
-
-                        add HALF_SPACER
-
-                        textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
-                        textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
-
-                        if renpy.windows:
-                            textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
-
-                        if project.manager.get("oldtutorial"):
-
-                           textbutton _("Force new tutorial") style "l_checkbox" action [ ToggleField(persistent, "force_new_tutorial"), project.SelectTutorial(True) ]
-
-                        if show_legacy:
-
-                            textbutton _("Legacy options") style "l_checkbox" action ToggleField(persistent, "legacy")
-
-                            if persistent.legacy:
-                                textbutton _("Show templates") style "l_checkbox" action ToggleField(persistent, "show_templates")
-
-                        textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
-
-                        if ability.can_update:
-                            textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
-
-                        add HALF_SPACER
-
-                        textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
-                        # textbutton _("Clear theme") style "l_checkbox" action [SetField(persistent, "theme", "clear", None), RestartAtPreferences() ]
-                        textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark", None), RestartAtPreferences()]
-                        textbutton _("Custom theme") style "l_checkbox" action [SetField(persistent, "theme", "custom", None), RestartAtPreferences()]
-
-
-                if translations:
-
-                    frame:
-                        style "l_indent"
-                        xmaximum ONETHIRD
+                        xmaximum TWOTHIRDS
                         xfill True
 
                         has vbox
+
+                        # Projects directory selection.
+                        add SEPARATOR2
+
+
+                        frame:
+                            style "l_indent"
+
+                            has vbox
+
+                            text _("Projects Directory:")
+
+                            add HALF_SPACER
+
+
+                            frame style "l_indent":
+                                if persistent.projects_directory:
+                                    textbutton _("[persistent.projects_directory!q]"):
+                                        action Jump("projects_directory_preference")
+                                        alt _("Projects directory: [text]")
+                                else:
+                                    textbutton _("Not Set"):
+                                        action Jump("projects_directory_preference")
+                                        alt _("Projects directory: [text]")
+
+                        add SPACER
 
                         # Text editor selection.
                         add SEPARATOR2
 
                         frame:
                             style "l_indent"
-                            yminimum 75
+                            has vbox
+
+                            text _("Text Editor:")
+
+                            add HALF_SPACER
+
+                            frame style "l_indent":
+                                if persistent.editor:
+                                    textbutton persistent.editor action Jump("editor_preference") alt _("Text editor: [text]")
+                                else:
+                                    textbutton _("Not Set") action Jump("editor_preference") alt _("Text editor: [text]")
+
+                        add SPACER
+
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
                             has vbox
 
                             text _("Language:")
 
                             add HALF_SPACER
 
-                            viewport:
+                            vpgrid:
+                                cols 3
+                                allow_underfull True
+
+                                xfill True
+
                                 scrollbars "vertical"
                                 mousewheel True
 
-                                has vbox
+                                # has vbox
 
                                 # frame style "l_indent":
 
                                 for tlid, tlname in translations:
-                                    textbutton tlname action [ Language(tlid), project.SelectTutorial(True) ] style "l_list"
+                                    textbutton tlname:
+                                        xmaximum (TWOTHIRDS // 3)
+                                        action [ Language(tlid), project.SelectTutorial(True) ]
+                                        style "l_list"
+
+                elif preference_tab == "options":
+
+                    frame:
+                        style "l_indent"
+                        xmaximum TWOTHIRDS
+                        xfill True
+
+                        has vbox
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+                            has vbox
+
+                            text _("Navigation Options:")
+
+                            add HALF_SPACER
+
+                            textbutton _("Include private names") style "l_checkbox" action ToggleField(persistent, "navigate_private")
+                            textbutton _("Include library names") style "l_checkbox" action ToggleField(persistent, "navigate_library")
+
+                        add SPACER
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+                            has vbox
+
+                            text _("Launcher Options:")
+
+                            add HALF_SPACER
+
+                            textbutton _("Show edit file section") style "l_checkbox" action ToggleField(persistent, "show_edit_funcs")
+                            textbutton _("Large fonts") style "l_checkbox" action [ ToggleField(persistent, "large_print"), renpy.utter_restart ]
+
+                            if renpy.windows:
+                                textbutton _("Console output") style "l_checkbox" action ToggleField(persistent, "windows_console")
+
+                            textbutton _("Sponsor message") style "l_checkbox" action ToggleField(persistent, "sponsor_message")
+
+                            if ability.can_update:
+                                textbutton _("Daily check for update") style "l_checkbox" action [ToggleField(persistent, "daily_update_check"), SetField(persistent, "last_update_check", None)] selected persistent.daily_update_check
+
+
+                elif preference_tab == "theme":
+
+                    frame:
+                        style "l_indent"
+                        xmaximum TWOTHIRDS
+                        xfill True
+
+                        has vbox
+
+                        # Projects directory selection.
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+                            has vbox
+
+                            text _("Launcher Theme:")
+
+                            add HALF_SPACER
+
+                            textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
+                            textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark", None), RestartAtPreferences()]
+                            textbutton _("Custom theme") style "l_checkbox" action [SetField(persistent, "theme", "custom", None), RestartAtPreferences()]
+
+                            add SPACER
+
+                            text _("Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}.")
+
+                elif preference_tab == "install":
+
+                    frame:
+                        style "l_indent"
+                        xmaximum TWOTHIRDS
+                        xfill True
+
+                        has vbox
+
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+                            has vbox
+
+                            text _("Install Libraries:")
+
+                            add HALF_SPACER
+
+                            use install_preferences
+
+
+                elif preference_tab == "actions":
+
+                    frame:
+                        style "l_indent"
+                        xmaximum TWOTHIRDS
+                        xfill True
+
+                        has vbox
+
+                        add SEPARATOR2
+
+                        frame:
+                            style "l_indent"
+                            has vbox
+
+                            text _("Actions:")
+
+                            add HALF_SPACER
+
+                            textbutton _("Open launcher project") style "l_nonbox" action [ project.Select("launcher"), Jump("front_page") ]
+                            textbutton _("Reset window size") style "l_nonbox" action Preference("display", 1.0)
+                            textbutton _("Clean temporary files") style "l_nonbox" action Jump("clean_tmp")
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"

@@ -105,7 +105,48 @@ label install_live2d:
 
     jump front_page
 
-screen install():
+screen install_preferences():
+
+    frame:
+        style "l_indent"
+        has vbox
+
+        text _("This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed.")
+
+    add SPACER
+
+    if not achievement.has_steam:
+
+        textbutton _("Install Steam Support"):
+            action Jump("install_steam")
+
+        add HALF_SPACER
+
+        frame:
+            style "l_indent"
+            has vbox
+
+            text _("Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}.")
+
+    else:
+
+        textbutton _("Install Steam Support")
+
+        add HALF_SPACER
+
+        frame:
+            style "l_indent"
+            has vbox
+
+            text _("Steam support has already been installed.")
+
+    add SPACER
+
+    textbutton _("Install Live2D Cubism SDK for Native"):
+        action Jump("prompt_live2d")
+
+
+screen install_live2d():
 
     frame:
         style_group "l"
@@ -130,10 +171,6 @@ screen install():
 
                         has vbox
 
-                        text _("This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed.")
-
-                        add HALF_SPACER
-
                         add SPACER
 
                         textbutton _("Install Live2D Cubism SDK for Native"):
@@ -151,33 +188,6 @@ screen install():
 
                             text _("Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support.")
 
-                        add SPACER
-
-
-                        if not achievement.has_steam:
-
-                            textbutton _("Install Steam Support"):
-                                action Jump("install_steam")
-
-                            add HALF_SPACER
-
-                            frame:
-                                style "l_indent"
-                                has vbox
-
-                                text _("Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}.")
-
-                        else:
-
-                            textbutton _("Install Steam Support")
-
-                            add HALF_SPACER
-
-                            frame:
-                                style "l_indent"
-                                has vbox
-
-                                text _("Steam support has already been installed.")
 
 
     textbutton _("Cancel") action Return(False) style "l_left_button"
@@ -185,8 +195,8 @@ screen install():
 
     timer 2.0 action renpy.restart_interaction repeat True
 
-label install:
-    call screen install
+label prompt_live2d:
+    call screen install_live2d
     jump preferences
 
 label install_steam:
