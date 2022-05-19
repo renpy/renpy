@@ -144,9 +144,9 @@ init -1500 python:
          * Preference("voice sustain", "disable") - Don't sustain voice past the current interaction.
          * Preference("voice sustain", "toggle")  - Toggle voice sustain.
 
-         * Preference("main mute", "enable") - Mute main.
-         * Preference("main mute", "disable") - Un-mute main.
-         * Preference("main mute", "toggle") - Toggle main.
+         * Preference("main mute", "enable") - Mute the main volume mixer.
+         * Preference("main mute", "disable") - Un-mute the main volume mixer.
+         * Preference("main mute", "toggle") - Toggle the main volume mixer.
 
          * Preference("music mute", "enable") - Mute the music mixer.
          * Preference("music mute", "disable") - Un-mute the music mixer.
@@ -164,9 +164,9 @@ init -1500 python:
          * Preference("mixer <mixer> mute", "disable") - Unmute the specified mixer.
          * Preference("mixer <mixer> mute", "toggle") - Toggle mute of specified mixer.
 
-         * Preference("all mute", "enable") - Mute all mixers.
-         * Preference("all mute", "disable") - Unmute all mixers.
-         * Preference("all mute", "toggle") - Toggle mute of all mixers.
+         * Preference("all mute", "enable") - Mute each individual mixer **(deprecated, use "main mute" instead)**.
+         * Preference("all mute", "disable") - Unmute each individual mixer **(deprecated, use "main mute" instead)**.
+         * Preference("all mute", "toggle") - Toggle mute of each individual mixer **(deprecated, use "main mute" instead)**.
 
          * Preference("main volume", 0.5) - Set the adjustment applied to all channels.
          * Preference("music volume", 0.5) - Set the music volume.
