@@ -1345,7 +1345,7 @@
 
     # translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "Команда извлечения позволяет вам извлечь переводимые строки из существующего проекта во временный файл.\n\nКоманда объединения объединяет извлечённые переводы в другой перевод."
+    new "{size=-1}Команда извлечения позволяет вам извлечь переводимые строки из существующего проекта во временный файл.\n\nКоманда объединения объединяет извлечённые переводы в другой перевод.{/size}"
 
     # translations.rpy:252
     old "Ren'Py is generating translations...."
@@ -1966,3 +1966,23 @@
     # game/web.rpy:344
     old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
     new "Мы восстановим поддержку в будущем релизе Ren'Py 8. Пока что, пожалуйста используйте Ren'Py 7 для веб-сборки."
+
+    # game/preferences.rpy:104
+    old "General"
+    new "Общие"
+
+    # game/preferences.rpy:105
+    old "Options"
+    new "Опции"
+
+    # game/preferences.rpy:244
+    old "Launcher Theme:"
+    new "Тема лаунчера:"
+
+    # game/preferences.rpy:254
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    new "Информацию о создании пользовательских тем можно найти {a=https://www.renpy.org/doc/html/skins.html}в документации Ren'Py{/a}."
+
+    # game/preferences.rpy:271
+    old "Install Libraries:"
+    new "Установить библиотеки:"
