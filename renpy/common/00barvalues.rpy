@@ -442,8 +442,8 @@ init -1500 python:
 
          `mixer`
              The name of the mixer to adjust. This is usually one of
-             "music", "sfx", or "voice", but creators can create new
-             mixers.
+             "main", "music", "sfx", or "voice". See :ref:`volume`
+             for more information.
          """
 
         def __init__(self, mixer):
