@@ -319,6 +319,54 @@ label preferences:
     jump preferences
 
 
+screen choose_language():
+    default local_lang = _preferences.language
+    default chosen_lang = _preferences.language
+    default translations = scan_translations()
+
+    add BACKGROUND
+
+    vbox:
+        xalign .5
+        ypos .25
+        text renpy.translate_string(_("Hello ! Please pick a language"), local_lang):
+            xalign .5
+            style "l_label_text"
+            size 36
+
+        add SPACER
+        add SPACER
+
+        hbox:
+            xalign .5
+            for tran in translations:
+                vbox:
+                    for tlid, tlname in tran:
+                        textbutton tlname:
+                            xmaximum (TWOTHIRDS//3)
+                            action SetScreenVariable("chosen_lang", tlid)
+                            hovered SetScreenVariable("local_lang", tlid)
+                            unhovered SetScreenVariable("local_lang", chosen_lang)
+                            style "l_list"
+                            text_xalign .5
+
+        add SPACER
+        add SPACER
+
+        $ lang_name = renpy.translate_string("{#language name and font}", chosen_lang)
+        textbutton renpy.translate_string(_("Start using Ren'Py in [lang_name]"), local_lang):
+            xalign .5
+            action [Language(chosen_lang), project.SelectTutorial(True), Return()]
+            style "l_default"
+            text_style "l_default"
+            text_size 30
+
+
+label choose_language:
+    call screen choose_language
+    return
+
+
 translate None strings:
     # game/new_project.rpy:77
     old "{#language name and font}"
