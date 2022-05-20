@@ -353,7 +353,8 @@ screen choose_language():
         add SPACER
         add SPACER
 
-        textbutton renpy.translate_string(_("Start using Ren'Py in "), local_lang) + renpy.translate_string("{#language name and font}", chosen_lang):
+        $ lang_name = renpy.translate_string("{#language name and font}", chosen_lang)
+        textbutton renpy.translate_string(_("Start using Ren'Py in [lang_name]"), local_lang):
             xalign .5
             action [Language(chosen_lang), project.SelectTutorial(True), Return()]
             style "l_default"

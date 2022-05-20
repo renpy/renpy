@@ -2072,5 +2072,5 @@
     new "Bienvenue ! Choisissez une langue"
 
     # game/preferences.rpy:327
-    old "Start using Ren'Py in "
-    new "Commencez à utiliser Ren'Py en "
+    old "Start using Ren'Py in [lang_name]"
+    new "Commencez à utiliser Ren'Py en [lang_name]"
