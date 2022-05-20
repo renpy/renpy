@@ -2009,4 +2009,46 @@ translate spanish strings:
     old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
     new "Restauraremos el soporte en una versión futura de Ren'Py 8. Hasta entonces, use Ren'Py 7 para soporte web."
     
+    # game/preferences.rpy:104
+    old "General"
+    new "General"
 
+    # game/preferences.rpy:105
+    old "Options"
+    new "Opciones"
+
+    # game/preferences.rpy:244
+    old "Launcher Theme:"
+    new "Tema del lanzdor"
+
+    # game/preferences.rpy:254
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    new "Puedes encontrar información sobre cómo crear un tema personalizado {a=https://www.renpy.org/doc/html/skins.html}en la documentación de Ren'Py{/a}."
+
+    # game/preferences.rpy:271
+    old "Install Libraries:"
+    new "Instalar bibliotecas:"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    new "Estable (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    new "Estable (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "Preliminar (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "Preliminar (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    new "Nightly (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "Nightly (Ren'Py 7, Python 2)"
