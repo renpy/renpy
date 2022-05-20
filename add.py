@@ -17,6 +17,7 @@ SOURCE = [
 
 version = ".".join(str(i) for i in version_tuple)
 short_version = ".".join(str(i) for i in version_tuple[:-1])
+major = short_version.split(".")[0]
 print("Version", version)
 
 ap = argparse.ArgumentParser()
@@ -73,6 +74,8 @@ else:
 
 if args.no_tag:
     tag = False
+
+links = [ i + "-" + major for i in links ]
 
 if tag:
     for i in SOURCE:
