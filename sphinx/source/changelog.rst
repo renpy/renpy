@@ -8,8 +8,8 @@ Changelog (Ren'Py 7.x-)
 8.0 / 7.5
 =========
 
-Python 3 Support (Ren'Py 8.0 Only)
-----------------------------------
+Python 3 Support (Ren'Py 8.0)
+-----------------------------
 
 Ren'Py 8.0 runs under Python 3, the latest major version of the Python
 language.
