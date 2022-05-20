@@ -235,6 +235,13 @@ label start:
 default persistent.has_update = False
 
 label front_page:
+    if not persistent.chosen_language:
+        if _preferences.language is None:
+            hide screen bottom_info
+            call choose_language
+            show screen bottom_info
+        $ persistent.chosen_language = True
+
     if persistent.daily_update_check and ((not persistent.last_update_check) or (datetime.date.today() > persistent.last_update_check)):
         python hide:
             persistent.last_update_check = datetime.date.today()
