@@ -383,6 +383,9 @@ def piglatin_transform(s):
 
 
 def piglatin_filter(s):
+    if s == "{#language name and font}":
+        return "Igpay Atinlay"
+
     return generic_filter(s, piglatin_transform)
 
 
