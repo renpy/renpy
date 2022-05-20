@@ -1105,7 +1105,7 @@
 
     # updater.rpy:91
     old "Release"
-    new "Version actuelle."
+    new "Stable"
 
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -1113,7 +1113,7 @@
 
     # updater.rpy:102
     old "Prerelease"
-    new "Version de test"
+    new "Pré-stable"
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1197,11 +1197,11 @@
 
     # game/android.rpy:50
     old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
-    new "Selectionne le build de Debug, qui peut être atteint depuis Android Studio. Passer d'un build debug à un build release nécessitera une désinstallation sur votre appareil."
+    new "Selectionne le build de Debug, qui peut être atteint depuis Android Studio. Passer d'un build debug à un build stable nécessitera une désinstallation sur votre appareil."
 
     # game/android.rpy:51
     old "Selects the Release build, which can be uploaded to stores. Changing between debug and release builds requires an uninstall from your device."
-    new "Sélectionne le build de Release, qui peut être posté sur des magasins d'applications. Passer d'un build debug à un build release nécessitera une désinstallation sur votre appareil."
+    new "Sélectionne le build Stable, qui peut être posté sur des magasins d'applications. Passer d'un build debug à un build stable nécessitera une désinstallation sur votre appareil."
 
     # game/android.rpy:313
     old "Android: [project.current.display_name!q]"
@@ -2042,3 +2042,27 @@
     # game/preferences.rpy:271
     old "Install Libraries:"
     new "Installer des bibliothèques :"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    new "Stable (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    new "Stable (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "Pré-stable (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "Pré-stable (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    new "Nightly (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "Nightly (Ren'Py 7, Python 2)"
