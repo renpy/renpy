@@ -232,15 +232,20 @@ label start:
 
     jump expression renpy.session.pop("launcher_start_label", "front_page")
 
+default persistent.has_chosen_language = False
+
 default persistent.has_update = False
 
 label front_page:
-    if not persistent.chosen_language:
+
+    if (not persistent.has_chosen_language) or ("RENPY_CHOOSE_LANGUAGE" in os.environ):
+
         if _preferences.language is None:
             hide screen bottom_info
             call choose_language
             show screen bottom_info
-        $ persistent.chosen_language = True
+
+        $ persistent.has_chosen_language = True
 
     if persistent.daily_update_check and ((not persistent.last_update_check) or (datetime.date.today() > persistent.last_update_check)):
         python hide:

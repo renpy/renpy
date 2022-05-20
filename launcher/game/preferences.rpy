@@ -329,10 +329,20 @@ screen choose_language():
     vbox:
         xalign .5
         ypos .25
-        text renpy.translate_string(_("Hello ! Please pick a language"), local_lang):
-            xalign .5
-            style "l_label_text"
-            size 36
+
+        fixed:
+            ysize 0
+
+            text renpy.translate_string(_("{#in language font}Welcome! Please choose a language"), local_lang):
+                xalign .5
+                yanchor 1.0
+                ypos 1.0
+
+                style "l_label_text"
+
+                size 36
+                text_align .5
+                layout "subtitle"
 
         add SPACER
         add SPACER
@@ -353,13 +363,20 @@ screen choose_language():
         add SPACER
         add SPACER
 
-        $ lang_name = renpy.translate_string("{#language name and font}", chosen_lang)
-        textbutton renpy.translate_string(_("Start using Ren'Py in [lang_name]"), local_lang):
-            xalign .5
-            action [Language(chosen_lang), project.SelectTutorial(True), Return()]
-            style "l_default"
-            text_style "l_default"
-            text_size 30
+        $ lang_name = renpy.translate_string("{#language name and font}", local_lang)
+
+        fixed:
+            ysize 0
+
+            textbutton renpy.translate_string(_("{#in language font}Start using Ren'Py in [lang_name]"), local_lang):
+                xalign .5
+                action [Language(chosen_lang), project.SelectTutorial(True), Return()]
+                style "l_default"
+                text_style "l_default"
+
+                text_size 30
+                text_text_align .5
+                text_layout "subtitle"
 
 
 label choose_language:
