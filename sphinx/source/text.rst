@@ -129,6 +129,23 @@ text to lowercase. The ``!c`` flag acts only on the first character,
 capitalizing it. These flags may be combined, for example using ``!cl`` would
 capitalize the first character, and force the remaining text to lowercase.
 
+It should be noted that:
+
+- the order in which the flags are given does not change the result : ``!cl``
+  will do just the same as ``!lc``.
+- Supplementarly exclamation marks will be ignored, and will not circumvent
+  the previuous rule : ``!l!c`` will do the same as ``!c!l`` or ``!cl``.
+
+The transformations are done in the following order:
+
+#. ``r``/``s`` (repr or str)
+#. ``t`` (translate)
+#. ``i`` (recursive interpolation)
+#. ``q`` (quoting)
+#. ``u`` (uppercase)
+#. ``l`` (lowercase)
+#. ``c`` (capitalize)
+
 
 Styling and Text Tags
 =====================
