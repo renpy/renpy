@@ -28,7 +28,7 @@ init python:
     if persistent.windows_console is None:
         persistent.windows_console = False
 
-    def scan_translations():
+    def scan_translations(piglatin=True):
 
         languages = renpy.known_languages()
 
@@ -41,7 +41,9 @@ init python:
         rv.sort(key=lambda a : renpy.filter_text_tags(a[1], allow=[]).lower())
 
         rv.insert(0, (None, "English"))
-        rv.append(("piglatin", "Igpay Atinlay"))
+
+        if piglatin:
+            rv.append(("piglatin", "Igpay Atinlay"))
 
         bound = ceil(len(rv)/3.)
         return (rv[:bound], rv[bound:2*bound], rv[2*bound:])
@@ -322,7 +324,7 @@ label preferences:
 screen choose_language():
     default local_lang = _preferences.language
     default chosen_lang = _preferences.language
-    default translations = scan_translations()
+    default translations = scan_translations(piglatin=False)
 
     add BACKGROUND
 
