@@ -317,11 +317,11 @@ translate piglatin strings:
     old "Quick load."
     new "Uickqay oadlay."
 
-    # renpy/common/00action_other.rpy:375
+    # renpy/common/00action_other.rpy:377
     old "Language [text]"
     new "Anguagelay [text]"
 
-    # renpy/common/00action_other.rpy:662
+    # renpy/common/00action_other.rpy:664
     old "Open [text] directory."
     new "Penoay [text] irectoryday."
 
