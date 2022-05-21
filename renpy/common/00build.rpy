@@ -225,6 +225,9 @@ init -1500 python in build:
         :doc: build
 
         Classifies files that match `pattern` into `file_list`.
+        If the name given as `file_list` doesn't exist, it is created and
+        added to the set of valid file lists taken by :func:`build.archive`
+        or :func:`build.package`.
         """
 
         base_patterns.append((pattern, make_file_lists(file_list)))
