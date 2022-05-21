@@ -2309,3 +2309,90 @@ An example of defining a screen variant is:
         variant "small"
 
         text "Hello, World." size 30
+
+.. _creator-defined-sl:
+
+Creator-Defined Screen Language Statements
+==========================================
+
+Ren'Py supports defining custom screen language statements. Creator-defined screen
+language statements are wrappers for the screen language :ref:`use statement <sl-use>`.
+Positional arguments remain positional arguments, properties become keyword
+arguments, and if the statement takes a block, so does the use statement. For
+example, the custom screen language statement::
+
+    titledwindow "Test Window":
+        icon "icon.png"
+
+        text "This is a test."
+
+becomes::
+
+    use titledwindow("Test Window", icon="icon.png"):
+        text "This is a test."
+
+Creator-defined screen language statements must be registered in a ``python early`` block.
+What's more, the filename containing the creator-defined statement must be be loaded earlier
+than any file that uses it. Since Ren'Py loads files in Unicode sort order, it
+generally makes sense to prefix the name of any file registering a user-defined
+statement with 01, or some other small number.
+
+Creator-defined screen language statements are registered with the renpy.register_sl_statement
+function:
+
+.. include:: inc/custom_sl
+
+As an example of a creator-defined screen language statement, here's an
+implementation of the ``titledwindow`` statement given above. First, the
+statement must be registered in a ``python early`` block in a file that is loaded
+early – a name like 01custom.rpy will often load soon enough. The registration
+call looks like::
+
+
+    python early:
+        renpy.register_sl_statement("titledwindow", children=1).add_positional("title").add_property("icon").add_property("pos")
+
+Then, we define a screen that implements the custom statement. This screen can be defined in
+any file. One such screen is::
+
+    screen titledwindow(title, icon=None, pos=(0, 0)):
+        drag:
+            pos pos
+
+            frame:
+                background "#00000080"
+
+                has vbox
+
+                hbox:
+                    if icon is not None:
+                        add icon
+
+                    text title
+
+                null height 15
+
+                transclude
+
+
+When are used large property groups like a `add_property_group`, it makes sense to use
+the \*\*properties syntax with a properties keyword in some place. For example::
+
+    screen titledwindow(title, icon=None, **properties):
+        frame:
+            # When background not in properties it will use it as default value.
+            background "#00000080"
+
+            properties properties
+
+            has vbox
+
+            hbox:
+                if icon is not None:
+                    add icon
+
+                text title
+
+            null height 15
+
+            transclude
