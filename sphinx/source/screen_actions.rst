@@ -247,6 +247,54 @@ the :func:`DisableAllInputValues` action.
 
 .. include:: inc/input_value
 
+The InputValue class
+--------------------
+
+.. class:: InputValue
+
+    To define a new InputValue, inherit from this class, override
+    some or all of the methods, and set the value of the default
+    field.
+
+    .. attribute: editable
+
+        If true, this field is editable at all.
+
+    .. attribute:: default
+
+        If true, the input is eligible to be editable by default. (That
+        is, it may be given the caret when the screen is shown.)
+
+    .. method:: get_text(self)
+
+        Returns the default text of the input. This must be implemented.
+
+    .. method:: set_text(self, s)
+
+        Called when the text of the input is changed, with the new text.
+        This must be implemented.
+
+    .. method:: enter(self)
+
+        Called when the user presses enter. If this returns a non-None
+        value, that value is returned from the interacton. This may also
+        raise renpy.IgnoreEvent() to ignore the press. Otherwise, the
+        enter-press is propagated to other displayables.
+
+    The following actions are available as methods on InputValue:
+
+    .. method:: Enable()
+
+        Returns an action that enables text editing on the input.
+
+    .. method:: Disable()
+
+        Returns an action that disables text editing on the input.
+
+    .. method:: Toggle()
+
+        Returns an action that toggles text editing on the input.
+
 
 Functions and Classes
 =====================
