@@ -253,9 +253,22 @@ init -1500 python in build:
         """
         :doc: build
 
-        Declares the existence of an archive. If one or more files are
-        classified with `name`, `name`.rpa is build as an archive. The
-        archive is included in the named file lists.
+        Declares the existence of an archive, whose `name` is added to the
+        list of available file lists.
+
+        If one or more files are classified with `name`, `name`.rpa is
+        build as an archive, and then distributed in packages including
+        the `file_list` given here. ::
+
+            build.archive("secret", "windows")
+
+        If any file is included in the "secret" archive using the
+        :func:`build.classify` function, the secret.rpa archive will be
+        created, and included when calling :func:`build.package` with
+        "windows" in the file lists.
+
+        The `file_list` argument should not be given the name of another
+        archive.
         """
 
         archives.append((name, make_file_lists(file_list)))
