@@ -62,6 +62,9 @@ take the `name` and `page` arguments.
 
 .. include:: inc/file_action
 
+
+.. _audio-actions:
+
 Audio Actions
 -------------
 
@@ -190,7 +193,7 @@ Here's an example::
             if tooltip:
                 text "[tooltip]"
 
-The :ref:`nearrect` displayable can be used to display "popup-style" tooltips,
+The :ref:`sl-nearrect` displayable can be used to display "popup-style" tooltips,
 and has support for a special "tooltip" focus name, that is set to the location
 of the last focus that set a tooltip::
 

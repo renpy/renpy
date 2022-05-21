@@ -1301,7 +1301,7 @@ Finally, when a ``show`` statement does not include an ``at`` clause, the
 same displayables are used, so no inheritence is necessary. To prevent inheritance,
 show and then hide the displayable.
 
-.. _atl-transititions:
+.. _atl-transitions:
 
 ATL Transitions
 ===============

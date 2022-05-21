@@ -59,7 +59,7 @@ Ren'Py binaries can include source code from the following projects:
 * chardet (GNU LGPL)
 * libusb (GNU LGPL)
 * tinyfiledialogs (Zlib License)
-s
+
 For the purposes of LGPL compliance, all source code that Ren'Py depends
 on is located in one of the following repositories:
 

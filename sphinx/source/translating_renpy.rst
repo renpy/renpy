@@ -76,7 +76,7 @@ style.rpy
     generated game.
 
 Language-Specific Translations
------------------------------
+------------------------------
 
 There is one translation that is not a straight-up translation. The
 "{#language name and font}" translation should be replaced with the

@@ -98,6 +98,7 @@ Images defined using the image statement take precedence over those defined
 by the image directory.
 
 .. _image-directory:
+.. _images-directory:
 
 Images Directory
 ----------------

@@ -26,7 +26,7 @@ five things that can be provided:
   passed to :func:`Solid`.
 * An image name. Any other string is interpreted as a reference to an
   image, either defined with the image statement or auto-defined from
-  the :ref:`image directory <images-directory>`.
+  the :ref:`images directory <images-directory>`.
 * A list. If a list is provided, each item is expanded as described
   below, and checked to see if it matches a filename or image name.
   If so, expansion stops and the matched thing is then processed

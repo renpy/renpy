@@ -307,7 +307,7 @@ android-presplash.jpg
     screen is filled with the border color.
 
 android-downloading.jpg
-    The image thjat's used when the app is downloading assets from Google
+    The image that's used when the app is downloading assets from Google
     Play Asset delivery. This should be surrounded
     by 1px of a monocolored border. When displayed, the image is scaled to
     fit available space while preserving aspect ratio, and the rest of the
@@ -372,4 +372,3 @@ Android/data/org.renpy.mygame/files/game
     This might not exist, in which case you may create it. Files in this directory
     are loaded in preference to files in the androids packages, which means that
     patches can be placed in this directory.
-
