@@ -270,7 +270,7 @@ More information about how .rpyc files help with loading saves into changed
 games can be found at:
 
 * `Under the hood: .rpyc files <https://www.patreon.com/posts/under-hood-rpyc-23035810>`_
-* `Ren'Py developer update: February 20201 <https://www.patreon.com/posts/renpy-developer-48146908>`_
+* `Ren'Py developer update: February 2021 <https://www.patreon.com/posts/renpy-developer-48146908>`_
 
 
 Requirements
