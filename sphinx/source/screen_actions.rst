@@ -166,11 +166,68 @@ Bar Values
 ==========
 
 Bar values are used with bars, to set the bar value, and to allow the bar
-to adjust an underlying property. To create a new bar value, subclass
-the :class:`BarValue` class. All classes that have the `step` keyword also accept
-the `force_step` keyword which behavior is described in :func:`ui.adjustment`.
+to adjust an underlying property. All of the following classes that have
+the `step` keyword also accept the `force_step` keyword whose behavior is
+described in :func:`ui.adjustment`. In addition to the values listed below,
+it is also possible to subclass the :class:`BarValue` class.
 
 .. include:: inc/value
+
+The BarValue class
+------------------
+
+.. class:: BarValue
+
+    To define a new BarValue, inherit from this class and override
+    some of the methods.
+
+    .. method:: get_adjustment(self)
+
+        This method is called to get an adjustment object for the
+        bar. It should create the adjustment with
+        :func:`ui.adjustment`, and then return the object created this
+        way.
+
+        This method must be overridden, as the default method will
+        raise NotImplemented (and hence cause Ren'Py to report an
+        error).
+
+    .. method:: get_style(self)
+
+        This is used to determine the style of bars that use this
+        value. It should return a tuple of two style names or style
+        objects. The first is used for a bar, and the
+        second for vbar.
+
+        This defaults to ("bar", "vbar").
+
+    .. method:: get_tooltip(self)
+
+       This gets a default tooltip for this button, if a specific
+       tooltip is not assigned. It should return the tooltip value,
+       or None if a tooltip is not known.
+
+       This defaults to returning None.
+
+    .. method:: replaces(self, other)
+
+        This is called when a BarValue replaces another BarValue, such
+        as when a screen is updated. It can be used to update this
+        BarValue from the other. It is called before get_adjustment.
+
+        Note that `other` is not necessarily the same type as `self`.
+
+    .. method:: periodic(self, st)
+
+       This method is called once at the start of each interaction. If
+       it returns a number of seconds, it will be called before that
+       many seconds elapse, but it might be called sooner. It is
+       called after get_adjustment.
+
+       It can be used to update the value of the bar over time, like
+       :func:`AnimatedValue` does. To do this, get_adjustment should
+       store the adjustment, and periodic should call the
+       adjustment's changed method.
 
 
 .. _input-values:
