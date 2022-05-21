@@ -304,6 +304,10 @@ with the new :var:`config.call_screen_roll_forward` variable.
 New Features
 ------------
 
+The ``show screen``, ``hide screen`` and ``call screen`` statements now
+take an ``expression`` modifier, which allows a Python expression to supply
+the name of the screen.
+
 There is a new "main" volume that can be accessed through :func:`Preferences`.
 The main volume is multiplied with all the other volumes to globally reduce
 the volume of the game.
