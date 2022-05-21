@@ -366,7 +366,7 @@ screen main_menu():
             text "[config.name!t]":
                 style "main_menu_title"
 
-            text "[config.version!it]":
+            text "[config.version!t]":
                 style "main_menu_version"
 
 
@@ -547,7 +547,7 @@ screen about():
         vbox:
 
             label "[config.name!t]"
-            text _("[config.version!it]\n")
+            text _("[config.version!t]\n")
 
             hbox:
                 spacing 15
