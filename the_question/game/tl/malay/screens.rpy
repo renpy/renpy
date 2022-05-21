@@ -69,8 +69,8 @@
     new "Kembali"
 
     # screens.rpy:551
-    old "[config.version!it]\n"
-    new "[config.version!it]\n"
+    old "[config.version!t]\n"
+    new "[config.version!t]\n"
 
     # screens.rpy:555
     old "Updated Character Art"

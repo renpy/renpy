@@ -70,8 +70,8 @@ translate schinese strings:
     new "返回"
 
     # screens.rpy:553
-    old "[config.version!it]\n"
-    new "[config.version!it]\n"
+    old "[config.version!t]\n"
+    new "[config.version!t]\n"
 
     # screens.rpy:557
     old "Updated Character Art"
