@@ -224,7 +224,9 @@ init -1500 python in build:
         """
         :doc: build
 
-        Classifies files that match `pattern` into `file_list`.
+        Classifies files that match `pattern` into `file_list`, which can
+        also be an archive name.
+
         If the name given as `file_list` doesn't exist, it is created and
         added to the set of valid file lists taken by :func:`build.archive`
         or :func:`build.package`.
@@ -257,21 +259,18 @@ init -1500 python in build:
         :doc: build
 
         Declares the existence of an archive, whose `name` is added to the
-        list of available file lists.
+        list of available archive names, which can be passed to
+        :func:`build.classify`.
 
         If one or more files are classified with `name`, `name`.rpa is
-        build as an archive, and then distributed in packages including
+        built as an archive, and then distributed in packages including
         the `file_list` given here. ::
 
             build.archive("secret", "windows")
 
         If any file is included in the "secret" archive using the
-        :func:`build.classify` function, the secret.rpa archive will be
-        created, and included when calling :func:`build.package` with
-        "windows" in the file lists.
-
-        The `file_list` argument should not be given the name of another
-        archive.
+        :func:`build.classify` function, the file will be included inside
+        the secret.rpa archive in the windows builds.
         """
 
         archives.append((name, make_file_lists(file_list)))
@@ -349,8 +348,8 @@ init -1500 python in build:
             makes dlc possible).
 
         `file_lists`
-            A list containing the file lists that will be contained
-            within the package.
+            A list containing the file lists that will be included
+            in the package.
 
         `description`
             An optional description of the package to be built.
