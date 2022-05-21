@@ -146,8 +146,18 @@ renpy
     engine files. (Linux, Macintosh, and Windows.)
 android
     These files will be included in Android builds.
+
+This set of valid file lists can be expanded by passing
+:func:`build.classify` new names as its ``file_list`` argument.
+
+Files can also be classified in archives. By default, the "archive"
+archive is declared:
+
 archive
     These files will be included in the archive.rpa archive.
+
+The set of archives can also be expanded, using the :func:`build.archive`
+function.
 
 Files that are not otherwise classified are placed in the "all" file
 list.
