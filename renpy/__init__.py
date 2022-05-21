@@ -84,7 +84,7 @@ if PY2:
     version_tuple = (7, 5, 0, vc_version)
 
     # The name of this version.
-    version_name = "TBD"
+    version_name = "Heck's Getting Frosty"
 
 else:
 
