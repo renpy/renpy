@@ -28,7 +28,7 @@ init python:
     if persistent.windows_console is None:
         persistent.windows_console = False
 
-    def scan_translations():
+    def scan_translations(piglatin=True):
 
         languages = renpy.known_languages()
 
@@ -41,7 +41,9 @@ init python:
         rv.sort(key=lambda a : renpy.filter_text_tags(a[1], allow=[]).lower())
 
         rv.insert(0, (None, "English"))
-        rv.append(("piglatin", "Igpay Atinlay"))
+
+        if piglatin:
+            rv.append(("piglatin", "Igpay Atinlay"))
 
         bound = ceil(len(rv)/3.)
         return (rv[:bound], rv[bound:2*bound], rv[2*bound:])
@@ -317,6 +319,71 @@ label projects_directory_preference:
 label preferences:
     call screen preferences
     jump preferences
+
+
+screen choose_language():
+    default local_lang = _preferences.language
+    default chosen_lang = _preferences.language
+    default translations = scan_translations(piglatin=False)
+
+    add BACKGROUND
+
+    vbox:
+        xalign .5
+        yalign .5
+
+        fixed:
+            ysize 0
+
+            text renpy.translate_string(_("{#in language font}Welcome! Please choose a language"), local_lang):
+                xalign .5
+                yanchor 1.0
+                ypos 1.0
+
+                style "l_label_text"
+
+                size 36
+                text_align .5
+                layout "subtitle"
+
+        add SPACER
+        add SPACER
+
+        hbox:
+            xalign .5
+            for tran in translations:
+                vbox:
+                    for tlid, tlname in tran:
+                        textbutton tlname:
+                            xmaximum (TWOTHIRDS//3)
+                            action SetScreenVariable("chosen_lang", tlid)
+                            hovered SetScreenVariable("local_lang", tlid)
+                            unhovered SetScreenVariable("local_lang", chosen_lang)
+                            style "l_list"
+                            text_xalign .5
+
+        add SPACER
+        add SPACER
+
+        $ lang_name = renpy.translate_string("{#language name and font}", local_lang)
+
+        fixed:
+            ysize 0
+
+            textbutton renpy.translate_string(_("{#in language font}Start using Ren'Py in [lang_name]"), local_lang):
+                xalign .5
+                action [Language(chosen_lang), project.SelectTutorial(True), Return()]
+                style "l_default"
+                text_style "l_default"
+
+                text_size 30
+                text_text_align .5
+                text_layout "subtitle"
+
+
+label choose_language:
+    call screen choose_language
+    return
 
 
 translate None strings:

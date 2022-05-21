@@ -20,7 +20,7 @@ please read on.
 
 The move to Python 3 makes over a decade of Python language and
 library improvements available to the Ren'Py developer, as described
-in the :ref:`What's new in Python <https://docs.python.org/3.9/whatsnew/index.html>`_
+in the `What's new in Python <https://docs.python.org/3.9/whatsnew/index.html>`_
 documentation. There are far too many changes in Python 3 to include here,
 so please check that and other Python websites for descriptions.
 
@@ -162,7 +162,7 @@ Steam, Steam Deck, and Epic Games Store
 This release includes rewritten Steam support, provided by a new
 ctypes-based binding that gives access to the entire Steamworks API,
 including callbacks. While the Steam support available through the
-:ref:`achievement module <achievement>`_ remains unchanged, this
+:ref:`achievement module <achievement>` remains unchanged, this
 gives advanced Python programmers access to more Steam functionality.
 
 When Steam is active, Ren'Py will now enable the "steam" variant.
@@ -303,6 +303,10 @@ with the new :var:`config.call_screen_roll_forward` variable.
 
 New Features
 ------------
+
+The ``show screen``, ``hide screen`` and ``call screen`` statements now
+take an ``expression`` modifier, which allows a Python expression to supply
+the name of the screen.
 
 There is a new "main" volume that can be accessed through :func:`Preferences`.
 The main volume is multiplied with all the other volumes to globally reduce
@@ -674,7 +678,7 @@ Ren'Py will now look for archives in the external files directory, and
 automatically use the archives if found. This makes it possible to
 distribute patches, updates, and additional asset to users.
 
-The inclusion of :ref:`Pyjnius <pyjinus>`, a library for calling
+The inclusion of :ref:`Pyjnius <pyjnius>`, a library for calling
 the Android API, is now documented.
 
 The new :var:`build.android_permissions` variable, :func:`renpy.check_permission`

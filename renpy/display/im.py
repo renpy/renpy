@@ -1758,7 +1758,8 @@ class Tile(ImageBase):
         If not None, a (width, height) tuple. If None, this defaults to
         (:var:`config.screen_width`, :var:`config.screen_height`).
 
-    The same effect can now be achieved with Tile(im, size=size)
+    The same effect can now be achieved using the :func:`Tile`
+    displayable, with ``Tile(im, size=size)``.
     """
 
     def __init__(self, im, size=None, **properties):

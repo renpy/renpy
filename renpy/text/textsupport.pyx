@@ -96,7 +96,7 @@ def tokenize(unicode s):
     cdef int TAG_STATE = 3
     cdef int state = TEXT_STATE
 
-    cdef Py_UNICODE c
+    cdef Py_UCS4 c
     cdef unicode buf = u''
 
     cdef list rv = [ ]

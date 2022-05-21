@@ -174,7 +174,7 @@ def main():
     if not args.fast:
         for i in [ 'tutorial', 'launcher', 'the_question' ]:
             print("Compiling", i)
-            subprocess.check_call([renpy_sh, i, "quit" ])
+            subprocess.check_call([renpy_sh, i, "compile" ])
 
     # Kick off the rapt build.
     if not args.fast:

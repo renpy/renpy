@@ -1,5 +1,7 @@
+.. _audio:
+
 Audio
-=======
+=====
 
 Ren'Py supports playing music and sound effects in the background,
 using the following audio file formats:

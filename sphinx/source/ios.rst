@@ -136,9 +136,10 @@ images from files.
     If present, this file is scaled to the various sizes of png file
     needed to make an iOS icon.
 
+.. _pyobjus:
+
 Pyobjus
 =======
 
 On iOS and macOS, a version of `Pyobjus <https://pyobjus.readthedocs.io/en/latest/>`_
 is available, allowing advanced creators to call system libraries.
-

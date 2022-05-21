@@ -1046,8 +1046,8 @@ def get_screen(name, layer=None):
     """
     :doc: screens
 
-    Returns the ScreenDisplayable with the given `name` on layer. `name`
-    is first interpreted as a tag name, and then a screen name. If the
+    Returns the ScreenDisplayable with the given `name` on `layer`. `name`
+    is first interpreted as a tag name, and then as a screen name. If the
     screen is not showing, returns None.
 
     This can also take a list of names, in which case the first screen
@@ -1063,15 +1063,15 @@ def get_screen(name, layer=None):
     The ScreenDisplayable objects returnd by this function have the following
     documented fields:
 
-    ``ScreenDisplayable.layer``
+    `ScreenDisplayable.layer`
 
         The layer the screen is being displayed on.
 
-    ``ScreenDisplayable.name``
+    `ScreenDisplayable.name`
 
         The name of the screen.
 
-    ``ScreenDisplayable.zorder``
+    `ScreenDisplayable.zorder`
 
         The zorder the screen is being displayed at.
     """

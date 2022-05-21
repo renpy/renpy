@@ -700,8 +700,8 @@ init -1500 python:
 
         If a displayable is focused when this action is run, the rectangle
         containing that displayable is stored with the name `name`. This
-        rectange can then be retrieved with the :func:`GetFocusRect` action,
-        or the `focus` property of the :ref:`nearrect` displayable.
+        rectangle can then be retrieved with the :func:`GetFocusRect` action,
+        or the `focus` property of the :ref:`sl-nearrect` displayable.
 
         If no displayable is focused, the previous capture with that name
         is removed.
@@ -738,7 +738,7 @@ init -1500 python:
         """
         :doc: focus_action
 
-        If a focus rectange with the given name has been stored (either with
+        If a focus rectangle with the given name has been stored (either with
         :func:`CaptureFocus`, or automatically by a tooltip, returns the
         a (x, y, h, w) rectangle. Otherwise, returns None.
 

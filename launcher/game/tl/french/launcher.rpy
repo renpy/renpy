@@ -2066,3 +2066,11 @@
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
     new "Nightly (Ren'Py 7, Python 2)"
+
+    # game/preferences.rpy:327
+    old "{#in language font}Welcome! Please choose a language"
+    new "{font=fonts/Roboto-Light.ttf}Bienvenue ! Choisissez une langue{/font}"
+
+    # game/preferences.rpy:327
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    new "{font=fonts/Roboto-Light.ttf}Commencez à utiliser Ren'Py en [lang_name]{/font}"
