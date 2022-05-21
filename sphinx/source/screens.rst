@@ -2114,6 +2114,18 @@ screen name, and an optional Python argument list. If present, the arguments
 are used to initialize the scope of the screen. There are also some
 specific keywords passed to :func:`show_screen` and :func:`call_screen`.
 
+If the ``expression`` keyword is given, the expression following it will be evaluated
+as the screen name. To pass arguments to the screen with the expression keyword,
+separate the expression and arguments with the ``pass`` keyword.
+
+::
+
+    $ screen_name = "my_screen"
+    show screen expression screen_name
+    # Or if you need to pass some arguments
+    show screen expression screen_name pass ("Foo", message="Bar")
+
+
 The show screen statement takes an optional ``nopredict`` keyword, that
 prevents screen prediction from occurring. During screen prediction,
 arguments to the screen are evaluated. Please ensure that evaluating
@@ -2149,11 +2161,16 @@ being shown. If the screen is not being shown, nothing happens. The with
 clause is interpreted the same way the ``with`` clause of a show statement
 is.
 
+Similar to the ``show screen`` statement, ``hide screen`` also takes the ``expression`` keyword,
+allowing to use an arbitrary expression as the screen name.
+
 ::
 
     hide screen rare_screen
     hide screen clock_screen with dissolve
     hide screen overlay_screen
+    $ screen_name = "some_screen"
+    hide screen expression screen_name
 
 Call Screen
 -----------
@@ -2184,6 +2201,9 @@ special keyword argument to the screen, as in the example below.
 Other ways of triggering transitions also work, such as the
 ``[ With(dissolve), Return() ]`` action list.
 
+Similar to the ``show screen`` statement, ``call screen`` also takes the ``expression`` keyword,
+allowing to use an arbitrary expression as the screen name.
+
 .. warning::
 
     If evaluating the arguments to a screen causes side-effects to occur,
@@ -2203,6 +2223,9 @@ Other ways of triggering transitions also work, such as the
     # Shows the screen with dissolve and hides it with pixellate.
     call screen my_other_screen(_with_none=False) with dissolve
     with pixellate
+
+    $ screen_name = "my_screen"
+    call screen expression screen_name pass (foo="bar")
 
 .. _screen-variants:
 
