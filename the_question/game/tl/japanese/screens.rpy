@@ -70,8 +70,8 @@ translate japanese strings:
     new "戻る"
 
     # game/screens.rpy:553
-    old "[config.version!t]\n"
-    new "[config.version!t]\n"
+    old "[config.version!it]\n"
+    new "[config.version!it]\n"
 
     # game/screens.rpy:557
     old "Updated Character Art"
