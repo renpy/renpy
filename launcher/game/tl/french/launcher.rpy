@@ -2069,8 +2069,8 @@
 
     # game/preferences.rpy:327
     old "{#in language font}Welcome! Please choose a language"
-    new "Bienvenue ! Choisissez une langue"
+    new "{font=fonts/Roboto-Light.ttf}Bienvenue ! Choisissez une langue{/font}"
 
     # game/preferences.rpy:327
     old "{#in language font}Start using Ren'Py in [lang_name]"
-    new "Commencez à utiliser Ren'Py en [lang_name]"
+    new "{font=fonts/Roboto-Light.ttf}Commencez à utiliser Ren'Py en [lang_name]{/font}"
