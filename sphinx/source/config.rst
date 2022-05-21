@@ -1625,7 +1625,7 @@ Rarely or Internally Used
     archives, and other media, but not scripts. This is initialized to
     a list containing "common" and the name of the game directory.
 
-.. var:: config.search_prefixes = [ "", "images/" ]
+.. var:: config.search_prefixes = [ "", "images/", "audio/" ]
 
     A list of prefixes that are prepended to filenames that are searched
     for.
