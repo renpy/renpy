@@ -2055,7 +2055,7 @@ translate spanish strings:
     
     # game/preferences.rpy:327
     old "{#in language font}Welcome! Please choose a language"
-    new "¡Bienvenidp! Por favor elige un idioma"
+    new "¡Bienvenido! Por favor elige un idioma"
 
     # game/preferences.rpy:327
     old "{#in language font}Start using Ren'Py in [lang_name]"
