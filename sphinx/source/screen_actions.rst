@@ -10,18 +10,25 @@ for use with screens and the screen language.
 Actions
 =======
 
-Actions are invoked when a button (including imagebuttons,
-textbuttons, and hotspots) is activated, hovered, or
-unhovered. Actions may determine when a button is selected or
-insensitive.
+Many of the displayables created in the screen language take actions
+as arguments, which are invoked typically when a button is activated,
+hovered, or unhovered. Actions may also determine when a button is
+selected or insensitive.
 
-Along with these actions, an action may be a function that does not
-take any arguments. The function is called when the action is
-invoked. If the action returns a value, then the value is returned
-from an interaction.
+An action is in the general case a subclass of the :class:`Action`
+class, as are the actions listed in this page. Alternatively, a python
+callable (like a function or a bound method) taking no arguments can be
+used as an action. It will be called when the action is to be invoked.
+If the callable, or the \__call\__ method of the :class:`Action`
+subclass, returns a value, then that value is returned from an
+interaction. This is what the Return action does, for example.
 
 An action may also be a list of actions, in which case the actions in
 the list are run in order.
+
+To run an action from Python, use :func:`renpy.run`.
+
+.. include:: inc/run
 
 Control Actions
 ---------------
@@ -82,6 +89,75 @@ Other Actions
 These are other actions, not found anywhere else.
 
 .. include:: inc/other_action
+
+The Action class
+----------------
+
+The advantage to inheriting from the Action class, instead of using a
+function or callable, is that it allows you to override the methods that
+determine when a button should be sensitive, and when it is selected.
+
+.. class:: Action
+
+   To define a new action, inherit from this class. Override the
+   methods in this class to change the behavior of the action.
+
+   .. method:: __call__(self)
+
+       This is the method that is called when the action is
+       activated. In many cases, returning a non-None value from the
+       action will cause the current interaction to end.
+
+       This method must be overridden, as the default method will
+       raise NotImplemented (and hence cause Ren'Py to report an
+       error).
+
+   .. method:: get_sensitive(self)
+
+       This is called to determine if the button with this action
+       should be sensitive. It should return true if the button is
+       sensitive.
+
+       Note that __call__ can be called, even if this returns False.
+
+       The default implementation returns True.
+
+   .. method:: get_selected(self)
+
+       This should return true if the button should be rendered as a
+       selected button, and false otherwise.
+
+       The default implemention returns False.
+
+   .. method:: get_tooltip(self)
+
+       This gets a default tooltip for this button, if a specific
+       tooltip is not assigned. It should return the tooltip value,
+       or None if a tooltip is not known.
+
+       This defaults to returning None.
+
+   .. method:: periodic(self, st)
+
+       This method is called once at the start of each interaction,
+       and then is called periodically thereafter. If it returns a
+       number, it will be called before that many seconds elapse, but
+       it might be called sooner.
+
+       The main use of this is to call
+       :func:`renpy.restart_interaction` if the value of
+       get_selected or get_sensitive should change.
+
+       It takes one argument:
+
+       `st`
+           The number of seconds since the screen or displayable this
+           action is associated with was first shown.
+
+   .. method:: unhovered(self)
+
+       When the action is used as the `hovered` parameter to a button (or
+       similar object), this method is called when the object loses focus.
 
 
 .. _bar-values:
