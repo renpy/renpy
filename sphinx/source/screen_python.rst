@@ -9,9 +9,6 @@ The following functions support various operations related to screens.
 
 .. include:: inc/screens
 
-There are a few UI functions, which are not equivalents to statements
-in Ren'Py or screen-language.
-
 .. include:: inc/ui
 
 Actions
