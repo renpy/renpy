@@ -475,7 +475,7 @@ python early hide:
         """
         name = p["name"]
         if p.get("expression", False):
-            return _try_eval(name, "screen name")
+            return eval(name)
 
         return name
 
@@ -555,7 +555,11 @@ python early hide:
         if not predict:
             return
 
-        name = _get_screen_name(p)
+        try:
+            name = _get_screen_name(p)
+        except Exception:
+            return
+
         a = p["arguments"]
 
         if a is not None:
