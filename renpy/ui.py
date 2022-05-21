@@ -333,7 +333,7 @@ def remove_above(d):
 
 def at(transform):
     """
-    :doc: ui
+    :undocumented:
 
     Specifies a transform that is applied to the next displayable to
     be created. This is largely obsolete, as all UI functions now take
@@ -350,7 +350,7 @@ def clear():
 
 def detached():
     """
-    :doc: ui
+    :undocumented:
 
     Do not add the next displayable to any later or container. Use this if
     you want to assign the result of a ui function to a variable.
@@ -363,7 +363,7 @@ def detached():
 
 def layer(name):
     """
-    :doc: ui
+    :undocumented:
 
     Adds displayables to the layer named `name`. The later must be
     closed with :func:`ui.close`.
@@ -374,7 +374,7 @@ def layer(name):
 
 def close(d=None):
     """
-    :doc: ui
+    :undocumented:
     :args: ()
 
     Closes a displayable created with by a UI function. When a
@@ -1462,7 +1462,7 @@ on = Wrapper(renpy.display.behavior.OnEvent)
 
 def screen_id(id_, d):
     """
-    :doc: ui
+    :undocumented:
 
     Assigns the displayable `d` the screen widget id `id_`, as if it had
     been created by a screen statement with that id.

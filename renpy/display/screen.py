@@ -985,7 +985,7 @@ def prepare_screens():
 
 def define_screen(*args, **kwargs):
     """
-    :doc: screens
+    :undocumented:
     :args: (name, function, modal="False", zorder="0", tag=None, variant=None)
 
     Defines a screen with `name`, which should be a string.
