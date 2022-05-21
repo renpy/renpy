@@ -330,7 +330,7 @@ screen choose_language():
 
     vbox:
         xalign .5
-        ypos .25
+        yalign .5
 
         fixed:
             ysize 0
