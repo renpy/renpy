@@ -401,14 +401,16 @@ init python:
     # all-platforms binary.
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
-    build.classify_renpy("lib/*linux-armv7l/", "raspi")
-    build.classify_renpy("lib/*linux-armv7l/**", "raspi")
 
     if PY2:
+        build.classify_renpy("lib/py2-linux-armv7l/", "raspi")
+        build.classify_renpy("lib/py2-linux-armv7l/**", "raspi")
         source_and_binary("lib/py2-**", "binary", "binary")
         source_and_binary("lib/python2**", "binary", "binary")
         build.classify_renpy("renpy2.sh", "binary")
     else:
+        build.classify_renpy("lib/py3-linux-armv7l/", "raspi")
+        build.classify_renpy("lib/py3-linux-armv7l/**", "raspi")
         source_and_binary("lib/py3-**", "binary", "binary")
         source_and_binary("lib/python3**", "binary", "binary", py='pyc')
         build.classify_renpy("renpy3.sh", "binary")
