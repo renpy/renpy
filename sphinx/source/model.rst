@@ -282,14 +282,14 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     :default: None
 
     if not None, this should be a string. This string is looked up in
-    :var:`config.gl_blend_func` to  get the value for the gl_blend_func
+    :var:`config.gl_blend_func` to get the value for the gl_blend_func
     property. It's used to use alternate blend modes.
 
     The default blend modes this supports are "normal", "add", "multiply",
     "min", and "max".
 
 
-In addition, uniforms that start with u\_ and not u_renpy are made available
+In addition, uniforms that start with u\_ but not with u_renpy are made available
 as Transform properties. GL properties are made available as transform
 properties starting with gl\_. For example, the color_mask property is made
 available as gl_color_mask.
@@ -299,8 +299,8 @@ Blend Functions
 
 .. var:: config.gl_blend_func = { ... }
 
-    A dictionaryt used to map a blend mode name to a blend function. The
-    blend modes are suppled to the blend func property, given below.
+    A dictionary used to map a blend mode name to a blend function. The
+    blend modes are supplied to the blend func property, given below.
 
 The default blend modes are::
 
