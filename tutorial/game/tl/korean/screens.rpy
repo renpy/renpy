@@ -1,223 +1,325 @@
-﻿
+﻿translate korean strings:
 
-translate korean strings:
+    # screens.rpy:261
+    old "Back"
+    new "되감기"
 
+    # screens.rpy:262
+    old "History"
+    new "대사록"
 
-    # game/screens.rpy:194
-    old "Start Game"
-    new "게임 시작"
+    # screens.rpy:263
+    old "Skip"
+    new "넘기기"
 
+    # screens.rpy:264
+    old "Auto"
+    new "자동진행"
 
-    # game/screens.rpy:195
-    old "Load Game"
-    new "게임 로드"
+    # screens.rpy:265
+    old "Save"
+    new "저장하기"
 
+    # screens.rpy:266
+    old "Q.Save"
+    new "Q.저장"
 
-    # game/screens.rpy:196
+    # screens.rpy:267
+    old "Q.Load"
+    new "Q.불러오기"
+
+    # screens.rpy:268
+    old "Prefs"
+    new "설정"
+
+    # screens.rpy:299
+    old "Start"
+    new "시작하기"
+
+    # screens.rpy:307
+    old "Load"
+    new "불러오기"
+
+    # screens.rpy:318
     old "Preferences"
     new "환경설정"
 
+    # screens.rpy:322
+    old "End Replay"
+    new "리플레이 끝내기"
 
-    # game/screens.rpy:197
+    # screens.rpy:326
+    old "Main Menu"
+    new "대문으로"
+
+    # screens.rpy:328
+    old "About"
+    new "작품정보"
+
+    # screens.rpy:333
     old "Help"
-    new "도움말"
+    new "조작방법"
 
-
-    # game/screens.rpy:198
+    # screens.rpy:327
     old "Quit"
-    new "끝내기"
+    new "종료하기"
 
-
-    # game/screens.rpy:228
+    # screens.rpy:467
     old "Return"
     new "돌아가기"
 
+    # screens.rpy:551
+    old "[config.version!t]\n"
+    new "[config.version!t]\n"
 
-    # game/screens.rpy:230
-    old "Save Game"
-    new "게임 저장하기"
+    # screens.rpy:570
+    old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
+    new "{a=https://www.renpy.org/}렌파이{/a} [renpy.version_only]로 창작됐습니다.\n\n[renpy.license!t]"
 
+    # screens.rpy:610
+    old "Page {}"
+    new "{} 쪽"
 
-    # game/screens.rpy:232
-    old "Main Menu"
-    new "메인 화면으로"
+    # screens.rpy:607
+    old "Automatic saves"
+    new "자동 저장"
 
+    # screens.rpy:607
+    old "Quick saves"
+    new "빠른 저장"
 
-    # game/screens.rpy:266
-    old "Previous"
-    new "이전"
+    # screens.rpy:685
+    old "{#file_time}%A, %B %d %Y, %H:%M"
+    new "{#file_time}%Y년 %B %d일 %A, %H시 %M분"
 
+    # screens.rpy:685
+    old "empty slot"
+    new "빈 칸"
 
-    # game/screens.rpy:269
-    old "Auto"
-    new "자동"
+    # screens.rpy:702
+    old "<"
+    new "<"
 
+    # screens.rpy:668
+    old "{#auto_page}A"
+    new "{#auto_page}자동"
 
-    # game/screens.rpy:272
-    old "Quick"
-    new "빠르게"
+    # screens.rpy:670
+    old "{#quick_page}Q"
+    new "{#quick_page}빠른"
 
+    # screens.rpy:676
+    old ">"
+    new ">"
 
-    # game/screens.rpy:279
-    old "Next"
-    new "다음"
-
-
-    # game/screens.rpy:305
-    old "Empty Slot."
-    new "빈 슬롯"
-
-
-    # game/screens.rpy:361
+    # screens.rpy:738
     old "Display"
-    new "디스플레이"
+    new "화면 모드"
 
-
-    # game/screens.rpy:362
+    # screens.rpy:739
     old "Window"
-    new "윈도우"
+    new "창 화면"
 
-
-    # game/screens.rpy:363
+    # screens.rpy:740
     old "Fullscreen"
-    new "전체화면"
+    new "전체 화면"
 
+    # screens.rpy:757
+    old "Unseen Text"
+    new "읽지 않은 지문"
 
-    # game/screens.rpy:369
+    # screens.rpy:753
+    old "After Choices"
+    new "선택지 이후"
+
+    # screens.rpy:754
     old "Transitions"
-    new "트랜지션"
+    new "화면 전환 효과"
 
-
-    # game/screens.rpy:370
-    old "All"
-    new "전부"
-
-
-    # game/screens.rpy:371
-    old "None"
-    new "없음"
-
-
-    # game/screens.rpy:377
-    old "Text Speed"
-    new "텍스트 속도"
-
-
-    # game/screens.rpy:384
-    old "Joystick..."
-    new "조이스틱..."
-
-
-    # game/screens.rpy:391
+    # screens.rpy:800
     old "Language"
     new "언어"
 
+    # screens.rpy:767
+    old "Text Speed"
+    new "텍스트 속도"
 
-    # game/screens.rpy:403
-    old "Skip"
-    new "스킵"
-
-
-    # game/screens.rpy:404
-    old "Seen Messages"
-    new "이미 본 대사만"
-
-
-    # game/screens.rpy:405
-    old "All Messages"
-    new "모든 대사"
-
-
-    # game/screens.rpy:411
-    old "Begin Skipping"
-    new "스킵 시작"
-
-
-    # game/screens.rpy:417
-    old "After Choices"
-    new "선택지를 만나면"
-
-
-    # game/screens.rpy:418
-    old "Stop Skipping"
-    new "스킵 종료"
-
-
-    # game/screens.rpy:419
-    old "Keep Skipping"
-    new "계속 스킵"
-
-
-    # game/screens.rpy:425
+    # screens.rpy:771
     old "Auto-Forward Time"
     new "자동 진행 시간"
 
-
-    # game/screens.rpy:429
-    old "Wait for Voice"
-    new "음성을 기다리기"
-
-
-    # game/screens.rpy:436
+    # screens.rpy:828
     old "Music Volume"
-    new "음악 음량"
+    new "배경음 음량"
 
-
-    # game/screens.rpy:443
+    # screens.rpy:835
     old "Sound Volume"
     new "효과음 음량"
 
-
-    # game/screens.rpy:447
+    # screens.rpy:841
     old "Test"
     new "테스트"
 
-
-    # game/screens.rpy:456
+    # screens.rpy:845
     old "Voice Volume"
     new "음성 음량"
 
+    # screens.rpy:856
+    old "Mute All"
+    new "모두 음소거"
 
-    # game/screens.rpy:459
-    old "Voice Sustain"
-    new "음성 유지"
+    # screens.rpy:975
+    old "The dialogue history is empty."
+    new "대사가 없습니다."
 
+    # screens.rpy:1041
+    old "Keyboard"
+    new "키보드"
 
-    # game/screens.rpy:520
+    # screens.rpy:1042
+    old "Mouse"
+    new "마우스"
+
+    # screens.rpy:1045
+    old "Gamepad"
+    new "게임패드"
+
+    # screens.rpy:1058
+    old "Enter"
+    new "엔터(Enter)"
+
+    # screens.rpy:1059
+    old "Advances dialogue and activates the interface."
+    new "대사 진행 및 UI (선택지 포함) 선택."
+
+    # screens.rpy:1062
+    old "Space"
+    new "스페이스(Space)"
+
+    # screens.rpy:1063
+    old "Advances dialogue without selecting choices."
+    new "대사를 진행하되 선택지는 선택하지 않음."
+
+    # screens.rpy:1066
+    old "Arrow Keys"
+    new "화살표 키"
+
+    # screens.rpy:1067
+    old "Navigate the interface."
+    new "UI 이동."
+
+    # screens.rpy:1070
+    old "Escape"
+    new "이스케이프(Esc)"
+
+    # screens.rpy:1071
+    old "Accesses the game menu."
+    new "게임 메뉴 불러옴."
+
+    # screens.rpy:1074
+    old "Ctrl"
+    new "컨트롤(Ctrl)"
+
+    # screens.rpy:1075
+    old "Skips dialogue while held down."
+    new "누르고 있는 동안 대사를 넘기기."
+
+    # screens.rpy:1078
+    old "Tab"
+    new "탭(Tab)"
+
+    # screens.rpy:1079
+    old "Toggles dialogue skipping."
+    new "대사 넘기기를 토글."
+
+    # screens.rpy:1082
+    old "Page Up"
+    new "페이지 업(Page Up)"
+
+    # screens.rpy:1083
+    old "Rolls back to earlier dialogue."
+    new "이전 대사로 롤백."
+
+    # screens.rpy:1086
+    old "Page Down"
+    new "페이지 다운(Page Down)"
+
+    # screens.rpy:1087
+    old "Rolls forward to later dialogue."
+    new "이후 대사로 롤포워드."
+
+    # screens.rpy:1091
+    old "Hides the user interface."
+    new "UI를 숨김."
+
+    # screens.rpy:1095
+    old "Takes a screenshot."
+    new "스크린샷 저장."
+
+    # screens.rpy:1099
+    old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
+    new "{a=https://www.renpy.org/l/voicing}대사 읽어주기 기능{/a} 토글."
+
+    # screens.rpy:1105
+    old "Left Click"
+    new "클릭"
+
+    # screens.rpy:1109
+    old "Middle Click"
+    new "휠버튼 클릭"
+
+    # screens.rpy:1113
+    old "Right Click"
+    new "우클릭"
+
+    # screens.rpy:1117
+    old "Mouse Wheel Up\nClick Rollback Side"
+    new "휠 위로\n롤백 클릭"
+
+    # screens.rpy:1121
+    old "Mouse Wheel Down"
+    new "휠 아래로"
+
+    # screens.rpy:1128
+    old "Right Trigger\nA/Bottom Button"
+    new "오른쪽 트리거(RT)\nA버튼/아래 버튼"
+
+    # screens.rpy:1132
+    old "Left Trigger\nLeft Shoulder"
+    new "왼쪽 트리거(LT)\n왼쪽 범퍼(LB)"
+
+    # screens.rpy:1136
+    old "Right Shoulder"
+    new "오른쪽 범퍼(RB)"
+
+    # screens.rpy:1140
+    old "D-Pad, Sticks"
+    new "D-Pad, 아날로그 스틱"
+
+    # screens.rpy:1144
+    old "Start, Guide"
+    new "스타트 버튼/가이드 버튼"
+
+    # screens.rpy:1148
+    old "Y/Top Button"
+    new "Y버튼/위 버튼"
+
+    # screens.rpy:1151
+    old "Calibrate"
+    new "조정"
+
+    # screens.rpy:1216
     old "Yes"
-    new "예"
+    new "네"
 
-
-    # game/screens.rpy:521
+    # screens.rpy:1217
     old "No"
     new "아니오"
 
+    # screens.rpy:1263
+    old "Skipping"
+    new "넘기는 중"
 
-    # game/screens.rpy:549
-    old "Back"
-    new "뒤로"
-
-
-    # game/screens.rpy:550
-    old "Save"
-    new "세이브"
-
-
-    # game/screens.rpy:551
-    old "Q.Save"
-    new "퀵세이브"
-
-
-    # game/screens.rpy:552
-    old "Q.Load"
-    new "퀵로드"
-
-
-    # game/screens.rpy:554
-    old "F.Skip"
-    new "빠른 스킵"
-
-
-    # game/screens.rpy:556
-    old "Prefs"
-    new "설정"
+    # screens.rpy:1484
+    old "Menu"
+    new "메뉴"

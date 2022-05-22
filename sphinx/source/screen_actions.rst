@@ -62,10 +62,22 @@ take the `name` and `page` arguments.
 
 .. include:: inc/file_action
 
+
+.. _audio-actions:
+
 Audio Actions
 -------------
 
+The concept of channels and how they work, as well as most information
+about audio in Ren'Py, is explained at :ref:`audio`.
+
 .. include:: inc/audio_action
+
+
+Focus Actions
+-------------
+
+.. include:: inc/focus_action
 
 Other Actions
 -------------
@@ -74,13 +86,37 @@ These are other actions, not found anywhere else.
 
 .. include:: inc/other_action
 
-Values
-======
 
-Values are used with bars, to set the bar value, and to allow the bar
-to adjust an underlying property.
+.. _bar-values:
+
+Bar Values
+==========
+
+Bar values are used with bars, to set the bar value, and to allow the bar
+to adjust an underlying property. To create a new bar value, subclass
+the :class:`BarValue` class. All classes that have the `step` keyword also accept
+the `force_step` keyword which behavior is described in :func:`ui.adjustment`.
 
 .. include:: inc/value
+
+
+.. _input-values:
+
+Input Values
+============
+
+Input values are used with text inputs, to set the default text, to accept
+changed text, to respond to the enter key, and to determine if the text is
+editable by default. To create a new input value, subclass the :class:`InputValue`
+class.
+
+Ren'Py-defined input values inherit from InputValue, which means that
+all values also include Enable(), Disable(), and Toggle() methods that return
+actions that enable, disable, and toggle editing, respectively. See also
+the :func:`DisableAllInputValues` action.
+
+.. include:: inc/input_value
+
 
 Functions and Classes
 =====================
@@ -98,6 +134,14 @@ names used in the default preferences screen.
 
 .. include:: inc/preference_action
 
+.. include:: inc/preference_functions
+
+Gamepad
+-------
+
+These functions and actions work with the gamepad.
+
+.. include:: inc/gamepad
 
 File Functions
 --------------
@@ -114,9 +158,90 @@ This function returns the side image to use.
 
 .. include:: inc/side_image_function
 
+.. _tooltips:
 
 Tooltips
 --------
+
+Tooltips can now be accessed by the tooltip property available on all
+displayables, and the GetTooltip function. The GetTooltip function
+returns the value of the tooltip property when the displayable
+gains focus.
+
+Here's an example::
+
+    screen tooltip_example():
+        vbox:
+            textbutton "North":
+                action Return("n")
+                tooltip "To meet a polar bear."
+
+            textbutton "South":
+                action Return("s")
+                tooltip "All the way to the tropics."
+
+            textbutton "East":
+                action Return("e")
+                tooltip "So we can embrace the dawn."
+
+            textbutton "West":
+                action Return("w")
+                tooltip "Where to go to see the best sunsets."
+
+            $ tooltip = GetTooltip()
+
+            if tooltip:
+                text "[tooltip]"
+
+The :ref:`sl-nearrect` displayable can be used to display "popup-style" tooltips,
+and has support for a special "tooltip" focus name, that is set to the location
+of the last focus that set a tooltip::
+
+    screen tooltip_example2():
+        frame:
+
+            padding (20, 20)
+            align (.5, .3)
+
+            has vbox
+
+            textbutton "North":
+                action Return("n")
+                tooltip "To meet a polar bear."
+
+            textbutton "South":
+                action Return("s")
+                tooltip "All the way to the tropics."
+
+            textbutton "East":
+                action Return("e")
+                tooltip "So we can embrace the dawn."
+
+            textbutton "West":
+                action Return("w")
+                tooltip "Where to go to see the best sunsets."
+
+        # This has to be the last thing shown in the screen.
+
+        $ tooltip = GetTooltip()
+
+        if tooltip:
+
+            nearrect:
+                focus "tooltip"
+                prefer_top True
+
+                frame:
+                    xalign 0.5
+                    text tooltip
+
+
+.. include:: inc/get_tooltip
+
+Legacy
+^^^^^^
+
+.. warning:: This has been obsoleted by the above, but you might see it in older projects.
 
 The tooltip class changes the screen when a button is hovered.
 
@@ -125,7 +250,7 @@ The tooltip class changes the screen when a button is hovered.
 When using a tooltip with a screen, the usual behavior is to create a
 tooltip object in a default statement. The value of the tooltip and
 the action method can then be used within the screen. The order of
-use within a screen doesn't matter - it's possible to use the value
+use within a screen doesn't matter – it's possible to use the value
 before an action is used.
 
 Tooltips can take on any value. While in the example below we use the

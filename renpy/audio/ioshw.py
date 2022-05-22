@@ -1,9 +1,15 @@
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+
 import renpy
-import pyobjus # @UnresolvedImport
+import pyobjus # type: ignore
 
 from renpy.audio.audio import MusicContext
 
 VideoPlayer = pyobjus.autoclass("VideoPlayer")
+
 
 class IOSVideoChannel(object):
 
@@ -51,7 +57,6 @@ class IOSVideoChannel(object):
             self.default_loop = default_loop
             self.default_loop_set = True
 
-
     def get_context(self):
         """
         Returns the MusicContext corresponding to this channel, taken from
@@ -68,6 +73,17 @@ class IOSVideoChannel(object):
 
     context = property(get_context)
 
+    def copy_context(self):
+        """
+        Copies the MusicContext associated with this channel, updates the
+        ExecutionContext to point to the copy, and returns the copy.
+        """
+
+        mcd = renpy.game.context().music
+
+        ctx = self.get_context().copy()
+        mcd[self.name] = ctx
+        return ctx
 
     def start(self):
         """
@@ -78,9 +94,8 @@ class IOSVideoChannel(object):
             return
 
         filename = self.queue.pop(0)
-        f = renpy.loader.load(filename)
-
-        real_fn = f.name
+        with renpy.loader.load(filename) as f:
+            real_fn = f.name
 
         self.filename = filename
         self.player = VideoPlayer.alloc().initWithFile_(real_fn)
@@ -112,12 +127,14 @@ class IOSVideoChannel(object):
             self.stop()
             return
 
+        if self.player:
+            self.player.periodic()
+
         if self.get_playing():
             return
 
         if self.queue:
             self.start()
-
 
     def dequeue(self, even_tight=False):
         """
@@ -130,14 +147,12 @@ class IOSVideoChannel(object):
         else:
             self.queue = self.queue[:1]
 
-
     def interact(self):
         """
         Called (mostly) once per interaction.
         """
 
         self.periodic()
-
 
     def fadeout(self, secs):
         """
@@ -148,7 +163,7 @@ class IOSVideoChannel(object):
         self.stop()
         self.queue = [ ]
 
-    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None):
+    def enqueue(self, filenames, loop=True, synchro_start=False, fadein=0, tight=None, loop_only=False, relative_volume=1.0):
         self.queue.extend(filenames)
 
     def pause(self):
@@ -173,3 +188,11 @@ class IOSVideoChannel(object):
     def set_secondary_volume(self, volume, delay):
         pass
 
+    def reload(self):
+        return
+
+    def read_video(self):
+        return None
+
+    def video_ready(self):
+        return 1

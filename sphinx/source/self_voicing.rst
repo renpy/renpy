@@ -1,7 +1,7 @@
 .. _self-voicing:
 
 ============
-Self Voicing
+Self-Voicing
 ============
 
 Ren'Py supports a self-voicing mode in which a speech synthesizer is used
@@ -28,7 +28,7 @@ adjust your platform's speech settings.
 
 Windows
     On Windows, Ren'Py uses the Microsoft Speech API. Speech synthesis
-    settings can  be changed on the "Text to Speech" tab of the "Speech
+    settings can be changed on the "Text to Speech" tab of the "Speech
     Recognition" control panel.
 
 Mac OS X
@@ -41,8 +41,23 @@ Linux
     installed using your package manager before self-voicing mode will
     work.
 
-Android
-    Self-voicing mode is not supported on Android
+Android, iOS, Chrome OS
+    Self-voicing mode is not supported on Android, iOS, or Chrome OS.
+
+The default voice can be selected on a per-platform basis, using the
+:var:`config.tts_voice` variable. For example::
+
+    init python:
+
+        if renpy.windows:
+            config.tts_voice = "Mark"
+        elif renpy.macintosh:
+            config.tts_voice = "Alex"
+        elif renpy.linux:
+            config.tts_voice = "english_rp"
+
+The available voice vary based on the platform.
+
 
 Creator Concerns
 ----------------
@@ -78,20 +93,31 @@ Alternative text
 Descriptive Text
     Descriptive text is text that is displayed (and spoken) by the narrator if
     self-voicing is enabled. The text is not displayed if self-voicing is
-    disabled. Self voicing text uses the `sv` variable, which is defined to
+    disabled. Self-voicing text uses the :var:`sv` variable, which is defined to
     be similar to a character.
 
-    .. var:: sv = ...
+    .. var:: alt = ...
 
         A character-like object that uses the narrator to speak text if
-        self-vocing is enabled.
+        self-voicing is enabled.
 
     For example::
 
         e "Hang on, this is gonna be a bumpy ride!"
 
-        sv "And then the sun exploded..."
+        alt "And then the sun exploded..."
 
         # A complex and exciting cut scene.
         show event sun_exploding
         pause 10
+
+    There is a variable that controls descriptive text:
+
+    .. var:: config.descriptive_text_character = None
+
+        If not None, this should be a character object that is used to
+        display the descriptive text.
+
+A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
+display the text that would be voiced on the screen for development
+purposes.

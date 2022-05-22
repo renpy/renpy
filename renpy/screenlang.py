@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,7 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import renpy.display
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+import renpy
 import contextlib
 
 # Grab the python versions of the parser and ast modules.
@@ -31,6 +35,8 @@ filename = None
 new_variable_serial = 0
 
 # Returns the name of a new variable.
+
+
 @contextlib.contextmanager
 def new_variable():
     global new_variable_serial
@@ -39,10 +45,12 @@ def new_variable():
     yield "_%d" % new_variable_serial
     new_variable_serial -= 1
 
+
 def increment_lineno(node, amount):
     for node in ast.walk(node):
         if hasattr(node, 'lineno'):
             node.lineno += amount
+
 
 class LineNumberNormalizer(ast.NodeVisitor):
 
@@ -64,6 +72,7 @@ class LineNumberNormalizer(ast.NodeVisitor):
 # The parser that things are being added to.
 parser = None
 
+
 class Positional(object):
     """
     This represents a positional parameter to a function.
@@ -75,8 +84,6 @@ class Positional(object):
         if parser:
             parser.add(self)
 
-# Used to generate the documentation
-all_keyword_names = set()
 
 class Keyword(object):
     """
@@ -86,10 +93,9 @@ class Keyword(object):
     def __init__(self, name):
         self.name = name
 
-        all_keyword_names.add(self.name)
-
         if parser:
             parser.add(self)
+
 
 STYLE_PREFIXES = [
     '',
@@ -104,6 +110,7 @@ STYLE_PREFIXES = [
     'selected_activate_',
 ]
 
+
 class Style(object):
     """
     This represents a style parameter to a function.
@@ -111,9 +118,6 @@ class Style(object):
 
     def __init__(self, name):
         self.name = name
-
-        for j in STYLE_PREFIXES:
-            all_keyword_names.add(j + self.name)
 
         if parser:
             parser.add(self)
@@ -127,9 +131,6 @@ class PrefixStyle(object):
     def __init__(self, prefix, name):
         self.prefix = prefix
         self.name = name
-
-        for j in STYLE_PREFIXES:
-            all_keyword_names.add(prefix + j + self.name)
 
         if parser:
             parser.add(self)
@@ -219,9 +220,8 @@ class Parser(object):
                 if c is None:
                     l.error('Expected screen language statement.')
 
-                rv.extend(c)
+                rv.extend(c) # type: ignore
                 count += 1
-
 
         return rv
 
@@ -231,18 +231,18 @@ class Parser(object):
         and expr instances, and adjusts the line number.
         """
 
-        if isinstance(expr, unicode):
+        if isinstance(expr, str):
             expr = renpy.python.escape_unicode(expr)
 
         try:
             rv = ast.parse(expr, 'eval').body[0].value
-        except SyntaxError, e:
+        except SyntaxError as e:
             raise renpy.parser.ParseError(
                 filename,
-                lineno + e[1][1] - 1,
+                lineno + e.args[1][1] - 1,
                 "Syntax error while parsing python expression.",
-                e[1][3],
-                e[1][2])
+                e.args[1][3],
+                e.args[1][2])
 
         increment_lineno(rv, lineno-1)
 
@@ -254,19 +254,19 @@ class Parser(object):
         adjusts the line number. Returns a list of statements.
         """
 
-        if isinstance(code, unicode):
+        if isinstance(code, str):
             code = renpy.python.escape_unicode(code)
 
         try:
             rv = ast.parse(code, 'exec')
-        except SyntaxError, e:
+        except SyntaxError as e:
 
             raise renpy.parser.ParseError(
                 filename,
-                lineno + e[1][1] - 1,
+                lineno + e.args[1][1] - 1,
                 "Syntax error while parsing python code.",
-                e[1][3],
-                e[1][2])
+                e.args[1][3],
+                e.args[1][2])
 
         increment_lineno(rv, lineno-1)
 
@@ -300,6 +300,7 @@ class Parser(object):
 
 # A singleton value.
 many = renpy.object.Sentinel("many")
+
 
 class FunctionStatementParser(Parser):
     """
@@ -446,7 +447,7 @@ class FunctionStatementParser(Parser):
                         rv.pop()
 
                         rv.extend(self.parse_exec("%s = (%s, %d)" % (child_name, name, child_index)))
-                        rv.extend(c)
+                        rv.extend(c) # type: ignore
 
                         needs_close = False
 
@@ -494,139 +495,140 @@ all_statements = [ ]
 childbearing_statements = [ ]
 
 position_property_names = [
-        "anchor",
-        "xanchor",
-        "yanchor",
-        "pos",
-        "xpos",
-        "ypos",
-        "align",
-        "xalign",
-        "yalign",
-        "xoffset",
-        "yoffset",
-        "maximum",
-        "xmaximum",
-        "ymaximum",
-        "area",
-        "clipping",
-        "xfill",
-        "yfill",
-        # no center, since it can conflict with the center transform.
-        "xcenter",
-        "ycenter",
-        "xsize",
-        "ysize",
-        "xysize",
-        "alt",
-        "debug",
-        ]
+    "anchor",
+    "xanchor",
+    "yanchor",
+    "pos",
+    "xpos",
+    "ypos",
+    "align",
+    "xalign",
+    "yalign",
+    "xoffset",
+    "yoffset",
+    "maximum",
+    "xmaximum",
+    "ymaximum",
+    "area",
+    "clipping",
+    "xfill",
+    "yfill",
+    # no center, since it can conflict with the center transform.
+    "xcenter",
+    "ycenter",
+    "xsize",
+    "ysize",
+    "xysize",
+    "alt",
+    "debug",
+    ]
 
 position_properties = [ Style(i) for i in position_property_names ]
 text_position_properties = [ PrefixStyle("text_", i) for i in position_property_names ]
 side_position_properties = [ PrefixStyle("side_", i) for i in position_property_names ]
 
 text_property_names = [
-        "antialias",
-        "vertical",
-        "black_color",
-        "bold",
-        "color",
-        "drop_shadow",
-        "drop_shadow_color",
-        "first_indent",
-        "font",
-        "size",
-        "hyperlink_functions",
-        "italic",
-        "justify",
-        "kerning",
-        "language",
-        "layout",
-        "line_leading",
-        "line_spacing",
-        "minwidth",
-        "min_width",
-        "newline_indent",
-        "outlines",
-        "rest_indent",
-        "ruby_style",
-        "slow_cps",
-        "slow_cps_multiplier",
-        "slow_abortable",
-        "strikethrough",
-        "text_align",
-        "text_y_fudge",
-        "underline",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ]
+    "antialias",
+    "vertical",
+    "black_color",
+    "bold",
+    "color",
+    "drop_shadow",
+    "drop_shadow_color",
+    "first_indent",
+    "font",
+    "size",
+    "hyperlink_functions",
+    "italic",
+    "justify",
+    "kerning",
+    "language",
+    "layout",
+    "line_leading",
+    "line_spacing",
+    "minwidth",
+    "min_width",
+    "newline_indent",
+    "outlines",
+    "rest_indent",
+    "ruby_style",
+    "slow_cps",
+    "slow_cps_multiplier",
+    "slow_abortable",
+    "strikethrough",
+    "text_align",
+    "text_y_fudge",
+    "underline",
+    "minimum",
+    "xminimum",
+    "yminimum",
+    ]
 
 text_properties = [ Style(i) for i in text_property_names ]
 text_text_properties = [ PrefixStyle("text_", i) for i in text_property_names ]
 
 window_properties = [ Style(i) for i in [
-        "background",
-        "foreground",
-        "left_margin",
-        "right_margin",
-        "bottom_margin",
-        "top_margin",
-        "xmargin",
-        "ymargin",
-        "left_padding",
-        "right_padding",
-        "top_padding",
-        "bottom_padding",
-        "xpadding",
-        "ypadding",
-        "size_group",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ] ]
+    "background",
+    "foreground",
+    "left_margin",
+    "right_margin",
+    "bottom_margin",
+    "top_margin",
+    "xmargin",
+    "ymargin",
+    "left_padding",
+    "right_padding",
+    "top_padding",
+    "bottom_padding",
+    "xpadding",
+    "ypadding",
+    "size_group",
+    "minimum",
+    "xminimum",
+    "yminimum",
+    ] ]
 
 button_properties = [ Style(i) for i in [
-        "sound",
-        "mouse",
-        "focus_mask",
-        "child",
-        "keyboard_focus",
-        ] ]
+    "sound",
+    "mouse",
+    "focus_mask",
+    "child",
+    "keyboard_focus",
+    ] ]
 
 bar_properties = [ Style(i) for i in [
-        "bar_vertical",
-        "bar_invert",
-        "bar_resizing",
-        "left_gutter",
-        "right_gutter",
-        "top_gutter",
-        "bottom_gutter",
-        "left_bar",
-        "right_bar",
-        "top_bar",
-        "bottom_bar",
-        "thumb",
-        "thumb_shadow",
-        "thumb_offset",
-        "mouse",
-        "unscrollable",
-        "keyboard_focus",
-        ] ]
+    "bar_vertical",
+    "bar_invert",
+    "bar_resizing",
+    "left_gutter",
+    "right_gutter",
+    "top_gutter",
+    "bottom_gutter",
+    "left_bar",
+    "right_bar",
+    "top_bar",
+    "bottom_bar",
+    "thumb",
+    "thumb_shadow",
+    "thumb_offset",
+    "mouse",
+    "unscrollable",
+    "keyboard_focus",
+    ] ]
 
 box_properties = [ Style(i) for i in [
-        "box_layout",
-        "box_wrap",
-        "box_reverse",
-        "order_reverse",
-        "spacing",
-        "first_spacing",
-        "fit_first",
-        "minimum",
-        "xminimum",
-        "yminimum",
-        ] ]
+    "box_layout",
+    "box_wrap",
+    "box_wrap_spacing",
+    "box_reverse",
+    "order_reverse",
+    "spacing",
+    "first_spacing",
+    "fit_first",
+    "minimum",
+    "xminimum",
+    "yminimum",
+    ] ]
 
 ui_properties = [
     Keyword("at"),
@@ -639,7 +641,7 @@ ui_properties = [
 
 
 def add(thing):
-    parser.add(thing)
+    parser.add(thing) # type: ignore
 
 
 ##############################################################################
@@ -716,6 +718,7 @@ Keyword("default")
 Keyword("length")
 Keyword("allow")
 Keyword("exclude")
+Keyword("copypaste")
 Keyword("prefix")
 Keyword("suffix")
 Keyword("changed")
@@ -735,6 +738,8 @@ Keyword("clicked")
 Keyword("hovered")
 Keyword("unhovered")
 Keyword("alternate")
+Keyword("selected")
+Keyword("sensitive")
 add(ui_properties)
 add(position_properties)
 add(window_properties)
@@ -754,6 +759,8 @@ Keyword("hovered")
 Keyword("unhovered")
 Keyword("alternate")
 Keyword("image_style")
+Keyword("selected")
+Keyword("sensitive")
 add(ui_properties)
 add(position_properties)
 add(window_properties)
@@ -769,6 +776,8 @@ Keyword("alternate")
 Keyword("text_style")
 Keyword("substitute")
 Keyword("scope")
+Keyword("selected")
+Keyword("sensitive")
 add(ui_properties)
 add(position_properties)
 add(window_properties)
@@ -802,6 +811,7 @@ for name in [ "bar", "vbar" ]:
 FunctionStatementParser("viewport", "ui.viewport", 1)
 Keyword("child_size")
 Keyword("mousewheel")
+Keyword("arrowkeys")
 Keyword("draggable")
 Keyword("edgescroll")
 Keyword("xadjustment")
@@ -873,18 +883,22 @@ Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")
 Keyword("drag_raise")
+Keyword("dragging")
 Keyword("dragged")
 Keyword("dropped")
+Keyword("drop_allowable")
 Keyword("drag_handle")
 Keyword("drag_joined")
 Keyword("clicked")
 Keyword("hovered")
 Keyword("unhovered")
+Keyword("mouse_drop")
 Style("child")
 add(ui_properties)
 add(position_properties)
 
 FunctionStatementParser("draggroup", "ui.draggroup", many)
+Keyword("min_overlap")
 add(ui_properties)
 add(position_properties)
 
@@ -901,19 +915,14 @@ add(position_properties)
 
 class PassParser(Parser):
 
-    def __init__(self, name):
-        super(PassParser, self).__init__(name)
-
     def parse(self, l, name):
         return self.parse_exec("pass", l.number)
+
 
 PassParser("pass")
 
 
 class DefaultParser(Parser):
-
-    def __init__(self, name):
-        super(DefaultParser, self).__init__(name)
 
     def parse(self, l, name):
 
@@ -924,6 +933,7 @@ class DefaultParser(Parser):
         code = "_scope.setdefault(%r, (%s))" % (name, rest)
 
         return self.parse_exec(code, l.number)
+
 
 DefaultParser("default")
 
@@ -944,27 +954,39 @@ class UseParser(Parser):
 
         args = renpy.parser.parse_arguments(l)
 
+        extrapos = None
+        extrakw = None
+
         if args:
 
+            index = 0
+
             for k, v in args.arguments:
-                if k is None:
+
+                if index in args.starred_indexes:
+                    extrapos = v
+                elif index in args.doublestarred_indexes:
+                    extrakw = v
+                elif k is None:
                     code += ", (%s)" % v
                 else:
                     code += ", %s=(%s)" % (k, v)
+
+                index += 1
 
         code += ", _name=%s, _scope=_scope" % name
 
         if args:
 
-            if args.extrapos:
-                code += ", *(%s)" % args.extrapos
-
-            if args.extrakw:
-                code += ", **(%s)" % args.extrakw
+            if extrapos:
+                code += ", *(%s)" % extrapos
+            if extrakw:
+                code += ", **(%s)" % extrakw
 
         code += ")"
 
         return self.parse_exec(code, lineno)
+
 
 UseParser("use")
 
@@ -1028,6 +1050,7 @@ class IfParser(Parser):
                     break
 
         return [ rv ]
+
 
 IfParser("if")
 
@@ -1094,14 +1117,15 @@ class ForParser(Parser):
             rv = self.parse_exec("%s = 0" % counter_name)
 
             rv.append(ast.For(
-                    target=pattern,
-                    iter=expression,
-                    body=children,
-                    orelse=[],
-                    lineno=lineno,
-                    col_offset=0))
+                target=pattern,
+                iter=expression,
+                body=children,
+                orelse=[],
+                lineno=lineno,
+                col_offset=0))
 
         return rv
+
 
 ForParser("for")
 
@@ -1127,6 +1151,7 @@ class PythonParser(Parser):
             lineno += 1
 
         return self.parse_exec(python_code, lineno)
+
 
 PythonParser("$", True)
 PythonParser("python", False)
@@ -1207,10 +1232,10 @@ class ScreenLangScreen(renpy.object.Object):
         self.code = None
 
         # The variant of screen we're defining.
-        self.variant = "None" # expr.
+        self.variant = "None"  # expr.
 
         # Should we predict this screen?
-        self.predict = "None" # expr.
+        self.predict = "None"  # expr.
 
         # The parameters this screen takes.
         self.parameters = None
@@ -1248,8 +1273,7 @@ class ScreenLangScreen(renpy.object.Object):
             values = renpy.ast.apply_arguments(self.parameters, args, kwargs)
             scope.update(values)
 
-        renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope)
-
+        renpy.python.py_exec_bytecode(self.code.bytecode, locals=scope) # type: ignore
 
 
 class ScreenParser(Parser):
@@ -1288,7 +1312,7 @@ class ScreenParser(Parser):
         lineno = l.number
 
         screen.name = l.require(l.word)
-        screen.parameters = renpy.parser.parse_parameters(l)
+        screen.parameters = renpy.parser.parse_parameters(l) # type: ignore
 
         while parse_keyword(l):
             continue
@@ -1320,7 +1344,7 @@ class ScreenParser(Parser):
                 if c is None:
                     l.error('Expected a screen language statement.')
 
-                rv.extend(c)
+                rv.extend(c) # type: ignore
                 count += 1
 
         node = ast.Module(body=rv, lineno=lineno, col_offset=0)
@@ -1340,12 +1364,14 @@ class ScreenParser(Parser):
 #        print screen.name, "-----------------------------------------"
 #        unparse.Unparser(node)
 
-        screen.code = renpy.ast.PyCode(node, location, 'exec')
+        screen.code = renpy.ast.PyCode(node, location, 'exec') # type: ignore
 
         return screen
 
+
 screen_parser = ScreenParser()
 screen_parser.add(all_statements)
+
 
 def parse_screen(l):
     """

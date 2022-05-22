@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,6 +19,21 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+
+
+# Allow pickling NoneType.
+if PY2:
+    import __builtin__ # type: ignore
+    __builtin__.NoneType = type(None)
+else:
+    import builtins
+    builtins.NoneType = type(None) # type: ignore
+
+
 class Object(object):
     """
     Our own base class. Contains methods to simplify serialization.
@@ -35,11 +50,9 @@ class Object(object):
             if f in rv:
                 del rv[f]
 
-
         rv["__version__"] = self.__version__
 
         return rv
-
 
     # None, to prevent this from being called when unnecessary.
     after_setstate = None
@@ -51,15 +64,17 @@ class Object(object):
         self.__dict__.update(new_dict)
 
         if version != self.__version__:
-            self.after_upgrade(version) # E1101
+            self.after_upgrade(version)  # type: ignore
 
         if self.after_setstate:
-            self.after_setstate() # E1102
+            self.after_setstate()  # E1102
 
 # We don't handle slots with this mechanism, since the call to vars should
 # throw an error.
 
+
 sentinels = { }
+
 
 class Sentinel(object):
     """
@@ -71,7 +86,7 @@ class Sentinel(object):
         rv = sentinels.get(name, None)
 
         if rv is None:
-            rv = object.__new__(cls, name)
+            rv = object.__new__(cls)
             sentinels[name] = rv
 
         return rv
@@ -81,4 +96,3 @@ class Sentinel(object):
 
     def __reduce__(self):
         return (Sentinel, (self.name, ))
-

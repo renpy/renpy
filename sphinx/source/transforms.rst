@@ -10,7 +10,7 @@ object is placed on the screen, while user-defined transforms
 can cause more complex effects, like motion, zoom, and rotation.
 
 Transforms can be applied by giving the at clause to the scene and
-show statements. The following code applies the "right" transform to
+show statements. The following applies the "right" transform to
 the eileen happy displayable.::
 
     show eileen happy at right
@@ -33,19 +33,19 @@ Ren'Py ships with a number of transforms defined by default. These
 transforms position things on the screen. Here's a depiction of where
 each default transform will position an image. ::
 
-   +-----------------------------------------------------------+
-   |topleft, reset               top                   topright|
-   |                                                           |
-   |                                                           |
-   |                                                           |
-   |                                                           |
-   |                          truecenter                       |
-   |                                                           |
-   |                                                           |
-   |                                                           |
-   |                                                           |
-   |left                   center, default                right|
-   +-----------------------------------------------------------+
+                +-----------------------------------------------------------+
+                |topleft, reset               top                   topright|
+                |                                                           |
+                |                                                           |
+                |                                                           |
+                |                                                           |
+                |                          truecenter                       |
+                |                                                           |
+                |                                                           |
+                |                                                           |
+                |                                                           |
+   offscreenleft|left                   center, default                right|offscreenright
+                +-----------------------------------------------------------+
 
 The offscreenleft and offscreenright transforms position images off the
 screen. These transforms can be used to move things off the screen
@@ -61,8 +61,8 @@ The transforms are:
 .. var:: default
 
     Centers horizontally, and aligns to the bottom of the screen. This
-    can be redefined to change the default placement of images shown
-    with the show or scene statements.
+    can be redefined via :var:`config.default_transform` to change the
+    default placement of images shown with the show or scene statements.
 
 .. var:: left
 

@@ -11,6 +11,22 @@ and rolled-back when rollback occurs.
     This is a template ADV-mode character, and the default character kind
     that is used when :func:`Character` is called.
 
+.. var:: _autosave = True
+
+    This variable can be set to False to disable autosave.
+
+.. var:: _confirm_quit = True
+
+    This determines if quitting the game asks for confirmation. It is
+    set to False during the splashscreen, and is ignored when in the main
+    menu.
+
+.. var:: default_mouse
+
+    This is undefined by default. If defined, and if :var:`config.mouse` is
+    set at game startup, this is a key that is used to look up a mouse cursor
+    in config.mouse when the current cursor does not exist, or is the default.
+
 .. var:: _dismiss_pause = True
 
     If True, the player can dismiss pauses and transitions.
@@ -25,15 +41,38 @@ and rolled-back when rollback occurs.
     This is set to None at the start of the splashscreen, and restored to its
     original value when the splashscreen ends.
 
+.. var:: _history = True
+
+    If true, Ren'Py will record dialogue history when a line is shown. (Note
+    that :var:`config.history_list_length` must be set as well.)
+
+.. var:: _history_list = [ ]
+
+    This is a list of history objects, corresponding to each line of history
+    from oldest to newest. See the :ref:`History <history>` section for more
+    information.
+
+.. var:: _ignore_action = None
+
+    When this is not None, it's an action that is run after clicking Ignore
+    on the error handling screen. The action is usually :func:`Jump`, to jump
+    the game to a place that can recover from an error. If None, control
+    continues with the next Ren'Py statement.
+
 .. var:: main_menu = False
 
     Ren'Py sets this variable to True while in the main menu. This can be used
     to have screens display differently while in the main menu.
 
+.. var:: _menu = False
+
+    Ren'Py sets this variable to True when entering a main menu or game menu
+    context.
+
 .. var:: menu = renpy.display_menu
 
-    The function that's called to display the in-gamemenu. It should take the same
-    arguments as :func`renpy.display_menu`. Assigning :func:`nvl_menu` to this
+    The function that's called to display the in-game menu. It should take the same
+    arguments as :func:`renpy.display_menu`. Assigning :func:`nvl_menu` to this
     will display an nvl-mode menu.
 
 .. var:: mouse_visible = True
@@ -44,7 +83,7 @@ and rolled-back when rollback occurs.
 .. var:: name_only = Character(...)
 
     This is a template character that is used when a string is given as the
-    character name in a say statement. The code::
+    character name in a say statement. This::
 
         "Eileen" "Hello, world."
 
@@ -53,18 +92,23 @@ and rolled-back when rollback occurs.
         $ temp_char = Character("Eileen", kind=name_only)
         temp_char "Hello, world."
 
-    except that the temp_char variable is not used.
+    except that the ``temp_char`` variable is not used.
 
 .. var:: narrator = Character(...)
 
     This is the character that speaks narration (say statements that do not
-    give a character or character name). The code::
+    give a character or character name). This::
 
         "Hello, world."
 
     is equivalent to::
 
         narrator "Hello, world."
+
+.. var:: _quit_slot = None
+
+    If not None, this should be a string giving the name of a file slot.
+    When Ren'Py quits, the game will be saved in this slot.
 
 .. var:: _rollback = True
 
@@ -74,7 +118,7 @@ and rolled-back when rollback occurs.
 
     A function that is called by Ren'Py to display dialogue. This is called
     with three arguments. The first argument (`who`) is the character saying the
-    dialogue (or None for the narrator). The second argument(`what`) is what dialogue
+    dialogue (or None for the narrator). The second argument (`what`) is what dialogue
     is being said.
 
     The third argument must be a keyword argument named `interact` and defaulting
@@ -89,9 +133,24 @@ and rolled-back when rollback occurs.
 
     A save name that is included with saves.
 
+.. var:: _screenshot_pattern = None
+
+    If not None, this string is used in preference to :var:`config.screenshot_pattern`
+    to determine the filename of a screenshot. Please see the documentation for
+    that variable for the format of the string.
+
 .. var:: _skipping = True
 
-    Controls of if skipping is allowed.
+    Controls if skipping is allowed.
+
+.. var:: _version = ...
+
+    This is set to :var:`config.version` when a new game is started. It can be
+    used by the ``after_load`` label or :var:`config.after_load_callbacks` to
+    determine which upgrades need to be done.
+
+    This is only set once, upon the initial start. After that, the game is
+    responsible for updating _version as necessary.
 
 .. var:: _window = False
 

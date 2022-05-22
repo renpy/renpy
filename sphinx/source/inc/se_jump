@@ -1,7 +1,0 @@
-.. Automatically generated file - do not modify.
-
-.. function:: renpy.jump(label)
-    
-    Causes the current statement to end, and control to jump to the given
-    label.
-

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,14 +22,13 @@
 ################################################################################
 # Interface actions.
 init python in interface:
-    from store import OpenURL, config, Return
+    from store import OpenURL, config, Return, _preferences
     import store
 
     import os.path
     import contextlib
 
     RENPY_URL = "http://www.renpy.org"
-    RENPY_GAMES_URL = "http://games.renpy.org"
     DOC_PATH = os.path.join(config.renpy_base, "doc/index.html")
     DOC_URL = "http://www.renpy.org/doc/html/"
 
@@ -66,6 +65,15 @@ init python in interface:
         else:
             return OpenURL(LICENSE_URL)
 
+    def get_sponsor_url():
+        """
+        Returns the URL to the sponsors page.
+        """
+
+        return "https://www.renpy.org/sponsors.html?version={}&language={}".format(
+            renpy.version_only,
+            _preferences.language or "english"
+        )
 
     # Should we display the bottom links?
     links = True
@@ -79,6 +87,10 @@ init python in interface:
             yield
         finally:
             links = True
+
+    # Version.
+    import re
+    version = re.sub(r'\.\d+(\w*)$', r'\1', renpy.version())
 
 # This displays the bottom of the screen. If the tooltip is not None, this displays the
 # tooltip. Otherwise, it displays a list of links (to various websites, and to the
@@ -99,6 +111,9 @@ screen bottom_info:
             ypos 536
             yanchor 0.0
 
+            has vbox:
+                spacing 20
+
             hbox:
                 xfill True
 
@@ -106,18 +121,34 @@ screen bottom_info:
                     spacing INDENT
                     textbutton _("Documentation") style "l_link" action interface.OpenDocumentation()
                     textbutton _("Ren'Py Website") style "l_link" action OpenURL(interface.RENPY_URL)
-                    textbutton _("Ren'Py Games List") style "l_link" action OpenURL(interface.RENPY_GAMES_URL)
-                    textbutton _("About") style "l_link" action Jump("about")
+                    textbutton _("[interface.version]") style "l_link" action Jump("about")
 
                 hbox:
                     spacing INDENT
                     xalign 1.0
 
                     if ability.can_update:
-                        textbutton _("update") action Jump("update") style "l_link"
+                        textbutton _("update") action Jump("update") style "l_link":
+                            if persistent.has_update:
+                                text_color "#F96854"
+                                text_hover_color Color("#F96854").tint(.8)
 
                     textbutton _("preferences") style "l_link" action Jump("preferences")
                     textbutton _("quit") style "l_link" action Quit(confirm=False)
+
+            if persistent.sponsor_message:
+
+                textbutton _("Ren'Py Sponsor Information"):
+                    style "l_link"
+                    text_color "#F96854"
+                    text_hover_color Color("#F96854").tint(.8)
+
+                    xalign 0.0
+                    yalign 1.0
+                    yoffset -10
+
+                    action OpenURL(interface.get_sponsor_url())
+
 
 
 screen common:
@@ -197,7 +228,7 @@ screen common:
         label title text_color title_color style "l_info_label"
 
     if back:
-        textbutton _("Back") action back style "l_left_button"
+        textbutton _("Return") action back style "l_left_button"
     elif cancel:
         textbutton _("Cancel") action cancel style "l_left_button"
 
@@ -207,6 +238,8 @@ screen common:
 
 
 screen launcher_input:
+
+    default value = default
 
     frame:
         style "l_root"
@@ -223,7 +256,13 @@ screen launcher_input:
 
             add SPACER
 
-            input style "l_default" size 24 xalign 0.5 default default color INPUT_COLOR
+            input style "l_default":
+                value ScreenVariableInputValue("value", returnable=True)
+                size 24
+                xalign 0.5
+                color INPUT_COLOR
+                allow allow
+                copypaste True
 
             if filename:
                 add SPACER
@@ -234,10 +273,14 @@ screen launcher_input:
     if cancel:
         textbutton _("Cancel") action cancel style "l_left_button"
 
+    textbutton _("Continue") action Return(value) style "l_right_button"
+
+
 init python in interface:
 
     import traceback
     from store import Jump
+    import store._errorhandling as _errorhandling
 
     def common(title, title_color, message, submessage=None, back=None, continue_=None, pause0=False, show_screen=False, **kwargs):
         """
@@ -322,6 +365,13 @@ init python in interface:
         common(_("ERROR"), store.ERROR_COLOR, message=message, submessage=submessage, back=action, **kwargs)
 
 
+    store._ignore_action = Jump("front_page")
+
+    _errorhandling.rollback = False
+    _errorhandling.ignore = True
+    _errorhandling.reload = False
+    _errorhandling.console = False
+
     @contextlib.contextmanager
     def error_handling(what, label="front_page"):
         """
@@ -337,24 +387,28 @@ init python in interface:
 
         As an example of usage::
 
-            with interface.error_handling("opening the log file"):
+            with interface.error_handling(_("opening the log file")):
                 f = open("log.txt", "w")
         """
 
-
         try:
             yield
-        except Exception, e:
-            import traceback
-            traceback.print_exc()
+        except Exception as e:
+            renpy.renpy.error.report_exception(e, editor=False)
 
-            error(_("While [what!q], an error occured:"),
+            error(_("While [what!qt], an error occured:"),
                 _("[exception!q]"),
                 what=what,
                 label=label,
                 exception=traceback.format_exception_only(type(e), e)[-1][:-1])
 
-    def input(title, message, filename=False, sanitize=True, cancel=None, default=""):
+    import string
+    DIGITS_LETTERS = string.digits
+    PROJECT_LETTERS = string.digits + string.ascii_letters + " _"
+    FILENAME_LETTERS = PROJECT_LETTERS + "\\/"
+    TRANSLATE_LETTERS = string.ascii_letters + string.digits + "_"
+
+    def input(title, message, filename=False, sanitize=True, cancel=None, allow=None, default=""):
         """
         Requests typewritten input from the user.
         """
@@ -363,7 +417,15 @@ init python in interface:
 
         while True:
 
-            rv = renpy.call_screen("launcher_input", title=title, message=message, filename=filename, cancel=cancel, default=rv)
+            rv = renpy.call_screen(
+                "launcher_input",
+                title=title,
+                message=message,
+                filename=filename or (allow in [PROJECT_LETTERS, FILENAME_LETTERS]),
+                allow=allow,
+                cancel=cancel,
+                default=rv
+            )
 
             if sanitize:
                 if ("[" in rv) or ("{" in rv):
@@ -377,7 +439,7 @@ init python in interface:
 
                 try:
                     rv.encode("ascii")
-                except:
+                except Exception:
                     error(_("File and directory names must consist of ASCII characters."), label=None)
                     continue
 
@@ -477,6 +539,3 @@ init python in interface:
         """
 
         return common(_("CHOICE"), store.QUESTION_COLOR, message, choices=choices, selected=selected, **kwargs)
-
-
-

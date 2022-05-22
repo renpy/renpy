@@ -1,16 +1,9 @@
 Welcome to Ren'Py's documentation!
 ==================================
 
-We're in the process of rewriting Ren'Py's documentation. While what we have
-here is the most up-to-date documentation, it's also very incomplete. To find
-out more about Ren'Py, please visit the Ren'Py home page:
+To find out more about Ren'Py, please visit the Ren'Py home page:
 
     http://www.renpy.org/
-
-Some of Ren'Py is only documented in the older documentation, which is stored
-in the Ren'Py Wiki:
-
-    http://www.renpy.org/wiki/
 
 .. only:: not language_ja and not gettext
 
@@ -18,13 +11,23 @@ in the Ren'Py Wiki:
 
         http://ja.renpy.org/doc/html/
 
+.. only:: not language_cn and not gettext
+
+    简体中文的文档请参考这里：
+
+        https://renpy.cn/doc/
+
+    繁體中文的文件請參考這裡：
+
+        https://renpy.cn/doc-tw/
 
 Getting Started
 ---------------
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 3
 
-   quickstart
+    quickstart
+    gui
 
 The Ren'Py Language
 -------------------
@@ -55,6 +58,10 @@ Text, Displayables, Transforms, and Transitions
    transforms
    transitions
    atl
+   matrixcolor
+   layeredimage
+   3dstage
+   live2d
 
 Customizing Ren'Py
 ------------------
@@ -69,7 +76,19 @@ Customizing Ren'Py
    screen_special
    screen_optimization
    config
+   preferences
    store_variables
+   mouse
+
+Tools
+-----
+
+.. toctree::
+   :maxdepth: 1
+
+   launcher
+   developer_tools
+   director
 
 Other Functionality
 -------------------
@@ -84,8 +103,10 @@ Other Functionality
    drag_drop
    sprites
    keymap
-   developer_tools
    achievement
+   history
+   multiple
+   splashscreen_presplash
 
 Python and Ren'Py
 -----------------
@@ -97,14 +118,17 @@ Python and Ren'Py
    save_load_rollback
    persistent
    trans_trans_python
+   gui_advanced
    screen_python
    modes
-   udd
+   cdd
    cds
    custom_text_tags
    character_callbacks
    file_python
    color_class
+   matrix
+   model
    other
 
 Building, Updating, and Other Platforms
@@ -116,9 +140,11 @@ Building, Updating, and Other Platforms
    build
    updater
    android
+   chromeos
    ios
    iap
    gesture
+   raspi
 
 End-User Documentation
 ----------------------
@@ -138,18 +164,21 @@ Engine Developer Documentation
 
    editor
    skins
+   translating_renpy
 
-Changes, License, and Documentation Credits
--------------------------------------------
+Changes, License, and Credits
+-----------------------------
 
 .. toctree::
    :maxdepth: 1
 
    changelog
+   changelog6
    incompatible
    distributor
    license
    credits
+   sponsors
 
 Indices
 -------
@@ -169,4 +198,3 @@ Example Scripts
 
    thequestion
    thequestion_nvl
-

@@ -1,0 +1,85 @@
+﻿# هذا الملف يحتوي على كل نصوص اللعبه
+
+# استعمل السطر التالي لإظهار الصور في شاشة اللعب
+# image eileen happy = "eileen_happy.png"
+
+# من هي شخصيات هذه اللعبه؟
+define e = Character('إيلين', color="#c8ffc8")
+
+# اللعبه تبدأ هنا
+label start:
+
+    e "لقد بدأت حكاية رينباي جديدة."
+
+    e "كل ما عليك فعله هو إضافة نصوص و صور و إرسالها للعالم!"
+
+    return
+
+
+########################################################### من اليمين الى اليسار
+
+define config.rtl = True
+
+define gui.text_align = 1.0
+define gui.button_text_xalign = 1.0
+define gui.prompt_text_xalign = 1.0
+define gui.navigation_xpos = 240
+
+define gui.name_xalign = 1.0
+define gui.dialogue_text_xalign = 1.0
+define gui.button_text_xalign = 1.0
+define gui.main_menu_text_xalign = 1.0
+define gui.history_name_xalign = 0.0
+define gui.history_text_xalign = 1.0
+define gui.nvl_name_xalign = 0.0
+define gui.nvl_text_xalign = 1.0
+define gui.nvl_thought_xalign = 1.0
+define gui.nvl_button_xalign = 1.0
+
+define gui.help_label_text_xalign = 0.0
+
+define gui.name_xpos = gui.scale(1040)
+define gui.dialogue_xpos = gui.scale(1012)
+define gui.history_name_xpos = gui.scale(763)
+define gui.history_text_xpos = gui.scale(748)
+define gui.nvl_name_xpos = gui.scale(850)
+define gui.nvl_text_xpos = gui.scale(830)
+define gui.nvl_thought_xpos = gui.scale(1040)
+define gui.nvl_button_xpos = gui.scale(830)
+
+style game_menu_label:
+    xalign 1.0
+    xoffset gui.scale(-50)
+
+style navigation_vbox:
+    xanchor 1.0
+
+style return_button:
+    xanchor 1.0
+
+style radio_button:
+    xalign 1.0
+
+style radio_label:
+    xalign 1.0
+
+style check_button:
+    xalign 1.0
+
+style check_label:
+    xalign 1.0
+
+style slider_label:
+    xpos gui.scale(350)
+    xalign 1.0
+
+style help_hbox:
+    box_reverse True
+    xalign 1.0
+    spacing gui.scale(20)
+
+style help_label_text:
+    xalign 0.0
+
+style mute_all_button:
+    xalign 0.0

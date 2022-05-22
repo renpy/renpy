@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -58,6 +58,7 @@ init python:
 
     if RENIOS_PATH:
         import renios.create
+        import renios.image
 
     def IOSState():
         if not RENIOS_PATH:
@@ -104,11 +105,14 @@ init python:
         xcode_name_cache[s] = s
         return s
 
-    def xcode_project(p=None):
+    def xcode_project(p=None, target=None):
         """
         Return the path to the Xcode project corresponding to `p`, or the current
         project if `p` is None
         """
+
+        if target is not None:
+            return target
 
         if p is None:
             p = project.current
@@ -118,12 +122,22 @@ init python:
 
         return os.path.join(persistent.xcode_projects_directory, xcode_name(p.name))
 
-    def ios_create(p=None, gui=True):
+    def ios_create(p=None, gui=True, target=None):
+        project.current.update_dump(force=True, gui=gui)
 
-        dest = xcode_project(p)
+        name = project.current.dump.get("name", None)
+        version = project.current.dump.get("version", None)
+
+        dest = xcode_project(p, target)
+
+        if gui:
+            iface = MobileInterface("ios")
+        else:
+            iface = rapt.interface.Interface()
 
         if os.path.exists(dest):
-            interface.yesno(_("The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"), no=Jump("ios"))
+            if not iface.yesno(_("The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?")):
+                return
 
             i = 0
             while True:
@@ -134,12 +148,38 @@ init python:
 
             os.rename(dest, backup)
 
-        iface = MobileInterface("ios")
-        renios.create.create_project(iface, dest)
+        renios.create.create_project(iface, dest, name, version)
 
-        ios_populate(p, gui=gui)
+        ios_populate(p, gui=gui, target=target)
 
-    def ios_populate(p=None, gui=True):
+
+    def eliminate_pycache(directory):
+        """
+        Eliminates the __pycache__ directory, and moves the files in it up a level,
+        renaming them to remove the cache tag.
+        """
+
+        print("Eliminating __pycache__...")
+
+        if PY2:
+            return
+
+        import pathlib
+        import sys
+
+        paths = list(pathlib.Path(directory).glob("**/__pycache__/*.pyc"))
+
+        for p in paths:
+            name = p.stem.partition(".")[0]
+            p.rename(p.parent.parent / (name + ".pyc"))
+
+        paths = list(pathlib.Path(directory).glob("**/__pycache__"))
+
+        for p in paths:
+            p.rmdir()
+
+
+    def ios_populate(p=None, gui=True, target=None):
         """
         This actually builds the package.
         """
@@ -149,7 +189,7 @@ init python:
         if p is None:
             p = project.current
 
-        dist = os.path.join(xcode_project(p), "base")
+        dist = os.path.join(xcode_project(p, target), "base")
 
         if os.path.exists(dist):
             shutil.rmtree(dist)
@@ -167,6 +207,8 @@ init python:
             packagedest=dist,
             report_success=False,
             )
+
+        eliminate_pycache(dist)
 
         main_fn = os.path.join(dist, "main.py")
 
@@ -187,13 +229,29 @@ init python:
 
         os.unlink(py_fn)
 
+        ios_image(p, "ios-icon.png", "Media.xcassets/AppIcon.appiconset", True, target)
+        # ios_image(p, "ios-launchimage.png", "Media.xcassets/LaunchImage.launchimage", False, target)
+
+    def ios_image(p, source, destination, scale, target):
+        source = os.path.join(p.path, source)
+        destination = os.path.join(xcode_project(p, target), destination)
+
+        renios.image.generate(source, destination, scale)
+
 
     def launch_xcode():
         dist = xcode_project(None)
-        base = os.path.basename(dist)
-        xcodeproj = "{}/{}.xcodeproj".format(dist, base)
 
-        subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
+        if not os.path.exists(dist):
+            return
+
+        for fn in os.listdir(dist):
+            if fn.endswith(".xcodeproj"):
+                xcodeproj = os.path.join(dist, fn)
+                subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
+
+                break
+
 
 screen ios:
 
@@ -208,7 +266,7 @@ screen ios:
 
             has vbox
 
-            label _("iOS: [project.current.name!q]")
+            label _("iOS: [project.current.display_name!q]")
 
             add HALF_SPACER
 
@@ -238,11 +296,11 @@ screen ios:
                                 spacing 15
 
                             textbutton _("iPhone"):
-                                action LaunchEmulator("ios-touch", "small phone touch ios")
+                                action LaunchEmulator("ios-touch", "small phone touch ios mobile")
                                 hovered tt.Action(IPHONE_TEXT)
 
                             textbutton _("iPad"):
-                                action LaunchEmulator("ios-touch", "medium tablet touch ios")
+                                action LaunchEmulator("ios-touch", "medium tablet touch ios mobile")
                                 hovered tt.Action(IPAD_TEXT)
 
 
@@ -278,21 +336,9 @@ screen ios:
                                     action IOSIfState(state, IOS_OK, launch_xcode)
                                     hovered tt.Action(IOS_XCODE_TEXT)
 
-#                             textbutton _("Configure"):
-#                                 action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
-#                                 hovered tt.Action(CONFIGURE_TEXT)
-#
-#                             textbutton _("Build Package"):
-#                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build"))
-#                                 hovered tt.Action(BUILD_TEXT)
-#
-#                             textbutton _("Build & Install"):
-#                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_and_install"))
-#                                 hovered tt.Action(BUILD_AND_INSTALL_TEXT)
-#
-#                             textbutton _("Build, Install & Launch"):
-#                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_install_and_launch"))
-#                                 hovered tt.Action(BUILD_INSTALL_AND_LAUNCH_TEXT)
+                            add SPACER
+
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
                     add SPACER
                     add SEPARATOR2
@@ -330,13 +376,17 @@ screen ios:
 
                         add SPACER
 
+                        text _("There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices.")
+
+                        add SPACER
+
                         if tt.value:
                             text tt.value
                         else:
                             text IOSStateText(state)
 
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
 
 
 label ios:
@@ -372,3 +422,36 @@ label update_xcode_project:
     $ ios_populate(None, True)
 
     jump ios
+
+init python:
+
+    def ios_create_command():
+        ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("project", help="The path to the Ren'Py project.")
+        ap.add_argument("destination", help="The path the iOS project that will be created.")
+
+        args = ap.parse_args()
+
+        p = project.Project(args.project)
+
+        ios_create(p, False, args.destination)
+
+        return False
+
+    renpy.arguments.register_command("ios_create", ios_create_command)
+
+
+    def ios_populate_command():
+        ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("project", help="The path to the Ren'Py project.")
+        ap.add_argument("destination", help="The path the iOS project that will be created.")
+
+        args = ap.parse_args()
+
+        p = project.Project(args.project)
+
+        ios_populate(p, False, args.destination)
+
+        return False
+
+    renpy.arguments.register_command("ios_populate", ios_populate_command)

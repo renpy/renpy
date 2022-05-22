@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,15 +22,22 @@
 # This module wraps the pygame surface class (and associated functions). It
 # ensures that returned surfaces have a 2px border around them.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+
 import sys
-import pygame_sdl2 as pygame
 import threading
-import renpy.display
+
+import pygame_sdl2 as pygame
+import renpy
 
 
 # Sample surfaces, with and without alpha.
 sample_alpha = None
 sample_noalpha = None
+
 
 def set_rgba_masks():
     """
@@ -50,7 +57,7 @@ def set_rgba_masks():
 
     # Sort the components by absolute value.
     masks = list(sample_alpha.get_masks())
-    masks.sort(key=lambda a : abs(a))
+    masks.sort(key=abs)
 
     # Choose the masks.
     if sys.byteorder == 'big':
@@ -62,17 +69,14 @@ def set_rgba_masks():
     sample_alpha = pygame.Surface((10, 10), 0, 32, masks)
     sample_noalpha = pygame.Surface((10, 10), 0, 32, masks[:3] + (0,))
 
+    renpy.audio.audio.sample_surfaces(sample_noalpha, sample_alpha)
+
 
 class Surface(pygame.Surface):
     """
     This allows us to wrap around pygame's surface, to change
     its mode, as necessary.
     """
-
-    opaque = False
-
-    def is_opaque(self):
-        return self.opaque
 
     def convert_alpha(self, surface=None):
         return copy_surface_unscaled(self, True)
@@ -81,20 +85,21 @@ class Surface(pygame.Surface):
         return copy_surface(self, False)
 
     def copy(self):
-        return copy_surface(self, self)
+        return copy_surface(self, self) # type:ignore
 
     def subsurface(self, rect):
         rv = pygame.Surface.subsurface(self, rect)
         return rv
 
-def surface((width, height), alpha):
+
+def surface(rect, alpha): # (tuple, bool|Surface) -> Surface
     """
     Constructs a new surface. The allocated surface is actually a subsurface
     of a surface that has a 2 pixel border in all directions.
 
     `alpha` - True if the new surface should have an alpha channel.
     """
-
+    (width, height) = rect
     if isinstance(alpha, pygame.Surface):
         alpha = alpha.get_masks()[3]
 
@@ -108,19 +113,22 @@ def surface((width, height), alpha):
     if sample is None:
         sample = pygame.Surface((4, 4), pygame.SRCALPHA, 32)
 
-    surf = Surface((width + 4, height + 4), 0, sample)
-    return surf.subsurface((2, 2, width, height)) # E1101
+    surf = Surface((width + 4, height + 4), 0, sample) # type:ignore
+    return surf.subsurface((2, 2, width, height))  # E1101
+
 
 surface_unscaled = surface
 
-def copy_surface(surf, alpha=True):
+
+def copy_surface(surf, alpha=True): # (Surface, bool|Surface) -> Surface
     """
     Creates a copy of the surface.
     """
 
     rv = surface_unscaled(surf.get_size(), alpha)
-    renpy.display.accelerator.nogil_copy(surf, rv) # @UndefinedVariable
+    renpy.display.accelerator.nogil_copy(surf, rv)  # @UndefinedVariable
     return rv
+
 
 copy_surface_unscaled = copy_surface
 
@@ -128,27 +136,32 @@ copy_surface_unscaled = copy_surface
 # Wrapper around image loading.
 
 # Formats we can load reentrantly.
-safe_formats = { "png", "jpg", "jpeg" }
+safe_formats = { "png", "jpg", "jpeg", "webp" }
 
 # Lock used for loading unsafe formats.
 image_load_lock = threading.RLock()
 
-def load_image(f, filename):
-    global count
 
+def load_image(f, filename):
     _basename, _dot, ext = filename.rpartition('.')
 
-    if ext.lower() in safe_formats:
-        surf = pygame.image.load(f, renpy.exports.fsencode(filename))
-    else:
+    try:
 
-        # Non-whitelisted formats may not be able to load in a reentrant
-        # fashion.
-        with image_load_lock:
+        if ext.lower() in safe_formats:
             surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+        else:
+
+            # Non-whitelisted formats may not be able to load in a reentrant
+            # fashion.
+            with image_load_lock:
+                surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+
+    except Exception as e:
+        raise Exception("Could not load image {!r}: {!r}".format(filename, e))
 
     rv = copy_surface_unscaled(surf)
     return rv
+
 
 load_image_unscaled = load_image
 
@@ -159,6 +172,7 @@ def flip(surf, horizontal, vertical):
     surf = pygame.transform.flip(surf, horizontal, vertical)
     return copy_surface_unscaled(surf)
 
+
 flip_unscaled = flip
 
 
@@ -167,6 +181,7 @@ def rotozoom(surf, angle, zoom):
     surf = pygame.transform.rotozoom(surf, angle, zoom)
     return copy_surface_unscaled(surf)
 
+
 rotozoom_unscaled = rotozoom
 
 
@@ -174,11 +189,13 @@ def transform_scale(surf, size):
     surf = pygame.transform.scale(surf, size)
     return copy_surface_unscaled(surf, surf)
 
+
 transform_scale_unscaled = transform_scale
 
 
 def transform_rotate(surf, angle):
     surf = pygame.transform.rotate(surf, angle)
     return copy_surface(surf)
+
 
 transform_rotate_unscaled = transform_rotate

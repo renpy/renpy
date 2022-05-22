@@ -53,25 +53,28 @@ The implications are:
    - states implied by prefix
 
  * - (no prefix)
-   - insensitive, idle, hover, selected_idle, selected_hover
+   - insensitive, idle, hover, selected\_idle, selected\_hover
+
+ * - ``idle_``
+   - idle, selected\_idle
+
+ * - ``hover_``
+   - hover, selected\_hover
+
+ * - ``selected_``
+   - selected\_idle, selected\_hover
 
  * - ``insensitive_``
    - insensitive
 
- * - ``idle_``
-   - idle, selected_idle
-
- * - ``hover_``
-   - hover, selected_hover
-
- * - ``selected_``
-   - selected_idle, selected_hover
-
  * - ``selected_idle_``
-   - selected_idle
+   - selected\_idle
 
  * - ``selected_hover_``
-   - selected_hover
+   - selected\_hover
+
+ * - ``selected_insensitive_``
+   - selected\_insensitive
 
 Using a text button, we can show this in action. Text buttons use two styles
 by default: ``button`` for the button itself, and ``button_text`` for the
@@ -90,13 +93,14 @@ text.::
      # otherwise.
      style button_text:
          color "#fff"
-         selected_color = "#ff0"
+         selected_color "#ff0"
+
 
 Style Property Values
 =====================
 
 Each style property expects a specific kind of data. Many of these are
-standard python types, but a few are novel. Here are descriptions of the
+standard Python types, but a few are novel. Here are descriptions of the
 novel kinds of value a style property can expect.
 
 `position`
@@ -117,13 +121,13 @@ novel kinds of value a style property can expect.
         containing area. For example, 0.5 is a point halfway between the
         sides of the containing area, while 1.0 is on the right or bottom
         side.
-    renpy.absolute (like renpy.absolute(100.25))
-        A renpy.absolute number is interpreted as the number of pixels
-        from the left or top side of the screen, when using subpixel-precise
-        rendering.
+    absolute (like absolute(100.25))
+        An ``absolute`` number is interpreted as the number of pixels from the
+        left or top side of the screen, when using subpixel-precise rendering.
 
 `displayable`
-    Any displayable.
+    Any displayable. If a displayable contains a "[prefix\_]" substitution,
+    a prefix search is performed as described below.
 
 `color`
     Colors in Ren'Py can be expressed as strings beginning with the hash
@@ -149,12 +153,83 @@ novel kinds of value a style property can expect.
 
     Finally, colors can be an instance of :class:`Color`.
 
+
+.. _style-prefix-search:
+
+Style Prefix Search
+-------------------
+
+When a style property contains the "[prefix\_]" substitution, a prefix
+search is performed. The prefix search is performed separately for
+each state, including states that are implied by the original property
+assigned.
+
+For example, if we have::
+
+    style button:
+        hover_background "[prefix_]background.png"
+
+separate searches are performed for the hover and selected\_hover states. The
+prefixes searched vary based on the state.
+
+.. list-table::
+ :header-rows: 1
+
+ * - state
+   - search order
+
+ * - idle
+   - "idle\_", ""
+
+ * - hover
+   - "hover\_", "",
+
+ * - insensitive
+   - "insensitive\_", "", "idle\_"
+
+ * - selected\_idle
+   - "selected\_idle\_", "idle\_", "selected\_", ""
+
+ * - selected_hover
+   - "selected\_hover\_", "hover\_", "selected\_", ""
+
+ * - selected\_insensitive
+   - "selected\_insensitive\_", "hover\_", "selected\_", "", "selected\_idle\_", "idle\_"
+
+When a search is performed, each prefix is tried in the order given. The string
+has "[prefix\_]" replaced with the prefix, and then Ren'Py checks to see if
+a loadable file or image with that name exists. If the file or image exists,
+the search stops and the displayable found is used. Otherwise, it proceeds to
+the next prefix.
+
+The style prefix is passed through displayables that do not take user input,
+including containers, transforms, and frames.
+
+As an example of how this can be used, if the files "idle\_button.png" and
+"hover\_button.png" exist (and no other files ending in "button.png" do)::
+
+    style button:
+        background "[prefix_]button.png"
+
+is equivalent to::
+
+    style button:
+        idle_background "idle_button.png"
+        hover_background "hover_button.png"
+        insensitive_background "idle_button.png"
+
+        selected_idle_background "idle_button.png"
+        selected_hover_background "hover_button.png"
+        selected_insensitive_background "idle_button.png"
+
+
 List of All Style Properties
 ============================
 
 The style properties control the look of the various displayables. Not all
 style properties apply to all displayables, so we've divided them up into
 groups.
+
 
 .. _position-style-properties:
 
@@ -178,7 +253,7 @@ or on the screen when not inside a layout.
 
 .. style-property:: ypos position
 
-    The position of the displayable relative to the right side of the
+    The position of the displayable relative to the top side of the
     containing area.
 
 .. style-property:: pos tuple of (position, position)
@@ -195,6 +270,10 @@ or on the screen when not inside a layout.
 
     The position of the anchor relative to the top side of the
     displayable.
+
+    If the displayable is a :func:`Text`, then there is one special value
+    of this property. If the property is set to renpy.BASELINE, the anchor
+    is set to the baseline of the first line of text.
 
 .. style-property:: anchor tuple of (position, position)
 
@@ -227,7 +306,7 @@ or on the screen when not inside a layout.
 
 .. style-property:: ycenter position
 
-    Equivalent to setting ypos to the value of tihis property, and
+    Equivalent to setting ypos to the value of this property, and
     yanchor to 0.5.
 
 .. style-property:: xoffset int
@@ -239,6 +318,11 @@ or on the screen when not inside a layout.
 
     Gives a number of pixels that are added to the vertical position
     computed using ypos and yalign.
+
+.. style-property:: offset tuple of (int, int)
+
+    Equivalent to setting xoffset to the first component of the tuple,
+    and yoffset to the second component of the tuple.
 
 .. style-property:: xmaximum int
 
@@ -313,6 +397,15 @@ or on the screen when not inside a layout.
 
     This will not work with all displayables and all layouts.
 
+.. style-property:: mipmap boolean or None
+
+    This controls if textures created by this displayable are mipmapped.
+    This applies only to certain displayables, including :func:`Text`,
+    :func:`Movie`, and dissolves.
+
+    If None, the default for this is taken from config variables such
+    as :var:`config.mipmap_text`, :var:`config.mipmap_movies`, and
+    :var:`config.mipmap_dissolves`.
 
 .. _text-style-properties:
 
@@ -321,17 +414,39 @@ Text Style Properties
 
 .. style-property:: antialias boolean
 
-    If True, the default, truetype font text will be rendered
+    If True, the default, TrueType font text will be rendered
     anti-aliased.
+
+.. style-property:: adjust_spacing boolean or str
+
+    If True, Ren'Py will adjust the spacing of drawable-resolution text
+    to match the spacing of the text rendered at virtual resolution, to
+    ensure the size of frames and other containers holding text does not
+    change.
+
+    When set to False, text will not change in size, but it is the creator's
+    responsibility to ensure there is enough space to layout text at any
+    window size.
+
+    When set to the string "horizontal", text will adjust in the horizontal
+    direction only. When set to the string "vertical", text will adjust in
+    the vertical direction only.
+
+    Defaults to True for most text, but False for text in an ``input``.
+
+.. style-property:: altruby_style style or None
+
+    If not None, this should be a style object. The style that's used for
+    alternate ruby text.
 
 .. style-property:: black_color color
 
     When rendering an image-based font, black will be mapped to this
-    color. This has no effect for truetype fonts.
+    color. This has no effect for TrueType fonts.
 
 .. style-property:: bold boolean
 
-    If True, render the font in a bold style. For a truetype font,
+    If True, render the font in a bold style. For a TrueType font,
     this usually involves synthetically increasing the font weight. It
     can also cause the font to be remapped, using
     :var:`config.font_replacement_map`.
@@ -340,11 +455,11 @@ Text Style Properties
 
     If not None, this should be a displayable. The input widget will
     use this as the caret at the end of the text. If None, a 1 pixel
-    wide line is used as the caret.
+    wide blinking line is used as the caret.
 
 .. style-property:: color color
 
-    The color the text is rendered in. When using a truetype font,
+    The color the text is rendered in. When using a TrueType font,
     the font is rendered in this color. When using an image-based
     font, white is mapped to this color.
 
@@ -357,7 +472,7 @@ Text Style Properties
 
     A string giving the name of the font used to render text.
 
-    For a truetype font file, this is usually the name of the file
+    For a TrueType font file, this is usually the name of the file
     containing the font (like ``"DejaVuSans.ttf"``). To select a second
     font in a collection, this can be prefixed with a number and
     at sign (like ``"0@font.ttc"`` or ``"1@font.ttc"``). For an
@@ -372,14 +487,14 @@ Text Style Properties
 
 .. style-property:: italic boolean
 
-    If true, the text will be rendered in italics. For a truetype font,
+    If true, the text will be rendered in italics. For a TrueType font,
     this usually involves synthetically increasing the font slant. It
     can also cause the font to be remapped, using
     :var:`config.font_replacement_map`.
 
 .. style-property:: justify boolean
 
-    If true, additional whitespace is inserted between words so that
+    If True, additional whitespace is inserted between words so that
     the left and right margins of each line are even. This is not
     performed on the last line of a paragraph.
 
@@ -395,7 +510,7 @@ Text Style Properties
     values are:
 
     ``"unicode"`` (default)
-        Uses the unicode linebreaking algorithm, which is suitable for
+        Uses the Unicode linebreaking algorithm, which is suitable for
         most languages.
 
     ``"japanese-strict"``
@@ -421,6 +536,9 @@ Text Style Properties
         Allows breaking only at whitespace. Suitable for most
         languages.
 
+    ``"anywhere"``
+        Allows breaking at anywhere without ruby.
+
     The three Japanese breaking modes are taken from the `CSS3 text module <http://www.w3.org/TR/css3-text/#line-break>`_.
 
 .. style-property:: layout string
@@ -438,7 +556,7 @@ Text Style Properties
     ``"greedy"``
         A word is placed on the first line that has room for it.
 
-    ``"nowrap"``
+    ``"nobreak"``
         Do not line-break.
 
 .. style-property:: line_leading int
@@ -458,7 +576,7 @@ Text Style Properties
 .. style-property:: min_width int
 
     Sets the minimum width of each line of that. If a line is shorter
-    than this, it is padded to this length, with text_align used to
+    than this, it is padded to this length, with ``text_align`` used to
     specify where such padding is placed.
 
 .. style-property:: newline_indent boolean
@@ -474,14 +592,45 @@ Text Style Properties
     front.
 
     The list contains (`size`, `color`, `xoffset`, `yoffset`)
-    tuples. `Size` is the amount the font is expanded by, in
-    pixels. `Color` is the color of the outline. `xoffset` and
+    tuples. `size` is the amount the font is expanded by, in
+    pixels. `color` is the color of the outline. `xoffset` and
     `yoffset` are the amount the outline is shifted by, in pixels.
 
     The outline functionality can also be used to give drop-shadows to
     fonts, by specifying a size of 0 and non-zero offsets.
 
-    Outlines only work with truetype fonts.
+    By default, `size`, `xoffset` and `yoffset` are scaled with the text.
+    When given as the absolute type, they are not scaled. For example::
+
+        style default:
+            outlines [ (absolute(1), "#000", absolute(0), absolute(0)) ]
+
+    will always produce a 1 pixel-wide border.
+
+    Outlines only work with TrueType fonts.
+
+.. style-property:: outline_scaling string
+
+    This determines how outline sizes and offsets are scaled when the
+    window is scaled.
+
+    ``"linear"``
+        The default, best for text with thick outlines. The window scaling factor
+        is applied to the outline size, and then rounded to an integer.
+        This looks better for thick outlines, but concentric outlines of similar
+        thickness may become indistinguishable.
+
+        The resulting width is always at least 1 pixel.
+
+    ``"step"``
+        Best for text that uses thin outlines and text
+        that uses multiple outlines. The window scaling factor is
+        rounded down to an integer and applied to the outline size
+        and offsets. This ensures that multiple outlines all scale together,
+        without risk of eclipsing one another, but this yields different visual
+        results depending on the size of the game window.
+
+        The window scaling factor is always above 1.
 
 .. style-property:: rest_indent int
 
@@ -492,6 +641,12 @@ Text Style Properties
 
     If not None, this should be a style object. The style that's used for
     ruby text.
+
+.. style-property:: slow_abortable boolean
+
+    If True, a click that reaches the Text object will cause the slow
+    text to abort, which means that the rest of the slow text will be
+    displayed instantly.
 
 .. style-property:: slow_cps int or True
 
@@ -520,7 +675,7 @@ Text Style Properties
 
 .. style-property:: underline boolean
 
-    If true, an underline will be added to the text.
+    If True, an underline will be added to the text.
 
 .. style-property:: hyperlink_functions tuple of (function, function, function)
 
@@ -538,11 +693,11 @@ Text Style Properties
     The third item is the hyperlink focus function. This function is called
     with the argument of the hyperlink when the hyperlink gains focus, and
     with None when it loses focus. If it returns a value other than None,
-    the interaction returns that value
+    the interaction returns that value.
 
 .. style-property:: vertical boolean
 
-    If true, the text will be rendered vertically.
+    If True, the text will be rendered vertically.
 
 .. style-property:: hinting str
 
@@ -556,12 +711,14 @@ Text Style Properties
     "none"
         Does not hint the font.
 
+
 .. _window-style-properties:
 
 Window Style Properties
 -----------------------
 
-Window properties are used to specify the look of windows, frames, and buttons.
+Window properties are used to specify the look of windows, frames, and
+buttons. :ref:`margin-style-properties` also form part of this group.
 
 .. style-property:: background displayable or None
 
@@ -576,34 +733,6 @@ Window properties are used to specify the look of windows, frames, and buttons.
 
     If not None, this displayable is drawn above the contents of the
     window.
-
-.. style-property:: left_margin int
-
-    The amount of transparent space to the left of the background, in
-    pixels.
-
-.. style-property:: right_margin int
-
-    The amount of transparent space to the right of the background, in
-    pixels.
-
-.. style-property:: xmargin int
-
-    Equivalent to setting left_margin and right_margin to the same
-    value.
-
-.. style-property:: top_margin int
-
-    The amount of transparent space above the background, in pixels.
-
-.. style-property:: bottom_margin int
-
-    The amount of transparent space below the background, in pixels.
-
-.. style-property:: ymargin int
-
-    Equivalent to setting top_margin and bottom_margin to the same
-    value.
 
 .. style-property:: left_padding int
 
@@ -635,11 +764,30 @@ Window properties are used to specify the look of windows, frames, and buttons.
     Equivalent to setting top_padding and bottom_padding to the same
     value.
 
+.. style-property:: padding tuple
+
+    When given a two-item tuple, equivalent to setting xpadding and
+    ypadding to the two items. When given a four-item tuple, equivalent
+    to setting left_padding, top_padding, right_padding, and bottom_padding
+    to the four items.
+
 .. style-property:: size_group string or None
 
     If not None, this should be a string. Ren'Py will render all
     windows with the same size_group value at the same size.
 
+.. style-property:: modal boolean or callable
+
+    If True, the window is treated as modal. Events will stop propagating
+    through layers while the mouse is within the window or button. If False,
+    the window is not modal.
+
+    This may also be a callable function. If it is, the function is called
+    with (ev, x, y, w, h), where `ev` is either a pygame event, or None to
+    represent a generic mouse event; `x` and `y` are coordinates relative
+    to the window, and `w` and `h` are the height and width of the window.
+    If the callable returns true, the windows is treated as modal. If it
+    returns false, it is not.
 
 .. _button-style-properties:
 
@@ -659,7 +807,8 @@ Button Style Properties
 
 .. style-property:: activate_sound string
 
-    A sound that is played when the button is clicked.
+    A sound that is played when the button is activated (clicked). This is also
+    played when a bar or drag is activated.
 
 .. style-property:: mouse string
 
@@ -669,7 +818,7 @@ Button Style Properties
 .. style-property:: focus_mask multiple
 
     A mask that's used to control what portions of the button can be
-    focused, and hence clicked on. The type of this propertie determines
+    focused, and hence clicked on. The type of this property determines
     how it is interpreted.
 
     Displayable
@@ -681,19 +830,33 @@ Button Style Properties
         focused).
     callable
         If a non-displayable callable (like a function, method, or object
-        with a __call__ method) is given, the function is called with two
+        with a ``__call__`` method) is given, the function is called with two
         arguments, the x and y offset from the top-left corner of the
-        displayable. If the function returns true, the displayable is
-        focused.
+        displayable.
+
+        If the function returns a callable when called with two arguments,
+        that callable is called with four arguments - the x and y offsets, and the width
+        and height of the displayable.
+
+        If the function returns true, the displayable is focused.
     None
         If none is given, the entire button can be focused.
 
-.. style-property:: keyboard_focus
+.. style-property:: keyboard_focus boolean
 
-   If true, the default, this button can be focused using the keyboard focus
-   mechanism, if it can be focused at all. If false, the keyboard focus
+   If True, the default, this button can be focused using the keyboard focus
+   mechanism, if it can be focused at all. If False, the keyboard focus
    mechanism will skip this button. (The keyboard focus mechanism is used
    by keyboards and keyboard-like devices, such as joypads.)
+
+.. style-property:: key_events boolean
+
+    If True, keyboard-generated events are passed to the children of this
+    button. If False, those events are not propagated. In this default style,
+    this is set to True while the button is hovered, and False otherwise.
+
+    Setting this to True can be used to propagate keyboard events to an input
+    inside a button, even when the button isn't focused.
 
 
 .. _bar-style-properties:
@@ -717,17 +880,17 @@ left and right sides are used.
 
 .. style-property:: bar_vertical boolean
 
-    If true, the bar has a vertical orientation. If false, it has a
+    If True, the bar has a vertical orientation. If False, it has a
     horizontal orientation.
 
 .. style-property:: bar_invert boolean
 
-    If true, the value of the bar is represented on the right/top
+    If True, the value of the bar is represented on the right/top
     side of the bar, rather than the left/bottom side.
 
 .. style-property:: bar_resizing boolean
 
-    If true, we resize the sides of the bar. If false, we render the
+    If True, we resize the sides of the bar. If False, we render the
     sides of the bar at full size, and then crop them.
 
 .. style-property:: left_gutter int
@@ -761,6 +924,12 @@ left and right sides are used.
 .. style-property:: bottom_bar displayable
 
     The displayable uses for the bottom side of the bar.
+
+.. style-property:: base_bar displayable
+
+    A single displayable that is used for left_bar/right_bar or
+    top_bar/bottom_bar, as appropriate. (This can be used
+    with thumb to make a slider or scrollbar.)
 
 .. style-property:: thumb displayable or None
 
@@ -800,10 +969,10 @@ left and right sides are used.
        Prevents the bar from rendering at all. Space will be allocated
        for the bar, but nothing will be drawn in that space.
 
-.. style-property:: keyboard_focus
+.. style-property:: keyboard_focus boolean
 
-   If true, the default, this button can be focused using the keyboard focus
-   mechanism, if it can be focused at all. If false, the keyboard focus
+   If True, the default, this button can be focused using the keyboard focus
+   mechanism, if it can be focused at all. If False, the keyboard focus
    mechanism will skip this button. (The keyboard focus mechanism is used
    by keyboards and keyboard-like devices, such as joypads.)
 
@@ -826,21 +995,50 @@ These are used for the horizontal and vertical box layouts.
 
 .. style-property:: box_reverse boolean
 
-    If true, the placement of the items in the box will be reversed. When
-    this is true, a hbox will be filled right-to-left, and a vbox will
-    be filled bottom-to-top. This defaults to false.
+    If True, the placement of the items in the box will be reversed. When
+    this is True, a hbox will be filled right-to-left, and a vbox will
+    be filled bottom-to-top. This defaults to False.
 
 .. style-property:: box_wrap boolean
 
-    If true, then boxes will wrap when they reach the end of a line or column.
-    If false (the default), they will extend past the end of the line.
+    If True, then boxes will wrap when they reach the end of a line or column.
+    If False (the default), they will extend past the end of the line.
+
+.. style-property:: box_wrap_spacing int
+
+    When box_wrap is True, this is the spacing between wrapped lines
+    or columns. (So it is the vertical spacing between lines in a wrapped
+    hbox, and the horizontal spacing between columns in a wrapped vbox.)
 
 .. style-property:: order_reverse boolean
 
-    If false, the default, the items in the box will be draw first-to-last,
-    with the first item in the box being below the second, and so on. If true,
+    If False, the default, the items in the box will be drawn first-to-last,
+    with the first item in the box being below the second, and so on. If True,
     this order will be reversed, and the first item in the box will be above
     all other items in the box.
+
+
+.. _grid-style-properties:
+
+Grid Style Properties
+---------------------
+
+These are the properties used by the grid and vpgrid displayables.
+:ref:`margin-style-properties` also form part of this group.
+
+.. style-property:: spacing int
+
+    The spacing between cells of the grid, in pixels.
+
+.. style-property:: xspacing int or None
+
+    The spacing between cells of the grid in the horizontal direction, in pixels.
+    This takes precedence over the spacing property when it is not None.
+
+.. style-property:: yspacing int or None
+
+    The spacing between cells of the grid in the vertical direction, in pixels.
+    This takes precedence over the spacing property when it is not None.
 
 
 .. _fixed-style-properties:
@@ -850,7 +1048,71 @@ Fixed Style Properties
 
 These are used with the fixed layout.
 
-.. style-property:: fit_first bool
+.. style-property:: fit_first boolean or "width" or "height"
 
-   If true, then the size of the fixed layout is shrunk to be equal with
-   the size of the first item in the layout.
+    If True, then the size of the fixed layout is shrunk to be equal with
+    the size of the first item in the layout. If "width", only the width is changed
+    (the fixed will fill the screen vertically). Similarly, "height" only changes
+    the height.
+
+    The position of the child is ignored for the purpose of fit\_first.
+
+.. style-property:: xfit boolean
+
+    If True, the size of the fixed layout is shrunk horizontally to match the
+    right side of the rightmost child of the fixed.
+
+.. style-property:: yfit boolean
+
+    If True, the size of the fixed layout is shrunk vertically to match the
+    bottom side of the bottommost child of the fixed.
+
+When these properties are supplied, the children of the fixed are first
+offered the full area given to the fixed by its parent. Once the size
+and placement of the children are known, these properties are then used
+to select the size of the fixed.
+
+
+.. _margin-style-properties:
+
+Margin Style Properties
+-----------------------
+
+Margin properties are used to add transparent space around some
+displayables. Most notably: windows, frames, buttons and outside
+a grid or vpgrid.
+
+.. style-property:: left_margin int
+
+    The amount of transparent space to the left of the displayable, in
+    pixels.
+
+.. style-property:: right_margin int
+
+    The amount of transparent space to the right of the displayable, in
+    pixels.
+
+.. style-property:: xmargin int
+
+    Equivalent to setting left_margin and right_margin to the same
+    value.
+
+.. style-property:: top_margin int
+
+    The amount of transparent space above the displayable, in pixels.
+
+.. style-property:: bottom_margin int
+
+    The amount of transparent space below the displayable, in pixels.
+
+.. style-property:: ymargin int
+
+    Equivalent to setting top_margin and bottom_margin to the same
+    value.
+
+.. style-property:: margin tuple
+
+    When given a two-item tuple, equivalent to setting xmargin and
+    ymargin to the two items. When given a four-item tuple, equivalent
+    to setting left_margin, top_margin, right_margin, and bottom_margin
+    to the four items.

@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,11 +19,25 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+
 import sys
 import os
-import renpy.audio
 import subprocess
-import pygame
+
+import pygame_sdl2 as pygame
+import renpy
+
+
+class TTSDone(str):
+    """
+    A subclass of string that is returned from a tts function to stop
+    further TTS processing.
+    """
+
 
 class TTSRoot(Exception):
     """
@@ -31,6 +45,7 @@ class TTSRoot(Exception):
     of the root displayable, rather than text of the currently focused
     displayable.
     """
+
 
 # The root of the scene.
 root = None
@@ -41,12 +56,18 @@ last = ""
 # The speech synthesis process.
 process = None
 
+
 def periodic():
     global process
 
     if process is not None:
         if process.poll() is not None:
             process = None
+
+
+def is_active():
+
+    return process is not None
 
 
 def default_tts_function(s):
@@ -61,7 +82,7 @@ def default_tts_function(s):
         try:
             process.terminate()
             process.wait()
-        except:
+        except Exception:
             pass
 
     process = None
@@ -73,20 +94,54 @@ def default_tts_function(s):
 
     if renpy.game.preferences.self_voicing == "clipboard":
         try:
-            pygame.scrap.put(pygame.SCRAP_TEXT, s.encode("utf-8"))
-        except:
+            pygame.scrap.put(pygame.scrap.SCRAP_TEXT, s.encode("utf-8"))
+        except Exception:
             pass
 
         return
 
-    if renpy.linux:
-        process = subprocess.Popen([ "espeak", s.encode("utf-8") ])
+    if renpy.game.preferences.self_voicing == "debug":
+        renpy.exports.restart_interaction()
+        return
+
+    fsencode = renpy.exports.fsencode
+
+    if "RENPY_TTS_COMMAND" in os.environ:
+
+        process = subprocess.Popen([ os.environ["RENPY_TTS_COMMAND"], fsencode(s) ])
+
+    elif renpy.linux:
+
+        if renpy.config.tts_voice is None:
+            process = subprocess.Popen([ "espeak", fsencode(s) ])
+        else:
+            process = subprocess.Popen([ "espeak", "-v", fsencode(renpy.config.tts_voice), fsencode(s) ])
+
     elif renpy.macintosh:
-        process = subprocess.Popen([ "say", renpy.exports.fsencode(s) ])
+
+        if renpy.config.tts_voice is None:
+            process = subprocess.Popen([ "say", fsencode(s) ])
+        else:
+            process = subprocess.Popen([ "say", "-v", fsencode(renpy.config.tts_voice), fsencode(s) ])
+
     elif renpy.windows:
+
+        if renpy.config.tts_voice is None:
+            voice = "default voice" # something that is unlikely to match.
+        else:
+            voice = renpy.config.tts_voice
+
         say_vbs = os.path.join(os.path.dirname(sys.executable), "say.vbs")
         s = s.replace('"', "")
-        process = subprocess.Popen([ "wscript", renpy.exports.fsencode(say_vbs), renpy.exports.fsencode(s) ])
+        process = subprocess.Popen([ "wscript", fsencode(say_vbs), fsencode(s), fsencode(voice) ])
+
+    elif renpy.emscripten and renpy.config.webaudio:
+
+        try:
+            from renpy.audio.webaudio import call
+            call("tts", s)
+        except Exception:
+            pass
 
 
 def tts(s):
@@ -98,7 +153,7 @@ def tts(s):
 
     try:
         renpy.config.tts_function(s)
-    except:
+    except Exception:
         pass
 
     queue = [ ]
@@ -117,12 +172,15 @@ def speak(s, translate=True, force=False):
 
     tts(s)
 
+
 def set_root(d):
     global root
     root = d
 
+
 # The old value of the self_voicing preference.
 old_self_voicing = False
+
 
 def displayable(d):
     """
@@ -137,9 +195,9 @@ def displayable(d):
     if not self_voicing:
         if old_self_voicing:
             old_self_voicing = self_voicing
-            speak("Self-voicing disabled.", force=True)
+            speak(renpy.translation.translate_string("Self-voicing disabled."), force=True)
 
-        last = None
+        last = ""
 
         return
 

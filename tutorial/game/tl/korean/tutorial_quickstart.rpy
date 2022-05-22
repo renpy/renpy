@@ -1,882 +1,861 @@
 ﻿
+# game/tutorial_quickstart.rpy:28
+translate korean tutorial_create_27048c11:
 
-# game/tutorial_quickstart.rpy:20
-translate korean tutorial_dialogue_46edb91d:
+    # e "When you're ready to use Ren'Py to create your visual novel, the first step is to create a new project."
+    e "렌파이로 비주얼 노블을 만들 준비가 됐다면, 가장 먼저 할 일은 새 프로젝트를 생성하는 거야."
 
+# game/tutorial_quickstart.rpy:30
+translate korean tutorial_create_bae6289c:
 
-    # e "Probably the best way to learn Ren'Py is to see it in action. In this tutorial, I'll be showing you some of the things Ren'Py can do, and also showing you how to do them."
-    e "아마 렌'파이를 배우는 가장 좋은 방법은 렌'파이가 동작하는 모습을 보는 것이라고 생각해요. 이 튜토리얼에서 제가 렌'파이로 할 수 있는 것들을 보여드리고, 어떻게 하는지 알려 드릴게요."
-
-
-# game/tutorial_quickstart.rpy:25
-translate korean tutorial_dialogue_49c65906:
-
-
-    # e "Code examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
-    e "예제 코드들은 위에 있는 윈도우에 보여질 거예요. 튜토리얼을 계속 진행하려면 예제 윈도우 바깥을 클릭해주셔야 해요."
-
-
-# game/tutorial_quickstart.rpy:27
-translate korean tutorial_dialogue_5c2cb6f9:
-
-
-    # e "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
-    e "만약 예제 코드가 화면보다 크다면, 마우스 휠이나 그냥 마우스를 드래그하는 것으로 위아래로 이동할 수 있어요."
-
+    # e "You can create a new project by clicking 'Create New Project' on the front screen of the launcher."
+    e "런처의 첫 화면에서 '새 프로젝트 생성'을 눌러 프로젝트를 생성할 수 있어."
 
 # game/tutorial_quickstart.rpy:32
-translate korean tutorial_dialogue_3528a1fe:
+translate korean tutorial_create_45915fcb:
 
-
-    # e "To create a new project, you can click New Project in the Ren'Py launcher."
-    e "새로 프로젝트를 만들려면, 새 프로젝트 만들기를 클릭하세요."
-
-
-# game/tutorial_quickstart.rpy:34
-translate korean tutorial_dialogue_3ef9231c:
-
-
-    # e "If it's your first time making a Ren'Py game, you'll be asked to pick a directory to store your projects in."
-    e "만약 처음으로 렌'파이 게임을 만드는 것이라면, 프로젝트를 저장할 경로를 선택하셔야 해요."
-
+    # e "If this is your first time using Ren'Py, it'll ask you for the place you want to keep your projects. The best place is always somewhere that's frequently backed up."
+    e "만약 렌파이를 처음 사용하는 거라면, 프로젝트를 보관할 장소를 물어볼 거야. 최고의 장소는 언제나 자주 백업되는 곳이겠지?"
 
 # game/tutorial_quickstart.rpy:36
-translate korean tutorial_dialogue_15734bf9:
+translate korean tutorial_create_55e30cb5:
 
-
-    # e "You'll then be asked for the name of the project, and also to choose a theme for the interface."
-    e "그 다음 프로젝트의 이름을 입력하고, 인터페이스의 테마를 선택하셔야 해요."
-
-
-# game/tutorial_quickstart.rpy:38
-translate korean tutorial_dialogue_a12675cc:
-
-
-    # e "Once that's done, Ren'Py will automatically create a directory and fill it with the files needed to make a project."
-    e "이 작업이 완료되면, 렌'파이는 자동적으로 새로 폴더를 만들고, 새 프로젝트를 만드는데 필요한 파일들로 폴더를 채워 넣기 시작합니다."
-
+    # e "After that, Ren'Py will ask for a name for your project. You'll have to stick to English letters and numbers, as zip files can't handle anything more than that."
+    e "다음에는, 렌파이가 네 프로젝트의 이름을 물을 거야. zip 파일이 처리할 수 있도록 영어 단어와 숫자로 이름을 정해야 해."
 
 # game/tutorial_quickstart.rpy:40
-translate korean tutorial_dialogue_66d639af:
+translate korean tutorial_create_dea3e5c2:
 
+    # e "The next thing Ren'Py will ask for is the resolution the visual novel will run at. This controls how large or small you'll have to make your game's artwork."
+    e "다음은 프로그램이 실행될 해상도를 정하는 거야. 이건 네가 게임의 삽화를 얼마나 크게 또는 작게 할지를 생각해서 정해줘."
 
-    # e "If you have Java installed, you'll be able to click Edit Script to open your project's script."
-    e "만약 자바가 설치되어 있다면 파일 수정하기를 클릭해서 프로젝트의 스크립트를 열 수 있을 거예요."
+# game/tutorial_quickstart.rpy:44
+translate korean tutorial_create_3289ea75:
 
-
-# game/tutorial_quickstart.rpy:42
-translate korean tutorial_dialogue_f0d66410:
-
-
-    # e "Let's see the simplest possible Ren'Py game."
-    e "그러면 간단한 렌'파이 게임을 한번 볼까요?"
-
+    # e "Finally, Ren'Py will ask you to select a color scheme. You can change this after the game has been created, so just pick a color that's pleasing."
+    e "마지막으로, 렌파이는 색상 구성을 선택하도록 요청할 거야. 게임이 생성되면 언제든 바꿀 수 있으니까 일단 좋아하는 색으로 고르면 돼."
 
 # game/tutorial_quickstart.rpy:48
-translate korean tutorial_dialogue_3e6b0068:
+translate korean tutorial_create_6b9e3b96:
 
-
-    # "Wow, It's really really dark in here."
-    "와, 여기 엄청 어두운데."
-
+    # e "Once that's done, Ren'Py will work for a bit and return you to the main menu with the new project selected. Now, when you click Launch, Ren'Py will start your new game."
+    e "마쳤으면, 렌파이는 약간의 작업을 하고 새 프로젝트를 선택한 상태에서 메인 메뉴로 돌아갈 거야. 이제, 프로젝트 실행을 누르면 렌파이는 네 게임을 시작할 거야."
 
 # game/tutorial_quickstart.rpy:50
-translate korean tutorial_dialogue_5072a404:
+translate korean tutorial_create_bdf94f9b:
 
+    # e "To get back here, you can choose 'Tutorial' to switch to this tutorial game."
+    e "여기로 돌아오려면, 간단하게 런처에서 '길라잡이'를 선택하면 돼."
 
-    # "Lucy" "Better watch out. You don't want to be eaten by a Grue."
-    "Lucy" "조심하는 게 좋을걸. 그루한테 먹히고 싶진 않을 거 아냐."
+# game/tutorial_quickstart.rpy:52
+translate korean tutorial_create_22f516df:
 
+    # e "You'll also need to edit the games script to make changes. To do that, click 'script.rpy' on the front page of the launcher."
+    e "게임의 내용을 바꾸려면 스크립트를 편집해야 해. 그러려면, 런처의 첫 화면에서 'script.rpy'를 누르면 돼."
 
-# game/tutorial_quickstart.rpy:59
-translate korean tutorial_dialogue_871db44f:
+# game/tutorial_quickstart.rpy:54
+translate korean tutorial_create_9151025b:
 
+    # e "If it's your first time doing so, Ren'Py will ask you to select a text editor. Atom might be a safe choice, but read the descriptions to be sure."
+    e "만약 처음인 경우에는 렌파이는 네게 텍스트 에디터를 골라달라고 할 거야. 아톰(Atom)은 안전한 선택이지만 설명을 확실히 읽는 게 좋아."
 
-    # e "I'll show you the code for that example."
-    e "그럼 예제 게임의 코드를 볼까요?"
+# game/tutorial_quickstart.rpy:56
+translate korean tutorial_create_bfbd6220:
 
-
-# game/tutorial_quickstart.rpy:61
-translate korean tutorial_dialogue_6943c36d:
-
-
-    # e "This code demonstrates two kinds of Ren'Py statements, labels and say statements."
-    e "이 코드는 두 가지의 렌'파이 문을 보여줍니다. label 문과 say 문이죠."
-
-
-# game/tutorial_quickstart.rpy:63
-translate korean tutorial_dialogue_bc7ec147:
-
-
-    # e "The first line is a label statement. The label statement is used to give a name to a place in the program."
-    e "첫번째 줄은 label 문입니다. 이 문은 프로그램 안에 어떤 부분에 이름을 부여해 줍니다."
-
-
-# game/tutorial_quickstart.rpy:65
-translate korean tutorial_dialogue_b20db833:
-
-
-    # e "In this case, we're naming a place \"start\". The start label is special, as it marks the place a game begins running."
-    e "이 경우에 저는 이 부분을 \"start\"라고 이름을 붙여 주었는데요, 이 start 레이블은 중요합니다. 이 레이블이 게임이 시작하는 부분이거든요."
-
-
-# game/tutorial_quickstart.rpy:67
-translate korean tutorial_dialogue_b0afbe96:
-
-
-    # e "The next line is a simple say statement. It consists of a string beginning with a double-quote, and ending at the next double-quote."
-    e "그 다음 줄은 간단한 say 문입니다. 큰따옴표로 시작해서 큰따옴표로 끝나는 문자열으로 이루어져 있죠."
-
+    # e "After the text editor is downloaded, the script will open up and you can start to change what characters are saying."
+    e "텍스트 에디터를 내려받은 후에 스크립트가 열리고 캐릭터가 무엇을 말하는지 변경할 수 있어."
 
 # game/tutorial_quickstart.rpy:69
-translate korean tutorial_dialogue_628c9e4c:
+translate korean tutorial_dialogue_112ff505:
 
+    # e "Probably the most common thing a creator does with Ren'Py is to write dialogue for the player to read."
+    e "렌파이로 가장 일반적으로 하는 일은 사용자가 읽을 수 있는 대화를 작성하는 거야."
 
-    # e "Special characters in strings can be escaped with a backslash. To include \" in a string, we have to write \\\"."
-    e "문자열 안의 특별한 문자는 역슬래시를 통해 탈출될 수 있습니다. 예를 들어, \"를 문자열에 포함시키기 위해서는 \\\"라고 써야 한다는 소리죠."
+# game/tutorial_quickstart.rpy:71
+translate korean tutorial_dialogue_be2be31a:
 
+    # e "But before I can show you how to write dialogue, let me show you how we present script examples."
+    e "하지만 지문을 작성하는 방법을 보여주기 전에, 스크립트 예제를 보여줄게."
 
 # game/tutorial_quickstart.rpy:74
-translate korean tutorial_dialogue_3e6b0068_1:
+translate korean tutorial_dialogue_7b6be28e:
 
+    # "Eileen" "Examples will show up in a window like the one above. You'll need to click outside of the example window in order to advance the tutorial."
+    "아일린" "예제는 위와 같은 창에 표시돼. 튜토리얼을 진행하려면 예제 창 외부를 클릭해야 해."
 
-    # "Wow, It's really really dark in here."
-    "와, 여기 엄청 어두운데."
+# game/tutorial_quickstart.rpy:76
+translate korean tutorial_dialogue_5269d005:
 
+    # "Eileen" "When an example is bigger than the screen, you can scroll around in it using the mouse wheel or by simply dragging the mouse."
+    "아일린" "예제가 화면보다 크면 마우스 휠을 사용하거나 마우스를 드래그하여 스크롤하면 돼."
+
+# game/tutorial_quickstart.rpy:78
+translate korean tutorial_dialogue_241c0c74:
+
+    # "Eileen" "Script might seem scary at first, but if you look you'll see it's easy to match it up to what I'm saying."
+    "아일린" "스크립트는 처음에는 무서운 것처럼 보일지 모르지만, 내가 말하는 것과 일치하는 것을 쉽게 볼 수 있을 거야."
 
 # game/tutorial_quickstart.rpy:82
-translate korean tutorial_dialogue_d7f0b5b7:
+translate korean tutorial_dialogue_f0d66410:
 
+    # e "Let's see the simplest possible Ren'Py game."
+    e "렌파이 게임에서 가능한 가장 간단한 걸 보여줄게."
 
-    # e "When Ren'Py sees a single string on a line by itself, it uses the narrator to say that string. So a single string can be used to express a character's thoughts."
-    e "렌'파이가 한 줄에 문자열 하나만 있는 것을 발견한다면, 렌'파이는 그 문자열을 출력하는데 narrator를 사용합니다. 그러니 하나의 문자열은 캐릭터의 생각을 표현하는데 사용될 수 있죠."
+# game/tutorial_quickstart.rpy:89
+translate korean tutorial_dialogue_3e6b0068:
 
+    # "Wow, It's really really dark in here."
+    "와우, 여긴 정말 정말 어두워."
 
-# game/tutorial_quickstart.rpy:87
-translate korean tutorial_dialogue_5072a404_1:
-
+# game/tutorial_quickstart.rpy:91
+translate korean tutorial_dialogue_5072a404:
 
     # "Lucy" "Better watch out. You don't want to be eaten by a Grue."
-    "Lucy" "조심하는게 좋을걸, 그루한테 먹히고 싶진 않을 거 아냐."
-
-
-# game/tutorial_quickstart.rpy:95
-translate korean tutorial_dialogue_9dd2d543:
-
-
-    # e "When we have two strings separated by a space, the first is used as the character's name, and the second is what the character is saying."
-    e "렌'파이가 공백(스페이스)으로 나뉘어져 있는 두개의 문자열을 발견하면, 첫번째 문자열은 캐릭터의 이름이 되고, 두번째는 캐릭터가 말하는 내용이 됩니다."
-
-
-# game/tutorial_quickstart.rpy:97
-translate korean tutorial_dialogue_64ffe685:
-
-
-    # e "This two-argument form of the say statement is used for dialogue, where a character is speaking out loud."
-    e "이 인수 두개짜리 say 문은 캐릭터가 직접 말하는것, 즉 대화문을 표현할 때 사용될 수 있습니다."
-
+    "루시" "조심해. 그루(조크 시리즈에서 어둠 속 플레이어를 잡아먹는 괴물)에게 먹히고 싶지 않으면."
 
 # game/tutorial_quickstart.rpy:99
-translate korean tutorial_dialogue_97a33275:
+translate korean tutorial_dialogue_d39d1b2b:
 
-
-    # e "If you'd like, you can run this game yourself by erasing everything in your project's script.rpy file, and replacing it with the code in the box above."
-    e "만약 내키신다면, 프로젝트의 script.rpy 파일의 내용을 전부 지우고 위에 있는 코드를 붙여 넣어서 이 게임을 실행시켜 볼 수도 있어요."
-
+    # e "I'll show you the script of that example."
+    e "이제 금방 보여준 예제의 스크립트를 보여줄게."
 
 # game/tutorial_quickstart.rpy:101
-translate korean tutorial_dialogue_c5e70d7e:
+translate korean tutorial_dialogue_f51ecf1f:
 
+    # e "This script demonstrates two kinds of Ren'Py statements, labels and say statements."
+    e "이 스크립트는 두 종류의 렌파이 명령문, 레이블 및 say를 보여주는 거야."
 
-    # e "Be sure to preserve the spacing before lines. That's known as indentation, and it's used to help Ren'Py group lines of script into blocks."
-    e "아, 줄 앞에 공백을 만들어 두는것도 잊지 마세요. 이것은 들여쓰기라고 하는 것인데, 렌'파이가 코드를 블록으로 나누는 데에 필요합니다."
+# game/tutorial_quickstart.rpy:103
+translate korean tutorial_dialogue_bc7ec147:
 
+    # e "The first line is a label statement. The label statement is used to give a name to a place in the program."
+    e "첫 번째 줄은 레이블 명령문이야. 레이블 명령문은 프로그램의 특정 위치의 이름을 지정하는 데 사용돼."
 
-# game/tutorial_quickstart.rpy:106
-translate korean tutorial_dialogue_90719f73:
+# game/tutorial_quickstart.rpy:105
+translate korean tutorial_dialogue_b20db833:
 
+    # e "In this case, we're naming a place \"start\". The start label is special, as it marks the place a game begins running."
+    e "이 경우에, 우리는 \"start\"로 명명할 거야. start는 게임이 시작되는 지점을 표시하는 특별한 레이블이야."
 
-    # e "Using a string for a character's name is inconvenient, for two reasons."
-    e "그런데 문자열으로 캐릭터의 이름을 표현하는 방식은 별로 좋지 못해요."
+# game/tutorial_quickstart.rpy:107
+translate korean tutorial_dialogue_b0afbe96:
 
+    # e "The next line is a simple say statement. It consists of a string beginning with a double-quote, and ending at the next double-quote."
+    e "다음 줄은 간단한 say 명령문이야. 큰 따옴표로 시작해서 다음 큰 따옴표로 끝나는 문자열로 구성돼."
 
-# game/tutorial_quickstart.rpy:108
-translate korean tutorial_dialogue_910f286a:
+# game/tutorial_quickstart.rpy:109
+translate korean tutorial_dialogue_628c9e4c:
 
-
-    # e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
-    e "첫째로, 약간 중복되는 작업이 많아요. \"Lucy\"를 타이핑하는건 그렇게 불편하진 않지만 \"Eileen Richardson\"같은 긴 이름을 몇천번 반복해서 타이핑한다고 생각해 보세요."
-
-
-# game/tutorial_quickstart.rpy:110
-translate korean tutorial_dialogue_9c9d59c2:
-
-
-    # e "The second is that it doesn't leave any place to put styling, which can change the look of a character."
-    e "둘째로, 캐릭터의 모양을 바꿀 수 있는 스타일링을 할 수가 없어요."
-
-
-# game/tutorial_quickstart.rpy:112
-translate korean tutorial_dialogue_2a2d1e51:
-
-
-    # e "To solve these problems, Ren'Py lets you define Characters."
-    e "이런 문제를 해결하기 위해서, 렌'파이는 캐릭터 정의 기능을 지원합니다."
-
+    # e "Special characters in strings can be escaped with a backslash. To include \" in a string, we have to write \\\"."
+    e "특수문자는 백슬레시로 처리할 수 있어. \"를 문자열에 포함하려면 우리는 \\\"를 써야 해."
 
 # game/tutorial_quickstart.rpy:116
-translate korean tutorial_dialogue_16e8c5fd:
+translate korean tutorial_dialogue_3e6b0068_1:
 
+    # "Wow, It's really really dark in here."
+    "와우, 여기는 정말 정말 어두워."
 
-    # e "Here's an example Character definition. It begins with the word \"define\". That tells Ren'Py that we are defining something."
-    e "여기 캐릭터 정의 예제를 보여드릴게요. 단어 \"define\"으로 시작하는데요, 이 키워드는 렌'파이에게 여러분이 무언가를 정의하고 있다고 알려주는 역할을 합니다."
+# game/tutorial_quickstart.rpy:125
+translate korean tutorial_dialogue_d7f0b5b7:
 
+    # e "When Ren'Py sees a single string on a line by itself, it uses the narrator to say that string. So a single string can be used to express a character's thoughts."
+    e "한 줄에 하나의 문자열만 사용할 때(캐릭터가 지정되지 않는) 렌파이는 해당 문자열을 말하는 내레이터를 사용해. 따라서 하나의 문자열을 사용하여 캐릭터의 생각을 표현할 수 있어."
 
-# game/tutorial_quickstart.rpy:118
-translate korean tutorial_dialogue_34fe5aa0:
+# game/tutorial_quickstart.rpy:131
+translate korean tutorial_dialogue_5072a404_1:
 
+    # "Lucy" "Better watch out. You don't want to be eaten by a Grue."
+    "루시" "조심해. 그루에게 먹히고 싶지 않으면."
 
-    # e "Define is followed by a short name for the character, like \"l\". We'll be able to use that short name when writing dialogue."
-    e "define 다음에 들어가는 건 \"l\"과 같은 캐릭터의 짧은 이름인데요, 이제부터 대화문을 작성하는데 이 짧은 이름을 사용할 수 있습니다."
+# game/tutorial_quickstart.rpy:139
+translate korean tutorial_dialogue_9dd2d543:
 
+    # e "When we have two strings separated by a space, the first is used as the character's name, and the second is what the character is saying."
+    e "우리가 두 개의 문자열을 스페이스로 나눠 사용하면, 첫 번째 문자열은 캐릭터의 이름이고, 두 번째는 캐릭터가 말하는 내용이 돼."
 
-# game/tutorial_quickstart.rpy:120
-translate korean tutorial_dialogue_67f90201:
+# game/tutorial_quickstart.rpy:141
+translate korean tutorial_dialogue_64ffe685:
 
+    # e "This two-argument form of the say statement is used for dialogue, where a character is speaking out loud."
+    e "say 명령문의 두 인자 형식은 캐릭터가 직접 입으로 말하는 대화에 사용돼."
 
-    # e "This is followed by an equals sign, and the thing that we're defining. In this case, it's a Character."
-    e "이 짧은 이름 다음에 붙는 건 등호인데요, 등호 다음에 여러분이 무엇을 정의하고 있는지 써주시면 됩니다. 이 경우에는 Character가 되겠네요."
+# game/tutorial_quickstart.rpy:143
+translate korean tutorial_dialogue_97a33275:
 
-
-# game/tutorial_quickstart.rpy:122
-translate korean tutorial_dialogue_4e454a89:
-
-
-    # e "On the first line, the character's name is given to be \"Lucy\", and her name will be drawn a reddish color."
-    e "첫번째 줄에서 캐릭터의 이름은 \"Lucy\"로 정해졌습니다. 그리고 이 아이의 이름은 빨간색으로 출력될 거예요."
-
-
-# game/tutorial_quickstart.rpy:124
-translate korean tutorial_dialogue_db11f026:
-
-
-    # e "These short names are case-sensitive. Capital L is a different name from lower-case l, so you'll need to be careful about that."
-    e "이러한 짧은 이름들은 대소문자를 구분합니다. 대문자 L은 소문자 l과는 달라요. 그러니까 이 부분은 조심해야 해요."
-
-
-# game/tutorial_quickstart.rpy:128
-translate korean tutorial_dialogue_1d161320:
-
-
-    # e "Now that we have a character defined, we can use it to say dialogue."
-    e "이제 캐릭터가 정의되었으니, 이제 대사를 말할 때 쓸 수 있어요."
-
-
-# game/tutorial_quickstart.rpy:134
-translate korean tutorial_dialogue_3710169c:
-
-
-    # l "Why are you trying to put words into my mouth? And who are you calling \"it\"?"
-    l "내가 그런 말을 언제 했어? 그리고, \"그게\" 뭔데?"
-
-
-# game/tutorial_quickstart.rpy:136
-translate korean tutorial_dialogue_6d463776:
-
-
-    # l "What's more, what are you going to do about the Grue problem? Are you just going to leave me here?"
-    l "또, 그루 문제는 어쩔 건데? 그냥 날 여기에다 내팽개쳐두고 가려고?"
-
+    # e "If you'd like, you can run this game yourself by erasing everything in your project's script.rpy file, and replacing it with the code in the box above."
+    e "원한다면 네 프로젝트의 script.rpy 파일 내용을 모두 지우고 위 상자에 있는 내용으로 바꾸어 코드를 직접 실행할 수 있어."
 
 # game/tutorial_quickstart.rpy:145
-translate korean tutorial_dialogue_023bcd31:
+translate korean tutorial_dialogue_c5e70d7e:
 
-
-    # e "Here's the full game, including the two new lines of dialogue, both of which use the Character we defined to say dialogue."
-    e "제가 방금 정의한 캐릭터를 사용하는 두 개의 say 문을 추가한 버전입니다."
-
-
-# game/tutorial_quickstart.rpy:147
-translate korean tutorial_dialogue_48bb9547:
-
-
-    # e "The one-argument form of the say statement is unchanged, but in the two-argument form, instead of the first string we can use a short name."
-    e "인수 하나짜리 say 문은 바뀌지 않지만, 인수 두개짜리는 첫번째 이름 문자열 대신 방금 정의한 캐릭터 문자열을 쓸 수 있어요."
-
+    # e "Be sure to preserve the spacing before lines. That's known as indentation, and it's used to help Ren'Py group lines of script into blocks."
+    e "코딩을 할 때는 줄 앞에 간격을 유지해야 해. 이것은 들여쓰기로 많이 알려져 있고, 블록 안에 스크립트 라인의 그룹으로 사용해."
 
 # game/tutorial_quickstart.rpy:149
-translate korean tutorial_dialogue_56a9936f:
+translate korean tutorial_dialogue_90719f73:
 
-
-    # e "When this say statement is run, Ren'Py will look up the short name, which is really a Python variable. It will then use the associated Character to show the dialogue."
-    e "짧은 이름을 사용한 say 문을 실행시키면, 렌'파이는 그 짧은 이름, 정확히는 파이썬 변수인 짧은 이름을 찾습니다. 그 다음 그 이름과 연결된 캐릭터를 찾아 대사를 표시하지요."
-
+    # e "Using a string for a character's name is inconvenient, for two reasons."
+    e "캐릭터의 이름에 문자열을 사용하는 것이 불편한 데는 두 가지 이유가 있어."
 
 # game/tutorial_quickstart.rpy:151
-translate korean tutorial_dialogue_d5984a21:
+translate korean tutorial_dialogue_910f286a:
 
+    # e "The first is that's it's a bit verbose. While typing \"Lucy\" isn't so bad, imagine if you had to type \"Eileen Richardson\" thousands of times."
+    e "첫 번째는 다소 장황하다는 거야. \"루시\"를 타이핑하는 것이 그렇게 나쁘지는 않지만, \"아일린 리차드슨\"을 수천 번 입력해야 한다고 상상해봐."
 
-    # e "The Character object controls who is speaking, the color of their name, and many other properties of the dialogue."
-    e "Character 객체는 말하는이와 이름의 색깔을 포함하여 다른 여러가지 속성들을 조정할 수 있습니다."
+# game/tutorial_quickstart.rpy:153
+translate korean tutorial_dialogue_9c9d59c2:
 
+    # e "The second is that it doesn't leave any place to put styling, which can change the look of a character."
+    e "두 번째는 그렇게 하면 캐릭터의 대사가 어떻게 보일지 스타일링을 하지 않는다는 거야."
 
 # game/tutorial_quickstart.rpy:155
-translate korean tutorial_dialogue_a5bcac8b:
+translate korean tutorial_dialogue_2a2d1e51:
 
+    # e "To solve these problems, Ren'Py lets you define Characters."
+    e "이 문제를 해결하려면 캐릭터(Characters)를 정의(define)해야 해."
 
-    # e "Since the bulk of a visual novel is dialogue, we've tried to make it as easy to write as possible."
-    e "비주얼 노벨의 많은 부분이 대사로 채워져 있기에, 렌'파이 팀은 이를 최대한 짧고 쓰기 편하게 만들 수 있도록 노력했어요."
+# game/tutorial_quickstart.rpy:159
+translate korean tutorial_dialogue_16e8c5fd:
 
+    # e "Here's an example Character definition. It begins with the word \"define\". That tells Ren'Py that we are defining something."
+    e "여기에 캐릭터 정의의 예제를 보여줄게. 일단 \"define\"으로 시작해. 그것은 렌파이에게 우리가 무언가를 정의한다는 걸 알려주는 거야."
 
-# game/tutorial_quickstart.rpy:157
-translate korean tutorial_dialogue_6b9a42d0:
+# game/tutorial_quickstart.rpy:161
+translate korean tutorial_dialogue_34fe5aa0:
 
-
-    # e "Hopefully, by allowing the use of short names for characters, we've succeeded."
-    e "다행히도, 캐릭터들을 짧은 이름으로 정의할 수 있게 되어서 그 목표는 달성되었다고 해도 좋겠네요."
-
+    # e "Define is followed by a short name for the character, like \"l\". We'll be able to use that short name when writing dialogue."
+    e "\"l\"과 같은 이름으로 정의하면 캐릭터를 위한 짧은 이름을 따를 수 있어. 우리는 그 짧은 이름을 지문 작성에 사용할 수 있고."
 
 # game/tutorial_quickstart.rpy:163
-translate korean tutorial_images_e09ac970:
+translate korean tutorial_dialogue_67f90201:
 
-
-    # e "A visual novel isn't much without images. So let's add some images to our little game."
-    e "이미지 없는 비주얼 노벨은 설탕 없는 호떡이죠. 그러니 제 작은 게임에 이미지를 몇 개 추가해 보도록 할게요."
-
+    # e "This is followed by an equals sign, and the thing that we're defining. In this case, it's a Character."
+    e "그 다음에는 괄호와 우리가 정의하고 있는 것이 뒤따르고, 이 경우에는 캐릭터(Character)가 돼."
 
 # game/tutorial_quickstart.rpy:165
-translate korean tutorial_images_a664a8bc:
+translate korean tutorial_dialogue_4e454a89:
 
-
-    # e "Before we can show images, we must first put the image files into the game directory."
-    e "이미지를 표시하기 전에, 필요한 사진 파일 모두를 게임 경로 안에 넣어야 합니다."
-
+    # e "On the first line, the character's name is given to be \"Lucy\", and her name will be drawn a reddish color."
+    e "예제에서, 캐릭터의 이름은 \"루시\"라고 지어졌고, 그녀의 이름은 붉은 계통의 색으로 보여질 거야."
 
 # game/tutorial_quickstart.rpy:167
-translate korean tutorial_images_1d6236ee:
+translate korean tutorial_dialogue_db11f026:
 
+    # e "These short names are case-sensitive. Capital L is a different name from lower-case l, so you'll need to be careful about that."
+    e "이러한 짧은 이름들은 대소문자를 구분해. 대문자 L은 소문자 l과 다른 이름이니까 주의해야 해."
 
-    # e "The easiest way to open the game directory is to click the Game Directory button in the Ren'Py launcher."
-    e "게임 경로를 여는 가장 쉬운 방법은 렌'파이 런처에서 game 버튼을 클릭하는 거예요."
+# game/tutorial_quickstart.rpy:171
+translate korean tutorial_dialogue_1d161320:
 
+    # e "Now that we have a character defined, we can use it to say dialogue."
+    e "이제 우리는 정의된 캐릭터를 가지고 지문에 사용할 수 있어."
 
-# game/tutorial_quickstart.rpy:169
-translate korean tutorial_images_e41986f0:
+# game/tutorial_quickstart.rpy:178
+translate korean tutorial_dialogue_3710169c:
 
+    # l "Why are you trying to put words into my mouth? And who are you calling \"it\"?"
+    l "왜 내 입으로 말을 하게 하는 거야? 그리고 \"루시\"라 불리는 너는 도대체 누구야?"
 
-    # e "All of the image files we'll be using here are in the game directory, under the tutorial directory, under the Ren'Py directory."
-    e "제가 사용할 모든 이미지 파일은 렌'파이 경로 안, tutorial 폴더 안에 위치한 game 폴더에 들어 있답니다."
+# game/tutorial_quickstart.rpy:180
+translate korean tutorial_dialogue_6d463776:
 
+    # l "What's more, what are you going to do about the Grue problem? Are you just going to leave me here?"
+    l "게다가, 그루는 어떻게 할 거야? 나를 여기에 버려두고 갈 셈이야?"
 
-# game/tutorial_quickstart.rpy:173
-translate korean tutorial_images_0b9f7257:
+# game/tutorial_quickstart.rpy:188
+translate korean tutorial_dialogue_023bcd31:
 
+    # e "Here's the full game, including the two new lines of dialogue, both of which use the Character we defined to say dialogue."
+    e "이건 대화를 말하기 위해 정의한 각각의 캐릭터를 사용하는 두 줄의 대사를 포함하는 게임이야."
 
-    # e "Here are some sample image definitions. They should be placed at the start of the file, without any indentation."
-    e "이미지 정의 예제를 보여 드릴게요. 이미지는 파일의 시작점에 들여쓰기 없이 정의되어야 합니다."
+# game/tutorial_quickstart.rpy:190
+translate korean tutorial_dialogue_48bb9547:
 
-
-# game/tutorial_quickstart.rpy:175
-translate korean tutorial_images_5d67054c:
-
-
-    # e "The image statement begins with the keyword \"image\", which is followed by an image name, a space-separated list of words."
-    e "image 문은 키워드 \"image\"로 시작합니다. 그 다음, 스페이스로 구분되는 이미지의 이름이 들어갑니다."
-
-
-# game/tutorial_quickstart.rpy:177
-translate korean tutorial_images_4c9a51ec:
-
-
-    # e "The first word in the image name is the image tag. For the first image the tag is \"bg\", and for the others, it's \"lucy\"."
-    e "이미지 이름의 첫번째 단어는 이미지 태그입니다. 즉, 첫번째 이미지의 태그는 \"bg\", 그리고 다른 이미지의 태그는 \"lucy\"가 되지요."
-
-
-# game/tutorial_quickstart.rpy:179
-translate korean tutorial_images_bda71aa3:
-
-
-    # e "This is followed by an equals sign, and a string giving an image name."
-    e "그 다음, 등호와 이미지의 이름을 나타내는 문자열이 따라 붙습니다."
-
-
-# game/tutorial_quickstart.rpy:181
-translate korean tutorial_images_6d88aaa3:
-
-
-    # e "A string giving an image name is only one of the dozens of kinds of displayable that Ren'Py supports."
-    e "이 이미지 이름을 나타내는 문자열은 렌'파이가 지원하는 여러 디스플레이어블 중에 하나랍니다."
-
-
-# game/tutorial_quickstart.rpy:185
-translate korean tutorial_images_76b954de:
-
-
-    # e "Let's see what those look like in the game."
-    e "그럼 게임 안에서는 어떻게 보이는지 볼까요?"
-
+    # e "The one-argument form of the say statement is unchanged, but in the two-argument form, instead of the first string we can use a short name."
+    e "say 문의 인수 형식은 변경되지 않지만, 두 개의 인수 형식에서는 첫 번째 문자열 대신 짧은 이름을 사용할 수 있어."
 
 # game/tutorial_quickstart.rpy:192
+translate korean tutorial_dialogue_56a9936f:
+
+    # e "When this say statement is run, Ren'Py will look up the short name, which is really a Python variable. It will then use the associated Character to show the dialogue."
+    e "이 say 명령이 실행되면, 렌파이는 파이썬 변수인 짧은 이름을 찾을 거야. 그런 다음 관련된 캐릭터(Character)를 사용해 지문을 표시하지."
+
+# game/tutorial_quickstart.rpy:194
+translate korean tutorial_dialogue_d5984a21:
+
+    # e "The Character object controls who is speaking, the color of their name, and many other properties of the dialogue."
+    e "캐릭터 오브젝트는 누가 말하고, 이름의 색상은 무엇이며, 대사에 적용될 다른 많은 속성에는 무엇이 있는지를 제어할 수 있어."
+
+# game/tutorial_quickstart.rpy:198
+translate korean tutorial_dialogue_a5bcac8b:
+
+    # e "Since the bulk of a visual novel is dialogue, we've tried to make it as easy to write as possible."
+    e "시각 소설의 대부분은 대화이기 때문에 우리는 그것을 최대한 쉽게 작성할 수 있도록 노력했어."
+
+# game/tutorial_quickstart.rpy:200
+translate korean tutorial_dialogue_6b9a42d0:
+
+    # e "Hopefully, by allowing the use of short names for characters, we've succeeded."
+    e "짧은 이름의 캐릭터를 사용하는 것으로 우리는 성공했다고 할 수 있을 거야."
+
+# game/tutorial_quickstart.rpy:206
+translate korean tutorial_images_e09ac970:
+
+    # e "A visual novel isn't much without images. So let's add some images to our little game."
+    e "그림이 없는 시각 소설은 많지 않아. 이제 우리의 작은 게임에 이미지를 추가해보자."
+
+# game/tutorial_quickstart.rpy:208
+translate korean tutorial_images_40140793:
+
+    # e "Before we can show images, we must first choose image names, then place the image files into the images directory."
+    e "이미지를 표시하려면 먼저 이미지 이름을 선택하고 이미지 파일을 images 디렉토리에 저장해야 돼."
+
+# game/tutorial_quickstart.rpy:210
+translate korean tutorial_images_d73388f8:
+
+    # e "An image name is something like 'bg cave' or 'lucy happy', with one or more parts separated by spaces."
+    e "'bg cave'나 'lucy happy' 이름의 이미지들은 공백으로 분리된 하나 이상의 부품을 포함하고 있어."
+
+# game/tutorial_quickstart.rpy:212
+translate korean tutorial_images_2d5596d4:
+
+    # e "Each part should start with a lower-case letter, and then contain lower-case letters, numbers, and underscores."
+    e "각 부품들은 소문자로 시작될 수 있고, 그다음 소문자와 숫자, 밑줄을 포함할 수 있지."
+
+# game/tutorial_quickstart.rpy:214
+translate korean tutorial_images_e02c0c82:
+
+    # e "The first part of an image is called the tag. For 'bg cave' the tag is 'bg', while for 'lucy happy' the tag is 'lucy'."
+    e "이미지의 첫 번째 부품은 태그로 분류돼. 'bg cave'의 태그는 'bg', 'lucy happy'의 태그는 'lucy'야."
+
+# game/tutorial_quickstart.rpy:216
+translate korean tutorial_images_d5eafcf2:
+
+    # e "You can open the images directory by clicking the appropriate button in the Ren'Py launcher."
+    e "렌파이 런처에서는 images를 클릭해 디렉토리를 열 수 있어."
+
+# game/tutorial_quickstart.rpy:218
+translate korean tutorial_images_e4b12fb6:
+
+    # e "The files in the images directory should have the same name as the image, followed by an extension like .jpg, .png, or .webp."
+    e "images 디렉토리의 파일은 이미지와 이름이 같아야 하고, .jpg, .png 또는 .webp와 같은 확장자를 따라야 해."
+
+# game/tutorial_quickstart.rpy:220
+translate korean tutorial_images_a3bd89b2:
+
+    # e "Our example uses 'bg cave.jpg', 'lucy happy.png', and 'lucy mad.png'."
+    e "다음으로 보여질 예제는 'bg cave.jpg', 'lucy happy.png', 그리고 'lucy mad.png'를 사용해."
+
+# game/tutorial_quickstart.rpy:224
+translate korean tutorial_images_76b954de:
+
+    # e "Let's see what those look like in the game."
+    e "이것들이 게임에서 어떻게 보이는지 확인해보자."
+
+# game/tutorial_quickstart.rpy:230
 translate korean tutorial_images_f04e72ea:
 
-
     # l "Now that the lights are on, we don't have to worry about Grues anymore."
-    l "이제 불이 켜졌으니까 그루는 더이상 걱정할 필요가 없겠네."
+    l "불이 켜졌네. 더 이상 그루를 걱정하지 않아도 되겠어."
 
-
-# game/tutorial_quickstart.rpy:196
+# game/tutorial_quickstart.rpy:234
 translate korean tutorial_images_d77ffa1c:
 
-
     # l "But what's the deal with me being in a cave? Eileen gets to be out in the sun, and I'm stuck here!"
-    l "그런데 여기서 뭘 하자는 건데? 아이린은 벌써 햇빛으로 나가있는데, 나는 여기서 뭐 하는 거냐고!"
+    l "하지만 도대체 이 동굴은 나와 무슨 상관인 거야? 아일린은 햇볕을 쬐는데, 나는 왜 여기에 갇힌 거냐고!"
 
-
-# game/tutorial_quickstart.rpy:205
+# game/tutorial_quickstart.rpy:242
 translate korean tutorial_images_6c0c938b:
 
-
     # e "Here's the script for that scene. Notice how it includes two new statements, the scene and show statement."
-    e "위 코드는 방금 전 장면의 스크립트입니다. 위 스크립트가 새로 나온 scene 문과 show 문을 어떻게 사용하는지 한번 봐 주세요."
+    e "이건 예제 장면의 스크립트야. 두 개의 새로운 명령문인 scene과 show 문이 어떻게 포함되어 있는지 확인해둬."
 
-
-# game/tutorial_quickstart.rpy:207
+# game/tutorial_quickstart.rpy:244
 translate korean tutorial_images_1a4660b9:
 
-
     # e "The scene statement clears the screen, and then adds a background image."
-    e "scene 문은 화면을 지우고, 배경 이미지를 화면에 그립니다."
-
-
-# game/tutorial_quickstart.rpy:209
-translate korean tutorial_images_672c8cb8:
-
-
-    # e "The show statement adds a background image on top of all the other images on the screen."
-    e "show 문은 배경 이미지를 다른 모든 이미지 위에 표시합니다."
-
-
-# game/tutorial_quickstart.rpy:211
-translate korean tutorial_images_2fc7baee:
-
-
-    # e "If there was already an image with the same tag, the new image is used to replace the old one."
-    e "만약 화면에 같은 이미지 태그를 사용하는 이미지가 표시되어 있다면, 새 이미지가 이전 이미지를 대체하게 됩니다."
-
-
-# game/tutorial_quickstart.rpy:213
-translate korean tutorial_images_802825f2:
-
-
-    # e "Changes to the list of shown images take place instantly, so in the example, the user won't see the background by itself."
-    e "여러 이미지를 변경하는건 한꺼번에 이루어집니다. 그러니 방금 예제에서 플레이어는 배경 혼자 덩그러니 놓여있는 장면이 아니라 배경과 캐릭터가 같이 표시되는 장면을 보게 되지요."
-
-
-# game/tutorial_quickstart.rpy:215
-translate korean tutorial_images_b246dfdd:
-
-
-    # e "The second show statement has an at clause, which gives a location on the screen. Common locations are left, right, and center, but you can define many more."
-    e "두번째 show 문은 at 절을 가지고 있는데요, 이 절은 이미지가 화면에 표시될 위치를 알려줍니다. 가장 일반적인 위치는 left, right, center가 있습니다만, 여러분이 직접 정의해서 사용할 수도 있어요."
-
-
-# game/tutorial_quickstart.rpy:223
-translate korean tutorial_images_bc4ae0c7:
-
-
-    # e "In this example, we show an image named logo base, and we show it at a user-defined position, logopos."
-    e "제 뒤에 렌'파이 로고가 보이시나요? 이 이미지의 이름은 logo base이고, 이 이미지는 제가 정의한 위치, logopos에 위치해 있답니다."
-
-
-# game/tutorial_quickstart.rpy:225
-translate korean tutorial_images_9defda43:
-
-
-    # e "We also specify that it should be shown behind another image, in this case eileen. That's me."
-    e "또, 이미지가 다른 이미지의 뒤에 나올지를 정할 수도 있는데요, 이 경우에는 저, eileen이 되겠네요."
-
-
-# game/tutorial_quickstart.rpy:233
-translate korean tutorial_images_73d331f7:
-
-
-    # e "Finally, there's the hide statement, which hides the image with the given tag."
-    e "마지막으로, hide 문이 있습니다. 이 문은 어떤 태그를 가진 이미지를 숨기는 역할을 해요."
-
-
-# game/tutorial_quickstart.rpy:235
-translate korean tutorial_images_f34f62d5:
-
-
-    # e "Since the show statement replaces an image, and the scene statement clears the scene, it's pretty rare to hide an image."
-    e "show 문은 이미지를 교체하고, scene 문은 화면을 지우고 새로 그리기 때문에, 이미지를 숨기는 일은 별로 흔하지는 않아요."
-
-
-# game/tutorial_quickstart.rpy:237
-translate korean tutorial_images_e06fa53a:
-
-
-    # e "The main use is for when a character or prop leaves before the scene is over."
-    e "hide 문이 쓰이는 가장 일반적인 상황은 캐릭터나 물건이 장면이 끝나기 전에 밖으로 사라질 때 사용됩니다. "
-
+    e "장면(scene) 명령문은 화면을 새로이 하고 배경 이미지를 추가해."
 
 # game/tutorial_quickstart.rpy:246
-translate korean tutorial_transitions_9b8c714c:
+translate korean tutorial_images_672c8cb8:
 
+    # e "The show statement adds a background image on top of all the other images on the screen."
+    e "show 문은 화면의 다른 모든 이미지 위에 이미지를 추가하고."
 
-    # e "It can be somewhat jarring for the game to jump from place to place."
-    e "게임 내에서 이 장면 저 장면 건너뛰는 건 살짝 거슬릴 수도 있어요."
+# game/tutorial_quickstart.rpy:248
+translate korean tutorial_images_2fc7baee:
 
+    # e "If there was already an image with the same tag, the new image is used to replace the old one."
+    e "동일한 태그를 가진 이미지가 이미 화면에 사용되고 있는 경우에는, 새 이미지를 사용해 이전 이미지를 대체하게 돼."
 
-# game/tutorial_quickstart.rpy:253
-translate korean tutorial_transitions_3e290ea8:
+# game/tutorial_quickstart.rpy:250
+translate korean tutorial_images_802825f2:
 
+    # e "Changes to the list of shown images take place instantly, so in the example, the user won't see the background by itself."
+    e "표시된 이미지에 대한 변경은 전환을 사용하지 않는 한 즉시 이뤄지게 돼 있어."
 
-    # e "To help take some of edge off a change in scene, Ren'Py supports the use of transitions. Let's try that scene change again, but this time we'll use transitions."
-    e "장면 변경을 조금 더 부드럽게 하기 위해서 렌'파이는 트랜지션을 지원합니다. 한번 더 장면을 바꿔 볼까요? 이번에는 트랜지션을 사용해 보자구요."
+# game/tutorial_quickstart.rpy:252
+translate korean tutorial_images_b246dfdd:
 
+    # e "The second show statement has an at clause, which gives a location on the screen. Common locations are left, right, and center, but you can define many more."
+    e "두 번째 show 문은 위치를 부여하는 절을 가지고 있어. 기본 정의된 위치에는 왼쪽(left)과 오른쪽(right), 가운데(center)가 있지만 더 많은 것을 직접 정의할 수도 있어."
+
+# game/tutorial_quickstart.rpy:257
+translate korean tutorial_images_82fceeb8:
+
+    # e "In this example, we show an image named logo base, and we show it at a creator-defined position, rightish."
+    e "이 예제에서는, logo base라는 이미지와 rightish라는 임의 정의한 위치를 보여줄 거야."
+
+# game/tutorial_quickstart.rpy:259
+translate korean tutorial_images_9defda43:
+
+    # e "We also specify that it should be shown behind another image, in this case eileen. That's me."
+    e "또한, 그 이미지가 다른 이미지의 뒤에 표시돼야 한다고 지정할 수 있어. 이 경우에는 eileen이고, 그건 나야."
+
+# game/tutorial_quickstart.rpy:264
+translate korean tutorial_images_73d331f7:
+
+    # e "Finally, there's the hide statement, which hides the image with the given tag."
+    e "마지막으로, hide 문은 태그가 주어진 이미지를 숨길 때 사용해."
+
+# game/tutorial_quickstart.rpy:266
+translate korean tutorial_images_f34f62d5:
+
+    # e "Since the show statement replaces an image, and the scene statement clears the scene, it's pretty rare to hide an image."
+    e "show 문이 이미지를 대체하고 scene 문은 장면을 지우니까 이미지를 숨기는 일은 거의 없어."
 
 # game/tutorial_quickstart.rpy:268
-translate korean tutorial_transitions_9c0a86c4:
+translate korean tutorial_images_e06fa53a:
 
+    # e "The main use is for when a character or prop leaves before the scene is over."
+    e "hide는 장면이 끝나기 전에 화면에서 캐릭터나 소품을 없애려 할 때 주로 사용해."
 
-    # e "That's much smoother. Here's some example code showing how we include transitions in our game."
-    e "훨씬 낫네요! 위는 게임에 트랜지션을 추가하는 예제입니다."
+# game/tutorial_quickstart.rpy:282
+translate korean tutorial_simple_positions_b492e793:
 
+    # e "When the standard positions that come with Ren'Py aren't enough for you, you can create your own. Here, I'll show you the easy way to do it."
+    e "렌파이와 함께 제공되는 표준 위치가 충분하지 않다면 자신만의 위치 설정을 만들 수 있어. 쉬운 방법을 알려줄게."
 
-# game/tutorial_quickstart.rpy:270
-translate korean tutorial_transitions_3e490d40:
+# game/tutorial_quickstart.rpy:291
+translate korean tutorial_simple_positions_04e3bc44:
 
+    # e "The first way to do it is to show an image followed by a colon. Then indented on the next couple of lines are the xalign and yalign transform properties."
+    e "첫 번째 방법은 이미지를 콜론(:)으로 표시하는 거야. 그런 다음 xalign과 yalign 변형 속성을 ​​다음 줄에 들여쓰기로 작성하면 돼."
 
-    # e "It uses the with statement. The with statement causes the scene to transition from the last things shown to the things currently being shown."
-    e "트랜지션은 with 문과 함께 사용됩니다. with 문은 이전에 보여지던 것들을 새로 보여질 것으로 자연스럽게 바꿀 수 있게 해줍니다."
+# game/tutorial_quickstart.rpy:293
+translate korean tutorial_simple_positions_3ecad5f8:
 
+    # e "Each of the transform properties is a name followed by a value. For xalign and yalign, the values are numbers."
+    e "각 변형 속성은 이름 다음에 값이 오게 돼있어. xalign과 yalign의 경우에는 숫자가 값이야."
 
-# game/tutorial_quickstart.rpy:272
-translate korean tutorial_transitions_a43847df:
+# game/tutorial_quickstart.rpy:295
+translate korean tutorial_simple_positions_61c1b124:
 
+    # e "The xalign transform property is the important one, as it controls where the image is placed horizontally on the screen."
+    e "xalign 변형 속성은 이미지가 화면에서 가로로 배치되는 위치를 제어하는 중요한 속성이야."
 
-    # e "It takes a transition as an argument. In this case, we're using the Dissolve transition. This transition takes as an argument the amount of time the dissolve should take."
-    e "이 문은 트랜지션의 종류를 인수로서 받아들이는데요, 이 경우에서는 Dissolve 트랜지션을 사용하였습니다. 이 트랜지션은 디졸브될 시간을 인수로 받아들이지요."
+# game/tutorial_quickstart.rpy:305
+translate korean tutorial_simple_positions_67ebea97:
 
+    # e "An xalign of 0.0 is the left side."
+    e "xalign이 0.0이면 좌측이고,"
 
-# game/tutorial_quickstart.rpy:274
-translate korean tutorial_transitions_6fcee414:
+# game/tutorial_quickstart.rpy:315
+translate korean tutorial_simple_positions_bd4f56d8:
 
-
-    # e "In this case, each transition takes half a second."
-    e "이 경우, 각각의 트랜지션은 0.5초에 걸쳐 실행됩니다."
-
-
-# game/tutorial_quickstart.rpy:278
-translate korean tutorial_transitions_033042cc:
-
-
-    # e "We can define a short name for a transition, using the define statement. Here, we're defining slowdissolve to be a dissolve that takes a whole second."
-    e "define 문을 이용하면 트랜지션의 짧은 이름을 정의할 수 있어요. 제가 1초짜리 느린 디졸브 효과를 짧게 정의한 slowdissolve를 정의해 봤어요."
-
-
-# game/tutorial_quickstart.rpy:292
-translate korean tutorial_transitions_0ba82f00:
-
-
-    # e "Once a transition has been given a short name, we can use it in our game."
-    e "이제 짧은 이름을 정의했으니까, 게임에서 쓸 수 있어요."
-
-
-# game/tutorial_quickstart.rpy:296
-translate korean tutorial_transitions_51ff9600:
-
-
-    # e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
-    e "렌'파이는 여러분을 위해 dissolve, fade, move와 같은 몇가지 트랜지션을 제공합니다. 좀 더 복잡하고 정교한 트랜지션을 원하신다면 직접 만들어 볼 수도 있어요."
-
-
-# game/tutorial_quickstart.rpy:298
-translate korean tutorial_transitions_a7905e16:
-
-
-    # e "If you're interested, check out the Transitions Gallery section of the tutorial."
-    e "만약 관심이 있으시다면 이 길라잡이의 트랜지션 갤러리를 읽어보세요."
-
-
-# game/tutorial_quickstart.rpy:304
-translate korean tutorial_music_8b92efb7:
-
-
-    # e "Another important part of a visual novel or simulation game is the soundtrack."
-    e "비주얼 노벨이라고 \"비주얼\"만 있으면 안되죠. 배경음악도 필요합니다."
-
-
-# game/tutorial_quickstart.rpy:306
-translate korean tutorial_music_53910317:
-
-
-    # e "Ren'Py breaks sound up into channels. The channel a sound is played on determines if the sound loops, and if it is saved and restored with the game."
-    e "렌'파이는 소리를 채널 단위로 나눕니다."
-
-
-# game/tutorial_quickstart.rpy:308
-translate korean tutorial_music_a1e37712:
-
-
-    # e "When a sound is played on the music channel, it is looped, and it is saved when the game is saved."
-    e "만약 소리가 music 채널에서 재생되고 있다면, 소리는 반복 재생되고, 게임이 저장될때 함께 저장됩니다."
-
-
-# game/tutorial_quickstart.rpy:310
-translate korean tutorial_music_d9086d22:
-
-
-    # e "When the channel named sound is used, the sound is played once and then stopped. It isn't saved."
-    e "만약 sound 채널에서 재생된다면, 한번만 재생되고 소리는 멈추게 됩니다. 저장되지도 않구요."
-
-
-# game/tutorial_quickstart.rpy:312
-translate korean tutorial_music_45cd30df:
-
-
-    # e "The sounds themselves are stored in audio files. Ren'Py supports the Ogg Vorbis, mp3, mp2, and wav file formats."
-    e "소리는 오디오 파일에 저장됩니다. 렌'파이가 지원하는 형식은 Ogg Vorbis, mp3, mp2, 그리고 wav가 있죠."
-
-
-# game/tutorial_quickstart.rpy:314
-translate korean tutorial_music_a776b6ad:
-
-
-    # e "Let's check out some of the commands that can effect the music channel."
-    e "그러면, music 채널을 조정하는 명령들을 몇 가지 알아보도록 할게요."
-
+    # e "0.5 is the center."
+    e "0.5면 가운데가 돼."
 
 # game/tutorial_quickstart.rpy:324
-translate korean tutorial_music_8b606a55:
+translate korean tutorial_simple_positions_fb2c48f2:
 
+    # e "And 1.0 is the right. The decimal place is important and has to be there. Just 1 by itself won't work the same."
+    e "1.0이면 우측이야. 소수점 없이 단지 1만 쓴다면 코드는 작동하지 않아."
 
-    # e "The play music command replaces the currently playing music, and replaces it with the named filename."
-    e "play music 명령은 현재 재생중인 음악을 주어진 파일의 음악으로 대체합니다."
+# game/tutorial_quickstart.rpy:333
+translate korean tutorial_simple_positions_8eebc9a7:
 
+    # e "Of course, you can pick any position in between."
+    e "물론 원하는 위치를 설정할 수도 있어."
 
-# game/tutorial_quickstart.rpy:326
-translate korean tutorial_music_18650fe7:
+# game/tutorial_quickstart.rpy:335
+translate korean tutorial_simple_positions_4cd917f6:
 
+    # e "The yalign property is the same way, with 0.0 being the top of the screen and 1.0 being the bottom. Since most sprites stick to the bottom, it's almost always 1.0."
+    e "yalign 속성은 비슷한 방식으로, 화면의 상단은 0.0이고 하단이 1.0이야. 대부분의 스프라이트는 하단에 붙기 때문에 거의 항상 1.0이지."
 
-    # e "If you specify the currently-playing song, it will restart it."
-    e "만약 지금 재생 중인 음악을 인수로 준다면 음악을 재시작하게 되겠지요."
+# game/tutorial_quickstart.rpy:341
+translate korean tutorial_simple_positions_fbd1a3eb:
 
+    # e "While being able to write positions like this is useful, having to repeatedly do so isn't. So Ren'Py lets you define a transform once, and reuse it."
+    e "이처럼, 위치를 작성하는 것은 유용하지만 반복적으로 하는 것은 그렇지 않아. 그래서 렌파이는 한 번 정의한 변형을 다시 사용할 수 있어."
 
-# game/tutorial_quickstart.rpy:328
-translate korean tutorial_music_413d91fc:
+# game/tutorial_quickstart.rpy:345
+translate korean tutorial_simple_positions_2377e3b3:
 
+    # e "Usually transforms are defined at the top of a file, right after the characters. But it doesn't matter to Ren'Py where you define them."
+    e "일반적으로 변형은 파일의 맨 위에서 캐릭터 바로 다음에 정의하지만, 어디에 정의하는가는 별로 중요하지 않아."
 
-    # e "If the optional fadeout clause is given, it will fade out the currently playing music before starting the new music."
-    e "선택사항인 fadeout 절이 주어진다면 렌'파이는 현재 재생 중인 음악을 새 음악으로 바꾸기 전에  페이드 아웃 시킬 것입니다."
+# game/tutorial_quickstart.rpy:347
+translate korean tutorial_simple_positions_3ce7e367:
 
+    # e "The transform is given a name, slightleft, and then the xalign and yalign properties."
+    e "변형에는 이름, slightleft, 그다음 xalign 및 yalign 속성이 지정돼."
 
-# game/tutorial_quickstart.rpy:330
-translate korean tutorial_music_a282a0e3:
+# game/tutorial_quickstart.rpy:355
+translate korean tutorial_simple_positions_82d640d9:
 
+    # e "Once a transform has been defined, you can use it in the at clause of the show statement."
+    e "정의된 변형은 show 문의 at 절에서 사용할 수 있어."
 
-    # e "The queue statement also adds music to the named channel, but it waits until the currently-playing song is finished before playing the new music."
-    e "queue 문은 주어진 채널에 음악을 추가하지만, 현재 재생 중인 음악이 끝날 때까지 기다린 후에 재생을 시작합니다."
+# game/tutorial_quickstart.rpy:360
+translate korean tutorial_simple_positions_16b66785:
 
+    # e "Transforms are sticky. If you replace an image without using a transform, Ren'Py will keep the same transforms it had been using."
+    e "변형은 지속성이 있어. 변형을 사용하지 않고 이미지를 바꾸면 렌파이는 사용했던 것과 동일한 변형을 유지할 거야."
 
-# game/tutorial_quickstart.rpy:339
-translate korean tutorial_music_01ca6bad:
+# game/tutorial_quickstart.rpy:364
+translate korean tutorial_simple_positions_5d5e0cfd:
 
-
-    # e "The third statement is the stop statement. It stops the music playing on a channel. It too takes the fadeout clause."
-    e "세번째 문은 stop 문입니다. 보시는 대로 음악을 멈추는 기능을 합니다. play 문처럼 fadeout 절을 인수로 받을 수도 있어요."
-
-
-# game/tutorial_quickstart.rpy:348
-translate korean tutorial_music_384937da:
-
-
-    # e "Unlike the music channel, playing a sound on the sound channel causes it to play only once."
-    e "music 채널과는 다르게 sound 채널에서는 음악이 단 한번만 재생됩니다."
-
-
-# game/tutorial_quickstart.rpy:359
-translate korean tutorial_music_dc707e58:
-
-
-    # e "You can queue up multiple sounds on the sound channel, but they will only play one at a time."
-    e "queue 문을 사용해서 음악을 대기열에 추가시킬 수는 있지만, 각각 한번씩만 재생되겠죠."
-
+    # e "Of course, there's a lot more to transforms than this. If you want to learn more, you can read the sections on Position Properties, Transforms and Animation, and Transform Properties."
+    e "물론 이보다 더 많은 변형이 있어. 자세한 내용은 위치 속성, 변형 및 애니메이션, 그리고 변형 속성에 대한 단원을 참고하는 게 좋을 거야."
 
 # game/tutorial_quickstart.rpy:366
-translate korean tutorial_music_abcc2214:
+translate korean tutorial_simple_positions_e65da9bf:
 
+    # e "But for many visual novels, xalign and yalign are the only properties that matter."
+    e "하지만 많은 시각 소설들에는 xalign과 yalign만이 중요하지."
 
-    # e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as he likes."
-    e "렌'파이는 여러분이 조금 더 쉽게 조정할 수 있도록 효과음, 배경음악, 더빙 각각의 믹서를 분리시켜 두었습니다."
+# game/tutorial_quickstart.rpy:381
+translate korean tutorial_transitions_9b8c714c:
 
-
-# game/tutorial_quickstart.rpy:372
-translate korean tutorial_menus_0426904b:
-
-
-    # e "Many visual novels require the player to make choices from in-game menus. These choices can add some challenge to the game, or adjust it to the player's preferences."
-    e "많은 비주얼 노벨이 플레이어에게 선택지를 내 줍니다. 이 선택지는 스토리의 분기점을 나타내기 위한 것일 수도 있고, 다른 이유 때문일 수도 있죠."
-
-
-# game/tutorial_quickstart.rpy:374
-translate korean tutorial_menus_9c3b9154:
-
-
-    # e "Do you think your game will use menus?"
-    e "여러분의 게임에는 선택지가 있나요?"
-
+    # e "It can be somewhat jarring for the game to jump from place to place."
+    e "화면이 갑자기 변경되는 것은 다소 불쾌할 수 있어."
 
 # game/tutorial_quickstart.rpy:388
-translate korean choice1_yes_f6d95df8:
+translate korean tutorial_transitions_3e290ea8:
 
+    # e "To help take some of edge off a change in scene, Ren'Py supports the use of transitions. Let's try that scene change again, but this time we'll use transitions."
+    e "렌파이는 장면의 갑작스러운 변화를 막기 위해 전환 사용을 지원해. 이번에는 전환을 사용해서 장면을 바꿔볼게."
 
-    # e "While creating a multi-path visual novel can be a bit more work, it can yield a unique experience."
-    e "루트가 여러개인 비주얼 노벨을 만드는 것은 조금 더 힘이 들지만, 그만큼 더 특별한 경험을 할 수 있게 해 주죠."
+# game/tutorial_quickstart.rpy:402
+translate korean tutorial_transitions_9c0a86c4:
 
+    # e "That's much smoother. Here's some example code showing how we include transitions in our game."
+    e "더 부드러워졌어. 이제 게임에서 전환을 어떻게 포함하는지 예제 코드를 보여줄게."
 
-# game/tutorial_quickstart.rpy:396
-translate korean choice1_no_72958b50:
+# game/tutorial_quickstart.rpy:404
+translate korean tutorial_transitions_3e490d40:
 
+    # e "It uses the with statement. The with statement causes the scene to transition from the last things shown to the things currently being shown."
+    e "전환은 with 문을 사용해. with 명령문은 마지막 장면에서 현재 장면으로 전환돼."
 
-    # e "Games without menus are called kinetic novels, and there are dozens of them available to play."
-    e "선택지가 없는 비주얼 노벨은 \"키네틱 노벨\"이라고 불립니다. 그리고 여러 게임들이 이미 나와 있어요!"
+# game/tutorial_quickstart.rpy:406
+translate korean tutorial_transitions_a43847df:
 
+    # e "It takes a transition as an argument. In this case, we're using the Dissolve transition. This transition takes as an argument the amount of time the dissolve should take."
+    e "그것은 인수로 전환하고 있어. 이 경우에 Dissolve를 사용하고 있는데, 이 전환은 디졸브가 걸리는 시간을 인수로 하는 거야."
 
 # game/tutorial_quickstart.rpy:408
-translate korean choice1_done_acba9504:
+translate korean tutorial_transitions_6fcee414:
 
-
-    # e "Here, you can see the code for that menu. If you scroll down, you can see the code we run after the menu."
-    e "여기 선택지를 게임에 추가하는 예제입니다. 스크롤을 내리면 선택지 다음에 실행되는 코드를 볼 수 있어요."
-
-
-# game/tutorial_quickstart.rpy:410
-translate korean choice1_done_d18afbdf:
-
-
-    # e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which each line must contain a choice in quotes."
-    e "선택지는 menu 문에 의해 생성됩니다. menu 문은 들여쓰기된 블록을 가집니다. 이 블록 안에 선택지에 들어갈 내용을 적어 넣으시면 됩니다."
-
+    # e "In this case, each transition takes half a second."
+    e "여기서는 각 전환에 0.5초가 걸리지."
 
 # game/tutorial_quickstart.rpy:412
-translate korean choice1_done_2865a192:
+translate korean tutorial_transitions_033042cc:
 
+    # e "We can define a short name for a transition, using the define statement. Here, we're defining slowdissolve to be a dissolve that takes a whole second."
+    e "우리는 전환을 짧은 이름으로 지정할 수 있어. 여기, 우리는 1초의 디졸브를 slowdissolve로 정의하고 있어."
 
-    # e "The choices must end with a colon, as each choice has its own block of Ren'Py code, that is run when that choice is selected."
-    e "각각의 선택지는 렌'파이 스크립트로 이루어진 블록을 가지는데요, 이 블록 안의 내용이 선택지가 선택되었을 때 실행되는 스크립트랍니다."
+# game/tutorial_quickstart.rpy:427
+translate korean tutorial_transitions_0ba82f00:
 
+    # e "Once a transition has been given a short name, we can use it in our game."
+    e "전환에 짧은 이름이 주어지면 게임에서 그것을 사용할 수 있어."
 
-# game/tutorial_quickstart.rpy:414
-translate korean choice1_done_59cac95d:
+# game/tutorial_quickstart.rpy:431
+translate korean tutorial_transitions_51ff9600:
 
+    # e "Ren'Py defines some transitions for you, like dissolve, fade, and move. For more complex or customized transitions, you'll have to define your own."
+    e "렌파이는 디졸브(dissolve)와 페이드(fade), 무브(move)와 같은 일부 전환을 정의해. 더 많은 전환을 사용하려면 네가 직접 그것을 정의해야 해."
 
-    # e "Here, each block jumps to a label. While you could put small amounts of Ren'Py code inside a menu label, it's probably good practice to usually jump to a bigger block of code."
-    e "이 예제에서는 각각의 블록이 레이블으로 점프하네요. 짧은 양의 렌'파이 스크립트라면 menu 문 안에 넣어도 상관은 없지만, 스크립트 양이 점점 늘어난다면 점프를 하는 것이 좋아요."
+# game/tutorial_quickstart.rpy:433
+translate korean tutorial_transitions_1528f73f:
 
+    # e "If you're interested, check out the Transitions Gallery section of this tutorial."
+    e "관심 있다면 길라잡이에서 갤러리 전환 단원을 참고하도록 해."
 
-# game/tutorial_quickstart.rpy:416
-translate korean choice1_done_2851a313:
+# game/tutorial_quickstart.rpy:439
+translate korean tutorial_music_8b92efb7:
 
-
-    # e "Scrolling down past the menu, you can see the labels that the menu jumps to. There are three labels here, named choice1_yes, choice1_no, and choice1_done."
-    e "menu를 지나 계속 스크롤하면 레이블들을 볼 수 있는데요, 이 레이블들이 선택지에서 점프되는 레이블들입니다. choice1_yes, choice1_no, choice1_done, 이렇게 세개의 레이블이 보이네요."
-
-
-# game/tutorial_quickstart.rpy:418
-translate korean choice1_done_ff761b03:
-
-
-    # e "When the first menu choice is picked, we jump to the choice1_yes, which runs two lines of script before jumping to choice1_done."
-    e "첫번째 선택지가 선택되었을 때, choice1_yes 레이블으로 점프합니다. 이 레이블에서는 choice1_done으로 점프하기 전에 스크립트 두 줄을 실행시키죠."
-
-
-# game/tutorial_quickstart.rpy:420
-translate korean choice1_done_664fe702:
-
-
-    # e "Similarly, picking the second choice jumps us to choice1_no, which also runs two lines of script."
-    e "비슷하게, 두번째 선택지를 선택하면 choice1_no 레이블으로 점프합니다. 마찬가지로 이 레이블에서도 choice1_done 레이블으로 점프하기 전에 두 줄의 스크립트를 실행합니다."
-
-
-# game/tutorial_quickstart.rpy:422
-translate korean choice1_done_31d12b1e:
-
-
-    # e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
-    e "달러 기호($)로 시작하는 줄은 파이썬 코드 줄입니다. 여기서는 플레이어의 선택에 따라 플래그를 조정하기 위해 사용되었죠."
-
-
-# game/tutorial_quickstart.rpy:424
-translate korean choice1_done_88398d3e:
-
-
-    # e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
-    e "이 플래그의 이름은 menu_flag 입니다. 이 플래그는 플레이어의 선택에 따라 참(True) 또는  거짓(False)으로 세팅됩니다. if 문이 플래그를 검사하는데 쓰일 수 있죠. 이제 게임이 플레이어의 선택을 기억할 수 있게 되었습니다!"
-
-
-# game/tutorial_quickstart.rpy:432
-translate korean choice1_done_2828dbfc:
-
-
-    # e "For example, I remember that you plan to use menus in your game."
-    e "예를 들어서, 저는 당신이 만들 게임에 선택지가 있을 것이라는 걸 알고 있죠."
-
-
-# game/tutorial_quickstart.rpy:436
-translate korean choice1_done_503786e4:
-
-
-    # e "For example, I remember that you're planning to make a kinetic novel, without menus."
-    e "예를 들어, 저는 여러분의 게임이 키네틱 노벨, 즉 선택지가 없는 게임이라는 걸 알고 있어요."
-
+    # e "Another important part of a visual novel or simulation game is the soundtrack."
+    e "시각 소설이나 시뮬레이션 게임에서 중요한 다른 부분은 사운드트랙이야."
 
 # game/tutorial_quickstart.rpy:441
-translate korean choice1_done_819e234a:
+translate korean tutorial_music_53910317:
 
+    # e "Ren'Py breaks sound up into channels. The channel a sound is played on determines if the sound loops, and if it is saved and restored with the game."
+    e "렌파이는 소리를 채널로 나눠. 소리가 재생되는 채널은 소리가 반복되는지, 게임과 함께 저장되고 복원되는지 여부를 결정해."
 
-    # e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
-    e "여기 플래그를 어떻게 검사하는지, 그리고 그 플래그의 값에 따라 다른 스크립트를 실행하는 예제가 있습니다. "
+# game/tutorial_quickstart.rpy:443
+translate korean tutorial_music_a1e37712:
 
+    # e "When a sound is played on the music channel, it is looped, and it is saved when the game is saved."
+    e "소리가 음악(music) 채널에 재성되면, 그것은 반복되고, 게임이 저장될 때 함께 저장돼."
 
 # game/tutorial_quickstart.rpy:445
-translate korean choice1_done_47fa2268:
+translate korean tutorial_music_d9086d22:
 
-
-    # e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
-    e "제가 지금 보여드리지는 않았지만, 렌'파이는 점수, 플래그 등 여러가지 요소를 이용해서 선택지를 제작하는것을 지원합니다."
-
+    # e "When the channel named sound is used, the sound is played once and then stopped. It isn't saved."
+    e "소리(sound) 채널이 사용되면 소리는 한번 재생되고 멈춰. 그것은 저장되지 않아."
 
 # game/tutorial_quickstart.rpy:447
-translate korean choice1_done_826a600b:
+translate korean tutorial_music_3555b640:
 
-
-    # e "One of Ren'Py's big advantages is the flexibility using a scripting language like Python provides us. It lets us easily scale from kinetic novels to complex simulation games."
-    e "또 다른 렌'파이의 가장 큰 장점은 파이썬과 같은 스크립트 언어의 유연성입니다. 이는 간단한 키네틱 노벨을 복잡한 시뮬레이션 게임으로 바꾸기 훨씬 쉽게 해줍니다."
-
+    # e "The sounds themselves are stored in audio files. Ren'Py supports the Opus, Ogg Vorbis, and mp3 formats."
+    e "소리 자체는 오디오 파일에 저장돼 있어. 렌파이는 Opus, Ogg Vorbis 및 mp3 형식을 지원해."
 
 # game/tutorial_quickstart.rpy:449
-translate korean choice1_done_c2efd260:
+translate korean tutorial_music_a2ffbe9b:
+    # e "Let's check out some of the commands that can affect the music channel."
+    e "이제 음악 채널에 영향을 줄 수 있는 명령을 확인해보자."
 
+# game/tutorial_quickstart.rpy:454
+translate korean tutorial_music_8b606a55:
 
-    # e "We look forward to seeing what you make with it."
-    e "당신의 비주얼 노벨, 기대하고 있어요!"
+    # e "The play music command replaces the currently playing music, and replaces it with the named filename."
+    e "play music 명령은 현재 재생되는 음악과 파일 이름을 대체해."
 
+# game/tutorial_quickstart.rpy:456
+translate korean tutorial_music_18650fe7:
+
+    # e "If you specify the currently-playing song, it will restart it."
+    e "만약에 현재 재생중인 노래를 지정한다면 그 노래는 다시 시작될 거야."
+
+# game/tutorial_quickstart.rpy:458
+translate korean tutorial_music_413d91fc:
+
+    # e "If the optional fadeout clause is given, it will fade out the currently playing music before starting the new music."
+    e "fadeout 절이 주어지면, 새로운 음악을 시작하기 전에 현재 재생되고 있는 음악을 페이드 아웃시켜."
+
+# game/tutorial_quickstart.rpy:463
+translate korean tutorial_music_a282a0e3:
+
+    # e "The queue statement also adds music to the named channel, but it waits until the currently-playing song is finished before playing the new music."
+    e "대기열(queue) 문 역시 음악을 지정된 채널에 추가해. 하지만 이건 새로운 음악을 재생하기 전에 현재 재생 중인 음악이 끝날 때까지 기다리지."
+
+# game/tutorial_quickstart.rpy:468
+translate korean tutorial_music_01ca6bad:
+
+    # e "The third statement is the stop statement. It stops the music playing on a channel. It too takes the fadeout clause."
+    e "세 번째 명령문은 stop이야. 그건 채널에서 재생하는 음악을 중지하는 역할을 해. fadeout 역시 적용할 수 있어."
+
+# game/tutorial_quickstart.rpy:473
+translate korean tutorial_music_384937da:
+
+    # e "Unlike the music channel, playing a sound on the sound channel causes it to play only once."
+    e "music 채널과 다르게, 소리를 sound 채널에서 재생하면 한 번만 재생돼."
+
+# game/tutorial_quickstart.rpy:480
+translate korean tutorial_music_1d3e9fd2:
+
+    # e "You can queue up multiple sounds on the sound channel, but the sounds will only play one at a time."
+    e "소리 채널에 여러 소리 대기열을 넣을 수는 있지만 한 번씩만 재생돼."
+
+# game/tutorial_quickstart.rpy:486
+translate korean tutorial_music_aa01c19d:
+
+    # e "Ren'Py has separate mixers for sound, music, and voices, so the player can adjust them as they like."
+    e "렌파이는  소리, 음악, 목소리를 위한 별도의 믹서가 있어서 원하는 대로 조절할 수 있어."
+
+# game/tutorial_quickstart.rpy:492
+translate korean tutorial_menus_0426904b:
+
+    # e "Many visual novels require the player to make choices from in-game menus. These choices can add some challenge to the game, or adjust it to the player's preferences."
+    e "많은 시각 소설은 플레이어가 분기에서 선택할 것을 요구해. 이러한 선택은 게임에 약간의 도전을 추가하거나 플레이어의 선호도에 맞게 조정할 수 있지."
+
+# game/tutorial_quickstart.rpy:494
+translate korean tutorial_menus_431eeff0:
+
+    # e "Do you like to play visual novels with choices in them?"
+    e "너는 분기가 있는 시각 소설을 좋아하니?"
+
+# game/tutorial_quickstart.rpy:509
+translate korean choice1_yes_f6d95df8:
+
+    # e "While creating a multi-path visual novel can be a bit more work, it can yield a unique experience."
+    e "비선형 시각 소설을 만드는 것은 더 많은 작업이 될 수 있지만 그로부터 고유한 경험을 얻을 수 있어."
+
+# game/tutorial_quickstart.rpy:517
+translate korean choice1_no_72958b50:
+
+    # e "Games without menus are called kinetic novels, and there are dozens of them available to play."
+    e "분기가 없는 게임은 키네틱 노블이라 부르고, 수십 개의 플레이 가능한 작품들이 있어."
+
+# game/tutorial_quickstart.rpy:528
+translate korean choice1_done_acba9504:
+
+    # e "Here, you can see the code for that menu. If you scroll down, you can see the code we run after the menu."
+    e "여기에서 해당 분기의 코드를 볼 수 있어. 아래로 스크롤하면 분기 다음에 실행되는 코드를 볼 수 있고."
+
+# game/tutorial_quickstart.rpy:530
+translate korean choice1_done_f9fa6889:
+
+    # e "Menus are introduced by the menu statement. The menu statement takes an indented block, in which there can be one line of dialogue and multiple choices."
+    e "분기는 메뉴(menu) 명령문으로 시작돼. 메뉴는 들여쓰기 된 블록을 사용하고, 한 줄의 대사이거나 여러 선택이 있을 수 있어."
+
+# game/tutorial_quickstart.rpy:532
+translate korean choice1_done_ebb2db38:
+
+    # e "Each choice must end with a colon, as each choice has its own block of Ren'Py code, that is run when that choice is selected."
+    e "각 선택 항목은 콜론으로 끝나야 하고, 항목에는 렌파이 코드 블록이 있으며 선택 항목을 선택하면 실행되지."
+
+# game/tutorial_quickstart.rpy:534
+translate korean choice1_done_59cac95d:
+
+    # e "Here, each block jumps to a label. While you could put small amounts of Ren'Py code inside a menu label, it's probably good practice to usually jump to a bigger block of code."
+    e "여기서 각 블록은 레이블로 점프해. 소량의 렌파이 코드를 메뉴 레이블에 넣을 수는 있지만, 일반적으로 더 큰 코드 블록으로 점프하는 것이 좋을 거야."
+
+# game/tutorial_quickstart.rpy:536
+translate korean choice1_done_2851a313:
+
+    # e "Scrolling down past the menu, you can see the labels that the menu jumps to. There are three labels here, named choice1_yes, choice1_no, and choice1_done."
+    e "메뉴를 스크롤하면 메뉴가 이동하는 레이블을 볼 수 있어. 여기에는 choice1_yes, choice1_no, 그리고 choice1_done이라는 세 개의 레이블이 있어."
+
+# game/tutorial_quickstart.rpy:538
+translate korean choice1_done_ff761b03:
+
+    # e "When the first menu choice is picked, we jump to the choice1_yes, which runs two lines of script before jumping to choice1_done."
+    e "첫 번째 분기가 선택되면 choice1_yes로 점프하고 두 줄의 스크립트를 실행한 뒤에 choice1_done으로 건너뛸 거야."
+
+# game/tutorial_quickstart.rpy:540
+translate korean choice1_done_664fe702:
+
+    # e "Similarly, picking the second choice jumps us to choice1_no, which also runs two lines of script."
+    e "마찬가지로 두 번째 분기를 선택하면 choose1_no로 이동하여 두 줄의 스크립트를 실행해."
+
+# game/tutorial_quickstart.rpy:542
+translate korean choice1_done_31d12b1e:
+
+    # e "The lines beginning with the dollar sign are lines of python code, which are used to set a flag based on the user's choice."
+    e "달러 기호로 시작하는 줄은 사용자 선택에 따라 플래그를 설정하는 데 사용되는 파이썬 코드 줄이야."
+
+# game/tutorial_quickstart.rpy:544
+translate korean choice1_done_88398d3e:
+
+    # e "The flag is named menu_flag, and it's set to True or False based on the user's choice. The if statement can be used to test a flag, so the game can remember the user's choices."
+    e "플래그의 이름은 menu_flag이며 사용자의 선택에 따라 True 또는 False로 설정돼. if 문을 사용하여 플래그를 테스트 할 수 있으므로 게임에서 사용자의 선택을 기억할 수 있지."
+
+# game/tutorial_quickstart.rpy:549
+translate korean choice1_done_2828dbfc:
+
+    # e "For example, I remember that you plan to use menus in your game."
+    e "예를 들어, 나는 네 게임에서 메뉴를 사용할 계획이라는 것을 기억해."
+
+# game/tutorial_quickstart.rpy:553
+translate korean choice1_done_503786e4:
+
+    # e "For example, I remember that you're planning to make a kinetic novel, without menus."
+    e "예를 들어, 나는 네가 분기가 없는 키네틱 노블을 만들 계획이라는 걸 기억해."
+
+# game/tutorial_quickstart.rpy:555
+translate korean choice1_done_819e234a:
+
+    # e "Here's an example that shows how we can test a flag, and do different things if it is true or not."
+    e "다음은 플래그를 테스트 할 수있는 방법을 보여주는 예제이고, 사실인지 아닌지에 따라 다른 작업을 수행해."
+
+# game/tutorial_quickstart.rpy:559
+translate korean choice1_done_461e6a59:
+
+    # e "Finally, this shows how you can show dialogue and menus at the same time. Understand?" nointeract
+    e "마지막으로 지문과 분기를 동시에 표시하는 방법을 보여줄게. 이해되지?" nointeract
+
+# game/tutorial_quickstart.rpy:564
+translate korean choice1_done_a32e30fd:
+
+    # e "Great."
+    e "좋아."
+
+# game/tutorial_quickstart.rpy:568
+translate korean choice1_done_fbd1dbc1:
+
+    # e "If you look at the example, before the first choice, there's an indented say statement."
+    e "첫 번째 선택을 하기 전에 예제를 살펴보면 들여쓰기 된 say 문이 있는 걸 볼 수 있어."
+
+# game/tutorial_quickstart.rpy:574
+translate korean menu3_done_47fa2268:
+
+    # e "Although we won't demonstrate it here, Ren'Py supports making decisions based on a combinations of points, flags, and other factors."
+    e "여기서 설명하지는 않겠지만, 렌파이는 포인트, 플래그 및 기타 요소의 조합을 기반으로 결정을 내릴 수 있어."
+
+# game/tutorial_quickstart.rpy:576
+translate korean menu3_done_826a600b:
+
+    # e "One of Ren'Py's big advantages is the flexibility using a scripting language like Python provides us. It lets us easily scale from kinetic novels to complex simulation games."
+    e "렌파이의 가장 큰 장점 중 하나는 파이썬과 같은 스크립팅 언어를 사용하여 유연성을 제공한다는 거야. 우리가 쉽게 키네틱 노블에서 복잡한 시뮬레이션 게임으로 확장할 수 있다는 걸 의미하지."
+
+# game/tutorial_quickstart.rpy:585
+translate korean tutorial_input_066611c5:
+
+    # e "Some games might prompt the player for input."
+    e "일부 게임은 플레이어에게 입력을 요구하기도 해."
+
+# game/tutorial_quickstart.rpy:599
+translate korean tutorial_input_dc3b4560:
+
+    # e "That's done with Python, and especially the renpy.input function. The first line of this example prompts the player for some texts, and sticks it in the name variable."
+    e "그건 파이썬에서 renpy.input 함수를 사용하면 돼. 이 예제의 첫 번째 줄에서는 플레이어에게 텍스트를 입력하라는 메시지를 표시하고 그것을 이름 변수에 붙여 넣을 거야."
+
+# game/tutorial_quickstart.rpy:601
+translate korean tutorial_input_c88b3f4e:
+
+    # e "Often times, you'll want to clean the name up before you use it. The last line does that, by calling the strip method to remove whitespace, and replacing the name with a default if it's missing."
+    e "때때로, 그것을 사용하기 전에 이름을 정리하고 싶을 거야. 마지막 줄은 strip을 호출하여 공백을 제거하고 누락된 경우 기본값으로 바꾸는 거야."
+
+# game/tutorial_quickstart.rpy:605
+translate korean tutorial_input_1236e9da:
+
+    # e "To interpolate a variable, write it in square brackets. Isn't that right, [name]?"
+    e "변수를 보간하려면 대괄호 안에 써야 해. 그렇지 않니, [name]?"
+
+# game/tutorial_quickstart.rpy:609
+translate korean tutorial_input_c1f7a808:
+
+    # e "Variable names can also be shown in character names. To do that, just include the variable in square brackets in the character's name. Got it?"
+    e "변수 이름은 캐릭터의 이름으로 표시될 수도 있어. 그렇게하려면 캐릭터의 이름에 대괄호 안에 변수를 포함하면 돼. 알겠지?"
+
+# game/tutorial_quickstart.rpy:612
+translate korean tutorial_input_f7757a8e:
+
+    # g "I think I do."
+    g "난 할 수 있어."
+
+# game/tutorial_quickstart.rpy:619
+translate korean tutorial_input_0548d3e2:
+
+    # e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]."
+    e "변수 보간은 다른 변수와도 작동해. 여기서 대답은 [answer]이고 깃발은 [flag]야."
 
 translate korean strings:
 
-
-    # game/tutorial_quickstart.rpy:377
-    old "Yes, I do."
-    new "응."
-
-
-    # game/tutorial_quickstart.rpy:377
-    old "No, I don't."
-    new "아니, 없어."
-
-
-    # game/tutorial_quickstart.rpy:5
+    # tutorial_quickstart.rpy:2
     old "Lucy"
-    new "Lucy"
+    new "루시"
+
+    # tutorial_quickstart.rpy:497
+    old "Yes, I do."
+    new "응, 그래."
+
+    # tutorial_quickstart.rpy:497
+    old "No, I don't."
+    new "아니, 난 별로야."
+
+    # tutorial_quickstart.rpy:589
+    old "What's your name?"
+    new "네 이름은 뭐야?"
+
+    # tutorial_quickstart.rpy:591
+    old "Guy Shy"
+    new "수줍은 청년"

@@ -21,10 +21,10 @@
 
 import renpy
 
-from renpy.style cimport register_property_function, assign
+from renpy.style cimport register_property_function, assign, assign_prefixed
 from cpython.ref cimport PyObject
 
-from renpy.styledata.styleutil import none_is_null, expand_focus_mask, expand_outlines, expand_anchor
+from renpy.styledata.styleutil import none_is_null, none_is_0, expand_focus_mask, expand_outlines, expand_anchor
 
 cdef inline object index_0(object v):
     return v[0]
@@ -37,3 +37,15 @@ cdef inline object index_2(object v):
 
 cdef inline object index_3(object v):
     return v[3]
+
+cdef inline object index_2_or_0(object v):
+    if len(v) >= 3:
+        return v[2]
+    else:
+        return v[0]
+
+cdef inline object index_3_or_1(object v):
+    if len(v) >= 4:
+        return v[3]
+    else:
+        return v[1]

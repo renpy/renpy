@@ -17,10 +17,13 @@ When a character with a linked image tag speaks, Ren'Py creates a pool of
 image attributes. The linked image tag is added to this pool, as are the
 current image attributes that are associated with that tag.
 
+In addition to the tag, there must be at least one attribute in the pool.
+If not, no side image is shown.
+
 To determine the side image associated with a tag, Ren'Py tries to find
 an image with the tag "side", and the largest number of attributes from
 the pool. If no image can be found, or more than one image has the same
-number of attributes, an :class:`Null` is shown instead.
+number of attributes, a :class:`Null` is shown instead.
 
 For example, say we have the following script::
 
@@ -43,7 +46,7 @@ For example, say we have the following script::
 At point A, the character ``e`` is speaking, which is linked to the image
 tag "eileen". The "eileen happy" image is showing, so the pool of attributes
 is "eileen" and "happy". We look for an image with the "side" tag, and as
-many of those attributes as possible - and we match "side eileen happy",
+many of those attributes as possible – and we match "side eileen happy",
 which is the side image Ren'Py will display.
 
 At point B, the "eileen concerned" image is showing. The pool of attributes
@@ -75,13 +78,16 @@ For example::
 
         p concerned "This is shown with 'side player concerned'."
 
-Variations
-----------
+Config and Store Variables
+--------------------------
 
-There are two variants of side image support that can be selected - either alone
-or together - using config variables:
+There are a number of attributes of side images that can be controlled
+using config variables.
 
+.. var:: _side_image_tag = None
 .. var:: config.side_image_tag = None
+
+    If _side_image_tag is not None, it takes preference over config.side_image_tag.
 
     If this is given, then the side image will track the given image tag,
     rather than the image associated with currently speaking character. For example,
@@ -89,9 +95,7 @@ or together - using config variables:
     ::
 
         define e = Character("Eileen", image="eileen")
-
-        init python:
-             config.side_image_tag = "eileen"
+        define config.side_image_tag = "eileen"
 
     Will make the side image track the "eileen" image tag, which is associated
     with the ``e`` character.
@@ -101,27 +105,81 @@ or together - using config variables:
     When set to true, the side image will only show if an image with that tag
     is not already being shown on the screen.
 
+.. var:: _side_image_prefix_tag = None
+.. var:: config.side_image_prefix_tag = 'side'
 
-Leaving Room / Customization
-----------------------------
+    If _side_image_prefix_tag is not None, it takes preference over
+    config.side_image_prefix_tag.
 
-By default, the entire width of the screen is taken up by the text. If one
-tries to display a side image, it will be displayed on top of the text. To
-fix this, one should include margin or padding on the appropriate side of
-the text window, using code like::
+    The prefix that is used when searching for a side image.
 
-    style window:
-        left_padding 150
+.. var:: config.side_image_null = Null()
 
-The position of the side image can be changed by customizing the ``say``
-or ``nvl`` screens. Both include the line::
+    The Null displayable to use when not displaying a side image. This can
+    be changed, but only to other Null objects. One reason for doing so
+    would be to set the side of the Null (eg. ``Null(width=200, height=150)``)
+    to prevent dissolves from being cut off.
 
-    add SideImage() xalign 0.0 yalign 1.0
+.. var:: config.side_image_same_transform = None
 
-By changing the xalign and yalign properties, you can control the positioning
-of the side image on the screen.
+    If not None, a transform that is used when the new side image shares the
+    same image tag as the previous side image.
 
-Finally, the :func:`SideImage` function returns, as a displayable, the
-current side image. This can be used as part of more advanced screen
-customization.
+.. var:: config.side_image_change_transform = None
 
+    If not None, a transform that is used when the new side image does not
+    share the name image tag (or one of the new or old side images does not
+    exist).
+
+
+Transforms and Transitions
+--------------------------
+
+The :var:`config.side_image_same_transform` and
+:var:`config.side_image_change_transform` transforms are called with two
+arguments – old and new side image displayables – each time the side
+image is displayed. These can be used to move around side images, or
+use a transition to go between side images.
+
+This causes the side image to slide in and out when the character
+associated with that image changes::
+
+    transform change_transform(old, new):
+        contains:
+            old
+            yalign 1.0
+            xpos 0.0 xanchor 0.0
+            linear 0.2 xanchor 1.0
+        contains:
+            new
+            yalign 1.0
+            xpos 0.0 xanchor 1.0
+            linear 0.2 xanchor 0.0
+
+    define config.side_image_change_transform = change_transform
+
+This is used to dissolve between old and new side images when the
+character remains the same. (For example, when the character changes
+emotion.) For the :class:`Dissolve` to work correctly, both side images must
+be the same size. ::
+
+    transform same_transform(old, new):
+        old
+        new with Dissolve(0.2, alpha=True)
+
+    define config.side_image_same_transform = same_transform
+
+
+When the :func:`SideImage` is scaled down, it might make sense to enable
+mipmapping in the :func:`Dissolve`::
+
+    transform same_transform(old, new):
+        old
+        new with Dissolve(0.2, alpha=True, mipmap=True)
+
+    define config.side_image_same_transform = same_transform
+
+Functions
+---------
+
+.. include:: inc/side

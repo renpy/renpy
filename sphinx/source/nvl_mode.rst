@@ -22,7 +22,7 @@ clear`` statements at the end of each page.
 
 Characters can be declared to use NVL-mode by adding a ``kind=nvl``
 parameter to each of the Character declarations. For example, if we
-the character declarations from the Quickstart manual are::
+use the character declarations from the Quickstart manual::
 
     define s = Character('Sylvie', color="#c8ffc8")
     define m = Character('Me', color="#c8c8ff")
@@ -31,7 +31,11 @@ Changed to use NVL-mode, those declarations become::
 
     define s = Character('Sylvie', kind=nvl, color="#c8ffc8")
     define m = Character('Me', kind=nvl, color="#c8c8ff")
-    define narrator = Character(None, kind=nvl)
+
+An NVL-mode narrator can also be used by including the following
+definition::
+
+    define narrator = nvl_narrator
 
 Note that we have also added an NVL-mode declaration of
 ``narrator``. The ``narrator`` character is used to speak
@@ -63,8 +67,27 @@ While nvl-mode games generally have more text per paragraph, this
 example demonstrates a basic NVL-mode script. (Suitable for use in a
 kinetic novel that does not have transitions.)
 
-Menus
------
+.. _nvl-monologue-mode:
+
+:ref:`Monologue mode <monologue-mode>` works with NVL-mode as well.
+Including the ``{clear}`` text tag on a line by itself is the equivalent
+of an ``nvl clear`` statement without leaving monologue mode. For example::
+
+    label start:
+        s """
+        This is one block of text in monologue mode.
+
+        This is a second block, on the same page as the first.
+
+        {clear}
+
+        The page just cleared!
+        """
+
+.. _nvl-mode-menu:
+
+NVL-mode Menus
+--------------
 
 By default, menus are displayed in ADV-mode, taking up the full
 screen. There is also an alternate NVL-mode menu presentation, which
@@ -73,29 +96,42 @@ text.
 
 To access this alternate menu presentation, write::
 
-    init python:
-        menu = nvl_menu
+    define menu = nvl_menu
 
 The menu will disappear after the choice has been made, so it usually
 makes sense to follow menus with an "nvl clear" or some sort of
 indication as to the choice.
 
+:ref:`Menu arguments <menu-arguments>` can also be used to access
+a NVL-mode menu. This is done by providing a true `nvl` argument
+that is set to True. This is useful when mixing NVL-mode and ADV-mode
+menus in a single game. ::
+
+    menu (nvl=True):
+        "I prefer NVL-mode.":
+            pass
+
+        "ADV-mode is more for me.":
+            pass
+
+
 Showing and Hiding the NVL-mode Window
 --------------------------------------
 
 The NVL-mode window can be controlled with the standard ``window show``
-and ``window hide`` statements. To enable this, add the following code
-to your game::
+and ``window hide`` statements. To select the default transitions to be
+used for showing and hiding the window, add the following to your game::
 
     init python:
-        config.empty_window = nvl_show_core
         config.window_hide_transition = dissolve
         config.window_show_transition = dissolve
 
-Setting :var:`config.empty_window` to ``nvl_show_core``
-will cause the NVL-mode window to be displayed during a
-transition. (The last two lines select the default transitions to be
-used for showing and hiding the window.)
+The default :var:`config.empty_window` should select appropriate window
+automatically, but setting :var:`config.empty_window` to ``nvl_show_core``
+will force the NVL-mode window to be displayed during a transition.::
+
+    init python:
+        config.empty_window = nvl_show_core
 
 An example of using the window commands to show and hide the window is::
 
@@ -126,7 +162,7 @@ An example of using the window commands to show and hide the window is::
 
 There are also explicit ``nvl show`` and ``nvl hide`` commands that show
 hide the NVL-mode window. These take an optional transition, and can be
-used in code that has a mix of NVL-mode and ADV-mode windows.
+used in games that use a mix of NVL-mode and ADV-mode windows.
 
 Customizing Characters
 ----------------------
@@ -167,31 +203,6 @@ you to pick the one that is most appropriate to the game you are creating.
 
     define s = Character(None, kind=nvl)
 
-Customizing Menus
------------------
-
-There are a few styles that control the look of the menus. Here's some
-code showing how to customize them. See :doc:`style` for more information
-about styles. ::
-
-    init python:
-
-        # The color of a menu choice when it isn't hovered.
-        style.nvl_menu_choice.idle_color = "#ccccccff"
-
-        # The color of a menu choice when it is hovered.
-        style.nvl_menu_choice.hover_color = "#ffffffff"
-
-        # The color of the background of a menu choice, when it isn't
-        # hovered.
-        style.nvl_menu_choice_button.idle_background = "#00000000"
-
-        # The color of the background of a menu choice, when it is
-        # hovered.
-        style.nvl_menu_choice_button.hover_background = "#ff000044"
-
-        # How far from the left menu choices should be indented.
-        style.nvl_menu_choice_button.left_margin = 20
 
 Config Variables
 ----------------
@@ -201,6 +212,13 @@ The following config variables control nvl-related functionality.
 .. var:: config.nvl_layer = "screens"
 
     The layer the nvl screens are shown on.
+
+.. var:: config.nvl_list_length = None
+
+    If not None, the maximum length of the the list of NVL dialogue.
+    This can be set (often in conjuction with forcing the dialogue to
+    have a fixed height) in order to emulate an infinite scrolling
+    NVL window.
 
 .. var:: config.nvl_page_ctc = None
 
@@ -220,31 +238,10 @@ The following config variables control nvl-related functionality.
 
     If true, NVL-mode rollback will occur a full page at a time.
 
+Python Functions
+----------------
 
-Customizing the NVL window
---------------------------
-
-There are a few styles that control the NVL window; here's some code showing
-how to customize them.  See :doc:`style` for more information
-about styles. ::
-
-    init python:
-
-        # Set the background of the NVL window; this image should be the
-        # same size as the screen.
-        style.nvl_window.background = "nvl_window.png"
-
-        # Add some additional padding around the contents of the NVL window.
-        # This keeps the text inside the borders of our image.
-        style.nvl_window.xpadding = 55
-        style.nvl_window.ypadding = 55
-
-        # Set the spacing between each block of text on the page.
-        # The default is 10 pixels.
-        style.nvl_vbox.box_spacing = 10
-
-You can also completely customize the screen used to display NVL text, which
-is named ``nvl``; see :ref:`nvl-screen`.
+.. include:: inc/nvl
 
 
 Paged Rollback
@@ -252,14 +249,14 @@ Paged Rollback
 
 Paged rollback causes Ren'Py to rollback one NVL-mode page at a time,
 rather than one block of text at a time.  It can be enabled by
-including the following code in your script. ::
+including the following in your script. ::
 
     init python:
         config.nvl_paged_rollback = True
+
 
 Script of The Question (NVL-mode Edition)
 -----------------------------------------
 
 You can view the full script of the NVL-mode edition of ''The Question''
 :ref:`here <thequestion_nvl>`.
-

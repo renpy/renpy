@@ -58,7 +58,7 @@ of the displayable's style::
 
 When no ``style`` property is given, a parent is chosen based on the kind of
 displayable be that has been supplied. The parent chosen can be influenced
-by the :ref:`style_group <style-group>` property of user interface statements
+by the :ref:`style_prefix <style-prefix>` property of user interface statements
 in the screen language.
 
 When a style is defined without a parent being specified, a default
@@ -73,7 +73,7 @@ it using the default parent.
 Style names beginning with an underscore are reserved for Ren'Py use.
 
 As Ren'Py builds styles on startup, named styles should not be changed
-outside of init code.
+outside of a style statement or ``init`` block.
 
 
 Style Inspector
@@ -83,7 +83,7 @@ When :var:`config.developer` is true, the style inspector can be used to
 see which styles are being used by a displayable.
 
 To activate the style inspector, place the mouse over a displayable, and
-press shift+I. Ren'Py will display a list of displayables that include
+press Shift+I. Ren'Py will display a list of displayables that include
 the mouse position, in the order they are drawn to the screen. (That is,
 the last displayable is the one on top of the others.)
 
@@ -136,6 +136,11 @@ The style statement accepts the following clauses:
     least one of the variants given is active, the style statement is run,
     otherwise it is ignored.
 
+``properties`` `simple-expression`
+    Evaluates the simple expression to get a dictionary. The dictionary is
+    expected to map style properties to values, and the values are assigned
+    as if they were provided to the style statement.
+
 Examples of style statements are::
 
     # Creates a new style, inheriting from default.
@@ -152,8 +157,8 @@ Examples of style statements are::
         variant "touch"
         take big_red
 
-Style statements are always run at init-time. If a style statement is not
-in an init block, it is automatically placed init an init 0 block.
+Style statements are always run at init time. If a style statement is not
+in an ``init`` block, it is automatically placed into an ``init 0`` block.
 
 
 Defining Styles: Python
@@ -197,31 +202,38 @@ Styles. ::
         style object.
 
 
-..
+.. _indexed-styles:
 
-    Indexed Styles
+Indexed Styles
+--------------
 
-    Indexed styles are lightweight styles that can be used to customize the look
-    of a displayable based on the data supplied to that displayable. An index
-    style is created by indexing a style object with a string or integer. If an
-    indexed style does not exist, indexing creates it.::
+Indexed styles are lightweight styles that can be used to customize the look
+of a displayable based on the data supplied to that displayable. An index
+style is created by indexing a style object with a string or integer. If an
+indexed style does not exist, indexing creates it. ::
 
-        init python:
-            style.button['Foo'].background = "#f00"
-            style.button['Bar'].background = "#00f"
+    init python:
+        style.button['Foo'].background = "#f00"
+        style.button['Bar'].background = "#00f"
 
-    An index style is used by supplying the indexed style to a displayable.::
+An index style is used by supplying the indexed style to a displayable.::
 
-        screen indexed_style_test:
-            vbox:
-                textbutton "Foo" style style.button["Foo"]
-                textbutton "Bar" style style.button["Bar"]
+    screen indexed_style_test:
+        vbox:
+            textbutton "Foo" style style.button["Foo"]
+            textbutton "Bar" style style.button["Bar"]
 
 
 .. _style-preferences:
 
 Style Preferences
 -----------------
+
+.. note::
+
+    :ref:`gui-preferences` may often provide a better way of accomplishing
+    the same thing, as a gui preference can change a variable used in multiple
+    styles.
 
 It's often desirable to allow the user to customize aspects of the user
 interface that are best expressed as styles. For example, a creator may want
@@ -260,7 +272,7 @@ choose between large, simple text and smaller outlined text.
         renpy.register_style_preference("text", "large", style.say_dialogue, "outlines", [ ])
         renpy.register_style_preference("text", "large", style.say_dialogue, "size", 24)
 
-The following code will allow the user to select these alternatives using
+The following will allow the user to select these alternatives using
 buttons::
 
     textbutton "Decorated" action StylePreference("text", "decorated")
@@ -272,7 +284,7 @@ Other Style Functions
 .. function:: style.rebuild()
 
    This causes named styles to be rebuilt, allowing styles to be
-   changed outside of init code.
+   changed after the init phase has finished.
 
    .. warning::
 

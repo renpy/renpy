@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,12 +19,41 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import pygame_sdl2.controller
-import renpy.display
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+
+import os
+
+import pygame_sdl2
 from pygame_sdl2 import CONTROLLERDEVICEADDED, CONTROLLERDEVICEREMOVED
 from pygame_sdl2 import CONTROLLERAXISMOTION, CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP
 from pygame_sdl2.controller import Controller, get_string_for_axis, get_string_for_button
+import pygame_sdl2 as pygame
+
+import renpy
+
+
+def load_mappings():
+
+    try:
+        with renpy.loader.load("renpycontrollerdb.txt", False) as f:
+            pygame_sdl2.controller.add_mappings(f)
+    except Exception:
+        pass
+
+    try:
+        with renpy.loader.load("gamecontrollerdb.txt", False) as f:
+            pygame_sdl2.controller.add_mappings(f)
+    except Exception:
+        pass
+
+    try:
+        with open(os.path.join(renpy.config.renpy_base, "gamecontrollerdb.txt"), "rb") as f:
+            pygame_sdl2.controller.add_mappings(f)
+    except Exception:
+        pass
+
 
 def init():
     """
@@ -34,7 +63,19 @@ def init():
     if not renpy.game.preferences.pad_enabled:
         return
 
-    pygame_sdl2.controller.init()
+    try:
+        pygame_sdl2.controller.init()
+        load_mappings()
+    except Exception:
+        renpy.display.log.exception()
+
+    if not renpy.display.interface.safe_mode:
+        try:
+            for i in range(pygame_sdl2.controller.get_count()):
+                start(i)
+        except Exception:
+            renpy.display.log.exception()
+
 
 # A map from controller index to controller object.
 controllers = { }
@@ -45,18 +86,152 @@ axis_positions = {}
 # The axis threshold.
 THRESHOLD = (32768 // 2)
 
-def make_event(name):
+# Should we ignore events?
+ignore = False
+
+
+def post_event(control, state, repeat):
     """
-    Creates an EVENTNAME event with `name`, and returns it.
+    Creates an EVENTNAME event for the given state and name, and post it
+    to the event queue.
     """
+
+    if not renpy.display.interface.keyboard_focused:
+        return None
+
+    if ignore:
+        return None
+
+    name = "pad_{}_{}".format(control, state)
+
+    if repeat:
+        name = "repeat_" + name
 
     names = [ name ]
 
-    names.extend(renpy.config.pad_bindings.get(name, ()))
+    if renpy.config.map_pad_event:
+        names.extend(renpy.config.map_pad_event(name))
+    else:
+        names.extend(renpy.config.pad_bindings.get(name, ()))
 
-    return pygame_sdl2.event.Event(
+    ev = pygame_sdl2.event.Event(
         renpy.display.core.EVENTNAME,
         { "eventnames" : names, "controller" : name, "up" : False })
+
+    pygame.event.post(ev)
+
+
+def exists():
+    """
+    Returns true if a controller exists, and False otherwise.
+    """
+
+    if controllers:
+        return True
+    else:
+        return False
+
+
+def quit(index): # @ReservedAssignment
+    """
+    Quits the controller at index.
+    """
+
+    if index in controllers:
+        controllers[index].quit()
+        del controllers[index]
+
+        renpy.exports.restart_interaction()
+
+
+def start(index):
+    """
+    Starts the controller at index.
+    """
+
+    quit(index)
+    c = Controller(index)
+
+    if not c.is_controller():
+        return
+
+    renpy.exports.write_log("controller: %r %r %r" % (c.get_guid_string(), c.get_name(), c.is_controller()))
+
+    if renpy.game.preferences.pad_enabled != "all":
+        for prefix in renpy.config.controller_blocklist:
+            if c.get_guid_string().startswith(prefix):
+                renpy.exports.write_log("Controller found in blocklist, not using.")
+                return
+
+    try:
+        c.init()
+        controllers[index] = c
+    except Exception:
+        renpy.display.log.exception()
+
+    renpy.exports.restart_interaction()
+
+
+class PadEvent(object):
+    """
+    This stores the information about a PadEvent, to trigger repeats.
+    """
+
+    def __init__(self, control):
+
+        # The control this corresponds to.
+        self.control = control
+
+        # The current state of the control.
+        self.state = None
+
+        # When should the repeat occur?
+        self.repeat_time = 0
+
+    def event(self, state):
+
+        self.state = state
+        self.repeat_time = renpy.display.core.get_time() + renpy.config.controller_first_repeat
+
+        post_event(self.control, self.state, False)
+
+        if renpy.display.interface is not None:
+            renpy.display.interface.hide_mouse()
+
+    def repeat(self):
+
+        if self.state not in renpy.config.controller_repeat_states:
+            return
+
+        now = renpy.display.core.get_time()
+
+        if now < self.repeat_time:
+            return
+
+        self.repeat_time = self.repeat_time + renpy.config.controller_repeat
+
+        if self.repeat_time < now:
+            self.repeat_time = now + renpy.config.controller_repeat
+
+        post_event(self.control, self.state, True)
+
+
+# A map from the pade event name to the pad event object.
+pad_events = { }
+
+
+def controller_event(control, state):
+
+    pe = pad_events.get(control, None)
+    if pe is None:
+        pe = pad_events[control] = PadEvent(control)
+
+    pe.event(state)
+
+
+def periodic():
+    for pe in pad_events.values():
+        pe.repeat()
 
 
 def event(ev):
@@ -66,18 +241,11 @@ def event(ev):
     """
 
     if ev.type == CONTROLLERDEVICEADDED:
-        if ev.which not in controllers:
-            controllers[ev.which] = c = Controller(ev.which)
-            c.init()
-
+        start(ev.which)
         return None
 
     elif ev.type == CONTROLLERDEVICEREMOVED:
-
-        if ev.which in controllers:
-            c = controllers.pop(ev.which)
-            c.quit()
-
+        quit(ev.which)
         return None
 
     elif ev.type == CONTROLLERAXISMOTION:
@@ -87,7 +255,7 @@ def event(ev):
         elif ev.value < -THRESHOLD:
             pos = "neg"
         else:
-            pos = None
+            pos = "zero"
 
         old_pos = axis_positions.get((ev.which, ev.axis), None)
 
@@ -96,11 +264,9 @@ def event(ev):
 
         axis_positions[(ev.which, ev.axis)] = pos
 
-        if pos is None:
-            return None
+        controller_event(get_string_for_axis(ev.axis), pos)
 
-        name = "pad_{}_{}".format(get_string_for_axis(ev.axis), pos)
-        ev = make_event(name)
+        return None
 
     elif ev.type in (CONTROLLERBUTTONDOWN, CONTROLLERBUTTONUP):
 
@@ -109,7 +275,20 @@ def event(ev):
         else:
             pr = "release"
 
-        name = "pad_{}_{}".format(get_string_for_button(ev.button), pr)
-        ev = make_event(name)
+        controller_event(get_string_for_button(ev.button), pr)
+        return None
+
+    elif ev.type in (
+            pygame.JOYAXISMOTION,
+            pygame.JOYHATMOTION,
+            pygame.JOYBALLMOTION,
+            pygame.JOYBUTTONDOWN,
+            pygame.JOYBUTTONUP,
+            pygame.JOYDEVICEADDED,
+            pygame.JOYDEVICEREMOVED,
+            ):
+
+        if not renpy.config.pass_joystick_events:
+            return None
 
     return ev

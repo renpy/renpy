@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -35,13 +35,20 @@ init -1500 python:
         identity_fields = [ "mr" ]
         equality_fields = [ "filename" ]
 
-
         def __init__(self, mr, filename):
             self.mr = mr
             self.filename = filename
             self.selected = self.get_selected()
 
         def __call__(self):
+
+            renpy.restart_interaction()
+
+            if renpy.music.get_playing(self.mr.channel) == self.filename:
+                if renpy.music.get_pause(self.mr.channel):
+                    renpy.music.set_pause(False, self.mr.channel)
+                    return
+
             self.mr.play(self.filename, 0)
 
         def get_sensitive(self):
@@ -71,6 +78,9 @@ init -1500 python:
             self.mr = mr
 
         def __call__(self):
+
+            renpy.restart_interaction()
+
             playlist = self.mr.unlocked_playlist()
 
             if not playlist:
@@ -91,6 +101,9 @@ init -1500 python:
             self.mr = mr
 
         def __call__(self):
+
+            renpy.restart_interaction()
+
             if renpy.music.get_playing(self.mr.channel):
                 return self.mr.stop()
 
@@ -99,6 +112,65 @@ init -1500 python:
 
         def get_selected(self):
             return renpy.music.get_playing(self.mr.channel) is not None
+
+    @renpy.pure
+    class __MusicRoomTogglePause(Action, FieldEquality):
+        """
+        The action returned by MusicRoom.TogglePause
+        """
+
+        identity_fields = [ "mr" ]
+
+        def __init__(self, mr):
+            self.mr = mr
+
+        def __call__(self):
+
+            renpy.restart_interaction()
+
+            if not renpy.music.get_playing(self.mr.channel):
+                return
+
+            renpy.music.set_pause(not renpy.music.get_pause(self.mr.channel), self.mr.channel)
+
+        def get_selected(self):
+            return renpy.music.get_pause(self.mr.channel)
+
+        def get_sensitive(self):
+            return renpy.music.get_playing(self.mr.channel)
+        
+        def periodic(self, st):
+            self.mr.periodic(st)
+
+            return .1
+
+
+    @renpy.pure
+    class __MusicRoomStop(Action, FieldEquality):
+        """
+        The action returned by MusicRoom.Stop.
+        """
+
+        identity_fields = [ "mr" ]
+
+        def __init__(self, mr):
+            self.mr = mr
+            self.selected = self.get_selected()
+
+        def __call__(self):
+            self.mr.stop()
+
+        def get_selected(self):
+            return renpy.music.get_playing() is None
+
+        def periodic(self, st):
+            if self.selected != self.get_selected():
+                self.selected = self.get_selected()
+                renpy.restart_interaction()
+
+            self.mr.periodic(st)
+
+            return .1
 
 
     class MusicRoom(object):
@@ -410,6 +482,18 @@ init -1500 python:
             """
             return __MusicRoomTogglePlay(self)
 
+        def TogglePause(self):
+            """
+            :doc: music_room method
+
+            If music is playing, pauses or unpauses the music as appropriate.
+
+            This button is selected when the music is paused.
+            """
+
+            return __MusicRoomTogglePause(self)
+
+
         def Stop(self):
             """
             :doc: music_room method
@@ -417,8 +501,7 @@ init -1500 python:
             This action stops the music.
             """
 
-            return self.stop
-
+            return __MusicRoomStop(self)
 
         def Next(self):
             """

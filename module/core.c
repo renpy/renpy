@@ -5,16 +5,6 @@
 #include <stdio.h>
 #include <math.h>
 
-#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-#define GCC_MMX 1
-#include "mmx.h"
-#endif
-
-/* Work around a compiler bug with transforms on 32-bit linux. */
-#if defined(__linux__) && defined(__i386__)
-#undef GCC_MMX
-#endif
-
 // Shows how to do this.
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 #endif
@@ -31,7 +21,7 @@ void save_png_core(PyObject *pysurf, SDL_RWops *rw, int compress) {
     surf = PySurface_AsSurface(pysurf);
 
     /* Can't release GIL, since we're not using threaded RWops. */
-    IMG_SavePNG_RW(rw, surf, compress);
+    renpy_IMG_SavePNG_RW(rw, surf, compress);
 }
 
 /* This pixellates a 32-bit RGBA pygame surface to a destination
@@ -562,30 +552,114 @@ void linmap24_core(PyObject *pysrc,
     Py_END_ALLOW_THREADS
 }
 
+/*
+ * Helper function to describe averaging filters (AFs) needed to
+ * approximate a specific Gaussian. Takes a desired standard deviation
+ * and number of passes and produces lower and upper AF widths and the
+ * number of passes to perform with the lower AF width.
+ * ref: Peter Kovesi, "Fast Almost-Gaussian Filtering", 2010
+ *      section II; equations 3 and 5
+ *      https://www.peterkovesi.com/papers/FastGaussianSmoothing.pdf
+ */
+void blur_filters(float sigma, int n, int *wl, int *wu, int *m) {
+    *wl = (int) floor(sqrt(12 * sigma * sigma / n + 1));
+    if (*wl % 2 == 0) (*wl)--;
+    *wu = *wl + 2;
+    *m = (int) round(
+        (12 * sigma * sigma - n * *wl * *wl - 4 * n * *wl - 3 * n)
+        / (-4 * *wl - 4)
+    );
+}
 
-#if 0
+/*
+ * This expects pysrc, pywrk and pydst to be surfaces of the same size.
+ * It approximates a Gaussian blur using several box blurs. Box sizes
+ * are AF widths as described by blur_filters. Box blurs are performed
+ * using two passes of a one-dimensional blur, on the x and y axes
+ * respectively. The pywrk surface is used to hold intermediate results
+ * only and should not be treated as valid output.
+ * ref: Ivan Kutskir, "Fastest Gaussian Blur (in linear time)", 2013
+ *      http://blog.ivank.net/fastest-gaussian-blur.html
+ */
+void blur32_core(PyObject *pysrc,
+                 PyObject *pywrk,
+                 PyObject *pydst,
+                 float xrad,
+                 float yrad) {
 
-void xblur32_core(PyObject *pysrc,
-                  PyObject *pydst,
-                  int radius) {
+    int n = 3; // number of passes, no more than six
 
-    int i, x, y;
+    int xl, xu, xm;
+    int yl, yu, ym;
+
+    blur_filters(xrad, n, &xl, &xu, &xm);
+
+    if (xrad != yrad) {
+        blur_filters(yrad, n, &yl, &yu, &ym);
+    } else {
+        yl = xl; yu = xu; ym = xm;
+    }
+
+    for (int i = 0; i < n; i++) {
+        int xr = i < xm ? xl : xu;
+        linblur32_core(pysrc, pywrk, xr, 0);
+        int yr = i < ym ? yl : yu;
+        linblur32_core(pywrk, pydst, yr, 1);
+        pysrc = pydst;
+    }
+}
+
+void blur24_core(PyObject *pysrc,
+                 PyObject *pywrk,
+                 PyObject *pydst,
+                 float xrad,
+                 float yrad) {
+
+    int n = 3; // number of passes, no more than six
+
+    int xl, xu, xm;
+    int yl, yu, ym;
+
+    blur_filters(xrad, n, &xl, &xu, &xm);
+
+    if (xrad != yrad) {
+        blur_filters(yrad, n, &yl, &yu, &ym);
+    } else {
+        yl = xl; yu = xu; ym = xm;
+    }
+
+    for (int i = 0; i < n; i++) {
+        int xr = i < xm ? xl : xu;
+        linblur24_core(pysrc, pywrk, xr, 0);
+        int yr = i < ym ? yl : yu;
+        linblur24_core(pywrk, pydst, yr, 1);
+        pysrc = pydst;
+    }
+}
+
+/*
+ * This expects pysrc and pydst to be surfaces of the same size. It
+ * implements a linear time one-dimensional blur using accumulators,
+ * with a sample size of twice the radius plus one. It can operate in
+ * both the x and y axes.
+ */
+void linblur32_core(PyObject *pysrc,
+                    PyObject *pydst,
+                    int radius,
+                    int vertical) {
+
+    int c, r;
 
     SDL_Surface *src;
     SDL_Surface *dst;
 
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    Uint32 rows, cols;
+    Uint32 incr, skip;
 
     unsigned char *srcpixels;
     unsigned char *dstpixels;
 
-    int count;
-
-    unsigned char *srcp;
     unsigned char *dstp;
-
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
@@ -594,25 +668,30 @@ void xblur32_core(PyObject *pysrc,
 
     srcpixels = (unsigned char *) src->pixels;
     dstpixels = (unsigned char *) dst->pixels;
-    srcpitch = src->pitch;
-    dstpitch = dst->pitch;
-    srcw = src->w;
-    dstw = dst->w;
-    srch = src->h;
-    dsth = dst->h;
+
+    if (vertical) {
+        rows = dst->w;
+        skip = 4;
+        incr = dst->pitch - 4;
+        cols = dst->h;
+    } else {
+        rows = dst->h;
+        skip = dst->pitch;
+        incr = 0;
+        cols = dst->w;
+    }
 
     int divisor = radius * 2 + 1;
 
-    for (y = 0; y < dsth; y++) {
-
+    for (r = 0; r < rows; r++) {
         // The values of the pixels on the left and right ends of the
         // line.
         unsigned char lr, lg, lb, la;
         unsigned char rr, rg, rb, ra;
 
-        unsigned char *leader = srcpixels + y * srcpitch;
+        unsigned char *leader = srcpixels + r * skip;
         unsigned char *trailer = leader;
-        dstp = dstpixels + y * dstpitch;
+        dstp = dstpixels + r * skip;
 
         lr = *leader;
         lg = *(leader + 1);
@@ -624,25 +703,27 @@ void xblur32_core(PyObject *pysrc,
         int sumb = lb * radius;
         int suma = la * radius;
 
-
-        for (x = 0; x < radius + 0; x++) {
+        for (c = 0; c < radius; c++) {
             sumr += *leader++;
             sumg += *leader++;
             sumb += *leader++;
             suma += *leader++;
+            leader += incr;
         }
 
         // left side of the kernel is off of the screen.
-        for (x = 0; x < radius; x++) {
+        for (c = 0; c < radius; c++) {
             sumr += *leader++;
             sumg += *leader++;
             sumb += *leader++;
             suma += *leader++;
+            leader += incr;
 
             *dstp++ = sumr / divisor;
             *dstp++ = sumg / divisor;
             *dstp++ = sumb / divisor;
             *dstp++ = suma / divisor;
+            dstp += incr;
 
             sumr -= lr;
             sumg -= lg;
@@ -650,24 +731,27 @@ void xblur32_core(PyObject *pysrc,
             suma -= la;
         }
 
-        int end = srcw - radius - 1;
+        int end = cols - radius - 1;
 
         // The kernel is fully on the screen.
-        for (; x < end; x++) {
+        for (; c < end; c++) {
             sumr += *leader++;
             sumg += *leader++;
             sumb += *leader++;
             suma += *leader++;
+            leader += incr;
 
             *dstp++ = sumr / divisor;
             *dstp++ = sumg / divisor;
             *dstp++ = sumb / divisor;
             *dstp++ = suma / divisor;
+            dstp += incr;
 
             sumr -= *trailer++;
             sumg -= *trailer++;
             sumb -= *trailer++;
             suma -= *trailer++;
+            trailer += incr;
         }
 
         rr = *leader++;
@@ -676,7 +760,7 @@ void xblur32_core(PyObject *pysrc,
         ra = *leader++;
 
         // The kernel is off the right side of the screen.
-        for (; x < srcw; x++) {
+        for (; c < cols; c++) {
             sumr += rr;
             sumg += rg;
             sumb += rb;
@@ -686,19 +770,145 @@ void xblur32_core(PyObject *pysrc,
             *dstp++ = sumg / divisor;
             *dstp++ = sumb / divisor;
             *dstp++ = suma / divisor;
+            dstp += incr;
 
             sumr -= *trailer++;
             sumg -= *trailer++;
             sumb -= *trailer++;
             suma -= *trailer++;
+            trailer += incr;
         }
     }
 
     Py_END_ALLOW_THREADS
 }
 
-#endif
+void linblur24_core(PyObject *pysrc,
+                    PyObject *pydst,
+                    int radius,
+                    int vertical) {
 
+    int c, r;
+
+    SDL_Surface *src;
+    SDL_Surface *dst;
+
+    Uint32 rows, cols;
+    Uint32 incr, skip;
+
+    unsigned char *srcpixels;
+    unsigned char *dstpixels;
+
+    unsigned char *dstp;
+
+    src = PySurface_AsSurface(pysrc);
+    dst = PySurface_AsSurface(pydst);
+
+    Py_BEGIN_ALLOW_THREADS
+
+    srcpixels = (unsigned char *) src->pixels;
+    dstpixels = (unsigned char *) dst->pixels;
+
+    if (vertical) {
+        rows = dst->w;
+        skip = 3;
+        incr = dst->pitch - 3;
+        cols = dst->h;
+    } else {
+        rows = dst->h;
+        skip = dst->pitch;
+        incr = 0;
+        cols = dst->w;
+    }
+
+    int divisor = radius * 2 + 1;
+
+    for (r = 0; r < rows; r++) {
+        // The values of the pixels on the left and right ends of the
+        // line.
+        unsigned char lr, lg, lb;
+        unsigned char rr, rg, rb;
+
+        unsigned char *leader = srcpixels + r * skip;
+        unsigned char *trailer = leader;
+        dstp = dstpixels + r * skip;
+
+        lr = *leader;
+        lg = *(leader + 1);
+        lb = *(leader + 2);
+
+        int sumr = lr * radius;
+        int sumg = lg * radius;
+        int sumb = lb * radius;
+
+        for (c = 0; c < radius; c++) {
+            sumr += *leader++;
+            sumg += *leader++;
+            sumb += *leader++;
+            leader += incr;
+        }
+
+        // left side of the kernel is off of the screen.
+        for (c = 0; c < radius; c++) {
+            sumr += *leader++;
+            sumg += *leader++;
+            sumb += *leader++;
+            leader += incr;
+
+            *dstp++ = sumr / divisor;
+            *dstp++ = sumg / divisor;
+            *dstp++ = sumb / divisor;
+            dstp += incr;
+
+            sumr -= lr;
+            sumg -= lg;
+            sumb -= lb;
+        }
+
+        int end = cols - radius - 1;
+
+        // The kernel is fully on the screen.
+        for (; c < end; c++) {
+            sumr += *leader++;
+            sumg += *leader++;
+            sumb += *leader++;
+            leader += incr;
+
+            *dstp++ = sumr / divisor;
+            *dstp++ = sumg / divisor;
+            *dstp++ = sumb / divisor;
+            dstp += incr;
+
+            sumr -= *trailer++;
+            sumg -= *trailer++;
+            sumb -= *trailer++;
+            trailer += incr;
+        }
+
+        rr = *leader++;
+        rg = *leader++;
+        rb = *leader++;
+
+        // The kernel is off the right side of the screen.
+        for (; c < cols; c++) {
+            sumr += rr;
+            sumg += rg;
+            sumb += rb;
+
+            *dstp++ = sumr / divisor;
+            *dstp++ = sumg / divisor;
+            *dstp++ = sumb / divisor;
+            dstp += incr;
+
+            sumr -= *trailer++;
+            sumg -= *trailer++;
+            sumb -= *trailer++;
+            trailer += incr;
+        }
+    }
+
+    Py_END_ALLOW_THREADS
+}
 
 // Alpha Munge takes a channel from the source pixel, maps it, and
 // sticks it into the alpha channel of the destination, overwriting
@@ -1184,255 +1394,6 @@ int transform32_std(PyObject *pysrc, PyObject *pydst,
 
 
 
-#ifdef GCC_MMX
-
-/****************************************************************************/
-/* A similar concept to rotozoom, but implemented differently, so we
-   can limit the target area. */
-int transform32_mmx(PyObject *pysrc, PyObject *pydst,
-                    float corner_x, float corner_y,
-                    float xdx, float ydx,
-                    float xdy, float ydy,
-                    int ashift,
-                    float a,
-                    int precise
-    ) {
-
-    SDL_Surface *src;
-    SDL_Surface *dst;
-
-    int y;
-    int srcpitch, dstpitch;
-    int srcw, srch;
-    int dstw, dsth;
-
-    // The x and y source pixel coordinates, times 65536. And their
-    // delta-per-dest-x-pixel.
-    int sxi = 0, syi = 0, dsxi = 0, dsyi = 0;
-
-    unsigned char *srcpixels;
-    unsigned char *dstpixels;
-
-    src = PySurface_AsSurface(pysrc);
-    dst = PySurface_AsSurface(pydst);
-
-    Py_BEGIN_ALLOW_THREADS
-
-    srcpixels = (unsigned char *) src->pixels;
-    dstpixels = (unsigned char *) dst->pixels;
-    srcpitch = src->pitch;
-    dstpitch = dst->pitch;
-    srcw = src->w;
-    dstw = dst->w;
-    srch = src->h;
-    dsth = dst->h;
-
-    // Due to mmx.
-    ashift *= 2;
-
-    // Compute the coloring multiplier.
-    unsigned int amul = (unsigned int) (a * 256);
-
-    // Compute the maximum x and y coordinates.
-    double maxsx = srcw;
-    double maxsy = srch;
-
-    // Deal with pre-6.10.1 versions of Ren'Py, which didn't give us
-    // that 1px border that allows us to be precise.
-    if (! precise) {
-        maxsx -= EPSILON;
-        maxsy -= EPSILON;
-
-        // If a delta is too even, subtract epsilon (towards 0) from it.
-        if (xdx && fabs(fmodf(1.0 / xdx, 1)) < EPSILON) {
-            xdx -= (xdx / fabs(xdx)) * EPSILON;
-        }
-        if (xdy && fabs(fmodf(1.0 / xdy, 1)) < EPSILON) {
-            xdy -= (xdy / fabs(xdy)) * EPSILON;
-        }
-        if (ydx && fabs(fmodf(1.0 / ydx, 1)) < EPSILON) {
-            ydx -= (ydx / fabs(ydx)) * EPSILON;
-        }
-        if (ydy && fabs(fmodf(1.0 / ydy, 1)) < EPSILON) {
-            ydy -= (ydy / fabs(ydy)) * EPSILON;
-        }
-    }
-
-
-    // Loop through every line.
-    for (y = 0; y < dsth; y++) {
-
-        // The source coordinates of the leftmost pixel in the line.
-        double leftsx = corner_x + y * xdy;
-        double leftsy = corner_y + y * ydy;
-
-        // Min and max x-extent to draw on the current line.
-        double minx = 0;
-        double maxx = dstw - 1;
-
-        // Figure out the x-extent based on xdx.
-        if (xdx) {
-            double x1 = (0.0 - leftsx) / xdx;
-            double x2 = (maxsx - leftsx) / xdx;
-
-            if (x1 < x2) {
-                minx = fmax(x1, minx);
-                maxx = fmin(x2, maxx);
-            } else {
-                minx = fmax(x2, minx);
-                maxx = fmin(x1, maxx);
-            }
-
-        } else {
-            if (leftsx < 0 || leftsx > maxsx) {
-               continue;
-            }
-        }
-
-        // Figure out the x-extent based on ydx.
-        if (ydx) {
-            double x1 = (0.0 - leftsy) / ydx;
-            double x2 = (maxsy - leftsy) / ydx;
-
-            if (x1 < x2) {
-                minx = fmax(x1, minx);
-                maxx = fmin(x2, maxx);
-            } else {
-                minx = fmax(x2, minx);
-                maxx = fmin(x1, maxx);
-            }
-
-        } else {
-            if (leftsy < 0 || leftsy > maxsy) {
-                continue;
-            }
-        }
-
-        minx = ceil(minx);
-        maxx = floor(maxx);
-
-        if (minx >= maxx) {
-            continue;
-        }
-
-        // The start and end of line pointers.
-        unsigned char *d = dstpixels + dstpitch * y;
-        unsigned char *dend = d + 4 * (int) maxx;
-
-        // Advance start of line by 4.
-        d += 4 * (int) minx;
-
-        // Starting coordinates and deltas.
-        sxi = (int) ((leftsx + minx * xdx) * 65536);
-        syi = (int) ((leftsy + minx * ydx) * 65536);
-        dsxi = (int) (xdx * 65536);
-        dsyi = (int) (ydx * 65536);
-
-        // No floating point allowed between here and the end of the
-        // while loop.
-
-        // 0 -> mm7
-        pxor_r2r(mm7, mm7);
-
-        // ashift -> mm0
-        movd_m2r(ashift, mm0);
-
-        // amul -> mm4
-        movd_m2r(amul, mm4);
-
-        while (d <= dend) {
-
-            int px = sxi >> 16;
-            int py = syi >> 16;
-
-            unsigned char *sp = srcpixels + py * srcpitch + px * 4;
-
-            unsigned int yfrac = (syi >> 8) & 0xff; // ((short) sy) & 0xff;
-            unsigned int xfrac = (sxi >> 8) & 0xff; // ((short) sx) & 0xff;
-
-            // Put xfrac in mm5, yfrac in m6
-            pxor_r2r(mm5, mm5);
-            pxor_r2r(mm6, mm6);
-            movd_m2r(xfrac, mm5);
-            movd_m2r(yfrac, mm6);
-            punpcklwd_r2r(mm5, mm5);
-            punpcklwd_r2r(mm6, mm6);
-            punpckldq_r2r(mm5, mm5); /* 0X0X0X0X -> mm5 */
-            punpckldq_r2r(mm6, mm6); /* 0Y0Y0Y0Y -> mm6 */
-
-            // Load in the 4 bytes.
-            movd_m2r(*(unsigned int *) sp, mm1);
-            movd_m2r(*(unsigned int *) (sp + 4), mm2);
-            punpcklbw_r2r(mm7, mm1);
-            punpcklbw_r2r(mm7, mm2);
-
-            // Interpolate between a and b.
-            psubw_r2r(mm1, mm2);
-            pmullw_r2r(mm5, mm2);
-            psrlw_i2r(8, mm2);
-            paddb_r2r(mm2, mm1); /* mm1 contains I(a, b, xfrac); */
-
-            sp += srcpitch;
-            movd_m2r(*(unsigned int *) sp, mm3);
-            movd_m2r(*(unsigned int *) (sp + 4), mm2);
-
-            punpcklbw_r2r(mm7, mm3);
-            punpcklbw_r2r(mm7, mm2);
-
-            // Interpolate between c and d.
-            psubw_r2r(mm3, mm2);
-            pmullw_r2r(mm5, mm2);
-            psrlw_i2r(8, mm2);
-            paddb_r2r(mm2, mm3); /* mm3 contains I(c, d, xfrac); */
-
-            // Interpolate between ab and cd.
-            psubw_r2r(mm1, mm3);
-            pmullw_r2r(mm6, mm3);
-            psrlw_i2r(8, mm3);
-            paddb_r2r(mm3, mm1); /* mm1 contains I(ab, cd, yfrac) */
-
-
-            // Store the result.
-            // packuswb_r2r(mm7, mm1);
-            // movd_r2m(mm1, *(unsigned int *)d);
-
-            // Alpha blend with dest.
-            movq_r2r(mm1, mm3);
-            psrlq_r2r(mm0, mm3); /* 000000AA -> m3 */
-
-            pmullw_r2r(mm4, mm3); // Alpha adjustment.
-            psrlw_i2r(8, mm3);
-
-            punpcklwd_r2r(mm3, mm3); /* 0000AAAA -> m3 */
-            movd_m2r(*(unsigned int *)d, mm2);
-            punpcklwd_r2r(mm3, mm3); /* AAAAAAAA -> m3 */
-            punpcklbw_r2r(mm7, mm2); /* a -> m2 */
-            psubw_r2r(mm2, mm1); /* b - a -> m1 */
-            pmullw_r2r(mm3, mm1);
-            psrlw_i2r(8, mm1); /* alpha * (b-a) -> m1 */
-            paddb_r2r(mm2, mm1); /* a + alpha*(b-a) -> mm1 */
-
-            // Store the result.
-            packuswb_r2r(mm7, mm1);
-            movd_r2m(mm1, *(unsigned int *)d);
-
-            d += 4;
-            sxi += dsxi;
-            syi += dsyi;
-        }
-
-        emms();
-    }
-
-    Py_END_ALLOW_THREADS;
-
-
-    // This is bogus, and only serves to ensure that the FPU
-    // computes these variables at the right times.
-    return sxi + syi + dsxi + dsyi;
-}
-
-#endif
 
 void transform32_core(PyObject *pysrc, PyObject *pydst,
                       float corner_x, float corner_y,
@@ -1443,24 +1404,6 @@ void transform32_core(PyObject *pysrc, PyObject *pydst,
                       int precise
     ) {
 
-#ifdef GCC_MMX
-    static int checked_mmx = 0;
-    static int has_mmx = 0;
-
-
-
-    if (! checked_mmx) {
-        has_mmx = SDL_HasMMX();
-        checked_mmx = 1;
-    }
-
-    if (has_mmx) {
-        transform32_mmx(pysrc, pydst, corner_x, corner_y,
-                        xdx, ydx, xdy, ydy, ashift, a, precise);
-        return;
-    }
-
-#endif
 
     transform32_std(pysrc, pydst, corner_x, corner_y,
                     xdx, ydx, xdy, ydy, ashift, a, precise);
@@ -1526,96 +1469,8 @@ void blend32_core_std(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
 
 }
 
-#ifdef GCC_MMX
-
-void blend32_core_mmx(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
-                      int alpha) {
-
-    SDL_Surface *srca;
-    SDL_Surface *srcb;
-    SDL_Surface *dst;
-
-    int srcapitch, srcbpitch, dstpitch;
-    unsigned short dstw, dsth;
-    unsigned short y;
-
-    unsigned char *srcapixels;
-    unsigned char *srcbpixels;
-    unsigned char *dstpixels;
-
-    srca = PySurface_AsSurface(pysrca);
-    srcb = PySurface_AsSurface(pysrcb);
-    dst = PySurface_AsSurface(pydst);
-
-    Py_BEGIN_ALLOW_THREADS
-
-    srcapixels = (unsigned char *) srca->pixels;
-    srcbpixels = (unsigned char *) srcb->pixels;
-    dstpixels = (unsigned char *) dst->pixels;
-    srcapitch = srca->pitch;
-    srcbpitch = srcb->pitch;
-    dstpitch = dst->pitch;
-    dstw = dst->w;
-    dsth = dst->h;
-
-    /* This code is a slightly modified version of that found in
-     * SDL_blit_A.c */
-
-    pxor_r2r(mm5, mm5); /* 0 -> mm5 */
-    /* form the alpha mult */
-    movd_m2r(alpha, mm4); /* 0000000A -> mm4 */
-    punpcklwd_r2r(mm4, mm4); /* 00000A0A -> mm4 */
-    punpckldq_r2r(mm4, mm4); /* 0A0A0A0A -> mm4 */
-
-    for (y = 0; y < dsth; y++) {
-
-        unsigned int *dp = (unsigned int *)(dstpixels + dstpitch * y);
-        unsigned int *dpe = dp + dstw;
-
-        unsigned int *sap = (unsigned int *)(srcapixels + srcapitch * y);
-        unsigned int *sbp = (unsigned int *)(srcbpixels + srcbpitch * y);
-
-        while (dp < dpe) {
-
-            movd_m2r((*sbp++), mm1);
-            movd_m2r((*sap++), mm2);
-            punpcklbw_r2r(mm5, mm1); /* 0A0R0G0B -> mm1(b) */
-            punpcklbw_r2r(mm5, mm2); /* 0A0R0G0B -> mm2(a) */
-            psubw_r2r(mm2, mm1);/* a - b -> mm1 */
-            pmullw_r2r(mm4, mm1); /* mm1 * alpha -> mm1 */
-            psrlw_i2r(8, mm1); /* mm1 >> 8 -> mm1 */
-            paddb_r2r(mm1, mm2); /* mm1 + mm2(a) -> mm2 */
-            packuswb_r2r(mm5, mm2); /* ARGBARGB -> mm2 */
-            movd_r2m(mm2, *dp++);
-
-
-        }
-    }
-
-    emms();
-    Py_END_ALLOW_THREADS
-}
-
-#endif
-
 void blend32_core(PyObject *pysrca, PyObject *pysrcb, PyObject *pydst,
                   int alpha) {
-
-#ifdef GCC_MMX
-    static int checked_mmx = 0;
-    static int has_mmx = 0;
-
-    if (! checked_mmx) {
-        has_mmx = SDL_HasMMX();
-        checked_mmx = 1;
-    }
-
-    if (has_mmx) {
-        blend32_core_mmx(pysrca, pysrcb, pydst, alpha);
-        return;
-    }
-
-#endif
 
     blend32_core_std(pysrca, pysrcb, pydst, alpha);
 }
@@ -1689,105 +1544,10 @@ void imageblend32_core_std(PyObject *pysrca, PyObject *pysrcb,
     Py_END_ALLOW_THREADS
 }
 
-#ifdef GCC_MMX
-
-void imageblend32_core_mmx(PyObject *pysrca, PyObject *pysrcb,
-                           PyObject *pydst, PyObject *pyimg,
-                           int alpha_off, char *amap) {
-
-    SDL_Surface *srca;
-    SDL_Surface *srcb;
-    SDL_Surface *dst;
-    SDL_Surface *img;
-
-    int srcapitch, srcbpitch, dstpitch, imgpitch;
-    unsigned short dstw, dsth;
-    unsigned short y;
-
-    unsigned char *srcapixels;
-    unsigned char *srcbpixels;
-    unsigned char *dstpixels;
-    unsigned char *imgpixels;
-
-    srca = PySurface_AsSurface(pysrca);
-    srcb = PySurface_AsSurface(pysrcb);
-    dst = PySurface_AsSurface(pydst);
-    img = PySurface_AsSurface(pyimg);
-
-    Py_BEGIN_ALLOW_THREADS
-
-    srcapixels = (unsigned char *) srca->pixels;
-    srcbpixels = (unsigned char *) srcb->pixels;
-    dstpixels = (unsigned char *) dst->pixels;
-    imgpixels = (unsigned char *) img->pixels;
-    srcapitch = srca->pitch;
-    srcbpitch = srcb->pitch;
-    dstpitch = dst->pitch;
-    imgpitch = img->pitch;
-
-    dstw = dst->w;
-    dsth = dst->h;
-
-    pxor_r2r(mm5, mm5); /* 0 -> mm5 */
-
-    for (y = 0; y < dsth; y++) {
-
-        unsigned int *dp = (unsigned int *)(dstpixels + dstpitch * y);
-        unsigned int *dpe = dp + dstw;
-
-        unsigned int *sap = (unsigned int *)(srcapixels + srcapitch * y);
-        unsigned int *sbp = (unsigned int *)(srcbpixels + srcbpitch * y);
-
-        unsigned char *ip = (unsigned char *)(imgpixels + imgpitch * y);
-        ip += alpha_off;
-
-        while (dp < dpe) {
-            unsigned int alpha = (unsigned char) amap[*ip];
-            ip += 4;
-
-            /* form the alpha mult */
-            movd_m2r(alpha, mm4); /* 0000000A -> mm4 */
-            punpcklwd_r2r(mm4, mm4); /* 00000A0A -> mm4 */
-            punpckldq_r2r(mm4, mm4); /* 0A0A0A0A -> mm4 */
-
-            movd_m2r((*sbp++), mm1);
-            movd_m2r((*sap++), mm2);
-            punpcklbw_r2r(mm5, mm1); /* 0A0R0G0B -> mm1(b) */
-            punpcklbw_r2r(mm5, mm2); /* 0A0R0G0B -> mm2(a) */
-            psubw_r2r(mm2, mm1);/* a - b -> mm1 */
-            pmullw_r2r(mm4, mm1); /* mm1 * alpha -> mm1 */
-            psrlw_i2r(8, mm1); /* mm1 >> 8 -> mm1 */
-            paddb_r2r(mm1, mm2); /* mm1 + mm2(a) -> mm2 */
-            packuswb_r2r(mm5, mm2); /* ARGBARGB -> mm2 */
-            movd_r2m(mm2, *dp++);
-        }
-    }
-
-    emms();
-    Py_END_ALLOW_THREADS
-}
-
-#endif
 
 void imageblend32_core(PyObject *pysrca, PyObject *pysrcb,
                        PyObject *pydst, PyObject *pyimg,
                        int aoff, char *amap) {
-
-#ifdef GCC_MMX
-    static int checked_mmx = 0;
-    static int has_mmx = 0;
-
-    if (! checked_mmx) {
-        has_mmx = SDL_HasMMX();
-        checked_mmx = 1;
-    }
-
-    if (has_mmx) {
-        imageblend32_core_mmx(pysrca, pysrcb, pydst, pyimg, aoff, amap);
-        return;
-    }
-
-#endif
 
     imageblend32_core_std(pysrca, pysrcb, pydst, pyimg, aoff, amap);
 }

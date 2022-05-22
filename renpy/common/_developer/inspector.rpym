@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,22 +30,12 @@ screen _inspector:
 
     frame:
         style_group ""
+        right_padding 0
 
-        xmaximum 770
-        xfill True
-
-        xpadding 15
-        ypadding 15
-
-        xalign 0.5
-        yalign 0.25
-
-
-        has vbox
+        has side "t c b":
+            spacing gui._scale(10)
 
         label _("Displayable Inspector")
-
-        null height 10
 
         if not tree:
 
@@ -55,51 +45,51 @@ screen _inspector:
 
             viewport:
                 scrollbars "both"
-                child_size (1200, 0)
-                yfill False
-                xfill False
+                child_size (4000, 0)
+                yfill True
+                xfill True
                 mousewheel True
 
-                has vbox
+                has vbox:
+                    spacing gui._scale(3)
 
                 hbox:
                     text " ":
-                        min_width 350
-                        xmaximum 350
+                        min_width gui._scale(350)
+                        xmaximum gui._scale(350)
 
                     text _("Size"):
-                        min_width 85
+                        min_width gui._scale(90)
                         underline True
 
                     text _("Style"):
-                        min_width 125
+                        min_width gui._scale(225)
                         underline True
 
-                    null width 5
+                    null width gui._scale(5)
 
                     text _("Location"):
                         underline True
-                        min_width 100
 
-                null height 5
+                null height gui._scale(5)
 
                 for depth, width, height, d in tree:
 
-                    $ t = "  " * depth + u"\u2022 " + unicode(d)
+                    $ t = "  " * depth + u"\u2022 " + _inspector_repr(d)
                     $ s = __format_style(d.style.parent)
 
 
                     hbox:
 
                         text "[t!q]":
-                            min_width 350
+                            min_width gui._scale(350)
 
                         text "[width:.0f]x[height:.0f]":
-                            min_width 85
+                            min_width gui._scale(90)
 
                         textbutton "[s!q]":
                             style "_hyperlink_button"
-                            text_min_width 125
+                            text_min_width gui._scale(225)
                             action Show("_style_inspector", d=d)
 
                         null width 5
@@ -109,16 +99,12 @@ screen _inspector:
 
                             textbutton "[l!q]":
                                 style "_hyperlink_button"
-                                text_min_width 100
                                 action _EditFile(d._location[0], d._location[1])
 
+        hbox:
+            textbutton _("Return") action Return(True)
 
-                null height 5
-
-        null height 20
-
-        textbutton _("Return") action Return(True)
-        key "game_menu" action Return(True)
+    key "game_menu" action Return(True)
 
 screen _style_inspector:
     zorder 1020
@@ -126,30 +112,28 @@ screen _style_inspector:
 
     frame:
         style_group ""
+        right_padding 0
 
-        xmaximum 700
-        xfill True
+        has side "t c b":
+            xfill True
+            spacing gui._scale(10)
 
-        xpadding 15
-        ypadding 15
-
-        xalign 0.5
-        yalign 0.25
-
-        has vbox
-
-        $ displayable_name = unicode(d)
+        $ displayable_name = _inspector_repr(d)
         label _("Inspecting Styles of [displayable_name!q]")
 
-        null height 10
+        $ styles = d.style.inspect()
 
         viewport:
-            yfill False
-            xfill False
+            child_size (4000, 0)
+
+            yfill True
+            xfill True
             mousewheel True
 
             vbox:
-                for name, properties in d.style.inspect():
+                for i, j in enumerate(styles):
+
+                    $ name, properties = j
 
                     if name is None:
                         text _("displayable:")
@@ -157,10 +141,9 @@ screen _style_inspector:
                         $ style_name = __format_style(name)
                         text "style [style_name!q]:"
 
-
                     if not properties:
                         text _("        (no properties affect the displayable)")
-                    elif name in [ ("default",), ("_default",) ]:
+                    elif i == (len(styles) - 1):
                         text _("        (default properties omitted)")
                     else:
                         for propname in sorted(properties):
@@ -169,13 +152,9 @@ screen _style_inspector:
 
                     null height 5
 
-
-        # Code goes here.
-
-        null height 20
-
         textbutton _("Return") action Hide("_style_inspector")
-        key "game_menu" action Hide("_style_inspector")
+
+    key "game_menu" action Hide("_style_inspector")
 
 
 init python:
@@ -197,12 +176,12 @@ init python:
 
     def __safe_repr(name):
         try:
-            s = unicode(repr(name))
+            s = str(repr(name))
             if len(s) > 51:
-                s = s[:50] + u"\u2026"
+                s = s[:50] + "\u2026"
 
             return s
-        except:
+        except Exception:
             return _("<repr() failed>")
 
     def __inspect(tree):
@@ -213,3 +192,16 @@ init python:
         renpy.ui.interact(mouse="screen", type="screen", suppress_overlay=True, suppress_underlay=True)
 
     config.inspector = __inspect
+
+    def _inspector_repr(d):
+        if type(d) is renpy.display.screen.ScreenDisplayable:
+            clname = "Screen"
+        elif type(d) is renpy.display.layout.MultiBox:
+            clname = d._classname()
+        else:
+            clname = type(d).__name__
+
+        info = d._repr_info()
+        if info is None:
+            return clname
+        return clname + " " + info

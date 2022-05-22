@@ -1,7 +1,0 @@
-.. Automatically generated file - do not modify.
-
-.. function:: renpy.check_text_tags(s)
-    
-    Checks the text tags in s for correctness. Returns an error string if there is
-    an error, or None if there is no error.
-

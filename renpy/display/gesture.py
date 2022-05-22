@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,11 +19,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import pygame
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
 import math
-import renpy.display
+
+import pygame_sdl2 as pygame
+import renpy
 
 DIRECTIONS = [ "n", "ne", "e", "se", "s", "sw", "w", "nw" ]
+
 
 def dispatch_gesture(gesture):
     """
@@ -131,7 +137,6 @@ class GestureRecognizer(object):
 
             if ev.button == 1:
                 return self.finish()
-
 
 
 recognizer = GestureRecognizer()

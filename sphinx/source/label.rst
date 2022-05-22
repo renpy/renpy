@@ -5,8 +5,8 @@ Label Statement
 ---------------
 
 Label statements allow the given name to be assigned to a program point. They
-exist solely to be called or jumped to, whether by script code or the Ren'Py
-config. ::
+exist solely to be called or jumped to, either from Ren'Py script, Python
+functions, or from screens. ::
 
     label sample1:
         "Here is 'sample1' label."
@@ -19,11 +19,37 @@ A label statement may have a block associated with it. In that case, control
 enters the block whenever the label statement is reached, and proceeds with the
 statement after the label statement whenever the end of the block is reached.
 
+There are two kinds of labels: *global* and *local* labels. Global labels live
+in one global scope shared across all project files and thus should have unique
+names per game. Local labels logically reside inside the scope of the global label
+they are declared in. To declare a local label, prefix its name with a period ``.``.
+For example::
+
+    label global_label:
+        "Inside a global label.."
+    label .local_name:
+        "..resides a local one."
+        jump .local_name
+
+Local labels can be referenced directly inside the same global label they are
+declared in or by their full name, consisting of global and local name parts: ::
+
+    label another_global:
+        "Now lets jump inside local label located somewhere else."
+        jump global_label.local_name
+
 The label statement may take an optional list of parameters. These parameters
-are processed as described in PEP 3102, with two exceptions:
+are processed as described in :pep:`570`, with two exceptions:
 
 * The values of default parameters are evaluated at call time.
 * The variables are dynamically, rather than lexically, scoped.
+
+When a variable is dynamically scoped, its value lasts until a return
+statement following the label. It doesn't generally make sense to
+have a label with parameters that is reached by a jump or a previous
+statement. For an example of labels with parameters, see the
+:ref:`call statement <call-statement>`.
+
 
 .. _jump-statement:
 
@@ -60,30 +86,33 @@ string so computed is used as the name of the label to call. If the
 ``expression`` keyword is not present, the name of the statement to call must be
 explicitly given.
 
-If the optional from clause is present, it has the effect of including a label
+If the optional ``from`` clause is present, it has the effect of including a label
 statement with the given name as the statement immediately following the call
 statement. An explicit label helps to ensure that saved games with return
 stacks can return to the proper place when loaded on a changed script. ::
 
-    e "First, we will call a subroutine."
+    label start:
 
-    call subroutine
+        e "First, we will call a subroutine."
 
-    call subroutine(2)
+        call subroutine
 
-    call expression "subroutine" pass (count=3)
+        call subroutine(2)
+
+        call expression "sub" + "routine" pass (count=3)
+
+        return
 
     # ...
 
     label subroutine(count=1):
 
-        e "I camed here [count] time(s)."
+        e "I came here [count] time(s)."
         e "Next, we will return from the subroutine."
 
         return
 
-The call statement may take arguments, which are processed as described in PEP
-3102.
+The call statement may take arguments, which are processed as described in :pep:`448`.
 
 When using a call expression with an arguments list, the ``pass`` keyword must
 be inserted between the expression and the arguments list. Otherwise, the
@@ -95,12 +124,12 @@ call.
 Return Statement
 ----------------
 
-The return statement pops the top statement off of the call stack, and transfers
+The ``return`` statement pops the top statement off of the call stack, and transfers
 control to it. If the call stack is empty, the return statement restarts
 Ren'Py, returning control to the main menu.
 
 If the optional expression is given to return, it is evaluated, and it's result
-is stored in the _return variable. This variable is dynamically scoped to each
+is stored in the ``_return`` variable. This variable is dynamically scoped to each
 context.
 
 Special Labels
@@ -117,11 +146,14 @@ The following labels are used by Ren'Py:
 
 ``after_load``
     If it exists, this label is called when a game is loaded. It can be
-    use to fix data when the game is updated.
+    use to fix data when the game is updated. If data is changed by this
+    label, :func:`renpy.block_rollback` should be called to prevent those
+    changes from being reverted inf the player rolls back past the load
+    point.
 
 ``splashscreen``
     If it exists, this label is called when the game is first run, before
-    showing the main menu.
+    showing the main menu. Please see :ref:`Adding a Splashscreen <adding-a-splashscreen>`.
 
 ``before_main_menu``
     If it exists, this label is called before the main menu. It is used in
@@ -131,7 +163,7 @@ The following labels are used by Ren'Py:
 ``main_menu``
     If it exists, this label is called instead of the main menu. If it returns,
     Ren'Py will start the game at the ``start`` label. For example, the
-    following code will immediately start the game without displaying the
+    following will immediately start the game without displaying the
     main menu. ::
 
         label main_menu:
@@ -139,7 +171,13 @@ The following labels are used by Ren'Py:
 
 ``after_warp``
     If it is existed, this label is called after a warp but before the warped-to
-    statement executes. please see :ref:`Warping to a line <warping_to_a_line>`
+    statement executes. Please see :ref:`Warping to a line <warping_to_a_line>`.
+
+``hide_windows``
+    If it exists, this label is called when the player hides the windows with
+    the right mouse button or the H key. If this returns true, the hide is
+    cancelled (it's assumed the hide has occurred). Otherwise, the hide
+    continues.
 
 Labels & Control Flow Functions
 -------------------------------

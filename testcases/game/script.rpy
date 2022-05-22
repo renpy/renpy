@@ -21,6 +21,7 @@ init python:
 
     renpy.arguments.register_command("auto", auto_command)
 
+    JAPANESE = "../../sdk-fonts/SourceHanSansLite.ttf"
 
 image eileen happy = "eileen_happy.png"
 image eileen vhappy = "eileen_vhappy.png"
@@ -89,8 +90,8 @@ screen vtext_test:
 
     text "「可愛いね〜」と、彼女は言った。":
         vertical True
-        font "../../tutorial/game/tl/japanese/MTLc3m.ttf"
-        xpos 400 ypos 200
+        font JAPANESE
+        xpos 400 ypos 100
         xanchor 0.5
         yanchor 0.0
 
@@ -106,7 +107,7 @@ screen text1:
             color "#000"
 
         text "Testing font and size.":
-            font "../../tutorial/game/tl/japanese/MTLc3m.ttf"
+            font JAPANESE
             size 30
 
         text "Testing drop_shadow.":
@@ -114,7 +115,7 @@ screen text1:
             drop_shadow_color "#000"
 
         text "Testing outlines.":
-           outlines [ (2, "#000", 0, 0) ]
+            outlines [ (2, "#000", 0, 0) ]
 
         text "Testing changing the kerning value, with AA turned off.":
             kerning 2
@@ -140,7 +141,7 @@ screen text1:
             text_align 0.5
 
         text "ビジュアルノベル、ヴィジュアルノベル（visual novel）とは、コンピュータゲームの一ジャンルである。ビジュアルノベルそれ自体もアドベンチャーゲームの一種に分類される。ノベルゲームやサウンドノベルと呼ばれることもある。":
-            font "../../tutorial/game/tl/japanese/MTLc3m.ttf"
+            font JAPANESE
 
         text "Min-width & Text_align":
             min_width 400
@@ -152,6 +153,9 @@ screen text1:
 label text:
 
     # Text tag tests.
+    "{alpha=0.1}This text is barely readable!{/alpha}"
+    "{alpha=-0.1}This text is 10%% more transparent than the default.{/alpha}"
+    "{alpha=*0.5}This text is half as opaque as the default.{/alpha}"
 
     show screen text1
     "..."
@@ -175,7 +179,7 @@ label text:
 
     "Testing size {size=18}absolute{/size}, {size=-6}smaller{/size}, {size=+6}bigger{/size}."
 
-    "Testing an {font=../../tutorial/game/tl/japanese/MTLc3m.ttf}alternate font{/font}."
+    "Testing an {font=[JAPANESE]}alternate font{/font}."
 
     "Testing a {=red}custom text tag{/=red}."
 

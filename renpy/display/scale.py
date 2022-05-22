@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,8 +22,13 @@
 # This used to hack pygame to support resolution-scaling. Now it just kinda
 # sits here, to provide compatibility with what it used to be.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+
 import pygame_sdl2 as pygame
-import renpy.display
+import renpy
 import renpy.display.pgrender as pgrender
 
 import _renpy
@@ -32,12 +37,17 @@ import _renpy
 # The scaling API that's used if we don't enable scaling.
 
 # Gets the real pygame surface.
+
+
 def real(s):
     return s
 
 # Scales the number, n.
+
+
 def scale(n):
     return n
+
 
 def real_bilinear(src, size):
     rv = pgrender.surface_unscaled(size, src)
@@ -45,24 +55,34 @@ def real_bilinear(src, size):
     return rv
 
 # Does pygame.transform.scale.
+
+
 def real_transform_scale(surf, size):
     return pgrender.transform_scale_unscaled(surf, size)
 
 # Loads an image, without scaling it.
+
+
 def image_load_unscaled(f, hint, convert=True):
     rv = pgrender.load_image_unscaled(f, hint)
     return rv
 
 # Saves an image without rescaling.
+
+
 def image_save_unscaled(surf, filename):
-    pygame.image.save(surf, renpy.exports.fsencode(filename))
+    pygame.image.save(surf, filename)  # pygame_sdl2 does the filename encoding.
 
 # Scales down a surface.
+
+
 def surface_scale(full):
     return full
 
+
 real_renpy_pixellate = _renpy.pixellate
 real_renpy_transform = _renpy.transform
+
 
 def real_smoothscale(src, size, dest=None):
     """
@@ -85,11 +105,11 @@ def real_smoothscale(src, size, dest=None):
 
     while iwidth >= width * 2:
         xshrink *= 2
-        iwidth /= 2
+        iwidth //= 2
 
     while iheight >= height * 2:
         yshrink *= 2
-        iheight /= 2
+        iheight //= 2
 
     if iwidth != srcwidth or iheight != srcheight:
         inter = pgrender.surface_unscaled((iwidth, iheight), src)
@@ -105,5 +125,5 @@ def real_smoothscale(src, size, dest=None):
 
     return dest
 
-smoothscale = real_smoothscale
 
+smoothscale = real_smoothscale

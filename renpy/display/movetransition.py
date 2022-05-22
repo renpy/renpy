@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,7 +24,12 @@
 # are None, at least to the point of making it through __init__. This is
 # so that prediction of images works.
 
-import renpy.display
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+
+import renpy
 
 # Utility function used by MoveTransition et al.
 def position(d):
@@ -41,6 +46,7 @@ def position(d):
         yanchor = 0
 
     return xpos, ypos, xanchor, yanchor
+
 
 def offsets(d):
 
@@ -59,13 +65,17 @@ def MoveFactory(pos1, pos2, delay, d, **kwargs):
 
     return renpy.display.motion.Move(pos1, pos2, delay, d, **kwargs)
 
+
 def default_enter_factory(pos, delay, d, **kwargs):
     return d
+
 
 def default_leave_factory(pos, delay, d, **kwargs):
     return None
 
 # These can be used to move things in and out of the screen.
+
+
 def MoveIn(pos, pos1, delay, d, **kwargs):
 
     def aorb(a, b):
@@ -76,6 +86,7 @@ def MoveIn(pos, pos1, delay, d, **kwargs):
     pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
     return renpy.display.motion.Move(pos, pos1, delay, d, **kwargs)
 
+
 def MoveOut(pos, pos1, delay, d, **kwargs):
 
     def aorb(a, b):
@@ -85,6 +96,7 @@ def MoveOut(pos, pos1, delay, d, **kwargs):
 
     pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
     return renpy.display.motion.Move(pos1, pos, delay, d, **kwargs)
+
 
 def ZoomInOut(start, end, pos, delay, d, **kwargs):
 
@@ -98,6 +110,7 @@ def ZoomInOut(start, end, pos, delay, d, **kwargs):
     else:
         return FactorZoom(start, end, delay, d, opaque=False,
                           xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor, **kwargs)
+
 
 def RevolveInOut(start, end, pos, delay, d, **kwargs):
     return renpy.display.motion.Revolve(start, end, delay, d, pos=pos, **kwargs)
@@ -166,7 +179,7 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
         # a move occured.
 
         if (not isinstance(new, renpy.display.layout.MultiBox)
-            or (new.layers is None and new.layer_name is None)):
+                or (new.layers is None and new.layer_name is None)):
 
             if use_old:
                 child = old
@@ -200,7 +213,7 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
 
                 if (isinstance(f, renpy.display.layout.MultiBox)
                     and layer in layers
-                    and f.scene_list is not None):
+                        and f.scene_list is not None):
 
                     f = merge_slide(old.layers[layer], new.layers[layer])
 
@@ -245,7 +258,6 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
             move = renpy.display.layout.IgnoresEvents(move)
             rv_sl.append(merge(old_sle, move))
 
-
         def moving(old_sle, new_sle):
             old_d = wrap(old_sle)
             new_d = wrap(new_sle)
@@ -261,12 +273,10 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
 
             rv_sl.append(merge(new_sle, move))
 
-
         # The old, new, and merged scene_lists.
         old_sl = old.scene_list[:]
         new_sl = new.scene_list[:]
         rv_sl = [ ]
-
 
         # A list of tags in old_sl, new_sl, and rv_sl.
         old_map = dict((tag(i), i) for i in old_sl if i is not None)
@@ -293,7 +303,6 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
                     rv_tags.add(old_tag)
                     old_sl.pop(0)
                     continue
-
 
             # Otherwise, we must have something in new_sl. We want to
             # either move it or have it enter.
@@ -325,7 +334,6 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
 
         return rv
 
-
     # This calls merge_slide to actually do the merging.
 
     rv = merge_slide(old_widget, new_widget)
@@ -351,7 +359,7 @@ class MoveInterpolate(renpy.display.core.Displayable):
         self.new = new
 
         # Should we display the old displayable?
-        self.use_old = False
+        self.use_old = use_old
 
         # Time warp function or None.
         self.time_warp = time_warp
@@ -411,10 +419,10 @@ class MoveInterpolate(renpy.display.core.Displayable):
 
     def get_placement(self):
 
-        if self.st > self.delay:
+        if self.st > self.delay: # type: ignore
             done = 1.0
         else:
-            done = self.st / self.delay
+            done = self.st / self.delay # type: ignore
 
         if self.time_warp is not None:
             done = self.time_warp(done)
@@ -481,20 +489,23 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
     use_old = old
 
-    def merge_slide(old, new):
+    def merge_slide(old, new, merge_slide):
+
+        # This function takes itself as an argument to prevent a reference
+        # loop that occurs when it refers to itself in the it's parent's
+        # scope.
 
         # If new does not have .layers or .scene_list, then we simply
         # insert a move from the old position to the new position, if
         # a move occured.
 
         if (not isinstance(new, renpy.display.layout.MultiBox)
-            or (new.layers is None and new.layer_name is None)):
+                or (new.layers is None and new.layer_name is None)):
 
             if old is new:
                 return new
             else:
                 return MoveInterpolate(delay, old, new, use_old, time_warp)
-
 
         # If we're in the layers_root widget, merge the child widgets
         # for each layer.
@@ -502,17 +513,31 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
             rv = renpy.display.layout.MultiBox(layout='fixed')
 
+            rv.raw_layers = { }
+            rv.layers = { }
+
             for layer in renpy.config.layers:
 
                 f = new.layers[layer]
+                d = new.raw_layers[layer]
 
-                if (isinstance(f, renpy.display.layout.MultiBox)
+                if (isinstance(d, renpy.display.layout.MultiBox)
                     and layer in layers
-                    and f.scene_list is not None):
+                    and d.scene_list is not None):
 
-                    f = merge_slide(old.layers[layer], new.layers[layer])
+                    d = merge_slide(old.raw_layers[layer], new.raw_layers[layer], merge_slide)
 
-                rv.add(f)
+                    adjust = renpy.display.layout.AdjustTimes(d, None, None)
+                    f = renpy.game.context().scene_lists.transform_layer(layer, adjust)
+
+                    if f is adjust:
+                        f = d
+                    else:
+                        f = renpy.display.layout.MatchTimes(f, adjust)
+
+                rv.raw_layers[layer] = d
+                rv.layers[layer] = f
+                rv.add(f, True, True)
 
             return rv
 
@@ -552,7 +577,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
             move = renpy.display.layout.IgnoresEvents(move)
             rv_sl.append(merge(old_sle, move))
 
-
         def moving(old_sle, new_sle):
 
             if old_sle.displayable is new_sle.displayable:
@@ -565,7 +589,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
             move = MoveInterpolate(delay, old_d, new_d, use_old, time_warp)
 
             rv_sl.append(merge(new_sle, move))
-
 
         # The old, new, and merged scene_lists.
         old_sl = old.scene_list[:]
@@ -598,7 +621,6 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
                     old_sl.pop(0)
                     continue
 
-
             # Otherwise, we must have something in new_sl. We want to
             # either move it or have it enter.
 
@@ -629,8 +651,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
         return rv
 
     # Call merge_slide to actually do the merging.
-    rv = merge_slide(old_widget, new_widget)
+    rv = merge_slide(old_widget, new_widget, merge_slide)
     rv.delay = delay
 
     return rv
-

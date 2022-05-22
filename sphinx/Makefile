@@ -39,27 +39,18 @@ help:
 
 clean:
 	-rm -rf $(BUILDDIR)/*
-	-rm -rf source/credits.rst
 
-credits.rst:
-	@cat source/credit_items/header.txt source/credit_items/authors.txt > source/credits.rst
-	@if test -e "locale/credits/$(LANGUAGE).po" ; then \
-		cat source/credit_items/translators.txt >> source/credits.rst ; \
-		python source/fill-translator-credits.py ; \
-	fi
-	@cat source/credit_items/footer.txt >> source/credits.rst
-
-html: credits.rst
+html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
-dirhtml: credits.rst
+dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/dirhtml."
 
-singlehtml: credits.rst
+singlehtml:
 	$(SPHINXBUILD) -b singlehtml $(ALLSPHINXOPTS) $(BUILDDIR)/singlehtml
 	@echo
 	@echo "Build finished. The HTML page is in $(BUILDDIR)/singlehtml."
@@ -69,18 +60,18 @@ pickle: credits.rst
 	@echo
 	@echo "Build finished; now you can process the pickle files."
 
-json: credits.rst
+json:
 	$(SPHINXBUILD) -b json $(ALLSPHINXOPTS) $(BUILDDIR)/json
 	@echo
 	@echo "Build finished; now you can process the JSON files."
 
-htmlhelp: credits.rst
+htmlhelp:
 	$(SPHINXBUILD) -b htmlhelp $(ALLSPHINXOPTS) $(BUILDDIR)/htmlhelp
 	@echo
 	@echo "Build finished; now you can run HTML Help Workshop with the" \
 	      ".hhp project file in $(BUILDDIR)/htmlhelp."
 
-qthelp: credits.rst
+qthelp:
 	$(SPHINXBUILD) -b qthelp $(ALLSPHINXOPTS) $(BUILDDIR)/qthelp
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
@@ -89,7 +80,7 @@ qthelp: credits.rst
 	@echo "To view the help file:"
 	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/TheRenPyVisualNovelEngine.qhc"
 
-devhelp: credits.rst
+devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
@@ -98,30 +89,30 @@ devhelp: credits.rst
 	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/TheRenPyVisualNovelEngine"
 	@echo "# devhelp"
 
-epub: credits.rst
+epub:
 	$(SPHINXBUILD) -b epub $(ALLSPHINXOPTS) $(BUILDDIR)/epub
 	@echo
 	@echo "Build finished. The epub file is in $(BUILDDIR)/epub."
 
-latex: credits.rst
+latex:
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
 	@echo
 	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
 	@echo "Run \`make' in that directory to run these through (pdf)latex" \
 	      "(use \`make latexpdf' here to do that automatically)."
 
-latexpdf: credits.rst
+latexpdf:
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
 	@echo "Running LaTeX files through pdflatex..."
 	make -C $(BUILDDIR)/latex all-pdf
 	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
 
-text: credits.rst
+text:
 	$(SPHINXBUILD) -b text $(ALLSPHINXOPTS) $(BUILDDIR)/text
 	@echo
 	@echo "Build finished. The text files are in $(BUILDDIR)/text."
 
-man: credits.rst
+man:
 	$(SPHINXBUILD) -b man $(ALLSPHINXOPTS) $(BUILDDIR)/man
 	@echo
 	@echo "Build finished. The manual pages are in $(BUILDDIR)/man."
@@ -134,11 +125,6 @@ compile-po:
 	done;
 
 gettext:
-	@cat source/credit_items/header.txt \
-	     source/credit_items/authors.txt \
-	     source/credit_items/translators.txt \
-	     source/credit_items/footer.txt \
-	         > source/credits.rst
 	$(SPHINXBUILD) -b gettext -t gettext $(I18NSPHINXOPTS) $(BUILDDIR)/locale
 	@ls $(BUILDDIR)/locale
 	@for p in `find $(BUILDDIR)/locale -name *.pot`; do \
@@ -151,23 +137,19 @@ gettext:
 	@echo
 	@echo "Build finished. The message catalogs are in locale."
 
-changes: credits.rst
+changes:
 	$(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes
 	@echo
 	@echo "The overview file is in $(BUILDDIR)/changes."
 
-linkcheck: credits.rst
+linkcheck:
 	$(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck
 	@echo
 	@echo "Link check complete; look for any errors in the above output " \
 	      "or in $(BUILDDIR)/linkcheck/output.txt."
 
-doctest: credits.rst
+doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
 
-upload:
-	rsync -a build/html tom@onegeek.org:/home/tom/WWW.renpyorg/doc
-	rsync -a build/latex tom@onegeek.org:/home/tom/WWW.renpyorg/doc
-	

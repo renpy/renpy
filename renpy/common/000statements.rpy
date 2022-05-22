@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,9 +21,35 @@
 
 # This file contains code that creates a few new statements.
 
+init -1200 python in audio:
+    pass
+
+init -1200 python:
+
+    config.default_sound_loop = None
+
+    def _audio_eval(expr):
+        return eval(expr, locals=store.audio.__dict__)
+
+    def _try_eval(e, what):
+        try:
+            return _audio_eval(e)
+        except Exception:
+            renpy.error('unable to evaluate %s %r' % (what, e))
+
 python early hide:
 
-    # Music play - The example of a full statement.
+    def warp_audio(p):
+        """
+        Determines if we should play this statement while warping.
+        """
+
+        if p.get("channel", None) is not None:
+            channel = eval(p["channel"])
+        else:
+            channel = "music"
+
+        return renpy.music.is_music(channel)
 
     def parse_play_music(l):
 
@@ -36,11 +62,9 @@ python early hide:
         channel = None
         loop = None
         if_changed = False
+        volume = "1.0"
 
-        while True:
-
-            if l.eol():
-                break
+        while not l.eol():
 
             if l.keyword('fadeout'):
                 fadeout = l.simple_expression()
@@ -75,14 +99,19 @@ python early hide:
                 if_changed = True
                 continue
 
-            renpy.error('could not parse statement.')
+            if l.keyword('volume'):
+                volume = l.simple_expression()
+                continue
+
+            renpy.error('expected end of line')
 
         return dict(file=file,
                     fadeout=fadeout,
                     fadein=fadein,
                     channel=channel,
                     loop=loop,
-                    if_changed=if_changed)
+                    if_changed=if_changed,
+                    volume=volume)
 
     def execute_play_music(p):
 
@@ -91,14 +120,22 @@ python early hide:
         else:
             channel = "music"
 
-        renpy.music.play(eval(p["file"]),
+        renpy.music.play(_audio_eval(p["file"]),
                          fadeout=eval(p["fadeout"]),
                          fadein=eval(p["fadein"]),
                          channel=channel,
                          loop=p.get("loop", None),
-                         if_changed=p.get("if_changed", False))
+                         if_changed=p.get("if_changed", False),
+                         relative_volume=eval(p.get("volume", "1.0")))
 
     def predict_play_music(p):
+        if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
+            fn = _audio_eval(p["file"])
+            try:
+                with renpy.loader.load(fn) as f:
+                    pass
+            except renpy.webloader.DownloadNeeded as exception:
+                renpy.webloader.enqueue(exception.relpath, 'music', None)
         return [ ]
 
     def lint_play_music(p, channel="music"):
@@ -116,14 +153,15 @@ python early hide:
                 try:
                     if not renpy.music.playable(fn, channel):
                         renpy.error("%r is not loadable" % fn)
-                except:
+                except Exception:
                     pass
 
     renpy.register_statement('play music',
                               parse=parse_play_music,
                               execute=execute_play_music,
                               predict=predict_play_music,
-                              lint=lint_play_music)
+                              lint=lint_play_music,
+                              warp=warp_audio)
 
     # From here on, we'll steal bits of other statements when defining other
     # statements.
@@ -136,6 +174,8 @@ python early hide:
 
         channel = None
         loop = None
+        volume = "1.0"
+        fadein = "0"
 
         while not l.eol():
 
@@ -143,6 +183,8 @@ python early hide:
                 channel = l.simple_expression()
                 if channel is None:
                     renpy.error('expected simple expression')
+
+                continue
 
             if l.keyword('loop'):
                 loop = True
@@ -152,9 +194,20 @@ python early hide:
                 loop = False
                 continue
 
+            if l.keyword('volume'):
+                volume = l.simple_expression()
+                continue
+
+            if l.keyword('fadein'):
+                fadein = l.simple_expression()
+                if fadein is None:
+                    renpy.error('expected simple expression')
+
+                continue
+
             renpy.error('expected end of line')
 
-        return dict(file=file, channel=channel, loop=loop)
+        return dict(file=file, channel=channel, loop=loop, volume=volume, fadein=fadein)
 
     def execute_queue_music(p):
         if p["channel"] is not None:
@@ -163,34 +216,41 @@ python early hide:
             channel = "music"
 
         renpy.music.queue(
-            eval(p["file"]),
+            _audio_eval(p["file"]),
             channel=channel,
-            loop=p.get("loop", None))
+            loop=p.get("loop", None),
+            relative_volume=eval(p.get("volume", "1.0")),
+            fadein=eval(p.get("fadein", "0")),
+            )
 
 
     renpy.register_statement('queue music',
                               parse=parse_queue_music,
                               execute=execute_queue_music,
-                              lint=lint_play_music)
+                              lint=lint_play_music,
+                              warp=warp_audio)
 
     def parse_stop_music(l):
+        channel = None
         fadeout = "None"
 
-        if l.keyword("fadeout"):
-            fadeout = l.simple_expression()
+        while not l.eol():
 
-        channel = None
+            if l.keyword("fadeout"):
+                fadeout = l.simple_expression()
+                if fadeout is None:
+                    renpy.error('expected simple expression')
 
-        if l.keyword('channel'):
-            channel = l.simple_expression()
-            if channel is None:
-                renpy.error('expected simple expression')
+                continue
 
-        if not l.eol():
+            if l.keyword('channel'):
+                channel = l.simple_expression()
+                if channel is None:
+                    renpy.error('expected simple expression')
+
+                continue
+
             renpy.error('expected end of line')
-
-        if fadeout is None:
-            renpy.error('expected simple expression')
 
         return dict(fadeout=fadeout, channel=channel)
 
@@ -204,11 +264,24 @@ python early hide:
 
     renpy.register_statement('stop music',
                               parse=parse_stop_music,
-                              execute=execute_stop_music)
+                              execute=execute_stop_music,
+                              warp=warp_audio)
 
 
     # Sound statements. They share alot with the equivalent music
     # statements.
+
+    def warp_sound(p):
+        """
+        Determines if we should play this statement while warping.
+        """
+
+        if p.get("channel", None) is not None:
+            channel = eval(p["channel"])
+        else:
+            channel = "sound"
+
+        return renpy.music.is_music(channel)
 
     def execute_play_sound(p):
 
@@ -221,11 +294,15 @@ python early hide:
 
         loop = p.get("loop", False)
 
-        renpy.sound.play(eval(p["file"]),
+        if loop is None:
+            loop = config.default_sound_loop
+
+        renpy.sound.play(_audio_eval(p["file"]),
                          fadeout=fadeout,
                          fadein=eval(p["fadein"]),
                          loop=loop,
-                         channel=channel)
+                         channel=channel,
+                         relative_volume=eval(p.get("volume", "1.0")))
 
     def lint_play_sound(p, lint_play_music=lint_play_music):
         return lint_play_music(p, channel="sound")
@@ -233,7 +310,8 @@ python early hide:
     renpy.register_statement('play sound',
                               parse=parse_play_music,
                               execute=execute_play_sound,
-                              lint=lint_play_sound)
+                              lint=lint_play_sound,
+                              warp=warp_sound)
 
     def execute_queue_sound(p):
         if p["channel"] is not None:
@@ -243,13 +321,17 @@ python early hide:
 
         loop = p.get("loop", False)
 
-        renpy.sound.queue(eval(p["file"]), channel=channel, loop=loop)
+        if loop is None:
+            loop = config.default_sound_loop
+
+        renpy.sound.queue(_audio_eval(p["file"]), channel=channel, loop=loop, relative_volume=eval(p.get("volume", "1.0")))
 
 
     renpy.register_statement('queue sound',
                               parse=parse_queue_music,
                               execute=execute_queue_sound,
-                              lint=lint_play_sound)
+                              lint=lint_play_sound,
+                              warp=warp_sound)
 
     def execute_stop_sound(p):
         if p["channel"] is not None:
@@ -263,7 +345,8 @@ python early hide:
 
     renpy.register_statement('stop sound',
                               parse=parse_stop_music,
-                              execute=execute_stop_sound)
+                              execute=execute_stop_sound,
+                              warp=warp_sound)
 
 
     # Generic play/queue/stop statements. These take a channel name as
@@ -323,22 +406,28 @@ python early hide:
                               parse=parse_play_generic,
                               execute=execute_play_music,
                               predict=predict_play_music,
-                              lint=lint_play_generic)
+                              lint=lint_play_generic,
+                              warp=warp_audio)
 
     renpy.register_statement('queue',
                               parse=parse_queue_generic,
                               execute=execute_queue_music,
-                              lint=lint_play_generic)
+                              lint=lint_play_generic,
+                              warp=warp_audio)
 
     renpy.register_statement('stop',
                               parse=parse_stop_generic,
                               execute=execute_stop_music,
-                              lint=lint_stop_generic)
+                              lint=lint_stop_generic,
+                              warp=warp_audio)
 
 
 
     ##########################################################################
     # Pause statement.
+
+    # Should the pause statement use the pause Transition?
+    config.pause_with_transition = False
 
     def parse_pause(l):
 
@@ -358,24 +447,18 @@ python early hide:
 
         if p["delay"]:
             delay = eval(p["delay"])
-            renpy.with_statement(Pause(delay))
+            if config.pause_with_transition:
+                renpy.with_statement(Pause(delay))
+            else:
+                renpy.pause(delay)
         else:
             renpy.pause()
-
 
     renpy.register_statement('pause',
                               parse=parse_pause,
                               lint=lint_pause,
                               execute=execute_pause)
 
-
-init -1200 python:
-
-    def _try_eval(e, what):
-        try:
-            return eval(e)
-        except:
-            renpy.error('unable to evaluate %s %r' % (what, e))
 
 ##############################################################################
 # Screen-related statements.
@@ -385,29 +468,82 @@ python early hide:
     # Should we predict screens?
     config.predict_screen_statements = True
 
-    def parse_show_call_screen(l):
+    def _get_screen_name(p):
+        """
+        Returns screen name from the parsed data, evals it
+        if it's an expression
+        """
+        name = p["name"]
+        if p.get("expression", False):
+            return eval(name)
 
-        # Parse a name.
-        name = l.require(l.name)
+        return name
+
+    def _parse_screen_name(l):
+        """
+        Parses screen name from the lexer, returns tuple of 2 items
+
+        OUT:
+            tuple:
+                (name, is_expression)
+        """
+        # Check if this screen name is an expression
+        if l.keyword("expression"):
+            is_expression = True
+            name = l.require(l.simple_expression)
+
+        # Otherwise just parse a name
+        else:
+            is_expression = False
+            name = l.require(l.name)
+
+        return (name, is_expression)
+
+    def warp_true(p):
+        return True
+
+    def parse_show_call_screen(l):
+        # Parse a name
+        name, expression = _parse_screen_name(l)
+
+        # Add pass between name and arguments if the name is an expression
+        # so it works akin to "call expression 'label_name' pass (count=1)"
+        if expression:
+            l.keyword('pass')
 
         # Parse the list of arguments.
         arguments = renpy.parser.parse_arguments(l)
 
-        if l.keyword('nopredict'):
-            predict = False
-        else:
-            predict = True
+        predict = True
+        transition_expr = None
+
+        while True:
+
+            if l.keyword('nopredict'):
+                predict = False
+
+            elif l.keyword('with'):
+                transition_expr = l.require(l.simple_expression)
+
+            else:
+                break
 
         l.expect_eol()
 
-        return dict(name=name, arguments=arguments, predict=predict)
+        return dict(name=name, arguments=arguments, predict=predict, transition_expr=transition_expr, expression=expression)
 
     def parse_hide_screen(l):
-        name = l.require(l.name)
+        # Parse a name
+        name, expression = _parse_screen_name(l)
+
+        transition_expr = None
+
+        if l.keyword('with'):
+            transition_expr = l.require(l.simple_expression)
 
         l.expect_eol()
 
-        return dict(name=name)
+        return dict(name=name, transition_expr=transition_expr, expression=expression)
 
     def predict_screen(p):
 
@@ -419,7 +555,11 @@ python early hide:
         if not predict:
             return
 
-        name = p["name"]
+        try:
+            name = _get_screen_name(p)
+        except Exception:
+            return
+
         a = p["arguments"]
 
         if a is not None:
@@ -432,7 +572,7 @@ python early hide:
 
     def execute_show_screen(p):
 
-        name = p["name"]
+        name = _get_screen_name(p)
         a = p["arguments"]
 
         if a is not None:
@@ -441,12 +581,24 @@ python early hide:
             args = [ ]
             kwargs = { }
 
+        transition_expr = p.get("transition_expr", None)
+        if transition_expr is not None:
+            renpy.with_statement(None)
+
         renpy.show_screen(name, *args, **kwargs)
+
+        if transition_expr is not None:
+            renpy.with_statement(eval(transition_expr))
 
     def execute_call_screen(p):
 
-        name = p["name"]
+        name = _get_screen_name(p)
         a = p["arguments"]
+
+        transition_expr = p.get("transition_expr", None)
+
+        if transition_expr is not None:
+            renpy.transition(eval(transition_expr))
 
         if a is not None:
             args, kwargs = a.evaluate()
@@ -457,10 +609,23 @@ python early hide:
         store._return = renpy.call_screen(name, *args, **kwargs)
 
     def execute_hide_screen(p):
-        name = p["name"]
+        name = _get_screen_name(p)
+
+        transition_expr = p.get("transition_expr", None)
+        if transition_expr is not None:
+            renpy.with_statement(None)
+
         renpy.hide_screen(name)
 
+        if transition_expr is not None:
+            renpy.with_statement(eval(transition_expr))
+
+
     def lint_screen(p):
+        # Don't lint if it's an expression
+        if p.get("expression", False):
+            return
+
         name = p["name"]
         if not renpy.has_screen(name):
             renpy.error("Screen %s does not exist." % name)
@@ -470,14 +635,17 @@ python early hide:
                               parse=parse_show_call_screen,
                               execute=execute_show_screen,
                               predict=predict_screen,
-                              lint=lint_screen)
+                              lint=lint_screen,
+                              warp=warp_true)
 
     renpy.register_statement("call screen",
                               parse=parse_show_call_screen,
                               execute=execute_call_screen,
                               predict=predict_screen,
-                              lint=lint_screen)
+                              lint=lint_screen,
+                              force_begin_rollback=True)
 
     renpy.register_statement("hide screen",
                               parse=parse_hide_screen,
-                              execute=execute_hide_screen)
+                              execute=execute_hide_screen,
+                              warp=warp_true)

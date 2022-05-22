@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,16 +21,20 @@
 
 # This file handles imagemap caching.
 
-import pygame_sdl2 as pygame
-import renpy.display
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from renpy.display.render import render
 
 import hashlib
-import os
+
+import pygame_sdl2 as pygame
+import renpy
+from renpy.display.render import render
+
 
 # A list of cache images we've already written.
 cached = set()
+
 
 class ImageMapCrop(renpy.display.core.Displayable):
     """
@@ -71,6 +75,7 @@ class ImageCacheCrop(renpy.display.core.Displayable):
     def render(self, width, height, st, at):
         return self.cache.render(self.index, width, height, st, at)
 
+
 class ImageMapCache(renpy.object.Object):
 
     def __init__(self, enable):
@@ -91,11 +96,14 @@ class ImageMapCache(renpy.object.Object):
 
         # A list that, for each hotspot, gives the rectangle in the cache
         # image corresponding to that hotspot.
-        self.cache_rect = None
+        self.cache_rect = None # type: list[None|tuple[int, int, int, int]]|None
 
         # The size of the cache.
         self.cache_width = None
         self.cache_height = None
+
+        # Temporarily disabled.
+        enable = False
 
         self.enable = enable
 
@@ -116,8 +124,8 @@ class ImageMapCache(renpy.object.Object):
         if rv is not None:
             return rv
 
-        self.md5.update(repr(d.identity))
-        self.md5.update(repr(rect))
+        self.md5.update(repr(d.identity).encode("utf-8"))
+        self.md5.update(repr(rect).encode("utf-8"))
 
         index = len(self.imagerect)
         rv = ImageCacheCrop(self, index)
@@ -131,7 +139,7 @@ class ImageMapCache(renpy.object.Object):
     def layout(self):
         self.areas.sort()
         self.areas.reverse()
-        self.cache_rect = [ None ] * len(self.areas)
+        self.cache_rect = [ None ] * len(self.areas) # type: ignore
 
         # The width of the cache image.
         width = self.areas[0][0]
@@ -147,7 +155,7 @@ class ImageMapCache(renpy.object.Object):
                 line_height = 0
                 x = 0
 
-            self.cache_rect[i] = (x+1, y+1, w-2, h-2)
+            self.cache_rect[i] = (x+1, y+1, w-2, h-2) # type: ignore
 
             x += w
             if line_height < h:
@@ -171,7 +179,7 @@ class ImageMapCache(renpy.object.Object):
         cache = pygame.Surface((self.cache_width, self.cache_height), pygame.SRCALPHA, 32)
 
         for i, (d, rect) in enumerate(self.imagerect):
-            x, y, _w, _h = self.cache_rect[i]
+            x, y, _w, _h = self.cache_rect[i] # type: ignore
 
             surf = renpy.display.im.cache.get(d).subsurface(rect)
             cache.blit(surf, (x, y))
@@ -208,12 +216,11 @@ class ImageMapCache(renpy.object.Object):
         if renpy.config.developer:
             try:
                 self.write_cache(filename)
-            except:
+            except Exception:
                 pass
 
         if renpy.loader.loadable(filename):
             self.cache = renpy.display.im.Image(filename)
-
 
     def render(self, index, width, height, st, at):
         if self.cache is None:

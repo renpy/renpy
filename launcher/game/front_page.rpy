@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,40 +23,7 @@ define PROJECT_ADJUSTMENT = ui.adjustment()
 
 init python:
 
-    import os
-    import subprocess
-
-    class OpenDirectory(Action):
-        """
-        Opens `directory` in a file browser. `directory` is relative to
-        the project root.
-        """
-
-        alt = _("Open [text] directory.")
-
-        def __init__(self, directory, absolute=False):
-            if absolute:
-                self.directory = directory
-            else:
-                self.directory = os.path.join(project.current.path, directory)
-
-        def get_sensitive(self):
-            return os.path.exists(self.directory)
-
-        def __call__(self):
-
-            try:
-                directory = renpy.fsencode(self.directory)
-
-                if renpy.windows:
-                    os.startfile(directory)
-                elif renpy.macintosh:
-                    subprocess.Popen([ "open", directory ])
-                else:
-                    subprocess.Popen([ "xdg-open", directory ])
-
-            except:
-                pass
+    import datetime
 
     # Used for testing.
     def Relaunch():
@@ -88,7 +55,7 @@ screen front_page:
                     has hbox:
                         xfill True
 
-                    text "PROJECTS:" style "l_label_text" size 36 yoffset 10
+                    text _("PROJECTS:") style "l_label_text" size 36 yoffset 10
 
                     textbutton _("refresh"):
                         xalign 1.0
@@ -121,8 +88,6 @@ screen front_page:
                             left_margin (HALF_INDENT)
                             action Jump("new_project")
 
-
-
         # Project section - on right.
 
         if project.current is not None:
@@ -130,6 +95,7 @@ screen front_page:
 
     if project.current is not None:
         textbutton _("Launch Project") action project.Launch() style "l_right_button"
+        key "K_F5" action project.Launch()
 
 
 
@@ -163,7 +129,7 @@ screen front_page_project_list:
 
             null height 12
 
-        textbutton _("Tutorial") action project.Select("tutorial") style "l_list" alt _("Select project [text].")
+        textbutton _("Tutorial") action project.SelectTutorial() style "l_list" alt _("Select project [text].")
         textbutton _("The Question") action project.Select("the_question") style "l_list" alt _("Select project [text].")
 
 
@@ -179,7 +145,7 @@ screen front_page_project:
 
         frame style "l_label":
             has hbox xfill True
-            text "[p.name!q]" style "l_label_text"
+            text "[p.display_name!q]" style "l_label_text"
             label _("Active Project") style "l_alternate"
 
         grid 2 1:
@@ -193,10 +159,11 @@ screen front_page_project:
                 frame style "l_indent":
                     has vbox
 
-                    textbutton _("game") action OpenDirectory("game")
-                    textbutton _("base") action OpenDirectory(".")
-                    textbutton _("images") action OpenDirectory("game/images")
-                    # textbutton _("save") action None style "l_list"
+                    textbutton _("game") action OpenDirectory(os.path.join(p.path, "game"), absolute=True)
+                    textbutton _("base") action OpenDirectory(os.path.join(p.path, "."), absolute=True)
+                    textbutton _("images") action OpenDirectory(os.path.join(p.path, "game/images"), absolute=True)
+                    textbutton _("audio") action OpenDirectory(os.path.join(p.path, "game/audio"), absolute=True)
+                    textbutton _("gui") action OpenDirectory(os.path.join(p.path, "game/gui"), absolute=True)
 
             vbox:
                 if persistent.show_edit_funcs:
@@ -208,19 +175,17 @@ screen front_page_project:
 
                         textbutton "script.rpy" action editor.Edit("game/script.rpy", check=True)
                         textbutton "options.rpy" action editor.Edit("game/options.rpy", check=True)
+                        textbutton "gui.rpy" action editor.Edit("game/gui.rpy", check=True)
                         textbutton "screens.rpy" action editor.Edit("game/screens.rpy", check=True)
-                        textbutton _("All script files") action editor.EditAll()
+
+                        if editor.CanEditProject():
+                            textbutton _("Open project") action editor.EditProject()
+                        else:
+                            textbutton _("All script files") action editor.EditAll()
 
         add SPACER
-        add SEPARATOR
-        add SPACER
 
-        frame style "l_indent":
-            has vbox
-
-            textbutton _("Navigate Script") text_size 30 action Jump("navigation")
-
-        add SPACER
+        label _("Actions") style "l_label_small"
 
         grid 2 1:
             xfill True
@@ -229,8 +194,15 @@ screen front_page_project:
             frame style "l_indent":
                 has vbox
 
+                textbutton _("Navigate Script") action Jump("navigation")
                 textbutton _("Check Script (Lint)") action Jump("lint")
-                textbutton _("Change Theme") action Jump("choose_theme")
+
+                if project.current.exists("game/gui.rpy"):
+                    textbutton _("Change/Update GUI") action Jump("change_gui")
+                else:
+                    textbutton _("Change Theme") action Jump("choose_theme")
+
+
                 textbutton _("Delete Persistent") action Jump("rmpersistent")
                 textbutton _("Force Recompile") action Jump("force_recompile")
 
@@ -244,6 +216,10 @@ screen front_page_project:
 
                 textbutton _("Android") action Jump("android")
                 textbutton _("iOS") action Jump("ios")
+                textbutton _("Web") + " " + _("(Beta)") action Jump("web"):
+                    if not PY2:
+                        text_color DISABLED
+
                 textbutton _("Generate Translations") action Jump("translate")
                 textbutton _("Extract Dialogue") action Jump("extract_dialogue")
 
@@ -252,8 +228,30 @@ label main_menu:
 
 label start:
     show screen bottom_info
+    $ dmgcheck()
+
+    jump expression renpy.session.pop("launcher_start_label", "front_page")
+
+default persistent.has_chosen_language = False
+
+default persistent.has_update = False
 
 label front_page:
+
+    if (not persistent.has_chosen_language) or ("RENPY_CHOOSE_LANGUAGE" in os.environ):
+
+        if _preferences.language is None:
+            hide screen bottom_info
+            call choose_language
+            show screen bottom_info
+
+        $ persistent.has_chosen_language = True
+
+    if persistent.daily_update_check and ((not persistent.last_update_check) or (datetime.date.today() > persistent.last_update_check)):
+        python hide:
+            persistent.last_update_check = datetime.date.today()
+            renpy.invoke_in_thread(fetch_update_channels)
+
     call screen front_page
     jump front_page
 

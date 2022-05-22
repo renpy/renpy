@@ -11,7 +11,10 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import sys
+import os
+import sphinx_bootstrap_theme
+import datetime
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -25,7 +28,7 @@ sys.path.append(os.path.abspath('.'))
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo', 'sphinx.ext.extlinks', 'sphinx.ext.ifconfig', 'renpydoc']
+extensions = ['sphinx.ext.todo', 'sphinx.ext.extlinks', 'sphinx.ext.ifconfig', 'renpydoc', 'sphinx.ext.intersphinx' ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -41,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Ren\'Py Visual Novel Engine'
-copyright = u'2012, Tom Rothamel' #@ReservedAssignment
+copyright = u'2012-{}, Tom Rothamel'.format(datetime.date.today().year)  # @ReservedAssignment
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -101,10 +104,19 @@ html_theme = 'renpydoc'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    'navbar_title' : "Ren'Py Documentation",
+    'navbar_sidebarrel' : False,
+    'navbar_pagenav' : False,
+    'source_link_position': None,
+    'navbar_links': [
+        ("Home Page", "https://www.renpy.org", True),
+        ("Online Documentation", "https://www.renpy.org/doc/html/", True),
+    ],
+    }
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [ '.' ]
+html_theme_path = sphinx_bootstrap_theme.get_html_theme_path() + [ '.' ]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -137,6 +149,7 @@ html_use_smartypants = False
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
+html_sidebars = { '**': ['localtoc.html' ] }
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -168,6 +181,9 @@ html_use_smartypants = False
 # If nonempty, this is the file name suffix for HTML files (e.g. ".xhtml").
 #html_file_suffix = ''
 
+html_permalinks = True
+html_add_permalinks = " link"
+
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'TheRenPyVisualNovelEnginedoc'
 
@@ -185,8 +201,8 @@ locale_dirs = ["locale/"]
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'all.tex', u'Ren\'Py Visual Novel Engine Reference Manual',
-   u'PyTom', 'manual'),
+    ('index', 'all.tex', u'Ren\'Py Visual Novel Engine Reference Manual',
+     u'PyTom', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -218,8 +234,8 @@ latex_logo = "logo.png"
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-     # ('index', 'therenpyvisualnovelengine', u'The Ren'Py Visual Novel Engine Documentation',
-     # [u'PyTom'], 1)
+    # ('index', 'therenpyvisualnovelengine', u'The Ren'Py Visual Novel Engine Documentation',
+    # [u'PyTom'], 1)
 ]
 
 
@@ -272,8 +288,11 @@ rst_prolog = """\
 .. |PGS4A_URL| replace:: http://www.renpy.org/dl/android/
 """
 
+
 def setup(app):
     app.add_config_value('is_renpy', '', True)
+    app.add_config_value('renpy_figures', '', True)
 
-is_renpy = True
 
+is_renpy = "renpy"
+renpy_figures = ("figures" if ("RENPY_NO_FIGURES" not in os.environ) else '')

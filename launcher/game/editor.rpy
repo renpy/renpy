@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -67,8 +67,8 @@ init 1 python in editor:
         ei = EditorInfo(filename)
 
         if ei.name in editors:
-           if editors[ei.name].mtime >= ei.mtime:
-               return
+            if editors[ei.name].mtime >= ei.mtime:
+                return
 
         editors[ei.name] = ei
 
@@ -140,48 +140,66 @@ init 1 python in editor:
         Creates the list of FancyEditorInfo objects.
         """
 
+        import platform
+
         global fancy_editors
 
         scan_all()
 
         fei = fancy_editors = [ ]
 
-        # Editra.
-        ED  = _("{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input.")
-        EDL  = _("{b}Recommended.{/b} A beta editor with an easy to use interface and features that aid in development, such as spell-checking. Editra currently lacks the IME support required for Chinese, Japanese, and Korean text input. On Linux, Editra requires wxPython.")
+        # Visual Studio Code
+        AD1 = _("A modern editor with many extensions including advanced Ren'Py integration.")
+        AD2 = _("A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}")
 
         if renpy.windows:
-            dlc = "editra-windows"
-            installed = os.path.exists(os.path.join(config.basedir, "editra/Editra-win32"))
-            description = ED
-            error_message = None
+            installed = os.path.exists(os.path.join(config.basedir, "vscode/VSCode-win32-x64"))
         elif renpy.macintosh:
-            dlc = "editra-mac"
-            installed = os.path.exists(os.path.join(config.basedir, "editra/Editra-mac.app"))
-            description = ED
-            error_message = None
+            installed = os.path.exists(os.path.join(config.basedir, "vscode/Visual Studio Code.app"))
         else:
-            dlc = "editra-linux"
-            installed = os.path.exists(os.path.join(config.basedir, "editra/Editra"))
-            description = EDL
-            error_message = _("This may have occured because wxPython is not installed on this system.")
+            installed = os.path.exists(os.path.join(config.basedir, "vscode/VSCode-linux-x64"))
+
+        e = FancyEditorInfo(
+            0,
+            _("Visual Studio Code"),
+            AD2 if installed else AD2,
+            "extension:vscode",
+            _("Up to 110 MB download required."),
+            None)
+
+        e.installed = e.installed and installed
+
+        fei.append(e)
+
+        # Atom.
+        AD = _("A modern and approachable text editor.")
+
+        if renpy.windows:
+            dlc = "atom-windows"
+            installed = os.path.exists(os.path.join(config.basedir, "atom/atom-windows"))
+        elif renpy.macintosh:
+            dlc = "atom-mac"
+            installed = os.path.exists(os.path.join(config.basedir, "atom/Atom.app"))
+        else:
+            dlc = "atom-linux"
+            installed = os.path.exists(os.path.join(config.basedir, "atom/atom-linux-" + platform.machine()))
 
         e = FancyEditorInfo(
             1,
-            "Editra",
-            description,
+            _("Atom"),
+            AD,
             dlc,
-            _("Up to 22 MB download required."),
-            error_message)
+            _("Up to 150 MB download required."),
+            None)
 
-        e.installed = e.installed or installed
+        e.installed = e.installed and (installed or 'RENPY_ATOM' in os.environ)
 
         fei.append(e)
 
         # jEdit
         fei.append(FancyEditorInfo(
             2,
-            "jEdit",
+            _("jEdit"),
             _("A mature editor that requires Java."),
             "jedit",
             _("1.8 MB download required."),
@@ -190,12 +208,21 @@ init 1 python in editor:
 
         fei.append(FancyEditorInfo(
             3,
-            "System Editor",
+            _("Visual Studio Code (System)"),
+            _("Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."),
+            ))
+
+        fei.append(FancyEditorInfo(
+            3,
+            _("System Editor"),
             _("Invokes the editor your operating system has associated with .rpy files."),
             None))
 
+
+
+
         for k in editors:
-            if k in [ "Editra", "jEdit", "System Editor", "None" ]:
+            if k in [ "Visual Studio Code", "Visual Studio Code (System)", "Atom", "jEdit", "System Editor", "None" ]:
                 continue
 
             fei.append(FancyEditorInfo(
@@ -206,7 +233,7 @@ init 1 python in editor:
 
         fei.append(FancyEditorInfo(
             5,
-            "None",
+            _("None"),
             _("Prevents Ren'Py from opening a text editor."),
             None))
 
@@ -215,7 +242,8 @@ init 1 python in editor:
         # If we're in a linux distro or something, assume all editors work.
         if not updater.can_update():
             for i in fei:
-                i.installed = True
+                if i.dlc and not i.dlc.startswith("extension:"):
+                    i.installed = True
 
     def fancy_activate_editor(default=False):
         """
@@ -262,9 +290,12 @@ init 1 python in editor:
 
         if not fe.installed:
 
-            # We don't check the status of this because fancy_activate_editor
-            # will fail if the editor is not installed.
-            store.add_dlc(fe.dlc)
+            if fe.dlc.startswith("extension:"):
+                import installer
+                manifest = fe.dlc.partition(":")[2]
+                renpy.invoke_in_new_context(installer.manifest, "https://www.renpy.org/extensions/{}/{}.py".format(manifest, manifest), renpy=True)
+            else:
+                store.add_dlc(fe.dlc)
 
         persistent.editor = fe.name
         fancy_activate_editor()
@@ -307,7 +338,7 @@ init 1 python in editor:
 
 
     class Edit(Action):
-        alt = "Edit [text]."
+        alt = _("Edit [text].")
 
         def __init__(self, filename, line=None, check=False):
             """
@@ -334,7 +365,7 @@ init 1 python in editor:
                 return True
 
             fn = project.current.unelide_filename(self.filename)
-            return os.path.exists(fn)
+            return os.path.exists(renpy.fsencode(fn))
 
         def __call__(self):
 
@@ -354,7 +385,7 @@ init 1 python in editor:
                 e.open(fn, line=self.line)
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
@@ -382,7 +413,7 @@ init 1 python in editor:
             if not self.check:
                 return True
 
-            return os.path.exists(self.filename)
+            return os.path.exists(renpy.fsencode(self.filename))
 
         def __call__(self):
 
@@ -400,7 +431,7 @@ init 1 python in editor:
                 e.open(self.filename, line=self.line)
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
 
@@ -409,8 +440,6 @@ init 1 python in editor:
         """
         Opens all scripts that are part of the current project in a web browser.
         """
-
-        alt = "Edit [text]."
 
         def __init__(self):
             return
@@ -440,9 +469,45 @@ init 1 python in editor:
 
                 e.end()
 
-            except Exception, e:
+            except Exception as e:
                 exception = traceback.format_exception_only(type(e), e)[-1][:-1]
                 renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+
+
+    class EditProject(Action):
+        """
+        Opens the project's base directory in an editor.
+        """
+
+        def __call__(self):
+
+            if not check_editor():
+                return
+
+            try:
+
+                e = renpy.editor.editor
+
+                e.begin()
+                e.open_project(project.current.path)
+                e.end()
+
+            except Exception as e:
+                exception = traceback.format_exception_only(type(e), e)[-1][:-1]
+                renpy.invoke_in_new_context(interface.error, _("An exception occured while launching the text editor:\n[exception!q]"), error_message, exception=exception)
+
+
+    def CanEditProject():
+        """
+        Returns True if EditProject can be used.
+        """
+
+        try:
+            e = renpy.editor.editor
+            return e.has_projects
+        except Exception:
+            return False
+
 
 screen editor:
 
@@ -492,6 +557,14 @@ screen editor:
 
 
     textbutton _("Cancel") action Return(False) style "l_left_button"
+
+label reinstall_vscode:
+    python hide:
+        manifest = "vscode"
+        renpy.invoke_in_new_context(installer.manifest, "https://www.renpy.org/extensions/{}/{}.py".format(manifest, manifest), renpy=True)
+
+    jump editor_preference
+
 
 label editor_preference:
     call screen editor

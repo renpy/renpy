@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -40,11 +40,14 @@ init -1500 python:
         """
          :doc: control_action
 
-         Causes the current interaction to return the supplied value. This is
-         often used with menus and imagemaps, to select what the return value
-         of the interaction is.
+         Causes the current interaction to return the supplied value, which
+         must not be None. This is often used with menus and imagemaps, to
+         select what the return value of the interaction is. If the screen
+         was called using the ``call screen`` statement, the return value
+         is placed in the `_return` variable.
 
-         When in a menu, this returns from the menu.
+         When in a menu, this returns from the menu. (The value should be
+         None in this case.)
          """
 
         def __init__(self, value=None):
@@ -64,12 +67,10 @@ init -1500 python:
     @renpy.pure
     class Jump(Action, DictEquality):
         """
-         :doc: control_action
+        :doc: control_action
 
-         Causes control to transfer to the given label. This can be used in
-         conjunction with renpy.run_screen to define an imagemap that jumps
-         to a label when run.
-         """
+        Causes control to transfer to `label`, given as a string.
+        """
 
         def __init__(self, label):
             self.label = label
@@ -78,12 +79,32 @@ init -1500 python:
             renpy.jump(self.label)
 
     @renpy.pure
+    class Call(Action, DictEquality):
+        """
+        :doc: control_action
+
+        Ends the current statement, and calls `label`, given as a string.
+        Arguments and keyword arguments are passed to :func:`renpy.call`.
+        """
+
+        args = tuple()
+        kwargs = dict()
+
+        def __init__(self, label, *args, **kwargs):
+            self.label = label
+            self.args = args
+            self.kwargs = kwargs
+
+        def __call__(self):
+            renpy.call(self.label, *self.args, **self.kwargs)
+
+    @renpy.pure
     class Show(Action, DictEquality):
         """
          :doc: control_action
 
          This causes another screen to be shown. `screen` is a string
-         giving the name of the screen. The keyword arguments are
+         giving the name of the screen. The arguments are
          passed to the screen being shown.
 
          If not None, `transition` is use to show the new screen.
@@ -110,39 +131,99 @@ init -1500 python:
             renpy.restart_interaction()
 
         def get_selected(self):
-            return renpy.showing(self.screen)
+            return renpy.get_screen(self.screen, self.kwargs.get("_layer", None)) is not None
 
     @renpy.pure
-    def ShowTransient(screen, *args, **kwargs):
+    class ToggleScreen(Action, DictEquality):
         """
-         :doc: control_action
+        :doc: control_action
 
-         Shows a transient screen. A transient screen will be hidden when
-         the current interaction completes.
-         """
+        This toggles the visibility of `screen`. If it is not currently
+        shown, the screen is shown with the provided arguments. Otherwise,
+        the screen is hidden.
 
-        return Show(screen, _transient=True, *args, **kwargs)
-
-    @renpy.pure
-    class Hide(Action, DictEquality):
+        If not None, `transition` is use to show and hide the screen.
         """
-         :doc: control_action
 
-         This causes the screen named `screen` to be hidden, if it is shown.
+        args = None
 
-         `transition`
-             If not None, a transition that occurs when hiding the screen.
-         """
-
-        def __init__(self, screen, transition=None):
+        def __init__(self, screen, transition=None, *args, **kwargs):
             self.screen = screen
             self.transition = transition
+            self.args = args
+            self.kwargs = kwargs
+
+        def predict(self):
+            renpy.predict_screen(self.screen, *self.args, **self.kwargs)
 
         def __call__(self):
-            renpy.hide_screen(self.screen)
+            if renpy.get_screen(self.screen, layer=self.kwargs.get("_layer", None)):
+                renpy.hide_screen(self.screen, layer=self.kwargs.get("_layer", None))
+            else:
+                renpy.show_screen(self.screen, *self.args, **self.kwargs)
 
             if self.transition is not None:
                 renpy.transition(self.transition)
 
             renpy.restart_interaction()
 
+        def get_selected(self):
+            return renpy.get_screen(self.screen, self.kwargs.get("_layer", None)) is not None
+
+
+    @renpy.pure
+    def ShowTransient(screen, transition=None, *args, **kwargs):
+        """
+        :doc: control_action
+
+        Shows a transient screen. A transient screen will be hidden when
+        the current interaction completes. The arguments are
+        passed to the screen being shown.
+
+        If not None, `transition` is use to show the new screen.
+        """
+
+        return Show(screen, transition, _transient=True, *args, **kwargs)
+
+    @renpy.pure
+    class Hide(Action, DictEquality):
+        """
+        :doc: control_action
+
+        This causes a screen to be hidden if it is shown.
+
+        `screen`
+            Either a string giving the name of the screen to be hidden, or
+            None to hide the current screen.
+
+        `transition`
+            If not None, a transition that occurs when hiding the screen.
+
+        `_layer`
+            This is passed as the layer argument to :func:`renpy.hide_screen`.
+            Ignored if `screen` is None.
+        """
+
+        _layer = None
+
+        def __init__(self, screen=None, transition=None, _layer=None):
+            self.screen = screen
+            self.transition = transition
+            self._layer = _layer
+
+        def __call__(self):
+            if self.screen is None:
+                cs = renpy.current_screen()
+
+                if cs is None:
+                    return
+
+                renpy.hide_screen(cs.screen_name, layer=cs.layer)
+
+            else:
+                renpy.hide_screen(self.screen, layer=self._layer)
+
+            if self.transition is not None:
+                renpy.transition(self.transition)
+
+            renpy.restart_interaction()

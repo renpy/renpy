@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,8 +21,10 @@
 #
 # cython: boundscheck=False, wraparound=False
 
+from __future__ import print_function
+
 import time
-from textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, RUBY_TOP
+from renpy.text.textsupport cimport Glyph, SPLIT_INSTEAD, SPLIT_BEFORE, SPLIT_NONE, RUBY_TOP, RUBY_ALT
 from libc.stdlib cimport calloc, malloc, free
 
 import collections
@@ -135,7 +137,7 @@ cdef class WordWrapper(object):
                 # The width of the current line.
                 width = j_x - words[i].start_x
 
-                if i:
+                if i == 0:
                     line_width = first_width
                 else:
                     line_width = rest_width
@@ -168,7 +170,8 @@ cdef class WordWrapper(object):
         split points.
         """
 
-        cdef Word *words, *word
+        cdef Word *words
+        cdef Word *word
         cdef double start_x = 0, x = 0
         cdef Glyph g, start_glyph
         cdef list rv
@@ -189,6 +192,9 @@ cdef class WordWrapper(object):
             g = <Glyph> <object> glyphs[i]
 
             if g.ruby == RUBY_TOP:
+                continue
+
+            if g.ruby == RUBY_ALT:
                 continue
 
             if g.split == SPLIT_INSTEAD:

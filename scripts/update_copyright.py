@@ -1,10 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from __future__ import print_function
 
 import os.path
 import re
 import codecs
+
+import datetime
+year = datetime.date.today().year
 
 ENDINGS = [
     ".rpy",
@@ -35,6 +38,7 @@ full_copyright="""\
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."""
 
+
 def process_file(fn):
 
     for i in ENDINGS:
@@ -54,7 +58,7 @@ def process_file(fn):
         for l in f:
             l = re.sub(
                 r"Copyright (\d{4})-\d{4} Tom Rothamel",
-                r"Copyright \1-2015 Tom Rothamel",
+                r"Copyright \1-{} Tom Rothamel".format(year),
                 l)
 
             if re.search(r"Copyright .* Tom Rothamel", l):
@@ -84,6 +88,7 @@ def process(root):
         for fn in files:
             fn = os.path.join(dirname, fn)
             process_file(fn)
+
 
 process_file("renpy.py")
 process("renpy")

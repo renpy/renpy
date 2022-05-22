@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -18,6 +18,8 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+from __future__ import print_function, unicode_literals
 
 from cpython.ref cimport PyObject, Py_XDECREF
 from libc.string cimport memset
@@ -77,14 +79,22 @@ cpdef get_style(name):
 
     start, _mid, end = name.partition("_")
 
-    # We need both sides of the _, as we don't want to have
-    # _foo auto-inherit from foo.
-    if not start or not end:
+    if not end:
         raise Exception("Style %r does not exist." % name)
+
+    # Deal with inheritance of styles beginning with _ a bit specially,
+    # so _foo_bar inherits from _bar, not bar.
+    if not start:
+        _start, _mid, end = name[1:].partition("_")
+
+        if not end:
+            raise Exception("Style %r does not exist." % name)
+
+        end = "_" + end
 
     try:
         parent = get_style(end)
-    except:
+    except Exception:
         raise Exception("Style %r does not exist." % name)
 
     rv = Style(parent, name=nametuple)
@@ -156,24 +166,19 @@ cpdef get_tuple_name(s):
 
 def get_text_style(style, default):
     """
-    If `style` + "_text", exists, returns it. Otherwise, returns the `default`
-    style.
-
+    If style exists, returns `style` + "_text". Otherwise, returns `default`.
     For indexed styles, the above is applied first, and then indexing is applied.
     """
 
-    style = get_tuple_name(style)
-
     if style is None:
-        return None
+        style = default
+
+    style = get_tuple_name(style)
 
     start = style[0]
     rest = style[1:]
 
-    rv = styles.get((start + "_text",), None)
-
-    if rv is None:
-        rv = get_full_style(get_tuple_name(default))
+    rv = get_full_style((start + "_text",))
 
     for i in rest:
         rv = rv[i]
@@ -189,6 +194,11 @@ class StyleManager(object):
     def __setattr__(self, name, value):
 
         if not isinstance(value, StyleCore):
+
+            if getattr(value, "_is_style_compat", False):
+                self.__dict__[name] = value
+                return
+
             raise Exception("Value is not a style.")
 
         cdef StyleCore style = value
@@ -278,7 +288,7 @@ cdef class StyleCore:
         """
 
         self.prefix = "insensitive_"
-        self.offset = INSENSITIVE_PREFIX
+        self.prefix_offset = INSENSITIVE_PREFIX
 
         self.properties = [ ]
 
@@ -287,6 +297,11 @@ cdef class StyleCore:
                 properties = dict(properties)
 
             self.properties.append(properties)
+
+        if properties and ("insensitive_child" in properties):
+            if properties["insensitive_child"] is False:
+                import traceback
+                traceback.print_stack()
 
         self.parent = get_tuple_name(parent)
         self.name = name
@@ -427,17 +442,20 @@ cdef class StyleCore:
         self.prefix = prefix
 
         if prefix == "insensitive_":
-            self.offset = INSENSITIVE_PREFIX
+            self.prefix_offset = INSENSITIVE_PREFIX
         elif prefix == "idle_":
-            self.offset = IDLE_PREFIX
+            self.prefix_offset = IDLE_PREFIX
         elif prefix == "hover_":
-            self.offset = HOVER_PREFIX
+            self.prefix_offset = HOVER_PREFIX
         elif prefix == "selected_insensitive_":
-            self.offset = SELECTED_INSENSITIVE_PREFIX
+            self.prefix_offset = SELECTED_INSENSITIVE_PREFIX
         elif prefix == "selected_idle_":
-            self.offset = SELECTED_IDLE_PREFIX
+            self.prefix_offset = SELECTED_IDLE_PREFIX
         elif prefix == "selected_hover_":
-            self.offset = SELECTED_HOVER_PREFIX
+            self.prefix_offset = SELECTED_HOVER_PREFIX
+
+    def get_offset(self):
+        return self.prefix_offset
 
     def get_placement(self):
         """
@@ -469,7 +487,7 @@ cdef class StyleCore:
         # A limit to the number of styles we'll consider.
         cdef int limit
 
-        index += self.offset
+        index += self.prefix_offset
 
         if not self.built:
             build_style(self)
@@ -507,10 +525,10 @@ cdef class StyleCore:
 
 
     cpdef _get_unoffset(self, int index):
-        return self._get(index - self.offset)
+        return self._get(index - self.prefix_offset)
 
 
-    def _predict_window(self, pd):
+    def _visit_window(self, pd):
         """
         Predicts properties for a window.
 
@@ -524,7 +542,7 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
-    def _predict_bar(self, pd):
+    def _visit_bar(self, pd):
         """
         Predicts properties for a window.
 
@@ -538,7 +556,7 @@ cdef class StyleCore:
                 if v is not None:
                     pd(v)
 
-    def _predict_frame(self, pd):
+    def _visit_frame(self, pd):
         """
         Predicts properties for a Frame.
 
@@ -581,7 +599,8 @@ cdef class StyleCore:
             for pdict in reversed(s.properties):
 
                 propnames = list(pdict)
-                propnames.sort(key=lambda pn : -priority.get(pn, -100))
+                propnames.sort(key=lambda pn : priority.get(pn, 100))
+                propnames.reverse()
 
                 for propname in propnames:
                     prop_affects = affects.get(propname, [ ])
@@ -627,7 +646,7 @@ cdef class StyleCore:
 # This will be replaced when renpy.styledata.import_style_functions is called.
 Style = StyleCore
 
-from renpy.styledata.stylesets import all_properties, prefix_priority, prefix_alts
+from renpy.styledata.stylesets import all_properties, prefix_priority, prefix_alts, property_priority
 
 # The set of all prefixed properties we know about.
 prefixed_all_properties = {
@@ -677,6 +696,7 @@ cpdef build_style(StyleCore s):
 
         for d in s.properties:
             for k, v in d.items():
+
                 pfw = property_functions.get(k, None)
 
                 if pfw is None:
@@ -684,7 +704,7 @@ cpdef build_style(StyleCore s):
 
                 try:
                     pfw.function(s.cache, cache_priorities, priority, v)
-                except:
+                except Exception:
                     renpy.game.exception_info = "While processing the {} property of {}:".format(k, style_name_to_string(s.name))
                     raise
 
@@ -738,7 +758,7 @@ def init_inspect():
 
     for prefixname, pri in prefix_priority.items():
         for propname, proplist in all_properties.items():
-            priority[prefixname + propname] = pri
+            priority[prefixname + propname] = pri + property_priority.get(propname, 0)
             affects[prefixname + propname] = [ a + i for a in prefix_alts[prefixname] for i in proplist ]
 
 
@@ -753,22 +773,18 @@ def reset():
 
     styles.clear()
 
-#     import gc
-#
-#     for i in gc.get_objects():
-#         if isinstance(i, Style):
-#             unbuild_style(i)
-
 
 def build_styles():
     """
     Builds or rebuilds all styles.
     """
+    for i in renpy.config.build_styles_callbacks:
+        i()
 
-    for s in styles.values():
+    for s in list(styles.values()):
         unbuild_style(s)
 
-    for s in styles.values():
+    for s in list(styles.values()):
         build_style(s)
 
 def rebuild(prepare_screens=True):
@@ -779,6 +795,11 @@ def rebuild(prepare_screens=True):
     build_styles()
 
     renpy.display.screen.prepared = False
+
+    if not renpy.game.context().init_phase:
+        renpy.display.screen.prepare_screens()
+
+    renpy.exports.restart_interaction()
 
 def copy_properties(p):
     """
@@ -794,7 +815,7 @@ def backup():
 
     rv = { }
 
-    for k, v in styles.iteritems():
+    for k, v in styles.items():
         rv[k] = (v.parent, copy_properties(v.properties))
 
     return rv
@@ -806,11 +827,33 @@ def restore(o):
 
     cdef StyleCore s
 
-    for k, v in o.iteritems():
-        s = get_full_style(k)
+    keys = list(styles.keys())
+
+    for i in keys:
+        if i not in o:
+            del styles[i]
+
+
+    for k, v in o.items():
+
+        s = get_or_create_style(k[0])
+
+        for i in k[1:]:
+            s = s[i]
 
         parent, properties = v
 
+        s.clear()
         s.set_parent(parent)
         s.properties = copy_properties(properties)
 
+_types = """
+Style : Any
+prefixed_all_properties : set
+all_properties : dict[str, list[str]]
+prefix_priority : dict[str, int]
+prefix_alts : dict[str, list[str]]
+prefix_search : dict[str, list[str]]
+affects : dict[str, list[str]]
+styles: dict[str, Style]
+"""

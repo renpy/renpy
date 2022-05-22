@@ -22,9 +22,11 @@ with the same id. Ids are generated automatically by the screen
 language, but when doing things by hand, they must be manually
 specified.
 
-Here's an example python screen:
+.. warning::
 
-::
+    UI Functions are deprecated and not recommended.
+
+Here's an example Python screen::
 
     init python:
         def say_screen(who, what, **kwargs):
@@ -51,13 +53,19 @@ screens.
 UI Functions
 ============
 
-The UI functions are python equivalents of the screen language
+.. note::
+
+    The implementation of Ren'Py has changed, and UI functions that
+    create displayables can now be far slower than their screen language
+    equivalents.
+
+The UI functions are Python equivalents of the screen language
 statements. For each screen language statement, there is a ui function
 with the same name. For example, ui.text corresponds to the text
 statement, and ui.add corresponds to the add statement.
 
 There is a simple mapping between screen language parameters and
-arguments and python arguments. Screen language parameters
+arguments and Python arguments. Screen language parameters
 become positional arguments, while properties become keyword
 arguments. For example, the screen language statement: ::
 
@@ -93,7 +101,7 @@ The following UI functions do not take any children.
 * ui.spritemanager
 
 The following UI functions take a single child. They must be given
-that child - use ui.null() if the child is missing.
+that child – use :func:`ui.null` if the child is missing.
 
 * ui.button
 * ui.frame
@@ -124,7 +132,7 @@ Actions
 Many of the displayables created in the screen language take actions
 as arguments. An action is one of three things:
 
-* A callable python object (like a function or bound method) that
+* A callable Python object (like a function or bound method) that
   takes no arguments.
 * An object of a class that inherits from the Action class.
 * A list of other Actions.
@@ -165,6 +173,14 @@ sensitive, and when it is selected.
 
        The default implemention returns False.
 
+   .. method:: get_tooltip(self)
+
+       This gets a default tooltip for this button, if a specific
+       tooltip is not assigned. It should return the tooltip value,
+       or None if a tooltip is not known.
+
+       This defaults to returning None.
+
    .. method:: periodic(self, st)
 
        This method is called once at the start of each interaction,
@@ -182,16 +198,20 @@ sensitive, and when it is selected.
            The number of seconds since the screen or displayable this
            action is associated with was first shown.
 
-   .. method:: unhovered(self):
+   .. method:: unhovered(self)
 
        When the action is used as the `hovered` parameter to a button (or
        similar object), this method is called when the object loses focus.
+
+To run an action from Python, use :func:`renpy.run`.
+
+.. include:: inc/run
 
 BarValues
 =========
 
 When creating a bar, vbar, or hotbar, a BarValue object can be supplied as
-the `value` argument. Methods on the BarValue object are called to get
+the `value` property. Methods on the BarValue object are called to get
 the adjustment and styles.
 
 
@@ -220,6 +240,14 @@ the adjustment and styles.
 
         This defaults to ("bar", "vbar").
 
+    .. method:: get_tooltip(self)
+
+       This gets a default tooltip for this button, if a specific
+       tooltip is not assigned. It should return the tooltip value,
+       or None if a tooltip is not known.
+
+       This defaults to returning None.
+
     .. method:: replaces(self, other)
 
         This is called when a BarValue replaces another BarValue, such
@@ -239,6 +267,59 @@ the adjustment and styles.
        :func:`AnimatedValue` does. To do this, get_adjustment should
        store the adjustment, and periodic should call the
        adjustment's changed method.
+
+InputValue
+==========
+
+When creating an input, an InputValue object can be supplied as the
+`value` property. Methods on the InputValue object are called to
+get and set the text, determine if the input is editable, and handle
+the enter key being pressed.
+
+.. class:: InputValue
+
+    To define a new InputValue, inherit from this class, override
+    some or all of the methods, and set the value of the default
+    field.
+
+    .. attribute: editable
+
+        If true, this field is editable at all.
+
+    .. attribute:: default
+
+        If true, the input is eligible to be editable by default. (That
+        is, it may be given the caret when the screen is shown.)
+
+    .. method:: get_text(self)
+
+        Returns the default text of the input. This must be implemented.
+
+    .. method:: set_text(self, s)
+
+        Called when the text of the input is changed, with the new text.
+        This must be implemented.
+
+    .. method:: enter(self)
+
+        Called when the user presses enter. If this returns a non-None
+        value, that value is returned from the interacton. This may also
+        raise renpy.IgnoreEvent() to ignore the press. Otherwise, the
+        enter-press is propagated to other displayables.
+
+    The following actions are available as methods on InputValue:
+
+    .. method:: Enable()
+
+        Returns an action that enables text editing on the input.
+
+    .. method:: Disable()
+
+        Returns an action that disables text editing on the input.
+
+    .. method:: Toggle()
+
+        Returns an action that toggles text editing on the input.
 
 
 .. _creator-defined-sl:
@@ -262,9 +343,9 @@ becomes::
     use titledwindow("Test Window", icon="icon.png"):
         text "This is a test."
 
-Creator-defined screen language statements must be registered in a python early block.
+Creator-defined screen language statements must be registered in a ``python early`` block.
 What's more, the filename containing the creator-defined statement must be be loaded earlier
-than any file that uses it. Since Ren'Py loads files in unicode sort order, it
+than any file that uses it. Since Ren'Py loads files in Unicode sort order, it
 generally makes sense to prefix the name of any file registering a user-defined
 statement with 01, or some other small number.
 
@@ -275,13 +356,13 @@ function:
 
 As an example of a creator-defined screen language statement, here's an
 implementation of the ``titledwindow`` statement given above. First, the
-statement must be registered in a python early block in a file that is loaded
-early - a name like 01custom.rpy will often load soon enough. The registration
+statement must be registered in a ``python early`` block in a file that is loaded
+early – a name like 01custom.rpy will often load soon enough. The registration
 call looks like::
 
 
     python early:
-        renpy.register_sl_statement("titledwindow", positional=1, children=1).add_property("icon").add_property("pos")
+        renpy.register_sl_statement("titledwindow", children=1).add_positional("title").add_property("icon").add_property("pos")
 
 Then, we define a screen that implements the custom statement. This screen can be defined in
 any file. One such screen is::
@@ -304,3 +385,26 @@ any file. One such screen is::
                 null height 15
 
                 transclude
+
+
+When are used large property groups like a `add_property_group`, it makes sense to use
+the \*\*properties syntax with a properties keyword in some place. For example::
+
+    screen titledwindow(title, icon=None, **properties):
+        frame:
+            # When background not in properties it will use it as default value.
+            background "#00000080"
+
+            properties properties
+
+            has vbox
+
+            hbox:
+                if icon is not None:
+                    add icon
+
+                text title
+
+            null height 15
+
+            transclude

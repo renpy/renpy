@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,11 +22,17 @@
 # This file mediates access to the _renpy module, which is a C module that
 # allows us to enhance the feature set of pygame in a renpy specific way.
 
-import pygame_sdl2; pygame_sdl2
-import renpy.display
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+
+import pygame_sdl2
+import renpy
 import _renpy
 
 import sys
+
 
 def convert_and_call(function, src, dst, *args):
     """
@@ -93,6 +99,7 @@ else:
 
 bo_cache = None
 
+
 def byte_offset(src):
     """
     Given the surface src, returns a 4-tuple giving the byte offsets
@@ -107,6 +114,7 @@ def byte_offset(src):
 
     return bo_cache
 
+
 def endian_order(src, r, g, b, a):
 
     if bo_cache is None:
@@ -114,11 +122,10 @@ def endian_order(src, r, g, b, a):
 
     rv = [ a, a, a, a ]
 
-    for i, index_i in zip((r, g, b, a), bo_cache):
+    for i, index_i in zip((r, g, b, a), bo_cache): # type: ignore
         rv[index_i] = i
 
     return rv
-
 
 
 def linmap(src, dst, rmap, gmap, bmap, amap):
@@ -134,7 +141,8 @@ def linmap(src, dst, rmap, gmap, bmap, amap):
 
 save_png = _renpy.save_png
 
-def map(src, dst, rmap, gmap, bmap, amap): #@ReservedAssignment
+
+def map(src, dst, rmap, gmap, bmap, amap):  # @ReservedAssignment
     """
     This maps the colors between two surfaces. The various map
     parameters must be 256 character long strings, with the value
@@ -146,6 +154,22 @@ def map(src, dst, rmap, gmap, bmap, amap): #@ReservedAssignment
                      src, dst,
                      *endian_order(dst, rmap, gmap, bmap, amap))
 
+
+def blur(src, wrk, dst, xrad, yrad=None):  # @ReservedAssignment
+    """
+    This blurs the source surface. It approximates a Gaussian blur
+    using several box blurs with box sizes based on the desired
+    standard deviation.
+
+    Unlike other operations, blur requires an additional surface
+    to use as a holding location for intermediate results. This
+    surface should not be expected to contain anything usable and
+    it's final state is not defined.
+
+    The surfaces must all be the same size and colour depth.
+    """
+
+    convert_and_call(_renpy.blur, src, wrk, dst, xrad, yrad)
 
 
 def twomap(src, dst, white, black):
@@ -207,8 +231,8 @@ def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, 
         if sw <= dw * 2 and sh <= dh * 2:
             break
 
-        nsw = max(sw / 2, dw)
-        nsh = max(sh / 2, dh)
+        nsw = max(sw // 2, dw)
+        nsh = max(sh // 2, dh)
 
         nsrc = renpy.display.pgrender.surface((nsw, nsh), src.get_masks()[3])
 
@@ -228,6 +252,7 @@ transform = _renpy.transform
 # Note: Blend requires all surfaces to be the same size.
 blend = _renpy.blend
 
+
 def imageblend(a, b, dst, img, amap):
     alpha = byte_offset(img)[3]
     _renpy.imageblend(a, b, dst, img, alpha, amap)
@@ -239,13 +264,13 @@ def colormatrix(src, dst, matrix):
 
     o = [ None ] * 4
     for i in range(0, 4):
-        o[offs[i]] = i
+        o[offs[i]] = i # type: ignore
 
     _renpy.colormatrix(src, dst,
-                       c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4],
-                       c[o[1]][o[0]], c[o[1]][o[1]], c[o[1]][o[2]], c[o[1]][o[3]], c[o[1]][4],
-                       c[o[2]][o[0]], c[o[2]][o[1]], c[o[2]][o[2]], c[o[2]][o[3]], c[o[2]][4],
-                       c[o[3]][o[0]], c[o[3]][o[1]], c[o[3]][o[2]], c[o[3]][o[3]], c[o[3]][4])
+                       c[o[0]][o[0]], c[o[0]][o[1]], c[o[0]][o[2]], c[o[0]][o[3]], c[o[0]][4], # type: ignore
+                       c[o[1]][o[0]], c[o[1]][o[1]], c[o[1]][o[2]], c[o[1]][o[3]], c[o[1]][4], # type: ignore
+                       c[o[2]][o[0]], c[o[2]][o[1]], c[o[2]][o[2]], c[o[2]][o[3]], c[o[2]][4], # type: ignore
+                       c[o[3]][o[0]], c[o[3]][o[1]], c[o[3]][o[2]], c[o[3]][o[3]], c[o[3]][4]) # type: ignore
 
 
 def subpixel(src, dst, x, y):

@@ -1,5 +1,5 @@
 # -*- python -*-
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -20,16 +20,18 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 def version():
     return (6, 12, 0)
 
 from sdl2 cimport *
 from pygame_sdl2 cimport *
+from pygame_sdl2 import Surface
 
 cdef extern from "renpy.h":
 
     void core_init()
-    void subpixel_init()
 
     void save_png_core(object, SDL_RWops *, int)
 
@@ -58,7 +60,11 @@ cdef extern from "renpy.h":
                     int,
                     int)
 
-    void xblur32_core(object, object, int)
+    void blur32_core(object, object, object, float, float)
+    void blur24_core(object, object, object, float, float)
+
+    void linblur32_core(object, object, int, int)
+    void linblur24_core(object, object, int, int)
 
     void alphamunge_core(object, object, int, int, int, char *)
 
@@ -88,14 +94,10 @@ cdef extern from "renpy.h":
     void staticgray_core(object, object,
                          int, int, int, int, int, char *)
 
-    int subpixel32(object, object, float, float, int)
-
     void PyErr_Clear()
 
 
-import pygame
-
-PygameSurface = pygame.Surface
+from pygame_sdl2 import Surface as PygameSurface
 
 def save_png(surf, file, compress=-1):
 
@@ -196,6 +198,80 @@ def linmap(pysrc, pydst, r, g, b, a):
     # pysrc.unlock()
 
 
+def blur(pysrc, pywrk, pydst, xrad, yrad=None):
+
+    if not isinstance(pysrc, PygameSurface):
+        raise Exception("blur requires a pygame Surface as its first argument.")
+
+    if not isinstance(pywrk, PygameSurface):
+        raise Exception("blur requires a pygame Surface as its second argument.")
+
+    if not isinstance(pydst, PygameSurface):
+        raise Exception("blur requires a pygame Surface as its third argument.")
+
+    if pysrc.get_bitsize() not in (24, 32):
+        raise Exception("blur requires a 24 or 32 bit surface.")
+
+    if pywrk.get_bitsize() != pysrc.get_bitsize() \
+            or pydst.get_bitsize() != pysrc.get_bitsize():
+        raise Exception("blur requires all surfaces have the same bitsize.")
+
+    if pywrk.get_size() != pysrc.get_size() \
+            or pydst.get_size() != pysrc.get_size():
+        raise Exception("blur requires all surfaces have the same size.")
+
+    if yrad is None:
+        yrad = xrad
+
+    if xrad < 0 or yrad < 0:
+        raise Exception("blur requires a positive radius.")
+
+#     pysrc.lock()
+#     pywrk.lock()
+#     pydst.lock()
+
+    if pysrc.get_bitsize() == 32:
+        blur32_core(pysrc, pywrk, pydst, xrad, yrad)
+    else:
+        blur24_core(pysrc, pywrk, pydst, xrad, yrad)
+
+#     pydst.unlock()
+#     pywrk.unlock()
+#     pysrc.unlock()
+
+
+def linblur(pysrc, pydst, radius, vertical=0):
+
+    if not isinstance(pysrc, PygameSurface):
+        raise Exception("linblur requires a pygame Surface as its first argument.")
+
+    if not isinstance(pydst, PygameSurface):
+        raise Exception("linblur requires a pygame Surface as its second argument.")
+
+    if pysrc.get_bitsize() not in (24, 32):
+        raise Exception("linblur requires a 24 or 32 bit surface.")
+
+    if pydst.get_bitsize() != pysrc.get_bitsize():
+        raise Exception("linblur requires both surfaces have the same bitsize.")
+
+    if pydst.get_size() != pysrc.get_size():
+        raise Exception("linblur requires both surfaces have the same size.")
+
+    if radius < 1:
+        raise Exception("linblur requires a non-zero radius.")
+
+#     pysrc.lock()
+#     pydst.lock()
+
+    if pysrc.get_bitsize() == 32:
+        linblur32_core(pysrc, pydst, radius, vertical)
+    else:
+        linblur24_core(pysrc, pydst, radius, vertical)
+
+#     pydst.unlock()
+#     pysrc.unlock()
+
+
 def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
     if not isinstance(pysrc, PygameSurface):
@@ -226,39 +302,6 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 
     # pydst.unlock()
     # pysrc.unlock()
-
-
-
-
-# def xblur(pysrc, pydst, radius):
-
-#     if not isinstance(pysrc, PygameSurface):
-#         raise Exception("blur requires a pygame Surface as its first argument.")
-
-#     if not isinstance(pydst, PygameSurface):
-#         raise Exception("blur requires a pygame Surface as its second argument.")
-
-#     if pysrc.get_bitsize() not in (24, 32):
-#         raise Exception("blur requires a 24 or 32 bit surface.")
-
-#     if pydst.get_bitsize() != pysrc.get_bitsize():
-#         raise Exception("blur requires both surfaces have the same bitsize.")
-
-#     if pydst.get_size() != pysrc.get_size():
-#         raise Exception("blur requires both surfaces have the same size.")
-
-#     pysrc.lock()
-#     pydst.lock()
-
-#     if pysrc.get_bitsize() == 32:
-#         xblur32_core(pysrc, pydst, radius)
-#     else:
-#         # blur24_core(pysrc, pydst, radius)
-#         assert False
-
-
-#     pydst.unlock()
-#     pysrc.unlock()
 
 
 # def stretch(pysrc, pydst, rect):
@@ -412,10 +455,6 @@ def staticgray(pysrc, pydst, rmul, gmul, bmul, amul, shift, vmap):
 
 
 def subpixel(pysrc, pydst, xoffset, yoffset, shift):
-
-    if subpixel32(pysrc, pydst, xoffset, yoffset, shift):
-        return
-
     pydst.blit(pysrc, (int(xoffset), int(yoffset)))
 
 
@@ -423,4 +462,3 @@ def subpixel(pysrc, pydst, xoffset, yoffset, shift):
 
 import_pygame_sdl2()
 core_init()
-subpixel_init()

@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,38 +21,32 @@
 
 # This file contains functions that load and save the game state.
 
-import pickle
-import cPickle
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from cStringIO import StringIO
+from future.utils import reraise
 
+from typing import Optional
+
+import io
 import zipfile
 import re
 import threading
 import types
 import shutil
 import os
+import sys
 
 import renpy
-
 from json import dumps as json_dumps
 
-# Dump that chooses which pickle to use:
-def dump(o, f):
-    if renpy.config.use_cpickle:
-        cPickle.dump(o, f, cPickle.HIGHEST_PROTOCOL)
-    else:
-        pickle.dump(o, f, pickle.HIGHEST_PROTOCOL)
+from renpy.compat.pickle import dump, loads
 
-def loads(s):
-    if renpy.config.use_cpickle:
-        return cPickle.loads(s)
-    else:
-        return pickle.loads(s)
 
 # This is used as a quick and dirty way of versioning savegame
 # files.
 savegame_suffix = renpy.savegame_suffix
+
 
 def save_dump(roots, log):
     """
@@ -63,7 +57,6 @@ def save_dump(roots, log):
 
     o_repr_cache = { }
 
-
     def visit(o, path):
         ido = id(o)
 
@@ -71,14 +64,14 @@ def save_dump(roots, log):
             f.write("{0: 7d} {1} = alias {2}\n".format(0, path, o_repr_cache[ido]))
             return 0
 
-        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
+        if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             o_repr = repr(o)
 
-        elif isinstance(o, (str, unicode)):
+        elif isinstance(o, basestring):
             if len(o) <= 80:
-                o_repr = repr(o).encode("utf-8")
+                o_repr = repr(o)
             else:
-                o_repr = repr(o[:80] + "...").encode("utf-8")
+                o_repr = repr(o[:80]) + "..."
 
         elif isinstance(o, (tuple, list)):
             o_repr = "<" + o.__class__.__name__ + ">"
@@ -87,7 +80,11 @@ def save_dump(roots, log):
             o_repr = "<" + o.__class__.__name__ + ">"
 
         elif isinstance(o, types.MethodType):
-            o_repr = "<method {0}.{1}>".format(o.im_class.__name__, o.im_func.__name__)
+
+            if PY2:
+                o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__func__.__name__) # type: ignore
+            else:
+                o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
 
         elif isinstance(o, object):
             o_repr = "<{0}>".format(type(o).__name__)
@@ -95,14 +92,13 @@ def save_dump(roots, log):
         else:
             o_repr = "BAD TYPE <{0}>".format(type(o).__name__)
 
-
         o_repr_cache[ido] = o_repr
 
-        if isinstance(o, (int, float, types.NoneType, types.ModuleType, types.ClassType)):
+        if isinstance(o, (int, float, type(None), types.ModuleType, type)):
             size = 1
 
-        elif isinstance(o, (str, unicode)):
-            size = len(o) / 40 + 1
+        elif isinstance(o, bytes):
+            size = len(o) // 40 + 1
 
         elif isinstance(o, (tuple, list)):
             size = 1
@@ -112,18 +108,18 @@ def save_dump(roots, log):
 
         elif isinstance(o, dict):
             size = 2
-            for k, v in o.iteritems():
+            for k, v in o.items():
                 size += 2
                 size += visit(v, "{0}[{1!r}]".format(path, k))
 
         elif isinstance(o, types.MethodType):
-            size = 1 + visit(o.im_self, path + ".im_self")
+            size = 1 + visit(o.__self__, path + ".im_self")
 
         else:
 
             try:
                 reduction = o.__reduce_ex__(2)
-            except:
+            except Exception:
                 reduction = [ ]
                 o_repr = "BAD REDUCTION " + o_repr
 
@@ -141,17 +137,17 @@ def save_dump(roots, log):
 
             state = get(2, { })
             if isinstance(state, dict):
-                for k, v in state.iteritems():
+                for k, v in state.items():
                     size += 2
                     size += visit(v, path + "." + k)
             else:
                 size += visit(state, path + ".__getstate__()")
 
-            for i, oo in enumerate(get(3, [])):
+            for i, oo in enumerate(get(3, [])): # type: ignore
                 size += 1
                 size += visit(oo, "{0}[{1}]".format(path, i))
 
-            for i in get(4, []):
+            for i in get(4, []): # type: ignore
 
                 if len(i) != 2:
                     continue
@@ -161,17 +157,113 @@ def save_dump(roots, log):
                 size += 2
                 size += visit(v, "{0}[{1!r}]".format(path, k))
 
-
         f.write("{0: 7d} {1} = {2}\n".format(size, path, o_repr_cache[ido]))
 
         return size
 
-    f = file("save_dump.txt", "w")
+    f, _ = renpy.error.open_error_file("save_dump.txt", "w")
 
-    visit(roots, "roots")
-    visit(log, "log")
+    with f:
+        visit(roots, "roots")
+        visit(log, "log")
 
-    f.close()
+
+def find_bad_reduction(roots, log):
+    """
+    Finds objects that can't be reduced properly.
+    """
+
+    seen = set()
+
+    def visit(o, path):
+        ido = id(o)
+
+        if ido in seen:
+            return
+
+        seen.add(ido)
+
+        if isinstance(o, (int, float, type(None), type)):
+            return
+
+        if isinstance(o, (tuple, list)):
+            for i, oo in enumerate(o):
+                rv = visit(oo, "{0}[{1!r}]".format(path, i))
+                if rv is not None:
+                    return rv
+
+        elif isinstance(o, dict):
+            for k, v in o.items():
+                rv = visit(v, "{0}[{1!r}]".format(path, k))
+                if rv is not None:
+                    return rv
+
+        elif isinstance(o, types.MethodType):
+            return visit(o.__self__, path + ".im_self")
+
+        elif isinstance(o, types.ModuleType):
+
+            return "{} = {}".format(path, repr(o)[:160])
+
+        else:
+
+            try:
+                reduction = o.__reduce_ex__(2)
+            except Exception:
+
+                import copy
+
+                try:
+                    copy.copy(o)
+                    return None
+                except Exception:
+                    pass
+
+                return "{} = {}".format(path, repr(o)[:160])
+
+            # Gets an element from the reduction, or o if we don't have
+            # such an element.
+            def get(idx, default):
+                if idx < len(reduction) and reduction[idx] is not None:
+                    return reduction[idx]
+                else:
+                    return default
+
+            state = get(2, { })
+            if isinstance(state, dict):
+                for k, v in state.items():
+                    rv = visit(v, path + "." + k)
+                    if rv is not None:
+                        return rv
+            else:
+                rv = visit(state, path + ".__getstate__()")
+                if rv is not None:
+                    return rv
+
+            for i, oo in enumerate(get(3, [])):
+                rv = visit(oo, "{0}[{1}]".format(path, i))
+                if rv is not None:
+                    return rv
+
+            for i in get(4, []):
+
+                if len(i) != 2:
+                    continue
+
+                k, v = i
+
+                rv = visit(v, "{0}[{1!r}]".format(path, k))
+                if rv is not None:
+                    return rv
+
+        return None
+
+    for k, v in roots.items():
+        rv = visit(v, k)
+        if rv is not None:
+            return rv
+
+    return visit(log, "renpy.game.log")
 
 ################################################################################
 # Saving
@@ -179,8 +271,11 @@ def save_dump(roots, log):
 
 # Used to indicate an aborted save, due to the game being mutated
 # while the save is in progress.
+
+
 class SaveAbort(Exception):
     pass
+
 
 def safe_rename(old, new):
     """
@@ -190,7 +285,22 @@ def safe_rename(old, new):
     if os.path.exists(new):
         os.unlink(new)
 
-    os.rename(old, new)
+    try:
+        os.rename(old, new)
+    except Exception:
+
+        # If the rename failed, try again.
+        try:
+            os.unlink(new)
+            os.rename(old, new)
+        except Exception:
+
+            # If it fails a second time, give up.
+            try:
+                os.unlink(old)
+            except Exception:
+                pass
+
 
 class SaveRecord(object):
     """
@@ -220,29 +330,26 @@ class SaveRecord(object):
             safe_rename(filename_new, filename)
             return
 
-        zf = zipfile.ZipFile(filename_new, "w", zipfile.ZIP_DEFLATED)
+        with zipfile.ZipFile(filename_new, "w", zipfile.ZIP_DEFLATED) as zf:
+            # Screenshot.
+            if self.screenshot is not None:
+                zf.writestr("screenshot.png", self.screenshot)
 
-        # Screenshot.
-        zf.writestr("screenshot.png", self.screenshot)
+            # Extra info.
+            zf.writestr("extra_info", self.extra_info.encode("utf-8"))
 
-        # Extra info.
-        zf.writestr("extra_info", self.extra_info.encode("utf-8"))
+            # Json
+            zf.writestr("json", self.json)
 
-        # Json
-        zf.writestr("json", self.json)
+            # Version.
+            zf.writestr("renpy_version", renpy.version)
 
-        # Version.
-        zf.writestr("renpy_version", renpy.version)
-
-        # The actual game.
-        zf.writestr("log", self.log)
-
-        zf.close()
+            # The actual game.
+            zf.writestr("log", self.log)
 
         safe_rename(filename_new, filename)
 
         self.first_filename = filename
-
 
 
 def save(slotname, extra_info='', mutate_flag=False):
@@ -263,23 +370,49 @@ def save(slotname, extra_info='', mutate_flag=False):
     :func:`renpy.take_screenshot` should be called before this function.
     """
 
+    # Update persistent file, if needed. This is for the web and mobile
+    # platforms, to make sure the persistent file is updated whenever the
+    # game is saved. (But not auto-saved, for performance reasons.)
+    if not mutate_flag:
+        renpy.persistent.update()
+
     if mutate_flag:
-        renpy.python.mutate_flag = False
+        renpy.revertable.mutate_flag = False
 
     roots = renpy.game.log.freeze(None)
 
     if renpy.config.save_dump:
         save_dump(roots, renpy.game.log)
 
-    logf = StringIO()
-    dump((roots, renpy.game.log), logf)
+    logf = io.BytesIO()
+    try:
+        dump((roots, renpy.game.log), logf)
+    except Exception:
 
-    if mutate_flag and renpy.python.mutate_flag:
+        t, e, tb = sys.exc_info()
+
+        if mutate_flag:
+            reraise(t, e, tb)
+
+        try:
+            bad = find_bad_reduction(roots, renpy.game.log)
+        except Exception:
+            reraise(t, e, tb)
+
+        if bad is None:
+            reraise(t, e, tb)
+
+        if e.args:
+            e.args = (e.args[0] + ' (perhaps {})'.format(bad),) + e.args[1:]
+
+        reraise(t, e, tb)
+
+    if mutate_flag and renpy.revertable.mutate_flag:
         raise SaveAbort()
 
     screenshot = renpy.game.interface.get_screenshot()
 
-    json = { "_save_name" : extra_info }
+    json = { "_save_name" : extra_info, "_renpy_version" : list(renpy.version_tuple), "_version" : renpy.config.version }
 
     for i in renpy.config.save_json_callbacks:
         i(json)
@@ -293,6 +426,8 @@ def save(slotname, extra_info='', mutate_flag=False):
     clear_slot(slotname)
 
 
+# The thread used for autosave.
+autosave_thread = None
 
 # Flag that lets us know if an autosave is in progress.
 autosave_not_running = threading.Event()
@@ -301,7 +436,8 @@ autosave_not_running.set()
 # The number of times autosave has been called without a save occuring.
 autosave_counter = 0
 
-def autosave_thread(take_screenshot):
+
+def autosave_thread_function(take_screenshot):
 
     global autosave_counter
 
@@ -322,12 +458,14 @@ def autosave_thread(take_screenshot):
             save("auto-1", mutate_flag=True, extra_info=extra_info)
             autosave_counter = 0
 
-        except:
+        except Exception:
             pass
 
     finally:
         autosave_not_running.set()
-
+        if renpy.emscripten:
+            import emscripten
+            emscripten.syncfs()
 
 
 def autosave():
@@ -336,8 +474,11 @@ def autosave():
     if not renpy.config.autosave_frequency:
         return
 
+    if not renpy.config.has_autosave:
+        return
+
     # That is, autosave is running.
-    if not autosave_not_running.isSet():
+    if not autosave_not_running.is_set():
         return
 
     if renpy.config.skipping:
@@ -354,11 +495,14 @@ def autosave():
     if renpy.store.main_menu:
         return
 
+    if not renpy.store._autosave:
+        return
+
     force_autosave(True)
 
 
 # This assumes a screenshot has already been taken.
-def force_autosave(take_screenshot=False):
+def force_autosave(take_screenshot=False, block=False):
     """
     :doc: other
 
@@ -367,12 +511,24 @@ def force_autosave(take_screenshot=False):
     `take_screenshot`
         If True, a new screenshot will be taken. If False, the existing
         screenshot will be used.
+
+    `block`
+        If True, blocks until the autosave completes.
     """
 
+    global autosave_thread
+
+    if renpy.game.after_rollback or renpy.exports.in_rollback():
+        return
 
     # That is, autosave is running.
-    if not autosave_not_running.isSet():
+    if not autosave_not_running.is_set():
         return
+
+    # Join the autosave thread to clear resources.
+    if autosave_thread is not None:
+        autosave_thread.join()
+        autosave_thread = None
 
     # Do not save if we're in the main menu.
     if renpy.store.main_menu:
@@ -382,15 +538,35 @@ def force_autosave(take_screenshot=False):
     if renpy.store._in_replay:
         return
 
-    autosave_not_running.clear()
-    t = threading.Thread(target=autosave_thread, args=(take_screenshot,))
-    t.daemon = True
-    t.start()
+    if block:
 
+        if renpy.config.auto_save_extra_info:
+            extra_info = renpy.config.auto_save_extra_info()
+        else:
+            extra_info = ""
+
+        cycle_saves("auto-", renpy.config.autosave_slots)
+
+        if take_screenshot:
+            renpy.exports.take_screenshot()
+
+        save("auto-1", extra_info=extra_info)
+
+        return
+
+    autosave_not_running.clear()
+
+    if not renpy.emscripten:
+        autosave_thread = threading.Thread(target=autosave_thread_function, args=(take_screenshot,))
+        autosave_thread.daemon = True
+        autosave_thread.start()
+    else:
+        autosave_thread_function(take_screenshot)
 
 ################################################################################
 # Loading and Slot Manipulation
 ################################################################################
+
 
 def scan_saved_game(slotname):
 
@@ -405,7 +581,7 @@ def scan_saved_game(slotname):
     if json is None:
         return None
 
-    extra_info = json.get("_save_name", "")
+    extra_info = json.get("_save_name", "") # type: ignore
 
     screenshot = c.get_screenshot()
 
@@ -456,7 +632,7 @@ def list_saved_games(regexp=r'.', fast=False):
         if c is not None:
             json = c.get_json()
             if json is not None:
-                extra_info = json.get("_save_name", "")
+                extra_info = json.get("_save_name", "") # type: ignore
             else:
                 extra_info = ""
 
@@ -487,8 +663,10 @@ def list_slots(regexp=None):
 
     return slots
 
+
 # A cache for newest slot info.
 newest_slot_cache = { }
+
 
 def newest_slot(regexp=None):
     """
@@ -517,7 +695,7 @@ def newest_slot(regexp=None):
             if mtime is None:
                 continue
 
-            if mtime >= max_mtime:
+            if mtime >= max_mtime: # type: ignore
                 rv = i
                 max_mtime = mtime
 
@@ -534,15 +712,21 @@ def slot_mtime(slotname):
 
     return get_cache(slotname).get_mtime()
 
+
 def slot_json(slotname):
     """
     :doc: loadsave
 
     Returns the json information for `slotname`, or None if the slot is
     empty.
+
+    Much like the ``d`` argument to the :var:`config.save_json_callback`
+    function, it will be returned as a dictionary. More precisely, the
+    dictionary will contain the same data as it did when the game was saved.
     """
 
     return get_cache(slotname).get_json()
+
 
 def slot_screenshot(slotname):
     """
@@ -553,6 +737,7 @@ def slot_screenshot(slotname):
     """
 
     return get_cache(slotname).get_screenshot()
+
 
 def can_load(filename, test=False):
     """
@@ -568,6 +753,7 @@ def can_load(filename, test=False):
     else:
         return False
 
+
 def load(filename):
     """
     :doc: loadsave
@@ -578,6 +764,7 @@ def load(filename):
 
     roots, log = loads(location.load(filename))
     log.unfreeze(roots, label="_after_load")
+
 
 def unlink_save(filename):
     """
@@ -602,6 +789,7 @@ def rename_save(old, new):
 
     clear_slot(old)
     clear_slot(new)
+
 
 def copy_save(old, new):
     """
@@ -633,8 +821,10 @@ def cycle_saves(name, count):
 # Cache
 ################################################################################
 
+
 # None is a possible value for some of the attributes.
 unknown = renpy.object.Sentinel("unknown")
+
 
 class Cache(object):
     """
@@ -682,9 +872,20 @@ class Cache(object):
 
         return self.screenshot
 
+    def preload(self):
+        """
+        Preloads all the save data (that won't take up a ton of memory).
+        """
+
+        self.get_mtime()
+        self.get_json()
+        self.get_screenshot()
+
+
 # A map from slotname to cache object. This is used to cache savegame scan
 # data until the slot changes.
 cache = { }
+
 
 def get_cache(slotname):
 
@@ -707,6 +908,7 @@ def clear_slot(slotname):
 
     renpy.exports.restart_interaction()
 
+
 def clear_cache():
     """
     Clears the entire cache.
@@ -720,12 +922,19 @@ def clear_cache():
     renpy.exports.restart_interaction()
 
 
+def init():
+    """
+    Scans all the metadata from the save slot cache.
+    """
+
+    for i in list_slots():
+        if not i.startswith("_"):
+            get_cache(i).preload()
+
+
 # Save locations are places where saves are saved to or loaded from, or a
 # collection of such locations. This is the default save location.
 location = None
 
-if False:
+if 1 == 0:
     location = renpy.savelocation.FileLocation("blah")
-
-
-

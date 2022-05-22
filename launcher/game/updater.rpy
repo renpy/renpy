@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,23 +23,13 @@ init python:
     # This can be one of None, "available", "not-available", or "error".
     #
     # It must be None for a release.
-    UPDATE_SIMULATE = None
+    UPDATE_SIMULATE = os.environ.get("RENPY_UPDATE_SIMULATE", None)
 
     PUBLIC_KEY = "renpy_public.pem"
 
-    UPDATE_URLS = {
-        "Release" : "http://update.renpy.org/release/updates.json",
-        "Prerelease" : "http://update.renpy.org/prerelease/updates.json",
-        "Experimental" : "http://update.renpy.org/experimental/updates.json",
-        "Nightly" : "http://nightly.renpy.org/current/updates.json",
-        }
+    CHANNELS_URL = "https://www.renpy.org/channels.json"
 
     version_tuple = renpy.version(tuple=True)
-
-    DLC_URL = "http://update.renpy.org/{0}.{1}.{2}/updates.json".format(version_tuple[0], version_tuple[1], version_tuple[2])
-
-    if persistent.update_channel not in UPDATE_URLS:
-        persistent.update_channel = "Release"
 
     def check_dlc(name):
         """
@@ -55,20 +45,51 @@ init python:
         Returns True if the DLC is installed, False otherwise.
         """
 
-        if persistent.update_channel == "Nightly":
-            dlc_url = UPDATE_URLS["Nightly"]
-        else:
-            dlc_url = DLC_URL
+        dlc_url = "http://update.renpy.org/{}/updates.json".format(".".join(str(i) for i in version_tuple[:-1]))
+
+        state = updater.get_installed_state()
+
+        if state is not None:
+            base_name = state.get("sdk", {}).get('base_name', '')
+
+            if base_name.startswith("renpy-nightly-"):
+                dlc_url = "http://nightly.renpy.org/{}/updates.json".format(base_name[6:])
 
         return renpy.invoke_in_new_context(updater.update, dlc_url, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart)
 
-screen update_channel:
+    # Strings so they can be translated.
+
+
+    _("Release")
+    _("Release (Ren'Py 8, Python 3)")
+    _("Release (Ren'Py 7, Python 2)")
+    _("{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games.")
+
+    _("Prerelease")
+    _("Prerelease (Ren'Py 8, Python 3)")
+    _("Prerelease (Ren'Py 7, Python 2)")
+    _("A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games.")
+
+    _("Experimental")
+    _("Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer.")
+
+    _("Nightly")
+    _("Nightly (Ren'Py 8, Python 3)")
+    _("Nightly (Ren'Py 7, Python 2)")
+    _("The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all.")
+
+
+screen update_channel(channels):
 
     frame:
         style_group "l"
         style "l_root"
 
         window:
+
+            has viewport:
+                scrollbars "vertical"
+                mousewheel True
 
             has vbox
 
@@ -83,60 +104,44 @@ screen update_channel:
 
                     has vbox
 
-                    text _("The update channel controls the version of Ren'Py the updater will download. Please select an update channel:") style "l_small_text"
+                    text _("The update channel controls the version of Ren'Py the updater will download.")
 
-                    # Release
-                    add SPACER
+                    for c in channels:
 
-                    textbutton _("Release") action [ SetField(persistent, "update_channel", "Release"), Jump("preferences") ]
+                        if c["split_version"] != list(renpy.version_tuple):
+                            $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)]
 
-                    add HALF_SPACER
+                            if c["channel"].startswith("Release"):
+                                $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")
+                            elif c["channel"].startswith("Prerelease"):
+                                $ current = _("• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}")
+                            else:
+                                $ current = ""
 
-                    frame:
-                        style "l_indent"
-                        text _("{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games.") style "l_small_text"
+                        else:
+                            $ action = None
+                            $ current = _("• This version is installed and up-to-date.")
 
-                    # Prerelease
-                    add SPACER
+                        add SPACER
 
-                    textbutton _("Prerelease") action [ SetField(persistent, "update_channel", "Prerelease"), Jump("preferences") ]
-
-                    add HALF_SPACER
-
-                    frame:
-                        style "l_indent"
-                        text _("A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games.") style "l_small_text"
-
-
-                    # Experimental
-                    add SPACER
-
-                    textbutton _("Experimental") action [ SetField(persistent, "update_channel", "Experimental"), Jump("preferences") ]
-
-                    add HALF_SPACER
-
-                    frame:
-                        style "l_indent"
-                        text _("Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer.") style "l_small_text"
+                        hbox:
+                            spacing 7
+                            textbutton c["channel"]  action action
 
 
-                    # Nightly
-                    add SPACER
 
-                    textbutton _("Nightly") action [ SetField(persistent, "update_channel", "Nightly"), Jump("preferences") ]
+                        add HALF_SPACER
 
-                    add HALF_SPACER
+                        $ date = _strftime(__("%B %d, %Y"), time.localtime(c["timestamp"]))
 
-                    frame:
-                        style "l_indent"
-                        text _("The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all.") style "l_small_text"
+                        text "[date] • [c[pretty_version]] [current!t]" style "l_small_text"
 
+                        add HALF_SPACER
 
-    textbutton _("Cancel") action Jump("preferences") style "l_left_button"
+                        text c["description"] style "l_small_text"
 
-label update_preference:
-    call screen update_channel
-    return
+    textbutton _("Cancel") action Jump("front_page") style "l_left_button"
+
 
 screen updater:
 
@@ -183,7 +188,7 @@ screen updater:
 
                     bar:
                         range 1.0
-                        value u.progress
+                        value (u.progress or 0.0)
                         style "l_progress_bar"
 
         label _("Ren'Py Update") style "l_info_label"
@@ -196,9 +201,32 @@ screen updater:
 
 label update:
 
-    python:
-        updater.update(UPDATE_URLS[persistent.update_channel], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY)
+    $ update_channels = fetch_update_channels(quiet=False)
+    call screen update_channel(update_channels) nopredict
 
-    # This should never happen.
     jump front_page
 
+init python:
+
+    def fetch_update_channels(quiet=True):
+
+        if not quiet:
+            interface.processing(_("Fetching the list of update channels"))
+
+        import requests
+
+        if not quiet:
+            with interface.error_handling(_("downloading the list of update channels")):
+                channels = requests.get(CHANNELS_URL).json()["releases"]
+        else:
+            channels = requests.get(CHANNELS_URL).json()["releases"]
+
+        persistent.has_update = False
+
+        for chan in channels:
+            if chan["channel"] == "Release":
+                if chan["split_version"] > list(renpy.version_tuple):
+                    persistent.has_update = True
+                break
+
+        return channels

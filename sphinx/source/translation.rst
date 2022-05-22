@@ -31,16 +31,27 @@ Primary and Alternate Languages
 ===============================
 
 Ren'Py expects each game to be written in a single primary
-language. This is called the ``None`` language, regardless of what
+language. This is called the None language, regardless of what
 language it actually is. (For example, if the game was written in
-English, English will be the ``None`` language.)
-
-When the None language is selected, most of Ren'Py's translation
-functionality is disabled.
+English, English will be the None language.)
 
 Alternate languages are referred to by names which can double as
-python identifiers. (Starts with a letter or underscore, followed by
-letters, numbers, and underscores.)
+Python identifiers (starts with a letter or underscore, followed by
+letters, numbers, and underscores).
+
+When the None language is selected, most of Ren'Py's translation
+functionality is disabled, with the notable exception of Renpy's
+internal built-in strings, from the accessibility menu for example.
+Theses strings are not found in your project's code, yet they will
+still be included in the distributed version of the game. You can
+find them in the ``game/tl/None/common.rpym`` file, whose only
+purposes are 1) to provide translations to these strings when the None
+language is not english, and 2) to allow creators to customize these
+strings for their game.
+
+The language of the launcher at the time when the project is
+created will be the language this file will initially translate the
+internal strings to.
 
 Generating Translation Files
 ============================
@@ -58,7 +69,7 @@ be placed under ``tutorial/game/tl/piglatin``.
 
 There will be one translation file created per game script file. The
 common.rpy file will also be created to contain translations of
-strings found in the common code.
+strings that are common to all games made using Ren'Py.
 
 Translating Dialogue
 ====================
@@ -72,7 +83,7 @@ Translation Units
 
 The fundamental unit of translation is a block of zero or more
 translatable statements, optionally followed by a single say
-statement. Translatable statements are the voice and nvl statements. For example
+statement. Translatable statements are the voice and nvl statements. For example,
 take the following game::
 
     label start:
@@ -86,7 +97,7 @@ take the following game::
 
 This is broken up into multiple translation units. Each unit has an
 identifier assigned to it, with the identifier being generated from
-the label preceding the unit, and the code inside the unit. (If
+the label preceding the unit, and the statements inside the unit. (If
 multiple units would be assigned the same translation number, a serial
 number to the second and later units to distinguish them.)
 
@@ -111,7 +122,7 @@ Translate Statement
 
 When you generate translations for a language, Ren'Py will generate a
 translate statement corresponding to each translation unit. When
-translating the code above, Ren'Py will generate::
+translating the script above, Ren'Py will generate::
 
     # game/script.rpy:95
     translate piglatin start_636ae3f5:
@@ -131,7 +142,7 @@ translating the code above, Ren'Py will generate::
         # e "Pretty much everything your game needs!"
         e ""
 
-This can be translated by editing the generated code. A finished
+This can be translated by editing the generated files. A finished
 translation might look like::
 
     # game/script.rpy:95
@@ -170,7 +181,7 @@ original language. For example, a long line could be split::
         e "...orfay anslatingtray ialogueday, ingsstray, imagesway, andway ylesstay."
 
 
-Or a statement can be removed, by replacing it with the pass statement::
+Or a statement can be removed, by replacing it with the ``pass`` statement::
 
     # game/script.rpy:101
     translate piglatin start_9e949aac:
@@ -179,7 +190,7 @@ Or a statement can be removed, by replacing it with the pass statement::
          pass
 
 It's also possible to run non-dialogue statements, such as
-conditionals or python code. For example, we can translate::
+conditionals or Python. For example, we can translate::
 
   e "You scored [points] points!"
 
@@ -189,9 +200,20 @@ into::
     translate piglatin start_36562aba:
 
         # e "You scored [points] points!"
-        e $ latin_points = to_roman_numerals(points)
+        $ latin_points = to_roman_numerals(points)
         e "Ouyay oredscay [latin_points] ointspay!"
 
+Sometimes it might be desirable to change a line of
+dialogue in the original language, without requiring
+the translators to retranslate the line. For example,
+a typo in English is unlikely to have surved the process
+of being translated into Russian.
+
+This can be done by including an ``id`` clause as part of the
+say statement, giving the translation ID to use for this
+statement. For example:
+
+    e "This used to have a typo." id start_61b861a2
 
 Tips
 ----
@@ -201,20 +223,22 @@ especially when that dialogue is repeated in more than one place
 inside a label. In some cases, it may be necessary to assign
 a translation identifier directly, using a statement like::
 
-    translate None mylable_03ac197e_1:
+    translate None mylabel_03ac197e_1:
         "..."
 
 Adding labels can also confuse the translation process. To prevent
-this, labels that are given the hide clause are ignored by the
-translation code.::
+this, labels that are given the ``hide`` clause are ignored when generating
+translations.::
 
     label ignored_by_translation hide:
         "..."
 
-While translation blocks may include python code, this code should not
+While translation blocks may include Python, this Python should not
 have side effects visible outside of the block. That's because
 changing languages will restart the translation block, causing the
 side effects to occur multiple times.
+
+.. _string-translations:
 
 Menu and String Translations
 ============================
@@ -225,8 +249,8 @@ substitution. Wherever a string is found, it will be replaced by a
 single replacement.
 
 When generating translations, Ren'Py will scan the script files for
-menus, and for strings enclosed inside the _() function. It will then
-place the strings inside a translate strings block. For example, if we
+menus, and for strings enclosed inside the ``_()`` function. It will then
+place the strings inside a ``translate strings`` block. For example, if we
 have the following script::
 
   define e = Character(_("Eileen"))
@@ -241,7 +265,7 @@ have the following script::
        "Head East":
           # ...
 
-Ren'Py will generate the following code::
+Ren'Py will generate::
 
   translate piglatin strings:
 
@@ -270,7 +294,7 @@ Which can then be translated::
 String translations are also applied to dialogue strings that are not
 translated as dialogue.
 
-When the same string is used in multiple places in the code, the string can
+When the same string is used in multiple places, the string can
 be distinguished using the {#...} text tag. Even though they display the
 same, Ren'Py considers all of these distinct strings for the purpose
 of translation::
@@ -280,7 +304,7 @@ of translation::
     "New{#game}"
     "New{#playlist}"
 
-The translate strings statement can also be used to translate the None
+The ``translate strings`` statement can also be used to translate the None
 language. This can be used to when the game is written in a non-English
 language, to translate the Ren'Py user interface. ::
 
@@ -288,13 +312,12 @@ language, to translate the Ren'Py user interface. ::
          old "Start Game"
          new "Artstay Amegay"
 
-
-Translating substitutions
+Translating Substitutions
 -------------------------
 
-String substitutions can be translated using the !t conversion
-flag. So the following code will be translatable using the dialogue
-and code translation systems::
+String substitutions can be translated using the ``!t`` conversion
+flag. So the following will be translatable using a combination of
+the dialogue and string translation systems::
 
   if mood_points > 5:
       $ mood = _("great")
@@ -303,12 +326,37 @@ and code translation systems::
 
   "I'm feeling [mood!t]."
 
+.. _extract-merge-translations:
+
+Extracting and Merging String Translations
+------------------------------------------
+
+String translations can be extracted from one project, and moved to
+another. This is a multiple-step process:
+
+* Select the source project, and choose "Generate Translations".
+* Enter the language to extract, and click "Extract String Translations".
+* Return to the main menu, select the target project, and choose "Generate Translations".
+* Enter the language to merge to (often the same language), and choose "Merge String Translations".
+
+There are a couple of options that control merging:
+
+Replace existing translations
+    When checked, this will cause non-trivial existing translations (those
+    that are not empty or the source string) to be replaced. By default,
+    merging will refuse to overwrite non-trivial translations that already
+    exist.
+
+Reverse languages
+    Reverses the strings before merging. This can be used, for example,
+    to use a set of English -> Russian translations to create a
+    Russian -> English translation.
 
 Image and File Translations
 ===========================
 
 When translating a game, it may be necessary to replace a file
-with a translate version. For example, if an image contains text, it
+with a translated version. For example, if an image contains text, it
 might make sense to replace it with a version of the image where the
 text is in another language.
 
@@ -317,28 +365,33 @@ image. For example, if the "piglatin" language is in use, and
 "library.png" is loaded, Ren'Py will use "game/tl/piglatin/library.png"
 in preference to "game/library.png".
 
+If the file is in a directory under game, that directory should be
+included underneath the language. For example, the file "game/gui/main_menu.png"
+can be translated by creating the file "game/tl/piglatin/gui/main_menu.png".
+
 Style Translations
 ==================
 
-It may be necessary to change styles - especially font-related
-styles - when translating a game. Ren'Py handles this with translate
-style blocks and translate python blocks. These blocks can contain code
-to change language-related variables and styles. For example::
+It may be necessary to change styles – especially font-related
+styles – when translating a game. Ren'Py handles this with ``translate
+style`` blocks and ``translate python`` blocks. These blocks can
+change language-related variables and styles. For example::
 
-  translate piglatin style default:
-      font "stonecutter.ttf"
+    translate piglatin style default:
+        font "stonecutter.ttf"
 
-or equivalently::
+More usually, the font used for dialogue is set with :var:`gui.text_font`, which
+can be customized using:
 
-  translate piglatin python:
-      style.default.font = "stonecutter.ttf"
+    translate piglatin python:
+        gui.text_font = "stonecutter.ttf"
 
-When a language is activated - either at the start of the game, or
-after a language change - Ren'Py resets the styles to their contents
-at the end of the init phase. It then runs all translate python blocks
-and translate style blocks associated with the current language, guaranteeing
-that blocks appearing earlier in a file are executed first. Finally, it
-rebuilds styles, allowing the changes to take effect.
+When a language is activated – either at the start of the game, or
+after a language change – Ren'Py resets the styles to their contents
+at the end of the init phase. It then runs all ``translate python`` blocks,
+all style blocks, and all translate style blocks associated with the current
+language, guaranteeing that blocks appearing earlier in a file are executed first.
+Finally, it rebuilds styles, allowing the changes to take effect.
 
 Style translations may be added to any .rpy file.
 
@@ -353,6 +406,9 @@ The default language is chosen using the following method:
 * If :var:`config.language` is set, that language is used.
 * If the game has ever chosen a language in the past, that language is
   used.
+* If this is the first time the game has been run and
+  :var:`config.enable_language_autodetect` is True, Ren'Py tries to
+  autodetect the language using :var:`config.locale_to_language_function`.
 * If this is the first time the game has been run,
   :var:`config.default_language` is used. (This defaults to the None
   language.)
@@ -366,10 +422,10 @@ The main way to switch languages is with the Language action.
 .. include:: inc/language_action
 
 The Language action can be used to add a language preference to the
-preferences screen, using code like::
+preferences screen::
 
             frame:
-                style_group "pref"
+                style_prefix "pref"
                 has vbox
 
                 label _("Language")
@@ -380,7 +436,7 @@ There are two translation-related functions:
 
 .. include:: inc/translation_functions
 
-In addition, there are two functions that are related to string
+In addition, there are four functions that are related to string
 translation:
 
 .. function:: _(s)
@@ -397,6 +453,10 @@ translation:
    to the list of translatable strings. Note that the string may be
    double-translated, if it matches a string translation when it
    is displayed.
+
+.. include:: inc/underscore_p
+
+.. include:: inc/translate_string
 
 There are two language-related variables. One is
 :var:`config.language`, which is used to change the default language
@@ -438,7 +498,7 @@ This will update the "game/tl/language/strings.rpy" file with a
 translation template that contains all of the strings in it.
 
 If a game doesn't include support for changing the language, it may be
-appropriate to use an init python block to set :var:`config.language`
+appropriate to use an ``init python`` block to set :var:`config.language`
 to the target language.
 
 Along with the use of string translations for dialogue, unsanctioned

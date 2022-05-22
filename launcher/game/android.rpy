@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,19 +19,25 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+default persistent.android_bundle = False
+
 init python:
     ANDROID_NO_RAPT = 0
     ANDROID_NO_JDK = 1
     ANDROID_NO_SDK = 2
     ANDROID_NO_KEY = 3
-    ANDROID_NO_CONFIG = 4
-    ANDROID_OK = 5
+    ANDROID_NO_BUNDLE_KEY = 4
+    ANDROID_NO_CONFIG = 5
+    ANDROID_NO_BUNDLE = 6
+    ANDROID_OK = 7
 
     NO_RAPT_TEXT = _("To build Android packages, please download RAPT, unzip it, and place it into the Ren'Py directory. Then restart the Ren'Py launcher.")
-    NO_JDK_TEXT = _("A 32-bit Java Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/index.html}download and install the JDK{/a}, then restart the Ren'Py launcher.")
+    NO_JDK_TEXT = _("A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}download and install the JDK{/a}, then restart the Ren'Py launcher.")
     NO_SDK_TEXT = _("RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this.")
     NO_KEY_TEXT = _("RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore.")
+    NO_BUNDLE_KEY_TEXT = _("RAPT has been installed, but a bundle key hasn't been configured. Please create a new key, or restore bundle.keystore.")
     NO_CONFIG_TEXT = _("The current project has not been configured. Use \"Configure\" to configure it before building.")
+    NO_BUNDLE_TEXT = _("Please select if you want a Play Bundle (for Google Play), or a Universal APK (for sideloading and other app stores).")
     OK_TEXT = _("Choose \"Build\" to build the current project, or attach an Android device and choose \"Build & Install\" to build and install it on the device.")
 
     PHONE_TEXT = _("Attempts to emulate an Android phone.\n\nTouch input is emulated through the mouse, but only when the button is held down. Escape is mapped to the menu button, and PageUp is mapped to the back button.")
@@ -45,9 +51,16 @@ init python:
     BUILD_AND_INSTALL_TEXT = _("Builds the Android package, and installs it on an Android device connected to your computer.")
     BUILD_INSTALL_AND_LAUNCH_TEXT = _("Builds the Android package, installs it on an Android device connected to your computer, then launches the app on your device.")
 
-    CONNECT_TEXT = _("Connects to an Android device running ADB in TCP/IP mode.")
-    DISCONNECT_TEXT = _("Disconnects from an Android device running ADB in TCP/IP mode.")
     LOGCAT_TEXT = _("Retrieves the log from the Android device and writes it to a file.")
+    LIST_DEVICES_TEXT = _("Lists the connected devices.")
+    PAIR_TEXT = _("Pairs with a device over Wi-Fi, on Android 11+.")
+    CONNECT_TEXT = _("Connects to a device over Wi-Fi, on Android 11+.")
+    DISCONNECT_TEXT = _("Disconnects a device connected over Wi-Fi.")
+
+    CLEAN_TEXT = _("Removes Android temporary files.")
+
+    PLAY_BUNDLE_TEXT = _("Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data.")
+    UNIVERSAL_APK_TEXT = _("Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data.")
 
 
     import subprocess
@@ -83,6 +96,8 @@ init python:
         import rapt.interface
 
         rapt.plat.renpy = True
+        rapt.plat.translate = __
+
     else:
         rapt = None
 
@@ -95,14 +110,17 @@ init python:
             return ANDROID_NO_RAPT
         if renpy.windows and not "JAVA_HOME" in os.environ:
             return ANDROID_NO_JDK
-        if not os.path.exists(rapt.plat.path("android-sdk/extras/google/play_licensing")):
+        if not os.path.exists(rapt.plat.adb):
             return ANDROID_NO_SDK
-        if not os.path.exists(rapt.plat.path("android.keystore")):
+        if not os.path.exists(rapt.plat.path("project/local.properties")):
             return ANDROID_NO_KEY
-        if not os.path.exists(rapt.plat.path("local.properties")):
-            return ANDROID_NO_KEY
+        if not os.path.exists(rapt.plat.path("project/bundle.properties")):
+            return ANDROID_NO_BUNDLE_KEY
         if not os.path.exists(os.path.join(project.current.path, ".android.json")):
             return ANDROID_NO_CONFIG
+        if persistent.android_bundle is None:
+            return ANDROID_NO_BUNDLE
+
         return ANDROID_OK
 
 
@@ -119,8 +137,12 @@ init python:
             return NO_SDK_TEXT
         if state == ANDROID_NO_KEY:
             return NO_KEY_TEXT
+        if state == ANDROID_NO_BUNDLE_KEY:
+            return NO_BUNDLE_KEY_TEXT
         if state == ANDROID_NO_CONFIG:
             return NO_CONFIG_TEXT
+        if state == ANDROID_NO_BUNDLE:
+            return NO_BUNDLE_TEXT
         if state == ANDROID_OK:
             return OK_TEXT
 
@@ -161,8 +183,10 @@ init python:
 
         filename = os.path.join(p.path, ".android.json")
 
-        with open(filename, "r") as f:
+        with open(filename, "rb") as f:
             android_json = json.load(f)
+
+        old_android_json = dict(android_json)
 
         if "google_play_key" in build:
             android_json["google_play_key"] = build["google_play_key"]
@@ -178,11 +202,13 @@ init python:
         else:
             android_json.pop("google_play_salt", None)
 
+        if android_json != old_android_json:
 
-        with open(filename, "w") as f:
-            json.dump(android_json, f)
+            with open(filename, "wb") as f:
+                json.dump(android_json, f)
 
-    def android_build(command, p=None, gui=True, launch=False, destination=None, opendir=False):
+
+    def android_build(p=None, gui=True, bundle=False, install=False, launch=False, destination=None, opendir=False):
         """
         This actually builds the package.
         """
@@ -230,7 +256,7 @@ init python:
                         parent = os.path.dirname(p.path)
                         destination_dir = os.path.join(parent, destination)
 
-            except:
+            except Exception:
                 destination_dir = None
 
             dir_to_open = source_dir
@@ -241,7 +267,7 @@ init python:
 
                 try:
                     os.makedirs(destination_dir)
-                except:
+                except Exception:
                     pass
 
                 try:
@@ -251,17 +277,22 @@ init python:
 
                     dir_to_open = destination_dir
 
-                except:
+                except Exception:
                     import traceback
                     traceback.print_exc()
                     pass
 
             if opendir:
-                store.OpenDirectory(dir_to_open)()
+                dir_to_open = os.path.join(p.path, dir_to_open)
+                renpy.run(store.OpenDirectory(dir_to_open, absolute=True))
 
 
         with interface.nolinks():
-            rapt.build.build(rapt_interface, dist, command, launch=launch, finished=finished)
+            rapt.build.build(rapt_interface, dist, bundle=bundle, install=install, launch=launch, finished=finished, permissions=p.dump['build']['android_permissions'])
+
+
+    def android_build_argument(cmd):
+        return cmd + project.current.data["android_build"]
 
 
 
@@ -280,7 +311,7 @@ screen android_process(interface):
     text "[ft.text!q]":
         size 14
         color TEXT
-        font "Roboto-Light.ttf"
+        font gui.LIGHT_FONT
         xpos 75
         ypos 350
 
@@ -301,7 +332,7 @@ screen android:
 
             has vbox
 
-            label _("Android: [project.current.name!q]")
+            label _("Android: [project.current.display_name!q]")
 
             add HALF_SPACER
 
@@ -331,15 +362,15 @@ screen android:
                                 spacing 15
 
                             textbutton _("Phone"):
-                                action LaunchEmulator("touch", "small phone touch android")
+                                action LaunchEmulator("touch", "small phone touch android mobile")
                                 hovered tt.Action(PHONE_TEXT)
 
                             textbutton _("Tablet"):
-                                action LaunchEmulator("touch", "medium tablet touch android")
+                                action LaunchEmulator("touch", "medium tablet touch android mobile")
                                 hovered tt.Action(TABLET_TEXT)
 
                             textbutton _("Television"):
-                                action LaunchEmulator("tv", "small tv ouya android")
+                                action LaunchEmulator("tv", "small tv android mobile")
                                 hovered tt.Action(OUYA_TEXT)
 
 
@@ -357,7 +388,6 @@ screen android:
                         frame style "l_indent":
 
                             has vbox
-
                             textbutton _("Install SDK & Create Keys"):
                                 action AndroidIfState(state, ANDROID_NO_SDK, Jump("android_installsdk"))
                                 hovered tt.Action(INSTALL_SDK_TEXT)
@@ -365,6 +395,20 @@ screen android:
                             textbutton _("Configure"):
                                 action AndroidIfState(state, ANDROID_NO_CONFIG, Jump("android_configure"))
                                 hovered tt.Action(CONFIGURE_TEXT)
+
+                            add SPACER
+
+                            textbutton _("Play Bundle"):
+                                action SetField(persistent, "android_bundle", True)
+                                hovered tt.Action(PLAY_BUNDLE_TEXT)
+                                style "l_checkbox"
+
+                            textbutton _("Universal APK"):
+                                action SetField(persistent, "android_bundle", False)
+                                hovered tt.Action(UNIVERSAL_APK_TEXT)
+                                style "l_checkbox"
+
+                            add SPACER
 
                             textbutton _("Build Package"):
                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build"))
@@ -378,32 +422,9 @@ screen android:
                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_install_and_launch"))
                                 hovered tt.Action(BUILD_INSTALL_AND_LAUNCH_TEXT)
 
-                    add SPACER
-                    add SEPARATOR2
+                            add SPACER
 
-                    frame:
-                        style "l_indent"
-                        has vbox
-
-                        text _("Other:")
-
-                        add HALF_SPACER
-
-                        frame style "l_indent":
-
-                            has vbox
-
-                            textbutton _("Remote ADB Connect"):
-                                action AndroidIfState(state, ANDROID_OK, Jump("android_connect"))
-                                hovered tt.Action(CONNECT_TEXT)
-
-                            textbutton _("Remote ADB Disconnect"):
-                                action AndroidIfState(state, ANDROID_OK, Jump("android_disconnect"))
-                                hovered tt.Action(DISCONNECT_TEXT)
-
-                            textbutton _("Logcat"):
-                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("logcat"))
-                                hovered tt.Action(LOGCAT_TEXT)
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
 
                 # Right side.
@@ -420,6 +441,45 @@ screen android:
                         style "l_indent"
                         has vbox
 
+                        text _("Other:")
+
+                        add HALF_SPACER
+
+                        frame style "l_indent":
+
+                            has vbox
+
+                            textbutton _("Logcat"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("logcat"))
+                                hovered tt.Action(LOGCAT_TEXT)
+
+                            textbutton _("List Devices"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_list_devices"))
+                                hovered tt.Action(LIST_DEVICES_TEXT)
+
+                            textbutton _("Wi-Fi Debugging Pair"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_pair"))
+                                hovered tt.Action(PAIR_TEXT)
+
+                            textbutton _("Wi-Fi Debugging Connect"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_connect"))
+                                hovered tt.Action(CONNECT_TEXT)
+
+                            textbutton _("Wi-Fi Debugging Disconnect"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_disconnect"))
+                                hovered tt.Action(DISCONNECT_TEXT)
+
+                            textbutton _("Clean"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_clean"))
+                                hovered tt.Action(CLEAN_TEXT)
+
+                    add SPACER
+                    add SEPARATOR2
+
+                    frame:
+                        style "l_indent"
+                        has vbox
+
                         add SPACER
 
                         if tt.value:
@@ -428,7 +488,7 @@ screen android:
                             text AndroidStateText(state)
 
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
 
 
 label android:
@@ -452,81 +512,33 @@ label android_installsdk:
 label android_configure:
 
     python:
-        rapt.configure.configure(MobileInterface("android", edit=False), project.current.path)
+        project.current.update_dump(force=True)
+
+        rapt.configure.configure(
+            MobileInterface("android", edit=False),
+            project.current.path,
+            default_name=project.current.dump.get("name", None),
+            default_version=project.current.dump.get("version", None))
 
     jump android
 
 
 label android_build:
 
-    $ android_build([ 'release' ], opendir=True)
+    $ android_build(bundle=persistent.android_bundle, opendir=True)
 
     jump android
 
 
 label android_build_and_install:
 
-    $ android_build([ 'release', 'install' ])
+    $ android_build(bundle=persistent.android_bundle, install=True, opendir=True)
 
     jump android
 
 label android_build_install_and_launch:
 
-    $ android_build([ 'release', 'install' ], launch=True)
-
-    jump android
-
-
-label android_connect:
-
-    python hide:
-
-        if persistent.connect_address is not None:
-            address = persistent.connect_address
-        else:
-            address = ""
-
-        while True:
-            address = interface.input(
-                _("Remote ADB Address"),
-                _("Please enter the IP address and port number to connect to, in the form \"192.168.1.143:5555\". Consult your device's documentation to determine if it supports remote ADB, and if so, the address and port to use."),
-                default=address,
-                cancel=Jump("android"),
-                )
-
-            address = address.strip()
-
-            try:
-                host, port = address.split(":")
-            except:
-                interface.error(_("Invalid remote ADB address"), _("The address must contain one exactly one ':'."), label=None)
-                continue
-
-            if " " in host:
-                interface.error(_("Invalid remote ADB address"), _("The host may not contain whitespace."), label=None)
-                continue
-
-            try:
-                int(port)
-            except:
-                interface.error(_("Invalid remote ADB address"), _("The port must be a number."), label=None)
-                continue
-
-            break
-
-        persistent.connect_address = address
-
-        rapt_interface = MobileInterface("android")
-        rapt.build.connect(rapt_interface, address)
-
-    jump android
-
-label android_disconnect:
-
-    python hide:
-
-        rapt_interface = MobileInterface("android")
-        rapt.build.disconnect(rapt_interface)
+    $ android_build(bundle=persistent.android_bundle, install=True, launch=True, opendir=True)
 
     jump android
 
@@ -541,22 +553,163 @@ label logcat:
 
     jump android
 
+label android_list_devices:
+
+    python hide:
+        cc = ConsoleCommand()
+        cc.add(rapt.plat.adb, "devices")
+        cc.run()
+
+    jump android
+
+
+label android_pair:
+
+    python hide:
+        pairing_code = interface.input(
+            _("Wi-Fi Pairing Code"),
+            _("If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."),
+            sanitize=False,
+            cancel=Jump("android"),
+            )
+
+        host = interface.input(
+            _("Pairing Host & Port"),
+            _("If supported, this can be found in 'Developer options', 'Wireless debugging', 'Pair device with pairing code'."),
+            sanitize=False,
+            cancel=Jump("android"),
+            )
+
+        cc = ConsoleCommand()
+        cc.add(rapt.plat.adb, "pair", host, pairing_code)
+        cc.run()
+
+    jump android
+
+label android_connect:
+
+    python hide:
+        host = interface.input(
+            _("IP Address & Port"),
+            _("If supported, this can be found in 'Developer options', 'Wireless debugging'."),
+            sanitize=False,
+            cancel=Jump("android"),
+            )
+
+        cc = ConsoleCommand()
+        cc.add(rapt.plat.adb, "connect", host)
+        cc.run()
+
+    jump android
+
+label android_disconnect:
+
+    python hide:
+        host = interface.input(
+            _("IP Address & Port"),
+            _("This can be found in 'List Devices'."),
+            sanitize=False,
+            cancel=Jump("android"),
+            )
+
+        cc = ConsoleCommand()
+        cc.add(rapt.plat.adb, "disconnect", host)
+        cc.run()
+
+    jump android
+
+label android_clean:
+
+    python hide:
+        import shutil
+        import time
+
+        interface = MobileInterface("android")
+        interface.info(_("Cleaning up Android project."))
+
+        # Get the android json file, for the update_always key.
+        try:
+            filename = os.path.join(project.current.path, ".android.json")
+            with open(filename, "rb") as f:
+                android_json = json.load(f)
+        except Exception:
+            android_json = {}
+
+        # Clean up the files.
+        def clean(path):
+            if os.path.exists(path):
+                shutil.rmtree(path)
+
+        if android_json.get("update_always", True):
+
+            try:
+                with open(rapt.plat.path("project/local.properties"), "r") as f:
+                    local_properties = f.read()
+            except Exception:
+                local_properties = None
+
+            try:
+                with open(rapt.plat.path("project/bundle.properties"), "r") as f:
+                    bundle_properties = f.read()
+            except Exception:
+                bundle_properties = None
+
+            try:
+                with open(rapt.plat.path("project/gradle.properties"), "r") as f:
+                    gradle_properties = f.read()
+            except Exception:
+                gradle_properties = None
+
+            clean(rapt.plat.path("project"))
+
+            if local_properties or bundle_properties or gradle_properties:
+
+                os.mkdir(rapt.plat.path("project"))
+
+            if local_properties:
+
+                with open(rapt.plat.path("project/local.properties"), "w") as f:
+                    f.write(local_properties)
+
+            if bundle_properties:
+
+                with open(rapt.plat.path("project/bundle.properties"), "w") as f:
+                    f.write(bundle_properties)
+
+            if gradle_properties:
+
+                with open(rapt.plat.path("project/gradle.properties"), "w") as f:
+                    f.write(gradle_properties)
+
+        clean(rapt.plat.path("bin"))
+        clean(project.current.temp_filename("android.dist"))
+
+        # This can go really fast, so pause so it looks like something is happening.
+        time.sleep(.5)
+
+
+    jump android
+
+
 init python:
 
     def android_build_command():
         ap = renpy.arguments.ArgumentParser()
         ap.add_argument("android_project", help="The path to the project directory.")
-        ap.add_argument("ant_commands", help="Commands to pass to ant. (Try 'release' 'install'.)", nargs='+')
-        ap.add_argument("--launch", action="store_true", help="Launches the app after build and install compete.")
+        ap.add_argument("--bundle", action="store_true", help="Builds an android app bundle.")
+        ap.add_argument("--install", action="store_true", help="Installs the app on a device.")
+        ap.add_argument("--launch", action="store_true", help="Launches the app after build and install complete. Implies --install.")
         ap.add_argument("--destination", "--dest", default=None, action="store", help="The directory where the packaged files should be placed.")
 
         args = ap.parse_args()
 
+        if args.launch:
+            args.install = True
+
         p = project.Project(args.android_project)
 
-        android_build(args.ant_commands, p=p, gui=False, launch=args.launch, destination=args.destination)
+        android_build(p=p, gui=False, bundle=args.bundle, install=args.install, launch=args.launch, destination=args.destination)
 
         return False
 
     renpy.arguments.register_command("android_build", android_build_command)
-

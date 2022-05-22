@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,11 +21,9 @@
 
 init -1900 python:
     config.images_directory = 'images'
+    config.late_images_scan = False
 
-
-init 1900 python hide:
-
-    def scan_images_directory():
+    def _scan_images_directory():
 
         import os
 
@@ -41,7 +39,7 @@ init 1900 python hide:
             basename = os.path.basename(fn)
             base, ext = os.path.splitext(basename)
 
-            if not ext.lower() in [ ".jpg", ".png" ]:
+            if not ext.lower() in [ ".jpg", ".jpeg", ".png", ".webp" ]:
                 continue
 
             base = base.lower()
@@ -51,4 +49,12 @@ init 1900 python hide:
 
             renpy.image(base, fn)
 
-    scan_images_directory()
+init python:
+
+    if not config.late_images_scan:
+        _scan_images_directory()
+
+init 1900 python:
+
+    if config.late_images_scan:
+        _scan_images_directory()

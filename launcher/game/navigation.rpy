@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -165,7 +165,8 @@ screen navigation:
 
             frame style "l_label":
                 has hbox xfill True
-                text _("Navigate: [project.current.name]") style "l_label_text"
+                text _("Navigate: [project.current.display_name!q]") style "l_label_text"
+                alt _("Navigate Script")
 
                 frame:
                     style "l_alternate"
@@ -192,6 +193,7 @@ screen navigation:
                 hbox:
                     spacing HALF_INDENT
                     text _("Category:")
+                    alt ""
 
                     textbutton _("files") action navigation.ChangeKind("file")
                     textbutton _("labels") action navigation.ChangeKind("label")
@@ -257,7 +259,7 @@ screen navigation:
                                 xalign 0.5
                                 yalign 0.5
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
     textbutton _("Launch Project") action project.Launch() style "l_right_button"
 
 label navigation:

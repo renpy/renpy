@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,6 +23,11 @@
 # information about the game that's used to reflect on the contents,
 # including how to navigate around the game.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+
 import inspect
 import json
 import sys
@@ -30,16 +35,15 @@ import os
 
 import renpy
 
-
 # A list of (name, filename, linenumber) tuples, for various types of
 # name. These are added to as the definitions occur.
 definitions = [ ]
 transforms = [ ]
 screens = [ ]
 
-
 # Does a file exist? We cache the result here.
 file_exists_cache = { }
+
 
 def file_exists(fn):
     rv = file_exists_cache.get(fn, None)
@@ -56,6 +60,7 @@ def file_exists(fn):
 # Did we do a dump?
 completed_dump = False
 
+
 def dump(error):
     """
     Causes a JSON dump file to be written, if the user has requested it.
@@ -63,7 +68,6 @@ def dump(error):
     `error`
         An error flag that is added to the written file.
     """
-
 
     global completed_dump
 
@@ -74,17 +78,17 @@ def dump(error):
 
     completed_dump = True
 
-    if not args.json_dump:
+    if not args.json_dump: # type: ignore
         return
 
-    def filter(name, filename): #@ReservedAssignment
+    def name_filter(name, filename): # @ReservedAssignment
         """
-        Returns true if the name is included by the filter, or false if it is excluded.
+        Returns true if the name is included by the name_filter, or false if it is excluded.
         """
 
         filename = filename.replace("\\", "/")
 
-        if name.startswith("_") and not args.json_dump_private:
+        if name.startswith("_") and not args.json_dump_private: # type: ignore
             if name.startswith("__") and name.endswith("__"):
                 pass
             else:
@@ -94,7 +98,7 @@ def dump(error):
             return False
 
         if filename.startswith("common/") or filename.startswith("renpy/common/"):
-            return args.json_dump_common
+            return args.json_dump_common # type: ignore
 
         if not filename.startswith("game/"):
             return False
@@ -106,6 +110,13 @@ def dump(error):
     # Error flag.
     result["error"] = error
 
+    # The size.
+    result["size"] = [ renpy.config.screen_width, renpy.config.screen_height ]
+
+    # The name and version.
+    result["name"] = renpy.config.name
+    result["version"] = renpy.config.version
+
     # The JSON object we return.
     location = { }
     result["location"] = location
@@ -113,24 +124,23 @@ def dump(error):
     # Labels.
     label = location["label"] = { }
 
-    for name, n in renpy.game.script.namemap.iteritems():
+    for name, n in renpy.game.script.namemap.items():
         filename = n.filename
         line = n.linenumber
 
         if not isinstance(name, basestring):
             continue
 
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         label[name] = [ filename, line ]
-
 
     # Definitions.
     define = location["define"] = { }
 
     for name, filename, line in definitions:
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         define[name] = [ filename, line ]
@@ -139,7 +149,7 @@ def dump(error):
     screen = location["screen"] = { }
 
     for name, filename, line in screens:
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         screen[name] = [ filename, line ]
@@ -148,11 +158,10 @@ def dump(error):
     transform = location["transform"] = { }
 
     for name, filename, line in transforms:
-        if not filter(name, filename):
+        if not name_filter(name, filename):
             continue
 
         transform[name] = [ filename, line ]
-
 
     # Code.
 
@@ -166,10 +175,10 @@ def dump(error):
         """
 
         if inspect.isfunction(o):
-            return inspect.getfile(o), o.func_code.co_firstlineno
+            return inspect.getfile(o), o.__code__.co_firstlineno
 
         if inspect.ismethod(o):
-            return get_line(o.im_func)
+            return get_line(o.__func__)
 
         return None, None
 
@@ -199,16 +208,16 @@ def dump(error):
                     if filename is None:
                         continue
 
-                    if not filter(name, filename):
+                    if not name_filter(name, filename):
                         continue
 
                     code[prefix + name] = [ filename, line ]
-                except:
+                except Exception:
                     continue
 
             if inspect.isclass(o):
 
-                for methname, method in o.__dict__.iteritems():
+                for methname, method in o.__dict__.items():
 
                     try:
                         if inspect.getmodule(method) != mod:
@@ -219,24 +228,37 @@ def dump(error):
                         if filename is None:
                             continue
 
-                        if not filter(name, filename):
+                        if not name_filter(name, filename):
                             continue
 
-                        if not filter(methname, filename):
+                        if not name_filter(methname, filename):
                             continue
 
                         code[prefix + name + "." + methname] = [ filename, line ]
-                    except:
+                    except Exception:
                         continue
 
     # Add the build info from 00build.rpy, if it's available.
     try:
-        result["build"] = renpy.store.build.dump() #@UndefinedVariable
-    except:
+        result["build"] = renpy.store.build.dump() # type: ignore
+    except Exception:
         pass
 
-    if args.json_dump != "-":
-        with file(args.json_dump, "w") as f:
-            json.dump(result, f)
+    filename = renpy.exports.fsdecode(args.json_dump) # type: ignore
+
+    if filename != "-":
+        new = filename + ".new"
+
+        if PY2:
+            with open(new, "wb") as f:
+                json.dump(result, f) # type: ignore
+        else:
+            with open(new, "w") as f:
+                json.dump(result, f)
+
+        if os.path.exists(filename):
+            os.unlink(filename)
+
+        os.rename(new, filename)
     else:
         json.dump(result, sys.stdout, indent=2)

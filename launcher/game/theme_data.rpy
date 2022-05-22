@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -534,7 +534,7 @@ init python in theme_data:
         THEME_FUNCTIONS.add(function)
         THEME_SCREEN_OPERATIONS[theme] = roundrect_screen_ops
 
-        for scheme, colors in ROUNDRECT_SCHEMES.iteritems():
+        for scheme, colors in ROUNDRECT_SCHEMES.items():
             subs = dict(colors)
             subs["function"] = function
             subs["theme"] = theme
@@ -587,7 +587,7 @@ init python in theme_data:
     THEME_SCREEN_OPERATIONS["A White Tulip"] = awt_screen_ops
 
 
-    for scheme, colors in ROUNDRECT_SCHEMES.iteritems():
+    for scheme, colors in ROUNDRECT_SCHEMES.items():
         subs = dict(colors)
         subs["scheme"] = scheme
 

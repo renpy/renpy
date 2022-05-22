@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,8 +22,16 @@
 # This is kind of a catch-all file for things that are defined in the library,
 # but don't merit their own files.
 
+init 9999:
+    # Re-run the errorhandling setup, so we can adjust the styles to the new size
+    # of the screen.
+    call _errorhandling
 
 init -1700 python:
+
+    # Should we debug the equality operations?
+    config.debug_equality = False
+
     class DictEquality(object):
         """
         Declares two objects equal if their types are the same, and
@@ -31,13 +39,24 @@ init -1700 python:
         """
 
         def __eq__(self, o):
-            if self is o:
-                return True
 
-            if _type(self) is _type(o):
-                return (self.__dict__ == o.__dict__)
+            try:
+                if self is o:
+                    return True
 
-            return False
+                if _type(self) is _type(o):
+                    return (self.__dict__ == o.__dict__)
+
+                return False
+
+            except Exception:
+                if config.debug_equality:
+                    raise
+
+                return False
+
+        def __ne__(self, o):
+            return not (self == o)
 
     class FieldEquality(object):
         """
@@ -50,21 +69,35 @@ init -1700 python:
         identity_fields = [ ]
 
         def __eq__(self, o):
-            if self is o:
+
+            try:
+
+                if self is o:
+                    return True
+
+                if _type(self) is not _type(o):
+                    return False
+
+                for k in self.equality_fields:
+                    if self.__dict__[k] != o.__dict__[k]:
+                        return False
+
+                for k in self.identity_fields:
+                    if self.__dict__[k] is not o.__dict__[k]:
+                        return False
+
                 return True
 
-            if _type(self) is not _type(o):
+            except Exception:
+
+                if config.debug_equality:
+                    raise
+
                 return False
 
-            for k in self.equality_fields:
-                if self.__dict__[k] != o.__dict__[k]:
-                    return False
+        def __ne__(self, o):
+            return not (self == o)
 
-            for k in self.identity_fields:
-                if self.__dict__[k] is not o.__dict__[k]:
-                    return False
-
-            return True
 
 init -1700 python:
 
@@ -75,20 +108,48 @@ init -1700 python:
     # taking place.
     save_name = ''
 
+    ##########################################################################
+    # Alias the preferences object.
+
+    # This is for compatibility with default preferences.foo = True.
+    preferences = _preferences
+
+    ##########################################################################
+    # Empty window
+
     def _default_empty_window():
 
-        who = _last_say_who
+        try:
+            scry = renpy.scry()
 
-        if who is not None:
-            who = eval(who)
+            # When running in a say statement or menu-with-caption, scry for
+            # the next say statement, and get the window from that.
+            if scry.say or scry.menu_with_caption:
+                who = None
+
+                for i in range(10):
+                    if scry.say:
+                        who = scry.who
+                        break
+
+                    scry = scry.next()
+
+            else:
+                who = _last_say_who
+                who = renpy.eval_who(who)
+
+        except Exception:
+            who = None
 
         if who is None:
             who = narrator
 
         if isinstance(who, NVLCharacter):
             nvl_show_core()
+        elif not isinstance(store.narrator, NVLCharacter):
+            store.narrator.empty_window()
         else:
-            store._narrator("", interact=False)
+            store._narrator.empty_window()
 
     config.empty_window = _default_empty_window
 
@@ -98,10 +159,9 @@ init -1700 python:
 
     config.extend_interjection = "{fast}"
 
-    def extend(what, interact=True):
+    def extend(what, interact=True, *args, **kwargs):
         who = _last_say_who
-
-        who = renpy.ast.eval_who(who)
+        who = renpy.eval_who(who)
 
         if who is None:
             who = narrator
@@ -113,22 +173,15 @@ init -1700 python:
 
         what = _last_say_what + config.extend_interjection + _last_raw_what
 
-        renpy.exports.say(who, what, interact=interact)
+        args = args + _last_say_args
+        kw = dict(_last_say_kwargs)
+        kw.update(kwargs)
+        kw["interact"] = interact and kw.get("interact", True)
+
+        renpy.exports.say(who, what, *args, **kw)
         store._last_say_what = what
 
     extend.record_say = False
-
-
-    ##########################################################################
-    # Self-voicing
-
-    def sv(what, interact=True):
-        """
-        Uses the narrator to speak `what` iff self-voicing is enabled.
-        """
-
-        if _preferences.self_voicing:
-            return narrator(what, interact=interact)
 
 
     ##########################################################################
@@ -140,16 +193,22 @@ init -1700 python:
 
     def _skip_indicator():
 
+        if renpy.has_screen("skip_indicator"):
+
+            if config.skipping and not renpy.get_screen("skip_indicator"):
+                renpy.show_screen("skip_indicator")
+            elif not config.skipping and renpy.get_screen("skip_indicator"):
+                renpy.hide_screen("skip_indicator")
+
+            return
+
         ### skip_indicator default
         # (text) The style and placement of the skip indicator.
 
         if config.skip_indicator is True:
 
-            if config.skipping == "slow" and config.skip_indicator:
+            if config.skipping:
                 ui.text(_(u"Skip Mode"), style='skip_indicator')
-
-            if config.skipping == "fast" and config.skip_indicator:
-                ui.text(_(u"Fast Skip Mode"), style='skip_indicator')
 
             return
 
@@ -186,6 +245,9 @@ init -1700 python:
     # Prediction of screens.
     def _predict_screens():
 
+        for i in config.overlay_screens:
+            renpy.predict_screen(i)
+
         s = _game_menu_screen
 
         if s is None:
@@ -201,28 +263,8 @@ init -1700 python:
                 renpy.predict_screen(s)
                 return
 
-    config.predict_callbacks.append(_predict_screens)
+    config.expensive_predict_callbacks.append(_predict_screens)
 
-
-    ##########################################################################
-    # Side Images
-
-    config.side_image_tag = None
-    config.side_image_only_not_showing = False
-
-    def SideImage(prefix_tag="side"):
-        """
-        :doc: side_image_function
-
-        Returns the side image associated with the currently speaking character,
-        or a Null displayable if no such side image exists.
-        """
-
-        name = renpy.get_side_image(prefix_tag, image_tag=config.side_image_tag, not_showing=config.side_image_only_not_showing)
-        if name is None:
-            return Null()
-        else:
-            return ImageReference(name)
 
     ##########################################################################
     # Name-only say statements.
@@ -234,20 +276,128 @@ init -1700 python:
         who = Character(who, kind=name_only)
         try:
             who.predict(what)
-        except:
+        except Exception:
             pass
 
-    def say(who, what, interact=True):
+    def say(who, what, interact=True, *args, **kwargs):
         who = Character(who, kind=name_only)
-        who(what, interact=interact)
+        who(what, interact=interact, *args, **kwargs)
+
+    ##########################################################################
+    # Misc.
+
+    # Should we display tiles in places of transparency while in developer
+    # mode?
+    config.transparent_tile = True
+
+    # Use DejaVuSans-Bold when appropriate.
+    config.font_replacement_map["DejaVuSans.ttf", True, False] = ("DejaVuSans-Bold.ttf", False, False)
+
+    # License text.
+    renpy.license = _("This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}.")
 
 init -1000 python:
+    # Set developer to the auto default.
+    config.original_developer = "auto"
+
+    if config.script_version:
+        config.developer = False
+        config.default_developer = False
+    else:
+        config.developer = True
+        config.default_developer = True
+
     # Lock the library object.
     config.locked = True
 
     # Record the builtins.
     renpy.lint.renpy_builtins = set(globals())
 
+    for i in """
+adv
+alt
+anim
+blinds
+center
+default
+default_transition
+dissolve
+ease
+easeinbottom
+easeinleft
+easeinright
+easeintop
+easeoutbottom
+easeoutleft
+easeoutright
+easeouttop
+fade
+hpunch
+irisin
+irisout
+left
+menu
+mouse_visible
+move
+moveinbottom
+moveinleft
+moveinright
+moveintop
+moveoutbottom
+moveoutleft
+moveoutright
+moveouttop
+name_only
+nvl
+nvl_variant
+offscreenleft
+offscreenright
+pixellate
+pushdown
+pushleft
+pushright
+pushup
+right
+save_name
+slideawaydown
+slideawayleft
+slideawayright
+slideawayup
+slidedown
+slideleft
+slideright
+slideup
+squares
+suppress_overlay
+sv
+top
+topleft
+topright
+truecenter
+vpunch
+wipedown
+wipeleft
+wiperight
+wipeup
+zoomin
+zoominout
+zoomout
+
+_autosave
+_confirm_quit
+_dismiss_pause
+_game_menu_screen
+_ignore_action
+_quit_slot
+_rollback
+_skipping
+_window_subtitle
+""".split():
+
+        # _history, history_list, and _version are set later, so aren't included.
+        renpy.lint.renpy_builtins.remove(i)
+
+    del i
 
 # After init, make some changes based on if config.developer is True.
 init 1700 python hide:
@@ -260,9 +410,21 @@ init 1700 python hide:
         renpy.load_module("_developer/developer")
         renpy.load_module("_developer/inspector")
 
-# Used by renpy.return() to return.
+    if config.window_title is None:
+        config.window_title = config.name or "A Ren'Py Game"
+
+    import os
+    if "RENPY_GL_MODERN" in os.environ:
+        config.gl_npot = True
+        config.cache_surfaces = False
+
+        print("Modern GL Enabled.")
+
+
+
+# Used by renpy.return_statement() to return.
 label _renpy_return:
-    return
+    return _return
 
 # Entry point for the developer screen. The rest of it is loaded from
 # _developer.rpym
@@ -280,3 +442,8 @@ label _developer:
 # its own layer.
 screen _ctc:
     add ctc
+
+
+# Creates the data structure that history is stored in.
+default _history = True
+default _history_list = [ ]

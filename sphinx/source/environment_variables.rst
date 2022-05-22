@@ -43,16 +43,31 @@ The following environment variables control the behavior of Ren'Py:
     This causes Ren'Py to reduce its memory usage, in exchange for reductions
     in speed.
 
+``RENPY_LESS_MOUSE``
+    This causes Ren'Py to disable the mouse at all times.
+
+``RENPY_LESS_PAUSES``
+    This causes Ren'Py to disable the pauses created by the {p} and {w}
+    text tags.
+
 ``RENPY_LESS_UPDATES``
     This causes Ren'Py to reduce the number of screen updates that occur.
 
-``RENPY_LESS_MOUSE``
-    This causes Ren'Py to disable the mouse at all times.
+``RENPY_MULTIPERSISTENT``
+    The path to a directory where Ren'Py stores multipersistent data.
+
+``RENPY_PATH_TO_SAVES``
+    The path to a directory where Ren'Py stores it's saves. The actual saves 
+    for a game are stored in a game-specific path underneath this directory.
 
 ``RENPY_SCREENSHOT_PATTERN``
     A pattern used to create screenshot filenames. It should contain a single
     %d substitution in it. For example, setting this to "screenshot%04d.jpg" will
     cause Ren'Py to write out jpeg screenshots rather than the usual pngs.
+
+``RENPY_SEARCHPATH``
+    If set, a double-colon (\:\:) separated list of additional paths that
+    are added to :var:`config.searchpath`.
 
 ``RENPY_SIMPLE_EXCEPTIONS``
     When set, this disables Ren'Py's graphical exception handling.
@@ -87,5 +102,5 @@ variables.
 
 At startup, Ren'Py will look in the Ren'Py directory (the one containing
 renpy.exe or renpy.py) for the file "environment.txt". If it exists, it will be
-evaluated as a python file, and the values defined in that file will be used as
+evaluated as a Python file, and the values defined in that file will be used as
 the default values of environment variables.

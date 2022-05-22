@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,10 +22,17 @@
 # This file was responsible for joystick support in Ren'Py, which has
 # been removed, save for a few compatibility functions.
 
-import renpy.display
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+import pygame_sdl2
+import renpy
+
 
 # Do we have a joystick enabled?
 enabled = False
+
 
 class JoyBehavior(renpy.display.layout.Null):
     """
@@ -34,3 +41,22 @@ class JoyBehavior(renpy.display.layout.Null):
     """
 
     pass
+
+
+joysticks = { }
+
+
+def count():
+    return pygame_sdl2.joystick.get_count()
+
+
+def get(n):
+
+    if n in joysticks:
+        return joysticks[n]
+
+    try:
+        joysticks[n] = pygame_sdl2.joystick.Joystick(n)
+        return joysticks[n]
+    except Exception:
+        return None

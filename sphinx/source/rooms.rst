@@ -55,9 +55,9 @@ Creating an image gallery consists of the following four steps.
    and should contain navigation that allows the user to show other
    image galleries, or to return to the main or extras menu.
 
-4. Add code to display the image gallery screen to the main or extras menu.
+4. Add a way to display the image gallery screen to the main or extras menu.
 
-Here's an example of the first three steps::
+Here's an example::
 
     init python:
 
@@ -65,6 +65,10 @@ Here's an example of the first three steps::
         g = Gallery()
 
         # Step 2. Add buttons and images to the gallery.
+
+        # A button with an image that is always unlocked.
+        g.button("title")
+        g.image("title")
 
         # A button that contains an image that automatically unlocks.
         g.button("dawn")
@@ -81,7 +85,7 @@ Here's an example of the first three steps::
         g.unlock_image("beach2")
         g.unlock_image("beach3")
 
-        # This button has a condition associated with it, allowing code
+        # This button has a condition associated with it, allowing the game
         # to choose which images unlock.
         g.button("end1")
         g.condition("persistent.unlock_1")
@@ -158,6 +162,8 @@ Here's an example of the first three steps::
 
             add g.make_button("dark mary", "gal-dark_mary.png", xalign=0.5, yalign=0.5)
             add g.make_button("dawn mary", "gal-dawn_mary.png", xalign=0.5, yalign=0.5)
+            add g.make_button("title", "title.png", xalign=0.5, yalign=0.5)
+
 
             # The screen is responsible for returning to the main menu. It could also
             # navigate to other gallery screens.
@@ -204,7 +210,7 @@ following four steps:
 
 4. Add the music room screen to the main menu, or an extras menu.
 
-Here's an example of the first three steps::
+Here's an example::
 
     init python:
 
@@ -289,9 +295,9 @@ difference between the two modes are:
   the replay. In normal mode, end_replay does nothing.
 
 To take advantage of the replay mode, a scene should begin with a
-label, and end with a call to renpy.end_replay. The scene should make
+label, and end with a call to :func:`renpy.end_replay`. The scene should make
 no assumption as to the state of the layers or variables, which can be
-very different in normal and replay mode. (In replay code, the label
+very different in normal and replay mode. (When a replay begins, the label
 is invoked with a black screen.)
 
 For example::
@@ -332,7 +338,10 @@ There is one store variable used by replay mode:
 
 In addition, :var:`config.enter_replay_transition` and
 :var:`config.exit_replay_transition` are used when entering and exiting
-replay mode, respectively.
+replay mode, respectively. :var:`config.replay_scope` adds variables
+to the cleaned store when entering a replay, and by default sets
+:var:`_game_menu_screen` to cause right-clicking in a replay to
+default to showing the preferences screen.
 
 The following variables and actions are used in replay mode:
 

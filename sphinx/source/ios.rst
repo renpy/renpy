@@ -17,7 +17,7 @@ with a lawyer to be sure.
 
     This program contains free software licensed under a number of licenses,
     including the GNU Lesser General Public License. A complete list of
-    software is available at http://www.renpy.org/doc/html/license.html.
+    software is available at https://www.renpy.org/l/license/.
 
 Work in Progress
 ================
@@ -36,8 +36,6 @@ Platform Differences
 iOS is similar to Android, but differs from the mouse-based platforms
 that Ren'Py supports. All of the :ref:`android platform differences <android-platform-differences>`
 apply to iOS.
-
-iOS does not support MultiPersistent.
 
 A list of video formats supported by iOS can be found
 `here <https://developer.apple.com/library/ios/documentation/Miscellaneous/Conceptual/iPhoneOSTechOverview/MediaLayer/MediaLayer.html#//apple_ref/doc/uid/TP40007898-CH9-SW6>`_.
@@ -118,14 +116,30 @@ Customization
 Most customization is performed in the Xcode project. For example, the
 icon, launch images, and orientations are all customized in Xcode.
 
-Launch Images
--------------
+Launch Storyboard
+-----------------
 
-When the application is run, the Launch Image (configure as part of the
+When the application is run, the Launch Storyboard (configure as part of the
 Xcode project, outside of Ren'Py) will be displayed until Ren'Py is ready
 to display the game's user interface.
 
 Once Ren'Py finishes initializing, it will either resume the current game,
 or run the splashscreen and main menu.
 
+Generation
+-----------
 
+To ease development, it's possible to have Ren'Py generate the iOS icon
+images from files.
+
+``ios-icon.png``
+    If present, this file is scaled to the various sizes of png file
+    needed to make an iOS icon.
+
+.. _pyobjus:
+
+Pyobjus
+=======
+
+On iOS and macOS, a version of `Pyobjus <https://pyobjus.readthedocs.io/en/latest/>`_
+is available, allowing advanced creators to call system libraries.

@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,8 +21,64 @@
 
 # This file contains code to manage focus on the display.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+import operator
+
 import pygame_sdl2 as pygame
-import renpy.display
+import renpy
+
+# The focus storage api.
+
+focus_storage = { }
+
+def capture_focus(name="default"):
+    """
+    :doc: other
+
+    If a displayable is currently focused, captured the rectangular bounding
+    box of that displayable, and stores it with `name`. If not, removes any
+    focus stored with `name`.
+
+    Captured focuses are not saved when the game is saveed.
+
+    `name`
+        Should be a string. The name "tooltip" is special, as it's
+        automatically captured when a displayable with a tooltip gains focus.
+    """
+
+    rect = focus_coordinates()
+
+    if rect[0] is None:
+        rect = None
+
+    if rect is not None:
+        focus_storage[name] = rect
+    else:
+        focus_storage.pop(name, None)
+
+
+def clear_capture_focus(name="default"):
+    """
+    :doc: other
+
+    Clear the captured focus with `name`.
+    """
+
+    focus_storage.pop(name, None)
+
+
+def get_focus_rect(name="default"):
+    """
+    :undocumented:
+
+    Returns the captured focus. Used in the implementation of FocusRect.
+    """
+
+    return focus_storage.get(name, None)
+
 
 class Focus(object):
 
@@ -56,6 +112,25 @@ class Focus(object):
             self.h,
             self.screen)
 
+    def inside(self, rect):
+        """
+        Returns true if this focus is entirely contained inside the given
+        rectangle.
+        """
+
+        minx, miny, w, h = rect
+
+        maxx = minx + w
+        maxy = miny + h
+
+        if self.x is None:
+            return False
+
+        if (minx <= self.x < maxx) and (miny <= self.y < maxy) and (minx <= self.x + self.w < maxx) and (miny <= self.y + self.h < maxy):
+            return True
+
+        return False
+
 
 # The current focus argument.
 argument = None
@@ -69,7 +144,22 @@ grab = None
 # The default focus for the current screen.
 default_focus = None
 
-# Sets the currently focused widget.
+# The type of input that caused the focus to change last. One of
+# "keyboard" (for keyboard-like focus devices) or "mouse" (for mouse-like)
+# focus devices.)
+focus_type = "mouse"
+
+# The same, but for the most recent input that might potentially cause
+# the focus to change.
+pending_focus_type = "mouse"
+
+# The current tooltip and tooltip screen.
+tooltip = None
+
+# Overrides the currently focused displayable.
+override = None
+
+
 def set_focused(widget, arg, screen):
     global argument
     argument = arg
@@ -81,17 +171,60 @@ def set_focused(widget, arg, screen):
 
     renpy.display.tts.displayable(widget)
 
-# Gets the currently focused widget.
+    global tooltip
+
+    # Figure out the tooltip.
+
+    if widget is None:
+        new_tooltip = None
+    else:
+        new_tooltip = widget._get_tooltip()
+
+    if tooltip != new_tooltip:
+        tooltip = new_tooltip
+        capture_focus("tooltip")
+        renpy.exports.restart_interaction()
+
+
 def get_focused():
+    """
+    Gets the currently focused displayable.
+    """
+
     return renpy.game.context().scene_lists.focused
 
-# Get the mouse cursor for the focused widget.
+
 def get_mouse():
+    """
+    Gets the mouse associated with the currently focused displayable.
+    """
+
     focused = get_focused()
     if focused is None:
         return None
     else:
         return focused.style.mouse
+
+
+def get_tooltip(screen=None):
+    """
+    Gets the tooltip information.
+    """
+
+    if screen is None:
+        return tooltip
+
+    if screen_of_focused is None:
+        return None
+
+    if screen_of_focused.screen_name[0] == screen:
+        return tooltip
+
+    if screen_of_focused.tag == screen:
+        return tooltip
+
+    return None
+
 
 def set_grab(widget):
     global grab
@@ -99,13 +232,17 @@ def set_grab(widget):
 
     renpy.exports.cancel_gesture()
 
+
 def get_grab():
     return grab
+
 
 # The current list of focuses that we know about.
 focus_list = [ ]
 
 # This takes in a focus list from the rendering system.
+
+
 def take_focuses():
     global focus_list
     focus_list = [ ]
@@ -115,12 +252,23 @@ def take_focuses():
     global default_focus
     default_focus = None
 
+    global grab
+
+    grab_found = False
+
     for f in focus_list:
         if f.x is None:
             default_focus = f
 
+        if f.widget is grab:
+            grab_found = True
+
+    if not grab_found:
+        grab = None
+
     if (default_focus is not None) and (get_focused() is None):
         change_focus(default_focus, True)
+
 
 def focus_coordinates():
     """
@@ -143,36 +291,64 @@ def focus_coordinates():
 # A map from id(displayable) to the displayable that replaces it.
 replaced_by = { }
 
+# Set to True after a modal screen or a fullscreen modal displayable,
+# to prevent focuses after this from gaining the default focus.
+after_modal = False
+
+def mark_modal():
+    global after_modal
+    after_modal = True
+
 def before_interact(roots):
     """
     Called before each interaction to choose the focused and grabbed
     displayables.
     """
 
-
-    global new_grab
+    global override
     global grab
+    global after_modal
+
+    after_modal = False
 
     # a list of focusable, name, screen tuples.
     fwn = [ ]
 
     def callback(f, n):
-        fwn.append((f, n, renpy.display.screen._current_screen))
+        fwn.append((f, n, renpy.display.screen._current_screen, after_modal))
 
     for root in roots:
-        root.find_focusable(callback, None)
+        try:
+            root.find_focusable(callback, None)
+        except renpy.display.layout.IgnoreLayers:
+            pass
 
     # Assign a full name to each focusable.
 
     namecount = { }
 
-    for f, n, screen in fwn:
+    fwn2 = [ ]
+
+    for fwn_tuple in fwn:
+
+        f, n, screen, after_modal = fwn_tuple
+
         serial = namecount.get(n, 0)
         namecount[n] = serial + 1
+
+        if f is None:
+            continue
 
         f.full_focus_name = n, serial
 
         replaced_by[id(f)] = f
+
+        fwn2.append(fwn_tuple)
+
+    fwn = fwn2
+
+    # Is this a default change?
+    default = True
 
     # We assume id(None) is not in replaced_by.
     replaced_by.pop(None, None)
@@ -182,55 +358,91 @@ def before_interact(roots):
 
     current = get_focused()
     current = replaced_by.get(id(current), current)
+    old_current = current
+
+    # Update the grab.
+    grab = replaced_by.get(id(grab), None)
+
+    if override is not None:
+        d = renpy.exports.get_displayable(base=True, *override) # type: ignore
+
+        if (d is not None) and (current is not d) and not grab:
+            current = d
+            default = False
+
+    override = None
 
     if current is not None:
         current_name = current.full_focus_name
 
-        for f, n, screen in fwn:
+        for f, n, screen, modal in fwn:
+            if modal:
+                continue
+
             if f.full_focus_name == current_name:
                 current = f
-                set_focused(f, None, screen)
+                set_focused(f, argument, screen)
                 break
         else:
             current = None
 
-    # Otherwise, focus the default widget, or nothing.
-    if current is None:
+    if grab is not None:
+        current = grab
 
-        for f, n, screen in fwn:
+    # Otherwise, focus the default widget.
+    if (current is None) and renpy.display.interface.start_interact:
+
+        defaults = [ ]
+
+        for f, n, screen, modal in fwn:
+            if modal:
+                continue
+
             if f.default:
-                current = f
-                set_focused(f, None, screen)
-                break
-        else:
-            set_focused(None, None, None)
+                defaults.append((f.default, f, screen))
+
+        if defaults:
+            if len(defaults) > 1:
+                defaults.sort(key=operator.itemgetter(0))
+
+            _, f, screen = defaults[-1]
+
+            current = f
+            set_focused(f, None, screen)
+
+    if current is None:
+        set_focused(None, None, None)
 
     # Finally, mark the current widget as the focused widget, and
     # all other widgets as unfocused.
-    for f, n, screen in fwn:
+    for f, n, screen, modal in fwn:
         if f is not current:
             renpy.display.screen.push_current_screen(screen)
             try:
-                f.unfocus(default=True)
+                if (f is old_current) and renpy.config.always_unfocus:
+                    f.unfocus(default=False)
+                else:
+                    f.unfocus(default=default)
+
             finally:
                 renpy.display.screen.pop_current_screen()
 
     if current:
         renpy.display.screen.push_current_screen(screen_of_focused)
         try:
-            current.focus(default=True)
+            current.focus(default=default)
         finally:
             renpy.display.screen.pop_current_screen()
-
-    # Update the grab.
-    grab = replaced_by.get(id(grab), None)
 
     # Clear replaced_by.
     replaced_by.clear()
 
-# This changes the focus to be the widget contained inside the new
-# focus object.
+
 def change_focus(newfocus, default=False):
+    """
+    Change the focus to the displayable in ``newfocus``.
+    """
+
     rv = None
 
     if grab:
@@ -246,6 +458,9 @@ def change_focus(newfocus, default=False):
     # Nothing to do.
     if current is widget and (newfocus is None or newfocus.arg == argument):
         return rv
+
+    global focus_type
+    focus_type = pending_focus_type
 
     if current is not None:
         try:
@@ -270,7 +485,17 @@ def change_focus(newfocus, default=False):
 
     return rv
 
+
+def clear_focus():
+    """
+    Clears the focus when the window loses mouse focus.
+    """
+
+    change_focus(None)
+
 # This handles mouse events, to see if they change the focus.
+
+
 def mouse_handler(ev, x, y, default=False):
     """
     Handle mouse events, to see if they change the focus.
@@ -279,11 +504,21 @@ def mouse_handler(ev, x, y, default=False):
         If ev is not None, this function checks to see if it is a mouse event.
     """
 
+    global pending_focus_type
+
+    if grab:
+        return
+
     if ev is not None:
         if ev.type not in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
             return
+        else:
+            pending_focus_type = "mouse"
 
-    new_focus = renpy.display.render.focus_at_point(x, y)
+    try:
+        new_focus = renpy.display.render.focus_at_point(x, y)
+    except renpy.display.layout.IgnoreLayers:
+        new_focus = None
 
     if new_focus is None:
         new_focus = default_focus
@@ -298,11 +533,14 @@ def mouse_handler(ev, x, y, default=False):
 def focus_extreme(xmul, ymul, wmul, hmul):
 
     max_focus = None
-    max_score = -(65536**2)
+    max_score = -(65536 ** 2)
 
     for f in focus_list:
 
-        if not f.x:
+        if not f.widget.style.keyboard_focus:
+            continue
+
+        if f.x is None:
             continue
 
         score = (f.x * xmul +
@@ -321,8 +559,8 @@ def focus_extreme(xmul, ymul, wmul, hmul):
 # This calculates the distance between two points, applying
 # the given fudge factors. The distance is left squared.
 def points_dist(x0, y0, x1, y1, xfudge, yfudge):
-    return (( x0 - x1 ) * xfudge ) ** 2 + \
-           (( y0 - y1 ) * yfudge ) ** 2
+    return ((x0 - x1) * xfudge) ** 2 + \
+           ((y0 - y1) * yfudge) ** 2
 
 
 # This computes the distance between two horizontal lines. (So the
@@ -385,6 +623,9 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
                   condition,
                   xmul, ymul, wmul, hmul):
 
+    global pending_focus_type
+    pending_focus_type = "keyboard"
+
     if not focus_list:
         return
 
@@ -392,7 +633,15 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
     current = get_focused()
 
     if not current:
-        change_focus(focus_list[0])
+
+        for f in focus_list:
+
+            if not f.widget.style.keyboard_focus:
+                continue
+
+            change_focus(f)
+            return
+
         return
 
     # Find the current focus.
@@ -459,6 +708,9 @@ def focus_nearest(from_x0, from_y0, from_x1, from_y1,
 
 
 def focus_ordered(delta):
+
+    global pending_focus_type
+    pending_focus_type = "keyboard"
 
     placeless = None
 

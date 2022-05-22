@@ -1,16 +1,30 @@
 #!/bin/sh
 
-try () { "$@" || exit 1; }
+set -e
 
 SPHINX="$(dirname $(python -c "import os;print(os.path.realpath('$0'))"))"
 
-try cd "$SPHINX"
+cd "$SPHINX"
 
-# Delete .pyo files, which could not include docstrings.
-try find ../renpy -name \*.pyo -delete
+# Make the inc folder.
+mkdir -p source/inc
 
-try ../renpy.sh .
+# Run a Ren'Py game that generates documentation.
+python ../renpy.py .
 
-try sphinx-build -a source ../doc || exit 1
-try python checks.py
+# Clear out generated images.
+rm -Rf ../doc-web/_images || true
+rm -Rf ../doc/_images || true
+
+# Build the full web documentation.
+sphinx-build -E -a source ../doc-web &
+
+# Build the included-with-Ren'Py documentation.
+RENPY_NO_FIGURES=1 sphinx-build -E -a source ../doc 2>/dev/null
+
+# Wait for both builds to finish.
+wait
+
+# Run some checks.
+python checks.py
 

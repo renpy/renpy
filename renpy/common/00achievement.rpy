@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,8 +19,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
 init -1500 python in achievement:
-    from store import persistent, renpy, config
+    from store import persistent, renpy, config, Action
 
     # A list of backends that have been registered.
     backends = [ ]
@@ -65,7 +66,6 @@ init -1500 python in achievement:
 
             return False
 
-
     class PersistentBackend(Backend):
         """
         A backend that stores achievements in persistent._achievements.
@@ -78,26 +78,60 @@ init -1500 python in achievement:
             if persistent._achievement_progress is None:
                 persistent._achievement_progress = _dict()
 
+            self.stat_max = { }
+
+        def register(self, name, stat_max=None, **kwargs):
+            if stat_max:
+                self.stat_max[name] = stat_max
+
         def grant(self, name):
             persistent._achievements.add(name)
 
         def clear(self, name):
             persistent._achievements.discard(name)
+            if name in persistent._achievement_progress:
+                del persistent._achievement_progress[name]
 
         def clear_all(self):
             persistent._achievements.clear()
+            persistent._achievement_progress.clear()
 
         def has(self, name):
             return name in persistent._achievements
 
-        def progress(self, name, complete):
-            old = persistent._achievement_progress.get(name, 0)
-            persistent._achievement_progress[name] = max(complete, old)
+        def progress(self, name, completed):
+            current = persistent._achievement_progress.get(name, 0)
+
+            if (current is not None) and (current >= completed):
+                return
+
+            persistent._achievement_progress[name] = completed
+
+            if name not in self.stat_max:
+                if config.developer:
+                    raise Exception("To report progress, you must register {} with a stat_max.".format(name))
+                else:
+                    return
+
+            if completed >= self.stat_max[name]:
+                self.grant(name)
 
     def merge(old, new, current):
+        if old is None:
+            old = set()
+
+        if new is None:
+            new = set()
+
         return old | new
 
     def merge_progress(old, new, current):
+
+        if old is None:
+            old = { }
+        if new is None:
+            new = { }
+
         rv = _dict()
         rv.update(old)
 
@@ -114,98 +148,7 @@ init -1500 python in achievement:
 
     backends.append(PersistentBackend())
 
-
-    class SteamBackend(Backend):
-        """
-        A backend that sends achievements to Steam. This is only used if steam
-        has loaded and initialized successfully.
-        """
-
-        def __init__(self):
-            # A map from achievement name to steam name.
-            self.names = { }
-            self.stats = { }
-
-            steam.retrieve_stats()
-
-        def register(self, name, steam=None, steam_stat=None, stat_max=None, stat_modulo=1, **kwargs):
-            if steam is not None:
-                self.names[name] = steam
-
-            self.stats[name] = (steam_stat, stat_max, stat_modulo)
-
-        def grant(self, name):
-            name = self.names.get(name, name)
-
-            steam.grant_achievement(name)
-            steam.store_stats()
-
-        def clear(self, name):
-            name = self.names.get(name, name)
-
-            steam.clear_achievement(name)
-            steam.store_stats()
-
-        def clear_all(self):
-            for i in steam.list_achievements():
-                steam.clear_achievement(i)
-
-            steam.store_stats()
-
-        def progress(self, name, completed):
-
-            orig_name = name
-
-            completed = int(completed)
-
-            if name not in self.stats:
-                if config.developer:
-                    raise Exception("To report progress, you must register {} with a stat_max.".format(name))
-                else:
-                    return
-
-            current = persistent._achievement_progress.get(name, 0)
-
-            steam_stat, stat_max, stat_modulo = self.stats[name]
-
-            name = self.names.get(name, name)
-
-            if (current is not None) and (current >= completed):
-                return
-
-            if completed >= stat_max:
-                steam.grant_achievement(name)
-            else:
-                if (stat_modulo is None) or (completed % stat_modulo) == 0:
-                    steam.indicate_achievement_progress(name, completed, stat_max)
-
-            steam.store_stats()
-
-        def has(self, name):
-            name = self.names.get(name, name)
-
-            return steam.get_achievement(name)
-
-    try:
-        import _renpysteam as steam
-        renpy.write_log("Imported steam.")
-    except Exception as e:
-        steam = None
-        renpy.write_log("Importing _renpysteam: %r", e)
-
-    if steam is not None:
-
-        want_version = 2
-
-        if steam.version < want_version:
-            raise Exception("_renpysteam module is too old. (want version %d, got %d)" % (steam.version, want_version))
-
-        if steam.init():
-            renpy.write_log("Initialized steam.")
-            backends.insert(0, SteamBackend())
-        else:
-            renpy.write_log("Failed to initialize steam.")
-
+    # The Steam back-end has been moved to 00steam.rpy.
 
     def register(name, **kwargs):
         """
@@ -255,9 +198,8 @@ init -1500 python in achievement:
         Clears the achievement with `name`.
         """
 
-        if has(name):
-            for i in backends:
-                i.clear(name)
+        for i in backends:
+            i.clear(name)
 
     def clear_all():
         """
@@ -268,6 +210,17 @@ init -1500 python in achievement:
 
         for i in backends:
             i.clear_all()
+
+    def get_progress(name):
+        """
+        :doc: achievement
+
+        Returns the current progress towards the achievement identified
+        with `name`, or 0 if no progress has been registered for it or if
+        the achievement is not known.
+        """
+
+        return persistent._achievement_progress.get(name, 0)
 
     def progress(name, complete, total=None):
         """
@@ -300,7 +253,7 @@ init -1500 python in achievement:
         """
         :doc: achievement
 
-        Returns true if the plater has been grnted the achievement with
+        Returns true if the player has been granted the achievement with
         `name`.
         """
 
@@ -309,3 +262,34 @@ init -1500 python in achievement:
                 return True
 
         return False
+
+    def sync():
+        """
+        :doc: achievement
+
+        Synchronizes registered achievements between local storage and
+        other backends. (For example, Steam.)
+        """
+
+        for a in persistent._achievements:
+            for i in backends:
+                if not i.has(a):
+                    i.grant(a)
+
+    class Sync(Action):
+        """
+        :doc: achievement
+
+        An action that calls achievement.sync(). This is only sensitive if
+        achievements are out of sync.
+        """
+
+        def __call__(self):
+            sync()
+
+        def get_sensitive(self):
+            for a in persistent._achievements:
+                for i in backends:
+                    if not i.has(a):
+                        return True
+            return False

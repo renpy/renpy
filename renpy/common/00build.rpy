@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,6 +24,10 @@
 
 init -1500 python in build:
 
+    from store import config
+
+    import sys, os
+
     def make_file_lists(s):
         """
         Turns `s` into a (perhaps empty) list of file_lists.
@@ -42,7 +46,6 @@ init -1500 python in build:
         raise Exception("Expected a string, list, or None.")
 
 
-
     def pattern_list(l):
         """
         Apply file_lists to the second argument of each tuple in a list.
@@ -55,8 +58,30 @@ init -1500 python in build:
 
         return rv
 
+
+    renpy_sh = "renpy.sh"
+
+    if PY2:
+        renpy_patterns = pattern_list([
+            ("renpy/**.pyo", "all"),
+            ("renpy/**__pycache__", None),
+        ])
+
+        if os.path.exists(os.path.join(config.renpy_base, "renpy2.sh")):
+            renpy_sh = "renpy2.sh"
+
+    else:
+        renpy_patterns = pattern_list([
+            ("renpy/**__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), "all"),
+            ("renpy/**__pycache__", "all"),
+        ])
+
+        if os.path.exists(os.path.join(config.renpy_base, "renpy3.sh")):
+            renpy_sh = "renpy3.sh"
+
+
     # Patterns that are used to classify Ren'Py.
-    renpy_patterns = pattern_list([
+    renpy_patterns.extend(pattern_list([
         ( "**~", None),
         ( "**/#*", None),
         ( "**/.*", None),
@@ -64,37 +89,61 @@ init -1500 python in build:
         ( "**.new", None),
         ( "**.rpa", None),
 
-        ( "**/*.pyc", None),
+        ( "**/steam_appid.txt", None),
 
-        ( "renpy.py", "renpy"),
+        ( "renpy.py", "all"),
 
         ( "renpy/", "all"),
+        ( "renpy/**.py", "renpy"),
+
+        # Ignore Cython source files.
+        ( "renpy/**.pxd", None),
+        ( "renpy/**.pxi", None),
+        ( "renpy/**.pyx", None),
+
+        # Ignore legacy Python bytcode files (unless allowed above).
+        ( "renpy/**.pyc", None),
+        ( "renpy/**.pyo", None),
+
+        # Ignore Python interface files.
+        ( "renpy/**.pyi", None),
+
         ( "renpy/common/", "all"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**.rpy", "renpy"),
         ( "renpy/common/**.rpym", "renpy"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**", "all"),
-        ( "renpy/**", "renpy"),
+        ( "renpy/**", "all"),
 
         # Ignore Ren'Py and renpy.exe.
         ( "lib/*/renpy", None),
         ( "lib/*/renpy.exe", None),
+        ( "lib/*/pythonw.exe", None),
+
+        # Ignore the wrong Python.
+        ( "lib/py3-*/" if PY2 else "lib/py2-*/", None),
 
         # Windows patterns.
-        ( "lib/windows-i686/**", "windows"),
+        ( "lib/py*-windows-i686/**", "windows_i686"),
+        ( "lib/py*-windows-x86_64/**", "windows"),
 
         # Linux patterns.
-        ( "lib/linux-x86_64/**", "linux"),
-        ( "lib/linux-i686/**", "linux"),
+        ( "lib/py*-linux-i686/**", "linux_i686"),
+        ( "lib/py*-linux-*/**", "linux"),
 
-        # Mac patterns
-        ( "lib/darwin-x86_64/**", "mac"),
+        # Mac patterns.
+        ( "lib/py*-mac-*/**", "mac"),
+
+        # Old Python library.
+        ( "lib/python3.*/**" if PY2 else "lib/python2.*/**", None),
 
         # Shared patterns.
-        ( "/lib/**", "windows linux mac"),
-        ( "renpy.sh", "linux mac"),
-    ])
+        ( "lib/**", "windows linux mac android ios"),
+        ( renpy_sh, "linux mac"),
+    ]))
+
+
 
     def classify_renpy(pattern, groups):
         """
@@ -118,6 +167,8 @@ init -1500 python in build:
         ("common/", None),
         ("update/", None),
 
+        ("old-game/", None),
+
         ("icon.ico", None),
         ("icon.icns", None),
         ("project.json", None),
@@ -131,6 +182,9 @@ init -1500 python in build:
         ("dialogue.tab", None),
         ("profile_screen.txt", None),
 
+        ("files.txt", None),
+        ("memory.txt", None),
+
         ("tmp/", None),
         ("game/saves/", None),
         ("game/bytecode.rpyb", None),
@@ -139,14 +193,24 @@ init -1500 python in build:
         ("launcherinfo.py", None),
         ("android.txt", None),
 
+        ("game/presplash*.*", "all"),
+
         (".android.json", "android"),
-        ("android-icon.png", "android"),
-        ("android-presplash.*", "android"),
-        ("android-*-icon.png", "android"),
-        ("android-*-presplash.*", "android"),
-        ("ouya_icon.png", "android"),
+        ("android-*.png", "android"),
+        ("android-*.jpg", "android"),
+        ("ouya_icon.png", None),
 
         ("ios-presplash.*", "ios"),
+        ("ios-launchimage.png", None),
+        ("ios-icon.png", None),
+
+        ("web-presplash.png", "web"),
+        ("web-presplash.jpg", "web"),
+        ("web-presplash.webp", "web"),
+        ("progressive_download.txt", "web"),
+
+        ("steam_appid.txt", None),
+
         ])
 
     base_patterns = [ ]
@@ -179,7 +243,7 @@ init -1500 python in build:
         Removes the pattern from the list.
         """
 
-        l[:] = [ (p, fl) for i in l if p != pattern ]
+        l[:] = [ (p, fl) for p, fl in l if p != pattern ]
 
     # Archiving.
 
@@ -215,14 +279,11 @@ init -1500 python in build:
 
     xbit_patterns = [
         "**.sh",
-        "**/*.so.*",
-        "**/*.so",
-        "**/*.dylib",
+
+        "lib/py*-linux-*/*",
+        "lib/py*-mac-*/*",
+
         "**.app/Contents/MacOS/*",
-        "lib/**/python",
-        "lib/**/pythonw",
-        "lib/**/zsync",
-        "lib/**/zsyncmake",
         ]
 
     def executable(pattern):
@@ -255,10 +316,18 @@ init -1500 python in build:
 
             zip
                 A zip file.
-            app-zip
-                A zip file containing a macintosh application.
             tar.bz2
                 A tar.bz2 file.
+            directory
+                A directory containing the files.
+            dmg
+                A Macintosh DMG containing the files.
+            app-zip
+                A zip file containing a macintosh application.
+            app-directory
+                A directory containing the mac app.
+            app-dmg
+                A macintosh drive image containing a dmg. (Mac only.)
 
             The empty string will not build any package formats (this
             makes dlc possible).
@@ -286,7 +355,7 @@ init -1500 python in build:
         formats = format.split()
 
         for i in formats:
-            if i not in [ "zip", "app-zip", "tar.bz2", "directory" ]:
+            if i not in [ "zip", "app-zip", "tar.bz2", "directory", "dmg", "app-directory", "app-dmg" ]:
                 raise Exception("Format {} not known.".format(i))
 
         if description is None:
@@ -304,14 +373,20 @@ init -1500 python in build:
 
         packages.append(d)
 
-    package("all", "zip", "windows mac linux renpy all", "All Desktop Platforms")
-    package("linux", "tar.bz2", "linux renpy all", "Linux x86/x86_64")
-    package("mac", "app-zip", "mac renpy all", "Macintosh x86")
-    package("win", "zip", "windows renpy all", "Windows x86")
-    package("android", "directory", "android renpy all", hidden=True, update=False, dlc=True)
-    package("ios", "directory", "ios renpy all", hidden=True, update=False, dlc=True)
+    package("pc", "zip", "windows linux renpy all", "PC: Windows and Linux")
+    package("linux", "tar.bz2", "linux renpy all", "Linux")
+    package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh")
+    package("win", "zip", "windows renpy all", "Windows")
+    package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
+    package("steam", "zip", "windows linux mac renpy all", hidden=True)
+    package("android", "directory", "android all", hidden=True, update=False, dlc=True)
+    package("ios", "directory", "ios all", hidden=True, update=False, dlc=True)
+    package("web", "zip", "web all", hidden=True, update=False, dlc=True)
 
     # Data that we expect the user to set.
+
+    # A base name that's used to create the other names.
+    name = None
 
     # The name of directories in the archives.
     directory_name = ""
@@ -347,11 +422,67 @@ init -1500 python in build:
     # both discrete and integrated GPUs?
     allow_integrated_gpu = True
 
+    # The itch.io project name.
+    itch_project = None
+
+    # Should we include the old Ren'Py themes?
+    include_old_themes = True
+
+    # The identity used for codesigning and dmg building.
+    mac_identity = None
+
+    # The command used for mac codesigning.
+    mac_codesign_command = [ "/usr/bin/codesign", "--entitlements={entitlements}", "--options=runtime", "--timestamp", "-s", "{identity}", "-f", "--deep", "--no-strict", "{app}" ]
+
+    # The command used to build a dmg.
+    mac_create_dmg_command = [ "/usr/bin/hdiutil", "create", "-format", "UDBZ", "-volname", "{volname}", "-srcfolder", "{sourcedir}", "-ov", "{dmg}" ]
+
+    # The command used to sign a dmg.
+    mac_codesign_dmg_command = [ "/usr/bin/codesign", "--timestamp", "-s", "{identity}", "-f", "{dmg}" ]
+
+    # Additional or Override keys to add to the Info.plist.
+    mac_info_plist = { }
+
+    # Do we want to add the script_version file?
+    script_version = True
+
+    # A list of file lists to merge.
+    merge = [ ]
+
+    # Do we want to include the i686 binaries?
+    include_i686 = True
+
+    # Do we want to change the icon on the i686 binaries?
+    change_icon_i686 = True
+
+    # A list of additional android permission names.
+    android_permissions = [ ]
+
+    # Should the sdk-fonts directory be renamed to game?
+    _sdk_fonts = False
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
 
         rv = { }
+
+        excludes = [ ]
+
+        if not include_old_themes:
+            excludes.extend([
+                ( "renpy/common/_compat/**", None),
+                ( "renpy/common/_roundrect/**", None),
+                ( "renpy/common/_outline/**", None),
+                ( "renpy/common/_theme**", None),
+            ])
+
+        import sys
+
+        if "_ssl" not in sys.modules:
+            excludes.extend([
+                ( "lib/**/_ssl.*", None),
+            ])
 
         rv["directory_name"] = directory_name
         rv["executable_name"] = executable_name
@@ -361,10 +492,10 @@ init -1500 python in build:
         rv["archives"] = archives
         rv["documentation_patterns"] = documentation_patterns
         rv["base_patterns"] = early_base_patterns + base_patterns + late_base_patterns
-        rv["renpy_patterns"] = renpy_patterns
+        rv["renpy_patterns"] = excludes + renpy_patterns
         rv["xbit_patterns"] = xbit_patterns
         rv["version"] = version or directory_name
-        rv["display_name"] = display_name or executable_name
+        rv["display_name"] = display_name or config.name or executable_name
 
         rv["exclude_empty_directories"] = exclude_empty_directories
 
@@ -372,6 +503,7 @@ init -1500 python in build:
 
         rv["renpy"] = renpy
 
+        rv["script_version"] = script_version
 
         rv["destination"] = destination.format(
             directory_name=directory_name,
@@ -386,4 +518,46 @@ init -1500 python in build:
         if google_play_salt:
             rv["google_play_salt"] = google_play_salt
 
+        if itch_project:
+            rv["itch_project"] = itch_project
+
+        if mac_identity:
+            rv["mac_identity"] = mac_identity
+            rv["mac_codesign_command"] = mac_codesign_command
+            rv["mac_create_dmg_command"] = mac_create_dmg_command
+            rv["mac_codesign_dmg_command"] = mac_codesign_dmg_command
+
+        rv["mac_info_plist"] = mac_info_plist
+
+        rv["merge"] = list(merge)
+
+        if include_i686:
+           rv['merge'].append(("linux_i686", "linux"))
+           rv['merge'].append(("windows_i686", "windows"))
+
+        rv["include_i686"] = include_i686
+        rv["change_icon_i686"] = change_icon_i686
+
+        rv["android_permissions"] = android_permissions
+
+        rv["_sdk_fonts"] = _sdk_fonts
+
         return rv
+
+init 1500 python in build:
+
+    if version is None:
+        version = config.version
+
+    if name is not None:
+
+        if not directory_name:
+
+            directory_name = name
+
+            if config.version:
+                directory_name += "-" + version
+
+        if not executable_name:
+
+            executable_name = name

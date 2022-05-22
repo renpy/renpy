@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,15 +21,23 @@
 
 # Other text-related things.
 
-import renpy.text
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from renpy.text.textsupport import TAG
+
+
+import renpy
+
+from renpy.text.textsupport import TAG, PARAGRAPH
 import renpy.text.textsupport as textsupport
-
 
 # A list of text tags, mapping from the text tag prefix to if it
 # requires a closing tag.
 text_tags = dict(
+    alpha=True,
+    alt=True,
+    art=True,
+    done=False,
     image=False,
     p=False,
     w=False,
@@ -41,7 +49,9 @@ text_tags = dict(
     plain=True,
     font=True,
     color=True,
+    outlinecolor=True,
     size=True,
+    noalt=True,
     nw=False,
     s=True,
     rt=True,
@@ -65,19 +75,24 @@ def check_text_tags(s):
     an error, or None if there is no error.
     """
 
+    all_tags = dict(text_tags)
+
     custom_tags = renpy.config.custom_text_tags
-
     if custom_tags:
-        all_tags = dict(text_tags)
-        all_tags.update(renpy.config.custom_text_tags)
-    else:
-        all_tags = text_tags
+        all_tags.update(custom_tags)
 
-    tokens = textsupport.tokenize(unicode(s))
+    self_closing_custom_tags = renpy.config.self_closing_custom_text_tags
+    if self_closing_custom_tags:
+        all_tags.update(dict.fromkeys(self_closing_custom_tags, False))
+
+    try:
+        tokens = textsupport.tokenize(str(s))
+    except Exception as e:
+        return e.args[0]
 
     tag_stack = [ ]
 
-    for type, text in tokens: #@ReservedAssignment
+    for type, text in tokens: # @ReservedAssignment
         if type != TAG:
             continue
 
@@ -111,8 +126,97 @@ def check_text_tags(s):
     return None
 
 
+def filter_text_tags(s, allow=None, deny=None):
+    """
+    :doc: text_utility
+
+    Returns a copy of `s` with the text tags filtered. Exactly one of the `allow` and `deny` keyword
+    arguments must be given.
+
+    `allow`
+        A set of tags that are allowed. If a tag is not in this list, it is removed.
+
+    `deny`
+        A set of tags that are denied. If a tag is not in this list, it is kept in the string.
+    """
+
+    if (allow is None) and (deny is None):
+        raise Exception("Only one of the allow and deny keyword arguments should be given to filter_text_tags.")
+
+    if (allow is not None) and (deny is not None):
+        raise Exception("Only one of the allow and deny keyword arguments should be given to filter_text_tags.")
+
+    tokens = textsupport.tokenize(str(s))
+
+    rv = [ ]
+
+    for tokentype, text in tokens:
+
+        if tokentype == PARAGRAPH:
+            rv.append("\n")
+        elif tokentype == TAG:
+            kind = text.partition("=")[0]
+
+            if kind and (kind[0] == "/"):
+                kind = kind[1:]
+
+            if allow is not None:
+                if kind in allow:
+                    rv.append("{" + text + "}")
+            else:
+                if kind not in deny:
+                    rv.append("{" + text + "}")
+        else:
+            rv.append(text.replace("{", "{{"))
+
+    return "".join(rv)
+
+
+def filter_alt_text(s):
+    """
+    Returns a copy of `s` with the contents of text tags that shouldn't be in
+    alt text filtered. This returns just the text to say, with no text tags
+    at all in it.
+    """
+
+    tokens = textsupport.tokenize(str(s))
+
+    if renpy.config.custom_text_tags or renpy.config.self_closing_custom_text_tags or (renpy.config.replace_text is not None):
+        tokens = renpy.text.text.Text.apply_custom_tags(tokens)
+
+    rv = [ ]
+
+    active = set()
+
+    for tokentype, text in tokens:
+
+        if tokentype == PARAGRAPH:
+            rv.append("\n")
+        elif tokentype == TAG:
+            kind = text.partition("=")[0]
+
+            if kind.startswith("/"):
+                kind = kind[1:]
+                end = True
+            else:
+                end = False
+
+            if kind in renpy.config.tts_filter_tags:
+                if end:
+                    active.discard(kind)
+                else:
+                    active.add(kind)
+
+        else:
+            if not active:
+                rv.append(text)
+
+    return "".join(rv)
+
+
 class ParameterizedText(object):
     """
+    :name: ParameterizedText
     :doc: text
 
     This is a displayable that can be shown with an additional string
@@ -137,13 +241,60 @@ class ParameterizedText(object):
         self.style = style
         self.properties = properties
 
-    def parameterize(self, name, parameters):
+    _duplicatable = True
 
-        if len(parameters) != 1:
-            raise Exception("'%s' takes a single string parameter." %
-                            ' '.join(name))
+    def _duplicate(self, args):
 
-        param = parameters[0]
+        if args.lint:
+            return renpy.text.text.Text("", style=self.style, **self.properties)
+
+        if len(args.args) == 0:
+            raise Exception("'%s' takes a single string parameter." % ' '.join(args.name))
+
+        param = "".join(args.args)
         string = renpy.python.py_eval(param)
 
         return renpy.text.text.Text(string, style=self.style, **self.properties)
+
+
+def textwrap(s, width=78, asian=False):
+    """
+    Wraps the unicode string `s`, and returns a list of strings.
+
+    `width`
+        The number of half-width characters that fit on a line.
+    `asian`
+        True if we should make ambiguous width characters full-width, as is
+        done in Asian encodings.
+    """
+
+    import unicodedata
+
+    glyphs = [ ]
+
+    for c in str(s):
+
+        eaw = unicodedata.east_asian_width(c)
+
+        if (eaw == "F") or (eaw == "W"):
+            gwidth = 20
+        elif (eaw == "A"):
+            if asian:
+                gwidth = 20
+            else:
+                gwidth = 10
+        else:
+            gwidth = 10
+
+        g = textsupport.Glyph()
+        g.character = ord(c)
+        g.ascent = 10
+        g.line_spacing = 10
+        g.width = gwidth
+        g.advance = gwidth
+
+        glyphs.append(g)
+
+    textsupport.annotate_unicode(glyphs, False, 2)
+    renpy.text.texwrap.linebreak_tex(glyphs, width * 10, width * 10, False)
+    return textsupport.linebreak_list(glyphs)

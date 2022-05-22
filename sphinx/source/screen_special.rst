@@ -1,3 +1,5 @@
+.. _screen-special:
+
 ====================
 Special Screen Names
 ====================
@@ -22,7 +24,7 @@ as variables in the screen's scope.
 Some of the screens also have special ids associated with them. A
 special id should be assigned to a displayable of a given type. It can
 cause properties to be assigned to that displayable, and can make that
-displayable accessible to calling code.
+displayable accessible to the part of Ren'Py that displays the screen.
 
 In-Game Screens
 ===============
@@ -84,12 +86,37 @@ The ``choice`` screen is used to display the in-game choices created
 with the menu statement. It is given the following parameter:
 
 `items`
-    This is a list of (`caption`, `action`, `chosen`)
-    tuples. For each choice, `caption` is the name of the choice, and
-    `action` is the action to invoke for the choice, or None if this
-    is a choice label. `Chosen` if a choice with this label has been
-    chosen by the user before. (It doesn't have to be in the current
-    game.)
+    This is a list of menu entry objects, representing each of the
+    choices in the menu. Each of the objects has the following
+    fields on it:
+
+    .. attribute:: caption
+
+        A string giving the caption of the menu choice.
+
+    .. attribute:: action
+
+        An action that should be invoked when the menu choice is
+        chosen. This may be None if this is a menu caption, and
+        :var:`config.narrator_menu` is False.
+
+    .. attribute:: chosen
+
+        This is True if this choice has been chosen at least once
+        in any playthrough of the game.
+
+    .. attribute:: args
+
+        This is a tuple that contains any positional arguments passed
+        to the menu choice.
+
+    .. attribute:: kwargs
+
+        This is a dictionary that contains any keyword arguments passed
+        to the menu choice.
+
+In addition, any arguments passed to a menu statement are passed in during
+the call to the screen.
 
 ::
 
@@ -101,18 +128,18 @@ with the menu statement. It is given the following parameter:
             vbox:
                 style "menu"
 
-                for caption, action, chosen in items:
+                for i in items:
 
-                    if action:
+                    if i.action:
 
                         button:
-                            action action
+                            action i.action
                             style "menu_choice_button"
 
-                            text caption style "menu_choice"
+                            text i.caption style "menu_choice"
 
                     else:
-                        text caption style "menu_caption"
+                        text i.caption style "menu_caption"
 
 
 .. _input-screen:
@@ -152,22 +179,52 @@ The ``nvl`` screen is used to display NVL-mode dialogue. It is given
 the following parameter:
 
 `dialogue`
-    This is a list of ( `who`, `what`, `who_id`, `what_id`,
-    `window_id`) tuples, each of which corresponds to a line of
-    dialogue on the screen. `Who` and `what` are strings containing
-    the speaking character and the line of dialogue, respectively. The
-    ids should be assigned to the who and what text displayables, and
-    a window containing each unit of dialogue.
+    A list of NVL Entry objects, each of which corresponds to a line
+    of dialogue to be displayed. Each entry has the following
+    fields:
+
+    .. attribute:: current
+
+        True if this is the current line of dialogue. The current
+        line of dialogue must have its what text displayed with an
+        id of "what".
+
+    .. attribute:: who
+
+        The name of the speaking character, or None of there is no
+        such name.
+
+    .. attribute:: what
+
+        The text being spoken.
+
+    .. attribute:: who_id, what_id, window_id
+
+        Preferred ids for the speaker, dialogue, and window associated with an
+        entry.
+
+    .. attribute:: who_args, what_args, window_args
+
+        Properties associated with the speaker, dialogue, and window. These
+        are automatically applied if the id is set as above, but are also
+        made available separately.
+
+    .. attribute:: multiple
+
+        If :ref:`multiple character dialogue <multiple-character-dialogue>`, this is
+        a two component tuple. The first component is the one-based number
+        of the dialogue block, and the second is the total number of dialogue
+        blocks in the multiple statement.
 
 `items`
-    This is a list of (`caption`, `action`, `chosen`)
-    tuples. For each choice, `caption` is the name of the choice, and
-    `action` is the action to invoke for the choice, or None if this
-    is a choice label. `Chosen` if a choice with this label has been
-    chosen by the user before. (It doesn't have to be in the current
-    game.)
+    This is the same list of items that would be supplied to the
+    :ref:`choice screen <choice-screen>`. If this is empty,
+    the menu should not be shown.
 
-    If items is empty, the menu should not be shown.
+When `items` is not present, the NVL screen is expected to always
+give a text widget an id of "what". Ren'Py uses it to calculate
+auto-forward-mode time, click-to-continue, and other things. (This is
+satisfied automatically if the default what_id is used.)
 
 Ren'Py also supports an ``nvl_choice`` screen, which takes the same
 parameters as ``nvl``, and is used in preference to ``nvl`` when
@@ -184,17 +241,17 @@ an in-game choice is presented to the user, if it exists.
                 style "nvl_vbox"
 
             # Display dialogue.
-            for who, what, who_id, what_id, window_id in dialogue:
+            for d in dialogue:
                 window:
-                    id window_id
+                    id d.window_id
 
                     has hbox:
                         spacing 10
 
-                    if who is not None:
-                        text who id who_id
+                    if d.who is not None:
+                        text d.who id d.who_id
 
-                    text what id what_id
+                    text d.what id d.what_id
 
             # Display a menu, if given.
             if items:
@@ -202,19 +259,19 @@ an in-game choice is presented to the user, if it exists.
                 vbox:
                     id "menu"
 
-                    for caption, action, chosen in items:
+                    for i in items:
 
                         if action:
 
                             button:
                                 style "nvl_menu_choice_button"
-                                action action
+                                action i.action
 
-                                text caption style "nvl_menu_choice"
+                                text i.caption style "nvl_menu_choice"
 
                         else:
 
-                            text caption style "nvl_dialogue"
+                            text i.caption style "nvl_dialogue"
 
 
 .. _notify-screen:
@@ -253,8 +310,71 @@ The default notify screen, and its associated transform, are::
             linear .5 alpha 0.0
 
 
-Menu Screens
-============
+.. _skip-indicator:
+
+Skip Indicator
+--------------
+
+If present, ``skip_indicator`` screen is displayed when skipping is in progress,
+and hidden when skipping finishes. It takes no parameters.
+
+Here's a very simple skip indicator screen::
+
+
+    screen skip_indicator():
+
+        zorder 100
+
+        text _("Skipping")
+
+
+.. _ctc-screen:
+
+CTC (Click-To-Continue)
+-----------------------
+
+If present, the ``ctc`` screen is displayed when dialogue has finished
+showing, to prompt the player to click to display more text. It may be
+given a single parameter and multiple keyword arguments.
+
+`arg`
+    The ctc displayable selected by the :func:`Character`. This is one of
+    the `ctc`, `ctc_pause`, or `ctc_timedpause` arguments to Character,
+    as appropriate. If no CTC is given to the Character, this argument is not passed at
+    all.
+
+In addition, there are several parameters that are only passed if the screen requires
+them.
+
+`ctc_kind`
+    The kind of CTC to display. One of "last" (for the last CTC on a line),
+    "pause", or "timedpause".
+
+`ctc_last`
+    The `ctc` argument to :func:`Character`.
+
+`ctc_pause`
+    The `ctc_pause` argument to :func:`Character`.
+
+`ctc_timedpause`
+    The `ctc_timedpause` argument to :func:`Character`.
+
+
+Here's a very simple ctc screen::
+
+    screen ctc(arg=None):
+
+        zorder 100
+
+        text _("Click to Continue"):
+            size 12
+            xalign 0.98
+            yalign 0.98
+
+
+
+Out-Of-Game Menu Screens
+========================
 
 These are the menu screens. The ``main_menu`` and ``yesno_prompt`` are
 invoked implicitly.  When the user invokes the game menu, the screen
@@ -284,7 +404,7 @@ begins.
 
         # The main menu buttons.
         frame:
-            style_group "mm"
+            style_prefix "mm"
             xalign .98
             yalign .98
 
@@ -296,10 +416,8 @@ begins.
             textbutton _("Help") action Help()
             textbutton _("Quit") action Quit(confirm=False)
 
-    init python:
-
-        # Make all the main menu buttons be the same size.
-        style.mm_button.size_group = "mm"
+    style mm_button:
+        size_group "mm"
 
 .. _navigation-screen:
 
@@ -320,7 +438,7 @@ then use that screen from the save, load and preferences screens.
 
         # The various buttons.
         frame:
-            style_group "gm_nav"
+            style_prefix "gm_nav"
             xalign .98
             yalign .98
 
@@ -334,8 +452,8 @@ then use that screen from the save, load and preferences screens.
             textbutton _("Help") action Help()
             textbutton _("Quit") action Quit()
 
-    init python:
-        style.gm_nav_button.size_group = "gm_nav"
+    style gm_nav_button:
+        size_group "gm_nav"
 
 .. _save-screen:
 
@@ -455,6 +573,9 @@ Preferences
 The ``preferences`` screen is used to select options that control the
 display of the game.
 
+In general, the preferences are either actions or bar values returned
+from :func:`Preference`.
+
 ::
 
     screen preferences():
@@ -466,13 +587,13 @@ display of the game.
 
         # Put the navigation columns in a three-wide grid.
         grid 3 1:
-            style_group "prefs"
+            style_prefix "prefs"
             xfill True
 
             # The left column.
             vbox:
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     label _("Display")
@@ -480,7 +601,7 @@ display of the game.
                     textbutton _("Fullscreen") action Preference("display", "fullscreen")
 
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     label _("Transitions")
@@ -488,14 +609,14 @@ display of the game.
                     textbutton _("None") action Preference("transitions", "none")
 
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     label _("Text Speed")
                     bar value Preference("text speed")
 
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     textbutton _("Joystick...") action ShowMenu("joystick_preferences")
@@ -503,7 +624,7 @@ display of the game.
             vbox:
 
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     label _("Skip")
@@ -511,13 +632,13 @@ display of the game.
                     textbutton _("All Messages") action Preference("skip", "all")
 
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     textbutton _("Begin Skipping") action Skip()
 
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     label _("After Choices")
@@ -525,7 +646,7 @@ display of the game.
                     textbutton _("Keep Skipping") action Preference("after choices", "skip")
 
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     label _("Auto-Forward Time")
@@ -534,14 +655,14 @@ display of the game.
             vbox:
 
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     label _("Music Volume")
                     bar value Preference("music volume")
 
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     label _("Sound Volume")
@@ -549,47 +670,55 @@ display of the game.
                     textbutton "Test" action Play("sound", "sound_test.ogg") style "soundtest_button"
 
                 frame:
-                    style_group "pref"
+                    style_prefix "pref"
                     has vbox
 
                     label _("Voice Volume")
                     bar value Preference("voice volume")
                     textbutton "Test" action Play("voice", "voice_test.ogg") style "soundtest_button"
 
-    init python:
+    style pref_frame:
+        xfill True
+        xmargin 5
+        top_margin 5
 
-        style.pref_frame.xfill = True
-        style.pref_frame.xmargin = 5
-        style.pref_frame.top_margin = 5
+    style pref_vbox:
+        xfill True
 
-        style.pref_vbox.xfill = True
+    style pref_button:
+        size_group "pref"
+        xalign 1.0
 
-        style.pref_button.size_group = "pref"
-        style.pref_button.xalign = 1.0
+    style pref_slider:
+        xmaximum 192
+        xalign 1.0
 
-        style.pref_slider.xmaximum = 192
-        style.pref_slider.xalign = 1.0
-
-        style.soundtest_button.xalign = 1.0
+    style soundtest_button:
+        xalign 1.0
 
 .. _yesno-prompt-screen:
+.. _confirm-screen:
 
-Yesno_Prompt
-------------
+Confirm
+-------
 
-The ``yesno_prompt`` message is used to ask yes/no choices of the
+The ``confirm`` screen is used to ask yes/no choices of the
 user. It takes the following parameters:
 
 `message`
     The message to display to the user. This is one of:
 
-    * layout.ARE_YOU_SURE - "Are you sure?" This should be
-      the default if the message is unknown.
-    * layout.DELETE_SAVE - "Are you sure you want to delete this save?"
-    * layout.OVERWRITE_SAVE - "Are you sure you want to overwrite your save?"
-    * layout.LOADING - "Loading will lose unsaved progress.\nAre you sure you want to do this?"
-    * layout.QUIT - "Are you sure you want to quit?"
-    * layout.MAIN_MENU - "Are you sure you want to return to the main\nmenu? This will lose unsaved progress."
+    * gui.ARE_YOU_SURE - "Are you sure?" This should be the default if the message is unknown.
+    * gui.DELETE_SAVE - "Are you sure you want to delete this save?"
+    * gui.OVERWRITE_SAVE - "Are you sure you want to overwrite your save?"
+    * gui.LOADING - "Loading will lose unsaved progress.\nAre you sure you want to do this?"
+    * gui.QUIT - "Are you sure you want to quit?"
+    * gui.MAIN_MENU - "Are you sure you want to return to the main\nmenu? This will lose unsaved progress."
+    * gui.END_REPLAY - "Are you sure you want to end the replay?"
+    * gui.SLOW_SKIP - "Are you sure you want to begin skipping?"
+    * gui.FAST_SKIP_SEEN - "Are you sure you want to skip to the next choice?"
+    * gui.FAST_SKIP_UNSEEN - "Are you sure you want to skip unseen dialogue to the next choice?"
+
 
     The values of the variables are strings, which means they can be
     displayed using a text displayable.
@@ -600,9 +729,12 @@ user. It takes the following parameters:
 `no_action`
     The action to run when the user picks "No".
 
+Until Ren'Py 6.99.10, this screen was known as the ``yesno_prompt`` screen.
+If no ``confirm`` screen is present, ``yesno_prompt`` is used instead.
+
 ::
 
-    screen yesno_prompt(message, yes_action, no_action):
+    screen confirm(message, yes_action, no_action):
 
         modal True
 
@@ -610,7 +742,7 @@ user. It takes the following parameters:
             style "gm_root"
 
         frame:
-            style_group "yesno_prompt"
+            style_prefix "confirm"
 
             xfill True
             xmargin 50

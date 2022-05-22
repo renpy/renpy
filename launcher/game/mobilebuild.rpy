@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,7 +32,7 @@ init -1 python:
         if not renpy.loadable(fn1):
             return True
 
-        hash1 = renpy.file(fn1).read()
+        hash1 = renpy.file(fn1).read().decode("utf-8")
 
         if not os.path.exists(fn2):
             return False
@@ -84,19 +84,24 @@ init -1 python:
 
             self.info_msg = ""
 
-            with open(self.filename, "w"):
+            with open(self.filename, "w") as f:
+                f.write(renpy.version() + "\n")
                 pass
 
         def log(self, msg):
             with open(self.filename, "a") as f:
                 f.write("\n")
-                f.write(msg)
+                f.write(unicode(msg))
                 f.write("\n")
 
         def info(self, prompt):
             self.info_msg = prompt
             interface.processing(prompt, pause=False)
             self.log(prompt)
+
+        def open_directory(self, directory, prompt):
+            renpy.run(store.OpenDirectory(directory, absolute=True))
+            interface.info(prompt)
 
         def yesno(self, prompt, submessage=None):
             return interface.yesno(prompt, submessage=submessage)
@@ -154,22 +159,23 @@ init -1 python:
 
             try:
                 while self.run_yes:
-                    self.process.stdin.write('y\n')
+                    self.process.stdin.write(b'y\n')
                     self.process.stdin.flush()
                     time.sleep(.2)
-            except:
-                import traceback
-                traceback.print_exc()
+            except Exception:
+                pass
 
         def call(self, cmd, cancel=False, use_path=False, yes=False):
+
+            renpy.not_infinite_loop(30)
 
             cmd = [ renpy.fsencode(i) for i in cmd ]
 
             self.cmd = cmd
 
-            f = open(self.filename, "a")
+            f = open(self.filename, "ab")
 
-            f.write("\n\n\n")
+            f.write(b"\n\n\n")
 
             if cancel:
                 cancel_action = self.cancel
@@ -187,12 +193,13 @@ init -1 python:
                 interface.processing(self.info_msg, show_screen=True, cancel=cancel_action)
 
                 kwargs = { }
-                if yes:
-                    kwargs["stdin"] = subprocess.PIPE
 
                 try:
-                    self.process = subprocess.Popen(cmd, cwd=renpy.fsencode(RAPT_PATH), stdout=f, stderr=f, startupinfo=startupinfo, **kwargs)
-                except:
+                    self.process = subprocess.Popen(cmd, cwd=renpy.fsencode(RAPT_PATH), stdout=f, stderr=f, stdin=subprocess.PIPE, startupinfo=startupinfo, **kwargs)
+                    # avoid SIGTTIN caused by e.g. gradle doing empty read on terminal stdin
+                    if not yes:
+                        self.process.stdin.close()
+                except Exception:
                     import traceback
                     traceback.print_exc(file=f)
                     raise
@@ -213,6 +220,11 @@ init -1 python:
                     self.run_yes = False
                     self.yes_thread.join()
 
+                    try:
+                        self.process.stdin.close()
+                    except:
+                        pass
+
                 self.process = None
                 self.yes_thread = None
 
@@ -220,6 +232,8 @@ init -1 python:
             rv = self.process.poll()
 
             if rv is not None:
+                renpy.not_infinite_loop(30)
+
                 if rv:
                     raise subprocess.CalledProcessError(rv, self.cmd)
                 else:
@@ -255,4 +269,3 @@ init -1 python:
                 self.process.terminate()
 
             renpy.jump(self.platform)
-

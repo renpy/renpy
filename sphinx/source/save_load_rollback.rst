@@ -1,3 +1,5 @@
+.. _save-load-rollback:
+
 =============================
 Saving, Loading, and Rollback
 =============================
@@ -10,16 +12,15 @@ rolls back.
 
 
 .. note::
-
-  While we usually attempt to keep save compatibility between releases, this
-  compatibility is not guaranteed. We may decide to break save-compatibility
-  if doing so provides a sufficiently large benefit.
+    While we usually attempt to keep save compatibility between releases, this
+    compatibility is not guaranteed. We may decide to break save-compatibility
+    if doing so provides a sufficiently large benefit.
 
 What is Saved
 =============
 
 Ren'Py attempts to save the game state. This includes both internal state
-and python state.
+and Python state.
 
 The internal state consists of all aspects of Ren'Py that are intented to
 change once the game has started, and includes:
@@ -31,30 +32,33 @@ change once the game has started, and includes:
 * The music that Ren'Py is playing.
 * The list of nvl-mode text blocks.
 
-The python state consists of the variables in the store that have changed since
+The Python state consists of the variables in the store that have changed since
 the game began, and all objects reachable from those variables. Note that it's
-the change to the variables that matters - changes to fields in objects will
+the change to the variables that matters – changes to fields in objects will
 not cause those objects to be saved.
+
+Variables set using the :ref:`default statement <default-statement>` will
+always be saved.
 
 In this example::
 
     define a = 1
     define o = object()
+    default c = 17
 
     label start:
          $ b = 1
          $ o.value = 42
 
-only `b` will be saved. A will not be saved because it does not change once
-the game begins. `O` is not saved because it does not change - the object it
+only `b` and `c` will be saved. `A` will not be saved because it does not change once
+the game begins. `O` is not saved because it does not change – the object it
 refers to changes, but the variable itself does not.
-
 
 What isn't Saved
 ================
 
-Python variables that are not changed before the game begins will not be
-saved. This can be a major problem if a variable that is saved and one that is
+Python variables that are not changed after the game begins will not be
+saved. This can be a major problem if a variable that is not saved and one that is
 refer to the same object. (Alias the object.) In this example::
 
     init python:
@@ -77,8 +81,8 @@ There are several other kinds of state that isn't saved:
 
 control flow path
     Ren'Py only saves the current statement, and the statement it needs
-    to return to. It doesn't remember how it got there. Importantly, if
-    code (like variable assignments) is added to the game, it won't run.
+    to return to. It doesn't remember how it got there. Importantly, statements
+    (including variable assignments) that are added to the game won't run.
 
 mappings of image names to displayables
     Since this mapping is not saved, the image may change to a new image
@@ -87,7 +91,7 @@ mappings of image names to displayables
 
 configuration variables, styles, and style properties
     Configuration variables and styles aren't saved as part of the game.
-    Therefore, they should only be changed in init blocks, and left alone
+    Therefore, they should only be changed in ``init`` blocks, and left alone
     once the game has started.
 
 
@@ -102,46 +106,108 @@ statement. If a load or rollback occurs in the middle of a statement that
 interacts multiple times, the state will be the state that was active
 when the statement began.
 
-This can be a problem in python-defined statements. In code like::
+This can be a problem in Python-defined statements. In::
 
     python:
+
          i = 0
+
          while i < 10:
+
               i += 1
+
               narrator("The count is now [i].")
 
 if the user saves and loads in the middle, the loop will begin anew. Using
-similar code in Ren'Py - rather than Python - avoids this problem.::
+Ren'Py script – rather than Python – to loop avoids this problem.::
 
    $ i = 0
+
    while i < 10:
+
         $ i += 1
+
         "The count is now [i]."
 
 
-What Ren'Py can Save
+What Ren'Py Can Save
 ====================
 
-Ren'Py uses the python pickle system to save game state. This module can
+Ren'Py uses the Python pickle system to save game state. This module can
 save:
 
-* Basic types, such as True, False, None, int, str, float, complex, str, and unicode objects.
+* Basic types, such as True, False, None, int, str, float, complex, str, and Unicode objects.
 * Compound types, like lists, tuples, sets, and dicts.
 * Creator-defined objects, classes, functions, methods, and bound methods. For
   pickling these functions to succeed, they must remain available under their
   original names.
 * Character, Displayable, Transform, and Transition objects.
 
+.. _cant-save:
+
+What Ren'Py Can't Save
+======================
+
 There are certain types that cannot be pickled:
 
 * Render objects.
 * Iterator objects.
+* Generator objects.
+* Coroutine tasks and futures, like those created with ``async`` and ``await``.
 * File-like objects.
+* Network sockets, and objects that enclose them.
 * Inner functions and lambdas.
 
-By default, Ren'Py uses the cPickle module to save the game. Setting
-:var:`config.use_cpickle` will make Ren'Py use the pickle module instead. This
-makes the game slower, but is better at reporting save errors.
+This may not be an exhaustive list.
+
+Objects that can't be pickled can still be used, provided that their use
+is combined to namespaces that aren't saved by Ren'Py (like init variables,
+namespaces inside functions,  or ``python hide`` blocks.)
+
+For example, using a file object like::
+
+    $ monika_file = open(config.gamedir + "/monika.chr", "w")
+    $ monika_file.write("Do not delete.\r\n")
+    $ monika_file.close()
+
+Won't work, as ``f`` could be saved between any of the three Python statements.
+Putting this in a ``python hide`` block will work::
+
+    python hide:
+
+        monika_file = open(config.gamedir + "/monika.chr", "w")
+        monika_file.write("Do not delete.\r\n")
+        monika_file.close()
+
+(Of course, using the python ``with`` statement would be cleaner.) ::
+
+    python hide:
+
+        with open(config.gamedir + "/monika.chr", "w") as monika_file:
+            monika_file.write("Do not delete.\r\n")
+
+Coroutines, like those made with ``async``, ``await``, or the ``asyncio``
+are similar. If you have::
+
+    init python:
+
+        import asyncio
+
+        async def sleep_func():
+            await asyncio.sleep(1)
+            await asyncio.sleep(1)
+
+then::
+
+    $ sleep_task = sleep_func()
+    $ asyncio.run(sleep_task)
+
+will have problems, since `sleep_task` can't be saved. But if it's not assigned
+to a variable::
+
+    $ asyncio.run(sleep_func())
+
+will run fine.
 
 
 Save Functions and Variables
@@ -153,6 +219,9 @@ There is one variable that is used by the high-level save system:
 
    This is a string that is stored with each save. It can be used to give
    a name to the save, to help users tell them apart.
+
+   More per-save data customization can be done with the Json supplementary
+   data system, see :var:`config.save_json_callbacks`.
 
 There are a number of high-level save actions and functions defined in the
 :ref:`screen actions <screen-actions>`. In addition, there are the following
@@ -195,6 +264,7 @@ For example::
 
 .. include:: inc/retain_after_load
 
+
 Rollback
 ========
 
@@ -203,6 +273,61 @@ much the same way as undo/redo systems that are available in most
 modern applications. While the system takes care of maintaining the
 visuals and game variables during rollback events, there are several
 things that should be considered while creating a game.
+
+
+What Data is Rolled Back?
+==========================
+
+Rollback affects variables that have been changed after the init phase, and
+objects of revertable types reachable from those variables. The short version
+is that lists, dicts, and sets created in Ren'Py script are revertable as are
+instances of classes defined in Ren'Py scripts. Data created inside Python
+or inside Ren'Py usually isn't revertable.
+
+In more detail, inside the stores
+that Python embedded inside Ren'Py scripts run in, the object, list, dict, and
+set types have been replaced with equivalent types that are revertable. Objects
+that inherit from these types are also revertable. The :class:`renpy.Displayable`
+type inherits from the revertable object type.
+
+To make the use of revertable objects more convenient, Ren'Py modifies Python
+found inside Ren'Py script files in the following way.
+
+* Literal lists, dicts, and sets are automatically converted to the
+  revertable equivalent.
+* List, dict, and set comprehensions are also automatically converted to
+  the revertable equivalent.
+* Other python syntax, such as extended unpacking, that can create lists,
+  dicts, or sets converts the result to the revertable equivalent. However,
+  for performance reasons, double-starred parameters to functions and methods
+  (that create dictionaries of extra keyword arguments) are not converted
+  to revertable objects.
+* Classes that do not inherit from any other types automatically inherit
+  from the revertable object.
+
+In addition:
+
+* The methods and operators of revertable types have been modified to return
+  revertable objects when a list, dict, or set is produced.
+* Built in functions that return lists, dicts, and sets return a revertable
+  equivalent.
+
+Calling into Python code will not generally produce a revertable object. Some
+cases where you'll get an object that may not participate in rollback are:
+
+* Calling methods on built-in types, like the str.split method.
+* When the object is created in a Python module that's been imported, and
+  then return to Ren'Py. (For example, an instance of collections.defaultdict
+  won't participate in rollback.)
+* Objects returned from Ren'Py's API, unless documented otherwise.
+
+If such data needs to participate in rollback, it may make sense to convert
+it to a type that does partipate. For example::
+
+    # Calling list inside Python-in-Ren'Py converts a non-revertable list
+    # into a revertable one.
+    $ attrs = list(renpy.get_attributes("eileen"))
+
 
 Supporting Rollback and Roll Forward
 ====================================
@@ -300,10 +425,10 @@ possible to make a different choice.
 There are some caveats to consider when designing a game for
 fix_rollback. Ren'Py will automatically take care of locking any data
 that is given to :func:`checkpoint`. However, due to the generic nature
-of Ren'Py, it is possible to write Python code that bypasses this and
-changes things in ways that may have unpredictable results. It is up
-to the game designer to block rollback at problematic locations or
-write additional code to deal with it.
+of Ren'Py, it is possible to write scripts that bypass this and
+change things in ways that may have unpredictable results.  Most notably,
+``call screen`` doesn't work well with fixed rollback. It is up
+to the creator to block rollback at problematic locations.
 
 The internal user interaction options for menus, :func:`renpy.input`
 and :func:`renpy.imagemap` are designed to fully work with fix_rollback.
@@ -360,7 +485,7 @@ Example::
             hotspot (8, 200, 78, 78) action ui.ChoiceJump("swimming", "go_swimming", block_all=False)
             hotspot (204, 50, 78, 78) action ui.ChoiceJump("science", "go_science_club", block_all=False)
             hotspot (452, 79, 78, 78) action ui.ChoiceJump("art", "go_art_lessons", block_all=False)
-            hotspot (602, 316, 78, 78) action uiChoiceJump("home", "go_home", block_all=False)
+            hotspot (602, 316, 78, 78) action ui.ChoiceJump("home", "go_home", block_all=False)
 
 Example::
 
@@ -411,4 +536,3 @@ For example::
         $ o.value += 1
 
         "o.value is [o.value]. It will increase each time you rolllback and then click ahead."
-

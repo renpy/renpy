@@ -1,4 +1,4 @@
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,10 +19,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+
+
+
 import os
 import renpy
 import traceback
 import subprocess
+
 
 class Editor(object):
     """
@@ -63,9 +70,9 @@ class Editor(object):
         Ends an editor transaction.
         """
 
-    def open(self, filename, line=None, **kwargs): #@ReservedAssignment
+    def open(self, filename, line=None, **kwargs):  # @ReservedAssignment
         """
-        Ensures `path` is open in the editor. This may be called multiple
+        Ensures `filename` is open in the editor. This may be called multiple
         times per transaction.
 
         `line`
@@ -76,28 +83,36 @@ class Editor(object):
         should be given focus in a tabbed editor environment.
         """
 
+    # This should be set to True if the editor supports projects.
+    has_projects = False
+
+    def open_project(self, directory):
+        """
+        Opens `directory` as a project in the editor.
+        """
+
 
 class SystemEditor(Editor):
 
-    def open(self, filename, line=None, **kwargs): #@ReservedAssignment
+    def open(self, filename, line=None, **kwargs):  # @ReservedAssignment
 
         filename = renpy.exports.fsencode(filename)
 
         try:
             if renpy.windows:
-                os.startfile(filename) #@UndefinedVariable
+                os.startfile(filename) # type: ignore
             elif renpy.macintosh:
-                subprocess.call([ "open", filename ]) #@UndefinedVariable
+                subprocess.call([ "open", filename ])
             elif renpy.linux:
-                subprocess.call([ "xdg-open", filename ]) #@UndefinedVariable
-        except:
+                subprocess.call([ "xdg-open", filename ])
+        except Exception:
             traceback.print_exc()
-
 
 
 # The editor that Ren'Py is using. It should be a subclass of the Editor
 # class.
 editor = None
+
 
 def init():
     """
@@ -113,14 +128,20 @@ def init():
     if path is None:
         return
 
+    with open(path, "r") as f:
+        source = f.read()
+
+    code = compile(source, path, "exec")
+
     scope = { "__file__" : path }
-    execfile(path, scope, scope)
+    exec(code, scope, scope)
 
     if "Editor" in scope:
-        editor = scope["Editor"]()
+        editor = scope["Editor"]() # type: ignore
         return
 
     raise Exception("{0} did not define an Editor class.".format(path))
+
 
 def launch_editor(filenames, line=1, transient=False):
     """
@@ -144,12 +165,12 @@ def launch_editor(filenames, line=1, transient=False):
 
         for i in filenames:
             editor.open(i, line)
-            line = None # The line number only applies to the first filename.
+            line = None  # The line number only applies to the first filename.
 
         editor.end()
 
         return True
 
-    except:
+    except Exception:
         traceback.print_exc()
         return False

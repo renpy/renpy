@@ -5,7 +5,7 @@ Text
 ====
 
 Ren'Py contains several ways of displaying text. The :ref:`say <say-statement>`
-and :ref:`menu <menu-statement>` are primarily concerned with the
+and :ref:`menu <menu-statement>` statements are primarily concerned with the
 display of text to the user. The user interface often contains text,
 displayed using the :ref:`text <sl-text>`, :ref:`textbutton <sl-textbutton>`,
 and :ref:`label <sl-label>` screen language statements. These
@@ -54,15 +54,22 @@ ensure that their writing is not accidentally misinterpreted by the engine.
     \\\\ (backslash-backslash)
         Includes a backslash character in the text.
 
+    \\% (backslash-percent)
+        Includes a protected percent character in the text. It's also
+        possible to write it as %% : both protections will result in a
+        single % character being written in the end.
+
 [ (left bracket)
     The left bracket is used to introduce interpolation of a value
     into the text. To include a single left bracket in your text,
-    double it - write ``[[``.
+    double it – write ``[[``.
 
 { (left brace)
     The left brace is used to introduce a text tag. To include a left
-    brace in your text, double it - write ``{{``.
+    brace in your text, double it – write ``{{``.
 
+
+.. _text-interpolation:
 
 Interpolating Data
 ==================
@@ -79,13 +86,12 @@ local variables. (This can be overridden by supplying an explicit
 scope argument to the Text displayable.)
 
 Ren'Py isn't limited to interpolating simple variables. It can also
-interpolate fields and components of tuples. So it's possible to have
-code like::
+interpolate fields and components of tuples. So it's possible to have::
 
     g "My first name is [player.names[0]]."
 
-It's possible to apply formatting codes when displaying numbers. This
-code will display a floating point number to two decimal places::
+It's possible to apply formatting when displaying numbers. This
+will display a floating point number to two decimal places::
 
     $ percent = 100.0 * points / max_points
     g "I like you [percent:.2] percent!"
@@ -94,14 +100,14 @@ Ren'Py's string interpolation is taken from the :pep:`3101` string
 formatting syntax. Ren'Py uses [ to introduce string formatting
 because { was taken by text tags.
 
-Along with the !s and !r conversion flags supported by Python, Ren'Py
-supports !q and !t conversion flag. The !q conversion flag ensures that
+Along with the ``!s`` and ``!r`` conversion flags supported by Python, Ren'Py
+supports several more flags. The ``!q`` conversion flag ensures that
 text tags are properly quoted, so that displaying a string will not
 introduce unwanted formatting constructs. For example::
 
     g "Don't pull a fast one on me, [playername!q]."
 
-The !t flag will translate the interpolated string::
+The ``!t`` flag will translate the interpolated string::
 
     if points > 5:
         $ mood = _("happy")
@@ -109,6 +115,36 @@ The !t flag will translate the interpolated string::
         $ mood = _("annoyed")
 
     g "I'm [mood!t] to see you."
+
+The ``!i`` flag will make additional interpolate for the interpolated string::
+
+    define earned_points_info = _("[points]{image=points.png} earned points")
+    g "I'm happy to see you you have [earned_points_info!ti]."
+
+This should be used to substitute the text that has a substitution inside.
+It's often useful in screen language, see :ref:`Const Text <const-text>`.
+
+The ``!u`` flag forces the text to uppercase and the ``!l`` flag forces the
+text to lowercase. The ``!c`` flag acts only on the first character,
+capitalizing it. These flags may be combined, for example using ``!cl`` would
+capitalize the first character, and force the remaining text to lowercase.
+
+It should be noted that:
+
+- the order in which the flags are given does not change the result : ``!cl``
+  will do just the same as ``!lc``.
+- Supplementarly exclamation marks will be ignored, and will not circumvent
+  the previuous rule : ``!l!c`` will do the same as ``!c!l`` or ``!cl``.
+
+The transformations are done in the following order:
+
+#. ``r``/``s`` (repr or str)
+#. ``t`` (translate)
+#. ``i`` (recursive interpolation)
+#. ``q`` (quoting)
+#. ``u`` (uppercase)
+#. ``l`` (lowercase)
+#. ``c`` (capitalize)
 
 
 Styling and Text Tags
@@ -124,9 +160,9 @@ styling a portion of text block, or a small fraction of the text
 blocks in the program. If you find yourself applying the same text
 tags to every line of text, consider using a style instead.
 
-There are two text tags. Some text tags are self-closing, while others
+There are two types of text tags. Some text tags are self-closing, while others
 require a closing tag. When multiple closing tags are used, they
-should be closed last open, first closed order - Ren'Py will reject
+should be closed last open, first closed order – Ren'Py will reject
 incorrect nesting. For example::
 
     # This line is correct.
@@ -146,6 +182,7 @@ General Text Tags
 
 Tags that apply to all text are:
 
+.. _a-tag:
 .. text-tag:: a
 
     The anchor tag creates a hyperlink between itself and its closing
@@ -153,34 +190,73 @@ Tags that apply to all text are:
     :propref:`hyperlink_functions` style property, the default handler
     has the following behavior.
 
-    * Hyperlinks are rendered using the ``style.hyperlink_text`` style.
+    * When the argument begins with ``jump:``, the rest of the argument is a label to jump to.
 
-    * If the argument begins with the text ``"http://"``, clicking on
-      it opens the url in a web browser. Otherwise, the argument is
-      interpreted as a label, which is called in a new context. This
-      allows hyperlinks to be used to define terms.
+    * When the argument begins with ``call:``, the rest of the argument is a label
+      to call. As usual, a call ends the current Ren'Py statement.
 
-    * Apart from the change in style, there is no specific behavior
-      when a hyperlink is hovered.
+    * When the argument begins with ``call_in_new_context:``, the rest of the argument
+      is a label to call in a new context (using :func:`renpy.call_in_new_context`).
+
+    * When the argument begins with ``show:``, the rest of the argument is a screen to show.
+
+    * When the argument begins with ``showmenu:``, the rest of the argument is a game menu
+      screen to show.
+
+    * Otherwise, the argument is a URL that is opened by the system web browser.
+
+    If there is no protocol section in the argument, :var:`config.hyperlink_protocol`
+    is prepended to it. If config.hyperlink_protocol has been set to "jump",
+    {a=label} and {a=jump:label} become equivalent. Creators can define new
+    protocols using :var:`config.hyperlink_handlers`.
 
     ::
 
         label test:
 
-            e "Why don't you visit {a=http://renpy.org}Ren'Py's home page{/a}?"
+            e "Why don't you visit {a=https://renpy.org}Ren'Py's home page{/a}?"
 
-            e "The {a=define_trebuchet}trebuchet{/a} is at the gates."
-
-            return
-
-        label define_trebuchet:
-
-            e "A trebuchet is a kind of siege engine."
-            e "It uses a lever to fling things at targets."
-            e "Like us!"
+            e "Or {a=jump:more_text}here for more info{/a}."
 
             return
 
+        label more_text:
+
+            e "In Hot Springs, Arkansas, there's a statue of Al Capone you can take a picture with."
+
+            e "That's more info, but not the kind you wanted, is it?"
+
+            return
+
+
+.. text-tag:: alpha
+
+    The alpha text tag renders the text between itself and its closing
+    tag in the specified opacity. The opacity should be a value between
+    0.0 and 1.0, corresponding to fully invisible and fully opaque,
+    respectively. If the value is prefixed by + or -, the opacity will
+    be changed by that amount instead of completely replaced. If
+    the value is prefixed by \*, the opacity will be multiplied by
+    that amount. ::
+
+        "{alpha=0.1}This text is barely readable!{/alpha}"
+        "{alpha=-0.1}This text is 10 percent more transparent than the default.{/alpha}"
+        "{alpha=*0.5}This text is half as opaque as the default.{/alpha}"
+
+.. text-tag:: alt
+
+    The alt tag prevents text from being rendered, while still making the
+    text available for the text-to-speech system. ::
+
+       g "Good to see you! {image=heart.png}{alt}heart{/alt}"
+
+    See also the :var:`alt` character.
+
+.. text-tag:: art
+
+   The alternate ruby top tag marks text between itself and its closing tag as
+   alternate ruby top text. See the section on :ref:`Ruby Text <ruby-text>` for
+   more information.
 
 .. text-tag:: b
 
@@ -222,6 +298,15 @@ Tags that apply to all text are:
 
        "Visit the {i}leaning tower of Pisa{/i}."
 
+.. text-tag:: image
+
+   The image tag is a self-closing tag that inserts an image into the
+   text. The image should be the height of a single line of text. The
+   argument should be either the image filename, or the name of an
+   image defined with the image statement. ::
+
+       g "Good to see you! {image=heart.png}{alt}heart{/alt}"
+
 .. text-tag:: k
 
    The kerning tag is a tag that adjust the kerning of characters
@@ -232,21 +317,28 @@ Tags that apply to all text are:
 
        "{k=-.5}Negative{/k} Normal {k=.5}Positive{/k}"
 
-.. text-tag:: image
+.. text-tag:: noalt
 
-   The image tag is a self-closing tag that inserts an image into the
-   text. The image should be the height of a single line of text. The
-   argument should be either the image filename, or the name of an
-   image defined with the image statement. ::
+    The noalt tag prevents text from being spoken by the text-to-speech
+    system. This is often used in conjuction with the alt tag, to provide
+    accessible and visual optiopns  ::
 
-       g "Good to see you! {image=heart.png}"
+       g "Good to see you! {noalt}<3{/noalt}{alt}heart{/alt}"
 
-.. text-tag:: s
+.. text-tag:: outlinecolor
 
-   The strikethrough tag draws a line through text between itself and
-   its closing tag. ::
+    The outline text tag changes all the outlines (including drop
+    shadows) to the given color. The color should be in #rgb, #rgba,
+    #rrggbb, or #rrggbbaa format. ::
 
-       g "It's good {s}to see you{/s}."
+        "Let's have a {outlinecolor=#00ff00}Green{/outlinecolor} outline."
+
+.. text-tag:: plain
+
+   The plain tag ensures the text does not have bold, italics, underline,
+   or strikethrough applied. ::
+
+       "{b}This is bold. {plain}This is not.{/plain} This is bold.{/b}"
 
 .. text-tag:: rb
 
@@ -259,6 +351,13 @@ Tags that apply to all text are:
    The ruby top tag marks text between itself and its closing tag as
    ruby top text. See the section on :ref:`Ruby Text <ruby-text>` for
    more information.
+
+.. text-tag:: s
+
+   The strikethrough tag draws a line through text between itself and
+   its closing tag. ::
+
+       g "It's good {s}to see you{/s}."
 
 .. text-tag:: size
 
@@ -305,6 +404,20 @@ Dialogue Text Tags
 
 Text tags that only apply to dialogue are:
 
+.. text-tag:: done
+
+    Text after the done tag is not displayed. Why would you want this?
+    It's to allow text to avoid jumping around when :propref:`adjust_spacing`
+    is True.
+
+    When the done tag is present, the line of dialogue is not added to the
+    history buffer. If the nw tag is present, it should be before the done
+    tag.::
+
+        g "Looks like they're{nw}{done} playing with their trebuchet again."
+        show trebuchet
+        g "Looks like they're{fast} playing with their trebuchet again."
+
 .. text-tag:: fast
 
     If the fast tag is displayed in a line of text, then all text
@@ -325,6 +438,9 @@ Text tags that only apply to dialogue are:
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
 
+    The no-wait tag will wait for voice and self-voicing to complete before
+    advancing.
+
 .. text-tag:: p
 
     The paragraph pause tag is a self-closing tag that terminates the
@@ -343,6 +459,25 @@ Text tags that only apply to dialogue are:
     that many seconds have passed. ::
 
         "Line 1{w} Line 1{w=1.0} Line 1"
+
+
+.. text-tag:: clear
+
+    The clear text tag only makes sense on a line by itself in the :ref:`NVL monologue mode <nvl-monologue-mode>`.
+    It does the same thing at the ``nvl clear`` statement without ending the block of text. ::
+
+        """
+        Block 1 on page 1.
+
+        Block 2 on page 1.
+
+        {clear}
+
+        Block 1 on page 2.
+
+        etc.
+        """
+
 
 It's also possible to define :ref:`custom text tags <custom-text-tags>` using
 Python.
@@ -376,33 +511,29 @@ Non-English Languages
 The default font for Ren'Py contains characters for English and many
 other languages. For size reasons, it doesn't contain the characters
 required to render other languages, including Chinese, Japanese, and
-Korean. In order to support these language, a project must first
-change the default font, using code like::
-
-    init python:
-        style.default.font = "mikachan.ttf"
+Korean. In order to support these languages, a project must first
+change the fonts it uses.
 
 Ren'Py should then support most world languages without further
 configuration. However, Korean can be written with or without spacing
 between words. Ren'Py has a special mode to support Korean with
-spaces, which can be enabled with the code::
+spaces, which can be enabled by setting::
 
-    init python:
-         style.default.language = "korean-with-spaces"
+    define gui.language = "korean-with-spaces"
+
+This can be changed from the default of "unicode" in gui.rpy.
 
 Japanese has multiple rules for line breaking. We recommend starting with
 "japanese-normal", and moving to "japanese-loose" or "japanese-strict" for
-more or less break opportunities, respectively.::
+more or less break opportunities, respectively. ::
 
-    init python:
-         style.default.language = "japanese-normal"
+    define gui.language = "japanese-loose"
 
 Ideographic languages provide a large number of opportunities
 for line breaking. To enable a faster but less-accurate line-breaking
-algorithm, use the code::
+algorithm, use::
 
-    init python:
-         style.default.layout = "greedy"
+    define gui.language = "greedy"
 
 The faster line-breaking algorithm is not be necessary unless the
 game is displaying huge amounts of text, such as in NVL-mode.
@@ -444,7 +575,7 @@ Ruby Text
 
 Ruby text (also known as furigana or interlinear annotations) is a way
 of placing small text above a character or word. There are several
-steps required for your game to support Ruby text.
+steps required for your game to support ruby text.
 
 First, you must set up styles for the ruby text. The following style
 changes are required:
@@ -454,26 +585,27 @@ changes are required:
 2. A new named style must be created. The properties of this style,
    such as :propref:`size` should be set in a fashion appropriate
    for ruby text.
-3. The yoffset of the new style should be set, in order to move the
+3. The :propref:`yoffset` of the new style should be set, in order to move the
    ruby text above the baseline.
 4. The :propref:`ruby_style` field of the text's style should be set
    to the newly-created style.
 
 For example::
 
-    init python:
-        style.default.line_leading = 12
+    style ruby_style is default:
+        size 12
+        yoffset -20
 
-        style.ruby_style = Style(style.default)
-        style.ruby_style.size = 12
-        style.ruby_style.yoffset = -20
+    style say_dialogue:
+        line_leading 12
+        ruby_style style.ruby_style
 
-        style.default.ruby_style = style.ruby_style
+(Use ``style.style_name`` to refer to a style for this purpose.)
 
 Once Ren'Py has been configured, ruby text can be included using the
-rt and rb text tags. The rt tag is used to mark one or more characters
+{rt} and {rb} text tags. The {rt} tag is used to mark one or more characters
 to be displayed as ruby text. If the ruby text is preceded by text
-enclosed in the rb tag, the ruby text is centered over that
+enclosed in the {rb} tag, the ruby text is centered over that
 text. Otherwise, it is centered over the preceding character.
 
 For example::
@@ -487,19 +619,24 @@ leave the boundaries of the text. It may be necessary to add leading
 or spaces to the left and right of the text to prevent these errors
 from occurring.
 
+Ren'Py also supports alternate ruby text, which is a second kind of
+ruby top text. This is introduced with the {art} text tag (instead of {rt}),
+and the :propref:`altruby_style` property (instead of :propref:`ruby_style`).
+
 Fonts
 =====
 
-Ren'Py supports Truetype and Image-Based fonts.
+Ren'Py supports TrueType/OpenType fonts and collections, and
+Image-Based fonts.
 
-A Truetype font is specified by giving the name of the font file. The
-file must be present in the game directory, or one of the archive
+A TrueType or OpenType font is specified by giving the name of the font
+file. The file must be present in the game directory or one of the archive
 files.
 
-Ren'Py also supports Truetype collections that define more than one
+Ren'Py also supports TrueType/OpenType collections that define more than one
 font. When accessing a collection, use the 0-based font index,
-followed by an at-sign and the file name. For example, "0@font.ttc" is
-the first font in a collection, "1@font.ttc" the second, and so on.
+followed by an at-sign and the file name. For example, "0\@font.ttc" is
+the first font in a collection, "1\@font.ttc" the second, and so on.
 
 
 Font Replacement
@@ -511,8 +648,8 @@ mapped to a similar combination. This allows a font with proper
 italics to be used instead of the automatically-generated italics.
 
 Once such mapping would be to replace the italic version of the Deja
-Vu Sans font with the official oblique version. (You'll need to
-download the oblique font from the web.)::
+Vu Sans font with the official oblique version (You'll need to
+download the oblique font from the web)::
 
     init python:
         config.font_replacement_map["DejaVuSans.ttf", False, True] = ("DejaVuSans-Oblique.ttf", False, False)
@@ -553,15 +690,15 @@ the mood the creator intends. To support this, Ren'Py supports font groups
 that can take characters from two or more fonts and combine them into a
 single font.
 
-To create a font group, create a FontGroup object and call the .add method
-on it once or more. a FontGroup can be used wherever a font name can be
-used. The add method takes the start and end of a range of unicode character
+To create a font group, create a :class:`FontGroup` object and call the ``.add`` method
+on it once or more. A FontGroup can be used wherever a font name can be
+used. The add method takes the start and end of a range of Unicode character
 points, and the first range to cover a point is used.
 
 For example::
 
-    init python:
-         style.default.font = FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
+    style default:
+         font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
 
 .. include:: inc/font_group
 
@@ -576,6 +713,12 @@ allows you to apply transforms to text, displaying it as if it was an
 image and moving it around the screen.
 
 .. include:: inc/text
+
+
+Text Utility Functions
+======================
+
+.. include:: inc/text_utility
 
 Slow Text Concerns
 ==================
@@ -600,7 +743,7 @@ Artifacts aren't a problem for static text, like the text in menus and
 other parts of the user interface.
 
 Text Overflow Logging
----------------------
+=====================
 
 Ren'Py can log cases where text expands outside of the area allocated
 for it. To enable text overflow logging, the following steps are
@@ -612,4 +755,4 @@ necessary.
 3. Run the game.
 
 Whenever text is displayed that overflows the available area, Ren'Py
-will log an error to the ``text_overflow.txt`` file.
+will log an error to the text_overflow.txt file.

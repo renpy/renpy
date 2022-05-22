@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-#@PydevCodeAnalysisIgnore
 
 # This file is part of Ren'Py. The license below applies to Ren'Py only.
 # Games and other projects that use Ren'Py may use a different license.
 
-# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,21 +24,89 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function, absolute_import
+
 import os
 import sys
 import warnings
 
 # Functions to be customized by distributors. ################################
 
-# Given the Ren'Py base directory (usually the directory containing
-# this file), this is expected to return the path to the common directory.
+def path_to_gamedir(basedir, name):
+    """
+    Returns the absolute path to the directory containing the game
+    scripts an assets. (This becomes config.gamedir.)
+
+    `basedir`
+        The base directory (config.basedir)
+    `name`
+        The basename of the executable, with the extension removed.
+    """
+
+    # A list of candidate game directory names.
+    candidates = [ name ]
+
+    # Add candidate names that are based on the name of the executable,
+    # split at spaces and underscores.
+    game_name = name
+
+    while game_name:
+        prefix = game_name[0]
+        game_name = game_name[1:]
+
+        if prefix == ' ' or prefix == '_':
+            candidates.append(game_name)
+
+    # Add default candidates.
+    candidates.extend([ 'game', 'data', 'launcher/game' ])
+
+    # Take the first candidate that exists.
+    for i in candidates:
+
+        if i == "renpy":
+            continue
+
+        gamedir = os.path.join(basedir, i)
+
+        if os.path.isdir(gamedir):
+            break
+
+    else:
+        gamedir = basedir
+
+    return gamedir
+
+
 def path_to_common(renpy_base):
+    """
+    Returns the absolute path to the Ren'Py common directory.
+
+    `renpy_base`
+        The absolute path to the Ren'Py base directory, the directory
+        containing this file.
+    """
+
     return renpy_base + "/renpy/common"
 
-# Given a directory holding a Ren'Py game, this is expected to return
-# the path to a directory that will hold save files.
-def path_to_saves(gamedir):
-    import renpy #@UnresolvedImport
+
+def path_to_saves(gamedir, save_directory=None):
+    """
+    Given the path to a Ren'Py game directory, and the value of config.
+    save_directory, returns absolute path to the directory where save files
+    will be placed.
+
+    `gamedir`
+        The absolute path to the game directory.
+
+    `save_directory`
+        The value of config.save_directory.
+    """
+
+    import renpy # @UnresolvedImport
+
+    if save_directory is None:
+        save_directory = renpy.config.save_directory
+        save_directory = renpy.exports.fsencode(save_directory)
 
     # Makes sure the permissions are right on the save directory.
     def test_writable(d):
@@ -49,9 +116,8 @@ def path_to_saves(gamedir):
             open(fn, "r").close()
             os.unlink(fn)
             return True
-        except:
+        except Exception:
             return False
-
 
     # Android.
     if renpy.android:
@@ -64,16 +130,15 @@ def path_to_saves(gamedir):
         for rv in paths:
             if os.path.isdir(rv) and test_writable(rv):
                 break
+        else:
+            rv = paths[-1]
 
-        print "Saving to", rv
-
-        # We return the last path as the default.
-
+        print("Saving to", rv)
         return rv
 
     if renpy.ios:
-        from pyobjus import autoclass
-        from pyobjus.objc_py_types import enum
+        from pyobjus import autoclass # type: ignore
+        from pyobjus.objc_py_types import enum # type: ignore
 
         NSSearchPathDirectory = enum("NSSearchPathDirectory", NSDocumentDirectory=9)
         NSSearchPathDomainMask = enum("NSSearchPathDomainMask", NSUserDomainMask=1)
@@ -87,16 +152,23 @@ def path_to_saves(gamedir):
 
         # url.path seems to change type based on iOS version, for some reason.
         try:
-            rv = url.path().UTF8String().decode("utf-8")
-        except:
-            rv = url.path.UTF8String().decode("utf-8")
+            rv = url.path().UTF8String()
+        except Exception:
+            rv = url.path.UTF8String()
 
-        print "Saving to", rv
+
+        if isinstance(rv, bytes):
+            rv = rv.decode("utf-8")
+
+        print("Saving to", rv)
         return rv
 
     # No save directory given.
-    if not renpy.config.save_directory:
-        return gamedir + "/saves"
+    if not save_directory:
+        return os.path.join(gamedir, "saves")
+
+    if "RENPY_PATH_TO_SAVES" in os.environ:
+        return os.environ["RENPY_PATH_TO_SAVES"] + "/" + save_directory
 
     # Search the path above Ren'Py for a directory named "Ren'Py Data".
     # If it exists, then use that for our save directory.
@@ -104,7 +176,7 @@ def path_to_saves(gamedir):
 
     while True:
         if os.path.isdir(path + "/Ren'Py Data"):
-            return path + "/Ren'Py Data/" + renpy.config.save_directory
+            return path + "/Ren'Py Data/" + save_directory
 
         newpath = os.path.dirname(path)
         if path == newpath:
@@ -113,24 +185,28 @@ def path_to_saves(gamedir):
 
     # Otherwise, put the saves in a platform-specific location.
     if renpy.macintosh:
-        rv = "~/Library/RenPy/" + renpy.config.save_directory
+        rv = "~/Library/RenPy/" + save_directory
         return os.path.expanduser(rv)
 
     elif renpy.windows:
         if 'APPDATA' in os.environ:
-            return os.environ['APPDATA'] + "/RenPy/" + renpy.config.save_directory
+            return os.environ['APPDATA'] + "/RenPy/" + save_directory
         else:
             rv = "~/RenPy/" + renpy.config.save_directory
             return os.path.expanduser(rv)
 
     else:
-        rv = "~/.renpy/" + renpy.config.save_directory
+        rv = "~/.renpy/" + save_directory
         return os.path.expanduser(rv)
 
 
 # Returns the path to the Ren'Py base directory (containing common and
 # the launcher, usually.)
 def path_to_renpy_base():
+    """
+    Returns the absolute path to thew Ren'Py base directory.
+    """
+
     renpy_base = os.path.dirname(os.path.realpath(sys.argv[0]))
     renpy_base = os.path.abspath(renpy_base)
 
@@ -138,18 +214,6 @@ def path_to_renpy_base():
 
 ##############################################################################
 
-# The version of the Mac Launcher and py4renpy that we require.
-macos_version = (6, 14, 0)
-linux_version = (6, 14, 0)
-
-# Doing the version check this way also doubles as an import of ast,
-# which helps py2exe et al.
-try:
-    import ast; ast
-except:
-    raise
-    print "Ren'Py requires at least python 2.6."
-    sys.exit(0)
 
 android = ("ANDROID_PRIVATE" in os.environ)
 
@@ -157,37 +221,31 @@ android = ("ANDROID_PRIVATE" in os.environ)
 # renderers.
 if android:
     __main__ = sys.modules["__main__"]
-    __main__.path_to_renpy_base = path_to_renpy_base
-    __main__.path_to_common = path_to_common
-    __main__.path_to_saves = path_to_saves
-    os.environ["RENPY_RENDERER"] = "gl"
+    __main__.path_to_gamedir = path_to_gamedir # type: ignore
+    __main__.path_to_renpy_base = path_to_renpy_base # type: ignore
+    __main__.path_to_common = path_to_common # type: ignore
+    __main__.path_to_saves = path_to_saves # type: ignore
+
 
 def main():
 
     renpy_base = path_to_renpy_base()
 
-    # Add paths.
-    if os.path.exists(renpy_base + "/module"):
-        sys.path.append(renpy_base + "/module")
-
     sys.path.append(renpy_base)
 
-    # This is looked for by the mac launcher.
-    if os.path.exists(renpy_base + "/renpy.zip"):
-        sys.path.append(renpy_base + "/renpy.zip")
-
-    # Ignore warnings that happen.
+    # Ignore warnings.
     warnings.simplefilter("ignore", DeprecationWarning)
 
     # Start Ren'Py proper.
     try:
         import renpy.bootstrap
     except ImportError:
-        print >>sys.stderr, "Could not import renpy.bootstrap. Please ensure you decompressed Ren'Py"
-        print >>sys.stderr, "correctly, preserving the directory structure."
+        print("Could not import renpy.bootstrap. Please ensure you decompressed Ren'Py", file=sys.stderr)
+        print("correctly, preserving the directory structure.", file=sys.stderr)
         raise
 
     renpy.bootstrap.bootstrap(renpy_base)
+
 
 if __name__ == "__main__":
     main()

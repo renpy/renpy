@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -27,7 +27,8 @@
 init -1400:
 
     transform reset:
-        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None
+        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False
+        xsize None ysize None fit None crop None
 
     # These are positions that can be used inside at clauses. We set
     # them up here so that they can be used throughout the program.
@@ -62,7 +63,8 @@ init -1400:
         xpos 1.0 xanchor 0.0 ypos 1.0 yanchor 1.0
 
     transform default:
-        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False size None crop None
+        alpha 1 rotate None zoom 1 xzoom 1 yzoom 1 align (0, 0) alignaround (0, 0) subpixel False
+        xsize None ysize None fit None crop None
         xpos 0.5 xanchor 0.5 ypos 1.0 yanchor 1.0
 
     # These are used by the transitions to move things offscreen. We don't
@@ -143,13 +145,13 @@ init -1400 python:
 
         `time_warp`, `in_time_warp`, `out_time_warp`
             Time warp functions that are given a time from 0.0 to 1.0 representing
-            the fraction of the move complete, and return a value in the same
+            the fraction of the move that is complete, and return a value in the same
             range giving the fraction of a linear move that is complete.
 
             This can be used to define functions that ease the images around,
             rather than moving them at a constant speed.
 
-            The three argument are used for images remaining on the screen,
+            The three arguments are used for images remaining on the screen,
             newly shown images, and newly hidden images, respectively.
 
         `old`
@@ -247,7 +249,7 @@ init -1400 python:
                 ),
             }
 
-        for k, v in moves.iteritems():
+        for k, v in moves.items():
             setattr(store, prefix + k, v)
 
     def old_move_transitions(prefix, delay, time_warp=None, in_time_warp=None, out_time_warp=None, old=False, layers=[ 'master' ], **kwargs):
@@ -315,7 +317,7 @@ init -1400 python:
                 leave_factory=MoveOut((None, 1.0, None, 0.0), time_warp=time_warp, **kwargs)),
             }
 
-        for k, v in moves.iteritems():
+        for k, v in moves.items():
             setattr(store, prefix + k, v)
 
     define.move_transitions = move_transitions
@@ -353,6 +355,12 @@ init -1400:
     define irisout = CropMove(1.0, "irisout")
     define irisin = CropMove(1.0, "irisin")
 
+    # Various uses of PushMove.
+    define pushright = PushMove(1.0, "pushright")
+    define pushleft = PushMove(1.0, "pushleft")
+    define pushup = PushMove(1.0, "pushup")
+    define pushdown = PushMove(1.0, "pushdown")
+
     # Zoom-based transitions. Legacy - nowadays, these are probably best done with ATL.
     define zoomin = OldMoveTransition(0.5, enter_factory=ZoomInOut(0.01, 1.0))
     define zoomout = OldMoveTransition(0.5, leave_factory=ZoomInOut(1.0, 0.01))
@@ -367,24 +375,84 @@ init -1400:
     define blinds = ImageDissolve(im.Tile("blindstile.png"), 1.0, 8)
     define squares = ImageDissolve(im.Tile("squarestile.png"), 1.0, 256)
 
+    transform Swing(delay=1.0, vertical=False, reverse=False, background="#000", flatten=True, new_widget=None, old_widget=None):
+        delay delay
+
+        contains:
+            background
+
+        contains:
+            perspective True
+            events False
+
+            # Note: (bool(x) * v) == v when x is true, or 0 otherwise.
+
+            Transform(old_widget, mesh=flatten)
+
+            matrixtransform RotateMatrix(0.0, 0.0, 0.0)
+            linear (delay / 2.0) matrixtransform RotateMatrix(
+                bool(vertical) * (-90.0 if reverse else 90.0),
+                bool(not vertical) * (-90.0 if reverse else 90.0),
+                0.0)
+
+            events True
+
+            Transform(new_widget, mesh=flatten)
+            matrixtransform RotateMatrix(
+                bool(vertical) * (90.0 if reverse else -90.0),
+                bool(not vertical) * (90.0 if reverse else -90.0),
+                0.0)
+
+            linear (delay / 2.0) matrixtransform RotateMatrix(0.0, 0.0, 0.0)
+
+
+    python:
+        Swing.__doc__ = """
+            :doc: transition function
+            :args: (delay=1.0, vertical=False, reverse=False, background="#000", flatten=True)
+
+            A transitions that rotates the old scene 90 degrees around an axis,
+            so that it is edge on with the viewer, switches to the new scene,
+            and then rotates that scene another 90 degrees to show the new
+            scene to the viewer.
+
+            `delay`
+                How long the transition should take.
+
+            `vertical`
+                If true, the scene is rotate around the x-axis (pixels move
+                vertically). If false, the scene is roated around the y axis,
+                pixels moving horizontally.
+
+            `reverse`
+                When true, the rotation occurs in the reverse direction.
+
+            `background`
+                A displayable that is placed behind the scene as it rotates.
+
+            `flatten`
+                If true, the scenes are flattened into images the size of
+                the screen before being rotated. Use this if images being
+                not entirely on the screen causes undesired effects.
+        """
+
+        swing = Swing()
+
+init -1400 python:
+
     # The default narrator.
-    define _narrator = Character(None, kind=adv, what_style='say_thought')
+    _narrator = Character(None, kind=adv, what_style='say_thought')
+    adv_narrator = _narrator
+
+    # Centered characters.
+    centered = Character(None, what_style="centered_text", window_style="centered_window", statement_name="say-centered")
+    vcentered = Character(None, what_style="centered_vtext", window_style="centered_window", statement_name="say-centered")
+
 
 init 1400 python:
     if not hasattr(store, 'narrator'):
         narrator = _narrator
 
-    renpy.pure('narrator')
-    renpy.pure('name_only')
-
-    if not hasattr(store, 'centered'):
-        centered = Character(None, what_style="centered_text", window_style="centered_window")
-    if not hasattr(store, 'vcentered'):
-        vcentered = Character(None, what_style="centered_vtext", window_style="centered_window")
-
-    renpy.pure('centered')
-    renpy.pure('vcentered')
-
     # This is necessary to ensure that config.default_transform works.
     if config.default_transform:
-        config.default_transform._show()
+        config.default_transform.update_state()

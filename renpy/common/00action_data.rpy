@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -24,40 +24,73 @@ init -1600 python:
    ##########################################################################
     # Functions that set variables or fields.
 
+    __FieldNotFound = object()
+
+    def __get_field(obj, name, kind):
+
+        if not name:
+            return obj
+
+        rv = obj
+
+        for i in name.split("."):
+            rv = getattr(rv, i, __FieldNotFound)
+            if rv is __FieldNotFound:
+                raise NameError("The {} {} does not exist.".format(kind, name))
+
+        return rv
+
+    def __set_field(obj, name, value, kind):
+        fields, _, attr = name.rpartition(".")
+
+        try:
+            obj = __get_field(obj, fields, kind)
+            setattr(obj, attr, value)
+        except Exception:
+            raise NameError("The {} {} does not exist.".format(kind, name))
+
     @renpy.pure
     class SetField(Action, FieldEquality):
         """
          :doc: data_action
+         :args: (object, field, value)
 
          Causes the a field on an object to be set to a given value.
          `object` is the object, `field` is a string giving the name of the
          field to set, and `value` is the value to set it to.
          """
 
-        identity_fields = [ "object", "value" ]
-        equality_fields = [ "value" ]
+        identity_fields = [ "object" ]
+        equality_fields = [ "field", "value" ]
 
-        def __init__(self, object, field, value):
+        kind = "field"
+
+        def __init__(self, object, field, value, kind="field"):
             self.object = object
             self.field = field
             self.value = value
+            self.kind = kind
 
         def __call__(self):
-            setattr(self.object, self.field, self.value)
+            __set_field(self.object, self.field, self.value, self.kind)
             renpy.restart_interaction()
 
         def get_selected(self):
-            return getattr(self.object, self.field) == self.value
+            return __get_field(self.object, self.field, self.kind) == self.value
 
     @renpy.pure
-    def SetVariable(variable, value):
+    def SetVariable(name, value):
         """
-         :doc: data_action
+        :doc: data_action
 
-         Causes `variable` to be set to `value`.
-         """
+        Causes the variable with `name` to be set to `value`.
 
-        return SetField(store, variable, value)
+        The `name` argument must be a string, and can be a simple name like "strength", or
+        one with dots separating the variable from fields, like "hero.strength"
+        or "persistent.show_cutscenes".
+        """
+
+        return SetField(store, name, value, kind="variable")
 
     @renpy.pure
     class SetDict(Action, FieldEquality):
@@ -67,7 +100,8 @@ init -1600 python:
          Causes the value of `key` in `dict` to be set to `value`.
          """
 
-        identity_fields = [ "dict", "key", "value" ]
+        identity_fields = [ "dict" ]
+        equality_fields = [ "key", "value" ]
 
         def __init__(self, dict, key, value):
             self.dict = dict
@@ -92,6 +126,10 @@ init -1600 python:
 
         Causes the variable `name` associated with the current screen to
         be set to `value`.
+        In a ``use``\ d screen, this action sets the variable in the context
+        of the screen containing the ``use``\ d one(s).
+        To set variables within a ``use``\ d screen, and only in that
+        case, use :func:`SetLocalVariable` instead.
         """
 
         identity_fields = [ "value" ]
@@ -123,11 +161,34 @@ init -1600 python:
 
             return cs.scope[self.name] == self.value
 
+    # Not pure.
+    def SetLocalVariable(name, value):
+        """
+        :doc: data_action
+
+        Causes the variable `name` to be set to `value` in the current
+        local context.
+
+        This function is only useful in a screen that has been ``use``\ d by
+        another screen, as it provides a way of setting the value of a
+        variable inside the used screen. In all other cases,
+        :func:`SetScreenVariable` should be preferred, as it allows more
+        of the screen to be cached.
+
+        For more information, see :ref:`sl-use`.
+
+        This must be created in the context that the variable is set
+        in - it can't be passed in from somewhere else.
+        """
+
+        return SetDict(sys._getframe(1).f_locals, name, value)
+
 
     @renpy.pure
     class ToggleField(Action, FieldEquality):
         """
          :doc: data_action
+         :args: (object, field, true_value=None, false_value=None)
 
          Toggles `field` on `object`. Toggling means to invert the boolean
          value of that field when the action is performed.
@@ -138,17 +199,20 @@ init -1600 python:
              If not None, then this is the false value we use.
          """
 
-        identity_fields = [ "object", "true_value", "false_value" ]
-        equality_fields = [ "field" ]
+        identity_fields = [ "object"]
+        equality_fields = [ "field", "true_value", "false_value"  ]
 
-        def __init__(self, object, field, true_value=None, false_value=None):
+        kind = "field"
+
+        def __init__(self, object, field, true_value=None, false_value=None, kind="field"):
             self.object = object
             self.field = field
             self.true_value = true_value
             self.false_value = false_value
+            self.kind = kind
 
         def __call__(self):
-            value = getattr(self.object, self.field)
+            value = __get_field(self.object, self.field, self.kind)
 
             if self.true_value is not None:
                 value = (value == self.true_value)
@@ -161,32 +225,37 @@ init -1600 python:
                 else:
                     value = self.false_value
 
-            setattr(self.object, self.field, value)
+            __set_field(self.object, self.field, value, self.kind)
             renpy.restart_interaction()
 
         def get_selected(self):
-            rv = getattr(self.object, self.field)
+            rv = __get_field(self.object, self.field, self.kind)
 
             if self.true_value is not None:
                 rv = (rv == self.true_value)
 
             return rv
 
+
     @renpy.pure
     def ToggleVariable(variable, true_value=None, false_value=None):
         """
-         :doc: data_action
+        :doc: data_action
 
-         Toggles `variable`.
+        Toggles `variable`.
 
-         `true_value`
-             If not None, then this is the true value we use.
-         `false_value`
-             If not None, then this is the false value we use.
-         """
+        The `variable` argument must be a string, and can be a simple name like "strength", or
+        one with dots separating the variable from fields, like "hero.strength"
+        or "persistent.show_cutscenes".
 
-        return ToggleField(store, variable, true_value=true_value, false_value=false_value)
 
+        `true_value`
+            If not None, then this is the true value used.
+        `false_value`
+            If not None, then this is the false value used.
+        """
+
+        return ToggleField(store, variable, true_value=true_value, false_value=false_value, kind="variable")
 
 
     @renpy.pure
@@ -198,12 +267,13 @@ init -1600 python:
          value when the action is performed.
 
          `true_value`
-             If not None, then this is the true value we use.
+             If not None, then this is the true value used.
          `false_value`
-             If not None, then this is the false value we use.
+             If not None, then this is the false value used.
          """
 
-        identity_fields = [ "dict", "key", "true_value", "false_value" ]
+        identity_fields = [ "dict", ]
+        equality_fields = [ "key", "true_value", "false_value" ]
 
         def __init__(self, dict, key, true_value=None, false_value=None):
             self.dict = dict
@@ -239,23 +309,50 @@ init -1600 python:
 
             return rv
 
+    # Not pure.
+    def ToggleLocalVariable(name, true_value=None, false_value=None):
+        """
+        :doc: data_action
 
+        Toggles the value of `name` in the current local context.
+
+        This function is only useful in a screen that has been ``use``\ d by
+        another screen, as it provides a way of setting the value of a
+        variable inside the used screen. In all other cases,
+        :func:`ToggleScreenVariable` should be preferred, as it allows more
+        of the screen to be cached.
+
+        For more information, see :ref:`sl-use`.
+
+        This must be created in the context that the variable is set
+        in - it can't be passed in from somewhere else.
+
+        `true_value`
+            If not None, then this is the true value used.
+        `false_value`
+            If not None, then this is the false value used.
+        """
+
+        return ToggleDict(sys._getframe(1).f_locals, name, true_value=true_value, false_value=false_value)
 
     @renpy.pure
     class ToggleScreenVariable(Action, FieldEquality):
         """
-         :doc: data_action
+        :doc: data_action
 
-         Toggles the value of the variable `name` in the current screen.
+        Toggles the value of the variable `name` in the current screen.
+        In a ``use``\ d screen, this action accesses and sets the given variable
+        in the context of the screen containing the ``use``\ d one(s).
+        To access and set variables within a ``use``\ d screen, and only in that
+        case, use :func:`ToggleLocalVariable` instead.
 
-         `true_value`
-             If not None, then this is the true value we use.
-         `false_value`
-             If not None, then this is the false value we use.
-         """
+        `true_value`
+            If not None, then this is the true value used.
+        `false_value`
+            If not None, then this is the false value used.
+        """
 
-        identity_fields = [ "true_value", "false_value" ]
-        equality_fields = [ "name" ]
+        equality_fields = [ "name", "true_value", "false_value" ]
 
         def __init__(self, name, true_value=None, false_value=None):
             self.name = name
@@ -309,13 +406,14 @@ init -1600 python:
         Adds `value` to `set`.
 
         `set`
-            The set to add to. This may be a python set or list, in which
+            The set to add to. This may be a Python set or list, in which
             case the value is appended to the list.
         `value`
             The value to add or append.
         """
 
-        identity_fields = [ 'set', 'value' ]
+        identity_fields = [ 'set' ]
+        equality_fields = [ 'value' ]
 
         def __init__(self, set, value):
             self.set = set
@@ -342,10 +440,11 @@ init -1600 python:
         `set`
             The set to remove from. This may be a set or list.
         `value`
-            The value to add or append.
+            The value to remove.
         """
 
-        identity_fields = [ 'set', 'value' ]
+        identity_fields = [ 'set' ]
+        equality_fields = [ 'value' ]
 
         def __init__(self, set, value):
             self.set = set
@@ -378,7 +477,8 @@ init -1600 python:
             The value to add or append.
         """
 
-        identity_fields = [ 'set', 'value' ]
+        identity_fields = [ 'set' ]
+        equality_fields = [ 'value' ]
 
         def __init__(self, set, value):
             self.set = set

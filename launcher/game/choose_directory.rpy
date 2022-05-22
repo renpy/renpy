@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,6 +21,25 @@
 
 init python:
 
+    try:
+        import _renpytfd
+    except Exception:
+        _renpytfd = None
+
+    def directory_is_writable(path):
+        test = os.path.join(path, "renpy test do not use")
+
+        try:
+            if os.path.isdir(test):
+                os.rmdir(test)
+
+            os.mkdir(test)
+            os.rmdir(test)
+
+            return True
+
+        except Exception:
+            return False
 
     def choose_directory(path):
         """
@@ -37,57 +56,31 @@ init python:
 
         if path:
             default_path = path
+            path = None
         else:
             try:
                 default_path = os.path.dirname(os.path.abspath(config.renpy_base))
-            except:
+            except Exception:
                 default_path = os.path.abspath(config.renpy_base)
 
-        if EasyDialogs:
-
-            choice = EasyDialogs.AskFolder(defaultLocation=default_path, wanted=unicode)
-
-            if choice is not None:
-                path = choice
-            else:
-                path = None
-
-        else:
-
-            try:
-
-                cmd = [ "/usr/bin/python", os.path.join(config.gamedir, "tkaskdir.py"), renpy.fsencode(default_path) ]
-
-                p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-                choice = p.stdout.read()
-                code = p.wait()
-
-            except:
-                import traceback
-                traceback.print_exc()
-
-                code = 0
-                choice = ""
-                path = None
-
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."), label=None)
-
-            if code:
-                interface.error(_("Ren'Py was unable to run python with tkinter to choose the directory. Please install the python-tk or tkinter package."), label=None)
-
-            elif choice:
-                path = choice.decode("utf-8")
+        if _renpytfd:
+            path = _renpytfd.selectFolderDialog(__("Select Projects Directory"), default_path)
 
         is_default = False
 
-        if path is None:
+        # Path being None or "" means nothing was selected.
+        if not path:
             path = default_path
             is_default = True
 
         path = renpy.fsdecode(path)
 
-        if not os.path.isdir(path):
-            path = os.path.abspath(config.renpy_base)
+        if (not os.path.isdir(path)) or (not directory_is_writable(path)):
+            interface.error(_("The selected projects directory is not writable."))
+            path = default_path
             is_default = True
+
+        if is_default and (not directory_is_writable(path)):
+            path = os.path.expanduser("~")
 
         return path, is_default

@@ -12,7 +12,11 @@ Persistent data is loaded when Ren'Py starts, and when Ren'Py detects
 that the persistent data has been updated on disk.
 
 The persistent object is special in that an access to an undefined field will
-have a None value, rather than causing an exception.
+have a None value, rather than causing an exception. If something other than
+None is to be the default of a persistent value,
+the :ref:`default <default-statement>` statement should be used::
+
+    default persistent.main_background = "princess_not_saved"
 
 An example use of persistent is the creation of an unlockable image gallery.
 This is done by storing a flag in persistent that determines if the gallery has
@@ -32,8 +36,8 @@ must be set to True. ::
 
     $ persistent.gallery_unlocked = True
 
-As persistent data is loaded before the init code is run, persistent data
-should only contain types that are native to python or Ren'Py. Alternatively,
+As persistent data is loaded before ``init python`` blocks are run, persistent data
+should only contain types that are native to Python or Ren'Py. Alternatively,
 classes that are defined in ``python early`` blocks can be used, provided
 those classes can be pickled and implement equality.
 
@@ -59,11 +63,23 @@ union of that set when merging data. ::
         def merge_endings(old, new, current):
             current.update(old)
             current.update(new)
+            return current
 
         renpy.register_persistent('endings', merge_endings)
 
 Persistent Functions
 --------------------
+
+.. function:: persistent._clear(progress=False)
+
+    Resets the persistent data.
+
+    `progress`
+        If true, also resets progress data that Ren'Py keeps.
+
+    Note that this will delete all persistent data, and will not re-apply
+    defaults until Ren'Py restarts.
+
 
 .. include:: inc/persistent
 
@@ -75,20 +91,22 @@ Ren'Py games. This may be useful if you plan to make a series of games, and
 want to have them share information.
 
 To use multipersistent data, a MultiPersistent object must be created inside
-an init block. The user can then update this object, and save it to disk by
+an ``init`` block. The user can then update this object, and save it to disk by
 calling its save method. Undefined fields default to None. To ensure the
 object can be loaded again, we suggest not assigning the object instances
 of user-defined types.
 
-.. class:: MultiPersistent(key)
+.. class:: MultiPersistent(key, save_on_quit=False)
 
-    Creates a new MultiPersistent object. This should only be called inside an
-    init block, and it returns a new MultiPersistent with the given key.
+    Creates a new ``MultiPersistent`` object. This should only be called inside an
+    ``init`` block, and it returns a new ``MultiPersistent`` with the given key.
 
     `key`
         The key used to to access the multipersistent data. Games using the
         same key will access the same multipersistent data.
 
+    `save_on_quit`
+        If it is True, this object will be automatically saved when Ren'Py terminates.
 
     .. method:: save()
 

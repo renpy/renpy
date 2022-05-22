@@ -28,6 +28,11 @@ cdef extern from "pyfreetype.h":
         ctypedef unsigned long FT_UFast
 
 
+    # Moved up.
+    cdef struct FT_ModuleRec_
+    ctypedef FT_ModuleRec_ *FT_Module
+    cdef struct FT_ParameterRec_
+    ctypedef struct FT_Parameter
 
     #fttypes.h
     ctypedef unsigned char     FT_Bool
@@ -173,7 +178,6 @@ cdef extern from "pyfreetype.h":
 ##    ctypedef FT_DriverRec_*    FT_Driver
 ##    ctypedef FT_RendererRec_*  FT_Renderer
     ctypedef void*               FT_Library
-    ctypedef void*               FT_Module
     ctypedef void*               FT_Driver
     ctypedef void*               FT_Renderer
     ctypedef FT_FaceRec_*      FT_Face
@@ -423,6 +427,7 @@ cdef extern from "pyfreetype.h":
 
     FT_Int FT_Get_Charmap_Index(FT_CharMap charmap)
     FT_UInt FT_Get_Char_Index(FT_Face face, FT_ULong charcode)
+    FT_UInt FT_Face_GetCharVariantIndex(FT_Face face, FT_ULong charcode, FT_ULong variantSelector)
     FT_ULong FT_Get_First_Char(FT_Face face, FT_UInt *glyph_index)
     FT_ULong FT_Get_Next_Char(FT_Face face, FT_ULong charcode, FT_UInt *glyph_index)
     FT_UInt FT_Get_Name_Index(FT_Face face, FT_String *glyph_name)
@@ -549,11 +554,6 @@ cdef extern from "pyfreetype.h":
         unsigned char *limit
 
     ctypedef FT_StreamRec_ FT_StreamRec
-
-    cdef struct FT_ModuleRec_
-    ctypedef FT_ModuleRec_ *FT_Module
-    cdef struct FT_ParameterRec_
-    ctypedef struct FT_Parameter
 
     ctypedef struct FT_Open_Args:
         FT_UInt flags

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -208,7 +208,7 @@ init python:
 
         try:
             return base + int((int(filename) - 1) / per_page)
-        except:
+        except Exception:
             return base
 
     # Processes a screenshot.
@@ -237,7 +237,7 @@ init python:
 
                 # Figure out which game is the newest and so on.
                 newest = None
-                newest_mtime = None
+                newest_mtime = 0
                 save_info = { }
 
                 for fn, extra_info, screenshot, mtime in saved_games:

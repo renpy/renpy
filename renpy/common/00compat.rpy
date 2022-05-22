@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -19,13 +19,18 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-init -1900 python:
+init -1100 python:
 
     # This is called when script_version is set, to immediately
     # run code in response to a script_version change.
     def _set_script_version(version):
 
         if version is None:
+            return
+
+        import os
+
+        if "RENPY_EXPERIMENTAL" in os.environ:
             return
 
         if version <= (5, 6, 0):
@@ -100,6 +105,9 @@ init -1900 python:
         if version <= (6, 17, 0):
             config.keymap['toggle_music'] = [ 'm' ]
 
+        if version <= (6, 17, 4):
+            config.default_sound_loop = False
+
         if version <= (6, 18, 0):
             config.predict_screen_statements = False
             config.transition_screens = False
@@ -108,20 +116,189 @@ init -1900 python:
             config.images_directory = None
             config.preserve_zorder = False
 
+        if version <= (6, 99, 5):
+            config.wrap_shown_transforms = False
+            config.search_prefixes = [ "" ]
+
+        if version <= (6, 99, 6):
+            config.dynamic_images = False
+
+        if version <= (6, 99, 8):
+            if config.developer == "auto":
+                config.developer = False
+
+            config.play_channel = "sound"
+
+        if version <= (6, 99, 8):
+            config.help_screen = None
+            config.confirm_screen = False
+
+        if version <= (6, 99, 10):
+            config.new_translate_order = False
+            config.old_say_args = True
+            if "call screen" in config.window_auto_hide:
+                config.window_auto_hide.remove("call screen")
+            config.quit_action = ui.gamemenus("_quit_prompt")
+            config.enforce_window_max_size = False
+            config.splashscreen_suppress_overlay = False
+
+        if version <= (6, 99, 12, 3):
+            config.prefix_viewport_scrollbar_styles = False
+
+        if version <= (6, 99, 12, 4):
+            config.hyperlink_inherit_size = False
+            config.automatic_polar_motion = False
+            config.position_viewport_side = False
+            config.nw_voice = False
+            config.atl_one_frame = False
+            config.keep_show_layer_state = False
+            config.atl_multiple_events = False
+
+        if version <= (6, 99, 13):
+            config.fast_unhandled_event = False
+            config.gc_thresholds = (700, 10, 10)
+            config.idle_gc_count = 10000
+            config.scrollbar_child_size = False
+
+        if version <= (6, 99, 14):
+            config.image_cache_size_mb = None
+            config.image_cache_size = 16
+            config.cache_surfaces = True
+            config.optimize_texture_bounds = False
+
+        if version <= (6, 99, 14, 3):
+            config.late_images_scan = True
+            config.dissolve_force_alpha = False
+            config.replay_movie_sprites = False
+
+        if version <= (7, 0, 0):
+            config.reject_relative = False
+            config.say_attributes_use_side_image = False
+
+        if version <= (7, 1, 0):
+            config.menu_showed_window = True
+            config.window_auto_show = [ "say" ]
+            config.window_auto_hide = [ "scene", "call screen" ]
+
+        if version <= (7, 1, 1):
+            config.menu_actions = False
+
+        if version <= (7, 2, 2):
+            config.say_attribute_transition_callback_attrs = False
+            config.keep_side_render_order = False
+
+        if version <= (7, 3, 0):
+            config.force_sound = False
+
+        if version <= (7, 3, 2):
+            config.audio_directory = None
+            config.early_start_store = True
+            config.compat_viewport_minimum = True
+
+        if version <= (7, 3, 5):
+            config.side_image_requires_attributes = False
+            config.window_functions_set_auto = False
+            config.hw_video = True
+            config.who_what_sub_compat = 0
+
+        if version <= (7, 4, 0):
+            config.pause_with_transition = True
+
+        if version <= (7, 4, 2):
+            config.dismiss_blocking_transitions = False
+
+        if version <= (7, 4, 4):
+            config.pause_after_rollback = True
+            config.gl2 = False
+            config.gl_lod_bias = -1.0
+            config.who_what_sub_compat = 1
+
+        if version == (7, 4, 5):
+            config.scene_clears_layer_at_list = False
+
+        if version <= (7, 4, 6):
+            config.adjust_minimums = False
+            config.atl_start_on_show = False
+            config.input_caret_blink = False
+
+        if version <= (7, 4, 8):
+            config.relative_transform_size = False
+            config.tts_front_to_back = False
+
+        if version <= (7, 4, 10):
+            config.always_unfocus = False
+
+        if version <= (7, 4, 11):
+            config.allow_unfull_vpgrids = True
+            style.drag.focus_mask = True
+            style.default.outline_scaling = "step"
+            config.box_skip = False
+            config.crop_relative_default = False
+            config.layeredimage_offer_screen = False
+            config.narrator_menu = False
+            config.gui_text_position_properties = False
+
+
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
 
-init -1000 python hide:
+python early hide:
     try:
         import ast
-        script_version = renpy.file("script_version.txt").read()
-        config.script_version = ast.literal_eval(script_version)
-        renpy.write_log("Set script version to: %r", config.script_version)
-    except:
+        with renpy.file("script_version.txt") as f:
+            script_version = f.read()
+        script_version = ast.literal_eval(script_version)
+
+        config.early_script_version = script_version
+
+        if script_version <= (7, 2, 2):
+            config.keyword_after_python = True
+
+    except Exception:
+        config.early_script_version = None
         pass
 
-init 1900 python hide::
+
+init -1000 python hide:
+    import re
+
+    try:
+        import ast
+        with renpy.file("script_version.txt") as f:
+            script_version = f.read().decode("utf-8")
+        config.script_version = ast.literal_eval(script_version)
+        renpy.write_log("Set script version to: %r", config.script_version)
+    except Exception:
+        pass
+
+    # 6.99.12.4 didn't add script_version.txt, so we read it from renpy/__init__.py
+    # if that exists.
+    #
+    # For really old version, script_version may not be set, so try to read it out of
+    # the renpy that came with the game.
+    try:
+        if config.script_version is None:
+            init_py = os.path.join(renpy.config.basedir, "renpy", "__init__.py")
+            with open(init_py, "r") as f:
+                data = f.read()
+
+            if "version_tuple = (6, 99, 12, 4, vc_version)" in data:
+                config.script_version = (6, 99, 12, 4)
+            elif config.renpy_base != config.basedir:
+                for l in data.splitlines():
+                    m = re.match(r"version = \"Ren'Py ([\.\d]+)", l)
+                    if m:
+                        config.script_version = tuple(int(i) for i in m.group(1).split("."))
+
+
+
+            renpy.write_log("Set script version to: %r (alternate path)", config.script_version)
+    except Exception:
+        pass
+
+
+init 1100 python hide:
 
     # This returns true if the script_version is <= the
     # script_version supplied. Give it the last script version
@@ -164,6 +341,10 @@ init 1900 python hide::
 
     if compat(6, 9, 0):
         style.motion.clear()
+
+    if compat(6, 10, 2):
+        if 'screens' not in config.layers:
+            config.layers.append('screens')
 
     if "Fullscreen" in config.translations:
         fs = _("Fullscreen")

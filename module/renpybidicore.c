@@ -1,47 +1,52 @@
 #include <Python.h>
-#include <fribidi/fribidi.h>
+
+#ifdef RENPY_BUILD
+#include <fribidi.h>
+#else
+#include <fribidi-src/lib/fribidi.h>
+#endif
+
 #include <stdlib.h>
 
 #ifndef alloca
 #include <alloca.h>
 #endif
 
-/* This is easier than trying to figure out the header that alloca is */
-/* defined in. */
-// void *alloca(size_t size);
 
 PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
-    char *src;
-    int size;
+    Py_ssize_t size;
     FriBidiChar *srcuni;
-    int unisize;
     FriBidiChar *dstuni;
-    char *dst;
+    PyObject *rv;
 
-    src = PyString_AsString(s);
 
-    if (src == NULL) {
-        return NULL;
-    }
-
-    size = PyString_Size(s);
+    Py_UNICODE *p = PyUnicode_AS_UNICODE((PyUnicodeObject *) s);
+    size = PyUnicode_GET_SIZE((PyUnicodeObject *) s);
 
     srcuni = (FriBidiChar *) alloca(size * 4);
     dstuni = (FriBidiChar *) alloca(size * 4);
-    dst = (char *) alloca(size * 4);
 
-    unisize = fribidi_charset_to_unicode(FRIBIDI_CHAR_SET_UTF8, src, size, srcuni);
+    for (Py_ssize_t i = 0; i < size; i++) {
+        srcuni[i] = p[i];
+    }
 
     fribidi_log2vis(
         srcuni,
-        unisize,
-        direction,
+        size,
+        (FriBidiParType *) direction,
         dstuni,
         NULL,
         NULL,
         NULL);
 
-    fribidi_unicode_to_charset(FRIBIDI_CHAR_SET_UTF8, dstuni, unisize, dst);
 
-    return PyString_FromString(dst);
+    p = (Py_UNICODE *) alloca(size * sizeof(Py_UNICODE));
+
+    for (Py_ssize_t i = 0; i < size; i++) {
+        p[i] = (Py_UNICODE) dstuni[i];
+    }
+
+    rv = PyUnicode_FromUnicode(p, size);
+
+    return rv;
 }

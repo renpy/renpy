@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2015 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -154,7 +154,7 @@ screen build_distributions:
 
             has vbox
 
-            label _("Build Distributions: [project.current.name!q]")
+            label _("Build Distributions: [project.current.display_name!q]")
 
             add HALF_SPACER
 
@@ -192,8 +192,12 @@ screen build_distributions:
 
                             textbutton _("Edit options.rpy") action editor.Edit("game/options.rpy", check=True)
                             textbutton _("Add from clauses to calls, once") action Jump("add_from")
+                            textbutton _("Update old-game") action Jump("start_update_old_game")
                             textbutton _("Refresh") action Jump("build_distributions")
 
+                            add HALF_SPACER
+
+                            textbutton _("Upload to itch.io") action Jump("itch")
 
                 # Right side.
                 frame:
@@ -239,7 +243,7 @@ screen build_distributions:
                         textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
 
-    textbutton _("Back") action Jump("front_page") style "l_left_button"
+    textbutton _("Return") action Jump("front_page") style "l_left_button"
     textbutton _("Build") action Jump("start_distribute") style "l_right_button"
 
 label add_from_common:
@@ -253,6 +257,9 @@ label add_from:
     call add_from_common
     jump build_distributions
 
+label start_update_old_game:
+    call update_old_game
+    jump build_distributions
 
 label start_distribute:
     if project.current.data["add_from"]:
@@ -273,6 +280,8 @@ label build_distributions:
 
     call build_update_dump
 
+label post_build:
+
     if not project.current.dump["build"]["directory_name"]:
         jump build_missing
 
@@ -284,7 +293,12 @@ label build_missing:
 
         interface.yesno(_("Your project does not contain build information. Would you like to add build information to the end of options.rpy?"), yes=Return(True), no=Jump("front_page"))
 
-        build_info = DEFAULT_BUILD_INFO.replace("PROJECTNAME", project.current.name)
+        project_name = project.current.name
+        project_name = project_name.replace(" ", "_")
+        project_name = project_name.replace(":", "")
+        project_name = project_name.replace(";", "")
+
+        build_info = DEFAULT_BUILD_INFO.replace("PROJECTNAME", project_name)
 
         with open(os.path.join(project.current.path, "game", "options.rpy"), "a") as f:
             f.write(build_info)
