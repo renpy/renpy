@@ -31,7 +31,7 @@ echo "Submitted dmg for notarization."
 
 $(dirname $0)/wait_notarization.py
 
-sleep 15
+sleep 60
 
 xcrun stapler staple "$DMGBASE"
 
