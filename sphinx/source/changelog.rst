@@ -369,7 +369,7 @@ The new RENPY_PATH_TO_SAVES environment variable makes it possible to control
 where Ren'Py places system-level saves. The RENPY_MULTIPERSISTENT variable has
 been documented, and controls the same thing with multipersistent data.
 
-The new :var:`config.at_exit_callbacks` function are called when the game
+The new :var:`config.at_exit_callbacks` functions are called when the game
 quits. This is intended to allow the game to save additional data created
 by the developer.
 
