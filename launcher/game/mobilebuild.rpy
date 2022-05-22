@@ -32,7 +32,7 @@ init -1 python:
         if not renpy.loadable(fn1):
             return True
 
-        hash1 = renpy.file(fn1).read()
+        hash1 = renpy.file(fn1).read().decode("utf-8")
 
         if not os.path.exists(fn2):
             return False
