@@ -23,7 +23,7 @@ define gui.show_name = True
 
 ## The version of the game.
 
-define config.version = _("Ren'Py 7 Edition")
+define config.version = _("Ren'Py 7+ Edition")
 
 
 ## Text that is placed on the game's about screen. To insert a blank line
