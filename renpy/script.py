@@ -369,7 +369,7 @@ class Script(object):
 
         all_stmts = collapse_stmts(stmts)
 
-        version = int(time.time())
+        version = renpy.game.args.rpyc_version
 
         for s in all_stmts:
             if s.name is None:
