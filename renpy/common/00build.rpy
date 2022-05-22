@@ -270,6 +270,10 @@ init -1500 python in build:
         If any file is included in the "secret" archive using the
         :func:`build.classify` function, the file will be included inside
         the secret.rpa archive in the windows builds.
+
+        As with the :func:`build.classify` function, if the name given as
+        `file_list` doesn't exist as a file list name, it is created and
+        added to the set of valid file lists.
         """
 
         archives.append((name, make_file_lists(file_list)))
