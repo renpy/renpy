@@ -185,6 +185,128 @@ init -1600 python:
 
 
     @renpy.pure
+    class UpdateField(Action, FieldEquality):
+        """
+        :doc: data_action
+
+        Causes the field `field` of the object `obj` to be updated
+        by the function `callback`.
+        The function must accept one argument - the current value of the variable,
+        and return a new value. This could be used to increment/decrement a variable
+        when the user presses a button.
+        """
+        identity_fields = ["obj"]
+        equality_fields = ["field", "callback"]
+
+        kind = "field"
+
+        def __init__(self, obj, field, callback, kind="field"):
+            self.obj = obj
+            self.field = field
+            self.callback = callback
+            self.kind = kind
+
+        def __call__(self):
+            value = __get_field(self.obj, self.field, self.kind)
+            new_value = self.callback(value)
+            __set_field(self.obj, self.field, new_value, self.kind)
+
+            renpy.restart_interaction()
+
+
+    @renpy.pure
+    def UpdateVariable(name, callback):
+        """
+        :doc: data_action
+
+        Causes the variable `name` to be updated by the function `callback`.
+        The function must accept one argument - the current value of the variable,
+        and return a new value. This could be used to increment/decrement a variable
+        when the user presses a button.
+        """
+        return UpdateField(store, name, callback, kind="variable")
+
+
+    @renpy.pure
+    class UpdateDict(Action, FieldEquality):
+        """
+        :doc: data_action
+
+        Causes the value of the key `key` in dict `dict_` to be updated by the function `callback`.
+        The function must accept one argument - the current value of the variable,
+        and return a new value. This could be used to increment/decrement a variable
+        when the user presses a button.
+        """
+        identity_fields = ["dict"]
+        equality_fields = ["key", "callback"]
+
+        def __init__(self, dict_, key, callback):
+            self.dict = dict_
+            self.key = key
+            self.callback = callback
+
+        def __call__(self):
+            value = self.dict[self.key]
+            self.dict[self.key] = self.callback(value)
+
+            renpy.restart_interaction()
+
+
+    @renpy.pure
+    class UpdateScreenVariable(Action, DictEquality):
+        """
+        :doc: data_action
+
+        Causes the variable `name` associated with the current screen to
+        be updated by the function `callback`.
+        The function must accept one argument - the current value of the variable,
+        and return a new value. This could be used to increment/decrement a variable
+        when the user presses a button.
+
+        In a ``use``\ d screen, this action updates the variable in the context
+        of the screen containing the ``use``\ d one(s).
+        To update variables within a ``use``\ d screen, and only in that
+        case, use :func:`UpdateLocalVariable` instead.
+        """
+        def __init__(self, name, callback):
+            self.name = name
+            self.callback = callback
+
+        def __call__(self):
+            current_screen = renpy.current_screen()
+
+            if current_screen is None:
+                return
+
+            scope = current_screen.scope
+            scope[self.name] = self.callback(scope[self.name])
+
+            renpy.restart_interaction()
+
+
+    # Not pure.
+    def UpdateLocalVariable(name, callback):
+        """
+        :doc: data_action
+
+        Causes the variable `name` to be updated by the function `callback`
+        in the current local context.
+
+        This action is only useful in a screen that has been ``use``\ d by
+        another screen, as it provides a way of setting the value of a
+        variable inside the used screen. In all other cases,
+        :func:`UpdateScreenVariable` should be preferred, as it allows more
+        of the screen to be cached.
+
+        For more information, see :ref:`sl-use`.
+
+        This must be created in the context that the variable
+        has been defined in - it can't be passed in from somewhere else.
+        """
+        return UpdateDict(sys._getframe(1).f_locals, name, callback)
+
+
+    @renpy.pure
     class ToggleField(Action, FieldEquality):
         """
         :doc: data_action
