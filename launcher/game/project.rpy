@@ -340,10 +340,11 @@ init python in project:
 
                     line = line[:1024]
 
-                    try:
-                        line = line.decode("utf-8")
-                    except Exception:
-                        continue
+                    if PY2:
+                        try:
+                            line = line.decode("utf-8")
+                        except Exception:
+                            continue
 
                     m = re.search(r"#\s*TODO(\s*:\s*|\s+)(.*)", line, re.I)
 
