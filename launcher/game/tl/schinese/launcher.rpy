@@ -1,7 +1,4 @@
-﻿translate schinese strings:
-    # game/new_project.rpy:77
-    old "{#language name and font}"
-    new "{font=SourceHanSansLite.ttf}简体中文{/font}"
+translate schinese strings:
 
     # game/about.rpy:39
     old "[version!q]"
@@ -875,11 +872,11 @@
     old "Extract Dialogue"
     new "提取对话"
 
-    # game/front_page.rpy:250
+    # game/front_page.rpy:262
     old "Checking script for potential problems..."
     new "正在检查脚本中的潜在问题……"
 
-    # game/front_page.rpy:265
+    # game/front_page.rpy:277
     old "Deleting persistent data..."
     new "正在删除持久化数据……"
 
@@ -963,39 +960,39 @@
     old "Successfully installed [name!t]."
     new "已成功安装 [name!t]。"
 
-    # game/install.rpy:118
-    old "Install Libraries"
-    new "安装库"
-
-    # game/install.rpy:133
+    # game/install.rpy:114
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
     new "此界面允许您安装 Ren'Py 无法分发的库。其中一些库可能会要求您在使用或分发之前同意第三方许可。"
 
-    # game/install.rpy:139
-    old "Install Live2D Cubism SDK for Native"
-    new "安装 Live2D Cubism SDK for Native"
-
-    # game/install.rpy:148
-    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
-    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} 增加了对显示 Live2D 模型的支持。将 CubismSdkForNative-4-{i}version{/i}.zip 放在 Ren'Py SDK 目录中，然后点击“安装”。使用 Live2D 分发游戏需要您接受 Live2D 公司的许可。"
-
-    # game/install.rpy:152
-    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
-    new "Ren'Py 中的 Live2D 不支持网页版和安卓 x86_64（包括模拟器和 Chrome OS），且必须手动添加至 iOS 项目中。更新 Ren'Py 或安装安卓支持包后需要重新安装 Live2D。"
-
-    # game/install.rpy:159
+    # game/install.rpy:120
     old "Install Steam Support"
     new "安装 Steam 支持包"
 
-    # game/install.rpy:168
+    # game/install.rpy:129
     old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
     new "在安装 Steam 支持包之前，请确保您是 {a=https://partner.steamgames.com/}Steam 合作伙伴{/a}。"
 
-    # game/install.rpy:180
+    # game/install.rpy:141
     old "Steam support has already been installed."
     new "Steam 支持包已安装。"
 
-    # game/install.rpy:184
+    # game/install.rpy:145
+    old "Install Live2D Cubism SDK for Native"
+    new "安装 Live2D Cubism SDK for Native"
+
+    # game/install.rpy:159
+    old "Install Libraries"
+    new "安装库"
+
+    # game/install.rpy:185
+    old "The {a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} adds support for displaying Live2D models. Place CubismSdkForNative-4-{i}version{/i}.zip in the Ren'Py SDK directory, and then click Install. Distributing a game with Live2D requires you to accept a license from Live2D, Inc."
+    new "{a=https://www.live2d.com/en/download/cubism-sdk/download-native/}Cubism SDK for Native{/a} 增加了对显示 Live2D 模型的支持。将 CubismSdkForNative-4-{i}version{/i}.zip 放在 Ren'Py SDK 目录中，然后点击“安装”。使用 Live2D 分发游戏需要您接受 Live2D 公司的许可。"
+
+    # game/install.rpy:189
+    old "Live2D in Ren'Py doesn't support the Web, Android x86_64 (including emulators and Chrome OS), and must be added to iOS projects manually. Live2D must be reinstalled after upgrading Ren'Py or installing Android support."
+    new "Ren'Py 中的 Live2D 不支持网页版和安卓 x86_64（包括模拟器和 Chrome OS），且必须手动添加至 iOS 项目中。更新 Ren'Py 或安装安卓支持包后需要重新安装 Live2D。"
+
+    # game/install.rpy:194
     old "Open Ren'Py SDK Directory"
     new "打开 Ren'Py SDK 目录"
 
@@ -1131,55 +1128,55 @@
     old "The Xcode project already exists. Would you like to rename the old project, and replace it with a new one?"
     new "Xcode 项目已经存在。您希望重命名旧项目并用新项目替换它吗？"
 
-    # game/ios.rpy:262
+    # game/ios.rpy:269
     old "iOS: [project.current.display_name!q]"
     new "iOS：[project.current.display_name!q]"
 
-    # game/ios.rpy:291
+    # game/ios.rpy:298
     old "iPhone"
     new "iPhone"
 
-    # game/ios.rpy:295
+    # game/ios.rpy:302
     old "iPad"
     new "iPad"
 
-    # game/ios.rpy:315
+    # game/ios.rpy:322
     old "Select Xcode Projects Directory"
     new "指定 Xcode 项目目录"
 
-    # game/ios.rpy:319
+    # game/ios.rpy:326
     old "Create Xcode Project"
     new "创建 Xcode 项目"
 
-    # game/ios.rpy:323
+    # game/ios.rpy:330
     old "Update Xcode Project"
     new "更新 Xcode 项目"
 
-    # game/ios.rpy:328
+    # game/ios.rpy:335
     old "Launch Xcode"
     new "启动 Xcode"
 
-    # game/ios.rpy:351
+    # game/ios.rpy:358
     old "Open Xcode Projects Directory"
     new "打开 Xcode 项目目录"
 
-    # game/ios.rpy:372
+    # game/ios.rpy:379
     old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
     new "Apple Silicon 上的 iOS 模拟器存在已知问题。请在 x86_64 或 iOS 设备上进行测试。"
 
-    # game/ios.rpy:388
+    # game/ios.rpy:395
     old "Before packaging iOS apps, you'll need to download renios, Ren'Py's iOS support. Would you like to download renios now?"
     new "在打包 iOS 应用之前，您需要先下载 Ren'Py iOS 支持包 renios。您希望现在下载 renios 吗？"
 
-    # game/ios.rpy:397
+    # game/ios.rpy:404
     old "XCODE PROJECTS DIRECTORY"
     new "XCODE 项目目录"
 
-    # game/ios.rpy:397
+    # game/ios.rpy:404
     old "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
     new "请使用弹出的目录选择窗口来指定 Xcode 项目目录。\n{b}目录选择窗口可能会被本窗口覆盖。{/b}"
 
-    # game/ios.rpy:402
+    # game/ios.rpy:409
     old "Ren'Py has set the Xcode Projects Directory to:"
     new "Ren'Py 已将 Xcode 项目目录设置为："
 
@@ -1311,9 +1308,13 @@
     old "Legacy Theme Interface"
     new "传统主题界面"
 
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=SourceHanSansLite.ttf}简体中文{/font}"
+
     # game/new_project.rpy:81
     old "You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."
-    new "即将创建 [new_project_language]{#this substitution may be localized} 语言的项目。要创建其他语言的项目，请在设置中更改 Ren'Py 语言。"
+    new "即将创建[new_project_language]语言的项目。要创建其他语言的项目，请在设置中更改 Ren'Py 语言。"
 
     # game/new_project.rpy:86
     old "PROJECT NAME"
@@ -1347,113 +1348,125 @@
     old "Launcher Preferences"
     new "启动器设置"
 
-    # game/preferences.rpy:109
+    # game/preferences.rpy:106
+    old "General"
+    new "一般"
+
+    # game/preferences.rpy:107
+    old "Options"
+    new "选项"
+
+    # game/preferences.rpy:131
     old "Projects Directory:"
     new "项目目录："
 
-    # game/preferences.rpy:116
+    # game/preferences.rpy:138
     old "[persistent.projects_directory!q]"
     new "[persistent.projects_directory!q]"
 
-    # game/preferences.rpy:118
+    # game/preferences.rpy:140
     old "Projects directory: [text]"
     new "项目目录：[text]"
 
-    # game/preferences.rpy:120
+    # game/preferences.rpy:142
     old "Not Set"
     new "未指定"
 
-    # game/preferences.rpy:135
+    # game/preferences.rpy:155
     old "Text Editor:"
     new "文本编辑器："
 
-    # game/preferences.rpy:141
+    # game/preferences.rpy:161
     old "Text editor: [text]"
     new "文本编辑器：[text]"
 
-    # game/preferences.rpy:158
-    old "Install libraries"
-    new "安装库"
-
-    # game/preferences.rpy:159
-    old "Open launcher project"
-    new "打开启动器项目"
-
-    # game/preferences.rpy:160
-    old "Reset window size"
-    new "重置窗口大小"
-
-    # game/preferences.rpy:161
-    old "Clean temporary files"
-    new "清理临时文件"
-
-    # game/preferences.rpy:177
-    old "Navigation Options:"
-    new "定位选项："
-
-    # game/preferences.rpy:181
-    old "Include private names"
-    new "包含私有名称"
-
-    # game/preferences.rpy:182
-    old "Include library names"
-    new "包含库名称"
-
-    # game/preferences.rpy:192
-    old "Launcher Options:"
-    new "启动器选项："
-
-    # game/preferences.rpy:196
-    old "Show edit file section"
-    new "显示编辑文件部件"
-
-    # game/preferences.rpy:197
-    old "Large fonts"
-    new "大字体"
-
-    # game/preferences.rpy:200
-    old "Console output"
-    new "控制台输出"
-
-    # game/preferences.rpy:204
-    old "Force new tutorial"
-    new "强制新手教程"
-
-    # game/preferences.rpy:208
-    old "Legacy options"
-    new "传统选项"
-
-    # game/preferences.rpy:211
-    old "Show templates"
-    new "显示模板"
-
-    # game/preferences.rpy:213
-    old "Sponsor message"
-    new "赞助者信息"
-
-    # game/preferences.rpy:216
-    old "Daily check for update"
-    new "每日检查更新"
-
-    # game/preferences.rpy:220
-    old "Default theme"
-    new "默认主题"
-
-    # game/preferences.rpy:222
-    old "Dark theme"
-    new "深色主题"
-
-    # game/preferences.rpy:223
-    old "Custom theme"
-    new "自定义主题"
-
-    # game/preferences.rpy:243
+    # game/preferences.rpy:173
     old "Language:"
     new "语言："
 
-    # game/preferences.rpy:263
+    # game/preferences.rpy:200
+    old "Navigation Options:"
+    new "定位选项："
+
+    # game/preferences.rpy:204
+    old "Include private names"
+    new "包含私有名称"
+
+    # game/preferences.rpy:205
+    old "Include library names"
+    new "包含库名称"
+
+    # game/preferences.rpy:214
+    old "Launcher Options:"
+    new "启动器选项："
+
+    # game/preferences.rpy:218
+    old "Show edit file section"
+    new "显示编辑文件部件"
+
+    # game/preferences.rpy:219
+    old "Large fonts"
+    new "大字体"
+
+    # game/preferences.rpy:222
+    old "Console output"
+    new "控制台输出"
+
+    # game/preferences.rpy:224
+    old "Sponsor message"
+    new "赞助者信息"
+
+    # game/preferences.rpy:227
+    old "Daily check for update"
+    new "每日检查更新"
+
+    # game/preferences.rpy:246
+    old "Launcher Theme:"
+    new "启动器主题："
+
+    # game/preferences.rpy:250
+    old "Default theme"
+    new "默认主题"
+
+    # game/preferences.rpy:251
+    old "Dark theme"
+    new "深色主题"
+
+    # game/preferences.rpy:252
+    old "Custom theme"
+    new "自定义主题"
+
+    # game/preferences.rpy:256
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    new "有关创建自定义主题的信息可以{a=https://www.renpy.cn/doc/skins.html}在 Ren'Py 文档中找到{/a}。"
+
+    # game/preferences.rpy:273
+    old "Install Libraries:"
+    new "安装库："
+
+    # game/preferences.rpy:299
+    old "Open launcher project"
+    new "打开启动器项目"
+
+    # game/preferences.rpy:300
+    old "Reset window size"
+    new "重置窗口大小"
+
+    # game/preferences.rpy:301
+    old "Clean temporary files"
+    new "清理临时文件"
+
+    # game/preferences.rpy:308
     old "Cleaning temporary files..."
     new "正在清理临时文件……"
+
+    # game/preferences.rpy:338
+    old "{#in language font}Welcome! Please choose a language"
+    new "{font=SourceHanSansLite.ttf}欢迎！请选择一种语言"
+
+    # game/preferences.rpy:373
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    new "{font=SourceHanSansLite.ttf}开始以[lang_name]使用 Ren'Py"
 
     # game/project.rpy:46
     old "After making changes to the script, press shift+R to reload your game."
@@ -1620,114 +1633,138 @@
     new "发布版"
 
     # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    new "发布版 (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    new "发布版 (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:66
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
     new "{b}建议使用。{/b}在所有新发布的游戏中都应该使用的 Ren'Py 版本。"
 
-    # game/updater.rpy:66
+    # game/updater.rpy:68
     old "Prerelease"
     new "预发布版"
 
-    # game/updater.rpy:67
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "预发布版 (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "预发布版 (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:71
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
     new "Ren'Py 下个版本的预览，可用于测试和体验新功能，但不适用于游戏的最终发布。"
 
-    # game/updater.rpy:69
+    # game/updater.rpy:73
     old "Experimental"
     new "试验版"
 
-    # game/updater.rpy:70
+    # game/updater.rpy:74
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
     new "Ren'Py 试验版。除非应 Ren'Py 开发者的要求，否则您不应选择此通道。"
 
-    # game/updater.rpy:72
+    # game/updater.rpy:76
     old "Nightly"
     new "每夜版"
 
-    # game/updater.rpy:73
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    new "每夜版 (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "每夜版 (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:79
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
     new "Ren'Py 的尖端开发版。此版本也许包含了最新的功能，但也可能根本无法运行。"
 
-    # game/updater.rpy:90
+    # game/updater.rpy:96
     old "Select Update Channel"
     new "选择更新通道"
 
-    # game/updater.rpy:101
+    # game/updater.rpy:107
     old "The update channel controls the version of Ren'Py the updater will download."
     new "更新通道决定了更新程序所下载的 Ren'Py 版本。"
 
-    # game/updater.rpy:109
+    # game/updater.rpy:115
     old "• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/doc/html/changelog.html}查看更新日志{/a}"
 
-    # game/updater.rpy:111
+    # game/updater.rpy:117
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}查看更新日志{/a}"
 
-    # game/updater.rpy:117
+    # game/updater.rpy:123
     old "• This version is installed and up-to-date."
     new "• 该版本已安装并且是最新的。"
 
-    # game/updater.rpy:129
+    # game/updater.rpy:135
     old "%B %d, %Y"
     new "%Y-%m-%d"
 
-    # game/updater.rpy:151
+    # game/updater.rpy:157
     old "An error has occured:"
     new "发生错误："
 
-    # game/updater.rpy:153
+    # game/updater.rpy:159
     old "Checking for updates."
     new "正在检查更新。"
 
-    # game/updater.rpy:155
+    # game/updater.rpy:161
     old "Ren'Py is up to date."
     new "Ren'Py 已更新到最新版本。"
 
-    # game/updater.rpy:157
+    # game/updater.rpy:163
     old "[u.version] is now available. Do you want to install it?"
     new "[u.version] 现已可用。您希望现在安装吗？"
 
-    # game/updater.rpy:159
+    # game/updater.rpy:165
     old "Preparing to download the update."
     new "正在准备下载更新。"
 
-    # game/updater.rpy:161
+    # game/updater.rpy:167
     old "Downloading the update."
     new "正在下载更新。"
 
-    # game/updater.rpy:163
+    # game/updater.rpy:169
     old "Unpacking the update."
     new "正在解压更新。"
 
-    # game/updater.rpy:165
+    # game/updater.rpy:171
     old "Finishing up."
     new "完成。"
 
-    # game/updater.rpy:167
+    # game/updater.rpy:173
     old "The update has been installed. Ren'Py will restart."
     new "更新已安装。Ren'Py 即将重启。"
 
-    # game/updater.rpy:169
+    # game/updater.rpy:175
     old "The update has been installed."
     new "更新已安装。"
 
-    # game/updater.rpy:171
+    # game/updater.rpy:177
     old "The update was cancelled."
     new "更新已取消。"
 
-    # game/updater.rpy:188
+    # game/updater.rpy:194
     old "Ren'Py Update"
     new "Ren'Py 更新"
 
-    # game/updater.rpy:194
+    # game/updater.rpy:200
     old "Proceed"
     new "继续"
 
-    # game/updater.rpy:208
+    # game/updater.rpy:214
     old "Fetching the list of update channels"
     new "正在获取更新通道列表"
 
-    # game/updater.rpy:213 此处与 While 连用
+    # game/updater.rpy:219 此处与 While 连用
     old "downloading the list of update channels"
     new "下载更新通道列表"
 
