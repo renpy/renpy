@@ -1119,7 +1119,9 @@ PyObject *RPS_read_video(int channel) {
     c = &channels[channel];
 
     if (c->playing) {
+        Py_BEGIN_ALLOW_THREADS
         surf = media_read_video(c->playing);
+        Py_END_ALLOW_THREADS
     }
 
     error(SUCCESS);
