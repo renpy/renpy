@@ -646,7 +646,7 @@ class RollbackLog(renpy.object.Object):
         # This needs to be set late, so that StoreModule is available.
 
         global NOROLLBACK_TYPES
-        NOROLLBACK_TYPES = (renpy.python.StoreModule, SlottedNoRollback, io.IOBase)
+        NOROLLBACK_TYPES = (types.ModuleType, renpy.python.StoreModule, SlottedNoRollback, io.IOBase, type)
 
         reachable = { }
 
