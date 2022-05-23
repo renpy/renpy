@@ -21,7 +21,7 @@
 
 init -1600 python:
 
-   ##########################################################################
+    ##########################################################################
     # Functions that set variables or fields.
 
     __FieldNotFound = object()
@@ -52,13 +52,13 @@ init -1600 python:
     @renpy.pure
     class SetField(Action, FieldEquality):
         """
-         :doc: data_action
-         :args: (object, field, value)
+        :doc: data_action
+        :args: (object, field, value)
 
-         Causes the a field on an object to be set to a given value.
-         `object` is the object, `field` is a string giving the name of the
-         field to set, and `value` is the value to set it to.
-         """
+        Causes the a field on an object to be set to a given value.
+        `object` is the object, `field` is a string giving the name of the
+        field to set, and `value` is the value to set it to.
+        """
 
         identity_fields = [ "object" ]
         equality_fields = [ "field", "value" ]
@@ -95,10 +95,10 @@ init -1600 python:
     @renpy.pure
     class SetDict(Action, FieldEquality):
         """
-         :doc: data_action
+        :doc: data_action
 
-         Causes the value of `key` in `dict` to be set to `value`.
-         """
+        Causes the value of `key` in `dict` to be set to `value`.
+        """
 
         identity_fields = [ "dict" ]
         equality_fields = [ "key", "value" ]
@@ -187,17 +187,17 @@ init -1600 python:
     @renpy.pure
     class ToggleField(Action, FieldEquality):
         """
-         :doc: data_action
-         :args: (object, field, true_value=None, false_value=None)
+        :doc: data_action
+        :args: (object, field, true_value=None, false_value=None)
 
-         Toggles `field` on `object`. Toggling means to invert the boolean
-         value of that field when the action is performed.
+        Toggles `field` on `object`. Toggling means to invert the boolean
+        value of that field when the action is performed.
 
-         `true_value`
-             If not None, then this is the true value we use.
-         `false_value`
-             If not None, then this is the false value we use.
-         """
+        `true_value`
+            If not None, then this is the true value we use.
+        `false_value`
+            If not None, then this is the false value we use.
+        """
 
         identity_fields = [ "object"]
         equality_fields = [ "field", "true_value", "false_value"  ]
@@ -261,16 +261,16 @@ init -1600 python:
     @renpy.pure
     class ToggleDict(Action, FieldEquality):
         """
-         :doc: data_action
+        :doc: data_action
 
-         Toggles the value of `key` in `dict`. Toggling means to invert the
-         value when the action is performed.
+        Toggles the value of `key` in `dict`. Toggling means to invert the
+        value when the action is performed.
 
-         `true_value`
-             If not None, then this is the true value used.
-         `false_value`
-             If not None, then this is the false value used.
-         """
+        `true_value`
+            If not None, then this is the true value used.
+        `false_value`
+            If not None, then this is the false value used.
+        """
 
         identity_fields = [ "dict", ]
         equality_fields = [ "key", "true_value", "false_value" ]
