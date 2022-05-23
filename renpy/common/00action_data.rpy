@@ -49,6 +49,8 @@ init -1600 python:
         except Exception:
             raise NameError("The {} {} does not exist.".format(kind, name))
 
+    ### Actions that SET variables
+
     @renpy.pure
     class SetField(Action, FieldEquality):
         """
@@ -184,6 +186,9 @@ init -1600 python:
         return SetDict(sys._getframe(1).f_locals, name, value)
 
 
+    ### Actions that UPDATE variables
+
+
     @renpy.pure
     class UpdateField(Action, FieldEquality):
         """
@@ -213,7 +218,6 @@ init -1600 python:
 
             renpy.restart_interaction()
 
-
     @renpy.pure
     def UpdateVariable(name, callback):
         """
@@ -225,7 +229,6 @@ init -1600 python:
         when the user presses a button.
         """
         return UpdateField(store, name, callback, kind="variable")
-
 
     @renpy.pure
     class UpdateDict(Action, FieldEquality):
@@ -250,7 +253,6 @@ init -1600 python:
             self.dict[self.key] = self.callback(value)
 
             renpy.restart_interaction()
-
 
     @renpy.pure
     class UpdateScreenVariable(Action, DictEquality):
@@ -283,7 +285,6 @@ init -1600 python:
 
             renpy.restart_interaction()
 
-
     # Not pure.
     def UpdateLocalVariable(name, callback):
         """
@@ -304,6 +305,9 @@ init -1600 python:
         has been defined in - it can't be passed in from somewhere else.
         """
         return UpdateDict(sys._getframe(1).f_locals, name, callback)
+
+
+    ### Actions that TOGGLE variables
 
 
     @renpy.pure
@@ -519,6 +523,10 @@ init -1600 python:
 
 
             return rv
+
+
+    ### Actions to work with sets
+
 
     @renpy.pure
     class AddToSet(Action, FieldEquality):
