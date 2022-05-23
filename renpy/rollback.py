@@ -106,8 +106,6 @@ class AlwaysRollback(renpy.revertable.RevertableObject):
 
 NOROLLBACK_TYPES = tuple() # type: tuple[type, type, type]
 
-reach_log = [ ]
-
 
 def reached(obj, reachable, wait):
     """
@@ -117,7 +115,6 @@ def reached(obj, reachable, wait):
         A map from id(obj) to int. The int is 1 if the object was reached
         normally, and 0 if it was reached, but inherits from NoRollback.
     """
-
 
     if wait:
         wait()
@@ -129,72 +126,47 @@ def reached(obj, reachable, wait):
 
     reachable[idobj] = obj
 
-    if type(obj).__name__ == "PronounTool":
-        import traceback
-        traceback.print_stack()
-        for i in reach_log:
-            print("-", repr(i)[:120])
-
-        print()
-
-    reach_log.append(obj)
-    reach_log.append("")
+    if isinstance(obj, NOROLLBACK_TYPES):
+        return
 
     try:
+        nosave = getattr(obj, "nosave", None)
 
-
-        if isinstance(obj, NOROLLBACK_TYPES):
-            return
-
-        reach_log[-1] = "A"
-
-        try:
-            nosave = getattr(obj, "nosave", None)
-
-            if nosave is not None:
-                for k, v in vars(obj).items():
-                    if k not in nosave:
-                        reached(v, reachable, wait)
-
-            else:
-
-                # Fields have to be indexed by strings, so no need to check if
-                # the filed is reached.
-                for v in vars(obj).values():
+        if nosave is not None:
+            for k, v in vars(obj).items():
+                if k not in nosave:
                     reached(v, reachable, wait)
 
-        except Exception:
-            pass
+        else:
 
-        # Below this, we only consider containers with a defined size.
-        try:
-            if (not len(obj)) or isinstance(obj, basestring):
-                return
-        except:
+            # Fields have to be indexed by strings, so no need to check if
+            # the filed is reached.
+            for v in vars(obj).values():
+                reached(v, reachable, wait)
+
+    except Exception:
+        pass
+
+    # Below this, we only consider containers with a defined size.
+    try:
+        if (not len(obj)) or isinstance(obj, basestring):
             return
+    except:
+        return
 
-        reach_log[-1] = "B"
+    try:
+        # Treat as iterable.
+        for v in obj.__iter__():
+            reached(v, reachable, wait)
+    except Exception:
+        pass
 
-        try:
-            # Treat as iterable.
-            for v in obj.__iter__():
-                reached(v, reachable, wait)
-        except Exception:
-            pass
-
-        reach_log[-1] = "C"
-
-        try:
-            # Treat as dict.
-            for v in obj.values():
-                reached(v, reachable, wait)
-
-        except Exception:
-            pass
-
-    finally:
-        reach_log.pop()
-        reach_log.pop()
+    try:
+        # Treat as dict.
+        for v in obj.values():
+            reached(v, reachable, wait)
+    except Exception:
+        pass
 
 
 def reached_vars(store, reachable, wait):
@@ -367,14 +339,12 @@ class Rollback(renpy.object.Object):
 
                 id_o = id(o)
 
-                if (id_o not in seen) and (reachable.get(id_o, None) is not None) and not isinstance(o, NOROLLBACK_TYPES):
+                if (id_o not in seen) and not isinstance(reachable.get(id_o, None), NOROLLBACK_TYPES):
                     seen.add(id_o)
                     objects_changed = True
 
                     new_objects.append((o, rb))
-
                     reached(rb, reachable, wait)
-
 
         del self.objects[:]
         self.objects.extend(new_objects)
@@ -670,7 +640,7 @@ class RollbackLog(renpy.object.Object):
         # This needs to be set late, so that StoreModule is available.
 
         global NOROLLBACK_TYPES
-        NOROLLBACK_TYPES = (types.ModuleType, renpy.python.StoreModule, SlottedNoRollback, io.IOBase, type)
+        NOROLLBACK_TYPES = (renpy.python.StoreModule, SlottedNoRollback, io.IOBase)
 
         reachable = { }
 
