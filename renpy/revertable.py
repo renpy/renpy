@@ -330,6 +330,9 @@ class RevertableDict(dict):
         iterkeys = dict.keys
         iteritems = dict.items
 
+        def has_key(self, key):
+            return (key in self)
+
     def copy(self):
         rv = RevertableDict()
         rv.update(self)
