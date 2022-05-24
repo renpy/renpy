@@ -2292,7 +2292,7 @@ class NearRect(Container):
             rect = self.parent_rect
 
         if rect is None:
-            self.offsets = [ None ] # type: ignore
+            self.offsets = [ (0, 0) ] # type: ignore
 
             return rv
 
