@@ -221,7 +221,7 @@ The custom shader can then be applied using a transform::
 
     show eileen happy at gradient
 
-As stated before, the ``gradient_done`` variable from the exemple.gradient shader
+As stated before, the ``gradient_done`` variable from the example.gradient shader
 will be accessible by any and all other shaders applied from the same list. This
 can be useful when having optional parts in a given shader system, but it can also
 lead to name collisions when using two independent shaders.
