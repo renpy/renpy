@@ -739,7 +739,7 @@ init -1500 python:
         """
         :doc: focus_action
 
-        If the focus exist, clears it, otherwise captures it.
+        If the focus exists, clears it, otherwise captures it.
         """
 
         def __init__(self, name="default"):
