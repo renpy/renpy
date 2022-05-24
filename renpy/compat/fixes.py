@@ -26,6 +26,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import tokenize
 import token
 import io
+import ast
 
 
 def fix_octal_numbers(tokens):
@@ -161,6 +162,57 @@ def fix_tokens(source):
 
         rv = tokenize.untokenize(tokens).decode("utf-8")
         return rv
+
+    except Exception as e:
+        # import traceback
+        # traceback.print_exc()
+        raise e
+
+class ReorderGlobals(ast.NodeTransformer):
+    """
+    This removes all global statements from functions, and places the variables
+    therein in a new global statement on the first line of the function.
+    """
+
+    def __init__(self):
+        self.globals = set()
+
+    def visit_Global(self, n):
+
+        for i in n.names:
+            self.globals.add(i)
+
+        return ast.Pass()
+
+    def visit_FunctionDef(self, n):
+
+        old_globals = self.globals
+        try:
+            new_globals = list(self.globals)
+            new_globals.sort()
+
+            n = self.generic_visit(n)
+            n.body.insert(0, ast.Global(names=new_globals)) # type: ignore
+        finally:
+            self.globals = old_globals
+
+reorder_globals = ReorderGlobals()
+
+
+def fix_ast(tree):
+    """
+    This applies fixes that will help python 2 code run under python 3. Not all
+    source will be fixed, but this will attempt to handle common issues.
+
+    These are fixes that apply at the AST level.
+    """
+
+    if PY2:
+        return tree
+
+    try:
+        tree = reorder_globals.visit(tree)
+        return tree
 
     except Exception as e:
         # import traceback

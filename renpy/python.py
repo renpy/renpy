@@ -988,7 +988,16 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
         if ast_node:
             return tree.body
 
-        rv = compile(tree, filename, py_mode, flags, 1)
+        try:
+            rv = compile(tree, filename, py_mode, flags, 1)
+        except SyntaxError as orig_e:
+            try:
+                tree = renpy.compat.fixes.fix_ast(tree)
+                fix_missing_locations(tree, 1, 0)
+                rv = compile(tree, filename, py_mode, flags, 1)
+            except:
+                raise orig_e
+
 
         if cache:
             py_compile_cache[key] = rv
