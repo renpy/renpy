@@ -975,7 +975,7 @@ One use of nearrect is for dropdown menus::
 
                 # This action captures the focus rectangle, and in doing so,
                 # displays the dropdown.
-                action CaptureFocus("diff_drop")
+                action ToggleFocus("diff_drop")
 
             textbutton "Done":
                 action Return()
@@ -988,7 +988,7 @@ One use of nearrect is for dropdown menus::
 
             # If the player clicks outside the frame, dismiss the dropdown.
             # The ClearFocus action dismisses this dropdown.
-            dismiss action ClearFocus("diff_drop")
+            dismiss action ClearFocus("diff_drop") modal False
 
             # This positions the displayable near (usually under) the button above.
             nearrect:
@@ -997,8 +997,6 @@ One use of nearrect is for dropdown menus::
                 # Finally, this frame contains the choices in the dropdown, with
                 # each using ClearFocus to dismiss the dropdown.
                 frame:
-                    modal True
-
                     has vbox
 
                     textbutton "Easy" action [ SetVariable("difficulty", "Easy"), ClearFocus("diff_drop") ]
