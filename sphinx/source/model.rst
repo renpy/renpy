@@ -152,6 +152,11 @@ functions, vertex shade parts, and fragment shader parts. These are, in turn,
 used to generate the source code for shaders, with the parts of the vertex and
 fragement shaders being included in low-number to high-number priority order.
 
+This means that any variable created by one of the shader will be accessible
+by every other fragment from any other shader in the list of shader parts.
+There is no scope like in Python functions to protect interference between
+shaders.
+
 Ren'Py keeps a cache of all combinations of shader parts that have ever been
 used in game/cache/shaders.txt, and loads them at startup. If major changes
 in shader use occur, this file should be edited or deleted so it can be
@@ -203,7 +208,8 @@ each model it is used to render::
         """, vertex_300="""
             v_gradient_done = a_position.x / u_model_size.x;
         """, fragment_300="""
-            gl_FragColor *= mix(u_gradient_left, u_gradient_right, v_gradient_done);
+            float gradient_done = v_gradient_done;
+            gl_FragColor *= mix(u_gradient_left, u_gradient_right, gradient_done);
         """)
 
 The custom shader can then be applied using a transform::
@@ -214,6 +220,11 @@ The custom shader can then be applied using a transform::
         u_gradient_right (0.0, 0.0, 1.0, 1.0)
 
     show eileen happy at gradient
+
+As stated before, the ``gradient_done`` variable from the exemple.gradient shader
+will be accessible by any and all other shaders applied from the same list. This
+can be useful when having optional parts in a given shader system, but it can also
+lead to name collisions when using two independent shaders.
 
 There is a variable that can help in debugging custom shaders:
 
