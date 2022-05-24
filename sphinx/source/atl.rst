@@ -1001,26 +1001,26 @@ both horizontal and vertical positions.
 
     If fit, xsize, and ysize are all None, this property does not apply.
 
-   .. list-table::
-      :widths: 15 85
-      :header-rows: 1
+    .. list-table::
+       :widths: 15 85
+       :header-rows: 1
 
-      * - Value
-        - Description
-      * - ``contain``
-        - As large as possible, without exceeding any dimensions.
-          Maintains aspect ratio.
-      * - ``cover``
-        - As small as possible, while matching or exceeding all
-          dimensions. Maintains aspect ratio.
-      * - None or ``fill``
-        - Stretches/squashes displayable to exactly match dimensions.
-      * - ``scale-down``
-        - As for ``contain``, but will never increase the size of the
-          displayable.
-      * - ``scale-up``
-        - As for ``cover``, but will never decrease the size of the
-          displayable.
+       * - Value
+         - Description
+       * - ``contain``
+         - As large as possible, without exceeding any dimensions.
+           Maintains aspect ratio.
+       * - ``cover``
+         - As small as possible, while matching or exceeding all
+           dimensions. Maintains aspect ratio.
+       * - None or ``fill``
+         - Stretches/squashes displayable to exactly match dimensions.
+       * - ``scale-down``
+         - As for ``contain``, but will never increase the size of the
+           displayable.
+       * - ``scale-up``
+         - As for ``cover``, but will never decrease the size of the
+           displayable.
 
 .. transform-property:: subpixel
 
