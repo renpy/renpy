@@ -54,7 +54,7 @@ def _ensure_temp():
     try:
         if not os.path.exists(backups):
             os.makedirs(os.path.dirname(backups))
-    except:
+    except Exception:
         pass
 
     temp_exists = True
@@ -120,7 +120,7 @@ def _clean(directory, age=3):
             if time.time() - mtime > age * 86400:
                 try:
                     os.unlink(filename)
-                except:
+                except Exception:
                     pass
 
 
@@ -128,7 +128,7 @@ def _clean(directory, age=3):
 
             try:
                 os.rmdir(root)
-            except:
+            except Exception:
                 pass
 
 
@@ -354,12 +354,12 @@ def remove(filename):
             for f in files:
                 try:
                     os.utime(os.path.join(root, f), None)
-                except:
+                except Exception:
                     pass
     else:
         try:
             os.utime(backup, None)
-        except:
+        except Exception:
             pass
 
 def move(old_filename, new_filename):

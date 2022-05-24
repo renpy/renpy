@@ -151,7 +151,7 @@ def reached(obj, reachable, wait):
     try:
         if (not len(obj)) or isinstance(obj, basestring):
             return
-    except:
+    except Exception:
         return
 
     try:

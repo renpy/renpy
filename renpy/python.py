@@ -962,7 +962,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
                 try:
                     fixed_source = renpy.compat.fixes.fix_tokens(source)
                     tree = compile(fixed_source, filename, py_mode, ast.PyCF_ONLY_AST | flags, 1)
-                except:
+                except Exception:
                     raise orig_e
 
         else:

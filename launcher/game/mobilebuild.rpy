@@ -222,7 +222,7 @@ init -1 python:
 
                     try:
                         self.process.stdin.close()
-                    except:
+                    except Exception:
                         pass
 
                 self.process = None
