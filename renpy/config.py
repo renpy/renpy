@@ -1245,6 +1245,9 @@ call_screen_roll_forward = False
 # displayed during a choice menu.
 choice_empty_window = None
 
+# The encoiding that's used by renpy.open_file by default. False
+# means to use binary mode.
+open_file_encoding = os.environ.get("RENPY_OPEN_FILE_ENCODING", False)
 
 del os
 del collections

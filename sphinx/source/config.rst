@@ -1447,6 +1447,16 @@ Rarely or Internally Used
     text displayed by the :ref:`say <say-statement>` and :ref:`menu
     <menu-statement>` statements.
 
+.. var:: config.open_file_encoding = False
+
+    If not False, this is the encoding that :func:`renpy.open_file` uses
+    when its `encoding` parameter is none. This is mostly used when porting
+    Python 2 games that used :func:`renpy.file` extensively to Python 3,
+    to have those files open as text by default.
+
+    This gets its default value from the RENPY_OPEN_FILE_ENCODING
+    environment variable.
+
 .. var:: config.overlay_during_with = True
 
     True if we want overlays to be shown during :ref:`with statements

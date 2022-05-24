@@ -381,6 +381,10 @@ do not conflict.
 Other Changes
 -------------
 
+The :func:`renpy.file` function has been renamed to :func:`renpy.open_file`,
+with the old named retained. It has also gained an `encoding` parameter to
+open the file with an encoding.
+
 The :propref:`focus_mask` style property now defaults to None for drag displayables.
 This improves performance, but means that the displayable can be dragged by
 transparent pixels.

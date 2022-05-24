@@ -316,7 +316,7 @@ init -1500 python in updater:
             self.moves = [ ]
 
             if public_key is not None:
-                with renpy.file(public_key) as f:
+                with renpy.open_file(public_key, False) as f:
                     self.public_key = rsa.PublicKey.load_pkcs1(f.read())
             else:
                 self.public_key = None

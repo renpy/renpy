@@ -25,10 +25,9 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
-
-import re
 import gc
+import io
+import re
 
 import renpy
 
@@ -2434,7 +2433,7 @@ def mark_image_unseen(name):
         del renpy.game.persistent._seen_images[name] # type: ignore
 
 
-def file(fn): # @ReservedAssignment
+def open_file(fn, encoding=None): # @ReservedAssignment
     """
     :doc: file
 
@@ -2445,9 +2444,32 @@ def file(fn): # @ReservedAssignment
     The object supports a wide subset of the fields and methods found on Python's
     standard file object, opened in binary mode. (Basically, all of the methods that
     are sensible for a read-only file.)
-    """
-    return renpy.loader.load(fn)
 
+    `encoding`
+        If given, the file is open in text mode with the given encoding.
+        If None, the default, the encoding is taken from :var:`config.open_file_encoding`.
+        If False, the file is opened in binary mode.
+    """
+
+    rv = renpy.loader.load(fn)
+
+    if encoding is None:
+        encoding = renpy.config.open_file_encoding
+
+    if encoding:
+        rv = io.TextIOWrapper(rv, encoding=encoding, errors="surrogateescape")
+
+    return rv
+
+def file(fn, encoding=None):
+    """
+    :doc: file
+
+    An alias for :func:`renpy.open_file`, for compatibility with older
+    versions of Ren'Py.
+    """
+
+    return open_file(fn, encoding=encoding)
 
 def notl_file(fn): # @ReservedAssignment
     """
