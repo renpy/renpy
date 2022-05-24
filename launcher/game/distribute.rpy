@@ -1675,7 +1675,7 @@ change_renpy_executable()
             dst = project.temp_filename("old-" + src)
             try:
                 os.makedirs(os.path.dirname(dst))
-            except:
+            except Exception:
                 pass
             shutil.copyfile(os.path.join(project.path, src), dst)
 

@@ -772,7 +772,7 @@ init -1499 python in achievement:
         try:
             if config.early_script_version is not None:
                 return
-        except:
+        except Exception:
             return
 
         if config.steam_appid is None:

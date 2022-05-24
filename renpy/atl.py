@@ -752,7 +752,7 @@ class RawBlock(RawStatement):
             block = self.compile(Context({}))
         except RuntimeError:  # PY3: RecursionError
             raise Exception("This transform refers to itself in a cycle.")
-        except:
+        except Exception:
             self.constant = NOT_CONST
         else:
             self.compiled_block = block
