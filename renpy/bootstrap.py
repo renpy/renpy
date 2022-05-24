@@ -45,6 +45,15 @@ if PY2:
     sys.setdefaultencoding("utf-8") # type: ignore
     sys.executable = sys_executable
 
+def _setdefaultencoding(name):
+    """
+    This is install in sys to prevent games from trying to change the default
+    encoding.
+    """
+
+sys.setdefaultencoding = _setdefaultencoding
+
+
 sys.stdout = old_stdout
 sys.stderr = old_stderr
 
