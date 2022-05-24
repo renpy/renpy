@@ -2286,7 +2286,7 @@ class NearRect(Container):
 
         rv = renpy.display.render.Render(width, height)
 
-        if self.focus:
+        if self.focus_rect:
             rect = renpy.display.focus.get_focus_rect(self.focus_rect)
         else:
             rect = self.parent_rect
