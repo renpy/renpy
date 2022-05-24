@@ -31,7 +31,7 @@ import io
 def fix_octal_numbers(tokens):
     """
     This fixes python-2 style octal numbers. Tokenize seems to report this
-    as two numbers, the first of which has a tring of '0'. This merges that
+    as two numbers, the first of which has a string of '0'. This merges that
     with the next token.
     """
 
@@ -46,6 +46,75 @@ def fix_octal_numbers(tokens):
 
         rv.append(new)
         old = new
+
+    return rv
+
+def fix_print(tokens):
+    """
+    This tries to remove Python 2-style print statements.
+    """
+
+    def fix_line(line):
+
+        if len(line) < 2:
+            return line
+
+        if line[0].type != token.NAME:
+            return line
+
+        if line[0].string != "print":
+            return line
+
+        if line[1].exact_type == token.LPAR:
+            return line
+
+        if line[1].exact_type == token.RIGHTSHIFT:
+            newline = line[2:]
+        else:
+            newline = line[1:]
+
+        # Replace the print statement 0, arguments.
+        old = line[0]
+        newline.insert(0, tokenize.TokenInfo(token.NUMBER, "0", old.start, old.start, old.line))
+        newline.insert(1, tokenize.TokenInfo(token.OP, ",", old.end, old.end, old.line))
+
+        return newline
+
+    rv = [ ]
+    line = [ ]
+
+    for i in tokens:
+
+        if not line:
+            if i.exact_type == token.NL:
+                rv.append(i)
+                continue
+
+            if i.exact_type == token.INDENT:
+                rv.append(i)
+                continue
+
+            if i.exact_type == token.DEDENT:
+                rv.append(i)
+                continue
+
+            if i.exact_type == token.ENDMARKER:
+                rv.append(i)
+                continue
+
+            if i.exact_type == token.ENCODING:
+                rv.append(i)
+                continue
+
+        line.append(i)
+
+        if i.type != token.NEWLINE:
+            continue
+
+        rv.extend(fix_line(line))
+        line = [ ]
+
+    rv.extend(fix_line(line))
 
     return rv
 
@@ -67,11 +136,12 @@ def fix_tokens(source):
         tokens = list(tokenize.tokenize(bio.readline))
 
         tokens = fix_octal_numbers(tokens)
+        tokens = fix_print(tokens)
 
         rv = tokenize.untokenize(tokens).decode("utf-8")
         return rv
 
     except Exception as e:
-        # import traceback
-        # traceback.print_exc()
+        import traceback
+        traceback.print_exc()
         raise e
