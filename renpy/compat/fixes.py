@@ -49,6 +49,26 @@ def fix_octal_numbers(tokens):
 
     return rv
 
+def fix_spaceship(tokens):
+    """
+    This fixes the Python 2 spaceship operator (<>).
+    """
+
+    old = tokens[0]
+    rv = [ ]
+
+    for new in tokens:
+
+        if old.exact_type == token.LESS and new.exact_type == token.GREATER:
+            rv.pop()
+            new = tokenize.TokenInfo(token.OP, "!=", old.start, new.end, old.line)
+
+        rv.append(new)
+        old = new
+
+    return rv
+
+
 def fix_print(tokens):
     """
     This tries to remove Python 2-style print statements.
@@ -136,12 +156,13 @@ def fix_tokens(source):
         tokens = list(tokenize.tokenize(bio.readline))
 
         tokens = fix_octal_numbers(tokens)
+        tokens = fix_spaceship(tokens)
         tokens = fix_print(tokens)
 
         rv = tokenize.untokenize(tokens).decode("utf-8")
         return rv
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        # import traceback
+        # traceback.print_exc()
         raise e
