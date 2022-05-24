@@ -925,7 +925,7 @@ Nearrect takes the following properties:
 `focus`
     If given, this should be a string. This string is passed to the equivalent of
     :func:`GetFocusRect` to find the rectangle. If a focus rectangle with that
-    name is not found, the child is rendered.
+    name is found, the child is rendered.
 
     Passing "tooltip" to this uses the location of the last displayable that
     was focused while displaying a tooltip.
@@ -938,6 +938,10 @@ It also takes:
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
 
+If you provided `focus` to your nearrect, it should only be added to the screen when
+the appropriate focus has been captured. To check that use the :func:`GetFocusRect`
+function.
+
 Nearrect differes from the other layouts in that it positions its child near
 the given rectangle, rather than inside it. The child is first rendered with
 the full width available, and the maximum of the height above and height below
@@ -945,7 +949,7 @@ the rectangle. The y position is then computed as followed.
 
 * If the child will fit above the rectangle and `prefer_top` is given, the child
   is positioned directly abover the rectangle.
-* Otherwise, if the child can fit beklow the rectangle, it's positioned directly
+* Otherwise, if the child can fit below the rectangle, it's positioned directly
   below the rectangle.
 * Otherwise, the child is positioned directly above the rectangle.
 
@@ -983,7 +987,8 @@ One use of nearrect is for dropdown menus::
         # All sorts of other screen elements could be here, but the nearrect needs
         # be at the top level, and the last thing show, apart from its child.
 
-        # If a focus has been captured, display the dropdown.
+        # Only if the focus has been captured, display the dropdown.
+        # You could also use showif instead of basic if
         if GetFocusRect("diff_drop"):
 
             # If the player clicks outside the frame, dismiss the dropdown.
