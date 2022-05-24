@@ -2292,6 +2292,9 @@ class NearRect(Container):
             rect = self.parent_rect
 
         if rect is None:
+            if renpy.config.developer:
+                raise Exception("NearRect is being displayed without focus rect.")
+
             self.offsets = [ (0, 0) ] # type: ignore
 
             return rv
