@@ -734,6 +734,28 @@ init -1500 python:
             renpy.clear_capture_focus(self.name)
             renpy.restart_interaction()
 
+    @renpy.pure
+    class ToggleFocus(Action, DictEquality):
+        """
+        :doc: focus_action
+
+        If the focus exist, clears it, otherwise captures it.
+        """
+
+        def __init__(self, name="default"):
+            self.name = name
+
+        def __call__(self):
+            name = self.name
+
+            if renpy.get_focus_rect(name) is not None:
+                renpy.clear_capture_focus(name)
+
+            else:
+                renpy.capture_focus(name)
+
+            renpy.restart_interaction()
+
     def GetFocusRect(name="default"):
         """
         :doc: focus_action
