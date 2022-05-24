@@ -143,9 +143,9 @@ def fix_print(tokens):
 def fix_tokens(source):
     """
     This applies fixes that will help python 2 code run under python 3. Not all
-    source will be fixed, but this will attempt to handle common issues.
+    problem will be fixed, but this will attempt to handle common issues.
 
-    These are fixes that apply at the Python level.
+    These are fixes that apply at the source code level.
     """
 
     try:
@@ -187,12 +187,17 @@ class ReorderGlobals(ast.NodeTransformer):
     def visit_FunctionDef(self, n):
 
         old_globals = self.globals
+
         try:
+            n = self.generic_visit(n)
+
             new_globals = list(self.globals)
             new_globals.sort()
 
-            n = self.generic_visit(n)
-            n.body.insert(0, ast.Global(names=new_globals)) # type: ignore
+            if new_globals:
+                n.body.insert(0, ast.Global(names=new_globals)) # type: ignore
+
+            return n
         finally:
             self.globals = old_globals
 
@@ -202,7 +207,7 @@ reorder_globals = ReorderGlobals()
 def fix_ast(tree):
     """
     This applies fixes that will help python 2 code run under python 3. Not all
-    source will be fixed, but this will attempt to handle common issues.
+    problems will be fixed, but this will attempt to handle common issues.
 
     These are fixes that apply at the AST level.
     """
@@ -211,6 +216,7 @@ def fix_ast(tree):
         return tree
 
     try:
+
         tree = reorder_globals.visit(tree)
         return tree
 
