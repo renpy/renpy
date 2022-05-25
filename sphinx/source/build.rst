@@ -146,8 +146,18 @@ renpy
     engine files. (Linux, Macintosh, and Windows.)
 android
     These files will be included in Android builds.
+
+This set of valid file lists can be expanded by passing
+:func:`build.classify` new names as its ``file_list`` argument.
+
+Files can also be classified in archives. By default, the "archive"
+archive is declared:
+
 archive
     These files will be included in the archive.rpa archive.
+
+The set of archives can also be expanded, using the :func:`build.archive`
+function.
 
 Files that are not otherwise classified are placed in the "all" file
 list.
@@ -196,6 +206,13 @@ Say we wanted to build a normal version of our game, and one
 containing bonus material. We could classify the bonus files in to a
 "bonus" file list, and then declare an all-premium package with::
 
+    # Declare a new archive belonging to a new "bonus" file list.
+    build.archive("bonus_archive", "bonus")
+
+    # Put the bonus files into the new archive.
+    build.classify("game/bonus/**", "bonus_archive")
+
+    #  Declare the package.
     build.package("all-premium", "zip", "windows mac linux all bonus")
 
 Supported package types are "zip" and "tar.bz2" to generate files in
