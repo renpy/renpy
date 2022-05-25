@@ -784,19 +784,32 @@ all_channels = [ ]
 channels = { }
 
 
-def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True, movie=False, framedrop=True):
+def register_channel(name,
+                     mixer=None,
+                     loop=None,
+                     stop_on_mute=True,
+                     tight=False,
+                     file_prefix="",
+                     file_suffix="",
+                     buffer_queue=True,
+                     movie=False,
+                     framedrop=True):
     """
     :doc: audio
+    :args: (name, mixer, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True, movie=False, framedrop=True)
 
     This registers a new audio channel named `name`. Audio can then be
     played on the channel by supplying the channel name to the play or
     queue statements.
 
+    `name`
+        The name of the channel.
+
     `mixer`
-        The name of the mixer the channel uses. By default, Ren'Py
-        knows about the "music", "sfx", and "voice" mixers. Using
-        other names is possible, but may require changing the
-        preferences screens.
+        The name of the mixer the channel uses. By default, Ren'Py knows about
+        the "music", "sfx", and "voice" mixers. Using other names is possible,
+        and will create the mixer if it doesn't already exist, but making new
+        mixers reachable by the player requires changing the preferences screens.
 
     `loop`
         If true, sounds on this channel loop by default.

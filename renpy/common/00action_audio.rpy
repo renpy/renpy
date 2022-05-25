@@ -136,7 +136,8 @@ init -1500 python:
 
         `mixer`
             The mixer to set the volume of. A string, usually one of
-            "music", "sfx", or "voice".
+            "main", "music", "sfx", or "voice". See :ref:`volume` for
+            more information about mixers.
         `value`
             The value to set the volume to. A number between 0.0 and 1.0,
             inclusive.
@@ -163,8 +164,7 @@ init -1500 python:
 
         `mixer`
             Either a single string giving a mixer name, or a list of strings
-            giving a list of mixers. The strings should be mixer names, usually
-            "music", "sfx", or "voice".
+            giving a list of mixers. The strings should be mixer names.
 
         `mute`
             True to mute the mixer, False to ummute it.
@@ -200,8 +200,7 @@ init -1500 python:
 
         `mixer`
             Either a single string giving a mixer name, or a list of strings
-            giving a list of mixers. The strings should be mixer names, usually
-            "music", "sfx", or "voice".
+            giving a list of mixers. The strings should be mixer names.
         """
 
 
