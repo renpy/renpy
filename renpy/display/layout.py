@@ -2264,13 +2264,12 @@ class NearRect(Container):
         room.
     """
 
-    def __init__(self, child=None, rect=None, focus=None, prefer_top=False, **properties):
+    def __init__(self, child=None, rect=None, focus=None, prefer_top=False, replaces=None, **properties):
 
         super(NearRect, self).__init__(**properties)
 
         if focus is not None:
             rect = renpy.display.focus.get_focus_rect(focus)
-
 
         if (focus is None) and (rect is None):
             raise Exception("A NearRect requires either a focus or a rect parameter.")
@@ -2279,21 +2278,44 @@ class NearRect(Container):
         self.focus_rect = focus
         self.prefer_top = prefer_top
 
+        if replaces is not None:
+            self.old_parent_rect = replaces.old_parent_rect
+            self.hide_parent_rect = replaces.hide_parent_rect
+        else:
+            self.old_parent_rect = None
+            self.hide_parent_rect = None
+
         if child is not None:
             self.add(child)
+
+    def per_interact(self):
+
+        if self.focus_rect is None:
+            return
+
+        rect = renpy.display.focus.get_focus_rect(self.focus_rect)
+
+        if self.parent_rect != rect:
+            renpy.display.render.redraw(self, 0)
 
     def render(self, width, height, st, at):
 
         rv = renpy.display.render.Render(width, height)
 
         if self.focus_rect:
-            rect = renpy.display.focus.get_focus_rect(self.focus_rect)
-        else:
-            rect = self.parent_rect
+            self.parent_rect = renpy.display.focus.get_focus_rect(self.focus_rect)
+
+        if (self.parent_rect is not None) and (self.old_parent_rect is None):
+            self.child.set_transform_event("show")
+        elif (self.parent_rect is None) and (self.old_parent_rect is not None):
+            self.child.set_transform_event("hide")
+            self.hide_parent_rect = self.old_parent_rect
+
+        self.old_parent_rect = self.parent_rect
+
+        rect = self.parent_rect or self.hide_parent_rect
 
         if rect is None:
-            if renpy.config.developer:
-                raise Exception("NearRect is being displayed without focus rect.")
 
             self.offsets = [ (0, 0) ] # type: ignore
 
@@ -2308,6 +2330,12 @@ class NearRect(Container):
         # Render thje child, and get its size.
         cr = renpy.display.render.render(self.child, avail_w, avail_h, st, at)
         cw, ch = cr.get_size()
+
+        if isinstance(self.child, renpy.display.motion.Transform):
+            if self.child.hide_response:
+                self.hide_parent_rect = None
+        else:
+            self.hide_parent_rect = None
 
         # Work out the placement.
         xpos, _ypos, xanchor, _yanchor, xoffset, yoffset, _subpixel = self.child.get_placement()
@@ -2353,3 +2381,15 @@ class NearRect(Container):
         self.offsets = [ (layout_x, layout_y) ]
 
         return rv
+
+    def event(self, ev, x, y, st):
+        if self.parent_rect is not None:
+            return super(NearRect, self).event(ev, x, y, st)
+        else:
+            return None
+
+    def _tts(self):
+        if self.parent_rect is not None:
+            return self._tts_common()
+        else:
+            return ""

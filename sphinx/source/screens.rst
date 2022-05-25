@@ -938,17 +938,14 @@ It also takes:
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
 
-If you provided `focus` to your nearrect, it should only be added to the screen when
-the appropriate focus has been captured. To check that use the :func:`GetFocusRect`
-function.
 
-Nearrect differes from the other layouts in that it positions its child near
+Nearrect differs from the other layouts in that it positions its child near
 the given rectangle, rather than inside it. The child is first rendered with
 the full width available, and the maximum of the height above and height below
 the rectangle. The y position is then computed as followed.
 
 * If the child will fit above the rectangle and `prefer_top` is given, the child
-  is positioned directly abover the rectangle.
+  is positioned directly above the rectangle.
 * Otherwise, if the child can fit below the rectangle, it's positioned directly
   below the rectangle.
 * Otherwise, the child is positioned directly above the rectangle.
@@ -960,6 +957,9 @@ of the rectangle, and in the case of a floating point number, the width.
 
 At the end of positioning, the :propref:`xoffset` and :propref:`yoffset`
 properties are applied as normal.
+
+If the child of the nearrect is a transform, the transform is given ``show``
+and ``hide`` events. However, the position will change instantly.
 
 One use of nearrect is for dropdown menus::
 

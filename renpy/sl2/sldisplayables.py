@@ -511,7 +511,7 @@ Positional("event")
 Keyword("action")
 
 
-DisplayableParser("nearrect", renpy.display.layout.NearRect, "default", 1)
+DisplayableParser("nearrect", renpy.display.layout.NearRect, "default", 1, replaces=True)
 Keyword("rect")
 Keyword("focus")
 Keyword("prefer_top")
