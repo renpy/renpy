@@ -2311,9 +2311,7 @@ class NearRect(Container):
         rect = self.parent_rect or self.hide_parent_rect
 
         if rect is None:
-
             self.offsets = [ (0, 0) ] # type: ignore
-
             return rv
 
         px, py, pw, ph = rect
@@ -2331,6 +2329,14 @@ class NearRect(Container):
                 self.hide_parent_rect = None
         else:
             self.hide_parent_rect = None
+
+        # The child might have hidden itself, so avoid showing the child if
+        # it hasn't changed.
+        rect = self.parent_rect or self.hide_parent_rect
+
+        if rect is None:
+            self.offsets = [ (0, 0) ] # type: ignore
+            return rv
 
         # Work out the placement.
         xpos, _ypos, xanchor, _yanchor, xoffset, yoffset, _subpixel = self.child.get_placement()
