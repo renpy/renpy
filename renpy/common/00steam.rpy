@@ -319,7 +319,7 @@ init -1499 python in _renpysteam:
         :doc: steam_overlay
 
         Sets the position of the steam overlay. `Position` should be one of
-        _renpysteam.POSTION_TOP_LEFT, .POSITION_TOP_RIGHT, .POSITION_BOTTOM_LEFT,
+        _renpysteam.POSITION_TOP_LEFT, .POSITION_TOP_RIGHT, .POSITION_BOTTOM_LEFT,
         or .POSITION_BOTTOM_RIGHT.
         """
 
@@ -490,7 +490,7 @@ init -1499 python in _renpysteam:
 
         from ctypes import c_uint, c_ulonglong, create_string_buffer, byref
 
-        path = create_strng_buffer(4096)
+        path = create_string_buffer(4096)
         size = c_ulonglong()
         timestamp = c_int()
 
