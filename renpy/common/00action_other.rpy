@@ -724,6 +724,33 @@ init -1500 python:
             renpy.restart_interaction()
 
     @renpy.pure
+    class ToggleFocus(Action, DictEquality):
+        """
+        :doc: focus_action
+
+        If the focus rectangle exists, clears it, otherwise captures it.
+
+        `name`
+            The name of the focus rectangle to store. This should be a string.
+            The name "tooltip" is special, as it is automatically captured
+            when the tooltip is changed.
+        """
+
+        def __init__(self, name="default"):
+            self.name = name
+
+        def __call__(self):
+            name = self.name
+
+            if renpy.get_focus_rect(name) is not None:
+                renpy.clear_capture_focus(name)
+
+            else:
+                renpy.capture_focus(name)
+
+            renpy.restart_interaction()
+
+    @renpy.pure
     class ClearFocus(Action, DictEquality):
         """
         :doc: focus_action

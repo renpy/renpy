@@ -222,7 +222,8 @@ The rectangles aside of which the nearrect places things can be captured by
 the new :func:`CaptureFocus` action, which captures the location of the current
 button on the screen. After being captured, the :func:`GetFocusRect` function
 can get the focus rectangle, and the :func:`ClearFocus` can clear the
-captured focus.
+captured focus,  and the :func:`ToggleFocus` action
+captures and clears focus based on the current focus state.
 
 ATL and Transforms
 ------------------
