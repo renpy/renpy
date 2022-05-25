@@ -1077,8 +1077,8 @@ class Lexer(object):
         old_pos = self.pos
         c = self.text[self.pos]
 
-        # Allow unicode and raw strings.
-        for mod in ('u', 'r'):
+        # Allow unicode, raw, and formatted strings.
+        for mod in ('u', 'r', 'f'):
             if c != mod:
                 continue
 
