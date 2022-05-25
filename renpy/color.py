@@ -415,7 +415,8 @@ class Color(tuple):
         :doc: color method
 
         Rotates this color's hue by `rotation`, and returns the new Color. `rotation`
-        is a fraction of a full rotation, to convert degrees divide by 360.0.
+        is a fraction of a full rotation (between 0.0 and 1.0). Divide by 360.0 to
+        convert to degrees.
         """
 
         h, l, s = self.hls
