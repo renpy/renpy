@@ -354,7 +354,7 @@ def run_periodic(var, st):
         for i in var:
             v = run_periodic(i, st)
 
-            if rv is None or v < rv:
+            if (v is not None) and (rv is None or v < rv):
                 rv = v
 
         return rv
