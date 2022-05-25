@@ -290,20 +290,24 @@ init -1500 python:
 
     #########################################################################
 
-    def GetTooltip(screen=None):
+    def GetTooltip(screen=None, last=False):
         """
         :doc: get_tooltip
 
         Returns the tooltip of the currently focused displayable, or None
-        if no displatable is focused.
+        if no displayable is focused.
 
         `screen`
             If not None, this should be the name or tag of a screen. If
             given, this function only returns the tooltip if the focused
             displayable is part of the screen.
+
+        `last`
+            If true, returns the last non-None value this function would
+            have returned.
         """
 
-        return renpy.display.focus.get_tooltip(screen)
+        return renpy.display.focus.get_tooltip(screen, last)
 
 
     class __TooltipAction(Action, FieldEquality):

@@ -138,6 +138,12 @@ argument = None
 # The screen of the currently focused widget.
 screen_of_focused = None
 
+# The names of the current focused screen.
+screen_of_focused_names = set()
+
+# The names of the last focused screen.
+screen_of_last_focused_names = set()
+
 # The widget currently grabbing the input, if any.
 grab = None
 
@@ -156,22 +162,32 @@ pending_focus_type = "mouse"
 # The current tooltip and tooltip screen.
 tooltip = None
 
+# The last tooltip that was not None.
+last_tooltip = None
+
 # Overrides the currently focused displayable.
 override = None
 
 
 def set_focused(widget, arg, screen):
     global argument
-    argument = arg
-
     global screen_of_focused
+    global screen_of_focused_names
+    global tooltip
+    global last_tooltip
+    global screen_of_last_focused_names
+
+    argument = arg
     screen_of_focused = screen
+
+    if screen is not None:
+        screen_of_focused_names = { screen.screen_name[0], screen.tag }
+    else:
+        screen_of_focused_names = set()
 
     renpy.game.context().scene_lists.focused = widget
 
     renpy.display.tts.displayable(widget)
-
-    global tooltip
 
     # Figure out the tooltip.
 
@@ -184,6 +200,10 @@ def set_focused(widget, arg, screen):
         tooltip = new_tooltip
         capture_focus("tooltip")
         renpy.exports.restart_interaction()
+
+        if tooltip is not None:
+            last_tooltip = tooltip
+            screen_of_last_focused_names = screen_of_focused_names
 
 
 def get_focused():
@@ -206,22 +226,25 @@ def get_mouse():
         return focused.style.mouse
 
 
-def get_tooltip(screen=None):
+def get_tooltip(screen=None, last=False):
     """
     Gets the tooltip information.
     """
 
     if screen is None:
-        return tooltip
+        if last:
+            return last_tooltip
+        else:
+            return tooltip
 
-    if screen_of_focused is None:
-        return None
 
-    if screen_of_focused.screen_name[0] == screen:
-        return tooltip
+    if last:
+        if screen in screen_of_last_focused_names:
+            return last_tooltip
 
-    if screen_of_focused.tag == screen:
-        return tooltip
+    else:
+        if screen in screen_of_focused_names:
+            return tooltip
 
     return None
 
