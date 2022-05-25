@@ -1245,9 +1245,12 @@ call_screen_roll_forward = False
 # displayed during a choice menu.
 choice_empty_window = None
 
-# The encoiding that's used by renpy.open_file by default. False
+# The encoding that's used by renpy.open_file by default. False
 # means to use binary mode.
 open_file_encoding = os.environ.get("RENPY_OPEN_FILE_ENCODING", False)
+
+# A callback that can modify the gl2 window flags.
+gl2_modify_window_flags = None
 
 del os
 del collections
