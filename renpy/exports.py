@@ -3319,13 +3319,13 @@ def variant(name):
     """
     :doc: screens
 
-    Returns true if a `name` is a screen variant that can be chosen
-    by Ren'Py. See :ref:`screen-variants` for more details. This function
-    can be used as the condition in a Python if statement to set up the
-    appropriate styles for the selected screen variant.
+    Returns true if `name` is a screen variant that corresponds to the
+    context in which Ren'Py is currently executing. See :ref:`screen-variants`
+    for more details. This function can be used as the condition in an
+    if statement to switch behavior based on the selected screen variant.
 
     `name` can also be a list of variants, in which case this function
-    returns True if any of the variants is selected.
+    returns True if any of the variants would.
     """
 
     if isinstance(name, basestring):
@@ -3786,9 +3786,9 @@ def write_log(s, *args):
 
 def predicting():
     """
-    :doc: screens
+    :doc: other
 
-    Returns true if Ren'Py is currently predicting the screen.
+    Returns true if Ren'Py is currently in a predicting phase.
     """
 
     return renpy.display.predict.predicting

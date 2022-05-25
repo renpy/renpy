@@ -378,6 +378,13 @@ The :var:`config.default_attribute_callbacks` variable allows a game to
 specify default attributes for a tag that are used when other attributes
 do not conflict.
 
+Removed Features
+----------------
+
+Ren'Py used to support a very old system (the ``ui`` system) allowing the
+creation of screens as Python functions. In the current state of Ren'Py, this
+system is obsolete and very much under-optimized. While old games using it will
+continue to be supported, the system has been removed from the documentation.
 
 Other Changes
 -------------
