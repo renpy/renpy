@@ -2279,10 +2279,8 @@ class NearRect(Container):
         self.prefer_top = prefer_top
 
         if replaces is not None:
-            self.old_parent_rect = replaces.old_parent_rect
             self.hide_parent_rect = replaces.hide_parent_rect
         else:
-            self.old_parent_rect = None
             self.hide_parent_rect = None
 
         if child is not None:
@@ -2295,23 +2293,20 @@ class NearRect(Container):
 
         rect = renpy.display.focus.get_focus_rect(self.focus_rect)
 
+        if (rect is not None) and (self.parent_rect is None):
+            self.child.set_transform_event("show")
+        elif (rect is None) and (self.parent_rect is not None):
+            self.child.set_transform_event("hide")
+            self.hide_parent_rect = self.parent_rect
+
         if self.parent_rect != rect:
+            self.parent_rect = rect
             renpy.display.render.redraw(self, 0)
+
 
     def render(self, width, height, st, at):
 
         rv = renpy.display.render.Render(width, height)
-
-        if self.focus_rect:
-            self.parent_rect = renpy.display.focus.get_focus_rect(self.focus_rect)
-
-        if (self.parent_rect is not None) and (self.old_parent_rect is None):
-            self.child.set_transform_event("show")
-        elif (self.parent_rect is None) and (self.old_parent_rect is not None):
-            self.child.set_transform_event("hide")
-            self.hide_parent_rect = self.old_parent_rect
-
-        self.old_parent_rect = self.parent_rect
 
         rect = self.parent_rect or self.hide_parent_rect
 
