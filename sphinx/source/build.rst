@@ -299,27 +299,28 @@ visual novel.
 
 **Windows**
 
-* Version: Windows Vista or higher.
-* CPU: 2.0 GHz Core 2 Duo
+* Version: Windows 7 or higher.
+* CPU: 2.0 Ghz 64-bit Intel-compatible
 * RAM: 2.0 GB
-* Graphics: OpenGL 2.0 or DirectX 9.0c
+* Graphics: OpenGL 3.0 or DirectX 11
 
 **macOS**
 
 * Version: 10.10+
-* CPU: 2.0 GHz Core 2 Duo (64 bit only)
+* CPU: 2.0 Ghz 64-bit Intel-compatible (Apple silicon supported through Rosetta 2)
 * RAM: 2.0 GB
-* Graphics: OpenGL 2.0
+* Graphics: OpenGL 3.0
 
 **Linux**
 
 * Version: Ubuntu 16.04+
-* CPU: 2.0 GHz Core 2 Duo
+* CPU: 2.0 Ghz 64-bit Intel-compatible
 * RAM: 2.0 GB
-* Graphics: OpenGL 2.0
+* Graphics: OpenGL 3.0
 
 The amount of disk space required is entirely determined by the assets in your
-game, and the amount of CPU and RAM needed may also vary.
+game, and the amount of CPU and RAM needed may also vary. Ren'Py will also run
+under OpenGL 2 with certain extensions available.
 
 
 Build Functions
@@ -399,5 +400,3 @@ The following variables provide further control of the build process:
 
     This is a dictionary mapping strings to strings, that can be used to
     add or override keys in the mac's Info.plist file.
-
-
