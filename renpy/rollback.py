@@ -104,7 +104,7 @@ class AlwaysRollback(renpy.revertable.RevertableObject):
         return self
 
 
-NOROLLBACK_TYPES = tuple() # type: tuple[type, type, type]
+NOROLLBACK_TYPES = tuple() # type: tuple[type, type, type, type, type]
 
 
 def reached(obj, reachable, wait):

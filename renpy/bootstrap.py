@@ -51,7 +51,7 @@ def _setdefaultencoding(name):
     encoding.
     """
 
-sys.setdefaultencoding = _setdefaultencoding
+sys.setdefaultencoding = _setdefaultencoding # type: ignore
 
 
 sys.stdout = old_stdout
