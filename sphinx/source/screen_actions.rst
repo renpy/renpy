@@ -86,7 +86,10 @@ These are other actions, not found anywhere else.
 
 .. include:: inc/other_action
 
-.. include:: inc/language_action
+Additional actions are available in other pages of this documentation, such
+as :class:`Language`, :class:`Replay` and :class:`EndReplay`,
+:class:`gui.SetPreference` and :class:`gui.TogglePreference`,
+:class:`StylePreference`, and the :ref:`voice actions <voice-actions>`.
 
 
 .. _bar-values:
