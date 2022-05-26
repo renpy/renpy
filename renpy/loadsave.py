@@ -518,6 +518,9 @@ def force_autosave(take_screenshot=False, block=False):
 
     global autosave_thread
 
+    if not renpy.config.has_autosave:
+        return
+
     if renpy.game.after_rollback or renpy.exports.in_rollback():
         return
 
