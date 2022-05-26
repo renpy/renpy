@@ -1,4 +1,4 @@
-translate schinese strings:
+﻿translate schinese strings:
 
     # renpy/common/00console.rpy:492
     old "Press <esc> to exit console. Type help for help.\n"

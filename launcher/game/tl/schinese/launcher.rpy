@@ -1,4 +1,4 @@
-translate schinese strings:
+﻿translate schinese strings:
 
     # game/about.rpy:39
     old "[version!q]"

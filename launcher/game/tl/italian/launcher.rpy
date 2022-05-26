@@ -1,4 +1,4 @@
-translate italian strings:
+﻿translate italian strings:
     # game/new_project.rpy:77
     old "{#language name and font}"
     new "Italiano"

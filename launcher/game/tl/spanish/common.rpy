@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # 00action_file.rpy:26
     old "{#weekday}Monday"
@@ -765,7 +765,7 @@ translate spanish strings:
     # renpy/common/00preferences.rpy:493
     old "high contrast text"
     new "texto de alto contraste"
-    
+
     # renpy/common/00preferences.rpy:511
     old "audio when minimized"
     new "audio cuando está minimizado"

@@ -1,4 +1,4 @@
-translate arabic strings:
+﻿translate arabic strings:
     # game/new_project.rpy:77
     old "{#language name and font}"
     new "{font=DejaVuSans.ttf}العربية{/font}"

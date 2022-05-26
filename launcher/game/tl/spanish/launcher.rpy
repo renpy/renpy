@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
     # game/new_project.rpy:77
     old "{#language name and font}"
     new "{font=fonts/Roboto-Light.ttf}Español{/font}"
@@ -2008,7 +2008,7 @@ translate spanish strings:
     # game/web.rpy:344
     old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
     new "Restauraremos el soporte en una versión futura de Ren'Py 8. Hasta entonces, use Ren'Py 7 para soporte web."
-    
+
     # game/preferences.rpy:104
     old "General"
     new "General"
@@ -2052,7 +2052,7 @@ translate spanish strings:
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
     new "Nightly (Ren'Py 7, Python 2)"
-    
+
     # game/preferences.rpy:327
     old "{#in language font}Welcome! Please choose a language"
     new "{font=fonts/Roboto-Light.ttf}¡Bienvenido! Por favor elige un idioma{/font}"

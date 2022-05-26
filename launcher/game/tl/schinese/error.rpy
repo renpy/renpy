@@ -1,4 +1,4 @@
-translate schinese strings:
+﻿translate schinese strings:
 
     # renpy/common/00gltest.rpy:89
     old "Renderer"

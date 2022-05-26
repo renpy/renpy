@@ -1,4 +1,4 @@
-translate german strings:
+﻿translate german strings:
     # game/new_project.rpy:77
     old "{#language name and font}"
     new "Deutsch"
@@ -1198,7 +1198,6 @@ translate german strings:
     # updater.rpy:195
     old "Proceed"
     new "Fortsetzen"
-# TODO: Translation updated at 2022-05-24 14:08
 
 translate german strings:
 

@@ -1,4 +1,4 @@
-translate schinese strings:
+﻿translate schinese strings:
 
     # gui/game/screens.rpy:9
     old "## Styles"
