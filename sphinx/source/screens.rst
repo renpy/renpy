@@ -959,7 +959,9 @@ At the end of positioning, the :propref:`xoffset` and :propref:`yoffset`
 properties are applied as normal.
 
 If the child of the nearrect is a transform, the transform is given ``show``
-and ``hide`` events. However, the position will change instantly.
+and ``hide`` events. However, the position will change instantly. Nearrect
+works best on the top of a screen, with transforms and positioning applied
+to its child, rather the nearrect.
 
 One use of nearrect is for dropdown menus::
 
