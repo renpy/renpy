@@ -86,6 +86,8 @@ These are other actions, not found anywhere else.
 
 .. include:: inc/other_action
 
+.. include:: inc/language_action
+
 
 .. _bar-values:
 
