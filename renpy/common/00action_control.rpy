@@ -102,12 +102,17 @@ init -1500 python:
     class Show(Action, DictEquality):
         """
          :doc: control_action
+         :args: (screen, transition=None, *args, **kwargs)
 
          This causes another screen to be shown. `screen` is a string
          giving the name of the screen. The arguments are
          passed to the screen being shown.
 
-         If not None, `transition` is use to show the new screen.
+         If not None, `transition` is used to show the new screen.
+         
+         This action takes the `_layer`, `_zorder` and `_tag` keyword
+         arguments, which have the same meaning as in the
+         :func:`renpy.show_screen` function.
          """
 
 
@@ -143,6 +148,10 @@ init -1500 python:
         the screen is hidden.
 
         If not None, `transition` is use to show and hide the screen.
+         
+         This action takes the `_layer`, `_zorder` and `_tag` keyword
+         arguments, which have the same meaning as in the
+         :func:`renpy.show_screen` function.
         """
 
         args = None
@@ -181,6 +190,10 @@ init -1500 python:
         passed to the screen being shown.
 
         If not None, `transition` is use to show the new screen.
+         
+         This action takes the `_layer`, `_zorder` and `_tag` keyword
+         arguments, which have the same meaning as in the
+         :func:`renpy.show_screen` function.
         """
 
         return Show(screen, transition, _transient=True, *args, **kwargs)
