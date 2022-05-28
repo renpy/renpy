@@ -403,14 +403,14 @@ init python:
     build.classify_renpy("lib/**/*Live2D*", None)
 
     if PY2:
-        build.classify_renpy("lib/py2-linux-armv7l/", "raspi")
-        build.classify_renpy("lib/py2-linux-armv7l/**", "raspi")
+        build.classify_renpy("lib/py2-linux-armv7l/**", "linux_arm")
+        build.classify_renpy("lib/py2-linux-aarch64/**", "linux_arm")
         source_and_binary("lib/py2-**", "binary", "binary")
         source_and_binary("lib/python2**", "binary", "binary")
         build.classify_renpy("renpy2.sh", "binary")
     else:
-        build.classify_renpy("lib/py3-linux-armv7l/", "raspi")
-        build.classify_renpy("lib/py3-linux-armv7l/**", "raspi")
+        build.classify_renpy("lib/py3-linux-armv7l/**", "linux_arm")
+        build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
         source_and_binary("lib/py3-**", "binary", "binary")
         source_and_binary("lib/python3**", "binary", "binary", py='pyc')
         build.classify_renpy("renpy3.sh", "binary")
@@ -426,8 +426,8 @@ init python:
     build.packages = [ ]
 
     build.package("sdk", "zip tar.bz2 dmg", "source binary")
+    build.package("sdkarm", "tar.bz2", "source binary linux_arm")
     build.package("source", "tar.bz2", "source source_only", update=False)
-    build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
     build.package("steam", "zip", "steam", dlc=True)
 
     build.package("jedit", "zip", "jedit", dlc=True)

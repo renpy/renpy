@@ -130,6 +130,8 @@ init -1500 python in build:
 
         # Linux patterns.
         ( "lib/py*-linux-i686/**", "linux_i686"),
+        ( "lib/py*-linux-aarch64/**", "linux_arm"),
+        ( "lib/py*-linux-armv7l/**", "linux_arm"),
         ( "lib/py*-linux-*/**", "linux"),
 
         # Mac patterns.
@@ -392,7 +394,7 @@ init -1500 python in build:
         packages.append(d)
 
     package("pc", "zip", "windows linux renpy all", "PC: Windows and Linux")
-    package("linux", "tar.bz2", "linux renpy all", "Linux")
+    package("linux", "tar.bz2", "linux linux_arm renpy all", "Linux")
     package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh")
     package("win", "zip", "windows renpy all", "Windows")
     package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
