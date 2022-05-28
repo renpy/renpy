@@ -678,7 +678,7 @@ python early hide:
             renpy.with_statement(eval(transition_expr))
 
 
-    def lint_screen(p):
+    def lint_show_call_screen(p):
         is_expression = p.get("expression", False)
 
         name = p["name"]
@@ -691,24 +691,34 @@ python early hide:
             and layer not in renpy.config.layers
             and layer not in renpy.config.top_layers
         ):
-            renpy.error("Screen %s is being shown/hidden on unknown layer %s." % (name, layer))
+            renpy.error("Screen is being shown on unknown layer %s." % layer)
+
+    def lint_hide_screen(p):
+        layer = p.get("layer", None)
+        if (
+            layer is not None
+            and layer not in renpy.config.layers
+            and layer not in renpy.config.top_layers
+        ):
+            renpy.error("Screen is being hidden on unknown layer %s." % layer)
 
 
     renpy.register_statement("show screen",
                               parse=parse_show_call_screen,
                               execute=execute_show_screen,
                               predict=predict_screen,
-                              lint=lint_screen,
+                              lint=lint_show_call_screen,
                               warp=warp_true)
 
     renpy.register_statement("call screen",
                               parse=parse_show_call_screen,
                               execute=execute_call_screen,
                               predict=predict_screen,
-                              lint=lint_screen,
+                              lint=lint_show_call_screen,
                               force_begin_rollback=True)
 
     renpy.register_statement("hide screen",
                               parse=parse_hide_screen,
                               execute=execute_hide_screen,
+                              lint=lint_hide_screen,
                               warp=warp_true)
