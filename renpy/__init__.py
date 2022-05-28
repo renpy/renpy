@@ -179,6 +179,8 @@ elif sys.platform == 'emscripten' or "RENPY_EMSCRIPTEN" in os.environ:
 else:
     linux = True
 
+arch = os.environ.get("RENPY_PLATFORM", "unknown-unknown-unknown").rpartition("-")[2]
+
 # A flag that's true if we're on a smartphone or tablet-like platform.
 mobile = android or ios or emscripten
 
