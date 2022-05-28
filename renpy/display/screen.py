@@ -1236,6 +1236,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
     _tag = kwargs.pop("_tag", None)
     _widget_properties = kwargs.pop("_widget_properties", {})
     _transient = kwargs.pop("_transient", False)
+    _zorder = kwargs.pop("_zorder", None)
 
     name = _screen_name
 
