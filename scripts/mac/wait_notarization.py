@@ -27,6 +27,7 @@ def main():
 
     start = time.time()
     next_check = start + 60
+    failures = 0
 
     while True:
 
@@ -39,7 +40,12 @@ def main():
 
         status = check_notarization()
 
-        now = time.time()
+        try:
+            now = time.time()
+        except Exception as e:
+            failures += 1
+            if failures >= 3:
+                raise e
 
         print(round(time.time() - start), "notarization", status, file=sys.stderr)
 
