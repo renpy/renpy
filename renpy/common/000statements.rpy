@@ -499,6 +499,23 @@ python early hide:
 
         return (name, is_expression)
 
+    def _get_screen_props(p):
+        """
+        Returns screen properties from the parsed data,
+        they keys are prefixed with _ and can be used as arguments
+        to the appropriate functions
+
+        OUT:
+            dict
+        """
+        layer = p.get("layer", None)
+        zorder = p.get("zorder", None)
+        if zorder is not None:
+            zorder = eval(zorder)
+        tag = p.get("tag", None)
+
+        return dict(_layer=layer, _zorder=zorder, _tag=tag)
+
     def warp_true(p):
         return True
 
@@ -516,6 +533,9 @@ python early hide:
 
         predict = True
         transition_expr = None
+        layer = None
+        zorder = None
+        tag = None
 
         while True:
 
@@ -525,25 +545,51 @@ python early hide:
             elif l.keyword('with'):
                 transition_expr = l.require(l.simple_expression)
 
+            elif l.keyword("onlayer"):
+                layer = l.require(l.name)
+
+            elif l.keyword("zorder"):
+                zorder = l.require(l.simple_expression)
+
+            elif l.keyword("as"):
+                tag = l.require(l.name)
+
             else:
                 break
 
         l.expect_eol()
 
-        return dict(name=name, arguments=arguments, predict=predict, transition_expr=transition_expr, expression=expression)
+        return dict(
+            name=name,
+            arguments=arguments,
+            predict=predict,
+            transition_expr=transition_expr,
+            layer=layer,
+            zorder=zorder,
+            tag=tag,
+            expression=expression
+        )
 
     def parse_hide_screen(l):
         # Parse a name
         name, expression = _parse_screen_name(l)
 
         transition_expr = None
+        layer = None
 
-        if l.keyword('with'):
-            transition_expr = l.require(l.simple_expression)
+        while True:
+            if l.keyword('with'):
+                transition_expr = l.require(l.simple_expression)
+
+            elif l.keyword("onlayer"):
+                layer = l.require(l.name)
+
+            else:
+                break
 
         l.expect_eol()
 
-        return dict(name=name, transition_expr=transition_expr, expression=expression)
+        return dict(name=name, transition_expr=transition_expr, layer=layer, expression=expression)
 
     def predict_screen(p):
 
@@ -568,6 +614,9 @@ python early hide:
             args = [ ]
             kwargs = { }
 
+        screen_props = _get_screen_props(p)
+        kwargs.update(screen_props)
+
         renpy.predict_screen(name, *args, **kwargs)
 
     def execute_show_screen(p):
@@ -580,6 +629,9 @@ python early hide:
         else:
             args = [ ]
             kwargs = { }
+
+        screen_props = _get_screen_props(p)
+        kwargs.update(screen_props)
 
         transition_expr = p.get("transition_expr", None)
         if transition_expr is not None:
@@ -606,6 +658,9 @@ python early hide:
             args = [ ]
             kwargs = { }
 
+        screen_props = _get_screen_props(p)
+        kwargs.update(screen_props)
+
         store._return = renpy.call_screen(name, *args, **kwargs)
 
     def execute_hide_screen(p):
@@ -615,20 +670,28 @@ python early hide:
         if transition_expr is not None:
             renpy.with_statement(None)
 
-        renpy.hide_screen(name)
+        layer = p.get("layer", None)
+
+        renpy.hide_screen(name, layer=layer)
 
         if transition_expr is not None:
             renpy.with_statement(eval(transition_expr))
 
 
     def lint_screen(p):
-        # Don't lint if it's an expression
-        if p.get("expression", False):
-            return
+        is_expression = p.get("expression", False)
 
         name = p["name"]
-        if not renpy.has_screen(name):
+        if not is_expression and not renpy.has_screen(name):
             renpy.error("Screen %s does not exist." % name)
+
+        layer = p.get("layer", None)
+        if (
+            layer is not None
+            and layer not in renpy.config.layers
+            and layer not in renpy.config.top_layers
+        ):
+            renpy.error("Screen %s is being shown/hidden on unknown layer %s." % (name, layer))
 
 
     renpy.register_statement("show screen",
