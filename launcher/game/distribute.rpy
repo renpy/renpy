@@ -604,6 +604,17 @@ change_renpy_executable()
             # Rename the executable-like files.
             self.rename()
 
+            # Sign the mac app once on Ren'Py.
+            if self.build["renpy"]:
+                fl = self.file_lists['binary']
+                app, rest = fl.split_by_prefix(self.app)
+                if app:
+                    app = self.sign_app(app, macapp)
+                    fl = FileList.merge([ app, rest ])
+                    self.file_lists['binary'] = fl
+                else:
+                    raise Exception("No mac app found.")
+
             # The time of the update version.
             self.update_version = int(time.time())
 
@@ -1303,12 +1314,14 @@ change_renpy_executable()
             if macapp:
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
 
-            app, rest = fl.split_by_prefix(self.app)
+            if not self.build["renpy"]:
 
-            if app:
-                app = self.sign_app(app, macapp)
+                app, rest = fl.split_by_prefix(self.app)
 
-                fl = FileList.merge([ app, rest ])
+                if app:
+                    app = self.sign_app(app, macapp)
+
+                    fl = FileList.merge([ app, rest ])
 
             self.file_list_cache[key] = fl
             return fl.copy()
