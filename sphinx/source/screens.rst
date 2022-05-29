@@ -2136,7 +2136,7 @@ to the clauses of the :ref:`show-statement`:
 
 ``zorder``
     The zorder to show the screen on. If not specified, defaults to
-    the zorder associated with the screen.If that's not specified,
+    the zorder associated with the screen. If that's not specified,
     it is 0 by default.
 
 ``expression``
@@ -2155,15 +2155,16 @@ to the clauses of the :ref:`show-statement`:
 
         show screen clock_screen with dissolve
 
-The show screen statement takes an optional ``nopredict`` keyword, that
-prevents screen prediction from occurring. During screen prediction,
-arguments to the screen are evaluated. Please ensure that evaluating
-the screen arguments does not cause unexpected side-effects to occur.
+``nopredict``
+    The ``nopredict`` keyword doesn't take a value. It prevents screen prediction
+    from occurring. During screen prediction, arguments to the screen are evaluated.
+    Please ensure that evaluating the screen arguments does not cause unexpected
+    side-effects to occur.
 
-.. warning::
+    .. warning::
 
-    If evaluating the arguments to a screen causes side-effects to occur,
-    your game may behave in unexpected ways.
+        If evaluating the arguments to a screen causes side-effects to occur,
+        your game may behave in unexpected ways.
 
 Screens shown in this way are displayed until they are explicitly
 hidden. This allows them to be used for overlay purposes.
@@ -2210,8 +2211,8 @@ layer.
 The with clause is interpreted the same way the ``with`` clause of a
 :ref:`show-statement` is.
 
-Similar to the ``show screen`` statement, ``hide screen`` also takes the ``expression`` keyword,
-allowing to use an arbitrary expression as the screen name.
+Similar to the ``show screen`` statement, ``hide screen`` also takes the
+``expression`` keyword, allowing to use an arbitrary expression as the screen name.
 
 ::
 
@@ -2219,26 +2220,49 @@ allowing to use an arbitrary expression as the screen name.
     hide screen clock_screen with dissolve
     hide screen overlay_screen
     $ screen_name = "some_screen"
-    hide screen expression screen_nam
+    hide screen expression screen_name
 
 Call Screen
 -----------
 
 The ``call screen`` statement shows a screen, and then hides it again at
 the end of the current interaction. If the screen returns a value,
-then the value is placed in ``_return``.
+then the value is placed in the global ``_return`` variable.
 
 This can be used to display an imagemap. The imagemap can place a
 value into the ``_return`` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
-The call screen statement takes an optional ``nopredict`` keyword, which
-prevents screen prediction from occurring. During screen prediction,
-arguments to the screen are evaluated. Please ensure that evaluating
-the screen arguments does not cause unexpected side-effects to occur.
+The call screen statement takes various optional clauses, most of them similar to
+those of the :ref:`show-screen-statement`:
 
-In a call screen statement, the ``with`` clause causes a transition
-to occur when the screen is shown.
+``as``
+    The ``as`` clause takes a name. If not specified, it defaults to the
+    tag associated with the screen (see the :ref:`screen-statement`).
+    If that's not specified, it defaults to the name of the screen.
+
+``onlayer``
+    The layer to show the screen on.
+
+``zorder``
+    The zorder to show the screen on. If not specified, defaults to
+    the zorder associated with the screen. If that's not specified,
+    it is 0 by default.
+
+``nopredict``
+    This keyword prevents screen prediction from occurring. During screen prediction,
+    arguments to the screen are evaluated. Please ensure that evaluating
+    the screen arguments does not cause unexpected side-effects to occur.
+
+``expression``
+    Similar to the ``show screen`` statement, ``call screen`` also takes the
+    ``expression`` keyword, allowing to use an arbitrary expression as the screen
+    name. This also comes with the ``pass`` keyword, allowing arguments to be
+    passed to the screen.
+
+``with``
+    In a call screen statement, the ``with`` clause causes a transition
+    to occur when the screen is shown.
 
 Since calling a screen is an interaction, and interactions trigger
 an implicit ``with None``, using a ``with`` statement after the
@@ -2249,9 +2273,6 @@ special keyword argument to the screen, as in the example below.
 
 Other ways of triggering transitions also work, such as the
 ``[ With(dissolve), Return() ]`` action list.
-
-Similar to the ``show screen`` statement, ``call screen`` also takes the ``expression`` keyword,
-allowing to use an arbitrary expression as the screen name.
 
 .. warning::
 
