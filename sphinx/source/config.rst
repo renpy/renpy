@@ -1784,4 +1784,4 @@ Other Vonfiguration Variables
 
 Additional variables are available in other pages of this documentation, such
 as :ref:`nvl_mode`, :ref:`side_image`, :ref:`self_voicing`, :ref:`preferences`
-:ref:`model`, :ref:`achievemen`t and the :ref:`gesture`.
+:ref:`model`, :ref:`achievement` and the :ref:`gesture`.
