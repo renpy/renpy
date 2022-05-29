@@ -20,9 +20,10 @@ codesign --timestamp --verbose -s "$1" "$DMGBASE"
 date
 echo "Submitting for notarization."
 
+# --transport Aspera \
+
 xcrun altool --asc-provider XHTE5H7Z79 -u tom@rothamel.us -p "@keychain:altool"  \
     --notarize-app \
-    --transport Aspera \
     --primary-bundle-id org.renpy.renpy.dmg \
     -f "$DMGBASE"
 
