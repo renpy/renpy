@@ -1778,3 +1778,9 @@ Ren'Py management of the Python garbage collector.
 
     If True, Ren'Py will print to its console and logs information about the
     objects that are triggering collections.
+
+Other Vonfiguration Variables
+-----------------------------
+
+Additional variables are available in other pages of this documentation, such
+as :ref:`nvl_mode <config-variables>`.
