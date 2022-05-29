@@ -1779,9 +1779,9 @@ Ren'Py management of the Python garbage collector.
     If True, Ren'Py will print to its console and logs information about the
     objects that are triggering collections.
 
-Other Vonfiguration Variables
+Other Configuration Variables
 -----------------------------
 
 Additional variables are available in other pages of this documentation, such
 as :ref:`nvl_mode`, :ref:`side_image`, :ref:`self_voicing`, :ref:`preferences`
-:ref:`model`, :ref:`achievement` and the :ref:`gesture`.
+:ref:`model`, :ref:`achievement`, :ref:`live2d` and the :ref:`gesture`.
