@@ -261,3 +261,9 @@ The prefix can then be used to define images::
     image eileen big = "big:eileen happy"
 
 or in any other place where a displayable is required.
+
+See also
+--------
+
+:ref:`displaying-images` : the basics of how to make all these displayables
+appear on the screen.

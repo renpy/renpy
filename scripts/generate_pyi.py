@@ -305,7 +305,7 @@ def main():
 
     packages = set()
 
-    for name in sys.modules:
+    for name in tuple(sys.modules):
         package = name.rpartition(".")[0]
         packages.add(package)
 

@@ -20,8 +20,8 @@ take any arguments. The function is called when the action is
 invoked. If the action returns a value, then the value is returned
 from an interaction.
 
-An action may also be a list of actions, in which case the actions in
-the list are run in order.
+A list of actions can usually be provided in lieu of a single action,
+in which case the actions in the list are run in order.
 
 Control Actions
 ---------------
@@ -91,6 +91,8 @@ as :class:`Language`, :class:`Replay` and :class:`EndReplay`,
 :class:`gui.SetPreference` and :class:`gui.TogglePreference`,
 :class:`StylePreference`, and the :ref:`voice actions <voice-actions>`.
 
+Other actions can be created using the :class:`Action` class.
+
 
 .. _bar-values:
 
@@ -100,7 +102,7 @@ Bar Values
 Bar values are used with bars, to set the bar value, and to allow the bar
 to adjust an underlying property. To create a new bar value, subclass
 the :class:`BarValue` class. All classes that have the `step` keyword also accept
-the `force_step` keyword which behavior is described in :func:`ui.adjustment`.
+the `force_step` keyword whose behavior is described in :func:`ui.adjustment`.
 
 .. include:: inc/value
 

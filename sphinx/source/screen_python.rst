@@ -1,3 +1,5 @@
+.. _screen-python:
+
 ==================
 Screens and Python
 ==================

@@ -65,7 +65,8 @@ Python.
 
 * All strings are now unicode by default (Ren'Py has been forcing this
   for several years), and files are opened in text mode by default.
-  (However, :func:`renpy.file` opens files in binary mode.)
+  (However, :func:`renpy.file` opens files in binary mode. It's been
+  renamed to :func:`renpy.open_file` and can take a default encoding.)
 
 * Many Python modules have been renamed.
 
@@ -114,20 +115,28 @@ will be needed. If for some reason you can't port your game to Ren'Py
 8, please let us know what is holding you back.
 
 
-Platform Support Changes (Ren'Py 8)
------------------------------------
+Platform Support Changes
+------------------------
+
+This release adds support for the 64-bit ARM Linux (linux-aarch64)
+platform. While based on Ubuntu 20.04, this has been tested on Chromebooks,
+and should also work on the 64-bit ARM platform.
+
+The intended way to run Ren'Py games on ARM Linux would be to download
+the new ARM Linux SDK package, place the game in the projects directory,
+and use that to launch the game. If the files from the ARM Linux SDK are
+present when a Linux distribution is made, they will be included, creating
+a game that can be launched on ARM, but this is not the default, for
+size reasons.
 
 With the move to Ren'Py 8, we are removing support for the
 following platforms:
 
 * 32-bit x86 Windows (i686)
 * 32-bit x86 Linux (i686)
-* 32-bit ARM Linux (armv7l)
 
-This reflects the obsolescence of 32-bit computing. These platforms remain
-supported by Ren'Py 7.5, but the effort to port new software to old platforms
-didn't feel justified.
-
+This reflects the obsolescence of 32-bit x86 computing. These platforms remain
+supported by Ren'Py 7.5, but will not be supported by Ren'Py 8.
 
 Web and ChromeOS
 ----------------
@@ -154,6 +163,8 @@ the list of save files without a restart.
 
 When running as an Android application on a ChromeOS device, the "chromeos"
 variant will be selected.
+
+The Ren'Py SDK can be run on ARM Chromebooks.
 
 
 Steam, Steam Deck, and Epic Games Store
@@ -454,6 +465,10 @@ The version of SDL used by Ren'Py has been upgraded to 2.0.20 on non-web
 platforms.
 
 Many translations have been updated.
+
+The jEdit editor has been removed, as the Ren'Py integration was largely
+obsolete. However, if the version from 7.4.0 is unpacked, it should be
+selectable in the launcher.
 
 Versioning
 ----------
