@@ -215,7 +215,10 @@ The show statement takes the following properties:
     Takes an integer. The integer specifies the relative ordering of
     images within a layer, with larger numbers being closer to the
     user. This isn't generally used by Ren'Py games, but can be useful
-    when porting visual novels from other engines.
+    when porting visual novels from other engines. This can also be
+    useful for displaying an image that will be above any zorder-less
+    image displayed afterwards, without the burden of placing it on
+    another layer.
 
 Assuming we have the following images defined::
 
