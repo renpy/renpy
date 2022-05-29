@@ -38,14 +38,19 @@ def main():
 
         time.sleep(next_check - now)
 
-        status = check_notarization()
 
         try:
-            now = time.time()
+            status = check_notarization()
+
         except Exception as e:
+            print("Faile to check notarization status: %r" % e)
             failures += 1
-            if failures >= 3:
+
+            if failures >= 4:
                 raise e
+            else:
+                failures = 0
+                continue
 
         print(round(time.time() - start), "notarization", status, file=sys.stderr)
 
