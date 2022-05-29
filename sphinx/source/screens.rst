@@ -157,15 +157,15 @@ expression. It takes the following properties:
 
 `roll_forward`
     If true, roll forward will be enabled when the screen is used in a
-    ``call screen`` statement. If false, roll forward is disabled, and
-    if None or not given, the value of :var:`config.call_screen_roll_forward`
-    is used.
+    ``call screen`` statement. If false, roll forward is disable, and
+    if None, the value of :var:`config.call_screen_roll_forward` is
+    used.
 
     When roll forwarding from a ``call screen`` statement, return values
     and terminal jumps are preserved, but other side effects will not
-    occur. This means that if the screen only contains :func:`Jump`
+    occur. This means that if the screen consists entirely of :func:`Jump`
     and :func:`Return` actions, it's safe to enable `roll_forward`. Other
-    actions may have side-effects that will not occur during the roll_forward.
+    actions may have side-effects that will not occur duting the `roll_forward`.
 
 ::
 
@@ -2113,25 +2113,47 @@ Screen Statements
 In addition to the screen statement, there are three Ren'Py script
 language statements that involve screens.
 
+.. _show-screen-statement:
+
 Show Screen
 -----------
 
 The ``show screen`` statement causes a screen to be shown. It takes an
-screen name, and an optional Python argument list. If present, the arguments
-are used to initialize the scope of the screen. There are also some
-specific keywords passed to :func:`show_screen` and :func:`call_screen`.
+screen name, a series of optional clauses, and optional Python arguments
+which are passed to the screen. :func:`show_screen` and :func:`call_screen`
+take additional specific keywords.
 
-If the ``expression`` keyword is given, the expression following it will be evaluated
-as the screen name. To pass arguments to the screen with the expression keyword,
-separate the expression and arguments with the ``pass`` keyword.
+The ``show screen`` statement takes the following clauses, some of them similar
+to the clauses of the :ref:`show-statement`:
 
-::
+``as``
+    The ``as`` clause takes a name. If not specified, it defaults to the
+    tag associated with the screen (see the :ref:`screen-statement`).
+    If that's not specified, it defaults to the name of the screen.
 
-    $ screen_name = "my_screen"
-    show screen expression screen_name
-    # Or if you need to pass some arguments
-    show screen expression screen_name pass ("Foo", message="Bar")
+``onlayer``
+    The layer to show the screen on.
 
+``zorder``
+    The zorder to show the screen on. If not specified, defaults to
+    the zorder associated with the screen.If that's not specified,
+    it is 0 by default.
+
+``expression``
+    If the ``expression`` keyword is given, the expression following it will be evaluated
+    as the screen name. To pass arguments to the screen with the expression keyword,
+    separate the expression and arguments with the ``pass`` keyword::
+
+        $ screen_name = "my_screen"
+        show screen expression screen_name
+        # Or if you need to pass some arguments
+        show screen expression screen_name pass ("Foo", message="Bar")
+
+``with``
+    This is interpreted in the same way that the with clause of a ``show``
+    statement is::
+
+        show screen clock_screen with dissolve
 
 The show screen statement takes an optional ``nopredict`` keyword, that
 prevents screen prediction from occurring. During screen prediction,
@@ -2155,18 +2177,38 @@ hidden. This allows them to be used for overlay purposes.
         show rare_screen nopredict
 
 
-The ``show screen`` statement takes a with clause, which is interpreted in the
-same way that the with clause of a ``show`` statement is. ::
-
-    show screen clock_screen with dissolve
-
 Hide Screen
 -----------
 
 The ``hide screen`` statement is used to hide a screen that is currently
-being shown. If the screen is not being shown, nothing happens. The with
-clause is interpreted the same way the ``with`` clause of a show statement
-is.
+being shown. It takes a screen tag. It first tries to find a screen with
+the given tag on the given layer (see the ``onlayer`` clause). If none is
+found, it looks for a screen with that name on the layer, regardless of
+the tag the screen is shown as. If none is found, nothing happens::
+
+    show screen A
+    show screen B as A # B replaces A (which hides it)
+    hide screen C # does nothing
+    hide screen B # does nothing
+    hide screen A # hides B, tagged as A
+
+::
+
+    show screen A as B
+    show screen B as C
+
+    hide screen B
+    # hides the A screen, shown as B
+    # the B screen, shown as C, stays shown
+
+    hide screen B
+    # hides the B screen
+
+It also takes the ``onlayer`` clause, which defaults to the ``screens``
+layer.
+
+The with clause is interpreted the same way the ``with`` clause of a
+:ref:`show-statement` is.
 
 Similar to the ``show screen`` statement, ``hide screen`` also takes the ``expression`` keyword,
 allowing to use an arbitrary expression as the screen name.
@@ -2339,15 +2381,3 @@ An example of defining a screen variant is:
         variant "small"
 
         text "Hello, World." size 30
-
-See also
-========
-
-:ref:`screen-actions` : a comprehensive list of actions and other tools
-to be used with screens.
-
-:ref:`screen-optimization` : some useful ways of making screens as
-efficient as possible.
-
-:ref:`screen-python` : go from using Ren'Py's predefined tools, to
-extending Ren'Py.
