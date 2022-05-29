@@ -2339,3 +2339,15 @@ An example of defining a screen variant is:
         variant "small"
 
         text "Hello, World." size 30
+
+See also
+========
+
+:ref:`screen-actions` : a comprehensive list of actions and other tools
+to be used with screens.
+
+:ref:`screen-optimization` : some useful ways of making screens as
+efficient as possible.
+
+:ref:`screen-python` : go from using Ren'Py's predefined tools, to
+extending Ren'Py.
