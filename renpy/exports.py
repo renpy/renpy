@@ -3127,8 +3127,8 @@ def call_screen(_screen_name, *args, **kwargs):
     If the keyword argument `_with_none` is false, "with None" is not
     run at the end of end of the interaction.
 
-    If the keyword argument `_mode` in kwargs, it will be mode of this
-    interaction, otherwise it will be "screen" mode.
+    If the keyword argument `_mode` is passed, it will be the mode of this
+    interaction, otherwise the mode will be "screen".
     """
 
     mode = "screen"
