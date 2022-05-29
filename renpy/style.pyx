@@ -686,6 +686,7 @@ cpdef build_style(StyleCore s):
         # Build the properties cache.
         if not s.properties:
             s.cache = NULL
+            s.built = True
             return
 
         memset(cache_priorities, 0, sizeof(int) * PREFIX_COUNT * STYLE_PROPERTY_COUNT)
