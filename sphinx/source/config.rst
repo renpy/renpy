@@ -1782,32 +1782,51 @@ Ren'Py management of the Python garbage collector.
 Other Configuration Variables
 -----------------------------
 
-Additional variables are available in other pages of this documentation:
-:var:`config.nvl_layer`
-:var:`config.nvl_list_length`
-:var:`config.nvl_page_ctc`
-:var:`config.nvl_page_ctc_position`
-:var:`config.nvl_paged_rollback`
+Some other pages of this documentation contain and define other configuration
+variables. You can locate them there, in their context.
 
-:var:`config.side_image_only_not_showing`
-:var:`config.side_image_prefix_tag`
-:var:`config.side_image_null`
-:var:`config.side_image_same_transform`
-:var:`config.side_image_change_transform`
+:ref:`nvl_mode`:
+    :var:`config.nvl_layer`
+    :var:`config.nvl_list_length`
+    :var:`config.nvl_page_ctc`
+    :var:`config.nvl_page_ctc_position`
+    :var:`config.nvl_paged_rollback`
 
-:var:`config.descriptive_text_character`
+:ref:`side-images`:
+    :var:`config.side_image_tag`
+    :var:`config.side_image_only_not_showing`
+    :var:`config.side_image_prefix_tag`
+    :var:`config.side_image_null`
+    :var:`config.side_image_same_transform`
+    :var:`config.side_image_change_transform`
 
-:var:`config.default_music_volume`
-:var:`config.default_sfx_volume`
-:var:`config.default_voice_volume`
+:ref:`self-voicing`:
+    :var:`config.descriptive_text_character`
 
-:var:`config.gl2`
-:var:`config.log_gl_shaders`
-:var:`config.gl_blend_func`
+:ref:`preference-variables`:
+    :var:`config.default_music_volume`
+    :var:`config.default_sfx_volume`
+    :var:`config.default_voice_volume`
 
-:var:`config.steam_appid`
+:ref:`model`:
+    :var:`config.gl2`
+    :var:`config.log_gl_shaders`
+    :var:`config.gl_blend_func`
 
-:var:`config.gestures`
-:var:`config.dispatch_gesture`
+:ref:`achievement`:
+    :var:`config.steam_appid`
 
-:var:`config.log_live2d_loading`
+:ref:`gesture`:
+    :var:`config.gestures`
+    :var:`config.dispatch_gesture`
+
+:ref:`live2d`:
+    :var:`config.log_live2d_loading`
+
+:ref:`gui`:
+    :var:`config.thumbnail_height`
+    :var:`config.thumbnail_width`
+
+:ref:`custom-text-tags`:
+    :var:`config.custom_text_tags`
+    :var:`config.self_closing_custom_text_tags`
