@@ -78,6 +78,8 @@ init -1500 python in updater:
     DEFERRED_UPDATE_LOG = os.path.join(config.renpy_base, "update", "log.txt")
 
     def process_deferred_line(l):
+
+
         cmd, _, fn = l.partition(" ")
 
         if cmd == "R":
@@ -94,7 +96,7 @@ init -1500 python in updater:
                 os.unlink(fn)
 
         else:
-            raise Exception("Bad command.")
+            raise Exception("Bad command. %r (%r %r)" % (l, cmd, fn))
 
     def process_deferred():
         if not os.path.exists(DEFERRED_UPDATE_FILE):
@@ -123,7 +125,12 @@ init -1500 python in updater:
                         traceback.print_exc(file=log)
 
             try:
-                os.unlink(DEFERRED_UPDATE_FILE)
+                os.unlink(DEFERRED_UPDATE_FILE + ".old")
+            except:
+                pass
+
+            try:
+                os.rename(DEFERRED_UPDATE_FILE, DEFERRED_UPDATE_FILE + ".old")
             except Exception:
                 traceback.print_exc(file=log)
 
@@ -1298,7 +1305,7 @@ init -1500 python in updater:
 
                 if os.path.exists(i):
                     self.log.write("could not delete file %s" % i)
-                    with open(DEFERRED_UPDATE_FILE, "w") as f:
+                    with open(DEFERRED_UPDATE_FILE, "a") as f:
                         f.write("D " + i + "\r\n")
 
             for i in old_directories:
