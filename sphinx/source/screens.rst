@@ -2189,8 +2189,6 @@ the tag the screen is shown as. If none is found, nothing happens::
 
     show screen A
     show screen B as A # B replaces A (which hides it)
-    hide screen C # does nothing
-    hide screen B # does nothing
     hide screen A # hides B, tagged as A
 
 ::
