@@ -1,3 +1,5 @@
+.. _model:
+
 Model-Based Rendering
 =====================
 
