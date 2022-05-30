@@ -1782,6 +1782,32 @@ Ren'Py management of the Python garbage collector.
 Other Configuration Variables
 -----------------------------
 
-Additional variables are available in other pages of this documentation, such
-as :ref:`nvl_mode`, :ref:`side_image`, :ref:`self_voicing`, :ref:`preferences`
-:ref:`model`, :ref:`achievement`, :ref:`live2d` and the :ref:`gesture`.
+Additional variables are available in other pages of this documentation:
+:var:`config.nvl_layer`
+:var:`config.nvl_list_length`
+:var:`config.nvl_page_ctc`
+:var:`config.nvl_page_ctc_position`
+:var:`config.nvl_paged_rollback`
+
+:var:`config.side_image_only_not_showing`
+:var:`config.side_image_prefix_tag`
+:var:`config.side_image_null`
+:var:`config.side_image_same_transform`
+:var:`config.side_image_change_transform`
+
+:var:`config.descriptive_text_character`
+
+:var:`config.default_music_volume`
+:var:`config.default_sfx_volume`
+:var:`config.default_voice_volume`
+
+:var:`config.gl2`
+:var:`config.log_gl_shaders`
+:var:`config.gl_blend_func`
+
+:var:`config.steam_appid`
+
+:var:`config.gestures`
+:var:`config.dispatch_gesture`
+
+:var:`config.log_live2d_loading`
