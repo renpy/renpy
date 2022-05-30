@@ -1366,6 +1366,9 @@ change_renpy_executable()
                 "app-zip" : (".zip", False, False, False),
                 "app-directory" : ("-app", True, False, False),
                 "app-dmg" : ("-app-dmg", True, True, False),
+
+                "bare-tar.bz2" : (".tar.bz2", False, False, False),
+                "bare-zip" : (".zip", False, False, False),
             }
 
             if format not in FORMATS:
@@ -1454,11 +1457,11 @@ change_renpy_executable()
                 if file_hash:
                     self.build_cache[full_filename] = (file_hash, fl_hash)
 
-            if format == "tar.bz2":
+            if format == "tar.bz2" or format == "bare-tar.bz2":
                 pkg = TarPackage(path, "w:bz2")
             elif format == "update":
                 pkg = UpdatePackage(path, filename, self.destination)
-            elif format == "zip" or format == "app-zip":
+            elif format == "zip" or format == "app-zip" or format == "bare-zip":
                 if self.build['renpy']:
                     pkg = ExternalZipPackage(path)
                 else:

@@ -348,6 +348,12 @@ init -1500 python in build:
                 A directory containing the mac app.
             app-dmg
                 A macintosh drive image containing a dmg. (Mac only.)
+            bare-zip
+                A zip file without :var:`build.directory_name`
+                prepended.
+            bare-tar.bz2
+                A zip file without :var:`build.directory_name`
+                prepended.
 
             The empty string will not build any package formats (this
             makes dlc possible).
