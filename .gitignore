@@ -79,6 +79,8 @@ cache/
 /jedit
 /atom
 /vscode
+.vscode
+.dccache
 
 # Generated source.
 /renpy/vc_version.py

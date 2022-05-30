@@ -79,7 +79,7 @@ translate finnish strings:
 
     # 00gltest.rpy:200
     old "{b}Note:{/b} Microsoft's DirectX web setup program will, by default, install the Bing toolbar. If you do not want this toolbar, uncheck the appropriate box."
-    new "{b}Huomaa:{/b} Microsoftin DirectX verkkoasennusohjelma asentaa, oletusarvoisesti, Bing-työkalupalkin. Jos et halua tätä työkalupalkkia, poista valinta oikeasta laatikosta."
+    new "{b}Huomaa:{/b} Microsoftin DirectX-verkkoasennusohjelma asentaa, oletusarvoisesti, Bing-työkalupalkin. Jos et halua tätä työkalupalkkia, poista valinta oikeasta laatikosta."
 
     # 00gltest.rpy:204
     old "When setup finishes, please click below to restart this program."
