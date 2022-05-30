@@ -95,6 +95,10 @@ init -1500 python in updater:
             if os.path.exists(fn):
                 os.unlink(fn)
 
+        elif cmd == "":
+
+            pass
+
         else:
             raise Exception("Bad command. %r (%r %r)" % (l, cmd, fn))
 
