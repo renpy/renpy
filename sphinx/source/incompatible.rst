@@ -19,6 +19,14 @@ such changes only take effect when the GUI is regenerated.
 7.5.0/8.0.0
 -----------
 
+For the noalt text tag to work with history, you'll need to edit
+screens.rpy to make sure that :var:`gui.history_allow_tags` contains
+"noalt". The defaultfor this variable is::
+
+    define gui.history_allow_tags = { "alt", "noalt" }
+
+(This change was necessary in 7.4, but only documented now.)
+
 The behavior of Ren'Py changed sometime in the 7.4 series, such that
 rollback through a load behaved correctly, and reverted the changes
 peformed in the ``after_load`` label, and by :var:`config.after_load_callbacks`.
