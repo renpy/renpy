@@ -137,7 +137,8 @@ screen update_channel(channels):
                         for c in channels:
                             if c["split_version"] != list(renpy.version_tuple):
                                 $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)]
-                                $ current = _("• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}")
+                                if updater_tab != "Nightly":
+                                    $ current = _("• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}")
                             else:
                                 $ action = None
                                 $ current = _("• This version is installed and up-to-date.")
