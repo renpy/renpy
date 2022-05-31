@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -412,6 +412,10 @@ style l_small_button_text is l_button_text:
 style l_small_text is l_text:
     size size(14)
 
+style l_small_text_center_bottom is l_text:
+    xalign .5
+    yalign 1.0
+    size size(14)
 # Indents its contents.
 style l_indent is l_default:
     left_margin INDENT
