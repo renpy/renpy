@@ -80,9 +80,9 @@ init python:
     _("Nightly (Ren'Py 7, Python 2)")
     _("The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all.")
 
-default updater_tab = "Release"
 
 screen update_channel(channels):
+    
     default updater_tab = "Release"
     frame:
         style_group "l"
@@ -111,9 +111,9 @@ screen update_channel(channels):
 
                     add HALF_SPACER
 
-                    textbutton _("Release") action SetVariable("updater_tab", "Release") style "l_list"
-                    textbutton _("Prerelease") action SetVariable("updater_tab", "Prerelease") style "l_list"
-                    textbutton _("Nightly") action SetVariable("updater_tab", "Nightly") style "l_list"
+                    textbutton _("Release") action SetScreenVariable("updater_tab", "Release") style "l_list"
+                    textbutton _("Prerelease") action SetScreenVariable("updater_tab", "Prerelease") style "l_list"
+                    textbutton _("Nightly") action SetScreenVariable("updater_tab", "Nightly") style "l_list"
                 
 
                 frame:
@@ -153,7 +153,6 @@ screen update_channel(channels):
 
                             elif c["channel"].startswith("Prerelease") and updater_tab == "Prerelease":
                             
-
                                 textbutton c["channel"]  action action
                                 $ date = _strftime(__("%B %d, %Y"), time.localtime(c["timestamp"]))
                                 text "[date] • [c[pretty_version]] [current!t]" style "l_small_text"
