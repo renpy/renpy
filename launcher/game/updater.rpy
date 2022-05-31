@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -30,6 +30,8 @@ init python:
     CHANNELS_URL = "https://www.renpy.org/channels.json"
 
     version_tuple = renpy.version(tuple=True)
+
+    current = ""
 
     def check_dlc(name):
         """
@@ -80,16 +82,13 @@ init python:
 
 
 screen update_channel(channels):
-
+    default updater_tab = "Release"
     frame:
         style_group "l"
         style "l_root"
+        alt "Preferences"
 
         window:
-
-            has viewport:
-                scrollbars "vertical"
-                mousewheel True
 
             has vbox
 
@@ -98,47 +97,76 @@ screen update_channel(channels):
             add HALF_SPACER
 
             hbox:
+
                 frame:
                     style "l_indent"
+                    xmaximum ONETHIRD
                     xfill True
 
                     has vbox
 
-                    text _("The update channel controls the version of Ren'Py the updater will download.")
+                    # Update channel selection.
+                    add SEPARATOR2
 
-                    for c in channels:
+                    add HALF_SPACER
 
-                        if c["split_version"] != list(renpy.version_tuple):
-                            $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)]
+                    textbutton _("Release") action SetScreenVariable("updater_tab", "Release") style "l_list"
+                    textbutton _("Prerelease") action SetScreenVariable("updater_tab", "Prerelease") style "l_list"
+                    textbutton _("Nightly") action SetScreenVariable("updater_tab", "Nightly") style "l_list"
+                
 
-                            if c["channel"].startswith("Release"):
-                                $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")
-                            elif c["channel"].startswith("Prerelease"):
+                frame:
+                    style "l_indent"
+                    xmaximum TWOTHIRDS
+                    xfill True
+
+                    has vbox
+
+                    
+                    add SEPARATOR2
+
+
+                    frame:
+                        xfill True
+                        background None
+
+                        has vbox
+
+                        add HALF_SPACER
+                        for c in channels:
+                            if c["split_version"] != list(renpy.version_tuple):
+                                $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)]
                                 $ current = _("• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}")
                             else:
-                                $ current = ""
+                                $ action = None
+                                $ current = _("• This version is installed and up-to-date.")
+                            
+                      
 
-                        else:
-                            $ action = None
-                            $ current = _("• This version is installed and up-to-date.")
+                            if c["channel"].startswith("Release") and updater_tab == "Release":
 
-                        add SPACER
+                                textbutton c["channel"]  action action
+                                $ date = _strftime(__("%B %d, %Y"), time.localtime(c["timestamp"]))
+                                text "[date] • [c[pretty_version]] [current!t]" style "l_small_text"
+                                text c["description"] style "l_small_text"
 
-                        hbox:
-                            spacing 7
-                            textbutton c["channel"]  action action
+                            elif c["channel"].startswith("Prerelease") and updater_tab == "Prerelease":
+                            
 
+                                textbutton c["channel"]  action action
+                                $ date = _strftime(__("%B %d, %Y"), time.localtime(c["timestamp"]))
+                                text "[date] • [c[pretty_version]] [current!t]" style "l_small_text"
+                                text c["description"] style "l_small_text"
 
+                            elif c["channel"].startswith("Nightly") and updater_tab == "Nightly":
+                
+                             
+                                textbutton c["channel"]  action action
+                                $ date = _strftime(__("%B %d, %Y"), time.localtime(c["timestamp"]))
+                                text "[date] • [c[pretty_version]] [current!t]" style "l_small_text"
+                                text c["description"] style "l_small_text"
 
-                        add HALF_SPACER
-
-                        $ date = _strftime(__("%B %d, %Y"), time.localtime(c["timestamp"]))
-
-                        text "[date] • [c[pretty_version]] [current!t]" style "l_small_text"
-
-                        add HALF_SPACER
-
-                        text c["description"] style "l_small_text"
+        text _("The update channel controls the version of Ren'Py the updater will download.") style "l_small_text_center_bottom"
 
     textbutton _("Cancel") action Jump("front_page") style "l_left_button"
 
