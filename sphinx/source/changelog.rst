@@ -397,6 +397,10 @@ creation of screens as Python functions. In the current state of Ren'Py, this
 system is obsolete and very much under-optimized. While old games using it will
 continue to be supported, the system has been removed from the documentation.
 
+Due to issues in underlying libraries, the :func:`renpy.input` function
+and ``input`` displayable are now documented as not supporting IME-based
+(non-alphabetic) input on Android.
+
 Other Changes
 -------------
 

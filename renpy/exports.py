@@ -820,6 +820,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     Keywords prefixed with ``show_`` have the prefix stripped and
     are passed to the screen.
+
+    Due to limitations in supporting libraries, on Android and the web platform
+    this function is limited to alphabetic characters.
     """
 
     if renpy.config.disable_input:

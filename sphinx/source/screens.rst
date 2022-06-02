@@ -705,6 +705,9 @@ the user presses return, the text will be returned by the
 interaction. (When the screen is invoked through ``call screen``, the result
 will be placed in the ``_return`` variable.)
 
+Due to limitations in supporting libraries, on Android and the web platform
+the input displayable is limited to alphabetic characters.
+
 The input statement takes no parameters, and the following properties:
 
 `value`
