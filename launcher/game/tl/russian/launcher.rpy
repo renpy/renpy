@@ -2001,7 +2001,7 @@
 
     # game/updater.rpy:65
     old "Release (Ren'Py 7, Python 2)"
-    new "Релиз (Ren'Py 7, Python 3)"
+    new "Релиз (Ren'Py 7, Python 2)"
 
     # game/updater.rpy:69
     old "Prerelease (Ren'Py 8, Python 3)"
@@ -2009,7 +2009,7 @@
 
     # game/updater.rpy:70
     old "Prerelease (Ren'Py 7, Python 2)"
-    new "Пререлиз (Ren'Py 7, Python 3)"
+    new "Пререлиз (Ren'Py 7, Python 2)"
 
     # game/updater.rpy:77
     old "Nightly (Ren'Py 8, Python 3)"
@@ -2017,4 +2017,4 @@
 
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
-    new "Ночной (Ren'Py 7, Python 3)"
+    new "Ночной (Ren'Py 7, Python 2)"
