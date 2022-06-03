@@ -1017,23 +1017,41 @@ void RPS_set_volume(int channel, float volume) {
 
     c->volume = new_volume;
 
-    if (c->fade_step_len) {
+    if (old_volume == 0) {
+        c->fade_step_len = 0;
+    } else if (new_volume == 0) {
+        c->fade_step_len = 0;
+    } else if (c->fade_step_len) {
 
         if (c->fade_delta > 0) {
             int fade_samples_remaining = c->fade_step_len * (old_volume - c->fade_vol);
             c->fade_vol = new_volume * c->fade_vol / old_volume;
-            c->fade_step_len = fade_samples_remaining / (new_volume - c->fade_vol);
-            c->fade_step_len &= ~0x7; // Even sample.
-            c->fade_delta = 1;
+
+            if (new_volume <= c->fade_vol) {
+                c->fade_step_len = 0;
+            } else {
+                c->fade_step_len = fade_samples_remaining / (new_volume - c->fade_vol);
+                c->fade_step_len &= ~0x7; // Even sample.
+                c->fade_delta = 1;
+            }
         }
 
         if (c->fade_delta < 0) {
             int fade_samples_remaining = c->fade_step_len * c->fade_vol;
             c->fade_vol = new_volume * c->fade_vol / old_volume;
-            c->fade_step_len = fade_samples_remaining /  c->fade_vol;
-            c->fade_step_len &= ~0x7; // Even sample.
-            c->fade_delta = -1;
+
+            if (c->fade_vol <= 0) {
+                c->fade_step_len = 0;
+            } else {
+                c->fade_step_len = fade_samples_remaining /  c->fade_vol;
+                c->fade_step_len &= ~0x7; // Even sample.
+                c->fade_delta = -1;
+            }
         }
+    }
+
+    if (c->fade_step_len == 0) {
+        c->fade_vol = new_volume;
     }
 
     error(SUCCESS);
