@@ -37,10 +37,10 @@ directly, and your server must support HTTP range queries.
 (This means paying for web hosting, as "sharing" sites tend not to
 support the required features.)
 
-If the `patch` parameter is set to False, or an https url is given,
-the updater will not attempt to patch the game. Instead, it will
-download the full archive, and unpack that update. While this is a larger
-download, it will work with many more web servers.
+If the `patch` parameter is set to False, the updater will not attempt 
+to patch the game. Instead, it will download the full archive, and 
+unpack that update. While this is a larger download, it will work 
+with many more web servers.
 
 Building an Update
 ------------------
