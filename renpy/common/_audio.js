@@ -393,7 +393,7 @@ renpyAudio.set_pan = (channel, pan, delay) => {
     let c = get_channel(channel);
     let control = c.stereo_pan.pan;
 
-    linearRampToValue(control, control.value, volume, delay);
+    linearRampToValue(control, control.value, pan, delay);
 };
 
 renpyAudio.tts = (s) => {
