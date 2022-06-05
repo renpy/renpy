@@ -19,6 +19,14 @@ such changes only take effect when the GUI is regenerated.
 7.5.0/8.0.0
 -----------
 
+The "Windows, Mac, and Linux for Markets" distribution has been changed to
+no longer prefix the contents of the zip file created with the directory
+name and version number. If you'd like to retain the old behavior, add
+to your game::
+
+    init python:
+        build.package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
+
 For the noalt text tag to work with history, you'll need to edit
 screens.rpy to make sure that :var:`gui.history_allow_tags` contains
 "noalt". The defaultfor this variable is::

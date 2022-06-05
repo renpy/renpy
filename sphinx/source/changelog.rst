@@ -188,6 +188,12 @@ We have a `Ren'Py on Steam Deck Guide <https://github.com/renpy/steam-deck-guide
 to help you get your game certified on that platform. Thanks go to Valve for
 supplying a Steam Deck to test on.
 
+The "Windows, Mac, and Linux for Markets" distribution has been changed to
+no longer prefix the contents of the zip file created with the directory
+name and version number, meaning it's no longer required to update launch
+configurations with each release to Steam. This may require a one-time
+update to the launch configuration.
+
 Ren'Py now includes support for being launched by the Epic Games Store,
 by ignoring various command line arguments supplied by EGS.
 
