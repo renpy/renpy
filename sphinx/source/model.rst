@@ -265,8 +265,8 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     padding to the right and bottom, while a four component tuple applies
     padding to the left, top, right, and bottom.
 
-    This can be used, in conjunction with the pixel_perfect property, to
-    render text into a mesh. In Ren'Py, text is rendered at the screen
+    This can be used, in conjunction with the ``gl_pixel_perfect`` property,
+    to render text into a mesh. In Ren'Py, text is rendered at the screen
     resoltution, which might overflow the boundaries of the texture that
     will be applied to the mesh. Adding a few pixels of padding makes the
     texture bigger, which will display all pixels. For example::
