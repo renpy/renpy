@@ -1254,7 +1254,7 @@ class Window(Container):
     def visit(self):
         rv = [ ]
         self.style._visit_window(rv.append)
-        return rv
+        return rv + self.children
 
     def get_child(self):
         return self.style.child or self.child
