@@ -332,7 +332,7 @@ The following transform properties are used by the 3D Stage.
     :tpref:`zpos`, and :tpref:`rotate` are inverted, providing the effect of positioning the
     camera rather than the child.
 
-    As the perspective transformation assumes it's aligned wiht the window,
+    As the perspective transformation assumes it's aligned with the window,
     it doesn't make sense to reposition it using :tpref:`xanchor`, and :tpref:`yanchor`,
     or properties that set those, such as :tpref:`anchor`, :tpref:`align`, :tpref:`center`,
     etc.
