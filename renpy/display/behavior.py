@@ -1135,7 +1135,10 @@ class ImageButton(Button):
                                           **properties)
 
     def visit(self):
-        return list(self.state_children.values())
+        if self.imagebutton_child is None:
+            return list(self.state_children.values())
+        else:
+            return list(self.state_children.values()) + [ self.imagebutton_child ]
 
     def get_child(self):
 
@@ -1149,6 +1152,8 @@ class ImageButton(Button):
                 self.imagebutton_child._unique()
             else:
                 self.imagebutton_child = raw_child
+
+            self.imagebutton_child.per_interact()
 
         return self.imagebutton_child
 
