@@ -443,7 +443,12 @@ def before_interact(roots):
             renpy.display.screen.push_current_screen(screen)
             try:
                 if (f is old_current) and renpy.config.always_unfocus:
-                    f.unfocus(default=False)
+                    old_restart_interaction = renpy.game.interface.restart_interaction
+                    try:
+                        f.unfocus(default=False)
+                    finally:
+                        if not renpy.game.interface.start_interact:
+                            renpy.game.interface.restart_interaction = old_restart_interaction
                 else:
                     f.unfocus(default=default)
 
