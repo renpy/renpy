@@ -742,10 +742,10 @@ class DismissBehavior(renpy.display.core.Displayable):
         return rv
 
     def find_focusable(self, callback, focus_name):
-        super(DismissBehavior, self).find_focusable(callback, focus_name)
-
         if self.modal and not callable(self.modal):
             renpy.display.focus.mark_modal()
+
+        super(DismissBehavior, self).find_focusable(callback, focus_name)
 
     def render(self, width, height, st, at):
         rv = renpy.display.render.Render(0, 0)

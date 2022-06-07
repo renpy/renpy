@@ -314,13 +314,13 @@ def focus_coordinates():
 # A map from id(displayable) to the displayable that replaces it.
 replaced_by = { }
 
-# Set to True after a modal screen or a fullscreen modal displayable,
-# to prevent focuses after this from gaining the default focus.
-after_modal = False
+# The modal generation - the number of times mark_modal has been called.
+# Only displayables in the latest modal generation can gain focus.
+modal_generation = 0
 
 def mark_modal():
-    global after_modal
-    after_modal = True
+    global modal_generation
+    modal_generation += 1
 
 def before_interact(roots):
     """
@@ -330,15 +330,15 @@ def before_interact(roots):
 
     global override
     global grab
-    global after_modal
+    global modal_generation
 
-    after_modal = False
+    modal_generation = 0
 
     # a list of focusable, name, screen tuples.
     fwn = [ ]
 
     def callback(f, n):
-        fwn.append((f, n, renpy.display.screen._current_screen, after_modal))
+        fwn.append((f, n, renpy.display.screen._current_screen, modal_generation))
 
     for root in roots:
         try:
@@ -354,7 +354,7 @@ def before_interact(roots):
 
     for fwn_tuple in fwn:
 
-        f, n, screen, after_modal = fwn_tuple
+        f, n, screen, gen = fwn_tuple
 
         serial = namecount.get(n, 0)
         namecount[n] = serial + 1
@@ -398,8 +398,9 @@ def before_interact(roots):
     if current is not None:
         current_name = current.full_focus_name
 
-        for f, n, screen, modal in fwn:
-            if modal:
+        for f, n, screen, gen in fwn:
+
+            if gen != modal_generation:
                 continue
 
             if f.full_focus_name == current_name:
@@ -443,12 +444,7 @@ def before_interact(roots):
             renpy.display.screen.push_current_screen(screen)
             try:
                 if (f is old_current) and renpy.config.always_unfocus:
-                    old_restart_interaction = renpy.game.interface.restart_interaction
-                    try:
-                        f.unfocus(default=False)
-                    finally:
-                        if not renpy.game.interface.start_interact:
-                            renpy.game.interface.restart_interaction = old_restart_interaction
+                    f.unfocus(default=False)
                 else:
                     f.unfocus(default=default)
 
