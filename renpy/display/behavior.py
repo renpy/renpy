@@ -699,8 +699,7 @@ class SayBehavior(renpy.display.layout.Null):
             if ev.type == renpy.display.core.TIMEEVENT and st >= skip_delay:
 
                 if ev.modal:
-                    renpy.config.skipping = None
-                    renpy.exports.restart_interaction()
+                    return None
                 elif renpy.game.preferences.skip_unseen:
                     return True
                 elif renpy.config.skipping == "fast":
