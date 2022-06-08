@@ -1305,7 +1305,7 @@ screen nvl(dialogue, items=None):
             use nvl_dialogue(dialogue)
 
         ## Displays the menu, if given. The menu may be displayed incorrectly
-        ## if config.narrator_menu is set to True, as it is above.
+        ## if config.narrator_menu is set to True.
         for i in items:
 
             textbutton i.caption:
