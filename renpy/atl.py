@@ -256,8 +256,7 @@ class Context(object):
         self.context = context
 
     def eval(self, expr): # @ReservedAssignment
-        expr = renpy.python.escape_unicode(expr)
-        return eval(expr, renpy.store.__dict__, self.context) # @UndefinedVariable
+        return renpy.python.py_eval(expr, locals=self.context)
 
     def __eq__(self, other):
         if not isinstance(other, Context):
