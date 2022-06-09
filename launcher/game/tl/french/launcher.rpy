@@ -1629,7 +1629,7 @@
 
     # game/interface.rpy:136
     old "Ren'Py Sponsor Information"
-    new "Information sur les sponsors de Ren'Py Sponsor"
+    new "Informations sur les sponsors de Ren'Py"
 
     # game/interface.rpy:372
     old "opening the log file"
