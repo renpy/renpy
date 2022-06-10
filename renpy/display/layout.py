@@ -283,9 +283,7 @@ class Container(renpy.display.core.Displayable):
         return None
 
     def visit(self):
-        rv = list(self.children)
-        rv.reverse()
-        return rv
+        return list(self.children)
 
     # These interact with the ui functions to allow use as a context
     # manager.

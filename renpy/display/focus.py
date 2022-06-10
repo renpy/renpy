@@ -418,8 +418,8 @@ def before_interact(roots):
 
         defaults = [ ]
 
-        for f, n, screen, modal in fwn:
-            if modal:
+        for f, n, screen, gen in fwn:
+            if gen != modal_generation:
                 continue
 
             if f.default:
