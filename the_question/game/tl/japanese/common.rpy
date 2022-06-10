@@ -1172,3 +1172,51 @@ translate japanese strings:
     old "Change render options"
     new "レンダリング設定を変更"
 
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "ハイコントラストテキスト"
+
+    # renpy/common/00action_other.rpy:668
+    old "Open [text] directory."
+    new "[text] ディレクトリーを開きます。"
+
+    # renpy/common/00preferences.rpy:483
+    old "system cursor"
+    new "システムカーソル"
+
+    # renpy/common/00preferences.rpy:492
+    old "renderer menu"
+    new "レンダーメニュー"
+
+    # renpy/common/00preferences.rpy:495
+    old "accessibility menu"
+    new "アクセス性メニュー"
+
+    # renpy/common/00preferences.rpy:498
+    old "high contrast text"
+    new "ハイコントラストテキスト"
+
+    # renpy/common/00preferences.rpy:507
+    old "audio when minimized"
+    new "最小化時音声"
+
+    # renpy/common/00preferences.rpy:527
+    old "main volume"
+    new "メインの音量"
+
+    # renpy/common/00preferences.rpy:531
+    old "mute main"
+    new "メインをミュート"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "有効 (ブロックリスト無効化)"
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "{a=edit:1:log.txt}log.txt{/a} ファイルにある情報は何があなたのコンピュータで問題になっているか探る手助けになるでしょう"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "'[control!s]' [kind] を押すか動かしてください"
+

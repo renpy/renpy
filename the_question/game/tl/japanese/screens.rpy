@@ -401,3 +401,11 @@ translate japanese strings:
     old "Menu"
     new "メニュー"
 
+    # game/screens.rpy:799
+    old " "
+    new " "
+
+    # game/screens.rpy:1103
+    old "Opens the accessibility menu."
+    new "アクセス性メニューを開きます。"
+

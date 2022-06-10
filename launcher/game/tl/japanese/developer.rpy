@@ -197,3 +197,7 @@ translate japanese strings:
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
     new "unescape: ユニコード文字列中でのユニコードシンボルのエスケープを無効化し (default) として表示"
 
+    # renpy/common/00console.rpy:784
+    old "stack: print the return stack"
+    new "stack: リターンスタックの出力"
+
