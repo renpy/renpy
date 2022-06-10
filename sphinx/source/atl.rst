@@ -1346,8 +1346,8 @@ contexts, if the parameter is in the parameter list.
 `child`
     When ATL is used as a transform, the child parameter is given the original
     child that the transform is applied to. This allows the child to be referred
-    to explicitly. For example, it becomes possible to swap between the s
-    supplied child and another displayable::
+    to explicitly. For example, it becomes possible to swap between the supplied
+    child and another displayable::
 
         transform lucy_jump_scare(child):
             child      # Show the original child.
