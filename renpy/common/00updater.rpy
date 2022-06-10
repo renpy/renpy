@@ -243,6 +243,9 @@ init -1500 python in updater:
             Takes the same arguments as update().
             """
 
+            # Make sure the URL has the right type.
+            url = str(url)
+
             self.patch = patch
 
             if not url.startswith("http:"):
