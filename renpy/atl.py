@@ -863,8 +863,8 @@ class Block(Statement):
                     loop_end = target - arg
                     duration = loop_end - loop_start
 
-                    if (state is None) and (duration <= 0):
-                        raise Exception("ATL appears to be in an infinite loop.")
+                    if (duration <= 0) and (count is None):
+                       raise Exception("ATL appears to be in an infinite loop.")
 
                     # Figure how many durations can occur between the
                     # start of the loop and now.
