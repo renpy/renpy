@@ -1738,12 +1738,14 @@ class Function(Statement):
         return True
 
     def execute(self, trans, st, state, events):
-        fr = self.function(trans, st if state else 0, trans.at)
+        block = state or renpy.config.atl_function_always_blocks
+
+        fr = self.function(trans, st if block else 0, trans.at)
 
         if fr is not None:
             return "continue", True, fr
         else:
-            return "next", 0 if state else st, None
+            return "next", 0 if block else st, None
 
 
 # This parses an ATL block.
