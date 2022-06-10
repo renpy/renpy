@@ -1738,12 +1738,12 @@ class Function(Statement):
         return True
 
     def execute(self, trans, st, state, events):
-        fr = self.function(trans, st, trans.at)
+        fr = self.function(trans, st if state else 0, trans.at)
 
         if fr is not None:
-            return "continue", None, fr
+            return "continue", True, fr
         else:
-            return "next", st, None
+            return "next", 0 if state else st, None
 
 
 # This parses an ATL block.
