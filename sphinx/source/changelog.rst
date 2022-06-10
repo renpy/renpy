@@ -270,6 +270,10 @@ shown time begins each time it is shown.
 The default for the :tpref:`crop_relative` transform property has been changed to
 True.
 
+The ``function`` statement will now block execution only if producing a delay,
+which allows transforms using it to behave more naturally when catching up with
+an inherited timebase.
+
 Image Gallery
 -------------
 

@@ -237,6 +237,7 @@ init -1100 python:
             config.layeredimage_offer_screen = False
             config.narrator_menu = False
             config.gui_text_position_properties = False
+            config.atl_function_always_blocks = True
 
 
     # The version of Ren'Py this script is intended for, or

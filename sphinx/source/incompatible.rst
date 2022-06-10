@@ -121,6 +121,12 @@ can display differently in different contexts, you can use::
 Or you can also toggle it for specific layeredimages by passing them the
 ``offer_screen`` property.
 
+The ``function`` statement in ATL will only block catch-up in cases where it
+executes more than once. To revert to the old behavior, where ATL would block
+at a function, use::
+
+    define config.atl_function_always_blocks = True
+
 
 .. _incompatible-7.4.11:
 
