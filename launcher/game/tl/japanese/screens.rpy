@@ -699,3 +699,7 @@ translate japanese strings:
     old "Opens the accessibility menu."
     new "アクセス性メニューを開きます。"
 
+    # gui/game/screens.rpy:1307
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new "## 指定されれば選択肢を表示します。config.narrator_menuがTrueだと、メニューは正常に表示されないでしょう。"
+
