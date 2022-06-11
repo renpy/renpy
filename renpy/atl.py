@@ -1741,6 +1741,10 @@ class Function(Statement):
 
         fr = self.function(trans, st if block else 0, trans.at)
 
+        if (not block) and (fr is not None):
+           block = True
+           fr = self.function(trans, st, trans.at)
+
         if fr is not None:
             return "continue", True, fr
         else:
