@@ -90,6 +90,33 @@ are some example of Python one-liners::
 Python one-liners always run in the default store.
 
 
+.. _init-statement:
+
+Init Statement
+--------------
+
+The ``init`` statement runs Ren'Py script at initialization time,
+before the game loads. They take a priority number between the word
+``init`` and the colon ``:``::
+
+    init 5:
+        define b = a + 1
+
+    define a = 1
+
+When a priority is not given, 0 is used (but a bare ``init`` block,
+without a priority, is useless).
+Init statements are run in priority order, from lowest to highest.
+Init statements of the same priority are run in Unicode order by
+filename, and then from top to bottom within a file.
+
+To avoid conflict with Ren'Py, creators should use priorities in the
+range -999 to 999. Priorities of less than 0 are generally used for
+libraries and to set up themes. Normal init statements should have a
+priority of 0 or higher.
+
+Init blocks also exist in a ``python`` version, as explained below.
+
 .. _init-python-statement:
 
 Init Python Statement
@@ -115,17 +142,25 @@ persistent data. ::
         # The bad ending is always unlocked.
         persistent.endings.add("bad_ending")
 
-A priority number can be placed between ``init`` and ``python``. When
-a priority is not given, 0 is used. Init statements are run in priority
-order, from lowest to highest. Init statements of the same priority are run in
-Unicode order by filename, and then from top to bottom within a file.
+A priority number can be placed between ``init`` and ``python``,
+just like in regular ``init`` blocks. Init python statements take
+the ``hide`` or ``in`` clauses, like the regular ``python`` blocks.
+Init python blocks are really a combination of an init block and a
+python block; this code::
 
-To avoid conflict with Ren'Py, creators should use priorities in the
-range -999 to 999. Priorities of less than 0 are generally used for
-libraries and to set up themes. Normal init statements should have a priority
-of 0 or higher.
+    init 5 python in revelations:
+        class BlackHole(Hole):
+            color = "#000"
 
-Init python statements also take the ``hide`` or ``in`` clauses.
+is essentially a shortcut for this::
+
+    init 5:
+        python in revelations:
+            class BlackHole(Hole):
+                color = "#000"
+
+Using the former instead of the latter helps code readability by
+reducing the indenting level.
 
 Variables that have their value set in an init python block are not
 saved, loaded, and do not participate in rollback. Therefore, these
@@ -211,6 +246,19 @@ if it doesn't already exist. For example::
 
     default schedule.day = 0
 
+The ``default`` statements run in a relative order depending on their init
+priority, but they always run after all the ``define`` statements and the values
+set in ``init python`` blocks. This means that a define statement cannot rely
+on the value of a defaulted variable, and that a default statement always can.
+Here is an example::
+
+    init 5:
+        define b = a + 1
+        default d = c + 1
+
+    init 3:
+        define a = 1
+        default c = b + 1
 
 .. _init-offset-statement:
 
@@ -238,6 +286,31 @@ sets the priority offset to 42. In::
 The first define statement is run at priority 2, which means it runs
 after the second define statement, and hence ``foo`` winds up with
 a value of 2.
+
+This is not equivalent to the ``init`` block: both statements combine
+with one another. Here is how it works (each variable being given the
+value of its init's final offset)::
+
+    define a = 0
+
+    init offset = 5
+
+    define b = 5
+    
+    init 0:
+        define c = 5
+        # 5+0 = 5
+
+    init:
+        # same as init 0
+        define d = 5
+
+    init -1:
+        define e = 4
+        # 5-1 = 4
+
+The ``init offset`` statement should not be used inside an ``init``
+block.
 
 Names in the Store
 ------------------
