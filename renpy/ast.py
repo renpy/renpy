@@ -1635,7 +1635,7 @@ class With(Node):
         else:
             paired = None
 
-        renpy.exports.with_statement(trans, paired)
+        renpy.exports.with_statement(trans, paired=paired)
 
     def predict(self):
 
