@@ -3176,12 +3176,10 @@ class Interface(object):
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
 
-        # At this point, we're about to enter the background.
+        # Wait for APP_DIDENTERBACKGROUND.
+        pygame.event.wait()
 
         renpy.audio.audio.pause_all()
-
-        if renpy.android:
-            android.wakelock(False)
 
         pygame.time.set_timer(PERIODIC, 0)
         pygame.time.set_timer(REDRAW, 0)
@@ -3194,10 +3192,16 @@ class Interface(object):
 
         renpy.exports.free_memory()
 
+        if renpy.android:
+            android.wakelock(False)
+
         print("Entered background.")
 
         while True:
             ev = pygame.event.wait()
+
+            if ev.type == pygame.APP_TERMINATING:
+                sys.exit(0)
 
             if ev.type == pygame.APP_DIDENTERFOREGROUND:
                 break
