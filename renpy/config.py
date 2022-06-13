@@ -394,11 +394,11 @@ quit_action = None
 screenshot_crop = None
 
 # Various directories.
-gamedir = ""
-basedir = ""
-renpy_base = ""
-commondir = ""  # type: Optional[str]
-logdir = ""  # type: Optional[str] # Where log and error files go.
+gamedir = None # type: str
+basedir = None # type: str
+renpy_base = None # type: str
+commondir = None # type: str
+logdir = None # type: str # Where log and error files go.
 
 # Should we enable OpenGL mode?
 gl_enable = True
