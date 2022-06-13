@@ -103,7 +103,9 @@ class LogFile(object):
         try:
             base = os.environ.get("RENPY_LOG_BASE", renpy.config.logdir or renpy.config.basedir)
 
-            if base is None:
+            # This prevents the file from being opened until either logdir or basedir is set.
+            # it is set to "" in config.py
+            if not base:
                 return False
 
             fn = os.path.join(base, self.name + ".txt")
