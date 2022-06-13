@@ -42,11 +42,8 @@ last_clock = time.time()
 def log_clock(s):
     global last_clock
     now = time.time()
-    s = "{} took {:.2f}s".format(s, now - last_clock)
 
-    renpy.display.log.write(s)
-    if renpy.android and not renpy.config.log_to_stdout:
-        print(s)
+    print("{} took {:.2f}s".format(s, now - last_clock))
 
     # Pump the presplash window to prevent marking
     # our process as unresponsive by OS
