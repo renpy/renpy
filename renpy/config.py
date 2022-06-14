@@ -397,8 +397,8 @@ screenshot_crop = None
 gamedir = ""
 basedir = ""
 renpy_base = ""
-commondir = ""  # type: Optional[str]
-logdir = ""  # type: Optional[str] # Where log and error files go.
+commondir = None  # type: Optional[str]
+logdir = None  # type: Optional[str] # Where log and error files go.
 
 # Should we enable OpenGL mode?
 gl_enable = True
