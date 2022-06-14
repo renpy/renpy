@@ -105,9 +105,6 @@ init -1500 python in build:
         ( "renpy/**.pyc", None),
         ( "renpy/**.pyo", None),
 
-        # Ignore Python interface files.
-        ( "renpy/**.pyi", None),
-
         ( "renpy/common/", "all"),
         ( "renpy/common/_compat/**", "renpy"),
         ( "renpy/common/**.rpy", "renpy"),
