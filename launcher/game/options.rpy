@@ -347,6 +347,8 @@ init python:
             build.classify_renpy(pattern + "/**.pyc", None)
             build.classify_renpy(pattern + "/**.pyo", None)
 
+        build.classify_renpy(pattern + "/**.pyi", None)
+
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
         build.classify_renpy(pattern + "/**/cache/*", binary)
