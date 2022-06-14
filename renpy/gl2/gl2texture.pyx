@@ -416,10 +416,10 @@ cdef class GLTexture(GL2Model):
         # where glTexImage2D doesn't seem to work when the pixels are not
         # aligned.
 
-        # But it doesn't seem to work with ANGLE, so we avoid using PBOs when
+        # But it doesn't seem to work with ANGLE or emscripten, so we avoid using PBOs when
         # angle is in use.
 
-        if not draw.angle:
+        if not renpy.emscripten and not draw.angle:
 
             glGenBuffers(1, &pixel_buffer)
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
