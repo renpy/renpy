@@ -900,6 +900,12 @@ class Button(renpy.display.layout.Window):
 
         return rv
 
+    def set_transform_event(self, event):
+        super(Button, self).set_transform_event(self.role + event)
+
+        if self.child is not None:
+            self.child.set_transform_event(self.role + event)
+
     def focus(self, default=False):
         super(Button, self).focus(default)
 
@@ -908,10 +914,7 @@ class Button(renpy.display.layout.Window):
         if not default:
             rv = run(self.hovered)
 
-        self.set_transform_event(self.role + "hover")
-
-        if self.child is not None:
-            self.child.set_transform_event(self.role + "hover")
+        self.set_transform_event("hover")
 
         return rv
 
@@ -924,10 +927,7 @@ class Button(renpy.display.layout.Window):
             run_unhovered(self.hovered)
             run(self.unhovered)
 
-        self.set_transform_event(self.role + "idle")
-
-        if self.child is not None:
-            self.child.set_transform_event(self.role + "idle")
+        self.set_transform_event("idle")
 
     def is_selected(self):
         if self.selected is not None:
@@ -969,9 +969,13 @@ class Button(renpy.display.layout.Window):
 
             if self.clicked is not None:
                 self.set_style_prefix(self.role + "idle_", True)
+                if not self.focusable:
+                    self.set_transform_event("idle")
                 self.focusable = True
             else:
                 self.set_style_prefix(self.role + "insensitive_", True)
+                if self.focusable:
+                    self.set_transform_event("insensitive")
                 self.focusable = False
 
         super(Button, self).per_interact()
