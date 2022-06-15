@@ -1692,6 +1692,9 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, a
         occured. Abnormal mode ends when an interaction begins.
     """
 
+    if defer and not renpy.game.log.log:
+        return
+
     if defer and len(renpy.game.contexts) > 1:
         renpy.game.contexts[0].defer_rollback = (force, checkpoints)
         return
