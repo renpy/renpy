@@ -511,7 +511,7 @@ init -1500 python:
                 elif value == "disable":
                     return SetField(_preferences, "audio_when_minimized", False)
                 elif value == "toggle":
-                    return SetField(_preferences, "audio_when_minimized")
+                    return ToggleField(_preferences, "audio_when_minimized")
 
 
             mixer_names = {
