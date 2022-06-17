@@ -3188,8 +3188,16 @@ class Interface(object):
         self.mobile_save()
 
         if renpy.config.quit_on_mobile_background:
+
             if renpy.android:
-                android.activity.finishAndRemoveTask()
+                try:
+                    android.activity.finishAndRemoveTask()
+                except:
+                    pass
+
+                from jnius import autoclass
+                System = autoclass("java.lang.System")
+                System.exit(0)
 
             sys.exit(0)
 
@@ -3204,8 +3212,6 @@ class Interface(object):
             ev = pygame.event.wait()
 
             if ev.type == pygame.APP_TERMINATING:
-                if renpy.android:
-                    android.activity.finish()
 
                 sys.exit(0)
 
