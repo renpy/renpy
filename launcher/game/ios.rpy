@@ -217,7 +217,7 @@ init python:
                 py_fn = os.path.join(dist, fn)
                 break
         else:
-            raise Exception("Could not find a .py file.")
+            raise FileNotFoundError("Could not find a .py file.")
 
         with open(py_fn, "r") as py_f:
             with open(main_fn, "w") as main_f:

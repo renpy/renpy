@@ -794,7 +794,7 @@ change_renpy_executable()
             """
 
             if not os.path.exists(path):
-                raise Exception("{} does not exist.".format(path))
+                raise FileNotFoundError("{} does not exist.".format(path))
 
             if isinstance(file_list, basestring):
                 file_list = file_list.split()

@@ -61,7 +61,7 @@ init python in project:
                 path = path[:-1]
 
             if not os.path.exists(path):
-                raise Exception("{} does not exist.".format(path))
+                raise FileNotFoundError("{} does not exist.".format(path))
 
             self.name = name
 
@@ -236,7 +236,7 @@ init python in project:
                 if os.path.exists(executable):
                     break
             else:
-                raise Exception("Python interpreter not found: %r", executables)
+                raise FileNotFoundError("Python interpreter not found: %r", executables)
 
             # Put together the basic command line.
             cmd = [ executable, sys.argv[0] ]
