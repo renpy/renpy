@@ -56,7 +56,7 @@ The Python equivalent of an ATL transform is a Transform object.
     transform is drawn, and so may not be changed after the Transform object
     is created. Fields corresponding to other transform properties, however,
     can be set and changed afterwards, either within the function passed as
-    the `function` parameter, or immediately before calling the
+    the ``function`` parameter, or immediately before calling the
     :meth:`update` method.
 
     .. attribute:: hide_request
