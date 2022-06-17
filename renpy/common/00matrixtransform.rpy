@@ -36,7 +36,7 @@ init -1400 python:
 
         def __init__(self, *args):
             if len(args) != self.nargs:
-                raise Exception("{} takes {} arguments, {} given.".format(type(self).__name__, self.nargs, len(args)))
+                raise TypeError("{} takes {} arguments, {} given.".format(type(self).__name__, self.nargs, len(args)))
 
             self.args = args
 
@@ -76,4 +76,3 @@ init -1400 python:
         nargs = 3
         function = Matrix.scale
         __doc__ = TransformMatrix._document(Matrix.scale)
-

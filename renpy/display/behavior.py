@@ -728,7 +728,7 @@ class DismissBehavior(renpy.display.core.Displayable):
 
 
         if action is None:
-            raise Exception("Dismiss requires an action.")
+            raise TypeError("Dismiss requires an action.")
 
         self.action = action
         self.modal = modal

@@ -287,7 +287,7 @@ def apply_arguments(parameters, args, kwargs, ignore_errors=False):
 
     if parameters is None:
         if (args or kwargs) and not ignore_errors:
-            raise Exception("Arguments supplied, but parameter list not present")
+            raise TypeError("Arguments supplied, but parameter list not present")
         else:
             return { }
 

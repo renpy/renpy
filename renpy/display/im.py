@@ -822,7 +822,7 @@ class Composite(ImageBase):
         super(Composite, self).__init__(size, *args, **properties)
 
         if len(args) % 2 != 0:
-            raise Exception("Composite requires an odd number of arguments.")
+            raise TypeError("Composite requires an odd number of arguments.")
 
         self.size = size
         self.positions = args[0::2]
@@ -994,7 +994,7 @@ class Flip(ImageBase):
     def __init__(self, im, horizontal=False, vertical=False, **properties):
 
         if not (horizontal or vertical):
-            raise Exception("im.Flip must be called with a true value for horizontal or vertical.")
+            raise TypeError("im.Flip must be called with a true value for horizontal or vertical.")
 
         im = image(im)
         super(Flip, self).__init__(im, horizontal, vertical, **properties)

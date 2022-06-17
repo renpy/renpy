@@ -331,7 +331,7 @@ def Composite(size, *args, **properties):
     rv = Fixed(xmaximum=width, ymaximum=height, xminimum=width, yminimum=height, **properties)
 
     if len(args) % 2 != 0:
-        raise Exception("LiveComposite requires an odd number of arguments.")
+        raise TypeError("LiveComposite requires an odd number of arguments.")
 
     for pos, widget in zip(args[0::2], args[1::2]):
         xpos, ypos = pos
@@ -1644,7 +1644,7 @@ def ConditionSwitch(*args, **kwargs):
     switch = [ ]
 
     if len(args) % 2 != 0:
-        raise Exception('ConditionSwitch takes an even number of arguments')
+        raise TypeError('ConditionSwitch takes an even number of arguments')
 
     for cond, d in zip(args[0::2], args[1::2]):
 
@@ -1696,7 +1696,7 @@ def ShowingSwitch(*args, **kwargs):
     layer = kwargs.pop('layer', 'master')
 
     if len(args) % 2 != 0:
-        raise Exception('ShowingSwitch takes an even number of positional arguments')
+        raise TypeError('ShowingSwitch takes an even number of positional arguments')
 
     condargs = [ ]
 
@@ -2272,7 +2272,7 @@ class NearRect(Container):
             rect = renpy.display.focus.get_focus_rect(focus)
 
         if (focus is None) and (rect is None):
-            raise Exception("A NearRect requires either a focus or a rect parameter.")
+            raise TypeError("A NearRect requires either a focus or a rect parameter.")
 
         self.parent_rect = rect
         self.focus_rect = focus

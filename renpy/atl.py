@@ -440,7 +440,7 @@ class ATLTransformBase(renpy.object.Object):
             value = args.pop(0)
 
             if name in kwargs:
-                raise Exception('Parameter %r is used as both a positional and keyword argument to a transition.' % name)
+                raise TypeError('Parameter %r is used as both a positional and keyword argument to a transition.' % name)
 
             if (name == "child") or (name == "old_widget"):
                 child = value
@@ -448,7 +448,7 @@ class ATLTransformBase(renpy.object.Object):
             context[name] = value
 
         if args:
-            raise Exception("Too many arguments passed to ATL transform.")
+            raise TypeError("Too many arguments passed to ATL transform.")
 
         # Handle keyword arguments.
         for k, v in kwargs.items():
@@ -500,7 +500,7 @@ class ATLTransformBase(renpy.object.Object):
         if not constant:
             for p in self.parameters.positional:
                 if p not in self.context.context:
-                    raise Exception("Cannot compile ATL Transform at %s:%d, as it's missing positional parameter %s." % (
+                    raise TypeError("Cannot compile ATL Transform at %s:%d, as it's missing positional parameter %s." % (
                         self.atl.loc[0],
                         self.atl.loc[1],
                         p,
