@@ -379,8 +379,8 @@ def default_layer(layer, tag, expression=False):
     if layer is not None:
         return layer
 
-    if expression:
-        return 'master'
+    if (tag is None) or expression:
+        return renpy.config.default_tag_layer
 
     if isinstance(tag, tuple):
         tag = tag[0]
