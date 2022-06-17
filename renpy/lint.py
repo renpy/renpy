@@ -790,7 +790,7 @@ def report_character_stats(charastats):
         if len(chars) == 1:
             start = chars[0] + " has "
         elif len(chars) == 2:
-            start = chars[0] + "  and " + chars[1] + " have "
+            start = chars[0] + " and " + chars[1] + " have "
         else:
             start = ", ".join(chars[:-1]) + ", and " + chars[-1] + " have "
 
