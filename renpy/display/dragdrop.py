@@ -844,7 +844,7 @@ class DragGroup(renpy.display.layout.MultiBox):
         """
 
         if not isinstance(child, Drag):
-            raise Exception("Only drags can be added to a drag group.")
+            raise TypeError("Only drags can be added to a drag group.")
 
         super(DragGroup, self).add(child)
 
@@ -858,7 +858,7 @@ class DragGroup(renpy.display.layout.MultiBox):
         """
 
         if not isinstance(child, Drag):
-            raise Exception("Only drags can be removed from a drag group.")
+            raise TypeError("Only drags can be removed from a drag group.")
 
         child.x = None
         super(DragGroup, self).remove(child)

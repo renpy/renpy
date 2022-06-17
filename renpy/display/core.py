@@ -1094,7 +1094,7 @@ class SceneLists(renpy.object.Object):
         """
 
         if not isinstance(thing, Displayable):
-            raise Exception("Attempting to show something that isn't a displayable:" + repr(thing))
+            raise TypeError("Attempting to show something that isn't a displayable:" + repr(thing))
 
         if layer not in self.layers:
             raise Exception("Trying to add something to non-existent layer '%s'." % layer)
@@ -3696,7 +3696,7 @@ class Interface(object):
                     new_widget=scene_layer)
 
                 if not isinstance(trans, Displayable):
-                    raise Exception("Expected transition to be a displayable, not a %r" % trans)
+                    raise TypeError("Expected transition to be a displayable, not a %r" % trans)
 
                 transition_time = self.transition_time.get(layer, None)
 
@@ -3729,7 +3729,7 @@ class Interface(object):
                 new_widget=layers_root)
 
             if not isinstance(trans, Displayable):
-                raise Exception("Expected transition to be a displayable, not a %r" % trans)
+                raise TypeError("Expected transition to be a displayable, not a %r" % trans)
 
             transition_time = self.transition_time.get(None, None)
             root_widget.add(trans, transition_time, transition_time)

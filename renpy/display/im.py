@@ -254,7 +254,7 @@ class Cache(object):
         optimize_bounds = renpy.config.optimize_texture_bounds and image.optimize_bounds
 
         if not isinstance(image, ImageBase):
-            raise Exception("Expected an image of some sort, but got" + repr(image) + ".")
+            raise TypeError("Expected an image of some sort, but got" + repr(image) + ".")
 
         if not image.cache:
             surf = image.load()
@@ -1892,7 +1892,7 @@ def image(arg, loose=False, **properties):
         return arg
 
     if isinstance(arg, renpy.display.core.Displayable):
-        raise Exception("Expected an image, but got a general displayable.")
+        raise TypeError("Expected an image, but got a general displayable.")
     else:
         raise Exception("Could not construct image from argument.")
 

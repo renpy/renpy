@@ -875,7 +875,7 @@ class Say(Node):
                     callable(who) or
                     isinstance(who, basestring)):
 
-                raise Exception("Sayer %s is not a function or string." % self.who.encode("utf-8"))
+                raise TypeError("Sayer %s is not a function or string." % self.who.encode("utf-8"))
 
             what = self.what
             if renpy.config.say_menu_text_filter:

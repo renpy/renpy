@@ -1021,7 +1021,7 @@ class RawMultipurpose(RawStatement):
                 raise Exception("Could not evaluate expression %r when compiling ATL." % expr)
 
             if not isinstance(value, ATLTransformBase):
-                raise Exception("Expression %r is not an ATL transform, and so cannot be included in an ATL interpolation." % expr)
+                raise TypeError("Expression %r is not an ATL transform, and so cannot be included in an ATL interpolation." % expr)
 
             value.compile()
 

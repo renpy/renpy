@@ -481,7 +481,7 @@ def transform_render(self, widtho, heighto, st, at):
             matrix = matrix(None, 1.0)
 
         if not isinstance(matrix, renpy.display.matrix.Matrix):
-            raise Exception("matrixcolor requires a Matrix (not im.matrix, got %r)" % (matrix,))
+            raise TypeError("matrixcolor requires a Matrix (not im.matrix, got %r)" % (matrix,))
 
         rv.add_shader("renpy.matrixcolor")
         rv.add_uniform("u_renpy_matrixcolor", matrix)

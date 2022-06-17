@@ -329,7 +329,7 @@ init -1500 python:
             """
 
             if not isinstance(expression, basestring):
-                raise Exception("Gallery condition must be a string containing an expression.")
+                raise TypeError("Gallery condition must be a string containing an expression.")
 
             self.unlockable.conditions.append(__GalleryArbitraryCondition(expression))
 

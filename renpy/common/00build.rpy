@@ -43,7 +43,7 @@ init -1500 python in build:
         elif isinstance(s, basestring):
             return s.split()
 
-        raise Exception("Expected a string, list, or None.")
+        raise TypeError("Expected a string, list, or None.")
 
 
     def pattern_list(l):

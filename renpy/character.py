@@ -608,7 +608,7 @@ def display_say(
                     what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
 
                 if not isinstance(what_text, renpy.text.text.Text): # @UndefinedVariable
-                    raise Exception("The say screen (or show_function) must return a Text object.")
+                    raise TypeError("The say screen (or show_function) must return a Text object.")
 
                 if what_ctc:
 
@@ -1171,7 +1171,7 @@ class ADVCharacter(object):
             return True
 
         if not isinstance(what, basestring):
-            raise Exception("Character expects its what argument to be a string, got %r." % (what,))
+            raise TypeError("Character expects its what argument to be a string, got %r." % (what,))
 
         # Figure out multiple and final. Multiple is None if this is not a multiple
         # dialogue, or a step and the total number of steps in a multiple interaction.
