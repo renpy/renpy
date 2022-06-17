@@ -414,7 +414,7 @@ def can_show(name, layer=None, tag=None):
     if tag is None:
         tag = name[0]
 
-    layer = default_layer(layer, None)
+    layer = default_layer(layer, tag)
 
     try:
         return renpy.game.context().images.apply_attributes(layer, tag, name)

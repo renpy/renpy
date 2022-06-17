@@ -952,7 +952,7 @@ class ADVCharacter(object):
         tagged_attrs = (self.image_tag,) + attrs
         images = renpy.game.context().images
 
-        layer = renpy.config.tag_layer.get(self.image_tag, "master")
+        layer = renpy.exports.default_layer(None, self.image_tag)
 
         # If image is showing already, resolve it, then show or predict it.
         if images.showing(layer, (self.image_tag,)):
