@@ -3188,6 +3188,9 @@ class Interface(object):
         self.mobile_save()
 
         if renpy.config.quit_on_mobile_background:
+            if renpy.android:
+                android.activity.finishAndRemoveTask()
+
             sys.exit(0)
 
         renpy.exports.free_memory()
@@ -3201,6 +3204,9 @@ class Interface(object):
             ev = pygame.event.wait()
 
             if ev.type == pygame.APP_TERMINATING:
+                if renpy.android:
+                    android.activity.finish()
+
                 sys.exit(0)
 
             if ev.type == pygame.APP_DIDENTERFOREGROUND:
