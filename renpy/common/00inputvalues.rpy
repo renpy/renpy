@@ -85,10 +85,10 @@ init -1510 python:
         returnable = False
 
         def get_text(self):
-            raise Exception("Not implemented.")
+            raise NotImplementedError
 
         def set_text(self, s):
-            raise Exception("Not implemented.")
+            raise NotImplementedError
 
         def enter(self):
             if self.returnable:

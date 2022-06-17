@@ -535,7 +535,7 @@ class Displayable(renpy.object.Object):
         in seconds.
         """
 
-        raise Exception("Render not implemented.")
+        raise NotImplementedError("Render not implemented.")
 
     def event(self, ev, x, y, st):
         """

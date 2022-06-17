@@ -621,7 +621,7 @@ class ImageBase(renpy.display.core.Displayable):
         would override this.
         """
 
-        raise Exception("load method not implemented.")
+        raise NotImplementedError("load method not implemented.")
 
     def render(self, w, h, st, at):
         return cache.get(self, render=True)

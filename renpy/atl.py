@@ -630,7 +630,7 @@ class RawStatement(object):
     # Compiles this RawStatement into a Statement, by using ctx to
     # evaluate expressions as necessary.
     def compile(self, ctx): # @ReservedAssignment
-        raise Exception("Compile not implemented.")
+        raise NotImplementedError("Compile not implemented.")
 
     # Predicts the images used by this statement.
     def predict(self, ctx):
@@ -684,7 +684,7 @@ class Statement(renpy.object.Object):
     # Pause is the amount of time until execute should be called again,
     # or None if there's no need to call execute ever again.
     def execute(self, trans, st, state, events):
-        raise Exception("Not implemented.")
+        raise NotImplementedError
 
     # Return a list of displayable children.
     def visit(self):
