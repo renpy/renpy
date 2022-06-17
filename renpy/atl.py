@@ -1026,7 +1026,7 @@ class RawMultipurpose(RawStatement):
             value.compile()
 
             if value.properties is None:
-                raise Exception("ATL transform %r is too complicated to be included in interpolation." % expr)
+                raise ValueError("ATL transform %r is too complicated to be included in interpolation." % expr)
 
             properties.extend(value.properties)
 

@@ -911,7 +911,7 @@ class MultiBox(Container):
                 rv.width = width
 
                 if width > renpy.config.max_fit_size:
-                    raise Exception("Fixed fit width ({}) is too large.".format(width))
+                    raise ValueError("Fixed fit width ({}) is too large.".format(width))
 
             if yfit:
                 height = 0
@@ -925,7 +925,7 @@ class MultiBox(Container):
                 rv.height = height
 
                 if height > renpy.config.max_fit_size:
-                    raise Exception("Fixed fit height ({}) is too large.".format(height))
+                    raise ValueError("Fixed fit height ({}) is too large.".format(height))
 
             if self.style.order_reverse:
                 offsets.reverse()
@@ -1122,7 +1122,7 @@ class MultiBox(Container):
             maxx, maxy = layout_line(line, 0, (target_height - y) if (not box_wrap) else 0)
 
         else:
-            raise Exception("Unknown box layout: %r" % layout)
+            raise ValueError("Unknown box layout: %r" % layout)
 
         # Back to the common for vertical and horizontal.
 
@@ -1771,7 +1771,7 @@ class Side(Container):
 
         for i in positions:
             if not i in Side.possible_positions:
-                raise Exception("Side used with impossible position '%s'." % (i,))
+                raise ValueError("Side used with impossible position '%s'." % (i,))
 
             if i in seen:
                 raise Exception("Side used with duplicate position '%s'." % (i,))

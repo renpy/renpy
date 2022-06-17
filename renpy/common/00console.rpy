@@ -808,7 +808,7 @@ init -1500 python in _console:
         name = l.rest().strip()
 
         if not name:
-            raise Exception("Slot name must not be empty")
+            raise ValueError("Slot name must not be empty")
 
         try:
             renpy.load(name)
@@ -821,7 +821,7 @@ init -1500 python in _console:
         name = l.rest().strip()
 
         if not name:
-            raise Exception("Slot name must not be empty")
+            raise ValueError("Slot name must not be empty")
 
         renpy.save(name)
 

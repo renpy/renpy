@@ -577,7 +577,7 @@ init -1499 python in _renpysteam:
         elif keyboard_mode == "always":
             keyboard_primed = True
         elif keyboard_mode != "once":
-            raise Exception("Bad keyboard_mode.")
+            raise ValueError("Bad keyboard_mode.")
 
         keyboard_text_rect = renpy.display.interface.text_rect
         _KeyboardShift.text_rect = keyboard_text_rect

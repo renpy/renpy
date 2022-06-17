@@ -64,10 +64,10 @@ python early in layeredimage:
         if image is None:
 
             if name is None:
-                raise Exception("Can't find an image name to format {}.".format(what))
+                raise ValueError("Can't find an image name to format {}.".format(what))
 
             if attribute is None:
-                raise Exception("Can't find an attribute name to format {}.".format(what))
+                raise ValueError("Can't find an attribute name to format {}.".format(what))
 
             parts = [ name ]
 

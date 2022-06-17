@@ -164,7 +164,7 @@ class Color(tuple):
                     b = int(c[2], 16) * 0x11
                     a = int(c[3], 16) * 0x11
                 else:
-                    raise Exception("Color string {!r} must be 3, 4, 6, or 8 hex digits long.".format(c))
+                    raise ValueError("Color string {!r} must be 3, 4, 6, or 8 hex digits long.".format(c))
 
                 return tuple.__new__(cls, (r, g, b, a)) # type: ignore
 

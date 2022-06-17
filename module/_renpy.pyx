@@ -116,10 +116,10 @@ def pixellate(pysrc, pydst, avgwidth, avgheight, outwidth, outheight):
         raise TypeError("pixellate requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
-        raise Exception("pixellate requires a 24 or 32 bit surface.")
+        raise ValueError("pixellate requires a 24 or 32 bit surface.")
 
     if pydst.get_bitsize() != pysrc.get_bitsize():
-        raise Exception("pixellate requires both surfaces have the same bitsize.")
+        raise ValueError("pixellate requires both surfaces have the same bitsize.")
 
     # pysrc.lock()
     # pydst.lock()
@@ -146,13 +146,13 @@ def map(pysrc, pydst, r, g, b, a): # @ReservedAssignment
         raise TypeError("map requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
-        raise Exception("map requires a 24 or 32 bit surface.")
+        raise ValueError("map requires a 24 or 32 bit surface.")
 
     if pydst.get_bitsize() != pysrc.get_bitsize():
-        raise Exception("map requires both surfaces have the same bitsize.")
+        raise ValueError("map requires both surfaces have the same bitsize.")
 
     if pydst.get_size() != pysrc.get_size():
-        raise Exception("map requires both surfaces have the same size.")
+        raise ValueError("map requires both surfaces have the same size.")
 
     # pysrc.lock()
     # pydst.lock()
@@ -178,13 +178,13 @@ def linmap(pysrc, pydst, r, g, b, a):
         raise TypeError("map requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
-        raise Exception("map requires a 24 or 32 bit surface.")
+        raise ValueError("map requires a 24 or 32 bit surface.")
 
     if pydst.get_bitsize() != pysrc.get_bitsize():
-        raise Exception("map requires both surfaces have the same bitsize.")
+        raise ValueError("map requires both surfaces have the same bitsize.")
 
     if pydst.get_size() != pysrc.get_size():
-        raise Exception("map requires both surfaces have the same size.")
+        raise ValueError("map requires both surfaces have the same size.")
 
     # pysrc.lock()
     # pydst.lock()
@@ -210,21 +210,21 @@ def blur(pysrc, pywrk, pydst, xrad, yrad=None):
         raise TypeError("blur requires a pygame Surface as its third argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
-        raise Exception("blur requires a 24 or 32 bit surface.")
+        raise ValueError("blur requires a 24 or 32 bit surface.")
 
     if pywrk.get_bitsize() != pysrc.get_bitsize() \
             or pydst.get_bitsize() != pysrc.get_bitsize():
-        raise Exception("blur requires all surfaces have the same bitsize.")
+        raise ValueError("blur requires all surfaces have the same bitsize.")
 
     if pywrk.get_size() != pysrc.get_size() \
             or pydst.get_size() != pysrc.get_size():
-        raise Exception("blur requires all surfaces have the same size.")
+        raise ValueError("blur requires all surfaces have the same size.")
 
     if yrad is None:
         yrad = xrad
 
     if xrad < 0 or yrad < 0:
-        raise Exception("blur requires a positive radius.")
+        raise ValueError("blur requires a positive radius.")
 
 #     pysrc.lock()
 #     pywrk.lock()
@@ -249,16 +249,16 @@ def linblur(pysrc, pydst, radius, vertical=0):
         raise TypeError("linblur requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
-        raise Exception("linblur requires a 24 or 32 bit surface.")
+        raise ValueError("linblur requires a 24 or 32 bit surface.")
 
     if pydst.get_bitsize() != pysrc.get_bitsize():
-        raise Exception("linblur requires both surfaces have the same bitsize.")
+        raise ValueError("linblur requires both surfaces have the same bitsize.")
 
     if pydst.get_size() != pysrc.get_size():
-        raise Exception("linblur requires both surfaces have the same size.")
+        raise ValueError("linblur requires both surfaces have the same size.")
 
     if radius < 1:
-        raise Exception("linblur requires a non-zero radius.")
+        raise ValueError("linblur requires a non-zero radius.")
 
 #     pysrc.lock()
 #     pydst.lock()
@@ -281,13 +281,13 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
         raise TypeError("alpha_munge requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
-        raise Exception("alpha_munge requires a 24 or 32 bit surface.")
+        raise ValueError("alpha_munge requires a 24 or 32 bit surface.")
 
     if pydst.get_bitsize() != pysrc.get_bitsize():
-        raise Exception("alpha_munge requires both surfaces have the same bitsize.")
+        raise ValueError("alpha_munge requires both surfaces have the same bitsize.")
 
     if pydst.get_size() != pysrc.get_size():
-        raise Exception("alpha_munge requires both surfaces have the same size.")
+        raise ValueError("alpha_munge requires both surfaces have the same size.")
 
 
     if pysrc.get_bitsize() == 24:
@@ -313,7 +313,7 @@ def alpha_munge(pysrc, pydst, srcchan, dstchan, amap):
 #         raise TypeError("stretch requires a pygame Surface as its second argument.")
 
 #     if pydst.get_bitsize() != pysrc.get_bitsize():
-#         raise Exception("stretch requires both surfaces have the same bitsize.")
+#         raise ValueError("stretch requires both surfaces have the same bitsize.")
 
 #     if rect:
 #         x, y, w, h = rect
@@ -336,10 +336,10 @@ def bilinear(pysrc, pydst,
         raise TypeError("bilinear requires a pygame Surface as its second argument.")
 
     if pysrc.get_bitsize() not in (24, 32):
-        raise Exception("bilinear requires a 24 or 32 bit surface.")
+        raise ValueError("bilinear requires a 24 or 32 bit surface.")
 
     if pydst.get_bitsize() != pysrc.get_bitsize():
-        raise Exception("bilinear requires both surfaces have the same bitsize.")
+        raise ValueError("bilinear requires both surfaces have the same bitsize.")
 
     if source_width is None or source_height is None:
         source_width, source_height = pysrc.get_size()
@@ -370,7 +370,7 @@ def check(surf):
         raise TypeError("Surface must be a pygame surface.")
 
     if surf.get_bitsize() != 32:
-        raise Exception("Surface must be 32-bit.")
+        raise ValueError("Surface must be 32-bit.")
 
 
 def transform(pysrc, pydst,

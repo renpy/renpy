@@ -170,7 +170,7 @@ init python in distribute:
         def add_file(self, name, path, xbit):
 
             if path is None:
-                raise Exception("path for " + name + " must not be None.")
+                raise ValueError("path for " + name + " must not be None.")
 
             zi = zipfile.ZipInfo(name)
             zi.date_time = self.get_date_time(path)

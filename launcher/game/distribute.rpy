@@ -467,7 +467,7 @@ change_renpy_executable()
 
             if packagedest is not None:
                 if packages is None or len(packages) != 1:
-                    raise Exception("Packagedest requires a single package be given.")
+                    raise ValueError("Packagedest requires a single package be given.")
 
             # Safety - prevents us from releasing a launcher that won't update.
             if store.UPDATE_SIMULATE:

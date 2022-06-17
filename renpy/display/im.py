@@ -1339,7 +1339,7 @@ class MatrixColor(ImageBase):
         im = image(im)
 
         if len(matrix) != 20 and len(matrix) != 25:
-            raise Exception("ColorMatrix expects a 20 or 25 element matrix, got %d elements." % len(matrix))
+            raise ValueError("ColorMatrix expects a 20 or 25 element matrix, got %d elements." % len(matrix))
 
         matrix = tuple(matrix)
         super(MatrixColor, self).__init__(im, matrix, **properties)
@@ -1390,7 +1390,7 @@ class matrix(tuple):
             args = args + (0, 0, 0, 0, 1)
 
         if len(args) != 25:
-            raise Exception("Matrix expects to be given 20 or 25 entries, not %d." % len(args))
+            raise ValueError("Matrix expects to be given 20 or 25 entries, not %d." % len(args))
 
         return tuple.__new__(cls, args)
 
@@ -1829,7 +1829,7 @@ class AlphaMask(ImageBase):
         masksurf = cache.get(self.mask)
 
         if basesurf.get_size() != masksurf.get_size():
-            raise Exception("AlphaMask surfaces must be the same size.")
+            raise ValueError("AlphaMask surfaces must be the same size.")
 
         # Used to copy the surface.
         rv = renpy.display.pgrender.copy_surface(basesurf)

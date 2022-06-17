@@ -563,7 +563,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
                     if callable(mask):
                         mask = mask
                     else:
-                        raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
+                        raise ValueError("Focus_mask must be None, True, a displayable, or a callable.")
 
             if mask is not None:
                 fmx = 0

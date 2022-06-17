@@ -379,7 +379,7 @@ init -1500 python in build:
 
         for i in formats:
             if i not in [ "zip", "app-zip", "tar.bz2", "directory", "dmg", "app-directory", "app-dmg", "bare-zip", "bare-tar.bz2" ]:
-                raise Exception("Format {} not known.".format(i))
+                raise ValueError("Format {} not known.".format(i))
 
         if description is None:
             description = name

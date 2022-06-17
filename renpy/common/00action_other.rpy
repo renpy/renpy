@@ -645,7 +645,7 @@ init -1500 python:
                 delta = -1
                 adjustment = d.yadjustment
             else:
-                raise Exception("Unknown scroll direction: {}".format(self.direction))
+                raise ValueError("Unknown scroll direction: {}".format(self.direction))
 
             if self.amount == "step":
                 adjustment.change(adjustment.value + delta * adjustment.step)

@@ -134,7 +134,7 @@ def compile_event(key, keydown):
     if len(part) == 1:
         if len(part[0]) != 1:
             if renpy.config.developer:
-                raise Exception("Invalid key specifier %s" % key)
+                raise ValueError("Invalid key specifier %s" % key)
             else:
                 return "(False)"
 
@@ -143,7 +143,7 @@ def compile_event(key, keydown):
     else:
         if part[0] != "K":
             if renpy.config.developer:
-                raise Exception("Invalid key specifier %s" % key)
+                raise ValueError("Invalid key specifier %s" % key)
             else:
                 return "(False)"
 
@@ -885,7 +885,7 @@ class Button(renpy.display.layout.Window):
                     if callable(mask):
                         mask = mask
                     else:
-                        raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
+                        raise ValueError("Focus_mask must be None, True, a displayable, or a callable.")
 
             if mask is not None:
                 fmx = 0
@@ -2330,7 +2330,7 @@ class Timer(renpy.display.layout.Null):
         super(Timer, self).__init__(**properties)
 
         if delay <= 0:
-            raise Exception("A timer's delay must be > 0.")
+            raise ValueError("A timer's delay must be > 0.")
 
         # The delay.
         self.delay = delay

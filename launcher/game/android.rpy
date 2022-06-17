@@ -196,7 +196,7 @@ init python:
         if "google_play_salt" in build:
 
             if len(build["google_play_salt"]) != 20:
-                raise Exception("build.google_play_salt must be exactly 20 bytes long.")
+                raise ValueError("build.google_play_salt must be exactly 20 bytes long.")
 
             android_json["google_play_salt"] = ", ".join(str(i) for i in build["google_play_salt"])
         else:
