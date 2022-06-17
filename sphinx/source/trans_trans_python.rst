@@ -53,9 +53,9 @@ The Python equivalent of an ATL transform is a Transform object.
 
     Additional keyword arguments are values that transform properties are set
     to. These transform properties are set each time the transform is drawn,
-    and so may not be changed after the Transform object is created, unless
-    (1) it's done within the function passed as the `function` argument, or
-    (2) the :meth:`Transform.update` method is called immediately afterwards.
+    and so may not be changed after the Transform object is created. Fields
+    corresponding to other transform properties, however, can be set and
+    changed afterwards.
 
     .. attribute:: hide_request
 
