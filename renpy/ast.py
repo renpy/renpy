@@ -1755,7 +1755,8 @@ class Return(Node):
 
     __slots__ = [ 'expression']
 
-    should_be_reachable = True
+    # should_be_reachable = None
+    # there are implicit return statements in various places
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
