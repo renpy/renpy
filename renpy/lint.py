@@ -860,10 +860,9 @@ def lint():
         if isinstance(node, (renpy.ast.Show, renpy.ast.Scene)):
             precheck_show(node)
 
-    for node in all_stmts:
+    uncommon = [nod for nod in all_stmts if not common(nod)]
 
-        if common(node):
-            continue
+    for node in uncommon:
 
         report_node = node
 
