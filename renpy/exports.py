@@ -778,7 +778,7 @@ def scene(layer='master'):
     renpy.display.interface.ongoing_transition.pop(layer, None)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, **kwargs): # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None,copypaste=False, **kwargs): # @ReservedAssignment
     """
     :doc: input
 
