@@ -2097,6 +2097,14 @@ class If(Node):
 
     should_be_reachable = True
 
+    @property
+    def block(self):
+        """
+        Aligns If with other containers for easier recursion.
+        Uses tuple instead of list to prevent the illusion of possible side-effects.
+        """
+        return tuple(n for (_c, nodlist) in self.entries for n in nodlist)
+
     def __init__(self, loc, entries):
         """
         @param entries: A list of (condition, block) tuples.

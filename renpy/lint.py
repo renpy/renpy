@@ -713,6 +713,12 @@ def get_reachable_script_statements(all_stmts):
 
     # all_stmts = sorted(all_stmts, key=(lambda x:(x.filename, x.linenumber)))
 
+    def rec_mark_reachable(nodd):
+        for nod in getattr(nodd, "block", ()):
+            if nod.should_be_reachable:
+                rec_mark_reachable(nod)
+                reachable_stmts.add(nod)
+
     has_passed_label = False
     file_ = None
     for node in all_stmts:
@@ -723,11 +729,9 @@ def get_reachable_script_statements(all_stmts):
         if isinstance(node, renpy.ast.Label):
             has_passed_label = True
 
-        if isinstance(node, (renpy.ast.Init, renpy.ast.Translate)):
-            for nod in node.block:
-                # needs to search recursively, if nod has subnodes
-                if nod.should_be_reachable:
-                    reachable_stmts.add(nod)
+        if isinstance(node, (renpy.ast.Init,
+                             renpy.ast.Translate)):
+            rec_mark_reachable(node)
 
         if has_passed_label and node.should_be_reachable:
             reachable_stmts.add(node)
