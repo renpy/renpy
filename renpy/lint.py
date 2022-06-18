@@ -723,8 +723,7 @@ def get_reachable_script_statements(all_stmts):
         if isinstance(node, renpy.ast.Label):
             has_passed_label = True
 
-        if isinstance(node, renpy.ast.Init):
-            # translate blocks need to be covered too
+        if isinstance(node, (renpy.ast.Init, renpy.ast.Translate)):
             for nod in node.block:
                 # needs to search recursively, if nod has subnodes
                 if nod.should_be_reachable:
