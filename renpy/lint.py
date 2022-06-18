@@ -840,7 +840,7 @@ def lint():
     # them. We sort them in filename, linenumber order.
 
     all_stmts = list(renpy.game.script.all_stmts)
-    all_stmts.sort(key=lambda n : n.filename)
+    all_stmts.sort(key=lambda n : (n.filename, n.linenumber))
 
     # The current count.
     counts = collections.defaultdict(Count)
