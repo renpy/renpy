@@ -708,6 +708,34 @@ def check_styles():
         check_style("Style " + name, s)
 
 
+def get_reachable_script_statements(all_stmts):
+    reachable_stmts = set()
+
+    # all_stmts = sorted(all_stmts, key=(lambda x:(x.filename, x.linenumber)))
+
+    has_passed_label = False
+    file_ = None
+    for node in all_stmts:
+        if file_ != node.filename:
+            file_ = node.filename
+            has_passed_label = False
+
+        if isinstance(node, renpy.ast.Label):
+            has_passed_label = True
+
+        if isinstance(node, renpy.ast.Init):
+            # translate blocks need to be covered too
+            for nod in node.block:
+                # needs to search recursively, if nod has subnodes
+                if nod.should_be_reachable:
+                    reachable_stmts.add(nod)
+
+        if has_passed_label and node.should_be_reachable:
+            reachable_stmts.add(node)
+
+    return reachable_stmts
+
+
 def humanize(n):
     s = str(n)
 
@@ -861,10 +889,15 @@ def lint():
             precheck_show(node)
 
     uncommon = [nod for nod in all_stmts if not common(nod)]
+    reachable_stmts = get_reachable_script_statements(uncommon)
 
     for node in uncommon:
 
         report_node = node
+
+        if node.should_be_reachable:
+            if node not in reachable_stmts:
+                print("Unreachable node in {} at line {} : {}".format(node.filename, node.linenumber, node))
 
         if isinstance(node, renpy.ast.Image):
             image_count += 1
