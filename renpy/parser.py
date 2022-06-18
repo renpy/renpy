@@ -2387,7 +2387,13 @@ def transform_statement(l, loc):
     else:
         priority = 0
 
+    store = 'store'
     name = l.require(l.name)
+
+    while l.match(r'\.'):
+        store = store + "." + name
+        name = l.require(l.word)
+
     parameters = parse_parameters(l)
 
     if parameters and (parameters.extrakw or parameters.extrapos):
@@ -2398,7 +2404,7 @@ def transform_statement(l, loc):
 
     atl = renpy.atl.parse_atl(l.subblock_lexer())
 
-    rv = ast.Transform(loc, name, atl, parameters)
+    rv = ast.Transform(loc, store, name, atl, parameters)
 
     if not l.init:
         rv = ast.Init(loc, [ rv ], priority + l.init_offset)
