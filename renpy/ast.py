@@ -567,6 +567,14 @@ class Node(object):
     # * "force" force it to start.
     rollback = "normal"
 
+    # Does it make sense to find this outside of an init block or before a
+    # label ?
+    #
+    # True - it should only be reachable
+    # None - it doesn't matter
+    # False - it should not be reachable
+    should_be_reachable = None
+
     def __init__(self, loc):
         """
         Initializes this Node object.
@@ -768,6 +776,8 @@ class Say(Node):
         'rollback',
         'identifier',
         ]
+
+    should_be_reachable = True
 
     def diff_info(self):
         return (Say, self.who, self.what)
@@ -1073,6 +1083,8 @@ class Python(Node):
         'store',
         ]
 
+    should_be_reachable = True
+
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.store = "store"
@@ -1129,6 +1141,8 @@ class EarlyPython(Node):
         'store',
         ]
 
+    should_be_reachable = False
+
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.store = "store"
@@ -1175,6 +1189,8 @@ class Image(Node):
         'code',
         'atl',
         ]
+
+    should_be_reachable = False
 
     def __init__(self, loc, name, expr=None, atl=None):
         """
@@ -1233,6 +1249,8 @@ class Transform(Node):
         # The parameters associated with the transform, if any.
         'parameters',
         ]
+
+    should_be_reachable = False
 
     default_parameters = EMPTY_PARAMETERS
 
@@ -1365,6 +1383,8 @@ class Show(Node):
         'atl',
         ]
 
+    should_be_reachable = True
+
     warp = True
 
     def __init__(self, loc, imspec, atl=None):
@@ -1409,6 +1429,8 @@ class ShowLayer(Node):
         'atl',
         ]
 
+    should_be_reachable = True
+
     def __init__(self, loc, layer, at_list, atl):
         super(ShowLayer, self).__init__(loc)
 
@@ -1449,6 +1471,8 @@ class Camera(Node):
         'atl',
         ]
 
+    should_be_reachable = True
+
     def __init__(self, loc, layer, at_list, atl):
         super(Camera, self).__init__(loc)
 
@@ -1486,6 +1510,8 @@ class Scene(Node):
         'layer',
         'atl',
         ]
+
+    should_be_reachable = True
 
     warp = True
 
@@ -1538,6 +1564,8 @@ class Hide(Node):
     __slots__ = [
         'imspec',
         ]
+
+    should_be_reachable = True
 
     warp = True
 
@@ -1606,6 +1634,8 @@ class With(Node):
         'paired',
         ]
 
+    should_be_reachable = True
+
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.paired = None
@@ -1658,6 +1688,8 @@ class Call(Node):
         'arguments',
         'expression',
         ]
+
+    should_be_reachable = True
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
@@ -1723,6 +1755,8 @@ class Return(Node):
 
     __slots__ = [ 'expression']
 
+    should_be_reachable = True
+
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.expression = None
@@ -1785,6 +1819,8 @@ class Menu(Node):
         'item_arguments',
         'rollback',
         ]
+
+    should_be_reachable = True
 
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
@@ -1929,6 +1965,8 @@ class Jump(Node):
         'expression',
         ]
 
+    should_be_reachable = True
+
     def __init__(self, loc, target, expression):
         super(Jump, self).__init__(loc)
 
@@ -2005,6 +2043,8 @@ class While(Node):
         'block',
         ]
 
+    should_be_reachable = True
+
     def __init__(self, loc, condition, block):
         super(While, self).__init__(loc)
 
@@ -2053,6 +2093,8 @@ class While(Node):
 class If(Node):
 
     __slots__ = [ 'entries' ]
+
+    should_be_reachable = True
 
     def __init__(self, loc, entries):
         """
@@ -2363,6 +2405,8 @@ class Define(Node):
         'index',
         ]
 
+    should_be_reachable = False
+
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.store = 'store'
@@ -2482,6 +2526,8 @@ class Default(Node):
         'store',
         ]
 
+    should_be_reachable = False
+
     def __new__(cls, *args, **kwargs):
         self = Node.__new__(cls)
         self.store = 'store'
@@ -2557,6 +2603,8 @@ class Screen(Node):
     __slots__ = [
         'screen',
         ]
+
+    should_be_reachable = False
 
     def __init__(self, loc, screen):
         """
@@ -2828,6 +2876,8 @@ class Style(Node):
         'variant',
     ]
 
+    should_be_reachable = False
+
     def __init__(self, loc, name):
         """
         `name`
@@ -2911,6 +2961,8 @@ class Testcase(Node):
         'test',
         ]
 
+    should_be_reachable = False
+
     def __init__(self, loc, label, test):
         super(Testcase, self).__init__(loc)
 
@@ -2931,6 +2983,8 @@ class RPY(Node):
     __slots__ = [
         "rest"
         ]
+
+    should_be_reachable = False
 
     def __init__(self, loc, rest):
         super(RPY, self).__init__(loc)
