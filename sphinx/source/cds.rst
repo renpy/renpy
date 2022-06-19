@@ -32,7 +32,7 @@ Using a CDS allows you to:
 
 - Predict Displayables (If the function uses them)
 
-- Give you addition information during lint (If at runtime an error was ignored you can have a report here).
+- Give you addition information during :ref:`lint` (If at runtime an error was ignored you can have a report here).
 
 For example, the above behaviour, but written as a CDS:
 
