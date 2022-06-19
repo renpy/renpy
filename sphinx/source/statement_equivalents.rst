@@ -103,4 +103,4 @@ Pause
 
 The equivalent of the :ref:`pause-statement` is the :func:`renpy.pause` function.
 
-..include:: inc/se_pause
+.. include:: inc/se_pause
