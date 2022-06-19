@@ -778,7 +778,7 @@ def scene(layer='master'):
     renpy.display.interface.ongoing_transition.pop(layer, None)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None,copypaste=False, **kwargs): # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, copypaste=True, **kwargs): # @ReservedAssignment
     """
     :doc: input
 
@@ -814,9 +814,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     `mask`
         If not None, a single-character string that replaces the input text that
         is shown to the player, such as to conceal a password.
-        
+
     `copypaste`
-        If True, it becomes possible to copy and paste into this input. (By default, disabled.)
+        When true, copying from and pasting to this input is allowed.
 
     If :var:`config.disable_input` is True, this function only returns
     `default`.
