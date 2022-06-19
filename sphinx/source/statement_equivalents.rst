@@ -9,6 +9,10 @@ a Python equivalent. This usually consists of a Python function,
 but may also consist of a pattern of Python calls that perform an action
 equivalent to the statement.
 
+Note that using statement equivalents in lieu of the original statements
+usually removes any possible :ref:`lint` checks and prediction
+optimizations, making your game less easily checkable and possibly less
+fluid.
 
 Dialogue
 ========
