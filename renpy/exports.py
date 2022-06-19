@@ -778,7 +778,7 @@ def scene(layer='master'):
     renpy.display.interface.ongoing_transition.pop(layer, None)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, **kwargs): # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None,copypaste=False, **kwargs): # @ReservedAssignment
     """
     :doc: input
 
@@ -814,6 +814,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     `mask`
         If not None, a single-character string that replaces the input text that
         is shown to the player, such as to conceal a password.
+        
+    `copypaste`
+        If True, it becomes possible to copy and paste into this input. (By default, disabled.)
 
     If :var:`config.disable_input` is True, this function only returns
     `default`.
@@ -848,7 +851,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     if has_screen(screen):
         widget_properties = { }
-        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width, mask=mask)
+        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width, mask=mask, copypaste=copypaste)
 
         show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **show_properties)
 
