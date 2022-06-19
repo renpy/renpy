@@ -4,6 +4,8 @@ Developer Tools
 Ren'Py includes a number of features to make a developer's life easier. Many of
 them need the variable :var:`config.developer` to be set to True to operate.
 
+.. _lint:
+
 Lint
 ----
 
