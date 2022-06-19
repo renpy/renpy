@@ -166,6 +166,24 @@ variant will be selected.
 
 The Ren'Py SDK can be run on ARM Chromebooks.
 
+Android and iOS
+---------------
+
+The Android configuration once again prompts as to which store to use
+for in app purchases. When no store is selected, libraries to support
+purchasing are not included in the project. These libraries would include
+the billing permission, which would flag the game as supporting in-app
+purchases even if no purchases were used.
+
+Due to issues in underlying libraries, the :func:`renpy.input` function
+and ``input`` displayable are now documented as not supporting IME-based
+(non-alphabetic) input on Android.
+
+On iOS, OpenGL ES calls are translated to the native Metal graphics system.
+Doing this should improve compatibility with recent Apple devices, and
+fixes problems running applications under the iOS simulator on Apple
+Silicon-based devices.
+
 
 Steam, Steam Deck, and Epic Games Store
 ---------------------------------------
@@ -399,17 +417,6 @@ The :var:`config.default_attribute_callbacks` variable allows a game to
 specify default attributes for a tag that are used when other attributes
 do not conflict.
 
-Removed Features
-----------------
-
-Ren'Py used to support a very old system (the ``ui`` system) allowing the
-creation of screens as Python functions. In the current state of Ren'Py, this
-system is obsolete and very much under-optimized. While old games using it will
-continue to be supported, the system has been removed from the documentation.
-
-Due to issues in underlying libraries, the :func:`renpy.input` function
-and ``input`` displayable are now documented as not supporting IME-based
-(non-alphabetic) input on Android.
 
 Other Changes
 -------------
