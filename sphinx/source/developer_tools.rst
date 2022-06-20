@@ -10,10 +10,10 @@ Lint
 ----
 
 The Lint tool (available from the launcher) checks the game for potential errors
-or misoptimizations, and advises the developing team about how to improve it.
+or misoptimizations, and advises the developing team about how to best improve it.
 Since some of these errors will only affect users on other platforms, it’s
-recommended to understand fix all errors, even if the problem can't be triggered
-locally.
+recommended to understand and fix all errors, even if the problem can't be
+triggered locally.
 
 Lint also includes useful infos and stats about the game.
 
