@@ -535,7 +535,7 @@ presents menus to the user.
 Menus, Labels, and Jumps
 -------------------------
 
-*Main articles: :ref:`in-game-menus` and :ref:`labels-control-flow`*
+*Main articles: :ref:`menus` and :ref:`labels-control-flow`*
 
 The ``menu`` statement lets presents a choice to the player::
 
@@ -596,7 +596,7 @@ in how you organize the script of a larger game.
 Supporting Flags using the Default, Python and If Statements
 ------------------------------------------------------------
 
-*Main articles: :ref:`python-statements` and :ref:`conditional-statements`*
+*Main articles: :ref:`python` and :ref:`conditional-statements`*
 
 While some games can be made by only using the statements given above,
 other games require data to be stored and recalled later. For example,
