@@ -37,7 +37,7 @@ be given by adding "=" and the value (e.g. "transform a (b, c=0):").
 
 `qualname` must be a set of dot-separated Python identifiers. The transform created
 by the ATL block is bound to this name, within the given
-:ref:`store <other-named-stores>` if one was provided.::
+:ref:`store <named-stores>` if one was provided.::
 
     transform left_to_right:
         xalign 0.0
