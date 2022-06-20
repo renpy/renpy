@@ -270,6 +270,7 @@ the store are transitions and transforms.
 Names beginning with underscore ``_`` are reserved for Ren'Py's
 internal use. In addition, there is an :ref:`Index of Reserved Names <reserved-names>`.
 
+.. _named-stores:
 
 Other Named Stores
 ------------------
@@ -284,7 +285,7 @@ store. Each store corresponds to a Python module. The default store is
 ``store``, while a named store is accessed as ``store.name``. Names in
 the modules can be imported using the Python ``from`` statement.
 Named stores can be created using ``init python in`` blocks, or using
-default or define statements.
+``default``, ``define`` or :ref:`transform <transform-statement>` statements.
 
 For example::
 
