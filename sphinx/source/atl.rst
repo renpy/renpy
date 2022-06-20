@@ -26,7 +26,7 @@ The ``transform`` statement creates a transform that can be supplied as part of 
 at clause. The syntax of the transform statement is:
 
 .. productionlist:: script
-    atl_transform : "transform" `name` "(" `parameters` ")" ":"
+    atl_transform : "transform" `qualname` ( "(" `parameters` ")" )? ":"
                   :    `atl_block`
 
 The transform statement  must be run at init time. If it is found outside an
@@ -35,13 +35,17 @@ priority of 0. The transform may have a list of parameters, which must be
 supplied when it is called. Default values for the right-most parameters can
 be given by adding "=" and the value (e.g. "transform a (b, c=0):").
 
-`Name` must be a Python identifier. The transform created by the ATL block is
-bound to this name.::
+`qualname` must be a set of dot-separated Python identifiers. The transform created
+by the ATL block is bound to this name, within the given
+:ref:`store <other-named-stores>` if one was provided.::
 
-   transform left_to_right:
-       xalign 0.0
-       linear 2.0 xalign 1.0
-       repeat
+    transform left_to_right:
+        xalign 0.0
+        linear 2.0 xalign 1.0
+        repeat
+
+    transform ariana.left:
+        xcenter .3
 
 .. _atl-image-statement:
 
