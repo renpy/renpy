@@ -63,7 +63,7 @@ arguments to character calls.
 Choice Menus
 ============
 
-The :ref:`menu statement <in-game-menus>` has an equivalent Python function.
+The :ref:`menu statement <menus>` has an equivalent Python function.
 
 .. include:: inc/se_menu
 
