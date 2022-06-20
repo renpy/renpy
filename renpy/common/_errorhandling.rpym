@@ -525,7 +525,9 @@ init python:
         """
 
         def __call__(self):
-            renpy.quit(status=1)
+            # We use 'exception' instead of exports.quit
+            # to not call quit label since it may raise another error.
+            raise renpy.game.QuitException(status=1)
 
     class __EnterConsole(Action):
         """
