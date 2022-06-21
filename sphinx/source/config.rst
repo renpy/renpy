@@ -1317,7 +1317,7 @@ Rarely or Internally Used
 .. var:: config.layeredimage_offer_screen = True
 
     This variable sets the default value for the ``offer_screen`` property
-    of layeredimages. See :ref:`the related section <layered-images>`
+    of layeredimages. See :ref:`the related section <layeredimage-statement>`
     for more information.
 
 .. var:: config.layers = [ 'master', 'transient', 'screens', 'overlay' ]
