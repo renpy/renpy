@@ -232,7 +232,7 @@ def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, 
             break
 
         nsw = max(sw // 2, dw)
-        nsh = max(sh // 2, dh)
+        nsh = max(sh // 2, dh) # type: ignore
 
         nsrc = renpy.display.pgrender.surface((nsw, nsh), src.get_masks()[3])
 

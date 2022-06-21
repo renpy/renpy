@@ -1416,7 +1416,7 @@ returns = renpy.curry.curry(_returns)
 def _jumps(label, transition=None):
 
     if isinstance(transition, basestring):
-        transition = getattr(renpy.config, transition)
+        transition = getattr(renpy.config, transition) # type: ignore
 
     if transition is not None:
         renpy.exports.transition(transition)

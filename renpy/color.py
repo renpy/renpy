@@ -347,7 +347,7 @@ class Color(tuple):
         hsv = self.interpolate_core(self.hsv, other.hsv, fraction)
         alpha = self.interpolate_core(self.alpha, other.alpha, fraction)
 
-        return Color(hsv=hsv, alpha=alpha)
+        return Color(hsv=hsv, alpha=alpha) # type: ignore
 
     def interpolate_hls(self, other, fraction):
         """
@@ -368,7 +368,7 @@ class Color(tuple):
         hls = self.interpolate_core(self.hls, other.hls, fraction)
         alpha = self.interpolate_core(self.alpha, other.alpha, fraction)
 
-        return Color(hls=hls, alpha=alpha)
+        return Color(hls=hls, alpha=alpha) # type: ignore
 
     def tint(self, fraction):
         """

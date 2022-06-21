@@ -22,7 +22,7 @@
 # This file contains functions that are exported to the script namespace as
 # the renpy namespace. (So renpy.say, renpy.pause, and so on.)
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import gc
@@ -2466,7 +2466,7 @@ def open_file(fn, encoding=None): # @ReservedAssignment
         encoding = renpy.config.open_file_encoding
 
     if encoding:
-        rv = io.TextIOWrapper(rv, encoding=encoding, errors="surrogateescape")
+        rv = io.TextIOWrapper(rv, encoding=encoding, errors="surrogateescape") # type: ignore
 
     return rv
 

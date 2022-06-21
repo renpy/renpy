@@ -469,14 +469,14 @@ class Movie(renpy.display.core.Displayable):
                 renpy.audio.music.stop(channel=self.channel)
 
                 if self.mask:
-                    renpy.audio.music.stop(channel=self.mask_channel)
+                    renpy.audio.music.stop(channel=self.mask_channel) # type: ignore
 
     def stop(self):
         if self._play:
             renpy.audio.music.stop(channel=self.channel)
 
             if self.mask:
-                renpy.audio.music.stop(channel=self.mask_channel)
+                renpy.audio.music.stop(channel=self.mask_channel) # type: ignore
 
     def per_interact(self):
         displayable_channels[(self.channel, self.mask_channel)].append(self)
