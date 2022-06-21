@@ -1785,7 +1785,7 @@ Other Configuration Variables
 Some other pages of this documentation contain and define other configuration
 variables. You can locate them there, in their context.
 
-:ref:`nvl_mode`:
+:ref:`nvl-mode`:
     :var:`config.nvl_layer`
     :var:`config.nvl_list_length`
     :var:`config.nvl_page_ctc`
