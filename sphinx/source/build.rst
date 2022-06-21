@@ -1,3 +1,5 @@
+.. _building-distributions:
+
 Building Distributions
 ======================
 

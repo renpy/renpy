@@ -519,3 +519,11 @@ Image Functions
 ===============
 
 .. include:: inc/image_func
+
+See also
+========
+
+:ref:`statement-equivalents` : how to use most of the features described here in a
+python context.
+
+:ref:`displayables` : other objects to display, more diverse than basic images.

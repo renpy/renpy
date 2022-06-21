@@ -1440,7 +1440,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 
 def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None):
     """
-    :doc: other
+    :doc: se_pause
     :args: (delay=None, *, hard=False, predict=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
