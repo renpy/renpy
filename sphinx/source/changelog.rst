@@ -422,7 +422,8 @@ Other Changes
 -------------
 
 It is now possible to copy from :func:`renpy.input` with ctrl-C, and paste
-with ctrl-V.
+with ctrl-V. When text input is displayed, ctrl will no longer cause skipping
+to happen.
 
 The :func:`renpy.file` function has been renamed to :func:`renpy.open_file`,
 with the old named retained. It has also gained an `encoding` parameter to

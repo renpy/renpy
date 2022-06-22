@@ -264,8 +264,10 @@ def skipping(ev):
         return
 
     if map_event(ev, "skip"):
-        renpy.config.skipping = "slow"
-        renpy.exports.restart_interaction()
+
+        if (renpy.game.interface.text_rect is None) or renpy.config.skip_during_text:
+            renpy.config.skipping = "slow"
+            renpy.exports.restart_interaction()
 
     if map_keyup(ev, "skip") or map_event(ev, "stop_skipping"):
         renpy.config.skipping = None
