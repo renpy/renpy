@@ -793,7 +793,8 @@ def register_channel(name,
                      file_suffix="",
                      buffer_queue=True,
                      movie=False,
-                     framedrop=True):
+                     framedrop=True,
+                     force=False):
     """
     :doc: audio
     :args: (name, mixer, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True, movie=False, framedrop=True)
@@ -846,7 +847,7 @@ def register_channel(name,
     if name == "movie":
         movie = True
 
-    if not renpy.game.context().init_phase and (" " not in name):
+    if not force and not renpy.game.context().init_phase and (" " not in name):
         raise Exception("Can't register channel outside of init phase.")
 
     if renpy.android and renpy.config.hw_video and name == "movie":
