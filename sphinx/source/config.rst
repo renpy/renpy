@@ -1739,9 +1739,12 @@ Rarely or Internally Used
     If not None, this should be a function that is called when a :ref:`with
     statement <with-statement>` occurs. This function can be responsible for
     putting up transient things on the screen during the transition. The
-    function is called with a single argument, which is the transition that
-    is occurring. It is expected to return a transition, which may or may not
-    be the transition supplied as its argument.
+    function is called with two arguments: the transition that is occurring,
+    and the transition it is paired with. The latter is None except in the case
+    of the implicit None transition produced by an inline with statement, in
+    which case it is the inline transition that produced the with None. It is
+    expected to return a transition, which may or may not be the transition
+    supplied as its argument.
 
 
 Garbage Collection
