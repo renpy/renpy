@@ -104,16 +104,20 @@ before the game loads. They take a priority number between the word
 
     define a = 1
 
-When a priority is not given, 0 is used (but a bare ``init`` block,
-without a priority, is useless).
+Init blocks are rarely ever useful, because most statement that can
+be executed in an init block (``define``, ``default``, ``image``...),
+if they were found outside of the block, would be run at init time anyway.
+
+When a priority is not given, 0 is used, and an ``init`` block
+without a priority, or with a 0 priority, is useless (as stated above).
 Init statements are run in priority order, from lowest to highest.
 Init statements of the same priority are run in Unicode order by
 filename, and then from top to bottom within a file.
 
 To avoid conflict with Ren'Py, creators should use priorities in the
-range -999 to 999. Priorities of less than 0 are generally used for
+range from -999 to 999. Priorities of less than 0 are generally used for
 libraries and to set up themes. Normal init statements should have a
-priority of 0 or higher.
+priority of 1 or higher.
 
 Init blocks also exist in a ``python`` version, as explained below.
 
