@@ -22,7 +22,7 @@
 # This file contains functions that are exported to the script namespace as
 # the renpy namespace. (So renpy.say, renpy.pause, and so on.)
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import gc
@@ -379,8 +379,8 @@ def default_layer(layer, tag, expression=False):
     if layer is not None:
         return layer
 
-    if expression:
-        return 'master'
+    if (tag is None) or expression:
+        return renpy.config.default_tag_layer
 
     if isinstance(tag, tuple):
         tag = tag[0]
@@ -414,7 +414,7 @@ def can_show(name, layer=None, tag=None):
     if tag is None:
         tag = name[0]
 
-    layer = default_layer(layer, None)
+    layer = default_layer(layer, tag)
 
     try:
         return renpy.game.context().images.apply_attributes(layer, tag, name)
@@ -778,7 +778,7 @@ def scene(layer='master'):
     renpy.display.interface.ongoing_transition.pop(layer, None)
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, **kwargs): # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, copypaste=True, **kwargs): # @ReservedAssignment
     """
     :doc: input
 
@@ -815,6 +815,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
         If not None, a single-character string that replaces the input text that
         is shown to the player, such as to conceal a password.
 
+    `copypaste`
+        When true, copying from and pasting to this input is allowed.
+
     If :var:`config.disable_input` is True, this function only returns
     `default`.
 
@@ -848,7 +851,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     if has_screen(screen):
         widget_properties = { }
-        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width, mask=mask)
+        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width, mask=mask, copypaste=copypaste)
 
         show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **show_properties)
 
@@ -1437,7 +1440,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 
 def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None):
     """
-    :doc: other
+    :doc: se_pause
     :args: (delay=None, *, hard=False, predict=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
@@ -1634,12 +1637,6 @@ def with_statement(trans, always=False, paired=None, clear=True):
 
     renpy.exports.mode('with')
 
-    if isinstance(paired, dict):
-        paired = paired.get(None, None)
-
-        if (trans is None) and (paired is None):
-            return
-
     if isinstance(trans, dict):
 
         for k, v in trans.items():
@@ -1691,6 +1688,9 @@ def rollback(force=False, checkpoints=1, defer=False, greedy=True, label=None, a
         an abnormal mode that skips transitions that would have otherwise
         occured. Abnormal mode ends when an interaction begins.
     """
+
+    if defer and not renpy.game.log.log:
+        return
 
     if defer and len(renpy.game.contexts) > 1:
         renpy.game.contexts[0].defer_rollback = (force, checkpoints)
@@ -2460,7 +2460,7 @@ def open_file(fn, encoding=None): # @ReservedAssignment
         encoding = renpy.config.open_file_encoding
 
     if encoding:
-        rv = io.TextIOWrapper(rv, encoding=encoding, errors="surrogateescape")
+        rv = io.TextIOWrapper(rv, encoding=encoding, errors="surrogateescape") # type: ignore
 
     return rv
 

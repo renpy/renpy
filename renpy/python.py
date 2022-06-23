@@ -93,6 +93,7 @@ class StoreModule(object):
     def __delattr__(self, key):
         del self.__dict__[key]
 
+
 # Used to unpickle a store module.
 
 
@@ -225,7 +226,7 @@ def create_store(name):
     eval("1", d)
 
     for k, v in renpy.minstore.__dict__.items():
-        if k not in d:
+        if (k not in d) and k != "__all__":
             d[k] = v
 
     # Create or reuse the corresponding module.

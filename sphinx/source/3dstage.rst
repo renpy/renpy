@@ -318,7 +318,7 @@ The following transform properties are used by the 3D Stage.
 .. transform-property:: perspective
 
     :type: True or False or Float or (Float, Float, Float)
-    :default: False
+    :default: None
 
     When applied to a transform, this enables perspective rendering. This
     takes a triple, giving the near plane, z-distance to the 1:1 plane, and

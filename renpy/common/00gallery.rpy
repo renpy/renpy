@@ -635,9 +635,9 @@ init -1500:
         key "game_menu" action gallery.Return()
 
         if gallery.navigation:
-            use gallery_navigation
+            use gallery_navigation(gallery=gallery)
 
-    screen gallery_navigation():
+    screen gallery_navigation(gallery):
         hbox:
             spacing 20
 

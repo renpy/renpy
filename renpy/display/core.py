@@ -3176,12 +3176,10 @@ class Interface(object):
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
 
-        # At this point, we're about to enter the background.
+        # Wait for APP_DIDENTERBACKGROUND.
+        pygame.event.wait()
 
         renpy.audio.audio.pause_all()
-
-        if renpy.android:
-            android.wakelock(False)
 
         pygame.time.set_timer(PERIODIC, 0)
         pygame.time.set_timer(REDRAW, 0)
@@ -3190,14 +3188,32 @@ class Interface(object):
         self.mobile_save()
 
         if renpy.config.quit_on_mobile_background:
+
+            if renpy.android:
+                try:
+                    android.activity.finishAndRemoveTask()
+                except:
+                    pass
+
+                from jnius import autoclass
+                System = autoclass("java.lang.System")
+                System.exit(0)
+
             sys.exit(0)
 
         renpy.exports.free_memory()
+
+        if renpy.android:
+            android.wakelock(False)
 
         print("Entered background.")
 
         while True:
             ev = pygame.event.wait()
+
+            if ev.type == pygame.APP_TERMINATING:
+
+                sys.exit(0)
 
             if ev.type == pygame.APP_DIDENTERFOREGROUND:
                 break
@@ -3356,7 +3372,7 @@ class Interface(object):
             pause_start = get_time()
 
             while repeat:
-                repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, **kwargs)
+                repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, **kwargs) # type: ignore
                 self.start_interact = False
 
             return rv # type: ignore

@@ -444,7 +444,7 @@ def copyfile(source, dest, replace=None, replace_with=None):
     with open(sfn, "r") as sf:
         data = sf.read()
 
-    if replace:
+    if replace and (replace_with is not None):
         data = data.replace(replace, replace_with)
 
     with open(dfn, "w") as df:

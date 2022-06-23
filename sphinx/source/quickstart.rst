@@ -86,8 +86,8 @@ The launcher will then ask you for a project name. Since
 "The Question" is already taken, you should enter something different,
 like "My Question", and type enter.
 
-After that, the launcher will ask you to select the project resolution. The
-default of 1280x720 is a good compromise between game size and image quality.
+After that, the launcher will ask you to select the project resolution.
+1280x720 is a good compromise between game size and image quality.
 For the purpose of this tutorial, we will select 1280x720 to match
 "The Question" game art, then click "Continue".
 
@@ -141,14 +141,14 @@ and play through this example game.
 
 This example shows some of the commonly-used Ren'Py statements.
 
-The first line is a label statement. The label statement is used to
-give a name to a place in the program. In this case, we create a label
-named ``start``. The start label is special, as it's where Ren'Py
-scripts begin running when the user clicks "Start Game" on the main
-menu.
+The first line is a :ref:`label statement <label-statement>`. The label
+statement is used to give a name to a place in the program. In this case,
+we create a label named ``start``. The start label is special, as it's
+where Ren'Py scripts begin running when the user clicks "Start Game" on
+the main menu.
 
-The other lines are say statements. There are two forms of the say
-statement. The first is a string (beginning with a double-quote,
+The other lines are :ref:`say statements <say-statement>`. There are two
+forms of the say statement. The first is a string (beginning with a double-quote,
 containing characters, and ending with a double-quote) on a line by
 itself, which is used for narration, and the thoughts of the main
 character. The second form consists of two strings. It's used for
@@ -174,6 +174,8 @@ in a little bit, but first, let's see how to define characters.
 
 Characters
 ----------
+
+*Main article: :ref:`defining-character-objects`*
 
 One problem with the first example is that it requires you to
 repeatedly type the name of a character each time they speak. In a
@@ -217,6 +219,8 @@ we defined.
 
 Images
 ------
+
+*Main article: :ref:`displaying-images`*
 
 A visual novel isn't much of a visual novel without pictures. Here's another
 scene from "The Question". This also includes statements that show images
@@ -338,6 +342,8 @@ discussed :ref:`elsewhere <displaying-images>`.
 Transitions
 -----------
 
+*Main article: :ref:`transitions`*
+
 In the script above, pictures pop in and out instantaneously. Since
 changing location or having a character enter or leave a scene is
 important, Ren'Py supports transitions that allow effects to be
@@ -414,6 +420,8 @@ anything to the player.
 Positions
 ---------
 
+*Main article: :ref:`transforms`*
+
 By default, images are shown centered horizontally, and with their
 bottom edge touching the bottom of the screen. This is usually okay
 for backgrounds and single characters, but when showing more than one
@@ -438,6 +446,8 @@ but that's outside of the scope of this quickstart.
 
 Music and Sound
 ---------------
+
+*Main article: :ref:`audio`*
 
 Most Ren'Py games play music in the background. Music is played with the
 ``play music`` statement. The play music statement takes a filename that
@@ -488,6 +498,8 @@ For example, if "game/audio/illurock.ogg" exists, we can write::
 See :ref:`the audio namespace <audio-namespace>` for more details.
 
 
+.. _pause-statement:
+
 Pause Statement
 ---------------
 
@@ -522,6 +534,8 @@ presents menus to the user.
 
 Menus, Labels, and Jumps
 -------------------------
+
+*Main articles: :ref:`menus` and :ref:`labels-control-flow`*
 
 The ``menu`` statement lets presents a choice to the player::
 
@@ -582,8 +596,10 @@ in how you organize the script of a larger game.
 Supporting Flags using the Default, Python and If Statements
 ------------------------------------------------------------
 
+*Main articles: :ref:`python` and :ref:`conditional-statements`*
+
 While some games can be made by only using the statements given above,
-other games requires data to be stored and recalled later. For example,
+other games require data to be stored and recalled later. For example,
 it might make sense for a game to remember a choice a player has made,
 return to a common section of the script, and act on the choice later. This
 is one of the reasons why Ren'Py has embedded Python support.
@@ -689,6 +705,9 @@ before releasing it:
 
     * The `Completed Games section of the Lemma Soft Forums <https://lemmasoft.renai.us/forums/viewforum.php?f=11>`_ is a
       good place to tell fellow creators about your game.
+
+More advanced vays of customizing the building of the distribution of your game
+can be found in the :ref:`building-distributions` section.
 
 Script of The Question
 -----------------------

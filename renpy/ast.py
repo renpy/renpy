@@ -1311,7 +1311,7 @@ def predict_imspec(imspec, scene=False, atl=None):
         except Exception:
             pass
 
-    layer = renpy.exports.default_layer(layer, tag or name, expression)
+    layer = renpy.exports.default_layer(layer, tag or name, bool(expression))
 
     if scene:
         renpy.game.context().images.predict_scene(layer)
@@ -1346,7 +1346,7 @@ def show_imspec(imspec, atl=None):
 
     at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
-    layer = renpy.exports.default_layer(layer, tag or name, expression and (tag is None))
+    layer = renpy.exports.default_layer(layer, tag or name, bool(expression) and (tag is None))
 
     renpy.config.show(name,
                       at_list=at_list,
@@ -1635,7 +1635,7 @@ class With(Node):
         else:
             paired = None
 
-        renpy.exports.with_statement(trans, paired)
+        renpy.exports.with_statement(trans, paired=paired)
 
     def predict(self):
 

@@ -190,7 +190,7 @@ For example::
 
     define e = Character("Eileen")
 
-is equivalent to::
+is equivalent (except for some advantages, see below) to::
 
     init python:
         e = Character("Eileen")
@@ -216,6 +216,9 @@ or operator is generally used to concatenate sets. For example::
 One advantage of using the define statement is that it records the
 filename and line number at which the assignment occurred, and
 makes that available to the navigation feature of the launcher.
+Another advantage is that :ref:`lint` will be able to check defined
+values, for example by detecting whether the same variable is defined
+twice, potentially with different values.
 
 Variables that are defined using the define statement are treated
 as constant, are not saved or loaded, and should not be changed.
@@ -263,6 +266,9 @@ Here is an example::
     init 3:
         define a = 1
         default c = b + 1
+
+As for the ``define`` statement, :ref:`lint` offers checks and optimizations
+related to the ``default`` statement.
 
 .. _init-offset-statement:
 

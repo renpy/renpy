@@ -271,6 +271,8 @@ Statement Reference
 Note that with the exception of the conditions in the ``if`` statement, all expressions are
 evaluated at init time, when the layered image is first defined.
 
+.. _layeredimage-statement:
+
 Layeredimage
 ^^^^^^^^^^^^
 

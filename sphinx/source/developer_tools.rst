@@ -4,6 +4,21 @@ Developer Tools
 Ren'Py includes a number of features to make a developer's life easier. Many of
 them need the variable :var:`config.developer` to be set to True to operate.
 
+.. _lint:
+
+Lint
+----
+
+The Lint tool (available from the launcher) checks the game for potential errors
+or misoptimizations, and advises the developing team about how to best improve it.
+Since some of these errors will only affect users on other platforms, it’s
+recommended to understand and fix all errors, even if the problem can't be
+triggered locally.
+
+Lint also includes useful infos and stats about the game.
+
+Note that using Lint is not a substitute for thorough testing.
+
 Shift+O Console
 ---------------
 

@@ -863,8 +863,8 @@ class Block(Statement):
                     loop_end = target - arg
                     duration = loop_end - loop_start
 
-                    if (duration <= 0) and (count is None):
-                       raise Exception("ATL appears to be in an infinite loop.")
+                    if (state is None) and (duration <= 0):
+                        raise Exception("ATL appears to be in an infinite loop.")
 
                     # Figure how many durations can occur between the
                     # start of the loop and now.
@@ -1740,6 +1740,10 @@ class Function(Statement):
         block = state or renpy.config.atl_function_always_blocks
 
         fr = self.function(trans, st if block else 0, trans.at)
+
+        if (not block) and (fr is not None):
+           block = True
+           fr = self.function(trans, st, trans.at)
 
         if fr is not None:
             return "continue", True, fr

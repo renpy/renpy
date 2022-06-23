@@ -1317,7 +1317,7 @@ Rarely or Internally Used
 .. var:: config.layeredimage_offer_screen = True
 
     This variable sets the default value for the ``offer_screen`` property
-    of layeredimages. See :ref:`the related section <layered-images>`
+    of layeredimages. See :ref:`the related section <layeredimage-statement>`
     for more information.
 
 .. var:: config.layers = [ 'master', 'transient', 'screens', 'overlay' ]
@@ -1739,9 +1739,12 @@ Rarely or Internally Used
     If not None, this should be a function that is called when a :ref:`with
     statement <with-statement>` occurs. This function can be responsible for
     putting up transient things on the screen during the transition. The
-    function is called with a single argument, which is the transition that
-    is occurring. It is expected to return a transition, which may or may not
-    be the transition supplied as its argument.
+    function is called with two arguments: the transition that is occurring,
+    and the transition it is paired with. The latter is None except in the case
+    of the implicit None transition produced by an inline with statement, in
+    which case it is the inline transition that produced the with None. It is
+    expected to return a transition, which may or may not be the transition
+    supplied as its argument.
 
 
 Garbage Collection
@@ -1785,7 +1788,7 @@ Other Configuration Variables
 Some other pages of this documentation contain and define other configuration
 variables. You can locate them there, in their context.
 
-:ref:`nvl_mode`:
+:ref:`nvl-mode`:
     :var:`config.nvl_layer`
     :var:`config.nvl_list_length`
     :var:`config.nvl_page_ctc`

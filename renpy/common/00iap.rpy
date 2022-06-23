@@ -595,7 +595,10 @@ init -1500 python in iap:
 
         # Set up the back end.
         if renpy.renpy.android:
-            backend = init_android()
+            try:
+                backend = init_android()
+            except Exception:
+                backend = NoneBackend()
         elif renpy.renpy.ios:
             backend = IOSBackend()
         else:

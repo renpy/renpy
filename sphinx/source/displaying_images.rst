@@ -21,6 +21,9 @@ As abrupt changes of image can be disconcerting to the user, Ren'Py
 has the ``with`` statement, which allows effects to be applied
 when the scene is changed.
 
+Most (if not all) of the statements listed in this page are checked by
+:ref:`lint`, which is not the case for their python equivalents.
+
 
 Concepts
 ========
@@ -519,3 +522,11 @@ Image Functions
 ===============
 
 .. include:: inc/image_func
+
+See also
+========
+
+:ref:`statement-equivalents` : how to use most of the features described here in a
+python context.
+
+:ref:`displayables` : other objects to display, more diverse than basic images.

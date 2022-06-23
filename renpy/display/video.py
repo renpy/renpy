@@ -347,7 +347,7 @@ class Movie(renpy.display.core.Displayable):
         else:
             framedrop = False
 
-        renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop)
+        renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop, force=True)
 
     def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, **properties):
         super(Movie, self).__init__(**properties)
@@ -469,14 +469,14 @@ class Movie(renpy.display.core.Displayable):
                 renpy.audio.music.stop(channel=self.channel)
 
                 if self.mask:
-                    renpy.audio.music.stop(channel=self.mask_channel)
+                    renpy.audio.music.stop(channel=self.mask_channel) # type: ignore
 
     def stop(self):
         if self._play:
             renpy.audio.music.stop(channel=self.channel)
 
             if self.mask:
-                renpy.audio.music.stop(channel=self.mask_channel)
+                renpy.audio.music.stop(channel=self.mask_channel) # type: ignore
 
     def per_interact(self):
         displayable_channels[(self.channel, self.mask_channel)].append(self)

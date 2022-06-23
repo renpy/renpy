@@ -63,6 +63,7 @@ backslash to prevent it from closing the string. For example::
 
        "I walked past a sign saying, \"Let's give it 100%!\""
 
+.. _defining-character-objects:
 
 Defining Character Objects
 --------------------------

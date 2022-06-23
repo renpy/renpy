@@ -856,5 +856,5 @@ prefix_priority : dict[str, int]
 prefix_alts : dict[str, list[str]]
 prefix_search : dict[str, list[str]]
 affects : dict[str, list[str]]
-styles: dict[str, Style]
+styles: dict[str, Any]
 """

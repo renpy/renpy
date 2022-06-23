@@ -320,7 +320,7 @@ init python:
         """
         Classifies source and binary files beginning with `pattern`.
         .pyo, .rpyc, .rpycm, and .rpyb go into binary, everything
-        else goes into source.
+        else but .pyi files go into source.
         """
 
         if py is True:
@@ -346,6 +346,8 @@ init python:
             build.classify_renpy(pattern + "/**__pycache__/", None)
             build.classify_renpy(pattern + "/**.pyc", None)
             build.classify_renpy(pattern + "/**.pyo", None)
+
+        build.classify_renpy(pattern + "/**.pyi", None)
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)

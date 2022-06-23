@@ -131,7 +131,11 @@ let start_playing = (c) => {
 
     if (p.fadeout !== null) {
         linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, p.fadeout);
-        c.playing.source.stop(context.currentTime + p.fadeout);
+        try {
+            c.playing.source.stop(context.currentTime + p.fadeout);
+        } catch (e) {
+        }
+
     }
 
     setValue(c.relative_volume.gain, p.relative_volume);
@@ -163,7 +167,11 @@ let pause_playing = (c) => {
         return;
     }
 
-    p.source.stop()
+    try {
+        p.source.stop()
+    } catch (e) {
+    }
+
     p.start += (context.currentTime - p.started);
     p.started = null;
 }
@@ -176,7 +184,11 @@ let stop_playing = (c) => {
 
 
     if (c.playing !== null && c.playing.source !== null) {
-        c.playing.source.stop()
+        try {
+            c.playing.source.stop()
+        } catch (e) {
+        }
+
         c.playing.source.disconnect();
     }
 
@@ -273,7 +285,11 @@ renpyAudio.fadeout = (channel, delay) => {
     let p = c.playing;
 
     linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, delay);
-    p.source.stop(context.currentTime + delay);
+
+    try {
+        p.source.stop(context.currentTime + delay);
+    } catch (e) {
+    }
 
     if (c.queued === null || !c.queued.tight) {
         return;
