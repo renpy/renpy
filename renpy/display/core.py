@@ -3135,7 +3135,8 @@ class Interface(object):
         Create a mobile reload file.
         """
 
-        if renpy.config.save_on_mobile_background and (not renpy.store.main_menu):
+        should_skip_save = renpy.store.main_menu or renpy.store._in_replay
+        if renpy.config.save_on_mobile_background and not should_skip_save:
             renpy.loadsave.save("_reload-1")
 
         renpy.persistent.update(True)
