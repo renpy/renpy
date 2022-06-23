@@ -1637,12 +1637,6 @@ def with_statement(trans, always=False, paired=None, clear=True):
 
     renpy.exports.mode('with')
 
-    if isinstance(paired, dict):
-        paired = paired.get(None, None)
-
-        if (trans is None) and (paired is None):
-            return
-
     if isinstance(trans, dict):
 
         for k, v in trans.items():
