@@ -499,7 +499,7 @@ def group_logical_lines(lines):
                 depth = line_depth
 
             if depth != line_depth:
-                raise ParseError(filename, number, "indentation mismatch.")
+                raise ParseError(filename, number, "Indentation mismatch.")
 
             # Advance to the next line.
             i += 1
@@ -510,6 +510,13 @@ def group_logical_lines(lines):
             rv.append((filename, number, rest, block))
 
         return rv, i
+
+    if lines:
+
+        filename, number, text = lines[0]
+
+        if depth_split(text)[0] != 0:
+            raise ParseError(filename, number, "Unexpected indentation at start of file.")
 
     return gll_core(0, 0)[0]
 
