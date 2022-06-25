@@ -458,3 +458,7 @@ define config.rtl = True
 # Disable steam.
 python early:
     config.enable_steam = False
+
+# Since the launcher can be run directly or can be run from the SDK directory,
+# uneliding files needs to be handled slightly differently.
+define config.alternate_unelide_path = os.path.join(config.basedir, "launcher")

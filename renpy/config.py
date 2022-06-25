@@ -1260,6 +1260,10 @@ gl2_modify_window_flags = None
 # Should the skip key (ctrl) function during text?
 skip_during_text = False
 
+# An alternate path to use when uneliding. (Mostly used by the launcher to enable
+# the style inspector.)
+alternate_unelide_path = None
+
 del os
 del collections
 
