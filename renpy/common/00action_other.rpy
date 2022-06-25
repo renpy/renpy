@@ -611,15 +611,28 @@ init -1500 python:
 
         `amount`
             The amount to scroll by. This can be a number of pixels, or
-            else "step" or "page".
+            a float number between 0.0 and 1.0, or else "step" or "page".
+
+        `delay`
+            The time it takes to animate the scrolling, in seconds.
         """
 
-        def __init__(self, id, direction, amount="step"):
+        def __init__(self, id, direction, amount="step", delay=None):
             self.id = id
             self.direction = direction
             self.amount = amount
+            self.delay = delay
+
+            self.start_time = None
+            self.target_value = None
+            self.old_value = None
+            self.range = None
+            self.adjustment = None
 
         def __call__(self):
+
+            def clamp(adjustment, value):
+                return max(0, min(adjustment._range, value))
 
             d = renpy.get_widget(None, self.id)
 
@@ -648,11 +661,42 @@ init -1500 python:
                 raise Exception("Unknown scroll direction: {}".format(self.direction))
 
             if self.amount == "step":
-                adjustment.change(adjustment.value + delta * adjustment.step)
+                self.target_value = clamp(adjustment, adjustment.value + delta * adjustment.step)
             elif self.amount == "page":
-                adjustment.change(adjustment.value + delta * adjustment.page)
+                self.target_value = clamp(adjustment, adjustment.value + delta * adjustment.page)
+            elif isinstance(self.amount, float):
+                self.target_value = clamp(adjustment, adjustment.value + delta * adjustment._range * self.amount)
             else:
-                adjustment.change(adjustment.value + delta * self.amount)
+                self.target_value = clamp(adjustment, adjustment.value + delta * self.amount)
+
+            if self.delay is None:
+                adjustment.change(self.target_value)
+
+            self.adjustment = adjustment
+
+        def periodic(self, st):
+
+            if self.target_value is not None and self.delay is not None:
+
+                if self.start_time is None:
+                    self.start_time = st
+                    self.old_value = self.adjustment.value
+                    self.range = self.target_value - self.old_value
+
+                if st - self.start_time > self.delay or not self.range:
+                    self.start_time = None
+                    self.target_value = None
+                    return
+
+                fraction = (st - self.start_time) / float(self.delay)
+                fraction = _warper.ease(min(1.0, fraction))
+
+                self.adjustment.change(self.old_value + self.range * fraction)
+
+                return .0
+
+            else:
+                return
 
 
     @renpy.pure
