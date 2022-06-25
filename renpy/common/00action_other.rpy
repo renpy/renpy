@@ -692,6 +692,8 @@ init -1500 python:
                 fraction = _warper.ease(min(1.0, fraction))
 
                 self.adjustment.change(self.old_value + self.range * fraction)
+                
+                renpy.restart_interaction()
 
                 return .0
 
