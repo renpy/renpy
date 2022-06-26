@@ -120,6 +120,7 @@ init -1500 python:
 
 default persistent._console_short = True
 default persistent._console_traced_short = True
+default persistent._console_traced_per_interact = True
 default persistent._console_unicode_escaping = False
 
 init -1500 python in _console:
@@ -835,7 +836,7 @@ init -1500 python in _console:
     def R(l):
         store._reload_game()
 
-    @command(_("watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"))
+    @command(_("watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is\n watch per-interact: update traced expressions per interaction (default)\n watch real-time: update traced expressions as soon as possible"))
     def watch(l):
         expr = l.rest()
         expr = expr.strip()
@@ -848,12 +849,33 @@ init -1500 python in _console:
             persistent._console_traced_short = False
             return
 
+        if expr == "per-interact":
+            persistent._console_traced_per_interact = True
+            return
+
+        if expr == "real-time":
+            persistent._console_traced_per_interact = False
+            return
+
         renpy.python.py_compile(expr, 'eval')
 
         traced_expressions.append(expr)
 
         if "_trace_screen" not in config.always_shown_screens:
             config.always_shown_screens.append("_trace_screen")
+
+    def eval_traced_expression(st, at, expr):
+        if persistent._console_traced_short:
+            repr_func = traced_aRepr.repr
+        else:
+            repr_func = repr
+
+        try:
+            value = repr_func(eval(expr))
+        except Exception:
+            value = "eval failed"
+        return renpy.text.text.Text("[value!q]", scope={"value":value}, style="_console_trace_value"), 0
+
 
     def renpy_watch(expr):
         """
@@ -1068,21 +1090,27 @@ screen _trace_screen():
             vbox:
 
                 for expr in _console.traced_expressions:
-                    python:
-                        if persistent._console_traced_short:
-                            repr_func = _console.traced_aRepr.repr
-                        else:
-                            repr_func = repr
+                    if persistent._console_traced_per_interact:
+                        python:
+                            if persistent._console_traced_short:
+                                repr_func = _console.traced_aRepr.repr
+                            else:
+                                repr_func = repr
 
-                        try:
-                            value = repr_func(eval(expr))
-                        except Exception:
-                            value = "eval failed"
-                        del repr_func
+                            try:
+                                value = repr_func(eval(expr))
+                            except Exception:
+                                value = "eval failed"
+                            del repr_func
 
-                    hbox:
-                        text "[expr!q]: " style "_console_trace_var"
-                        text "[value!q]" style "_console_trace_value"
+                        hbox:
+                            text "[expr!q]: " style "_console_trace_var"
+                            text "[value!q]" style "_console_trace_value"
+                    else:
+
+                        hbox:
+                            text "[expr!q]: " style "_console_trace_var"
+                            add DynamicDisplayable(_console.eval_traced_expression, expr)
 
 # The label that is called by _console.enter to actually run the console.
 # This can be called in the current context (for normal Ren'Py code) or
