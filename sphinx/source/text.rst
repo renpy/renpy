@@ -291,8 +291,8 @@ Tags that apply to all text are:
 
         "Try out the {font=mikachan.ttf}mikachan font{/font}."
 
-    Alternatively, fonts can be :ref:`define-statement`\ d in the ``font``
-    store. ::
+    Alternatively, fonts can be :ref:`define <define-statement>`\ d in
+    the ``font`` store. ::
 
         define font.exotic = "fonts/Wingdings.otf"
 
