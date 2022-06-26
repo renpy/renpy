@@ -149,9 +149,9 @@ init -1500 python:
 
         If not None, `transition` is use to show and hide the screen.
          
-         This action takes the `_layer`, `_zorder` and `_tag` keyword
-         arguments, which have the same meaning as in the
-         :func:`renpy.show_screen` function.
+        This action takes the `_layer`, `_zorder` and `_tag` keyword
+        arguments, which have the same meaning as in the
+        :func:`renpy.show_screen` function.
         """
 
         args = None
@@ -191,9 +191,9 @@ init -1500 python:
 
         If not None, `transition` is use to show the new screen.
          
-         This action takes the `_layer`, `_zorder` and `_tag` keyword
-         arguments, which have the same meaning as in the
-         :func:`renpy.show_screen` function.
+        This action takes the `_layer`, `_zorder` and `_tag` keyword
+        arguments, which have the same meaning as in the
+        :func:`renpy.show_screen` function.
         """
 
         return Show(screen, transition, _transient=True, *args, **kwargs)
