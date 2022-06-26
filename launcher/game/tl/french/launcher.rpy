@@ -1613,7 +1613,7 @@
 
     # game/install.rpy:151
     old "Install Steam Support"
-    new "Installer le upport Steam"
+    new "Installer le support Steam"
 
     # game/install.rpy:160
     old "Before installing Steam support, please make sure you are a {a=https://partner.steamgames.com/}Steam partner{/a}."
