@@ -935,7 +935,7 @@ class CropMove(Transition):
         scales = (width, height, width, height)
 
         def interpolate_tuple(t0, t1):
-            return tuple([ int(s * (a * (1.0 - time) + b * time))
+            return tuple([ round(s * (a * (1.0 - time) + b * time))
                            for a, b, s in zip(t0, t1, scales) ])
 
         crop = interpolate_tuple(self.startcrop, self.endcrop)
