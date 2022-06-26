@@ -291,6 +291,14 @@ Tags that apply to all text are:
 
         "Try out the {font=mikachan.ttf}mikachan font{/font}."
 
+    Alternatively, fonts can be :ref:`define-statement`\ d in the ``font``
+    store. ::
+
+        define font.exotic = "fonts/Wingdings.otf"
+
+        label start:
+            e "I can speak in {font=exotic}weird{/font} characters !"
+
 .. text-tag:: i
 
    The italics tag renders the text between itself and its closing tag
