@@ -627,6 +627,9 @@ def load_face(fn):
         index, fn = fn.split("@", 1)
         index = int(index)
 
+    if 'store.font' in renpy.python.store_dicts:
+        fn = renpy.python.store_dicts['store.font'].get(fn, fn)
+
     font_file = None
 
     try:
