@@ -175,7 +175,7 @@ in a little bit, but first, let's see how to define characters.
 Characters
 ----------
 
-*Main article: :ref:`defining-character-objects`*
+*Main article:* :ref:`defining-character-objects`
 
 One problem with the first example is that it requires you to
 repeatedly type the name of a character each time they speak. In a
@@ -220,7 +220,7 @@ we defined.
 Images
 ------
 
-*Main article: :ref:`displaying-images`*
+*Main article:* :ref:`displaying-images`
 
 A visual novel isn't much of a visual novel without pictures. Here's another
 scene from "The Question". This also includes statements that show images
@@ -342,7 +342,7 @@ discussed :ref:`elsewhere <displaying-images>`.
 Transitions
 -----------
 
-*Main article: :ref:`transitions`*
+*Main article:* :ref:`transitions`
 
 In the script above, pictures pop in and out instantaneously. Since
 changing location or having a character enter or leave a scene is
@@ -420,7 +420,7 @@ anything to the player.
 Positions
 ---------
 
-*Main article: :ref:`transforms`*
+*Main article:* :ref:`transforms`
 
 By default, images are shown centered horizontally, and with their
 bottom edge touching the bottom of the screen. This is usually okay
@@ -447,7 +447,7 @@ but that's outside of the scope of this quickstart.
 Music and Sound
 ---------------
 
-*Main article: :ref:`audio`*
+*Main article:* :ref:`audio`
 
 Most Ren'Py games play music in the background. Music is played with the
 ``play music`` statement. The play music statement takes a filename that
@@ -535,7 +535,7 @@ presents menus to the user.
 Menus, Labels, and Jumps
 -------------------------
 
-*Main articles: :ref:`menus` and :ref:`labels-control-flow`*
+*Main articles:* :ref:`menus` *and* :ref:`labels-control-flow`
 
 The ``menu`` statement lets presents a choice to the player::
 
@@ -596,7 +596,7 @@ in how you organize the script of a larger game.
 Supporting Flags using the Default, Python and If Statements
 ------------------------------------------------------------
 
-*Main articles: :ref:`python` and :ref:`conditional-statements`*
+*Main articles:* :ref:`python` *and* :ref:`conditional-statements`
 
 While some games can be made by only using the statements given above,
 other games require data to be stored and recalled later. For example,
