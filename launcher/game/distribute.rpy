@@ -262,6 +262,34 @@ change_renpy_executable()
 
             return rv
 
+        def add_missing_directories(self):
+            """
+            Adds to this file list all directories that are needed by other
+            entries in this file list.
+            """
+
+            rv = self.copy()
+
+            seen = set()
+            required = set()
+
+            for i in self:
+                seen.add(i.name)
+
+                name = i.name
+
+                while "/" in name:
+                    name = name.rpartition("/")[0]
+                    required.add(name)
+
+            for name in required - seen:
+                rv.append(File(name, None, True, False))
+
+            rv.sort()
+
+            return rv
+
+
         @staticmethod
         def merge(l):
             """
@@ -1310,6 +1338,8 @@ change_renpy_executable()
 
             if self.build.get("exclude_empty_directories", True):
                 fl = fl.filter_empty()
+
+            fl = fl.add_missing_directories()
 
             if macapp:
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
