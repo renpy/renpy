@@ -1400,7 +1400,14 @@ cdef class Render:
                     rv = None
 
         if (rv is None) and self.modal:
-            if renpy.display.layout.check_modal(self.modal, None, x, y, self.width, self.height):
+            w = self.width
+            h = self.height
+
+            if self.modal == "default":
+                w = None
+                h = None
+
+            if renpy.display.layout.check_modal(self.modal, None, x, y, w, h):
                 return Modal
 
         return rv
