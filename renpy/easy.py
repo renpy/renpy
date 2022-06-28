@@ -37,7 +37,7 @@ color = renpy.color.Color
 
 def lookup_displayable_prefix(d):
     """
-    Given `d`, a string given a displayable, returns the displayale it
+    Given `d`, a string given a displayable, returns the displayable it
     corresponds to or None if it it does not correspond to one.
     """
 
