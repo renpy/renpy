@@ -95,7 +95,7 @@ Creator-Defined Statements (CDS) must conform to the following rules:
 - They cannot be used in the same file in which they are defined.
 
 - The file containing the CDS must be loaded earlier than any file that uses it.
-  (Since Ren'Py loads files in Unicode sort order, it generally makes sense to
+  (Since Ren'Py loads files in the Unicode sort order of their path, it generally makes sense to
   prefix the name of any file containing a CDS with 01 or some other small number.)
 
 Creator-Defined Statements are registered using the :func:`renpy.register_statement`
