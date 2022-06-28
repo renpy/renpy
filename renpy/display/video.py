@@ -328,7 +328,8 @@ class Movie(renpy.display.core.Displayable):
 
     def after_setstate(self):
         play = self._original_play or self._play
-        if (play is not None) and renpy.loader.loadable(play):
+        if (play is not None) and (not isinstance(play, list) and renpy.loader.loadable(play)
+                                   or all(renpy.loadable(p) for p in play)):
             self._original_play = self._play = play
         else:
             self._play = None
@@ -362,7 +363,8 @@ class Movie(renpy.display.core.Displayable):
         self.loop = loop
 
         self._original_play = play
-        if (play is not None) and renpy.loader.loadable(play):
+        if (play is not None) and (not isinstance(play, list) and renpy.loader.loadable(play)
+                                   or all(renpy.loadable(p) for p in play)):
             self._play = play
 
         if side_mask:
