@@ -79,7 +79,6 @@ init -1500 python in updater:
 
     def process_deferred_line(l):
 
-
         cmd, _, fn = l.partition(" ")
 
         if cmd == "R":
@@ -139,7 +138,23 @@ init -1500 python in updater:
                 traceback.print_exc(file=log)
 
     # Process deferred updates on startup, if any exist.
+
     process_deferred()
+
+    DELETED = os.path.join(config.renpy_base, "update", "deleted")
+
+    def process_deleted():
+        if not os.path.exists(DELETED):
+            return
+
+        import shutil
+
+        try:
+            shutil.rmtree(DELETED)
+        except Exception as e:
+            pass
+
+    process_deleted()
 
     def zsync_path(command):
         """
@@ -655,15 +670,21 @@ init -1500 python in updater:
             Tries to unlink the file at `path`.
             """
 
-            if os.path.exists(path + ".old"):
-                os.unlink(path + ".old")
-
             if os.path.exists(path):
+
+                import random
+
+                newname = os.path.join(DELETED, os.path.basename(path) + "." + str(random.randint(0, 1000000)))
+
+                try:
+                    os.mkdir(DELETED)
+                except Exception:
+                    pass
 
                 # This might fail because of a sharing violation on Windows.
                 try:
-                    os.rename(path, path + ".old")
-                    os.unlink(path + ".old")
+                    os.rename(path, newname)
+                    os.unlink(newname)
                 except Exception:
                     pass
 
