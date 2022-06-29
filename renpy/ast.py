@@ -382,9 +382,6 @@ def __newobj__(cls, *args):
     return cls.__new__(cls, *args)
 
 
-# A list of pyexprs that need to be precompiled.
-pyexpr_list = [ ]
-
 
 class PyExpr(str):
     """
@@ -411,6 +408,29 @@ class PyExpr(str):
 
     def __getnewargs__(self):
         return (str(self), self.filename, self.linenumber, self.py)
+
+    @staticmethod
+    def checkpoint():
+        """
+        Checkpoints the pyexpr list. Returns an opaque object that can be used
+        to revert the list.
+        """
+
+        if renpy.game.script.all_pyexpr is None:
+            return None
+
+        return len(renpy.game.script.all_pyexpr)
+
+    @staticmethod
+    def revert(opaque):
+
+        if renpy.game.script.all_pyexpr is None:
+            return
+
+        if opaque is None:
+            return
+
+        renpy.game.script.all_pyexpr[opaque:] = [ ]
 
 
 def probably_side_effect_free(expr):

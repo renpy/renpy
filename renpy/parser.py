@@ -1309,7 +1309,7 @@ class Lexer(object):
         passed to revert to back the lexer up.
         """
 
-        return self.line, self.filename, self.number, self.text, self.subblock, self.pos
+        return self.line, self.filename, self.number, self.text, self.subblock, self.pos, renpy.ast.PyExpr.checkpoint()
 
     def revert(self, state):
         """
@@ -1317,7 +1317,10 @@ class Lexer(object):
         by a previous checkpoint operation on this lexer.
         """
 
-        self.line, self.filename, self.number, self.text, self.subblock, self.pos = state
+        self.line, self.filename, self.number, self.text, self.subblock, self.pos, pyexpr_checkpoint = state
+
+        renpy.ast.PyExpr.revert(pyexpr_checkpoint)
+
         self.word_cache_pos = -1
         if self.line < len(self.block):
             self.eob = False
