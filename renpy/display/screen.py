@@ -1061,18 +1061,18 @@ def get_screen(name, layer=None):
         else:
             text "The say screen is hidden."
 
-    The ScreenDisplayable objects returnd by this function have the following
-    documented fields:
+    The ScreenDisplayable objects returned by this function have the
+    following documented fields:
 
-    `ScreenDisplayable.layer`
+    .. attribute:: ScreenDisplayable.layer
 
         The layer the screen is being displayed on.
 
-    `ScreenDisplayable.name`
+    .. attribute:: ScreenDisplayable.name
 
         The name of the screen.
 
-    `ScreenDisplayable.zorder`
+    .. attribute:: ScreenDisplayable.zorder
 
         The zorder the screen is being displayed at.
     """
