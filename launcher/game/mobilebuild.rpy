@@ -173,9 +173,9 @@ init -1 python:
 
             self.cmd = cmd
 
-            f = open(self.filename, "ab")
+            f = open(self.filename, "a")
 
-            f.write(b"\n\n\n")
+            f.write("\n\n\n")
 
             if cancel:
                 cancel_action = self.cancel
