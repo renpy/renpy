@@ -535,8 +535,12 @@ init -1500 python:
             if type(self) is not type(other):
                 return False
 
-            if self.callable != other.callable:
-                return False
+            if PY2:
+                if self.callable is not other.callable:
+                    return False
+            else:
+                if self.callable != other.callable:
+                    return False
 
             if self.args != other.args:
                 return False
