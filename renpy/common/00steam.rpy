@@ -150,7 +150,7 @@ init -1499 python in _renpysteam:
         server.
         """
 
-        return steamapi.SteamUserStats().SetStat(name.encode("utf-8"), v)
+        return steamapi.SteamUserStats().SetStatFloat(name.encode("utf-8"), value)
 
 
     def get_int_stat(name):
@@ -160,11 +160,11 @@ init -1499 python in _renpysteam:
         Returns the value of the stat with `name`, or None if no such stat
         exits.
         """
-        from ctypes import c_float, byref
+        from ctypes import c_int, byref
 
         rv = c_int(0)
 
-        if not steamapi.SteamUserStats().GetStatInt32(name.encode("utf-8"),  byref(rv)):
+        if not steamapi.SteamUserStats().GetStatInt32(name.encode("utf-8"), byref(rv)):
             return None
 
         return rv.value
@@ -179,7 +179,7 @@ init -1499 python in _renpysteam:
         server.
         """
 
-        return steamapi.SteamUserStats().SetStatInt32(name.encode("utf-8"), v)
+        return steamapi.SteamUserStats().SetStatInt32(name.encode("utf-8"), value)
 
 
     ########################################################################### Apps
