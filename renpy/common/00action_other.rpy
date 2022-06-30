@@ -514,7 +514,8 @@ init -1500 python:
         This Action calls `callable` with `args` and `kwargs`.
 
         `callable`
-            Callable object.
+            Callable object. This assumes that if two callables compare
+            equal, calling either one will be equivalent.
         `args`
             position arguments to be passed to `callable`.
         `kwargs`
@@ -527,6 +528,10 @@ init -1500 python:
         If the function returns a non-None value, the interaction stops and
         returns that value. (When called using the call screen statement, the
         result is placed in the `_return` variable.)
+
+        Instead of using a Function action, you can define your own subclass
+        of the :class:`Action` class. This lets you name the action, and
+        determine when it should be selected and sensitive.
         """
 
         update_screens = True
