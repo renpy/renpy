@@ -40,8 +40,8 @@ sensitive, and when it is selected.
        action will cause the current interaction to end.
 
        This method must be overridden, as the default method will
-       raise NotImplemented (and hence cause Ren'Py to report an
-       error).
+       raise a NotImplemented exception (and hence cause Ren'Py to
+       report an error).
 
    .. method:: get_sensitive(self)
 
