@@ -507,7 +507,7 @@ init -1500 python:
             renpy.queue_event(self.event, up=self.up)
 
     @renpy.pure
-    class Function(Action, DictEquality):
+    class Function(Action):
         """
         :doc: other_action
 
@@ -530,6 +530,32 @@ init -1500 python:
         """
 
         update_screens = True
+
+        def __eq__(self, other):
+            if type(self) is not type(other):
+                return False
+
+            if self.callable != other.callable:
+                return False
+
+            if self.args != other.args:
+                return False
+
+            if self.kwargs != other.kwargs:
+                return False
+
+            for a, b in zip(self.args, other.args):
+                if a is not b:
+                    return False
+
+            for k in self.kwargs:
+                if self.kwargs[k] is not other.kwargs[k]:
+                    return False
+
+            if self.update_screens != other.update_screens:
+                return False
+
+            return True
 
         def __init__(self, callable, *args, **kwargs):
             self.callable = callable
