@@ -1264,6 +1264,9 @@ skip_during_text = False
 # the style inspector.)
 alternate_unelide_path = None
 
+# An alias -> font map.
+font_names = {}
+
 del os
 del collections
 
