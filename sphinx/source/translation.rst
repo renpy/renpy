@@ -382,7 +382,7 @@ change language-related variables and styles. For example::
         font "stonecutter.ttf"
 
 More usually, the font used for dialogue is set with :var:`gui.text_font`, which
-can be customized using:
+can be customized using::
 
     translate piglatin python:
         gui.text_font = "stonecutter.ttf"
