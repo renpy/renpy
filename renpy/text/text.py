@@ -352,6 +352,14 @@ class TextSegment(object):
         fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
         return fo.bounds(glyphs, bounds)
 
+    @property
+    def font(self):
+        return self._font
+
+    @font.setter
+    def font(self, value):
+        self._font = renpy.config.font_names.get(value, value)
+
 
 class SpaceSegment(object):
     """
