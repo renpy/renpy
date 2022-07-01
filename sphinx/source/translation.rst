@@ -212,6 +212,7 @@ of being translated into Russian.
 This can be done by including an ``id`` clause as part of the
 say statement, giving the translation ID to use for this
 statement. For example::
+
     label start:
         e "This used to have a typo." id start_61b861a2
 
