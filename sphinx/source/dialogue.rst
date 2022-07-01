@@ -231,7 +231,9 @@ them can be a problem.
      and the dialogue given to extend. This can be used to have the screen
      change over the course of dialogue.
 
-     Extend is aware of NVL-mode and treats it correctly.
+     Extend is aware of NVL-mode and treats it correctly. Extend does not work
+     properly if the language preference changes between the initial say and
+     the extend.
 
 For example::
 
