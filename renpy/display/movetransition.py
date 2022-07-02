@@ -235,7 +235,7 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
 
         def merge(sle, d):
             rv = sle.copy()
-            rv.show_time = 0
+            rv.show_time = None
             rv.displayable = d
             return rv
 
