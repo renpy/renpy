@@ -1265,7 +1265,7 @@ skip_during_text = False
 alternate_unelide_path = None
 
 # An alias -> font map.
-font_names = {}
+font_name_map = {}
 
 del os
 del collections
