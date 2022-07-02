@@ -216,6 +216,8 @@ def default_play_callback(old, new): # @UnusedVariable
     if new.mask:
         renpy.audio.music.play(new.mask, channel=new.mask_channel, loop=new.loop, synchro_start=True)
 
+# A serial number that's used to generated movie channels.
+movie_channel_serial = 0
 
 class Movie(renpy.display.core.Displayable):
     """
@@ -242,8 +244,9 @@ class Movie(renpy.display.core.Displayable):
         :var:`config.single_movie_channel` and :var:`config.auto_movie_channel`.
 
     `play`
-        If given, this should be the path to a movie file. The movie
-        file will be automatically played on `channel` when the Movie is
+        If given, this should be the path to a movie file, or a list
+        of paths to movie files. These movie
+        files will be automatically played on `channel` when the Movie is
         shown, and automatically stopped when the movie is hidden.
 
     `side_mask`
@@ -257,7 +260,8 @@ class Movie(renpy.display.core.Displayable):
         no chance of frames going out of sync.
 
     `mask`
-        If given, this should be the path to a movie file that is used as
+        If given, this should be the path to a movie file, or a list of paths
+        to movie files, that are used as
         the alpha channel of this displayable. The movie file will be
         automatically played on `movie_channel` when the Movie is shown,
         and automatically stopped when the movie is hidden.
@@ -326,9 +330,21 @@ class Movie(renpy.display.core.Displayable):
 
     loop = True
 
+
+    def any_loadable(self, name):
+        """
+        If `name` is a string, checks if that filename is loadable.
+        If `name` is a list of strings, checks that all filenames are loadable.
+        """
+
+        if isinstance(name, basestring):
+            return renpy.loader.loadable(name)
+        else:
+            return any(renpy.loader.loadable(i) for i in name)
+
     def after_setstate(self):
         play = self._original_play or self._play
-        if (play is not None) and renpy.loader.loadable(play):
+        if (play is not None) and self.any_loadable(play):
             self._original_play = self._play = play
         else:
             self._play = None
@@ -350,19 +366,23 @@ class Movie(renpy.display.core.Displayable):
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop, force=True)
 
     def __init__(self, fps=24, size=None, channel="movie", play=None, mask=None, mask_channel=None, image=None, play_callback=None, side_mask=False, loop=True, start_image=None, **properties):
+
+        global movie_channel_serial
+
         super(Movie, self).__init__(**properties)
 
         if channel == "movie" and play and renpy.config.single_movie_channel:
             channel = renpy.config.single_movie_channel
         elif channel == "movie" and play and renpy.config.auto_movie_channel:
-            channel = "movie_{}_{}".format(play, mask)
+            channel = "_movie_{}".format(movie_channel_serial)
+            movie_channel_serial += 1
 
         self.size = size
         self.channel = channel
         self.loop = loop
 
         self._original_play = play
-        if (play is not None) and renpy.loader.loadable(play):
+        if (play is not None) and self.any_loadable(play):
             self._play = play
 
         if side_mask:
