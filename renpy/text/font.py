@@ -794,6 +794,9 @@ class FontGroup(object):
         chained together.
         """
 
+        if font in renpy.config.font_names:
+            raise Exception("FontGroup do not accept font aliases.")
+
         if start is None:
 
             if isinstance(font, FontGroup):
@@ -871,7 +874,8 @@ class FontGroup(object):
 
     def segment(self, s):
         """
-        Segments `s` into fonts. Generates (font, string) tuples.
+        Segments the `s` string into substrings, each having only one font.
+        Generates (font, string) tuples.
         """
 
         mark = 0
