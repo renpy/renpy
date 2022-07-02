@@ -181,7 +181,8 @@ class TextSegment(object):
         if source is not None:
             self.antialias = source.antialias
             self.vertical = source.vertical
-            self.font = source.font
+            font = source.font
+            self.font = renpy.config.font_name_map.get(font, font)
             self.size = source.size
             self.bold = source.bold
             self.italic = source.italic
@@ -215,7 +216,8 @@ class TextSegment(object):
 
         self.antialias = style.antialias
         self.vertical = style.vertical
-        self.font = style.font
+        font = style.font
+        self.font = renpy.config.font_name_map.get(font, font)
         self.size = style.size
         self.bold = style.bold
         self.italic = style.italic
@@ -351,14 +353,6 @@ class TextSegment(object):
 
         fo = font.get_font(self.font, self.size, self.bold, self.italic, 0, self.antialias, self.vertical, self.hinting, layout.oversample)
         return fo.bounds(glyphs, bounds)
-
-    @property
-    def font(self):
-        return self._font
-
-    @font.setter
-    def font(self, value):
-        self._font = renpy.config.font_names.get(value, value)
 
 
 class SpaceSegment(object):
@@ -1173,6 +1167,7 @@ class Layout(object):
                     push().take_style(style, self)
 
                 elif tag == "font":
+                    value = renpy.config.font_name_map.get(value, value)
                     push().font = value
 
                 elif tag == "size":
