@@ -864,7 +864,7 @@ fast_redraw_frames = 4
 gl_clear_color = "#000"
 
 # Screens that are updated once per frame rather than once per interaction.
-per_frame_screens = [ ]
+per_frame_screens = ["_trace_screen",]
 
 # How long we store performance data for.
 performance_window = 5.0
