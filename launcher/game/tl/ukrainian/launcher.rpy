@@ -400,7 +400,7 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:43
     old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
-    new "Мені не вдалося використати javac для компіляції тестового файлу. Якщо ви не встановили Java Development Kit, завантажте його з:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{ /a}\n\nJDK відрізняється від JRE, тому можливо, що у вас є Java без JDK. Переконайтеся, що ви встановили «ключі реєстру JavaSoft (Oracle)».\n\nБез робочого JDK я не можу продовжити."
+    new "Мені не вдалося використати javac для компіляції тестового файлу. Якщо ви не встановили Java Development Kit, завантажте його з:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nJDK відрізняється від JRE, тому можливо, що у вас є Java без JDK. Переконайтеся, що ви встановили «ключі реєстру JavaSoft (Oracle)».\n\nБез робочого JDK я не можу продовжити."
 
     # game/androidstrings.rpy:44
     old "The version of Java on your computer does not appear to be JDK 8, which is the only version supported by the Android SDK. If you need to install JDK 8, you can download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nYou can also set the JAVA_HOME environment variable to use a different version of Java."
@@ -908,7 +908,7 @@ translate ukrainian strings:
 
     # game/gui7.rpy:333
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
-    new "Яку роздільну здатність має використовувати проект? Хоча Ren'Py може масштабувати вікно вгору та вниз, це початковий розмір вікна, розмір, на якому мають бути намальовані ресурси, і розмір, на якому ресурси будуть найрізкішими.\n\nЗа замовчуванням [ default_size[0]]x[default_size[1]] є розумним компромісом."
+    new "Яку роздільну здатність має використовувати проект? Хоча Ren'Py може масштабувати вікно вгору та вниз, це початковий розмір вікна, розмір, на якому мають бути намальовані ресурси, і розмір, на якому ресурси будуть найрізкішими.\n\nЗа замовчуванням [default_size[0]]x[default_size[1]] є розумним компромісом."
 
     # game/gui7.rpy:333
     old "Custom. The GUI is optimized for a 16:9 aspect ratio."
@@ -1813,4 +1813,3 @@ translate ukrainian strings:
     # game/web.rpy:348
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Перш ніж створювати пакети веб-програм, вам потрібно буде завантажити RenPyWeb, веб-підтримку Ren'Py. Бажаєте завантажити RenPyWeb зараз?"
-

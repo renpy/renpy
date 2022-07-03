@@ -328,7 +328,7 @@ translate ukrainian strings:
 
     # gui/game/gui.rpy:319
     old "## Horizontal borders."
-    new "Горизонтальні межі."
+    new "## Горизонтальні межі."
 
     # gui/game/gui.rpy:324
     old "## Vertical borders."
@@ -433,4 +433,3 @@ translate ukrainian strings:
     # gui/game/gui.rpy:461
     old "## NVL-mode."
     new "## NVL-режим."
-
