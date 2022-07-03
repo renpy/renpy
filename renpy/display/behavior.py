@@ -642,6 +642,9 @@ class SayBehavior(renpy.display.layout.Null):
 
                 afm_delay += max_time
 
+            if ev.type == renpy.display.core.TIMEEVENT and ev.modal:
+                return None
+
             if st > afm_delay:
                 if renpy.config.afm_callback:
                     if renpy.config.afm_callback() and not renpy.display.tts.is_active():
