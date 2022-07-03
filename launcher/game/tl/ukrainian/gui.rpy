@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-07-03 15:11
-
+﻿
 translate ukrainian strings:
 
     # gui/game/gui.rpy:2
