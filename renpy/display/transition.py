@@ -697,6 +697,10 @@ class AlphaDissolve(Transition):
         return rv
 
 
+def interpolate_tuple(t0, t1, time, scales):
+    return tuple([ round(s * (a * (1.0 - time) + b * time))
+                    for a, b, s in zip(t0, t1, scales) ])
+
 class CropMove(Transition):
     """
     :doc: transition function
@@ -934,12 +938,8 @@ class CropMove(Transition):
         # How we scale each element of a tuple.
         scales = (width, height, width, height)
 
-        def interpolate_tuple(t0, t1):
-            return tuple([ int(s * (a * (1.0 - time) + b * time))
-                           for a, b, s in zip(t0, t1, scales) ])
-
-        crop = interpolate_tuple(self.startcrop, self.endcrop)
-        pos = interpolate_tuple(self.startpos, self.endpos)
+        crop = interpolate_tuple(self.startcrop, self.endcrop, time, scales)
+        pos = interpolate_tuple(self.startpos, self.endpos, time, scales)
 
         top = render(self.top, width, height, st, at)
         bottom = render(self.bottom, width, height, st, at)
@@ -1057,15 +1057,11 @@ class PushMove(Transition):
         # How we scale each element of a tuple.
         scales = (width, height, width, height)
 
-        def interpolate_tuple(t0, t1):
-            return tuple([ int(s * (a * (1.0 - time) + b * time))
-                           for a, b, s in zip(t0, t1, scales) ])
+        new_crop = interpolate_tuple(self.new_startcrop, self.new_endcrop, time, scales)
+        new_pos = interpolate_tuple(self.new_startpos, self.new_endpos, time, scales)
 
-        new_crop = interpolate_tuple(self.new_startcrop, self.new_endcrop)
-        new_pos = interpolate_tuple(self.new_startpos, self.new_endpos)
-
-        old_crop = interpolate_tuple(self.old_startcrop, self.old_endcrop)
-        old_pos = interpolate_tuple(self.old_startpos, self.old_endpos)
+        old_crop = interpolate_tuple(self.old_startcrop, self.old_endcrop, time, scales)
+        old_pos = interpolate_tuple(self.old_startpos, self.old_endpos, time, scales)
 
         new = render(self.new_widget, width, height, st, at)
         old = render(self.old_widget, width, height, st, at)
