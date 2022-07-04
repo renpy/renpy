@@ -34,13 +34,7 @@ init -1500 python:
         `x`, `y`
             The coordinates of the hotspot, relative to the upper left
             corner of the mouse, in virtual pixels.
-
-        .. method MouseDisplayable.add(name, cursor, x, y)
-
-            This adds a second cursor, that is used when the `name`
-            mouse is displayed. This returns the MouseDisplayable,
-            so that calls to this method can be chained.
-            """
+        """
 
         def __init__(self, cursor, x, y):
 
@@ -53,6 +47,13 @@ init -1500 python:
 
 
         def add(self, name, cursor, x, y):
+            """
+            :doc: mouse_displayable
+
+            This adds a second cursor, that is used when the `name`
+            mouse is displayed. This returns the MouseDisplayable,
+            so that calls to this method can be chained.
+            """
             self.cursors[name] = ( renpy.displayable(cursor), x, y )
             return self
 
@@ -91,8 +92,3 @@ init -1500 python:
 
         def visit(self):
             return [ i[0] for i in self.cursors.values() ]
-
-
-
-
-
