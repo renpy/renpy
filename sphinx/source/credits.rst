@@ -63,6 +63,7 @@ the omission in future versions.
 * Edward Betts
 * Edwin
 * Eevee (Lexy Munroe)
+* Elckarow
 * Eliza Velasquez
 * Emmanuel Marty
 * Emmeken
@@ -138,6 +139,7 @@ the omission in future versions.
 * Marcel
 * Markus Koschany
 * Mason Chou
+* Matias B.
 * Matt George
 * Max le Fou
 * Maxwell Paul Brickner
@@ -157,6 +159,7 @@ the omission in future versions.
 * 逆转咸鱼
 * NoJoker
 * Nolanlemahn
+* Numerlor
 * Nxcrft
 * Nyaatrap
 * Oshi-Shinobu
