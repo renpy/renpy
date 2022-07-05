@@ -56,7 +56,7 @@ A displayable cursor uses the :var:`config.mouse_displayable` variable,
 and the MouseDisplayable displayable. As an example::
 
 
-    image "mouse spin":
+    image mouse spin:
         "gui/spin0.png"
         rotate 0.0
         linear 1.0 rotate 360.0
@@ -67,7 +67,7 @@ and the MouseDisplayable displayable. As an example::
         repeat
 
     define config.mouse_displayable = MouseDisplayable(
-        "gui/arrow.png", 0, 0).add("spin", "spin mouse", 9.9, 9.9)
+        "gui/arrow.png", 0, 0).add("spin", "mouse spin", 9.9, 9.9)
 
 .. include:: inc/mouse_displayable
 
@@ -86,5 +86,3 @@ It's also possible to use :var:`default_mouse` to set the mouse cursor
 globally::
 
     $ default_mouse = "spin"
-
-
