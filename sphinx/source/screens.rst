@@ -1350,7 +1350,7 @@ following properties:
     viewport. If `scrollbars` is "both", both horizontal and vertical
     scrollbars are created.
 
-    When `scrollbars` is not None, the `vpgrid` takes prefixed properties:
+    When `scrollbars` is not None, the `viewport` takes prefixed properties:
 
     * Properties beginning with ``viewport_`` are passed to the viewport.
     * Properties beginning with ``side_`` are passed to the side.
@@ -1415,8 +1415,7 @@ incorrectly, please ensure that all children are of the same size.
 
 A vpgrid must be given at least one of the `cols` and `rows` properties.
 If one is omitted or None, the other is automatically determined from the
-size, spacing, and number of children. If there are not enough children to
-fill all cells, any empty cells will not be rendered.
+size, spacing, and number of children.
 
 Vpgrids take the the following properties:
 
