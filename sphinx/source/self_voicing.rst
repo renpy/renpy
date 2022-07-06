@@ -81,6 +81,20 @@ Alternative text
     from a displayable and its children, but such child text is made
     available as the "[text]" string substitution. No other string
     substitutions are allowed.
+    
+    For example::
+
+        screen information(message, planet, badness):
+            text message:
+                color color_from_badness(badness)
+                alt "Information for you : [text]. Badness is " + str(badness)
+
+            text "ORIGIN_OF_MESSAGE_{color=#f00}[planet!u]{/color}":
+                alt "Origin of message is " + planet
+
+    In the above example, the ``badness`` and ``planet`` variables
+    cannot be substituted directly using "[badness]". Concatenating
+    it manually is a solution.
 
     Supplying the `who_alt` and `what_alt` parameters to Character
     sets the alt style property for the character name and body text,
@@ -93,7 +107,7 @@ Alternative text
 Descriptive Text
     Descriptive text is text that is displayed (and spoken) by the narrator if
     self-voicing is enabled. The text is not displayed if self-voicing is
-    disabled. Self-voicing text uses the :var:`sv` variable, which is defined to
+    disabled. Self-voicing text uses the :var:`alt` variable, which is defined to
     be similar to a character.
 
     .. var:: alt = ...
