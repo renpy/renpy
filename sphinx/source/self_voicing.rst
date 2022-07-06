@@ -81,6 +81,16 @@ Alternative text
     from a displayable and its children, but such child text is made
     available as the "[text]" string substitution. No other string
     substitutions are allowed.
+    
+    For example::
+
+        screen information(message, planet, badness):
+            text message:
+                color color_from_badness(badness)
+                alt "Information for you : [text]. Badness is " + str(badness)
+
+            text "ORIGINOFMESSAGE{color=#f00}[planet]{/color}":
+                alt "Origin of message is " + planet
 
     Supplying the `who_alt` and `what_alt` parameters to Character
     sets the alt style property for the character name and body text,
