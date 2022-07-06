@@ -213,9 +213,9 @@ renpyAudio = { };
 
 renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, relative_volume) => {
 
-    let c = get_channel(channel);
+    const c = get_channel(channel);
 
-    let q = {
+    const q = {
         source : null,
         buffer : null,
         name : name,
@@ -257,10 +257,10 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
         }
     }
 
-    let array = FS.readFile(file);
+    const array = FS.readFile(file);
     context.decodeAudioData(array.buffer, (buffer) => {
 
-        var source = context.createBufferSource();
+        const source = context.createBufferSource();
         source.buffer = buffer;
         source.onended = () => { on_end(c); };
 
