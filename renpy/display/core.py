@@ -717,9 +717,9 @@ class Displayable(renpy.object.Object):
         rv = [ ]
 
         if reverse:
-            order = 1
-        else:
             order = -1
+        else:
+            order = 1
 
         speech = ""
 
