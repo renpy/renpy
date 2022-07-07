@@ -334,7 +334,7 @@ class Movie(renpy.display.core.Displayable):
     def any_loadable(self, name):
         """
         If `name` is a string, checks if that filename is loadable.
-        If `name` is a list of strings, checks that all filenames are loadable.
+        If `name` is a list of strings, checks if any filenames is loadable.
         """
 
         if isinstance(name, basestring):
