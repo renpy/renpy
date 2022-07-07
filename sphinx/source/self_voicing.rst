@@ -81,7 +81,7 @@ Alternative text
     from a displayable and its children, but such child text is made
     available as the "[text]" string substitution. No other string
     substitutions are allowed.
-    
+
     For example::
 
         screen information(message, planet, badness):
@@ -130,7 +130,7 @@ Descriptive Text
     .. var:: config.descriptive_text_character = None
 
         If not None, this should be a character object that is used to
-        display the descriptive text.
+        display the descriptive text, instead of the narrator.
 
 A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
 display the text that would be voiced on the screen for development
