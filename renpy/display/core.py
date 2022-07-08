@@ -728,10 +728,11 @@ class Displayable(renpy.object.Object):
                 speech = i._tts()
 
                 if speech.strip():
-                    rv.append(speech)
-
                     if isinstance(speech, renpy.display.tts.TTSDone):
-                        break
+                        rv = [ speech ]
+                    else:
+                        rv.append(speech)
+
 
         rv = ": ".join(rv)
         rv = rv.replace("::", ":")

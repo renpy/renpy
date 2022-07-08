@@ -1205,7 +1205,7 @@ raise_image_exceptions = True
 relative_transform_size = True
 
 # Should tts of layers be from front to back?
-tts_front_to_back = True
+tts_front_to_back = False
 
 # Should live2d loading be logged to log.txt
 log_live2d_loading = False
