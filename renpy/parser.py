@@ -2559,29 +2559,15 @@ def rpy_statement(l, loc):
     return [ ]
 
 
-def screen1_statement(l, loc):
+@statement("screen")
+def screen_statement(l, loc):
 
-    # The guts of screen language parsing is in screenlang.py. It
-    # assumes we ate the "screen" keyword before it's called.
-    screen = renpy.screenlang.parse_screen(l)
+    slver = l.integer()
+    if slver is not None:
+        screen_language = int(slver)
+        if screen_language < 0 or screen_language > 2:
+            l.error("Bad screen language version.")
 
-    l.advance()
-
-    if not screen:
-        return [ ]
-
-    rv = ast.Screen(loc, screen)
-
-    if not l.init:
-        rv = ast.Init(loc, [ rv ], -500 + l.init_offset)
-
-    return rv
-
-
-def screen2_statement(l, loc):
-
-    # The guts of screen language parsing is in screenlang.py. It
-    # assumes we ate the "screen" keyword before it's called.
     screen = renpy.sl2.slparser.parse_screen(l, loc)
 
     l.advance()
@@ -2592,27 +2578,6 @@ def screen2_statement(l, loc):
         rv = ast.Init(loc, [ rv ], -500 + l.init_offset)
 
     return rv
-
-
-# The version of screen language to use by default.
-default_screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "2"))
-
-
-@statement("screen")
-def screen_statement(l, loc):
-
-    screen_language = default_screen_language
-
-    slver = l.integer()
-    if slver is not None:
-        screen_language = int(slver)
-
-    if screen_language == 1:
-        return screen1_statement(l, loc)
-    elif screen_language == 2:
-        return screen2_statement(l, loc)
-    else:
-        l.error("Bad screen language version.")
 
 
 @statement("testcase")
