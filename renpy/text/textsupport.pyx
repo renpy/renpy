@@ -1026,3 +1026,5 @@ def offset_glyphs(list glyphs, short x, short y):
     for g in glyphs:
         g.x += x
         g.y += y
+
+"This exists to force a recompile for Ren'Py 8.0.2 and 7.5.2."
