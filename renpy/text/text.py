@@ -2021,6 +2021,9 @@ class Text(renpy.display.core.Displayable):
             if clicked is not None:
                 target = layout.hyperlink_targets.get(renpy.display.focus.argument, None)
 
+                if target is None:
+                    return
+
                 if not self.hyperlink_sensitive(target):
                     return None
 
