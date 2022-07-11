@@ -387,7 +387,8 @@ def is_selected(action):
     :name: renpy.is_selected
     :doc: run
 
-    Returns true if `action` indicates it is selected, or false otherwise.
+    Returns a true value if the provided action or list of actions
+    indicates it is selected, and false otherwise.
     """
 
     if isinstance(action, (list, tuple)):
@@ -407,7 +408,8 @@ def is_sensitive(action):
     :name: renpy.is_sensitive
     :doc: run
 
-    Returns true if `action` indicates it is sensitive, or False otherwise.
+    Returns a true value if the provided action or list of actions
+    indicates it is sensitive, and false otherwise.
     """
 
     if isinstance(action, (list, tuple)):
