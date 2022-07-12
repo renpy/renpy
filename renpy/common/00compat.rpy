@@ -249,6 +249,8 @@ init -1100 python:
             config.gui_text_position_properties = False
             config.atl_function_always_blocks = True
 
+        if _compat_versions(version, (7, 5, 2), (8, 0, 2)):
+            config.quadratic_volumes = True
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
