@@ -120,8 +120,24 @@ init -1700 python:
     def _default_empty_window():
 
         try:
-            who = _last_say_who
-            who = renpy.eval_who(who)
+            scry = renpy.scry()
+
+            # When running in a say statement or menu-with-caption, scry for
+            # the next say statement, and get the window from that.
+            if scry.say or scry.menu_with_caption:
+                who = None
+
+                for i in range(10):
+                    if scry.say:
+                        who = scry.who
+                        break
+
+                    scry = scry.next()
+
+            else:
+                who = _last_say_who
+                who = renpy.eval_who(who)
+
         except Exception:
             who = None
 
@@ -130,9 +146,9 @@ init -1700 python:
 
         if isinstance(who, NVLCharacter):
             nvl_show_core()
-        elif isinstance(store.narrator, ADVCharacter):
+        elif not isinstance(store.narrator, NVLCharacter):
             store.narrator.empty_window()
-        elif isinstance(store._narrator, ADVCharacter):
+        else:
             store._narrator.empty_window()
 
     config.empty_window = _default_empty_window

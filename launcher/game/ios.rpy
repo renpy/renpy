@@ -152,6 +152,33 @@ init python:
 
         ios_populate(p, gui=gui, target=target)
 
+
+    def eliminate_pycache(directory):
+        """
+        Eliminates the __pycache__ directory, and moves the files in it up a level,
+        renaming them to remove the cache tag.
+        """
+
+        print("Eliminating __pycache__...")
+
+        if PY2:
+            return
+
+        import pathlib
+        import sys
+
+        paths = list(pathlib.Path(directory).glob("**/__pycache__/*.pyc"))
+
+        for p in paths:
+            name = p.stem.partition(".")[0]
+            p.rename(p.parent.parent / (name + ".pyc"))
+
+        paths = list(pathlib.Path(directory).glob("**/__pycache__"))
+
+        for p in paths:
+            p.rmdir()
+
+
     def ios_populate(p=None, gui=True, target=None):
         """
         This actually builds the package.
@@ -180,6 +207,8 @@ init python:
             packagedest=dist,
             report_success=False,
             )
+
+        eliminate_pycache(dist)
 
         main_fn = os.path.join(dist, "main.py")
 
@@ -212,10 +241,17 @@ init python:
 
     def launch_xcode():
         dist = xcode_project(None)
-        name = project.current.dump.get("name", None)
-        xcodeproj = "{}/{}.xcodeproj".format(dist, name)
 
-        subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
+        if not os.path.exists(dist):
+            return
+
+        for fn in os.listdir(dist):
+            if fn.endswith(".xcodeproj"):
+                xcodeproj = os.path.join(dist, fn)
+                subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
+
+                break
+
 
 screen ios:
 
@@ -299,6 +335,10 @@ screen ios:
                                 textbutton _("Launch Xcode"):
                                     action IOSIfState(state, IOS_OK, launch_xcode)
                                     hovered tt.Action(IOS_XCODE_TEXT)
+
+                            add SPACER
+
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
                     add SPACER
                     add SEPARATOR2
@@ -415,4 +455,3 @@ init python:
         return False
 
     renpy.arguments.register_command("ios_populate", ios_populate_command)
-

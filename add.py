@@ -17,6 +17,7 @@ SOURCE = [
 
 version = ".".join(str(i) for i in version_tuple)
 short_version = ".".join(str(i) for i in version_tuple[:-1])
+major = short_version.split(".")[0]
 print("Version", version)
 
 ap = argparse.ArgumentParser()
@@ -27,8 +28,42 @@ ap.add_argument("--experimental", action="store_true")
 ap.add_argument("--no-tag", "-n", action="store_true")
 ap.add_argument("--push-tags", action="store_true")
 ap.add_argument("--delete-tag")
+ap.add_argument("--github", action="store_true")
 
 args = ap.parse_args()
+
+if args.github:
+    subprocess.call([ "git", "push", "--tags" ])
+    subprocess.call([ "gh", "release", "create", version, "--notes", "See https://www.renpy.org/release/" + short_version, "-t", "Ren'Py {}".format(short_version) ])
+
+    dn = "/home/tom/ab/renpy/dl/" + short_version
+
+    for fn in os.listdir(dn):
+
+        if fn == ".build_cache":
+            continue
+
+        if fn.endswith(".update.gz"):
+            continue
+
+        if fn.endswith(".update.json"):
+            continue
+
+        if fn.startswith("updates.json"):
+            continue
+
+        if fn.endswith(".zsync"):
+            continue
+
+        if fn.endswith(".sums"):
+            continue
+
+        subprocess.call([ "gh", "release", "upload", version, os.path.join(dn, fn) ])
+
+
+    sys.exit(0)
+
+
 
 if args.release:
     subprocess.check_call([ "/home/tom/ab/renpy/scripts/checksums.py", "/home/tom/ab/renpy/dl/" + short_version ])
@@ -73,6 +108,8 @@ else:
 
 if args.no_tag:
     tag = False
+
+links = [ i + "-" + major for i in links ]
 
 if tag:
     for i in SOURCE:

@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Any
 
 # This file contains displayables that move, zoom, rotate, or otherwise
@@ -84,7 +85,7 @@ def polar_to_cartesian(angle, radius, xaround, yaround):
 
 def first_not_none(*args):
     """
-    Returns the first argument that is not None, or the last argument if 
+    Returns the first argument that is not None, or the last argument if
     all are None.
     """
 
@@ -98,6 +99,7 @@ def first_not_none(*args):
 class TransformState(renpy.object.Object):
 
     last_angle = None
+    last_events = True
 
     def __init__(self):
 
@@ -125,6 +127,7 @@ class TransformState(renpy.object.Object):
             d[k] = getattr(ts, k)
 
         self.last_angle = ts.last_angle
+        self.last_events = ts.last_events
 
         # Set the position and anchor to None, so inheritance works.
         if self.perspective is None: # type: ignore
@@ -417,7 +420,7 @@ class Transform(Container):
 
     # Compatibility with old versions of the class.
     active = False
-    children = [ ] 
+    children = [ ]
     arguments = DEFAULT_ARGUMENTS
 
     # Default before we set this.
@@ -430,13 +433,14 @@ class Transform(Container):
                  focus=None,
                  default=False,
                  _args=None,
+                 alt=None,
 
                  **kwargs):
 
         self.kwargs = kwargs
         self.style_arg = style
 
-        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args)
+        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args, alt=alt)
 
         self.function = function
 
@@ -697,10 +701,9 @@ class Transform(Container):
 
         if duplicate and child._duplicatable:
             child = child._duplicate(self._args)
-            child._unique()
 
-        if child._duplicatable:
-            self._duplicatable = True
+            if not self._duplicatable:
+                child._unique()
 
         self.child = child
         self.children = [ child ]
@@ -733,6 +736,11 @@ class Transform(Container):
                 renpy.display.render.redraw(self, fr)
 
         self.active = True
+
+        if self.state.last_events != self.state.events:
+            if self.state.events:
+                renpy.game.interface.timeout(0)
+            self.state.last_events = self.state.events
 
     # The render method is now defined in accelerator.pyx.
     def render(self, width, height, st, at):
@@ -789,9 +797,11 @@ class Transform(Container):
         return rv
 
     def _unique(self):
-        if self.child and self.child._duplicatable:
-            self._duplicatable = True
-        else:
+        if self._duplicatable:
+
+            if self.child is not None:
+                self.child._unique()
+
             self._duplicatable = False
 
     def get_placement(self):
@@ -875,7 +885,6 @@ class Transform(Container):
 
         rv = self(_args=args)
         rv.take_execution_state(self)
-        rv._unique()
 
         return rv
 
@@ -922,12 +931,18 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
         self.active = True
 
+        if self.state.last_events != self.state.events:
+            if self.state.events:
+                renpy.game.interface.timeout(0)
+            self.state.last_events = self.state.events
+
+
     def _repr_info(self):
         return repr((self.child, self.atl.loc))
 
 
-# Names of transform properties, and if the property should be handles with
-# diff2 or diff2.
+# Names of transform properties, and if the property should be handled with
+# diff2 or diff4.
 all_properties = set()
 diff2_properties = set()
 diff4_properties = set()
@@ -937,7 +952,7 @@ uniforms = set()
 gl_properties = set()
 
 
-def add_property(name, atl=any_object, default=None, diff=2):
+def add_property(name, atl=any_object, default=None, diff=2): # type: (str, Any, Any, int|None) -> None
     """
     Adds an ATL property.
     """
@@ -986,11 +1001,10 @@ add_property("additive", float, 0.0)
 add_property("alpha", float, 1.0)
 add_property("blend", any_object, None)
 add_property("blur", float_or_none, None)
-add_property("clip", (position, position), None)
-add_property("corner1", (float, float), None)
-add_property("corner2", (float, float), None)
-add_property("crop", (float, float, float, float), None)
-add_property("crop_relative", bool, False)
+add_property("corner1", (position, position), None)
+add_property("corner2", (position, position), None)
+add_property("crop", (position, position, position, position), None)
+add_property("crop_relative", bool_or_none, None)
 add_property("debug", any_object, None)
 add_property("delay", float, 0)
 add_property("events", bool, True)
@@ -1037,6 +1051,7 @@ add_gl_property("gl_anisotropic")
 add_gl_property("gl_blend_func")
 add_gl_property("gl_color_mask")
 add_gl_property("gl_depth")
+add_gl_property("gl_drawable_resolution")
 add_gl_property("gl_mipmap")
 add_gl_property("gl_pixel_perfect")
 add_gl_property("gl_texture_scaling")

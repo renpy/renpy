@@ -38,7 +38,7 @@ init -1900 python:
             basename = os.path.basename(fn)
             base, ext = os.path.splitext(basename)
 
-            if not ext.lower() in [ ".wav", ".mp2", ".mp3", ".ogg", ".opus" ]:
+            if not ext.lower() in [ ".wav", ".mp2", ".mp3", ".ogg", ".opus", ".flac" ]:
                 continue
 
             base = base.lower()

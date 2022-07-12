@@ -214,6 +214,14 @@ change_renpy_executable()
 
             hash.update(digest.encode("utf-8"))
 
+        def reprefix(self, old, new):
+            rv = self.copy()
+
+            if self.name.startswith(old):
+                rv.name = new + self.name[len(old):]
+
+            return rv
+
     class FileList(list):
         """
         This represents a list of files that we know about.
@@ -253,6 +261,34 @@ change_renpy_executable()
                     needed_dirs.add(directory)
 
             return rv
+
+        def add_missing_directories(self):
+            """
+            Adds to this file list all directories that are needed by other
+            entries in this file list.
+            """
+
+            rv = self.copy()
+
+            seen = set()
+            required = set()
+
+            for i in self:
+                seen.add(i.name)
+
+                name = i.name
+
+                while "/" in name:
+                    name = name.rpartition("/")[0]
+                    required.add(name)
+
+            for name in required - seen:
+                rv.append(File(name, None, True, False))
+
+            rv.sort()
+
+            return rv
+
 
         @staticmethod
         def merge(l):
@@ -382,13 +418,25 @@ change_renpy_executable()
 
             return yes, no
 
+        def reprefix(self, old, new):
+            """
+            Returns a new file list with all the paths reprefixed.
+            """
+
+            rv = FileList()
+
+            for f in self:
+                rv.append(f.reprefix(old, new))
+
+            return rv
+
 
     class Distributor(object):
         """
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None, force_format=None):
             """
             Distributes `project`.
 
@@ -422,7 +470,10 @@ change_renpy_executable()
 
             `macapp`
                 If given, the path to a macapp that's used instead of
-                the macapp
+                the macapp that's included with Ren'Py.
+
+            `force_format`
+                If given, forces the format of the distribution to be this.
             """
 
             # A map from a package to a unique update version hash.
@@ -551,6 +602,10 @@ change_renpy_executable()
             self.reporter.info(_("Scanning Ren'Py files..."))
             self.scan_and_classify(config.renpy_base, build["renpy_patterns"])
 
+            if build["_sdk_fonts"]:
+                for k in list(self.file_lists.keys()):
+                    self.file_lists[k] = self.file_lists[k].reprefix("sdk-fonts", "game")
+
             # Add Python (with the same name as our executables)
             self.add_python()
 
@@ -577,12 +632,27 @@ change_renpy_executable()
             # Rename the executable-like files.
             self.rename()
 
+            # Sign the mac app once on Ren'Py.
+            if self.build["renpy"]:
+                fl = self.file_lists['binary']
+                app, rest = fl.split_by_prefix(self.app)
+                if app:
+                    app = self.sign_app(app, macapp)
+                    fl = FileList.merge([ app, rest ])
+                    self.file_lists['binary'] = fl
+                else:
+                    raise Exception("No mac app found.")
+
             # The time of the update version.
             self.update_version = int(time.time())
 
             for p in build_packages:
 
-                for f in p["formats"]:
+                formats = p["formats"]
+                if force_format is not None:
+                    formats = [ force_format ]
+
+                for f in formats:
 
                     self.make_package(
                         p["name"],
@@ -612,7 +682,7 @@ change_renpy_executable()
                 self.reporter.info(_("All packages have been built.\n\nDue to the presence of permission information, unpacking and repacking the Linux and Macintosh distributions on Windows is not supported."))
 
             if open_directory:
-                store.OpenDirectory(self.destination)()
+                renpy.run(store.OpenDirectory(self.destination, absolute=True))
 
         def scan_and_classify(self, directory, patterns):
             """
@@ -1269,15 +1339,19 @@ change_renpy_executable()
             if self.build.get("exclude_empty_directories", True):
                 fl = fl.filter_empty()
 
+            fl = fl.add_missing_directories()
+
             if macapp:
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
 
-            app, rest = fl.split_by_prefix(self.app)
+            if not self.build["renpy"]:
 
-            if app:
-                app = self.sign_app(app, macapp)
+                app, rest = fl.split_by_prefix(self.app)
 
-                fl = FileList.merge([ app, rest ])
+                if app:
+                    app = self.sign_app(app, macapp)
+
+                    fl = FileList.merge([ app, rest ])
 
             self.file_list_cache[key] = fl
             return fl.copy()
@@ -1322,6 +1396,9 @@ change_renpy_executable()
                 "app-zip" : (".zip", False, False, False),
                 "app-directory" : ("-app", True, False, False),
                 "app-dmg" : ("-app-dmg", True, True, False),
+
+                "bare-tar.bz2" : (".tar.bz2", False, False, False),
+                "bare-zip" : (".zip", False, False, False),
             }
 
             if format not in FORMATS:
@@ -1410,11 +1487,11 @@ change_renpy_executable()
                 if file_hash:
                     self.build_cache[full_filename] = (file_hash, fl_hash)
 
-            if format == "tar.bz2":
+            if format == "tar.bz2" or format == "bare-tar.bz2":
                 pkg = TarPackage(path, "w:bz2")
             elif format == "update":
                 pkg = UpdatePackage(path, filename, self.destination)
-            elif format == "zip" or format == "app-zip":
+            elif format == "zip" or format == "app-zip" or format == "bare-zip":
                 if self.build['renpy']:
                     pkg = ExternalZipPackage(path)
                 else:
@@ -1603,6 +1680,8 @@ change_renpy_executable()
         ap.add_argument("--package", action="append", help="If given, a package to build. Defaults to building all packages.")
         ap.add_argument("--no-archive", action="store_true", help="If given, files will not be added to archives.")
         ap.add_argument("--macapp", default=None, action="store", help="If given, the path to a signed and notarized mac app.")
+        ap.add_argument("--format", default=None, action="store", help="The format of package to build.")
+
         ap.add_argument("project", help="The path to the project directory.")
 
         args = ap.parse_args()
@@ -1614,11 +1693,57 @@ change_renpy_executable()
         else:
             packages = None
 
-        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest, macapp=args.macapp)
+        Distributor(p, destination=args.destination, reporter=TextReporter(), packages=packages, build_update=args.build_update, noarchive=args.no_archive, packagedest=args.packagedest, macapp=args.macapp, force_format=args.format)
 
         return False
 
     renpy.arguments.register_command("distribute", distribute_command)
+
+
+    def update_old_game(project, reporter, compile):
+        if compile:
+            reporter.info(_("Recompiling all rpy files into rpyc files..."))
+            project.launch([ "compile", "--keep-orphan-rpyc" ], wait=True)
+
+        files = [fn + "c" for fn in project.script_files()
+                 if fn.startswith("game/") and project.exists(fn + "c")]
+        len_files = len(files)
+
+        if not files:
+            return
+
+        TEMP_OLD_GAME_DIR = project.temp_filename("old-game")
+        if os.path.isdir(TEMP_OLD_GAME_DIR):
+            shutil.rmtree(TEMP_OLD_GAME_DIR)
+
+        for i, src in enumerate(files):
+            reporter.progress(_("Copying files..."), i, len_files)
+            dst = project.temp_filename("old-" + src)
+            try:
+                os.makedirs(os.path.dirname(dst))
+            except Exception:
+                pass
+            shutil.copyfile(os.path.join(project.path, src), dst)
+
+        reporter.progress_done()
+
+        OLD_GAME_DIR = os.path.join(project.path, "old-game")
+        if os.path.isdir(OLD_GAME_DIR):
+            shutil.rmtree(OLD_GAME_DIR)
+
+        shutil.copytree(TEMP_OLD_GAME_DIR, OLD_GAME_DIR)
+
+    def update_old_game_command():
+        ap = renpy.arguments.ArgumentParser("Back-ups all rpyc files into old-game directory.")
+        ap.add_argument("project", help="The path to the project directory.")
+
+        args = ap.parse_args()
+
+        update_old_game(project.Project(args.project), TextReporter(), True)
+
+        return False
+
+    renpy.arguments.register_command("update_old_game", update_old_game_command)
 
 label distribute:
 
@@ -1634,3 +1759,8 @@ label distribute:
 
 
     jump post_build
+
+label update_old_game:
+    python hide:
+        distribute.update_old_game(project.current, distribute.GuiReporter(), False)
+    return

@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional
 
 import renpy
@@ -113,6 +114,8 @@ class RPAv3ArchiveHandler(object):
     Archive handler handling RPAv3 archives.
     """
 
+    archive_extension = ".rpa"
+
     @staticmethod
     def get_supported_extensions():
         return [ ".rpa" ]
@@ -158,6 +161,8 @@ class RPAv2ArchiveHandler(object):
     Archive handler handling RPAv2 archives.
     """
 
+    archive_extension = ".rpa"
+
     @staticmethod
     def get_supported_extensions():
         return [ ".rpa" ]
@@ -183,6 +188,8 @@ class RPAv1ArchiveHandler(object):
     """
     Archive handler handling RPAv1 archives.
     """
+
+    archive_extension = ".rpa"
 
     @staticmethod
     def get_supported_extensions():
@@ -252,7 +259,7 @@ def index_archives():
                         if file_header.startswith(header):
                             f.seek(0, 0)
                             index = handler.read_index(f)
-                            archives.append((prefix + ext, index))
+                            archives.append((prefix + handler.archive_extension, index))
                             archive_handled = True
                             break
                     if archive_handled == True:
@@ -453,6 +460,7 @@ def listdirfiles(common=True):
 
 
 class SubFile(object):
+    closed = False
 
     def __init__(self, fn, base, length, start):
         self.fn = fn
@@ -504,6 +512,9 @@ class SubFile(object):
 
         return (rv1 + rv2)
 
+    def readable(self):
+        return True
+
     def readline(self, length=None):
 
         if self.f is None:
@@ -552,6 +563,12 @@ class SubFile(object):
             rv.append(l)
 
         return rv
+
+    def seekable(self):
+        return True
+
+    def writable(self):
+        return False
 
     def xreadlines(self):
         return self
@@ -693,7 +710,6 @@ def load_from_archive(name):
     """
     Returns an open python file object of the given type from an archive file.
     """
-
     for prefix, index in archives:
         if not name in index:
             continue

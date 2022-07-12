@@ -50,7 +50,7 @@ def call_str(function, *args):
     return rv
 
 
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0):
+def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -73,6 +73,9 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
     `end`
         A time in the file to end playing.    `
+
+    `relative_volume`
+        A number between 0 and 1 that controls the relative volume of this file
     """
 
     try:
@@ -81,10 +84,10 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         return
 
     call("stop", channel)
-    call("queue", channel, file, name, paused, fadein, tight, start, end)
+    call("queue", channel, file, name, paused, fadein, tight, start, end, relative_volume)
 
 
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
+def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -97,7 +100,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
     except Exception:
         return
 
-    call("queue", channel, file, name, False, fadein, tight, start, end)
+    call("queue", channel, file, name, False, fadein, tight, start, end, relative_volume)
 
 
 def stop(channel):
@@ -297,6 +300,22 @@ def set_video(channel, video):
     return
 
 
+loaded = False
+
+def load_script():
+    """
+    Loads the javascript required for webaudio to work.
+    """
+
+    global loaded
+
+    if not loaded:
+        js = renpy.loader.load("_audio.js").read()
+        emscripten.run_script(js)
+
+    loaded = True
+
+
 def init(freq, stereo, samples, status=False, equal_mono=False):
     """
     Initializes the audio system with the given parameters. The parameter are
@@ -317,10 +336,7 @@ def init(freq, stereo, samples, status=False, equal_mono=False):
     `
     """
 
-    renpy.config.debug_sound = True
-
-    js = renpy.loader.load("_audio.js").read()
-    emscripten.run_script(js)
+    load_script()
 
     return True
 
@@ -350,3 +366,14 @@ def sample_surfaces(rgb, rgba):
     """
 
     return
+
+
+def can_play_types(types):
+    """
+    Webaudio-specific. Returns 1 if the audio system can play all the mime
+    types in the list, 0 if it cannot.
+    """
+
+    load_script()
+
+    return call_int("can_play_types", types)

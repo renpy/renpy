@@ -23,7 +23,8 @@
 # drag and drop.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import pygame_sdl2 as pygame
 
@@ -60,7 +61,7 @@ def default_drop_allowable(drop, drags):
 class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     """
     :doc: drag_drop class
-    :args: (d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=..., clicked=None, hovered=None, unhovered=None, mouse_drop=False, **properties)
+    :args: (d=None, drag_name=None, draggable=True, droppable=True, drag_raise=True, dragging=None, dragged=None, dropped=None, drag_handle=(0.0, 0.0, 1.0, 1.0), drag_joined=..., clicked=None, hovered=None, unhovered=None, mouse_drop=False, **properties)
 
     A displayable that represents an object that can be dragged around
     its enclosing area. A Drag can also represent an area that
@@ -79,8 +80,8 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     * ``idle`` - otherwise.
 
     The drag handle is a rectangle inside the child. The mouse must be over
-    a non-transparent pixel inside the drag handle for dragging or clicking
-    to occur.
+    a pixel inside the drag handle for dragging or clicking to occur. If the
+    :propref:`focus_mask` property is True, that pixel must not be transparent.
 
     A newly-created draggable is added to the default DragGroup. A draggable
     can only be in a single DragGroup - if it's added to a second group,
@@ -118,6 +119,12 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         is pressed down on the drag. It is called with one argument, a
         a list of Drags that are being dragged. The return value of this
         callback is ignored.
+
+    `dragging`
+        A callback (or list of callbacks) that is called when the Drag is being
+        dragged. It is called with one argument, a list of Drags that are
+        being dragged. If the callback returns a value other than None, that
+        value is returned as the result of the interaction.
 
     `dragged`
         A callback (or list of callbacks) that is called when the Drag
@@ -185,10 +192,13 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     been rendered, the following fields become available:
 
     `x`, `y`
-         The position of the Drag relative to its parent, in pixels.
+        The position of the Drag relative to its parent, in pixels.
+
+    `start_x`, `start_y`
+        The drag start position of the Drag relative to its parent, in pixels.
 
     `w`, `h`
-         The width and height of the Drag's child, in pixels.
+        The width and height of the Drag's child, in pixels.
     """
 
     z = 0
@@ -200,6 +210,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     drag_offscreen = False
     activated = None
     alternate = None
+    dragging = None
 
     # The time a click started, or None if a click is not in progress.
     click_time = None
@@ -224,6 +235,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
                  activated=None,
                  alternate=None,
                  style="drag",
+                 dragging=None,
                  **properties):
 
         super(Drag, self).__init__(style=style, **properties)
@@ -232,6 +244,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         self.draggable = draggable
         self.droppable = droppable
         self.drag_raise = drag_raise
+        self.dragging = dragging
         self.dragged = dragged
         self.dropped = dropped
         self.drop_allowable = drop_allowable
@@ -617,6 +630,8 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
             grabbed = True
 
+            renpy.exports.play(self.style.activate_sound)
+
         elif (self.alternate is not None) and map_event(ev, "button_alternate"):
             rv = run(self.alternate)
             if rv is not None:
@@ -686,6 +701,12 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
                     i.target_x = new_x
                     i.target_y = new_y
                     i.target_at = self.at
+                    # Call the dragging callback.
+                    drag = joined[0]
+                    if drag.dragging is not None:
+                        rv = run(drag.dragging, joined)
+                        if rv is not None:
+                            return rv
                     redraw(i, 0)
 
         else:
@@ -782,7 +803,7 @@ class DragGroup(renpy.display.layout.MultiBox):
 
     `min_overlap`
         An integer which means the minimum number of pixels at the
-        overlap so that drop will be allow.
+        overlap for the drop to be allowed.
     """
 
     z_serial = 0
@@ -825,7 +846,6 @@ class DragGroup(renpy.display.layout.MultiBox):
         if not isinstance(child, Drag):
             raise Exception("Only drags can be added to a drag group.")
 
-        child.drag_group = self
         super(DragGroup, self).add(child)
 
         self.sorted = False
@@ -844,6 +864,9 @@ class DragGroup(renpy.display.layout.MultiBox):
         super(DragGroup, self).remove(child)
 
     def render(self, width, height, st, at):
+
+        for i in self.children:
+            i.drag_group = self
 
         if not self.sorted:
             self.children.sort(key=lambda i : i.z)
@@ -968,7 +991,7 @@ class DragGroup(renpy.display.layout.MultiBox):
         :doc: drag_drop method
 
         Returns the first child of this DragGroup that has a drag_name
-        of name.
+        of `name`.
         """
 
         for i in self.children:

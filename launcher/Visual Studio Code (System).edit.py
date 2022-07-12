@@ -17,6 +17,9 @@ class Editor(renpy.editor.Editor):
 
         if system:
 
+            if "RENPY_VSCODE" in os.environ:
+                return os.environ["RENPY_VSCODE"]
+
             if renpy.windows:
                 return "code.cmd"
 
@@ -34,7 +37,14 @@ class Editor(renpy.editor.Editor):
             elif renpy.macintosh:
                 code = os.path.join(RENPY_VSCODE, "Visual Studio Code.app", "Contents", "Resources", "app", "bin", "code")
             elif renpy.linux:
-                code = os.path.join(RENPY_VSCODE, "VSCode-linux-x64", "bin", "code")
+                if renpy.arch == "aarch64":
+                    arch = "arm64"
+                elif renpy.arch == "armv7l":
+                    arch = "arm"
+                else:
+                    arch = "x86_64"
+
+                code = os.path.join(RENPY_VSCODE, "VSCode-linux-" + arch, "bin", "code")
             else:
                 code = "code"
 

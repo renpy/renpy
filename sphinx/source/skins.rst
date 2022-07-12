@@ -12,7 +12,7 @@ expected to be forward or backwards compatible.
 
 1. Open the launcher in the launcher. This can be done from the
    preferences screen.
-   
+
 2. Create the skin.rpy script file.
 
 3. Copy the following into skin.rpy::
@@ -53,16 +53,16 @@ expected to be forward or backwards compatible.
         custom_question_color = "#d19753"
 
         # The color of input text.
-        custom_imput_color = "#d86b45"
-       
+        custom_input_color = "#d86b45"
+
         # A displayable used for the background of windows
         # containing commands, preferences, and navigation info.
         custom_window = Frame(Fixed(Solid(custom_reverse_idle, xsize=4, xalign=0), Solid(custom_info_window, xsize=794, xalign=1.0), xsize=800, ysize=600), 0, 0, tile=True)
 
 4. Modify skin.rpy to skin the launcher. Place the image files you use
-   into the launcher's game directory. Recommended size for background 
-   800x600 pixels. 
-   
+   into the launcher's game directory. Recommended size for background
+   800x600 pixels.
+
 5. Select Custom theme in preferences.
 
 An incorrect skin.rpy file could prevent the launcher from

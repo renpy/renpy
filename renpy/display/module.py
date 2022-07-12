@@ -23,10 +23,11 @@
 # allows us to enhance the feature set of pygame in a renpy specific way.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 
-import pygame_sdl2; pygame_sdl2
+
+import pygame_sdl2
 import renpy
 import _renpy
 
@@ -231,7 +232,7 @@ def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, 
             break
 
         nsw = max(sw // 2, dw)
-        nsh = max(sh // 2, dh)
+        nsh = max(sh // 2, dh) # type: ignore
 
         nsrc = renpy.display.pgrender.surface((nsw, nsh), src.get_masks()[3])
 

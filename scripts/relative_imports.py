@@ -15,7 +15,8 @@ def find_modules():
     modules = [ ]
 
     # .py modules.
-    for i in ROOT.glob("**/*.py"):
+    for i in ROOT.glob("renpy/**/*.py"):
+        i = i.relative_to(ROOT)
         mod = str(i.with_suffix("")).replace("/", ".")
         if mod.endswith(".__init__"):
             mod = mod[:-9]
@@ -69,7 +70,7 @@ def generate(package, modules):
     text += "if 1 == 0:\n"
 
     for mod in modules:
-        text += f"    from . import {mod}; {mod}\n"
+        text += f"    from . import {mod}\n"
 
     p.write_text(text)
 

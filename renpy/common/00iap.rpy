@@ -287,7 +287,9 @@ init -1500 python in iap:
             rv = self.helper.formatPrice_(identifier)
 
             if rv is not None:
-                rv = rv.UTF8String().decode("utf-8")
+                rv = rv.UTF8String()
+                if isinstance(rv, bytes):
+                    rv = rv.decode("utf-8")
 
             return rv
 
@@ -568,10 +570,17 @@ init -1500 python in iap:
 
     def init():
         """
-        Called to initialize the IAP system.
+        :doc: iap
+
+        Initialize iap. This should be called after all calls to iap.register(),
+        but before any other iap function. If not called explicitly, this is
+        automatically called at the end of the initialization phase.
         """
 
         global backend
+
+        if not isinstance(backend, NoneBackend):
+            return
 
         if persistent._iap_purchases is None:
             persistent._iap_purchases = { }
@@ -586,7 +595,10 @@ init -1500 python in iap:
 
         # Set up the back end.
         if renpy.renpy.android:
-            backend = init_android()
+            try:
+                backend = init_android()
+            except Exception:
+                backend = NoneBackend()
         elif renpy.renpy.ios:
             backend = IOSBackend()
         else:

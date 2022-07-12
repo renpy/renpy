@@ -223,6 +223,9 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     xmaximum = style.xmaximum
     ymaximum = style.ymaximum
 
+    if d._offer_size is not None:
+        width, height = d._offer_size
+
     if xmaximum is not None:
         if isinstance(xmaximum, float):
             width = width * xmaximum
@@ -1219,7 +1222,33 @@ cdef class Render:
             screen = self.focus_screen
 
         if self.modal:
-            focuses[:] = [ ]
+
+            if self.modal == "window":
+
+                x1, y1 = transform.transform(0, 0)
+                x2, y2 = transform.transform(self.width, self.height)
+
+                minx = min(x1, x2)
+                maxx = max(x1, x2)
+                miny = min(y1, y2)
+                maxy = max(y1, y2)
+
+                new_focuses = [ ]
+
+                rect = (minx, miny, maxx - minx, maxy - miny)
+
+                for f in focuses:
+
+                    if f.inside(rect):
+                        continue
+
+                    new_focuses.append(f)
+
+                focuses[:] = new_focuses
+
+            elif not callable(self.modal):
+
+                focuses[:] = [ ]
 
         if self.focuses:
 
@@ -1351,7 +1380,12 @@ cdef class Render:
                         if mask.is_pixel_opaque(cx, cy):
                             rv = d, arg, screen
                     else:
-                        if mask(cx, cy):
+                        mask_result = mask(cx, cy)
+
+                        if callable(mask_result):
+                            mask_result = mask_result(cx, cy, w - mx, w - my)
+
+                        if mask_result:
                             rv = d, arg, screen
 
                 elif xo <= x < xo + w and yo <= y < yo + h:
@@ -1366,7 +1400,14 @@ cdef class Render:
                     rv = None
 
         if (rv is None) and self.modal:
-            if renpy.display.layout.check_modal(self.modal, None, x, y, self.width, self.height):
+            w = self.width
+            h = self.height
+
+            if self.modal == "default":
+                w = None
+                h = None
+
+            if renpy.display.layout.check_modal(self.modal, None, x, y, w, h):
                 return Modal
 
         return rv

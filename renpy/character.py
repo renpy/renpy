@@ -22,7 +22,8 @@
 # The Character object (and friends).
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Any
 
 import renpy
@@ -413,9 +414,9 @@ class SlowDone(object):
         for c in self.callback:
             c("slow_done", interact=self.interact, type=self.type, **self.cb_args)
 
-# This function takes care of repeatably showing the screen as part of
-# an interaction.
-
+# This is a queue for text that's going to be passed to the say behavior to
+# set the AFM info.
+afm_text_queue = [ ]
 
 def display_say(
         who,
@@ -439,12 +440,20 @@ def display_say(
         multiple=None,
         dtt=None):
 
+    global afm_text_queue
+
     # Final is true if this statement should perform an interaction.
 
     if multiple is None:
         final = interact
+
+        afm_text_queue = [ ]
+
     else:
         step, total = multiple
+
+        if step == 1:
+            afm_text_queue = [ ]
 
         if step == total:
             final = interact
@@ -467,6 +476,11 @@ def display_say(
         # Clears out transients.
         renpy.exports.with_statement(None)
         return
+
+    # If we're not interacting, call the noniteractive_callbacks.
+    if interact is False:
+        for i in renpy.config.nointeract_callbacks:
+            i()
 
     # Figure out the callback(s) we want to use.
     if callback is None:
@@ -596,10 +610,15 @@ def display_say(
             else:
                 what_text = show_function(who, what_string)
 
-            if interact or what_string or (what_ctc is not None) or (behavior and afm):
+            if isinstance(what_text, tuple):
+                what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
 
-                if isinstance(what_text, tuple):
-                    what_text = renpy.display.screen.get_widget(what_text[0], what_text[1], what_text[2])
+            if not multiple:
+                afm_text_queue = [ what_text ]
+            else:
+                afm_text_queue.append(what_text)
+
+            if interact or what_string or (what_ctc is not None) or (behavior and afm):
 
                 if not isinstance(what_text, renpy.text.text.Text): # @UndefinedVariable
                     raise Exception("The say screen (or show_function) must return a Text object.")
@@ -631,7 +650,7 @@ def display_say(
                     raise Exception("The displayable with id 'what' was not given the exact contents of the what variable given to the say screen.")
 
                 if behavior and afm:
-                    behavior.set_text(what_text)
+                    behavior.set_text(*afm_text_queue)
 
             else:
 
@@ -666,11 +685,10 @@ def display_say(
     if final:
 
         if not dtt.no_wait:
-            if checkpoint:
-                if exception is None:
-                    renpy.exports.checkpoint(True)
-                else:
-                    renpy.exports.checkpoint(exception)
+            if exception is None:
+                renpy.exports.checkpoint(True, hard=checkpoint)
+            else:
+                renpy.exports.checkpoint(exception)
 
         else:
             renpy.game.after_rollback = after_rollback
@@ -703,6 +721,15 @@ class HistoryEntry(renpy.object.Object):
     multiple = None
     who = None
     what = None
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
+
+    def __hash__(self):
+        return hash(tuple(sorted(self.__dict__.items())))
 
     def __repr__(self):
         return "<History {!r} {!r}>".format(self.who, self.what)
@@ -938,7 +965,7 @@ class ADVCharacter(object):
         tagged_attrs = (self.image_tag,) + attrs
         images = renpy.game.context().images
 
-        layer = renpy.config.tag_layer.get(self.image_tag, "master")
+        layer = renpy.exports.default_layer(None, self.image_tag)
 
         # If image is showing already, resolve it, then show or predict it.
         if images.showing(layer, (self.image_tag,)):

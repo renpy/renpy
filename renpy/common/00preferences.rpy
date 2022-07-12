@@ -158,12 +158,13 @@ init -1500 python:
 
          * Preference("mixer <mixer> mute", "enable") - Mute the specified mixer.
          * Preference("mixer <mixer> mute", "disable") - Unmute the specified mixer.
-         * Preference("mixer <mixer> mute", "toggle") - Toggle mute of specified mixer.
+         * Preference("mixer <mixer> mute", "toggle") - Toggle mute of the specified mixer.
 
-         * Preference("all mute", "enable") - Mute all mixers.
-         * Preference("all mute", "disable") - Unmute all mixers.
-         * Preference("all mute", "toggle") - Toggle mute of all mixers.
+         * Preference("all mute", "enable") - Mute each individual mixer.
+         * Preference("all mute", "disable") - Unmute each individual mixer.
+         * Preference("all mute", "toggle") - Toggle mute of each individual mixer.
 
+         * Preference("main volume", 0.5) - Set the adjustment applied to all channels.
          * Preference("music volume", 0.5) - Set the music volume.
          * Preference("sound volume", 0.5) - Set the sound volume.
          * Preference("voice volume", 0.5) - Set the voice volume.
@@ -218,11 +219,15 @@ init -1500 python:
          * Preference("high contrast text", "toggle") - Toggles high contrast text.
 
 
+         * Preference("audio when minimized", "enable") - Enable sounds playing when the window is not in focus.
+         * Preference("audio when minimized", "disable") - Disable sounds playing when the window is not in focus.
+         * Preference("audio when minimized", "toggle") - Toggle sounds playing when the window is not in focus.
 
          Values that can be used with bars are:
 
          * Preference("text speed")
          * Preference("auto-forward time")
+         * Preference("main volume")
          * Preference("music volume")
          * Preference("sound volume")
          * Preference("voice volume")
@@ -499,19 +504,31 @@ init -1500 python:
                 elif value == "toggle":
                     return [ ToggleField(_preferences, "high_contrast"), _DisplayReset() ]
 
+            elif name == _("audio when minimized"):
+
+                if value == "enable":
+                    return SetField(_preferences, "audio_when_minimized", True)
+                elif value == "disable":
+                    return SetField(_preferences, "audio_when_minimized", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "audio_when_minimized")
+
 
             mixer_names = {
+                "main" : "main",
                 "music" : "music",
                 "sound" : "sfx",
                 "voice" : "voice",
-                "all" : _preferences.get_all_mixers(),
+                "all" : _preferences.get_all_mixers() + ["main"],
             }
 
             # Make these available to the translation system
             if False:
+                _("main volume")
                 _("music volume")
                 _("sound volume")
                 _("voice volume")
+                _("mute main")
                 _("mute music")
                 _("mute sound")
                 _("mute voice")

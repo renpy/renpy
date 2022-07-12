@@ -27,8 +27,9 @@
 # updating.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-from typing import Optional
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
+from typing import Optional, Any
 
 import renpy
 
@@ -305,8 +306,8 @@ class ArgumentInfo(renpy.object.Object):
     def after_upgrade(self, version):
         if version < 1:
             arguments = self.arguments
-            extrapos = self.extrapos
-            extrakw = self.extrakw
+            extrapos = self.extrapos # type: ignore
+            extrakw = self.extrakw # type: ignore
             length = len(arguments) + bool(extrapos) + bool(extrakw)
             if extrapos:
                 self.starred_indexes = { length - 1 }
@@ -376,12 +377,13 @@ class ArgumentInfo(renpy.object.Object):
         return "(" + ", ".join(l) + ")"
 
 
+EMPTY_PARAMETERS = ParameterInfo([ ], [ ], None, None, None, None)
+EMPTY_ARGUMENTS = ArgumentInfo([ ], None, None)
+
+
 def __newobj__(cls, *args):
     return cls.__new__(cls, *args)
 
-
-# A list of pyexprs that need to be precompiled.
-pyexpr_list = [ ]
 
 
 class PyExpr(str):
@@ -409,6 +411,29 @@ class PyExpr(str):
 
     def __getnewargs__(self):
         return (str(self), self.filename, self.linenumber, self.py)
+
+    @staticmethod
+    def checkpoint():
+        """
+        Checkpoints the pyexpr list. Returns an opaque object that can be used
+        to revert the list.
+        """
+
+        if renpy.game.script.all_pyexpr is None:
+            return None
+
+        return len(renpy.game.script.all_pyexpr)
+
+    @staticmethod
+    def revert(opaque):
+
+        if renpy.game.script.all_pyexpr is None:
+            return
+
+        if opaque is None:
+            return
+
+        renpy.game.script.all_pyexpr[opaque:] = [ ]
 
 
 def probably_side_effect_free(expr):
@@ -510,8 +535,12 @@ class Scry(object):
     predict, this tries to only get things we _know_ will happen.
     """
 
-    _next = None # type: Optional[Node]
-    interacts = None # type: Optional[bool]
+    _next = None # type: Node|None
+    interacts = None # type: bool|None
+
+    say = False # type: bool|None
+    menu_with_caption = False # type: bool|None
+    who = None # type: str|None
 
     # By default, all attributes are None.
     def __getattr__(self, name):
@@ -897,6 +926,7 @@ class Say(Node):
         finally:
             renpy.game.context().say_attributes = None
             renpy.game.context().temporary_attributes = None
+            renpy.store._last_raw_what = "" # type: ignore
 
     def predict(self):
 
@@ -931,6 +961,8 @@ class Say(Node):
         rv = Node.scry(self)
 
         who = eval_who(self.who, self.who_fast)
+        rv.who = who
+        rv.say = True
 
         if self.interact:
             renpy.exports.scry_say(who, rv)
@@ -1206,7 +1238,9 @@ class Image(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.mark_constant()
+            # ATL images must participate with the game defined
+            # constant names. So, we pass empty parameters to enable it.
+            self.atl.analyze(EMPTY_PARAMETERS)
 
 
 class Transform(Node):
@@ -1223,7 +1257,7 @@ class Transform(Node):
         'parameters',
         ]
 
-    default_parameters = ParameterInfo([ ], [ ], None, None)
+    default_parameters = EMPTY_PARAMETERS
 
     def __init__(self, loc, name, atl=None, parameters=default_parameters):
 
@@ -1252,7 +1286,13 @@ class Transform(Node):
         setattr(renpy.store, self.varname, trans)
 
     def analyze(self):
-        self.atl.mark_constant()
+
+        parameters = getattr(self, "parameters", None)
+
+        if parameters is None:
+            parameters = Transform.default_parameters
+
+        self.atl.analyze(parameters)
 
 
 def predict_imspec(imspec, scene=False, atl=None):
@@ -1294,7 +1334,7 @@ def predict_imspec(imspec, scene=False, atl=None):
         except Exception:
             pass
 
-    layer = renpy.exports.default_layer(layer, tag or name, expression)
+    layer = renpy.exports.default_layer(layer, tag or name, bool(expression))
 
     if scene:
         renpy.game.context().images.predict_scene(layer)
@@ -1329,7 +1369,7 @@ def show_imspec(imspec, atl=None):
 
     at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
-    layer = renpy.exports.default_layer(layer, tag or name, expression and (tag is None))
+    layer = renpy.exports.default_layer(layer, tag or name, bool(expression) and (tag is None))
 
     renpy.config.show(name,
                       at_list=at_list,
@@ -1359,7 +1399,7 @@ class Show(Node):
         super(Show, self).__init__(loc)
 
         self.imspec = imspec
-        self.atl = atl
+        self.atl = atl # type: Any
 
     def diff_info(self):
         return (Show, tuple(self.imspec[0]))
@@ -1376,7 +1416,10 @@ class Show(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.mark_constant()
+            # ATL block defined for show, scene or show layer statements
+            # must participate with the game defined constant names.
+            # So, we pass empty parameters to enable it.
+            self.atl.analyze(EMPTY_PARAMETERS)
 
 
 class ShowLayer(Node):
@@ -1416,7 +1459,7 @@ class ShowLayer(Node):
 
     def analyze(self):
         if self.atl is not None:
-            self.atl.mark_constant()
+            self.atl.analyze(EMPTY_PARAMETERS)
 
 
 class Camera(Node):
@@ -1456,7 +1499,7 @@ class Camera(Node):
 
     def analyze(self):
         if self.atl is not None:
-            self.atl.mark_constant()
+            self.atl.analyze(EMPTY_PARAMETERS)
 
 
 class Scene(Node):
@@ -1480,7 +1523,7 @@ class Scene(Node):
 
         self.imspec = imgspec
         self.layer = layer
-        self.atl = atl
+        self.atl = atl # type: Any
 
     def diff_info(self):
 
@@ -1510,7 +1553,7 @@ class Scene(Node):
 
     def analyze(self):
         if getattr(self, 'atl', None) is not None:
-            self.atl.mark_constant()
+            self.atl.analyze(EMPTY_PARAMETERS)
 
 
 class Hide(Node):
@@ -1615,7 +1658,7 @@ class With(Node):
         else:
             paired = None
 
-        renpy.exports.with_statement(trans, paired)
+        renpy.exports.with_statement(trans, paired=paired)
 
     def predict(self):
 
@@ -1815,7 +1858,7 @@ class Menu(Node):
 
         next_node(self.next)
 
-        if self.has_caption:
+        if self.has_caption or renpy.config.choice_empty_window:
             statement_name("menu-with-caption")
         else:
             statement_name("menu")
@@ -1887,6 +1930,8 @@ class Menu(Node):
         rv = Node.scry(self)
         rv._next = None
         rv.interacts = True
+        if self.has_caption:
+            rv.menu_with_caption = True
         return rv
 
     def restructure(self, callback):
@@ -2277,8 +2322,16 @@ class PostUserStatement(Node):
 
 
 def create_store(name):
-    if name not in renpy.config.special_namespaces:
-        renpy.python.create_store(name)
+    if name in renpy.config.special_namespaces:
+        return
+
+    # Take first two components of dot-joined name
+    maybe_special = ".".join(name.split(".")[:2])
+    if maybe_special in renpy.config.special_namespaces:
+        if not renpy.config.special_namespaces[maybe_special].allow_child_namespaces:
+            raise Exception('Creating stores within the {} namespace is not supported.'.format(maybe_special[6:]))
+
+    renpy.python.create_store(name)
 
 
 class StoreNamespace(object):
@@ -2500,19 +2553,23 @@ class Default(Node):
             d["_defaults_set"] = defaults_set = renpy.revertable.RevertableSet()
             d.ever_been_changed.add("_defaults_set")
 
-        if self.varname not in defaults_set:
-
-            if start or (self.varname not in d.ever_been_changed):
-                d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
-
-            d.ever_been_changed.add(self.varname)
-
-            defaults_set.add(self.varname)
-
-        else:
-
+        if self.varname in defaults_set:
             if start and renpy.config.developer:
                 raise Exception("{}.{} is being given a default a second time.".format(self.store, self.varname))
+            return
+
+        # do the variable shadowing if not in this case, for compatibility reasons
+        if start and (renpy.config.developer is True):
+            fullname = '.'.join((self.store, self.varname))
+            if fullname in renpy.python.store_dicts:
+                raise Exception("{} is being given a default, but a store with that name already exists.".format(fullname))
+
+        if start or (self.varname not in d.ever_been_changed):
+            d[self.varname] = renpy.python.py_eval_bytecode(self.code.bytecode)
+
+        d.ever_been_changed.add(self.varname)
+
+        defaults_set.add(self.varname)
 
     def report_traceback(self, name, last):
         return [ (self.filename, self.linenumber, name, None) ]

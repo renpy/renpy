@@ -570,7 +570,7 @@ label tutorial_atl:
 
     show example atl_transform
 
-    e "The simplest thing we can to is to statically position an image. This is done by giving the names of the position properties, followed by the property values."
+    e "The simplest thing we can do is to statically position an image. This is done by giving the names of the position properties, followed by the property values." id tutorial_atl_ddc55039
 
     show example atl_transform1
     show logo base at move_jump

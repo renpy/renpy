@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import codecs
 import time
@@ -250,8 +251,8 @@ def image_exists_precise(name):
 
             try:
                 da = renpy.display.core.DisplayableArguments()
-                da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs) 
-                da.args = tuple(i for i in name[1:] if i in rest) 
+                da.name = (im[0],) + tuple(i for i in name[1:] if i in attrs)
+                da.args = tuple(i for i in name[1:] if i in rest)
                 da.lint = True
                 d._duplicate(da)
             except Exception:
@@ -561,6 +562,11 @@ def check_if(node):
 
 
 def check_define(node, kind):
+
+    if node.store == "store.persistent" and kind == "define":
+        report("Define should not be used with a persistent variable. Use default persistent.%s = ... instead.", node.varname)
+        return
+
     if node.store != 'store':
         return
 
@@ -765,6 +771,37 @@ def common(n):
     else:
         return False
 
+def report_character_stats(charastats):
+    """
+    Returns a list of character stat lines.
+    """
+
+    # Keep all the statistics in a list, so that it gets wrapped ionto a
+    rv = [ "Character statistics (for default language):" ]
+
+    count_to_char = collections.defaultdict(list)
+
+    for char, count in charastats.items():
+        count_to_char[count].append(char)
+
+    for count, chars in sorted(count_to_char.items(), reverse=True):
+        chars.sort()
+
+        if len(chars) == 1:
+            start = chars[0] + " has "
+        elif len(chars) == 2:
+            start = chars[0] + " and " + chars[1] + " have "
+        else:
+            start = ", ".join(chars[:-1]) + ", and " + chars[-1] + " have "
+
+        rv.append(
+            " * " + start + humanize(count) +
+            (" block " if count == 1 else " blocks ") + "of dialogue" +
+            (" each." if len(chars) > 1 else ".")
+            )
+
+    return rv
+
 
 def lint():
     """
@@ -786,6 +823,12 @@ def lint():
 
     print("\ufeff" + renpy.version + " lint report, generated at: " + time.ctime())
 
+    # Populate default statement values.
+    renpy.exports.execute_default_statement(True)
+
+    # Initialise store and values set by start callbacks.
+    renpy.exports.call_in_new_context('_start_store')
+
     # This supports check_hide.
     global image_prefixes
     image_prefixes = { }
@@ -801,6 +844,8 @@ def lint():
 
     # The current count.
     counts = collections.defaultdict(Count)
+
+    charastats = collections.defaultdict(int)
 
     # The current language.
     language = None
@@ -842,6 +887,8 @@ def lint():
             check_say(node)
 
             counts[language].add(node.what)
+            if language is None:
+                charastats[node.who if node.who else 'narrator' ] += 1
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -922,16 +969,34 @@ characters per block. """.format(
     print("")
 
     languages = list(counts)
-    languages.sort()
+    languages.sort(key=lambda a : "" if not a else a)
     for i in languages:
         report_language(i)
 
     lines.append("The game contains {0} menus, {1} images, and {2} screens.".format(
         humanize(menu_count), humanize(image_count), humanize(screen_count)))
 
+    if renpy.config.developer and renpy.config.lint_character_statistics:
+        lines.append(report_character_stats(charastats))
+
+    # Format the lines and lists of lines.
     for l in lines:
-        for ll in textwrap.wrap(l, 78):
-            print(ll)
+        if not isinstance(l, (tuple, list)):
+            l = (l,)
+
+        for ll in l:
+
+            if ll.startswith(" * "):
+                prefix = " * "
+                altprefix = "   "
+                ll = ll[3:]
+            else:
+                prefix  = ""
+                altprefix = ""
+
+            for lll in textwrap.wrap(ll, 78 - len(prefix)):
+                print(prefix + lll)
+                prefix = altprefix
 
         print("")
 

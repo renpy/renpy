@@ -182,46 +182,50 @@ translate piglatin strings:
     new "exitay: exitay hetay onsolecay"
 
     # renpy/common/00console.rpy:784
+    old "stack: print the return stack"
+    new "ackstay: rintpay hetay eturnray ackstay"
+
+    # renpy/common/00console.rpy:806
     old "load <slot>: loads the game from slot"
     new "oadlay <otslay>: oadslay hetay amegay omfray otslay"
 
-    # renpy/common/00console.rpy:797
+    # renpy/common/00console.rpy:819
     old "save <slot>: saves the game in slot"
     new "avesay <otslay>: avessay hetay amegay inay otslay"
 
-    # renpy/common/00console.rpy:808
+    # renpy/common/00console.rpy:830
     old "reload: reloads the game, refreshing the scripts"
     new "eloadray: eloadsray hetay amegay, efreshingray hetay criptssay"
 
-    # renpy/common/00console.rpy:816
+    # renpy/common/00console.rpy:838
     old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
     new "atchway <expressionay>: atchway aay ythonpay expressionay\n atchway ortshay: akesmay hetay epresentationray ofay acedtray expressionsay ortshay (efaultday)\n atchway onglay: akesmay hetay epresentationray ofay acedtray expressionsay asay isay"
 
-    # renpy/common/00console.rpy:851
+    # renpy/common/00console.rpy:875
     old "unwatch <expression>: stop watching an expression"
     new "unwatchay <expressionay>: opstay atchingway anay expressionay"
 
-    # renpy/common/00console.rpy:886
+    # renpy/common/00console.rpy:918
     old "unwatchall: stop watching all expressions"
     new "unwatchallay: opstay atchingway allay expressionsay"
 
-    # renpy/common/00console.rpy:903
+    # renpy/common/00console.rpy:939
     old "jump <label>: jumps to label"
     new "umpjay <abellay>: umpsjay otay abellay"
 
-    # renpy/common/00console.rpy:919
+    # renpy/common/00console.rpy:955
     old "short: Shorten the representation of objects on the console (default)."
     new "ortshay: Hortensay hetay epresentationray ofay objectsay onay hetay onsolecay (efaultday)."
 
-    # renpy/common/00console.rpy:923
+    # renpy/common/00console.rpy:959
     old "long: Print the full representation of objects on the console."
     new "onglay: Rintpay hetay ullfay epresentationray ofay objectsay onay hetay onsolecay."
 
-    # renpy/common/00console.rpy:927
+    # renpy/common/00console.rpy:963
     old "escape: Enables escaping of unicode symbols in unicode strings."
     new "escapeay: Nableseay escapingay ofay unicodeay ymbolssay inay unicodeay ringsstay."
 
-    # renpy/common/00console.rpy:931
+    # renpy/common/00console.rpy:967
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
     new "unescapeay: Isablesday escapingay ofay unicodeay ymbolssay inay unicodeay ringsstay anday rintpay itay asay isay (efaultday)."
 

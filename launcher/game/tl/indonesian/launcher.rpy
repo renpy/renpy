@@ -1,5 +1,7 @@
-﻿
-translate indonesian strings:
+﻿translate indonesian strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "Bahasa Indonesia"
 
     # about.rpy:39
     old "[version!q]"

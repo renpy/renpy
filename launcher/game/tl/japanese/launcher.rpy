@@ -1,5 +1,7 @@
-﻿
-translate japanese strings:
+﻿translate japanese strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=SourceHanSansLite.ttf}日本語{/font}"
 
     # about.rpy:39
     old "[version!q]"
@@ -1027,7 +1029,7 @@ translate japanese strings:
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "抽出コマンドは、このプロジェクトから文字列の翻訳（台詞以外の翻訳）を一時ファイルとして抽出します。\n\n統合コマンドは、抽出した翻訳をこのプロジェクトに統合します。"
+    new "抽出コマンドは、このプロジェクトから文字列の翻訳（台詞以外の翻訳）を一時ファイルとして抽出します。\n\n統合コマンドは、抽出した翻訳を別のプロジェクトに統合します。"
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1091,7 +1093,7 @@ translate japanese strings:
 
     # translations.rpy:378
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
-    new "Ren'Py は台詞の抽出を終了しました。抽出した台詞は、base ディレクトリーの、[persistent.dialogue_format] にあります。"
+    new "Ren'Py は台詞の抽出を終了しました。抽出した台詞は、ディレクトリーの base.[persistent.dialogue_format] にあります。"
 
     # updater.rpy:75
     old "Select Update Channel"
@@ -1928,4 +1930,168 @@ translate japanese strings:
     # game/android.rpy:398
     old "Play Bundle"
     new "Play Bundle"
+
+    # game/gui7.rpy:340
+    old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of 1280x720 is a reasonable compromise."
+    new "プロジェクトはどの解像度を使用しますか? Ren'Py ではウィンドウの拡大縮小ができますが、これはウィンドウの初期サイズであり、もっともアセットがシャープに描画されるサイズです。\n\nデフォルトの1280x720が合理的な妥当な案です。"
+
+    # game/android.rpy:60
+    old "Removes Android temporary files."
+    new "Android 一次ファイル削除"
+
+    # game/android.rpy:472
+    old "Clean"
+    new "クリーン"
+
+    # game/android.rpy:628
+    old "Cleaning up Android project."
+    new "Androidプロジェクトのクリーンアップ"
+
+    # game/androidstrings.rpy:43
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    new "javac を使用してテストファイルをコンパイルできませんでした。Java Development Kitをまだインストールしていないならば:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}からダウンロードしてください。\n\nJDK は JRE とは異り、JDKなしでJavaを利用できます。 'JavaSoft (Oracle) registry keys'.\n\nをインストールしたか確認してくあさい。JDK, I can't continue."
+
+    # game/androidstrings.rpy:64
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    new "android.keystore と bundle.keystore を含むディレクトリーを開きました。それらをバックアップして、安全な場所に保管してください。"
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    new "プロジェクトディレクトリーを選択してください"
+
+    # game/distribute.rpy:1690
+    old "Copying files..."
+    new "ファイルをコピーしています..."
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    new "古いゲームの更新"
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    new "高度な Ren'Py 統合を含んだ拡張を伴うモダンなエディターです。"
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    new "高度な Ren'Py 統合を含んだ拡張を伴うモダンなエディターです。\n{a=jump:reinstall_vscode}Visual Studio Codeを最新にアップグレードする。{/a}"
+
+    # game/editor.rpy:169
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:169
+    old "Up to 110 MB download required."
+    new "110 MBまでのダウンロードが必要です。"
+
+    # game/editor.rpy:182
+    old "A modern and approachable text editor."
+    new "モダンで親しみやすいテキストエディターです"
+
+    # game/editor.rpy:196
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:211
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:220
+    old "Visual Studio Code (System)"
+    new "Visual Studio Code (System)"
+
+    # game/editor.rpy:220
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    new "あなたがRen'Py外にインストールしたVisual Studio Codeのコピーを使用します。language-renpy拡張をインストールしてRen'Pyファイルのサポート追加を推奨します。"
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    new "[extension.download_file]をダウンロード中です"
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    new "[extension.download_url]から[extension.download_file]をダウンロードできません。:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    new "[extension.download_url]からダウンロードされた[extension.download_file]が正しくありません。"
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/preferences.rpy:106
+    old "General"
+    new "一般"
+
+    # game/preferences.rpy:107
+    old "Options"
+    new "設定"
+
+    # game/preferences.rpy:246
+    old "Launcher Theme:"
+    new "ランチャーテーマ:"
+
+    # game/preferences.rpy:256
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    new "カスタムテーマ作成情報は {a=https://www.renpy.org/doc/html/skins.html}Ren'Pyのドキュメント{/a}で読めます。"
+
+    # game/preferences.rpy:273
+    old "Install Libraries:"
+    new "ライブラリインストール:"
+
+    # game/preferences.rpy:301
+    old "Clean temporary files"
+    new "一時ファイル削除"
+
+    # game/preferences.rpy:308
+    old "Cleaning temporary files..."
+    new "一時ファイルを削除しています..."
+
+    # game/preferences.rpy:338
+    old "{#in language font}Welcome! Please choose a language"
+    new "{font=SourceHanSansLite.ttf}言語を選択してください{/font}"
+
+    # game/preferences.rpy:373
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    new "{font=SourceHanSansLite.ttf}[lang_name]でRen'Pyの使用を開始します{/font}"
+
+    # game/project.rpy:280
+    old "This may be because the project is not writeable."
+    new "これはおそらくプロジェクトが書き込みではないためです"
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    new "Language (デフォルト言語はNoneです)"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    new "Release (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    new "Release (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "Prerelease (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "Prerelease (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    new "Nightly (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "Nightly (Ren'Py 7, Python 2)"
+
+    # game/web.rpy:344
+    old "This feature is not supported in Ren'Py 8."
+    new "この機能はRen'Py 8ではサポートされていません。"
+
+    # game/web.rpy:344
+    old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
+    new "Ren'Py 8 の将来のリリースでサポートを復活させます。それまではRen'Py 7 をウェブプラットフォームに使用ください。"
 

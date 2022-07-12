@@ -30,6 +30,9 @@
 
 init -1 python hide:
 
+    # Update the searchpath to find additional fonts.
+    config.searchpath.append(config.renpy_base + "/sdk-fonts")
+
     # Should we enable the use of developer tools? This should be
     # set to False before the game is released, so the user can't
     # cheat using developer tools.
@@ -269,8 +272,7 @@ init python:
 
     # Atom rules. These have to be very early, since Atom uses names like
     # tmp for packages.
-    build.classify_renpy("atom/", "atom-all source_only")
-    build.classify_renpy("atom/Atom.edit.py", "atom-all source_only")
+    build.classify_renpy("atom/", "atom-all")
     build.classify_renpy("atom/default-dot-atom/**", "atom-all")
     build.classify_renpy("atom/atom-windows/**", "atom-windows")
     build.classify_renpy("atom/Atom.app/**", "atom-mac")
@@ -314,21 +316,38 @@ init python:
 
     # main source.
 
-    def source_and_binary(pattern, source="source", binary="binary"):
+    def source_and_binary(pattern, source="source", binary="binary", py=True):
         """
         Classifies source and binary files beginning with `pattern`.
         .pyo, .rpyc, .rpycm, and .rpyb go into binary, everything
-        else goes into source.
+        else but .pyi files go into source.
         """
 
-        if PY2:
-            build.classify_renpy(pattern + "/__pycache__/", None)
-            build.classify_renpy(pattern + "/**.pyo", binary)
-        else:
-            build.classify_renpy(pattern + "/__pycache__/", binary)
-            build.classify_renpy(pattern + "/__pycache__/**.{}.pyc".format(sys.implementation.cache_tag), binary)
+        if py is True:
+            py = 'pyo' if PY2 else 'pycache'
+
+        if py == 'pycache':
+            build.classify_renpy(pattern + "/**__pycache__/", binary)
+            build.classify_renpy(pattern + "/**__pycache__/*.{}.pyc".format(sys.implementation.cache_tag), binary)
+            build.classify_renpy(pattern + "/**.pyc", None)
+            build.classify_renpy(pattern + "/**.pyo", None)
+
+        elif py == 'pyc':
+            build.classify_renpy(pattern + "/**__pycache__/", None)
             build.classify_renpy(pattern + "/**.pyc", binary)
             build.classify_renpy(pattern + "/**.pyo", None)
+
+        elif py == 'pyo':
+            build.classify_renpy(pattern + "/**__pycache__/", None)
+            build.classify_renpy(pattern + "/**.pyc", None)
+            build.classify_renpy(pattern + "/**.pyo", binary)
+
+        else:
+            build.classify_renpy(pattern + "/**__pycache__/", None)
+            build.classify_renpy(pattern + "/**.pyc", None)
+            build.classify_renpy(pattern + "/**.pyo", None)
+
+        build.classify_renpy(pattern + "/**.pyi", None)
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
@@ -343,11 +362,14 @@ init python:
     build.classify_renpy("launcher/game/theme/", None)
     build.classify_renpy("gui/game/gui/", None)
 
-    source_and_binary("launcher")
-    source_and_binary("gui", binary=None)
+    source_and_binary("launcher", py=False)
+    source_and_binary("gui", binary=None, py=False)
 
     source_and_binary("the_question")
     source_and_binary("tutorial")
+
+    # extra fonts.
+    build.classify_renpy("sdk-fonts/**", "source")
 
     # docs.
     build.classify_renpy("doc/", "source")
@@ -379,19 +401,20 @@ init python:
     build.classify_renpy("module/fribidi-src/**", "source")
 
     # all-platforms binary.
-    build.classify_renpy("lib/**/_renpysteam*", "steam")
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
-    build.classify_renpy("lib/*linux-armv7l/", "raspi")
-    build.classify_renpy("lib/*linux-armv7l/**", "raspi")
 
     if PY2:
+        build.classify_renpy("lib/py2-linux-armv7l/**", "linux_arm")
+        build.classify_renpy("lib/py2-linux-aarch64/**", "linux_arm")
         source_and_binary("lib/py2-**", "binary", "binary")
         source_and_binary("lib/python2**", "binary", "binary")
         build.classify_renpy("renpy2.sh", "binary")
     else:
+        build.classify_renpy("lib/py3-linux-armv7l/**", "linux_arm")
+        build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
         source_and_binary("lib/py3-**", "binary", "binary")
-        source_and_binary("lib/python3**", "binary", "binary")
+        source_and_binary("lib/python3**", "binary", "binary", py='pyc')
         build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
@@ -405,8 +428,8 @@ init python:
     build.packages = [ ]
 
     build.package("sdk", "zip tar.bz2 dmg", "source binary")
+    build.package("sdkarm", "tar.bz2", "source binary linux_arm")
     build.package("source", "tar.bz2", "source source_only", update=False)
-    build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
     build.package("steam", "zip", "steam", dlc=True)
 
     build.package("jedit", "zip", "jedit", dlc=True)
@@ -429,7 +452,13 @@ define config.mouse_focus_clickthrough = True
 # Reduce the rate of screen updates.
 default preferences.gl_powersave = True
 
+# Enable rtl.
+define config.rtl = True
 
 # Disable steam.
 python early:
     config.enable_steam = False
+
+# Since the launcher can be run directly or can be run from the SDK directory,
+# uneliding files needs to be handled slightly differently.
+define config.alternate_unelide_path = os.path.join(config.basedir, "launcher")

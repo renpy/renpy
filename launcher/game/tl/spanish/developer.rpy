@@ -1,4 +1,4 @@
-translate spanish strings:
+﻿translate spanish strings:
 
     # _developer/developer.rpym:38
     old "Developer Menu"
@@ -207,3 +207,7 @@ translate spanish strings:
     # renpy/common/00console.rpy:929
     old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
     new "unescape: Desactiva el escape de símbolos Unicode en cadenas Unicode y lo imprime como está (predeterminado)."
+
+    # renpy/common/00console.rpy:784
+    old "stack: print the return stack"
+    new "stack: imprime la pila de retorno"

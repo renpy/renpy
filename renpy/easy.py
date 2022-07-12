@@ -22,7 +22,8 @@
 # Functions that make the user's life easier.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Any
 
 import contextlib
@@ -36,8 +37,8 @@ color = renpy.color.Color
 
 def lookup_displayable_prefix(d):
     """
-    Given `d`, a string given a displayable, returns the displayale it
-    corresponds to or None if it it does not correspond to one.
+    Given `d`, a string given a displayable, returns the displayable it
+    corresponds to or None if it does not correspond to one.
     """
 
     prefix, colon, arg = d.partition(":")

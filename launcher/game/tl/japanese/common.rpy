@@ -771,7 +771,7 @@ translate japanese strings:
 
     # renpy/common/00accessibility.rpy:193
     old "Self-Voicing Volume Drop"
-    new "セルフボイシングボリューム"
+    new "セルフボイシングボリューム低減"
 
     # renpy/common/00preferences.rpy:384
     old "self voicing volume drop"
@@ -796,4 +796,16 @@ translate japanese strings:
     # renpy/common/00preferences.rpy:493
     old "high contrast text"
     new "ハイコントラストテキスト"
+
+    # renpy/common/00preferences.rpy:507
+    old "audio when minimized"
+    new "最小化時音声"
+
+    # renpy/common/00preferences.rpy:527
+    old "main volume"
+    new "メインの音量"
+
+    # renpy/common/00preferences.rpy:531
+    old "mute main"
+    new "メインをミュート"
 

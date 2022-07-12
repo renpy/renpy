@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 
 
@@ -346,7 +347,7 @@ class Color(tuple):
         hsv = self.interpolate_core(self.hsv, other.hsv, fraction)
         alpha = self.interpolate_core(self.alpha, other.alpha, fraction)
 
-        return Color(hsv=hsv, alpha=alpha)
+        return Color(hsv=hsv, alpha=alpha) # type: ignore
 
     def interpolate_hls(self, other, fraction):
         """
@@ -367,7 +368,7 @@ class Color(tuple):
         hls = self.interpolate_core(self.hls, other.hls, fraction)
         alpha = self.interpolate_core(self.alpha, other.alpha, fraction)
 
-        return Color(hls=hls, alpha=alpha)
+        return Color(hls=hls, alpha=alpha) # type: ignore
 
     def tint(self, fraction):
         """
@@ -414,7 +415,8 @@ class Color(tuple):
         :doc: color method
 
         Rotates this color's hue by `rotation`, and returns the new Color. `rotation`
-        is a fraction of a full rotation, to convert degrees divide by 360.0.
+        is a fraction of a full rotation (between 0.0 and 1.0). Divide by 360.0 to
+        convert to degrees.
         """
 
         h, l, s = self.hls

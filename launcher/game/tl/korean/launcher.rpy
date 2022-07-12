@@ -1,4 +1,7 @@
 ﻿translate korean strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=SourceHanSansLite.ttf}한국어{/font}"
 
     # game/about.rpy:39
     old "[version!q]"

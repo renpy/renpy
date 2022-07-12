@@ -27,23 +27,23 @@ init -1500 python:
     @renpy.pure
     class Play(Action, FieldEquality):
         """
-         :doc: audio_action
+        :doc: audio_action
 
-         Causes an audio file to be played on a given channel.
+        Causes an audio file to be played on a given channel.
 
-         `channel`
-             The channel to play the sound on.
-         `file`
-             The file to play.
-         `selected`
-             If True, buttons using this action will be marked as selected
-             if the file is playing on the channel. If False, this action
-             will not cause the button to start playing. If None, the button
-             is marked selected if the channel is a music channel, and not
-             otherwise.
+        `channel`
+            The channel to play the sound on.
+        `file`
+            The file to play.
+        `selected`
+            If True, buttons using this action will be marked as selected
+            if the file is playing on the channel. If False, this action
+            will not cause the button to start playing. If None, the button
+            is marked selected if the channel is a music channel, and not
+            otherwise.
 
-         Any other keyword arguments are passed to :func:`renpy.music.play`.
-         """
+        Any other keyword arguments are passed to :func:`renpy.music.play`.
+        """
 
         equality_fields = ["channel", "file", "kwargs", "can_be_selected" ]
 
@@ -85,17 +85,17 @@ init -1500 python:
     @renpy.pure
     class Queue(Action, DictEquality):
         """
-         :doc: audio_action
+        :doc: audio_action
 
-         Causes an audio file to be queued on a given channel.
+        Causes an audio file to be queued on a given channel.
 
-         `channel`
-             The channel to play the sound on.
-         `file`
-             The file to play.
+        `channel`
+            The channel to play the sound on.
+        `file`
+            The file to play.
 
-         Any keyword arguments are passed to :func:`renpy.music.queue`
-         """
+        Any keyword arguments are passed to :func:`renpy.music.queue`
+        """
 
         def __init__(self, channel, file, **kwargs):
             self.channel = channel
@@ -109,15 +109,15 @@ init -1500 python:
     @renpy.pure
     class Stop(Action, DictEquality):
         """
-         :doc: audio_action
+        :doc: audio_action
 
-         Causes an audio channel to be stopped.
+        Causes an audio channel to be stopped.
 
-         `channel`
-             The channel to stop the sound on.
+        `channel`
+            The channel to stop the sound on.
 
-         Any keyword arguments are passed to :func:`renpy.music.stop`
-         """
+        Any keyword arguments are passed to :func:`renpy.music.stop`
+        """
 
         def __init__(self, channel, **kwargs):
             self.channel = channel
@@ -136,7 +136,8 @@ init -1500 python:
 
         `mixer`
             The mixer to set the volume of. A string, usually one of
-            "music", "sfx", or "voice".
+            "main", "music", "sfx", or "voice". See :ref:`volume` for
+            more information about mixers.
         `value`
             The value to set the volume to. A number between 0.0 and 1.0,
             inclusive.
@@ -163,8 +164,7 @@ init -1500 python:
 
         `mixer`
             Either a single string giving a mixer name, or a list of strings
-            giving a list of mixers. The strings should be mixer names, usually
-            "music", "sfx", or "voice".
+            giving a list of mixers. The strings should be mixer names.
 
         `mute`
             True to mute the mixer, False to ummute it.
@@ -200,8 +200,7 @@ init -1500 python:
 
         `mixer`
             Either a single string giving a mixer name, or a list of strings
-            giving a list of mixers. The strings should be mixer names, usually
-            "music", "sfx", or "voice".
+            giving a list of mixers. The strings should be mixer names.
         """
 
 

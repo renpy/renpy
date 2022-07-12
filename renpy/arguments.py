@@ -27,11 +27,13 @@
 # decide if the game runs or some other action occurs.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 
 import argparse
 import os
+import sys
+
 import renpy
 
 try:
@@ -265,6 +267,8 @@ def bootstrap():
     unknown arguments. Returns the parsed arguments, and a list of unknown arguments.
     """
 
+    clean_epic_arguments()
+
     ap = ArgumentParser(False, require_command=False)
     args, _rest = ap.parse_known_args()
 
@@ -311,3 +315,23 @@ def takes_no_arguments(description=None):
     """
 
     ArgumentParser(description=description).parse_args()
+
+
+# If we're running from the Epic Game Store, we need to clean out the
+# arguments passed in from the store, as they're not compatible with
+# Ren'Py.
+
+epic_arguments = None
+
+def clean_epic_arguments():
+
+    for i in sys.argv[1:]:
+        if i.lower().startswith("-epicapp="):
+            break
+    else:
+        return
+
+    global epic_arguments
+    epic_arguments = sys.argv[1:]
+
+    sys.argv = [ sys.argv[0] ]

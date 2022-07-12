@@ -22,7 +22,8 @@
 # This module handles the logging of messages to a file.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # type: ignore
+
 
 
 import os
@@ -99,8 +100,11 @@ class LogFile(object):
         if not renpy.config.log_enable:
             return False
 
+        if renpy.config.logdir is None:
+            return
+
         try:
-            base = os.environ.get("RENPY_LOG_BASE", renpy.config.logdir or renpy.config.basedir)
+            base = os.environ.get("RENPY_LOG_BASE", renpy.config.logdir)
 
             if base is None:
                 return False

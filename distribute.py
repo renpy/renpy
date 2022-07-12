@@ -1,4 +1,4 @@
-#!/home/tom/ab/renpy/lib/py2-linux-x86_64/python -O
+#!/home/tom/ab/renpy/lib/py3-linux-x86_64/python
 
 # Builds a distribution of Ren'Py.
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
@@ -15,7 +15,6 @@ import subprocess
 import argparse
 import time
 import collections
-
 
 try:
     # reload is built-in in Python 2, in importlib in Python 3
@@ -44,13 +43,23 @@ def copy_tutorial_file(src, dest):
                 if copy:
                     df.write(l)
 
+def link_directory(dirname):
+    dn = os.path.join(ROOT, dirname)
+
+    if os.path.exists(dn):
+        os.unlink(dn)
+
+    if PY2:
+        source = dn + "2"
+    else:
+        source = dn + "3"
+
+    if os.path.exists(source):
+        os.symlink(source, dn)
 
 def main():
 
     start = time.time()
-
-    if PY2 and not sys.flags.optimize:
-        raise Exception("Not running with python optimization.")
 
     ap = argparse.ArgumentParser()
     ap.add_argument("version", nargs="?")
@@ -62,11 +71,24 @@ def main():
     ap.add_argument("--nosign", action="store_false", dest="sign")
     ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
+    ap.add_argument("--link-directories", action="store_true")
 
     args = ap.parse_args()
 
+    link_directory("rapt")
+    link_directory("renios")
+
+    if args.link_directories:
+        return
+
     if args.sign:
         os.environ["RENPY_MAC_IDENTITY"] = "Developer ID Application: Tom Rothamel (XHTE5H7Z79)"
+
+    if PY2 and not sys.flags.optimize:
+        raise Exception("Not running with python optimization.")
+
+    if not os.path.abspath(sys.executable).startswith(ROOT + "/lib"):
+        raise Exception("Distribute must be run with the python in lib/.")
 
     # Revision updating is done early, so we can do it even if the rest
     # of the program fails.
@@ -94,7 +116,7 @@ def main():
         else:
             key = max(commits_per_day.keys())
             vc_version = "{}{:02d}".format(key, commits_per_day[key])
-    except:
+    except Exception:
         vc_version = 0
 
     with open("renpy/vc_version.py", "w") as f:
@@ -152,7 +174,7 @@ def main():
     if not args.fast:
         for i in [ 'tutorial', 'launcher', 'the_question' ]:
             print("Compiling", i)
-            subprocess.check_call([renpy_sh, i, "quit" ])
+            subprocess.check_call([renpy_sh, i, "compile" ])
 
     # Kick off the rapt build.
     if not args.fast:

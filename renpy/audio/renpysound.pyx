@@ -55,8 +55,8 @@ import_pygame_sdl2()
 
 cdef extern from "renpysound_core.h":
 
-    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int fadein, int tight, int paused, double start, double end)
-    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int fadein, int tight, double start, double end)
+    void RPS_play(int channel, SDL_RWops *rw, char *ext, char* name, int fadein, int tight, int paused, double start, double end, float volume)
+    void RPS_queue(int channel, SDL_RWops *rw, char *ext, char *name, int fadein, int tight, double start, double end, float volume)
     void RPS_stop(int channel)
     void RPS_dequeue(int channel, int even_tight)
     int RPS_queue_depth(int channel)
@@ -97,7 +97,7 @@ def check_error():
     if len(e):
         raise Exception(unicode(e, "utf-8", "replace"))
 
-def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0):
+def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
     replaces them with this file.
@@ -120,6 +120,9 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
 
     `end`
         A time in the file to end playing.    `
+
+    `relative_volume`
+        A float giving the relative volume of the file.
     """
 
     cdef SDL_RWops *rw
@@ -140,10 +143,10 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_play(channel, rw, name, name, fadein * 1000, tight, pause, start, end)
+    RPS_play(channel, rw, name, name, fadein * 1000, tight, pause, start, end, relative_volume)
     check_error()
 
-def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
+def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
     playing, plays it.
@@ -164,7 +167,7 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0):
         tight = 0
 
     name = name.encode("utf-8")
-    RPS_queue(channel, rw, name, name, fadein * 1000, tight, start, end)
+    RPS_queue(channel, rw, name, name, fadein * 1000, tight, start, end, relative_volume)
     check_error()
 
 def stop(channel):
@@ -266,14 +269,13 @@ def get_duration(channel):
 def set_volume(channel, volume):
     """
     Sets the primary volume for `channel` to `volume`, a number between
-    0 and 1. This volume control is perceptual, taking into account the
-    logarithmic nature of human hearing.
+    0 and 1. This volume control is linear.
     """
 
     if volume == 0:
         RPS_set_volume(channel, 0)
     else:
-        RPS_set_volume(channel, volume ** 2)
+        RPS_set_volume(channel, volume)
 
     check_error()
 

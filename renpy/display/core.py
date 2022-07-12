@@ -23,7 +23,8 @@
 # window.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional, Tuple
 
 import sys
@@ -332,6 +333,13 @@ class Displayable(renpy.object.Object):
     # Does this displayable have a tooltip?
     _tooltip = None
 
+    # Should hbox and vbox skip this displayable?
+    _box_skip = False
+
+    # If not None, this should be a (width, height) tuple that overrides the
+    # amount of space offered to the displayable.
+    _offer_size = None
+
     # Used by a transition (or transition-like object) to determine how long to
     # delay for.
     delay = None # type: float|None
@@ -407,11 +415,11 @@ class Displayable(renpy.object.Object):
 
     def _unique(self):
         """
-        This is called when a displayable is "born" unique, which occurs
-        when there is only a single reference to it. What it does is to
-        manage the _duplicatable flag - setting it false unless one of
-        the displayable's children happens to be duplicatable.
+        This is called when a displayable is "unique", meaning there will
+        only be one reference to it, ever, from the tree of displayables.
         """
+
+        self._duplicatable = False
 
         return
 
@@ -709,9 +717,9 @@ class Displayable(renpy.object.Object):
         rv = [ ]
 
         if reverse:
-            order = 1
-        else:
             order = -1
+        else:
+            order = 1
 
         speech = ""
 
@@ -720,10 +728,11 @@ class Displayable(renpy.object.Object):
                 speech = i._tts()
 
                 if speech.strip():
-                    rv.append(speech)
-
                     if isinstance(speech, renpy.display.tts.TTSDone):
-                        break
+                        rv = [ speech ]
+                    else:
+                        rv.append(speech)
+
 
         rv = ": ".join(rv)
         rv = rv.replace("::", ":")
@@ -932,7 +941,7 @@ class SceneLists(renpy.object.Object):
             self.music = None
             self.focused = None
 
-    def replace_transient(self, prefix="hide"):
+    def replace_transient(self, prefix="hide"): # type: (str|None) -> None
         """
         Replaces the contents of the transient display list with
         a copy of the master display list. This is used after a
@@ -1248,7 +1257,7 @@ class SceneLists(renpy.object.Object):
 
             self.hide_or_replace(layer, i, "hide")
 
-    def remove(self, layer, thing, prefix="hide"):
+    def remove(self, layer, thing, prefix="hide"): # type: (str, str|tuple|Displayable, str|None) -> None
         """
         Thing is either a key or a displayable. This iterates through the
         named layer, searching for entries matching the thing.
@@ -2006,6 +2015,9 @@ class Interface(object):
         # Should we clear the screenshot at the start of the next interaction?
         self.clear_screenshot = False
 
+        # Is our audio paused?
+        self.audio_paused = False
+
         for layer in renpy.config.layers + renpy.config.top_layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
@@ -2135,6 +2147,11 @@ class Interface(object):
         # Is this the first frame?
         self.first_frame = True
 
+        # Should prediction be forced? This causes the prediction coroutine to
+        # be prioritized, and is set to False when it's done, when preloading
+        # is done, or at the end of the interaction.
+        self.force_prediction = False
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -2217,6 +2234,7 @@ class Interface(object):
             self.check_android_start()
 
         # Initialize audio.
+        pygame.display.hint("SDL_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
         pygame.display.hint("SDL_AUDIO_DEVICE_APP_NAME", (renpy.config.name or "Ren'Py Game").encode("utf-8"))
 
         renpy.audio.audio.init()
@@ -2834,7 +2852,7 @@ class Interface(object):
                 continue
 
             start = self.transition_time.get(l, self.frame_time) or 0
-            delay = self.transition_delay.get(l, 0)
+            delay = self.transition_delay.get(l, None) or 0
 
             if (self.frame_time - start) >= delay:
                 self.ongoing_transition.pop(l, None)
@@ -3118,7 +3136,8 @@ class Interface(object):
         Create a mobile reload file.
         """
 
-        if renpy.config.save_on_mobile_background and (not renpy.store.main_menu):
+        should_skip_save = renpy.store.main_menu or renpy.store._in_replay
+        if renpy.config.save_on_mobile_background and not should_skip_save:
             renpy.loadsave.save("_reload-1")
 
         renpy.persistent.update(True)
@@ -3159,12 +3178,10 @@ class Interface(object):
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
 
-        # At this point, we're about to enter the background.
+        # Wait for APP_DIDENTERBACKGROUND.
+        pygame.event.wait()
 
         renpy.audio.audio.pause_all()
-
-        if renpy.android:
-            android.wakelock(False)
 
         pygame.time.set_timer(PERIODIC, 0)
         pygame.time.set_timer(REDRAW, 0)
@@ -3173,14 +3190,32 @@ class Interface(object):
         self.mobile_save()
 
         if renpy.config.quit_on_mobile_background:
+
+            if renpy.android:
+                try:
+                    android.activity.finishAndRemoveTask()
+                except:
+                    pass
+
+                from jnius import autoclass
+                System = autoclass("java.lang.System")
+                System.exit(0)
+
             sys.exit(0)
 
         renpy.exports.free_memory()
+
+        if renpy.android:
+            android.wakelock(False)
 
         print("Entered background.")
 
         while True:
             ev = pygame.event.wait()
+
+            if ev.type == pygame.APP_TERMINATING:
+
+                sys.exit(0)
 
             if ev.type == pygame.APP_DIDENTERFOREGROUND:
                 break
@@ -3339,12 +3374,14 @@ class Interface(object):
             pause_start = get_time()
 
             while repeat:
-                repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, **kwargs)
+                repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, **kwargs) # type: ignore
                 self.start_interact = False
 
             return rv # type: ignore
 
         finally:
+
+            self.force_prediction = False
 
             context.interacting = False
 
@@ -3413,7 +3450,7 @@ class Interface(object):
 
         while True:
 
-            if self.event_peek():
+            if self.event_peek() and not self.force_prediction:
                 break
 
             if not (can_block and expensive):
@@ -3430,8 +3467,16 @@ class Interface(object):
                 renpy.display.draw.ready_one_texture()
                 step += 1
 
-            # Step 3: Predict more images.
+            # Step 3: Execute commands from JS (on emscripten)
             elif step == 3:
+
+                if expensive and renpy.emscripten:
+                    self.exec_js_cmd()
+
+                step += 1
+
+            # Step 4: Predict more images.
+            elif step == 4:
 
                 if not self.prediction_coroutine:
                     step += 1
@@ -3452,16 +3497,16 @@ class Interface(object):
                     if not expensive:
                         step += 1
 
-            # Step 4: Preload images (on emscripten)
-            elif step == 4:
+            # Step 5: Preload images (on emscripten)
+            elif step == 5:
 
                 if expensive and renpy.emscripten:
                     renpy.display.im.cache.preload_thread_pass()
 
                 step += 1
 
-            # Step 5: Autosave.
-            elif step == 5:
+            # Step 6: Autosave.
+            elif step == 6:
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()
@@ -3471,6 +3516,11 @@ class Interface(object):
                 step += 1
 
             else:
+
+                # Check to see if preloading has finished
+                if renpy.display.im.cache.done():
+                    self.force_prediction = False
+
                 break
 
         if expensive:
@@ -3487,7 +3537,7 @@ class Interface(object):
                       preloads=[],
                       roll_forward=None,
                       pause=False,
-                      pause_start=0,
+                      pause_start=0.0,
                       ):
         """
         This handles one cycle of displaying an image to the user,
@@ -3974,8 +4024,13 @@ class Interface(object):
                         pygame.time.set_timer(TIMEEVENT, int(time_left * 1000 + 1))
                         old_timeout_time = self.timeout_time
 
-                if can_block or (frame >= renpy.config.idle_frame):
+                if can_block or (frame >= renpy.config.idle_frame) or (self.force_prediction):
                     expensive = not (needs_redraw or (_redraw_in < .2) or (_timeout_in < .2) or renpy.display.video.playing())
+
+                    if self.force_prediction:
+                        expensive = True
+                        can_block = True
+
                     self.idle_frame(can_block, expensive)
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
@@ -4066,7 +4121,13 @@ class Interface(object):
                     # Clear the mods when the keymap is changed, such as when
                     # an IME is selected. This fixes a problem on Windows 10 where
                     # super+space won't unset super.
-                    pygame.key.set_mods(0)
+
+                    # This only happens when the GUI key is down, as shift can
+                    # also change the keymap.
+
+                    if pygame.key.get_mods() & pygame.KMOD_GUI:
+                        pygame.key.set_mods(0)
+
                     continue
 
                 elif self.text_editing and ev.type in [ pygame.KEYDOWN, pygame.KEYUP ]:
@@ -4137,6 +4198,18 @@ class Interface(object):
 
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
+
+                    # If the window becomes inactive as a result of this event
+                    # pause the audio according to preference
+                    if not renpy.game.preferences.audio_when_minimized:
+                        if not pygame.display.get_active() and not self.audio_paused:
+                            renpy.audio.audio.pause_all()
+                            self.audio_paused = True
+                        # If the window had not gone inactive or has regained activity
+                        # unpause the audio
+                        elif pygame.display.get_active() and self.audio_paused:
+                            renpy.audio.audio.unpause_all()
+                            self.audio_paused = False
 
                     pygame.key.set_mods(0)
 
@@ -4288,3 +4361,27 @@ class Interface(object):
         """
 
         self.check_background_screenshot()
+
+    def exec_js_cmd(self):
+        """
+        Execute a command from JS if required (emscripten only).
+        """
+
+        if not renpy.emscripten:
+            return
+
+        # Retrieve the command to be executed from a global JS variable
+        # (an empty string is returned if the variable is not defined)
+        cmd = emscripten.run_script_string("window._renpy_cmd")
+        if len(cmd) == 0:
+            return
+
+        # Delete command variable to prevent executing the command again
+        emscripten.run_script("delete window._renpy_cmd")
+
+        # Execute the command
+        try:
+            renpy.python.py_exec(cmd)
+        except Exception as e:
+            renpy.display.log.write(cmd)
+            renpy.display.log.write('Error while executing JS command: %s' % (e,))

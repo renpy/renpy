@@ -21,6 +21,9 @@ As abrupt changes of image can be disconcerting to the user, Ren'Py
 has the ``with`` statement, which allows effects to be applied
 when the scene is changed.
 
+Most (if not all) of the statements listed in this page are checked by
+:ref:`lint`, which is not the case for their python equivalents.
+
 
 Concepts
 ========
@@ -98,6 +101,7 @@ Images defined using the image statement take precedence over those defined
 by the image directory.
 
 .. _image-directory:
+.. _images-directory:
 
 Images Directory
 ----------------
@@ -214,7 +218,10 @@ The show statement takes the following properties:
     Takes an integer. The integer specifies the relative ordering of
     images within a layer, with larger numbers being closer to the
     user. This isn't generally used by Ren'Py games, but can be useful
-    when porting visual novels from other engines.
+    when porting visual novels from other engines. This can also be
+    useful for displaying an image that will be above any zorder-less
+    image displayed afterwards, without the burden of placing it on
+    another layer.
 
 Assuming we have the following images defined::
 
@@ -244,7 +251,25 @@ Some example show statements are::
     # Show an image on a user-defined layer.
     show moon onlayer user_layer
 
-**Show Expression.**
+Attributes management
+---------------------
+
+As shown above, attributes can be set, added and replaced.
+
+They can also be removed using the minus sign::
+
+     # show susan being neutral
+     show susan
+
+     # show susan being happy
+     show susan happy
+
+     # show susan being neutral again
+     show susan -happy
+
+Show expression
+---------------
+
 A variant of the show statement replaces the image name with the
 keyword ``expression``, followed by a simple expression. The
 expression must evaluate to a displayable, and the displayable
@@ -255,7 +280,9 @@ For example::
 
     show expression "moon.png" as moon
 
-** Show Layer.**
+Show Layer
+----------
+
 The ``show layer`` statement is discussed alongside the camera statement,
 below.
 
@@ -495,3 +522,11 @@ Image Functions
 ===============
 
 .. include:: inc/image_func
+
+See also
+========
+
+:ref:`statement-equivalents` : how to use most of the features described here in a
+python context.
+
+:ref:`displayables` : other objects to display, more diverse than basic images.

@@ -24,7 +24,8 @@
 # game state to some time in the past.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional
 
 import marshal
@@ -103,6 +104,9 @@ class AlwaysRollback(renpy.revertable.RevertableObject):
         return self
 
 
+NOROLLBACK_TYPES = tuple() # type: tuple[type, type, type, type, type]
+
+
 def reached(obj, reachable, wait):
     """
     @param obj: The object that was reached.
@@ -120,31 +124,40 @@ def reached(obj, reachable, wait):
     if idobj in reachable:
         return
 
-    if isinstance(obj, (SlottedNoRollback, io.IOBase)): # @UndefinedVariable
-        reachable[idobj] = 0
+    reachable[idobj] = obj
+
+    if isinstance(obj, NOROLLBACK_TYPES):
         return
-
-    reachable[idobj] = 1
-
-    # Since the store module is the roots, there's no need to
-    # look into it.
-    if isinstance(obj, renpy.python.StoreModule):
-        return
-
-    # parents.append(obj)
 
     try:
-        # Treat as fields, indexed by strings.
-        for v in vars(obj).values():
-            reached(v, reachable, wait)
+        nosave = getattr(obj, "nosave", None)
+
+        if nosave is not None:
+            for k, v in vars(obj).items():
+                if k not in nosave:
+                    reached(v, reachable, wait)
+
+        else:
+
+            # Fields have to be indexed by strings, so no need to check if
+            # the filed is reached.
+            for v in vars(obj).values():
+                reached(v, reachable, wait)
+
     except Exception:
         pass
 
+    # Below this, we only consider containers with a defined size.
     try:
-        # Treat as iterable
-        if not isinstance(obj, basestring):
-            for v in obj.__iter__():
-                reached(v, reachable, wait)
+        if (not len(obj)) or isinstance(obj, basestring):
+            return
+    except Exception:
+        return
+
+    try:
+        # Treat as iterable.
+        for v in obj.__iter__():
+            reached(v, reachable, wait)
     except Exception:
         pass
 
@@ -155,17 +168,17 @@ def reached(obj, reachable, wait):
     except Exception:
         pass
 
-    # parents.pop()
-
 
 def reached_vars(store, reachable, wait):
     """
     Marks everything reachable from the variables in the store
     or from the context info objects as reachable.
 
-    @param store: A map from variable name to variable value.
-    @param reachable: A dictionary mapping reached object ids to
-    the path by which the object was reached.
+    `store`
+        A map from variable name to variable value.
+
+    `reachable`
+        A dictionary that will be filled in with a map from id(obj) to obj.
     """
 
     for v in store.values():
@@ -326,12 +339,18 @@ class Rollback(renpy.object.Object):
 
                 id_o = id(o)
 
-                if (id_o not in seen) and reachable.get(id_o, 0):
-                    seen.add(id_o)
-                    objects_changed = True
+                if id_o in seen or id_o not in reachable:
+                    continue
 
-                    new_objects.append((o, rb))
-                    reached(rb, reachable, wait)
+                seen.add(id_o)
+
+                if isinstance(o, NOROLLBACK_TYPES):
+                    continue
+
+                objects_changed = True
+
+                new_objects.append((o, rb))
+                reached(rb, reachable, wait)
 
         del self.objects[:]
         self.objects.extend(new_objects)
@@ -510,15 +529,14 @@ class RollbackLog(renpy.object.Object):
             self.log.pop(0)
 
         # check for the end of fixed rollback
-        if self.log and self.log[-1] == self.current:
-
-            if self.current.context.current == self.fixed_rollback_boundary:
+        if len(self.log) >= 2:
+            if self.log[-2].context.current == self.fixed_rollback_boundary:
                 self.rollback_is_fixed = False
 
-            elif self.rollback_is_fixed and not self.forward:
-                # A lack of rollback data in fixed rollback mode ends rollback.
-                self.fixed_rollback_boundary = self.current.context.current
-                self.rollback_is_fixed = False
+        # A lack of rollback data in fixed rollback mode ends rollback.
+        if self.rollback_is_fixed and not self.forward:
+            self.fixed_rollback_boundary = self.current.context.current
+            self.rollback_is_fixed = False
 
         self.current = Rollback()
         self.current.retain_after_load = self.retain_after_load_flag
@@ -561,7 +579,9 @@ class RollbackLog(renpy.object.Object):
         # Update self.current.stores with the changes from each store.
         # Also updates .ever_been_changed.
         for name, sd in renpy.python.store_dicts.items():
-            self.current.stores[name], self.current.delta_ebc[name] = sd.get_changes(begin)
+            delta = sd.get_changes(begin)
+            if delta:
+                self.current.stores[name], self.current.delta_ebc[name] = delta
 
         # Update the list of mutated objects and what we need to do to
         # restore them.
@@ -623,6 +643,11 @@ class RollbackLog(renpy.object.Object):
         are no changes queued up.
         """
 
+        # This needs to be set late, so that StoreModule is available.
+
+        global NOROLLBACK_TYPES
+        NOROLLBACK_TYPES = (types.ModuleType, renpy.python.StoreModule, SlottedNoRollback, io.IOBase, type)
+
         reachable = { }
 
         reached_vars(roots, reachable, wait)
@@ -633,6 +658,9 @@ class RollbackLog(renpy.object.Object):
         for i in revlog:
             if not i.purge_unreachable(reachable, wait):
                 break
+
+        # Break any cycles.
+        reachable.clear()
 
     def in_rollback(self):
         if self.forward:
@@ -667,7 +695,8 @@ class RollbackLog(renpy.object.Object):
         if self.checkpointing_suspended:
             hard = False
 
-        self.retain_after_load_flag = False
+        if hard:
+            self.retain_after_load_flag = False
 
         if self.current.checkpoint:
             return
@@ -744,11 +773,19 @@ class RollbackLog(renpy.object.Object):
 
         self.retain_after_load_flag = True
         self.current.retain_after_load = True
+
+        for rb in reversed(self.log):
+            if rb.hard_checkpoint:
+                break
+
+            rb.retain_after_load = True
+
         renpy.game.context().force_checkpoint = True
 
     def fix_rollback(self):
         if not self.rollback_is_fixed and len(self.log) > 1:
             self.fixed_rollback_boundary = self.log[-2].context.current
+        renpy.game.context().force_checkpoint = True
 
     def can_rollback(self):
         """
@@ -979,6 +1016,7 @@ class RollbackLog(renpy.object.Object):
         # Purge unreachable objects, so we don't save them.
         self.complete(False)
         roots = self.get_roots()
+
         self.purge_unreachable(roots, wait=wait)
 
         # The current is not purged.

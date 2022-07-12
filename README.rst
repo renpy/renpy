@@ -63,9 +63,9 @@ To return to this virtualenv later, run::
 
     workon renpy
 
-After activating the virtualenv, install cython, future, and six::
+After activating the virtualenv, install additional dependencies::
 
-    pip install -U cython future six
+    pip install -U cython future six typing pefile requests
 
 Then, install pygame_sdl2 by running the following commands::
 
@@ -107,7 +107,7 @@ link in a nightly build, or compile the modules as described above. You'll
 also need the `Sphinx <https://www.sphinx-doc.org>`_ documentation generator.
 If you have pip working, install Sphinx using::
 
-    pip install -U sphinx
+    pip install -U sphinx sphinx-bootstrap-theme
 
 Once Sphinx is installed, change into the ``sphinx`` directory inside the
 Ren'Py checkout and run::

@@ -25,7 +25,8 @@ five things that can be provided:
   where each component is an integer between 0 and 255. Colors are
   passed to :func:`Solid`.
 * An image name. Any other string is interpreted as a reference to an
-  image defined with the image statement, or if none exist, to a filename.
+  image, either defined with the image statement or auto-defined from
+  the :ref:`images directory <images-directory>`.
 * A list. If a list is provided, each item is expanded as described
   below, and checked to see if it matches a filename or image name.
   If so, expansion stops and the matched thing is then processed
@@ -125,8 +126,7 @@ Dynamic Displayables
 --------------------
 
 Dynamic displayables display a child displayable based on the state of
-the game. They do not take any properties, as their layout is controlled
-by the properties of the child displayable they return.
+the game.
 
 Note that these dynamic displayables always display their current state.
 Because of this, a dynamic displayable will not participate in a
@@ -134,9 +134,9 @@ transition. (Or more precisely, it will display the same thing in both the
 old and new states of the transition.)
 
 By design, dynamic displayables are intended to be used for things that
-change rarely and when an image define this way is off screen (Such as
-a character customization system), and not for things that change
-frequently, such as character emotions.
+change rarely and when an image defined this way is off screen (Such as
+a character customization system). It is not designed for things that
+change frequently, such as character emotions.
 
 .. include:: inc/disp_dynamic
 
@@ -261,3 +261,9 @@ The prefix can then be used to define images::
     image eileen big = "big:eileen happy"
 
 or in any other place where a displayable is required.
+
+See also
+--------
+
+:ref:`displaying-images` : the basics of how to make all these displayables
+appear on the screen.

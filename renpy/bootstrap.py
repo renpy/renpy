@@ -20,14 +20,16 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
-from typing import Optional
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+from typing import Optional
 
 import os
 import sys
 import subprocess
 import io
+
+import __main__
 
 # Encoding and sys.stderr/stdout handling ######################################
 
@@ -42,6 +44,15 @@ if PY2:
     reload(sys) # type: ignore
     sys.setdefaultencoding("utf-8") # type: ignore
     sys.executable = sys_executable
+
+def _setdefaultencoding(name):
+    """
+    This is install in sys to prevent games from trying to change the default
+    encoding.
+    """
+
+sys.setdefaultencoding = _setdefaultencoding # type: ignore
+
 
 sys.stdout = old_stdout
 sys.stderr = old_stderr
@@ -114,12 +125,12 @@ def popen_del(self, *args, **kwargs):
 
     return
 
-
 def bootstrap(renpy_base):
 
-    global renpy # W0602
+    global renpy
 
-    import renpy.log # @UnusedImport
+    import renpy.config
+    import renpy.log
 
     # Remove a legacy environment setting.
     if os.environ.get("SDL_VIDEODRIVER", "") == "windib":
@@ -182,28 +193,7 @@ def bootstrap(renpy_base):
         if not os.path.exists(basedir + "/game"):
             os.mkdir(basedir + "/game", 0o777)
 
-    gamedirs = [ name ]
-    game_name = name
-
-    while game_name:
-        prefix = game_name[0]
-        game_name = game_name[1:]
-
-        if prefix == ' ' or prefix == '_':
-            gamedirs.append(game_name)
-
-    gamedirs.extend([ 'game', 'data', 'launcher/game' ])
-
-    for i in gamedirs:
-
-        if i == "renpy":
-            continue
-
-        gamedir = basedir + "/" + i
-        if os.path.isdir(gamedir):
-            break
-    else:
-        gamedir = basedir
+    gamedir = __main__.path_to_gamedir(basedir, name)
 
     sys.path.insert(0, basedir)
 
@@ -243,7 +233,7 @@ You may be using a system install of python. Please run {0}.sh,
 
     # Ditto for the Ren'Py module.
     try:
-        import _renpy; _renpy
+        import _renpy
     except Exception:
         print("""\
 Could not import _renpy. Please ensure that this program has been built
@@ -302,7 +292,10 @@ You may be using a system install of python. Please run {0}.sh,
                     if hasattr(sys, "renpy_executable"):
                         subprocess.Popen([sys.renpy_executable] + sys.argv[1:]) # type: ignore
                     else:
-                        subprocess.Popen([sys.executable, "-EO"] + sys.argv)
+                        if PY2:
+                            subprocess.Popen([sys.executable, "-EO"] + sys.argv)
+                        else:
+                            subprocess.Popen([sys.executable] + sys.argv)
 
             except renpy.game.ParseErrorException:
                 pass

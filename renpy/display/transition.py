@@ -25,7 +25,8 @@
 # so that prediction of images works.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 
 import renpy
@@ -319,7 +320,7 @@ class Pixellate(Transition):
 class Dissolve(Transition):
     """
     :doc: transition function
-    :args: (time, alpha=False, time_warp=None)
+    :args: (time, alpha=False, time_warp=None, **properties)
     :name: Dissolve
 
     Returns a transition that dissolves from the old scene to the new scene.
@@ -334,6 +335,11 @@ class Dissolve(Transition):
         A function that adjusts the timeline. If not None, this should be a
         function that takes a fractional time between 0.0 and 1.0, and returns
         a number in the same range.
+
+    When the dissolve will be scaled to less than half its natural size, the
+    :propref:`mipmap` style property can be set to True. This will cause mipmaps
+    to be generated, which will make the dissolve consume more GPU resources,
+    but will reduce artifacts.
     """
 
     __version__ = 1
@@ -405,7 +411,7 @@ class Dissolve(Transition):
 class ImageDissolve(Transition):
     """
     :doc: transition function
-    :args: (image, time, ramplen=8, reverse=False, alpha=True, time_warp=None)
+    :args: (image, time, ramplen=8, reverse=False, alpha=True, time_warp=None, **properties)
     :name: ImageDissolve
 
     Returns a transition that dissolves the old scene into the new scene, using
@@ -443,6 +449,11 @@ class ImageDissolve(Transition):
         define circirisout = ImageDissolve("circiris.png", 1.0)
         define circirisin = ImageDissolve("circiris.png", 1.0, reverse=True)
         define circiristbigramp = ImageDissolve("circiris.png", 1.0, ramplen=256)
+
+    When the dissolve will be scaled to less than half its natural size, the
+    :propref:`mipmap` style property can be set to True. This will cause mipmaps
+    to be generated, which will make the dissolve consume more GPU resources,
+    but will reduce artifacts.
     """
 
     __version__ = 1
@@ -590,7 +601,7 @@ class ImageDissolve(Transition):
 class AlphaDissolve(Transition):
     """
     :doc: transition function
-    :args: (control, delay=0.0, alpha=False, reverse=False)
+    :args: (control, delay=0.0, alpha=False, reverse=False, **properties)
 
     Returns a transition that uses a control displayable (almost always some
     sort of animated transform) to transition from one screen to another. The
@@ -610,6 +621,11 @@ class AlphaDissolve(Transition):
         If true, the alpha channel is reversed. Opaque areas are taken
         from the old image, while transparent areas are taken from the
         new image.
+
+    When the dissolve will be scaled to less than half its natural size, the
+    :propref:`mipmap` style property can be set to True. This will cause mipmaps
+    to be generated, which will make the dissolve consume more GPU resources,
+    but will reduce artifacts.
      """
 
     mipmap = None
@@ -680,6 +696,10 @@ class AlphaDissolve(Transition):
 
         return rv
 
+
+def interpolate_tuple(t0, t1, time, scales):
+    return tuple([ round(s * (a * (1.0 - time) + b * time))
+                    for a, b, s in zip(t0, t1, scales) ])
 
 class CropMove(Transition):
     """
@@ -918,12 +938,8 @@ class CropMove(Transition):
         # How we scale each element of a tuple.
         scales = (width, height, width, height)
 
-        def interpolate_tuple(t0, t1):
-            return tuple([ int(s * (a * (1.0 - time) + b * time))
-                           for a, b, s in zip(t0, t1, scales) ])
-
-        crop = interpolate_tuple(self.startcrop, self.endcrop)
-        pos = interpolate_tuple(self.startpos, self.endpos)
+        crop = interpolate_tuple(self.startcrop, self.endcrop, time, scales)
+        pos = interpolate_tuple(self.startpos, self.endpos, time, scales)
 
         top = render(self.top, width, height, st, at)
         bottom = render(self.bottom, width, height, st, at)
@@ -1041,15 +1057,11 @@ class PushMove(Transition):
         # How we scale each element of a tuple.
         scales = (width, height, width, height)
 
-        def interpolate_tuple(t0, t1):
-            return tuple([ int(s * (a * (1.0 - time) + b * time))
-                           for a, b, s in zip(t0, t1, scales) ])
+        new_crop = interpolate_tuple(self.new_startcrop, self.new_endcrop, time, scales)
+        new_pos = interpolate_tuple(self.new_startpos, self.new_endpos, time, scales)
 
-        new_crop = interpolate_tuple(self.new_startcrop, self.new_endcrop)
-        new_pos = interpolate_tuple(self.new_startpos, self.new_endpos)
-
-        old_crop = interpolate_tuple(self.old_startcrop, self.old_endcrop)
-        old_pos = interpolate_tuple(self.old_startpos, self.old_endpos)
+        old_crop = interpolate_tuple(self.old_startcrop, self.old_endcrop, time, scales)
+        old_pos = interpolate_tuple(self.old_startpos, self.old_endpos, time, scales)
 
         new = render(self.new_widget, width, height, st, at)
         old = render(self.old_widget, width, height, st, at)

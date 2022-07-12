@@ -21,6 +21,16 @@
 
 init -1100 python:
 
+    def _compat_versions(version, *args):
+        if version <= args[0]:
+            return True
+
+        for i in args[1:]:
+            if (version[0] == i[0]) and (version <= i):
+                return True
+
+        return False
+
     # This is called when script_version is set, to immediately
     # run code in response to a script_version change.
     def _set_script_version(version):
@@ -228,8 +238,20 @@ init -1100 python:
         if version <= (7, 4, 10):
             config.always_unfocus = False
 
-        if version <= (7, 5, 0):
+        if version <= (7, 4, 11):
+            config.allow_unfull_vpgrids = True
             style.drag.focus_mask = True
+            style.default.outline_scaling = "step"
+            config.box_skip = False
+            config.crop_relative_default = False
+            config.layeredimage_offer_screen = False
+            config.narrator_menu = False
+            config.gui_text_position_properties = False
+            config.atl_function_always_blocks = True
+
+        if _compat_versions(version, (7, 5, 2), (8, 0, 2)):
+            config.quadratic_volumes = True
+            config.emphasize_audio_volume = 0.5
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
@@ -238,7 +260,7 @@ init -1100 python:
 python early hide:
     try:
         import ast
-        with renpy.file("script_version.txt") as f:
+        with renpy.open_file("script_version.txt", "utf-8") as f:
             script_version = f.read()
         script_version = ast.literal_eval(script_version)
 
@@ -253,18 +275,22 @@ python early hide:
 
 
 init -1000 python hide:
+    import re
+
     try:
         import ast
-        with renpy.file("script_version.txt") as f:
+        with renpy.open_file("script_version.txt", "utf-8") as f:
             script_version = f.read()
         config.script_version = ast.literal_eval(script_version)
         renpy.write_log("Set script version to: %r", config.script_version)
     except Exception:
         pass
 
-
     # 6.99.12.4 didn't add script_version.txt, so we read it from renpy/__init__.py
     # if that exists.
+    #
+    # For really old version, script_version may not be set, so try to read it out of
+    # the renpy that came with the game.
     try:
         if config.script_version is None:
             init_py = os.path.join(renpy.config.basedir, "renpy", "__init__.py")
@@ -273,10 +299,18 @@ init -1000 python hide:
 
             if "version_tuple = (6, 99, 12, 4, vc_version)" in data:
                 config.script_version = (6, 99, 12, 4)
+            elif config.renpy_base != config.basedir:
+                for l in data.splitlines():
+                    m = re.match(r"version = \"Ren'Py ([\.\d]+)", l)
+                    if m:
+                        config.script_version = tuple(int(i) for i in m.group(1).split("."))
+
+
 
             renpy.write_log("Set script version to: %r (alternate path)", config.script_version)
     except Exception:
         pass
+
 
 init 1100 python hide:
 

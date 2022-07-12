@@ -79,7 +79,8 @@ cdef class TextureLoader:
         self.total_texture_size = 0
         self.texture_load_queue = weakref.WeakSet()
 
-        glGetFloatv(MAX_TEXTURE_MAX_ANISOTROPY_EXT, &self.max_anisotropy)
+        if not self.draw.gles:
+            glGetFloatv(MAX_TEXTURE_MAX_ANISOTROPY_EXT, &self.max_anisotropy)
 
     def quit(self):
         """
@@ -308,7 +309,12 @@ cdef class GLTexture(GL2Model):
         tw = round(tw)
         th = round(th)
 
-        cw, ch = draw.draw_to_virt.transform(tw, th)
+        drawable = properties.get("drawable_resolution", True)
+
+        if drawable:
+            cw, ch = draw.draw_to_virt.transform(tw, th)
+        else:
+            cw, ch = tw, th
 
         tw = min(tw, loader.max_texture_width)
         th = min(th, loader.max_texture_height)
@@ -378,6 +384,7 @@ cdef class GLTexture(GL2Model):
         cdef GLuint premultiplied
         cdef Program program
         cdef SDL_Surface *s
+        cdef GLuint pixel_buffer
 
         if self.loaded:
             return
@@ -403,8 +410,29 @@ cdef class GLTexture(GL2Model):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
 
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, s.pixels)
+        # Use a pixel buffer to create a texture.
+        # Why use a Pixel Buffer? Apart from potentially being faster, this
+        # works around a bug in Samsung android devices running Android 11,
+        # where glTexImage2D doesn't seem to work when the pixels are not
+        # aligned.
+
+        # But it doesn't seem to work with ANGLE or emscripten, so we avoid using PBOs when
+        # angle is in use.
+
+        if not renpy.emscripten and not draw.angle:
+
+            glGenBuffers(1, &pixel_buffer)
+            glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pixel_buffer)
+            glBufferData(GL_PIXEL_UNPACK_BUFFER, s.h * s.pitch, s.pixels, GL_STATIC_DRAW)
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, <void *> 0)
+            glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER)
+            glDeleteBuffers(1, &pixel_buffer)
+
+        else:
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, s.pitch // 4)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.width, self.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, s.pixels)
+
 
         mesh = Mesh2.texture_rectangle(-1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0)
 
@@ -472,7 +500,7 @@ cdef class GLTexture(GL2Model):
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t)
 
-        if properties.get("anisotropic", True):
+        if (not self.loader.draw.gles) and properties.get("anisotropic", True):
             glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, self.loader.max_anisotropy)
 
         # Store the texture size that was loaded.

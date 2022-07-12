@@ -309,7 +309,9 @@ screen web():
                             textbutton _("Open in Browser") action Jump("web_start")
                             textbutton _("Open build directory") action Jump("open_build_directory")
 
-                        add SPACER
+                            add SPACER
+
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
 
                 # Right side.
@@ -333,15 +335,14 @@ screen web():
 
                         text _("Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported.")
 
-                        add SPACER
-
-                        text _("There are known issues with Safari and other Webkit-based browsers that may prevent games from running.")
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
 
-
-
 label web:
+
+    if not PY2:
+        $ interface.info(_("This feature is not supported in Ren'Py 8."),  _("We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."))
+        return
 
     if WEB_PATH is None:
         $ interface.yesno(_("Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"), no=Jump("front_page"))
@@ -364,7 +365,7 @@ label web_launch:
 
 label open_build_directory():
     $ project.current.update_dump(True, gui=True)
-    $ OpenDirectory(get_web_destination(project.current))()
+    $ renpy.run(OpenDirectory(get_web_destination(project.current), absolute=True))
     jump web
 
 label web_start:

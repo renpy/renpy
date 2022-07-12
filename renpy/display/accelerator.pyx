@@ -71,8 +71,8 @@ def transform_render(self, widtho, heighto, st, at):
 
     cdef double rxdx, rxdy, rydx, rydy
     cdef double cosa, sina
-    cdef double xo, x1, x2, x3, px
-    cdef double yo, y1, y2, y3, py
+    cdef double xo, px
+    cdef double yo, py
     cdef float zoom, xzoom, yzoom
     cdef double cw, ch, nw, nh
     cdef Render rv, cr, tcr
@@ -200,12 +200,7 @@ def transform_render(self, widtho, heighto, st, at):
     xpan = state.xpan
     ypan = state.ypan
 
-    if xpan is not None:
-        xtile = 2
-
-    if ypan is not None:
-        ytile = 2
-
+    # Tiling.
     if (xtile != 1) or (ytile != 1):
         tcr = renpy.display.render.Render(cwidth * xtile, cheight * ytile)
 
@@ -215,6 +210,7 @@ def transform_render(self, widtho, heighto, st, at):
 
         cr = tcr
 
+    # Panning.
     if (xpan is not None) or (ypan is not None):
 
         if xpan is not None:
@@ -233,7 +229,16 @@ def transform_render(self, widtho, heighto, st, at):
             pan_y = 0
             pan_h = cr.height
 
-        cr = cr.subsurface((pan_x, pan_y, pan_w, pan_h))
+        tcr = renpy.display.render.Render(pan_w, pan_h)
+
+        for xpano in [ 0, cwidth ] if (xpan is not None) else [ 0 ]:
+            for ypano in [ 0, cheight ] if (ypan is not None) else [ 0 ]:
+                tcr.subpixel_blit(cr, (xpano - pan_x, ypano - pan_y))
+
+        tcr.xclipping = True
+        tcr.yclipping = True
+
+        cr = tcr
 
     mesh = state.mesh
     blur = state.blur or None
@@ -259,17 +264,48 @@ def transform_render(self, widtho, heighto, st, at):
     xo = 0
     yo = 0
 
+    # Cropping.
+
     crop = state.crop
 
-    # Cropping.
+    crop_relative = state.crop_relative
+
+    if crop_relative is None:
+        crop_relative = renpy.config.crop_relative_default
+
+    def relative(n, base, limit):
+        if isinstance(n, (int, absolute)):
+            return n
+        else:
+            return min(int(n * base), limit)
+
+    if crop is not None:
+
+        if crop_relative:
+            x, y, w, h = crop
+
+            x = relative(x, width, width)
+            y = relative(y, height, height)
+            w = relative(w, width, width - x)
+            h = relative(h, height, height - y)
+
+            crop = (x, y, w, h)
+
     if (state.corner1 is not None) and (crop is None) and (state.corner2 is not None):
         x1, y1 = state.corner1
         x2, y2 = state.corner2
+
+        if crop_relative:
+            x1 = relative(x1, width, width)
+            y1 = relative(y1, height, height)
+            x2 = relative(x2, width, width)
+            y2 = relative(y2, height, height)
 
         if x1 > x2:
             x3 = x1
             x1 = x2
             x2 = x3
+
         if y1 > y2:
             y3 = y1
             y1 = y2
@@ -278,22 +314,6 @@ def transform_render(self, widtho, heighto, st, at):
         crop = (x1, y1, x2-x1, y2-y1)
 
     if crop is not None:
-
-        if state.crop_relative:
-            x, y, w, h = crop
-
-            def relative(n, base, limit):
-                if isinstance(n, (int, absolute)):
-                    return n
-                else:
-                    return min(int(n * base), limit)
-
-            x = relative(x, width, width)
-            y = relative(y, height, height)
-            w = relative(w, width, width - x)
-            h = relative(h, height, height - y)
-
-            crop = (x, y, w, h)
 
         negative_xo, negative_yo, width, height = crop
 
@@ -594,19 +614,6 @@ def transform_render(self, widtho, heighto, st, at):
     # Clipping.
     rv.xclipping = clipping
     rv.yclipping = clipping
-
-    if state.clip:
-        xclip = state.clip[0]
-        yclip = state.clip[1]
-
-        if isinstance(xclip, float):
-            xclip *= rv.width
-        if isinstance(yclip, float):
-            yclip *= rv.height
-
-        rv = rv.subsurface((0, 0, xclip, yclip))
-
-        width, height = xclip, yclip
 
     self.offsets = [ pos ]
     self.render_size = (width, height)

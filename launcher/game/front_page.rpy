@@ -25,41 +25,6 @@ init python:
 
     import datetime
 
-    import os
-    import subprocess
-
-    class OpenDirectory(Action):
-        """
-        Opens `directory` in a file browser. `directory` is relative to
-        the project root.
-        """
-
-        alt = _("Open [text] directory.")
-
-        def __init__(self, directory, absolute=False):
-            if absolute:
-                self.directory = directory
-            else:
-                self.directory = os.path.join(project.current.path, directory)
-
-        def get_sensitive(self):
-            return os.path.exists(self.directory)
-
-        def __call__(self):
-
-            try:
-                directory = renpy.fsencode(self.directory)
-
-                if renpy.windows:
-                    os.startfile(directory)
-                elif renpy.macintosh:
-                    subprocess.Popen([ "open", directory ])
-                else:
-                    subprocess.Popen([ "xdg-open", directory ])
-
-            except Exception:
-                pass
-
     # Used for testing.
     def Relaunch():
         renpy.quit(relaunch=True)
@@ -194,11 +159,11 @@ screen front_page_project:
                 frame style "l_indent":
                     has vbox
 
-                    textbutton _("game") action OpenDirectory("game")
-                    textbutton _("base") action OpenDirectory(".")
-                    textbutton _("images") action OpenDirectory("game/images")
-                    textbutton _("audio") action OpenDirectory("game/audio")
-                    textbutton _("gui") action OpenDirectory("game/gui")
+                    textbutton _("game") action OpenDirectory(os.path.join(p.path, "game"), absolute=True)
+                    textbutton _("base") action OpenDirectory(os.path.join(p.path, "."), absolute=True)
+                    textbutton _("images") action OpenDirectory(os.path.join(p.path, "game/images"), absolute=True)
+                    textbutton _("audio") action OpenDirectory(os.path.join(p.path, "game/audio"), absolute=True)
+                    textbutton _("gui") action OpenDirectory(os.path.join(p.path, "game/gui"), absolute=True)
 
             vbox:
                 if persistent.show_edit_funcs:
@@ -251,7 +216,10 @@ screen front_page_project:
 
                 textbutton _("Android") action Jump("android")
                 textbutton _("iOS") action Jump("ios")
-                textbutton _("Web") + " " + _("(Beta)") action Jump("web")
+                textbutton _("Web") + " " + _("(Beta)") action Jump("web"):
+                    if not PY2:
+                        text_color DISABLED
+
                 textbutton _("Generate Translations") action Jump("translate")
                 textbutton _("Extract Dialogue") action Jump("extract_dialogue")
 
@@ -264,9 +232,21 @@ label start:
 
     jump expression renpy.session.pop("launcher_start_label", "front_page")
 
+default persistent.has_chosen_language = False
+
 default persistent.has_update = False
 
 label front_page:
+
+    if (not persistent.has_chosen_language) or ("RENPY_CHOOSE_LANGUAGE" in os.environ):
+
+        if _preferences.language is None:
+            hide screen bottom_info
+            call choose_language
+            show screen bottom_info
+
+        $ persistent.has_chosen_language = True
+
     if persistent.daily_update_check and ((not persistent.last_update_check) or (datetime.date.today() > persistent.last_update_check)):
         python hide:
             persistent.last_update_check = datetime.date.today()

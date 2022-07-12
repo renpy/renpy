@@ -25,7 +25,8 @@
 # at least pcm_ok, we have no sound whatsoever.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 from future.utils import raise_
 
@@ -137,7 +138,7 @@ class MusicContext(renpy.revertable.RevertableObject):
     __version__ = 0
 
     pause = False
-    tertiary_volume = 1.0
+    last_relative_volume = 1.0
 
     def __init__(self):
 
@@ -155,9 +156,6 @@ class MusicContext(renpy.revertable.RevertableObject):
         # The secondary volume.
         self.secondary_volume = 1.0
 
-        # The tertiary volume.
-        self.tertiary_volume = 1.0
-
         # The time the channel was ordered last changed.
         self.last_changed = 0
 
@@ -166,6 +164,9 @@ class MusicContext(renpy.revertable.RevertableObject):
 
         # What were the filenames we were ordered to loop last?
         self.last_filenames = [ ]
+
+        # The relative volume of the last files played.
+        self.last_relative_volume = 1.0
 
         # Should we force stop this channel?
         self.force_stop = False
@@ -417,12 +418,13 @@ class Channel(object):
         # Update the channel volume.
 
         mixer_volume = renpy.game.preferences.volumes.get(self.mixer, 1.0)
+        main_volume = renpy.game.preferences.volumes.get("main", 1.0)
 
         if renpy.game.preferences.self_voicing:
             if self.mixer not in renpy.config.voice_mixers:
                 mixer_volume = mixer_volume * renpy.game.preferences.self_voicing_volume_drop
 
-        vol = self.chan_volume * mixer_volume
+        vol = self.chan_volume * mixer_volume * main_volume
 
         if renpy.game.preferences.mute.get(self.mixer, False):
             vol = 0.0
@@ -506,8 +508,6 @@ class Channel(object):
                 if renpy.config.audio_filename_callback is not None:
                     filename = renpy.config.audio_filename_callback(filename)
 
-                self.set_tertiary_volume(topq.relative_volume)
-
                 if (end >= 0) and ((end - start) <= 0) and self.queue:
                     continue
 
@@ -519,9 +519,9 @@ class Channel(object):
                 renpysound.set_video(self.number, self.movie)
 
                 if depth == 0:
-                    renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end)
+                    renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume)
                 else:
-                    renpysound.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight, start=start, end=end)
+                    renpysound.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume)
 
                 self.playing = True
 
@@ -606,10 +606,7 @@ class Channel(object):
 
             if self.secondary_volume_time != self.context.secondary_volume_time:
                 self.secondary_volume_time = self.context.secondary_volume_time
-                result_volume = self.context.secondary_volume * self.context.tertiary_volume
-                renpysound.set_secondary_volume(self.number,
-                                                result_volume,
-                                                0)
+                renpysound.set_secondary_volume(self.number, self.context.secondary_volume, 0)
 
         if not self.queue and self.callback:
             self.callback() # E1102
@@ -741,12 +738,7 @@ class Channel(object):
 
             if pcm_ok:
                 self.secondary_volume_time = self.context.secondary_volume_time
-                result_volume = self.context.secondary_volume * self.context.tertiary_volume
-                renpysound.set_secondary_volume(self.number, result_volume, delay)
-
-    def set_tertiary_volume(self, volume):
-        self.context.tertiary_volume = volume
-        self.set_secondary_volume(self.context.secondary_volume, 0)
+                renpysound.set_secondary_volume(self.number, self.context.secondary_volume, delay)
 
     def pause(self):
         with lock:
@@ -792,19 +784,33 @@ all_channels = [ ]
 channels = { }
 
 
-def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True, movie=False, framedrop=True):
+def register_channel(name,
+                     mixer=None,
+                     loop=None,
+                     stop_on_mute=True,
+                     tight=False,
+                     file_prefix="",
+                     file_suffix="",
+                     buffer_queue=True,
+                     movie=False,
+                     framedrop=True,
+                     force=False):
     """
     :doc: audio
+    :args: (name, mixer, loop=None, stop_on_mute=True, tight=False, file_prefix="", file_suffix="", buffer_queue=True, movie=False, framedrop=True)
 
     This registers a new audio channel named `name`. Audio can then be
     played on the channel by supplying the channel name to the play or
     queue statements.
 
+    `name`
+        The name of the channel.
+
     `mixer`
-        The name of the mixer the channel uses. By default, Ren'Py
-        knows about the "music", "sfx", and "voice" mixers. Using
-        other names is possible, but may require changing the
-        preferences screens.
+        The name of the mixer the channel uses. By default, Ren'Py knows about
+        the "music", "sfx", and "voice" mixers. Using other names is possible,
+        and will create the mixer if it doesn't already exist, but making new
+        mixers reachable by the player requires changing the preferences screens.
 
     `loop`
         If true, sounds on this channel loop by default.
@@ -841,7 +847,7 @@ def register_channel(name, mixer=None, loop=None, stop_on_mute=True, tight=False
     if name == "movie":
         movie = True
 
-    if not renpy.game.context().init_phase and (" " not in name):
+    if not force and not renpy.game.context().init_phase and (" " not in name):
         raise Exception("Can't register channel outside of init phase.")
 
     if renpy.android and renpy.config.hw_video and name == "movie":
@@ -936,7 +942,9 @@ def init():
 
     if renpy.emscripten and renpy.config.webaudio:
         import renpy.audio.webaudio as webaudio
-        renpysound.__dict__.update(webaudio.__dict__)
+
+        if webaudio.can_play_types(renpy.config.webaudio_required_types):
+            renpysound.__dict__.update(webaudio.__dict__)
 
     if pcm_ok is None and renpysound:
         bufsize = 2048
@@ -1194,7 +1202,7 @@ def interact():
                         c.fadeout(renpy.config.context_fadeout_music or renpy.config.fade_music)
 
                 if filenames:
-                    c.enqueue(filenames, loop=True, synchro_start=False, tight=tight, fadein=renpy.config.context_fadein_music)
+                    c.enqueue(filenames, loop=True, synchro_start=False, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)
 
                 c.last_changed = ctx.last_changed
 

@@ -52,7 +52,7 @@ init python:
         if state is not None:
             base_name = state.get("sdk", {}).get('base_name', '')
 
-            if base_name.startswith("renpy-nightly-"):
+            if "-nightly-" in base_name:
                 dlc_url = "http://nightly.renpy.org/{}/updates.json".format(base_name[6:])
 
         return renpy.invoke_in_new_context(updater.update, dlc_url, add=[name], public_key=PUBLIC_KEY, simulate=UPDATE_SIMULATE, restart=restart)
@@ -61,15 +61,21 @@ init python:
 
 
     _("Release")
+    _("Release (Ren'Py 8, Python 3)")
+    _("Release (Ren'Py 7, Python 2)")
     _("{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games.")
 
     _("Prerelease")
+    _("Prerelease (Ren'Py 8, Python 3)")
+    _("Prerelease (Ren'Py 7, Python 2)")
     _("A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games.")
 
     _("Experimental")
     _("Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer.")
 
     _("Nightly")
+    _("Nightly (Ren'Py 8, Python 3)")
+    _("Nightly (Ren'Py 7, Python 2)")
     _("The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all.")
 
 
@@ -105,9 +111,9 @@ screen update_channel(channels):
                         if c["split_version"] != list(renpy.version_tuple):
                             $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)]
 
-                            if c["channel"] == "Release":
+                            if c["channel"].startswith("Release"):
                                 $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")
-                            elif c["channel"] == "Prerelease":
+                            elif c["channel"].startswith("Prerelease"):
                                 $ current = _("• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}")
                             else:
                                 $ current = ""

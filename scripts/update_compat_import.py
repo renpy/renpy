@@ -6,7 +6,7 @@ import re
 
 ROOT = pathlib.Path(__file__).parent.parent
 
-IMPORT_LINE = "from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *\n"
+IMPORT_LINE = "from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *\n"
 
 def main():
 

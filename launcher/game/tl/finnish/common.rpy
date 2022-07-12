@@ -315,7 +315,7 @@ translate finnish strings:
 
     # 00gallery.rpy:563
     old "Image [index] of [count] locked."
-    new "[index]. kuva [count]:stä on lukittu"
+    new "Kuva [index]/[count] on lukittu."
 
     # 00gallery.rpy:583
     old "prev"

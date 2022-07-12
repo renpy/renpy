@@ -416,7 +416,7 @@ init -1500 python in _console:
     stdio_lines = _list()
 
     def stdout_line(l):
-        if not config.developer:
+        if not (config.console or config.developer):
             return
 
         stdio_lines.append((False, l))
@@ -425,7 +425,7 @@ init -1500 python in _console:
             stdio_lines.pop(0)
 
     def stderr_line(l):
-        if not config.developer:
+        if not (config.console or config.developer):
             return
 
         stdio_lines.append((True, l))
@@ -745,7 +745,7 @@ init -1500 python in _console:
         return wrap
 
     @command(_("help: show this help"))
-    def help(l):
+    def help(l, doc_generate=False):
         keys = list(config.console_commands.keys())
         keys.sort()
 
@@ -758,7 +758,7 @@ init -1500 python in _console:
 
             rv += " " + __(f.help) + "\n"
 
-        if console.can_renpy():
+        if console.can_renpy() or doc_generate:
             rv += __(" <renpy script statement>: run the statement\n")
 
         rv += __(" <python expression or statement>: run the expression or statement")
@@ -780,6 +780,28 @@ init -1500 python in _console:
     @command()
     def quit(l):
         renpy.jump("_console_return")
+
+    @command(_("stack: print the return stack"))
+    def stack(l):
+        def fmt(entry):
+            if isinstance(entry, str):
+                name = entry
+            else:
+                name = "(anonymous)"
+            try:
+                lkp = renpy.game.script.lookup(entry)
+                filename, linenumber = lkp.filename, lkp.linenumber
+            except Exception:
+                filename = linenumber = "?"
+            return "{} <{}:{}>".format(name, filename, linenumber)
+
+        rs = renpy.exports.get_return_stack()
+        if rs:
+            print("Return stack (most recent call last):\n")
+            for entry in rs:
+                print(fmt(entry))
+        else:
+            print("The return stack is empty.")
 
     @command(_("load <slot>: loads the game from slot"))
     def load(l):
@@ -829,7 +851,9 @@ init -1500 python in _console:
         renpy.python.py_compile(expr, 'eval')
 
         traced_expressions.append(expr)
-        renpy.show_screen("_trace_screen")
+
+        if "_trace_screen" not in config.always_shown_screens:
+            config.always_shown_screens.append("_trace_screen")
 
     def renpy_watch(expr):
         """
@@ -860,9 +884,20 @@ init -1500 python in _console:
         if expr in traced_expressions:
             traced_expressions.remove(expr)
 
+        if not traced_expressions:
+
+            if "_trace_screen" in renpy.config.always_shown_screens:
+                config.always_shown_screens.remove("_trace_screen")
+
+            renpy.hide_screen("_trace_screen")
+
+
     def watch_after_load():
-        if config.developer and traced_expressions:
-            renpy.show_screen("_trace_screen")
+        try:
+            if config.developer and traced_expressions:
+                renpy.show_screen("_trace_screen")
+        except Exception:
+            pass
 
     config.after_load_callbacks.append(watch_after_load)
 
@@ -886,6 +921,10 @@ init -1500 python in _console:
     @command(_("unwatchall: stop watching all expressions"))
     def unwatchall(l):
         traced_expressions[:] = [ ]
+
+        if "_trace_screen" in renpy.config.always_shown_screens:
+            config.always_shown_screens.remove("_trace_screen")
+
         renpy.hide_screen("_trace_screen")
 
     def renpy_unwatchall():
@@ -1018,7 +1057,7 @@ screen _console:
 
 default _console.traced_expressions = _console.TracedExpressionsList()
 
-screen _trace_screen:
+screen _trace_screen():
 
     zorder 1501
 
@@ -1060,3 +1099,6 @@ label _console:
 
 label _console_return:
     return
+
+init -1010 python:
+    config.per_frame_screens.append("_trace_screen")

@@ -23,7 +23,8 @@
 # Definitions of screen language statements.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import renpy
 
@@ -31,7 +32,7 @@ from renpy.sl2.slparser import Positional, Keyword, Style, PrefixStyle, add
 from renpy.sl2.slparser import DisplayableParser, many
 
 from renpy.sl2.slproperties import text_properties, box_properties, window_properties
-from renpy.sl2.slproperties import bar_properties, button_properties
+from renpy.sl2.slproperties import bar_properties, button_properties, position_properties
 from renpy.sl2.slproperties import text_position_properties, text_text_properties
 from renpy.sl2.slproperties import side_position_properties
 from renpy.sl2.slproperties import scrollbar_bar_properties, scrollbar_position_properties
@@ -67,6 +68,10 @@ class ShowIf(renpy.display.layout.Container):
                 self.pending_event = replaces.pending_event
 
             self.show_child = replaces.show_child
+
+    @property
+    def _box_skip(self):
+        return (not self.show_child)
 
     def per_interact(self):
         if self.pending_event:
@@ -148,6 +153,7 @@ DisplayableParser("side", renpy.display.layout.Side, "side", many)
 Positional("positions")
 Style("spacing")
 
+
 # Omit sizer, as we can always just put an xmaximum and ymaximum on an item.
 
 for name in [ "window", "frame" ]:
@@ -158,6 +164,7 @@ DisplayableParser("key", renpy.ui._key, None, 0)
 Positional("key")
 Keyword("action")
 Keyword("activate_sound")
+Keyword("capture")
 
 DisplayableParser("timer", renpy.display.behavior.Timer, "default", 0, replaces=True)
 Positional("delay")
@@ -377,6 +384,7 @@ add(viewport_position_properties)
 DisplayableParser("vpgrid", sl2vpgrid, "vpgrid", many, replaces=True, pass_context=True)
 Keyword("rows")
 Keyword("cols")
+Keyword("allow_underfull")
 Keyword("child_size")
 Keyword("mousewheel")
 Keyword("arrowkeys")
@@ -460,10 +468,11 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
 
 
 for name in [ "add", "image" ]:
-    DisplayableParser(name, sl2add, None, 0, replaces=True, default_properties=False, scope=True)
+    DisplayableParser(name, sl2add, None, 0, replaces=True, default_properties=False, scope=True, unique=False)
     Positional("im")
     Keyword("at")
     Keyword("id")
+    Keyword("alt")
     for i in renpy.atl.PROPERTIES:
         Style(i)
 
@@ -473,6 +482,7 @@ Keyword("drag_name")
 Keyword("draggable")
 Keyword("droppable")
 Keyword("drag_raise")
+Keyword("dragging")
 Keyword("dragged")
 Keyword("dropped")
 Keyword("drop_allowable")
@@ -486,6 +496,7 @@ Keyword("focus_mask")
 Keyword("mouse_drop")
 Keyword("alternate")
 Style("child")
+Style("sound")
 
 DisplayableParser("draggroup", renpy.display.dragdrop.DragGroup, None, many, replaces=True)
 Keyword("min_overlap")
@@ -498,6 +509,21 @@ Style("focus_mask")
 DisplayableParser("on", renpy.display.behavior.OnEvent, None, 0)
 Positional("event")
 Keyword("action")
+
+
+DisplayableParser("nearrect", renpy.display.layout.NearRect, "default", 1, replaces=True)
+Keyword("rect")
+Keyword("focus")
+Keyword("prefer_top")
+add(position_properties)
+
+DisplayableParser("dismiss", renpy.display.behavior.DismissBehavior , "default", 0)
+Keyword("action")
+Keyword("modal")
+Style("alt")
+Style("sound")
+Style("debug")
+
 
 # Ensure that Parsers are no longer added automatically.
 renpy.sl2.slparser.parser = None

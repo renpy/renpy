@@ -24,7 +24,8 @@
 # including how to navigate around the game.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 
 import inspect
@@ -183,7 +184,7 @@ def dump(error):
 
     code = location["callable"] = { }
 
-    for modname, mod in sys.modules.items():
+    for modname, mod in sys.modules.copy().items():
 
         if mod is None:
             continue

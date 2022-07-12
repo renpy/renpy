@@ -22,7 +22,8 @@
 # This file contains functions that load and save the game state.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from future.utils import reraise
 
 from typing import Optional
@@ -79,7 +80,11 @@ def save_dump(roots, log):
             o_repr = "<" + o.__class__.__name__ + ">"
 
         elif isinstance(o, types.MethodType):
-            o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__func__.__name__)
+
+            if PY2:
+                o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__func__.__name__) # type: ignore
+            else:
+                o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
 
         elif isinstance(o, object):
             o_repr = "<{0}>".format(type(o).__name__)
@@ -365,9 +370,10 @@ def save(slotname, extra_info='', mutate_flag=False):
     :func:`renpy.take_screenshot` should be called before this function.
     """
 
-    if renpy.emscripten:
-        # Update persistent file on emscripten now
-        # as it cannot be written when page closes
+    # Update persistent file, if needed. This is for the web and mobile
+    # platforms, to make sure the persistent file is updated whenever the
+    # game is saved. (But not auto-saved, for performance reasons.)
+    if not mutate_flag:
         renpy.persistent.update()
 
     if mutate_flag:
@@ -468,6 +474,9 @@ def autosave():
     if not renpy.config.autosave_frequency:
         return
 
+    if not renpy.config.has_autosave:
+        return
+
     # That is, autosave is running.
     if not autosave_not_running.is_set():
         return
@@ -508,6 +517,9 @@ def force_autosave(take_screenshot=False, block=False):
     """
 
     global autosave_thread
+
+    if not renpy.config.has_autosave:
+        return
 
     if renpy.game.after_rollback or renpy.exports.in_rollback():
         return
@@ -710,6 +722,10 @@ def slot_json(slotname):
 
     Returns the json information for `slotname`, or None if the slot is
     empty.
+
+    Much like the ``d`` argument to the :var:`config.save_json_callback`
+    function, it will be returned as a dictionary. More precisely, the
+    dictionary will contain the same data as it did when the game was saved.
     """
 
     return get_cache(slotname).get_json()

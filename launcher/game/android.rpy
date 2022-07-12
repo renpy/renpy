@@ -57,6 +57,8 @@ init python:
     CONNECT_TEXT = _("Connects to a device over Wi-Fi, on Android 11+.")
     DISCONNECT_TEXT = _("Disconnects a device connected over Wi-Fi.")
 
+    CLEAN_TEXT = _("Removes Android temporary files.")
+
     PLAY_BUNDLE_TEXT = _("Builds an Android App Bundle (ABB), intended to be uploaded to Google Play. This can include up to 2GB of data.")
     UNIVERSAL_APK_TEXT = _("Builds a Universal APK package, intended for sideloading and stores other than Google Play. This can include up to 2GB of data.")
 
@@ -181,7 +183,7 @@ init python:
 
         filename = os.path.join(p.path, ".android.json")
 
-        with open(filename, "rb") as f:
+        with open(filename, "r") as f:
             android_json = json.load(f)
 
         old_android_json = dict(android_json)
@@ -202,7 +204,7 @@ init python:
 
         if android_json != old_android_json:
 
-            with open(filename, "wb") as f:
+            with open(filename, "w") as f:
                 json.dump(android_json, f)
 
 
@@ -281,7 +283,8 @@ init python:
                     pass
 
             if opendir:
-                store.OpenDirectory(dir_to_open)()
+                dir_to_open = os.path.join(p.path, dir_to_open)
+                renpy.run(store.OpenDirectory(dir_to_open, absolute=True))
 
 
         with interface.nolinks():
@@ -419,9 +422,9 @@ screen android:
                                 action AndroidIfState(state, ANDROID_OK, AndroidBuild("android_build_install_and_launch"))
                                 hovered tt.Action(BUILD_INSTALL_AND_LAUNCH_TEXT)
 
-#                     add SPACER
-#                     add SEPARATOR2
+                            add SPACER
 
+                            textbutton _("Force Recompile") action DataToggle("force_recompile") style "l_checkbox"
 
 
                 # Right side.
@@ -466,7 +469,9 @@ screen android:
                                 action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_disconnect"))
                                 hovered tt.Action(DISCONNECT_TEXT)
 
-
+                            textbutton _("Clean"):
+                                action AndroidIfState(state, ANDROID_NO_KEY, Jump("android_clean"))
+                                hovered tt.Action(CLEAN_TEXT)
 
                     add SPACER
                     add SEPARATOR2
@@ -610,6 +615,78 @@ label android_disconnect:
         cc = ConsoleCommand()
         cc.add(rapt.plat.adb, "disconnect", host)
         cc.run()
+
+    jump android
+
+label android_clean:
+
+    python hide:
+        import shutil
+        import time
+
+        interface = MobileInterface("android")
+        interface.info(_("Cleaning up Android project."))
+
+        # Get the android json file, for the update_always key.
+        try:
+            filename = os.path.join(project.current.path, ".android.json")
+            with open(filename, "rb") as f:
+                android_json = json.load(f)
+        except Exception:
+            android_json = {}
+
+        # Clean up the files.
+        def clean(path):
+            if os.path.exists(path):
+                shutil.rmtree(path)
+
+        if android_json.get("update_always", True):
+
+            try:
+                with open(rapt.plat.path("project/local.properties"), "r") as f:
+                    local_properties = f.read()
+            except Exception:
+                local_properties = None
+
+            try:
+                with open(rapt.plat.path("project/bundle.properties"), "r") as f:
+                    bundle_properties = f.read()
+            except Exception:
+                bundle_properties = None
+
+            try:
+                with open(rapt.plat.path("project/gradle.properties"), "r") as f:
+                    gradle_properties = f.read()
+            except Exception:
+                gradle_properties = None
+
+            clean(rapt.plat.path("project"))
+
+            if local_properties or bundle_properties or gradle_properties:
+
+                os.mkdir(rapt.plat.path("project"))
+
+            if local_properties:
+
+                with open(rapt.plat.path("project/local.properties"), "w") as f:
+                    f.write(local_properties)
+
+            if bundle_properties:
+
+                with open(rapt.plat.path("project/bundle.properties"), "w") as f:
+                    f.write(bundle_properties)
+
+            if gradle_properties:
+
+                with open(rapt.plat.path("project/gradle.properties"), "w") as f:
+                    f.write(gradle_properties)
+
+        clean(rapt.plat.path("bin"))
+        clean(project.current.temp_filename("android.dist"))
+
+        # This can go really fast, so pause so it looks like something is happening.
+        time.sleep(.5)
+
 
     jump android
 

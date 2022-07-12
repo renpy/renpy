@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional, Callable
 
 import math
@@ -527,7 +528,7 @@ class Layout(object):
             self.reverse = renpy.display.draw.draw_to_virt
             self.forward = renpy.display.draw.virt_to_draw
 
-            self.outline_step = text.style.outline_scaling != "linear"
+            self.outline_step = text.style.outline_scaling == "step"
 
             self.pixel_perfect = True
 
@@ -680,6 +681,8 @@ class Layout(object):
                     textsupport.annotate_unicode(par_glyphs, False, 2)
                 elif language == "japanese-strict":
                     textsupport.annotate_unicode(par_glyphs, False, 3)
+                elif language == "anywhere":
+                    textsupport.annotate_anywhere(par_glyphs)
                 else:
                     raise Exception("Unknown language: {0}".format(language))
 
@@ -772,7 +775,7 @@ class Layout(object):
             maxx = target_x
             y = target_y
 
-            textsupport.offset_glyphs(all_glyphs, 0, int(round(splits_from.baseline * self.oversample)) - find_baseline())
+            textsupport.offset_glyphs(all_glyphs, 0, round(splits_from.baseline * self.oversample) - find_baseline())
 
         # Figure out the size of the texture. (This is a little over-sized,
         # but it simplifies the code to not have to care about borders on a
@@ -925,7 +928,7 @@ class Layout(object):
         if isinstance(n, renpy.display.core.absolute):
             return int(n)
 
-        return int(round(n * self.oversample))
+        return round(n * self.oversample)
 
     def scale_outline(self, n):
         if n is None:
@@ -945,7 +948,7 @@ class Layout(object):
             if n == 0:
                 return 0
 
-            rv = int(round(n * self.oversample))
+            rv = round(n * self.oversample)
 
             if n < 0 and rv > -1:
                 rv = -1
@@ -1492,7 +1495,7 @@ class Text(renpy.display.core.Displayable):
     """
     :name: Text
     :doc: text
-    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, mipmap=None, **properties)
+    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, **properties)
 
     A displayable that displays text on the screen.
 
@@ -1512,6 +1515,14 @@ class Text(renpy.display.core.Displayable):
     `substitute`
         If true, text interpolation occurs. If false, it will not occur. If
         None, they are controlled by :var:`config.new_substitutions`.
+
+    `slow_done`
+        If not None, and if slow text mode is enabled (see the `slow` parameter), this is a
+        function or callable which is called with no arguments when the text finishes displaying.
+
+    `**properties`
+        Like other Displayables, Text takes style properties, including (among many others) the
+        :propref:`mipmap` property.
     """
 
     __version__ = 4
@@ -1987,7 +1998,6 @@ class Text(renpy.display.core.Displayable):
             for i in slow_text:
                 if i.slow:
                     i.call_slow_done(st)
-                    i.slow = False
 
             raise renpy.display.core.IgnoreEvent()
 
@@ -1995,15 +2005,6 @@ class Text(renpy.display.core.Displayable):
 
         if layout is None:
             return
-
-        if self.slow:
-            redraw = layout.redraw_typewriter(st)
-
-            if redraw is None:
-                self.call_slow_done(st)
-                self.slow = False
-            else:
-                renpy.display.render.redraw(self, 0)
 
         for d, xo, yo in self.displayable_offsets:
             rv = d.event(ev, x - xo, y - yo, st)
@@ -2237,9 +2238,9 @@ class Text(renpy.display.core.Displayable):
         # Figure out if we need to redraw or call slow_done.
         if self.slow:
             if redraw is not None:
-                renpy.display.render.redraw(self, redraw)
+                renpy.display.render.redraw(self, max(redraw, 0))
             else:
-                renpy.display.interface.timeout(0)
+                self.call_slow_done(st)
 
         rv.forward = layout.forward
         rv.reverse = layout.reverse
@@ -2279,7 +2280,8 @@ class Text(renpy.display.core.Displayable):
 
         return tokens
 
-    def apply_custom_tags(self, tokens):
+    @staticmethod
+    def apply_custom_tags(tokens):
         """
         Apply new-style custom text tags.
         """

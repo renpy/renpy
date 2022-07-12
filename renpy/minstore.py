@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 xrange = range
 
@@ -144,6 +145,15 @@ def _p(s):
     rv += " ".join(para)
     return rv
 
+def input(*args, **kwargs):
+    """
+    :undocumented:
+    """
+
+    raise Exception("The Python input and raw_input functions do not work with Ren'Py. Please use the renpy.input function instead.")
+
+raw_input = input
+
 
 __all__ = [
     'PY2',
@@ -166,6 +176,7 @@ __all__ = [
     'bord',
     'dict',
     'eval',
+    'input',
     'list',
     'object',
     'open',
@@ -175,6 +186,7 @@ __all__ = [
     'python_object',
     'python_set',
     'range',
+    'raw_input',
     'set',
     'sorted',
     'str',

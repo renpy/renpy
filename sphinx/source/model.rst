@@ -1,3 +1,5 @@
+.. _model:
+
 Model-Based Rendering
 =====================
 
@@ -152,6 +154,11 @@ functions, vertex shade parts, and fragment shader parts. These are, in turn,
 used to generate the source code for shaders, with the parts of the vertex and
 fragement shaders being included in low-number to high-number priority order.
 
+This means that any variable created by one of the shader will be accessible
+by every other fragment from any other shader in the list of shader parts.
+There is no scope like in Python functions to protect interference between
+shaders.
+
 Ren'Py keeps a cache of all combinations of shader parts that have ever been
 used in game/cache/shaders.txt, and loads them at startup. If major changes
 in shader use occur, this file should be edited or deleted so it can be
@@ -203,7 +210,8 @@ each model it is used to render::
         """, vertex_300="""
             v_gradient_done = a_position.x / u_model_size.x;
         """, fragment_300="""
-            gl_FragColor *= mix(u_gradient_left, u_gradient_right, v_gradient_done);
+            float gradient_done = v_gradient_done;
+            gl_FragColor *= mix(u_gradient_left, u_gradient_right, gradient_done);
         """)
 
 The custom shader can then be applied using a transform::
@@ -214,6 +222,11 @@ The custom shader can then be applied using a transform::
         u_gradient_right (0.0, 0.0, 1.0, 1.0)
 
     show eileen happy at gradient
+
+As stated before, the ``gradient_done`` variable from the example.gradient shader
+will be accessible by any and all other shaders applied from the same list. This
+can be useful when having optional parts in a given shader system, but it can also
+lead to name collisions when using two independent shaders.
 
 There is a variable that can help in debugging custom shaders:
 
@@ -252,8 +265,8 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     padding to the right and bottom, while a four component tuple applies
     padding to the left, top, right, and bottom.
 
-    This can be used, in conjunction with the pixel_perfect property, to
-    render text into a mesh. In Ren'Py, text is rendered at the screen
+    This can be used, in conjunction with the ``gl_pixel_perfect`` property,
+    to render text into a mesh. In Ren'Py, text is rendered at the screen
     resoltution, which might overflow the boundaries of the texture that
     will be applied to the mesh. Adding a few pixels of padding makes the
     texture bigger, which will display all pixels. For example::
@@ -282,14 +295,14 @@ Model-Based rendering adds the following properties to ATL and :func:`Transform`
     :default: None
 
     if not None, this should be a string. This string is looked up in
-    :var:`config.gl_blend_func` to  get the value for the gl_blend_func
+    :var:`config.gl_blend_func` to get the value for the gl_blend_func
     property. It's used to use alternate blend modes.
 
     The default blend modes this supports are "normal", "add", "multiply",
     "min", and "max".
 
 
-In addition, uniforms that start with u\_ and not u_renpy are made available
+In addition, uniforms that start with u\_ but not with u_renpy are made available
 as Transform properties. GL properties are made available as transform
 properties starting with gl\_. For example, the color_mask property is made
 available as gl_color_mask.
@@ -299,8 +312,8 @@ Blend Functions
 
 .. var:: config.gl_blend_func = { ... }
 
-    A dictionaryt used to map a blend mode name to a blend function. The
-    blend modes are suppled to the blend func property, given below.
+    A dictionary used to map a blend mode name to a blend function. The
+    blend modes are supplied to the blend func property, given below.
 
 The default blend modes are::
 
@@ -340,9 +353,9 @@ The following uniforms are made available to all Models.
     likelyhood) different from frame to frame.
 
 ``vec4 u_viewport``
-    This gives the current viewport being drawn into. u_viewport.xy is 
+    This gives the current viewport being drawn into. u_viewport.xy is
     are the coordinates of the bottom-left corner of the viewport, relative
-    to the bottom-left corner of the window. u_viewport.pq is the width 
+    to the bottom-left corner of the window. u_viewport.pq is the width
     and height of the viewport.
 
 ``sampler2D tex0``, ``sampler2D tex1``, ``sampler2D tex2``
@@ -419,9 +432,10 @@ The following properties only take effect when a texture is being created,
 by a Transform with :tpref:`mesh` set, or by :func:`Model`, where these
 can be supplied the property method.
 
-``gl_mipmap``
-    If supplied, this determines if the textures supplied to a mesh are
-    created with mipmaps. This defaults to true.
+``gl_drawable_resolution``
+    If true or not set, the texture is rendered at the same resolution
+    as the window displaying the game. If false, it's rendered at the
+    virtual resolution of the displayable.
 
 ``gl_anisotropic``
     If supplied, this determines if the textures applied to a mesh are
@@ -431,6 +445,10 @@ can be supplied the property method.
 
     This defaults to true. Ren'Py sets this to False for certain effects,
     like the Pixellate transition.
+
+``gl_mipmap``
+    If supplied, this determines if the textures supplied to a mesh are
+    created with mipmaps. This defaults to true.
 
 ``gl_texture_wrap``
     When supplied, this determines how the textures applied to a mesh

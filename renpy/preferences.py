@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 
 import copy
@@ -169,6 +170,8 @@ Preference("system_cursor", False)
 # Do we force high contrast text?
 Preference("high_contrast", False)
 
+# Should sound continue playing when the window is minimized?
+Preference("audio_when_minimized", True)
 
 class Preferences(renpy.object.Object):
     """
@@ -216,6 +219,7 @@ class Preferences(renpy.object.Object):
         font_line_spacing = 1.0
         system_cursor = False
         high_contrast = False
+        audio_when_minimized = True
 
     def init(self):
         """
@@ -256,7 +260,7 @@ class Preferences(renpy.object.Object):
         self.init()
 
     def set_volume(self, mixer, volume):
-        if volume != 0:
+        if not renpy.config.preserve_volume_when_muted and volume != 0:
             self.mute[mixer] = False
 
         self.volumes[mixer] = volume
@@ -265,7 +269,7 @@ class Preferences(renpy.object.Object):
         if mixer not in self.volumes:
             return 0.0
 
-        if self.mute.get(mixer, False):
+        if not renpy.config.preserve_volume_when_muted and self.mute.get(mixer, False):
             return 0.0
 
         return self.volumes[mixer]
@@ -273,8 +277,9 @@ class Preferences(renpy.object.Object):
     def set_mute(self, mixer, mute):
         self.mute[mixer] = mute
 
-        if (not mute) and (self.volumes.get(mixer, 1.0) == 0.0):
-            self.volumes[mixer] = 1.0
+        if not renpy.config.preserve_volume_when_muted:
+            if (not mute) and (self.volumes.get(mixer, 1.0) == 0.0):
+                self.volumes[mixer] = 1.0
 
     def get_mute(self, mixer):
         if mixer not in self.volumes:
@@ -283,7 +288,7 @@ class Preferences(renpy.object.Object):
         return self.mute[mixer]
 
     def init_mixers(self):
-        for i in renpy.audio.music.get_all_mixers():
+        for i in renpy.audio.music.get_all_mixers() + ["main"]:
             self.volumes.setdefault(i, 1.0)
             self.mute.setdefault(i, False)
 

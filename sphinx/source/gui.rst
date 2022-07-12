@@ -1083,9 +1083,8 @@ History
 There are a few variables that control the way the history screen
 is displayed.
 
-.. var:: config.history_length = 250
-
-    The number of blocks of dialogue Ren'Py will keep at history.
+The :var:`config.history_length` variable, which defaults to 250,
+sets the number of blocks of dialogue Ren'Py will keep at history.
 
 .. var:: gui.history_height = 210
 

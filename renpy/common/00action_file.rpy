@@ -274,14 +274,15 @@ init -1500 python:
 
         Accesses the Json information associated with `name`.
 
-        If `key` is None, returns the entire Json other object, or `empty` if the slot
-        is empty.
+        This always returns `empty` if the slot is empty.
+
+        If not, and if `key` is None, returns the entire dictionary containing the Json data.
 
         Otherwise, this returns json[key] if `key` is defined on the json object of the save,
-        `missing` if there is a save with the given name, but it does not contain `key`, or
-        `empty` if the save slot is empty.
+        and `missing` if there is a save with the given name, but it does not contain `key`.
 
-        Json is added to a save slot by callbacks registered using :var:`config.save_json_callbacks`.
+        Such Json data is added to a save slot by callbacks registered using
+        :var:`config.save_json_callbacks`.
         """
 
         json = renpy.slot_json(__slotname(name, page, slot))

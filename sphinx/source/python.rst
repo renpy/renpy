@@ -118,7 +118,7 @@ persistent data. ::
 A priority number can be placed between ``init`` and ``python``. When
 a priority is not given, 0 is used. Init statements are run in priority
 order, from lowest to highest. Init statements of the same priority are run in
-Unicode order by filename, and then from top to bottom within a file.
+Unicode order by filepath, and then from top to bottom within a file.
 
 To avoid conflict with Ren'Py, creators should use priorities in the
 range -999 to 999. Priorities of less than 0 are generally used for
@@ -131,6 +131,16 @@ Variables that have their value set in an init python block are not
 saved, loaded, and do not participate in rollback. Therefore, these
 variables should not be changed after init is over.
 
+.. warning::
+
+    Classes created within Ren'py and inheriting nothing or explicitly
+    inheriting ``object``, and subclasses of these classes, do not support
+    ``__slots__``. Trying to do so will misbehave with rollback in older
+    versions of renpy, and will raise errors in newer versions.
+
+    In order to have slotted classes, creators should explicitly subclass
+    ``python_object``, which doesn't support rollback.
+
 .. _define-statement:
 
 Define Statement
@@ -141,13 +151,14 @@ For example::
 
     define e = Character("Eileen")
 
-is equivalent to::
+is equivalent (except for some advantages, see below) to::
 
     init python:
         e = Character("Eileen")
 
 The define statement can take an optional named store (see below), by
-prepending it to the variable name with a dot. For example::
+prepending it to the variable name with a dot. The store is created
+if it doesn't already exist. For example::
 
     define character.e = Character("Eileen")
 
@@ -166,6 +177,9 @@ or operator is generally used to concatenate sets. For example::
 One advantage of using the define statement is that it records the
 filename and line number at which the assignment occurred, and
 makes that available to the navigation feature of the launcher.
+Another advantage is that :ref:`lint` will be able to check defined
+values, for example by detecting whether the same variable is defined
+twice, potentially with different values.
 
 Variables that are defined using the define statement are treated
 as constant, are not saved or loaded, and should not be changed.
@@ -195,10 +209,13 @@ When the variable ``points`` is not defined at game load, it's equivalent to::
         $ points = 0
 
 The default statement can take an optional named store (see below), by
-prepending it to the variable name with a dot. For example::
+prepending it to the variable name with a dot. The store is created
+if it doesn't already exist. For example::
 
     default schedule.day = 0
 
+As for the ``define`` statement, :ref:`lint` offers checks and optimizations
+related to the ``default`` statement.
 
 .. _init-offset-statement:
 
@@ -271,6 +288,8 @@ Named stores can be accessed by supplying the ``in`` clause to
 store. Each store corresponds to a Python module. The default store is
 ``store``, while a named store is accessed as ``store.name``. Names in
 the modules can be imported using the Python ``from`` statement.
+Named stores can be created using ``init python in`` blocks, or using
+default or define statements.
 
 For example::
 
@@ -284,13 +303,21 @@ For example::
             serial_number += 1
             return serial_number
 
+    default character_stats.chloe_substore.friends = {"Eileen",}
+
     label start:
         $ serial = mystore.serial()
 
+        if "Lucy" in character_stats.chloe_substore.friends:
+            chloe "Lucy is my friend !"
+        elif character_stats.chloe_substore.friends:
+            chelo "I have friends, but Lucy is not one of them."
+
 
 Named stores participate in save, load, and rollback in the same way
-that the default store does. The defined statement can be used to
-define names in a named store.
+that the default store does. Special namespaces such as ``persistent``,
+``config``, ``renpy``... do not and never have supported substore creation
+within them.
 
 
 .. _python-modules:

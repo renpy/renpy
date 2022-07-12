@@ -181,8 +181,8 @@ cdef class GL2Draw:
         bound_h = min(visible_h, head_h)
 
         self.info["max_window_size"] = (
-            int(round(min(bound_h * virtual_ar, bound_w))),
-            int(round(min(bound_w / virtual_ar, bound_h))),
+            round(min(bound_h * virtual_ar, bound_w)),
+            round(min(bound_w / virtual_ar, bound_h)),
             )
 
         if (not renpy.mobile) and (not maximized):
@@ -198,8 +198,8 @@ cdef class GL2Draw:
             pwidth, pheight = min(pheight * virtual_ar, pwidth), min(pwidth / virtual_ar, pheight)
 
         # Limit to integers.
-        pwidth = int(round(pwidth))
-        pheight = int(round(pheight))
+        pwidth = round(pwidth)
+        pheight = round(pheight)
 
         # Keep a minimum size.
         pwidth = max(pwidth, 256)
@@ -345,6 +345,9 @@ cdef class GL2Draw:
 
             if renpy.config.gl_resize:
                 window_flags |= pygame.RESIZABLE
+
+        if renpy.config.gl2_modify_window_flags is not None:
+            window_flags = renpy.config.gl2_modify_window_flags(window_flags)
 
         # Select the GL attributes and hints.
         self.select_gl_attributes(gles)

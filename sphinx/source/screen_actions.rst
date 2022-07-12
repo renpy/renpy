@@ -20,8 +20,8 @@ take any arguments. The function is called when the action is
 invoked. If the action returns a value, then the value is returned
 from an interaction.
 
-An action may also be a list of actions, in which case the actions in
-the list are run in order.
+A list of actions can usually be provided in lieu of a single action,
+in which case the actions in the list are run in order.
 
 Control Actions
 ---------------
@@ -62,10 +62,22 @@ take the `name` and `page` arguments.
 
 .. include:: inc/file_action
 
+
+.. _audio-actions:
+
 Audio Actions
 -------------
 
+The concept of channels and how they work, as well as most information
+about audio in Ren'Py, is explained at :ref:`audio`.
+
 .. include:: inc/audio_action
+
+
+Focus Actions
+-------------
+
+.. include:: inc/focus_action
 
 Other Actions
 -------------
@@ -73,6 +85,13 @@ Other Actions
 These are other actions, not found anywhere else.
 
 .. include:: inc/other_action
+
+Additional actions are available in other pages of this documentation, such
+as :class:`Language`, :class:`Replay` and :class:`EndReplay`,
+:class:`gui.SetPreference` and :class:`gui.TogglePreference`,
+:class:`StylePreference`, and the :ref:`voice actions <voice-actions>`.
+
+Other actions can be created using the :class:`Action` class.
 
 
 .. _bar-values:
@@ -83,7 +102,7 @@ Bar Values
 Bar values are used with bars, to set the bar value, and to allow the bar
 to adjust an underlying property. To create a new bar value, subclass
 the :class:`BarValue` class. All classes that have the `step` keyword also accept
-the `force_step` keyword which behavior is described in :func:`ui.adjustment`.
+the `force_step` keyword whose behavior is described in :func:`ui.adjustment`.
 
 .. include:: inc/value
 
@@ -180,6 +199,49 @@ Here's an example::
 
             if tooltip:
                 text "[tooltip]"
+
+The :ref:`sl-nearrect` displayable can be used to display "popup-style" tooltips,
+and has support for a special "tooltip" focus name, that is set to the location
+of the last focus that set a tooltip::
+
+    screen tooltip_example2():
+        frame:
+
+            padding (20, 20)
+            align (.5, .3)
+
+            has vbox
+
+            textbutton "North":
+                action Return("n")
+                tooltip "To meet a polar bear."
+
+            textbutton "South":
+                action Return("s")
+                tooltip "All the way to the tropics."
+
+            textbutton "East":
+                action Return("e")
+                tooltip "So we can embrace the dawn."
+
+            textbutton "West":
+                action Return("w")
+                tooltip "Where to go to see the best sunsets."
+
+        # This has to be the last thing shown in the screen.
+
+        $ tooltip = GetTooltip()
+
+        if tooltip:
+
+            nearrect:
+                focus "tooltip"
+                prefer_top True
+
+                frame:
+                    xalign 0.5
+                    text tooltip
+
 
 .. include:: inc/get_tooltip
 

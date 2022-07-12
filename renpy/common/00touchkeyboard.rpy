@@ -103,7 +103,7 @@ init -1500:
         text_align 0.5
 
     screen _touch_keyboard:
-        zorder 100
+        zorder 1100
         style_prefix "_touch_keyboard"
 
         hbox:

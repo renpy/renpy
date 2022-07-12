@@ -67,8 +67,8 @@ init 1 python in editor:
         ei = EditorInfo(filename)
 
         if ei.name in editors:
-           if editors[ei.name].mtime >= ei.mtime:
-               return
+            if editors[ei.name].mtime >= ei.mtime:
+                return
 
         editors[ei.name] = ei
 
@@ -153,11 +153,18 @@ init 1 python in editor:
         AD2 = _("A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}")
 
         if renpy.windows:
-            installed = os.path.exists(os.path.join(config.basedir, "vscode/VSCode-win32-x64"))
+            installed = os.path.exists(os.path.join(config.renpy_base, "vscode/VSCode-win32-x64"))
         elif renpy.macintosh:
-            installed = os.path.exists(os.path.join(config.basedir, "vscode/Visual Studio Code.app"))
+            installed = os.path.exists(os.path.join(config.renpy_base, "vscode/Visual Studio Code.app"))
         else:
-            installed = os.path.exists(os.path.join(config.basedir, "vscode/VSCode-linux-x64"))
+            if renpy.arch == "aarch64":
+                arch = "arm64"
+            elif renpy.arch == "armv7l":
+                arch = "arm"
+            else:
+                arch = "x86_64"
+
+            installed = os.path.exists(os.path.join(config.renpy_base, "vscode/VSCode-linux-" + arch))
 
         e = FancyEditorInfo(
             0,
@@ -176,35 +183,39 @@ init 1 python in editor:
 
         if renpy.windows:
             dlc = "atom-windows"
-            installed = os.path.exists(os.path.join(config.basedir, "atom/atom-windows"))
+            installed = os.path.exists(os.path.join(config.renpy_base, "atom/atom-windows"))
         elif renpy.macintosh:
             dlc = "atom-mac"
-            installed = os.path.exists(os.path.join(config.basedir, "atom/Atom.app"))
+            installed = os.path.exists(os.path.join(config.renpy_base, "atom/Atom.app"))
         else:
             dlc = "atom-linux"
-            installed = os.path.exists(os.path.join(config.basedir, "atom/atom-linux-" + platform.machine()))
+            installed = os.path.exists(os.path.join(config.renpy_base, "atom/atom-linux-" + platform.machine()))
 
-        e = FancyEditorInfo(
-            1,
-            _("Atom"),
-            AD,
-            dlc,
-            _("Up to 150 MB download required."),
-            None)
+        if not (renpy.arch in [ "aarch64", "armv7l" ]):
 
-        e.installed = e.installed and installed
+            e = FancyEditorInfo(
+                1,
+                _("Atom"),
+                AD,
+                dlc,
+                _("Up to 150 MB download required."),
+                None)
 
-        fei.append(e)
+            e.installed = e.installed and (installed or 'RENPY_ATOM' in os.environ)
+
+            fei.append(e)
 
         # jEdit
-        fei.append(FancyEditorInfo(
-            2,
-            _("jEdit"),
-            _("A mature editor that requires Java."),
-            "jedit",
-            _("1.8 MB download required."),
-            _("This may have occured because Java is not installed on this system."),
-            ))
+        if os.path.exists(os.path.join(config.renpy_base, "jedit")):
+
+            fei.append(FancyEditorInfo(
+                2,
+                _("jEdit"),
+                _("A mature editor that requires Java."),
+                "jedit",
+                _("1.8 MB download required."),
+                _("This may have occured because Java is not installed on this system."),
+                ))
 
         fei.append(FancyEditorInfo(
             3,

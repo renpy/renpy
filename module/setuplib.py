@@ -344,7 +344,7 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
             fn,
             "-o",
             c_fn], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    
+
     stdout, stderr = p.communicate()
 
     with lock:
@@ -375,23 +375,6 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
             ccode = re.sub(r'^__Pyx_PyMODINIT_FUNC PyInit_', '__Pyx_PyMODINIT_FUNC PyInit_' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py3 Cython 0.28+
             ccode = re.sub(r'^PyMODINIT_FUNC init', 'PyMODINIT_FUNC init' + parent_module_identifier + '_', ccode, 0, re.MULTILINE) # Py2 Cython 0.25.2
 
-        cname = "_".join(split_name)
-
-        ccode += """
-static struct _inittab CNAME_inittab[] = {
-#if PY_MAJOR_VERSION < 3
-    { "PYNAME", initCNAME },
-#else
-    { "PYNAME", PyInit_CNAME },
-#endif
-    { NULL, NULL },
-};
-static void CNAME_constructor(void) __attribute__((constructor));
-static void CNAME_constructor(void) {
-    PyImport_ExtendInittab(CNAME_inittab);
-}
-""".replace("PYNAME", name).replace("CNAME", cname)
-
         with open(c_fn, 'w') as f:
             f.write(ccode)
 
@@ -400,7 +383,7 @@ def generate_all_cython():
     Run all of the cython that needs to be generated.
     """
 
-    threads = [ ] 
+    threads = [ ]
 
     for args in generate_cython_queue:
 
@@ -461,7 +444,7 @@ def copyfile(source, dest, replace=None, replace_with=None):
     with open(sfn, "r") as sf:
         data = sf.read()
 
-    if replace:
+    if replace and (replace_with is not None):
         data = data.replace(replace, replace_with)
 
     with open(dfn, "w") as df:

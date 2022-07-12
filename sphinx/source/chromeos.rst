@@ -35,13 +35,18 @@ To install it:
 
 To install a version of Ren'Py, open a terminal and run::
 
-    wget https://www.renpy.org/dl/7.4.0/renpy-7.4.0-sdk.tar.bz2
-    tar xaf renpy-7.4.0-sdk.tar.bz2
+    wget https://www.renpy.org/dl/7.4.0/renpy-7.5.0-sdkarm.tar.bz2
+    tar xaf renpy-7.5.0-sdkarm.tar.bz2
 
 To run that version of Ren'Py, open a terminal and run::
 
-    cd ~/ab/renpy-7.4.0-sdk
+    cd ~/ab/renpy-7.5.0-sdkarm
     ./renpy.sh
 
-Note that this works with other versions of Ren'Py if you change 7.4.0
+Note that this works with other versions of Ren'Py if you change 7.5.0
 for another version.
+
+A SDK installed in this way can be used to run games that do not natively
+support ARM chromebooks on an ARM chromebook. Just unpack the game into
+the projects directory and hit refresh, then launch it through the
+Ren'Py launcher. (The projects directory can be set in preferences.)

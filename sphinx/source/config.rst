@@ -236,6 +236,11 @@ Occasionally Used
     A list of functions that are called (with no arguments) when a load
     occurs.
 
+    If these callbacks change data (for example, migrating data from an
+    old version of the game), :func:`renpy.block_rollback` should be
+    called to prevent the player from rolling back and reverting
+    the changes.
+
 .. var:: config.after_replay_callback = None
 
     If not None, a function that is called with no arguments after a
@@ -244,6 +249,13 @@ Occasionally Used
 .. var:: config.allow_underfull_grids = False
 
     If True, Ren'Py will not require grids to be full in order to display.
+
+.. var:: config.always_shown_screens = [ ]
+
+    A list of names of screens that Ren'Py will always show, even in menus,
+    and when the interface is hidden. This is mostly used by Ren'Py, which
+    assumes this will be a list. The :var:`config.overlay_screens` list is
+    usually more appropriate.
 
 .. var:: config.audio_filename_callback = None
 
@@ -593,6 +605,13 @@ Occasionally Used
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
 
+.. var:: config.lint_character_statistics = True
+
+    If true, and :var:`config.developer` is true, the lint report will include
+    statistics about the number of dialogue blocks spoken for each character.
+    The chanracter statistics are disabled when the game is packaged, to
+    prevent spoilers.
+
 .. var:: config.load_failed_label = None
 
     If a string, this is a label that is jumped to when a load fails because
@@ -712,10 +731,9 @@ Occasionally Used
     cursor, and so should probably be a :func:`MouseDisplayable`
     or something very similar.
 
-.. var:: config.narrator_menu = False
+.. var:: config.narrator_menu = True
 
-    (This is set to True by the default screens.rpy file.) If true,
-    then narration inside a menu is displayed using the narrator
+    If true, narration inside a menu is displayed using the narrator
     character. Otherwise, narration is displayed as captions
     within the menu itself.
 
@@ -759,6 +777,12 @@ Occasionally Used
     A list of the names of TrueType and OpenType fonts that Ren'Py should
     load when starting up. Including the name of a font here can prevent
     Ren'Py from pausing when introducing a new typeface.
+
+.. var:: config.preserve_volume_when_muted = False
+
+    If False, the default, the volume of channels are shown as 0 and
+    changing it disables mute when the channel is mute.
+    Otherwise, It is shown and adjustable while keeping mute.
 
 .. var:: config.python_callbacks = [ ]
 
@@ -836,6 +860,19 @@ Occasionally Used
     The dictionary passed to the callbacks may have already have keys
     beginning with an underscore ``_``. These keys are used by Ren'Py,
     and should not be changed.
+
+    For example::
+
+        init python:
+            def jsoncallback(d):
+                d["playername"] = player_name
+
+            config.save_json_callback.append(jsoncallback)
+
+    ``FileJson(slot)`` and ``renpy.slot_json(slot)`` will recover the state
+    of the ``d`` dict-like object as it was at the moment the game was saved.
+    The value of the ``player_name`` variable at the moment the game was saved
+    is also accessible by ``FileJson(slot, "playername")``.
 
 .. var:: config.say_arguments_callback = None
 
@@ -935,6 +972,21 @@ Occasionally Used
     play back text-to-speech for self voicing. The possible choices are
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
+
+.. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mp3" ]
+
+    When running on the web platform, Ren'Py will check the browser to
+    see if it can play audio files of these mime types. If the browser
+    can, it is used to play the files. If not, a slower and potentially skip
+    prone wasm decoder is used.
+
+    By default, the browser's web audio system is used on Chrome and Firefox,
+    and wasm is used on safari. If your game only uses mp3 audio, this can
+    be changed using ::
+
+        define config.webaudio_required_types = [ "audio/mp3" ]
+
+    To used the faster web audio system on Safari as well.
 
 .. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu', "say-centered" ]
 
@@ -1087,9 +1139,30 @@ Rarely or Internally Used
     If True, Ren'Py will autosave when the user inputs text.
     (When :func:`renpy.input` is called.)
 
+.. var:: config.call_screen_roll_forward = False
+
+    The value is used when the `roll_forward` property of
+    a screen is None.
+
 .. var:: config.character_callback = None
 
     The default value of the callback parameter of Character.
+
+.. var:: config.choice_empty_window = None
+
+    If not None, and a choice menu (usually invoked with the ``menu``
+    statement) does not have a caption, this function is called with
+    the arguments ("", interact=False).
+
+    The expected use of this is::
+
+        define config.choice_empty_window = extend
+
+    Doing this displays repeats the last line of dialogue as the
+    caption of the menu, if no other caption is given.
+
+    Other implementations are possible, but it's assumed that this will
+    always display a dialogue window.
 
 .. var:: config.choice_layer = "screens"
 
@@ -1241,6 +1314,12 @@ Rarely or Internally Used
     If a layer is not mentioned in config.layer_clipping, then it is
     assumed to take up the full screen.
 
+.. var:: config.layeredimage_offer_screen = True
+
+    This variable sets the default value for the ``offer_screen`` property
+    of layeredimages. See :ref:`the related section <layeredimage-statement>`
+    for more information.
+
 .. var:: config.layers = [ 'master', 'transient', 'screens', 'overlay' ]
 
     This variable gives a list of all of the layers that Ren'Py knows
@@ -1294,6 +1373,11 @@ Rarely or Internally Used
     If not None, this is expected to be a filename. Much of the text
     shown to the user by :ref:`say <say-statement>` or :ref:`menu
     <menu-statement>` statements will be logged to this file.
+
+.. var:: config.main_menu_stop_channels = [ "movie", "sound", "voice" ]
+
+    A list of channels that are stopped when entering or returning to the
+    main menu.
 
 .. var:: config.mipmap_dissolves = False
 
@@ -1362,6 +1446,16 @@ Rarely or Internally Used
     If True, Ren'Py will apply old-style (percent) substitutions to
     text displayed by the :ref:`say <say-statement>` and :ref:`menu
     <menu-statement>` statements.
+
+.. var:: config.open_file_encoding = False
+
+    If not False, this is the encoding that :func:`renpy.open_file` uses
+    when its `encoding` parameter is none. This is mostly used when porting
+    Python 2 games that used :func:`renpy.file` extensively to Python 3,
+    to have those files open as text by default.
+
+    This gets its default value from the RENPY_OPEN_FILE_ENCODING
+    environment variable.
 
 .. var:: config.overlay_during_with = True
 
@@ -1495,10 +1589,10 @@ Rarely or Internally Used
 
 .. var:: config.scene = renpy.scene
 
-    A function that's used in place of renpy.scene by the :ref:`scene
+    A function that's used in place of :func:`renpy.scene` by the :ref:`scene
     statement <scene-statement>`. Note that this is used to clear the screen,
-    and config.show is used to show a new image. This should have the same
-    signature as renpy.scene.
+    and :var:`config.show` is used to show a new image. This should have the same
+    signature as :func:`renpy.scene`.
 
 .. var:: config.screenshot_callback = ...
 
@@ -1548,9 +1642,9 @@ Rarely or Internally Used
 
 .. var:: config.show = renpy.show
 
-    A function that is used in place of renpy.show by the :ref:`show
+    A function that is used in place of :func:`renpy.show` by the :ref:`show
     <show-statement>` and :ref:`scene <scene-statement>` statements. This
-    should have the same signature as renpy.show.
+    should have the same signature as :func:`renpy.show`.
 
 .. var:: config.skip_delay = 75
 
@@ -1645,9 +1739,12 @@ Rarely or Internally Used
     If not None, this should be a function that is called when a :ref:`with
     statement <with-statement>` occurs. This function can be responsible for
     putting up transient things on the screen during the transition. The
-    function is called with a single argument, which is the transition that
-    is occurring. It is expected to return a transition, which may or may not
-    be the transition supplied as its argument.
+    function is called with two arguments: the transition that is occurring,
+    and the transition it is paired with. The latter is None except in the case
+    of the implicit None transition produced by an inline with statement, in
+    which case it is the inline transition that produced the with None. It is
+    expected to return a transition, which may or may not be the transition
+    supplied as its argument.
 
 
 Garbage Collection
@@ -1684,3 +1781,55 @@ Ren'Py management of the Python garbage collector.
 
     If True, Ren'Py will print to its console and logs information about the
     objects that are triggering collections.
+
+Other Configuration Variables
+-----------------------------
+
+Some other pages of this documentation contain and define other configuration
+variables. You can locate them there, in their context.
+
+:ref:`nvl-mode`:
+    :var:`config.nvl_layer`
+    :var:`config.nvl_list_length`
+    :var:`config.nvl_page_ctc`
+    :var:`config.nvl_page_ctc_position`
+    :var:`config.nvl_paged_rollback`
+
+:ref:`side-images`:
+    :var:`config.side_image_tag`
+    :var:`config.side_image_only_not_showing`
+    :var:`config.side_image_prefix_tag`
+    :var:`config.side_image_null`
+    :var:`config.side_image_same_transform`
+    :var:`config.side_image_change_transform`
+
+:ref:`self-voicing`:
+    :var:`config.descriptive_text_character`
+
+:ref:`preference-variables`:
+    :var:`config.default_music_volume`
+    :var:`config.default_sfx_volume`
+    :var:`config.default_voice_volume`
+
+:ref:`model`:
+    :var:`config.gl2`
+    :var:`config.log_gl_shaders`
+    :var:`config.gl_blend_func`
+
+:ref:`achievement`:
+    :var:`config.steam_appid`
+
+:ref:`gesture`:
+    :var:`config.gestures`
+    :var:`config.dispatch_gesture`
+
+:ref:`live2d`:
+    :var:`config.log_live2d_loading`
+
+:ref:`gui`:
+    :var:`config.thumbnail_height`
+    :var:`config.thumbnail_width`
+
+:ref:`custom-text-tags`:
+    :var:`config.custom_text_tags`
+    :var:`config.self_closing_custom_text_tags`

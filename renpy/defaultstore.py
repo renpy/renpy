@@ -20,7 +20,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 from renpy.minstore import *
 
@@ -321,6 +322,7 @@ def AlphaBlend(control, old, new, alpha=False):
 def At(d, *args):
     """
     :doc: disp_at
+    :name: At
 
     Given a displayable `d`, applies each of the transforms in `args`
     to it. The transforms are applied in left-to-right order, so that

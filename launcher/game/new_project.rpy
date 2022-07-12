@@ -74,11 +74,11 @@ label new_project:
                 cancel=Jump("front_page"),
                 )
         else:
-            new_project_language = (_preferences.language or "english").title()
+            new_project_language = __("{#language name and font}")
             gui_kind = "new_gui_project"
 
             # When translating this, feel free to replace [new_project_language] with the translation of your language.
-            interface.info(_("You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."))
+            interface.info(_("You will be creating an [new_project_language]{#this substitution may be localized} language project. Change the launcher language in preferences to create a project in another language."), cancel=Jump("front_page"))
 
     python:
         project_name = ""

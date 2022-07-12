@@ -33,6 +33,7 @@ fields = [
     "xdz", "ydz", "zdz", "wdz",
     "xdw", "ydw", "zdw", "wdw",
     ]
+# not the same as documented
 
 cdef inline bint absne(float a, float b):
     return abs(a - b) > .0001
@@ -135,6 +136,8 @@ cdef class Matrix:
         for i in range(16):
             rv[fields[i]] = self.m[i]
 
+        rv["origin"] = getattr(self, "origin", None)
+
         return rv
 
     def __setstate__(self, state):
@@ -147,6 +150,8 @@ cdef class Matrix:
         for i in range(16):
             if fields[i] in state:
                 self.m[i] = state[fields[i]]
+
+        self.origin = state.get("origin", None)
 
     def __mul__(Matrix self, Matrix other):
 
@@ -174,19 +179,6 @@ cdef class Matrix:
 
         return rv
 
-    def __getitem__(Matrix self, int index):
-        if 0 <= index < 16:
-            return self.m[index]
-
-        raise IndexError("Matrix index out of range.")
-
-    def __setitem__(Matrix self, int index, float value):
-        if 0 <= index < 16:
-            self.m[index] = value
-            return
-
-        raise IndexError("Matrix index out of range.")
-
     def __repr__(Matrix self):
         cdef int x, y
 
@@ -196,7 +188,7 @@ cdef class Matrix:
             if y:
                 rv += "\n        "
             for 0 <= x < 4:
-                rv += "{:10.7f}, ".format(self.m[x + y * 4])
+                rv += "{:10.7f}, ".format(self.m[x * 4 + y])
 
         return rv + "])"
 

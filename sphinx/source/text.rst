@@ -54,6 +54,11 @@ ensure that their writing is not accidentally misinterpreted by the engine.
     \\\\ (backslash-backslash)
         Includes a backslash character in the text.
 
+    \\% (backslash-percent)
+        Includes a protected percent character in the text. It's also
+        possible to write it as %% : both protections will result in a
+        single % character being written in the end.
+
 [ (left bracket)
     The left bracket is used to introduce interpolation of a value
     into the text. To include a single left bracket in your text,
@@ -123,6 +128,23 @@ The ``!u`` flag forces the text to uppercase and the ``!l`` flag forces the
 text to lowercase. The ``!c`` flag acts only on the first character,
 capitalizing it. These flags may be combined, for example using ``!cl`` would
 capitalize the first character, and force the remaining text to lowercase.
+
+It should be noted that:
+
+- the order in which the flags are given does not change the result : ``!cl``
+  will do just the same as ``!lc``.
+- Supplementarly exclamation marks will be ignored, and will not circumvent
+  the previuous rule : ``!l!c`` will do the same as ``!c!l`` or ``!cl``.
+
+The transformations are done in the following order:
+
+#. ``r``/``s`` (repr or str)
+#. ``t`` (translate)
+#. ``i`` (recursive interpolation)
+#. ``q`` (quoting)
+#. ``u`` (uppercase)
+#. ``l`` (lowercase)
+#. ``c`` (capitalize)
 
 
 Styling and Text Tags
@@ -223,7 +245,7 @@ Tags that apply to all text are:
 
 .. text-tag:: alt
 
-    The alt tag prevents text from being rendered, while still maing the
+    The alt tag prevents text from being rendered, while still making the
     text available for the text-to-speech system. ::
 
        g "Good to see you! {image=heart.png}{alt}heart{/alt}"

@@ -23,7 +23,8 @@
 # up a rectangular area of the screen, and do not respond to input.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import renpy
 from renpy.display.render import render, Render
@@ -563,6 +564,10 @@ class Frame(renpy.display.core.Displayable):
         rv.image = image
         rv._duplicatable = image._duplicatable
         return rv
+
+    def _unique(self):
+        self.image._unique()
+        self._duplicatable = False
 
     def _in_current_store(self):
         image = self.image._in_current_store()

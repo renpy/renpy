@@ -96,12 +96,14 @@ init -1500 python in build:
         ( "renpy/", "all"),
         ( "renpy/**.py", "renpy"),
 
-        ( "renpy/**.pyx", None),
-        ( "renpy/**.pyd", None),
+        # Ignore Cython source files.
+        ( "renpy/**.pxd", None),
         ( "renpy/**.pxi", None),
+        ( "renpy/**.pyx", None),
+
+        # Ignore legacy Python bytcode files (unless allowed above).
         ( "renpy/**.pyc", None),
         ( "renpy/**.pyo", None),
-        ( "renpy/**.pyi", None),
 
         ( "renpy/common/", "all"),
         ( "renpy/common/_compat/**", "renpy"),
@@ -125,6 +127,8 @@ init -1500 python in build:
 
         # Linux patterns.
         ( "lib/py*-linux-i686/**", "linux_i686"),
+        ( "lib/py*-linux-aarch64/**", "linux_arm"),
+        ( "lib/py*-linux-armv7l/**", "linux_arm"),
         ( "lib/py*-linux-*/**", "linux"),
 
         # Mac patterns.
@@ -219,7 +223,11 @@ init -1500 python in build:
         """
         :doc: build
 
-        Classifies files that match `pattern` into `file_list`.
+        Classifies files that match `pattern` into `file_list`, which can
+        also be an archive name.
+
+        If the name given as `file_list` doesn't exist as an archive or file
+        list name, it is created and added to the set of valid file lists.
         """
 
         base_patterns.append((pattern, make_file_lists(file_list)))
@@ -238,7 +246,7 @@ init -1500 python in build:
         Removes the pattern from the list.
         """
 
-        l[:] = [ (p, fl) for i in l if p != pattern ]
+        l[:] = [ (p, fl) for p, fl in l if p != pattern ]
 
     # Archiving.
 
@@ -248,9 +256,23 @@ init -1500 python in build:
         """
         :doc: build
 
-        Declares the existence of an archive. If one or more files are
-        classified with `name`, `name`.rpa is build as an archive. The
-        archive is included in the named file lists.
+        Declares the existence of an archive, whose `name` is added to the
+        list of available archive names, which can be passed to
+        :func:`build.classify`.
+
+        If one or more files are classified with `name`, `name`.rpa is
+        built as an archive, and then distributed in packages including
+        the `file_list` given here. ::
+
+            build.archive("secret", "windows")
+
+        If any file is included in the "secret" archive using the
+        :func:`build.classify` function, the file will be included inside
+        the secret.rpa archive in the windows builds.
+
+        As with the :func:`build.classify` function, if the name given as
+        `file_list` doesn't exist as a file list name, it is created and
+        added to the set of valid file lists.
         """
 
         archives.append((name, make_file_lists(file_list)))
@@ -323,13 +345,19 @@ init -1500 python in build:
                 A directory containing the mac app.
             app-dmg
                 A macintosh drive image containing a dmg. (Mac only.)
+            bare-zip
+                A zip file without :var:`build.directory_name`
+                prepended.
+            bare-tar.bz2
+                A zip file without :var:`build.directory_name`
+                prepended.
 
             The empty string will not build any package formats (this
             makes dlc possible).
 
         `file_lists`
-            A list containing the file lists that will be contained
-            within the package.
+            A list containing the file lists that will be included
+            in the package.
 
         `description`
             An optional description of the package to be built.
@@ -350,7 +378,7 @@ init -1500 python in build:
         formats = format.split()
 
         for i in formats:
-            if i not in [ "zip", "app-zip", "tar.bz2", "directory", "dmg", "app-directory", "app-dmg" ]:
+            if i not in [ "zip", "app-zip", "tar.bz2", "directory", "dmg", "app-directory", "app-dmg", "bare-zip", "bare-tar.bz2" ]:
                 raise Exception("Format {} not known.".format(i))
 
         if description is None:
@@ -366,13 +394,16 @@ init -1500 python in build:
             "hidden" : hidden,
             }
 
+        global packages
+        packages = [ i for i in packages if i["name"] != name ]
+
         packages.append(d)
 
     package("pc", "zip", "windows linux renpy all", "PC: Windows and Linux")
-    package("linux", "tar.bz2", "linux renpy all", "Linux")
+    package("linux", "tar.bz2", "linux linux_arm renpy all", "Linux")
     package("mac", "app-zip app-dmg", "mac renpy all", "Macintosh")
     package("win", "zip", "windows renpy all", "Windows")
-    package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
+    package("market", "bare-zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
     package("steam", "zip", "windows linux mac renpy all", hidden=True)
     package("android", "directory", "android all", hidden=True, update=False, dlc=True)
     package("ios", "directory", "ios all", hidden=True, update=False, dlc=True)
@@ -453,6 +484,9 @@ init -1500 python in build:
     # A list of additional android permission names.
     android_permissions = [ ]
 
+    # Should the sdk-fonts directory be renamed to game?
+    _sdk_fonts = False
+
     # This function is called by the json_dump command to dump the build data
     # into the json file.
     def dump():
@@ -531,6 +565,8 @@ init -1500 python in build:
         rv["change_icon_i686"] = change_icon_i686
 
         rv["android_permissions"] = android_permissions
+
+        rv["_sdk_fonts"] = _sdk_fonts
 
         return rv
 

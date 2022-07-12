@@ -48,10 +48,10 @@ cdef class Glyph:
 
         # Controls splitting of this glyph, based on where we are in the
         # the line.
-        split_t split
+        public split_t split
 
         # Is this ruby or not?
-        ruby_t ruby
+        public ruby_t ruby
 
         # The ascent and spacing of the font.
         public short ascent

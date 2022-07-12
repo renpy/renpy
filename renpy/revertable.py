@@ -24,7 +24,8 @@
 # game state to some time in the past.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 from typing import Optional
 
 import __future__
@@ -71,10 +72,18 @@ copyreg._reconstructor = _reconstructor # type: ignore
 # this to check to see if a background-save is valid.
 mutate_flag = True
 
+# In Python 2 functools.wraps does not check for the existence of WRAPPER_ASSIGNMENTS elements,
+# so for the C-defined methods we have AttributeError: 'method_descriptor' object has no attribute '__module__'.
+# To work around this, we only keep attributes that surely exist.
+if PY2:
+    def _method_wrapper(method):
+        return functools.wraps(method, ("__name__", "__doc__"), ())
+else:
+    _method_wrapper = functools.wraps # type: ignore
 
 def mutator(method):
 
-    @functools.wraps(method, ("__name__", "__doc__"), ())
+    @_method_wrapper(method)
     def do_mutation(self, *args, **kwargs):
 
         global mutate_flag
@@ -191,6 +200,7 @@ class RevertableList(list):
 
     def wrapper(method): # type: ignore
 
+        @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             l = method(*args, **kwargs) # type: ignore
             return RevertableList(l)
@@ -320,6 +330,9 @@ class RevertableDict(dict):
         iterkeys = dict.keys
         iteritems = dict.items
 
+        def has_key(self, key):
+            return (key in self)
+
     def copy(self):
         rv = RevertableDict()
         rv.update(self)
@@ -379,9 +392,10 @@ class RevertableSet(set):
 
     def wrapper(method): # type: ignore
 
+        @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             rv = method(*args, **kwargs) # type: ignore
-            if isinstance(rv, (set, frozenset)):
+            if isinstance(rv, set):
                 return RevertableSet(rv)
             else:
                 return rv
@@ -412,6 +426,12 @@ class RevertableSet(set):
 
 
 class RevertableObject(object):
+    # All RenPy's objects have  __dict__, so _rollback is fast, i.e
+    # one update, not iterating over all attributes.
+    # __weakref__ should exist, so mutator can work.
+    # Other slots are forbidden because they cannot be reverted in easy way.
+    # For more details, see https://github.com/renpy/renpy/pull/3282
+    # __slots__ = ("__weakref__", "__dict__")
 
     def __new__(cls, *args, **kwargs):
         self = super(RevertableObject, cls).__new__(cls)
@@ -426,14 +446,13 @@ class RevertableObject(object):
         if (args or kwargs) and renpy.config.developer:
             raise TypeError("object() takes no parameters.")
 
-    def __setattr__(self, attr, value):
-        object.__setattr__(self, attr, value)
+    def __init_subclass__(cls):
+        if renpy.config.developer and "__slots__" in cls.__dict__:
+            raise TypeError("Classes with __slots__ do not support rollback."
+                            "To create a class with slots, inherit from python_object instead.")
 
-    def __delattr__(self, attr):
-        object.__delattr__(self, attr)
-
-    __setattr__ = mutator(__setattr__) # type: ignore
-    __delattr__ = mutator(__delattr__) # type: ignore
+    __setattr__ = mutator(object.__setattr__) # type: ignore
+    __delattr__ = mutator(object.__delattr__) # type: ignore
 
     def _clean(self):
         return self.__dict__.copy()
@@ -444,6 +463,18 @@ class RevertableObject(object):
     def _rollback(self, compressed):
         self.__dict__.clear()
         self.__dict__.update(compressed)
+
+
+def checkpointing(method):
+
+    @_method_wrapper(method)
+    def do_checkpoint(self, *args, **kwargs):
+
+        renpy.game.context().force_checkpoint = True
+
+        return method(self, *args, **kwargs)
+
+    return do_checkpoint
 
 
 class RollbackRandom(random.Random):
@@ -468,14 +499,14 @@ class RollbackRandom(random.Random):
     def _rollback(self, compressed):
         super(RollbackRandom, self).setstate(compressed)
 
-    setstate = mutator(random.Random.setstate)
+    setstate = checkpointing(mutator(random.Random.setstate))
 
     if PY2:
-        jumpahead = mutator(random.Random.jumpahead) # type: ignore
+        jumpahead = checkpointing(mutator(random.Random.jumpahead)) # type: ignore
 
-    getrandbits = mutator(random.Random.getrandbits)
-    seed = mutator(random.Random.seed) # type: ignore
-    random = mutator(random.Random.random)
+    getrandbits = checkpointing(mutator(random.Random.getrandbits))
+    seed = checkpointing(mutator(random.Random.seed)) # type: ignore
+    random = checkpointing(mutator(random.Random.random))
 
     def Random(self, seed=None):
         """
@@ -488,7 +519,6 @@ class RollbackRandom(random.Random):
         new = RollbackRandom()
         new.seed(seed)
         return new
-
 
 class DetRandom(random.Random):
     """
@@ -510,6 +540,8 @@ class DetRandom(random.Random):
 
         if log.current is not None:
             log.current.random.append(rv)
+
+        renpy.game.context().force_checkpoint = True
 
         return rv
 

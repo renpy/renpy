@@ -22,8 +22,9 @@
 # This module contains the parser for the Ren'Py script language. It's
 # called when parsing is necessary, and creates an AST from the script.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 import codecs
 import re
@@ -170,22 +171,36 @@ def elide_filename(fn):
     or relative to the Ren'Py directory.
     """
 
-    original_fn = fn
     fn = fn.replace("\\", "/")
 
-    for d in [ renpy.config.basedir, renpy.config.renpy_base ]:
-        d = os.path.abspath(d).replace("\\", "/") + "/"
+    basedir = os.path.abspath(renpy.config.basedir).replace("\\", "/") + "/"
+    renpy_base = os.path.abspath(renpy.config.renpy_base).replace("\\", "/") + "/"
+
+    # This is SDK inside the project, for some reason, or it is the same path
+    if renpy_base.startswith(basedir):
+        dirs = [renpy_base, basedir]
+
+    # This is a projects dir inside SDK or it's different paths
+    else:
+        dirs = [basedir, renpy_base]
+
+    for d in dirs:
         if fn.startswith(d):
             rv = fn[len(d):]
             break
     else:
-        rv = original_fn.replace("\\", "/")
+        rv = fn
 
     return rv
 
 
 def unelide_filename(fn):
     fn = os.path.normpath(fn)
+
+    if renpy.config.alternate_unelide_path is not None:
+        fn0 = os.path.join(renpy.config.alternate_unelide_path, fn)
+        if os.path.exists(fn0):
+            return fn0
 
     fn1 = os.path.join(renpy.config.basedir, fn)
     if os.path.exists(fn1):
@@ -489,7 +504,7 @@ def group_logical_lines(lines):
                 depth = line_depth
 
             if depth != line_depth:
-                raise ParseError(filename, number, "indentation mismatch.")
+                raise ParseError(filename, number, "Indentation mismatch.")
 
             # Advance to the next line.
             i += 1
@@ -500,6 +515,13 @@ def group_logical_lines(lines):
             rv.append((filename, number, rest, block))
 
         return rv, i
+
+    if lines:
+
+        filename, number, text = lines[0]
+
+        if depth_split(text)[0] != 0:
+            raise ParseError(filename, number, "Unexpected indentation at start of file.")
 
     return gll_core(0, 0)[0]
 
@@ -734,6 +756,9 @@ class Lexer(object):
         Convenience function for reporting a parse error at the current
         location.
         """
+
+        if (self.line == -1) and self.block:
+            self.filename, self.number, self.text, self.subblock = self.block[0]
 
         raise ParseError(self.filename, self.number, msg, self.text, self.pos)
 
@@ -1064,8 +1089,8 @@ class Lexer(object):
         old_pos = self.pos
         c = self.text[self.pos]
 
-        # Allow unicode and raw strings.
-        for mod in ('u', 'r'):
+        # Allow unicode, raw, and formatted strings.
+        for mod in ('u', 'r', 'f'):
             if c != mod:
                 continue
 
@@ -1284,7 +1309,7 @@ class Lexer(object):
         passed to revert to back the lexer up.
         """
 
-        return self.line, self.filename, self.number, self.text, self.subblock, self.pos
+        return self.line, self.filename, self.number, self.text, self.subblock, self.pos, renpy.ast.PyExpr.checkpoint()
 
     def revert(self, state):
         """
@@ -1292,7 +1317,10 @@ class Lexer(object):
         by a previous checkpoint operation on this lexer.
         """
 
-        self.line, self.filename, self.number, self.text, self.subblock, self.pos = state
+        self.line, self.filename, self.number, self.text, self.subblock, self.pos, pyexpr_checkpoint = state
+
+        renpy.ast.PyExpr.revert(pyexpr_checkpoint)
+
         self.word_cache_pos = -1
         if self.line < len(self.block):
             self.eob = False
@@ -1639,7 +1667,15 @@ def parse_menu(stmtl, loc, arguments):
         state = l.checkpoint()
 
         who = l.simple_expression()
-        what = l.string()
+
+        attributes = say_attributes(l)
+
+        if l.match(r'\@'):
+            temporary_attributes = say_attributes(l)
+        else:
+            temporary_attributes = None
+
+        what = l.triple_string() or l.string()
 
         if who is not None and what is not None:
 
@@ -1649,7 +1685,7 @@ def parse_menu(stmtl, loc, arguments):
             if say_ast:
                 l.error("Only one say menuitem may exist per menu.")
 
-            say_ast = finish_say(l, l.get_location(), who, what, interact=False)
+            say_ast = finish_say(l, l.get_location(), who, what, attributes, temporary_attributes, interact=False)
 
             l.expect_eol()
             l.expect_noblock("say menuitem")
@@ -1775,7 +1811,7 @@ def parse_parameters(l):
             l.match(r',')
 
             # extrakw is always last parameter
-            if not l.match('\)'):
+            if not l.match(r'\)'):
                 l.error("arguments cannot follow var-keyword argument")
 
             break
@@ -1825,6 +1861,8 @@ def parse_parameters(l):
                 l.skip_whitespace()
                 annotation = l.require(l.delimited_python("=,)"))
 
+            default = None
+
             if l.match(r'='):
                 l.skip_whitespace()
                 default = l.delimited_python("),")
@@ -1835,9 +1873,6 @@ def parse_parameters(l):
 
             elif first_kwonly is None and has_default:
                 l.error("non-default argument follows default argument")
-
-            else:
-                default = None
 
             name_parsed(name, default)
             parameters.append((name, default))
@@ -2533,29 +2568,15 @@ def rpy_statement(l, loc):
     return [ ]
 
 
-def screen1_statement(l, loc):
+@statement("screen")
+def screen_statement(l, loc):
 
-    # The guts of screen language parsing is in screenlang.py. It
-    # assumes we ate the "screen" keyword before it's called.
-    screen = renpy.screenlang.parse_screen(l)
+    slver = l.integer()
+    if slver is not None:
+        screen_language = int(slver)
+        if screen_language < 0 or screen_language > 2:
+            l.error("Bad screen language version.")
 
-    l.advance()
-
-    if not screen:
-        return [ ]
-
-    rv = ast.Screen(loc, screen)
-
-    if not l.init:
-        rv = ast.Init(loc, [ rv ], -500 + l.init_offset)
-
-    return rv
-
-
-def screen2_statement(l, loc):
-
-    # The guts of screen language parsing is in screenlang.py. It
-    # assumes we ate the "screen" keyword before it's called.
     screen = renpy.sl2.slparser.parse_screen(l, loc)
 
     l.advance()
@@ -2566,27 +2587,6 @@ def screen2_statement(l, loc):
         rv = ast.Init(loc, [ rv ], -500 + l.init_offset)
 
     return rv
-
-
-# The version of screen language to use by default.
-default_screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "2"))
-
-
-@statement("screen")
-def screen_statement(l, loc):
-
-    screen_language = default_screen_language
-
-    slver = l.integer()
-    if slver is not None:
-        screen_language = int(slver)
-
-    if screen_language == 1:
-        return screen1_statement(l, loc)
-    elif screen_language == 2:
-        return screen2_statement(l, loc)
-    else:
-        l.error("Bad screen language version.")
 
 
 @statement("testcase")
@@ -3084,7 +3084,7 @@ def report_parse_errors():
 
     try:
         if renpy.game.args.command == "run": # type: ignore
-            renpy.exports.launch_editor([ error_fn ], 1, transient=1)
+            renpy.exports.launch_editor([ error_fn ], 1, transient=True)
     except Exception:
         pass
 

@@ -96,7 +96,7 @@ def tokenize(unicode s):
     cdef int TAG_STATE = 3
     cdef int state = TEXT_STATE
 
-    cdef Py_UNICODE c
+    cdef Py_UCS4 c
     cdef unicode buf = u''
 
     cdef list rv = [ ]
@@ -178,6 +178,25 @@ def annotate_western(list glyphs):
             g.split = SPLIT_INSTEAD
         else:
             g.split = SPLIT_NONE
+
+
+def annotate_anywhere(list glyphs):
+    """
+    allow all characters without ruby to be used for linebreaking.
+    """
+
+    cdef Glyph g
+
+    for g in glyphs:
+
+        # Don't split ruby.
+        if g.ruby != RUBY_NONE:
+            continue
+
+        if g.character == 0x20 or g.character == 0x200b:
+            g.split = SPLIT_INSTEAD
+        else:
+            g.split = SPLIT_BEFORE
 
 # This is used to tailor the unicode break algorithm. If a character in this
 # array is mapped to not
@@ -1007,3 +1026,5 @@ def offset_glyphs(list glyphs, short x, short y):
     for g in glyphs:
         g.x += x
         g.y += y
+
+"This exists to force a recompile for Ren'Py 8.0.2 and 7.5.2."

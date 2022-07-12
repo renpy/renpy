@@ -36,6 +36,14 @@ VP9, VP8, or Theora; Opus or Vorbis; and WebM, Matroska, or Ogg.)
 Movies can be displayed fullscreen or in a displayable. Fullscreen movies
 are more efficient.
 
+Ren'Py's movie decoder does not support movies with alpha channels, but the
+`side_mask` parameter of the :func:`Movie` displayable can be used for that
+purpose. Here is an example of hhow to use ffmpeg to create a webm file with
+a side-by-side mask from a mov file with an alpha channel. ::
+
+        ffmpeg -i original.mov -filter:v alphaextract mask.mov
+        ffmpeg -i original.mov -i mask.mov -filter_complex "hstack" -codec:v vp8 -crf 10 output.webm
+
 Movies are not supported on the Web platform.
 
 
@@ -70,21 +78,9 @@ channel, with white being full opacity and black being full transparency.
 
 Movies played by the Movie displayable loop automatically.
 
-A Movie takes two parameters:
-
-`play`
-    A string giving the name of a movie file to play.
-
-    This should always be provided.
-
-`mask`
-    A string giving the name of a movie file to use as an alpha mask. It should
-    be the same size, duration, and framerate as the movie file provided to
-    `play`.
-
 Here's an example of defining a movie sprite::
 
-    image eileen movie = Movie(play="eileen_movie.webm", mask="eileen_mask.webm")
+    image eileen movie = Movie(play="eileen_movie.webm", side_mask=True)
 
 The movie sprite can be shown using the show statement, which automatically starts the
 movie playing. It will be automatically stopped when the displayable is hidden. ::

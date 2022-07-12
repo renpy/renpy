@@ -54,14 +54,13 @@ def _ensure_temp():
     try:
         if not os.path.exists(backups):
             os.makedirs(os.path.dirname(backups))
-    except:
+    except Exception:
         pass
 
     temp_exists = True
 
 # The target directory that the extensions API operates on.
 target = None
-
 
 def set_target(directory):
     """
@@ -72,6 +71,8 @@ def set_target(directory):
 
     global target
     target = directory
+
+    _clean("temp:", 3)
 
 
 def _path(filename):
@@ -96,10 +97,39 @@ def _path(filename):
         base = os.path.basename(rest.rpartition(":")[2])
         return os.path.join(backups, base + "." + str(time.time()))
 
+    if prefix == "renpy":
+        return os.path.join(config.renpy_base, rest)
+
     if target is None:
         raise Exception("The target directory has not been set.")
 
     return os.path.join(target, filename)
+
+
+def _clean(directory, age=3):
+    """
+    Removes files from `directory` that are older than `age` days.
+    """
+
+    directory = _path(directory)
+
+    for root, dirs, files in os.walk(directory, topdown=False):
+        for f in files:
+            filename = os.path.join(root, f)
+            mtime = os.stat(filename).st_mtime
+            if time.time() - mtime > age * 86400:
+                try:
+                    os.unlink(filename)
+                except Exception:
+                    pass
+
+
+        if root != directory:
+
+            try:
+                os.rmdir(root)
+            except Exception:
+                pass
 
 
 def _friendly(filename):
@@ -132,7 +162,6 @@ def _check_hash(filename, hashj):
 
     except Exception:
         return False
-
 
 # The name and url of the file that is currently being downloaded. This is meant to
 # to be used by the interface screens to show the user what files are being
@@ -227,7 +256,7 @@ class _FixedZipFile(zipfile.ZipFile):
         if upperdirs and not os.path.exists(upperdirs):
             os.makedirs(upperdirs)
 
-        if member.is_dir():
+        if member.filename.endswith("/"):
             if not os.path.isdir(targetpath):
                 os.mkdir(targetpath)
             return targetpath
@@ -315,8 +344,23 @@ def remove(filename):
     if not exists(filename):
         return
 
-    shutil.move(_path(filename), _path("backup:" + filename))
+    backup = _path("backup:" + filename)
+    shutil.move(_path(filename), backup)
 
+    # Now, touch everything so _cleanup doesn't get it too quickly.
+
+    if os.path.isdir(backup):
+        for root, dirs, files in os.walk(backup):
+            for f in files:
+                try:
+                    os.utime(os.path.join(root, f), None)
+                except Exception:
+                    pass
+    else:
+        try:
+            os.utime(backup, None)
+        except Exception:
+            pass
 
 def move(old_filename, new_filename):
     """

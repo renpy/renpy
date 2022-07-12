@@ -125,12 +125,17 @@ Interpolation Statement
 The interpolation statement is the main way that ATL controls transformations.
 
 .. productionlist:: atl
-    atl_interp : ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )?
-               : ( `property` `simple_expression` ( "knot" `simple_expression` )*
-               : | "clockwise"
-               : | "counterclockwise"
-               : | "circles" simple_expression
-               : | simple_expression )*
+    atl_properties : ( `property` `simple_expression` ( "knot" `simple_expression` )*
+                   : | "clockwise"
+                   : | "counterclockwise"
+                   : | "circles" simple_expression
+                   : | simple_expression )*
+
+.. productionlist:: atl
+    atl_interp : ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )? `atl_properties`
+               : | ( `warper` `simple_expression` | "warp" `simple_expression` `simple_expression` )? ":"
+               :    `atl_properties`
+
 
 The first part of the interpolation statement is used to select a function
 that time-warps the interpolation. (That is, a function from linear time to
@@ -171,31 +176,43 @@ a single interpolation statement, without a warper, splines, or circular
 motion. The properties from the transform are processed as if they were
 included in this statement.
 
+A warper may be followed by a colon (:). In this case, it may be followed
+by one or more lines containing the clauses available above. This lets
+an ATL interpolation apply to multiple lines of properties.
+
 Some sample interpolations are::
 
     show logo base:
-         # Show the logo at the upper right side of the screen.
-         xalign 1.0 yalign 0.0
+        # Show the logo at the upper right side of the screen.
+        xalign 1.0 yalign 0.0
 
-         # Take 1.0 seconds to move things back to the left.
-         linear 1.0 xalign 0.0
+        # Take 1.0 seconds to move things back to the left.
+        linear 1.0 xalign 0.0
 
-         # Take 1.0 seconds to move things to the location specified in the
-         # truecenter transform. Use the ease warper to do this.
-         ease 1.0 truecenter
+        # Take 1.0 seconds to move things to the location specified in the
+        # truecenter transform. Use the ease warper to do this.
+        ease 1.0 truecenter
 
-         # Just pause for a second.
-         pause 1.0
+        # Just pause for a second.
+        pause 1.0
 
-         # Set the location to circle around.
-         alignaround (.5, .5)
+        # Set the location to circle around.
+        alignaround (.5, .5)
 
-         # Use circular motion to bring us to spiral out to the top of
-         # the screen. Take 2 seconds to do so.
-         linear 2.0 yalign 0.0 clockwise circles 3
+        # Use circular motion to bring us to spiral out to the top of
+        # the screen. Take 2 seconds to do so.
+        linear 2.0 yalign 0.0 clockwise circles 3
 
-         # Use a spline motion to move us around the screen.
-         linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
+        # Use a spline motion to move us around the screen.
+        linear 2.0 align (0.5, 1.0) knot (0.0, .33) knot (1.0, .66)
+
+         # Changes xalign and yalign at thje same time.
+         linear 2.0 xalign 1.0 yalign 1.0
+
+         # The same thing, using a block.
+         linear 2.0:
+            xalign 1.0
+            yalign 1.0
 
 An important special case is that the pause warper, followed by a time and
 nothing else, causes ATL execution to pause for that amount of time.
@@ -248,19 +265,24 @@ expression.
 
 There are three things the first simple expression may evaluate to:
 
-* If it's a transform, that transform is executed. With clauses are ignored
-  when a transform is supplied.
+* If it's an ATL transform, and that ATL transform has **not** been supplied
+  a child (through being called as a transform or transition, or
+  with a `child` or `old_widget` argument), the ATL transform is
+  included at the location of the expression. The ``with`` clause is ignored.
 
 * If it's an integer or floating point number,  it's taken as a number of
-  seconds to pause execution for.
+  seconds to pause execution for. The ``with`` clause is ignored.
 
 * Otherwise, the expression is interpreted to be a displayable. This
   displayable replaces the child of the transform when this clause executes,
-  making it useful for animation. If a with clause is present, the second
+  making it useful for animation. If a ``with`` clause is present, the second
   expression is evaluated as a transition, and the transition is applied to
   the old and new displayables.
 
 ::
+
+    transform move_right:
+        linear 1.0 xalign 1.0
 
     image atl example:
          # Display logo_base.png
@@ -907,41 +929,31 @@ both horizontal and vertical positions.
 
 .. transform-property:: crop
 
-    :type: None or (int, int, int, int) or (float, float, float, float)
+    :type: None or (position, position, position, position)
     :default: None
 
     If not None, causes the displayable to be cropped to the given
     box. The box is specified as a tuple of (x, y, width, height).
-    If floats are given and ``crop_relative`` is true, the components are
-    taken as a fraction of the width and hight of the source image.
-    Otherwise, the components are considered to be an absolute number
-    of pixels.
 
     If corners and crop are given, crop takes priority over corners.
 
-.. transform-property:: crop_relative
-
-    :type: boolean
-    :default: False
-
-    If True, float components of crop are take as a fraction of the width
-    and height of the source image.
-
 .. transform-property:: corner1
 
-    :type: None or (int, int)
+    :type: None or (position, position)
     :default: None
 
     If not None, gives the upper-left corner of the crop box. Crop takes
-    priority over corners.
+    priority over corners. When a float, and crop_relative is enabled,
+    this is relative to the size of the child.
 
 .. transform-property:: corner2
 
-    :type: None or (int, int)
+    :type: None or (position, position)
     :default: None
 
     If not None, gives the lower right corner of the crop box. Cropt takes
-    priority over corners.
+    priority over corners. When a float, and crop_relativer is enabled, this
+    is relative to the size of the child.
 
 .. transform-property:: xysize
 
@@ -949,7 +961,8 @@ both horizontal and vertical positions.
     :default: None
 
     If not None, causes the displayable to be scaled to the given
-    size.
+    size. This is equivalent to setting the :tpref:`xsize` and
+    :tpref:`ysize` properties to the first and second components.
 
     This is affected by the :tpref:`fit` property.
 
@@ -973,62 +986,41 @@ both horizontal and vertical positions.
 
 .. transform-property:: fit
 
-   :type: None or string
-   :default: None
-
-   If not None, causes the displayable to be sized according to the
-   table below. In this context "dimensions" refers to one or more of ``xsize`` and
-   ``ysize`` that are not None.
-
-   .. list-table::
-      :widths: 15 85
-      :header-rows: 1
-
-      * - Value
-        - Description
-      * - ``contain``
-        - As large as possible, without exceeding any dimensions.
-          Maintains aspect ratio.
-      * - ``cover``
-        - As small as possible, while matching or exceeding all
-          dimensions. Maintains aspect ratio.
-      * - None or ``fill``
-        - Stretches/squashes displayable to exactly match dimensions.
-      * - ``scale-down``
-        - As for ``contain``, but will never increase the size of the
-          displayable.
-      * - ``scale-up``
-        - As for ``cover``, but will never decrease the size of the
-          displayable.
-
-.. transform-property:: size
-
-    :type: None or (int, int)
+    :type: None or string
     :default: None
 
-    If not None, causes the displayable to be scaled to the given
-    size.
+    Causes the displayable to be sized according to the table below.
+    In the context of the the table below, the "dimensions" are:
 
-    This is affected by the :tpref:`fit` property.
+    * If both :tpref:`xsize` and :tpref:`ysize` are not None, both sizes
+      are used as the dimensions.
+    * If only one of those properties is not None, it is used as the
+      sole dimension.
+    * Otherwise, if fit is not None the area that the Transform is
+      contained in is used as the dimensions.
 
-    .. warning::
+    If fit, xsize, and ysize are all None, this property does not apply.
 
-        This property is deprecated. Use :tpref:`xysize` instead.
+    .. list-table::
+       :widths: 15 85
+       :header-rows: 1
 
-.. transform-property:: maxsize
-
-    :type: None or (int, int)
-    :default: None
-
-    If not None, causes the displayable to be scaled so that it fits
-    within a box of this size, while preserving aspect ratio. (Note that
-    this means that one of the dimensions may be smaller than the size
-    of this box.)
-
-    .. warning::
-
-        This property is deprecated. Consider using :tpref:`xysize` in
-        conjuction with :tpref:`fit` and the value ``contain``.
+       * - Value
+         - Description
+       * - ``contain``
+         - As large as possible, without exceeding any dimensions.
+           Maintains aspect ratio.
+       * - ``cover``
+         - As small as possible, while matching or exceeding all
+           dimensions. Maintains aspect ratio.
+       * - None or ``fill``
+         - Stretches/squashes displayable to exactly match dimensions.
+       * - ``scale-down``
+         - As for ``contain``, but will never increase the size of the
+           displayable.
+       * - ``scale-up``
+         - As for ``cover``, but will never decrease the size of the
+           displayable.
 
 .. transform-property:: subpixel
 
@@ -1090,16 +1082,14 @@ both horizontal and vertical positions.
     :type: int
     :default: 1
 
-    The number of times to tile the image horizontally. (This is ignored when
-    xpan is given.)
+    The number of times to tile the image horizontally.
 
 .. transform-property:: ytile
 
     :type: int
     :default: 1
 
-    The number of times to tile the image vertically. (This is ignored when
-    ypan is given.)
+    The number of times to tile the image vertically.
 
 .. transform-property:: matrixcolor
 
@@ -1107,8 +1097,9 @@ both horizontal and vertical positions.
     :default: None
 
     If not None, the value of this property is used to recolor everything
-    that children of this transform draw. See :ref:`matrixcolor` for more
-    information.
+    that children of this transform draw. Interpolation is only supported
+    when MatrixColors are used, and the MatrixColors are structurally similar.
+    See :ref:`matrixcolor` for more information.
 
     This requires model-based rendering to be enabled by setting :var:`config.gl2` to
     True.
@@ -1126,16 +1117,6 @@ both horizontal and vertical positions.
     This requires model-based rendering to be enabled by setting :var:`config.gl2` to
     True.
 
-.. transform-property:: clip
-
-    :type: (position, position) or None
-    :default: None
-
-    This clips the child of this transform to the given size. Integers are 
-    interpreted as pixels, while floats are interpreted as relative to the 
-    width and height of the child being clipped.
-
-
 There are also several sets of transform properties that are documented elsewhere:
 
 3D Stage properties:
@@ -1152,12 +1133,12 @@ Uniforms:
 
 These properties are applied in the following order:
 
-#. tile
 #. mesh, blur
+#. tile
+#. pan
 #. crop, corner1, corner2
 #. xysize, size, maxsize
 #. zoom, xzoom, yzoom
-#. pan
 #. rotate
 #. zpos
 #. matrixtransform, matrixanchor
@@ -1166,8 +1147,51 @@ These properties are applied in the following order:
 #. nearest, blend, alpha, additive, shader.
 #. matrixcolor
 #. GL Properties, Uniforms
-#. clip
 #. position properties
+
+Deprecated Transform Properties
+===============================
+
+.. warning::
+
+    The following properties should not be used in modern games, as they may
+    conflict with more recent features. They are only kept here for compatibility,
+    along with the new way of achieving the same behavior.
+
+.. transform-property:: crop_relative
+
+    :type: boolean
+    :default: True
+
+    If False, float components of :tpref:`crop` are interpreted as an absolute
+    number of pixels, instead of a fraction of the width and height of
+    the source image.
+
+    If an absolute number of pixel is to be expressed, ``absolute`` instances
+    should be provided to the :tpref:`crop` property instead of using the
+    crop_relative property. If necessary, values of dubious type can be wrapped
+    in the ``absolute`` callable.
+
+.. transform-property:: size
+
+    :type: None or (int, int)
+    :default: None
+
+    This is an older version of :tpref:`xysize` interpreting floating-point values
+    as an absolute number of pixels.
+
+.. transform-property:: maxsize
+
+    :type: None or (int, int)
+    :default: None
+
+    If not None, causes the displayable to be scaled so that it fits
+    within a box of this size, while preserving aspect ratio. (Note that
+    this means that one of the dimensions may be smaller than the size
+    of this box.)
+
+    To achieve the same result, give the values to the :tpref:`xysize` property, and
+    set the :tpref:`fit` property to the value "contain".
 
 Circular Motion
 ===============
@@ -1276,3 +1300,78 @@ multiple ways - for example, :tpref:`xalign` sets xpos and xanchor.
 Finally, when a ``show`` statement does not include an ``at`` clause, the
 same displayables are used, so no inheritence is necessary. To prevent inheritance,
 show and then hide the displayable.
+
+.. _atl-transitions:
+
+ATL Transitions
+===============
+
+It's possible to use an ATL transform to define a transition. These transitions
+accept the `old_widget` and `new_widget` arguments, which are given displayables
+that are transitioned from and to, respectively.
+
+An ATL transition must set the :tpref:`delay` property to the number of seconds
+the transition lasts for. It may user the :tpref:`events` property to prevent
+the old displayable from receiving events. ::
+
+    transform spin(duration=1.0, new_widget=None, old_widget=None):
+
+        # Set how long this transform will take to complete.
+        delay duration
+
+        # Center it.
+        xcenter 0.5
+        ycenter 0.5
+
+        # Spin the old displayable.
+        old_widget
+        events False
+        rotate 0.0
+        easeout (duration / 2) rotate 360.0
+
+        # Spin the new displayable.
+        new_widget
+        events True
+        easein (duration / 2) rotate 720.0
+
+
+.. _atl-keyword-parameters:
+
+Special ATL Keyword Parameters
+==============================
+
+There are several parameters that Ren'Py will supply to ATL, in certain
+contexts, if the parameter is in the parameter list.
+
+`child`
+    When ATL is used as a transform, the child parameter is given the original
+    child that the transform is applied to. This allows the child to be referred
+    to explicitly. For example, it becomes possible to swap between the supplied
+    child and another displayable::
+
+        transform lucy_jump_scare(child):
+            child      # Show the original child.
+            pause 5
+            "lucy mad" # Jump scare.
+            pause .2
+            child      # Go back to the original child.
+
+    If can also be used to place the original child inside a ``contains``
+    block::
+
+        transform marquee(width, height=1.0, duration=2.0, child=None):
+            xcenter 0.5
+            ycenter 0.5
+
+            crop_relative True
+            crop (0, 0, 0.5, 500)
+
+            contains:
+                child
+                xanchor 0.0 xpos 1.0
+                linear duration xanchor 1.0 xpos 0.0
+
+
+`old_widget`, `new_widget`
+    When an ATL block is used as a transition, these are given displayables
+    that are transitioned from and to, respectively.

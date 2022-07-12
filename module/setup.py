@@ -66,8 +66,11 @@ setuplib.extra_link_args = [ ]
 if platform.win32_ver()[0]:
     windows = True
     setuplib.extra_compile_args.append("-fno-strict-aliasing")
+    tfd_libs = [ "comdlg32", "ole32" ]
+
 else:
     windows = False
+    tfd_libs = [ ]
 
 if raspi:
     setuplib.extra_compile_args.append("-DRASPBERRY_PI")
@@ -76,11 +79,11 @@ include("zlib.h")
 include("png.h")
 include("SDL.h", directory="SDL2")
 include("ft2build.h")
-include("freetype/freetype.h", directory="freetype2", optional=True) or include("freetype.h", directory="freetype2")
-include("libavutil/avstring.h", directory="ffmpeg", optional=True) or include("libavutil/avstring.h")
-include("libavformat/avformat.h", directory="ffmpeg", optional=True) or include("libavformat/avformat.h")
-include("libavcodec/avcodec.h", directory="ffmpeg", optional=True) or include("libavcodec/avcodec.h")
-include("libswscale/swscale.h", directory="ffmpeg", optional=True) or include("libswscale/swscale.h")
+include("freetype/freetype.h", directory="freetype2", optional=True) or include("freetype.h", directory="freetype2") # type: ignore
+include("libavutil/avstring.h", directory="ffmpeg", optional=True) or include("libavutil/avstring.h") # type: ignore
+include("libavformat/avformat.h", directory="ffmpeg", optional=True) or include("libavformat/avformat.h") # type: ignore
+include("libavcodec/avcodec.h", directory="ffmpeg", optional=True) or include("libavcodec/avcodec.h") # type: ignore
+include("libswscale/swscale.h", directory="ffmpeg", optional=True) or include("libswscale/swscale.h") # type: ignore
 include("GL/glew.h")
 include("pygame_sdl2/pygame_sdl2.h", directory="python{}.{}".format(sys.version_info.major, sys.version_info.minor))
 
@@ -103,13 +106,6 @@ if android:
 else:
     sdl = [ 'SDL2' ]
     png = 'png'
-
-steam_sdk = os.environ.get("RENPY_STEAM_SDK", None)
-steam_platform = os.environ.get("RENPY_STEAM_PLATFORM", "")
-
-if steam_sdk:
-    setuplib.library_dirs.append("{}/redistributable_bin/{}".format(steam_sdk, steam_platform))
-    setuplib.include_dirs.append("{}/public".format(steam_sdk))
 
 cubism = os.environ.get("CUBISM", None)
 if cubism:
@@ -147,7 +143,8 @@ cython(
         ("HAVE_CONFIG_H", "1"),
         ])
 
-cython("_renpysteam", language="c++", compile_if=steam_sdk, libs=["steam_api"])
+if not (android or ios or emscripten):
+    cython("_renpytfd", [ "tinyfiledialogs/tinyfiledialogs.c" ], libs=tfd_libs)
 
 # Sound.
 

@@ -383,6 +383,7 @@ init -1400:
 
         contains:
             perspective True
+            events False
 
             # Note: (bool(x) * v) == v when x is true, or 0 otherwise.
 
@@ -393,6 +394,8 @@ init -1400:
                 bool(vertical) * (-90.0 if reverse else 90.0),
                 bool(not vertical) * (-90.0 if reverse else 90.0),
                 0.0)
+
+            events True
 
             Transform(new_widget, mesh=flatten)
             matrixtransform RotateMatrix(

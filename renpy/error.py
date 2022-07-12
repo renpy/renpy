@@ -22,7 +22,8 @@
 # This file contains code for formatting tracebacks.
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
-from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, str, tobytes, unicode # *
+from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
+
 
 
 import traceback
@@ -200,7 +201,7 @@ def report_exception(e, editor=True):
     print('', file=full)
 
     try:
-        print(str(platform.platform()), file=full)
+        print(str(platform.platform()), str(platform.machine()), file=full)
         print(renpy.version, file=full)
         print(renpy.config.name + " " + renpy.config.version, file=full)
         print(str(time.ctime()), file=full)
@@ -236,7 +237,7 @@ def report_exception(e, editor=True):
 
         try:
             if editor and ((renpy.game.args.command == "run") or (renpy.game.args.errors_in_editor)): # type: ignore
-                renpy.exports.launch_editor([ traceback_fn ], 1, transient=1)
+                renpy.exports.launch_editor([ traceback_fn ], 1, transient=True)
         except Exception:
             pass
 
