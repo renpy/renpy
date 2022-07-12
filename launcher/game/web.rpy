@@ -35,6 +35,91 @@ init python:
 
     WEB_PATH = None
 
+    class ProgressiveFilter(object):
+        def __init__(self, project):
+            self.project = project
+            self.destination = get_web_destination(project)
+            self.remote_files = {}
+            self.images = []
+            self.path_filters = []
+            load_filters(project, self.path_filters)
+
+        def filter(self, file, variant, format):
+            """
+            Detect and copy the files to be downloaded progressively,
+            and prevent them to be put in the ZIP archive.
+            Returns True if the file must be included in the ZIP archive.
+            """
+            if variant != 'web' or format != 'zip':  # useless?
+                return True
+
+            base, ext = os.path.splitext(file.name)
+
+            copy_file = False
+            # Images
+            if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
+                    and filters_match(self.path_filters, file.name, 'image')):
+                # Add image to list and generate placeholder later
+                self.images.append((file.path, file.name))
+                copy_file = True
+
+            # Musics (but not SFX - no placeholders for short, non-looping sounds)
+            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
+                    and filters_match(self.path_filters, file.name, 'music')):
+                self.remote_files[file.name[len('game/'):]] = 'music -'
+                copy_file = True
+
+            # Voices
+            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
+                    and filters_match(self.path_filters, file.name, 'voice')):
+                self.remote_files[file.name[len('game/'):]] = 'voice -'
+                copy_file = True
+
+            # Videos are currently not supported, strip them if not already
+            elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
+                return False
+
+            if not copy_file:
+                return True
+
+            # Copy the file to the destination folder, keeping metadata
+            dst_path = os.path.join(self.destination, file.name)
+            dst_dir = os.path.dirname(dst_path)
+            if not os.path.isdir(dst_dir):
+                os.makedirs(dst_dir, 0o755)
+            shutil.copy2(file.path, dst_path)
+
+            return False
+
+        def finalize(self):
+            """
+            Append some generated files to the ZIP archive.
+            """
+            zout = zipfile.ZipFile(os.path.join(self.destination, 'game.zip'), 'a')
+            tmpdir = tempfile.mkdtemp()
+
+            # Generate and append placeholder image files to archive
+            for (src, dst) in self.images:
+                surface = pygame_sdl2.image.load(src)
+                (w, h) = (surface.get_width(), surface.get_height())
+                self.remote_files[dst[len('game/'):]] = 'image {},{}'.format(w,h)
+                tmpfile = generate_image_placeholder(surface, tmpdir)
+                placeholder_relpath = os.path.join('_placeholders', dst[len('game/'):])
+                zout.write(tmpfile, placeholder_relpath)
+
+            # Prepare a list of remote files for renpy.loader
+            remote_files_str = ''
+            for f in sorted(self.remote_files):
+                remote_files_str += f + "\n"
+                remote_files_str += self.remote_files[f] + "\n"
+            zout.writestr('game/renpyweb_remote_files.txt',
+                          remote_files_str,
+                          zipfile.ZIP_DEFLATED)
+
+            # Clean-up
+            shutil.rmtree(tmpdir)
+            zout.close()
+
     def find_web():
 
         global WEB_PATH
@@ -140,82 +225,6 @@ init python:
                 return f_rule
         return False
 
-    def repack_for_progressive_download(p):
-        """
-        Filter out downloadable resources and generate placeholders
-        """
-
-        destination = get_web_destination(p)
-
-        path_filters = []
-        load_filters(p, path_filters)
-
-        shutil.move(
-            os.path.join(destination, 'game.zip'),
-            os.path.join(destination, 'game-old.zip'))
-        zin  = zipfile.ZipFile(os.path.join(destination, 'game-old.zip'))
-        zout = zipfile.ZipFile(os.path.join(destination, 'game.zip'), 'w')
-        remote_files = {}
-        tmpdir = tempfile.mkdtemp()
-
-        for m in zin.infolist():
-
-            base, ext = os.path.splitext(m.filename)
-
-            # Images
-            if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
-                and filters_match(path_filters, m.filename, 'image')):
-
-                zin.extract(m, path=destination)
-                surface = pygame_sdl2.image.load(os.path.join(destination,m.filename))
-                (w,h) = (surface.get_width(),surface.get_height())
-
-                remote_files[m.filename[len('game/'):]] = 'image {},{}'.format(w,h)
-
-                tmpfile = generate_image_placeholder(surface, tmpdir)
-                placeholder_relpath = os.path.join('_placeholders', m.filename[len('game/'):])
-                zout.write(tmpfile, placeholder_relpath)
-
-            # Musics (but not SFX - no placeholders for short, non-looping sounds)
-            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
-                and filters_match(path_filters, m.filename, 'music')):
-                zin.extract(m, path=destination)
-                remote_files[m.filename[len('game/'):]] = 'music -'
-
-            # Voices
-            elif (ext.lower() in ('.wav', '.mp2', '.mp3', '.ogg', '.opus')
-                and filters_match(path_filters, m.filename, 'voice')):
-                zin.extract(m, path=destination)
-                remote_files[m.filename[len('game/'):]] = 'voice -'
-
-            # Videos are currently not supported, strip them if not already
-            elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
-                pass
-
-            # Default: keep (extract & recompress to new .zip)
-            else:
-                # Not using zout.writestr(m, zin.read(m)) to avoid MemoryError
-                tmpfile = zin.extract(m, tmpdir)
-                date_time = time.mktime(m.date_time+(0,0,0))
-                os.utime(tmpfile, (date_time,date_time))
-                zout.write(tmpfile, m.filename, m.compress_type)
-
-        # Prepare a list of remote files for renpy.loader
-        remote_files_str = ''
-        for f in sorted(remote_files):
-            remote_files_str += f + "\n"
-            remote_files_str += remote_files[f] + "\n"
-        zout.writestr('game/renpyweb_remote_files.txt',
-                      remote_files_str,
-                      zipfile.ZIP_DEFLATED)
-
-        # Clean-up
-        shutil.rmtree(tmpdir)
-        zout.close()
-        zin.close()
-        os.unlink(os.path.join(destination, 'game-old.zip'))
-
-
     def build_web(p, gui=True):
 
         # Figure out the reporter to use.
@@ -236,11 +245,14 @@ init python:
 
         os.makedirs(destination, 0o777)
 
+        files_filter = ProgressiveFilter(p)
+
         # Use the distributor to make game.zip.
-        distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"), reporter=reporter, noarchive=True, scan=False)
+        distribute.Distributor(p, packages=[ "web" ], packagedest=os.path.join(destination, "game"),
+                reporter=reporter, noarchive=True, scan=False, files_filter=files_filter)
 
         reporter.info(_("Preparing progressive download"))
-        repack_for_progressive_download(p)
+        files_filter.finalize()
 
         # Copy the files from WEB_PATH to destination.
         for fn in os.listdir(WEB_PATH):
