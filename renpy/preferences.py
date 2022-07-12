@@ -22,9 +22,9 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
-
 import copy
+import math
+
 import renpy
 
 pad_bindings = {
@@ -273,6 +273,25 @@ class Preferences(renpy.object.Object):
             return 0.0
 
         return self.volumes[mixer]
+
+
+    def set_mixer(self, mixer, volume):
+        if volume > 0:
+            volume = renpy.config.volume_db_range * volume - renpy.config.volume_db_range
+            volume = 10 ** (volume / 20)     
+
+        self.set_volume(mixer, volume)
+
+    def get_mixer(self, mixer):
+        rv = self.get_volume(mixer)
+
+        if rv == 0:
+            return 0
+
+        rv = 20 * math.log10(rv)
+        rv = (rv + renpy.config.volume_db_range) / renpy.config.volume_db_range
+
+        return rv
 
     def set_mute(self, mixer, mute):
         self.mute[mixer] = mute

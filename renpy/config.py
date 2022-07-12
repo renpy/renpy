@@ -1264,6 +1264,10 @@ skip_during_text = False
 # the style inspector.)
 alternate_unelide_path = None
 
+# The range, in decibels, of the volume mixers.
+volume_db_range = 60
+
+
 del os
 del collections
 
