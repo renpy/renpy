@@ -431,7 +431,8 @@ init -1500 python:
         def get_style(self):
             return self.style, "v" + self.style
 
-
+    # The range, in decibels, of the mixer slider.
+    config.mixer_db_range = 30
 
     @renpy.pure
     class MixerValue(BarValue, DictEquality):
@@ -449,18 +450,55 @@ init -1500 python:
         def __init__(self, mixer):
             self.mixer = mixer
 
+        def get_volume(self):
+            return _preferences.get_volume(self.mixer)
+
+        def set_volume(self, volume):
+            _preferences.set_volume(self.mixer, volume)
+
         def set_mixer(self, value):
-            _preferences.set_volume(self.mixer, value)
+            
+            if value == 0:
+                value = 0
+            else:
+                value = 1.0 * value - config.mixer_db_range
+                value = pow(10, value / 10)
+
+            self.set_volume(value)
+
             renpy.restart_interaction()
 
         def get_adjustment(self):
+            import math
+
+            value = self.get_volume()
+
+            if config.mixer_db_range is not None:
+                if value > 0:
+                    value = math.log10(value) * 10 + config.mixer_db_range
+
+                range = config.mixer_db_range * 1.0
+
             return ui.adjustment(
-                range=1.0,
-                value=_preferences.get_volume(self.mixer),
+                range=range,
+                value=value,
                 changed=self.set_mixer)
 
         def get_style(self):
             return "slider", "vslider"
+
+    @renpy.pure
+    class _CharacterVolumeValue(MixerValue):
+
+        def __init__(self, voice_tag):
+            self.voice_tag = voice_tag
+
+        def get_volume(self):
+            return persistent._character_volume[self.voice_tag]
+
+        def set_volume(self, volume):
+            persistent._character_volume[self.voice_tag] = volume
+
 
     class XScrollValue(BarValue, FieldEquality):
         """
