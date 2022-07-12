@@ -269,14 +269,13 @@ def get_duration(channel):
 def set_volume(channel, volume):
     """
     Sets the primary volume for `channel` to `volume`, a number between
-    0 and 1. This volume control is perceptual, taking into account the
-    logarithmic nature of human hearing.
+    0 and 1. This volume control is linear.
     """
 
     if volume == 0:
         RPS_set_volume(channel, 0)
     else:
-        RPS_set_volume(channel, volume ** 2)
+        RPS_set_volume(channel, volume)
 
     check_error()
 
