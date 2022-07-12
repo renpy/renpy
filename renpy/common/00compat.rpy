@@ -21,6 +21,16 @@
 
 init -1100 python:
 
+    def _compat_versions(version, *args):
+        if version <= args[0]:
+            return True
+
+        for i in args[1:]:
+            if (version[0] == i[0]) and (version <= i):
+                return True
+
+        return False
+
     # This is called when script_version is set, to immediately
     # run code in response to a script_version change.
     def _set_script_version(version):
