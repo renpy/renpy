@@ -5,6 +5,33 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-7.5.2:
 .. _renpy-8.0.2:
 
+8.1 / 7.6
+=========
+
+Mixer Volume Changes
+--------------------
+
+Ren'Py has changed how mixer volumes are represented. Internally, the mixer
+volumes are stored as number between 0.0 and 1.0. This number is multiplied
+with the samples to produce the voltage supplied to the speakers or headphones,
+and hence the square of this determines the power.
+
+Mixers now work in decibels (power), similar to the way the volume controls
+on audio equipment and computers work. An empty mixer slider represents -60 dB
+below the maximum volume, while a full bar represents 0 dB, the full volume.
+
+Variables that control the default mixer volumes, such as :var:`config.default_music_volume`,
+:var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` now work on a scale
+where 0.0 is -60 dB, and 1.0 is 0 dB. :func:`SetCharacterVolume` works in a similar way,
+as do the new :func:`preferences.set_mixer` and :func:`preferences.get_mixer` functions.
+
+The advantage of this change is that it makes the volumes sliders much more dynamic.
+Previously, the volume slider had to be very near the bottom before it had an effect.
+Now, the volume increases and decreases match the way people perceive loudness.
+
+.. _renpy-7.5.2:
+.. _renpy-8.0.2:
+
 8.0.2 / 7.5.2
 =============
 

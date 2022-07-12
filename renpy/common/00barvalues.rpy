@@ -431,9 +431,6 @@ init -1500 python:
         def get_style(self):
             return self.style, "v" + self.style
 
-    # The range, in decibels, of the mixer slider.
-    config.volume_db_range = 60
-
     @renpy.pure
     class MixerValue(BarValue, DictEquality):
         """

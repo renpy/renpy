@@ -13,6 +13,23 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-8.1.0:
+.. _incompatible-7.6.0:
+
+8.1.0 / 7.6.0
+-------------
+
+Mixer volumes now must be specified using a new format, where 0.0 is -60 dB (power)
+and 1.0 is 0 dB (power). To use the old format, where the samples were multiplied
+by volume ** 2, use::
+
+    define config.quadratic_volume = True
+
+Alternatively, you can determine new default volumes for :var:`config.default_music_volume`,
+:var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` variables. If any
+of these is 0.0 or 1.0, it can be left unchanged.
+
+
 .. _incompatible-8.0.0:
 .. _incompatible-7.5.0:
 
