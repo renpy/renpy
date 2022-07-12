@@ -251,6 +251,7 @@ init -1100 python:
 
         if _compat_versions(version, (7, 5, 2), (8, 0, 2)):
             config.quadratic_volumes = True
+            config.emphasize_audio_volume = 0.5
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

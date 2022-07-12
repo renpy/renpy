@@ -432,20 +432,20 @@ init -1500 python:
             return self.style, "v" + self.style
 
     # The range, in decibels, of the mixer slider.
-    config.mixer_db_range = 30
+    config.volume_db_range = 60
 
     @renpy.pure
     class MixerValue(BarValue, DictEquality):
         """
-         :doc: value
+        :doc: value
 
-         The value of an audio mixer.
+        The value of an audio mixer.
 
-         `mixer`
-             The name of the mixer to adjust. This is usually one of
-             "main", "music", "sfx", or "voice". See :ref:`volume`
-             for more information.
-         """
+        `mixer`
+            The name of the mixer to adjust. This is usually one of
+            "main", "music", "sfx", or "voice". See :ref:`volume`
+            for more information.
+        """
 
         def __init__(self, mixer):
             self.mixer = mixer
@@ -461,8 +461,8 @@ init -1500 python:
             if value == 0:
                 value = 0
             else:
-                value = 1.0 * value - config.mixer_db_range
-                value = pow(10, value / 10)
+                value = 1.0 * value - config.volume_db_range
+                value = pow(10, value / 20)
 
             self.set_volume(value)
 
@@ -473,11 +473,11 @@ init -1500 python:
 
             value = self.get_volume()
 
-            if config.mixer_db_range is not None:
+            if config.volume_db_range is not None:
                 if value > 0:
-                    value = math.log10(value) * 10 + config.mixer_db_range
+                    value = math.log10(value) * 20 + config.volume_db_range
 
-                range = config.mixer_db_range * 1.0
+                range = config.volume_db_range * 1.0
 
             return ui.adjustment(
                 range=range,

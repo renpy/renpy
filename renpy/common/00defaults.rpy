@@ -68,13 +68,16 @@ init -1500 python:
 init 1500 python hide:
 
     def vol(n):
+        if n == 0.0:
+            return 0.0
+
         if config.quadratic_volumes:
             return n ** 2
         else:
-            return n
+            n = n * config.volume_db_range - config.volume_db_range
+            return 10 ** (n / 20)
 
-    if config.quadratic_volumes:
-        config.emphasize_audio_volumes = config.emphasize_audio_volumes ** 2
+    config.emphasize_audio_volume = vol(config.emphasize_audio_volume)
 
     if not persistent._linearized_volumes:
         for k, v in _preferences.volumes.items():
