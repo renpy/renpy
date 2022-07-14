@@ -2065,7 +2065,10 @@ def while_statement(l, loc):
 
 @statement("pass")
 def pass_statement(l, loc):
-    l.expect_noblock('pass statement')
+
+    if l.match(':') is None:
+        l.expect_noblock('pass statement')
+
     l.expect_eol()
     l.advance()
 
