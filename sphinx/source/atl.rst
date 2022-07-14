@@ -142,7 +142,18 @@ that time-warps the interpolation. (That is, a function from linear time to
 non-linear time.) This can either be done by giving the name of a warper
 registered with ATL, or by giving the keyword "warp" followed by an
 expression giving a function. Either case is followed by a number, giving the
-number of seconds the interpolation should take.
+number of seconds the interpolation should take. ::
+
+    transform builtin_warper:
+        xpos 0
+        ease 5 xpos 52
+
+    transform accessed_as_function:
+        xpos 0
+        warp _warper.ease xpos 52
+
+In the second case, any user-defined function can be used instead of
+``_warper.ease``. See :ref:`warpers` for more details.
 
 If no warp function is given, the interpolation is instantaneous. Otherwise,
 it persists for the amount of time given, and at least one frame.
