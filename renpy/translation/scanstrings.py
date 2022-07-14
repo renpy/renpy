@@ -96,8 +96,9 @@ class String(object):
         else:
             pl = REGULAR_PRIORITIES
 
+        normalized_elided = self.elided.replace("\\", "/")
         for prefix, priority, launcher_file in pl:
-            if self.elided.startswith(prefix):
+            if normalized_elided.startswith(prefix):
                 break
         else:
             priority = 500
