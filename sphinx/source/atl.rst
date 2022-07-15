@@ -140,9 +140,27 @@ The interpolation statement is the main way that ATL controls transformations.
 The first part of the interpolation statement is used to select a function
 that time-warps the interpolation. (That is, a function from linear time to
 non-linear time.) This can either be done by giving the name of a warper
-registered with ATL, or by giving the keyword "warp" followed by an
+registered with ATL, or by giving the
+keyword "warp" followed by an
 expression giving a function. Either case is followed by a number, giving the
-number of seconds the interpolation should take.
+number of seconds the interpolation should take. ::
+
+    init python:
+        @renpy.atl_warper
+        def my_warper(t):
+            return t**4.4
+
+    define my_warpers = [my_warper]
+
+    transform builtin_warper:
+        xpos 0
+        my_warper 5 xpos 52
+
+    transform accessed_as_function:
+        xpos 0
+        warp my_warpers[0] 5 xpos 52
+
+See :ref:`warpers` for more information about warpers.
 
 If no warp function is given, the interpolation is instantaneous. Otherwise,
 it persists for the amount of time given, and at least one frame.
