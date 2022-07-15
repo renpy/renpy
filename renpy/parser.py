@@ -2051,6 +2051,50 @@ def if_statement(l, loc):
     return ast.If(loc, entries)
 
 
+@statement("IF")
+def IF_statement(l, loc):
+
+    rv = None
+
+    entries = [ ]
+
+    condition = l.require(l.python_expression)
+    l.require(':')
+    l.expect_eol()
+    l.expect_block('IF statement')
+
+    if renpy.python.py_eval(condition):
+        rv = parse_block(l.subblock_lexer())
+
+    l.advance()
+
+    while l.keyword('ELIF'):
+
+        condition = l.require(l.python_expression)
+        l.require(':')
+        l.expect_eol()
+        l.expect_block('ELIF clause')
+
+        if (rv is None) and renpy.python.py_eval(condition):
+            rv = parse_block(l.subblock_lexer())
+
+        l.advance()
+
+    if l.keyword('ELSE'):
+        l.require(':')
+        l.expect_eol()
+        l.expect_block('ELSE clause')
+
+        if rv is None:
+            rv = parse_block(l.subblock_lexer())
+
+        l.advance()
+
+    if rv is None:
+        rv = [ ]
+
+    return rv
+
 @statement("while")
 def while_statement(l, loc):
     condition = l.require(l.python_expression)
