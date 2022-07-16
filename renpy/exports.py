@@ -1932,6 +1932,20 @@ def return_statement(value=None):
     jump("_renpy_return")
 
 
+def warp_to_line(warp_spec):
+    """
+    :doc: debug
+
+    This takes as an argument a filename:linenumber pair, and tries to warp to
+    the statement before that line number.
+
+    This works samely as the `--warp` command.
+    """
+
+    renpy.warp.warp_spec = warp_spec
+    renpy.warp.warp()
+
+
 def screenshot(filename):
     """
     :doc: other
