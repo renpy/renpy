@@ -1119,6 +1119,9 @@ class StoreProxy(object):
     def __delattr__(self, k):
         delattr(renpy.store, k) # @UndefinedVariable
 
+# This needs to exist even after PY2 support is dropped, to load older saves.
+def method_unpickle(obj, name):
+    return getattr(obj, name)
 
 if PY2:
 
@@ -1132,9 +1135,6 @@ if PY2:
             obj = method.im_class
 
         return method_unpickle, (obj, name)
-
-    def method_unpickle(obj, name):
-        return getattr(obj, name)
 
     copyreg.pickle(types.MethodType, method_pickle)
 

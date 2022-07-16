@@ -81,18 +81,18 @@ official = official and getattr(site, "renpy_build_official", False)
 if PY2:
 
     # The tuple giving the version number.
-    version_tuple = (7, 5, 1, vc_version)
+    version_tuple = (7, 6, 0, vc_version)
 
     # The name of this version.
-    version_name = "Heck's Getting Frosty"
+    version_name = "TBD"
 
 else:
 
     # The tuple giving the version number.
-    version_tuple = (8, 0, 1, vc_version)
+    version_tuple = (8, 1, 0, vc_version)
 
     # The name of this version.
-    version_name = "Heck Freezes Over"
+    version_name = "TBD"
 
 # A string giving the version number only (8.0.1.123), with a suffix if needed.
 version_only = ".".join(str(i) for i in version_tuple)

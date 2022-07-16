@@ -565,7 +565,7 @@ autosave_on_input = True
 emphasize_audio_channels = [ 'voice' ]
 
 # What we should lower the volume of non-emphasized channels to.
-emphasize_audio_volume = 0.5
+emphasize_audio_volume = 0.8
 
 # How long we should take to raise and lower the volume when emphasizing
 # audio.
@@ -1205,7 +1205,7 @@ raise_image_exceptions = True
 relative_transform_size = True
 
 # Should tts of layers be from front to back?
-tts_front_to_back = True
+tts_front_to_back = False
 
 # Should live2d loading be logged to log.txt
 log_live2d_loading = False
@@ -1263,6 +1263,9 @@ skip_during_text = False
 # An alternate path to use when uneliding. (Mostly used by the launcher to enable
 # the style inspector.)
 alternate_unelide_path = None
+
+# The range, in decibels, of the volume mixers.
+volume_db_range = 60
 
 # An alias -> font map.
 font_name_map = {}

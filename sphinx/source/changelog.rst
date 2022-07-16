@@ -2,6 +2,89 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
+.. _renpy-7.5.2:
+.. _renpy-8.0.2:
+
+8.1 / 7.6
+=========
+
+Mixer Volume Changes
+--------------------
+
+Ren'Py has changed how mixer volumes are represented. Internally, the mixer
+volumes are stored as number between 0.0 and 1.0. This number is multiplied
+with the samples to produce the voltage supplied to the speakers or headphones,
+and hence the square of this determines the power.
+
+Mixers now work in decibels (power), similar to the way the volume controls
+on audio equipment and computers work. An empty mixer slider represents -60 dB
+below the maximum volume, while a full bar represents 0 dB, the full volume.
+
+Variables that control the default mixer volumes, such as :var:`config.default_music_volume`,
+:var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` now work on a scale
+where 0.0 is -60 dB, and 1.0 is 0 dB. :func:`SetCharacterVolume` works in a similar way,
+as do the new :func:`preferences.set_mixer` and :func:`preferences.get_mixer` functions.
+
+The advantage of this change is that it makes the volumes sliders much more dynamic.
+Previously, the volume slider had to be very near the bottom before it had an effect.
+Now, the volume increases and decreases match the way people perceive loudness.
+
+.. _renpy-7.5.2:
+.. _renpy-8.0.2:
+
+8.0.2 / 7.5.2
+=============
+
+
+.. _renpy-7.5.1:
+.. _renpy-8.0.1:
+
+8.0.1 / 7.5.1
+=============
+
+Improvements
+------------
+
+The launcher now has a Ukrainian translation, courtesy of Matias B.
+
+The web port will now reuse audio data when an audio file loops, reducing
+the memory usage.
+
+ATL transforms used inside a :func:`MouseDisplayable` are now reset each
+time the mouse is changed. Previously, this behavior was undefined.
+
+The trace screen used by the console is now updated once per frame.
+
+There have been a large number of documentation improvements.
+
+Fixes
+-----
+
+Alt text is now played in first-to-last order. A change to 8.0 caused
+the order alt text was played in to be reversed.
+
+A rounding error that would cause the CropMove transitions to work
+incorrectly was fixed.
+
+An issue preventing the zoomin and zoomout transitions from working
+was fixed.
+
+The Movie displayable can once again take a list of movie files to
+play, rather than only a single filename.
+
+An issue with building on Android has been fixed.
+
+Object identity is used to compared the arguments of :func:`Function`
+actions. This prevents an issue where an action could be incorrectly
+reused if the action's arguments where equal, but not the same (for
+example, two empty lists).
+
+Problems with getting and setting Steam statistics have been fixed.
+
+The :ref:`dismiss <sl-dismiss>` is now correctly modal.
+
+
+
 .. _renpy-7.5.0:
 .. _renpy-8.0.0:
 

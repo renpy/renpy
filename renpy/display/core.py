@@ -717,9 +717,9 @@ class Displayable(renpy.object.Object):
         rv = [ ]
 
         if reverse:
-            order = 1
-        else:
             order = -1
+        else:
+            order = 1
 
         speech = ""
 
@@ -728,10 +728,11 @@ class Displayable(renpy.object.Object):
                 speech = i._tts()
 
                 if speech.strip():
-                    rv.append(speech)
-
                     if isinstance(speech, renpy.display.tts.TTSDone):
-                        break
+                        rv = [ speech ]
+                    else:
+                        rv.append(speech)
+
 
         rv = ": ".join(rv)
         rv = rv.replace("::", ":")
@@ -2851,7 +2852,7 @@ class Interface(object):
                 continue
 
             start = self.transition_time.get(l, self.frame_time) or 0
-            delay = self.transition_delay.get(l, 0)
+            delay = self.transition_delay.get(l, None) or 0
 
             if (self.frame_time - start) >= delay:
                 self.ongoing_transition.pop(l, None)

@@ -399,6 +399,7 @@ init python:
     build.classify_renpy("module/pysdlsound/*.py", "source")
     build.classify_renpy("module/pysdlsound/*.pyx", "source")
     build.classify_renpy("module/fribidi-src/**", "source")
+    build.classify_renpy("module/tinyfiledialogs/**", "source")
 
     # all-platforms binary.
     build.classify_renpy("lib/**/*steam_api*", "steam")

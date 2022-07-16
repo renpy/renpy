@@ -387,7 +387,8 @@ def is_selected(action):
     :name: renpy.is_selected
     :doc: run
 
-    Returns true if `action` indicates it is selected, or false otherwise.
+    Returns a true value if the provided action or list of actions
+    indicates it is selected, and false otherwise.
     """
 
     if isinstance(action, (list, tuple)):
@@ -407,7 +408,8 @@ def is_sensitive(action):
     :name: renpy.is_sensitive
     :doc: run
 
-    Returns true if `action` indicates it is sensitive, or False otherwise.
+    Returns a true value if the provided action or list of actions
+    indicates it is sensitive, and false otherwise.
     """
 
     if isinstance(action, (list, tuple)):
@@ -586,7 +588,7 @@ class SayBehavior(renpy.display.layout.Null):
     """
 
     focusable = True
-    text = None
+    text_tuple = None
 
     dismiss_unfocused = [ 'dismiss_unfocused' ]
 
@@ -613,15 +615,20 @@ class SayBehavior(renpy.display.layout.Null):
     def _tts_all(self):
         raise renpy.display.tts.TTSRoot()
 
-    def set_text(self, text):
-        self.text = text
+    def set_text(self, *args):
+        self.text_tuple = args
 
-        try:
-            afm_text = text.text[0][text.start:text.end]
-            afm_text = renpy.text.extras.filter_text_tags(afm_text, allow=[])
-            self.afm_length = max(len(afm_text), 1)
-        except Exception:
-            self.afm_length = max(text.end - text.start, 1)
+        self.afm_length = 1
+        self.text_time = 0
+
+        for text in args:
+
+            try:
+                afm_text = text.text[0][text.start:text.end]
+                afm_text = renpy.text.extras.filter_text_tags(afm_text, allow=[])
+                self.afm_length += max(len(afm_text), 1)
+            except Exception:
+                self.afm_length += max(text.end - text.start, 1)
 
     def event(self, ev, x, y, st):
 
@@ -629,8 +636,13 @@ class SayBehavior(renpy.display.layout.Null):
 
             afm_delay = (1.0 * (renpy.config.afm_bonus + self.afm_length) / renpy.config.afm_characters) * renpy.game.preferences.afm_time
 
-            if self.text is not None:
-                afm_delay += self.text.get_time()
+            if self.text_tuple is not None:
+                max_time = 0
+
+                for t in self.text_tuple:
+                    max_time = max(max_time, t.get_time())
+
+                afm_delay += max_time
 
             if st > afm_delay:
                 if renpy.config.afm_callback:

@@ -34,13 +34,9 @@ init -1500 python:
         `x`, `y`
             The coordinates of the hotspot, relative to the upper left
             corner of the mouse, in virtual pixels.
+        """
 
-        .. method MouseDisplayable.add(name, cursor, x, y)
-
-            This adds a second cursor, that is used when the `name`
-            mouse is displayed. This returns the MouseDisplayable,
-            so that calls to this method can be chained.
-            """
+        cursor = None
 
         def __init__(self, cursor, x, y):
 
@@ -51,8 +47,14 @@ init -1500 python:
             self.last_cursor = "_default_"
             self.last_cursor_st = 0
 
-
         def add(self, name, cursor, x, y):
+            """
+            :doc: mouse_displayable
+
+            This adds a second cursor, that is used when the `name`
+            mouse is displayed. This returns the MouseDisplayable,
+            so that calls to this method can be chained.
+            """
             self.cursors[name] = ( renpy.displayable(cursor), x, y )
             return self
 
@@ -66,9 +68,10 @@ init -1500 python:
                 name = "default"
 
             # Adjust st when the cursor changes.
-            if name != self.last_cursor:
+            if (name != self.last_cursor) or (self.cursor is None):
                 self.last_cursor = name
                 self.last_cursor_st = st
+                self.cursor = self.cursors[name][0]._duplicate(None)
 
             st = st - self.last_cursor_st
 
@@ -77,7 +80,8 @@ init -1500 python:
 
             # If the user is on the screen,
             x, y = renpy.get_mouse_pos()
-            d, xo, yo = self.cursors[name]
+            _, xo, yo = self.cursors[name]
+            d = self.cursor
 
             if (0 <= x < width) and (0 <= y < height) and renpy.is_mouse_visible():
 
@@ -91,8 +95,3 @@ init -1500 python:
 
         def visit(self):
             return [ i[0] for i in self.cursors.values() ]
-
-
-
-
-

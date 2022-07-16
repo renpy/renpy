@@ -21,6 +21,16 @@
 
 init -1100 python:
 
+    def _compat_versions(version, *args):
+        if version <= args[0]:
+            return True
+
+        for i in args[1:]:
+            if (version[0] == i[0]) and (version <= i):
+                return True
+
+        return False
+
     # This is called when script_version is set, to immediately
     # run code in response to a script_version change.
     def _set_script_version(version):
@@ -239,6 +249,9 @@ init -1100 python:
             config.gui_text_position_properties = False
             config.atl_function_always_blocks = True
 
+        if _compat_versions(version, (7, 5, 2), (8, 0, 2)):
+            config.quadratic_volumes = True
+            config.emphasize_audio_volume = 0.5
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
