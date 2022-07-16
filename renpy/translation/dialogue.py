@@ -153,7 +153,7 @@ def notags_filter(s):
 
 def combine_filter(s):
 
-    for double in ("[[", "{{", "%%"):
+    for double in ("{{", "%%"):
         while True:
             if s.find(double) >= 0:
                 i = s.find(double)
