@@ -127,11 +127,11 @@ translate japanese strings:
 
     # game/screens.rpy:759
     old "Unseen Text"
-    new "未読テキスト"
+    new "未読テキストもスキップ"
 
     # game/screens.rpy:760
     old "After Choices"
-    new "選択肢の後"
+    new "選択肢後もスキップ継続"
 
     # game/screens.rpy:766
     old "Examples"
