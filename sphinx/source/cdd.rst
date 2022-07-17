@@ -338,7 +338,7 @@ Utility Functions and Classes
     Causes the displayable `d` to be redrawn after `when` seconds have
     elapsed.
 
-.. class:: renpy.IgnoreEvent
+.. exception:: renpy.IgnoreEvent
 
     This is an exception that, if raised, causes Ren'Py to ignore the
     event. To raise this inside the event method, write::
