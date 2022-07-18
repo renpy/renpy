@@ -140,7 +140,7 @@ The transformations are done in the following order:
 
 #. ``r``/``s`` (repr or str)
 #. ``t`` (translate)
-#. ``i`` (inner interpolation)
+#. ``i`` (recursive interpolation)
 #. ``q`` (quoting)
 #. ``u`` (uppercase)
 #. ``l`` (lowercase)
