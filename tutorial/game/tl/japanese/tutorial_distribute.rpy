@@ -3,7 +3,7 @@
 translate japanese distribute_7db9b042:
 
     # e "One thing Ren'Py makes easy is building distributions of your visual novel so you can give it to players."
-    e "Ren'pyを使うとあなたのビジュアルノベルを簡単に配布物にビルドしてプレイヤーに配布できます。"
+    e "Ren'Pyを使うとあなたのビジュアルノベルを簡単に配布物にビルドしてプレイヤーに配布できます。"
 
 # game/tutorial_distribute.rpy:5
 translate japanese distribute_d373903b:
@@ -33,13 +33,13 @@ translate japanese distribute_821be97b:
 translate japanese distribute_638f964a:
 
     # e "If you are on a Macintosh, you can have Ren'Py sign the Mac application, which makes it easier for players to run. To enable this, you need to set build.mac_identity in options.rpy."
-    e "もしMacintoshを使用しているのであれば、Ren'py sign the Mac applicationを持つことができますので、プレイヤーが更に簡単に起動できるようになります。これを可能にするために、options.rpyの中にbuild.mac_identityを設定する必要があります。"
+    e "もしMacintoshを使用しているのであれば、Ren'Py sign the Mac applicationを持つことができますので、プレイヤーが更に簡単に起動できるようになります。これを可能にするために、options.rpyの中にbuild.mac_identityを設定する必要があります。"
 
 # game/tutorial_distribute.rpy:21
 translate japanese distribute_dd1af4dd:
 
     # e "Ren'Py supports the mobile platforms, Android and iOS. We also support ChromeOS, through its ability to run Android apps."
-    e "Ren'pyはモバイルプラットフォームであるAndroidとiOSをサポートしています。私たちはAndroidアプリを走らせるための活動を通してChromeOSもサポートしています。"
+    e "Ren'PyはモバイルプラットフォームであるAndroidとiOSをサポートしています。私たちはAndroidアプリを走らせるための活動を通してChromeOSもサポートしています。"
 
 # game/tutorial_distribute.rpy:23
 translate japanese distribute_0b547b7b:
@@ -63,7 +63,7 @@ translate japanese distribute_a9a2149f:
 translate japanese distribute_f1cbc9d0:
 
     # e "Thanks to the distribution tools Ren'Py ships with, there are thousands of visual novels available."
-    e "Ren'pyが搭載している配布ツールのおかげで、何千本ものビジュアルノベルが入手可能です。"
+    e "Ren'Pyが搭載している配布ツールのおかげで、何千本ものビジュアルノベルが入手可能です。"
 
 # game/tutorial_distribute.rpy:33
 translate japanese distribute_500b3e7f:
