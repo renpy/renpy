@@ -788,10 +788,25 @@ def report_character_stats(charastats):
         chars.sort()
 
         for char in chars:
-            rv.append(char + " has " + humanize(charastats[char].blocks) +
+            rv.append(" * " + char + " has " + humanize(charastats[char].blocks) +
                       (" block" if charastats[char].blocks == 1 else " blocks") + " of dialogue, " +
                       humanize(charastats[char].words) + (" word" if count == 1 else " words") +
                       " and " + humanize(charastats[char].characters) + " characters.")
+
+    return rv
+
+def report_file_stats(filestats):
+    """
+    Returns a list of file statistics.
+    """
+
+    rv = [ "File statistics:" ]
+
+    count_to_char = collections.defaultdict(list)
+
+    for file in filestats:
+        rv.append(" * " + file[5:] + " contains " + humanize(filestats[file].blocks) + " dialogue blocks, " +
+                  humanize(filestats[file].words) + " words and " + humanize(filestats[file].characters) + " characters.")
 
     return rv
 
@@ -840,6 +855,8 @@ def lint():
 
     charastats = collections.defaultdict(Count)
 
+    filestats = collections.defaultdict(Count)
+
     # The current language.
     language = None
 
@@ -882,6 +899,7 @@ def lint():
             counts[language].add(node.what)
             if language is None:
                 charastats[node.who if node.who else 'narrator' ].add(node.what)
+                filestats[node.filename].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -970,6 +988,7 @@ characters per block. """.format(
         humanize(menu_count), humanize(image_count), humanize(screen_count)))
 
     if renpy.config.developer and renpy.config.lint_character_statistics:
+        lines.append(report_file_stats(filestats))
         lines.append(report_character_stats(charastats))
 
     # Format the lines and lists of lines.
