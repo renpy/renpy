@@ -56,6 +56,9 @@ The following environment variables control the behavior of Ren'Py:
 ``RENPY_MULTIPERSISTENT``
     The path to a directory where Ren'Py stores multipersistent data.
 
+``RENPY_NO_STEAM``
+    If present in the environment, Ren'Py will not initialize Steamworks.
+
 ``RENPY_OPEN_FILE_ENCODING``
     Sets the default encoding for :func:`renpy.open_file`. This is mostly
     used to help Python 2 games run on Python 3 based versions of Ren'Py
