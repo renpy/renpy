@@ -87,7 +87,7 @@ translate japanese simple_displayables_00603985:
 translate japanese simple_displayables_d8b23480:
 
     # e "Frames might look a little weird in the abstract, but when used with a texture, you can see how we create scalable interface components."
-    e "Frameは概略では奇妙に見えるかもしれませんが、テクスチャーに使用されると、どうやって拡大縮小可能なインターフェースの要素を作っているか分かるでしょう。"
+    e "Frameは概略では奇妙に見えるかもしれませんが、テクスチャーに使用すると、どうやって拡大縮小可能なインターフェースの要素を作っているか分かるでしょう。"
 
 # game/indepth_displayables.rpy:132
 translate japanese simple_displayables_ae3f35f5:
