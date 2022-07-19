@@ -781,24 +781,17 @@ def report_character_stats(charastats):
 
     count_to_char = collections.defaultdict(list)
 
-    for char, count in charastats.items():
-        count_to_char[count].append(char)
+    for char in charastats:
+        count_to_char[charastats[char].words].append(char)
 
     for count, chars in sorted(count_to_char.items(), reverse=True):
         chars.sort()
 
-        if len(chars) == 1:
-            start = chars[0] + " has "
-        elif len(chars) == 2:
-            start = chars[0] + " and " + chars[1] + " have "
-        else:
-            start = ", ".join(chars[:-1]) + ", and " + chars[-1] + " have "
-
-        rv.append(
-            " * " + start + humanize(count) +
-            (" block " if count == 1 else " blocks ") + "of dialogue" +
-            (" each." if len(chars) > 1 else ".")
-            )
+        for char in chars:
+            rv.append(char + " has " + humanize(charastats[char].blocks) +
+                      (" block" if charastats[char].blocks == 1 else " blocks") + " of dialogue, " +
+                      humanize(charastats[char].words) + (" word" if count == 1 else " words") +
+                      " and " + humanize(charastats[char].characters) + " characters.")
 
     return rv
 
@@ -845,7 +838,7 @@ def lint():
     # The current count.
     counts = collections.defaultdict(Count)
 
-    charastats = collections.defaultdict(int)
+    charastats = collections.defaultdict(Count)
 
     # The current language.
     language = None
@@ -888,7 +881,7 @@ def lint():
 
             counts[language].add(node.what)
             if language is None:
-                charastats[node.who if node.who else 'narrator' ] += 1
+                charastats[node.who if node.who else 'narrator' ].add(node.what)
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
