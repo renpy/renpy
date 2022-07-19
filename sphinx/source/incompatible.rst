@@ -13,11 +13,26 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-8.0.2:
+.. _incompatible-7.5.2:
+
+8.0.2 / 7.5.2
+-------------
+
+The default games no longer filter Ruby/Furigana text tags from the history.
+This requires the line in screens.rpy that sets :var:`gui.history_allow_tags`
+to be changed to::
+
+    define gui.history_allow_tags = { "alt", "noalt", "rt", "rb", "art" }
+
+This change is only required if your game uses Ruby/Furigana text tags.
+
+
 .. _incompatible-8.0.0:
 .. _incompatible-7.5.0:
 
-7.5.0/8.0.0
------------
+8.0.0 / 7.5.0
+-------------
 
 The "Windows, Mac, and Linux for Markets" distribution has been changed to
 no longer prefix the contents of the zip file created with the directory
