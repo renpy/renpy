@@ -588,7 +588,8 @@ changes are required:
 3. The :propref:`yoffset` of the new style should be set, in order to move the
    ruby text above the baseline.
 4. The :propref:`ruby_style` field of the text's style should be set
-   to the newly-created style.
+   to the newly-created style, for both dialogue and history window
+   text.
 
 For example::
 
@@ -597,6 +598,10 @@ For example::
         yoffset -20
 
     style say_dialogue:
+        line_leading 12
+        ruby_style style.ruby_style
+
+    style history_text:
         line_leading 12
         ruby_style style.ruby_style
 

@@ -422,8 +422,8 @@ class DisplayableSegment(object):
 
     def glyphs(self, s, layout):
 
-        if self.width == 0:
-            return
+        if isinstance(self.d, renpy.display.layout.Null) and (self.d.width == 0) and (self.d.height == 0):
+            return [ ]
 
         glyph = textsupport.Glyph()
 
@@ -451,7 +451,6 @@ class DisplayableSegment(object):
         return rv
 
     def draw(self, glyphs, di, xo, yo, layout):
-
         if not glyphs:
             return
 

@@ -30,11 +30,26 @@ Alternatively, you can determine new default volumes for :var:`config.default_mu
 of these is 0.0 or 1.0, it can be left unchanged.
 
 
+.. _incompatible-8.0.2:
+.. _incompatible-7.5.2:
+
+8.0.2 / 7.5.2
+-------------
+
+The default games no longer filter Ruby/Furigana text tags from the history.
+This requires the line in screens.rpy that sets :var:`gui.history_allow_tags`
+to be changed to::
+
+    define gui.history_allow_tags = { "alt", "noalt", "rt", "rb", "art" }
+
+This change is only required if your game uses Ruby/Furigana text tags.
+
+
 .. _incompatible-8.0.0:
 .. _incompatible-7.5.0:
 
-7.5.0/8.0.0
------------
+8.0.0 / 7.5.0
+-------------
 
 The "Windows, Mac, and Linux for Markets" distribution has been changed to
 no longer prefix the contents of the zip file created with the directory
