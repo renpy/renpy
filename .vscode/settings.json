@@ -37,7 +37,6 @@
         "renpy*.exe": true,
         "tmp": true,
         "web": true,
-
     },
 
     "python.languageServer": "Pylance",

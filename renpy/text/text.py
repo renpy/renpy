@@ -422,9 +422,6 @@ class DisplayableSegment(object):
 
     def glyphs(self, s, layout):
 
-        if self.width == 0:
-            return
-
         glyph = textsupport.Glyph()
 
         w = layout.scale_int(self.width)
@@ -451,20 +448,12 @@ class DisplayableSegment(object):
         return rv
 
     def draw(self, glyphs, di, xo, yo, layout):
-
-        if not glyphs:
-            return
-
         glyph = glyphs[0]
 
         if di.displayable_blits is not None:
             di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.width, glyph.ascent, glyph.line_spacing, glyph.time))
 
     def assign_times(self, gt, glyphs):
-
-        if not glyphs:
-            return gt
-
         if self.cps != 0:
             gt += 1.0 / self.cps
 
