@@ -15,7 +15,7 @@ translate japanese director_ebf40500:
 translate japanese director_6f3d1bea:
 
     # e "Shift+O brings you to the console, which lets you enter Ren'Py and Python commands to try them out."
-    e "Shift+O を押すとコンソール画面が開きます。この画面では、Ren'pyおよびPythonのコマンドを試せます。"
+    e "Shift+O を押すとコンソール画面が開きます。この画面では、Ren'PyおよびPythonのコマンドを試せます。"
 
 # game/tutorial_director.rpy:11
 translate japanese director_70a61c1c:
@@ -27,7 +27,7 @@ translate japanese director_70a61c1c:
 translate japanese director_43504744:
 
     # e "The most powerful tool is the interactive director that lets you add images, music, and voice lines to your game from inside Ren'Py."
-    e "最も強力なツールはインタラクティブディレクターで、これを使うとRen'py内からあなたのゲームに画像や音楽、ボイスの行を追加できます。"
+    e "最も強力なツールはインタラクティブディレクターで、これを使うとRen'Py内からあなたのゲームに画像や音楽、ボイスの行を追加できます。"
 
 # game/tutorial_director.rpy:15
 translate japanese director_32f8695e:
@@ -39,7 +39,7 @@ translate japanese director_32f8695e:
 translate japanese director_62734181:
 
     # e "It looks like Ren'Py is installed read-only on your system, so you won't be able to try out the interactive director now."
-    e "Ren'pyはあなたのシステム上にインストールされていて読み取り専用ですので、今はインタラクティブディレクターを試すことはできません。"
+    e "Ren'Pyはあなたのシステム上にインストールされていて読み取り専用ですので、今はインタラクティブディレクターを試すことはできません。"
 
 # game/tutorial_director.rpy:23
 translate japanese director_aec4c7d4:
@@ -75,7 +75,7 @@ translate japanese director_1cd735bc:
 translate japanese director_c7a18979:
 
     # e "You can show the director at any time by pressing the 'D' key on your keyboard. Ren'Py will reload, and you'll come back here. Try it now."
-    e "キーボードの「D」キーを押すと、いつでもディレクターを表示させられます。Ren'pyはリロードされ、この画面に戻ってきます。それでは試してみましょう。"
+    e "キーボードの「D」キーを押すと、いつでもディレクターを表示させられます。Ren'Pyはリロードされ、この画面に戻ってきます。それでは試してみましょう。"
 
 # game/tutorial_director.rpy:46
 translate japanese director_3dcc4362:

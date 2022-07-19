@@ -225,13 +225,13 @@ translate japanese demo_imagedissolve_transitions_4327dca2:
 translate japanese demo_imagedissolve_transitions_3a401ee7:
 
     # e "This lets circleirisin and circleirisout use the same image."
-    e "これによって、circleirisinとcircleirisoutは同じ画像を使わせています。"
+    e "これによって、circleirisinとcircleirisoutで同じ画像を使えます。"
 
 # game/indepth_transitions.rpy:267
 translate japanese demo_imagedissolve_transitions_20d9cf6c:
 
     # e "The teleport transition uses a different image, one that dissolves things in one line at a time."
-    e "teleportトランジションは、別の画像を使っています。これで線を使って少しずつディゾルブをします。"
+    e "teleportトランジションは、別の画像を使っています。これは線を使って少しずつディゾルブをします。"
 
 # game/indepth_transitions.rpy:272
 translate japanese demo_imagedissolve_transitions_906f7800:
