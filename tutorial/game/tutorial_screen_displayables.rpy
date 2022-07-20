@@ -864,52 +864,6 @@ label viewport_displayables:
     e "The xinitial and yinitial properties set the initial amount of scrolling, as a fraction of the amount that can be scrolled."
 
     example large:
-        screen nochild_size_viewport_screen():
-
-            viewport:
-                xalign 0.5 ypos 50 xysize (700, 300)
-
-                scrollbars "horizontal"
-                spacing 5
-
-                draggable True
-                mousewheel True
-                arrowkeys True
-
-                add "#000c"
-                text _("This text is wider than the viewport.") size 40
-
-
-    with dissolve
-
-    e "Finally, there's the child_size property. To explain what it does, I first have to show you what happens when we don't have it."
-
-    e "As you can see, the text wraps. That's because Ren'Py is offering it space that isn't big enough."
-
-    example large:
-        screen child_size_viewport_screen():
-
-            viewport:
-                xalign 0.5 ypos 50 xysize (700, 300)
-
-                child_size (1000, None)
-
-                scrollbars "horizontal"
-                spacing 5
-
-                draggable True
-                mousewheel True
-                arrowkeys True
-
-                add "#000c"
-                text _("This text is wider than the viewport.") size 40
-
-    with dissolve
-
-    e "When we give the screen a child_size, it offers more space to its children, allowing scrolling. It takes a horizontal and vertical size. If one component is None, it takes the size of the viewport."
-
-
-    example large:
         screen vpgrid_screen():
 
             vpgrid:

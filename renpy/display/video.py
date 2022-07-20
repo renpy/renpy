@@ -350,6 +350,16 @@ class Movie(renpy.display.core.Displayable):
             self._play = None
             self._original_play = play
 
+        global movie_channel_serial
+
+        if (self.channel is not None) and ((" " in self.channel) or ("/" in self.channel)):
+            self.channel = "_movie_{}".format(movie_channel_serial)
+            movie_channel_serial += 1
+
+            if self.mask_channel is not None:
+                self.mask_channel = self.channel + "_mask"
+
+
     def ensure_channel(self, name):
 
         if name is None:
