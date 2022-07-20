@@ -379,7 +379,6 @@ screen extract_dialogue:
 
                     textbutton _("Strip text tags from the dialogue.") action ToggleField(persistent, "dialogue_notags") style "l_checkbox"
                     textbutton _("Escape quotes and other special characters.") action ToggleField(persistent, "dialogue_escape") style "l_checkbox"
-                    textbutton _("Combine special characters which need to be double into one.") action ToggleField(persistent, "dialogue_combine") style "l_checkbox"
                     textbutton _("Extract all translatable strings, not just dialogue.") action ToggleField(persistent, "dialogue_strings") style "l_checkbox"
 
                 add SPACER
@@ -422,9 +421,6 @@ label start_extract_dialogue:
 
         if persistent.dialogue_notags:
             args.append("--notags")
-
-        if persistent.dialogue_combine:
-            args.append("--combine")
 
         if persistent.dialogue_escape:
             args.append("--escape")

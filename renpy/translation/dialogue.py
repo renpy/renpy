@@ -169,8 +169,7 @@ def what_filter(s):
 
 class DialogueFile(object):
 
-    def __init__(self, filename, output, tdf=True, strings=False, notags=True,
-                 escape=True, combine=False, language=None): # @ReservedAssignment
+    def __init__(self, filename, output, tdf=True, strings=False, notags=True, escape=True, language=None): # @ReservedAssignment
         """
         `filename`
             The file we're extracting dialogue from.
@@ -187,10 +186,6 @@ class DialogueFile(object):
 
         `escape`
             If true, escape special characters in the dialogue.
-
-        `combine`
-            If true, combine special characters which need to be doubl into 
-            one in the dialogue.
         """
 
         self.filename = filename
@@ -203,7 +198,6 @@ class DialogueFile(object):
         self.tdf = tdf
         self.notags = notags
         self.escape = escape
-        self.combine = combine
         self.strings = strings
         self.language = language
 
@@ -251,8 +245,7 @@ class DialogueFile(object):
                     if self.notags:
                         what = notags_filter(what)
 
-                    if self.combine:
-                        what = combine_filter(what)
+                    what = combine_filter(what)
 
                     if self.escape:
                         what = quote_unicode(what)
@@ -314,8 +307,7 @@ class DialogueFile(object):
             if self.notags:
                 s = notags_filter(s)
 
-            if self.combine:
-                what = combine_filter(s)
+            what = combine_filter(s)
 
             if self.escape:
                 s = quote_unicode(s)
@@ -346,7 +338,6 @@ def dialogue_command():
     ap.add_argument("--strings", help="Output all translatable strings, not just dialogue.", dest="strings", action="store_true")
     ap.add_argument("--notags", help="Strip text tags from the dialogue.", dest="notags", action="store_true")
     ap.add_argument("--escape", help="Escape quotes and other special characters.", dest="escape", action="store_true")
-    ap.add_argument("--combine", help="Combine special characters which need to be double into one.", dest="combine", action="store_true")
     args = ap.parse_args()
 
     tdf = not args.text
@@ -381,8 +372,8 @@ def dialogue_command():
         language = args.language
         if language in ("None", ""):
             language = None
-        DialogueFile(filename, output, tdf=tdf, strings=args.strings, notags=args.notags,
-                     escape=args.escape, combine=args.combine, language=language)
+        DialogueFile(filename, output, tdf=tdf, strings=args.strings,
+                     notags=args.notags, escape=args.escape, language=language)
 
     return False
 
