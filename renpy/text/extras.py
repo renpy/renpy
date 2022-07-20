@@ -28,7 +28,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy
 
-from renpy.text.textsupport import TAG, PARAGRAPH
+from renpy.text.textsupport import DISPLAYABLE, PARAGRAPH, TAG
 import renpy.text.textsupport as textsupport
 
 # A list of text tags, mapping from the text tag prefix to if it
@@ -206,7 +206,8 @@ def filter_alt_text(s):
                     active.discard(kind)
                 else:
                     active.add(kind)
-
+        elif tokentype == DISPLAYABLE:
+            rv.append(text._tts())
         else:
             if not active:
                 rv.append(text)
