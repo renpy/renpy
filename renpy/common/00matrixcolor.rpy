@@ -96,7 +96,7 @@ init -1500 python:
                             0.0, 0.0, 0.0, 1.0, ])
 
 
-    class SaturationMatrix(ColorMatrix):
+    class SaturationMatrix(ColorMatrix, DictEquality):
         """
         :doc: colormatrix
 
