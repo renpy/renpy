@@ -236,6 +236,12 @@ class ParameterizedText(object):
     different style properties. For example, one can write::
 
         image top_text = ParameterizedText(xalign=0.5, yalign=0.0)
+<<<<<<< HEAD
+=======
+
+        label start:
+            show top_text "This text is shown at the center-top of the screen"
+>>>>>>> 775d291fe (doc: tweaks to last)
     """
 
     def __init__(self, style='default', **properties):
