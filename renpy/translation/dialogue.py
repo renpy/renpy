@@ -84,6 +84,8 @@ def notags_filter(s):
                 if first:
 
                     brace = False
+                    first = False
+                    rv += '{{'
                 else:
                     brace = True
                     first = True
@@ -93,6 +95,8 @@ def notags_filter(s):
 
                 if brace:
                     brace = False
+                else:
+                    rv += i
 
             else:
                 first = False
