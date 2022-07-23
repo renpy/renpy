@@ -867,7 +867,7 @@ Occasionally Used
             def jsoncallback(d):
                 d["playername"] = player_name
 
-            config.save_json_callback.append(jsoncallback)
+            config.save_json_callbacks.append(jsoncallback)
 
     ``FileJson(slot)`` and ``renpy.slot_json(slot)`` will recover the state
     of the ``d`` dict-like object as it was at the moment the game was saved.
