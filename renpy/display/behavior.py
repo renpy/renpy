@@ -2447,7 +2447,7 @@ class MouseArea(renpy.display.core.Displayable):
         if renpy.display.focus.pending_focus_type == 'keyboard':
             is_hovered = False
 
-        if (ev.type == renpy.display.core.TIMEEVENT) and ev.modal:
+        elif (ev.type == renpy.display.core.TIMEEVENT) and ev.modal:
             is_hovered = False
 
         else:
