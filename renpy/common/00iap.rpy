@@ -558,7 +558,7 @@ init -1500 python in iap:
         """
 
         from jnius import autoclass
-        Store = autoclass(b'org.renpy.iap.Store')
+        Store = autoclass('org.renpy.iap.Store')
         store = Store.getStore()
 
         store_name = store.getStoreName()
