@@ -148,7 +148,7 @@ screen_of_last_focused_names = set()
 grab = None
 
 # The default focus for the current screen.
-default_focus = None
+global_focus = None
 
 # The type of input that caused the focus to change last. One of
 # "keyboard" (for keyboard-like focus devices) or "mouse" (for mouse-like)
@@ -272,8 +272,8 @@ def take_focuses():
 
     renpy.display.render.take_focuses(focus_list)
 
-    global default_focus
-    default_focus = None
+    global global_focus
+    global_focus = None
 
     global grab
 
@@ -281,7 +281,7 @@ def take_focuses():
 
     for f in focus_list:
         if f.x is None:
-            default_focus = f
+            global_focus = f
 
         if f.widget is grab:
             grab_found = True
@@ -289,8 +289,8 @@ def take_focuses():
     if not grab_found:
         grab = None
 
-    if (default_focus is not None) and (get_focused() is None):
-        change_focus(default_focus, True)
+    if (global_focus is not None) and (get_focused() is None):
+        change_focus(global_focus, True)
 
 
 def focus_coordinates():
@@ -317,6 +317,10 @@ replaced_by = { }
 # The modal generation - the number of times mark_modal has been called.
 # Only displayables in the latest modal generation can gain focus.
 modal_generation = 0
+
+# The maximum default_focus number found the last time before_interact
+# was called.
+old_max_default = 0
 
 def mark_modal():
     global modal_generation
@@ -370,8 +374,32 @@ def before_interact(roots):
 
     fwn = fwn2
 
-    # Is this a default change?
-    default = True
+    # Determine the default, as determined by the current screen.
+    defaults = [ ]
+
+    for f, n, screen, gen in fwn:
+        if gen != modal_generation:
+            continue
+
+        if f.default:
+            defaults.append((f.default, f, screen))
+
+    if defaults:
+        if len(defaults) > 1:
+            defaults.sort(key=operator.itemgetter(0))
+
+        max_default, max_default_focus, max_default_screen = defaults[-1]
+
+    else:
+        max_default = 0
+        max_default_focus = None
+        max_default_screen = None
+
+    # Should we do the max_default logic?
+    should_max_default = (renpy.display.interface.last_event is None) or (renpy.display.interface.last_event.type not in [ pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION ])
+
+    # Is this an explicit change, using the override operation?
+    explicit = False
 
     # We assume id(None) is not in replaced_by.
     replaced_by.pop(None, None)
@@ -391,10 +419,17 @@ def before_interact(roots):
 
         if (d is not None) and (current is not d) and not grab:
             current = d
-            default = False
+            explicit = True
 
     override = None
 
+    # When increasing the default focus, and the user is not using the mouse,
+    # switch to the default.
+    if should_max_default and (max_default > old_max_default):
+        current = max_default_focus
+        set_focused(max_default_focus, None, max_default_screen)
+
+    # Try to find the current focus.
     if current is not None:
         current_name = current.full_focus_name
 
@@ -413,26 +448,13 @@ def before_interact(roots):
     if grab is not None:
         current = grab
 
-    # Otherwise, focus the default widget.
-    if (current is None) and renpy.display.interface.start_interact:
+    # If nothing has focus, focus the default if the highest priority has changed,
+    # or if the default is None.
+    if (should_max_default and (max_default > 0) and (current is None) and
+        (renpy.display.interface.start_interact or (max_default != old_max_default))):
 
-        defaults = [ ]
-
-        for f, n, screen, gen in fwn:
-            if gen != modal_generation:
-                continue
-
-            if f.default:
-                defaults.append((f.default, f, screen))
-
-        if defaults:
-            if len(defaults) > 1:
-                defaults.sort(key=operator.itemgetter(0))
-
-            _, f, screen = defaults[-1]
-
-            current = f
-            set_focused(f, None, screen)
+        current = max_default_focus
+        set_focused(max_default_focus, None, max_default_screen)
 
     if current is None:
         set_focused(None, None, None)
@@ -446,7 +468,7 @@ def before_interact(roots):
                 if (f is old_current) and renpy.config.always_unfocus:
                     f.unfocus(default=False)
                 else:
-                    f.unfocus(default=default)
+                    f.unfocus(default=not explicit)
 
             finally:
                 renpy.display.screen.pop_current_screen()
@@ -454,7 +476,7 @@ def before_interact(roots):
     if current:
         renpy.display.screen.push_current_screen(screen_of_focused)
         try:
-            current.focus(default=default)
+            current.focus(default=not explicit)
         finally:
             renpy.display.screen.pop_current_screen()
 
@@ -545,7 +567,7 @@ def mouse_handler(ev, x, y, default=False):
         new_focus = None
 
     if new_focus is None:
-        new_focus = default_focus
+        new_focus = global_focus
 
     return change_focus(new_focus, default=default)
 
