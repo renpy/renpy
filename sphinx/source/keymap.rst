@@ -48,7 +48,7 @@ ctrl
     when the Ctrl key is not pressed. (Ctrl is not very useful, as it
     usually triggers skipping.)
 osctrl
-    This is Command on the Macintosh, and ctrl elsewhere.
+    This is alt on the Macintosh, and ctrl elsewhere.
 shift
     Matches when the Shift key is pressed.
 noshift
@@ -74,7 +74,7 @@ statement, and removes the space key from that list. ::
         $ config.keymap['dismiss'].remove('K_SPACE')
 
 The default keymap is contained inside renpy/common/00keymap.rpy, and
-as of version 7.4.11 is as follows::
+as of version 8.0.2 is as follows::
 
     config.keymap = dict(
 
@@ -134,8 +134,8 @@ as of version 7.4.11 is as follows::
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
         input_home = [ 'K_HOME', 'meta_K_LEFT' ],
         input_end = [ 'K_END', 'meta_K_RIGHT' ],
-        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c' ],
-        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v' ],
+        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c', 'meta_noshift_K_c' ],
+        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v', 'meta_noshift_K_v' ],
         input_jump_word_left = [ 'osctrl_K_LEFT' ],
         input_jump_word_right = [ 'osctrl_K_RIGHT' ],
         input_delete_word = [ 'osctrl_K_BACKSPACE' ],

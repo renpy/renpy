@@ -186,8 +186,8 @@ init -1500 python in iap:
 
     if renpy.renpy.ios:
         import pyobjus
-        IAPHelper = pyobjus.autoclass(b"IAPHelper")
-        NSMutableArray = pyobjus.autoclass(b"NSMutableArray")
+        IAPHelper = pyobjus.autoclass("IAPHelper")
+        NSMutableArray = pyobjus.autoclass("NSMutableArray")
 
         from pyobjus import objc_str, objc_arr
 

@@ -232,6 +232,9 @@ All user interface statements take the following common properties:
     multiple displayables have this, the values are compared and the
     displayable with the greatest default focus becomes the default.
 
+    The default focus is only used when the last interaction was not
+    a mouse click, mouse movement, or touch.
+
 `id`
     An identifier for the user-interface statement. When a screen is
     shown, property values can be supplied for the displayables with a
