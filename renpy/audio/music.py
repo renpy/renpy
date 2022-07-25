@@ -569,7 +569,7 @@ def pump():
     This 'pumps' the audio system. Normally, the effects of the ``play``,
     ``queue``, and ``stop`` statements and the function equivalents take
     place at the start of the next interaction. In some cases, the effects
-    of multiple statements can cancel each other out - for example, an
+    of multiple statements can cancel each other out - for example, a
     play followed by a stop causes the track to never be played.
 
     If this function is called between the play and stop, the track will
