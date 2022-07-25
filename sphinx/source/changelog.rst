@@ -29,6 +29,16 @@ The advantage of this change is that it makes the volumes sliders much more dyna
 Previously, the volume slider had to be very near the bottom before it had an effect.
 Now, the volume increases and decreases match the way people perceive loudness.
 
+New Features
+------------
+
+The new :func:`renpy.music.pump` function can be called to cause audio changes
+to take effect immediately, rather than at the start of the next interaction.
+The main use of this is to allow a sound to be played, and then faded out. (By
+default, a ``play`` followed by a ``stop`` causes the track to never be
+played, and hence never faded out.)
+
+
 .. _renpy-7.5.2:
 .. _renpy-8.0.2:
 

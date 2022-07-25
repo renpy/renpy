@@ -1212,6 +1212,16 @@ def interact():
 
     periodic()
 
+def pump():
+    """
+    Used to implement renpy.music.pump.
+    """
+
+    interact()
+
+    with lock:
+        periodic_pass()
+
 
 def rollback():
     """
