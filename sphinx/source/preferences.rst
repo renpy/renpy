@@ -94,7 +94,7 @@ can then change it again.)
     This determines if tearing (True) or frameskip (False) is the preferred
     behavior when the game can't keep up with its intended framerate.
 
-.. var:: preferences.mouse_move = False
+.. var:: preferences.mouse_move = True
 
     If True, the mouse will automatically move to a selected button. If False,
     it will not. The equivalent of the "automatic mouse move" preference.
@@ -189,7 +189,7 @@ See :ref:`volume` for more details about mixers.
     If `mute` is false, the mixer's volume is reverted to its value before
     it was muted.
 
-.. function:: preferences.get_mute(mute)
+.. function:: preferences.get_mute(mixer)
 
     Gets the mute setting for `mixer`.
 
