@@ -134,21 +134,10 @@ These control transitions between various screens.
     If not None, a transition that is used when exiting the yes/no
     prompt screen.
 
-.. var:: config.game_main_transition = None
-
-    The transition that is used to display the main menu after leaving
-    the game menu. This is used when the load and preferences screens
-    are invoked from the main menu, and it's also used when the user
-    picks "Main Menu" from the game menu.
-
 .. var:: config.intra_transition = None
 
-    The transition that is used between screens of the game menu.
-
-.. var:: config.main_game_transition = None
-
-    The transition used when entering the game menu from the main
-    menu, as is done when clicking "Load Game" or "Preferences".
+    The transition that is used between screens of the game and main
+    menu. (That is, when the screen is changed with :func:`ShowMenu`.)
 
 .. var:: config.nvl_adv_transition = None
 
