@@ -551,8 +551,9 @@ cdef class GL2Draw:
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
         size = renpy.display.core.get_size()
+        drawable_size = pygame.display.get_drawable_size()
 
-        if force or (fullscreen != renpy.display.interface.fullscreen) or (size != self.physical_size):
+        if force or (fullscreen != renpy.display.interface.fullscreen) or (size != self.physical_size) or (drawable_size != self.drawable_size):
             renpy.display.interface.before_resize()
             self.on_resize()
 
