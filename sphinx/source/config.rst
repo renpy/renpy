@@ -134,6 +134,11 @@ These control transitions between various screens.
     If not None, a transition that is used when exiting the yes/no
     prompt screen.
 
+.. var:: config.game_main_transition = None
+
+    If not None, a transition that is used when returning to the main
+    menu from the game menu, using the :func:`MainMenu` action.
+
 .. var:: config.intra_transition = None
 
     The transition that is used between screens of the game and main
