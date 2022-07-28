@@ -304,17 +304,19 @@ cdef class GLTexture(GL2Model):
 
         # The visible size of the texture.
 
-        tw, th = draw.virt_to_draw.transform(cw, ch)
-
-        tw = round(tw)
-        th = round(th)
-
         drawable = properties.get("drawable_resolution", True)
 
         if drawable:
-            cw, ch = draw.draw_to_virt.transform(tw, th)
+
+            tw, th = draw.virt_to_draw.transform(cw, ch)
+
+            tw = round(tw)
+            th = round(th)
+
         else:
-            cw, ch = tw, th
+
+            tw = cw = round(cw)
+            th = ch = round(ch)
 
         tw = min(tw, loader.max_texture_width)
         th = min(th, loader.max_texture_height)
