@@ -2156,8 +2156,8 @@ class Flatten(Container):
 
     `drawable_resolution`
         Defaults to true, which is usually the right choice, but may cause
-        the texture to be had different artifacts when scaled than the
-        textures that make it up. Setting this to False will change the
+        the resulting texture, when scaled, to have different artifacts than
+        the textures that make it up. Setting this to False will change the
         artifacts, which may be more pleasing in some cases.
     """
 
