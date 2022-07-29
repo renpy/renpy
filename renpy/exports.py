@@ -1829,9 +1829,10 @@ def reload_script():
 
     session = renpy.session
 
-    session.pop("_reload_screen", None)
-    session.pop("_reload_screen_args", None)
-    session.pop("_reload_screen_kwargs", None)
+    # If one of these variables is already in session, we're recovering from
+    # a failed reload.
+    if ("_reload_screen" in session) or ("_main_menu_screen" in session):
+        utter_restart()
 
     if not renpy.store.main_menu:
 
