@@ -171,10 +171,60 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         to the corner of this drag.
 
     `drag_offscreen`
-        If true, this draggable can be moved offscreen. This can be
-        dangerous to use with drag_joined or drags that can change
-        size, as the drags can leave the screen entirely, with no
-        way to get them back on the screen.
+        This should be one of:
+
+        False
+            To disallow dragging the drag offscreen. (The default)
+
+        True
+            To allow dragging offscreen, in any direction. This can
+            be dangerous to use with drag_joined or drags that can
+            change size, as the drags can leave the screen entirely,
+            with no way to get them back on the screen.
+
+        "horizontal"
+            To allow dragging offscreen in the horizontal direction only.
+
+        "vertical"
+            To allow dragging offscreen in the vertical direction only.
+
+        (min_x, max_x, min_y, max_y)
+            Where each of min_x, max_x, min_y, and max_y are integers.
+            min_x is the minimum pixel position this drag can be
+            dragged to on the x-axis, and max_x is the maximum pixel
+            position this drag can be dragged to on the x-axis. The
+            same goes for min_y and max_y on the y-axis. (0, 0, 0, 0)
+            is equivalent to not allowing dragging offscreen at all.
+
+            For example, (-100, 200, 0, 0) would allow the drag to be
+            dragged 100 pixels off the left edge of the screen and 200
+            pixels off the right edge of the screen, but does not
+            allow it to be dragged offscreen at the top nor bottom.
+
+            This can also be used to constrain the drag within the
+            screen bounds. (200, -200, 200, -200) would only allow
+            the drag within 200 pixels of the edges of the screen.
+
+        callable
+            A callable can be provided to drag_offscreen. It must
+            take two arguments: and x and a y position which
+            represents the dragged position of the top left corner of
+            the drag, and it must return an (x, y) tuple which is the
+            new (x, y) position the drag should be in. This callable
+            is called frequently, whenever the drag is moved. For
+            example, the following function snaps the drag into place
+            every 300 pixels::
+
+                def drag_where(x, y):
+
+                    if y < 150:
+                        y = 0
+                    elif y < 450:
+                        y = 300
+                    else:
+                        y = 600
+
+                    return 200, y
 
     `mouse_drop`
         If true, the drag is dropped on the first droppable under the cursor.
@@ -182,8 +232,8 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         the largest degree of overlap.
 
     `drop_allowable`
-        A callback that is called to determine whether this drop allow
-        the current drags dropped onto. It is called with two arguments.
+        A callback that is called to determine whether this drop will allow
+        the current drags to be dropped onto it. It is called with two arguments.
         The first is the Drag which determines its sensitivity.
         The second is a list of Drags that are being dragged.
 
@@ -687,11 +737,26 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
                     new_x = int(par_x - self.grab_x + xo) # type: ignore
                     new_y = int(par_y - self.grab_y + yo) # type: ignore
 
-                    if not self.drag_offscreen:
+                    # Constrain x-axis
+                    if not self.drag_offscreen or self.drag_offscreen == "vertical":
                         new_x = max(new_x, 0)
                         new_x = min(new_x, int(i.parent_width - i.w))
+                    # Constrain y-axis
+                    if not self.drag_offscreen or self.drag_offscreen == "horizontal":
                         new_y = max(new_y, 0)
                         new_y = min(new_y, int(i.parent_height - i.h))
+
+                    # Tuple of (x_min, x_max, y_min, y_max)
+                    if isinstance(self.drag_offscreen, tuple):
+                        if len(self.drag_offscreen) != 4:
+                            raise Exception("Invalid number of arguments to drag_offscreen.")
+                        new_x = max(new_x, self.drag_offscreen[0])
+                        new_x = min(new_x, int(i.parent_width - i.w + self.drag_offscreen[1]))
+                        new_y = max(new_y, self.drag_offscreen[2])
+                        new_y = min(new_y, int(i.parent_height - i.h + self.drag_offscreen[3]))
+                    # Callable called with x, y position
+                    elif callable(self.drag_offscreen):
+                        new_x, new_y = self.drag_offscreen(new_x, new_y)
 
                     if i.drag_group is not None and i.drag_name is not None:
                         i.drag_group.positions[i.drag_name] = (new_x, new_y, self.old_position)
