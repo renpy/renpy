@@ -1,5 +1,3 @@
-.. _statement-equivalents:
-
 =====================
 Statement Equivalents
 =====================
@@ -67,7 +65,7 @@ arguments to character calls.
 Choice Menus
 ============
 
-The :ref:`menu statement <menus>` has an equivalent Python function.
+The :doc:`menu statement <menus>` has an equivalent Python function.
 
 .. include:: inc/se_menu
 
@@ -76,7 +74,7 @@ Displaying Images
 =================
 
 The image, scene, show, and hide statements each have an equivalent
-Python function (see :ref:`displaying-images` for the original statements).
+Python function (see :doc:`displaying_images` for the original statements).
 
 .. include:: inc/se_images
 

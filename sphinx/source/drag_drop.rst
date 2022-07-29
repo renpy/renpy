@@ -22,7 +22,7 @@ something that can do both. The DragGroup class represents a group of
 Drags – for a drag and drop to occur, both Drags must be part of the
 same drag group.
 
-The drag and drop system can be used either through the :ref:`Screen
+The drag and drop system can be used either through the :doc:`Screen
 Language <screens>` or directly as displayables. It makes sense to use
 the screen language when you don't need to refer to the Drags that you
 create after they've been created. This might be the case if the

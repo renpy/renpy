@@ -11,7 +11,7 @@ displayable is allowed to take arbitrary pygame events. It can
 also render other displayables, and place them at arbitrary locations
 on the screen. This makes it suitable for creating 2D mini-games that
 cannot be expressed with the tools Ren'Py gives you. (But see also the
-section :ref:`sprites <sprites>`, which describes a higher-level way
+section :doc:`sprites <sprites>`, which describes a higher-level way
 of accomplishing many of the same things.)
 
 Creator-defined displayables are programmed entirely in Python, and we
@@ -344,4 +344,3 @@ Utility Functions and Classes
     event. To raise this inside the event method, write::
 
         raise renpy.IgnoreEvent()
-

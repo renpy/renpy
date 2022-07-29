@@ -204,7 +204,7 @@ Preference Defaults
 -------------------
 
 Ren'Py has a number of variables that set the default values of
-preferences. Please see the section on :ref:`preference variables <preference-variables>`
+preferences. Please see the section on :doc:`preference variables <preferences>`
 for more information on how to set defaults for various preferences.
 
 Occasionally Used
@@ -676,7 +676,7 @@ Occasionally Used
 .. var:: config.mode_callbacks = [ ... ]
 
     A list of callbacks called when entering a mode. For more documentation,
-    see the section on :ref:`Modes`.
+    see the section on :doc:`modes`.
 
     The default value includes a callback that implements :var:`config.adv_nvl_transition`
     and :var:`config.nvl_adv_transition`.
@@ -1281,7 +1281,7 @@ Rarely or Internally Used
 
     This variable contains a keymap giving the keys and mouse buttons
     assigned to each possible operation. Please see the section on
-    :ref:`Keymaps <keymap>` for more information.
+    :doc:`Keymaps <keymap>` for more information.
 
 .. var:: config.label_callback = None
 
@@ -1365,8 +1365,8 @@ Rarely or Internally Used
 .. var:: config.log = None
 
     If not None, this is expected to be a filename. Much of the text
-    shown to the user by :ref:`say <say-statement>` or :ref:`menu
-    <menu-statement>` statements will be logged to this file.
+    shown to the user by :ref:`say <say-statement>` or :doc:`menu
+    <menus>` statements will be logged to this file.
 
 .. var:: config.main_menu_stop_channels = [ "movie", "sound", "voice" ]
 
@@ -1438,8 +1438,8 @@ Rarely or Internally Used
 .. var:: config.old_substitutions = True
 
     If True, Ren'Py will apply old-style (percent) substitutions to
-    text displayed by the :ref:`say <say-statement>` and :ref:`menu
-    <menu-statement>` statements.
+    text displayed by the :ref:`say <say-statement>` and :doc:`menu
+    <menus>` statements.
 
 .. var:: config.open_file_encoding = False
 
@@ -1545,8 +1545,8 @@ Rarely or Internally Used
 .. var:: config.say_menu_text_filter = None
 
     If not None, then this is a function that is given the text found
-    in strings in the :ref:`say <say-statement>` and :ref:`menu
-    <menu-statement>` statements. It is expected to return new
+    in strings in the :ref:`say <say-statement>` and :doc:`menu
+    <menus>` statements. It is expected to return new
     (or the same) strings to replace them.
 
 .. var:: config.say_sustain_callbacks = ...
@@ -1782,48 +1782,48 @@ Other Configuration Variables
 Some other pages of this documentation contain and define other configuration
 variables. You can locate them there, in their context.
 
-:ref:`nvl-mode`:
-    :var:`config.nvl_layer`
-    :var:`config.nvl_list_length`
-    :var:`config.nvl_page_ctc`
-    :var:`config.nvl_page_ctc_position`
-    :var:`config.nvl_paged_rollback`
+:doc:`nvl_mode`:
+* :var:`config.nvl_layer`
+* :var:`config.nvl_list_length`
+* :var:`config.nvl_page_ctc`
+* :var:`config.nvl_page_ctc_position`
+* :var:`config.nvl_paged_rollback`
 
-:ref:`side-images`:
-    :var:`config.side_image_tag`
-    :var:`config.side_image_only_not_showing`
-    :var:`config.side_image_prefix_tag`
-    :var:`config.side_image_null`
-    :var:`config.side_image_same_transform`
-    :var:`config.side_image_change_transform`
+:doc:`side_image`:
+* :var:`config.side_image_tag`
+* :var:`config.side_image_only_not_showing`
+* :var:`config.side_image_prefix_tag`
+* :var:`config.side_image_null`
+* :var:`config.side_image_same_transform`
+* :var:`config.side_image_change_transform`
 
-:ref:`self-voicing`:
-    :var:`config.descriptive_text_character`
+:doc:`self_voicing`:
+* :var:`config.descriptive_text_character`
 
-:ref:`preference-variables`:
-    :var:`config.default_music_volume`
-    :var:`config.default_sfx_volume`
-    :var:`config.default_voice_volume`
+:doc:`preferences`:
+* :var:`config.default_music_volume`
+* :var:`config.default_sfx_volume`
+* :var:`config.default_voice_volume`
 
-:ref:`model`:
-    :var:`config.gl2`
-    :var:`config.log_gl_shaders`
-    :var:`config.gl_blend_func`
+:doc:`model`:
+* :var:`config.gl2`
+* :var:`config.log_gl_shaders`
+* :var:`config.gl_blend_func`
 
-:ref:`achievement`:
-    :var:`config.steam_appid`
+:doc:`achievement`:
+* :var:`config.steam_appid`
 
-:ref:`gesture`:
-    :var:`config.gestures`
-    :var:`config.dispatch_gesture`
+:doc:`gesture`:
+* :var:`config.gestures`
+* :var:`config.dispatch_gesture`
 
-:ref:`live2d`:
-    :var:`config.log_live2d_loading`
+:doc:`live2d`:
+* :var:`config.log_live2d_loading`
 
-:ref:`gui`:
-    :var:`config.thumbnail_height`
-    :var:`config.thumbnail_width`
+:doc:`gui`:
+* :var:`config.thumbnail_height`
+* :var:`config.thumbnail_width`
 
-:ref:`custom-text-tags`:
-    :var:`config.custom_text_tags`
-    :var:`config.self_closing_custom_text_tags`
+:doc:`custom_text_tags`:
+* :var:`config.custom_text_tags`
+* :var:`config.self_closing_custom_text_tags`

@@ -7,7 +7,7 @@ Android on Chrome OS
 --------------------
 
 The easiest way to make a game available for Chrome OS is to package it for
-Android, as described in the :ref:`Android documentation <android>`. Ren'Py's
+Android, as described in the :doc:`Android documentation <android>`. Ren'Py's
 Android support was designed with Chrome OS in mind as well.
 
 This mode only supports playing games, not developing new games.

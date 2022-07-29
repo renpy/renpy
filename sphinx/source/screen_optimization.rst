@@ -1,5 +1,3 @@
-.. _screen-optimization:
-
 ============================
 Screen Language Optimization
 ============================
@@ -260,4 +258,3 @@ Pure Names
 The following names are both pure and const by default.
 
 .. include:: inc/pure_vars
-

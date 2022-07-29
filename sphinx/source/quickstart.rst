@@ -220,7 +220,7 @@ we defined.
 Images
 ------
 
-*Main article:* :ref:`displaying-images`
+*Main article:* :doc:`displaying_images`
 
 A visual novel isn't much of a visual novel without pictures. Here's another
 scene from "The Question". This also includes statements that show images
@@ -336,13 +336,13 @@ The image statement is run at init time, before label start and the rest
 of the game script that interacts with the player.
 
 The image statement can also be used for more complex tasks, but that's
-discussed :ref:`elsewhere <displaying-images>`.
+discussed :doc:`elsewhere <displaying_images>`.
 
 
 Transitions
 -----------
 
-*Main article:* :ref:`transitions`
+*Main article:* :doc:`transitions`
 
 In the script above, pictures pop in and out instantaneously. Since
 changing location or having a character enter or leave a scene is
@@ -420,7 +420,7 @@ anything to the player.
 Positions
 ---------
 
-*Main article:* :ref:`transforms`
+*Main article:* :doc:`transforms`
 
 By default, images are shown centered horizontally, and with their
 bottom edge touching the bottom of the screen. This is usually okay
@@ -447,7 +447,7 @@ but that's outside of the scope of this quickstart.
 Music and Sound
 ---------------
 
-*Main article:* :ref:`audio`
+*Main article:* :doc:`audio`
 
 Most Ren'Py games play music in the background. Music is played with the
 ``play music`` statement. The play music statement takes a filename that
@@ -535,7 +535,7 @@ presents menus to the user.
 Menus, Labels, and Jumps
 -------------------------
 
-*Main articles:* :ref:`menus` *and* :ref:`labels-control-flow`
+*Main articles:* :doc:`menus` *and* :doc:`label`
 
 The ``menu`` statement lets presents a choice to the player::
 
@@ -596,7 +596,7 @@ in how you organize the script of a larger game.
 Supporting Flags using the Default, Python and If Statements
 ------------------------------------------------------------
 
-*Main articles:* :ref:`python` *and* :ref:`conditional-statements`
+*Main articles:* :doc:`python` *and* :doc:`conditional`
 
 While some games can be made by only using the statements given above,
 other games require data to be stored and recalled later. For example,
@@ -707,7 +707,7 @@ before releasing it:
       good place to tell fellow creators about your game.
 
 More advanced vays of customizing the building of the distribution of your game
-can be found in the :ref:`building-distributions` section.
+can be found in the :doc:`build` section.
 
 Script of The Question
 -----------------------
