@@ -1,5 +1,3 @@
-.. _preference-variables:
-
 ====================
 Preference Variables
 ====================

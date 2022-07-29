@@ -387,7 +387,7 @@ The following variables provide further control of the build process:
 
 .. var:: build.include_update = False
 
-    When true, Ren'Py will produce the files required for the :ref:`updater <web-updater>`
+    When true, Ren'Py will produce the files required for the :doc:`updater <updater>`
     to work.
 
 .. var:: build.itch_project = None

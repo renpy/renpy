@@ -1,5 +1,3 @@
-.. _nvl-mode:
-
 NVL-Mode Tutorial
 =================
 
@@ -259,4 +257,4 @@ Script of The Question (NVL-mode Edition)
 -----------------------------------------
 
 You can view the full script of the NVL-mode edition of ''The Question''
-:ref:`here <thequestion_nvl>`.
+:doc:`here <thequestion_nvl>`.

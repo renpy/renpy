@@ -1,10 +1,8 @@
-.. _style-properties:
-
 ================
 Style Properties
 ================
 
-The style properties associated with :ref:`styles <styles>` control how
+The style properties associated with :doc:`styles <style>` control how
 Displayables are shown. Style properties can be either given without a prefix,
 in which case they apply to all states of the displayable, or with a prefix
 that limits the property to a limited number of states.
@@ -243,7 +241,7 @@ or on the screen when not inside a layout.
 .. style-property:: alt string or None
 
     Alternative text used for the displayable when self-voicing is
-    enabled. See the :ref:`self voicing <self-voicing>` section for
+    enabled. See the :doc:`self voicing <self_voicing>` section for
     more information.
 
 .. style-property:: xpos position

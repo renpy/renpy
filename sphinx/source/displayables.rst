@@ -145,7 +145,7 @@ Applying Transforms to Displayables
 -----------------------------------
 
 The At function produces a displayable from a displayable and one or
-more :ref:`transforms <transforms>`.
+more :doc:`transforms <transforms>`.
 
 .. include:: inc/disp_at
 
@@ -198,7 +198,7 @@ These displayables are used to create certain visual effects.
 Image Manipulators
 -------------------
 
-An :ref:`image manipulator <image-manipulator>` is a displayable that takes an image or image
+An :doc:`image manipulator <im>` is a displayable that takes an image or image
 manipulator, and either loads it or performs an operation on it.
 Image manipulators can only take images or other
 image manipulators as input.
@@ -214,7 +214,7 @@ In any case except for :func:`im.Data`, the :func:`Transform` displayable provid
 similar functionality in a more general manner, while fixing the problems,
 although it sometimes requires gl2 to be enabled.
 
-For the list of image manipulators, see the :ref:`image manipulator <image-manipulator>`
+For the list of image manipulators, see the :doc:`image manipulator <im>`
 documentation.
 
 Placeholders
@@ -265,5 +265,5 @@ or in any other place where a displayable is required.
 See also
 --------
 
-:ref:`displaying-images` : the basics of how to make all these displayables
+:doc:`displaying_images` : the basics of how to make all these displayables
 appear on the screen.

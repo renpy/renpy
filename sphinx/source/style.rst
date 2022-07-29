@@ -19,7 +19,7 @@ while its ``idle_background`` property is used when the button is unfocused.
 While Ren'Py has over 100 style properties, only a few properties are
 used in this section. Along with ``background``, we use ``color``, ``font``,
 ``outlines`` and ``size`` as style properties. For a full list of style
-properties, please read the :ref:`style properties <style-properties>`
+properties, please read the :doc:`style properties <style_properties>`
 documentation.
 
 

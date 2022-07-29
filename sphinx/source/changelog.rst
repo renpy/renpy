@@ -247,7 +247,7 @@ Steam, Steam Deck, and Epic Games Store
 This release includes rewritten Steam support, provided by a new
 ctypes-based binding that gives access to the entire Steamworks API,
 including callbacks. While the Steam support available through the
-:ref:`achievement module <achievement>` remains unchanged, this
+:doc:`achievement module <achievement>` remains unchanged, this
 gives advanced Python programmers access to more Steam functionality.
 
 When Steam is active, Ren'Py will now enable the "steam" variant.
@@ -1146,7 +1146,7 @@ to False.
 When the model-based renderer is being used, Ren'Py now supports a "3D Stage".
 This adds a third dimension to shown images, allowing for perspective correct
 zooming and motion, the rotation and translation of displayables in 3D,
-and many other new effects. Please see the :ref:`3D Stage <3dstage>`
+and many other new effects. Please see the :doc:`3D Stage <3dstage>`
 documentation for more information.
 
 To facilitate the 3D Stage, the ``scene`` statement no longer clears
@@ -1315,7 +1315,7 @@ Live2D now supports the additive and multiply blend modes.
 Using default or define with the ``renpy`` namespace will now produce an
 error.
 
-A number of previously-undocumented methods on the `preferences object <preference-variables>`
+A number of previously-undocumented methods on the :doc:`preferences object <preferences>`
 have been documented. These methods make it possible to get or set the current value
 of the volume and the current value of mute.
 
@@ -2277,7 +2277,7 @@ Text Improvements
 -----------------
 
 Ren'Py now includes support for self-closing custom text tags, which
-are :ref:`custom text tags <custom-text-tags>` that do not require as
+are :doc:`custom text tags <custom_text_tags>` that do not require as
 closing text tag.
 
 Ren'Py now supports three new flags that can be applied when formatting
@@ -2323,7 +2323,7 @@ The ``side`` displayable now renders its children in the order
 they are provided in the control string.
 
 The ``say`` statement, ``menu`` statement, and ``renpy.call_screen``
-statements now tak a `_mode` argument, which specifies the :ref:`mode <modes>`
+statements now tak a `_mode` argument, which specifies the :doc:`mode <modes>`
 Ren'Py goes into when these statements occur.
 
 The :func:`renpy.show_screen` and :func:`renpy.call_screen` functions now
@@ -2550,7 +2550,7 @@ than the screen, and will be selected if the current window size is the
 maximum window size, if the size selected with :func:`gui.init` is bigger
 than the maximum window size.
 
-:ref:`Creator defined statements <cds>` now have a few more lexer methods available,
+:doc:`Creator defined statements <cds>` now have a few more lexer methods available,
 making it possible to to parse arguments, image name components, labels, and
 delimited python.
 
@@ -2998,7 +2998,7 @@ contains the differences between 7.0 and 6.99.14.3.
 Layered Images
 --------------
 
-A :ref:`layered image <layered-images>` is a new way of defining images
+A :doc:`layered image <layeredimage>` is a new way of defining images
 for use in Ren'Py. It's intended to be used with a sprite that has been
 created in Photoshop or some other program as a series of layers.
 The layered image system can use the attributes the image was displayed
