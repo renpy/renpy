@@ -216,7 +216,7 @@ containing bonus material. We could classify the bonus files in to a
     # Put the bonus files into the new archive.
     build.classify("game/bonus/**", "bonus_archive")
 
-    #  Declare the package.
+    # Declare the package.
     build.package("all-premium", "zip", "windows mac linux all bonus")
 
 Supported package types are "zip" and "tar.bz2" to generate files in
