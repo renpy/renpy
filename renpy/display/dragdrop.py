@@ -171,16 +171,19 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         to the corner of this drag.
 
     `drag_offscreen`
+        Determines the conditions under which the drag is allowed
+        to be dragged offscreen. Allowing offscreen dragging can be
+        dangerous to use with drag_joined or drags that can change
+        size, as the drags can leave the screen entirely, with no
+        way to get them back on the screen.
+
         This should be one of:
 
         False
             To disallow dragging the drag offscreen. (The default)
 
         True
-            To allow dragging offscreen, in any direction. This can
-            be dangerous to use with drag_joined or drags that can
-            change size, as the drags can leave the screen entirely,
-            with no way to get them back on the screen.
+            To allow dragging offscreen, in any direction.
 
         "horizontal"
             To allow dragging offscreen in the horizontal direction only.
@@ -200,10 +203,11 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
         (min_x, max_x, min_y, max_y)
             Where each of min_x, max_x, min_y, and max_y are integers.
-            min_x is the minimum pixel position this drag can be
-            dragged to on the x-axis, and max_x is the maximum pixel
-            position this drag can be dragged to on the x-axis. The
-            same goes for min_y and max_y on the y-axis. (0, 0, 0, 0)
+            min_x is the number of pixels away from the left border,
+            and max_x is the number of pixels away from the right
+            border. The same goes for min_y and max_y on the top and
+            bottom borders respectively. The drag can be moved until
+            one of its edges hit the specified border. (0, 0, 0, 0)
             is equivalent to not allowing dragging offscreen at all.
 
             For example, (-100, 200, 0, 0) would allow the drag to be
@@ -221,7 +225,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
         callable
             A callable can be provided to drag_offscreen. It must
-            take two arguments: and x and a y position which
+            take two arguments: an x and a y position which
             represents the dragged position of the top left corner of
             the drag, and it must return an (x, y) tuple which is the
             new (x, y) position the drag should be in. This callable
@@ -231,9 +235,9 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
                 def drag_snap(x, y):
 
-                    if y < 150:
+                    if y < 300:
                         y = 0
-                    elif y < 450:
+                    elif y < 600:
                         y = 300
                     else:
                         y = 600
@@ -761,8 +765,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
                         new_y = min(new_y, int(i.parent_height - i.h))
 
                     if isinstance(self.drag_offscreen, tuple):
-                        if (len(self.drag_offscreen) != 4
-                                and len(self.drag_offscreen) != 2):
+                        if len(self.drag_offscreen) not in (2, 4):
                             raise Exception("Invalid number of arguments to drag_offscreen.")
 
                         # Tuple of (x_min, x_max, y_min, y_max)
