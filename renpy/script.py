@@ -475,7 +475,7 @@ class Script(object):
                             bad_name, old_node.filename, old_node.linenumber,
                             renpy.parser.get_line_text(old_node.filename, old_node.linenumber),
                             bad_node.filename, bad_node.linenumber,
-                            renpy.parser.get_line_text(old_node.filename, old_node.linenumber),
+                            renpy.parser.get_line_text(bad_node.filename, bad_node.linenumber),
                         ))
 
         self.update_bytecode()
