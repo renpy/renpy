@@ -1,5 +1,7 @@
-﻿
-translate turkish strings:
+﻿translate turkish strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=fonts/Roboto-Light.ttf}Türkçe{/font}"
 
     # about.rpy:39
     old "[version!q]"
@@ -1516,4 +1518,3 @@ translate turkish strings:
     # updater.rpy:188
     old "Fetching the list of update channels"
     new "Güncelleme kanalı listesi alınıyor"
-

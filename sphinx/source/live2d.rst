@@ -1,3 +1,5 @@
+.. _live2d:
+
 Live2D Cubism
 =============
 

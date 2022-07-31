@@ -244,20 +244,36 @@ class Script(object):
         # what we will load immediately.
         self.script_files = [ ]
 
+        # Similar, but for script python files.
+        self.script_python_files = [ ]
+
         # Similar, but for modules:
         self.module_files = [ ]
 
         for dir, fn in dirlist: # @ReservedAssignment
 
-            if fn.endswith(".rpy"):
+            if fn.endswith("_ren.py"):
+                if dir is None:
+                    continue
+
+                fn = fn[:-3]
+                target = self.script_python_files
+
+            elif fn.endswith("_ren.rpyc"):
+                fn = fn[:-5]
+                target = self.script_python_files
+
+            elif fn.endswith(".rpy"):
                 if dir is None:
                     continue
 
                 fn = fn[:-4]
                 target = self.script_files
+
             elif fn.endswith(".rpyc"):
                 fn = fn[:-5]
                 target = self.script_files
+
             elif fn.endswith(".rpym"):
                 if dir is None:
                     continue
@@ -275,14 +291,28 @@ class Script(object):
 
     def load_script(self):
 
+        script_python_files = self.script_python_files
         script_files = self.script_files
 
         # Sort script files by filename.
         # We need this key to prevet possible crash when comparing None to str
         # during sorting
+        script_python_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
         script_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
 
         initcode = [ ]
+
+        for fn, dir in script_python_files: # @ReservedAssignment
+            # Mitigate "busy script" warning from the browser
+            if renpy.emscripten:
+                import emscripten # type: ignore
+                emscripten.sleep(0)
+
+            # Pump the presplash window to prevent marking
+            # our process as unresponsive by OS
+            renpy.display.presplash.pump_window()
+
+            self.load_appropriate_file(".rpyc", ".py", dir, fn, initcode)
 
         for fn, dir in script_files: # @ReservedAssignment
             # Mitigate "busy script" warning from the browser
@@ -475,7 +505,7 @@ class Script(object):
                             bad_name, old_node.filename, old_node.linenumber,
                             renpy.parser.get_line_text(old_node.filename, old_node.linenumber),
                             bad_node.filename, bad_node.linenumber,
-                            renpy.parser.get_line_text(old_node.filename, old_node.linenumber),
+                            renpy.parser.get_line_text(bad_node.filename, bad_node.linenumber),
                         ))
 
         self.update_bytecode()
@@ -592,18 +622,22 @@ class Script(object):
 
     def load_file(self, dir, fn): # @ReservedAssignment
 
-        if fn.endswith(".rpy") or fn.endswith(".rpym"):
+        if fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith("_ren.py"):
 
             if not dir:
-                raise Exception("Cannot load rpy/rpym file %s from inside an archive." % fn)
+                raise Exception("Cannot load rpy/rpym/ren.py file %s from inside an archive." % fn)
 
             base, _, game = dir.rpartition("/")
             olddir = base + "/old-" + game
 
             fullfn = dir + "/" + fn
-            rpycfn = fullfn + "c"
 
-            oldrpycfn = olddir + "/" + fn + "c"
+            if fn.endswith("_ren.py"):
+                rpycfn = fullfn[:-3] + ".rpyc"
+                oldrpycfn = olddir + "/" + fn[:-3] + ".rpyc"
+            else:
+                rpycfn = fullfn + "c"
+                oldrpycfn = olddir + "/" + fn + "c"
 
             stmts = renpy.parser.parse(fullfn)
 

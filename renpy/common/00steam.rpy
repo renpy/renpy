@@ -150,7 +150,7 @@ init -1499 python in _renpysteam:
         server.
         """
 
-        return steamapi.SteamUserStats().SetStat(name.encode("utf-8"), v)
+        return steamapi.SteamUserStats().SetStatFloat(name.encode("utf-8"), value)
 
 
     def get_int_stat(name):
@@ -160,11 +160,11 @@ init -1499 python in _renpysteam:
         Returns the value of the stat with `name`, or None if no such stat
         exits.
         """
-        from ctypes import c_float, byref
+        from ctypes import c_int, byref
 
         rv = c_int(0)
 
-        if not steamapi.SteamUserStats().GetStatInt32(name.encode("utf-8"),  byref(rv)):
+        if not steamapi.SteamUserStats().GetStatInt32(name.encode("utf-8"), byref(rv)):
             return None
 
         return rv.value
@@ -179,7 +179,7 @@ init -1499 python in _renpysteam:
         server.
         """
 
-        return steamapi.SteamUserStats().SetStatInt32(name.encode("utf-8"), v)
+        return steamapi.SteamUserStats().SetStatInt32(name.encode("utf-8"), value)
 
 
     ########################################################################### Apps
@@ -319,7 +319,7 @@ init -1499 python in _renpysteam:
         :doc: steam_overlay
 
         Sets the position of the steam overlay. `Position` should be one of
-        _renpysteam.POSTION_TOP_LEFT, .POSITION_TOP_RIGHT, .POSITION_BOTTOM_LEFT,
+        _renpysteam.POSITION_TOP_LEFT, .POSITION_TOP_RIGHT, .POSITION_BOTTOM_LEFT,
         or .POSITION_BOTTOM_RIGHT.
         """
 
@@ -490,7 +490,7 @@ init -1499 python in _renpysteam:
 
         from ctypes import c_uint, c_ulonglong, create_string_buffer, byref
 
-        path = create_strng_buffer(4096)
+        path = create_string_buffer(4096)
         size = c_ulonglong()
         timestamp = c_int()
 
@@ -769,10 +769,7 @@ init -1499 python in achievement:
 
         import os, sys
 
-        try:
-            if config.early_script_version is not None:
-                return
-        except:
+        if config.early_script_version is not None:
             return
 
         if config.steam_appid is None:
@@ -814,6 +811,9 @@ init -1499 python in achievement:
             has_steam = os.path.exists(dll_path)
 
             if not config.enable_steam:
+                return
+
+            if "RENPY_NO_STEAM" in os.environ:
                 return
 
             dll = ctypes.cdll[dll_path]

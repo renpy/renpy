@@ -546,7 +546,7 @@ class DisplayableParser(Parser):
                  hotspot=False, default_properties=True, unique=False):
         """
         `scope`
-            If true, the scope is passed into the displayable functionas a keyword
+            If true, the scope is passed into the displayable function as a keyword
             argument named "scope".
 
         `pass_context`

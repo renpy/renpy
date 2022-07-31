@@ -1,5 +1,7 @@
-﻿
-translate italian strings:
+﻿translate italian strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "Italiano"
 
     # about.rpy:39
     old "[version!q]"
@@ -1196,4 +1198,3 @@ translate italian strings:
     # front_page.rpy:91
     old "PROJECTS:"
     new "PROGETTI:"
-

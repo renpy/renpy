@@ -33,7 +33,7 @@ translate japanese text_38c63ec8:
 translate japanese text_1760f9c8:
 
     # e "We've already seen the b, i, s, and u tags, but there are lot more than those. I'll show you the rest of them."
-    e "b, i, s, uタグをすでに見ましたが、モットを多くのタグがあります。残りを表示しましょう。"
+    e "b, i, s, uタグをすでに見ましたが、もっと多くのタグがあります。残りを表示しましょう。"
 
 # game/indepth_text.rpy:43
 translate japanese text_a620251f:

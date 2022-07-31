@@ -797,3 +797,15 @@ translate japanese strings:
     old "high contrast text"
     new "ハイコントラストテキスト"
 
+    # renpy/common/00preferences.rpy:507
+    old "audio when minimized"
+    new "最小化時音声"
+
+    # renpy/common/00preferences.rpy:527
+    old "main volume"
+    new "メインの音量"
+
+    # renpy/common/00preferences.rpy:531
+    old "mute main"
+    new "メインをミュート"
+

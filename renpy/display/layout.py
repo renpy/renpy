@@ -275,9 +275,7 @@ class Container(renpy.display.core.Displayable):
         return None
 
     def visit(self):
-        rv = list(self.children)
-        rv.reverse()
-        return rv
+        return list(self.children)
 
     # These interact with the ui functions to allow use as a context
     # manager.
@@ -1413,7 +1411,9 @@ class DynamicDisplayable(renpy.display.core.Displayable):
     :doc: disp_dynamic
 
     A displayable that can change its child based on a Python
-    function, over the course of an interaction.
+    function, over the course of an interaction. It does not
+    take any properties, as its layout is controlled by the
+    properties of the child displayable it returns.
 
     `function`
         A function that is called with the arguments:
@@ -2149,8 +2149,8 @@ class Flatten(Container):
 
     `drawable_resolution`
         Defaults to true, which is usually the right choice, but may cause
-        the texture to be had different artifacts when scaled than the
-        textures that make it up. Setting this to False will change the
+        the resulting texture, when scaled, to have different artifacts than
+        the textures that make it up. Setting this to False will change the
         artifacts, which may be more pleasing in some cases.
     """
 
@@ -2257,13 +2257,12 @@ class NearRect(Container):
         room.
     """
 
-    def __init__(self, child=None, rect=None, focus=None, prefer_top=False, **properties):
+    def __init__(self, child=None, rect=None, focus=None, prefer_top=False, replaces=None, **properties):
 
         super(NearRect, self).__init__(**properties)
 
         if focus is not None:
             rect = renpy.display.focus.get_focus_rect(focus)
-
 
         if (focus is None) and (rect is None):
             raise Exception("A NearRect requires either a focus or a rect parameter.")
@@ -2272,21 +2271,40 @@ class NearRect(Container):
         self.focus_rect = focus
         self.prefer_top = prefer_top
 
+        if replaces is not None:
+            self.hide_parent_rect = replaces.hide_parent_rect
+        else:
+            self.hide_parent_rect = None
+
         if child is not None:
             self.add(child)
+
+    def per_interact(self):
+
+        if self.focus_rect is None:
+            return
+
+        rect = renpy.display.focus.get_focus_rect(self.focus_rect)
+
+        if (rect is not None) and (self.parent_rect is None):
+            self.child.set_transform_event("show")
+        elif (rect is None) and (self.parent_rect is not None):
+            self.child.set_transform_event("hide")
+            self.hide_parent_rect = self.parent_rect
+
+        if self.parent_rect != rect:
+            self.parent_rect = rect
+            renpy.display.render.redraw(self, 0)
+
 
     def render(self, width, height, st, at):
 
         rv = renpy.display.render.Render(width, height)
 
-        if self.focus:
-            rect = renpy.display.focus.get_focus_rect(self.focus_rect)
-        else:
-            rect = self.parent_rect
+        rect = self.parent_rect or self.hide_parent_rect
 
         if rect is None:
-            self.offsets = [ None ] # type: ignore
-
+            self.offsets = [ (0, 0) ] # type: ignore
             return rv
 
         px, py, pw, ph = rect
@@ -2298,6 +2316,20 @@ class NearRect(Container):
         # Render thje child, and get its size.
         cr = renpy.display.render.render(self.child, avail_w, avail_h, st, at)
         cw, ch = cr.get_size()
+
+        if isinstance(self.child, renpy.display.motion.Transform):
+            if self.child.hide_response:
+                self.hide_parent_rect = None
+        else:
+            self.hide_parent_rect = None
+
+        # The child might have hidden itself, so avoid showing the child if
+        # it hasn't changed.
+        rect = self.parent_rect or self.hide_parent_rect
+
+        if rect is None:
+            self.offsets = [ (0, 0) ] # type: ignore
+            return rv
 
         # Work out the placement.
         xpos, _ypos, xanchor, _yanchor, xoffset, yoffset, _subpixel = self.child.get_placement()
@@ -2314,7 +2346,7 @@ class NearRect(Container):
         # Y positioning.
         if self.prefer_top and (ch < py):
             layout_y = py - ch
-        elif ch < (height - pw - ph):
+        elif ch <= (height - py - ph):
             layout_y = py + ph
         else:
             layout_y = py - ch
@@ -2343,3 +2375,15 @@ class NearRect(Container):
         self.offsets = [ (layout_x, layout_y) ]
 
         return rv
+
+    def event(self, ev, x, y, st):
+        if self.parent_rect is not None:
+            return super(NearRect, self).event(ev, x, y, st)
+        else:
+            return None
+
+    def _tts(self):
+        if self.parent_rect is not None:
+            return self._tts_common()
+        else:
+            return ""

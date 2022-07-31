@@ -262,6 +262,34 @@ change_renpy_executable()
 
             return rv
 
+        def add_missing_directories(self):
+            """
+            Adds to this file list all directories that are needed by other
+            entries in this file list.
+            """
+
+            rv = self.copy()
+
+            seen = set()
+            required = set()
+
+            for i in self:
+                seen.add(i.name)
+
+                name = i.name
+
+                while "/" in name:
+                    name = name.rpartition("/")[0]
+                    required.add(name)
+
+            for name in required - seen:
+                rv.append(File(name, None, True, False))
+
+            rv.sort()
+
+            return rv
+
+
         @staticmethod
         def merge(l):
             """
@@ -603,6 +631,17 @@ change_renpy_executable()
 
             # Rename the executable-like files.
             self.rename()
+
+            # Sign the mac app once on Ren'Py.
+            if self.build["renpy"]:
+                fl = self.file_lists['binary']
+                app, rest = fl.split_by_prefix(self.app)
+                if app:
+                    app = self.sign_app(app, macapp)
+                    fl = FileList.merge([ app, rest ])
+                    self.file_lists['binary'] = fl
+                else:
+                    raise Exception("No mac app found.")
 
             # The time of the update version.
             self.update_version = int(time.time())
@@ -1300,15 +1339,19 @@ change_renpy_executable()
             if self.build.get("exclude_empty_directories", True):
                 fl = fl.filter_empty()
 
+            fl = fl.add_missing_directories()
+
             if macapp:
                 fl = fl.mac_transform(self.app, self.documentation_patterns)
 
-            app, rest = fl.split_by_prefix(self.app)
+            if not self.build["renpy"]:
 
-            if app:
-                app = self.sign_app(app, macapp)
+                app, rest = fl.split_by_prefix(self.app)
 
-                fl = FileList.merge([ app, rest ])
+                if app:
+                    app = self.sign_app(app, macapp)
+
+                    fl = FileList.merge([ app, rest ])
 
             self.file_list_cache[key] = fl
             return fl.copy()
@@ -1353,6 +1396,9 @@ change_renpy_executable()
                 "app-zip" : (".zip", False, False, False),
                 "app-directory" : ("-app", True, False, False),
                 "app-dmg" : ("-app-dmg", True, True, False),
+
+                "bare-tar.bz2" : (".tar.bz2", False, False, False),
+                "bare-zip" : (".zip", False, False, False),
             }
 
             if format not in FORMATS:
@@ -1441,11 +1487,11 @@ change_renpy_executable()
                 if file_hash:
                     self.build_cache[full_filename] = (file_hash, fl_hash)
 
-            if format == "tar.bz2":
+            if format == "tar.bz2" or format == "bare-tar.bz2":
                 pkg = TarPackage(path, "w:bz2")
             elif format == "update":
                 pkg = UpdatePackage(path, filename, self.destination)
-            elif format == "zip" or format == "app-zip":
+            elif format == "zip" or format == "app-zip" or format == "bare-zip":
                 if self.build['renpy']:
                     pkg = ExternalZipPackage(path)
                 else:
@@ -1675,7 +1721,7 @@ change_renpy_executable()
             dst = project.temp_filename("old-" + src)
             try:
                 os.makedirs(os.path.dirname(dst))
-            except:
+            except Exception:
                 pass
             shutil.copyfile(os.path.join(project.path, src), dst)
 

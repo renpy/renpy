@@ -181,6 +181,7 @@ html_sidebars = { '**': ['localtoc.html' ] }
 # If nonempty, this is the file name suffix for HTML files (e.g. ".xhtml").
 #html_file_suffix = ''
 
+html_permalinks = True
 html_add_permalinks = " link"
 
 # Output file base name for HTML help builder.

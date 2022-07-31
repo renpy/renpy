@@ -1,5 +1,9 @@
+.. _labels-control-flow:
+
 Labels & Control Flow
 =====================
+
+.. _label-statement:
 
 Label Statement
 ---------------

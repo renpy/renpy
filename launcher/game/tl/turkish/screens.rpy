@@ -1,5 +1,4 @@
-﻿
-translate turkish strings:
+﻿translate turkish strings:
 
     # screens.rpy:9
     old "## Styles"
@@ -311,7 +310,7 @@ translate turkish strings:
 
     # screens.rpy:710
     old "## Preferences screen"
-    new "Tercihler ekranı"
+    new "## Tercihler ekranı"
 
     # screens.rpy:712
     old "## The preferences screen allows the player to configure the game to better suit themselves."

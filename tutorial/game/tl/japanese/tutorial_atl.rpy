@@ -21,7 +21,7 @@ translate japanese tutorial_positions_a60b775d:
 translate japanese tutorial_positions_7f1a560c:
 
     # e "Ren'Py uses integers to represent absolute coordinates, and floats to represent fractions of an area with known size."
-    e "Ren'Pyは絶対座標の表現に整数を、サイズが分っている領域の分割し表現に小数を用います。"
+    e "Ren'Pyは絶対座標の表現に整数を、サイズが分っている領域の割合の表現に小数を用います。"
 # game/tutorial_atl.rpy:213
 translate japanese tutorial_positions_8e7d3e52:
 
@@ -296,13 +296,13 @@ translate japanese tutorial_atl_7cad2ab9:
 translate japanese tutorial_atl_c78b2a1e:
 
     # e "The second way is through the use of the transform statement. This assigns the ATL block to a python variable, allowing it to be used in at clauses and inside other transforms."
-    e "2つ目の方法は、transformステートメントによる方法です。この方法はATLブロックをPythonの変数に割り当てるので、項や他のtransformの内側に使えるようになります。"
+    e "2つ目の方法は、transformステートメントによる方法です。この方法はATLブロックをPythonの変数に割り当てるので、節や他のtransformの内側に使えるようになります。"
 
 # game/tutorial_atl.rpy:473
 translate japanese tutorial_atl_da7a7759:
 
     # e "Finally, an ATL block can be used as part of a show statement, instead of the at clause."
-    e "最後の方法は、ATLブロックをshowステートメントの一部として項の代わりに使う方法です。"
+    e "最後の方法は、ATLブロックをshowステートメントの一部として節の代わりに使う方法です。"
 
 # game/tutorial_atl.rpy:480
 translate japanese tutorial_atl_1dd345c6:

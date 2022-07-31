@@ -241,10 +241,17 @@ init python:
 
     def launch_xcode():
         dist = xcode_project(None)
-        name = project.current.dump.get("name", None)
-        xcodeproj = "{}/{}.xcodeproj".format(dist, name)
 
-        subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
+        if not os.path.exists(dist):
+            return
+
+        for fn in os.listdir(dist):
+            if fn.endswith(".xcodeproj"):
+                xcodeproj = os.path.join(dist, fn)
+                subprocess.call([ 'open', renpy.fsencode(xcodeproj) ])
+
+                break
+
 
 screen ios:
 

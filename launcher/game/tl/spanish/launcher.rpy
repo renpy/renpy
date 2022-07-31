@@ -1,4 +1,7 @@
-translate spanish strings:
+﻿translate spanish strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=fonts/Roboto-Light.ttf}Español{/font}"
 
     # about.rpy:39
     old "[version!q]"
@@ -1897,7 +1900,7 @@ translate spanish strings:
     # game/updater.rpy:111
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Ver el registro de cambios{/a}"
-    
+
     # game/installer.rpy:10
     old "Downloading [extension.download_file]."
     new "Descargando [extension.download_file]."
@@ -1910,4 +1913,150 @@ translate spanish strings:
     old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
     new "El archivo descargado [extension.download_file] desde [extension.download_url] no es correcto."
 
+    # game/android.rpy:60
+    old "Removes Android temporary files."
+    new "Elimina los archivos temporales de Android."
 
+    # game/android.rpy:472
+    old "Clean"
+    new "Limpiar"
+
+    # game/android.rpy:628
+    old "Cleaning up Android project."
+    new "Limpieando el proyecto de Android."
+
+    # game/androidstrings.rpy:43
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    new "No pude usar javac para compilar un archivo de prueba. Si aún no has instalado el kit de desarrollo de Java, descárgalo de:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nEl JDK es diferente del JRE, por lo que es posible que tenga Java sin tener el JDK. Asegúrese de haber instalado las 'claves de registro de JavaSoft (Oracle)'.\n\nSin un JDK que funcione, no puedo continuar."
+
+    # game/androidstrings.rpy:64
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    new "Abrí el directorio que contiene android.keystore y bundle.keystore. Por favor, haz una copia de seguridad y guárdalos en un lugar seguro."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    new "Seleccionar directorio de proyectos"
+
+    # game/distribute.rpy:1674
+    old "Copying files..."
+    new "Copiando archivos..."
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    new "Actualizar juego antiguo"
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    new "Un editor moderno con muchas extensiones, incluida la integración avanzada de Ren'Py."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    new "Un editor moderno con muchas extensiones, incluida la integración avanzada de Ren'Py.\n{a=jump:reinstall_vscode}Actualice Visual Studio Code a la última versión.{/a}"
+
+    # game/editor.rpy:162
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:162
+    old "Up to 110 MB download required."
+    new "Requiere descargar hasta 110 MB."
+
+    # game/editor.rpy:175
+    old "A modern and approachable text editor."
+    new "Un editor de texto moderno y accesible."
+
+    # game/editor.rpy:187
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:200
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:209
+    old "Visual Studio Code (System)"
+    new "Visual Studio Code (Sistema)"
+
+    # game/editor.rpy:209
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    new "Utiliza una copia de Visual Studio Code que ha instalado fuera de Ren'Py. Se recomienda que instale la extensión language-renpy para agregar soporte para archivos Ren'Py."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/preferences.rpy:161
+    old "Clean temporary files"
+    new "Limpiar archivos temporales"
+
+    # game/preferences.rpy:263
+    old "Cleaning temporary files..."
+    new "Limpiando archivos temporales..."
+
+    # game/project.rpy:280
+    old "This may be because the project is not writeable."
+    new "Esto puede deberse a que el proyecto no se puede escribir."
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    new "Idioma (o Ninguno para el idioma predeterminado):"
+
+    # game/web.rpy:344
+    old "This feature is not supported in Ren'Py 8."
+    new "Esta característica no es compatible con Ren'Py 8."
+
+    # game/web.rpy:344
+    old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
+    new "Restauraremos el soporte en una versión futura de Ren'Py 8. Hasta entonces, use Ren'Py 7 para soporte web."
+
+    # game/preferences.rpy:104
+    old "General"
+    new "General"
+
+    # game/preferences.rpy:105
+    old "Options"
+    new "Opciones"
+
+    # game/preferences.rpy:244
+    old "Launcher Theme:"
+    new "Tema del lanzdor"
+
+    # game/preferences.rpy:254
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    new "Puedes encontrar información sobre cómo crear un tema personalizado {a=https://www.renpy.org/doc/html/skins.html}en la documentación de Ren'Py{/a}."
+
+    # game/preferences.rpy:271
+    old "Install Libraries:"
+    new "Instalar bibliotecas:"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    new "Estable (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    new "Estable (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "Preliminar (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "Preliminar (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    new "Nightly (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "Nightly (Ren'Py 7, Python 2)"
+
+    # game/preferences.rpy:327
+    old "{#in language font}Welcome! Please choose a language"
+    new "{font=fonts/Roboto-Light.ttf}¡Bienvenido! Por favor elige un idioma{/font}"
+
+    # game/preferences.rpy:327
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    new "{font=fonts/Roboto-Light.ttf}Empieza a usar Ren'Py en [lang_name]{/font}"

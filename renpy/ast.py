@@ -382,9 +382,6 @@ def __newobj__(cls, *args):
     return cls.__new__(cls, *args)
 
 
-# A list of pyexprs that need to be precompiled.
-pyexpr_list = [ ]
-
 
 class PyExpr(str):
     """
@@ -411,6 +408,29 @@ class PyExpr(str):
 
     def __getnewargs__(self):
         return (str(self), self.filename, self.linenumber, self.py)
+
+    @staticmethod
+    def checkpoint():
+        """
+        Checkpoints the pyexpr list. Returns an opaque object that can be used
+        to revert the list.
+        """
+
+        if renpy.game.script.all_pyexpr is None:
+            return None
+
+        return len(renpy.game.script.all_pyexpr)
+
+    @staticmethod
+    def revert(opaque):
+
+        if renpy.game.script.all_pyexpr is None:
+            return
+
+        if opaque is None:
+            return
+
+        renpy.game.script.all_pyexpr[opaque:] = [ ]
 
 
 def probably_side_effect_free(expr):
@@ -1223,6 +1243,8 @@ class Image(Node):
 class Transform(Node):
 
     __slots__ = [
+        # The name of the store this transform is stored in.
+        'store',
 
         # The name of the transform.
         'varname',
@@ -1236,16 +1258,25 @@ class Transform(Node):
 
     default_parameters = EMPTY_PARAMETERS
 
-    def __init__(self, loc, name, atl=None, parameters=default_parameters):
+    def __new__(cls, *args, **kwargs):
+        self = Node.__new__(cls)
+        self.store = 'store'
+        return self
+
+    def __init__(self, loc, store, name, atl=None, parameters=default_parameters):
 
         super(Transform, self).__init__(loc)
 
+        self.store = store
         self.varname = name
         self.atl = atl
         self.parameters = parameters
 
     def diff_info(self):
-        return (Transform, self.varname)
+        return (Transform, self.store, self.varname)
+
+    def early_execute(self):
+        create_store(self.store)
 
     def execute(self):
 
@@ -1260,7 +1291,9 @@ class Transform(Node):
         trans = renpy.display.motion.ATLTransform(self.atl, parameters=parameters)
         renpy.dump.transforms.append((self.varname, self.filename, self.linenumber))
         renpy.exports.pure(self.varname)
-        setattr(renpy.store, self.varname, trans)
+
+        ns, _special = get_namespace(self.store)
+        ns.set(self.varname, trans)
 
     def analyze(self):
 
@@ -1311,7 +1344,7 @@ def predict_imspec(imspec, scene=False, atl=None):
         except Exception:
             pass
 
-    layer = renpy.exports.default_layer(layer, tag or name, expression)
+    layer = renpy.exports.default_layer(layer, tag or name, bool(expression))
 
     if scene:
         renpy.game.context().images.predict_scene(layer)
@@ -1346,7 +1379,7 @@ def show_imspec(imspec, atl=None):
 
     at_list = [ renpy.python.py_eval(i) for i in at_list ]
 
-    layer = renpy.exports.default_layer(layer, tag or name, expression and (tag is None))
+    layer = renpy.exports.default_layer(layer, tag or name, bool(expression) and (tag is None))
 
     renpy.config.show(name,
                       at_list=at_list,
@@ -1635,7 +1668,7 @@ class With(Node):
         else:
             paired = None
 
-        renpy.exports.with_statement(trans, paired)
+        renpy.exports.with_statement(trans, paired=paired)
 
     def predict(self):
 

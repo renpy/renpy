@@ -211,9 +211,10 @@ of being translated into Russian.
 
 This can be done by including an ``id`` clause as part of the
 say statement, giving the translation ID to use for this
-statement. For example:
+statement. For example::
 
-    e "This used to have a typo." id start_61b861a2
+    label start:
+        e "This used to have a typo." id start_61b861a2
 
 Tips
 ----
@@ -381,7 +382,7 @@ change language-related variables and styles. For example::
         font "stonecutter.ttf"
 
 More usually, the font used for dialogue is set with :var:`gui.text_font`, which
-can be customized using:
+can be customized using::
 
     translate piglatin python:
         gui.text_font = "stonecutter.ttf"

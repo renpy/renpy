@@ -21,7 +21,7 @@ translate russian tutorial_create_45915fcb:
 translate russian tutorial_create_55e30cb5:
 
     # e "After that, Ren'Py will ask for a name for your project. You'll have to stick to English letters and numbers, as zip files can't handle anything more than that."
-    e "После этого Ren'Py спросит вас об имени вашего проекта. Вам придётся ограничиться английскими буквами и цифрами, так как zip-архивы не способны понять русский язык."
+    e "После этого Ren'Py спросит вас об имени вашего проекта. Вам нужно ограничиться английскими буквами и цифрами, так как zip-архивы могут неправильно обрабатывать русский язык."
 
 # game/tutorial_quickstart.rpy:40
 translate russian tutorial_create_dea3e5c2:

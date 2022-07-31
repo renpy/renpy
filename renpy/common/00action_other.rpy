@@ -24,11 +24,11 @@ init -1500 python:
     @renpy.pure
     class InvertSelected(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         This inverts the selection state of the provided action, while
-         proxying over all of the other methods.
-         """
+        This inverts the selection state of the provided action, while
+        proxying over all of the other methods.
+        """
 
         def __init__(self, action):
             self.action = action
@@ -56,13 +56,13 @@ init -1500 python:
     @renpy.pure
     def If(expression, true=None, false=None):
         """
-         :doc: other_action
+        :doc: other_action
 
-         This returns `true` if `expression` is true, and `false`
-         otherwise. Use this to select an action based on an expression.
-         Note that the default, None, can be used as an action that causes
-         a button to be disabled.
-         """
+        This returns `true` if `expression` is true, and `false`
+        otherwise. Use this to select an action based on an expression.
+        Note that the default, None, can be used as an action that causes
+        a button to be disabled.
+        """
 
         if expression:
             return true
@@ -138,10 +138,10 @@ init -1500 python:
     @renpy.pure
     class Screenshot(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         Takes a screenshot.
-         """
+        Takes a screenshot.
+        """
 
         def __call__(self):
             _screenshot()
@@ -149,10 +149,11 @@ init -1500 python:
     @renpy.pure
     class HideInterface(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         Causes the interface to be hidden until the user clicks.
-         """
+        Causes the interface to be hidden until the user clicks.
+        This is typically what happens when hitting the H key in a Ren'Py game.
+        """
 
         def __call__(self):
             renpy.call_in_new_context("_hide_windows")
@@ -178,10 +179,10 @@ init -1500 python:
 
     class With(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         Causes `transition` to occur.
-         """
+        Causes `transition` to occur.
+        """
 
         def __init__(self, transition):
             self.transition = transition
@@ -193,10 +194,10 @@ init -1500 python:
     @renpy.pure
     class Notify(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         Displays `message` using :func:`renpy.notify`.
-         """
+        Displays `message` using :func:`renpy.notify`.
+        """
 
         def __init__(self, message):
             self.message = message
@@ -211,12 +212,13 @@ init -1500 python:
     class Rollback(Action, DictEquality):
         """
         :doc: other_action
+        :args: (*args, force="menu", **kwargs)
 
         This action causes a rollback to occur, when a rollback is possible.
         Otherwise, nothing happens.
 
-        The arguments are given to :func:`renpy.rollback`, except that the
-        `force` argument defaults to "menu".
+        The arguments are given to :func:`renpy.rollback`. This includes the
+        `force` argument which here defaults to "menu".
         """
 
         args = tuple()
@@ -288,20 +290,24 @@ init -1500 python:
 
     #########################################################################
 
-    def GetTooltip(screen=None):
+    def GetTooltip(screen=None, last=False):
         """
         :doc: get_tooltip
 
         Returns the tooltip of the currently focused displayable, or None
-        if no displatable is focused.
+        if no displayable is focused.
 
         `screen`
             If not None, this should be the name or tag of a screen. If
             given, this function only returns the tooltip if the focused
             displayable is part of the screen.
+
+        `last`
+            If true, returns the last non-None value this function would
+            have returned.
         """
 
-        return renpy.display.focus.get_tooltip(screen)
+        return renpy.display.focus.get_tooltip(screen, last)
 
 
     class __TooltipAction(Action, FieldEquality):
@@ -500,15 +506,16 @@ init -1500 python:
         def __call__(self):
             renpy.queue_event(self.event, up=self.up)
 
-
-    class Function(Action, DictEquality):
+    @renpy.pure
+    class Function(Action):
         """
         :doc: other_action
 
         This Action calls `callable` with `args` and `kwargs`.
 
         `callable`
-            Callable object.
+            Callable object. This assumes that if two callables compare
+            equal, calling either one will be equivalent.
         `args`
             position arguments to be passed to `callable`.
         `kwargs`
@@ -521,9 +528,43 @@ init -1500 python:
         If the function returns a non-None value, the interaction stops and
         returns that value. (When called using the call screen statement, the
         result is placed in the `_return` variable.)
+
+        Instead of using a Function action, you can define your own subclass
+        of the :class:`Action` class. This lets you name the action, and
+        determine when it should be selected and sensitive.
         """
 
         update_screens = True
+
+        def __eq__(self, other):
+            if type(self) is not type(other):
+                return False
+
+            if PY2:
+                if self.callable is not other.callable:
+                    return False
+            else:
+                if self.callable != other.callable:
+                    return False
+
+            if self.args != other.args:
+                return False
+
+            if self.kwargs != other.kwargs:
+                return False
+
+            for a, b in zip(self.args, other.args):
+                if a is not b:
+                    return False
+
+            for k in self.kwargs:
+                if self.kwargs[k] is not other.kwargs[k]:
+                    return False
+
+            if self.update_screens != other.update_screens:
+                return False
+
+            return True
 
         def __init__(self, callable, *args, **kwargs):
             self.callable = callable
@@ -698,8 +739,8 @@ init -1500 python:
 
         If a displayable is focused when this action is run, the rectangle
         containing that displayable is stored with the name `name`. This
-        rectange can then be retrieved with the :func:`GetFocusRect` action,
-        or the `focus` property of the :ref:`nearrect` displayable.
+        rectangle can then be retrieved with the :func:`GetFocusRect` action,
+        or the `focus` property of the :ref:`sl-nearrect` displayable.
 
         If no displayable is focused, the previous capture with that name
         is removed.
@@ -715,6 +756,33 @@ init -1500 python:
 
         def __call__(self):
             renpy.capture_focus(self.name)
+            renpy.restart_interaction()
+
+    @renpy.pure
+    class ToggleFocus(Action, DictEquality):
+        """
+        :doc: focus_action
+
+        If the focus rectangle exists, clears it, otherwise captures it.
+
+        `name`
+            The name of the focus rectangle to store. This should be a string.
+            The name "tooltip" is special, as it is automatically captured
+            when the tooltip is changed.
+        """
+
+        def __init__(self, name="default"):
+            self.name = name
+
+        def __call__(self):
+            name = self.name
+
+            if renpy.get_focus_rect(name) is not None:
+                renpy.clear_capture_focus(name)
+
+            else:
+                renpy.capture_focus(name)
+
             renpy.restart_interaction()
 
     @renpy.pure
@@ -736,7 +804,7 @@ init -1500 python:
         """
         :doc: focus_action
 
-        If a focus rectange with the given name has been stored (either with
+        If a focus rectangle with the given name has been stored (either with
         :func:`CaptureFocus`, or automatically by a tooltip, returns the
         a (x, y, h, w) rectangle. Otherwise, returns None.
 

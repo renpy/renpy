@@ -26,12 +26,13 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import tokenize
 import token
 import io
+import ast
 
 
 def fix_octal_numbers(tokens):
     """
     This fixes python-2 style octal numbers. Tokenize seems to report this
-    as two numbers, the first of which has a tring of '0'. This merges that
+    as two numbers, the first of which has a string of '0'. This merges that
     with the next token.
     """
 
@@ -49,13 +50,102 @@ def fix_octal_numbers(tokens):
 
     return rv
 
+def fix_spaceship(tokens):
+    """
+    This fixes the Python 2 spaceship operator (<>).
+    """
+
+    old = tokens[0]
+    rv = [ ]
+
+    for new in tokens:
+
+        if old.exact_type == token.LESS and new.exact_type == token.GREATER:
+            rv.pop()
+            new = tokenize.TokenInfo(token.OP, "!=", old.start, new.end, old.line)
+
+        rv.append(new)
+        old = new
+
+    return rv
+
+
+def fix_print(tokens):
+    """
+    This tries to remove Python 2-style print statements.
+    """
+
+    def fix_line(line):
+
+        if len(line) < 2:
+            return line
+
+        if line[0].type != token.NAME:
+            return line
+
+        if line[0].string != "print":
+            return line
+
+        if line[1].exact_type == token.LPAR:
+            return line
+
+        if line[1].exact_type == token.RIGHTSHIFT:
+            newline = line[2:]
+        else:
+            newline = line[1:]
+
+        # Replace the print statement 0, arguments.
+        old = line[0]
+        newline.insert(0, tokenize.TokenInfo(token.NUMBER, "0", old.start, old.start, old.line))
+        newline.insert(1, tokenize.TokenInfo(token.OP, ",", old.end, old.end, old.line))
+
+        return newline
+
+    rv = [ ]
+    line = [ ]
+
+    for i in tokens:
+
+        if not line:
+            if i.exact_type == token.NL:
+                rv.append(i)
+                continue
+
+            if i.exact_type == token.INDENT:
+                rv.append(i)
+                continue
+
+            if i.exact_type == token.DEDENT:
+                rv.append(i)
+                continue
+
+            if i.exact_type == token.ENDMARKER:
+                rv.append(i)
+                continue
+
+            if i.exact_type == token.ENCODING:
+                rv.append(i)
+                continue
+
+        line.append(i)
+
+        if i.type != token.NEWLINE:
+            continue
+
+        rv.extend(fix_line(line))
+        line = [ ]
+
+    rv.extend(fix_line(line))
+
+    return rv
+
 
 def fix_tokens(source):
     """
     This applies fixes that will help python 2 code run under python 3. Not all
-    source will be fixed, but this will attempt to handle common issues.
+    problem will be fixed, but this will attempt to handle common issues.
 
-    These are fixes that apply at the Python level.
+    These are fixes that apply at the source code level.
     """
 
     try:
@@ -67,9 +157,68 @@ def fix_tokens(source):
         tokens = list(tokenize.tokenize(bio.readline))
 
         tokens = fix_octal_numbers(tokens)
+        tokens = fix_spaceship(tokens)
+        tokens = fix_print(tokens)
 
         rv = tokenize.untokenize(tokens).decode("utf-8")
         return rv
+
+    except Exception as e:
+        # import traceback
+        # traceback.print_exc()
+        raise e
+
+class ReorderGlobals(ast.NodeTransformer):
+    """
+    This removes all global statements from functions, and places the variables
+    therein in a new global statement on the first line of the function.
+    """
+
+    def __init__(self):
+        self.globals = set()
+
+    def visit_Global(self, n):
+
+        for i in n.names:
+            self.globals.add(i)
+
+        return ast.Pass()
+
+    def visit_FunctionDef(self, n):
+
+        old_globals = self.globals
+
+        try:
+            n = self.generic_visit(n)
+
+            new_globals = list(self.globals)
+            new_globals.sort()
+
+            if new_globals:
+                n.body.insert(0, ast.Global(names=new_globals)) # type: ignore
+
+            return n
+        finally:
+            self.globals = old_globals
+
+reorder_globals = ReorderGlobals()
+
+
+def fix_ast(tree):
+    """
+    This applies fixes that will help python 2 code run under python 3. Not all
+    problems will be fixed, but this will attempt to handle common issues.
+
+    These are fixes that apply at the AST level.
+    """
+
+    if PY2:
+        return tree
+
+    try:
+
+        tree = reorder_globals.visit(tree)
+        return tree
 
     except Exception as e:
         # import traceback

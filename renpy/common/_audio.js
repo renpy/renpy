@@ -131,7 +131,11 @@ let start_playing = (c) => {
 
     if (p.fadeout !== null) {
         linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, p.fadeout);
-        c.playing.source.stop(context.currentTime + p.fadeout);
+        try {
+            c.playing.source.stop(context.currentTime + p.fadeout);
+        } catch (e) {
+        }
+
     }
 
     setValue(c.relative_volume.gain, p.relative_volume);
@@ -163,7 +167,11 @@ let pause_playing = (c) => {
         return;
     }
 
-    p.source.stop()
+    try {
+        p.source.stop()
+    } catch (e) {
+    }
+
     p.start += (context.currentTime - p.started);
     p.started = null;
 }
@@ -176,7 +184,11 @@ let stop_playing = (c) => {
 
 
     if (c.playing !== null && c.playing.source !== null) {
-        c.playing.source.stop()
+        try {
+            c.playing.source.stop()
+        } catch (e) {
+        }
+
         c.playing.source.disconnect();
     }
 
@@ -201,10 +213,9 @@ renpyAudio = { };
 
 renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, relative_volume) => {
 
-    let c = get_channel(channel);
-    let array = FS.readFile(file);
+    const c = get_channel(channel);
 
-    let q = {
+    const q = {
         source : null,
         buffer : null,
         name : name,
@@ -215,19 +226,41 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
         fadein : fadein,
         fadeout: null,
         tight : tight,
-        started_once : false
+        started_once : false,
+        file: file,
     };
+
+    function reuseBuffer(c) {
+        // We can re-use the audio buffer, but not the buffer source
+        c.queued.buffer = c.playing.buffer;
+        c.queued.source = context.createBufferSource();
+        c.queued.source.buffer = c.playing.buffer;
+        c.queued.source.onended = () => { on_end(c); };
+
+        start_playing(c);
+    }
 
     if (c.playing === null) {
         c.playing = q;
         c.paused = paused;
     } else {
         c.queued = q;
+        if (c.playing.file === file) {
+            // Same file, re-use the data to reduce memory and CPU footprint
+            if (c.playing.buffer !== null) {
+                reuseBuffer(c);
+            } else {
+                // Not ready yet, wait for decodeAudioData() to complete
+            }
+
+            return;
+        }
     }
 
+    const array = FS.readFile(file);
     context.decodeAudioData(array.buffer, (buffer) => {
 
-        var source = context.createBufferSource();
+        const source = context.createBufferSource();
         source.buffer = buffer;
         source.onended = () => { on_end(c); };
 
@@ -235,6 +268,11 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
         q.buffer = buffer;
 
         start_playing(c);
+
+        if (c.playing === q && c.queued !== null && c.queued.file === q.file) {
+            // Same file, re-use the data to reduce memory and CPU footprint
+            reuseBuffer(c);
+        }
     }, () => {
         console.log(`The audio data in ${file} could not be decoded. The file format may not be supported by this browser.`);
     });
@@ -273,7 +311,11 @@ renpyAudio.fadeout = (channel, delay) => {
     let p = c.playing;
 
     linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, delay);
-    p.source.stop(context.currentTime + delay);
+
+    try {
+        p.source.stop(context.currentTime + delay);
+    } catch (e) {
+    }
 
     if (c.queued === null || !c.queued.tight) {
         return;
@@ -393,7 +435,7 @@ renpyAudio.set_pan = (channel, pan, delay) => {
     let c = get_channel(channel);
     let control = c.stereo_pan.pan;
 
-    linearRampToValue(control, control.value, volume, delay);
+    linearRampToValue(control, control.value, pan, delay);
 };
 
 renpyAudio.tts = (s) => {

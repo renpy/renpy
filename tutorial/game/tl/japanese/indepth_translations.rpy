@@ -15,7 +15,7 @@ translate japanese translations_20b9a600:
 translate japanese translations_07c7643c:
 
     # e "While Ren'Py can find dialogue and menu choice strings for you, you'll have to indicate which other strings need translation."
-    e "Ren'Pyは台詞と選択肢の文字列を研修tできますが、他の文字列は翻訳を必要とするかを明示しなければなりません。"
+    e "Ren'Pyは台詞と選択肢の文字列検出できますが、他の文字列は翻訳を必要とするかを明示しなければなりません。"
 
 # game/indepth_translations.rpy:20
 translate japanese translations_317d73e5:

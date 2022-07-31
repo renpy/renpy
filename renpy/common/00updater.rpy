@@ -78,6 +78,7 @@ init -1500 python in updater:
     DEFERRED_UPDATE_LOG = os.path.join(config.renpy_base, "update", "log.txt")
 
     def process_deferred_line(l):
+
         cmd, _, fn = l.partition(" ")
 
         if cmd == "R":
@@ -93,8 +94,12 @@ init -1500 python in updater:
             if os.path.exists(fn):
                 os.unlink(fn)
 
+        elif cmd == "":
+
+            pass
+
         else:
-            raise Exception("Bad command.")
+            raise Exception("Bad command. %r (%r %r)" % (l, cmd, fn))
 
     def process_deferred():
         if not os.path.exists(DEFERRED_UPDATE_FILE):
@@ -123,12 +128,33 @@ init -1500 python in updater:
                         traceback.print_exc(file=log)
 
             try:
-                os.unlink(DEFERRED_UPDATE_FILE)
+                os.unlink(DEFERRED_UPDATE_FILE + ".old")
+            except:
+                pass
+
+            try:
+                os.rename(DEFERRED_UPDATE_FILE, DEFERRED_UPDATE_FILE + ".old")
             except Exception:
                 traceback.print_exc(file=log)
 
     # Process deferred updates on startup, if any exist.
+
     process_deferred()
+
+    DELETED = os.path.join(config.renpy_base, "update", "deleted")
+
+    def process_deleted():
+        if not os.path.exists(DELETED):
+            return
+
+        import shutil
+
+        try:
+            shutil.rmtree(DELETED)
+        except Exception as e:
+            pass
+
+    process_deleted()
 
     def zsync_path(command):
         """
@@ -232,6 +258,9 @@ init -1500 python in updater:
             Takes the same arguments as update().
             """
 
+            # Make sure the URL has the right type.
+            url = str(url)
+
             self.patch = patch
 
             if not url.startswith("http:"):
@@ -316,7 +345,7 @@ init -1500 python in updater:
             self.moves = [ ]
 
             if public_key is not None:
-                with renpy.file(public_key) as f:
+                with renpy.open_file(public_key, False) as f:
                     self.public_key = rsa.PublicKey.load_pkcs1(f.read())
             else:
                 self.public_key = None
@@ -641,15 +670,21 @@ init -1500 python in updater:
             Tries to unlink the file at `path`.
             """
 
-            if os.path.exists(path + ".old"):
-                os.unlink(path + ".old")
-
             if os.path.exists(path):
+
+                import random
+
+                newname = os.path.join(DELETED, os.path.basename(path) + "." + str(random.randint(0, 1000000)))
+
+                try:
+                    os.mkdir(DELETED)
+                except Exception:
+                    pass
 
                 # This might fail because of a sharing violation on Windows.
                 try:
-                    os.rename(path, path + ".old")
-                    os.unlink(path + ".old")
+                    os.rename(path, newname)
+                    os.unlink(newname)
                 except Exception:
                     pass
 
@@ -1298,7 +1333,7 @@ init -1500 python in updater:
 
                 if os.path.exists(i):
                     self.log.write("could not delete file %s" % i)
-                    with open(DEFERRED_UPDATE_FILE, "w") as f:
+                    with open(DEFERRED_UPDATE_FILE, "a") as f:
                         f.write("D " + i + "\r\n")
 
             for i in old_directories:

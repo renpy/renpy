@@ -1,5 +1,7 @@
-﻿
-translate finnish strings:
+﻿translate finnish strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "Suomi"
 
     # about.rpy:39
     old "[version!q]"
@@ -131,23 +133,23 @@ translate finnish strings:
 
     # android.rpy:361
     old "Install SDK & Create Keys"
-    new "Asenna SDK & Luo avaimia"
+    new "Asenna SDK & Luo Avaimet"
 
     # android.rpy:365
     old "Configure"
-    new "Muokkaa asetuksia"
+    new "Muokkaa Asetuksia"
 
     # android.rpy:369
     old "Build Package"
-    new "Kokoa sovellus"
+    new "Kokoa Sovellus"
 
     # android.rpy:373
     old "Build & Install"
-    new "Kokoa & asenna"
+    new "Kokoa & Asenna"
 
     # android.rpy:377
     old "Build, Install & Launch"
-    new "Kokoa, asenna & käynnistä"
+    new "Kokoa, Asenna & Aja"
 
     # android.rpy:388
     old "Other:"
@@ -231,7 +233,7 @@ translate finnish strings:
 
     # consolecommand.rpy:84
     old "The command is being run in a new operating system console window."
-    new "The command is being run in a new operating system console window."
+    new "Komentoa ajetaan uuudessa käyttöjärjestelmän konsoli-ikkunassa."
 
     # distribute.rpy:443
     old "Scanning project files..."
@@ -259,19 +261,19 @@ translate finnish strings:
 
     # distribute.rpy:1050
     old "Unpacking the Macintosh application for signing..."
-    new "Unpacking the Macintosh application for signing..."
+    new "Puretaan Macintosh-sovellusta allekirjoitusta varten..."
 
     # distribute.rpy:1060
     old "Signing the Macintosh application..."
-    new "Signing the Macintosh application..."
+    new "Allekirjoitetaan Macintosh-sovellusta..."
 
     # distribute.rpy:1082
     old "Creating the Macintosh DMG..."
-    new "Creating the Macintosh DMG..."
+    new "Luodaan Macintosh DMG-tiedostoa..."
 
     # distribute.rpy:1091
     old "Signing the Macintosh DMG..."
-    new "Signing the Macintosh DMG..."
+    new "Allekirjoitetaan Macintosh DMG-tiedostoa..."
 
     # distribute.rpy:1248
     old "Writing the [variant] [format] package."
@@ -315,7 +317,7 @@ translate finnish strings:
 
     # distribute_gui.rpy:199
     old "Upload to itch.io"
-    new "Upload to itch.io"
+    new "Lataa itch.io-palveluun"
 
     # distribute_gui.rpy:215
     old "Build Packages:"
@@ -415,11 +417,11 @@ translate finnish strings:
 
     # front_page.rpy:120
     old "+ Create New Project"
-    new "+ Luo uusi projekti"
+    new "+ Luo Uusi Projekti"
 
     # front_page.rpy:130
     old "Launch Project"
-    new "Suorita projekti"
+    new "Suorita Projekti"
 
     # front_page.rpy:147
     old "[p.name!q] (template)"
@@ -479,7 +481,7 @@ translate finnish strings:
 
     # front_page.rpy:237
     old "Change/Update GUI"
-    new "Change/Update GUI"
+    new "Muokkaa/Päivitä GUI"
 
     # front_page.rpy:239
     old "Change Theme"
@@ -523,23 +525,23 @@ translate finnish strings:
 
     # gui7.rpy:236
     old "Select Accent and Background Colors"
-    new "Select Accent and Background Colors"
+    new "Valitse Korostus- ja Taustavärit"
 
     # gui7.rpy:250
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
+    new "Ole hyvä ja valitse haluamasi väriteema, ja klikkaa Seuraava. Näitä värejä voi vaihtaa ja muokata myöhemmin."
 
     # gui7.rpy:294
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
-    new "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
+    new "{b}varoitus{/b}\nJatkamalla yliajat muokatut palkki-, painike-, tallennus-, vierityspalkki-, ja liukuvalintakuvat.\n\nHaluatko jatkaa?"
 
     # gui7.rpy:294
     old "Choose new colors, then regenerate image files."
-    new "Choose new colors, then regenerate image files."
+    new "Valitse uudet värit, ja luo kuvatiedostot uudelleen."
 
     # gui7.rpy:294
     old "Regenerate the image files using the colors in gui.rpy."
-    new "Regenerate the image files using the colors in gui.rpy."
+    new "Luo kuvatiedostot uudelleen käyttäen värejä gui.rpy-tiedostossa."
 
     # gui7.rpy:314
     old "PROJECT NAME"
@@ -563,15 +565,15 @@ translate finnish strings:
 
     # gui7.rpy:341
     old "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
-    new "What resolution should the project use? Although Ren'Py can scale the window up and down, this is the initial size of the window, the size at which assets should be drawn, and the size at which the assets will be at their sharpest.\n\nThe default of [default_size[0]]x[default_size[1]] is a reasonable compromise."
+    new "Mitä resoluutiota projektin tulisi käyttää? Vaikka Ren'Py kykenee skaalaamaan ikkunaa molempiin suuntiin, tämä on ikkunan alustava koko, resoluutio jolla grafiikka piirretään, ja koko jossa grafiikka on terävimmillään.\n\nOletusasetus [default_size[0]]x[default_size[1]] on varteenotettava kompromissi."
 
     # gui7.rpy:389
     old "Creating the new project..."
-    new "Creating the new project..."
+    new "Luodaan uutta projektia..."
 
     # gui7.rpy:391
     old "Updating the project..."
-    new "Updating the project..."
+    new "Päivitetään projektia..."
 
     # interface.rpy:107
     old "Documentation"
@@ -735,27 +737,27 @@ translate finnish strings:
 
     # itch.rpy:60
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "The built distributions could not be found. Please choose 'Build' and try again."
+    new "Koottuja jakeluita ei löytynyt. Valitse 'Kokoa' ja yritä uudelleen."
 
     # itch.rpy:91
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "No uploadable files were found. Please choose 'Build' and try again."
+    new "Ladattavia tiedostoja ei löytynyt. Valitse 'Kokoa' ja yritä uudelleen."
 
     # itch.rpy:99
     old "The butler program was not found."
-    new "The butler program was not found."
+    new "Butler-ohjelmaa ei löytynyt."
 
     # itch.rpy:99
     old "Please install the itch.io app, which includes butler, and try again."
-    new "Please install the itch.io app, which includes butler, and try again."
+    new "Ole hyvä ja asenna itch.io-sovellus, joka sisältää butlerin, ja yritä uudelleen."
 
     # itch.rpy:108
     old "The name of the itch project has not been set."
-    new "The name of the itch project has not been set."
+    new "Itch-projektin nimeä ei ole asetettu."
 
     # itch.rpy:108
     old "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
-    new "Please {a=https://itch.io/game/new}create your project{/a}, then add a line like \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} to options.rpy."
+    new "Ole hyvä ja {a=https://itch.io/game/new}luo projektisi{/a}, ja tämän jälkeen lisää rivi kuten \n{vspace=5}define build.itch_project = \"user-name/game-name\"\n{vspace=5} options.rpy-tiedostoon."
 
     # mobilebuild.rpy:109
     old "{a=%s}%s{/a}"
@@ -827,23 +829,23 @@ translate finnish strings:
 
     # new_project.rpy:38
     old "New GUI Interface"
-    new "New GUI Interface"
+    new "Uusi GUI-käyttöliittymä"
 
     # new_project.rpy:48
     old "Both interfaces have been translated to your language."
-    new "Both interfaces have been translated to your language."
+    new "Molemmat käyttöliittymät on käännetty kielellesi."
 
     # new_project.rpy:50
     old "Only the new GUI has been translated to your language."
-    new "Only the new GUI has been translated to your language."
+    new "Vain uusi GUI on käännetty kielellesi."
 
     # new_project.rpy:52
     old "Only the legacy theme interface has been translated to your language."
-    new "Only the legacy theme interface has been translated to your language."
+    new "Vain vanha teemakäyttöliittymä on käännetty kielellesi."
 
     # new_project.rpy:54
     old "Neither interface has been translated to your language."
-    new "Neither interface has been translated to your language."
+    new "Kumpaakaan käyttöliittymää ei ole käännetty kielellesi."
 
     # new_project.rpy:63
     old "The projects directory could not be set. Giving up."
@@ -851,11 +853,11 @@ translate finnish strings:
 
     # new_project.rpy:69
     old "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
-    new "Which interface would you like to use? The new GUI has a modern look, supports wide screens and mobile devices, and is easier to customize. Legacy themes might be necessary to work with older example code.\n\n[language_support!t]\n\nIf in doubt, choose the new GUI, then click Continue on the bottom-right."
+    new "Kumpaa käyttöliittymää haluaisit käyttää? Uusi GUI on modernin näköinen, tukee leveitä näyttöjä sekä mobiililaitteita, ja sen kustomointi on helpompaa. Vanhat teemat voivat olla tarpeellisia vanhan esimerkkikoodin kanssa.\n\n[language_support!t]\n\nJos epäröit, valitse uusi käyttöliittymä, ja klikkaa Jatka oikeassa alakulmassa."
 
     # new_project.rpy:69
     old "Legacy Theme Interface"
-    new "Legacy Theme Interface"
+    new "Vanha Teemakäyttöliittymä"
 
     # new_project.rpy:90
     old "Choose Project Template"
@@ -883,7 +885,7 @@ translate finnish strings:
 
     # preferences.rpy:96
     old "Not Set"
-    new "Ei valittu"
+    new "Ei Valittu"
 
     # preferences.rpy:111
     old "Text Editor:"
@@ -991,11 +993,11 @@ translate finnish strings:
 
     # translations.rpy:63
     old "Translations: [project.current.name!q]"
-    new "Translations: [project.current.name!q]"
+    new "Käännökset: [project.current.name!q]"
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "The language to work with. This should only contain lower-case ASCII characters and underscores."
+    new "Työkieli. Tämän tulisi sisältää vain pieniä ASCII-merkkejä ja alaviivoja."
 
     # translations.rpy:130
     old "Generate empty strings for translations"
@@ -1003,31 +1005,31 @@ translate finnish strings:
 
     # translations.rpy:148
     old "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
-    new "Generates or updates translation files. The files will be placed in game/tl/[persistent.translate_language!q]."
+    new "Luo tai päivittää käännöstiedostot. Tiedostot sijoitetaan kansioon game/tl/[persistent.translate_language!q]."
 
     # translations.rpy:168
     old "Extract String Translations"
-    new "Extract String Translations"
+    new "Poimi Merkkijonojen Käännökset"
 
     # translations.rpy:170
     old "Merge String Translations"
-    new "Merge String Translations"
+    new "Yhdistä Merkkijonojen Käännökset"
 
     # translations.rpy:175
     old "Replace existing translations"
-    new "Replace existing translations"
+    new "Korvaa olemassaolevat käännökset"
 
     # translations.rpy:176
     old "Reverse languages"
-    new "Reverse languages"
+    new "Vaihda kielet päikseen"
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Update Default Interface Translations"
+    new "Päivitä Oletusarvoiset Käyttöliittymän Käännökset"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
+    new "Poimi-komento mahdollistaa merkkijonokäännösten poimimisen olemassaolevasta projektista väliaikaiseen tiedostoon.\n\nYhdistä-komento yhdistää poimitut käännökset toiseen projektiin."
 
     # translations.rpy:224
     old "Ren'Py is generating translations...."
@@ -1039,23 +1041,23 @@ translate finnish strings:
 
     # translations.rpy:248
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py is extracting string translations..."
+    new "Ren'Py poimii merkkijonojen käännöksiä..."
 
     # translations.rpy:251
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py has finished extracting [language] string translations."
+    new "Ren'Py on onnistuneesti poiminut [language] merkkijonojen käännökset."
 
     # translations.rpy:271
     old "Ren'Py is merging string translations..."
-    new "Ren'Py is merging string translations..."
+    new "Ren'Py yhdisttää merkkijonojen käännöksiä..."
 
     # translations.rpy:274
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py has finished merging [language] string translations."
+    new "Ren'Py on onnistuneesti yhdistänyt [language] merkkijonojen käännökset."
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Updating default interface translations..."
+    new "Päivitetään oletusarvoisen käyttöliittymän käännöksiä..."
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
@@ -1184,4 +1186,3 @@ translate finnish strings:
     # updater.rpy:195
     old "Proceed"
     new "Jatka"
-

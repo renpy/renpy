@@ -75,7 +75,7 @@ translate japanese strings:
 
     # game/screens.rpy:572
     old "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
-    new "Made with {a=https://www.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
+    new "Made with {a=https://ja.renpy.org/}Ren'Py{/a} [renpy.version_only].\n\n[renpy.license!t]"
 
     # game/screens.rpy:612
     old "Page {}"
@@ -127,11 +127,11 @@ translate japanese strings:
 
     # game/screens.rpy:759
     old "Unseen Text"
-    new "未読テキスト"
+    new "未読テキストも\nスキップ"
 
     # game/screens.rpy:760
     old "After Choices"
-    new "選択肢の後"
+    new "選択肢後も\nスキップ継続"
 
     # game/screens.rpy:766
     old "Examples"
@@ -328,4 +328,8 @@ translate japanese strings:
     # game/screens.rpy:1083
     old "Opens the accessibility menu."
     new "アクセス性メニューを開きます。"
+
+    # game/screens.rpy:777
+    old " "
+    new " "
 

@@ -262,7 +262,7 @@ label screens_showing:
                         action Return(True)
 
 
-    e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen, and it's name is simple_screen."
+    e "Here's an example of a very simple screen. The screen statement is used to tell Ren'Py this is a screen, and its name is simple_screen." id screens_showing_1b51e9a4
 
     e "Inside the screen statement, lines introduces displayables such as frame, vbox, text, and textbutton; or properties like action, xalign, and ypos."
 

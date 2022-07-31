@@ -954,7 +954,7 @@ screen history():
         if not _history_list:
             label _("The dialogue history is empty.")
 
-define gui.history_allow_tags = set()
+define gui.history_allow_tags = { "alt", "noalt", "rt", "rb", "art" }
 
 style history_window is empty
 
@@ -1351,7 +1351,7 @@ screen nvl(dialogue, items=None):
             use nvl_dialogue(dialogue)
 
         ## Displays the menu, if given. The menu may be displayed incorrectly if
-        ## config.narrator_menu is set to True, as it is above.
+        ## config.narrator_menu is set to True.
         for i in items:
 
             textbutton i.caption:

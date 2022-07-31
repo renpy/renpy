@@ -229,8 +229,10 @@ font_replacement_map = { }
 
 # A callback that is called when a with statement (but not
 # the with clause of a say or menu statement) executes. If not None,
-# it's called with a single argument, the transition supplied to the
-# with clause.
+# it's called with a two arguments, the transition supplied to the
+# with clause and the transition it is paired with. The latter is
+# None except in the case of the implicit None transition produced
+# by inline with statements.
 with_callback = None
 
 # The framerate limit, in frames per second.
@@ -395,8 +397,8 @@ screenshot_crop = None
 gamedir = ""
 basedir = ""
 renpy_base = ""
-commondir = ""  # type: Optional[str]
-logdir = ""  # type: Optional[str] # Where log and error files go.
+commondir = None  # type: Optional[str]
+logdir = None  # type: Optional[str] # Where log and error files go.
 
 # Should we enable OpenGL mode?
 gl_enable = True
@@ -563,7 +565,7 @@ autosave_on_input = True
 emphasize_audio_channels = [ 'voice' ]
 
 # What we should lower the volume of non-emphasized channels to.
-emphasize_audio_volume = 0.5
+emphasize_audio_volume = 0.8
 
 # How long we should take to raise and lower the volume when emphasizing
 # audio.
@@ -830,6 +832,9 @@ say_arguments_callback = None
 
 # Should we show an atl interpolation for one frame?
 atl_one_frame = True
+
+# Should function statements in ATL block fast-forward?
+atl_function_always_blocks = False
 
 # Should we keep the show layer state?
 keep_show_layer_state = True
@@ -1200,7 +1205,7 @@ raise_image_exceptions = True
 relative_transform_size = True
 
 # Should tts of layers be from front to back?
-tts_front_to_back = True
+tts_front_to_back = False
 
 # Should live2d loading be logged to log.txt
 log_live2d_loading = False
@@ -1244,6 +1249,23 @@ call_screen_roll_forward = False
 # A function that's called with ("", interact=False) when no window is
 # displayed during a choice menu.
 choice_empty_window = None
+
+# The encoding that's used by renpy.open_file by default. False
+# means to use binary mode.
+open_file_encoding = os.environ.get("RENPY_OPEN_FILE_ENCODING", False)
+
+# A callback that can modify the gl2 window flags.
+gl2_modify_window_flags = None
+
+# Should the skip key (ctrl) function during text?
+skip_during_text = False
+
+# An alternate path to use when uneliding. (Mostly used by the launcher to enable
+# the style inspector.)
+alternate_unelide_path = None
+
+# The range, in decibels, of the volume mixers.
+volume_db_range = 60
 
 
 del os

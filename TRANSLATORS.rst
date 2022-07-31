@@ -43,3 +43,14 @@ are provided in brackets) to avoid confusion, relying on their common use in
 Turkish language and among Turkish developers.
 
 * Arda Güler (WKFO) <ardaguler09@gmail.com>
+
+Finnish
+---------
+
+Translation to the Finnish language. Most terms have been translated,
+sometimes requiring some imagination to come up with suitable terms.
+The quality is not perfect, but it should make sense to any developer
+fluent in Finnish but not English. Adjustments will be made if better
+translations are suggested.
+
+* Lari Liuhamo (Diapolo10) <lari.liuhamo+github116504@gmail.com>

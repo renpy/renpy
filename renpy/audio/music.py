@@ -562,6 +562,27 @@ def get_pause(channel="music"):
 
         return False
 
+def pump():
+    """
+    :doc: audio
+
+    This 'pumps' the audio system. Normally, the effects of the ``play``,
+    ``queue``, and ``stop`` statements and the function equivalents take
+    place at the start of the next interaction. In some cases, the effects
+    of multiple statements can cancel each other out - for example, a
+    play followed by a stop causes the track to never be played.
+
+    If this function is called between the play and stop, the track will
+    begin playing before this function returns, which then allows the track
+    to be faded out. ::
+
+        play music "mytrack.opus"
+        $ renpy.music.pump()
+        stop music fadeout 4
+    """
+
+    renpy.audio.audio.pump()
+
 
 def set_mixer(channel, mixer, default=False):
     """

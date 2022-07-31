@@ -62,7 +62,31 @@ init -1500 python:
     # If not None, the default value of set_volume (voice)
     config.default_voice_volume = 1.0
 
+    # If True, the default volumes are considered to be quadratic.
+    config.quadratic_volumes = False
+
 init 1500 python hide:
+
+    def vol(n):
+        if n == 0.0:
+            return 0.0
+
+        if config.quadratic_volumes:
+            return n ** 2
+        else:
+            n = n * config.volume_db_range - config.volume_db_range
+            return 10 ** (n / 20)
+
+    config.emphasize_audio_volume = vol(config.emphasize_audio_volume)
+
+    if not persistent._linearized_volumes:
+        for k, v in _preferences.volumes.items():
+            _preferences.volumes[k] = v ** 2
+        
+        for k, v in persistent._character_volume.items():
+            persistent._character_volume[k] = v ** 2
+
+        persistent._linearized_volumes = True
 
     if not persistent._set_preferences:
         persistent._set_preferences = True
@@ -104,9 +128,9 @@ init 1500 python hide:
         if config.default_emphasize_audio is not None:
             _preferences.emphasize_audio = config.default_emphasize_audio
 
-        _preferences.set_volume('music', config.default_music_volume)
-        _preferences.set_volume('sfx', config.default_sfx_volume)
-        _preferences.set_volume('voice', config.default_voice_volume)
+        _preferences.set_volume('music', vol(config.default_music_volume))
+        _preferences.set_volume('sfx', vol(config.default_sfx_volume))
+        _preferences.set_volume('voice', vol(config.default_voice_volume))
 
     # Use default_afm_enable to decide if we use the afm_enable
     # preference.

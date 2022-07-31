@@ -893,8 +893,11 @@ init -1500 python in _console:
 
 
     def watch_after_load():
-        if config.developer and traced_expressions:
-            renpy.show_screen("_trace_screen")
+        try:
+            if config.developer and traced_expressions:
+                renpy.show_screen("_trace_screen")
+        except Exception:
+            pass
 
     config.after_load_callbacks.append(watch_after_load)
 
@@ -1096,3 +1099,6 @@ label _console:
 
 label _console_return:
     return
+
+init -1010 python:
+    config.per_frame_screens.append("_trace_screen")

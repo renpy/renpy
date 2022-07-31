@@ -136,6 +136,8 @@ cdef class Matrix:
         for i in range(16):
             rv[fields[i]] = self.m[i]
 
+        rv["origin"] = getattr(self, "origin", None)
+
         return rv
 
     def __setstate__(self, state):
@@ -148,6 +150,8 @@ cdef class Matrix:
         for i in range(16):
             if fields[i] in state:
                 self.m[i] = state[fields[i]]
+
+        self.origin = state.get("origin", None)
 
     def __mul__(Matrix self, Matrix other):
 

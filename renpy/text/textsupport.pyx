@@ -96,7 +96,7 @@ def tokenize(unicode s):
     cdef int TAG_STATE = 3
     cdef int state = TEXT_STATE
 
-    cdef Py_UNICODE c
+    cdef Py_UCS4 c
     cdef unicode buf = u''
 
     cdef list rv = [ ]
@@ -1026,3 +1026,5 @@ def offset_glyphs(list glyphs, short x, short y):
     for g in glyphs:
         g.x += x
         g.y += y
+
+"This exists to force a recompile for Ren'Py 8.0.2 and 7.5.2."

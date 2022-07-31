@@ -13,15 +13,63 @@ Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
 
+.. _incompatible-8.1.0:
+.. _incompatible-7.6.0:
+
+8.1.0 / 7.6.0
+-------------
+
+Mixer volumes now must be specified using a new format, where 0.0 is -60 dB (power)
+and 1.0 is 0 dB (power). To use the old format, where the samples were multiplied
+by volume ** 2, use::
+
+    define config.quadratic_volume = True
+
+Alternatively, you can determine new default volumes for :var:`config.default_music_volume`,
+:var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` variables. If any
+of these is 0.0 or 1.0, it can be left unchanged.
+
+
+.. _incompatible-8.0.2:
+.. _incompatible-7.5.2:
+
+8.0.2 / 7.5.2
+-------------
+
+The default games no longer filter Ruby/Furigana text tags from the history.
+This requires the line in screens.rpy that sets :var:`gui.history_allow_tags`
+to be changed to::
+
+    define gui.history_allow_tags = { "alt", "noalt", "rt", "rb", "art" }
+
+This change is only required if your game uses Ruby/Furigana text tags.
+
+
 .. _incompatible-8.0.0:
 .. _incompatible-7.5.0:
 
-7.5.0/8.0.0
------------
+8.0.0 / 7.5.0
+-------------
+
+The "Windows, Mac, and Linux for Markets" distribution has been changed to
+no longer prefix the contents of the zip file created with the directory
+name and version number. If you'd like to retain the old behavior, add
+to your game::
+
+    init python:
+        build.package("market", "zip", "windows linux mac renpy all", "Windows, Mac, Linux for Markets")
+
+For the noalt text tag to work with history, you'll need to edit
+screens.rpy to make sure that :var:`gui.history_allow_tags` contains
+"noalt". The defaultfor this variable is::
+
+    define gui.history_allow_tags = { "alt", "noalt" }
+
+(This change was necessary in 7.4, but only documented now.)
 
 The behavior of Ren'Py changed sometime in the 7.4 series, such that
 rollback through a load behaved correctly, and reverted the changes
-peformed in the ``after_load`` label, and by :var:`config.after_load_callbacks`.
+performed in the ``after_load`` label, and by :var:`config.after_load_callbacks`.
 (The previous behavior was undefined, with some changes reverted and some not,
 leaving the game in an inconsistent state.) If your game has to migrate
 data after a load, it's now recommended to call :func:`renpy.block_rollback`
@@ -104,6 +152,12 @@ can display differently in different contexts, you can use::
 
 Or you can also toggle it for specific layeredimages by passing them the
 ``offer_screen`` property.
+
+The ``function`` statement in ATL will only block catch-up in cases where it
+executes more than once. To revert to the old behavior, where ATL would block
+at a function, use::
+
+    define config.atl_function_always_blocks = True
 
 
 .. _incompatible-7.4.11:

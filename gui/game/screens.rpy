@@ -178,7 +178,7 @@ screen input(prompt):
     window:
 
         vbox:
-            xalign gui.dialogue_text_xalign
+            xanchor gui.dialogue_text_xalign
             xpos gui.dialogue_xpos
             xsize gui.dialogue_width
             ypos gui.dialogue_ypos
@@ -908,7 +908,7 @@ screen history():
 ## This determines what tags are allowed to be displayed on the history
 ## screen.
 
-define gui.history_allow_tags = { "alt", "noalt" }
+define gui.history_allow_tags = { "alt", "noalt", "rt", "rb", "art" }
 
 
 style history_window is empty
@@ -1305,7 +1305,7 @@ screen nvl(dialogue, items=None):
             use nvl_dialogue(dialogue)
 
         ## Displays the menu, if given. The menu may be displayed incorrectly
-        ## if config.narrator_menu is set to True, as it is above.
+        ## if config.narrator_menu is set to True.
         for i in items:
 
             textbutton i.caption:

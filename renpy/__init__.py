@@ -81,7 +81,7 @@ official = official and getattr(site, "renpy_build_official", False)
 if PY2:
 
     # The tuple giving the version number.
-    version_tuple = (7, 5, 0, vc_version)
+    version_tuple = (7, 6, 0, vc_version)
 
     # The name of this version.
     version_name = "TBD"
@@ -89,10 +89,10 @@ if PY2:
 else:
 
     # The tuple giving the version number.
-    version_tuple = (8, 0, 0, vc_version)
+    version_tuple = (8, 1, 0, vc_version)
 
     # The name of this version.
-    version_name = "Heck Freezes Over"
+    version_name = "TBD"
 
 # A string giving the version number only (8.0.1.123), with a suffix if needed.
 version_only = ".".join(str(i) for i in version_tuple)
@@ -178,6 +178,8 @@ elif sys.platform == 'emscripten' or "RENPY_EMSCRIPTEN" in os.environ:
     emscripten = True
 else:
     linux = True
+
+arch = os.environ.get("RENPY_PLATFORM", "unknown-unknown-unknown").rpartition("-")[2]
 
 # A flag that's true if we're on a smartphone or tablet-like platform.
 mobile = android or ios or emscripten

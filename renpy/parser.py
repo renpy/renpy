@@ -22,7 +22,7 @@
 # This module contains the parser for the Ren'Py script language. It's
 # called when parsing is necessary, and creates an AST from the script.
 
-from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
+from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 
@@ -196,6 +196,11 @@ def elide_filename(fn):
 
 def unelide_filename(fn):
     fn = os.path.normpath(fn)
+
+    if renpy.config.alternate_unelide_path is not None:
+        fn0 = os.path.join(renpy.config.alternate_unelide_path, fn)
+        if os.path.exists(fn0):
+            return fn0
 
     fn1 = os.path.join(renpy.config.basedir, fn)
     if os.path.exists(fn1):
@@ -499,7 +504,7 @@ def group_logical_lines(lines):
                 depth = line_depth
 
             if depth != line_depth:
-                raise ParseError(filename, number, "indentation mismatch.")
+                raise ParseError(filename, number, "Indentation mismatch.")
 
             # Advance to the next line.
             i += 1
@@ -510,6 +515,13 @@ def group_logical_lines(lines):
             rv.append((filename, number, rest, block))
 
         return rv, i
+
+    if lines:
+
+        filename, number, text = lines[0]
+
+        if depth_split(text)[0] != 0:
+            raise ParseError(filename, number, "Unexpected indentation at start of file.")
 
     return gll_core(0, 0)[0]
 
@@ -1077,8 +1089,8 @@ class Lexer(object):
         old_pos = self.pos
         c = self.text[self.pos]
 
-        # Allow unicode and raw strings.
-        for mod in ('u', 'r'):
+        # Allow unicode, raw, and formatted strings.
+        for mod in ('u', 'r', 'f'):
             if c != mod:
                 continue
 
@@ -1297,7 +1309,7 @@ class Lexer(object):
         passed to revert to back the lexer up.
         """
 
-        return self.line, self.filename, self.number, self.text, self.subblock, self.pos
+        return self.line, self.filename, self.number, self.text, self.subblock, self.pos, renpy.ast.PyExpr.checkpoint()
 
     def revert(self, state):
         """
@@ -1305,7 +1317,10 @@ class Lexer(object):
         by a previous checkpoint operation on this lexer.
         """
 
-        self.line, self.filename, self.number, self.text, self.subblock, self.pos = state
+        self.line, self.filename, self.number, self.text, self.subblock, self.pos, pyexpr_checkpoint = state
+
+        renpy.ast.PyExpr.revert(pyexpr_checkpoint)
+
         self.word_cache_pos = -1
         if self.line < len(self.block):
             self.eob = False
@@ -2036,6 +2051,50 @@ def if_statement(l, loc):
     return ast.If(loc, entries)
 
 
+@statement("IF")
+def IF_statement(l, loc):
+
+    rv = None
+
+    entries = [ ]
+
+    condition = l.require(l.python_expression)
+    l.require(':')
+    l.expect_eol()
+    l.expect_block('IF statement')
+
+    if renpy.python.py_eval(condition):
+        rv = parse_block(l.subblock_lexer())
+
+    l.advance()
+
+    while l.keyword('ELIF'):
+
+        condition = l.require(l.python_expression)
+        l.require(':')
+        l.expect_eol()
+        l.expect_block('ELIF clause')
+
+        if (rv is None) and renpy.python.py_eval(condition):
+            rv = parse_block(l.subblock_lexer())
+
+        l.advance()
+
+    if l.keyword('ELSE'):
+        l.require(':')
+        l.expect_eol()
+        l.expect_block('ELSE clause')
+
+        if rv is None:
+            rv = parse_block(l.subblock_lexer())
+
+        l.advance()
+
+    if rv is None:
+        rv = [ ]
+
+    return rv
+
 @statement("while")
 def while_statement(l, loc):
     condition = l.require(l.python_expression)
@@ -2387,7 +2446,13 @@ def transform_statement(l, loc):
     else:
         priority = 0
 
+    store = 'store'
     name = l.require(l.name)
+
+    while l.match(r'\.'):
+        store = store + "." + name
+        name = l.require(l.word)
+
     parameters = parse_parameters(l)
 
     if parameters and (parameters.extrakw or parameters.extrapos):
@@ -2398,7 +2463,7 @@ def transform_statement(l, loc):
 
     atl = renpy.atl.parse_atl(l.subblock_lexer())
 
-    rv = ast.Transform(loc, name, atl, parameters)
+    rv = ast.Transform(loc, store, name, atl, parameters)
 
     if not l.init:
         rv = ast.Init(loc, [ rv ], priority + l.init_offset)
@@ -2544,29 +2609,15 @@ def rpy_statement(l, loc):
     return [ ]
 
 
-def screen1_statement(l, loc):
+@statement("screen")
+def screen_statement(l, loc):
 
-    # The guts of screen language parsing is in screenlang.py. It
-    # assumes we ate the "screen" keyword before it's called.
-    screen = renpy.screenlang.parse_screen(l)
+    slver = l.integer()
+    if slver is not None:
+        screen_language = int(slver)
+        if screen_language < 0 or screen_language > 2:
+            l.error("Bad screen language version.")
 
-    l.advance()
-
-    if not screen:
-        return [ ]
-
-    rv = ast.Screen(loc, screen)
-
-    if not l.init:
-        rv = ast.Init(loc, [ rv ], -500 + l.init_offset)
-
-    return rv
-
-
-def screen2_statement(l, loc):
-
-    # The guts of screen language parsing is in screenlang.py. It
-    # assumes we ate the "screen" keyword before it's called.
     screen = renpy.sl2.slparser.parse_screen(l, loc)
 
     l.advance()
@@ -2577,27 +2628,6 @@ def screen2_statement(l, loc):
         rv = ast.Init(loc, [ rv ], -500 + l.init_offset)
 
     return rv
-
-
-# The version of screen language to use by default.
-default_screen_language = int(os.environ.get("RENPY_SCREEN_LANGUAGE", "2"))
-
-
-@statement("screen")
-def screen_statement(l, loc):
-
-    screen_language = default_screen_language
-
-    slver = l.integer()
-    if slver is not None:
-        screen_language = int(slver)
-
-    if screen_language == 1:
-        return screen1_statement(l, loc)
-    elif screen_language == 2:
-        return screen2_statement(l, loc)
-    else:
-        l.error("Bad screen language version.")
 
 
 @statement("testcase")

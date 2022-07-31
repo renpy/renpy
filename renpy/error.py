@@ -201,7 +201,7 @@ def report_exception(e, editor=True):
     print('', file=full)
 
     try:
-        print(str(platform.platform()), file=full)
+        print(str(platform.platform()), str(platform.machine()), file=full)
         print(renpy.version, file=full)
         print(renpy.config.name + " " + renpy.config.version, file=full)
         print(str(time.ctime()), file=full)

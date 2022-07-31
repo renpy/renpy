@@ -203,15 +203,15 @@ translate japanese strings:
 
     # game/screens.rpy:792
     old "Unseen Text"
-    new "未読テキスト"
+    new "未読テキストも\nスキップ"
 
     # game/screens.rpy:793
     old "After Choices"
-    new "選択肢の後"
+    new "選択肢後も\nスキップ継続"
 
     # game/screens.rpy:794
     old "Transitions"
-    new "トランジション"
+    new "トランジションを\nスキップ"
 
     # game/screens.rpy:802
     old "Language"
@@ -400,4 +400,12 @@ translate japanese strings:
     # game/screens.rpy:1490
     old "Menu"
     new "メニュー"
+
+    # game/screens.rpy:799
+    old " "
+    new " "
+
+    # game/screens.rpy:1103
+    old "Opens the accessibility menu."
+    new "アクセス性メニューを開きます。"
 

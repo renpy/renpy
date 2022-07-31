@@ -94,7 +94,7 @@ can then change it again.)
     This determines if tearing (True) or frameskip (False) is the preferred
     behavior when the game can't keep up with its intended framerate.
 
-.. var:: preferences.mouse_move = False
+.. var:: preferences.mouse_move = True
 
     If True, the mouse will automatically move to a selected button. If False,
     it will not. The equivalent of the "automatic mouse move" preference.
@@ -163,27 +163,33 @@ can then change it again.)
 Mixer Functions
 ---------------
 
-.. function:: preferences.set_volume(mixer, volume)
+See :ref:`volume` for more details about mixers.
+
+.. function:: preferences.set_mixer(mixer, volume)
 
     Sets `mixer` to `volume`.
 
     `mixer`
         A string giving the name of the mixer. By default, the mixers
-        are "music", "sfx", and "voice".
+        are "main", "music", "sfx", and "voice" ("main" being a special mixer).
 
     `volume`
-        A number between 0.0 and 1.0.
+        A number between 0.0 and 1.0, where 0.0 is -60 dB (power), and 1.0 is 0 dB
+        (power).
 
-.. function:: preferences.get_volume(mixer):
+.. function:: preferences.get_mixer(mixer)
 
     Gets the volume for `mixer`. If the mixer is muted, this returns
-    0.0.
+    0.0. The is returns a number between 0.0 and 1.0, where 0.0 is -60 dB
+    (power) and 1.0 is 0 dB (power).
 
-.. function:: preferences.set_mute(mixer, mute):
+.. function:: preferences.set_mute(mixer, mute)
 
     Sets the mute setting for `mixer`. If `mute` is true, the mixer is muted.
+    If `mute` is false, the mixer's volume is reverted to its value before
+    it was muted.
 
-.. function:: preferences.get_mute(mute):
+.. function:: preferences.get_mute(mixer)
 
     Gets the mute setting for `mixer`.
 
@@ -196,17 +202,17 @@ These config variables set the default volumes on various audio mixers.
 .. var:: config.default_music_volume = 1.0
 
     The default volume of the music mixer, which is used for the music and
-    movie audio channels. This should be a number between 0.0 and 1.0,
+    movie channels. This should be a number between 0.0 and 1.0,
     with 1.0 being full volume.
 
 .. var:: config.default_sfx_volume = 1.0
 
-    The default volume of the sfx mixer, which is used for the sound
-    audio channel. This should be a number between 0.0 and 1.0,
+    The default volume of the sfx mixer, which is used for the sound and
+    audio channels. This should be a number between 0.0 and 1.0,
     with 1.0 being full volume.
 
 .. var:: config.default_voice_volume = 1.0
 
     The default volume of the voice mixer, which is used for the voice
-    audio channel (And hence the voice statement, auto-voice, etc.).
+    channel (and hence the voice statement, auto-voice, etc.).
     This should be a number between 0.0 and 1.0, with 1.0 being full volume.

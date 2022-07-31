@@ -558,24 +558,36 @@ class DynamicImage(renpy.display.core.Displayable):
     # The name used for hashing.
     hash_name = None
 
+    # A copy of the last scope given to this displayable, if the
+    # displayable uses a prefix.
+    scope = None
+
     def __init__(self, name, scope=None, **properties):
         super(DynamicImage, self).__init__(**properties)
 
         self.name = name
 
-        if isinstance(name, basestring) and ("[prefix_" in name):
-            self._duplicatable = True
+        self._uses_scope = False
+
+        if isinstance(name, basestring):
+            if ("[prefix_" in name):
+                self._duplicatable = True
+
+            if "[" in name.replace("[prefix_]", ""):
+                self._uses_scope = True
 
         if isinstance(name, list):
             for i in name:
                 if ("[prefix_" in i):
                     self._duplicatable = True
 
-        if scope is not None:
-            self.find_target(scope)
-            self._uses_scope = True
-        else:
+                if "[" in i.replace("[prefix_]", ""):
+                    self._uses_scope = True
+
+        if scope is None:
             self._uses_scope = False
+        else:
+            self.find_target(scope)
 
     def _scope(self, scope, update):
         return self.find_target(scope, update)
@@ -626,6 +638,13 @@ class DynamicImage(renpy.display.core.Displayable):
 
         if self.locked and (self.target is not None):
             return
+
+        if scope is not None:
+            if self._uses_scope and (self._duplicatable or self._args.prefix):
+                self.scope = dict(scope)
+
+        elif self._uses_scope:
+            scope = self.scope
 
         if self._args.prefix is None:
             if self._duplicatable:
@@ -817,8 +836,7 @@ class ShownImageInfo(renpy.object.Object):
         layer.
         """
 
-        if layer is None:
-            layer = renpy.config.tag_layer.get(tag, "master")
+        layer = renpy.exports.default_layer(layer, tag)
 
         return self.attributes.get((layer, tag), default)
 
@@ -831,8 +849,7 @@ class ShownImageInfo(renpy.object.Object):
         tag = name[0]
         rest = name[1:]
 
-        if layer is None:
-            layer = renpy.config.tag_layer.get(tag, "master")
+        layer = renpy.exports.default_layer(layer, tag)
 
         if (layer, tag) not in self.shown:
             return None
@@ -892,8 +909,7 @@ class ShownImageInfo(renpy.object.Object):
         tag = name[0]
         rest = name[1:]
 
-        if layer is None:
-            layer = renpy.config.tag_layer.get(tag, "master")
+        layer = renpy.exports.default_layer(layer, tag)
 
         self.attributes[layer, tag] = rest
 
@@ -903,8 +919,7 @@ class ShownImageInfo(renpy.object.Object):
     def predict_hide(self, layer, name):
         tag = name[0]
 
-        if layer is None:
-            layer = renpy.config.tag_layer.get(tag, "master")
+        layer = renpy.exports.default_layer(layer, tag)
 
         if (layer, tag) in self.attributes:
             del self.attributes[layer, tag]
@@ -923,8 +938,7 @@ class ShownImageInfo(renpy.object.Object):
         if f is not None:
             name = f(name)
 
-        if layer is None:
-            layer = renpy.config.tag_layer.get(tag, "master")
+        layer = renpy.exports.default_layer(layer, tag)
 
         # If the name matches one that exactly exists, return it.
         if name in images:

@@ -320,7 +320,7 @@ init python:
         """
         Classifies source and binary files beginning with `pattern`.
         .pyo, .rpyc, .rpycm, and .rpyb go into binary, everything
-        else goes into source.
+        else but .pyi files go into source.
         """
 
         if py is True:
@@ -346,6 +346,8 @@ init python:
             build.classify_renpy(pattern + "/**__pycache__/", None)
             build.classify_renpy(pattern + "/**.pyc", None)
             build.classify_renpy(pattern + "/**.pyo", None)
+
+        build.classify_renpy(pattern + "/**.pyi", None)
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
@@ -397,18 +399,21 @@ init python:
     build.classify_renpy("module/pysdlsound/*.py", "source")
     build.classify_renpy("module/pysdlsound/*.pyx", "source")
     build.classify_renpy("module/fribidi-src/**", "source")
+    build.classify_renpy("module/tinyfiledialogs/**", "source")
 
     # all-platforms binary.
     build.classify_renpy("lib/**/*steam_api*", "steam")
     build.classify_renpy("lib/**/*Live2D*", None)
-    build.classify_renpy("lib/*linux-armv7l/", "raspi")
-    build.classify_renpy("lib/*linux-armv7l/**", "raspi")
 
     if PY2:
+        build.classify_renpy("lib/py2-linux-armv7l/**", "linux_arm")
+        build.classify_renpy("lib/py2-linux-aarch64/**", "linux_arm")
         source_and_binary("lib/py2-**", "binary", "binary")
         source_and_binary("lib/python2**", "binary", "binary")
         build.classify_renpy("renpy2.sh", "binary")
     else:
+        build.classify_renpy("lib/py3-linux-armv7l/**", "linux_arm")
+        build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
         source_and_binary("lib/py3-**", "binary", "binary")
         source_and_binary("lib/python3**", "binary", "binary", py='pyc')
         build.classify_renpy("renpy3.sh", "binary")
@@ -424,8 +429,8 @@ init python:
     build.packages = [ ]
 
     build.package("sdk", "zip tar.bz2 dmg", "source binary")
+    build.package("sdkarm", "tar.bz2", "source binary linux_arm")
     build.package("source", "tar.bz2", "source source_only", update=False)
-    build.package("raspi", "tar.bz2", "raspi", dlc=True, update=False)
     build.package("steam", "zip", "steam", dlc=True)
 
     build.package("jedit", "zip", "jedit", dlc=True)
@@ -448,7 +453,13 @@ define config.mouse_focus_clickthrough = True
 # Reduce the rate of screen updates.
 default preferences.gl_powersave = True
 
+# Enable rtl.
+define config.rtl = True
 
 # Disable steam.
 python early:
     config.enable_steam = False
+
+# Since the launcher can be run directly or can be run from the SDK directory,
+# uneliding files needs to be handled slightly differently.
+define config.alternate_unelide_path = os.path.join(config.basedir, "launcher")

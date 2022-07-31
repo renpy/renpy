@@ -555,7 +555,7 @@ python early in layeredimage:
             or select attributes at random.
 
         `offer_screen`
-            Sets whether or not the available area is taken into acount as for how children
+            Sets whether or not the available area is taken into account as for how children
             are placed and how they are sized (when they have variable size). If False, the
             available area is considered, and if True it is not. If None, defaults to
             :var:`config.layeredimage_offer_screen`.

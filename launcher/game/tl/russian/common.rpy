@@ -908,3 +908,15 @@ translate russian strings:
     # renpy/common/00preferences.rpy:493
     old "high contrast text"
     new "высококонтрастный текст"
+
+    # renpy/common/00preferences.rpy:511
+    old "audio when minimized"
+    new "звук при сворачивании окна"
+
+    # renpy/common/00preferences.rpy:531
+    old "main volume"
+    new "общая громкость"
+
+    # renpy/common/00preferences.rpy:535
+    old "mute main"
+    new "режим без звука"

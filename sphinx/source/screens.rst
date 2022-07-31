@@ -157,15 +157,15 @@ expression. It takes the following properties:
 
 `roll_forward`
     If true, roll forward will be enabled when the screen is used in a
-    ``call screen`` statement. If false, roll forward is disable, and
-    if None, the value of :var:`config.call_screen_roll_forward` is
-    used.
+    ``call screen`` statement. If false, roll forward is disabled, and
+    if None or not given, the value of :var:`config.call_screen_roll_forward`
+    is used.
 
     When roll forwarding from a ``call screen`` statement, return values
     and terminal jumps are preserved, but other side effects will not
-    occur. This means that if the screen consists entirely of :func:`Jump`
+    occur. This means that if the screen only contains :func:`Jump`
     and :func:`Return` actions, it's safe to enable `roll_forward`. Other
-    actions may have side-effects that will not occur duting the `roll_forward`.
+    actions may have side-effects that will not occur during the roll_forward.
 
 ::
 
@@ -231,6 +231,9 @@ All user interface statements take the following common properties:
     If given and true, the displayable is focused by default. When
     multiple displayables have this, the values are compared and the
     displayable with the greatest default focus becomes the default.
+
+    The default focus is only used when the last interaction was not
+    a mouse click, mouse movement, or touch.
 
 `id`
     An identifier for the user-interface statement. When a screen is
@@ -705,6 +708,9 @@ the user presses return, the text will be returned by the
 interaction. (When the screen is invoked through ``call screen``, the result
 will be placed in the ``_return`` variable.)
 
+Due to limitations in supporting libraries, on Android and the web platform
+the input displayable is limited to alphabetic characters.
+
 The input statement takes no parameters, and the following properties:
 
 `value`
@@ -925,7 +931,7 @@ Nearrect takes the following properties:
 `focus`
     If given, this should be a string. This string is passed to the equivalent of
     :func:`GetFocusRect` to find the rectangle. If a focus rectangle with that
-    name is not found, the child is rendered.
+    name is found, the child is rendered.
 
     Passing "tooltip" to this uses the location of the last displayable that
     was focused while displaying a tooltip.
@@ -938,14 +944,15 @@ It also takes:
 * :ref:`Common Properties <common-properties>`
 * :ref:`position-style-properties`
 
-Nearrect differes from the other layouts in that it positions its child near
+
+Nearrect differs from the other layouts in that it positions its child near
 the given rectangle, rather than inside it. The child is first rendered with
 the full width available, and the maximum of the height above and height below
 the rectangle. The y position is then computed as followed.
 
 * If the child will fit above the rectangle and `prefer_top` is given, the child
-  is positioned directly abover the rectangle.
-* Otherwise, if the child can fit beklow the rectangle, it's positioned directly
+  is positioned directly above the rectangle.
+* Otherwise, if the child can fit below the rectangle, it's positioned directly
   below the rectangle.
 * Otherwise, the child is positioned directly above the rectangle.
 
@@ -956,6 +963,11 @@ of the rectangle, and in the case of a floating point number, the width.
 
 At the end of positioning, the :propref:`xoffset` and :propref:`yoffset`
 properties are applied as normal.
+
+If the child of the nearrect is a transform, the transform is given ``show``
+and ``hide`` events. However, the position will change instantly. Nearrect
+works best on the top of a screen, with transforms and positioning applied
+to its child, rather the nearrect.
 
 One use of nearrect is for dropdown menus::
 
@@ -983,7 +995,8 @@ One use of nearrect is for dropdown menus::
         # All sorts of other screen elements could be here, but the nearrect needs
         # be at the top level, and the last thing show, apart from its child.
 
-        # If a focus has been captured, display the dropdown.
+        # Only if the focus has been captured, display the dropdown.
+        # You could also use showif instead of basic if
         if GetFocusRect("diff_drop"):
 
             # If the player clicks outside the frame, dismiss the dropdown.
@@ -1340,7 +1353,7 @@ following properties:
     viewport. If `scrollbars` is "both", both horizontal and vertical
     scrollbars are created.
 
-    When `scrollbars` is not None, the `vpgrid` takes prefixed properties:
+    When `scrollbars` is not None, the `viewport` takes prefixed properties:
 
     * Properties beginning with ``viewport_`` are passed to the viewport.
     * Properties beginning with ``side_`` are passed to the side.
@@ -1405,8 +1418,7 @@ incorrectly, please ensure that all children are of the same size.
 
 A vpgrid must be given at least one of the `cols` and `rows` properties.
 If one is omitted or None, the other is automatically determined from the
-size, spacing, and number of children. If there are not enough children to
-fill all cells, any empty cells will not be rendered.
+size, spacing, and number of children.
 
 Vpgrids take the the following properties:
 
@@ -2114,6 +2126,18 @@ screen name, and an optional Python argument list. If present, the arguments
 are used to initialize the scope of the screen. There are also some
 specific keywords passed to :func:`show_screen` and :func:`call_screen`.
 
+If the ``expression`` keyword is given, the expression following it will be evaluated
+as the screen name. To pass arguments to the screen with the expression keyword,
+separate the expression and arguments with the ``pass`` keyword.
+
+::
+
+    $ screen_name = "my_screen"
+    show screen expression screen_name
+    # Or if you need to pass some arguments
+    show screen expression screen_name pass ("Foo", message="Bar")
+
+
 The show screen statement takes an optional ``nopredict`` keyword, that
 prevents screen prediction from occurring. During screen prediction,
 arguments to the screen are evaluated. Please ensure that evaluating
@@ -2149,11 +2173,16 @@ being shown. If the screen is not being shown, nothing happens. The with
 clause is interpreted the same way the ``with`` clause of a show statement
 is.
 
+Similar to the ``show screen`` statement, ``hide screen`` also takes the ``expression`` keyword,
+allowing to use an arbitrary expression as the screen name.
+
 ::
 
     hide screen rare_screen
     hide screen clock_screen with dissolve
     hide screen overlay_screen
+    $ screen_name = "some_screen"
+    hide screen expression screen_name
 
 Call Screen
 -----------
@@ -2184,6 +2213,9 @@ special keyword argument to the screen, as in the example below.
 Other ways of triggering transitions also work, such as the
 ``[ With(dissolve), Return() ]`` action list.
 
+Similar to the ``show screen`` statement, ``call screen`` also takes the ``expression`` keyword,
+allowing to use an arbitrary expression as the screen name.
+
 .. warning::
 
     If evaluating the arguments to a screen causes side-effects to occur,
@@ -2203,6 +2235,9 @@ Other ways of triggering transitions also work, such as the
     # Shows the screen with dissolve and hides it with pixellate.
     call screen my_other_screen(_with_none=False) with dissolve
     with pixellate
+
+    $ screen_name = "my_screen"
+    call screen expression screen_name pass (foo="bar")
 
 .. _screen-variants:
 
@@ -2309,3 +2344,15 @@ An example of defining a screen variant is:
         variant "small"
 
         text "Hello, World." size 30
+
+See also
+========
+
+:ref:`screen-actions` : a comprehensive list of actions and other tools
+to be used with screens.
+
+:ref:`screen-optimization` : some useful ways of making screens as
+efficient as possible.
+
+:ref:`screen-python` : go from using Ren'Py's predefined tools, to
+extending Ren'Py.

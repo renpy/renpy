@@ -23,6 +23,8 @@ init python:
 
     def find_itch_butler():
 
+        import requests
+
         if renpy.windows:
             platform = "windows-amd64"
             exe = "butler.exe"
@@ -47,20 +49,13 @@ init python:
         except Exception:
             pass
 
-        import urllib2
-
         with interface.error_handling(_("Downloading the itch.io butler.")):
             url = "https://broth.itch.ovh/butler/{}/LATEST/archive/default".format(platform)
-            req = urllib2.Request(url, headers={'User-Agent' : "Renpy"})
-            response = urllib2.urlopen(req, context=ssl_context())
+
+            response = requests.get(url, headers={'User-Agent' : "Renpy"})
 
             with open(zip, "wb") as f:
-                while True:
-                    data = response.read(1024 * 1024)
-                    if not data:
-                        break
-
-                    f.write(data)
+                f.write(response.content)
 
         import zipfile
 

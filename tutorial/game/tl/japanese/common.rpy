@@ -1201,3 +1201,23 @@ translate japanese strings:
     old "Press or move the '[control!s]' [kind]."
     new "'[control!s]' [kind] を押すか動かしてください"
 
+    # renpy/common/00action_other.rpy:668
+    old "Open [text] directory."
+    new "[text] ディレクトリーを開きます。"
+
+    # renpy/common/00preferences.rpy:507
+    old "audio when minimized"
+    new "最小化時音声"
+
+    # renpy/common/00preferences.rpy:527
+    old "main volume"
+    new "メインの音量"
+
+    # renpy/common/00preferences.rpy:531
+    old "mute main"
+    new "メインをミュート"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "有効 (ブロックリスト無効化)"
+

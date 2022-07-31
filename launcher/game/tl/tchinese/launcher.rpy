@@ -1,5 +1,7 @@
-﻿
-translate tchinese strings:
+﻿translate tchinese strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=SourceHanSansLite.ttf}繁體中文{/font}"
 
     # about.rpy:39
     old "[version!q]"

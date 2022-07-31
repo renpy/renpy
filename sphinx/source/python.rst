@@ -118,7 +118,7 @@ persistent data. ::
 A priority number can be placed between ``init`` and ``python``. When
 a priority is not given, 0 is used. Init statements are run in priority
 order, from lowest to highest. Init statements of the same priority are run in
-Unicode order by filename, and then from top to bottom within a file.
+Unicode order by filepath, and then from top to bottom within a file.
 
 To avoid conflict with Ren'Py, creators should use priorities in the
 range -999 to 999. Priorities of less than 0 are generally used for
@@ -151,7 +151,7 @@ For example::
 
     define e = Character("Eileen")
 
-is equivalent to::
+is equivalent (except for some advantages, see below) to::
 
     init python:
         e = Character("Eileen")
@@ -177,11 +177,15 @@ or operator is generally used to concatenate sets. For example::
 One advantage of using the define statement is that it records the
 filename and line number at which the assignment occurred, and
 makes that available to the navigation feature of the launcher.
+Another advantage is that :ref:`lint` will be able to check defined
+values, for example by detecting whether the same variable is defined
+twice, potentially with different values.
 
 Variables that are defined using the define statement are treated
-as constant, are not saved or loaded, and should not be changed.
-(Ren'Py does not enforce this, but will produce undefined behavior
-when this is not the case.)
+as constant, are not saved or loaded, and should not be changed. This
+constant-nature extends to objects reachable through these variables
+through field access and subscripting. (Ren'Py does not enforce this,
+but will produce undefined behavior when this is not the case.)
 
 .. _default-statement:
 
@@ -211,6 +215,8 @@ if it doesn't already exist. For example::
 
     default schedule.day = 0
 
+As for the ``define`` statement, :ref:`lint` offers checks and optimizations
+related to the ``default`` statement.
 
 .. _init-offset-statement:
 
@@ -270,6 +276,7 @@ the store are transitions and transforms.
 Names beginning with underscore ``_`` are reserved for Ren'Py's
 internal use. In addition, there is an :ref:`Index of Reserved Names <reserved-names>`.
 
+.. _named-stores:
 
 Other Named Stores
 ------------------
@@ -284,7 +291,7 @@ store. Each store corresponds to a Python module. The default store is
 ``store``, while a named store is accessed as ``store.name``. Names in
 the modules can be imported using the Python ``from`` statement.
 Named stores can be created using ``init python in`` blocks, or using
-default or define statements.
+``default``, ``define`` or :ref:`transform <transform-statement>` statements.
 
 For example::
 

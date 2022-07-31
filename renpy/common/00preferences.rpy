@@ -144,10 +144,6 @@ init -1500 python:
          * Preference("voice sustain", "disable") - Don't sustain voice past the current interaction.
          * Preference("voice sustain", "toggle")  - Toggle voice sustain.
 
-         * Preference("main mute", "enable") - Mute main.
-         * Preference("main mute", "disable") - Un-mute main.
-         * Preference("main mute", "toggle") - Toggle main.
-
          * Preference("music mute", "enable") - Mute the music mixer.
          * Preference("music mute", "disable") - Un-mute the music mixer.
          * Preference("music mute", "toggle") - Toggle music mute.
@@ -162,11 +158,11 @@ init -1500 python:
 
          * Preference("mixer <mixer> mute", "enable") - Mute the specified mixer.
          * Preference("mixer <mixer> mute", "disable") - Unmute the specified mixer.
-         * Preference("mixer <mixer> mute", "toggle") - Toggle mute of specified mixer.
+         * Preference("mixer <mixer> mute", "toggle") - Toggle mute of the specified mixer.
 
-         * Preference("all mute", "enable") - Mute all mixers.
-         * Preference("all mute", "disable") - Unmute all mixers.
-         * Preference("all mute", "toggle") - Toggle mute of all mixers.
+         * Preference("all mute", "enable") - Mute each individual mixer.
+         * Preference("all mute", "disable") - Unmute each individual mixer.
+         * Preference("all mute", "toggle") - Toggle mute of each individual mixer.
 
          * Preference("main volume", 0.5) - Set the adjustment applied to all channels.
          * Preference("music volume", 0.5) - Set the music volume.
@@ -515,7 +511,7 @@ init -1500 python:
                 elif value == "disable":
                     return SetField(_preferences, "audio_when_minimized", False)
                 elif value == "toggle":
-                    return SetField(_preferences, "audio_when_minimized")
+                    return ToggleField(_preferences, "audio_when_minimized")
 
 
             mixer_names = {

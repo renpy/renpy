@@ -26,7 +26,7 @@ The ``transform`` statement creates a transform that can be supplied as part of 
 at clause. The syntax of the transform statement is:
 
 .. productionlist:: script
-    atl_transform : "transform" `name` "(" `parameters` ")" ":"
+    atl_transform : "transform" `qualname` ( "(" `parameters` ")" )? ":"
                   :    `atl_block`
 
 The transform statement  must be run at init time. If it is found outside an
@@ -35,13 +35,17 @@ priority of 0. The transform may have a list of parameters, which must be
 supplied when it is called. Default values for the right-most parameters can
 be given by adding "=" and the value (e.g. "transform a (b, c=0):").
 
-`Name` must be a Python identifier. The transform created by the ATL block is
-bound to this name.::
+`qualname` must be a set of dot-separated Python identifiers. The transform created
+by the ATL block is bound to this name, within the given
+:ref:`store <named-stores>` if one was provided.::
 
-   transform left_to_right:
-       xalign 0.0
-       linear 2.0 xalign 1.0
-       repeat
+    transform left_to_right:
+        xalign 0.0
+        linear 2.0 xalign 1.0
+        repeat
+
+    transform ariana.left:
+        xcenter .3
 
 .. _atl-image-statement:
 
@@ -140,9 +144,27 @@ The interpolation statement is the main way that ATL controls transformations.
 The first part of the interpolation statement is used to select a function
 that time-warps the interpolation. (That is, a function from linear time to
 non-linear time.) This can either be done by giving the name of a warper
-registered with ATL, or by giving the keyword "warp" followed by an
+registered with ATL, or by giving the
+keyword "warp" followed by an
 expression giving a function. Either case is followed by a number, giving the
-number of seconds the interpolation should take.
+number of seconds the interpolation should take. ::
+
+    init python:
+        @renpy.atl_warper
+        def my_warper(t):
+            return t**4.4
+
+    define my_warpers = [my_warper]
+
+    transform builtin_warper:
+        xpos 0
+        my_warper 5 xpos 52
+
+    transform accessed_as_function:
+        xpos 0
+        warp my_warpers[0] 5 xpos 52
+
+See :ref:`warpers` for more information about warpers.
 
 If no warp function is given, the interpolation is instantaneous. Otherwise,
 it persists for the amount of time given, and at least one frame.
@@ -1003,26 +1025,26 @@ both horizontal and vertical positions.
 
     If fit, xsize, and ysize are all None, this property does not apply.
 
-   .. list-table::
-      :widths: 15 85
-      :header-rows: 1
+    .. list-table::
+       :widths: 15 85
+       :header-rows: 1
 
-      * - Value
-        - Description
-      * - ``contain``
-        - As large as possible, without exceeding any dimensions.
-          Maintains aspect ratio.
-      * - ``cover``
-        - As small as possible, while matching or exceeding all
-          dimensions. Maintains aspect ratio.
-      * - None or ``fill``
-        - Stretches/squashes displayable to exactly match dimensions.
-      * - ``scale-down``
-        - As for ``contain``, but will never increase the size of the
-          displayable.
-      * - ``scale-up``
-        - As for ``cover``, but will never decrease the size of the
-          displayable.
+       * - Value
+         - Description
+       * - ``contain``
+         - As large as possible, without exceeding any dimensions.
+           Maintains aspect ratio.
+       * - ``cover``
+         - As small as possible, while matching or exceeding all
+           dimensions. Maintains aspect ratio.
+       * - None or ``fill``
+         - Stretches/squashes displayable to exactly match dimensions.
+       * - ``scale-down``
+         - As for ``contain``, but will never increase the size of the
+           displayable.
+       * - ``scale-up``
+         - As for ``cover``, but will never decrease the size of the
+           displayable.
 
 .. transform-property:: subpixel
 
@@ -1303,7 +1325,7 @@ Finally, when a ``show`` statement does not include an ``at`` clause, the
 same displayables are used, so no inheritence is necessary. To prevent inheritance,
 show and then hide the displayable.
 
-.. _atl-transititions:
+.. _atl-transitions:
 
 ATL Transitions
 ===============
@@ -1348,8 +1370,8 @@ contexts, if the parameter is in the parameter list.
 `child`
     When ATL is used as a transform, the child parameter is given the original
     child that the transform is applied to. This allows the child to be referred
-    to explicitly. For example, it becomes possible to swap between the s
-    supplied child and another displayable::
+    to explicitly. For example, it becomes possible to swap between the supplied
+    child and another displayable::
 
         transform lucy_jump_scare(child):
             child      # Show the original child.

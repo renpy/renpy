@@ -1,5 +1,7 @@
-﻿
-translate russian strings:
+﻿translate russian strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=fonts/Roboto-Light.ttf}Русский{/font}"
 
     # about.rpy:39
     old "[version!q]"
@@ -1343,7 +1345,7 @@ translate russian strings:
 
     # translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "Команда извлечения позволяет вам извлечь переводимые строки из существующего проекта во временный файл.\n\nКоманда объединения объединяет извлечённые переводы в другой перевод."
+    new "{size=-1}Команда извлечения позволяет вам извлечь переводимые строки из существующего проекта во временный файл.\n\nКоманда объединения объединяет извлечённые переводы в другой перевод.{/size}"
 
     # translations.rpy:252
     old "Ren'Py is generating translations...."
@@ -1815,7 +1817,7 @@ translate russian strings:
 
     # game/gui7.rpy:311
     old "{size=-4}\n\nThis will not overwrite gui/main_menu.png, gui/game_menu.png, and gui/window_icon.png, but will create files that do not exist.{/size}"
-    new "{size=-4}\n\пЭто не перезапишет gui/main_menu.png, gui/game_menu.png, и gui/window_icon.png, но создаст несуществующие файлы.{/size}"
+    new "{size=-4}\n\nЭто не перезапишет gui/main_menu.png, gui/game_menu.png, и gui/window_icon.png, но создаст несуществующие файлы.{/size}"
 
     # game/ios.rpy:339
     old "There are known issues with the iOS simulator on Apple Silicon. Please test on x86_64 or iOS devices."
@@ -1856,3 +1858,163 @@ translate russian strings:
     # game/updater.rpy:111
     old "• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}"
     new "• {a=https://www.renpy.org/dev-doc/html/changelog.html}Посмотреть журнал изменений{/a}"
+
+    # game/android.rpy:60
+    old "Removes Android temporary files."
+    new "Очистить временные файлы Android"
+
+    # game/android.rpy:472
+    old "Clean"
+    new "Очистить"
+
+    # game/android.rpy:628
+    old "Cleaning up Android project."
+    new "Очистка временных файлов Android"
+
+    # game/androidstrings.rpy:43
+    old "I was unable to use javac to compile a test file. If you haven't installed the Java Development Kit yet, please download it from:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\nThe JDK is different from the JRE, so it's possible you have Java without having the JDK. Please make sure you installed the 'JavaSoft (Oracle) registry keys'.\n\nWithout a working JDK, I can't continue."
+    new "Не удалось использовать javac для компиляции тестового файла. Если вы еще не установили Java Development Kit, загрузите его с:\n\n{a=https://adoptium.net/?variant=openjdk8}https://adoptium.net/?variant=openjdk8{/a}\n\JDK отличается от JRE, поэтому возможно, что у вас есть Java без JDK. Пожалуйста, убедитесь, что вы установили 'переменные окружения JavaSoft (Oracle)'.\n\nБез работающего JDK я не могу продолжать."
+
+    # game/androidstrings.rpy:64
+    old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
+    new "Открыт каталог, содержащий android.keystore и bundle.keystore. Пожалуйста, сделайте их резервную копию и храните в безопасном месте."
+
+    # game/choose_directory.rpy:67
+    old "Select Projects Directory"
+    new "Выбрать папку с проектами"
+
+    # game/distribute.rpy:1674
+    old "Copying files..."
+    new "Копирование файлов..."
+
+    # game/distribute_gui.rpy:195
+    old "Update old-game"
+    new "Обновить old-game"
+
+    # game/editor.rpy:152
+    old "A modern editor with many extensions including advanced Ren'Py integration."
+    new "Современный текстовый редактор с множеством расширений, включая расширенную интеграцию Ren'Py."
+
+    # game/editor.rpy:153
+    old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
+    new "Современный текстовый редактор с множеством расширений, включая расширенную интеграцию Ren'Py.\n{a=jump:reinstall_vscode}Обновить Visual Studio Code до последней версии.{/a}"
+
+    # game/editor.rpy:162
+    old "Visual Studio Code"
+    new "Visual Studio Code"
+
+    # game/editor.rpy:162
+    old "Up to 110 MB download required."
+    new "Требуется скачать 110 МБ."
+
+    # game/editor.rpy:175
+    old "A modern and approachable text editor."
+    new "Современный и удобный текстовый редактор."
+
+    # game/editor.rpy:187
+    old "Atom"
+    new "Atom"
+
+    # game/editor.rpy:200
+    old "jEdit"
+    new "jEdit"
+
+    # game/editor.rpy:209
+    old "Visual Studio Code (System)"
+    new "Visual Studio Code (установленный)"
+
+    # game/editor.rpy:209
+    old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
+    new "Используется версия Visual Studio Code, установленная вне Ren'Py. Рекомендуется установить расширение language-renpy, чтобы добавить поддержку файлов Ren'Py."
+
+    # game/installer.rpy:10
+    old "Downloading [extension.download_file]."
+    new "Загрузка [extension.download_file]."
+
+    # game/installer.rpy:11
+    old "Could not download [extension.download_file] from [extension.download_url]:\n{b}[extension.download_error]"
+    new "Не удалось загрузить [extension.download_file] из [extension.download_url]:\n{b}[extension.download_error]"
+
+    # game/installer.rpy:12
+    old "The downloaded file [extension.download_file] from [extension.download_url] is not correct."
+    new "Загруженный файл [extension.download_file] из [extension.download_url] некорректен."
+
+    # game/interface.rpy:124
+    old "[interface.version]"
+    new "[interface.version]"
+
+    # game/preferences.rpy:153
+    old "Clean temporary files"
+    new "Очистить временные файлы"
+
+    # game/preferences.rpy:255
+    old "Cleaning temporary files..."
+    new "Очистка временных файлов..."
+
+    # game/project.rpy:280
+    old "This may be because the project is not writeable."
+    new "Это может быть связано с тем, что папка проекта недоступна для записи."
+
+    # game/translations.rpy:391
+    old "Language (or None for the default language):"
+    new "Язык (или None для языка по умолчанию):"
+
+    # game/web.rpy:344
+    old "This feature is not supported in Ren'Py 8."
+    new "Этот функционал недоступен в Ren'Py 8."
+
+    # game/web.rpy:344
+    old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
+    new "Мы восстановим поддержку в будущем релизе Ren'Py 8. Пока что, пожалуйста используйте Ren'Py 7 для веб-сборки."
+
+    # game/preferences.rpy:104
+    old "General"
+    new "Общие"
+
+    # game/preferences.rpy:105
+    old "Options"
+    new "Опции"
+
+    # game/preferences.rpy:244
+    old "Launcher Theme:"
+    new "Тема лаунчера:"
+
+    # game/preferences.rpy:254
+    old "Information about creating a custom theme can be found {a=https://www.renpy.org/doc/html/skins.html}in the Ren'Py Documentation{/a}."
+    new "Информацию о создании пользовательских тем можно найти {a=https://www.renpy.org/doc/html/skins.html}в документации Ren'Py{/a}."
+
+    # game/preferences.rpy:271
+    old "Install Libraries:"
+    new "Установить библиотеки:"
+
+    # game/preferences.rpy:338
+    old "{#in language font}Welcome! Please choose a language"
+    new "Добро пожаловать!\nВыберите язык"
+
+    # game/preferences.rpy:373
+    old "{#in language font}Start using Ren'Py in [lang_name]"
+    new "Начать использовать Ren'Py на русском"
+
+    # game/updater.rpy:64
+    old "Release (Ren'Py 8, Python 3)"
+    new "Релиз (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:65
+    old "Release (Ren'Py 7, Python 2)"
+    new "Релиз (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:69
+    old "Prerelease (Ren'Py 8, Python 3)"
+    new "Пререлиз (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:70
+    old "Prerelease (Ren'Py 7, Python 2)"
+    new "Пререлиз (Ren'Py 7, Python 2)"
+
+    # game/updater.rpy:77
+    old "Nightly (Ren'Py 8, Python 3)"
+    new "Ночной (Ren'Py 8, Python 3)"
+
+    # game/updater.rpy:78
+    old "Nightly (Ren'Py 7, Python 2)"
+    new "Ночной (Ren'Py 7, Python 2)"

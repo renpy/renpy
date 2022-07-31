@@ -229,7 +229,9 @@ about them being applied right to left. In this example::
 The image will be shifted up by 300 pixels, and then will be rotated around
 the X axis.
 
-**Structural Similarity.**
+Structural Similarity
+^^^^^^^^^^^^^^^^^^^^^^
+
 In ATL, interpolating a the :tpref:`matrixtransform` property requires the
 use of TransformMatrixes that have structural similarity. That means the same
 types of TransformMatrix, multiplied together in the same order.
@@ -316,7 +318,7 @@ The following transform properties are used by the 3D Stage.
 .. transform-property:: perspective
 
     :type: True or False or Float or (Float, Float, Float)
-    :default: False
+    :default: None
 
     When applied to a transform, this enables perspective rendering. This
     takes a triple, giving the near plane, z-distance to the 1:1 plane, and
@@ -330,7 +332,7 @@ The following transform properties are used by the 3D Stage.
     :tpref:`zpos`, and :tpref:`rotate` are inverted, providing the effect of positioning the
     camera rather than the child.
 
-    As the perspective transformation assumes it's aligned wiht the window,
+    As the perspective transformation assumes it's aligned with the window,
     it doesn't make sense to reposition it using :tpref:`xanchor`, and :tpref:`yanchor`,
     or properties that set those, such as :tpref:`anchor`, :tpref:`align`, :tpref:`center`,
     etc.

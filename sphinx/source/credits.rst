@@ -17,6 +17,7 @@ the omission in future versions.
 * Ajkahn96
 * Aleema
 * Alessio
+* Alex
 * Alexandre Tranchant
 * Alisha Taylor
 * Andrej
@@ -62,6 +63,7 @@ the omission in future versions.
 * Edward Betts
 * Edwin
 * Eevee (Lexy Munroe)
+* Elckarow
 * Eliza Velasquez
 * Emmanuel Marty
 * Emmeken
@@ -94,6 +96,7 @@ the omission in future versions.
 * Hyper Sonic
 * Ian Leslie
 * Jackmcbarn
+* Jacob Kauffmann
 * JaHIY
 * Jake Staines
 * James Broadhead
@@ -105,6 +108,7 @@ the omission in future versions.
 * Joshua Fehler
 * Joshua Stone
 * Julian Uy
+* Julvenzor
 * Jürg Billeter
 * Kalawore
 * Kapil Gain
@@ -120,9 +124,11 @@ the omission in future versions.
 * Kuroonehalf
 * Kyouryuukunn
 * Lapalissiano
+* LaUwUrence
 * Lee Yunseok
 * Lent1
 * Lezalith
+* LoafyLemon
 * Loliconazter
 * Liu Wenyuan
 * Lore
@@ -131,8 +137,10 @@ the omission in future versions.
 * Maissara Moustafa
 * Mal Graty
 * Marcel
-* Mason Chou
 * Markus Koschany
+* Mason Chou
+* Matias B.
+* Matt George
 * Max le Fou
 * Maxwell Paul Brickner
 * Meithal
@@ -151,6 +159,7 @@ the omission in future versions.
 * 逆转咸鱼
 * NoJoker
 * Nolanlemahn
+* Numerlor
 * Nxcrft
 * Nyaatrap
 * Oshi-Shinobu
@@ -165,6 +174,8 @@ the omission in future versions.
 * Pratomo Asta Nugraha
 * Project Gardares
 * Psunbury
+* Raj Singh Chauhan
+* Raspberry-soft
 * Rastagong
 * RangHo Lee
 * Remix
@@ -190,7 +201,9 @@ the omission in future versions.
 * Spiky Caterpillar
 * Susnux
 * Sylvain Beucler
+* Tey
 * Thuong Nguyen Huu
+* Tichq
 * Tlm-2501
 * Tmrwiz
 * Viliam Búr
@@ -202,6 +215,7 @@ the omission in future versions.
 * Zedraxlo
 * Zhangning
 * Zigmut
+* 琴梨梨
 
 And your lead developer,
 

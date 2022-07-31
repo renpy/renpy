@@ -184,7 +184,7 @@ def dump(error):
 
     code = location["callable"] = { }
 
-    for modname, mod in sys.modules.items():
+    for modname, mod in sys.modules.copy().items():
 
         if mod is None:
             continue

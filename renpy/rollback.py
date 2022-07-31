@@ -104,7 +104,7 @@ class AlwaysRollback(renpy.revertable.RevertableObject):
         return self
 
 
-NOROLLBACK_TYPES = tuple() # type: tuple[type, type, type]
+NOROLLBACK_TYPES = tuple() # type: tuple[type, type, type, type, type]
 
 
 def reached(obj, reachable, wait):
@@ -151,7 +151,7 @@ def reached(obj, reachable, wait):
     try:
         if (not len(obj)) or isinstance(obj, basestring):
             return
-    except:
+    except Exception:
         return
 
     try:
@@ -339,12 +339,18 @@ class Rollback(renpy.object.Object):
 
                 id_o = id(o)
 
-                if (id_o not in seen) and not isinstance(reachable.get(id_o, None), NOROLLBACK_TYPES):
-                    seen.add(id_o)
-                    objects_changed = True
+                if id_o in seen or id_o not in reachable:
+                    continue
 
-                    new_objects.append((o, rb))
-                    reached(rb, reachable, wait)
+                seen.add(id_o)
+
+                if isinstance(o, NOROLLBACK_TYPES):
+                    continue
+
+                objects_changed = True
+
+                new_objects.append((o, rb))
+                reached(rb, reachable, wait)
 
         del self.objects[:]
         self.objects.extend(new_objects)
@@ -640,7 +646,7 @@ class RollbackLog(renpy.object.Object):
         # This needs to be set late, so that StoreModule is available.
 
         global NOROLLBACK_TYPES
-        NOROLLBACK_TYPES = (renpy.python.StoreModule, SlottedNoRollback, io.IOBase)
+        NOROLLBACK_TYPES = (types.ModuleType, renpy.python.StoreModule, SlottedNoRollback, io.IOBase, type)
 
         reachable = { }
 

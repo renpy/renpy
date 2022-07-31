@@ -469,6 +469,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         hiding = (self.phase == OLD) or (self.phase == HIDE)
 
+        if self.modal and not callable(self.modal):
+            renpy.display.focus.mark_modal()
+
         try:
             push_current_screen(self)
 
@@ -477,8 +480,6 @@ class ScreenDisplayable(renpy.display.layout.Container):
         finally:
             pop_current_screen()
 
-        if self.modal and not callable(self.modal):
-            renpy.display.focus.mark_modal()
 
     def copy(self):
         rv = ScreenDisplayable(self.screen, self.tag, self.layer, self.widget_properties, self.scope, **self.properties)
@@ -985,7 +986,7 @@ def prepare_screens():
 
 def define_screen(*args, **kwargs):
     """
-    :doc: screens
+    :undocumented:
     :args: (name, function, modal="False", zorder="0", tag=None, variant=None)
 
     Defines a screen with `name`, which should be a string.
@@ -1046,8 +1047,8 @@ def get_screen(name, layer=None):
     """
     :doc: screens
 
-    Returns the ScreenDisplayable with the given `name` on layer. `name`
-    is first interpreted as a tag name, and then a screen name. If the
+    Returns the ScreenDisplayable with the given `name` on `layer`. `name`
+    is first interpreted as a tag name, and then as a screen name. If the
     screen is not showing, returns None.
 
     This can also take a list of names, in which case the first screen
@@ -1060,18 +1061,18 @@ def get_screen(name, layer=None):
         else:
             text "The say screen is hidden."
 
-    The ScreenDisplayable objects returnd by this function have the following
-    documented fields:
+    The ScreenDisplayable objects returned by this function have the
+    following documented fields:
 
-    ``ScreenDisplayable.layer``
+    .. attribute:: ScreenDisplayable.layer
 
         The layer the screen is being displayed on.
 
-    ``ScreenDisplayable.name``
+    .. attribute:: ScreenDisplayable.name
 
         The name of the screen.
 
-    ``ScreenDisplayable.zorder``
+    .. attribute:: ScreenDisplayable.zorder
 
         The zorder the screen is being displayed at.
     """

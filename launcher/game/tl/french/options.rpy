@@ -154,7 +154,7 @@
 
     # options.rpy:165
     old "## In a pattern:"
-    new "## Dans le format:"
+    new "## Dans le format :"
 
     # options.rpy:167
     old "## / is the directory separator."

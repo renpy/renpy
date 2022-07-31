@@ -136,19 +136,13 @@ These control transitions between various screens.
 
 .. var:: config.game_main_transition = None
 
-    The transition that is used to display the main menu after leaving
-    the game menu. This is used when the load and preferences screens
-    are invoked from the main menu, and it's also used when the user
-    picks "Main Menu" from the game menu.
+    If not None, a transition that is used when returning to the main
+    menu from the game menu, using the :func:`MainMenu` action.
 
 .. var:: config.intra_transition = None
 
-    The transition that is used between screens of the game menu.
-
-.. var:: config.main_game_transition = None
-
-    The transition used when entering the game menu from the main
-    menu, as is done when clicking "Load Game" or "Preferences".
+    The transition that is used between screens of the game and main
+    menu. (That is, when the screen is changed with :func:`ShowMenu`.)
 
 .. var:: config.nvl_adv_transition = None
 
@@ -867,7 +861,7 @@ Occasionally Used
             def jsoncallback(d):
                 d["playername"] = player_name
 
-            config.save_json_callback.append(jsoncallback)
+            config.save_json_callbacks.append(jsoncallback)
 
     ``FileJson(slot)`` and ``renpy.slot_json(slot)`` will recover the state
     of the ``d`` dict-like object as it was at the moment the game was saved.
@@ -1317,7 +1311,7 @@ Rarely or Internally Used
 .. var:: config.layeredimage_offer_screen = True
 
     This variable sets the default value for the ``offer_screen`` property
-    of layeredimages. See :ref:`the related section <layeredimage>`
+    of layeredimages. See :ref:`the related section <layeredimage-statement>`
     for more information.
 
 .. var:: config.layers = [ 'master', 'transient', 'screens', 'overlay' ]
@@ -1446,6 +1440,16 @@ Rarely or Internally Used
     If True, Ren'Py will apply old-style (percent) substitutions to
     text displayed by the :ref:`say <say-statement>` and :ref:`menu
     <menu-statement>` statements.
+
+.. var:: config.open_file_encoding = False
+
+    If not False, this is the encoding that :func:`renpy.open_file` uses
+    when its `encoding` parameter is none. This is mostly used when porting
+    Python 2 games that used :func:`renpy.file` extensively to Python 3,
+    to have those files open as text by default.
+
+    This gets its default value from the RENPY_OPEN_FILE_ENCODING
+    environment variable.
 
 .. var:: config.overlay_during_with = True
 
@@ -1579,10 +1583,10 @@ Rarely or Internally Used
 
 .. var:: config.scene = renpy.scene
 
-    A function that's used in place of renpy.scene by the :ref:`scene
+    A function that's used in place of :func:`renpy.scene` by the :ref:`scene
     statement <scene-statement>`. Note that this is used to clear the screen,
-    and config.show is used to show a new image. This should have the same
-    signature as renpy.scene.
+    and :var:`config.show` is used to show a new image. This should have the same
+    signature as :func:`renpy.scene`.
 
 .. var:: config.screenshot_callback = ...
 
@@ -1632,9 +1636,9 @@ Rarely or Internally Used
 
 .. var:: config.show = renpy.show
 
-    A function that is used in place of renpy.show by the :ref:`show
+    A function that is used in place of :func:`renpy.show` by the :ref:`show
     <show-statement>` and :ref:`scene <scene-statement>` statements. This
-    should have the same signature as renpy.show.
+    should have the same signature as :func:`renpy.show`.
 
 .. var:: config.skip_delay = 75
 
@@ -1729,9 +1733,12 @@ Rarely or Internally Used
     If not None, this should be a function that is called when a :ref:`with
     statement <with-statement>` occurs. This function can be responsible for
     putting up transient things on the screen during the transition. The
-    function is called with a single argument, which is the transition that
-    is occurring. It is expected to return a transition, which may or may not
-    be the transition supplied as its argument.
+    function is called with two arguments: the transition that is occurring,
+    and the transition it is paired with. The latter is None except in the case
+    of the implicit None transition produced by an inline with statement, in
+    which case it is the inline transition that produced the with None. It is
+    expected to return a transition, which may or may not be the transition
+    supplied as its argument.
 
 
 Garbage Collection
@@ -1768,3 +1775,55 @@ Ren'Py management of the Python garbage collector.
 
     If True, Ren'Py will print to its console and logs information about the
     objects that are triggering collections.
+
+Other Configuration Variables
+-----------------------------
+
+Some other pages of this documentation contain and define other configuration
+variables. You can locate them there, in their context.
+
+:ref:`nvl-mode`:
+    :var:`config.nvl_layer`
+    :var:`config.nvl_list_length`
+    :var:`config.nvl_page_ctc`
+    :var:`config.nvl_page_ctc_position`
+    :var:`config.nvl_paged_rollback`
+
+:ref:`side-images`:
+    :var:`config.side_image_tag`
+    :var:`config.side_image_only_not_showing`
+    :var:`config.side_image_prefix_tag`
+    :var:`config.side_image_null`
+    :var:`config.side_image_same_transform`
+    :var:`config.side_image_change_transform`
+
+:ref:`self-voicing`:
+    :var:`config.descriptive_text_character`
+
+:ref:`preference-variables`:
+    :var:`config.default_music_volume`
+    :var:`config.default_sfx_volume`
+    :var:`config.default_voice_volume`
+
+:ref:`model`:
+    :var:`config.gl2`
+    :var:`config.log_gl_shaders`
+    :var:`config.gl_blend_func`
+
+:ref:`achievement`:
+    :var:`config.steam_appid`
+
+:ref:`gesture`:
+    :var:`config.gestures`
+    :var:`config.dispatch_gesture`
+
+:ref:`live2d`:
+    :var:`config.log_live2d_loading`
+
+:ref:`gui`:
+    :var:`config.thumbnail_height`
+    :var:`config.thumbnail_width`
+
+:ref:`custom-text-tags`:
+    :var:`config.custom_text_tags`
+    :var:`config.self_closing_custom_text_tags`

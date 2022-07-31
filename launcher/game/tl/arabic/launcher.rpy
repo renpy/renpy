@@ -1,5 +1,7 @@
-﻿
-translate arabic strings:
+﻿translate arabic strings:
+    # game/new_project.rpy:77
+    old "{#language name and font}"
+    new "{font=DejaVuSans.ttf}العربية{/font}"
 
     # about.rpy:39
     old "[version!q]"
@@ -1184,4 +1186,3 @@ translate arabic strings:
     # updater.rpy:195
     old "Proceed"
     new "استمرار"
-

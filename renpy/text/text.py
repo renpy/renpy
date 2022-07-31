@@ -422,6 +422,9 @@ class DisplayableSegment(object):
 
     def glyphs(self, s, layout):
 
+        if isinstance(self.d, renpy.display.layout.Null) and (self.d.width == 0) and (self.d.height == 0):
+            return [ ]
+
         glyph = textsupport.Glyph()
 
         w = layout.scale_int(self.width)
@@ -448,12 +451,19 @@ class DisplayableSegment(object):
         return rv
 
     def draw(self, glyphs, di, xo, yo, layout):
+        if not glyphs:
+            return
+
         glyph = glyphs[0]
 
         if di.displayable_blits is not None:
             di.displayable_blits.append((self.d, glyph.x, glyph.y, glyph.width, glyph.ascent, glyph.line_spacing, glyph.time))
 
     def assign_times(self, gt, glyphs):
+
+        if not glyphs:
+            return gt
+
         if self.cps != 0:
             gt += 1.0 / self.cps
 
@@ -1495,7 +1505,7 @@ class Text(renpy.display.core.Displayable):
     """
     :name: Text
     :doc: text
-    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, mipmap=None, **properties)
+    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, **properties)
 
     A displayable that displays text on the screen.
 
@@ -1515,6 +1525,14 @@ class Text(renpy.display.core.Displayable):
     `substitute`
         If true, text interpolation occurs. If false, it will not occur. If
         None, they are controlled by :var:`config.new_substitutions`.
+
+    `slow_done`
+        If not None, and if slow text mode is enabled (see the `slow` parameter), this is a
+        function or callable which is called with no arguments when the text finishes displaying.
+
+    `**properties`
+        Like other Displayables, Text takes style properties, including (among many others) the
+        :propref:`mipmap` property.
     """
 
     __version__ = 4

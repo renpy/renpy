@@ -346,15 +346,15 @@ translate japanese strings:
 
     # screens.rpy:752
     old "Unseen Text"
-    new "未読テキスト"
+    new "未読テキストもスキップ"
 
     # screens.rpy:753
     old "After Choices"
-    new "選択肢の後"
+    new "選択肢後もスキップ継続"
 
     # screens.rpy:754
     old "Transitions"
-    new "トランジション"
+    new "トランジションをスキップ"
 
     # screens.rpy:756
     old "## Additional vboxes of type \"radio_pref\" or \"check_pref\" can be added here, to add additional creator-defined preferences."
@@ -698,4 +698,8 @@ translate japanese strings:
     # gui/game/screens.rpy:1049
     old "Opens the accessibility menu."
     new "アクセス性メニューを開きます。"
+
+    # gui/game/screens.rpy:1307
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new "## 指定されれば選択肢を表示します。config.narrator_menuがTrueだと、メニューは正常に表示されないでしょう。"
 

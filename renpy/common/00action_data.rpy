@@ -21,7 +21,7 @@
 
 init -1600 python:
 
-   ##########################################################################
+    ##########################################################################
     # Functions that set variables or fields.
 
     __FieldNotFound = object()
@@ -52,13 +52,13 @@ init -1600 python:
     @renpy.pure
     class SetField(Action, FieldEquality):
         """
-         :doc: data_action
-         :args: (object, field, value)
+        :doc: data_action
+        :args: (object, field, value)
 
-         Causes the a field on an object to be set to a given value.
-         `object` is the object, `field` is a string giving the name of the
-         field to set, and `value` is the value to set it to.
-         """
+        Causes the a field on an object to be set to a given value.
+        `object` is the object, `field` is a string giving the name of the
+        field to set, and `value` is the value to set it to.
+        """
 
         identity_fields = [ "object" ]
         equality_fields = [ "field", "value" ]
@@ -83,7 +83,7 @@ init -1600 python:
         """
         :doc: data_action
 
-        Causes the variable with `name` to be set to `value`.
+        Causes the variable called `name` to be set to `value`.
 
         The `name` argument must be a string, and can be a simple name like "strength", or
         one with dots separating the variable from fields, like "hero.strength"
@@ -95,10 +95,12 @@ init -1600 python:
     @renpy.pure
     class SetDict(Action, FieldEquality):
         """
-         :doc: data_action
+        :doc: data_action
 
-         Causes the value of `key` in `dict` to be set to `value`.
-         """
+        Causes the value of `key` in `dict` to be set to `value`.
+        This also works with lists, where `key` is the index at which
+        the value will be set.
+        """
 
         identity_fields = [ "dict" ]
         equality_fields = [ "key", "value" ]
@@ -124,8 +126,8 @@ init -1600 python:
         """
         :doc: data_action
 
-        Causes the variable `name` associated with the current screen to
-        be set to `value`.
+        Causes the variable called `name` associated with the current screen
+        to be set to `value`.
         In a ``use``\ d screen, this action sets the variable in the context
         of the screen containing the ``use``\ d one(s).
         To set variables within a ``use``\ d screen, and only in that
@@ -166,7 +168,7 @@ init -1600 python:
         """
         :doc: data_action
 
-        Causes the variable `name` to be set to `value` in the current
+        Causes the variable called `name` to be set to `value` in the current
         local context.
 
         This function is only useful in a screen that has been ``use``\ d by
@@ -187,17 +189,17 @@ init -1600 python:
     @renpy.pure
     class ToggleField(Action, FieldEquality):
         """
-         :doc: data_action
-         :args: (object, field, true_value=None, false_value=None)
+        :doc: data_action
+        :args: (object, field, true_value=None, false_value=None)
 
-         Toggles `field` on `object`. Toggling means to invert the boolean
-         value of that field when the action is performed.
+        Toggles `field` on `object`. Toggling means to invert the boolean
+        value of that field when the action is performed.
 
-         `true_value`
-             If not None, then this is the true value we use.
-         `false_value`
-             If not None, then this is the false value we use.
-         """
+        `true_value`
+            If not None, then this is the true value we use.
+        `false_value`
+            If not None, then this is the false value we use.
+        """
 
         identity_fields = [ "object"]
         equality_fields = [ "field", "true_value", "false_value"  ]
@@ -242,7 +244,7 @@ init -1600 python:
         """
         :doc: data_action
 
-        Toggles `variable`.
+        Toggles the variable whose name is given in `variable`.
 
         The `variable` argument must be a string, and can be a simple name like "strength", or
         one with dots separating the variable from fields, like "hero.strength"
@@ -261,16 +263,17 @@ init -1600 python:
     @renpy.pure
     class ToggleDict(Action, FieldEquality):
         """
-         :doc: data_action
+        :doc: data_action
 
-         Toggles the value of `key` in `dict`. Toggling means to invert the
-         value when the action is performed.
+        Toggles the value of `key` in `dict`. It also works on
+        lists, in which case `key` is the index of the value to toggle.
+        Toggling means to invert the value when the action is performed.
 
-         `true_value`
-             If not None, then this is the true value used.
-         `false_value`
-             If not None, then this is the false value used.
-         """
+        `true_value`
+            If not None, then this is the true value used.
+        `false_value`
+            If not None, then this is the false value used.
+        """
 
         identity_fields = [ "dict", ]
         equality_fields = [ "key", "true_value", "false_value" ]
@@ -314,7 +317,7 @@ init -1600 python:
         """
         :doc: data_action
 
-        Toggles the value of `name` in the current local context.
+        Toggles the value of the variable called `name` in the current local context.
 
         This function is only useful in a screen that has been ``use``\ d by
         another screen, as it provides a way of setting the value of a
@@ -340,7 +343,7 @@ init -1600 python:
         """
         :doc: data_action
 
-        Toggles the value of the variable `name` in the current screen.
+        Toggles the value of the variable called `name` in the current screen.
         In a ``use``\ d screen, this action accesses and sets the given variable
         in the context of the screen containing the ``use``\ d one(s).
         To access and set variables within a ``use``\ d screen, and only in that

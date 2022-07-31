@@ -1,3 +1,5 @@
+.. _building-distributions:
+
 Building Distributions
 ======================
 
@@ -11,18 +13,20 @@ With no configuration, Ren'Py is able to build the following kinds of
 packages:
 
 PC: Windows and Linux
-    A zip file targeting Windows x86, Linux x86, and Linux x86_64.
+    A zip file targeting Windows x86_64 and Linux x86_64
 
-Linux x86/x86_64
-    A tar.bz2 file targeting Linux x86 and Linux x86_64.
+Linux
+    A tar.bz2 file targeting Linux x86_64. This will also include
+    the 32-bit and 64-bit ARM version of Ren'Py, if present. (These
+    are found in the sdkarm Ren'Py package.)
 
-Macintosh x86_64
+Macintosh
     A zip file containing a Macintosh application targeting Macintosh
     OS X on Intel processors. Game data will be included inside the
     application, which appears to the user as a single file.
 
-Windows x86
-     A zip file targeting Windows x86.
+Windows
+     A zip file targeting Windows x86_64.
 
 Windows, Mac, and Linux for Markets
      A distribution that contains the information required to run on
@@ -146,8 +150,18 @@ renpy
     engine files. (Linux, Macintosh, and Windows.)
 android
     These files will be included in Android builds.
+
+This set of valid file lists can be expanded by passing
+:func:`build.classify` new names as its ``file_list`` argument.
+
+Files can also be classified in archives. By default, the "archive"
+archive is declared:
+
 archive
     These files will be included in the archive.rpa archive.
+
+The set of archives can also be expanded, using the :func:`build.archive`
+function.
 
 Files that are not otherwise classified are placed in the "all" file
 list.
@@ -196,6 +210,13 @@ Say we wanted to build a normal version of our game, and one
 containing bonus material. We could classify the bonus files in to a
 "bonus" file list, and then declare an all-premium package with::
 
+    # Declare a new archive belonging to a new "bonus" file list.
+    build.archive("bonus_archive", "bonus")
+
+    # Put the bonus files into the new archive.
+    build.classify("game/bonus/**", "bonus_archive")
+
+    # Declare the package.
     build.package("all-premium", "zip", "windows mac linux all bonus")
 
 Supported package types are "zip" and "tar.bz2" to generate files in
@@ -270,7 +291,7 @@ More information about how .rpyc files help with loading saves into changed
 games can be found at:
 
 * `Under the hood: .rpyc files <https://www.patreon.com/posts/under-hood-rpyc-23035810>`_
-* `Ren'Py developer update: February 20201 <https://www.patreon.com/posts/renpy-developer-48146908>`_
+* `Ren'Py developer update: February 2021 <https://www.patreon.com/posts/renpy-developer-48146908>`_
 
 
 Requirements
@@ -282,27 +303,28 @@ visual novel.
 
 **Windows**
 
-* Version: Windows Vista or higher.
-* CPU: 2.0 GHz Core 2 Duo
+* Version: Windows 7 or higher.
+* CPU: 2.0 Ghz 64-bit Intel-compatible
 * RAM: 2.0 GB
-* Graphics: OpenGL 2.0 or DirectX 9.0c
+* Graphics: OpenGL 3.0 or DirectX 11
 
 **macOS**
 
 * Version: 10.10+
-* CPU: 2.0 GHz Core 2 Duo (64 bit only)
+* CPU: 2.0 Ghz 64-bit Intel-compatible (Apple silicon supported through Rosetta 2)
 * RAM: 2.0 GB
-* Graphics: OpenGL 2.0
+* Graphics: OpenGL 3.0
 
 **Linux**
 
 * Version: Ubuntu 16.04+
-* CPU: 2.0 GHz Core 2 Duo
+* CPU: 2.0 Ghz 64-bit Intel-compatible
 * RAM: 2.0 GB
-* Graphics: OpenGL 2.0
+* Graphics: OpenGL 3.0
 
 The amount of disk space required is entirely determined by the assets in your
-game, and the amount of CPU and RAM needed may also vary.
+game, and the amount of CPU and RAM needed may also vary. Ren'Py will also run
+under OpenGL 2 with certain extensions available.
 
 
 Build Functions
@@ -382,5 +404,3 @@ The following variables provide further control of the build process:
 
     This is a dictionary mapping strings to strings, that can be used to
     add or override keys in the mac's Info.plist file.
-
-

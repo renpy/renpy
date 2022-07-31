@@ -9,8 +9,8 @@ translate korean strings:
     new "{b}물음 (The Question){/b}"
 
     # options.rpy:26
-    old "Ren'Py 7 Edition"
-    new "렌파이 7 에디션"
+    old "Ren'Py 7+ Edition"
+    new "렌파이 7+ 에디션"
 
     # options.rpy:32
     old "Character Art: Deji.\nOriginal Character Art: derik.\n\nBackground Art: Mugenjohncel.\nOriginal Background Art: DaFool\n\nMusic By: Alessio\n\nWritten By: mikey"

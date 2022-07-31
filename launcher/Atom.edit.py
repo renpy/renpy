@@ -29,8 +29,8 @@ class Editor(renpy.editor.Editor):
         if atom is not None:
             return atom
 
-        DIR = os.path.abspath(os.path.dirname(__file__))
-        DIR = renpy.exports.fsdecode(DIR)
+        DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+        DIR = os.path.join(renpy.exports.fsdecode(DIR), "atom")
 
         if renpy.windows:
             atom = os.path.join(DIR, "atom-windows", "atom.exe")

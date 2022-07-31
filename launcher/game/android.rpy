@@ -183,7 +183,7 @@ init python:
 
         filename = os.path.join(p.path, ".android.json")
 
-        with open(filename, "rb") as f:
+        with open(filename, "r") as f:
             android_json = json.load(f)
 
         old_android_json = dict(android_json)
@@ -204,7 +204,7 @@ init python:
 
         if android_json != old_android_json:
 
-            with open(filename, "wb") as f:
+            with open(filename, "w") as f:
                 json.dump(android_json, f)
 
 
