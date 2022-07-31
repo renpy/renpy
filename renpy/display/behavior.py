@@ -522,20 +522,20 @@ class PauseBehavior(renpy.display.layout.Null):
                 renpy.game.interface.timeout(max(self.delay - st, 0))
                 return
 
-        if st >= self.delay:
+            if st >= self.delay:
 
-            if self.voice and renpy.config.nw_voice:
-                if (not renpy.config.afm_callback()) or renpy.display.tts.is_active():
-                    renpy.game.interface.timeout(0.05)
-                    return
+                if self.voice and renpy.config.nw_voice:
+                    if (not renpy.config.afm_callback()) or renpy.display.tts.is_active():
+                        renpy.game.interface.timeout(0.05)
+                        return
 
-            # If we have been drawn since the timeout, simply return
-            # true. Otherwise, force a redraw, and return true when
-            # it comes back.
-            if renpy.game.interface.drawn_since(st - self.delay):
-                return self.result
-            else:
-                renpy.game.interface.force_redraw = True
+                # If we have been drawn since the timeout, simply return
+                # true. Otherwise, force a redraw, and return true when
+                # it comes back.
+                if renpy.game.interface.drawn_since(st - self.delay):
+                    return self.result
+                else:
+                    renpy.game.interface.force_redraw = True
 
         renpy.game.interface.timeout(max(self.delay - st, 0))
 
