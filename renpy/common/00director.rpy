@@ -1523,7 +1523,7 @@ screen director_lines(state):
 
                     text "[line_pos]":
                         xpos (gui._scale(300) - 10)
-                        xalign 1.0
+                        xanchor 1.0
                         text_align 1.0
                         style "director_text"
 
