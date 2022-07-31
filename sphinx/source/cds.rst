@@ -368,7 +368,7 @@ A custom statement's parse function takes an instance of a Lexer object.
                 ll = l.subblock_lexer()
 
                 while ll.advance():
-                    with ll.catch_errors():
+                    with ll.catch_error():
                         strings.append(ll.require(ll.string))
                         ll.expect_noblock("string inside mystatement")
                         ll.expect_eol()
