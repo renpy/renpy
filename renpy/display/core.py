@@ -3559,6 +3559,9 @@ class Interface(object):
 
         renpy.plog(1, "start interact_core")
 
+        # Check to see if the language has changed.
+        renpy.translation.check_language()
+
         suppress_overlay = suppress_overlay or renpy.store.suppress_overlay
 
         # Store the various parameters.
@@ -3606,9 +3609,6 @@ class Interface(object):
                 return False, None
             if not self.old_scene:
                 return False, None
-
-        # Check to see if the language has changed.
-        renpy.translation.check_language()
 
         # We just restarted.
         self.restart_interaction = False
