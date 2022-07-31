@@ -19,6 +19,12 @@ such changes only take effect when the GUI is regenerated.
 8.0.2 / 7.5.2
 -------------
 
+A modal screen now blocks the ``pause`` statement and :func:`renpy.pause``
+function from timing out. This was the indended behavior, but didn't work
+in some cases. This change can be reverted with::
+
+    define config.modal_blocks_pause = False
+
 The default games no longer filter Ruby/Furigana text tags from the history.
 This requires the line in screens.rpy that sets :var:`gui.history_allow_tags`
 to be changed to::
