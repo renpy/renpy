@@ -1362,7 +1362,10 @@ def say(who, what, *args, **kwargs):
         what = what % tag_quoting_dict
 
     if who is None:
-        who = renpy.store.narrator # type: ignore
+        try:
+            who = renpy.store.character.narrator
+        except AttributeError:
+            who = renpy.store.narrator # type: ignore
 
     if renpy.config.say_arguments_callback:
         args, kwargs = renpy.config.say_arguments_callback(who, *args, **kwargs)
