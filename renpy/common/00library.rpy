@@ -161,7 +161,10 @@ init -1700 python:
             who = None
 
         if who is None:
-            who = narrator
+            try:
+                who = character.narrator
+            except AttributeError:
+                who = narrator
 
         if isinstance(who, NVLCharacter):
             nvl_show_core()
@@ -183,7 +186,10 @@ init -1700 python:
         who = renpy.eval_who(who)
 
         if who is None:
-            who = narrator
+            try:
+                who = character.narrator
+            except AttributeError:
+                who = narrator
         elif isinstance(who, basestring):
             who = Character(who, kind=name_only)
 
