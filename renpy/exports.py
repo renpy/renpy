@@ -1305,7 +1305,10 @@ def predict_say(who, what):
     """
 
     if who is None:
-        who = renpy.store.narrator # type: ignore
+        try:
+            who = renpy.store.character.narrator
+        except AttributeError:
+            who = renpy.store.narrator # type: ignore
 
     if isinstance(who, basestring):
         return renpy.store.predict_say(who, what)
