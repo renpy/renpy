@@ -520,7 +520,7 @@ class PauseBehavior(renpy.display.layout.Null):
     def event(self, ev, x, y, st):
 
         if ev.type == renpy.display.core.TIMEEVENT:
-            if ev.modal:
+            if ev.modal and renpy.config.modal_blocks_pause:
                 renpy.game.interface.timeout(max(self.delay - st, 0))
                 return
 
