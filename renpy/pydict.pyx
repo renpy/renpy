@@ -43,7 +43,7 @@ cdef inline int partition(Item *a, int size):
     cdef int j = size - 1
 
     # Use the last key as the pivot.
-    cdef PyObject *pivot = a[j].key
+    cdef PyObject *pivot = a[j // 2].key
 
     while True:
 
@@ -72,7 +72,6 @@ cdef void quicksort_items(Item *array, int size):
     cdef int split = partition(array, size)
     cdef int left_size = split
     cdef int right_size = size - split - 1
-
 
     if left_size >= 2:
         quicksort_items(array, split)
