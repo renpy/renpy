@@ -2708,8 +2708,8 @@ def scry():
     Returns the scry object for the current statement.
 
     The scry object tells Ren'Py about things that must be true in the
-    future of the current statement. Right now, the scry object has followed
-    field:
+    future of the current statement. Right now, the scry object has the
+    following fields:
 
     ``nvl_clear``
         Is true if an ``nvl clear`` statement will execute before the
@@ -2720,12 +2720,12 @@ def scry():
         next interaction.
 
     ``menu_with_caption``
-        Is true if an ``menu-with-caption`` statement will execute
+        Is true if a ``menu`` statement with a caption will execute
         before the next interaction.
 
     ``who``
-        Is the next character object if an ``say`` or ``menu-with-caption``
-        statement will execute before the next interaction.
+        If a ``say`` or ``menu-with-caption`` statement will execute
+        before the next interaction, this is the character object it will use.
     """
 
     name = renpy.game.context().current
