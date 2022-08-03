@@ -187,7 +187,7 @@ parentheses, the difference in behavior are described in the section
 concerning :ref:`the use statement <sl-use>`. If no other screen
 ``use`` a given screen, not giving parentheses to that screen leads to
 pure inefficiency in the way Ren'py works internally, see the
-:ref:`screen optimization section <screen-optimization>` concerning
+:doc:`screen optimization section <screen_optimization>` concerning
 parameters.
 
 
@@ -407,11 +407,11 @@ action. A button takes no parameters, and the following properties.
     If not provided, the action will be used to determine sensitivity.
 
 `keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the action of this button.
 
 `alternate_keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the alternate action of this button.
 
 It also takes:
@@ -672,11 +672,11 @@ properties:
     If not provided, the action will be used to determine sensitivity.
 
 `keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the action of this button.
 
 `alternate_keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the alternate action of this button.
 
 It also takes:
@@ -790,8 +790,8 @@ or one of the keys in a given list. Key is used in a loose sense here,
 as it also allows joystick and mouse events.
 
 Key takes one positional parameter, a string giving the key to
-bind. See the :ref:`keymap` section for a description of available
-keysyms. It takes one property:
+bind. See the :doc:`keymap` section for a description of available
+keysyms. It takes two properties:
 
 `action`
     This gives an action that is run when the key is pressed. This
@@ -1155,11 +1155,11 @@ following properties:
     If not provided, the action will be used to determine sensitivity.
 
 `keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the action of this button.
 
 `alternate_keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the alternate action of this button.
 
 `text_style`
@@ -1629,11 +1629,11 @@ also takes the following properties:
     If not provided, the action will be used to determine sensitivity.
 
 `keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the action of this button.
 
 `alternate_keysym`
-    A string giving a :ref:`keysym <keymap>` describing a keyboard key that,
+    A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
     when pressed, invokes the alternate action of this button.
 
 It also takes:
@@ -2348,11 +2348,11 @@ An example of defining a screen variant is:
 See also
 ========
 
-:ref:`screen-actions` : a comprehensive list of actions and other tools
+:doc:`screen_actions` : a comprehensive list of actions and other tools
 to be used with screens.
 
-:ref:`screen-optimization` : some useful ways of making screens as
+:doc:`screen_optimization` : some useful ways of making screens as
 efficient as possible.
 
-:ref:`screen-python` : go from using Ren'Py's predefined tools, to
+:doc:`screen_python` : go from using Ren'Py's predefined tools, to
 extending Ren'Py.

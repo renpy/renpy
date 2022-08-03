@@ -1,5 +1,3 @@
-.. _matrixcolor:
-
 Matrixcolor
 ===========
 

@@ -380,7 +380,7 @@ This function:
   of (0, 0).
 
 Since the functions ends with \*\*properties, it means that it can
-take :ref:`style properties <style-properties>` as additional keyword
+take :doc:`style properties <style_properties>` as additional keyword
 arguments. Other special entries are \*args, which means that it takes
 an arbitrary number of positional parameters, and \*\*kwargs, which means
 that the keyword arguments are described in the documentation.

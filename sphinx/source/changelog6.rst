@@ -299,7 +299,7 @@ say statements. For example::
 
 As there is more than one way to show dialogue from multiple characters
 (side-by-side? top-and-bottom? one or two textboxes?), Ren'Py doesn't include
-support for this out of the box yet. Please see the :ref:`multiple-character-dialogue`
+support for this out of the box yet. Please see the :doc:`multiple`
 section of the documentation for the styles you'll need to define.
 
 GUI Preferences
@@ -852,7 +852,7 @@ of text presented to the player by Ren'Py.
 There is now a single place for translating Ren'Py – translating
 the launcher also now translates the comments of a generated game. The process
 of translating Ren'Py (the launcher and the GUI) is now documented
-on the :ref:`Translating Ren'py <translating-renpy>` page. This page also
+on the :doc:`Translating Ren'py <translating_renpy>` page. This page also
 suggests a logical order in which strings should be translated.
 
 Functions have been added for selecting an alternate font, changing defines
@@ -1437,7 +1437,7 @@ overhauled. It's now possible to apply an ATL transform, and hence a transition,
 whenever the side image changes. Different transforms can be used
 in the case where the character changes and the case where it stays the same.
 
-See the :ref:`side-images` section for complete documentation.
+See the :doc:`side_image` section for complete documentation.
 
 PushMove Transitions
 --------------------
@@ -2024,7 +2024,7 @@ it using settings preferred by the player.
 Custom Text Tags
 ----------------
 
-Ren'Py snow supports a new form of :ref:`custom text tags <custom-text-tags>`.
+Ren'Py snow supports a new form of :doc:`custom text tags <custom_text_tags>`.
 
 Custom text tags are applied after the text has been tokenized into tags and
 text. This makes it easier to write a custom text tag that manipulates text
@@ -2193,7 +2193,7 @@ potential to be much faster than the original implementation of screen language.
 Where the original screen language evaluated screens from scratch at the start
 of each interaction, this new implementation can incrementally reuse large
 portions of a screen between interactions. Please see the new
-:ref:`Screen Language Optimization <screen-optimization>` documentation for
+:doc:`Screen Language Optimization <screen_optimization>` documentation for
 information on how to maximize screen language performance.
 
 Of special note is that screens now perform better when defined with a parameter
@@ -2255,7 +2255,7 @@ Accessibility
 
 Ren'Py now includes support for self-voicing, a mode in which Ren'Py will
 read on-screen text to vision impaired players. To activate self-voicing,
-press the ``v`` key.  For more information, please read the :ref:`self-voicing <self-voicing>`
+press the ``v`` key.  For more information, please read the :doc:`self-voicing <self_voicing>`
 documentation.
 
 The new :propref:`alt` style property allows one to supply alternative
@@ -3026,7 +3026,7 @@ There were a few launcher improvements in this release.
 
 * The Ren'Py launcher now has a small amount of support for skins. While the
   basic layout of the launcher remains fixed, skins allow the background
-  images and colors to be changed. See the :ref:`skin documentation <skins>`
+  images and colors to be changed. See the :doc:`skin documentation <skins>`
   for more details.
 
 Macintosh Changes
@@ -3413,7 +3413,7 @@ can semi-automatically set up an Android build environment on your system,
 build a package, and install that package on your Android device.
 
 To fix some editor-related problems, backported the 6.14 editor system. This
-changes how editors are configured. Please see :ref:`text-editor-integration`
+changes how editors are configured. Please see :doc:`editor`
 for a description of the new system.
 
 The new :var:`config.save_dump` variable causes Ren'Py to write out
@@ -3482,7 +3482,7 @@ Ren'Py 6.13
 Text Rewrite
 ------------
 
-:ref:`Text display <text>` has been rewritten from scratch. In addition to
+:doc:`Text display <text>` has been rewritten from scratch. In addition to
 supporting many new features, the new implementation of Text is much faster
 at text layout and display, and contains much cleaner code.
 
@@ -3711,7 +3711,7 @@ is equivalent to::
 whenever an image with the tag eileen is being shown.
 
 **Side Image.** This release features a new implementation of
-:ref:`side-images`, which allows side images to be defined like other images,
+:doc:`side_image`, which allows side images to be defined like other images,
 and allows side images to be integrated with screens easily.
 
 **Sticky Transforms.** Finally, showing an image without providing a transform
@@ -3841,7 +3841,7 @@ callbacks to occur when the mouse enters and leaves an area of the screen.
 Since it doesn't participate in the focus system, a mousearea can include
 buttons and bars.
 
-Added :ref:`drag-and-drop` widgets and displayables. The drag and drop system
+Added :doc:`drag_drop` widgets and displayables. The drag and drop system
 can support:
 
 * Windows being repositioned by the user.
@@ -4010,7 +4010,7 @@ transition. These take two displayables, and use the alpha channel of a third
 displayable to blend them together. (The third displayable is often an
 animation, allowing the effect to change over time.)
 
-The new :ref:`modes` system allows one to invoke callbacks when switching from
+The new :doc:`modes` system allows one to invoke callbacks when switching from
 one type of interaction to another. This can be used, for example, to
 automatically hide the window before transitions.
 
@@ -4238,4 +4238,3 @@ Other Changes
 
   * Take the condition parameter to Character into account when
     determining if an nvl clear occurs before the next interaction.
-

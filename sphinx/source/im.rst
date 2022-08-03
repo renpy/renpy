@@ -45,7 +45,7 @@ two im.MatrixColors.
 The im.MatrixColor image manipulator has been replaced by Transforms
 and ATL transforms that specify the matrixcolor property. Each `im.matrix`
 generator has been given a new `Matrix` equivalent, which can be found
-in the :ref:`matrixcolor documentation <matrixcolor>`.
+in the :doc:`matrixcolor documentation <matrixcolor>`.
 
 .. warning::
 

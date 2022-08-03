@@ -1,5 +1,3 @@
-.. _screen-special:
-
 ====================
 Special Screen Names
 ====================
@@ -211,7 +209,7 @@ the following parameter:
 
     .. attribute:: multiple
 
-        If :ref:`multiple character dialogue <multiple-character-dialogue>`, this is
+        If :doc:`multiple character dialogue <multiple>`, this is
         a two component tuple. The first component is the one-based number
         of the dialogue block, and the second is the total number of dialogue
         blocks in the multiple statement.

@@ -49,7 +49,7 @@ A displayable is something that can be shown on the screen. The most
 common thing to show is a static image, which can be specified by
 giving the filename of the image, as a string. In the example above,
 we might use "mary_beach_night_happy.png" as the filename.
-However, an image may refer to :ref:`any displayable Ren'Py supports
+However, an image may refer to :doc:`any displayable Ren'Py supports
 <displayables>`, not just static images. Thus, the same statements
 that are used to display images can also be used for animations, solid
 colors, and the other types of displayables.
@@ -372,7 +372,7 @@ this interaction is controlled by the user, and the user can cause it
 to terminate early.
 
 For a full list of transitions that can be used, see the chapter on
-:ref:`transitions <transitions>`.
+:doc:`transitions <transitions>`.
 
 An example of the with statement is::
 
@@ -526,7 +526,7 @@ Image Functions
 See also
 ========
 
-:ref:`statement-equivalents` : how to use most of the features described here in a
+:doc:`statement_equivalents` : how to use most of the features described here in a
 python context.
 
-:ref:`displayables` : other objects to display, more diverse than basic images.
+:doc:`displayables` : other objects to display, more diverse than basic images.

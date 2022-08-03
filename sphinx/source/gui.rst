@@ -17,9 +17,9 @@ can be customized somewhat, and can be replaced entirely if necessary. This
 page explains how to do simple and intermediate levels of GUI customization.
 
 For more advanced customization, please take a look at the documentation for
-:ref:`styles <styles>` (including the list of :ref:`style properties <style-properties>`)
-and :ref:`screens <screens>` (including :ref:`screen actions <screen-actions>`
-and :ref:`special screens <screen-special>`).
+:doc:`styles <style>` (including the list of :doc:`style properties <style_properties>`)
+and :doc:`screens <screens>` (including :doc:`screen actions <screen_actions>`
+and :doc:`special screens <screen_special>`).
 
 This assumes that you're using a new-style Ren'Py GUI (contained in the gui.rpy
 file). Older GUIs (that use the screens.rpy file) should be treated as advanced
@@ -1318,7 +1318,7 @@ it with something of your own. Here are a few places to get started.
 Styles
 ------
 
-:ref:`Styles <styles>` and :ref:`style properties <style-properties>` control how displayables
+:doc:`Styles <style>` and :doc:`style properties <style_properties>` control how displayables
 are displayed. To find out what style a displayable is using, put the mouse
 over it and type Shift+I. This invokes the style inspector, which shows
 style names. Once the style name is known, a style statement can be used
@@ -1339,8 +1339,8 @@ Screens - Navigation
 --------------------
 
 The next level of customization is to modify the screens. The most
-important documentation about screens is located in the :ref:`screens`
-and  :ref:`screen-actions` sections.
+important documentation about screens is located in the :doc:`screens`
+and :doc:`screen_actions` sections.
 
 
 One of the most important screens is the navigation screen, which serves
@@ -1460,14 +1460,14 @@ Advanced creators can replace some or all of screens.rpy in its entirely.
 When doing so, some or all of the contents of gui.rpy may become redundant.
 It's probably a good idea to call :func:`gui.init` to reset styles – but after
 that, a creator can do whatever they want. It usually makes sense to include
-some or all of the :ref:`special screens <screen-special>`, to make sure
+some or all of the :doc:`special screens <screen_special>`, to make sure
 players can have access to all the functionality Ren'Py provides.
 
 
 See Also
 ========
 
-For more information about the GUI, see the :ref:`Advanced GUI <gui-advanced>`
+For more information about the GUI, see the :doc:`Advanced GUI <gui_advanced>`
 section.
 
 

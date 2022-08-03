@@ -1,5 +1,3 @@
-.. _web-updater:
-
 Web Updater
 ===========
 

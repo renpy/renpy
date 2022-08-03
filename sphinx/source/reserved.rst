@@ -1,7 +1,5 @@
 :orphan:
 
-.. _reserved-names:
-
 Reserved Names
 ==============
 
@@ -23,4 +21,3 @@ cases it makes sense to redefine these names, one should be aware that doing
 so can cause obscure problems.
 
 .. include:: inc/reserved_renpy
-

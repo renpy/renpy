@@ -17,7 +17,7 @@ Ren'Py 7 supports Python 2.7. Ren'Py 8 supports Python 3.9.
     Python packages that don't ship with Ren'Py may not work inside Ren'Py.
 
     There are also some Python constructs that work, but may lead to problems
-    in saving. Please read the :ref:`save, load, and rollback <save-load-rollback>` page
+    in saving. Please read the :doc:`save, load, and rollback <save_load_rollback>` page
     for more details, especially the section on :ref:`what can't be saved <cant-save>`.
     (You need to be careful with files, sockets, iterators, task, futures, and
     generators.)
@@ -274,7 +274,7 @@ character and a flag. Other things that are usually placed into
 the store are transitions and transforms.
 
 Names beginning with underscore ``_`` are reserved for Ren'Py's
-internal use. In addition, there is an :ref:`Index of Reserved Names <reserved-names>`.
+internal use. In addition, there is an :doc:`Index of Reserved Names <reserved>`.
 
 .. _named-stores:
 

@@ -108,5 +108,5 @@ Creator-Defined Transforms
 ==========================
 
 A creator can define a transform using the
-:ref:`animation and transformation language <atl>`, or the
+:doc:`animation and transformation language <atl>`, or the
 :class:`Transform` function.

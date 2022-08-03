@@ -1121,7 +1121,7 @@ both horizontal and vertical positions.
     If not None, the value of this property is used to recolor everything
     that children of this transform draw. Interpolation is only supported
     when MatrixColors are used, and the MatrixColors are structurally similar.
-    See :ref:`matrixcolor` for more information.
+    See :doc:`matrixcolor` for more information.
 
     This requires model-based rendering to be enabled by setting :var:`config.gl2` to
     True.
