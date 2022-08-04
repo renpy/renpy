@@ -42,8 +42,12 @@ cdef inline int partition(Item *a, int size):
     cdef int i = 0
     cdef int j = size - 1
 
-    # Use the last key as the pivot.
-    cdef PyObject *pivot = a[j // 2].key
+    # Swap the middle element with the last element.
+    # This produces better behavior when the list is sorted.
+    swap(a, j, j // 2)
+
+    # Use that new last element as a pivot.
+    cdef PyObject *pivot = a[j].key
 
     while True:
 
