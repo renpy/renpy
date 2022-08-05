@@ -21,6 +21,11 @@ and rolled-back when rollback occurs.
     set to False during the splashscreen, and is ignored when in the main
     menu.
 
+.. var:: _constant
+
+    If set to true in a store, indicates the store is constant.
+    See :ref:`constant-stores`.
+
 .. var:: default_mouse
 
     This is undefined by default. If defined, and if :var:`config.mouse` is

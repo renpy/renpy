@@ -19,6 +19,28 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+
+This release of Ren'Py introduces :ref:`constant stores <constant-stores>`, and
+makes some of the built-in stores constant. Constant stores should not change
+outside of the init phase. The following stores are constant:
+
+    _errorhandling
+    _gamepad
+    _renpysteam
+    _warper
+    audio
+    achievement
+    build
+    director
+    iap
+    layeredimage
+    updater
+
+If your game changes a variable in one of these stores, outside of the init,
+the store can be set to non-constant with (for example)::
+
+    define audio._constant = False
+
 Mixer volumes now must be specified using a new format, where 0.0 is -60 dB (power)
 and 1.0 is 0 dB (power). To use the old format, where the samples were multiplied
 by volume ** 2, use::

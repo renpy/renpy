@@ -302,6 +302,25 @@ init -1700 python:
         who = Character(who, kind=name_only)
         who(what, interact=interact, *args, **kwargs)
 
+
+    ##########################################################################
+    # Constant stores.
+    #
+    # Set _constant on many default stores.
+
+    _errorhandling._constant = True
+    _gamepad._constant = True
+    _renpysteam._constant = True
+    _warper._constant = True
+    audio._constant = True
+    achievement._constant = True
+    build._constant = True
+    director._constant = True
+    iap._constant = True
+    layeredimage._constant = True
+    updater._constant = True
+
+
     ##########################################################################
     # Misc.
 
@@ -314,6 +333,7 @@ init -1700 python:
 
     # License text.
     renpy.license = _("This program contains free software under a number of licenses, including the MIT License and GNU Lesser General Public License. A complete list of software, including links to full source code, can be found {a=https://www.renpy.org/l/license}here{/a}.")
+
 
 init -1000 python:
     # Set developer to the auto default.

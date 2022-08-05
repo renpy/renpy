@@ -249,12 +249,26 @@ init -1100 python:
             config.gui_text_position_properties = False
             config.atl_function_always_blocks = True
 
+        if _compat_versions(version, (7, 5, 1), (8, 0, 1)):
+            config.modal_blocks_pause = False
+
         if _compat_versions(version, (7, 5, 2), (8, 0, 2)):
             config.quadratic_volumes = True
             config.emphasize_audio_volume = 0.5
 
-        if _compat_versions(version, (7, 5, 1), (8, 0, 1)):
-            config.modal_blocks_pause = False
+            store._errorhandling._constant = True
+            store._gamepad._constant = True
+            store._renpysteam._constant = True
+            store._warper._constant = True
+            store.audio._constant = True
+            store.achievement._constant = True
+            store.build._constant = True
+            store.director._constant = True
+            store.iap._constant = True
+            store.layeredimage._constant = True
+            store.updater._constant = True
+
+
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

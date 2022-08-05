@@ -322,6 +322,46 @@ that the default store does. Special namespaces such as ``persistent``,
 within them.
 
 
+.. _constant-stores:
+
+Constant Stores
+---------------
+
+A named store can be declared to be constant by setting a variable named ``_constant``
+to a true value, using, for example::
+
+    init python in mystore:
+        _constant = True
+
+When a store is constant, variables in that store are not saved, and objects
+reachable solely from those variables do not participate in rollback.
+
+Variables in a constant store can be changed during the init phase. It's only
+after init (including statements like ``define``, ``transform``, etc.) completes
+that the store must be treated as constant.
+
+As Ren'Py has no way of enforcing this, it is the responsibility of the creator
+to ensure that variables in a constant store do not change after the init phase.
+
+The reason for declaring a store constant is that each store and variable
+incurs a small amount of overhead to support saving, loading, and rollback.
+A constant store avoids this overhead.
+
+The following stores are declared constant by default::
+
+    _errorhandling
+    _gamepad
+    _renpysteam
+    _warper
+    audio
+    achievement
+    build
+    director
+    iap
+    layeredimage
+    updater
+
+
 .. _python-modules:
 
 First and Third-Party Python Modules and Packages

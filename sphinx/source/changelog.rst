@@ -29,6 +29,35 @@ The advantage of this change is that it makes the volumes sliders much more dyna
 Previously, the volume slider had to be very near the bottom before it had an effect.
 Now, the volume increases and decreases match the way people perceive loudness.
 
+Constant Stores
+---------------
+
+Ren'Py has the ability to mark a :ref:`named store <named-stores>` as a constant,
+by setting the ``_constant`` variable in that store. If true, variables in that
+:ref:`constant store <constant-store>` will not be saved, and objects reachable
+soley from that store will not participate in rollback.
+
+The reason to declare a store constant is that there are small per-store and
+per-variable overheads that are required to support rollback. Declaring a
+store constant can eliminate these overheads.
+
+The following stores are declared to be constant by default:
+
+    _errorhandling
+    _gamepad
+    _renpysteam
+    _warper
+    audio
+    achievement
+    build
+    director
+    iap
+    layeredimage
+    updater
+
+Variables in a constant store can be updated during the init phase, but should
+not change after the init phase finishes.
+
 New Features
 ------------
 
