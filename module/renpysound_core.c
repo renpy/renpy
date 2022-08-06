@@ -278,8 +278,16 @@ static void start_sample(struct Channel* c, int reset_fade) {
             c->fade_vol = 0;
 
             if (fade_steps) {
-                c->fade_step_len = ms_to_bytes(c->playing_fadein) / fade_steps;
-                c->fade_step_len &= ~0x7; // Even sample.
+                while (c->fade_delta < c->volume) {
+                    c->fade_step_len = c->fade_delta * ms_to_bytes(c->playing_fadein) / fade_steps;
+                    c->fade_step_len &= ~0x7; // Even sample.
+
+                    if (c->fade_step_len != 0) {
+                        break;
+                    }
+
+                    c->fade_delta *= 2;
+                }
             } else {
                 c->fade_step_len = 0;
             }
@@ -859,13 +867,21 @@ void RPS_fadeout(int channel, int ms) {
     c->fade_vol = c->volume;
 
     if (fade_steps) {
-        c->fade_step_len = ms_to_bytes(ms) / fade_steps;
-        c->fade_step_len &= ~0x7; // Even sample.
+        while (-c->fade_delta < c->volume) {
+            c->fade_step_len = -c->fade_delta * ms_to_bytes(ms) / fade_steps;
+            c->fade_step_len &= ~0x7; // Even sample.
+
+            if (c->fade_step_len != 0) {
+                break;
+            }
+
+            c->fade_delta *= 2;
+        }
     } else {
         c->fade_step_len = 0;
     }
 
-    c->stop_bytes = ms_to_bytes(ms);
+    c->stop_bytes = c->fade_step_len * c->volume / -c->fade_delta;
     c->queued_tight = 0;
 
     if (!c->queued) {
