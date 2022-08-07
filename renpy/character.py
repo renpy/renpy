@@ -1503,7 +1503,7 @@ def Character(name=NotSet, kind=None, **properties):
     `callback`
         A function that is called when events occur while the
         character is speaking. See the section on
-        :ref:`character-callbacks` fore more information.
+        :ref:`character-callbacks` for more information.
 
     **Click-to-continue.**
     A click-to-continue indicator is displayed once all the text has
