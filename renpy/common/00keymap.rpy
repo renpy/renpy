@@ -477,6 +477,9 @@ label _save_reload_game:
         if renpy.session.get("_reload_slot", None) and renpy.can_load(renpy.session["_reload_slot"]):
             renpy.utter_restart()
 
+        if (renpy.game.log is None) or (renpy.game.log.current is None):
+            renpy.utter_restart()
+
         renpy.session["_reload_slot"] = "_reload-1"
 
         import time
