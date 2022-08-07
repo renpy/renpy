@@ -54,4 +54,11 @@
     "esbonio.server.enabled": true,
     "esbonio.sphinx.confDir": "",
     "circuitpython.board.version": null,
+
+    "renpy.excludeCompiledFilesFromWorkspace": false,
+    "renpy.watchFoldersForChanges": false,
+    "renpy.warnOnInvalidVariableNames": "Disabled",
+    "renpy.warnOnInvalidFilenameIssues": "Disabled",
+    "renpy.warnOnIndentationAndSpacingIssues": "Disabled",
+
 }
