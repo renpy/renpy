@@ -2217,6 +2217,9 @@ class AlphaMask(Container):
         self.add(child)
         self.null = None
 
+    def visit(self):
+        return [ self.mask, self.child ]
+
     def render(self, width, height, st, at):
 
         cr = renpy.display.render.render(self.child, width, height, st, at)
