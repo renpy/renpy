@@ -58,6 +58,8 @@ while not getting in the way of mouse users.
 Other Improvements
 ------------------
 
+There have been many copyedits and other improvements to Ren'Py's documentation.
+
 In Ren'Py 8, Python blocks are now compiled as if the ``from __future__ import annotations``
 statement was present.
 
