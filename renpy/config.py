@@ -1270,6 +1270,9 @@ modal_blocks_pause = True
 # The range, in decibels, of the volume mixers.
 volume_db_range = 60
 
+# Do we treat float values for spacing as relative values ?
+relative_spacing = True
+
 del os
 del collections
 
