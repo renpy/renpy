@@ -58,6 +58,21 @@ init -1500 python:
             self.cursors[name] = ( renpy.displayable(cursor), x, y )
             return self
 
+        def adds(self, **kwargs):
+            """
+            :doc: mouse_displayable
+
+            This replaces successive calls to the :meth:`add` method. ::
+
+                MouseDisplayable("gui/arrow.png", 0, 0).adds(spin=("mouse spin",
+                                                                   9.9, 9.9),
+                                                             red_square=(Solid("#f00", xysize=(100, 100),
+                                                                         50, 50)))
+            """
+            for k, v in kwargs.items():
+                self.add(k, *v)
+            return self
+
         def render(self, width, height, st, at):
 
             # Determine the name of the mouse to use.
