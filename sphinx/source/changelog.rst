@@ -74,6 +74,82 @@ played, and hence never faded out.)
 8.0.2 / 7.5.2
 =============
 
+Fixes
+-----
+
+There have been a number of changes to the way autoreload (shift+R) works, to
+try to prevent Ren'Py from creating an invalid save file when an autoreload after
+an error happens, and Ren'Py is in an invalid state. The goal of these changes
+is to preserve the save file from before the change, and reuse that.
+
+Ren'Py is now able to perform audio fadeins and fadeouts of less than 0.68
+seconds. Previously such short fadeins and fadeouts would be result in an
+underflow and no fading. In this release, the precise duration of a fadein
+and fadeout is not strictly guaranteed.
+
+An issue that could cause excessive CPU and memory usage when a store had
+large number of variables in it has been fixed.
+
+Loading a save slot that was saved with a different language than is currently set will no
+longer prevent :var:`config.after_load_transition` from occurring.
+
+Several problems that preventing In-App Purchases (IAP) from working on Ren'Py
+8 have been fixed.
+
+An issue with examples in the tutorial game not working in a non-English languages
+has been fixed.
+
+Tinydialogs is now included in the source code distribution of Ren'Py.
+
+
+Default Focus Changes
+---------------------
+
+There have been several changes to the `default_focus` property of focusable
+displayables like buttons and bars. This property allows Ren'Py to select a
+displayable to gain default focus when displayables are added to removed.
+
+The new rules are:
+
+* When the mouse is used, focus follows the mouse and `default_focus` is ignored.
+* When a displayable with a higher `default_focus` than any other displayable
+  is shown, it is given focus.
+* When the displayable with the highest `default_focus` is hidden, the displayable
+  with the next highest non-zero `default_focus` is given focus.
+
+The goal is to support common keyboard and controller navigation patterns,
+while not getting in the way of mouse users.
+
+
+Other Improvements
+------------------
+
+There have been many copyedits and other improvements to Ren'Py's documentation.
+
+In Ren'Py 8, Python blocks are now compiled as if the ``from __future__ import annotations``
+statement was present.
+
+A modal screen or dismiss statement now blocks the ``pause`` statement and :func:`renpy.pause``
+from ending. Previously, what happened in this case was undefined and varied between
+versions.
+
+On macOS, Ren'Py will now properly adjust when the game window is moved between
+displays with different scaling.
+
+Command-C and Command-V now work for copy and paste on macOS.
+
+The default input screen in screens.rpy has now been changed to prevent a
+conflict between the :propref:`xalign` and :propref:`xpos` of the vbox.
+The fix was to change the use of xalign to :propref:`xanchor`.
+
+Ren'Py will now start if a sound card is not present, even in developer mode.
+Errors with audio hardware are now written to log.txt.
+
+The Japanese translation has been updated.
+
+New games created with Ren'Py no longer filter out ruby/furigana text tags.
+
+
 
 .. _renpy-7.5.1:
 .. _renpy-8.0.1:
