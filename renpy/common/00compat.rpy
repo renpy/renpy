@@ -255,6 +255,7 @@ init -1100 python:
         if _compat_versions(version, (7, 5, 2), (8, 0, 2)):
             config.quadratic_volumes = True
             config.emphasize_audio_volume = 0.5
+            config.relative_spacing = False
 
             store._errorhandling._constant = True
             store._gamepad._constant = True
