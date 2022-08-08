@@ -466,7 +466,7 @@ class Grid(Container):
         if yspacing is None:
             yspacing = self.style.spacing
 
-        if config.relative_spacing:
+        if renpy.config.relative_spacing:
             xspacing = renpy.display.layout.scale(xspacing, width)
             yspacing = renpy.display.layout.scale(yspacing, height)
 
