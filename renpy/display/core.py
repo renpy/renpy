@@ -3961,6 +3961,11 @@ class Interface(object):
                     if not self.mouse_move.perform():
                         self.mouse_move = None
 
+                # Check the uat
+                if renpy.loadsave.did_autosave:
+                    renpy.loadsave.did_autosave = False
+                    renpy.exports.run(renpy.config.autosave_callback)
+
                 # See if we want to restart the interaction entirely.
                 if self.restart_interaction and not self.display_reset:
                     return True, None

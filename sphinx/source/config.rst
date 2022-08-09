@@ -300,6 +300,18 @@ Occasionally Used
 
     See :ref:`Automatic Voice <automatic-voice>` for more details.
 
+.. var:: config.autosave_callback = None
+
+    A callback or list of callbacks that will be called after each time a
+    background autosave happens. The callbacks are called during an interaction,
+    and so actions may be used, though the Return action will not function.
+
+    If a non-Action callback shows a displayable or screen,
+    :func:`renpy.restart_interaction` should be called.
+
+    ::
+        define config.autosave_callback = Notify("Autosaved.")
+
 .. var:: config.autosave_slots = 10
 
     The number of slots used by autosaves.

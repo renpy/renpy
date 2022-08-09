@@ -1270,6 +1270,9 @@ modal_blocks_pause = True
 # The range, in decibels, of the volume mixers.
 volume_db_range = 60
 
+# Autosave callback.
+autosave_callback = None
+
 del os
 del collections
 
