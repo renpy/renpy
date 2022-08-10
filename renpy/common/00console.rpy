@@ -132,22 +132,30 @@ init -1500 python in _console:
     class PrettyRepr(Repr):
         _ellipsis = str("...")
 
-        def repr_str(self, x, level):
+        def _repr_bytes(self, x, level):
             s = repr(x)
             if len(s) > self.maxstring:
                 i = max(0, (self.maxstring - 3) // 2)
                 s = s[:i] + self._ellipsis + s[len(s) - i:]
             return s
 
-        def repr_unicode(self, x, level):
+        def _repr_string(self, x, level):
             s = repr(x)
-            if not persistent._console_unicode_escaping:
-                s = s.decode("unicode-escape", errors="replace")
+
+            if persistent._console_unicode_escaping:
+                s = s.encode("ascii", "backslashreplace").decode("utf-8")
 
             if len(s) > self.maxstring:
                 i = max(0, (self.maxstring - 3) // 2)
                 s = s[:i] + self._ellipsis + s[len(s) - i:]
             return s
+
+        if PY2:
+            repr_str = _repr_bytes
+            repr_unicode = _repr_string
+        else:
+            repr_bytes = _repr_bytes
+            repr_str = _repr_string
 
         def repr_tuple(self, x, level):
             if not x: return "()"
