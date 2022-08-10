@@ -1273,6 +1273,9 @@ volume_db_range = 60
 # Do we treat float values for spacing as relative values ?
 relative_spacing = True
 
+# Autosave callback.
+autosave_callback = None
+
 del os
 del collections
 

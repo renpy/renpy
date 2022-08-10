@@ -61,6 +61,9 @@ not change after the init phase finishes.
 New Features
 ------------
 
+The new :var:`config.autosave_callback` is run after a background autosave
+finishes.
+
 The new :func:`renpy.music.pump` function can be called to cause audio changes
 to take effect immediately, rather than at the start of the next interaction.
 The main use of this is to allow a sound to be played, and then faded out. (By
