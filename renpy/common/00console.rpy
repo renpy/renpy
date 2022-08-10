@@ -207,7 +207,7 @@ init -1500 python in _console:
             if level <= 0: return "{...}"
 
             iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
-            iter_x = self._make_pretty_items(x, iter_keys)
+            iter_x = self._make_pretty_items(x, iter_keys, '{', '}')
             return self._repr_iterable(iter_x, level, '{', '}')
 
         repr_RevertableDict = repr_dict
@@ -222,7 +222,7 @@ init -1500 python in _console:
             if level <= 0: return left + "...})"
 
             iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
-            iter_x = self._make_pretty_items(x, iter_keys)
+            iter_x = self._make_pretty_items(x, iter_keys, left, '})')
             return self._repr_iterable(iter_x, level, left, '})')
 
         def repr_OrderedDict(self, x, level):
@@ -231,8 +231,32 @@ init -1500 python in _console:
             if level <= 0: return "OrderedDict({...})"
 
             iter_keys = self._to_shorted_list(x, self.maxdict)
-            iter_x = self._make_pretty_items(x, iter_keys)
+            iter_x = self._make_pretty_items(x, iter_keys, 'OrderedDict({', '})')
             return self._repr_iterable(iter_x, level, 'OrderedDict({', '})')
+
+        def repr_dict_keys(self, x, level):
+            if not x: return "dict_keys([])"
+
+            if level <= 0: return "dict_keys([...])"
+
+            iter_x = self._to_shorted_list(x, self.maxdict)
+            return self._repr_iterable(iter_x, level, 'dict_keys([', '])')
+
+        def repr_dict_values(self, x, level):
+            if not x: return "dict_values([])"
+
+            if level <= 0: return "dict_values([...])"
+
+            iter_x = self._to_shorted_list(x, self.maxdict)
+            return self._repr_iterable(iter_x, level, 'dict_values([', '])')
+
+        def repr_dict_items(self, x, level):
+            if not x: return "dict_items([])"
+
+            if level <= 0: return "dict_items([...])"
+
+            iter_x = self._to_shorted_list(x, self.maxdict)
+            return self._repr_iterable(iter_x, level, 'dict_items([', '])')
 
 
         class _PrettyDictItem(object):
@@ -253,7 +277,7 @@ init -1500 python in _console:
                 value = self.repr1(x.value, newlevel)
             return "%s: %s" % (key, value)
 
-        def _make_pretty_items(self, x, iter_keys):
+        def _make_pretty_items(self, x, iter_keys, left, right):
             ellipsis = self._ellipsis
             DictItem = self._PrettyDictItem
             iter_x = []
@@ -261,7 +285,7 @@ init -1500 python in _console:
                 if key is ellipsis:
                     di = ellipsis
                 elif x[key] is x:
-                    di = DictItem(key, ellipsis)
+                    di = DictItem(key, '%s%s%s' % (left, ellipsis, right))
                 else:
                     di = DictItem(key, x[key])
                 iter_x.append(di)
