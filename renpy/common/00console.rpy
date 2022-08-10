@@ -206,7 +206,7 @@ init -1500 python in _console:
 
             if level <= 0: return "{...}"
 
-            iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
+            iter_keys = self._to_shorted_list(x, self.maxdict, sort=PY2)
             iter_x = self._make_pretty_items(x, iter_keys, '{', '}')
             return self._repr_iterable(iter_x, level, '{', '}')
 
@@ -221,7 +221,7 @@ init -1500 python in _console:
 
             if level <= 0: return left + "...})"
 
-            iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
+            iter_keys = self._to_shorted_list(x, self.maxdict, sort=PY2)
             iter_x = self._make_pretty_items(x, iter_keys, left, '})')
             return self._repr_iterable(iter_x, level, left, '})')
 
