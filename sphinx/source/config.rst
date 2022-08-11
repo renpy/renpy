@@ -1794,48 +1794,58 @@ Other Configuration Variables
 Some other pages of this documentation contain and define other configuration
 variables. You can locate them there, in their context.
 
+:doc:`achievement`:
+
+* :var:`config.steam_appid`
+
+:doc:`custom_text_tags`:
+
+* :var:`config.custom_text_tags`
+* :var:`config.self_closing_custom_text_tags`
+
+:doc:`gesture`:
+
+* :var:`config.dispatch_gesture`
+* :var:`config.gestures`
+
+:doc:`gui`:
+
+* :var:`config.thumbnail_height`
+* :var:`config.thumbnail_width`
+
+:doc:`live2d`:
+
+* :var:`config.log_live2d_loading`
+
+:doc:`model`:
+
+* :var:`config.gl2`
+* :var:`config.gl_blend_func`
+* :var:`config.log_gl_shaders`
+
 :doc:`nvl_mode`:
+
 * :var:`config.nvl_layer`
 * :var:`config.nvl_list_length`
 * :var:`config.nvl_page_ctc`
 * :var:`config.nvl_page_ctc_position`
 * :var:`config.nvl_paged_rollback`
 
-:doc:`side_image`:
-* :var:`config.side_image_tag`
-* :var:`config.side_image_only_not_showing`
-* :var:`config.side_image_prefix_tag`
-* :var:`config.side_image_null`
-* :var:`config.side_image_same_transform`
-* :var:`config.side_image_change_transform`
-
-:doc:`self_voicing`:
-* :var:`config.descriptive_text_character`
-
 :doc:`preferences`:
+
 * :var:`config.default_music_volume`
 * :var:`config.default_sfx_volume`
 * :var:`config.default_voice_volume`
 
-:doc:`model`:
-* :var:`config.gl2`
-* :var:`config.log_gl_shaders`
-* :var:`config.gl_blend_func`
+:doc:`self_voicing`:
 
-:doc:`achievement`:
-* :var:`config.steam_appid`
+* :var:`config.descriptive_text_character`
 
-:doc:`gesture`:
-* :var:`config.gestures`
-* :var:`config.dispatch_gesture`
+:doc:`side_image`:
 
-:doc:`live2d`:
-* :var:`config.log_live2d_loading`
-
-:doc:`gui`:
-* :var:`config.thumbnail_height`
-* :var:`config.thumbnail_width`
-
-:doc:`custom_text_tags`:
-* :var:`config.custom_text_tags`
-* :var:`config.self_closing_custom_text_tags`
+* :var:`config.side_image_change_transform`
+* :var:`config.side_image_null`
+* :var:`config.side_image_only_not_showing`
+* :var:`config.side_image_prefix_tag`
+* :var:`config.side_image_same_transform`
+* :var:`config.side_image_tag`
