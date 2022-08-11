@@ -25,7 +25,8 @@ and rolled-back when rollback occurs.
 
     This is undefined by default. If defined, and if :var:`config.mouse` is
     set at game startup, this is a key that is used to look up a mouse cursor
-    in config.mouse when the current cursor does not exist, or is the default.
+    when the current cursor does not exist, or is the default. This is used by
+    :var:`config.mouse` and :func:`MouseDisplayable`.
 
 .. var:: _dismiss_pause = True
 
