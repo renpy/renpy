@@ -88,6 +88,8 @@ the various other layer-related config variables. Using
 :func:`renpy.show_layer_at`, one or more transforms can be applied to
 a layer.
 
+.. _defining-images:
+
 Defining Images
 ===============
 
