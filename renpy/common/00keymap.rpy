@@ -79,8 +79,8 @@ init -1600 python:
         input_delete = [ 'K_DELETE', 'repeat_K_DELETE' ],
         input_home = [ 'K_HOME', 'meta_K_LEFT' ],
         input_end = [ 'K_END', 'meta_K_RIGHT' ],
-        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c' ],
-        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v' ],
+        input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c', "meta_noshift_K_c" ],
+        input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v', "meta_noshift_K_v" ],
         input_jump_word_left = [ 'osctrl_K_LEFT' ],
         input_jump_word_right = [ 'osctrl_K_RIGHT' ],
         input_delete_word = [ 'osctrl_K_BACKSPACE' ],
@@ -474,8 +474,13 @@ label _save_reload_game:
 
         renpy.music.stop()
 
-        if renpy.can_load("_reload-1"):
+        if renpy.session.get("_reload_slot", None) and renpy.can_load(renpy.session["_reload_slot"]):
             renpy.utter_restart()
+
+        if (renpy.game.log is None) or (renpy.game.log.current is None):
+            renpy.utter_restart()
+
+        renpy.session["_reload_slot"] = "_reload-1"
 
         import time
         renpy.session["_reload_time"] = time.time()
@@ -502,19 +507,31 @@ label _save_reload_game:
 
 label _load_reload_game:
 
-    if not renpy.can_load("_reload-1"):
+    if not renpy.session.get("_reload_slot", None):
+        return
+
+    if not renpy.can_load(renpy.session["_reload_slot"]):
+        $ del renpy.session["_reload_slot"]
         return
 
     python hide:
-        renpy.rename_save("_reload-1", "_reload-2")
 
-        ui.add(Solid((0, 0, 0, 255)))
-        ui.text("Reloading game...",
-                size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
+        try:
 
-        ui.pausebehavior(0)
-        ui.interact(suppress_underlay=True, suppress_overlay=True)
+            ui.add(Solid((0, 0, 0, 255)))
+            ui.text("Reloading game...",
+                    size=32, xalign=0.5, yalign=0.5, color="#fff", style="_text")
 
-        renpy.load("_reload-2")
+            ui.pausebehavior(0)
+            ui.interact(suppress_underlay=True, suppress_overlay=True)
+
+            renpy.load(renpy.session["_reload_slot"])
+
+        except (renpy.game.RestartTopContext, renpy.game.RestartContext):
+
+            renpy.rename_save(renpy.session["_reload_slot"], "_reload-2")
+            del renpy.session["_reload_slot"]
+            raise
+
 
     return

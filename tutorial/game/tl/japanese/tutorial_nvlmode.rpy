@@ -35,7 +35,7 @@ translate japanese tutorial_nvlmode_130610c2:
 translate japanese tutorial_nvlmode_390a4eb1:
 
     # nvle "The 'nvl show' and 'nvl hide' statements use transitions to show and hide the NVL window."
-    nvle "'nvl show' と 'nvl hide' ステートメントは、遷移効果を使ってNVLウィンドウを表示・消去します。"
+    nvle "'nvl show' と 'nvl hide' ステートメントは、トランジション効果を使ってNVLウィンドウを表示・消去します。"
 
 # game/tutorial_nvlmode.rpy:48
 translate japanese tutorial_nvlmode_05956e33:
@@ -69,7 +69,7 @@ translate japanese after_nvl_menu_cb560cd2:
 translate japanese after_nvl_menu_10a6e85a:
 
     # e "You can specify transitions that occur when going from NVL-mode to ADV-mode."
-    e "NVLモードからADVモードに移行するときは、遷移効果を指定できます。"
+    e "NVLモードからADVモードに移行するときは、トランジション効果を指定できます。"
 
 # game/tutorial_nvlmode.rpy:73
 translate japanese after_nvl_menu_d43b28d1:

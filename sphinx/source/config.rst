@@ -136,19 +136,13 @@ These control transitions between various screens.
 
 .. var:: config.game_main_transition = None
 
-    The transition that is used to display the main menu after leaving
-    the game menu. This is used when the load and preferences screens
-    are invoked from the main menu, and it's also used when the user
-    picks "Main Menu" from the game menu.
+    If not None, a transition that is used when returning to the main
+    menu from the game menu, using the :func:`MainMenu` action.
 
 .. var:: config.intra_transition = None
 
-    The transition that is used between screens of the game menu.
-
-.. var:: config.main_game_transition = None
-
-    The transition used when entering the game menu from the main
-    menu, as is done when clicking "Load Game" or "Preferences".
+    The transition that is used between screens of the game and main
+    menu. (That is, when the screen is changed with :func:`ShowMenu`.)
 
 .. var:: config.nvl_adv_transition = None
 
@@ -210,7 +204,7 @@ Preference Defaults
 -------------------
 
 Ren'Py has a number of variables that set the default values of
-preferences. Please see the section on :ref:`preference variables <preference-variables>`
+preferences. Please see the section on :doc:`preference variables <preferences>`
 for more information on how to set defaults for various preferences.
 
 Occasionally Used
@@ -305,6 +299,18 @@ Occasionally Used
     voice audio.
 
     See :ref:`Automatic Voice <automatic-voice>` for more details.
+
+.. var:: config.autosave_callback = None
+
+    A callback or list of callbacks that will be called after each time a
+    background autosave happens. The callbacks are called during an interaction,
+    and so actions may be used, though the Return action will not function.
+
+    If a non-Action callback shows a displayable or screen,
+    :func:`renpy.restart_interaction` should be called.
+
+    ::
+        define config.autosave_callback = Notify("Autosaved.")
 
 .. var:: config.autosave_slots = 10
 
@@ -688,7 +694,7 @@ Occasionally Used
 .. var:: config.mode_callbacks = [ ... ]
 
     A list of callbacks called when entering a mode. For more documentation,
-    see the section on :ref:`Modes`.
+    see the section on :doc:`modes`.
 
     The default value includes a callback that implements :var:`config.adv_nvl_transition`
     and :var:`config.nvl_adv_transition`.
@@ -873,7 +879,7 @@ Occasionally Used
             def jsoncallback(d):
                 d["playername"] = player_name
 
-            config.save_json_callback.append(jsoncallback)
+            config.save_json_callbacks.append(jsoncallback)
 
     ``FileJson(slot)`` and ``renpy.slot_json(slot)`` will recover the state
     of the ``d`` dict-like object as it was at the moment the game was saved.
@@ -1293,7 +1299,7 @@ Rarely or Internally Used
 
     This variable contains a keymap giving the keys and mouse buttons
     assigned to each possible operation. Please see the section on
-    :ref:`Keymaps <keymap>` for more information.
+    :doc:`Keymaps <keymap>` for more information.
 
 .. var:: config.label_callback = None
 
@@ -1377,8 +1383,8 @@ Rarely or Internally Used
 .. var:: config.log = None
 
     If not None, this is expected to be a filename. Much of the text
-    shown to the user by :ref:`say <say-statement>` or :ref:`menu
-    <menu-statement>` statements will be logged to this file.
+    shown to the user by :ref:`say <say-statement>` or :doc:`menu
+    <menus>` statements will be logged to this file.
 
 .. var:: config.main_menu_stop_channels = [ "movie", "sound", "voice" ]
 
@@ -1450,8 +1456,8 @@ Rarely or Internally Used
 .. var:: config.old_substitutions = True
 
     If True, Ren'Py will apply old-style (percent) substitutions to
-    text displayed by the :ref:`say <say-statement>` and :ref:`menu
-    <menu-statement>` statements.
+    text displayed by the :ref:`say <say-statement>` and :doc:`menu
+    <menus>` statements.
 
 .. var:: config.open_file_encoding = False
 
@@ -1557,8 +1563,8 @@ Rarely or Internally Used
 .. var:: config.say_menu_text_filter = None
 
     If not None, then this is a function that is given the text found
-    in strings in the :ref:`say <say-statement>` and :ref:`menu
-    <menu-statement>` statements. It is expected to return new
+    in strings in the :ref:`say <say-statement>` and :doc:`menu
+    <menus>` statements. It is expected to return new
     (or the same) strings to replace them.
 
 .. var:: config.say_sustain_callbacks = ...
@@ -1794,48 +1800,58 @@ Other Configuration Variables
 Some other pages of this documentation contain and define other configuration
 variables. You can locate them there, in their context.
 
-:ref:`nvl-mode`:
-    :var:`config.nvl_layer`
-    :var:`config.nvl_list_length`
-    :var:`config.nvl_page_ctc`
-    :var:`config.nvl_page_ctc_position`
-    :var:`config.nvl_paged_rollback`
+:doc:`achievement`:
 
-:ref:`side-images`:
-    :var:`config.side_image_tag`
-    :var:`config.side_image_only_not_showing`
-    :var:`config.side_image_prefix_tag`
-    :var:`config.side_image_null`
-    :var:`config.side_image_same_transform`
-    :var:`config.side_image_change_transform`
+* :var:`config.steam_appid`
 
-:ref:`self-voicing`:
-    :var:`config.descriptive_text_character`
+:doc:`custom_text_tags`:
 
-:ref:`preference-variables`:
-    :var:`config.default_music_volume`
-    :var:`config.default_sfx_volume`
-    :var:`config.default_voice_volume`
+* :var:`config.custom_text_tags`
+* :var:`config.self_closing_custom_text_tags`
 
-:ref:`model`:
-    :var:`config.gl2`
-    :var:`config.log_gl_shaders`
-    :var:`config.gl_blend_func`
+:doc:`gesture`:
 
-:ref:`achievement`:
-    :var:`config.steam_appid`
+* :var:`config.dispatch_gesture`
+* :var:`config.gestures`
 
-:ref:`gesture`:
-    :var:`config.gestures`
-    :var:`config.dispatch_gesture`
+:doc:`gui`:
 
-:ref:`live2d`:
-    :var:`config.log_live2d_loading`
+* :var:`config.thumbnail_height`
+* :var:`config.thumbnail_width`
 
-:ref:`gui`:
-    :var:`config.thumbnail_height`
-    :var:`config.thumbnail_width`
+:doc:`live2d`:
 
-:ref:`custom-text-tags`:
-    :var:`config.custom_text_tags`
-    :var:`config.self_closing_custom_text_tags`
+* :var:`config.log_live2d_loading`
+
+:doc:`model`:
+
+* :var:`config.gl2`
+* :var:`config.gl_blend_func`
+* :var:`config.log_gl_shaders`
+
+:doc:`nvl_mode`:
+
+* :var:`config.nvl_layer`
+* :var:`config.nvl_list_length`
+* :var:`config.nvl_page_ctc`
+* :var:`config.nvl_page_ctc_position`
+* :var:`config.nvl_paged_rollback`
+
+:doc:`preferences`:
+
+* :var:`config.default_music_volume`
+* :var:`config.default_sfx_volume`
+* :var:`config.default_voice_volume`
+
+:doc:`self_voicing`:
+
+* :var:`config.descriptive_text_character`
+
+:doc:`side_image`:
+
+* :var:`config.side_image_change_transform`
+* :var:`config.side_image_null`
+* :var:`config.side_image_only_not_showing`
+* :var:`config.side_image_prefix_tag`
+* :var:`config.side_image_same_transform`
+* :var:`config.side_image_tag`

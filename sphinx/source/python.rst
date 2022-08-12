@@ -17,7 +17,7 @@ Ren'Py 7 supports Python 2.7. Ren'Py 8 supports Python 3.9.
     Python packages that don't ship with Ren'Py may not work inside Ren'Py.
 
     There are also some Python constructs that work, but may lead to problems
-    in saving. Please read the :ref:`save, load, and rollback <save-load-rollback>` page
+    in saving. Please read the :doc:`save, load, and rollback <save_load_rollback>` page
     for more details, especially the section on :ref:`what can't be saved <cant-save>`.
     (You need to be careful with files, sockets, iterators, task, futures, and
     generators.)
@@ -182,9 +182,10 @@ values, for example by detecting whether the same variable is defined
 twice, potentially with different values.
 
 Variables that are defined using the define statement are treated
-as constant, are not saved or loaded, and should not be changed.
-(Ren'Py does not enforce this, but will produce undefined behavior
-when this is not the case.)
+as constant, are not saved or loaded, and should not be changed. This
+constant-nature extends to objects reachable through these variables
+through field access and subscripting. (Ren'Py does not enforce this,
+but will produce undefined behavior when this is not the case.)
 
 .. _default-statement:
 
@@ -273,8 +274,9 @@ character and a flag. Other things that are usually placed into
 the store are transitions and transforms.
 
 Names beginning with underscore ``_`` are reserved for Ren'Py's
-internal use. In addition, there is an :ref:`Index of Reserved Names <reserved-names>`.
+internal use. In addition, there is an :doc:`Index of Reserved Names <reserved>`.
 
+.. _named-stores:
 
 Other Named Stores
 ------------------
@@ -289,7 +291,7 @@ store. Each store corresponds to a Python module. The default store is
 ``store``, while a named store is accessed as ``store.name``. Names in
 the modules can be imported using the Python ``from`` statement.
 Named stores can be created using ``init python in`` blocks, or using
-default or define statements.
+``default``, ``define`` or :ref:`transform <transform-statement>` statements.
 
 For example::
 
@@ -318,6 +320,46 @@ Named stores participate in save, load, and rollback in the same way
 that the default store does. Special namespaces such as ``persistent``,
 ``config``, ``renpy``... do not and never have supported substore creation
 within them.
+
+
+.. _constant-stores:
+
+Constant Stores
+---------------
+
+A named store can be declared to be constant by setting a variable named ``_constant``
+to a true value, using, for example::
+
+    init python in mystore:
+        _constant = True
+
+When a store is constant, variables in that store are not saved, and objects
+reachable solely from those variables do not participate in rollback.
+
+Variables in a constant store can be changed during the init phase. It's only
+after init (including statements like ``define``, ``transform``, etc.) completes
+that the store must be treated as constant.
+
+As Ren'Py has no way of enforcing this, it is the responsibility of the creator
+to ensure that variables in a constant store do not change after the init phase.
+
+The reason for declaring a store constant is that each store and variable
+incurs a small amount of overhead to support saving, loading, and rollback.
+A constant store avoids this overhead.
+
+The following stores are declared constant by default::
+
+    _errorhandling
+    _gamepad
+    _renpysteam
+    _warper
+    audio
+    achievement
+    build
+    director
+    iap
+    layeredimage
+    updater
 
 
 .. _python-modules:

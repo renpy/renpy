@@ -64,8 +64,8 @@ init -1500 python:
             name = renpy.get_mouse_name()
 
             # If it doesn't exist, use the default.
-            if name not in self.cursors:
-                name = "default"
+            if (name not in self.cursors) or (name == "default"):
+                name = getattr(store, "default_mouse", "default")
 
             # Adjust st when the cursor changes.
             if (name != self.last_cursor) or (self.cursor is None):

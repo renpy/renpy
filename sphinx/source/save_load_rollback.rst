@@ -1,5 +1,3 @@
-.. _save-load-rollback:
-
 =============================
 Saving, Loading, and Rollback
 =============================
@@ -224,7 +222,7 @@ There is one variable that is used by the high-level save system:
    data system, see :var:`config.save_json_callbacks`.
 
 There are a number of high-level save actions and functions defined in the
-:ref:`screen actions <screen-actions>`. In addition, there are the following
+:doc:`screen actions <screen_actions>`. In addition, there are the following
 low-level save and load actions.
 
 

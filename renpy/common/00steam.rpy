@@ -577,7 +577,7 @@ init -1499 python in _renpysteam:
         elif keyboard_mode == "always":
             keyboard_primed = True
         elif keyboard_mode != "once":
-            raise Exception("Bad keyboard_mode.")
+            raise Exception("Bad steam keyboard_mode.")
 
         keyboard_text_rect = renpy.display.interface.text_rect
         _KeyboardShift.text_rect = keyboard_text_rect
@@ -591,8 +591,6 @@ init -1499 python in _renpysteam:
             steamapi.SteamUtils().ShowFloatingGamepadTextInput(
                 steamapi.k_EFloatingGamepadTextInputModeModeSingleLine,
                 x, y, w, h)
-
-            print("Showing keyboard.")
 
             keyboard_showing = time.time()
             keyboard_primed = False
@@ -811,6 +809,9 @@ init -1499 python in achievement:
             has_steam = os.path.exists(dll_path)
 
             if not config.enable_steam:
+                return
+
+            if "RENPY_NO_STEAM" in os.environ:
                 return
 
             dll = ctypes.cdll[dll_path]

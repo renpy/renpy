@@ -436,10 +436,13 @@ autosave_not_running.set()
 # The number of times autosave has been called without a save occuring.
 autosave_counter = 0
 
+# True if a background autosave has finished.
+did_autosave = False
 
 def autosave_thread_function(take_screenshot):
 
     global autosave_counter
+    global did_autosave
 
     try:
 
@@ -457,6 +460,8 @@ def autosave_thread_function(take_screenshot):
 
             save("auto-1", mutate_flag=True, extra_info=extra_info)
             autosave_counter = 0
+
+            did_autosave = True
 
         except Exception:
             pass

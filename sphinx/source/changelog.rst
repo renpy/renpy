@@ -29,11 +29,133 @@ The advantage of this change is that it makes the volumes sliders much more dyna
 Previously, the volume slider had to be very near the bottom before it had an effect.
 Now, the volume increases and decreases match the way people perceive loudness.
 
+Constant Stores
+---------------
+
+Ren'Py has the ability to mark a :ref:`named store <named-stores>` as a constant,
+by setting the ``_constant`` variable in that store. If true, variables in that
+:ref:`constant store <constant-store>` will not be saved, and objects reachable
+soley from that store will not participate in rollback.
+
+The reason to declare a store constant is that there are small per-store and
+per-variable overheads that are required to support rollback. Declaring a
+store constant can eliminate these overheads.
+
+The following stores are declared to be constant by default:
+
+    _errorhandling
+    _gamepad
+    _renpysteam
+    _warper
+    audio
+    achievement
+    build
+    director
+    iap
+    layeredimage
+    updater
+
+Variables in a constant store can be updated during the init phase, but should
+not change after the init phase finishes.
+
+New Features
+------------
+
+The new :var:`config.autosave_callback` is run after a background autosave
+finishes.
+
+The new :func:`renpy.music.pump` function can be called to cause audio changes
+to take effect immediately, rather than at the start of the next interaction.
+The main use of this is to allow a sound to be played, and then faded out. (By
+default, a ``play`` followed by a ``stop`` causes the track to never be
+played, and hence never faded out.)
+
+
 .. _renpy-7.5.2:
 .. _renpy-8.0.2:
 
 8.0.2 / 7.5.2
 =============
+
+Fixes
+-----
+
+There have been a number of changes to the way autoreload (shift+R) works, to
+try to prevent Ren'Py from creating an invalid save file when an autoreload after
+an error happens, and Ren'Py is in an invalid state. The goal of these changes
+is to preserve the save file from before the change, and reuse that.
+
+Ren'Py is now able to perform audio fadeins and fadeouts of less than 0.68
+seconds. Previously such short fadeins and fadeouts would be result in an
+underflow and no fading. In this release, the precise duration of a fadein
+and fadeout is not strictly guaranteed.
+
+An issue that could cause excessive CPU and memory usage when a store had
+large number of variables in it has been fixed.
+
+Loading a save slot that was saved with a different language than is currently set will no
+longer prevent :var:`config.after_load_transition` from occurring.
+
+Several problems that preventing In-App Purchases (IAP) from working on Ren'Py
+8 have been fixed.
+
+An issue with examples in the tutorial game not working in a non-English languages
+has been fixed.
+
+Tinydialogs is now included in the source code distribution of Ren'Py.
+
+
+Default Focus Changes
+---------------------
+
+There have been several changes to the `default_focus` property of focusable
+displayables like buttons and bars. This property allows Ren'Py to select a
+displayable to gain default focus when displayables are added to removed.
+
+The new rules are:
+
+* When the mouse is used, focus follows the mouse and `default_focus` is ignored.
+* When a displayable with a higher `default_focus` than any other displayable
+  is shown, it is given focus.
+* When the displayable with the highest `default_focus` is hidden, the displayable
+  with the next highest non-zero `default_focus` is given focus.
+
+The goal is to support common keyboard and controller navigation patterns,
+while not getting in the way of mouse users.
+
+
+Other Improvements
+------------------
+
+There have been many copyedits and other improvements to Ren'Py's documentation.
+
+The console has been improved to display more Python 3 types.
+
+:func:`MouseDisplayable` now respects :var:`default_mouse`, if set.
+
+In Ren'Py 8, Python blocks are now compiled as if the ``from __future__ import annotations``
+statement was present.
+
+A modal screen or dismiss statement now blocks the ``pause`` statement and :func:`renpy.pause``
+from ending. Previously, what happened in this case was undefined and varied between
+versions.
+
+On macOS, Ren'Py will now properly adjust when the game window is moved between
+displays with different scaling.
+
+Command-C and Command-V now work for copy and paste on macOS.
+
+The default input screen in screens.rpy has now been changed to prevent a
+conflict between the :propref:`xalign` and :propref:`xpos` of the vbox.
+The fix was to change the use of xalign to :propref:`xanchor`.
+
+Ren'Py will now start if a sound card is not present, even in developer mode.
+Errors with audio hardware are now written to log.txt.
+
+The Japanese translation has been updated.
+
+New games created with Ren'Py no longer filter out ruby/furigana text tags.
+
 
 
 .. _renpy-7.5.1:
@@ -274,7 +396,7 @@ Steam, Steam Deck, and Epic Games Store
 This release includes rewritten Steam support, provided by a new
 ctypes-based binding that gives access to the entire Steamworks API,
 including callbacks. While the Steam support available through the
-:ref:`achievement module <achievement>` remains unchanged, this
+:doc:`achievement module <achievement>` remains unchanged, this
 gives advanced Python programmers access to more Steam functionality.
 
 When Steam is active, Ren'Py will now enable the "steam" variant.
@@ -1173,7 +1295,7 @@ to False.
 When the model-based renderer is being used, Ren'Py now supports a "3D Stage".
 This adds a third dimension to shown images, allowing for perspective correct
 zooming and motion, the rotation and translation of displayables in 3D,
-and many other new effects. Please see the :ref:`3D Stage <3dstage>`
+and many other new effects. Please see the :doc:`3D Stage <3dstage>`
 documentation for more information.
 
 To facilitate the 3D Stage, the ``scene`` statement no longer clears
@@ -1342,7 +1464,7 @@ Live2D now supports the additive and multiply blend modes.
 Using default or define with the ``renpy`` namespace will now produce an
 error.
 
-A number of previously-undocumented methods on the `preferences object <preference-variables>`
+A number of previously-undocumented methods on the :doc:`preferences object <preferences>`
 have been documented. These methods make it possible to get or set the current value
 of the volume and the current value of mute.
 
@@ -2304,7 +2426,7 @@ Text Improvements
 -----------------
 
 Ren'Py now includes support for self-closing custom text tags, which
-are :ref:`custom text tags <custom-text-tags>` that do not require as
+are :doc:`custom text tags <custom_text_tags>` that do not require as
 closing text tag.
 
 Ren'Py now supports three new flags that can be applied when formatting
@@ -2350,7 +2472,7 @@ The ``side`` displayable now renders its children in the order
 they are provided in the control string.
 
 The ``say`` statement, ``menu`` statement, and ``renpy.call_screen``
-statements now tak a `_mode` argument, which specifies the :ref:`mode <modes>`
+statements now tak a `_mode` argument, which specifies the :doc:`mode <modes>`
 Ren'Py goes into when these statements occur.
 
 The :func:`renpy.show_screen` and :func:`renpy.call_screen` functions now
@@ -2577,7 +2699,7 @@ than the screen, and will be selected if the current window size is the
 maximum window size, if the size selected with :func:`gui.init` is bigger
 than the maximum window size.
 
-:ref:`Creator defined statements <cds>` now have a few more lexer methods available,
+:doc:`Creator defined statements <cds>` now have a few more lexer methods available,
 making it possible to to parse arguments, image name components, labels, and
 delimited python.
 
@@ -3025,7 +3147,7 @@ contains the differences between 7.0 and 6.99.14.3.
 Layered Images
 --------------
 
-A :ref:`layered image <layered-images>` is a new way of defining images
+A :doc:`layered image <layeredimage>` is a new way of defining images
 for use in Ren'Py. It's intended to be used with a sprite that has been
 created in Photoshop or some other program as a series of layers.
 The layered image system can use the attributes the image was displayed

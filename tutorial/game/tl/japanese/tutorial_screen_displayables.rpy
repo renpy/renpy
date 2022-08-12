@@ -3,7 +3,7 @@
 translate japanese screen_displayables_7c897a6d:
 
     # e "There are quite a few screen displayables. Here, I'll tell you about some of the most important ones."
-    e "Ren'pyには非常にたくさんのスクリーンdisplayableがあります。ここでは、最も重要ないくつかについてお話いたします。"
+    e "Ren'Pyには非常にたくさんのスクリーンdisplayableがあります。ここでは、最も重要ないくつかについてお話いたします。"
 
 # game/tutorial_screen_displayables.rpy:9
 translate japanese screen_displayables_menu_fef7b441:
@@ -39,7 +39,7 @@ translate japanese screen_displayable_properties_2ed40a70:
 translate japanese screen_displayable_properties_da5733d1:
 
     # e "It tells Ren'Py which displayables are the background window, 'who' is speaking, and 'what' is being said. This used to apply per-Character styles, and help with auto-forward mode."
-    e "idプロパティは、どのdisplayableがウィンドウの背景なのか、「誰が」話しているのか、「何」を言っているのかをRen'pyに教えます。これはキャラクター別のスタイルを適用したり、オートモートで役立ちます。"
+    e "idプロパティは、どのdisplayableがウィンドウの背景なのか、「誰が」話しているのか、「何」を言っているのかをRen'Pyに教えます。これはキャラクター別のスタイルを適用したり、オートモートで役立ちます。"
 
 # game/tutorial_screen_displayables.rpy:123
 translate japanese screen_displayable_properties_cc09fade:
@@ -141,7 +141,7 @@ translate japanese text_displayable_7e84a5d1:
 translate japanese text_displayable_8bc866c4:
 
     # e "There's not much more to say about text in screens, as it works the same way as all other text in Ren'Py."
-    e "スクリーン内のテキストは、Ren'pyに含まれる他の全てのテキストと同じように振舞いますので、これ以上言うことはありません。"
+    e "スクリーン内のテキストは、Ren'Pyに含まれる他の全てのテキストと同じように振舞いますので、これ以上言うことはありません。"
 
 # game/tutorial_screen_displayables.rpy:255
 translate japanese layout_displayables_d75efbae:
@@ -177,7 +177,7 @@ translate japanese layout_displayables_a156591f:
 translate japanese layout_displayables_126f5816:
 
     # e "The grid has to be full, or Ren'Py will produce an error. Notice how in this example, the empty cell is filled with a null."
-    e "グリッドは全て埋められていなければいけません、そうでなければRen'pyはエラーを出します。この例でどのようにしているかに注目してください、空のセルはnullで埋められています。"
+    e "グリッドは全て埋められていなければいけません、そうでなければRen'Pyはエラーを出します。この例でどのようにしているかに注目してください、空のセルはnullで埋められています。"
 
 # game/tutorial_screen_displayables.rpy:305
 translate japanese layout_displayables_bfaaaf9b:
@@ -201,7 +201,7 @@ translate japanese layout_displayables_afdc1b11:
 translate japanese layout_displayables_a23e2826:
 
     # e "The fixed displayable displays the children using Ren'Py's normal placement algorithm. This lets you place displayables anywhere in the screen."
-    e "fixed displayableはRen'pyの通常の配置アルゴリズムを使って子を表示します。これによりスクリーンのどのにでもDislayableを配置できます。"
+    e "fixed displayableはRen'Pyの通常の配置アルゴリズムを使って子を表示します。これによりスクリーンのどのにでもDislayableを配置できます。"
 
 # game/tutorial_screen_displayables.rpy:355
 translate japanese layout_displayables_fd3926ca:
@@ -231,7 +231,7 @@ translate japanese layout_displayables_d7fa0f28:
 translate japanese window_displayables_14beb786:
 
     # e "In the default GUI that Ren'Py creates for a game, most user interface elements expect some sort of background."
-    e "Ren'pyがゲーム向けに生成するデフォルトのGUIにおいて、ほとんどのユーザーインターフェース要素は何らかの背景を持つと想定されています。"
+    e "Ren'Pyがゲーム向けに生成するデフォルトのGUIにおいて、ほとんどのユーザーインターフェース要素は何らかの背景を持つと想定されています。"
 
 # game/tutorial_screen_displayables.rpy:405
 translate japanese window_displayables_495d332b:
@@ -279,7 +279,7 @@ translate japanese button_displayables_372dcc0f:
 translate japanese button_displayables_a6b270ff:
 
     # e "Actions can do many things, like setting variables, showing screens, jumping to a label, or returning a value. There are many {a=https://www.renpy.org/doc/html/screen_actions.html}actions in the Ren'Py documentation{/a}, and you can also write your own."
-    e "アクションによって、変数の設定やスクリーンの表示、ラベルへの移動、値を返すなど多様なことができます。{a=https://ja.renpy.org/doc/html/screen_actions.html}Ren'pyドキュメンテーション{/a}にはたくさんのアクションが掲載されていますし、あなた自身のアクションを記述もできます。"
+    e "アクションによって、変数の設定やスクリーンの表示、ラベルへの移動、値を返すなど多様なことができます。{a=https://ja.renpy.org/doc/html/screen_actions.html}Ren'Pyドキュメンテーション{/a}にはたくさんのアクションが掲載されていますし、あなた自身のアクションを記述もできます。"
 
 # game/tutorial_screen_displayables.rpy:458
 translate japanese button_displayables_4c600d20:
@@ -339,7 +339,7 @@ translate japanese button_displayables_220b020d:
 translate japanese button_displayables_b89d12aa:
 
     # e "Of course, it's prety rare we'd ever customize a button in a screen like that. Instead, we'd create custom styles and tell Ren'Py to use them."
-    e "もちろん、このようにスクリーン内でボタンをカスタマイズすることは非常に稀です。代わりに、カスタムスタイルを作りRen'pyにそれを使うよう指示します。"
+    e "もちろん、このようにスクリーン内でボタンをカスタマイズすることは非常に稀です。代わりに、カスタムスタイルを作りRen'Pyにそれを使うよう指示します。"
 
 # game/tutorial_screen_displayables.rpy:577
 translate japanese bar_displayables_946746c2:
@@ -357,7 +357,7 @@ translate japanese bar_displayables_af3a51b8:
 translate japanese bar_displayables_62f8b0ab:
 
     # e "A list of all the BarValues that can be used is found {a=https://www.renpy.org/doc/html/screen_actions.html#bar-values}in the Ren'Py documentation{/a}."
-    e "全てのBarValueの一覧は{a=https://ja.renpy.org/doc/html/screen_actions.html#bar-values}Ren'pyのドキュメント{/a}で見ることができます。"
+    e "全てのBarValueの一覧は{a=https://ja.renpy.org/doc/html/screen_actions.html#bar-values}Ren'Pyのドキュメント{/a}で見ることができます。"
 
 # game/tutorial_screen_displayables.rpy:583
 translate japanese bar_displayables_5212eb0a:
@@ -519,7 +519,7 @@ translate japanese imagemap_done_c817794d:
 translate japanese imagemap_done_c1ed91b8:
 
     # e "Feel free to omit the selected and insensitive images if your game doesn't need them. Ren'Py will use the idle or hover images to replace them."
-    e "もしあなたのゲームが必要としないなら、selectedイメージやinsensitiveイメージは省いてしまってかまいません。Ren'pyはidle画像やhover画像を使ってこれらを置換します。"
+    e "もしあなたのゲームが必要としないなら、selectedイメージやinsensitiveイメージは省いてしまってかまいません。Ren'Pyはidle画像やhover画像を使ってこれらを置換します。"
 
 # game/tutorial_screen_displayables.rpy:759
 translate japanese imagemap_done_166f75db:
@@ -621,7 +621,7 @@ translate japanese viewport_displayables_c047efb5:
 translate japanese viewport_displayables_c563019f:
 
     # e "As you can see, the text wraps. That's because Ren'Py is offering it space that isn't big enough."
-    e "ご覧の通り、テキストが折り返されます。これはRen'pyが十分に大きくないスペースを提供しているためです。" #TODO(折り返されて表示されない)
+    e "ご覧の通り、テキストが折り返されます。これはRen'Pyが十分に大きくないスペースを提供しているためです。" #TODO(折り返されて表示されない)
 
 # game/tutorial_screen_displayables.rpy:909
 translate japanese viewport_displayables_4bcf0ad0:

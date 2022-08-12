@@ -84,6 +84,8 @@ def notags_filter(s):
                 if first:
 
                     brace = False
+                    first = False
+                    rv += '{{'
                 else:
                     brace = True
                     first = True
@@ -93,6 +95,8 @@ def notags_filter(s):
 
                 if brace:
                     brace = False
+                else:
+                    rv += i
 
             else:
                 first = False
@@ -149,6 +153,18 @@ def notags_filter(s):
         return rv
 
     return square_pass(s)
+
+
+def combine_filter(s):
+
+    for double in ("{{", "%%"):
+        while True:
+            if s.find(double) >= 0:
+                i = s.find(double)
+                s = s[:i] + s[i+1:]
+            else:
+                break
+    return s
 
 
 def what_filter(s):
@@ -233,6 +249,8 @@ class DialogueFile(object):
                     if self.notags:
                         what = notags_filter(what)
 
+                    what = combine_filter(what)
+
                     if self.escape:
                         what = quote_unicode(what)
                     elif self.tdf:
@@ -292,6 +310,8 @@ class DialogueFile(object):
 
             if self.notags:
                 s = notags_filter(s)
+
+            what = combine_filter(s)
 
             if self.escape:
                 s = quote_unicode(s)

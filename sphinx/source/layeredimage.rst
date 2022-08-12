@@ -1,5 +1,3 @@
-.. _layered-images:
-
 Layered Images
 ==============
 

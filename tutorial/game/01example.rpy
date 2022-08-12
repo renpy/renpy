@@ -570,7 +570,11 @@ init python hide:
 
     for fn in files:
 
-        lines = renpy.file(fn).read().decode("utf-8").splitlines()
+        try:
+            with open(os.path.join(renpy.config.gamedir, fn), "r") as f:
+                lines = f.readlines()
+        except:
+            lines = [ ]
 
         open_examples = set()
 

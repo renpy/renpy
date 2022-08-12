@@ -294,7 +294,7 @@ def get_registered_image(name):
     """
     :doc: image_func
 
-    If an image with the same name has been registered with renpy.register_image,
+    If an image with the same name has been :ref:`registered <defining-images>`,
     returns it. Otherwise, returns None.
     """
 

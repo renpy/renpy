@@ -961,8 +961,8 @@ def init():
             pcm_ok = True
         except Exception:
 
-            if renpy.config.debug_sound:
-                raise
+            renpy.display.log.write("Sound init failed. Proceeding anyway.")
+            renpy.display.log.exception()
 
             os.environ["SDL_AUDIODRIVER"] = "dummy"
 
@@ -1211,6 +1211,16 @@ def interact():
                 raise
 
     periodic()
+
+def pump():
+    """
+    Used to implement renpy.music.pump.
+    """
+
+    interact()
+
+    with lock:
+        periodic_pass()
 
 
 def rollback():

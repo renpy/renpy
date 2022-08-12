@@ -1,5 +1,3 @@
-.. _multiple-character-dialogue:
-
 Multiple Character Dialogue
 ===========================
 

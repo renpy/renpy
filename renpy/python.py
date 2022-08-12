@@ -137,6 +137,9 @@ class StoreDict(dict):
         Called to mark the start of a rollback period.
         """
 
+        if self.get("_constant", False):
+            return
+
         self.old = DictItems(self)
 
     def get_changes(self, cycle):
@@ -152,6 +155,9 @@ class StoreDict(dict):
             If true, this cycles the old changes to the new changes. If
             False, does not.
         """
+
+        if self.get("_constant", False):
+            return
 
         new = DictItems(self)
         rv = find_changes(self.old, new, deleted)
@@ -256,8 +262,9 @@ class StoreBackup():
         # The contents of ever_been_changed for each store.
         self.ever_been_changed = { }
 
-        for k in store_dicts:
-            self.backup_one(k)
+        for k, v in store_dicts.items():
+            if not v.get("_constant", False):
+                self.backup_one(k)
 
     def backup_one(self, name):
 
@@ -280,7 +287,7 @@ class StoreBackup():
 
     def restore(self):
 
-        for k in store_dicts:
+        for k in self.store:
             self.restore_one(k)
 
 
@@ -752,6 +759,9 @@ new_compile_flags = (old_compile_flags
 
 py3_compile_flags = (new_compile_flags |
                       __future__.division.compiler_flag)
+
+if not PY2:
+    py3_compile_flags |= __future__.annotations.compiler_flag
 
 # The set of files that should be compiled under Python 2 with Python 3
 # semantics.

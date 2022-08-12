@@ -43,7 +43,7 @@ The :var:`config.editor` variable allows a developer to specify an editor
 command that is run when the launch_editor keypress (by default, Shift+E)
 occurs.
 
-Please see :ref:`Text Editor Integration <text-editor-integration>`.
+Please see :doc:`Text Editor Integration <editor>`.
 
 Shift+D Developer Menu
 ----------------------

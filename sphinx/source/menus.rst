@@ -1,5 +1,4 @@
 .. _menus:
-.. _menu-statement:
 
 =============
 In-Game Menus

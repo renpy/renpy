@@ -42,8 +42,7 @@ init 1000000 python:
 
     doc.check_dups()
 
-    console_commands = _console.help(None, True)
-    console_commands = "\n\n".join(console_commands.split("\n"))
+    console_commands = _console.help(None, True).replace("\n ", "\n\n* ")
     with open(os.path.join(incdir, "console_commands"), "w") as f:
         f.write(console_commands)
     

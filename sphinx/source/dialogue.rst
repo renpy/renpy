@@ -203,7 +203,7 @@ them can be a problem.
 
 ``nvl``
     A kind of Character that causes dialogue to be displayed in
-    :ref:`NVL-mode`, with multiple lines of text on the screen
+    :doc:`nvl_mode`, with multiple lines of text on the screen
     at once.
 
 ``narrator``

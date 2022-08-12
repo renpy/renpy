@@ -1,5 +1,3 @@
-.. _screen-actions:
-
 =====================================
 Screen Actions, Values, and Functions
 =====================================
@@ -69,7 +67,7 @@ Audio Actions
 -------------
 
 The concept of channels and how they work, as well as most information
-about audio in Ren'Py, is explained at :ref:`audio`.
+about audio in Ren'Py, is explained at :doc:`audio`.
 
 .. include:: inc/audio_action
 

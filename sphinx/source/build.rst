@@ -216,7 +216,7 @@ containing bonus material. We could classify the bonus files in to a
     # Put the bonus files into the new archive.
     build.classify("game/bonus/**", "bonus_archive")
 
-    #  Declare the package.
+    # Declare the package.
     build.package("all-premium", "zip", "windows mac linux all bonus")
 
 Supported package types are "zip" and "tar.bz2" to generate files in
@@ -387,7 +387,7 @@ The following variables provide further control of the build process:
 
 .. var:: build.include_update = False
 
-    When true, Ren'Py will produce the files required for the :ref:`updater <web-updater>`
+    When true, Ren'Py will produce the files required for the :doc:`updater <updater>`
     to work.
 
 .. var:: build.itch_project = None

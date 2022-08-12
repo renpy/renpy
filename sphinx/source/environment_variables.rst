@@ -22,7 +22,7 @@ The following environment variables control the behavior of Ren'Py:
 
 ``RENPY_EDIT_PY``
     The path to an .edit.py file telling Ren'Py how to invoke a text editor.
-    See :ref:`text-editor-integration` for more information.
+    See :doc:`editor` for more information.
 
 ``RENPY_GL_ENVIRON``
     Sets the OpenGL texture environment.
@@ -55,6 +55,9 @@ The following environment variables control the behavior of Ren'Py:
 
 ``RENPY_MULTIPERSISTENT``
     The path to a directory where Ren'Py stores multipersistent data.
+
+``RENPY_NO_STEAM``
+    If present in the environment, Ren'Py will not initialize Steamworks.
 
 ``RENPY_OPEN_FILE_ENCODING``
     Sets the default encoding for :func:`renpy.open_file`. This is mostly

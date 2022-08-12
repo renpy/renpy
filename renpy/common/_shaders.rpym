@@ -140,10 +140,8 @@ init python:
     """)
 
 init python hide:
+    from operator import mul
 
-    def multiply(old, new):
-        return old * new
-
-    config.merge_uniforms["u_renpy_alpha"] = multiply
-    config.merge_uniforms["u_renpy_over"] = multiply
-    config.merge_uniforms["u_renpy_matrixcolor"] = multiply
+    config.merge_uniforms["u_renpy_alpha"] = mul
+    config.merge_uniforms["u_renpy_over"] = mul
+    config.merge_uniforms["u_renpy_matrixcolor"] = mul
