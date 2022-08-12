@@ -668,10 +668,7 @@ class Image(ImageBase):
         self.filename = filename
 
     def _repr_info(self):
-        if len(self.filename) < 20:
-            return repr(self.filename)
-        else:
-            return repr("\u2026"+self.filename[-20:])
+        return repr(self.filename)
 
     def get_hash(self):
         return renpy.loader.get_hash(self.filename)
