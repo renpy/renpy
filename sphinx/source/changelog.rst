@@ -60,6 +60,8 @@ Other Improvements
 
 There have been many copyedits and other improvements to Ren'Py's documentation.
 
+The console has been improved to display more Python 3 types.
+
 :func:`MouseDisplayable` now respects :var:`default_mouse`, if set.
 
 In Ren'Py 8, Python blocks are now compiled as if the ``from __future__ import annotations``
