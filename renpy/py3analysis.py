@@ -138,7 +138,7 @@ def pure(fn):
     `fn`
         The name of the function to declare pure. This may either be a string
         containing the name of the function, or the function itself.
-        If a string is passed and the function is inside the module,
+        If a string is passed and the function is inside a module,
         this string should contain the module name with the dot.
 
     Returns `fn`, allowing this function to be used as a decorator.
