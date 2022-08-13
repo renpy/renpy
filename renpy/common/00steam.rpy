@@ -464,12 +464,12 @@ init -1499 python in _renpysteam:
         workshop.
         """
 
-        from ctypes import c_ulonglong, byref, POINTER, cast
+        from ctypes import c_ulonglong, pointer, POINTER, cast
 
         subscribed = (c_ulonglong * 512)()
 
         count = steamapi.SteamUGC().GetSubscribedItems(
-            cast(byref(subscribed), POINTER(c_ulonglong)),
+            cast(pointer(subscribed), POINTER(c_ulonglong)),
             512)
 
         rv = [ ]
