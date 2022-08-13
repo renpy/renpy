@@ -29,8 +29,13 @@ ap.add_argument("--no-tag", "-n", action="store_true")
 ap.add_argument("--push-tags", action="store_true")
 ap.add_argument("--delete-tag")
 ap.add_argument("--github", action="store_true")
+ap.add_argument("--real", action="store_true")
 
 args = ap.parse_args()
+
+if not args.real:
+    print("Did you want to use scripts/add_all.sh? If not, give --real.")
+    sys.exit(1)
 
 if args.github:
     subprocess.call([ "git", "push", "--tags" ])
