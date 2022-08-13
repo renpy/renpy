@@ -219,8 +219,8 @@ a string, the entire expression is const::
 
     text _("Your score is: [score]")
 
-If a variable containing the text contain substitution it's necessary to use
-``!i`` conversion flag::
+If a variable containing the text contains substitution, it's necessary to use
+the ``!i`` conversion flag::
 
     $ who = "Jane"
     $ t = "Hello, [who]!"

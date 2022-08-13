@@ -225,7 +225,7 @@ init -1499 python in _renpysteam:
 
         rv = create_string_buffer(256)
 
-        if not steamapi.SteamApps().GetCurrentBetaName(byref(rv), 256):
+        if not steamapi.SteamApps().GetCurrentBetaName(rv, 256):
             return None
 
         return rv.value.decode("utf-8")
@@ -319,7 +319,7 @@ init -1499 python in _renpysteam:
         :doc: steam_overlay
 
         Sets the position of the steam overlay. `Position` should be one of
-        _renpysteam.POSITION_TOP_LEFT, .POSITION_TOP_RIGHT, .POSITION_BOTTOM_LEFT,
+        achievement.steam.POSITION_TOP_LEFT, .POSITION_TOP_RIGHT, .POSITION_BOTTOM_LEFT,
         or .POSITION_BOTTOM_RIGHT.
         """
 
@@ -359,7 +359,7 @@ init -1499 python in _renpysteam:
             The appid to open.
 
         `flag`
-            One of achievements.steam.STORE_NONE, .STORE_ADD_TO_CART, or .STORE_ADD_TO_CART_AND_SHOW.
+            One of achievement.steam.STORE_NONE, .STORE_ADD_TO_CART, or .STORE_ADD_TO_CART_AND_SHOW.
         """
 
         if flag is None:
@@ -420,7 +420,7 @@ init -1499 python in _renpysteam:
         ticket_buf = create_string_buffer(2048)
         ticket_len = c_uint()
 
-        h_ticket = steamapi.SteamUser().GetAuthSessionTicket(byref(ticket_buf), 2048, byref(ticket_len))
+        h_ticket = steamapi.SteamUser().GetAuthSessionTicket(ticket_buf, 2048, byref(ticket_len))
 
         if h_ticket:
             ticket = ticket_buf.raw[0:ticket_len]
@@ -464,11 +464,13 @@ init -1499 python in _renpysteam:
         workshop.
         """
 
-        from ctypes import c_ulonglong, byref
+        from ctypes import c_ulonglong, pointer, POINTER, cast
 
         subscribed = (c_ulonglong * 512)()
 
-        count = steamapi.SteamUGC().GetSubscribedItems(byref(subscribed), 512)
+        count = steamapi.SteamUGC().GetSubscribedItems(
+            cast(pointer(subscribed), POINTER(c_ulonglong)),
+            512)
 
         rv = [ ]
 
