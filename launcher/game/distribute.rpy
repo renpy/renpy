@@ -1005,13 +1005,13 @@ change_renpy_executable()
                 linux = 'binary'
                 linux_i686 = 'binary'
                 mac = 'binary'
-                raspi = 'raspi'
+                raspi = 'linux_arm'
             else:
                 windows = 'windows'
                 linux = 'linux'
                 linux_i686 = 'linux_i686'
                 mac = 'mac'
-                raspi = 'linux'
+                raspi = 'linux_arm'
 
             prefix = py("lib/py{major}-")
 
@@ -1039,6 +1039,15 @@ change_renpy_executable()
                     armfn,
                     True)
 
+            aarch64fn = os.path.join(config.renpy_base, prefix + "linux-aarch64/renpy")
+
+            if os.path.exists(aarch64fn):
+
+                self.add_file(
+                    raspi,
+                    prefix + "linux-aarch64/" + self.executable_name,
+                    aarch64fn,
+                    True)
 
             self.add_file(
                 mac,
