@@ -212,6 +212,9 @@ cdef class Matrix:
         if self is other:
             return True
 
+        if type(self) != type(other):
+            return False
+
         cdef int i
         cdef double total
 
