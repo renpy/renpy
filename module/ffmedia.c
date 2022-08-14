@@ -14,6 +14,7 @@
 #define USE_POSIX_MEMALIGN
 #endif
 
+
 /* Should a mono channel be split into two equal stero channels (true) or
  * should the energy be split onto two stereo channels with 1/2 the energy
  * (false).
@@ -116,9 +117,14 @@ static void rwops_close(SDL_RWops *rw) {
 
 static double current_time = 0;
 
+typedef struct PacketQueueEntry {
+	AVPacket *pkt;
+	struct PacketQueueEntry *next;
+} PacketQueueEntry;
+
 typedef struct PacketQueue {
-	AVPacketList *first;
-	AVPacketList *last;
+	PacketQueueEntry *first;
+	PacketQueueEntry *last;
 } PacketQueue;
 
 typedef struct FrameQueue {
@@ -432,22 +438,26 @@ static AVFrame *dequeue_frame(FrameQueue *fq) {
 
 
 static void enqueue_packet(PacketQueue *pq, AVPacket *pkt) {
-	AVPacketList *pl = av_malloc(sizeof(AVPacketList));
-	if (pl == NULL)
+	PacketQueueEntry *pqe = av_malloc(sizeof(PacketQueueEntry));
+	if (pqe == NULL)
 	{
 		return;
 	}
 
-	av_init_packet(&pl->pkt);
-	av_packet_ref(&pl->pkt, pkt);
+	pqe->pkt = av_packet_alloc();
+	if (pqe->pkt == NULL) {
+		av_free(pqe);
+		return;
+	}
 
-	pl->next = NULL;
+	av_packet_move_ref(pqe->pkt, pkt);
+	pqe->next = NULL;
 
 	if (!pq->first) {
-		pq->first = pq->last = pl;
+		pq->first = pq->last = pqe;
 	} else {
-		pq->last->next = pl;
-		pq->last = pl;
+		pq->last->next = pqe;
+		pq->last = pqe;
 	}
 }
 
@@ -456,40 +466,41 @@ static int dequeue_packet(PacketQueue *pq, AVPacket *pkt) {
 		return 0;
 	}
 
-	AVPacketList *pl = pq->first;
+	PacketQueueEntry *pqe = pq->first;
 
-	av_packet_move_ref(pkt, &pl->pkt);
+	if (pkt) {
+		av_packet_move_ref(pkt, pqe->pkt);
+	} else {
+		av_packet_unref(pqe->pkt);
+	}
 
-	pq->first = pl->next;
+	pq->first = pqe->next;
 
 	if (!pq->first) {
 		pq->last = NULL;
 	}
 
-	av_free(pl);
+	av_packet_free(&pqe->pkt);
+	av_free(pqe);
 
 	return 1;
 }
 static int count_packet_queue(PacketQueue *pq) {
-       AVPacketList *pl = pq->first;
+    PacketQueueEntry *pqe = pq->first;
 
-       int rv = 0;
+	int rv = 0;
 
-       while (pl) {
-               rv += 1;
-               pl = pl->next;
-       }
+	while (pqe) {
+		rv += 1;
+		pqe = pqe->next;
+	}
 
-       return rv;
+	return rv;
 }
 
 static void free_packet_queue(PacketQueue *pq) {
-	AVPacket scratch;
-
-	av_init_packet(&scratch);
-
-	while (dequeue_packet(pq, &scratch)) {
-		av_packet_unref(&scratch);
+	while (dequeue_packet(pq, NULL)) {
+		// pass
 	}
 }
 
