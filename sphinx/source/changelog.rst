@@ -21,7 +21,12 @@ seconds. Previously such short fadeins and fadeouts would be result in an
 underflow and no fading. In this release, the precise duration of a fadein
 and fadeout is not strictly guaranteed.
 
-Several steam methods have been fixed.
+Several functions in achievement.steam (or _renpysteam) had regressions when
+reimplmented in terms of achievement.steamapi. These regressions have been
+fixed.
+
+An issue that prevented built distributions from launching on aarch64 has
+been fixed.
 
 An issue that could cause excessive CPU and memory usage when a store had
 large number of variables in it has been fixed.
