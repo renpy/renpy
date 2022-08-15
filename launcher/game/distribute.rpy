@@ -436,7 +436,7 @@ change_renpy_executable()
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None, force_format=None):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None, force_format=None, files_filter=None):
             """
             Distributes `project`.
 
@@ -474,6 +474,11 @@ change_renpy_executable()
 
             `force_format`
                 If given, forces the format of the distribution to be this.
+
+            `files_filter`
+                If given, use this object to decide which files must be included.
+                The object must contains the `filter(file, variant, format)`
+                method which must return True is the file must be included.
             """
 
             # A map from a package to a unique update version hash.
@@ -645,6 +650,8 @@ change_renpy_executable()
 
             # The time of the update version.
             self.update_version = int(time.time())
+
+            self.files_filter = files_filter
 
             for p in build_packages:
 
@@ -1520,6 +1527,9 @@ change_renpy_executable()
                 if f.directory:
                     pkg.add_directory(f.name, f.path)
                 else:
+                    if self.files_filter is not None and not self.files_filter.filter(f, variant, format):
+                        # Ignore file
+                        continue
                     pkg.add_file(f.name, f.path, f.executable)
 
             self.reporter.progress_done()
