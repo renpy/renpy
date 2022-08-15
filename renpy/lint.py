@@ -708,6 +708,11 @@ def check_styles():
         check_style("Style " + name, s)
 
 
+def check_init(node):
+    if not (-999 <= node.priority <= 999):
+        report("The init priority ({}) is not in the -999 to 999 range.".format(node.priority))
+
+
 def humanize(n):
     s = str(n)
 
@@ -929,6 +934,9 @@ def lint():
         elif isinstance(node, renpy.ast.Default):
             check_define(node, "default")
             check_redefined(node, "default")
+
+        elif isinstance(node, renpy.ast.Init):
+            check_init(node)
 
     report_node = None
 
