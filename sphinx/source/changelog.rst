@@ -2410,7 +2410,7 @@ The ``side`` displayable now renders its children in the order
 they are provided in the control string.
 
 The ``say`` statement, ``menu`` statement, and ``renpy.call_screen``
-statements now tak a `_mode` argument, which specifies the :doc:`mode <modes>`
+statements now take a `_mode` argument, which specifies the :doc:`mode <modes>`
 Ren'Py goes into when these statements occur.
 
 The :func:`renpy.show_screen` and :func:`renpy.call_screen` functions now
