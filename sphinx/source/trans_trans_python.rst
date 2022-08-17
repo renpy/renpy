@@ -5,6 +5,8 @@ Transforms and Transitions in Python
 Python can be used to create new transforms and transitions for use by
 Ren'Py scripts.
 
+.. _transforms-python:
+
 Transforms
 ----------
 
@@ -82,6 +84,7 @@ The Python equivalent of an ATL transform is a Transform object.
         outside of the function passed as the `function` argument, to ensure
         that the change takes effect.
 
+.. _transitions-python:
 
 Transitions
 -----------
