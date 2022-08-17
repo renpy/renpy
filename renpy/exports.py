@@ -83,7 +83,8 @@ from renpy.python import py_eval as eval
 from renpy.rollback import rng as random
 from renpy.atl import atl_warper
 from renpy.easy import predict, displayable, split_properties
-from renpy.parser import unelide_filename, get_parse_errors
+from renpy.lexer import unelide_filename
+from renpy.parser import get_parse_errors
 
 from renpy.translation import change_language, known_languages, translate_string
 from renpy.translation.generation import generic_filter as transform_text
@@ -2735,7 +2736,7 @@ def scry():
 
 @renpy_pure
 def munged_filename():
-    return renpy.parser.munge_filename(get_filename_line()[0])
+    return renpy.lexer.munge_filename(get_filename_line()[0])
 
 # Module loading stuff.
 
@@ -3715,7 +3716,7 @@ def munge(name, filename=None):
     if name.endswith("__"):
         return name
 
-    return renpy.parser.munge_filename(filename) + name[2:]
+    return renpy.lexer.munge_filename(filename) + name[2:]
 
 
 def get_return_stack():

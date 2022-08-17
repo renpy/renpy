@@ -809,7 +809,7 @@ class Say(Node):
             self.who = who.strip()
 
             # True if who is a simple enough expression we can just look it up.
-            if re.match(renpy.parser.word_regexp + "$", self.who):
+            if re.match(renpy.lexer.word_regexp + "$", self.who):
                 self.who_fast = True
             else:
                 self.who_fast = False

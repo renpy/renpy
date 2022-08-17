@@ -168,7 +168,7 @@ cython(
     define_macros=macros)
 
 # renpy
-cython("renpy.parsersupport")
+cython("renpy.lexersupport")
 cython("renpy.pydict")
 cython("renpy.style")
 

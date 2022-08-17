@@ -49,7 +49,7 @@ def file_exists(fn):
     rv = file_exists_cache.get(fn, None)
 
     if rv is None:
-        fullfn = renpy.parser.unelide_filename(fn)
+        fullfn = renpy.lexer.unelide_filename(fn)
 
         rv = os.path.exists(fullfn)
         file_exists_cache[fn] = rv

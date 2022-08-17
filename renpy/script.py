@@ -25,8 +25,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
-
 import renpy
 
 import hashlib
@@ -458,7 +456,7 @@ class Script(object):
 
         # Fix the filename for a renamed .rpyc file.
         if filename is not None:
-            filename = renpy.parser.elide_filename(filename)
+            filename = renpy.lexer.elide_filename(filename)
 
             if not all_stmts[0].filename.lower().endswith(filename.lower()):
 
@@ -503,9 +501,9 @@ class Script(object):
                     self.duplicate_labels.append(
                         u'The label {} is defined twice, at File "{}", line {}:\n{}and File "{}", line {}:\n{}'.format(
                             bad_name, old_node.filename, old_node.linenumber,
-                            renpy.parser.get_line_text(old_node.filename, old_node.linenumber),
+                            renpy.lexer.get_line_text(old_node.filename, old_node.linenumber),
                             bad_node.filename, bad_node.linenumber,
-                            renpy.parser.get_line_text(bad_node.filename, bad_node.linenumber),
+                            renpy.lexer.get_line_text(bad_node.filename, bad_node.linenumber),
                         ))
 
         self.update_bytecode()
@@ -671,7 +669,7 @@ class Script(object):
                 finally:
                     self.record_pycode = True
 
-            self.assign_names(stmts, renpy.parser.elide_filename(fullfn))
+            self.assign_names(stmts, renpy.lexer.elide_filename(fullfn))
 
             pickle_data_before_static_transforms = dumps((data, stmts))
 

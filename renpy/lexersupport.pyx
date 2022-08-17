@@ -21,6 +21,7 @@
 
 from __future__ import print_function
 
+
 cdef inline int letterlike(Py_UNICODE c):
     if u'a' <= c <= u'z':
         return 1
@@ -35,7 +36,6 @@ cdef inline int letterlike(Py_UNICODE c):
         return 1
 
     return 0
-
 
 
 def match_logical_word(unicode s, int pos):
@@ -77,10 +77,3 @@ def match_logical_word(unicode s, int pos):
 
 
     return s[start:pos], magic, pos
-
-
-
-
-
-
-

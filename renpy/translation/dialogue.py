@@ -290,7 +290,7 @@ class DialogueFile(object):
 
         lines = []
 
-        filename = renpy.parser.elide_filename(self.filename)
+        filename = renpy.lexer.elide_filename(self.filename)
 
         for ss in renpy.translation.scanstrings.scan_strings(self.filename):
 

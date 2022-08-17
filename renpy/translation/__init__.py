@@ -106,7 +106,7 @@ class ScriptTranslator(object):
         UserStatement = renpy.ast.UserStatement
         Translate = renpy.ast.Translate
 
-        filename = renpy.exports.unelide_filename(nodes[0].filename)
+        filename = renpy.lexer.unelide_filename(nodes[0].filename)
         filename = os.path.normpath(os.path.abspath(filename))
 
         for n in nodes:
