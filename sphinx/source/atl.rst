@@ -145,20 +145,20 @@ keyword "warp" followed by an
 expression giving a function. Either case is followed by a number, giving the
 number of seconds the interpolation should take. ::
 
+    transform builtin_warper:
+        xpos 0
+        ease 5 xpos 520
+
     init python:
-        @renpy.atl_warper
         def my_warper(t):
             return t**4.4
 
     define my_warpers = [my_warper]
 
-    transform builtin_warper:
-        xpos 0
-        my_warper 5 xpos 52
-
     transform accessed_as_function:
         xpos 0
-        warp my_warpers[0] 5 xpos 52
+        warp my_warpers[0] 5 xpos 520
+        warp my_warper 3 xpos 100
 
 See :ref:`warpers` for more information about warpers.
 
