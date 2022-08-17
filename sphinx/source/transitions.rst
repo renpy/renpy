@@ -221,5 +221,5 @@ This works because the dialogue window exists entirely on the screens layer.
 See Also
 ========
 
-:ref:`atl-transitions`, :ref:`Transitions using Python <trans-python>` : how to
+:ref:`atl-transitions`, :ref:`Transitions using Python <transitions-python>` : how to
 create transitions using the ATL system and Python, respectively
