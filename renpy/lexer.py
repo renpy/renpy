@@ -242,6 +242,9 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
         with open(filename, "rb") as f:
             data = f.read().decode("utf-8", "python_strict")
 
+    if filename.endswith("_ren.py"):
+        data = ren_py_to_rpy(data)
+
     filename = elide_filename(filename)
     prefix = munge_filename(filename)
 
@@ -1465,3 +1468,76 @@ class Lexer(object):
         self.subparses.append(sp)
 
         return sp
+
+
+def ren_py_to_rpy(text):
+    """
+    Transforms an _ren.py file into the equivalent .rpy file.
+
+    This should retain line numbers.
+    """
+
+    lines = text.split("\n")
+    result = [ ]
+
+    # The prefix prepended to Python lines.
+    prefix = ""
+
+    # Possible states.
+    IGNORE = 0
+    RENPY = 1
+    PYTHON = 2
+
+    # The state the state machine is in.
+    state = IGNORE
+
+    for l in lines:
+
+        if state != RENPY:
+            if l.startswith('"""renpy'):
+                state = RENPY
+                terminator = '"""'
+                result.append('')
+                continue
+
+        if state == RENPY:
+            if l == '"""':
+                state = PYTHON
+                result.append('')
+                continue
+
+            # Ignore empty and comments.
+            sl = l.strip()
+            if not sl:
+                result.append(l)
+                continue
+
+            if sl[0] == "#":
+                result.append(l)
+                continue
+
+            # Determine the prefix.
+            prefix = ""
+            for i in l:
+                if i != ' ':
+                    break
+                prefix += ' '
+
+            # If the line ends in ":", add 4 spaces to the prefix.
+            if sl[-1] == ":":
+                prefix += "    "
+
+            result.append(l)
+            continue
+
+        if state == PYTHON:
+            result.append(prefix + l)
+            continue
+
+        if state == IGNORE:
+            result.append('')
+            continue
+
+    rv = "\n".join(result)
+
+    return rv
