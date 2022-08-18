@@ -102,7 +102,7 @@ class Borders(object):
 
     `left`, `top`, `right`, `bottom`
         These provide the size of the insets used by a frame, and are added
-        to the padding on each side. They should zero or a positive integer.
+        to the padding on each side. They should be zero or a positive integer.
 
     `pad_left`, `pad_top`, `pad_right`, `pad_bottom`
         These are added to the padding on each side, and may be positive or
