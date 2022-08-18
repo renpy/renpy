@@ -781,7 +781,6 @@ def report_character_stats(charastats):
     Returns a list of character stat lines.
     """
 
-    # Keep all the statistics in a list, so that it gets wrapped ionto a
     rv = [ "Character statistics (for default language):" ]
 
     count_to_char = collections.defaultdict(list)
@@ -893,7 +892,7 @@ def lint():
 
             counts[language].add(node.what)
             if language is None:
-                charastats[node.who if node.who else 'narrator' ] += 1
+                charastats[node.who or 'narrator' ] += 1
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -946,6 +945,9 @@ def lint():
     for f in renpy.config.lint_hooks:
         f()
 
+    # list of either strings or lists of strings
+    # the elements of `lines` will be printed separated by blank lines
+    # the strings in lists in `lines` will be separated by simple carriage-returns
     lines = [ ]
 
     def report_language(language):
@@ -977,7 +979,7 @@ characters per block. """.format(
     print("")
 
     languages = list(counts)
-    languages.sort(key=lambda a : "" if not a else a)
+    languages.sort(key=lambda a : a or "")
     for i in languages:
         report_language(i)
 
@@ -999,7 +1001,7 @@ characters per block. """.format(
                 altprefix = "   "
                 ll = ll[3:]
             else:
-                prefix  = ""
+                prefix = ""
                 altprefix = ""
 
             for lll in textwrap.wrap(ll, 78 - len(prefix)):
