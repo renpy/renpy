@@ -68,27 +68,30 @@ class ParameterInfo(object):
 
     def __init__(self, parameters, positional, extrapos, extrakw, last_posonly=None, first_kwonly=None):
 
-        # A list of parameter name, default value pairs.
+        # A list of (parameter name, default value) pairs.
+        # The default value is either None (if there is none)
+        # or a string which when evaluated results in the actual value
         self.parameters = parameters
 
-        # A list, giving the positional parameters to this function,
-        # in order.
+        # A list, giving the names of the positional parameters
+        # to this function, in order.
         self.positional = positional
 
         # A variable that takes the extra positional arguments, if
         # any. None if no such variable exists.
+        # If there is *args, this is "args".
         self.extrapos = extrapos
 
         # A variable that takes the extra keyword arguments, if
         # any. None if no such variable exists.
+        # If there is **properties, this is "properties".
         self.extrakw = extrakw
 
-        # A parameters that is positional-only, see
+        # The parameters which are positional-only, see
         # https://www.python.org/dev/peps/pep-0570/
-        # None if / not presets.
+        # Empty if / not present.
         if last_posonly is None:
             self.positional_only = [ ]
-
         else:
             rv = [ ]
             for param in parameters:
@@ -98,12 +101,11 @@ class ParameterInfo(object):
 
             self.positional_only = rv
 
-        # A parameters that is keyword-only, see
+        # The parameters which are keyword-only, see
         # https://www.python.org/dev/peps/pep-3102/
-        # None if * or *args not preset, or there are no parameters afterwards.
+        # Empty if * nor *args are present, or if there are no parameters after them.
         if first_kwonly is None:
             self.keyword_only = [ ]
-
         else:
             rv = [ ]
             for param in reversed(parameters):
