@@ -1491,19 +1491,31 @@ def ren_py_to_rpy(text, filename):
     # The state the state machine is in.
     state = IGNORE
 
-    for l in lines:
+    for linenumber, l in enumerate(lines):
 
         if state != RENPY:
-            if l.startswith('"""renpy'):
-                state = RENPY
-                result.append('')
+            for t in ('"""', "'''"):
+                if l.startswith(t+"renpy"):
+                    state = RENPY
+                    result.append('')
+                    terminator = t
+                    open_linenumber = linenumber
+                    break
+
+            if state == RENPY:
                 continue
 
         if state == RENPY:
-            if l == '"""':
-                state = PYTHON
-                result.append('')
-                continue
+            if terminator in l:
+                if l == terminator:
+                    state = PYTHON
+                    result.append('')
+                    continue
+
+                raise Exception("In {!r}:{}, the {}renpy block opened at line {} is closed in an invalid way.".format(filename,
+                                                                                                                      linenumber,
+                                                                                                                      terminator,
+                                                                                                                      open_linenumber))
 
             # Ignore empty and comments.
             sl = l.strip()
@@ -1541,7 +1553,9 @@ def ren_py_to_rpy(text, filename):
         raise Exception('In {!r}, there are no """renpy blocks, so every line is ignored.'.format(filename))
 
     if state == RENPY:
-        raise Exception('In {!r}, there is a """renpy block that is not terminated by """.'.format(filename))
+        raise Exception('In {0!r}, there is a {2}renpy block at line {1} that is not terminated by {2}.'.format(filename,
+                                                                                                                open_linenumber,
+                                                                                                                terminator))
 
     rv = "\n".join(result)
 
