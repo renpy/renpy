@@ -243,7 +243,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
             data = f.read().decode("utf-8", "python_strict")
 
     if filename.endswith("_ren.py"):
-        data = ren_py_to_rpy(data)
+        data = ren_py_to_rpy(data, filename)
 
     filename = elide_filename(filename)
     prefix = munge_filename(filename)
@@ -1470,7 +1470,7 @@ class Lexer(object):
         return sp
 
 
-def ren_py_to_rpy(text):
+def ren_py_to_rpy(text, filename):
     """
     Transforms an _ren.py file into the equivalent .rpy file.
 
@@ -1496,7 +1496,6 @@ def ren_py_to_rpy(text):
         if state != RENPY:
             if l.startswith('"""renpy'):
                 state = RENPY
-                terminator = '"""'
                 result.append('')
                 continue
 
@@ -1537,6 +1536,12 @@ def ren_py_to_rpy(text):
         if state == IGNORE:
             result.append('')
             continue
+
+    if state == IGNORE:
+        raise Exception('In {!r}, there are no """renpy blocks, so every line is ignored.'.format(filename))
+
+    if state == RENPY:
+        raise Exception('In {!r}, there is a """renpy block that is not terminated by """.'.format(filename))
 
     rv = "\n".join(result)
 
