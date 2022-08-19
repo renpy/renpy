@@ -721,6 +721,8 @@ class Script(object):
 
         source = source_extensions[-1]
 
+        renpy.game.exception_info = "While loading the script."
+
         # This can only be a .rpyc file, since we're loading it
         # from an archive.
         if dir is None:
@@ -741,20 +743,29 @@ class Script(object):
             # Otherwise, we're loading from disk. So we need to decide if
             # we want to load the rpy or the rpyc file.
             rpycfn = dir + "/" + fn + compiled
-            rpyfn = "" # prevent the spurious warning.
+            rpyfn = None # prevent the spurious warning.
             rpydigest = None
 
-            for source in source_extensions:
+            rpyfns = [ ]
 
+            for source in source_extensions:
                 rpyfn = dir + "/" + fn + source
 
                 renpy.loader.add_auto(rpyfn)
 
                 if os.path.exists(rpyfn):
-                    with open(rpyfn, "rb") as f:
-                        rpydigest = hashlib.md5(f.read()).digest()
+                    rpyfns.append((source, rpyfn))
 
-                    break
+            if len(rpyfns) > 1:
+                raise Exception("{} conflict, and can't exist in the same game.".format(" and ".join(i[1] for i in rpyfns)))
+            elif rpyfns:
+                source, rpyfn = rpyfns[0]
+
+                with open(rpyfn, "rb") as f:
+                    rpydigest = hashlib.md5(f.read()).digest()
+            else:
+                source = source_extensions[-1]
+                rpyfn = dir + "/" + fn + source_extensions[-1]
 
             try:
                 if os.path.exists(rpycfn):
