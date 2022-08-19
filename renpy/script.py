@@ -242,9 +242,6 @@ class Script(object):
         # what we will load immediately.
         self.script_files = [ ]
 
-        # Similar, but for script python files.
-        self.script_python_files = [ ]
-
         # Similar, but for modules:
         self.module_files = [ ]
 
@@ -254,12 +251,8 @@ class Script(object):
                 if dir is None:
                     continue
 
-                fn = fn[:-3]
-                target = self.script_python_files
-
-            elif fn.endswith("_ren.rpyc"):
-                fn = fn[:-5]
-                target = self.script_python_files
+                fn = fn[:-7]
+                target = self.script_files
 
             elif fn.endswith(".rpy"):
                 if dir is None:
@@ -289,28 +282,14 @@ class Script(object):
 
     def load_script(self):
 
-        script_python_files = self.script_python_files
         script_files = self.script_files
 
         # Sort script files by filename.
         # We need this key to prevet possible crash when comparing None to str
         # during sorting
-        script_python_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
         script_files.sort(key=lambda item: ((item[0] or ""), (item[1] or "")))
 
         initcode = [ ]
-
-        for fn, dir in script_python_files: # @ReservedAssignment
-            # Mitigate "busy script" warning from the browser
-            if renpy.emscripten:
-                import emscripten # type: ignore
-                emscripten.sleep(0)
-
-            # Pump the presplash window to prevent marking
-            # our process as unresponsive by OS
-            renpy.display.presplash.pump_window()
-
-            self.load_appropriate_file(".rpyc", ".py", dir, fn, initcode)
 
         for fn, dir in script_files: # @ReservedAssignment
             # Mitigate "busy script" warning from the browser
@@ -322,7 +301,7 @@ class Script(object):
             # our process as unresponsive by OS
             renpy.display.presplash.pump_window()
 
-            self.load_appropriate_file(".rpyc", ".rpy", dir, fn, initcode)
+            self.load_appropriate_file(".rpyc", [ "_ren.py", ".rpy" ], dir, fn, initcode)
 
         # Make the sort stable.
         initcode = [ (prio, index, code) for index, (prio, code) in
@@ -347,7 +326,7 @@ class Script(object):
         fn, dir = files[0] # @ReservedAssignment
         initcode = [ ]
 
-        self.load_appropriate_file(".rpymc", ".rpym", dir, fn, initcode)
+        self.load_appropriate_file(".rpymc", [ ".rpym" ], dir, fn, initcode)
 
         if renpy.parser.report_parse_errors():
             raise SystemExit(-1)
@@ -631,8 +610,8 @@ class Script(object):
             fullfn = dir + "/" + fn
 
             if fn.endswith("_ren.py"):
-                rpycfn = fullfn[:-3] + ".rpyc"
-                oldrpycfn = olddir + "/" + fn[:-3] + ".rpyc"
+                rpycfn = fullfn[:-7] + ".rpyc"
+                oldrpycfn = olddir + "/" + fn[:-7] + ".rpyc"
             else:
                 rpycfn = fullfn + "c"
                 oldrpycfn = olddir + "/" + fn + "c"
@@ -662,8 +641,8 @@ class Script(object):
                         old_data, old_stmts = loads(bindata)
                         self.merge_names(old_stmts, stmts, used_names)
 
-                    del old_data
-                    del old_stmts
+                        del old_data
+                        del old_stmts
                 except Exception:
                     pass
                 finally:
@@ -737,8 +716,10 @@ class Script(object):
 
         return data, stmts
 
-    def load_appropriate_file(self, compiled, source, dir, fn, initcode): # @ReservedAssignment
+    def load_appropriate_file(self, compiled, source_extensions, dir, fn, initcode): # @ReservedAssignment
         data = None
+
+        source = source_extensions[-1]
 
         # This can only be a .rpyc file, since we're loading it
         # from an archive.
@@ -759,16 +740,21 @@ class Script(object):
 
             # Otherwise, we're loading from disk. So we need to decide if
             # we want to load the rpy or the rpyc file.
-            rpyfn = dir + "/" + fn + source
             rpycfn = dir + "/" + fn + compiled
+            rpyfn = "" # prevent the spurious warning.
+            rpydigest = None
 
-            renpy.loader.add_auto(rpyfn)
+            for source in source_extensions:
 
-            if os.path.exists(rpyfn):
-                with open(rpyfn, "rb") as f:
-                    rpydigest = hashlib.md5(f.read()).digest()
-            else:
-                rpydigest = None
+                rpyfn = dir + "/" + fn + source
+
+                renpy.loader.add_auto(rpyfn)
+
+                if os.path.exists(rpyfn):
+                    with open(rpyfn, "rb") as f:
+                        rpydigest = hashlib.md5(f.read()).digest()
+
+                    break
 
             try:
                 if os.path.exists(rpycfn):
