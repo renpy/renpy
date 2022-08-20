@@ -32,18 +32,18 @@ Ren'Py in Python files contain three types of sections.
 
 * A single ignored section starts the file. This can be used for Python
   imports and other constructs that will help the editors and other tools,
-  but aren't part of the game.
+  but aren't part of the game and will not be executed by Ren'Py.
 
 * One or more Ren'Py sections, which contain Ren'Py script. Ren'Py script
-  is generally used to introduce Python, and also sets the indentation
+  is generally used to introduce Python sections, and also sets the indentation
   of that Python.
 
   A Ren'Py section is introduced with ``"""renpy`` on a line by itself,
   and is terminated with ``"""`` on a line by itself. Both the start and
   the end need to be placed at the start of a line, without any indentation
-  before it. If either is indented, the section will not be processed correctly.
+  before it. If either is indented, the file will not be processed correctly.
 
-* One or more Python sections. Python sections occur after the Ren'Py sections,
+* One or more Python sections. Python sections occur after Ren'Py sections,
   and are indented to the indentation level of the last non-whitespace, non-comment
   line in the Ren'Py section. If that line ends with a colon (:), the Python is
   indented by 4 more spaces.
@@ -51,7 +51,8 @@ Ren'Py in Python files contain three types of sections.
 This transformation is used to create the equivalent of a .rpy file in memory,
 and this file is compiled in the usual way. Notably, Ren'Py in Python runs in the
 Ren'Py store (rather than in an isolated module), and the Python code is subject
-to the transformations that enable rollback and save/load to work.
+to the transformations that enable rollback and save/load to work - see
+:doc:`python` and :ref:`rollback`.
 
 Example
 -------
