@@ -130,6 +130,7 @@ Python and Ren'Py
    matrix
    model
    other
+   ren_py
 
 Building, Updating, and Other Platforms
 ---------------------------------------
