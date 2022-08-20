@@ -1497,19 +1497,14 @@ def ren_py_to_rpy(text, filename):
             if l.startswith('"""renpy'):
                 state = RENPY
                 result.append('')
-                open_linenumber = linenumber
+                open_linenumber = linenumber + 1
                 continue
 
         if state == RENPY:
-            if '"""' in l:
-                if l == '"""':
-                    state = PYTHON
-                    result.append('')
-                    continue
-
-                raise Exception('In {!r}:{}, the """renpy block opened at line {} is closed in an invalid way.'.format(filename,
-                                                                                                                       linenumber,
-                                                                                                                       open_linenumber))
+            if l == '"""':
+                state = PYTHON
+                result.append('')
+                continue
 
             # Ignore empty and comments.
             sl = l.strip()
