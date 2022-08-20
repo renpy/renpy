@@ -29,6 +29,29 @@ The advantage of this change is that it makes the volumes sliders much more dyna
 Previously, the volume slider had to be very near the bottom before it had an effect.
 Now, the volume increases and decreases match the way people perceive loudness.
 
+
+\_ren.py Files - Ren'Py in Python
+---------------------------------
+
+:doc:`The new \_ren.py file format <ren_py>` allows Ren'Py script to be embedded
+in a valid Python file. For example::
+
+    """renpy
+    init python:
+    """"
+
+    flag = True
+
+is equivalent to::
+
+    init python:
+
+        flag = True
+
+The purpose of this new format is to allow Python-heavy script files to be edited
+with Python-specific tools, while still running as Ren'Py script.
+
+
 Constant Stores
 ---------------
 
