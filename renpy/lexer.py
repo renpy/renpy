@@ -34,22 +34,50 @@ import renpy
 
 from renpy.lexersupport import match_logical_word
 
+# The filename that's in the line text cache.
+line_text_filename = ""
+
+# The content of the line text cache.
+line_text_cache = [ ]
+
 
 def get_line_text(filename, lineno):
     """
     Gets the text of a line, in a best-effort way, for debugging purposes. May
-    return just a newline.
+    return just a newline, if the line doesn't exist.
     """
+
+    global line_text_filename
+    global line_text_cache
 
     import linecache
     full_filename = renpy.exports.unelide_filename(filename)
 
-    try:
-        line = linecache.getline(full_filename, lineno) or "\n"
-    except Exception:
-        line = "\n"
 
-    return line
+    if full_filename != line_text_filename:
+
+        line_text_filename = full_filename
+
+        try:
+
+            with open(full_filename, "rb") as f:
+                data = f.read().decode("utf-8", "python_strict")
+
+            if full_filename.endswith("_ren.py"):
+                data = ren_py_to_rpy(data, None)
+
+            data += "\n\n"
+
+            line_text_cache = data.split("\n")
+
+        except Exception:
+            raise
+            line_text_cache = [ ]
+
+    if lineno <= len(line_text_cache):
+        return line_text_cache[lineno - 1] + "\n"
+    else:
+        return "\n"
 
 
 class ParseError(Exception):
@@ -1472,9 +1500,11 @@ class Lexer(object):
 
 def ren_py_to_rpy(text, filename):
     """
-    Transforms an _ren.py file into the equivalent .rpy file.
+    Transforms an _ren.py file into the equivalent .rpy file. This should retain line numbers.
 
-    This should retain line numbers.
+    `filename`
+        If not None, and an error occurs, the error is reported with the given filename.
+        Otherwise, errors are ignored and a a best effort is used.
     """
 
     lines = text.splitlines()
@@ -1538,12 +1568,14 @@ def ren_py_to_rpy(text, filename):
             result.append('')
             continue
 
-    if state == IGNORE:
-        raise Exception('In {!r}, there are no """renpy blocks, so every line is ignored.'.format(filename))
+    if filename is not None:
 
-    if state == RENPY:
-        raise Exception('In {!r}, there is a """renpy block at line {} that is not terminated by """.'.format(filename,
-                                                                                                              open_linenumber))
+        if state == IGNORE:
+            raise Exception('In {!r}, there are no """renpy blocks, so every line is ignored.'.format(filename))
+
+        if state == RENPY:
+            raise Exception('In {!r}, there is a """renpy block at line {} that is not terminated by """.'.format(filename,
+                                                                                                                open_linenumber))
 
     rv = "\n".join(result)
 
