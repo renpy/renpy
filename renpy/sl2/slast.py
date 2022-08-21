@@ -1654,7 +1654,7 @@ class SLFor(SLBlock):
 
         try:
             if expr is not None:
-                value = list(eval(expr, context.globals, context.scope))
+                value = eval(expr, context.globals, context.scope)
             else:
                 value = self.expression_value
         except Exception:
