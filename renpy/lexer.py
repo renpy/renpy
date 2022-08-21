@@ -1477,7 +1477,7 @@ def ren_py_to_rpy(text, filename):
     This should retain line numbers.
     """
 
-    lines = text.split("\n")
+    lines = text.splitlines()
     result = [ ]
 
     # The prefix prepended to Python lines.
@@ -1491,13 +1491,13 @@ def ren_py_to_rpy(text, filename):
     # The state the state machine is in.
     state = IGNORE
 
-    for linenumber, l in enumerate(lines):
+    for linenumber, l in enumerate(lines, start=1):
 
         if state != RENPY:
             if l.startswith('"""renpy'):
                 state = RENPY
                 result.append('')
-                open_linenumber = linenumber + 1
+                open_linenumber = linenumber
                 continue
 
         if state == RENPY:
