@@ -42,11 +42,11 @@ always_constants = { 'True', 'False', 'None' }
 pure_functions = {
     # Python 3 builtins.
     'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytes', 'callable',
-    'chr', 'complex', 'dict', 'dir', 'divmod', 'filter', 'float',
+    'chr', 'complex', 'dict', 'dir', 'divmod', 'enumerate', 'filter', 'float',
     'format', 'frozenset', 'getattr', 'hasattr', 'hash', 'hex', 'int',
     'isinstance', 'issubclass', 'len', 'list', 'map', 'max', 'min', 'oct',
-    'ord', 'pow', 'repr', 'reversed', 'round', 'set', 'slice', 'sorted',
-    'str', 'sum', 'tuple', 'type',
+    'ord', 'pow', 'range', 'repr', 'reversed', 'round', 'set', 'slice', 'sorted',
+    'str', 'sum', 'tuple', 'type', 'zip',
 
     # minstore.py
     "_",

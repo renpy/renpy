@@ -1635,7 +1635,7 @@ class SLFor(SLBlock):
         const = analysis.is_constant(node)
 
         if const == GLOBAL_CONST:
-            self.expression_value = py_eval_bytecode(compile_expr(self.location, node))
+            self.expression_value = list(py_eval_bytecode(compile_expr(self.location, node)))
             self.expression_expr = None
         else:
             self.expression_value = None
@@ -1654,7 +1654,7 @@ class SLFor(SLBlock):
 
         try:
             if expr is not None:
-                value = eval(expr, context.globals, context.scope)
+                value = list(eval(expr, context.globals, context.scope))
             else:
                 value = self.expression_value
         except Exception:
