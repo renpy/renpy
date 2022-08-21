@@ -71,7 +71,6 @@ def get_line_text(filename, lineno):
             line_text_cache = data.split("\n")
 
         except Exception:
-            raise
             line_text_cache = [ ]
 
     if lineno <= len(line_text_cache):
