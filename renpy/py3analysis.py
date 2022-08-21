@@ -39,9 +39,15 @@ from renpy.compat.pickle import loads, dumps
 always_constants = { 'True', 'False', 'None' }
 
 # The set of names that should be treated as pure functions.
-pure_functions = set(i for i in dir(builtins) if not i.startswith("__"))
-pure_functions -= { "copyright", "credits", "enumerate", "help", "input", "license", "map", "memoryview", "next", "open", "print", "reversed" }
 pure_functions = {
+    # Python 3 builtins.
+    'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytes', 'callable',
+    'chr', 'complex', 'dict', 'dir', 'divmod', 'filter', 'float',
+    'format', 'frozenset', 'getattr', 'hasattr', 'hash', 'hex', 'int',
+    'isinstance', 'issubclass', 'len', 'list', 'map', 'max', 'min', 'oct',
+    'ord', 'pow', 'repr', 'reversed', 'round', 'set', 'slice', 'sorted',
+    'str', 'sum', 'tuple', 'type',
+
     # minstore.py
     "_",
     "_p",
