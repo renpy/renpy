@@ -330,7 +330,7 @@ field in the org.renpy.android.PythonSDLActivity class. For example::
 
     init python:
         if renpy.android:
-            import jinus
+            import jnius
             mActivity = jnius.autoclass("org.renpy.android.PythonSDLActivity")
         else:
             mActivity = None
