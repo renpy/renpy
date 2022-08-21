@@ -2732,6 +2732,7 @@ loaded_modules = set()
 def load_module(name, **kwargs):
     """
     :doc: other
+    :args: (name)
 
     This loads the Ren'Py module named name. A Ren'Py module consists of Ren'Py script
     that is loaded into the usual (store) namespace, contained in a file named
@@ -2765,7 +2766,7 @@ def load_module(name, **kwargs):
     context.make_dynamic(kwargs)
     renpy.store.__dict__.update(kwargs) # @UndefinedVariable
 
-    for prio, node in initcode: # @UnusedVariable
+    for _prio, node in initcode: # @UnusedVariable
         if isinstance(node, renpy.ast.Node):
             renpy.game.context().run(node)
         else:
