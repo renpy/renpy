@@ -350,6 +350,9 @@ class LoadedVariables(ast.NodeVisitor):
         elif isinstance(node.ctx, ast.Store):
             self.stored.add(node.id)
 
+    def visit_arg(self, node):
+        self.stored.add(node.arg)
+
     def find(self, node):
         self.loaded = set()
         self.stored = set()
