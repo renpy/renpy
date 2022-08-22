@@ -271,7 +271,7 @@ Occasionally Used
 
 .. var:: config.auto_movie_channel = True
 
-    If True, and the `play` argument is give to :func:`Movie`, an
+    If True, and the `play` argument is given to :func:`Movie`, an
     audio channel name is automatically generated for each movie.
 
     :var:`config.single_movie_channel` takes precendece over this
