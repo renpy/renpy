@@ -349,9 +349,15 @@ class LoadedVariables(ast.NodeVisitor):
             self.loaded.add(node.id)
         elif isinstance(node.ctx, ast.Store):
             self.stored.add(node.id)
+        elif PY2 and isinstance(node.ctx, ast.Param):
+            # there's no guarantee that ast.Param will keep existing in future versions of python3
+            # it's only present in asts made in py2
+            self.stored.add(node.id)
 
-    def visit_arg(self, node):
-        self.stored.add(node.arg)
+    if not PY2:
+        # we could remove this if, but the method wouldn't be called in py2 anyway
+        def visit_arg(self, node):
+            self.stored.add(node.arg)
 
     def find(self, node):
         self.loaded = set()
