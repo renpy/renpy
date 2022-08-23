@@ -234,7 +234,17 @@ class Restructurer(object):
         self.label = None
         self.alternate = None
 
+        self.preexisting_identifiers = set()
         self.identifiers = set()
+
+        # Search for identifiers that have been set to the user, and add them
+        # to self.preexisting_identifiers.
+        for i in renpy.script.collapse_stmts(children):
+            if isinstance(i, renpy.ast.Say):
+                identifier = getattr(i, "identifier", None)
+                if identifier is not None:
+                    self.preexisting_identifiers.add(identifier)
+
         self.callback(children)
 
     def id_exists(self, identifier):
@@ -260,7 +270,7 @@ class Restructurer(object):
 
             identifier = base + suffix
 
-            if not self.id_exists(identifier):
+            if not self.id_exists(identifier) and not (identifier in self.preexisting_identifiers):
                 break
 
             i += 1
