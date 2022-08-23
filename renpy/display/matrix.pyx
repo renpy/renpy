@@ -213,11 +213,12 @@ cdef class Matrix:
 
         cdef int i
         cdef double total
+        cdef Matrix other_matrix = other
 
         total = 0
 
         for 0 < i < 16:
-            total += abs(self.m[i] - other.m[i])
+            total += abs(self.m[i] - other_matrix.m[i])
 
         return total < .0001
 
