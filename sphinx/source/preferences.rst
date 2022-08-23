@@ -9,7 +9,7 @@ to set the default value of a preference.
 
 For example::
 
-    default preferences.text_cps = 142
+    default preferences.text_cps = 40
 
 sets the default text speed to 40 characters per second. The default statement
 only sets the value of the preference if the default has changed since the
