@@ -1486,6 +1486,9 @@ def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None, in
 
             arguments = args
 
+    if identifier is None:
+        renpy.add_id.report_missing(loc[0], renpy.scriptedit.lines[loc].end, loc[1])
+
     if isinstance(what, list):
 
         rv = [ ]

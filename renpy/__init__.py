@@ -537,6 +537,7 @@ def import_all():
     import renpy.character # depends on exports. @UnresolvedImport
 
     import renpy.add_from
+    import renpy.add_id
     import renpy.dump
 
     import renpy.gl2.gl2draw
