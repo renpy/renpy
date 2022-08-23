@@ -208,6 +208,11 @@ screen translate:
                         textbutton _("Update Default Interface Translations"):
                             action [ Jump("update_renpy_strings") ]
 
+                        add HALF_SPACER
+
+                        textbutton _("Generate id clauses for dialogue lines"):
+                            action Jump("add_id_clauses")
+
 
 
                 frame:
@@ -229,6 +234,11 @@ screen translate:
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
 
+label add_id_clauses:
+    python:
+        interface.processing(_("Adding id clauses to say statements that do not have them."))
+        project.current.launch([ "add_id" ], wait=True)
+    jump translate
 
 label translate:
     call screen translate
