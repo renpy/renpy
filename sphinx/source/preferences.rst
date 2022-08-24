@@ -27,7 +27,7 @@ can then change it again.)
 .. var:: preferences.afm_enable = False
 
     If True, auto-forward move is enabled, otherwise False. The equivalent
-    of the "auto-forward" preference.
+    of the "auto-forward time" preference.
 
 .. var:: preferences.afm_time = 15
 
