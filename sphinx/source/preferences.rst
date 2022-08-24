@@ -20,9 +20,9 @@ can then change it again.)
 
 .. var:: preferences.afm_after_click = False
 
-    If True, auto-forward move will be continue after a click. If False,
-    a click will end auto-forward mode. The equivalent of the
-    "auto-forward after click" preference.
+    If True, the auto-forward mode will be continued after a click. If False,
+    a click will end auto-forward mode. The equivalent of the "auto-forward
+    after click" preference.
 
 .. var:: preferences.afm_enable = False
 
