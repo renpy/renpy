@@ -740,16 +740,17 @@ class DismissBehavior(renpy.display.core.Displayable):
     """
 
     focusable = True
+    keysym = "dismiss"
 
-    def __init__(self, action=None, modal=True, **properties):
+    def __init__(self, action=None, modal=True, keysym="dismiss", **properties):
         super(DismissBehavior, self).__init__(**properties)
-
 
         if action is None:
             raise Exception("Dismiss requires an action.")
 
         self.action = action
         self.modal = modal
+        self.keysym = keysym
 
     def _tts(self):
         return ""
@@ -776,7 +777,7 @@ class DismissBehavior(renpy.display.core.Displayable):
 
     def event(self, ev, x, y, st):
 
-        if self.is_focused() and map_event(ev, "dismiss"):
+        if self.is_focused() and map_event(ev, self.keysym):
             renpy.exports.play(self.style.activate_sound)
             rv = run(self.action)
 

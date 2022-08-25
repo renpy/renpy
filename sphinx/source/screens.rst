@@ -445,9 +445,15 @@ This takes the following properties:
     The action performed when the dismiss is activated. This property is
     required.
 
+`keysym`
+    A string giving a :doc:`keysym <keymap>` describing a key that,
+    when pressed, invokes the action of this dismiss. This replaces the default
+    "dismiss" keysym.
+
 `modal`
     By default, the dimiss is modal, preventing events from being processed
     by displayables "behind" it.
+
 
 It also takes:
 

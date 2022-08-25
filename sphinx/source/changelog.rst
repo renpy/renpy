@@ -84,6 +84,9 @@ not change after the init phase finishes.
 New Features
 ------------
 
+The :ref:`dismiss <sl-dismiss>` displayable now takes a `keysym` property,
+specifying what keysym causes the dismiss.
+
 The new :var:`config.autosave_callback` is run after a background autosave
 finishes.
 
