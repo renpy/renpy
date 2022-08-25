@@ -2152,6 +2152,9 @@ class Interface(object):
         # is done, or at the end of the interaction.
         self.force_prediction = False
 
+        # The number of interactions that have happened without processing an event.
+        self.interaction_counter = 0
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -3369,11 +3372,18 @@ class Interface(object):
             for i in renpy.config.start_interact_callbacks:
                 i()
 
+            self.interaction_counter = 0
+
             repeat = True
 
             pause_start = get_time()
 
             while repeat:
+                self.interaction_counter += 1
+
+                if self.interaction_counter == 100 and renpy.config.developer:
+                    raise Exception("renpy.restart_interaction() was called 100 times without processing any input.")
+
                 repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, **kwargs) # type: ignore
                 self.start_interact = False
 
@@ -3961,7 +3971,7 @@ class Interface(object):
                     if not self.mouse_move.perform():
                         self.mouse_move = None
 
-                # Check the uat
+                # Check the autosave callback.
                 if renpy.loadsave.did_autosave:
                     renpy.loadsave.did_autosave = False
                     renpy.exports.run(renpy.config.autosave_callback)
@@ -4046,6 +4056,8 @@ class Interface(object):
                     renpy.plog(1, "pre wait")
                     ev = self.event_wait()
                     renpy.plog(1, "post wait {!r}", ev)
+
+                self.interaction_counter = 0
 
                 if ev.type == pygame.NOEVENT:
 
