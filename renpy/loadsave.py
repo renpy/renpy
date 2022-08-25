@@ -412,7 +412,7 @@ def save(slotname, extra_info='', mutate_flag=False):
 
     screenshot = renpy.game.interface.get_screenshot()
 
-    json = { "_save_name" : extra_info, "_renpy_version" : list(renpy.version_tuple), "_version" : renpy.config.version }
+    json = { "_save_name" : extra_info, "_renpy_version" : list(renpy.version_tuple), "_version" : str(renpy.config.version) }
 
     for i in renpy.config.save_json_callbacks:
         i(json)

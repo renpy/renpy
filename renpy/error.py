@@ -203,7 +203,7 @@ def report_exception(e, editor=True):
     try:
         print(str(platform.platform()), str(platform.machine()), file=full)
         print(renpy.version, file=full)
-        print(renpy.config.name + " " + renpy.config.version, file=full)
+        print("%s %r" % (renpy.config.name, renpy.config.version), file=full)
         print(str(time.ctime()), file=full)
     except Exception:
         pass

@@ -115,7 +115,7 @@ def dump(error):
 
     # The name and version.
     result["name"] = renpy.config.name
-    result["version"] = renpy.config.version
+    result["version"] = str(renpy.config.version)
 
     # The JSON object we return.
     location = { }

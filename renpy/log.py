@@ -143,7 +143,7 @@ class LogFile(object):
             except Exception:
                 self.write("Unknown platform.")
             self.write("%s", renpy.version)
-            self.write("%s %s", renpy.config.name, renpy.config.version)
+            self.write("%s %r", renpy.config.name, renpy.config.version)
             self.write("")
 
             return True
