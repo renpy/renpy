@@ -39,7 +39,7 @@ init -1900 python:
             basename = os.path.basename(fn)
             base, ext = os.path.splitext(basename)
 
-            if not ext.lower() in [ ".jpg", ".jpeg", ".png", ".webp" ]:
+            if not ext.lower() in [ ".jpg", ".jpeg", ".png", ".webp", ".jxl", ".avif" ]:
                 continue
 
             base = base.lower()
