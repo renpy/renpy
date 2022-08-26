@@ -1273,6 +1273,9 @@ volume_db_range = 60
 # Autosave callback.
 autosave_callback = None
 
+# The radius the mouse has to move before triggering a viewport drag.
+viewport_drag_radius = 10
+
 del os
 del collections
 

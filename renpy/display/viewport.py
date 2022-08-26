@@ -295,10 +295,16 @@ class Viewport(renpy.display.layout.Container):
         self.xoffset = None
         self.yoffset = None
 
-        rv = super(Viewport, self).event(ev, x, y, st)
+        if self.draggable and self.drag_position is not None and renpy.display.focus.get_grab() != self:
 
-        if rv is not None:
-            return rv
+            oldx, oldy = self.drag_position
+
+            if math.hypot(oldx - x, oldy - y) >= renpy.config.viewport_drag_radius:
+                rv = renpy.display.focus.force_focus(self)
+                renpy.display.focus.set_grab(self)
+
+                if rv is not None:
+                    return rv
 
         if self.draggable and renpy.display.focus.get_grab() == self:
 
@@ -307,6 +313,7 @@ class Viewport(renpy.display.layout.Container):
 
             if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
                 renpy.display.focus.set_grab(None)
+                self.drag_position = None
 
                 # Invoke rounding adjustment on viewport release
                 xvalue = self.xadjustment.round_value(old_xvalue, release=True)
@@ -450,14 +457,7 @@ class Viewport(renpy.display.layout.Container):
         if inside and self.draggable:
 
             if renpy.display.behavior.map_event(ev, 'viewport_drag_start'):
-
-                focused = renpy.display.focus.get_focused()
-
-                if (focused is None) or (focused is self):
-
-                    self.drag_position = (x, y)
-                    renpy.display.focus.set_grab(self)
-                    raise renpy.display.core.IgnoreEvent()
+                self.drag_position = (x, y)
 
         if inside and self.edge_size and ev.type in [ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ]:
 
@@ -491,6 +491,11 @@ class Viewport(renpy.display.layout.Container):
                 self.check_edge_redraw(st, reset_st=False)
             else:
                 self.edge_last_st = None
+
+        rv = super(Viewport, self).event(ev, x, y, st)
+
+        if rv is not None:
+            return rv
 
         return None
 
