@@ -539,7 +539,29 @@ def clear_focus():
 
     change_focus(None)
 
-# This handles mouse events, to see if they change the focus.
+
+def force_focus(d, arg=None):
+    """
+    Forces the focus to `d` immediately.
+    """
+
+    current = get_focused()
+
+    if (current is d) and (arg == argument):
+        return None
+
+    set_grab(None)
+
+    if current is not None:
+
+        try:
+            renpy.display.screen.push_current_screen(screen_of_focused)
+            current.unfocus(default=False)
+        finally:
+            renpy.display.screen.pop_current_screen()
+
+    set_focused(d, arg, renpy.display.screen.current_screen())
+    return d.focus(default=False)
 
 
 def mouse_handler(ev, x, y, default=False):
