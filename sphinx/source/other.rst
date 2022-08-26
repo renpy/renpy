@@ -25,6 +25,9 @@ Ren'Py Version
 
     The version number of Ren'Py, as a tuple of the form (1, 2, 3, 456).
 
+    This is a namedtuple with four fields: ``major``, ``minor``, ``patch``,
+    and ``commit``.
+
 .. var:: renpy.version_name
 
     A human readable version name, of the form "Example Version."
