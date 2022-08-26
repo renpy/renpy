@@ -79,12 +79,12 @@ except ImportError:
 
 official = official and getattr(site, "renpy_build_official", False)
 
-SemVer = namedtuple("SemVer", ["major", "minor", "patch", "vc_version"])
+VersionTuple = namedtuple("VersionTuple", ["major", "minor", "patch", "commit"])
 
 if PY2:
 
     # The tuple giving the version number.
-    version_tuple = SemVer(7, 6, 0, vc_version)
+    version_tuple = VersionTuple(7, 6, 0, vc_version)
 
     # The name of this version.
     version_name = "TBD"
@@ -92,7 +92,7 @@ if PY2:
 else:
 
     # The tuple giving the version number.
-    version_tuple = SemVer(8, 1, 0, vc_version)
+    version_tuple = VersionTuple(8, 1, 0, vc_version)
 
     # The name of this version.
     version_name = "TBD"
