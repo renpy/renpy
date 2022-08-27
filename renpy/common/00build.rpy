@@ -568,6 +568,12 @@ init -1500 python in build:
 
         rv["_sdk_fonts"] = _sdk_fonts
 
+        # Data saved in cache/build_info.json
+        rv["build_info"] = {
+            "name": config.name,
+            "version": config.version,
+        }
+
         return rv
 
 init 1500 python in build:

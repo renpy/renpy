@@ -922,6 +922,14 @@ change_renpy_executable()
 
                     self.add_file("all", "game/script_version.txt", script_version_txt)
 
+            if self.build["build_info"]:
+                build_info_json = self.temp_filename("build_info.json")
+
+                with open(build_info_json, "w") as f:
+                    json.dump(self.build["build_info"], f, indent=2)
+
+                self.add_file("all", "game/cache/build_info.json", build_info_json)
+
         def add_file_list_hash(self, list_name):
             """
             Hashes a file list, then adds that file to the Ren'Py distribution.

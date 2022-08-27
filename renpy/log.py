@@ -143,7 +143,11 @@ class LogFile(object):
             except Exception:
                 self.write("Unknown platform.")
             self.write("%s", renpy.version)
-            self.write("%s %s", renpy.config.name, renpy.config.version)
+
+            build_info_get = renpy.session['build_info'].get
+            name = build_info_get("name", renpy.config.name)
+            version = build_info_get("version", renpy.config.version)
+            self.write("%s %s", name, version)
             self.write("")
 
             return True

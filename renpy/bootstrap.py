@@ -28,6 +28,7 @@ import os
 import sys
 import subprocess
 import io
+import json
 
 import __main__
 
@@ -249,6 +250,16 @@ You may be using a system install of python. Please run {0}.sh,
     renpy.import_all()
 
     renpy.loader.init_importer()
+
+    # Load build_info.json once we have accessed the loader.
+    try:
+        with renpy.loader.load("cache/build_info.json") as f:
+            renpy.session['build_info'] = json.load(f)
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        # Could fail if file does not exists
+        renpy.session['build_info'] = {}
 
     exit_status = None
 
