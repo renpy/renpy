@@ -152,6 +152,7 @@ End-User Documentation
 .. toctree::
    :maxdepth: 1
 
+   security
    problems
    environment_variables
    self_voicing
