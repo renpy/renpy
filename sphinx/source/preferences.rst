@@ -9,7 +9,7 @@ to set the default value of a preference.
 
 For example::
 
-    default preferences.text_cps = 142
+    default preferences.text_cps = 40
 
 sets the default text speed to 40 characters per second. The default statement
 only sets the value of the preference if the default has changed since the
@@ -20,14 +20,14 @@ can then change it again.)
 
 .. var:: preferences.afm_after_click = False
 
-    If True, auto-forward move will be continue after a click. If False,
-    a click will end auto-forward mode. The equivalent of the
-    "auto-forward after click" preference.
+    If True, the auto-forward mode will be continued after a click. If False,
+    a click will end auto-forward mode. The equivalent of the "auto-forward
+    after click" preference.
 
 .. var:: preferences.afm_enable = False
 
     If True, auto-forward move is enabled, otherwise False. The equivalent
-    of the "auto-forward" preference.
+    of the "auto-forward time" preference.
 
 .. var:: preferences.afm_time = 15
 

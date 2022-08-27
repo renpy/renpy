@@ -5,8 +5,12 @@ Transforms and Transitions in Python
 Python can be used to create new transforms and transitions for use by
 Ren'Py scripts.
 
+.. _transforms-python:
+
 Transforms
 ----------
+
+*Main articles:* :doc:`transforms` *and* :doc:`atl`
 
 A transform is a Python callable that, when called with a displayable,
 returns another displayable.
@@ -80,9 +84,13 @@ The Python equivalent of an ATL transform is a Transform object.
         outside of the function passed as the `function` argument, to ensure
         that the change takes effect.
 
+.. _transitions-python:
 
 Transitions
 -----------
+
+*Main article:* :doc:`transitions`
+*See also:* :ref:`atl-transitions`
 
 A transition is a Python callable that, when called with two keyword
 arguments, returns a displayable that performs the transition effect.

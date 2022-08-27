@@ -84,9 +84,6 @@ init -1500 python:
 
         A ColorMatrix that can be used with :tpref:`matrixcolor` that does not
         change the color or alpha of what is supplied to it.
-
-        `value`
-            Is ignored.
         """
 
         def get(self, value):

@@ -93,7 +93,14 @@ explicitly given.
 If the optional ``from`` clause is present, it has the effect of including a label
 statement with the given name as the statement immediately following the call
 statement. An explicit label helps to ensure that saved games with return
-stacks can return to the proper place when loaded on a changed script. ::
+stacks can return to the proper place when loaded on a changed script.
+
+The call statement may take arguments, which are processed as described in :pep:`448`.
+
+When using a call expression with an arguments list, the ``pass`` keyword must
+be inserted between the expression and the arguments list. Otherwise, the
+arguments list will be parsed as part of the expression, not as part of the
+call. ::
 
     label start:
 
@@ -116,12 +123,16 @@ stacks can return to the proper place when loaded on a changed script. ::
 
         return
 
-The call statement may take arguments, which are processed as described in :pep:`448`.
+.. warning::
 
-When using a call expression with an arguments list, the ``pass`` keyword must
-be inserted between the expression and the arguments list. Otherwise, the
-arguments list will be parsed as part of the expression, not as part of the
-call.
+    Publishing a game without ``from`` clauses for each ``call`` statement
+    is dangerous, if you intend to publish updates of the game later on.
+    If no such clauses are added, and if you edit the file containing the
+    ``call`` instruction, there is a potential risk for saves made inside
+    the called label to become broken.
+
+    Using the "Add from clauses to calls" option when building a game's
+    distribution can solve that issue.
 
 .. _return-statement:
 

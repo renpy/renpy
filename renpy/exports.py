@@ -2747,6 +2747,7 @@ loaded_modules = set()
 def load_module(name, **kwargs):
     """
     :doc: other
+    :args: (name)
 
     This loads the Ren'Py module named name. A Ren'Py module consists of Ren'Py script
     that is loaded into the usual (store) namespace, contained in a file named
@@ -2780,7 +2781,7 @@ def load_module(name, **kwargs):
     context.make_dynamic(kwargs)
     renpy.store.__dict__.update(kwargs) # @UndefinedVariable
 
-    for prio, node in initcode: # @UnusedVariable
+    for _prio, node in initcode: # @UnusedVariable
         if isinstance(node, renpy.ast.Node):
             renpy.game.context().run(node)
         else:
@@ -3145,6 +3146,7 @@ def stop_predict_screen(name):
 def call_screen(_screen_name, *args, **kwargs):
     """
     :doc: screens
+    :args: (_screen_name, *args, _with_none=True, _mode="screen", **kwargs)
 
     The programmatic equivalent of the call screen statement.
 
@@ -3155,11 +3157,11 @@ def call_screen(_screen_name, *args, **kwargs):
     Positional arguments, and keyword arguments that do not begin with
     _ are passed to the screen.
 
-    If the keyword argument `_with_none` is false, "with None" is not
-    run at the end of end of the interaction.
+    If `_with_none` is false, "with None" is not run at the end of end
+    of the interaction.
 
-    If the keyword argument `_mode` is passed, it will be the mode of this
-    interaction, otherwise the mode will be "screen".
+    If `_mode` is passed, it will be the mode of this interaction,
+    otherwise the mode will be "screen".
     """
 
     mode = "screen"
