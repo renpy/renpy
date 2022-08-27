@@ -81,7 +81,7 @@ official = official and getattr(site, "renpy_build_official", False)
 if PY2:
 
     # The tuple giving the version number.
-    version_tuple = (7, 5, 2, vc_version)
+    version_tuple = (7, 5, 3, vc_version)
 
     # The name of this version.
     version_name = "Heck's Getting Frosty"
@@ -89,7 +89,7 @@ if PY2:
 else:
 
     # The tuple giving the version number.
-    version_tuple = (8, 0, 2, vc_version)
+    version_tuple = (8, 0, 3, vc_version)
 
     # The name of this version.
     version_name = "Heck Freezes Over"
