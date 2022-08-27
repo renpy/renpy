@@ -29,6 +29,8 @@ init -1150 python in gui:
 
     _null = Null()
 
+    version = None
+
     def init(width, height, fov=75):
         """
         :doc: gui
@@ -77,6 +79,10 @@ init -1150 python in gui:
 
         if persistent._gui_preference_default is None:
             persistent._gui_preference_default = { }
+
+        global version
+        if version is None:
+            version = str(config.version)
 
     # A list of variant, function tuples.
     variant_functions = [ ]

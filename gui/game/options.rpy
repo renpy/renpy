@@ -23,9 +23,13 @@ define config.name = _("Ren'Py 7 Default GUI")
 define gui.show_name = True
 
 
-## The version of the game.
+## The version of the game used in log file and traceback file. This could be any object.
 
 define config.version = "1.0"
+
+## The version of the game displayed to user in about screen.
+
+define gui.version = "1.0"
 
 
 ## Text that is placed on the game's about screen. Place the text between

@@ -581,7 +581,7 @@ init 1500 python in build:
 
             directory_name = name
 
-            if config.version:
+            if version:
                 directory_name += "-" + version
 
         if not executable_name:

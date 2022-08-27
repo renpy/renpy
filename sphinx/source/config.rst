@@ -58,11 +58,12 @@ Commonly Used
     To locate the save directory, read :var:`config.savedir` instead of
     this variable.
 
-.. var:: config.version = ""
+.. var:: config.version = ...
 
-    This should be a string giving the version of the game. This is included
-    as part of tracebacks and other log files, helping to identify the
-    version of the game being used.
+    This should be an object representing the version of the game. This is
+    included as part of tracebacks and other log files, helping to identify the
+    version of the game being used. This may be a string or an object of any
+    other class but then it should have ``__str__`` method.
 
 .. var:: config.window = None
 

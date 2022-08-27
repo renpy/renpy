@@ -74,7 +74,7 @@ use.
 
    This variable should not contain special characters like spaces,
    colons, and semicolons. If not set, it defaults to :var:`build.name`
-   a dash, and :var:`config.version`.
+   a dash, and string representation of :var:`config.version`.
 
 .. var:: build.executable_name = "..."
 
