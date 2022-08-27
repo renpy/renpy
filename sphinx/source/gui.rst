@@ -74,7 +74,8 @@ GUI.
 
 :var:`config.version`
     A string giving the version of the game. This is presented to the
-    user in various places.
+    user in various places in the default GUI. It has other uses apart
+    from that, such as error messages or tracebacks.
 
 :var:`gui.about`
     Additional text that is added to the about screen. If you want multiple
