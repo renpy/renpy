@@ -440,10 +440,10 @@ def parse_parameters(l):
 
             if l.match(r'='):
                 l.skip_whitespace()
-                default = l.delimited_python("),")
+                default = l.delimited_python("),").strip()
                 has_default = True
 
-                if not default.strip():
+                if not default:
                     l.error("empty parameter default")
 
             elif first_kwonly is None and has_default:
