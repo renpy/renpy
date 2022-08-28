@@ -905,13 +905,13 @@ class Lexer(object):
         newline.
         """
 
-        s = self.match(r'r?"""([^\\"]|\\.)*"""')
+        s = self.match(r'r?"""([^\\]|\\.)*"""')
 
         if s is None:
-            s = self.match(r"r?'''([^\\']|\\.)*'''")
+            s = self.match(r"r?'''([^\\]|\\.)*'''")
 
         if s is None:
-            s = self.match(r"r?```([^\\`]|\\.)*```")
+            s = self.match(r"r?```([^\\]|\\.)*```")
 
         if s is None:
             return None
