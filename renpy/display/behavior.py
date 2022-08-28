@@ -1724,8 +1724,6 @@ class Adjustment(renpy.object.Object):
     or viewport. They contain information about the value, the range
     of the value, and how to adjust the value in small steps and large
     pages.
-
-
     """
 
     force_step = False
@@ -1908,6 +1906,10 @@ class Bar(renpy.display.core.Displayable):
     Implements a bar that can display an integer value, and respond
     to clicks on that value.
     """
+
+    @property
+    def _draggable(self):
+        return self.focusable
 
     __version__ = 2
 

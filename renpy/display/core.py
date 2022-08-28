@@ -340,6 +340,11 @@ class Displayable(renpy.object.Object):
     # amount of space offered to the displayable.
     _offer_size = None
 
+    # If true, this displayable will be treated as draggable in its own right.
+    # This is used by viewport to decide if a drag is meant for the viewport
+    # or for its child.
+    _draggable = False
+
     # Used by a transition (or transition-like object) to determine how long to
     # delay for.
     delay = None # type: float|None

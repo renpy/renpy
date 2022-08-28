@@ -412,6 +412,10 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         if d is not None:
             self.add(d)
 
+    @property
+    def _draggable(self):
+        return self.draggable
+
     def snap(self, x, y, delay=0):
         """
         :doc: drag_drop method
