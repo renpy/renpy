@@ -137,16 +137,19 @@ init -1150 python in gui:
 
     not_set = object()
 
+    preferences_with_default = set()
+
     def preference(name, default=not_set):
         """
         :doc: gui_preference
+        :args: (name, default=...)
 
         This function returns the value of the gui preference with
         `name`.
 
         `default`
             If given, this value becomes the default value of the gui
-            preference. The default value should be given the first time
+            preference. The default value must be given the first time
             the preference is used.
         """
 
@@ -155,9 +158,16 @@ init -1150 python in gui:
         defaults = persistent._gui_preference_default
 
         if default is not not_set:
+
+            preferences_with_default.add(name)
+
             if (name not in defaults) or (defaults[name] != default):
                 prefs[name] = default
                 defaults[name] = default
+
+        else:
+            if config.developer and (name not in preferences_with_default):
+                raise Exception("Gui preference %r is not set, and does not have a default value." % name)
 
         return prefs[name]
 
