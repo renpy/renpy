@@ -1438,10 +1438,10 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     return rv
 
 
-def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None):
+def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=False):
     """
     :doc: se_pause
-    :args: (delay=None, *, hard=False, predict=False)
+    :args: (delay=None, *, hard=False, predict=False, modal=False)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -1477,6 +1477,11 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         This also causes Ren'Py to prioritize prediction over display smoothness
         for the duration of the pause. Because of that, it's recommended to not
         display animations during prediction.
+
+    `modal`
+        If True, the pause will end while a modal window is above it. If False,
+        the default, the pause will not end until the modal window has been
+        dismissed.
     """
 
     if renpy.config.skipping == "fast":
@@ -1530,7 +1535,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         renpy.ui.add(renpy.display.behavior.PredictPauseBehavior())
 
     try:
-        rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay)
+        rv = renpy.ui.interact(mouse='pause', type='pause', roll_forward=roll_forward, pause=delay, pause_modal=modal)
     except (renpy.game.JumpException, renpy.game.CallException) as e:
         rv = e
 

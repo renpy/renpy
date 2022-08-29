@@ -3329,7 +3329,7 @@ class Interface(object):
         else:
             self.maximum_framerate_time = max(self.maximum_framerate_time, get_time() + t)
 
-    def interact(self, clear=True, suppress_window=False, trans_pause=False, pause=None, **kwargs):
+    def interact(self, clear=True, suppress_window=False, trans_pause=False, pause=None, pause_modal=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
         keyword arguments are passed off to interact_core.
@@ -3374,7 +3374,7 @@ class Interface(object):
             pause_start = get_time()
 
             while repeat:
-                repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, **kwargs) # type: ignore
+                repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, pause_modal=pause_modal, **kwargs) # type: ignore
                 self.start_interact = False
 
             return rv # type: ignore
@@ -3538,6 +3538,7 @@ class Interface(object):
                       roll_forward=None,
                       pause=False,
                       pause_start=0.0,
+                      pause_modal=False,
                       ):
         """
         This handles one cycle of displaying an image to the user,
@@ -3555,6 +3556,9 @@ class Interface(object):
         `pause`
             If not None, the amount of time before the interaction ends with
             False being returned.
+
+        `pause_modal`
+            If True, the pause will end even if a modal screen is active.
         """
 
         renpy.plog(1, "start interact_core")
@@ -3693,7 +3697,7 @@ class Interface(object):
         renpy.plog(1, "final predict")
 
         if pause is not None:
-            pb = renpy.display.behavior.PauseBehavior(pause)
+            pb = renpy.display.behavior.PauseBehavior(pause, modal=pause_modal)
             root_widget.add(pb, pause_start, pause_start)
             focus_roots.append(pb)
 

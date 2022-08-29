@@ -1204,6 +1204,11 @@ takes the properties:
 `repeat`
     If True, the timer repeats after it times out.
 
+`modal`
+    If True, the timer will fire even if it's behind a modal screen.
+    If False, the default, the timer will not fire until all modal screens
+    in front of it are dismissed.
+
 It takes no children.
 
 ::

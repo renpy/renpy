@@ -5,6 +5,19 @@ Changelog (Ren'Py 7.x-)
 .. _renpy-7.5.2:
 .. _renpy-8.0.2:
 
+8.0.3 / 7.5.3
+=============
+
+Changes
+-------
+
+Based on feedback from creators, there are some cases where having modal screens
+block pauses is not desirable. To deal with those cases, the :ref:`timer displayable <sl-timer>`
+and :func:`renpy.pause` have a new `modal` property/parameter. If true, timers will expire
+and pauses will end even if a modal screen is displayed.
+
+
+
 8.0.2 / 7.5.2
 =============
 
