@@ -11,6 +11,9 @@ Changelog (Ren'Py 7.x-)
 Changes and Fixes
 -----------------
 
+There is now a new :doc:`security` page in the documentation, intended to help
+players understand the security implications of mods and sharing save files.
+
 Ren'Py has been updated to target Android API level 33, corresponding to Android 13,
 allowing new games to be added to the Google Play store.
 
