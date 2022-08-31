@@ -80,6 +80,7 @@ the omission in future versions.
 * GimmiRuski
 * GiovanH
 * Giuseppe Bertone
+* GNCanva
 * Gouvernathor
 * Gratusfr
 * Gregory Pease
@@ -174,6 +175,7 @@ the omission in future versions.
 * Pratomo Asta Nugraha
 * Project Gardares
 * Psunbury
+* qTich
 * Raj Singh Chauhan
 * Raspberry-soft
 * Rastagong
