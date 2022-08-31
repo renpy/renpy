@@ -51,7 +51,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:56
     old "## To allow the user to play a test sound on the sound or voice channel, uncomment a line below and use it to set a sample sound to play."
-    new "## Щоб дозволити користувачеві відтворювати тестовий звук на звуковому або голосовому каналі, розкоментуйте рядок нижче та використовуйте його, щоб установити зразок звуку для відтворення."
+    new "## Щоб дозволити користувачеві відтворювати тестовий звук на звуковому або голосовому каналі, розкоментуйте рядок нижче та використовуйте його, щоб встановити зразок звуку для відтворення."
 
     # gui/game/options.rpy:63
     old "## Uncomment the following line to set an audio file that will be played while the player is at the main menu. This file will continue playing into the game, until it is stopped or another file is played."
@@ -83,7 +83,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:97
     old "## A variable to set the transition used when the game starts does not exist. Instead, use a with statement after showing the initial scene."
-    new "## Змінна для встановлення переходу, що використовується під час запуску гри, не існує. Натомість використовуйте а з заявою після показу початкової сцени."
+    new "## Змінна для встановлення переходу, який використовується під час запуску гри, не існує. Замість цього використовуйте оператор with після показу початкової сцени."
 
     # gui/game/options.rpy:102
     old "## Window management"
@@ -111,7 +111,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:129
     old "## The default auto-forward delay. Larger numbers lead to longer waits, with 0 to 30 being the valid range."
-    new "## Затримка автоматичного пересилання за умовчанням. Більші числа призводять до довшого очікування, при цьому допустимим діапазоном є від 0 до 30."
+    new "## Затримка автоматичного пересилання за замовчуванням. Більші числа призводять до довшого очікування, при цьому допустимим діапазоном є від 0 до 30."
 
     # gui/game/options.rpy:135
     old "## Save directory"
@@ -147,11 +147,11 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:159
     old "## Build configuration"
-    new "## Конфігурація збірки"
+    new "## Створити конфігурацію"
 
     # gui/game/options.rpy:161
     old "## This section controls how Ren'Py turns your project into distribution files."
-    new "## Цей розділ керує тим, як Ren'Py перетворює ваш проект у файли розповсюдження."
+    new "## Цей розділ керує тим, як Ren'Py перетворює ваш проєкт у файли розповсюдження."
 
     # gui/game/options.rpy:166
     old "## The following functions take file patterns. File patterns are case- insensitive, and matched against the path relative to the base directory, with and without a leading /. If multiple patterns match, the first is used."
@@ -175,7 +175,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:179
     old "## For example, \"*.txt\" matches txt files in the base directory, \"game/**.ogg\" matches ogg files in the game directory or any of its subdirectories, and \"**.psd\" matches psd files anywhere in the project."
-    new "## Наприклад, \"*.txt\" відповідає файлам txt у базовому каталозі, \"game/**.ogg\" відповідає файлам ogg у каталозі гри або будь-якому з його підкаталогів, а \"**.psd \" відповідає файлам psd будь-де в проекті."
+    new "## Наприклад, \"*.txt\" відповідає файлам txt у базовому каталозі, \"game/**.ogg\" відповідає файлам ogg у каталозі гри або будь-якому з його підкаталогів, а \"**.psd \" відповідає файлам psd будь-де в проєкті."
 
     # gui/game/options.rpy:183
     old "## Classify files as None to exclude them from the built distributions."
@@ -187,7 +187,7 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:196
     old "## Files matching documentation patterns are duplicated in a mac app build, so they appear in both the app and the zip file."
-    new "## Файли, що відповідають шаблонам документації, дублюються у збірці програми Mac, тому вони з’являються як у програмі, так і в zip-файлі."
+    new "## Файли, що відповідають шаблонам документації, дублюються у створенні програми Mac, тому вони з’являються як у програмі, так і в zip-файлі."
 
     # gui/game/options.rpy:203
     old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
@@ -195,5 +195,5 @@ translate ukrainian strings:
 
     # gui/game/options.rpy:210
     old "## The username and project name associated with an itch.io project, separated by a slash."
-    new "## Ім’я користувача та назва проекту, пов’язані з проектом itch.io, розділені скісною рискою."
+    new "## Ім’я користувача та назва проєкту, пов’язані з проєктом itch.io, розділені скісною рискою."
 

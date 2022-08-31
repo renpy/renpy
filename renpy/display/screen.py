@@ -1349,7 +1349,7 @@ def current_screen(): # type: () -> ScreenDisplayable|None
     :doc: screens
     :name: renpy.current_screen
 
-    Returns the ScreendDisplayable corresponding to the screen currently being
+    Returns the ScreenDisplayable corresponding to the screen currently being
     updated, rendered, or processing an
 
     See :func:`get_screen` for documented fields on ScreenDisplayable.

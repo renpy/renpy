@@ -509,18 +509,20 @@ class PauseBehavior(renpy.display.layout.Null):
     """
 
     voice = False
+    modal = False
 
-    def __init__(self, delay, result=False, voice=False, **properties):
+    def __init__(self, delay, result=False, voice=False, modal=False, **properties):
         super(PauseBehavior, self).__init__(**properties)
 
         self.delay = delay
         self.result = result
         self.voice = voice
+        self.modal = modal
 
     def event(self, ev, x, y, st):
 
         if ev.type == renpy.display.core.TIMEEVENT:
-            if ev.modal and renpy.config.modal_blocks_pause:
+            if ev.modal and (not self.modal) and renpy.config.modal_blocks_pause:
                 renpy.game.interface.timeout(max(self.delay - st, 0))
                 return
 
@@ -2340,6 +2342,7 @@ class Timer(renpy.display.layout.Null):
 
     started = False
     _box_skip = True
+    modal = False
 
     def after_upgrade(self, version):
         if version < 1:
@@ -2347,7 +2350,7 @@ class Timer(renpy.display.layout.Null):
             self.state.started = self.started
             self.state.next_event = self.next_event
 
-    def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}, replaces=None, **properties):
+    def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}, replaces=None, modal=False, **properties):
         super(Timer, self).__init__(**properties)
 
         if delay <= 0:
@@ -2370,6 +2373,9 @@ class Timer(renpy.display.layout.Null):
         # Did we start the timer?
         self.started = False
 
+        # Should this timer trigger on modal events.
+        self.modal = modal
+
         if isinstance(replaces, Timer):
             self.state = replaces.state
         else:
@@ -2386,7 +2392,7 @@ class Timer(renpy.display.layout.Null):
 
     def event(self, ev, x, y, st):
 
-        if ev.type == renpy.display.core.TIMEEVENT and ev.modal:
+        if ev.type == renpy.display.core.TIMEEVENT and (not self.modal) and ev.modal:
             return
 
         state = self.state

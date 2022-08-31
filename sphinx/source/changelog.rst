@@ -2,6 +2,40 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
+.. _renpy-7.5.3:
+.. _renpy-8.0.3:
+
+8.0.3 / 7.5.3
+=============
+
+Changes and Fixes
+-----------------
+
+There is now a new :doc:`security` page in the documentation, intended to help
+players understand the security implications of mods and sharing save files.
+
+Ren'Py has been updated to target Android API level 33, corresponding to Android 13,
+allowing new games to be added to the Google Play store.
+
+Based on feedback from creators, there are some cases where having modal screens
+block pauses is not desirable. To deal with those cases, the :ref:`timer displayable <sl-timer>`
+and :func:`renpy.pause` have a new `modal` property/parameter. If true, timers will expire
+and pauses will end even if a modal screen is displayed.
+
+When a game is being developed, Ren'Py will now produce an error if the first
+use of :func:`gui.preference` has not been given a default. This makes an error
+that could happen at runtime in that case more explicit.
+
+There have been many documentation improvements.
+
+This release fixes a problem with Matrix equality that could prevent
+transform properties that use Matrixes from being animated correctly.
+
+Ren'Py now properly analyzes variables that are bound by lambdas.
+
+The Ukrainian translation has been updated.
+
+
 .. _renpy-7.5.2:
 .. _renpy-8.0.2:
 

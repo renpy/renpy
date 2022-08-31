@@ -3,7 +3,7 @@ translate ukrainian strings:
 
     # 00console.rpy:255
     old "Press <esc> to exit console. Type help for help.\n"
-    new "Натисніть <esc>, щоб вийти із консолі. Введіть help для допомоги.\n"
+    new "Натисніть <esc>, щоб вийти із консолі. Введіть <help> для допомоги.\n"
 
     # 00console.rpy:259
     old "Ren'Py script enabled."
@@ -31,7 +31,7 @@ translate ukrainian strings:
 
     # 00console.rpy:521
     old "clear: clear the console history"
-    new "clear: очищує історію консолі"
+    new "clear: очищення історії консолі"
 
     # 00console.rpy:525
     old "exit: exit the console"
@@ -63,7 +63,7 @@ translate ukrainian strings:
 
     # 00console.rpy:639
     old "jump <label>: jumps to label"
-    new "jump <label>: стрибок на мітку"
+    new "jump <мітка>: стрибок на мітку"
 
     # 00console.rpy:685
     old "short: Shorten the representation of objects on the console (default)."

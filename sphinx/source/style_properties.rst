@@ -605,7 +605,9 @@ Text Style Properties
 
     will always produce a 1 pixel-wide border.
 
-    Outlines only work with TrueType fonts.
+    Outlines only work with TrueType fonts. Outlines only work when applied
+    to an entire Text displayable. They do not work when applied to a hyperlink,
+    text tag, or other method that applies to only a portion of the text.
 
 .. style-property:: outline_scaling string
 

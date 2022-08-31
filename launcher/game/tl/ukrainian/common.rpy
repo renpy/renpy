@@ -183,7 +183,7 @@ translate ukrainian strings:
 
     # 00action_file.rpy:763
     old "Next file page."
-    new "Наступна сторінка збережень"
+    new "Наступна сторінка збережень."
 
     # 00action_file.rpy:827
     old "Previous file page."
@@ -195,11 +195,11 @@ translate ukrainian strings:
 
     # 00action_file.rpy:906
     old "Quick save."
-    new "Швидке збереження"
+    new "Швидке збереження."
 
     # 00action_file.rpy:925
     old "Quick load."
-    new "Швидке завантаження"
+    new "Швидке завантаження."
 
     # 00action_other.rpy:355
     old "Language [text]"
@@ -263,7 +263,7 @@ translate ukrainian strings:
 
     # 00director.rpy:1639
     old "Remove"
-    new "Прибрати"
+    new "Видалити"
 
     # 00director.rpy:1674
     old "Statement:"
@@ -307,7 +307,7 @@ translate ukrainian strings:
 
     # 00gui.rpy:372
     old "Are you sure you want to overwrite your save?"
-    new "Ви впевнені що хочете перезаписатиь ваше збереження?"
+    new "Ви впевнені що хочете перезаписати ваше збереження?"
 
     # 00gui.rpy:373
     old "Loading will lose unsaved progress.\nAre you sure you want to do this?"
@@ -359,11 +359,11 @@ translate ukrainian strings:
 
     # 00library.rpy:150
     old "bar"
-    new ". Смуга налаштування"
+    new "Смуга налаштування"
 
     # 00library.rpy:151
     old "selected"
-    new ". На даний момент це вибрано"
+    new "вибрано"
 
     # 00library.rpy:152
     old "viewport"
@@ -371,11 +371,11 @@ translate ukrainian strings:
 
     # 00library.rpy:153
     old "horizontal scroll"
-    new ". горизонтальна смуга прокручування"
+    new "горизонтальна смуга прокручування"
 
     # 00library.rpy:154
     old "vertical scroll"
-    new ". вертикальна смуга прокручування"
+    new "вертикальна смуга прокручування"
 
     # 00library.rpy:155
     old "activate"
@@ -579,7 +579,7 @@ translate ukrainian strings:
 
     # _developer\developer.rpym:43
     old "Interactive Director (D)"
-    new "Интерактивний Директор (D)"
+    new "Інтерактивний Директор (D)"
 
     # _developer\developer.rpym:45
     old "Reload Game (Shift+R)"
@@ -615,7 +615,7 @@ translate ukrainian strings:
 
     # _developer\developer.rpym:90
     old "[name] [attributes] (hidden)"
-    new "[name] [attributes] (hidden)"
+    new "[name] [attributes] (приховано)"
 
     # _developer\developer.rpym:94
     old "[name] [attributes]"
@@ -679,7 +679,7 @@ translate ukrainian strings:
 
     # _developer\inspector.rpym:61
     old "Size"
-    new "Розширення"
+    new "Розмір"
 
     # _developer\inspector.rpym:65
     old "Style"
@@ -715,7 +715,7 @@ translate ukrainian strings:
 
     # _layout\classic_load_save.rpym:179
     old "q"
-    new "б"
+    new "ш"
 
     # 00iap.rpy:217
     old "Contacting App Store\nPlease Wait..."
@@ -795,7 +795,7 @@ translate ukrainian strings:
 
     # 00gallery.rpy:585
     old "Image [index] of [count] locked."
-    new "Зображення [index] із [count] зачинено."
+    new "Зображення [index] із [count] заблоковано."
 
     # 00gallery.rpy:605
     old "prev"
@@ -815,11 +815,11 @@ translate ukrainian strings:
 
     # _developer\developer.rpym:154
     old "Hide deleted"
-    new "Сховати віддалені"
+    new "Сховати видалені"
 
     # _developer\developer.rpym:154
     old "Show deleted"
-    new "Показати віддалені"
+    new "Показати видалені"
 
     # 00accessibility.rpy:76
     old "Font Override"
