@@ -52,6 +52,7 @@ the omission in future versions.
 * David Gowers
 * Deji
 * Delta
+* Dennis Goodlett
 * Denzil
 * Derik
 * Diapolo10
@@ -175,7 +176,6 @@ the omission in future versions.
 * Pratomo Asta Nugraha
 * Project Gardares
 * Psunbury
-* qTich
 * Raj Singh Chauhan
 * Raspberry-soft
 * Rastagong
