@@ -880,6 +880,9 @@ def check_unreachables(all_nodes):
         locadict[filename].append(str(linenumber))
 
     for filename, linenumbers in locadict.items():
+        if len(linenumbers) > 10:
+            linenumbers = linenumbers[:9]
+            linenumbers.append("others")
         report("{} : this file contains unreachable statements at {}.".format(filename,
                                                                               humanize_listing(linenumbers,
                                                                                                singular_prefix="line ",
