@@ -2212,7 +2212,7 @@ class UserStatement(Node):
 
         for i in self.subparses:
             if i.block[0] is old:
-                self.code_block.insert(0, new)
+                i.block.insert(0, new)
 
     def restructure(self, callback):
         if self.code_block:
