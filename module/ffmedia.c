@@ -656,7 +656,7 @@ static void decode_audio(MediaState *ms) {
 
 		if (ret == 0) {
 			dequeue_packet(&ms->audio_packet_queue);
-		} else if (ret == AVERROR(EAGAIN)) {
+		} else if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
 			// pass
 		} else {
 			ms->audio_finished = 1;
@@ -777,9 +777,10 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		AVPacket *pkt = read_packet(ms, &ms->video_packet_queue);
 		ret = avcodec_send_packet(ms->video_context, pkt);
 
+
 		if (ret == 0) {
 			dequeue_packet(&ms->video_packet_queue);
-		} else if (ret == AVERROR(EAGAIN)) {
+		} else if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF) {
 			// pass
 		} else {
 			ms->video_finished = 1;
