@@ -90,16 +90,17 @@ Multi-Game persistence is a feature that lets you share information between
 Ren'Py games. This may be useful if you plan to make a series of games, and
 want to have them share information.
 
-To use multipersistent data, a MultiPersistent object must be created inside
-an ``init`` block. The user can then update this object, and save it to disk by
+To use multipersistent data, a MultiPersistent object must be created at init
+time (preferably using ``define``).
+The user can then update this object, and save it to disk by
 calling its save method. Undefined fields default to None. To ensure the
-object can be loaded again, we suggest not assigning the object instances
-of user-defined types.
+object can be loaded again in a different game, we strongly advise against
+storing instances of user-defined types in the object.
 
 .. class:: MultiPersistent(key, save_on_quit=False)
 
-    Creates a new ``MultiPersistent`` object. This should only be called inside an
-    ``init`` block, and it returns a new ``MultiPersistent`` with the given key.
+    Creates a new ``MultiPersistent`` object. This should only be called at init time,
+    and it returns a new ``MultiPersistent`` with the given key.
 
     `key`
         The key used to to access the multipersistent data. Games using the
@@ -116,8 +117,7 @@ of user-defined types.
 
 As an example, take the first part of a two-part game::
 
-    init python:
-        mp = MultiPersistent("demo.renpy.org")
+    define mp = MultiPersistent("demo.renpy.org")
 
     label start:
 
@@ -132,8 +132,7 @@ As an example, take the first part of a two-part game::
 
 And the second part::
 
-    init python:
-        mp = MultiPersistent("demo.renpy.org")
+    define mp = MultiPersistent("demo.renpy.org")
 
     label start:
 
