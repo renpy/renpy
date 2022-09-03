@@ -493,7 +493,7 @@ def clear_attributes(tag, layer=None):
     :doc: image_func
 
     Clears all image attributes for the `tag` image.
-    If the tag had no attachec image attributes, does nothing.
+    If the tag had no attached image attributes, this does nothing.
 
     `layer`
         The layer to check. If None, uses the default layer for `tag`.
