@@ -61,17 +61,27 @@ init -1600 python:
         """
 
         identity_fields = [ "object" ]
-        equality_fields = [ "field", "value" ]
+        equality_fields = [ "field", "value", "min", "max" ]
 
         kind = "field"
 
-        def __init__(self, object, field, value, kind="field"):
+        def __init__(self, object, field, value, kind="field", **kwargs):
             self.object = object
             self.field = field
             self.value = value
             self.kind = kind
+            self.min = kwargs.get("min")
+            self.max = kwargs.get("max")
 
         def __call__(self):
+            if isinstance(self.value, (int, float)):
+
+                if self.min is not None:
+                    self.value = max(self.value, self.min)
+
+                if self.max is not None:
+                    self.value = min(self.value, self.max)
+
             __set_field(self.object, self.field, self.value, self.kind)
             renpy.restart_interaction()
 
@@ -79,7 +89,7 @@ init -1600 python:
             return __get_field(self.object, self.field, self.kind) == self.value
 
     @renpy.pure
-    def SetVariable(name, value):
+    def SetVariable(name, value, **kwargs):
         """
         :doc: data_action
 
@@ -90,7 +100,7 @@ init -1600 python:
         or "persistent.show_cutscenes".
         """
 
-        return SetField(store, name, value, kind="variable")
+        return SetField(store, name, value, kind="variable", **kwargs)
 
     @renpy.pure
     class SetDict(Action, FieldEquality):
@@ -103,14 +113,24 @@ init -1600 python:
         """
 
         identity_fields = [ "dict" ]
-        equality_fields = [ "key", "value" ]
+        equality_fields = [ "key", "value", "min", "max" ]
 
-        def __init__(self, dict, key, value):
+        def __init__(self, dict, key, value, **kwargs):
             self.dict = dict
             self.key = key
             self.value = value
+            self.min = kwargs.get("min")
+            self.max = kwargs.get("max")
 
         def __call__(self):
+            if isinstance(self.value, (int, float)):
+
+                if self.min is not None:
+                    self.value = max(self.value, self.min)
+
+                if self.max is not None:
+                    self.value = min(self.value, self.max)
+
             self.dict[self.key] = self.value
             renpy.restart_interaction()
 
@@ -135,11 +155,13 @@ init -1600 python:
         """
 
         identity_fields = [ "value" ]
-        equality_fields = [ "name" ]
+        equality_fields = [ "name", "min", "max" ]
 
-        def __init__(self, name, value):
+        def __init__(self, name, value, **kwargs):
             self.name = name
             self.value = value
+            self.min = kwargs.get("min")
+            self.max = kwargs.get("max")
 
         def __call__(self):
 
@@ -147,6 +169,14 @@ init -1600 python:
 
             if cs is None:
                 return
+
+            if isinstance(self.value, (int, float)):
+
+                if self.min is not None:
+                    self.value = max(self.value, self.min)
+
+                if self.max is not None:
+                    self.value = min(self.value, self.max)
 
             cs.scope[self.name] = self.value
             renpy.restart_interaction()
@@ -164,7 +194,7 @@ init -1600 python:
             return cs.scope[self.name] == self.value
 
     # Not pure.
-    def SetLocalVariable(name, value):
+    def SetLocalVariable(name, value, **kwargs):
         """
         :doc: data_action
 
@@ -183,7 +213,7 @@ init -1600 python:
         in - it can't be passed in from somewhere else.
         """
 
-        return SetDict(sys._getframe(1).f_locals, name, value)
+        return SetDict(sys._getframe(1).f_locals, name, value, **kwargs)
 
 
     @renpy.pure
