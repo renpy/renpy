@@ -71,13 +71,16 @@ class NullFile(io.IOBase):
     def read(self, length=None):
         raise IOError("Not implemented.")
 
+    def flush(self):
+        return
+
 
 def null_files():
     try:
         if (sys.stderr is None) or sys.stderr.fileno() < 0:
             sys.stderr = NullFile()
 
-        if (sys.stderr is None) or sys.stdout.fileno() < 0:
+        if (sys.stdout is None) or sys.stdout.fileno() < 0:
             sys.stdout = NullFile()
     except Exception:
         pass

@@ -511,18 +511,19 @@ class PauseBehavior(renpy.display.layout.Null):
     voice = False
     modal = False
 
-    def __init__(self, delay, result=False, voice=False, modal=False, **properties):
+    def __init__(self, delay, result=False, voice=False, modal=None, **properties):
         super(PauseBehavior, self).__init__(**properties)
 
         self.delay = delay
         self.result = result
         self.voice = voice
-        self.modal = modal
+        self.modal = (renpy.config.modal_blocks_pause) if (modal is None) else modal
 
     def event(self, ev, x, y, st):
 
         if ev.type == renpy.display.core.TIMEEVENT:
-            if ev.modal and (not self.modal) and renpy.config.modal_blocks_pause:
+
+            if ev.modal and self.modal:
                 renpy.game.interface.timeout(max(self.delay - st, 0))
                 return
 
@@ -2350,7 +2351,7 @@ class Timer(renpy.display.layout.Null):
             self.state.started = self.started
             self.state.next_event = self.next_event
 
-    def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}, replaces=None, modal=False, **properties):
+    def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}, replaces=None, modal=None, **properties):
         super(Timer, self).__init__(**properties)
 
         if delay <= 0:
@@ -2373,8 +2374,10 @@ class Timer(renpy.display.layout.Null):
         # Did we start the timer?
         self.started = False
 
+        print("Modal", self.modal)
+
         # Should this timer trigger on modal events.
-        self.modal = modal
+        self.modal = (renpy.config.modal_blocks_timer) if (modal is None) else modal
 
         if isinstance(replaces, Timer):
             self.state = replaces.state
@@ -2392,7 +2395,9 @@ class Timer(renpy.display.layout.Null):
 
     def event(self, ev, x, y, st):
 
-        if ev.type == renpy.display.core.TIMEEVENT and (not self.modal) and ev.modal:
+        print(self.modal)
+
+        if ev.type == renpy.display.core.TIMEEVENT and self.modal and ev.modal:
             return
 
         state = self.state
