@@ -28,6 +28,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 import gc
 import io
 import re
+from collections.abc import Iterable
 
 import renpy
 
@@ -658,7 +659,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
     if not at_list:
         tt = renpy.config.tag_transform.get(key, None)
         if tt is not None:
-            if not isinstance(tt, list):
+            if not isinstance(tt, Iterable):
                 at_list = [ tt ]
             else:
                 at_list = list(tt)
@@ -2565,8 +2566,10 @@ def show_layer_at(at_list, layer='master', reset=True, camera=False):
         to update that state.
     """
 
-    if not isinstance(at_list, list):
+    if not isinstance(at_list, Iterable):
         at_list = [ at_list ]
+    elif not isinstance(at_list, list):
+        at_list = list(at_list)
 
     renpy.game.context().scene_lists.set_layer_at_list(layer, at_list, reset=reset, camera=camera)
 
