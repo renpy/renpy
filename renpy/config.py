@@ -1267,6 +1267,9 @@ alternate_unelide_path = None
 # Should modal block pause?
 modal_blocks_pause = True
 
+# Should modal block timers?
+modal_blocks_timer = False
+
 del os
 del collections
 

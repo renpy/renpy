@@ -3536,9 +3536,9 @@ class Interface(object):
                       mouse='default',
                       preloads=[],
                       roll_forward=None,
-                      pause=False,
+                      pause=None,
                       pause_start=0.0,
-                      pause_modal=False,
+                      pause_modal=None,
                       ):
         """
         This handles one cycle of displaying an image to the user,
@@ -3558,7 +3558,8 @@ class Interface(object):
             False being returned.
 
         `pause_modal`
-            If True, the pause will end even if a modal screen is active.
+            If true, the pause will respect modal windows. If false, it will
+            not.
         """
 
         renpy.plog(1, "start interact_core")
