@@ -4,6 +4,7 @@ python early in layeredimage:
 
     from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
     from collections import OrderedDict
+    from collections.abc import Iterable
 
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
     ATL_PROPERTIES_SET = set(ATL_PROPERTIES)
@@ -95,23 +96,31 @@ python early in layeredimage:
 
         def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], group_args={}, **kwargs):
 
-            if not isinstance(at, list):
+            if not isinstance(at, Iterable):
                 at = [ at ]
+            elif not isinstance(at, list):
+                at = list(at)
 
             self.at = at
 
-            if not isinstance(if_all, list):
+            if isinstance(if_all, str):
                 if_all = [ if_all ]
+            elif not isinstance(if_all, list):
+                if_all = list(at)
 
             self.if_all = if_all
 
-            if not isinstance(if_any, list):
+            if isinstance(if_any, str):
                 if_any = [ if_any ]
+            elif not isinstance(if_any, list):
+                if_any = list(at)
 
             self.if_any = if_any
 
-            if not isinstance(if_not, list):
+            if isinstance(if_not, str):
                 if_not = [ if_not ]
+            elif not isinstance(if_not, list):
+                if_not = list(at)
 
             self.if_not = if_not
 
@@ -596,8 +605,10 @@ python early in layeredimage:
             for i in attributes:
                 self.add(i)
 
-            if not isinstance(at, list):
+            if not isinstance(at, Iterable):
                 at = [ at ]
+            elif not isinstance(at, list):
+                at = list(at)
 
             self.at = at
 
@@ -1118,7 +1129,9 @@ python early in layeredimage:
             if transform is None:
                 self.transform = [ ]
 
-            elif isinstance(transform, list):
+            elif isinstance(transform, Iterable):
+                if not isinstance(transform, list):
+                    transform = list(transform)
                 self.transform = transform
 
             else:
