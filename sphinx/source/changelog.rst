@@ -84,6 +84,10 @@ not change after the init phase finishes.
 New Features
 ------------
 
+The size text tag now takes multipliers, so it's possible to have::
+
+    "{size=*2}This is double size{/size} and {size=*0.5}this is half size{/size}."
+
 The :ref:`dismiss <sl-dismiss>` displayable now takes a `keysym` property,
 specifying what keysym causes the dismiss.
 
