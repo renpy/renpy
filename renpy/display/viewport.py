@@ -312,6 +312,11 @@ class Viewport(renpy.display.layout.Container):
 
         grab = renpy.display.focus.get_grab()
 
+        if draggable and grab is None:
+
+            if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
+                self.drag_position = None
+
         if inside and draggable and (self.drag_position is not None) and (grab is not self):
 
             focused = renpy.display.focus.get_focused()
