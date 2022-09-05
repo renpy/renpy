@@ -307,6 +307,11 @@ or on the screen when not inside a layout.
     Equivalent to setting ypos to the value of this property, and
     yanchor to 0.5.
 
+.. style-property:: xycenter tuple of (position, position)
+
+    Equivalent to setting xcenter to the first component of the tuple,
+    and ycenter to the second.
+
 .. style-property:: xoffset int
 
     Gives a number of pixels that are added to the horizontal position
