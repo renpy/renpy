@@ -2374,8 +2374,6 @@ class Timer(renpy.display.layout.Null):
         # Did we start the timer?
         self.started = False
 
-        print("Modal", self.modal)
-
         # Should this timer trigger on modal events.
         self.modal = (renpy.config.modal_blocks_timer) if (modal is None) else modal
 
@@ -2394,8 +2392,6 @@ class Timer(renpy.display.layout.Null):
         return super(Timer, self).render(width, height, st, at)
 
     def event(self, ev, x, y, st):
-
-        print(self.modal)
 
         if ev.type == renpy.display.core.TIMEEVENT and self.modal and ev.modal:
             return

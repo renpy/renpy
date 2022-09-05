@@ -713,7 +713,7 @@ def check_language():
     if ctx.translate_language != preferences.language:
         ctx.translate_language = preferences.language
 
-        tid = ctx.translate_identifier
+        tid = ctx.translate_identifier or ctx.deferred_translate_identifier
 
         if tid is not None:
             node = renpy.game.script.translator.lookup_translate(tid) # @UndefinedVariable
