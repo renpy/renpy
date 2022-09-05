@@ -72,7 +72,7 @@ def main():
     ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
     ap.add_argument("--link-directories", action="store_true")
-    ap.add_argument("--append_version", action="store_true")
+    ap.add_argument("--append-version", action="store_true")
 
     args = ap.parse_args()
 
