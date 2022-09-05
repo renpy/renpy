@@ -100,8 +100,6 @@ def main():
 
     if args.version is None:
         args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
-    elif args.append_version:
-        args.version += "-"  + ".".join(str(i) for i in renpy.version_tuple)
 
     try:
         s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", ]).decode("utf-8").strip()
@@ -140,6 +138,9 @@ def main():
         import renpy.vc_version # @UnusedImport
 
     reload(sys.modules['renpy'])
+
+    if args.append_version:
+        args.version += "-"  + renpy.version_only
 
     # Check that the versions match.
     full_version = renpy.version_only # @UndefinedVariable
