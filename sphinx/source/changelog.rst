@@ -2,60 +2,8 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
-.. _renpy-7.5.3:
-.. _renpy-8.0.3:
-
-8.0.3 / 7.5.3
-=============
-
-Security
---------
-
-There is now a new :doc:`security` page in the documentation, intended to help
-players understand the security implications of mods and sharing save files.
-
-Modal Screen, Pauses, and Timers
---------------------------------
-
-Based on feedback from creators, the changes to how modal screens interact
-with pauses and timers have been redone. As of this version, pauses will
-not end when a modal screen is shown, while timers will trigger while
-a modal screen is shown above the timer.
-
-There are some cases where this behavior may not be wanted. To deal with
-those cases, the :ref:`timer displayable <sl-timer>` and :func:`renpy.pause`
-have a new `modal` property/parameter. If `modal` is True, pauses will
-end and timers will respect the modal screen, and will not trigger until
-the screen disappears. If false, the modal screen will not be respected,
-causing pauses to end and timers to trigger while the modal screen is
-still displayed.
-
-Changes and Fixes
------------------
-
-Ren'Py has been updated to target Android API level 33, corresponding to Android 13,
-allowing new games to be added to the Google Play store.
-
-When the translation language changes during a menu that is using dialogue as a
-caption, Ren'Py will jump the game back to the start of the say statement that
-added that dialogue, allowing it to be re-translated.
-
-When a game is being developed, Ren'Py will now produce an error if the first
-use of :func:`gui.preference` has not been given a default. This makes an error
-that could happen at runtime in that case more explicit.
-
-There have been many documentation improvements.
-
-This release fixes a problem with Matrix equality that could prevent
-transform properties that use Matrixes from being animated correctly.
-
-Ren'Py now properly analyzes variables that are bound by lambdas.
-
-The Ukrainian translation has been updated.
-
-
-.. _renpy-7.5.2:
-.. _renpy-8.0.2:
+.. _renpy-8.1.0:
+.. _renpy-7.6.0:
 
 8.1 / 7.6
 =========
@@ -147,6 +95,58 @@ to take effect immediately, rather than at the start of the next interaction.
 The main use of this is to allow a sound to be played, and then faded out. (By
 default, a ``play`` followed by a ``stop`` causes the track to never be
 played, and hence never faded out.)
+
+
+.. _renpy-7.5.3:
+.. _renpy-8.0.3:
+
+8.0.3 / 7.5.3
+=============
+
+Security
+--------
+
+There is now a new :doc:`security` page in the documentation, intended to help
+players understand the security implications of mods and sharing save files.
+
+Modal Screen, Pauses, and Timers
+--------------------------------
+
+Based on feedback from creators, the changes to how modal screens interact
+with pauses and timers have been redone. As of this version, pauses will
+not end when a modal screen is shown, while timers will trigger while
+a modal screen is shown above the timer.
+
+There are some cases where this behavior may not be wanted. To deal with
+those cases, the :ref:`timer displayable <sl-timer>` and :func:`renpy.pause`
+have a new `modal` property/parameter. If `modal` is True, pauses will
+end and timers will respect the modal screen, and will not trigger until
+the screen disappears. If false, the modal screen will not be respected,
+causing pauses to end and timers to trigger while the modal screen is
+still displayed.
+
+Changes and Fixes
+-----------------
+
+Ren'Py has been updated to target Android API level 33, corresponding to Android 13,
+allowing new games to be added to the Google Play store.
+
+When the translation language changes during a menu that is using dialogue as a
+caption, Ren'Py will jump the game back to the start of the say statement that
+added that dialogue, allowing it to be re-translated.
+
+When a game is being developed, Ren'Py will now produce an error if the first
+use of :func:`gui.preference` has not been given a default. This makes an error
+that could happen at runtime in that case more explicit.
+
+There have been many documentation improvements.
+
+This release fixes a problem with Matrix equality that could prevent
+transform properties that use Matrixes from being animated correctly.
+
+Ren'Py now properly analyzes variables that are bound by lambdas.
+
+The Ukrainian translation has been updated.
 
 
 .. _renpy-7.5.2:
