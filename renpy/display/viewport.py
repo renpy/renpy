@@ -130,8 +130,11 @@ class Viewport(renpy.display.layout.Container):
 
         self.child_width, self.child_height = child_size
 
+        if isinstance(draggable, bool):
+            self.draggable = draggable
+        else:
+            self.draggable = renpy.exports.variant(draggable)
         self.mousewheel = mousewheel
-        self.draggable = draggable
         self.arrowkeys = arrowkeys
         self.pagekeys = pagekeys
 
