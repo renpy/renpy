@@ -1465,7 +1465,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     return rv
 
 
-def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=False):
+def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=True):
     """
     :doc: se_pause
     :args: (delay=None, *, hard=False, predict=False, modal=False)
@@ -1506,9 +1506,8 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
         display animations during prediction.
 
     `modal`
-        If True, the pause will end while a modal window is above it. If False,
-        the default, the pause will not end until the modal window has been
-        dismissed.
+        If True or None, the pause will not end when a modal screen is being displayed.
+        If false, the pause will end while a modal screen is being displayed.
     """
 
     if renpy.config.skipping == "fast":

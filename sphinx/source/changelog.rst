@@ -8,19 +8,37 @@ Changelog (Ren'Py 7.x-)
 8.0.3 / 7.5.3
 =============
 
-Changes and Fixes
------------------
+Security
+--------
 
 There is now a new :doc:`security` page in the documentation, intended to help
 players understand the security implications of mods and sharing save files.
 
+Modal Screen, Pauses, and Timers
+--------------------------------
+
+Based on feedback from creators, the changes to how modal screens interact
+with pauses and timers have been redone. As of this version, pauses will
+not end when a modal screen is shown, while timers will trigger while
+a modal screen is shown above the timer.
+
+There are some cases where this behavior may not be wanted. To deal with
+those cases, the :ref:`timer displayable <sl-timer>` and :func:`renpy.pause`
+have a new `modal` property/parameter. If `modal` is True, pauses will
+end and timers will respect the modal screen, and will not trigger until
+the screen disappears. If false, the modal screen will not be respected,
+causing pauses to end and timers to trigger while the modal screen is
+still displayed.
+
+Changes and Fixes
+-----------------
+
 Ren'Py has been updated to target Android API level 33, corresponding to Android 13,
 allowing new games to be added to the Google Play store.
 
-Based on feedback from creators, there are some cases where having modal screens
-block pauses is not desirable. To deal with those cases, the :ref:`timer displayable <sl-timer>`
-and :func:`renpy.pause` have a new `modal` property/parameter. If true, timers will expire
-and pauses will end even if a modal screen is displayed.
+When the translation language changes during a menu that is using dialogue as a
+caption, Ren'Py will jump the game back to the start of the say statement that
+added that dialogue, allowing it to be re-translated.
 
 When a game is being developed, Ren'Py will now produce an error if the first
 use of :func:`gui.preference` has not been given a default. This makes an error

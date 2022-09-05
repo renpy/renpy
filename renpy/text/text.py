@@ -1184,6 +1184,8 @@ class Layout(object):
 
                     if value[0] in "+-":
                         push().size += int(value)
+                    elif value[0] == "*":
+                        push().size = int(float(value[1:]) * push().size)
                     else:
                         push().size = int(value)
 

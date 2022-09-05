@@ -1015,7 +1015,8 @@ characters per block. """.format(
 
     print("")
     if renpy.config.developer and (renpy.config.original_developer != "auto"):
-        print("Remember to set config.developer to False before releasing.")
+        print("Remember to set config.developer to False before releasing,")
+        print('or set it to "auto".')
         print("")
 
     print("Lint is not a substitute for thorough testing. Remember to update Ren'Py")

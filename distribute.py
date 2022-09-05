@@ -72,6 +72,7 @@ def main():
     ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
     ap.add_argument("--link-directories", action="store_true")
+    ap.add_argument("--append-version", action="store_true")
 
     args = ap.parse_args()
 
@@ -98,7 +99,7 @@ def main():
     import renpy
 
     if args.version is None:
-        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1]) # @UndefinedVariable
+        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
 
     try:
         s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", ]).decode("utf-8").strip()
@@ -137,6 +138,9 @@ def main():
         import renpy.vc_version # @UnusedImport
 
     reload(sys.modules['renpy'])
+
+    if args.append_version:
+        args.version += "-"  + renpy.version_only
 
     # Check that the versions match.
     full_version = renpy.version_only # @UndefinedVariable

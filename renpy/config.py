@@ -1267,6 +1267,9 @@ alternate_unelide_path = None
 # Should modal block pause?
 modal_blocks_pause = True
 
+# Should modal block timers?
+modal_blocks_timer = False
+
 # The range, in decibels, of the volume mixers.
 volume_db_range = 60
 
@@ -1275,6 +1278,7 @@ autosave_callback = None
 
 # The radius the mouse has to move before triggering a viewport drag.
 viewport_drag_radius = 10
+
 
 del os
 del collections

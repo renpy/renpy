@@ -368,6 +368,12 @@ Tags that apply to all text are:
    decreased by that amount. ::
 
        "{size=+10}Bigger{/size} {size=-10}Smaller{/size} {size=24}24 px{/size}."
+   
+   You can also provide a floating point number preceded by a \*, in
+   which case the size will be multiplied by that number and then
+   rounded down. ::
+   
+       "{size=*2}Twice as big{/size} {size=*0.5}half as big.{/size}"
 
 .. text-tag:: space
 
