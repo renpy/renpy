@@ -96,6 +96,11 @@ The main use of this is to allow a sound to be played, and then faded out. (By
 default, a ``play`` followed by a ``stop`` causes the track to never be
 played, and hence never faded out.)
 
+The new :func:`renpy.clear_attributes` function allows for an image tag to be
+cleared of all the attributes attached to it. The previous way to do this was
+to hide and show the image again, which had the consequence of also resetting
+the placement of the image on the screen. It is not the case with this function.
+
 
 .. _renpy-7.5.3:
 .. _renpy-8.0.3:
