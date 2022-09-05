@@ -3,7 +3,7 @@
 python early in layeredimage:
 
     from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
-    from collections import OrderedDict
+    from collections import OrderedDict, defaultdict
 
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
     ATL_PROPERTIES_SET = set(ATL_PROPERTIES)
@@ -574,9 +574,8 @@ python early in layeredimage:
             self.attributes = [ ]
             self.layers = [ ]
 
-            import collections
-            self.attribute_to_groups = collections.defaultdict(set)
-            self.group_to_attributes = collections.defaultdict(set)
+            self.attribute_to_groups = defaultdict(set)
+            self.group_to_attributes = defaultdict(set)
 
             for i in attributes:
                 self.add(i)
