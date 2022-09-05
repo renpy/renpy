@@ -333,6 +333,7 @@ class Viewport(renpy.display.layout.Container):
                     if math.hypot(oldx - x, oldy - y) >= renpy.config.viewport_drag_radius:
                         rv = renpy.display.focus.force_focus(self)
                         renpy.display.focus.set_grab(self)
+                        self.drag_position = (x, y)
                         grab = self
 
                         if rv is not None:
