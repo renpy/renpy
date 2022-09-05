@@ -444,8 +444,6 @@ init -1500 python hide:
         else:
             _voice.play = None
 
-        renpy.game.context().deferred_translate_identifier = None
-
         _voice.auto_file = vi.auto_filename
         _voice.sustain = vi.sustain
         _voice.tlid = vi.tlid

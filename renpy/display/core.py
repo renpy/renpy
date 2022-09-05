@@ -3380,6 +3380,7 @@ class Interface(object):
             return rv # type: ignore
 
         finally:
+            renpy.game.context().deferred_translate_identifier = None
 
             self.force_prediction = False
 
