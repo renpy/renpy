@@ -130,11 +130,8 @@ class Viewport(renpy.display.layout.Container):
 
         self.child_width, self.child_height = child_size
 
-        if isinstance(draggable, bool):
-            self.draggable = draggable
-        else:
-            self.draggable = renpy.exports.variant(draggable)
         self.mousewheel = mousewheel
+        self.draggable = draggable
         self.arrowkeys = arrowkeys
         self.pagekeys = pagekeys
 
@@ -315,11 +312,6 @@ class Viewport(renpy.display.layout.Container):
 
         grab = renpy.display.focus.get_grab()
 
-        if draggable and grab is None:
-
-            if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
-                self.drag_position = None
-
         if inside and draggable and (self.drag_position is not None) and (grab is not self):
 
             focused = renpy.display.focus.get_focused()
@@ -333,7 +325,6 @@ class Viewport(renpy.display.layout.Container):
                     if math.hypot(oldx - x, oldy - y) >= renpy.config.viewport_drag_radius:
                         rv = renpy.display.focus.force_focus(self)
                         renpy.display.focus.set_grab(self)
-                        self.drag_position = (x, y)
                         grab = self
 
                         if rv is not None:
