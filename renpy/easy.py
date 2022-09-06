@@ -281,6 +281,10 @@ def to_tuple(value):
     """
     Same as to_list, but with tuples.
     """
-    if isinstance(value, Iterable) and not isinstance(value, str):
+    if isinstance(value, tuple):
+        return value
+
+    if not isinstance(value, str) and isinstance(value, Iterable):
         return tuple(value)
+
     return (value,)
