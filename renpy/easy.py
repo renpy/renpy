@@ -269,10 +269,12 @@ def to_list(value, copy=False):
     If the value is an iterable, turns it into a list, otherwise wraps it into one.
     If a list is provided and `copy` is True, a new list will be returned.
     """
-    if isinstance(value, Iterable) and not isinstance(value, str):
-        if (not copy) and isinstance(value, list):
-            return value
+    if isinstance(value, list):
+        return list(value) if copy else value
+        
+    if not isinstance(value, str) and isinstance(value, Iterable):
         return list(value)
+
     return [value]
 
 def to_tuple(value):
