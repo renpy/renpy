@@ -68,7 +68,11 @@ init python:
             renpy_blur_norm += renpy_blur_weight;
         }
 
-        gl_FragColor /= renpy_blur_norm;
+        if (renpy_blur_norm > 0.0) {
+            gl_FragColor /= renpy_blur_norm;
+        } else {
+            gl_FragColor = texture2D(tex0, v_tex_coord.xy, 0.0);
+        }
    """)
 
     renpy.register_shader("renpy.solid", variables="""
