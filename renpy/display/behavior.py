@@ -222,7 +222,8 @@ def map_event(ev, keysym):
 
         return False
 
-    keysym = renpy.easy.to_tuple(keysym)
+    if isinstance(keysym, list):
+        keysym = tuple(keysym)
 
     check_code = event_cache.get(keysym, None)
     if check_code is None:
@@ -239,7 +240,8 @@ def map_keyup(ev, keysym):
         if (keysym in ev.eventnames) and ev.up:
             return True
 
-    keysym = renpy.easy.to_tuple(keysym)
+    if isinstance(keysym, list):
+        keysym = tuple(keysym)
 
     check_code = keyup_cache.get(keysym, None)
     if check_code is None:
