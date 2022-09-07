@@ -34,7 +34,10 @@ Changes and Fixes
 -----------------
 
 Ren'Py has been updated to target Android API level 33, corresponding to Android 13,
-allowing new games to be added to the Google Play store.
+allowing new games to be added to the Google Play store. The Play Billing library
+has been updated to version 5.
+
+A case where blurs could become transparent has been addressed.
 
 When the translation language changes during a menu that is using dialogue as a
 caption, Ren'Py will jump the game back to the start of the say statement that
