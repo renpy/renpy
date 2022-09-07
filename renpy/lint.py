@@ -510,13 +510,18 @@ def check_say(node):
 
         name = (char.image_tag,) + attributes
 
+        orig = name
+        f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
+        if f is not None:
+            name = f(name)
+
         if image_exists_imprecise(name):
             continue
 
         if image_exists_imprecise(('side',) + name):
             continue
 
-        report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
+        report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(orig))
 
 
 def check_menu(node):
