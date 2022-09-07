@@ -13,7 +13,7 @@
         "**/renpy/web/**" : true,
     },
     "files.exclude": {
-        "0old" : true,
+        "0old": true,
         "**-dists": true,
         "**/*.pyc": true,
         "**/*.pyo": true,
@@ -37,6 +37,9 @@
         "renpy*.exe": true,
         "tmp": true,
         "web": true,
+        "**/*.rpa": true,
+        "**/*.rpymc": true,
+        "**/cache/": true
     },
 
     "python.languageServer": "Pylance",
@@ -55,7 +58,7 @@
     "esbonio.sphinx.confDir": "",
     "circuitpython.board.version": null,
 
-    "renpy.excludeCompiledFilesFromWorkspace": false,
+    "renpy.excludeCompiledFilesFromWorkspace": true,
     "renpy.watchFoldersForChanges": false,
     "renpy.warnOnInvalidVariableNames": "Disabled",
     "renpy.warnOnInvalidFilenameIssues": "Disabled",
