@@ -136,6 +136,8 @@ Ren'Py has been updated to target Android API level 33, corresponding to Android
 allowing new games to be added to the Google Play store. The Play Billing library
 has been updated to version 5.
 
+Lint now respects :var:`config.adjust_attributes`.
+
 A case where blurs could become transparent has been addressed.
 
 When the translation language changes during a menu that is using dialogue as a
