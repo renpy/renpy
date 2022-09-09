@@ -64,6 +64,9 @@ into the game directory.
 presplash.png
     The image that's used when the game is loading.
 
+The :var:`config.minimum_presplash_time` variable sets a minimum time the
+presplash is shown for.
+
 Adding a Progress Bar
 ---------------------
 
