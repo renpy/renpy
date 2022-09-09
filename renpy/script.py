@@ -410,12 +410,14 @@ class Script(object):
         initcode into the script current initcode
         """
         module_initcode = self.load_module(name)
+        if not module_initcode:
+            return
 
         # We may not insert elements at or prior the current id!
         current_id = renpy.game.initcode_ast_id
 
         if module_initcode[0][0] < self.initcode[current_id][0]:
-            raise Exception("Module %s contains nodes with priority lower than the node that loads it" %name)
+            raise Exception("Module %s contains nodes with priority lower than the node that loads it" % name)
 
         merge_id = current_id + 1
         current_tail = self.initcode[merge_id:]
