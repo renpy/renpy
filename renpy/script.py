@@ -374,13 +374,9 @@ class Script(object):
 
             self.load_appropriate_file(".rpyc", [ "_ren.py", ".rpy" ], dir, fn, initcode)
 
-        # Make the sort stable.
-        initcode = [ (prio, index, code) for index, (prio, code) in
-                     enumerate(initcode) ]
+        initcode.sort(key=lambda i: i[0])
 
-        initcode.sort(key=lambda i: (i[0], i[1]))
-
-        self.initcode = [ (prio, code) for prio, index, code in initcode ]
+        self.initcode = initcode
 
         self.translator.chain_translates()
 
