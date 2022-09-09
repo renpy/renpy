@@ -78,7 +78,10 @@ init python:
     _("Nightly (Ren'Py 7, Python 2)")
     _("The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all.")
 
-default allow_repair_update = False
+    def update_action(url, force):
+        return [SetField(persistent, "has_update", None),
+                SetField(persistent, "last_update_check", None),
+                updater.Update(url, simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False, force=force)]
 
 screen update_channel(channels):
 
@@ -109,8 +112,8 @@ screen update_channel(channels):
 
                     for c in channels:
 
-                        if c["split_version"] != list(renpy.version_tuple) or allow_repair_update:
-                            $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False, force=allow_repair_update)]
+                        if c["split_version"] != list(renpy.version_tuple):
+                            $ action = update_action(c["url"], False)
 
                             if c["channel"].startswith("Release"):
                                 $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")
@@ -127,8 +130,13 @@ screen update_channel(channels):
 
                         hbox:
                             spacing 7
-                            textbutton c["channel"]  action action
+                            textbutton c["channel"] action action
 
+                            if c["split_version"] == list(renpy.version_tuple):
+                                textbutton _("(repair)"):
+                                    text_size 15
+                                    action update_action(c["url"], True)
+                                    yalign 1.
 
 
                         add HALF_SPACER
