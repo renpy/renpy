@@ -487,6 +487,8 @@ class Script(object):
 
         stmts = self.finish_load(stmts, initcode, False)
 
+        initcode.sort(key=lambda i: i[0])
+
         return stmts, initcode
 
     def finish_load(self, stmts, initcode, check_names=True, filename=None):
