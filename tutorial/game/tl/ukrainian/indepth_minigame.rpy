@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/indepth_minigame.rpy:220
 translate ukrainian demo_minigame_8f14835c:
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/tutorial_director.rpy:5
 translate ukrainian director_e4543d9b:
 

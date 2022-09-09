@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/indepth_text.rpy:22
 translate ukrainian a_label_8d79d234:
 

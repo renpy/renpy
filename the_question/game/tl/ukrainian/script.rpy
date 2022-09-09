@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:40
-
+﻿
 # game/script.rpy:19
 translate ukrainian start_915cb944:
 

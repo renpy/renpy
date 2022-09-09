@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/indepth_style.rpy:40
 translate ukrainian new_gui_17a0326e:
 
@@ -48,7 +47,7 @@ translate ukrainian styles_6189ee12:
     # e "While the default GUI uses variables to provide styles with sensible defaults, if you're replacing the GUI or creating your own screens, you'll need to learn about styles yourself."
     e "Хоча графічний інтерфейс за замовчуванням використовує змінні для надання стилів із розумними значеннями за замовчуванням."
     e "Якщо ви замінюєте графічний інтерфейс користувача або створюєте власні екрани, вам доведеться дізнатися про стилі самостійно."
-    
+
 # game/indepth_style.rpy:68
 translate ukrainian styles_menu_a4a6913e:
 

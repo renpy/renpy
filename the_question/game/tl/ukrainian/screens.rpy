@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:40
-
+﻿
 translate ukrainian strings:
 
     # game/screens.rpy:248

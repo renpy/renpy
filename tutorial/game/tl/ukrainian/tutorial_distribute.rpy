@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/tutorial_distribute.rpy:3
 translate ukrainian distribute_7db9b042:
 

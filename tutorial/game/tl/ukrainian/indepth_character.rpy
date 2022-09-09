@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/indepth_character.rpy:11
 translate ukrainian demo_character_e7e1b1bb:
 

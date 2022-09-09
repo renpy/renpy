@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/tutorial_atl.rpy:208
 translate ukrainian tutorial_positions_a09a3fd1:
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:40
-
+﻿
 translate ukrainian strings:
 
     # renpy/common/00accessibility.rpy:28

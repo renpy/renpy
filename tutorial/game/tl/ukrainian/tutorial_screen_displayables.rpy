@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/tutorial_screen_displayables.rpy:3
 translate ukrainian screen_displayables_7c897a6d:
 

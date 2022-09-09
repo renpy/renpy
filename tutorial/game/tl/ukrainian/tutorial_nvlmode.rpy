@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/tutorial_nvlmode.rpy:19
 translate ukrainian tutorial_nvlmode_76b2fe88:
 

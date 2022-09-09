@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/tutorial_playing.rpy:11
 translate ukrainian tutorial_playing_2985ab86:
 

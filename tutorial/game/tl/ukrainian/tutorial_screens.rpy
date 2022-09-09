@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/tutorial_screens.rpy:165
 translate ukrainian tutorial_screens_2faa22e5:
 

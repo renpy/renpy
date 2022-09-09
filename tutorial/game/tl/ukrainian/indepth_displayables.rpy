@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/indepth_displayables.rpy:15
 translate ukrainian simple_displayables_db46fd25:
 

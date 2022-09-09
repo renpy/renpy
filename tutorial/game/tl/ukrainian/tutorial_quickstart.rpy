@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/tutorial_quickstart.rpy:28
 translate ukrainian tutorial_create_27048c11:
 

@@ -1,5 +1,4 @@
-﻿# TODO: Translation updated at 2022-08-24 15:41
-
+﻿
 # game/indepth_transitions.rpy:56
 translate ukrainian demo_transitions_5bbc72fe:
 
