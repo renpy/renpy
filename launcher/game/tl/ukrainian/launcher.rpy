@@ -523,7 +523,7 @@ translate ukrainian strings:
 
     # game/consolecommand.rpy:91
     old "INFORMATION"
-    new "ІНФО"
+    new "ІНФОРМАЦІЯ"
 
     # game/consolecommand.rpy:91
     old "The command is being run in a new operating system console window."
@@ -775,11 +775,11 @@ translate ukrainian strings:
 
     # game/front_page.rpy:132
     old "Tutorial"
-    new "Посібник"
+    new "Навчальний посібник"
 
     # game/front_page.rpy:133
     old "The Question"
-    new "Питання"
+    new "Запитання"
 
     # game/front_page.rpy:149
     old "Active Project"
@@ -867,7 +867,7 @@ translate ukrainian strings:
 
     # game/front_page.rpy:223
     old "Generate Translations"
-    new "Створити Переклади"
+    new "Створити переклади"
 
     # game/front_page.rpy:224
     old "Extract Dialogue"
