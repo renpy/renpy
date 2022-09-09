@@ -790,19 +790,19 @@ screen preferences():
 
                     textbutton "English" text_font "DejaVuSans.ttf" action Language(None)
                     textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
-                    textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                     textbutton "Bahasa Melayu" text_font "DejaVuSans.ttf" action Language("malay")
-                    textbutton "한국어" text_font "SourceHanSansLite.ttf" action Language("korean")
+                    textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
+                    textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
 
                 vbox:
                     style_prefix "radio"
                     label _(" ")
 
-
+                    textbutton "Українська" text_font "DejaVuSans.ttf" action Language("ukrainian")
+                    textbutton "日本語" text_font "SourceHanSansLite.ttf" action Language("japanese")
+                    textbutton "한국어" text_font "SourceHanSansLite.ttf" action Language("korean")
                     textbutton "简体中文" text_font "SourceHanSansLite.ttf" action Language("schinese")
                     textbutton "繁體中文" text_font "SourceHanSansLite.ttf" action Language("tchinese")
-                    textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
-                    textbutton "日本語" text_font "SourceHanSansLite.ttf" action Language("japanese")
 
 #end language_picker
 

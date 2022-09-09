@@ -56,7 +56,8 @@ transform properties that use Matrixes from being animated correctly.
 
 Ren'Py now properly analyzes variables that are bound by lambdas.
 
-The Ukrainian translation has been updated.
+The Tutorial and The Question have been translated into Ukrainian, and the
+Ukrainian translation of the launcher has been updated.
 
 
 .. _renpy-7.5.2:
