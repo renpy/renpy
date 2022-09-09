@@ -417,7 +417,7 @@ class Script(object):
 
         # We may not insert elements at or prior the current id!
         current_id = renpy.game.initcode_ast_id
-        print("{} < {}".format(module_initcode[0][0], self.initcode[current_id][0]))
+
         if module_initcode[0][0] < self.initcode[current_id][0]:
             raise Exception("Module %s contains nodes with priority lower than the node that loads it" %name)
 
