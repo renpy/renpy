@@ -771,6 +771,7 @@ screen preferences():
                     textbutton "Français" text_font "DejaVuSans.ttf" action Language("french")
                     textbutton "Русский" text_font "DejaVuSans.ttf" action Language("russian")
                     textbutton "Español" text_font "DejaVuSans.ttf" action Language("spanish")
+                    textbutton "Українська" text_font "DejaVuSans.ttf" action Language("ukrainian")
 
                 vbox:
                     style_prefix "radio"

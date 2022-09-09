@@ -136,6 +136,9 @@ Ren'Py has been updated to target Android API level 33, corresponding to Android
 allowing new games to be added to the Google Play store. The Play Billing library
 has been updated to version 5.
 
+Init statements inside a module loaded with :func:`renpy.load_module` are now
+run in init-priority order.
+
 Lint now respects :var:`config.adjust_attributes`.
 
 A case where blurs could become transparent has been addressed.
@@ -155,7 +158,8 @@ transform properties that use Matrixes from being animated correctly.
 
 Ren'Py now properly analyzes variables that are bound by lambdas.
 
-The Ukrainian translation has been updated.
+The Tutorial and The Question have been translated into Ukrainian, and the
+Ukrainian translation of the launcher has been updated.
 
 
 .. _renpy-7.5.2:
