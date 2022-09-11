@@ -980,7 +980,7 @@ Occasionally Used
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
 
-.. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mp3" ]
+.. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mpeg" ]
 
     When running on the web platform, Ren'Py will check the browser to
     see if it can play audio files of these mime types. If the browser
@@ -991,7 +991,7 @@ Occasionally Used
     and wasm is used on safari. If your game only uses mp3 audio, this can
     be changed using ::
 
-        define config.webaudio_required_types = [ "audio/mp3" ]
+        define config.webaudio_required_types = [ "audio/mpeg" ]
 
     To used the faster web audio system on Safari as well.
 
