@@ -247,9 +247,10 @@ Occasionally Used
 .. var:: config.always_shown_screens = [ ]
 
     A list of names of screens that Ren'Py will always show, even in menus,
-    and when the interface is hidden. This is mostly used by Ren'Py, which
-    assumes this will be a list. The :var:`config.overlay_screens` list is
-    usually more appropriate.
+    and when the interface is hidden. If a screen in this list is ever not
+    shown, that screen will be re-shown. This is used by Ren'Py, which may modify the list.
+
+    Setting :var:`config.overlay_screens` is usually more appropriate.
 
 .. var:: config.audio_filename_callback = None
 
