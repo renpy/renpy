@@ -30,6 +30,18 @@ Previously, the volume slider had to be very near the bottom before it had an ef
 Now, the volume increases and decreases match the way people perceive loudness.
 
 
+Draggable Viewports
+-------------------
+
+Viewports can now be dragged by the user, even if a button or other displayable
+inside the viewport is focused. Ren'Py will now detect when the user is dragging,
+and switch focus to the viewport, allowing the viewport to move.
+
+The `draggable` property of :ref:`viewports <sl-viewport>` and :ref:`vpgrids <sl-vpgrid>`
+can now take a :ref:`screen variant <screen-variants>` like "touch", in which
+case the viewport will only be draggable if touch is enabled.
+
+
 \_ren.py Files - Ren'Py in Python
 ---------------------------------
 

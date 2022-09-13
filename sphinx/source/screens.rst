@@ -1298,6 +1298,7 @@ following properties:
     `ysize`) tuple. This can usually be omitted, when the child can
     compute it's own size. If either component is None, the child's
     size is used.
+
 `mousewheel`
     This should be one of:
 
@@ -1316,8 +1317,12 @@ following properties:
         bottom.)
     "horizontal-change"
         Combines horizontal scrolling with change mode.
+
 `draggable`
-    If True, dragging the mouse will scroll the viewport.
+    If True, dragging the mouse will scroll the viewport. This can also be
+    a :ref:`variant <screen-variants>`, in which case the viewport will be draggable
+    if the variant is in place. (For example, ``draggable "touch"``.)
+
 `edgescroll`
     Controlls scrolling when the mouse reaches the edge of the
     viewport. If not None, this should be a two- or three-element
