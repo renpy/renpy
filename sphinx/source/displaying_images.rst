@@ -28,6 +28,7 @@ Most (if not all) of the statements listed in this page are checked by
 Concepts
 ========
 
+.. _concept-image:
 Image
 -----
 
