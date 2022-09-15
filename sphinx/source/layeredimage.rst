@@ -313,9 +313,9 @@ Attribute
 ^^^^^^^^^
 
 The ``attribute`` statement adds a layer that is displayed when the given
-attribute is used to display the image. The same attribute can be used with
-multiple layers, with all layers corresponding to the attribute being shown
-(the `if_all`, `if_any`, and `if_not` properties can change this).
+attribute is used to display the image. The same attribute name can be used
+in multiple layers, with all layers corresponding to the attribute being shown
+(the `if_all`, `if_any`, and `if_not` properties can tweak this).
 
 An attribute takes an attribute name. It can also take two keywords.
 The ``default`` keyword indicates that the attribute should be present
@@ -324,16 +324,13 @@ prevents Ren'Py from automatically searching for a displayable corresponding
 to this attribute, which is useful to have an attribute that is intended solely
 for use with `if_all`, `if_any`, or `if_not`.
 
-If the displayable is not present, it will be computed from the name of the
-layer, group, group variant, and attribute, by replacing all spaces with
-underscores and using underscores to combine everything together. So
-if we have an image named "augustina", the group "eyes" and the attribute "closed",
-the image "augustina_eyes_closed" will be used. (The layered image's
-format function is used to do this, defaulting to :func:`layeredimage.format_function`.)
-
-If an attribute is not inside a group, it's placed in a group with the
-same name, but that group is not used to compute the displayable name.
-(So it would look for "image_attribute", not "image_attribute_attribute").
+If the displayable is not explicitely given, it will be computed from the name
+of the layeredimage, the group (if any), the group's variant (if any), and the
+attribute, by replacing all spaces with underscores and using underscores to
+combine everything together. So if we have an image named "augustina", the
+group "eyes", no group variant, and the attribute "closed", the image
+"augustina_eyes_closed" will be used. (The layered image's format function is
+used to do this, defaulting to :func:`layeredimage.format_function`.)
 
 The attribute statement takes the following properties:
 
@@ -359,6 +356,22 @@ The attribute statement takes the following properties:
 
 `at`
     A transform or list of transforms that are applied to the layer.
+
+The `if_*` clauses' test is based upon the list of attributes of the resulting
+image, as explained :ref:`here <concept-image>`, but it **does not *change* that
+list.** ::
+
+    layeredimaga eileen:
+        attribute a
+        attribute b default if_not "a"
+        attribute c default if_not "b"
+
+In this example, the ``b`` and ``c`` attributes are *always* part of the attributes
+list (because of their ``default`` clause). When calling ``show eileen a``, the
+``a`` attribute will be displayed as requested, and the ``b`` attribute will not,
+due to its ``if_not`` property. But even if not displayed, the ``b`` attribute will
+still be part of the attributes list, which means the ``c`` attribute will still not
+display.
 
 Group
 ^^^^^
