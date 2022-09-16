@@ -204,15 +204,19 @@ def Fade(out_time,
          color=None,
          widget=None,
          alpha=False,
+         time_warp=None,
          ):
     """
     :doc: transition function
-    :args: (out_time, hold_time, in_time, *, color="#000")
+    :args: (out_time, hold_time, in_time, *, color="#000", alpha=False, time_warp=None)
     :name: Fade
 
     Returns a transition that takes `out_time` seconds to fade to
     a screen filled with `color`, holds at that screen for `hold_time`
     seconds, and then takes `in_time` to fade to then new screen.
+
+    The `alpha` and `time_warp` arguments have the same effect as in
+    :func:`Dissolve`.
 
     ::
 
@@ -229,20 +233,19 @@ def Fade(out_time,
     dissolve = renpy.curry.curry(Dissolve)
     notrans = renpy.curry.curry(NoTransition)
 
-    widget = renpy.easy.displayable_or_none(widget)
-
     if color:
         widget = renpy.display.image.Solid(color)
+    else:
+        widget = renpy.easy.displayable_or_none(widget)
+        if not widget:
+            widget = renpy.display.image.Solid((0, 0, 0, 255))
 
-    if not widget:
-        widget = renpy.display.image.Solid((0, 0, 0, 255))
-
-    args = [ False, dissolve(out_time, alpha=alpha), widget ]
+    args = [ False, dissolve(out_time, alpha=alpha, time_warp=time_warp), widget ]
 
     if hold_time:
         args.extend([ notrans(hold_time), widget, ])
 
-    args.extend([dissolve(in_time, alpha=alpha), True ])
+    args.extend([dissolve(in_time, alpha=alpha, time_warp=time_warp), True ])
 
     return MultipleTransition(args, old_widget=old_widget, new_widget=new_widget)
 
