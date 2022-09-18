@@ -23,7 +23,7 @@ init python hide:
     import os
 
     macapp = os.path.join(config.renpy_base, "renpy.app/Contents/MacOS")
-    maclib = os.path.join(config.renpy_base, distribute.py("lib/py{major}-mac-x86_64"))
+    maclib = os.path.join(config.renpy_base, distribute.py("lib/py{major}-mac-universal"))
 
     if os.path.exists(maclib):
 

@@ -368,13 +368,15 @@ change_renpy_executable()
             duplicate is set.
             """
 
+            prefix = py("lib/py{major}-mac-universal")
+
             for f in list(self):
 
                 if f.name.startswith("lib/python") and (not duplicate):
                     name = app + "/Contents/Resources/" + f.name
 
-                elif f.name.startswith(py("lib/py{major}-mac-x86_64")):
-                    name = app + "/Contents/MacOS/" + f.name[19:]
+                elif f.name.startswith(prefix):
+                    name = app + "/Contents/MacOS/" + f.name[len(prefix)+1:]
 
                 else:
                     continue
@@ -1058,8 +1060,8 @@ change_renpy_executable()
 
             self.add_file(
                 mac,
-                prefix + "mac-x86_64/" + self.executable_name,
-                os.path.join(config.renpy_base, prefix + "mac-x86_64/renpy"),
+                prefix + "mac-universal/" + self.executable_name,
+                os.path.join(config.renpy_base, prefix + "mac-universal/renpy"),
                 True)
 
         def add_mac_files(self):
@@ -1083,7 +1085,7 @@ change_renpy_executable()
 
             self.add_file(filelist,
                 contents + "/MacOS/" + self.executable_name,
-                os.path.join(config.renpy_base, py("lib/py{major}-mac-x86_64/renpy")))
+                os.path.join(config.renpy_base, py("lib/py{major}-mac-universal/renpy")))
 
 
             custom_fn = os.path.join(self.project.path, "icon.icns")
@@ -1101,7 +1103,7 @@ change_renpy_executable()
 
             if not self.build['renpy']:
                 self.add_directory(filelist, contents + "/MacOS/lib")
-                self.add_directory(filelist, contents + py("/MacOS/lib/py{major}-mac-x86_64"))
+                self.add_directory(filelist, contents + py("/MacOS/lib/py{major}-mac-universal"))
                 self.add_directory(filelist, contents + py("/Resources/lib/python{major}.{minor}"))
 
             self.file_lists[filelist].mac_lib_transform(self.app, self.build['renpy'])
@@ -1315,13 +1317,13 @@ change_renpy_executable()
         def workaround_mac_notarization(self, fl):
             """
             This works around mac notarization by compressing the unsigned,
-            un-notarized, binaries in lib/py3-mac-x86_64.
+            un-notarized, binaries in lib/py3-mac-universal.
             """
 
             fl = fl.copy()
 
             for f in fl:
-                if py("/lib/py{major}-mac-x86_64/") in f.name:
+                if py("/lib/py{major}-mac-universal/") in f.name:
                     with open(f.path, "rb") as inf:
                         data = inf.read()
 
