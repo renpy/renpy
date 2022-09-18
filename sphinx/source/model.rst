@@ -487,6 +487,28 @@ a built-in shader to create the Dissolve transform::
 Using the Model displayable as the child of a displayable is incompatible
 with :tpref:`mesh`, as the two both create models inside Ren'Py.
 
+Animated Shaders
+----------------
+
+When using shaders that depend on `u_time` to animate, one must be aware, that
+even though every shader on screen will run on every frame displayed, Ren'Py
+does not run on constant FPS, and will fall back to the minimum frame rate of 5
+FPS if no displayables require to be redrawn.
+
+When using an animating shader in an ATL transform, this can cause that shader
+to "stutter" and only animate properly while some other object on screen
+animates as well, in case the transform you're using it in does not cause
+redraws otherwise. In these cases, you can introduce an empty ATL loop to force
+redraws to happen::
+
+    transform fancy_shader:
+        shader 'my_fancy_shader'
+        pause 0
+        repeat
+
+`pause 0` will cycle the frames as fast as possible. You can also set different
+values for `pause` to specify a minimum frame rate, like `pause 1/30`.
+
 Default Shader Parts
 --------------------
 
