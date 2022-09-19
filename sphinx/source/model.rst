@@ -498,7 +498,7 @@ FPS if no displayables require to be redrawn.
 When using an animating shader in an ATL transform, this can cause that shader
 to "stutter" and only animate properly while some other object on screen
 animates as well, in case the transform you're using it in does not cause
-redraws otherwise. In these cases, you can introduce an empty ATL loop to force
+redraws otherwise. In this case, an empty ATL loop can be introduced to force
 redraws to happen::
 
     transform fancy_shader:
@@ -507,7 +507,7 @@ redraws to happen::
         repeat
 
 `pause 0` will cycle the frames as fast as possible. You can also set different
-values for `pause` to specify a minimum frame rate, like `pause 1/30`.
+values for `pause` to specify a minimum frame rate, like `pause 1.0/30`.
 
 Default Shader Parts
 --------------------
