@@ -4005,7 +4005,7 @@ def get_identifier_checkpoints(identifier):
 
 def get_adjustment(bar_value):
     """
-    :doc: other
+    :doc: screens
 
     Given `bar_value`, a  :class:`BarValue`, returns the :func:`ui.adjustment`
     if uses. The adjustment has the following to attributes defined:
