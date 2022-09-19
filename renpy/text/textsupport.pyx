@@ -208,9 +208,9 @@ for i in range(0, 65536):
 def language_tailor(chars, cls):
     """
     :doc: other
-    :args: (chars, cls)
 
-    This can be used to override the line breaking class of a character. For
+    This can be used to override the line breaking class of a unicode
+    character. For
     example, the linebreaking class of a character can be set to ID to
     treat it as an ideograph, which allows breaks before and after that
     character.
