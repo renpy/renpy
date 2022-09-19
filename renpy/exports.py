@@ -2580,7 +2580,7 @@ def free_memory():
 
 def flush_cache_file(fn):
     """
-    :doc: other
+    :doc: image_func
 
     This flushes all image cache entries that refer to the file `fn`.  This
     may be called when an image file changes on disk to force Ren'Py to
