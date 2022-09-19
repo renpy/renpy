@@ -1897,7 +1897,7 @@ def jump(label):
 
 def jump_out_of_context(label):
     """
-    :doc: label
+    :doc: context
 
     Causes control to leave the current context, and then to be
     transferred in the parent context to the given label.
