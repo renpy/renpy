@@ -2851,7 +2851,7 @@ pop_return = pop_call
 
 def call_stack_depth():
     """
-    :doc: other
+    :doc: label
 
     Returns the depth of the call stack of the current context - the number
     of calls that have run without being returned from or popped from the
