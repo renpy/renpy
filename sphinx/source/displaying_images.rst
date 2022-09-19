@@ -84,10 +84,10 @@ overlay
      an overlay function. This layer is cleared when an interaction is
      restarted.
 
-Additional layers can be defined by updating :var:`config.layers`, and
-the various other layer-related config variables. Using
-:func:`renpy.show_layer_at`, one or more transforms can be applied to
-a layer.
+Additional layers can be defined by calling :func:`renpy.add_layer`, and
+using the various layer-related :doc:`configuration variables <config>`.
+Using the :ref:`camera statement <camera>`, one or more transforms can be
+applied to a layer.
 
 .. _defining-images:
 
@@ -286,11 +286,8 @@ For example::
 Show Layer
 ----------
 
-The ``show layer`` statement is discussed alongside the camera statement,
+The ``show layer`` statement is discussed alongside the :ref:`camera statement <camera>`,
 below.
-
-
-
 
 .. _scene-statement:
 
@@ -450,6 +447,8 @@ is equivalent to::
     with None
     show lucy mad at right
     with dissolve
+
+.. _camera:
 
 Camera and Show Layer Statements
 ================================
