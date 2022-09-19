@@ -2315,7 +2315,7 @@ def dynamic(*args, **kwargs):
 
 def context_dynamic(*args):
     """
-    :doc: other
+    :doc: context
 
     This can be given one or more variable names as arguments. This makes
     the variables dynamically scoped to the current context. The variables will
