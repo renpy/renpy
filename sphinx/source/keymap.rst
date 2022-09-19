@@ -263,3 +263,5 @@ Gamepads that do not work without special initialization are disabled by
 default. This includes the Nintendo Switch Pro Controller, which requires
 special initialization to work on a PC. This blocklisting is controlled by
 :var:`config.controller_blocklist`.
+
+.. include:: inc/keymap
