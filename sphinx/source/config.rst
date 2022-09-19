@@ -900,6 +900,17 @@ Occasionally Used
 
         config.say_arguments_callback = say_arguments_callback
 
+.. var:: config.scene_callbacks = [ ]
+
+    A list of functions that are called when the scene statement runs,
+    or :func:`renpy.scene` is called. The functions are called with a
+    single argument, the layer that the scene statement is called on.
+    These functions are called after the layer is cleared, but before the
+    optional image is added, if present.
+
+    Ren'Py may call renpy.scene for its own purposes, so it's recommended
+    to check the layer name before acting on these callbacks.
+
 .. var:: config.screen_height = 600
 
     The height of the screen. Usually set by :func:`gui.init` to

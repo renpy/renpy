@@ -96,6 +96,10 @@ not change after the init phase finishes.
 New Features
 ------------
 
+The new :var:`config.scene_callbacks` function contains a list of functions
+that are called when the scene statement is run or the :func:`renpy.scene`
+statement is called.
+
 The size text tag now takes multipliers, so it's possible to have::
 
     "{size=*2}This is double size{/size} and {size=*0.5}this is half size{/size}."

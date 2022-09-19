@@ -1279,6 +1279,10 @@ autosave_callback = None
 # The radius the mouse has to move before triggering a viewport drag.
 viewport_drag_radius = 10
 
+# A list of callbacks that are called when the scene statement or renpy.scene
+# function is run.
+scene_callbacks = [ ]
+
 
 del os
 del collections

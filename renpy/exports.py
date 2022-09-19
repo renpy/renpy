@@ -778,6 +778,9 @@ def scene(layer='master'):
     # End a transition that's affecting layer.
     renpy.display.interface.ongoing_transition.pop(layer, None)
 
+    for i in renpy.config.scene_callbacks:
+        i(layer)
+
 
 def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, copypaste=True, **kwargs): # @ReservedAssignment
     """
