@@ -48,6 +48,8 @@ screen _developer:
                     action [ Hide("_developer"), _console.enter ]
                 textbutton _("Variable Viewer"):
                     action ui.callsinnewcontext("_debugger_screen")
+                textbutton _("Persistent Data Viewer"):
+                    action ui.callsinnewcontext("_persistent_explorer")
                 textbutton _("Image Location Picker"):
                     action ui.callsinnewcontext("_image_location_picker")
                 textbutton _("Filename List"):
@@ -205,6 +207,67 @@ label _debugger_screen:
         entries.sort(key=lambda e : e[0])
 
         renpy.call_screen("_variable_viewer", all_entries=entries, deleted_entries=deleted_entries)
+
+    return
+
+screen _persistent_data_viewer(entries):
+
+    zorder 1010
+    modal True
+
+    frame:
+        style_prefix ""
+        right_padding 0
+
+        has side "t c b":
+            spacing gui._scale(10)
+
+        label _("Persistent Data Viewer")
+
+        viewport:
+            scrollbars "both"
+            child_size (4000, 0)
+            yfill True
+            xfill True
+            mousewheel True
+
+            vbox:
+
+                if not entries:
+                    text _("Nothing to inspect.")
+
+                for vn, value in entries:
+                    text "[vn] = [value!q]"
+
+        hbox:
+            spacing gui._scale(25)
+
+            textbutton _(u"Return"):
+                action Return(True)
+
+label _persistent_explorer:
+
+    call _enter_game_menu
+
+    python hide:
+        import reprlib
+        aRepr = reprlib.Repr()
+        aRepr.maxstring = 120
+
+        entries = []
+
+        for vn in sorted(persistent._keys()):
+            if vn.startswith("__00"):
+                continue
+
+            if vn.startswith("_") and not vn.startswith("__"):
+                continue
+
+            value = aRepr.repr(getattr(persistent, vn))
+
+            entries.append((vn, value))
+
+        renpy.call_screen("_persistent_data_viewer", entries=entries)
 
     return
 
