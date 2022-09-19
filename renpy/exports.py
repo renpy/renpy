@@ -3840,7 +3840,7 @@ def clear_line_log():
 
 def add_layer(layer, above=None, below=None, menu_clear=True):
     """
-    :doc: other
+    :doc: image_func
 
     Adds a new layer to the screen. If the layer already exists, this
     function does nothing.
@@ -3860,7 +3860,7 @@ def add_layer(layer, above=None, below=None, menu_clear=True):
 
     `menu_clear`
         If true, this layer will be cleared when entering the game menu
-        context, and restored when leaving the
+        context, and restored when leaving it.
     """
 
     layers = renpy.config.layers
