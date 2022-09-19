@@ -2289,13 +2289,13 @@ def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)
 
 
-def dynamic(*vars, **kwargs): # @ReservedAssignment
+def dynamic(*args, **kwargs):
     """
-    :doc: other
+    :doc: label
 
-    This can be given one or more variable names as arguments. This makes
-    the variables dynamically scoped to the current call. The variables will
-    be reset to their original value when the call returns.
+    This can be given one or more variable names as arguments. This makes the
+    variables dynamically scoped to the current call. When the call returns, the
+    variables will be reset to the value they had when this function was called.
 
     If the variables are given as keyword arguments, the value of the argument
     is assigned to the variable name.
@@ -2306,14 +2306,14 @@ def dynamic(*vars, **kwargs): # @ReservedAssignment
         $ renpy.dynamic(players=2, score=0)
     """
 
-    vars = vars + tuple(kwargs) # @ReservedAssignment
-    renpy.game.context().make_dynamic(vars)
+    args = args + tuple(kwargs)
+    renpy.game.context().make_dynamic(args)
 
     for k, v in kwargs.items():
         setattr(renpy.store, k, v)
 
 
-def context_dynamic(*vars): # @ReservedAssignment
+def context_dynamic(*args):
     """
     :doc: other
 
@@ -2326,7 +2326,7 @@ def context_dynamic(*vars): # @ReservedAssignment
         $ renpy.context_dynamic("x", "y", "z")
     """
 
-    renpy.game.context().make_dynamic(vars, context=True)
+    renpy.game.context().make_dynamic(args, context=True)
 
 
 def seen_label(label):
