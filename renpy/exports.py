@@ -3671,7 +3671,7 @@ def count_newly_seen_dialogue_blocks():
 
 def substitute(s, scope=None, translate=True):
     """
-    :doc: other
+    :doc: text_utility
 
     Applies translation and new-style formatting to the string `s`.
 
