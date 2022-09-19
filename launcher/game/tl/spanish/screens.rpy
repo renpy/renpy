@@ -654,8 +654,8 @@ translate spanish strings:
     new "## Presenta el diálogo en una 'vpgrid' o una 'vbox'."
 
     # screens.rpy:1316
-    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
-    new "## Presenta el menú, si lo hay. El menú puede ser presentado incorrectamente si 'config.narrator_menu' está ajustado a 'True', como lo es más arriba."
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new "## Presenta el menú, si lo hay. El menú puede ser presentado incorrectamente si 'config.narrator_menu' está ajustado a 'True'."
 
     # screens.rpy:1346
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
@@ -680,4 +680,3 @@ translate spanish strings:
     # gui/game/screens.rpy:1049
     old "Opens the accessibility menu."
     new "Abre el menú de accesibilidad."
-

@@ -622,8 +622,8 @@ translate italian strings:
     new "## Mostra il dialogo in una vpgrid o in una vbox."
 
     # screens.rpy:1314
-    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
-    new "## Mostra il menu, se fornito. Il menu può apparire distorto se config.narrator_menu è impostato a True, come lo è sopra."
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new "## Mostra il menu, se fornito. Il menu può apparire distorto se config.narrator_menu è impostato a True."
 
     # screens.rpy:1344
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
@@ -676,4 +676,3 @@ translate italian strings:
     # screens.rpy:1079
     old "Left Trigger\nLeft Shoulder"
     new "Grilletto Sinistro\nLaterale Sinistro"
-

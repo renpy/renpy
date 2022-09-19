@@ -621,8 +621,8 @@
     new "## Les dialogues sont affichés soit dans une vpgrid soit dans une vbox."
 
     # screens.rpy:1314
-    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
-    new "## Si fourni, affiche le menu. Le menu peut s’afficher de manière incorrecte si config.narrator_menu est initialisé à True, comme c’est le cas au-dessus."
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new "## Si fourni, affiche le menu. Le menu peut s’afficher de manière incorrecte si config.narrator_menu est initialisé à True."
 
     # screens.rpy:1344
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
