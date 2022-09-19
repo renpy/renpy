@@ -63,12 +63,7 @@ class Persistent(object):
             If true, also resets progress data that Ren'Py keeps.
         """
 
-        keys = list(self.__dict__)
-
-        for i in keys:
-            if i[0] == "_":
-                continue
-
+        for i in self._keys():
             del self.__dict__[i]
 
         if progress:
@@ -117,6 +112,12 @@ class Persistent(object):
                 "_seen_audio" : 0,
                 "_seen_translates" : 0,
             }
+
+    def _keys(self):
+        """
+        Returns the set of keys which the creator should be aware of.
+        """
+        return [k for k in self.__dict__ if not k.startswith("_")]
 
 
 renpy.game.Persistent = Persistent # type: ignore
