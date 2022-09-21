@@ -135,3 +135,10 @@ Debug Functions
 ---------------
 
 .. include:: inc/debug
+
+Utility functions
+-----------------
+
+These tools are meant to ease development effort.
+
+.. include:: inc/devtools
