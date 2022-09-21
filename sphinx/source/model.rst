@@ -490,10 +490,10 @@ with :tpref:`mesh`, as the two both create models inside Ren'Py.
 Animated Shaders
 ----------------
 
-When using shaders that depend on `u_time` to animate, one must be aware, that
-even though every shader on screen will run on every frame displayed, Ren'Py
-does not run on constant FPS, and will fall back to the minimum frame rate of 5
-FPS if no displayables require to be redrawn.
+When using shaders that depend on ``u_time`` to animate, one must be aware,
+that even though every shader on screen will run on every frame displayed,
+Ren'Py does not run on constant FPS, and will fall back to the minimum frame
+rate of 5 FPS if no displayables require to be redrawn.
 
 When using an animating shader in an ATL transform, this can cause that shader
 to "stutter" and only animate properly while some other object on screen
@@ -506,8 +506,9 @@ redraws to happen::
         pause 0
         repeat
 
-`pause 0` will cycle the frames as fast as possible. You can also set different
-values for `pause` to specify a minimum frame rate, like `pause 1.0/30`.
+``pause 0`` will cycle the frames as fast as possible. You can also set
+different values for ``pause`` to specify a minimum frame rate, like
+``pause 1.0/30``.
 
 Default Shader Parts
 --------------------
