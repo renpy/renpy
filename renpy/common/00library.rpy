@@ -34,8 +34,11 @@ init -1700 python:
 
     class DictEquality(object):
         """
-        Declares two objects equal if their types are the same, and
-        their internal dictionaries are equal.
+        :doc: devtools
+
+        Objects of classes inheriting this class will compare equal if their
+        types are the same and their internal dicts are equal, which means when
+        they have the exact same attributes, excluding class attributes.
         """
 
         def __eq__(self, o):
@@ -68,8 +71,28 @@ init -1700 python:
 
     class FieldEquality(object):
         """
-        Declares two objects equal if their types are the same, and
-        the listed fields are equal.
+        :doc: devtools
+
+        Objects of classes inheriting this class will compare equal if their
+        types are the same and if specific fields are equal.
+
+        The classes inheriting this should define at least one of ``equality_fields``
+        or ``identity_fields``, which are lists of names to be considered on both
+        objects being compared, respectively by equality and by identity.
+        For example::
+
+            class Particle(FieldEquality):
+                equality_fields = ["kind"]
+
+                def __init__(self, kind, x, y, speed):
+                    self.kind = kind
+                    self.position = (x, y)
+                    self.speed = speed
+
+            a = Particle("quark", 1, 3, 7)
+            b = Particle("quark", 4, 6, 0)
+
+            a == b # they have the same type and their kind attributes are equal
         """
 
         # The lists of fields to use.
