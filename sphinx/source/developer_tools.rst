@@ -139,6 +139,7 @@ Debug Functions
 Utility functions
 -----------------
 
-These tools are meant to ease development effort.
+These functions and classes are tools meant to ease development effort, but not
+specifically related to specific Ren'Py features or objects.
 
 .. include:: inc/devtools
