@@ -797,11 +797,6 @@ def call_statement(l, loc):
 
 @statement("scene")
 def scene_statement(l, loc):
-    if l.keyword('onlayer'):
-        layer = l.require(l.name)
-    else:
-        layer = "master"
-
     # Empty.
     if l.eol():
         l.advance()
