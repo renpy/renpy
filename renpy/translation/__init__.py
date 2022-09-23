@@ -722,6 +722,17 @@ def check_language():
                 raise renpy.game.JumpException(node.name)
 
 
+def get_translation_identifier():
+    """
+    :doc: translation_functions
+
+    Returns the translation identifier for the current statement.
+    """
+
+    ctx = renpy.game.contexts[-1]
+    return ctx.translate_identifier or ctx.deferred_translate_identifier
+
+
 def known_languages():
     """
     :doc: translation_functions

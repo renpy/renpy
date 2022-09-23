@@ -96,6 +96,9 @@ not change after the init phase finishes.
 New Features
 ------------
 
+The new :func:`renpy.get_translation_identifier` function returns the
+unique identifier for the current line of dialogue, if there is one.
+
 The new :var:`config.scene_callbacks` function contains a list of functions
 that are called when the scene statement is run or the :func:`renpy.scene`
 statement is called.

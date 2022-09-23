@@ -86,7 +86,7 @@ from renpy.easy import predict, displayable, split_properties
 from renpy.lexer import unelide_filename
 from renpy.parser import get_parse_errors
 
-from renpy.translation import change_language, known_languages, translate_string
+from renpy.translation import change_language, known_languages, translate_string, get_translation_identifier
 from renpy.translation.generation import generic_filter as transform_text
 
 from renpy.persistent import register_persistent
