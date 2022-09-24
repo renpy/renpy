@@ -142,4 +142,11 @@ Utility functions
 These functions and classes are tools meant to ease development effort, but not
 specifically related to specific Ren'Py features or objects.
 
-.. include:: inc/devtools
+The two following classes are equality mixin classes. They add equality support,
+following different rules, to the classes inheriting them.
+
+.. include:: inc/equality_mixins
+
+The two following functions allow for partial evaluation of function arguments.
+
+.. include:: inc/curry_partial
