@@ -2371,11 +2371,9 @@ class NearRect(Container):
         layout_x = px + xpos - xanchor
 
         # Final x positioning - make sure the child fits inside the screen.
-        if layout_x + cw > width:
-            layout_x = width - cw
+        layout_x = min(layout_x, width - cw)
 
-        if layout_x < 0:
-            layout_x = 0
+        layout_x = max(layout_x, 0)
 
         # Apply offsets.
         layout_x += xoffset

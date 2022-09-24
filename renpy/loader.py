@@ -599,14 +599,12 @@ class SubFile(object):
         elif whence == 2:
             offset = self.length + offset
 
-        if offset > self.length:
-            offset = self.length
+        offset = min(offset, self.length)
 
         self.offset = offset
 
         offset = offset - len(self.start)
-        if offset < 0:
-            offset = 0
+        offset = max(0, offset)
 
         self.f.seek(offset + self.base)
 
