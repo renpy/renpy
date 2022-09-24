@@ -36,10 +36,10 @@ The init phase
 
 After parsing/early phase, the "init" phase starts. Several statements are executed at that time,
 including the :ref:`init-python-statement`, the :ref:`define-statement`, the
-:ref:`default-statement`, the :ref:`transform-statement`, the :ref:`image-statement`, the
-:ref:`screen-statement`, and the :doc:`style <style>` statement. The init phase is divided in
-successive epochs, or init priorities, from -999 to 999. Contrary to what it may imply, epochs of
-lower priority are executed before epochs of higher priority.
+:ref:`transform-statement`, the :ref:`image-statement`, the :ref:`screen-statement`, and the
+:doc:`style <style>` statement. The init phase is divided in successive epochs, or init priorities,
+from -999 to 999. Contrary to what the term may imply, epochs of lower priority are executed before
+epochs of higher priority.
 
 .. image define default transform (init) screen (testcase) (translation) style
 
@@ -104,4 +104,5 @@ In-game phase
 -------------
 
 This part is when a playthrough starts. It typically begins with the :class:`Start` action, but
-there are other ways (such as loading a save, or returning from the ``main_menu`` label).
+there are other ways (such as loading a save, or returning from the ``main_menu`` label). As
+explained in :doc:`label`, when returning, control goes back to the main menu.
