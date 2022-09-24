@@ -87,7 +87,7 @@ def process_file(fn):
     consumed = 0
 
     # The output.
-    output = u""
+    output = ""
 
     for position, target in edits:
         output += data[consumed:position]

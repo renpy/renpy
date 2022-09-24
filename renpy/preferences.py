@@ -201,15 +201,15 @@ class Preferences(renpy.object.Object):
         joymap = {}
         physical_size = None
         virtual_size = None
-        renderer = u'auto'
+        renderer = 'auto'
         performance_test = True
         language = None
         self_voicing = False
         self_voicing_volume_drop = 0.5
         emphasize_audio = False
         pad_enabled = True
-        mobile_rollback_side = u'disable'
-        desktop_rollback_side = u'disable'
+        mobile_rollback_side = 'disable'
+        desktop_rollback_side = 'disable'
         gl_npot = True
         gl_powersave = True
         gl_framerate = None
@@ -278,7 +278,7 @@ class Preferences(renpy.object.Object):
     def set_mixer(self, mixer, volume):
         if volume > 0:
             volume = renpy.config.volume_db_range * volume - renpy.config.volume_db_range
-            volume = 10 ** (volume / 20)     
+            volume = 10 ** (volume / 20)
 
         self.set_volume(mixer, volume)
 

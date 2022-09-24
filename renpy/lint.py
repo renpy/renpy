@@ -65,7 +65,7 @@ error_reported = False
 
 def report(msg, *args):
     if report_node:
-        out = u"%s:%d " % (renpy.lexer.unicode_filename(report_node.filename), report_node.linenumber)
+        out = "%s:%d " % (renpy.lexer.unicode_filename(report_node.filename), report_node.linenumber)
     else:
         out = ""
 

@@ -82,7 +82,7 @@ def get_line_text(filename, lineno):
 class ParseError(Exception):
 
     def __init__(self, filename, number, msg, line=None, pos=None, first=False):
-        message = u"File \"%s\", line %d: %s" % (unicode_filename(filename), number, msg)
+        message = "File \"%s\", line %d: %s" % (unicode_filename(filename), number, msg)
 
         if line:
             if isinstance(line, list):
@@ -290,7 +290,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
     # Are we looking at a triple-quoted string?
 
     # Skip the BOM, if any.
-    if len(data) and data[0] == u'\ufeff':
+    if len(data) and data[0] == '\ufeff':
         pos += 1
 
     if add_lines or renpy.game.context().init_phase:
@@ -327,10 +327,10 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
             startpos = pos
             c = data[pos]
 
-            if c == u'\t':
+            if c == '\t':
                 raise ParseError(filename, number, "Tab characters are not allowed in Ren'Py scripts.")
 
-            if c == u'\n' and not parendepth:
+            if c == '\n' and not parendepth:
 
                 line = ''.join(line)
 
@@ -345,7 +345,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
                 lines[loc].end_delim = endpos + 1
 
-                while data[endpos - 1] in u' \r':
+                while data[endpos - 1] in ' \r':
                     endpos -= 1
 
                 lines[loc].end = endpos
@@ -359,39 +359,39 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                 line = [ ]
                 break
 
-            if c == u'\n':
+            if c == '\n':
                 number += 1
                 endpos = None
 
-            if c == u"\r":
+            if c == "\r":
                 pos += 1
                 continue
 
             # Backslash/newline.
-            if c == u"\\" and data[pos + 1] == u"\n":
+            if c == "\\" and data[pos + 1] == "\n":
                 pos += 2
                 number += 1
-                line.append(u"\\\n")
+                line.append("\\\n")
                 continue
 
             # Parenthesis.
-            if c in u'([{':
+            if c in '([{':
                 parendepth += 1
 
-            if (c in u'}])') and parendepth:
+            if (c in '}])') and parendepth:
                 parendepth -= 1
 
             # Comments.
-            if c == u'#':
+            if c == '#':
                 endpos = pos
 
-                while data[pos] != u'\n':
+                while data[pos] != '\n':
                     pos += 1
 
                 continue
 
             # Strings.
-            if c in u'"\'`':
+            if c in '"\'`':
                 delim = c
                 line.append(c)
                 pos += 1
@@ -411,10 +411,10 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
                     c = data[pos]
 
-                    if c == u'\n':
+                    if c == '\n':
                         number += 1
 
-                    if c == u'\r':
+                    if c == '\r':
                         pos += 1
                         continue
 
@@ -438,7 +438,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
                             s.append(delim)
                             break
 
-                    if c == u'\\':
+                    if c == '\\':
                         escape = True
 
                     s.append(c)
@@ -463,7 +463,7 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
 
                 rest = word[2:]
 
-                if u"__" not in rest:
+                if "__" not in rest:
                     word = prefix + rest
 
             line.append(word)

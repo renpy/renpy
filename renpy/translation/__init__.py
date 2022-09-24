@@ -465,16 +465,16 @@ class StringTranslator(object):
             fn = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, "strings.rpy")
 
         with renpy.translation.generation.open_tl_file(fn) as f:
-            f.write(u"translate {} strings:\n".format(language))
-            f.write(u"\n")
+            f.write("translate {} strings:\n".format(language))
+            f.write("\n")
 
             for i in self.unknown:
 
                 i = quote_unicode(i)
 
-                f.write(u"    old \"{}\"\n".format(i))
-                f.write(u"    new \"{}\"\n".format(i))
-                f.write(u"\n")
+                f.write("    old \"{}\"\n".format(i))
+                f.write("    new \"{}\"\n".format(i))
+                f.write("\n")
 
 
 def add_string_translation(language, old, new, newloc):

@@ -1299,8 +1299,8 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
     caret_pos = 0
     old_caret_pos = 0
     pixel_width = None
-    default = u""
-    edit_text = u""
+    default = ""
+    edit_text = ""
     value = None
     shown = False
 
@@ -1423,7 +1423,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
         def set_content(content):
 
             if content == "":
-                content = u" "
+                content = " "
 
             if editable:
                 l = len(content)

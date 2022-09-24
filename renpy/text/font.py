@@ -196,20 +196,20 @@ class SFont(ImageFont):
             self.baseline = height + self.baseline # W0201
 
         # Create space characters.
-        self.chars[u' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
-        self.width[u' '] = self.spacewidth
-        self.advance[u' '] = self.spacewidth
-        self.offsets[u' '] = (0, 0)
+        self.chars[' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
+        self.width[' '] = self.spacewidth
+        self.advance[' '] = self.spacewidth
+        self.offsets[' '] = (0, 0)
 
-        self.chars[u'\u200b'] = renpy.display.pgrender.surface((0, height), True)
-        self.width[u'\u200b'] = 0
-        self.advance[u'\u200b'] = 0
-        self.offsets[u'\u200b'] = (0, 0)
+        self.chars['\u200b'] = renpy.display.pgrender.surface((0, height), True)
+        self.width['\u200b'] = 0
+        self.advance['\u200b'] = 0
+        self.offsets['\u200b'] = (0, 0)
 
-        self.chars[u'\u00a0'] = self.chars[u' ']
-        self.width[u'\u00a0'] = self.width[u' ']
-        self.advance[u'\u00a0'] = self.advance[u' ']
-        self.offsets[u'\u00a0'] = self.offsets[u' ']
+        self.chars['\u00a0'] = self.chars[' ']
+        self.width['\u00a0'] = self.width[' ']
+        self.advance['\u00a0'] = self.advance[' ']
+        self.offsets['\u00a0'] = self.offsets[' ']
 
         # The color key used to separate characters.
         i = 0
@@ -308,22 +308,22 @@ class MudgeFont(ImageFont):
         self.baseline = height # W0201
 
         # Create space characters.
-        if u' ' not in self.chars:
-            self.chars[u' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
-            self.width[u' '] = self.spacewidth
-            self.advance[u' '] = self.spacewidth
-            self.offsets[u' '] = (0, 0)
+        if ' ' not in self.chars:
+            self.chars[' '] = renpy.display.pgrender.surface((self.spacewidth, height), True)
+            self.width[' '] = self.spacewidth
+            self.advance[' '] = self.spacewidth
+            self.offsets[' '] = (0, 0)
 
-        if u'\u00a0' not in self.chars:
-            self.chars[u'\u00a0'] = self.chars[u' ']
-            self.width[u'\u00a0'] = self.width[u' ']
-            self.advance[u'\u00a0'] = self.advance[u' ']
-            self.offsets[u'\u00a0'] = self.offsets[u' ']
+        if '\u00a0' not in self.chars:
+            self.chars['\u00a0'] = self.chars[' ']
+            self.width['\u00a0'] = self.width[' ']
+            self.advance['\u00a0'] = self.advance[' ']
+            self.offsets['\u00a0'] = self.offsets[' ']
 
-        self.chars[u'\u200b'] = renpy.display.pgrender.surface((0, height), True)
-        self.width[u'\u200b'] = 0
-        self.advance[u'\u200b'] = 0
-        self.offsets[u'\u200b'] = (0, 0)
+        self.chars['\u200b'] = renpy.display.pgrender.surface((0, height), True)
+        self.width['\u200b'] = 0
+        self.advance['\u200b'] = 0
+        self.offsets['\u200b'] = (0, 0)
 
 
 def parse_bmfont_line(l):
@@ -409,16 +409,16 @@ class BMFont(ImageFont):
                     second = chr(int(args["second"]))
                     self.kerns[first + second] = int(args["amount"])
 
-        if u'\u00a0' not in self.chars:
-            self.chars[u'\u00a0'] = self.chars[u' ']
-            self.width[u'\u00a0'] = self.width[u' ']
-            self.advance[u'\u00a0'] = self.advance[u' ']
-            self.offsets[u'\u00a0'] = self.offsets[u' ']
+        if '\u00a0' not in self.chars:
+            self.chars['\u00a0'] = self.chars[' ']
+            self.width['\u00a0'] = self.width[' ']
+            self.advance['\u00a0'] = self.advance[' ']
+            self.offsets['\u00a0'] = self.offsets[' ']
 
-        self.chars[u'\u200b'] = renpy.display.pgrender.surface((0, self.height), True)
-        self.width[u'\u200b'] = 0
-        self.advance[u'\u200b'] = 0
-        self.offsets[u'\u200b'] = (0, 0)
+        self.chars['\u200b'] = renpy.display.pgrender.surface((0, self.height), True)
+        self.width['\u200b'] = 0
+        self.advance['\u200b'] = 0
+        self.offsets['\u200b'] = (0, 0)
 
 
 class ScaledImageFont(ImageFont):
@@ -450,8 +450,8 @@ class ScaledImageFont(ImageFont):
 
 
 def register_sfont(name=None, size=None, bold=False, italics=False, underline=False,
-                   filename=None, spacewidth=10, baseline=None, default_kern=0, kerns={},
-                   charset=u"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"):
+                   filename=None, spacewidth=10, baseline=None, default_kern=0, kerns=None,
+                   charset="!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"):
     """
     :doc: image_fonts
 

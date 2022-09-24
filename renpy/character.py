@@ -628,13 +628,13 @@ def display_say(
                     if ctc_position == "nestled":
                         what_text.set_ctc(what_ctc)
                     elif ctc_position == "nestled-close":
-                        what_text.set_ctc([ u"\ufeff", what_ctc, ])
+                        what_text.set_ctc([ "\ufeff", what_ctc, ])
 
                 if (not last_pause) and ctc:
                     if ctc_position == "nestled":
                         what_text.set_last_ctc(ctc)
                     elif ctc_position == "nestled-close":
-                        what_text.set_last_ctc([ u"\ufeff", ctc, ])
+                        what_text.set_last_ctc([ "\ufeff", ctc, ])
 
                 if what_text.text[0] == what_string:
 

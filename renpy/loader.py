@@ -39,7 +39,7 @@ from renpy.webloader import DownloadNeeded
 
 # Ensure the utf-8 codec is loaded, to prevent recursion when we use it
 # to look up filenames.
-u"".encode(u"utf-8")
+"".encode("utf-8")
 
 # Physical Paths
 
@@ -993,7 +993,7 @@ class RenpyImporter(object):
             try:
 
                 source = load(filename).read().decode(encoding)
-                if source and source[0] == u'\ufeff':
+                if source and source[0] == '\ufeff':
                     source = source[1:]
                 source = source.encode("raw_unicode_escape")
                 source = source.replace(b"\r", b"")

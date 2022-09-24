@@ -49,7 +49,7 @@ def scan_comments(filename):
     start = 0
 
     with open(filename, "r", encoding="utf-8") as f:
-        lines = [ i.rstrip() for i in f.read().replace(u"\ufeff", "").split('\n') ]
+        lines = [ i.rstrip() for i in f.read().replace("\ufeff", "").split('\n') ]
 
     for i, l in enumerate(lines):
 
@@ -99,15 +99,15 @@ def open_tl_file(fn):
             pass
 
         f = open(fn, "a", encoding="utf-8")
-        f.write(u"\ufeff")
+        f.write("\ufeff")
 
     else:
         f = open(fn, "a", encoding="utf-8")
 
     if todo:
-        f.write(u"# TO" + "DO: Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))
+        f.write("# TO" + "DO: Translation updated at {}\n".format(time.strftime("%Y-%m-%d %H:%M")))
 
-    f.write(u"\n")
+    f.write("\n")
 
     tl_file_cache[fn] = f
 
@@ -178,17 +178,17 @@ def write_translates(filename, language, filter): # @ReservedAssignment
         if label is None:
             label = ""
 
-        f.write(u"# {}:{}\n".format(t.filename, t.linenumber))
-        f.write(u"translate {} {}:\n".format(language, t.identifier.replace('.', '_')))
-        f.write(u"\n")
+        f.write("# {}:{}\n".format(t.filename, t.linenumber))
+        f.write("translate {} {}:\n".format(language, t.identifier.replace('.', '_')))
+        f.write("\n")
 
         for n in t.block:
-            f.write(u"    # " + n.get_code() + "\n")
+            f.write("    # " + n.get_code() + "\n")
 
         for n in t.block:
-            f.write(u"    " + n.get_code(filter) + "\n")
+            f.write("    " + n.get_code(filter) + "\n")
 
-        f.write(u"\n")
+        f.write("\n")
 
 
 def translation_filename(s):
@@ -247,16 +247,16 @@ def write_strings(language, filter, min_priority, max_priority, common_only): # 
         tlfn = os.path.join(renpy.config.gamedir, renpy.config.tl_directory, language, tlfn)
         f = open_tl_file(tlfn)
 
-        f.write(u"translate {} strings:\n".format(language))
-        f.write(u"\n")
+        f.write("translate {} strings:\n".format(language))
+        f.write("\n")
 
         for s in sl:
             text = filter(s.text)
 
-            f.write(u"    # {}:{}\n".format(elide_filename(s.filename), s.line))
-            f.write(u"    old \"{}\"\n".format(quote_unicode(s.text)))
-            f.write(u"    new \"{}\"\n".format(quote_unicode(text)))
-            f.write(u"\n")
+            f.write("    # {}:{}\n".format(elide_filename(s.filename), s.line))
+            f.write("    old \"{}\"\n".format(quote_unicode(s.text)))
+            f.write("    new \"{}\"\n".format(quote_unicode(text)))
+            f.write("\n")
 
 
 def null_filter(s):

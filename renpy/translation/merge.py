@@ -79,7 +79,7 @@ def merge_strings():
 
         new = data[k]
         quoted = renpy.translation.quote_unicode(new)
-        code = u'new "{}"'.format(quoted)
+        code = 'new "{}"'.format(quoted)
 
         filename, linenumber = st.translation_loc[k]
         renpy.scriptedit.insert_line_before(code, filename, linenumber)

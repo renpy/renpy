@@ -1011,7 +1011,7 @@ class Layout(object):
                 if isinstance(i[0], (TextSegment, SpaceSegment, DisplayableSegment)):
                     return
 
-            line.extend(tss[-1].subsegment(u"\u200B")) # type: ignore
+            line.extend(tss[-1].subsegment("\u200B")) # type: ignore
 
         for type, text in tokens: # @ReservedAssignment
 
@@ -1030,15 +1030,15 @@ class Layout(object):
 
                 elif type == TEXT:
 
-                    if (text_displayable.mask is not None):
-                        if text != u"\u200b":
+                    if text_displayable.mask is not None:
+                        if text != "\u200b":
                             text = text_displayable.mask * len(text)
 
                     line.extend(tss[-1].subsegment(text))
                     continue
 
-                elif type == DISPLAYABLE:
-                    line.append((DisplayableSegment(tss[-1], text, renders), u""))
+                if type == DISPLAYABLE:
+                    line.append((DisplayableSegment(tss[-1], text, renders), ""))
                     continue
 
                 # Otherwise, we have a text tag.
@@ -1080,7 +1080,7 @@ class Layout(object):
                         raise Exception("empty value supplied for tag %r" % tag)
 
                     width = self.scale_int(int(value))
-                    line.append((SpaceSegment(tss[-1], width=width), u""))
+                    line.append((SpaceSegment(tss[-1], width=width), ""))
 
                 elif tag == "vspace":
 
@@ -1094,7 +1094,7 @@ class Layout(object):
                     if line:
                         paragraphs.append(line)
 
-                    line = [ (SpaceSegment(tss[-1], height=height), u"") ]
+                    line = [ (SpaceSegment(tss[-1], height=height), "") ]
                     paragraphs.append(line)
 
                     line = [ ]
@@ -1662,7 +1662,7 @@ class Text(renpy.display.core.Displayable):
                 s += i # type: ignore
 
             if len(s) > 25:
-                s = s[:24] + u"\u2026"
+                s = s[:24] + "\u2026"
                 break
 
         return repr(s)
@@ -1671,7 +1671,7 @@ class Text(renpy.display.core.Displayable):
         """
         Gets all the text,
         """
-        s = u""
+        s = ""
 
         for i in self.text:
             if isinstance(i, basestring):
