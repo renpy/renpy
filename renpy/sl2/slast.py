@@ -639,7 +639,7 @@ class SLDisplayable(SLBlock):
     # A list of variables that are locally constant.
     local_constant = [ ]
 
-    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords={}, hotspot=False, variable=None, name="", unique=True):
+    def __init__(self, loc, displayable, scope=False, child_or_fixed=False, style=None, text_style=None, pass_context=False, imagemap=False, replaces=False, default_keywords=None, hotspot=False, variable=None, name="", unique=True):
         """
         `displayable`
             A function that, when called with the positional and keyword
@@ -692,7 +692,7 @@ class SLDisplayable(SLBlock):
         self.imagemap = imagemap
         self.hotspot = hotspot
         self.replaces = replaces
-        self.default_keywords = default_keywords
+        self.default_keywords = default_keywords or {}
         self.variable = variable
         self.unique = unique
 

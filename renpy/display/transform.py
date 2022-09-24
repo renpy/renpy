@@ -908,7 +908,8 @@ class Transform(Container):
 
 class ATLTransform(renpy.atl.ATLTransformBase, Transform):
 
-    def __init__(self, atl, child=None, context={}, parameters=None, **properties):
+    def __init__(self, atl, child=None, context=None, parameters=None, **properties):
+        context = context or {}
         renpy.atl.ATLTransformBase.__init__(self, atl, context, parameters)
         Transform.__init__(self, child=child, **properties)
 

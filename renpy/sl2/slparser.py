@@ -542,7 +542,7 @@ def register_sl_displayable(*args, **kwargs):
 class DisplayableParser(Parser):
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False,
-                 pass_context=False, imagemap=False, replaces=False, default_keywords={},
+                 pass_context=False, imagemap=False, replaces=False, default_keywords=None,
                  hotspot=False, default_properties=True, unique=False):
         """
         `scope`
@@ -585,7 +585,7 @@ class DisplayableParser(Parser):
         self.imagemap = imagemap
         self.hotspot = hotspot
         self.replaces = replaces
-        self.default_keywords = default_keywords
+        self.default_keywords = default_keywords or {}
         self.variable = True
         self.unique = unique
 

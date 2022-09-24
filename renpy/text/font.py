@@ -509,12 +509,12 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
     if name is None or size is None or filename is None:
         raise Exception("When registering an SFont, the font name, font size, and filename are required.")
 
-    sf = SFont(filename, spacewidth, default_kern, kerns, charset, baseline)
+    sf = SFont(filename, spacewidth, default_kern, kerns or {}, charset, baseline)
     image_fonts[(name, size, bold, italics)] = sf
 
 
 def register_mudgefont(name=None, size=None, bold=False, italics=False, underline=False,
-                       filename=None, xml=None, spacewidth=10, default_kern=0, kerns={}):
+                       filename=None, xml=None, spacewidth=10, default_kern=0, kerns=None):
     """
     :doc: image_fonts
 
@@ -563,7 +563,7 @@ def register_mudgefont(name=None, size=None, bold=False, italics=False, underlin
     if name is None or size is None or filename is None or xml is None:
         raise Exception("When registering a Mudge Font, the font name, font size, filename, and xml filename are required.")
 
-    mf = MudgeFont(filename, xml, spacewidth, default_kern, kerns)
+    mf = MudgeFont(filename, xml, spacewidth, default_kern, kerns or {})
     image_fonts[(name, size, bold, italics)] = mf
 
 

@@ -114,7 +114,7 @@ def RevolveInOut(start, end, pos, delay, d, **kwargs):
     return renpy.display.motion.Revolve(start, end, delay, d, pos=pos, **kwargs)
 
 
-def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_factory=None, leave_factory=None, old=False, layers=[ 'master' ]):
+def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, enter_factory=None, leave_factory=None, old=False, layers=('master',)):
     """
     Returns a transition that attempts to find images that have changed
     position, and moves them from the old position to the new transition, taking
@@ -440,7 +440,7 @@ class MoveInterpolate(renpy.display.core.Displayable):
         return xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel
 
 
-def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=None, old=False, layers=[ 'master' ], time_warp=None, enter_time_warp=None, leave_time_warp=None):
+def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=None, old=False, layers=('master',), time_warp=None, enter_time_warp=None, leave_time_warp=None):
     """
     :doc: transition function
     :args: (delay, enter=None, leave=None, old=False, layers=['master'], time_warp=None, enter_time_warp=None, leave_time_warp=None)

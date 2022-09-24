@@ -512,7 +512,7 @@ def _find_image(layer, key, name, what):
     return name, what
 
 
-def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
+def predict_show(name, layer=None, what=None, tag=None, at_list=()):
     """
     :undocumented:
 
@@ -1087,7 +1087,7 @@ def display_menu(items,
                  choice_chosen_style='menu_choice_chosen',
                  choice_button_style='menu_choice_button',
                  choice_chosen_button_style='menu_choice_chosen_button',
-                 scope={ },
+                 scope=(),
                  widget_properties=None,
                  screen="choice",
                  type="menu", # @ReservedAssignment

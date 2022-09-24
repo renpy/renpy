@@ -271,7 +271,7 @@ def walk_memory(roots, seen=None):
     return size, seen
 
 
-def profile_memory_common(packages=[ "renpy", "store" ], skip_constants=False):
+def profile_memory_common(packages=("renpy", "store"), skip_constants=False):
     """
     Profiles object, surface, and texture memory used in the renpy and store
     packages.

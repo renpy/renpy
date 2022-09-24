@@ -594,9 +594,9 @@ class SayBehavior(renpy.display.layout.Null):
     focusable = True
     text_tuple = None
 
-    dismiss_unfocused = [ 'dismiss_unfocused' ]
+    dismiss_unfocused = ('dismiss_unfocused',)
 
-    def __init__(self, default=True, afm=None, dismiss=[ 'dismiss' ], allow_dismiss=None, dismiss_unfocused=[ 'dismiss_unfocused' ], **properties):
+    def __init__(self, default=True, afm=None, dismiss=('dismiss',), allow_dismiss=None, dismiss_unfocused=('dismiss_unfocused',), **properties):
         super(SayBehavior, self).__init__(default=default, **properties)
 
         if not isinstance(dismiss, (list, tuple)):
@@ -825,7 +825,7 @@ class Button(renpy.display.layout.Window):
 
     def __init__(self, child=None, style='button', clicked=None,
                  hovered=None, unhovered=None, action=None, role=None,
-                 time_policy=None, keymap={}, alternate=None,
+                 time_policy=None, keymap=None, alternate=None,
                  selected=None, sensitive=None, keysym=None, alternate_keysym=None,
                  **properties):
 
@@ -845,7 +845,7 @@ class Button(renpy.display.layout.Window):
         self.focusable = True # (clicked is not None) or (action is not None)
         self.role_parameter = role
 
-        self.keymap = keymap
+        self.keymap = keymap or {}
 
         self.keysym = keysym
         self.alternate_keysym = alternate_keysym
@@ -2352,7 +2352,7 @@ class Timer(renpy.display.layout.Null):
             self.state.started = self.started
             self.state.next_event = self.next_event
 
-    def __init__(self, delay, action=None, repeat=False, args=(), kwargs={}, replaces=None, modal=None, **properties):
+    def __init__(self, delay, action=None, repeat=False, args=(), kwargs=None, replaces=None, modal=None, **properties):
         super(Timer, self).__init__(**properties)
 
         if delay <= 0:
@@ -2370,7 +2370,7 @@ class Timer(renpy.display.layout.Null):
         # The function and its arguments.
         self.function = action
         self.args = args
-        self.kwargs = kwargs
+        self.kwargs = kwargs or {}
 
         # Did we start the timer?
         self.started = False

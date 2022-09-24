@@ -3546,7 +3546,7 @@ class Interface(object):
                       suppress_overlay=False,
                       suppress_underlay=False,
                       mouse='default',
-                      preloads=[],
+                      preloads=(),
                       roll_forward=None,
                       pause=None,
                       pause_start=0.0,

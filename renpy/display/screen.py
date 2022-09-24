@@ -339,7 +339,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         self.profile = profile.get(self.screen_name, None)
 
-    def __init__(self, screen, tag, layer, widget_properties={}, scope={}, transient=False, **properties):
+    def __init__(self, screen, tag, layer, widget_properties=None, scope=None, transient=False, **properties):
+        widget_properties = widget_properties or {}
+        scope = scope or {}
 
         super(ScreenDisplayable, self).__init__(**properties)
 
