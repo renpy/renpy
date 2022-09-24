@@ -143,7 +143,8 @@ These functions and classes are tools meant to ease development effort, but not
 specifically related to specific Ren'Py features or objects.
 
 The two following classes are equality mixin classes. They add equality support,
-following different rules, to the classes inheriting them.
+following different rules, to the classes inheriting them. They are incompatible
+with class having or inheriting ``__slots__``.
 
 .. include:: inc/equality_mixins
 
