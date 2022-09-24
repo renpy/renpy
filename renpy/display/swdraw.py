@@ -138,14 +138,10 @@ class Clipper(object):
             x1 += 1
             y1 += 1
 
-            if x0 < sx0:
-                x0 = sx0
-            if y0 < sy0:
-                y0 = sy0
-            if x1 > sx1:
-                x1 = sx1
-            if y1 > sy1:
-                y1 = sy1
+            x0 = max(x0, sx0)
+            y0 = max(y0, sy0)
+            x1 = min(x1, sx1)
+            y1 = min(y1, sy1)
 
             w = x1 - x0
             h = y1 - y0
@@ -528,15 +524,11 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
         miny = math.floor(min(y0, y1, y2, y3) + yo)
         maxy = math.ceil(max(y0, y1, y2, y3) + yo)
 
-        if minx < 0:
-            minx = 0
-        if miny < 0:
-            miny = 0
+        minx = max(minx, 0)
+        miny = max(miny, 0)
 
-        if maxx > dw:
-            maxx = dw
-        if maxy > dh:
-            maxy = dh
+        maxx = min(maxx, dw)
+        maxy = min(maxy, dh)
 
         if minx > dw or miny > dh or maxx < 0 or maxy < 0:
             return

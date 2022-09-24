@@ -1881,10 +1881,7 @@ class Adjustment(renpy.object.Object):
 
     def change(self, value):
 
-        if value < 0:
-            value = 0
-        if value > self._range:
-            value = self._range
+        value = min(max(0, value), self._range)
 
         if value != self._value:
             self._value = value

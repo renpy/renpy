@@ -157,8 +157,7 @@ class ImageMapCache(renpy.object.Object):
             self.cache_rect[i] = (x+1, y+1, w-2, h-2) # type: ignore
 
             x += w
-            if line_height < h:
-                line_height = h
+            line_height = max(line_height, h)
 
         self.cache_width = width
         self.cache_height = y + line_height

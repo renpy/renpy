@@ -572,8 +572,7 @@ class ImageDissolve(Transition):
             ramp = self.ramplen
 
             # Prevent a DBZ if the user gives us a 0 ramp.
-            if ramp < 1:
-                ramp = 1
+            ramp = max(ramp, 1)
 
             # Compute the offset to apply to the alpha.
             start = -1.0
