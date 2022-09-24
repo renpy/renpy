@@ -239,7 +239,7 @@ def index_archives():
     archive_extensions = [ ]
     for handler in archive_handlers:
         for ext in handler.get_supported_extensions():
-            if not (ext in archive_extensions):
+            if ext not in archive_extensions:
                 archive_extensions.append(ext)
 
     for prefix in renpy.config.archives:
@@ -509,7 +509,7 @@ class SubFile(object):
         else:
             rv2 = b""
 
-        return (rv1 + rv2)
+        return rv1 + rv2
 
     def readable(self):
         return True
@@ -602,7 +602,7 @@ class SubFile(object):
 
         self.offset = offset
 
-        offset = offset - len(self.start)
+        offset -= len(self.start)
         offset = max(0, offset)
 
         self.f.seek(offset + self.base)

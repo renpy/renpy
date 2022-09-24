@@ -59,7 +59,7 @@ class Solid(renpy.display.core.Displayable):
         if not self._equals(o):
             return False
 
-        return (self.color == o.color)
+        return self.color == o.color
 
     def visit(self):
         return [ ]

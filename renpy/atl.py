@@ -438,7 +438,7 @@ class ATLTransformBase(renpy.object.Object):
             if name in kwargs:
                 raise Exception('Parameter %r is used as both a positional and keyword argument to a transition.' % name)
 
-            if (name == "child") or (name == "old_widget"):
+            if name in ("child", "old_widget"):
                 child = value
 
             context[name] = value
@@ -1627,7 +1627,7 @@ class On(Statement):
             if action == "continue":
 
                 # If it comes from a hide block, indicate that.
-                if name == "hide" or name == "replaced":
+                if name in ("hide", "replaced"):
                     trans.hide_response = False
                     trans.replaced_response = False
 
@@ -1636,8 +1636,8 @@ class On(Statement):
             # If we get a next, then try going to the default
             # event, unless we're already in default, in which case we
             # go to None.
-                if name == "default" or name == "hide" or name == "replaced":
             if action == "next":
+                if name in ("default", "hide", "replaced"):
                     name = None
                 else:
                     name = "default"

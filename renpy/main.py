@@ -401,7 +401,7 @@ def main():
     archive_extensions = [ ]
     for handler in renpy.loader.archive_handlers:
         for ext in handler.get_supported_extensions():
-            if not (ext in archive_extensions):
+            if ext not in archive_extensions:
                 archive_extensions.append(ext)
 
     # Find archives.
@@ -414,7 +414,7 @@ def main():
             base, ext = os.path.splitext(i)
 
             # Check if the archive does not have any of the extensions in archive_extensions
-            if not (ext in archive_extensions):
+            if ext not in archive_extensions:
                 continue
 
             renpy.config.archives.append(base)
@@ -466,7 +466,7 @@ def main():
     # If recompiling everything, remove orphan .rpyc files.
     # Otherwise, will fail in case orphan .rpyc have same
     # labels as in other scripts (usually happens on script rename).
-    if (renpy.game.args.command == 'compile') and not (renpy.game.args.keep_orphan_rpyc): # type: ignore
+    if (renpy.game.args.command == 'compile') and not renpy.game.args.keep_orphan_rpyc: # type: ignore
 
         for (fn, dn) in renpy.game.script.script_files:
 

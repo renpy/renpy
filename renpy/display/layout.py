@@ -1172,7 +1172,7 @@ class MultiBox(Container):
         except IgnoreLayers:
             if self.layers:
 
-                if (ev.type != renpy.display.core.TIMEEVENT):
+                if ev.type != renpy.display.core.TIMEEVENT:
                     renpy.display.interface.post_time_event()
 
                 return None

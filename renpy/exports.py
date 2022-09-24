@@ -4112,7 +4112,7 @@ def is_skipping():
     or False otherwise.
     """
 
-    return not not renpy.config.skipping
+    return bool(renpy.config.skipping)
 
 
 def is_init_phase():

@@ -71,7 +71,7 @@ class ShowIf(renpy.display.layout.Container):
 
     @property
     def _box_skip(self):
-        return (not self.show_child)
+        return not self.show_child
 
     def per_interact(self):
         if self.pending_event:

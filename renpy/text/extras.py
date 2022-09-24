@@ -280,9 +280,9 @@ def textwrap(s, width=78, asian=False):
 
         eaw = unicodedata.east_asian_width(c)
 
-        if (eaw == "F") or (eaw == "W"):
+        if eaw in ("F", "W"):
             gwidth = 20
-        elif (eaw == "A"):
+        elif eaw == "A":
             if asian:
                 gwidth = 20
             else:

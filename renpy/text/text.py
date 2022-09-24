@@ -679,7 +679,7 @@ class Layout(object):
                 # they should be included or excluded from the end of a line.
                 language = style.language
 
-                if language == "unicode" or language == "eastasian":
+                if language in ("unicode", "eastasian"):
                     textsupport.annotate_unicode(par_glyphs, False, 0)
                 elif language == "korean-with-spaces":
                     textsupport.annotate_unicode(par_glyphs, True, 0)
@@ -701,7 +701,7 @@ class Layout(object):
 
                 if layout == "tex":
                     texwrap.linebreak_tex(par_glyphs, width - first_indent, width - rest_indent, False)
-                elif layout == "subtitle" or layout == "tex-subtitle":
+                elif layout in ("subtitle", "tex-subtitle"):
                     texwrap.linebreak_tex(par_glyphs, width - first_indent, width - rest_indent, True)
                 elif layout == "greedy":
                     textsupport.linebreak_greedy(par_glyphs, width - first_indent, width - rest_indent)
@@ -830,7 +830,7 @@ class Layout(object):
             if key in self.textures:
                 continue
 
-            if color == None:
+            if color is None:
                 self.displayable_blits = [ ]
                 di.displayable_blits = self.displayable_blits
             else:
@@ -1306,7 +1306,7 @@ class Layout(object):
             s, direction = log2vis(unicode(s), direction)
             l.append((ts, s))
 
-        rtl = (direction == RTL or direction == WRTL)
+        rtl = (direction in (RTL, WRTL))
 
         return l, rtl
 

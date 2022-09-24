@@ -86,7 +86,7 @@ class DialogueTextTags(object):
                     self.text += quoted
                     continue
 
-                if tag == "p" or tag == "w":
+                if tag in ("p", "w"):
                     if not less_pauses:
                         self.pause_start.append(len(self.text))
                         self.pause_end.append(len(self.text))
