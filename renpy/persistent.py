@@ -515,7 +515,8 @@ def MultiPersistent(name, save_on_quit=False):
         fn = os.path.join(fn, name) # type: ignore
         if os.path.isfile(fn):
             try:
-                data = open(fn, "rb").read()
+                with open(fn, "rb") as f:
+                    data = f.read()
                 break
             except Exception:
                 pass

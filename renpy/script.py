@@ -119,7 +119,8 @@ class Script(object):
         renpy.game.script = self
 
         if os.path.exists(renpy.config.renpy_base + "/lock.txt"):
-            self.key = open(renpy.config.renpy_base + "/lock.txt", "rb").read()
+            with open(renpy.config.renpy_base + "/lock.txt", "rb") as f:
+                self.key = f.read()
         else:
             self.key = None
 
