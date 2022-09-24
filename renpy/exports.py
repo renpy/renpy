@@ -2051,8 +2051,8 @@ def transition(trans, layer=None, always=False, force=False):
     """
 
     if isinstance(trans, dict):
-        for layer, t in trans.items():
-            transition(t, layer=layer, always=always, force=force)
+        for l, t in trans.items():
+            transition(t, layer=l, always=always, force=force)
         return
 
     if (not always) and not renpy.game.preferences.transitions: # type: ignore
