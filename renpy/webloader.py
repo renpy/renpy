@@ -250,7 +250,7 @@ def process_downloaded_resources():
     # Due to search-path dups and derived images (including image-based animations)
     # files can't be removed right after actual load
     ttl = 60  # remove after 1mn - if your animation is longer than that, use a video
-    for fullpath in to_unlink.keys():
+    for fullpath in to_unlink:
         delta = time.time() - to_unlink[fullpath]
         if delta > ttl:
             os.unlink(fullpath)

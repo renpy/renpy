@@ -1784,7 +1784,7 @@ def get_all_labels():
     """
     rv = [ ]
 
-    for i in renpy.game.script.namemap.keys():
+    for i in renpy.game.script.namemap:
         if isinstance(i, basestring):
             rv.append(i)
 
