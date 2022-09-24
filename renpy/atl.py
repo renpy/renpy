@@ -1154,8 +1154,6 @@ class Child(Statement):
             child = self.transition(old_widget=old_child,
                                     new_widget=child)
             child._unique()
-        else:
-            child = child
 
         trans.set_child(child, duplicate=False)
         trans.raw_child = self.child

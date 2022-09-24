@@ -305,7 +305,6 @@ You may be using a system install of python. Please run {0}.sh,
 
             except Exception as e:
                 renpy.error.report_exception(e)
-                pass
 
         sys.exit(exit_status)
 

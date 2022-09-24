@@ -570,8 +570,6 @@ class IgnoreLayers(Exception):
     underlay. This can also be used to stop processing focuses.
     """
 
-    pass
-
 
 def default_modal_function(ev, x, y, w, h):
     if w is None:
