@@ -463,7 +463,7 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
 
     if kwargs:
         rv = Transform(child=d, **kwargs)
-        rv._main = d
+        rv._main = d # type: ignore
 
     return rv
 

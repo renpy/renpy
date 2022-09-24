@@ -221,7 +221,7 @@ class Script(object):
                 continue
 
             try:
-                os.makedirs(os.path.dirname(target_fn), 0o700)
+                os.makedirs(os.path.dirname(target_fn), 0o700) # type: ignore
             except Exception:
                 pass
 

@@ -1520,6 +1520,8 @@ def ren_py_to_rpy(text, filename):
     # The state the state machine is in.
     state = IGNORE
 
+    open_linenumber = 0
+
     for linenumber, l in enumerate(lines, start=1):
 
         if state != RENPY:

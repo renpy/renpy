@@ -306,7 +306,7 @@ class DialogueFile(object):
             # avoid to include same s
             stl.translations[s] = s
 
-            s = renpy.translation.translate_string(s, self.language)
+            s = renpy.translation.translate_string(s, self.language) # type: ignore
 
             if self.notags:
                 s = notags_filter(s)
