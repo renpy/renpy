@@ -126,10 +126,7 @@ def exists():
     Returns true if a controller exists, and False otherwise.
     """
 
-    if controllers:
-        return True
-    else:
-        return False
+    return bool(controllers)
 
 
 def quit(index): # @ReservedAssignment

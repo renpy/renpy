@@ -1674,10 +1674,7 @@ def get_safe_mode():
             VK_SHIFT = 0x10
 
             ctypes.windll.user32.GetKeyState.restype = ctypes.c_ushort # type: ignore
-            if ctypes.windll.user32.GetKeyState(VK_SHIFT) & 0x8000: # type: ignore
-                return True
-            else:
-                return False
+            return bool(ctypes.windll.user32.GetKeyState(VK_SHIFT) & 0x8000) # type: ignore
 
         # Safe mode doesn't work on other platforms.
         return False

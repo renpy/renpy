@@ -754,10 +754,7 @@ def can_load(filename, test=False):
 
     c = get_cache(filename)
 
-    if c.get_mtime():
-        return True
-    else:
-        return False
+    return bool(c.get_mtime())
 
 
 def load(filename):

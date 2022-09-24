@@ -1104,10 +1104,7 @@ def label_statement(l, loc, init=False):
     l.set_global_label(name)
     parameters = parse_parameters(l)
 
-    if l.keyword('hide'):
-        hide = True
-    else:
-        hide = False
+    hide = bool(l.keyword('hide'))
 
     l.require(':')
     l.expect_eol()

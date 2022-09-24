@@ -367,10 +367,7 @@ class Movie(renpy.display.core.Displayable):
         if renpy.audio.music.channel_defined(name):
             return
 
-        if self.mask:
-            framedrop = True
-        else:
-            framedrop = False
+        framedrop = bool(self.mask)
 
         renpy.audio.music.register_channel(name, renpy.config.movie_mixer, loop=True, stop_on_mute=False, movie=True, framedrop=framedrop, force=True)
 
@@ -591,9 +588,6 @@ def frequent():
 
         c = renpy.audio.audio.get_channel("movie")
 
-        if c.video_ready():
-            return True
-        else:
-            return False
+        return bool(c.video_ready())
 
     return False

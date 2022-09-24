@@ -1892,10 +1892,7 @@ class SLUse(SLNode):
         if self.block:
             self.block.prepare(analysis)
 
-            if self.block.constant == GLOBAL_CONST:
-                const = True
-            else:
-                const = False
+            const = (self.block.constant == GLOBAL_CONST)
         else:
             const = True
 

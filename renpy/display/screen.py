@@ -1108,10 +1108,7 @@ def has_screen(name):
     if not name:
         return False
 
-    if get_screen_variant(name[0]):
-        return True
-    else:
-        return False
+    return bool(get_screen_variant(name[0]))
 
 
 def get_screen_roll_forward(screen_name):

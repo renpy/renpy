@@ -662,10 +662,7 @@ class RollbackLog(renpy.object.Object):
         reachable.clear()
 
     def in_rollback(self):
-        if self.forward:
-            return True
-        else:
-            return False
+        return bool(self.forward)
 
     def in_fixed_rollback(self):
         return self.rollback_is_fixed

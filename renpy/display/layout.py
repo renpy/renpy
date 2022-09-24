@@ -805,10 +805,7 @@ class MultiBox(Container):
     def render(self, width, height, st, at):
 
         # Do we need to adjust the child times due to our being a layer?
-        if self.layer_name or (self.layers is not None):
-            adjust_times = True
-        else:
-            adjust_times = False
+        adjust_times = bool(self.layer_name or (self.layers is not None))
 
         minx = self.style.xminimum
         if minx is not None:

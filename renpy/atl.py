@@ -1192,10 +1192,7 @@ class Interpolation(Statement):
 
         # Special case `pause 0` to always display a frame. This is intended to
         # support single-frame animations that shouldn't skip.
-        if state is None and self.warper == "pause" and self.duration == 0 and renpy.config.atl_one_frame:
-            force_frame = True
-        else:
-            force_frame = False
+        force_frame = bool(state is None and self.warper == "pause" and self.duration == 0 and renpy.config.atl_one_frame)
 
         if self.duration:
             complete = min(1.0, st / self.duration)
@@ -1592,10 +1589,7 @@ class On(Statement):
         self.handlers = handlers
 
     def _handles_event(self, event):
-        if event in self.handlers:
-            return True
-        else:
-            return False
+        return event in self.handlers
 
     def execute(self, trans, st, state, events):
 

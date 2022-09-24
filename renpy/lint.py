@@ -775,10 +775,7 @@ def common(n):
 
     filename = n.filename.replace("\\", "/")
 
-    if filename.startswith("common/") or filename.startswith("renpy/common/"):
-        return True
-    else:
-        return False
+    return bool(filename.startswith("common/") or filename.startswith("renpy/common/"))
 
 def report_character_stats(charastats):
     """
