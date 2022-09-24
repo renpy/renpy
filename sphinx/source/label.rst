@@ -147,6 +147,8 @@ If the optional expression is given to return, it is evaluated, and it's result
 is stored in the ``_return`` variable. This variable is dynamically scoped to each
 context.
 
+.. _special-labels:
+
 Special Labels
 --------------
 

@@ -12,7 +12,7 @@ code applies to a splashscreen located anywhere in your game under a different
 label.
 
 To add a textual splashscreen to your game, insert code like the below anywhere in
-your script files (as long as it is not itself in a block): ::
+your script files (as long as it is not itself in a block)::
 
     label splashscreen:
         scene black
@@ -27,7 +27,7 @@ your script files (as long as it is not itself in a block): ::
         return
 
 Here's another example of a splashscreen, this time using an image and
-sound: ::
+sound::
 
     image splash = "splash.png"
 
@@ -45,13 +45,15 @@ sound: ::
 
         return
 
-And finally, with a movie file: ::
+And finally, with a movie file::
 
     label splashscreen:
 
         $ renpy.movie_cutscene('movie.ogv')
 
         return
+
+.. _presplash:
 
 Adding a Presplash
 ------------------
