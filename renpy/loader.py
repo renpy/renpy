@@ -1107,8 +1107,6 @@ def auto_thread_function():
     This thread sets need_autoreload when necessary.
     """
 
-    global needs_autoreload
-
     while True:
 
         with auto_lock:
