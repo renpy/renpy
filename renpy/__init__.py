@@ -35,7 +35,6 @@ def update_path():
     Update the __path__ of package, to import binary modules from a libexec
     directory.
     """
-    import sys
     import os.path
 
     name = sys._getframe(1).f_globals["__name__"]
