@@ -2034,7 +2034,7 @@ class Interface(object):
                     )
 
             else:
-                self.layer_properties[layer] = dict()
+                self.layer_properties[layer] = {}
 
         # A stack giving the values of self.transition and self.transition_time
         # for contexts outside the current one. This is used to restore those
