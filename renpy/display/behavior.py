@@ -23,7 +23,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from typing import Callable
 
 import math
 import re
@@ -1731,7 +1731,7 @@ class Adjustment(renpy.object.Object):
 
     force_step = False
 
-    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # @ReservedAssignment
+    def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
         """
         The following parameters correspond to fields or properties on
         the adjustment object:
@@ -1800,7 +1800,7 @@ class Adjustment(renpy.object.Object):
                 adjustable = True
 
         self._range = range
-        self._value = type(range)(value)
+        self._value = type(range)(value) # type: ignore
         self._page = page
         self._step = step
         self.changed = changed
@@ -1827,7 +1827,7 @@ class Adjustment(renpy.object.Object):
     def get_value(self):
         if self._value <= 0:
             return type(self._value)(0)
-        if self._value >= self._range:
+        if self._value >= self._range: # type: ignore
             return self._range
 
         return self._value
@@ -1881,7 +1881,7 @@ class Adjustment(renpy.object.Object):
 
     def change(self, value):
 
-        value = min(max(0, value), self._range)
+        value = min(max(0, value), self._range) # type: ignore
 
         if value != self._value:
             self._value = value

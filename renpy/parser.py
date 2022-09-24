@@ -1043,7 +1043,7 @@ def transform_statement(l, loc):
 
     atl = renpy.atl.parse_atl(l.subblock_lexer())
 
-    rv = ast.Transform(loc, store, name, atl, parameters)
+    rv = ast.Transform(loc, store, name, atl, parameters) #type: ignore
 
     if not l.init:
         rv = ast.Init(loc, [ rv ], priority + l.init_offset)

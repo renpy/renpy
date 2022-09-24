@@ -486,7 +486,7 @@ def add_string_translation(language, old, new, newloc):
 Default = renpy.object.Sentinel("default")
 
 
-def translate_string(s, language=Default):
+def translate_string(s, language=Default): # type (str, str|renpy.object.Sentinel|None) -> str
     """
     :doc: translate_string
     :name: renpy.translate_string

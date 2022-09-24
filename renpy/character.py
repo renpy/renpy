@@ -769,7 +769,7 @@ class ADVCharacter(object):
             self,
             name=NotSet,
             kind=None,
-            **properties):
+            **properties): # type: (str|None|renpy.object.Sentinel, None|str|ADVCharacter, Any) -> None
 
         if kind is None:
             kind = renpy.store.adv

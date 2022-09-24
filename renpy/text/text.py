@@ -22,7 +22,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Optional, Callable
+from typing import Any, Optional, Callable
 
 import math
 
@@ -1579,7 +1579,7 @@ class Text(renpy.display.core.Displayable):
                 break
 
         # True if we are substituting things in.
-        self.substitute = substitute
+        self.substitute = substitute # type: bool | None
 
         # Do we need to update ourselves?
         self.dirty = True
@@ -1591,7 +1591,7 @@ class Text(renpy.display.core.Displayable):
         self.mask = mask
 
         # Sets the text we're showing, and performs substitutions.
-        self.set_text(text, scope, substitute)
+        self.set_text(text, scope, substitute) # type: ignore
 
         if renpy.game.less_updates or renpy.game.preferences.self_voicing:
             slow = False
@@ -1687,10 +1687,10 @@ class Text(renpy.display.core.Displayable):
 
         return self.set_text(self.text_parameter, scope, self.substitute, update)
 
-    def set_text(self, text, scope=None, substitute=False, update=True):
+    def set_text(self, text, scope=None, substitute=False, update=True): # type: (Any, Any, bool|None, bool) -> bool
 
         if self.locked:
-            return
+            return False
 
         self.language = renpy.game.preferences.language
 
@@ -1709,7 +1709,7 @@ class Text(renpy.display.core.Displayable):
         for i in text:
             if isinstance(i, basestring):
                 if substitute is not False:
-                    i, did_sub = renpy.substitutions.substitute(i, scope, substitute)
+                    i, did_sub = renpy.substitutions.substitute(i, scope, substitute) # type: ignore
                     uses_scope = uses_scope or did_sub
 
                 if isinstance(i, bytes):

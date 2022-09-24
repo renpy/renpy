@@ -62,7 +62,7 @@ def onetime_init():
     if not PY2:
         dll = dll.encode("utf-8")
 
-    if not renpy.gl2.live2dmodel.load(dll):
+    if not renpy.gl2.live2dmodel.load(dll): # type: ignore
         raise Exception("Could not load Live2D. {} was not found.".format(dll))
 
     did_onetime_init = True
@@ -199,7 +199,7 @@ class Live2DCommon(object):
             self.model_json = json.load(f)
 
         # The model created from the moc3 file.
-        self.model = renpy.gl2.live2dmodel.Live2DModel(self.base + self.model_json["FileReferences"]["Moc"])
+        self.model = renpy.gl2.live2dmodel.Live2DModel(self.base + self.model_json["FileReferences"]["Moc"]) # type: ignore
 
         # The texture images.
         self.textures = [ ]
