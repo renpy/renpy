@@ -185,8 +185,8 @@ class Parser(object):
                 c = self.children[word].parse(loc, l, self, keyword)
 
             return c
-        else:
-            return None
+
+        return None
 
     def parse_layout(self, loc, l, parent, keyword):
         l.error("The %s statement cannot be used as a container for the has statement." % self.name)

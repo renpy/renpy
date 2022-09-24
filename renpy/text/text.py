@@ -1028,7 +1028,7 @@ class Layout(object):
 
                     continue
 
-                elif type == TEXT:
+                if type == TEXT:
 
                     if text_displayable.mask is not None:
                         if text != "\u200b":
@@ -1447,8 +1447,7 @@ class Layout(object):
 
         if st >= self.max_time:
             return None
-        else:
-            return 0
+        return 0
 
 
 # The maximum number of entries in the layout cache.
@@ -1576,9 +1575,8 @@ class Text(renpy.display.core.Displayable):
             if not isinstance(i, (basestring, renpy.display.core.Displayable)):
                 if renpy.config.developer:
                     raise Exception("Cannot display {0!r} as text.".format(i))
-                else:
-                    text = [ "" ]
-                    break
+                text = [ "" ]
+                break
 
         # True if we are substituting things in.
         self.substitute = substitute

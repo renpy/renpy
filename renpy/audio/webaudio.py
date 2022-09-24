@@ -198,8 +198,7 @@ def get_pos(channel):
 
     if rv >= 0:
         return rv / 1000.0
-    else:
-        return None
+    return None
 
 
 def get_duration(channel):
@@ -212,8 +211,7 @@ def get_duration(channel):
 
     if rv >= 0:
         return rv / 1000.0
-    else:
-        return None
+    return None
 
 
 def set_volume(channel, volume):

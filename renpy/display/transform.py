@@ -520,8 +520,7 @@ class Transform(Container):
     def visit(self):
         if self.child is None:
             return [ ]
-        else:
-            return [ self.child ]
+        return [ self.child ]
 
     # The default function chooses entries from self.arguments that match
     # the style prefix, and applies them to the state.

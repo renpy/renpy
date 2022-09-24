@@ -305,8 +305,7 @@ class Analysis(object):
 
         if self.control.imagemap:
             return NOT_CONST
-        else:
-            return GLOBAL_CONST
+        return GLOBAL_CONST
 
     def exit_loop(self):
         """
@@ -402,12 +401,11 @@ class Analysis(object):
 
             if name in self.not_constant:
                 return NOT_CONST, name
-            elif name in self.global_constant:
+            if name in self.global_constant:
                 return GLOBAL_CONST, name
-            elif name in self.local_constant:
+            if name in self.local_constant:
                 return LOCAL_CONST, name
-            else:
-                return const, name
+            return const, name
 
         def check_nodes(nodes):
             """
@@ -437,25 +435,25 @@ class Analysis(object):
             if isinstance(node, ast.Constant):
                 return GLOBAL_CONST
 
-            elif isinstance(node, ast.BoolOp):
+            if isinstance(node, ast.BoolOp):
                 return check_nodes(node.values)
 
-            elif isinstance(node, ast.NamedExpr):
+            if isinstance(node, ast.NamedExpr):
                 return check_node(node.value)
 
-            elif isinstance(node, ast.BinOp):
+            if isinstance(node, ast.BinOp):
                 return min(
                     check_node(node.left),
                     check_node(node.right),
                     )
 
-            elif isinstance(node, ast.UnaryOp):
+            if isinstance(node, ast.UnaryOp):
                 return check_node(node.operand)
 
 
             # ast.Lambda is NOT_CONST.
 
-            elif isinstance(node, ast.IfExp):
+            if isinstance(node, ast.IfExp):
                 return min(
                     check_node(node.test),
                     check_node(node.body),
@@ -463,13 +461,13 @@ class Analysis(object):
                     )
 
 
-            elif isinstance(node, ast.Dict):
+            if isinstance(node, ast.Dict):
                 return min(
                     check_nodes(node.keys),
                     check_nodes(node.values)
                     )
 
-            elif isinstance(node, ast.Set):
+            if isinstance(node, ast.Set):
                 return check_nodes(node.elts)
 
 
@@ -483,13 +481,13 @@ class Analysis(object):
             # ast.Yield is NOT_CONST.
             # ast.YieldFrom is NOT_CONST.
 
-            elif isinstance(node, ast.Compare):
+            if isinstance(node, ast.Compare):
                 return min(
                     check_node(node.left),
                     check_nodes(node.comparators),
                     )
 
-            elif isinstance(node, ast.Call):
+            if isinstance(node, ast.Call):
                 const, name = check_name(node.func)
 
                 # The function must have a name, and must be declared pure.
@@ -502,31 +500,31 @@ class Analysis(object):
                 )
 
 
-            elif isinstance(node, ast.FormattedValue):
+            if isinstance(node, ast.FormattedValue):
                 return min(
                     check_node(node.value),
                     check_node(node.format_spec),
                 )
 
-            elif isinstance(node, ast.JoinedStr):
+            if isinstance(node, ast.JoinedStr):
                 return check_nodes(node.values)
 
-            elif isinstance(node, (ast.Attribute, ast.Name)):
+            if isinstance(node, (ast.Attribute, ast.Name)):
                 return check_name(node)[0]
 
-            elif isinstance(node, ast.Subscript):
+            if isinstance(node, ast.Subscript):
                 return min(
                     check_node(node.value),
                     check_node(node.slice),
                     )
 
-            elif isinstance(node, ast.Starred):
+            if isinstance(node, ast.Starred):
                 return check_node(node.value)
 
-            elif isinstance(node, (ast.List, ast.Tuple)):
+            if isinstance(node, (ast.List, ast.Tuple)):
                 return check_nodes(node.elts)
 
-            elif isinstance(node, ast.Slice):
+            if isinstance(node, ast.Slice):
                 return min(
                     check_node(node.lower),
                     check_node(node.upper),
@@ -547,8 +545,8 @@ class Analysis(object):
 
         if literal:
             return GLOBAL_CONST
-        else:
-            return self.is_constant(node)
+
+        return self.is_constant(node)
 
     def python(self, code):
         """

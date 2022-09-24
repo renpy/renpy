@@ -301,8 +301,8 @@ def interact(type='misc', roll_forward=None, **kwargs): # @ReservedAssignment
 
     if renpy.exports.in_fixed_rollback() and roll_forward is not None:
         return roll_forward
-    else:
-        return rv
+
+    return rv
 
 
 def tag(name):
@@ -442,8 +442,7 @@ class Wrapper(renpy.object.Object):
     def __reduce__(self):
         if PY2:
             return bytes(self.name) # type: ignore
-        else:
-            return self.name
+        return self.name
 
     def __init__(self, function, one=False, many=False, imagemap=False, replaces=False, style=None, **kwargs):
 
@@ -944,8 +943,7 @@ def _imagebutton(idle_image=None,
         if required:
             if auto:
                 raise Exception("Imagebutton does not have a %s image. (auto=%r)." % (name, auto))
-            else:
-                raise Exception("Imagebutton does not have a %s image." % (name,))
+            raise Exception("Imagebutton does not have a %s image." % (name,))
 
         return None
 
@@ -1155,7 +1153,7 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
 
         return rv
 
-    elif scrollbars == "horizontal":
+    if scrollbars == "horizontal":
 
         if renpy.config.scrollbar_child_size:
             viewport_properties.setdefault("child_size", (VIEWPORT_SIZE, None))
@@ -1172,23 +1170,21 @@ def viewport_common(vpfunc, _spacing_to_side, scrollbars=None, **properties):
 
         return rv
 
-    else:
+    if renpy.config.scrollbar_child_size:
+        viewport_properties.setdefault("child_size", (VIEWPORT_SIZE, VIEWPORT_SIZE))
 
-        if renpy.config.scrollbar_child_size:
-            viewport_properties.setdefault("child_size", (VIEWPORT_SIZE, VIEWPORT_SIZE))
+    side("c r b", **side_properties)
 
-        side("c r b", **side_properties)
+    rv = vpfunc(**viewport_properties)
+    addable = stack.pop()
 
-        rv = vpfunc(**viewport_properties)
-        addable = stack.pop()
+    vscrollbar(adjustment=rv.yadjustment, **vscrollbar_properties)
+    scrollbar(adjustment=rv.xadjustment, **scrollbar_properties)
+    close()
 
-        vscrollbar(adjustment=rv.yadjustment, **vscrollbar_properties)
-        scrollbar(adjustment=rv.xadjustment, **scrollbar_properties)
-        close()
+    stack.append(addable)
 
-        stack.append(addable)
-
-        return rv
+    return rv
 
 
 def viewport(**properties):
@@ -1447,8 +1443,7 @@ def gamemenus(*args):
 
     if args:
         return callsinnewcontext("_game_menu", _game_menu_screen=args[0])
-    else:
-        return callsinnewcontext("_game_menu")
+    return callsinnewcontext("_game_menu")
 
 ##############################################################################
 # The on statement.

@@ -137,8 +137,7 @@ elif os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
         def readyState(self):
             if self.done:
                 return 4
-            else:
-                return 0
+            return 0
 
         @property
         def status(self):

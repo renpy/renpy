@@ -138,8 +138,7 @@ def safe_deepcopy(o):
 
         if renpy.config.developer:
             raise Exception("To be persisted, %r must support equality comparison." % o)
-        else:
-            rv = o
+        rv = o
 
     return rv
 

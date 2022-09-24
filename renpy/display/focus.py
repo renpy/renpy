@@ -222,8 +222,8 @@ def get_mouse():
     focused = get_focused()
     if focused is None:
         return None
-    else:
-        return focused.style.mouse
+
+    return focused.style.mouse
 
 
 def get_tooltip(screen=None, last=False):
@@ -234,8 +234,7 @@ def get_tooltip(screen=None, last=False):
     if screen is None:
         if last:
             return last_tooltip
-        else:
-            return tooltip
+        return tooltip
 
 
     if last:
@@ -580,8 +579,8 @@ def mouse_handler(ev, x, y, default=False):
     if ev is not None:
         if ev.type not in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN):
             return
-        else:
-            pending_focus_type = "mouse"
+
+        pending_focus_type = "mouse"
 
     try:
         new_focus = renpy.display.render.focus_at_point(x, y)
@@ -647,8 +646,7 @@ def horiz_line_dist(ax0, ay0, ax1, ay1, bx0, by0, bx1, by1):
     # The right end of a is to the left of the left end of b.
     if ax0 <= ax1 <= bx0 <= bx1:
         return points_dist(ax1, ay1, bx0, by0, renpy.config.focus_crossrange_penalty, 1.0)
-    else:
-        return points_dist(ax0, ay0, bx1, by1, renpy.config.focus_crossrange_penalty, 1.0)
+    return points_dist(ax0, ay0, bx1, by1, renpy.config.focus_crossrange_penalty, 1.0)
 
 
 # This computes the distance between two vertical lines. (So the
@@ -667,8 +665,7 @@ def verti_line_dist(ax0, ay0, ax1, ay1, bx0, by0, bx1, by1):
     # The right end of a is to the left of the left end of b.
     if ay0 <= ay1 <= by0 <= by1:
         return points_dist(ax1, ay1, bx0, by0, 1.0, renpy.config.focus_crossrange_penalty)
-    else:
-        return points_dist(ax0, ay0, bx1, by1, 1.0, renpy.config.focus_crossrange_penalty)
+    return points_dist(ax0, ay0, bx1, by1, 1.0, renpy.config.focus_crossrange_penalty)
 
 
 # This focuses the widget that is nearest to the current widget. To

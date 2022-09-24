@@ -632,9 +632,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
                 try:
                     mask = renpy.display.render.render(mask, fw, fh, st, at)
                 except Exception:
-                    if callable(mask):
-                        mask = mask
-                    else:
+                    if not callable(mask):
                         raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
 
             if mask is not None:
@@ -875,8 +873,7 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
         if self.x is not None:
             return self.x, self.y, 0, 0, 0, 0, True
-        else:
-            return super(Drag, self).get_placement()
+        return super(Drag, self).get_placement()
 
     def per_interact(self):
         self.set_style_prefix("idle_", True)
@@ -1049,8 +1046,8 @@ class DragGroup(renpy.display.layout.MultiBox):
 
         if max_overlap <= 0:
             return None
-        else:
-            return rv
+
+        return rv
 
     def get_drop_at(self, joined, x, y):
         """

@@ -1292,10 +1292,10 @@ class TagQuotingDict(object):
                 rv = rv.replace("{", "{{")
 
             return rv
-        else:
-            if renpy.config.debug:
-                raise Exception("During an interpolation, '%s' was not found as a variable." % key)
-            return "<" + key + " unbound>"
+
+        if renpy.config.debug:
+            raise Exception("During an interpolation, '%s' was not found as a variable." % key)
+        return "<" + key + " unbound>"
 
 
 tag_quoting_dict = TagQuotingDict()
@@ -2209,8 +2209,8 @@ def get_filename_line():
 
     if n is None:
         return "unknown", 0
-    else:
-        return n.filename, n.linenumber
+
+    return n.filename, n.linenumber
 
 
 # A file that log logs to.
@@ -3371,12 +3371,12 @@ def variant(name):
 
     if isinstance(name, basestring):
         return name in renpy.config.variants
-    else:
-        for n in name:
-            if n in renpy.config.variants:
-                return True
 
-        return False
+    for n in name:
+        if n in renpy.config.variants:
+            return True
+
+    return False
 
 
 def vibrate(duration):
@@ -3886,10 +3886,11 @@ def add_layer(layer, above=None, below=None, menu_clear=True):
     if layer in renpy.config.layers:
         return
 
-    if (above is not None) and (below is not None):
-        raise Exception("The above and below arguments to renpy.add_layer are mutually exclusive.")
+    if above is not None:
 
-    elif above is not None:
+        if below is not None:
+            raise Exception("The above and below arguments to renpy.add_layer are mutually exclusive.")
+
         try:
             index = layers.index(above) + 1
         except ValueError:
@@ -4079,12 +4080,12 @@ def get_on_battery():
 
     if pi.state == pygame_sdl2.POWERSTATE_UNKNOWN: # @UndefinedVariable
         return old_battery
-    elif pi.state == pygame_sdl2.POWERSTATE_ON_BATTERY: # @UndefinedVariable
+    if pi.state == pygame_sdl2.POWERSTATE_ON_BATTERY: # @UndefinedVariable
         old_battery = True
         return True
-    else:
-        old_battery = False
-        return False
+
+    old_battery = False
+    return False
 
 
 def get_say_image_tag():

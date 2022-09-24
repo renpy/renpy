@@ -104,8 +104,8 @@ def get_line_text(filename, linenumber):
 
     if (filename, linenumber) in lines:
         return lines[filename, linenumber].text
-    else:
-        return None
+
+    return None
 
 
 def adjust_line_locations(filename, linenumber, char_offset, line_offset):

@@ -455,35 +455,33 @@ def draw(dest, clip, what, xo, yo, screen):
             dest.forced.add(clip + (clip,))
             return
 
+        # After this code, x and y are the coordinates of the subsurface
+        # relative to the destination. xo and yo are the offset of the
+        # upper-left corner relative to the subsurface.
+
+        if xo >= 0:
+            x = xo
+            xo = 0
         else:
+            x = 0
+            # xo = xo
 
-            # After this code, x and y are the coordinates of the subsurface
-            # relative to the destination. xo and yo are the offset of the
-            # upper-left corner relative to the subsurface.
+        if yo >= 0:
+            y = yo
+            yo = 0
+        else:
+            y = 0
+            # yo = yo
 
-            if xo >= 0:
-                x = xo
-                xo = 0
-            else:
-                x = 0
-                # xo = xo
+        dw, dh = dest.get_size()
 
-            if yo >= 0:
-                y = yo
-                yo = 0
-            else:
-                y = 0
-                # yo = yo
+        width = min(dw - x, what.width + xo)
+        height = min(dh - y, what.height + yo)
 
-            dw, dh = dest.get_size()
+        if width < 0 or height < 0:
+            return
 
-            width = min(dw - x, what.width + xo)
-            height = min(dh - y, what.height + yo)
-
-            if width < 0 or height < 0:
-                return
-
-            dest = dest.subsurface((x, y, width, height))
+        dest = dest.subsurface((x, y, width, height))
 
     # Deal with alpha and transforms by passing them off to draw_transformed.
     if what.alpha != 1 or what.over != 1.0 or (what.forward is not None and what.forward is not IDENTITY):
@@ -595,35 +593,33 @@ def draw_transformed(dest, clip, what, xo, yo, alpha, forward, reverse):
             dest.forced.add(clip + (clip,))
             return
 
+        # After this code, x and y are the coordinates of the subsurface
+        # relative to the destination. xo and yo are the offset of the
+        # upper-left corner relative to the subsurface.
+
+        if xo >= 0:
+            x = xo
+            xo = 0
         else:
+            x = 0
+            # xo = xo
 
-            # After this code, x and y are the coordinates of the subsurface
-            # relative to the destination. xo and yo are the offset of the
-            # upper-left corner relative to the subsurface.
+        if yo >= 0:
+            y = yo
+            yo = 0
+        else:
+            y = 0
+            # yo = yo
 
-            if xo >= 0:
-                x = xo
-                xo = 0
-            else:
-                x = 0
-                # xo = xo
+        dw, dh = dest.get_size()
 
-            if yo >= 0:
-                y = yo
-                yo = 0
-            else:
-                y = 0
-                # yo = yo
+        width = min(dw - x, width + xo)
+        height = min(dh - y, height + yo)
 
-            dw, dh = dest.get_size()
+        if width < 0 or height < 0:
+            return
 
-            width = min(dw - x, width + xo)
-            height = min(dh - y, height + yo)
-
-            if width < 0 or height < 0:
-                return
-
-            dest = dest.subsurface((x, y, width, height))
+        dest = dest.subsurface((x, y, width, height))
 
     if what.operation != BLIT:
         child = what.pygame_surface(True)

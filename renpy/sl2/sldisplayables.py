@@ -108,8 +108,7 @@ class ShowIf(renpy.display.layout.Container):
     def event(self, ev, x, y, st):
         if self.condition:
             return self.child.event(ev, x, y, st)
-        else:
-            return None
+        return None
 
     def get_placement(self):
         return self.child.get_placement()
@@ -117,8 +116,7 @@ class ShowIf(renpy.display.layout.Container):
     def _tts(self):
         if self.condition:
             return self._tts_common()
-        else:
-            return ""
+        return ""
 
 
 DisplayableParser("null", renpy.display.layout.Null, "default", 0)

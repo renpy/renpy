@@ -1094,8 +1094,7 @@ def python_statement(l, loc):
 
     if early:
         return ast.EarlyPython(loc, python_code, hide, store=store)
-    else:
-        return ast.Python(loc, python_code, hide, store=store)
+    return ast.Python(loc, python_code, hide, store=store)
 
 
 @statement("label")
@@ -1499,8 +1498,7 @@ def finish_say(l, loc, who, what, attributes=None, temporary_attributes=None, in
 
         return rv
 
-    else:
-        return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments, temporary_attributes=temporary_attributes, identifier=identifier)
+    return ast.Say(loc, who, what, with_, attributes=attributes, interact=interact, arguments=arguments, temporary_attributes=temporary_attributes, identifier=identifier)
 
 
 def say_attributes(l):

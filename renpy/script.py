@@ -472,18 +472,16 @@ class Script(object):
                                        old_node.filename, old_node.linenumber,
                                        bad_node.filename, bad_node.linenumber))
 
-                else:
+                if renpy.config.allow_duplicate_labels:
+                    return
 
-                    if renpy.config.allow_duplicate_labels:
-                        return
-
-                    self.duplicate_labels.append(
-                        u'The label {} is defined twice, at File "{}", line {}:\n{}and File "{}", line {}:\n{}'.format(
-                            bad_name, old_node.filename, old_node.linenumber,
-                            renpy.lexer.get_line_text(old_node.filename, old_node.linenumber),
-                            bad_node.filename, bad_node.linenumber,
-                            renpy.lexer.get_line_text(bad_node.filename, bad_node.linenumber),
-                        ))
+                self.duplicate_labels.append(
+                    'The label {} is defined twice, at File "{}", line {}:\n{}and File "{}", line {}:\n{}'.format(
+                        bad_name, old_node.filename, old_node.linenumber,
+                        renpy.lexer.get_line_text(old_node.filename, old_node.linenumber),
+                        bad_node.filename, bad_node.linenumber,
+                        renpy.lexer.get_line_text(bad_node.filename, bad_node.linenumber),
+                    ))
 
         self.update_bytecode()
 
@@ -758,7 +756,7 @@ class Script(object):
 
             if len(rpyfns) > 1:
                 raise Exception("{} conflict, and can't exist in the same game.".format(" and ".join(i[1] for i in rpyfns)))
-            elif rpyfns:
+            if rpyfns:
                 source, rpyfn = rpyfns[0]
 
                 with open(rpyfn, "rb") as f:

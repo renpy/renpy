@@ -64,14 +64,14 @@ def compile_event(key, keydown):
     if part[0] == "mousedown":
         if keydown:
             return "(ev.type == %d and ev.button == %d)" % (pygame.MOUSEBUTTONDOWN, int(part[1]))
-        else:
-            return "(False)"
+
+        return "(False)"
 
     if part[0] == "mouseup":
         if keydown:
             return "(ev.type == %d and ev.button == %d)" % (pygame.MOUSEBUTTONUP, int(part[1]))
-        else:
-            return "(False)"
+
+        return "(False)"
 
 
     MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl" }
@@ -135,8 +135,7 @@ def compile_event(key, keydown):
         if len(part[0]) != 1:
             if renpy.config.developer:
                 raise Exception("Invalid key specifier %s" % key)
-            else:
-                return "(False)"
+            return "(False)"
 
         rv += " and ev.unicode == %r)" % part[0]
 
@@ -144,8 +143,7 @@ def compile_event(key, keydown):
         if part[0] != "K":
             if renpy.config.developer:
                 raise Exception("Invalid key specifier %s" % key)
-            else:
-                return "(False)"
+            return "(False)"
 
         rv += " and ev.key == %d)" % (getattr(pygame.constants, key)) # type: ignore
 
@@ -397,10 +395,10 @@ def is_selected(action):
                 return i.get_selected()
         return any(is_selected(i) for i in action)
 
-    elif isinstance(action, renpy.ui.Action):
+    if isinstance(action, renpy.ui.Action):
         return action.get_selected()
-    else:
-        return False
+
+    return False
 
 
 def is_sensitive(action):
@@ -418,10 +416,10 @@ def is_sensitive(action):
                 return i.get_sensitive()
         return all(is_sensitive(i) for i in action)
 
-    elif isinstance(action, renpy.ui.Action):
+    if isinstance(action, renpy.ui.Action):
         return action.get_sensitive()
-    else:
-        return True
+
+    return True
 
 
 def alt(clicked):
@@ -436,13 +434,13 @@ def alt(clicked):
 
         if rv:
             return " ".join(rv)
-        else:
-            return None
+
+        return None
 
     if isinstance(clicked, renpy.ui.Action):
         return clicked.alt
-    else:
-        return None
+
+    return None
 
 ##############################################################################
 # Special-Purpose Displayables
@@ -539,8 +537,8 @@ class PauseBehavior(renpy.display.layout.Null):
                 # it comes back.
                 if renpy.game.interface.drawn_since(st - self.delay):
                     return self.result
-                else:
-                    renpy.game.interface.force_redraw = True
+
+                renpy.game.interface.force_redraw = True
 
         renpy.game.interface.timeout(max(self.delay - st, 0))
 
@@ -655,8 +653,8 @@ class SayBehavior(renpy.display.layout.Null):
                 if renpy.config.afm_callback:
                     if renpy.config.afm_callback() and not renpy.display.tts.is_active():
                         return True
-                    else:
-                        renpy.game.interface.timeout(0.1)
+
+                    renpy.game.interface.timeout(0.1)
                 else:
                     return True
             else:
@@ -721,15 +719,15 @@ class SayBehavior(renpy.display.layout.Null):
 
                 if ev.modal:
                     return None
-                elif renpy.game.preferences.skip_unseen:
+                if renpy.game.preferences.skip_unseen:
                     return True
-                elif renpy.config.skipping == "fast":
+                if renpy.config.skipping == "fast":
                     return True
-                elif renpy.game.context().seen_current(True):
+                if renpy.game.context().seen_current(True):
                     return True
-                else:
-                    renpy.config.skipping = None
-                    renpy.exports.restart_interaction()
+
+                renpy.config.skipping = None
+                renpy.exports.restart_interaction()
 
             else:
                 renpy.game.interface.timeout(skip_delay - st)
@@ -786,8 +784,8 @@ class DismissBehavior(renpy.display.core.Displayable):
 
             if rv is not None:
                 return rv
-            else:
-                raise renpy.display.core.IgnoreEvent()
+
+            raise renpy.display.core.IgnoreEvent()
 
         if renpy.display.layout.check_modal(self.modal, ev, x, y, None, None):
             raise renpy.display.layout.IgnoreLayers()
@@ -904,9 +902,7 @@ class Button(renpy.display.layout.Window):
                 try:
                     mask = renpy.display.render.render(mask, rv.width, rv.height, st, at)
                 except Exception:
-                    if callable(mask):
-                        mask = mask
-                    else:
+                    if not callable(mask):
                         raise Exception("Focus_mask must be None, True, a displayable, or a callable.")
 
             if mask is not None:
@@ -1010,8 +1006,8 @@ class Button(renpy.display.layout.Window):
 
             if rv is not None:
                 return rv
-            else:
-                raise renpy.display.core.IgnoreEvent()
+
+            raise renpy.display.core.IgnoreEvent()
 
         # Call self.action.periodic()
         timeout = run_periodic(self.action, st)
@@ -1812,7 +1808,8 @@ class Adjustment(renpy.object.Object):
         # Prevent deadlock border points
         if value <= 0:
             return type(self._value)(0)
-        elif value >= self._range:
+
+        if value >= self._range:
             return self._range
 
         if self.force_step is False:
@@ -1866,8 +1863,8 @@ class Adjustment(renpy.object.Object):
 
         if isinstance(self._range, float):
             return self._range / 10
-        else:
-            return 1
+
+        return 1
 
     def set_step(self, v):
         self._step = v
@@ -2044,7 +2041,8 @@ class Bar(renpy.display.core.Displayable):
             if self.style.unscrollable == "hide":
                 self.hidden = True
                 return renpy.display.render.Render(width, height)
-            elif self.style.unscrollable == "insensitive":
+
+            if self.style.unscrollable == "insensitive":
                 self.set_style_prefix("insensitive_", True)
 
         self.hidden = False
@@ -2272,8 +2270,8 @@ class Bar(renpy.display.core.Displayable):
 
         if ignore_event:
             raise renpy.display.core.IgnoreEvent()
-        else:
-            return None
+
+        return None
 
     def set_style_prefix(self, prefix, root):
         if root:
@@ -2312,8 +2310,7 @@ class Conditional(renpy.display.layout.Container):
     def render(self, width, height, st, at):
         if self.state:
             return render(self.child, width, height, st, at)
-        else:
-            return render(self.null, width, height, st, at)
+        return render(self.null, width, height, st, at)
 
     def event(self, ev, x, y, st):
 
@@ -2506,8 +2503,7 @@ class OnEvent(renpy.display.core.Displayable):
     def is_event(self, event):
         if isinstance(self.event_name, basestring):
             return self.event_name == event
-        else:
-            return event in self.event_name
+        return event in self.event_name
 
     def _handles_event(self, event):
         if self.is_event(event):

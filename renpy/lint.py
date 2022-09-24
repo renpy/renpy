@@ -349,8 +349,7 @@ def imspec(t):
         return t[0], None, None, t[1], t[2], 0, None
     if len(t) == 6:
         return t[0], t[1], t[2], t[3], t[4], t[5], None
-    else:
-        return t
+    return t
 
 
 # Lints ast.Show and ast.Scene nodes.

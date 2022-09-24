@@ -342,8 +342,7 @@ def reset_store_changes(name):
 def b(s):
     if PY2:
         return s.encode("utf-8")
-    else:
-        return s
+    return s
 
 
 class LoadedVariables(ast.NodeVisitor):
@@ -456,22 +455,20 @@ class WrapNode(ast.NodeTransformer):
                 kwargs=None,
             )
 
-        else:
-
-            return ast.Call(
-                func=ast.Lambda(
-                    args=ast.arguments(
-                        posonlyargs=[ ],
-                        args=lambda_args,
-                        kwonlyargs=[ ],
-                        kw_defaults=[ ],
-                        defaults=[ ],
-                    ),
-                    body=node,
+        return ast.Call(
+            func=ast.Lambda(
+                args=ast.arguments(
+                    posonlyargs=[ ],
+                    args=lambda_args,
+                    kwonlyargs=[ ],
+                    kw_defaults=[ ],
+                    defaults=[ ],
                 ),
-                args=call_args,
-                keywords=[ ],
-            )
+                body=node,
+            ),
+            args=call_args,
+            keywords=[ ],
+        )
 
     def wrap_starred_assign(self, n, targets):
 

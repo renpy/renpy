@@ -51,8 +51,7 @@ class Transition(renpy.display.core.Displayable):
 
         if self.events or ev.type == renpy.display.core.TIMEEVENT:
             return self.new_widget.event(ev, x, y, st) # E1101
-        else:
-            return None
+        return None
 
     def visit(self):
         return [ self.new_widget, self.old_widget ] # E1101
@@ -162,8 +161,7 @@ class MultipleTransition(Transition):
 
         if self.events or ev.type == renpy.display.core.TIMEEVENT:
             return self.transitions[-1].event(ev, x, y, st)
-        else:
-            return None
+        return None
 
     def render(self, width, height, st, at):
 

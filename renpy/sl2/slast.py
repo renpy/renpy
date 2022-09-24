@@ -1914,8 +1914,7 @@ class SLUse(SLNode):
 
                 if renpy.config.developer:
                     raise Exception("A screen named {} does not exist.".format(self.target))
-                else:
-                    return
+                return
 
             if target.ast is None:
                 self.constant = NOT_CONST
@@ -2069,8 +2068,7 @@ class SLUse(SLNode):
     def has_transclude(self):
         if self.block:
             return self.block.has_transclude()
-        else:
-            return False
+        return False
 
     def dump_const(self, prefix):
         self.dc(prefix, "use", self.target)
@@ -2199,16 +2197,14 @@ class SLCustomUse(SLNode):
 
             if renpy.config.developer:
                 raise Exception("A screen named {} does not exist.".format(self.target))
-            else:
-                return
+            return
 
         if target.ast is None:
             self.constant = NOT_CONST
 
             if renpy.config.developer:
                 raise Exception("A screen used in CD SLS should be a SL-based screen.")
-            else:
-                return
+            return
 
         # If we have the id property, we're not constant - since we may get
         # our state via other screen on replace.

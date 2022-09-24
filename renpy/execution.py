@@ -950,8 +950,7 @@ def run_context(top):
             if top:
                 continue
 
-            else:
-                raise
+            raise
 
         except Exception:
             context.pop_all_dynamic()

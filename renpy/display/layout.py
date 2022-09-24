@@ -39,8 +39,7 @@ def scale(num, base):
 
     if type(num) is float:
         return num * base
-    else:
-        return num
+    return num
 
 
 def xyminimums(style, width, height):
@@ -559,9 +558,9 @@ class Grid(Container):
 
             if not allow_underfull:
                 raise Exception("Grid not completely full.")
-            else:
-                for _ in range(delta):
-                    self.add(Null())
+
+            for _ in range(delta):
+                self.add(Null())
 
 
 class IgnoreLayers(Exception):
@@ -732,9 +731,9 @@ class MultiBox(Container):
 
         if layout == "fixed":
             return "Fixed"
-        elif layout == "horizontal":
+        if layout == "horizontal":
             return "HBox"
-        elif layout == "vertical":
+        if layout == "vertical":
             return "VBox"
         return "MultiBox"
 
@@ -830,10 +829,9 @@ class MultiBox(Container):
         def adjust(t, frame_time, timebase):
             if t is None:
                 return 0
-            elif t is True:
+            if t is True:
                 return timebase
-            else:
-                return frame_time - t
+            return frame_time - t
 
         # Handle time adjustment, store the results in csts and cats.
         if adjust_times:
@@ -1183,16 +1181,14 @@ class MultiBox(Container):
                     renpy.display.interface.post_time_event()
 
                 return None
-            else:
-                raise
+            raise
 
         return None
 
     def _tts(self):
         if self.layers or self.scene_list:
             return self._tts_common(reverse=renpy.config.tts_front_to_back)
-        else:
-            return self._tts_common()
+        return self._tts_common()
 
 
 def Fixed(**properties):
@@ -1495,8 +1491,7 @@ class DynamicDisplayable(renpy.display.core.Displayable):
 
         if self.child:
             return [ self.child ]
-        else:
-            return [ ]
+        return [ ]
 
     def update(self, st, at):
         self.last_st = st
@@ -1821,8 +1816,7 @@ class Side(Container):
             def spacer(a, b, c, axis):
                 if (a in pos_d) or (b in pos_d) or (c in pos_d):
                     return spacing, axis - spacing
-                else:
-                    return 0, axis
+                return 0, axis
 
             self.left_space, width = spacer('tl', 'l', 'bl', width) # W0201
             self.right_space, width = spacer('tr', 'r', 'br', width) # W0201
@@ -2389,11 +2383,9 @@ class NearRect(Container):
     def event(self, ev, x, y, st):
         if self.parent_rect is not None:
             return super(NearRect, self).event(ev, x, y, st)
-        else:
-            return None
+        return None
 
     def _tts(self):
         if self.parent_rect is not None:
             return self._tts_common()
-        else:
-            return ""
+        return ""

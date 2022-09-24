@@ -166,8 +166,8 @@ class Motion(Container):
                 # Almost certainly gives the wrong placement, but there's nothing
                 # we can do.
                 return super(Motion, self).get_placement()
-            else:
-                self.update_position(0.0, None)
+
+            self.update_position(0.0, None)
 
         return self.position + (self.style.xoffset, self.style.yoffset, self.style.subpixel)
 
@@ -330,8 +330,7 @@ class Revolver(object):
 
             if isinstance(x, float):
                 return int(x * r)
-            else:
-                return x
+            return x
 
         if self.pos is None:
             pos = self.child.get_placement()
@@ -514,8 +513,7 @@ class ZoomCommon(renpy.display.core.Displayable):
 
         if done == 1.0 and self.after_child:
             return self.after_child.event(ev, x, y, st)
-        else:
-            return None
+        return None
 
 
 class Zoom(ZoomCommon):

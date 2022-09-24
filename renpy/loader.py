@@ -455,8 +455,7 @@ def listdirfiles(common=True):
 
     if common:
         return game_files + common_files
-    else:
-        return list(game_files)
+    return list(game_files)
 
 
 class SubFile(object):
@@ -621,9 +620,6 @@ class SubFile(object):
     def write(self, s):
         raise Exception("Write not supported by SubFile")
 
-
-open_file = open # type: ignore
-
 if "RENPY_FORCE_SUBFILE" in os.environ:
 
     def open_file(name, mode):
@@ -634,6 +630,10 @@ if "RENPY_FORCE_SUBFILE" in os.environ:
         f.seek(0, 0)
 
         return SubFile(f, 0, length, b'')
+
+else:
+
+    open_file = open # type: ignore
 
 # A list of callbacks to open an open python file object of the given type.
 file_open_callbacks = [ ]

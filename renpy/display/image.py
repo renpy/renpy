@@ -624,8 +624,7 @@ class DynamicImage(renpy.display.core.Displayable):
     def _target(self):
         if self.target:
             return self.target._target()
-        else:
-            return self
+        return self
 
     def set_style_prefix(self, prefix, root):
 
@@ -1039,8 +1038,7 @@ class ShownImageInfo(renpy.object.Object):
 
         if exception_name:
             raise Exception("Showing '" + " ".join(exception_name) + "' is ambiguous, possible images include: " + ", ".join(" ".join(i) for i in matches))
-        else:
-            return None
+        return None
 
 
 renpy.display.core.ImagePredictInfo = ShownImageInfo # type: ignore

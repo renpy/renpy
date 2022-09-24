@@ -128,8 +128,7 @@ def save_dump(roots, log):
             def get(idx, default):
                 if idx < len(reduction) and reduction[idx] is not None:
                     return reduction[idx]
-                else:
-                    return default
+                return default
 
             # An estimate of the size of the object, in arbitrary units. (These units are about 20-25 bytes on
             # my computer.)
@@ -226,8 +225,7 @@ def find_bad_reduction(roots, log):
             def get(idx, default):
                 if idx < len(reduction) and reduction[idx] is not None:
                     return reduction[idx]
-                else:
-                    return default
+                return default
 
             state = get(2, { })
             if isinstance(state, dict):

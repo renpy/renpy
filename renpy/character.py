@@ -186,8 +186,7 @@ def compute_widget_properties(who_args, what_args, window_args, properties, vari
         if style is None:
             if multiple is None:
                 return d
-            else:
-                style = name
+            style = name
 
         in_rollback = renpy.exports.in_rollback()
 
@@ -725,8 +724,7 @@ class HistoryEntry(renpy.object.Object):
     def __eq__(self, other):
         if isinstance(other, type(self)):
             return self.__dict__ == other.__dict__
-        else:
-            return False
+        return False
 
     def __hash__(self):
         return hash(tuple(sorted(self.__dict__.items())))
@@ -785,15 +783,13 @@ class ADVCharacter(object):
         def v(n):
             if n in properties:
                 return properties.pop(n)
-            else:
-                return getattr(kind, n)
+            return getattr(kind, n)
 
         # Similar, but it grabs the value out of kind.display_args instead.
         def d(n):
             if n in properties:
                 return properties.pop(n)
-            else:
-                return kind.display_args[n]
+            return kind.display_args[n]
 
         self.name = v('name')
         self.who_prefix = v('who_prefix')
@@ -901,17 +897,15 @@ class ADVCharacter(object):
                 multiple=multiple,
                 **self.show_args)
 
-        else:
-
-            return self.show_function(
-                who,
-                what,
-                who_args=self.who_args,
-                what_args=self.what_args,
-                window_args=self.window_args,
-                screen=self.screen,
-                properties=self.properties,
-                **self.show_args)
+        return self.show_function(
+            who,
+            what,
+            who_args=self.who_args,
+            what_args=self.what_args,
+            window_args=self.window_args,
+            screen=self.screen,
+            properties=self.properties,
+            **self.show_args)
 
     # This is called after the last interaction is done.
     def do_done(self, who, what, multiple=None):
@@ -954,8 +948,7 @@ class ADVCharacter(object):
         if not self.image_tag:
             if attrs and not predict:
                 raise Exception("Say has image attributes %r, but there's no image tag associated with the speaking character." % (attrs,))
-            else:
-                return
+            return
 
         if attrs is None:
             attrs = ()
@@ -1095,8 +1088,8 @@ class ADVCharacter(object):
             if not predicting:
                 renpy.exports.show(image_with_attrs)
                 return True
-            else:
-                renpy.exports.predict_show(image_with_attrs)
+
+            renpy.exports.predict_show(image_with_attrs)
 
         else:
             images.predict_show(None, image_with_attrs, show=False)
@@ -1158,18 +1151,17 @@ class ADVCharacter(object):
             return prefix + body + suffix
 
         # Used before Ren'Py 7.4.
-        elif renpy.config.who_what_sub_compat == 0:
+        if renpy.config.who_what_sub_compat == 0:
             pattern = sub(prefix + thingvar_quoted + suffix)
             return pattern.replace(thingvar, sub(body))
 
         # Used from Ren'Py 7.4 to Ren'Py 7.4.4
-        elif renpy.config.who_what_sub_compat == 1:
+        if renpy.config.who_what_sub_compat == 1:
             pattern = sub(sub(prefix) + thingvar_quoted + sub(suffix))
             return pattern.replace(thingvar, sub(body))
 
         # 7.4.5 on.
-        else:
-            return (sub(prefix) + sub(body) + sub(suffix))
+        return (sub(prefix) + sub(body) + sub(suffix))
 
     def __call__(self, what, interact=True, _call_done=True, multiple=None, **kwargs):
 
@@ -1296,10 +1288,9 @@ class ADVCharacter(object):
     def statement_name(self):
         if self._statement_name is not None:
             return self._statement_name
-        elif not (self.condition is None or renpy.python.py_eval(self.condition)):
+        if not (self.condition is None or renpy.python.py_eval(self.condition)):
             return "say-condition-false"
-        else:
-            return "say"
+        return "say"
 
     def predict(self, what):
 

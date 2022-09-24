@@ -110,8 +110,7 @@ class ImageMapCache(renpy.object.Object):
     def visit(self, index):
         if self.cache is not None:
             return [ self.cache ]
-        else:
-            return [ self.imagerect[index][0] ]
+        return [ self.imagerect[index][0] ]
 
     def crop(self, d, rect):
         if not isinstance(d, renpy.display.im.ImageBase) or \

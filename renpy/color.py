@@ -199,8 +199,7 @@ class Color(tuple):
     def hexcode(self):
         if self.alpha != 1.0:
             return "#{self[0]:02x}{self[1]:02x}{self[2]:02x}{self[3]:02x}".format(self=self)
-        else:
-            return "#{self[0]:02x}{self[1]:02x}{self[2]:02x}".format(self=self)
+        return "#{self[0]:02x}{self[1]:02x}{self[2]:02x}".format(self=self)
 
     def __repr__(self):
         return "<Color {}>".format(self.hexcode)

@@ -218,8 +218,7 @@ class RevertableList(list):
 
         if isinstance(index, slice):
             return RevertableList(rv)
-        else:
-            return rv
+        return rv
 
     def __mul__(self, other):
         if not isinstance(other, int):
@@ -397,8 +396,7 @@ class RevertableSet(set):
             rv = method(*args, **kwargs) # type: ignore
             if isinstance(rv, set):
                 return RevertableSet(rv)
-            else:
-                return rv
+            return rv
 
         return newmethod
 

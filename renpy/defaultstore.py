@@ -118,8 +118,7 @@ class _Config(object):
     def __delattr__(self, name):
         if renpy.config.locked:
             raise Exception('Deleting configuration variables is not supported.')
-        else:
-            delattr(renpy.config, name)
+        delattr(renpy.config, name)
 
 
 

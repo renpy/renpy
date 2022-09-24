@@ -64,19 +64,19 @@ def displayable_or_none(d, scope=None, dynamic=True): # type: (Any, dict|None, b
     if isinstance(d, basestring):
         if not d:
             raise Exception("An empty string cannot be used as a displayable.")
-        elif ("[" in d) and renpy.config.dynamic_images and dynamic:
+        if ("[" in d) and renpy.config.dynamic_images and dynamic:
             return renpy.display.image.DynamicImage(d, scope=scope)
 
         rv = lookup_displayable_prefix(d)
 
         if rv is not None:
             return rv
-        elif d[0] == '#':
+        if d[0] == '#':
             return renpy.store.Solid(d)
-        elif "." in d:
+        if "." in d:
             return renpy.store.Image(d)
-        else:
-            return renpy.store.ImageReference(tuple(d.split()))
+
+        return renpy.store.ImageReference(tuple(d.split()))
 
     if isinstance(d, Color):
         return renpy.store.Solid(d) # type: ignore
@@ -110,19 +110,18 @@ def displayable(d, scope=None): # type(d, dict|None=None) -> renpy.display.core.
     if isinstance(d, basestring):
         if not d:
             raise Exception("An empty string cannot be used as a displayable.")
-        elif ("[" in d) and renpy.config.dynamic_images:
+        if ("[" in d) and renpy.config.dynamic_images:
             return renpy.display.image.DynamicImage(d, scope=scope)
 
         rv = lookup_displayable_prefix(d)
 
         if rv is not None:
             return rv
-        elif d[0] == '#':
+        if d[0] == '#':
             return renpy.store.Solid(d)
-        elif "." in d:
+        if "." in d:
             return renpy.store.Image(d)
-        else:
-            return renpy.store.ImageReference(tuple(d.split()))
+        return renpy.store.ImageReference(tuple(d.split()))
 
     if isinstance(d, Color):
         return renpy.store.Solid(d)

@@ -128,8 +128,7 @@ def get_profile(name):
 
     if name in profile:
         return profile[name]
-    else:
-        return ScreenProfile(None)
+    return ScreenProfile(None)
 
 # Cache ########################################################################
 
@@ -759,8 +758,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         if self.modal:
             return renpy.display.tts.TTSDone(self._tts_common())
-        else:
-            return self._tts_common()
+        return self._tts_common()
 
 
 # The name of the screen that is currently being displayed, or
@@ -1039,8 +1037,7 @@ def get_screen_layer(name):
 
     if screen is None:
         return "screens"
-    else:
-        return screen.layer
+    return screen.layer
 
 
 def get_screen(name, layer=None):

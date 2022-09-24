@@ -37,14 +37,12 @@ if PY2:
     def load(f): # type: ignore
         if renpy.config.use_cpickle:
             return cPickle.load(f)
-        else:
-            return pickle.load(f)
+        return pickle.load(f)
 
     def loads(s): # type: ignore
         if renpy.config.use_cpickle:
             return cPickle.loads(s)
-        else:
-            return pickle.loads(s)
+        return pickle.loads(s)
 
     def dump(o, f, highest=False):
         if renpy.config.use_cpickle:
@@ -55,8 +53,7 @@ if PY2:
     def dumps(o, highest=False): # type: ignore
         if renpy.config.use_cpickle:
             return cPickle.dumps(o, PROTOCOL)
-        else:
-            return pickle.dumps(o, PROTOCOL)
+        return pickle.dumps(o, PROTOCOL)
 
 else:
 

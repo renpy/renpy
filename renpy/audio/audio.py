@@ -534,8 +534,7 @@ class Channel(object):
 
                 if renpy.config.debug_sound and not renpy.game.after_rollback:
                     raise
-                else:
-                    return
+                return
 
             break
 

@@ -424,8 +424,7 @@ class StringTranslator(object):
                 fn, line = self.translation_loc[old]
                 raise Exception("A translation for \"{}\" already exists at {}:{}.".format(
                     quote_unicode(old), fn, line))
-            else:
-                raise Exception("A translation for \"{}\" already exists.".format(
+            raise Exception("A translation for \"{}\" already exists.".format(
                     quote_unicode(old)))
 
         self.translations[old] = new

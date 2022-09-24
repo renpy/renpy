@@ -157,8 +157,7 @@ def cycle_finder(o, name):
             def get(idx, default):
                 if idx < len(reduction) and reduction[idx] is not None:
                     return reduction[idx]
-                else:
-                    return default
+                return default
 
             state = get(2, { })
             if isinstance(state, dict):

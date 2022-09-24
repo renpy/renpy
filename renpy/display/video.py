@@ -339,8 +339,7 @@ class Movie(renpy.display.core.Displayable):
 
         if isinstance(name, basestring):
             return renpy.loader.loadable(name)
-        else:
-            return any(renpy.loader.loadable(i) for i in name)
+        return any(renpy.loader.loadable(i) for i in name)
 
     def after_setstate(self):
         play = self._original_play or self._play

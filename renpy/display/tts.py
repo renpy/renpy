@@ -225,8 +225,7 @@ def displayable(d):
         except TTSRoot:
             if d is root:
                 return
-            else:
-                d = root
+            d = root
 
     if s != last:
         last = s

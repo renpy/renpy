@@ -88,10 +88,9 @@ def float_or_none(x):
 def matrix(x):
     if x is None:
         return None
-    elif callable(x):
+    if callable(x):
         return x
-    else:
-        return renpy.display.matrix.Matrix(x)
+    return renpy.display.matrix.Matrix(x)
 
 
 def mesh(x):
@@ -114,10 +113,8 @@ def correct_type(v, b, ty):
     if ty is position:
         if v is None:
             return None
-        else:
-            return type(b)(v)
-    else:
-        return ty(v)
+        return type(b)(v)
+    return ty(v)
 
 
 def interpolate(t, a, b, type): # @ReservedAssignment
@@ -363,10 +360,9 @@ class ATLTransformBase(renpy.object.Object):
 
         if self.block:
             return self.block
-        elif self.predict_block and renpy.display.predict.predicting:
+        if self.predict_block and renpy.display.predict.predicting:
             return self.predict_block
-        else:
-            return None
+        return None
 
     def take_execution_state(self, t):
         """
@@ -381,9 +377,9 @@ class ATLTransformBase(renpy.object.Object):
 
         if self is t:
             return
-        elif not isinstance(t, ATLTransformBase):
+        if not isinstance(t, ATLTransformBase):
             return
-        elif t.atl is not self.atl:
+        if t.atl is not self.atl:
             return
 
         # Important to do it this way, so we use __eq__. The exception handling
@@ -980,8 +976,7 @@ class RawMultipurpose(RawStatement):
             if isinstance(child, ATLTransformBase) and (child.child is None):
                 child.compile()
                 return child.get_block()
-            else:
-                return Child(self.loc, child, transition)
+            return Child(self.loc, child, transition)
 
         compiling(self.loc)
 
@@ -1441,8 +1436,7 @@ class Parallel(Statement):
 
         if newstate:
             return "continue", newstate, min(pauses)
-        else:
-            return "next", min(left), None
+        return "next", min(left), None
 
     def visit(self):
         return [ j for i in self.blocks for j in i.visit() ]
@@ -1520,8 +1514,7 @@ class Choice(Statement):
 
         if action == "continue":
             return "continue", (choice, arg), pause
-        else:
-            return action, arg, None
+        return action, arg, None
 
     def visit(self):
         return [ j for i in self.choices for j in i[1].visit() ]
@@ -1656,8 +1649,8 @@ class On(Statement):
             # If we get a next, then try going to the default
             # event, unless we're already in default, in which case we
             # go to None.
-            elif action == "next":
                 if name == "default" or name == "hide" or name == "replaced":
+            if action == "next":
                     name = None
                 else:
                     name = "default"
@@ -1669,7 +1662,7 @@ class On(Statement):
 
             # If we get an event, then either handle it if we can, or
             # pass it up the stack if we can't.
-            elif action == "event":
+            if action == "event":
 
                 name, arg = arg
 
@@ -1747,8 +1740,7 @@ class Function(Statement):
 
         if fr is not None:
             return "continue", True, fr
-        else:
-            return "next", 0 if block else st, None
+        return "next", 0 if block else st, None
 
 
 # This parses an ATL block.
@@ -2008,21 +2000,21 @@ def parse_atl(l):
             old.blocks.extend(new.blocks)
             continue
 
-        elif isinstance(old, RawChoice) and isinstance(new, RawChoice):
+        if isinstance(old, RawChoice) and isinstance(new, RawChoice):
             old.choices.extend(new.choices)
             continue
 
-        elif isinstance(old, RawChild) and isinstance(new, RawChild):
+        if isinstance(old, RawChild) and isinstance(new, RawChild):
             old.children.extend(new.children)
             continue
 
-        elif isinstance(old, RawOn) and isinstance(new, RawOn):
+        if isinstance(old, RawOn) and isinstance(new, RawOn):
             old.handlers.update(new.handlers)
             continue
 
         # None is a pause statement, which gets skipped, but also
         # prevents things from combining.
-        elif new is None:
+        if new is None:
             old = new
             continue
 

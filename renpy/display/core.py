@@ -2584,8 +2584,8 @@ class Interface(object):
                 renpy.display.draw = draw
                 renpy.display.render.models = draw.info.get("models", False)
                 break
-            else:
-                pygame.display.destroy()
+
+            pygame.display.destroy()
 
         else:
             # Ensure we don't get stuck in fullscreen.
@@ -2801,12 +2801,12 @@ class Interface(object):
         if (not trans) or self.suppress_transition:
             self.with_none()
             return False
-        else:
-            self.set_transition(trans)
-            return self.interact(trans_pause=True,
-                                 suppress_overlay=not renpy.config.overlay_during_with,
-                                 mouse='with',
-                                 clear=clear)
+
+        self.set_transition(trans)
+        return self.interact(trans_pause=True,
+                             suppress_overlay=not renpy.config.overlay_during_with,
+                             mouse='with',
+                             clear=clear)
 
     def with_none(self, overlay=True):
         """
@@ -3281,8 +3281,8 @@ class Interface(object):
         ev = self.event_peek()
         if ev is None:
             return False
-        else:
-            return ev.type in (pygame.TEXTINPUT, pygame.TEXTEDITING)
+
+        return ev.type in (pygame.TEXTINPUT, pygame.TEXTEDITING)
 
     def update_text_rect(self):
         """

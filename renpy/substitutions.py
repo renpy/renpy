@@ -72,59 +72,56 @@ class Formatter(string.Formatter):
                 if c == '[':
                     state = OPEN_BRACKET
                     continue
-                else:
-                    literal += c
-                    continue
 
-            elif state == OPEN_BRACKET:
+                literal += c
+                continue
+
+            if state == OPEN_BRACKET:
                 if c == '[':
                     literal += c
                     state = LITERAL
                     continue
 
-                else:
-                    value = c
-                    state = VALUE
-                    bracket_depth = 0
-                    continue
+                value = c
+                state = VALUE
+                bracket_depth = 0
+                continue
 
-            elif state == VALUE:
+            if state == VALUE:
 
                 if c == '[':
                     bracket_depth += 1
                     value += c
                     continue
 
-                elif c == ']':
+                if c == ']':
 
                     if bracket_depth:
                         bracket_depth -= 1
                         value += c
                         continue
 
-                    else:
-                        yield (literal, value, format, conversion)
-                        state = LITERAL
-                        literal = ''
-                        value = ''
-                        format = '' # @ReservedAssignment
-                        conversion = None
-                        continue
+                    yield (literal, value, format, conversion)
+                    state = LITERAL
+                    literal = ''
+                    value = ''
+                    format = '' # @ReservedAssignment
+                    conversion = None
+                    continue
 
-                elif c == ':':
+                if c == ':':
                     state = FORMAT
                     continue
 
-                elif c == '!':
+                if c == '!':
                     state = CONVERSION
                     conversion = ''
                     continue
 
-                else:
-                    value += c
-                    continue
+                value += c
+                continue
 
-            elif state == FORMAT:
+            if state == FORMAT:
 
                 if c == ']':
                     yield (literal, value, format, conversion)
@@ -135,16 +132,15 @@ class Formatter(string.Formatter):
                     conversion = None
                     continue
 
-                elif c == '!':
+                if c == '!':
                     state = CONVERSION
                     conversion = ''
                     continue
 
-                else:
-                    format += c
-                    continue
+                format += c
+                continue
 
-            elif state == CONVERSION:
+            if state == CONVERSION:
                 if c == ']':
                     yield (literal, value, format, conversion)
                     state = LITERAL
@@ -154,9 +150,8 @@ class Formatter(string.Formatter):
                     conversion = None
                     continue
 
-                else:
-                    conversion += c
-                    continue
+                conversion += c
+                continue
 
         if state != LITERAL:
             raise Exception("String {0!r} ends with an open format operation.".format(s))

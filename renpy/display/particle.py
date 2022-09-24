@@ -328,8 +328,7 @@ class SpriteManager(renpy.display.core.Displayable):
 
         if self.event_function is not None:
             return self.event_function(ev, x, y, st)
-        else:
-            return None
+        return None
 
     def visit(self):
         rv = [ ]
@@ -468,8 +467,7 @@ class SnowBlossomFactory(renpy.rollback.NoRollback):
         def ranged(n):
             if isinstance(n, tuple):
                 return random.uniform(n[0], n[1])
-            else:
-                return n
+            return n
 
         if (st == 0) and not particles and self.fast:
             rv = [ ]
@@ -565,8 +563,7 @@ class SnowBlossomParticle(renpy.rollback.NoRollback):
 
         if not self.rotate:
             return int(xpos), int(ypos), to + self.offset, self.image
-        else:
-            return int(ypos), int(xpos), to + self.offset, self.image
+        return int(ypos), int(xpos), to + self.offset, self.image
 
 
 def SnowBlossom(d,

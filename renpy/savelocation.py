@@ -324,8 +324,7 @@ class FileLocation(object):
 
         if self.persistent_data:
             return [ (self.persistent_mtime, self.persistent_data) ]
-        else:
-            return [ ]
+        return [ ]
 
     def save_persistent(self, data):
         """

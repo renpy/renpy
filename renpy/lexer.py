@@ -75,8 +75,7 @@ def get_line_text(filename, lineno):
 
     if lineno <= len(line_text_cache):
         return line_text_cache[lineno - 1] + "\n"
-    else:
-        return "\n"
+    return "\n"
 
 
 class ParseError(Exception):
@@ -629,10 +628,9 @@ class SubParse(object):
 
     def __repr__(self):
 
-        if not self.block:
-            return "<SubParse empty>"
-        else:
+        if self.block:
             return "<SubParse {}:{}>".format(self.block[0].filename, self.block[0].linenumber)
+        return "<SubParse empty>"
 
 
 class Lexer(object):

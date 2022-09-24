@@ -49,8 +49,7 @@ class StoreDeleted(object):
     def __reduce__(self):
         if PY2:
             return b"deleted"
-        else:
-            return "deleted"
+        return "deleted"
 
 
 deleted = StoreDeleted()

@@ -195,9 +195,8 @@ class ParameterInfo(object):
                 raise TypeError(
                     "Some positional-only arguments passed as keyword arguments: %s" %
                     ", ".join("'%s'" % i for i in posonly_keyword))
-            else:
-                for name in posonly_keyword:
-                    kwargs.pop(name)
+            for name in posonly_keyword:
+                kwargs.pop(name)
 
         # Fill positional_or_keyword slots with left args
         poskw_slots = parameters[len(self.positional_only):-len(self.keyword_only) or None]
@@ -290,8 +289,8 @@ def apply_arguments(parameters, args, kwargs, ignore_errors=False):
     if parameters is None:
         if (args or kwargs) and not ignore_errors:
             raise Exception("Arguments supplied, but parameter list not present")
-        else:
-            return { }
+
+        return { }
 
     return parameters.apply(args, kwargs, ignore_errors)
 
@@ -548,11 +547,11 @@ class Scry(object):
     def next(self): # @ReservedAssignment
         if self._next is None:
             return None
-        else:
-            try:
-                return self._next.scry()
-            except Exception:
-                return None
+
+        try:
+            return self._next.scry()
+        except Exception:
+            return None
 
 
 class Node(object):
@@ -677,8 +676,7 @@ class Node(object):
 
         if self.next:
             return [ self.next ]
-        else:
-            return [ ]
+        return [ ]
 
     def scry(self):
         """
@@ -2287,8 +2285,8 @@ class UserStatement(Node):
 
         if rv is not None:
             return renpy.game.script.lookup(rv)
-        else:
-            return self.next
+
+        return self.next
 
     def scry(self):
         rv = Node.scry(self)

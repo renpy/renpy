@@ -54,8 +54,7 @@ def offsets(d):
 
     if renpy.config.movetransition_respects_offsets:
         return { 'xoffset' : xoffset, 'yoffset' : yoffset }
-    else:
-        return { }
+    return { }
 
 
 # These are used by MoveTransition.
@@ -105,11 +104,10 @@ def ZoomInOut(start, end, pos, delay, d, **kwargs):
     FactorZoom = renpy.display.motion.FactorZoom
 
     if end == 1.0:
-        return FactorZoom(start, end, delay, d, after_child=d, opaque=False,
-                          xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor, **kwargs)
-    else:
-        return FactorZoom(start, end, delay, d, opaque=False,
-                          xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor, **kwargs)
+        kwargs["after_child"] = d
+
+    return FactorZoom(start, end, delay, d, opaque=False,
+                      xpos=xpos, ypos=ypos, xanchor=xanchor, yanchor=yanchor, **kwargs)
 
 
 def RevolveInOut(start, end, pos, delay, d, **kwargs):
@@ -197,8 +195,7 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
                                **offsets(child)
                                )
 
-            else:
-                return child
+            return child
 
         # If we're in the layers_root widget, merge the child widgets
         # for each layer.
@@ -401,12 +398,9 @@ class MoveInterpolate(renpy.display.core.Displayable):
         def based(v, base):
             if v is None:
                 return 0
-            elif isinstance(v, int):
+            if isinstance(v, (int, renpy.display.core.absolute)):
                 return v
-            elif isinstance(v, renpy.display.core.absolute):
-                return v
-            else:
-                return v * base
+            return v * base
 
         xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = child.get_placement()
 
@@ -504,8 +498,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
             if old is new:
                 return new
-            else:
-                return MoveInterpolate(delay, old, new, use_old, time_warp)
+            return MoveInterpolate(delay, old, new, use_old, time_warp)
 
         # If we're in the layers_root widget, merge the child widgets
         # for each layer.

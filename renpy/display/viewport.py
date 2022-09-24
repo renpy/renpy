@@ -399,8 +399,7 @@ class Viewport(renpy.display.layout.Container):
                 rv = adjustment.change(adjustment.value - adjustment.step)
                 if rv is not None:
                     return rv
-                else:
-                    raise renpy.display.core.IgnoreEvent()
+                raise renpy.display.core.IgnoreEvent()
 
             if renpy.display.behavior.map_event(ev, 'viewport_wheeldown'):
 
@@ -410,8 +409,7 @@ class Viewport(renpy.display.layout.Container):
                 rv = adjustment.change(adjustment.value + adjustment.step)
                 if rv is not None:
                     return rv
-                else:
-                    raise renpy.display.core.IgnoreEvent()
+                raise renpy.display.core.IgnoreEvent()
 
         if self.arrowkeys:
 
@@ -423,8 +421,7 @@ class Viewport(renpy.display.layout.Container):
                 rv = self.xadjustment.change(self.xadjustment.value - self.xadjustment.step)
                 if rv is not None:
                     return rv
-                else:
-                    raise renpy.display.core.IgnoreEvent()
+                raise renpy.display.core.IgnoreEvent()
 
             if renpy.display.behavior.map_event(ev, 'viewport_rightarrow'):
 
@@ -434,8 +431,7 @@ class Viewport(renpy.display.layout.Container):
                 rv = self.xadjustment.change(self.xadjustment.value + self.xadjustment.step)
                 if rv is not None:
                     return rv
-                else:
-                    raise renpy.display.core.IgnoreEvent()
+                raise renpy.display.core.IgnoreEvent()
 
             if renpy.display.behavior.map_event(ev, 'viewport_uparrow'):
 
@@ -445,8 +441,7 @@ class Viewport(renpy.display.layout.Container):
                 rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.step)
                 if rv is not None:
                     return rv
-                else:
-                    raise renpy.display.core.IgnoreEvent()
+                raise renpy.display.core.IgnoreEvent()
 
             if renpy.display.behavior.map_event(ev, 'viewport_downarrow'):
 
@@ -456,8 +451,7 @@ class Viewport(renpy.display.layout.Container):
                 rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.step)
                 if rv is not None:
                     return rv
-                else:
-                    raise renpy.display.core.IgnoreEvent()
+                raise renpy.display.core.IgnoreEvent()
 
         if self.pagekeys:
 
@@ -466,16 +460,14 @@ class Viewport(renpy.display.layout.Container):
                 rv = self.yadjustment.change(self.yadjustment.value - self.yadjustment.page)
                 if rv is not None:
                     return rv
-                else:
-                    raise renpy.display.core.IgnoreEvent()
+                raise renpy.display.core.IgnoreEvent()
 
             if renpy.display.behavior.map_event(ev, 'viewport_pagedown'):
 
                 rv = self.yadjustment.change(self.yadjustment.value + self.yadjustment.page)
                 if rv is not None:
                     return rv
-                else:
-                    raise renpy.display.core.IgnoreEvent()
+                raise renpy.display.core.IgnoreEvent()
 
         if inside and draggable:
 

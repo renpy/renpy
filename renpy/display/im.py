@@ -277,8 +277,8 @@ class Cache(object):
                     rv = renpy.display.render.Render(ce.width, ce.height)
                     rv.blit(ce.texture, ce.bounds[:2])
                     return rv
-                else:
-                    return ce.texture
+
+                return ce.texture
 
             if ce.surf is None:
                 ce = None
@@ -713,27 +713,23 @@ class Image(ImageBase):
 
                 return im.load()
 
-            else:
+            if self.filename not in ignored_images:
+                images_to_ignore.add(self.filename)
+                raise e
 
-                if self.filename not in ignored_images:
-                    images_to_ignore.add(self.filename)
-                    raise e
-                else:
-                    return Image("_missing_image.png").load()
-
-            raise e
+            return Image("_missing_image.png").load()
 
     def predict_files(self):
 
         if renpy.loader.loadable(self.filename):
             return [ self.filename ]
-        else:
-            if renpy.config.missing_image_callback:
-                im = renpy.config.missing_image_callback(self.filename)
-                if im is not None:
-                    return im.predict_files()
 
-            return [ self.filename ]
+        if renpy.config.missing_image_callback:
+            im = renpy.config.missing_image_callback(self.filename)
+            if im is not None:
+                return im.predict_files()
+
+        return [ self.filename ]
 
 
 class Data(ImageBase):
@@ -1869,14 +1865,14 @@ def image(arg, loose=False, **properties):
     if isinstance(arg, ImageBase):
         return arg
 
-    elif isinstance(arg, basestring):
+    if isinstance(arg, basestring):
         return Image(arg, **properties)
 
-    elif isinstance(arg, renpy.display.image.ImageReference):
+    if isinstance(arg, renpy.display.image.ImageReference):
         arg.find_target()
         return image(arg.target, loose=loose, **properties)
 
-    elif isinstance(arg, tuple):
+    if isinstance(arg, tuple):
         params = [ ]
 
         for i in arg:
@@ -1885,13 +1881,12 @@ def image(arg, loose=False, **properties):
 
         return Composite(None, *params)
 
-    elif loose:
+    if loose:
         return arg
 
     if isinstance(arg, renpy.display.core.Displayable):
         raise Exception("Expected an image, but got a general displayable.")
-    else:
-        raise Exception("Could not construct image from argument.")
+    raise Exception("Could not construct image from argument.")
 
 
 def expands_bounds(bounds, size, amount):
