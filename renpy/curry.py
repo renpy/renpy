@@ -111,7 +111,7 @@ class Partial(functools.partial):
 
 def curry(fn):
     """
-    :doc: devtools
+    :doc: curry_partial
 
     Takes an input callable, and returns another callable.
     The returned callable can be called with arguments and keyword
@@ -124,7 +124,7 @@ def curry(fn):
         b = a(1)
 
         b(2) # calls print(1, 2)
-        b == renpy.partial(print, 1)
+        # b is the same as renpy.partial(print, 1)
     """
 
     rv = Partial(Partial, fn)
@@ -135,20 +135,22 @@ def curry(fn):
 
 def partial(function, *args, **kwargs):
     """
-    :doc: devtools
+    :doc: curry_partial
 
     Returns a partial version of ``function`` whose arguments
     and keyword arguments given by ``args`` and ``kwargs`` are
     pre-filled, and will combine with the arguments of the second
     call. For example::
 
-        def divide(num, den):
+        def divide(num, den, euclidian=True):
+            if euclidian:
+                return num // den
             return num / den
 
-        half = renpy.partial(divide, den=2)
-        half(5) # returns 2.5
+        divide_five = renpy.partial(divide, 5, euclidian=False)
+        divide_five(2) # returns 2.5
 
-    The returned object should be considered immutable, and as many
+    The returned object should be considered immutable, and as most
     built-in renpy objects, it will not participate in rollback.
     """
 
