@@ -1771,7 +1771,6 @@ class Return(Node):
     # We don't care what the next node is.
     def chain(self, next): # @ReservedAssignment
         self.next = None
-        return
 
     def execute(self):
 
@@ -1974,7 +1973,6 @@ class Jump(Node):
     # We don't care what our next node is.
     def chain(self, next): # @ReservedAssignment
         self.next = None
-        return
 
     def execute(self):
 

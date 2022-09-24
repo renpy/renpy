@@ -178,7 +178,6 @@ class LogFile(object):
                     self.file.flush() # type: ignore
                 except Exception:
                     self.flush = False
-                    pass
 
     def exception(self):
         """
