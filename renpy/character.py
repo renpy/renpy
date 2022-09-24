@@ -303,7 +303,6 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
             layer = renpy.config.say_layer
 
         tag = screen
-        index = 0
 
         if multiple:
 

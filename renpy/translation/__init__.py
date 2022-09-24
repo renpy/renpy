@@ -945,7 +945,7 @@ def detect_user_locale():
         if isinstance(locale_name, bytes):
             locale_name = locale_name.decode("utf-8")
 
-        local_name = locale_name.replace("-", "_")
+        locale_name = locale_name.replace("-", "_")
     else:
         locale_name = locale.getdefaultlocale()
         if locale_name is not None:

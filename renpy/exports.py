@@ -2830,7 +2830,7 @@ def load_string(s, filename="<string>"):
         context.init_phase = True
         renpy.game.contexts.append(context)
 
-        for prio, node in initcode: # @UnusedVariable
+        for _prio, node in initcode: # @UnusedVariable
             if isinstance(node, renpy.ast.Node):
                 renpy.game.context().run(node)
             else:
@@ -3226,7 +3226,7 @@ def list_files(common=False):
 
     rv = [ ]
 
-    for dir, fn in renpy.loader.listdirfiles(common): # @ReservedAssignment
+    for _dir, fn in renpy.loader.listdirfiles(common): # @ReservedAssignment
         if fn.startswith("saves/"):
             continue
 

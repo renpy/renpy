@@ -585,7 +585,7 @@ class Context(renpy.object.Object):
                     if developer and self.next_node:
                         self.check_stacks()
 
-                except renpy.game.CONTROL_EXCEPTIONS as e:
+                except renpy.game.CONTROL_EXCEPTIONS:
 
                     # An exception ends the current translation.
                     self.translate_interaction = None
@@ -612,7 +612,7 @@ class Context(renpy.object.Object):
                                 raise
                     except renpy.game.CONTROL_EXCEPTIONS as ce:
                         raise ce
-                    except Exception as ce:
+                    except Exception:
                         reraise(exc_info[0], exc_info[1], exc_info[2])
 
                 node = self.next_node
@@ -943,10 +943,10 @@ def run_context(top):
 
             return rv
 
-        except renpy.game.RestartContext as e:
+        except renpy.game.RestartContext:
             continue
 
-        except renpy.game.RestartTopContext as e:
+        except renpy.game.RestartTopContext:
             if top:
                 continue
 

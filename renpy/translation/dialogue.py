@@ -311,7 +311,7 @@ class DialogueFile(object):
             if self.notags:
                 s = notags_filter(s)
 
-            what = combine_filter(s)
+            # what = combine_filter(s)
 
             if self.escape:
                 s = quote_unicode(s)

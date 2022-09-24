@@ -460,7 +460,7 @@ def before_interact(roots):
 
     # Finally, mark the current widget as the focused widget, and
     # all other widgets as unfocused.
-    for f, n, screen, modal in fwn:
+    for f, n, screen, _modal in fwn:
         if f is not current:
             renpy.display.screen.push_current_screen(screen)
             try:

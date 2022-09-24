@@ -265,7 +265,7 @@ def index_archives():
                     if archive_handled == True:
                         break
 
-    for dir, fn in listdirfiles(): # @ReservedAssignment
+    for _dir, fn in listdirfiles(): # @ReservedAssignment
         lower_map[unicodedata.normalize('NFC', fn.lower())] = fn
 
     for fn in remote_files:

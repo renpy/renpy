@@ -400,7 +400,7 @@ def context_enter(w):
     if isinstance(renpy.ui.stack[-1], renpy.ui.Many) and renpy.ui.stack[-1].displayable is w: # type: ignore
         return
 
-    raise Exception("%r cannot be used as a context manager.", type(w).__name__)
+    raise Exception("{} cannot be used as a context manager.".format(type(w).__name__))
 
 
 def context_exit(w):
@@ -526,7 +526,7 @@ class Wrapper(renpy.object.Object):
         try:
             w = self.function(*args, **keyword)
         except TypeError as e:
-            etype, e, tb = sys.exc_info()
+            _etype, e, tb = sys.exc_info()
 
             if tb.tb_next is None:
                 e.args = (e.args[0].replace("__call__", "ui." + self.name),) # type: ignore

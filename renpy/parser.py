@@ -638,8 +638,6 @@ def IF_statement(l, loc):
 
     rv = None
 
-    entries = [ ]
-
     condition = l.require(l.python_expression)
     l.require(':')
     l.expect_eol()

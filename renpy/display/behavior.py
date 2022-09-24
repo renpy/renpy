@@ -1545,7 +1545,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
             if self.caret_pos > 0:
                 space_pos = 0
                 for item in re.finditer(r"\s+", self.content[:self.caret_pos]):
-                    start, end = item.span()
+                    _start, end = item.span()
                     if end != self.caret_pos:
                         space_pos = end
                 self.caret_pos = space_pos
