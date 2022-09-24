@@ -3197,7 +3197,7 @@ class Interface(object):
             if renpy.android:
                 try:
                     android.activity.finishAndRemoveTask()
-                except:
+                except Exception:
                     pass
 
                 from jnius import autoclass
