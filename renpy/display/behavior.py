@@ -1352,9 +1352,9 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
 
         caretprops = { 'color' : None }
 
-        for i in properties:
+        for i, v in properties.items():
             if i.endswith("color"):
-                caretprops[i] = properties[i]
+                caretprops[i] = v
 
         caret = renpy.display.image.Solid(xysize=(1, renpy.store.preferences.font_size), style=style, **caretprops)
 
