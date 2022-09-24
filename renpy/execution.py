@@ -447,7 +447,7 @@ class Context(renpy.object.Object):
     def report_traceback(self, name, last):
 
         if last:
-            return
+            return None
 
         rv = [ ]
 

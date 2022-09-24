@@ -751,7 +751,7 @@ class Transform(Container):
             return None
 
         if not self.state.events: # type: ignore
-            return
+            return None
 
         children = self.children
         offsets = self.offsets

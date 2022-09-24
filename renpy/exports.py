@@ -165,7 +165,7 @@ def roll_forward_core(value=None):
     if value is None:
         value = roll_forward_info()
     if value is None:
-        return
+        return None
 
     renpy.game.interface.suppress_transition = True
     renpy.game.after_rollback = True
@@ -1654,7 +1654,7 @@ def with_statement(trans, always=False, paired=None, clear=True):
             renpy.exports.transition(v, layer=k)
 
         if None not in trans:
-            return
+            return None
 
         trans = trans[None]
 
@@ -4220,7 +4220,7 @@ def get_sdl_window_pointer():
         window = pygame_sdl2.display.get_window()
 
         if window is None:
-            return
+            return None
 
         return window.get_sdl_window_pointer()
 

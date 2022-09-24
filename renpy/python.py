@@ -157,7 +157,7 @@ class StoreDict(dict):
         """
 
         if self.get("_constant", False):
-            return
+            return None
 
         new = DictItems(self)
         rv = find_changes(self.old, new, deleted)

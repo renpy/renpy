@@ -1951,7 +1951,7 @@ class Text(renpy.display.core.Displayable):
         renpy.display.render.redraw(self, 0)
 
         if layout is None:
-            return
+            return None
 
         if not default:
             renpy.exports.play(self.style.hover_sound)
@@ -1961,6 +1961,8 @@ class Text(renpy.display.core.Displayable):
 
         if hyperlink_focus and (not default) and (target is not None):
             return hyperlink_focus(target)
+
+        return None
 
     def unfocus(self, default=False):
         """
@@ -1974,6 +1976,8 @@ class Text(renpy.display.core.Displayable):
 
         if hyperlink_focus and not default:
             return hyperlink_focus(None)
+
+        return None
 
     def call_slow_done(self, st):
         """
@@ -2014,7 +2018,7 @@ class Text(renpy.display.core.Displayable):
         layout = self.get_layout()
 
         if layout is None:
-            return
+            return None
 
         for d, xo, yo in self.displayable_offsets:
             rv = d.event(ev, x - xo, y - yo, st)
@@ -2040,6 +2044,8 @@ class Text(renpy.display.core.Displayable):
                     raise renpy.display.core.IgnoreEvent()
 
                 return rv
+
+        return None
 
     def size(self, width=4096, height=4096, st=0, at=0):
         """

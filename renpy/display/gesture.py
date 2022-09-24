@@ -105,7 +105,7 @@ class GestureRecognizer(object):
         rv = None
 
         if self.x is None:
-            return
+            return None
 
         if self.strokes:
             func = renpy.config.dispatch_gesture
@@ -137,6 +137,8 @@ class GestureRecognizer(object):
 
             if ev.button == 1:
                 return self.finish()
+
+        return None
 
 
 recognizer = GestureRecognizer()

@@ -120,6 +120,8 @@ def post_event(control, state, repeat):
 
     pygame.event.post(ev)
 
+    return None
+
 
 def exists():
     """

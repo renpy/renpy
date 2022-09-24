@@ -426,8 +426,6 @@ class Displayable(renpy.object.Object):
 
         self._duplicatable = False
 
-        return
-
     def parameterize(self, name, parameters):
         """
         Obsolete alias for _duplicate.
@@ -508,7 +506,7 @@ class Displayable(renpy.object.Object):
     def is_focused(self):
 
         if renpy.display.focus.grab and renpy.display.focus.grab is not self:
-            return
+            return None
 
         return renpy.game.context().scene_lists.focused is self
 

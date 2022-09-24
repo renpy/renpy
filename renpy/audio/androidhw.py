@@ -142,6 +142,8 @@ class AndroidVideoChannel(object):
         if self.player.isPlaying():
             return self.filename
 
+        return None
+
     def periodic(self):
 
         # This should be set from something that checks to see if our

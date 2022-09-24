@@ -160,6 +160,8 @@ def report_exception(short, full, traceback_fn):
         renpy.display.log.exception()
         raise
 
+    return None
+
 
 def report_parse_errors(errors, error_fn):
     """
@@ -207,3 +209,5 @@ def report_parse_errors(errors, error_fn):
         renpy.display.log.write("While handling exception:")
         renpy.display.log.exception()
         raise
+
+    return None

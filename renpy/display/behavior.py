@@ -333,7 +333,7 @@ def run_unhovered(var):
     """
 
     if var is None:
-        return None
+        return
 
     if isinstance(var, (list, tuple)):
         for i in var:
@@ -361,6 +361,8 @@ def run_periodic(var, st):
 
     if isinstance(var, renpy.ui.Action):
         return var.periodic(st)
+
+    return None
 
 
 def get_tooltip(action):
@@ -1186,6 +1188,8 @@ class HoveredProxy(object):
         self.a()
         if self.b:
             return self.b()
+
+        return None
 
 
 # The currently editable input value.

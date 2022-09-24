@@ -1072,6 +1072,8 @@ class DragGroup(renpy.display.layout.MultiBox):
             ):
                 return c
 
+        return None
+
     def get_children(self):
         """
         Returns a list of Drags that are the children of

@@ -1108,6 +1108,8 @@ def periodic_pass():
         if renpy.config.debug_sound:
             raise
 
+    return None
+
 
 # The exception that's been thrown by the periodic thread.
 periodic_exc = None

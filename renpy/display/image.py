@@ -637,7 +637,7 @@ class DynamicImage(renpy.display.core.Displayable):
     def find_target(self, scope=None, update=True):
 
         if self.locked and (self.target is not None):
-            return
+            return None
 
         if scope is not None:
             if self._uses_scope and (self._duplicatable or self._args.prefix):

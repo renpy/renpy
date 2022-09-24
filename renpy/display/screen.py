@@ -580,7 +580,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def update(self):
 
         if self in updated_screens:
-            return
+            return None
 
         updated_screens.add(self)
 
@@ -728,7 +728,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
     def event(self, ev, x, y, st):
 
         if (self.phase == OLD) or (self.phase == HIDE):
-            return
+            return None
 
         if not self.screen:
             return None
@@ -748,6 +748,8 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
         if renpy.display.layout.check_modal(self.modal, ev, x, y, None, None):
             raise renpy.display.layout.IgnoreLayers()
+
+        return None
 
     def get_phase_name(self):
         return phase_name[self.phase]

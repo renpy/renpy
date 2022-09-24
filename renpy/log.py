@@ -101,7 +101,7 @@ class LogFile(object):
             return False
 
         if renpy.config.logdir is None:
-            return
+            return None
 
         try:
             base = os.environ.get("RENPY_LOG_BASE", renpy.config.logdir)

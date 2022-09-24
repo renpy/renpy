@@ -491,7 +491,7 @@ def change_focus(newfocus, default=False):
     rv = None
 
     if grab:
-        return
+        return None
 
     if newfocus is None:
         widget = None

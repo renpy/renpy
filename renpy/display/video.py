@@ -522,7 +522,7 @@ def playing():
         if renpy.audio.music.get_playing(channel):
             return True
 
-    return
+    return None
 
 
 def update_playing():

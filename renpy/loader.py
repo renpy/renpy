@@ -755,8 +755,6 @@ def load_from_remote_file(name):
     if name in remote_files:
         raise DownloadNeeded(relpath=name, rtype=remote_files[name]['type'], size=remote_files[name]['size'])
 
-    return None
-
 
 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
     file_open_callbacks.append(load_from_remote_file)
@@ -973,6 +971,8 @@ class RenpyImporter(object):
 
         if self.translate(fullname):
             return self
+
+        return None
 
     def load_module(self, fullname):
 

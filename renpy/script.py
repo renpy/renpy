@@ -167,7 +167,7 @@ class Script(object):
         backups = __main__.path_to_saves(renpy.config.gamedir, "backups") # @UndefinedVariable
 
         if backups is None:
-            return
+            return None
 
         basename = os.path.basename(renpy.config.basedir)
         backupdir = renpy.os.path.join(renpy.exports.fsencode(backups),

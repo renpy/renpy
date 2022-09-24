@@ -1041,6 +1041,8 @@ class ADVCharacter(object):
         if temporary_attrs:
             return (attrs, images)
 
+        return None
+
     def handle_say_transition(self, mode, before, after):
 
         before = set(before)
@@ -1284,6 +1286,8 @@ class ADVCharacter(object):
                 if self.restore_say_attributes(False, old_attr_state, interact): # type: ignore
                     after = images.get_attributes(None, self.image_tag) # type: ignore
                     self.handle_say_transition('restore', before, after) # type: ignore
+
+        return None
 
     def statement_name(self):
         if self._statement_name is not None:
