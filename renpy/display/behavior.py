@@ -159,7 +159,7 @@ keyup_cache = { }
 
 def clear_keymap_cache():
     """
-    :doc: other
+    :doc: keymap
 
     Clears the keymap cache. This allows changes to :var:`config.keymap` to
     take effect without restarting Ren'Py.
