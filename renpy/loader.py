@@ -262,7 +262,7 @@ def index_archives():
                             archives.append((prefix + handler.archive_extension, index))
                             archive_handled = True
                             break
-                    if archive_handled == True:
+                    if archive_handled:
                         break
 
     for _dir, fn in listdirfiles(): # @ReservedAssignment
