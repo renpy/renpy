@@ -912,7 +912,7 @@ def get_menu_args():
     """
 
     if menu_args is None:
-        return tuple(), dict()
+        return (), {}
 
     return menu_args, menu_kwargs
 
@@ -928,8 +928,8 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
     global menu_args
     global menu_kwargs
 
-    args = args or tuple()
-    kwargs = kwargs or dict()
+    args = args or ()
+    kwargs = kwargs or {}
 
     nvl = kwargs.pop("nvl", False)
 
@@ -947,7 +947,7 @@ def menu(items, set_expr, args=None, kwargs=None, item_arguments=None):
             return s
 
     if item_arguments is None:
-        item_arguments = [ (tuple(), dict()) ] * len(items)
+        item_arguments = [ ((), {}) ] * len(items)
 
     # Filter the list of items on the set_expr:
     if set_expr:

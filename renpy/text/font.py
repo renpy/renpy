@@ -333,7 +333,7 @@ def parse_bmfont_line(l):
     quote = False
 
     for c in l:
-        if c == "\r" or c == "\n":
+        if c in ("\r", "\n"):
             continue
 
         if c == " " and not quote:
@@ -682,7 +682,7 @@ def get_font(fn, size, bold, italics, outline, antialias, vertical, hinting, sca
     # If the scale changed, invalidate caches of scaled fonts.
     global last_scale
 
-    if (scale != 1.0) and (scale != last_scale):
+    if scale not in (1.0, last_scale):
         scaled_image_fonts.clear()
         font_cache.clear()
         last_scale = scale
@@ -748,7 +748,7 @@ class FontGroup(object):
     """
 
     # For compatibility with older instances.
-    char_map = dict()
+    char_map = {}
 
     def __init__(self):
 

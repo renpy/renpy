@@ -895,7 +895,7 @@ def transfn(name):
     raise Exception("Couldn't find file '%s'." % name)
 
 
-hash_cache = dict()
+hash_cache = {}
 
 
 def get_hash(name): # type: (str) -> int
