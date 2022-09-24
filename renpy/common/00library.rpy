@@ -34,7 +34,7 @@ init -1700 python:
 
     class DictEquality(object):
         """
-        :doc: devtools
+        :doc: equality_mixins
 
         Objects of classes inheriting this class will compare equal if their
         types are the same and their internal dicts are equal, which means when
@@ -71,7 +71,7 @@ init -1700 python:
 
     class FieldEquality(object):
         """
-        :doc: devtools
+        :doc: equality_mixins
 
         Objects of classes inheriting this class will compare equal if their
         types are the same and if specific fields are equal.
