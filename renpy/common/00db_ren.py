@@ -21,12 +21,13 @@
 
 import renpy.config as config
 import renpy.exports as renpy
+from renpy.minstore import _dict, _object
 
 """renpy
 init -1100 python:
 """
 
-class _JSONDBDict(dict):
+class _JSONDBDict(_dict):
 
     def __init__(self, *args, **kwargs):
 
@@ -100,7 +101,7 @@ class _JSONDBDict(dict):
         return super(_JSONDBDict, self).__ior__(other)
 
 
-class JSONDB(object):
+class JSONDB(_object):
     """
     :doc: jsondb
 
@@ -124,6 +125,8 @@ class JSONDB(object):
     default contents. The second level dictionary is read-write, and
     when one of the keys in a second level dictionary is changed,
     that change is saved to the database whe the game exits.
+
+    Like other persistent data, JSONDBs do not participate in rollback.
 
     A JSONDB should be created during init (in an init python block or
     define statement), and will automatically be saved to the disk provided
