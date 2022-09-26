@@ -513,8 +513,8 @@ class RollbackRandom(random.Random):
 
     if PY2:
         jumpahead = checkpointing(mutator(random.Random.jumpahead)) # type: ignore
-
-    choices = list_wrapper(random.Random.choices)
+    else:
+        choices = list_wrapper(random.Random.choices)
     sample = list_wrapper(random.Random.sample)
 
     getrandbits = checkpointing(mutator(random.Random.getrandbits))
@@ -542,7 +542,8 @@ class DetRandom(random.Random):
         super(DetRandom, self).__init__()
         self.stack = [ ]
 
-    choices = list_wrapper(random.Random.choices)
+    if not PY2:
+        choices = list_wrapper(random.Random.choices)
     sample = list_wrapper(random.Random.sample)
 
     def random(self):
