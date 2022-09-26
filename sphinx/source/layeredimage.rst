@@ -361,7 +361,7 @@ The `if_*` clauses' test is based upon the list of attributes of the resulting
 image, as explained :ref:`here <concept-image>`, but it **does not *change* that
 list.** ::
 
-    layeredimaga eileen:
+    layeredimage eileen:
         attribute a
         attribute b default if_not "a"
         attribute c default if_not "b"
