@@ -124,9 +124,11 @@ default persistent._console_unicode_escaping = False
 
 init -1500 python in _console:
     from store import config, persistent, NoRollback
+    import io
     import sys
     import traceback
     import store
+    import pydoc
 
     from reprlib import Repr
     class PrettyRepr(Repr):
@@ -776,8 +778,22 @@ init -1500 python in _console:
 
         return wrap
 
-    @command(_("help: show this help"))
+    @command(_("help: show this help\n help <expr>: show signature and documentation of <expr>"))
     def help(l, doc_generate=False):
+        rest = l.rest_statement()
+        if rest and rest.replace(" ", "") != "()":
+            try:
+                renpy.python.py_compile(rest, 'eval')
+            except Exception:
+                result = "Could not evaluate expression."
+            else:
+                value = renpy.python.py_eval(rest)
+                stream = io.StringIO()
+                pydoc.doc(value, title='%s', output=stream)
+                result = stream.getvalue()
+
+            return result
+
         keys = list(config.console_commands.keys())
         keys.sort()
 
