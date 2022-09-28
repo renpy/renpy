@@ -282,16 +282,20 @@ Other Named Stores
 ------------------
 
 Named stores provide a way of organizing Python functions and variables
-into modules. By placing Python in modules, you can minimize the chance of name
-conflicts.
+into modules. By placing Python in named stores, you can minimize the
+chance of name conflicts. Each store corresponds to a Python module.
+The default store is ``store``, while a named store is accessed as
+``store.named``.
+
+Named stores can be created using ``python in`` blocks (or their
+``init python`` or ``python early`` variants), or using ``default``,
+``define`` or :ref:`transform <transform-statement>` statements. Variables
+in can be imported individually using ``from store.named import variable``,
+and a named store itself can be imported using ``from store import named``.
 
 Named stores can be accessed by supplying the ``in`` clause to
-``python`` or ``init python``, all of which run Python in a named
-store. Each store corresponds to a Python module. The default store is
-``store``, while a named store is accessed as ``store.name``. Names in
-the modules can be imported using the Python ``from`` statement.
-Named stores can be created using ``init python in`` blocks, or using
-``default``, ``define`` or :ref:`transform <transform-statement>` statements.
+``python`` or ``init python`` (or ``python early``), all of which
+run the Python they contain in the given named store.
 
 For example::
 
@@ -315,6 +319,12 @@ For example::
         elif character_stats.chloe_substore.friends:
             chloe "I have friends, but Lucy is not one of them."
 
+        python in character_stats.chloe_substore:
+            friends.add("Jeremy")
+
+
+From a ``python in`` block, the default "outer" store can be
+accessed using either ``renpy.store``, or ``import store``.
 
 Named stores participate in save, load, and rollback in the same way
 that the default store does. Special namespaces such as ``persistent``,
