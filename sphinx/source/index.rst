@@ -107,6 +107,7 @@ Other Functionality
    history
    multiple
    splashscreen_presplash
+   lifecycle
 
 Python and Ren'Py
 -----------------
