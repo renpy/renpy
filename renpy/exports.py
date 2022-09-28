@@ -488,6 +488,32 @@ def get_attributes(tag, layer=None, if_hidden=None):
     return renpy.game.context().images.get_attributes(layer, tag, if_hidden)
 
 
+def clear_attributes(tag, layer=None):
+    """
+    :doc: image_func
+
+    Clears all image attributes for the `tag` image.
+    If the tag had no attached image attributes, this does nothing.
+
+    `layer`
+        The layer to check. If None, uses the default layer for `tag`.
+    """
+
+    current = get_attributes(tag, layer, None)
+
+    if not current:
+        # either shown with no attributes to remove, or not showing
+        return
+
+    shown = showing(tag, default_layer(layer, tag))
+
+    current = tuple('-'+a for a in current)
+    set_tag_attributes((tag,)+current, layer)
+
+    if shown:
+        show(tag, layer=layer)
+
+
 def _find_image(layer, key, name, what):
     """
     :undocumented:
