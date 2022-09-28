@@ -790,7 +790,9 @@ init -1500 python in _console:
                 value = renpy.python.py_eval(rest)
                 stream = io.StringIO()
                 pydoc.doc(value, title='%s', output=stream)
-                result = stream.getvalue()
+                result = __("Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n")
+                result += stream.getvalue()
+
 
             return result
 

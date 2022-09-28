@@ -96,6 +96,10 @@ not change after the init phase finishes.
 New Features
 ------------
 
+The console (accessed with shift+O) ``help`` command can now take an
+expression, in which case it display the pydoc documentation for the
+function or class that expression refers to.
+
 The new :func:`renpy.get_translation_identifier` function returns the
 unique identifier for the current line of dialogue, if there is one.
 
