@@ -111,6 +111,7 @@ in a block may be one of two things:
 * A property list.
 * A screen language statement.
 
+.. _screen-statement:
 
 Screen Statement
 ----------------

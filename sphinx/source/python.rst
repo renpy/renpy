@@ -218,33 +218,6 @@ if it doesn't already exist. For example::
 As for the ``define`` statement, :ref:`lint` offers checks and optimizations
 related to the ``default`` statement.
 
-.. _init-offset-statement:
-
-Init Offset Statement
----------------------
-
-The ``init offset`` statement sets a priority offset for all statements
-that run at init time (init, init python, define, default, screen,
-transform, style, and more). The offset applies to all following
-statements in the current block and child blocks, up to the next
-init priority statement. The statement::
-
-    init offset = 42
-
-sets the priority offset to 42. In::
-
-    init offset = 2
-    define foo = 2
-
-    init offset = 1
-    define foo = 1
-
-    init offset = 0
-
-The first define statement is run at priority 2, which means it runs
-after the second define statement, and hence ``foo`` winds up with
-a value of 2.
-
 Names in the Store
 ------------------
 
