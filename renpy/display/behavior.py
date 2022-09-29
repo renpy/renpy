@@ -2521,3 +2521,130 @@ class OnEvent(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
         return renpy.display.render.Render(0, 0)
+
+
+class AreaPicker(renpy.display.layout.Container):
+    """
+    This is a displayable that allows the user to pick an area of the screen,
+    using two clicks - one to start the selection, and one to end it. It
+    will display its child as the selection is made, and calls a callback
+    to let Ren'Py know what's going on.
+    """
+
+    def __init__(self, rows=None, cols=None, changed=None, finished=None, **properties):
+        super(AreaPicker, self).__init__(**properties)
+
+        # The number of entries in the x and y grids, or None
+        # to disable gridding.
+        self.rows = rows
+        self.cols = cols
+
+        # Two rectangles, representing the start and end.
+        self.rect0 = None
+
+        # The rectangle-location of the second click.
+        self.rect1 = None
+
+        # The width and height of this displayable.
+        self.width = 1
+        self.height = 1
+
+        # Functions that are called when the size changes, or when the
+        # release event occurs.
+        self.changed = changed
+        self.finished = finished
+
+    def round_to_grid(self, x, y, is_point1):
+
+        if self.rows is not None:
+            xgrid = self.width / self.rows
+            w = xgrid
+        else:
+            xgrid = 1
+            w = 0
+
+        if self.cols is not None:
+            ygrid = self.height / self.cols
+            h = ygrid
+        else:
+            ygrid = 1
+            h = 0
+
+        # Round x and y to the grid.
+        px = xgrid * round(x / xgrid)
+        py = ygrid * round(y / ygrid)
+
+        if x < px:
+            px -= xgrid
+
+        if y < py:
+            py -= ygrid
+
+        return (px, py, w, h)
+
+    def get_rect(self):
+
+        if self.rect0 is None or self.rect1 is None:
+            return None
+
+        p0x, p0y, p0w, p0h = self.rect0 # type: ignore
+        p1x, p1y, p1w, p1h = self.rect1 # type: ignore
+
+        x = min(p0x, p1x)
+        y = min(p0y, p1y)
+        w = max(p0x + p0w, p1x + p1w) - x
+        h = max(p0y + p0h, p1y + p1h) - y
+
+        return (int(x), int(y), int(w), int(h))
+
+    def render(self, width, height, st, at):
+        self.width = width
+        self.height = height
+
+        rv = renpy.display.render.Render(width, height)
+        rv.add_focus(self, None, 0, 0, width, height)
+
+        rect = self.get_rect()
+
+        if rect is not None:
+            px, py, pw, ph = rect
+            rv.place(self.child, px, py, pw, ph)
+
+        return rv
+
+    def event(self, ev, x, y, st):
+
+        old_rect = self.get_rect()
+        grabbed = renpy.display.focus.get_grab()
+
+        finished = False
+
+        if self.is_focused():
+
+            if not grabbed:
+                self.rect0 = self.round_to_grid(x, y, False)
+
+            if map_event(ev, "drag_activate"):
+                renpy.display.focus.set_grab(self)
+
+            elif map_event(ev, "drag_deactivate"):
+                renpy.display.focus.set_grab(None)
+                finished = True
+
+            self.rect1 = self.round_to_grid(x, y, True)
+
+        else:
+
+            self.rect0 = None
+            self.rect1 = None
+
+        rect = self.get_rect()
+
+        if (rect != old_rect):
+            renpy.display.render.redraw(self, 0)
+            run(self.changed, rect)
+
+        if finished and rect:
+            renpy.display.render.redraw(self, 0)
+            run(self.finished, rect)
+            self.rect0 = self.rect1
