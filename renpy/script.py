@@ -678,7 +678,7 @@ class Script(object):
             data = None
             stmts = None
 
-            with renpy.loader.load(fn) as f:
+            with renpy.loader.load(fn, tl=False) as f:
                 for slot in [ 2, 1 ]:
                     try:
                         bindata = self.read_rpyc_data(f, slot)
@@ -734,7 +734,7 @@ class Script(object):
             if data is None:
                 raise Exception("Could not load from archive %s." % (lastfn,))
 
-            with renpy.loader.load(fn + compiled) as f:
+            with renpy.loader.load(fn + compiled, tl=False) as f:
                 f.seek(-hashlib.md5().digest_size, 2)
                 digest = f.read(hashlib.md5().digest_size)
 
