@@ -684,7 +684,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
     if not at_list:
         tt = renpy.config.tag_transform.get(key, None)
         if tt is not None:
-            renpy.easy.to_list(tt, copy=True)
+            at_list = renpy.easy.to_list(tt, copy=True)
 
     if what is None:
         what = name
