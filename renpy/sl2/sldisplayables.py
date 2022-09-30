@@ -526,6 +526,7 @@ Style("sound")
 DisplayableParser("areapicker", renpy.display.behavior.AreaPicker, "default", 1)
 Keyword("rows")
 Keyword("cols")
+Keyword("position")
 Keyword("changed")
 Keyword("finished")
 

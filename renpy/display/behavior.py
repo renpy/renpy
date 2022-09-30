@@ -2531,7 +2531,7 @@ class AreaPicker(renpy.display.layout.Container):
     to let Ren'Py know what's going on.
     """
 
-    def __init__(self, rows=None, cols=None, changed=None, finished=None, **properties):
+    def __init__(self, rows=None, cols=None, position=None, changed=None, finished=None, **properties):
         super(AreaPicker, self).__init__(**properties)
 
         # The number of entries in the x and y grids, or None
@@ -2551,6 +2551,7 @@ class AreaPicker(renpy.display.layout.Container):
 
         # Functions that are called when the size changes, or when the
         # release event occurs.
+        self.position = position
         self.changed = changed
         self.finished = finished
 
@@ -2633,18 +2634,23 @@ class AreaPicker(renpy.display.layout.Container):
 
             self.rect1 = self.round_to_grid(x, y, True)
 
+            run(self.position, (x, y))
+
+            rect = self.get_rect()
+
+            if (rect != old_rect):
+                renpy.display.render.redraw(self, 0)
+                run(self.changed, rect)
+
+            if finished and rect:
+                renpy.display.render.redraw(self, 0)
+                run(self.finished, rect)
+                self.rect0 = self.rect1
+
         else:
 
             self.rect0 = None
             self.rect1 = None
 
-        rect = self.get_rect()
-
-        if (rect != old_rect):
-            renpy.display.render.redraw(self, 0)
-            run(self.changed, rect)
-
-        if finished and rect:
-            renpy.display.render.redraw(self, 0)
-            run(self.finished, rect)
-            self.rect0 = self.rect1
+            if renpy.display.focus.get_grab() is self:
+                renpy.display.focus.set_grab(None)
