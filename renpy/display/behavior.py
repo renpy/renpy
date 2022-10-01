@@ -2531,7 +2531,7 @@ class AreaPicker(renpy.display.layout.Container):
     to let Ren'Py know what's going on.
     """
 
-    def __init__(self, rows=None, cols=None, position=None, changed=None, finished=None, **properties):
+    def __init__(self, rows=None, cols=None, position=None, changed=None, finished=None, persist=False, **properties):
         super(AreaPicker, self).__init__(**properties)
 
         # The number of entries in the x and y grids, or None
@@ -2555,7 +2555,12 @@ class AreaPicker(renpy.display.layout.Container):
         self.changed = changed
         self.finished = finished
 
-    def round_to_grid(self, x, y, is_point1):
+        self.persist = persist
+
+    def round_to_grid(self, x, y, current):
+
+        if x == -1 and y == -1:
+            return current
 
         if self.rows is not None:
             xgrid = self.width / self.rows
@@ -2622,30 +2627,40 @@ class AreaPicker(renpy.display.layout.Container):
 
         if self.is_focused():
 
-            if not grabbed:
-                self.rect0 = self.round_to_grid(x, y, False)
-
             if map_event(ev, "drag_activate"):
+                self.rect0 = self.round_to_grid(x, y, self.rect0)
+                self.rect1 = self.rect0
                 renpy.display.focus.set_grab(self)
 
             elif map_event(ev, "drag_deactivate"):
                 renpy.display.focus.set_grab(None)
                 finished = True
 
-            self.rect1 = self.round_to_grid(x, y, True)
+            elif not grabbed and not self.persist:
+                self.rect0 = self.round_to_grid(x, y, self.rect0)
+
+            if grabbed or not self.persist:
+                self.rect1 = self.round_to_grid(x, y, self.rect1)
 
             run(self.position, (x, y))
 
             rect = self.get_rect()
 
+            old_showing = old_rect and old_rect[2] and old_rect[3]
+            new_showing = rect and rect[2] and rect[3]
+
             if (rect != old_rect):
-                renpy.display.render.redraw(self, 0)
+                if old_showing or new_showing:
+                    renpy.display.render.redraw(self, 0)
+
                 run(self.changed, rect)
 
             if finished and rect:
                 renpy.display.render.redraw(self, 0)
                 run(self.finished, rect)
-                self.rect0 = self.rect1
+
+                if not self.persist:
+                    self.rect0 = self.rect1
 
         else:
 

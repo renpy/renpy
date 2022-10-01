@@ -529,6 +529,7 @@ Keyword("cols")
 Keyword("position")
 Keyword("changed")
 Keyword("finished")
+Keyword("persist")
 
 
 # Ensure that Parsers are no longer added automatically.

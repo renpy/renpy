@@ -378,116 +378,85 @@ label _fps_meter:
 
 init python:
 
-    # This is a displayable that can keep track of the mouse coordinates,
-    # and show them to the user.
-    class __ImageLocationPicker(renpy.Displayable):
+    class __ImageLocationPickerData:
 
-        def __init__(self, fn, **kwargs):
-            super(__ImageLocationPicker, self).__init__(**kwargs)
-
-            self.child = Image(fn)
-
-            self.mouse = None
-            self.point1 = None
-            self.point2 = None
-
-            self.size = (0, 0)
-
+        def __init__(self):
+            self.position = None
+            self.rectangle = None
             self.clipboard = None
 
-        def rectangle(self):
-            x1, y1 = self.point1
-            x2, y2 = self.point2
+        def set_position(self, position):
+            self.position = position
+            renpy.restart_interaction()
 
-            width = self.size[0]
-            height = self.size[1]
+        def set_rectangle(self, rectangle):
+            self.rectangle = rectangle
+            renpy.restart_interaction()
 
-            x1 = min(x1, width)
-            x2 = min(x2, width)
-            y1 = min(y1, height)
-            y2 = min(y2, height)
+        def finish_rectangle(self, rectangle):
+            self.rectangle = rectangle
+            renpy.restart_interaction()
 
-            minx = min(x1, x2)
-            miny = min(y1, y2)
-            maxx = max(x1, x2)
-            maxy = max(y1, y2)
+            x, y, w, h = self.rectangle
 
-            w = int(maxx - minx)
-            h = int(maxy - miny)
+            if w or h:
+                text = repr((x, y, w, h))
+                self.clipboard = __("Rectangle copied to clipboard.")
+            else:
+                text = repr((x, y))
+                self.clipboard = __("Position copied to clipboard.")
 
-            minx = int(minx)
-            miny = int(miny)
+            import pygame
+            pygame.scrap.put(pygame.scrap.SCRAP_TEXT, text.encode("utf-8"))
 
-
-            return (minx, miny, w, h)
-
-        def render(self, width, height, st, at):
-            rv = renpy.Render(width, height)
-
-            cr = renpy.render(self.child, width, height, st, at)
-            rv.blit(cr, (0, 0))
-
+        def get_text(self):
             text = [ ]
 
-            self.size = (cr.width, cr.height)
+            if self.rectangle and self.rectangle[2] and self.rectangle[3]:
+                x, y, w, h = self.rectangle
 
-            if self.point1 and self.point2 and not self.point1 == self.point2:
-                x, y, w, h = self.rectangle()
-
-                if w and h:
-
-                    sr = renpy.render(Solid("#0ff4"), w, h, st, at)
-                    rv.blit(sr, (x, y))
-
-                    # text.append("Imagemap rectangle: %r" % ((minx, miny, maxx, maxy),))
+                if w or h:
                     text.append(__("Rectangle: %r") % ((x, y, w, h),))
 
-            if self.mouse:
-                mx, my = self.mouse
-                if mx < cr.width and my < cr.height:
-                    text.append(__("Mouse position: %r") % (self.mouse,))
+            if self.position:
+                text.append(__("Mouse position: %r") % (self.position,))
 
             if self.clipboard:
                 text.append(self.clipboard)
 
             text.append(__("Right-click or escape to quit."))
 
-            td = Text("\n".join(text), size=14, color="#fff", outlines=[ (1, "#000", 0, 0 ) ])
-            tr = renpy.render(td, width, height, st, at)
+            return "\n".join(text)
 
-            rv.blit(tr, (0, height - tr.height))
 
-            return rv
+screen _image_location_picker_image(image_name):
 
-        def event(self, ev, x, y, st):
-            import pygame_sdl2 as pygame
+    default ilpd = __ImageLocationPickerData()
 
-            if (x < 0 or y < 0):
-                return None
+    viewport:
+        edgescroll (40, 400)
 
-            self.mouse = (x, y)
-            renpy.redraw(self, 0)
+        fixed:
+            fit_first True
 
-            if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
-                self.point1 = (x, y)
-                self.point2 = (x, y)
+            add image_name
+            areapicker:
+                persist True
+                add "#0ff4"
 
-            elif ev.type == pygame.MOUSEMOTION and ev.buttons[0]:
-                self.point2 = (x, y)
+                position ilpd.set_position
+                changed ilpd.set_rectangle
+                finished ilpd.finish_rectangle
 
-            elif ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
-                self.point2 = (x, y)
+    text ilpd.get_text():
+        align (0.0, 1.0)
+        style "_text"
+        size 14
+        color "#fff"
+        outlines [ (1, "#000", 0, 0) ]
 
-                x, y, w, h = self.rectangle()
+    key "game_menu" action Return(True)
 
-                if w or h:
-                    text = repr((x, y, w, h))
-                    self.clipboard = __("Rectangle copied to clipboard.")
-                else:
-                    text = repr((x, y))
-                    self.clipboard = __("Position copied to clipboard.")
-
-                pygame.scrap.put(pygame.scrap.SCRAP_TEXT, text.encode("utf-8"))
 
 screen _image_location_picker(image_files):
 
@@ -551,9 +520,6 @@ label _image_location_picker:
 
         image_files.sort()
 
-        xadjustment = ui.adjustment()
-        yadjustment = ui.adjustment()
-
         while True:
 
             rv = renpy.call_screen("_image_location_picker", image_files=image_files)
@@ -561,11 +527,7 @@ label _image_location_picker:
             if rv is False:
                 renpy.jump("_image_location_picker_done")
 
-            # Now, allow the user to pick the image.
-
-            ui.keymap(game_menu=ui.returns(True))
-            ui.add(__ImageLocationPicker(rv))
-            ui.interact()
+            renpy.call_screen("_image_location_picker_image", rv)
 
         renpy.jump("_image_location_picker")
 
