@@ -110,6 +110,7 @@ label _image_attributes:
 
     return
 
+
 screen _variable_viewer(all_entries, deleted_entries):
 
     zorder 1010
@@ -202,94 +203,6 @@ label _debugger_screen:
 
     return
 
-label _theme_test:
-
-    call _enter_game_menu
-
-    python hide:
-
-        # Never gets pickled
-        def role(b):
-            if b:
-                return "selected_"
-            else:
-                return ""
-
-        toggle_var = True
-        adj = ui.adjustment(100, 25, page=25, adjustable=True)
-
-        while True:
-
-            ui.window(style=style.gm_root)
-            ui.null()
-
-            # Buttons
-            ui.hbox(box_spacing=10, xpos=10, ypos=10)
-
-            ui.vbox(box_spacing=10)
-
-            sg = "theme_test"
-
-            ui.frame(style='menu_frame')
-            ui.vbox()
-            layout.label("Button", None)
-            ui.textbutton("Button", size_group=sg, clicked=ui.returns("gndn"))
-            ui.textbutton("Button (Selected)", size_group=sg, clicked=ui.returns("gndn"), role=role(True))
-            ui.textbutton("Small", clicked=ui.returns("gndn"), style='small_button')
-            ui.close()
-
-            ui.frame(style='menu_frame')
-            ui.vbox()
-            layout.label("Radio Button", None)
-            ui.textbutton("True", size_group=sg, clicked=ui.returns("set"), role=role(toggle_var), style='radio_button')
-            ui.textbutton("False", size_group=sg, clicked=ui.returns("unset"), role=role(not toggle_var), style='radio_button')
-            ui.close()
-
-            ui.frame(style='menu_frame')
-            ui.vbox()
-            layout.label("Check Button", None)
-            ui.textbutton("Check Button", size_group=sg, clicked=ui.returns("toggle"), role=role(toggle_var), style='check_button')
-            ui.close()
-
-            ui.frame(style='menu_frame')
-            ui.vbox(box_spacing=2)
-            ui.bar(adjustment=adj, style='bar', xmaximum=200)
-            ui.bar(adjustment=adj, style='slider', xmaximum=200)
-            ui.bar(adjustment=adj, style='scrollbar', xmaximum=200)
-            ui.close()
-
-            ui.close() # vbox
-
-            ui.frame(style='menu_frame')
-            ui.hbox(box_spacing=2)
-            ui.bar(adjustment=adj, style='vbar', ymaximum=200)
-            ui.bar(adjustment=adj, style='vslider', ymaximum=200)
-            ui.bar(adjustment=adj, style='vscrollbar', ymaximum=200)
-            ui.close()
-
-            ui.frame(style='menu_frame', xmaximum=0.95)
-            ui.vbox(box_spacing=20)
-            layout.prompt("This is a prompt. We've made this text long enough to wrap around so it fills multiple lines.", None)
-            ui.close()
-
-            ui.close() # hbox
-
-            ui.frame(style='menu_frame', xalign=.01, yalign=.99)
-            ui.textbutton(_("Return to the developer menu"), clicked=ui.returns("return"))
-
-            rv = ui.interact()
-            if rv == "return":
-                break
-
-            elif rv == "set":
-                toggle_var = True
-            elif rv == "unset":
-                toggle_var = False
-            elif rv == "toggle":
-                toggle_var = not toggle_var
-
-    return
-
 
 # Not used any more, but may be in save files.
 init -1050 python:
@@ -335,45 +248,6 @@ init 1050 python:
 
         if config.missing_hide is None:
             config.missing_hide = __missing_hide_callback
-
-
-init -1050 python:
-
-    class __FPSMeter(object):
-
-        def __init__(self):
-            self.last_frames = None
-            self.last_time = None
-
-        def __call__(self, st, at):
-
-            if self.last_time is not None:
-                frames = config.frames - self.last_frames
-                time = st - self.last_time
-
-                text = "FPS: %.1f" % (frames / time)
-
-            else:
-                text = "FPS: --.-"
-
-            self.last_frames = config.frames
-            self.last_time = st
-
-            return Text(text, xalign=1.0), .5
-
-label _fps_meter:
-
-    python hide:
-        def fps_overlay():
-            ui.add(DynamicDisplayable(__FPSMeter()))
-
-        # We normally don't want to change this at runtime... but here
-        # it's okay, because we don't want to save the FPS meter anyway.
-        #
-        # Do as I say, not as I do.
-        config.overlay_functions.append(fps_overlay)
-
-    return
 
 
 init python:
@@ -616,6 +490,7 @@ screen _image_load_log():
                     size 14
 
     timer 10.0 action SetScreenVariable("show_help", False)
+
 
 init 1000 python hide:
     if config.transparent_tile:
