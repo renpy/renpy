@@ -23,6 +23,8 @@ init -1900 python:
     config.images_directory = 'images'
     config.late_images_scan = False
 
+    config.image_extensions =  [ ".jpg", ".jpeg", ".jxl", ".png", ".webp" ]
+
     def _scan_images_directory():
 
         import os
@@ -39,7 +41,7 @@ init -1900 python:
             basename = os.path.basename(fn)
             base, ext = os.path.splitext(basename)
 
-            if not ext.lower() in [ ".jpg", ".jpeg", ".png", ".webp" ]:
+            if not ext.lower() in config.image_extensions:
                 continue
 
             base = base.lower()

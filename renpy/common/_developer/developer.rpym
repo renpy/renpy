@@ -504,8 +504,6 @@ label _image_location_picker:
 
     python hide:
 
-        extensions = [ ".jpg", ".jpeg", ".png", ".webp" ]
-
         image_files = [ ]
 
         for fn in renpy.list_files():
@@ -514,7 +512,7 @@ label _image_location_picker:
 
             lfn = fn.lower()
 
-            for i in extensions:
+            for i in config.image_extensions:
                 if lfn.endswith(i):
                     image_files.append(fn)
 
