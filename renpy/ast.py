@@ -1081,6 +1081,7 @@ class Label(Node):
         renpy.store._kwargs = None
 
         renpy.easy.run_callbacks(renpy.config.label_callback, self.name, renpy.game.context().last_abnormal)
+        renpy.easy.run_callbacks(renpy.config.label_callbacks, self.name, renpy.game.context().last_abnormal)
 
     def restructure(self, callback):
         callback(self.block)

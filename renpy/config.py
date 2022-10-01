@@ -358,8 +358,10 @@ missing_scene = None
 missing_show = None
 missing_hide = None
 
-# This is called when control is transferred to a label.
-label_callback = [ ]
+# This is called when control is transferred to a label. (label_callbacks is
+# kept as an old name for label_callbacks.)
+label_callback = None
+label_callbacks = [ ]
 
 # A function that is called when the window needs to be shown.
 empty_window = None

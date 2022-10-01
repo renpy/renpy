@@ -128,6 +128,12 @@ cleared of all the attributes attached to it. The previous way to do this was
 to hide and show the image again, which had the consequence of also resetting
 the placement of the image on the screen. It is not the case with this function.
 
+Other Changes
+-------------
+
+The config.label_callback variable has been renamed to :var`config.label_callbacks`,
+and now takes a list of callback functions.
+
 
 .. _renpy-7.5.3:
 .. _renpy-8.0.3:

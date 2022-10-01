@@ -1307,7 +1307,7 @@ Rarely or Internally Used
     assigned to each possible operation. Please see the section on
     :doc:`Keymaps <keymap>` for more information.
 
-.. var:: config.label_callback = [ ]
+.. var:: config.label_callbacks = [ ]
 
     This is a list of callbacks that are called whenever a labels is
     reached. The callbacks are called with two arguments. The first is the name
