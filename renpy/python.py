@@ -1028,6 +1028,12 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
 
     except SyntaxError as e:
 
+        try:
+            # e.text = # renpy.lexer.get_line_text(e.filename, e.lineno)
+            e.text = source.splitlines()[e.lineno - 1]
+        except Exception:
+            pass
+
         if e.lineno is not None:
             e.lineno += line_offset
 
