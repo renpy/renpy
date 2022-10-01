@@ -359,7 +359,7 @@ missing_show = None
 missing_hide = None
 
 # This is called when control is transferred to a label.
-label_callback = None
+label_callback = [ ]
 
 # A function that is called when the window needs to be shown.
 empty_window = None

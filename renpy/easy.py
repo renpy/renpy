@@ -271,7 +271,7 @@ def to_list(value, copy=False):
     """
     if isinstance(value, list):
         return list(value) if copy else value
-        
+
     if not isinstance(value, str) and isinstance(value, Iterable):
         return list(value)
 
@@ -288,3 +288,24 @@ def to_tuple(value):
         return tuple(value)
 
     return (value,)
+
+def run_callbacks(cb, *args, **kwargs):
+    """
+    Runs a callback or list of callbacks that do not expect results
+    """
+
+    if cb is None:
+        return None
+
+    if isinstance(cb, (list, tuple)):
+        rv = None
+
+        for i in cb:
+            new_rv = run_callbacks(i, *args, **kwargs)
+
+            if new_rv is not None:
+                rv = new_rv
+
+        return rv
+
+    return cb(*args, **kwargs)

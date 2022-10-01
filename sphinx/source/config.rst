@@ -1307,13 +1307,12 @@ Rarely or Internally Used
     assigned to each possible operation. Please see the section on
     :doc:`Keymaps <keymap>` for more information.
 
-.. var:: config.label_callback = None
+.. var:: config.label_callback = [ ]
 
-    If not None, this is a function that is called whenever a label is
-    reached. It is called with two parameters. The first is the name
+    This is a list of callbacks that are called whenever a labels is
+    reached. The callbacks are called with two arguments. The first is the name
     of the label. The second is True if the label was reached through
-    jumping, calling, or creating a new context, and False
-    otherwise.
+    jumping, calling, or creating a new context, and False otherwise.
 
 .. var:: config.label_overrides = { }
 
