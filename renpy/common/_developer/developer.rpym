@@ -503,5 +503,3 @@ init 1000 python hide:
     config.underlay.append(renpy.Keymap(
         image_load_log = ToggleScreen("_image_load_log")
     ))
-
-    test.0
