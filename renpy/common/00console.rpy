@@ -781,6 +781,13 @@ init -1500 python in _console:
     @command(_("help: show this help\n help <expr>: show signature and documentation of <expr>"))
     def help(l, doc_generate=False):
         rest = l.rest_statement()
+        if rest and rest in globals():
+            try:
+                result = globals()[rest].help + "\n"
+                return result
+            except Exception:
+                pass
+
         if rest and rest.replace(" ", "") != "()":
             try:
                 renpy.python.py_compile(rest, 'eval')
