@@ -41,7 +41,7 @@ Examples
 An example of a say screen that allows the user to choose the location
 of the window by dragging it around the screen.::
 
-    screen say:
+    screen say(who, what):
 
         drag:
             drag_name "say"
