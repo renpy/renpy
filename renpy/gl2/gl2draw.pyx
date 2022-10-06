@@ -632,6 +632,9 @@ cdef class GL2Draw:
         height = max(self.virtual_size[1] + BORDER, self.drawable_size[1] + BORDER, height)
         height = min(height, max_texture_size, max_renderbuffer_size)
 
+        if "RENPY_MAX_TEXTURE_SIZE" in os.environ:
+            width = height = int(os.environ["RENPY_MAX_TEXTURE_SIZE"])
+
         renpy.display.log.write("Maximum texture size: %dx%d", width, height)
 
         self.texture_loader.max_texture_width = width
