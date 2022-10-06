@@ -326,16 +326,25 @@ class TextSegment(object):
             return
 
         segs = { }
+        ts_callbacks = renpy.config.textsubsegment_callbacks.get(
+            renpy.game.preferences.language, []
+        )
 
         for f, ss in tf.segment(s):
 
-            seg = segs.get(f, None)
+            seg = segs.get(
+                (f, ss) if ts_callbacks else f,
+                None
+            )
 
             if seg is None:
                 seg = TextSegment(self)
                 seg.font = f
 
-                segs[f] = seg
+                for ts_callback in ts_callbacks:
+                    seg = ts_callback(seg, ss)
+
+                segs[(f, ss) if ts_callbacks else f] = seg
 
             yield seg, ss
 

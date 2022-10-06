@@ -1285,6 +1285,10 @@ viewport_drag_radius = 10
 # function is run.
 scene_callbacks = [ ]
 
+# This is a dict of list with functions that accept the key to which is language,
+# (object of `text.TextSegment``, phrase by `font.FontGroup.segment``),
+# Only called when using `font.FontGroup` instead of a font.
+textsubsegment_callbacks = { }
 
 del os
 del collections
