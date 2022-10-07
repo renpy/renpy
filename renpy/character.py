@@ -886,32 +886,81 @@ class ADVCharacter(object):
         return
 
     # This is what shows the screen for a given interaction.
-    def do_show(self, who, what, multiple=None):
+
+    def get_show_properties(self, extra_properties):
+        """
+        This merges a potentially empty dict of extra properties in with
+        show_function.
+        """
+
+        screen = self.screen
+        show_args = self.show_args
+        who_args = self.who_args
+        what_args = self.what_args
+        window_args = self.window_args
+        properties = self.properties
+
+        if extra_properties:
+
+            screen = extra_properties.pop("screen", screen)
+
+            show_args = show_args.copy()
+            who_args = who_args.copy()
+            what_args = what_args.copy()
+            window_args = window_args.copy()
+
+            properties = collections.defaultdict(dict)
+
+            for k, v in self.properties.items():
+                properties[k] = v.copy()
+
+            prefixes = [ "show", "cb", "what", "window", "who"] + renpy.config.character_id_prefixes
+            split_args = [ i + "_" for i in prefixes ] + [ "" ]
+
+            split = renpy.easy.split_properties(extra_properties, *split_args)
+
+            for prefix, dictionary in zip(prefixes, split):
+                properties[prefix].update(dictionary)
+
+            properties["who"].update(split[-1])
+
+            show_args.update(properties.pop("show"))
+            who_args.update(properties.pop("who"))
+            what_args.update(properties.pop("what"))
+            window_args.update(properties.pop("window"))
+
+        return screen, show_args, who_args, what_args, window_args, properties
+
+
+    def do_show(self, who, what, multiple=None, extra_properties=None):
+
+        screen, show_args, who_args, what_args, window_args, properties = self.get_show_properties(extra_properties)
 
         if multiple is not None:
 
             return self.show_function(
                 who,
                 what,
-                who_args=self.who_args,
-                what_args=self.what_args,
-                window_args=self.window_args,
-                screen=self.screen,
-                properties=self.properties,
+                who_args=who_args,
+                what_args=what_args,
+                window_args=window_args,
+                screen=screen,
+                properties=properties,
                 multiple=multiple,
-                **self.show_args)
+                **show_args)
 
         else:
 
             return self.show_function(
                 who,
                 what,
-                who_args=self.who_args,
-                what_args=self.what_args,
-                window_args=self.window_args,
-                screen=self.screen,
-                properties=self.properties,
-                **self.show_args)
+                who_args=who_args,
+                what_args=what_args,
+                window_args=window_args,
+                screen=screen,
+                properties=properties,
+                **show_args)
+
 
     # This is called after the last interaction is done.
     def do_done(self, who, what, multiple=None):
@@ -931,16 +980,19 @@ class ADVCharacter(object):
 
     # This is called to predict images that will be used by this
     # statement.
-    def do_predict(self, who, what):
+    def do_predict(self, who, what, extra_properties=None):
+
+        screen, show_args, who_args, what_args, window_args, properties = self.get_show_properties(extra_properties)
+
         return self.predict_function(
             who,
             what,
-            who_args=self.who_args,
-            what_args=self.what_args,
-            window_args=self.window_args,
-            screen=self.screen,
-            properties=self.properties,
-            **self.show_args)
+            who_args=who_args,
+            what_args=what_args,
+            window_args=window_args,
+            screen=screen,
+            properties=properties,
+            **show_args)
 
     def resolve_say_attributes(self, predict, attrs):
         """
