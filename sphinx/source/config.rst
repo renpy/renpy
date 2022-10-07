@@ -1083,10 +1083,11 @@ Rarely or Internally Used
     The number of seconds after a voice file finishes playing
     before AFM can advance text.
 
-.. var:: config.all_character_callbacks = [ ]
+.. var:: config.all_character_callbacks = [ ... ]
 
     A list of callbacks that are called by all characters. This list
-    is prepended to the list of character-specific callbacks.
+    is prepended to the list of character-specific callbacks. Ren'Py
+    includes it's own callbacks at the start of this list.
 
 .. var:: config.allow_skipping = True
 

@@ -1314,7 +1314,7 @@ class ADVCharacter(object):
 
             dtt = DialogueTextTags(what)
 
-            # Now, display the damned thing.
+            # Now, display the dialogue.
             self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
 
             # Indicate that we're done.
