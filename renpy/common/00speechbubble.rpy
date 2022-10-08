@@ -40,12 +40,12 @@ init -1050 python in bubble:
 
     # The default window area rectangle. This is expressed as squares, where units
     # are  defined by the rows and columns.
-    default_window_area = (0, 18, 24, 6)
+    default_area = (0, 18, 24, 6)
 
     # Additional properties that the player can use to customize the bubble.
     # This is a map from a property name to a list of choices that are cycled
     # through.
-    properties = { }
+    properties = { "window_area": "area" }
 
     # This is set to the JSONDB object that stores the bubble database,
     # or None if the databse doesn't exist yet.
@@ -96,15 +96,18 @@ init -1050 python in bubble:
             xgrid = config.screen_width / cols
             ygrid = config.screen_height / rows
 
-            rv["window_area"] = (
-                int(default_window_area[0] * xgrid),
-                int(default_window_area[1] * ygrid),
-                int(default_window_area[2] * xgrid),
-                int(default_window_area[3] * ygrid)
-            )
+            default_area_rect = [
+                int(default_area[0] * xgrid),
+                int(default_area[1] * ygrid),
+                int(default_area[2] * xgrid),
+                int(default_area[3] * ygrid)
+            ]
 
-            for i in properties:
-                rv[i] = properties[i][0]
+            for k, v in properties.items():
+                if v == "area":
+                    rv[k] = default_area_rect
+                else:
+                    rv[k] = v[0]
 
             return rv
 
@@ -124,7 +127,7 @@ init -1050 python in bubble:
 
             if tlid is not None:
                 for k, v in db[tlid].items():
-                    if k in properties or k == "window_area":
+                    if k in properties:
                         tag_properties[image_tag][k] = v
 
                 current_dialogue.append((image_tag, tlid))
@@ -171,33 +174,36 @@ init -1050 python in bubble:
             renpy.rollback(checkpoints=0, force=True, greedy=True)
 
         def alternate(self):
-            del db[self.tlid][self.property]
-            renpy.rollback(checkpoints=0, force=True, greedy=True)
+            if self.property in db[self.tlid]:
+                del db[self.tlid][self.property]
+                renpy.rollback(checkpoints=0, force=True, greedy=True)
 
     class SetWindowArea(Action):
         """
         An action that displays the area picker to select the window area.
         """
 
-        def __init__(self, image_tag, tlid):
+        def __init__(self, image_tag, tlid, property):
             self.image_tag = image_tag
             self.tlid = tlid
+            self.property = property
 
         def __call__(self):
             renpy.show_screen("_bubble_window_area_editor", self)
             renpy.restart_interaction()
 
         def get_selected(self):
-            return "window_area" in db[self.tlid]
+            return self.property in db[self.tlid]
 
         def finished(self, rect):
             rect = list(rect)
-            db[self.tlid]["window_area"] = rect
+            db[self.tlid][self.property] = rect
             renpy.rollback(checkpoints=0, force=True, greedy=True)
 
         def alternate(self):
-            del db[self.tlid]["window_area"]
-            renpy.rollback(checkpoints=0, force=True, greedy=True)
+            if self.property in db[self.tlid]:
+                del db[self.tlid][self.property]
+                renpy.rollback(checkpoints=0, force=True, greedy=True)
 
     def GetCurrentDialogue():
         """
@@ -210,15 +216,18 @@ init -1050 python in bubble:
         rv = [ ]
 
         for image_tag, tlid in current_dialogue:
-            properties = [ ]
+            property_list = [ ]
 
             for k, v in sorted(tag_properties[image_tag].items()):
-                properties.append((
+                if k not in properties:
+                    continue
+
+                property_list.append((
                     render_bubble_property(k, v),
-                    SetWindowArea(image_tag, tlid) if (k == "window_area") else CycleBubbleProperty(image_tag, tlid, k)
+                    SetWindowArea(image_tag, tlid, k) if (properties[k] == "area") else CycleBubbleProperty(image_tag, tlid, k)
                     ))
 
-            rv.append((image_tag, properties))
+            rv.append((image_tag, property_list))
 
         return rv
 
