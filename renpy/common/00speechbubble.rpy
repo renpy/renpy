@@ -108,7 +108,6 @@ init -1050 python in bubble:
 
             return rv
 
-
         def do_show(self, who, what, multiple=None, extra_properties=None):
 
             if extra_properties is None:
@@ -116,21 +115,23 @@ init -1050 python in bubble:
             else:
                 extra_properties = dict(extra_properties)
 
-            extra_properties["window_background"] = "#f00"
-
             image_tag = self.image_tag
 
-            if image_tag not in self.properties:
+            if image_tag not in tag_properties:
                 tag_properties[image_tag] = self.bubble_default_properties(image_tag)
 
             tlid = renpy.get_translation_identifier()
 
             if tlid is not None:
-                tag_properties[image_tag].update(db[tlid])
+                for k, v in db[tlid].items():
+                    if k in properties or k == "window_area":
+                        tag_properties[image_tag][k] = v
 
                 current_dialogue.append((image_tag, tlid))
 
-            return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, extra_properties=tag_properties[image_tag])
+            extra_properties.update(tag_properties[image_tag])
+
+            return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, extra_properties=extra_properties)
 
     def render_bubble_property(name, value):
         """
@@ -154,6 +155,25 @@ init -1050 python in bubble:
         def get_selected(self):
             return self.property in db[self.tlid]
 
+        def __call__(self):
+
+            choices = properties[self.property]
+            current = tag_properties[self.image_tag][self.property]
+
+            try:
+                idx = choices.index(current)
+            except ValueError:
+                idx = 0
+
+            idx = (idx + 1) % len(choices)
+
+            db[self.tlid][self.property] = choices[idx]
+            renpy.rollback(checkpoints=0, force=True, greedy=True)
+
+        def alternate(self):
+            del db[self.tlid][self.property]
+            renpy.rollback(checkpoints=0, force=True, greedy=True)
+
     class SetWindowArea(Action):
         """
         An action that displays the area picker to select the window area.
@@ -173,6 +193,10 @@ init -1050 python in bubble:
         def finished(self, rect):
             rect = list(rect)
             db[self.tlid]["window_area"] = rect
+            renpy.rollback(checkpoints=0, force=True, greedy=True)
+
+        def alternate(self):
+            del db[self.tlid]["window_area"]
             renpy.rollback(checkpoints=0, force=True, greedy=True)
 
     def GetCurrentDialogue():
@@ -198,6 +222,17 @@ init -1050 python in bubble:
 
         return rv
 
+init 1050:
+    python hide:
+        import json
+
+        if config.developer:
+            for k, v in bubble.properties.items():
+                for i in v:
+                    try:
+                        json.dumps(i)
+                    except:
+                        raise Exception("bubble.properties[{!r}] contains a value that can't be serialized to JSON: {!r}".format(k, i))
 
 screen _bubble_editor():
     zorder 1050
@@ -247,6 +282,7 @@ screen _bubble_editor():
                             textbutton "[prop!q]":
                                 style "_default"
                                 action action
+                                alternate action.alternate
                                 text_color "#ddd8"
                                 text_selected_idle_color "#ddd"
                                 text_hover_color "#fff"
