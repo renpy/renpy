@@ -32,24 +32,24 @@ init -1050 python in bubble:
     from store import config, ADVCharacter, Character, JSONDB, Action
 
     # The path to the json file the bubble database is stored in.
-    config.bubble_json = "bubble.json"
+    db_filename = "bubble.json"
 
     # The number of rows and columns in the bubble database.
-    config.bubble_cols = 24
-    config.bubble_rows = 24
+    cols = 24
+    rows = 24
 
     # The default window area rectangle. This is expressed as squares, where units
     # are  defined by the rows and columns.
-    config.bubble_default_window_area = (0, 18, 24, 6)
+    default_window_area = (0, 18, 24, 6)
 
     # Additional properties that the player can use to customize the bubble.
     # This is a map from a property name to a list of choices that are cycled
     # through.
-    config.bubble_properties = { } # type: ignore
+    properties = { }
 
     # This is set to the JSONDB object that stores the bubble database,
     # or None if the databse doesn't exist yet.
-    db = None # type: ignore
+    db = None
 
 
     def scene_callback(layer):
@@ -71,16 +71,13 @@ init -1050 python in bubble:
 
             super(BubbleCharacter, self).__init__(*args, **kwargs)
 
-            if kwargs.get("_bubble", False):
-                return
-
             if self.image_tag is None:
                 raise Exception("BubbleCharacter require an image tag (the image='...' parameter).")
 
             global db
 
             if db is None:
-                db = JSONDB(config.bubble_json)
+                db = JSONDB(db_filename)
 
             if character_callback not in config.all_character_callbacks:
                 config.all_character_callbacks.insert(0, character_callback)
@@ -96,18 +93,18 @@ init -1050 python in bubble:
 
             rv = { }
 
-            xgrid = config.screen_width / config.bubble_cols
-            ygrid = config.screen_height / config.bubble_rows
+            xgrid = config.screen_width / cols
+            ygrid = config.screen_height / rows
 
             rv["window_area"] = (
-                int(config.bubble_default_window_area[0] * xgrid),
-                int(config.bubble_default_window_area[1] * ygrid),
-                int(config.bubble_default_window_area[2] * xgrid),
-                int(config.bubble_default_window_area[3] * ygrid)
+                int(default_window_area[0] * xgrid),
+                int(default_window_area[1] * ygrid),
+                int(default_window_area[2] * xgrid),
+                int(default_window_area[3] * ygrid)
             )
 
-            for i in config.bubble_properties:
-                rv[i] = config.bubble_properties[i][0]
+            for i in properties:
+                rv[i] = properties[i][0]
 
             return rv
 
@@ -144,19 +141,46 @@ init -1050 python in bubble:
         return "{}={!r}".format(name, value)
 
     class CycleBubbleProperty(Action):
-        def __init__(self, tlid, property):
+        """
+        This is an action that causes the given property to be cycled
+        through.
+        """
+
+        def __init__(self, image_tag, tlid, property):
             self.image_tag = image_tag
             self.tlid = tlid
             self.property = property
 
+        def get_selected(self):
+            return self.property in db[self.tlid]
+
     class SetWindowArea(Action):
+        """
+        An action that displays the area picker to select the window area.
+        """
+
         def __init__(self, image_tag, tlid):
             self.image_tag = image_tag
             self.tlid = tlid
 
+        def __call__(self):
+            renpy.show_screen("_bubble_window_area_editor", self)
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            return "window_area" in db[self.tlid]
+
+        def finished(self, rect):
+            rect = list(rect)
+            db[self.tlid]["window_area"] = rect
+            renpy.rollback(checkpoints=0, force=True, greedy=True)
+
     def GetCurrentDialogue():
         """
         Returns the properties of the current bubble.
+
+        Returns a list of (tlid, property list) pairs, where each property list
+        contains a (name, action) pair.
         """
 
         rv = [ ]
@@ -176,7 +200,7 @@ init -1050 python in bubble:
 
 
 screen _bubble_editor():
-    zorder 1000
+    zorder 1050
 
     drag:
         draggable True
@@ -223,6 +247,21 @@ screen _bubble_editor():
                             textbutton "[prop!q]":
                                 style "_default"
                                 action action
-                                text_color "#ddd"
+                                text_color "#ddd8"
+                                text_selected_idle_color "#ddd"
                                 text_hover_color "#fff"
                                 text_size gui._scale(14)
+
+screen _bubble_window_area_editor(action):
+    modal True
+    zorder 1051
+
+    areapicker:
+        cols bubble.cols
+        rows bubble.rows
+
+        finished action.finished
+
+        add "#f004"
+
+    key "game_menu" action Hide()
