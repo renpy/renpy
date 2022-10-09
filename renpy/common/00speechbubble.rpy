@@ -39,7 +39,7 @@ init -1050 python in bubble:
     rows = 24
 
     # The default window area rectangle. This is expressed as squares, where units
-    # are  defined by the rows and columns.
+    # are defined by the rows and columns.
     default_area = (0, 18, 24, 6)
 
     # Additional properties that the player can use to customize the bubble.
@@ -58,6 +58,7 @@ init -1050 python in bubble:
         if layer == "master":
             tag_properties = { }
 
+
     def character_callback(event, interact=True, **kwargs):
         global current_dialogue
 
@@ -68,6 +69,8 @@ init -1050 python in bubble:
     class BubbleCharacter(ADVCharacter):
 
         def __init__(self, *args, **kwargs):
+
+            kwargs.setdefault("statement_name", "say-bubble")
 
             super(BubbleCharacter, self).__init__(*args, **kwargs)
 
@@ -243,6 +246,7 @@ init 1050:
                     except:
                         raise Exception("bubble.properties[{!r}] contains a value that can't be serialized to JSON: {!r}".format(k, i))
 
+
 screen _bubble_editor():
     zorder 1050
 
@@ -296,6 +300,7 @@ screen _bubble_editor():
                                 text_selected_idle_color "#ddd"
                                 text_hover_color "#fff"
                                 text_size gui._scale(14)
+
 
 screen _bubble_window_area_editor(action):
     modal True

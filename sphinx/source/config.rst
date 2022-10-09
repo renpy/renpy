@@ -1006,7 +1006,7 @@ Occasionally Used
 
     To used the faster web audio system on Safari as well.
 
-.. var:: config.window_auto_hide = [ 'scene', 'call screen', 'menu', "say-centered" ]
+.. var:: config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered", "say-bubble" ]
 
     A list of statements that cause ``window auto`` to hide the empty
     dialogue window.

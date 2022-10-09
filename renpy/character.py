@@ -1346,10 +1346,10 @@ class ADVCharacter(object):
                     self.handle_say_transition('restore', before, after) # type: ignore
 
     def statement_name(self):
-        if self._statement_name is not None:
-            return self._statement_name
-        elif not (self.condition is None or renpy.python.py_eval(self.condition)):
+        if not (self.condition is None or renpy.python.py_eval(self.condition)):
             return "say-condition-false"
+        elif self._statement_name is not None:
+            return self._statement_name
         else:
             return "say"
 
