@@ -1139,6 +1139,18 @@ both horizontal and vertical positions.
     This requires model-based rendering to be enabled by setting :var:`config.gl2` to
     True.
 
+.. transform-property:: show_cancels_hide
+
+    :type: boolean
+    :default: True
+
+
+    Normally, when a displayable or screen with the same tag or name as one
+    that is hiding is shown, the hiding displayable or screen is removed,
+    cancelling the hide transform. If this0 property is False in the hide
+    transform, this cancellation will not occur, and the hide transform
+    will proceed to completion.
+
 There are also several sets of transform properties that are documented elsewhere:
 
 3D Stage properties:
@@ -1170,6 +1182,7 @@ These properties are applied in the following order:
 #. matrixcolor
 #. GL Properties, Uniforms
 #. position properties
+#. show_cancels_hide
 
 Deprecated Transform Properties
 ===============================

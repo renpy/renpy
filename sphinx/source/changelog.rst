@@ -96,6 +96,11 @@ not change after the init phase finishes.
 New Features
 ------------
 
+Normally, when a displayable or screen with the same tag or name as one
+that is hiding is shown, the hiding displayable or screen is removed,
+cancelling the hide transform. The new :tpref:`show_cancels_hide` transform
+property controls this behavior.
+
 The console (accessed with shift+O) ``help`` command can now take an
 expression, in which case it display the pydoc documentation for the
 function or class that expression refers to.

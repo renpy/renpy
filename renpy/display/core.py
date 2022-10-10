@@ -682,7 +682,11 @@ class Displayable(renpy.object.Object):
         """
         Returns None if this displayable is ready to be hidden, or
         a replacement displayable if it doesn't want to be hidden
-        quite yet. Kind is either "hide" or "replaced".
+        quite yet.
+
+        Kind may be "hide", "replace", or "cancel", with the latter
+        being called when the hide is being hidden itself because
+        another displayable is shown.
         """
 
         return None
@@ -1457,8 +1461,23 @@ class SceneLists(renpy.object.Object):
         hide_tag = "hide$" + tag
         replaced_tag = "replaced$" + tag
 
-        l = self.layers[layer]
-        self.layers[layer][:] = [ i for i in l if i.tag != hide_tag and i.tag != replaced_tag ]
+        layer_list = self.layers[layer]
+
+
+        now = get_time()
+
+        new_layer_list = [ ]
+
+        for sle in layer_list:
+            if (sle.tag == hide_tag) or (sle.tag == replaced_tag):
+                d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "cancel")
+
+                if d is None:
+                    continue
+
+            new_layer_list.append(sle)
+
+        layer_list[:] = new_layer_list
 
     def remove_hidden(self):
         """
