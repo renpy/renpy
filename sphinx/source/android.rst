@@ -292,6 +292,7 @@ When generating the application, Ren'Py will convert these files to an
 appropriate size for each device, and will generate static icons for devices
 that do not support adaptive icons.
 
+.. _android-presplash:
 
 Presplash
 ---------
