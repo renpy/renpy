@@ -42,10 +42,19 @@ init -1050 python in bubble:
     # are defined by the rows and columns.
     default_area = (0, 18, 24, 6)
 
+    # The property that the area is supplied as.
+    area_property = "window_area"
+
     # Additional properties that the player can use to customize the bubble.
     # This is a map from a property name to a list of choices that are cycled
     # through.
-    properties = { "window_area": "area" }
+    properties = {
+        "red" : { "window_background" : "#f00" },
+        "blue" : { "window_background" : "#00f" },
+         }
+
+    # The property group names, in order.
+    properties_order = [ ]
 
     # This is set to the JSONDB object that stores the bubble database,
     # or None if the databse doesn't exist yet.
@@ -70,16 +79,21 @@ init -1050 python in bubble:
 
         def __init__(self, *args, **kwargs):
 
+            open_db = kwargs.pop("_open_db", True)
+
             kwargs.setdefault("statement_name", "say-bubble")
 
             super(BubbleCharacter, self).__init__(*args, **kwargs)
+
+            if not open_db:
+                return
 
             if self.image_tag is None:
                 raise Exception("BubbleCharacter require an image tag (the image='...' parameter).")
 
             global db
 
-            if db is None:
+            if db is None and open_db:
                 db = JSONDB(db_filename)
 
             if character_callback not in config.all_character_callbacks:
@@ -106,13 +120,10 @@ init -1050 python in bubble:
                 int(default_area[3] * ygrid)
             ]
 
-            for k, v in properties.items():
-                if v == "area":
-                    rv[k] = default_area_rect
-                else:
-                    rv[k] = v[0]
-
-            return rv
+            return {
+                "area" : default_area_rect,
+                "properties" : properties_order[0]
+            }
 
         def do_show(self, who, what, multiple=None, extra_properties=None):
 
@@ -130,55 +141,47 @@ init -1050 python in bubble:
 
             if tlid is not None:
                 for k, v in db[tlid].items():
-                    if k in properties:
-                        tag_properties[image_tag][k] = v
+                    tag_properties[image_tag][k] = v
 
                 current_dialogue.append((image_tag, tlid))
 
-            extra_properties.update(tag_properties[image_tag])
+            properties_key = tag_properties[image_tag]["properties"]
+
+            extra_properties.update(properties.get(properties_key, { }))
+            extra_properties[area_property] = tag_properties[image_tag]["area"]
 
             return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, extra_properties=extra_properties)
 
-    def render_bubble_property(name, value):
-        """
-        Converts a bubble property into a text string. This may be overridden
-        if you want to shorten the property.
-        """
-
-        return "{}={!r}".format(name, value)
-
     class CycleBubbleProperty(Action):
         """
-        This is an action that causes the given property to be cycled
+        This is an action that causes the property groups to be cycled
         through.
         """
 
-        def __init__(self, image_tag, tlid, property):
+        def __init__(self, image_tag, tlid):
             self.image_tag = image_tag
             self.tlid = tlid
-            self.property = property
 
         def get_selected(self):
-            return self.property in db[self.tlid]
+            return "properties" in db[self.tlid]
 
         def __call__(self):
 
-            choices = properties[self.property]
-            current = tag_properties[self.image_tag][self.property]
+            current = tag_properties[self.image_tag]["properties"]
 
             try:
-                idx = choices.index(current)
+                idx = properties_order.index(current)
             except ValueError:
                 idx = 0
 
-            idx = (idx + 1) % len(choices)
+            idx = (idx + 1) % len(properties_order)
 
-            db[self.tlid][self.property] = choices[idx]
+            db[self.tlid]["properties"] = properties_order[idx]
             renpy.rollback(checkpoints=0, force=True, greedy=True)
 
         def alternate(self):
-            if self.property in db[self.tlid]:
-                del db[self.tlid][self.property]
+            if "properties" in db[self.tlid]:
+                del db[self.tlid]["properties"]
                 renpy.rollback(checkpoints=0, force=True, greedy=True)
 
     class SetWindowArea(Action):
@@ -186,26 +189,25 @@ init -1050 python in bubble:
         An action that displays the area picker to select the window area.
         """
 
-        def __init__(self, image_tag, tlid, property):
+        def __init__(self, image_tag, tlid):
             self.image_tag = image_tag
             self.tlid = tlid
-            self.property = property
 
         def __call__(self):
             renpy.show_screen("_bubble_window_area_editor", self)
             renpy.restart_interaction()
 
         def get_selected(self):
-            return self.property in db[self.tlid]
+            return "area" in db[self.tlid]
 
         def finished(self, rect):
             rect = list(rect)
-            db[self.tlid][self.property] = rect
+            db[self.tlid]["area"] = rect
             renpy.rollback(checkpoints=0, force=True, greedy=True)
 
         def alternate(self):
-            if self.property in db[self.tlid]:
-                del db[self.tlid][self.property]
+            if "area" in db[self.tlid]:
+                del db[self.tlid]["area"]
                 renpy.rollback(checkpoints=0, force=True, greedy=True)
 
     def GetCurrentDialogue():
@@ -221,30 +223,43 @@ init -1050 python in bubble:
         for image_tag, tlid in current_dialogue:
             property_list = [ ]
 
-            for k, v in sorted(tag_properties[image_tag].items()):
-                if k not in properties:
-                    continue
+            property_list.append((
+                "area={!r}".format(tag_properties[image_tag]["area"]),
+                SetWindowArea(image_tag, tlid)))
 
-                property_list.append((
-                    render_bubble_property(k, v),
-                    SetWindowArea(image_tag, tlid, k) if (properties[k] == "area") else CycleBubbleProperty(image_tag, tlid, k)
-                    ))
+            property_list.append((
+                "properties={}".format(tag_properties[image_tag]["properties"]),
+                CycleBubbleProperty(image_tag, tlid)))
 
             rv.append((image_tag, property_list))
 
         return rv
 
-init 1050:
-    python hide:
-        import json
+    # A character that inherits from bubble.
+    character = BubbleCharacter(
+        None,
+        screen="bubble",
+        who_style="bubble_label",
+        what_style="bubble_dialogue",
+        namebox_style="bubble_namebox",
+        window_style="bubble_window",
+        _open_db=False)
 
-        if config.developer:
-            for k, v in bubble.properties.items():
-                for i in v:
-                    try:
-                        json.dumps(i)
-                    except:
-                        raise Exception("bubble.properties[{!r}] contains a value that can't be serialized to JSON: {!r}".format(k, i))
+
+init 1050 python hide:
+    import json
+
+    for k in sorted(bubble.properties):
+        if k not in bubble.properties_order:
+            bubble.properties_order.append(k)
+
+    if config.developer:
+        for k, v in bubble.properties.items():
+            for i in v:
+                try:
+                    json.dumps(i)
+                except:
+                    raise Exception("bubble.properties[{!r}] contains a value that can't be serialized to JSON: {!r}".format(k, i))
 
 
 screen _bubble_editor():
