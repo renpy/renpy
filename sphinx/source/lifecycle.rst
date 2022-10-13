@@ -95,8 +95,8 @@ Splashscreen
 
 If it exists, the :ref:`splashscreen <adding-a-splashscreen>` label is executed until it returns.
 
-A splashscreen is only displayed once per time Ren'Py is run, and is skipped when
-script execution restarts.
+A splashscreen is only displayed once per time Ren'Py is run, and is not shown when
+script execution returns to the main menu.
 
 Main Menu
 ---------
@@ -105,7 +105,7 @@ If it exists, the ``before_main_menu`` label is executed. Then, once it returns,
 :ref:`main_menu <main-menu-screen>` screen is shown, unless a ``main_menu`` label exists, in which
 case it is executed instead. See :ref:`special-labels` for more information.
 
-The main menu itself is run in it's own :ref:`context <context>`.  Ren'Py can leave this
+The main menu itself is run in its own :ref:`context <context>`.  Ren'Py can leave this
 context by calling the :class:`Start` action, which also jumps to a label, or the ``start`` label
 if none is specified. Returning from the ``main_menu`` label also enters the in-game phase at the
 ``start`` label, while loading a game enters the in-game phase at the spot where the game was saved.
@@ -114,18 +114,16 @@ In-Game Phase
 -------------
 
 This is the phase in which an actual playthrough of the game occurs, and this is
-the mode in which players generally spend most of their time. This phase continues
-until the game quits, or the game restarts and the player returns to the main menu.
+the mode in which players generally spend most of their time.
 
 During the in-game phase, the :class:`ShowMenu` action can be used to display a
 screen in a new context.
 
-The In-game phase continues until either the player quits or restarts the game
-to return to the main menu. The game may be restarted by returning when no
-call is on the stack, as explained explained in :doc:`label`. The game may
-also be restarted by the :class:`MainMenu` action or the :func:`renpy.full_restart`
-function.
+The In-game phase continues until either the player quits or returns to the main
+menu. This happens when returning when no call is on the stack, as explained
+in :doc:`label`, or by using the :class:`MainMenu` action or the
+:func:`renpy.full_restart` function.
 
-When the game restarts, all non-persistent data is reset to what it was at the
-end of the script execution phase, and then the script execution phase begins
-again, skipping the splashscreen.
+When the game returns to the main menu, all non-persistent data is reset to what
+it was at the end of the script execution phase, and then the script execution
+phase begins again, but skipping the splashscreen.
