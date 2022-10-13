@@ -29,7 +29,7 @@ default bubble.current_dialogue = [ ]
 
 init -1050 python in bubble:
 
-    from store import config, ADVCharacter, Character, JSONDB, Action
+    from store import config, ADVCharacter, Character, JSONDB, Action, Frame
 
     # The path to the json file the bubble database is stored in.
     db_filename = "bubble.json"
@@ -49,12 +49,11 @@ init -1050 python in bubble:
     # This is a map from a property name to a list of choices that are cycled
     # through.
     properties = {
-        "red" : { "window_background" : "#f00" },
-        "blue" : { "window_background" : "#00f" },
-         }
+        "default" : { }
+    }
 
     # The property group names, in order.
-    properties_order = [ ]
+    properties_order = [ "default" ]
 
     # This is set to the JSONDB object that stores the bubble database,
     # or None if the databse doesn't exist yet.
@@ -239,10 +238,9 @@ init -1050 python in bubble:
     character = BubbleCharacter(
         None,
         screen="bubble",
-        who_style="bubble_label",
-        what_style="bubble_dialogue",
-        namebox_style="bubble_namebox",
         window_style="bubble_window",
+        who_style="bubble_who",
+        what_style="bubble_what",
         _open_db=False)
 
 
