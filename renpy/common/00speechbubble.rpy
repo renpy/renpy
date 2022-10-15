@@ -31,6 +31,9 @@ init -1050 python in bubble:
 
     from store import config, ADVCharacter, Character, JSONDB, Action, Frame
 
+    # This gets set to true if at least one character that uses a speech bubble has been defined.
+    active = False
+
     # The path to the json file the bubble database is stored in.
     db_filename = "bubble.json"
 
@@ -90,7 +93,10 @@ init -1050 python in bubble:
             if self.image_tag is None:
                 raise Exception("BubbleCharacter require an image tag (the image='...' parameter).")
 
+            global active
             global db
+
+            active = True
 
             if db is None and open_db:
                 db = JSONDB(db_filename)

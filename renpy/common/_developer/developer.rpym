@@ -63,6 +63,11 @@ screen _developer:
                 textbutton _("Image Attributes"):
                     action ui.callsinnewcontext("_image_attributes")
 
+                if bubble.active:
+
+                    textbutton _("Speech Bubble Editor"):
+                        action ToggleScreen("_bubble_editor")
+
         hbox:
             spacing gui._scale(25)
 
