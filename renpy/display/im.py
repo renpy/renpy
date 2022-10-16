@@ -248,6 +248,22 @@ class Cache(object):
     # generation of images.
     def get(self, image, predict=False, texture=False, render=False):
 
+        def make_render(ce):
+
+            if image.oversample != 1:
+                oversample = image.oversample
+                inv_oversample = 1.0 / image.oversample
+
+                rv = renpy.display.render.Render(ce.width * inv_oversample, ce.height * inv_oversample)
+                rv.forward = renpy.display.matrix.Matrix2D(oversample, 0, 0, oversample)
+                rv.reverse = renpy.display.matrix.Matrix2D(inv_oversample, 0, 0, inv_oversample)
+            else:
+                rv = renpy.display.render.Render(ce.width, ce.height)
+
+            rv.blit(ce.texture, ce.bounds[:2])
+
+            return rv
+
         if render:
             texture = True
 
@@ -274,9 +290,7 @@ class Cache(object):
                     return None
 
                 if render:
-                    rv = renpy.display.render.Render(ce.width, ce.height)
-                    rv.blit(ce.texture, ce.bounds[:2])
-                    return rv
+                    return make_render(ce)
                 else:
                     return ce.texture
 
@@ -340,8 +354,7 @@ class Cache(object):
 
             if not predict:
                 if render:
-                    rv = renpy.display.render.Render(ce.width, ce.height)
-                    rv.blit(ce.texture, ce.bounds[:2])
+                    return make_render(ce)
                 else:
                     rv = ce.texture
             else:
@@ -588,6 +601,7 @@ class ImageBase(renpy.display.core.Displayable):
     __version__ = 1
 
     optimize_bounds = False
+    oversample = 1
 
     def after_upgrade(self, version):
         if version < 1:
@@ -598,6 +612,10 @@ class ImageBase(renpy.display.core.Displayable):
         self.rle = properties.pop('rle', None)
         self.cache = properties.pop('cache', True)
         self.optimize_bounds = properties.pop('optimize_bounds', True)
+        self.oversample = properties.pop('oversample', 1)
+
+        if self.oversample <= 0:
+            raise Exception("Image's oversample parameter must be greater than 0.")
 
         properties.setdefault('style', 'image')
 
@@ -1842,18 +1860,25 @@ def image(arg, loose=False, **properties):
     """
     :doc: im_image
     :name: Image
-    :args: (filename, *, optimize_bounds=True, **properties)
+    :args: (filename, *, optimize_bounds=True, oversample=1, **properties)
 
     Loads an image from a file. `filename` is a
     string giving the name of the file.
 
-    `filename` should be a JPEG or PNG file with an appropriate
-    extension.
+    `filename`
+        This should be an image filename, including the extension.
 
-    If optimize_bounds is True, only the portion of the image that
-    inside the bounding box of non-transparent pixels is loaded into
-    GPU memory. (The only reason to set this to False is when using an
-    image as input to a shader.)
+    `optimize_bounds`
+        If true, only the portion of the image that
+        inside the bounding box of non-transparent pixels is loaded into
+        GPU memory. (The only reason to set this to False is when using an
+        image as input to a shader.)
+
+    `oversample`
+        If this is greater than 1, the image is considered to be oversampled,
+        with more pixels than its logical size would imply. For example, if
+        an image file is 2048x2048 and oversample is 2, then the image will
+        be treated as a 1024x1024 image for the purpose of layout.
     """
 
     """
