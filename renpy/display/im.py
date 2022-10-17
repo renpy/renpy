@@ -664,10 +664,6 @@ class ImageBase(renpy.display.core.Displayable):
         return 0
 
 
-
-
-
-
 ignored_images = set()
 images_to_ignore = set()
 
@@ -681,6 +677,21 @@ class Image(ImageBase):
         """
         @param filename: The filename that the image will be loaded from.
         """
+
+        if "@" in filename:
+            base = filename.rpartition(".")[0]
+            extras = base.partition("@")[2].split(",")
+
+            for i in extras:
+                try:
+                    oversample = float(i)
+                    properties.setdefault('oversample', oversample)
+                    continue
+                except:
+                    pass
+
+                raise Exception("Unknown image modifier %r in %r." % (i, filename))
+
 
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
