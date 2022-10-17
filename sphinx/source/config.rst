@@ -301,6 +301,11 @@ Occasionally Used
 
     See :ref:`Automatic Voice <automatic-voice>` for more details.
 
+.. var:: config.voice_stop_menu = True
+
+    If False, The voice does not stop playing when entering menus
+    (navigation and history screens).
+    
 .. var:: config.autosave_callback = None
 
     A callback or list of callbacks that will be called after each time a
