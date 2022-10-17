@@ -3168,7 +3168,7 @@ class Interface(object):
             renpy.loadsave.save("_reload-1")
 
         renpy.persistent.update(True)
-        renpy.persistent.save_MP()
+        renpy.persistent.save_on_quit_MP()
 
     def mobile_unlink(self):
         """

@@ -432,29 +432,52 @@ def save():
 # MultiPersistent
 ################################################################################
 
-
-save_MP_instances = weakref.WeakSet()
+# `_MultiPersistent` instances from `MultiPersistent` calls.
+MP_instances = weakref.WeakSet()
 
 
 def save_MP():
-    for ins in save_MP_instances:
-        ins.save()
+    """
+    Called `save` for each `_MultiPersistent` instance.
+    """
+    for instance in MP_instances:
+        instance.save()
 
+
+def save_on_quit_MP():
+    """
+    Called `save` for each `_MultiPersistent` instance to be saved on exit.
+    """
+    for instance in MP_instances:
+        if instance._save_on_quit:
+            instance.save()
+
+
+def get_MP(name):
+    """
+    Returns `_MultiPersistent` instance if exists.
+    """
+    for instance in MP_instances:
+        if instance._name == name:
+            return instance
 
 class _MultiPersistent(object):
 
     _filename = ""
+    _name = ""
+    _save_on_quit = False
 
     def __getstate__(self):
         state = self.__dict__.copy()
         del state['_filename']
+        del state['_name']
+        del state['_save_on_quit']
         return state
 
     def __setstate__(self, state):
         self.__dict__.update(state)
 
     def __getattr__(self, name):
-
         if name.startswith("__") and name.endswith("__"):
             raise AttributeError()
 
@@ -477,11 +500,17 @@ class _MultiPersistent(object):
 
 
 def MultiPersistent(name, save_on_quit=False):
-
-    name = renpy.exports.fsdecode(name)
+    """
+    Returns `_MultiPersistent` object.
+    """
 
     if not renpy.game.context().init_phase:
         raise Exception("MultiPersistent objects must be created during the init phase.")
+
+    name = renpy.exports.fsdecode(name)
+    MP_instance = get_MP(name)
+    if MP_instance is not None:
+        return MP_instance
 
     if renpy.android or renpy.ios:
         # Due to the security policy of mobile devices, we store MultiPersistent
@@ -493,7 +522,11 @@ def MultiPersistent(name, save_on_quit=False):
         files = [ os.path.expanduser("~/RenPy/Persistent") ]
 
         if 'APPDATA' in os.environ:
-            files.append(renpy.exports.fsdecode(os.environ['APPDATA']) + "/RenPy/persistent")
+            files.append(
+                os.path.join(
+                    renpy.exports.fsdecode(os.environ['APPDATA']), "RenPy", "persistent"
+                )
+            )
 
     elif renpy.macintosh:
         files = [ os.path.expanduser("~/.renpy/persistent"),
@@ -519,26 +552,28 @@ def MultiPersistent(name, save_on_quit=False):
         fn = os.path.join(fn, name) # type: ignore
         if os.path.isfile(fn):
             try:
-                data = open(fn, "rb").read()
+                with open(fn, "rb") as mpf:
+                    data = mpf.read()
                 break
             except Exception:
                 pass
 
-    rv = _MultiPersistent()
+    MP_instance = _MultiPersistent()
 
     if data is not None:
         try:
-            rv = loads(data)
+            MP_instance = loads(data)
         except Exception:
             renpy.display.log.write("Loading MultiPersistent at %r:" % fn)
             renpy.display.log.exception()
 
-    rv._filename = fn
+    MP_instance._filename = fn
+    MP_instance._name = name
+    MP_instance._save_on_quit = save_on_quit
 
-    if save_on_quit:
-        save_MP_instances.add(rv)
+    MP_instances.add(MP_instance)
 
-    return rv
+    return MP_instance
 
 
 renpy.loadsave._MultiPersistent = _MultiPersistent # type: ignore
