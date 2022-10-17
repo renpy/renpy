@@ -461,16 +461,19 @@ class _MultiPersistent(object):
         return None
 
     def save(self):
-
-        fn = self._filename
-        with open(fn + ".new", "wb") as f:
-            dump(self, f)
-
         try:
-            os.rename(fn + ".new", fn)
-        except Exception:
-            os.unlink(fn)
-            os.rename(fn + ".new", fn)
+            fn = self._filename
+            with open(fn + ".new", "wb") as f:
+                dump(self, f)
+        except OSError as e:
+            if renpy.config.developer:
+                raise e
+        else:
+            try:
+                os.rename(fn + ".new", fn)
+            except Exception:
+                os.unlink(fn)
+                os.rename(fn + ".new", fn)
 
 
 def MultiPersistent(name, save_on_quit=False):
