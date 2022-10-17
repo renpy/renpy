@@ -45,6 +45,7 @@ init -1900 python:
                 continue
 
             base = base.lower()
+            base = base.partition("@")[0]
 
             if renpy.has_image(base, exact=True):
                 continue
