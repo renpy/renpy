@@ -1751,6 +1751,11 @@ Rarely or Internally Used
     statement to produce the filename that is played to the user. For
     example, if this is "{filename}.ogg", the ``voice "test"`` statement
     will play test.ogg.
+    
+.. var:: config.voice_stop_menu = True
+
+    If False, The voice does not stop playing when entering menus
+    (navigation and history screens).
 
 .. var:: config.with_callback = None
 
