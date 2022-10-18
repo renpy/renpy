@@ -257,7 +257,7 @@ name_blacklist = {
     "renpy.audio.audio.lock",
     "renpy.audio.audio.periodic_condition",
     "renpy.webloader.queue_lock",
-    "renpy.persistent.save_MP_instances",
+    "renpy.persistent.MP_instances",
     "renpy.exports.sdl_dll",
     }
 
