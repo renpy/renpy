@@ -513,6 +513,9 @@ key_repeat = (.3, .03)
 # A callback that is called with the character's voice_tag.
 voice_tag_callback = None
 
+# Should we make the voice stop when we enter the menu?
+voice_stop_menu = True
+
 # A list of callbacks that can be used to add JSON to save files.
 save_json_callbacks = [ ]
 
