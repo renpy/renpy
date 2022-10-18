@@ -429,7 +429,8 @@ init -1500 python hide:
             return
 
         if getattr(renpy.context(), "_menu", False):
-            renpy.sound.stop(channel="voice")
+            if config.voice_stop_menu:
+                renpy.sound.stop(channel="voice")
             return
 
         if _preferences.voice_sustain and not _voice.sustain:
