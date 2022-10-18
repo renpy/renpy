@@ -508,9 +508,9 @@ def MultiPersistent(name, save_on_quit=False):
         raise Exception("MultiPersistent objects must be created during the init phase.")
 
     name = renpy.exports.fsdecode(name)
-    MP_instance = get_MP(name)
-    if MP_instance is not None:
-        return MP_instance
+    rv = get_MP(name)
+    if rv is not None:
+        return rv
 
     if renpy.android or renpy.ios:
         # Due to the security policy of mobile devices, we store MultiPersistent
@@ -558,22 +558,22 @@ def MultiPersistent(name, save_on_quit=False):
             except Exception:
                 pass
 
-    MP_instance = _MultiPersistent()
+    rv = _MultiPersistent()
 
     if data is not None:
         try:
-            MP_instance = loads(data)
+            rv = loads(data)
         except Exception:
             renpy.display.log.write("Loading MultiPersistent at %r:" % fn)
             renpy.display.log.exception()
 
-    MP_instance._filename = fn
-    MP_instance._name = name
-    MP_instance._save_on_quit = save_on_quit
+    rv._filename = fn
+    rv._name = name
+    rv._save_on_quit = save_on_quit
 
-    MP_instances.add(MP_instance)
+    MP_instances.add(rv)
 
-    return MP_instance
+    return rv
 
 
 renpy.loadsave._MultiPersistent = _MultiPersistent # type: ignore
