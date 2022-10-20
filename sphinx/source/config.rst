@@ -783,6 +783,18 @@ Occasionally Used
     If True, renpy will include timeless pauses to the valid places a
     rollback can take the user.
 
+.. var:: config.physical_height = None
+
+    If set, this is the default height of the window containing the Ren'Py
+    game, in pixels. If not set, the height of the window defaults to
+    :var:`config.screen_height`.
+
+.. var:: config.physical_width = None
+
+    If set, this is the default height of the window containing the Ren'Py
+    game, in pixels. If not set, the height of the window defaults to
+    :var:`config.screen_width`.
+
 .. var:: config.preload_fonts = [ ]
 
     A list of the names of TrueType and OpenType fonts that Ren'Py should
@@ -917,13 +929,15 @@ Occasionally Used
 
 .. var:: config.screen_height = 600
 
-    The height of the screen. Usually set by :func:`gui.init` to
-    a much larger size.
+    The virtual height of the the game, in pixels. If :var:`config.physical_height`
+    is not set, this is also the default size of the window containing the
+    game. Usually set by :func:`gui.init` to a much larger size.
 
 .. var:: config.screen_width = 800
 
-    The width of the screen. Usually set by :func:`gui.init` to a much
-    larger size.
+    The virtual width of the the game, in pixels. If :var:`config.physical_width`
+    is not set, this is also the default size of the window containing the
+    game. Usually set by :func:`gui.init` to a much larger size.
 
 .. var:: config.single_movie_channel = None
 

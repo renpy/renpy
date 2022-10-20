@@ -1288,6 +1288,11 @@ viewport_drag_radius = 10
 # function is run.
 scene_callbacks = [ ]
 
+# The physical width and heigh of the game window. If None, the window defaults
+# to config.screen_width and config.screen_height.
+physical_width = None
+physical_height = None
+
 
 del os
 del collections

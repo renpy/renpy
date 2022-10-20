@@ -31,8 +31,11 @@ init -1500 python:
 
         def get_size(self):
 
-            w = int(self.factor * config.screen_width)
-            h = int(self.factor * config.screen_height)
+            width = renpy.config.physical_width or renpy.config.screen_width
+            height = renpy.config.physical_height or renpy.config.screen_height
+
+            w = int(self.factor * width)
+            h = int(self.factor * height)
 
             rv = (w, h)
 
