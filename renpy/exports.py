@@ -3514,12 +3514,13 @@ def reset_physical_size():
     """
     :doc: other
 
-    Attempts to set the size of the physical window to the specified values
-    in renpy.config. (That is, screen_width and screen_height.) This has the
-    side effect of taking the screen out of fullscreen mode.
+    Attempts to set the size of the physical window to the size specified
+    using :var:`renpy.config.physical_height` and :var:`renpy.config.physical_width`,
+    or the size set using :var:`renpy.config.screen_width` and :var:`renpy.config.screen_height`
+    if not set.
     """
 
-    set_physical_size((renpy.config.screen_width, renpy.config.screen_height))
+    set_physical_size((renpy.config.physical_width or renpy.config.screen_width, renpy.config.physical_height or renpy.config.screen_height))
 
 
 @renpy_pure

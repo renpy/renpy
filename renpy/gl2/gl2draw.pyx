@@ -288,8 +288,10 @@ cdef class GL2Draw:
             renpy.display.log.write("GL Disabled.")
             return False
 
-        if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
+        if renpy.mobile:
             physical_size = (None, None)
+        elif renpy.game.preferences.physical_size is None:
+            physical_size = (renpy.config.physical_width, renpy.config.physical_height)
         else:
             physical_size = renpy.game.preferences.physical_size
 
