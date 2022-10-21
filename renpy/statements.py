@@ -226,6 +226,7 @@ def register(
             rv.translation_relevant = bool(translation_strings)
             rv.code_block = code_block
             rv.subparses = l.subparses
+            rv.init_priority = init_priority + l.init_offset
 
         finally:
             l.subparses = old_subparses

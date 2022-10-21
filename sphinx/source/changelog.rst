@@ -136,6 +136,10 @@ the placement of the image on the screen. It is not the case with this function.
 Other Changes
 -------------
 
+The `execute_init` argument to :func:`renpy.register_statement` now respects
+the `init_priority` argument. Previously, all `execute_init` function ran
+at init priority 0.
+
 The config.label_callback variable has been renamed to :var`config.label_callbacks`,
 and now takes a list of callback functions.
 
