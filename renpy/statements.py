@@ -124,12 +124,15 @@ def register(
     `init`
         True if this statement should be run at init-time. (If the statement
         is not already inside an init block, it's automatically placed inside
-        an init block.) This calls the execute function, in addition to the
-        execute_init function.
+        an init block.)
+
+        You probably don't want this if you have an `execute_init` function,
+        as wrapping the statement in an init block will cause the `execute_init`
+        and `execute` functions to be called at the same time.
 
     `init_priority`
         An integer that determines the priority of initialization of the
-        init block.
+        init block created by `init` and `execute_init` function.
 
     `translation_strings`
         A function that is called with the parsed block. It's expected to
@@ -226,6 +229,7 @@ def register(
             rv.translation_relevant = bool(translation_strings)
             rv.code_block = code_block
             rv.subparses = l.subparses
+            rv.init_priority = init_priority + l.init_offset
 
         finally:
             l.subparses = old_subparses
