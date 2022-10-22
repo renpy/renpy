@@ -32,7 +32,10 @@ def zip_rapt_symbols(destination):
 
     import zipfile
 
-    zf = zipfile.ZipFile(destination + "/android-native-symbols.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=3)
+    if PY2:
+        zf = zipfile.ZipFile(destination + "/android-native-symbols.zip", "w", zipfile.ZIP_DEFLATED)
+    else:
+        zf = zipfile.ZipFile(destination + "/android-native-symbols.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=3)
 
     for dn, dirs, files in os.walk("rapt/symbols"):
         for fn in dirs + files:
