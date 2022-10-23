@@ -72,9 +72,9 @@ class FileLocation(object):
 
             os.unlink(fn)
 
-            self.active = True
+            self._active = True
         except Exception:
-            self.active = False
+            self._active = False
 
         # A map from slotname to the mtime of that slot.
         self.mtimes = { }
@@ -87,6 +87,10 @@ class FileLocation(object):
 
         # The data loaded from the persistent file.
         self.persistent_data = None
+
+    @property
+    def active(self):
+        return self._active and os.path.exists(self.directory)
 
     def filename(self, slotname):
         """
