@@ -29,6 +29,8 @@ init -1499 python in _renpysteam:
 
     import collections
     import time
+    
+    ticket = None
 
     def retrieve_stats():
         """
@@ -423,7 +425,7 @@ init -1499 python in _renpysteam:
         h_ticket = steamapi.SteamUser().GetAuthSessionTicket(ticket_buf, 2048, byref(ticket_len))
 
         if h_ticket:
-            ticket = ticket_buf.raw[0:ticket_len]
+            ticket = ticket_buf.raw[0:ticket_len.value]
 
         return ticket
 
