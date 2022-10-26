@@ -1296,8 +1296,6 @@ del collections
 
 
 def init():
-    import renpy
-
     global scene
     scene = renpy.exports.scene
 
