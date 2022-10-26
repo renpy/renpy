@@ -207,9 +207,8 @@ class DialogueFile(object):
 
         self.f = open(output, "a", encoding="utf-8")
 
-        self.write_dialogue()
-
-        self.f.close()
+        with self.f:
+            self.write_dialogue()
 
     def write_dialogue(self):
         """
