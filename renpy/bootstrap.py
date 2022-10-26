@@ -215,7 +215,7 @@ def bootstrap(renpy_base):
     # won't import.)
     try:
         import pygame_sdl2
-        if not ("pygame" in sys.modules):
+        if "pygame" not in sys.modules:
             pygame_sdl2.import_as_pygame()
     except Exception:
         print("""\

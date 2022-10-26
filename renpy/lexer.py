@@ -103,7 +103,7 @@ class ParseError(Exception):
                         open_string = None
                     elif open_string:
                         pass
-                    elif c == '`' or c == '\'' or c == '"':
+                    elif c in ('`', '\'', '"'):
                         open_string = c
 
                     i += 1
@@ -1013,7 +1013,7 @@ class Lexer(object):
         oldpos = self.pos
         rv = self.word()
 
-        if (rv == "r") or (rv == "u") or (rv == "ur"):
+        if rv in "ur": # u or r or ur
             if self.text[self.pos:self.pos + 1] in ('"', "'", "`"):
                 self.pos = oldpos
                 return None
@@ -1088,7 +1088,7 @@ class Lexer(object):
         oldpos = self.pos
         rv = self.match(image_word_regexp)
 
-        if (rv == "r") or (rv == "u"):
+        if rv in ("r", "u"):
             if self.text[self.pos:self.pos + 1] in ('"', "'", "`"):
                 self.pos = oldpos
                 return None

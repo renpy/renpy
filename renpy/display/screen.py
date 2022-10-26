@@ -467,7 +467,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     def find_focusable(self, callback, focus_name):
 
-        hiding = (self.phase == OLD) or (self.phase == HIDE)
+        hiding = self.phase in (OLD, HIDE)
 
         if self.modal and not callable(self.modal):
             renpy.display.focus.mark_modal()
@@ -708,7 +708,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         rv = renpy.display.render.Render(w, h)
         rv.focus_screen = self
 
-        hiding = (self.phase == OLD) or (self.phase == HIDE)
+        hiding = self.phase in (OLD, HIDE)
 
         if self.screen is None:
             sensitive = False
@@ -728,7 +728,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
 
     def event(self, ev, x, y, st):
 
-        if (self.phase == OLD) or (self.phase == HIDE):
+        if self.phase in (OLD, HIDE):
             return
 
         if not self.screen:
@@ -754,7 +754,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         return phase_name[self.phase]
 
     def _tts(self):
-        if (self.phase == OLD) or (self.phase == HIDE):
+        if self.phase in (OLD, HIDE):
             return ""
 
         if self.modal:
@@ -891,7 +891,7 @@ def sort_screens():
 
     rv = [ ]
 
-    workset = { k for k, v in depends.items() if not len(v) }
+    workset = {k for k, v in depends.items() if not v}
 
     while workset:
         name = workset.pop()

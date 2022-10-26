@@ -331,7 +331,7 @@ class RevertableDict(dict):
         iteritems = dict.items
 
         def has_key(self, key):
-            return (key in self)
+            return key in self
 
     def copy(self):
         rv = RevertableDict()

@@ -1258,7 +1258,7 @@ class SceneLists(renpy.object.Object):
             sle = self.layers[layer][i]
 
             if thing:
-                if sle.tag == thing or sle.displayable == thing:
+                if thing in (sle.tag, sle.displayable):
                     break
 
             if sle.tag and "$" in sle.tag:
@@ -1439,7 +1439,7 @@ class SceneLists(renpy.object.Object):
                 else:
                     rv = a(rv)
 
-            if (new_transform is not None):
+            if new_transform is not None:
                 self.transform_state(old_transform, new_transform, execution=True)
 
             f = renpy.display.layout.MultiBox(layout='fixed')
@@ -1469,7 +1469,7 @@ class SceneLists(renpy.object.Object):
         new_layer_list = [ ]
 
         for sle in layer_list:
-            if (sle.tag == hide_tag) or (sle.tag == replaced_tag):
+            if sle.tag in (hide_tag, replaced_tag):
                 d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "cancel")
 
                 if d is None:
@@ -3085,7 +3085,7 @@ class Interface(object):
         else:
             visible = renpy.store.mouse_visible and (not renpy.game.less_mouse)
 
-        visible = visible and self.show_mouse and not (renpy.display.video.fullscreen)
+        visible = visible and self.show_mouse and not renpy.display.video.fullscreen
 
         return visible
 
@@ -4124,7 +4124,7 @@ class Interface(object):
                 # merge a mouse down and mouse up event with its successor. This
                 # prevents us from getting overwhelmed with too many events on
                 # a multitouch screen.
-                if renpy.android and (ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP):
+                if renpy.android and (ev.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP)):
                     pygame.event.clear(ev.type)
 
                 # Handle redraw timeouts.
@@ -4220,9 +4220,7 @@ class Interface(object):
                         self.mouse_focused = True
 
                 # Handle mouse event time, and ignoring touch.
-                if ev.type == pygame.MOUSEMOTION or \
-                        ev.type == pygame.MOUSEBUTTONDOWN or \
-                        ev.type == pygame.MOUSEBUTTONUP:
+                if ev.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
 
                     self.mouse_event_time = renpy.display.core.get_time()
 

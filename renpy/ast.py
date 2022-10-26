@@ -442,7 +442,7 @@ def probably_side_effect_free(expr):
     doesn't allow for a function call.
     """
 
-    return not ("(" in expr)
+    return "(" not in expr
 
 
 class PyCode(object):

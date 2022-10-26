@@ -571,7 +571,7 @@ class DynamicImage(renpy.display.core.Displayable):
         self._uses_scope = False
 
         if isinstance(name, basestring):
-            if ("[prefix_" in name):
+            if "[prefix_" in name:
                 self._duplicatable = True
 
             if "[" in name.replace("[prefix_]", ""):
@@ -579,7 +579,7 @@ class DynamicImage(renpy.display.core.Displayable):
 
         if isinstance(name, list):
             for i in name:
-                if ("[prefix_" in i):
+                if "[prefix_" in i:
                     self._duplicatable = True
 
                 if "[" in i.replace("[prefix_]", ""):

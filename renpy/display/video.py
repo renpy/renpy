@@ -422,7 +422,7 @@ class Movie(renpy.display.core.Displayable):
 
     def render(self, width, height, st, at):
 
-        if self._play and not (renpy.game.preferences.video_image_fallback is True):
+        if self._play and (renpy.game.preferences.video_image_fallback is not True):
             channel_movie[self.channel] = self
 
             if st == 0:

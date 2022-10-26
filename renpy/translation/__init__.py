@@ -270,7 +270,7 @@ class Restructurer(object):
 
             identifier = base + suffix
 
-            if not self.id_exists(identifier) and not (identifier in self.preexisting_identifiers):
+            if not self.id_exists(identifier) and (identifier not in self.preexisting_identifiers):
                 break
 
             i += 1

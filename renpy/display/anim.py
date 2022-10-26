@@ -402,8 +402,7 @@ class TransitionAnimation(renpy.display.core.Displayable):
 
                 return rv
 
-            else:
-                t = t - delay
+            t -= delay
 
     def visit(self):
         return self.images
