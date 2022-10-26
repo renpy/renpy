@@ -1020,7 +1020,6 @@ class Label(Node):
 
     translation_relevant = True
     __slots__ = [
-        'name',
         'parameters',
         'block',
         'hide',
