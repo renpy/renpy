@@ -196,8 +196,6 @@ def enqueue(relpath, rtype, data):
 
 
 def process_downloaded_resources():
-    global queue, to_unlink
-
     if not queue:
         return
 
