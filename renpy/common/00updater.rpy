@@ -129,7 +129,7 @@ init -1500 python in updater:
 
             try:
                 os.unlink(DEFERRED_UPDATE_FILE + ".old")
-            except:
+            except Exception:
                 pass
 
             try:

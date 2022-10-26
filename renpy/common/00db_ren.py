@@ -50,7 +50,7 @@ class _JSONDBDict(_dict):
 
         try:
             json.dumps(value)
-        except:
+        except Exception:
             raise TypeError("The data {!r} is not JSON serializable.".format(value))
 
     def __setitem__(self, key, value):

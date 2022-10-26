@@ -1015,7 +1015,7 @@ def py_compile(source, mode, filename='<none>', lineno=1, ast_node=False, cache=
                 tree = renpy.compat.fixes.fix_ast(tree)
                 fix_missing_locations(tree, 1, 0)
                 rv = compile(tree, filename, py_mode, flags, 1)
-            except:
+            except Exception:
                 raise orig_e
 
 

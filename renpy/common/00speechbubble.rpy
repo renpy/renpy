@@ -262,7 +262,7 @@ init 1050 python hide:
             for i in v:
                 try:
                     json.dumps(i)
-                except:
+                except Exception:
                     raise Exception("bubble.properties[{!r}] contains a value that can't be serialized to JSON: {!r}".format(k, i))
 
 
