@@ -83,7 +83,7 @@ def MoveIn(pos, pos1, delay, d, **kwargs):
             return b
         return a
 
-    pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
+    pos = tuple(aorb(a, b) for a, b in zip(pos, pos1))
     return renpy.display.motion.Move(pos, pos1, delay, d, **kwargs)
 
 
@@ -94,7 +94,7 @@ def MoveOut(pos, pos1, delay, d, **kwargs):
             return b
         return a
 
-    pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
+    pos = tuple(aorb(a, b) for a, b in zip(pos, pos1))
     return renpy.display.motion.Move(pos1, pos, delay, d, **kwargs)
 
 
