@@ -527,7 +527,7 @@ class Wrapper(renpy.object.Object):
         try:
             w = self.function(*args, **keyword)
         except TypeError as e:
-            etype, e, tb = sys.exc_info()
+            _etype, e, tb = sys.exc_info()
 
             if tb.tb_next is None:
                 e.args = (e.args[0].replace("__call__", "ui." + self.name),) # type: ignore
