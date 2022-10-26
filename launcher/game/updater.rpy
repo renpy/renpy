@@ -113,9 +113,9 @@ screen update_channel(channels):
                             $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False, force=allow_repair_update)]
 
                             if c["channel"].startswith("Release"):
-                                $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")
+                                $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a} | {a=https://www.renpy.org/doc/html/incompatible.html}Incompatible Changes{/a}")
                             elif c["channel"].startswith("Prerelease"):
-                                $ current = _("• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a}")
+                                $ current = _("• {a=https://www.renpy.org/dev-doc/html/changelog.html}View change log{/a} | {a=https://www.renpy.org/dev-doc/html/incompatible.html}Incompatible Changes{/a}")
                             else:
                                 $ current = ""
 
