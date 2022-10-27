@@ -410,8 +410,6 @@ class TransitionAnimation(renpy.display.core.Displayable):
 
 
 class Blink(renpy.display.core.Displayable):
-    """
-    """
 
     def __init__(self, image, on=0.5, off=0.5, rise=0.5, set=0.5, # @ReservedAssignment
                  high=1.0, low=0.0, offset=0.0, anim_timebase=False, **properties):
