@@ -750,7 +750,7 @@ class SLDisplayable(SLBlock):
             for i in self.positional:
                 const = min(self.constant, analysis.is_constant_expr(i))
 
-            for k, v in self.keyword:
+            for _k, v in self.keyword:
                 const = min(self.constant, analysis.is_constant_expr(v))
 
             if self.keyword_exist("id"):

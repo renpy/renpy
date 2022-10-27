@@ -1938,7 +1938,7 @@ class Text(renpy.display.core.Displayable):
 
             layout = Layout(self, width, height, renders, size_only=True, drawable_res=True)
 
-        xpos, ypos, xanchor, yanchor, xoffset, yoffset, subpixel = rv
+        xpos, ypos, xanchor, _yanchor, xoffset, yoffset, subpixel = rv
         rv = (xpos, ypos, xanchor, layout.baseline, xoffset, yoffset, subpixel)
         return rv
 
