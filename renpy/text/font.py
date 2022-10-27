@@ -748,7 +748,7 @@ class FontGroup(object):
     """
 
     # For compatibility with older instances.
-    char_map = dict()
+    char_map = {}
 
     def __init__(self):
 
