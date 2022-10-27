@@ -1339,8 +1339,8 @@ class SceneLists(renpy.object.Object):
         for l, (t, ll) in list(self.layer_at_list.items()):
             self.layer_at_list[l] = (t or time, ll)
 
-        for l, ll in self.layers.items():
-            self.layers[l][:] = [ i.update_time(time) for i in ll ]
+        for ll in self.layers.values():
+            ll[:] = [ i.update_time(time) for i in ll ]
 
     def showing(self, layer, name):
         """
@@ -1488,10 +1488,10 @@ class SceneLists(renpy.object.Object):
 
         now = get_time()
 
-        for l in self.layers:
+        for v in self.layers.values():
             newl = [ ]
 
-            for sle in self.layers[l]:
+            for sle in v:
 
                 if sle.tag:
 
@@ -1507,17 +1507,17 @@ class SceneLists(renpy.object.Object):
 
                 newl.append(sle)
 
-            self.layers[l][:] = newl
+            v[:] = newl
 
     def remove_all_hidden(self):
         """
         Removes everything hidden, even if it's not time yet. (Used when making a rollback copy).
         """
 
-        for l in self.layers:
+        for v in self.layers.values():
             newl = [ ]
 
-            for sle in self.layers[l]:
+            for sle in v:
 
                 if sle.tag:
 
@@ -1526,7 +1526,7 @@ class SceneLists(renpy.object.Object):
 
                 newl.append(sle)
 
-            self.layers[l][:] = newl
+            v[:] = newl
 
     def get_displayable_by_tag(self, layer, tag):
         """
@@ -3630,11 +3630,11 @@ class Interface(object):
             self.transition_from.clear()
             self.transition_time.clear()
         else:
-            for k in self.transition:
+            for k, t in self.transition.items():
                 if k not in self.old_scene:
                     continue
 
-                self.ongoing_transition[k] = self.transition[k]
+                self.ongoing_transition[k] = t
                 self.transition_from[k] = self.old_scene[k]._in_current_store()
                 self.transition_time[k] = None
 
