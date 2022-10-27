@@ -150,7 +150,7 @@ class MultipleTransition(Transition):
 
             self.transitions.append(trans(old_widget=old, new_widget=new))
 
-        super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]), **properties)
+        super(MultipleTransition, self).__init__(sum(i.delay for i in self.transitions), **properties)
 
         self.new_widget = self.transitions[-1]
         self.events = False
@@ -698,8 +698,8 @@ class AlphaDissolve(Transition):
 
 
 def interpolate_tuple(t0, t1, time, scales):
-    return tuple([ round(s * (a * (1.0 - time) + b * time))
-                    for a, b, s in zip(t0, t1, scales) ])
+    return tuple(round(s * (a * (1.0 - time) + b * time))
+                    for a, b, s in zip(t0, t1, scales))
 
 class CropMove(Transition):
     """
