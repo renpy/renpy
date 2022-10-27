@@ -687,7 +687,7 @@ class Image(ImageBase):
                     oversample = float(i)
                     properties.setdefault('oversample', oversample)
                     continue
-                except:
+                except Exception:
                     pass
 
                 raise Exception("Unknown image modifier %r in %r." % (i, filename))

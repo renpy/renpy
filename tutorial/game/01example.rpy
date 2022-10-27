@@ -573,7 +573,7 @@ init python hide:
         try:
             with open(os.path.join(renpy.config.gamedir, fn), "r") as f:
                 lines = f.readlines()
-        except:
+        except Exception:
             lines = [ ]
 
         open_examples = set()
