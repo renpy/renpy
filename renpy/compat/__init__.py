@@ -162,7 +162,6 @@ round = builtins.round
 
 if PY2:
 
-    import io
     import types
 
     # io.TextIOWrapper._write = io.TextIOWrapper.write

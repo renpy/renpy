@@ -35,7 +35,6 @@ def update_path():
     Update the __path__ of package, to import binary modules from a libexec
     directory.
     """
-    import sys
     import os.path
 
     name = sys._getframe(1).f_globals["__name__"]
@@ -53,12 +52,12 @@ def update_path():
 
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
+import sys
 
 update_path()
 
 import renpy.compat.pickle as pickle
 
-import sys
 import os
 import copy
 import types
