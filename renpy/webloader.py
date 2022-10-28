@@ -29,6 +29,7 @@
 # (e.g. won't work when loading a savegame, nor with 'show expression')
 
 from __future__ import print_function
+from multiprocessing import queues
 import renpy
 import os
 import renpy.display
@@ -196,6 +197,8 @@ def enqueue(relpath, rtype, data):
 
 
 def process_downloaded_resources():
+    global queue
+
     if not queue:
         return
 

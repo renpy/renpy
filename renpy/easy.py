@@ -35,7 +35,7 @@ Color = renpy.color.Color
 color = renpy.color.Color
 
 if PY2:
-    from collections import Iterable
+    from collections import Iterable # type: ignore
 else:
     from collections.abc import Iterable
 
