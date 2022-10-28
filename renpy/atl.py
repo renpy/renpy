@@ -1188,11 +1188,6 @@ class Interpolation(Statement):
 
         warper = warpers.get(self.warper, self.warper)
 
-        if trans.atl.animation:
-            st_or_at = trans.at
-        else:
-            st_or_at = trans.st
-
         # Special case `pause 0` to always display a frame. This is intended to
         # support single-frame animations that shouldn't skip.
         if state is None and self.warper == "pause" and self.duration == 0 and renpy.config.atl_one_frame:
