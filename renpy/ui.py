@@ -400,7 +400,7 @@ def context_enter(w):
     if isinstance(renpy.ui.stack[-1], renpy.ui.Many) and renpy.ui.stack[-1].displayable is w: # type: ignore
         return
 
-    raise Exception("%r cannot be used as a context manager.", type(w).__name__)
+    raise Exception("%r cannot be used as a context manager." % type(w).__name__)
 
 
 def context_exit(w):
