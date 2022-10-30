@@ -780,7 +780,12 @@ init -1500 python in _console:
 
     @command(_("help: show this help\n help <expr>: show signature and documentation of <expr>"))
     def help(l, doc_generate=False):
-        rest = l.rest_statement()
+
+        if l is not None:
+            rest = l.rest_statement()
+        else:
+            rest = None
+
         if rest and rest in globals():
             try:
                 result = globals()[rest].help + "\n"
