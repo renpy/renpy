@@ -29,7 +29,6 @@
 # (e.g. won't work when loading a savegame, nor with 'show expression')
 
 from __future__ import print_function
-from multiprocessing import queues
 import renpy
 import os
 import renpy.display
