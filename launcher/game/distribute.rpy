@@ -401,7 +401,10 @@ change_renpy_executable()
             for f in sorted(self, key=lambda a : a.name):
                 f.hash(sha, distributor)
 
-            return sha.hexdigest()
+            if PY2:
+                return sha.hexdigest().decode("utf-8")
+            else:
+                return sha.hexdigest()
 
         def split_by_prefix(self, prefix):
             """
