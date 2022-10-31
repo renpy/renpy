@@ -187,11 +187,6 @@ def main():
     else:
         renpy_sh = "./renpy2.sh"
 
-    # Perhaps autobuild.
-    if "RENPY_BUILD_ALL" in os.environ:
-        print("Autobuild...")
-        subprocess.check_call(["scripts/autobuild.sh"])
-
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=True, quiet=1)
 
