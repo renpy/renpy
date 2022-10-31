@@ -1459,7 +1459,7 @@ change_renpy_executable()
 
             if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
 
-                with open(update_fn, "w") as f:
+                with open(update_fn, "wb" if PY2 else "w") as f:
                     json.dump(update, f, indent=2)
 
                 if (not dlc) or (format == "update"):
@@ -1599,7 +1599,7 @@ change_renpy_executable()
                     add_variant(p["name"])
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
-            with open(fn, "w") as f:
+            with open(fn, "wb" if PY2 else "w") as f:
                 json.dump(index, f, indent=2)
 
 
