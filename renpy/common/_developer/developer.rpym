@@ -26,7 +26,7 @@
 
 screen _developer:
 
-    zorder 1001
+    zorder 1051
     modal True
 
     frame:
@@ -66,7 +66,7 @@ screen _developer:
                 if bubble.active:
 
                     textbutton _("Speech Bubble Editor"):
-                        action ToggleScreen("_bubble_editor")
+                        action [ SetField(bubble.shown, "value", True), Hide("_developer") ]
 
         hbox:
             spacing gui._scale(25)
