@@ -47,6 +47,7 @@ respectively.
 In-game, the usual way to play music and sound in Ren'Py is using
 the three music/sound statements.
 
+.. _play-statement:
 
 Play Statement
 --------------
