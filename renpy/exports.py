@@ -1924,7 +1924,7 @@ def jump(label):
 
 def jump_out_of_context(label):
     """
-    :doc: label
+    :doc: context
 
     Causes control to leave the current context, and then to be
     transferred in the parent context to the given label.
@@ -2330,13 +2330,13 @@ def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)
 
 
-def dynamic(*vars, **kwargs): # @ReservedAssignment
+def dynamic(*args, **kwargs):
     """
-    :doc: other
+    :doc: label
 
-    This can be given one or more variable names as arguments. This makes
-    the variables dynamically scoped to the current call. The variables will
-    be reset to their original value when the call returns.
+    This can be given one or more variable names as arguments. This makes the
+    variables dynamically scoped to the current call. When the call returns, the
+    variables will be reset to the value they had when this function was called.
 
     If the variables are given as keyword arguments, the value of the argument
     is assigned to the variable name.
@@ -2347,16 +2347,16 @@ def dynamic(*vars, **kwargs): # @ReservedAssignment
         $ renpy.dynamic(players=2, score=0)
     """
 
-    vars = vars + tuple(kwargs) # @ReservedAssignment
-    renpy.game.context().make_dynamic(vars)
+    args = args + tuple(kwargs)
+    renpy.game.context().make_dynamic(args)
 
     for k, v in kwargs.items():
         setattr(renpy.store, k, v)
 
 
-def context_dynamic(*vars): # @ReservedAssignment
+def context_dynamic(*args):
     """
-    :doc: other
+    :doc: context
 
     This can be given one or more variable names as arguments. This makes
     the variables dynamically scoped to the current context. The variables will
@@ -2367,7 +2367,7 @@ def context_dynamic(*vars): # @ReservedAssignment
         $ renpy.context_dynamic("x", "y", "z")
     """
 
-    renpy.game.context().make_dynamic(vars, context=True)
+    renpy.game.context().make_dynamic(args, context=True)
 
 
 def seen_label(label):
@@ -2620,7 +2620,7 @@ def free_memory():
 
 def flush_cache_file(fn):
     """
-    :doc: other
+    :doc: image_func
 
     This flushes all image cache entries that refer to the file `fn`.  This
     may be called when an image file changes on disk to force Ren'Py to
@@ -2873,7 +2873,7 @@ def load_string(s, filename="<string>"):
 
 def pop_call():
     """
-    :doc: other
+    :doc: label
     :name: renpy.pop_call
 
     Pops the current call from the call stack, without returning to
@@ -2891,7 +2891,7 @@ pop_return = pop_call
 
 def call_stack_depth():
     """
-    :doc: other
+    :doc: label
 
     Returns the depth of the call stack of the current context - the number
     of calls that have run without being returned from or popped from the
@@ -3712,7 +3712,7 @@ def count_newly_seen_dialogue_blocks():
 
 def substitute(s, scope=None, translate=True):
     """
-    :doc: other
+    :doc: text_utility
 
     Applies translation and new-style formatting to the string `s`.
 
@@ -3881,7 +3881,7 @@ def clear_line_log():
 
 def add_layer(layer, above=None, below=None, menu_clear=True):
     """
-    :doc: other
+    :doc: image_func
 
     Adds a new layer to the screen. If the layer already exists, this
     function does nothing.
@@ -3901,7 +3901,7 @@ def add_layer(layer, above=None, below=None, menu_clear=True):
 
     `menu_clear`
         If true, this layer will be cleared when entering the game menu
-        context, and restored when leaving the
+        context, and restored when leaving it.
     """
 
     layers = renpy.config.layers
@@ -4046,7 +4046,7 @@ def get_identifier_checkpoints(identifier):
 
 def get_adjustment(bar_value):
     """
-    :doc: other
+    :doc: screens
 
     Given `bar_value`, a  :class:`BarValue`, returns the :func:`ui.adjustment`
     if uses. The adjustment has the following to attributes defined:

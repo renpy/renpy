@@ -250,7 +250,7 @@ def context(index=-1):
 
 def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
     """
-    :doc: label
+    :doc: context
 
     This function creates a new context, and invokes the given Python
     callable (function) in that context. When the function returns
@@ -313,7 +313,7 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
 
 def call_in_new_context(label, *args, **kwargs):
     """
-    :doc: label
+    :doc: context
 
     This creates a new context, and then starts executing Ren'Py script
     from the given label in that context. Rollback is disabled in the

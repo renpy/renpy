@@ -80,11 +80,6 @@ Memory Profiling
 
 .. include:: inc/memory
 
-Contexts
----------
-
-.. include:: inc/context
-
 renpy.random
 -------------
 
