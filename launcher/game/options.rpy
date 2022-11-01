@@ -444,6 +444,8 @@ init python:
     build.package("renios", "zip", "renios", dlc=True)
     build.package("web", "zip", "web", dlc=True)
 
+# The identifier for the SDK.
+define build.mac_info_plist["CFBundleIdentifier"] = "org.renpy.sdk"
 
 # Enable the special launcher translation mode.
 define config.translate_launcher = True

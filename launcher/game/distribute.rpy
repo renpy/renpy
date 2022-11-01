@@ -972,6 +972,7 @@ change_renpy_executable()
                 CFBundleDisplayName=display_name,
                 CFBundleExecutable=executable_name,
                 CFBundleIconFile="icon",
+                CFBundleIdentifier="com.domain.game",
                 CFBundleInfoDictionaryVersion="6.0",
                 CFBundleName=display_name,
                 CFBundlePackageType="APPL",
