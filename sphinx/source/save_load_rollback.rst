@@ -261,6 +261,7 @@ For example::
 
 .. include:: inc/retain_after_load
 
+.. _rollback:
 
 Rollback
 ========

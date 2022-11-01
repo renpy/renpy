@@ -91,8 +91,9 @@ Voice Functions
 
 .. include:: inc/voice
 
+.. _voice-actions:
+
 Voice Actions
 -------------
 
 .. include:: inc/voice_action
-
