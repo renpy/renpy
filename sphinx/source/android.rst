@@ -322,7 +322,7 @@ android-downloading.jpg
 Pyjnius
 =======
 
-When running on Android, a version of the `Pyjnius <https://pyjnius.readthedocs.io/en/stable/>`_
+When running on Android, a version of the `Pyjnius <https://pyjnius.readthedocs.io/en/stable/>`__
 library is available. This allows advanced creators to call into the Android
 libraries.
 

@@ -141,5 +141,5 @@ images from files.
 Pyobjus
 =======
 
-On iOS and macOS, a version of `Pyobjus <https://pyobjus.readthedocs.io/en/latest/>`_
+On iOS and macOS, a version of `Pyobjus <https://pyobjus.readthedocs.io/en/latest/>`__
 is available, allowing advanced creators to call system libraries.
