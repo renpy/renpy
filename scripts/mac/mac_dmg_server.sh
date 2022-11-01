@@ -20,19 +20,7 @@ codesign --timestamp --verbose -s "$1" "$DMGBASE"
 date
 echo "Submitting for notarization."
 
-# --transport Aspera \
-
-xcrun altool --asc-provider XHTE5H7Z79 -u tom@rothamel.us -p "@keychain:altool"  \
-    --notarize-app \
-    --primary-bundle-id org.renpy.renpy.dmg \
-    -f "$DMGBASE"
-
-date
-echo "Submitted dmg for notarization."
-
-$(dirname $0)/wait_notarization.py
-
-sleep 60
+xcrun notarytool submit --keychain-profile developer-signing --wait "$DMGBASE"
 
 xcrun stapler staple "$DMGBASE"
 
