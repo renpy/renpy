@@ -124,6 +124,7 @@ Python and Ren'Py
    modes
    cdd
    cds
+   extensions
    custom_text_tags
    character_callbacks
    file_python
