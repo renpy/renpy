@@ -110,7 +110,7 @@ unique identifier for the current line of dialogue, if there is one.
 
 The new :var:`config.scene_callbacks` function contains a list of functions
 that are called when the scene statement is run or the :func:`renpy.scene`
-statement is called.
+function is called.
 
 The size text tag now takes multipliers, so it's possible to have::
 
