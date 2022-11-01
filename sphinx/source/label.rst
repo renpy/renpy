@@ -206,6 +206,8 @@ Labels & Control Flow Functions
 
 .. include:: inc/label
 
+.. _context:
+
 Contexts
 ---------
 
