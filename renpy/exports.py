@@ -2330,7 +2330,7 @@ def last_interact_type():
     return getattr(renpy.game.context().info, "_last_interact_type", None)
 
 
-def dynamic(*args, **kwargs):
+def dynamic(*variables, **kwargs):
     """
     :doc: label
 
@@ -2347,14 +2347,14 @@ def dynamic(*args, **kwargs):
         $ renpy.dynamic(players=2, score=0)
     """
 
-    args = args + tuple(kwargs)
-    renpy.game.context().make_dynamic(args)
+    variables = variables + tuple(kwargs)
+    renpy.game.context().make_dynamic(variables)
 
     for k, v in kwargs.items():
         setattr(renpy.store, k, v)
 
 
-def context_dynamic(*args):
+def context_dynamic(*variables):
     """
     :doc: context
 
@@ -2367,7 +2367,7 @@ def context_dynamic(*args):
         $ renpy.context_dynamic("x", "y", "z")
     """
 
-    renpy.game.context().make_dynamic(args, context=True)
+    renpy.game.context().make_dynamic(variables, context=True)
 
 
 def seen_label(label):
