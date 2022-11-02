@@ -69,8 +69,8 @@ Constant Stores
 
 Ren'Py has the ability to mark a :ref:`named store <named-stores>` as a constant,
 by setting the ``_constant`` variable in that store. If true, variables in that
-:ref:`constant store <constant-store>` will not be saved, and objects reachable
-soley from that store will not participate in rollback.
+:ref:`constant store <constant-stores>` will not be saved, and objects reachable
+solely from that store will not participate in rollback.
 
 The reason to declare a store constant is that there are small per-store and
 per-variable overheads that are required to support rollback. Declaring a
