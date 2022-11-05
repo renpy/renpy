@@ -805,7 +805,9 @@ def register_channel(name,
 
     `name`
         The name of the channel. It should not contain spaces, as this is reserved
-        for Ren'Py's internal use.
+        for Ren'Py's internal use, and should be a
+        `valid identifier <https://docs.python.org/reference/lexical_analysis.html#identifiers>`__
+        for the syntax of the :ref:`play-statement` to be usable.
 
     `mixer`
         The name of the mixer the channel uses. By default, Ren'Py knows about
