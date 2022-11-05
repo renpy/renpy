@@ -804,7 +804,8 @@ def register_channel(name,
     queue statements.
 
     `name`
-        The name of the channel.
+        The name of the channel. It should not contain spaces, as this is reserved
+        for Ren'Py's internal use.
 
     `mixer`
         The name of the mixer the channel uses. By default, Ren'Py knows about
