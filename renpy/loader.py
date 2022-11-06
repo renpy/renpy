@@ -1171,9 +1171,10 @@ def auto_init():
 
     auto_quit_flag = False
 
-    auto_thread = threading.Thread(target=auto_thread_function)
-    auto_thread.daemon = True
-    auto_thread.start()
+    if not renpy.emscripten:
+        auto_thread = threading.Thread(target=auto_thread_function)
+        auto_thread.daemon = True
+        auto_thread.start()
 
 
 def auto_quit():

@@ -3800,7 +3800,13 @@ def invoke_in_thread(fn, *args, **kwargs):
     thread, and then update variables with the results of that call, by storing
     the result in variables and then relying on the interaction restart to cause
     screens to display those variables.
+
+    This does not work on the web platform, except for immediately returning
+    without an error.
     """
+
+    if renpy.emscripten:
+        return
 
     def run():
         try:

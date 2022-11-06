@@ -570,5 +570,6 @@ def init():
 
     renpy.loadsave.location = location
 
-    scan_thread = threading.Thread(target=run_scan_thread)
-    scan_thread.start()
+    if not renpy.emscripten:
+        scan_thread = threading.Thread(target=run_scan_thread)
+        scan_thread.start()

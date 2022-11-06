@@ -989,9 +989,12 @@ def init():
 
         periodic_thread_quit = False
 
-        periodic_thread = threading.Thread(target=periodic_thread_main)
-        periodic_thread.daemon = True
-        periodic_thread.start()
+        if not renpy.emscripten:
+            periodic_thread = threading.Thread(target=periodic_thread_main)
+            periodic_thread.daemon = True
+            periodic_thread.start()
+        else:
+            periodic_thread = None
 
 
 def quit(): # @ReservedAssignment
