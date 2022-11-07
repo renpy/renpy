@@ -407,7 +407,7 @@ init -1500 python in build:
     package("steam", "zip", "windows linux mac renpy all", hidden=True)
     package("android", "directory", "android all", hidden=True, update=False, dlc=True)
     package("ios", "directory", "ios all", hidden=True, update=False, dlc=True)
-    package("web", "zip", "web all", hidden=True, update=False, dlc=True)
+    package("web", "zip", "web renpy all", hidden=True, update=False, dlc=True)
 
     # Data that we expect the user to set.
 

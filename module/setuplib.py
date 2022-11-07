@@ -472,6 +472,7 @@ def setup(name, version):
         version=version,
         ext_modules=extensions,
         py_modules=py_modules,
+        zip_safe=False,
         )
 
 

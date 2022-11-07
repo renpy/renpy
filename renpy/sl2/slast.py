@@ -80,9 +80,8 @@ def compile_expr(loc, node):
         flags = renpy.python.new_compile_flags
 
     expr = ast.Expression(body=node)
-    ast.fix_missing_locations(expr)
+    renpy.python.fix_locations(expr, 1, 0)
     return compile(expr, filename, "eval", flags, 1)
-
 
 class SLContext(renpy.ui.Addable):
     """
