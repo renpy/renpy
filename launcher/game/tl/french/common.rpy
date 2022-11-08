@@ -797,3 +797,11 @@ translate french strings:
     # renpy/common/00preferences.rpy:535
     old "mute main"
     new "sourdine générale"
+
+    # renpy/common/00speechbubble.rpy:299
+    old "Speech Bubble Editor"
+    new "Éditeur de bulles de dialogue"
+
+    # renpy/common/00speechbubble.rpy:304
+    old "(hide)"
+    new "(masquer)"
