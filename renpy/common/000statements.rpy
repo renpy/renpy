@@ -327,7 +327,7 @@ python early hide:
         renpy.sound.queue(
             _audio_eval(p["file"]),
             channel=channel,
-            fadein=eval(p.get("fadein", 0)),
+            fadein=eval(p.get("fadein", "0")),
             loop=loop,
             relative_volume=eval(p.get("volume", "1.0"))
             )
