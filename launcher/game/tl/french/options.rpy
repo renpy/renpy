@@ -186,7 +186,7 @@
 
     # options.rpy:196
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
-    new "## Une clé de licence A Google Play est requise pour permettre les achats depuis l'application. Vous pourrez la trouver dans la console de développement Google Play, sous \"Monétiser\" > \"Configuration de la monétisation\" > \"Licences\"."
+    new "## Une clé de licence Google Play est requise pour permettre les achats depuis l'application. Vous pourrez la trouver dans la console de développement Google Play, sous \"Monétiser\" > \"Configuration de la monétisation\" > \"Licences\"."
 
     # options.rpy:203
     old "## The username and project name associated with an itch.io project, separated by a slash."
