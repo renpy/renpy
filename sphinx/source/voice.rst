@@ -100,6 +100,10 @@ Placing the english version in "game/omelette.ogg" and the french translation
 in "game/tl/french/omelette.ogg" will make Ren'Py use the french version when
 the french language is activated in the game.
 
+It works just the same for automatic voice, as long as the filepath of the
+translation file starting from "game/tl/<language>/" matches the filepath of
+the original file starting from "game/"
+
 Voice Functions
 ---------------
 
