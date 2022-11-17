@@ -393,7 +393,7 @@ def main():
 
     # Load Ren'Py extensions.
     for dir in renpy.config.searchpath: # @ReservedAssignment
-        for fn in os.listdir(dir):
+        for fn in sorted(os.listdir(dir)):
             if fn.lower().endswith(".rpe"):
                 load_rpe(dir + "/" + fn)
 
