@@ -265,7 +265,7 @@ class Cache(object):
                 rv.forward = renpy.display.matrix.Matrix2D(oversample, 0, 0, oversample)
                 rv.reverse = renpy.display.matrix.Matrix2D(inv_oversample, 0, 0, inv_oversample)
 
-                boun = tuple(el / oversample for el in boun)
+                boun = tuple(round(el / oversample) for el in boun)
             else:
                 rv = renpy.display.render.Render(ce.width, ce.height)
 
