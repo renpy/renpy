@@ -573,3 +573,33 @@ def init():
     if not renpy.emscripten:
         scan_thread = threading.Thread(target=run_scan_thread)
         scan_thread.start()
+
+
+def zip_saves():
+    """
+    This is called directly from Javascript, to zip up the savegames
+    to /savegames.zip.
+    """
+
+    import zipfile
+    import pathlib
+
+    p = pathlib.Path(renpy.config.savedir).parent # type: ignore
+
+    with zipfile.ZipFile("/savegames.zip", "w", zipfile.ZIP_DEFLATED) as zf:
+        for fn in p.glob("*/*"):
+            zf.write(fn, fn.relative_to(p))
+
+    return True
+
+def unzip_saves():
+
+    import zipfile
+    import pathlib
+
+    p = pathlib.Path(renpy.config.savedir).parent # type: ignore
+
+    with zipfile.ZipFile("/savegames.zip", "r") as zf:
+        zf.extractall(str(p))
+
+    return True
