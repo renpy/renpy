@@ -151,9 +151,10 @@ def load_rpe(fn):
     with zipfile.ZipFile(fn) as zfn:
         autorun = zfn.read("autorun.py")
 
+    if fn in sys.path:
+        sys.path.remove(fn)
     sys.path.insert(0, fn)
-    exec(autorun, {})
-
+    exec(autorun, {'__file__': os.path.join(fn, "autorun.py")})
 
 def choose_variants():
 
