@@ -1554,7 +1554,7 @@ cdef class Render:
 
             render = renpy.display.render.render(d, width, height, st, at)
 
-        d.place(self, x, y, width, height, render, main=main)
+        return d.place(self, x, y, width, height, render, main=main)
 
     def zoom(self, xzoom, yzoom):
         """
