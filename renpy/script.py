@@ -34,6 +34,7 @@ import time
 import marshal
 import struct
 import zlib
+import sys
 
 from renpy.compat.pickle import loads, dumps
 import shutil
@@ -61,8 +62,10 @@ else:
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
 
-# A string
-BYTECODE_FILE = "cache/bytecode.rpyb"
+
+# The name of the obsolete and new bytecode cache files.
+OLD_BYTECODE_FILE = "cache/bytecode.rpyb"
+BYTECODE_FILE = "cache/bytecode-{}{}.rpyb".format(sys.version_info.major, sys.version_info.minor)
 
 
 class ScriptError(Exception):
@@ -932,6 +935,12 @@ class Script(object):
                 with open(fn, "wb") as f:
                     data = (BYTECODE_VERSION, self.bytecode_newcache)
                     f.write(zlib.compress(dumps(data), 3))
+            except Exception:
+                pass
+
+            fn = renpy.loader.get_path(OLD_BYTECODE_FILE)
+            try:
+                os.unlink(fn)
             except Exception:
                 pass
 
