@@ -295,11 +295,12 @@ class Script(object):
 
         initcode = [ ]
 
+        count = 0
+
         for fn, dir in script_files: # @ReservedAssignment
-            # Mitigate "busy script" warning from the browser
-            if renpy.emscripten:
-                import emscripten # type: ignore
-                emscripten.sleep(0)
+
+            count += 1
+            renpy.display.presplash.progress("Loading script...", count, len(script_files))
 
             # Pump the presplash window to prevent marking
             # our process as unresponsive by OS
@@ -874,6 +875,7 @@ class Script(object):
 
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
+
         for i in self.all_pycode:
 
             key = i.get_hash() + MAGIC
