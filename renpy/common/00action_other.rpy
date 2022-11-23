@@ -631,9 +631,6 @@ init -1500 python:
 
         def __call__(self):
 
-            def clamp(adjustment, value):
-                return max(0, min(adjustment._range, value))
-
             d = renpy.get_widget(None, self.id)
 
             if d is None:
@@ -661,13 +658,15 @@ init -1500 python:
                 raise Exception("Unknown scroll direction: {}".format(self.direction))
 
             if self.amount == "step":
-                self.target_value = clamp(adjustment, adjustment.value + delta * adjustment.step)
+                self.target_value = adjustment.value + (delta * adjustment.step)
             elif self.amount == "page":
-                self.target_value = clamp(adjustment, adjustment.value + delta * adjustment.page)
+                self.target_value = adjustment.value + (delta * adjustment.page)
             elif isinstance(self.amount, float):
-                self.target_value = clamp(adjustment, adjustment.value + delta * adjustment._range * self.amount)
+                self.target_value = adjustment.value + (delta * adjustment._range * self.amount)
             else:
-                self.target_value = clamp(adjustment, adjustment.value + delta * self.amount)
+                self.target_value = adjustment.value + (delta * self.amount)
+
+            self.target_value = max(0, min(adjustment._range, self.target_value))
 
             if self.delay is None:
                 adjustment.change(self.target_value)
@@ -684,21 +683,20 @@ init -1500 python:
                     self.range = self.target_value - self.old_value
 
                 if st - self.start_time > self.delay or not self.range:
+                    self.adjustment.change(self.target_value)
                     self.start_time = None
                     self.target_value = None
                     return
 
-                fraction = (st - self.start_time) / float(self.delay)
+                fraction = (st - self.start_time) / self.delay
                 fraction = _warper.ease(min(1.0, fraction))
 
                 self.adjustment.change(self.old_value + self.range * fraction)
-                
-                renpy.restart_interaction()
 
-                return .0
+                return 1 / 60.0
 
             else:
-                return
+                return None
 
 
     @renpy.pure
