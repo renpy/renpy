@@ -928,7 +928,7 @@ menu_kwargs = None
 
 def get_menu_args():
     """
-    :other:
+    :doc: other
 
     Returns a tuple giving the arguments (as a tuple) and the keyword arguments
     (as a dict) passed to the current menu statement.
@@ -4098,7 +4098,7 @@ old_battery = False
 
 def get_on_battery():
     """
-    :other:
+    :doc: other
 
     Returns True if Ren'Py is running on a device that is powered by an internal
     battery, or False if the device is being charged by some external source.
