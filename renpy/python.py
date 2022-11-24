@@ -225,8 +225,7 @@ def create_store(name):
     pyname = pystr(name)
 
     # Set the name.
-    d["__name__"] = pyname
-    d["__package__"] = pyname
+    d.update(__name__=pyname, __package__=pyname)
 
     # Set up the default contents of the store.
     eval("1", d)
