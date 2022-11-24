@@ -361,7 +361,10 @@ init python:
 
     # games.
     build.classify_renpy("launcher/game/theme/", None)
-    build.classify_renpy("gui/game/gui/", None)
+
+    build.classify_renpy("gui/game/gui/", "source")
+    build.classify_renpy("gui/game/gui/bubble.png", "source")
+    build.classify_renpy("gui/game/gui/*", None)
 
     source_and_binary("launcher", py=False)
     source_and_binary("gui", binary=None, py=False)
