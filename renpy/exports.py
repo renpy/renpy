@@ -211,7 +211,7 @@ def in_fixed_rollback():
 def checkpoint(data=None, keep_rollback=None, hard=True):
     """
     :doc: rollback
-    :args: (data=None)
+    :args: (data=None, hard=True)
 
     Makes the current statement a checkpoint that the user can rollback to. Once
     this function has been called, there should be no more interaction with the
@@ -928,7 +928,7 @@ menu_kwargs = None
 
 def get_menu_args():
     """
-    :other:
+    :doc: other
 
     Returns a tuple giving the arguments (as a tuple) and the keyword arguments
     (as a dict) passed to the current menu statement.
@@ -1794,6 +1794,7 @@ def get_all_labels():
 def take_screenshot(scale=None, background=False):
     """
     :doc: loadsave
+    :args: ()
 
     Causes a screenshot to be taken. This screenshot will be saved as part of
     a save game.
@@ -1808,6 +1809,7 @@ def take_screenshot(scale=None, background=False):
 def full_restart(transition=False, label="_invoke_main_menu", target="_main_menu", save=False):
     """
     :doc: other
+    :args: (transition=False, *, save=False)
 
     Causes Ren'Py to restart, returning the user to the main menu.
 
@@ -2552,7 +2554,7 @@ def image_size(im):
     return surf.get_size()
 
 
-def get_at_list(name, layer=None, camera=False):
+def get_at_list(name, layer=None):
     """
     :doc: se_images
 
@@ -4096,7 +4098,7 @@ old_battery = False
 
 def get_on_battery():
     """
-    :other:
+    :doc: other
 
     Returns True if Ren'Py is running on a device that is powered by an internal
     battery, or False if the device is being charged by some external source.
