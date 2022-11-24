@@ -48,6 +48,7 @@ init python in project:
         _("Press shift+O (the letter) to access the console."),
         _("Press shift+D to access the developer menu."),
         _("Have you backed up your projects recently?"),
+        _("Lint checks your game for potential mistakes, and gives you statistics."),
     ]
 
     class Project(object):
