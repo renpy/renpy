@@ -204,3 +204,7 @@
     old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
     new "## Estas tres variables controlan, entre otras cosas, qué mezcladores se muestran al reproductor de forma predeterminada. Establecer uno de estos en False ocultará el mezclador apropiado. "
 
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new "## Se necesita una clave de licencia de Google Play para realizar compras dentro de la aplicación. Se puede encontrar en la consola de desarrollador de Google Play, en \"Monetizar\" > \"Configuración de la monetización\" > \"Licencias\"."
+
