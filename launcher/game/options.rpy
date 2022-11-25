@@ -352,9 +352,15 @@ init python:
 
         build.classify_renpy(pattern + "/**.rpyc", binary)
         build.classify_renpy(pattern + "/**.rpymc", binary)
+
+        build.classify_renpy(pattern + "/**/" + renpy.script.BYTECODE_FILE, binary)
+        build.classify_renpy(pattern + "/**/cache/bytecode-311.rpyb", "web")
+        build.classify_renpy(pattern + "/**/cache/bytecode-*.rpyb", None)
+
         build.classify_renpy(pattern + "/**/cache/*", binary)
 
         build.classify_renpy(pattern + "/**", source)
+
 
     build.classify_renpy("renpy.py", "binary")
     source_and_binary("renpy")

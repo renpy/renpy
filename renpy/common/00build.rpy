@@ -143,7 +143,6 @@ init -1500 python in build:
     ]))
 
 
-
     def classify_renpy(pattern, groups):
         """
         Classifies files in the Ren'Py base directory according to pattern.
@@ -210,7 +209,12 @@ init -1500 python in build:
 
         ("steam_appid.txt", None),
 
-        ])
+        ("game/" + renpy.script.BYTECODE_FILE, "all"),
+        ("game/cache/bytecode-311.rpyb", "web"),
+        ("game/cache/bytecode-*.rpyb", None),
+
+    ])
+
 
     base_patterns = [ ]
 
