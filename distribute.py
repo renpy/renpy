@@ -99,6 +99,7 @@ def main():
 
     link_directory("rapt")
     link_directory("renios")
+    link_directory("web")
 
     if args.link_directories:
         return
