@@ -261,11 +261,32 @@ init python:
 
             shutil.copy(os.path.join(WEB_PATH, fn), os.path.join(destination, fn))
 
+        # Find the presplash and copy it over.
+        presplash = None
+
+        if not PY2:
+            for fn in [ "web-presplash.png", "web-presplash.jpg", "web-presplash.webp" ]:
+                fullfn = os.path.join(project.current.path, fn)
+
+                if os.path.exists(fullfn):
+                    presplash = fn
+                    break
+
+        if presplash:
+            os.unlink(os.path.join(destination, "web-presplash.jpg"))
+            shutil.copy(os.path.join(project.current.path, presplash), os.path.join(destination, presplash))
+
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
             html = f.read()
 
-        html = html.replace("%%TITLE%%", display_name)
+        if PY2:
+            html = html.replace("%%TITLE%%", display_name)
+        else:
+            html = html.replace("Ren'Py Web Game", display_name)
+
+            if presplash:
+                html = html.replace("web-presplash.jpg", presplash)
 
         with io.open(os.path.join(destination, "index.html"), "w", encoding='utf-8') as f:
             f.write(html)
