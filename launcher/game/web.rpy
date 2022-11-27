@@ -352,10 +352,6 @@ screen web():
 
 label web:
 
-    if not PY2:
-        $ interface.info(_("This feature is not supported in Ren'Py 8."),  _("We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."))
-        return
-
     if WEB_PATH is None:
         $ interface.yesno(_("Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"), no=Jump("front_page"))
         $ add_dlc("web", restart=True)
