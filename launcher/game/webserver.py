@@ -220,6 +220,7 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         '.htm': 'text/html',
         '.html': 'text/html',
         '.js': 'application/javascript',
+        '.wasm': 'application/wasm',
     }
 
 
