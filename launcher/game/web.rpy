@@ -75,9 +75,9 @@ init python:
                 self.remote_files[file.name[len('game/'):]] = 'voice -'
                 copy_file = True
 
-            # Videos are currently not supported, strip them if not already
+            # Videos are never included.
             elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
-                return False
+                copy_file = True
 
             if not copy_file:
                 return True
