@@ -1766,13 +1766,12 @@ Rarely or Internally Used
     example, if this is "{filename}.ogg", the ``voice "test"`` statement
     will play test.ogg.
 
-
 .. var:: config.web_video_base = "./game"
 
     When playing a movie in the web browser, this is a URL that
     is appended to to the movie filename to get the full URL
     to play the movie from. It can include directories in it, so
-    "https://share.renpy.org/movies-for-mygame/" would also be fine.
+    "https://share.renpy.org/movies-for-mygame" would also be fine.
 
     This allows large movie files to be hosted on a different server
     than the rest of the game.
