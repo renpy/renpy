@@ -140,13 +140,14 @@ Building, Updating, and Other Platforms
    :maxdepth: 1
 
    build
-   updater
    android
-   chromeos
    ios
-   iap
-   gesture
+   web
+   chromeos
    raspi
+   iap
+   updater
+   gesture
 
 End-User Documentation
 ----------------------
