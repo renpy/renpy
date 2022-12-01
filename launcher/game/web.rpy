@@ -291,6 +291,23 @@ init python:
         with io.open(os.path.join(destination, "index.html"), "w", encoding='utf-8') as f:
             f.write(html)
 
+        # Zip up the game.
+
+        zip_targets = [ ]
+
+        for dn, dirs, files in os.walk(destination):
+            for directory in dirs:
+                zip_targets.append(os.path.join(dn, directory))
+            for file in files:
+                zip_targets.append(os.path.join(dn, file))
+
+        with zipfile.ZipFile(destination + ".zip", 'w') as zf:
+            for i, target in enumerate(zip_targets):
+                zf.write(target, os.path.relpath(target, destination))
+                reporter.progress(_("Creating package..."), i + 1, len(zip_targets))
+
+        # Start the web server.
+
         webserver.start(destination)
 
 
