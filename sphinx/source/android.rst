@@ -12,6 +12,9 @@ packaged and ported to these devices.
 RAPT – the Ren'Py Android Packaging Tool – is a program, downloaded separately
 from Ren'Py, that creates an Android package for testing or release purposes.
 
+Ren'Py runs on Android 5.0 and later, though older devices may lack the
+resources to run larger games properly.
+
 Required Language
 =================
 
