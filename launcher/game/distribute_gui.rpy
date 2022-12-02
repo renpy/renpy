@@ -228,7 +228,7 @@ screen build_distributions:
                                         spacing 3
                                         text "[description!q]"
                                         if pkg["dlc"]:
-                                            text "(DLC)"
+                                            text _("(DLC)")
 
                     add SPACER
                     add HALF_SPACER
