@@ -13,7 +13,7 @@
 
 import sys
 import os
-import sphinx_bootstrap_theme
+import sphinx_rtd_theme
 import datetime
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -28,7 +28,14 @@ sys.path.append(os.path.abspath('.'))
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo', 'sphinx.ext.extlinks', 'sphinx.ext.ifconfig', 'renpydoc', 'sphinx.ext.intersphinx' ]
+extensions = [
+    'sphinx.ext.todo',
+    'sphinx.ext.extlinks',
+    'sphinx.ext.ifconfig',
+    'renpydoc',
+    'sphinx.ext.intersphinx',
+    'sphinx_rtd_theme',
+    ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -44,7 +51,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Ren\'Py Visual Novel Engine'
-copyright = u'2012-{}, Tom Rothamel'.format(datetime.date.today().year)  # @ReservedAssignment
+copyright = u'2012-{}, Tom Rothamel'.format(datetime.date.today().year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -93,30 +100,20 @@ pygments_style = 'default'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
-
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 # html_theme = 'sphinxdoc'
-html_theme = 'renpydoc'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {
-    'navbar_title' : "Ren'Py Documentation",
-    'navbar_sidebarrel' : False,
-    'navbar_pagenav' : False,
-    'source_link_position': None,
-    'navbar_links': [
-        ("Home Page", "https://www.renpy.org", True),
-        ("Online Documentation", "https://www.renpy.org/doc/html/", True),
-    ],
-    }
+html_theme_options = { }
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path() + [ '.' ]
+# html_theme_path = sphinx_bootstrap_theme.get_html_theme_path() + [ '.' ]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -134,6 +131,8 @@ html_title = "Ren'Py Documentation"
 # pixels large.
 #html_favicon = None
 
+html_baseurl = "https://www.renpy.org/doc/html/"
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -149,7 +148,11 @@ html_use_smartypants = False
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
-html_sidebars = { '**': ['localtoc.html' ] }
+# html_sidebars = { '**': ['localtoc.html' ] }
+
+html_css_files = [
+    'custom.css',
+]
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -164,8 +167,15 @@ html_sidebars = { '**': ['localtoc.html' ] }
 # If true, the index is split into individual pages for each letter.
 #html_split_index = False
 
+html_context = {
+  'display_github': True,
+  'github_user': 'renpy',
+  'github_repo': 'renpy',
+  'github_version': 'master/sphinx/source/',
+}
+
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 #html_show_sphinx = True
@@ -182,7 +192,7 @@ html_sidebars = { '**': ['localtoc.html' ] }
 #html_file_suffix = ''
 
 html_permalinks = True
-html_add_permalinks = " link"
+html_permalinks_icon = " link"
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'TheRenPyVisualNovelEnginedoc'

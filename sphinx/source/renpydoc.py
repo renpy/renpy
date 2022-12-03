@@ -85,6 +85,7 @@ class PythonIndex(sphinx.domains.Index):
 
     def generate(self, docnames=None):
 
+
         if not isinstance(self.domain, sphinx.domains.python.PythonDomain):
             return [ ], False
 
@@ -92,11 +93,13 @@ class PythonIndex(sphinx.domains.Index):
 
         for name, oe in self.domain.data['objects'].items():
 
-            docname = oe[0]
-            kind = oe[1]
+            docname = oe.docname
+            kind = oe.objtype
 
             if kind == "function" or kind == "class":
                 entries.append((name, 0, docname, name, None, None, ''))
+
+        print(len(entries), "entries")
 
         content = { }
 
@@ -176,6 +179,7 @@ def setup(app):
         app.add_lexer("renpy", RenPyLexer())
     else:
         app.add_lexer('renpy', RenPyLexer)
+
     app.add_object_type("var", "var", "single: %s (variable)", parse_node=parse_var_node)
     app.add_object_type("style-property", "propref", "single: %s (style property)", parse_node=parse_style_node)
     app.add_object_type("transform-property", "tpref", "single: %s (transform property)")

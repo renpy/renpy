@@ -1,0 +1,29 @@
+.wy-nav-content {
+    max-width: 1080px;
+}
+
+
+/* Highlighting */
+
+.highlight .k, .highlight .kc {
+    color: #4040b0 !important;
+    font-weight: normal !important;
+}
+
+.highlight .s1, .highlight .s2, .highlight .se {
+    color: #935c45 !important;
+    font-weight: normal !important;
+}
+
+.highlight .c, .highlight .c1 {
+    color: #008000 !important;
+    font-style: normal;
+}
+
+.highlight .mi, .highlight .mf {
+    color: #222 !important;
+}
+
+.highlight .na {
+    color: #004040 !important;
+}
