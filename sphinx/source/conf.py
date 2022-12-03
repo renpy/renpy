@@ -35,6 +35,7 @@ extensions = [
     'renpydoc',
     'sphinx.ext.intersphinx',
     'sphinx_rtd_theme',
+    'sphinx_rtd_dark_mode',
     ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -239,3 +240,6 @@ def setup(app):
 
 is_renpy = "renpy"
 renpy_figures = ("figures" if ("RENPY_NO_FIGURES" not in os.environ) else '')
+
+
+default_dark_mode = False

@@ -5,6 +5,30 @@
 
 /* Highlighting */
 
+html[data-theme='dark'] .highlight .k, html[data-theme='dark'] .highlight .kc {
+    color: #c586c0 !important;
+    font-weight: normal !important;
+}
+
+html[data-theme='dark'] .highlight .s1, html[data-theme='dark'] .highlight .s2, html[data-theme='dark'] .highlight .se {
+    color: #ce9178 !important;
+    font-weight: normal !important;
+}
+
+html[data-theme='dark'] .highlight .c, html[data-theme='dark'] .highlight .c1 {
+    color: #6a9955 !important;
+    font-style: normal;
+}
+
+html[data-theme='dark'] .highlight .mi, html[data-theme='dark'] .highlight .mf {
+    color: #b5cea8 !important;
+}
+
+html[data-theme='dark'] .highlight .na {
+    color: #9cdcfe !important;
+}
+
+
 .highlight .k, .highlight .kc {
     color: #4040b0 !important;
     font-weight: normal !important;
@@ -27,6 +51,8 @@
 .highlight .na {
     color: #004040 !important;
 }
+
+
 
 dt.sig {
     display: block !important;
