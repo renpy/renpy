@@ -27,3 +27,7 @@
 .highlight .na {
     color: #004040 !important;
 }
+
+dt.sig {
+    display: block !important;
+}
