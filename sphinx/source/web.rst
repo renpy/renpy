@@ -103,12 +103,14 @@ If you're hosting the game yourself, you'll want to make sure your web
 server serves .wasm files using the application/wasm MIME type. Doing
 so will make the game load faster, and prevent a warning from happening.
 
+.. _web-presplash:
+
 Presplash
 ---------
 
-A web-specific preplash can be used by creating a ``web-preplash.jpg`` file
-in the game's base directory. This file will be displayed while the game is
-loading.
+The Web platform natively uses a default presplash image. To override it, you can supply
+an image named `web-presplash`, `.jpg`, `.png` or `.webp`, and it will replace
+the default.
 
 Progressive Downloading
 -----------------------
@@ -258,10 +260,3 @@ Export saves
 
 Ren'Py log
     This downloads the Ren'Py log, which contains debugging output.
-
-Thank You
-=========
-
-As always, thank your for your support and using Ren'Py. It was nice to
-spend a month buckling down and getting this done. I hope it's useful
-to everyone.
