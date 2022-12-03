@@ -16,19 +16,6 @@ such features will be added to the understanding. This documentation is
 intended for very advanced creators, and for developers looking to add
 to Ren'Py itself.
 
-As of Ren'Py 7.4 (late 2020), Model-Based rendering needs to be enabled to
-be used. This is done by setting config.gl2 to True, using::
-
-    define config.gl2 = True
-
-.. var:: config.gl2 = False
-
-    If true, Ren'Py will default to using a model-based renderer.
-
-As it's expected that model-based rendering will become the only renderer
-in the near future, the rest of this documentation is written as if model-based
-rendering is enabled all the time.
-
 Model-Based Rendering is one of the most advanced features in Ren'Py, and
 this documentation may be hard to understand without first looking at the
 OpenGL, OpenGL ES, GLSL, and GLSL ES manual. What's more, since there are

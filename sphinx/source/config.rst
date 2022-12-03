@@ -1861,7 +1861,6 @@ variables. You can locate them there, in their context.
 
 :doc:`model`:
 
-* :var:`config.gl2`
 * :var:`config.gl_blend_func`
 * :var:`config.log_gl_shaders`
 
