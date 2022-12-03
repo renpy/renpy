@@ -1,3 +1,5 @@
+:orphan:
+
 NVL-mode script for The Question
 ================================
 
