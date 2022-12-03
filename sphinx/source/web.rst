@@ -258,10 +258,3 @@ Export saves
 
 Ren'Py log
     This downloads the Ren'Py log, which contains debugging output.
-
-Thank You
-=========
-
-As always, thank your for your support and using Ren'Py. It was nice to
-spend a month buckling down and getting this done. I hope it's useful
-to everyone.
