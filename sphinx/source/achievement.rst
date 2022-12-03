@@ -31,7 +31,7 @@ Variables that control achievements are:
 
     If not None, this should be the Steam appid. Ren'Py will automatically
     set this appid when it starts. This needs to be set using the define
-    statement
+    statement::
 
         define config.steam_appid = 12345
 

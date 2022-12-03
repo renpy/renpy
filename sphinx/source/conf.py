@@ -13,7 +13,7 @@
 
 import sys
 import os
-import sphinx_rtd_theme
+# import sphinx_rtd_theme
 import datetime
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -124,7 +124,7 @@ html_title = "Ren'Py Documentation"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+html_logo = "navbar-logo.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -181,7 +181,7 @@ html_show_sourcelink = False
 #html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-#html_show_copyright = True
+html_show_copyright = False
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
@@ -194,115 +194,48 @@ html_show_sourcelink = False
 html_permalinks = True
 html_permalinks_icon = " link"
 
-# Output file base name for HTML help builder.
-htmlhelp_basename = 'TheRenPyVisualNovelEnginedoc'
-
 locale_dirs = ["locale/"]
 
 
-# -- Options for LaTeX output --------------------------------------------------
-
-# The paper size ('letter' or 'a4').
-#latex_paper_size = 'letter'
-
-# The font size ('10pt', '11pt' or '12pt').
-#latex_font_size = '10pt'
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'all.tex', u'Ren\'Py Visual Novel Engine Reference Manual',
-     u'PyTom', 'manual'),
+    ('index', 'all.tex', u'Ren\'Py Visual Novel Engine Reference Manual', u'', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 latex_logo = "logo.png"
 
-# For "manual" documents, if this is true, then toplevel headings are parts,
-# not chapters.
-#latex_use_parts = False
-
-# If true, show page references after internal links.
-#latex_show_pagerefs = False
-
-# If true, show URL addresses after external links.
-#latex_show_urls = False
-
-# Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
-
-# Documents to append as an appendix to all manuals.
-#latex_appendices = []
-
-# If false, no module index is generated.
-#latex_domain_indices = True
-
-
-# -- Options for manual page output --------------------------------------------
-
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [
-    # ('index', 'therenpyvisualnovelengine', u'The Ren'Py Visual Novel Engine Documentation',
-    # [u'PyTom'], 1)
-]
-
 
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
 epub_title = u'The Ren\'Py Visual Novel Engine'
-epub_author = u'PyTom'
-epub_publisher = u'PyTom'
-epub_copyright = u'2011, PyTom'
+epub_author = u''
+epub_publisher = u''
+epub_copyright = copyright
 
-# The language of the text. It defaults to the language option
-# or en if the language is not set.
-#epub_language = ''
 
-# The scheme of the identifier. Typical schemes are ISBN or URL.
-#epub_scheme = ''
-
-# The unique identifier of the text. This can be a ISBN number
-# or the project homepage.
-#epub_identifier = ''
-
-# A unique identification for the text.
-#epub_uid = ''
-
-# HTML files that should be inserted before the pages created by sphinx.
-# The format is a list of tuples containing the path and title.
-#epub_pre_files = []
-
-# HTML files shat should be inserted after the pages created by sphinx.
-# The format is a list of tuples containing the path and title.
-#epub_post_files = []
-
-# A list of files that should not be packed into the epub file.
-#epub_exclude_files = []
-
-# The depth of the table of contents in toc.ncx.
-#epub_tocdepth = 3
+# -- More options --------------------------------------------------------------
 
 highlight_language = "renpy"
 
-extlinks = {'lpbug': ('https://bugs.launchpad.net/renpy/+bug/%s',
-                      'launchpad bug '),
-            'ghbug': ('https://github.com/renpy/renpy/issues/%s',
-                      'github bug'),
-            }
+extlinks = {
+    'lpbug': (
+        'https://bugs.launchpad.net/renpy/+bug/%s',
+        'launchpad bug %s'),
+    'ghbug': (
+       'https://github.com/renpy/renpy/issues/%s',
+        'github bug %s'),
+    }
 
 rst_prolog = """\
 .. |PGS4A| replace:: RAPT
 .. |PGS4A_URL| replace:: http://www.renpy.org/dl/android/
 """
 
-
 def setup(app):
     app.add_config_value('is_renpy', '', True)
     app.add_config_value('renpy_figures', '', True)
-
 
 is_renpy = "renpy"
 renpy_figures = ("figures" if ("RENPY_NO_FIGURES" not in os.environ) else '')
