@@ -225,6 +225,72 @@ init python:
                 return f_rule
         return False
 
+    def generate_pwa_icons(p, destination):
+        """
+        Checks if the pwa_icon.png file exists in the game folder and generates
+        required icons for PWA in subdirectory icons/ in the destination folder.
+        If no pwa_icon.png is found, the default Ren'Py icon is used instead in
+        the web folder, if exists.
+        """
+        # Check if there's a custom icon in the game directory
+        icon_path = os.path.join(p.path, 'pwa_icon.png')
+        # Generate a default icon if there isn't
+        if not os.path.exists(icon_path):
+            icon_path = os.path.join(WEB_PATH, 'pwa_icon.png')
+
+        # Check if path is a valid image
+        if not os.path.exists(icon_path):
+            # Skip pwa support if no icon is found
+            return
+        # Create icons directory
+        icons_dir = os.path.join(destination, 'icons')
+        if not os.path.isdir(icons_dir):
+            os.makedirs(icons_dir, 0o777) 
+        # Check the height and width of the icon
+        icon = pygame_sdl2.image.load(icon_path)
+        icon_width = icon.get_width()
+        icon_height = icon.get_height()
+        if icon_width != icon_height:
+            raise RuntimeError("The icon must be square")
+        if icon_width < 512:
+            raise RuntimeError("The icon must be at least 512x512 pixels")
+
+        best_compression = 5
+        # Generate 512x512 icon, if needed
+        if icon_width != 512:
+            icon512 = renpy.display.pgrender.transform_scale(icon, (512, 512))
+            pygame_sdl2.image.save(icon512, os.path.join(icons_dir, 'icon-512x512.png'), best_compression)
+        else:
+            pygame_sdl2.image.save(icon, os.path.join(icons_dir, 'icon-512x512.png'), best_compression)
+        
+        # Generate 384x384 icon
+        icon384 = renpy.display.pgrender.transform_scale(icon, (384, 384))
+        pygame_sdl2.image.save(icon384, os.path.join(icons_dir, 'icon-384x384.png'), best_compression)
+
+        # Generate 192x192 icon
+        icon192 = renpy.display.pgrender.transform_scale(icon, (192, 192))
+        pygame_sdl2.image.save(icon192, os.path.join(icons_dir, 'icon-192x192.png'), best_compression)
+
+        # Generate 152x152 icon
+        icon152 = renpy.display.pgrender.transform_scale(icon, (152, 152))
+        pygame_sdl2.image.save(icon152, os.path.join(icons_dir, 'icon-152x152.png'), best_compression)
+
+        # Generate 144x144 icon
+        icon144 = renpy.display.pgrender.transform_scale(icon, (144, 144))
+        pygame_sdl2.image.save(icon144, os.path.join(icons_dir, 'icon-144x144.png'), best_compression)
+
+        # Generate 128x128 icon
+        icon128 = renpy.display.pgrender.transform_scale(icon, (128, 128))
+        pygame_sdl2.image.save(icon128, os.path.join(icons_dir, 'icon-128x128.png'), best_compression)
+
+        # Generate 96x96 icon
+        icon96 = renpy.display.pgrender.transform_scale(icon, (96, 96))
+        pygame_sdl2.image.save(icon96, os.path.join(icons_dir, 'icon-96x96.png'), best_compression)
+
+        # Generate 72x72 icon
+        icon72 = renpy.display.pgrender.transform_scale(icon, (72, 72))
+        pygame_sdl2.image.save(icon72, os.path.join(icons_dir, 'icon-72x72.png'), best_compression)
+
     def build_web(p, gui=True):
 
         # Figure out the reporter to use.
@@ -275,6 +341,8 @@ init python:
         if presplash:
             os.unlink(os.path.join(destination, "web-presplash.jpg"))
             shutil.copy(os.path.join(project.current.path, presplash), os.path.join(destination, presplash))
+
+        generate_pwa_icons(p, destination)
 
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
