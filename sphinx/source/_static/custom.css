@@ -5,6 +5,10 @@
 
 /* Highlighting */
 
+html[data-theme='dark'] .pre {
+    color: #fff;
+}
+
 html[data-theme='dark'] .highlight .k, html[data-theme='dark'] .highlight .kc {
     color: #c586c0 !important;
     font-weight: normal !important;
