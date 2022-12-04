@@ -270,21 +270,6 @@ init python:
     build.classify_renpy("**/thumbs.db", None)
     build.classify_renpy("**/.*", None)
 
-    # Atom rules. These have to be very early, since Atom uses names like
-    # tmp for packages.
-    build.classify_renpy("atom/", "atom-all")
-    build.classify_renpy("atom/default-dot-atom/**", "atom-all")
-    build.classify_renpy("atom/atom-windows/**", "atom-windows")
-    build.classify_renpy("atom/Atom.app/**", "atom-mac")
-    build.classify_renpy("atom/atom-linux**", "atom-linux")
-
-    try:
-        with open(os.path.join(config.renpy_base, "atom", "executable.txt")) as f:
-            for l in f:
-                build.executable(l.strip())
-    except Exception:
-        pass
-
     build.classify_renpy("rapt/**/libLive2DCubismCore.so", None)
     build.classify_renpy("rapt/symbols/", None)
     build.classify_renpy("rapt/**", "rapt")
@@ -430,11 +415,6 @@ init python:
 
     build.classify_renpy("lib/", "binary")
 
-    # renpy.app is now built from scratch from distribute.rpy.
-
-    # jedit rules.
-    build.classify_renpy("jedit/**", "jedit")
-
     # Packages.
     build.packages = [ ]
 
@@ -442,12 +422,6 @@ init python:
     build.package("sdkarm", "tar.bz2", "source binary linux_arm")
     build.package("source", "tar.bz2", "source source_only", update=False)
     build.package("steam", "zip", "steam", dlc=True)
-
-    build.package("jedit", "zip", "jedit", dlc=True)
-
-    build.package("atom-linux", "tar.bz2", "atom-all atom-linux", dlc=True)
-    build.package("atom-mac", "zip", "atom-all atom-mac", dlc=True)
-    build.package("atom-windows", "zip", "atom-all atom-windows", dlc=True)
 
     build.package("rapt", "zip", "rapt", dlc=True)
     build.package("renios", "zip", "renios", dlc=True)
