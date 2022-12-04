@@ -125,3 +125,13 @@ how things could look below:
 
         An slightly more elaborate example of how the progress bar foreground
         could look.
+
+Mobile and Web Presplash Screens
+--------------------------------
+
+The Android, iOS, and Web platforms have their own presplash screens. These
+are documented elsewhere:
+
+* Android ref:`android-presplash`
+* iOS :ref:`ios-storyboard`
+* Web :ref:`web-presplash`
