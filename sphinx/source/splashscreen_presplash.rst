@@ -67,6 +67,8 @@ presplash.png
     The image that's used when the game is loading.
 
 This will only work on computer platforms, not on android, ios or web.
+For the android platform, see :ref:`android-presplash`, and for the web,
+see :ref:`Web Presplash <web-presplash>`.
 
 The :var:`config.minimum_presplash_time` variable sets a minimum time the
 presplash is shown for.
@@ -123,12 +125,3 @@ how things could look below:
 
         An slightly more elaborate example of how the progress bar foreground
         could look.
-
-Platform-specific presplashes
------------------------------
-
-The Web platform natively uses a default presplash image. To override it, you can supply
-an image named `web-presplash`, `.jpg`, `.png` or `.webp`, and it will replace
-the default.
-
-For the android platform, see :ref:`android-presplash`.
