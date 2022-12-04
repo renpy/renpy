@@ -659,6 +659,23 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
     `behind`
         A list of strings, giving image tags that this image is shown behind.
         The equivalent of the ``behind`` property.
+
+    ::
+        show a
+        $ renpy.show("a")
+
+        show expression w
+        # anonymous show expression : no equivalent
+
+        show expression w as a
+        $ renpy.show("a", what=w)
+        $ renpy.show("y", what=w, tag="a") # in this case, name is ignored
+
+        show a at T, T2
+        $ renpy.show("a", at_list=(T, T2))
+
+        show a onlayer b behind c zorder d as e
+        $ renpy.show("a", layer="b", behind=["c"], zorder="d", tag="e")
     """
 
     default_transform = renpy.config.default_transform
