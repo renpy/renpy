@@ -209,9 +209,14 @@ documented = collections.defaultdict(list)
 documented_list = [ ]
 
 
-def scan(name, o, prefix=""):
+def scan(name, o, prefix="", inclass=False):
 
-    doc_type = "function"
+    if inspect.isclass(o):
+        doc_type = "class"
+    elif not inclass:
+        doc_type = "function"
+    else:
+        doc_type = "method"
 
     # The section it's going into.
     section = None
@@ -313,7 +318,7 @@ def scan(name, o, prefix=""):
     if inspect.isclass(o):
         if (name not in [ "Matrix", "OffsetMatrix", "RotateMatrix", "ScaleMatrix" ]):
             for i in dir(o):
-                scan(i, getattr(o, i), prefix + "    ")
+                scan(i, getattr(o, i), prefix + "    ", inclass=True)
 
     if name == "identity":
         raise Exception("identity")
