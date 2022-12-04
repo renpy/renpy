@@ -116,7 +116,7 @@ Customization
 Most customization is performed in the Xcode project. For example, the
 icon, launch images, and orientations are all customized in Xcode.
 
-... _ios-storyboard:
+.. _ios-storyboard:
 
 Launch Storyboard
 -----------------
