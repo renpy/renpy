@@ -29,7 +29,7 @@ init -1499 python in _renpysteam:
 
     import collections
     import time
-    
+
     ticket = None
 
     def retrieve_stats():
@@ -305,6 +305,8 @@ init -1499 python in _renpysteam:
         return steamapi.SteamUtils().IsOverlayEnabled()
 
 
+    last_needs_present_call = 0
+
     def overlay_needs_present():
         """
         :doc: steam_overlay
@@ -312,6 +314,17 @@ init -1499 python in _renpysteam:
         Returns true if the steam overlay is enabled. (This might take a while to
         return true once the game starts.)
         """
+
+        global last_needs_present_call
+
+        now = time.time()
+
+        # Steam docs say that BOOL BOverlayNeedsPresent() should be called
+        # at around 33 Hz. See also Ren'Py bug #3978.
+        if now < last_needs_present_call + 1 / 33.0:
+            return False
+
+        last_needs_present_call = now
 
         return steamapi.SteamUtils().BOverlayNeedsPresent()
 
