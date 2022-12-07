@@ -383,7 +383,7 @@ screen web():
 
                         add SPACER
 
-                        text _("Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general.")
+                        text _("Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies have limited support.")
 
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
