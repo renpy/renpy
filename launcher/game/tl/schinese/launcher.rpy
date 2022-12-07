@@ -1797,8 +1797,8 @@
     new "图像和音乐可以在进行游戏时下载。引擎将创建 progressive_download.txt 文件，以便您配置此行为。"
 
     # game/web.rpy:336
-    old "Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported."
-    new "目前网络平台的限制意味着加载大型图像可能会导致音频或帧数故障，并降低总体性能。目前不支持视频。"
+    old "Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general."
+    new "目前网络平台的限制意味着加载大型图像可能会导致音频或帧数故障，并降低总体性能。"
 
     # game/web.rpy:344
     old "This feature is not supported in Ren'Py 8."
