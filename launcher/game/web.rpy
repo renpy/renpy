@@ -32,6 +32,7 @@ init python:
     import time
     import pygame_sdl2
     import zipfile
+    import re
 
     WEB_PATH = None
 
@@ -325,6 +326,37 @@ init python:
         pygame_sdl2.image.save(icon72_maskable, os.path.join(icons_dir, 'icon-72x72-maskable.png'), best_compression)
 
 
+    def prepare_pwa_files(p, destination):
+        """
+        Replaces in service-worker.js the cache name with the game name and current timestamp.
+        Replace in manifest.json the project name with the ones in the game.
+        """
+
+        # Open the service-worker.js file
+        with io.open(os.path.join(destination, "service-worker.js"), encoding='utf-8') as f:
+            service_worker = f.read()
+    
+        # Use re to slugify the game name, avoiding use of 3rd party libraries
+        slugified_name = re.sub(r'\W+', '-', p.dump['build']['display_name']).lower()
+        # Replace the default cache name with the game name + current timestamp
+        service_worker = service_worker.replace('renpy-web-game', f"{slugified_name}-{int(time.time())}")
+        
+        # Write the file
+        with io.open(os.path.join(destination, "service-worker.js"), 'w', encoding='utf-8') as f:
+            f.write(service_worker)
+
+        # Open the manifest.json file
+        with io.open(os.path.join(destination, "manifest.json"), encoding='utf-8') as f:
+            manifest = f.read()
+
+        # Replace the project name with the ones in the game
+        manifest = manifest.replace("Ren'Py Web Game", p.dump['build']['display_name'])
+
+        # Write the file
+        with io.open(os.path.join(destination, "manifest.json"), 'w', encoding='utf-8') as f:
+            f.write(manifest)
+
+
     def build_web(p, gui=True):
 
         # Figure out the reporter to use.
@@ -356,7 +388,7 @@ init python:
 
         # Copy the files from WEB_PATH to destination.
         for fn in os.listdir(WEB_PATH):
-            if fn in { "game.zip", "hash.txt", "index.html" }:
+            if fn in { "game.zip", "hash.txt", "index.html", "pwa_icon.png" }:
                 continue
 
             shutil.copy(os.path.join(WEB_PATH, fn), os.path.join(destination, fn))
@@ -377,6 +409,7 @@ init python:
             shutil.copy(os.path.join(project.current.path, presplash), os.path.join(destination, presplash))
 
         generate_pwa_icons(p, destination)
+        prepare_pwa_files(p, destination)
 
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
