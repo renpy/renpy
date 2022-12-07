@@ -351,6 +351,10 @@ init python:
 
         # Replace the project name with the ones in the game
         manifest = manifest.replace("Ren'Py Web Game", p.dump['build']['display_name'])
+        screen_size = p.dump.get("size")
+        # If width are smaller than height, set the orientation to portrait. If not, leave it as is.
+        if screen_size[0] < screen_size[1]:
+            manifest = manifest.replace("landscape-primary", "portrait-primary")
 
         # Write the file
         with io.open(os.path.join(destination, "manifest.json"), 'w', encoding='utf-8') as f:
