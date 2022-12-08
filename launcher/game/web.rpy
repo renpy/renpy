@@ -32,6 +32,7 @@ init python:
     import time
     import pygame_sdl2
     import zipfile
+    import re
 
     WEB_PATH = None
 
@@ -225,6 +226,141 @@ init python:
                 return f_rule
         return False
 
+    def generate_pwa_icons(p, destination):
+        """
+        Checks if the pwa_icon.png file exists in the game folder and generates
+        required icons for PWA in subdirectory icons/ in the destination folder.
+        If no pwa_icon.png is found, the default Ren'Py icon is used instead in
+        the web folder, if exists.
+        """
+        # Check if there's a custom icon in the game directory
+        icon_path = os.path.join(p.path, 'pwa_icon.png')
+        # Generate a default icon if there isn't
+        if not os.path.exists(icon_path):
+            icon_path = os.path.join(WEB_PATH, 'pwa_icon.png')
+
+        # Check if path is a valid image
+        if not os.path.exists(icon_path):
+            # Skip pwa support if no icon is found
+            return
+        # Create icons directory
+        icons_dir = os.path.join(destination, 'icons')
+        if not os.path.isdir(icons_dir):
+            os.makedirs(icons_dir, 0o777) 
+        # Check the height and width of the icon
+        icon = pygame_sdl2.image.load(icon_path)
+        icon_width = icon.get_width()
+        icon_height = icon.get_height()
+        if icon_width != icon_height:
+            raise RuntimeError("The icon must be square")
+        if icon_width < 512:
+            raise RuntimeError("The icon must be at least 512x512 pixels")
+
+        best_compression = 9
+        # Generate 512x512 icon, if needed
+        if icon_width != 512:
+            icon512 = renpy.display.pgrender.transform_scale(icon, (512, 512))
+            pygame_sdl2.image.save(icon512, os.path.join(icons_dir, 'icon-512x512.png'), best_compression)
+        else:
+            pygame_sdl2.image.save(icon, os.path.join(icons_dir, 'icon-512x512.png'), best_compression)
+        
+        # Generate 384x384 icon
+        icon384 = renpy.display.pgrender.transform_scale(icon, (384, 384))
+        pygame_sdl2.image.save(icon384, os.path.join(icons_dir, 'icon-384x384.png'), best_compression)
+
+        # Generate 192x192 icon
+        icon192 = renpy.display.pgrender.transform_scale(icon, (192, 192))
+        pygame_sdl2.image.save(icon192, os.path.join(icons_dir, 'icon-192x192.png'), best_compression)
+
+        # Generate 152x152 icon
+        icon152 = renpy.display.pgrender.transform_scale(icon, (152, 152))
+        pygame_sdl2.image.save(icon152, os.path.join(icons_dir, 'icon-152x152.png'), best_compression)
+
+        # Generate 144x144 icon
+        icon144 = renpy.display.pgrender.transform_scale(icon, (144, 144))
+        pygame_sdl2.image.save(icon144, os.path.join(icons_dir, 'icon-144x144.png'), best_compression)
+
+        # Generate 128x128 icon
+        icon128 = renpy.display.pgrender.transform_scale(icon, (128, 128))
+        pygame_sdl2.image.save(icon128, os.path.join(icons_dir, 'icon-128x128.png'), best_compression)
+
+        # Generate 96x96 icon
+        icon96 = renpy.display.pgrender.transform_scale(icon, (96, 96))
+        pygame_sdl2.image.save(icon96, os.path.join(icons_dir, 'icon-96x96.png'), best_compression)
+
+        # Generate 72x72 icon
+        icon72 = renpy.display.pgrender.transform_scale(icon, (72, 72))
+        pygame_sdl2.image.save(icon72, os.path.join(icons_dir, 'icon-72x72.png'), best_compression)
+
+        # Add 128 pixels to the 384x384 icon to generate 512x512 icon maskable
+        icon512_maskable = pygame_sdl2.Surface((512, 512), pygame_sdl2.SRCALPHA)
+        icon512_maskable.blit(icon384, (64, 64))
+        pygame_sdl2.image.save(icon512_maskable, os.path.join(icons_dir, 'icon-512x512-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 384x384 to generate 384x384 icon maskable
+        icon384_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (384, 384))
+        pygame_sdl2.image.save(icon384_maskable, os.path.join(icons_dir, 'icon-384x384-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 192x192 to generate 192x192 icon maskable
+        icon192_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (192, 192))
+        pygame_sdl2.image.save(icon192_maskable, os.path.join(icons_dir, 'icon-192x192-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 152x152 to generate 152x152 icon maskable
+        icon152_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (152, 152))
+        pygame_sdl2.image.save(icon152_maskable, os.path.join(icons_dir, 'icon-152x152-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 144x144 to generate 144x144 icon maskable
+        icon144_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (144, 144))
+        pygame_sdl2.image.save(icon144_maskable, os.path.join(icons_dir, 'icon-144x144-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 128x128 to generate 128x128 icon maskable
+        icon128_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (128, 128))
+        pygame_sdl2.image.save(icon128_maskable, os.path.join(icons_dir, 'icon-128x128-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 96x96 to generate 96x96 icon maskable
+        icon96_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (96, 96))
+        pygame_sdl2.image.save(icon96_maskable, os.path.join(icons_dir, 'icon-96x96-maskable.png'), best_compression)
+
+        # Resize icon512_maskable to 72x72 to generate 72x72 icon maskable
+        icon72_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (72, 72))
+        pygame_sdl2.image.save(icon72_maskable, os.path.join(icons_dir, 'icon-72x72-maskable.png'), best_compression)
+
+
+    def prepare_pwa_files(p, destination):
+        """
+        Replaces in service-worker.js the cache name with the game name and current timestamp.
+        Replace in manifest.json the project name with the ones in the game.
+        """
+
+        # Open the service-worker.js file
+        with io.open(os.path.join(destination, "service-worker.js"), encoding='utf-8') as f:
+            service_worker = f.read()
+    
+        # Use re to slugify the game name, avoiding use of 3rd party libraries
+        slugified_name = re.sub(r'\W+', '-', p.dump['build']['display_name']).lower()
+        # Replace the default cache name with the game name + current timestamp
+        service_worker = service_worker.replace('renpy-web-game', f"{slugified_name}-{int(time.time())}")
+        
+        # Write the file
+        with io.open(os.path.join(destination, "service-worker.js"), 'w', encoding='utf-8') as f:
+            f.write(service_worker)
+
+        # Open the manifest.json file
+        with io.open(os.path.join(destination, "manifest.json"), encoding='utf-8') as f:
+            manifest = f.read()
+
+        # Replace the project name with the ones in the game
+        manifest = manifest.replace("Ren'Py Web Game", p.dump['build']['display_name'])
+        screen_size = p.dump.get("size")
+        # If width are smaller than height, set the orientation to portrait. If not, leave it as is.
+        if screen_size[0] < screen_size[1]:
+            manifest = manifest.replace("landscape-primary", "portrait-primary")
+
+        # Write the file
+        with io.open(os.path.join(destination, "manifest.json"), 'w', encoding='utf-8') as f:
+            f.write(manifest)
+
+
     def build_web(p, gui=True):
 
         # Figure out the reporter to use.
@@ -256,7 +392,7 @@ init python:
 
         # Copy the files from WEB_PATH to destination.
         for fn in os.listdir(WEB_PATH):
-            if fn in { "game.zip", "hash.txt", "index.html" }:
+            if fn in { "game.zip", "hash.txt", "index.html", "pwa_icon.png" }:
                 continue
 
             shutil.copy(os.path.join(WEB_PATH, fn), os.path.join(destination, fn))
@@ -275,6 +411,9 @@ init python:
         if presplash:
             os.unlink(os.path.join(destination, "web-presplash.jpg"))
             shutil.copy(os.path.join(project.current.path, presplash), os.path.join(destination, presplash))
+
+        generate_pwa_icons(p, destination)
+        prepare_pwa_files(p, destination)
 
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
