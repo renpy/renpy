@@ -2,7 +2,7 @@ init -1100 python hide:
 
     config.web_video_base = "./game"
 
-    config.web_video_prompt = _("Touch to play the video.")
+    config.web_video_prompt = _("Touch to turn on volume.")
 
     if renpy.emscripten:
 
@@ -91,13 +91,14 @@ videoPlay = (properties) => {
         setTimeout(unblockVideo, 1000);
     }).catch( (e) => {
         console.log("Video rejected: " + e);
-        videoPlayPrompt(properties.prompt);
         video.style.pointerEvents = "auto";
+        video.muted = true;
+        video.play();
 
         video.addEventListener("click", () => {
             console.log("Video click!");
-            videoPlayPromptHide();
             setTimeout(unblockVideo, 1000);
+            video.muted = false;
             video.play();
         });
     });
