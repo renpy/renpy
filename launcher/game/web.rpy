@@ -246,7 +246,7 @@ init python:
         # Create icons directory
         icons_dir = os.path.join(destination, 'icons')
         if not os.path.isdir(icons_dir):
-            os.makedirs(icons_dir, 0o777) 
+            os.makedirs(icons_dir, 0o777)
         # Check the height and width of the icon
         icon = pygame_sdl2.image.load(icon_path)
         icon_width = icon.get_width()
@@ -263,7 +263,7 @@ init python:
             pygame_sdl2.image.save(icon512, os.path.join(icons_dir, 'icon-512x512.png'), best_compression)
         else:
             pygame_sdl2.image.save(icon, os.path.join(icons_dir, 'icon-512x512.png'), best_compression)
-        
+
         # Generate 384x384 icon
         icon384 = renpy.display.pgrender.transform_scale(icon, (384, 384))
         pygame_sdl2.image.save(icon384, os.path.join(icons_dir, 'icon-384x384.png'), best_compression)
@@ -335,12 +335,12 @@ init python:
         # Open the service-worker.js file
         with io.open(os.path.join(destination, "service-worker.js"), encoding='utf-8') as f:
             service_worker = f.read()
-    
+
         # Use re to slugify the game name, avoiding use of 3rd party libraries
         slugified_name = re.sub(r'\W+', '-', p.dump['build']['display_name']).lower()
         # Replace the default cache name with the game name + current timestamp
-        service_worker = service_worker.replace('renpy-web-game', f"{slugified_name}-{int(time.time())}")
-        
+        service_worker = service_worker.replace('renpy-web-game', "{}-{}".format(slugified_name, int(time.time())))
+
         # Write the file
         with io.open(os.path.join(destination, "service-worker.js"), 'w', encoding='utf-8') as f:
             f.write(service_worker)
