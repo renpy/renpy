@@ -804,16 +804,22 @@ class Lexer(object):
         if not self.eol():
             self.error('end of line expected.')
 
-    def expect_noblock(self, stmt):
+    def expect_noblock(self, stmt, colon_possible=False):
         """
         Called to indicate this statement does not expect a block.
         If a block is found, raises an error.
+        `colon_possible` indicates that a block could be accepted if a colon were added.
         """
 
         if self.subblock:
             ll = self.subblock_lexer()
             ll.advance()
-            ll.error("Line is indented, but the preceding %s statement does not expect a block. Please check this line's indentation." % stmt)
+            error = "Line is indented, but the preceding {} statement does not expect a block.".format(stmt)
+            if colon_possible:
+                error += " You may have forgotten a colon (:)."
+            else:
+                error += " Please check this line's indentation."
+            ll.error(error)
 
     def expect_block(self, stmt):
         """
