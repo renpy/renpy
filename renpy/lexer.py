@@ -813,7 +813,8 @@ class Lexer(object):
         if self.subblock:
             ll = self.subblock_lexer()
             ll.advance()
-            ll.error("Line is indented, but the preceding %s statement does not expect a block. Please check this line's indentation." % stmt)
+            ll.error("Line is indented, but the preceding {} statement does not expect a block. "
+                     "Please check this line's indentation. You may have forgotten a colon (:).".format(stmt))
 
     def expect_block(self, stmt):
         """
