@@ -757,7 +757,7 @@ def jump_statement(l, loc):
 
 @statement("call")
 def call_statement(l, loc):
-    l.expect_noblock('call statment')
+    l.expect_noblock('call statement')
 
     if l.keyword('expression'):
         expression = True
@@ -812,7 +812,7 @@ def scene_statement(l, loc):
     if l.match(':'):
         stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
-        l.expect_noblock('scene statement')
+        l.expect_noblock('scene statement', colon_possible=True)
 
     l.expect_eol()
     l.advance()
@@ -829,7 +829,7 @@ def show_statement(l, loc):
     if l.match(':'):
         stmt.atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
-        l.expect_noblock('show statement')
+        l.expect_noblock('show statement', colon_possible=True)
 
     l.expect_eol()
     l.advance()
@@ -851,7 +851,7 @@ def show_layer_statement(l, loc):
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         atl = None
-        l.expect_noblock('show layer statement')
+        l.expect_noblock('show layer statement', colon_possible=True)
 
     l.expect_eol()
     l.advance()
@@ -875,7 +875,7 @@ def camera_statement(l, loc):
         atl = renpy.atl.parse_atl(l.subblock_lexer())
     else:
         atl = None
-        l.expect_noblock('camera statement')
+        l.expect_noblock('camera statement', colon_possible=True)
 
     l.expect_eol()
     l.advance()
@@ -1412,7 +1412,7 @@ def style_statement(l, loc):
         pass
 
     if not l.match(':'):
-        l.expect_noblock("style statement")
+        l.expect_noblock("style statement", colon_possible=True)
         l.expect_eol()
     else:
         l.expect_block("style statement")

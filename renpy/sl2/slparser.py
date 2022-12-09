@@ -300,7 +300,7 @@ class Parser(object):
                     break
 
                 if l.eol():
-                    l.expect_noblock(self.name)
+                    l.expect_noblock(self.name, colon_possible=True)
                     block = False
                     break
 
@@ -892,7 +892,7 @@ class UseParser(Parser):
 
         else:
             l.expect_eol()
-            l.expect_noblock("use statement")
+            l.expect_noblock("use statement", colon_possible=True)
 
             block = None
 

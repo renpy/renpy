@@ -849,7 +849,7 @@ python early in layeredimage:
 
         if not l.match(':'):
             l.expect_eol()
-            l.expect_noblock('attribute')
+            l.expect_noblock('attribute', colon_possible=True)
             return
 
 
@@ -893,7 +893,7 @@ python early in layeredimage:
 
         if not l.match(':'):
             l.expect_eol()
-            l.expect_noblock('attribute')
+            l.expect_noblock('attribute', colon_possible=True)
             return
 
         l.expect_block('attribute')
@@ -942,7 +942,7 @@ python early in layeredimage:
 
         else:
             l.expect_eol()
-            l.expect_noblock("group")
+            l.expect_noblock("group", colon_possible=True)
 
     def parse_condition(l, need_expr):
 
