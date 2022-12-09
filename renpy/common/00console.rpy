@@ -410,6 +410,9 @@ init -1500 python in _console:
             self.lines = lines
 
         def append(self, value):
+            if self and (self[-1] == value):
+                return
+
             super(BoundedList, self).append(value)
 
             while len(self) >= self.size:
@@ -443,6 +446,12 @@ init -1500 python in _console:
             lines = lines[-config.console_history_lines:]
             self.result = "\n".join(lines)
             self.lines = len(lines)
+
+        def __eq__(self, other):
+            return type(self) is type(other)\
+                and self.command == other.command\
+                and self.result == other.result\
+                and self.is_error == other.is_error
 
     HistoryEntry = ConsoleHistoryEntry
 
