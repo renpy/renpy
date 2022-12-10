@@ -606,7 +606,8 @@ init -1500 python in _console:
                 return
 
             lines = self.lines
-            self.line_history.append(lines)
+            if not self.line_history or self.line_history[-1] != lines:
+                self.line_history.append(lines)
 
             self.reset()
 
