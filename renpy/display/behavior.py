@@ -60,29 +60,11 @@ def compile_event(key, keydown):
 
     part = key.split("_")
 
-    # Deal with the mouse.
-    if part[0] == "mousedown":
-        if keydown:
-            return "(ev.type == %d and ev.button == %d)" % (pygame.MOUSEBUTTONDOWN, int(part[1]))
-        else:
-            return "(False)"
-
-    if part[0] == "mouseup":
-        if keydown:
-            return "(ev.type == %d and ev.button == %d)" % (pygame.MOUSEBUTTONUP, int(part[1]))
-        else:
-            return "(False)"
-
-
     MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl" }
     modifiers = set()
 
     while part[0] in MODIFIERS:
         modifiers.add(part.pop(0))
-
-    # Deal with the Joystick / Gamepad.
-    if part[0] == "joy" or part[0] == "pad":
-        return "(False)"
 
     key = "_".join(part)
 
@@ -91,16 +73,36 @@ def compile_event(key, keydown):
     elif "keyup" in modifiers:
         keydown = False
 
-    # Otherwise, deal with it as a key.
-    if keydown:
+    # Deal with the Joystick / Gamepad.
+    if part[0] == "joy" or part[0] == "pad":
+        return "(False)"
+
+    # Determine the type of the event to check.
+    mouse = False
+
+    if part[0] == "mouseup":
+        mouse = True
+        rv = "(ev.type == %d" % pygame.MOUSEBUTTONUP
+
+    elif part[0] == "mousedown":
+        mouse = True
+        rv = "(ev.type == %d" % pygame.MOUSEBUTTONDOWN
+
+    elif keydown:
         rv = "(ev.type == %d" % pygame.KEYDOWN
+
     else:
         rv = "(ev.type == %d" % pygame.KEYUP
 
-    if "repeat" in modifiers:
-        rv += " and (ev.repeat)"
-    else:
-        rv += " and (not ev.repeat)"
+    if mouse and not keydown:
+        return
+
+    if not mouse:
+
+        if "repeat" in modifiers:
+            rv += " and (ev.repeat)"
+        else:
+            rv += " and (not ev.repeat)"
 
     if key not in [ "K_LALT", "K_RALT" ]:
 
@@ -131,7 +133,20 @@ def compile_event(key, keydown):
         if "noshift" in modifiers:
             rv += " and not (ev.mod & %d)" % pygame.KMOD_SHIFT
 
-    if len(part) == 1:
+
+    if part[0] == "mousedown":
+        if len(part) != 2:
+            raise Exception("Invalid key specifier %s" % key)
+
+        rv += " and ev.button == %d)" % int(part[1])
+
+    elif part[0] == "mouseup":
+        if len(part) != 2:
+            raise Exception("Invalid key specifier %s" % key)
+
+        rv += " and ev.button == %d)" % (int(part[1]))
+
+    elif len(part) == 1:
         if len(part[0]) != 1:
             if renpy.config.developer:
                 raise Exception("Invalid key specifier %s" % key)

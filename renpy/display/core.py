@@ -2179,6 +2179,10 @@ class Interface(object):
         # The number of interactions that have happened without processing an event.
         self.interaction_counter = 0
 
+        # This caches the mod field of the last event that has one, allowing keyboard
+        # modifiers to be used with mouse and other events.
+        self.mod = 0
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -4096,6 +4100,12 @@ class Interface(object):
                         pygame.time.wait(1)
 
                     continue
+
+                # Add the current keyboard modifiers to all events.
+                if ev.type in (pygame.KEYDOWN, pygame.KEYUP):
+                    self.mod = ev.mod
+
+                ev.mod = self.mod
 
                 # Recognize and ignore AltGr on Windows.
                 if ev.type == pygame.KEYDOWN:

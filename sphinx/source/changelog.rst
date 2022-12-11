@@ -98,6 +98,11 @@ not change after the init phase finishes.
 New Features
 ------------
 
+It's now possible for a mouse keysym to be given modifiers corresponding
+to the state of keyboard modifiers when the mouse button was pressed. For
+example, "shift_mouseup_1" will only trigger when mouse button 1 is
+released while the shift key is held down.
+
 Normally, when a displayable or screen with the same tag or name as one
 that is hiding is shown, the hiding displayable or screen is removed,
 cancelling the hide transform. The new :tpref:`show_cancels_hide` transform

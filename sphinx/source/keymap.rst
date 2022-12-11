@@ -34,8 +34,8 @@ the K\_ constants taken from pygame.constants. This type of keysym looks like
 "K\_BACKSPACE", "K\_RETURN", and "K\_TAB"; a full list of this kind of keysyms may
 be found `here <http://www.pygame.org/docs/ref/key.html>`_.
 
-Keyboard keysyms may be preceded by the following prefixes, separated by
-underscores:
+Keyboard and Mouse keysyms may be preceded by the following prefixes,
+separated by underscores:
 
 alt
     Matches if the Alt key is pressed. Keysyms without this prefix match
@@ -55,15 +55,16 @@ noshift
     Matches when the Shift key is not pressed.
 repeat
     Matches when the key is a repeat due to the key being held down. Keysyms
-    without this prefix do not match repeats.
+    without this prefix do not match repeats. (This does not work with mouse
+    buttons.)
 keydown
     Matches when the key is being pressed down (the default).
 keyup
     Matches when the key is being released.
 
 For example, the keysym "shift_alt_K_F5" will match the F5 key being pressed
-while Shift and Alt are held down.
-
+while Shift and Alt are held down. The keysym "shift_mouse_1" will match
+the left mouse button being pressed while Shift is held down.
 
 To change a binding, update the appropriate list in :var:`config.keymap`. The
 following adds the 't' key to the list of keys that dismiss a say
