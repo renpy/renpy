@@ -2322,7 +2322,7 @@ class Conditional(renpy.display.layout.Container):
         self.condition = condition
         self.null = renpy.display.layout.Null()
 
-        self.state = eval(self.condition, vars(renpy.store))
+        self.state = eval(self.condition, renpy.store.__dict__)
 
     def render(self, width, height, st, at):
         if self.state:
@@ -2332,7 +2332,7 @@ class Conditional(renpy.display.layout.Container):
 
     def event(self, ev, x, y, st):
 
-        state = eval(self.condition, vars(renpy.store))
+        state = eval(self.condition, renpy.store.__dict__)
 
         if state != self.state:
             renpy.display.render.redraw(self, 0)

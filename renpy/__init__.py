@@ -353,7 +353,7 @@ class Backup(_object):
 
         # Remove new variables from the module.
         for mod, names in self.names.items():
-            modvars = vars(mod)
+            modvars = mod.__dict__
             for name in set(modvars.keys()) - names:
                 del modvars[name]
 
@@ -605,7 +605,7 @@ def post_import():
     # Import everything into renpy.exports, provided it isn't
     # already there.
     for k, v in globals().items():
-        vars(renpy.exports).setdefault(k, v)
+        renpy.exports.__dict__.setdefault(k, v)
 
 
 def issubmodule(sub, module):

@@ -306,8 +306,8 @@ def merge(other):
 
     persistent = renpy.game.persistent
 
-    pvars = vars(persistent)
-    ovars = vars(other)
+    pvars = persistent.__dict__
+    ovars = other.__dict__
 
     fields = set(pvars.keys()) | set(ovars.keys())
 
