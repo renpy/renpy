@@ -634,7 +634,14 @@ class Layout(object):
         started = self.start_segment is None
         ended = False
 
+        language = style.language
+
         for p_num, p in enumerate(self.paragraphs):
+
+            if language == "thaic90":
+                # Thai C90 - apply the Thai C90 algorithm to the text of each
+                # segment.
+                p = self.thaic90_paragraph(p)
 
             # RTL - apply RTL to the text of each segment, then
             # reverse the order of the segments in each paragraph.
@@ -677,9 +684,8 @@ class Layout(object):
 
                 # Tag the glyphs that are eligible for line breaking, and if
                 # they should be included or excluded from the end of a line.
-                language = style.language
 
-                if language == "unicode" or language == "eastasian":
+                if language == "unicode" or language == "eastasian" or language == "thaic90":
                     textsupport.annotate_unicode(par_glyphs, False, 0)
                 elif language == "korean-with-spaces":
                     textsupport.annotate_unicode(par_glyphs, True, 0)
@@ -1289,6 +1295,23 @@ class Layout(object):
         paragraphs.append(line)
 
         return paragraphs
+
+    def thaic90_paragraph(self, p):
+        """
+        Given a paragraph (a list of (segment, text) tuples), converts the
+        text into c90-encoded thai text. This is an encoding that combines
+        multiple characters (base character, upper vowel, lower vowel, and
+        tone mark) into a single character in a unicode reserved space.
+        """
+
+        rv = [ ]
+
+        for ts, s in p:
+            s = renpy.text.extras.thaic90(s)
+            rv.append((ts, s))
+
+        return rv
+
 
     def rtl_paragraph(self, p):
         """

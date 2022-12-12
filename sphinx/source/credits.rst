@@ -191,6 +191,8 @@ the omission in future versions.
 * rivvil
 * Robert Penner
 * Roope Herpiö
+* Saamkhaih Kyakya
+* SahabandhSthabara
 * Saltome
 * Sapphi
 * Scout

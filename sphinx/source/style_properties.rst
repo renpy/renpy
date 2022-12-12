@@ -504,8 +504,8 @@ Text Style Properties
 
 .. style-property:: language string
 
-    Controls the language family used to break text into lines. Legal
-    values are:
+    Controls the language family used to break text into lines, and
+    for certain other text transformations. Legal values are:
 
     ``"unicode"`` (default)
         Uses the Unicode linebreaking algorithm, which is suitable for
@@ -529,6 +529,12 @@ Text Style Properties
     ``"korean-with-spaces"``
         Used for Korean text delimited by whitespace. This prevents linebreaking
         between adjacent Korean characters.
+
+    ``"thaic90"``
+        Used for Thai text displayed in fonts that support the
+        `C90 encoding for Thai <http://www.bakoma-tex.com/doc/fonts/enc/c90/c90.pdf>`_.
+        This combines groups of characters into single glyphs, allowing for better
+        display of vowel and tone marks. Line breaking uses the unicode algorithm.
 
     ``"western"``
         Allows breaking only at whitespace. Suitable for most

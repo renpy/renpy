@@ -98,6 +98,12 @@ not change after the init phase finishes.
 New Features
 ------------
 
+Ren'Py supports the C90 encoding for Thai fonts, which uses the unicode
+private area to provide glyphs that are combinations of base characters,
+vowel marks, and tone marks. This can be enabled by selecting a Thai font
+that supports the C90 encoding, and then setting :propref:`language` to
+"thaic90".
+
 It's now possible for a mouse keysym to be given modifiers corresponding
 to the state of keyboard modifiers when the mouse button was pressed. For
 example, "shift_mouseup_1" will only trigger when mouse button 1 is
