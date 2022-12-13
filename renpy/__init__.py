@@ -44,7 +44,7 @@ def update_path():
 
     try:
         import _renpy
-        if hasattr(_renpy, '__file__'): # .so/.dll
+        if hasattr(_renpy, '__file__') and _renpy.__file__ != "built-in":
             libexec = os.path.dirname(_renpy.__file__)
             package.__path__.append(os.path.join(libexec, *name))
     except ImportError:
