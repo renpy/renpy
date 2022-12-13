@@ -346,7 +346,7 @@ init python:
                 catalog["files"].append(file_name)
         with io.open(os.path.join(destination, "pwa_catalog.json"), 'w', encoding='utf-8') as f:
             # Write the JSON file without spaces and new lines, so it's as small as possible
-            f.write(json.dumps(catalog, separators=(',', ':'), sort_keys=True))
+            f.write(json.dumps(catalog, separators=(',', ':')))
 
 
     def prepare_pwa_files(p, destination):
