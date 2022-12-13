@@ -311,7 +311,7 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:21
     old "What is the full name of your application? This name will appear in the list of installed applications."
-    new "Як повна назва вашої програми? Ця назва з’явиться в списку встановлених програм."
+    new "Яка повна назва вашої програми? Ця назва з’явиться в списку встановлених програм."
 
     # game/androidstrings.rpy:22
     old "What is the short name of your application? This name will be used in the launcher, and for application shortcuts."
@@ -319,7 +319,7 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:23
     old "What is the name of the package?\n\nThis is usually of the form com.domain.program or com.domain.email.program. It may only contain ASCII letters and dots. It must contain at least one dot."
-    new "Як називається пакет?\n\nЦе зазвичай має форму com.domain.program або com.domain.email.program. Він може містити лише літери ASCII і крапки. Він повинен містити хоча б одну крапку."
+    new "Як називається пакет?\n\Він зазвичай має форму com.domain.program або com.domain.email.program. Він може містити лише літери ASCII і крапки. Він повинен містити хоча б одну крапку."
 
     # game/androidstrings.rpy:24
     old "The package name may not be empty."
@@ -347,7 +347,7 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:30
     old "What is the application's version?\n\nThis should be the human-readable version that you would present to a person. It must contain only numbers and dots."
-    new "Яка версія програми?\n\nЦе має бути зрозуміла для людини версія, яку ви б показали персоні. Вона повинна містити лише цифри та крапки."
+    new "Яка версія програми?\n\nЦе має бути зрозуміла для людини версія, яку ви б показали людині. Вона повинна містити лише цифри та крапки."
 
     # game/androidstrings.rpy:31
     old "The version number must contain only numbers and dots."
@@ -443,7 +443,7 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:55
     old "I've finished installing the required Android packages."
-    new "Мною було завершено встановлення необхідних пакетів Android."
+    new "Я завершив встановлення необхідних пакетів Android."
 
     # game/androidstrings.rpy:56
     old "Please enter your name or the name of your organization."
@@ -463,7 +463,7 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:60
     old "I've finished creating android.keystore. Please back it up, and keep it in a safe place."
-    new "Мною закінчиено створення android.keystore. Зробіть резервну копію та зберігайте її в безпечному місці."
+    new "Я завершив створення android.keystore. Зробіть резервну копію та зберігайте її в безпечному місці."
 
     # game/androidstrings.rpy:61
     old "I can create a bundle signing key for you. This key is required to build an Android App Bundle (AAB) for upload to Google Play.\n\nDo you want to create a key?"
@@ -479,7 +479,7 @@ translate ukrainian strings:
 
     # game/androidstrings.rpy:64
     old "I've opened the directory containing android.keystore and bundle.keystore. Please back them up, and keep them in a safe place."
-    new "В мене відкритий каталог, що містить android.keystore і bundle.keystore. Створіть їх резервні копії та зберігайте в безпечному місці."
+    new "Я відкрив каталог, що містить android.keystore і bundle.keystore. Створіть їх резервні копії та зберігайте в безпечному місці."
 
     # game/androidstrings.rpy:65
     old "It looks like you're ready to start packaging games."
@@ -671,7 +671,7 @@ translate ukrainian strings:
 
     # game/editor.rpy:153
     old "A modern editor with many extensions including advanced Ren'Py integration.\n{a=jump:reinstall_vscode}Upgrade Visual Studio Code to the latest version.{/a}"
-    new "Сучасний редактор із багатьма розширеннями, зокрема розширеною інтеграцією Ren'Py.\n{a=jump:reinstall_vscode}Оновіть код Visual Studio до останньої версії.{/a}"
+    new "Сучасний редактор із багатьма розширеннями, зокрема розширеною інтеграцією Ren'Py.\n{a=jump:reinstall_vscode}Оновіть Visual Studio Code до останньої версії.{/a}"
 
     # game/editor.rpy:169
     old "Visual Studio Code"
@@ -887,7 +887,7 @@ translate ukrainian strings:
 
     # game/gui7.rpy:257
     old "Please click on the color scheme you wish to use, then click Continue. These colors can be changed and customized later."
-    new "Клацніть колірну схему, яку ви бажаєте використати, а потім натисніть Продовжити. Ці кольори можна змінити та налаштувати пізніше."
+    new "Натисніть на колірну схему, яку ви бажаєте використати, а потім натисніть Продовжити. Ці кольори можна змінити та налаштувати пізніше."
 
     # game/gui7.rpy:302
     old "{b}Warning{/b}\nContinuing will overwrite customized bar, button, save slot, scrollbar, and slider images.\n\nWhat would you like to do?"
@@ -963,7 +963,7 @@ translate ukrainian strings:
 
     # game/install.rpy:114
     old "This screen allows you to install libraries that can't be distributed with Ren'Py. Some of these libraries may require you to agree to a third-party license before being used or distributed."
-    new "Цей екран дозволяє встановлювати бібліотеки, що неможлоиво поширити за допомогою Ren'Py. Деякі з цих бібліотек можуть вимагати від вас підтвердити ліцензію третьої сторони перед використанням або розповсюдженням."
+    new "Цей екран дозволяє встановлювати бібліотеки, які неможлоиво поширювати разом з Ren'Py. Деякі з цих бібліотек можуть вимагати від вас підтвердити ліцензію третьої сторони перед використанням або розповсюдженням."
 
     # game/install.rpy:120
     old "Install Steam Support"
