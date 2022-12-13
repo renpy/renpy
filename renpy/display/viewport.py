@@ -680,33 +680,33 @@ class VPGrid(Viewport):
     def per_interact(self):
         super(VPGrid, self).per_interact()
 
-        exc = None
-        delta = 0
+        children = len(self.children)
 
-        if None not in (self.grid_cols, self.grid_rows):
-            delta = (self.grid_cols * self.grid_rows) - len(self.children)
-            if delta > 0:
-                exc = Exception("VPGrid not completely full.")
-
+        if self.grid_cols is None or self.grid_rows is None:
+            given = self.grid_cols or self.grid_rows # ignore if both are 0
+            delta = given - (children % given or given) if given else 0
         else:
-            given = self.grid_cols or self.grid_rows
-            if given: # ignore the case where one is 0 - cannot be underfull
-                delta = given - (len(self.children) % given)
-                # the number of aditional children needed to complete
-                # within [1, given], `given` being all right
-                if delta < given:
-                    exc = Exception("VPGrid not completely full, needs a multiple of {} children.".format(given))
+            delta = (self.grid_cols * self.grid_rows) - children
 
-        if exc is not None:
+        if not delta:
+            return
+
+        if renpy.config.developer:
             allow_underfull = self.allow_underfull
-            if allow_underfull is None:
-                allow_underfull = renpy.config.allow_underfull_grids or renpy.config.allow_unfull_vpgrids
 
-            if not renpy.config.developer:
-                allow_underfull = True
+            if allow_underfull is None:
+                allow_underfull = renpy.config.allow_underfull_grids or \
+                                  renpy.config.allow_unfull_vpgrids
 
             if not allow_underfull:
-                raise exc
+                msg = "VPGrid not completely full"
 
-            for _ in range(delta):
-                self.add(renpy.display.layout.Null())
+                if self.grid_cols is None or self.grid_rows is None:
+                    msg += ", needs a multiple of {} children".format(given)
+
+                raise Exception(msg + ".")
+
+        null = renpy.display.layout.Null()
+
+        for _ in range(delta):
+            self.add(null)
