@@ -143,6 +143,7 @@ the omission in future versions.
 * Mason Chou
 * Matias B.
 * Matt George
+* Matthew Vimislik
 * Max le Fou
 * Maxwell Paul Brickner
 * Meithal
