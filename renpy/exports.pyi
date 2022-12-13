@@ -1,22 +1,87 @@
+# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 from __future__ import annotations
+
+# Export other undocumented API as renpy.renpy[.exports]
+import renpy as renpy
+
 import builtins
 import ctypes
 from typing import Any, BinaryIO, Callable, Final, Iterable, Iterator, Literal, Mapping, NoReturn, Sequence, TypeVar, overload
-import renpy
 from renpy.display.core import absolute
 
 
+# Public API imports
+
+# renpy.pyanalysis
+pure = renpy.pyanalysis.pure
+const = renpy.pyanalysis.const
+not_const = renpy.pyanalysis.not_const
+
+
+# renpy.text
+ParameterizedText = renpy.text.extras.ParameterizedText
+filter_text_tags = renpy.text.extras.filter_text_tags
+check_text_tags = renpy.text.extras.check_text_tags
+
+register_sfont = renpy.text.font.register_sfont
+register_mudgefont = renpy.text.font.register_mudgefont
+register_bmfont = renpy.text.font.register_bmfont
+
+BASELINE = renpy.text.text.BASELINE
+
+language_tailor = renpy.text.textsupport.language_tailor
+TEXT_TAG = renpy.text.textsupport.TAG
+TEXT_TEXT = renpy.text.textsupport.TEXT
+TEXT_PARAGRAPH = renpy.text.textsupport.PARAGRAPH
+TEXT_DISPLAYABLE = renpy.text.textsupport.DISPLAYABLE
+
+
+# renpy.display
+Render = renpy.display.render.Render
+render = renpy.display.render.render
+IgnoreEvent = renpy.display.core.IgnoreEvent
+redraw = renpy.display.render.redraw
+
+
+# New context stuff
+call_in_new_context = renpy.game.call_in_new_context
+curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
+invoke_in_new_context = renpy.game.invoke_in_new_context
+curried_invoke_in_new_context = renpy.curry.curry(renpy.game.invoke_in_new_context)
+call_replay = renpy.game.call_replay
+
+
 # Type declarations
-ImageName = str | tuple[str, ...]
-Character = renpy.character.ADVCharacter
-TransitionLike = renpy.display.transition.Transition | None
-DisplayableLike = renpy.display.core.Displayable | str
-AtTransform = Callable[..., renpy.display.core.Displayable]
+_ImageName = str | tuple[str, ...]
+_Character = renpy.character.ADVCharacter
+_TransitionLike = renpy.display.transition.Transition | None
+_DisplayableLike = renpy.display.core.Displayable | str
+_AtTransform = Callable[..., renpy.display.core.Displayable]
 _T = TypeVar("_T")
 
 
 # renpy.compat
-PY2: Literal[False] = False
+PY2: Literal[False]
 open = builtins.open
 basestring = (str, )
 str = builtins.str
@@ -30,7 +95,24 @@ def bchr(s: int, /) -> bytes: ...
 def tobytes(s: str | bytes, /) -> bytes: ...
 
 
+# Constants
 bits: Final[int]
+version_string: Final[str]
+version_only: Final[str]
+version_name: Final[str]
+version_tuple: Final[tuple[str, str, str, str]]
+license: Final[str]
+
+
+# Platform constants
+platform: Final[bool]
+windows: Final[bool]
+macintosh: Final[bool]
+linux: Final[bool]
+android: Final[bool]
+ios: Final[bool]
+emscripten: Final[bool]
+mobile: Final[bool]
 
 
 def roll_forward_info() -> Any | None:
@@ -69,7 +151,7 @@ def retain_after_load() -> None:
     ...
 
 
-def image(name: str, d: DisplayableLike) -> None:
+def image(name: str, d: _DisplayableLike) -> None:
     ...
 
 
@@ -77,11 +159,11 @@ def copy_images(old: str, new: str) -> None:
     ...
 
 
-def can_show(name: ImageName, layer: str | None = None, tag: str | None = None) -> tuple[str, ...] | None:
+def can_show(name: _ImageName, layer: str | None = None, tag: str | None = None) -> tuple[str, ...] | None:
     ...
 
 
-def showing(name: ImageName, layer: str | None = None) -> bool:
+def showing(name: _ImageName, layer: str | None = None) -> bool:
     ...
 
 
@@ -108,13 +190,13 @@ def clear_attributes(tag: str, layer: str | None = None) -> None:
     ...
 
 
-def set_tag_attributes(name: ImageName, layer: str | None = None) -> None:
+def set_tag_attributes(name: _ImageName, layer: str | None = None) -> None:
     ...
 
 
 def show(
-    name: ImageName,
-    at_list: Sequence[AtTransform] = [],
+    name: _ImageName,
+    at_list: Sequence[_AtTransform] = [],
     layer: str | None = None,
     what: str | renpy.display.core.Displayable | None = None,
     zorder: int | None = None,
@@ -124,7 +206,7 @@ def show(
     ...
 
 
-def hide(name: ImageName, layer: str | None = None) -> None:
+def hide(name: _ImageName, layer: str | None = None) -> None:
     ...
 
 
@@ -155,7 +237,7 @@ def display_menu(items: Iterable[tuple[str, Any]], *, interact: bool = True, scr
     ...
 
 
-def say(who: Character | str | None, what: str, *args: Any, **kwargs: Any) -> None:
+def say(who: _Character | str | None, what: str, *args: Any, **kwargs: Any) -> None:
     ...
 
 
@@ -167,7 +249,7 @@ def movie_cutscene(filename: str, delay: float | None = None, loops: int = 0, st
     ...
 
 
-def with_statement(trans: TransitionLike | Mapping[str | None, TransitionLike], always: bool = False) -> bool:
+def with_statement(trans: _TransitionLike | Mapping[str | None, _TransitionLike], always: bool = False) -> bool:
     ...
 
 
@@ -195,7 +277,7 @@ def take_screenshot(scale: tuple[int, int] | None = None, background: bool = Fal
 
 
 def full_restart(
-    transition: TransitionLike | Literal[False] = False,
+    transition: _TransitionLike | Literal[False] = False,
     label: str = "_invoke_main_menu",
     target: str = "_main_menu",
     save: bool = False
@@ -243,20 +325,11 @@ def version(tuple: bool = False) -> str | tuple[str, str, str, str]:
     ...
 
 
-version_string: str = renpy.version
-version_only: str = renpy.version_only
-version_name: str = renpy.version_name
-version_tuple: tuple[str, str, str, str] = renpy.version_tuple
-license: str
-
-platform: str
-
-
-def transition(trans: TransitionLike, layer: str | None = None, always: bool = False, force: bool = False) -> None:
+def transition(trans: _TransitionLike, layer: str | None = None, always: bool = False, force: bool = False) -> None:
     ...
 
 
-def get_transition(layer: str | None = None) -> TransitionLike:
+def get_transition(layer: str | None = None) -> _TransitionLike:
     ...
 
 
@@ -328,15 +401,15 @@ def mark_audio_unseen(filename: str) -> None:
     ...
 
 
-def seen_image(name: ImageName) -> bool:
+def seen_image(name: _ImageName) -> bool:
     ...
 
 
-def mark_image_seen(name: ImageName) -> None:
+def mark_image_seen(name: _ImageName) -> None:
     ...
 
 
-def mark_image_unseen(name: ImageName) -> None:
+def mark_image_unseen(name: _ImageName) -> None:
     ...
 
 
@@ -348,12 +421,12 @@ def image_size(im: str | renpy.display.im.ImageBase) -> tuple[int, int]:
     ...
 
 
-def get_at_list(name: ImageName, layer: str | None = None) -> list[Callable] | None:
+def get_at_list(name: _ImageName, layer: str | None = None) -> list[_AtTransform] | None:
     ...
 
 
 def show_layer_at(
-        at_list: Iterable[AtTransform],
+        at_list: Iterable[_AtTransform],
         layer: str = 'master', reset: bool = True, camera: bool = False) -> None:
     ...
 
@@ -372,15 +445,6 @@ def quit_event() -> None:
 
 def iconify() -> None:
     ...
-
-
-# New context stuff.
-# TODO
-call_in_new_context = renpy.game.call_in_new_context
-curried_call_in_new_context = renpy.curry.curry(renpy.game.call_in_new_context)
-invoke_in_new_context = renpy.game.invoke_in_new_context
-curried_invoke_in_new_context = renpy.curry.curry(renpy.game.invoke_in_new_context)
-call_replay = renpy.game.call_replay
 
 
 def error(msg: str) -> None:
@@ -432,15 +496,15 @@ class placement:
 
     @property
     def pos(self) -> tuple[int | float | absolute | None, int | float | absolute | None]:
-        return self.xpos, self.ypos
+        ...
 
     @property
     def anchor(self) -> tuple[int | float | None, int | float | None]:
-        return self.xanchor, self.yanchor
+        ...
 
     @property
     def offset(self) -> tuple[int, int]:
-        return self.xoffset, self.yoffset
+        ...
 
 
 def get_placement(d: renpy.display.core.Displayable) -> placement:
@@ -455,16 +519,8 @@ def get_image_bounds(
 ) -> tuple[int | float, int | float, int | float, int | float]:
     ...
 
+
 # User-Defined Displayable stuff.
-
-
-# TODO
-Render = renpy.display.render.Render
-render = renpy.display.render.render
-IgnoreEvent = renpy.display.core.IgnoreEvent
-redraw = renpy.display.render.redraw
-
-
 class Displayable(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     pass
 
@@ -485,7 +541,7 @@ def start_predict_screen(_screen_name: str, *args: Any, **kwargs: Any) -> None:
     ...
 
 
-def stop_predict_screen(name: str):
+def stop_predict_screen(name: str) -> None:
     ...
 
 
@@ -503,9 +559,9 @@ def list_files(common: bool = False) -> list[str]:
     ...
 
 
-# TODO
 def get_renderer_info():
     ...
+    # TODO
 
 
 def mode(mode: str) -> None:
@@ -625,7 +681,7 @@ def set_return_stack(stack: list[str | tuple[Any, ...]]) -> None:
     ...
 
 
-def invoke_in_thread(fn: Callable, *args: Any, **kwargs: Any) -> None:
+def invoke_in_thread(fn: Callable[..., None], *args: Any, **kwargs: Any) -> None:
     ...
 
 
