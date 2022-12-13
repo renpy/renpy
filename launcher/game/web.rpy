@@ -326,6 +326,29 @@ init python:
         pygame_sdl2.image.save(icon72_maskable, os.path.join(icons_dir, 'icon-72x72-maskable.png'), best_compression)
 
 
+    def generate_files_catalog(destination, version):
+        """
+        Generates a JSON file with information about the game files.
+        This file is used by the service worker to cache the game files.
+
+        :param destination: The destination path where the files will be copied to and where
+        game folder is located.
+
+        :return: None
+        """
+        catalog = {"files": [], "version": version}
+        for root, dirs, files in os.walk(os.path.join(destination, "game")):
+            for file in files:
+                file_path = os.path.join(root, file)
+                file_name = os.path.relpath(file_path, destination)
+                # Replace backslashes with forward slashes
+                file_name = file_name.replace("\\", "/")
+                catalog["files"].append(file_name)
+        with io.open(os.path.join(destination, "pwa_catalog.json"), 'w', encoding='utf-8') as f:
+            # Write the JSON file without spaces and new lines, so it's as small as possible
+            f.write(json.dumps(catalog, separators=(',', ':'), sort_keys=True))
+
+
     def prepare_pwa_files(p, destination):
         """
         Replaces in service-worker.js the cache name with the game name and current timestamp.
@@ -338,8 +361,9 @@ init python:
 
         # Use re to slugify the game name, avoiding use of 3rd party libraries
         slugified_name = re.sub(r'\W+', '-', p.dump['build']['display_name']).lower()
+        version = "{}-{}".format(slugified_name, int(time.time()))
         # Replace the default cache name with the game name + current timestamp
-        service_worker = service_worker.replace('renpy-web-game', "{}-{}".format(slugified_name, int(time.time())))
+        service_worker = service_worker.replace('renpy-web-game', version)
 
         # Write the file
         with io.open(os.path.join(destination, "service-worker.js"), 'w', encoding='utf-8') as f:
@@ -359,6 +383,8 @@ init python:
         # Write the file
         with io.open(os.path.join(destination, "manifest.json"), 'w', encoding='utf-8') as f:
             f.write(manifest)
+
+        generate_files_catalog(destination, version)
 
 
     def build_web(p, gui=True):
