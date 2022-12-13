@@ -331,8 +331,10 @@ init python:
         Generates a JSON file with information about the game files.
         This file is used by the service worker to cache the game files.
 
-        :param destination: The destination path where the files will be copied to and where
+        :param destination: string, The destination path where the files will be copied to and where
         game folder is located.
+        :param version: string, the version of the game. Should be the same as the version in the
+        manifest.json file.
 
         :return: None
         """
