@@ -234,10 +234,10 @@ init python:
         the web folder, if exists.
         """
         # Check if there's a custom icon in the game directory
-        icon_path = os.path.join(p.path, 'pwa_icon.png')
+        icon_path = os.path.join(p.path, 'web-icon.png')
         # Generate a default icon if there isn't
         if not os.path.exists(icon_path):
-            icon_path = os.path.join(WEB_PATH, 'pwa_icon.png')
+            icon_path = os.path.join(WEB_PATH, 'web-icon.png')
 
         # Check if path is a valid image
         if not os.path.exists(icon_path):
@@ -412,8 +412,9 @@ init python:
             os.unlink(os.path.join(destination, "web-presplash.jpg"))
             shutil.copy(os.path.join(project.current.path, presplash), os.path.join(destination, presplash))
 
-        generate_pwa_icons(p, destination)
-        prepare_pwa_files(p, destination)
+        if not PY2:
+            generate_pwa_icons(p, destination)
+            prepare_pwa_files(p, destination)
 
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
