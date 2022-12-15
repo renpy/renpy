@@ -326,7 +326,7 @@ init python:
         icon72_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (72, 72))
         pygame_sdl2.image.save(icon72_maskable, os.path.join(icons_dir, 'icon-72x72-maskable.png'), best_compression)
 
-    def get_md5_hash(file_path: str) -> str:
+    def get_md5_hash(file_path):
         """
         Generates MD5 hash sum of the given file.
 
