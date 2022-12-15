@@ -33,6 +33,7 @@ init python:
     import pygame_sdl2
     import zipfile
     import re
+    import hashlib
 
     WEB_PATH = None
 
@@ -325,6 +326,38 @@ init python:
         icon72_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (72, 72))
         pygame_sdl2.image.save(icon72_maskable, os.path.join(icons_dir, 'icon-72x72-maskable.png'), best_compression)
 
+    def get_md5_hash(file_path: str) -> str:
+        """
+        Generates MD5 hash sum of the given file.
+
+        :param file_path: string, The path to the file.
+
+        :return: string, The MD5 hash sum of the file.
+        """
+        # Check if the file exists
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"The file {file_path} was not found.")
+
+        # Check if the file is not a directory
+        if os.path.isdir(file_path):
+            raise IsADirectoryError(f"The file {file_path} is a directory.")
+
+        # Check if the file is not empty
+        if os.stat(file_path).st_size == 0:
+            raise ValueError(f"The file {file_path} is empty.")
+
+        # Create a new MD5 hash object
+        md5_hash = hashlib.md5()
+        # Open the file in read byte mode
+        with open(file_path, "rb") as file:
+            # Read the file in 4KB chunks
+            for chunk in iter(lambda: file.read(4096), b""):
+                # Update the hash with the current chunk
+                md5_hash.update(chunk)
+
+        # Return the hash as a string
+        return md5_hash.hexdigest()
+
 
     def generate_files_catalog(destination, version):
         """
@@ -338,14 +371,20 @@ init python:
 
         :return: None
         """
-        catalog = {"files": [], "version": version}
+        catalog = {"files": {}, "version": version}
+        # Walk through the game folder
         for root, dirs, files in os.walk(os.path.join(destination, "game")):
             for file in files:
+                # Get the absolute path of the file
                 file_path = os.path.join(root, file)
+                # Convert it to relative path of the file
                 file_name = os.path.relpath(file_path, destination)
                 # Replace backslashes with forward slashes
                 file_name = file_name.replace("\\", "/")
-                catalog["files"].append(file_name)
+                # Get the MD5 hash of the file
+                file_hash = get_md5_hash(file_path)
+                # Add the file to the catalog
+                catalog["files"][file_hash] = file_name
         with io.open(os.path.join(destination, "pwa_catalog.json"), 'w', encoding='utf-8') as f:
             # Write the JSON file without spaces and new lines, so it's as small as possible
             f.write(json.dumps(catalog, separators=(',', ':')))
