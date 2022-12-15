@@ -169,8 +169,6 @@ isVideoPlaying = () => {
             import json
 
             def src(filename):
-                ext = filename.rpartition(".")[2]
-
                 TYPES = {
                     'avi': 'video/x-msvideo',
                     'm1v': 'video/mpeg',
@@ -190,7 +188,7 @@ isVideoPlaying = () => {
 
                 ext = filename.rpartition(".")[2].lower()
                 video_type = TYPES.get(ext, "video/" + ext)
-                return { "src": filename, "type": "video/" + filename.rpartition(".")[2] }
+                return { "src": filename, "type": "video/" + ext }
 
             # This is a json object that's passed to videoPlay.
             properties = { }
