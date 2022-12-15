@@ -384,7 +384,7 @@ init python:
                 # Get the MD5 hash of the file
                 file_hash = get_md5_hash(file_path)
                 # Add the file to the catalog
-                catalog["files"][file_hash] = file_name
+                catalog["files"][file_name] = file_hash
         with io.open(os.path.join(destination, "pwa_catalog.json"), 'w', encoding='utf-8') as f:
             # Write the JSON file without spaces and new lines, so it's as small as possible
             f.write(json.dumps(catalog, separators=(',', ':')))
