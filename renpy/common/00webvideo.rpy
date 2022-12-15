@@ -72,10 +72,9 @@ videoPlay = (properties) => {
     video.style.height = "100%";
 
     for (let i of properties.sources) {
-        console.log("Video source: " + i);
-
         let source = document.createElement("source");
-        source.setAttribute("src", i)
+        source.setAttribute("src", i.src)
+        source.setAttribute("type", i.type)
         video.append(source);
     }
 
@@ -95,7 +94,6 @@ videoPlay = (properties) => {
         video.style.pointerEvents = "auto";
 
         video.addEventListener("click", () => {
-            console.log("Video click!");
             videoPlayPromptHide();
             setTimeout(unblockVideo, 1000);
             video.play();
@@ -170,6 +168,30 @@ isVideoPlaying = () => {
 
             import json
 
+            def src(filename):
+                ext = filename.rpartition(".")[2]
+
+                TYPES = {
+                    'avi': 'video/x-msvideo',
+                    'm1v': 'video/mpeg',
+                    'm2v': 'video/mpeg',
+                    'm4v': 'video/mp4',
+                    'mkv': 'video/x-matroska',
+                    'mp4': 'video/mp4',
+                    'mpe': 'video/mpeg',
+                    'mpeg': 'video/mpeg',
+                    'mpg': 'video/mpeg',
+                    'mpg4': 'video/mp4',
+                    'mpv': 'video/x-matroska',
+                    'ogv': 'video/ogg',
+                    'webm': 'video/webm',
+                    'wmv': 'video/x-ms-wmv',
+                }
+
+                ext = filename.rpartition(".")[2].lower()
+                video_type = TYPES.get(ext, "video/" + ext)
+                return { "src": filename, "type": "video/" + filename.rpartition(".")[2] }
+
             # This is a json object that's passed to videoPlay.
             properties = { }
 
@@ -179,13 +201,13 @@ isVideoPlaying = () => {
                 properties["loop"] = False
 
             # Determine the filename, and if different, the alternative filename.
-            properties["sources"] = [ config.web_video_base + "/" + filename ]
+            properties["sources"] = [ src(config.web_video_base + "/" + filename) ]
 
             properties["prompt"] = __(config.web_video_prompt)
 
             alt_filename = filename.rpartition(".")[0] + ".mp4"
             if alt_filename != filename:
-                properties["sources"].append( config.web_video_base + "/" + alt_filename )
+                properties["sources"].append(config.web_video_base + "/" + alt_filename )
 
             json_properties = json.dumps(properties)
 
