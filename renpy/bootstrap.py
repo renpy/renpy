@@ -292,7 +292,13 @@ You may be using a system install of python. Please run {0}.sh,
                 exit_status = e.status
 
                 if e.relaunch:
-                    if hasattr(sys, "renpy_executable"):
+                    if renpy.emscripten:
+                        import emscripten
+                        emscripten.run_script('Module.print("The game asks for a restart. '
+                                              'You need to manually reload the tab.")')
+                        sys.exit(0)
+
+                    elif hasattr(sys, "renpy_executable"):
                         subprocess.Popen([sys.renpy_executable] + sys.argv[1:]) # type: ignore
                     else:
                         if PY2:
@@ -305,6 +311,14 @@ You may be using a system install of python. Please run {0}.sh,
 
             except Exception as e:
                 renpy.error.report_exception(e)
+
+        if renpy.emscripten:
+            import emscripten
+            if exit_status == 0:
+                emscripten.run_script('Module.print("The game quits. You may close the tab.")')
+            else:
+                emscripten.run_script('Module.print("The game has crashed.'
+                                      'You can download the log file and send it to the developers.")')
 
         sys.exit(exit_status)
 
