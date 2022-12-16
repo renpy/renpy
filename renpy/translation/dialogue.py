@@ -157,7 +157,12 @@ def notags_filter(s):
 
 def combine_filter(s):
 
-    for double in ("{{", "%%"):
+    doubles = [ "{{", "%%" ]
+
+    if renpy.config.lenticular_bracket_ruby:
+        doubles.append("【【")
+
+    for double in doubles:
         while True:
             if s.find(double) >= 0:
                 i = s.find(double)

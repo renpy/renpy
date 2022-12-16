@@ -22,6 +22,8 @@
 from __future__ import print_function
 from builtins import chr
 
+import renpy
+
 include "linebreak.pxi"
 
 cdef class Glyph:
@@ -101,13 +103,19 @@ def tokenize(unicode s):
 
     cdef list rv = [ ]
 
+    def finish_text():
+        if  ("【" in buf) and renpy.config.lenticular_bracket_ruby:
+            rv.extend(lenticular_bracket_ruby(buf))
+        else:
+            rv.append((TEXT, buf))
+
     for c in s:
 
         if state == TEXT_STATE:
 
             if c == u'\n':
                 if buf:
-                    rv.append((TEXT, buf))
+                    finish_text()
 
                 rv.append((PARAGRAPH, u''))
                 buf = u''
@@ -133,7 +141,7 @@ def tokenize(unicode s):
 
             else:
                 if buf:
-                    rv.append((TEXT, buf))
+                    finish_text()
 
                 buf = c
                 state = TAG_STATE
@@ -154,7 +162,94 @@ def tokenize(unicode s):
         raise Exception("Open text tag at end of string {0!r}.".format(s))
 
     if buf:
-        rv.append((TEXT, buf))
+        finish_text()
+
+    return rv
+
+
+def lenticular_bracket_ruby(s):
+    """
+    This tokenizes text that may contain lenticular bracket ruby. It searches
+    for 【東京｜とうきょう】 and converts it to the equivalent of
+    {rb}東京{/rb}{rt}とうきょう{/rt}.
+    """
+
+    cdef int TEXT_STATE = 1
+    cdef int LEFT_STATE = 2
+    cdef int RIGHT_STATE = 3
+    cdef int state = TEXT_STATE
+
+    cdef Py_UCS4 c
+    cdef unicode buf = u''
+
+    cdef list rv = [ ]
+
+    for c in s:
+
+        if state == TEXT_STATE:
+
+            if c == u'【':
+                if buf:
+                    rv.append((TEXT, buf))
+
+                buf = u''
+                state = LEFT_STATE
+                continue
+
+            else:
+                buf += c
+                continue
+
+        elif state == LEFT_STATE:
+            if c == u'【' and not buf:
+                buf += c
+                state = TEXT_STATE
+                continue
+
+            elif c == u'】':
+                rv.append((TEXT, u'【' + buf + u'】'))
+                buf = u''
+                state = TEXT_STATE
+                continue
+
+            elif c == u'｜' or c == u'|':
+                rv.append((TAG, "rb"))
+                rv.append((TEXT, buf))
+                rv.append((TAG, "/rb"))
+
+                buf = u''
+                state = RIGHT_STATE
+                continue
+
+            else:
+                buf += c
+                continue
+
+        elif state == RIGHT_STATE:
+
+            if c == u'】':
+                rv.append((TAG, "rt"))
+                rv.append((TEXT, buf))
+                rv.append((TAG, "/rt"))
+                buf = u''
+                state = TEXT_STATE
+                continue
+
+            else:
+                buf += c
+
+    if buf:
+
+        if state == TEXT_STATE:
+            rv.append((TEXT, buf))
+
+        elif state == LEFT_STATE:
+            rv.append((TEXT, u'【' + buf))
+
+        elif state == RIGHT_STATE:
+            rv.append((TAG, "rt"))
+            rv.append((TEXT, buf))
+            rv.append((TAG, "/rt"))
 
     return rv
 
