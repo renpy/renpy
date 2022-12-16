@@ -601,6 +601,19 @@ def unzip_saves():
     p = pathlib.Path(renpy.config.savedir)  # type: ignore
 
     with zipfile.ZipFile("savegames.zip", "r") as zf:
-        zf.extractall(str(p))
+
+        for i in zf.infolist():
+            if "/" not in i.filename:
+                filename = i.filename
+            else:
+                prefix, _, filename = i.filename.partition("/")
+
+                if (not renpy.config.save_directory) or (prefix != renpy.config.save_directory):
+                    continue
+
+            data = zf.read(i)
+
+            with open(p / filename, "wb") as f:
+                f.write(data)
 
     return True
