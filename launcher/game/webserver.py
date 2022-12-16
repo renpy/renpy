@@ -221,7 +221,21 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         '.html': 'text/html',
         '.js': 'application/javascript',
         '.wasm': 'application/wasm',
-    }
+        '.avi': 'video/x-msvideo',
+        '.m1v': 'video/mpeg',
+        '.m2v': 'video/mpeg',
+        '.m4v': 'video/mp4',
+        '.mkv': 'video/x-matroska',
+        '.mp4': 'video/mp4',
+        '.mpe': 'video/mpeg',
+        '.mpeg': 'video/mpeg',
+        '.mpg': 'video/mpeg',
+        '.mpg4': 'video/mp4',
+        '.mpv': 'video/x-matroska',
+        '.ogv': 'video/ogg',
+        '.webm': 'video/webm',
+        '.wmv': 'video/x-ms-wmv',
+        }
 
 
 def run():

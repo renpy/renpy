@@ -1290,6 +1290,8 @@ scene_callbacks = [ ]
 physical_width = None
 physical_height = None
 
+# If true, lenticular brackets can be used to encode ruby text.
+lenticular_bracket_ruby = True
 
 del os
 del collections

@@ -584,22 +584,36 @@ def zip_saves():
     import zipfile
     import pathlib
 
-    p = pathlib.Path(renpy.config.savedir).parent # type: ignore
+    p = pathlib.Path(renpy.config.savedir)  # type: ignore
 
-    with zipfile.ZipFile("/savegames.zip", "w", zipfile.ZIP_DEFLATED) as zf:
-        for fn in p.glob("*/*"):
+    with zipfile.ZipFile("savegames.zip", "w", zipfile.ZIP_DEFLATED) as zf:
+        for fn in p.rglob("*"):
             zf.write(fn, fn.relative_to(p))
 
     return True
+
 
 def unzip_saves():
 
     import zipfile
     import pathlib
 
-    p = pathlib.Path(renpy.config.savedir).parent # type: ignore
+    p = pathlib.Path(renpy.config.savedir)  # type: ignore
 
-    with zipfile.ZipFile("/savegames.zip", "r") as zf:
-        zf.extractall(str(p))
+    with zipfile.ZipFile("savegames.zip", "r") as zf:
+
+        for i in zf.infolist():
+            if "/" not in i.filename:
+                filename = i.filename
+            else:
+                prefix, _, filename = i.filename.partition("/")
+
+                if (not renpy.config.save_directory) or (prefix != renpy.config.save_directory):
+                    continue
+
+            data = zf.read(i)
+
+            with open(p / filename, "wb") as f:
+                f.write(data)
 
     return True

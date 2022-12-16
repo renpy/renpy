@@ -562,7 +562,11 @@ the same size, the size of the largest child.
 
 It takes two parameters. The first is the number of columns in the
 grid, and the second is the number of rows in the grid. It takes the
-following property:
+following properties:
+
+`allow_underfull`
+    If true, the grid will be allowed to have fewer children than
+    the number of columns times rows.
 
 `transpose`
     If False (the default), rows are filled before columns. If True,
@@ -1445,6 +1449,11 @@ Vpgrids take the the following properties:
 
 `rows`
     The number of rows in the grid.
+
+`allow_underfull`
+    If true, the grid will be allowed to have a number of children that
+    is not a multliple of the number of columns or rows specified. The
+    default is false.
 
 `transpose`
     If true, columns are filled before rows. The default of this depends
