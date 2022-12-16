@@ -2,7 +2,7 @@ init -1100 python hide:
 
     config.web_video_base = "./game"
 
-    config.web_video_prompt = _("Touch to turn on volume.")
+    config.web_video_prompt = _("Touch to play the video.")
 
     if renpy.emscripten:
 
@@ -72,10 +72,9 @@ videoPlay = (properties) => {
     video.style.height = "100%";
 
     for (let i of properties.sources) {
-        console.log("Video source: " + i);
-
         let source = document.createElement("source");
-        source.setAttribute("src", i)
+        source.setAttribute("src", i.src)
+        source.setAttribute("type", i.type)
         video.append(source);
     }
 
@@ -91,12 +90,17 @@ videoPlay = (properties) => {
         setTimeout(unblockVideo, 1000);
     }).catch( (e) => {
         console.log("Video rejected: " + e);
-        video.style.pointerEvents = "auto";
         video.muted = true;
-        video.play();
+        video.style.pointerEvents = "auto";
+        video.play().then(() => {
+            setTimeout(unblockVideo, 1000);
+        }).catch( (e) => {
+            console.log("Video rejected: " + e);
+            videoPlayPrompt(properties.prompt);
+        });
 
         video.addEventListener("click", () => {
-            console.log("Video click!");
+            videoPlayPromptHide();
             setTimeout(unblockVideo, 1000);
             video.muted = false;
             video.play();
@@ -171,6 +175,28 @@ isVideoPlaying = () => {
 
             import json
 
+            def src(filename):
+                TYPES = {
+                    'avi': 'video/x-msvideo',
+                    'm1v': 'video/mpeg',
+                    'm2v': 'video/mpeg',
+                    'm4v': 'video/mp4',
+                    'mkv': 'video/x-matroska',
+                    'mp4': 'video/mp4',
+                    'mpe': 'video/mpeg',
+                    'mpeg': 'video/mpeg',
+                    'mpg': 'video/mpeg',
+                    'mpg4': 'video/mp4',
+                    'mpv': 'video/x-matroska',
+                    'ogv': 'video/ogg',
+                    'webm': 'video/webm',
+                    'wmv': 'video/x-ms-wmv',
+                }
+
+                ext = filename.rpartition(".")[2].lower()
+                video_type = TYPES.get(ext, "video/" + ext)
+                return { "src": filename, "type": video_type }
+
             # This is a json object that's passed to videoPlay.
             properties = { }
 
@@ -180,13 +206,13 @@ isVideoPlaying = () => {
                 properties["loop"] = False
 
             # Determine the filename, and if different, the alternative filename.
-            properties["sources"] = [ config.web_video_base + "/" + filename ]
+            properties["sources"] = [ src(config.web_video_base + "/" + filename) ]
 
             properties["prompt"] = __(config.web_video_prompt)
 
             alt_filename = filename.rpartition(".")[0] + ".mp4"
             if alt_filename != filename:
-                properties["sources"].append( config.web_video_base + "/" + alt_filename )
+                properties["sources"].append(src(config.web_video_base + "/" + alt_filename))
 
             json_properties = json.dumps(properties)
 
