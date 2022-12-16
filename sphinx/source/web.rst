@@ -204,7 +204,9 @@ Javascript
 ----------
 
 Ren'Py can run Javascript, using three functions in the ``emscripten``
-module. This module is only present when running inside the web browser.
+module. This module is only present when running inside the web browser,
+which can be tested using :var:`renpy.emscripten` - though you still need
+to import the module before using it.
 
 .. function:: emscripten.run_script(script)
 
