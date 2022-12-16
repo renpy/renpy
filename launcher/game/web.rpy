@@ -371,7 +371,19 @@ init python:
 
         :return: None
         """
-        catalog = {"files": {}, "version": version}
+        catalog = {
+            "core": {
+                "index.html": "",
+                "game.zip": "",
+                "renpy-pre.js": "",
+                "renpy.js": "",
+                "renpy.data": "",
+                "renpy.wasm": "",
+                "web-presplash.jpg": "",
+            },
+            "files": {},
+            "version": version
+        }
         # Walk through the game folder
         for root, dirs, files in os.walk(os.path.join(destination, "game")):
             for file in files:
@@ -385,6 +397,14 @@ init python:
                 file_hash = get_md5_hash(file_path)
                 # Add the file to the catalog
                 catalog["files"][file_name] = file_hash
+
+        # Generate md5 hashes for core files
+        for key, value in catalog["core"].items():
+            file_path = os.path.join(destination, key)
+            file_path = file_path.replace("\\", "/")
+            file_hash = get_md5_hash(file_path)
+            catalog["core"][key] = file_hash
+
         with io.open(os.path.join(destination, "pwa_catalog.json"), 'w', encoding='utf-8') as f:
             # Write the JSON file without spaces and new lines, so it's as small as possible
             f.write(json.dumps(catalog, separators=(',', ':')))
@@ -479,9 +499,6 @@ init python:
             os.unlink(os.path.join(destination, "web-presplash.jpg"))
             shutil.copy(os.path.join(project.current.path, presplash), os.path.join(destination, presplash))
 
-        generate_pwa_icons(p, destination)
-        prepare_pwa_files(p, destination)
-
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
             html = f.read()
@@ -496,6 +513,9 @@ init python:
 
         with io.open(os.path.join(destination, "index.html"), "w", encoding='utf-8') as f:
             f.write(html)
+
+        generate_pwa_icons(p, destination)
+        prepare_pwa_files(p, destination)
 
         # Zip up the game.
 
