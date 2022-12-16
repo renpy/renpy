@@ -188,7 +188,7 @@ isVideoPlaying = () => {
 
                 ext = filename.rpartition(".")[2].lower()
                 video_type = TYPES.get(ext, "video/" + ext)
-                return { "src": filename, "type": "video/" + ext }
+                return { "src": filename, "type": video_type }
 
             # This is a json object that's passed to videoPlay.
             properties = { }
@@ -205,7 +205,7 @@ isVideoPlaying = () => {
 
             alt_filename = filename.rpartition(".")[0] + ".mp4"
             if alt_filename != filename:
-                properties["sources"].append(config.web_video_base + "/" + alt_filename )
+                properties["sources"].append(src(config.web_video_base + "/" + alt_filename))
 
             json_properties = json.dumps(properties)
 
