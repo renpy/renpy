@@ -19,8 +19,17 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**Lenticular bracket ruby text** This release of Ren'Py introduces
+lenticular bracket ruby text, an easier way of writing ruby text. If
+a game included a literal 【, it needs to be doubled, to "【【", to
+quote it properly. (This is only strictly necessary when the text
+is succeded by a full-width vertical bar, but works always.)
 
-This release of Ren'Py introduces :ref:`constant stores <constant-stores>`, and
+To disable lenticular bracket ruby text, add to your game::
+
+    define config.lenticular_bracket_ruby = False
+
+**Constant stores.** This release of Ren'Py introduces :ref:`constant stores <constant-stores>`, and
 makes some of the built-in stores constant. Constant stores should not change
 outside of the init phase. The following stores are constant:
 
@@ -41,7 +50,7 @@ the store can be set to non-constant with (for example)::
 
     define audio._constant = False
 
-Mixer volumes now must be specified using a new format, where 0.0 is -60 dB (power)
+**Mixer volumes** now must be specified using a new format, where 0.0 is -60 dB (power)
 and 1.0 is 0 dB (power). To use the old format, where the samples were multiplied
 by volume ** 2, use::
 

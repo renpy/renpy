@@ -95,6 +95,27 @@ The following stores are declared to be constant by default:
 Variables in a constant store can be updated during the init phase, but should
 not change after the init phase finishes.
 
+
+Lenticular Bracket Ruby Text
+-----------------------------
+
+:ref:`Ruby text <ruby-text>`, small text above the main characters used
+for readings and translations, can now be written be written by enclosing it in
+full-width lenticular brackets (【】), with the full-width or half-width
+vertical line character (｜ or |) separating the bottom text from the top text.
+For example::
+
+    e "Ruby can be used for furigana (【東｜とう】 【京｜きょう】)."
+
+    e "It's also used for translations (【東京｜Tokyo】)."
+
+In some contexts, the left full-width lenticular bracket (【) must be
+doubled, to "【【", to prevent it from being interpreted as the start of
+ruby text. For example::
+
+    e "【【This is not | ruby text.】"
+
+
 New Features
 ------------
 

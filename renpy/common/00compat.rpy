@@ -262,6 +262,7 @@ init -1100 python:
         if _compat_versions(version, (7, 5, 2), (8, 0, 2)):
             config.quadratic_volumes = True
             config.emphasize_audio_volume = 0.5
+            config.lenticular_bracket_ruby = False
 
             store._errorhandling._constant = True
             store._gamepad._constant = True
@@ -274,6 +275,8 @@ init -1100 python:
             store.iap._constant = True
             store.layeredimage._constant = True
             store.updater._constant = True
+
+
 
 
 
