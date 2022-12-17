@@ -160,7 +160,7 @@ def combine_filter(s):
     doubles = [ "{{", "%%" ]
 
     if renpy.config.lenticular_bracket_ruby:
-        doubles.append("【【")
+        doubles.append("\u3010\u3010") # LENTICULAR BRACKET LEFT x 2
 
     for double in doubles:
         while True:
