@@ -345,7 +345,7 @@ init python:
             "version": int(time.time())
         }
         # Walk through the game folder
-        for root, dirs, files in os.walk(os.path.join(destination, "game")):
+        for root, dirs, files in os.walk(destination):
             for file in files:
                 # Get the absolute path of the file
                 file_path = os.path.join(root, file)
