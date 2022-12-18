@@ -33,6 +33,7 @@ init python:
     import pygame_sdl2
     import zipfile
     import re
+    import hashlib
 
     WEB_PATH = None
 
@@ -325,6 +326,89 @@ init python:
         icon72_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (72, 72))
         pygame_sdl2.image.save(icon72_maskable, os.path.join(icons_dir, 'icon-72x72-maskable.png'), best_compression)
 
+    def get_md5_hash(file_path):
+        """
+        Generates MD5 hash sum of the given file.
+
+        :param file_path: string, The path to the file.
+
+        :return: string, The MD5 hash sum of the file.
+        """
+        # Check if the file exists
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"The file {file_path} was not found.")
+
+        # Check if the file is not a directory
+        if os.path.isdir(file_path):
+            raise IsADirectoryError(f"The file {file_path} is a directory.")
+
+        # Check if the file is not empty
+        if os.stat(file_path).st_size == 0:
+            raise ValueError(f"The file {file_path} is empty.")
+
+        # Create a new MD5 hash object
+        md5_hash = hashlib.md5()
+        # Open the file in read byte mode
+        with open(file_path, "rb") as file:
+            # Read the file in 4KB chunks
+            for chunk in iter(lambda: file.read(4096), b""):
+                # Update the hash with the current chunk
+                md5_hash.update(chunk)
+
+        # Return the hash as a string
+        return md5_hash.hexdigest()
+
+
+    def generate_files_catalog(destination, version):
+        """
+        Generates a JSON file with information about the game files.
+        This file is used by the service worker to cache the game files.
+
+        :param destination: string, The destination path where the files will be copied to and where
+        game folder is located.
+        :param version: string, the version of the game. Should be the same as the version in the
+        manifest.json file.
+
+        :return: None
+        """
+        catalog = {
+            "core": {
+                "index.html": "",
+                "game.zip": "",
+                "renpy-pre.js": "",
+                "renpy.js": "",
+                "renpy.data": "",
+                "renpy.wasm": "",
+                "web-presplash.jpg": "",
+            },
+            "files": {},
+            "version": version
+        }
+        # Walk through the game folder
+        for root, dirs, files in os.walk(os.path.join(destination, "game")):
+            for file in files:
+                # Get the absolute path of the file
+                file_path = os.path.join(root, file)
+                # Convert it to relative path of the file
+                file_name = os.path.relpath(file_path, destination)
+                # Replace backslashes with forward slashes
+                file_name = file_name.replace("\\", "/")
+                # Get the MD5 hash of the file
+                file_hash = get_md5_hash(file_path)
+                # Add the file to the catalog
+                catalog["files"][file_name] = file_hash
+
+        # Generate md5 hashes for core files
+        for key, value in catalog["core"].items():
+            file_path = os.path.join(destination, key)
+            file_path = file_path.replace("\\", "/")
+            file_hash = get_md5_hash(file_path)
+            catalog["core"][key] = file_hash
+
+        with io.open(os.path.join(destination, "pwa_catalog.json"), 'w', encoding='utf-8') as f:
+            # Write the JSON file without spaces and new lines, so it's as small as possible
+            f.write(json.dumps(catalog, separators=(',', ':')))
+
 
     def prepare_pwa_files(p, destination):
         """
@@ -338,8 +422,9 @@ init python:
 
         # Use re to slugify the game name, avoiding use of 3rd party libraries
         slugified_name = re.sub(r'\W+', '-', p.dump['build']['display_name']).lower()
+        version = "{}-{}".format(slugified_name, int(time.time()))
         # Replace the default cache name with the game name + current timestamp
-        service_worker = service_worker.replace('renpy-web-game', "{}-{}".format(slugified_name, int(time.time())))
+        service_worker = service_worker.replace('renpy-web-game', version)
 
         # Write the file
         with io.open(os.path.join(destination, "service-worker.js"), 'w', encoding='utf-8') as f:
@@ -359,6 +444,8 @@ init python:
         # Write the file
         with io.open(os.path.join(destination, "manifest.json"), 'w', encoding='utf-8') as f:
             f.write(manifest)
+
+        generate_files_catalog(destination, version)
 
 
     def build_web(p, gui=True):
@@ -412,10 +499,6 @@ init python:
             os.unlink(os.path.join(destination, "web-presplash.jpg"))
             shutil.copy(os.path.join(project.current.path, presplash), os.path.join(destination, presplash))
 
-        if not PY2:
-            generate_pwa_icons(p, destination)
-            prepare_pwa_files(p, destination)
-
         # Copy over index.html.
         with io.open(os.path.join(WEB_PATH, "index.html"), encoding='utf-8') as f:
             html = f.read()
@@ -430,6 +513,10 @@ init python:
 
         with io.open(os.path.join(destination, "index.html"), "w", encoding='utf-8') as f:
             f.write(html)
+
+        if not PY2:
+            generate_pwa_icons(p, destination)
+            prepare_pwa_files(p, destination)
 
         # Zip up the game.
 
