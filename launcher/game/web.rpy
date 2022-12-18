@@ -422,9 +422,7 @@ init python:
 
         # Use re to slugify the game name, avoiding use of 3rd party libraries
         slugified_name = re.sub(r'\W+', '-', p.dump['build']['display_name']).lower()
-        version = "{}-{}".format(slugified_name, int(time.time()))
-        # Replace the default cache name with the game name + current timestamp
-        service_worker = service_worker.replace('renpy-web-game', version)
+        service_worker = service_worker.replace('renpy-web-game', slugified_name)
 
         # Write the file
         with io.open(os.path.join(destination, "service-worker.js"), 'w', encoding='utf-8') as f:
