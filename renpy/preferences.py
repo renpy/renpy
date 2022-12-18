@@ -173,6 +173,9 @@ Preference("high_contrast", False)
 # Should sound continue playing when the window is minimized?
 Preference("audio_when_minimized", True)
 
+# Should a progressive web app preload all files into the browser cache?
+Preference("pwa_preload", False)
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
@@ -220,6 +223,7 @@ class Preferences(renpy.object.Object):
         system_cursor = False
         high_contrast = False
         audio_when_minimized = True
+        pwa_preload = False
 
     def init(self):
         """
@@ -278,7 +282,7 @@ class Preferences(renpy.object.Object):
     def set_mixer(self, mixer, volume):
         if volume > 0:
             volume = renpy.config.volume_db_range * volume - renpy.config.volume_db_range
-            volume = 10 ** (volume / 20)     
+            volume = 10 ** (volume / 20)
 
         self.set_volume(mixer, volume)
 

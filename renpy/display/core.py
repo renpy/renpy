@@ -2291,6 +2291,10 @@ class Interface(object):
         # Kill off the presplash.
         renpy.display.presplash.end()
 
+        # If we are on the web browser, start preloading the browser cache.
+        if renpy.emscripten:
+            emscripten.run_script("loadCache()")
+
         renpy.main.log_clock("Interface start")
 
         self.started = True
