@@ -185,7 +185,8 @@ else:
 arch = os.environ.get("RENPY_PLATFORM", "unknown-unknown-unknown").rpartition("-")[2]
 
 # A flag that's true if we're on a smartphone or tablet-like platform.
-mobile = android or ios or emscripten
+mobile = android or ios
+web = emscripten
 
 # A flag that's set to true if the game directory is bundled inside a mac app.
 macapp = False
@@ -620,6 +621,11 @@ def reload_all():
 
     if mobile:
         raise Exception("Reloading is not supported on mobile platforms.")
+
+    if web:
+        import emscripten
+        emscripten.run_script('window.location.reload()')
+        return
 
     import renpy
 
