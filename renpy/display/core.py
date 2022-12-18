@@ -3511,16 +3511,8 @@ class Interface(object):
                 renpy.display.draw.ready_one_texture()
                 step += 1
 
-            # Step 3: Execute commands from JS (on emscripten)
+            # Step 3: Predict more images.
             elif step == 3:
-
-                if expensive and renpy.emscripten:
-                    self.exec_js_cmd()
-
-                step += 1
-
-            # Step 4: Predict more images.
-            elif step == 4:
 
                 if not self.prediction_coroutine:
                     step += 1
@@ -3541,16 +3533,16 @@ class Interface(object):
                     if not expensive:
                         step += 1
 
-            # Step 5: Preload images (on emscripten)
-            elif step == 5:
+            # Step 4: Preload images (on emscripten)
+            elif step == 4:
 
                 if expensive and renpy.emscripten:
                     renpy.display.im.cache.preload_thread_pass()
 
                 step += 1
 
-            # Step 6: Autosave.
-            elif step == 6:
+            # Step 5: Autosave.
+            elif step == 5:
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()
@@ -4162,6 +4154,9 @@ class Interface(object):
 
                     self.update_mouse(mouse_displayable)
 
+                    if renpy.emscripten:
+                        self.exec_js_cmd()
+
                     continue
 
                 # Handle quit specially for now.
@@ -4434,7 +4429,9 @@ class Interface(object):
 
         # Retrieve the command to be executed from a global JS variable
         # (an empty string is returned if the variable is not defined)
+
         cmd = emscripten.run_script_string("window._renpy_cmd")
+
         if len(cmd) == 0:
             return
 
