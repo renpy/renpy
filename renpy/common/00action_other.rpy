@@ -816,6 +816,30 @@ init -1500 python:
 
         return renpy.get_focus_rect(name)
 
+    @renpy.pure
+    class ExecJS(Action, DictEquality):
+        """
+        :doc: other_action
+
+        Executes the given JavaScript source code. This is only supported on
+        the web, and will raise an exception on other platforms. The script
+        is executed asynchronously in the window context, and the return value
+        is not available.
+
+        `code`
+            The JavaScript code to execute.
+        """
+
+        def __init__(self, code):
+            self.code = code
+
+        def __call__(self):
+            if not renpy.emscripten:
+                raise Exception("ExecJS is only supported on the web.")
+
+            import emscripten
+            emscripten.run_script(self.code)
+
 
 init -1500:
 
