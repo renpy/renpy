@@ -257,40 +257,42 @@ init python:
         if icon_width < 512:
             raise RuntimeError("The icon must be at least 512x512 pixels")
 
+        scale = renpy.display.scale.smoothscale
+
         best_compression = 9
         # Generate 512x512 icon, if needed
         if icon_width != 512:
-            icon512 = renpy.display.pgrender.transform_scale(icon, (512, 512))
+            icon512 = scale(icon, (512, 512))
             pygame_sdl2.image.save(icon512, os.path.join(icons_dir, 'icon-512x512.png'), best_compression)
         else:
             pygame_sdl2.image.save(icon, os.path.join(icons_dir, 'icon-512x512.png'), best_compression)
 
         # Generate 384x384 icon
-        icon384 = renpy.display.pgrender.transform_scale(icon, (384, 384))
+        icon384 = scale(icon, (384, 384))
         pygame_sdl2.image.save(icon384, os.path.join(icons_dir, 'icon-384x384.png'), best_compression)
 
         # Generate 192x192 icon
-        icon192 = renpy.display.pgrender.transform_scale(icon, (192, 192))
+        icon192 = scale(icon, (192, 192))
         pygame_sdl2.image.save(icon192, os.path.join(icons_dir, 'icon-192x192.png'), best_compression)
 
         # Generate 152x152 icon
-        icon152 = renpy.display.pgrender.transform_scale(icon, (152, 152))
+        icon152 = scale(icon, (152, 152))
         pygame_sdl2.image.save(icon152, os.path.join(icons_dir, 'icon-152x152.png'), best_compression)
 
         # Generate 144x144 icon
-        icon144 = renpy.display.pgrender.transform_scale(icon, (144, 144))
+        icon144 = scale(icon, (144, 144))
         pygame_sdl2.image.save(icon144, os.path.join(icons_dir, 'icon-144x144.png'), best_compression)
 
         # Generate 128x128 icon
-        icon128 = renpy.display.pgrender.transform_scale(icon, (128, 128))
+        icon128 = scale(icon, (128, 128))
         pygame_sdl2.image.save(icon128, os.path.join(icons_dir, 'icon-128x128.png'), best_compression)
 
         # Generate 96x96 icon
-        icon96 = renpy.display.pgrender.transform_scale(icon, (96, 96))
+        icon96 = scale(icon, (96, 96))
         pygame_sdl2.image.save(icon96, os.path.join(icons_dir, 'icon-96x96.png'), best_compression)
 
         # Generate 72x72 icon
-        icon72 = renpy.display.pgrender.transform_scale(icon, (72, 72))
+        icon72 = scale(icon, (72, 72))
         pygame_sdl2.image.save(icon72, os.path.join(icons_dir, 'icon-72x72.png'), best_compression)
 
         # Add 128 pixels to the 384x384 icon to generate 512x512 icon maskable
@@ -299,31 +301,31 @@ init python:
         pygame_sdl2.image.save(icon512_maskable, os.path.join(icons_dir, 'icon-512x512-maskable.png'), best_compression)
 
         # Resize icon512_maskable to 384x384 to generate 384x384 icon maskable
-        icon384_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (384, 384))
+        icon384_maskable = scale(icon512_maskable, (384, 384))
         pygame_sdl2.image.save(icon384_maskable, os.path.join(icons_dir, 'icon-384x384-maskable.png'), best_compression)
 
         # Resize icon512_maskable to 192x192 to generate 192x192 icon maskable
-        icon192_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (192, 192))
+        icon192_maskable = scale(icon512_maskable, (192, 192))
         pygame_sdl2.image.save(icon192_maskable, os.path.join(icons_dir, 'icon-192x192-maskable.png'), best_compression)
 
         # Resize icon512_maskable to 152x152 to generate 152x152 icon maskable
-        icon152_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (152, 152))
+        icon152_maskable = scale(icon512_maskable, (152, 152))
         pygame_sdl2.image.save(icon152_maskable, os.path.join(icons_dir, 'icon-152x152-maskable.png'), best_compression)
 
         # Resize icon512_maskable to 144x144 to generate 144x144 icon maskable
-        icon144_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (144, 144))
+        icon144_maskable = scale(icon512_maskable, (144, 144))
         pygame_sdl2.image.save(icon144_maskable, os.path.join(icons_dir, 'icon-144x144-maskable.png'), best_compression)
 
         # Resize icon512_maskable to 128x128 to generate 128x128 icon maskable
-        icon128_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (128, 128))
+        icon128_maskable = scale(icon512_maskable, (128, 128))
         pygame_sdl2.image.save(icon128_maskable, os.path.join(icons_dir, 'icon-128x128-maskable.png'), best_compression)
 
         # Resize icon512_maskable to 96x96 to generate 96x96 icon maskable
-        icon96_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (96, 96))
+        icon96_maskable = scale(icon512_maskable, (96, 96))
         pygame_sdl2.image.save(icon96_maskable, os.path.join(icons_dir, 'icon-96x96-maskable.png'), best_compression)
 
         # Resize icon512_maskable to 72x72 to generate 72x72 icon maskable
-        icon72_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (72, 72))
+        icon72_maskable = scale(icon512_maskable, (72, 72))
         pygame_sdl2.image.save(icon72_maskable, os.path.join(icons_dir, 'icon-72x72-maskable.png'), best_compression)
 
     def generate_files_catalog(destination):
