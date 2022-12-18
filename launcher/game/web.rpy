@@ -326,40 +326,7 @@ init python:
         icon72_maskable = renpy.display.pgrender.transform_scale(icon512_maskable, (72, 72))
         pygame_sdl2.image.save(icon72_maskable, os.path.join(icons_dir, 'icon-72x72-maskable.png'), best_compression)
 
-    def get_md5_hash(file_path):
-        """
-        Generates MD5 hash sum of the given file.
-
-        :param file_path: string, The path to the file.
-
-        :return: string, The MD5 hash sum of the file.
-        """
-        # Check if the file exists
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f"The file {file_path} was not found.")
-
-        # Check if the file is not a directory
-        if os.path.isdir(file_path):
-            raise IsADirectoryError(f"The file {file_path} is a directory.")
-
-        # Check if the file is not empty
-        if os.stat(file_path).st_size == 0:
-            raise ValueError(f"The file {file_path} is empty.")
-
-        # Create a new MD5 hash object
-        md5_hash = hashlib.md5()
-        # Open the file in read byte mode
-        with open(file_path, "rb") as file:
-            # Read the file in 4KB chunks
-            for chunk in iter(lambda: file.read(4096), b""):
-                # Update the hash with the current chunk
-                md5_hash.update(chunk)
-
-        # Return the hash as a string
-        return md5_hash.hexdigest()
-
-
-    def generate_files_catalog(destination, version):
+    def generate_files_catalog(destination):
         """
         Generates a JSON file with information about the game files.
         This file is used by the service worker to cache the game files.
@@ -372,17 +339,8 @@ init python:
         :return: None
         """
         catalog = {
-            "core": {
-                "index.html": "",
-                "game.zip": "",
-                "renpy-pre.js": "",
-                "renpy.js": "",
-                "renpy.data": "",
-                "renpy.wasm": "",
-                "web-presplash.jpg": "",
-            },
-            "files": {},
-            "version": version
+            "files": [ ],
+            "version": int(time.time())
         }
         # Walk through the game folder
         for root, dirs, files in os.walk(os.path.join(destination, "game")):
@@ -393,22 +351,11 @@ init python:
                 file_name = os.path.relpath(file_path, destination)
                 # Replace backslashes with forward slashes
                 file_name = file_name.replace("\\", "/")
-                # Get the MD5 hash of the file
-                file_hash = get_md5_hash(file_path)
                 # Add the file to the catalog
-                catalog["files"][file_name] = file_hash
-
-        # Generate md5 hashes for core files
-        for key, value in catalog["core"].items():
-            file_path = os.path.join(destination, key)
-            file_path = file_path.replace("\\", "/")
-            file_hash = get_md5_hash(file_path)
-            catalog["core"][key] = file_hash
+                catalog["files"].append(file_name)
 
         with io.open(os.path.join(destination, "pwa_catalog.json"), 'w', encoding='utf-8') as f:
-            # Write the JSON file without spaces and new lines, so it's as small as possible
-            f.write(json.dumps(catalog, separators=(',', ':')))
-
+            f.write(json.dumps(catalog))
 
     def prepare_pwa_files(p, destination):
         """
@@ -430,20 +377,23 @@ init python:
 
         # Open the manifest.json file
         with io.open(os.path.join(destination, "manifest.json"), encoding='utf-8') as f:
-            manifest = f.read()
+            manifest = json.load(f)
+
+
 
         # Replace the project name with the ones in the game
-        manifest = manifest.replace("Ren'Py Web Game", p.dump['build']['display_name'])
+        manifest["name"] = p.dump['build']['display_name']
+
         screen_size = p.dump.get("size")
         # If width are smaller than height, set the orientation to portrait. If not, leave it as is.
         if screen_size[0] < screen_size[1]:
-            manifest = manifest.replace("landscape-primary", "portrait-primary")
+            manifest["orientation"] = "portrait-primary"
 
         # Write the file
         with io.open(os.path.join(destination, "manifest.json"), 'w', encoding='utf-8') as f:
-            f.write(manifest)
+            f.write(json.dumps(manifest))
 
-        generate_files_catalog(destination, version)
+        generate_files_catalog(destination)
 
 
     def build_web(p, gui=True):
