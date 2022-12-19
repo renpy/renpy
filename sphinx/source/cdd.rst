@@ -248,7 +248,7 @@ the implicit `self` parameter.
 
     .. method:: place(d, x=0, y=0, width=None, height=None, st=None, at=None, render=None, main=True)
 
-        Renders `d` and places it into the rectangle defined by the `x`, `y`,
+        Renders `d`, a displayable, and places it into the rectangle defined by the `x`, `y`,
         `width`, and `height`, using Ren'Py's standard placement algorithm.
 
         `x`, `y`, `width`, `height`
@@ -291,7 +291,7 @@ the implicit `self` parameter.
     .. method:: zoom(xzoom, yzoom)
 
         Sets the zoom level of the children of this displayable in the
-        horitzontal and vertical axes. Only the children of the displayable
+        horizontal and vertical axes. Only the children of the displayable
         are zoomed – the width, height, and blit coordinates are not zoomed.
 
     The following attributes and methods are only used when model-based rendering
