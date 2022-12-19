@@ -58,6 +58,9 @@ init -1500 python:
 
     # If not None, the default value of set_volume (sfx)
     config.default_sfx_volume = 1.0
+    
+    # The default values of set_volume for custom mixers
+    config.default_mixer_volume = {}
 
     # If not None, the default value of set_volume (voice)
     config.default_voice_volume = 1.0
@@ -131,6 +134,9 @@ init 1500 python hide:
         _preferences.set_volume('music', vol(config.default_music_volume))
         _preferences.set_volume('sfx', vol(config.default_sfx_volume))
         _preferences.set_volume('voice', vol(config.default_voice_volume))
+        
+        for m in config.default_mixer_volume:
+            _preferences.set_volume(m, vol(config.default_mixer_volume[m]))
 
     # Use default_afm_enable to decide if we use the afm_enable
     # preference.
