@@ -132,6 +132,9 @@ import sys
 import threading
 import fnmatch
 
+if renpy.emscripten:
+    import emscripten
+
 
 # The number of bits in the architecture.
 if sys.maxsize > (2 << 32):
@@ -926,7 +929,12 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     if fixed:
         renpy.ui.saybehavior()
 
-    rv = renpy.ui.interact(mouse='prompt', type="input", roll_forward=roll_forward)
+    rv = None
+    if renpy.emscripten:
+        rv = emscripten.run_script_string("(function callMobilePrompt() { if (window.ontouchstart !== undefined) { return prompt('%s', '%s'); } return ''})()" % (prompt, default))
+
+    if not rv:
+        rv = renpy.ui.interact(mouse='prompt', type="input", roll_forward=roll_forward)
     renpy.exports.checkpoint(rv)
 
     if with_none is None:
