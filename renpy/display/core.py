@@ -3910,92 +3910,103 @@ class Interface(object):
                 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
                     renpy.webloader.process_downloaded_resources()
 
-                for i in renpy.config.needs_redraw_callbacks:
-                    if i():
+                avoid_draw = False
+
+                if renpy.emscripten:
+                    avoid_draw = emscripten.run_script_int("webglContextLost")
+
+                    if emscripten.run_script_int("webglContextRestored"):
+                        self.display_reset = True
+                        emscripten.run_script("webglContextRestored = false;")
+
+                if not avoid_draw:
+
+                    for i in renpy.config.needs_redraw_callbacks:
+                        if i():
+                            needs_redraw = True
+
+                    # Check for a fullscreen change.
+                    if renpy.game.preferences.fullscreen != self.fullscreen:
+                        renpy.display.draw.resize()
+
+                    # Ask if the game has changed size.
+                    if renpy.display.draw.update(force=self.display_reset):
                         needs_redraw = True
 
-                # Check for a fullscreen change.
-                if renpy.game.preferences.fullscreen != self.fullscreen:
-                    renpy.display.draw.resize()
+                    # Redraw the screen.
+                    if (self.force_redraw or
+                        ((first_pass or not pygame.event.peek(ALL_EVENTS)) and
+                        renpy.display.draw.should_redraw(needs_redraw, first_pass, can_block))):
 
-                # Ask if the game has changed size.
-                if renpy.display.draw.update(force=self.display_reset):
-                    needs_redraw = True
+                        self.force_redraw = False
 
-                # Redraw the screen.
-                if (self.force_redraw or
-                    ((first_pass or not pygame.event.peek(ALL_EVENTS)) and
-                     renpy.display.draw.should_redraw(needs_redraw, first_pass, can_block))):
+                        renpy.display.render.process_redraws()
 
-                    self.force_redraw = False
+                        # If we have a movie, start showing it.
+                        fullscreen_video = renpy.display.video.interact()
 
-                    renpy.display.render.process_redraws()
+                        # Clean out the redraws, if we have to.
+                        # renpy.display.render.kill_redraws()
 
-                    # If we have a movie, start showing it.
-                    fullscreen_video = renpy.display.video.interact()
+                        self.text_rect = None
 
-                    # Clean out the redraws, if we have to.
-                    # renpy.display.render.kill_redraws()
+                        # Draw the screen.
+                        self.frame_time = get_time()
 
-                    self.text_rect = None
+                        renpy.audio.audio.advance_time() # Sets the time of all video frames.
 
-                    # Draw the screen.
-                    self.frame_time = get_time()
+                        self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
 
-                    renpy.audio.audio.advance_time() # Sets the time of all video frames.
+                        if first_pass:
+                            if not self.interact_time:
+                                self.interact_time = max(self.frame_time, get_time() - self.frame_duration)
 
-                    self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
+                            scene_lists.set_times(self.interact_time)
 
-                    if first_pass:
-                        if not self.interact_time:
-                            self.interact_time = max(self.frame_time, get_time() - self.frame_duration)
+                            for k, v in self.transition_time.items():
+                                if v is None:
+                                    self.transition_time[k] = self.interact_time
 
-                        scene_lists.set_times(self.interact_time)
+                            renpy.display.render.adjust_render_cache_times(self.frame_time, self.interact_time)
 
-                        for k, v in self.transition_time.items():
-                            if v is None:
-                                self.transition_time[k] = self.interact_time
+                        frame += 1
+                        renpy.config.frames += 1
 
-                        renpy.display.render.adjust_render_cache_times(self.frame_time, self.interact_time)
+                        # If profiling is enabled, report the profile time.
+                        if renpy.config.profile or self.profile_once:
 
-                    frame += 1
-                    renpy.config.frames += 1
+                            renpy.plog(0, "end frame")
+                            renpy.performance.analyze()
+                            renpy.performance.clear()
+                            renpy.plog(0, "start frame")
 
-                    # If profiling is enabled, report the profile time.
-                    if renpy.config.profile or self.profile_once:
+                            self.profile_once = False
 
-                        renpy.plog(0, "end frame")
-                        renpy.performance.analyze()
-                        renpy.performance.clear()
-                        renpy.plog(0, "start frame")
+                        if first_pass and self.last_event and self.last_event.type in [ pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION ]:
 
-                        self.profile_once = False
+                            x, y = renpy.display.draw.get_mouse_pos()
+                            ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
 
-                    if first_pass and self.last_event and self.last_event.type in [ pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION ]:
+                            if self.ignore_touch:
+                                x = -1
+                                y = -1
 
-                        x, y = renpy.display.draw.get_mouse_pos()
-                        ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
+                            if renpy.android and self.last_event.type == pygame.MOUSEBUTTONUP:
+                                x = -1
+                                y = -1
 
-                        if self.ignore_touch:
-                            x = -1
-                            y = -1
+                            renpy.display.focus.mouse_handler(None, x, y, default=False)
 
-                        if renpy.android and self.last_event.type == pygame.MOUSEBUTTONUP:
-                            x = -1
-                            y = -1
+                        needs_redraw = False
+                        first_pass = False
 
-                        renpy.display.focus.mouse_handler(None, x, y, default=False)
+                        pygame.time.set_timer(REDRAW, 0)
+                        pygame.event.clear([REDRAW])
+                        old_redraw_time = None
 
-                    needs_redraw = False
-                    first_pass = False
+                        self.update_text_rect()
 
-                    pygame.time.set_timer(REDRAW, 0)
-                    pygame.event.clear([REDRAW])
-                    old_redraw_time = None
-
-                    self.update_text_rect()
-
-                    renpy.test.testexecution.execute()
+                        renpy.test.testexecution.execute()
 
                 # Move the mouse, if necessary.
                 if self.mouse_move is not None:
