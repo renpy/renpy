@@ -153,7 +153,7 @@ class MultipleTransition(Transition):
         super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]), **properties)
 
         self.new_widget = self.transitions[-1]
-        self.events = False
+        self.events = properties.get('events', False)
 
     def visit(self):
         return [ i for i in self.screens if isinstance(i, renpy.display.core.Displayable)] + self.transitions
@@ -277,7 +277,7 @@ class Pixellate(Transition):
         self.old_widget = old_widget
         self.new_widget = new_widget
 
-        self.events = False
+        self.events = properties.get('events', False)
 
         self.quantum = time / (2 * steps)
 
@@ -356,7 +356,7 @@ class Dissolve(Transition):
         self.time = time
         self.old_widget = old_widget
         self.new_widget = new_widget
-        self.events = False
+        self.events = properties.get('events', False)
         self.alpha = alpha
         self.time_warp = time_warp
 
@@ -485,7 +485,7 @@ class ImageDissolve(Transition):
 
         self.old_widget = old_widget
         self.new_widget = new_widget
-        self.events = False
+        self.events = properties.get('events', False)
         self.alpha = alpha
         self.time_warp = time_warp
 
@@ -647,7 +647,7 @@ class AlphaDissolve(Transition):
 
         self.old_widget = renpy.easy.displayable(old_widget)
         self.new_widget = renpy.easy.displayable(new_widget)
-        self.events = False
+        self.events = properties.get('events', False)
 
         self.alpha = alpha
         self.reverse = reverse
@@ -914,7 +914,7 @@ class CropMove(Transition):
         self.old_widget = old_widget
         self.new_widget = new_widget
 
-        self.events = False
+        self.events = properties.get('events', False)
 
         if topnew:
             self.bottom = old_widget
@@ -1040,7 +1040,7 @@ class PushMove(Transition):
         self.old_widget = old_widget
         self.new_widget = new_widget
 
-        self.events = False
+        self.events = properties.get('events', False)
 
     def render(self, width, height, st, at):
 
