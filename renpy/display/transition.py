@@ -42,10 +42,10 @@ class Transition(renpy.display.core.Displayable):
     new_widget = None # type:renpy.display.core.Displayable|None
     old_widget = None # type:renpy.display.core.Displayable|None
 
-    def __init__(self, delay, **properties):
+    def __init__(self, delay, events=False, **properties):
         super(Transition, self).__init__(**properties)
         self.delay = delay
-        self.events = True
+        self.events = events
 
     def event(self, ev, x, y, st):
 
@@ -82,12 +82,12 @@ class NoTransition(Transition):
     It can be useful as part of a MultipleTransition.
     """
 
-    def __init__(self, delay, old_widget=None, new_widget=None, **properties):
+    def __init__(self, delay, old_widget=None, new_widget=None, events=True, **properties):
         super(NoTransition, self).__init__(delay, **properties)
 
         self.old_widget = old_widget
         self.new_widget = new_widget
-        self.events = True
+        self.events = events
 
     def render(self, width, height, st, at):
         return null_render(self, width, height, st, at)
@@ -126,7 +126,7 @@ class MultipleTransition(Transition):
     dissolve to the new scene.
     """
 
-    def __init__(self, args, old_widget=None, new_widget=None, **properties):
+    def __init__(self, args, old_widget=None, new_widget=None, events=False, **properties):
 
         if len(args) % 2 != 1 or len(args) < 3:
             raise Exception("MultipleTransition requires an odd number of arguments, and at least 3 arguments.")
@@ -153,7 +153,7 @@ class MultipleTransition(Transition):
         super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]), **properties)
 
         self.new_widget = self.transitions[-1]
-        self.events = properties.get('events', False)
+        self.events = events
 
     def visit(self):
         return [ i for i in self.screens if isinstance(i, renpy.display.core.Displayable)] + self.transitions
@@ -265,7 +265,7 @@ class Pixellate(Transition):
         so a 5-step pixellation will create 32x32 pixels.
     """
 
-    def __init__(self, time, steps, old_widget=None, new_widget=None, **properties):
+    def __init__(self, time, steps, old_widget=None, new_widget=None, events=False, **properties):
 
         time = float(time)
 
@@ -276,8 +276,7 @@ class Pixellate(Transition):
 
         self.old_widget = old_widget
         self.new_widget = new_widget
-
-        self.events = properties.get('events', False)
+        self.events = events
 
         self.quantum = time / (2 * steps)
 
@@ -336,6 +335,9 @@ class Dissolve(Transition):
         function that takes a fractional time between 0.0 and 1.0, and returns
         a number in the same range.
 
+    `events`
+        If True, will pass events to the new_widget from the start of transition.
+
     When the dissolve will be scaled to less than half its natural size, the
     :propref:`mipmap` style property can be set to True. This will cause mipmaps
     to be generated, which will make the dissolve consume more GPU resources,
@@ -350,13 +352,20 @@ class Dissolve(Transition):
 
     time_warp = None
 
-    def __init__(self, time, old_widget=None, new_widget=None, alpha=False, time_warp=None, **properties):
+    def __init__(self,
+                 time,
+                 old_widget=None,
+                 new_widget=None,
+                 alpha=False,
+                 time_warp=None,
+                 events=False,
+                 **properties):
         super(Dissolve, self).__init__(time, **properties)
 
         self.time = time
         self.old_widget = old_widget
         self.new_widget = new_widget
-        self.events = properties.get('events', False)
+        self.events = events
         self.alpha = alpha
         self.time_warp = time_warp
 
@@ -444,6 +453,9 @@ class ImageDissolve(Transition):
         function that takes a fractional time between 0.0 and 1.0, and returns
         a number in the same range.
 
+    `events`
+        If True, will pass events to the new_widget from the start of transition.
+
     ::
 
         define circirisout = ImageDissolve("circiris.png", 1.0)
@@ -464,19 +476,19 @@ class ImageDissolve(Transition):
 
     time_warp = None
 
-    def __init__(
-            self,
-            image,
-            time,
-            ramplen=8,
-            ramptype='linear',
-            ramp=None,
-            reverse=False,
-            alpha=False,
-            old_widget=None,
-            new_widget=None,
-            time_warp=None,
-            **properties):
+    def __init__(self,
+                 image,
+                 time,
+                 ramplen=8,
+                 ramptype='linear',
+                 ramp=None,
+                 reverse=False,
+                 alpha=False,
+                 old_widget=None,
+                 new_widget=None,
+                 time_warp=None,
+                 events=False,
+                 **properties):
 
         # ramptype and ramp are now unused, but are kept for compatbility with
         # older code.
@@ -485,7 +497,7 @@ class ImageDissolve(Transition):
 
         self.old_widget = old_widget
         self.new_widget = new_widget
-        self.events = properties.get('events', False)
+        self.events = events
         self.alpha = alpha
         self.time_warp = time_warp
 
@@ -622,6 +634,9 @@ class AlphaDissolve(Transition):
         from the old image, while transparent areas are taken from the
         new image.
 
+    `events`
+        If True, will pass events to the new_widget from the start of transition.
+
     When the dissolve will be scaled to less than half its natural size, the
     :propref:`mipmap` style property can be set to True. This will cause mipmaps
     to be generated, which will make the dissolve consume more GPU resources,
@@ -630,15 +645,15 @@ class AlphaDissolve(Transition):
 
     mipmap = None
 
-    def __init__(
-            self,
-            control,
-            delay=0.0,
-            old_widget=None,
-            new_widget=None,
-            alpha=False,
-            reverse=False,
-            **properties):
+    def __init__(self,
+                 control,
+                 delay=0.0,
+                 old_widget=None,
+                 new_widget=None,
+                 alpha=False,
+                 reverse=False,
+                 events=False,
+                 **properties):
 
         super(AlphaDissolve, self).__init__(delay, **properties)
 
@@ -647,7 +662,7 @@ class AlphaDissolve(Transition):
 
         self.old_widget = renpy.easy.displayable(old_widget)
         self.new_widget = renpy.easy.displayable(new_widget)
-        self.events = properties.get('events', False)
+        self.events = events
 
         self.alpha = alpha
         self.reverse = reverse
@@ -792,6 +807,7 @@ class CropMove(Transition):
                  topnew=True,
                  old_widget=None,
                  new_widget=None,
+                 events=False,
                  **properties):
 
         super(CropMove, self).__init__(time, **properties)
@@ -913,8 +929,7 @@ class CropMove(Transition):
 
         self.old_widget = old_widget
         self.new_widget = new_widget
-
-        self.events = properties.get('events', False)
+        self.events = events
 
         if topnew:
             self.bottom = old_widget
@@ -986,6 +1001,7 @@ class PushMove(Transition):
                  mode="pushright",
                  old_widget=None,
                  new_widget=None,
+                 events=False,
                  **properties):
 
         super(PushMove, self).__init__(time, **properties)
@@ -1039,8 +1055,7 @@ class PushMove(Transition):
 
         self.old_widget = old_widget
         self.new_widget = new_widget
-
-        self.events = properties.get('events', False)
+        self.events = events
 
     def render(self, width, height, st, at):
 
