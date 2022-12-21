@@ -70,3 +70,10 @@ html[data-theme='dark'] .highlight .na {
 dt.sig {
     display: block !important;
 }
+
+p.caption {
+    line-height: inherit !important;
+    white-space: normal !important;
+    height: auto !important;
+    margin: 16px 0 6px 0 !important;
+}
