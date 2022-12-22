@@ -931,6 +931,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     rv = None
     if renpy.emscripten:
+        # escape quotes in prompt and default for javascript usage
+        prompt = prompt.replace("'", "\'").replace('"', '\"')
+        default = default.replace("'", "\'").replace('"', '\"')
         rv = emscripten.run_script_string("(function callMobilePrompt() { if (window.ontouchstart !== undefined) { return prompt('%s', '%s'); } return ''})()" % (prompt, default))
 
     if not rv:
