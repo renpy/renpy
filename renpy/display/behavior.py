@@ -25,12 +25,18 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 from typing import Callable
 
+import json
 import math
 import re
 
 import pygame_sdl2 as pygame
 import renpy
 from renpy.display.render import render, Render
+
+try:
+    import emscripten
+except ImportError:
+    emscripten = None
 
 
 def compile_event(key, keydown):
@@ -2684,3 +2690,31 @@ class AreaPicker(renpy.display.layout.Container):
 
             if renpy.display.focus.get_grab() is self:
                 renpy.display.focus.set_grab(None)
+
+class JSWait(renpy.display.core.Displayable):
+    """
+    This is a displayable that waits for a Javascript expression to
+    become non-null. If it does, this returns the value of the expression.
+    """
+
+    def __init__(self, expression):
+
+        super(JSWait, self).__init__()
+
+        self.expression = expression
+
+    def event(self, ev, x, y, st):
+
+        if not emscripten:
+            return None
+
+        data = emscripten.run_script_string("""JSON.stringify({0})""".format(self.expression))
+        data = json.loads(data)
+
+        if data is None:
+            renpy.game.interface.timeout(0.05)
+
+        return data
+
+    def render(self, width, height, st, at):
+        return renpy.display.render.Render(0, 0)
