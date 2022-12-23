@@ -2691,24 +2691,61 @@ class AreaPicker(renpy.display.layout.Container):
             if renpy.display.focus.get_grab() is self:
                 renpy.display.focus.set_grab(None)
 
-class JSWait(renpy.display.core.Displayable):
+
+
+class WebInput(renpy.display.core.Displayable):
     """
-    This is a displayable that waits for a Javascript expression to
-    become non-null. If it does, this returns the value of the expression.
+    A displayable meant to pull input from an input tag in the web browser.
     """
 
-    def __init__(self, expression):
+    # The active input, if any.
+    active = None
 
-        super(JSWait, self).__init__()
+    def __init__(self, prompt, default='', allow=None, exclude='{}', mask=False, **properties):
 
-        self.expression = expression
+        super(WebInput, self).__init__(**properties)
+
+        self.prompt = prompt
+        self.default = default
+        self.allow = allow
+        self.exclude = exclude
+        self.mask = mask
+
+        self.value = self.default
+
+    @staticmethod
+    def pre_find_focusable():
+        WebInput.active = None
+
+    def find_focusable(self, callback, focus_name):
+        WebInput.active = self
+
+    @staticmethod
+    def post_find_focusable():
+        if not renpy.emscripten:
+            return
+
+        if WebInput.active is None:
+            emscripten.run_script("""endInput();""")
+        else:
+            WebInput.active.activate()
+
+    def activate(self):
+        """
+        Makes the input active.
+        """
+
+        emscripten.run_script("""startInput({0}, {1});""".format(
+            json.dumps(self.prompt),
+            json.dumps(self.value),
+            ))
 
     def event(self, ev, x, y, st):
 
         if not emscripten:
             return None
 
-        data = emscripten.run_script_string("""JSON.stringify({0})""".format(self.expression))
+        data = emscripten.run_script_string("""JSON.stringify(inputResult)""")
         data = json.loads(data)
 
         if data is None:

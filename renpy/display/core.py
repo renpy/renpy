@@ -3853,7 +3853,9 @@ class Interface(object):
         # which we will try to show to the user.
 
         # Figure out what should be focused.
+        renpy.display.behavior.WebInput.pre_find_focusable()
         renpy.display.focus.before_interact(focus_roots)
+        renpy.display.behavior.WebInput.post_find_focusable()
 
         # Something updated the screens. Deal with it now, so the player doesn't
         # see it.

@@ -1293,6 +1293,9 @@ physical_height = None
 # If true, lenticular brackets can be used to encode ruby text.
 lenticular_bracket_ruby = True
 
+# If true, the web implentation of renpy.input will be used.
+web_input = True
+
 del os
 del collections
 

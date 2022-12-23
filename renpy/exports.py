@@ -33,6 +33,10 @@ import renpy
 
 from renpy.pyanalysis import const, pure, not_const
 
+try:
+    import emscripten
+except ImportError:
+    pass
 
 def renpy_pure(fn):
     """
@@ -821,6 +825,41 @@ def scene(layer='master'):
     for i in renpy.config.scene_callbacks:
         i(layer)
 
+def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=False):
+    """
+    :undocumented:
+
+    This provides input in the web environment, when config.web_input is True.
+    """
+
+    renpy.exports.mode('input')
+
+    roll_forward = renpy.exports.roll_forward_info()
+    if not isinstance(roll_forward, basestring):
+        roll_forward = None
+
+    # use previous data in rollback
+    if roll_forward is not None:
+        default = roll_forward
+
+    wi = renpy.display.behavior.WebInput(prompt, default, length=length, allow=allow, exclude=exclude, mask=mask)
+    renpy.ui.add(wi)
+
+    renpy.exports.shown_window()
+
+    if renpy.config.autosave_on_input and not renpy.game.after_rollback:
+        renpy.loadsave.force_autosave(True)
+
+    rv = renpy.ui.interact(mouse='prompt', type="input", roll_forward=roll_forward)
+    renpy.exports.checkpoint(rv)
+
+    with_none = renpy.config.implicit_with_none
+
+    if with_none:
+        renpy.game.interface.do_with(None, None)
+
+    return rv
+
 
 def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, copypaste=True, **kwargs): # @ReservedAssignment
     """
@@ -875,6 +914,11 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     if renpy.config.disable_input:
         return default
 
+    fixed = in_fixed_rollback()
+
+    if (not PY2) and renpy.emscripten and renpy.config.web_input and not fixed:
+        return web_input(prompt, default, allow, exclude, length, bool(mask))
+
     renpy.exports.mode('input')
 
     roll_forward = renpy.exports.roll_forward_info()
@@ -884,8 +928,6 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     # use previous data in rollback
     if roll_forward is not None:
         default = roll_forward
-
-    fixed = in_fixed_rollback()
 
     # put arguments with show_ prefix aside
     show_properties, kwargs = renpy.easy.split_properties(kwargs, "show_", "")
