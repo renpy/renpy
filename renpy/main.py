@@ -274,8 +274,6 @@ def choose_variants():
             if mobile:
                 renpy.config.variants.insert(0, 'touch') # type: ignore
 
-        renpy.config.variants.insert(0, 'touch')
-
         # large/medium/small
         # tablet/phone
         # screen.width/height is auto-adjusted by browser,
