@@ -1020,6 +1020,19 @@ Occasionally Used
 
     To used the faster web audio system on Safari as well.
 
+.. var:: config.web_input = True
+
+    If True, the web platform will use the browser's input system to
+    handle :func:`renpy.input`.  If False, Ren'Py's own input system will
+    be used. The browser's input system supports more languages, virtual
+    keyboards, and other conveniences, but is not as customizable.
+
+    This may be changed at init time, and also in translate python blocks.
+
+    To only use the browser's input system on touchscreen devices, use::
+
+        define config.web_input = renpy.variant("touch")
+
 .. var:: config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered", "say-bubble" ]
 
     A list of statements that cause ``window auto`` to hide the empty
