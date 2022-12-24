@@ -240,10 +240,6 @@ Occasionally Used
     If not None, a function that is called with no arguments after a
     replay completes.
 
-.. var:: config.allow_underfull_grids = False
-
-    If True, Ren'Py will not require grids to be full in order to display.
-
 .. var:: config.always_shown_screens = [ ]
 
     A list of names of screens that Ren'Py will always show, even in menus,

@@ -170,6 +170,9 @@ the placement of the image on the screen. It is not the case with this function.
 Other Changes
 -------------
 
+Ren'Py no longer requires grids or vpgrids to be full - it will now pad these
+grids with nulls as required.
+
 The `execute_init` argument to :func:`renpy.register_statement` now respects
 the `init_priority` argument. Previously, all `execute_init` function ran
 at init priority 0.

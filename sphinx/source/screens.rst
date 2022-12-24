@@ -561,12 +561,10 @@ This displays its children in a grid. Each child is given an area of
 the same size, the size of the largest child.
 
 It takes two parameters. The first is the number of columns in the
-grid, and the second is the number of rows in the grid. It takes the
-following properties:
+grid, and the second is the number of rows in the grid. If the grid
+is not full, the remaining cells are filled with the ``null`` displayable.
 
-`allow_underfull`
-    If true, the grid will be allowed to have fewer children than
-    the number of columns times rows.
+Grid takes one property:
 
 `transpose`
     If False (the default), rows are filled before columns. If True,
@@ -1440,7 +1438,8 @@ incorrectly, please ensure that all children are of the same size.
 
 A vpgrid must be given at least one of the `cols` and `rows` properties.
 If one is omitted or None, the other is automatically determined from the
-size, spacing, and number of children.
+size, spacing, and number of children. If a row or column would be underfull,
+``null`` displayable are used to fill the remaining space.
 
 Vpgrids take the the following properties:
 
@@ -1449,11 +1448,6 @@ Vpgrids take the the following properties:
 
 `rows`
     The number of rows in the grid.
-
-`allow_underfull`
-    If true, the grid will be allowed to have a number of children that
-    is not a multliple of the number of columns or rows specified. The
-    default is false.
 
 `transpose`
     If true, columns are filled before rows. The default of this depends

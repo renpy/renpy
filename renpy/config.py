@@ -470,7 +470,7 @@ log_enable = True
 debug_text_overflow = False
 
 # Should underfull grids raise an exception?
-allow_underfull_grids = False
+allow_underfull_grids = True
 
 # Should we save the window size in the preferences?
 save_physical_size = True
@@ -1230,7 +1230,7 @@ at_exit_callbacks = [ ]
 lint_character_statistics = True
 
 # Should vpgrids be allowed to raise under/overfull errors ?
-allow_unfull_vpgrids = False
+allow_unfull_vpgrids = True
 
 # Should vbox and hbox skip non-visible children?
 box_skip = True
