@@ -834,6 +834,8 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
 
     renpy.exports.mode('input')
 
+    prompt = renpy.text.extras.filter_text_tags(prompt, allow=set())
+
     roll_forward = renpy.exports.roll_forward_info()
     if not isinstance(roll_forward, basestring):
         roll_forward = None

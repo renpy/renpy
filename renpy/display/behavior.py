@@ -2735,9 +2735,12 @@ class WebInput(renpy.display.core.Displayable):
         Makes the input active.
         """
 
-        emscripten.run_script("""startInput({0}, {1});""".format(
+        emscripten.run_script("""startInput({0}, {1}, {2}, {3}, {4});""".format(
             json.dumps(self.prompt),
             json.dumps(self.value),
+            json.dumps(self.allow),
+            json.dumps(self.exclude),
+            json.dumps(self.mask),
             ))
 
     def event(self, ev, x, y, st):
