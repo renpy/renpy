@@ -259,10 +259,15 @@ init -1100 python:
             config.modal_blocks_pause = True
             config.timer_blocks_pause = True
 
-        if _compat_versions(version, (7, 5, 2), (8, 0, 2)):
+        if _compat_versions(version, (7, 5, 3), (8, 0, 3)):
             config.quadratic_volumes = True
             config.emphasize_audio_volume = 0.5
             config.lenticular_bracket_ruby = False
+
+            config.top_layers.remove("top")
+            config.bottom_layers.remove("bottom")
+            config.context_clear_layers.remove("top")
+            config.context_clear_layers.remove("bottom")
 
             store._errorhandling._constant = True
             store._gamepad._constant = True

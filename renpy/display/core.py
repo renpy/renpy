@@ -833,7 +833,7 @@ class SceneLists(renpy.object.Object):
         self.camera_list = getattr(self, "camera_list", { })
         self.camera_transform = getattr(self, "camera_transform", { })
 
-        for i in renpy.config.layers + renpy.config.top_layers:
+        for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
             if i not in self.layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
@@ -849,7 +849,7 @@ class SceneLists(renpy.object.Object):
             self.at_list = { }
             self.layer_at_list = { }
 
-            for i in renpy.config.layers + renpy.config.top_layers:
+            for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
 
@@ -912,7 +912,7 @@ class SceneLists(renpy.object.Object):
 
         if oldsl:
 
-            for i in renpy.config.layers + renpy.config.top_layers:
+            for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
 
                 try:
                     self.layers[i] = oldsl.layers[i][:]
@@ -941,7 +941,7 @@ class SceneLists(renpy.object.Object):
             self.camera_transform.update(oldsl.camera_transform)
 
         else:
-            for i in renpy.config.layers + renpy.config.top_layers:
+            for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
@@ -2042,7 +2042,7 @@ class Interface(object):
         # Is our audio paused?
         self.audio_paused = False
 
-        for layer in renpy.config.layers + renpy.config.top_layers:
+        for layer in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
                 self.layer_properties[layer] = dict(
@@ -3008,7 +3008,7 @@ class Interface(object):
         raw = { }
         rv = { }
 
-        for layer in renpy.config.layers + renpy.config.top_layers:
+        for layer in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
             raw[layer] = d = scene_lists.make_layer(layer, self.layer_properties[layer])
             rv[layer] = scene_lists.transform_layer(layer, d)
 
@@ -3766,6 +3766,10 @@ class Interface(object):
             else:
                 where.layers[layer] = scene_layer
                 where.add(scene_layer)
+
+        # Add the bottom layers to root_widget.
+        for layer in renpy.config.bottom_layers:
+            add_layer(root_widget, layer)
 
         # Add layers (perhaps with transitions) to the layers root.
         for layer in renpy.config.layers:

@@ -1176,6 +1176,13 @@ Rarely or Internally Used
     save time, the autosave occurs while the user is being prompted to confirm
     his or her decision.)
 
+.. var:: config.bottom_layers = [ "bottom" ]
+
+    This is a list of names of layers that are displayed above all
+    other layers, and do not participate in a transition that is
+    applied to all layers. If a layer name is listed here, it should
+    not be listed in :var:`config.layers`` or :var:`config.top_layers`.
+
 .. var:: config.autosave_on_input = True
 
     If True, Ren'Py will autosave when the user inputs text.
@@ -1215,7 +1222,7 @@ Rarely or Internally Used
     A list of names of layers to clear when entering the main and game
     menus.
 
-.. var:: config.context_clear_layers = [ 'screens' ]
+.. var:: config.context_clear_layers = [ 'screens', 'top', 'bottom' ]
 
     A list of layers that are cleared when entering a new context.
 
@@ -1733,12 +1740,12 @@ Rarely or Internally Used
     Ren'Py terminates. This is intended to free resources, such as
     opened files or started threads.
 
-.. var:: config.top_layers = [ ]
+.. var:: config.top_layers = [ "top" ]
 
     This is a list of names of layers that are displayed above all
     other layers, and do not participate in a transition that is
     applied to all layers. If a layer name is listed here, it should
-    not be listed in config.layers.
+    not be listed in :var:`config.layers`` or :var:`config.bottom_layers`.
 
 .. var:: config.transient_layers = [ 'transient' ]
 

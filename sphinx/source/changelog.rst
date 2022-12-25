@@ -119,6 +119,12 @@ ruby text. For example::
 New Features
 ------------
 
+Two new layers are now part of Ren'Py. The "top" layer is displayed above
+all other layers, and does not participate in transitions. This makes
+it useful for display information that is always shown. The "bottom" layer
+is displayed below all other layers. The bottom layer is useful for
+handling keys in a way that is always active.
+
 Ren'Py supports the C90 encoding for Thai fonts, which uses the unicode
 private area to provide glyphs that are combinations of base characters,
 vowel marks, and tone marks. This can be enabled by selecting a Thai font
