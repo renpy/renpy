@@ -1299,6 +1299,37 @@ web_input = True
 # Layers below all other layers, that do not participate in transitions.
 bottom_layers = [ 'bottom' ]
 
+# Aliases for the keys on the numeric keypad, to make them easier to write as keysyms.
+keypad_aliases = {
+    "KP_HOME" : "nonum_K_KP7",
+    "KP_UP" : "nonum_K_KP8",
+    "KP_PAGEUP" : "nonum_K_KP9",
+    "KP_LEFT" : "nonum_K_KP4",
+    "KP_RIGHT" : "nonum_K_KP6",
+    "KP_END" : "nonum_K_KP1",
+    "KP_DOWN" : "nonum_K_KP2",
+    "KP_PAGEDOWN" : "nonum_K_KP3",
+    "KP_INSERT" : "nonum_K_KP0",
+    "KP_DELETE" : "nonum_K_KP_PERIOD",
+    "KP_0" : "num_K_KP0",
+    "KP_1" : "num_K_KP1",
+    "KP_2" : "num_K_KP2",
+    "KP_3" : "num_K_KP3",
+    "KP_4" : "num_K_KP4",
+    "KP_5" : "num_K_KP5",
+    "KP_6" : "num_K_KP6",
+    "KP_7" : "num_K_KP7",
+    "KP_8" : "num_K_KP8",
+    "KP_9" : "num_K_KP9",
+    "KP_PERIOD" : "num_K_KP_PERIOD",
+    "KP_DIVIDE" : "K_KP_DIVIDE",
+    "KP_MULTIPLY" : "K_KP_MULTIPLY",
+    "KP_MINUS" : "K_KP_MINUS",
+    "KP_PLUS" : "K_KP_PLUS",
+    "KP_ENTER" : "K_KP_ENTER",
+    "KP_EQUALS" : "K_KP_EQUALS",
+}
+
 del os
 del collections
 

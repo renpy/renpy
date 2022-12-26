@@ -53,6 +53,14 @@ shift
     Matches when the Shift key is pressed.
 noshift
     Matches when the Shift key is not pressed.
+caps
+    Matches when the Caps Lock key is on.
+nocaps
+    Matches when the Caps Lock key is off.
+num
+    Matches when the Num Lock key is on.
+nonum
+    Matches when the Num Lock key is off.
 repeat
     Matches when the key is a repeat due to the key being held down. Keysyms
     without this prefix do not match repeats. (This does not work with mouse

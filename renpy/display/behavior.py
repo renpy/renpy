@@ -66,13 +66,21 @@ def compile_event(key, keydown):
 
     part = key.split("_")
 
-    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl" }
+    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl", "caps", "nocaps", "num", "nonum" }
     modifiers = set()
 
     while part[0] in MODIFIERS:
         modifiers.add(part.pop(0))
 
     key = "_".join(part)
+
+    if key in renpy.config.keypad_aliases:
+        part = renpy.config.keypad_aliases[key].split("_")
+
+        while part[0] in MODIFIERS:
+            modifiers.add(part.pop(0))
+
+        key = "_".join(part)
 
     if "keydown" in modifiers:
         keydown = True
@@ -139,6 +147,21 @@ def compile_event(key, keydown):
         if "noshift" in modifiers:
             rv += " and not (ev.mod & %d)" % pygame.KMOD_SHIFT
 
+    if key not in [ "K_CAPSLOCK" ]:
+
+        if "caps" in modifiers:
+            rv += " and (ev.mod & %d)" % pygame.KMOD_CAPS
+
+        if "nocaps" in modifiers:
+            rv += " and not (ev.mod & %d)" % pygame.KMOD_CAPS
+
+    if key not in [ "K_NUMLOCK" ]:
+
+        if "num" in modifiers:
+            rv += " and (ev.mod & %d)" % pygame.KMOD_NUM
+
+        if "nonum" in modifiers:
+            rv += " and not (ev.mod & %d)" % pygame.KMOD_NUM
 
     if part[0] == "mousedown":
         if len(part) != 2:
