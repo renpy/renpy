@@ -757,7 +757,7 @@ def jump_statement(l, loc):
 
 @statement("call")
 def call_statement(l, loc):
-    l.expect_noblock('call statment')
+    l.expect_noblock('call statement')
 
     if l.keyword('expression'):
         expression = True
