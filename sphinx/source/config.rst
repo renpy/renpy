@@ -945,13 +945,16 @@ Occasionally Used
 
 .. var:: config.speaking_attribute = None
 
-    If not None, this should be a string giving the name of an image
-    attribute. The image attribute is added to the image when the
-    character's image tag when the character is speaking, and removed
-    when the character stops.
+    If not None, this should be a string giving an image attribute,
+    which is added to the character's image tag when the character
+    is speaking, and removed when the character stops.
 
     This is applied to the image on the default layer for the tag,
     which can be set using :var:`config.tag_layer`.
+
+    This is very similar to temporary attributes shown using @ in dialogue
+    lines. The attribute is not removed when the text apparition animation
+    ends, but when the dialogue window gets dismissed.
 
 .. var:: config.tag_layer = { }
 
