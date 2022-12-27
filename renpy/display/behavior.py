@@ -66,7 +66,7 @@ def compile_event(key, keydown):
 
     part = key.split("_")
 
-    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl", "caps", "nocaps", "num", "nonum" }
+    MODIFIERS = { "keydown", "keyup", "repeat", "alt", "meta", "shift", "noshift", "ctrl", "osctrl", "caps", "nocaps", "num", "nonum", "any" }
     modifiers = set()
 
     while part[0] in MODIFIERS:
@@ -74,8 +74,8 @@ def compile_event(key, keydown):
 
     key = "_".join(part)
 
-    if key in renpy.config.keypad_aliases:
-        part = renpy.config.keypad_aliases[key].split("_")
+    if key in renpy.config.key_aliases:
+        part = renpy.config.key_aliases[key].split("_")
 
         while part[0] in MODIFIERS:
             modifiers.add(part.pop(0))
@@ -115,6 +115,8 @@ def compile_event(key, keydown):
 
         if "repeat" in modifiers:
             rv += " and (ev.repeat)"
+        elif "any" in modifiers:
+            pass
         else:
             rv += " and (not ev.repeat)"
 

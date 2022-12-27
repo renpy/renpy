@@ -1300,7 +1300,7 @@ web_input = True
 bottom_layers = [ 'bottom' ]
 
 # Aliases for the keys on the numeric keypad, to make them easier to write as keysyms.
-keypad_aliases = {
+key_aliases = {
     "KP_HOME" : "nonum_K_KP7",
     "KP_UP" : "nonum_K_KP8",
     "KP_PAGEUP" : "nonum_K_KP9",

@@ -63,8 +63,10 @@ nonum
     Matches when the Num Lock key is off.
 repeat
     Matches when the key is a repeat due to the key being held down. Keysyms
-    without this prefix do not match repeats. (This does not work with mouse
-    buttons.)
+    without the repeat or any prefixes do not match repeats. (This does not
+    work with mouse buttons.)
+any
+    Matches both initial keypresses and repeats.
 keydown
     Matches when the key is being pressed down (the default).
 keyup
