@@ -167,8 +167,7 @@ class Script(object):
             if renpy.loader.loadable(i):
                 return None
 
-        import __main__
-        backups = __main__.path_to_saves(renpy.config.gamedir, "backups") # @UndefinedVariable
+        backups = renpy.__main__.path_to_saves(renpy.config.gamedir, "backups") # @UndefinedVariable
 
         if backups is None:
             return

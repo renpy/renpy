@@ -34,8 +34,6 @@ import linecache
 import renpy
 import renpy.game as game
 
-import __main__
-
 last_clock = time.time()
 
 
@@ -375,7 +373,7 @@ def main():
     renpy.config.searchpath = [ renpy.config.gamedir ]
 
     # Find the common directory.
-    commondir = __main__.path_to_common(renpy.config.renpy_base) # E1101 @UndefinedVariable
+    commondir = renpy.__main__.path_to_common(renpy.config.renpy_base) # E1101 @UndefinedVariable
 
     if os.path.isdir(commondir):
         renpy.config.searchpath.append(commondir)
@@ -506,7 +504,7 @@ def main():
 
     # Find the save directory.
     if renpy.config.savedir is None:
-        renpy.config.savedir = __main__.path_to_saves(renpy.config.gamedir) # E1101 @UndefinedVariable
+        renpy.config.savedir = renpy.__main__.path_to_saves(renpy.config.gamedir) # E1101 @UndefinedVariable
 
     if renpy.game.args.savedir: # type: ignore
         renpy.config.savedir = renpy.game.args.savedir # type: ignore

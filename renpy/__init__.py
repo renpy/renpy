@@ -25,6 +25,10 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from typing import Any
 
+# Initial import of the __main__ module. This gets replaced in renpy.py
+# whatever that module has been imported as.
+import __main__
+
 # All imports should go below renpy.compat.
 
 # Backup object, as it'll be overwritten when renpy.object is imported.

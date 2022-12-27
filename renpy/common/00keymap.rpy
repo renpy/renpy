@@ -281,7 +281,6 @@ init -1600 python:
     def _screenshot():
         import os.path
         import os
-        import __main__
 
         dest = config.renpy_base
 
