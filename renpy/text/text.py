@@ -2291,12 +2291,14 @@ class Text(renpy.display.core.Displayable):
             rv.blit(drend, (0, 0))
 
         # Add in the focus areas.
-        for hyperlink, hx, hy, hw, hh in layout.hyperlinks:
+        for hyperlink, hx, hy, hw, hh, valid_st in layout.hyperlinks:
 
-            h_x, h_y = layout.unscale_pair(hx + layout.xoffset, hy + layout.yoffset)
-            h_w, h_h = layout.unscale_pair(hw, hh)
+            if st >= valid_st:
 
-            rv.add_focus(self, hyperlink, h_x, h_y, h_w, h_h)
+                h_x, h_y = layout.unscale_pair(hx + layout.xoffset, hy + layout.yoffset)
+                h_w, h_h = layout.unscale_pair(hw, hh)
+
+                rv.add_focus(self, hyperlink, h_x, h_y, h_w, h_h)
 
         # Figure out if we need to redraw or call slow_done.
         if self.slow:

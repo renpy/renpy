@@ -816,9 +816,9 @@ def max_times(list l):
 
 def hyperlink_areas(list l):
     """
-    Returns a list of (hyperlink, x, y, w, h) tuples, where each entry in
+    Returns a list of (hyperlink, x, y, w, h, valid_st) tuples, where each entry in
     the rectangle represents a contiguous portion of a hyperlink on the
-    given line.
+    given line, and valid_st is when the first part of the rectangle is shown.
     """
 
     cdef Line line
@@ -831,6 +831,7 @@ def hyperlink_areas(list l):
     cdef int max_x
     cdef int min_x
     cdef int hyperlink
+    cdef float hyperlink_time
 
     rv = [ ]
 
@@ -839,6 +840,7 @@ def hyperlink_areas(list l):
         len_gl = len(gl)
 
         hyperlink = 0
+        hyperlink_time = 86400 # Just a big number.
         max_x = 0
         min_x = 1000000
         pos = 0
@@ -848,8 +850,9 @@ def hyperlink_areas(list l):
             g = gl[pos]
 
             if (hyperlink and g.hyperlink != hyperlink):
-                rv.append((hyperlink, min_x, line.y, max_x - min_x, line.height))
+                rv.append((hyperlink, min_x, line.y, max_x - min_x, line.height, hyperlink_time))
                 hyperlink = 0
+                hyperlink_time = 86400
                 max_x = 0
                 min_x = 1000000
 
@@ -862,10 +865,12 @@ def hyperlink_areas(list l):
                 if g.x + g.width > max_x:
                     max_x = g.x + <int> g.width
 
+                hyperlink_time = min(g.time, hyperlink_time)
+
             pos += 1
 
         if hyperlink:
-            rv.append((hyperlink, min_x, line.y, max_x - min_x, line.height))
+            rv.append((hyperlink, min_x, line.y, max_x - min_x, line.height, hyperlink_time))
 
     return rv
 
