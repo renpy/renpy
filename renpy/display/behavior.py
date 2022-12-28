@@ -698,13 +698,13 @@ class SayBehavior(renpy.display.layout.Null):
                 return None
 
             if st > afm_delay:
-                if renpy.config.afm_callback:
-                    if renpy.config.afm_callback() and not renpy.display.tts.is_active():
+
+                if not renpy.display.tts.is_active() and (not renpy.game.preferences.self_voicing or self.is_focused()):
+                    if (not renpy.config.afm_callback) or renpy.config.afm_callback():
                         return True
-                    else:
-                        renpy.game.interface.timeout(0.1)
-                else:
-                    return True
+
+                renpy.game.interface.timeout(0.1)
+
             else:
                 renpy.game.interface.timeout(afm_delay - st)
 

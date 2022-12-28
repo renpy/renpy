@@ -180,6 +180,9 @@ the placement of the image on the screen. It is not the case with this function.
 Other Changes
 -------------
 
+Self-voicing and auto-forward mode may now be enabled at the same time. When
+this is the case, auto-forward will only occur when the dialogue is focused.
+
 Ren'Py no longer requires grids or vpgrids to be full - it will now pad these
 grids with nulls as required.
 
