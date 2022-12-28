@@ -558,10 +558,6 @@ screen web():
 
                         text _("Images and music can be downloaded while playing. A 'progressive_download.txt' file will be created so you can configure this behavior.")
 
-                        add SPACER
-
-                        text _("Current limitations in the web platform mean that loading large images may cause audio or framerate glitches, and lower performance in general. Movies aren't supported.")
-
 
     textbutton _("Return") action Jump("front_page") style "l_left_button"
 
