@@ -119,6 +119,10 @@ ruby text. For example::
 New Features
 ------------
 
+The :func:`Text` displayable now takes a new `tokenized` argument. When
+true, the Text displayable expects to take a list of tokens taken from
+a :ref:`custom text tag <custom-text-tags>`.
+
 Two new layers are now part of Ren'Py. The "top" layer is displayed above
 all other layers, and does not participate in transitions. This makes
 it useful for display information that is always shown. The "bottom" layer

@@ -1530,7 +1530,7 @@ class Text(renpy.display.core.Displayable):
     """
     :name: Text
     :doc: text
-    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, **properties)
+    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, tokenized=False, **properties)
 
     A displayable that displays text on the screen.
 
@@ -1555,6 +1555,9 @@ class Text(renpy.display.core.Displayable):
         If not None, and if slow text mode is enabled (see the `slow` parameter), this is a
         function or callable which is called with no arguments when the text finishes displaying.
 
+    `tokenized`
+        If true, `text` is expected to be a list of tokens, rather than a string. The tokens are
+
     `**properties`
         Like other Displayables, Text takes style properties, including (among many others) the
         :propref:`mipmap` property.
@@ -1569,6 +1572,7 @@ class Text(renpy.display.core.Displayable):
     language = None
     mask = None
     last_ctc = None
+    tokenized = False
 
     def after_upgrade(self, version):
 
@@ -1586,22 +1590,25 @@ class Text(renpy.display.core.Displayable):
             self.end = None
             self.dirty = True
 
-    def __init__(self, text, slow=None, scope=None, substitute=None, slow_done=None, replaces=None, mask=None, **properties):
+    def __init__(self, text, slow=None, scope=None, substitute=None, slow_done=None, replaces=None, mask=None, tokenized=False, **properties):
 
         super(Text, self).__init__(**properties)
 
-        # We need text to be a list, so if it's not, wrap it.
-        if not isinstance(text, list):
-            text = [ text ]
 
-        # Check that the text is all text-able things.
-        for i in text:
-            if not isinstance(i, (basestring, renpy.display.core.Displayable)):
-                if renpy.config.developer:
-                    raise Exception("Cannot display {0!r} as text.".format(i))
-                else:
-                    text = [ "" ]
-                    break
+        if not tokenized:
+
+            # We need text to be a list, so if it's not, wrap it.
+            if not isinstance(text, list):
+                text = [ text ]
+
+            # Check that the text is all text-able things.
+            for i in text:
+                if not isinstance(i, (basestring, renpy.display.core.Displayable)):
+                    if renpy.config.developer:
+                        raise Exception("Cannot display {0!r} as text.".format(i))
+                    else:
+                        text = [ "" ]
+                        break
 
         # True if we are substituting things in.
         self.substitute = substitute # type: bool | None
@@ -1614,6 +1621,9 @@ class Text(renpy.display.core.Displayable):
 
         # A mask, for passwords and such.
         self.mask = mask
+
+        # True if the text is tokenized, False otherwise.
+        self.tokenized = tokenized
 
         # Sets the text we're showing, and performs substitutions.
         self.set_text(text, scope, substitute) # type: ignore
@@ -1719,6 +1729,18 @@ class Text(renpy.display.core.Displayable):
 
         self.language = renpy.game.preferences.language
 
+        if self.tokenized:
+
+            if update and self.text != text:
+                self.dirty = True
+                renpy.display.render.redraw(self, 0)
+
+            self.text = text
+            self.text_parameter = text
+            self._uses_scope = False
+
+            return True
+
         old_text = self.text
 
         if not isinstance(text, list):
@@ -1784,60 +1806,65 @@ class Text(renpy.display.core.Displayable):
 
         self.kill_layout()
 
-        text = self.text
+        if not self.tokenized:
 
-        # Decide the portion of the text to show quickly, the part to
-        # show slowly, and the part not to show (but to lay out).
-        if self.start is not None:
-            start_string = text[0][:self.start]
-            mid_string = text[0][self.start:self.end]
-            end_string = text[0][self.end:]
+            text = self.text
 
-            if start_string:
-                start_string = start_string + "{_start}"
+            # Decide the portion of the text to show quickly, the part to
+            # show slowly, and the part not to show (but to lay out).
+            if self.start is not None:
+                start_string = text[0][:self.start]
+                mid_string = text[0][self.start:self.end]
+                end_string = text[0][self.end:]
 
-            if end_string:
-                end_string = "{_end}" + end_string
+                if start_string:
+                    start_string = start_string + "{_start}"
 
-            text_split = [ ]
+                if end_string:
+                    end_string = "{_end}" + end_string
 
-            if start_string:
-                text_split.append(start_string)
+                text_split = [ ]
 
-            text_split.append(mid_string)
+                if start_string:
+                    text_split.append(start_string)
 
-            if self.ctc is not None:
-                if isinstance(self.ctc, list):
-                    text_split.extend(self.ctc)
+                text_split.append(mid_string)
+
+                if self.ctc is not None:
+                    if isinstance(self.ctc, list):
+                        text_split.extend(self.ctc)
+                    else:
+                        text_split.append(self.ctc)
+
+                if end_string:
+                    text_split.append(end_string)
+
+                text_split.extend(text[1:])
+
+                text = text_split
+
+            else:
+                # Add the CTC.
+                if self.ctc is not None:
+                    if isinstance(self.ctc, list):
+                        text.extend(self.ctc)
+                    else:
+                        text.append(self.ctc)
+
+            if self.last_ctc is not None:
+                if isinstance(self.last_ctc, list):
+                    text.extend(self.last_ctc)
                 else:
-                    text_split.append(self.ctc)
+                    text.append(self.last_ctc)
 
-            if end_string:
-                text_split.append(end_string)
+            # Tokenize the text.
+            tokens = self.tokenize(text)
 
-            text_split.extend(text[1:])
-
-            text = text_split
+            if renpy.config.custom_text_tags or renpy.config.self_closing_custom_text_tags or (renpy.config.replace_text is not None):
+                tokens = self.apply_custom_tags(tokens)
 
         else:
-            # Add the CTC.
-            if self.ctc is not None:
-                if isinstance(self.ctc, list):
-                    text.extend(self.ctc)
-                else:
-                    text.append(self.ctc)
-
-        if self.last_ctc is not None:
-            if isinstance(self.last_ctc, list):
-                text.extend(self.last_ctc)
-            else:
-                text.append(self.last_ctc)
-
-        # Tokenize the text.
-        tokens = self.tokenize(text)
-
-        if renpy.config.custom_text_tags or renpy.config.self_closing_custom_text_tags or (renpy.config.replace_text is not None):
-            tokens = self.apply_custom_tags(tokens)
+            tokens = self.text
 
         # self.tokens is a list of pairs, where the first component of
         # each pair is TEXT, NEWLINE, TAG, or DISPLAYABLE, and the second

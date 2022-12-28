@@ -62,6 +62,9 @@ renpy.TEXT_PARAGRAPH
 A self-closing text tag function is similar, except that it does not take
 the third argument.
 
+Lists of tokens can be passed to :func:`Text` when its `tokenized`
+argument is True.
+
 Caveats
 -------
 
