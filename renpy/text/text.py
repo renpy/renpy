@@ -1557,6 +1557,7 @@ class Text(renpy.display.core.Displayable):
 
     `tokenized`
         If true, `text` is expected to be a list of tokens, rather than a string. The tokens are
+        introduced in the :doc:`custom_text_tags` page.
 
     `**properties`
         Like other Displayables, Text takes style properties, including (among many others) the
