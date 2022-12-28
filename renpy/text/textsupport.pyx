@@ -109,6 +109,9 @@ def tokenize(unicode s):
         else:
             rv.append((TEXT, buf))
 
+    if not s:
+        return [ ]
+
     if (u"{" not in s) and (u'\n' not in s) and (u"【" not in s):
         rv.append((TEXT, s))
         return rv
@@ -167,6 +170,9 @@ def tokenize(unicode s):
 
     if buf:
         finish_text()
+
+    if s == "":
+        print(rv)
 
     return rv
 
