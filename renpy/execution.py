@@ -97,7 +97,7 @@ class LineLogEntry(object):
     def __init__(self, filename, line, node, abnormal):
         self.filename = filename
         self.line = line
-        self.node = node
+        self.node_name = node.name
         self.abnormal = abnormal
 
         for i in renpy.config.line_log_callbacks:
@@ -107,10 +107,14 @@ class LineLogEntry(object):
         if not isinstance(other, LineLogEntry):
             return False
 
-        return (self.filename == other.filename) and (self.line == other.line) and (self.node is other.node)
+        return (self.filename == other.filename) and (self.line == other.line) and (self.node_name is other.node_name)
 
     def __ne__(self, other):
         return not (self == other)
+
+    @property
+    def node(self):
+        return renpy.game.script.lookup(self.node_name)
 
 
 class Context(renpy.object.Object):
