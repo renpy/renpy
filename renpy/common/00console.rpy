@@ -439,8 +439,15 @@ init -1500 python in _console:
             if self.result is None:
                 return
 
-            lines = self.result.split("\n")
-            lines = lines[-config.console_history_lines:]
+            lines = self.result
+            if len(lines) > config.console_history_lines * 160:
+                lines = "…" + self.result[-config.console_history_lines * 160:]
+
+            lines = lines.split("\n")
+
+            if len(lines) > config.console_history_lines:
+                lines = [ "…" ] + lines[-config.console_history_lines:]
+
             self.result = "\n".join(lines)
             self.lines = len(lines)
 
