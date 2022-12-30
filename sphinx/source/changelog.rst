@@ -115,6 +115,29 @@ ruby text. For example::
 
     e "【【This is not | ruby text.】"
 
+Save Token Security
+-------------------
+
+Ren'Py now uses tokens to warn users when a save file is moved between
+devices, to prevent the user from making mistakes described in the
+:doc:`security documentation <security>`.
+
+This works by generating a token the first time Ren'Py is run on a given
+computer. This token is included in saves and in persistent data. If the
+token for a different computer is found in a save file, the user is warned
+and asked if they want to continue. If they choose yes, the user will be
+asked if they want to automatically accept all saves from that computer.
+
+Persistent data is loaded if it's from the current computer, or a computer
+with an accepted token.
+
+The first time a game is run with a version of Ren'Py supporting save
+tokens, all save files that exist for that game are checked, and if a
+token does not exist in those files, the token is added. This should prevent
+prompting during upgrades to Ren'Py 8.1/7.6 or later.
+
+There is intentionally no way to disable this feature, as it's important
+for end-users to be warned about the security issues when possible.
 
 New Features
 ------------
