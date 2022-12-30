@@ -259,8 +259,7 @@ class FileLocation(object):
 
     def load(self, slotname):
         """
-        Returns the log component of the file found in `slotname`, so it
-        can be loaded.
+        Returns the log and token components of the file found in `slotname`
         """
 
         with disk_lock:
@@ -268,9 +267,14 @@ class FileLocation(object):
             filename = self.filename(slotname)
 
             with zipfile.ZipFile(filename, "r") as zf:
-                rv = zf.read("log")
+                log = zf.read("log")
 
-            return rv
+                try:
+                    token = zf.read("token.txt").decode("utf-8")
+                except:
+                    token = ''
+
+            return log, token
 
     def unlink(self, slotname):
         """

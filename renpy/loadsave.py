@@ -779,7 +779,12 @@ def load(filename):
     successfully, this function never returns.
     """
 
-    roots, log = loads(location.load(filename))
+    log_data, token = location.load(filename)
+
+    if not renpy.savetoken.check_load(token):
+        return
+
+    roots, log = loads(log_data)
     log.unfreeze(roots, label="_after_load")
 
 

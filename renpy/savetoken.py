@@ -29,7 +29,11 @@ import zipfile
 import renpy
 
 
-# The save token that is used for this computer.
+# The directory containing the save token information.
+token_dir = None # type: str|None
+
+# The save token that is used for this computer. This may also
+# be a space separated list of tokens.
 token = None # type: str|None
 
 # A set of save tokens that the user considers valid.
@@ -38,14 +42,59 @@ save_tokens = set() # type: set[str]
 # True if the save files and persistent data should be upgraded.
 should_upgrade = False # type: bool
 
+def check_load(token):
+    """
+    This checks the token that was loaded from a save file to see if it's
+    valid. If not, it will prompt the user to confirm the load.
+    """
+
+    if token_dir is None:
+        return True
+
+    if token is None:
+        return True
+
+    # The web sandbox should be enough.
+    if renpy.emscripten:
+        return True
+
+    for i in token.split():
+        if i and (i in save_tokens):
+            return True
+
+    def ask(prompt):
+        """
+        Asks the user a yes/no question. Returns True if the user says yes,
+        and false otherwise.
+        """
+
+        return renpy.exports.invoke_in_new_context(renpy.store.layout.yesno_prompt, None, prompt)
+
+    if not ask(renpy.store.gui.UNKNOWN_TOKEN):
+        return False
+
+    if token and ask(renpy.store.gui.TRUST_TOKEN):
+
+        tokens_txt = os.path.join(token_dir, "security_tokens.txt")
+
+        for i in token.split():
+            if i not in save_tokens:
+                save_tokens.add(i)
+
+                with open(tokens_txt, "a") as f:
+                        f.write(i + "\n")
+
+    return True
+
 
 def check_persistent(token):
     """
     This checks a persistent file to see if the token is valid.
     """
 
-    if token and (token in save_tokens):
-        return True
+    for i in token.split():
+        if i and (i in save_tokens):
+            return True
 
     if should_upgrade:
         return True
@@ -90,7 +139,6 @@ def upgrade_all_savefiles():
     if not should_upgrade:
         return
 
-    token_dir = renpy.__main__.path_to_saves(renpy.config.gamedir, "tokens")
     upgraded_txt = os.path.join(token_dir, "upgraded.txt")
 
     for fn in renpy.loadsave.location.list_files():
@@ -107,6 +155,7 @@ def upgrade_all_savefiles():
 
 
 def init_tokens():
+    global token_dir
     global token
     global save_tokens
     global should_upgrade
