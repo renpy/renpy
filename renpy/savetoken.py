@@ -39,6 +39,19 @@ save_tokens = set() # type: set[str]
 should_upgrade = False # type: bool
 
 
+def check_persistent(token):
+    """
+    This checks a persistent file to see if the token is valid.
+    """
+
+    if token and (token in save_tokens):
+        return True
+
+    if should_upgrade:
+        return True
+
+    return False
+
 def create_token(filename):
     """
     Creates a token and writes it to `filename`, if possible.
@@ -75,7 +88,7 @@ def upgrade_all_savefiles():
         return
 
     if not should_upgrade:
-       return
+        return
 
     token_dir = renpy.__main__.path_to_saves(renpy.config.gamedir, "tokens")
     upgraded_txt = os.path.join(token_dir, "upgraded.txt")

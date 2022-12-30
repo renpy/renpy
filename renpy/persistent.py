@@ -199,14 +199,15 @@ def load(filename):
     # Unserialize the persistent data.
     try:
         with open(filename, "rb") as f:
-            s = zlib.decompress(f.read())
+            do = zlib.decompressobj()
+            s = do.decompress(f.read())
 
+            if not renpy.savetoken.check_persistent(do.unused_data.decode("utf-8")):
+                return None
 
         persistent = loads(s)
 
     except Exception:
-        import renpy.display
-
         try:
             renpy.display.log.write("Loading persistent.")
             renpy.display.log.exception()
@@ -411,6 +412,10 @@ def save():
 
     try:
         data = zlib.compress(dumps(renpy.game.persistent), 3)
+
+        if renpy.savetoken.token:
+            data += renpy.savetoken.token.encode("utf-8")
+
         renpy.loadsave.location.save_persistent(data)
     except Exception:
         if renpy.config.developer:
