@@ -80,9 +80,8 @@ def compile_expr(loc, node):
         flags = renpy.python.new_compile_flags
 
     expr = ast.Expression(body=node)
-    ast.fix_missing_locations(expr)
+    renpy.python.fix_locations(expr, 1, 0)
     return compile(expr, filename, "eval", flags, 1)
-
 
 class SLContext(renpy.ui.Addable):
     """
@@ -750,7 +749,7 @@ class SLDisplayable(SLBlock):
             for i in self.positional:
                 const = min(self.constant, analysis.is_constant_expr(i))
 
-            for k, v in self.keyword:
+            for _k, v in self.keyword:
                 const = min(self.constant, analysis.is_constant_expr(v))
 
             if self.keyword_exist("id"):

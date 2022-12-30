@@ -40,8 +40,6 @@ class JoyBehavior(renpy.display.layout.Null):
     event occurs, this returns it as a string.
     """
 
-    pass
-
 
 joysticks = { }
 

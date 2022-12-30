@@ -97,12 +97,14 @@ def compat_open(*args, **kwargs):
 
 
 ################################################################################
-# Make strict use surrogateescape error handling.
-if PY2:
-    import codecs
+# Make strict use surrogateescape error handling on PY2.
 
-    strict_error = codecs.lookup_error("strict")
-    codecs.register_error("python_strict", strict_error)
+import codecs
+
+strict_error = codecs.lookup_error("strict")
+codecs.register_error("python_strict", strict_error)
+
+if PY2:
     surrogateescape_error = codecs.lookup_error("surrogateescape")
     codecs.register_error("strict", surrogateescape_error)
 
@@ -162,7 +164,6 @@ round = builtins.round
 
 if PY2:
 
-    import io
     import types
 
     # io.TextIOWrapper._write = io.TextIOWrapper.write

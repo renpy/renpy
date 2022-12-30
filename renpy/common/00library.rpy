@@ -474,7 +474,6 @@ label _developer:
 screen _ctc:
     add ctc
 
-
 # Creates the data structure that history is stored in.
 default _history = True
 default _history_list = [ ]

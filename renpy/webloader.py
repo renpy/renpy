@@ -196,7 +196,7 @@ def enqueue(relpath, rtype, data):
 
 
 def process_downloaded_resources():
-    global queue, to_unlink
+    global queue
 
     if not queue:
         return
@@ -250,8 +250,10 @@ def process_downloaded_resources():
     # Due to search-path dups and derived images (including image-based animations)
     # files can't be removed right after actual load
     ttl = 60  # remove after 1mn - if your animation is longer than that, use a video
-    for fullpath in to_unlink.keys():
-        delta = time.time() - to_unlink[fullpath]
+    current_time = time.time()
+    for fullpath, value in tuple(to_unlink.items()):
+        # Get the number of seconds that passed since the item was pushed into the to_unlink
+        delta = current_time - value
         if delta > ttl:
             os.unlink(fullpath)
             del to_unlink[fullpath]

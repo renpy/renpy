@@ -168,10 +168,13 @@ This function returns the side image to use.
 Tooltips
 --------
 
-Tooltips can now be accessed by the tooltip property available on all
+Tooltips can now be accessed by the ``tooltip`` property available on all
 displayables, and the GetTooltip function. The GetTooltip function
 returns the value of the tooltip property when the displayable
 gains focus.
+
+As a reminder, values passed to the ``tooltip`` property must support
+equality.
 
 Here's an example::
 

@@ -519,9 +519,9 @@ class Channel(object):
                 renpysound.set_video(self.number, self.movie)
 
                 if depth == 0:
-                    renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume)
+                    renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume) # type:ignore
                 else:
-                    renpysound.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume)
+                    renpysound.queue(self.number, topf, topq.filename, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume) # type:ignore
 
                 self.playing = True
 
@@ -804,7 +804,10 @@ def register_channel(name,
     queue statements.
 
     `name`
-        The name of the channel.
+        The name of the channel. It should not contain spaces, as this is reserved
+        for Ren'Py's internal use, and should be a
+        `valid identifier <https://docs.python.org/reference/lexical_analysis.html#identifiers>`__
+        for the syntax of the :ref:`play-statement` to be usable.
 
     `mixer`
         The name of the mixer the channel uses. By default, Ren'Py knows about
@@ -989,14 +992,16 @@ def init():
 
         periodic_thread_quit = False
 
-        periodic_thread = threading.Thread(target=periodic_thread_main)
-        periodic_thread.daemon = True
-        periodic_thread.start()
+        if not renpy.emscripten:
+            periodic_thread = threading.Thread(target=periodic_thread_main)
+            periodic_thread.daemon = True
+            periodic_thread.start()
+        else:
+            periodic_thread = None
 
 
 def quit(): # @ReservedAssignment
 
-    global periodic_thread
     global periodic_thread_quit
 
     global pcm_ok

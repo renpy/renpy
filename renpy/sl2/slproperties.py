@@ -49,12 +49,14 @@ position_property_names = [
     "clipping",
     "xfill",
     "yfill",
-    # no center, since it can conflict with the center transform.
     "xcenter",
     "ycenter",
+    "xycenter",
+    # not center, since it can conflict with the center transform.
     "xsize",
     "ysize",
     "xysize",
+    # not size, which is a text style property
     "alt",
     "debug",
     ]

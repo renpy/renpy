@@ -3,7 +3,7 @@
 python early in layeredimage:
 
     from store import Transform, ConditionSwitch, Fixed, Null, config, Text, eval, At
-    from collections import OrderedDict
+    from collections import OrderedDict, defaultdict
 
     ATL_PROPERTIES = [ i for i in renpy.atl.PROPERTIES ]
     ATL_PROPERTIES_SET = set(ATL_PROPERTIES)
@@ -95,25 +95,10 @@ python early in layeredimage:
 
         def __init__(self, if_all=[ ], if_any=[ ], if_not=[ ], at=[ ], group_args={}, **kwargs):
 
-            if not isinstance(at, list):
-                at = [ at ]
-
-            self.at = at
-
-            if not isinstance(if_all, list):
-                if_all = [ if_all ]
-
-            self.if_all = if_all
-
-            if not isinstance(if_any, list):
-                if_any = [ if_any ]
-
-            self.if_any = if_any
-
-            if not isinstance(if_not, list):
-                if_not = [ if_not ]
-
-            self.if_not = if_not
+            self.at = renpy.easy.to_list(at)
+            self.if_all = renpy.easy.to_list(if_all)
+            self.if_any = renpy.easy.to_list(if_any)
+            self.if_not = renpy.easy.to_list(if_not)
 
             self.group_args = group_args
             self.transform_args = kwargs
@@ -589,17 +574,13 @@ python early in layeredimage:
             self.attributes = [ ]
             self.layers = [ ]
 
-            import collections
-            self.attribute_to_groups = collections.defaultdict(set)
-            self.group_to_attributes = collections.defaultdict(set)
+            self.attribute_to_groups = defaultdict(set)
+            self.group_to_attributes = defaultdict(set)
 
             for i in attributes:
                 self.add(i)
 
-            if not isinstance(at, list):
-                at = [ at ]
-
-            self.at = at
+            self.at = renpy.easy.to_list(at)
 
             kwargs.setdefault("xfit", True)
             kwargs.setdefault("yfit", True)
@@ -1118,11 +1099,8 @@ python early in layeredimage:
             if transform is None:
                 self.transform = [ ]
 
-            elif isinstance(transform, list):
-                self.transform = transform
-
             else:
-                self.transform = [ transform ]
+                self.transform = renpy.easy.to_list(transform)
 
         @property
         def image(self):

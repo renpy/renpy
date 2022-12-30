@@ -116,10 +116,12 @@ Customization
 Most customization is performed in the Xcode project. For example, the
 icon, launch images, and orientations are all customized in Xcode.
 
+.. _ios-storyboard:
+
 Launch Storyboard
 -----------------
 
-When the application is run, the Launch Storyboard (configure as part of the
+When the application is run, the Launch Storyboard (configured as part of the
 Xcode project, outside of Ren'Py) will be displayed until Ren'Py is ready
 to display the game's user interface.
 
@@ -141,5 +143,5 @@ images from files.
 Pyobjus
 =======
 
-On iOS and macOS, a version of `Pyobjus <https://pyobjus.readthedocs.io/en/latest/>`_
+On iOS and macOS, a version of `Pyobjus <https://pyobjus.readthedocs.io/en/latest/>`__
 is available, allowing advanced creators to call system libraries.

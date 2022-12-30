@@ -24,6 +24,27 @@ except NameError:
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
+
+def zip_rapt_symbols(destination):
+    """
+    Zips up the rapt symbols.
+    """
+
+    import zipfile
+
+    if PY2:
+        zf = zipfile.ZipFile(destination + "/android-native-symbols.zip", "w", zipfile.ZIP_DEFLATED)
+    else:
+        zf = zipfile.ZipFile(destination + "/android-native-symbols.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=3)
+
+    for dn, dirs, files in os.walk("rapt/symbols"):
+        for fn in dirs + files:
+            fn = os.path.join(dn, fn)
+            arcname = os.path.relpath(fn, "rapt/symbols")
+            zf.write(fn, arcname)
+
+    zf.close()
+
 def copy_tutorial_file(src, dest):
     """
     Copies a file from src to dst. Lines between  "# tutorial-only" and
@@ -78,6 +99,7 @@ def main():
 
     link_directory("rapt")
     link_directory("renios")
+    link_directory("web")
 
     if args.link_directories:
         return
@@ -166,11 +188,6 @@ def main():
     else:
         renpy_sh = "./renpy2.sh"
 
-    # Perhaps autobuild.
-    if "RENPY_BUILD_ALL" in os.environ:
-        print("Autobuild...")
-        subprocess.check_call(["scripts/autobuild.sh"])
-
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=True, quiet=1)
 
@@ -201,6 +218,7 @@ def main():
     if not os.path.exists(destination):
         os.makedirs(destination)
 
+    zip_rapt_symbols(destination)
 
     if args.fast:
 

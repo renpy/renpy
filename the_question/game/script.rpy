@@ -6,7 +6,6 @@ define m = Character(_("Me"), color="#c8c8ff")
 # otherwise.
 default book = False
 
-
 # The game starts here.
 label start:
 

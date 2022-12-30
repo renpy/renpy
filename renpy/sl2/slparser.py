@@ -21,7 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from typing import Any, Callable, Literal
 
 
 import collections
@@ -514,7 +514,7 @@ def register_sl_displayable(*args, **kwargs):
         * "text"
         * "window"
 
-        These correspond to groups of :ref:`style-properties`. Group can
+        These correspond to groups of :doc:`style_properties`. Group can
         also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
     """
 
@@ -543,7 +543,7 @@ class DisplayableParser(Parser):
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False,
                  pass_context=False, imagemap=False, replaces=False, default_keywords={},
-                 hotspot=False, default_properties=True, unique=False):
+                 hotspot=False, default_properties=True, unique=False): # type: (str, Callable, str, int|Literal["many"]|renpy.object.Sentinel, bool, bool, bool, bool, dict[str, Any], bool, bool, bool) -> None
         """
         `scope`
             If true, the scope is passed into the displayable function as a keyword

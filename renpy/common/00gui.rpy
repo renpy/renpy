@@ -452,6 +452,8 @@ init -1150 python in gui:
     SLOW_SKIP = _("Are you sure you want to begin skipping?")
     FAST_SKIP_SEEN = _("Are you sure you want to skip to the next choice?")
     FAST_SKIP_UNSEEN = _("Are you sure you want to skip unseen dialogue to the next choice?")
+    UNKNOWN_TOKEN = _("This save was created on a different device. Do you trust its creator and everyone who had access to it?")
+    TRUST_TOKEN = _("Do you trust the device the save was created on? You should only choose yes if you are the device's sole user.")
 
     ############################################################################
     # Image generation. This lives here since it wants to read data from

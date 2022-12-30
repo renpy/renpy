@@ -353,6 +353,8 @@ Reverse languages
     to use a set of English -> Russian translations to create a
     Russian -> English translation.
 
+.. _image-file-translation:
+
 Image and File Translations
 ===========================
 

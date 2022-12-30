@@ -326,9 +326,14 @@ class SaveRecord(object):
 
         # For speed, copy the file after we've written it at least once.
         if self.first_filename is not None:
-            shutil.copyfile(self.first_filename, filename_new)
-            safe_rename(filename_new, filename)
-            return
+            try:
+                shutil.copyfile(self.first_filename, filename_new)
+            except OSError as e:
+                if renpy.config.developer:
+                    raise e
+            else:
+                safe_rename(filename_new, filename)
+                return
 
         with zipfile.ZipFile(filename_new, "w", zipfile.ZIP_DEFLATED) as zf:
             # Screenshot.
@@ -343,6 +348,10 @@ class SaveRecord(object):
 
             # Version.
             zf.writestr("renpy_version", renpy.version)
+
+            # Token.
+            if renpy.savetoken.token is not None:
+                zf.writestr("token.txt", renpy.savetoken.token.encode("utf-8"))
 
             # The actual game.
             zf.writestr("log", self.log)
@@ -770,7 +779,12 @@ def load(filename):
     successfully, this function never returns.
     """
 
-    roots, log = loads(location.load(filename))
+    log_data, token = location.load(filename)
+
+    if not renpy.savetoken.check_load(token):
+        return
+
+    roots, log = loads(log_data)
     log.unfreeze(roots, label="_after_load")
 
 

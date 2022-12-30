@@ -10,6 +10,7 @@ import sys
 import shutil
 import mimetypes
 import io
+import hashlib
 
 # The path to the root of the web server.
 root = ""
@@ -84,19 +85,44 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
             # newline translations, making the actual size of the content
             # transmitted *less* than the content-length!
             f = open(path, 'rb')
+            fs = os.fstat(f.fileno())
         except IOError:
             self.send_error(404, "File not found")
             return None
         try:
+
+            last_modified = self.date_time_string(fs.st_mtime)
+
+            ims = self.headers.get("If-Modified-Since", None)
+            if (ims is not None) and (ims == last_modified):
+                self.send_response(304)
+                self.end_headers()
+                return None
+
+            hash = hashlib.md5()
+
+            while True:
+                data = f.read(1024 * 1024)
+                if not data:
+                    break
+                hash.update(data)
+
+            f.seek(0)
+
+            etag = '"{}"'.format(hash.hexdigest())
+
+            if self.headers.get("If-None-Match", None) == etag:
+                self.send_response(304)
+                self.end_headers()
+                return None
+
             self.send_response(200)
             self.send_header("Content-type", ctype)
-            fs = os.fstat(f.fileno())
 
-            # Ren'Py - bust cache.
-            self.send_header("Pragma", "no-cache")
-
+            self.send_header("Cache-Control", "max-age=0, must-revalidate")
             self.send_header("Content-Length", str(fs[6]))
             self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
+            self.send_header("ETag", etag)
             self.end_headers()
             return f
         except Exception:
@@ -220,7 +246,22 @@ class WebHandler(http.server.BaseHTTPRequestHandler):
         '.htm': 'text/html',
         '.html': 'text/html',
         '.js': 'application/javascript',
-    }
+        '.wasm': 'application/wasm',
+        '.avi': 'video/x-msvideo',
+        '.m1v': 'video/mpeg',
+        '.m2v': 'video/mpeg',
+        '.m4v': 'video/mp4',
+        '.mkv': 'video/x-matroska',
+        '.mp4': 'video/mp4',
+        '.mpe': 'video/mpeg',
+        '.mpeg': 'video/mpeg',
+        '.mpg': 'video/mpeg',
+        '.mpg4': 'video/mp4',
+        '.mpv': 'video/x-matroska',
+        '.ogv': 'video/ogg',
+        '.webm': 'video/webm',
+        '.wmv': 'video/x-ms-wmv',
+        }
 
 
 def run():

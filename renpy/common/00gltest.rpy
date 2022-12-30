@@ -383,14 +383,14 @@ label _gl_test:
         return
 
     # Show the test image.
-    scene black
+    scene black zorder 0
     show expression config.gl_test_image
     with None
 
     $ __gl_test()
 
     # Hide the test image.
-    scene black
+    scene black zorder 0
 
     return
 

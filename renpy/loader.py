@@ -265,7 +265,7 @@ def index_archives():
                     if archive_handled == True:
                         break
 
-    for dir, fn in listdirfiles(): # @ReservedAssignment
+    for _dir, fn in listdirfiles():
         lower_map[unicodedata.normalize('NFC', fn.lower())] = fn
 
     for fn in remote_files:
@@ -897,7 +897,7 @@ def transfn(name):
     raise Exception("Couldn't find file '%s'." % name)
 
 
-hash_cache = dict()
+hash_cache = {}
 
 
 def get_hash(name): # type: (str) -> int
@@ -1107,8 +1107,6 @@ def auto_thread_function():
     This thread sets need_autoreload when necessary.
     """
 
-    global needs_autoreload
-
     while True:
 
         with auto_lock:
@@ -1173,9 +1171,10 @@ def auto_init():
 
     auto_quit_flag = False
 
-    auto_thread = threading.Thread(target=auto_thread_function)
-    auto_thread.daemon = True
-    auto_thread.start()
+    if not renpy.emscripten:
+        auto_thread = threading.Thread(target=auto_thread_function)
+        auto_thread.daemon = True
+        auto_thread.start()
 
 
 def auto_quit():

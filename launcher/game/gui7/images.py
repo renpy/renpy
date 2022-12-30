@@ -404,6 +404,14 @@ class ImageGenerator(object):
         self.save(s, "main_menu", overwrite=False)
         self.save(s, "game_menu", overwrite=False)
 
+    def generate_bubble(self):
+
+        import shutil
+        shutil.copyfile(
+            os.path.join(config.renpy_base, "gui", "game", "gui", "bubble.png"),
+            os.path.join(self.prefix, "bubble.png"))
+
+
     def generate_all(self):
         self.generate_textbox()
         self.generate_choice_button()
@@ -415,6 +423,7 @@ class ImageGenerator(object):
         self.generate_notify()
         self.generate_menus()
         self.generate_icon()
+        self.generate_bubble()
 
 
 if __name__ == "__main__":

@@ -45,6 +45,9 @@ def find_modules():
 
 def generate(package, modules):
 
+    if package == "renpy.common":
+        return
+
     print(package)
 
     fn = package.replace(".", "/") + "/__init__.py"

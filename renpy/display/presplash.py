@@ -34,6 +34,9 @@ import time
 import pygame_sdl2
 import renpy
 
+if renpy.emscripten:
+    import emscripten
+
 # The window.
 window = None
 
@@ -139,6 +142,10 @@ def start(basedir, gamedir):
 
 
 def pump_window():
+
+    if renpy.emscripten:
+        emscripten.sleep(0)
+
     if window is None:
         return
 
@@ -160,10 +167,6 @@ def end():
     global window
 
     if renpy.emscripten:
-        # presplash handled on the JavaScript side, because emscripten
-        # currently does not support destroying/recreating GL contexts;
-        # in addition browsers support animated webp
-        import emscripten
         emscripten.run_script(r"""presplashEnd();""")
 
     if window is None:
@@ -189,3 +192,38 @@ def sleep():
 
     while end_time - time.time() > 0:
         pump_window()
+
+
+progress_kind = None
+
+def progress(kind, done, total):
+    """
+    Reports progress to emscripten.
+
+    `kind`
+        The kind of progress being reported. This is printed each time
+        it changes.
+
+    `done`
+        The number of units of progress that are complete.
+
+    `total`
+        The total number of units of progress.
+    """
+
+    global progress_kind
+
+    if not renpy.emscripten:
+        return
+
+    if not PY2:
+
+        if progress_kind != kind:
+            print()
+            print(kind)
+            progress_kind = kind
+            sys.stdout.flush()
+
+        emscripten.run_script(r"""progress(%d, %d);""" % (done, total))
+
+    emscripten.sleep(0)

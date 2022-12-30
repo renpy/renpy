@@ -925,7 +925,7 @@
 
     # preferences.rpy:174
     old "Show edit file section"
-    new "Afficher la section d’édition de fichier"
+    new "Afficher la section d’édition de fichiers"
 
     # preferences.rpy:175
     old "Large fonts"
@@ -933,11 +933,11 @@
 
     # preferences.rpy:178
     old "Console output"
-    new "Sortie console"
+    new "Console de sortie"
 
     # preferences.rpy:199
     old "Open launcher project"
-    new "Ouvrir le projet lanceur"
+    new "Ouvrir le projet du lanceur"
 
     # preferences.rpy:213
     old "Language:"

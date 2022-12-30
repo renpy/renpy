@@ -13,7 +13,7 @@
 
 import sys
 import os
-import sphinx_bootstrap_theme
+# import sphinx_rtd_theme
 import datetime
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -28,7 +28,15 @@ sys.path.append(os.path.abspath('.'))
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo', 'sphinx.ext.extlinks', 'sphinx.ext.ifconfig', 'renpydoc', 'sphinx.ext.intersphinx' ]
+extensions = [
+    'sphinx.ext.todo',
+    'sphinx.ext.extlinks',
+    'sphinx.ext.ifconfig',
+    'renpydoc',
+    'sphinx.ext.intersphinx',
+    'sphinx_rtd_theme',
+    'sphinx_rtd_dark_mode',
+    ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -44,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Ren\'Py Visual Novel Engine'
-copyright = u'2012-{}, Tom Rothamel'.format(datetime.date.today().year)  # @ReservedAssignment
+copyright = u'2012-{}, Tom Rothamel'.format(datetime.date.today().year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -93,30 +101,20 @@ pygments_style = 'default'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
-
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 # html_theme = 'sphinxdoc'
-html_theme = 'renpydoc'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-html_theme_options = {
-    'navbar_title' : "Ren'Py Documentation",
-    'navbar_sidebarrel' : False,
-    'navbar_pagenav' : False,
-    'source_link_position': None,
-    'navbar_links': [
-        ("Home Page", "https://www.renpy.org", True),
-        ("Online Documentation", "https://www.renpy.org/doc/html/", True),
-    ],
-    }
+html_theme_options = { }
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path() + [ '.' ]
+# html_theme_path = sphinx_bootstrap_theme.get_html_theme_path() + [ '.' ]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -127,12 +125,14 @@ html_title = "Ren'Py Documentation"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+html_logo = "navbar-logo.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
 #html_favicon = None
+
+html_baseurl = "https://www.renpy.org/doc/html/"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -149,7 +149,11 @@ html_use_smartypants = False
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
-html_sidebars = { '**': ['localtoc.html' ] }
+# html_sidebars = { '**': ['localtoc.html' ] }
+
+html_css_files = [
+    'custom.css',
+]
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -164,14 +168,21 @@ html_sidebars = { '**': ['localtoc.html' ] }
 # If true, the index is split into individual pages for each letter.
 #html_split_index = False
 
+html_context = {
+  'display_github': True,
+  'github_user': 'renpy',
+  'github_repo': 'renpy',
+  'github_version': 'master/sphinx/source/',
+}
+
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 #html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-#html_show_copyright = True
+html_show_copyright = False
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
@@ -182,117 +193,53 @@ html_sidebars = { '**': ['localtoc.html' ] }
 #html_file_suffix = ''
 
 html_permalinks = True
-html_add_permalinks = " link"
-
-# Output file base name for HTML help builder.
-htmlhelp_basename = 'TheRenPyVisualNovelEnginedoc'
+html_permalinks_icon = " link"
 
 locale_dirs = ["locale/"]
 
 
-# -- Options for LaTeX output --------------------------------------------------
-
-# The paper size ('letter' or 'a4').
-#latex_paper_size = 'letter'
-
-# The font size ('10pt', '11pt' or '12pt').
-#latex_font_size = '10pt'
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-    ('index', 'all.tex', u'Ren\'Py Visual Novel Engine Reference Manual',
-     u'PyTom', 'manual'),
+    ('index', 'all.tex', u'Ren\'Py Visual Novel Engine Reference Manual', u'', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 latex_logo = "logo.png"
 
-# For "manual" documents, if this is true, then toplevel headings are parts,
-# not chapters.
-#latex_use_parts = False
-
-# If true, show page references after internal links.
-#latex_show_pagerefs = False
-
-# If true, show URL addresses after external links.
-#latex_show_urls = False
-
-# Additional stuff for the LaTeX preamble.
-#latex_preamble = ''
-
-# Documents to append as an appendix to all manuals.
-#latex_appendices = []
-
-# If false, no module index is generated.
-#latex_domain_indices = True
-
-
-# -- Options for manual page output --------------------------------------------
-
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [
-    # ('index', 'therenpyvisualnovelengine', u'The Ren'Py Visual Novel Engine Documentation',
-    # [u'PyTom'], 1)
-]
-
 
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
 epub_title = u'The Ren\'Py Visual Novel Engine'
-epub_author = u'PyTom'
-epub_publisher = u'PyTom'
-epub_copyright = u'2011, PyTom'
+epub_author = u''
+epub_publisher = u''
+epub_copyright = copyright
 
-# The language of the text. It defaults to the language option
-# or en if the language is not set.
-#epub_language = ''
 
-# The scheme of the identifier. Typical schemes are ISBN or URL.
-#epub_scheme = ''
-
-# The unique identifier of the text. This can be a ISBN number
-# or the project homepage.
-#epub_identifier = ''
-
-# A unique identification for the text.
-#epub_uid = ''
-
-# HTML files that should be inserted before the pages created by sphinx.
-# The format is a list of tuples containing the path and title.
-#epub_pre_files = []
-
-# HTML files shat should be inserted after the pages created by sphinx.
-# The format is a list of tuples containing the path and title.
-#epub_post_files = []
-
-# A list of files that should not be packed into the epub file.
-#epub_exclude_files = []
-
-# The depth of the table of contents in toc.ncx.
-#epub_tocdepth = 3
+# -- More options --------------------------------------------------------------
 
 highlight_language = "renpy"
 
-extlinks = {'lpbug': ('https://bugs.launchpad.net/renpy/+bug/%s',
-                      'launchpad bug '),
-            'ghbug': ('https://github.com/renpy/renpy/issues/%s',
-                      'github bug'),
-            }
+extlinks = {
+    'lpbug': (
+        'https://bugs.launchpad.net/renpy/+bug/%s',
+        'launchpad bug %s'),
+    'ghbug': (
+       'https://github.com/renpy/renpy/issues/%s',
+        'github bug %s'),
+    }
 
 rst_prolog = """\
 .. |PGS4A| replace:: RAPT
 .. |PGS4A_URL| replace:: http://www.renpy.org/dl/android/
 """
 
-
 def setup(app):
     app.add_config_value('is_renpy', '', True)
     app.add_config_value('renpy_figures', '', True)
 
-
 is_renpy = "renpy"
 renpy_figures = ("figures" if ("RENPY_NO_FIGURES" not in os.environ) else '')
+
+
+default_dark_mode = False

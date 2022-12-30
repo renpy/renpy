@@ -2,6 +2,8 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
+*There is also a list of* :doc:`incompatible changes <incompatible>`
+
 .. _renpy-8.1.0:
 .. _renpy-7.6.0:
 
@@ -69,8 +71,8 @@ Constant Stores
 
 Ren'Py has the ability to mark a :ref:`named store <named-stores>` as a constant,
 by setting the ``_constant`` variable in that store. If true, variables in that
-:ref:`constant store <constant-store>` will not be saved, and objects reachable
-soley from that store will not participate in rollback.
+:ref:`constant store <constant-stores>` will not be saved, and objects reachable
+solely from that store will not participate in rollback.
 
 The reason to declare a store constant is that there are small per-store and
 per-variable overheads that are required to support rollback. Declaring a
@@ -93,12 +95,89 @@ The following stores are declared to be constant by default:
 Variables in a constant store can be updated during the init phase, but should
 not change after the init phase finishes.
 
+
+Lenticular Bracket Ruby Text
+-----------------------------
+
+:ref:`Ruby text <ruby-text>`, small text above the main characters used
+for readings and translations, can now be written be written by enclosing it in
+full-width lenticular brackets (【】), with the full-width or half-width
+vertical line character (｜ or |) separating the bottom text from the top text.
+For example::
+
+    e "Ruby can be used for furigana (【東｜とう】 【京｜きょう】)."
+
+    e "It's also used for translations (【東京｜Tokyo】)."
+
+In some contexts, the left full-width lenticular bracket (【) must be
+doubled, to "【【", to prevent it from being interpreted as the start of
+ruby text. For example::
+
+    e "【【This is not | ruby text.】"
+
+Save Token Security
+-------------------
+
+Ren'Py now uses tokens to warn users when a save file is moved between
+devices, to prevent the user from making mistakes described in the
+:doc:`security documentation <security>`.
+
+This works by generating a token the first time Ren'Py is run on a given
+computer. This token is included in saves and in persistent data. If the
+token for a different computer is found in a save file, the user is warned
+and asked if they want to continue. If they choose yes, the user will be
+asked if they want to automatically accept all saves from that computer.
+
+Persistent data is loaded if it's from the current computer, or a computer
+with an accepted token.
+
+The first time a game is run with a version of Ren'Py supporting save
+tokens, all save files that exist for that game are checked, and if a
+token does not exist in those files, the token is added. This should prevent
+prompting during upgrades to Ren'Py 8.1/7.6 or later.
+
+There is intentionally no way to disable this feature, as it's important
+for end-users to be warned about the security issues when possible.
+
 New Features
 ------------
 
+The :func:`Text` displayable now takes a new `tokenized` argument. When
+true, the Text displayable expects to take a list of tokens taken from
+a :ref:`custom text tag <custom-text-tags>`.
+
+Two new layers are now part of Ren'Py. The "top" layer is displayed above
+all other layers, and does not participate in transitions. This makes
+it useful for display information that is always shown. The "bottom" layer
+is displayed below all other layers. The bottom layer is useful for
+handling keys in a way that is always active.
+
+Ren'Py supports the C90 encoding for Thai fonts, which uses the unicode
+private area to provide glyphs that are combinations of base characters,
+vowel marks, and tone marks. This can be enabled by selecting a Thai font
+that supports the C90 encoding, and then setting :propref:`language` to
+"thaic90".
+
+It's now possible for a mouse keysym to be given modifiers corresponding
+to the state of keyboard modifiers when the mouse button was pressed. For
+example, "shift_mouseup_1" will only trigger when mouse button 1 is
+released while the shift key is held down.
+
+Normally, when a displayable or screen with the same tag or name as one
+that is hiding is shown, the hiding displayable or screen is removed,
+cancelling the hide transform. The new :tpref:`show_cancels_hide` transform
+property controls this behavior.
+
+The console (accessed with shift+O) ``help`` command can now take an
+expression, in which case it display the pydoc documentation for the
+function or class that expression refers to.
+
+The new :func:`renpy.get_translation_identifier` function returns the
+unique identifier for the current line of dialogue, if there is one.
+
 The new :var:`config.scene_callbacks` function contains a list of functions
 that are called when the scene statement is run or the :func:`renpy.scene`
-statement is called.
+function is called.
 
 The size text tag now takes multipliers, so it's possible to have::
 
@@ -115,6 +194,27 @@ to take effect immediately, rather than at the start of the next interaction.
 The main use of this is to allow a sound to be played, and then faded out. (By
 default, a ``play`` followed by a ``stop`` causes the track to never be
 played, and hence never faded out.)
+
+The new :func:`renpy.clear_attributes` function allows for an image tag to be
+cleared of all the attributes attached to it. The previous way to do this was
+to hide and show the image again, which had the consequence of also resetting
+the placement of the image on the screen. It is not the case with this function.
+
+Other Changes
+-------------
+
+Self-voicing and auto-forward mode may now be enabled at the same time. When
+this is the case, auto-forward will only occur when the dialogue is focused.
+
+Ren'Py no longer requires grids or vpgrids to be full - it will now pad these
+grids with nulls as required.
+
+The `execute_init` argument to :func:`renpy.register_statement` now respects
+the `init_priority` argument. Previously, all `execute_init` function ran
+at init priority 0.
+
+The config.label_callback variable has been renamed to :var`config.label_callbacks`,
+and now takes a list of callback functions.
 
 
 .. _renpy-7.5.3:

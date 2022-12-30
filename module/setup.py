@@ -56,7 +56,7 @@ setup_env("LD")
 setup_env("CXX")
 
 import setuplib
-from setuplib import android, ios, emscripten, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen, generate_all_cython
+from setuplib import android, ios, emscripten, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen, generate_all_cython, PY2
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -173,7 +173,8 @@ cython("renpy.pydict")
 cython("renpy.style")
 
 # renpy.compat
-cython("renpy.compat.dictviews")
+if PY2:
+    cython("renpy.compat.dictviews")
 
 # renpy.styledata
 cython("renpy.styledata.styleclass")

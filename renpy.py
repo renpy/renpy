@@ -217,16 +217,6 @@ def path_to_renpy_base():
 
 android = ("ANDROID_PRIVATE" in os.environ)
 
-# Android requires us to add code to the main module, and to command some
-# renderers.
-if android:
-    __main__ = sys.modules["__main__"]
-    __main__.path_to_gamedir = path_to_gamedir # type: ignore
-    __main__.path_to_renpy_base = path_to_renpy_base # type: ignore
-    __main__.path_to_common = path_to_common # type: ignore
-    __main__.path_to_saves = path_to_saves # type: ignore
-
-
 def main():
 
     renpy_base = path_to_renpy_base()
@@ -243,6 +233,9 @@ def main():
         print("Could not import renpy.bootstrap. Please ensure you decompressed Ren'Py", file=sys.stderr)
         print("correctly, preserving the directory structure.", file=sys.stderr)
         raise
+
+    # Set renpy.__main__ to this module.
+    renpy.__main__ = sys.modules[__name__] # type: ignore
 
     renpy.bootstrap.bootstrap(renpy_base)
 

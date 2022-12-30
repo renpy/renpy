@@ -399,6 +399,7 @@ define gui.nvl_thought_xalign = 0.0
 define gui.nvl_button_xpos = gui.scale(450)
 define gui.nvl_button_xalign = 0.0
 
+
 ## Localization ################################################################
 
 ## This controls where a line break is permitted. The default is suitable for

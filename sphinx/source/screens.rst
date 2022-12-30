@@ -111,6 +111,7 @@ in a block may be one of two things:
 * A property list.
 * A screen language statement.
 
+.. _screen-statement:
 
 Screen Statement
 ----------------
@@ -560,8 +561,10 @@ This displays its children in a grid. Each child is given an area of
 the same size, the size of the largest child.
 
 It takes two parameters. The first is the number of columns in the
-grid, and the second is the number of rows in the grid. It takes the
-following property:
+grid, and the second is the number of rows in the grid. If the grid
+is not full, the remaining cells are filled with the ``null`` displayable.
+
+Grid takes one property:
 
 `transpose`
     If False (the default), rows are filled before columns. If True,
@@ -1435,7 +1438,8 @@ incorrectly, please ensure that all children are of the same size.
 
 A vpgrid must be given at least one of the `cols` and `rows` properties.
 If one is omitted or None, the other is automatically determined from the
-size, spacing, and number of children.
+size, spacing, and number of children. If a row or column would be underfull,
+``null`` displayable are used to fill the remaining space.
 
 Vpgrids take the the following properties:
 
@@ -1829,7 +1833,8 @@ For
 ---
 
 The ``for`` statement is similar to the Python ``for`` statement, except that
-it does not support the ``else`` clause. It supports assignment to
+it does not support the ``else`` clause nor the ``continue`` and ``break``
+statements. It supports assignment to
 (optionally nested) tuple patterns, as well as variables.
 
 ::

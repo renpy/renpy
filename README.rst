@@ -80,7 +80,7 @@ Next, set RENPY_DEPS_INSTALL To a \:-separated (\;-separated on Windows)
 list of paths containing the dependencies, and RENPY_CYTHON to the name
 of the cython command::
 
-    export RENPY_DEPS_INSTALL="/usr:/usr/lib/$(uname -m)-linux-gnu/"
+    export RENPY_DEPS_INSTALL="/usr:/usr/lib/$(gcc -dumpmachine)/"
     export RENPY_CYTHON=cython
 
 Finally, use setup.py in the Ren'Py ``module`` directory to compile and

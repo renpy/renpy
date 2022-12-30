@@ -160,11 +160,11 @@ overlay_layers = [ 'overlay' ]
 
 # A list of layers that should be cleared when we enter a
 # new context.
-context_clear_layers = [ 'screens' ]
+context_clear_layers = [ 'screens', 'top', 'bottom' ]
 
 # A list of layers that are displayed atop all other layers, and do
 # not participate in transitions.
-top_layers = [ ]
+top_layers = [ 'top' ]
 
 # True if we want to show overlays during wait statements, or
 # false otherwise.
@@ -358,8 +358,10 @@ missing_scene = None
 missing_show = None
 missing_hide = None
 
-# This is called when control is transferred to a label.
+# This is called when control is transferred to a label. (label_callbacks is
+# kept as an old name for label_callbacks.)
 label_callback = None
+label_callbacks = [ ]
 
 # A function that is called when the window needs to be shown.
 empty_window = None
@@ -468,7 +470,7 @@ log_enable = True
 debug_text_overflow = False
 
 # Should underfull grids raise an exception?
-allow_underfull_grids = False
+allow_underfull_grids = True
 
 # Should we save the window size in the preferences?
 save_physical_size = True
@@ -1283,14 +1285,56 @@ viewport_drag_radius = 10
 # function is run.
 scene_callbacks = [ ]
 
+# The physical width and heigh of the game window. If None, the window defaults
+# to config.screen_width and config.screen_height.
+physical_width = None
+physical_height = None
+
+# If true, lenticular brackets can be used to encode ruby text.
+lenticular_bracket_ruby = True
+
+# If true, the web implentation of renpy.input will be used.
+web_input = True
+
+# Layers below all other layers, that do not participate in transitions.
+bottom_layers = [ 'bottom' ]
+
+# Aliases for the keys on the numeric keypad, to make them easier to write as keysyms.
+key_aliases = {
+    "KP_HOME" : "nonum_K_KP7",
+    "KP_UP" : "nonum_K_KP8",
+    "KP_PAGEUP" : "nonum_K_KP9",
+    "KP_LEFT" : "nonum_K_KP4",
+    "KP_RIGHT" : "nonum_K_KP6",
+    "KP_END" : "nonum_K_KP1",
+    "KP_DOWN" : "nonum_K_KP2",
+    "KP_PAGEDOWN" : "nonum_K_KP3",
+    "KP_INSERT" : "nonum_K_KP0",
+    "KP_DELETE" : "nonum_K_KP_PERIOD",
+    "KP_0" : "num_K_KP0",
+    "KP_1" : "num_K_KP1",
+    "KP_2" : "num_K_KP2",
+    "KP_3" : "num_K_KP3",
+    "KP_4" : "num_K_KP4",
+    "KP_5" : "num_K_KP5",
+    "KP_6" : "num_K_KP6",
+    "KP_7" : "num_K_KP7",
+    "KP_8" : "num_K_KP8",
+    "KP_9" : "num_K_KP9",
+    "KP_PERIOD" : "num_K_KP_PERIOD",
+    "KP_DIVIDE" : "K_KP_DIVIDE",
+    "KP_MULTIPLY" : "K_KP_MULTIPLY",
+    "KP_MINUS" : "K_KP_MINUS",
+    "KP_PLUS" : "K_KP_PLUS",
+    "KP_ENTER" : "K_KP_ENTER",
+    "KP_EQUALS" : "K_KP_EQUALS",
+}
 
 del os
 del collections
 
 
 def init():
-    import renpy
-
     global scene
     scene = renpy.exports.scene
 

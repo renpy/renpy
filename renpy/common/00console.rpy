@@ -124,9 +124,11 @@ default persistent._console_unicode_escaping = False
 
 init -1500 python in _console:
     from store import config, persistent, NoRollback
+    import io
     import sys
     import traceback
     import store
+    import pydoc
 
     from reprlib import Repr
     class PrettyRepr(Repr):
@@ -437,8 +439,15 @@ init -1500 python in _console:
             if self.result is None:
                 return
 
-            lines = self.result.split("\n")
-            lines = lines[-config.console_history_lines:]
+            lines = self.result
+            if len(lines) > config.console_history_lines * 160:
+                lines = "…" + self.result[-config.console_history_lines * 160:]
+
+            lines = lines.split("\n")
+
+            if len(lines) > config.console_history_lines:
+                lines = [ "…" ] + lines[-config.console_history_lines:]
+
             self.result = "\n".join(lines)
             self.lines = len(lines)
 
@@ -604,7 +613,8 @@ init -1500 python in _console:
                 return
 
             lines = self.lines
-            self.line_history.append(lines)
+            if not self.line_history or self.line_history[-1] != lines:
+                self.line_history.append(lines)
 
             self.reset()
 
@@ -776,8 +786,36 @@ init -1500 python in _console:
 
         return wrap
 
-    @command(_("help: show this help"))
+    @command(_("help: show this help\n help <expr>: show signature and documentation of <expr>"))
     def help(l, doc_generate=False):
+
+        if l is not None:
+            rest = l.rest_statement()
+        else:
+            rest = None
+
+        if rest and rest in globals():
+            try:
+                result = globals()[rest].help + "\n"
+                return result
+            except Exception:
+                pass
+
+        if rest and rest.replace(" ", "") != "()":
+            try:
+                renpy.python.py_compile(rest, 'eval')
+            except Exception:
+                result = "Could not evaluate expression."
+            else:
+                value = renpy.python.py_eval(rest)
+                stream = io.StringIO()
+                pydoc.doc(value, title='%s', output=stream)
+                result = __("Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n")
+                result += stream.getvalue()
+
+
+            return result
+
         keys = list(config.console_commands.keys())
         keys.sort()
 

@@ -16,19 +16,6 @@ such features will be added to the understanding. This documentation is
 intended for very advanced creators, and for developers looking to add
 to Ren'Py itself.
 
-As of Ren'Py 7.4 (late 2020), Model-Based rendering needs to be enabled to
-be used. This is done by setting config.gl2 to True, using::
-
-    define config.gl2 = True
-
-.. var:: config.gl2 = False
-
-    If true, Ren'Py will default to using a model-based renderer.
-
-As it's expected that model-based rendering will become the only renderer
-in the near future, the rest of this documentation is written as if model-based
-rendering is enabled all the time.
-
 Model-Based Rendering is one of the most advanced features in Ren'Py, and
 this documentation may be hard to understand without first looking at the
 OpenGL, OpenGL ES, GLSL, and GLSL ES manual. What's more, since there are
@@ -486,6 +473,29 @@ a built-in shader to create the Dissolve transform::
 
 Using the Model displayable as the child of a displayable is incompatible
 with :tpref:`mesh`, as the two both create models inside Ren'Py.
+
+Animated Shaders
+----------------
+
+When using shaders that depend on ``u_time`` to animate, one must be aware,
+that even though every shader on screen will run on every frame displayed,
+Ren'Py does not run on constant FPS, and will fall back to the minimum frame
+rate of 5 FPS if no displayables require to be redrawn.
+
+When using an animating shader in an ATL transform, this can cause that shader
+to "stutter" and only animate properly while some other object on screen
+animates as well, in case the transform you're using it in does not cause
+redraws otherwise. In this case, an empty ATL loop can be introduced to force
+redraws to happen::
+
+    transform fancy_shader:
+        shader 'my_fancy_shader'
+        pause 0
+        repeat
+
+``pause 0`` will cycle the frames as fast as possible. You can also set
+different values for ``pause`` to specify a minimum frame rate, like
+``pause 1.0/30``.
 
 Default Shader Parts
 --------------------

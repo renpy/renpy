@@ -34,6 +34,7 @@ import time
 import marshal
 import struct
 import zlib
+import sys
 
 from renpy.compat.pickle import loads, dumps
 import shutil
@@ -61,8 +62,10 @@ else:
 # A string at the start of each rpycv2 file.
 RPYC2_HEADER = b"RENPY RPC2"
 
-# A string
-BYTECODE_FILE = "cache/bytecode.rpyb"
+
+# The name of the obsolete and new bytecode cache files.
+OLD_BYTECODE_FILE = "cache/bytecode.rpyb"
+BYTECODE_FILE = "cache/bytecode-{}{}.rpyb".format(sys.version_info.major, sys.version_info.minor)
 
 
 class ScriptError(Exception):
@@ -119,7 +122,8 @@ class Script(object):
         renpy.game.script = self
 
         if os.path.exists(renpy.config.renpy_base + "/lock.txt"):
-            self.key = open(renpy.config.renpy_base + "/lock.txt", "rb").read()
+            with open(renpy.config.renpy_base + "/lock.txt", "rb") as f:
+                self.key = f.read()
         else:
             self.key = None
 
@@ -163,8 +167,7 @@ class Script(object):
             if renpy.loader.loadable(i):
                 return None
 
-        import __main__
-        backups = __main__.path_to_saves(renpy.config.gamedir, "backups") # @UndefinedVariable
+        backups = renpy.__main__.path_to_saves(renpy.config.gamedir, "backups") # @UndefinedVariable
 
         if backups is None:
             return
@@ -221,7 +224,7 @@ class Script(object):
                 continue
 
             try:
-                os.makedirs(os.path.dirname(target_fn), 0o700)
+                os.makedirs(os.path.dirname(target_fn), 0o700) # type: ignore
             except Exception:
                 pass
 
@@ -291,11 +294,12 @@ class Script(object):
 
         initcode = [ ]
 
+        count = 0
+
         for fn, dir in script_files: # @ReservedAssignment
-            # Mitigate "busy script" warning from the browser
-            if renpy.emscripten:
-                import emscripten # type: ignore
-                emscripten.sleep(0)
+
+            count += 1
+            renpy.display.presplash.progress("Loading script...", count, len(script_files))
 
             # Pump the presplash window to prevent marking
             # our process as unresponsive by OS
@@ -678,7 +682,7 @@ class Script(object):
             data = None
             stmts = None
 
-            with renpy.loader.load(fn) as f:
+            with renpy.loader.load(fn, tl=False) as f:
                 for slot in [ 2, 1 ]:
                     try:
                         bindata = self.read_rpyc_data(f, slot)
@@ -734,7 +738,7 @@ class Script(object):
             if data is None:
                 raise Exception("Could not load from archive %s." % (lastfn,))
 
-            with renpy.loader.load(fn + compiled) as f:
+            with renpy.loader.load(fn + compiled, tl=False) as f:
                 f.seek(-hashlib.md5().digest_size, 2)
                 digest = f.read(hashlib.md5().digest_size)
 
@@ -870,6 +874,7 @@ class Script(object):
 
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
+
         for i in self.all_pycode:
 
             key = i.get_hash() + MAGIC
@@ -931,6 +936,12 @@ class Script(object):
                 with open(fn, "wb") as f:
                     data = (BYTECODE_VERSION, self.bytecode_newcache)
                     f.write(zlib.compress(dumps(data), 3))
+            except Exception:
+                pass
+
+            fn = renpy.loader.get_path(OLD_BYTECODE_FILE)
+            try:
+                os.unlink(fn)
             except Exception:
                 pass
 

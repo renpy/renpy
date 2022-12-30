@@ -200,9 +200,9 @@ init python:
     build.documentation('*.txt')
 
 
-## A Google Play license key is required to download expansion files and
-## perform in-app purchases. It can be found on the "Services & APIs" page
-## of the Google Play developer console.
+## A Google Play license key is required to perform in-app purchases.
+## It can be found in the Google Play developer console,
+## under "Monetize" > "Monetization Setup" > "Licensing".
 
 # define build.google_play_key = "..."
 

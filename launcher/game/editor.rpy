@@ -197,7 +197,7 @@ init 1 python in editor:
                 1,
                 _("Atom"),
                 AD,
-                dlc,
+                "extension:atom",
                 _("Up to 150 MB download required."),
                 None)
 
@@ -205,7 +205,7 @@ init 1 python in editor:
 
             fei.append(e)
 
-        # jEdit
+        # jEdit - Only present if it exists on system.
         if os.path.exists(os.path.join(config.renpy_base, "jedit")):
 
             fei.append(FancyEditorInfo(

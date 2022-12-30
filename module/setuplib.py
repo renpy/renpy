@@ -53,6 +53,9 @@ gen = "gen"
 
 if sys.version_info.major > 2:
     gen += "3"
+    PY2 = False
+else:
+    PY2 = True
 
 if coverage:
     gen += "-coverage"
@@ -469,6 +472,7 @@ def setup(name, version):
         version=version,
         ext_modules=extensions,
         py_modules=py_modules,
+        zip_safe=False,
         )
 
 

@@ -99,7 +99,7 @@ class _Config(object):
         return cvars[name]
 
     def __setattr__(self, name, value):
-        cvars = vars(_config)
+        cvars = _config.__dict__
 
         if name not in cvars and renpy.config.locked:
             raise Exception('config.%s is not a known configuration variable.' % (name))

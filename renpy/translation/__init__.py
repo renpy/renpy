@@ -204,7 +204,7 @@ class ScriptTranslator(object):
             tl = self.language_translates.get((identifier, language), None)
 
             if (tl is None) and alternate:
-                tl = self.language_translates.get((identifier, language), None)
+                tl = self.language_translates.get((identifier, alternate), None)
 
         else:
             tl = None
@@ -310,7 +310,6 @@ class Restructurer(object):
 
         else:
             alternate = None
-            identifier = identifier
 
         self.identifiers.add(identifier)
         if alternate is not None:
@@ -488,7 +487,7 @@ def add_string_translation(language, old, new, newloc):
 Default = renpy.object.Sentinel("default")
 
 
-def translate_string(s, language=Default):
+def translate_string(s, language=Default): # type (str, str|renpy.object.Sentinel|None) -> str
     """
     :doc: translate_string
     :name: renpy.translate_string
@@ -719,7 +718,23 @@ def check_language():
             node = renpy.game.script.translator.lookup_translate(tid) # @UndefinedVariable
 
             if node is not None:
+                # This is necessary for the menu-with-say case. ADVCharachter needs
+                # identifier to set deferred_translate_identifier again, but EndTranslation
+                # has already set translate_identifier to None.
+                ctx.translate_identifier = tid
+
                 raise renpy.game.JumpException(node.name)
+
+
+def get_translation_identifier():
+    """
+    :doc: translation_functions
+
+    Returns the translation identifier for the current statement.
+    """
+
+    ctx = renpy.game.contexts[-1]
+    return ctx.translate_identifier or ctx.deferred_translate_identifier
 
 
 def known_languages():
@@ -936,7 +951,7 @@ def detect_user_locale():
         if isinstance(locale_name, bytes):
             locale_name = locale_name.decode("utf-8")
 
-        local_name = locale_name.replace("-", "_")
+        locale_name = locale_name.replace("-", "_")
     else:
         locale_name = locale.getdefaultlocale()
         if locale_name is not None:

@@ -638,8 +638,6 @@ def IF_statement(l, loc):
 
     rv = None
 
-    entries = [ ]
-
     condition = l.require(l.python_expression)
     l.require(':')
     l.expect_eol()
@@ -759,7 +757,7 @@ def jump_statement(l, loc):
 
 @statement("call")
 def call_statement(l, loc):
-    l.expect_noblock('call statment')
+    l.expect_noblock('call statement')
 
     if l.keyword('expression'):
         expression = True
@@ -1045,7 +1043,7 @@ def transform_statement(l, loc):
 
     atl = renpy.atl.parse_atl(l.subblock_lexer())
 
-    rv = ast.Transform(loc, store, name, atl, parameters)
+    rv = ast.Transform(loc, store, name, atl, parameters) #type: ignore
 
     if not l.init:
         rv = ast.Init(loc, [ rv ], priority + l.init_offset)

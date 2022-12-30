@@ -777,3 +777,11 @@ translate spanish strings:
     # renpy/common/00preferences.rpy:535
     old "mute main"
     new "silenciar volumen principal"
+
+    # renpy/common/00speechbubble.rpy:299
+    old "Speech Bubble Editor"
+    new "Editor de globos de diálogo"
+
+    # renpy/common/00speechbubble.rpy:304
+    old "(hide)"
+    new "(ocultar)"
