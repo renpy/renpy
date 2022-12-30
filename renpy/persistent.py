@@ -200,7 +200,10 @@ def load(filename):
     try:
         with open(filename, "rb") as f:
             s = zlib.decompress(f.read())
+
+
         persistent = loads(s)
+
     except Exception:
         import renpy.display
 
@@ -236,9 +239,7 @@ def init():
         persistent = Persistent()
 
     # Create the backup of the persistent data.
-    v = vars(persistent)
-
-    for k, v in vars(persistent).items():
+    for k, v in persistent.__dict__.items():
         backup[k] = safe_deepcopy(v)
 
     return persistent

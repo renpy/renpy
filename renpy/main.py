@@ -509,6 +509,9 @@ def main():
     if renpy.game.args.savedir: # type: ignore
         renpy.config.savedir = renpy.game.args.savedir # type: ignore
 
+    # Init the save token system.
+    renpy.savetoken.init()
+
     # Init preferences.
     game.persistent = renpy.persistent.init()
     game.preferences = game.persistent._preferences
@@ -523,12 +526,11 @@ def main():
     # Init save locations and loadsave.
     renpy.savelocation.init()
 
-    # We need to be 100% sure we kill the savelocation thread.
     try:
 
         # Init save slots and save tokens.
         renpy.loadsave.init()
-        renpy.savetoken.init()
+        renpy.savetoken.upgrade_all_savefiles()
         log_clock("Loading save slot metadata.")
 
         # Load persistent data from all save locations.
