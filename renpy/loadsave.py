@@ -349,6 +349,10 @@ class SaveRecord(object):
             # Version.
             zf.writestr("renpy_version", renpy.version)
 
+            # Token.
+            if renpy.savetoken.token is not None:
+                zf.writestr("token.txt", renpy.savetoken.token.encode("utf-8"))
+
             # The actual game.
             zf.writestr("log", self.log)
 
