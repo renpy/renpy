@@ -27,8 +27,6 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
-
 import os
 import zipfile
 import json
@@ -174,6 +172,18 @@ class FileLocation(object):
         """
 
         return list(self.mtimes)
+
+    def list_files(self):
+        """
+        Returns a list of all the actual save files.
+        """
+
+        rv = [ ]
+
+        for slotname in self.list():
+            rv.append(self.filename(slotname))
+
+        return rv
 
     def mtime(self, slotname):
         """
@@ -439,6 +449,15 @@ class MultiLocation(object):
             rv.update(l.list())
 
         return list(rv)
+
+    def list_files(self):
+
+        rv = [ ]
+
+        for l in self.active_locations():
+            rv.extend(l.list_files())
+
+        return rv
 
     def mtime(self, slotname):
         l = self.newest(slotname)

@@ -432,7 +432,8 @@ def import_all():
     import renpy.execution
     import renpy.lexer
     import renpy.loadsave
-    import renpy.savelocation # @UnresolvedImport
+    import renpy.savelocation
+    import renpy.savetoken
     import renpy.persistent
     import renpy.scriptedit
     import renpy.parser
@@ -711,6 +712,7 @@ if 1 == 0:
     from . import gl
     from . import gl2
     from . import lexer
+    from . import lexersupport
     from . import lint
     from . import loader
     from . import loadsave
@@ -720,7 +722,6 @@ if 1 == 0:
     from . import minstore
     from . import object
     from . import parser
-    from . import parsersupport
     from . import performance
     from . import persistent
     from . import preferences
@@ -732,6 +733,7 @@ if 1 == 0:
     from . import revertable
     from . import rollback
     from . import savelocation
+    from . import savetoken
     from . import screenlang
     from . import script
     from . import scriptedit

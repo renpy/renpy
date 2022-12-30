@@ -526,9 +526,9 @@ def main():
     # We need to be 100% sure we kill the savelocation thread.
     try:
 
-        # Init save slots.
+        # Init save slots and save tokens.
         renpy.loadsave.init()
-
+        renpy.savetoken.init()
         log_clock("Loading save slot metadata.")
 
         # Load persistent data from all save locations.
