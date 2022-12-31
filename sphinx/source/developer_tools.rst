@@ -19,6 +19,8 @@ Lint also includes useful infos and stats about the game.
 
 Note that using Lint is not a substitute for thorough testing.
 
+.. _console:
+
 Shift+O Console
 ---------------
 

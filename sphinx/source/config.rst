@@ -892,17 +892,17 @@ Occasionally Used
 .. var:: config.save_token_keys = [ ]
 
     A list of keys that the game will trust when loading a save file. This can
-    be used to allow the game's creator to distributed save files that will
-    be loaded without a warning being displayed.
+    be used to allow the game's creator to distribute save files that will
+    be loaded without displaying a warning.
 
     To allow the save token for the current computer to be trusted in this
-    way, open the console and run::
+    way, open the :ref:`console <console>` and run::
 
         print(renpy.get_save_token_keys())
 
     This will print the keys out in log.txt. The value can then be used to
     define this config.save_token_keys. This variable must be set with a define
-    statment, or in a python early block.
+    statement, or in a python early block.
 
 .. var:: config.say_arguments_callback = None
 
@@ -914,7 +914,7 @@ Occasionally Used
 
     This should return a pair, containing a tuple of positional arguments
     (almost always empty), and a dictionary of keyword arguments (almost
-    always with at least interact in it).
+    always with at least `interact` in it).
 
     For example::
 
