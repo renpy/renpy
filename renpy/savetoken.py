@@ -23,6 +23,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import base64
+import ecdsa
 import os
 import zipfile
 
@@ -32,17 +33,108 @@ import renpy
 # The directory containing the save token information.
 token_dir = None # type: str|None
 
-# The save token that is used for this computer. This may also
-# be a space separated list of tokens.
-token = None # type: str|None
+# A list of the keys used to sign saves, stored as DER-encoded strings.
+signing_keys = [ ] # type: list[str]
 
-# A set of save tokens that the user considers valid.
-save_tokens = set() # type: set[str]
+# A list of the keys used to verify saves, stored as DER-encoded strings.
+verifying_keys = [ ] # type: list[str]
 
 # True if the save files and persistent data should be upgraded.
 should_upgrade = False # type: bool
 
-def check_load(token):
+def encode_line(key, a, b=None): #type (str, bytes, bytes|None) -> str
+    """
+    This encodes a line that contains a key and up to 2 base64-encoded fields.
+    It returns the line with the newline appended, as a string.
+    """
+
+    if b is None:
+        return key + " " + base64.b64encode(a).decode("ascii") + "\n"
+    else:
+        return key + " " + base64.b64encode(a).decode("ascii") + " " + base64.b64encode(b).decode("ascii") + "\n"
+
+def decode_line(line): #type (str) -> (str, bytes, bytes|None)
+    """
+    This decodes a line that contains a key and up to 2 base64-encoded fields.
+    It returns a tuple of the key, the first field, and the second field.
+    If the second field is not present, it is None.
+    """
+
+    line = line.strip()
+
+    if not line or line[0] == "#":
+        return '', b'', None
+
+    parts = line.split(None, 2)
+
+    try:
+        if len(parts) == 2:
+            return parts[0], base64.b64decode(parts[1]), None
+        else:
+            return parts[0], base64.b64decode(parts[1]), base64.b64decode(parts[2])
+    except Exception:
+        return '', b'', None
+
+
+def sign_data(data):
+    """
+    Signs `data` with the signing keys and returns the
+    signature. If there are no signing keys, returns None.
+    """
+
+    rv = ""
+
+    for i in signing_keys:
+        sk = ecdsa.SigningKey.from_der(i)
+
+        if sk is not None and sk.verifying_key is not None:
+            sig = sk.sign(data)
+            rv += encode_line("signature", sk.verifying_key.to_der(), sig)
+
+    return rv
+
+def verify_data(data, signatures):
+    """
+    Verifies that `data` has been signed by the keys in `signatures`.
+    """
+
+    for i in signatures.splitlines():
+        kind, key, sig = decode_line(i)
+
+        if kind == "signature":
+
+            if key is None:
+                continue
+
+            if key not in verifying_keys:
+                continue
+
+            try:
+                vk = ecdsa.VerifyingKey.from_der(key)
+                if vk.verify(sig, data):
+                    return True
+            except Exception:
+                continue
+
+    return False
+
+def get_keys_from_signatures(signatures):
+    """
+    Given a string containing signatures, get the verification keys
+    for those signatures.
+    """
+
+    rv = [ ]
+
+    for l in signatures.splitlines():
+        kind, key, _ = decode_line(l)
+
+        if kind == "signature":
+            rv.append(key)
+
+    return rv
+
+def check_load(log, signatures):
     """
     This checks the token that was loaded from a save file to see if it's
     valid. If not, it will prompt the user to confirm the load.
@@ -51,16 +143,15 @@ def check_load(token):
     if token_dir is None:
         return True
 
-    if token is None:
+    if not signing_keys:
         return True
 
     # The web sandbox should be enough.
     if renpy.emscripten:
         return True
 
-    for i in token.split():
-        if i and (i in save_tokens):
-            return True
+    if verify_data(log, signatures):
+        return True
 
     def ask(prompt):
         """
@@ -73,30 +164,30 @@ def check_load(token):
     if not ask(renpy.store.gui.UNKNOWN_TOKEN):
         return False
 
-    if token and ask(renpy.store.gui.TRUST_TOKEN):
+    new_keys = [ i for i in get_keys_from_signatures(signatures) if i not in verifying_keys ]
 
-        tokens_txt = os.path.join(token_dir, "security_tokens.txt")
+    if new_keys and ask(renpy.store.gui.TRUST_TOKEN):
 
-        for i in token.split():
-            if i not in save_tokens:
-                save_tokens.add(i)
+        keys_text = os.path.join(token_dir, "security_keys.txt")
 
-                with open(tokens_txt, "a") as f:
-                        f.write(i + "\n")
+        with open(keys_text, "a") as f:
+            for k in new_keys:
+                f.write(encode_line("verifying-key", k))
+                verifying_keys.append(k)
 
-    return True
+    # This check catches the case where the signature is not correct.
+    return verify_data(log, signatures)
 
 
-def check_persistent(token):
+def check_persistent(data, signatures):
     """
     This checks a persistent file to see if the token is valid.
     """
 
-    for i in token.split():
-        if i and (i in save_tokens):
-            return True
-
     if should_upgrade:
+        return True
+
+    if verify_data(data, signatures):
         return True
 
     return False
@@ -111,29 +202,33 @@ def create_token(filename):
     except Exception:
         pass
 
-    token = base64.b64encode(os.urandom(32)).decode("utf-8")
+    sk = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p)
+    vk = sk.verifying_key
+    if vk is not None:
+        line = encode_line("signing-key", sk.to_der(), vk.to_der())
 
-    with open(filename, "w") as f:
-        f.write(token + "\n")
+        with open(filename, "w") as f:
+            f.write(line)
 
 def upgrade_savefile(fn):
     """
     Given a savegame, fn, upgrades it to include the token.
     """
 
-    if token is None:
+    if signing_keys is None:
         return
 
     with zipfile.ZipFile(fn, "a") as zf:
 
-        if "token.txt" in zf.namelist():
+        if "signatures" in zf.namelist():
             return
 
-        zf.writestr("token.txt", token)
+        log = zf.read("log")
+        zf.writestr("signatures", sign_data(log))
 
 def upgrade_all_savefiles():
 
-    if token is None:
+    if token_dir is None:
         return
 
     if not should_upgrade:
@@ -156,8 +251,8 @@ def upgrade_all_savefiles():
 
 def init_tokens():
     global token_dir
-    global token
-    global save_tokens
+    global signing_keys
+    global verifying_keys
     global should_upgrade
 
     if renpy.config.save_directory is None:
@@ -167,16 +262,26 @@ def init_tokens():
     # Determine the current save token, and the list of accepted save tokens.
     token_dir = renpy.__main__.path_to_saves(renpy.config.gamedir, "tokens")
 
-    tokens_txt = os.path.join(token_dir, "security_tokens.txt")
+    if token_dir is None:
+        return
 
-    if not os.path.exists(tokens_txt):
-        create_token(tokens_txt)
+    keys_fn = os.path.join(token_dir, "security_keys.txt")
 
-    with open(tokens_txt, "r") as f:
-        tokens = f.read().splitlines()
+    if not os.path.exists(keys_fn):
+        create_token(keys_fn)
 
-    token = tokens[0]
-    save_tokens = set(tokens)
+    # Load the signing and verifying keys.
+    with open(keys_fn, "r") as f:
+        for l in f:
+            kind, key, _ = decode_line(l)
+
+            if kind == "signing-key":
+                sk = ecdsa.SigningKey.from_der(key)
+                if sk is not None and sk.verifying_key is not None:
+                    signing_keys.append(sk.to_der())
+                    verifying_keys.append(sk.verifying_key.to_der())
+            elif kind == "verifying-key":
+                verifying_keys.append(key)
 
     # Determine if we need to upgrade the current game.
 

@@ -202,7 +202,7 @@ def load(filename):
             do = zlib.decompressobj()
             s = do.decompress(f.read())
 
-            if not renpy.savetoken.check_persistent(do.unused_data.decode("utf-8")):
+            if not renpy.savetoken.check_persistent(s, do.unused_data.decode("utf-8")):
                 return None
 
         persistent = loads(s)
@@ -411,12 +411,10 @@ def save():
         return
 
     try:
-        data = zlib.compress(dumps(renpy.game.persistent), 3)
-
-        if renpy.savetoken.token:
-            data += renpy.savetoken.token.encode("utf-8")
-
-        renpy.loadsave.location.save_persistent(data)
+        data = dumps(renpy.game.persistent)
+        compressed = zlib.compress(data, 3)
+        compressed += renpy.savetoken.sign_data(data).encode("utf-8")
+        renpy.loadsave.location.save_persistent(compressed)
     except Exception:
         if renpy.config.developer:
             raise

@@ -349,12 +349,11 @@ class SaveRecord(object):
             # Version.
             zf.writestr("renpy_version", renpy.version)
 
-            # Token.
-            if renpy.savetoken.token is not None:
-                zf.writestr("token.txt", renpy.savetoken.token.encode("utf-8"))
-
             # The actual game.
             zf.writestr("log", self.log)
+
+            # The signatures.
+            zf.writestr("signatures", renpy.savetoken.sign_data(self.log))
 
         safe_rename(filename_new, filename)
 
@@ -779,9 +778,9 @@ def load(filename):
     successfully, this function never returns.
     """
 
-    log_data, token = location.load(filename)
+    log_data, signature = location.load(filename)
 
-    if not renpy.savetoken.check_load(token):
+    if not renpy.savetoken.check_load(log_data, signature):
         return
 
     roots, log = loads(log_data)

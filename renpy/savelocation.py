@@ -259,7 +259,7 @@ class FileLocation(object):
 
     def load(self, slotname):
         """
-        Returns the log and token components of the file found in `slotname`
+        Returns the log and signature components of the file found in `slotname`
         """
 
         with disk_lock:
@@ -270,7 +270,7 @@ class FileLocation(object):
                 log = zf.read("log")
 
                 try:
-                    token = zf.read("token.txt").decode("utf-8")
+                    token = zf.read("signatures").decode("utf-8")
                 except:
                     token = ''
 
