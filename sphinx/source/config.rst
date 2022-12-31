@@ -889,6 +889,21 @@ Occasionally Used
     The value of the ``player_name`` variable at the moment the game was saved
     is also accessible by ``FileJson(slot, "playername")``.
 
+.. var:: config.save_token_keys = [ ]
+
+    A list of keys that the game will trust when loading a save file. This can
+    be used to allow the game's creator to distributed save files that will
+    be loaded without a warning being displayed.
+
+    To allow the save token for the current computer to be trusted in this
+    way, open the console and run::
+
+        print(renpy.get_save_token_keys())
+
+    This will print the keys out in log.txt. The value can then be used to
+    define this config.save_token_keys. This variable must be set with a define
+    statment, or in a python early block.
+
 .. var:: config.say_arguments_callback = None
 
     If not None, this should be a function that takes the speaking character,

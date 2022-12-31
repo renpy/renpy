@@ -2383,6 +2383,7 @@ EARLY_CONFIG = {
     "steam_appid",
     "name",
     "version",
+    "save_token_keys",
 }
 
 define_statements = [ ]
@@ -2432,7 +2433,6 @@ class Define(Node):
             return
 
         if self.store == "store.config" and self.varname in EARLY_CONFIG:
-
             value = renpy.python.py_eval_bytecode(self.code.bytecode)
             setattr(renpy.config, self.varname, value)
 

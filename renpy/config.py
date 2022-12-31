@@ -1330,6 +1330,11 @@ key_aliases = {
     "KP_EQUALS" : "K_KP_EQUALS",
 }
 
+# Additional save token keys that are added to the list of save verification
+# tokens. This lets the game's creator distribute blessed save files.
+save_token_keys = [ ]
+
+
 del os
 del collections
 

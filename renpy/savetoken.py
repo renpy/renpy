@@ -283,6 +283,27 @@ def init_tokens():
             elif kind == "verifying-key":
                 verifying_keys.append(key)
 
+    # Process config.save_token_keys
+
+    for tk in renpy.config.save_token_keys:
+
+        k = base64.b64decode(tk)
+        try:
+            vk = ecdsa.VerifyingKey.from_der(k)
+            verifying_keys.append(k)
+        except Exception:
+            try:
+                sk = ecdsa.SigningKey.from_der(k)
+            except Exception:
+                raise Exception("In config.save_token_keys, the key {!r} is not a valid key.".format(tk))
+
+            if sk.verifying_key is not None:
+                vk = base64.b64encode(sk.verifying_key.to_der()).decode("utf-8")
+            else:
+                vk = ""
+
+            raise Exception("In config.save_token_keys, the signing key {!r} was provided, but the verifying key {!r} is required.".format(tk, vk)) # type: ignore
+
     # Determine if we need to upgrade the current game.
 
     upgraded_txt = os.path.join(token_dir, "upgraded.txt")
@@ -308,3 +329,20 @@ def init():
 
         import traceback
         traceback.print_exc()
+
+def get_save_token_keys():
+    """
+    :undocumented:
+
+    Returns the list of save token keys.
+    """
+
+    rv = [ ]
+
+    for i in signing_keys:
+        sk = ecdsa.SigningKey.from_der(i)
+
+        if sk.verifying_key is not None:
+            rv.append(base64.b64encode(sk.verifying_key.to_der()).decode("utf-8"))
+
+    return rv
