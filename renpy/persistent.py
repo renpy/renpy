@@ -36,7 +36,6 @@ from renpy.compat.pickle import dump, dumps, loads
 
 # The class that's used to hold the persistent data.
 
-
 class Persistent(object):
 
     def __init__(self):
@@ -55,6 +54,16 @@ class Persistent(object):
 
         return None
 
+    def __contains__(self, key):
+        return key in self.__dict__
+
+    def _keys(self):
+        """
+        Returns a list of the persistent variables,
+        but only those the creators should be aware of, not renpy's internals.
+        """
+        return [key for key in self.__dict__ if (not key.startswith("_")) or key.startswith("__") and not key.startswith("__00")]
+
     def _clear(self, progress=False):
         """
         Resets the persistent data.
@@ -63,12 +72,7 @@ class Persistent(object):
             If true, also resets progress data that Ren'Py keeps.
         """
 
-        keys = list(self.__dict__)
-
-        for i in keys:
-            if i[0] == "_":
-                continue
-
+        for i in self._keys():
             del self.__dict__[i]
 
         if progress:
