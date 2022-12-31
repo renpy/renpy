@@ -18,6 +18,15 @@ the :ref:`default <default-statement>` statement should be used::
 
     default persistent.main_background = "princess_not_saved"
 
+To test whether a given persistent field has been set, use the ``in`` syntax.
+This allows to tell apart the fields manually set to None, and the unset fields.
+
+A list of all registered fields can also be generated:
+
+.. function:: persistent._keys():
+
+    Returns a list of the registered persistent entries.
+
 An example use of persistent is the creation of an unlockable image gallery.
 This is done by storing a flag in persistent that determines if the gallery has
 been unlocked, as in ::
@@ -40,6 +49,11 @@ As persistent data is loaded before ``init python`` blocks are run, persistent d
 should only contain types that are native to Python or Ren'Py. Alternatively,
 classes that are defined in ``python early`` blocks can be used, provided
 those classes can be pickled and implement equality.
+
+Fields starting with ``__`` are supported, but will have the name-mangling effect
+described in :ref:`this section <elements-of-statements>`, which means they will be
+specific to the file they're defined in. This means that when renaming the file,
+access to that field will be broken.
 
 Merging Persistent Data
 -----------------------
@@ -79,7 +93,6 @@ Persistent Functions
 
     Note that this will delete all persistent data, and will not re-apply
     defaults until Ren'Py restarts.
-
 
 .. include:: inc/persistent
 
