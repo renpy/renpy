@@ -257,11 +257,12 @@ label _persistent_explorer:
         entries = []
 
         for vn in sorted(persistent._keys()):
-            if vn.startswith("__00"):
-                continue
 
-            if vn.startswith("_") and not vn.startswith("__"):
-                continue
+            # if vn.startswith("__00"):
+            #     continue
+            #
+            # if vn.startswith("_") and not vn.startswith("__"):
+            #     continue
 
             value = aRepr.repr(getattr(persistent, vn))
 
