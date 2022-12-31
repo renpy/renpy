@@ -237,7 +237,7 @@ label front_page:
 
     if (not persistent.has_chosen_language) or ("RENPY_CHOOSE_LANGUAGE" in os.environ):
 
-        if _preferences.language is None:
+        if (_preferences.language is None) or ("RENPY_CHOOSE_LANGUAGE" in os.environ):
             hide screen bottom_info
             call choose_language
             show screen bottom_info

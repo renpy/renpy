@@ -356,7 +356,7 @@ screen choose_language():
                     for tlid, tlname in tran:
                         textbutton tlname:
                             xmaximum (TWOTHIRDS//3)
-                            action SetScreenVariable("chosen_lang", tlid)
+                            action [ SetScreenVariable("chosen_lang", tlid), Language(tlid), project.SelectTutorial(True), Return() ]
                             hovered SetScreenVariable("local_lang", tlid)
                             unhovered SetScreenVariable("local_lang", chosen_lang)
                             style "l_list"
