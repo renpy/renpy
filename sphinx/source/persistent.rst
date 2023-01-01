@@ -47,10 +47,14 @@ should only contain types that are native to Python or Ren'Py. Alternatively,
 classes that are defined in ``python early`` blocks can be used, provided
 those classes can be pickled and implement equality.
 
-Fields starting with ``__`` are supported, but will have the name-mangling effect
-described in :ref:`this section <elements-of-statements>`, which means they will be
-specific to the file they're defined in. This means that when renaming the file,
-access to that field will be broken.
+Fields starting with two underscores (``__``) are supported, but will receive the
+name-mangling effect described in :ref:`this section <elements-of-statements>`,
+which means they will be specific to the file they're defined in. This means that
+when renaming the file, access to that field will be broken. In addition to this,
+these fields are not affected by the :meth:`persistent._clear` method.
+
+As a reminder, fields starting with a single underscore ``_`` are reserved and
+should not be used.
 
 Merging Persistent Data
 -----------------------
@@ -83,7 +87,7 @@ Persistent Functions
 
 .. function:: persistent._clear(progress=False)
 
-    Resets the persistent data.
+    Resets the persistent data, except for fields starting with ``__``.
 
     `progress`
         If true, also resets progress data that Ren'Py keeps.
