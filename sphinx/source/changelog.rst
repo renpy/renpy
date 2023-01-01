@@ -142,6 +142,9 @@ for end-users to be warned about the security issues when possible.
 New Features
 ------------
 
+The interactive director now lets you negate an attribute by right
+clicking on the attribute name.
+
 The :func:`Text` displayable now takes a new `tokenized` argument. When
 true, the Text displayable expects to take a list of tokens taken from
 a :ref:`custom text tag <custom-text-tags>`.
