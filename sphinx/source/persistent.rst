@@ -82,7 +82,7 @@ union of that set when merging data. ::
 Persistent Functions
 --------------------
 
-.. function:: persistent._hasattr(field_name):
+.. function:: persistent._hasattr(field_name)
 
     Tests whether the `field_name` persistent field has been set or not.
     This allows you to distinguish fields that have been explicitly set
