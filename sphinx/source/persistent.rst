@@ -18,14 +18,11 @@ the :ref:`default <default-statement>` statement should be used::
 
     default persistent.main_background = "princess_not_saved"
 
-To test whether a given persistent field has been set, use the ``in`` syntax.
-This allows to tell apart the fields manually set to None, and the unset fields.
+.. function:: persistent._hasattr(field_name):
 
-A list of all registered fields can also be generated:
-
-.. function:: persistent._keys():
-
-    Returns a list of the registered persistent entries.
+    Tests whether the `field_name` persistent field has been set or not.
+    This allows you to distinguish fields that have been explicitly set
+    to None from fields that have never been set.
 
 An example use of persistent is the creation of an unlockable image gallery.
 This is done by storing a flag in persistent that determines if the gallery has
