@@ -1777,6 +1777,18 @@ class Adjustment(renpy.object.Object):
 
     force_step = False
 
+    # The amplitude of the inertia.
+    inertia_amplitude = None # type: float|None
+
+    # The target value of the inertia.
+    inertia_target = None # type: float|None
+
+    # The time the inertia started
+    inertia_start = None # type: float|None
+
+    # The time constant of the inertia.
+    inertia_time_constant = None # type: float|None
+
     def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
         """
         The following parameters correspond to fields or properties on
@@ -1924,7 +1936,10 @@ class Adjustment(renpy.object.Object):
     def register(self, d):
         adj_registered.setdefault(self, [ ]).append(d)
 
-    def change(self, value):
+    def change(self, value, end_animation=True):
+
+        if end_animation:
+            self.end_animation()
 
         if value < 0:
             value = 0
@@ -1948,6 +1963,39 @@ class Adjustment(renpy.object.Object):
 
         for d in adj_registered.setdefault(self, [ ]):
             renpy.display.render.invalidate(d)
+
+    def inertia(self, amplitude, time_constant, st):
+        if not amplitude or not self._range:
+            self.end_animation(True)
+        else:
+            self.inertia_amplitude = amplitude
+            self.inertia_target = self._value + amplitude
+            self.inertia_time_constant = time_constant
+            self.inertia_start = st
+
+    def end_animation(self, always=False):
+        if always or self.inertia_target is not None:
+            self.inertia_amplitude = None
+            self.inertia_target = None
+            self.inertia_start = None
+            self.inertia_time_constant = None
+
+            value = self.round_value(self._value, release=True)
+            self.change(value, end_animation=False)
+
+    def animate(self, st):
+
+        if self.inertia_target is None:
+            return
+
+        value = self.inertia_target - self.inertia_amplitude * math.exp(-(st - self.inertia_start) / self.inertia_time_constant)
+        self.change(value, end_animation=False)
+
+        if st > self.inertia_start + self.inertia_time_constant * 6:
+            self.end_animation()
+            return None
+        else:
+            return 0
 
 
 class Bar(renpy.display.core.Displayable):

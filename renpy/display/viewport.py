@@ -49,6 +49,8 @@ class Viewport(renpy.display.layout.Container):
 
     _draggable = True
 
+    drag_position_time = None
+
     def after_upgrade(self, version):
         if version < 1:
             self.xadjustment = renpy.display.behavior.Adjustment(1, 0)
@@ -125,8 +127,10 @@ class Viewport(renpy.display.layout.Container):
             self.xoffset = replaces.xoffset
             self.yoffset = replaces.yoffset
             self.drag_position = replaces.drag_position
+            self.drag_position_time = replaces.drag_position_time
         else:
             self.drag_position = None # type: tuple[int, int]|None
+            self.drag_position_time = None # type: float|None
 
         self.child_width, self.child_height = child_size
 
@@ -242,6 +246,15 @@ class Viewport(renpy.display.layout.Container):
 
             self.check_edge_redraw(st)
 
+        redraw = self.xadjustment.animate(st)
+        if redraw is not None:
+            renpy.display.render.redraw(self, redraw)
+
+        redraw = self.yadjustment.animate(st)
+        if redraw is not None:
+            renpy.display.render.redraw(self, redraw)
+
+
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
 
@@ -334,6 +347,8 @@ class Viewport(renpy.display.layout.Container):
                         rv = renpy.display.focus.force_focus(self)
                         renpy.display.focus.set_grab(self)
                         self.drag_position = (x, y)
+                        self.drag_position_time = st
+                        self.drag_speed = (0.0, 0.0)
                         grab = self
 
                         if rv is not None:
@@ -344,20 +359,46 @@ class Viewport(renpy.display.layout.Container):
             old_xvalue = self.xadjustment.value
             old_yvalue = self.yadjustment.value
 
-            if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
-                renpy.display.focus.set_grab(None)
-                self.drag_position = None
-
-                # Invoke rounding adjustment on viewport release
-                xvalue = self.xadjustment.round_value(old_xvalue, release=True)
-                self.xadjustment.change(xvalue)
-                yvalue = self.yadjustment.round_value(old_yvalue, release=True)
-                self.yadjustment.change(yvalue)
-                raise renpy.display.core.IgnoreEvent()
-
             oldx, oldy = self.drag_position # type: ignore
             dx = x - oldx
             dy = y - oldy
+
+            dt = st - self.drag_position_time
+            if dt > 0:
+                old_xspeed, old_yspeed = self.drag_speed
+                new_xspeed = -dx / dt / 60
+                new_yspeed = -dy / dt / 60
+
+                done = min(1.0, dt / (1 / 60))
+
+                new_xspeed = old_xspeed + done * (new_xspeed - old_xspeed)
+                new_yspeed = old_yspeed + done * (new_yspeed - old_yspeed)
+
+                self.drag_speed = (new_xspeed, new_yspeed)
+
+            if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
+
+                renpy.display.focus.set_grab(None)
+
+                xspeed, yspeed = self.drag_speed
+
+                if xspeed and renpy.config.viewport_inertia_amplitude:
+                    self.xadjustment.inertia(renpy.config.viewport_inertia_amplitude * xspeed, renpy.config.viewport_inertia_time_constant, st)
+                else:
+                    xvalue = self.xadjustment.round_value(old_xvalue, release=True)
+                    self.xadjustment.change(xvalue)
+
+                if yspeed and renpy.config.viewport_inertia_amplitude:
+                    self.yadjustment.inertia(renpy.config.viewport_inertia_amplitude * yspeed, renpy.config.viewport_inertia_time_constant, st)
+                else:
+                    yvalue = self.yadjustment.round_value(old_yvalue, release=True)
+                    self.yadjustment.change(yvalue)
+
+                self.drag_position = None
+                self.drag_position_time = None
+
+                raise renpy.display.core.IgnoreEvent()
+
 
             new_xvalue = self.xadjustment.round_value(old_xvalue - dx, release=False)
             if old_xvalue == new_xvalue:
@@ -374,7 +415,7 @@ class Viewport(renpy.display.layout.Container):
                 newy = y
 
             self.drag_position = (newx, newy) # W0201
-
+            self.drag_position_time = st
 
         if inside and self.mousewheel:
 
@@ -484,6 +525,11 @@ class Viewport(renpy.display.layout.Container):
             if (focused is self) or (focused is None) or (not focused._draggable):
                 if renpy.display.behavior.map_event(ev, 'viewport_drag_start'):
                     self.drag_position = (x, y)
+                    self.drag_position_time = st
+                    self.drag_speed = (0.0, 0.0)
+
+                    self.xadjustment.end_animation()
+                    self.yadjustment.end_animation()
 
         if inside and self.edge_size and ev.type in [ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ]:
 

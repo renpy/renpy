@@ -1334,6 +1334,13 @@ key_aliases = {
 # tokens. This lets the game's creator distribute blessed save files.
 save_token_keys = [ ]
 
+# The amplitude of the viewport inertia. Tis is
+viewport_inertia_amplitude = 20.0
+
+# The time constant of the viewport flick gesture. This controls how quickly the
+# flick gesture decays.
+viewport_inertia_time_constant = 0.325
+
 
 del os
 del collections
