@@ -2060,3 +2060,15 @@ translate spanish strings:
     # game/preferences.rpy:327
     old "{#in language font}Start using Ren'Py in [lang_name]"
     new "{font=fonts/Roboto-Light.ttf}Empieza a usar Ren'Py en [lang_name]{/font}"
+    
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    new "Lint comprueba tu juego en busca de posibles errores y te ofrece estadísticas."
+
+    # game/web.rpy:484
+    old "Creating package..."
+    new "Creando paquete..."
