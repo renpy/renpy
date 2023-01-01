@@ -47,7 +47,9 @@ screen _developer:
                 textbutton _("Console (Shift+O)"):
                     action [ Hide("_developer"), _console.enter ]
                 textbutton _("Variable Viewer"):
-                    action ui.callsinnewcontext("_debugger_screen")
+                    action ui.callsinnewcontext("_variable_viewer")
+                textbutton _("Persistent Viewer"):
+                    action ui.callsinnewcontext("_persistent_viewer")
                 textbutton _("Image Location Picker"):
                     action ui.callsinnewcontext("_image_location_picker")
                 textbutton _("Filename List"):
@@ -116,7 +118,7 @@ label _image_attributes:
     return
 
 
-screen _variable_viewer(all_entries, deleted_entries):
+screen _variable_viewer(title, all_entries, deleted_entries):
 
     zorder 1010
     modal True
@@ -134,7 +136,7 @@ screen _variable_viewer(all_entries, deleted_entries):
         has side "t c b":
             spacing gui._scale(10)
 
-        label _("Variable Viewer")
+        label "[title]"
 
         viewport:
             scrollbars "both"
@@ -161,7 +163,7 @@ screen _variable_viewer(all_entries, deleted_entries):
                     action ToggleScreenVariable("show_deleted")
 
 
-label _debugger_screen:
+label _variable_viewer:
 
     call _enter_game_menu
 
@@ -204,7 +206,40 @@ label _debugger_screen:
 
         entries.sort(key=lambda e : e[0])
 
-        renpy.call_screen("_variable_viewer", all_entries=entries, deleted_entries=deleted_entries)
+        renpy.call_screen("_variable_viewer", _("Variable Viewer"),
+                          all_entries=entries, deleted_entries=deleted_entries)
+
+    return
+
+
+label _persistent_viewer:
+
+    call _enter_game_menu
+
+    python hide:
+
+        import reprlib
+        aRepr = reprlib.Repr()
+        aRepr.maxstring = 120
+
+        entries = []
+
+        for vn, value in persistent.__dict__.items():
+
+            if vn.startswith("__00"):
+                continue
+
+            if vn.startswith("_") and not vn.startswith("__"):
+                continue
+
+            value = aRepr.repr(value)
+
+            entries.append((vn, value))
+
+        entries.sort(key=lambda e : e[0])
+
+        renpy.call_screen("_variable_viewer", _("Persistent Viewer"),
+                          all_entries=entries, deleted_entries=None)
 
     return
 
