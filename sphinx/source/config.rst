@@ -757,11 +757,6 @@ Occasionally Used
     When True, Ren'Py will scan images to find the bounding box of the
     non-transparent pixels, and only load those pixels into a texture.
 
-.. var:: config.overlay_functions = [ ... ]
-
-    A list of functions. When called, each function is expected to
-    use ui functions to add displayables to the overlay layer.
-
 .. var:: config.overlay_screens = [ ... ]
 
     A list of screens that are displayed when the overlay is enabled,
@@ -1063,11 +1058,6 @@ Occasionally Used
     giving an icon that is used for the game's main window. This does
     not set the icon used by windows executables and mac apps, as
     those are controlled by :ref:`special-files`.
-
-.. var:: config.window_overlay_functions = [ ... ]
-
-    A list of overlay functions that are only called when the window
-    is shown.
 
 .. var:: config.window_title = None
 
