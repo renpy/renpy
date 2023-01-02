@@ -50,7 +50,7 @@ and rolled-back when rollback occurs.
 .. var:: _history = True
 
     If true, Ren'Py will record dialogue history when a line is shown. (Note
-    that :var:`config.history_length` must be set as well.)
+    that :var:`config.history_list_length` must be set as well.)
 
 .. var:: _history_list = [ ]
 
