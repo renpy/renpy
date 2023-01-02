@@ -18,8 +18,7 @@ With the few exceptions listed below, the use of image manipulators is
 historic. A number of image manipulators that had been documented in the
 past should no longer be used, as they suffer from inherent problems.
 In any case except for `im.Data`, the :func:`Transform` displayable provides
-similar functionality in a more general manner, while fixing the problems,
-although it sometimes requires gl2 to be enabled.
+similar functionality in a more general manner, while fixing the problems.
 
 .. include:: inc/im_im
 
