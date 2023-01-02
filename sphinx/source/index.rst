@@ -168,7 +168,6 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    changelog
    changelog6
    incompatible
-   distributor
    license
    credits
    sponsors
