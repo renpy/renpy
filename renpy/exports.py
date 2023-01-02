@@ -4010,7 +4010,7 @@ def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
         renpy.config.menu_clear_layers.append(layer) # type: ignore # Set in 00gamemenu.rpy.
 
     if sticky or sticky is None and renpy.config.sticky_layers:
-        renpy.config.sticky_layers.add(layer)
+        renpy.config.sticky_layers.append(layer)
 
 
 def maximum_framerate(t):
