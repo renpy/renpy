@@ -36,7 +36,6 @@ from renpy.compat.pickle import dump, dumps, loads
 
 # The class that's used to hold the persistent data.
 
-
 class Persistent(object):
 
     def __init__(self):
@@ -54,6 +53,9 @@ class Persistent(object):
             raise AttributeError("Persistent object has no attribute %r" % attr)
 
         return None
+
+    def _hasattr(self, field_name):
+        return field_name in self.__dict__
 
     def _clear(self, progress=False):
         """

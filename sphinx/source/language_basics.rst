@@ -164,6 +164,8 @@ structure without overwhelming the script text.
    "This is part of the first block, again."
 
 
+.. _elements-of-statements:
+
 Elements of Statements
 ======================
 
