@@ -210,19 +210,23 @@ class, we'll present them with the `self` parameter.
         ensures that the per_interact methods of those displayables
         are called, and also allows images used by those displayables
         to be predicted.
-        
+
     .. method:: place(self, dest, x, y, width, height, surf, main=True)
-    
+
         This places a render (which must be of this displayable)
         within a bounding area. Returns an (x, y) tuple giving the location
         the displayable was placed at.
+
         `dest`
             If not None, the `surf` will be blitted to `dest` at the
             computed coordinates.
+
         `x`, `y`, `width`, `height`
             The bounding area.
+
         `surf`
             The render to place.
+
         `main`
             This is passed to Render.blit().
 
