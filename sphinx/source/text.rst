@@ -621,7 +621,7 @@ Once Ren'Py has been configured, ruby text can be included in two way.
 
 **Lenticular brackets.** Ruby text can be written by enclosing it
 full-width lenticular brackets (【】), with the full-width or half-width
-vertical line character (｜ or |) separating the bottom text from the top text.
+vertical line character (｜ or \|) separating the bottom text from the top text.
 For example::
 
     e "Ruby can be used for furigana (【東｜とう】 【京｜きょう】)."

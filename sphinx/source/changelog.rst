@@ -102,7 +102,7 @@ Lenticular Bracket Ruby Text
 :ref:`Ruby text <ruby-text>`, small text above the main characters used
 for readings and translations, can now be written be written by enclosing it in
 full-width lenticular brackets (【】), with the full-width or half-width
-vertical line character (｜ or |) separating the bottom text from the top text.
+vertical line character (｜ or \|) separating the bottom text from the top text.
 For example::
 
     e "Ruby can be used for furigana (【東｜とう】 【京｜きょう】)."
