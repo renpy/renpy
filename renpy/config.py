@@ -169,6 +169,9 @@ top_layers = [ 'top' ]
 # Layers below all other layers, that do not participate in transitions.
 bottom_layers = [ 'bottom' ]
 
+# Layers which will override the default layer for a tag while shown.
+sticky_layers = { 'master' }
+
 # True if we want to show overlays during wait statements, or
 # false otherwise.
 overlay_during_with = True

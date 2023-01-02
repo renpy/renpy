@@ -394,7 +394,8 @@ def default_layer(layer, tag, expression=False):
     elif " " in tag:
         tag = tag.split()[0]
 
-    return renpy.config.tag_layer.get(tag, renpy.config.default_tag_layer)
+    return scene_lists().sticky_tags.get(tag, None) or \
+           renpy.config.tag_layer.get(tag, renpy.config.default_tag_layer)
 
 
 def can_show(name, layer=None, tag=None):
