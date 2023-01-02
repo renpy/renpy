@@ -97,6 +97,7 @@ the omission in future versions.
 * Huanxuantian
 * Hyper Sonic
 * Ian Leslie
+* JackkelDragon
 * Jackmcbarn
 * Jacob Kauffmann
 * JaHIY
