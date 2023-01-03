@@ -646,8 +646,8 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
 
     `layer`
         A string, giving the name of the layer on which the image will be shown.
-        The equivalent of the ``onlayer`` property. If None, uses the default
-        layer associated with the tag.
+        The equivalent of the ``onlayer`` or ``in`` property. If None, uses the
+        default layer associated with the tag.
 
     `what`
         If not None, this is a displayable that will be shown in lieu of

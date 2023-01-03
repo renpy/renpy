@@ -243,6 +243,10 @@ The show statement takes the following properties:
 ``onlayer``
     Takes a name. Shows the image on the named layer.
 
+``in``
+    Same as ``onlayer``, but also makes the image sticky to the layer.
+    This can't be used at the same time as ``onlayer``.
+
 ``zorder``
     Takes an integer. The integer specifies the relative ordering of
     images within a layer, with larger numbers being closer to the
