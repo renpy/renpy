@@ -826,7 +826,7 @@ class SceneLists(renpy.object.Object):
     things to the user.
     """
 
-    __version__ = 7
+    __version__ = 8
 
     def after_setstate(self):
 
@@ -871,6 +871,9 @@ class SceneLists(renpy.object.Object):
         if version < 7:
             self.layer_transform = { }
 
+        if version < 8:
+            self.sticky_tags = { }
+
     def __init__(self, oldsl, shown):
 
         super(SceneLists, self).__init__()
@@ -910,6 +913,9 @@ class SceneLists(renpy.object.Object):
         # Same thing, but for the camera transform.
         self.camera_transform = { }
 
+        # A map from tag -> layer name, only for layers in config.sticky_layers.
+        self.sticky_tags = { }
+
         if oldsl:
 
             for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
@@ -939,6 +945,7 @@ class SceneLists(renpy.object.Object):
 
             self.layer_transform.update(oldsl.layer_transform)
             self.camera_transform.update(oldsl.camera_transform)
+            self.sticky_tags.update(oldsl.sticky_tags)
 
         else:
             for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
@@ -1112,6 +1119,9 @@ class SceneLists(renpy.object.Object):
         if key:
             self.remove_hide_replaced(layer, key)
             self.at_list[layer][key] = at_list
+
+            if layer in renpy.config.sticky_layers:
+                self.sticky_tags[key] = layer
 
         if key and name:
             self.shown.predict_show(layer, name)
@@ -1288,6 +1298,9 @@ class SceneLists(renpy.object.Object):
                 self.shown.predict_hide(layer, (tag,))
                 self.at_list[layer].pop(tag, None)
 
+                if layer in renpy.config.sticky_layers:
+                    self.sticky_tags.pop(tag, None)
+
             self.hide_or_replace(layer, remove_index, prefix)
 
     def clear(self, layer, hide=False):
@@ -1313,6 +1326,9 @@ class SceneLists(renpy.object.Object):
 
         self.at_list[layer].clear()
         self.shown.predict_scene(layer)
+
+        if layer in renpy.config.sticky_layers:
+            self.sticky_tags = {k: v for k, v in self.sticky_tags.items() if v != layer}
 
         if renpy.config.scene_clears_layer_at_list:
             self.layer_at_list[layer] = (None, [ ])

@@ -166,6 +166,12 @@ context_clear_layers = [ 'screens', 'top', 'bottom' ]
 # not participate in transitions.
 top_layers = [ 'top' ]
 
+# Layers below all other layers, that do not participate in transitions.
+bottom_layers = [ 'bottom' ]
+
+# Layers which will override the default layer for a tag while shown.
+sticky_layers = [ 'master' ]
+
 # True if we want to show overlays during wait statements, or
 # false otherwise.
 overlay_during_with = True
@@ -1295,9 +1301,6 @@ lenticular_bracket_ruby = True
 
 # If true, the web implentation of renpy.input will be used.
 web_input = True
-
-# Layers below all other layers, that do not participate in transitions.
-bottom_layers = [ 'bottom' ]
 
 # Aliases for the keys on the numeric keypad, to make them easier to write as keysyms.
 key_aliases = {
