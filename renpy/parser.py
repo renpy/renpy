@@ -800,7 +800,7 @@ def call_statement(l, loc):
 
 @statement("scene")
 def scene_statement(l, loc):
-    if l.keyword('onlayer'):
+    if l.keyword('onlayer') or l.keyword('in'):
         layer = l.require(l.name)
     else:
         layer = "master"
