@@ -419,8 +419,7 @@ class ImageDissolve(Transition):
     dissolve in first, and black pixels will dissolve in last.
 
     `image`
-        A control image to use. If `config.gl2` is True, then this can be any displayable,
-        else it needs to be either an image file or an image manipulator. The control image
+        The control image. This can be any displayable. It
         should be the size of the scenes being dissolved, and if `reverse=True`,
         it should be fully opaque.
 
