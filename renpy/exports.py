@@ -629,10 +629,10 @@ def set_tag_attributes(name, layer=None):
         renpy.game.context().images.predict_show(layer, name, False)
 
 
-def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
+def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind=[ ], sticky=False, atl=None, transient=False, munge_name=True):
     """
     :doc: se_images
-    :args: (name, at_list=[], layer='master', what=None, zorder=0, tag=None, behind=[])
+    :args: (name, at_list=[], layer='master', what=None, zorder=0, tag=None, behind=[], sticky=False, **kwargs)
 
     Shows an image on a layer. This is the programmatic equivalent of the show
     statement.
@@ -667,6 +667,10 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         A list of strings, giving image tags that this image is shown behind.
         The equivalent of the ``behind`` property.
 
+    `sticky`
+        If True, the image will stick to the layer, making it the equivalent
+        of the ``in`` keyword rather than ``onlayer``.
+
     ::
         show a
         $ renpy.show("a")
@@ -680,6 +684,12 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
 
         show a at T, T2
         $ renpy.show("a", at_list=(T, T2))
+
+        show a onlayer b
+        $ renpy.show("a", layer="b")
+
+        show a in b
+        $ renpy.show("a", layer="b", sticky=True)
 
         show a onlayer b behind c zorder d as e
         $ renpy.show("a", layer="b", behind=["c"], zorder="d", tag="e")
@@ -698,6 +708,9 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
 
     sls = scene_lists()
     key = tag or name[0]
+
+    if not layer:
+        sticky = False
 
     layer = default_layer(layer, key)
 
@@ -757,7 +770,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
     if renpy.config.missing_hide:
         renpy.config.missing_hide(name, layer)
 
-    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name, atl=atl, default_transform=default_transform, transient=transient)
+    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name, atl=atl, default_transform=default_transform, transient=transient, sticky=sticky)
 
 
 def hide(name, layer=None):

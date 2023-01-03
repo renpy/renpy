@@ -1312,7 +1312,10 @@ def predict_imspec(imspec, scene=False, atl=None):
     in imspec.
     """
 
-    if len(imspec) == 7:
+    if len(imspec) == 8:
+        name, expression, tag, at_expr_list, layer, _zorder, _behind, _sticky = imspec
+
+    elif len(imspec) == 7:
         name, expression, tag, at_expr_list, layer, _zorder, _behind = imspec
 
     elif len(imspec) == 6:
@@ -1355,12 +1358,17 @@ def predict_imspec(imspec, scene=False, atl=None):
 
 def show_imspec(imspec, atl=None):
 
-    if len(imspec) == 7:
+    if len(imspec) == 8:
+        name, expression, tag, at_list, layer, zorder, behind, sticky = imspec
+
+    elif len(imspec) == 7:
         name, expression, tag, at_list, layer, zorder, behind = imspec
+        sticky = False
 
     elif len(imspec) == 6:
         name, expression, tag, at_list, layer, zorder = imspec
         behind = [ ]
+        sticky = False
 
     else:
         name, at_list, layer = imspec
@@ -1368,6 +1376,7 @@ def show_imspec(imspec, atl=None):
         tag = None
         zorder = None
         behind = [ ]
+        sticky = False
 
     if zorder is not None:
         zorder = renpy.python.py_eval(zorder)
@@ -1389,7 +1398,8 @@ def show_imspec(imspec, atl=None):
                       zorder=zorder,
                       tag=tag,
                       behind=behind,
-                      atl=atl)
+                      atl=atl,
+                      sticky=sticky)
 
 
 class Show(Node):
@@ -1591,18 +1601,25 @@ class Hide(Node):
 
     def predict(self):
 
-        if len(self.imspec) == 7:
+        if len(self.imspec) == 8:
+            name, _expression, tag, _at_list, layer, _zorder, _behind, _sticky = self.imspec
+
+        elif len(self.imspec) == 7:
             name, _expression, tag, _at_list, layer, _zorder, _behind = self.imspec
+            _sticky = False
 
         elif len(self.imspec) == 6:
             name, _expression, tag, _at_list, layer, _zorder = self.imspec
             _behind = None
+            _sticky = False
+
         else:
             name, _at_list, layer = self.imspec
             tag = None
             _expression = None
             _zorder = None
             _behind = None
+            _sticky = False
 
         if tag is None:
             tag = name[0]
@@ -1618,7 +1635,9 @@ class Hide(Node):
         next_node(self.next)
         statement_name("hide")
 
-        if len(self.imspec) == 7:
+        if len(self.imspec) == 8:
+            name, _expression, tag, _at_list, layer, _zorder, _behind, _sticky = self.imspec
+        elif len(self.imspec) == 7:
             name, _expression, tag, _at_list, layer, _zorder, _behind = self.imspec
         elif len(self.imspec) == 6:
             name, _expression, tag, _at_list, layer, _zorder = self.imspec

@@ -129,6 +129,7 @@ def parse_image_specifier(l):
     at_list = [ ]
     zorder = None
     behind = [ ]
+    sticky = False
 
     if l.keyword("expression") or l.keyword("image"):
         expression = l.require(l.simple_expression)
@@ -139,11 +140,15 @@ def parse_image_specifier(l):
 
     while True:
 
-        if l.keyword("onlayer"):
+        ol = l.keyword("onlayer") or l.keyword("in") # either keyword, or the empty string
+        if ol:
             if layer:
-                l.error("multiple onlayer clauses are prohibited.")
+                l.error("multiple 'onlayer' or 'in' clauses are prohibited.")
             else:
                 layer = l.require(l.name)
+
+            if ol == "in":
+                sticky = True
 
             continue
 
@@ -189,7 +194,7 @@ def parse_image_specifier(l):
 
         break
 
-    return image_name, expression, tag, at_list, layer, zorder, behind
+    return image_name, expression, tag, at_list, layer, zorder, behind, sticky
 
 
 def parse_with(l, node):

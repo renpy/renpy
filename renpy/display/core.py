@@ -1079,7 +1079,8 @@ class SceneLists(renpy.object.Object):
             atl=None,
             default_transform=None,
             transient=False,
-            keep_st=False):
+            keep_st=False,
+            sticky=None):
         """
         Adds something to this scene list. Some of these names are quite a bit
         out of date.
@@ -1108,6 +1109,10 @@ class SceneLists(renpy.object.Object):
 
         `keep_st`
             If true, we preserve the shown time of a replaced displayable.
+
+        `sticky`
+            If not None, decides whether the the displayable sticks to the layer or not.
+            Otherwise, that's decided by the layer being in config.sticky_layers or not.
         """
 
         if not isinstance(thing, Displayable):
@@ -1120,7 +1125,7 @@ class SceneLists(renpy.object.Object):
             self.remove_hide_replaced(layer, key)
             self.at_list[layer][key] = at_list
 
-            if layer in renpy.config.sticky_layers:
+            if sticky or (layer in renpy.config.sticky_layers):
                 self.sticky_tags[key] = layer
 
         if key and name:
