@@ -552,7 +552,7 @@ def display_say(
             # If we're going to do an interaction, then saybehavior needs
             # to be here.
             if advance:
-                behavior = renpy.ui.saybehavior(allow_dismiss=renpy.config.say_allow_dismiss)
+                behavior = renpy.ui.saybehavior(allow_dismiss=renpy.config.say_allow_dismiss, dialogue_pause=delay)
             else:
                 behavior = None
 

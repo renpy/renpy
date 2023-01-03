@@ -641,8 +641,9 @@ class SayBehavior(renpy.display.layout.Null):
     text_tuple = None
 
     dismiss_unfocused = [ 'dismiss_unfocused' ]
+    dialogue_pause = None
 
-    def __init__(self, default=True, afm=None, dismiss=[ 'dismiss' ], allow_dismiss=None, dismiss_unfocused=[ 'dismiss_unfocused' ], **properties):
+    def __init__(self, default=True, afm=None, dismiss=[ 'dismiss' ], allow_dismiss=None, dismiss_unfocused=[ 'dismiss_unfocused' ], dialogue_pause=None, **properties):
         super(SayBehavior, self).__init__(default=default, **properties)
 
         if not isinstance(dismiss, (list, tuple)):
@@ -662,6 +663,8 @@ class SayBehavior(renpy.display.layout.Null):
 
         self.allow_dismiss = allow_dismiss
 
+        self.dialogue_pause = dialogue_pause
+
     def _tts_all(self):
         raise renpy.display.tts.TTSRoot()
 
@@ -669,7 +672,6 @@ class SayBehavior(renpy.display.layout.Null):
         self.text_tuple = args
 
         self.afm_length = 1
-        self.text_time = 0
 
         for text in args:
 
@@ -685,6 +687,9 @@ class SayBehavior(renpy.display.layout.Null):
         if self.afm_length and renpy.game.preferences.afm_time and renpy.game.preferences.afm_enable:
 
             afm_delay = (1.0 * (renpy.config.afm_bonus + self.afm_length) / renpy.config.afm_characters) * renpy.game.preferences.afm_time
+
+            if self.dialogue_pause is not None:
+                afm_delay += self.dialogue_pause
 
             if self.text_tuple is not None:
                 max_time = 0
