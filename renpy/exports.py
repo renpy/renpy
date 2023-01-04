@@ -3904,10 +3904,14 @@ def execute_default_statement(start=False):
     :undocumented:
 
     Executes the default statement.
+
+    `start`
+        This is true at the start of the game, and false at other
+        times.
     """
 
     for i in renpy.ast.default_statements:
-        i.set_default(start)
+        i.execute_default(start)
 
 
 def write_log(s, *args):

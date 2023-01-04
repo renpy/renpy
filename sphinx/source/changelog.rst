@@ -142,6 +142,10 @@ for end-users to be warned about the security issues when possible.
 New Features
 ------------
 
+A creator-defined statement can now execute a function at the same
+time the ``default`` statements are executed. This is after the init
+phase, but before the game starts.
+
 The interactive director now lets you negate an attribute by right
 clicking on the attribute name.
 
