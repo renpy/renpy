@@ -205,7 +205,7 @@ def create_token(filename):
     sk = ecdsa.SigningKey.generate(curve=ecdsa.NIST256p)
     vk = sk.verifying_key
     if vk is not None:
-        line = encode_line("signing-key", sk.to_der(), vk.to_der())
+        line = encode_line("signing-key", sk.to_der())
 
         with open(filename, "w") as f:
             f.write(line)
