@@ -2410,9 +2410,6 @@ class Text(renpy.display.core.Displayable):
 
                         contents.append(t2)
 
-                    if count:
-                        raise Exception("Text ended while the '{}' text tag was still open.".format(tag))
-
                     new_contents = func(tag, value, contents)
 
                 else:

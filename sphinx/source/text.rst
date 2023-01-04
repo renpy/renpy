@@ -165,16 +165,22 @@ blocks in the program. If you find yourself applying the same text
 tags to every line of text, consider using a style instead.
 
 There are two types of text tags. Some text tags are self-closing, while others
-require a closing tag. When multiple closing tags are used, they
-should be closed last open, first closed order – Ren'Py will reject
-incorrect nesting. For example::
+allow a closing tag. The close tag starts with a slash (/), and tags are
+closed in last-in, first-out order. Each closing tag should match the
+corresponding opening tag. If not, Ren'Py will produce a lint warning.
+
+For example::
 
     # This line is correct.
     "Plain {b}Bold {i}Bold-Italic{/i} Bold{/b} Plain"
 
-    # This line is incorrect, and will cause an error or incorrect
-    # behavior.
+    # This line is incorrect, and will cause incorrect behavior.
     "Plain {b}Bold {i}Bold-Italic{/b} Italic{/i} Plain"
+
+It is not necessary to close all text tags. Ren'Py will close all
+tags that are open at the end of the text block. For example::
+
+    "{size=+20}This is big!"
 
 Some text tags take an argument. In that case, the tag name is
 followed by an equals sign (=), and the argument. The argument may

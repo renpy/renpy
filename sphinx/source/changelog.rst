@@ -214,6 +214,12 @@ the placement of the image on the screen. It is not the case with this function.
 Other Changes
 -------------
 
+It is now explicitly documented that non-self-closing tags will be closed at
+the end of a block of text. This was the behavior of many versions of Ren'Py,
+but would produce lint warnings. Now, the following is explicitly valid::
+
+    e "{size+=20}This is big!"
+
 Self-voicing and auto-forward mode may now be enabled at the same time. When
 this is the case, auto-forward will only occur when the dialogue is focused.
 
