@@ -1344,6 +1344,10 @@ viewport_inertia_amplitude = 20.0
 # flick gesture decays.
 viewport_inertia_time_constant = 0.325
 
+# A list of callbacks that are executed after the default statements have
+# run.
+after_default_callbacks = [ ]
+
 
 del os
 del collections

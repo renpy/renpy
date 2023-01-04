@@ -170,9 +170,11 @@ def register(
 
     `execute_default`
         This is a function that is called at the same time the default
-        statement will execute - before the game starts, after load,
-        after rollback, and after lint, among other times. It is passed a
-        single argument, the object returned from parse.
+        statements are run - after the init phase, but before the game starts; when the
+        a save is loaded; after rollback; before lint; and potentially at
+        other times.
+
+        This is called with a single argument, the object returned from parse.
     """
 
     name = tuple(name.split())

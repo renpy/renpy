@@ -144,7 +144,11 @@ New Features
 
 A creator-defined statement can now execute a function at the same
 time the ``default`` statements are executed. This is after the init
-phase, but before the game starts.
+phase, but before the game starts; when a save is loaded; after
+rollback; before lint; and potentially at other times.
+
+The new :var:`config.after_default_callbacks` allows callbacks to be
+run immediately after the default statements are executed.
 
 The interactive director now lets you negate an attribute by right
 clicking on the attribute name.

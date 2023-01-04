@@ -225,6 +225,17 @@ Occasionally Used
     As this function may be called during prediction, it must not rely
     on any state.
 
+.. var:: config.after_default_callbacks = [ ... ]
+
+    A list of functions that are called (with no arguments) whenever
+    default statements are processed. The default statements are
+    run after the init phase, but before the game starts; when the
+    a save is loaded; after rollback; before lint; and potentially at
+    other times.
+
+    Similar to the default statement, these callbacks are a good place
+    to add data to the game that does not exist, but needs to.
+
 .. var:: config.after_load_callbacks = [ ... ]
 
     A list of functions that are called (with no arguments) when a load

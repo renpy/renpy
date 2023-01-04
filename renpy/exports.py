@@ -3913,6 +3913,8 @@ def execute_default_statement(start=False):
     for i in renpy.ast.default_statements:
         i.execute_default(start)
 
+    for i in renpy.config.after_default_callbacks:
+        i()
 
 def write_log(s, *args):
     """
