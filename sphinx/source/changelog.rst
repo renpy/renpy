@@ -10,6 +10,23 @@ Changelog (Ren'Py 7.x-)
 8.1 / 7.6
 =========
 
+Sticky Layers
+-------------
+
+When a tag is shown, the layer it is shown on will be stored and treated as the
+tag's default layer until it is hidden. In practice that means when showing
+a tag on a layer besides its usual default it will continue to be updated with
+attributes set via a show or say statement without the need to respecify the
+layer. Once the tag is hidden then it's normal default layer will against take
+precedence.::
+
+    show eileen onlayer near
+    eileen happy "Hello there!"  # will now work, where previously it would not
+    show eileen excited          # implicit onlayer near
+    hide eileen                  # implicit onlayer near
+    show eileen                  # implicit onlayer master, eileen's default
+
+
 Mixer Volume Changes
 --------------------
 

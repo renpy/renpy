@@ -1760,11 +1760,11 @@ Rarely or Internally Used
     Ren'Py terminates. This is intended to free resources, such as
     opened files or started threads.
 
-.. var:: config.sticky_layers = [ "master", ... ]
+.. var:: config.sticky_layers = True
 
-    A list of layer names that will, when a tag is shown on them, take
-    precedence over that tag's entry in :var:`config.tag_layer` for the
-    duration of it being shown.
+    When True, the last layer a showing tag was displayed on will be
+    remembered and used in place of an entry in :var:`config.tag_layer`.
+    When the tag is hidden it is forgotten and will revert to normal.
 
 .. var:: config.top_layers = [ "top", ... ]
 

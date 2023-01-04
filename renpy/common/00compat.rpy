@@ -269,7 +269,7 @@ init -1100 python:
             config.context_clear_layers.remove("top")
             config.context_clear_layers.remove("bottom")
 
-            config.sticky_layers.remove("master")
+            config.sticky_layers = False
 
             store._errorhandling._constant = True
             store._gamepad._constant = True

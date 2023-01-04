@@ -3957,7 +3957,7 @@ def clear_line_log():
     renpy.game.context().line_log = [ ]
 
 
-def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
+def add_layer(layer, above=None, below=None, menu_clear=True):
     """
     :doc: image_func
 
@@ -3980,11 +3980,6 @@ def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
     `menu_clear`
         If true, this layer will be cleared when entering the game menu
         context, and restored when leaving it.
-
-    `sticky`
-        If true, any tags added to this layer will have it become their
-        default layer until they are hidden. If None, this layer will be
-        sticky only if other sticky layers already exist.
     """
 
     layers = renpy.config.layers
@@ -4014,9 +4009,6 @@ def add_layer(layer, above=None, below=None, menu_clear=True, sticky=None):
 
     if menu_clear:
         renpy.config.menu_clear_layers.append(layer) # type: ignore # Set in 00gamemenu.rpy.
-
-    if sticky or sticky is None and renpy.config.sticky_layers:
-        renpy.config.sticky_layers.append(layer)
 
 
 def maximum_framerate(t):

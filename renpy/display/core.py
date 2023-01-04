@@ -1120,7 +1120,7 @@ class SceneLists(renpy.object.Object):
             self.remove_hide_replaced(layer, key)
             self.at_list[layer][key] = at_list
 
-            if layer in renpy.config.sticky_layers:
+            if renpy.config.sticky_layers and not isinstance(thing, renpy.display.screen.ScreenDisplayable):
                 self.sticky_tags[key] = layer
 
         if key and name:
@@ -1298,8 +1298,8 @@ class SceneLists(renpy.object.Object):
                 self.shown.predict_hide(layer, (tag,))
                 self.at_list[layer].pop(tag, None)
 
-                if layer in renpy.config.sticky_layers:
-                    self.sticky_tags.pop(tag, None)
+                if self.sticky_tags.get(tag, None) == layer:
+                    del self.sticky_tags[tag]
 
             self.hide_or_replace(layer, remove_index, prefix)
 
@@ -1325,10 +1325,9 @@ class SceneLists(renpy.object.Object):
                 self.hide_or_replace(layer, i, hide)
 
         self.at_list[layer].clear()
-        self.shown.predict_scene(layer)
+        self.sticky_tags = {k: v for k, v in self.sticky_tags.items() if v != layer}
 
-        if layer in renpy.config.sticky_layers:
-            self.sticky_tags = {k: v for k, v in self.sticky_tags.items() if v != layer}
+        self.shown.predict_scene(layer)
 
         if renpy.config.scene_clears_layer_at_list:
             self.layer_at_list[layer] = (None, [ ])

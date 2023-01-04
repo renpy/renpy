@@ -19,6 +19,17 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**Sticky layers** This release introduces sticky layer behaviour which
+helps automatically manage tags being placed on layers other than their
+default. In the rare case that a game requires multiple of the same tag,
+to be displayed at the same time, on different layers then this may not
+be desirable. This does not apply to screens.
+
+To disable sticky layers, add to your game::
+
+    define config.sticky_layers = False
+
+
 **Lenticular bracket ruby text** This release of Ren'Py introduces
 lenticular bracket ruby text, an easier way of writing ruby text. If
 a game included a literal 【, it needs to be doubled, to "【【", to
