@@ -2147,8 +2147,8 @@ Show Screen
 
 The ``show screen`` statement causes a screen to be shown. It takes an
 screen name, a series of optional clauses, and optional Python arguments
-which are passed to the screen. :func:`show_screen` and :func:`call_screen`
-take additional specific keywords.
+which are passed to the screen. :func:`renpy.show_screen` and
+:func:`renpy.call_screen` take additional specific keywords.
 
 The ``show screen`` statement takes the following clauses, some of them similar
 to the clauses of the :ref:`show-statement`:
@@ -2279,6 +2279,11 @@ those of the :ref:`show-screen-statement`:
     arguments to the screen are evaluated. Please ensure that evaluating
     the screen arguments does not cause unexpected side-effects to occur.
 
+    .. warning::
+
+        If evaluating the arguments to a screen causes side-effects to occur,
+        your game may behave in unexpected ways.
+
 ``expression``
     Similar to the ``show screen`` statement, ``call screen`` also takes the
     ``expression`` keyword, allowing to use an arbitrary expression as the screen
@@ -2298,11 +2303,6 @@ special keyword argument to the screen, as in the example below.
 
 Other ways of triggering transitions also work, such as the
 ``[ With(dissolve), Return() ]`` action list.
-
-.. warning::
-
-    If evaluating the arguments to a screen causes side-effects to occur,
-    your game may behave in unexpected ways.
 
 ::
 
