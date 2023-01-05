@@ -263,6 +263,7 @@ init -1100 python:
             config.quadratic_volumes = True
             config.emphasize_audio_volume = 0.5
             config.lenticular_bracket_ruby = False
+            config.preserve_volume_when_muted = True
 
             config.top_layers.remove("top")
             config.bottom_layers.remove("bottom")
@@ -282,9 +283,6 @@ init -1100 python:
             store.iap._constant = True
             store.layeredimage._constant = True
             store.updater._constant = True
-
-
-
 
 
     # The version of Ren'Py this script is intended for, or

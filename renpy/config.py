@@ -990,8 +990,8 @@ ftfont_vertical_extent_scale = { }
 # The default shader.
 default_shader = "renpy.geometry"
 
-# If True, the volume of a channel is shown when it is mute.
-preserve_volume_when_muted = False
+# If True, the volume of a channel is kept while the channel is muted.
+preserve_volume_when_muted = True
 
 
 def say_attribute_transition_callback(*args):

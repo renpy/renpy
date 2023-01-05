@@ -214,6 +214,9 @@ the placement of the image on the screen. It is not the case with this function.
 Other Changes
 -------------
 
+Audio volumes are now preserved when muted. (This means that the volume will
+not drop to 0 when the game is muted.)
+
 It is now explicitly documented that non-self-closing tags will be closed at
 the end of a block of text. This was the behavior of many versions of Ren'Py,
 but would produce lint warnings. Now, the following is explicitly valid::
