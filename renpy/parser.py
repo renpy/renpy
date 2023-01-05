@@ -795,13 +795,13 @@ def call_statement(l, loc):
 
 @statement("scene")
 def scene_statement(l, loc):
+    layer = None
     if l.keyword('onlayer'):
         layer = l.require(l.name)
-    else:
-        layer = "master"
+        l.expect_eol()
 
-    # Empty.
-    if l.eol():
+    if layer or l.eol():
+        # No displayable.
         l.advance()
         return ast.Scene(loc, None, layer)
 
