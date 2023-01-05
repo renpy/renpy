@@ -10,6 +10,31 @@ Changelog (Ren'Py 7.x-)
 8.1 / 7.6
 =========
 
+Sticky Layers
+-------------
+
+A sticky layer is defined as one that, when a tag is shown upon it, will
+be treated as that tag's default layer until it is either hidden, or
+shown on another sticky layer.
+
+In practice, that means showing a tag on a layer other than its default,
+and assuming that layer is sticky, it will be updated with attributes
+set via a show or say statement without the need to respecify the layer.
+
+The following example assumes that the default layer for ``eileen`` is
+``master``, and that ``near`` is a sticky layer::
+
+    show eileen onlayer near
+    eileen happy "Hello there!"  # will now work, where previously it would not
+    show eileen excited          # implicit onlayer near
+    hide eileen                  # implicit onlayer near
+    show eileen                  # implicit onlayer master, eileen's default
+
+The default for this feature is for the ``master`` layer to be sticky, as
+well as any layers created with :func:`renpy.add_layer` unless passed
+the new parameter ``sticky=False``.
+
+
 Mixer Volume Changes
 --------------------
 
