@@ -173,6 +173,9 @@ Preference("high_contrast", False)
 # Should sound continue playing when the window is minimized?
 Preference("audio_when_minimized", True)
 
+# Should sound continue playing when the window is not focused?
+Preference("audio_when_unfocused", True)
+
 # Should a progressive web app preload all files into the browser cache?
 Preference("pwa_preload", False)
 

@@ -219,9 +219,13 @@ init -1500 python:
          * Preference("high contrast text", "disable") - Disables high contrast text.
          * Preference("high contrast text", "toggle") - Toggles high contrast text.
 
-         * Preference("audio when minimized", "enable") - Enable sounds playing when the window is not in focus.
-         * Preference("audio when minimized", "disable") - Disable sounds playing when the window is not in focus.
-         * Preference("audio when minimized", "toggle") - Toggle sounds playing when the window is not in focus.
+         * Preference("audio when minimized", "enable") - Enable sounds playing when the window has been minimized.
+         * Preference("audio when minimized", "disable") - Disable sounds playing when the window has been minimized.
+         * Preference("audio when minimized", "toggle") - Toggle sounds playing when the window has been minimized.
+
+         * Preference("audio when unfocused", "enable") - Enable sounds playing when the window is not in focus.
+         * Preference("audio when unfocused", "disable") - Disable sounds playing when the window is not in focus.
+         * Preference("audio when unfocused", "toggle") - Toggle sounds playing when the window is not in focus.
 
          * Preference("web preload cache", "enable") - Will cause the web cache to be preloaded.
          * Preference("web preload cache", "disable") - Will cause the web cache to not be preloaded, and preloaded data to be deleted.
@@ -516,6 +520,15 @@ init -1500 python:
                     return SetField(_preferences, "audio_when_minimized", False)
                 elif value == "toggle":
                     return ToggleField(_preferences, "audio_when_minimized")
+
+            elif name == _("audio when unfocused"):
+
+                if value == "enable":
+                    return SetField(_preferences, "audio_when_unfocused", True)
+                elif value == "disable":
+                    return SetField(_preferences, "audio_when_unfocused", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "audio_when_unfocused")
 
             elif name == _("web cache preload"):
 
