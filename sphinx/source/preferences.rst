@@ -158,6 +158,22 @@ can then change it again.)
     have no effect on audio.
     The equivalent of the "audio when minimized" preference.
 
+.. var:: preferences.audio_when_unfocused = True
+
+    If False, audio channels are stopped when the window loses keyboard focus,
+    and resumed when the window regains keyboard focus. If True, keyboard focus
+    will have no effect on audio.
+    The equivalent of the "audio when unfocused" preference.
+
+.. var:: preferences.web_cache_preload = False
+
+    If True the game files will be loaded into the web browser's cache,
+    allowing the game to be played offline. If False, the game files will
+    not be loaded into the web browser's cache, and the game will require
+    internet access to play.
+    The equivalent of the "web cache preload" preference.
+
+
 Mixer Functions
 ---------------
 
