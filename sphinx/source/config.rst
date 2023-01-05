@@ -402,6 +402,11 @@ Occasionally Used
     As this function may be called during prediction, it must not rely on any
     state.
 
+.. var:: config.default_language = None
+
+    If not None, this should be a string giving the default language
+    that the game is translated into by the translation framework.
+
 .. var:: config.default_tag_layer = "master"
 
     The layer an image is shown on if its tag is not found in :var:`config.tag_layer`.
@@ -602,11 +607,6 @@ Occasionally Used
 .. var:: config.input_caret_blink = 1.0
 
     If not False, sets the blinking period of the default caret, in seconds.
-
-.. var:: config.language = None
-
-    If not None, this should be a string giving the default language
-    that the game is translated into by the translation framework.
 
 .. var:: config.lint_character_statistics = True
 
@@ -1921,3 +1921,7 @@ variables. You can locate them there, in their context.
 * :var:`config.side_image_prefix_tag`
 * :var:`config.side_image_same_transform`
 * :var:`config.side_image_tag`
+
+:doc:`translation`:
+
+* :var:`config.language`

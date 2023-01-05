@@ -406,15 +406,15 @@ The default language is chosen using the following method:
 
 * If the RENPY_LANGUAGE environment variable is set, that language is
   used.
-* If :var:`config.language` is set, that language is used.
+* If :var:`config.language` is set, that language is used, overriding
+  all of the following.
 * If the game has ever chosen a language in the past, that language is
   used.
 * If this is the first time the game has been run and
   :var:`config.enable_language_autodetect` is True, Ren'Py tries to
   autodetect the language using :var:`config.locale_to_language_function`.
 * If this is the first time the game has been run,
-  :var:`config.default_language` is used. (This defaults to the None
-  language.)
+  :var:`config.default_language` is used.
 * Otherwise, the None language is used.
 
 Translation Actions, Functions, and Variables
@@ -462,7 +462,7 @@ translation:
 .. include:: inc/translate_string
 
 There are two language-related variables. One is
-:var:`config.language`, which is used to change the default language
+:var:`config.default_language`, which is used to change the default language
 of the game.
 
 .. var:: _preferences.language
@@ -503,6 +503,11 @@ translation template that contains all of the strings in it.
 If a game doesn't include support for changing the language, it may be
 appropriate to use an ``init python`` block to set :var:`config.language`
 to the target language.
+
+.. var:: config.language = None
+
+    If not None, sets the language to use at game launch, overriding
+    any memorized choice made by the user.
 
 Along with the use of string translations for dialogue, unsanctioned
 translators may be interested in using the techniques described above
