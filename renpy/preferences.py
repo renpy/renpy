@@ -177,7 +177,7 @@ Preference("audio_when_minimized", True)
 Preference("audio_when_unfocused", True)
 
 # Should a progressive web app preload all files into the browser cache?
-Preference("pwa_preload", False)
+Preference("web_cache_preload", False)
 
 class Preferences(renpy.object.Object):
     """
@@ -226,7 +226,8 @@ class Preferences(renpy.object.Object):
         system_cursor = False
         high_contrast = False
         audio_when_minimized = True
-        pwa_preload = False
+        audio_when_unfocused = True
+        web_cache_preload = False
 
     def init(self):
         """

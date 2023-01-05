@@ -536,11 +536,11 @@ init -1500 python:
                     return None
 
                 if value == "enable":
-                    return [ SetField(_preferences, "pwa_preload", True), ExecJS("loadCache()") ]
+                    return [ SetField(_preferences, "web_cache_preload", True), ExecJS("loadCache()") ]
                 elif value == "disable":
-                    return [ SetField(_preferences, "pwa_preload", False), ExecJS("clearCache()") ]
+                    return [ SetField(_preferences, "web_cache_preload", False), ExecJS("clearCache()") ]
                 elif value == "toggle":
-                    if _preferences.pwa_preload:
+                    if _preferences.web_cache_preload:
                         return Preferences("web cache preload", "disable")
                     else:
                         return Preferences("web cache preload", "enable")
