@@ -1874,7 +1874,7 @@ statement. It supports the ``if``, ``elif``, and ``else`` clauses.
 ::
 
     screen skipping_indicator():
-        if config.skipping:
+        if renpy.get_skipping():
              text "Skipping."
         else:
              text "Not Skipping."

@@ -164,7 +164,7 @@ namespaces inside functions,  or ``python hide`` blocks.)
 
 For example, using a file object like::
 
-    $ monika_file = open(config.gamedir + "/monika.chr", "w")
+    $ monika_file = open("./monika.chr", "w")
     $ monika_file.write("Do not delete.\r\n")
     $ monika_file.close()
 
@@ -173,7 +173,7 @@ Putting this in a ``python hide`` block will work::
 
     python hide:
 
-        monika_file = open(config.gamedir + "/monika.chr", "w")
+        monika_file = open("./monika.chr", "w")
         monika_file.write("Do not delete.\r\n")
         monika_file.close()
 
@@ -181,7 +181,7 @@ Putting this in a ``python hide`` block will work::
 
     python hide:
 
-        with open(config.gamedir + "/monika.chr", "w") as monika_file:
+        with open("./monika.chr", "w") as monika_file:
             monika_file.write("Do not delete.\r\n")
 
 Coroutines, like those made with ``async``, ``await``, or the ``asyncio``
