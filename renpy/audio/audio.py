@@ -1252,7 +1252,7 @@ def autoreload(_fn):
     renpy.exports.restart_interaction()
 
 
-global_pause = False
+global_pause = 0
 
 
 def pause_all():
@@ -1261,7 +1261,7 @@ def pause_all():
     """
 
     global global_pause
-    global_pause = True
+    global_pause += 1
 
     periodic()
 
@@ -1272,7 +1272,8 @@ def unpause_all():
     """
 
     global global_pause
-    global_pause = False
+    if global_pause > 0:
+        global_pause -= 1
 
     periodic()
 
