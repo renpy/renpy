@@ -183,7 +183,7 @@ class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = len(all_preferences)
+    __version__ = len(all_preferences) + 1
 
     # Default values, for typing purposes.
     if 1 == 0:
