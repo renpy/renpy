@@ -558,7 +558,8 @@ def Filmstrip(image, framesize, gridsize, delay, frames=None, loop=True, **prope
             x = c * width
             y = r * height
 
-            args.append(renpy.display.im.Crop(image, x, y, width, height))
+            args.append(renpy.display.transform.Transform(
+                image, crop=(x, y, width, height)))
             args.append(delay)
 
             i += 1
