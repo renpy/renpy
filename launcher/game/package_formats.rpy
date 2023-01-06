@@ -31,12 +31,11 @@ init python in distribute:
     import sys
     import threading
 
-    from renpy import six
     from zipfile import crc32
 
 
     # Since the long type doesn't exist on py3, define it here
-    if six.PY3:
+    if not PY2:
         long = int
 
     zlib.Z_DEFAULT_COMPRESSION = 5
