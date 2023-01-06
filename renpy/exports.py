@@ -632,7 +632,7 @@ def set_tag_attributes(name, layer=None):
 def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
     """
     :doc: se_images
-    :args: (name, at_list=[], layer='master', what=None, zorder=0, tag=None, behind=[])
+    :args: (name, at_list=[], layer=None, what=None, zorder=0, tag=None, behind=[], **kwargs)
 
     Shows an image on a layer. This is the programmatic equivalent of the show
     statement.
