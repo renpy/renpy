@@ -358,7 +358,7 @@ interact with the Android permissions system.
     necessary to use renpy.check_permission and renpy.request_permission as necessary
     to request the permission.
 
-.. include: inc/android_permission
+.. include:: inc/android_permission
 
 
 Transferring Files to and From Android
