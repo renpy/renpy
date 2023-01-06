@@ -1241,6 +1241,10 @@ Rarely or Internally Used
     A list of names of layers to clear when entering the main and game
     menus.
 
+.. var:: config.console = False
+
+    This enables the console in the case :var:`config.developer` is not true.
+
 .. var:: config.context_clear_layers = [ 'screens', 'top', 'bottom', ... ]
 
     A list of layers that are cleared when entering a new context.
