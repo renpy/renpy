@@ -70,6 +70,11 @@ means than when an image is closer than 100 z-units from the camera,
 it disappears, and it also disappears if it's more than 100,000 z-units
 away.
 
+.. var:: config.perspective = (100, z, 100000)
+
+    The default value used when :tpref:`perspective` is not set to a 3-tuple.
+    ``z`` depends on the size of the game, as defined above.
+
 
 Using the 3D Stage
 ------------------

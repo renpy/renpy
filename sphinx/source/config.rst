@@ -1883,6 +1883,10 @@ Other Configuration Variables
 Some other pages of this documentation contain and define other configuration
 variables. You can locate them there, in their context.
 
+:doc:`3dstage`
+
+* :var:`config.perspective`
+
 :doc:`achievement`:
 
 * :var:`config.steam_appid`
