@@ -1537,6 +1537,11 @@ Rarely or Internally Used
     cleared before the overlay functions are called. "overlay" should
     always be in this list.
 
+.. var:: config.pad_bindings = { ... }
+
+    An equivalent of :var:`config.keymap` for gamepads.
+    Please see :doc:`keymap`'s section about pad bindings for more information.
+
 .. var:: config.pause_with_transition = False
 
     If false, :func:`renpy.pause` is always, used by the ``pause`` statement.
