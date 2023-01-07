@@ -777,15 +777,15 @@ class CropMove(Transition):
     """
 
     def __init__(self, time,
-                 mode="slideright",
-                 startcrop=(0.0, 0.0, 0.0, 1.0),
-                 startpos=(0.0, 0.0),
-                 endcrop=(0.0, 0.0, 1.0, 1.0),
-                 endpos=(0.0, 0.0),
-                 topnew=True,
-                 old_widget=None,
-                 new_widget=None,
-                 **properties):
+                       mode="slideright",
+                       startcrop=(0.0, 0.0, 0.0, 1.0),
+                       startpos=(0.0, 0.0),
+                       endcrop=(0.0, 0.0, 1.0, 1.0),
+                       endpos=(0.0, 0.0),
+                       topnew=True,
+                       old_widget=None,
+                       new_widget=None,
+                       **properties):
 
         super(CropMove, self).__init__(time, **properties)
         self.time = time
