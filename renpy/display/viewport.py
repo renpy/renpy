@@ -728,8 +728,9 @@ class VPGrid(Viewport):
 
         children = len(self.children)
 
+        given = self.grid_cols or self.grid_rows # ignore if both are 0
+
         if self.grid_cols is None or self.grid_rows is None:
-            given = self.grid_cols or self.grid_rows # ignore if both are 0
             delta = given - (children % given or given) if given else 0
         else:
             delta = (self.grid_cols * self.grid_rows) - children
