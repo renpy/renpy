@@ -254,7 +254,7 @@ renpy.game.post_init.append(reset)
 def interact(type='misc', roll_forward=None, **kwargs): # @ReservedAssignment
     """
     :doc: ui
-    :args: (roll_forward=None, mouse='default')
+    :args: (*, roll_forward=None, mouse='default')
 
     Causes an interaction with the user, and returns the result of that
     interaction. This causes Ren'Py to redraw the screen and begin processing

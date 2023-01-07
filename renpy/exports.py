@@ -217,7 +217,7 @@ def in_fixed_rollback():
 def checkpoint(data=None, keep_rollback=None, hard=True):
     """
     :doc: rollback
-    :args: (data=None, hard=True)
+    :args: (data=None, *, hard=True)
 
     Makes the current statement a checkpoint that the user can rollback to. Once
     this function has been called, there should be no more interaction with the
@@ -1204,7 +1204,6 @@ def display_menu(items,
 
         $ narrator("Which direction would you like to go?", interact=False)
         $ result = renpy.display_menu([ ("East", "east"), ("West", "west") ])
-
     """
 
     menu_args, menu_kwargs = get_menu_args()

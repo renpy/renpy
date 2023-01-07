@@ -170,7 +170,7 @@ render_height = 0
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
     :doc: udd_utility
-    :args: (d, width, height, st, at)
+    :args: (d, width, height, /, st, at)
 
     Causes a displayable to be rendered, and a renpy.Render object to
     be returned.

@@ -1530,7 +1530,7 @@ class Text(renpy.display.core.Displayable):
     """
     :name: Text
     :doc: text
-    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, tokenized=False, **properties)
+    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, *, tokenized=False, **properties)
 
     A displayable that displays text on the screen.
 
