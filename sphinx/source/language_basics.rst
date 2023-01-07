@@ -175,16 +175,24 @@ Ren'Py statements are made of a few basic parts.
     A keyword is a word that must literally appear in the script of the game.
     Keywords are used to introduce statements and properties.
 
-    Names beginning with a single underscore (_) are reserved for
-    Ren'Py internal use, unless otherwise documented. When a name
-    begins with __ but doesn't end with __, it is changed to a
-    file-specific version of that name.
-
 :dfn:`Name`
     A name begins with a letter or underscore, which is followed by
     zero or more letters, numbers, and underscores. For our purpose,
     Unicode characters between U+00a0 and U+fffd are considered to be
     letters.
+
+    .. warning::
+
+        Names beginning with a single underscore (_) are reserved for
+        Ren'Py internal use, unless otherwise documented.
+
+        When a name begins with two underscores (__) but doesn't end with two
+        underscores, it is changed to a file-specific version of that name.
+        However, these don't work inside
+        `f-strings <https://docs.python.org/3/tutorial/inputoutput.html#formatted-string-literals>`__,
+        you need to use the
+        `format method <https://docs.python.org/3/tutorial/inputoutput.html#the-string-format-method>`__
+        instead.
 
 :dfn:`Image Name`
     An :dfn:`image name` consists of one or more components, separated by
