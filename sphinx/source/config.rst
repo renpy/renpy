@@ -1309,10 +1309,14 @@ Rarely or Internally Used
     entirely, although we don't recommend that, as rollback is useful
     to let the user see text he skipped by mistake.
 
+.. var:: config.help = None
+
+    The default value for the :func:`Help` action.
+
 .. var:: config.help_screen = "help"
 
-    The name of the screen shown by the :func:`Help` action, or by pressing
-    f1 on the keyboard.
+    The name of the screen shown by pressing f1 on the keyboard, or by
+    the :func:`Help` action under certain circumstances.
 
 .. var:: config.hide = renpy.hide
 
