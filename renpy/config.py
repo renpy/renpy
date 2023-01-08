@@ -1348,6 +1348,10 @@ viewport_inertia_time_constant = 0.325
 # run.
 after_default_callbacks = [ ]
 
+# Are parsing errors raised when conflicting transform or style properties are
+# set simultaneously?
+# Set to True in the default GUI.
+check_conflicting_properties = False
 
 del os
 del collections
