@@ -432,7 +432,7 @@ synthetic_properties = sorted_dict(
 
 all_properties = collections.OrderedDict()
 
-for k, v in style_properties.items():
+for k in style_properties:
     all_properties[k] = [ (k, None) ]
 
 all_properties.update(synthetic_properties)
@@ -634,6 +634,8 @@ def generate_sets():
     for k, v in all_properties.items():
         ap[k] = [ i[0] for i in v ]
 
+    ip = {p : frozenset(el[0] for el in l) for p, l in synthetic_properties.items()}
+
     prefix_priority = collections.OrderedDict()
     prefix_alts = collections.OrderedDict()
 
@@ -647,6 +649,7 @@ def generate_sets():
     g.write("")
     g.write('exec("""\\')
     g.write("all_properties = {}", ap)
+    g.write("proxy_properties = {}", ip)
     g.write("prefix_priority = {}", prefix_priority)
     g.write("prefix_alts = {}", prefix_alts)
     g.write("prefix_search = {}", PREFIX_SEARCH)
