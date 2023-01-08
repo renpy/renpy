@@ -54,7 +54,7 @@ def process_file(fn):
     has_copyright = False
     first = True
 
-    with open(fn, "rb") as f:
+    with open(fn, "r") as f:
         for l in f:
             l = re.sub(
                 r"Copyright (\d{4})-\d{4} Tom Rothamel",
@@ -71,20 +71,20 @@ def process_file(fn):
 
             if first:
                 if fn.endswith(".rpy") or fn.endswith(".rpym"):
-                    if codecs.BOM_UTF8 not in l:
-                        l = codecs.BOM_UTF8 + l
+                    if "\ufeff" not in l:
+                        l = "\ufeff" + l
 
                 first = False
 
             lines.append(l)
 
-    with open(fn, "wb") as f:
+    with open(fn, "w") as f:
         f.write("".join(lines))
 
 
 def process(root):
 
-    for dirname, _dirs, files in os.walk(root):
+    for dirname, _dirs, files in os.walk(root): #type: ignore
         for fn in files:
             fn = os.path.join(dirname, fn)
             process_file(fn)
