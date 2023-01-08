@@ -1,4 +1,4 @@
-
+﻿
 # This file imports the extensions API into the default store, and makes it
 # also contains the strings used by the extensions API, so the Ren'Py translation
 # framework can find them.
