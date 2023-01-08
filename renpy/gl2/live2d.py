@@ -87,6 +87,9 @@ def init():
     if not renpy.config.gl2:
         raise Exception("Live2D requires that config.gl2 be True.")
 
+    if renpy.emscripten:
+        raise Exception("Live2D is not supported the web platform.")
+
     onetime_init()
 
     register_shader("live2d.mask", variables="""
