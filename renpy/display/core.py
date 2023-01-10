@@ -3874,6 +3874,9 @@ class Interface(object):
         # Clean up some movie-related things.
         renpy.display.video.early_interact()
 
+        # A dict of any active layer transitions.
+        layer_transitions = { }
+
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.
         try:
@@ -3882,7 +3885,9 @@ class Interface(object):
             def per_interact(i):
                 if isinstance(i, renpy.display.layout.Layer):
                     if i.layer in scene:
+                        i.layers = layer_transitions
                         add_layer(i, i.layer)
+                        del i.layers
                     else:
                         i.add(null)
 
@@ -3892,6 +3897,12 @@ class Interface(object):
             renpy.display.behavior.input_pre_per_interact()
             root_widget.visit_all(per_interact)
             renpy.display.behavior.input_post_per_interact()
+
+            # Consolidate static and layer transitions for later processing.
+            if layer_transitions:
+                layer_transitions.update(layers_root.layers)
+            else:
+                layer_transitions = layers_root.layers
 
             del add_layer, per_interact
 
@@ -4440,7 +4451,7 @@ class Interface(object):
         finally:
 
             # Determine the transition delay for each layer.
-            self.transition_delay = { k : getattr(v, "delay", 0) for k, v in layers_root.layers.items() }
+            self.transition_delay = { k : getattr(v, "delay", 0) for k, v in layer_transitions.items() }
 
             # Clean out the overlay layers.
             for i in renpy.config.overlay_layers:
