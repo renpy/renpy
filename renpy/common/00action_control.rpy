@@ -38,17 +38,17 @@ init -1500 python:
     @renpy.pure
     class Return(Action, DictEquality):
         """
-         :doc: control_action
+        :doc: control_action
 
-         Causes the current interaction to return the supplied value, which
-         must not be None. This is often used with menus and imagemaps, to
-         select what the return value of the interaction is. If the screen
-         was called using the ``call screen`` statement, the return value
-         is placed in the `_return` variable.
+        Causes the current interaction to return the supplied value, which
+        must not be None. This is often used with menus and imagemaps, to
+        select what the return value of the interaction is. If the screen
+        was called using the ``call screen`` statement, the return value
+        is placed in the `_return` variable.
 
-         When in a menu, this returns from the menu. (The value should be
-         None in this case.)
-         """
+        When in a menu, this returns from the menu. (The value should be
+        None in this case.)
+        """
 
         def __init__(self, value=None):
             self.value = value
@@ -101,19 +101,19 @@ init -1500 python:
     @renpy.pure
     class Show(Action, DictEquality):
         """
-         :doc: control_action
-         :args: (screen, transition=None, *args, **kwargs)
+        :doc: control_action
+        :args: (screen, transition=None, *args, **kwargs)
 
-         This causes another screen to be shown. `screen` is a string
-         giving the name of the screen. The arguments are
-         passed to the screen being shown.
+        This causes another screen to be shown. `screen` is a string
+        giving the name of the screen. The arguments are
+        passed to the screen being shown.
 
-         If not None, `transition` is used to show the new screen.
-         
-         This action takes the `_layer`, `_zorder` and `_tag` keyword
-         arguments, which have the same meaning as in the
-         :func:`renpy.show_screen` function.
-         """
+        If not None, `transition` is used to show the new screen.
+
+        This action takes the `_layer`, `_zorder` and `_tag` keyword
+        arguments, which have the same meaning as in the
+        :func:`renpy.show_screen` function.
+        """
 
 
         args = None
@@ -148,7 +148,7 @@ init -1500 python:
         the screen is hidden.
 
         If not None, `transition` is use to show and hide the screen.
-         
+
         This action takes the `_layer`, `_zorder` and `_tag` keyword
         arguments, which have the same meaning as in the
         :func:`renpy.show_screen` function.
@@ -190,7 +190,7 @@ init -1500 python:
         passed to the screen being shown.
 
         If not None, `transition` is use to show the new screen.
-         
+
         This action takes the `_layer`, `_zorder` and `_tag` keyword
         arguments, which have the same meaning as in the
         :func:`renpy.show_screen` function.
