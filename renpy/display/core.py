@@ -114,16 +114,20 @@ PERIODIC_INTERVAL = 50
 layers = frozenset(renpy.config.layers)
 sticky_layers = frozenset()
 
+null = None
+
 # Time management.
 time_base = 0.0
 time_mult = 1.0
 
 
 def init_layers():
-    global layers, sticky_layers
+    global layers, sticky_layers, null
 
     layers = frozenset(renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers)
     sticky_layers = frozenset(renpy.config.sticky_layers)
+
+    null = renpy.display.layout.Null()
 
 
 def init_time():
@@ -3792,8 +3796,8 @@ class Interface(object):
                 where.layers[layer] = trans
 
             else:
-                where.layers[layer] = scene_layer
                 where.add(scene_layer)
+                where.layers[layer] = scene_layer
 
         # Add the bottom layers to root_widget.
         for layer in renpy.config.bottom_layers:
@@ -3861,8 +3865,6 @@ class Interface(object):
             if mouse_displayable is not None:
                 root_widget.add(mouse_displayable, 0, 0)
 
-        del add_layer
-
         self.prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
         self.prediction_coroutine.send(None)
 
@@ -3876,10 +3878,22 @@ class Interface(object):
         # caused by an exception propagating through this function.
         try:
 
+            # Insert layers into Layer displayables.
+            def per_interact(i):
+                if isinstance(i, renpy.display.layout.Layer):
+                    if i.layer in scene:
+                        add_layer(i, i.layer)
+                    else:
+                        i.add(null)
+
+                i.per_interact()
+
             # Call per-interaction code for all widgets.
             renpy.display.behavior.input_pre_per_interact()
-            root_widget.visit_all(lambda i : i.per_interact())
+            root_widget.visit_all(per_interact)
             renpy.display.behavior.input_post_per_interact()
+
+            del add_layer, per_interact
 
             # Now, update various things regarding scenes and transitions,
             # so we are ready for a new interaction or a restart.
