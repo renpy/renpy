@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -910,7 +910,7 @@ init -1500 python:
             renpy.restart_interaction()
 
     @renpy.pure
-    def QuickSave(message=_("Quick save complete."), newest=False):
+    class QuickSave(Action, DictEquality):
         """
         :doc: file_action
 
@@ -921,19 +921,33 @@ init -1500 python:
 
         `newest`
             Set to true to mark the quicksave as the newest save.
-         """
+        """
 
-        rv = [
-            FileSave(1, page="quick", confirm=False, cycle=True, newest=newest),
-            Notify(message),
-            ]
+        alt = _("Quick save.")
 
-        rv[0].alt = _("Quick save.")
+        def __init__(self, message=_("Quick save complete."), newest=False):
+            self.message = message
+            self.fs = FileSave(1, page="quick", confirm=False, cycle=True, newest=newest)
 
-        if not getattr(renpy.context(), "_menu", False):
-            rv.insert(0, FileTakeScreenshot())
+        def __call__(self):
+            if not self.fs.get_sensitive():
+                return
 
-        return rv
+            rv = []
+
+            if not getattr(renpy.context(), "_menu", False):
+                rv.append(FileTakeScreenshot())
+
+            rv.append(self.fs)
+            rv.append(Notify(self.message))
+
+            return renpy.exports.run(rv)
+
+        def get_sensitive(self):
+            return self.fs.get_sensitive()
+
+        def get_selected(self):
+            return self.fs.get_selected()
 
     @renpy.pure
     def QuickLoad(confirm=True):
