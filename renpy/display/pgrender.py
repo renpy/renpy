@@ -163,19 +163,30 @@ formats = {
 }
 
 
-def load_image(f, filename):
+def load_image(f, filename, size=None):
+    """
+    `f`
+        A file-like object that can be used to load the image.
+    `filename`
+        The name of the file that is being loaded. Used for hinting what
+        kind of image it is.
+    `size`
+        If given, the image is scaled to this size. This only works for
+        SVG images.
+    """
+
     _basename, _dot, ext = filename.rpartition('.')
 
     try:
 
         if ext.lower() in safe_formats:
-            surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+            surf = pygame.image.load(f, renpy.exports.fsencode(filename), size=size)
         else:
 
             # Non-whitelisted formats may not be able to load in a reentrant
             # fashion.
             with image_load_lock:
-                surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+                surf = pygame.image.load(f, renpy.exports.fsencode(filename), size=size)
 
     except Exception as e:
 
