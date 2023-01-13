@@ -20,6 +20,9 @@ past should no longer be used, as they suffer from inherent problems.
 In any case except for `im.Data`, the :func:`Transform` displayable provides
 similar functionality in a more general manner, while fixing the problems.
 
+Image manipulators should not be used with oversampled images, or svg images
+that might be automatically oversampled, as the size may be incorrect.
+
 .. include:: inc/im_im
 
 im.MatrixColor
