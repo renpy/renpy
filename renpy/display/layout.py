@@ -2445,3 +2445,22 @@ class Layer(AdjustTimes):
         self.anim_time = at
 
         super(Layer, self).add(d)
+
+    def visit_all(self, callback, seen=None):
+        # Call on self first, as it could be replacing the child.
+        callback(self)
+
+        d = self.child
+
+        if d is None:
+            return
+
+        if seen is None:
+            seen = set()
+
+        id_d = id(d)
+        if id_d in seen:
+            return
+
+        seen.add(id_d)
+        d.visit_all(callback, seen)
