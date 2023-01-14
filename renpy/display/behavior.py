@@ -2616,7 +2616,10 @@ class OnEvent(renpy.display.core.Displayable):
 
     def set_transform_event(self, event):
         if self.is_event(event):
-            run(self.action)
+            rv = run(self.action)
+
+            if rv is not None:
+                raise renpy.display.core.EndInteraction(rv)
 
     def render(self, width, height, st, at):
         return renpy.display.render.Render(0, 0)

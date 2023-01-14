@@ -113,6 +113,9 @@ with the menu statement. It is given the following parameter:
         This is a dictionary that contains any keyword arguments passed
         to the menu choice.
 
+    These items, and the actions within, become invalid when the menu
+    statement ends.
+
 In addition, any arguments passed to a menu statement are passed in during
 the call to the screen.
 
