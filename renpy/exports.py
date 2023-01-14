@@ -355,7 +355,6 @@ def copy_images(old, new):
     `new`
         A space-separated string giving the components of the new image
         name.
-
     """
 
     if not isinstance(old, tuple):
@@ -767,12 +766,12 @@ def hide(name, layer=None):
     Hides an image from a layer. The Python equivalent of the hide statement.
 
     `name`
-         The name of the image to hide. Only the image tag is used, and
-         any image with the tag is hidden (the precise name does not matter).
+        The name of the image to hide. Only the image tag is used, and
+        any image with the tag is hidden (the precise name does not matter).
 
     `layer`
-         The layer on which this function operates. If None, uses the default
-         layer associated with the tag.
+        The layer on which this function operates. If None, uses the default
+        layer associated with the tag.
     """
 
     if renpy.game.context().init_phase:
@@ -1204,7 +1203,6 @@ def display_menu(items,
 
         $ narrator("Which direction would you like to go?", interact=False)
         $ result = renpy.display_menu([ ("East", "east"), ("West", "west") ])
-
     """
 
     menu_args, menu_kwargs = get_menu_args()
@@ -1828,7 +1826,8 @@ def has_label(name):
     """
     :doc: label
 
-    Returns true if `name` is a valid label the program, or false otherwise.
+    Returns true if `name` is a valid label in the program, or false
+    otherwise.
 
     `name`
         Should be a string to check for the existence of a label. It can
@@ -1861,7 +1860,7 @@ def take_screenshot(scale=None, background=False):
     :args: ()
 
     Causes a screenshot to be taken. This screenshot will be saved as part of
-    a save game.
+    a saved game.
     """
 
     if scale is None:
@@ -2279,8 +2278,8 @@ def music_start(filename, loops=True, fadeout=None, fadein=0):
 
 def music_stop(fadeout=None):
     """
-    Deprecated music start function, retained for compatibility. Use
-    renpy.music.play() or .queue() instead.
+    Deprecated music stop function, retained for compatibility. Use
+    renpy.music.stop() instead.
     """
 
     renpy.audio.music.stop(fadeout=fadeout)
@@ -2357,7 +2356,7 @@ def force_full_redraw():
     to redraw the screen directly.
     """
 
-    # This had been used for the software renderer, but gl rendering rerdraws
+    # This had been used for the software renderer, but gl rendering redraws
     # the screen every frame, so it's removed.
     return
 
@@ -3038,7 +3037,6 @@ def get_placement(d):
     * xoffset
     * yoffset
     * subpixel
-
     """
     p = d.get_placement()
 

@@ -1426,6 +1426,12 @@ Rarely or Internally Used
     True if the file is loadable, and False if not. This can be used with
     :var:`config.file_open_callback` or :var:`config.missing_image_callback`.
 
+.. var:: config.log = None
+
+    If not None, this is expected to be a filename. Much of the text
+    shown to the user by :ref:`say <say-statement>` or :doc:`menu
+    <menus>` statements will be logged to this file.
+
 .. var:: config.log_width = 78
 
     The width of lines logged when :var:`config.log` is used.
@@ -1443,12 +1449,6 @@ Rarely or Internally Used
 .. var:: config.longpress_vibrate = .1
 
     The amount of time the device will vibrate for after a longpress.
-
-.. var:: config.log = None
-
-    If not None, this is expected to be a filename. Much of the text
-    shown to the user by :ref:`say <say-statement>` or :doc:`menu
-    <menus>` statements will be logged to this file.
 
 .. var:: config.main_menu_stop_channels = [ "movie", "sound", "voice", ... ]
 

@@ -697,7 +697,7 @@ init -1500 python:
         :args: (directory)
 
         Opens `directory` in a file browser. `directory` is relative to
-        the config.basedir.
+        :var:`config.basedir`.
         """
 
         alt = _("Open [text] directory.")

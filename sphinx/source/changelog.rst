@@ -239,6 +239,10 @@ the placement of the image on the screen. It is not the case with this function.
 Other Changes
 -------------
 
+When :var:`config.steam_appid` is not set, Ren'Py will delete any existing
+``steam_appid.txt`` file in the game directory. This is to prevent the wrong
+app id from being used.
+
 Audio volumes are now preserved when muted. (This means that the volume will
 not drop to 0 when the game is muted.)
 

@@ -211,8 +211,8 @@ init -1500 python:
          * Preference("font size", 1.0) - Sets the accessibility font size scaling factor.
          * Preference("font line spacing", 1.0) - Sets the accessibility font vertical spacing scaling factor.
 
-         * Preference("system cursor", "enable") - Use system cursor ignoring config.mouse.
-         * Preference("system cursor", "disable") - Use cursor defined in config.mouse.
+         * Preference("system cursor", "enable") - Use system cursor ignoring :var:`config.mouse`.
+         * Preference("system cursor", "disable") - Use cursor defined in :var:`config.mouse`.
          * Preference("system cursor", "toggle") - Toggle system cursor.
 
          * Preference("high contrast text", "enable") - Enables white text on a black background.

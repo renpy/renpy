@@ -3859,65 +3859,65 @@ class Interface(object):
         # Clean up some movie-related things.
         renpy.display.video.early_interact()
 
-        # Call per-interaction code for all widgets.
-        renpy.display.behavior.input_pre_per_interact()
-        root_widget.visit_all(lambda i : i.per_interact())
-        renpy.display.behavior.input_post_per_interact()
-
-        # Now, update various things regarding scenes and transitions,
-        # so we are ready for a new interaction or a restart.
-        self.old_scene = scene
-
-        # Okay, from here on we now have a single root widget (root_widget),
-        # which we will try to show to the user.
-
-        # Figure out what should be focused.
-        renpy.display.behavior.WebInput.pre_find_focusable()
-        renpy.display.focus.before_interact(focus_roots)
-        renpy.display.behavior.WebInput.post_find_focusable()
-
-        # Something updated the screens. Deal with it now, so the player doesn't
-        # see it.
-        if self.restart_interaction:
-            return True, None
-
-        # Redraw the screen.
-        needs_redraw = True
-
-        # First pass through the while loop?
-        first_pass = True
-
-        # We don't yet know when the interaction began.
-        self.interact_time = None
-
-        # We only want to do autosave once.
-        self.did_autosave = False
-
-        old_timeout_time = None
-        old_redraw_time = None
-
-        rv = None
-
-        # Start sound.
-        renpy.audio.audio.interact()
-
-        # How long until we redraw.
-        _redraw_in = 3600
-
-        # Have we drawn a frame yet?
-        video_frame_drawn = False
-
-        # We're no longer after rollback.
-        renpy.game.after_rollback = False
-
-        # How many frames have we shown so far?
-        frame = 0
-
-        can_block = False
-
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.
         try:
+
+            # Call per-interaction code for all widgets.
+            renpy.display.behavior.input_pre_per_interact()
+            root_widget.visit_all(lambda i : i.per_interact())
+            renpy.display.behavior.input_post_per_interact()
+
+            # Now, update various things regarding scenes and transitions,
+            # so we are ready for a new interaction or a restart.
+            self.old_scene = scene
+
+            # Okay, from here on we now have a single root widget (root_widget),
+            # which we will try to show to the user.
+
+            # Figure out what should be focused.
+            renpy.display.behavior.WebInput.pre_find_focusable()
+            renpy.display.focus.before_interact(focus_roots)
+            renpy.display.behavior.WebInput.post_find_focusable()
+
+            # Something updated the screens. Deal with it now, so the player doesn't
+            # see it.
+            if self.restart_interaction:
+                return True, None
+
+            # Redraw the screen.
+            needs_redraw = True
+
+            # First pass through the while loop?
+            first_pass = True
+
+            # We don't yet know when the interaction began.
+            self.interact_time = None
+
+            # We only want to do autosave once.
+            self.did_autosave = False
+
+            old_timeout_time = None
+            old_redraw_time = None
+
+            rv = None
+
+            # Start sound.
+            renpy.audio.audio.interact()
+
+            # How long until we redraw.
+            _redraw_in = 3600
+
+            # Have we drawn a frame yet?
+            video_frame_drawn = False
+
+            # We're no longer after rollback.
+            renpy.game.after_rollback = False
+
+            # How many frames have we shown so far?
+            frame = 0
+
+            can_block = False
 
             while rv is None:
 
@@ -4478,7 +4478,7 @@ class Interface(object):
 
         # Execute the command
         try:
-            renpy.python.py_exec(cmd)
+            renpy.python.py_exec(cmd, hide=True)
         except Exception as e:
             renpy.display.log.write(cmd)
             renpy.display.log.write('Error while executing JS command: %s' % (e,))
