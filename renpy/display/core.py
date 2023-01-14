@@ -4478,7 +4478,7 @@ class Interface(object):
 
         # Execute the command
         try:
-            renpy.python.py_exec(cmd)
+            renpy.python.py_exec(cmd, hide=True)
         except Exception as e:
             renpy.display.log.write(cmd)
             renpy.display.log.write('Error while executing JS command: %s' % (e,))
