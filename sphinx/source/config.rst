@@ -1731,7 +1731,8 @@ Rarely or Internally Used
 
     A function that is used in place of :func:`renpy.show` by the :ref:`show
     <show-statement>` and :ref:`scene <scene-statement>` statements. This
-    should have the same signature as :func:`renpy.show`.
+    should have the same signature as :func:`renpy.show`, and pass unknown
+    keyword arguments unchanged.
 
 .. var:: config.skip_delay = 75
 
