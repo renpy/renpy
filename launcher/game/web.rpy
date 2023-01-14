@@ -59,7 +59,7 @@ init python:
 
             copy_file = False
             # Images
-            if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp')
+            if (ext.lower() in ('.jpg', '.jpeg', '.png', '.webp', '.avif', '.svg')
                     and filters_match(self.path_filters, file.name, 'image')):
                 # Add image to list and generate placeholder later
                 self.images.append((file.path, file.name))
