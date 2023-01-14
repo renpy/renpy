@@ -142,7 +142,7 @@ class Borders(object):
 class Frame(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
-    :args: (image, left=0, top=0, right=None, bottom=None, tile=False, **properties)
+    :args: (image, left=0, top=0, right=None, bottom=None, *, tile=False, **properties)
     :name: Frame
 
     A displayable that resizes an image to fill the available area,

@@ -217,7 +217,7 @@ def in_fixed_rollback():
 def checkpoint(data=None, keep_rollback=None, hard=True):
     """
     :doc: rollback
-    :args: (data=None, hard=True)
+    :args: (data=None, *, hard=True)
 
     Makes the current statement a checkpoint that the user can rollback to. Once
     this function has been called, there should be no more interaction with the

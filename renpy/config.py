@@ -990,21 +990,9 @@ default_shader = "renpy.geometry"
 # If True, the volume of a channel is kept while the channel is muted.
 preserve_volume_when_muted = True
 
-
+# Documented in Sphinx.
 def say_attribute_transition_callback(*args):
-    """
-    :args: (tag, attrs, mode)
-
-    Returns the say attribute transition to use, and the layer the transition
-    should be applied to (with None being a valid layer.
-
-    Attrs is the list of tags/attributes of the incoming image.
-
-    Mode is one of "permanent", "temporary", or "restore".
-    """
-
     return renpy.config.say_attribute_transition, renpy.config.say_attribute_transition_layer
-
 
 # Should say_attribute_transition_callback take attrs?
 say_attribute_transition_callback_attrs = True
