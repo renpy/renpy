@@ -787,11 +787,17 @@ init -1499 python in achievement:
         if config.early_script_version is not None:
             return
 
-        if config.steam_appid is None:
-            return
+        steam_appid_fn = os.path.join(os.path.dirname(sys.executable), "steam_appid.txt")
 
-        with open(os.path.join(os.path.dirname(sys.executable), "steam_appid.txt"), "w") as f:
-            f.write(str(config.steam_appid) + "\n")
+        if config.steam_appid is not None:
+            with open(steam_appid_fn, "w") as f:
+                f.write(str(config.steam_appid) + "\n")
+        else:
+            try:
+                os.unlink(steam_appid_fn)
+            except Exception:
+                pass
+
 
     # The _renpysteam namespace, or None if steam isn't loaded.
     steam = None

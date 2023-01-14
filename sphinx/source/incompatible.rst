@@ -19,6 +19,11 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**Steam Appid** When :var:`config.steam_appid` is not set, Ren'Py will delete
+any existing ``steam_appid.txt`` file in the game directory. This is to prevent
+the wrong app id from being used.
+
+
 **Sticky layers** This release introduces the concept of sticky layers
 which help automatically manage tags being placed on layers other than
 their default. In the rare case that a game requires multiple of the
