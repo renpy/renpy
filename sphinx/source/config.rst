@@ -1298,6 +1298,12 @@ Rarely or Internally Used
     the selected direction of motion, when moving focus with the
     keyboard.
 
+.. var:: config.gamedir = ...
+
+    The full path leading to the game's ``game/`` directory. This is a
+    read-only variable. There is no guarantee that any file will be there,
+    typically on platforms such as android.
+
 .. var:: config.gl_resize = True
 
     Determines if the user is allowed to resize an OpenGL-drawn window.
