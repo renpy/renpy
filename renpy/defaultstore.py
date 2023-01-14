@@ -86,10 +86,6 @@ class _Config(object):
     def __setstate__(self, data):
         return
 
-    def register(self, name, default, cat=None, help=None): # @ReservedAssignment
-        setattr(self, name, default)
-        _config.help.append((cat, name, help))
-
     def __getattr__(self, name):
         cvars = vars(_config)
 

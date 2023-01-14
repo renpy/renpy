@@ -308,9 +308,6 @@ init -1500 python:
 
         Displays help.
 
-        If a screen named ``help`` is defined, that screen is displayed
-        using :func:`ShowMenu` and `help` is ignored.
-
         `help`
             A string that is used to find help. This is used in the
             following way:
@@ -321,7 +318,8 @@ init -1500 python:
               that should be opened in a web browser.
 
             If `help` is None, :var:`config.help` is used as the default
-            value.
+            value. If it is also None, the :var:`config.help_screen` screen
+            is shown in a new context, if it exists. Otherwise, does nothing.
         """
 
         def __init__(self, help=None):

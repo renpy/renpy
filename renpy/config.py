@@ -36,9 +36,6 @@ import renpy
 # Can we add more config variables?
 locked = False
 
-# Contains help for config variables.
-help = [ ] # @ReservedAssignment
-
 # The title of the game window.
 window_title = None
 
