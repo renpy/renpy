@@ -212,11 +212,16 @@ documented_list = [ ]
 def scan(name, o, prefix="", inclass=False):
 
     if inspect.isclass(o):
-        doc_type = "class"
-    elif not inclass:
-        doc_type = "function"
-    else:
+        if issubclass(o, (renpy.store.Action,
+                          renpy.store.BarValue,
+                          renpy.store.InputValue)):
+            doc_type = "function"
+        else:
+            doc_type = "class"
+    elif inclass:
         doc_type = "method"
+    else:
+        doc_type = "function"
 
     # The section it's going into.
     section = None
