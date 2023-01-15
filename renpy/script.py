@@ -54,77 +54,7 @@ if PY2:
     # Change this to force a recompile when required.
     MAGIC += b'_v2.1'
 
-    def heapq_merge(it_a, it_b, key=None, reverse=False):
-        """
-        Backported from py3 for compatibility, can only merge 2 iterables
-        """
-        iterables = [it_a, it_b]
-        h = []
-        h_append = h.append
-
-        if reverse:
-            _heapify = heapq._heapify_max
-            _heappop = heapq._heappop_max
-            _heapreplace = heapq._heapreplace_max
-            direction = -1
-        else:
-            _heapify = heapq.heapify
-            _heappop = heapq.heappop
-            _heapreplace = heapq.heapreplace
-            direction = 1
-
-        if key is None:
-            for order, it in enumerate(map(iter, iterables)):
-                try:
-                    next = it.next
-                    h_append([next(), order * direction, next])
-                except StopIteration:
-                    pass
-            _heapify(h)
-            while len(h) > 1:
-                try:
-                    while True:
-                        value, order, next = s = h[0]
-                        yield value
-                        s[0] = next() # raises StopIteration when exhausted
-                        _heapreplace(h, s) # restore heap condition
-                except StopIteration:
-                    _heappop(h) # remove empty iterator
-            if h:
-                # fast case when only a single iterator remains
-                value, order, next = h[0]
-                yield value
-                for v in next.__self__:
-                    yield v
-            return
-
-        for order, it in enumerate(map(iter, iterables)):
-            try:
-                next = it.next
-                value = next()
-                h_append([key(value), order * direction, value, next])
-            except StopIteration:
-                pass
-        _heapify(h)
-        while len(h) > 1:
-            try:
-                while True:
-                    key_value, order, value, next = s = h[0]
-                    yield value
-                    value = next()
-                    s[0] = key(value)
-                    s[2] = value
-                    _heapreplace(h, s)
-            except StopIteration:
-                _heappop(h)
-        if h:
-            key_value, order, value, next = h[0]
-            yield value
-            for v in next.__self__:
-                yield v
-
 else:
-    from heapq import merge as heapq_merge
     from importlib.util import MAGIC_NUMBER as MAGIC
 
     # Change this to force a recompile when required.
@@ -428,9 +358,10 @@ class Script(object):
 
         # Since script initcode and module initcode are both sorted,
         # we can use heap to merge them
-        new_tail = heapq_merge(current_tail, module_initcode, key=lambda i: i[0])
+        new_tail = current_tail +  module_initcode
+        new_tail.sort(key=lambda i: i[0])
 
-        self.initcode[merge_id:] = list(new_tail)
+        self.initcode[merge_id:] = new_tail
 
     def assign_names(self, stmts, fn):
         # Assign names to statements that don't have one already.
