@@ -563,7 +563,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
             if not enter:
                 return
 
-            new_d = wrap(new_sle)
+            new_d = wrap(sle)
             move = MoveInterpolate(delay, renpy.store.At(new_d, enter), new_d, False, enter_time_warp)
             rv_sl.append(merge(new_sle, move))
 
