@@ -53,6 +53,11 @@ the command::
         libswresample-dev libswscale-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
         libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev git
 
+Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
+that version, you'll need to download it from:
+
+    https://github.com/libsdl-org/SDL_image/tree/SDL2
+
 We strongly suggest installing the Ren'Py modules into a Python
 virtualenv. To create a new virtualenv, open a new terminal and run::
 

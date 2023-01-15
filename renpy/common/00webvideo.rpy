@@ -1,4 +1,4 @@
-init -1100 python hide:
+﻿init -1100 python hide:
 
     config.web_video_base = "./game"
 

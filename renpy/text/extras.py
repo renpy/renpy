@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -106,10 +106,10 @@ def check_text_tags(s):
         # Closing tag.
         if text and text[0] == '/':
             if not tag_stack:
-                return "Close text tag '%s' does not match an open text tag." % text
+                return "Close text tag '{%s}' does not match an open text tag." % text
 
             if tag_stack[-1] != text[1:]:
-                return "Close text tag '%s' does not match open text tag '%s'." % (text, tag_stack[-1])
+                return "Close text tag '{%s}' does not match open text tag '{%s}'." % (text, tag_stack[-1])
 
             tag_stack.pop()
             continue
@@ -119,9 +119,6 @@ def check_text_tags(s):
 
         if all_tags[text]:
             tag_stack.append(text)
-
-    if tag_stack:
-        return "One or more text tags were left open at the end of the string: " + ", ".join([ "'" + i + "'" for i in tag_stack])
 
     return None
 

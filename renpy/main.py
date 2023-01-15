@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -551,7 +551,9 @@ def main():
 
         renpy.game.exception_info = 'While executing init code:'
 
-        for _prio, node in game.script.initcode:
+        for id_, (_prio, node) in enumerate(game.script.initcode):
+
+            renpy.game.initcode_ast_id = id_
 
             if isinstance(node, renpy.ast.Node):
                 node_start = time.time()

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,7 +23,7 @@ init -1900 python:
     config.images_directory = 'images'
     config.late_images_scan = False
 
-    config.image_extensions =  [ ".jpg", ".jpeg", ".jxl", ".png", ".webp" ]
+    config.image_extensions =  [ ".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg" ]
 
     def _scan_images_directory():
 

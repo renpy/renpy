@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -795,13 +795,13 @@ def call_statement(l, loc):
 
 @statement("scene")
 def scene_statement(l, loc):
+    layer = None
     if l.keyword('onlayer'):
         layer = l.require(l.name)
-    else:
-        layer = "master"
+        l.expect_eol()
 
-    # Empty.
-    if l.eol():
+    if layer or l.eol():
+        # No displayable.
         l.advance()
         return ast.Scene(loc, None, layer)
 

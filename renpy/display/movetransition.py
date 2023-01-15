@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -449,7 +449,7 @@ class MoveInterpolate(renpy.display.core.Displayable):
 def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=None, old=False, layers=[ 'master' ], time_warp=None, enter_time_warp=None, leave_time_warp=None):
     """
     :doc: transition function
-    :args: (delay, enter=None, leave=None, old=False, layers=['master'], time_warp=None, enter_time_warp=None, leave_time_warp=None)
+    :args: (delay, *, enter=None, leave=None, old=False, layers=['master'], time_warp=None, enter_time_warp=None, leave_time_warp=None)
     :name: MoveTransition
 
     Returns a transition that interpolates the position of images (with the

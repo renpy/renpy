@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1139,6 +1139,7 @@ def get_screen_roll_forward(screen_name):
 def show_screen(_screen_name, *_args, **kwargs):
     """
     :doc: screens
+    :args: (_screen_name, *args, _layer=None, _zorder=None, _tag=None, _widget_properties={}, _transient=False, **kwargs)
 
     The programmatic equivalent of the show screen statement.
 
@@ -1147,19 +1148,23 @@ def show_screen(_screen_name, *_args, **kwargs):
     `_screen_name`
         The name of the screen to show.
     `_layer`
-        The layer to show the screen on.
+        The layer to show the screen on. This is equivalent to the
+        ``onlayer`` clause of the :ref:`show-screen-statement` statement.
     `_zorder`
         The zorder to show the screen on. If not specified, defaults to
-        the zorder associated with the screen. It that's not specified,
+        the zorder associated with the screen. If that's not specified,
         it is 0 by default.
     `_tag`
         The tag to show the screen with. If not specified, defaults to
-        the tag associated with the screen. It that's not specified,
+        the tag associated with the screen. If that's not specified,
         defaults to the name of the screen.
+        
+        This is equivalent to the ``as`` clause of the
+        :ref:`show-screen-statement` statement.
     `_widget_properties`
-        A map from the id of a widget to a property name -> property
-        value map. When a widget with that id is shown by the screen,
-        the specified properties are added to it.
+        A map from the id of a widget to a property name -> property value
+        dictionary. When a widget with that id is shown by the screen, the
+        specified properties are added to it.
     `_transient`
         If true, the screen will be automatically hidden at the end of
         the current interaction.
@@ -1237,6 +1242,7 @@ def predict_screen(_screen_name, *_args, **kwargs):
     _tag = kwargs.pop("_tag", None)
     _widget_properties = kwargs.pop("_widget_properties", {})
     _transient = kwargs.pop("_transient", False)
+    _zorder = kwargs.pop("_zorder", None)
 
     name = _screen_name
 

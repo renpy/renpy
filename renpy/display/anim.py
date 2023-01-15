@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -558,7 +558,8 @@ def Filmstrip(image, framesize, gridsize, delay, frames=None, loop=True, **prope
             x = c * width
             y = r * height
 
-            args.append(renpy.display.im.Crop(image, x, y, width, height))
+            args.append(renpy.display.transform.Transform(
+                image, crop=(x, y, width, height)))
             args.append(delay)
 
             i += 1

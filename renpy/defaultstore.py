@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -85,10 +85,6 @@ class _Config(object):
 
     def __setstate__(self, data):
         return
-
-    def register(self, name, default, cat=None, help=None): # @ReservedAssignment
-        setattr(self, name, default)
-        _config.help.append((cat, name, help))
 
     def __getattr__(self, name):
         cvars = vars(_config)

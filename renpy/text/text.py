@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1530,7 +1530,7 @@ class Text(renpy.display.core.Displayable):
     """
     :name: Text
     :doc: text
-    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, tokenized=False, **properties)
+    :args: (text, slow=None, scope=None, substitute=None, slow_done=None, *, tokenized=False, **properties)
 
     A displayable that displays text on the screen.
 
@@ -2409,9 +2409,6 @@ class Text(renpy.display.core.Displayable):
                                     break
 
                         contents.append(t2)
-
-                    if count:
-                        raise Exception("Text ended while the '{}' text tag was still open.".format(tag))
 
                     new_contents = func(tag, value, contents)
 

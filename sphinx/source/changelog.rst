@@ -10,6 +10,31 @@ Changelog (Ren'Py 7.x-)
 8.1 / 7.6
 =========
 
+Sticky Layers
+-------------
+
+A sticky layer is defined as one that, when a tag is shown upon it, will
+be treated as that tag's default layer until it is either hidden, or
+shown on another sticky layer.
+
+In practice, that means showing a tag on a layer other than its default,
+and assuming that layer is sticky, it will be updated with attributes
+set via a show or say statement without the need to respecify the layer.
+
+The following example assumes that the default layer for ``eileen`` is
+``master``, and that ``near`` is a sticky layer::
+
+    show eileen onlayer near
+    eileen happy "Hello there!"  # will now work, where previously it would not
+    show eileen excited          # implicit onlayer near
+    hide eileen                  # implicit onlayer near
+    show eileen                  # implicit onlayer master, eileen's default
+
+The default for this feature is for the ``master`` layer to be sticky, as
+well as any layers created with :func:`renpy.add_layer` unless passed
+the new parameter ``sticky=False``.
+
+
 Mixer Volume Changes
 --------------------
 
@@ -142,6 +167,14 @@ for end-users to be warned about the security issues when possible.
 New Features
 ------------
 
+A creator-defined statement can now execute a function at the same
+time the ``default`` statements are executed. This is after the init
+phase, but before the game starts; when a save is loaded; after
+rollback; before lint; and potentially at other times.
+
+The new :var:`config.after_default_callbacks` allows callbacks to be
+run immediately after the default statements are executed.
+
 The interactive director now lets you negate an attribute by right
 clicking on the attribute name.
 
@@ -205,6 +238,19 @@ the placement of the image on the screen. It is not the case with this function.
 
 Other Changes
 -------------
+
+When :var:`config.steam_appid` is not set, Ren'Py will delete any existing
+``steam_appid.txt`` file in the game directory. This is to prevent the wrong
+app id from being used.
+
+Audio volumes are now preserved when muted. (This means that the volume will
+not drop to 0 when the game is muted.)
+
+It is now explicitly documented that non-self-closing tags will be closed at
+the end of a block of text. This was the behavior of many versions of Ren'Py,
+but would produce lint warnings. Now, the following is explicitly valid::
+
+    e "{size+=20}This is big!"
 
 Self-voicing and auto-forward mode may now be enabled at the same time. When
 this is the case, auto-forward will only occur when the dialogue is focused.

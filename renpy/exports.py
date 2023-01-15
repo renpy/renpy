@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -217,7 +217,7 @@ def in_fixed_rollback():
 def checkpoint(data=None, keep_rollback=None, hard=True):
     """
     :doc: rollback
-    :args: (data=None, hard=True)
+    :args: (data=None, *, hard=True)
 
     Makes the current statement a checkpoint that the user can rollback to. Once
     this function has been called, there should be no more interaction with the
@@ -355,7 +355,6 @@ def copy_images(old, new):
     `new`
         A space-separated string giving the components of the new image
         name.
-
     """
 
     if not isinstance(old, tuple):
@@ -632,7 +631,7 @@ def set_tag_attributes(name, layer=None):
 def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
     """
     :doc: se_images
-    :args: (name, at_list=[], layer='master', what=None, zorder=0, tag=None, behind=[])
+    :args: (name, at_list=[], layer=None, what=None, zorder=0, tag=None, behind=[], **kwargs)
 
     Shows an image on a layer. This is the programmatic equivalent of the show
     statement.
@@ -767,12 +766,12 @@ def hide(name, layer=None):
     Hides an image from a layer. The Python equivalent of the hide statement.
 
     `name`
-         The name of the image to hide. Only the image tag is used, and
-         any image with the tag is hidden (the precise name does not matter).
+        The name of the image to hide. Only the image tag is used, and
+        any image with the tag is hidden (the precise name does not matter).
 
     `layer`
-         The layer on which this function operates. If None, uses the default
-         layer associated with the tag.
+        The layer on which this function operates. If None, uses the default
+        layer associated with the tag.
     """
 
     if renpy.game.context().init_phase:
@@ -1204,7 +1203,6 @@ def display_menu(items,
 
         $ narrator("Which direction would you like to go?", interact=False)
         $ result = renpy.display_menu([ ("East", "east"), ("West", "west") ])
-
     """
 
     menu_args, menu_kwargs = get_menu_args()
@@ -1828,7 +1826,8 @@ def has_label(name):
     """
     :doc: label
 
-    Returns true if `name` is a valid label the program, or false otherwise.
+    Returns true if `name` is a valid label in the program, or false
+    otherwise.
 
     `name`
         Should be a string to check for the existence of a label. It can
@@ -1861,7 +1860,7 @@ def take_screenshot(scale=None, background=False):
     :args: ()
 
     Causes a screenshot to be taken. This screenshot will be saved as part of
-    a save game.
+    a saved game.
     """
 
     if scale is None:
@@ -2279,8 +2278,8 @@ def music_start(filename, loops=True, fadeout=None, fadein=0):
 
 def music_stop(fadeout=None):
     """
-    Deprecated music start function, retained for compatibility. Use
-    renpy.music.play() or .queue() instead.
+    Deprecated music stop function, retained for compatibility. Use
+    renpy.music.stop() instead.
     """
 
     renpy.audio.music.stop(fadeout=fadeout)
@@ -2357,7 +2356,7 @@ def force_full_redraw():
     to redraw the screen directly.
     """
 
-    # This had been used for the software renderer, but gl rendering rerdraws
+    # This had been used for the software renderer, but gl rendering redraws
     # the screen every frame, so it's removed.
     return
 
@@ -2868,7 +2867,6 @@ def load_module(name, **kwargs):
     renpy.config.locked = False
 
     initcode = renpy.game.script.load_module(name)
-    initcode.sort(key=lambda i: i[0])
 
     context = renpy.execution.Context(False)
     context.init_phase = True
@@ -2935,6 +2933,26 @@ def load_string(s, filename="<string>"):
 
     finally:
         renpy.game.exception_info = old_exception_info
+
+
+def include_module(name):
+    """
+    :doc: other
+
+    Similar to :func:`renpy.load_module`, but instead of loading the module right away,
+    inserts it into the init queue somewhere after the current AST node.
+
+    The module may not contain init blocks lower than the block that includes the module.
+    For example, if your module contains an init 10 block, the latest you can load it is
+    init 10.
+
+    Module loading may only occur from inside an init block.
+    """
+
+    if not renpy.game.context().init_phase:
+        raise Exception("Module loading is only allowed in init code.")
+
+    renpy.game.script.include_module(name)
 
 
 def pop_call():
@@ -3038,7 +3056,6 @@ def get_placement(d):
     * xoffset
     * yoffset
     * subpixel
-
     """
     p = d.get_placement()
 
@@ -3904,11 +3921,17 @@ def execute_default_statement(start=False):
     :undocumented:
 
     Executes the default statement.
+
+    `start`
+        This is true at the start of the game, and false at other
+        times.
     """
 
     for i in renpy.ast.default_statements:
-        i.set_default(start)
+        i.execute_default(start)
 
+    for i in renpy.config.after_default_callbacks:
+        i()
 
 def write_log(s, *args):
     """

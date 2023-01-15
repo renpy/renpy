@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -211,17 +211,21 @@ init -1500 python:
          * Preference("font size", 1.0) - Sets the accessibility font size scaling factor.
          * Preference("font line spacing", 1.0) - Sets the accessibility font vertical spacing scaling factor.
 
-         * Preference("system cursor", "enable") - Use system cursor ignoring config.mouse.
-         * Preference("system cursor", "disable") - Use cursor defined in config.mouse.
+         * Preference("system cursor", "enable") - Use system cursor ignoring :var:`config.mouse`.
+         * Preference("system cursor", "disable") - Use cursor defined in :var:`config.mouse`.
          * Preference("system cursor", "toggle") - Toggle system cursor.
 
          * Preference("high contrast text", "enable") - Enables white text on a black background.
          * Preference("high contrast text", "disable") - Disables high contrast text.
          * Preference("high contrast text", "toggle") - Toggles high contrast text.
 
-         * Preference("audio when minimized", "enable") - Enable sounds playing when the window is not in focus.
-         * Preference("audio when minimized", "disable") - Disable sounds playing when the window is not in focus.
-         * Preference("audio when minimized", "toggle") - Toggle sounds playing when the window is not in focus.
+         * Preference("audio when minimized", "enable") - Enable sounds playing when the window has been minimized.
+         * Preference("audio when minimized", "disable") - Disable sounds playing when the window has been minimized.
+         * Preference("audio when minimized", "toggle") - Toggle sounds playing when the window has been minimized.
+
+         * Preference("audio when unfocused", "enable") - Enable sounds playing when the window is not in focus.
+         * Preference("audio when unfocused", "disable") - Disable sounds playing when the window is not in focus.
+         * Preference("audio when unfocused", "toggle") - Toggle sounds playing when the window is not in focus.
 
          * Preference("web preload cache", "enable") - Will cause the web cache to be preloaded.
          * Preference("web preload cache", "disable") - Will cause the web cache to not be preloaded, and preloaded data to be deleted.
@@ -517,17 +521,26 @@ init -1500 python:
                 elif value == "toggle":
                     return ToggleField(_preferences, "audio_when_minimized")
 
+            elif name == _("audio when unfocused"):
+
+                if value == "enable":
+                    return SetField(_preferences, "audio_when_unfocused", True)
+                elif value == "disable":
+                    return SetField(_preferences, "audio_when_unfocused", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "audio_when_unfocused")
+
             elif name == _("web cache preload"):
 
                 if not renpy.emscripten:
                     return None
 
                 if value == "enable":
-                    return [ SetField(_preferences, "pwa_preload", True), ExecJS("loadCache()") ]
+                    return [ SetField(_preferences, "web_cache_preload", True), ExecJS("loadCache()") ]
                 elif value == "disable":
-                    return [ SetField(_preferences, "pwa_preload", False), ExecJS("clearCache()") ]
+                    return [ SetField(_preferences, "web_cache_preload", False), ExecJS("clearCache()") ]
                 elif value == "toggle":
-                    if _preferences.pwa_preload:
+                    if _preferences.web_cache_preload:
                         return Preferences("web cache preload", "disable")
                     else:
                         return Preferences("web cache preload", "enable")

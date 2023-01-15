@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -256,9 +256,10 @@ class Cache(object):
 
         def make_render(ce):
 
-            if image.oversample != 1:
-                oversample = image.oversample
-                inv_oversample = 1.0 / image.oversample
+            oversample = image.get_oversample() or .001
+
+            if oversample != 1:
+                inv_oversample = 1.0 / oversample
 
                 rv = renpy.display.render.Render(ce.width * inv_oversample, ce.height * inv_oversample)
                 rv.forward = renpy.display.matrix.Matrix2D(oversample, 0, 0, oversample)
@@ -267,6 +268,9 @@ class Cache(object):
                 rv = renpy.display.render.Render(ce.width, ce.height)
 
             rv.blit(ce.texture, ce.bounds[:2])
+
+            if image.pixel_perfect:
+                rv.add_property("pixel_perfect", True)
 
             return rv
 
@@ -608,6 +612,7 @@ class ImageBase(renpy.display.core.Displayable):
 
     optimize_bounds = False
     oversample = 1
+    pixel_perfect = False
 
     def after_upgrade(self, version):
         if version < 1:
@@ -669,6 +674,13 @@ class ImageBase(renpy.display.core.Displayable):
 
         return 0
 
+    def get_oversample(self):
+        """
+        Returns the oversample value for this image.
+        """
+
+        return self.oversample
+
 
 ignored_images = set()
 images_to_ignore = set()
@@ -678,6 +690,8 @@ class Image(ImageBase):
     """
     This image manipulator loads an image from a file.
     """
+
+    is_svg = False
 
     def __init__(self, filename, **properties):
         """
@@ -698,9 +712,9 @@ class Image(ImageBase):
 
                 raise Exception("Unknown image modifier %r in %r." % (i, filename))
 
-
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
+
 
     def _repr_info(self):
         return repr(self.filename)
@@ -708,13 +722,19 @@ class Image(ImageBase):
     def get_hash(self):
         return renpy.loader.get_hash(self.filename)
 
+    def get_oversample(self):
+        if self.is_svg:
+            return self.oversample * renpy.display.draw.draw_per_virt
+        else:
+            return self.oversample
+
     def load(self, unscaled=False):
+
+        # Unscaled is no longer used.
 
         cache.add_load_log(self.filename)
 
-
         try:
-
 
             try:
                 filelike = renpy.loader.load(self.filename)
@@ -728,14 +748,25 @@ class Image(ImageBase):
                 force_size = e.size
 
             with filelike as f:
-                if unscaled:
-                    surf = renpy.display.pgrender.load_image_unscaled(f, filename)
-                else:
-                    surf = renpy.display.pgrender.load_image(f, filename)
+                surf = renpy.display.pgrender.load_image(f, filename)
 
             if force_size is not None:
                 # avoid size-related exceptions (e.g. Crop on a smaller placeholder)
                 surf = renpy.display.pgrender.transform_scale(surf, force_size)
+
+            self.is_svg = filename.lower().endswith(".svg")
+            self.pixel_perfect = self.is_svg
+
+            if self.is_svg:
+                width, height = surf.get_size()
+
+                width = int(width * renpy.display.draw.draw_per_virt)
+                height = int(height * renpy.display.draw.draw_per_virt)
+
+                filelike = renpy.loader.load(self.filename)
+
+                with filelike as f:
+                    surf = renpy.display.pgrender.load_image(filelike, filename, size=(width, height))
 
             return surf
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -97,6 +97,9 @@ persistent = None # type: Any
 
 # The current preferences.
 preferences = None # type: Any
+
+# Current id of the AST node in script initcode
+initcode_ast_id = 0
 
 
 class ExceptionInfo(object):

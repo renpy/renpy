@@ -225,6 +225,17 @@ Occasionally Used
     As this function may be called during prediction, it must not rely
     on any state.
 
+.. var:: config.after_default_callbacks = [ ... ]
+
+    A list of functions that are called (with no arguments) whenever
+    default statements are processed. The default statements are
+    run after the init phase, but before the game starts; when the
+    a save is loaded; after rollback; before lint; and potentially at
+    other times.
+
+    Similar to the default statement, these callbacks are a good place
+    to add data to the game that does not exist, but needs to.
+
 .. var:: config.after_load_callbacks = [ ... ]
 
     A list of functions that are called (with no arguments) when a load
@@ -401,6 +412,11 @@ Occasionally Used
 
     As this function may be called during prediction, it must not rely on any
     state.
+
+.. var:: config.default_language = None
+
+    If not None, this should be a string giving the default language
+    that the game is translated into by the translation framework.
 
 .. var:: config.default_tag_layer = "master"
 
@@ -602,11 +618,6 @@ Occasionally Used
 .. var:: config.input_caret_blink = 1.0
 
     If not False, sets the blinking period of the default caret, in seconds.
-
-.. var:: config.language = None
-
-    If not None, this should be a string giving the default language
-    that the game is translated into by the translation framework.
 
 .. var:: config.lint_character_statistics = True
 
@@ -1230,6 +1241,10 @@ Rarely or Internally Used
     A list of names of layers to clear when entering the main and game
     menus.
 
+.. var:: config.console = False
+
+    This enables the console in the case :var:`config.developer` is not true.
+
 .. var:: config.context_clear_layers = [ 'screens', 'top', 'bottom', ... ]
 
     A list of layers that are cleared when entering a new context.
@@ -1283,6 +1298,12 @@ Rarely or Internally Used
     the selected direction of motion, when moving focus with the
     keyboard.
 
+.. var:: config.gamedir = ...
+
+    The full path leading to the game's ``game/`` directory. This is a
+    read-only variable. There is no guarantee that any file will be there,
+    typically on platforms such as android.
+
 .. var:: config.gl_resize = True
 
     Determines if the user is allowed to resize an OpenGL-drawn window.
@@ -1294,10 +1315,14 @@ Rarely or Internally Used
     entirely, although we don't recommend that, as rollback is useful
     to let the user see text he skipped by mistake.
 
+.. var:: config.help = None
+
+    The default value for the :func:`Help` action.
+
 .. var:: config.help_screen = "help"
 
-    The name of the screen shown by the :func:`Help` action, or by pressing
-    f1 on the keyboard.
+    The name of the screen shown by pressing f1 on the keyboard, or by
+    the :func:`Help` action under certain circumstances.
 
 .. var:: config.hide = renpy.hide
 
@@ -1407,6 +1432,12 @@ Rarely or Internally Used
     True if the file is loadable, and False if not. This can be used with
     :var:`config.file_open_callback` or :var:`config.missing_image_callback`.
 
+.. var:: config.log = None
+
+    If not None, this is expected to be a filename. Much of the text
+    shown to the user by :ref:`say <say-statement>` or :doc:`menu
+    <menus>` statements will be logged to this file.
+
 .. var:: config.log_width = 78
 
     The width of lines logged when :var:`config.log` is used.
@@ -1424,12 +1455,6 @@ Rarely or Internally Used
 .. var:: config.longpress_vibrate = .1
 
     The amount of time the device will vibrate for after a longpress.
-
-.. var:: config.log = None
-
-    If not None, this is expected to be a filename. Much of the text
-    shown to the user by :ref:`say <say-statement>` or :doc:`menu
-    <menus>` statements will be logged to this file.
 
 .. var:: config.main_menu_stop_channels = [ "movie", "sound", "voice", ... ]
 
@@ -1525,6 +1550,11 @@ Rarely or Internally Used
     This is a list of all of the overlay layers. Overlay layers are
     cleared before the overlay functions are called. "overlay" should
     always be in this list.
+
+.. var:: config.pad_bindings = { ... }
+
+    An equivalent of :var:`config.keymap` for gamepads.
+    Please see :doc:`keymap`'s section about pad bindings for more information.
 
 .. var:: config.pause_with_transition = False
 
@@ -1701,7 +1731,8 @@ Rarely or Internally Used
 
     A function that is used in place of :func:`renpy.show` by the :ref:`show
     <show-statement>` and :ref:`scene <scene-statement>` statements. This
-    should have the same signature as :func:`renpy.show`.
+    should have the same signature as :func:`renpy.show`, and pass unknown
+    keyword arguments unchanged.
 
 .. var:: config.skip_delay = 75
 
@@ -1867,6 +1898,10 @@ Other Configuration Variables
 Some other pages of this documentation contain and define other configuration
 variables. You can locate them there, in their context.
 
+:doc:`3dstage`
+
+* :var:`config.perspective`
+
 :doc:`achievement`:
 
 * :var:`config.steam_appid`
@@ -1921,3 +1956,7 @@ variables. You can locate them there, in their context.
 * :var:`config.side_image_prefix_tag`
 * :var:`config.side_image_same_transform`
 * :var:`config.side_image_tag`
+
+:doc:`translation`:
+
+* :var:`config.language`

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -217,24 +217,24 @@ init -1500 python:
 
     def FileLoadable(name, page=None, slot=False):
         """
-         :doc: file_action_function
+        :doc: file_action_function
 
-         This is a function that returns true
-         if the file is loadable, and false otherwise.
-         """
+        This is a function that returns true
+        if the file is loadable, and false otherwise.
+        """
 
         return renpy.can_load(__slotname(name, page, slot))
 
     def FileScreenshot(name, empty=None, page=None, slot=False):
         """
-         :doc: file_action_function
+        :doc: file_action_function
 
-         Returns the screenshot associated with the given file. If the
-         file is not loadable, then `empty` is returned, unless it's None,
-         in which case, a Null displayable is created.
+        Returns the screenshot associated with the given file. If the
+        file is not loadable, then `empty` is returned, unless it's None,
+        in which case, a Null displayable is created.
 
-         The return value is a displayable.
-         """
+        The return value is a displayable.
+        """
 
         screenshot = renpy.slot_screenshot(__slotname(name, page, slot=slot))
 
@@ -249,14 +249,14 @@ init -1500 python:
 
     def FileTime(name, format=_("%b %d, %H:%M"), empty="", page=None, slot=False):
         """
-         :doc: file_action_function
+        :doc: file_action_function
 
-         Returns the time the file was saved, formatted according
-         to the supplied `format`. If the file is not found, `empty` is
-         returned.
+        Returns the time the file was saved, formatted according
+        to the supplied `format`. If the file is not found, `empty` is
+        returned.
 
-         The return value is a string.
-         """
+        The return value is a string.
+        """
 
         mtime = renpy.slot_mtime(__slotname(name, page, slot))
 
@@ -298,11 +298,11 @@ init -1500 python:
 
     def FileSaveName(name, empty="", page=None, slot=False):
         """
-         :doc: file_action_function
+        :doc: file_action_function
 
-         Return the save_name that was in effect when the file was saved,
-         or `empty` if the file does not exist.
-         """
+        Return the save_name that was in effect when the file was saved,
+        or `empty` if the file does not exist.
+        """
 
         return FileJson(name, "_save_name", empty=empty, missing=empty, page=page, slot=slot)
 
@@ -317,35 +317,35 @@ init -1500 python:
 
     class FileSave(Action, DictEquality):
         """
-         :doc: file_action
+        :doc: file_action
 
-         Saves the file.
+        Saves the file.
 
-         The button with this slot is selected if it's marked as the
-         newest save file.
+        The button with this slot is selected if it's marked as the
+        newest save file.
 
-         `name`
-             The name of the slot to save to. If None, an unused slot
-             (a large number based on the current time) will be used.
+        `name`
+            The name of the slot to save to. If None, an unused slot
+            (a large number based on the current time) will be used.
 
-         `confirm`
-             If true, then we will prompt before overwriting a file.
+        `confirm`
+            If true, then we will prompt before overwriting a file.
 
-         `newest`
-             Ignored.
+        `newest`
+            Ignored.
 
-         `page`
-             The name of the page that the slot is on. If None, the current
-             page is used.
+        `page`
+            The name of the page that the slot is on. If None, the current
+            page is used.
 
-         `cycle`
-             If true, then saves on the supplied page will be cycled before
-             being shown to the user. :var:`config.quicksave_slots` slots are
-             used in the cycle.
+        `cycle`
+            If true, then saves on the supplied page will be cycled before
+            being shown to the user. :var:`config.quicksave_slots` slots are
+            used in the cycle.
 
-         `slot`
-             If True, `name` is taken to be a slot name, and `page` is ignored.
-         """
+        `slot`
+            If True, `name` is taken to be a slot name, and `page` is ignored.
+        """
 
         alt = "Save slot [text]"
         slot = None
@@ -402,30 +402,30 @@ init -1500 python:
 
     class FileLoad(Action, DictEquality):
         """
-         :doc: file_action
+        :doc: file_action
 
-         Loads the file.
+        Loads the file.
 
-         `name`
-             The name of the slot to load from. If None, an unused slot will be
-             used, and hence the file will not be loadable.
+        `name`
+            The name of the slot to load from. If None, an unused slot will be
+            used, and hence the file will not be loadable.
 
-         `confirm`
-             If true and not at the main menu, prompt for confirmation before loading the file.
+        `confirm`
+            If true and not at the main menu, prompt for confirmation before loading the file.
 
-         `page`
-             The page that the file will be loaded from. If None, the
-             current page is used.
+        `page`
+            The page that the file will be loaded from. If None, the
+            current page is used.
 
-         `newest`
-             If true, the button is selected if this is the newest file.
+        `newest`
+            If true, the button is selected if this is the newest file.
 
-         `cycle`
-             Ignored.
+        `cycle`
+            Ignored.
 
-         `slot`
-             If True, `name` is taken to be a slot name, and `page` is ignored.
-         """
+        `slot`
+            If True, `name` is taken to be a slot name, and `page` is ignored.
+        """
 
         alt = "Load slot [text]"
         slot = None
@@ -477,23 +477,23 @@ init -1500 python:
     @renpy.pure
     class FileDelete(Action, DictEquality):
         """
-         :doc: file_action
+        :doc: file_action
 
-         Deletes the file.
+        Deletes the file.
 
-         `name`
-             The name of the slot to delete.
+        `name`
+            The name of the slot to delete.
 
-         `confirm`
-             If true and not at the main menu, prompt for confirmation before loading the file.
+        `confirm`
+            If true and not at the main menu, prompt for confirmation before loading the file.
 
-         `page`
-             The page that the file will be loaded from. If None, the
-             current page is used.
+        `page`
+            The page that the file will be loaded from. If None, the
+            current page is used.
 
-         `slot`
-             If True, `name` is taken to be a slot name, and `page` is ignored.
-         """
+        `slot`
+            If True, `name` is taken to be a slot name, and `page` is ignored.
+        """
 
         alt = _("Delete slot [text]")
         slot = None
@@ -523,22 +523,22 @@ init -1500 python:
 
     def FileAction(name, page=None, **kwargs):
         """
-         :doc: file_action
+        :doc: file_action
 
-         "Does the right thing" with the file. This means loading it if the
-         load screen is showing (current screen is named "load"), and saving
-         otherwise.
+        "Does the right thing" with the file. This means loading it if the
+        load screen is showing (current screen is named "load"), and saving
+        otherwise.
 
-         `name`
-             The name of the slot to save to or load from. If None, an unused slot
-             (a large number based on the current time) will be used.
+        `name`
+            The name of the slot to save to or load from. If None, an unused slot
+            (a large number based on the current time) will be used.
 
-         `page`
-             The page that the file will be saved to or loaded from. If None, the
-             current page is used.
+        `page`
+            The page that the file will be saved to or loaded from. If None, the
+            current page is used.
 
-         Other keyword arguments are passed to FileLoad or FileSave.
-         """
+        Other keyword arguments are passed to FileLoad or FileSave.
+        """
 
         if renpy.current_screen().screen_name[0] == "load":
             return FileLoad(name, page=page, **kwargs)
@@ -564,11 +564,11 @@ init -1500 python:
     @renpy.pure
     class FilePage(Action, DictEquality):
         """
-         :doc: file_action
+        :doc: file_action
 
-         Sets the file page to `page`, which should be one of "auto", "quick",
-         or an integer.
-         """
+        Sets the file page to `page`, which should be one of "auto", "quick",
+        or an integer.
+        """
 
         def __init__(self, page):
             self.page = str(page)
@@ -595,12 +595,12 @@ init -1500 python:
 
     def FilePageName(auto="a", quick="q"):
         """
-         :doc: file_action_function
+        :doc: file_action_function
 
-         Returns the name of the current file page, as a string. If a normal
-         page, this returns the page number. Otherwise, it returns
-         `auto` or `quick`.
-         """
+        Returns the name of the current file page, as a string. If a normal
+        page, this returns the page number. Otherwise, it returns
+        `auto` or `quick`.
+        """
 
         page = persistent._file_page
 
@@ -710,34 +710,34 @@ init -1500 python:
 
     def FileSlotName(slot, slots_per_page, auto="a", quick="q", format="%s%d"):
         """
-         :doc: file_action_function
+        :doc: file_action_function
 
-         Returns the name of the numbered slot. This assumes that slots on
-         normal pages are numbered in a linear order starting with 1, and
-         that page numbers start with 1. When slot is 2, and slots_per_page
-         is 10, and the other variables are the defaults:
+        Returns the name of the numbered slot. This assumes that slots on
+        normal pages are numbered in a linear order starting with 1, and
+        that page numbers start with 1. When slot is 2, and slots_per_page
+        is 10, and the other variables are the defaults:
 
-         * When the first page is showing, this returns "2".
-         * When the second page is showing, this returns "12".
-         * When the auto page is showing, this returns "a2".
-         * When the quicksave page is showing, this returns "q2".
+        * When the first page is showing, this returns "2".
+        * When the second page is showing, this returns "12".
+        * When the auto page is showing, this returns "a2".
+        * When the quicksave page is showing, this returns "q2".
 
-         `slot`
-             The number of the slot to access.
+        `slot`
+            The number of the slot to access.
 
-         `slots_per_page`
-             The number of slots per page.
+        `slots_per_page`
+            The number of slots per page.
 
-         `auto`
-             A prefix to use for the auto page.
+        `auto`
+            A prefix to use for the auto page.
 
-         `quick`
-             A prefix to use for the quick page.
+        `quick`
+            A prefix to use for the quick page.
 
-         `format`
-             The formatting code to use. This is given two arguments: A string
-             giving the page prefix, and an integer giving the slot number.
-         """
+        `format`
+            The formatting code to use. This is given two arguments: A string
+            giving the page prefix, and an integer giving the slot number.
+        """
 
         page = persistent._file_page
 
@@ -898,12 +898,12 @@ init -1500 python:
     @renpy.pure
     class FileTakeScreenshot(Action, DictEquality):
         """
-         :doc: file_action
+        :doc: file_action
 
-         Take a screenshot to be used when the game is saved. This can
-         be used to ensure that the screenshot is accurate, by taking
-         a picture of the screen before a file save screen is shown.
-         """
+        Take a screenshot to be used when the game is saved. This can
+        be used to ensure that the screenshot is accurate, by taking
+        a picture of the screen before a file save screen is shown.
+        """
 
         def __call__(self):
             renpy.take_screenshot()

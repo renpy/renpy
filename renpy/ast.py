@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -2237,6 +2237,12 @@ class UserStatement(Node):
     def execute_init(self):
         self.call("execute_init")
 
+        if renpy.statements.get("init", self.parsed):
+            self.init_priority = 1
+
+        if renpy.statements.get("execute_default", self.parsed):
+            default_statements.append(self)
+
     def get_init(self):
         return self.init_priority, self.execute_init
 
@@ -2245,6 +2251,9 @@ class UserStatement(Node):
         statement_name(self.get_name())
 
         self.call("execute")
+
+    def execute_default(self, start):
+        self.call("execute_default")
 
     def predict(self):
         predictions = self.call("predict")
@@ -2556,7 +2565,7 @@ class Default(Node):
         else:
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
-    def set_default(self, start):
+    def execute_default(self, start):
         d = renpy.python.store_dicts[self.store]
 
         defaults_set = d.get("_defaults_set", None)

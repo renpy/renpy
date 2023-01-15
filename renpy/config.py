@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -35,9 +35,6 @@ import renpy
 
 # Can we add more config variables?
 locked = False
-
-# Contains help for config variables.
-help = [ ] # @ReservedAssignment
 
 # The title of the game window.
 window_title = None
@@ -990,24 +987,12 @@ ftfont_vertical_extent_scale = { }
 # The default shader.
 default_shader = "renpy.geometry"
 
-# If True, the volume of a channel is shown when it is mute.
-preserve_volume_when_muted = False
+# If True, the volume of a channel is kept while the channel is muted.
+preserve_volume_when_muted = True
 
-
+# Documented in Sphinx.
 def say_attribute_transition_callback(*args):
-    """
-    :args: (tag, attrs, mode)
-
-    Returns the say attribute transition to use, and the layer the transition
-    should be applied to (with None being a valid layer.
-
-    Attrs is the list of tags/attributes of the incoming image.
-
-    Mode is one of "permanent", "temporary", or "restore".
-    """
-
     return renpy.config.say_attribute_transition, renpy.config.say_attribute_transition_layer
-
 
 # Should say_attribute_transition_callback take attrs?
 say_attribute_transition_callback_attrs = True
@@ -1344,6 +1329,10 @@ viewport_inertia_amplitude = 20.0
 # flick gesture decays.
 viewport_inertia_time_constant = 0.325
 
+# A list of callbacks that are executed after the default statements have
+# run.
+after_default_callbacks = [ ]
+
 
 del os
 del collections
@@ -1367,7 +1356,7 @@ def init():
 
     global autoreload_functions
     autoreload_functions = [
-        (r'\.(png|jpg|jpeg|webp|gif|tif|tiff|bmp)$', renpy.exports.flush_cache_file),
+        (r'\.(png|jpg|jpeg|webp|gif|tif|tiff|bmp|avif|svg)$', renpy.exports.flush_cache_file),
         (r'\.(mp2|mp3|ogg|opus|wav)$', renpy.audio.audio.autoreload),
         ]
 

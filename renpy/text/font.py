@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -379,6 +379,8 @@ class BMFont(ImageFont):
         with renpy.loader.load(self.filename) as f:
             for l in f:
 
+                l = l.decode("utf-8")
+
                 kind, args = parse_bmfont_line(l)
 
                 if kind == "common":
@@ -500,7 +502,7 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
         The character set of the font. A string containing characters in
         the order in which they are found in the image. The default character
         set for a SFont is
-    
+
     .. code-block:: none
 
         ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?

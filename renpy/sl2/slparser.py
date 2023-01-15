@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -422,7 +422,7 @@ many = renpy.object.Sentinel("many")
 def register_sl_displayable(*args, **kwargs):
     """
     :doc: custom_sl class
-    :args: (name, displayable, style, nchildren=0, scope=False, replaces=False, default_keywords={}, default_properties=True, unique=False)
+    :args: (name, displayable, style, nchildren=0, scope=False, *, replaces=False, default_keywords={}, default_properties=True, unique=False)
 
     Registers a screen language statement that creates a displayable.
 

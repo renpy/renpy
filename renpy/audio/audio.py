@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1252,7 +1252,7 @@ def autoreload(_fn):
     renpy.exports.restart_interaction()
 
 
-global_pause = False
+global_pause = 0
 
 
 def pause_all():
@@ -1261,7 +1261,7 @@ def pause_all():
     """
 
     global global_pause
-    global_pause = True
+    global_pause += 1
 
     periodic()
 
@@ -1272,7 +1272,8 @@ def unpause_all():
     """
 
     global global_pause
-    global_pause = False
+    if global_pause > 0:
+        global_pause -= 1
 
     periodic()
 
