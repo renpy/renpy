@@ -186,8 +186,8 @@ Or a statement can be removed, by replacing it with the ``pass`` statement::
     # game/script.rpy:101
     translate piglatin start_9e949aac:
 
-         # e "Pretty much everything your game needs!"
-         pass
+        # e "Pretty much everything your game needs!"
+        pass
 
 It's also possible to run non-dialogue statements, such as
 conditionals or Python. For example, we can translate::
@@ -203,10 +203,17 @@ into::
         $ latin_points = to_roman_numerals(points)
         e "Ouyay oredscay [latin_points] ointspay!"
 
+Tips
+----
+
+Be very careful when changing dialogue that has been translated,
+especially when that dialogue is repeated in more than one place
+inside a label.
+
 Sometimes it might be desirable to change a line of
 dialogue in the original language, without requiring
 the translators to retranslate the line. For example,
-a typo in English is unlikely to have surved the process
+a typo in English is unlikely to have survived the process
 of being translated into Russian.
 
 This can be done by including an ``id`` clause as part of the
@@ -216,20 +223,9 @@ statement. For example::
     label start:
         e "This used to have a typo." id start_61b861a2
 
-Tips
-----
-
-Be very careful when changing dialogue that has been translated,
-especially when that dialogue is repeated in more than one place
-inside a label. In some cases, it may be necessary to assign
-a translation identifier directly, using a statement like::
-
-    translate None mylabel_03ac197e_1:
-        "..."
-
 Adding labels can also confuse the translation process. To prevent
 this, labels that are given the ``hide`` clause are ignored when generating
-translations.::
+translations. ::
 
     label ignored_by_translation hide:
         "..."
