@@ -2867,7 +2867,6 @@ def load_module(name, **kwargs):
     renpy.config.locked = False
 
     initcode = renpy.game.script.load_module(name)
-    initcode.sort(key=lambda i: i[0])
 
     context = renpy.execution.Context(False)
     context.init_phase = True
@@ -2934,6 +2933,26 @@ def load_string(s, filename="<string>"):
 
     finally:
         renpy.game.exception_info = old_exception_info
+
+
+def include_module(name):
+    """
+    :doc: other
+
+    Similar to :func:`renpy.load_module`, but instead of loading the module right away,
+    inserts it into the init queue somewhere after the current AST node.
+
+    The module may not contain init blocks lower than the block that includes the module.
+    For example, if your module contains an init 10 block, the latest you can load it is
+    init 10.
+
+    Module loading may only occur from inside an init block.
+    """
+
+    if not renpy.game.context().init_phase:
+        raise Exception("Module loading is only allowed in init code.")
+
+    renpy.game.script.include_module(name)
 
 
 def pop_call():
