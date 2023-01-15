@@ -350,8 +350,8 @@ Occasionally Used
 
 .. var:: config.context_callback = None
 
-    This is a callback that is called when Ren'Py enters a new context,
-    such as a menu context.
+    This is a callback that is called with no arguments when Ren'Py enters a
+    new context, such as a menu context.
 
 .. var:: config.context_copy_remove_screens = [ 'notify', ... ]
 
@@ -488,7 +488,7 @@ Occasionally Used
 
 .. var:: config.empty_window : Callable
 
-    This is called when _window is True, and no window has been shown
+    This is called with no arguments when _window is True, and no window has been shown
     on the screen. (That is, no call to :func:`renpy.shown_window` has
     occurred.) It's expected to show an empty window on the screen, and
     return without causing an interaction.
@@ -1484,8 +1484,9 @@ Rarely or Internally Used
 .. var:: config.missing_image_callback = None
 
     If not None, this function is called when an attempt to load an
-    image fails. It may return None, or it may return an image
-    manipulator. If an image manipulator is returned, that image
+    image fails. The callback is passed the filename of the missing image.
+    It may return None, or it may return an :doc:`image manipulator <im>`.
+    If an image manipulator is returned, that image
     manipulator is loaded in the place of the missing image.
 
     One may want to also define a :var:`config.loadable_callback`,
