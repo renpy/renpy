@@ -80,13 +80,22 @@ Using the 3D Stage
 ------------------
 
 The first thing to do to use the 3D stage is to enable it for a layer, using
-the ``camera`` statement. This is usually done with::
+the ``camera`` statement. If no layer name is provided, ``master`` is used by
+default. This is usually done with::
 
+    # Enabling the 3D stage for the master layer.
     camera:
         perspective True
 
 though it's possible that you'll want to include a default camera position, as
-described below.
+described below. 
+
+Alternatively, you can provide a specific layer name to enable the 3D stage only
+for that layer.
+
+    # Enabling the 3D stage for the background layer.
+    camera background:
+        perspective True
 
 Showing images (backgrounds and sprites) works the same way as it does in
 when using 2D coordinates. ::
