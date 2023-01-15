@@ -60,6 +60,8 @@ can then change it again.)
     the current language. The :func:`Language` action can be used to change
     the language.
 
+    See :doc:`translation` for more information.
+
 .. var:: preferences.emphasize_audio = False
 
     If True, Ren'Py will emphasize the audio channels found in :var:`config.emphasize_audio_channels`

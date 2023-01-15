@@ -33,6 +33,8 @@ and rolled-back when rollback occurs.
     when the current cursor does not exist, or is the default. This is used by
     :var:`config.mouse` and :func:`MouseDisplayable`.
 
+    See :doc:`mouse` for more information.
+
 .. var:: _dismiss_pause = True
 
     If True, the player can dismiss pauses and transitions.
