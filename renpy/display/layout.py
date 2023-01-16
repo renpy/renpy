@@ -1894,8 +1894,18 @@ class Side(Container):
         cwidth = min(cwidth, width - left - lefts - right - rights)
         cheight = min(cheight, height - top - tops - bottom - bottoms)
 
-        rv = renpy.display.render.Render(left + lefts + cwidth + rights + right,
-                                         top + tops + cheight + bottoms + bottom)
+        # Render the center displayable, with the insets around it, to get
+        # the final size of the center displayable, which could be bigger. (For
+        # example, when text word-wraps.
+        if 'c' in pos_d:
+            c_rend = render(pos_d['c'], cwidth, cheight, st, at)
+            c_width, c_height = c_rend.get_size()
+            cwidth = max(cwidth, c_width)
+            cheight = max(cheight, c_height)
+
+        rv = renpy.display.render.Render(
+            left + lefts + cwidth + rights + right,
+            top + tops + cheight + bottoms + bottom)
 
         def place(pos, x, y, w, h):
 
@@ -1904,7 +1914,12 @@ class Side(Container):
 
             d = pos_d[pos]
             i = pos_i[pos]
-            rend = render(d, w, h, st, at)
+
+            if pos == 'c':
+                rend = c_rend
+            else:
+                rend = render(d, w, h, st, at)
+
             self.offsets[i] = pos_d[pos].place(rv, x, y, w, h, rend)
 
         col1 = 0
