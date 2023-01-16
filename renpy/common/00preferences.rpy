@@ -624,6 +624,9 @@ init -1500 python:
         elif not _preferences.self_voicing and has_screen:
             renpy.hide_screen("_self_voicing")
 
+
+    config.interact_callbacks.append(__show_self_voicing)
+
     # Ignored.
     config.self_voicing_stops_afm = False
 
