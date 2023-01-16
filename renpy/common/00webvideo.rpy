@@ -95,7 +95,7 @@ videoPlay = (properties) => {
         video.play().then(() => {
             setTimeout(unblockVideo, 1000);
         }).catch( (e) => {
-            console.log("Video rejected: " + e);
+            console.log("Video rejected twice: " + e);
             videoPlayPrompt(properties.prompt);
         });
 
