@@ -310,9 +310,9 @@ Occasionally Used
 
 .. var:: config.autosave_callback = None
 
-    A callback or list of callbacks that will be called after each time a
-    background autosave happens. The callbacks are called during an interaction,
-    and so actions may be used, though the Return action will not function.
+    A callback or list of callbacks or Actions that will be called after
+    each time a background autosave happens. Although actions may be used,
+    the Return action will not function.
 
     If a non-Action callback shows a displayable or screen,
     :func:`renpy.restart_interaction` should be called.
@@ -350,8 +350,8 @@ Occasionally Used
 
 .. var:: config.context_callback = None
 
-    This is a callback that is called when Ren'Py enters a new context,
-    such as a menu context.
+    This is a callback that is called with no arguments when Ren'Py enters a
+    new context, such as a menu context.
 
 .. var:: config.context_copy_remove_screens = [ 'notify', ... ]
 
@@ -417,6 +417,8 @@ Occasionally Used
 
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
+
+    See :doc:`translation` for more details.
 
 .. var:: config.default_tag_layer = "master"
 
@@ -486,7 +488,7 @@ Occasionally Used
 
 .. var:: config.empty_window : Callable
 
-    This is called when _window is True, and no window has been shown
+    This is called with no arguments when _window is True, and no window has been shown
     on the screen. (That is, no call to :func:`renpy.shown_window` has
     occurred.) It's expected to show an empty window on the screen, and
     return without causing an interaction.
@@ -512,9 +514,9 @@ Occasionally Used
 
 .. var:: config.fix_rollback_without_choice = False
 
-    This option determines how the built in menus or imagemaps behave
+    This option determines how the built-in menus or imagemaps behave
     during fixed rollback. The default value is False, which means that
-    menu only the previously selected option remains clickable. If set
+    only the previously selected menu option remains clickable. If set
     to True, the selected option is marked but no options are clickable.
     The user can progress forward through the rollback buffer by
     clicking.
@@ -733,6 +735,8 @@ Occasionally Used
     The frames are played back at 20Hz, and the animation loops after
     all frames have been shown.
 
+    See :doc:`mouse` for more information.
+
 .. var:: config.mouse_displayable = None
 
     If not None, this should either be a displayable, or a callable that
@@ -744,6 +748,8 @@ Occasionally Used
     responsible for positioning and drawing a sythetic mouse
     cursor, and so should probably be a :func:`MouseDisplayable`
     or something very similar.
+
+    See :doc:`mouse` for more information.
 
 .. var:: config.narrator_menu = True
 
@@ -827,7 +833,7 @@ Occasionally Used
 .. var:: config.quit_action : Action
 
     The action that is called when the user clicks the quit button on
-    a window. The default action prompts the user to see if he wants
+    a window. The default action prompts the user to see if they want
     to quit the game.
 
 .. var:: config.reload_modules = [ ... ]
@@ -1129,7 +1135,7 @@ Rarely or Internally Used
 
     A list of callbacks that are called by all characters. This list
     is prepended to the list of character-specific callbacks. Ren'Py
-    includes it's own callbacks at the start of this list.
+    includes its own callbacks at the start of this list.
 
 .. var:: config.allow_skipping = True
 
@@ -1214,7 +1220,7 @@ Rarely or Internally Used
 
 .. var:: config.character_callback = None
 
-    The default value of the callback parameter of Character.
+    The default value of the `callback` parameter of :class:`Character`.
 
 .. var:: config.choice_empty_window = None
 
@@ -1478,8 +1484,9 @@ Rarely or Internally Used
 .. var:: config.missing_image_callback = None
 
     If not None, this function is called when an attempt to load an
-    image fails. It may return None, or it may return an image
-    manipulator. If an image manipulator is returned, that image
+    image fails. The callback is passed the filename of the missing image.
+    It may return None, or it may return an :doc:`image manipulator <im>`.
+    If an image manipulator is returned, that image
     manipulator is loaded in the place of the missing image.
 
     One may want to also define a :var:`config.loadable_callback`,
