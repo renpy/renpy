@@ -124,8 +124,11 @@ time_mult = 1.0
 def init_layers():
     global layers, sticky_layers, null
 
-    layers = frozenset(renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers)
-    sticky_layers = frozenset(renpy.config.sticky_layers)
+    layers = frozenset(
+        renpy.config.layers + renpy.config.detached_layers +
+        renpy.config.top_layers + renpy.config.bottom_layers)
+    sticky_layers = frozenset(
+        renpy.config.sticky_layers + renpy.config.detached_layers)
 
     null = renpy.display.layout.Null()
 
