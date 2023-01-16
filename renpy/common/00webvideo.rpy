@@ -90,12 +90,19 @@ videoPlay = (properties) => {
         setTimeout(unblockVideo, 1000);
     }).catch( (e) => {
         console.log("Video rejected: " + e);
-        videoPlayPrompt(properties.prompt);
+        video.muted = true;
         video.style.pointerEvents = "auto";
+        video.play().then(() => {
+            setTimeout(unblockVideo, 1000);
+        }).catch( (e) => {
+            console.log("Video rejected: " + e);
+            videoPlayPrompt(properties.prompt);
+        });
 
         video.addEventListener("click", () => {
             videoPlayPromptHide();
             setTimeout(unblockVideo, 1000);
+            video.muted = false;
             video.play();
         });
     });
