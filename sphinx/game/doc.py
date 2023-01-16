@@ -208,6 +208,9 @@ documented = collections.defaultdict(list)
 # This keeps all objectsd we see alive, to prevent duplicates in documented.
 documented_list = [ ]
 
+# The docstring for object.__init__ - which we don't want to pass for one of our classes's
+objinidoc = inspect.getdoc(object.__init__)
+
 
 def scan(name, o, prefix="", inclass=False):
 
@@ -282,7 +285,7 @@ def scan(name, o, prefix="", inclass=False):
 
             init_doc = inspect.getdoc(init)
 
-            if init_doc and not init_doc.startswith("x.__init__("):
+            if init_doc and (init_doc != objinidoc):
                 lines.append("")
                 lines.extend(init_doc.split("\n"))
 
