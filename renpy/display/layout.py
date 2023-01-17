@@ -2418,6 +2418,8 @@ class NearRect(Container):
 
 class Layer(AdjustTimes):
     """
+    :doc: disp_layer
+
     This allows a layer to be shown as a displayable on another layer.
     Intended for use with detached layers.
 

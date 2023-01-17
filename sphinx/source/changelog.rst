@@ -35,6 +35,24 @@ well as any layers created with :func:`renpy.add_layer` unless passed
 the new parameter ``sticky=False``.
 
 
+Detached Layers & Layer Displayable
+-----------------------------------
+
+Detached layers are creator-defined layers which are not automatically added to
+a scene. They are instead displayed using a new :class:`Layer` displayable
+which can be show on other layers.
+
+One of the driving factors behind this is that it allows shaders and other
+transform effects to be applied to a group of tags while still allowing them to
+operate normally with other systems such as show and say statements. It also
+also allows the same layer to be shown multiple times, for instance in
+reflections or several TV showing the same channel.
+
+As detached layers don't participate in scene building in the same way as
+typical layers, they are defined directly in :var:`config.detached_layers`
+rather than through :func:`add_layer`, and are inherently sticky.
+
+
 Mixer Volume Changes
 --------------------
 
