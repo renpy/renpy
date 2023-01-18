@@ -537,6 +537,7 @@ def clear_focus():
     Clears the focus when the window loses mouse focus.
     """
 
+    set_grab(None)
     change_focus(None)
 
 
