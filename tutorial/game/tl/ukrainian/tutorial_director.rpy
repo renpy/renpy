@@ -78,13 +78,10 @@ translate ukrainian director_c7a18979:
     e "Ви можете показати директора в будь-який час, натиснувши клавішу 'D' на клавіатурі. Ren'Py перезавантажиться, і ви повернетеся сюди. Спробуй зараз."
 
 # game/tutorial_director.rpy:46
-
 translate ukrainian director_3dcc4362:
 
     # e "Let's add a background. Click the '+' to pick where to add it, then the 'scene' statement and 'washington' for the image. Finally, click 'Add' to add it."
     e "Додамо фон. Клацніть '+', щоб вибрати, куди його додати, потім твердження 'scene' і 'washington' для зображення. Нарешті натисніть 'Додати', щоб додати його."
-
-scene bg washington
 
 # game/tutorial_director.rpy:48
 translate ukrainian director_292d58b5:
