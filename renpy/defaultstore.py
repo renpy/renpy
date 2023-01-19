@@ -161,6 +161,7 @@ DynamicDisplayable = renpy.display.layout.DynamicDisplayable
 ConditionSwitch = renpy.display.layout.ConditionSwitch
 ShowingSwitch = renpy.display.layout.ShowingSwitch
 AlphaMask = renpy.display.layout.AlphaMask
+Layer = renpy.display.layout.Layer
 
 Transform = renpy.display.motion.Transform
 

@@ -1277,6 +1277,12 @@ Rarely or Internally Used
     returns False, the built-in exception handler is use. This function may also call
     :func:`renpy.jump` to transfer control to some other label.
 
+.. var:: config.detached_layers = [ ]
+
+    These are layers which do not get automatically added to scenes.
+    They are always treated as :var:`sticky <config.sticky_layers>` and
+    intended for use with the :ref:`Layer` displayable for embedding.
+
 .. var:: config.fade_music = 0.0
 
     This is the amount of time in seconds to spend fading the old

@@ -110,9 +110,27 @@ enabled_events = {
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
 
+# Layer management.
+layers = frozenset(renpy.config.layers)
+sticky_layers = frozenset()
+
+null = None
+
 # Time management.
 time_base = 0.0
 time_mult = 1.0
+
+
+def init_layers():
+    global layers, sticky_layers, null
+
+    layers = frozenset(
+        renpy.config.layers + renpy.config.detached_layers +
+        renpy.config.top_layers + renpy.config.bottom_layers)
+    sticky_layers = frozenset(
+        renpy.config.sticky_layers + renpy.config.detached_layers)
+
+    null = renpy.display.layout.Null()
 
 
 def init_time():
@@ -829,11 +847,10 @@ class SceneLists(renpy.object.Object):
     __version__ = 8
 
     def after_setstate(self):
-
         self.camera_list = getattr(self, "camera_list", { })
         self.camera_transform = getattr(self, "camera_transform", { })
 
-        for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+        for i in layers:
             if i not in self.layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
@@ -849,7 +866,7 @@ class SceneLists(renpy.object.Object):
             self.at_list = { }
             self.layer_at_list = { }
 
-            for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+            for i in layers:
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
 
@@ -918,7 +935,7 @@ class SceneLists(renpy.object.Object):
 
         if oldsl:
 
-            for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+            for i in layers:
 
                 try:
                     self.layers[i] = oldsl.layers[i][:]
@@ -948,7 +965,7 @@ class SceneLists(renpy.object.Object):
             self.sticky_tags.update(oldsl.sticky_tags)
 
         else:
-            for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+            for i in layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
@@ -1120,7 +1137,7 @@ class SceneLists(renpy.object.Object):
             self.remove_hide_replaced(layer, key)
             self.at_list[layer][key] = at_list
 
-            if layer in renpy.config.sticky_layers:
+            if layer in sticky_layers:
                 self.sticky_tags[key] = layer
 
         if key and name:
@@ -2057,7 +2074,10 @@ class Interface(object):
         # Is our audio paused?
         self.audio_paused = False
 
-        for layer in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+        # Init layers.
+        init_layers()
+
+        for layer in layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
                 self.layer_properties[layer] = dict(
@@ -3023,7 +3043,7 @@ class Interface(object):
         raw = { }
         rv = { }
 
-        for layer in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+        for layer in layers:
             raw[layer] = d = scene_lists.make_layer(layer, self.layer_properties[layer])
             rv[layer] = scene_lists.transform_layer(layer, d)
 
@@ -3779,8 +3799,8 @@ class Interface(object):
                 where.layers[layer] = trans
 
             else:
-                where.layers[layer] = scene_layer
                 where.add(scene_layer)
+                where.layers[layer] = scene_layer
 
         # Add the bottom layers to root_widget.
         for layer in renpy.config.bottom_layers:
@@ -3848,8 +3868,6 @@ class Interface(object):
             if mouse_displayable is not None:
                 root_widget.add(mouse_displayable, 0, 0)
 
-        del add_layer
-
         self.prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
         self.prediction_coroutine.send(None)
 
@@ -3859,14 +3877,37 @@ class Interface(object):
         # Clean up some movie-related things.
         renpy.display.video.early_interact()
 
+        # A dict of any active layer transitions.
+        layer_transitions = { }
+
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.
         try:
 
+            # Insert layers into Layer displayables.
+            def per_interact(i):
+                if isinstance(i, renpy.display.layout.Layer):
+                    if i.layer in scene:
+                        i.layers = layer_transitions
+                        add_layer(i, i.layer)
+                        del i.layers
+                    else:
+                        i.add(null)
+
+                i.per_interact()
+
             # Call per-interaction code for all widgets.
             renpy.display.behavior.input_pre_per_interact()
-            root_widget.visit_all(lambda i : i.per_interact())
+            root_widget.visit_all(per_interact)
             renpy.display.behavior.input_post_per_interact()
+
+            # Consolidate static and layer transitions for later processing.
+            if layer_transitions:
+                layer_transitions.update(layers_root.layers)
+            else:
+                layer_transitions = layers_root.layers
+
+            del add_layer, per_interact
 
             # Now, update various things regarding scenes and transitions,
             # so we are ready for a new interaction or a restart.
@@ -4413,7 +4454,7 @@ class Interface(object):
         finally:
 
             # Determine the transition delay for each layer.
-            self.transition_delay = { k : getattr(v, "delay", 0) for k, v in layers_root.layers.items() }
+            self.transition_delay = { k : getattr(v, "delay", 0) for k, v in layer_transitions.items() }
 
             # Clean out the overlay layers.
             for i in renpy.config.overlay_layers:

@@ -169,6 +169,10 @@ bottom_layers = [ 'bottom' ]
 # Layers which will override the default layer for a tag while shown.
 sticky_layers = [ 'master' ]
 
+# Layers not automatically added to a scene and inherently sticky,
+# primarily for use with the Layer displayable.
+detached_layers = [ ]
+
 # True if we want to show overlays during wait statements, or
 # false otherwise.
 overlay_during_with = True

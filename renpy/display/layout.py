@@ -2414,3 +2414,55 @@ class NearRect(Container):
             return self._tts_common()
         else:
             return ""
+
+
+class Layer(AdjustTimes):
+    """
+    :doc: disp_layer
+
+    This allows a layer to be shown as a displayable on another layer.
+    Intended for use with detached layers.
+
+    Trying to display a layer on itself is not supported.
+
+    `layer`
+        The layer to display.
+
+    `clipping`
+        If False, the layer's contents may exceed its bounds, otherwise
+        anything exceeding the bounds will be trimmed.
+    """
+
+    def __init__(self, layer, **properties):
+        self.layer = layer
+        self._clipping = properties.pop('clipping', True)
+
+        # Intentionally skip over the AdjustTimes constructor.
+        super(AdjustTimes, self).__init__(**properties)
+
+    def add(self, d, st=None, at=None):
+        self._clear()
+
+        self.start_time = st
+        self.anim_time = at
+
+        super(Layer, self).add(d)
+
+    def visit_all(self, callback, seen=None):
+        # Call on self first, as it could be replacing the child.
+        callback(self)
+
+        d = self.child
+
+        if d is None:
+            return
+
+        if seen is None:
+            seen = set()
+
+        id_d = id(d)
+        if id_d in seen:
+            return
+
+        seen.add(id_d)
+        d.visit_all(callback, seen)
