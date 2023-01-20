@@ -130,7 +130,7 @@ def main():
 
         commits_per_day = collections.defaultdict(int)
 
-        for i in subprocess.check_output([ "git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d", "--follow", "HEAD", "--", "." ]).decode("utf-8").split():
+        for i in subprocess.check_output([ "git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d" ]).decode("utf-8").split():
             commits_per_day[i[2:]] += 1
 
         if dirty:
