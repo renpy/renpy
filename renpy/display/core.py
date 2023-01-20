@@ -3907,8 +3907,6 @@ class Interface(object):
             else:
                 layer_transitions = layers_root.layers
 
-            del add_layer, per_interact
-
             # Now, update various things regarding scenes and transitions,
             # so we are ready for a new interaction or a restart.
             self.old_scene = scene
