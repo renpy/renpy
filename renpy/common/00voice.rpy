@@ -428,7 +428,7 @@ init -1500 python hide:
         if (mode is None) or (mode == "with"):
             return
 
-        if getattr(renpy.context(), "_menu", False):
+        if getattr(renpy.context(), "_menu", False) and not _preferences.voice_after_menu:
             renpy.sound.stop(channel="voice")
             return
 

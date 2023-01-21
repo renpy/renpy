@@ -175,6 +175,11 @@ can then change it again.)
     internet access to play.
     The equivalent of the "web cache preload" preference.
 
+.. var:: preferences.voice_after_menu = False
+
+    If True, voice will continue playing after a menu is shown. If False,
+    voice will be stopped when a menu is shown. The equivalent of the
+    "voice after menu" preference.
 
 Mixer Functions
 ---------------
