@@ -577,6 +577,10 @@ def quit(): # @ReservedAssignment
 
 def init():
     global scan_thread
+    global quit_scan_thread
+
+    quit()
+    quit_scan_thread = False
 
     location = MultiLocation()
 
