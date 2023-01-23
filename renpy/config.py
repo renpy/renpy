@@ -1340,6 +1340,8 @@ viewport_inertia_time_constant = 0.325
 # run.
 after_default_callbacks = [ ]
 
+# A list of extra save directories. Strings giving the full paths.
+extra_savedirs = [ ]
 
 del os
 del collections

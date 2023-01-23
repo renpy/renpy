@@ -195,6 +195,21 @@ class FileLocation(object):
 
         return self.mtimes.get(slotname, None)
 
+    def path(self, filename):
+        """
+        Returns the mtime and path of the given filename, or (0, None) if
+        the file does not exist.
+        """
+
+        with disk_lock:
+
+            fn = os.path.join(self.directory, filename)
+
+            try:
+                return os.path.getmtime(fn), fn
+            except Exception:
+                return 0, None
+
     def json(self, slotname):
         """
         Returns the JSON data for slotname.
@@ -463,6 +478,19 @@ class MultiLocation(object):
 
         return rv
 
+    def path(self, filename):
+
+        results = [ ]
+
+        for i in self.active_locations():
+            results.append(i.path(filename))
+
+        if not results:
+            return 0, None
+
+        results.sort()
+        return results[-1]
+
     def mtime(self, slotname):
         l = self.newest(slotname)
 
@@ -591,6 +619,10 @@ def init():
     if (not renpy.mobile) and (not renpy.macapp):
         path = os.path.join(renpy.config.gamedir, "saves")
         location.add(FileLocation(path))
+
+    # 3. Extra savedirs.
+    for i in renpy.config.extra_savedirs:
+        location.add(FileLocation(i))
 
     # Scan the location once.
     location.scan()
