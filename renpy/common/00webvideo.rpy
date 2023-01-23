@@ -34,7 +34,8 @@ videoPlayPrompt = (message, color) => {
 
     videoPrompt.style.position = "absolute";
     videoPrompt.style.bottom = "50%";
-    videoPrompt.style.width = "100%";
+    videoPrompt.style.left = "0";
+    videoPrompt.style.right = "0";
     videoPrompt.style.textAlign = "center";
 
     videoPrompt.style.font = "24px sans-serif";
