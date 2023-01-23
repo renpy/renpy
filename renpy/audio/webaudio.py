@@ -24,6 +24,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy
 import emscripten # type: ignore
+import pygame
 from json import dumps
 
 
@@ -275,7 +276,7 @@ def video_ready(channel):
     presentation.
     """
 
-    return False
+    return call_int("video_ready", channel)
 
 
 def read_video(channel):
@@ -284,7 +285,14 @@ def read_video(channel):
     as an SDL surface with 2px of padding on all sides.
     """
 
-    return None
+    fn = call_str("read_video", channel)
+    if len(fn) == 0:
+        return None
+
+    surf = pygame.image.load(fn)
+    # FIXME Add 2px padding? Seems to be 4px actually...
+
+    return surf
 
 
 # No video will be played from this channel.
@@ -302,7 +310,7 @@ def set_video(channel, video):
     Sets a flag that determines if this channel will attempt to decode video.
     """
 
-    return
+    call("set_video", channel, video)
 
 
 loaded = False
