@@ -264,6 +264,7 @@ init -1100 python:
             config.emphasize_audio_volume = 0.5
             config.lenticular_bracket_ruby = False
             config.preserve_volume_when_muted = True
+            config.history_current_dialogue = False
 
             config.top_layers.remove("top")
             config.bottom_layers.remove("bottom")

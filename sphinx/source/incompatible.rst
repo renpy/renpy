@@ -19,7 +19,19 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
-**Steam Appid** When :var:`config.steam_appid` is not set, Ren'Py will delete
+**Dialogue history** Dialogue is now present in the history list
+(and hence the history screen) during the statement in which the
+dialogue is shown. Previously, it was only present at the end of the
+statement. During the statement, the dialogue is shown with a kind of
+"current".
+
+In rare cases, your game might have relied on the old behavior. If so,
+it can be disabled with::
+
+    define config.history_current_dialogue = False
+
+
+**Steam appid** When :var:`config.steam_appid` is not set, Ren'Py will delete
 any existing ``steam_appid.txt`` file in the game directory. This is to prevent
 the wrong app id from being used.
 

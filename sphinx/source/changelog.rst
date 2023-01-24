@@ -257,6 +257,10 @@ the placement of the image on the screen. It is not the case with this function.
 Other Changes
 -------------
 
+Dialogue is now present in the history list (and hence the history screen)
+during the statement in which the dialogue is shown. Previously, it was only
+present at the end of the statement.
+
 When :var:`config.steam_appid` is not set, Ren'Py will delete any existing
 ``steam_appid.txt`` file in the game directory. This is to prevent the wrong
 app id from being used.

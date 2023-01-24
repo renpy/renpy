@@ -742,7 +742,7 @@ history_length = None
 history_callbacks = [ ]
 
 # Should we add the current dialogue to the history?
-history_current_dialogue = False
+history_current_dialogue = True
 
 # Should we use the new order for translate blocks?
 new_translate_order = True
