@@ -66,11 +66,16 @@ properties.
     # an image.
     image logo right = Image("logo.png", xalign=1.0)
 
-There are three image file formats we recommend you use:
+There are four image file formats we recommend you use:
 
+* AVIF
 * WEBP
 * PNG
 * JPG
+
+And one vector image file format we recommend:
+
+* SVG
 
 Non-animated GIF and BMP files are also supported, but should not be
 used in modern games.
@@ -156,36 +161,36 @@ targeted at the layer being displayed.
 
 ::
 
-   # A new detached layer to hold the contents of a broadcast.
-   define config.detached_layers += [ "broadcast" ]
+    # A new detached layer to hold the contents of a broadcast.
+    define config.detached_layers += [ "broadcast" ]
 
-   # A layer displayable to represent a TV and watch the broadcast layer.
-   image tv = Window(Layer("broadcast"), background='#000', padding=(10, 10))
+    # A layer displayable to represent a TV and watch the broadcast layer.
+    image tv = Window(Layer("broadcast"), background='#000', padding=(10, 10))
 
-   image living_room = Placeholder('bg', text='living_room')
-   image studio = Solid('7c7')
-   image eileen = Placeholder('girl')
+    image living_room = Placeholder('bg', text='living_room')
+    image studio = Solid('7c7')
+    image eileen = Placeholder('girl')
 
-   label example:
-       pause
+    label example:
+        pause
 
-       # Set up the broadcast scene.
-       scene studio onlayer broadcast
-       with None
+        # Set up the broadcast scene.
+        scene studio onlayer broadcast
+        with None
 
-       # Begin a new scene in the living room.
-       scene living_room
+        # Begin a new scene in the living room.
+        scene living_room
 
-       # Show the TV in the lower right corner of ths screen.
-       show tv:
-         align (.75, .75) zoom .3
+        # Show the TV in the lower right corner of ths screen.
+        show tv:
+          align (.75, .75) zoom .3
 
-       # Show Eileen in the broadcast.
-       show eileen onlayer broadcast
+        # Show Eileen in the broadcast.
+        show eileen onlayer broadcast
 
-       # Dissolve into the living room, as Eileen enters the TV from the right.
-       with {'master': dissolve, 'broadcast': moveinright}
-       pause
+        # Dissolve into the living room, as Eileen enters the TV from the right.
+        with {'master': dissolve, 'broadcast': moveinright}
+        pause
 
 
 Applying Transforms to Displayables

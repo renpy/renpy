@@ -10,6 +10,15 @@ Changelog (Ren'Py 7.x-)
 8.1 / 7.6
 =========
 
+Web
+---
+
+Other Platforms
+---------------
+
+Bubble Dialogue
+---------------
+
 Sticky Layers
 -------------
 
@@ -52,6 +61,37 @@ As detached layers don't participate in scene building in the same way as
 typical layers, they are defined directly in :var:`config.detached_layers`
 rather than through :func:`add_layer`, and are inherently sticky.
 
+New Image Formats and Image Oversampling
+----------------------------------------
+
+These releases add support for two new image formats:
+
+* The AV1 Image File Format (AVIF) is a new image format that uses modern
+  compression techniques to produce smaller files than JPEG, PNG, or WebP.
+  In many cases, converting images to AVIF will reduce their size without
+  sacrificing image quality.
+
+* SVG files are a vector graphics format used on the web. Ren'Py supports a
+  SVG files containing a large subset of SVGs  capability. (Notably, Ren'Py
+  does not support text in SVG files.) Ren'Py ill automatically oversample
+  (or undersample) SVGs when the game is scaled, to ensure the SVGs remain
+  sharp at any resolution, similar to the way it oversamples text. This makes
+  svgs a reasonable choice for interface elemnts that need to remain sharp.
+
+This release of Ren'Py also adds support for oversampling raster images,
+like PNG, JPEG, WebP, and AVIF. For these images, oversampling is done
+by including an @ and number in the filename. For example, "eileen happy@2.png"
+will be oversampled by a factor of 2.
+
+For raster images, oversampling causes the image file to be loaded at full
+resolution, but treated as if it was smaller by the oversampling factor. For
+example, if the image is 1000x1000, and is oversampled by 2, it will be treated
+as a 500x500 image for the purpose of layout. If the game is scaled up,
+all of the image data is available to keep the image sharp.
+
+Image oversampling can also be used with the new :var:`config.physical_width`
+and :var:`config.physical_height` variables to upgrade the resolution of
+a game without having to adjust the game's layout.
 
 Mixer Volume Changes
 --------------------
@@ -126,6 +166,7 @@ The following stores are declared to be constant by default:
     _errorhandling
     _gamepad
     _renpysteam
+    _sync
     _warper
     audio
     achievement
@@ -185,6 +226,24 @@ for end-users to be warned about the security issues when possible.
 New Features
 ------------
 
+A new tool, accessible through the developer (Shift+D) menu, allows
+persistent data to be viewed.
+
+The interactive director can now create a statement that removes an
+attribute from an image.
+
+The ``show screen``, ``hide screen``, and ``call screen`` statements now
+can now take ``expression``, ``as``, ``onlayer``, ``zorder``, and ``with``
+clauses, which have the same meaning as the corresponding clauses in the
+``show`` and ``hide`` statements.
+
+The :func:`renpy.include_module` function can now be used to load a rpym
+file in such a way that its init blocks are interleaved with those from
+the rest of the game.
+
+The new "voice after game menu" preference controls if voice is allowed
+to continue playing after the game menu is shown.
+
 A creator-defined statement can now execute a function at the same
 time the ``default`` statements are executed. This is after the init
 phase, but before the game starts; when a save is loaded; after
@@ -216,6 +275,10 @@ It's now possible for a mouse keysym to be given modifiers corresponding
 to the state of keyboard modifiers when the mouse button was pressed. For
 example, "shift_mouseup_1" will only trigger when mouse button 1 is
 released while the shift key is held down.
+
+Keysyms have been reworked to make it possible to bind to numeric keypad keys
+(like the arrows and home) when numlock is off, and :doc:`the keymap <keymap>`
+has been reworked to make better use of the numeric keypad.
 
 Normally, when a displayable or screen with the same tag or name as one
 that is hiding is shown, the hiding displayable or screen is removed,
@@ -256,6 +319,18 @@ the placement of the image on the screen. It is not the case with this function.
 
 Other Changes
 -------------
+
+The ``fadein`` clause can be used when queuing an audio track.
+
+Ren'Py will limit calls to BOverlayNeedsPresent on Steam Deck, preventing
+a freezing issue.
+
+Grids are now, by default, allowed to be underfull.
+
+It's now explicitly document that closing text tags is not required. The
+following should always be valid.::
+
+    "{b}This is bold."
 
 Dialogue is now present in the history list (and hence the history screen)
 during the statement in which the dialogue is shown. Previously, it was only
