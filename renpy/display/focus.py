@@ -223,6 +223,8 @@ def get_mouse():
     if focused is None:
         return None
     else:
+        if isinstance(focused, renpy.display.behavior.Button): # this affects Button and all its subclasses (like Imagebutton)
+            return focused.style.mouse or "button" # prioritize button style over default keyword
         return focused.style.mouse
 
 

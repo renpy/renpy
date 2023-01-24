@@ -710,9 +710,9 @@ Occasionally Used
     Otherwise, this should be a dictionary giving the
     mouse animations for various mouse types. Keys used by the default
     library include "default", "say", "with", "menu", "prompt",
-    "imagemap", "pause", "mainmenu", and "gamemenu". The "default" key
-    should always be present, as it is used when a more specific key
-    is absent.
+    "imagemap", "button", "mousebuttondown", "pause", "mainmenu", and 
+    "gamemenu". The "default" key should always be present, as it is 
+    used when a more specific key is absent.
 
     Each value in the dictionary should be a list of (`image`,
     `xoffset`, `yoffset`) tuples, representing frames.

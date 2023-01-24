@@ -3154,7 +3154,12 @@ class Interface(object):
             self.set_mouse(True)
             return
 
-        mouse_kind = self.get_mouse_name(True)
+        # only check for mousebuttondown if we have a cursor for it, otherwise its a waste of a call
+        # mousebuttondown always takes precedence over other mouse styles
+        if "mousebuttondown" in self.cursor_cache and pygame.mouse.get_pressed()[0]:
+            mouse_kind = "mousebuttondown"
+        else:
+            mouse_kind = self.get_mouse_name(True)
 
         if mouse_kind in self.cursor_cache:
             anim = self.cursor_cache[mouse_kind]
