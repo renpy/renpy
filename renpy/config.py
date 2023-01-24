@@ -741,6 +741,9 @@ history_length = None
 # object.
 history_callbacks = [ ]
 
+# Should we add the current dialogue to the history?
+history_current_dialogue = False
+
 # Should we use the new order for translate blocks?
 new_translate_order = True
 

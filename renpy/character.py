@@ -1312,9 +1312,10 @@ class ADVCharacter(object):
                 self.do_add(who, what)
 
             dtt = DialogueTextTags(what)
-
+            
+            if not renpy.config.history_current_dialogue:
             # Now, display the dialogue.
-            self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
+                self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
 
             # Indicate that we're done.
             if _call_done and not dtt.has_done:
@@ -1330,6 +1331,9 @@ class ADVCharacter(object):
 
                 renpy.exports.log(what)
                 renpy.exports.log("")
+                
+            if renpy.config.history_current_dialogue:
+                self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)                
 
         finally:
 

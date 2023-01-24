@@ -578,6 +578,10 @@ Occasionally Used
 
     The number of entries of dialogue history Ren'Py keeps. This is
     set to 250 by the default gui.
+    
+.. var:: config.history_current_dialogue = False
+
+    If true, The current dialogue will appear in the history screen.
 
 .. var:: config.hw_video = False
 
