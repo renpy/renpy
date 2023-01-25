@@ -4,7 +4,7 @@ renpy.audio.renpysound gen/renpy.audio.renpysound.c renpysound_core.c ffmedia.c
 renpy.lexersupport gen/renpy.lexersupport.c
 renpy.pydict gen/renpy.pydict.c
 renpy.style gen/renpy.style.c
-renpy.encryption gen/renpy.encrpytion.c libhydrogen/hydrogen.c
+renpy.encryption gen/renpy.encryption.c libhydrogen/hydrogen.c
 renpy.compat.dictviews gen/renpy.compat.dictviews.c
 renpy.styledata.styleclass gen/renpy.styledata.styleclass.c
 renpy.styledata.stylesets gen/renpy.styledata.stylesets.c
