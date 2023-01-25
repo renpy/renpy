@@ -22,7 +22,7 @@
 from libc.stdint cimport uint8_t, uint64_t
 from libc.stddef cimport size_t
 
-cdef extern from "libhydrogen/hydrogen.h":
+cdef extern from "libhydrogen/hydrogen.c":
 
     enum:
         hydro_secretbox_HEADERBYTES
