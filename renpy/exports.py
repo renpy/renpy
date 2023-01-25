@@ -3863,6 +3863,32 @@ def set_return_stack(stack):
     renpy.game.context().set_return_stack(stack)
 
 
+def lookup_ast(entry=None):
+    """
+    :undocumented:
+
+    Returns the AST node of the provided label, which can be either a label
+    name or an element of the return stack (see the above functions).
+
+    Example uses:
+    $ renpy.lookup_ast("aste")
+    returns the renpy.ast.Label object matching the "aste" label
+    $ renpy.lookup_ast(renpy.get_return_stack()[-1])
+    from the console, returns the AST of the blocking statement (like a Say or a Pause)
+
+    The default entry is the last element of the return stack,
+    or nothing if the stack is empty.
+    """
+
+    if entry is None:
+        rs = get_return_stack()
+        if not rs:
+            return None
+        entry = rs[-1]
+
+    renpy.game.script.lookup(entry)
+
+
 def invoke_in_thread(fn, *args, **kwargs):
     """
     :doc: other
