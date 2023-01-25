@@ -20,8 +20,10 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-const USE_TGA = true;  // XXX TGA support is disabled in SDL2 for RenpyWeb :(
-// const USE_TGA = false;  // XXX TGA support is disabled in SDL2 for RenpyWeb :(
+/** If USE_TGA is true, video frames are send as TGA image format to Renpy (JPG/PNG otherwise) */
+const USE_TGA = true;  // XXX TGA support is disabled when compiling sdl_image for web2
+/** If DEBUG_OUT is true, extra debug information are shown in console */
+const DEBUG_OUT = false;
 
 /**
  * A map from channel to channel object.
@@ -291,18 +293,26 @@ let video_stop = (c) => {
 
     if (c.playing !== null) {
         const q = c.playing;
-        const period = q.period_stats[1] > 0 ? q.period_stats[0] / q.period_stats[1] : 0;
-        const fetch = q.fetch_stats[1] > 0 ? q.fetch_stats[0] / q.fetch_stats[1] : 0;
-        const draw = q.draw_stats[1] > 0 ? q.draw_stats[0] / q.draw_stats[1] : 0;
-        const blob = q.blob_stats[1] > 0 ? q.blob_stats[0] / q.blob_stats[1] : 0;
-        const array = q.array_stats[1] > 0 ? q.array_stats[0] / q.array_stats[1] : 0;
-        const file = q.file_stats[1] > 0 ? q.file_stats[0] / q.file_stats[1] : 0;
-        console.debug(`period=${period} (${q.period_stats[1]})`,
-            `fetch=${fetch} (${q.fetch_stats[1]})`,
-            `draw=${draw} (${q.draw_stats[1]})`,
-            `blob=${blob} (${q.blob_stats[1]})`,
-            `array=${array} (${q.array_stats[1]})`,
-            `file=${file} (${q.file_stats[1]})`);
+        if (DEBUG_OUT) {
+            const period = q.period_stats[1] > 0 ? q.period_stats[0] / q.period_stats[1] : 0;
+            const fetch = q.fetch_stats[1] > 0 ? q.fetch_stats[0] / q.fetch_stats[1] : 0;
+            const draw = q.draw_stats[1] > 0 ? q.draw_stats[0] / q.draw_stats[1] : 0;
+            const blob = q.blob_stats[1] > 0 ? q.blob_stats[0] / q.blob_stats[1] : 0;
+            const array = q.array_stats[1] > 0 ? q.array_stats[0] / q.array_stats[1] : 0;
+            const file = q.file_stats[1] > 0 ? q.file_stats[0] / q.file_stats[1] : 0;
+            console.debug(`period=${period} (${q.period_stats[1]})`,
+                `fetch=${fetch} (${q.fetch_stats[1]})`,
+                `draw=${draw} (${q.draw_stats[1]})`,
+                `blob=${blob} (${q.blob_stats[1]})`,
+                `array=${array} (${q.array_stats[1]})`,
+                `file=${file} (${q.file_stats[1]})`);
+        }
+
+        // Always show FPS in console
+        const draw_fps = q.draw_stats[1] > 1 ? q.draw_stats[1] * 1000.0 / (q.draw_stats[3] - q.draw_stats[2]) : 0;
+        const file_fps = q.file_stats[1] > 1 ? q.file_stats[1] * 1000.0 / (q.file_stats[3] - q.file_stats[2]) : 0;
+        console.debug(`draw_fps=${draw_fps.toFixed(1)}`,
+            `renpy_fps=${file_fps.toFixed(1)}`);
     }
 
     c.playing = c.queued;
@@ -357,12 +367,12 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
              tight : tight,  // TODO?
              started_once: false,
 
-             period_stats: [0, 0],
+             period_stats: [0, 0],  // time sum, count
              fetch_stats: [0, 0],
-             draw_stats: [0, 0],
+             draw_stats: [0, 0, 0, 0],  // time sum, count, first timestamp, last timestamp
              blob_stats: [0, 0],
              array_stats: [0, 0],
-             file_stats: [0, 0],
+             file_stats: [0, 0, 0, 0],  // time sum, count, first timestamp, last timestamp
         };
 
         if (c.video_el === null) {
@@ -435,6 +445,8 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
                 let prev_ts = start, cur_ts = performance.now();
                 q.draw_stats[0] += cur_ts - prev_ts;
                 q.draw_stats[1]++;
+                if (q.draw_stats[2] == 0) q.draw_stats[2] = cur_ts;
+                q.draw_stats[3] = cur_ts;
 
                 if (USE_TGA) {
                     c.video_frame = c.canvas_ctx;
@@ -823,14 +835,35 @@ renpyAudio.read_video = (channel) => {
         c.video_frame = null;
 
         if (q !== null) {
-            q.file_stats[0] += performance.now() - start;
+            const cur_ts = performance.now();
+            q.file_stats[0] += cur_ts - start;
             q.file_stats[1]++;
+            if (q.file_stats[2] == 0) q.file_stats[2] = cur_ts;
+            q.file_stats[3] = cur_ts;
         }
 
         return filename;
     }
     return '';
 }
+
+if (DEBUG_OUT) {
+    // DEBUG Dumps all method calls to renpyAudio
+    renpyAudio._nodump = {'queue_depth': 1, 'playing_name': 1, 'video_ready': 1, 'read_video': 1};
+    renpyAudio = new Proxy(renpyAudio, {
+        get(target, prop) {
+            const origMethod = target[prop];
+            if (!(prop in target._nodump) && typeof origMethod == 'function') {
+                return function (...args) {
+                    console.debug(prop, ...args);
+                    return origMethod.apply(target, args);
+                }
+            }
+            return origMethod;
+        }
+    });
+}
+
 
 if (context.state == "suspended") {
     let unlockContext = () => {
