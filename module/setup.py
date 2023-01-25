@@ -172,6 +172,8 @@ cython("renpy.lexersupport")
 cython("renpy.pydict")
 cython("renpy.style")
 
+cython("renpy.encryption", [ 'libhydrogen/hydrogen.c' ])
+
 # renpy.compat
 if PY2:
     cython("renpy.compat.dictviews")
