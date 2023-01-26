@@ -287,6 +287,9 @@ init -1600 python:
 
         pattern = renpy.store._screenshot_pattern or config.screenshot_pattern
 
+        if config.screenshot_name_callback is not None:
+            pattern = config.screenshot_name_callback(pattern)
+
         # Try to pick a filename.
         i = 1
         while True:

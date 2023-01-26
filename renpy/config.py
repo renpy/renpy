@@ -1343,6 +1343,11 @@ after_default_callbacks = [ ]
 # A list of extra save directories. Strings giving the full paths.
 extra_savedirs = [ ]
 
+# A function that is expected to return a filename pattern for screenshot
+# It must take one argument: pattern selected by renpy
+# It may change it or return unchanged
+screenshot_name_callback = None
+
 del os
 del collections
 
