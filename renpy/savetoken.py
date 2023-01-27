@@ -175,6 +175,9 @@ def check_load(log, signatures):
                 f.write(encode_line("verifying-key", k))
                 verifying_keys.append(k)
 
+    if not signatures:
+        return True
+
     # This check catches the case where the signature is not correct.
     return verify_data(log, signatures)
 
