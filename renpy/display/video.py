@@ -151,7 +151,7 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
 
     if side_mask:
 
-        if surf is not None:
+        if surf is not None:  # FIXME "surf" is not a surface for web
 
             w, h = surf.get_size()
             w //= 2
@@ -168,7 +168,7 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
     else:
         mask_surf = None
 
-    if mask_surf is not None:
+    if mask_surf is not None:  # FIXME "surf" is not a surface for web
 
         # Something went wrong with the mask video.
         if surf:
@@ -177,8 +177,12 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
             surf = None
 
     if surf is not None:
-        renpy.display.render.mutated_surface(surf)
-        tex = renpy.display.draw.load_texture(surf, True, { "mipmap" : mipmap })
+        if renpy.emscripten:
+            # A texture object is returned instead of a surface by read_video() for web
+            tex = surf
+        else:
+            renpy.display.render.mutated_surface(surf)
+            tex = renpy.display.draw.load_texture(surf, True, { "mipmap" : mipmap })
         texture[channel] = tex
         new = True
     else:

@@ -278,21 +278,40 @@ def video_ready(channel):
 
     return call_int("video_ready", channel)
 
+channel_size = {}
 
 def read_video(channel):
     """
-    Returns the frame of video playing on `channel`. This should be returned
-    as an SDL surface with 2px of padding on all sides.
+    Returns the frame of video playing on `channel`. This is returned as a GLTexture.
     """
 
-    fn = call_str("read_video", channel)
-    if len(fn) == 0:
+    video_size = channel_size.get(channel)
+    if video_size is None:
+        info = call_str("get_video_size", channel)
+        if len(info) == 0:
+            # Video dimension not ready yet
+            return None
+        video_size = [int(s) for s in info.split('x')]
+        channel_size[channel] = video_size
+
+    # Generate a new texture and pass it to JS
+    tex = renpy.gl2.gl2texture.Texture(video_size, renpy.display.draw.texture_loader, generate=True)
+
+    res = call_int("read_video", channel, tex.get_number(), *video_size)
+    if res == 0:
+        return tex
+
+    if res > 0:
+        # No new video frame available
         return None
 
-    surf = pygame.image.load(fn)
-    # FIXME Add 2px padding? Seems to be 4px actually...
+    if res == -1:
+        # Video size has changed, try again but fetch new size first
+        del channel_size[channel]
+        return read_video(channel)
 
-    return surf
+    # Other errors happened
+    return None
 
 
 # No video will be played from this channel.

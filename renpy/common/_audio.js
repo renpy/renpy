@@ -20,10 +20,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/** If USE_TGA is true, video frames are send as TGA image format to Renpy (JPG/PNG otherwise) */
-const USE_TGA = true;  // XXX TGA support is disabled when compiling sdl_image for web2
 /** If DEBUG_OUT is true, extra debug information are shown in console */
-const DEBUG_OUT = false;
+const DEBUG_OUT = true;
 
 /**
  * A map from channel to channel object.
@@ -56,12 +54,10 @@ let get_channel = (channel) => {
         paused : false,
         video: false,
         video_el: null,
-        canvas_el: null,
-        canvas_ctx: null,
         chan_id: next_chan_id++,
-        video_frame: null,
         media_source: null,
-        tga_header: null,
+        video_size: null,
+        is_playing: false,
     };
 
     c.destination = c.stereo_pan;
@@ -293,6 +289,7 @@ let video_stop = (c) => {
 
     if (c.playing !== null) {
         const q = c.playing;
+        // FIXME Update debug stats for WebGL version
         if (DEBUG_OUT) {
             const period = q.period_stats[1] > 0 ? q.period_stats[0] / q.period_stats[1] : 0;
             const fetch = q.fetch_stats[1] > 0 ? q.fetch_stats[0] / q.fetch_stats[1] : 0;
@@ -323,11 +320,7 @@ let video_stop = (c) => {
         c.media_source.disconnect();
         c.media_source = null;
 
-        c.video_frame = null;
-        c.canvas_ctx = null;
-
-        c.canvas_el.parentElement.removeChild(c.canvas_el);
-        c.canvas_el = null;
+        c.video_size = null;
 
         c.video_el.parentElement.removeChild(c.video_el);
         c.video_el = null;
@@ -380,135 +373,24 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
             c.video_el.style.display = 'none';
             document.body.appendChild(c.video_el);
 
-            c.canvas_el = document.createElement('canvas');
-            c.canvas_el.style.display = 'none';
-            document.body.appendChild(c.canvas_el);
-
-            c.canvas_ctx = c.canvas_el.getContext('2d', {willReadFrequently: USE_TGA,});
-
             c.video_el.addEventListener('loadedmetadata', function() {
-                c.canvas_el.width = c.video_el.videoWidth;
-                c.canvas_el.height = c.video_el.videoHeight;
-                //c.canvas_el.width = c.video_el.videoWidth / 2;
-                //c.canvas_el.height = c.video_el.videoHeight / 2;
-                if (USE_TGA) {
-                    c.tga_header.setUint16(12, c.canvas_el.width, true);  // Width, little endian
-                    c.tga_header.setUint16(14, c.canvas_el.height, true);  // Height, little endian
-                }
+                c.video_size = [c.video_el.videoWidth, c.video_el.videoHeight];
             });
 
             c.media_source = context.createMediaElementSource(c.video_el);
             c.media_source.connect(c.destination);
 
-            if (USE_TGA) {
-                // Pre-build TGA header
-                c.tga_header = new DataView(new ArrayBuffer(18));
-                c.tga_header.setUint8(0, 0);  // ID length (empty)
-                c.tga_header.setUint8(1, 0);  // Color map type (none)
-                c.tga_header.setUint8(2, 2);  // Image type (uncompressed true-color image)
-                c.tga_header.setUint32(3, 0);  // Color map (ignored)
-                c.tga_header.setUint8(7, 0);  // Color map (ignored)
-                c.tga_header.setUint32(8, 0);  // X and Y origin (0, 0)
-                // c.tga_header.setUint16(12, width, true);  // Width, little endian
-                // c.tga_header.setUint16(14, height, true);  // Height, little endian
-                c.tga_header.setUint8(16, 32);  // Pixels depth (32)
-                c.tga_header.setUint8(17, 0x28);  // Flags (3-0: alpha channel width, 5: top to bottom)
-            }
-
-            let fetch_timer = null;
-            let fetch_busy = false;
-            function fetch_frame() {
-                const start = performance.now();
-
-                if (fetch_busy) {
-                    // Make sure there is only 1 fetch timer
-                    return;
-                }
-                fetch_timer = null
-
-                if (c.playing === null || c.paused) {
-                    return;
-                }
-
-                fetch_busy = true;
-
-                const q = c.playing;
-                if (q.last_fetch !== undefined) {
-                    q.period_stats[0] += start - q.last_fetch;
-                    q.period_stats[1]++;
-                }
-                q.last_fetch = start;
-
-                c.canvas_ctx.drawImage(c.video_el, 0, 0);
-                //c.canvas_ctx.drawImage(c.video_el, 0, 0, c.canvas_el.width, c.canvas_el.height);
-
-                let prev_ts = start, cur_ts = performance.now();
-                q.draw_stats[0] += cur_ts - prev_ts;
-                q.draw_stats[1]++;
-                if (q.draw_stats[2] == 0) q.draw_stats[2] = cur_ts;
-                q.draw_stats[3] = cur_ts;
-
-                if (USE_TGA) {
-                    c.video_frame = c.canvas_ctx;
-
-                    q.fetch_stats[0] += cur_ts - start;
-                    q.fetch_stats[1]++;
-
-                    fetch_busy = false;
-                    // Assuming 30 FPS
-                    let next = 1000 / 30.0 - (start - performance.now());
-                    if (next <= 0) {
-                        // Browser is struggling to render video, give it some rest
-                        next = 10;
-                    }
-                    fetch_timer = setTimeout(fetch_frame, next);
-
-                } else {  // JPG or PNG (both slower than TGA because of compression)
-                    c.canvas_el.toBlob((blob) => {
-                        prev_ts = cur_ts;
-                        cur_ts = performance.now();
-                        q.blob_stats[0] += cur_ts - prev_ts;
-                        q.blob_stats[1]++;
-
-                        blob.arrayBuffer().then((buffer) => {
-                            c.video_frame = new Uint8Array(buffer);
-
-                            prev_ts = cur_ts;
-                            cur_ts = performance.now();
-                            q.array_stats[0] += cur_ts - prev_ts;
-                            q.array_stats[1]++;
-                            q.fetch_stats[0] += cur_ts - start;
-                            q.fetch_stats[1]++;
-
-                            fetch_busy = false;
-                            // Assuming 30 FPS
-                            let next = 1000 / 30.0 - (start - performance.now());
-                            if (next <= 0) {
-                                // Browser is struggling to render video, give it some rest
-                                next = 10;
-                            }
-                            fetch_timer = setTimeout(fetch_frame, next);
-                        });
-                    // }, 'image/png');
-                    }, 'image/jpeg');
-                }
-            }
-
             c.video_el.addEventListener('ended', (e) => {
-                clearTimeout(fetch_timer);
-                fetch_timer = null;
+                c.is_playing = false;
                 on_video_end(c);
             });
 
             c.video_el.addEventListener('paused', (e) => {
-                clearTimeout(fetch_timer);
-                fetch_timer = null;
+                c.is_playing = false;
             });
 
             c.video_el.addEventListener('playing', function() {
-                clearTimeout(fetch_timer);
-                fetch_timer = null;
-                fetch_frame();
+                c.is_playing = true;
             });
         }
 
@@ -812,27 +694,56 @@ renpyAudio.set_video = (channel, video) => {
 renpyAudio.video_ready = (channel) => {
     const c = get_channel(channel);
     return c.video && c.video_frame !== null;
+    return c.video && c.video_el !== null && c.is_playing && c.video_size !== null;
 }
 
-renpyAudio.read_video = (channel) => {
+renpyAudio.get_video_size = (channel) => {
     const c = get_channel(channel);
-    if (c.video && c.video_frame !== null) {
+    if (c.video_el !== null && c.video_size !== null) {
+        return c.video_size[0] + "x" + c.video_size[1];
+    }
+
+    return "";
+}
+
+renpyAudio.read_video = (channel, video_tex, width, height) => {
+    const c = get_channel(channel);
+
+    if (c.video && c.video_el !== null && c.is_playing && c.video_size !== null) {
         const start = performance.now();
         const q = c.playing;
+        const gl = GL.currentContext.GLctx;
+        const texture = GL.textures[video_tex];
 
-        // Store the frame to a MEMFS file for RenPy to access it
-        const ext = USE_TGA ? '.tga' : '.jpg';
-        const filename = 'video_frame_' + c.chan_id + ext;
-        const stream = FS.open(filename, 'w+');
-        if (USE_TGA) {
-            const imageData = c.video_frame.getImageData(0, 0, c.canvas_el.width, c.canvas_el.height);
-            FS.write(stream, new Uint8Array(c.tga_header.buffer), 0, c.tga_header.byteLength, 0);
-            FS.write(stream, imageData.data, 0, imageData.data.length, c.tga_header.byteLength);
-        } else {
-            FS.write(stream, c.video_frame, 0, c.video_frame.length, 0);
+        if (texture == null) {
+            console.warn(`OpenGL texture #${video_tex} not found!`);
+            return -2;
         }
-        FS.close(stream);
-        c.video_frame = null;
+
+        if (c.video_size[0] != width || c.video_size[1] != height) {
+            // Video size has changed, notify Ren'Py about it
+            return -1;
+        }
+
+        const level = 0;
+        const internalFormat = gl.RGBA;
+        const srcFormat = gl.RGBA;
+        const srcType = gl.UNSIGNED_BYTE;
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            level,
+            internalFormat,
+            srcFormat,
+            srcType,
+            c.video_el
+        );
+
+        // Turn off mips and set wrapping to clamp to edge so it
+        // will work regardless of the dimensions of the video.
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
         if (q !== null) {
             const cur_ts = performance.now();
@@ -843,8 +754,10 @@ renpyAudio.read_video = (channel) => {
         }
 
         return filename;
+        return 0;
     }
-    return '';
+
+    return 1;
 }
 
 if (DEBUG_OUT) {
