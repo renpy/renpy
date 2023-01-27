@@ -362,13 +362,15 @@ init -1100 python in _sync:
 
         sync_id = renpy.input(
             _("Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."),
-            default=TEST_SYNC_ID if TEST_SYNC_ID else "",
-            allow=DIGITS + "-",
+            default="",
+            allow=DIGITS + DIGITS.lower() + "-",
             length=11,
             screen="sync_prompt",
             )
 
         sync_id = sync_id.strip().upper()
+        sync_id = sync_id.replace("-", "")
+        sync_id = sync_id[:5] + "-" + sync_id[5:]
 
         if not sync_id:
             return
@@ -416,16 +418,34 @@ init -1100 python in _sync:
 
         return True
 
-init -100:
+init -1100:
 
     screen sync_confirm():
         modal True
         zorder 100
 
-        use confirm(
-            _("This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"),
-            yes_action=Return(True),
-            no_action=Return(False))
+        add "gui/overlay/confirm.png"
+
+        frame:
+
+            vbox:
+                xalign .5
+                yalign .5
+                spacing 30
+
+                label _(message):
+                    style "confirm_prompt"
+                    xalign 0.5
+
+                hbox:
+                    xalign 0.5
+                    spacing 100
+
+                    textbutton _("Yes") action Return(True)
+                    textbutton _("No") action Return(False)
+
+        ## Right-click and escape answer "no".
+        key "game_menu" action Return(False)
 
     screen sync_prompt(prompt):
         modal True
@@ -436,11 +456,11 @@ init -100:
         frame:
             xalign .5
             yalign .5
-            xpadding gui.scale(40)
-            ypadding gui.scale(40)
+            xpadding gui._scale(40)
+            ypadding gui._scale(40)
 
             vbox:
-                spacing gui.scale(30)
+                spacing gui._scale(30)
 
                 label _("Enter Sync ID"):
                     xalign 0.5
@@ -474,11 +494,11 @@ init -100:
         frame:
             xalign .5
             yalign .5
-            xpadding gui.scale(40)
-            ypadding gui.scale(40)
+            xpadding gui._scale(40)
+            ypadding gui._scale(40)
 
             vbox:
-                spacing gui.scale(30)
+                spacing gui._scale(30)
 
                 label _("Sync Success"):
                     xalign 0.5
@@ -509,11 +529,11 @@ init -100:
         frame:
             xalign .5
             yalign .5
-            xpadding gui.scale(40)
-            ypadding gui.scale(40)
+            xpadding gui._scale(40)
+            ypadding gui._scale(40)
 
             vbox:
-                spacing gui.scale(30)
+                spacing gui._scale(30)
 
                 label _("Sync Error"):
                     xalign 0.5
