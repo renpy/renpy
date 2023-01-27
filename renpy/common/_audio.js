@@ -23,6 +23,8 @@
 /** If DEBUG_OUT is true, extra debug information are shown in console */
 const DEBUG_OUT = true;
 
+const USE_FRAME_CB = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+
 /**
  * A map from channel to channel object.
  */
@@ -58,6 +60,7 @@ let get_channel = (channel) => {
         media_source: null,
         video_size: null,
         is_playing: false,
+        frame_ready: false,
     };
 
     c.destination = c.stereo_pan;
@@ -392,6 +395,18 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
             c.video_el.addEventListener('playing', function() {
                 c.is_playing = true;
             });
+
+            if (USE_FRAME_CB) {
+                // Get notified when a new video frame is available (not supported by Firefox)
+                const onVideoFrame = () => {
+                    c.frame_ready = true;
+                    if (c.video_el !== null) {
+                        c.video_el.requestVideoFrameCallback(onVideoFrame);
+                    }
+                };
+                c.frame_ready = false;
+                c.video_el.requestVideoFrameCallback(onVideoFrame);
+            }
         }
 
         if (c.playing === null) {
@@ -693,7 +708,7 @@ renpyAudio.set_video = (channel, video) => {
 
 renpyAudio.video_ready = (channel) => {
     const c = get_channel(channel);
-    return c.video && c.video_frame !== null;
+    if (USE_FRAME_CB) return c.frame_ready;
     return c.video && c.video_el !== null && c.is_playing && c.video_size !== null;
 }
 
@@ -708,6 +723,8 @@ renpyAudio.get_video_size = (channel) => {
 
 renpyAudio.read_video = (channel, video_tex, width, height) => {
     const c = get_channel(channel);
+
+    if (USE_FRAME_CB && !c.frame_ready) return 1;
 
     if (c.video && c.video_el !== null && c.is_playing && c.video_size !== null) {
         const start = performance.now();
@@ -753,7 +770,8 @@ renpyAudio.read_video = (channel, video_tex, width, height) => {
             q.file_stats[3] = cur_ts;
         }
 
-        return filename;
+        if (USE_FRAME_CB) c.frame_ready = false;
+
         return 0;
     }
 
