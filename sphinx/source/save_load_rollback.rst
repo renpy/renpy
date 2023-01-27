@@ -533,4 +533,4 @@ For example::
 
         $ o.value += 1
 
-        "o.value is [o.value]. It will increase each time you rolllback and then click ahead."
+        "o.value is [o.value]. It will increase each time you rollback and then click ahead."
