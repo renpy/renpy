@@ -93,7 +93,7 @@ def sign_data(data):
 
     return rv
 
-def verify_data(data, signatures):
+def verify_data(data, signatures, check_verifying=True):
     """
     Verifies that `data` has been signed by the keys in `signatures`.
     """
@@ -106,7 +106,7 @@ def verify_data(data, signatures):
             if key is None:
                 continue
 
-            if key not in verifying_keys:
+            if check_verifying and key not in verifying_keys:
                 continue
 
             try:
@@ -179,7 +179,7 @@ def check_load(log, signatures):
         return True
 
     # This check catches the case where the signature is not correct.
-    return verify_data(log, signatures)
+    return verify_data(log, signatures, False)
 
 
 def check_persistent(data, signatures):
