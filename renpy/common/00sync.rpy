@@ -427,15 +427,17 @@ init -1100:
         add "gui/overlay/confirm.png"
 
         frame:
+            xalign .5
+            yalign .5
+            xpadding gui._scale(40)
+            ypadding gui._scale(40)
 
             vbox:
-                xalign .5
-                yalign .5
-                spacing 30
+                spacing gui._scale(30)
 
-                label _(message):
-                    style "confirm_prompt"
+                text _("This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"):
                     xalign 0.5
+                    text_align 0.5
 
                 hbox:
                     xalign 0.5
