@@ -407,6 +407,8 @@ init -1100 python in _sync:
 
         import io
         import zipfile
+        import datetime
+        import os
 
         with zipfile.ZipFile(io.BytesIO(content), "r") as zf:
 
@@ -425,14 +427,34 @@ init -1100 python in _sync:
 
 
             for fn in zf.namelist():
-                if "/" in fn or "\\" in fn:
+                if "/" in fn or "\\" in fn or ":" in fn:
                     report_error(_("The sync contains a file with an invalid name."))
                     return
 
-                if "." not in fn:
+                if fn == "save_directory":
                     continue
 
-            zf.extractall(config.savedir + "/sync")
+                zi = zf.getinfo(fn)
+
+                timestamp = datetime.datetime(*zi.date_time).timestamp()
+
+                data = zf.read(fn)
+
+                fn = config.savedir + "/sync/" + fn
+                nfn = fn + ".new"
+
+                if os.path.exists(nfn):
+                    os.unlink(nfn)
+
+                with open(nfn, "wb") as f:
+                    f.write(data)
+
+                os.utime(nfn, (timestamp, timestamp))
+
+                if os.path.exists(fn):
+                    os.unlink(fn)
+
+                os.rename(nfn, fn)
 
         renpy.loadsave.location.scan()
 
