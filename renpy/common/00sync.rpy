@@ -314,6 +314,9 @@ init -1100 python in _sync:
 
             total_size = 0
 
+            if renpy.config.save_directory:
+                zf.writestr("save_directory", renpy.config.save_directory)
+
             persistent = location.path("persistent")[1]
 
             if persistent is not None:
@@ -368,6 +371,9 @@ init -1100 python in _sync:
             screen="sync_prompt",
             )
 
+        if not sync_id:
+            return
+
         sync_id = sync_id.strip().upper()
         sync_id = sync_id.replace("-", "")
         sync_id = sync_id[:5] + "-" + sync_id[5:]
@@ -403,10 +409,28 @@ init -1100 python in _sync:
         import zipfile
 
         with zipfile.ZipFile(io.BytesIO(content), "r") as zf:
+
+            if renpy.config.save_directory:
+
+                valid = False
+
+                try:
+                    if zf.read("save_directory").decode("utf-8") == renpy.config.save_directory:
+                        valid = True
+                except:
+                    pass
+
+                if not valid:
+                    report_error(_("The sync belongs to a different game."))
+
+
             for fn in zf.namelist():
                 if "/" in fn or "\\" in fn:
                     report_error(_("The sync contains a file with an invalid name."))
                     return
+
+                if "." not in fn:
+                    continue
 
             zf.extractall(config.savedir + "/sync")
 
