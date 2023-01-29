@@ -179,13 +179,13 @@ extensions = [ ]
 global_macros = [ ]
 
 
-def cmodule(name, source, libs=[], define_macros=[], includes=[], language="c"):
+def cmodule(name, source, libs=[], define_macros=[], includes=[], language="c", compile_args=[]):
     """
     Compiles the python module `name` from the files given in
     `source`, and the libraries in `libs`.
     """
 
-    eca = list(extra_compile_args)
+    eca = list(extra_compile_args) + compile_args
 
     if language == "c":
         eca.insert(0, "-std=gnu99")
@@ -209,7 +209,7 @@ necessary_gen = [ ]
 # A list of cython generation commands that will be run in parallel.
 generate_cython_queue = [ ]
 
-def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros=[], pyx=None, language="c"):
+def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros=[], pyx=None, language="c", compile_args=[]):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -311,7 +311,7 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
         if mod_coverage:
             define_macros = define_macros + [ ("CYTHON_TRACE", "1") ]
 
-        cmodule(name, [ c_fn ] + source, libs=libs, includes=includes, define_macros=define_macros, language=language)
+        cmodule(name, [ c_fn ] + source, libs=libs, includes=includes, define_macros=define_macros, language=language, compile_args=compile_args)
 
 lock = threading.Condition()
 cython_failure = False

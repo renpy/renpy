@@ -117,31 +117,7 @@ cython(
     [ "IMG_savepng.c", "core.c" ],
     sdl + [ png, 'z', 'm' ])
 
-FRIBIDI_SOURCES = """
-fribidi-src/lib/fribidi.c
-fribidi-src/lib/fribidi-arabic.c
-fribidi-src/lib/fribidi-bidi.c
-fribidi-src/lib/fribidi-bidi-types.c
-fribidi-src/lib/fribidi-deprecated.c
-fribidi-src/lib/fribidi-joining.c
-fribidi-src/lib/fribidi-joining-types.c
-fribidi-src/lib/fribidi-mem.c
-fribidi-src/lib/fribidi-mirroring.c
-fribidi-src/lib/fribidi-run.c
-fribidi-src/lib/fribidi-shape.c
-renpybidicore.c
-""".split()
-cython(
-    "_renpybidi",
-    FRIBIDI_SOURCES,
-    includes=[
-        BASE + "/fribidi-src/",
-        BASE + "/fribidi-src/lib/",
-        ],
-    define_macros=[
-        ("FRIBIDI_ENTRY", ""),
-        ("HAVE_CONFIG_H", "1"),
-        ])
+cython("_renpybidi", [ "renpybidicore.c" ], [ "fribidi" ])
 
 if not (android or ios or emscripten):
     cython("_renpytfd", [ "tinyfiledialogs/tinyfiledialogs.c" ], libs=tfd_libs)
