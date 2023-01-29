@@ -277,7 +277,7 @@ init -1100 python in _sync:
 
             return None
 
-        def download_content(hashed):
+        def download_content(url):
             """
             Downloads content from the sync server, using the given half-hash.
 
