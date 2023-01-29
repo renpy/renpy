@@ -500,6 +500,11 @@ Examples::
                 selected_insensitive "scissors_hover.png"
                 action ui.ChoiceReturn("scissors", "Scissors", block_all=True)
 
+            if renpy.in_fixed_rollback():
+                textbutton "Advance":
+                    action Return(renpy.roll_forward_info())
+                    # required because of the block_all=True in the other buttons
+
     label dough:
         call screen rps
         $ renpy.fix_rollback()
