@@ -748,9 +748,7 @@ class ChoiceReturn(ChoiceActionBase):
         variable.
 
         When true is given to all items in a screen, it will
-        become unclickable (rolling forward will still work). This can
-        be changed by calling :func:`ui.saybehavior` before the call
-        to :func:`ui.interact`.
+        become unclickable (rolling forward will still work).
     """
 
     def __call__(self):
@@ -792,9 +790,7 @@ class ChoiceJump(ChoiceActionBase):
         variable.
 
         When true is given to all items in a screen, it will
-        become unclickable (rolling forward will still work). This can
-        be changed by calling :func:`ui.saybehavior` before the call
-        to :func:`ui.interact`.
+        become unclickable (rolling forward will still work).
     """
 
     def get_selected(self):
