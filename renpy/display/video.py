@@ -146,12 +146,16 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
     if mipmap is None:
         mipmap = renpy.config.mipmap_movies
 
+    if renpy.emscripten:
+        # Use an optimized function for web
+        return get_movie_texture_web(channel, mask_channel, side_mask, mipmap)
+
     c = renpy.audio.music.get_channel(channel)
     surf = c.read_video()
 
     if side_mask:
 
-        if surf is not None:  # FIXME "surf" is not a surface for web
+        if surf is not None:
 
             w, h = surf.get_size()
             w //= 2
@@ -168,7 +172,7 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
     else:
         mask_surf = None
 
-    if mask_surf is not None:  # FIXME "surf" is not a surface for web
+    if mask_surf is not None:
 
         # Something went wrong with the mask video.
         if surf:
@@ -177,12 +181,62 @@ def get_movie_texture(channel, mask_channel=None, side_mask=False, mipmap=None):
             surf = None
 
     if surf is not None:
-        if renpy.emscripten:
-            # A texture object is returned instead of a surface by read_video() for web
-            tex = surf
+        renpy.display.render.mutated_surface(surf)
+        tex = renpy.display.draw.load_texture(surf, True, { "mipmap" : mipmap })
+        texture[channel] = tex
+        new = True
+    else:
+        tex = texture.get(channel, None)
+        new = False
+
+    return tex, new
+
+def get_movie_texture_web(channel, mask_channel, side_mask, mipmap):
+    """
+    This method returns either a GLTexture or a Render.
+    """
+    c = renpy.audio.music.get_channel(channel)
+    # read_video() returns a GLTexture for web
+    tex = c.read_video()
+
+    if side_mask:
+
+        if tex is not None:
+
+            w, h = tex.get_size()
+            w //= 2
+
+            mask_tex = tex.subsurface((w, 0, w, h))
+            tex = tex.subsurface((0, 0, w, h))
+
         else:
-            renpy.display.render.mutated_surface(surf)
-            tex = renpy.display.draw.load_texture(surf, True, { "mipmap" : mipmap })
+            mask_tex = None
+
+    elif mask_channel:
+        mc = renpy.audio.music.get_channel(mask_channel)
+        mask_tex = mc.read_video()
+    else:
+        mask_tex = None
+
+    if mask_tex is not None:
+
+        # Something went wrong with the mask video.
+        if tex:
+            # Apply alpha using mask
+            rv = renpy.display.render.Render(*tex.get_size())
+            rv.blit(tex, (0, 0))
+            rv.blit(mask_tex, (0, 0))
+
+            rv.mesh = True
+            rv.add_shader("renpy.alpha_mask")
+
+            # Not a texture anymore
+            tex = rv
+
+        else:
+            tex = None
+
+    if tex is not None:
         texture[channel] = tex
         new = True
     else:
