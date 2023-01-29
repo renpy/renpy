@@ -121,6 +121,9 @@ init -1100 python in _sync:
 
         import hashlib
 
+        if config.save_directory:
+            sync_id += config.save_directory
+
         hashed = sync_id.encode("utf-8")
 
         for _ in range(10000):
