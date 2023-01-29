@@ -19,9 +19,21 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# This is the config module, where game configuration settings are stored.
-# This includes both simple settings (like the screen dimensions) and
-# methods that perform standard tasks, like the say and menu methods.
+# Protocol:
+#
+# This currently requires one endpoint on the server, and makes
+# PUT and GET requests.
+#
+# PUT <server>/api/sync/v1/<hash>?game=<game_hash>
+#
+#    Puts new save data to the server.
+#
+# GET <server>/api/sync/v1/<hash>
+#
+#    Retrieves encrypted save data from the server.
+#
+# The endpoint should report 200 to 299 on success, and should return
+# 400-5XX and a textual error on failure.
 
 init -1100 python:
 
