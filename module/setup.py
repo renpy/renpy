@@ -204,4 +204,4 @@ sys.path.insert(0, '..')
 
 import renpy
 
-setuplib.setup("Ren'Py", renpy.version[7:]) # @UndefinedVariable
+setuplib.setup("Ren'Py", renpy.version[7:].rstrip('un')) # @UndefinedVariable

@@ -29,7 +29,10 @@ import sys
 import re
 import threading
 
-import distutils.core
+if sys.version_info.major == 2:
+    import distutils.core as setuptools
+else:
+    import setuptools
 
 # This flag determines if we are compiling for Android or not.
 android = "RENPY_ANDROID" in os.environ
@@ -190,7 +193,7 @@ def cmodule(name, source, libs=[], define_macros=[], includes=[], language="c", 
     if language == "c":
         eca.insert(0, "-std=gnu99")
 
-    extensions.append(distutils.core.Extension(
+    extensions.append(setuptools.Extension(
         name,
         source,
         include_dirs=include_dirs + includes,
@@ -467,11 +470,12 @@ def setup(name, version):
     if (len(sys.argv) >= 2) and (sys.argv[1] == "generate"):
         return
 
-    distutils.core.setup(
+    setuptools.setup(
         name=name,
         version=version,
         ext_modules=extensions,
         py_modules=py_modules,
+        zip_safe=False,
         )
 
 
