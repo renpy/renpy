@@ -114,6 +114,23 @@ init -1100 python in _sync:
 
         return rv
 
+    def hash_game():
+        import hashlib
+
+        if config.save_directory:
+            hashed = config.save_directory.encode("utf-8")
+        else:
+            hashed = b''
+
+        for _ in range(10000):
+            hashed = hashlib.sha256(hashed).digest()
+
+        if PY2:
+            return hashed.encode("hex")
+        else:
+            return hashed.hex()
+
+
     def key_and_hash(sync_id):
         """
         Return a 32 byte key and 32-character hash, from a sync_id.
@@ -135,9 +152,9 @@ init -1100 python in _sync:
             hashed = hashlib.sha256(hashed).digest()
 
         if PY2:
-            return key, hashed[16:].encode("hex")
+            return key, hashed.encode("hex")
         else:
-            return key, hashed[16:].hex()
+            return key, hashed.hex()
 
     def requests_error(e):
         import requests
@@ -154,7 +171,7 @@ init -1100 python in _sync:
 
     if renpy.emscripten:
 
-        def upload_content(content, hashed):
+        def upload_content(content, url):
             """
             Uploads content to the sync server, using the given half-hash.
 
@@ -169,9 +186,7 @@ init -1100 python in _sync:
                 f.write(content)
 
             fetch_id = emscripten.run_script_int(
-                """fetchFile("PUT", "{url}", "/sync.data", null)""".format(
-                    url=config.sync_server + "/api/sync/v1/" + hashed
-            ))
+                """fetchFile("PUT", "{url}", "/sync.data", null)""".format(url=url))
 
             status = "PENDING"
             message = "Pending."
@@ -194,15 +209,13 @@ init -1100 python in _sync:
                 return None
 
 
-        def download_content(hashed):
+        def download_content(hashed, url):
             import emscripten
             import time
             import os
 
             fetch_id = emscripten.run_script_int(
-                """fetchFile("GET", "{url}", null, "/sync.data")""".format(
-                    url=config.sync_server + "/api/sync/v1/" + hashed
-            ))
+                """fetchFile("GET", "{url}", null, "/sync.data")""".format(url=url))
 
             status = "PENDING"
             message = "Pending."
@@ -233,7 +246,7 @@ init -1100 python in _sync:
 
     else:
 
-        def upload_content(content, hashed):
+        def upload_content(content, url):
             """
             Uploads content to the sync server, using the given half-hash.
 
@@ -243,7 +256,7 @@ init -1100 python in _sync:
             import requests
 
             try:
-                r = requests.put(config.sync_server + "/api/sync/v1/" + hashed, data = content, timeout=15)
+                r = requests.put(url, data = content, timeout=15)
             except Exception as e:
                 return requests_error(e)
 
@@ -262,7 +275,7 @@ init -1100 python in _sync:
             import requests
 
             try:
-                r = requests.get(config.sync_server + "/api/sync/v1/" + hashed, timeout=15)
+                r = requests.get(url, timeout=15)
             except Exception as e:
                 return True, requests_error(e)
 
@@ -349,7 +362,10 @@ init -1100 python in _sync:
 
         contents = renpy.encryption.secretbox_encrypt(contents, key)
 
-        error = upload_content(contents, hashed)
+        url = config.sync_server + "/api/sync/v1/" + hashed
+        url = url + "?game=" + hash_game()
+
+        error = upload_content(contents, url)
 
         if error:
             report_error(error)
@@ -392,7 +408,9 @@ init -1100 python in _sync:
 
         # Download the sync from the server.
 
-        error, content = download_content(hashed)
+        url = config.sync_server + "/api/sync/v1/" + hashed
+
+        error, content = download_content(url)
 
         if error:
             report_error(content)
