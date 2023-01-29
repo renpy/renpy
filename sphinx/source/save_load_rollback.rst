@@ -487,25 +487,28 @@ Example::
 
 Example::
 
-    python:
-        roll_forward = renpy.roll_forward_info()
-        if roll_forward not in ("Rock", "Paper", "Scissors"):
-            roll_forward = None
+    screen rps():
+        hbox:
+            imagebutton:
+                idle "rock.png"
+                hover "rock_hover.png"
+                selected_insensitive "rock_hover.png"
+                action ui.ChoiceReturn("rock", "Rock", block_all=True)
+            imagebutton:
+                idle "paper.png"
+                hover "paper_hover.png"
+                selected_insensitive "paper_hover.png"
+                action ui.ChoiceReturn("paper", "Paper", block_all=True)
+            imagebutton:
+                idle "scissors.png"
+                hover "scissors_hover.png"
+                selected_insensitive "scissors_hover.png"
+                action ui.ChoiceReturn("scissors", "Scissors", block_all=True)
 
-        ui.hbox()
-        ui.imagebutton("rock.png", "rock_hover.png", selected_insensitive="rock_hover.png", clicked=ui.ChoiceReturn("rock", "Rock", block_all=True))
-        ui.imagebutton("paper.png", "paper_hover.png", selected_insensitive="paper_hover.png", clicked=ui.ChoiceReturn("paper", "Paper", block_all=True))
-        ui.imagebutton("scissors.png", "scissors_hover.png", selected_insensitive="scissors_hover.png", clicked=ui.ChoiceReturn("scissors", "Scissors", block_all=True))
-        ui.close()
-
-        if renpy.in_fixed_rollback():
-            ui.saybehavior()
-
-        choice = ui.interact(roll_forward=roll_forward)
-        renpy.checkpoint(choice)
-
-    $ renpy.fix_rollback()
-    m "[choice]!"
+    label dough:
+        call screen rps
+        $ renpy.fix_rollback()
+        m "[choice]!"
 
 
 Rollback-blocking and -fixing Functions
