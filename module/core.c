@@ -142,6 +142,7 @@ void pixellate32_core(PyObject *pysrc,
             /* Compute the average pixel values. */
             r /= number;
             g /= number;
+            b /= number;
             a /= number;
 
             /* Write out the average pixel values. */
