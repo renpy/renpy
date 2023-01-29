@@ -51,9 +51,9 @@ void pixellate32_core(PyObject *pysrc,
     SDL_Surface *dst;
 
     int x, y, i, j;
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    int srcpitch, dstpitch;
+    int srcw, srch;
+    int dstw, dsth;
     int vw, vh;
 
     unsigned char *srcpixels;
@@ -142,7 +142,6 @@ void pixellate32_core(PyObject *pysrc,
             /* Compute the average pixel values. */
             r /= number;
             g /= number;
-            b /= number;
             a /= number;
 
             /* Write out the average pixel values. */
@@ -193,9 +192,9 @@ void pixellate24_core(PyObject *pysrc,
     SDL_Surface *dst;
 
     int x, y, i, j;
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    int srcpitch, dstpitch;
+    int srcw, srch;
+    int dstw, dsth;
     int vw, vh;
 
     unsigned char *srcpixels;
@@ -322,9 +321,8 @@ void map32_core(PyObject *pysrc,
     SDL_Surface *dst;
 
     int x, y;
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    int srcpitch, dstpitch;
+    int srcw, srch;
 
     char *srcpixels;
     char *dstpixels;
@@ -344,9 +342,7 @@ void map32_core(PyObject *pysrc,
     srcpitch = src->pitch;
     dstpitch = dst->pitch;
     srcw = src->w;
-    dstw = dst->w;
     srch = src->h;
-    dsth = dst->h;
 
     srcrow = srcpixels;
     dstrow = dstpixels;
@@ -381,9 +377,8 @@ void map24_core(PyObject *pysrc,
     SDL_Surface *dst;
 
     int x, y;
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    int srcpitch, dstpitch;
+    int srcw, srch;
 
     char *srcpixels;
     char *dstpixels;
@@ -403,9 +398,7 @@ void map24_core(PyObject *pysrc,
     srcpitch = src->pitch;
     dstpitch = dst->pitch;
     srcw = src->w;
-    dstw = dst->w;
     srch = src->h;
-    dsth = dst->h;
 
     srcrow = srcpixels;
     dstrow = dstpixels;
@@ -446,9 +439,8 @@ void linmap32_core(PyObject *pysrc,
     SDL_Surface *dst;
 
     int x, y;
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    int srcpitch, dstpitch;
+    int srcw, srch;
 
     char *srcpixels;
     char *dstpixels;
@@ -468,9 +460,7 @@ void linmap32_core(PyObject *pysrc,
     srcpitch = src->pitch;
     dstpitch = dst->pitch;
     srcw = src->w;
-    dstw = dst->w;
     srch = src->h;
-    dsth = dst->h;
 
     srcrow = srcpixels;
     dstrow = dstpixels;
@@ -505,9 +495,8 @@ void linmap24_core(PyObject *pysrc,
     SDL_Surface *dst;
 
     int x, y;
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    int srcpitch, dstpitch;
+    int srcw, srch;
 
     char *srcpixels;
     char *dstpixels;
@@ -527,9 +516,7 @@ void linmap24_core(PyObject *pysrc,
     srcpitch = src->pitch;
     dstpitch = dst->pitch;
     srcw = src->w;
-    dstw = dst->w;
     srch = src->h;
-    dsth = dst->h;
 
     srcrow = srcpixels;
     dstrow = dstpixels;
@@ -653,8 +640,8 @@ void linblur32_core(PyObject *pysrc,
     SDL_Surface *src;
     SDL_Surface *dst;
 
-    Uint32 rows, cols;
-    Uint32 incr, skip;
+    int rows, cols;
+    int incr, skip;
 
     unsigned char *srcpixels;
     unsigned char *dstpixels;
@@ -793,8 +780,8 @@ void linblur24_core(PyObject *pysrc,
     SDL_Surface *src;
     SDL_Surface *dst;
 
-    Uint32 rows, cols;
-    Uint32 incr, skip;
+    int rows, cols;
+    int incr, skip;
 
     unsigned char *srcpixels;
     unsigned char *dstpixels;
@@ -928,9 +915,8 @@ void alphamunge_core(PyObject *pysrc,
     SDL_Surface *src;
     SDL_Surface *dst;
 
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    int srcpitch, dstpitch;
+    int dstw, dsth;
 
     unsigned char *srcpixels;
     unsigned char *dstpixels;
@@ -951,9 +937,7 @@ void alphamunge_core(PyObject *pysrc,
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
     dstpitch = dst->pitch;
-    srcw = src->w;
     dstw = dst->w;
-    srch = src->h;
     dsth = dst->h;
 
 
@@ -996,9 +980,8 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
     SDL_Surface *dst;
 
     int y;
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    int srcpitch, dstpitch;
+    int dstw, dsth;
     float xdelta, ydelta;
 
     unsigned char *srcpixels;
@@ -1014,9 +997,7 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
     dstpitch = dst->pitch;
-    srcw = src->w;
     dstw = dst->w;
-    srch = src->h;
     dsth = dst->h;
 
     if (precise) {
@@ -1041,7 +1022,6 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
     for (y = 0; y < dsth; y++) {
 
         unsigned char *s0;
-        unsigned char *s1;
         unsigned char *d;
         unsigned char *dend;
 
@@ -1058,7 +1038,6 @@ void scale32_core(PyObject *pysrc, PyObject *pydst,
         s0frac = 256 - s1frac;
 
         s0 = srcpixels + (sline >> 8) * srcpitch;
-        s1 = s0 + srcpitch;
 
         scol = source_xoff * 256 + dest_xoff * xdelta;
 
@@ -1109,14 +1088,12 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
     SDL_Surface *dst;
 
     int y;
-    Uint32 srcpitch, dstpitch;
-    Uint32 srcw, srch;
-    Uint32 dstw, dsth;
+    int srcpitch, dstpitch;
+    int dstw, dsth;
     float xdelta, ydelta;
 
     unsigned char *srcpixels;
     unsigned char *dstpixels;
-
 
     src = PySurface_AsSurface(pysrc);
     dst = PySurface_AsSurface(pydst);
@@ -1127,9 +1104,7 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
     dstpixels = (unsigned char *) dst->pixels;
     srcpitch = src->pitch;
     dstpitch = dst->pitch;
-    srcw = src->w;
     dstw = dst->w;
-    srch = src->h;
     dsth = dst->h;
 
     xdelta = 255.0 * (source_width - 1) / dest_width;
@@ -1138,7 +1113,6 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
     for (y = 0; y < dsth; y++) {
 
         unsigned char *s0;
-        unsigned char *s1;
         unsigned char *d;
         unsigned char *dend;
 
@@ -1155,7 +1129,6 @@ void scale24_core(PyObject *pysrc, PyObject *pydst,
         s0frac = 256 - s1frac;
 
         s0 = srcpixels + (sline >> 8) * srcpitch;
-        s1 = s0 + srcpitch;
 
         scol = source_xoff * 255 + dest_xoff * xdelta;
 
