@@ -13,7 +13,6 @@ ehthumbs_vista.db
 # Python related files.
 *.pyc
 *.pyo
-*.pyi
 
 # Editor files.
 *~
