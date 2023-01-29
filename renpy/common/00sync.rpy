@@ -26,7 +26,7 @@
 #
 # PUT <server>/api/sync/v1/<hash>?game=<game_hash>
 #
-#    Puts new save data to the server.
+#    Puts encrypted save data to the server.
 #
 # GET <server>/api/sync/v1/<hash>
 #
