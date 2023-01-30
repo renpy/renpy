@@ -22,6 +22,7 @@ their fields, as defined below.
     .. attribute:: kind
 
         The kind of character that created this history. Ren'Py sets this
+        to "current" while a line of dialogue is displaying, and then
         to either "adv" or "nvl".
 
     .. attribute:: who
@@ -74,5 +75,3 @@ their fields, as defined below.
 Once a HistoryEntry has been created, it is passed to each of the
 callbacks in :var:`config.history_callbacks`, which allows creator-written
 code to add new fields.
-
-

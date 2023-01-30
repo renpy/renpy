@@ -2330,7 +2330,7 @@ class Interface(object):
         if renpy.emscripten and renpy.game.preferences.web_cache_preload:
             emscripten.run_script("loadCache()")
 
-        renpy.main.log_clock("Interface start")
+        renpy.main.log_clock("Interface start.")
 
         self.started = True
 
@@ -2371,7 +2371,7 @@ class Interface(object):
 
                 self.cursor_cache[key] = l
 
-        s = "Total time until interface ready: {}s".format(time.time() - import_time)
+        s = "Total time until interface ready: {}s.".format(time.time() - import_time)
 
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)

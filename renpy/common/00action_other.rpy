@@ -628,7 +628,6 @@ init -1500 python:
         def get_tooltip(self):
             return renpy.display.behavior.get_tooltip(self.yes)
 
-
     @renpy.pure
     class Scroll(Action, DictEquality):
         """
@@ -840,6 +839,21 @@ init -1500 python:
             import emscripten
             emscripten.run_script(self.code)
 
+    def CurrentScreenName():
+        """
+        :doc: other_screen_function
+
+        Returns the name of the current screen, or None if there is no
+        current screen. In the case of a screen including by the use
+        screen, this returns the name of the screen that is doing the
+        including, not the name of the screen being included.
+        """
+
+        current = renpy.current_screen()
+        if current is None:
+            return None
+
+        return current.screen_name[0]
 
 init -1500:
 

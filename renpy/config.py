@@ -741,6 +741,9 @@ history_length = None
 # object.
 history_callbacks = [ ]
 
+# Should we add the current dialogue to the history?
+history_current_dialogue = True
+
 # Should we use the new order for translate blocks?
 new_translate_order = True
 
@@ -1337,6 +1340,8 @@ viewport_inertia_time_constant = 0.325
 # run.
 after_default_callbacks = [ ]
 
+# A list of extra save directories. Strings giving the full paths.
+extra_savedirs = [ ]
 
 del os
 del collections
