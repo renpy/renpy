@@ -255,7 +255,9 @@ let video_start = (c) => {
     c.video_el.play().then(() => {
         // TODO?
     }).catch((e) => {
-        Module.print(`Cannot play ${p.name} (${e})`);
+        if (e.name != 'AbortError') {
+            Module.print(`Cannot play ${p.name} (${e})`);
+        }
         throw e;
     });
 
