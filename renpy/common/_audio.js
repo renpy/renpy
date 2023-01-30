@@ -21,7 +21,8 @@
  */
 
 /** If DEBUG_OUT is true, extra debug information are shown in console */
-const DEBUG_OUT = true;
+// const DEBUG_OUT = true;
+const DEBUG_OUT = false;
 
 const USE_FRAME_CB = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
 
