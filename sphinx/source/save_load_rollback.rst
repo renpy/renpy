@@ -503,12 +503,13 @@ Examples::
             if renpy.in_fixed_rollback():
                 textbutton "Advance":
                     action Return(renpy.roll_forward_info())
-                    # required because of the block_all=True in the other buttons
+                    # required because of the block_all=True in all the other buttons
 
     label dough:
         call screen rps
+        $ chosen = _return
         $ renpy.fix_rollback()
-        m "[choice]!"
+        m "[chosen]!"
 
 When writing custom Python routines that must play nice with the
 fix_rollback system there are a few simple things to know. First of all
