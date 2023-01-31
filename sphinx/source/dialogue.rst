@@ -385,7 +385,13 @@ Python Equivalents
 
 .. note::
 
-   This may only make sense if you've read the :ref:`python` section.
+    This may only make sense if you've read the :ref:`python` section.
+
+.. warning::
+
+    Several features, such as skipping already-seen dialogues, are not
+    available using the python version and only enabled when using the native
+    say statement.
 
 When the first parameter to a say statement is present and an expression,
 the say statement is equivalent to calling that expressing with the dialogue
@@ -395,7 +401,7 @@ and an ``interact`` argument of True. For example::
 
 is equivalent to::
 
-    $ e("Hello, world.", interact=True)
+    $ e("Hello, world.")
 
 The say statement will search the ``character`` named store before the default
 store. If you want to have a character with the same name as a variable in
@@ -418,11 +424,11 @@ A say with arguments sees the arguments passed to the function. For example::
 
 is equivalent to::
 
-    $ e("Hello, world.", interact=True, what_size=32)
+    $ e("Hello, world.", what_size=32)
 
 When e is a Character, this is further equivalent to::
 
-    $ Character(kind=e, what_size=32)("Hello, world.", interact=True)
+    $ Character(kind=e, what_size=32)("Hello, world.")
 
 But it's possible to use :var:`config.say_arguments_callback` or
 have ``e`` wrap a character to do things differently.
