@@ -1045,16 +1045,16 @@ Occasionally Used
     must be strings.
 
     If the pattern is a string, it is escaped, then prefixed
-    and suffixed with 'r\b' (to indicate it must begin and end at a word
-    boundary), and then compiled into a regular expression. When pattern
+    and suffixed with r'\\b' (to indicate it must begin and end at a word
+    boundary), and then compiled into a regular expression. When the pattern
     is a string, the replacement is also escaped.
 
-    If pattern is a regular expression, it is used as-is, and the replacement
-    is not escaped.
+    If the pattern is a regular expression, it is used as-is, and the
+    replacement is not escaped.
 
-    The substitutions are performed in the order they are given. If a substution
-    matches the string, the match is checed to see if the match is in title case,
-    upper case, or lower case, and if so the corresponding casing is performed
+    The substitutions are performed in the order they are given. If a substitution
+    matches the string, the match is checked to see if it is in title case,
+    upper case, or lower case ; and if so the corresponding casing is performed
     on the replacement. Once this is done, the replacement is applied.
 
     For example::
@@ -1063,7 +1063,7 @@ Occasionally Used
             ("Ren'Py", "Ren Pie"),
         ]
 
-    Will cause the string "Ren'Py is pronunced ren'py." to be voices as if
+    Will cause the string "Ren'Py is pronounced ren'py." to be voiced as if
     it were "Ren Pie is pronounced ren pie."
 
 .. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mpeg", ... ]
