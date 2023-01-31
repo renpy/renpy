@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -265,6 +265,7 @@ init -1100 python:
             config.lenticular_bracket_ruby = False
             config.preserve_volume_when_muted = True
             config.history_current_dialogue = False
+            config.allow_empty_slkeywords = True
 
             config.top_layers.remove("top")
             config.bottom_layers.remove("bottom")

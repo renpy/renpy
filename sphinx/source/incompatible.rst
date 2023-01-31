@@ -94,6 +94,26 @@ Alternatively, you can determine new default volumes for :var:`config.default_mu
 :var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` variables. If any
 of these is 0.0 or 1.0, it can be left unchanged.
 
+**Parsing changes** Some parsing changes were made in this version.
+For one, while screen elements taking keyword arguments allowed for
+these to be passed without a value, this never made sense and is no
+longer allowed. An example::
+
+    screen a():
+        vpgrid:
+            cols 3
+            rows # here, the rows keyword argument is passed without a value
+            add "#f00"
+            add "#0f0"
+            add "#00f"
+
+To restore the old behavior, in which the line would have no meaning or
+consequence, you need to add::
+
+    define config.allow_empty_slkeywords = True
+
+Every compat for a parsing change needs to be added in a file named
+01compat.rpy in your game's game directory.
 
 .. _incompatible-8.0.2:
 .. _incompatible-7.5.2:

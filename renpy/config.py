@@ -1346,6 +1346,9 @@ extra_savedirs = [ ]
 # The text-to-speech dictionary. A list of [ (RegeEx|String, String) ] pairs.
 tts_substitutions = [ ]
 
+# Whether to allow value-less keyword arguments in screen parsing.
+allow_empty_slkeywords = False
+
 del os
 del collections
 

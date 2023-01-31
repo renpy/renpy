@@ -2393,6 +2393,7 @@ EARLY_CONFIG = {
     "name",
     "version",
     "save_token_keys",
+    "allow_empty_slkeywords",
 }
 
 define_statements = [ ]
