@@ -1285,7 +1285,7 @@ Rarely or Internally Used
 
     These are layers which do not get automatically added to scenes.
     They are always treated as :var:`sticky <config.sticky_layers>` and
-    intended for use with the :ref:`Layer` displayable for embedding.
+    intended for use with the :class:`Layer` displayable for embedding.
 
 .. var:: config.fade_music = 0.0
 
