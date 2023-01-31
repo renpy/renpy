@@ -310,9 +310,9 @@ Occasionally Used
 
 .. var:: config.autosave_callback = None
 
-    A callback or list of callbacks that will be called after each time a
-    background autosave happens. The callbacks are called during an interaction,
-    and so actions may be used, though the Return action will not function.
+    A callback or list of callbacks or Actions that will be called after
+    each time a background autosave happens. Although actions may be used,
+    the Return action will not function.
 
     If a non-Action callback shows a displayable or screen,
     :func:`renpy.restart_interaction` should be called.
@@ -350,8 +350,8 @@ Occasionally Used
 
 .. var:: config.context_callback = None
 
-    This is a callback that is called when Ren'Py enters a new context,
-    such as a menu context.
+    This is a callback that is called with no arguments when Ren'Py enters a
+    new context, such as a menu context.
 
 .. var:: config.context_copy_remove_screens = [ 'notify', ... ]
 
@@ -417,6 +417,8 @@ Occasionally Used
 
     If not None, this should be a string giving the default language
     that the game is translated into by the translation framework.
+
+    See :doc:`translation` for more details.
 
 .. var:: config.default_tag_layer = "master"
 
@@ -486,7 +488,7 @@ Occasionally Used
 
 .. var:: config.empty_window : Callable
 
-    This is called when _window is True, and no window has been shown
+    This is called with no arguments when _window is True, and no window has been shown
     on the screen. (That is, no call to :func:`renpy.shown_window` has
     occurred.) It's expected to show an empty window on the screen, and
     return without causing an interaction.
@@ -512,9 +514,9 @@ Occasionally Used
 
 .. var:: config.fix_rollback_without_choice = False
 
-    This option determines how the built in menus or imagemaps behave
+    This option determines how the built-in menus or imagemaps behave
     during fixed rollback. The default value is False, which means that
-    menu only the previously selected option remains clickable. If set
+    only the previously selected menu option remains clickable. If set
     to True, the selected option is marked but no options are clickable.
     The user can progress forward through the rollback buffer by
     clicking.
@@ -576,6 +578,10 @@ Occasionally Used
 
     The number of entries of dialogue history Ren'Py keeps. This is
     set to 250 by the default gui.
+
+.. var:: config.history_current_dialogue = True
+
+    If true, the current dialogue will appear in the history screen.
 
 .. var:: config.hw_video = False
 
@@ -733,6 +739,8 @@ Occasionally Used
     The frames are played back at 20Hz, and the animation loops after
     all frames have been shown.
 
+    See :doc:`mouse` for more information.
+
 .. var:: config.mouse_displayable = None
 
     If not None, this should either be a displayable, or a callable that
@@ -744,6 +752,8 @@ Occasionally Used
     responsible for positioning and drawing a sythetic mouse
     cursor, and so should probably be a :func:`MouseDisplayable`
     or something very similar.
+
+    See :doc:`mouse` for more information.
 
 .. var:: config.narrator_menu = True
 
@@ -827,7 +837,7 @@ Occasionally Used
 .. var:: config.quit_action : Action
 
     The action that is called when the user clicks the quit button on
-    a window. The default action prompts the user to see if he wants
+    a window. The default action prompts the user to see if they want
     to quit the game.
 
 .. var:: config.reload_modules = [ ... ]
@@ -1025,6 +1035,37 @@ Occasionally Used
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
 
+.. var:: config.tts_substitutions = [ ]
+
+    This is a list of (pattern, replacement) pairs that are used to perform
+    substitutions on text before it is passed to the text-to-speech engine,
+    so that the text-to-speech engine can pronounce it correctly.
+
+    Patterns may be either strings or regular expressions, and replacements
+    must be strings.
+
+    If the pattern is a string, it is escaped, then prefixed
+    and suffixed with r'\\b' (to indicate it must begin and end at a word
+    boundary), and then compiled into a regular expression. When the pattern
+    is a string, the replacement is also escaped.
+
+    If the pattern is a regular expression, it is used as-is, and the
+    replacement is not escaped.
+
+    The substitutions are performed in the order they are given. If a substitution
+    matches the string, the match is checked to see if it is in title case,
+    upper case, or lower case ; and if so the corresponding casing is performed
+    on the replacement. Once this is done, the replacement is applied.
+
+    For example::
+
+        define config.tts_substitutions = [
+            ("Ren'Py", "Ren Pie"),
+        ]
+
+    Will cause the string "Ren'Py is pronounced ren'py." to be voiced as if
+    it were "Ren Pie is pronounced ren pie."
+
 .. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mpeg", ... ]
 
     When running on the web platform, Ren'Py will check the browser to
@@ -1129,7 +1170,7 @@ Rarely or Internally Used
 
     A list of callbacks that are called by all characters. This list
     is prepended to the list of character-specific callbacks. Ren'Py
-    includes it's own callbacks at the start of this list.
+    includes its own callbacks at the start of this list.
 
 .. var:: config.allow_skipping = True
 
@@ -1214,7 +1255,7 @@ Rarely or Internally Used
 
 .. var:: config.character_callback = None
 
-    The default value of the callback parameter of Character.
+    The default value of the `callback` parameter of :class:`Character`.
 
 .. var:: config.choice_empty_window = None
 
@@ -1271,6 +1312,12 @@ Rarely or Internally Used
     returns False, the built-in exception handler is use. This function may also call
     :func:`renpy.jump` to transfer control to some other label.
 
+.. var:: config.detached_layers = [ ]
+
+    These are layers which do not get automatically added to scenes.
+    They are always treated as :var:`sticky <config.sticky_layers>` and
+    intended for use with the :class:`Layer` displayable for embedding.
+
 .. var:: config.fade_music = 0.0
 
     This is the amount of time in seconds to spend fading the old
@@ -1298,6 +1345,12 @@ Rarely or Internally Used
     the selected direction of motion, when moving focus with the
     keyboard.
 
+.. var:: config.gamedir = ...
+
+    The full path leading to the game's ``game/`` directory. This is a
+    read-only variable. There is no guarantee that any file will be there,
+    typically on platforms such as android.
+
 .. var:: config.gl_resize = True
 
     Determines if the user is allowed to resize an OpenGL-drawn window.
@@ -1309,10 +1362,14 @@ Rarely or Internally Used
     entirely, although we don't recommend that, as rollback is useful
     to let the user see text he skipped by mistake.
 
+.. var:: config.help = None
+
+    The default value for the :func:`Help` action.
+
 .. var:: config.help_screen = "help"
 
-    The name of the screen shown by the :func:`Help` action, or by pressing
-    f1 on the keyboard.
+    The name of the screen shown by pressing f1 on the keyboard, or by
+    the :func:`Help` action under certain circumstances.
 
 .. var:: config.hide = renpy.hide
 
@@ -1468,8 +1525,9 @@ Rarely or Internally Used
 .. var:: config.missing_image_callback = None
 
     If not None, this function is called when an attempt to load an
-    image fails. It may return None, or it may return an image
-    manipulator. If an image manipulator is returned, that image
+    image fails. The callback is passed the filename of the missing image.
+    It may return None, or it may return an :doc:`image manipulator <im>`.
+    If an image manipulator is returned, that image
     manipulator is loaded in the place of the missing image.
 
     One may want to also define a :var:`config.loadable_callback`,
@@ -1721,7 +1779,8 @@ Rarely or Internally Used
 
     A function that is used in place of :func:`renpy.show` by the :ref:`show
     <show-statement>` and :ref:`scene <scene-statement>` statements. This
-    should have the same signature as :func:`renpy.show`.
+    should have the same signature as :func:`renpy.show`, and pass unknown
+    keyword arguments unchanged.
 
 .. var:: config.skip_delay = 75
 

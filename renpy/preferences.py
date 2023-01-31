@@ -179,11 +179,14 @@ Preference("audio_when_unfocused", True)
 # Should a progressive web app preload all files into the browser cache?
 Preference("web_cache_preload", False)
 
+# Should the voice continue to play after the user enters the game menu.
+Preference("voice_after_game_menu", False)
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = len(all_preferences) + 1
+    __version__ = len(all_preferences) + 2
 
     # Default values, for typing purposes.
     if 1 == 0:
@@ -228,6 +231,7 @@ class Preferences(renpy.object.Object):
         audio_when_minimized = True
         audio_when_unfocused = True
         web_cache_preload = False
+        voice_after_game_menu = False
 
     def init(self):
         """

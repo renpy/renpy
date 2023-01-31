@@ -21,7 +21,7 @@
 
 from __future__ import print_function
 
-cdef extern from "fribidi.h":
+cdef extern from "fribidi/fribidi.h":
     int FRIBIDI_TYPE_LTR
     int FRIBIDI_TYPE_ON
     int FRIBIDI_TYPE_RTL

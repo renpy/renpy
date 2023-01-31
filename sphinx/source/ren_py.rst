@@ -63,7 +63,7 @@ Here's an example of a \_ren.py file::
     # the type of strength.
     strength = 100
 
-    """"renpy
+    """renpy
     init python:
     """
 

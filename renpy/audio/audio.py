@@ -1263,8 +1263,9 @@ def pause_all():
     global global_pause
     global_pause += 1
 
-    periodic()
-
+    for c in all_channels:
+        c.pause()
+        c.paused = True
 
 def unpause_all():
     """

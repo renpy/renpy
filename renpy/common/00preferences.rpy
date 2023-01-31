@@ -231,6 +231,10 @@ init -1500 python:
          * Preference("web preload cache", "disable") - Will cause the web cache to not be preloaded, and preloaded data to be deleted.
          * Preference("web preload cache", "toggle") - Will toggle the web cache preload state.
 
+         * Preference("voice after game menu", "enable") - Will cause the voice to continue being played when entering the game  menu.
+         * Preference("voice after game menu", "disable") - Will cause the voice to stop being played when entering the game menu.
+         * Preference("voice after game menu", "toggle") - Will toggle the voice after game menu state.
+
          Values that can be used with bars are:
 
          * Preference("text speed")
@@ -545,6 +549,14 @@ init -1500 python:
                     else:
                         return Preferences("web cache preload", "enable")
 
+            elif name == _("voice after game menu"):
+
+                if value == "enable":
+                    return SetField(_preferences, "voice_after_game_menu", True)
+                elif value == "disable":
+                    return SetField(_preferences, "voice_after_game_menu", False)
+                elif value == "toggle":
+                    return ToggleField(_preferences, "voice_after_game_menu")
 
             mixer_names = {
                 "main" : "main",
@@ -623,6 +635,9 @@ init -1500 python:
             renpy.show_screen("_self_voicing")
         elif not _preferences.self_voicing and has_screen:
             renpy.hide_screen("_self_voicing")
+
+
+    config.interact_callbacks.append(__show_self_voicing)
 
     # Ignored.
     config.self_voicing_stops_afm = False

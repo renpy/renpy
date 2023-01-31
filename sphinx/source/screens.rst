@@ -382,8 +382,8 @@ action. A button takes no parameters, and the following properties.
     The action to run when the button is activated. A button is activated
     when it is clicked, or when the player selects it and hits enter on the
     keyboard. This also controls if the button is sensitive if `sensitive`
-    is not provided, and if the button is selected if `selected` is not
-    provided.
+    is not provided or None, and if the button is selected if `selected` is not
+    provided or None.
 
 `alternate`
     An action that is run if the button is activated in an alternate manner.
@@ -400,12 +400,12 @@ action. A button takes no parameters, and the following properties.
 `selected`
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
 `sensitive`
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
 `keysym`
     A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
@@ -655,8 +655,8 @@ properties:
 
 `action`
     The action to run when the button is activated. This also controls if
-    the button is sensitive if `sensitive` is not provided, and if the button
-    is selected if `selected` is not provided.
+    the button is sensitive if `sensitive` is not provided or None, and if the button
+    is selected if `selected` is not provided or None.
 
 `alternate`
     An action that is run if the button is activated in an alternate manner.
@@ -673,12 +673,12 @@ properties:
 `selected`
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
 `sensitive`
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
 `keysym`
     A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
@@ -1138,8 +1138,8 @@ following properties:
 
 `action`
     The action to run when the button is activated. This also controls if
-    the button is sensitive if `sensitive` is not provided, and if the button
-    is selected if `selected` is not provided.
+    the button is sensitive if `sensitive` is not provided or None, and if the button
+    is selected if `selected` is not provided or None.
 
 `alternate`
     An action that is run if the button is activated in an alternate manner.
@@ -1156,12 +1156,12 @@ following properties:
 `selected`
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
 `sensitive`
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
 `keysym`
     A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
@@ -1177,8 +1177,8 @@ following properties:
     to that string to give the default text style.
 
 `text_`-
-   Other properties prefixed with text_ have this prefix stripped, and are
-   then passed to the text displayable.
+    Other properties prefixed with text_ have this prefix stripped, and are
+    then passed to the text displayable.
 
 It also takes:
 
@@ -1642,12 +1642,12 @@ also takes the following properties:
 `selected`
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
 `sensitive`
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
 `keysym`
     A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
@@ -1874,7 +1874,7 @@ statement. It supports the ``if``, ``elif``, and ``else`` clauses.
 ::
 
     screen skipping_indicator():
-        if config.skipping:
+        if renpy.is_skipping():
              text "Skipping."
         else:
              text "Not Skipping."

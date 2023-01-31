@@ -33,35 +33,35 @@ init -1500 python:
     @renpy.pure
     class ShowMenu(Action, DictEquality):
         """
-         :doc: menu_action
+        :doc: menu_action
 
-         Causes us to enter the game menu, if we're not there already. If we
-         are in the game menu, then this shows a screen or jumps to a label.
+        Causes us to enter the game menu, if we're not there already. If we
+        are in the game menu, then this shows a screen or jumps to a label.
 
-         `screen` is usually the name of a screen, which is shown using
-         the screen mechanism. If the screen doesn't exist, then "_screen"
-         is appended to it, and that label is jumped to.
+        `screen` is usually the name of a screen, which is shown using
+        the screen mechanism. If the screen doesn't exist, then "_screen"
+        is appended to it, and that label is jumped to.
 
-         If the optional keyword argument `_transition` is given, the
-         menu will change screens using the provided transition.
-         If not manually specified, the default transition is
-         `config.intra_transition`.
+        If the optional keyword argument `_transition` is given, the
+        menu will change screens using the provided transition.
+        If not manually specified, the default transition is
+        `config.intra_transition`.
 
-         * ShowMenu("load")
-         * ShowMenu("save")
-         * ShowMenu("preferences")
+        * ShowMenu("load")
+        * ShowMenu("save")
+        * ShowMenu("preferences")
 
-         This can also be used to show user-defined menu screens. For
-         example, if one has a "stats" screen defined, one can
-         show it as part of the game menu using:
+        This can also be used to show user-defined menu screens. For
+        example, if one has a "stats" screen defined, one can
+        show it as part of the game menu using:
 
-         * ShowMenu("stats")
+        * ShowMenu("stats")
 
-         ShowMenu without an argument will enter the game menu at the
-         default screen, taken from _game_menu_screen.
+        ShowMenu without an argument will enter the game menu at the
+        default screen, taken from _game_menu_screen.
 
-         Extra arguments and keyword arguments are passed on to the screen
-         """
+        Extra arguments and keyword arguments are passed on to the screen
+        """
         transition = None  # For save compatability; see renpy#2376
 
         def __init__(self, screen=None, *args, **kwargs):
@@ -131,15 +131,15 @@ init -1500 python:
     @renpy.pure
     class Start(Action, DictEquality):
         """
-         :doc: menu_action
+        :doc: menu_action
 
-         Causes Ren'Py to jump out of the menu context to the named
-         label. The main use of this is to start a new game from the
-         main menu. Common uses are:
+        Causes Ren'Py to jump out of the menu context to the named
+        label. The main use of this is to start a new game from the
+        main menu. Common uses are:
 
-         * Start() - Start at the start label.
-         * Start("foo") - Start at the "foo" label.
-         """
+        * Start() - Start at the start label.
+        * Start("foo") - Start at the "foo" label.
+        """
 
         def __init__(self, label="start"):
             self.label = label
@@ -193,15 +193,15 @@ init -1500 python:
     @renpy.pure
     class Quit(Action, DictEquality):
         """
-         :doc: menu_action
+        :doc: menu_action
 
-         Quits the game.
+        Quits the game.
 
-         `confirm`
-              If true, prompts the user if he wants to quit, rather
-              than quitting directly. If None, asks if and only if
-              the user is not at the main menu.
-         """
+        `confirm`
+            If true, prompts the user if he wants to quit, rather
+            than quitting directly. If None, asks if and only if
+            the user is not at the main menu.
+        """
 
         def __init__(self, confirm=None):
             self.confirm = confirm
@@ -225,18 +225,18 @@ init -1500 python:
     @renpy.pure
     class Skip(Action, DictEquality):
         """
-         :doc: other_action
+        :doc: other_action
 
-         Causes the game to begin skipping. If the game is in a menu
-         context, then this returns to the game. Otherwise, it just
-         enables skipping.
+        Causes the game to begin skipping. If the game is in a menu
+        context, then this returns to the game. Otherwise, it just
+        enables skipping.
 
-         `fast`
-               If true, skips directly to the next menu choice.
+        `fast`
+            If true, skips directly to the next menu choice.
 
-         `confirm`
-               If true, asks for confirmation before beginning skipping.
-         """
+        `confirm`
+            If true, asks for confirmation before beginning skipping.
+        """
 
         fast = False
         confirm = False
@@ -308,9 +308,6 @@ init -1500 python:
 
         Displays help.
 
-        If a screen named ``help`` is defined, that screen is displayed
-        using :func:`ShowMenu` and `help` is ignored.
-
         `help`
             A string that is used to find help. This is used in the
             following way:
@@ -321,8 +318,9 @@ init -1500 python:
               that should be opened in a web browser.
 
             If `help` is None, :var:`config.help` is used as the default
-            value.
-         """
+            value. If it is also None, the :var:`config.help_screen` screen
+            is shown in a new context, if it exists. Otherwise, does nothing.
+        """
 
         def __init__(self, help=None):
             self.help = help

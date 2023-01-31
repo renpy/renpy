@@ -47,6 +47,7 @@ BYTECODE_VERSION = 1
 
 # The python magic code.
 if PY2:
+    import heapq
     import imp
     MAGIC = imp.get_magic()
 
@@ -307,13 +308,9 @@ class Script(object):
 
             self.load_appropriate_file(".rpyc", [ "_ren.py", ".rpy" ], dir, fn, initcode)
 
-        # Make the sort stable.
-        initcode = [ (prio, index, code) for index, (prio, code) in
-                     enumerate(initcode) ]
+        initcode.sort(key=lambda i: i[0])
 
-        initcode.sort(key=lambda i: (i[0], i[1]))
-
-        self.initcode = [ (prio, code) for prio, index, code in initcode ]
+        self.initcode = initcode
 
         self.translator.chain_translates()
 
@@ -335,9 +332,36 @@ class Script(object):
         if renpy.parser.report_parse_errors():
             raise SystemExit(-1)
 
+        initcode.sort(key=lambda i: i[0])
+
         self.translator.chain_translates()
 
         return initcode
+
+    def include_module(self, name):
+        """
+        Loads a module with the provided name and inserts its
+        initcode into the script current initcode
+        """
+        module_initcode = self.load_module(name)
+        if not module_initcode:
+            return
+
+        # We may not insert elements at or prior the current id!
+        current_id = renpy.game.initcode_ast_id
+
+        if module_initcode[0][0] < self.initcode[current_id][0]:
+            raise Exception("Module %s contains nodes with priority lower than the node that loads it" % name)
+
+        merge_id = current_id + 1
+        current_tail = self.initcode[merge_id:]
+
+        # Since script initcode and module initcode are both sorted,
+        # we can use heap to merge them
+        new_tail = current_tail +  module_initcode
+        new_tail.sort(key=lambda i: i[0])
+
+        self.initcode[merge_id:] = new_tail
 
     def assign_names(self, stmts, fn):
         # Assign names to statements that don't have one already.
@@ -395,6 +419,8 @@ class Script(object):
         initcode = [ ]
 
         stmts = self.finish_load(stmts, initcode, False)
+
+        initcode.sort(key=lambda i: i[0])
 
         return stmts, initcode
 

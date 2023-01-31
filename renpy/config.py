@@ -36,9 +36,6 @@ import renpy
 # Can we add more config variables?
 locked = False
 
-# Contains help for config variables.
-help = [ ] # @ReservedAssignment
-
 # The title of the game window.
 window_title = None
 
@@ -171,6 +168,10 @@ bottom_layers = [ 'bottom' ]
 
 # Layers which will override the default layer for a tag while shown.
 sticky_layers = [ 'master' ]
+
+# Layers not automatically added to a scene and inherently sticky,
+# primarily for use with the Layer displayable.
+detached_layers = [ ]
 
 # True if we want to show overlays during wait statements, or
 # false otherwise.
@@ -740,6 +741,9 @@ history_length = None
 # object.
 history_callbacks = [ ]
 
+# Should we add the current dialogue to the history?
+history_current_dialogue = True
+
 # Should we use the new order for translate blocks?
 new_translate_order = True
 
@@ -993,21 +997,9 @@ default_shader = "renpy.geometry"
 # If True, the volume of a channel is kept while the channel is muted.
 preserve_volume_when_muted = True
 
-
+# Documented in Sphinx.
 def say_attribute_transition_callback(*args):
-    """
-    :args: (tag, attrs, mode)
-
-    Returns the say attribute transition to use, and the layer the transition
-    should be applied to (with None being a valid layer.
-
-    Attrs is the list of tags/attributes of the incoming image.
-
-    Mode is one of "permanent", "temporary", or "restore".
-    """
-
     return renpy.config.say_attribute_transition, renpy.config.say_attribute_transition_layer
-
 
 # Should say_attribute_transition_callback take attrs?
 say_attribute_transition_callback_attrs = True
@@ -1353,6 +1345,12 @@ after_default_callbacks = [ ]
 # Set to True in the default GUI.
 check_conflicting_properties = False
 
+# A list of extra save directories. Strings giving the full paths.
+extra_savedirs = [ ]
+
+# The text-to-speech dictionary. A list of [ (RegeEx|String, String) ] pairs.
+tts_substitutions = [ ]
+
 del os
 del collections
 
@@ -1375,7 +1373,7 @@ def init():
 
     global autoreload_functions
     autoreload_functions = [
-        (r'\.(png|jpg|jpeg|webp|gif|tif|tiff|bmp)$', renpy.exports.flush_cache_file),
+        (r'\.(png|jpg|jpeg|webp|gif|tif|tiff|bmp|avif|svg)$', renpy.exports.flush_cache_file),
         (r'\.(mp2|mp3|ogg|opus|wav)$', renpy.audio.audio.autoreload),
         ]
 

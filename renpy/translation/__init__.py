@@ -687,6 +687,9 @@ def change_language(language, force=False):
     # Rebuild the styles.
     renpy.style.rebuild() # @UndefinedVariable
 
+    # Re-init tts.
+    renpy.display.tts.init()
+
     for i in renpy.config.translate_clean_stores:
         renpy.python.reset_store_changes(i)
 
@@ -697,6 +700,7 @@ def change_language(language, force=False):
         renpy.exports.block_rollback()
 
         old_language = language
+
 
 
 def check_language():

@@ -217,7 +217,7 @@ def in_fixed_rollback():
 def checkpoint(data=None, keep_rollback=None, hard=True):
     """
     :doc: rollback
-    :args: (data=None, hard=True)
+    :args: (data=None, *, hard=True)
 
     Makes the current statement a checkpoint that the user can rollback to. Once
     this function has been called, there should be no more interaction with the
@@ -631,7 +631,7 @@ def set_tag_attributes(name, layer=None):
 def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind=[ ], atl=None, transient=False, munge_name=True):
     """
     :doc: se_images
-    :args: (name, at_list=[], layer='master', what=None, zorder=0, tag=None, behind=[])
+    :args: (name, at_list=[], layer=None, what=None, zorder=0, tag=None, behind=[], **kwargs)
 
     Shows an image on a layer. This is the programmatic equivalent of the show
     statement.
@@ -1182,7 +1182,7 @@ def display_menu(items,
     """
     :doc: se_menu
     :name: renpy.display_menu
-    :args: (items, *, interact=True, screen="choice")
+    :args: (items, *, interact=True, screen="choice", **kwargs)
 
     This displays a menu to the user. `items` should be a list of 2-item tuples.
     In each tuple, the first item is a textual label, and the second item is
@@ -2867,7 +2867,6 @@ def load_module(name, **kwargs):
     renpy.config.locked = False
 
     initcode = renpy.game.script.load_module(name)
-    initcode.sort(key=lambda i: i[0])
 
     context = renpy.execution.Context(False)
     context.init_phase = True
@@ -2934,6 +2933,26 @@ def load_string(s, filename="<string>"):
 
     finally:
         renpy.game.exception_info = old_exception_info
+
+
+def include_module(name):
+    """
+    :doc: other
+
+    Similar to :func:`renpy.load_module`, but instead of loading the module right away,
+    inserts it into the init queue somewhere after the current AST node.
+
+    The module may not contain init blocks lower than the block that includes the module.
+    For example, if your module contains an init 10 block, the latest you can load it is
+    init 10.
+
+    Module loading may only occur from inside an init block.
+    """
+
+    if not renpy.game.context().init_phase:
+        raise Exception("Module loading is only allowed in init code.")
+
+    renpy.game.script.include_module(name)
 
 
 def pop_call():

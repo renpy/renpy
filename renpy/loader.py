@@ -34,6 +34,8 @@ import re
 import io
 import unicodedata
 
+from pygame_sdl2.rwobject import RWops_from_file, RWops_create_subfile
+
 from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded
 
@@ -622,18 +624,18 @@ class SubFile(object):
         raise Exception("Write not supported by SubFile")
 
 
-open_file = open # type: ignore
+open_file = RWops_from_file # type: ignore
 
 if "RENPY_FORCE_SUBFILE" in os.environ:
 
     def open_file(name, mode):
-        f = open(name, mode)
+        f = RWops_from_file(name, mode)
 
         f.seek(0, 2)
         length = f.tell()
         f.seek(0, 0)
 
-        return SubFile(f, 0, length, b'')
+        return RWops_create_subfile(f, 0, length)
 
 # A list of callbacks to open an open python file object of the given type.
 file_open_callbacks = [ ]
@@ -728,7 +730,11 @@ def load_from_archive(name):
             else:
                 offset, dlen, start = t
 
-            rv = SubFile(afn, offset, dlen, start)
+            if start == None or len(start) == 0:
+                rw = RWops_from_file(afn, "rb")
+                rv = RWops_create_subfile(rw, offset, dlen)
+            else:
+                rv = SubFile(afn, offset, dlen, start)
 
         # Compatibility path.
         else:
