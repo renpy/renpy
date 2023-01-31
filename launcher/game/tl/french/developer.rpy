@@ -14,7 +14,11 @@
 
     # _developer/developer.rpym:47
     old "Variable Viewer"
-    new "Visualisateur de variable"
+    new "Inspecteur de variables"
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    new "Inspecteur de données persistentes"
 
     # _developer/developer.rpym:49
     old "Theme Test"

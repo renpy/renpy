@@ -2074,3 +2074,15 @@
     # game/preferences.rpy:327
     old "{#in language font}Start using Ren'Py in [lang_name]"
     new "{font=fonts/Roboto-Light.ttf}Commencez à utiliser Ren'Py en [lang_name]{/font}"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    new "Lint vérifie votre jeu pour des erreurs communes, et génère des statistiques."
+
+    # game/web.rpy:484
+    old "Creating package..."
+    new "Création du package..."
