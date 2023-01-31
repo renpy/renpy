@@ -324,6 +324,7 @@ Dialogue window management is subject to the "show empty window"
 :func:`Preference`. If the preference is disabled, the statements above
 have no effect.
 
+.. _say-with-arguments:
 
 Say with Arguments
 ------------------
@@ -338,7 +339,9 @@ if it is not None. If any remain, they are then passed to the character,
 which treats them as if they were present when the character was defined.
 So, the example above displays the dialogue in green.
 Special keywords `_mode` and `_with_node` will override the ones set in
-the character only for this interaction.
+the character only for this interaction. Same for `interact` : when it is False,
+Ren'Py will display the character dialogue box, and will then return before
+performing an interaction.
 
 .. _monologue-mode:
 
@@ -379,29 +382,10 @@ If you'd like to omit the spaces between the blocks, write
 ``rpy monologue single`` at the top level of the file, before the first
 monologue line.
 
+The ``character`` Store
+-----------------------
 
-Python Equivalents
-------------------
-
-.. note::
-
-    This may only make sense if you've read the :ref:`python` section.
-
-.. warning::
-
-    Several features, such as skipping already-seen dialogues, are not
-    available using the python version and only enabled when using the native
-    say statement.
-
-When the first parameter to a say statement is present and an expression,
-the say statement is equivalent to calling that expressing with the dialogue
-and an ``interact`` argument of True. For example::
-
-    e "Hello, world."
-
-is equivalent to::
-
-    $ e("Hello, world.")
+*Main article:* :ref:`named-stores`
 
 The say statement will search the ``character`` named store before the default
 store. If you want to have a character with the same name as a variable in
@@ -411,33 +395,17 @@ the default store, it can be defined using::
 
 This character can then be used alongside a variable in the default store::
 
+    default e = 0
+
     label start:
 
-        # This is a terrible variable name.
+        # This is still a terrible variable name.
         $ e = 100
 
-        e "Our starting energy is [e] units."
+        e "Our current energy is [e] units."
 
-A say with arguments sees the arguments passed to the function. For example::
+See Also
+--------
 
-    e "Hello, world." (what_size=32)
-
-is equivalent to::
-
-    $ e("Hello, world.", what_size=32)
-
-When e is a Character, this is further equivalent to::
-
-    $ Character(kind=e, what_size=32)("Hello, world.")
-
-But it's possible to use :var:`config.say_arguments_callback` or
-have ``e`` wrap a character to do things differently.
-
-
-
-
-
-Window management is performed by setting the :var:`_window` and
-:var:`_window_auto` variables, and by using the following two functions:
-
-.. include:: inc/window
+:doc:`statement_equivalents` : how to use most of the features described here in
+a python context, although with some drawbacks and limitations.

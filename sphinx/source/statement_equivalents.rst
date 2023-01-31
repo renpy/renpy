@@ -10,23 +10,27 @@ equivalent to the statement.
 Note that using statement equivalents in lieu of the original statements
 usually removes any possible :ref:`lint` checks and prediction
 optimizations, making your game less easily checkable and possibly less
-fluid.
+fluid. It can also disable features in certain cases.
 
 Dialogue
 ========
 
+.. warning::
+
+    Several features, such as skipping already-seen dialogues, are not
+    available using the python version and only enabled when using the native
+    say statement.
+
 The Ren'Py :ref:`say-statement` is equivalent to calling the character
-object as a function. The following displays the same line twice::
+object (when any is present) as a function. Displaying narration (meaning when
+no character is supplied) can be done the same way, by using the ``narrator``
+character. ::
 
     e "Hello, world."
-
     $ e("Hello, world.")
 
-Displaying narration can be done the same way, by using the
-``narrator`` character. When calling a character, it's possible to
-supply the keyword argument ``interact``. When ``interact`` is False,
-Ren'Py will display the character dialogue box, and will then
-return before performing an interaction.
+    "And then the sun exploded."
+    $ narrator("And then the sun exploded.")
 
 This equivalence of characters and function objects works in the other
 direction as well. It is possible to declare a Python function, and
@@ -57,10 +61,35 @@ two characters. ::
 
 A function used in this way should either ignore unknown keyword
 arguments, or pass them to a character function. Doing this will
-allow the game to continue working if Ren'Py adds additional keyword
-arguments to character calls.
+allow the game to continue working if future versions of Ren'Py add additional
+keyword arguments to character calls.
+
+A :ref:`say-with-arguments` sees the arguments passed to the function. For
+example::
+
+    e "Hello, world." (what_size=32)
+
+is equivalent to::
+
+    $ e("Hello, world.", what_size=32)
+
+When e is a Character, this is further equivalent to::
+
+    $ Character(kind=e, what_size=32)("Hello, world.")
+
+But it's possible to use :var:`config.say_arguments_callback` or
+have ``e`` wrap a character to do things differently.
 
 .. include:: inc/se_say
+
+Dialogue Window Management
+--------------------------
+
+:ref:`Window management <dialogue-window-management>` is performed by setting
+the :var:`_window` and :var:`_window_auto` variables, and by using the following
+two functions:
+
+.. include:: inc/window
 
 Choice Menus
 ============
