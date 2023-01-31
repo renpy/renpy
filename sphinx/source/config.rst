@@ -1035,6 +1035,37 @@ Occasionally Used
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
 
+.. var:: config.tts_substitutions = [ ]
+
+    This is a list of (pattern, replacement) pairs that are used to perform
+    substitutions on text before it is passed to the text-to-speech engine,
+    so that the text-to-speech engine can pronounce it correctly.
+
+    Patterns may be either strings or regular expressions, and replacements
+    must be strings.
+
+    If the pattern is a string, it is escaped, then prefixed
+    and suffixed with 'r\b' (to indicate it must begin and end at a word
+    boundary), and then compiled into a regular expression. When pattern
+    is a string, the replacement is also escaped.
+
+    If pattern is a regular expression, it is used as-is, and the replacement
+    is not escaped.
+
+    The substitutions are performed in the order they are given. If a substution
+    matches the string, the match is checed to see if the match is in title case,
+    upper case, or lower case, and if so the corresponding casing is performed
+    on the replacement. Once this is done, the replacement is applied.
+
+    For example::
+
+        define config.tts_substitutions = [
+            ("Ren'Py", "Ren Pie"),
+        ]
+
+    Will cause the string "Ren'Py is pronunced ren'py." to be voices as if
+    it were "Ren Pie is pronounced ren pie."
+
 .. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mpeg", ... ]
 
     When running on the web platform, Ren'Py will check the browser to

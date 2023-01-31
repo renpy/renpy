@@ -199,6 +199,23 @@ ruby text. For example::
 
     e "【【This is not | ruby text.】"
 
+Accessibility
+-------------
+
+The new :var:`config.tts_substitutions` variable allows the game to
+provide substitution rules for self-voicing. That is meant to allow
+the creator to control pronunciation of words that might be mispronounced
+by the text to speech engine.
+
+For example::
+
+        define config.tts_substitutions = [
+            ("Ren'Py", "Ren Pie"),
+        ]
+
+Will cause the word "Ren'Py" to be pronounced as "Ren Pie" whenever
+self-voicing speaks it.
+
 Save Token Security
 -------------------
 

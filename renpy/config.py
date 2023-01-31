@@ -1343,6 +1343,9 @@ after_default_callbacks = [ ]
 # A list of extra save directories. Strings giving the full paths.
 extra_savedirs = [ ]
 
+# The text-to-speech dictionary. A list of [ (RegeEx|String, String) ] pairs.
+tts_substitutions = [ ]
+
 del os
 del collections
 
