@@ -404,6 +404,21 @@ This character can then be used alongside a variable in the default store::
 
         e "Our current energy is [e] units."
 
+This is especially useful in order to manage variable information about a
+character in a namespace without conflicting with the say statement::
+
+    define character.naomi = Character("Naomi Nagata", who_color="#8c8")
+    default naomi = PersonClass(engineering=5, max_g_force=.7) # can be an object...
+    define character.fred = Character("Fred Johnson", who_color="#72f")
+    default fred.money = 1000 # ...or a dedicated named store
+    default fred.rank = "Colonel"
+
+    label traded:
+        fred "Here you go."
+        $ fred.money -= 50
+        $ naomi.money += 50
+        naomi "Thanks ! I knew you would value my class-[naomi.engineering] engineering skills."
+
 See Also
 --------
 
