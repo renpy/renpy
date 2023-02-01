@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -142,22 +142,63 @@ safe_formats = { "png", "jpg", "jpeg", "webp" }
 image_load_lock = threading.RLock()
 
 
-def load_image(f, filename):
+formats = {
+    # PNG
+    "png": pygame.image.INIT_PNG, # type:ignore
+    # JPEG
+    "jpg": pygame.image.INIT_JPG, # type:ignore
+    "jpeg": pygame.image.INIT_JPG, # type:ignore
+    # WebP
+    "webp": pygame.image.INIT_WEBP, # type:ignore
+    # JPEG-XL
+    # "jxl": pygame.image.INIT_JXL, # type:ignore
+    # AVIF
+    "avif": pygame.image.INIT_AVIF, # type:ignore
+    ## There is no real way of checking the below,
+    ## but they are built into SDL2_image by default
+    "tga": 0,
+    "bmp": 0,
+    "ico": 0,
+    "svg": 0,
+}
+
+
+def load_image(f, filename, size=None):
+    """
+    `f`
+        A file-like object that can be used to load the image.
+    `filename`
+        The name of the file that is being loaded. Used for hinting what
+        kind of image it is.
+    `size`
+        If given, the image is scaled to this size. This only works for
+        SVG images.
+    """
+
     _basename, _dot, ext = filename.rpartition('.')
 
     try:
 
         if ext.lower() in safe_formats:
-            surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+            surf = pygame.image.load(f, renpy.exports.fsencode(filename), size=size)
         else:
 
             # Non-whitelisted formats may not be able to load in a reentrant
             # fashion.
             with image_load_lock:
-                surf = pygame.image.load(f, renpy.exports.fsencode(filename))
+                surf = pygame.image.load(f, renpy.exports.fsencode(filename), size=size)
 
     except Exception as e:
-        raise Exception("Could not load image {!r}: {!r}".format(filename, e))
+
+        extra = ""
+
+        if ext.lower() not in formats:
+            extra = " ({} files are not supported by Ren'Py)".format(ext)
+
+        elif formats[ext] and (not pygame.image.has_init(formats[ext])): # type:ignore
+            extra = " (your SDL2_image library does not support {} files)".format(ext)
+
+        raise Exception("Could not load image {!r}{}: {!r}".format(filename, extra, e))
 
     rv = copy_surface_unscaled(surf)
     return rv

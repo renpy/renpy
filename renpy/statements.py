@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -56,6 +56,7 @@ def register(
         post_label=None,
         predict_all=True,
         predict_next=None,
+        execute_default=None,
 ):
     """
     :doc: statement_register
@@ -89,7 +90,8 @@ def register(
         single argument, the object returned from parse.
 
     `execute_init`
-        This is a function that is called at init time, at priority 0.
+        This is a function that is called at init time, at priority 0. It is passed a
+        single argument, the object returned from parse.
 
     `predict`
         This is a function that is called to predict the images used by the statement.
@@ -124,12 +126,15 @@ def register(
     `init`
         True if this statement should be run at init-time. (If the statement
         is not already inside an init block, it's automatically placed inside
-        an init block.) This calls the execute function, in addition to the
-        execute_init function.
+        an init block.)
+
+        You probably don't want this if you have an `execute_init` function,
+        as wrapping the statement in an init block will cause the `execute_init`
+        and `execute` functions to be called at the same time.
 
     `init_priority`
         An integer that determines the priority of initialization of the
-        init block.
+        init block created by `init` and `execute_init` function.
 
     `translation_strings`
         A function that is called with the parsed block. It's expected to
@@ -162,6 +167,14 @@ def register(
         This should be called to predict the statements that can run after
         this one. It's expected to return a list of of labels or SubParse
         objects. This is not called if `predict_all` is true.
+
+    `execute_default`
+        This is a function that is called at the same time the default
+        statements are run - after the init phase, but before the game starts; when the
+        a save is loaded; after rollback; before lint; and potentially at
+        other times.
+
+        This is called with a single argument, the object returned from parse.
     """
 
     name = tuple(name.split())
@@ -185,7 +198,7 @@ def register(
         post_label=post_label,
         predict_all=predict_all,
         predict_next=predict_next,
-
+        execute_default=execute_default,
     )
 
     if block not in [True, False, "script", "possible" ]:
@@ -226,6 +239,7 @@ def register(
             rv.translation_relevant = bool(translation_strings)
             rv.code_block = code_block
             rv.subparses = l.subparses
+            rv.init_priority = init_priority + l.init_offset
 
         finally:
             l.subparses = old_subparses

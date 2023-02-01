@@ -66,11 +66,16 @@ properties.
     # an image.
     image logo right = Image("logo.png", xalign=1.0)
 
-There are three image file formats we recommend you use:
+There are four image file formats we recommend you use:
 
+* AVIF
 * WEBP
 * PNG
 * JPG
+
+And one vector image file format we recommend:
+
+* SVG
 
 Non-animated GIF and BMP files are also supported, but should not be
 used in modern games.
@@ -139,6 +144,53 @@ a character customization system). It is not designed for things that
 change frequently, such as character emotions.
 
 .. include:: inc/disp_dynamic
+
+
+Layer Displayables
+------------------
+
+Layer displayables display the contents of a layer based on the state of the
+game. They are intended for use with :var:`config.detached_layers`.
+
+Note that similar to dynamic displayables, the layers shown within always
+display their current state. Because of this, the contents of a layer
+displayable will not participate in a transition, unless that transition is
+targeted at the layer being displayed.
+
+.. include:: inc/disp_layer
+
+::
+
+    # A new detached layer to hold the contents of a broadcast.
+    define config.detached_layers += [ "broadcast" ]
+
+    # A layer displayable to represent a TV and watch the broadcast layer.
+    image tv = Window(Layer("broadcast"), background='#000', padding=(10, 10))
+
+    image living_room = Placeholder('bg', text='living_room')
+    image studio = Solid('7c7')
+    image eileen = Placeholder('girl')
+
+    label example:
+        pause
+
+        # Set up the broadcast scene.
+        scene studio onlayer broadcast
+        with None
+
+        # Begin a new scene in the living room.
+        scene living_room
+
+        # Show the TV in the lower right corner of ths screen.
+        show tv:
+          align (.75, .75) zoom .3
+
+        # Show Eileen in the broadcast.
+        show eileen onlayer broadcast
+
+        # Dissolve into the living room, as Eileen enters the TV from the right.
+        with {'master': dissolve, 'broadcast': moveinright}
+        pause
 
 
 Applying Transforms to Displayables
@@ -211,8 +263,7 @@ The use of image manipulators is
 historic. A number of image manipulators that had been documented in the
 past should no longer be used, as they suffer from inherent problems.
 In any case except for :func:`im.Data`, the :func:`Transform` displayable provides
-similar functionality in a more general manner, while fixing the problems,
-although it sometimes requires gl2 to be enabled.
+similar functionality in a more general manner, while fixing the problems.
 
 For the list of image manipulators, see the :doc:`image manipulator <im>`
 documentation.

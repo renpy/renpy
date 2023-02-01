@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -204,7 +204,7 @@ class ScriptTranslator(object):
             tl = self.language_translates.get((identifier, language), None)
 
             if (tl is None) and alternate:
-                tl = self.language_translates.get((identifier, language), None)
+                tl = self.language_translates.get((identifier, alternate), None)
 
         else:
             tl = None
@@ -310,7 +310,6 @@ class Restructurer(object):
 
         else:
             alternate = None
-            identifier = identifier
 
         self.identifiers.add(identifier)
         if alternate is not None:
@@ -688,6 +687,9 @@ def change_language(language, force=False):
     # Rebuild the styles.
     renpy.style.rebuild() # @UndefinedVariable
 
+    # Re-init tts.
+    renpy.display.tts.init()
+
     for i in renpy.config.translate_clean_stores:
         renpy.python.reset_store_changes(i)
 
@@ -698,6 +700,7 @@ def change_language(language, force=False):
         renpy.exports.block_rollback()
 
         old_language = language
+
 
 
 def check_language():
@@ -952,7 +955,7 @@ def detect_user_locale():
         if isinstance(locale_name, bytes):
             locale_name = locale_name.decode("utf-8")
 
-        local_name = locale_name.replace("-", "_")
+        locale_name = locale_name.replace("-", "_")
     else:
         locale_name = locale.getdefaultlocale()
         if locale_name is not None:

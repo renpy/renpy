@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -786,6 +786,20 @@ class Lexer(object):
 
         raise ParseError(self.filename, self.number, msg, self.text, self.pos)
 
+    def deferred_error(self, queue, msg):
+        """
+        Adds a deferred error to the given queue. This is used for something
+        that might be an error, but could be compat-ed away.
+
+        `queue`
+            A string giving a list of deferred errors to add to.
+        """
+
+        if (self.line == -1) and self.block:
+            self.filename, self.number, self.text, self.subblock = self.block[0]
+
+        renpy.parser.deferred_parse_errors[queue].append(ParseError(self.filename, self.number, msg, self.text, self.pos).message)
+
     def eol(self):
         """
         Returns True if, after skipping whitespace, the current
@@ -813,7 +827,8 @@ class Lexer(object):
         if self.subblock:
             ll = self.subblock_lexer()
             ll.advance()
-            ll.error("Line is indented, but the preceding %s statement does not expect a block. Please check this line's indentation." % stmt)
+            ll.error("Line is indented, but the preceding {} statement does not expect a block. "
+                     "Please check this line's indentation. You may have forgotten a colon (:).".format(stmt))
 
     def expect_block(self, stmt):
         """

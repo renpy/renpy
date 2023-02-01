@@ -19,6 +19,8 @@ Lint also includes useful infos and stats about the game.
 
 Note that using Lint is not a substitute for thorough testing.
 
+.. _console:
+
 Shift+O Console
 ---------------
 
@@ -39,11 +41,9 @@ The console can be used to:
 Shift+E Editor Support
 ----------------------
 
-The :var:`config.editor` variable allows a developer to specify an editor
-command that is run when the launch_editor keypress (by default, Shift+E)
-occurs.
-
-Please see :doc:`Text Editor Integration <editor>`.
+Shift+E opens the default text editor, as set in the launcher and customizable
+using :doc:`editor`, to open the script file in and line number at which the
+current statement is written.
 
 Shift+D Developer Menu
 ----------------------

@@ -51,7 +51,12 @@ the command::
 
     sudo apt install virtualenvwrapper python3-dev libavcodec-dev libavformat-dev \
         libswresample-dev libswscale-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
-        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev git
+        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev
+
+Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
+that version, you'll need to download it from:
+
+    https://github.com/libsdl-org/SDL_image/tree/SDL2
 
 We strongly suggest installing the Ren'Py modules into a Python
 virtualenv. To create a new virtualenv, open a new terminal and run::
@@ -66,7 +71,7 @@ To return to this virtualenv later, run::
 
 After activating the virtualenv, install additional dependencies::
 
-    pip install -U cython future six typing pefile requests
+    pip install -U cython future six typing pefile requests ecdsa
 
 Then, install pygame_sdl2 by running the following commands::
 

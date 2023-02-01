@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -428,7 +428,7 @@ init -1500 python hide:
         if (mode is None) or (mode == "with"):
             return
 
-        if getattr(renpy.context(), "_menu", False):
+        if getattr(renpy.context(), "_menu", False) and not _preferences.voice_after_game_menu:
             renpy.sound.stop(channel="voice")
             return
 

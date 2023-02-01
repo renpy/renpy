@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,12 +25,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
-import codecs
-import re
-import os
+import collections
 import time
-import contextlib
 
 import renpy
 import renpy.ast as ast
@@ -51,6 +47,10 @@ from renpy.lexer import (
 
 # A list of parse error messages.
 parse_errors = [ ]
+
+# A list of deferred parser error. These are potential parse errors that
+# can be released or not when parse errors are reported.
+deferred_parse_errors = collections.defaultdict(list)
 
 ################################################################################
 # Parsing of structures that are less than a full statement.
@@ -638,8 +638,6 @@ def IF_statement(l, loc):
 
     rv = None
 
-    entries = [ ]
-
     condition = l.require(l.python_expression)
     l.require(':')
     l.expect_eol()
@@ -759,7 +757,7 @@ def jump_statement(l, loc):
 
 @statement("call")
 def call_statement(l, loc):
-    l.expect_noblock('call statment')
+    l.expect_noblock('call statement')
 
     if l.keyword('expression'):
         expression = True
@@ -797,13 +795,13 @@ def call_statement(l, loc):
 
 @statement("scene")
 def scene_statement(l, loc):
+    layer = None
     if l.keyword('onlayer'):
         layer = l.require(l.name)
-    else:
-        layer = "master"
+        l.expect_eol()
 
-    # Empty.
-    if l.eol():
+    if layer or l.eol():
+        # No displayable.
         l.advance()
         return ast.Scene(loc, None, layer)
 
@@ -1659,15 +1657,51 @@ def parse(fn, filedata=None, linenumber=1):
 
     return rv
 
+def release_deferred_errors():
+    """
+    Determine which deferred errors should be released, and adds them to  the
+    parse_errors list. As new kinds of deferred errors are added, logic should
+    be added here to determine which should be released.
+
+    Logic should only depend on early config variables - marked as such
+    in ast.EARLY_CONFIG.
+    """
+
+    def pop(queue):
+        """
+        Remove the given queue from the list of deferred errors
+        """
+        return deferred_parse_errors.pop(queue, ())
+
+    def release(queue):
+        """
+        Trigger the specified deferred as parse errors.
+        """
+        parse_errors.extend(pop(queue))
+
+    # Unconditionally releases the deferred_test queue.
+    release("deferred_test")
+
+    # Unconditionally ignores the deferred_experimentation
+    pop("deferred_experimentation")
+
+    if deferred_parse_errors:
+        raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))
+
 
 def get_parse_errors():
     global parse_errors
+
+    release_deferred_errors()
+
     rv = parse_errors
     parse_errors = [ ]
     return rv
 
 
 def report_parse_errors():
+
+    release_deferred_errors()
 
     if not parse_errors:
         return False

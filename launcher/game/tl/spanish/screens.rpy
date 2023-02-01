@@ -680,3 +680,15 @@ translate spanish strings:
     # gui/game/screens.rpy:1049
     old "Opens the accessibility menu."
     new "Abre el menú de accesibilidad."
+    
+    # gui/game/screens.rpy:1397
+    old "## Bubble screen"
+    new "## Pantalla de globos"
+
+    # gui/game/screens.rpy:1399
+    old "## The Bubble screen is used to display dialogue to the player when using speech bubbles. The Bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    new "## La pantalla globos se utiliza para mostrar el diálogo al jugador cuando se utilizan globos de dialogo. La pantalla de globos toma los mismos parámetros que la pantalla say, debe crear un displayable con el id de \"what\", y puede crear displayables con los ids de \"namebox\", \"who\", y \"window\"."
+
+    # gui/game/screens.rpy:1404
+    old "## https://www.renpy.org/doc/html/screen_special.html#bubble"
+    new "## https://www.renpy.org/doc/html/screen_special.html#bubble"

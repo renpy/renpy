@@ -97,6 +97,7 @@ the omission in future versions.
 * Huanxuantian
 * Hyper Sonic
 * Ian Leslie
+* JackkelDragon
 * Jackmcbarn
 * Jacob Kauffmann
 * JaHIY
@@ -143,6 +144,7 @@ the omission in future versions.
 * Mason Chou
 * Matias B.
 * Matt George
+* Matthew Vimislik
 * Max le Fou
 * Maxwell Paul Brickner
 * Meithal
@@ -191,6 +193,8 @@ the omission in future versions.
 * rivvil
 * Robert Penner
 * Roope Herpiö
+* Saamkhaih Kyakya
+* SahabandhSthabara
 * Saltome
 * Sapphi
 * Scout

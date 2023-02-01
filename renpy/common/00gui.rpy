@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -452,6 +452,8 @@ init -1150 python in gui:
     SLOW_SKIP = _("Are you sure you want to begin skipping?")
     FAST_SKIP_SEEN = _("Are you sure you want to skip to the next choice?")
     FAST_SKIP_UNSEEN = _("Are you sure you want to skip unseen dialogue to the next choice?")
+    UNKNOWN_TOKEN = _("This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?")
+    TRUST_TOKEN = _("Do you trust the device the save was created on? You should only choose yes if you are the device's sole user.")
 
     ############################################################################
     # Image generation. This lives here since it wants to read data from

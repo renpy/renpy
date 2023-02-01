@@ -3,14 +3,12 @@
 # Declare characters used by this game. The color argument colorizes the
 # name of the character.
 
-define e = Character("Eileen", image="eileen", kind=bubble.character, color="#0f0")
+define e = Character("Eileen")
 
 
 # The game starts here.
 
 label start:
-
-    show screen _bubble_editor
 
     # Show a background. This uses a placeholder by default, but you can
     # add a file (named either "bg room.png" or "bg room.jpg") to the

@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1020,7 +1020,6 @@ class Label(Node):
 
     translation_relevant = True
     __slots__ = [
-        'name',
         'parameters',
         'block',
         'hide',
@@ -1773,7 +1772,6 @@ class Return(Node):
     # We don't care what the next node is.
     def chain(self, next): # @ReservedAssignment
         self.next = None
-        return
 
     def execute(self):
 
@@ -1976,7 +1974,6 @@ class Jump(Node):
     # We don't care what our next node is.
     def chain(self, next): # @ReservedAssignment
         self.next = None
-        return
 
     def execute(self):
 
@@ -2157,6 +2154,7 @@ class UserStatement(Node):
         'translation_relevant',
         'rollback',
         'subparses',
+        'init_priority',
         ]
 
     def __new__(cls, *args, **kwargs):
@@ -2167,6 +2165,7 @@ class UserStatement(Node):
         self.translation_relevant = False
         self.rollback = "normal"
         self.subparses = [ ]
+        self.init_priority = 0
         return self
 
     def __init__(self, loc, line, block, parsed):
@@ -2177,6 +2176,7 @@ class UserStatement(Node):
         self.line = line
         self.block = block
         self.subparses = [ ]
+        self.init_priority = 0
 
         self.name = self.call("label")
         self.rollback = renpy.statements.get("rollback", self.parsed) or "normal"
@@ -2237,14 +2237,23 @@ class UserStatement(Node):
     def execute_init(self):
         self.call("execute_init")
 
+        if renpy.statements.get("init", self.parsed):
+            self.init_priority = 1
+
+        if renpy.statements.get("execute_default", self.parsed):
+            default_statements.append(self)
+
     def get_init(self):
-        return 0, self.execute_init
+        return self.init_priority, self.execute_init
 
     def execute(self):
         next_node(self.get_next())
         statement_name(self.get_name())
 
         self.call("execute")
+
+    def execute_default(self, start):
+        self.call("execute_default")
 
     def predict(self):
         predictions = self.call("predict")
@@ -2383,6 +2392,7 @@ EARLY_CONFIG = {
     "steam_appid",
     "name",
     "version",
+    "save_token_keys",
 }
 
 define_statements = [ ]
@@ -2432,7 +2442,6 @@ class Define(Node):
             return
 
         if self.store == "store.config" and self.varname in EARLY_CONFIG:
-
             value = renpy.python.py_eval_bytecode(self.code.bytecode)
             setattr(renpy.config, self.varname, value)
 
@@ -2556,7 +2565,7 @@ class Default(Node):
         else:
             renpy.dump.definitions.append((self.store[6:] + "." + self.varname, self.filename, self.linenumber))
 
-    def set_default(self, start):
+    def execute_default(self, start):
         d = renpy.python.store_dicts[self.store]
 
         defaults_set = d.get("_defaults_set", None)

@@ -12,13 +12,13 @@ Custom text tags are created by assigning a text tag function to an
 entry in the config.custom_text_tags dictionary or the
 config.self_closing_custom_tags dictionary.
 
-.. var:: config.custom_text_tags
+.. var:: config.custom_text_tags = { }
 
     Maps text tag names to text tag functions, when the text tag can
     wrap other text.
 
 
-.. var:: config.self_closing_custom_text_tags
+.. var:: config.self_closing_custom_text_tags = { }
 
     Maps text tag names to a self-closing text tag functions, when the text tag
     does not wrap other text.
@@ -61,6 +61,9 @@ renpy.TEXT_PARAGRAPH
 
 A self-closing text tag function is similar, except that it does not take
 the third argument.
+
+Lists of tokens can be passed to :func:`Text` when its `tokenized`
+argument is True.
 
 Caveats
 -------

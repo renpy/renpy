@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -149,8 +149,9 @@ cdef class GLDraw:
         gltexture.dealloc_textures()
         gltexture.free_texture_numbers()
 
-        if renpy.android or renpy.ios:
-            pygame.display.get_window().recreate_gl_context()
+
+        if renpy.android or renpy.ios or renpy.emscripten:
+            pygame.display.get_window().recreate_gl_context(always=renpy.emscripten)
 
         # Are we in fullscreen mode?
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))

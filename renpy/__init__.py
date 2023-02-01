@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,6 +25,10 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from typing import Any
 
+# Initial import of the __main__ module. This gets replaced in renpy.py
+# whatever that module has been imported as.
+import __main__
+
 # All imports should go below renpy.compat.
 
 # Backup object, as it'll be overwritten when renpy.object is imported.
@@ -44,7 +48,7 @@ def update_path():
 
     try:
         import _renpy
-        if hasattr(_renpy, '__file__'): # .so/.dll
+        if hasattr(_renpy, '__file__') and _renpy.__file__ != "built-in":
             libexec = os.path.dirname(_renpy.__file__)
             package.__path__.append(os.path.join(libexec, *name))
     except ImportError:
@@ -257,7 +261,7 @@ name_blacklist = {
     "renpy.audio.audio.lock",
     "renpy.audio.audio.periodic_condition",
     "renpy.webloader.queue_lock",
-    "renpy.persistent.save_MP_instances",
+    "renpy.persistent.MP_instances",
     "renpy.exports.sdl_dll",
     }
 
@@ -353,7 +357,7 @@ class Backup(_object):
 
         # Remove new variables from the module.
         for mod, names in self.names.items():
-            modvars = vars(mod)
+            modvars = mod.__dict__
             for name in set(modvars.keys()) - names:
                 del modvars[name]
 
@@ -425,10 +429,12 @@ def import_all():
     import renpy.curry
     import renpy.color
     import renpy.easy
+    import renpy.encryption
     import renpy.execution
     import renpy.lexer
     import renpy.loadsave
-    import renpy.savelocation # @UnresolvedImport
+    import renpy.savelocation
+    import renpy.savetoken
     import renpy.persistent
     import renpy.scriptedit
     import renpy.parser
@@ -605,7 +611,7 @@ def post_import():
     # Import everything into renpy.exports, provided it isn't
     # already there.
     for k, v in globals().items():
-        vars(renpy.exports).setdefault(k, v)
+        renpy.exports.__dict__.setdefault(k, v)
 
 
 def issubmodule(sub, module):
@@ -707,6 +713,7 @@ if 1 == 0:
     from . import gl
     from . import gl2
     from . import lexer
+    from . import lexersupport
     from . import lint
     from . import loader
     from . import loadsave
@@ -716,7 +723,6 @@ if 1 == 0:
     from . import minstore
     from . import object
     from . import parser
-    from . import parsersupport
     from . import performance
     from . import persistent
     from . import preferences
@@ -728,6 +734,7 @@ if 1 == 0:
     from . import revertable
     from . import rollback
     from . import savelocation
+    from . import savetoken
     from . import screenlang
     from . import script
     from . import scriptedit

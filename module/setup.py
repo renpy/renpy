@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -56,7 +56,7 @@ setup_env("LD")
 setup_env("CXX")
 
 import setuplib
-from setuplib import android, ios, emscripten, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen, generate_all_cython
+from setuplib import android, ios, emscripten, raspi, include, library, cython, cmodule, copyfile, find_unnecessary_gen, generate_all_cython, PY2
 
 # These control the level of optimization versus debugging.
 setuplib.extra_compile_args = [ "-Wno-unused-function" ]
@@ -117,31 +117,7 @@ cython(
     [ "IMG_savepng.c", "core.c" ],
     sdl + [ png, 'z', 'm' ])
 
-FRIBIDI_SOURCES = """
-fribidi-src/lib/fribidi.c
-fribidi-src/lib/fribidi-arabic.c
-fribidi-src/lib/fribidi-bidi.c
-fribidi-src/lib/fribidi-bidi-types.c
-fribidi-src/lib/fribidi-deprecated.c
-fribidi-src/lib/fribidi-joining.c
-fribidi-src/lib/fribidi-joining-types.c
-fribidi-src/lib/fribidi-mem.c
-fribidi-src/lib/fribidi-mirroring.c
-fribidi-src/lib/fribidi-run.c
-fribidi-src/lib/fribidi-shape.c
-renpybidicore.c
-""".split()
-cython(
-    "_renpybidi",
-    FRIBIDI_SOURCES,
-    includes=[
-        BASE + "/fribidi-src/",
-        BASE + "/fribidi-src/lib/",
-        ],
-    define_macros=[
-        ("FRIBIDI_ENTRY", ""),
-        ("HAVE_CONFIG_H", "1"),
-        ])
+cython("_renpybidi", [ "renpybidicore.c" ], [ "fribidi" ])
 
 if not (android or ios or emscripten):
     cython("_renpytfd", [ "tinyfiledialogs/tinyfiledialogs.c" ], libs=tfd_libs)
@@ -172,8 +148,11 @@ cython("renpy.lexersupport")
 cython("renpy.pydict")
 cython("renpy.style")
 
+cython("renpy.encryption")
+
 # renpy.compat
-cython("renpy.compat.dictviews")
+if PY2:
+    cython("renpy.compat.dictviews")
 
 # renpy.styledata
 cython("renpy.styledata.styleclass")
@@ -225,4 +204,4 @@ sys.path.insert(0, '..')
 
 import renpy
 
-setuplib.setup("Ren'Py", renpy.version[7:]) # @UndefinedVariable
+setuplib.setup("Ren'Py", renpy.version[7:].rstrip('un')) # @UndefinedVariable

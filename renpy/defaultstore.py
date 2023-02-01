@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -86,10 +86,6 @@ class _Config(object):
     def __setstate__(self, data):
         return
 
-    def register(self, name, default, cat=None, help=None): # @ReservedAssignment
-        setattr(self, name, default)
-        _config.help.append((cat, name, help))
-
     def __getattr__(self, name):
         cvars = vars(_config)
 
@@ -99,7 +95,7 @@ class _Config(object):
         return cvars[name]
 
     def __setattr__(self, name, value):
-        cvars = vars(_config)
+        cvars = _config.__dict__
 
         if name not in cvars and renpy.config.locked:
             raise Exception('config.%s is not a known configuration variable.' % (name))
@@ -165,6 +161,7 @@ DynamicDisplayable = renpy.display.layout.DynamicDisplayable
 ConditionSwitch = renpy.display.layout.ConditionSwitch
 ShowingSwitch = renpy.display.layout.ShowingSwitch
 AlphaMask = renpy.display.layout.AlphaMask
+Layer = renpy.display.layout.Layer
 
 Transform = renpy.display.motion.Transform
 

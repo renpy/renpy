@@ -777,3 +777,27 @@ translate spanish strings:
     # renpy/common/00preferences.rpy:535
     old "mute main"
     new "silenciar volumen principal"
+
+    # renpy/common/00speechbubble.rpy:299
+    old "Speech Bubble Editor"
+    new "Editor de globos de diálogo"
+
+    # renpy/common/00speechbubble.rpy:304
+    old "(hide)"
+    new "(ocultar)"
+    
+    # renpy/common/00gui.rpy:455
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    new "Este archivo se creó en otro dispositivo. Los archivos de guardado maliciosamente creados pueden dañar tu computadora. Confías en el creador de este archivo y en todos los que podrían haberlo modificado?"
+
+    # renpy/common/00gui.rpy:456
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    new "¿Confías en el dispositivo en el que se creó el archivo de  guardado? Sólo debes elegir sí si eres el único usuario del dispositivo."
+
+    # renpy/common/00preferences.rpy:520
+    old "web cache preload"
+    new "precarga de la caché web"
+
+    # renpy/common/00webvideo.rpy:5
+    old "Touch to play the video."
+    new "Toca aquí para reproducir el video."

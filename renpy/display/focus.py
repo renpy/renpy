@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -335,6 +335,7 @@ def before_interact(roots):
     global override
     global grab
     global modal_generation
+    global old_max_default
 
     modal_generation = 0
 
@@ -427,7 +428,9 @@ def before_interact(roots):
     # switch to the default.
     if should_max_default and (max_default > old_max_default):
         current = max_default_focus
+        set_grab(None)
         set_focused(max_default_focus, None, max_default_screen)
+        old_max_default = max_default
 
     # Try to find the current focus.
     if current is not None:
@@ -461,7 +464,7 @@ def before_interact(roots):
 
     # Finally, mark the current widget as the focused widget, and
     # all other widgets as unfocused.
-    for f, n, screen, modal in fwn:
+    for f, n, screen, _modal in fwn:
         if f is not current:
             renpy.display.screen.push_current_screen(screen)
             try:
@@ -537,6 +540,7 @@ def clear_focus():
     Clears the focus when the window loses mouse focus.
     """
 
+    set_grab(None)
     change_focus(None)
 
 

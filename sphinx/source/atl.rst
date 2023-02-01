@@ -1123,9 +1123,6 @@ both horizontal and vertical positions.
     when MatrixColors are used, and the MatrixColors are structurally similar.
     See :doc:`matrixcolor` for more information.
 
-    This requires model-based rendering to be enabled by setting :var:`config.gl2` to
-    True.
-
 .. transform-property:: blur
 
     :type: None or float
@@ -1136,8 +1133,6 @@ both horizontal and vertical positions.
     between Ren'Py versions, and the blurring may exhibit artifacts,
     especially when the image being blurred is changing.
 
-    This requires model-based rendering to be enabled by setting :var:`config.gl2` to
-    True.
 
 .. transform-property:: show_cancels_hide
 

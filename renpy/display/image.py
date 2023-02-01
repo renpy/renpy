@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -115,6 +115,10 @@ def check_image_attributes(tag, attributes):
     Otherwise, returns None.
     """
 
+    negated = [ i[1:] for i in attributes if i[:1] == "-" ]
+    negative = [ "-" + i for i in negated ]
+    attributes = [ i for i in attributes if i[:1] != "-" ]
+
     l = [ ]
 
     for attrs, d in image_attributes[tag].items():
@@ -134,15 +138,18 @@ def check_image_attributes(tag, attributes):
             if not remainder:
                 l.append(attrs)
 
+    if negated:
+        l = [ i for i in l if not (set(negated) & set(i)) ]
+
     # Check to see if there's an image that is exactly the one we want.
     for i in l:
         if len(i) == len(attributes):
-            return tuple(i)
+            return tuple(i + negative)
 
     if len(l) != 1:
         return None
 
-    return tuple(l[0])
+    return tuple(l[0] + negative)
 
 
 def get_ordered_image_attributes(tag, attributes=(), sort=None):

@@ -66,6 +66,10 @@ into the game directory.
 presplash.png
     The image that's used when the game is loading.
 
+This will only work on computer platforms, not on android, ios or web.
+For the android platform, see :ref:`android-presplash`, and for the web,
+see :ref:`Web Presplash <web-presplash>`.
+
 The :var:`config.minimum_presplash_time` variable sets a minimum time the
 presplash is shown for.
 
@@ -121,3 +125,13 @@ how things could look below:
 
         An slightly more elaborate example of how the progress bar foreground
         could look.
+
+Mobile and Web Presplash Screens
+--------------------------------
+
+The Android, iOS, and Web platforms have their own presplash screens. These
+are documented elsewhere:
+
+* Android :ref:`android-presplash`
+* iOS :ref:`ios-storyboard`
+* Web :ref:`web-presplash`

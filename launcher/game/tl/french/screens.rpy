@@ -450,7 +450,7 @@
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."
-    new "Active ou désactives les «sauts des dialogues»."
+    new "Active ou désactive les «sauts des dialogues»."
 
     # screens.rpy:1027
     old "Page Up"
@@ -719,3 +719,15 @@
     # gui/game/screens.rpy:1049
     old "Opens the accessibility menu."
     new "Ouvre le menu d'accessibilité."
+
+    # gui/game/screens.rpy:1397
+    old "## Bubble screen"
+    new "## Screen des bulles"
+
+    # gui/game/screens.rpy:1399
+    old "## The Bubble screen is used to display dialogue to the player when using speech bubbles. The Bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    new "## Le screen des bulles est utilisé pour afficher des dialogues en utilisant des bulles. Ce screen prend les mêmes paramètres que le screen say, doit prévoir un displayable avec l'id \"what\", et peut créer des displayables avec les ids \"namebox\", \"who\", et \"window\"."
+
+    # gui/game/screens.rpy:1404
+    old "## https://www.renpy.org/doc/html/screen_special.html#bubble"
+    new "## https://www.renpy.org/doc/html/screen_special.html#bubble"

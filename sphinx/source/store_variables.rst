@@ -33,6 +33,8 @@ and rolled-back when rollback occurs.
     when the current cursor does not exist, or is the default. This is used by
     :var:`config.mouse` and :func:`MouseDisplayable`.
 
+    See :doc:`mouse` for more information.
+
 .. var:: _dismiss_pause = True
 
     If True, the player can dismiss pauses and transitions.
@@ -50,7 +52,7 @@ and rolled-back when rollback occurs.
 .. var:: _history = True
 
     If true, Ren'Py will record dialogue history when a line is shown. (Note
-    that :var:`config.history_list_length` must be set as well.)
+    that :var:`config.history_length` must be set as well.)
 
 .. var:: _history_list = [ ]
 
@@ -78,8 +80,8 @@ and rolled-back when rollback occurs.
 .. var:: menu = renpy.display_menu
 
     The function that's called to display the in-game menu. It should take the same
-    arguments as :func:`renpy.display_menu`. Assigning :func:`nvl_menu` to this
-    will display an nvl-mode menu.
+    arguments as :func:`renpy.display_menu`, and pass unknown keyword arguments
+    unchanged. Assigning :func:`nvl_menu` to this will display an nvl-mode menu.
 
 .. var:: mouse_visible = True
 

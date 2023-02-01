@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,6 +26,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import sys
 import os
+import re
 import subprocess
 
 import pygame_sdl2 as pygame
@@ -52,6 +53,9 @@ root = None
 
 # The text of the last displayable.
 last = ""
+
+# The text of the last displayable, before config.tts_dictionary was applied.
+last_raw = ""
 
 # The speech synthesis process.
 process = None
@@ -143,20 +147,58 @@ def default_tts_function(s):
         except Exception:
             pass
 
+# A List of (regex, string) pairs.
+tts_substitutions = [ ]
+
+def init():
+    """
+    Initializes the TTS system. This is called automatically by ts, below.
+    """
+
+    for pattern, replacement in renpy.config.tts_substitutions:
+
+        if isinstance(pattern, basestring):
+            pattern = r'\b' + re.escape(pattern) + r'\b'
+            pattern = re.compile(pattern, re.IGNORECASE)
+            replacement = re.escape(replacement)
+
+
+        tts_substitutions.append((pattern, replacement))
+
+
+def apply_substitutions(s):
+    """
+    Applies the TTS dictionary to `s`, returning the result.
+    """
+
+    def replace(m):
+        old = m.group(0)
+        if old.istitle():
+            template = replacement.title()
+        elif old.isupper():
+            template = replacement.upper()
+        elif old.islower():
+            template = replacement.lower()
+        else:
+            template = replacement
+
+        return m.expand(template)
+
+    for pattern, replacement in tts_substitutions:
+        s = pattern.sub(replace, s)
+
+    return s
+
 
 def tts(s):
     """
-    Speaks the queued messages using the specified function.
+    Causes `s` to be spoken.
     """
-
-    global queue
 
     try:
         renpy.config.tts_function(s)
     except Exception:
         pass
-
-    queue = [ ]
 
 
 def speak(s, translate=True, force=False):
@@ -189,6 +231,7 @@ def displayable(d):
 
     global old_self_voicing
     global last
+    global last_raw
 
     self_voicing = renpy.game.preferences.self_voicing
 
@@ -228,6 +271,9 @@ def displayable(d):
             else:
                 d = root
 
-    if s != last:
+
+    if s != last_raw:
+        last_raw = s
+        s = apply_substitutions(s)
         last = s
         tts(prefix + s)

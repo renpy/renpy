@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -804,7 +804,10 @@ def register_channel(name,
     queue statements.
 
     `name`
-        The name of the channel.
+        The name of the channel. It should not contain spaces, as this is reserved
+        for Ren'Py's internal use, and should be a
+        `valid identifier <https://docs.python.org/reference/lexical_analysis.html#identifiers>`__
+        for the syntax of the :ref:`play-statement` to be usable.
 
     `mixer`
         The name of the mixer the channel uses. By default, Ren'Py knows about
@@ -989,14 +992,16 @@ def init():
 
         periodic_thread_quit = False
 
-        periodic_thread = threading.Thread(target=periodic_thread_main)
-        periodic_thread.daemon = True
-        periodic_thread.start()
+        if not renpy.emscripten:
+            periodic_thread = threading.Thread(target=periodic_thread_main)
+            periodic_thread.daemon = True
+            periodic_thread.start()
+        else:
+            periodic_thread = None
 
 
 def quit(): # @ReservedAssignment
 
-    global periodic_thread
     global periodic_thread_quit
 
     global pcm_ok
@@ -1247,7 +1252,7 @@ def autoreload(_fn):
     renpy.exports.restart_interaction()
 
 
-global_pause = False
+global_pause = 0
 
 
 def pause_all():
@@ -1256,10 +1261,11 @@ def pause_all():
     """
 
     global global_pause
-    global_pause = True
+    global_pause += 1
 
-    periodic()
-
+    for c in all_channels:
+        c.pause()
+        c.paused = True
 
 def unpause_all():
     """
@@ -1267,7 +1273,8 @@ def unpause_all():
     """
 
     global global_pause
-    global_pause = False
+    if global_pause > 0:
+        global_pause -= 1
 
     periodic()
 

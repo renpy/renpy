@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,7 +29,14 @@ default bubble.current_dialogue = [ ]
 
 init -1050 python in bubble:
 
-    from store import config, ADVCharacter, Character, JSONDB, Action, Frame
+    from store import config, ADVCharacter, Character, JSONDB, Action, Frame, NoRollback
+
+    # This gets set to true if at least one character that uses a speech bubble has been defined.
+    active = False
+
+    # This becomes true when the screen is shown.
+    shown = NoRollback()
+    shown.value = False
 
     # The path to the json file the bubble database is stored in.
     db_filename = "bubble.json"
@@ -90,7 +97,10 @@ init -1050 python in bubble:
             if self.image_tag is None:
                 raise Exception("BubbleCharacter require an image tag (the image='...' parameter).")
 
+            global active
             global db
+
+            active = True
 
             if db is None and open_db:
                 db = JSONDB(db_filename)
@@ -256,63 +266,70 @@ init 1050 python hide:
             for i in v:
                 try:
                     json.dumps(i)
-                except:
+                except Exception:
                     raise Exception("bubble.properties[{!r}] contains a value that can't be serialized to JSON: {!r}".format(k, i))
+
+        if bubble.active:
+            config.overlay_screens.append("_bubble_editor")
+
 
 
 screen _bubble_editor():
     zorder 1050
 
-    drag:
-        draggable True
-        focus_mask None
-        xpos 0
-        ypos 0
+    if bubble.shown.value:
 
-        frame:
-            style "empty"
-            background "#0004"
-            xpadding 5
-            ypadding 5
-            xminimum 150
+        drag:
+            draggable True
+            focus_mask None
+            xpos 0
+            ypos 0
 
-            vbox:
-                hbox:
-                    spacing gui._scale(5)
+            frame:
+                style "empty"
+                background "#0004"
+                xpadding 5
+                ypadding 5
+                xminimum 150
 
-                    text _("Speech Bubble Editor"):
-                        style "_default"
-                        color "#fff"
-                        size gui._scale(14)
-
-                    textbutton _("(hide)"):
-                        style "_default"
-                        action Hide()
-                        text_color "#ddd"
-                        text_hover_color "#fff"
-                        text_size gui._scale(14)
-
-                null height gui._scale(5)
-
-                for image_tag, properties in bubble.GetCurrentDialogue():
-
+                vbox:
                     hbox:
                         spacing gui._scale(5)
 
-                        text "[image_tag!q]":
+                        text _("Speech Bubble Editor"):
                             style "_default"
                             color "#fff"
                             size gui._scale(14)
 
-                        for prop, action in properties:
-                            textbutton "[prop!q]":
+                        textbutton _("(hide)"):
+                            style "_default"
+                            action SetField(bubble.shown, "value", False)
+                            selected False
+                            text_color "#ddd8"
+                            text_hover_color "#fff"
+                            text_size gui._scale(14)
+
+                    null height gui._scale(5)
+
+                    for image_tag, properties in bubble.GetCurrentDialogue():
+
+                        hbox:
+                            spacing gui._scale(5)
+
+                            text "[image_tag!q]":
                                 style "_default"
-                                action action
-                                alternate action.alternate
-                                text_color "#ddd8"
-                                text_selected_idle_color "#ddd"
-                                text_hover_color "#fff"
-                                text_size gui._scale(14)
+                                color "#fff"
+                                size gui._scale(15)
+
+                            for prop, action in properties:
+                                textbutton "[prop!q]":
+                                    style "_default"
+                                    action action
+                                    alternate action.alternate
+                                    text_color "#ddd8"
+                                    text_selected_idle_color "#ddd"
+                                    text_hover_color "#fff"
+                                    text_size gui._scale(15)
 
 
 screen _bubble_window_area_editor(action):

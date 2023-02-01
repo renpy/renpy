@@ -60,6 +60,8 @@ can then change it again.)
     the current language. The :func:`Language` action can be used to change
     the language.
 
+    See :doc:`translation` for more information.
+
 .. var:: preferences.emphasize_audio = False
 
     If True, Ren'Py will emphasize the audio channels found in :var:`config.emphasize_audio_channels`
@@ -157,6 +159,27 @@ can then change it again.)
     and resumed when the window is restored. If True, window state will
     have no effect on audio.
     The equivalent of the "audio when minimized" preference.
+
+.. var:: preferences.audio_when_unfocused = True
+
+    If False, audio channels are stopped when the window loses keyboard focus,
+    and resumed when the window regains keyboard focus. If True, keyboard focus
+    will have no effect on audio.
+    The equivalent of the "audio when unfocused" preference.
+
+.. var:: preferences.web_cache_preload = False
+
+    If True the game files will be loaded into the web browser's cache,
+    allowing the game to be played offline. If False, the game files will
+    not be loaded into the web browser's cache, and the game will require
+    internet access to play.
+    The equivalent of the "web cache preload" preference.
+
+.. var:: preferences.voice_after_game_menu = False
+
+    If True, voice will continue playing after the game menu is shown. If False,
+    voice will be stopped when the game menu is shown. The equivalent of the
+    "voice after menu" preference.
 
 Mixer Functions
 ---------------

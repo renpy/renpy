@@ -51,17 +51,6 @@ be accessed using the button in the bottom right of the install libraries
 screen. Then click "Install Live2D Cubism SDK for Native". After a short
 amount of time, Live2D will be installed.
 
-Opt in to GL2
--------------
-
-To use Live2D, you'll need to opt in to the Model-based renderer, by adding
-the line::
-
-    define config.gl2 = True
-
-to your game. This has to be done once per game.
-
-
 Defining Animations
 -------------------
 

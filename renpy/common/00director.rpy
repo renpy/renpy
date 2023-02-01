@@ -1065,6 +1065,9 @@ init python in director:
                 state.attributes.remove(self.attribute)
             else:
 
+                if "-" + self.attribute in state.attributes:
+                    state.attributes.remove("-" + self.attribute)
+
                 state.attributes.append(self.attribute)
 
                 compatible = set()
@@ -1072,12 +1075,35 @@ init python in director:
                 for i in renpy.get_ordered_image_attributes(state.tag, [ self.attribute ]):
                     compatible.add(i)
 
-                state.attributes = [ i for i in state.attributes if i in compatible ]
+                state.attributes = [ i for i in state.attributes if i in compatible or i.startswith("-")]
 
             update_ast()
 
         def get_selected(self):
             return self.attribute in state.attributes
+
+    class ToggleNegativeAttribute(Action):
+        """
+        This action toggles on and off a negative attribute.
+        Then the AST is updated.
+        """
+
+        def __init__(self, attribute):
+
+            self.attribute = attribute
+            self.negative = "-" + attribute
+
+        def __call__(self):
+            if self.negative in state.attributes:
+                state.attributes.remove(self.negative)
+            else:
+
+                if self.attribute in state.attributes:
+                    state.attributes.remove(self.attribute)
+
+                state.attributes.append(self.negative)
+
+            update_ast()
 
 
     class SetList(Action):
@@ -1713,8 +1739,13 @@ screen director_attributes(state):
             for t in director.get_attributes():
                 textbutton "[t]":
                     action director.ToggleAttribute(t)
+                    alternate director.ToggleNegativeAttribute(t)
                     style "director_button"
                     ypadding 0
+
+        null height 14
+
+        text _("Click to toggle attribute, right click to toggle negative attribute.")
 
         use director_footer(state)
 
@@ -1735,6 +1766,10 @@ screen director_transform(state):
                     style "director_button"
                     ypadding 0
 
+        null height 14
+
+        text _("Click to set transform, right click to add to transform list.")
+
         use director_footer(state)
 
 
@@ -1753,6 +1788,8 @@ screen director_behind(state):
                     alternate director.ToggleList(state.behind, t)
                     style "director_button"
                     ypadding 0
+
+        text _("Click to set, right click to add to behind list.")
 
         use director_footer(state)
 

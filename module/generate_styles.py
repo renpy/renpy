@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -275,11 +275,11 @@ property_priority = sorted_dict(
 )
 
 # A list of synthetic style properties, where each property is expanded into
-# multiple style properties. Each property are mapped into a list of tuples,
+# multiple style properties. Each property is mapped into a list of tuples,
 # with each consisting of:
 #
-# * The name of the style to assign.
-# * A string giving the name of a functon to call to get the value to assign, a constant
+# * The name of the style property to assign.
+# * A string giving the name of a function to call to get the value to assign, a constant
 #   numeric value, or None to not change the argument.
 synthetic_properties = sorted_dict(
 
@@ -419,6 +419,13 @@ synthetic_properties = sorted_dict(
 
     ycenter=[
         ('ypos', None),
+        ('yanchor', 0.5),
+        ],
+
+    xycenter=[
+        ('xpos', 'index_0'),
+        ('ypos', 'index_1'),
+        ('xanchor', 0.5),
         ('yanchor', 0.5),
         ],
     )

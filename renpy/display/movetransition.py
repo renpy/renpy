@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -83,7 +83,7 @@ def MoveIn(pos, pos1, delay, d, **kwargs):
             return b
         return a
 
-    pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
+    pos = tuple(aorb(a, b) for a, b in zip(pos, pos1))
     return renpy.display.motion.Move(pos, pos1, delay, d, **kwargs)
 
 
@@ -94,7 +94,7 @@ def MoveOut(pos, pos1, delay, d, **kwargs):
             return b
         return a
 
-    pos = tuple([aorb(a, b) for a, b in zip(pos, pos1)])
+    pos = tuple(aorb(a, b) for a, b in zip(pos, pos1))
     return renpy.display.motion.Move(pos1, pos, delay, d, **kwargs)
 
 
@@ -240,13 +240,13 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
             return rv
 
         def entering(sle):
-            new_d = wrap(new_sle)
+            new_d = wrap(sle)
             move = enter_factory(position(new_d), delay, new_d, **offsets(new_d))
 
             if move is None:
                 return
 
-            rv_sl.append(merge(new_sle, move))
+            rv_sl.append(merge(sle, move))
 
         def leaving(sle):
             old_d = wrap(sle)
@@ -256,7 +256,7 @@ def OldMoveTransition(delay, old_widget=None, new_widget=None, factory=None, ent
                 return
 
             move = renpy.display.layout.IgnoresEvents(move)
-            rv_sl.append(merge(old_sle, move))
+            rv_sl.append(merge(sle, move))
 
         def moving(old_sle, new_sle):
             old_d = wrap(old_sle)
@@ -449,7 +449,7 @@ class MoveInterpolate(renpy.display.core.Displayable):
 def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=None, old=False, layers=[ 'master' ], time_warp=None, enter_time_warp=None, leave_time_warp=None):
     """
     :doc: transition function
-    :args: (delay, enter=None, leave=None, old=False, layers=['master'], time_warp=None, enter_time_warp=None, leave_time_warp=None)
+    :args: (delay, *, enter=None, leave=None, old=False, layers=['master'], time_warp=None, enter_time_warp=None, leave_time_warp=None)
     :name: MoveTransition
 
     Returns a transition that interpolates the position of images (with the
@@ -563,9 +563,9 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
             if not enter:
                 return
 
-            new_d = wrap(new_sle)
-            move = MoveInterpolate(delay, enter(new_d), new_d, False, enter_time_warp)
-            rv_sl.append(merge(new_sle, move))
+            new_d = wrap(sle)
+            move = MoveInterpolate(delay, renpy.store.At(new_d, enter), new_d, False, enter_time_warp)
+            rv_sl.append(merge(sle, move))
 
         def leaving(sle):
 
@@ -573,9 +573,9 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
                 return
 
             old_d = wrap(sle)
-            move = MoveInterpolate(delay, old_d, leave(old_d), True, leave_time_warp)
+            move = MoveInterpolate(delay, old_d, renpy.store.At(old_d, leave), True, leave_time_warp)
             move = renpy.display.layout.IgnoresEvents(move)
-            rv_sl.append(merge(old_sle, move))
+            rv_sl.append(merge(sle, move))
 
         def moving(old_sle, new_sle):
 

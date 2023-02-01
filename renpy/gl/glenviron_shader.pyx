@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -299,7 +299,7 @@ def compile_shader(kind, source):
     cdef int lensource = len(source)
 
     handle = glCreateShader(kind)
-    glShaderSource(handle, 1, <GLchar **> &sourceptr, &lensource)
+    glShaderSource(handle, 1, <const GLchar * const *> &sourceptr, &lensource)
     glCompileShader(handle)
 
     check_status(True, handle, GL_COMPILE_STATUS)

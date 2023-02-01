@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -150,7 +150,7 @@ class MultipleTransition(Transition):
 
             self.transitions.append(trans(old_widget=old, new_widget=new))
 
-        super(MultipleTransition, self).__init__(sum([i.delay for i in self.transitions]), **properties)
+        super(MultipleTransition, self).__init__(sum(i.delay for i in self.transitions), **properties)
 
         self.new_widget = self.transitions[-1]
         self.events = False
@@ -320,7 +320,7 @@ class Pixellate(Transition):
 class Dissolve(Transition):
     """
     :doc: transition function
-    :args: (time, alpha=False, time_warp=None, **properties)
+    :args: (time, *, alpha=False, time_warp=None, **properties)
     :name: Dissolve
 
     Returns a transition that dissolves from the old scene to the new scene.
@@ -411,7 +411,7 @@ class Dissolve(Transition):
 class ImageDissolve(Transition):
     """
     :doc: transition function
-    :args: (image, time, ramplen=8, reverse=False, alpha=True, time_warp=None, **properties)
+    :args: (image, time, ramplen=8, *, reverse=False, time_warp=None, **properties)
     :name: ImageDissolve
 
     Returns a transition that dissolves the old scene into the new scene, using
@@ -419,8 +419,7 @@ class ImageDissolve(Transition):
     dissolve in first, and black pixels will dissolve in last.
 
     `image`
-        A control image to use. If `config.gl2` is True, then this can be any displayable,
-        else it needs to be either an image file or an image manipulator. The control image
+        The control image. This can be any displayable. It
         should be the size of the scenes being dissolved, and if `reverse=True`,
         it should be fully opaque.
 
@@ -435,9 +434,6 @@ class ImageDissolve(Transition):
 
     `reverse`
         If True, black pixels will dissolve in before white pixels.
-
-    `alpha`
-        Ignored.
 
     `time_warp`
         A function that adjusts the timeline. If not None, this should be a
@@ -601,7 +597,7 @@ class ImageDissolve(Transition):
 class AlphaDissolve(Transition):
     """
     :doc: transition function
-    :args: (control, delay=0.0, alpha=False, reverse=False, **properties)
+    :args: (control, delay=0.0, *, reverse=False, **properties)
 
     Returns a transition that uses a control displayable (almost always some
     sort of animated transform) to transition from one screen to another. The
@@ -613,9 +609,6 @@ class AlphaDissolve(Transition):
 
     `delay`
         The time the transition takes, before ending.
-
-    `alpha`
-        Ignored.
 
     `reverse`
         If true, the alpha channel is reversed. Opaque areas are taken
@@ -698,8 +691,8 @@ class AlphaDissolve(Transition):
 
 
 def interpolate_tuple(t0, t1, time, scales):
-    return tuple([ round(s * (a * (1.0 - time) + b * time))
-                    for a, b, s in zip(t0, t1, scales) ])
+    return tuple(round(s * (a * (1.0 - time) + b * time))
+                    for a, b, s in zip(t0, t1, scales))
 
 class CropMove(Transition):
     """
@@ -784,15 +777,15 @@ class CropMove(Transition):
     """
 
     def __init__(self, time,
-                 mode="slideright",
-                 startcrop=(0.0, 0.0, 0.0, 1.0),
-                 startpos=(0.0, 0.0),
-                 endcrop=(0.0, 0.0, 1.0, 1.0),
-                 endpos=(0.0, 0.0),
-                 topnew=True,
-                 old_widget=None,
-                 new_widget=None,
-                 **properties):
+                       mode="slideright",
+                       startcrop=(0.0, 0.0, 0.0, 1.0),
+                       startpos=(0.0, 0.0),
+                       endcrop=(0.0, 0.0, 1.0, 1.0),
+                       endpos=(0.0, 0.0),
+                       topnew=True,
+                       old_widget=None,
+                       new_widget=None,
+                       **properties):
 
         super(CropMove, self).__init__(time, **properties)
         self.time = time

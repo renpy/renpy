@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -28,8 +28,6 @@ import os
 import sys
 import subprocess
 import io
-
-import __main__
 
 # Encoding and sys.stderr/stdout handling ######################################
 
@@ -196,7 +194,7 @@ def bootstrap(renpy_base):
         if not os.path.exists(basedir + "/game"):
             os.mkdir(basedir + "/game", 0o777)
 
-    gamedir = __main__.path_to_gamedir(basedir, name)
+    gamedir = renpy.__main__.path_to_gamedir(basedir, name)
 
     sys.path.insert(0, basedir)
 
@@ -305,7 +303,6 @@ You may be using a system install of python. Please run {0}.sh,
 
             except Exception as e:
                 renpy.error.report_exception(e)
-                pass
 
         sys.exit(exit_status)
 

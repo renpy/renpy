@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -35,7 +35,7 @@ Color = renpy.color.Color
 color = renpy.color.Color
 
 if PY2:
-    from collections import Iterable
+    from collections import Iterable # type: ignore
 else:
     from collections.abc import Iterable
 

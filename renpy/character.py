@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -304,7 +304,6 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
             layer = renpy.config.say_layer
 
         tag = screen
-        index = 0
 
         if multiple:
 
@@ -553,7 +552,7 @@ def display_say(
             # If we're going to do an interaction, then saybehavior needs
             # to be here.
             if advance:
-                behavior = renpy.ui.saybehavior(allow_dismiss=renpy.config.say_allow_dismiss)
+                behavior = renpy.ui.saybehavior(allow_dismiss=renpy.config.say_allow_dismiss, dialogue_pause=delay)
             else:
                 behavior = None
 
@@ -1314,8 +1313,13 @@ class ADVCharacter(object):
 
             dtt = DialogueTextTags(what)
 
-            # Now, display the dialogue.
+            if renpy.config.history_current_dialogue:
+                self.add_history("current", who, what, multiple=multiple)
+
             self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
+
+            if renpy.config.history_current_dialogue:
+                self.pop_history()
 
             # Indicate that we're done.
             if _call_done and not dtt.has_done:

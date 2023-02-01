@@ -925,7 +925,7 @@
 
     # preferences.rpy:174
     old "Show edit file section"
-    new "Afficher la section d’édition de fichier"
+    new "Afficher la section d’édition de fichiers"
 
     # preferences.rpy:175
     old "Large fonts"
@@ -933,11 +933,11 @@
 
     # preferences.rpy:178
     old "Console output"
-    new "Sortie console"
+    new "Console de sortie"
 
     # preferences.rpy:199
     old "Open launcher project"
-    new "Ouvrir le projet lanceur"
+    new "Ouvrir le projet du lanceur"
 
     # preferences.rpy:213
     old "Language:"
@@ -2074,3 +2074,15 @@
     # game/preferences.rpy:327
     old "{#in language font}Start using Ren'Py in [lang_name]"
     new "{font=fonts/Roboto-Light.ttf}Commencez à utiliser Ren'Py en [lang_name]{/font}"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    new "Lint vérifie votre jeu pour des erreurs communes, et génère des statistiques."
+
+    # game/web.rpy:484
+    old "Creating package..."
+    new "Création du package..."

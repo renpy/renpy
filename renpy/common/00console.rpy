@@ -439,8 +439,15 @@ init -1500 python in _console:
             if self.result is None:
                 return
 
-            lines = self.result.split("\n")
-            lines = lines[-config.console_history_lines:]
+            lines = self.result
+            if len(lines) > config.console_history_lines * 160:
+                lines = "…" + self.result[-config.console_history_lines * 160:]
+
+            lines = lines.split("\n")
+
+            if len(lines) > config.console_history_lines:
+                lines = [ "…" ] + lines[-config.console_history_lines:]
+
             self.result = "\n".join(lines)
             self.lines = len(lines)
 
@@ -606,7 +613,8 @@ init -1500 python in _console:
                 return
 
             lines = self.lines
-            self.line_history.append(lines)
+            if not self.line_history or self.line_history[-1] != lines:
+                self.line_history.append(lines)
 
             self.reset()
 
@@ -780,7 +788,12 @@ init -1500 python in _console:
 
     @command(_("help: show this help\n help <expr>: show signature and documentation of <expr>"))
     def help(l, doc_generate=False):
-        rest = l.rest_statement()
+
+        if l is not None:
+            rest = l.rest_statement()
+        else:
+            rest = None
+
         if rest and rest in globals():
             try:
                 result = globals()[rest].help + "\n"

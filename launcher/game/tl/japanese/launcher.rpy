@@ -669,7 +669,7 @@
 
     # ios.rpy:37
     old "Creates an Xcode project corresponding to the current Ren'Py project."
-    new "現在の Ren'PY プロジェクトに対応する Xcode プロジェクトを作成します。"
+    new "現在の Ren'Py プロジェクトに対応する Xcode プロジェクトを作成します。"
 
     # ios.rpy:38
     old "Updates the Xcode project with the latest game files. This must be done each time the Ren'Py project changes."

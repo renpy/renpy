@@ -3718,6 +3718,7 @@ and allows side images to be integrated with screens easily.
 or ATL block will now continue the previous transform that an image with that
 tag was using. Previously, it caused those transforms to stop.
 
+
 Error Handling
 --------------
 
@@ -3826,6 +3827,10 @@ Android support required several changes in Ren'Py:
   Ren'Py. This allows one to build packages without having to set up the
   Android NDK (you'll still need the Android SDK, Java, Python, Ant, and a
   lot of patience).
+
+Ren'Py also now creates a number of binary modules that live in the
+renpy.display package. As long as they go in the same place as
+_renpy.so, they should be picked up automatically.
 
 
 New Widgets and Displayables
@@ -4076,6 +4081,13 @@ Ren'Py 6.11.0
 
 OpenGL Support
 --------------
+
+Ren'Py now depends on:
+
+* Python 2.6
+* OpenGL
+* The GL Extension Wrangler Library: http://glew.sourceforge.net/
+* The argparse Python module: http://code.google.com/p/argparse/
 
 Ren'Py will now take advantage of a computer's OpenGL hardware acceleration,
 if supported. This OpenGL support has several user-visible changes:

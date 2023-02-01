@@ -169,12 +169,10 @@ class IOSVideoChannel(object):
     def pause(self):
         if self.player is not None:
             self.player.pause()
-        pass
 
     def unpause(self):
         if self.player is not None:
             self.player.unpause()
-        pass
 
     def set_volume(self, volume):
         pass

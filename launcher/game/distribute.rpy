@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -401,7 +401,10 @@ change_renpy_executable()
             for f in sorted(self, key=lambda a : a.name):
                 f.hash(sha, distributor)
 
-            return sha.hexdigest()
+            if PY2:
+                return sha.hexdigest().decode("utf-8")
+            else:
+                return sha.hexdigest()
 
         def split_by_prefix(self, prefix):
             """
@@ -969,6 +972,7 @@ change_renpy_executable()
                 CFBundleDisplayName=display_name,
                 CFBundleExecutable=executable_name,
                 CFBundleIconFile="icon",
+                CFBundleIdentifier="com.domain.game",
                 CFBundleInfoDictionaryVersion="6.0",
                 CFBundleName=display_name,
                 CFBundlePackageType="APPL",
@@ -1456,7 +1460,7 @@ change_renpy_executable()
 
             if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
 
-                with open(update_fn, "w") as f:
+                with open(update_fn, "wb" if PY2 else "w") as f:
                     json.dump(update, f, indent=2)
 
                 if (not dlc) or (format == "update"):
@@ -1596,7 +1600,7 @@ change_renpy_executable()
                     add_variant(p["name"])
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
-            with open(fn, "w") as f:
+            with open(fn, "wb" if PY2 else "w") as f:
                 json.dump(index, f, indent=2)
 
 

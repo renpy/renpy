@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -97,7 +97,7 @@ class LineLogEntry(object):
     def __init__(self, filename, line, node, abnormal):
         self.filename = filename
         self.line = line
-        self.node = node
+        self.node_name = node.name
         self.abnormal = abnormal
 
         for i in renpy.config.line_log_callbacks:
@@ -107,10 +107,14 @@ class LineLogEntry(object):
         if not isinstance(other, LineLogEntry):
             return False
 
-        return (self.filename == other.filename) and (self.line == other.line) and (self.node is other.node)
+        return (self.filename == other.filename) and (self.line == other.line) and (self.node_name is other.node_name)
 
     def __ne__(self, other):
         return not (self == other)
+
+    @property
+    def node(self):
+        return renpy.game.script.lookup(self.node_name)
 
 
 class Context(renpy.object.Object):
@@ -585,7 +589,7 @@ class Context(renpy.object.Object):
                     if developer and self.next_node:
                         self.check_stacks()
 
-                except renpy.game.CONTROL_EXCEPTIONS as e:
+                except renpy.game.CONTROL_EXCEPTIONS:
 
                     # An exception ends the current translation.
                     self.translate_interaction = None
@@ -612,7 +616,7 @@ class Context(renpy.object.Object):
                                 raise
                     except renpy.game.CONTROL_EXCEPTIONS as ce:
                         raise ce
-                    except Exception as ce:
+                    except Exception:
                         reraise(exc_info[0], exc_info[1], exc_info[2])
 
                 node = self.next_node
@@ -943,10 +947,10 @@ def run_context(top):
 
             return rv
 
-        except renpy.game.RestartContext as e:
+        except renpy.game.RestartContext:
             continue
 
-        except renpy.game.RestartTopContext as e:
+        except renpy.game.RestartTopContext:
             if top:
                 continue
 
