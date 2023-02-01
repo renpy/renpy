@@ -219,3 +219,7 @@
     # renpy/common/00console.rpy:805
     old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
     new "La ayuda puede mostrar funciones no documentadas. Por favor, compruebe que la función o\nclase que desea utilizar está documentada.\n\n"
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    new "Visor de datos persistentes"
