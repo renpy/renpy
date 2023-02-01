@@ -1664,13 +1664,23 @@ def release_deferred_errors():
     be added here to determine which should be released.
     """
 
+    # remove the given queue from the list of deferred errors
+    pop = deferred_parse_errors.pop
+
     def release(queue):
-        parse_errors.extend(deferred_parse_errors[queue])
+        """
+        Trigger the specified deferred as parse errors.
+        """
+        parse_errors.extend(pop(queue))
 
     # Unconditionally releases the deferred_test queue.
     release("deferred_test")
 
-    deferred_parse_errors.clear()
+    # Unconditionally ignores the deferred_experimentation
+    pop("deferred_experimentation")
+
+    if deferred_parse_errors:
+        raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))
 
 
 def get_parse_errors():
