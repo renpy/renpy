@@ -1662,10 +1662,16 @@ def release_deferred_errors():
     Determine which deferred errors should be released, and adds them to  the
     parse_errors list. As new kinds of deferred errors are added, logic should
     be added here to determine which should be released.
+
+    Logic should only depend on early config variables - marked as such
+    in ast.EARLY_CONFIG.
     """
 
-    # remove the given queue from the list of deferred errors
-    pop = deferred_parse_errors.pop
+    def pop(queue):
+        """
+        Remove the given queue from the list of deferred errors
+        """
+        return deferred_parse_errors.pop(queue, ())
 
     def release(queue):
         """
