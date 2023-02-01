@@ -50,8 +50,10 @@ to the displayable::
         text "Hello, World" style "big"
 
 When no ``style`` property is given, a parent is chosen based on the kind of
-displayable be that has been supplied. The parent chosen can be influenced
-by the :ref:`style_prefix <style-prefix>` property of user interface statements
+displayable that has been supplied. For example, buttons (including imagebuttons
+and textbuttons) default to the "button" style, grids to the "grid" style, and
+so on. The parent choice can be influenced by the
+:ref:`style_prefix <style-prefix>` property of user interface statements
 in the screen language.
 
 When a style is defined without a parent being specified, a default
@@ -113,7 +115,8 @@ The style statement accepts the following clauses:
 ``clear``
     Removes all properties of this style that were assigned before
     this style statement was run. This does not prevent the style
-    from inheriting property values from its parents.
+    from inheriting property values from its parents, and does not change its
+    parent. To clear the parent of a style, use ``is default`` instead.
 
 ``take`` `style-name`
     Clears all properties of this style that were assigned before
@@ -147,8 +150,12 @@ Examples of style statements are::
         variant "touch"
         take big_red
 
-Style statements are always run at init time. If a style statement is not
-in an ``init`` block, it is automatically placed into an ``init 0`` block.
+    # Style a has all the properties of style c, except that when not present
+    # in c, the properties are taken from b or b's parents.
+    style a is b:
+        take c
+
+Style statements are always run at :ref:`init time <init-phase>`.
 
 
 Defining Styles: Python
