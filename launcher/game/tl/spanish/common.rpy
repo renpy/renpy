@@ -801,3 +801,91 @@ translate spanish strings:
     # renpy/common/00webvideo.rpy:5
     old "Touch to play the video."
     new "Toca aquí para reproducir el video."
+
+    # renpy/common/00director.rpy:1748
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    new "Clic para cambiar el atributo, Clic derecho para cambiar el atributo a negativo."
+
+    # renpy/common/00director.rpy:1771
+    old "Click to set transform, right click to add to transform list."
+    new "Clic para establecer la transformación, clic derecho para añadir a la lista de transformaciones."
+
+    # renpy/common/00director.rpy:1792
+    old "Click to set, right click to add to behind list."
+    new "Clic para fijar, clic derecho para añadir a detrás de la lista."
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    new "audio cuando no está enfocado"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    new "voz después de un menú del juego"
+
+    # renpy/common/00sync.rpy:58
+    old "Sync downloaded."
+    new "Sincronización descargada"
+
+    # renpy/common/00sync.rpy:178
+    old "Could not connect to the Ren'Py Sync server."
+    new "No se pudo conectar al servidor Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:180
+    old "The Ren'Py Sync server timed out."
+    new "Se agotó el tiempo de espera del servidor Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:182
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    new "Se produjo un error desconocido al conectarse al servidor Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:255
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    new "El servidor Ren'Py Sync no tiene una copia de esta sincronización. Es posible que el ID de sincronización no sea válido o que se haya agotado el tiempo de espera."
+
+    # renpy/common/00sync.rpy:397
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    new "Ingresa la ID de sincronización SI que generaste.\nNunca ingreses una ID de sincronización que no creaste."
+
+    # renpy/common/00sync.rpy:416
+    old "The sync ID is not in the correct format."
+    new "El ID de sincronización no tiene el formato correcto."
+
+    # renpy/common/00sync.rpy:436
+    old "The sync could not be decrypted."
+    new "No se pudo descifrar la ID de sincronización."
+
+    # renpy/common/00sync.rpy:459
+    old "The sync belongs to a different game."
+    new "La sincronización pertenece a un juego diferente."
+
+    # renpy/common/00sync.rpy:464
+    old "The sync contains a file with an invalid name."
+    new "La sincronización contiene un archivo con un nombre no válido."
+
+    # renpy/common/00sync.rpy:517
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    new "Esto cargará tus archivos guardados en el {a=https://sync.renpy.org}Servidor Ren'Py Sync{/a}..\n¿Quieres continuar?"
+
+    # renpy/common/00sync.rpy:546
+    old "Enter Sync ID"
+    new "Ingrese ID de Sync"
+
+    # renpy/common/00sync.rpy:557
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    new "Esto contactará con el {a=https://sync.renpy.org}Servidor Ren'Py Sync{/a}."
+
+    # renpy/common/00sync.rpy:584
+    old "Sync Success"
+    new "Sincronización exitosa"
+
+    # renpy/common/00sync.rpy:587
+    old "The Sync ID is:"
+    new "El ID de Sync es:"
+
+    # renpy/common/00sync.rpy:593
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    new "Puede usar esta ID para descargar su guardado en otro dispositivo.\nEsta sincronización caducará en una hora.\RenPy Sync está para {a=https://www.renpy.org/sponsors.html}los patrocinadores de Ren'Py{/a}."
+
+    # renpy/common/00sync.rpy:619
+    old "Sync Error"
+    new "Error de sincronización"
