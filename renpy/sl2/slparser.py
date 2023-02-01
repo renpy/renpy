@@ -289,6 +289,8 @@ class Parser(object):
                 return
 
             expr = l.comma_expression()
+            if expr is None:
+                l.error("the {} keyword argument was not given a value.".format(name))
 
             if (not keyword) and (not renpy.config.keyword_after_python):
                 try:

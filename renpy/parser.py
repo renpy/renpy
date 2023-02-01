@@ -25,12 +25,8 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals # type: ignore
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-
-import codecs
-import re
-import os
+import collections
 import time
-import contextlib
 
 import renpy
 import renpy.ast as ast
@@ -51,6 +47,10 @@ from renpy.lexer import (
 
 # A list of parse error messages.
 parse_errors = [ ]
+
+# A list of deferred parser error. These are potential parse errors that
+# can be released or not when parse errors are reported.
+deferred_parse_errors = collections.defaultdict(list)
 
 ################################################################################
 # Parsing of structures that are less than a full statement.
@@ -1657,15 +1657,45 @@ def parse(fn, filedata=None, linenumber=1):
 
     return rv
 
+def release_deferred_errors():
+    """
+    Determine which deferred errors should be released, and adds them to  the
+    parse_errors list. As new kinds of deferred errors are added, logic should
+    be added here to determine which should be released.
+    """
+
+    # remove the given queue from the list of deferred errors
+    pop = deferred_parse_errors.pop
+
+    def release(queue):
+        """
+        Trigger the specified deferred as parse errors.
+        """
+        parse_errors.extend(pop(queue))
+
+    # Unconditionally releases the deferred_test queue.
+    release("deferred_test")
+
+    # Unconditionally ignores the deferred_experimentation
+    pop("deferred_experimentation")
+
+    if deferred_parse_errors:
+        raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))
+
 
 def get_parse_errors():
     global parse_errors
+
+    release_deferred_errors()
+
     rv = parse_errors
     parse_errors = [ ]
     return rv
 
 
 def report_parse_errors():
+
+    release_deferred_errors()
 
     if not parse_errors:
         return False

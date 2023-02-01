@@ -413,7 +413,7 @@ init -1100 python in _sync:
             return
 
         if not check_sync_id(sync_id):
-            report_error(_("The sync id is not in the correct format."))
+            report_error(_("The sync ID is not in the correct format."))
             return
 
         key, hashed = key_and_hash(sync_id)

@@ -173,11 +173,11 @@ def apply_substitutions(s):
 
     def replace(m):
         old = m.group(0)
-        if old.title() == old:
+        if old.istitle():
             template = replacement.title()
-        elif old.upper() == old:
+        elif old.isupper():
             template = replacement.upper()
-        elif old.lower() == old:
+        elif old.islower():
             template = replacement.lower()
         else:
             template = replacement
