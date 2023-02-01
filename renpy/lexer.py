@@ -907,7 +907,7 @@ class Lexer(object):
         if not raw:
 
             # Collapse runs of whitespace into single spaces.
-            s = re.sub(r'\s+', ' ', s)
+            s = re.sub(r'(\s)\s+', r'\1', s)
             s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
 
         return s
@@ -961,7 +961,6 @@ class Lexer(object):
 
         if not raw:
 
-            # Collapse runs of whitespace into single spaces.
             s = re.sub(r' *\n *', '\n', s)
 
             rv = [ ]
@@ -972,7 +971,8 @@ class Lexer(object):
                 if not s:
                     continue
 
-                s = re.sub(r'\s+', ' ', s)
+                # Collapse runs of whitespace into single spaces.
+                s = re.sub(r'(\s)\s+', r'\1', s)
                 s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
 
                 rv.append(s)
