@@ -1984,9 +1984,9 @@ def parse_atl(l):
                     else:
                         addprop_rv = rm.add_property(prop, expr)
                         if addprop_rv == prop:
-                            ll.error("property {!r} is given a value more than once".format(prop))
+                            ll.deferred_error("check_conflicting_properties", "property {!r} is given a value more than once".format(prop))
                         elif addprop_rv:
-                            ll.error("properties {!r} and {!r} conflict with each other".format(prop, addprop_rv))
+                            ll.deferred_error("check_conflicting_properties", "properties {!r} and {!r} conflict with each other".format(prop, addprop_rv))
 
                     continue
 

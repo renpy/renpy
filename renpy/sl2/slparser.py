@@ -276,7 +276,7 @@ class Parser(object):
                 l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
             incomprop = check_incompatible_props(name, seen_keywords)
             if incomprop:
-                l.error('keyword argument {!r} is incompatible with {!r}.'.format(name, incomprop))
+                l.deferred_error("check_conflicting_properties", 'keyword argument {!r} is incompatible with {!r}.'.format(name, incomprop))
 
             seen_keywords.add(name)
 
