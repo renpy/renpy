@@ -116,7 +116,7 @@ def check_image_attributes(tag, attributes):
     """
 
     negated = [ i[1:] for i in attributes if i[:1] == "-" ]
-    negative = [ "-" + i for i in negated ]
+    negative = tuple("-" + i for i in negated)
     attributes = [ i for i in attributes if i[:1] != "-" ]
 
     l = [ ]
@@ -131,12 +131,12 @@ def check_image_attributes(tag, attributes):
 
             chosen = ca(tag, remainder, None)
             if chosen is not None:
-                l.append(list(attrs) + list(chosen))
+                l.append(attrs + tuple(chosen))
 
         else:
 
             if not remainder:
-                l.append(list(attrs))
+                l.append(attrs)
 
     if negated:
         l = [ i for i in l if not (set(negated) & set(i)) ]
