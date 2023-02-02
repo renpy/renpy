@@ -477,7 +477,7 @@ Here's an example of dismiss being used::
 
             text "This is a very important message.":
                 xalign 0.5
-                text_align 0.5
+                textalign 0.5
 
             # Dismiss can be confusing on its own, so we'll add a button as well.
             textbutton "Dismiss":
