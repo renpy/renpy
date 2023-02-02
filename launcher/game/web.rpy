@@ -79,6 +79,7 @@ init python:
 
             # Videos are never included.
             elif (ext.lower() in ('.ogv', '.webm', '.mp4', '.mkv', '.avi')):
+                self.remote_files[file.name[len('game/'):]] = 'video -'
                 copy_file = True
 
             if not copy_file:
