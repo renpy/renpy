@@ -136,7 +136,7 @@ def check_image_attributes(tag, attributes):
         else:
 
             if not remainder:
-                l.append(attrs)
+                l.append(list(attrs))
 
     if negated:
         l = [ i for i in l if not (set(negated) & set(i)) ]
