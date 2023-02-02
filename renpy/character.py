@@ -1610,8 +1610,8 @@ def Character(name=NotSet, kind=None, **properties):
 
     **Styling Text and Windows.**
     Keyword arguments beginning with ``who_``, ``what_``, and
-    ``window_`` have their prefix stripped, and are used to :ref:`style
-    <styles>` the character name, the spoken text, and the window
+    ``window_`` have their prefix stripped, and are used to :doc:`style
+    <style>` the character name, the spoken text, and the window
     containing both, respectively.
 
     For example, if a character is given the keyword argument
