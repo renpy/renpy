@@ -2552,8 +2552,8 @@ def open_file(fn, encoding=None): # @ReservedAssignment
     :doc: file
 
     Returns a read-only file-like object that accesses the file named `fn`. The file is
-    accessed using Ren'Py's standard search method, and may reside in an RPA archive.
-    or as an Android asset.
+    accessed using Ren'Py's standard search method, and may reside in the game directory,
+    in an RPA archive, or as an Android asset.
 
     The object supports a wide subset of the fields and methods found on Python's
     standard file object, opened in binary mode. (Basically, all of the methods that
