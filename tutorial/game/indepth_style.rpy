@@ -726,7 +726,7 @@ screen vbar(style):
 
         text "[measure:.0f]/100":
             xalign 0.5
-            text_align 0.5
+            textalign 0.5
             min_width 100
 
 
@@ -1092,5 +1092,3 @@ label style_inspector:
     e "You can try the inspector right now, by hovering this text and hitting shift+I."
 
     return
-
-

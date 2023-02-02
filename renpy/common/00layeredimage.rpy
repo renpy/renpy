@@ -693,7 +693,7 @@ python early in layeredimage:
                     size=16,
                     xalign=0.5,
                     yalign=0.5,
-                    text_align=0.5,
+                    textalign=0.5,
                     color="#fff",
                     outlines=[ (1, "#0008", 0, 0) ],
                 )
