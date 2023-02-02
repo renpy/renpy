@@ -74,7 +74,7 @@ def path_to_gamedir(basedir, name):
     else:
         gamedir = basedir
 
-    return gamedir.replace("\\", "/")
+    return gamedir
 
 
 def path_to_common(renpy_base):
