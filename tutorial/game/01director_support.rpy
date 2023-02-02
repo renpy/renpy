@@ -1,3 +1,6 @@
+# Disables the director store being constant, since we're changing stuff inside it.
+define director._constant = False
+
 # Disable the director until the director example enables it.
 default director.enable = False
 
