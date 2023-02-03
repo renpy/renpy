@@ -32,12 +32,6 @@ character. ::
     "And then the sun exploded."
     $ narrator("And then the sun exploded.")
 
-It's possible to pass additional arguments to a character when calling it this
-way (more about this in the next section), but note that unlike other arguments,
-if the Character was passed ``interact=False`` when created, passing it
-``interact=True`` will not override that, meaning no interaction will happen in
-that case.
-
 .. _say-proxy:
 
 Proxy functions
