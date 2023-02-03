@@ -25,21 +25,26 @@ statement after the label statement whenever the end of the block is reached.
 
 There are two kinds of labels: *global* and *local* labels. Global labels live
 in one global scope shared across all project files and thus should have unique
-names per game. Local labels logically reside inside the scope of the global label
-they are declared in. To declare a local label, prefix its name with a period ``.``.
+names per game. A local label on the other hand refer to a global label, so several
+local labels in the game can have the same name, provided they are related to
+different global labels. To declare a local label, prefix its name with a period
+``.``, and put it under a global label which it will belong to.
 For example::
 
     label global_label:
         "Inside a global label.."
-    label .local_name:
+    label .local_label:
         "..resides a local one."
-        jump .local_name
+        jump .another_local
+    label .another_local:
+        "And another !"
+        jump .local_label
 
 Local labels can be referenced directly inside the same global label they are
-declared in or by their full name, consisting of global and local name parts: ::
+declared in, or by their full name, consisting of global and local name parts::
 
     label another_global:
-        "Now lets jump inside local label located somewhere else."
+        "Now lets jump inside a local label located somewhere else."
         jump global_label.local_name
 
 The label statement may take an optional list of parameters. These parameters
@@ -93,7 +98,14 @@ explicitly given.
 If the optional ``from`` clause is present, it has the effect of including a label
 statement with the given name as the statement immediately following the call
 statement. An explicit label helps to ensure that saved games with return
-stacks can return to the proper place when loaded on a changed script. ::
+stacks can return to the proper place when loaded on a changed script.
+
+The call statement may take arguments, which are processed as described in :pep:`448`.
+
+When using a call expression with an arguments list, the ``pass`` keyword must
+be inserted between the expression and the arguments list. Otherwise, the
+arguments list will be parsed as part of the expression, not as part of the
+call. ::
 
     label start:
 
@@ -116,12 +128,16 @@ stacks can return to the proper place when loaded on a changed script. ::
 
         return
 
-The call statement may take arguments, which are processed as described in :pep:`448`.
+.. warning::
 
-When using a call expression with an arguments list, the ``pass`` keyword must
-be inserted between the expression and the arguments list. Otherwise, the
-arguments list will be parsed as part of the expression, not as part of the
-call.
+    Publishing a game without ``from`` clauses for each ``call`` statement
+    is dangerous, if you intend to publish updates of the game later on.
+    If no such clauses are added, and if you edit the file containing the
+    ``call`` instruction, there is a potential risk for saves made inside
+    the called label to become broken.
+
+    Using the "Add from clauses to calls" option when building a game's
+    distribution can solve that issue.
 
 .. _return-statement:
 
@@ -135,6 +151,8 @@ Ren'Py, returning control to the main menu.
 If the optional expression is given to return, it is evaluated, and it's result
 is stored in the ``_return`` variable. This variable is dynamically scoped to each
 context.
+
+.. _special-labels:
 
 Special Labels
 --------------
@@ -187,3 +205,10 @@ Labels & Control Flow Functions
 -------------------------------
 
 .. include:: inc/label
+
+.. _context:
+
+Contexts
+---------
+
+.. include:: inc/context

@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -326,9 +326,14 @@ class SaveRecord(object):
 
         # For speed, copy the file after we've written it at least once.
         if self.first_filename is not None:
-            shutil.copyfile(self.first_filename, filename_new)
-            safe_rename(filename_new, filename)
-            return
+            try:
+                shutil.copyfile(self.first_filename, filename_new)
+            except OSError as e:
+                if renpy.config.developer:
+                    raise e
+            else:
+                safe_rename(filename_new, filename)
+                return
 
         with zipfile.ZipFile(filename_new, "w", zipfile.ZIP_DEFLATED) as zf:
             # Screenshot.
@@ -346,6 +351,9 @@ class SaveRecord(object):
 
             # The actual game.
             zf.writestr("log", self.log)
+
+            # The signatures.
+            zf.writestr("signatures", renpy.savetoken.sign_data(self.log))
 
         safe_rename(filename_new, filename)
 
@@ -770,7 +778,12 @@ def load(filename):
     successfully, this function never returns.
     """
 
-    roots, log = loads(location.load(filename))
+    log_data, signature = location.load(filename)
+
+    if not renpy.savetoken.check_load(log_data, signature):
+        return
+
+    roots, log = loads(log_data)
     log.unfreeze(roots, label="_after_load")
 
 

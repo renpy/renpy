@@ -19,8 +19,51 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**Dialogue history** Dialogue is now present in the history list
+(and hence the history screen) during the statement in which the
+dialogue is shown. Previously, it was only present at the end of the
+statement. During the statement, the dialogue is shown with a kind of
+"current".
 
-This release of Ren'Py introduces :ref:`constant stores <constant-stores>`, and
+In rare cases, your game might have relied on the old behavior. If so,
+it can be disabled with::
+
+    define config.history_current_dialogue = False
+
+
+**Steam appid** When :var:`config.steam_appid` is not set, Ren'Py will delete
+any existing ``steam_appid.txt`` file in the game directory. This is to prevent
+the wrong app id from being used.
+
+
+**Sticky layers** This release introduces the concept of sticky layers
+which help automatically manage tags being placed on layers other than
+their default. In the rare case that a game requires multiple of the
+same tag, to be displayed at the same time, on different layers then
+this may not be desirable.
+
+To disable sticky layers entirely, add to your game::
+
+    define config.sticky_layers = [ ]
+
+Alternatively, to prevent only specific layers from being sticky, update
+their definitions to include ``sticky=False``::
+
+    init python:
+        renpy.add_layer("ptfe", sticky=False)
+
+
+**Lenticular bracket ruby text** This release of Ren'Py introduces
+lenticular bracket ruby text, an easier way of writing ruby text. If
+a game included a literal 【, it needs to be doubled, to "【【", to
+quote it properly. (This is only strictly necessary when the text
+is succeded by a full-width vertical bar, but works always.)
+
+To disable lenticular bracket ruby text, add to your game::
+
+    define config.lenticular_bracket_ruby = False
+
+**Constant stores.** This release of Ren'Py introduces :ref:`constant stores <constant-stores>`, and
 makes some of the built-in stores constant. Constant stores should not change
 outside of the init phase. The following stores are constant:
 
@@ -41,7 +84,7 @@ the store can be set to non-constant with (for example)::
 
     define audio._constant = False
 
-Mixer volumes now must be specified using a new format, where 0.0 is -60 dB (power)
+**Mixer volumes** now must be specified using a new format, where 0.0 is -60 dB (power)
 and 1.0 is 0 dB (power). To use the old format, where the samples were multiplied
 by volume ** 2, use::
 

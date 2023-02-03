@@ -41,6 +41,18 @@ should only contain types that are native to Python or Ren'Py. Alternatively,
 classes that are defined in ``python early`` blocks can be used, provided
 those classes can be pickled and implement equality.
 
+Fields starting with two underscores (``__``) are supported, but will receive the
+name-mangling effect described in :ref:`this section <elements-of-statements>`,
+which means they will be specific to the file they're defined in. This implies that
+if the file is renamed between two releases, access to the value that field had in
+the previous release will be broken.
+
+In addition to this, these fields are not affected by the :meth:`persistent._clear`
+method.
+
+As a reminder, fields starting with a single underscore ``_`` are reserved and
+should not be used.
+
 Merging Persistent Data
 -----------------------
 
@@ -70,16 +82,21 @@ union of that set when merging data. ::
 Persistent Functions
 --------------------
 
+.. function:: persistent._hasattr(field_name)
+
+    Tests whether the `field_name` persistent field has been set or not.
+    This allows you to distinguish fields that have been explicitly set
+    to None from fields that have never been set.
+
 .. function:: persistent._clear(progress=False)
 
-    Resets the persistent data.
+    Resets the persistent data, except for fields starting with ``__``.
 
     `progress`
         If true, also resets progress data that Ren'Py keeps.
 
     Note that this will delete all persistent data, and will not re-apply
     defaults until Ren'Py restarts.
-
 
 .. include:: inc/persistent
 
@@ -90,16 +107,17 @@ Multi-Game persistence is a feature that lets you share information between
 Ren'Py games. This may be useful if you plan to make a series of games, and
 want to have them share information.
 
-To use multipersistent data, a MultiPersistent object must be created inside
-an ``init`` block. The user can then update this object, and save it to disk by
+To use multipersistent data, a MultiPersistent object must be created at init
+time (preferably using ``define``).
+The user can then update this object, and save it to disk by
 calling its save method. Undefined fields default to None. To ensure the
-object can be loaded again, we suggest not assigning the object instances
-of user-defined types.
+object can be loaded again in a different game, we strongly advise against
+storing instances of user-defined types in the object.
 
 .. class:: MultiPersistent(key, save_on_quit=False)
 
-    Creates a new ``MultiPersistent`` object. This should only be called inside an
-    ``init`` block, and it returns a new ``MultiPersistent`` with the given key.
+    Creates a new ``MultiPersistent`` object. This should only be called at init time,
+    and it returns a new ``MultiPersistent`` with the given key.
 
     `key`
         The key used to to access the multipersistent data. Games using the
@@ -116,8 +134,7 @@ of user-defined types.
 
 As an example, take the first part of a two-part game::
 
-    init python:
-        mp = MultiPersistent("demo.renpy.org")
+    define mp = MultiPersistent("demo.renpy.org")
 
     label start:
 
@@ -132,8 +149,7 @@ As an example, take the first part of a two-part game::
 
 And the second part::
 
-    init python:
-        mp = MultiPersistent("demo.renpy.org")
+    define mp = MultiPersistent("demo.renpy.org")
 
     label start:
 

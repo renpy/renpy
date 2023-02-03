@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -32,7 +32,7 @@ init -1200 python:
     config.window_auto_show = [ "say", "menu-with-caption" ]
 
     # A list of statements that cause the window to be auto-hidden.
-    config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered" ]
+    config.window_auto_hide = [ "scene", "call screen", "menu", "say-centered", "say-bubble" ]
 
     config.window_functions_set_auto = True
 

@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -379,6 +379,8 @@ class BMFont(ImageFont):
         with renpy.loader.load(self.filename) as f:
             for l in f:
 
+                l = l.decode("utf-8")
+
                 kind, args = parse_bmfont_line(l)
 
                 if kind == "common":
@@ -499,12 +501,14 @@ def register_sfont(name=None, size=None, bold=False, italics=False, underline=Fa
     `charset`
         The character set of the font. A string containing characters in
         the order in which they are found in the image. The default character
-        set for a SFont is::
+        set for a SFont is
 
-            ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?
-            @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \\ ] ^ _
-            ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } ~
-    """
+    .. code-block:: none
+
+        ! " # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ?
+        @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \\ ] ^ _
+        ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } ~
+    """ # a code-block and not a ::, because it's not proper renpy syntax
 
     if name is None or size is None or filename is None:
         raise Exception("When registering an SFont, the font name, font size, and filename are required.")
@@ -748,7 +752,7 @@ class FontGroup(object):
     """
 
     # For compatibility with older instances.
-    char_map = dict()
+    char_map = {}
 
     def __init__(self):
 

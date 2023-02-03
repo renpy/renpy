@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,6 +29,8 @@ init -1499 python in _renpysteam:
 
     import collections
     import time
+
+    ticket = None
 
     def retrieve_stats():
         """
@@ -225,7 +227,7 @@ init -1499 python in _renpysteam:
 
         rv = create_string_buffer(256)
 
-        if not steamapi.SteamApps().GetCurrentBetaName(byref(rv), 256):
+        if not steamapi.SteamApps().GetCurrentBetaName(rv, 256):
             return None
 
         return rv.value.decode("utf-8")
@@ -303,6 +305,8 @@ init -1499 python in _renpysteam:
         return steamapi.SteamUtils().IsOverlayEnabled()
 
 
+    last_needs_present_call = 0
+
     def overlay_needs_present():
         """
         :doc: steam_overlay
@@ -310,6 +314,17 @@ init -1499 python in _renpysteam:
         Returns true if the steam overlay is enabled. (This might take a while to
         return true once the game starts.)
         """
+
+        global last_needs_present_call
+
+        now = time.time()
+
+        # Steam docs say that BOOL BOverlayNeedsPresent() should be called
+        # at around 33 Hz. See also Ren'Py bug #3978.
+        if now < last_needs_present_call + 1 / 33.0:
+            return False
+
+        last_needs_present_call = now
 
         return steamapi.SteamUtils().BOverlayNeedsPresent()
 
@@ -319,7 +334,7 @@ init -1499 python in _renpysteam:
         :doc: steam_overlay
 
         Sets the position of the steam overlay. `Position` should be one of
-        _renpysteam.POSITION_TOP_LEFT, .POSITION_TOP_RIGHT, .POSITION_BOTTOM_LEFT,
+        achievement.steam.POSITION_TOP_LEFT, .POSITION_TOP_RIGHT, .POSITION_BOTTOM_LEFT,
         or .POSITION_BOTTOM_RIGHT.
         """
 
@@ -359,7 +374,7 @@ init -1499 python in _renpysteam:
             The appid to open.
 
         `flag`
-            One of achievements.steam.STORE_NONE, .STORE_ADD_TO_CART, or .STORE_ADD_TO_CART_AND_SHOW.
+            One of achievement.steam.STORE_NONE, .STORE_ADD_TO_CART, or .STORE_ADD_TO_CART_AND_SHOW.
         """
 
         if flag is None:
@@ -420,10 +435,10 @@ init -1499 python in _renpysteam:
         ticket_buf = create_string_buffer(2048)
         ticket_len = c_uint()
 
-        h_ticket = steamapi.SteamUser().GetAuthSessionTicket(byref(ticket_buf), 2048, byref(ticket_len))
+        h_ticket = steamapi.SteamUser().GetAuthSessionTicket(ticket_buf, 2048, byref(ticket_len))
 
         if h_ticket:
-            ticket = ticket_buf.raw[0:ticket_len]
+            ticket = ticket_buf.raw[0:ticket_len.value]
 
         return ticket
 
@@ -464,11 +479,13 @@ init -1499 python in _renpysteam:
         workshop.
         """
 
-        from ctypes import c_ulonglong, byref
+        from ctypes import c_ulonglong, pointer, POINTER, cast
 
         subscribed = (c_ulonglong * 512)()
 
-        count = steamapi.SteamUGC().GetSubscribedItems(byref(subscribed), 512)
+        count = steamapi.SteamUGC().GetSubscribedItems(
+            cast(pointer(subscribed), POINTER(c_ulonglong)),
+            512)
 
         rv = [ ]
 
@@ -770,11 +787,17 @@ init -1499 python in achievement:
         if config.early_script_version is not None:
             return
 
-        if config.steam_appid is None:
-            return
+        steam_appid_fn = os.path.join(os.path.dirname(sys.executable), "steam_appid.txt")
 
-        with open(os.path.join(os.path.dirname(sys.executable), "steam_appid.txt"), "w") as f:
-            f.write(str(config.steam_appid) + "\n")
+        if config.steam_appid is not None:
+            with open(steam_appid_fn, "w") as f:
+                f.write(str(config.steam_appid) + "\n")
+        else:
+            try:
+                os.unlink(steam_appid_fn)
+            except Exception:
+                pass
+
 
     # The _renpysteam namespace, or None if steam isn't loaded.
     steam = None

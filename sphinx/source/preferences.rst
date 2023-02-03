@@ -9,7 +9,7 @@ to set the default value of a preference.
 
 For example::
 
-    default preferences.text_cps = 142
+    default preferences.text_cps = 40
 
 sets the default text speed to 40 characters per second. The default statement
 only sets the value of the preference if the default has changed since the
@@ -20,14 +20,14 @@ can then change it again.)
 
 .. var:: preferences.afm_after_click = False
 
-    If True, auto-forward move will be continue after a click. If False,
-    a click will end auto-forward mode. The equivalent of the
-    "auto-forward after click" preference.
+    If True, the auto-forward mode will be continued after a click. If False,
+    a click will end auto-forward mode. The equivalent of the "auto-forward
+    after click" preference.
 
 .. var:: preferences.afm_enable = False
 
     If True, auto-forward move is enabled, otherwise False. The equivalent
-    of the "auto-forward" preference.
+    of the "auto-forward time" preference.
 
 .. var:: preferences.afm_time = 15
 
@@ -59,6 +59,8 @@ can then change it again.)
     This can be used to set the default language, and can be read to determine
     the current language. The :func:`Language` action can be used to change
     the language.
+
+    See :doc:`translation` for more information.
 
 .. var:: preferences.emphasize_audio = False
 
@@ -157,6 +159,27 @@ can then change it again.)
     and resumed when the window is restored. If True, window state will
     have no effect on audio.
     The equivalent of the "audio when minimized" preference.
+
+.. var:: preferences.audio_when_unfocused = True
+
+    If False, audio channels are stopped when the window loses keyboard focus,
+    and resumed when the window regains keyboard focus. If True, keyboard focus
+    will have no effect on audio.
+    The equivalent of the "audio when unfocused" preference.
+
+.. var:: preferences.web_cache_preload = False
+
+    If True the game files will be loaded into the web browser's cache,
+    allowing the game to be played offline. If False, the game files will
+    not be loaded into the web browser's cache, and the game will require
+    internet access to play.
+    The equivalent of the "web cache preload" preference.
+
+.. var:: preferences.voice_after_game_menu = False
+
+    If True, voice will continue playing after the game menu is shown. If False,
+    voice will be stopped when the game menu is shown. The equivalent of the
+    "voice after menu" preference.
 
 Mixer Functions
 ---------------

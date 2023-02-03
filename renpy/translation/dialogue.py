@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -157,7 +157,12 @@ def notags_filter(s):
 
 def combine_filter(s):
 
-    for double in ("{{", "%%"):
+    doubles = [ "{{", "%%" ]
+
+    if renpy.config.lenticular_bracket_ruby:
+        doubles.append("\u3010\u3010") # LENTICULAR BRACKET LEFT x 2
+
+    for double in doubles:
         while True:
             if s.find(double) >= 0:
                 i = s.find(double)
@@ -207,9 +212,8 @@ class DialogueFile(object):
 
         self.f = open(output, "a", encoding="utf-8")
 
-        self.write_dialogue()
-
-        self.f.close()
+        with self.f:
+            self.write_dialogue()
 
     def write_dialogue(self):
         """
@@ -290,7 +294,7 @@ class DialogueFile(object):
 
         lines = []
 
-        filename = renpy.parser.elide_filename(self.filename)
+        filename = renpy.lexer.elide_filename(self.filename)
 
         for ss in renpy.translation.scanstrings.scan_strings(self.filename):
 
@@ -306,12 +310,12 @@ class DialogueFile(object):
             # avoid to include same s
             stl.translations[s] = s
 
-            s = renpy.translation.translate_string(s, self.language)
+            s = renpy.translation.translate_string(s, self.language) # type: ignore
 
             if self.notags:
                 s = notags_filter(s)
 
-            what = combine_filter(s)
+            s = combine_filter(s)
 
             if self.escape:
                 s = quote_unicode(s)

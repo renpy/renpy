@@ -11,6 +11,8 @@ init offset = -2
 init python:
     gui.init(1280, 720)
 
+## Enable checks for invalid or unstable properties in screens or transforms
+define config.check_conflicting_properties = True
 
 
 ################################################################################
@@ -398,6 +400,7 @@ define gui.nvl_thought_xalign = 0.0
 ## The position of nvl menu_buttons.
 define gui.nvl_button_xpos = gui.scale(450)
 define gui.nvl_button_xalign = 0.0
+
 
 ## Localization ################################################################
 

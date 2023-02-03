@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -254,7 +254,7 @@ renpy.game.post_init.append(reset)
 def interact(type='misc', roll_forward=None, **kwargs): # @ReservedAssignment
     """
     :doc: ui
-    :args: (roll_forward=None, mouse='default')
+    :args: (*, roll_forward=None, mouse='default')
 
     Causes an interaction with the user, and returns the result of that
     interaction. This causes Ren'Py to redraw the screen and begin processing
@@ -400,7 +400,7 @@ def context_enter(w):
     if isinstance(renpy.ui.stack[-1], renpy.ui.Many) and renpy.ui.stack[-1].displayable is w: # type: ignore
         return
 
-    raise Exception("%r cannot be used as a context manager.", type(w).__name__)
+    raise Exception("%r cannot be used as a context manager." % type(w).__name__)
 
 
 def context_exit(w):
@@ -527,7 +527,7 @@ class Wrapper(renpy.object.Object):
         try:
             w = self.function(*args, **keyword)
         except TypeError as e:
-            etype, e, tb = sys.exc_info()
+            _etype, e, tb = sys.exc_info()
 
             if tb.tb_next is None:
                 e.args = (e.args[0].replace("__call__", "ui." + self.name),) # type: ignore
@@ -748,9 +748,7 @@ class ChoiceReturn(ChoiceActionBase):
         variable.
 
         When true is given to all items in a screen, it will
-        become unclickable (rolling forward will still work). This can
-        be changed by calling :func:`ui.saybehavior` before the call
-        to :func:`ui.interact`.
+        become unclickable (rolling forward will still work).
     """
 
     def __call__(self):
@@ -792,9 +790,7 @@ class ChoiceJump(ChoiceActionBase):
         variable.
 
         When true is given to all items in a screen, it will
-        become unclickable (rolling forward will still work). This can
-        be changed by calling :func:`ui.saybehavior` before the call
-        to :func:`ui.interact`.
+        become unclickable (rolling forward will still work).
     """
 
     def get_selected(self):

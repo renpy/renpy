@@ -63,7 +63,7 @@ Creator Concerns
 ----------------
 
 Ren'Py's self-voicing works by extracting text from displayables and
-reading it to the player. Ren'Py extracts this text from two places.
+reading it to the player. Ren'Py extracts this text from multiple places.
 
 Text displayables
     Ren'Py will extract text from a Text displayable, and make it
@@ -131,6 +131,11 @@ Descriptive Text
 
         If not None, this should be a character object that is used to
         display the descriptive text, instead of the narrator.
+
+The :var:`config.tts_substitutions` variable can be used to substitute
+words in the text being spoken, to better control pronunciation. The
+:var:`config.tts_voice` variable can be used to select the voice used
+to speak text from the voices on a platform.
 
 A self-voicing debug mode can be enabled by typing Shift+Alt+V. This will
 display the text that would be voiced on the screen for development

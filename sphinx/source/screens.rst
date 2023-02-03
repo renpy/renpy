@@ -111,6 +111,7 @@ in a block may be one of two things:
 * A property list.
 * A screen language statement.
 
+.. _screen-statement:
 
 Screen Statement
 ----------------
@@ -381,8 +382,8 @@ action. A button takes no parameters, and the following properties.
     The action to run when the button is activated. A button is activated
     when it is clicked, or when the player selects it and hits enter on the
     keyboard. This also controls if the button is sensitive if `sensitive`
-    is not provided, and if the button is selected if `selected` is not
-    provided.
+    is not provided or None, and if the button is selected if `selected` is not
+    provided or None.
 
 `alternate`
     An action that is run if the button is activated in an alternate manner.
@@ -399,12 +400,12 @@ action. A button takes no parameters, and the following properties.
 `selected`
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
 `sensitive`
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
 `keysym`
     A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
@@ -445,9 +446,15 @@ This takes the following properties:
     The action performed when the dismiss is activated. This property is
     required.
 
+`keysym`
+    A string giving a :doc:`keysym <keymap>` describing a key that,
+    when pressed, invokes the action of this dismiss. This replaces the default
+    "dismiss" keysym.
+
 `modal`
     By default, the dimiss is modal, preventing events from being processed
     by displayables "behind" it.
+
 
 It also takes:
 
@@ -554,8 +561,10 @@ This displays its children in a grid. Each child is given an area of
 the same size, the size of the largest child.
 
 It takes two parameters. The first is the number of columns in the
-grid, and the second is the number of rows in the grid. It takes the
-following property:
+grid, and the second is the number of rows in the grid. If the grid
+is not full, the remaining cells are filled with the ``null`` displayable.
+
+Grid takes one property:
 
 `transpose`
     If False (the default), rows are filled before columns. If True,
@@ -646,8 +655,8 @@ properties:
 
 `action`
     The action to run when the button is activated. This also controls if
-    the button is sensitive if `sensitive` is not provided, and if the button
-    is selected if `selected` is not provided.
+    the button is sensitive if `sensitive` is not provided or None, and if the button
+    is selected if `selected` is not provided or None.
 
 `alternate`
     An action that is run if the button is activated in an alternate manner.
@@ -664,12 +673,12 @@ properties:
 `selected`
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
 `sensitive`
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
 `keysym`
     A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
@@ -1129,8 +1138,8 @@ following properties:
 
 `action`
     The action to run when the button is activated. This also controls if
-    the button is sensitive if `sensitive` is not provided, and if the button
-    is selected if `selected` is not provided.
+    the button is sensitive if `sensitive` is not provided or None, and if the button
+    is selected if `selected` is not provided or None.
 
 `alternate`
     An action that is run if the button is activated in an alternate manner.
@@ -1147,12 +1156,12 @@ following properties:
 `selected`
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
 `sensitive`
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
 `keysym`
     A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
@@ -1168,8 +1177,8 @@ following properties:
     to that string to give the default text style.
 
 `text_`-
-   Other properties prefixed with text_ have this prefix stripped, and are
-   then passed to the text displayable.
+    Other properties prefixed with text_ have this prefix stripped, and are
+    then passed to the text displayable.
 
 It also takes:
 
@@ -1204,7 +1213,13 @@ takes the properties:
 `repeat`
     If True, the timer repeats after it times out.
 
-It takes no children.
+`modal`
+    If True, the timer will not fire if it is blocked by a modal
+    screen. If false or not given, the timer will fire even if it
+    is blocked by a modal screen.
+
+
+Timer takes no children.
 
 ::
 
@@ -1286,6 +1301,7 @@ following properties:
     `ysize`) tuple. This can usually be omitted, when the child can
     compute it's own size. If either component is None, the child's
     size is used.
+
 `mousewheel`
     This should be one of:
 
@@ -1304,8 +1320,12 @@ following properties:
         bottom.)
     "horizontal-change"
         Combines horizontal scrolling with change mode.
+
 `draggable`
-    If True, dragging the mouse will scroll the viewport.
+    If True, dragging the mouse will scroll the viewport. This can also be
+    a :ref:`variant <screen-variants>`, in which case the viewport will be draggable
+    if the variant is in place. (For example, ``draggable "touch"``.)
+
 `edgescroll`
     Controlls scrolling when the mouse reaches the edge of the
     viewport. If not None, this should be a two- or three-element
@@ -1418,7 +1438,8 @@ incorrectly, please ensure that all children are of the same size.
 
 A vpgrid must be given at least one of the `cols` and `rows` properties.
 If one is omitted or None, the other is automatically determined from the
-size, spacing, and number of children.
+size, spacing, and number of children. If a row or column would be underfull,
+``null`` displayable are used to fill the remaining space.
 
 Vpgrids take the the following properties:
 
@@ -1621,12 +1642,12 @@ also takes the following properties:
 `selected`
     An expression that determines whether the button is selected or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine selectedness.
+    If not provided or None, the action will be used to determine selectedness.
 
 `sensitive`
     An expression that determines whether the button is sensitive or not.
     This expression is evaluated at least once per interaction.
-    If not provided, the action will be used to determine sensitivity.
+    If not provided or None, the action will be used to determine sensitivity.
 
 `keysym`
     A string giving a :doc:`keysym <keymap>` describing a keyboard key that,
@@ -1812,7 +1833,8 @@ For
 ---
 
 The ``for`` statement is similar to the Python ``for`` statement, except that
-it does not support the ``else`` clause. It supports assignment to
+it does not support the ``else`` clause nor the ``continue`` and ``break``
+statements. It supports assignment to
 (optionally nested) tuple patterns, as well as variables.
 
 ::
@@ -1852,7 +1874,7 @@ statement. It supports the ``if``, ``elif``, and ``else`` clauses.
 ::
 
     screen skipping_indicator():
-        if config.skipping:
+        if renpy.is_skipping():
              text "Skipping."
         else:
              text "Not Skipping."
@@ -2118,35 +2140,58 @@ Screen Statements
 In addition to the screen statement, there are three Ren'Py script
 language statements that involve screens.
 
+.. _show-screen-statement:
+
 Show Screen
 -----------
 
 The ``show screen`` statement causes a screen to be shown. It takes an
-screen name, and an optional Python argument list. If present, the arguments
-are used to initialize the scope of the screen. There are also some
-specific keywords passed to :func:`show_screen` and :func:`call_screen`.
+screen name, a series of optional clauses, and optional Python arguments
+which are passed to the screen. :func:`renpy.show_screen` and
+:func:`renpy.call_screen` take additional specific keywords.
 
-If the ``expression`` keyword is given, the expression following it will be evaluated
-as the screen name. To pass arguments to the screen with the expression keyword,
-separate the expression and arguments with the ``pass`` keyword.
+The ``show screen`` statement takes the following clauses, some of them similar
+to the clauses of the :ref:`show-statement`:
 
-::
+``as``
+    The ``as`` clause takes a name. If not specified, it defaults to the
+    tag associated with the screen (see the :ref:`screen-statement`).
+    If that's not specified, it defaults to the name of the screen.
 
-    $ screen_name = "my_screen"
-    show screen expression screen_name
-    # Or if you need to pass some arguments
-    show screen expression screen_name pass ("Foo", message="Bar")
+``onlayer``
+    The layer to show the screen on.
 
+``zorder``
+    The zorder to show the screen on. If not specified, defaults to
+    the zorder associated with the screen. If that's not specified,
+    it is 0 by default.
 
-The show screen statement takes an optional ``nopredict`` keyword, that
-prevents screen prediction from occurring. During screen prediction,
-arguments to the screen are evaluated. Please ensure that evaluating
-the screen arguments does not cause unexpected side-effects to occur.
+``expression``
+    If the ``expression`` keyword is given, the expression following it will be evaluated
+    as the screen name. To pass arguments to the screen with the expression keyword,
+    separate the expression and arguments with the ``pass`` keyword::
 
-.. warning::
+        $ screen_name = "my_screen"
+        show screen expression screen_name
+        # Or if you need to pass some arguments
+        show screen expression screen_name pass ("Foo", message="Bar")
 
-    If evaluating the arguments to a screen causes side-effects to occur,
-    your game may behave in unexpected ways.
+``with``
+    This is interpreted in the same way that the with clause of a ``show``
+    statement is::
+
+        show screen clock_screen with dissolve
+
+``nopredict``
+    The ``nopredict`` keyword doesn't take a value. It prevents screen prediction
+    from occurring. During screen prediction, arguments to the screen are evaluated.
+    Please ensure that evaluating the screen arguments does not cause unexpected
+    side-effects to occur.
+
+    .. warning::
+
+        If evaluating the arguments to a screen causes side-effects to occur,
+        your game may behave in unexpected ways.
 
 Screens shown in this way are displayed until they are explicitly
 hidden. This allows them to be used for overlay purposes.
@@ -2160,21 +2205,39 @@ hidden. This allows them to be used for overlay purposes.
         show rare_screen nopredict
 
 
-The ``show screen`` statement takes a with clause, which is interpreted in the
-same way that the with clause of a ``show`` statement is. ::
-
-    show screen clock_screen with dissolve
-
 Hide Screen
 -----------
 
 The ``hide screen`` statement is used to hide a screen that is currently
-being shown. If the screen is not being shown, nothing happens. The with
-clause is interpreted the same way the ``with`` clause of a show statement
-is.
+being shown. It takes a screen tag. It first tries to find a screen with
+the given tag on the given layer (see the ``onlayer`` clause). If none is
+found, it looks for a screen with that name on the layer, regardless of
+the tag the screen is shown as. If none is found, nothing happens::
 
-Similar to the ``show screen`` statement, ``hide screen`` also takes the ``expression`` keyword,
-allowing to use an arbitrary expression as the screen name.
+    show screen A
+    show screen B as A # B replaces A (which hides it)
+    hide screen A # hides B, tagged as A
+
+::
+
+    show screen A as B
+    show screen B as C
+
+    hide screen B
+    # hides the A screen, shown as B
+    # the B screen, shown as C, stays shown
+
+    hide screen B
+    # hides the B screen
+
+It also takes the ``onlayer`` clause, which defaults to the ``screens``
+layer.
+
+The with clause is interpreted the same way the ``with`` clause of a
+:ref:`show-statement` is.
+
+Similar to the ``show screen`` statement, ``hide screen`` also takes the
+``expression`` keyword, allowing to use an arbitrary expression as the screen name.
 
 ::
 
@@ -2189,19 +2252,47 @@ Call Screen
 
 The ``call screen`` statement shows a screen, and then hides it again at
 the end of the current interaction. If the screen returns a value,
-then the value is placed in ``_return``.
+then the value is placed in the global ``_return`` variable.
 
 This can be used to display an imagemap. The imagemap can place a
 value into the ``_return`` variable using the :func:`Return` action,
 or can jump to a label using the :func:`Jump` action.
 
-The call screen statement takes an optional ``nopredict`` keyword, which
-prevents screen prediction from occurring. During screen prediction,
-arguments to the screen are evaluated. Please ensure that evaluating
-the screen arguments does not cause unexpected side-effects to occur.
+The call screen statement takes various optional clauses, most of them similar to
+those of the :ref:`show-screen-statement`:
 
-In a call screen statement, the ``with`` clause causes a transition
-to occur when the screen is shown.
+``as``
+    The ``as`` clause takes a name. If not specified, it defaults to the
+    tag associated with the screen (see the :ref:`screen-statement`).
+    If that's not specified, it defaults to the name of the screen.
+
+``onlayer``
+    The layer to show the screen on.
+
+``zorder``
+    The zorder to show the screen on. If not specified, defaults to
+    the zorder associated with the screen. If that's not specified,
+    it is 0 by default.
+
+``nopredict``
+    This keyword prevents screen prediction from occurring. During screen prediction,
+    arguments to the screen are evaluated. Please ensure that evaluating
+    the screen arguments does not cause unexpected side-effects to occur.
+
+    .. warning::
+
+        If evaluating the arguments to a screen causes side-effects to occur,
+        your game may behave in unexpected ways.
+
+``expression``
+    Similar to the ``show screen`` statement, ``call screen`` also takes the
+    ``expression`` keyword, allowing to use an arbitrary expression as the screen
+    name. This also comes with the ``pass`` keyword, allowing arguments to be
+    passed to the screen.
+
+``with``
+    In a call screen statement, the ``with`` clause causes a transition
+    to occur when the screen is shown.
 
 Since calling a screen is an interaction, and interactions trigger
 an implicit ``with None``, using a ``with`` statement after the
@@ -2212,14 +2303,6 @@ special keyword argument to the screen, as in the example below.
 
 Other ways of triggering transitions also work, such as the
 ``[ With(dissolve), Return() ]`` action list.
-
-Similar to the ``show screen`` statement, ``call screen`` also takes the ``expression`` keyword,
-allowing to use an arbitrary expression as the screen name.
-
-.. warning::
-
-    If evaluating the arguments to a screen causes side-effects to occur,
-    your game may behave in unexpected ways.
 
 ::
 

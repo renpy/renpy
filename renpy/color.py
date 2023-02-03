@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -39,8 +39,8 @@ class Color(tuple):
     between various color spaces. It also represents opacity in the form
     of an alpha.
 
-    When creating a Color, at one of the `color`, `hls`, `hsv`, or `rgb`
-    arguments should be supplied. (If all are None, None is returned.)
+    When creating a Color, at most one of the `color`, `hls`, `hsv`, or
+    `rgb` arguments should be supplied. (If all are None, None is returned.)
 
     `color`
         The color, in one of the standard formats Ren'Py understands. These

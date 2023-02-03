@@ -74,7 +74,8 @@ GUI.
 
 :var:`config.version`
     A string giving the version of the game. This is presented to the
-    user in various places.
+    user in various places in the default GUI. It has other uses apart
+    from that, such as error messages or tracebacks.
 
 :var:`gui.about`
     Additional text that is added to the about screen. If you want multiple
@@ -703,12 +704,10 @@ the save slots.
 
     The borders applied to each save slot.
 
-.. var:: config.thumbnail_width = 384
-.. var:: config.thumbnail_height = 216
-
-    The width and height of the save thumbnails. Note that these live in
-    the config namespace, not the gui namespace. These do not take effect
-    until the file is saved and loaded.
+:var:`config.thumbnail_width` = 384 and :var:`config.thumbnail_height` = 216
+set the width and height of the save thumbnails. Note that these live in
+the config namespace, not the gui namespace. These do not take effect
+until the file is saved and loaded.
 
 .. var:: gui.file_slot_cols = 3
 .. var:: gui.file_slot_rows = 2

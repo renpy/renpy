@@ -1,7 +1,5 @@
 cdef class Matrix:
 
-    cdef float m[0]
-
     cdef public float xdx
     cdef public float ydx
     cdef public float zdx
@@ -21,6 +19,10 @@ cdef class Matrix:
     cdef public float ydw
     cdef public float zdw
     cdef public float wdw
+
+    # This can be replaced with a cdef inline property when Cython 3 comes
+    # out.
+    cdef float *m
 
     # When this matrix is generated, where it was generated from.
     cdef public object origin

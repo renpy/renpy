@@ -14,10 +14,12 @@ ehthumbs_vista.db
 *.pyc
 *.pyo
 *.pyi
+*.egg-info
 
-# Editor files.
+# Editor/tool files.
 *~
 *.bak
+.gdb_history
 
 # Compiled Ren'Py files.
 *.rpyc
@@ -64,6 +66,8 @@ cache/
 /renios3
 
 /web
+/web2
+/web3
 
 # Docs.
 /sphinx/source/inc

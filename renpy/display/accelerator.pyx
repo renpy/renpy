@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -509,8 +509,16 @@ def transform_render(self, widtho, heighto, st, at):
     elif state.zpos:
         self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
 
+    mt = state.matrixtransform
+
     # matrixtransform
-    if state.matrixtransform is not None:
+    if mt is not None:
+
+        if callable(mt):
+            mt = mt(None, 1.0)
+
+        if not isinstance(mt, renpy.display.matrix.Matrix):
+            raise Exception("matrixtransform requires a Matrix (got %r)" % (mt,))
 
         if state.matrixanchor is None:
 
@@ -526,7 +534,7 @@ def transform_render(self, widtho, heighto, st, at):
                 manchory *= height
 
         m = Matrix.offset(-manchorx, -manchory, 0.0)
-        m = state.matrixtransform * m
+        m = mt * m
         m = Matrix.offset(manchorx, manchory, 0.0) * m
 
         self.reverse = m * self.reverse

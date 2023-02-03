@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -356,7 +356,7 @@ screen choose_language():
                     for tlid, tlname in tran:
                         textbutton tlname:
                             xmaximum (TWOTHIRDS//3)
-                            action SetScreenVariable("chosen_lang", tlid)
+                            action [ SetScreenVariable("chosen_lang", tlid), Language(tlid), project.SelectTutorial(True), Return() ]
                             hovered SetScreenVariable("local_lang", tlid)
                             unhovered SetScreenVariable("local_lang", chosen_lang)
                             style "l_list"

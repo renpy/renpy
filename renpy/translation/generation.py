@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -31,7 +31,7 @@ import shutil
 
 import renpy
 from renpy.translation import quote_unicode
-from renpy.parser import elide_filename
+from renpy.lexer import elide_filename
 
 ################################################################################
 # Translation Generation

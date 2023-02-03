@@ -12,6 +12,9 @@ packaged and ported to these devices.
 RAPT – the Ren'Py Android Packaging Tool – is a program, downloaded separately
 from Ren'Py, that creates an Android package for testing or release purposes.
 
+Ren'Py runs on Android 5.0 and later, though older devices may lack the
+resources to run larger games properly.
+
 Required Language
 =================
 
@@ -292,6 +295,7 @@ When generating the application, Ren'Py will convert these files to an
 appropriate size for each device, and will generate static icons for devices
 that do not support adaptive icons.
 
+.. _android-presplash:
 
 Presplash
 ---------
@@ -321,7 +325,7 @@ android-downloading.jpg
 Pyjnius
 =======
 
-When running on Android, a version of the `Pyjnius <https://pyjnius.readthedocs.io/en/stable/>`_
+When running on Android, a version of the `Pyjnius <https://pyjnius.readthedocs.io/en/stable/>`__
 library is available. This allows advanced creators to call into the Android
 libraries.
 
@@ -330,8 +334,8 @@ field in the org.renpy.android.PythonSDLActivity class. For example::
 
     init python:
         if renpy.android:
-            import jinus
-            mActivity = jnius.autoclass("org.renpy.android.PythonSDLActivity")
+            import jnius
+            mActivity = jnius.autoclass("org.renpy.android.PythonSDLActivity").mActivity
         else:
             mActivity = None
 
@@ -354,7 +358,7 @@ interact with the Android permissions system.
     necessary to use renpy.check_permission and renpy.request_permission as necessary
     to request the permission.
 
-.. include: inc/android_permission
+.. include:: inc/android_permission
 
 
 Transferring Files to and From Android

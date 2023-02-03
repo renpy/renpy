@@ -1,5 +1,5 @@
 #cython: profile=False
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -170,7 +170,7 @@ render_height = 0
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
     :doc: udd_utility
-    :args: (d, width, height, st, at)
+    :args: (d, width, height, /, st, at)
 
     Causes a displayable to be rendered, and a renpy.Render object to
     be returned.
@@ -1554,7 +1554,7 @@ cdef class Render:
 
             render = renpy.display.render.render(d, width, height, st, at)
 
-        d.place(self, x, y, width, height, render, main=main)
+        return d.place(self, x, y, width, height, render, main=main)
 
     def zoom(self, xzoom, yzoom):
         """

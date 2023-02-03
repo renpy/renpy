@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -902,6 +902,23 @@ class Block(Statement):
     def visit(self):
         return [ j for i in self.statements for j in i.visit() ]
 
+incompatible_props = {"alignaround" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
+                      "align" : {"xanchor", "yanchor", "xpos", "ypos"},
+                      "anchor" : {"xanchor", "yanchor"},
+                      "angle" : {"xpos", "ypos"},
+                      "around" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
+                      "offset" : {"xoffset", "yoffset"},
+                      "pos" : {"xpos", "ypos"},
+                      "radius" : {"xpos", "ypos"},
+                      "size" : {"xsize", "ysize"},
+                      "xalign" : {"xpos", "xanchor"},
+                      "xcenter" : {"xpos", "xanchor"},
+                      "xycenter" : {"xpos", "ypos", "xanchor", "yanchor"},
+                      "xysize" : {"xsize", "ysize"},
+                      "yalign" : {"ypos", "yanchor"},
+                      "ycenter" : {"ypos", "yanchor"},
+                      }
+
 # This can become one of four things:
 #
 # - A pause.
@@ -937,7 +954,21 @@ class RawMultipurpose(RawStatement):
         self.warp_function = warp_function
 
     def add_property(self, name, exprs):
+        """
+        Checks if the property is compatible with any previously included, and
+        sets it.
+        Either returns the previously-set property, if any, or None.
+        """
+        newly_set = incompatible_props.get(name, set()) | {name}
+
+        for old, _e in self.properties:
+            if newly_set.intersection(incompatible_props.get(old, (old,))):
+                break
+        else:
+            old = None
+
         self.properties.append((name, exprs))
+        return old
 
     def add_expression(self, expr, with_clause):
         self.expressions.append((expr, with_clause))
@@ -1075,8 +1106,6 @@ class RawMultipurpose(RawStatement):
                 continue
 
 # This lets us have an ATL transform as our child.
-
-
 class RawContainsExpr(RawStatement):
 
     def __init__(self, loc, expr):
@@ -1154,8 +1183,6 @@ class Child(Statement):
             child = self.transition(old_widget=old_child,
                                     new_widget=child)
             child._unique()
-        else:
-            child = child
 
         trans.set_child(child, duplicate=False)
         trans.raw_child = self.child
@@ -1189,11 +1216,6 @@ class Interpolation(Statement):
         executing(self.loc)
 
         warper = warpers.get(self.warper, self.warper)
-
-        if trans.atl.animation:
-            st_or_at = trans.at
-        else:
-            st_or_at = trans.st
 
         # Special case `pause 0` to always display a frame. This is intended to
         # support single-frame animations that shouldn't skip.
@@ -1960,7 +1982,11 @@ def parse_atl(l):
                         knots.append(expr)
                         rm.add_spline(prop, knots)
                     else:
-                        rm.add_property(prop, expr)
+                        addprop_rv = rm.add_property(prop, expr)
+                        if addprop_rv == prop:
+                            ll.deferred_error("check_conflicting_properties", "property {!r} is given a value more than once".format(prop))
+                        elif addprop_rv:
+                            ll.deferred_error("check_conflicting_properties", "properties {!r} and {!r} conflict with each other".format(prop, addprop_rv))
 
                     continue
 

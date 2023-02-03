@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -22,7 +22,9 @@
 from __future__ import print_function
 
 from libc.string cimport memset
-from libc.math cimport sin, cos, M_PI as pi
+from libc.math cimport sin, cos
+
+DEF pi = 3.14159265358979323846
 
 cdef float *aligned_1 = [ 1, 0, 0, 0, 0, 1, 0, 0,  0, 0, 1, 0, 0, 0, 0, 1 ]
 cdef float *aligned_2 = [ 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]
@@ -98,6 +100,8 @@ cdef class Matrix:
 
     _types = "".join(["{} : float\n".format(i) for i in fields])
 
+    def __cinit__(self):
+        self.m = &self.xdx
 
     def __init__(Matrix self, l):
 
@@ -204,23 +208,26 @@ cdef class Matrix:
         elif components == 4:
             return (ox, oy, oz, ow)
 
-    def __richcmp__(Matrix self, Matrix other, op):
-
-        if op != 2:
-            return NotImplemented
-
+    def __eq__(Matrix self, other):
         if self is other:
             return True
 
+        if type(self) != type(other):
+            return False
+
         cdef int i
         cdef double total
+        cdef Matrix other_matrix = other
 
         total = 0
 
         for 0 < i < 16:
-            total += abs(self.m[i] - other.m[i])
+            total += abs(self.m[i] - other_matrix.m[i])
 
         return total < .0001
+
+    def __ne__(Matrix self, other):
+        return not (self == other)
 
     cpdef bint is_unit_aligned(Matrix self):
         """

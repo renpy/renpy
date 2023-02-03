@@ -28,6 +28,8 @@ Most (if not all) of the statements listed in this page are checked by
 Concepts
 ========
 
+.. _concept-image:
+
 Image
 -----
 
@@ -83,10 +85,10 @@ overlay
      an overlay function. This layer is cleared when an interaction is
      restarted.
 
-Additional layers can be defined by updating :var:`config.layers`, and
-the various other layer-related config variables. Using
-:func:`renpy.show_layer_at`, one or more transforms can be applied to
-a layer.
+Additional layers can be defined by calling :func:`renpy.add_layer`, and
+using the various layer-related :doc:`configuration variables <config>`.
+Using the :ref:`camera statement <camera>`, one or more transforms can be
+applied to a layer.
 
 .. _defining-images:
 
@@ -109,7 +111,7 @@ Images Directory
 ----------------
 
 The image directory is named "images", and is placed under the game directory.
-When a file with the .jpg or .png extension is placed underneath this directory,
+When a file with a .jpg, .jpeg, .jxl, .png, or .webp extension is placed underneath this directory,
 the extension is stripped, the rest of the filename is forced to lowercase,
 and the resulting filename is used as the image name if an image with that
 name has not been previously defined.
@@ -120,6 +122,31 @@ example, all of these files will define the image ``eileen happy``::
     game/images/eileen happy.png
     game/images/Eileen Happy.jpg
     game/images/eileen/eileen happy.png
+
+.. _oversampling:
+
+Oversampling
+------------
+
+By default, the pixel size of an image defines the size it will take up
+when displayed. For example, if an image is 1920x1080 pixels, and the
+game is configured, using :func:`gui.init`, to run at 1920x1080, the
+image will fill the entire screen.
+
+When oversampling is enabled, the size that the image is displayed at is
+smaller than the image size would imply. For example, if an image is 3480x2160,
+and has an oversamply of 2, then each axis will be halved, and the image would
+fill the same 1920x1080 window.
+
+This is useful when the image might be zoomed in on, and the extra detail is
+required. Oversampling is also useful in conjunction with :var:`config.physical_width`
+and :var:`config.physical_height` to allow a game to be remade with higher
+resolution graphics.
+
+Oversampling is automatically enabled if the image ends with an '@' followed
+by a number, before the extension. For example, "eileen happy@2.png" is
+2x oversampled, and "eileen happy@3x.png" will be 3x oversampled. Oversampling
+can also be enabled by giving the `oversample` keyword argument to :func:`Image`.
 
 .. _image-statement:
 
@@ -285,11 +312,8 @@ For example::
 Show Layer
 ----------
 
-The ``show layer`` statement is discussed alongside the camera statement,
+The ``show layer`` statement is discussed alongside the :ref:`camera statement <camera>`,
 below.
-
-
-
 
 .. _scene-statement:
 
@@ -449,6 +473,8 @@ is equivalent to::
     with None
     show lucy mad at right
     with dissolve
+
+.. _camera:
 
 Camera and Show Layer Statements
 ================================

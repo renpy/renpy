@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -642,6 +642,12 @@ class Transform(Container):
 
     def _hide(self, st, at, kind):
 
+        if kind == "cancel":
+            if self.state.show_cancels_hide:
+                return None
+            else:
+                return self
+
         # Prevent time from ticking backwards, as can happen if we replace a
         # transform but keep its state.
         if st + self.st_offset <= self.st:
@@ -1020,6 +1026,7 @@ add_property("perspective", any_object, None)
 add_property("rotate", float, None)
 add_property("rotate_pad", bool, True)
 add_property("shader", any_object, None, diff=None)
+add_property("show_cancels_hide", bool, True)
 add_property("subpixel", bool, False)
 add_property("transform_anchor", bool, False)
 add_property("zoom", float, 1.0)

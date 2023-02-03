@@ -1,10 +1,6 @@
 #include <Python.h>
 
-#ifdef RENPY_BUILD
-#include <fribidi.h>
-#else
-#include <fribidi-src/lib/fribidi.h>
-#endif
+#include <fribidi/fribidi.h>
 
 #include <stdlib.h>
 
@@ -12,6 +8,34 @@
 #include <alloca.h>
 #endif
 
+#if PY_VERSION_HEX > 0x030300f0
+
+PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
+    Py_ssize_t size;
+    FriBidiChar *srcuni;
+    FriBidiChar *dstuni;
+
+    PyUnicode_READY(s);
+    size = PyUnicode_GET_LENGTH(s);
+
+    srcuni = (FriBidiChar *) alloca(size * 4);
+    dstuni = (FriBidiChar *) alloca(size * 4);
+
+    PyUnicode_AsUCS4(s, (Py_UCS4 *) srcuni, size, 0);
+
+    fribidi_log2vis(
+        srcuni,
+        size,
+        (FriBidiParType *) direction,
+        dstuni,
+        NULL,
+        NULL,
+        NULL);
+
+    return PyUnicode_FromKindAndData(PyUnicode_4BYTE_KIND, dstuni, size);
+}
+
+#else
 
 PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
     Py_ssize_t size;
@@ -50,3 +74,5 @@ PyObject *renpybidi_log2vis(PyObject *s, int *direction) {
 
     return rv;
 }
+
+#endif

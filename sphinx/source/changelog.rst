@@ -2,11 +2,96 @@
 Changelog (Ren'Py 7.x-)
 =======================
 
-.. _renpy-7.5.2:
-.. _renpy-8.0.2:
+*There is also a list of* :doc:`incompatible changes <incompatible>`
+
+.. _renpy-8.1.0:
+.. _renpy-7.6.0:
 
 8.1 / 7.6
 =========
+
+Web
+---
+
+Other Platforms
+---------------
+
+Bubble Dialogue
+---------------
+
+Sticky Layers
+-------------
+
+A sticky layer is defined as one that, when a tag is shown upon it, will
+be treated as that tag's default layer until it is either hidden, or
+shown on another sticky layer.
+
+In practice, that means showing a tag on a layer other than its default,
+and assuming that layer is sticky, it will be updated with attributes
+set via a show or say statement without the need to respecify the layer.
+
+The following example assumes that the default layer for ``eileen`` is
+``master``, and that ``near`` is a sticky layer::
+
+    show eileen onlayer near
+    eileen happy "Hello there!"  # will now work, where previously it would not
+    show eileen excited          # implicit onlayer near
+    hide eileen                  # implicit onlayer near
+    show eileen                  # implicit onlayer master, eileen's default
+
+The default for this feature is for the ``master`` layer to be sticky, as
+well as any layers created with :func:`renpy.add_layer` unless passed
+the new parameter ``sticky=False``.
+
+
+Detached Layers & Layer Displayable
+-----------------------------------
+
+Detached layers are creator-defined layers which are not automatically added to
+a scene. They are instead displayed using a new :class:`Layer` displayable
+which can be show on other layers.
+
+One of the driving factors behind this is that it allows shaders and other
+transform effects to be applied to a group of tags while still allowing them to
+operate normally with other systems such as show and say statements. It also
+also allows the same layer to be shown multiple times, for instance in
+reflections or several TV showing the same channel.
+
+As detached layers don't participate in scene building in the same way as
+typical layers, they are defined directly in :var:`config.detached_layers`
+rather than through :func:`add_layer`, and are inherently sticky.
+
+New Image Formats and Image Oversampling
+----------------------------------------
+
+These releases add support for two new image formats:
+
+* The AV1 Image File Format (AVIF) is a new image format that uses modern
+  compression techniques to produce smaller files than JPEG, PNG, or WebP.
+  In many cases, converting images to AVIF will reduce their size without
+  sacrificing image quality.
+
+* SVG files are a vector graphics format used on the web. Ren'Py supports a
+  SVG files containing a large subset of SVGs  capability. (Notably, Ren'Py
+  does not support text in SVG files.) Ren'Py ill automatically oversample
+  (or undersample) SVGs when the game is scaled, to ensure the SVGs remain
+  sharp at any resolution, similar to the way it oversamples text. This makes
+  svgs a reasonable choice for interface elemnts that need to remain sharp.
+
+This release of Ren'Py also adds support for oversampling raster images,
+like PNG, JPEG, WebP, and AVIF. For these images, oversampling is done
+by including an @ and number in the filename. For example, "eileen happy@2.png"
+will be oversampled by a factor of 2.
+
+For raster images, oversampling causes the image file to be loaded at full
+resolution, but treated as if it was smaller by the oversampling factor. For
+example, if the image is 1000x1000, and is oversampled by 2, it will be treated
+as a 500x500 image for the purpose of layout. If the game is scaled up,
+all of the image data is available to keep the image sharp.
+
+Image oversampling can also be used with the new :var:`config.physical_width`
+and :var:`config.physical_height` variables to upgrade the resolution of
+a game without having to adjust the game's layout.
 
 Mixer Volume Changes
 --------------------
@@ -29,13 +114,48 @@ The advantage of this change is that it makes the volumes sliders much more dyna
 Previously, the volume slider had to be very near the bottom before it had an effect.
 Now, the volume increases and decreases match the way people perceive loudness.
 
+
+Draggable Viewports
+-------------------
+
+Viewports can now be dragged by the user, even if a button or other displayable
+inside the viewport is focused. Ren'Py will now detect when the user is dragging,
+and switch focus to the viewport, allowing the viewport to move.
+
+The `draggable` property of :ref:`viewports <sl-viewport>` and :ref:`vpgrids <sl-vpgrid>`
+can now take a :ref:`screen variant <screen-variants>` like "touch", in which
+case the viewport will only be draggable if touch is enabled.
+
+
+\_ren.py Files - Ren'Py in Python
+---------------------------------
+
+:doc:`The new \_ren.py file format <ren_py>` allows Ren'Py script to be embedded
+in a valid Python file. For example::
+
+    """renpy
+    init python:
+    """"
+
+    flag = True
+
+is equivalent to::
+
+    init python:
+
+        flag = True
+
+The purpose of this new format is to allow Python-heavy script files to be edited
+with Python-specific tools, while still running as Ren'Py script.
+
+
 Constant Stores
 ---------------
 
 Ren'Py has the ability to mark a :ref:`named store <named-stores>` as a constant,
 by setting the ``_constant`` variable in that store. If true, variables in that
-:ref:`constant store <constant-store>` will not be saved, and objects reachable
-soley from that store will not participate in rollback.
+:ref:`constant store <constant-stores>` will not be saved, and objects reachable
+solely from that store will not participate in rollback.
 
 The reason to declare a store constant is that there are small per-store and
 per-variable overheads that are required to support rollback. Declaring a
@@ -46,6 +166,7 @@ The following stores are declared to be constant by default:
     _errorhandling
     _gamepad
     _renpysteam
+    _sync
     _warper
     audio
     achievement
@@ -58,8 +179,146 @@ The following stores are declared to be constant by default:
 Variables in a constant store can be updated during the init phase, but should
 not change after the init phase finishes.
 
+
+Lenticular Bracket Ruby Text
+-----------------------------
+
+:ref:`Ruby text <ruby-text>`, small text above the main characters used
+for readings and translations, can now be written be written by enclosing it in
+full-width lenticular brackets (【】), with the full-width or half-width
+vertical line character (｜ or \|) separating the bottom text from the top text.
+For example::
+
+    e "Ruby can be used for furigana (【東｜とう】 【京｜きょう】)."
+
+    e "It's also used for translations (【東京｜Tokyo】)."
+
+In some contexts, the left full-width lenticular bracket (【) must be
+doubled, to "【【", to prevent it from being interpreted as the start of
+ruby text. For example::
+
+    e "【【This is not | ruby text.】"
+
+Accessibility
+-------------
+
+The new :var:`config.tts_substitutions` variable allows the game to
+provide substitution rules for self-voicing. That is meant to allow
+the creator to control pronunciation of words that might be mispronounced
+by the text to speech engine.
+
+For example::
+
+        define config.tts_substitutions = [
+            ("Ren'Py", "Ren Pie"),
+        ]
+
+Will cause the word "Ren'Py" to be pronounced as "Ren Pie" whenever
+self-voicing speaks it.
+
+Save Token Security
+-------------------
+
+Ren'Py now uses tokens to warn users when a save file is moved between
+devices, to prevent the user from making mistakes described in the
+:doc:`security documentation <security>`.
+
+This works by generating a token the first time Ren'Py is run on a given
+computer. This token is included in saves and in persistent data. If the
+token for a different computer is found in a save file, the user is warned
+and asked if they want to continue. If they choose yes, the user will be
+asked if they want to automatically accept all saves from that computer.
+
+Persistent data is loaded if it's from the current computer, or a computer
+with an accepted token.
+
+The first time a game is run with a version of Ren'Py supporting save
+tokens, all save files that exist for that game are checked, and if a
+token does not exist in those files, the token is added. This should prevent
+prompting during upgrades to Ren'Py 8.1/7.6 or later.
+
+There is intentionally no way to disable this feature, as it's important
+for end-users to be warned about the security issues when possible.
+
 New Features
 ------------
+
+A new tool, accessible through the developer (Shift+D) menu, allows
+persistent data to be viewed.
+
+The interactive director can now create a statement that removes an
+attribute from an image.
+
+The ``show screen``, ``hide screen``, and ``call screen`` statements now
+can now take ``expression``, ``as``, ``onlayer``, ``zorder``, and ``with``
+clauses, which have the same meaning as the corresponding clauses in the
+``show`` and ``hide`` statements.
+
+The :func:`renpy.include_module` function can now be used to load a rpym
+file in such a way that its init blocks are interleaved with those from
+the rest of the game.
+
+The new "voice after game menu" preference controls if voice is allowed
+to continue playing after the game menu is shown.
+
+A creator-defined statement can now execute a function at the same
+time the ``default`` statements are executed. This is after the init
+phase, but before the game starts; when a save is loaded; after
+rollback; before lint; and potentially at other times.
+
+The new :var:`config.after_default_callbacks` allows callbacks to be
+run immediately after the default statements are executed.
+
+The interactive director now lets you negate an attribute by right
+clicking on the attribute name.
+
+The :func:`Text` displayable now takes a new `tokenized` argument. When
+true, the Text displayable expects to take a list of tokens taken from
+a :ref:`custom text tag <custom-text-tags>`.
+
+Two new layers are now part of Ren'Py. The "top" layer is displayed above
+all other layers, and does not participate in transitions. This makes
+it useful for display information that is always shown. The "bottom" layer
+is displayed below all other layers. The bottom layer is useful for
+handling keys in a way that is always active.
+
+Ren'Py supports the C90 encoding for Thai fonts, which uses the unicode
+private area to provide glyphs that are combinations of base characters,
+vowel marks, and tone marks. This can be enabled by selecting a Thai font
+that supports the C90 encoding, and then setting :propref:`language` to
+"thaic90".
+
+It's now possible for a mouse keysym to be given modifiers corresponding
+to the state of keyboard modifiers when the mouse button was pressed. For
+example, "shift_mouseup_1" will only trigger when mouse button 1 is
+released while the shift key is held down.
+
+Keysyms have been reworked to make it possible to bind to numeric keypad keys
+(like the arrows and home) when numlock is off, and :doc:`the keymap <keymap>`
+has been reworked to make better use of the numeric keypad.
+
+Normally, when a displayable or screen with the same tag or name as one
+that is hiding is shown, the hiding displayable or screen is removed,
+cancelling the hide transform. The new :tpref:`show_cancels_hide` transform
+property controls this behavior.
+
+The console (accessed with shift+O) ``help`` command can now take an
+expression, in which case it display the pydoc documentation for the
+function or class that expression refers to.
+
+The new :func:`renpy.get_translation_identifier` function returns the
+unique identifier for the current line of dialogue, if there is one.
+
+The new :var:`config.scene_callbacks` function contains a list of functions
+that are called when the scene statement is run or the :func:`renpy.scene`
+function is called.
+
+The size text tag now takes multipliers, so it's possible to have::
+
+    "{size=*2}This is double size{/size} and {size=*0.5}this is half size{/size}."
+
+The :ref:`dismiss <sl-dismiss>` displayable now takes a `keysym` property,
+specifying what keysym causes the dismiss.
 
 The new :var:`config.autosave_callback` is run after a background autosave
 finishes.
@@ -69,6 +328,117 @@ to take effect immediately, rather than at the start of the next interaction.
 The main use of this is to allow a sound to be played, and then faded out. (By
 default, a ``play`` followed by a ``stop`` causes the track to never be
 played, and hence never faded out.)
+
+The new :func:`renpy.clear_attributes` function allows for an image tag to be
+cleared of all the attributes attached to it. The previous way to do this was
+to hide and show the image again, which had the consequence of also resetting
+the placement of the image on the screen. It is not the case with this function.
+
+Other Changes
+-------------
+
+The ``fadein`` clause can be used when queuing an audio track.
+
+Ren'Py will limit calls to BOverlayNeedsPresent on Steam Deck, preventing
+a freezing issue.
+
+Grids are now, by default, allowed to be underfull.
+
+It's now explicitly document that closing text tags is not required. The
+following should always be valid.::
+
+    "{b}This is bold."
+
+Dialogue is now present in the history list (and hence the history screen)
+during the statement in which the dialogue is shown. Previously, it was only
+present at the end of the statement.
+
+When :var:`config.steam_appid` is not set, Ren'Py will delete any existing
+``steam_appid.txt`` file in the game directory. This is to prevent the wrong
+app id from being used.
+
+Audio volumes are now preserved when muted. (This means that the volume will
+not drop to 0 when the game is muted.)
+
+It is now explicitly documented that non-self-closing tags will be closed at
+the end of a block of text. This was the behavior of many versions of Ren'Py,
+but would produce lint warnings. Now, the following is explicitly valid::
+
+    e "{size+=20}This is big!"
+
+Self-voicing and auto-forward mode may now be enabled at the same time. When
+this is the case, auto-forward will only occur when the dialogue is focused.
+
+Ren'Py no longer requires grids or vpgrids to be full - it will now pad these
+grids with nulls as required.
+
+The `execute_init` argument to :func:`renpy.register_statement` now respects
+the `init_priority` argument. Previously, all `execute_init` function ran
+at init priority 0.
+
+The config.label_callback variable has been renamed to :var`config.label_callbacks`,
+and now takes a list of callback functions.
+
+
+.. _renpy-7.5.3:
+.. _renpy-8.0.3:
+
+8.0.3 / 7.5.3
+=============
+
+Security
+--------
+
+There is now a new :doc:`security` page in the documentation, intended to help
+players understand the security implications of mods and sharing save files.
+
+Modal Screen, Pauses, and Timers
+--------------------------------
+
+Based on feedback from creators, the changes to how modal screens interact
+with pauses and timers have been redone. As of this version, pauses will
+not end when a modal screen is shown, while timers will trigger while
+a modal screen is shown above the timer.
+
+There are some cases where this behavior may not be wanted. To deal with
+those cases, the :ref:`timer displayable <sl-timer>` and :func:`renpy.pause`
+have a new `modal` property/parameter. If `modal` is True, pauses will
+end and timers will respect the modal screen, and will not trigger until
+the screen disappears. If false, the modal screen will not be respected,
+causing pauses to end and timers to trigger while the modal screen is
+still displayed.
+
+Changes and Fixes
+-----------------
+
+Ren'Py has been updated to target Android API level 33, corresponding to Android 13,
+allowing new games to be added to the Google Play store. The Play Billing library
+has been updated to version 5.
+
+Init statements inside a module loaded with :func:`renpy.load_module` are now
+run in init-priority order.
+
+Lint now respects :var:`config.adjust_attributes`.
+
+A case where blurs could become transparent has been addressed.
+
+When the translation language changes during a menu that is using dialogue as a
+caption, Ren'Py will jump the game back to the start of the say statement that
+added that dialogue, allowing it to be re-translated.
+
+When a game is being developed, Ren'Py will now produce an error if the first
+use of :func:`gui.preference` has not been given a default. This makes an error
+that could happen at runtime in that case more explicit.
+
+There have been many documentation improvements.
+
+This release fixes a problem with Matrix equality that could prevent
+transform properties that use Matrixes from being animated correctly.
+
+Ren'Py now properly analyzes variables that are bound by lambdas.
+
+The Tutorial and The Question have been translated into Ukrainian, and the
+Ukrainian translation of the launcher has been updated.
 
 
 .. _renpy-7.5.2:
@@ -89,6 +459,13 @@ Ren'Py is now able to perform audio fadeins and fadeouts of less than 0.68
 seconds. Previously such short fadeins and fadeouts would be result in an
 underflow and no fading. In this release, the precise duration of a fadein
 and fadeout is not strictly guaranteed.
+
+Several functions in achievement.steam (or _renpysteam) had regressions when
+reimplmented in terms of achievement.steamapi. These regressions have been
+fixed.
+
+An issue that prevented built distributions from launching on aarch64 has
+been fixed.
 
 An issue that could cause excessive CPU and memory usage when a store had
 large number of variables in it has been fixed.
@@ -2472,7 +2849,7 @@ The ``side`` displayable now renders its children in the order
 they are provided in the control string.
 
 The ``say`` statement, ``menu`` statement, and ``renpy.call_screen``
-statements now tak a `_mode` argument, which specifies the :doc:`mode <modes>`
+statements now take a `_mode` argument, which specifies the :doc:`mode <modes>`
 Ren'Py goes into when these statements occur.
 
 The :func:`renpy.show_screen` and :func:`renpy.call_screen` functions now

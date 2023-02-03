@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -21,7 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from typing import Any, Callable, Literal
 
 
 import collections
@@ -116,6 +116,21 @@ class PrefixStyle(object):
         if parser:
             parser.add(self)
 
+
+from renpy.styledata.stylesets import proxy_properties as incompatible_props
+
+def check_incompatible_props(new, olds):
+    """
+    Takes a property and a set of already-seen properties, and checks
+    to see if the new is incompatible with any of the old ones.
+    """
+    newly_set = incompatible_props.get(new, set()) | {new}
+
+    for old in olds:
+        if newly_set.intersection(incompatible_props.get(old, (old,))):
+            return old
+
+    return False
 
 class Parser(object):
 
@@ -240,7 +255,7 @@ class Parser(object):
 
             if can_tag and name == "tag":
                 if target.tag is not None:
-                    l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+                    l.error('the tag keyword argument appears more than once in a %s statement.' % (self.name,))
 
                 target.tag = l.require(l.word)
                 l.expect_noblock(name)
@@ -259,6 +274,9 @@ class Parser(object):
 
             if name in seen_keywords:
                 l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+            incomprop = check_incompatible_props(name, seen_keywords)
+            if incomprop:
+                l.deferred_error("check_conflicting_properties", 'keyword argument {!r} is incompatible with {!r}.'.format(name, incomprop))
 
             seen_keywords.add(name)
 
@@ -271,6 +289,8 @@ class Parser(object):
                 return
 
             expr = l.comma_expression()
+            if expr is None:
+                l.error("the {} keyword argument was not given a value.".format(name))
 
             if (not keyword) and (not renpy.config.keyword_after_python):
                 try:
@@ -422,7 +442,7 @@ many = renpy.object.Sentinel("many")
 def register_sl_displayable(*args, **kwargs):
     """
     :doc: custom_sl class
-    :args: (name, displayable, style, nchildren=0, scope=False, replaces=False, default_keywords={}, default_properties=True, unique=False)
+    :args: (name, displayable, style, nchildren=0, scope=False, *, replaces=False, default_keywords={}, default_properties=True, unique=False)
 
     Registers a screen language statement that creates a displayable.
 
@@ -514,7 +534,7 @@ def register_sl_displayable(*args, **kwargs):
         * "text"
         * "window"
 
-        These correspond to groups of :ref:`style-properties`. Group can
+        These correspond to groups of :doc:`style_properties`. Group can
         also be "ui", in which case it adds the :ref:`common ui properties <common-properties>`.
     """
 
@@ -543,7 +563,7 @@ class DisplayableParser(Parser):
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False,
                  pass_context=False, imagemap=False, replaces=False, default_keywords={},
-                 hotspot=False, default_properties=True, unique=False):
+                 hotspot=False, default_properties=True, unique=False): # type: (str, Callable, str, int|Literal["many"]|renpy.object.Sentinel, bool, bool, bool, bool, dict[str, Any], bool, bool, bool) -> None
         """
         `scope`
             If true, the scope is passed into the displayable function as a keyword

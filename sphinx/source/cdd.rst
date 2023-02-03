@@ -211,6 +211,25 @@ class, we'll present them with the `self` parameter.
         are called, and also allows images used by those displayables
         to be predicted.
 
+    .. method:: place(self, dest, x, y, width, height, surf, main=True)
+
+        This places a render (which must be of this displayable)
+        within a bounding area. Returns an (x, y) tuple giving the location
+        the displayable was placed at.
+
+        `dest`
+            If not None, the `surf` will be blitted to `dest` at the
+            computed coordinates.
+
+        `x`, `y`, `width`, `height`
+            The bounding area.
+
+        `surf`
+            The render to place.
+
+        `main`
+            This is passed to Render.blit().
+
 renpy.Render
 ============
 
@@ -248,8 +267,11 @@ the implicit `self` parameter.
 
     .. method:: place(d, x=0, y=0, width=None, height=None, st=None, at=None, render=None, main=True)
 
-        Renders `d` and places it into the rectangle defined by the `x`, `y`,
+        Renders `d`, a displayable, and places it into the rectangle defined by the `x`, `y`,
         `width`, and `height`, using Ren'Py's standard placement algorithm.
+        Returns an (x, y) tuple giving the location
+        the displayable was placed at. Location is computed
+        by calling Displayable.place() method.
 
         `x`, `y`, `width`, `height`
             The rectangle to place in. If `width` or `height`, when None,
@@ -291,7 +313,7 @@ the implicit `self` parameter.
     .. method:: zoom(xzoom, yzoom)
 
         Sets the zoom level of the children of this displayable in the
-        horitzontal and vertical axes. Only the children of the displayable
+        horizontal and vertical axes. Only the children of the displayable
         are zoomed – the width, height, and blit coordinates are not zoomed.
 
     The following attributes and methods are only used when model-based rendering

@@ -47,6 +47,7 @@ respectively.
 In-game, the usual way to play music and sound in Ren'Py is using
 the three music/sound statements.
 
+.. _play-statement:
 
 Play Statement
 --------------
@@ -89,6 +90,7 @@ on the channel, the play instruction doesn't interrupt it. ::
             play music market if_changed
             "Maybe we just entered the market, maybe we were already there."
             "If we were already there, the music didn't stop and start over, it just continued."
+            jump market_main
 
 The ``volume`` clause is also optional, and specifies a relative volume for
 the track, between 0.0 and 1.0. This makes it possible to adjust the volume a

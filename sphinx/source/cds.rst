@@ -57,7 +57,7 @@ For example, the above behaviour, but written as a CDS:
 
         def lint_random(parsed_object):
             for i in parsed_object:
-                renpy.check_text_tags(i.what)
+                renpy.error(renpy.check_text_tags(i.what))
 
 
         renpy.register_statement(

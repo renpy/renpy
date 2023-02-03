@@ -60,7 +60,6 @@ int renpy_IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
 	SDL_PixelFormat *fmt=NULL;
 	SDL_Surface *tempsurf=NULL;
 	int ret;
-	unsigned int i;
 	png_colorp palette;
 	Uint8 *palette_alpha=NULL;
 	png_byte **row_pointers=NULL;
@@ -149,7 +148,7 @@ int renpy_IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
 		}
 	}
 
-	for(i=0;i < surf->h;i++){
+	for(int i=0;i < surf->h;i++){
 		row_pointers[i]= ((png_byte*) surf->pixels) + i * surf->pitch;
 	}
 

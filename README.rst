@@ -49,29 +49,34 @@ Building the modules requires you have the many dependencies installed on
 your system. On Ubuntu and Debian, these dependencies can be installed with
 the command::
 
-    apt-get install virtualenvwrapper python-dev libavcodec-dev libavformat-dev \
-        libavresample-dev libswresample-dev libswscale-dev libfreetype6-dev libglew1.6-dev \
-        libfribidi-dev libsdl2-dev libsdl2-image-dev libsdl2-gfx-dev \
-        libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev
+    sudo apt install virtualenvwrapper python3-dev libavcodec-dev libavformat-dev \
+        libswresample-dev libswscale-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
+        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev
+
+Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
+that version, you'll need to download it from:
+
+    https://github.com/libsdl-org/SDL_image/tree/SDL2
 
 We strongly suggest installing the Ren'Py modules into a Python
 virtualenv. To create a new virtualenv, open a new terminal and run::
 
+    . /usr/share/virtualenvwrapper/virtualenvwrapper.sh
     mkvirtualenv renpy
 
 To return to this virtualenv later, run::
 
+    . /usr/share/virtualenvwrapper/virtualenvwrapper.sh
     workon renpy
 
 After activating the virtualenv, install additional dependencies::
 
-    pip install -U cython future six typing pefile requests
+    pip install -U cython future six typing pefile requests ecdsa
 
 Then, install pygame_sdl2 by running the following commands::
 
     git clone https://www.github.com/renpy/pygame_sdl2
     pushd pygame_sdl2
-    python fix_virtualenv.py $VIRTUAL_ENV
     python setup.py install
     python setup.py install_headers
     popd
@@ -80,7 +85,7 @@ Next, set RENPY_DEPS_INSTALL To a \:-separated (\;-separated on Windows)
 list of paths containing the dependencies, and RENPY_CYTHON to the name
 of the cython command::
 
-    export RENPY_DEPS_INSTALL="/usr:/usr/lib/$(uname -m)-linux-gnu/"
+    export RENPY_DEPS_INSTALL="/usr:/usr/lib/$(gcc -dumpmachine)/"
     export RENPY_CYTHON=cython
 
 Finally, use setup.py in the Ren'Py ``module`` directory to compile and
@@ -93,7 +98,7 @@ install the modules that support Ren'Py::
 Ren'Py will be installed into the activated virtualenv. It can then be run
 using the command::
 
-    python -O renpy.py
+    python renpy.py
 
 
 Documentation

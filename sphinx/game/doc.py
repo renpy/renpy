@@ -208,10 +208,23 @@ documented = collections.defaultdict(list)
 # This keeps all objectsd we see alive, to prevent duplicates in documented.
 documented_list = [ ]
 
+# The docstring for object.__init__ - which we don't want to pass for one of our classes's
+objinidoc = inspect.getdoc(object.__init__)
 
-def scan(name, o, prefix=""):
 
-    doc_type = "function"
+def scan(name, o, prefix="", inclass=False):
+
+    if inspect.isclass(o):
+        if issubclass(o, (renpy.store.Action,
+                          renpy.store.BarValue,
+                          renpy.store.InputValue)):
+            doc_type = "function"
+        else:
+            doc_type = "class"
+    elif inclass:
+        doc_type = "method"
+    else:
+        doc_type = "function"
 
     # The section it's going into.
     section = None
@@ -272,7 +285,7 @@ def scan(name, o, prefix=""):
 
             init_doc = inspect.getdoc(init)
 
-            if init_doc and not init_doc.startswith("x.__init__("):
+            if init_doc and (init_doc != objinidoc):
                 lines.append("")
                 lines.extend(init_doc.split("\n"))
 
@@ -313,7 +326,7 @@ def scan(name, o, prefix=""):
     if inspect.isclass(o):
         if (name not in [ "Matrix", "OffsetMatrix", "RotateMatrix", "ScaleMatrix" ]):
             for i in dir(o):
-                scan(i, getattr(o, i), prefix + "    ")
+                scan(i, getattr(o, i), prefix + "    ", inclass=True)
 
     if name == "identity":
         raise Exception("identity")

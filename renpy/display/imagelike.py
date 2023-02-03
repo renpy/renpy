@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -102,7 +102,7 @@ class Borders(object):
 
     `left`, `top`, `right`, `bottom`
         These provide the size of the insets used by a frame, and are added
-        to the padding on each side. They should zero or a positive integer.
+        to the padding on each side. They should be zero or a positive integer.
 
     `pad_left`, `pad_top`, `pad_right`, `pad_bottom`
         These are added to the padding on each side, and may be positive or
@@ -142,7 +142,7 @@ class Borders(object):
 class Frame(renpy.display.core.Displayable):
     """
     :doc: disp_imagelike
-    :args: (image, left=0, top=0, right=None, bottom=None, tile=False, **properties)
+    :args: (image, left=0, top=0, right=None, bottom=None, *, tile=False, **properties)
     :name: Frame
 
     A displayable that resizes an image to fill the available area,

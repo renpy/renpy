@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -39,9 +39,15 @@ from renpy.compat.pickle import loads, dumps
 always_constants = { 'True', 'False', 'None' }
 
 # The set of names that should be treated as pure functions.
-pure_functions = set(i for i in dir(builtins) if not i.startswith("__"))
-pure_functions -= { "copyright", "credits", "enumerate", "help", "input", "license", "map", "memoryview", "next", "open", "print", "reversed" }
 pure_functions = {
+    # Python 3 builtins.
+    'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytes', 'callable',
+    'chr', 'complex', 'dict', 'dir', 'divmod', 'enumerate', 'filter', 'float',
+    'format', 'frozenset', 'getattr', 'hasattr', 'hash', 'hex', 'int',
+    'isinstance', 'issubclass', 'len', 'list', 'map', 'max', 'min', 'oct',
+    'ord', 'pow', 'range', 'repr', 'reversed', 'round', 'set', 'slice', 'sorted',
+    'str', 'sum', 'tuple', 'type', 'zip',
+
     # minstore.py
     "_",
     "_p",
@@ -138,7 +144,7 @@ def pure(fn):
     `fn`
         The name of the function to declare pure. This may either be a string
         containing the name of the function, or the function itself.
-        If a string is passed and the function is inside the module,
+        If a string is passed and the function is inside a module,
         this string should contain the module name with the dot.
 
     Returns `fn`, allowing this function to be used as a decorator.

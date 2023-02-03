@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -477,6 +477,16 @@ def checkpointing(method):
     return do_checkpoint
 
 
+def list_wrapper(method):
+
+    @_method_wrapper(method)
+    def newmethod(*args, **kwargs):
+        l = method(*args, **kwargs)
+        return RevertableList(l)
+
+    return newmethod
+
+
 class RollbackRandom(random.Random):
     """
     This is used for Random objects returned by renpy.random.Random.
@@ -503,6 +513,9 @@ class RollbackRandom(random.Random):
 
     if PY2:
         jumpahead = checkpointing(mutator(random.Random.jumpahead)) # type: ignore
+    else:
+        choices = list_wrapper(random.Random.choices)
+    sample = list_wrapper(random.Random.sample)
 
     getrandbits = checkpointing(mutator(random.Random.getrandbits))
     seed = checkpointing(mutator(random.Random.seed)) # type: ignore
@@ -528,6 +541,10 @@ class DetRandom(random.Random):
     def __init__(self):
         super(DetRandom, self).__init__()
         self.stack = [ ]
+
+    if not PY2:
+        choices = list_wrapper(random.Random.choices)
+    sample = list_wrapper(random.Random.sample)
 
     def random(self):
 

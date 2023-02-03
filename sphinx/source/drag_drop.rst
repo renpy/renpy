@@ -41,7 +41,7 @@ Examples
 An example of a say screen that allows the user to choose the location
 of the window by dragging it around the screen.::
 
-    screen say:
+    screen say(who, what):
 
         drag:
             drag_name "say"
@@ -121,9 +121,12 @@ send a character to a location::
 
 
 More complicated systems take significant programming skill to get
-right. The `Ren'Py cardgame framework <http://www.renpy.org/wiki/renpy/Frameworks#Cardgame>`_
-is both an example of how to use drag and drop in a complex
-system, and useful for making card games in its own right.
+right.
+
+..
+    The `Ren'Py cardgame framework <http://www.renpy.org/wiki/renpy/Frameworks#Cardgame>`_
+    is both an example of how to use drag and drop in a complex
+    system, and useful for making card games in its own right.
 
 .. _as-example:
 

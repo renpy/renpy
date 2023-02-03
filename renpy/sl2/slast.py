@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -80,9 +80,8 @@ def compile_expr(loc, node):
         flags = renpy.python.new_compile_flags
 
     expr = ast.Expression(body=node)
-    ast.fix_missing_locations(expr)
+    renpy.python.fix_locations(expr, 1, 0)
     return compile(expr, filename, "eval", flags, 1)
-
 
 class SLContext(renpy.ui.Addable):
     """
@@ -750,7 +749,7 @@ class SLDisplayable(SLBlock):
             for i in self.positional:
                 const = min(self.constant, analysis.is_constant_expr(i))
 
-            for k, v in self.keyword:
+            for _k, v in self.keyword:
                 const = min(self.constant, analysis.is_constant_expr(v))
 
             if self.keyword_exist("id"):
@@ -1635,7 +1634,7 @@ class SLFor(SLBlock):
         const = analysis.is_constant(node)
 
         if const == GLOBAL_CONST:
-            self.expression_value = py_eval_bytecode(compile_expr(self.location, node))
+            self.expression_value = list(py_eval_bytecode(compile_expr(self.location, node)))
             self.expression_expr = None
         else:
             self.expression_value = None
