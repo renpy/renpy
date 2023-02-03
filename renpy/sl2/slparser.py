@@ -812,7 +812,30 @@ class ForParser(Parser):
         return rv
 
 
-ForParser("for")
+for_parser = ForParser("for")
+
+
+class BreakParser(Parser):
+
+    def parse(self, loc, l, parent, keyword):
+
+        l.expect_eol()
+        l.expect_noblock('break statement')
+
+        return slast.SLBreak(loc)
+
+for_parser.add(BreakParser("break", False))
+
+class ContinueParser(Parser):
+
+    def parse(self, loc, l, parent, keyword):
+
+        l.expect_eol()
+        l.expect_noblock('continue statement')
+
+        return slast.SLContinue(loc)
+
+for_parser.add(ContinueParser("continue", False))
 
 
 class OneLinePythonParser(Parser):
