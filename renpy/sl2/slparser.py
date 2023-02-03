@@ -117,6 +117,21 @@ class PrefixStyle(object):
             parser.add(self)
 
 
+from renpy.styledata.stylesets import proxy_properties as incompatible_props
+
+def check_incompatible_props(new, olds):
+    """
+    Takes a property and a set of already-seen properties, and checks
+    to see if the new is incompatible with any of the old ones.
+    """
+    newly_set = incompatible_props.get(new, set()) | {new}
+
+    for old in olds:
+        if newly_set.intersection(incompatible_props.get(old, (old,))):
+            return old
+
+    return False
+
 class Parser(object):
 
     # The number of children this statement takes, out of 0, 1, or "many".
@@ -240,7 +255,7 @@ class Parser(object):
 
             if can_tag and name == "tag":
                 if target.tag is not None:
-                    l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+                    l.error('the tag keyword argument appears more than once in a %s statement.' % (self.name,))
 
                 target.tag = l.require(l.word)
                 l.expect_noblock(name)
@@ -259,6 +274,9 @@ class Parser(object):
 
             if name in seen_keywords:
                 l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+            incomprop = check_incompatible_props(name, seen_keywords)
+            if incomprop:
+                l.deferred_error("check_conflicting_properties", 'keyword argument {!r} is incompatible with {!r}.'.format(name, incomprop))
 
             seen_keywords.add(name)
 

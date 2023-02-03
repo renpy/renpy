@@ -902,6 +902,23 @@ class Block(Statement):
     def visit(self):
         return [ j for i in self.statements for j in i.visit() ]
 
+incompatible_props = {"alignaround" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
+                      "align" : {"xanchor", "yanchor", "xpos", "ypos"},
+                      "anchor" : {"xanchor", "yanchor"},
+                      "angle" : {"xpos", "ypos"},
+                      "around" : {"xaround", "yaround", "xanchoraround", "yanchoraround"},
+                      "offset" : {"xoffset", "yoffset"},
+                      "pos" : {"xpos", "ypos"},
+                      "radius" : {"xpos", "ypos"},
+                      "size" : {"xsize", "ysize"},
+                      "xalign" : {"xpos", "xanchor"},
+                      "xcenter" : {"xpos", "xanchor"},
+                      "xycenter" : {"xpos", "ypos", "xanchor", "yanchor"},
+                      "xysize" : {"xsize", "ysize"},
+                      "yalign" : {"ypos", "yanchor"},
+                      "ycenter" : {"ypos", "yanchor"},
+                      }
+
 # This can become one of four things:
 #
 # - A pause.
@@ -937,7 +954,21 @@ class RawMultipurpose(RawStatement):
         self.warp_function = warp_function
 
     def add_property(self, name, exprs):
+        """
+        Checks if the property is compatible with any previously included, and
+        sets it.
+        Either returns the previously-set property, if any, or None.
+        """
+        newly_set = incompatible_props.get(name, set()) | {name}
+
+        for old, _e in self.properties:
+            if newly_set.intersection(incompatible_props.get(old, (old,))):
+                break
+        else:
+            old = None
+
         self.properties.append((name, exprs))
+        return old
 
     def add_expression(self, expr, with_clause):
         self.expressions.append((expr, with_clause))
@@ -1075,8 +1106,6 @@ class RawMultipurpose(RawStatement):
                 continue
 
 # This lets us have an ATL transform as our child.
-
-
 class RawContainsExpr(RawStatement):
 
     def __init__(self, loc, expr):
@@ -1953,7 +1982,11 @@ def parse_atl(l):
                         knots.append(expr)
                         rm.add_spline(prop, knots)
                     else:
-                        rm.add_property(prop, expr)
+                        addprop_rv = rm.add_property(prop, expr)
+                        if addprop_rv == prop:
+                            ll.deferred_error("check_conflicting_properties", "property {!r} is given a value more than once".format(prop))
+                        elif addprop_rv:
+                            ll.deferred_error("check_conflicting_properties", "properties {!r} and {!r} conflict with each other".format(prop, addprop_rv))
 
                     continue
 
