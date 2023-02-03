@@ -310,7 +310,7 @@ cdef int split_line(Mesh3 old, Mesh3 new, CropInfo *ci, int p0idx, int p1idx):
     cdef float a
     cdef float b
 
-    for 0 <= i <= stride:
+    for 0 <= i < stride:
         a = old.attribute[p0idx * stride + i]
         b = old.attribute[p1idx * stride + i]
         new.attribute[npidx * stride + i] = a + d * (b - a)
@@ -512,5 +512,3 @@ cdef Mesh3 crop_mesh(Mesh3 m, Polygon p):
         j = i
 
     return rv
-
-
