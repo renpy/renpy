@@ -1179,8 +1179,10 @@ def rpy_statement(l, loc):
         l.monologue_delimiter = "\n\n"
     elif l.keyword("single"):
         l.monologue_delimiter = "\n"
+    elif l.keyword("none"):
+        l.monologue_delimiter = ""
     else:
-        l.error("rpy monologue expects either single or double.")
+        l.error("rpy monologue expects either none, single or double.")
 
     l.expect_eol()
     l.expect_noblock('rpy monologue')
