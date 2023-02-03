@@ -634,6 +634,14 @@ def generate_sets():
     for k, v in all_properties.items():
         ap[k] = [ i[0] for i in v ]
 
+    proxy_property_code = "{"
+
+    for p, l in synthetic_properties.items():
+        proxy_property_code += '"{}" : frozenset({}),'.format(p, [ el[0] for el in l ])
+
+    proxy_property_code += "}"
+
+
     ip = {p : frozenset(el[0] for el in l) for p, l in synthetic_properties.items()}
 
     prefix_priority = collections.OrderedDict()
@@ -649,7 +657,7 @@ def generate_sets():
     g.write("")
     g.write('exec("""\\')
     g.write("all_properties = {}", ap)
-    g.write("proxy_properties = {}", ip)
+    g.write("proxy_properties = {}", proxy_property_code)
     g.write("prefix_priority = {}", prefix_priority)
     g.write("prefix_alts = {}", prefix_alts)
     g.write("prefix_search = {}", PREFIX_SEARCH)
