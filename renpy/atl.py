@@ -69,6 +69,43 @@ def instant(t):
 position = renpy.object.Sentinel("position")
 
 
+class Relative(object):
+    __slots__ = ("value", "sign")
+
+    def __init__(self, value, sign):
+        self.value = value
+        self.sign = sign
+
+    def relative_to(self, value, type):
+        def interpolate(a, b, type):
+            # Deal with booleans, nones, etc.
+            if b is None or isinstance(b, (bool, basestring, renpy.display.matrix.Matrix)):
+                raise Exception("Could not use relative spline with that type")
+
+            # Recurse into tuples.
+            elif isinstance(b, tuple):
+                if a is None:
+                    a = [ None ] * len(b)
+
+                if not isinstance(type, tuple):
+                    type = (type,) * len(b)
+
+                return tuple(interpolate(i, j, ty) for i, j, ty in zip(a, b, type))
+
+            # If something is callable, call it and return the result.
+            elif callable(b):
+                raise Exception("Could not use relative spline with that type")
+
+            # Interpolate everything else.
+            else:
+                if a is None:
+                    a = 0
+
+                return correct_type(a + self.sign * b, b, type)
+
+        return interpolate(value, self.value, type)
+
+
 def any_object(x):
     return x
 
@@ -619,7 +656,7 @@ class ATLTransformBase(renpy.object.Object):
 # The base class for raw ATL statements.
 
 
-class RawStatement(object):
+class RawStatement(renpy.object.Object):
 
     constant = None
 
@@ -919,6 +956,13 @@ class RawMultipurpose(RawStatement):
 
     warp_function = None
 
+    __version__ = 1
+
+    def after_upgrade(self, version):
+        if version < 1:
+            self.properties = [ (name, expr, None) for name, expr in self.properties ]
+            self.splines = [ (name, exprs, None) for name, exprs in self.splines ]
+
     def __init__(self, loc):
 
         super(RawMultipurpose, self).__init__(loc)
@@ -936,8 +980,8 @@ class RawMultipurpose(RawStatement):
         self.duration = duration
         self.warp_function = warp_function
 
-    def add_property(self, name, exprs):
-        self.properties.append((name, exprs))
+    def add_property(self, name, expr, relative=None):
+        self.properties.append((name, expr, relative))
 
     def add_expression(self, expr, with_clause):
         self.expressions.append((expr, with_clause))
@@ -948,8 +992,8 @@ class RawMultipurpose(RawStatement):
     def add_circles(self, circles):
         self.circles = circles
 
-    def add_spline(self, name, exprs):
-        self.splines.append((name, exprs))
+    def add_spline(self, name, exprs, relative=None):
+        self.splines.append((name, exprs, relative))
 
     def compile(self, ctx): # @ReservedAssignment
 
@@ -997,20 +1041,27 @@ class RawMultipurpose(RawStatement):
 
         properties = [ ]
 
-        for name, expr in self.properties:
+        for name, expr, relative in self.properties:
             if name not in PROPERTIES:
                 raise Exception("ATL Property %s is unknown at runtime." % name)
 
             value = ctx.eval(expr)
+
+            if relative is not None:
+                value = Relative(value, relative)
+
             properties.append((name, value))
 
         splines = [ ]
 
-        for name, exprs in self.splines:
+        for name, exprs, relative in self.splines:
             if name not in PROPERTIES:
                 raise Exception("ATL Property %s is unknown at runtime." % name)
 
             values = [ ctx.eval(i) for i in exprs ]
+
+            if relative is not None:
+                values[-1] = Relative(values[-1], relative)
 
             splines.append((name, values))
 
@@ -1043,10 +1094,10 @@ class RawMultipurpose(RawStatement):
         constant = min(constant, is_constant_expr(self.duration))
         constant = min(constant, is_constant_expr(self.circles))
 
-        for _name, expr in self.properties:
+        for _name, expr, _relative in self.properties:
             constant = min(constant, is_constant_expr(expr))
 
-        for _name, exprs in self.splines:
+        for _name, exprs, _relative in self.splines:
             for expr in exprs:
                 constant = min(constant, is_constant_expr(expr))
 
@@ -1217,6 +1268,9 @@ class Interpolation(Statement):
             has_angle = False
 
             for k, v in self.properties:
+                if isinstance(v, Relative):
+                    v = v.relative_to(getattr(trans.state, k), PROPERTIES[k])
+
                 setattr(newts, k, v)
 
                 if k == "angle":
@@ -1283,6 +1337,9 @@ class Interpolation(Statement):
 
             # Figure out the splines.
             for name, values in self.splines:
+                if isinstance(values[-1], Relative):
+                    values[-1] = values[-1].relative_to(getattr(trans.state, name), PROPERTIES[name])
+
                 splines.append((name, [ getattr(trans.state, name) ] + values))
 
             state = (linear, revolution, splines)
@@ -1291,6 +1348,9 @@ class Interpolation(Statement):
             # change from the old state.
             for k, v in self.properties:
                 if k not in linear:
+                    if isinstance(v, Relative):
+                        v = v.relative_to(getattr(trans.state, k), PROPERTIES[k])
+
                     setattr(trans.state, k, v)
 
         else:
@@ -1939,6 +1999,15 @@ def parse_atl(l):
 
                 if (prop in PROPERTIES) or (prop and prop.startswith("u_")):
 
+                    if ll.match(r'\+='):
+                        relative = 1
+                    elif ll.match(r'-='):
+                        relative = -1
+                    else:
+                        # Allow property = val
+                        ll.match('=')
+                        relative = None
+
                     expr = ll.require(ll.simple_expression)
 
                     # We either have a property or a spline. It's the
@@ -1951,9 +2020,9 @@ def parse_atl(l):
 
                     if knots:
                         knots.append(expr)
-                        rm.add_spline(prop, knots)
+                        rm.add_spline(prop, knots, relative)
                     else:
-                        rm.add_property(prop, expr)
+                        rm.add_property(prop, expr, relative)
 
                     continue
 
