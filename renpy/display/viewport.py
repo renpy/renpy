@@ -246,14 +246,13 @@ class Viewport(renpy.display.layout.Container):
 
             self.check_edge_redraw(st)
 
-        redraw = self.xadjustment.animate(st)
+        redraw = self.xadjustment.periodic(st)
         if redraw is not None:
             renpy.display.render.redraw(self, redraw)
 
-        redraw = self.yadjustment.animate(st)
+        redraw = self.yadjustment.periodic(st)
         if redraw is not None:
             renpy.display.render.redraw(self, redraw)
-
 
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
