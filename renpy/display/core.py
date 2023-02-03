@@ -1449,6 +1449,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
+            f.raw_child = d
 
             rv = f
 
@@ -1477,6 +1478,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
+            f.raw_child = d
 
             rv = f
 
@@ -3040,20 +3042,17 @@ class Interface(object):
         name to a Fixed containing that layer.
         """
 
-        raw = { }
         rv = { }
 
         for layer in layers:
-            raw[layer] = d = scene_lists.make_layer(layer, self.layer_properties[layer])
+            d = scene_lists.make_layer(layer, self.layer_properties[layer])
             rv[layer] = scene_lists.transform_layer(layer, d)
 
         root = renpy.display.layout.MultiBox(layout='fixed')
         root.layers = { }
-        root.raw_layers = { }
 
         for layer in renpy.config.layers:
             root.layers[layer] = rv[layer]
-            root.raw_layers[layer] = raw[layer]
             root.add(rv[layer])
 
         rv[None] = root
@@ -3777,7 +3776,6 @@ class Interface(object):
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
         layers_root.layers = { }
-        layers_root.raw_layers = scene[None].raw_layers
 
         def add_layer(where, layer):
 
@@ -3817,7 +3815,6 @@ class Interface(object):
 
             old_root = renpy.display.layout.MultiBox(layout='fixed')
             old_root.layers = { }
-            old_root.raw_layers = self.transition_from[None].raw_layers
 
             for layer in renpy.config.layers:
                 d = self.transition_from[None].layers[layer]
