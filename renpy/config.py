@@ -1357,6 +1357,10 @@ extra_savedirs = [ ]
 # The text-to-speech dictionary. A list of [ (RegeEx|String, String) ] pairs.
 tts_substitutions = [ ]
 
+# The base URL where unpacked web videos can be found.
+web_video_base = "./game"
+
+
 del os
 del collections
 

@@ -2641,7 +2641,7 @@ class Interface(object):
         else:
             draws = self.get_draw_constructors()
 
-        for name, draw in draws:
+        for name, draw in draws: #type: ignore
             renpy.display.log.write("")
             renpy.display.log.write("Initializing {0} renderer:".format(name))
             if draw.init(virtual_size):

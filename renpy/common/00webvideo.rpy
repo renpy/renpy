@@ -1,6 +1,5 @@
 ﻿init -1100 python hide:
 
-    config.web_video_base = "./game"
 
     config.web_video_prompt = _("Touch to play the video.")
     config.web_video_error = _("Cannot load the video.")
