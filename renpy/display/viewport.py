@@ -647,6 +647,10 @@ class VPGrid(Viewport):
         if yspacing is None:
             yspacing = self.style.spacing
 
+        if renpy.config.relative_spacing:
+            xspacing = renpy.display.layout.scale(xspacing, width)
+            yspacing = renpy.display.layout.scale(yspacing, height)
+
         left_margin = renpy.display.layout.scale(self.style.left_margin, width)
         right_margin = renpy.display.layout.scale(self.style.right_margin, width)
         top_margin = renpy.display.layout.scale(self.style.top_margin, height)

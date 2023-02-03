@@ -1273,6 +1273,9 @@ modal_blocks_timer = False
 # The range, in decibels, of the volume mixers.
 volume_db_range = 60
 
+# Do we treat float values for spacing as relative values ?
+relative_spacing = True
+
 # Autosave callback.
 autosave_callback = None
 
