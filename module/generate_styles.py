@@ -641,9 +641,6 @@ def generate_sets():
 
     proxy_property_code += "}"
 
-
-    ip = {p : frozenset(el[0] for el in l) for p, l in synthetic_properties.items()}
-
     prefix_priority = collections.OrderedDict()
     prefix_alts = collections.OrderedDict()
 
