@@ -997,7 +997,7 @@
 
     # translations.rpy:104
     old "The language to work with. This should only contain lower-case ASCII characters and underscores."
-    new "Le langage avec lequel travailler. Cette valeur ne doit contenir que des caractères ASCII en minuscules et des underscores (tiret bas)."
+    new "Le langage avec lequel travailler. Cette valeur ne doit contenir que des caractères ASCII en minuscules et des underscores."
 
     # translations.rpy:130
     old "Generate empty strings for translations"
@@ -1025,7 +1025,7 @@
 
     # translations.rpy:180
     old "Update Default Interface Translations"
-    new "Met à jour la traduction de l'interface par défaut"
+    new "Mise à jour de la traduction par défaut de l'interface"
 
     # translations.rpy:200
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
@@ -1057,7 +1057,7 @@
 
     # translations.rpy:282
     old "Updating default interface translations..."
-    new "Mise à jour en cours de la traduction de l’interface par défaut..."
+    new "Mise à jour de la traduction par défaut de l’interface en cours..."
 
     # translations.rpy:306
     old "Extract Dialogue: [project.current.name!q]"
@@ -1069,7 +1069,7 @@
 
     # translations.rpy:330
     old "Tab-delimited Spreadsheet (dialogue.tab)"
-    new "Feuille de calcul avec pour séparateur des tabulations (dialogue.tab)"
+    new "Feuille de calcul avec des tabulations comme séparateur (dialogue.tab)"
 
     # translations.rpy:331
     old "Dialogue Text Only (dialogue.txt)"
