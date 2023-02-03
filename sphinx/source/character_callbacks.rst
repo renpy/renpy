@@ -75,5 +75,5 @@ characters::
             elif event == "slow_done":
                 renpy.sound.stop()
         
-        define nagata = Character("Naomi", callback=functools.partial(boopy_voice, boopfile="belter_boop.ogg"))
-        define chrisjen = Character("Chrisjen", callback=boopy_voice)
+    define nagata = Character("Naomi", callback=functools.partial(boopy_voice, boopfile="belter_boop.ogg"))
+    define chrisjen = Character("Chrisjen", callback=boopy_voice)
