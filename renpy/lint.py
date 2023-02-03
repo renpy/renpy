@@ -894,6 +894,23 @@ def check_unreachables(all_nodes):
                                                                                                plural_prefix="lines ")))
 
 
+def check_orphan_translations(none_lang_identifiers, translation_identifiers):
+    faulty = collections.defaultdict(list) # filename : [linenumbers]
+    for id, nodes in translation_identifiers.items():
+        if id not in none_lang_identifiers:
+            for node in nodes:
+                faulty[node.filename].append("{} (id {})".format(node.linenumber, id))
+
+    for filename, linenumbers in faulty.items():
+        # if len(linenumbers) > 10:
+        #     linenumbers = linenumbers[:9]
+        #     linenumbers.append("others")
+        report("{} : this file contains orphan translations at {}.".format(filename,
+                                                                           humanize_listing(linenumbers,
+                                                                                            singular_prefix="line ",
+                                                                                            plural_prefix="lines ")))
+
+
 def lint():
     """
     The master lint function, that's responsible for staging all of the
@@ -946,6 +963,9 @@ def lint():
     image_count = 0
 
     global report_node
+
+    none_language_ids = set()
+    translated_ids = collections.defaultdict(list) # id : [nodes]
 
     for node in all_stmts:
         if isinstance(node, (renpy.ast.Show, renpy.ast.Scene)):
@@ -1005,6 +1025,10 @@ def lint():
 
         elif isinstance(node, renpy.ast.Translate):
             language = node.language
+            if language is None:
+                none_language_ids.add(node.identifier)
+            else:
+                translated_ids[node.identifier].append(node)
 
         elif isinstance(node, renpy.ast.EndTranslate):
             language = None
@@ -1029,6 +1053,7 @@ def lint():
     check_styles()
     check_filename_encodings()
     check_unreachables(all_stmts)
+    check_orphan_translations(none_language_ids, translated_ids)
 
     for f in renpy.config.lint_hooks:
         f()
