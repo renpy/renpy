@@ -702,14 +702,11 @@ class Image(ImageBase):
             base = filename.rpartition(".")[0]
             extras = base.partition("@")[2].split(",")
 
-            for i in extras:
-                try:
+            try:
+                for i in extras:
                     oversample = float(i)
                     properties.setdefault('oversample', oversample)
-                    continue
-                except Exception:
-                    pass
-
+            except Exception:
                 raise Exception("Unknown image modifier %r in %r." % (i, filename))
 
         super(Image, self).__init__(filename, **properties)
@@ -786,8 +783,6 @@ class Image(ImageBase):
                     raise e
                 else:
                     return Image("_missing_image.png").load()
-
-            raise e
 
     def predict_files(self):
 
