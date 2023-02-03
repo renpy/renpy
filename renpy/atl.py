@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -1154,8 +1154,6 @@ class Child(Statement):
             child = self.transition(old_widget=old_child,
                                     new_widget=child)
             child._unique()
-        else:
-            child = child
 
         trans.set_child(child, duplicate=False)
         trans.raw_child = self.child
@@ -1189,11 +1187,6 @@ class Interpolation(Statement):
         executing(self.loc)
 
         warper = warpers.get(self.warper, self.warper)
-
-        if trans.atl.animation:
-            st_or_at = trans.at
-        else:
-            st_or_at = trans.st
 
         # Special case `pause 0` to always display a frame. This is intended to
         # support single-frame animations that shouldn't skip.

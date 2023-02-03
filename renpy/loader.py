@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -33,6 +33,8 @@ import zlib
 import re
 import io
 import unicodedata
+
+from pygame_sdl2.rwobject import RWops_from_file, RWops_create_subfile
 
 from renpy.compat.pickle import loads
 from renpy.webloader import DownloadNeeded
@@ -265,7 +267,7 @@ def index_archives():
                     if archive_handled == True:
                         break
 
-    for dir, fn in listdirfiles(): # @ReservedAssignment
+    for _dir, fn in listdirfiles():
         lower_map[unicodedata.normalize('NFC', fn.lower())] = fn
 
     for fn in remote_files:
@@ -622,18 +624,18 @@ class SubFile(object):
         raise Exception("Write not supported by SubFile")
 
 
-open_file = open # type: ignore
+open_file = RWops_from_file # type: ignore
 
 if "RENPY_FORCE_SUBFILE" in os.environ:
 
     def open_file(name, mode):
-        f = open(name, mode)
+        f = RWops_from_file(name, mode)
 
         f.seek(0, 2)
         length = f.tell()
         f.seek(0, 0)
 
-        return SubFile(f, 0, length, b'')
+        return RWops_create_subfile(f, 0, length)
 
 # A list of callbacks to open an open python file object of the given type.
 file_open_callbacks = [ ]
@@ -728,7 +730,11 @@ def load_from_archive(name):
             else:
                 offset, dlen, start = t
 
-            rv = SubFile(afn, offset, dlen, start)
+            if start == None or len(start) == 0:
+                rw = RWops_from_file(afn, "rb")
+                rv = RWops_create_subfile(rw, offset, dlen)
+            else:
+                rv = SubFile(afn, offset, dlen, start)
 
         # Compatibility path.
         else:
@@ -897,7 +903,7 @@ def transfn(name):
     raise Exception("Couldn't find file '%s'." % name)
 
 
-hash_cache = dict()
+hash_cache = {}
 
 
 def get_hash(name): # type: (str) -> int
@@ -1107,8 +1113,6 @@ def auto_thread_function():
     This thread sets need_autoreload when necessary.
     """
 
-    global needs_autoreload
-
     while True:
 
         with auto_lock:
@@ -1173,9 +1177,10 @@ def auto_init():
 
     auto_quit_flag = False
 
-    auto_thread = threading.Thread(target=auto_thread_function)
-    auto_thread.daemon = True
-    auto_thread.start()
+    if not renpy.emscripten:
+        auto_thread = threading.Thread(target=auto_thread_function)
+        auto_thread.daemon = True
+        auto_thread.start()
 
 
 def auto_quit():

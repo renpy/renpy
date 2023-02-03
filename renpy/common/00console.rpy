@@ -124,30 +124,40 @@ default persistent._console_unicode_escaping = False
 
 init -1500 python in _console:
     from store import config, persistent, NoRollback
+    import io
     import sys
     import traceback
     import store
+    import pydoc
 
     from reprlib import Repr
     class PrettyRepr(Repr):
         _ellipsis = str("...")
 
-        def repr_str(self, x, level):
+        def _repr_bytes(self, x, level):
             s = repr(x)
             if len(s) > self.maxstring:
                 i = max(0, (self.maxstring - 3) // 2)
                 s = s[:i] + self._ellipsis + s[len(s) - i:]
             return s
 
-        def repr_unicode(self, x, level):
+        def _repr_string(self, x, level):
             s = repr(x)
-            if not persistent._console_unicode_escaping:
-                s = s.decode("unicode-escape", errors="replace")
+
+            if persistent._console_unicode_escaping:
+                s = s.encode("ascii", "backslashreplace").decode("utf-8")
 
             if len(s) > self.maxstring:
                 i = max(0, (self.maxstring - 3) // 2)
                 s = s[:i] + self._ellipsis + s[len(s) - i:]
             return s
+
+        if PY2:
+            repr_str = _repr_bytes
+            repr_unicode = _repr_string
+        else:
+            repr_bytes = _repr_bytes
+            repr_str = _repr_string
 
         def repr_tuple(self, x, level):
             if not x: return "()"
@@ -198,8 +208,8 @@ init -1500 python in _console:
 
             if level <= 0: return "{...}"
 
-            iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
-            iter_x = self._make_pretty_items(x, iter_keys)
+            iter_keys = self._to_shorted_list(x, self.maxdict, sort=PY2)
+            iter_x = self._make_pretty_items(x, iter_keys, '{', '}')
             return self._repr_iterable(iter_x, level, '{', '}')
 
         repr_RevertableDict = repr_dict
@@ -213,8 +223,8 @@ init -1500 python in _console:
 
             if level <= 0: return left + "...})"
 
-            iter_keys = self._to_shorted_list(x, self.maxdict, sort=True)
-            iter_x = self._make_pretty_items(x, iter_keys)
+            iter_keys = self._to_shorted_list(x, self.maxdict, sort=PY2)
+            iter_x = self._make_pretty_items(x, iter_keys, left, '})')
             return self._repr_iterable(iter_x, level, left, '})')
 
         def repr_OrderedDict(self, x, level):
@@ -223,8 +233,32 @@ init -1500 python in _console:
             if level <= 0: return "OrderedDict({...})"
 
             iter_keys = self._to_shorted_list(x, self.maxdict)
-            iter_x = self._make_pretty_items(x, iter_keys)
+            iter_x = self._make_pretty_items(x, iter_keys, 'OrderedDict({', '})')
             return self._repr_iterable(iter_x, level, 'OrderedDict({', '})')
+
+        def repr_dict_keys(self, x, level):
+            if not x: return "dict_keys([])"
+
+            if level <= 0: return "dict_keys([...])"
+
+            iter_x = self._to_shorted_list(x, self.maxdict)
+            return self._repr_iterable(iter_x, level, 'dict_keys([', '])')
+
+        def repr_dict_values(self, x, level):
+            if not x: return "dict_values([])"
+
+            if level <= 0: return "dict_values([...])"
+
+            iter_x = self._to_shorted_list(x, self.maxdict)
+            return self._repr_iterable(iter_x, level, 'dict_values([', '])')
+
+        def repr_dict_items(self, x, level):
+            if not x: return "dict_items([])"
+
+            if level <= 0: return "dict_items([...])"
+
+            iter_x = self._to_shorted_list(x, self.maxdict)
+            return self._repr_iterable(iter_x, level, 'dict_items([', '])')
 
 
         class _PrettyDictItem(object):
@@ -245,7 +279,7 @@ init -1500 python in _console:
                 value = self.repr1(x.value, newlevel)
             return "%s: %s" % (key, value)
 
-        def _make_pretty_items(self, x, iter_keys):
+        def _make_pretty_items(self, x, iter_keys, left, right):
             ellipsis = self._ellipsis
             DictItem = self._PrettyDictItem
             iter_x = []
@@ -253,7 +287,7 @@ init -1500 python in _console:
                 if key is ellipsis:
                     di = ellipsis
                 elif x[key] is x:
-                    di = DictItem(key, ellipsis)
+                    di = DictItem(key, '%s%s%s' % (left, ellipsis, right))
                 else:
                     di = DictItem(key, x[key])
                 iter_x.append(di)
@@ -405,8 +439,15 @@ init -1500 python in _console:
             if self.result is None:
                 return
 
-            lines = self.result.split("\n")
-            lines = lines[-config.console_history_lines:]
+            lines = self.result
+            if len(lines) > config.console_history_lines * 160:
+                lines = "…" + self.result[-config.console_history_lines * 160:]
+
+            lines = lines.split("\n")
+
+            if len(lines) > config.console_history_lines:
+                lines = [ "…" ] + lines[-config.console_history_lines:]
+
             self.result = "\n".join(lines)
             self.lines = len(lines)
 
@@ -572,7 +613,8 @@ init -1500 python in _console:
                 return
 
             lines = self.lines
-            self.line_history.append(lines)
+            if not self.line_history or self.line_history[-1] != lines:
+                self.line_history.append(lines)
 
             self.reset()
 
@@ -744,8 +786,36 @@ init -1500 python in _console:
 
         return wrap
 
-    @command(_("help: show this help"))
+    @command(_("help: show this help\n help <expr>: show signature and documentation of <expr>"))
     def help(l, doc_generate=False):
+
+        if l is not None:
+            rest = l.rest_statement()
+        else:
+            rest = None
+
+        if rest and rest in globals():
+            try:
+                result = globals()[rest].help + "\n"
+                return result
+            except Exception:
+                pass
+
+        if rest and rest.replace(" ", "") != "()":
+            try:
+                renpy.python.py_compile(rest, 'eval')
+            except Exception:
+                result = "Could not evaluate expression."
+            else:
+                value = renpy.python.py_eval(rest)
+                stream = io.StringIO()
+                pydoc.doc(value, title='%s', output=stream)
+                result = __("Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n")
+                result += stream.getvalue()
+
+
+            return result
+
         keys = list(config.console_commands.keys())
         keys.sort()
 

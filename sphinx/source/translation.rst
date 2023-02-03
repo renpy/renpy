@@ -186,8 +186,8 @@ Or a statement can be removed, by replacing it with the ``pass`` statement::
     # game/script.rpy:101
     translate piglatin start_9e949aac:
 
-         # e "Pretty much everything your game needs!"
-         pass
+        # e "Pretty much everything your game needs!"
+        pass
 
 It's also possible to run non-dialogue statements, such as
 conditionals or Python. For example, we can translate::
@@ -203,10 +203,17 @@ into::
         $ latin_points = to_roman_numerals(points)
         e "Ouyay oredscay [latin_points] ointspay!"
 
+Tips
+----
+
+Be very careful when changing dialogue that has been translated,
+especially when that dialogue is repeated in more than one place
+inside a label.
+
 Sometimes it might be desirable to change a line of
 dialogue in the original language, without requiring
 the translators to retranslate the line. For example,
-a typo in English is unlikely to have surved the process
+a typo in English is unlikely to have survived the process
 of being translated into Russian.
 
 This can be done by including an ``id`` clause as part of the
@@ -216,20 +223,9 @@ statement. For example::
     label start:
         e "This used to have a typo." id start_61b861a2
 
-Tips
-----
-
-Be very careful when changing dialogue that has been translated,
-especially when that dialogue is repeated in more than one place
-inside a label. In some cases, it may be necessary to assign
-a translation identifier directly, using a statement like::
-
-    translate None mylabel_03ac197e_1:
-        "..."
-
 Adding labels can also confuse the translation process. To prevent
 this, labels that are given the ``hide`` clause are ignored when generating
-translations.::
+translations. ::
 
     label ignored_by_translation hide:
         "..."
@@ -353,6 +349,8 @@ Reverse languages
     to use a set of English -> Russian translations to create a
     Russian -> English translation.
 
+.. _image-file-translation:
+
 Image and File Translations
 ===========================
 
@@ -404,15 +402,15 @@ The default language is chosen using the following method:
 
 * If the RENPY_LANGUAGE environment variable is set, that language is
   used.
-* If :var:`config.language` is set, that language is used.
+* If :var:`config.language` is set, that language is used, overriding
+  all of the following.
 * If the game has ever chosen a language in the past, that language is
   used.
 * If this is the first time the game has been run and
   :var:`config.enable_language_autodetect` is True, Ren'Py tries to
   autodetect the language using :var:`config.locale_to_language_function`.
 * If this is the first time the game has been run,
-  :var:`config.default_language` is used. (This defaults to the None
-  language.)
+  :var:`config.default_language` is used.
 * Otherwise, the None language is used.
 
 Translation Actions, Functions, and Variables
@@ -460,7 +458,7 @@ translation:
 .. include:: inc/translate_string
 
 There are two language-related variables. One is
-:var:`config.language`, which is used to change the default language
+:var:`config.default_language`, which is used to change the default language
 of the game.
 
 .. var:: _preferences.language
@@ -501,6 +499,11 @@ translation template that contains all of the strings in it.
 If a game doesn't include support for changing the language, it may be
 appropriate to use an ``init python`` block to set :var:`config.language`
 to the target language.
+
+.. var:: config.language = None
+
+    If not None, sets the language to use at game launch, overriding
+    any memorized choice made by the user.
 
 Along with the use of string translations for dialogue, unsanctioned
 translators may be interested in using the techniques described above

@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -62,7 +62,7 @@ def onetime_init():
     if not PY2:
         dll = dll.encode("utf-8")
 
-    if not renpy.gl2.live2dmodel.load(dll):
+    if not renpy.gl2.live2dmodel.load(dll): # type: ignore
         raise Exception("Could not load Live2D. {} was not found.".format(dll))
 
     did_onetime_init = True
@@ -86,6 +86,9 @@ def init():
 
     if not renpy.config.gl2:
         raise Exception("Live2D requires that config.gl2 be True.")
+
+    if renpy.emscripten:
+        raise Exception("Live2D is not supported the web platform.")
 
     onetime_init()
 
@@ -199,7 +202,7 @@ class Live2DCommon(object):
             self.model_json = json.load(f)
 
         # The model created from the moc3 file.
-        self.model = renpy.gl2.live2dmodel.Live2DModel(self.base + self.model_json["FileReferences"]["Moc"])
+        self.model = renpy.gl2.live2dmodel.Live2DModel(self.base + self.model_json["FileReferences"]["Moc"]) # type: ignore
 
         # The texture images.
         self.textures = [ ]

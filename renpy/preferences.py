@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -173,11 +173,20 @@ Preference("high_contrast", False)
 # Should sound continue playing when the window is minimized?
 Preference("audio_when_minimized", True)
 
+# Should sound continue playing when the window is not focused?
+Preference("audio_when_unfocused", True)
+
+# Should a progressive web app preload all files into the browser cache?
+Preference("web_cache_preload", False)
+
+# Should the voice continue to play after the user enters the game menu.
+Preference("voice_after_game_menu", False)
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
     """
-    __version__ = len(all_preferences)
+    __version__ = len(all_preferences) + 2
 
     # Default values, for typing purposes.
     if 1 == 0:
@@ -220,6 +229,9 @@ class Preferences(renpy.object.Object):
         system_cursor = False
         high_contrast = False
         audio_when_minimized = True
+        audio_when_unfocused = True
+        web_cache_preload = False
+        voice_after_game_menu = False
 
     def init(self):
         """
@@ -278,7 +290,7 @@ class Preferences(renpy.object.Object):
     def set_mixer(self, mixer, volume):
         if volume > 0:
             volume = renpy.config.volume_db_range * volume - renpy.config.volume_db_range
-            volume = 10 ** (volume / 20)     
+            volume = 10 ** (volume / 20)
 
         self.set_volume(mixer, volume)
 

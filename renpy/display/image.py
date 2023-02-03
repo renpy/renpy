@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -115,6 +115,9 @@ def check_image_attributes(tag, attributes):
     Otherwise, returns None.
     """
 
+    negative = tuple(i for i in attributes if i[:1] == "-")
+    attributes = [i for i in attributes if i[:1] != "-"]
+
     l = [ ]
 
     for attrs, d in image_attributes[tag].items():
@@ -127,29 +130,33 @@ def check_image_attributes(tag, attributes):
 
             chosen = ca(tag, remainder, None)
             if chosen is not None:
-                l.append(list(attrs) + list(chosen))
+                l.append(attrs + tuple(chosen))
 
         else:
 
             if not remainder:
                 l.append(attrs)
 
+    if negative:
+        negated = {i[1:] for i in negative}
+        l = [ i for i in l if not (negated & set(i)) ]
+
     # Check to see if there's an image that is exactly the one we want.
     for i in l:
         if len(i) == len(attributes):
-            return tuple(i)
+            return tuple(i + negative)
 
     if len(l) != 1:
         return None
 
-    return tuple(l[0])
+    return tuple(l[0] + negative)
 
 
 def get_ordered_image_attributes(tag, attributes=(), sort=None):
     """
     :doc: image_func
 
-    Returns a list of image tags, ordered in a way that makes sense to
+    Returns a list of image attributes, ordered in a way that makes sense to
     present to the user.
 
     `attributes`
@@ -158,9 +165,10 @@ def get_ordered_image_attributes(tag, attributes=(), sort=None):
         can be in a single image at the same time.)
 
     `sort`
-        If not None, the returned list of attributes is sorted. This is a function
-        that should be used as a tiebreaker.
-
+        If not None, the returned list of attributes is sorted. This is a
+        one-argument function that should be used as a tiebreaker - see
+        `this tutorial <https://docs.python.org/3/howto/sorting.html#key-functions>`_
+        for more information.
     """
 
     sequences = [ ]
@@ -294,7 +302,7 @@ def get_registered_image(name):
     """
     :doc: image_func
 
-    If an image with the same name has been registered with renpy.register_image,
+    If an image with the same name has been :ref:`registered <defining-images>`,
     returns it. Otherwise, returns None.
     """
 

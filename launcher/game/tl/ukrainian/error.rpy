@@ -39,7 +39,7 @@ translate ukrainian strings:
 
     # 00gltest.rpy:149
     old "Screen"
-    new "Екранна"
+    new "Екран"
 
     # 00gltest.rpy:153
     old "60"
@@ -91,15 +91,15 @@ translate ukrainian strings:
 
     # 00gltest.rpy:242
     old "Continue, Show this warning again"
-    new "Продовжити, Показати це попередження знову"
+    new "Продовжити, показати це попередження знову"
 
     # 00gltest.rpy:246
     old "Continue, Don't show warning again"
-    new "Продовжити, Не показувати це попередження знову."
+    new "Продовжити, не показувати це попередження знову."
 
     # 00gltest.rpy:264
     old "Updating DirectX."
-    new "Оновлюю DirectX."
+    new "Оновлення DirectX."
 
     # 00gltest.rpy:268
     old "DirectX web setup has been started. It may start minimized in the taskbar. Please follow the prompts to install DirectX."
@@ -123,7 +123,7 @@ translate ukrainian strings:
 
     # 00gamepad.rpy:35
     old "No Gamepads Available"
-    new "Геймпадів Не Виявлено"
+    new "Геймпадів не виявлено"
 
     # 00gamepad.rpy:54
     old "Calibrating [name] ([i]/[total])"
@@ -135,11 +135,11 @@ translate ukrainian strings:
 
     # 00gamepad.rpy:66
     old "Skip (A)"
-    new "Skip (A)"
+    new "Пропустити (A)"
 
     # 00gamepad.rpy:69
     old "Back (B)"
-    new "Back (B)"
+    new "Назад (B)"
 
     # _errorhandling.rpym:529
     old "Open"
@@ -243,11 +243,11 @@ translate ukrainian strings:
 
     # renpy/common/00gltest.rpy:105
     old "Force ANGLE Renderer"
-    new "Примусовий ANGLE рендеринг"
+    new "Примусовий рендеринг ANGLE"
 
     # renpy/common/00gltest.rpy:110
     old "Force GLES Renderer"
-    new "Примусовий GLES рендеринг"
+    new "Примусовий рендеринг GLES"
 
     # renpy/common/00gltest.rpy:116
     old "Force GL2 Renderer"
@@ -255,11 +255,11 @@ translate ukrainian strings:
 
     # renpy/common/00gltest.rpy:121
     old "Force ANGLE2 Renderer"
-    new "Примусовий ANGLE2 рендеринг"
+    new "Примусовий рендеринг ANGLE2"
 
     # renpy/common/00gltest.rpy:126
     old "Force GLES2 Renderer"
-    new "Примусовий GLES2 рендеринг"
+    new "Примусовий рендеринг GLES2"
 
     # renpy/common/00gltest.rpy:245
     old "This game requires use of GL2 that can't be initialised."

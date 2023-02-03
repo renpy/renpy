@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,8 +26,6 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
-
 
 import os
 import zipfile
@@ -175,6 +173,18 @@ class FileLocation(object):
 
         return list(self.mtimes)
 
+    def list_files(self):
+        """
+        Returns a list of all the actual save files.
+        """
+
+        rv = [ ]
+
+        for slotname in self.list():
+            rv.append(self.filename(slotname))
+
+        return rv
+
     def mtime(self, slotname):
         """
         For a slot, returns the time the object was saved in that
@@ -184,6 +194,21 @@ class FileLocation(object):
         """
 
         return self.mtimes.get(slotname, None)
+
+    def path(self, filename):
+        """
+        Returns the mtime and path of the given filename, or (0, None) if
+        the file does not exist.
+        """
+
+        with disk_lock:
+
+            fn = os.path.join(self.directory, filename)
+
+            try:
+                return os.path.getmtime(fn), fn
+            except Exception:
+                return 0, None
 
     def json(self, slotname):
         """
@@ -249,8 +274,7 @@ class FileLocation(object):
 
     def load(self, slotname):
         """
-        Returns the log component of the file found in `slotname`, so it
-        can be loaded.
+        Returns the log and signature components of the file found in `slotname`
         """
 
         with disk_lock:
@@ -258,9 +282,14 @@ class FileLocation(object):
             filename = self.filename(slotname)
 
             with zipfile.ZipFile(filename, "r") as zf:
-                rv = zf.read("log")
+                log = zf.read("log")
 
-            return rv
+                try:
+                    token = zf.read("signatures").decode("utf-8")
+                except:
+                    token = ''
+
+            return log, token
 
     def unlink(self, slotname):
         """
@@ -440,6 +469,28 @@ class MultiLocation(object):
 
         return list(rv)
 
+    def list_files(self):
+
+        rv = [ ]
+
+        for l in self.active_locations():
+            rv.extend(l.list_files())
+
+        return rv
+
+    def path(self, filename):
+
+        results = [ ]
+
+        for i in self.active_locations():
+            results.append(i.path(filename))
+
+        if not results:
+            return 0, None
+
+        results.sort()
+        return results[-1]
+
     def mtime(self, slotname):
         l = self.newest(slotname)
 
@@ -554,6 +605,10 @@ def quit(): # @ReservedAssignment
 
 def init():
     global scan_thread
+    global quit_scan_thread
+
+    quit()
+    quit_scan_thread = False
 
     location = MultiLocation()
 
@@ -565,10 +620,59 @@ def init():
         path = os.path.join(renpy.config.gamedir, "saves")
         location.add(FileLocation(path))
 
+    # 3. Extra savedirs.
+    for i in renpy.config.extra_savedirs:
+        location.add(FileLocation(i))
+
     # Scan the location once.
     location.scan()
 
     renpy.loadsave.location = location
 
-    scan_thread = threading.Thread(target=run_scan_thread)
-    scan_thread.start()
+    if not renpy.emscripten:
+        scan_thread = threading.Thread(target=run_scan_thread)
+        scan_thread.start()
+
+
+def zip_saves():
+    """
+    This is called directly from Javascript, to zip up the savegames
+    to /savegames.zip.
+    """
+
+    import zipfile
+    import pathlib
+
+    p = pathlib.Path(renpy.config.savedir)  # type: ignore
+
+    with zipfile.ZipFile("savegames.zip", "w", zipfile.ZIP_DEFLATED) as zf:
+        for fn in p.rglob("*"):
+            zf.write(fn, fn.relative_to(p))
+
+    return True
+
+
+def unzip_saves():
+
+    import zipfile
+    import pathlib
+
+    p = pathlib.Path(renpy.config.savedir)  # type: ignore
+
+    with zipfile.ZipFile("savegames.zip", "r") as zf:
+
+        for i in zf.infolist():
+            if "/" not in i.filename:
+                filename = i.filename
+            else:
+                prefix, _, filename = i.filename.partition("/")
+
+                if (not renpy.config.save_directory) or (prefix != renpy.config.save_directory):
+                    continue
+
+            data = zf.read(i)
+
+            with open(p / filename, "wb") as f:
+                f.write(data)
+
+    return True

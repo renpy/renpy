@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -110,9 +110,27 @@ enabled_events = {
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
 
+# Layer management.
+layers = frozenset(renpy.config.layers)
+sticky_layers = frozenset()
+
+null = None
+
 # Time management.
 time_base = 0.0
 time_mult = 1.0
+
+
+def init_layers():
+    global layers, sticky_layers, null
+
+    layers = frozenset(
+        renpy.config.layers + renpy.config.detached_layers +
+        renpy.config.top_layers + renpy.config.bottom_layers)
+    sticky_layers = frozenset(
+        renpy.config.sticky_layers + renpy.config.detached_layers)
+
+    null = renpy.display.layout.Null()
 
 
 def init_time():
@@ -339,6 +357,11 @@ class Displayable(renpy.object.Object):
     # If not None, this should be a (width, height) tuple that overrides the
     # amount of space offered to the displayable.
     _offer_size = None
+
+    # If true, this displayable will be treated as draggable in its own right.
+    # This is used by viewport to decide if a drag is meant for the viewport
+    # or for its child.
+    _draggable = False
 
     # Used by a transition (or transition-like object) to determine how long to
     # delay for.
@@ -677,7 +700,11 @@ class Displayable(renpy.object.Object):
         """
         Returns None if this displayable is ready to be hidden, or
         a replacement displayable if it doesn't want to be hidden
-        quite yet. Kind is either "hide" or "replaced".
+        quite yet.
+
+        Kind may be "hide", "replace", or "cancel", with the latter
+        being called when the hide is being hidden itself because
+        another displayable is shown.
         """
 
         return None
@@ -817,14 +844,13 @@ class SceneLists(renpy.object.Object):
     things to the user.
     """
 
-    __version__ = 7
+    __version__ = 8
 
     def after_setstate(self):
-
         self.camera_list = getattr(self, "camera_list", { })
         self.camera_transform = getattr(self, "camera_transform", { })
 
-        for i in renpy.config.layers + renpy.config.top_layers:
+        for i in layers:
             if i not in self.layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
@@ -840,7 +866,7 @@ class SceneLists(renpy.object.Object):
             self.at_list = { }
             self.layer_at_list = { }
 
-            for i in renpy.config.layers + renpy.config.top_layers:
+            for i in layers:
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
 
@@ -861,6 +887,9 @@ class SceneLists(renpy.object.Object):
 
         if version < 7:
             self.layer_transform = { }
+
+        if version < 8:
+            self.sticky_tags = { }
 
     def __init__(self, oldsl, shown):
 
@@ -901,9 +930,12 @@ class SceneLists(renpy.object.Object):
         # Same thing, but for the camera transform.
         self.camera_transform = { }
 
+        # A map from tag -> layer name, only for layers in config.sticky_layers.
+        self.sticky_tags = { }
+
         if oldsl:
 
-            for i in renpy.config.layers + renpy.config.top_layers:
+            for i in layers:
 
                 try:
                     self.layers[i] = oldsl.layers[i][:]
@@ -930,9 +962,10 @@ class SceneLists(renpy.object.Object):
 
             self.layer_transform.update(oldsl.layer_transform)
             self.camera_transform.update(oldsl.camera_transform)
+            self.sticky_tags.update(oldsl.sticky_tags)
 
         else:
-            for i in renpy.config.layers + renpy.config.top_layers:
+            for i in layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
@@ -1103,6 +1136,9 @@ class SceneLists(renpy.object.Object):
         if key:
             self.remove_hide_replaced(layer, key)
             self.at_list[layer][key] = at_list
+
+            if layer in sticky_layers:
+                self.sticky_tags[key] = layer
 
         if key and name:
             self.shown.predict_show(layer, name)
@@ -1279,6 +1315,9 @@ class SceneLists(renpy.object.Object):
                 self.shown.predict_hide(layer, (tag,))
                 self.at_list[layer].pop(tag, None)
 
+                if self.sticky_tags.get(tag, None) == layer:
+                    del self.sticky_tags[tag]
+
             self.hide_or_replace(layer, remove_index, prefix)
 
     def clear(self, layer, hide=False):
@@ -1303,6 +1342,8 @@ class SceneLists(renpy.object.Object):
                 self.hide_or_replace(layer, i, hide)
 
         self.at_list[layer].clear()
+        self.sticky_tags = {k: v for k, v in self.sticky_tags.items() if v != layer}
+
         self.shown.predict_scene(layer)
 
         if renpy.config.scene_clears_layer_at_list:
@@ -1330,8 +1371,8 @@ class SceneLists(renpy.object.Object):
         for l, (t, ll) in list(self.layer_at_list.items()):
             self.layer_at_list[l] = (t or time, ll)
 
-        for l, ll in self.layers.items():
-            self.layers[l][:] = [ i.update_time(time) for i in ll ]
+        for ll in self.layers.values():
+            ll[:] = [ i.update_time(time) for i in ll ]
 
     def showing(self, layer, name):
         """
@@ -1408,6 +1449,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
+            f.raw_child = d
 
             rv = f
 
@@ -1436,6 +1478,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
+            f.raw_child = d
 
             rv = f
 
@@ -1452,8 +1495,23 @@ class SceneLists(renpy.object.Object):
         hide_tag = "hide$" + tag
         replaced_tag = "replaced$" + tag
 
-        l = self.layers[layer]
-        self.layers[layer][:] = [ i for i in l if i.tag != hide_tag and i.tag != replaced_tag ]
+        layer_list = self.layers[layer]
+
+
+        now = get_time()
+
+        new_layer_list = [ ]
+
+        for sle in layer_list:
+            if (sle.tag == hide_tag) or (sle.tag == replaced_tag):
+                d = sle.displayable._hide(now - sle.show_time, now - sle.animation_time, "cancel")
+
+                if d is None:
+                    continue
+
+            new_layer_list.append(sle)
+
+        layer_list[:] = new_layer_list
 
     def remove_hidden(self):
         """
@@ -1464,10 +1522,10 @@ class SceneLists(renpy.object.Object):
 
         now = get_time()
 
-        for l in self.layers:
+        for v in self.layers.values():
             newl = [ ]
 
-            for sle in self.layers[l]:
+            for sle in v:
 
                 if sle.tag:
 
@@ -1483,17 +1541,17 @@ class SceneLists(renpy.object.Object):
 
                 newl.append(sle)
 
-            self.layers[l][:] = newl
+            v[:] = newl
 
     def remove_all_hidden(self):
         """
         Removes everything hidden, even if it's not time yet. (Used when making a rollback copy).
         """
 
-        for l in self.layers:
+        for v in self.layers.values():
             newl = [ ]
 
-            for sle in self.layers[l]:
+            for sle in v:
 
                 if sle.tag:
 
@@ -1502,7 +1560,7 @@ class SceneLists(renpy.object.Object):
 
                 newl.append(sle)
 
-            self.layers[l][:] = newl
+            v[:] = newl
 
     def get_displayable_by_tag(self, layer, tag):
         """
@@ -2018,7 +2076,10 @@ class Interface(object):
         # Is our audio paused?
         self.audio_paused = False
 
-        for layer in renpy.config.layers + renpy.config.top_layers:
+        # Init layers.
+        init_layers()
+
+        for layer in layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
                 self.layer_properties[layer] = dict(
@@ -2034,7 +2095,7 @@ class Interface(object):
                     )
 
             else:
-                self.layer_properties[layer] = dict()
+                self.layer_properties[layer] = {}
 
         # A stack giving the values of self.transition and self.transition_time
         # for contexts outside the current one. This is used to restore those
@@ -2152,6 +2213,13 @@ class Interface(object):
         # is done, or at the end of the interaction.
         self.force_prediction = False
 
+        # The number of interactions that have happened without processing an event.
+        self.interaction_counter = 0
+
+        # This caches the mod field of the last event that has one, allowing keyboard
+        # modifiers to be used with mouse and other events.
+        self.mod = 0
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -2260,7 +2328,11 @@ class Interface(object):
         # Kill off the presplash.
         renpy.display.presplash.end()
 
-        renpy.main.log_clock("Interface start")
+        # If we are on the web browser, start preloading the browser cache.
+        if renpy.emscripten and renpy.game.preferences.web_cache_preload:
+            emscripten.run_script("loadCache()")
+
+        renpy.main.log_clock("Interface start.")
 
         self.started = True
 
@@ -2301,7 +2373,7 @@ class Interface(object):
 
                 self.cursor_cache[key] = l
 
-        s = "Total time until interface ready: {}s".format(time.time() - import_time)
+        s = "Total time until interface ready: {}s.".format(time.time() - import_time)
 
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
@@ -2970,20 +3042,17 @@ class Interface(object):
         name to a Fixed containing that layer.
         """
 
-        raw = { }
         rv = { }
 
-        for layer in renpy.config.layers + renpy.config.top_layers:
-            raw[layer] = d = scene_lists.make_layer(layer, self.layer_properties[layer])
+        for layer in layers:
+            d = scene_lists.make_layer(layer, self.layer_properties[layer])
             rv[layer] = scene_lists.transform_layer(layer, d)
 
         root = renpy.display.layout.MultiBox(layout='fixed')
         root.layers = { }
-        root.raw_layers = { }
 
         for layer in renpy.config.layers:
             root.layers[layer] = rv[layer]
-            root.raw_layers[layer] = raw[layer]
             root.add(rv[layer])
 
         rv[None] = root
@@ -3141,7 +3210,7 @@ class Interface(object):
             renpy.loadsave.save("_reload-1")
 
         renpy.persistent.update(True)
-        renpy.persistent.save_MP()
+        renpy.persistent.save_on_quit_MP()
 
     def mobile_unlink(self):
         """
@@ -3178,9 +3247,6 @@ class Interface(object):
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
 
-        # Wait for APP_DIDENTERBACKGROUND.
-        pygame.event.wait()
-
         renpy.audio.audio.pause_all()
 
         pygame.time.set_timer(PERIODIC, 0)
@@ -3194,7 +3260,7 @@ class Interface(object):
             if renpy.android:
                 try:
                     android.activity.finishAndRemoveTask()
-                except:
+                except Exception:
                     pass
 
                 from jnius import autoclass
@@ -3208,7 +3274,11 @@ class Interface(object):
         if renpy.android:
             android.wakelock(False)
 
-        print("Entered background.")
+        # # Wait for APP_DIDENTERBACKGROUND.
+        # pygame.event.wait()
+
+
+        print("Entered background. --------------------------------------------")
 
         while True:
             ev = pygame.event.wait()
@@ -3220,7 +3290,7 @@ class Interface(object):
             if ev.type == pygame.APP_DIDENTERFOREGROUND:
                 break
 
-        print("Entering foreground.")
+        print("Entering foreground. -------------------------------------------")
 
         self.mobile_unlink()
 
@@ -3329,7 +3399,7 @@ class Interface(object):
         else:
             self.maximum_framerate_time = max(self.maximum_framerate_time, get_time() + t)
 
-    def interact(self, clear=True, suppress_window=False, trans_pause=False, pause=None, **kwargs):
+    def interact(self, clear=True, suppress_window=False, trans_pause=False, pause=None, pause_modal=False, **kwargs):
         """
         This handles an interaction, restarting it if necessary. All of the
         keyword arguments are passed off to interact_core.
@@ -3369,17 +3439,26 @@ class Interface(object):
             for i in renpy.config.start_interact_callbacks:
                 i()
 
+            self.interaction_counter = 0
+
             repeat = True
 
             pause_start = get_time()
 
             while repeat:
-                repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, **kwargs) # type: ignore
+                self.interaction_counter += 1
+
+                if self.interaction_counter == 100 and renpy.config.developer:
+                    raise Exception("renpy.restart_interaction() was called 100 times without processing any input.")
+
+                repeat, rv = self.interact_core(preloads=preloads, trans_pause=trans_pause, pause=pause, pause_start=pause_start, pause_modal=pause_modal, **kwargs) # type: ignore
+
                 self.start_interact = False
 
             return rv # type: ignore
 
         finally:
+            renpy.game.context().deferred_translate_identifier = None
 
             self.force_prediction = False
 
@@ -3467,16 +3546,8 @@ class Interface(object):
                 renpy.display.draw.ready_one_texture()
                 step += 1
 
-            # Step 3: Execute commands from JS (on emscripten)
+            # Step 3: Predict more images.
             elif step == 3:
-
-                if expensive and renpy.emscripten:
-                    self.exec_js_cmd()
-
-                step += 1
-
-            # Step 4: Predict more images.
-            elif step == 4:
 
                 if not self.prediction_coroutine:
                     step += 1
@@ -3497,16 +3568,16 @@ class Interface(object):
                     if not expensive:
                         step += 1
 
-            # Step 5: Preload images (on emscripten)
-            elif step == 5:
+            # Step 4: Preload images (on emscripten)
+            elif step == 4:
 
                 if expensive and renpy.emscripten:
                     renpy.display.im.cache.preload_thread_pass()
 
                 step += 1
 
-            # Step 6: Autosave.
-            elif step == 6:
+            # Step 5: Autosave.
+            elif step == 5:
 
                 if not self.did_autosave:
                     renpy.loadsave.autosave()
@@ -3536,8 +3607,9 @@ class Interface(object):
                       mouse='default',
                       preloads=[],
                       roll_forward=None,
-                      pause=False,
+                      pause=None,
                       pause_start=0.0,
+                      pause_modal=None,
                       ):
         """
         This handles one cycle of displaying an image to the user,
@@ -3555,6 +3627,10 @@ class Interface(object):
         `pause`
             If not None, the amount of time before the interaction ends with
             False being returned.
+
+        `pause_modal`
+            If true, the pause will respect modal windows. If false, it will
+            not.
         """
 
         renpy.plog(1, "start interact_core")
@@ -3589,11 +3665,11 @@ class Interface(object):
             self.transition_from.clear()
             self.transition_time.clear()
         else:
-            for k in self.transition:
+            for k, t in self.transition.items():
                 if k not in self.old_scene:
                     continue
 
-                self.ongoing_transition[k] = self.transition[k]
+                self.ongoing_transition[k] = t
                 self.transition_from[k] = self.old_scene[k]._in_current_store()
                 self.transition_time[k] = None
 
@@ -3693,14 +3769,13 @@ class Interface(object):
         renpy.plog(1, "final predict")
 
         if pause is not None:
-            pb = renpy.display.behavior.PauseBehavior(pause)
+            pb = renpy.display.behavior.PauseBehavior(pause, modal=pause_modal)
             root_widget.add(pb, pause_start, pause_start)
             focus_roots.append(pb)
 
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
         layers_root.layers = { }
-        layers_root.raw_layers = scene[None].raw_layers
 
         def add_layer(where, layer):
 
@@ -3723,8 +3798,12 @@ class Interface(object):
                 where.layers[layer] = trans
 
             else:
-                where.layers[layer] = scene_layer
                 where.add(scene_layer)
+                where.layers[layer] = scene_layer
+
+        # Add the bottom layers to root_widget.
+        for layer in renpy.config.bottom_layers:
+            add_layer(root_widget, layer)
 
         # Add layers (perhaps with transitions) to the layers root.
         for layer in renpy.config.layers:
@@ -3736,7 +3815,6 @@ class Interface(object):
 
             old_root = renpy.display.layout.MultiBox(layout='fixed')
             old_root.layers = { }
-            old_root.raw_layers = self.transition_from[None].raw_layers
 
             for layer in renpy.config.layers:
                 d = self.transition_from[None].layers[layer]
@@ -3788,8 +3866,6 @@ class Interface(object):
             if mouse_displayable is not None:
                 root_widget.add(mouse_displayable, 0, 0)
 
-        del add_layer
-
         self.prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
         self.prediction_coroutine.send(None)
 
@@ -3799,63 +3875,86 @@ class Interface(object):
         # Clean up some movie-related things.
         renpy.display.video.early_interact()
 
-        # Call per-interaction code for all widgets.
-        renpy.display.behavior.input_pre_per_interact()
-        root_widget.visit_all(lambda i : i.per_interact())
-        renpy.display.behavior.input_post_per_interact()
-
-        # Now, update various things regarding scenes and transitions,
-        # so we are ready for a new interaction or a restart.
-        self.old_scene = scene
-
-        # Okay, from here on we now have a single root widget (root_widget),
-        # which we will try to show to the user.
-
-        # Figure out what should be focused.
-        renpy.display.focus.before_interact(focus_roots)
-
-        # Something updated the screens. Deal with it now, so the player doesn't
-        # see it.
-        if self.restart_interaction:
-            return True, None
-
-        # Redraw the screen.
-        needs_redraw = True
-
-        # First pass through the while loop?
-        first_pass = True
-
-        # We don't yet know when the interaction began.
-        self.interact_time = None
-
-        # We only want to do autosave once.
-        self.did_autosave = False
-
-        old_timeout_time = None
-        old_redraw_time = None
-
-        rv = None
-
-        # Start sound.
-        renpy.audio.audio.interact()
-
-        # How long until we redraw.
-        _redraw_in = 3600
-
-        # Have we drawn a frame yet?
-        video_frame_drawn = False
-
-        # We're no longer after rollback.
-        renpy.game.after_rollback = False
-
-        # How many frames have we shown so far?
-        frame = 0
-
-        can_block = False
+        # A dict of any active layer transitions.
+        layer_transitions = { }
 
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.
         try:
+
+            # Insert layers into Layer displayables.
+            def per_interact(i):
+                if isinstance(i, renpy.display.layout.Layer):
+                    if i.layer in scene:
+                        i.layers = layer_transitions
+                        add_layer(i, i.layer)
+                        del i.layers
+                    else:
+                        i.add(null)
+
+                i.per_interact()
+
+            # Call per-interaction code for all widgets.
+            renpy.display.behavior.input_pre_per_interact()
+            root_widget.visit_all(per_interact)
+            renpy.display.behavior.input_post_per_interact()
+
+            # Consolidate static and layer transitions for later processing.
+            if layer_transitions:
+                layer_transitions.update(layers_root.layers)
+            else:
+                layer_transitions = layers_root.layers
+
+            # Now, update various things regarding scenes and transitions,
+            # so we are ready for a new interaction or a restart.
+            self.old_scene = scene
+
+            # Okay, from here on we now have a single root widget (root_widget),
+            # which we will try to show to the user.
+
+            # Figure out what should be focused.
+            renpy.display.behavior.WebInput.pre_find_focusable()
+            renpy.display.focus.before_interact(focus_roots)
+            renpy.display.behavior.WebInput.post_find_focusable()
+
+            # Something updated the screens. Deal with it now, so the player doesn't
+            # see it.
+            if self.restart_interaction:
+                return True, None
+
+            # Redraw the screen.
+            needs_redraw = True
+
+            # First pass through the while loop?
+            first_pass = True
+
+            # We don't yet know when the interaction began.
+            self.interact_time = None
+
+            # We only want to do autosave once.
+            self.did_autosave = False
+
+            old_timeout_time = None
+            old_redraw_time = None
+
+            rv = None
+
+            # Start sound.
+            renpy.audio.audio.interact()
+
+            # How long until we redraw.
+            _redraw_in = 3600
+
+            # Have we drawn a frame yet?
+            video_frame_drawn = False
+
+            # We're no longer after rollback.
+            renpy.game.after_rollback = False
+
+            # How many frames have we shown so far?
+            frame = 0
+
+            can_block = False
 
             while rv is None:
 
@@ -3869,99 +3968,110 @@ class Interface(object):
                 if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
                     renpy.webloader.process_downloaded_resources()
 
-                for i in renpy.config.needs_redraw_callbacks:
-                    if i():
+                avoid_draw = False
+
+                if renpy.emscripten:
+                    avoid_draw = emscripten.run_script_int("webglContextLost")
+
+                    if emscripten.run_script_int("webglContextRestored"):
+                        self.display_reset = True
+                        emscripten.run_script("webglContextRestored = false;")
+
+                if not avoid_draw:
+
+                    for i in renpy.config.needs_redraw_callbacks:
+                        if i():
+                            needs_redraw = True
+
+                    # Check for a fullscreen change.
+                    if renpy.game.preferences.fullscreen != self.fullscreen:
+                        renpy.display.draw.resize()
+
+                    # Ask if the game has changed size.
+                    if renpy.display.draw.update(force=self.display_reset):
                         needs_redraw = True
 
-                # Check for a fullscreen change.
-                if renpy.game.preferences.fullscreen != self.fullscreen:
-                    renpy.display.draw.resize()
+                    # Redraw the screen.
+                    if (self.force_redraw or
+                        ((first_pass or not pygame.event.peek(ALL_EVENTS)) and
+                        renpy.display.draw.should_redraw(needs_redraw, first_pass, can_block))):
 
-                # Ask if the game has changed size.
-                if renpy.display.draw.update(force=self.display_reset):
-                    needs_redraw = True
+                        self.force_redraw = False
 
-                # Redraw the screen.
-                if (self.force_redraw or
-                    ((first_pass or not pygame.event.peek(ALL_EVENTS)) and
-                     renpy.display.draw.should_redraw(needs_redraw, first_pass, can_block))):
+                        renpy.display.render.process_redraws()
 
-                    self.force_redraw = False
+                        # If we have a movie, start showing it.
+                        fullscreen_video = renpy.display.video.interact()
 
-                    renpy.display.render.process_redraws()
+                        # Clean out the redraws, if we have to.
+                        # renpy.display.render.kill_redraws()
 
-                    # If we have a movie, start showing it.
-                    fullscreen_video = renpy.display.video.interact()
+                        self.text_rect = None
 
-                    # Clean out the redraws, if we have to.
-                    # renpy.display.render.kill_redraws()
+                        # Draw the screen.
+                        self.frame_time = get_time()
 
-                    self.text_rect = None
+                        renpy.audio.audio.advance_time() # Sets the time of all video frames.
 
-                    # Draw the screen.
-                    self.frame_time = get_time()
+                        self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
 
-                    renpy.audio.audio.advance_time() # Sets the time of all video frames.
+                        if first_pass:
+                            if not self.interact_time:
+                                self.interact_time = max(self.frame_time, get_time() - self.frame_duration)
 
-                    self.draw_screen(root_widget, fullscreen_video, (not fullscreen_video) or video_frame_drawn)
+                            scene_lists.set_times(self.interact_time)
 
-                    if first_pass:
-                        if not self.interact_time:
-                            self.interact_time = max(self.frame_time, get_time() - self.frame_duration)
+                            for k, v in self.transition_time.items():
+                                if v is None:
+                                    self.transition_time[k] = self.interact_time
 
-                        scene_lists.set_times(self.interact_time)
+                            renpy.display.render.adjust_render_cache_times(self.frame_time, self.interact_time)
 
-                        for k, v in self.transition_time.items():
-                            if v is None:
-                                self.transition_time[k] = self.interact_time
+                        frame += 1
+                        renpy.config.frames += 1
 
-                        renpy.display.render.adjust_render_cache_times(self.frame_time, self.interact_time)
+                        # If profiling is enabled, report the profile time.
+                        if renpy.config.profile or self.profile_once:
 
-                    frame += 1
-                    renpy.config.frames += 1
+                            renpy.plog(0, "end frame")
+                            renpy.performance.analyze()
+                            renpy.performance.clear()
+                            renpy.plog(0, "start frame")
 
-                    # If profiling is enabled, report the profile time.
-                    if renpy.config.profile or self.profile_once:
+                            self.profile_once = False
 
-                        renpy.plog(0, "end frame")
-                        renpy.performance.analyze()
-                        renpy.performance.clear()
-                        renpy.plog(0, "start frame")
+                        if first_pass and self.last_event and self.last_event.type in [ pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION ]:
 
-                        self.profile_once = False
+                            x, y = renpy.display.draw.get_mouse_pos()
+                            ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
 
-                    if first_pass and self.last_event and self.last_event.type in [ pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION ]:
+                            if self.ignore_touch:
+                                x = -1
+                                y = -1
 
-                        x, y = renpy.display.draw.get_mouse_pos()
-                        ev, x, y = renpy.display.emulator.emulator(self.last_event, x, y)
+                            if renpy.android and self.last_event.type == pygame.MOUSEBUTTONUP:
+                                x = -1
+                                y = -1
 
-                        if self.ignore_touch:
-                            x = -1
-                            y = -1
+                            renpy.display.focus.mouse_handler(None, x, y, default=False)
 
-                        if renpy.android and self.last_event.type == pygame.MOUSEBUTTONUP:
-                            x = -1
-                            y = -1
+                        needs_redraw = False
+                        first_pass = False
 
-                        renpy.display.focus.mouse_handler(None, x, y, default=False)
+                        pygame.time.set_timer(REDRAW, 0)
+                        pygame.event.clear([REDRAW])
+                        old_redraw_time = None
 
-                    needs_redraw = False
-                    first_pass = False
+                        self.update_text_rect()
 
-                    pygame.time.set_timer(REDRAW, 0)
-                    pygame.event.clear([REDRAW])
-                    old_redraw_time = None
-
-                    self.update_text_rect()
-
-                    renpy.test.testexecution.execute()
+                        renpy.test.testexecution.execute()
 
                 # Move the mouse, if necessary.
                 if self.mouse_move is not None:
                     if not self.mouse_move.perform():
                         self.mouse_move = None
 
-                # Check the uat
+                # Check the autosave callback.
                 if renpy.loadsave.did_autosave:
                     renpy.loadsave.did_autosave = False
                     renpy.exports.run(renpy.config.autosave_callback)
@@ -4047,12 +4157,20 @@ class Interface(object):
                     ev = self.event_wait()
                     renpy.plog(1, "post wait {!r}", ev)
 
+                self.interaction_counter = 0
+
                 if ev.type == pygame.NOEVENT:
 
                     if can_block and (not needs_redraw) and (not self.prediction_coroutine) and (not self.mouse_move):
                         pygame.time.wait(1)
 
                     continue
+
+                # Add the current keyboard modifiers to all events.
+                if ev.type in (pygame.KEYDOWN, pygame.KEYUP):
+                    self.mod = ev.mod
+
+                ev.mod = self.mod
 
                 # Recognize and ignore AltGr on Windows.
                 if ev.type == pygame.KEYDOWN:
@@ -4104,6 +4222,9 @@ class Interface(object):
                     renpy.display.controller.periodic()
 
                     self.update_mouse(mouse_displayable)
+
+                    if renpy.emscripten:
+                        self.exec_js_cmd()
 
                     continue
 
@@ -4203,6 +4324,12 @@ class Interface(object):
 
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
+
+                        if not renpy.game.preferences.audio_when_unfocused:
+                            if not ev.gain:
+                                renpy.audio.audio.pause_all()
+                            else:
+                                renpy.audio.audio.unpause_all()
 
                     # If the window becomes inactive as a result of this event
                     # pause the audio according to preference
@@ -4323,7 +4450,7 @@ class Interface(object):
         finally:
 
             # Determine the transition delay for each layer.
-            self.transition_delay = { k : getattr(v, "delay", 0) for k, v in layers_root.layers.items() }
+            self.transition_delay = { k : getattr(v, "delay", 0) for k, v in layer_transitions.items() }
 
             # Clean out the overlay layers.
             for i in renpy.config.overlay_layers:
@@ -4377,7 +4504,9 @@ class Interface(object):
 
         # Retrieve the command to be executed from a global JS variable
         # (an empty string is returned if the variable is not defined)
+
         cmd = emscripten.run_script_string("window._renpy_cmd")
+
         if len(cmd) == 0:
             return
 
@@ -4386,7 +4515,7 @@ class Interface(object):
 
         # Execute the command
         try:
-            renpy.python.py_exec(cmd)
+            renpy.python.py_exec(cmd, hide=True)
         except Exception as e:
             renpy.display.log.write(cmd)
             renpy.display.log.write('Error while executing JS command: %s' % (e,))

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -90,8 +90,7 @@ label install_live2d:
         patterns = [
             (r".*/Core/dll/linux/x86_64/(libLive2DCubismCore.so)", _prefix + r"linux-x86_64/\1"),
             (r".*/Core/dll/windows/x86_64/(Live2DCubismCore.dll)", _prefix + r"windows-x86_64/\1"),
-            (r".*/Core/dll/windows/x86/(Live2DCubismCore.dll)", _prefix + r"windows-i686/\1"),
-            (r".*/Core/dll/macos/(libLive2DCubismCore.dylib)", _prefix + r"mac-x86_64/\1"),
+            (r".*/Core/dll/macos/(libLive2DCubismCore.dylib)", _prefix + r"mac-universal/\1"),
             (r".*/Core/dll/experimental/rpi/(libLive2DCubismCore.so)", _prefix + r"linux-armv7l/\1"),
 
             (r".*/Core/dll/android/(armeabi-v7a/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),

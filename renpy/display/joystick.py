@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -39,8 +39,6 @@ class JoyBehavior(renpy.display.layout.Null):
     This is a behavior intended for joystick calibration. If a joystick
     event occurs, this returns it as a string.
     """
-
-    pass
 
 
 joysticks = { }

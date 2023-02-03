@@ -218,33 +218,6 @@ if it doesn't already exist. For example::
 As for the ``define`` statement, :ref:`lint` offers checks and optimizations
 related to the ``default`` statement.
 
-.. _init-offset-statement:
-
-Init Offset Statement
----------------------
-
-The ``init offset`` statement sets a priority offset for all statements
-that run at init time (init, init python, define, default, screen,
-transform, style, and more). The offset applies to all following
-statements in the current block and child blocks, up to the next
-init priority statement. The statement::
-
-    init offset = 42
-
-sets the priority offset to 42. In::
-
-    init offset = 2
-    define foo = 2
-
-    init offset = 1
-    define foo = 1
-
-    init offset = 0
-
-The first define statement is run at priority 2, which means it runs
-after the second define statement, and hence ``foo`` winds up with
-a value of 2.
-
 Names in the Store
 ------------------
 
@@ -282,16 +255,20 @@ Other Named Stores
 ------------------
 
 Named stores provide a way of organizing Python functions and variables
-into modules. By placing Python in modules, you can minimize the chance of name
-conflicts.
+into modules. By placing Python in named stores, you can minimize the
+chance of name conflicts. Each store corresponds to a Python module.
+The default store is ``store``, while a named store is accessed as
+``store.named``.
+
+Named stores can be created using ``python in`` blocks (or their
+``init python`` or ``python early`` variants), or using ``default``,
+``define`` or :ref:`transform <transform-statement>` statements. Variables
+in can be imported individually using ``from store.named import variable``,
+and a named store itself can be imported using ``from store import named``.
 
 Named stores can be accessed by supplying the ``in`` clause to
-``python`` or ``init python``, all of which run Python in a named
-store. Each store corresponds to a Python module. The default store is
-``store``, while a named store is accessed as ``store.name``. Names in
-the modules can be imported using the Python ``from`` statement.
-Named stores can be created using ``init python in`` blocks, or using
-``default``, ``define`` or :ref:`transform <transform-statement>` statements.
+``python`` or ``init python`` (or ``python early``), all of which
+run the Python they contain in the given named store.
 
 For example::
 
@@ -313,8 +290,14 @@ For example::
         if "Lucy" in character_stats.chloe_substore.friends:
             chloe "Lucy is my friend !"
         elif character_stats.chloe_substore.friends:
-            chelo "I have friends, but Lucy is not one of them."
+            chloe "I have friends, but Lucy is not one of them."
 
+        python in character_stats.chloe_substore:
+            friends.add("Jeremy")
+
+
+From a ``python in`` block, the default "outer" store can be
+accessed using either ``renpy.store``, or ``import store``.
 
 Named stores participate in save, load, and rollback in the same way
 that the default store does. Special namespaces such as ``persistent``,

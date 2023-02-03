@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -127,7 +127,7 @@ def scan_strings(filename):
     for line, s in renpy.game.script.translator.additional_strings[filename]: # @UndefinedVariable
         rv.append(String(filename, line, s, False))
 
-    for _filename, lineno, text in renpy.parser.list_logical_lines(filename):
+    for _filename, lineno, text in renpy.lexer.list_logical_lines(filename):
 
         for m in re.finditer(STRING_RE, text):
 

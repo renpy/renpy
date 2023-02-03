@@ -1,5 +1,5 @@
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -127,6 +127,7 @@ cdef unsigned long io_func(FT_Stream stream, unsigned long offset, unsigned char
 
     cdef FTFace face
     cdef char *cbuf
+    cdef unsigned long i
 
     face = <FTFace> stream.descriptor.pointer
     f = face.f
@@ -679,10 +680,10 @@ cdef class FTFont:
             if bmy < y:
                 y = bmy
 
-            if bmx + cache.bitmap.width > w:
+            if bmx + <int> cache.bitmap.width > w:
                 w = bmx + cache.bitmap.width
 
-            if bmy + cache.bitmap.rows > h:
+            if bmy + <int> cache.bitmap.rows > h:
                 h = bmy + cache.bitmap.rows
 
         return x, y, w, h

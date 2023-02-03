@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -68,7 +68,7 @@ class Line(object):
 
         # The full text, including any comments or delimiters.
         self.full_text = ''
-        
+
 
     def __repr__(self):
         return "<Line {}:{} {!r}>".format(self.filename, self.number, self.text)
@@ -88,8 +88,8 @@ def ensure_loaded(filename):
 
     files.add(filename)
 
-    fn = renpy.parser.unelide_filename(filename)
-    renpy.parser.list_logical_lines(fn, add_lines=True)
+    fn = renpy.lexer.unelide_filename(filename)
+    renpy.lexer.list_logical_lines(fn, add_lines=True)
 
 
 def get_line_text(filename, linenumber):

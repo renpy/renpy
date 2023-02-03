@@ -24,6 +24,27 @@ except NameError:
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
+
+def zip_rapt_symbols(destination):
+    """
+    Zips up the rapt symbols.
+    """
+
+    import zipfile
+
+    if PY2:
+        zf = zipfile.ZipFile(destination + "/android-native-symbols.zip", "w", zipfile.ZIP_DEFLATED)
+    else:
+        zf = zipfile.ZipFile(destination + "/android-native-symbols.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=3)
+
+    for dn, dirs, files in os.walk("rapt/symbols"):
+        for fn in dirs + files:
+            fn = os.path.join(dn, fn)
+            arcname = os.path.relpath(fn, "rapt/symbols")
+            zf.write(fn, arcname)
+
+    zf.close()
+
 def copy_tutorial_file(src, dest):
     """
     Copies a file from src to dst. Lines between  "# tutorial-only" and
@@ -72,11 +93,13 @@ def main():
     ap.add_argument("--notarized", action="store_true", dest="notarized")
     ap.add_argument("--vc-version-only", action="store_true")
     ap.add_argument("--link-directories", action="store_true")
+    ap.add_argument("--append-version", action="store_true")
 
     args = ap.parse_args()
 
     link_directory("rapt")
     link_directory("renios")
+    link_directory("web")
 
     if args.link_directories:
         return
@@ -98,7 +121,7 @@ def main():
     import renpy
 
     if args.version is None:
-        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1]) # @UndefinedVariable
+        args.version = ".".join(str(i) for i in renpy.version_tuple[:-1])
 
     try:
         s = subprocess.check_output([ "git", "describe", "--tags", "--dirty", ]).decode("utf-8").strip()
@@ -107,7 +130,7 @@ def main():
 
         commits_per_day = collections.defaultdict(int)
 
-        for i in subprocess.check_output([ "git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d", "--follow", "HEAD", "--", "." ]).decode("utf-8").split():
+        for i in subprocess.check_output([ "git", "log", "-99", "--pretty=%cd", "--date=format:%Y%m%d" ]).decode("utf-8").split():
             commits_per_day[i[2:]] += 1
 
         if dirty:
@@ -138,6 +161,9 @@ def main():
 
     reload(sys.modules['renpy'])
 
+    if args.append_version:
+        args.version += "-"  + renpy.version_only
+
     # Check that the versions match.
     full_version = renpy.version_only # @UndefinedVariable
     if "-" not in args.version \
@@ -161,11 +187,6 @@ def main():
         renpy_sh = "./renpy3.sh"
     else:
         renpy_sh = "./renpy2.sh"
-
-    # Perhaps autobuild.
-    if "RENPY_BUILD_ALL" in os.environ:
-        print("Autobuild...")
-        subprocess.check_call(["scripts/autobuild.sh"])
 
     # Compile all the python files.
     compileall.compile_dir("renpy/", ddir="renpy/", force=True, quiet=1)
@@ -197,6 +218,7 @@ def main():
     if not os.path.exists(destination):
         os.makedirs(destination)
 
+    zip_rapt_symbols(destination)
 
     if args.fast:
 

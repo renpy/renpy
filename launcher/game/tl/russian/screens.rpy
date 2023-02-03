@@ -654,7 +654,7 @@ translate russian strings:
     new "## Показывает диалог или в vpgrid, или в vbox."
 
     # screens.rpy:1316
-    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
     new "## Показывает меню, если есть. Меню может показываться некорректно, если config.narrator_menu установлено на True."
 
     # screens.rpy:1346

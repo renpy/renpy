@@ -2,9 +2,8 @@
 Other Functions and Variables
 =============================
 
-We're in the process of migrating the documentation over to a new
-tool. As not every page has been migrated yet, this exists to document
-new functionality that has no other place to go.
+This page lists and documents various miscellaneous functions and variables
+not better listed somewhere else.
 
 
 Ren'Py Version
@@ -24,6 +23,9 @@ Ren'Py Version
 .. var:: renpy.version_tuple
 
     The version number of Ren'Py, as a tuple of the form (1, 2, 3, 456).
+
+    This is a namedtuple with four fields: ``major``, ``minor``, ``patch``,
+    and ``commit``.
 
 .. var:: renpy.version_name
 
@@ -77,11 +79,6 @@ Memory Profiling
 -----------------
 
 .. include:: inc/memory
-
-Contexts
----------
-
-.. include:: inc/context
 
 renpy.random
 -------------

@@ -21,19 +21,17 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
 
         https://renpy.cn/doc-tw/
 
-Getting Started
----------------
 .. toctree::
     :maxdepth: 3
+    :caption: Getting Started
 
     quickstart
     gui
 
-The Ren'Py Language
--------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: The Ren'Py Language
 
    language_basics
    label
@@ -46,11 +44,10 @@ The Ren'Py Language
    movie
    voice
 
-Text, Displayables, Transforms, and Transitions
------------------------------------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Text, Displayables, Transforms, and Transitions
 
    text
    translation
@@ -63,11 +60,10 @@ Text, Displayables, Transforms, and Transitions
    3dstage
    live2d
 
-Customizing Ren'Py
-------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Customizing Ren'Py
 
    style
    style_properties
@@ -80,21 +76,19 @@ Customizing Ren'Py
    store_variables
    mouse
 
-Tools
------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Tools
 
    launcher
    developer_tools
    director
 
-Other Functionality
--------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Other Functionality
 
    nvl_mode
    input
@@ -107,12 +101,12 @@ Other Functionality
    history
    multiple
    splashscreen_presplash
+   lifecycle
 
-Python and Ren'Py
------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Python and Ren'Py
 
    statement_equivalents
    save_load_rollback
@@ -130,52 +124,50 @@ Python and Ren'Py
    matrix
    model
    other
+   ren_py
 
-Building, Updating, and Other Platforms
----------------------------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Building, Updating, and Other Platforms
 
    build
-   updater
    android
-   chromeos
    ios
-   iap
-   gesture
+   web
+   chromeos
    raspi
+   iap
+   updater
+   gesture
 
-End-User Documentation
-----------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: End-User Documentation
 
+   security
    problems
    environment_variables
    self_voicing
 
-Engine Developer Documentation
-------------------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Engine Developer Documentation
 
    editor
    skins
    translating_renpy
 
-Changes, License, and Credits
------------------------------
 
 .. toctree::
    :maxdepth: 1
+   :caption: Changes, License, and Credits
 
    changelog
    changelog6
    incompatible
-   distributor
    license
    credits
    sponsors
@@ -193,8 +185,5 @@ Indices
 Example Scripts
 ---------------
 
-.. toctree::
-   :maxdepth: 1
-
-   thequestion
-   thequestion_nvl
+* :doc:`thequestion`
+* :doc:`thequestion_nvl`

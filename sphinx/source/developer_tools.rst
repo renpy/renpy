@@ -19,6 +19,8 @@ Lint also includes useful infos and stats about the game.
 
 Note that using Lint is not a substitute for thorough testing.
 
+.. _console:
+
 Shift+O Console
 ---------------
 
@@ -39,11 +41,9 @@ The console can be used to:
 Shift+E Editor Support
 ----------------------
 
-The :var:`config.editor` variable allows a developer to specify an editor
-command that is run when the launch_editor keypress (by default, Shift+E)
-occurs.
-
-Please see :doc:`Text Editor Integration <editor>`.
+Shift+E opens the default text editor, as set in the launcher and customizable
+using :doc:`editor`, to open the script file in and line number at which the
+current statement is written.
 
 Shift+D Developer Menu
 ----------------------
@@ -66,16 +66,19 @@ preserved across the reload. This means that if one of those statements is
 changed, it is necessary to rollback and re-execute the statement to see its
 new effect.
 
+.. _style-inspector:
+
 Shift+I Style Inspecting
 ------------------------
 
 When :var:`config.developer` is true, pressing Shift+I will cause style
 inspection to occur. This will display a list of displayables underneath the
-mouse. For each displayable, it will display the type, the style used, and the
-size it is being rendered at.
+mouse, in the order they are drawn to the screen (that is, the last displayable
+is the one on top of the others). For each displayable, it will display the
+type, the style used, and the size it is being rendered at.
 
-Clicking on the style name will display where the style properties used by the
-displayable are taken from.
+Clicking on the style name will display the styles the displayable inherits
+from, and the properties each style contributes to the final displayable.
 
 > Fast Skipping
 ---------------

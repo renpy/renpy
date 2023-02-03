@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -48,6 +48,7 @@ init python in project:
         _("Press shift+O (the letter) to access the console."),
         _("Press shift+D to access the developer menu."),
         _("Have you backed up your projects recently?"),
+        _("Lint checks your game for potential mistakes, and gives you statistics."),
     ]
 
     class Project(object):
@@ -275,6 +276,8 @@ init python in project:
 
             if wait:
                 if p.wait():
+
+                    print("Launch failed. command={!r}, returncode={!r}".format(cmd, p.returncode))
 
                     if args and not self.is_writeable():
                         interface.error(_("Launching the project failed."), _("This may be because the project is not writeable."))

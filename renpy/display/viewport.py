@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -46,6 +46,10 @@ class Viewport(renpy.display.layout.Container):
 
     arrowkeys = False
     pagekeys = False
+
+    _draggable = True
+
+    drag_position_time = None
 
     def after_upgrade(self, version):
         if version < 1:
@@ -123,13 +127,18 @@ class Viewport(renpy.display.layout.Container):
             self.xoffset = replaces.xoffset
             self.yoffset = replaces.yoffset
             self.drag_position = replaces.drag_position
+            self.drag_position_time = replaces.drag_position_time
         else:
             self.drag_position = None # type: tuple[int, int]|None
+            self.drag_position_time = None # type: float|None
 
         self.child_width, self.child_height = child_size
 
+        if isinstance(draggable, bool):
+            self.draggable = draggable
+        else:
+            self.draggable = renpy.exports.variant(draggable)
         self.mousewheel = mousewheel
-        self.draggable = draggable
         self.arrowkeys = arrowkeys
         self.pagekeys = pagekeys
 
@@ -237,6 +246,15 @@ class Viewport(renpy.display.layout.Container):
 
             self.check_edge_redraw(st)
 
+        redraw = self.xadjustment.animate(st)
+        if redraw is not None:
+            renpy.display.render.redraw(self, redraw)
+
+        redraw = self.yadjustment.animate(st)
+        if redraw is not None:
+            renpy.display.render.redraw(self, redraw)
+
+
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
 
@@ -295,29 +313,92 @@ class Viewport(renpy.display.layout.Container):
         self.xoffset = None
         self.yoffset = None
 
-        rv = super(Viewport, self).event(ev, x, y, st)
+        if not ((0 <= x < self.width) and (0 <= y <= self.height)):
+            self.edge_xspeed = 0
+            self.edge_yspeed = 0
+            self.edge_last_st = None
 
-        if rv is not None:
-            return rv
+            inside = False
 
-        if self.draggable and renpy.display.focus.get_grab() == self:
+        else:
+            inside = True
+
+        # True if the player can drag the viewoport.
+        draggable = self.draggable and (self.xadjustment.range or self.yadjustment.range)
+
+        grab = renpy.display.focus.get_grab()
+
+        if draggable and grab is None:
+
+            if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
+                self.drag_position = None
+
+        if inside and draggable and (self.drag_position is not None) and (grab is not self):
+
+            focused = renpy.display.focus.get_focused()
+
+            if (focused is None) or (focused is self) or not focused._draggable:
+
+                if ev.type == pygame.MOUSEMOTION:
+
+                    oldx, oldy = self.drag_position
+
+                    if math.hypot(oldx - x, oldy - y) >= renpy.config.viewport_drag_radius:
+                        rv = renpy.display.focus.force_focus(self)
+                        renpy.display.focus.set_grab(self)
+                        self.drag_position = (x, y)
+                        self.drag_position_time = st
+                        self.drag_speed = (0.0, 0.0)
+                        grab = self
+
+                        if rv is not None:
+                            return rv
+
+        if renpy.display.focus.get_grab() == self:
 
             old_xvalue = self.xadjustment.value
             old_yvalue = self.yadjustment.value
 
-            if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
-                renpy.display.focus.set_grab(None)
-
-                # Invoke rounding adjustment on viewport release
-                xvalue = self.xadjustment.round_value(old_xvalue, release=True)
-                self.xadjustment.change(xvalue)
-                yvalue = self.yadjustment.round_value(old_yvalue, release=True)
-                self.yadjustment.change(yvalue)
-                raise renpy.display.core.IgnoreEvent()
-
             oldx, oldy = self.drag_position # type: ignore
             dx = x - oldx
             dy = y - oldy
+
+            dt = st - self.drag_position_time
+            if dt > 0:
+                old_xspeed, old_yspeed = self.drag_speed
+                new_xspeed = -dx / dt / 60
+                new_yspeed = -dy / dt / 60
+
+                done = min(1.0, dt / (1 / 60))
+
+                new_xspeed = old_xspeed + done * (new_xspeed - old_xspeed)
+                new_yspeed = old_yspeed + done * (new_yspeed - old_yspeed)
+
+                self.drag_speed = (new_xspeed, new_yspeed)
+
+            if renpy.display.behavior.map_event(ev, 'viewport_drag_end'):
+
+                renpy.display.focus.set_grab(None)
+
+                xspeed, yspeed = self.drag_speed
+
+                if xspeed and renpy.config.viewport_inertia_amplitude:
+                    self.xadjustment.inertia(renpy.config.viewport_inertia_amplitude * xspeed, renpy.config.viewport_inertia_time_constant, st)
+                else:
+                    xvalue = self.xadjustment.round_value(old_xvalue, release=True)
+                    self.xadjustment.change(xvalue)
+
+                if yspeed and renpy.config.viewport_inertia_amplitude:
+                    self.yadjustment.inertia(renpy.config.viewport_inertia_amplitude * yspeed, renpy.config.viewport_inertia_time_constant, st)
+                else:
+                    yvalue = self.yadjustment.round_value(old_yvalue, release=True)
+                    self.yadjustment.change(yvalue)
+
+                self.drag_position = None
+                self.drag_position_time = None
+
+                raise renpy.display.core.IgnoreEvent()
+
 
             new_xvalue = self.xadjustment.round_value(old_xvalue - dx, release=False)
             if old_xvalue == new_xvalue:
@@ -334,17 +415,7 @@ class Viewport(renpy.display.layout.Container):
                 newy = y
 
             self.drag_position = (newx, newy) # W0201
-
-        if not ((0 <= x < self.width) and (0 <= y <= self.height)):
-            self.edge_xspeed = 0
-            self.edge_yspeed = 0
-            self.edge_last_st = None
-
-            inside = False
-
-        else:
-
-            inside = True
+            self.drag_position_time = st
 
         if inside and self.mousewheel:
 
@@ -447,17 +518,18 @@ class Viewport(renpy.display.layout.Container):
                 else:
                     raise renpy.display.core.IgnoreEvent()
 
-        if inside and self.draggable:
+        if inside and draggable:
 
-            if renpy.display.behavior.map_event(ev, 'viewport_drag_start'):
+            focused = renpy.display.focus.get_focused()
 
-                focused = renpy.display.focus.get_focused()
-
-                if (focused is None) or (focused is self):
-
+            if (focused is self) or (focused is None) or (not focused._draggable):
+                if renpy.display.behavior.map_event(ev, 'viewport_drag_start'):
                     self.drag_position = (x, y)
-                    renpy.display.focus.set_grab(self)
-                    raise renpy.display.core.IgnoreEvent()
+                    self.drag_position_time = st
+                    self.drag_speed = (0.0, 0.0)
+
+                    self.xadjustment.end_animation()
+                    self.yadjustment.end_animation()
 
         if inside and self.edge_size and ev.type in [ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ]:
 
@@ -491,6 +563,11 @@ class Viewport(renpy.display.layout.Container):
                 self.check_edge_redraw(st, reset_st=False)
             else:
                 self.edge_last_st = None
+
+        rv = super(Viewport, self).event(ev, x, y, st)
+
+        if rv is not None:
+            return rv
 
         return None
 
@@ -653,33 +730,34 @@ class VPGrid(Viewport):
     def per_interact(self):
         super(VPGrid, self).per_interact()
 
-        exc = None
-        delta = 0
+        children = len(self.children)
 
-        if None not in (self.grid_cols, self.grid_rows):
-            delta = (self.grid_cols * self.grid_rows) - len(self.children)
-            if delta > 0:
-                exc = Exception("VPGrid not completely full.")
+        given = self.grid_cols or self.grid_rows # ignore if both are 0
 
+        if self.grid_cols is None or self.grid_rows is None:
+            delta = given - (children % given or given) if given else 0
         else:
-            given = self.grid_cols or self.grid_rows
-            if given: # ignore the case where one is 0 - cannot be underfull
-                delta = given - (len(self.children) % given)
-                # the number of aditional children needed to complete
-                # within [1, given], `given` being all right
-                if delta < given:
-                    exc = Exception("VPGrid not completely full, needs a multiple of {} children.".format(given))
+            delta = (self.grid_cols * self.grid_rows) - children
 
-        if exc is not None:
+        if not delta:
+            return
+
+        if renpy.config.developer:
             allow_underfull = self.allow_underfull
-            if allow_underfull is None:
-                allow_underfull = renpy.config.allow_underfull_grids or renpy.config.allow_unfull_vpgrids
 
-            if not renpy.config.developer:
-                allow_underfull = True
+            if allow_underfull is None:
+                allow_underfull = renpy.config.allow_underfull_grids or \
+                                  renpy.config.allow_unfull_vpgrids
 
             if not allow_underfull:
-                raise exc
+                msg = "VPGrid not completely full"
 
-            for _ in range(delta):
-                self.add(renpy.display.layout.Null())
+                if self.grid_cols is None or self.grid_rows is None:
+                    msg += ", needs a multiple of {} children".format(given)
+
+                raise Exception(msg + ".")
+
+        null = renpy.display.layout.Null()
+
+        for _ in range(delta):
+            self.add(null)

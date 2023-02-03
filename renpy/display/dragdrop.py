@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -411,6 +411,10 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
 
         if d is not None:
             self.add(d)
+
+    @property
+    def _draggable(self):
+        return self.draggable
 
     def snap(self, x, y, delay=0):
         """

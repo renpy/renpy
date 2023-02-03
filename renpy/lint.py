@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -65,7 +65,7 @@ error_reported = False
 
 def report(msg, *args):
     if report_node:
-        out = u"%s:%d " % (renpy.parser.unicode_filename(report_node.filename), report_node.linenumber)
+        out = u"%s:%d " % (renpy.lexer.unicode_filename(report_node.filename), report_node.linenumber)
     else:
         out = ""
 
@@ -88,6 +88,18 @@ def add(msg, *args):
         added[msg] = True
         msg = str(msg) % args
         print(msg)
+
+
+def humanize_listing(l, singular_prefix="", plural_prefix="", singular_suffix="", plural_suffix=""):
+    """
+    Formats a list of strings into a humanized enumeration.
+    """
+    if len(l) == 1:
+        return singular_prefix + l[0] + singular_suffix
+    elif len(l) == 2:
+        return plural_prefix + l[0] + " and " + l[1] + plural_suffix
+    else:
+        return plural_prefix + ", ".join(l[:-1]) + ", and " + l[-1] + plural_suffix
 
 
 # Tries to evaluate an expression, announcing an error if it fails.
@@ -510,13 +522,18 @@ def check_say(node):
 
         name = (char.image_tag,) + attributes
 
+        orig = name
+        f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
+        if f is not None:
+            name = f(name)
+
         if image_exists_imprecise(name):
             continue
 
         if image_exists_imprecise(('side',) + name):
             continue
 
-        report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(name))
+        report("Could not find image (%s) corresponding to attributes on say statement.", " ".join(orig))
 
 
 def check_menu(node):
@@ -708,6 +725,11 @@ def check_styles():
         check_style("Style " + name, s)
 
 
+def check_init(node):
+    if not (-999 <= node.priority <= 999):
+        report("The init priority ({}) is not in the -999 to 999 range.".format(node.priority))
+
+
 def humanize(n):
     s = str(n)
 
@@ -776,7 +798,6 @@ def report_character_stats(charastats):
     Returns a list of character stat lines.
     """
 
-    # Keep all the statistics in a list, so that it gets wrapped ionto a
     rv = [ "Character statistics (for default language):" ]
 
     count_to_char = collections.defaultdict(list)
@@ -787,12 +808,7 @@ def report_character_stats(charastats):
     for count, chars in sorted(count_to_char.items(), reverse=True):
         chars.sort()
 
-        if len(chars) == 1:
-            start = chars[0] + " has "
-        elif len(chars) == 2:
-            start = chars[0] + " and " + chars[1] + " have "
-        else:
-            start = ", ".join(chars[:-1]) + ", and " + chars[-1] + " have "
+        start = humanize_listing(chars, singular_suffix=" has ", plural_suffix=" have ")
 
         rv.append(
             " * " + start + humanize(count) +
@@ -801,6 +817,81 @@ def report_character_stats(charastats):
             )
 
     return rv
+
+
+def check_unreachables(all_nodes):
+    all_nodes = [node for node in all_nodes if not common(node)]
+
+    unreachable = set(all_nodes)
+
+    to_check = {node for node in all_nodes if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)) or isinstance(node, renpy.ast.Translate) and node.language is not None}
+    # reachable nodes whose children haven't yet been checked
+
+    def add_block(block):
+        next = block[0]
+        if next in unreachable:
+            to_check.add(next)
+
+    for node in all_nodes:
+        if isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
+            # the block of these ones is always reachable, but their next is reachable only if they are themselves reachable
+            add_block(node.block)
+
+    while to_check:
+        node = to_check.pop()
+        unreachable.remove(node)
+
+        if isinstance(node, renpy.ast.While):
+            add_block(node.block)
+
+        elif isinstance(node, renpy.ast.Menu):
+            all_cond = True
+
+            for (_l, condition, block) in node.items:
+                if block is not None:
+                    add_block(block)
+                if condition == "True":
+                    # "True" is the default value when no condition is specified
+                    all_cond = False
+
+            if not all_cond:
+                # if there's only returns or jumps in the menu choices,
+                # the next of the menu is only reachable if every choice is disabled and the menu gets skipped
+                # if not, the blocks will lead us there eventually
+                continue
+
+        elif isinstance(node, renpy.ast.If):
+            for (_c, block) in node.entries:
+                add_block(block)
+
+        elif isinstance(node, renpy.ast.UserStatement):
+            if node.code_block is not None:
+                add_block(node.code_block)
+
+            for i in node.subparses:
+                add_block(i.block)
+
+        next = node.next
+        if next in unreachable:
+            to_check.add(next)
+
+    locations = sorted(set((node.filename, node.linenumber) for node in unreachable if not isinstance(node, (renpy.ast.Return, renpy.ast.EndTranslate, renpy.ast.Init, renpy.ast.TranslateBlock))))
+    # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes
+    # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place, and EndTranslate nodes from explicit translate blocks are naturally unreachable
+    # Init and TranslateBlock nodes are meant to be unreachable, but we had to check them because if they are reachable, what follows them is too and must not be flagged as unreachable
+
+    locadict = collections.defaultdict(list)
+    for filename, linenumber in locations:
+        locadict[filename].append(str(linenumber))
+
+    for filename, linenumbers in locadict.items():
+        if len(linenumbers) > 10:
+            linenumbers = linenumbers[:9]
+            linenumbers.append("others")
+        report("{} : this file contains unreachable statements at {}.".format(filename,
+                                                                              humanize_listing(linenumbers,
+                                                                                               singular_prefix="line ",
+                                                                                               plural_prefix="lines ")))
 
 
 def lint():
@@ -888,7 +979,7 @@ def lint():
 
             counts[language].add(node.what)
             if language is None:
-                charastats[node.who if node.who else 'narrator' ] += 1
+                charastats[node.who or 'narrator' ] += 1
 
         elif isinstance(node, renpy.ast.Menu):
             check_menu(node)
@@ -930,14 +1021,21 @@ def lint():
             check_define(node, "default")
             check_redefined(node, "default")
 
+        elif isinstance(node, renpy.ast.Init):
+            check_init(node)
+
     report_node = None
 
     check_styles()
     check_filename_encodings()
+    check_unreachables(all_stmts)
 
     for f in renpy.config.lint_hooks:
         f()
 
+    # list of either strings or lists of strings
+    # the elements of `lines` will be printed separated by blank lines
+    # the strings in lists in `lines` will be separated by simple carriage-returns
     lines = [ ]
 
     def report_language(language):
@@ -969,7 +1067,7 @@ characters per block. """.format(
     print("")
 
     languages = list(counts)
-    languages.sort(key=lambda a : "" if not a else a)
+    languages.sort(key=lambda a : a or "")
     for i in languages:
         report_language(i)
 
@@ -991,7 +1089,7 @@ characters per block. """.format(
                 altprefix = "   "
                 ll = ll[3:]
             else:
-                prefix  = ""
+                prefix = ""
                 altprefix = ""
 
             for lll in textwrap.wrap(ll, 78 - len(prefix)):
@@ -1005,7 +1103,8 @@ characters per block. """.format(
 
     print("")
     if renpy.config.developer and (renpy.config.original_developer != "auto"):
-        print("Remember to set config.developer to False before releasing.")
+        print("Remember to set config.developer to False before releasing,")
+        print('or set it to "auto".')
         print("")
 
     print("Lint is not a substitute for thorough testing. Remember to update Ren'Py")

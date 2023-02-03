@@ -634,8 +634,8 @@ translate piglatin strings:
     new "## Isplaysday ialogueday inay eitheray aay pgridvay oray hetay boxvay."
 
     # gui/game/screens.rpy:1307
-    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True, as it is above."
-    new "## Isplaysday hetay enumay, ifay ivengay. Hetay enumay aymay ebay isplayedday incorrectlyay ifay onfigcay.arrator_menunay isay etsay otay Ruetay, asay itay isay aboveay."
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    new "## Isplaysday hetay enumay, ifay ivengay. Hetay enumay aymay ebay isplayedday incorrectlyay ifay onfigcay.arrator_menunay isay etsay otay Ruetay."
 
     # gui/game/screens.rpy:1337
     old "## This controls the maximum number of NVL-mode entries that can be displayed at once."
@@ -652,4 +652,3 @@ translate piglatin strings:
     # gui/game/screens.rpy:1424
     old "Menu"
     new "Enumay"
-

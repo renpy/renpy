@@ -25,6 +25,12 @@ if [ -z "$PYTHONPATH" -a -z "$VIRTUAL_ENV" ] ; then
     exit 1
 fi
 
+PY_VERSION=$(python -c 'import sys; print(sys.version_info.major)')
+
+if [ $PY_VERSION != "2" ]; then
+    BUILD_J="-j $(nproc)"
+fi
+
 ROOT="$(dirname $(realpath $0))"
 
 setup () {
@@ -32,11 +38,11 @@ setup () {
 
     if [ -n "$PYTHONPATH" ]; then
         try python setup.py $QUIET \
-            build -b build/lib.$variant -t build/tmp.$variant \
+            build -b build/lib.$variant -t build/tmp.$variant $BUILD_J \
             $RENPY_BUILD_ARGS install_lib -d "$PYTHONPATH"
     else
         try python setup.py $QUIET \
-            build -b build/lib.$variant -t build/tmp.$variant \
+            build -b build/lib.$variant -t build/tmp.$variant $BUILD_J \
             $RENPY_BUILD_ARGS install
     fi
 

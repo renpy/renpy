@@ -137,14 +137,12 @@ For example::
 
     label start:
 
-        show eileen mad
-        e "I'm a little upset at you."
+        show eileen
+        e mad "I'm a little upset at you."
 
-        show eileen happy
-        e "That's funny."
+        e happy "That's funny."
 
-        show eileen -happy
-        e "I'm not sure what to think now."
+        e -happy "I'm not sure what to think now."
 
 When an @ is included in the list of attributes, any element placed after it
 has an only temporary effect, and is reverted at the end of the line of dialogue.

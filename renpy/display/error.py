@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -60,7 +60,7 @@ def init_display():
     The minimum amount of code required to init the display.
     """
 
-    renpy.config.gl2 = getattr(renpy.game.persistent, "_gl2", False)
+    renpy.config.gl2 = getattr(renpy.game.persistent, "_gl2", True)
 
     # Ensure we have correctly-typed preferences.
     renpy.game.preferences.check()
@@ -72,8 +72,8 @@ def init_display():
         renpy.display.core.Interface()
         renpy.loader.index_archives()
         renpy.display.im.cache.init()
-    else:
-        renpy.game.interface.start()
+
+    renpy.game.interface.start()
 
     renpy.ui.reset()
 

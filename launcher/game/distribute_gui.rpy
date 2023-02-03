@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -222,7 +222,13 @@ screen build_distributions:
                         for pkg in packages:
                             if not pkg["hidden"]:
                                 $ description = pkg["description"]
-                                textbutton "[description!q]" action PackageToggle(pkg["name"]) style "l_checkbox"
+                                button:
+                                    action PackageToggle(pkg["name"]) style "l_checkbox"
+                                    hbox:
+                                        spacing 3
+                                        text "[description!q]"
+                                        if pkg["dlc"]:
+                                            text _("(DLC)")
 
                     add SPACER
                     add HALF_SPACER

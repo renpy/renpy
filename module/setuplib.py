@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -29,7 +29,10 @@ import sys
 import re
 import threading
 
-import distutils.core
+if sys.version_info.major == 2:
+    import distutils.core as setuptools
+else:
+    import setuptools
 
 # This flag determines if we are compiling for Android or not.
 android = "RENPY_ANDROID" in os.environ
@@ -53,6 +56,9 @@ gen = "gen"
 
 if sys.version_info.major > 2:
     gen += "3"
+    PY2 = False
+else:
+    PY2 = True
 
 if coverage:
     gen += "-coverage"
@@ -176,18 +182,18 @@ extensions = [ ]
 global_macros = [ ]
 
 
-def cmodule(name, source, libs=[], define_macros=[], includes=[], language="c"):
+def cmodule(name, source, libs=[], define_macros=[], includes=[], language="c", compile_args=[]):
     """
     Compiles the python module `name` from the files given in
     `source`, and the libraries in `libs`.
     """
 
-    eca = list(extra_compile_args)
+    eca = list(extra_compile_args) + compile_args
 
     if language == "c":
         eca.insert(0, "-std=gnu99")
 
-    extensions.append(distutils.core.Extension(
+    extensions.append(setuptools.Extension(
         name,
         source,
         include_dirs=include_dirs + includes,
@@ -206,7 +212,7 @@ necessary_gen = [ ]
 # A list of cython generation commands that will be run in parallel.
 generate_cython_queue = [ ]
 
-def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros=[], pyx=None, language="c"):
+def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros=[], pyx=None, language="c", compile_args=[]):
     """
     Compiles a cython module. This takes care of regenerating it as necessary
     when it, or any of the files it depends on, changes.
@@ -308,7 +314,7 @@ def cython(name, source=[], libs=[], includes=[], compile_if=True, define_macros
         if mod_coverage:
             define_macros = define_macros + [ ("CYTHON_TRACE", "1") ]
 
-        cmodule(name, [ c_fn ] + source, libs=libs, includes=includes, define_macros=define_macros, language=language)
+        cmodule(name, [ c_fn ] + source, libs=libs, includes=includes, define_macros=define_macros, language=language, compile_args=compile_args)
 
 lock = threading.Condition()
 cython_failure = False
@@ -464,11 +470,12 @@ def setup(name, version):
     if (len(sys.argv) >= 2) and (sys.argv[1] == "generate"):
         return
 
-    distutils.core.setup(
+    setuptools.setup(
         name=name,
         version=version,
         ext_modules=extensions,
         py_modules=py_modules,
+        zip_safe=False,
         )
 
 

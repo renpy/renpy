@@ -39,7 +39,7 @@ translate ukrainian strings:
 
     # gui/game/gui.rpy:36
     old "## The color that is used for buttons and bars that are hovered."
-    new "## Колір, який використовується для кнопок і смуг, які наводяться."
+    new "## Колір, який використовується для кнопок і смуг, на які наводяться."
 
     # gui/game/gui.rpy:39
     old "## The color used for a text button when it is selected but not focused. A button is selected if it is the current screen or preference value."
@@ -283,11 +283,11 @@ translate ukrainian strings:
 
     # gui/game/gui.rpy:282
     old "## These variables control the look of frames that can contain user interface components when an overlay or window is not present."
-    new "## Ці змінні керують виглядом фреймів, що можуть містити компоненти інтерфейсу користувача, коли накладання або вікно відсутні."
+    new "## Ці змінні керують виглядом рамок, що можуть містити компоненти інтерфейсу користувача, коли накладання або вікно відсутні."
 
     # gui/game/gui.rpy:285
     old "## Generic frames."
-    new "## Загальні фрейми."
+    new "## Загальні рамки."
 
     # gui/game/gui.rpy:288
     old "## The frame that is used as part of the confirm screen."
@@ -295,7 +295,7 @@ translate ukrainian strings:
 
     # gui/game/gui.rpy:291
     old "## The frame that is used as part of the skip screen."
-    new "## Кадр, який використовується як частина екрана пропуску."
+    new "## Рамка, який використовується як частина екрана пропуску."
 
     # gui/game/gui.rpy:294
     old "## The frame that is used as part of the notify screen."
@@ -335,7 +335,7 @@ translate ukrainian strings:
 
     # gui/game/gui.rpy:329
     old "## What to do with unscrollable scrollbars in the gui. \"hide\" hides them, while None shows them."
-    new "## Що робити з непрокручуваними смугами прокручування в gui. \"hide\" приховує їх, а None показує їх."
+    new "## Що робити з непрокручуваними смугами прокручування в gui. \"hide\" приховує їх, а «Нічого» показує їх."
 
     # gui/game/gui.rpy:334
     old "## History"
@@ -347,15 +347,15 @@ translate ukrainian strings:
 
     # gui/game/gui.rpy:338
     old "## The number of blocks of dialogue history Ren'Py will keep."
-    new "## Кількість блоків історії діалогів, яку Ren'Py збереже."
+    new "## Кількість блоків історії діалогів, яких Ren'Py збереже."
 
     # gui/game/gui.rpy:341
     old "## The height of a history screen entry, or None to make the height variable at the cost of performance."
-    new "## Висота запису на екрані історії або None, щоб зробити висоту змінною за рахунок продуктивності."
+    new "## Висота запису на екрані історії або «Нічого», щоб зробити висоту змінною за рахунок продуктивності."
 
     # gui/game/gui.rpy:345
     old "## The position, width, and alignment of the label giving the name of the speaking character."
-    new "## Положення, ширина та вирівнювання мітки, яка дає назву персонажа, що говорить."
+    new "## Положення, ширина та вирівнювання мітки, що вказує ім’я персонажа, що говорить."
 
     # gui/game/gui.rpy:352
     old "## The position, width, and alignment of the dialogue text."

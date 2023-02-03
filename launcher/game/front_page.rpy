@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -216,10 +216,7 @@ screen front_page_project:
 
                 textbutton _("Android") action Jump("android")
                 textbutton _("iOS") action Jump("ios")
-                textbutton _("Web") + " " + _("(Beta)") action Jump("web"):
-                    if not PY2:
-                        text_color DISABLED
-
+                textbutton _("Web") + " " + _("(Beta)") action Jump("web")
                 textbutton _("Generate Translations") action Jump("translate")
                 textbutton _("Extract Dialogue") action Jump("extract_dialogue")
 
@@ -240,7 +237,7 @@ label front_page:
 
     if (not persistent.has_chosen_language) or ("RENPY_CHOOSE_LANGUAGE" in os.environ):
 
-        if _preferences.language is None:
+        if (_preferences.language is None) or ("RENPY_CHOOSE_LANGUAGE" in os.environ):
             hide screen bottom_info
             call choose_language
             show screen bottom_info

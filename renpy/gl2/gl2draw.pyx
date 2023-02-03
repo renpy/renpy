@@ -1,6 +1,6 @@
 #cython: profile=False
 #@PydevCodeAnalysisIgnore
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -288,8 +288,10 @@ cdef class GL2Draw:
             renpy.display.log.write("GL Disabled.")
             return False
 
-        if renpy.mobile or renpy.game.preferences.physical_size is None: # @UndefinedVariable
+        if renpy.mobile:
             physical_size = (None, None)
+        elif renpy.game.preferences.physical_size is None:
+            physical_size = (renpy.config.physical_width, renpy.config.physical_height)
         else:
             physical_size = renpy.game.preferences.physical_size
 
@@ -432,8 +434,8 @@ cdef class GL2Draw:
             self.quit_fbo()
             self.shader_cache.clear()
 
-        if renpy.android or renpy.ios:
-            pygame.display.get_window().recreate_gl_context()
+        if renpy.android or renpy.ios or renpy.emscripten:
+            pygame.display.get_window().recreate_gl_context(always=renpy.emscripten)
 
         # Are we in fullscreen mode?
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
@@ -631,6 +633,9 @@ cdef class GL2Draw:
         width = min(width, max_texture_size, max_renderbuffer_size)
         height = max(self.virtual_size[1] + BORDER, self.drawable_size[1] + BORDER, height)
         height = min(height, max_texture_size, max_renderbuffer_size)
+
+        if "RENPY_MAX_TEXTURE_SIZE" in os.environ:
+            width = height = int(os.environ["RENPY_MAX_TEXTURE_SIZE"])
 
         renpy.display.log.write("Maximum texture size: %dx%d", width, height)
 

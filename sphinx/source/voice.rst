@@ -85,14 +85,33 @@ the corresponding line is shown, Ren'Py will look for the file
 ``voice/demo_minigame_03fc91ef.ogg``. If the file exists, Ren'Py will
 play it.
 
+Multilingual Voice
+------------------
+
+To benefit from Ren'Py's translation system when dubbing a game in several
+languages, it's possible to make use of :ref:`image-file-translation`.
+For a game whose original language is English and dubbed in French, and the
+following dialogue::
+
+    voice "omelette.ogg"
+    e "I like scrambled eggs with cheese..."
+
+Placing the english version in "game/omelette.ogg" and the french translation
+in "game/tl/french/omelette.ogg" will make Ren'Py use the french version when
+the french language is activated in the game.
+
+It works just the same for automatic voice, as long as the filepath of the
+translation file starting from "game/tl/<language>/" matches the filepath of
+the original file starting from "game/"
 
 Voice Functions
 ---------------
 
 .. include:: inc/voice
 
+.. _voice-actions:
+
 Voice Actions
 -------------
 
 .. include:: inc/voice_action
-

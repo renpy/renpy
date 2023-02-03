@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -368,13 +368,15 @@ change_renpy_executable()
             duplicate is set.
             """
 
+            prefix = py("lib/py{major}-mac-universal")
+
             for f in list(self):
 
                 if f.name.startswith("lib/python") and (not duplicate):
                     name = app + "/Contents/Resources/" + f.name
 
-                elif f.name.startswith(py("lib/py{major}-mac-x86_64")):
-                    name = app + "/Contents/MacOS/" + f.name[19:]
+                elif f.name.startswith(prefix):
+                    name = app + "/Contents/MacOS/" + f.name[len(prefix)+1:]
 
                 else:
                     continue
@@ -399,7 +401,10 @@ change_renpy_executable()
             for f in sorted(self, key=lambda a : a.name):
                 f.hash(sha, distributor)
 
-            return sha.hexdigest()
+            if PY2:
+                return sha.hexdigest().decode("utf-8")
+            else:
+                return sha.hexdigest()
 
         def split_by_prefix(self, prefix):
             """
@@ -436,7 +441,7 @@ change_renpy_executable()
         This manages the process of building distributions.
         """
 
-        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None, force_format=None):
+        def __init__(self, project, destination=None, reporter=None, packages=None, build_update=True, open_directory=False, noarchive=False, packagedest=None, report_success=True, scan=True, macapp=None, force_format=None, files_filter=None):
             """
             Distributes `project`.
 
@@ -474,6 +479,11 @@ change_renpy_executable()
 
             `force_format`
                 If given, forces the format of the distribution to be this.
+
+            `files_filter`
+                If given, use this object to decide which files must be included.
+                The object must contains the `filter(file, variant, format)`
+                method which must return True is the file must be included.
             """
 
             # A map from a package to a unique update version hash.
@@ -645,6 +655,8 @@ change_renpy_executable()
 
             # The time of the update version.
             self.update_version = int(time.time())
+
+            self.files_filter = files_filter
 
             for p in build_packages:
 
@@ -960,6 +972,7 @@ change_renpy_executable()
                 CFBundleDisplayName=display_name,
                 CFBundleExecutable=executable_name,
                 CFBundleIconFile="icon",
+                CFBundleIdentifier="com.domain.game",
                 CFBundleInfoDictionaryVersion="6.0",
                 CFBundleName=display_name,
                 CFBundlePackageType="APPL",
@@ -1005,13 +1018,13 @@ change_renpy_executable()
                 linux = 'binary'
                 linux_i686 = 'binary'
                 mac = 'binary'
-                raspi = 'raspi'
+                raspi = 'linux_arm'
             else:
                 windows = 'windows'
                 linux = 'linux'
                 linux_i686 = 'linux_i686'
                 mac = 'mac'
-                raspi = 'linux'
+                raspi = 'linux_arm'
 
             prefix = py("lib/py{major}-")
 
@@ -1039,11 +1052,20 @@ change_renpy_executable()
                     armfn,
                     True)
 
+            aarch64fn = os.path.join(config.renpy_base, prefix + "linux-aarch64/renpy")
+
+            if os.path.exists(aarch64fn):
+
+                self.add_file(
+                    raspi,
+                    prefix + "linux-aarch64/" + self.executable_name,
+                    aarch64fn,
+                    True)
 
             self.add_file(
                 mac,
-                prefix + "mac-x86_64/" + self.executable_name,
-                os.path.join(config.renpy_base, prefix + "mac-x86_64/renpy"),
+                prefix + "mac-universal/" + self.executable_name,
+                os.path.join(config.renpy_base, prefix + "mac-universal/renpy"),
                 True)
 
         def add_mac_files(self):
@@ -1067,7 +1089,7 @@ change_renpy_executable()
 
             self.add_file(filelist,
                 contents + "/MacOS/" + self.executable_name,
-                os.path.join(config.renpy_base, py("lib/py{major}-mac-x86_64/renpy")))
+                os.path.join(config.renpy_base, py("lib/py{major}-mac-universal/renpy")))
 
 
             custom_fn = os.path.join(self.project.path, "icon.icns")
@@ -1085,7 +1107,7 @@ change_renpy_executable()
 
             if not self.build['renpy']:
                 self.add_directory(filelist, contents + "/MacOS/lib")
-                self.add_directory(filelist, contents + py("/MacOS/lib/py{major}-mac-x86_64"))
+                self.add_directory(filelist, contents + py("/MacOS/lib/py{major}-mac-universal"))
                 self.add_directory(filelist, contents + py("/Resources/lib/python{major}.{minor}"))
 
             self.file_lists[filelist].mac_lib_transform(self.app, self.build['renpy'])
@@ -1299,13 +1321,13 @@ change_renpy_executable()
         def workaround_mac_notarization(self, fl):
             """
             This works around mac notarization by compressing the unsigned,
-            un-notarized, binaries in lib/py3-mac-x86_64.
+            un-notarized, binaries in lib/py3-mac-universal.
             """
 
             fl = fl.copy()
 
             for f in fl:
-                if py("/lib/py{major}-mac-x86_64/") in f.name:
+                if py("/lib/py{major}-mac-universal/") in f.name:
                     with open(f.path, "rb") as inf:
                         data = inf.read()
 
@@ -1438,7 +1460,7 @@ change_renpy_executable()
 
             if self.include_update and (variant not in [ 'ios', 'android', 'source']) and (not format.startswith("app-")):
 
-                with open(update_fn, "w") as f:
+                with open(update_fn, "wb" if PY2 else "w") as f:
                     json.dump(update, f, indent=2)
 
                 if (not dlc) or (format == "update"):
@@ -1520,6 +1542,9 @@ change_renpy_executable()
                 if f.directory:
                     pkg.add_directory(f.name, f.path)
                 else:
+                    if self.files_filter is not None and not self.files_filter.filter(f, variant, format):
+                        # Ignore file
+                        continue
                     pkg.add_file(f.name, f.path, f.executable)
 
             self.reporter.progress_done()
@@ -1575,7 +1600,7 @@ change_renpy_executable()
                     add_variant(p["name"])
 
             fn = renpy.fsencode(os.path.join(self.destination, "updates.json"))
-            with open(fn, "w") as f:
+            with open(fn, "wb" if PY2 else "w") as f:
                 json.dump(index, f, indent=2)
 
 

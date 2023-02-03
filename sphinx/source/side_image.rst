@@ -85,10 +85,10 @@ using config variables.
 .. var:: _side_image_tag = None
 .. var:: config.side_image_tag = None
 
-    If _side_image_tag is not None, it takes preference over config.side_image_tag.
+    If _side_image_tag is not None, it takes precedence over config.side_image_tag.
 
     If this is given, then the side image will track the given image tag,
-    rather than the image associated with currently speaking character. For example,
+    rather than the image associated with the currently speaking character. For example,
 
     ::
 

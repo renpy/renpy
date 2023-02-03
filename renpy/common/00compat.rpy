@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -249,13 +249,30 @@ init -1100 python:
             config.gui_text_position_properties = False
             config.atl_function_always_blocks = True
 
-        if _compat_versions(version, (7, 5, 1), (8, 0, 1)):
+        if version <= (7, 4, 11):
+            config.timer_blocks_pause = False
             config.modal_blocks_pause = False
+        elif _compat_versions(version, (7, 5, 1), (8, 0, 1)):
+            config.timer_blocks_pause = True
+            config.modal_blocks_pause = False
+        elif _compat_versions(version, (7, 5, 2), (8, 0, 2)):
+            config.modal_blocks_pause = True
+            config.timer_blocks_pause = True
 
-        if _compat_versions(version, (7, 5, 2), (8, 0, 2)):
+        if _compat_versions(version, (7, 5, 3), (8, 0, 3)):
             config.quadratic_volumes = True
             config.emphasize_audio_volume = 0.5
             config.relative_spacing = False
+            config.lenticular_bracket_ruby = False
+            config.preserve_volume_when_muted = True
+            config.history_current_dialogue = False
+
+            config.top_layers.remove("top")
+            config.bottom_layers.remove("bottom")
+            config.context_clear_layers.remove("top")
+            config.context_clear_layers.remove("bottom")
+
+            config.sticky_layers.remove("master")
 
             store._errorhandling._constant = True
             store._gamepad._constant = True
@@ -268,7 +285,6 @@ init -1100 python:
             store.iap._constant = True
             store.layeredimage._constant = True
             store.updater._constant = True
-
 
 
     # The version of Ren'Py this script is intended for, or

@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -23,6 +23,8 @@ init -1900 python:
     config.images_directory = 'images'
     config.late_images_scan = False
 
+    config.image_extensions =  [ ".jpg", ".jpeg", ".png", ".webp", ".avif", ".svg" ]
+
     def _scan_images_directory():
 
         import os
@@ -39,10 +41,11 @@ init -1900 python:
             basename = os.path.basename(fn)
             base, ext = os.path.splitext(basename)
 
-            if not ext.lower() in [ ".jpg", ".jpeg", ".png", ".webp" ]:
+            if not ext.lower() in config.image_extensions:
                 continue
 
             base = base.lower()
+            base = base.partition("@")[0]
 
             if renpy.has_image(base, exact=True):
                 continue

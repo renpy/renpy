@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -78,6 +78,7 @@ init python:
     _("Nightly (Ren'Py 7, Python 2)")
     _("The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all.")
 
+default allow_repair_update = False
 
 screen update_channel(channels):
 
@@ -108,8 +109,8 @@ screen update_channel(channels):
 
                     for c in channels:
 
-                        if c["split_version"] != list(renpy.version_tuple):
-                            $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False)]
+                        if c["split_version"] != list(renpy.version_tuple) or allow_repair_update:
+                            $ action = [SetField(persistent, "has_update", None), SetField(persistent, "last_update_check", None), updater.Update(c["url"], simulate=UPDATE_SIMULATE, public_key=PUBLIC_KEY, confirm=False, force=allow_repair_update)]
 
                             if c["channel"].startswith("Release"):
                                 $ current = _("• {a=https://www.renpy.org/doc/html/changelog.html}View change log{/a}")

@@ -149,20 +149,20 @@ keyword "warp" followed by an
 expression giving a function. Either case is followed by a number, giving the
 number of seconds the interpolation should take. ::
 
+    transform builtin_warper:
+        xpos 0
+        ease 5 xpos 520
+
     init python:
-        @renpy.atl_warper
         def my_warper(t):
             return t**4.4
 
     define my_warpers = [my_warper]
 
-    transform builtin_warper:
-        xpos 0
-        my_warper 5 xpos 52
-
     transform accessed_as_function:
         xpos 0
-        warp my_warpers[0] 5 xpos 52
+        warp my_warpers[0] 5 xpos 520
+        warp my_warper 3 xpos 100
 
 See :ref:`warpers` for more information about warpers.
 
@@ -1123,9 +1123,6 @@ both horizontal and vertical positions.
     when MatrixColors are used, and the MatrixColors are structurally similar.
     See :doc:`matrixcolor` for more information.
 
-    This requires model-based rendering to be enabled by setting :var:`config.gl2` to
-    True.
-
 .. transform-property:: blur
 
     :type: None or float
@@ -1136,8 +1133,18 @@ both horizontal and vertical positions.
     between Ren'Py versions, and the blurring may exhibit artifacts,
     especially when the image being blurred is changing.
 
-    This requires model-based rendering to be enabled by setting :var:`config.gl2` to
-    True.
+
+.. transform-property:: show_cancels_hide
+
+    :type: boolean
+    :default: True
+
+
+    Normally, when a displayable or screen with the same tag or name as one
+    that is hiding is shown, the hiding displayable or screen is removed,
+    cancelling the hide transform. If this0 property is False in the hide
+    transform, this cancellation will not occur, and the hide transform
+    will proceed to completion.
 
 There are also several sets of transform properties that are documented elsewhere:
 
@@ -1170,6 +1177,7 @@ These properties are applied in the following order:
 #. matrixcolor
 #. GL Properties, Uniforms
 #. position properties
+#. show_cancels_hide
 
 Deprecated Transform Properties
 ===============================

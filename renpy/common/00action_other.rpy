@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -628,7 +628,6 @@ init -1500 python:
         def get_tooltip(self):
             return renpy.display.behavior.get_tooltip(self.yes)
 
-
     @renpy.pure
     class Scroll(Action, DictEquality):
         """
@@ -697,7 +696,7 @@ init -1500 python:
         :args: (directory)
 
         Opens `directory` in a file browser. `directory` is relative to
-        the config.basedir.
+        :var:`config.basedir`.
         """
 
         alt = _("Open [text] directory.")
@@ -816,6 +815,45 @@ init -1500 python:
 
         return renpy.get_focus_rect(name)
 
+    @renpy.pure
+    class ExecJS(Action, DictEquality):
+        """
+        :doc: other_action
+
+        Executes the given JavaScript source code. This is only supported on
+        the web, and will raise an exception on other platforms. The script
+        is executed asynchronously in the window context, and the return value
+        is not available.
+
+        `code`
+            The JavaScript code to execute.
+        """
+
+        def __init__(self, code):
+            self.code = code
+
+        def __call__(self):
+            if not renpy.emscripten:
+                raise Exception("ExecJS is only supported on the web.")
+
+            import emscripten
+            emscripten.run_script(self.code)
+
+    def CurrentScreenName():
+        """
+        :doc: other_screen_function
+
+        Returns the name of the current screen, or None if there is no
+        current screen. In the case of a screen including by the use
+        screen, this returns the name of the screen that is doing the
+        including, not the name of the screen being included.
+        """
+
+        current = renpy.current_screen()
+        if current is None:
+            return None
+
+        return current.screen_name[0]
 
 init -1500:
 

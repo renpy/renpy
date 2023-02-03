@@ -313,9 +313,9 @@ Attribute
 ^^^^^^^^^
 
 The ``attribute`` statement adds a layer that is displayed when the given
-attribute is used to display the image. The same attribute can be used with
-multiple layers, with all layers corresponding to the attribute being shown
-(the `if_all`, `if_any`, and `if_not` properties can change this).
+attribute is used to display the image. The same attribute name can be used
+in multiple layers, with all layers corresponding to the attribute being shown
+(the `if_all`, `if_any`, and `if_not` properties can tweak this).
 
 An attribute takes an attribute name. It can also take two keywords.
 The ``default`` keyword indicates that the attribute should be present
@@ -324,16 +324,13 @@ prevents Ren'Py from automatically searching for a displayable corresponding
 to this attribute, which is useful to have an attribute that is intended solely
 for use with `if_all`, `if_any`, or `if_not`.
 
-If the displayable is not present, it will be computed from the name of the
-layer, group, group variant, and attribute, by replacing all spaces with
-underscores and using underscores to combine everything together. So
-if we have an image named "augustina", the group "eyes" and the attribute "closed",
-the image "augustina_eyes_closed" will be used. (The layered image's
-format function is used to do this, defaulting to :func:`layeredimage.format_function`.)
-
-If an attribute is not inside a group, it's placed in a group with the
-same name, but that group is not used to compute the displayable name.
-(So it would look for "image_attribute", not "image_attribute_attribute").
+If the displayable is not explicitely given, it will be computed from the name
+of the layeredimage, the group (if any), the group's variant (if any), and the
+attribute, by replacing all spaces with underscores and using underscores to
+combine everything together. So if we have an image named "augustina", the
+group "eyes", no group variant, and the attribute "closed", the image
+"augustina_eyes_closed" will be used. (The layered image's format function is
+used to do this, defaulting to :func:`layeredimage.format_function`.)
 
 The attribute statement takes the following properties:
 
@@ -360,16 +357,33 @@ The attribute statement takes the following properties:
 `at`
     A transform or list of transforms that are applied to the layer.
 
+The `if_*` clauses' test is based upon the list of attributes of the resulting
+image, as explained :ref:`here <concept-image>`, but it **does not *change* that
+list.** ::
+
+    layeredimage eileen:
+        attribute a
+        attribute b default if_not "a"
+        attribute c default if_not "b"
+
+In this example, the ``b`` and ``c`` attributes are *always* part of the attributes
+list (because of their ``default`` clause). When calling ``show eileen a``, the
+``a`` attribute will be displayed as requested, and the ``b`` attribute will not,
+due to its ``if_not`` property. But even if not displayed, the ``b`` attribute will
+still be part of the attributes list, which means the ``c`` attribute will still not
+display.
+
 Group
 ^^^^^
 
 The ``group`` statement groups together alternative layers. When an attribute is
-inside a group, it is an error to include any of the other attributes in
-that group. (But it's fine to include the same attribute twice. The ``multiple``
-keyword removes this restriction.)
+inside a group, and unless the group is ``multiple``, it is an error to include any
+of the other attributes in that group. (But it's fine for several attributes
+to have same name, even within the same group.)
 
 The ``group`` statement takes a name. The name isn't used for very much, but is
-used to generate the default names of attributes inside the group.
+used to generate the default names of attributes inside the group. That is not the
+case for ``multiple`` groups for which the name doesn't have any use or impact.
 
 The name may be followed by the ``auto`` keyword. If it's present, after any
 attributes in the group have been declared, Ren'Py will scan its list of images
@@ -379,8 +393,9 @@ declared with the attribute statement.
 
 This can be followed by the ``multiple`` keyword. If present, more than one
 member of the group can be selected at the same time. This is useful to have
-a group auto-define multiple attributes that are not exclusive. This conflicts
-with the default keyword being given to one of the attributes.
+a group auto-define multiple attributes that are not exclusive, or to apply the
+same properties to a set of attributes at once.
+This conflicts with the ``default`` keyword being given to one of the attributes.
 
 Properties can then be declared on the first line of the group, and it can
 take a block that contains properties and attributes.
@@ -388,9 +403,9 @@ take a block that contains properties and attributes.
 There are two properties that are specific to groups.
 
 `variant`
-    If given, this should be a string. If present, it adds a variant element
-    that becomes part of automatically-generated image names and the pattern
-    used to search for automatically-defined attributes.
+    If given, this should be a string. If present, it adds an element that becomes
+    part of automatically-generated image names, and of the pattern used to search
+    for images when automatically defining attributes in ``auto`` groups.
 
 `prefix`
     If given, this is a prefix that is concatenated using an underscore with
@@ -398,9 +413,29 @@ There are two properties that are specific to groups.
     "leftarm", and the attribute name "hip" is encountered, the attribute
     "leftarm_hip" is defined instead.
 
-The group statement also takes the same properties ``attribute`` does.  Properties
+The group statement also takes the same properties ``attribute`` does. Properties
 supplied to the group are passed to the attributes inside the group, unless
 overridden by the same property of the attribute itself.
+
+Several ``group`` blocks with the same name being defined in the same layeredimage
+are considered to be different parts of a single group. For example::
+
+    layeredimage eileen sitting:
+        attribute base default
+        group arms variant "behind":
+            attribute on_hips
+            attribute on_knees
+            attribute mixed
+        attribute table default
+        group arms variant "infront":
+            attribute on_table default
+            attribute holding_margarita
+            attribute mixed
+
+In our example, the ``eileen_sitting_arms_behind_mixed.png`` will contain her left
+arm behind the table, and ``eileen_sitting_arms_infront_mixed.png`` will contain
+her right arm on the table. When calling ``show eileen sitting mixed``, the two
+images will be shown at the same time, respectively behind and in front of the table.
 
 **Pattern.** The image pattern used consists of:
 
@@ -449,7 +484,7 @@ The always statement takes the following properties:
 If
 ^^
 
-The ``if`` statement (or more fully the if-elif-else) statement allows you
+The ``if`` statement (or more fully the if-elif-else statement) allows you
 to supply one or more conditions that are evaluated at runtime. Each
 condition is associated with a layer, with the first true condition
 being the one that is shown. If no condition is true, the ``else`` layer

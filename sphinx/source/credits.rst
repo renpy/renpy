@@ -52,6 +52,7 @@ the omission in future versions.
 * David Gowers
 * Deji
 * Delta
+* Dennis Goodlett
 * Denzil
 * Derik
 * Diapolo10
@@ -80,6 +81,7 @@ the omission in future versions.
 * GimmiRuski
 * GiovanH
 * Giuseppe Bertone
+* GNCanva
 * Gouvernathor
 * Gratusfr
 * Gregory Pease
@@ -95,6 +97,7 @@ the omission in future versions.
 * Huanxuantian
 * Hyper Sonic
 * Ian Leslie
+* JackkelDragon
 * Jackmcbarn
 * Jacob Kauffmann
 * JaHIY
@@ -141,6 +144,7 @@ the omission in future versions.
 * Mason Chou
 * Matias B.
 * Matt George
+* Matthew Vimislik
 * Max le Fou
 * Maxwell Paul Brickner
 * Meithal
@@ -189,6 +193,8 @@ the omission in future versions.
 * rivvil
 * Robert Penner
 * Roope Herpiö
+* Saamkhaih Kyakya
+* SahabandhSthabara
 * Saltome
 * Sapphi
 * Scout

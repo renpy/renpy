@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -170,6 +170,7 @@ DisplayableParser("timer", renpy.display.behavior.Timer, "default", 0, replaces=
 Positional("delay")
 Keyword("action")
 Keyword("repeat")
+Keyword("modal")
 
 # Omit behaviors.
 # Omit menu as being too high-level.
@@ -462,7 +463,7 @@ def sl2add(d, replaces=None, scope=None, **kwargs):
 
     if kwargs:
         rv = Transform(child=d, **kwargs)
-        rv._main = d
+        rv._main = d # type: ignore
 
     return rv
 
@@ -510,19 +511,25 @@ DisplayableParser("on", renpy.display.behavior.OnEvent, None, 0)
 Positional("event")
 Keyword("action")
 
-
 DisplayableParser("nearrect", renpy.display.layout.NearRect, "default", 1, replaces=True)
 Keyword("rect")
 Keyword("focus")
 Keyword("prefer_top")
-add(position_properties)
 
 DisplayableParser("dismiss", renpy.display.behavior.DismissBehavior , "default", 0)
 Keyword("action")
 Keyword("modal")
+Keyword("keysym")
 Style("alt")
 Style("sound")
-Style("debug")
+
+DisplayableParser("areapicker", renpy.display.behavior.AreaPicker, "default", 1)
+Keyword("rows")
+Keyword("cols")
+Keyword("position")
+Keyword("changed")
+Keyword("finished")
+Keyword("persist")
 
 
 # Ensure that Parsers are no longer added automatically.

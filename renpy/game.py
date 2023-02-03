@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -97,6 +97,9 @@ persistent = None # type: Any
 
 # The current preferences.
 preferences = None # type: Any
+
+# Current id of the AST node in script initcode
+initcode_ast_id = 0
 
 
 class ExceptionInfo(object):
@@ -250,7 +253,7 @@ def context(index=-1):
 
 def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
     """
-    :doc: label
+    :doc: context
 
     This function creates a new context, and invokes the given Python
     callable (function) in that context. When the function returns
@@ -274,6 +277,8 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
     """
 
     restart_context = False
+
+    renpy.display.focus.clear_focus()
 
     context = renpy.execution.Context(False, contexts[-1], clear=True)
     contexts.append(context)
@@ -313,7 +318,7 @@ def invoke_in_new_context(callable, *args, **kwargs): # @ReservedAssignment
 
 def call_in_new_context(label, *args, **kwargs):
     """
-    :doc: label
+    :doc: context
 
     This creates a new context, and then starts executing Ren'Py script
     from the given label in that context. Rollback is disabled in the
@@ -323,6 +328,8 @@ def call_in_new_context(label, *args, **kwargs):
     Use this to begin a second interaction with the user while
     inside an interaction.
     """
+
+    renpy.display.focus.clear_focus()
 
     context = renpy.execution.Context(False, contexts[-1], clear=True)
     contexts.append(context)
@@ -368,6 +375,8 @@ def call_replay(label, scope={}):
     Keyword arguments are used to set the initial values of variables in the
     memory context.
     """
+
+    renpy.display.focus.clear_focus()
 
     renpy.game.log.complete()
 

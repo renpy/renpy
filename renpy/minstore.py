@@ -1,4 +1,4 @@
-# Copyright 2004-2022 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -94,7 +94,7 @@ def _p(s):
     translated when displayed by the text displayable. This is intended
     to define multi-line for use in strings, of the form::
 
-        define config.about = _p("""
+        define gui.about = _p("""
             These two lines will be combined together
             to form a long line.
 

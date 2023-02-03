@@ -1,9 +1,10 @@
 _renpy gen/_renpy.c IMG_savepng.c core.c
 _renpybidi gen/_renpybidi.c renpybidicore.c
 renpy.audio.renpysound gen/renpy.audio.renpysound.c renpysound_core.c ffmedia.c
-renpy.parsersupport gen/renpy.parsersupport.c
+renpy.lexersupport gen/renpy.lexersupport.c
 renpy.pydict gen/renpy.pydict.c
 renpy.style gen/renpy.style.c
+renpy.encryption gen/renpy.encryption.c
 renpy.compat.dictviews gen/renpy.compat.dictviews.c
 renpy.styledata.styleclass gen/renpy.styledata.styleclass.c
 renpy.styledata.stylesets gen/renpy.styledata.stylesets.c
