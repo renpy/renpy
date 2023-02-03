@@ -646,12 +646,18 @@ init -1500 python:
         `amount`
             The amount to scroll by. This can be a number of pixels, or
             else "step" or "page".
+
+        `delay`
+            If non-zero, the scroll will be animated for this many seconds.
         """
 
-        def __init__(self, id, direction, amount="step"):
+        delay = 0.0
+
+        def __init__(self, id, direction, amount="step", delay=0.0):
             self.id = id
             self.direction = direction
             self.amount = amount
+            self.delay = delay
 
         def __call__(self):
 
@@ -682,11 +688,18 @@ init -1500 python:
                 raise Exception("Unknown scroll direction: {}".format(self.direction))
 
             if self.amount == "step":
-                adjustment.change(adjustment.value + delta * adjustment.step)
+                amount = delta * adjustment.step
             elif self.amount == "page":
-                adjustment.change(adjustment.value + delta * adjustment.page)
+                amount = delta * adjustment.page
+            elif isinstance(self.amount) and not isinstance(self.amount, absolute):
+                amount = delta * self.amount * adjustment.range
             else:
-                adjustment.change(adjustment.value + delta * self.amount)
+                amount = delta * self.amount
+
+            if self.delay == 0.0:
+                adjustment.change(adjustment.value + amount)
+            else:
+                adjustment.animate(amount, self.delay, _warper.ease)
 
 
     @renpy.pure
