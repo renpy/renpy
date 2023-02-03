@@ -63,6 +63,9 @@ backslash to prevent it from closing the string. For example::
 
        "I walked past a sign saying, \"Let's give it 100%!\""
 
+It's also possible to use a proxy function instead of a character
+object. More details about this in :ref:`this section <say-proxy>`.
+
 .. _defining-character-objects:
 
 Defining Character Objects
@@ -73,9 +76,7 @@ can customize the look (and to some extent, the behavior) of
 dialogue. Characters are created by using the ``define`` statement to
 assign a Character to a variable. For example::
 
-    define e = Character("Eileen",
-                         who_color="#c8ffc8")
-
+    define e = Character("Eileen", who_color="#c8ffc8")
 
 Once this is done, the character can be used in a say statement::
 

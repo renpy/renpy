@@ -32,10 +32,21 @@ character. ::
     "And then the sun exploded."
     $ narrator("And then the sun exploded.")
 
+It's possible to pass additional arguments to a character when calling it this
+way (more about this in the next section), but note that unlike other arguments,
+if the Character was passed ``interact=False`` when created, passing it
+``interact=True`` will not override that, meaning no interaction will happen in
+that case.
+
+.. _say-proxy:
+
+Proxy functions
+---------------
+
 This equivalence of characters and function objects works in the other
 direction as well. It is possible to declare a Python function, and
-then use that function in the place of a character object. For
-example, the following function uses a variable to choose between
+then use that function in the place of a character object in a native say statement.
+For example, the following function uses a variable to choose between
 two characters. ::
 
     define lucy_normal = Character("Lucy")
@@ -64,12 +75,19 @@ arguments, or pass them to a character function. Doing this will
 allow the game to continue working if future versions of Ren'Py add additional
 keyword arguments to character calls.
 
-A :ref:`say-with-arguments` sees the arguments passed to the function. For
-example::
+Note that unlike other possible arguments, ``interact=True`` will always be
+passed to the function - unless manually passing ``(interact=False)``. A
+:ref:`say-with-arguments` sees the arguments (including the supplementary
+`interact`) passed to the function. For example::
 
     e "Hello, world." (what_size=32)
 
-is equivalent to::
+resolves to the following call::
+
+    e("Hello, world.", what_size=32, interact=True)
+
+Note that it's not required to pass ``interact=True`` when calling a Character
+object for it to work as intended. The following works just as well::
 
     $ e("Hello, world.", what_size=32)
 
@@ -79,6 +97,8 @@ When e is a Character, this is further equivalent to::
 
 But it's possible to use :var:`config.say_arguments_callback` or
 have ``e`` wrap a character to do things differently.
+
+There is one additional way of replacing the say statement using Python:
 
 .. include:: inc/se_say
 
