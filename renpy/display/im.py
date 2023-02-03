@@ -886,6 +886,9 @@ class Composite(ImageBase):
         self.positions = args[0::2]
         self.images = [ image(i) for i in args[1::2] ]
 
+        # Only supports all the images having the same oversample factor
+        self.oversample = self.images[0].get_oversample()
+
     def get_hash(self):
         rv = 0
 
@@ -901,10 +904,13 @@ class Composite(ImageBase):
         else:
             size = cache.get(self.images[0]).get_size()
 
+        os = self.oversample
+        size = [s*os for s in size]
+
         rv = renpy.display.pgrender.surface(size, True)
 
         for pos, im in zip(self.positions, self.images):
-            rv.blit(cache.get(im), pos)
+            rv.blit(cache.get(im), [p*os for p in pos])
 
         return rv
 
@@ -1894,6 +1900,9 @@ class AlphaMask(ImageBase):
 
         self.base = image(base)
         self.mask = image(mask)
+
+        # The two images already need to be the same size, they now also need the same oversample.
+        self.oversample = self.base.get_oversample()
 
     def get_hash(self):
         return self.base.get_hash() + self.mask.get_hash()
