@@ -343,7 +343,17 @@ when defining the Character, passing ``interact=True`` will not override
 that, meaning no interaction will happen in that case.
 
 Note that :var:`config.say_arguments_callback` will be called every time
-a say statement executes, and not only when arguments are passed.
+a say statement executes, and not only when arguments are passed. It can be
+useful to implement conditional overrides over characters' customizations.
+For example::
+
+    init python:
+        def say_arguments_callback(char, *args, **kwargs):
+            if colorblind_mode:
+                kwargs["what_color"] = "#000"
+            return args, kwargs
+
+    define config.say_arguments_callback = say_arguments_callback
 
 .. _monologue-mode:
 
