@@ -255,10 +255,27 @@ let video_start = (c) => {
     c.video_el.play().then(() => {
         // TODO?
     }).catch((e) => {
-        if (e.name != 'AbortError') {
-            Module.print(`Cannot play ${p.name} (${e})`);
+        switch (e.name) {
+            case 'NotAllowedError':
+                // Autoplay not allowed until user interacts with page unless video is muted
+                console.warn('Playing video as muted to prevent autoplay blocking');
+                c.video_el.muted = true;
+                c.video_el.play().then(() => {
+                    // TODO?
+                }).catch( (e) => {
+                    console.warn('Video is NOT playing even when muted', e.name);
+                    renpyAudio.videoPlayPrompt(renpyAudio._web_video_prompt, c.video_el);
+                });
+                break;
+
+            case 'AbortError':
+                // Happens when user interacts while video playback is starting
+                break;
+
+            default:
+                Module.print(`Cannot play ${p.name} ([${e.name}] ${e})`);
+                throw e;
         }
-        throw e;
     });
 
     //TODO? if (p.fadeout !== null) {
@@ -377,6 +394,7 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
         if (c.video_el === null) {
             c.video_el = document.createElement('video');
             c.video_el.style.display = 'none';
+            c.video_el.playsInline = true;  // For autoplay on Safari
             document.body.appendChild(c.video_el);
 
             c.video_el.addEventListener('loadedmetadata', function() {
@@ -812,3 +830,65 @@ if (context.state == "suspended") {
     document.body.addEventListener('touchend', unlockContext, true);
     document.body.addEventListener('touchstart', unlockContext, true);
 }
+
+renpyAudio._videoPrompt = null;
+renpyAudio._blockedVideos = [];
+
+renpyAudio.videoPlayPrompt = (message, video) => {
+    renpyAudio.videoPlayPromptHide();
+
+    const videoPrompt = document.createElement("div");
+    videoPrompt.append(message);
+
+    videoPrompt.style.position = "absolute";
+    videoPrompt.style.top = "0";
+    videoPrompt.style.bottom = "0";
+    videoPrompt.style.left = "0";
+    videoPrompt.style.right = "0";
+    videoPrompt.style.font = "24px sans-serif";
+    videoPrompt.style.color = "white";
+    videoPrompt.style.textAlign = "center";
+    videoPrompt.style.textShadow = "0 0 2px black";
+    videoPrompt.style.display = "flex";
+    videoPrompt.style.justifyContent = "center";
+    videoPrompt.style.alignItems = "center";
+    videoPrompt.style.cursor = "pointer";
+
+    if (video !== undefined) {
+        // Add video to _blockedVideos just in case multiple Movie() are blocked
+        renpyAudio._blockedVideos.push(video);
+    }
+
+    videoPrompt.addEventListener('click', () => {
+        renpyAudio.videoPlayPromptHide();
+        const videos = renpyAudio._blockedVideos;
+        renpyAudio._blockedVideos = [];
+        videos.forEach((video_el) => {
+            if (video_el.parentElement !== null) {
+                video_el.muted = false;
+                video_el.play().then(() => {
+                    // TODO?
+                }).catch((e) => {
+                    console.warn('Cannot play video after interaction, giving up', e.name);
+                    throw e;
+                });
+            }
+        });
+    });
+
+    renpyAudio._videoPrompt = videoPrompt;
+    document.body.append(videoPrompt);
+};
+
+renpyAudio.videoPlayPromptHide = () => {
+    if (renpyAudio._videoPrompt) {
+        renpyAudio._videoPrompt.remove();
+    }
+
+    renpyAudio._videoPrompt = null;
+};
+
+renpyAudio._web_video_prompt = 'Click to play the video.';
+//TODO? renpy_get('config.web_video_prompt').then((msg) => {
+//TODO?     renpyAudio._web_video_prompt = msg;
+//TODO? });
