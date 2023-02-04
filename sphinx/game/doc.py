@@ -283,22 +283,21 @@ def scan(name, o, prefix="", inclass=False):
             if not init:
                 return
 
-            init_doc = inspect.getdoc(init)
+            if init is not renpy.store.object.__init__:
 
-            if init_doc and (init_doc != objinidoc):
-                lines.append("")
-                lines.extend(init_doc.split("\n"))
+                init_doc = inspect.getdoc(init)
 
-            try:
-                args = inspect.getargspec(init)
-            except Exception:
-                args = None
+                if init_doc and (init_doc != objinidoc):
+                    lines.append("")
+                    lines.extend(init_doc.split("\n"))
 
-        elif inspect.isfunction(o):
-            args = inspect.getargspec(o)
+                try:
+                    args = inspect.signature(init)
+                except Exception:
+                    args = None
 
-        elif inspect.ismethod(o):
-            args = inspect.getargspec(o)
+        elif inspect.isfunction(o) or inspect.ismethod(o):
+            args = inspect.signature(o)
 
         else:
             print("Warning: %s has section but not args." % name)
@@ -308,7 +307,7 @@ def scan(name, o, prefix="", inclass=False):
         # Format the arguments.
         if args is not None:
 
-            args = inspect.formatargspec(*args)
+            args = str(args)
             args = args.replace("(self, ", "(")
         else:
             args = "()"
