@@ -43,7 +43,7 @@ init -1500 python:
     # The character that's used for descriptive text.
     config.descriptive_text_character = None
 
-    def alt(what, interact=True):
+    def alt(what, interact=True, **kwargs):
         """
         Uses the narrator to speak `what` if self-voicing is enabled.
         """
@@ -55,7 +55,7 @@ init -1500 python:
             if c is None:
                 c = narrator
 
-            return c(what, interact=interact)
+            return c(what, interact=interact, **kwargs)
 
     def alt_statement_name():
         if _preferences.self_voicing:
@@ -229,4 +229,3 @@ screen _accessibility():
                 textbutton _("Return"):
                     action Hide("_accessibility")
                     yalign 1.0
-
