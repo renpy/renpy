@@ -342,6 +342,9 @@ The `interact` parameter is a special case : when it was passed as False
 when defining the Character, passing ``interact=True`` will not override
 that, meaning no interaction will happen in that case.
 
+Note that :var:`config.say_arguments_callback` will be called every time
+a say statement executes, and not only when arguments are passed.
+
 .. _monologue-mode:
 
 Monologue Mode
