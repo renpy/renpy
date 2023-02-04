@@ -1893,6 +1893,8 @@ class AlphaMask(ImageBase):
 
     Note that this takes different arguments from :func:`AlphaMask`,
     which uses the mask's alpha channel.
+
+    The two images need to have the same size, and the same oversampling factor.
     """
 
     def __init__(self, base, mask, **properties):
