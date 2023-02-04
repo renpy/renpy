@@ -4325,7 +4325,7 @@ class Interface(object):
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
 
-                        if not renpy.game.preferences.audio_when_unfocused:
+                        if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
                             if not ev.gain:
                                 renpy.audio.audio.pause_all()
                             else:
@@ -4333,7 +4333,7 @@ class Interface(object):
 
                     # If the window becomes inactive as a result of this event
                     # pause the audio according to preference
-                    if not renpy.game.preferences.audio_when_minimized:
+                    if not renpy.game.preferences.audio_when_minimized and not renpy.emscripten:
                         if not pygame.display.get_active() and not self.audio_paused:
                             renpy.audio.audio.pause_all()
                             self.audio_paused = True
