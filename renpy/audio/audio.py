@@ -521,7 +521,11 @@ class Channel(object):
                 else:
                     topf = load(filename)
 
-                renpysound.set_video(self.number, self.movie)
+                if renpy.emscripten and self.movie != renpy.audio.renpysound.NO_VIDEO:
+                    # Let the browser handle the video loop if any
+                    renpysound.set_video(self.number, self.movie, loop=(len(self.loop) == 1))
+                else:
+                    renpysound.set_video(self.number, self.movie)
 
                 if depth == 0:
                     renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume) # type:ignore

@@ -62,6 +62,7 @@ let get_channel = (channel) => {
         video_size: null,
         is_playing: false,
         frame_ready: false,
+        loop: false,
     };
 
     c.destination = c.stereo_pan;
@@ -242,6 +243,8 @@ let video_start = (c) => {
     if (c.video_el === null) {
         return;
     }
+
+    c.video_el.loop = c.loop;
 
     //TODO? if (p.fadeout === null) {
     //TODO?     if (p.fadein > 0) {
@@ -722,9 +725,10 @@ renpyAudio.can_play_types = (l) => {
     return 1;
 }
 
-renpyAudio.set_video = (channel, video) => {
+renpyAudio.set_video = (channel, video, loop) => {
     const c = get_channel(channel);
     c.video = !!video;
+    c.loop = !!loop;
 }
 
 renpyAudio.video_ready = (channel) => {

@@ -324,12 +324,12 @@ NODROP_VIDEO = 1
 DROP_VIDEO = 2
 
 
-def set_video(channel, video):
+def set_video(channel, video, loop=False):
     """
     Sets a flag that determines if this channel will attempt to decode video.
     """
 
-    call("set_video", channel, video)
+    call("set_video", channel, video, loop)
 
 
 loaded = False
