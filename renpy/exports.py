@@ -3098,16 +3098,16 @@ render = renpy.display.render.render
 IgnoreEvent = renpy.display.core.IgnoreEvent
 redraw = renpy.display.render.redraw
 
-def is_pixel_opaque(d, x, y, *args):
+def is_pixel_opaque(d, width, height, st, at, x, y):
     """
     :doc: udd_utility
 
-    Returns whether the pixel at (x, y) is opaque, when this displayable
-    is rendered by ``renpy.render(d, *args)``.
+    Returns whether the pixel at (x, y) is opaque when this displayable
+    is rendered by ``renpy.render(d, width, height, st, at)``.
     """
 
     # Uses the caching features of renpy.render, as opposed to d.render.
-    return bool(render(renpy.easy.displayable(d), *args).is_pixel_opaque(x, y))
+    return bool(render(renpy.easy.displayable(d), width, height, st, at).is_pixel_opaque(x, y))
 
 
 class Displayable(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
