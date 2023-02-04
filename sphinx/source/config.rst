@@ -523,8 +523,8 @@ Occasionally Used
 
 .. var:: config.font_name_map = { }
 
-    This is a map from (font name) to (font filepath). It's used to
-    simplify and shorten ``{font}`` tags, and to give them access to the
+    This is a map from (font name) to (font filepath/fontgroup). Font names
+    simplify and shorten ``{font}`` tags, and gives them access to the
     :ref:`fontgroup` feature.
 
 .. var:: config.font_replacement_map = { }

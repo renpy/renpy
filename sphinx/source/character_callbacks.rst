@@ -36,7 +36,7 @@ The callback is called with at least one keyword argument:
     This is true if the dialogue causes an interaction to occur.
 
 Other values of the positional argument and additional keyword arguments may
-be supplied in the future. The callback should written to ignore arguments it
+be supplied in the future. The callback should be written to ignore arguments it
 does not understand.
 
 Example
@@ -74,6 +74,6 @@ characters::
                 renpy.sound.play(boopfile)
             elif event == "slow_done":
                 renpy.sound.stop()
-        
+
     define nagata = Character("Naomi", callback=functools.partial(boopy_voice, boopfile="belter_boop.ogg"))
     define chrisjen = Character("Chrisjen", callback=boopy_voice)
