@@ -342,13 +342,6 @@ The ``fadein`` clause can be used when queuing an audio track.
 Ren'Py will limit calls to BOverlayNeedsPresent on Steam Deck, preventing
 a freezing issue.
 
-Grids are now, by default, allowed to be underfull.
-
-It's now explicitly document that closing text tags is not required. The
-following should always be valid.::
-
-    "{b}This is bold."
-
 Dialogue is now present in the history list (and hence the history screen)
 during the statement in which the dialogue is shown. Previously, it was only
 present at the end of the statement.
@@ -376,7 +369,7 @@ The `execute_init` argument to :func:`renpy.register_statement` now respects
 the `init_priority` argument. Previously, all `execute_init` function ran
 at init priority 0.
 
-The config.label_callback variable has been renamed to :var`config.label_callbacks`,
+The config.label_callback variable has been renamed to :var:`config.label_callbacks`,
 and now takes a list of callback functions.
 
 
