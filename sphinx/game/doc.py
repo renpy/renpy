@@ -283,18 +283,16 @@ def scan(name, o, prefix="", inclass=False):
             if not init:
                 return
 
-            if init is not renpy.store.object.__init__:
+            init_doc = inspect.getdoc(init)
 
-                init_doc = inspect.getdoc(init)
+            if init_doc and (init_doc != objinidoc):
+                lines.append("")
+                lines.extend(init_doc.split("\n"))
 
-                if init_doc and (init_doc != objinidoc):
-                    lines.append("")
-                    lines.extend(init_doc.split("\n"))
-
-                try:
-                    args = inspect.signature(init)
-                except Exception:
-                    args = None
+            try:
+                args = inspect.signature(init)
+            except Exception:
+                args = None
 
         elif inspect.isfunction(o) or inspect.ismethod(o):
             args = inspect.signature(o)

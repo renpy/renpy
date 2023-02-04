@@ -2,11 +2,13 @@ init 1000000 python:
     import doc
     import shaderdoc
 
+    object.__init__ = lambda self:None
+
     srcdir = 'source'
     if os.path.isdir('sphinx') and os.path.split(os.getcwd())[-1] == 'renpy':
         srcdir = os.path.join('sphinx', 'source') # ran from renpy/. cwd using sphinx in-game project
 
-    incdir = os.path.join(srcdir, 'inc')        
+    incdir = os.path.join(srcdir, 'inc')
 
     shaderdoc.shaders(incdir=incdir)
 
@@ -45,5 +47,5 @@ init 1000000 python:
     console_commands = _console.help(None, True).replace("\n ", "\n\n* ")
     with open(os.path.join(incdir, "console_commands"), "w") as f:
         f.write(console_commands)
-    
+
     raise SystemExit
