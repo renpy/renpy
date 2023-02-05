@@ -168,16 +168,17 @@ on the ``style`` object::
     init python:
         style.big_red = Style(style.default)
 
-Style properties can be set by assigning to the fields of the Style objects. ::
+Style properties can be set by assigning to properties-like fields of the Style
+objects. ::
 
     init python:
         style.big_red.color = "#f00"
         style.big_red.size = 42
 
-.. class:: Style(parent)
+However, the value of a style property cannot be accessed this way, it can only
+be written.
 
-    Creates a new style object. Style properties can be assigned as fields of
-    this object.
+.. class:: Style(parent)
 
     `parent`
         The styles parent. This can be another Style object, or a string.
