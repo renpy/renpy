@@ -3125,6 +3125,9 @@ class Interface(object):
         if mouse_kind == 'default':
             mouse_kind = getattr(renpy.store, 'default_mouse', 'default')
 
+        if pygame.mouse.get_pressed()[0]:
+            mouse_kind = "pressed_" + mouse_kind 
+
         return mouse_kind
 
     def update_mouse(self, mouse_displayable):
@@ -3154,16 +3157,25 @@ class Interface(object):
             self.set_mouse(True)
             return
 
-        # only check for mousebuttondown if we have a cursor for it, otherwise its a waste of a call
-        # mousebuttondown always takes precedence over other mouse styles
-        if "mousebuttondown" in self.cursor_cache and pygame.mouse.get_pressed()[0]:
-            mouse_kind = "mousebuttondown"
-        else:
-            mouse_kind = self.get_mouse_name(True)
+        mouse_kind = self.get_mouse_name(True)
 
         if mouse_kind in self.cursor_cache:
             anim = self.cursor_cache[mouse_kind]
             cursor = anim[self.ticks % len(anim)]
+
+        # if the "pressed_variant" cursor is not defined, we will either use
+        # the generic "pressed_default" cursor, or strip pressed_ from mouse_kind to
+        # get the non-pressed cursor
+        elif mouse_kind.startswith("pressed_") and "pressed_default" in self.cursor_cache:
+            # if a generic pressed_ cursor is defined, use it 
+            anim = self.cursor_cache["pressed_default"]
+            cursor = anim[self.ticks % len(anim)]
+
+        elif mouse_kind.startswith("pressed_") and mouse_kind[8:] in self.cursor_cache:
+            # otherwise use the non-pressed cursor if we have it in cache
+            anim = self.cursor_cache[mouse_kind[8:]]
+            cursor = anim[self.ticks % len(anim)]
+
         else:
             cursor = True
 
