@@ -407,9 +407,14 @@ class ImageGenerator(object):
     def generate_bubble(self):
 
         import shutil
-        shutil.copyfile(
-            os.path.join(config.renpy_base, "gui", "game", "gui", "bubble.png"),
-            os.path.join(self.prefix, "bubble.png"))
+
+        source = os.path.join(config.renpy_base, "gui", "game", "gui", "bubble.png")
+        dest = os.path.join(self.prefix, "bubble.png")
+
+        if source == dest:
+            return
+
+        shutil.copyfile(source, dest)
 
 
     def generate_all(self):
