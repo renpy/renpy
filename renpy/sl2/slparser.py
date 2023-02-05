@@ -51,8 +51,11 @@ STYLE_PREFIXES = [
 # The parser that things are being added to.
 parser = None
 
-# All statements we know about.
-all_statements = [ ]
+# The names of all statements known to SL.
+statement_names = set()
+
+# A list of statements that are valid anywhere a child can be placed.
+all_child_statements = [ ]
 
 # Statements that can contain children.
 childbearing_statements = set()
@@ -139,7 +142,7 @@ class Parser(object):
     # inside something that takes a single child.
     nchildren = "many"
 
-    def __init__(self, name, statement=True):
+    def __init__(self, name, child_statement=True):
 
         # The name of this object.
         self.name = name
@@ -150,11 +153,13 @@ class Parser(object):
         self.keyword = { }
         self.children = { }
 
+        statement_names.add(name)
+
         # True if this parser takes "as".
         self.variable = False
 
-        if statement:
-            all_statements.append(self)
+        if child_statement:
+            all_child_statements.append(self)
 
         global parser
         parser = self
@@ -270,7 +275,12 @@ class Parser(object):
                     return
 
             if name not in self.keyword:
-                l.error('%r is not a keyword argument or valid child for the %s statement.' % (name, self.name))
+                if name == "continue" or name == "break":
+                    l.error("The %s statement may only appear inside a for statement, or an if statement inside a for statement." % name)
+                elif name in statement_names:
+                    l.error('The %s statement is not a valid child of the %s statement.' % (name, self.name))
+                else:
+                    l.error('%r is not a keyword argument or valid child of the %s statement.' % (name, self.name))
 
             if name in seen_keywords:
                 l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
@@ -550,7 +560,7 @@ def register_sl_displayable(*args, **kwargs):
     if rv.nchildren != 0:
         childbearing_statements.add(rv)
 
-        for i in all_statements:
+        for i in all_child_statements:
             rv.add(i)
 
     rv.add(if_statement)
@@ -996,7 +1006,7 @@ class CustomParser(Parser):
         if self.nchildren != 0:
             childbearing_statements.add(self)
 
-            for i in all_statements:
+            for i in all_child_statements:
                 self.add(i)
 
         self.add_property("arguments")
@@ -1042,7 +1052,7 @@ class CustomParser(Parser):
 class ScreenParser(Parser):
 
     def __init__(self):
-        super(ScreenParser, self).__init__("screen", statement=False)
+        super(ScreenParser, self).__init__("screen", child_statement=False)
 
     def parse(self, loc, l, parent, name="_name", keyword=True):
 
@@ -1080,12 +1090,12 @@ parser = None
 
 
 def init():
-    screen_parser.add(all_statements)
+    screen_parser.add(all_child_statements)
 
-    for i in all_statements:
+    for i in all_child_statements:
 
         if i in childbearing_statements:
-            i.add(all_statements)
+            i.add(all_child_statements)
         else:
             i.add(if_statement)
             i.add(pass_statement)
