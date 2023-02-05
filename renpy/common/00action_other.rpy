@@ -510,20 +510,23 @@ init -1500 python:
     class Function(Action):
         """
         :doc: other_action
+        :args: (callable, *args, _update_screens=True, **kwargs)
 
-        This Action calls `callable` with `args` and `kwargs`.
+        This Action calls ``callable(*args, **kwargs)``.
 
         `callable`
             Callable object. This assumes that if two callables compare
             equal, calling either one will be equivalent.
+
         `args`
-            position arguments to be passed to `callable`.
+            positional arguments to be passed to `callable`.
+
         `kwargs`
             keyword arguments to be passed to `callable`.
 
-        This Action takes an optional _update_screens keyword argument, which
-        defaults to true. When it is true, the interaction restarts and
-        the screens are updated after the function returns.
+        `_update_screens`
+            When true, the interaction restarts and the screens are updated
+            after the function returns.
 
         If the function returns a non-None value, the interaction stops and
         returns that value. (When called using the call screen statement, the
