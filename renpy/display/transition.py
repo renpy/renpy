@@ -442,8 +442,8 @@ class ImageDissolve(Transition):
 
     ::
 
-        define circirisout = ImageDissolve("circiris.png", 1.0)
-        define circirisin = ImageDissolve("circiris.png", 1.0, reverse=True)
+        define circirisout = ImageDissolve("circiris.png", 1.0, time_warp=_warper.easeout)
+        define circirisin = ImageDissolve("circiris.png", 1.0, reverse=True, time_warp=_warper.easein)
         define circiristbigramp = ImageDissolve("circiris.png", 1.0, ramplen=256)
 
     When the dissolve will be scaled to less than half its natural size, the
