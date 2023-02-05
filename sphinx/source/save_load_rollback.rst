@@ -455,15 +455,6 @@ properties while the other buttons use properties with the
 Fixed Rollback and Custom Screens
 =================================
 
-When writing custom Python routines that must play nice with the
-fix_rollback system there are a few simple things to know. First of all
-the :func:`renpy.in_fixed_rollback` function can be used to determine whether
-the game is currently in fixed rollback state. Second, when in
-fixed rollback state, :func:`ui.interact` will always return the
-supplied roll_forward data regardless of what action was performed. This
-effectively means that when the :func:`ui.interact`/:func:`renpy.checkpoint`
-functions are used, most of the work is done.
-
 To simplify the creation of custom screens, two actions are
 provided to help with the most common uses. The :func:`ui.ChoiceReturn` action
 returns the value when the button it is attached to is clicked. The
@@ -471,9 +462,11 @@ returns the value when the button it is attached to is clicked. The
 action only works properly when the screen is called trough a
 ``call screen`` statement.
 
-Example::
+Examples::
 
-    screen demo_imagemap:
+    screen demo_imagemap():
+        roll_forward True
+
         imagemap:
             ground "imagemap_ground.jpg"
             hover "imagemap_hover.jpg"
@@ -485,27 +478,47 @@ Example::
             hotspot (452, 79, 78, 78) action ui.ChoiceJump("art", "go_art_lessons", block_all=False)
             hotspot (602, 316, 78, 78) action ui.ChoiceJump("home", "go_home", block_all=False)
 
-Example::
+::
 
-    python:
-        roll_forward = renpy.roll_forward_info()
-        if roll_forward not in ("Rock", "Paper", "Scissors"):
-            roll_forward = None
+    screen rps():
+        roll_forward True
 
-        ui.hbox()
-        ui.imagebutton("rock.png", "rock_hover.png", selected_insensitive="rock_hover.png", clicked=ui.ChoiceReturn("rock", "Rock", block_all=True))
-        ui.imagebutton("paper.png", "paper_hover.png", selected_insensitive="paper_hover.png", clicked=ui.ChoiceReturn("paper", "Paper", block_all=True))
-        ui.imagebutton("scissors.png", "scissors_hover.png", selected_insensitive="scissors_hover.png", clicked=ui.ChoiceReturn("scissors", "Scissors", block_all=True))
-        ui.close()
+        hbox:
+            imagebutton:
+                idle "rock.png"
+                hover "rock_hover.png"
+                selected_insensitive "rock_hover.png"
+                action ui.ChoiceReturn("rock", "Rock", block_all=True)
+            imagebutton:
+                idle "paper.png"
+                hover "paper_hover.png"
+                selected_insensitive "paper_hover.png"
+                action ui.ChoiceReturn("paper", "Paper", block_all=True)
+            imagebutton:
+                idle "scissors.png"
+                hover "scissors_hover.png"
+                selected_insensitive "scissors_hover.png"
+                action ui.ChoiceReturn("scissors", "Scissors", block_all=True)
 
-        if renpy.in_fixed_rollback():
-            ui.saybehavior()
+            if renpy.in_fixed_rollback():
+                textbutton "Advance":
+                    action Return(renpy.roll_forward_info())
+                    # required because of the block_all=True in all the other buttons
 
-        choice = ui.interact(roll_forward=roll_forward)
-        renpy.checkpoint(choice)
+    label dough:
+        call screen rps
+        $ chosen = _return
+        $ renpy.fix_rollback()
+        m "[chosen]!"
 
-    $ renpy.fix_rollback()
-    m "[choice]!"
+When writing custom Python routines that must play nice with the
+fix_rollback system there are a few simple things to know. First of all
+the :func:`renpy.in_fixed_rollback` function can be used to determine whether
+the game is currently in fixed rollback state. Second, when in
+fixed rollback state, :func:`ui.interact` will always return the
+supplied roll_forward data regardless of what action was performed. This
+effectively means that when the :func:`ui.interact`/:func:`renpy.checkpoint`
+functions are used, most of the work is done.
 
 
 Rollback-blocking and -fixing Functions
@@ -533,4 +546,4 @@ For example::
 
         $ o.value += 1
 
-        "o.value is [o.value]. It will increase each time you rolllback and then click ahead."
+        "o.value is [o.value]. It will increase each time you rollback and then click ahead."

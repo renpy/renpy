@@ -786,6 +786,20 @@ class Lexer(object):
 
         raise ParseError(self.filename, self.number, msg, self.text, self.pos)
 
+    def deferred_error(self, queue, msg):
+        """
+        Adds a deferred error to the given queue. This is used for something
+        that might be an error, but could be compat-ed away.
+
+        `queue`
+            A string giving a list of deferred errors to add to.
+        """
+
+        if (self.line == -1) and self.block:
+            self.filename, self.number, self.text, self.subblock = self.block[0]
+
+        renpy.parser.deferred_parse_errors[queue].append(ParseError(self.filename, self.number, msg, self.text, self.pos).message)
+
     def eol(self):
         """
         Returns True if, after skipping whitespace, the current
@@ -893,7 +907,8 @@ class Lexer(object):
         if not raw:
 
             # Collapse runs of whitespace into single spaces.
-            s = re.sub(r'\s+', ' ', s)
+            s = re.sub(r'[ \n]+', ' ', s)
+
             s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
 
         return s
@@ -947,7 +962,6 @@ class Lexer(object):
 
         if not raw:
 
-            # Collapse runs of whitespace into single spaces.
             s = re.sub(r' *\n *', '\n', s)
 
             rv = [ ]
@@ -958,7 +972,9 @@ class Lexer(object):
                 if not s:
                     continue
 
-                s = re.sub(r'\s+', ' ', s)
+                # Collapse runs of whitespace into single spaces.
+                s = re.sub(r'[ \n]+', ' ', s)
+
                 s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
 
                 rv.append(s)

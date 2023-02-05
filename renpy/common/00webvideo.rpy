@@ -1,8 +1,8 @@
 ﻿init -1100 python hide:
 
-    config.web_video_base = "./game"
 
     config.web_video_prompt = _("Touch to play the video.")
+    config.web_video_error = _("Cannot load the video.")
 
     if renpy.emscripten:
 
@@ -24,7 +24,8 @@ let videoPrompt;
  * `loop` - True to loop, False not to loop.
  */
 
-videoPlayPrompt = (message) => {
+videoPlayPrompt = (message, color) => {
+    if (color === undefined) color = "white";
     videoPlayPromptHide();
 
     videoPrompt = document.createElement("div");
@@ -32,11 +33,12 @@ videoPlayPrompt = (message) => {
 
     videoPrompt.style.position = "absolute";
     videoPrompt.style.bottom = "50%";
-    videoPrompt.style.width = "100%";
+    videoPrompt.style.left = "0";
+    videoPrompt.style.right = "0";
     videoPrompt.style.textAlign = "center";
 
     videoPrompt.style.font = "24px sans-serif";
-    videoPrompt.style.color = "white";
+    videoPrompt.style.color = color;
     videoPrompt.style.textAlign = "center";
     videoPrompt.style.textShadow = "0 0 2px black";
 
@@ -71,12 +73,20 @@ videoPlay = (properties) => {
     video.style.width = "100%";
     video.style.height = "100%";
 
+    let last_source;
     for (let i of properties.sources) {
         let source = document.createElement("source");
         source.setAttribute("src", i.src)
         source.setAttribute("type", i.type)
         video.append(source);
+        last_source = source;
     }
+
+    last_source.addEventListener("error", (e) => {
+        // None of the video source could be loaded, let user click through to continue
+        video.style.pointerEvents = "none";
+        videoPlayPrompt(properties.error, "red");
+    });
 
     document.body.append(video);
 
@@ -90,12 +100,19 @@ videoPlay = (properties) => {
         setTimeout(unblockVideo, 1000);
     }).catch( (e) => {
         console.log("Video rejected: " + e);
-        videoPlayPrompt(properties.prompt);
+        video.muted = true;
         video.style.pointerEvents = "auto";
+        video.play().then(() => {
+            setTimeout(unblockVideo, 1000);
+        }).catch( (e) => {
+            console.log("Video rejected twice: " + e);
+            videoPlayPrompt(properties.prompt);
+        });
 
         video.addEventListener("click", () => {
             videoPlayPromptHide();
             setTimeout(unblockVideo, 1000);
+            video.muted = false;
             video.play();
         });
     });
@@ -202,6 +219,7 @@ isVideoPlaying = () => {
             properties["sources"] = [ src(config.web_video_base + "/" + filename) ]
 
             properties["prompt"] = __(config.web_video_prompt)
+            properties["error"] = __(config.web_video_error)
 
             alt_filename = filename.rpartition(".")[0] + ".mp4"
             if alt_filename != filename:

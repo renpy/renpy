@@ -24,6 +24,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy
 import emscripten # type: ignore
+import pygame
 from json import dumps
 
 
@@ -82,7 +83,8 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     """
 
     try:
-        file = file.name
+        if not isinstance(file, basestring):
+            file = file.name
     except Exception:
         return
 
@@ -99,7 +101,8 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
     """
 
     try:
-        file = file.name
+        if not isinstance(file, basestring):
+            file = file.name
     except Exception:
         return
 
@@ -273,15 +276,41 @@ def video_ready(channel):
     presentation.
     """
 
-    return False
+    return call_int("video_ready", channel)
 
+channel_size = {}
 
 def read_video(channel):
     """
-    Returns the frame of video playing on `channel`. This should be returned
-    as an SDL surface with 2px of padding on all sides.
+    Returns the frame of video playing on `channel`. This is returned as a GLTexture.
     """
 
+    video_size = channel_size.get(channel)
+    if video_size is None:
+        info = call_str("get_video_size", channel)
+        if len(info) == 0:
+            # Video dimension not ready yet
+            return None
+        video_size = [int(s) for s in info.split('x')]
+        channel_size[channel] = video_size
+
+    # Generate a new texture and pass it to JS
+    tex = renpy.gl2.gl2texture.Texture(video_size, renpy.display.draw.texture_loader, generate=True)
+
+    res = call_int("read_video", channel, tex.get_number(), *video_size)
+    if res == 0:
+        return tex
+
+    if res > 0:
+        # No new video frame available
+        return None
+
+    if res == -1:
+        # Video size has changed, try again but fetch new size first
+        del channel_size[channel]
+        return read_video(channel)
+
+    # Other errors happened
     return None
 
 
@@ -300,7 +329,7 @@ def set_video(channel, video):
     Sets a flag that determines if this channel will attempt to decode video.
     """
 
-    return
+    call("set_video", channel, video)
 
 
 loaded = False

@@ -74,6 +74,11 @@ def load(fn):
         elif exception.rtype == 'voice':
             # prediction failed, too late
             pass
+        elif exception.rtype == 'video':
+            # Video files are downloaded by the browser, so return
+            # the file name instead of a file-like object
+            return 'url:' + renpy.config.web_video_base + "/" + fn
+
         # temporary 1s placeholder, will retry loading when looping:
         rv = open(os.path.join(renpy.config.commondir, '_dl_silence.ogg'), 'rb') # type: ignore
     return rv
@@ -1263,8 +1268,9 @@ def pause_all():
     global global_pause
     global_pause += 1
 
-    periodic()
-
+    for c in all_channels:
+        c.pause()
+        c.paused = True
 
 def unpause_all():
     """

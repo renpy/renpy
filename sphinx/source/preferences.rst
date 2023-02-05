@@ -60,6 +60,8 @@ can then change it again.)
     the current language. The :func:`Language` action can be used to change
     the language.
 
+    See :doc:`translation` for more information.
+
 .. var:: preferences.emphasize_audio = False
 
     If True, Ren'Py will emphasize the audio channels found in :var:`config.emphasize_audio_channels`
@@ -173,6 +175,11 @@ can then change it again.)
     internet access to play.
     The equivalent of the "web cache preload" preference.
 
+.. var:: preferences.voice_after_game_menu = False
+
+    If True, voice will continue playing after the game menu is shown. If False,
+    voice will be stopped when the game menu is shown. The equivalent of the
+    "voice after menu" preference.
 
 Mixer Functions
 ---------------

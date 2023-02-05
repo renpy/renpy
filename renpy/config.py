@@ -169,6 +169,10 @@ bottom_layers = [ 'bottom' ]
 # Layers which will override the default layer for a tag while shown.
 sticky_layers = [ 'master' ]
 
+# Layers not automatically added to a scene and inherently sticky,
+# primarily for use with the Layer displayable.
+detached_layers = [ ]
+
 # True if we want to show overlays during wait statements, or
 # false otherwise.
 overlay_during_with = True
@@ -737,6 +741,9 @@ history_length = None
 # object.
 history_callbacks = [ ]
 
+# Should we add the current dialogue to the history?
+history_current_dialogue = True
+
 # Should we use the new order for translate blocks?
 new_translate_order = True
 
@@ -1266,6 +1273,12 @@ modal_blocks_timer = False
 # The range, in decibels, of the volume mixers.
 volume_db_range = 60
 
+# An alias -> font map.
+font_name_map = {}
+
+# Do we treat float values for spacing as relative values ?
+relative_spacing = True
+
 # Autosave callback.
 autosave_callback = None
 
@@ -1332,6 +1345,20 @@ viewport_inertia_time_constant = 0.325
 # A list of callbacks that are executed after the default statements have
 # run.
 after_default_callbacks = [ ]
+
+# Are parsing errors raised when conflicting transform or style properties are
+# set simultaneously?
+# Set to True in the default GUI.
+check_conflicting_properties = False
+
+# A list of extra save directories. Strings giving the full paths.
+extra_savedirs = [ ]
+
+# The text-to-speech dictionary. A list of [ (RegeEx|String, String) ] pairs.
+tts_substitutions = [ ]
+
+# The base URL where unpacked web videos can be found.
+web_video_base = "./game"
 
 
 del os

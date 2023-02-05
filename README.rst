@@ -51,7 +51,7 @@ the command::
 
     sudo apt install virtualenvwrapper python3-dev libavcodec-dev libavformat-dev \
         libswresample-dev libswscale-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
-        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev git
+        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev
 
 Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
 that version, you'll need to download it from:

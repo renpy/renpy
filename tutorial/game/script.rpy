@@ -104,6 +104,7 @@ screen tutorials(adj):
         viewport:
             yadjustment adj
             mousewheel True
+            draggable True
 
             vbox:
                 for i in tutorials:
@@ -120,9 +121,6 @@ screen tutorials(adj):
                         null height 10
                         text i.title alt ""
                         null height 5
-
-
-
 
         bar adjustment adj style "vscrollbar"
 

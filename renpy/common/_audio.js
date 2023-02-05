@@ -1,4 +1,4 @@
-﻿/* Copyright 2004-2021 Tom Rothamel <pytom@bishoujo.us>
+﻿/* Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation files
@@ -20,10 +20,17 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/** If DEBUG_OUT is true, extra debug information are shown in console */
+// const DEBUG_OUT = true;
+const DEBUG_OUT = false;
+
+const USE_FRAME_CB = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+
 /**
  * A map from channel to channel object.
  */
 let channels = { };
+let next_chan_id = 0;
 
 let context = new AudioContext();
 
@@ -48,6 +55,13 @@ let get_channel = (channel) => {
         secondary_volume : context.createGain(),
         relative_volume : context.createGain(),
         paused : false,
+        video: false,
+        video_el: null,
+        chan_id: next_chan_id++,
+        media_source: null,
+        video_size: null,
+        is_playing: false,
+        frame_ready: false,
     };
 
     c.destination = c.stereo_pan;
@@ -208,12 +222,206 @@ let on_end = (c) => {
     start_playing(c);
 };
 
+let video_start = (c) => {
+    const p = c.playing;
+
+    if (p === null) {
+        return;
+    }
+
+    if (p.started !== null) {
+        return;
+    }
+
+    // TODO Check if video has already been started?
+
+    if (c.paused) {
+        return;
+    }
+
+    if (c.video_el === null) {
+        return;
+    }
+
+    //TODO? if (p.fadeout === null) {
+    //TODO?     if (p.fadein > 0) {
+    //TODO?         linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 1.0, p.fadein);
+    //TODO?     } else {
+    //TODO?         setValue(c.fade_volume.gain, 1.0);
+    //TODO?     }
+    //TODO? }
+
+    c.video_el.src = p.url;
+    c.video_el.play().then(() => {
+        // TODO?
+    }).catch((e) => {
+        if (e.name != 'AbortError') {
+            Module.print(`Cannot play ${p.name} (${e})`);
+        }
+        throw e;
+    });
+
+    //TODO? if (p.fadeout !== null) {
+    //TODO?     linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, p.fadeout);
+    //TODO?     try {
+    //TODO?         c.playing.source.stop(context.currentTime + p.fadeout);
+    //TODO?     } catch (e) {
+    //TODO?     }
+    //TODO? 
+    //TODO? }
+
+    setValue(c.relative_volume.gain, p.relative_volume);
+
+    p.started = c.video_el.currentTime;  // XXX Probably not ready yet
+    p.started_once = true;
+};
+
+let video_pause = (c) => {
+    if (p.started === null) {
+        return;
+    }
+
+    c.paused = true;
+    c.video_el?.pause();
+
+    //TODO? p.start += (context.currentTime - p.started);
+    p.started = null;
+};
+
+let video_stop = (c) => {
+    if (c.video_el !== null) {
+        c.video_el.src = '';
+    }
+
+    if (c.playing !== null) {
+        const q = c.playing;
+        // FIXME Update debug stats for WebGL version
+        if (DEBUG_OUT) {
+            const period = q.period_stats[1] > 0 ? q.period_stats[0] / q.period_stats[1] : 0;
+            const fetch = q.fetch_stats[1] > 0 ? q.fetch_stats[0] / q.fetch_stats[1] : 0;
+            const draw = q.draw_stats[1] > 0 ? q.draw_stats[0] / q.draw_stats[1] : 0;
+            const blob = q.blob_stats[1] > 0 ? q.blob_stats[0] / q.blob_stats[1] : 0;
+            const array = q.array_stats[1] > 0 ? q.array_stats[0] / q.array_stats[1] : 0;
+            const file = q.file_stats[1] > 0 ? q.file_stats[0] / q.file_stats[1] : 0;
+            console.debug(`period=${period} (${q.period_stats[1]})`,
+                `fetch=${fetch} (${q.fetch_stats[1]})`,
+                `draw=${draw} (${q.draw_stats[1]})`,
+                `blob=${blob} (${q.blob_stats[1]})`,
+                `array=${array} (${q.array_stats[1]})`,
+                `file=${file} (${q.file_stats[1]})`);
+        }
+
+        // Always show FPS in console
+        const draw_fps = q.draw_stats[1] > 1 ? q.draw_stats[1] * 1000.0 / (q.draw_stats[3] - q.draw_stats[2]) : 0;
+        const file_fps = q.file_stats[1] > 1 ? q.file_stats[1] * 1000.0 / (q.file_stats[3] - q.file_stats[2]) : 0;
+        console.debug(`draw_fps=${draw_fps.toFixed(1)}`,
+            `renpy_fps=${file_fps.toFixed(1)}`);
+    }
+
+    c.playing = c.queued;
+    c.queued = null;
+
+    if (c.playing == null && c.video_el !== null) {
+        // Channel is not used anymore, release resources
+        c.media_source.disconnect();
+        c.media_source = null;
+
+        c.video_size = null;
+
+        c.video_el.parentElement.removeChild(c.video_el);
+        c.video_el = null;
+    }
+};
+
+let on_video_end = (c) => {
+    if (c.playing !== null && c.playing.started !== null) {
+        video_stop(c);
+    }
+
+    video_start(c);
+};
+
 renpyAudio = { };
 
 
 renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, relative_volume) => {
 
     const c = get_channel(channel);
+
+    if (file.startsWith('url:')) {
+        const url = new URL(file.slice(4), window.location);
+        if (!c.video) {
+            throw new Error('URL resources are only supported for videos');
+        }
+
+        const q = {
+             url: url,
+             name : name,
+             start : start,  // TODO?
+             end : end,  // TODO?
+             relative_volume : relative_volume,
+             started : null,
+             fadein : fadein,  // TODO?
+             fadeout: null,  // TODO?
+             tight : tight,  // TODO?
+             started_once: false,
+
+             period_stats: [0, 0],  // time sum, count
+             fetch_stats: [0, 0],
+             draw_stats: [0, 0, 0, 0],  // time sum, count, first timestamp, last timestamp
+             blob_stats: [0, 0],
+             array_stats: [0, 0],
+             file_stats: [0, 0, 0, 0],  // time sum, count, first timestamp, last timestamp
+        };
+
+        if (c.video_el === null) {
+            c.video_el = document.createElement('video');
+            c.video_el.style.display = 'none';
+            document.body.appendChild(c.video_el);
+
+            c.video_el.addEventListener('loadedmetadata', function() {
+                c.video_size = [c.video_el.videoWidth, c.video_el.videoHeight];
+            });
+
+            c.media_source = context.createMediaElementSource(c.video_el);
+            c.media_source.connect(c.destination);
+
+            c.video_el.addEventListener('ended', (e) => {
+                c.is_playing = false;
+                on_video_end(c);
+            });
+
+            c.video_el.addEventListener('paused', (e) => {
+                c.is_playing = false;
+            });
+
+            c.video_el.addEventListener('playing', function() {
+                c.is_playing = true;
+            });
+
+            if (USE_FRAME_CB) {
+                // Get notified when a new video frame is available (not supported by Firefox)
+                const onVideoFrame = () => {
+                    c.frame_ready = true;
+                    if (c.video_el !== null) {
+                        c.video_el.requestVideoFrameCallback(onVideoFrame);
+                    }
+                };
+                c.frame_ready = false;
+                c.video_el.requestVideoFrameCallback(onVideoFrame);
+            }
+        }
+
+        if (c.playing === null) {
+            c.playing = q;
+            c.paused = paused;
+        } else {
+            c.queued = q;
+        }
+
+        video_start(c);
+        return;
+    }
 
     const q = {
         source : null,
@@ -282,7 +490,11 @@ renpyAudio.queue = (channel, file, name,  paused, fadein, tight, start, end, rel
 renpyAudio.stop = (channel) => {
     let c = get_channel(channel);
     c.queued = null;
-    stop_playing(c);
+    if (c.video) {
+        video_stop(c);
+    } else {
+        stop_playing(c);
+    }
 };
 
 
@@ -311,6 +523,11 @@ renpyAudio.fadeout = (channel, delay) => {
     let p = c.playing;
 
     linearRampToValue(c.fade_volume.gain, c.fade_volume.gain.value, 0.0, delay);
+
+    if (c.video) {
+        // TODO?
+        return;
+    }
 
     try {
         p.source.stop(context.currentTime + delay);
@@ -361,20 +578,34 @@ renpyAudio.playing_name = (channel) => {
 renpyAudio.pause = (channel) => {
 
     let c = get_channel(channel);
-    pause_playing(c);
+    if (c.video) {
+        video_pause(c);
+    } else {
+        pause_playing(c);
+    }
 };
 
 
 renpyAudio.unpause = (channel) => {
     let c = get_channel(channel);
-    start_playing(c);
+    if (c.video) {
+        video_start(c);
+    } else {
+        start_playing(c);
+    }
 };
 
 
 renpyAudio.unpauseAllAtStart = () => {
     for (let i of Object.entries(channels)) {
-        if (i[1].playing && ! i[1].playing.started_once ) {
-            start_playing(i[1]);
+        const c = i[1];
+        if (c.playing && ! c.playing.started_once && c.paused) {
+            c.paused = false;
+            if (c.video) {
+                video_start(c);
+            } else {
+                start_playing(c);
+            }
         }
     }
 };
@@ -392,7 +623,11 @@ renpyAudio.get_pos = (channel) => {
     let rv = p.start;
 
     if (p.started !== null) {
-        rv += (context.currentTime - p.started);
+        if (c.video) {
+            rv += c.video_el.currentTime - p.started;
+        } else {
+            rv += (context.currentTime - p.started);
+        }
     }
 
     return rv * 1000;
@@ -403,7 +638,14 @@ renpyAudio.get_duration = (channel) => {
     let c = get_channel(channel);
     let p = c.playing;
 
-    if (p.buffer) {
+    if (c.video) {
+        if (c.video_el) {
+            const duration = c.video_el.duration;
+            if (Number.isFinite(duration)) {
+                return duration * 1000;
+            }
+        }
+    } else if (p.buffer) {
         return p.buffer.duration * 1000;
     }
 
@@ -426,6 +668,7 @@ renpyAudio.set_secondary_volume = (channel, volume, delay) => {
 
 
 renpyAudio.get_volume = (channel) => {
+    const c = get_channel(channel);
     return c.primary_volume.gain * 1000;
 };
 
@@ -459,6 +702,100 @@ renpyAudio.can_play_types = (l) => {
     }
 
     return 1;
+}
+
+renpyAudio.set_video = (channel, video) => {
+    const c = get_channel(channel);
+    c.video = !!video;
+}
+
+renpyAudio.video_ready = (channel) => {
+    const c = get_channel(channel);
+    if (USE_FRAME_CB) return c.frame_ready;
+    return c.video && c.video_el !== null && c.is_playing && c.video_size !== null;
+}
+
+renpyAudio.get_video_size = (channel) => {
+    const c = get_channel(channel);
+    if (c.video_el !== null && c.video_size !== null) {
+        return c.video_size[0] + "x" + c.video_size[1];
+    }
+
+    return "";
+}
+
+renpyAudio.read_video = (channel, video_tex, width, height) => {
+    const c = get_channel(channel);
+
+    if (USE_FRAME_CB && !c.frame_ready) return 1;
+
+    if (c.video && c.video_el !== null && c.is_playing && c.video_size !== null) {
+        const start = performance.now();
+        const q = c.playing;
+        const gl = GL.currentContext.GLctx;
+        const texture = GL.textures[video_tex];
+
+        if (texture == null) {
+            console.warn(`OpenGL texture #${video_tex} not found!`);
+            return -2;
+        }
+
+        if (c.video_size[0] != width || c.video_size[1] != height) {
+            // Video size has changed, notify Ren'Py about it
+            return -1;
+        }
+
+        const level = 0;
+        const internalFormat = gl.RGBA;
+        const srcFormat = gl.RGBA;
+        const srcType = gl.UNSIGNED_BYTE;
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            level,
+            internalFormat,
+            srcFormat,
+            srcType,
+            c.video_el
+        );
+
+        // Turn off mips and set wrapping to clamp to edge so it
+        // will work regardless of the dimensions of the video.
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+        if (q !== null) {
+            const cur_ts = performance.now();
+            q.file_stats[0] += cur_ts - start;
+            q.file_stats[1]++;
+            if (q.file_stats[2] == 0) q.file_stats[2] = cur_ts;
+            q.file_stats[3] = cur_ts;
+        }
+
+        if (USE_FRAME_CB) c.frame_ready = false;
+
+        return 0;
+    }
+
+    return 1;
+}
+
+if (DEBUG_OUT) {
+    // DEBUG Dumps all method calls to renpyAudio
+    renpyAudio._nodump = {'queue_depth': 1, 'playing_name': 1, 'video_ready': 1, 'read_video': 1};
+    renpyAudio = new Proxy(renpyAudio, {
+        get(target, prop) {
+            const origMethod = target[prop];
+            if (!(prop in target._nodump) && typeof origMethod == 'function') {
+                return function (...args) {
+                    console.debug(prop, ...args);
+                    return origMethod.apply(target, args);
+                }
+            }
+            return origMethod;
+        }
+    });
 }
 
 

@@ -110,9 +110,27 @@ enabled_events = {
 # The number of msec between periodic events.
 PERIODIC_INTERVAL = 50
 
+# Layer management.
+layers = frozenset(renpy.config.layers)
+sticky_layers = frozenset()
+
+null = None
+
 # Time management.
 time_base = 0.0
 time_mult = 1.0
+
+
+def init_layers():
+    global layers, sticky_layers, null
+
+    layers = frozenset(
+        renpy.config.layers + renpy.config.detached_layers +
+        renpy.config.top_layers + renpy.config.bottom_layers)
+    sticky_layers = frozenset(
+        renpy.config.sticky_layers + renpy.config.detached_layers)
+
+    null = renpy.display.layout.Null()
 
 
 def init_time():
@@ -829,11 +847,10 @@ class SceneLists(renpy.object.Object):
     __version__ = 8
 
     def after_setstate(self):
-
         self.camera_list = getattr(self, "camera_list", { })
         self.camera_transform = getattr(self, "camera_transform", { })
 
-        for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+        for i in layers:
             if i not in self.layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
@@ -849,7 +866,7 @@ class SceneLists(renpy.object.Object):
             self.at_list = { }
             self.layer_at_list = { }
 
-            for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+            for i in layers:
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
 
@@ -918,7 +935,7 @@ class SceneLists(renpy.object.Object):
 
         if oldsl:
 
-            for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+            for i in layers:
 
                 try:
                     self.layers[i] = oldsl.layers[i][:]
@@ -948,7 +965,7 @@ class SceneLists(renpy.object.Object):
             self.sticky_tags.update(oldsl.sticky_tags)
 
         else:
-            for i in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+            for i in layers:
                 self.layers[i] = [ ]
                 self.at_list[i] = { }
                 self.layer_at_list[i] = (None, [ ])
@@ -1120,7 +1137,7 @@ class SceneLists(renpy.object.Object):
             self.remove_hide_replaced(layer, key)
             self.at_list[layer][key] = at_list
 
-            if layer in renpy.config.sticky_layers:
+            if layer in sticky_layers:
                 self.sticky_tags[key] = layer
 
         if key and name:
@@ -1432,6 +1449,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
+            f.raw_child = d
 
             rv = f
 
@@ -1460,6 +1478,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
+            f.raw_child = d
 
             rv = f
 
@@ -2057,7 +2076,10 @@ class Interface(object):
         # Is our audio paused?
         self.audio_paused = False
 
-        for layer in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
+        # Init layers.
+        init_layers()
+
+        for layer in layers:
             if layer in renpy.config.layer_clipping:
                 x, y, w, h = renpy.config.layer_clipping[layer]
                 self.layer_properties[layer] = dict(
@@ -2310,7 +2332,7 @@ class Interface(object):
         if renpy.emscripten and renpy.game.preferences.web_cache_preload:
             emscripten.run_script("loadCache()")
 
-        renpy.main.log_clock("Interface start")
+        renpy.main.log_clock("Interface start.")
 
         self.started = True
 
@@ -2351,7 +2373,7 @@ class Interface(object):
 
                 self.cursor_cache[key] = l
 
-        s = "Total time until interface ready: {}s".format(time.time() - import_time)
+        s = "Total time until interface ready: {}s.".format(time.time() - import_time)
 
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
@@ -2619,7 +2641,7 @@ class Interface(object):
         else:
             draws = self.get_draw_constructors()
 
-        for name, draw in draws:
+        for name, draw in draws: #type: ignore
             renpy.display.log.write("")
             renpy.display.log.write("Initializing {0} renderer:".format(name))
             if draw.init(virtual_size):
@@ -3020,20 +3042,17 @@ class Interface(object):
         name to a Fixed containing that layer.
         """
 
-        raw = { }
         rv = { }
 
-        for layer in renpy.config.layers + renpy.config.top_layers + renpy.config.bottom_layers:
-            raw[layer] = d = scene_lists.make_layer(layer, self.layer_properties[layer])
+        for layer in layers:
+            d = scene_lists.make_layer(layer, self.layer_properties[layer])
             rv[layer] = scene_lists.transform_layer(layer, d)
 
         root = renpy.display.layout.MultiBox(layout='fixed')
         root.layers = { }
-        root.raw_layers = { }
 
         for layer in renpy.config.layers:
             root.layers[layer] = rv[layer]
-            root.raw_layers[layer] = raw[layer]
             root.add(rv[layer])
 
         rv[None] = root
@@ -3245,9 +3264,6 @@ class Interface(object):
         if ev.type != pygame.APP_WILLENTERBACKGROUND:
             return False
 
-        # Wait for APP_DIDENTERBACKGROUND.
-        pygame.event.wait()
-
         renpy.audio.audio.pause_all()
 
         pygame.time.set_timer(PERIODIC, 0)
@@ -3275,7 +3291,11 @@ class Interface(object):
         if renpy.android:
             android.wakelock(False)
 
-        print("Entered background.")
+        # # Wait for APP_DIDENTERBACKGROUND.
+        # pygame.event.wait()
+
+
+        print("Entered background. --------------------------------------------")
 
         while True:
             ev = pygame.event.wait()
@@ -3287,7 +3307,7 @@ class Interface(object):
             if ev.type == pygame.APP_DIDENTERFOREGROUND:
                 break
 
-        print("Entering foreground.")
+        print("Entering foreground. -------------------------------------------")
 
         self.mobile_unlink()
 
@@ -3773,7 +3793,6 @@ class Interface(object):
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
         layers_root.layers = { }
-        layers_root.raw_layers = scene[None].raw_layers
 
         def add_layer(where, layer):
 
@@ -3796,8 +3815,8 @@ class Interface(object):
                 where.layers[layer] = trans
 
             else:
-                where.layers[layer] = scene_layer
                 where.add(scene_layer)
+                where.layers[layer] = scene_layer
 
         # Add the bottom layers to root_widget.
         for layer in renpy.config.bottom_layers:
@@ -3813,7 +3832,6 @@ class Interface(object):
 
             old_root = renpy.display.layout.MultiBox(layout='fixed')
             old_root.layers = { }
-            old_root.raw_layers = self.transition_from[None].raw_layers
 
             for layer in renpy.config.layers:
                 d = self.transition_from[None].layers[layer]
@@ -3865,8 +3883,6 @@ class Interface(object):
             if mouse_displayable is not None:
                 root_widget.add(mouse_displayable, 0, 0)
 
-        del add_layer
-
         self.prediction_coroutine = renpy.display.predict.prediction_coroutine(root_widget)
         self.prediction_coroutine.send(None)
 
@@ -3876,14 +3892,35 @@ class Interface(object):
         # Clean up some movie-related things.
         renpy.display.video.early_interact()
 
+        # A dict of any active layer transitions.
+        layer_transitions = { }
+
         # This try block is used to force cleanup even on termination
         # caused by an exception propagating through this function.
         try:
 
+            # Insert layers into Layer displayables.
+            def per_interact(i):
+                if isinstance(i, renpy.display.layout.Layer):
+                    if i.layer in scene:
+                        i.layers = layer_transitions
+                        add_layer(i, i.layer)
+                        del i.layers
+                    else:
+                        i.add(null)
+
+                i.per_interact()
+
             # Call per-interaction code for all widgets.
             renpy.display.behavior.input_pre_per_interact()
-            root_widget.visit_all(lambda i : i.per_interact())
+            root_widget.visit_all(per_interact)
             renpy.display.behavior.input_post_per_interact()
+
+            # Consolidate static and layer transitions for later processing.
+            if layer_transitions:
+                layer_transitions.update(layers_root.layers)
+            else:
+                layer_transitions = layers_root.layers
 
             # Now, update various things regarding scenes and transitions,
             # so we are ready for a new interaction or a restart.
@@ -4305,7 +4342,7 @@ class Interface(object):
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
 
-                        if not renpy.game.preferences.audio_when_unfocused:
+                        if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
                             if not ev.gain:
                                 renpy.audio.audio.pause_all()
                             else:
@@ -4313,7 +4350,7 @@ class Interface(object):
 
                     # If the window becomes inactive as a result of this event
                     # pause the audio according to preference
-                    if not renpy.game.preferences.audio_when_minimized:
+                    if not renpy.game.preferences.audio_when_minimized and not renpy.emscripten:
                         if not pygame.display.get_active() and not self.audio_paused:
                             renpy.audio.audio.pause_all()
                             self.audio_paused = True
@@ -4430,7 +4467,7 @@ class Interface(object):
         finally:
 
             # Determine the transition delay for each layer.
-            self.transition_delay = { k : getattr(v, "delay", 0) for k, v in layers_root.layers.items() }
+            self.transition_delay = { k : getattr(v, "delay", 0) for k, v in layer_transitions.items() }
 
             # Clean out the overlay layers.
             for i in renpy.config.overlay_layers:

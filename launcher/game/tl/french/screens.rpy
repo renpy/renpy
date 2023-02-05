@@ -450,7 +450,7 @@
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."
-    new "Active ou désactives les «sauts des dialogues»."
+    new "Active ou désactive les «sauts des dialogues»."
 
     # screens.rpy:1027
     old "Page Up"

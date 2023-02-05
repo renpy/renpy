@@ -864,7 +864,10 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 #ifndef USE_POSIX_MEMALIGN
     rv->pixels = SDL_calloc(rv->pitch * rv->h, 1);
 #else
-    posix_memalign(&rv->pixels, ROW_ALIGNMENT, rv->pitch * rv->h);
+	if (posix_memalign(&rv->pixels, ROW_ALIGNMENT, rv->pitch * rv->h)) {
+		av_free(rv);
+		return NULL;
+	}
     memset(rv->pixels, 0, rv->pitch * rv->h);
 #endif
 

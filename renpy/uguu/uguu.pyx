@@ -122,7 +122,7 @@ cdef class Buffer:
     def __getbuffer__(self, Py_buffer *buffer, int flags):
 
         buffer.buf = self.data
-        buffer.format = self.format
+        buffer.format = <char *> self.format
         buffer.internal = NULL
         buffer.itemsize = self.itemsize
         buffer.len = self.length * self.itemsize

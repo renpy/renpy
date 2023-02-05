@@ -17,7 +17,7 @@ only thing that's possibly visible at that point is the :ref:`presplash <prespla
 Script Parsing Phase
 --------------------
 
-To read the games's code, Ren'Py reads each of the game's ``.rpy`` (and ``_ren.py``) files one by
+To read the game's code, Ren'Py reads each of the game's ``.rpy`` (and ``_ren.py``) files one by
 one, in the unicode order of their filepaths. That's the "parsing" phase, or "early" phase.
 
 The first creator-written code being executed is what's written in ``python early`` blocks. These
@@ -27,7 +27,7 @@ read. This is why statements which modify how parsing works, like :doc:`cds`,
 blocks.
 
 The ``init python early`` syntax is sometimes encountered, but it's redundant and doesn't change
-anything in how the code gets executed.
+anything in how the code gets executed compared to ``python early``.
 
 .. _init-phase:
 
@@ -105,8 +105,8 @@ If it exists, the ``before_main_menu`` label is executed. Then, once it returns,
 :ref:`main_menu <main-menu-screen>` screen is shown, unless a ``main_menu`` label exists, in which
 case it is executed instead. See :ref:`special-labels` for more information.
 
-The main menu itself is run in it's own :ref:`context <context>`.  Ren'Py can leave this
-context by calling the :class:`Start` action, which also jumps to a label, or the ``start`` label
+The main menu itself is run in its own :ref:`context <context>`. Ren'Py can leave this
+context by calling the :class:`Start` action, which also jumps to a label or to the ``start`` label
 if none is specified. Returning from the ``main_menu`` label also enters the in-game phase at the
 ``start`` label, while loading a game enters the in-game phase at the spot where the game was saved.
 

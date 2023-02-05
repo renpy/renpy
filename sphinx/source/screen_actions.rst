@@ -163,6 +163,11 @@ This function returns the side image to use.
 
 .. include:: inc/side_image_function
 
+Other Functions
+---------------
+
+.. include:: inc/other_screen_function
+
 .. _tooltips:
 
 Tooltips

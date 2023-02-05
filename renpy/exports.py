@@ -1182,7 +1182,7 @@ def display_menu(items,
     """
     :doc: se_menu
     :name: renpy.display_menu
-    :args: (items, *, interact=True, screen="choice")
+    :args: (items, *, interact=True, screen="choice", **kwargs)
 
     This displays a menu to the user. `items` should be a list of 2-item tuples.
     In each tuple, the first item is a textual label, and the second item is
@@ -2552,8 +2552,8 @@ def open_file(fn, encoding=None): # @ReservedAssignment
     :doc: file
 
     Returns a read-only file-like object that accesses the file named `fn`. The file is
-    accessed using Ren'Py's standard search method, and may reside in an RPA archive.
-    or as an Android asset.
+    accessed using Ren'Py's standard search method, and may reside in the game directory,
+    in an RPA archive, or as an Android asset.
 
     The object supports a wide subset of the fields and methods found on Python's
     standard file object, opened in binary mode. (Basically, all of the methods that
@@ -2867,7 +2867,6 @@ def load_module(name, **kwargs):
     renpy.config.locked = False
 
     initcode = renpy.game.script.load_module(name)
-    initcode.sort(key=lambda i: i[0])
 
     context = renpy.execution.Context(False)
     context.init_phase = True
@@ -2934,6 +2933,26 @@ def load_string(s, filename="<string>"):
 
     finally:
         renpy.game.exception_info = old_exception_info
+
+
+def include_module(name):
+    """
+    :doc: other
+
+    Similar to :func:`renpy.load_module`, but instead of loading the module right away,
+    inserts it into the init queue somewhere after the current AST node.
+
+    The module may not contain init blocks lower than the block that includes the module.
+    For example, if your module contains an init 10 block, the latest you can load it is
+    init 10.
+
+    Module loading may only occur from inside an init block.
+    """
+
+    if not renpy.game.context().init_phase:
+        raise Exception("Module loading is only allowed in init code.")
+
+    renpy.game.script.include_module(name)
 
 
 def pop_call():
@@ -3078,6 +3097,17 @@ Render = renpy.display.render.Render
 render = renpy.display.render.render
 IgnoreEvent = renpy.display.core.IgnoreEvent
 redraw = renpy.display.render.redraw
+
+def is_pixel_opaque(d, width, height, st, at, x, y):
+    """
+    :doc: udd_utility
+
+    Returns whether the pixel at (x, y) is opaque when this displayable
+    is rendered by ``renpy.render(d, width, height, st, at)``.
+    """
+
+    # Uses the caching features of renpy.render, as opposed to d.render.
+    return bool(render(renpy.easy.displayable(d), width, height, st, at).is_pixel_opaque(x, y))
 
 
 class Displayable(renpy.display.core.Displayable, renpy.revertable.RevertableObject):

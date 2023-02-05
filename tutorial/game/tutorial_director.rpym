@@ -37,7 +37,7 @@ label director:
     scene
     with dissolve
 
-    $ director.enable = not director_readonly
+    $ _director_enable = not director_readonly
 
     e "To get started, let's go back to a blank slate, with no images on the screen."
 
@@ -54,7 +54,7 @@ label director:
     e "Finally, you can use the play, queue, stop, and voice statements to manage audio. Try adding 'play', 'music', 'sunflower-slow-drag.ogg'."
 
     $ director.state.show_director = False
-    $ director.enable = False
+    $ _director_enable = False
 
     if renpy.showing("lucy"):
 
@@ -73,5 +73,3 @@ label director:
     e "I hope these tools make developing your visual novel that much easier."
 
     return
-
-

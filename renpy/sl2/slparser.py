@@ -51,8 +51,11 @@ STYLE_PREFIXES = [
 # The parser that things are being added to.
 parser = None
 
-# All statements we know about.
-all_statements = [ ]
+# The names of all statements known to SL.
+statement_names = set()
+
+# A list of statements that are valid anywhere a child can be placed.
+all_child_statements = [ ]
 
 # Statements that can contain children.
 childbearing_statements = set()
@@ -117,6 +120,21 @@ class PrefixStyle(object):
             parser.add(self)
 
 
+from renpy.styledata.stylesets import proxy_properties as incompatible_props
+
+def check_incompatible_props(new, olds):
+    """
+    Takes a property and a set of already-seen properties, and checks
+    to see if the new is incompatible with any of the old ones.
+    """
+    newly_set = incompatible_props.get(new, set()) | {new}
+
+    for old in olds:
+        if newly_set.intersection(incompatible_props.get(old, (old,))):
+            return old
+
+    return False
+
 class Parser(object):
 
     # The number of children this statement takes, out of 0, 1, or "many".
@@ -124,7 +142,7 @@ class Parser(object):
     # inside something that takes a single child.
     nchildren = "many"
 
-    def __init__(self, name, statement=True):
+    def __init__(self, name, child_statement=True):
 
         # The name of this object.
         self.name = name
@@ -135,11 +153,13 @@ class Parser(object):
         self.keyword = { }
         self.children = { }
 
+        statement_names.add(name)
+
         # True if this parser takes "as".
         self.variable = False
 
-        if statement:
-            all_statements.append(self)
+        if child_statement:
+            all_child_statements.append(self)
 
         global parser
         parser = self
@@ -240,7 +260,7 @@ class Parser(object):
 
             if can_tag and name == "tag":
                 if target.tag is not None:
-                    l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+                    l.error('the tag keyword argument appears more than once in a %s statement.' % (self.name,))
 
                 target.tag = l.require(l.word)
                 l.expect_noblock(name)
@@ -255,10 +275,18 @@ class Parser(object):
                     return
 
             if name not in self.keyword:
-                l.error('%r is not a keyword argument or valid child for the %s statement.' % (name, self.name))
+                if name == "continue" or name == "break":
+                    l.error("The %s statement may only appear inside a for statement, or an if statement inside a for statement." % name)
+                elif name in statement_names:
+                    l.error('The %s statement is not a valid child of the %s statement.' % (name, self.name))
+                else:
+                    l.error('%r is not a keyword argument or valid child of the %s statement.' % (name, self.name))
 
             if name in seen_keywords:
                 l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+            incomprop = check_incompatible_props(name, seen_keywords)
+            if incomprop:
+                l.deferred_error("check_conflicting_properties", 'keyword argument {!r} is incompatible with {!r}.'.format(name, incomprop))
 
             seen_keywords.add(name)
 
@@ -271,6 +299,8 @@ class Parser(object):
                 return
 
             expr = l.comma_expression()
+            if expr is None:
+                l.error("the {} keyword argument was not given a value.".format(name))
 
             if (not keyword) and (not renpy.config.keyword_after_python):
                 try:
@@ -530,7 +560,7 @@ def register_sl_displayable(*args, **kwargs):
     if rv.nchildren != 0:
         childbearing_statements.add(rv)
 
-        for i in all_statements:
+        for i in all_child_statements:
             rv.add(i)
 
     rv.add(if_statement)
@@ -792,7 +822,30 @@ class ForParser(Parser):
         return rv
 
 
-ForParser("for")
+for_parser = ForParser("for")
+
+
+class BreakParser(Parser):
+
+    def parse(self, loc, l, parent, keyword):
+
+        l.expect_eol()
+        l.expect_noblock('break statement')
+
+        return slast.SLBreak(loc)
+
+for_parser.add(BreakParser("break", False))
+
+class ContinueParser(Parser):
+
+    def parse(self, loc, l, parent, keyword):
+
+        l.expect_eol()
+        l.expect_noblock('continue statement')
+
+        return slast.SLContinue(loc)
+
+for_parser.add(ContinueParser("continue", False))
 
 
 class OneLinePythonParser(Parser):
@@ -953,7 +1006,7 @@ class CustomParser(Parser):
         if self.nchildren != 0:
             childbearing_statements.add(self)
 
-            for i in all_statements:
+            for i in all_child_statements:
                 self.add(i)
 
         self.add_property("arguments")
@@ -999,7 +1052,7 @@ class CustomParser(Parser):
 class ScreenParser(Parser):
 
     def __init__(self):
-        super(ScreenParser, self).__init__("screen", statement=False)
+        super(ScreenParser, self).__init__("screen", child_statement=False)
 
     def parse(self, loc, l, parent, name="_name", keyword=True):
 
@@ -1037,12 +1090,12 @@ parser = None
 
 
 def init():
-    screen_parser.add(all_statements)
+    screen_parser.add(all_child_statements)
 
-    for i in all_statements:
+    for i in all_child_statements:
 
         if i in childbearing_statements:
-            i.add(all_statements)
+            i.add(all_child_statements)
         else:
             i.add(if_statement)
             i.add(pass_statement)

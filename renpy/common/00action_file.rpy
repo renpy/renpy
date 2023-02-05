@@ -345,12 +345,17 @@ init -1500 python:
 
         `slot`
             If True, `name` is taken to be a slot name, and `page` is ignored.
+
+        `action`
+            An action that is run after the save is complete. This is only run
+            if the save is successful.
         """
 
         alt = "Save slot [text]"
         slot = None
+        action = None
 
-        def __init__(self, name, confirm=True, newest=True, page=None, cycle=False, slot=False):
+        def __init__(self, name, confirm=True, newest=True, page=None, cycle=False, slot=False, action=None):
             if name is None:
                 name = __unused_slot_name(page)
 
@@ -359,6 +364,7 @@ init -1500 python:
             self.page = page
             self.cycle = cycle
             self.slot = slot
+            self.action = action
 
             try:
                 self.alt = __("Save slot %s: [text]") % (name,)
@@ -374,7 +380,7 @@ init -1500 python:
 
             if renpy.scan_saved_game(fn):
                 if self.confirm:
-                    layout.yesno_screen(layout.OVERWRITE_SAVE, FileSave(self.name, False, False, self.page, cycle=self.cycle, slot=self.slot))
+                    layout.yesno_screen(layout.OVERWRITE_SAVE, FileSave(self.name, False, False, self.page, cycle=self.cycle, slot=self.slot, action=self.action))
                     return
 
             if self.cycle:
@@ -383,6 +389,8 @@ init -1500 python:
             renpy.save(fn, extra_info=save_name)
 
             renpy.restart_interaction()
+
+            return renpy.run(self.action)
 
         def get_sensitive(self):
             if _in_replay:
@@ -923,10 +931,7 @@ init -1500 python:
             Set to true to mark the quicksave as the newest save.
          """
 
-        rv = [
-            FileSave(1, page="quick", confirm=False, cycle=True, newest=newest),
-            Notify(message),
-            ]
+        rv = [ FileSave(1, page="quick", confirm=False, cycle=True, newest=newest, action=Notify(message)) ]
 
         rv[0].alt = _("Quick save.")
 

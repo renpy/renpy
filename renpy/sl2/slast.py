@@ -1711,12 +1711,19 @@ class SLFor(SLBlock):
 
             # Inline of SLBlock.execute.
 
-            for i in children_i:
-                try:
-                    i.execute(ctx)
-                except Exception:
-                    if not context.predicting:
+            try:
+                for i in children_i:
+                    try:
+                        i.execute(ctx)
+                    except SLForException:
                         raise
+                    except Exception:
+                        if not context.predicting:
+                            raise
+            except SLBreakException:
+                break
+            except SLContinueException:
+                continue
 
             if context.unlikely:
                 break
@@ -1745,6 +1752,38 @@ class SLFor(SLBlock):
 
         for i in self.children:
             i.dump_const(prefix + "  ")
+
+class SLForException(Exception): pass
+
+class SLBreakException(SLForException): pass
+
+class SLContinueException(SLForException): pass
+
+class SLBreak(SLNode):
+
+    def execute(self, context):
+        raise SLBreakException()
+
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+
+        return rv
+
+    def dump_const(self, prefix):
+        self.dc(prefix, "break")
+
+class SLContinue(SLNode):
+
+    def execute(self, context):
+        raise SLContinueException()
+
+    def copy(self, transclude):
+        rv = self.instantiate(transclude)
+
+        return rv
+
+    def dump_const(self, prefix):
+        self.dc(prefix, "continue")
 
 class SLPython(SLNode):
 
