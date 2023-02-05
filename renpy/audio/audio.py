@@ -960,7 +960,7 @@ def init():
     if renpy.emscripten and renpy.config.webaudio:
         import renpy.audio.webaudio as webaudio
 
-        if webaudio.can_play_types(renpy.config.webaudio_required_types) and False:
+        if webaudio.can_play_types(renpy.config.webaudio_required_types):
             renpysound.__dict__.update(webaudio.__dict__)
             renpysound.is_webaudio = True
         else:
