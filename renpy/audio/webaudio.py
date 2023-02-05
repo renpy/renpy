@@ -276,6 +276,9 @@ def video_ready(channel):
     presentation.
     """
 
+    if not video_supported():
+        return False
+
     return call_int("video_ready", channel)
 
 channel_size = {}
@@ -284,6 +287,9 @@ def read_video(channel):
     """
     Returns the frame of video playing on `channel`. This is returned as a GLTexture.
     """
+
+    if not video_supported():
+        return None
 
     video_size = channel_size.get(channel)
     if video_size is None:
@@ -329,8 +335,16 @@ def set_video(channel, video, loop=False):
     Sets a flag that determines if this channel will attempt to decode video.
     """
 
+    if not video_supported():
+        import sys
+        print('Warning: video playback is not supported on this browser', file=sys.stderr)
+
     call("set_video", channel, video, loop)
 
+def video_supported():
+    # Video only work with OpenGL v2 renderers (should be supported since WebGL v1,
+    # but it falls back to OpenGL v1 on some configs)
+    return renpy.session["renderer"] in ('gl2', 'gles2')
 
 loaded = False
 

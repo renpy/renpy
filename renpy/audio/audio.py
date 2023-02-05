@@ -521,7 +521,7 @@ class Channel(object):
                 else:
                     topf = load(filename)
 
-                if renpy.emscripten and self.movie != renpy.audio.renpysound.NO_VIDEO:
+                if renpysound.is_webaudio and self.movie != renpy.audio.renpysound.NO_VIDEO:
                     # Let the browser handle the video loop if any
                     renpysound.set_video(self.number, self.movie, loop=(len(self.loop) == 1))
                 else:
@@ -541,7 +541,11 @@ class Channel(object):
                 while topq.filename in self.loop:
                     self.loop.remove(topq.filename)
 
-                if renpy.config.debug_sound and not renpy.game.after_rollback:
+                if renpy.emscripten and not renpysound.is_webaudio:
+                    # Audio playback not supported
+                    print('Warning: media playback is not supported on this browser', file=sys.stderr)
+                    return
+                elif renpy.config.debug_sound and not renpy.game.after_rollback:
                     raise
                 else:
                     return
@@ -952,11 +956,15 @@ def init():
         mix_ok = False
         return
 
+    renpysound.is_webaudio = False
     if renpy.emscripten and renpy.config.webaudio:
         import renpy.audio.webaudio as webaudio
 
-        if webaudio.can_play_types(renpy.config.webaudio_required_types):
+        if webaudio.can_play_types(renpy.config.webaudio_required_types) and False:
             renpysound.__dict__.update(webaudio.__dict__)
+            renpysound.is_webaudio = True
+        else:
+            print('Warning: media playback is not supported on this browser', file=sys.stderr)
 
     if pcm_ok is None and renpysound:
         bufsize = 2048
