@@ -646,27 +646,40 @@ screen file_slots(title):
                         key "save_delete" action FileDelete(slot)
 
             ## Buttons to access other pages.
-            hbox:
+            vbox:
                 style_prefix "page"
 
                 xalign 0.5
                 yalign 1.0
 
-                spacing gui.page_spacing
+                hbox:
+                    xalign 0.5
 
-                textbutton _("<") action FilePagePrevious()
+                    spacing gui.page_spacing
 
-                if config.has_autosave:
-                    textbutton _("{#auto_page}A") action FilePage("auto")
+                    textbutton _("<") action FilePagePrevious()
 
-                if config.has_quicksave:
-                    textbutton _("{#quick_page}Q") action FilePage("quick")
+                    if config.has_autosave:
+                        textbutton _("{#auto_page}A") action FilePage("auto")
 
-                ## range(1, 10) gives the numbers from 1 to 9.
-                for page in range(1, 10):
-                    textbutton "[page]" action FilePage(page)
+                    if config.has_quicksave:
+                        textbutton _("{#quick_page}Q") action FilePage("quick")
 
-                textbutton _(">") action FilePageNext()
+                    ## range(1, 10) gives the numbers from 1 to 9.
+                    for page in range(1, 10):
+                        textbutton "[page]" action FilePage(page)
+
+                    textbutton _(">") action FilePageNext()
+
+                if config.has_sync:
+                    if CurrentScreenName() == "save":
+                        textbutton _("Upload Sync"):
+                            action UploadSync()
+                            xalign 0.5
+                    else:
+                        textbutton _("Download Sync"):
+                            action DownloadSync()
+                            xalign 0.5
 
 
 style page_label is gui_label
