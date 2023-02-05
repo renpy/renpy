@@ -747,11 +747,7 @@ Occasionally Used
     The frames are played back at 20Hz, and the animation loops after
     all frames have been shown.
 
-<<<<<<< HEAD
     See :doc:`mouse` for more information and examples.
-=======
-    See :doc:`mouse` for more information.
->>>>>>> master
 
 .. var:: config.mouse_displayable = None
 
