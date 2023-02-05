@@ -527,7 +527,7 @@ Each layer must have a displayable given. It can also be given these properties:
 The ``if`` statement is transformed to a :func:`ConditionSwitch` when the
 ``layeredimage`` statement runs.
 
-.. var: layeredimage.predict_all = None
+.. var:: layeredimage.predict_all = None
 
     Sets the value of `predict_all` for the ConditionSwitches produced
     by layered image if statements.
