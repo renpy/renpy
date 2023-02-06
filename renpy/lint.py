@@ -824,13 +824,19 @@ def check_unreachables(all_nodes):
 
     unreachable = set(all_nodes)
 
-    to_check = {node for node in all_nodes if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)) or isinstance(node, renpy.ast.Translate) and node.language is not None}
-    # reachable nodes whose children haven't yet been checked
-
     def add_block(block):
         next = block[0]
         if next in unreachable:
             to_check.add(next)
+
+    to_check = set()
+    # reachable nodes whose children haven't yet been checked
+    # placing the always-reachable nodes there
+    for node in all_nodes:
+        if isinstance(node, renpy.ast.Label):
+            to_check.add(node)
+        elif isinstance(node, renpy.ast.Translate) and node.language is not None:
+            to_check.add(node)
 
     for node in all_nodes:
         if isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
@@ -875,13 +881,19 @@ def check_unreachables(all_nodes):
         if next in unreachable:
             to_check.add(next)
 
-    locations = sorted(set((node.filename, node.linenumber) for node in unreachable if not isinstance(node, (renpy.ast.Return, renpy.ast.EndTranslate, renpy.ast.Init, renpy.ast.TranslateBlock))))
-    # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes
-    # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place, and EndTranslate nodes from explicit translate blocks are naturally unreachable
-    # Init and TranslateBlock nodes are meant to be unreachable, but we had to check them because if they are reachable, what follows them is too and must not be flagged as unreachable
+    locations = set()
+    for node in unreachable:
+        if isinstance(node, (renpy.ast.Return,
+                             renpy.ast.EndTranslate,
+                             renpy.ast.Init, renpy.ast.TranslateBlock, renpy.ast.EarlyPython)):
+            # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes
+            # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place, and EndTranslate nodes from explicit translate blocks are naturally unreachable
+            # Init, TranslateBlock and EarlyPython nodes are meant to be unreachable, but we had to check them because if they are reachable, what follows them is too and must not be flagged as unreachable
+            continue
+        locations.add((node.filename, node.linenumber))
 
     locadict = collections.defaultdict(list)
-    for filename, linenumber in locations:
+    for filename, linenumber in sorted(locations):
         locadict[filename].append(str(linenumber))
 
     for filename, linenumbers in locadict.items():
