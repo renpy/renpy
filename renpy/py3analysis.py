@@ -189,9 +189,18 @@ class Control(object):
 
 
 # Three levels of constness.
-GLOBAL_CONST = 2 # Expressions that are const everywhere.
-LOCAL_CONST = 1 # Expressions that are const with regard to a screen + parameters.
-NOT_CONST = 0 # Expressions that are not const.
+
+# An expression is globally constant if it will evaluate to the same value
+# whenever it is run.
+GLOBAL_CONST = 2
+
+# An expression is locally const if it will evaluate to the same value when
+# run in the same place - the same screen, with the same parameters, the same
+# statement, and the same iteration of a for loop.
+LOCAL_CONST = 1
+
+# An expression is not const if it wilk change it's value.
+NOT_CONST = 0
 
 
 class DeltaSet(object):
