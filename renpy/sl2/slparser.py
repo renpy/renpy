@@ -621,6 +621,7 @@ class DisplayableParser(Parser):
 
         Keyword("arguments")
         Keyword("properties")
+        Keyword("prefer_screen_to_id")
 
         if default_properties:
             add(renpy.sl2.slproperties.ui_properties)

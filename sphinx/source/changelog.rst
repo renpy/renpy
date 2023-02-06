@@ -359,6 +359,11 @@ of the game to be paused when the player switches to another window.
 Other Changes
 -------------
 
+Displayables with an `id` property can now be given the `prefer_screen_to_id`
+property, which controls if properties supplied by the screen override
+the properties supplied by the displayable identifier. The default remains
+that the displayable identifier overrides the screen.
+
 The ``fadein`` clause can be used when queuing an audio track.
 
 Ren'Py will limit calls to BOverlayNeedsPresent on Steam Deck, preventing

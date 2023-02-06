@@ -923,6 +923,16 @@ class SLDisplayable(SLBlock):
             # Get the widget id and transform, if any.
             widget_id = keywords.pop("id", None)
             transform = keywords.pop("at", None)
+            prefer_screen_to_id = keywords.pop("prefer_screen_to_id", False)
+
+            if widget_id and (widget_id in screen.widget_properties):
+
+                if prefer_screen_to_id:
+                    new_keywords = screen.widget_properties[widget_id].copy()
+                    new_keywords.update(keywords)
+                    keywords = new_keywords
+                else:
+                    keywords.update(screen.widget_properties[widget_id])
 
             # If we don't know the style, figure it out.
             style_suffix = keywords.pop("style_suffix", None) or self.style
@@ -931,9 +941,6 @@ class SLDisplayable(SLBlock):
                     keywords["style"] = style_suffix
                 else:
                     keywords["style"] = ctx.style_prefix + "_" + style_suffix
-
-            if widget_id and (widget_id in screen.widget_properties):
-                keywords.update(screen.widget_properties[widget_id])
 
             old_d = cache.displayable
             if old_d:
