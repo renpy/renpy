@@ -1450,7 +1450,7 @@ class SLIf(SLNode):
 
     def keywords(self, context):
 
-        for cond, block in self.prepared_entries:
+        for cond, block, _cond_const in self.prepared_entries:
             if cond is None or eval(cond, context.globals, context.scope):
                 block.keywords(context)
                 return
