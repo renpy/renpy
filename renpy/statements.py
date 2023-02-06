@@ -182,6 +182,9 @@ def register(
     if label:
         force_begin_rollback = True
 
+    if block not in (True, False, "script", "possible"):
+        raise Exception("Unknown \"block\" argument value: {}".format(block))
+
     registry[name] = dict(
         parse=parse,
         lint=lint,
@@ -200,9 +203,6 @@ def register(
         predict_next=predict_next,
         execute_default=execute_default,
     )
-
-    if block not in [True, False, "script", "possible" ]:
-        raise Exception("Unknown \"block\" argument value: {}".format(block))
 
     # The function that is called to create an ast.UserStatement.
     def parse_user_statement(l, loc):
