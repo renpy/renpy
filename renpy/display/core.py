@@ -3138,14 +3138,25 @@ class Interface(object):
         if interaction and (mouse_kind is None):
             mouse_kind = self.mouse
 
+        if pygame.mouse.get_pressed()[0]:
+            mouse_kind = "pressed_" + mouse_kind 
+
         if cache_only and (mouse_kind not in self.cursor_cache):
-            mouse_kind = 'default'
+            # if the mouse_kind cursor is not in cache, use a replacement
+            # if pressed_ is in the cursor name, we'll try to use pressed_default
+            # or the non-pressed cursor if we have it in cache
+            # otherwise we'll use the default cursor
+            if mouse_kind.startswith("pressed_") and ("pressed_default" in self.cursor_cache):
+                # if a generic pressed_default cursor is defined, use it
+                mouse_kind = "pressed_default"
+            elif mouse_kind.startswith("pressed_") and (mouse_kind[8:] in self.cursor_cache):
+                # otherwise use the non-pressed cursor if we have it in cache
+                mouse_kind = mouse_kind[8:]
+            else:
+                mouse_kind = 'default'
 
         if mouse_kind == 'default':
             mouse_kind = getattr(renpy.store, 'default_mouse', 'default')
-
-        if pygame.mouse.get_pressed()[0]:
-            mouse_kind = "pressed_" + mouse_kind 
 
         return mouse_kind
 
@@ -3181,20 +3192,6 @@ class Interface(object):
         if mouse_kind in self.cursor_cache:
             anim = self.cursor_cache[mouse_kind]
             cursor = anim[self.ticks % len(anim)]
-
-        # if the "pressed_variant" cursor is not defined, we will either use
-        # the generic "pressed_default" cursor, or strip pressed_ from mouse_kind to
-        # get the non-pressed cursor
-        elif mouse_kind.startswith("pressed_") and "pressed_default" in self.cursor_cache:
-            # if a generic pressed_ cursor is defined, use it 
-            anim = self.cursor_cache["pressed_default"]
-            cursor = anim[self.ticks % len(anim)]
-
-        elif mouse_kind.startswith("pressed_") and mouse_kind[8:] in self.cursor_cache:
-            # otherwise use the non-pressed cursor if we have it in cache
-            anim = self.cursor_cache[mouse_kind[8:]]
-            cursor = anim[self.ticks % len(anim)]
-
         else:
             cursor = True
 

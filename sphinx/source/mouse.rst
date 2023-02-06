@@ -90,12 +90,9 @@ and the corresponding usage:
 
 Every key can have an optional ``pressed_`` prefix, which indicates the
 cursor to use when the mouse is pressed. For instance, ``pressed_button``
-is used when the user clicks on a button; however, for a ``pressed_`` variant
-to be used, the corresponding standard variant must be defined. In other words,
-if you define ``pressed_button``, you must also define ``button``.
-
-To define a default pressed cursor style, use ``pressed_default`` key. It is used
-when no other pressed cursor is defined.
+is used when the user clicks on a button. To define a default pressed 
+cursor style, use ``pressed_default`` key. It is used when no other 
+pressed cursor is defined.
 
 For example::
 
