@@ -1366,13 +1366,16 @@ class SLIf(SLNode):
             if cond is not None:
                 node = ccache.ast_eval(cond)
 
-                self.constant = min(self.constant, analysis.is_constant(node))
+                cond_const = analysis.is_constant(node)
+                self.constant = min(self.constant, cond_const)
 
                 cond = compile_expr(self.location, node)
+            else:
+                cond_const = True
 
             block.prepare(analysis)
             self.constant = min(self.constant, block.constant)
-            self.prepared_entries.append((cond, block))
+            self.prepared_entries.append((cond, block, cond_const))
 
             self.has_keyword |= block.has_keyword
             self.last_keyword |= block.last_keyword
@@ -1383,7 +1386,7 @@ class SLIf(SLNode):
             self.execute_predicting(context)
             return
 
-        for cond, block in self.prepared_entries:
+        for cond, block, _cond_const in self.prepared_entries:
             if cond is None or eval(cond, context.globals, context.scope):
                 for i in block.children:
                     i.execute(context)
@@ -1396,10 +1399,13 @@ class SLIf(SLNode):
         # True if no block has been the main choice yet.
         first = True
 
-        # Other blocks that we predict if not predicted.
-        false_blocks = [ ]
 
-        for cond, block in self.prepared_entries:
+        # Should we predict false branches?
+        predict_false = self.serial not in context.predicted
+        context.predicted.add(self.serial)
+
+
+        for cond, block, const_cond in self.prepared_entries:
             try:
                 cond_value = (cond is None) or eval(cond, context.globals, context.scope)
             except Exception:
@@ -1415,30 +1421,25 @@ class SLIf(SLNode):
                     except Exception:
                         pass
 
-            else:
-                false_blocks.append(block)
+                if const_cond:
+                    break
 
-        # Has any instance of this node been predicted? We only predict
-        # once per node, for performance reasons.
-        if self.serial in context.predicted:
-            return
+            elif predict_false:
 
-        context.predicted.add(self.serial)
+                ctx = SLContext(context)
+                ctx.children = [ ]
+                ctx.unlikely = True
 
-        # Not-taken branches.
-        for block in false_blocks:
-            ctx = SLContext(context)
-            ctx.children = [ ]
-            ctx.unlikely = True
+                for i in block.children:
+                    try:
+                        i.execute(ctx)
+                    except Exception:
+                        pass
 
-            for i in block.children:
-                try:
-                    i.execute(ctx)
-                except Exception:
-                    pass
+                for i in ctx.children:
+                    predict_displayable(i)
 
-            for i in ctx.children:
-                predict_displayable(i)
+
 
     def keywords(self, context):
 
