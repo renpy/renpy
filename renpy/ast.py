@@ -2169,7 +2169,6 @@ class UserStatement(Node):
         return self
 
     def __init__(self, loc, line, block, parsed):
-
         super(UserStatement, self).__init__(loc)
         self.code_block = None # type: Optional[list]
         self.parsed = parsed
@@ -2225,12 +2224,7 @@ class UserStatement(Node):
         return (UserStatement, self.line)
 
     def call(self, method, *args, **kwargs):
-
-        parsed = self.parsed
-
-        if parsed is None:
-            parsed = renpy.statements.parse(self, self.line, self.block)
-            self.parsed = parsed
+        parsed = self.get_parsed()
 
         return renpy.statements.call(method, parsed, *args, **kwargs)
 
@@ -2279,11 +2273,7 @@ class UserStatement(Node):
         return [ self.next ]
 
     def get_name(self):
-        parsed = self.parsed
-
-        if parsed is None:
-            parsed = renpy.statements.parse(self, self.line, self.block)
-            self.parsed = parsed
+        parsed = self.get_parsed()
 
         return renpy.statements.get_name(parsed)
 
@@ -2298,6 +2288,15 @@ class UserStatement(Node):
             return renpy.game.script.lookup(rv)
         else:
             return self.next
+
+    def get_parsed(self):
+        parsed = self.parsed
+
+        if parsed is None:
+            parsed = renpy.statements.parse(self, self.line, self.block)
+            self.parsed = parsed
+
+        return parsed
 
     def scry(self):
         rv = Node.scry(self)
