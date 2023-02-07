@@ -1632,7 +1632,7 @@ class Text(renpy.display.core.Displayable):
         # Sets the text we're showing, and performs substitutions.
         self.set_text(text, scope, substitute) # type: ignore
 
-        if renpy.game.less_updates or renpy.game.preferences.self_voicing:
+        if renpy.game.less_updates:
             slow = False
 
         # True if we're using slow text mode.
