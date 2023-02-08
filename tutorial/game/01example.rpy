@@ -257,7 +257,16 @@ python early:
     def execute_init_example(data):
         read_example(data["name"], data["filename"], data["number"], data.get("outdent", "auto"))
 
-    renpy.register_statement("example", parse=parse_example, execute=execute_example, execute_init=execute_init_example, next=next_example, block="script")
+    renpy.register_statement("example",
+                             parse=parse_example,
+                             execute=execute_example,
+                             execute_init=execute_init_example,
+                             next=next_example,
+                             block="script",
+                             statement_reachable=False,
+                             block_reachable="Always",
+                             next_reachable="RIR",
+                             )
 
 
     # The show example statement.
@@ -303,7 +312,12 @@ python early:
             "showtrans" : showtrans,
             }
 
-    renpy.register_statement("show example", parse=parse_show_example, execute=execute_example)
+    renpy.register_statement("show example",
+                             parse=parse_show_example,
+                             execute=execute_example,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
 
     # The hide example statement.
@@ -331,7 +345,12 @@ python early:
             hide_example_screen()
             renpy.with_statement(example_transition)
 
-    renpy.register_statement("hide example", parse=parse_hide_example, execute=execute_hide_example)
+    renpy.register_statement("hide example",
+                             parse=parse_hide_example,
+                             execute=execute_hide_example,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
 
 # A preference that controls if translations are shown.

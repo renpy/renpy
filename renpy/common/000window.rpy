@@ -201,18 +201,27 @@ python early hide:
 
 
     renpy.register_statement('window show',
-                              parse=parse_window,
-                              execute=execute_window_show,
-                              lint=lint_window,
-                              warp=warp_true)
+                             parse=parse_window,
+                             execute=execute_window_show,
+                             lint=lint_window,
+                             warp=warp_true,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
     renpy.register_statement('window hide',
-                              parse=parse_window,
-                              execute=execute_window_hide,
-                              lint=lint_window,
-                              warp=warp_true)
+                             parse=parse_window,
+                             execute=execute_window_hide,
+                             lint=lint_window,
+                             warp=warp_true,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
     renpy.register_statement('window auto',
                              parse=parse_window_auto,
                              execute=execute_window_auto,
-                             warp=warp_true)
+                             warp=warp_true,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )

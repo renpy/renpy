@@ -157,11 +157,14 @@ python early hide:
                     pass
 
     renpy.register_statement('play music',
-                              parse=parse_play_music,
-                              execute=execute_play_music,
-                              predict=predict_play_music,
-                              lint=lint_play_music,
-                              warp=warp_audio)
+                             parse=parse_play_music,
+                             execute=execute_play_music,
+                             predict=predict_play_music,
+                             lint=lint_play_music,
+                             warp=warp_audio,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
     # From here on, we'll steal bits of other statements when defining other
     # statements.
@@ -225,10 +228,13 @@ python early hide:
 
 
     renpy.register_statement('queue music',
-                              parse=parse_queue_music,
-                              execute=execute_queue_music,
-                              lint=lint_play_music,
-                              warp=warp_audio)
+                             parse=parse_queue_music,
+                             execute=execute_queue_music,
+                             lint=lint_play_music,
+                             warp=warp_audio,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
     def parse_stop_music(l):
         channel = None
@@ -263,9 +269,12 @@ python early hide:
         renpy.music.stop(fadeout=eval(p["fadeout"]), channel=channel)
 
     renpy.register_statement('stop music',
-                              parse=parse_stop_music,
-                              execute=execute_stop_music,
-                              warp=warp_audio)
+                             parse=parse_stop_music,
+                             execute=execute_stop_music,
+                             warp=warp_audio,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
 
     # Sound statements. They share alot with the equivalent music
@@ -308,10 +317,13 @@ python early hide:
         return lint_play_music(p, channel="sound")
 
     renpy.register_statement('play sound',
-                              parse=parse_play_music,
-                              execute=execute_play_sound,
-                              lint=lint_play_sound,
-                              warp=warp_sound)
+                             parse=parse_play_music,
+                             execute=execute_play_sound,
+                             lint=lint_play_sound,
+                             warp=warp_sound,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
     def execute_queue_sound(p):
         if p["channel"] is not None:
@@ -334,10 +346,13 @@ python early hide:
 
 
     renpy.register_statement('queue sound',
-                              parse=parse_queue_music,
-                              execute=execute_queue_sound,
-                              lint=lint_play_sound,
-                              warp=warp_sound)
+                             parse=parse_queue_music,
+                             execute=execute_queue_sound,
+                             lint=lint_play_sound,
+                             warp=warp_sound,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
     def execute_stop_sound(p):
         if p["channel"] is not None:
@@ -350,9 +365,12 @@ python early hide:
         renpy.sound.stop(fadeout=fadeout, channel=channel)
 
     renpy.register_statement('stop sound',
-                              parse=parse_stop_music,
-                              execute=execute_stop_sound,
-                              warp=warp_sound)
+                             parse=parse_stop_music,
+                             execute=execute_stop_sound,
+                             warp=warp_sound,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
 
     # Generic play/queue/stop statements. These take a channel name as
@@ -409,23 +427,32 @@ python early hide:
             renpy.error("channel %r is not defined" % channel)
 
     renpy.register_statement('play',
-                              parse=parse_play_generic,
-                              execute=execute_play_music,
-                              predict=predict_play_music,
-                              lint=lint_play_generic,
-                              warp=warp_audio)
+                             parse=parse_play_generic,
+                             execute=execute_play_music,
+                             predict=predict_play_music,
+                             lint=lint_play_generic,
+                             warp=warp_audio,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
     renpy.register_statement('queue',
-                              parse=parse_queue_generic,
-                              execute=execute_queue_music,
-                              lint=lint_play_generic,
-                              warp=warp_audio)
+                             parse=parse_queue_generic,
+                             execute=execute_queue_music,
+                             lint=lint_play_generic,
+                             warp=warp_audio,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
     renpy.register_statement('stop',
-                              parse=parse_stop_generic,
-                              execute=execute_stop_music,
-                              lint=lint_stop_generic,
-                              warp=warp_audio)
+                             parse=parse_stop_generic,
+                             execute=execute_stop_music,
+                             lint=lint_stop_generic,
+                             warp=warp_audio,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
 
 
@@ -461,9 +488,12 @@ python early hide:
             renpy.pause()
 
     renpy.register_statement('pause',
-                              parse=parse_pause,
-                              lint=lint_pause,
-                              execute=execute_pause)
+                             parse=parse_pause,
+                             lint=lint_pause,
+                             execute=execute_pause,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
 
 ##############################################################################
@@ -710,21 +740,30 @@ python early hide:
 
 
     renpy.register_statement("show screen",
-                              parse=parse_show_call_screen,
-                              execute=execute_show_screen,
-                              predict=predict_screen,
-                              lint=lint_show_call_screen,
-                              warp=warp_true)
+                             parse=parse_show_call_screen,
+                             execute=execute_show_screen,
+                             predict=predict_screen,
+                             lint=lint_show_call_screen,
+                             warp=warp_true,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
     renpy.register_statement("call screen",
-                              parse=parse_show_call_screen,
-                              execute=execute_call_screen,
-                              predict=predict_screen,
-                              lint=lint_show_call_screen,
-                              force_begin_rollback=True)
+                             parse=parse_show_call_screen,
+                             execute=execute_call_screen,
+                             predict=predict_screen,
+                             lint=lint_show_call_screen,
+                             force_begin_rollback=True,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
 
     renpy.register_statement("hide screen",
-                              parse=parse_hide_screen,
-                              execute=execute_hide_screen,
-                              lint=lint_hide_screen,
-                              warp=warp_true)
+                             parse=parse_hide_screen,
+                             execute=execute_hide_screen,
+                             lint=lint_hide_screen,
+                             warp=warp_true,
+                             statement_reachable=True,
+                             next_reachable="RIR",
+                             )
