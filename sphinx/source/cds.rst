@@ -1,5 +1,3 @@
-.. _cds:
-
 Creator-Defined Statements
 ==========================
 

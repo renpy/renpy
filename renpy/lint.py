@@ -837,6 +837,15 @@ def check_unreachables(all_nodes):
             to_check.add(node)
         elif isinstance(node, renpy.ast.Translate) and node.language is not None:
             to_check.add(node)
+        elif isinstance(node, renpy.ast.UserStatement):
+            parsed = node.get_parsed()
+            if renpy.statements.get("next_reachable", parsed) == "Always": # Always
+                if node.next in unreachable:
+                    to_check.add(node.next)
+            if node.code_block: # not None and not empty
+                if renpy.statements.get("block_reachable", parsed) == "Always": # Always
+                    add_block(node.code_block)
+            del parsed
 
     for node in all_nodes:
         if isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
@@ -871,11 +880,15 @@ def check_unreachables(all_nodes):
                 add_block(block)
 
         elif isinstance(node, renpy.ast.UserStatement):
-            if node.code_block is not None:
+            parsed = node.get_parsed()
+            if node.code_block and (renpy.statements.get("block_reachable", parsed) == "RIR"): # RIR
                 add_block(node.code_block)
 
-            for i in node.subparses:
+            for i in node.subparses: # ?
                 add_block(i.block)
+
+            if renpy.statements.get("next_reachable", parsed) == "Never": # Never/RIB
+                continue
 
         next = node.next
         if next in unreachable:
@@ -890,6 +903,10 @@ def check_unreachables(all_nodes):
             # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place, and EndTranslate nodes from explicit translate blocks are naturally unreachable
             # Init, TranslateBlock and EarlyPython nodes are meant to be unreachable, but we had to check them because if they are reachable, what follows them is too and must not be flagged as unreachable
             continue
+        if isinstance(node, renpy.ast.UserStatement):
+            if not renpy.statements.get("statement_reachable", node.get_parsed()):
+                # the statement is not meant to be reachable
+                continue
         locations.add((node.filename, node.linenumber))
 
     locadict = collections.defaultdict(list)

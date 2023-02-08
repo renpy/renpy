@@ -57,6 +57,9 @@ def register(
         predict_all=True,
         predict_next=None,
         execute_default=None,
+        statement_reachable=None,
+        block_reachable=None,
+        next_reachable=None,
 ):
     """
     :doc: statement_register
@@ -175,6 +178,45 @@ def register(
         other times.
 
         This is called with a single argument, the object returned from parse.
+
+    `statement_reachable`
+        Boolean, whether this statement *should be* reachable. If True and put
+        at the very top of a file or directly after a return, it will be flagged
+        as a mistake. For example, dialogues, shows and jumps should be
+        reachable, but labels, ``init python`` and ``define`` don't need to.
+
+    `block_reachable`
+        A string, indicating how the block of Ren'Py script this statement takes
+        is reachable (in the case the `block` parameter is "script", otherwise
+        this is ignored.)
+
+        "RIR" is for when this statement makes it reachable when this statement
+        itself is reached (meaning that control comes from a statement just
+        before it), like an ``if`` or ``while`` statement for example.
+
+        "Always" is for when the block can be reached *even in other circumstances*
+        than this statement being reached, like ``init python`` or ``label``.
+
+        "Never" is for when the block is never reachable, but that doesn't really make sense.
+
+    `next_reachable`
+        A string indicating how the statement coming after this statement, or
+        after its block, is reachable. (We call that the "next" statement.)
+
+        "Never" is for when this statement *nevers* passes control to it. This is
+        the case for ``jump`` or ``return`` statements for example.
+
+        "RIB" is for when this statement takes a block, and control passes to
+        the "next" *only* when the block's end is reached. This is
+        the case for the ``menu`` statement for example.
+
+        "RIR" is for when the statement passes (or can pass) control to the "next"
+        when this statement iself is reached. This is the case for most
+        statements, like ``show``, python blocks, or dialogues for example.
+
+        "Always" is for when the statement can pass control to the "next" *even in
+        other circumstances* than this statement being reached. This is the case
+        for the ``label`` statement.
     """
 
     name = tuple(name.split())
@@ -184,6 +226,33 @@ def register(
 
     if block not in (True, False, "script", "possible"):
         raise Exception("Unknown \"block\" argument value: {}".format(block))
+
+    if next_reachable == "RIB":
+        next_reachable = "Never" # amounts to the same for reachability analysis purposes
+
+    # defaults, educated guesses - if too many parameters are passed as functions, this will grow inaccurate
+    # setting them to False/Always/Always would disable every warning by default
+    if statement_reachable is None:
+        statement_reachable = (execute_init is None) or (execute is not None) # passing init=True makes statement_reachable irrelevent
+
+    if block_reachable is None:
+        if (block == "script"):
+            if next is None:
+                block_reachable = "Never" # Never
+            else:
+                if statement_reachable:
+                    block_reachable = "RIR" # RIR
+                else:
+                    block_reachable = "Always" # Always
+
+    if next_reachable is None:
+        if (next is None) or (block_reachable in (None, "Never")):
+            if statement_reachable:
+                next_reachable = "RIR" # RIR
+            else:
+                next_reachable = "Always" # Always
+        else:
+            next_reachable = "Never" # Never/RIB
 
     registry[name] = dict(
         parse=parse,
@@ -202,6 +271,9 @@ def register(
         predict_all=predict_all,
         predict_next=predict_next,
         execute_default=execute_default,
+        statement_reachable=statement_reachable,
+        block_reachable=block_reachable,
+        next_reachable=next_reachable,
     )
 
     # The function that is called to create an ast.UserStatement.
