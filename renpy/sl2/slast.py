@@ -1625,16 +1625,27 @@ class SLFor(SLBlock):
 
     def analyze(self, analysis):
 
-        if analysis.is_constant_expr(self.expression) == GLOBAL_CONST:
-            analysis.push_control(True)
-            analysis.mark_constant(self.variable)
-        else:
-            analysis.push_control(False)
-            analysis.mark_not_constant(self.variable)
+        const = analysis.is_constant_expr(self.expression) == GLOBAL_CONST
 
-        SLBlock.analyze(self, analysis)
+        while True:
 
-        analysis.pop_control()
+            if const:
+                analysis.push_control(True, loop=True)
+                analysis.mark_constant(self.variable)
+            else:
+                analysis.push_control(False, loop=True)
+                analysis.mark_not_constant(self.variable)
+
+            SLBlock.analyze(self, analysis)
+
+            new_const = analysis.control.const
+
+            analysis.pop_control()
+
+            if new_const == const:
+                break
+
+            const = new_const
 
     def prepare(self, analysis):
         node = ccache.ast_eval(self.expression)
@@ -1769,6 +1780,9 @@ class SLContinueException(SLForException): pass
 
 class SLBreak(SLNode):
 
+    def analyze(self, analysis):
+        analysis.exit_loop()
+
     def execute(self, context):
         raise SLBreakException()
 
@@ -1781,6 +1795,9 @@ class SLBreak(SLNode):
         self.dc(prefix, "break")
 
 class SLContinue(SLNode):
+
+    def analyze(self, analysis):
+        analysis.exit_loop()
 
     def execute(self, context):
         raise SLContinueException()

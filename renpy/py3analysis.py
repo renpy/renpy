@@ -187,6 +187,9 @@ class Control(object):
         self.loop = loop
         self.imagemap = imagemap
 
+    def __repr__(self):
+        return "<Control const={0} loop={1} imagemap={2}>".format(self.const, self.loop, self.imagemap)
+
 
 # Three levels of constness.
 
