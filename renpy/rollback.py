@@ -847,7 +847,7 @@ class RollbackLog(renpy.object.Object):
             and so on.
 
         `current_label`
-            A lable that is called when control returns to the current statement,
+            A label that is called when control returns to the current statement,
             after rollback. (At most one of `current_label` and `label` can be
             provided.)
         """

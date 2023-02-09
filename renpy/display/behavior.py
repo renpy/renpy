@@ -1783,16 +1783,19 @@ class Adjustment(renpy.object.Object):
     force_step = False
 
     # The amplitude of the inertia.
-    inertia_amplitude = None # type: float|None
+    animation_amplitude = None # type: float|None
 
     # The target value of the inertia.
-    inertia_target = None # type: float|None
+    animation_target = None # type: float|None
 
     # The time the inertia started
-    inertia_start = None # type: float|None
+    animation_start = None # type: float|None
 
     # The time constant of the inertia.
-    inertia_time_constant = None # type: float|None
+    animation_delay = None # type: float|None
+
+    # The warper applied to the animation.
+    animation_warper = None # type (float) -> float|None
 
     def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
         """
@@ -1969,34 +1972,53 @@ class Adjustment(renpy.object.Object):
         for d in adj_registered.setdefault(self, [ ]):
             renpy.display.render.invalidate(d)
 
-    def inertia(self, amplitude, time_constant, st):
+    def inertia_warper(self, done):
+        return 1.0 - math.exp(-done * 6)
+
+    def animate(self, amplitude, delay, warper):
         if not amplitude or not self._range:
-            self.end_animation(True)
+            self.end_animation()
         else:
-            self.inertia_amplitude = amplitude
-            self.inertia_target = self._value + amplitude
-            self.inertia_time_constant = time_constant
-            self.inertia_start = st
+            self.animation_amplitude = amplitude
+            self.animation_target = self.round_value(self._value + amplitude, release=True)
 
-    def end_animation(self, always=False):
-        if always or self.inertia_target is not None:
-            self.inertia_amplitude = None
-            self.inertia_target = None
-            self.inertia_start = None
-            self.inertia_time_constant = None
+            self.animation_delay = delay
+            self.animation_start = None
+            self.animation_warper = warper
+            self.update()
 
-            value = self.round_value(self._value, release=True)
+    def inertia(self, amplitude, time_constant, st):
+        self.animate(amplitude, time_constant * 6.0, self.inertia_warper)
+        self.periodic(st)
+
+    def end_animation(self):
+        if self.animation_target is not None:
+            value = self.animation_target
+
+            self.animation_amplitude = None
+            self.animation_target = None
+            self.animation_start = None
+            self.animation_delay = None
+            self.animation_warper = None
+
             self.change(value, end_animation=False)
 
-    def animate(self, st):
+    def periodic(self, st):
 
-        if self.inertia_target is None:
+        if self.animation_target is None:
             return
 
-        value = self.inertia_target - self.inertia_amplitude * math.exp(-(st - self.inertia_start) / self.inertia_time_constant)
+        if self.animation_start is None:
+            self.animation_start = st
+
+        done = (st - self.animation_start) / self.animation_delay
+        done = self.animation_warper(done)
+
+        value = self.animation_target - self.animation_amplitude * (1.0 - done)
+
         self.change(value, end_animation=False)
 
-        if st > self.inertia_start + self.inertia_time_constant * 6:
+        if st > self.animation_start + self.animation_delay: # type: ignore
             self.end_animation()
             return None
         else:

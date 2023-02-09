@@ -2552,8 +2552,8 @@ def open_file(fn, encoding=None): # @ReservedAssignment
     :doc: file
 
     Returns a read-only file-like object that accesses the file named `fn`. The file is
-    accessed using Ren'Py's standard search method, and may reside in an RPA archive.
-    or as an Android asset.
+    accessed using Ren'Py's standard search method, and may reside in the game directory,
+    in an RPA archive, or as an Android asset.
 
     The object supports a wide subset of the fields and methods found on Python's
     standard file object, opened in binary mode. (Basically, all of the methods that
@@ -3097,6 +3097,17 @@ Render = renpy.display.render.Render
 render = renpy.display.render.render
 IgnoreEvent = renpy.display.core.IgnoreEvent
 redraw = renpy.display.render.redraw
+
+def is_pixel_opaque(d, width, height, st, at, x, y):
+    """
+    :doc: udd_utility
+
+    Returns whether the pixel at (x, y) is opaque when this displayable
+    is rendered by ``renpy.render(d, width, height, st, at)``.
+    """
+
+    # Uses the caching features of renpy.render, as opposed to d.render.
+    return bool(render(renpy.easy.displayable(d), width, height, st, at).is_pixel_opaque(x, y))
 
 
 class Displayable(renpy.display.core.Displayable, renpy.revertable.RevertableObject):

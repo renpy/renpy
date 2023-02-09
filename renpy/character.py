@@ -279,7 +279,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     def handle_who():
         if who:
             if image:
-                renpy.ui.add(renpy.display.im.image(who, loose=True, **props["who"]))
+                renpy.ui.add(renpy.display.im.image(who, loose=True, **props["who"])) #type: ignore
             else:
                 renpy.ui.text(who, **who_args)
 
@@ -348,14 +348,14 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         renpy.ui.window(**merge_style('say_who_window', who_window_properties))
         handle_who()
 
-    renpy.ui.window(**props["window"])
+    renpy.ui.window(**props["window"]) #type: ignore
     # Opens the say_vbox.
     renpy.ui.vbox(**merge_style('say_vbox', say_vbox_properties))
 
     if not two_window:
         handle_who()
 
-    rv = renpy.ui.text(what, **props["what"])
+    rv = renpy.ui.text(what, **props["what"]) #type: ignore
 
     # Closes the say_vbox.
     renpy.ui.close()
@@ -1610,8 +1610,8 @@ def Character(name=NotSet, kind=None, **properties):
 
     **Styling Text and Windows.**
     Keyword arguments beginning with ``who_``, ``what_``, and
-    ``window_`` have their prefix stripped, and are used to :ref:`style
-    <styles>` the character name, the spoken text, and the window
+    ``window_`` have their prefix stripped, and are used to :doc:`style
+    <style>` the character name, the spoken text, and the window
     containing both, respectively.
 
     For example, if a character is given the keyword argument

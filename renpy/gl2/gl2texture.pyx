@@ -252,11 +252,12 @@ cdef class GLTexture(GL2Model):
     are no longer required.
     """
 
-    def __init__(GLTexture self, size, TextureLoader loader):
+    def __init__(GLTexture self, size, TextureLoader loader, generate=False):
 
         cdef unsigned char *pixels
         cdef unsigned char *data
         cdef unsigned char *p
+        cdef GLuint number
 
         width, height = size
 
@@ -276,6 +277,19 @@ cdef class GLTexture(GL2Model):
         self.loader = loader
         self.loader.total_texture_size += self.width * self.height * 4
 
+        if renpy.emscripten and generate:
+            # Generate a texture name to access video frames for web
+            glGenTextures(1, &number)
+            self.number = number
+            self.loaded = True
+            self.loader.allocated.add(self.number)
+            self.mesh = Mesh2.texture_rectangle(
+                0.0, 0.0, width, height,
+                0.0, 0.0, 1.0, 1.0,
+                )
+
+    def get_number(GLTexture self):
+        return self.number if renpy.emscripten else None
 
     def from_surface(GLTexture self, surface, properties):
         """

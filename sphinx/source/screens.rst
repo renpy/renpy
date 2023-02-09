@@ -244,6 +244,12 @@ All user interface statements take the following common properties:
 
     By default, the ``id`` is automatically-generated.
 
+`prefer_screen_to_id`
+    If true, when a property is provided by both the the screen and a
+    displayble identifier, the screen property is used. If false, the
+    default, the displayable property is used. (This can be used to
+    decide if the screen overrides properties set by a Character.)
+
 `style`
     A string giving the name of the style applied to this displayable. The
     style gives default values for style properties.

@@ -246,14 +246,13 @@ class Viewport(renpy.display.layout.Container):
 
             self.check_edge_redraw(st)
 
-        redraw = self.xadjustment.animate(st)
+        redraw = self.xadjustment.periodic(st)
         if redraw is not None:
             renpy.display.render.redraw(self, redraw)
 
-        redraw = self.yadjustment.animate(st)
+        redraw = self.yadjustment.periodic(st)
         if redraw is not None:
             renpy.display.render.redraw(self, redraw)
-
 
         cxo = -int(self.xadjustment.value)
         cyo = -int(self.yadjustment.value)
@@ -646,6 +645,10 @@ class VPGrid(Viewport):
             xspacing = self.style.spacing
         if yspacing is None:
             yspacing = self.style.spacing
+
+        if renpy.config.relative_spacing:
+            xspacing = renpy.display.layout.scale(xspacing, width)
+            yspacing = renpy.display.layout.scale(yspacing, height)
 
         left_margin = renpy.display.layout.scale(self.style.left_margin, width)
         right_margin = renpy.display.layout.scale(self.style.right_margin, width)

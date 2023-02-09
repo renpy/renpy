@@ -466,6 +466,10 @@ class Grid(Container):
         if yspacing is None:
             yspacing = self.style.spacing
 
+        if renpy.config.relative_spacing:
+            xspacing = renpy.display.layout.scale(xspacing, width)
+            yspacing = renpy.display.layout.scale(yspacing, height)
+
         left_margin = scale(self.style.left_margin, width)
         right_margin = scale(self.style.right_margin, width)
         top_margin = scale(self.style.top_margin, height)
@@ -619,7 +623,6 @@ class MultiBox(Container):
     _layer_at_list = None # type: list|None
     _camera_list = None # type: list|None
     layers = None # type: dict|None
-    raw_layers = None # type: dict|None
 
 
     def __init__(self, spacing=None, layout=None, style='default', **properties):
@@ -642,9 +645,6 @@ class MultiBox(Container):
         # that layer.
         self.layers = None
 
-        # The same, but for the raw layers.
-        self.raw_layers = None
-
         # The scene list for this widget.
         self.scene_list = None
 
@@ -654,7 +654,6 @@ class MultiBox(Container):
         self.start_times = [ ]
         self.anim_times = [ ]
         self.layers = None
-        self.raw_layers = None
         self.scene_list = None
 
     def _in_current_store(self):
@@ -689,15 +688,14 @@ class MultiBox(Container):
         elif self.layers:
             rv = MultiBox(layout=self.default_layout)
             rv.layers = { }
-            rv.raw_layers = { }
 
             changed = False
 
             for layer in renpy.config.layers:
-                old_d = self.raw_layers[layer]
-                new_d = old_d._in_current_store()
+                old_d = self.layers[layer]
+                old_d = getattr(old_d, 'raw_child', old_d)
 
-                rv.raw_layers[layer] = new_d
+                new_d = old_d._in_current_store()
 
                 if new_d is not old_d:
                     changed = True

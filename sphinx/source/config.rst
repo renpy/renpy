@@ -521,6 +521,12 @@ Occasionally Used
     The user can progress forward through the rollback buffer by
     clicking.
 
+.. var:: config.font_name_map = { }
+
+    This is a map from (font name) to (font filepath/fontgroup). Font names
+    simplify and shorten ``{font}`` tags, and gives them access to the
+    :ref:`fontgroup` feature.
+
 .. var:: config.font_replacement_map = { }
 
     This is a map from (font, bold, italics) to (font, bold, italics),

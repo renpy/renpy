@@ -1685,6 +1685,11 @@ def release_deferred_errors():
     # Unconditionally ignores the deferred_experimentation
     pop("deferred_experimentation")
 
+    if renpy.config.check_conflicting_properties:
+        release("check_conflicting_properties")
+    else:
+        pop("check_conflicting_properties")
+
     if deferred_parse_errors:
         raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))
 
