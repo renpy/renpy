@@ -121,6 +121,7 @@ init -1600 python:
 
         # Debug console.
         console = [ 'shift_K_o', 'alt_shift_K_o' ],
+        console_exit = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
         console_older = [ 'any_K_UP', 'any_KP_UP' ],
         console_newer = [ 'any_K_DOWN', 'any_KP_DOWN' ],
 

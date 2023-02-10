@@ -1121,7 +1121,7 @@ screen _console:
                 input default default style "_console_input_text" exclude "" copypaste True
 
 
-    key "game_menu" action Jump("_console_return")
+    key "console_exit" action Jump("_console_return")
     key "console_older" action _console.console.older
     key "console_newer" action _console.console.newer
 
