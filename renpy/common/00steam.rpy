@@ -831,6 +831,9 @@ init -1499 python in achievement:
             dll_path = os.path.join(os.path.dirname(sys.executable), dll_name)
             has_steam = os.path.exists(dll_path)
 
+            if not has_steam:
+                return
+
             if not config.enable_steam:
                 return
 
