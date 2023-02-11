@@ -70,6 +70,33 @@ def fix_spaceship(tokens):
     return rv
 
 
+def fix_backtick_repr(tokens):
+    """
+    This fixes the Python 2 backtick-repr.
+    """
+
+    rv = [ ]
+
+    # Is this the first backtick in a pair?
+    first = True
+
+    for t in tokens:
+
+        if t.type == token.ERRORTOKEN and t.string == "`":
+            if first:
+                rv.append(tokenize.TokenInfo(token.NAME, "repr", t.start, t.end, t.line))
+                rv.append(tokenize.TokenInfo(token.LPAR, "(", t.end, t.end, t.line))
+                first = False
+            else:
+                rv.append(tokenize.TokenInfo(token.RPAR, ")", t.start, t.end, t.line))
+                first = True
+        else:
+            rv.append(t)
+
+    return rv
+
+
+
 def fix_print(line):
     """
     This tries to remove Python 2-style print statements.
@@ -121,6 +148,7 @@ def fix_raise(line):
     newline.insert(-1, tokenize.TokenInfo(token.RPAR, ")", line[-2].end, line[-2].end, line[-2].line))
 
     return newline
+
 
 def fix_lines(tokens):
 
@@ -186,6 +214,8 @@ def fix_tokens(source):
 
         tokens = fix_octal_numbers(tokens)
         tokens = fix_spaceship(tokens)
+        tokens = fix_backtick_repr(tokens)
+
         tokens = fix_lines(tokens)
 
         rv = tokenize.untokenize(tokens).decode("utf-8")
