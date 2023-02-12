@@ -13,8 +13,25 @@ Changelog (Ren'Py 7.x-)
 Web
 ---
 
-The web platform now fully support playing videos through the :class:`Movie`
+The web platform now fully supports playing videos through the :class:`Movie`
 displayable, when it used to only support :func:`renpy.movie_cutscene`.
+
+Android
+--------
+
+Android has been changed so that the ``android.keystore`` file and
+``bundle.keystore`` file are expected to be found in the project's base
+directory, and not in the rapt directory. This allows projects to be
+built with different keys, and helps ensure the same keys are used
+with multiple Android versions.
+
+When the new "Generate Keys" button is pressed, if old keystore files
+exist, Ren'Py will offer to copy the old files into the project.
+
+The android configuration file has been renamed from ``.android.json`` to
+``android.json``. Ren'Py will automatically create the new file if the old
+exists.
+
 
 Other Platforms
 ---------------
