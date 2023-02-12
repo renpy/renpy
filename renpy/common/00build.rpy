@@ -158,6 +158,7 @@ init -1500 python in build:
         ("*.app/", None),
         ("*.dll", None),
         ("*.manifest", None),
+        ("*.keystore", None),
 
         ("lib/", None),
         ("renpy/", None),
@@ -193,6 +194,7 @@ init -1500 python in build:
 
         ("game/presplash*.*", "all"),
 
+        ("android.json", "android"),
         (".android.json", "android"),
         ("android-*.png", "android"),
         ("android-*.jpg", "android"),
@@ -212,7 +214,6 @@ init -1500 python in build:
         ("game/" + renpy.script.BYTECODE_FILE, "all"),
         ("game/cache/bytecode-311.rpyb", "web"),
         ("game/cache/bytecode-*.rpyb", None),
-
     ])
 
 
