@@ -293,6 +293,9 @@ class Channel(object):
                 self.movie = renpy.audio.renpysound.DROP_VIDEO
             else:
                 self.movie = renpy.audio.renpysound.NODROP_VIDEO
+
+            if getattr(renpysound, 'is_webaudio', False):
+                renpysound.set_movie_channel(self.number, True)
         else:
             self.movie = renpy.audio.renpysound.NO_VIDEO
 
@@ -541,11 +544,7 @@ class Channel(object):
                 while topq.filename in self.loop:
                     self.loop.remove(topq.filename)
 
-                if renpy.emscripten and not renpysound.is_webaudio:
-                    # Audio playback not supported
-                    print('Warning: media playback is not supported on this browser', file=sys.stderr)
-                    return
-                elif renpy.config.debug_sound and not renpy.game.after_rollback:
+                if renpy.config.debug_sound and not renpy.game.after_rollback:
                     raise
                 else:
                     return
@@ -958,13 +957,20 @@ def init():
 
     renpysound.is_webaudio = False
     if renpy.emscripten and renpy.config.webaudio:
+        # Importing webaudio hooks all public functions of renpysound
         import renpy.audio.webaudio as webaudio
+        renpysound.is_webaudio = True
 
         if webaudio.can_play_types(renpy.config.webaudio_required_types):
-            renpysound.__dict__.update(webaudio.__dict__)
-            renpysound.is_webaudio = True
+            webaudio.video_only = False
         else:
-            print('Warning: media playback is not supported on this browser', file=sys.stderr)
+            # Audio files are decoded by Ren'Py (wasm), video files by browser
+            webaudio.video_only = True
+
+        # Some channels are created before init() is called, so flag them now
+        if getattr(renpysound, 'is_webaudio', False):
+            for c in all_channels:
+                webaudio.set_movie_channel(c.number, c.movie != renpy.audio.renpysound.NO_VIDEO)
 
     if pcm_ok is None and renpysound:
         bufsize = 2048
