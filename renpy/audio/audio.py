@@ -968,9 +968,8 @@ def init():
             webaudio.video_only = True
 
         # Some channels are created before init() is called, so flag them now
-        if getattr(renpysound, 'is_webaudio', False):
-            for c in all_channels:
-                webaudio.set_movie_channel(c.number, c.movie != renpy.audio.renpysound.NO_VIDEO)
+        for c in all_channels:
+            webaudio.set_movie_channel(c.number, c.movie != renpy.audio.renpysound.NO_VIDEO)
 
     if pcm_ok is None and renpysound:
         bufsize = 2048
