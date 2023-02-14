@@ -290,15 +290,12 @@ def scan(name, o, prefix="", inclass=False):
                 lines.extend(init_doc.split("\n"))
 
             try:
-                args = inspect.getargspec(init)
+                args = inspect.signature(init)
             except Exception:
                 args = None
 
-        elif inspect.isfunction(o):
-            args = inspect.getargspec(o)
-
-        elif inspect.ismethod(o):
-            args = inspect.getargspec(o)
+        elif inspect.isfunction(o) or inspect.ismethod(o):
+            args = inspect.signature(o)
 
         else:
             print("Warning: %s has section but not args." % name)
@@ -308,7 +305,7 @@ def scan(name, o, prefix="", inclass=False):
         # Format the arguments.
         if args is not None:
 
-            args = inspect.formatargspec(*args)
+            args = str(args)
             args = args.replace("(self, ", "(")
         else:
             args = "()"
