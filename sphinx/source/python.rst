@@ -218,6 +218,16 @@ if it doesn't already exist. For example::
 As for the ``define`` statement, :ref:`lint` offers checks and optimizations
 related to the ``default`` statement.
 
+.. note::
+
+    It is highly recommended to ``default`` every variable in your game that is
+    susceptible to change. If you use ``init python`` or ``define`` to declare a
+    variable, when a player play a game and changes that variable, then goes
+    back to the main menu and starts a new game, the variable will not have the
+    value set in ``init python`` and so the former game will "leak" in the newly
+    started one. If you create these variables in the start label instead, they
+    will be missing when you load a save file that existed before.
+
 Names in the Store
 ------------------
 
