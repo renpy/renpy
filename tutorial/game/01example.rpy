@@ -581,6 +581,7 @@ init python hide:
         for l in lines:
 
             l = l.rstrip()
+            l = l.lstrip("\ufeff")
 
             m = re.match("\s*#begin (\w+)", l)
             if m:
