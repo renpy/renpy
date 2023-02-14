@@ -390,9 +390,18 @@ init python in project:
             can be included in the project.
             """
 
+            def is_script(fn):
+                fn = fn.lower()
+
+                for i in [ ".rpy", ".rpym", "_ren.py" ]:
+                    if fn.endswith(i):
+                        return True
+
+                return False
+
             rv = [ ]
             rv.extend(i for i, isdir in util.walk(self.path)
-                if (not isdir) and (i.endswith(".rpy") or i.endswith(".rpym")) and (not i.startswith("tmp/")) )
+                if (not isdir) and is_script(i) and (not i.startswith("tmp/")) )
 
             return rv
 
