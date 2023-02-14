@@ -196,7 +196,7 @@ cdef class Live2DModel:
 
         cdef int i
 
-        with renpy.loader.load(fn) as f:
+        with renpy.loader.load(fn, directory="images") as f:
             data = f.read()
 
         # Load the MOC.

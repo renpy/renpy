@@ -19,6 +19,12 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**File Search** Ren'Py will now only look for image files in game/images,
+rather than all files. To look for all files in game/images, use::
+
+    define config.search_prefixes += [ "images/" ]
+
+
 **Android** Android has been changed so that the ``android.keystore`` file and
 ``bundle.keystore`` file are expected to be found in the project's base
 directory, and not in the rapt directory. This allows projects to be

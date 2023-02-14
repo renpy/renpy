@@ -185,7 +185,7 @@ class Live2DCommon(object):
         if renpy.config.log_live2d_loading:
             renpy.display.log.write("Loading Live2D from %r.", filename)
 
-        if not renpy.loader.loadable(filename):
+        if not renpy.loader.loadable(filename, directory="images"):
             raise Exception("Live2D model {} does not exist.".format(filename))
 
         # A short name for the model.
@@ -198,7 +198,7 @@ class Live2DCommon(object):
             self.base += "/"
 
         # The contents of the .model3.json file.
-        with renpy.loader.load(filename) as f:
+        with renpy.loader.load(filename, directory="images") as f:
             self.model_json = json.load(f)
 
         # The model created from the moc3 file.
@@ -258,7 +258,7 @@ class Live2DCommon(object):
             if prefix == model_name:
                 name = suffix
 
-            if renpy.loader.loadable(self.base + i["File"]):
+            if renpy.loader.loadable(self.base + i["File"], directory="images"):
                 if renpy.config.log_live2d_loading:
                     renpy.display.log.write(" - motion %s -> %s", name, i["File"])
 
@@ -280,14 +280,14 @@ class Live2DCommon(object):
             if prefix == model_name:
                 name = suffix
 
-            if renpy.loader.loadable(self.base + i["File"]):
+            if renpy.loader.loadable(self.base + i["File"], directory="images"):
                 if renpy.config.log_live2d_loading:
                     renpy.display.log.write(" - expression %s -> %s", name, i["File"])
 
                 if name in self.attributes:
                     raise Exception("Name {!r} is already specified as a motion.".format(name))
 
-                with renpy.loader.load(self.base + i["File"]) as f:
+                with renpy.loader.load(self.base + i["File"], directory="images") as f:
                     expression_json = json.load(f)
 
                 self.expressions[name] = Live2DExpression(

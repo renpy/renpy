@@ -276,7 +276,7 @@ class MudgeFont(ImageFont):
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
 
         # Parse the xml file.
-        with renpy.loader.load(self.xml) as f:
+        with renpy.loader.load(self.xml, directory="fonts") as f:
             tree = etree.fromstring(f.read())
 
         height = 0
@@ -376,7 +376,7 @@ class BMFont(ImageFont):
 
         pages = { }
 
-        with renpy.loader.load(self.filename) as f:
+        with renpy.loader.load(self.filename, directory="fonts") as f:
             for l in f:
 
                 l = l.decode("utf-8")
@@ -634,7 +634,7 @@ def load_face(fn):
     font_file = None
 
     try:
-        font_file = renpy.loader.load(fn)
+        font_file = renpy.loader.load(fn, directory="fonts")
     except IOError:
 
         if (not renpy.config.developer) or renpy.config.allow_sysfonts:

@@ -67,7 +67,7 @@ def load(fn):
     """
 
     try:
-        rv = renpy.loader.load(fn)
+        rv = renpy.loader.load(fn, directory="audio")
     except renpy.webloader.DownloadNeeded as exception:
         if exception.rtype == 'music':
             renpy.webloader.enqueue(exception.relpath, 'music', None)

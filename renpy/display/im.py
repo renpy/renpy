@@ -741,7 +741,7 @@ class Image(ImageBase):
         try:
 
             try:
-                filelike = renpy.loader.load(self.filename)
+                filelike = renpy.loader.load(self.filename, directory="images")
                 filename = self.filename
                 force_size = None
             except renpy.webloader.DownloadNeeded as e:
@@ -767,7 +767,7 @@ class Image(ImageBase):
                 width = int(width * renpy.display.draw.draw_per_virt)
                 height = int(height * renpy.display.draw.draw_per_virt)
 
-                filelike = renpy.loader.load(self.filename)
+                filelike = renpy.loader.load(self.filename, directory="images")
 
                 with filelike as f:
                     surf = renpy.display.pgrender.load_image(filelike, filename, size=(width, height))
@@ -793,7 +793,7 @@ class Image(ImageBase):
 
     def predict_files(self):
 
-        if renpy.loader.loadable(self.filename):
+        if renpy.loader.loadable(self.filename, directory="images"):
             return [ self.filename ]
         else:
             if renpy.config.missing_image_callback:

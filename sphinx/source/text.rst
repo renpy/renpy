@@ -673,6 +673,9 @@ font. When accessing a collection, use the 0-based font index,
 followed by an at-sign and the file name. For example, "0\@font.ttc" is
 the first font in a collection, "1\@font.ttc" the second, and so on.
 
+When looking for a font files, if the file is not found, Ren'Py will search
+in the ``game/fonts`` directory. For example, when looking for test.ttf, Ren'Py
+will first search for ``game/test.ttf``, and then for ``game/fonts/test.ttf``.
 
 Font Replacement
 ----------------
@@ -701,7 +704,7 @@ enable :ref:`fontgroup` to be used by these tags. ::
 
     define config.font_name_map["jap"] = "electroharmonix.ttf"
     define config.font_name_map["tjap"] = FontGroup().add("OrthodoxHerbertarian.ttf", "A", "Z").add("electroharmonix.ttf", None, None)
-    
+
     label yamato:
         e "Sorry, what does {font=jap}Black holes and revelations{/font} mean ?"
         y "You pronounce it {font=tjap}Black Holes And Revelations{/font}." # the capital letters appear in OrthodoxHerbertarian

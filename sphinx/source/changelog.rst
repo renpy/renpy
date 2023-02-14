@@ -266,6 +266,11 @@ for end-users to be warned about the security issues when possible.
 New Features
 ------------
 
+Ren'Py will now search for audio files in the ``game/audio`` directory,
+and font files in the ``game/fonts`` directory, if not found in the game
+directory. Images will still be searched for in the ``game/images`` directory,
+but other files will not be found there.
+
 A new tool, accessible through the developer (Shift+D) menu, allows
 persistent data to be viewed.
 
