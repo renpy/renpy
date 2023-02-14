@@ -1,4 +1,4 @@
-#begin characters
+﻿#begin characters
 define l = Character(_("Lucy"), color="#ffcccc")
 #end characters
 

@@ -1,4 +1,4 @@
-python early:
+﻿python early:
 
     # This maps from example name to the text of a fragment.
     examples = { }

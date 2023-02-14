@@ -1,4 +1,4 @@
-image logo blink:
+﻿image logo blink:
     "logo base"
     pause 0.5
     linear .5 alpha 0.0

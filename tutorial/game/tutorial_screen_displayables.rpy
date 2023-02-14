@@ -1,4 +1,4 @@
-label screen_displayables:
+﻿label screen_displayables:
 
     e "There are quite a few screen displayables. Here, I'll tell you about some of the most important ones."
 

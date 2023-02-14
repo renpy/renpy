@@ -1,4 +1,4 @@
-example translate_font:
+﻿example translate_font:
     translate japanese python:
         gui.text_font = "MTLc3m.ttf"
         gui.name_text_font = "MTLc3m.ttf"

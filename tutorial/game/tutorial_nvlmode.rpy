@@ -1,4 +1,4 @@
-# Declare an nvl-version of eileen.
+﻿# Declare an nvl-version of eileen.
 
 example nvl1:
     define nvle = Character(_("Eileen"), color="#c8ffc8", kind=nvl)

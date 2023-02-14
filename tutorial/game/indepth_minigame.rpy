@@ -1,4 +1,4 @@
-example minigame:
+﻿example minigame:
 
     init python:
 
