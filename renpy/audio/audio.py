@@ -293,6 +293,9 @@ class Channel(object):
                 self.movie = renpy.audio.renpysound.DROP_VIDEO
             else:
                 self.movie = renpy.audio.renpysound.NODROP_VIDEO
+
+            if getattr(renpysound, 'is_webaudio', False):
+                renpysound.set_movie_channel(self.number, True)
         else:
             self.movie = renpy.audio.renpysound.NO_VIDEO
 
@@ -521,7 +524,11 @@ class Channel(object):
                 else:
                     topf = load(filename)
 
-                renpysound.set_video(self.number, self.movie)
+                if renpysound.is_webaudio and self.movie != renpy.audio.renpysound.NO_VIDEO:
+                    # Let the browser handle the video loop if any
+                    renpysound.set_video(self.number, self.movie, loop=(len(self.loop) == 1))
+                else:
+                    renpysound.set_video(self.number, self.movie)
 
                 if depth == 0:
                     renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume) # type:ignore
@@ -948,11 +955,21 @@ def init():
         mix_ok = False
         return
 
+    renpysound.is_webaudio = False
     if renpy.emscripten and renpy.config.webaudio:
+        # Importing webaudio hooks all public functions of renpysound
         import renpy.audio.webaudio as webaudio
+        renpysound.is_webaudio = True
 
         if webaudio.can_play_types(renpy.config.webaudio_required_types):
-            renpysound.__dict__.update(webaudio.__dict__)
+            webaudio.video_only = False
+        else:
+            # Audio files are decoded by Ren'Py (wasm), video files by browser
+            webaudio.video_only = True
+
+        # Some channels are created before init() is called, so flag them now
+        for c in all_channels:
+            webaudio.set_movie_channel(c.number, c.movie != renpy.audio.renpysound.NO_VIDEO)
 
     if pcm_ok is None and renpysound:
         bufsize = 2048
