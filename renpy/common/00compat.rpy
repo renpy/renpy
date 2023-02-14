@@ -267,7 +267,8 @@ init -1100 python:
             config.preserve_volume_when_muted = True
             config.history_current_dialogue = False
 
-            config.search_path.append("images/")
+            if version > (6, 99, 5):
+                config.search_path.append("images/")
 
             config.top_layers.remove("top")
             config.bottom_layers.remove("bottom")
