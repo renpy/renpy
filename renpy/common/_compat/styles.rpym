@@ -218,8 +218,8 @@ init python:
     style.file_picker_new.minwidth = 40
     style.file_picker_old.minwidth = 40
 
-    style.file_picker_new.text_align = 1.0
-    style.file_picker_old.text_align = 1.0
+    style.file_picker_new.textalign = 1.0
+    style.file_picker_old.textalign = 1.0
 
 
     ######################################################################

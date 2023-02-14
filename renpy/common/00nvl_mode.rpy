@@ -62,7 +62,7 @@ init -1500 python:
 
     # Set up nvl mode styles.
     style.nvl_label.minwidth = 150
-    style.nvl_label.text_align = 1.0
+    style.nvl_label.textalign = 1.0
 
     style.nvl_window.background = "#0008"
     style.nvl_window.yfill = True

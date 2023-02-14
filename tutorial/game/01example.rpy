@@ -546,7 +546,7 @@ screen example(blocks, small=False, bottom=False, showtrans=False):
             textbutton _("copy"):
                 style "empty"
                 text_style "quick_button_text"
-                text_text_align 0.5
+                text_textalign 0.5
                 text_minwidth 180
 
                 text_size 16

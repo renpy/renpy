@@ -343,7 +343,7 @@ screen choose_language():
                 style "l_label_text"
 
                 size 36
-                text_align .5
+                textalign .5
                 layout "subtitle"
 
         add SPACER
@@ -377,7 +377,7 @@ screen choose_language():
                 text_style "l_default"
 
                 text_size 30
-                text_text_align .5
+                text_textalign .5
                 text_layout "subtitle"
 
 

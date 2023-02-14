@@ -755,7 +755,7 @@ If no ``confirm`` screen is present, ``yesno_prompt`` is used instead.
                 spacing 25
 
                 text _(message):
-                    text_align 0.5
+                    textalign 0.5
                     xalign 0.5
 
                 hbox:

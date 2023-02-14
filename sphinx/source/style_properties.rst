@@ -585,7 +585,7 @@ Text Style Properties
 .. style-property:: min_width int
 
     Sets the minimum width of each line of that. If a line is shorter
-    than this, it is padded to this length, with ``text_align`` used to
+    than this, it is padded to this length, with ``textalign`` used to
     specify where such padding is placed.
 
 .. style-property:: newline_indent boolean
@@ -675,7 +675,7 @@ Text Style Properties
 
     If True, a line is drawn through the text.
 
-.. style-property:: text_align float
+.. style-property:: textalign float
 
     This is used when a line is shorter than the width of the text
     displayable. It determines how much of the extra space is placed

@@ -606,7 +606,7 @@ style about_label_text:
 style about_small:
     size 20
     minwidth 260
-    text_align 1.0
+    textalign 1.0
     yalign 0.9
 
 
@@ -724,7 +724,7 @@ style page_label:
     ypadding 3
 
 style page_label_text:
-    text_align 0.5
+    textalign 0.5
     layout "subtitle"
     hover_color gui.hover_color
 
@@ -999,7 +999,7 @@ style history_name:
 
 style history_name_text:
     min_width gui.history_name_width
-    text_align gui.history_name_xalign
+    textalign gui.history_name_xalign
 
 style history_text:
     xpos gui.history_text_xpos
@@ -1007,7 +1007,7 @@ style history_text:
     xanchor gui.history_text_xalign
     xsize gui.history_text_width
     min_width gui.history_text_width
-    text_align gui.history_text_xalign
+    textalign gui.history_text_xalign
     layout ("subtitle" if gui.history_text_xalign else "tex")
 
 style history_label:
@@ -1175,7 +1175,7 @@ style help_label:
 style help_label_text:
     size gui.text_size
     xalign 1.0
-    text_align 1.0
+    textalign 1.0
 
 
 
@@ -1237,7 +1237,7 @@ style confirm_frame:
     yalign .5
 
 style confirm_prompt_text:
-    text_align 0.5
+    textalign 0.5
     layout "subtitle"
 
 style confirm_button:
@@ -1431,7 +1431,7 @@ style nvl_label:
     yanchor 0.0
     xsize gui.nvl_name_width
     min_width gui.nvl_name_width
-    text_align gui.nvl_name_xalign
+    textalign gui.nvl_name_xalign
 
 style nvl_dialogue:
     xpos gui.nvl_text_xpos
@@ -1439,7 +1439,7 @@ style nvl_dialogue:
     ypos gui.nvl_text_ypos
     xsize gui.nvl_text_width
     min_width gui.nvl_text_width
-    text_align gui.nvl_text_xalign
+    textalign gui.nvl_text_xalign
     layout ("subtitle" if gui.nvl_text_xalign else "tex")
 
 style nvl_thought:
@@ -1448,7 +1448,7 @@ style nvl_thought:
     ypos gui.nvl_thought_ypos
     xsize gui.nvl_thought_width
     min_width gui.nvl_thought_width
-    text_align gui.nvl_thought_xalign
+    textalign gui.nvl_thought_xalign
     layout ("subtitle" if gui.nvl_text_xalign else "tex")
 
 style nvl_button:
