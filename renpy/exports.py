@@ -527,21 +527,29 @@ def _find_image(layer, key, name, what):
     Finds an image to show.
     """
 
+    # If a specific image is requested, use it.
+    if what is not None:
+
+        if isinstance(what, basestring):
+            what = tuple(what.split())
+
+        return name, what
+
     if renpy.config.image_attributes:
 
-        new_what = renpy.game.context().images.apply_attributes(layer, key, name)
-        if new_what is not None:
-            what = new_what
-            name = (key,) + new_what[1:]
-            return name, what
+        new_image = renpy.game.context().images.apply_attributes(layer, key, name)
+        if new_image is not None:
+            image = new_image
+            name = (key,) + new_image[1:]
+            return name, new_image
 
-    f = renpy.config.adjust_attributes.get(what[0], None) or renpy.config.adjust_attributes.get(None, None)
+    f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
     if f is not None:
-        new_what = f(what)
-        name = (key,) + new_what[1:]
-        return name, new_what
+        new_image = f(name)
+        name = (key,) + new_image[1:]
+        return name, new_image
 
-    return name, what
+    return name, name
 
 
 def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
@@ -569,11 +577,6 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
     key = tag or name[0]
 
     layer = default_layer(layer, key)
-
-    if what is None:
-        what = name
-    elif isinstance(what, basestring):
-        what = tuple(what.split())
 
     if isinstance(what, renpy.display.core.Displayable):
         base = img = what
@@ -708,11 +711,6 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         tt = renpy.config.tag_transform.get(key, None)
         if tt is not None:
             at_list = renpy.easy.to_list(tt, copy=True)
-
-    if what is None:
-        what = name
-    elif isinstance(what, basestring):
-        what = tuple(what.split())
 
     if isinstance(what, renpy.display.core.Displayable):
 
