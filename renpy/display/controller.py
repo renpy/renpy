@@ -245,7 +245,11 @@ def event(ev):
         return None
 
     elif ev.type == CONTROLLERDEVICEREMOVED:
-        quit(ev.which)
+        for k, v in controllers.items():
+            if v.instance_id == ev.which:
+                quit(k)
+                break
+
         return None
 
     elif ev.type == CONTROLLERAXISMOTION:
