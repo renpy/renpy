@@ -1664,7 +1664,7 @@ but potentially not all, of the time. We strongly recommend upgrading from
 
 If a file is not found in the game directory, Ren'Py will search the
 images/ directory for that file. This behavior is controlled by
-the :var:`config.search_path` variable.
+the :var:`config.search_prefixes` variable.
 
 Screens now take the `style_group` property, which was previously only
 allowed on displayable statements.

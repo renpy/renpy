@@ -268,7 +268,7 @@ init -1100 python:
             config.history_current_dialogue = False
 
             if version > (6, 99, 5):
-                config.search_path.append("images/")
+                config.search_prefixes.append("images/")
 
             config.top_layers.remove("top")
             config.bottom_layers.remove("bottom")
