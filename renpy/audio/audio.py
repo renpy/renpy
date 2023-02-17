@@ -73,8 +73,8 @@ def load(fn):
             renpy.webloader.enqueue(exception.relpath, 'music', None)
             return False  # Try again later
         elif exception.rtype == 'voice':
-            # prediction failed, too late
-            pass
+            renpy.webloader.enqueue(exception.relpath, 'voice', None)
+            return False  # Try again later
         elif exception.rtype == 'video':
             # Video files are downloaded by the browser, so return
             # the file name instead of a file-like object
