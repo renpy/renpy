@@ -845,3 +845,24 @@ init python:
         return False
 
     renpy.arguments.register_command("get_projects_directory", get_projects_directory_command)
+
+    def set_project_command():
+        ap = renpy.arguments.ArgumentParser()
+        ap.add_argument("project", help="The full path to the project to select.")
+
+        args = ap.parse_args()
+
+        projects = os.path.dirname(os.path.abspath(args.project))
+        name = os.path.basename(args.project)
+
+        persistent.projects_directory = renpy.fsdecode(projects)
+        project.multipersistent.projects_directory = persistent.projects_directory
+
+        persistent.active_project = name
+
+        project.multipersistent.save()
+        renpy.save_persistent()
+
+        return False
+
+    renpy.arguments.register_command("set_project", set_project_command)
