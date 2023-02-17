@@ -71,6 +71,7 @@ def load(fn):
     except renpy.webloader.DownloadNeeded as exception:
         if exception.rtype == 'music':
             renpy.webloader.enqueue(exception.relpath, 'music', None)
+            return False  # Try again later
         elif exception.rtype == 'voice':
             # prediction failed, too late
             pass
@@ -523,6 +524,10 @@ class Channel(object):
                     topf = io.BytesIO(topq.filename.data)
                 else:
                     topf = load(filename)
+                    if topf is False:
+                        # File is not ready, try again later
+                        self.queue.insert(0, topq)
+                        break
 
                 if renpysound.is_webaudio and self.movie != renpy.audio.renpysound.NO_VIDEO:
                     # Let the browser handle the video loop if any
