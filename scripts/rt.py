@@ -48,6 +48,12 @@ def select(dn):
 
     CURRENT.symlink_to(p)
 
+    subprocess.run([
+        RENPY / "run.sh",
+        RENPY / "launcher",
+        "set_project",
+        TESTS / dn,
+        ])
 
 def select_command(args):
     select(args.path)
