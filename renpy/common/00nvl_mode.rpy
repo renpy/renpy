@@ -351,6 +351,8 @@ init -1500 python:
 
         def do_display(self, who, what, multiple=None, **display_args):
 
+            renpy.translation.check_language()
+
             page = self.clear or nvl_clear_next()
 
             if config.nvl_page_ctc and page:

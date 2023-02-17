@@ -722,10 +722,12 @@ def check_language():
             node = renpy.game.script.translator.lookup_translate(tid) # @UndefinedVariable
 
             if node is not None:
-                # This is necessary for the menu-with-say case. ADVCharachter needs
+                # This is necessary for the menu-with-say case. ADVCharacter needs
                 # identifier to set deferred_translate_identifier again, but EndTranslation
                 # has already set translate_identifier to None.
                 ctx.translate_identifier = tid
+
+                renpy.game.log.forward = [ ]
 
                 raise renpy.game.JumpException(node.name)
 
