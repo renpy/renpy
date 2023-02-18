@@ -1528,7 +1528,7 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
 def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=True):
     """
     :doc: se_pause
-    :args: (delay=None, *, hard=False, predict=False, modal=False)
+    :args: (delay=None, *, hard=False, predict=False, modal=True)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -1567,7 +1567,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
 
     `modal`
         If True or None, the pause will not end when a modal screen is being displayed.
-        If false, the pause will end while a modal screen is being displayed.
+        If False, the pause will end while a modal screen is being displayed.
     """
 
     if renpy.config.skipping == "fast":
