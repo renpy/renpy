@@ -21,6 +21,17 @@
 
 init -1600 python:
 
+    class _keymap_list(_list):
+
+        def remove(self, a):
+            try:
+                _list.remove(self, a)
+            except ValueError:
+                if config.developer:
+                    raise
+                pass
+
+
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly
@@ -141,7 +152,8 @@ init -1600 python:
 
     )
 
-    config.default_keymap = { k : list(v) for k, v in config.keymap.items() }
+    config.default_keymap = { k : _list(v) for k, v in config.keymap.items() }
+    config.keymap = { k : _keymap_list(v) for k, v in config.keymap.items() }
 
     config.pad_bindings = {
         "pad_leftshoulder_press" : [ "rollback", ],

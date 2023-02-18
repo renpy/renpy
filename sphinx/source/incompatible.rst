@@ -19,6 +19,11 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**Keymap** The :doc:`keymap <keymap>` has changed substantially, which means that
+if your game changes the default keymap - usually a bad idea - it
+will need to be updated to reflect the new keysyms.
+
+
 **File Search** Ren'Py will now only look for image files in game/images,
 rather than all files. To look for all files in game/images, use::
 
