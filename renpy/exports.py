@@ -670,6 +670,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         The equivalent of the ``behind`` property.
 
     ::
+
         show a
         $ renpy.show("a")
 
