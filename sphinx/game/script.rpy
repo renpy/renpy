@@ -1,4 +1,4 @@
-init 1000000 python:
+﻿init 1000000 python:
     import doc
     import shaderdoc
 
