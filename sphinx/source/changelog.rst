@@ -116,6 +116,16 @@ Image oversampling can also be used with the new :var:`config.physical_width`
 and :var:`config.physical_height` variables to upgrade the resolution of
 a game without having to adjust the game's layout.
 
+AV1 Video
+---------
+
+Ren'Py now supports the modern AV1 video format. AV1 is supported in
+WEBM and MKV containers. AV1 videos should be about 30% smaller than
+the equivalent quality movie encoded with VP9, the previous best codec.
+
+Note that the newer AV1 format requires more CPU to decode. It's possible
+that some hardware that plays VP9 fluidly will struggle with AV1.
+
 Mixer Volume Changes
 --------------------
 

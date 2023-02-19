@@ -6,6 +6,7 @@ Movie
 Ren'Py is capable of using FFmpeg (included) to play movies using the
 video codecs:
 
+* AV1
 * VP9
 * VP8
 * Theora
@@ -15,6 +16,7 @@ video codecs:
 
 and the following audio codecs:
 
+* FLAC
 * Opus
 * Vorbis
 * MP3
