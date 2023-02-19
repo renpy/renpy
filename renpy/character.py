@@ -1584,10 +1584,9 @@ def Character(name=NotSet, kind=None, **properties):
         ``"nestled"``, the indicator is displayed as part of the text
         being shown, immediately after the last character. ``"nestled-close"`` is
         similar, except a break is not allowed between the text and the CTC
-        indicator. If ``"fixed"``,
-        the indicator is added to the screen, and its position is
-        controlled by the position style properties.
-
+        indicator. If ``"fixed"``, a new screen containing the CTC indicator is shown,
+        and the position style properties of the CTC displayable are used
+        to position the CTC indicator.
 
     **Screens.**
     The display of dialogue uses a :ref:`screen <screens>`. These arguments
