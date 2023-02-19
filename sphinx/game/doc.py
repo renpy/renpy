@@ -289,10 +289,11 @@ def scan(name, o, prefix="", inclass=False):
                 lines.append("")
                 lines.extend(init_doc.split("\n"))
 
-            try:
-                args = inspect.signature(init)
-            except Exception:
-                args = None
+            if init != object.__init__: # we don't want that signature either
+                try:
+                    args = inspect.signature(init)
+                except Exception:
+                    args = None
 
         elif inspect.isfunction(o) or inspect.ismethod(o):
             args = inspect.signature(o)
