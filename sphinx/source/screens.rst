@@ -1839,8 +1839,8 @@ For
 ---
 
 The ``for`` statement is similar to the Python ``for`` statement, except that
-it does not support the ``else`` clause nor the ``continue`` and ``break``
-statements. It supports assignment to
+it does not support the ``else`` clause (it does, however, support the
+``continue`` and ``break`` statements). It supports assignment to
 (optionally nested) tuple patterns, as well as variables.
 
 ::

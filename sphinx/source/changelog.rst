@@ -388,6 +388,8 @@ is animated over a short period of time.
 The new :var:`preferences.audio_when_unfocused` preference now enables the audio
 of the game to be paused when the player switches to another window.
 
+The screens' ``for`` loops now support the ``continue`` and ``break`` statements.
+
 Other Changes
 -------------
 
