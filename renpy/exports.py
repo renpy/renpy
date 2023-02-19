@@ -1525,10 +1525,10 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     return rv
 
 
-def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=True):
+def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=None):
     """
     :doc: se_pause
-    :args: (delay=None, *, hard=False, predict=False, modal=True)
+    :args: (delay=None, *, hard=False, predict=False, modal=None)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
