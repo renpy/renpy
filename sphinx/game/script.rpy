@@ -1,9 +1,9 @@
 
-﻿init 1000000 python:
+init 1000000 python:
     import doc
     import shaderdoc
 
-    object.__init__ = lambda self:None
+    del object.__init__
 
     srcdir = 'source'
     if os.path.isdir('sphinx') and os.path.split(os.getcwd())[-1] == 'renpy':
