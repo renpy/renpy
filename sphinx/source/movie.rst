@@ -16,11 +16,11 @@ video codecs:
 
 and the following audio codecs:
 
-* FLAC
 * Opus
 * Vorbis
 * MP3
 * MP2
+* FLAC
 * PCM
 
 inside the following container formats:
