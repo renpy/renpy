@@ -197,7 +197,7 @@ If you don't want to download the SDK each time, you can create a file
 named sdk.txt containing a single line that is the path to the
 already-installed SDK.
 
-Step 3: Generate keys.
+Step 3: Generate keys
 ---------------------
 
 After this, choose "Generate Keys" to generate Android and Bundle
