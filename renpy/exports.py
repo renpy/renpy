@@ -2188,16 +2188,21 @@ def get_game_runtime():
 
 
 @renpy_pure
-def loadable(filename):
+def loadable(filename, directory=None):
     """
     :doc: file
 
     Returns True if the given filename is loadable, meaning that it
     can be loaded from the disk or from inside an archive. Returns
     False if this is not the case.
+
+    `directory`
+        If not None, a directory to search in if the file is not found
+        in the game directory. This will be prepended to filename, and
+        the search tried again.
     """
 
-    return renpy.loader.loadable(filename)
+    return renpy.loader.loadable(filename, directory=directory)
 
 
 @renpy_pure
@@ -2545,7 +2550,7 @@ def mark_image_unseen(name):
         del renpy.game.persistent._seen_images[name] # type: ignore
 
 
-def open_file(fn, encoding=None): # @ReservedAssignment
+def open_file(fn, encoding=None, directory=None): # @ReservedAssignment
     """
     :doc: file
 
@@ -2561,9 +2566,14 @@ def open_file(fn, encoding=None): # @ReservedAssignment
         If given, the file is open in text mode with the given encoding.
         If None, the default, the encoding is taken from :var:`config.open_file_encoding`.
         If False, the file is opened in binary mode.
+
+    `directory`
+        If not None, a directory to search in if the file is not found
+        in the game directory. This will be prepended to filename, and
+        the search tried again.
     """
 
-    rv = renpy.loader.load(fn)
+    rv = renpy.loader.load(fn, directory=directory)
 
     if encoding is None:
         encoding = renpy.config.open_file_encoding

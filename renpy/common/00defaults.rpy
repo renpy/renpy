@@ -82,7 +82,7 @@ init 1500 python hide:
     if not persistent._linearized_volumes:
         for k, v in _preferences.volumes.items():
             _preferences.volumes[k] = v ** 2
-        
+
         for k, v in persistent._character_volume.items():
             persistent._character_volume[k] = v ** 2
 
@@ -164,7 +164,7 @@ init -1500 python:
 
         if renpy.image_exists(rv):
             return rv
-        elif renpy.loadable(rv):
+        elif renpy.loadable(rv, directory="images"):
             return rv
         elif renpy.easy.lookup_displayable_prefix(rv):
             return rv

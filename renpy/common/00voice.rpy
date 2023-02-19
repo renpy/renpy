@@ -337,7 +337,7 @@ init -1500 python:
 
                     self.auto_filename = fn
 
-                    if fn and renpy.loadable(fn):
+                    if fn and renpy.loadable(fn, directory="audio"):
 
                         if _voice.tlid == tlid:
                             self.sustain = True
@@ -505,7 +505,7 @@ screen _auto_voice:
 
     if _voice.auto_file:
 
-        if renpy.loadable(_voice.auto_file):
+        if renpy.loadable(_voice.auto_file, directory="audio"):
             $ color = "#ffffff"
         else:
             $ color = "#ffcccc"

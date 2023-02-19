@@ -312,7 +312,7 @@ def image_exists(name, expression, tag, precise=True):
 check_file_cache = { }
 
 
-def check_file(what, fn):
+def check_file(what, fn, directory=None):
 
     present = check_file_cache.get(fn, None)
     if present is True:
@@ -321,7 +321,7 @@ def check_file(what, fn):
         report("%s uses file '%s', which is not loadable.", what.capitalize(), fn)
         return
 
-    if not renpy.loader.loadable(fn):
+    if not renpy.loader.loadable(fn, directory=directory):
         report("%s uses file '%s', which is not loadable.", what.capitalize(), fn)
         check_file_cache[fn] = False
         return
@@ -345,7 +345,7 @@ def check_displayable(what, d):
         pass
 
     for fn in files:
-        check_file(what, fn)
+        check_file(what, fn, directory="images")
 
 
 # Lints ast.Image nodes.
@@ -681,9 +681,9 @@ def check_style(name, s):
             if k.endswith("font"):
                 if isinstance(v, renpy.text.font.FontGroup):
                     for f in set(v.map.values()):
-                        check_file(name, f)
+                        check_file(name, f, directory="fonts")
                 else:
-                    check_file(name, v)
+                    check_file(name, v, directory="images")
 
             if isinstance(v, renpy.display.core.Displayable):
                 check_style_property_displayable(name, k, v)
