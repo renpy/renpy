@@ -393,6 +393,10 @@ The screens' ``for`` loops now support the ``continue`` and ``break`` statements
 Other Changes
 -------------
 
+The ``selected_insensitive`` style prefix will now be generated, and
+``selected`` and ``selected_insensitive`` events will be given to
+transforms when appropriate.
+
 Displayables with an `id` property can now be given the `prefer_screen_to_id`
 property, which controls if properties supplied by the screen override
 the properties supplied by the displayable identifier. The default remains

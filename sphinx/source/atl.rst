@@ -1272,7 +1272,7 @@ The following events can be triggered automatically:
     another screen. This happens in rare but possible cases, such as when
     the game is loaded and when styles or translations change.
 
-``hover``, ``idle``, ``selected_hover``, ``selected_idle``
+``hover``, ``idle``, ``selected_hover``, ``selected_idle``, ``insensitive``, ``selected_insensitive``
    Triggered when button containing this transform, or a button contained
    by this transform, enters the named state.
 

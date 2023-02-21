@@ -1026,7 +1026,6 @@ class Button(renpy.display.layout.Window):
                     clicked = self.action
                 else:
                     clicked = None
-                    role = ''
 
             else:
                 role = ''
@@ -1044,6 +1043,11 @@ class Button(renpy.display.layout.Window):
                 self.set_style_prefix(self.role + "idle_", True)
                 self.focusable = True
             else:
+                self.set_transform_event(self.role + "insensitive")
+
+                if self.child:
+                    self.child.set_transform_event(self.role + "insensitive")
+
                 self.set_style_prefix(self.role + "insensitive_", True)
                 self.focusable = False
 
