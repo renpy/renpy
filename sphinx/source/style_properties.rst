@@ -355,21 +355,22 @@ or on the screen when not inside a layout.
     Equivalent to setting xminimum to the first component of the
     tuple, and yminimum to the second.
 
-.. style-property:: xsize int
+.. style-property:: xsize int or float
 
     Equivalent to setting xminimum and xmaximum to the same value. This
-    has the effect of setting the width of the displayable.
+    has the effect of setting the width of the displayable.  f the size
+    is a float, it's relative to the width of the containing area.
 
-.. style-property:: ysize int
+.. style-property:: ysize int or float
 
     Equivalent to setting yminimum and ymaximum to the same value. This
-    has the effect of setting the height of the displayable.
+    has the effect of setting the height of the displayable. If the size
+    is a float, it's relative to the height of the containing area.
 
-.. style-property:: xysize tuple of (int, int)
+.. style-property:: xysize tuple of (int or float, int or float)
 
-    Equivalent to setting xminimum and xmaximum to the first component of
-    the tuple, and yminimum and ymaximum to the second component. This
-    has the effect of setting the size of the displayable.
+    Equivalent to setting xsize to the first component of
+    the tuple, and ysize to the second component.
 
 .. style-property:: xfill boolean
 
