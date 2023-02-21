@@ -61,6 +61,8 @@ def get_serial():
     return (unique, serial)
 
 
+AudioNotReady = renpy.object.Sentinel("AudioNotReady")
+
 def load(fn):
     """
     Returns a file-like object for the given filename.
@@ -71,10 +73,10 @@ def load(fn):
     except renpy.webloader.DownloadNeeded as exception:
         if exception.rtype == 'music':
             renpy.webloader.enqueue(exception.relpath, 'music', None)
-            return False  # Try again later
+            return AudioNotReady  # Try again later
         elif exception.rtype == 'voice':
             renpy.webloader.enqueue(exception.relpath, 'voice', None)
-            return False  # Try again later
+            return AudioNotReady  # Try again later
         elif exception.rtype == 'video':
             # Video files are downloaded by the browser, so return
             # the file name instead of a file-like object
@@ -524,8 +526,8 @@ class Channel(object):
                     topf = io.BytesIO(topq.filename.data)
                 else:
                     topf = load(filename)
-                    if topf is False:
-                        # File is not ready, try again later
+                    if topf is AudioNotReady:
+                        # File is not ready, try again on the next periodic pass.
                         self.queue.insert(0, topq)
                         break
 
