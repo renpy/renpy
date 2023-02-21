@@ -12,13 +12,22 @@ initialized, configuration variables will not change. Changing configuration
 variables outside of ``init`` blocks can lead to undefined behavior.
 Configuration variables are not part of the save data.
 
-Configuration variables are often changed in ``init python`` blocks::
+Most configuration variables are easily set changed using a ``define`` statement::
 
-    init python:
+    define config.rollback_enabled = False
 
-        # Use a widescreen resolution.
-        config.screen_width = 1024
-        config.screen_height = 600
+Dict and list variables can be populated using ``define`` or in an
+``init python`` block::
+
+    define config.preload_fonts += ["OrthodoxHerbertarian.ttf"]
+    define config.adjust_attributes["eileen"] = eileen_adjust_function
+
+    init python hide:
+        def inter_cbk():
+            # this is a terrible callback
+            renpy.notify("Interacting !")
+
+        config.interact_callbacks.append(inter_cbk)
 
 
 Commonly Used
