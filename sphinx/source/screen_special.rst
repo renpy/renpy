@@ -367,10 +367,14 @@ Here's a very simple ctc screen::
 
         zorder 100
 
-        text _("Click to Continue"):
-            size 12
+        hbox:
             xalign 0.98
             yalign 0.98
+
+            add arg
+
+            text _("Click to Continue"):
+                size 12
 
 
 
