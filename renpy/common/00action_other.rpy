@@ -806,6 +806,7 @@ init -1500 python:
         :doc: focus_action
 
         Clears a stored focus rectangle captured with :func:`CaptureFocus`.
+        If `name` is None, all focus rectangles are cleared.
         """
 
         def __init__(self, name="default"):
