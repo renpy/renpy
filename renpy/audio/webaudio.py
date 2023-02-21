@@ -411,7 +411,7 @@ def set_video(channel, video, loop=False):
     Sets a flag that determines if this channel will attempt to decode video.
     """
 
-    if not video_supported():
+    if video != renpysound.NO_VIDEO and not video_supported():
         import sys
         print('Warning: video playback is not supported on this browser', file=sys.stderr)
 
