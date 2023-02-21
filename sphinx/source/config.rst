@@ -12,7 +12,7 @@ initialized, configuration variables will not change. Changing configuration
 variables outside of ``init`` blocks can lead to undefined behavior.
 Configuration variables are not part of the save data.
 
-Most configuration variables are easily set changed using a ``define`` statement::
+Most configuration variables are easily set using a ``define`` statement::
 
     define config.rollback_enabled = False
 
