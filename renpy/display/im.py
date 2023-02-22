@@ -255,6 +255,7 @@ class Cache(object):
     def get(self, image, predict=False, texture=False, render=False):
 
         def make_render(ce):
+            boun = ce.bounds[:2]
 
             oversample = image.get_oversample() or .001
 
@@ -264,10 +265,12 @@ class Cache(object):
                 rv = renpy.display.render.Render(ce.width * inv_oversample, ce.height * inv_oversample)
                 rv.forward = renpy.display.matrix.Matrix2D(oversample, 0, 0, oversample)
                 rv.reverse = renpy.display.matrix.Matrix2D(inv_oversample, 0, 0, inv_oversample)
+
+                boun = tuple(round(el / oversample) for el in boun)
             else:
                 rv = renpy.display.render.Render(ce.width, ce.height)
 
-            rv.blit(ce.texture, ce.bounds[:2])
+            rv.blit(ce.texture, boun)
 
             if image.pixel_perfect:
                 rv.add_property("pixel_perfect", True)
