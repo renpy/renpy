@@ -255,7 +255,7 @@ class Cache(object):
     def get(self, image, predict=False, texture=False, render=False):
 
         def make_render(ce):
-            boun = ce.bounds[:2]
+            bounds = ce.bounds[:2]
 
             oversample = image.get_oversample() or .001
 
@@ -266,11 +266,11 @@ class Cache(object):
                 rv.forward = renpy.display.matrix.Matrix2D(oversample, 0, 0, oversample)
                 rv.reverse = renpy.display.matrix.Matrix2D(inv_oversample, 0, 0, inv_oversample)
 
-                boun = tuple(round(el / oversample) for el in boun)
+                bounds = tuple(round(el / oversample) for el in bounds)
             else:
                 rv = renpy.display.render.Render(ce.width, ce.height)
 
-            rv.blit(ce.texture, boun)
+            rv.blit(ce.texture, bounds)
 
             if image.pixel_perfect:
                 rv.add_property("pixel_perfect", True)
@@ -327,7 +327,11 @@ class Cache(object):
 
             if optimize_bounds:
                 bounds = tuple(surf.get_bounding_rect())
-                bounds = expands_bounds(bounds, size, renpy.config.expand_texture_bounds)
+                bounds = expand_bounds(bounds, size, renpy.config.expand_texture_bounds)
+
+                if image.oversample > 1:
+                    bounds = ensure_bounds_divide_evenly(bounds, image.oversample)
+
                 w = bounds[2]
                 h = bounds[3]
             else:
@@ -2000,7 +2004,7 @@ def image(arg, loose=False, **properties):
         raise Exception("Could not construct image from argument.")
 
 
-def expands_bounds(bounds, size, amount):
+def expand_bounds(bounds, size, amount):
     """
     This expands the rectangle bounds by amount, while ensure it fits inside size.
     """
@@ -2014,6 +2018,28 @@ def expands_bounds(bounds, size, amount):
     y1 = min(sy, y + h + amount)
 
     return (x0, y0, x1 - x0, y1 - y0)
+
+
+def ensure_bounds_divide_evenly(bounds, n):
+    """
+    This ensures that the bounds is divisible by n, by expanding the bounds
+    if necessary.
+    """
+
+    x, y, w, h = bounds
+
+    xmodulo = x % n
+    ymodulo = y % n
+
+    if xmodulo:
+        x -= xmodulo
+        w += xmodulo
+
+    if ymodulo:
+        y -= ymodulo
+        h += ymodulo
+
+    return (x, y, w, h)
 
 
 def load_image(im):
