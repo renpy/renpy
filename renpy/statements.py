@@ -107,7 +107,9 @@ def register(
 
         The function should return either a string giving a label to jump to,
         the second argument to transfer control into the block, or None to
-        continue to the statement after this one.
+        continue to the statement after this one. It can also return the result
+        of :meth:`Lexer.renpy_statement` or :meth:`Lexer.renpy_block` when
+        called in the `parse` function.
 
     `label`
         This is a function that is called to determine the label of this
