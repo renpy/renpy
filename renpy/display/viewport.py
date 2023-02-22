@@ -527,8 +527,8 @@ class Viewport(renpy.display.layout.Container):
                     self.drag_position_time = st
                     self.drag_speed = (0.0, 0.0)
 
-                    self.xadjustment.end_animation()
-                    self.yadjustment.end_animation()
+                    self.xadjustment.end_animation(instantly=True)
+                    self.yadjustment.end_animation(instantly=True)
 
         if inside and self.edge_size and ev.type in [ pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP ]:
 
