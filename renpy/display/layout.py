@@ -696,7 +696,7 @@ class MultiBox(Container):
 
             for layer in renpy.config.layers:
                 old_d = self.layers[layer]
-                old_d = getattr(old_d, 'raw_child', old_d)
+                old_d = old_d.raw_child or old_d
 
                 new_d = old_d._in_current_store()
 
