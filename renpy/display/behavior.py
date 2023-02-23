@@ -1991,7 +1991,7 @@ class Adjustment(renpy.object.Object):
             self.end_animation()
         else:
             self.animation_amplitude = amplitude
-            self.animation_target = self.round_value(self._value + amplitude, release=True)
+            self.animation_target = self._value + amplitude
 
             self.animation_delay = delay
             self.animation_start = None
@@ -2002,8 +2002,8 @@ class Adjustment(renpy.object.Object):
         self.animate(amplitude, time_constant * 6.0, self.inertia_warper)
         self.periodic(st)
 
-    def end_animation(self):
-        if self.animation_target is not None:
+    def end_animation(self, instantly=False):
+        if self.animation_target is not None or instantly:
             value = self.animation_target
 
             self.animation_amplitude = None
@@ -2012,7 +2012,8 @@ class Adjustment(renpy.object.Object):
             self.animation_delay = None
             self.animation_warper = None
 
-            self.change(value, end_animation=False)
+            if not instantly:
+                self.change(value, end_animation=False)
 
     def periodic(self, st):
 
@@ -2029,7 +2030,10 @@ class Adjustment(renpy.object.Object):
 
         self.change(value, end_animation=False)
 
-        if st > self.animation_start + self.animation_delay: # type: ignore
+        if value < 0 or value > self._range:
+            self.end_animation(instantly=True)
+            return 0
+        elif st > self.animation_start + self.animation_delay: # type: ignore
             self.end_animation()
             return None
         else:
