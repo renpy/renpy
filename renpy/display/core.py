@@ -3133,12 +3133,12 @@ class Interface(object):
 
     def get_mouse_name(self, cache_only=False, interaction=True):
 
-        mouse_kind = renpy.display.focus.get_mouse() # type: str
+        mouse_kind = renpy.display.focus.get_mouse() # str|None
 
         if interaction and (mouse_kind is None):
             mouse_kind = self.mouse
 
-        if cache_only and (mouse_kind not in self.cursor_cache):
+        if cache_only and (mouse_kind not in self.cursor_cache): # type: ignore
             mouse_kind = 'default'
 
         if mouse_kind == 'default':

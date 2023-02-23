@@ -741,7 +741,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if isinstance(i, renpy.display.motion.Transform):
             img = i(child=img)
         else:
-            img = i(img)
+            img = i(img) # type: ignore
 
         # Mark the newly created images unique.
         img._unique()
@@ -3627,7 +3627,7 @@ def reset_physical_size():
 
 
 @renpy_pure
-def fsencode(s, force=False):
+def fsencode(s, force=False): # type: (str, bool) -> str
     """
     :doc: file_rare
     :name: renpy.fsencode
@@ -3642,11 +3642,11 @@ def fsencode(s, force=False):
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"
-    return s.encode(fsencoding)
+    return s.encode(fsencoding) # type: ignore
 
 
 @renpy_pure
-def fsdecode(s):
+def fsdecode(s): # type: (bytes|str) -> str
     """
     :doc: file_rare
     :name: renpy.fsdecode

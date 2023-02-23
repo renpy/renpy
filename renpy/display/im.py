@@ -716,12 +716,12 @@ class Image(ImageBase):
             base = filename.rpartition(".")[0]
             extras = base.partition("@")[2].split(",")
 
-            try:
-                for i in extras:
+            for i in extras:
+                try:
                     oversample = float(i)
                     properties.setdefault('oversample', oversample)
-            except Exception:
-                raise Exception("Unknown image modifier %r in %r." % (i, filename))
+                except Exception:
+                    raise Exception("Unknown image modifier %r in %r." % (i, filename))
 
         super(Image, self).__init__(filename, **properties)
         self.filename = filename

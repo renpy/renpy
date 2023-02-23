@@ -21,7 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from typing import Any
 
 import codecs
 import time
@@ -838,7 +838,7 @@ def check_unreachables(all_nodes):
             add_block(node.block)
 
     while to_check:
-        node = to_check.pop()
+        node = to_check.pop() # type: Any
         unreachable.remove(node)
 
         if isinstance(node, renpy.ast.While):

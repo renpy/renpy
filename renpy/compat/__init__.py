@@ -114,10 +114,13 @@ renpy.update_path()
 ################################################################################
 # String (text and binary) types and functions.
 
-basestring = future.utils.string_types # @ReservedAssignment
+basestring = future.utils.string_types
 pystr = str
-str = future.utils.text_type # @ReservedAssignment
-unicode = future.utils.text_type # @ReservedAssignment
+unicode = future.utils.text_type
+
+# This tries to help pylance get the types right.
+str = builtins.str; globals()["str"] = future.utils.text_type
+
 
 bord = future.utils.bord
 

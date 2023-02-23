@@ -113,14 +113,14 @@ class AudioData(str):
 
     def __new__(cls, data, filename):
         rv = str.__new__(cls, filename)
-        rv.data = data
+        rv.data = data # type: ignore
         return rv
 
     def __init__(self, data, filename):
         pass
 
     def __reduce__(self):
-        return(AudioData, (self.data, str(self)))
+        return(AudioData, (self.data, str(self))) # type: ignore
 
 
 class QueueEntry(object):
@@ -523,7 +523,7 @@ class Channel(object):
                     continue
 
                 if isinstance(topq.filename, AudioData):
-                    topf = io.BytesIO(topq.filename.data)
+                    topf = io.BytesIO(topq.filename.data) # type: ignore
                 else:
                     topf = load(filename)
                     if topf is AudioNotReady:

@@ -549,7 +549,7 @@ def MultiPersistent(name, save_on_quit=False):
     # Find the first file that actually exists. Otherwise, use the last
     # file.
     for fn in files:
-        fn = os.path.join(fn, name)
+        fn = os.path.join(fn, name) # type: ignore
         if os.path.isfile(fn):
             try:
                 with open(fn, "rb") as mpf:

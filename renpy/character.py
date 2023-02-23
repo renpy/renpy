@@ -24,7 +24,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Any
+from typing import Any, Literal
 
 import renpy
 
@@ -770,7 +770,7 @@ class ADVCharacter(object):
             self,
             name=NotSet,
             kind=None,
-            **properties): # type: (str|None|renpy.object.Sentinel, None|str|ADVCharacter, Any) -> None
+            **properties): # type: (str|None|renpy.object.Sentinel, Literal[False]|None|ADVCharacter, Any) -> None
 
         if kind is None:
             kind = renpy.store.adv
@@ -787,11 +787,11 @@ class ADVCharacter(object):
                 return getattr(kind, n)
 
         # Similar, but it grabs the value out of kind.display_args instead.
-        def d(n):
+        def d(n): # type (str) -> Any
             if n in properties:
                 return properties.pop(n)
             else:
-                return kind.display_args[n]
+                return kind.display_args[n] # type: ignore
 
         self.name = v('name')
         self.who_prefix = v('who_prefix')
@@ -813,7 +813,7 @@ class ADVCharacter(object):
             if "image" in properties:
                 self.image_tag = properties.pop("image")
             else:
-                self.image_tag = kind.image_tag
+                self.image_tag = kind.image_tag # type: ignore
         else:
             self.image_tag = None
 
