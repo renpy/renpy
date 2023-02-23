@@ -64,7 +64,7 @@ def set_movie_channel(channel, movie):
     if video_only and not movie:
         audio_channels.add(channel)
 
-renpysound.set_movie_channel = set_movie_channel
+renpysound.set_movie_channel = set_movie_channel # type: ignore
 
 # Map of renpysound functions that have been replaced with webaudio functions
 renpysound_funcs = {}

@@ -358,7 +358,7 @@ auto_save_extra_info = None
 
 # The directory (underneath ~/RenPy, ~/Library/RenPy, or ~/.renpy) where the
 # game-specific data is saved.
-save_directory = None # type: str
+save_directory = None # type: str|None
 
 # These are used to deal with the case where a picture is missing.
 missing_scene = None

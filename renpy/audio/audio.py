@@ -297,8 +297,8 @@ class Channel(object):
             else:
                 self.movie = renpy.audio.renpysound.NODROP_VIDEO
 
-            if getattr(renpysound, 'is_webaudio', False):
-                renpysound.set_movie_channel(self.number, True)
+            if renpysound.is_webaudio:
+                renpysound.set_movie_channel(self.number, True) # type: ignore
         else:
             self.movie = renpy.audio.renpysound.NO_VIDEO
 
@@ -531,11 +531,11 @@ class Channel(object):
                         self.queue.insert(0, topq)
                         break
 
-                if renpysound.is_webaudio and self.movie != renpy.audio.renpysound.NO_VIDEO:
+                if self.movie != renpy.audio.renpysound.NO_VIDEO:
                     # Let the browser handle the video loop if any
                     renpysound.set_video(self.number, self.movie, loop=(len(self.loop) == 1))
                 else:
-                    renpysound.set_video(self.number, self.movie)
+                    renpysound.set_video(self.number, self.movie, loop=False)
 
                 if depth == 0:
                     renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume) # type:ignore
@@ -962,10 +962,10 @@ def init():
         mix_ok = False
         return
 
-    renpysound.is_webaudio = False
     if renpy.emscripten and renpy.config.webaudio:
         # Importing webaudio hooks all public functions of renpysound
         import renpy.audio.webaudio as webaudio
+
         renpysound.is_webaudio = True
 
         if webaudio.can_play_types(renpy.config.webaudio_required_types):
