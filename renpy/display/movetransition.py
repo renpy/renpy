@@ -525,7 +525,7 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
             return rv
 
         # Unpack old if needs be.
-        old = getattr(old, 'raw_child', old)
+        old = old.raw_child or old
 
         # If we're dealing with a wrapped layer widget, merge the raw
         # children then re-apply the transform.
