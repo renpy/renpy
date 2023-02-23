@@ -624,6 +624,9 @@ class MultiBox(Container):
     _camera_list = None # type: list|None
     layers = None # type: dict|None
 
+    # Used when this is representing a layer.
+    raw_child = None # type: renpy.display.core.Displayable|None
+    layer_name = None # type: str|None
 
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
@@ -2430,6 +2433,11 @@ class Layer(AdjustTimes):
         If False, the layer's contents may exceed its bounds, otherwise
         anything exceeding the bounds will be trimmed.
     """
+
+    # An instance variable that's used to store the layer_transitions
+    # when this layer s being processed. (This is only being created
+    # as a dict for typing purposes.)
+    layers = { }
 
     def __init__(self, layer, **properties):
         self.layer = layer
