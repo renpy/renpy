@@ -424,8 +424,8 @@ def save():
     global persistent_mtime
 
     # Prevent updates just after save
-    for persistent_mtime, _data in renpy.loadsave.location.load_persistent():
-        pass
+    for mtime, _data in renpy.loadsave.location.load_persistent():
+        persistent_mtime = max(persistent_mtime, mtime)
 
 
 
