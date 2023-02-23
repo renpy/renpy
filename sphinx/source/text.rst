@@ -444,6 +444,9 @@ Text tags that only apply to dialogue are:
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
 
+    If present, the {fast} tag will cause voice to be sustained from
+    the previous line.
+
 .. text-tag:: nw
 
     The no-wait tag is a self-closing tag that causes the current line
@@ -454,7 +457,7 @@ Text tags that only apply to dialogue are:
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
 
-    The no-wait tag will wait for voice and self-voicing to complete before
+    The no-wait tag will wait for self-voicing to complete before
     advancing.
 
 .. text-tag:: p

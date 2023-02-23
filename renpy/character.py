@@ -376,8 +376,9 @@ class SlowDone(object):
     delay = None
     ctc_kwargs = { }
     last_pause = True
+    no_wait=False
 
-    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause): # @ReservedAssignment
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause, no_wait):
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
@@ -387,6 +388,7 @@ class SlowDone(object):
         self.delay = delay
         self.ctc_kwargs = ctc_kwargs
         self.last_pause = last_pause
+        self.no_wait = no_wait
 
     def __call__(self):
 
@@ -407,7 +409,7 @@ class SlowDone(object):
                 renpy.exports.restart_interaction()
 
         if self.delay is not None:
-            renpy.ui.pausebehavior(self.delay, True, voice=self.last_pause)
+            renpy.ui.pausebehavior(self.delay, True, voice=self.last_pause and not self.no_wait, self_voicing=self.last_pause)
             renpy.exports.restart_interaction()
 
         for c in self.callback:
@@ -546,9 +548,6 @@ def display_say(
             # True if the is the last pause in a line of dialogue.
             last_pause = (i == len(pause_start) - 1)
 
-            if dtt.no_wait:
-                last_pause = False
-
             # If we're going to do an interaction, then saybehavior needs
             # to be here.
             if advance:
@@ -601,7 +600,7 @@ def display_say(
                 c("show", interact=interact, type=type, **cb_args)
 
             # Create the callback that is called when the slow text is done.
-            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause)
+            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause, dtt.no_wait)
 
             # Show the text.
             if multiple:

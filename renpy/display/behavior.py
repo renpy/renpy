@@ -556,13 +556,15 @@ class PauseBehavior(renpy.display.layout.Null):
 
     voice = False
     modal = False
+    self_voice = False
 
-    def __init__(self, delay, result=False, voice=False, modal=None, **properties):
+    def __init__(self, delay, result=False, voice=False, self_voicing=False, modal=None, **properties):
         super(PauseBehavior, self).__init__(**properties)
 
         self.delay = delay
         self.result = result
         self.voice = voice
+        self.self_voicing = self_voicing
         self.modal = (renpy.config.modal_blocks_pause) if (modal is None) else modal
 
     def event(self, ev, x, y, st):
@@ -575,8 +577,13 @@ class PauseBehavior(renpy.display.layout.Null):
 
             if st >= self.delay:
 
+                if self.self_voicing and renpy.config.nw_voice:
+                    if renpy.display.tts.is_active():
+                        renpy.game.interface.timeout(0.05)
+                        return
+
                 if self.voice and renpy.config.nw_voice:
-                    if (not renpy.config.afm_callback()) or renpy.display.tts.is_active():
+                    if not renpy.config.afm_callback():
                         renpy.game.interface.timeout(0.05)
                         return
 

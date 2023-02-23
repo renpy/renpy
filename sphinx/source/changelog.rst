@@ -393,6 +393,9 @@ The screens' ``for`` loops now support the ``continue`` and ``break`` statements
 Other Changes
 -------------
 
+The {nw} tag will wait for self-voicing to complete, when self-voicing
+is enabled.
+
 The ``selected_insensitive`` style prefix will now be generated, and
 ``selected`` and ``selected_insensitive`` events will be given to
 transforms when appropriate.
