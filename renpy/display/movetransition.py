@@ -529,11 +529,11 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
         # If we're dealing with a wrapped layer widget, merge the raw
         # children then re-apply the transform.
-        if getattr(new, 'raw_child', None):
+        if hasattr(new, 'raw_child'):
             rv = new
 
             new = new.raw_child
-            layer = new.layer_name # type: ignore
+            layer = new.layer_name
 
             if (isinstance(new, renpy.display.layout.MultiBox) and
                 layer in layers and new.scene_list is not None):
