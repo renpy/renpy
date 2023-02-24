@@ -1449,7 +1449,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
-            f.raw_child = d
+            f.untransformed_layer = d
 
             rv = f
 
@@ -1478,7 +1478,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
-            f.raw_child = d
+            f.untransformed_layer = d
 
             rv = f
 

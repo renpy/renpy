@@ -624,6 +624,8 @@ class MultiBox(Container):
     _camera_list = None # type: list|None
     layers = None # type: dict|None
 
+    layer_name = None # type: str|None
+    untransformed_layer = None # type: renpy.display.layout.MultiBox|None
 
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
@@ -693,7 +695,7 @@ class MultiBox(Container):
 
             for layer in renpy.config.layers:
                 old_d = self.layers[layer]
-                old_d = getattr(old_d, 'raw_child', old_d)
+                old_d = old_d.untransformed_layer or old_d
 
                 new_d = old_d._in_current_store()
 
@@ -2430,6 +2432,9 @@ class Layer(AdjustTimes):
         If False, the layer's contents may exceed its bounds, otherwise
         anything exceeding the bounds will be trimmed.
     """
+
+    # Used to store layer_transitions when processing this layer.
+    layers = { }
 
     def __init__(self, layer, **properties):
         self.layer = layer
