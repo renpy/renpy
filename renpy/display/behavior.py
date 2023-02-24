@@ -578,7 +578,7 @@ class PauseBehavior(renpy.display.layout.Null):
             if st >= self.delay:
 
                 if self.self_voicing and renpy.config.nw_voice:
-                    if renpy.display.tts.is_active():
+                    if renpy.display.tts.is_active() or not renpy.config.afm_callback():
                         renpy.game.interface.timeout(0.05)
                         return
 
