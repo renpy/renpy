@@ -964,16 +964,26 @@ class Lexer(object):
 
             s = re.sub(r' *\n *', '\n', s)
 
+            mondel = self.monologue_delimiter
+
+            if mondel:
+                sl = s.split(mondel)
+            else:
+                sl = [s]
+
             rv = [ ]
 
-            for s in s.split(self.monologue_delimiter):
+            for s in sl:
                 s = s.strip()
 
                 if not s:
                     continue
 
                 # Collapse runs of whitespace into single spaces.
-                s = re.sub(r'[ \n]+', ' ', s)
+                if mondel:
+                    s = re.sub(r'[ \n]+', ' ', s)
+                else:
+                    s = re.sub(r' +', ' ', s)
 
                 s = re.sub(r'\\(u([0-9a-fA-F]{1,4})|.)', dequote, s) # type: ignore
 
