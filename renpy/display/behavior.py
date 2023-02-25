@@ -1888,7 +1888,7 @@ class Adjustment(renpy.object.Object):
     def round_value(self, value, release):
         # Prevent deadlock border points
         if value <= 0:
-            return type(self._value)(0)
+            return type(self._value)(0) # type: ignore
         elif value >= self._range:
             return self._range
 
@@ -1898,11 +1898,11 @@ class Adjustment(renpy.object.Object):
         if (not release) and self.force_step == "release":
             return value
 
-        return type(self._value)(self.step * round(float(value) / self.step))
+        return type(self._value)(self.step * round(float(value) / self.step)) # type: ignore
 
     def get_value(self):
         if self._value <= 0:
-            return type(self._value)(0)
+            return type(self._value)(0) # type: ignore
         if self._value >= self._range: # type: ignore
             return self._range
 
