@@ -132,7 +132,7 @@ python early hide:
         if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
             fn = _audio_eval(p["file"])
             try:
-                with renpy.loader.load(fn) as f:
+                with renpy.loader.load(fn, directory="audio") as f:
                     pass
             except renpy.webloader.DownloadNeeded as exception:
                 renpy.webloader.enqueue(exception.relpath, 'music', None)

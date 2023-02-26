@@ -90,8 +90,8 @@ def sl2_keywords():
 
     rv = set()
 
-    for i in renpy.sl2.slparser.all_statements:
-        rv.add(i.name)
+    for i in renpy.sl2.slparser.statement_names:
+        rv.add(i)
 
     rv.remove("icon")
     rv.remove("iconbutton")
@@ -289,16 +289,14 @@ def scan(name, o, prefix="", inclass=False):
                 lines.append("")
                 lines.extend(init_doc.split("\n"))
 
-            try:
-                args = inspect.getargspec(init)
-            except Exception:
-                args = None
+            if init != object.__init__: # we don't want that signature either
+                try:
+                    args = inspect.signature(init)
+                except Exception:
+                    args = None
 
-        elif inspect.isfunction(o):
-            args = inspect.getargspec(o)
-
-        elif inspect.ismethod(o):
-            args = inspect.getargspec(o)
+        elif inspect.isfunction(o) or inspect.ismethod(o):
+            args = inspect.signature(o)
 
         else:
             print("Warning: %s has section but not args." % name)
@@ -307,9 +305,12 @@ def scan(name, o, prefix="", inclass=False):
 
         # Format the arguments.
         if args is not None:
+            if args.parameters and next(iter(args.parameters)) == "self":
+                pars = iter(args.parameters.values())
+                next(pars)
+                args = args.replace(parameters=pars)
 
-            args = inspect.formatargspec(*args)
-            args = args.replace("(self, ", "(")
+            args = str(args)
         else:
             args = "()"
 

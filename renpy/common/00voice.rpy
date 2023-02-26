@@ -337,7 +337,7 @@ init -1500 python:
 
                     self.auto_filename = fn
 
-                    if fn and renpy.loadable(fn):
+                    if fn and renpy.loadable(fn, directory="audio"):
 
                         if _voice.tlid == tlid:
                             self.sustain = True
@@ -505,7 +505,7 @@ screen _auto_voice:
 
     if _voice.auto_file:
 
-        if renpy.loadable(_voice.auto_file):
+        if renpy.loadable(_voice.auto_file, directory="audio"):
             $ color = "#ffffff"
         else:
             $ color = "#ffcccc"
@@ -541,7 +541,7 @@ python early hide:
         if renpy.emscripten or os.environ.get('RENPY_SIMULATE_DOWNLOAD', False):
             fn = config.voice_filename_format.format(filename=_audio_eval(fn))
             try:
-                with renpy.loader.load(fn) as f:
+                with renpy.loader.load(fn, directory="audio") as f:
                     pass
             except renpy.webloader.DownloadNeeded as exception:
                 renpy.webloader.enqueue(exception.relpath, 'voice', None)

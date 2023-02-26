@@ -37,13 +37,13 @@ python early in icon:
 
             for p in path:
                 fn = p + prefix + self.name + ".png"
-                if renpy.loadable(fn):
+                if renpy.loadable(fn, directory="images"):
                     return fn
 
             for p in path:
                 fn = p + self.name + ".png"
 
-                if renpy.loadable(fn):
+                if renpy.loadable(fn, directory="images"):
                     c = self.style.color
 
                     if c is not None:

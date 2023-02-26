@@ -155,7 +155,7 @@ init -1110 python hide:
 
             style.button_text.xalign = 0.5
             style.button_text.yalign = 0.5
-            style.button_text.text_align = 0.5
+            style.button_text.textalign = 0.5
 
         setattr(theme, name + "_buttons", buttons)
 
@@ -215,7 +215,7 @@ init -1110 python hide:
             style.prompt_text.color = label
 
             style.prompt.xalign = 0.5
-            style.prompt_text.text_align = 0.5
+            style.prompt_text.textalign = 0.5
             style.prompt_text.layout = "subtitle"
 
         setattr(theme, name + "_prompts", prompts)
@@ -455,7 +455,7 @@ init -1110 python hide:
         style.button_text.selected_hover_color = bright_red
 
         style.button_text.xalign = 0.5
-        style.button_text.text_align = 0.5
+        style.button_text.textalign = 0.5
 
         style.bar.ymaximum = 22
         style.bar.left_bar = Solid(bright_cyan)
@@ -509,7 +509,7 @@ init -1110 python hide:
         style.large_button_text.size = 16
         style.large_button_text.drop_shadow = (1, 1)
         style.large_button_text.xalign = 0
-        style.large_button_text.text_align = 0
+        style.large_button_text.textalign = 0
 
         style.label_text.size = 24
         style.label_text.color = green
@@ -519,7 +519,7 @@ init -1110 python hide:
         style.prompt_text.size = 24
         style.prompt_text.color = green
         style.prompt_text.layout = "subtitle"
-        style.prompt_text.text_align = 0.5
+        style.prompt_text.textalign = 0.5
         style.prompt_text.drop_shadow = (1, 1)
         style.prompt_text.drop_shadow_color = "#000"
 
@@ -872,7 +872,7 @@ init -1110 python hide:
 
         style.button_text.xalign = 0.5
         style.button_text.yalign = 0.5
-        style.button_text.text_align = 0.5
+        style.button_text.textalign = 0.5
 
         # Radio Buttons
 
@@ -912,7 +912,7 @@ init -1110 python hide:
 
 
             s.xalign = 0.0
-            s.text_align = 0.0
+            s.textalign = 0.0
 
         set_radio_style(style.radio_button, widget)
         set_radio_text_style(style.radio_button_text)
@@ -981,7 +981,7 @@ init -1110 python hide:
 
         style.large_button_text.xalign = 0.5
         style.large_button_text.yalign = 0.5
-        style.large_button_text.text_align = 0.5
+        style.large_button_text.textalign = 0.5
 
     @theme
     def a_white_tulip_labels(
@@ -1014,7 +1014,7 @@ init -1110 python hide:
         style.prompt_text.color = label
 
         style.prompt.xalign = 0.5
-        style.prompt_text.text_align = 0.5
+        style.prompt_text.textalign = 0.5
         style.prompt_text.layout = "subtitle"
 
     @theme

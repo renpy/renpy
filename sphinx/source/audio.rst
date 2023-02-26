@@ -276,8 +276,8 @@ Will play silence for half a second, and then an explosion sound.
 
 .. _audio-namespace:
 
-Audio Namespace
----------------
+Audio Namespace and Directory
+-----------------------------
 
 The ``play`` and ``queue`` statements evaluate their arguments in the
 audio namespace. This means it is possible to use the define statement
@@ -307,6 +307,13 @@ Some filenames can't be accessed this way, as their names are not expressable
 as Python variables. For example, "my song.mp3", "8track.opus", and
 "this-is-a-song.ogg" won't work.
 
+When searching for an audio file, if the file is not found, Ren'Py will look
+in the audio directory. For example::
+
+    play music "opening.ogg"
+
+Will first look for ``game/opening.ogg``. If not found, Ren'Py will look for
+``game/audio/opening.ogg``.
 
 Actions
 -------

@@ -320,7 +320,7 @@ class Pixellate(Transition):
 class Dissolve(Transition):
     """
     :doc: transition function
-    :args: (time, *, alpha=False, time_warp=None, **properties)
+    :args: (time, *, alpha=False, time_warp=None, mipmap=None)
     :name: Dissolve
 
     Returns a transition that dissolves from the old scene to the new scene.
@@ -336,10 +336,11 @@ class Dissolve(Transition):
         function that takes a fractional time between 0.0 and 1.0, and returns
         a number in the same range.
 
-    When the dissolve will be scaled to less than half its natural size, the
-    :propref:`mipmap` style property can be set to True. This will cause mipmaps
-    to be generated, which will make the dissolve consume more GPU resources,
-    but will reduce artifacts.
+    `mipmap`
+        When the dissolve will be scaled to less than half its natural size,
+        this can be set to True. This will cause mipmaps to be generated,
+        which will make the dissolve consume more GPU resources, but will
+        reduce artifacts. See :propref:`mipmap` for more information.
     """
 
     __version__ = 1
@@ -411,7 +412,7 @@ class Dissolve(Transition):
 class ImageDissolve(Transition):
     """
     :doc: transition function
-    :args: (image, time, ramplen=8, *, reverse=False, time_warp=None, **properties)
+    :args: (image, time, ramplen=8, *, reverse=False, time_warp=None, mipmap=None)
     :name: ImageDissolve
 
     Returns a transition that dissolves the old scene into the new scene, using
@@ -440,16 +441,17 @@ class ImageDissolve(Transition):
         function that takes a fractional time between 0.0 and 1.0, and returns
         a number in the same range.
 
+    `mipmap`
+        When the dissolve will be scaled to less than half its natural size,
+        this can be set to True. This will cause mipmaps to be generated,
+        which will make the dissolve consume more GPU resources, but will
+        reduce artifacts. See :propref:`mipmap` for more information.
+
     ::
 
-        define circirisout = ImageDissolve("circiris.png", 1.0)
-        define circirisin = ImageDissolve("circiris.png", 1.0, reverse=True)
+        define circirisout = ImageDissolve("circiris.png", 1.0, time_warp=_warper.easeout)
+        define circirisin = ImageDissolve("circiris.png", 1.0, reverse=True, time_warp=_warper.easein)
         define circiristbigramp = ImageDissolve("circiris.png", 1.0, ramplen=256)
-
-    When the dissolve will be scaled to less than half its natural size, the
-    :propref:`mipmap` style property can be set to True. This will cause mipmaps
-    to be generated, which will make the dissolve consume more GPU resources,
-    but will reduce artifacts.
     """
 
     __version__ = 1
@@ -474,7 +476,7 @@ class ImageDissolve(Transition):
             time_warp=None,
             **properties):
 
-        # ramptype and ramp are now unused, but are kept for compatbility with
+        # ramptype and ramp are now unused, but are kept for compatibility with
         # older code.
 
         super(ImageDissolve, self).__init__(time, **properties)
@@ -597,7 +599,7 @@ class ImageDissolve(Transition):
 class AlphaDissolve(Transition):
     """
     :doc: transition function
-    :args: (control, delay=0.0, *, reverse=False, **properties)
+    :args: (control, delay=0.0, *, reverse=False, mipmap=None)
 
     Returns a transition that uses a control displayable (almost always some
     sort of animated transform) to transition from one screen to another. The
@@ -615,11 +617,12 @@ class AlphaDissolve(Transition):
         from the old image, while transparent areas are taken from the
         new image.
 
-    When the dissolve will be scaled to less than half its natural size, the
-    :propref:`mipmap` style property can be set to True. This will cause mipmaps
-    to be generated, which will make the dissolve consume more GPU resources,
-    but will reduce artifacts.
-     """
+    `mipmap`
+        When the dissolve will be scaled to less than half its natural size,
+        this can be set to True. This will cause mipmaps to be generated,
+        which will make the dissolve consume more GPU resources, but will
+        reduce artifacts. See :propref:`mipmap` for more information.
+    """
 
     mipmap = None
 

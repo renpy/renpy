@@ -358,7 +358,7 @@ auto_save_extra_info = None
 
 # The directory (underneath ~/RenPy, ~/Library/RenPy, or ~/.renpy) where the
 # game-specific data is saved.
-save_directory = None # type: str
+save_directory = None # type: str|None
 
 # These are used to deal with the case where a picture is missing.
 missing_scene = None
@@ -656,7 +656,7 @@ after_replay_callback = None
 wrap_shown_transforms = True
 
 # A list of prefixes Ren'Py will search for assets.
-search_prefixes = [ "", "images/" ]
+search_prefixes = [ "" ]
 
 # Should Ren'Py clear the database of code lines?
 clear_lines = True

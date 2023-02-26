@@ -255,6 +255,7 @@ class Cache(object):
     def get(self, image, predict=False, texture=False, render=False):
 
         def make_render(ce):
+            bounds = ce.bounds[:2]
 
             oversample = image.get_oversample() or .001
 
@@ -264,10 +265,12 @@ class Cache(object):
                 rv = renpy.display.render.Render(ce.width * inv_oversample, ce.height * inv_oversample)
                 rv.forward = renpy.display.matrix.Matrix2D(oversample, 0, 0, oversample)
                 rv.reverse = renpy.display.matrix.Matrix2D(inv_oversample, 0, 0, inv_oversample)
+
+                bounds = tuple(round(el / oversample) for el in bounds)
             else:
                 rv = renpy.display.render.Render(ce.width, ce.height)
 
-            rv.blit(ce.texture, ce.bounds[:2])
+            rv.blit(ce.texture, bounds)
 
             if image.pixel_perfect:
                 rv.add_property("pixel_perfect", True)
@@ -324,7 +327,11 @@ class Cache(object):
 
             if optimize_bounds:
                 bounds = tuple(surf.get_bounding_rect())
-                bounds = expands_bounds(bounds, size, renpy.config.expand_texture_bounds)
+                bounds = expand_bounds(bounds, size, renpy.config.expand_texture_bounds)
+
+                if image.oversample > 1:
+                    bounds = ensure_bounds_divide_evenly(bounds, image.oversample)
+
                 w = bounds[2]
                 h = bounds[3]
             else:
@@ -362,7 +369,14 @@ class Cache(object):
 
                 ce.texture = renpy.display.draw.load_texture(texsurf)
 
+                # This was loaded while predicting images for immediate use,
+                # so get it onto the GPU.
+                if not predict and renpy.display.draw is not None:
+                    while renpy.display.draw.ready_one_texture():
+                        pass
+
             if not predict:
+
                 if render:
                     return make_render(ce)
                 else:
@@ -702,12 +716,12 @@ class Image(ImageBase):
             base = filename.rpartition(".")[0]
             extras = base.partition("@")[2].split(",")
 
-            try:
-                for i in extras:
+            for i in extras:
+                try:
                     oversample = float(i)
                     properties.setdefault('oversample', oversample)
-            except Exception:
-                raise Exception("Unknown image modifier %r in %r." % (i, filename))
+                except Exception:
+                    raise Exception("Unknown image modifier %r in %r." % (i, filename))
 
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
@@ -734,7 +748,7 @@ class Image(ImageBase):
         try:
 
             try:
-                filelike = renpy.loader.load(self.filename)
+                filelike = renpy.loader.load(self.filename, directory="images")
                 filename = self.filename
                 force_size = None
             except renpy.webloader.DownloadNeeded as e:
@@ -760,7 +774,7 @@ class Image(ImageBase):
                 width = int(width * renpy.display.draw.draw_per_virt)
                 height = int(height * renpy.display.draw.draw_per_virt)
 
-                filelike = renpy.loader.load(self.filename)
+                filelike = renpy.loader.load(self.filename, directory="images")
 
                 with filelike as f:
                     surf = renpy.display.pgrender.load_image(filelike, filename, size=(width, height))
@@ -786,7 +800,7 @@ class Image(ImageBase):
 
     def predict_files(self):
 
-        if renpy.loader.loadable(self.filename):
+        if renpy.loader.loadable(self.filename, directory="images"):
             return [ self.filename ]
         else:
             if renpy.config.missing_image_callback:
@@ -1990,7 +2004,7 @@ def image(arg, loose=False, **properties):
         raise Exception("Could not construct image from argument.")
 
 
-def expands_bounds(bounds, size, amount):
+def expand_bounds(bounds, size, amount):
     """
     This expands the rectangle bounds by amount, while ensure it fits inside size.
     """
@@ -2004,6 +2018,28 @@ def expands_bounds(bounds, size, amount):
     y1 = min(sy, y + h + amount)
 
     return (x0, y0, x1 - x0, y1 - y0)
+
+
+def ensure_bounds_divide_evenly(bounds, n):
+    """
+    This ensures that the bounds is divisible by n, by expanding the bounds
+    if necessary.
+    """
+
+    x, y, w, h = bounds
+
+    xmodulo = x % n
+    ymodulo = y % n
+
+    if xmodulo:
+        x -= xmodulo
+        w += xmodulo
+
+    if ymodulo:
+        y -= ymodulo
+        h += ymodulo
+
+    return (x, y, w, h)
 
 
 def load_image(im):

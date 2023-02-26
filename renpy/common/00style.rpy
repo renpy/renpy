@@ -152,7 +152,7 @@ init -1800:
         outlines [ ]
         outline_scaling "linear"
         minwidth 0
-        text_align 0
+        textalign 0
         justify False
         text_y_fudge 0
         first_indent 0

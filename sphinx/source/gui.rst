@@ -1432,7 +1432,7 @@ A screen we expect to be commonly added is the click to continue screen. This
 is a screen that is shown when text finishes displaying. Here's a simple
 example::
 
-    screen ctc():
+    screen ctc(arg=None):
 
         frame:
             at ctc_appear

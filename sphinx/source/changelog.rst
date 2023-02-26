@@ -13,8 +13,25 @@ Changelog (Ren'Py 7.x-)
 Web
 ---
 
-The web platform now fully support playing videos through the :class:`Movie`
+The web platform now fully supports playing videos through the :class:`Movie`
 displayable, when it used to only support :func:`renpy.movie_cutscene`.
+
+Android
+--------
+
+Android has been changed so that the ``android.keystore`` file and
+``bundle.keystore`` file are expected to be found in the project's base
+directory, and not in the rapt directory. This allows projects to be
+built with different keys, and helps ensure the same keys are used
+with multiple Android versions.
+
+When the new "Generate Keys" button is pressed, if old keystore files
+exist, Ren'Py will offer to copy the old files into the project.
+
+The android configuration file has been renamed from ``.android.json`` to
+``android.json``. Ren'Py will automatically create the new file if the old
+exists.
+
 
 Other Platforms
 ---------------
@@ -76,7 +93,7 @@ These releases add support for two new image formats:
 
 * SVG files are a vector graphics format used on the web. Ren'Py supports a
   SVG files containing a large subset of SVGs  capability. (Notably, Ren'Py
-  does not support text in SVG files.) Ren'Py ill automatically oversample
+  does not support text in SVG files.) Ren'Py will automatically oversample
   (or undersample) SVGs when the game is scaled, to ensure the SVGs remain
   sharp at any resolution, similar to the way it oversamples text. This makes
   svgs a reasonable choice for interface elemnts that need to remain sharp.
@@ -98,6 +115,16 @@ all of the image data is available to keep the image sharp.
 Image oversampling can also be used with the new :var:`config.physical_width`
 and :var:`config.physical_height` variables to upgrade the resolution of
 a game without having to adjust the game's layout.
+
+AV1 Video
+---------
+
+Ren'Py now supports the modern AV1 video format. AV1 is supported in
+WEBM and MKV containers. AV1 videos should be about 30% smaller than
+the equivalent quality movie encoded with VP9, the previous best codec.
+
+Note that the newer AV1 format requires more CPU to decode. It's possible
+that some hardware that plays VP9 fluidly will struggle with AV1.
 
 Mixer Volume Changes
 --------------------
@@ -249,6 +276,11 @@ for end-users to be warned about the security issues when possible.
 New Features
 ------------
 
+Ren'Py will now search for audio files in the ``game/audio`` directory,
+and font files in the ``game/fonts`` directory, if not found in the game
+directory. Images will still be searched for in the ``game/images`` directory,
+but other files will not be found there.
+
 A new tool, accessible through the developer (Shift+D) menu, allows
 persistent data to be viewed.
 
@@ -356,8 +388,22 @@ is animated over a short period of time.
 The new :var:`preferences.audio_when_unfocused` preference now enables the audio
 of the game to be paused when the player switches to another window.
 
+The screens' ``for`` loops now support the ``continue`` and ``break`` statements.
+
 Other Changes
 -------------
+
+The {nw} tag will wait for self-voicing to complete, when self-voicing
+is enabled.
+
+The ``selected_insensitive`` style prefix will now be generated, and
+``selected`` and ``selected_insensitive`` events will be given to
+transforms when appropriate.
+
+Displayables with an `id` property can now be given the `prefer_screen_to_id`
+property, which controls if properties supplied by the screen override
+the properties supplied by the displayable identifier. The default remains
+that the displayable identifier overrides the screen.
 
 The ``fadein`` clause can be used when queuing an audio track.
 

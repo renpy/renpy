@@ -107,6 +107,9 @@ cache/
 steam_appid.txt
 /steamapi.py
 
+# Android.
+*.keystore
+
 # Type analysis.
 /typings
 

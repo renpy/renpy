@@ -56,7 +56,7 @@ init -1500:
 
     style _console_prompt is _console_text:
         minwidth gui._scale(22)
-        text_align 1.0
+        textalign 1.0
 
     style _console_input_text is _console_text:
         color "#000000"
@@ -1121,7 +1121,7 @@ screen _console:
                 input default default style "_console_input_text" exclude "" copypaste True
 
 
-    key "game_menu" action Jump("_console_return")
+    key "console_exit" action Jump("_console_return")
     key "console_older" action _console.console.older
     key "console_newer" action _console.console.newer
 

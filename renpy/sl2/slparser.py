@@ -573,7 +573,7 @@ class DisplayableParser(Parser):
 
     def __init__(self, name, displayable, style, nchildren=0, scope=False,
                  pass_context=False, imagemap=False, replaces=False, default_keywords={},
-                 hotspot=False, default_properties=True, unique=False): # type: (str, Callable, str, int|Literal["many"]|renpy.object.Sentinel, bool, bool, bool, bool, dict[str, Any], bool, bool, bool) -> None
+                 hotspot=False, default_properties=True, unique=False): # type: (str, Callable, str|None, int|Literal["many"]|renpy.object.Sentinel, bool, bool, bool, bool, dict[str, Any], bool, bool, bool) -> None
         """
         `scope`
             If true, the scope is passed into the displayable function as a keyword
@@ -621,6 +621,7 @@ class DisplayableParser(Parser):
 
         Keyword("arguments")
         Keyword("properties")
+        Keyword("prefer_screen_to_id")
 
         if default_properties:
             add(renpy.sl2.slproperties.ui_properties)

@@ -422,8 +422,8 @@ init -1100:
             style.file_picker_old.minwidth = 40
             style.file_picker_new.minwidth = 40
 
-            style.file_picker_old.text_align = 1.0
-            style.file_picker_new.text_align = 1.0
+            style.file_picker_old.textalign = 1.0
+            style.file_picker_new.textalign = 1.0
 
             if config.script_version is None or config.script_version > (6, 0, 0):
                 style.file_picker_text.insensitive_color = disabled_text
@@ -481,20 +481,20 @@ init -1100:
                 style.launcher_text.xanchor = 0.5
                 style.launcher_text.xmaximum = 240
                 style.launcher_text.color = label
-                style.launcher_text.text_align = 0.5
+                style.launcher_text.textalign = 0.5
 
 
                 style.launcher_label.xpos = 140
                 style.launcher_label.xanchor = 0.5
                 style.launcher_label.xmaximum = 240
                 style.launcher_label.color = label
-                style.launcher_label.text_align = 0.5
+                style.launcher_label.textalign = 0.5
 
                 style.launcher_input.xpos = 140
                 style.launcher_input.xanchor = 0.5
                 style.launcher_input.xmaximum = 240
                 style.launcher_input.color = widget
-                style.launcher_input.text_align = 0.5
+                style.launcher_input.textalign = 0.5
 
                 store._launcher_per_page = 9
 
@@ -517,4 +517,3 @@ init -1100:
             theme.roundrect(**args)
 
         theme.roundrect_red = theme_roundrect_red
-

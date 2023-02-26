@@ -37,13 +37,13 @@ import renpy
 def load_mappings():
 
     try:
-        with renpy.loader.load("renpycontrollerdb.txt", False) as f:
+        with renpy.loader.load("renpycontrollerdb.txt", tl=False) as f:
             pygame_sdl2.controller.add_mappings(f)
     except Exception:
         pass
 
     try:
-        with renpy.loader.load("gamecontrollerdb.txt", False) as f:
+        with renpy.loader.load("gamecontrollerdb.txt", tl=False) as f:
             pygame_sdl2.controller.add_mappings(f)
     except Exception:
         pass
@@ -245,7 +245,11 @@ def event(ev):
         return None
 
     elif ev.type == CONTROLLERDEVICEREMOVED:
-        quit(ev.which)
+        for k, v in controllers.items():
+            if v.instance_id == ev.which:
+                quit(k)
+                break
+
         return None
 
     elif ev.type == CONTROLLERAXISMOTION:

@@ -1,4 +1,4 @@
-image bg band = Transform("concert1", zoom=.75)
+﻿image bg band = Transform("concert1", zoom=.75)
 image logo small = Transform("logo base", zoom=.66)
 
 image concert:

@@ -170,7 +170,7 @@ screen common:
             has vbox
 
             text message:
-                text_align 0.5
+                textalign 0.5
                 xalign 0.5
                 layout "subtitle"
 
@@ -211,7 +211,7 @@ screen common:
                 add SPACER
 
                 text submessage:
-                    text_align 0.5
+                    textalign 0.5
                     xalign 0.5
                     layout "subtitle"
 
@@ -250,7 +250,7 @@ screen launcher_input:
             has vbox
 
             text message:
-                text_align 0.5
+                textalign 0.5
                 xalign 0.5
                 layout "subtitle"
 

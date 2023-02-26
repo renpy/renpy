@@ -81,7 +81,7 @@ def compile_expr(loc, node):
 
     expr = ast.Expression(body=node)
     renpy.python.fix_locations(expr, 1, 0)
-    return compile(expr, filename, "eval", flags, 1)
+    return compile(expr, filename, "eval", flags, True)
 
 class SLContext(renpy.ui.Addable):
     """
@@ -923,6 +923,16 @@ class SLDisplayable(SLBlock):
             # Get the widget id and transform, if any.
             widget_id = keywords.pop("id", None)
             transform = keywords.pop("at", None)
+            prefer_screen_to_id = keywords.pop("prefer_screen_to_id", False)
+
+            if widget_id and (widget_id in screen.widget_properties):
+
+                if prefer_screen_to_id:
+                    new_keywords = screen.widget_properties[widget_id].copy()
+                    new_keywords.update(keywords)
+                    keywords = new_keywords
+                else:
+                    keywords.update(screen.widget_properties[widget_id])
 
             # If we don't know the style, figure it out.
             style_suffix = keywords.pop("style_suffix", None) or self.style
@@ -931,9 +941,6 @@ class SLDisplayable(SLBlock):
                     keywords["style"] = style_suffix
                 else:
                     keywords["style"] = ctx.style_prefix + "_" + style_suffix
-
-            if widget_id and (widget_id in screen.widget_properties):
-                keywords.update(screen.widget_properties[widget_id])
 
             old_d = cache.displayable
             if old_d:
@@ -1366,13 +1373,16 @@ class SLIf(SLNode):
             if cond is not None:
                 node = ccache.ast_eval(cond)
 
-                self.constant = min(self.constant, analysis.is_constant(node))
+                cond_const = analysis.is_constant(node)
+                self.constant = min(self.constant, cond_const)
 
                 cond = compile_expr(self.location, node)
+            else:
+                cond_const = True
 
             block.prepare(analysis)
             self.constant = min(self.constant, block.constant)
-            self.prepared_entries.append((cond, block))
+            self.prepared_entries.append((cond, block, cond_const))
 
             self.has_keyword |= block.has_keyword
             self.last_keyword |= block.last_keyword
@@ -1383,7 +1393,7 @@ class SLIf(SLNode):
             self.execute_predicting(context)
             return
 
-        for cond, block in self.prepared_entries:
+        for cond, block, _cond_const in self.prepared_entries:
             if cond is None or eval(cond, context.globals, context.scope):
                 for i in block.children:
                     i.execute(context)
@@ -1396,10 +1406,13 @@ class SLIf(SLNode):
         # True if no block has been the main choice yet.
         first = True
 
-        # Other blocks that we predict if not predicted.
-        false_blocks = [ ]
 
-        for cond, block in self.prepared_entries:
+        # Should we predict false branches?
+        predict_false = self.serial not in context.predicted
+        context.predicted.add(self.serial)
+
+
+        for cond, block, const_cond in self.prepared_entries:
             try:
                 cond_value = (cond is None) or eval(cond, context.globals, context.scope)
             except Exception:
@@ -1415,34 +1428,29 @@ class SLIf(SLNode):
                     except Exception:
                         pass
 
-            else:
-                false_blocks.append(block)
+                if const_cond:
+                    break
 
-        # Has any instance of this node been predicted? We only predict
-        # once per node, for performance reasons.
-        if self.serial in context.predicted:
-            return
+            elif predict_false:
 
-        context.predicted.add(self.serial)
+                ctx = SLContext(context)
+                ctx.children = [ ]
+                ctx.unlikely = True
 
-        # Not-taken branches.
-        for block in false_blocks:
-            ctx = SLContext(context)
-            ctx.children = [ ]
-            ctx.unlikely = True
+                for i in block.children:
+                    try:
+                        i.execute(ctx)
+                    except Exception:
+                        pass
 
-            for i in block.children:
-                try:
-                    i.execute(ctx)
-                except Exception:
-                    pass
+                for i in ctx.children:
+                    predict_displayable(i)
 
-            for i in ctx.children:
-                predict_displayable(i)
+
 
     def keywords(self, context):
 
-        for cond, block in self.prepared_entries:
+        for cond, block, _cond_const in self.prepared_entries:
             if cond is None or eval(cond, context.globals, context.scope):
                 block.keywords(context)
                 return
@@ -1617,16 +1625,27 @@ class SLFor(SLBlock):
 
     def analyze(self, analysis):
 
-        if analysis.is_constant_expr(self.expression) == GLOBAL_CONST:
-            analysis.push_control(True)
-            analysis.mark_constant(self.variable)
-        else:
-            analysis.push_control(False)
-            analysis.mark_not_constant(self.variable)
+        const = analysis.is_constant_expr(self.expression) == GLOBAL_CONST
 
-        SLBlock.analyze(self, analysis)
+        while True:
 
-        analysis.pop_control()
+            if const:
+                analysis.push_control(True, loop=True)
+                analysis.mark_constant(self.variable)
+            else:
+                analysis.push_control(False, loop=True)
+                analysis.mark_not_constant(self.variable)
+
+            SLBlock.analyze(self, analysis)
+
+            new_const = analysis.control.const
+
+            analysis.pop_control()
+
+            if new_const == const:
+                break
+
+            const = new_const
 
     def prepare(self, analysis):
         node = ccache.ast_eval(self.expression)
@@ -1761,6 +1780,9 @@ class SLContinueException(SLForException): pass
 
 class SLBreak(SLNode):
 
+    def analyze(self, analysis):
+        analysis.exit_loop()
+
     def execute(self, context):
         raise SLBreakException()
 
@@ -1773,6 +1795,9 @@ class SLBreak(SLNode):
         self.dc(prefix, "break")
 
 class SLContinue(SLNode):
+
+    def analyze(self, analysis):
+        analysis.exit_loop()
 
     def execute(self, context):
         raise SLContinueException()

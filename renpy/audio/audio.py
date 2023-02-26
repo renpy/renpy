@@ -61,19 +61,22 @@ def get_serial():
     return (unique, serial)
 
 
+AudioNotReady = renpy.object.Sentinel("AudioNotReady")
+
 def load(fn):
     """
     Returns a file-like object for the given filename.
     """
 
     try:
-        rv = renpy.loader.load(fn)
+        rv = renpy.loader.load(fn, directory="audio")
     except renpy.webloader.DownloadNeeded as exception:
         if exception.rtype == 'music':
             renpy.webloader.enqueue(exception.relpath, 'music', None)
+            return AudioNotReady  # Try again later
         elif exception.rtype == 'voice':
-            # prediction failed, too late
-            pass
+            renpy.webloader.enqueue(exception.relpath, 'voice', None)
+            return AudioNotReady  # Try again later
         elif exception.rtype == 'video':
             # Video files are downloaded by the browser, so return
             # the file name instead of a file-like object
@@ -110,14 +113,14 @@ class AudioData(str):
 
     def __new__(cls, data, filename):
         rv = str.__new__(cls, filename)
-        rv.data = data
+        rv.data = data # type: ignore
         return rv
 
     def __init__(self, data, filename):
         pass
 
     def __reduce__(self):
-        return(AudioData, (self.data, str(self)))
+        return(AudioData, (self.data, str(self))) # type: ignore
 
 
 class QueueEntry(object):
@@ -293,6 +296,9 @@ class Channel(object):
                 self.movie = renpy.audio.renpysound.DROP_VIDEO
             else:
                 self.movie = renpy.audio.renpysound.NODROP_VIDEO
+
+            if renpysound.is_webaudio:
+                renpysound.set_movie_channel(self.number, True) # type: ignore
         else:
             self.movie = renpy.audio.renpysound.NO_VIDEO
 
@@ -517,11 +523,19 @@ class Channel(object):
                     continue
 
                 if isinstance(topq.filename, AudioData):
-                    topf = io.BytesIO(topq.filename.data)
+                    topf = io.BytesIO(topq.filename.data) # type: ignore
                 else:
                     topf = load(filename)
+                    if topf is AudioNotReady:
+                        # File is not ready, try again on the next periodic pass.
+                        self.queue.insert(0, topq)
+                        break
 
-                renpysound.set_video(self.number, self.movie)
+                if self.movie != renpy.audio.renpysound.NO_VIDEO:
+                    # Let the browser handle the video loop if any
+                    renpysound.set_video(self.number, self.movie, loop=(len(self.loop) == 1))
+                else:
+                    renpysound.set_video(self.number, self.movie, loop=False)
 
                 if depth == 0:
                     renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume) # type:ignore
@@ -949,10 +963,20 @@ def init():
         return
 
     if renpy.emscripten and renpy.config.webaudio:
+        # Importing webaudio hooks all public functions of renpysound
         import renpy.audio.webaudio as webaudio
 
+        renpysound.is_webaudio = True
+
         if webaudio.can_play_types(renpy.config.webaudio_required_types):
-            renpysound.__dict__.update(webaudio.__dict__)
+            webaudio.video_only = False
+        else:
+            # Audio files are decoded by Ren'Py (wasm), video files by browser
+            webaudio.video_only = True
+
+        # Some channels are created before init() is called, so flag them now
+        for c in all_channels:
+            webaudio.set_movie_channel(c.number, c.movie != renpy.audio.renpysound.NO_VIDEO)
 
     if pcm_ok is None and renpysound:
         bufsize = 2048

@@ -244,6 +244,12 @@ All user interface statements take the following common properties:
 
     By default, the ``id`` is automatically-generated.
 
+`prefer_screen_to_id`
+    If true, when a property is provided by both the the screen and a
+    displayble identifier, the screen property is used. If false, the
+    default, the displayable property is used. (This can be used to
+    decide if the screen overrides properties set by a Character.)
+
 `style`
     A string giving the name of the style applied to this displayable. The
     style gives default values for style properties.
@@ -477,7 +483,7 @@ Here's an example of dismiss being used::
 
             text "This is a very important message.":
                 xalign 0.5
-                text_align 0.5
+                textalign 0.5
 
             # Dismiss can be confusing on its own, so we'll add a button as well.
             textbutton "Dismiss":
@@ -1833,8 +1839,8 @@ For
 ---
 
 The ``for`` statement is similar to the Python ``for`` statement, except that
-it does not support the ``else`` clause nor the ``continue`` and ``break``
-statements. It supports assignment to
+it does not support the ``else`` clause (it does, however, support the
+``continue`` and ``break`` statements). It supports assignment to
 (optionally nested) tuple patterns, as well as variables.
 
 ::

@@ -316,7 +316,9 @@ class ScreenDisplayable(renpy.display.layout.Container):
         'miss_cache',
         'profile',
         'phase',
-        'use_cache' ]
+        'use_cache'
+        'copied_from'
+        ]
 
     restarting = False
     hiding = False
@@ -337,6 +339,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         self.phase = UPDATE
         self.use_cache = { }
         self.miss_cache = { }
+        self.copied_from = None
 
         self.profile = profile.get(self.screen_name, None)
 
@@ -437,6 +440,10 @@ class ScreenDisplayable(renpy.display.layout.Container):
         # The lifecycle phase we are in - one of PREDICT, SHOW, UPDATE, or HIDE.
         self.phase = PREDICT
 
+        # If this screen was copied from another by _in_current_store, returns
+        # the screen it was copied from.
+        self.copied_from = None
+
     @property
     def name(self):
         return " ".join(self.screen_name)
@@ -531,6 +538,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
                 i.set_transform_event(kind)
 
         hid.phase = HIDE
+        hid.copied_from = self
 
         rv = None
 
@@ -575,6 +583,7 @@ class ScreenDisplayable(renpy.display.layout.Container):
         rv = self.copy()
         rv.phase = OLD
         rv.child = self.child._in_current_store()
+        rv.copied_from = self
 
         return rv
 
@@ -1158,7 +1167,7 @@ def show_screen(_screen_name, *_args, **kwargs):
         The tag to show the screen with. If not specified, defaults to
         the tag associated with the screen. If that's not specified,
         defaults to the name of the screen.
-        
+
         This is equivalent to the ``as`` clause of the
         :ref:`show-screen-statement` statement.
     `_widget_properties`
@@ -1221,6 +1230,7 @@ def show_screen(_screen_name, *_args, **kwargs):
     sls = renpy.display.core.scene_lists()
 
     sls.add(_layer, d, _tag, zorder=_zorder, transient=_transient, keep_st=True, name=name)
+    sls.shown.predict_show(_layer, (_tag,), True)
 
 
 def predict_screen(_screen_name, *_args, **kwargs):
@@ -1309,8 +1319,12 @@ def hide_screen(tag, layer=None):
 
     screen = get_screen(tag, layer)
 
+
+    sls = renpy.display.core.scene_lists()
+
     if screen is not None:
-        renpy.exports.hide(screen.tag, layer=layer)
+        sls.remove(layer, screen.tag)
+        sls.shown.predict_hide(layer, screen.screen_name)
 
 
 def use_screen(_screen_name, *_args, **kwargs):
@@ -1360,6 +1374,9 @@ def current_screen(): # type: () -> ScreenDisplayable|None
 
     See :func:`get_screen` for documented fields on ScreenDisplayable.
     """
+
+    if _current_screen and _current_screen.copied_from:
+        return _current_screen.copied_from
 
     return _current_screen
 

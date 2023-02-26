@@ -89,7 +89,7 @@ def path_to_common(renpy_base):
     return renpy_base + "/renpy/common"
 
 
-def path_to_saves(gamedir, save_directory=None):
+def path_to_saves(gamedir, save_directory=None): # type: (str, str|None) -> str
     """
     Given the path to a Ren'Py game directory, and the value of config.
     save_directory, returns absolute path to the directory where save files
@@ -106,7 +106,7 @@ def path_to_saves(gamedir, save_directory=None):
 
     if save_directory is None:
         save_directory = renpy.config.save_directory
-        save_directory = renpy.exports.fsencode(save_directory)
+        save_directory = renpy.exports.fsencode(save_directory) # type: ignore
 
     # Makes sure the permissions are right on the save directory.
     def test_writable(d):
@@ -192,7 +192,7 @@ def path_to_saves(gamedir, save_directory=None):
         if 'APPDATA' in os.environ:
             return os.environ['APPDATA'] + "/RenPy/" + save_directory
         else:
-            rv = "~/RenPy/" + renpy.config.save_directory
+            rv = "~/RenPy/" + renpy.config.save_directory # type: ignore
             return os.path.expanduser(rv)
 
     else:

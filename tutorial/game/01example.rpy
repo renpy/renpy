@@ -1,4 +1,4 @@
-python early:
+﻿python early:
 
     # This maps from example name to the text of a fragment.
     examples = { }
@@ -546,7 +546,7 @@ screen example(blocks, small=False, bottom=False, showtrans=False):
             textbutton _("copy"):
                 style "empty"
                 text_style "quick_button_text"
-                text_text_align 0.5
+                text_textalign 0.5
                 text_minwidth 180
 
                 text_size 16
@@ -581,6 +581,7 @@ init python hide:
         for l in lines:
 
             l = l.rstrip()
+            l = l.lstrip("\ufeff")
 
             m = re.match("\s*#begin (\w+)", l)
             if m:

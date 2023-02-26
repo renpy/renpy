@@ -1449,7 +1449,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
-            f.raw_child = d
+            f.untransformed_layer = d
 
             rv = f
 
@@ -1478,7 +1478,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
-            f.raw_child = d
+            f.untransformed_layer = d
 
             rv = f
 
@@ -3133,7 +3133,7 @@ class Interface(object):
 
     def get_mouse_name(self, cache_only=False, interaction=True):
 
-        mouse_kind = renpy.display.focus.get_mouse() # type: str
+        mouse_kind = renpy.display.focus.get_mouse() # str|None
 
         if interaction and (mouse_kind is None):
             mouse_kind = self.mouse
@@ -3141,7 +3141,7 @@ class Interface(object):
         if pygame.mouse.get_pressed()[0]:
             mouse_kind = "pressed_" + mouse_kind 
 
-        if cache_only and (mouse_kind not in self.cursor_cache):
+        if cache_only and (mouse_kind not in self.cursor_cache): # type: ignore
             # if the mouse_kind cursor is not in cache, use a replacement
             # if pressed_ is in the cursor name, we'll try to use pressed_default
             # or the non-pressed cursor if we have it in cache

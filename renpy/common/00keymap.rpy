@@ -21,6 +21,17 @@
 
 init -1600 python:
 
+    class _keymap_list(_list):
+
+        def remove(self, a):
+            try:
+                _list.remove(self, a)
+            except ValueError:
+                if config.developer:
+                    raise
+                pass
+
+
     config.keymap = dict(
 
         # Bindings present almost everywhere, unless explicitly
@@ -121,6 +132,7 @@ init -1600 python:
 
         # Debug console.
         console = [ 'shift_K_o', 'alt_shift_K_o' ],
+        console_exit = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
         console_older = [ 'any_K_UP', 'any_KP_UP' ],
         console_newer = [ 'any_K_DOWN', 'any_KP_DOWN' ],
 
@@ -140,7 +152,8 @@ init -1600 python:
 
     )
 
-    config.default_keymap = { k : list(v) for k, v in config.keymap.items() }
+    config.default_keymap = { k : _list(v) for k, v in config.keymap.items() }
+    config.keymap = { k : _keymap_list(v) for k, v in config.keymap.items() }
 
     config.pad_bindings = {
         "pad_leftshoulder_press" : [ "rollback", ],

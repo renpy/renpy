@@ -161,7 +161,7 @@ def dynamic_image(d, scope=None, prefix=None, search=None): # type: (Any, dict|N
         if renpy.exports.image_exists(name):
             return True
 
-        if renpy.loader.loadable(name):
+        if renpy.loader.loadable(name, directory="images"):
             return True
 
         if lookup_displayable_prefix(name):

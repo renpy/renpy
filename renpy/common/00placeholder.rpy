@@ -67,9 +67,9 @@ init -1500 python:
                 If true, the sprite is flipped horizontally.
 
             `text`
-                 If provided, no other text than this will be displayed on the
-                 placeholder. If not, the text will reflect the show
-                 instruction that was used to display it.
+                If provided, no other text than this will be displayed on the
+                placeholder. If not, the text will reflect the show
+                instruction that was used to display it.
             """
 
             super(Placeholder, self).__init__(**properties)
@@ -149,7 +149,7 @@ init -1500 python:
             if base == "bg":
                 rv = Fixed(
                     Solid("#aaa"),
-                    Text(" ".join(self.name), style="_default", color="#333333", text_align=0.5, xalign=0.5, ypos=5),
+                    Text(" ".join(self.name), style="_default", color="#333333", textalign=0.5, xalign=0.5, ypos=5),
                     alt="",
                 )
 
@@ -190,7 +190,7 @@ init -1500 python:
 
             rv = Fixed(
                 Transform(image, crop=crop, size=size, xzoom=xzoom),
-                Text(text, pos=textpos, xanchor=0.5, yanchor=0.5, style="_default", color="#aaa", text_align=0.5),
+                Text(text, pos=textpos, xanchor=0.5, yanchor=0.5, style="_default", color="#aaa", textalign=0.5),
                 xysize=size,
                 alt="",
             )

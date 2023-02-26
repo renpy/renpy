@@ -70,36 +70,92 @@ def fix_spaceship(tokens):
     return rv
 
 
-def fix_print(tokens):
+def fix_backtick_repr(tokens):
+    """
+    This fixes the Python 2 backtick-repr.
+    """
+
+    rv = [ ]
+
+    # Is this the first backtick in a pair?
+    first = True
+
+    for t in tokens:
+
+        if t.type == token.ERRORTOKEN and t.string == "`":
+            if first:
+                rv.append(tokenize.TokenInfo(token.NAME, "repr", t.start, t.end, t.line))
+                rv.append(tokenize.TokenInfo(token.LPAR, "(", t.end, t.end, t.line))
+                first = False
+            else:
+                rv.append(tokenize.TokenInfo(token.RPAR, ")", t.start, t.end, t.line))
+                first = True
+        else:
+            rv.append(t)
+
+    return rv
+
+
+
+def fix_print(line):
     """
     This tries to remove Python 2-style print statements.
     """
 
+    if len(line) < 2:
+        return line
+
+    if line[0].type != token.NAME:
+        return line
+
+    if line[0].string != "print":
+        return line
+
+    if line[1].exact_type == token.LPAR:
+        return line
+
+    if line[1].exact_type == token.RIGHTSHIFT:
+        newline = line[2:]
+    else:
+        newline = line[1:]
+
+    # Replace the print statement 0, arguments.
+    old = line[0]
+    newline.insert(0, tokenize.TokenInfo(token.NUMBER, "0", old.start, old.start, old.line))
+    newline.insert(1, tokenize.TokenInfo(token.OP, ",", old.end, old.end, old.line))
+
+    return newline
+
+
+def fix_raise(line):
+    if len(line) < 4:
+        return line
+
+    if line[0].type != token.NAME:
+        return line
+
+    if line[0].string != "raise":
+        return line
+
+    if line[1].exact_type != token.NAME:
+        return line
+
+    if line[2].exact_type != token.COMMA:
+        return line
+
+    newline = list(line)
+    newline[2] = tokenize.TokenInfo(token.LPAR, "(", line[2].start, line[2].end, line[2].line)
+    newline.insert(-1, tokenize.TokenInfo(token.RPAR, ")", line[-2].end, line[-2].end, line[-2].line))
+
+    return newline
+
+
+def fix_lines(tokens):
+
     def fix_line(line):
-
-        if len(line) < 2:
-            return line
-
-        if line[0].type != token.NAME:
-            return line
-
-        if line[0].string != "print":
-            return line
-
-        if line[1].exact_type == token.LPAR:
-            return line
-
-        if line[1].exact_type == token.RIGHTSHIFT:
-            newline = line[2:]
-        else:
-            newline = line[1:]
-
-        # Replace the print statement 0, arguments.
-        old = line[0]
-        newline.insert(0, tokenize.TokenInfo(token.NUMBER, "0", old.start, old.start, old.line))
-        newline.insert(1, tokenize.TokenInfo(token.OP, ",", old.end, old.end, old.line))
-
-        return newline
+        line = fix_print(line)
+        line = fix_raise(line)
+        return line
 
     rv = [ ]
     line = [ ]
@@ -158,9 +214,12 @@ def fix_tokens(source):
 
         tokens = fix_octal_numbers(tokens)
         tokens = fix_spaceship(tokens)
-        tokens = fix_print(tokens)
+        tokens = fix_backtick_repr(tokens)
+
+        tokens = fix_lines(tokens)
 
         rv = tokenize.untokenize(tokens).decode("utf-8")
+
         return rv
 
     except Exception as e:

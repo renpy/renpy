@@ -1179,8 +1179,10 @@ def rpy_statement(l, loc):
         l.monologue_delimiter = "\n\n"
     elif l.keyword("single"):
         l.monologue_delimiter = "\n"
+    elif l.keyword("none"):
+        l.monologue_delimiter = ""
     else:
-        l.error("rpy monologue expects either single or double.")
+        l.error("rpy monologue expects either none, single or double.")
 
     l.expect_eol()
     l.expect_noblock('rpy monologue')
@@ -1245,7 +1247,7 @@ def translate_strings(init_loc, language, l):
         s = s.strip()
 
         try:
-            bc = compile(s, "<string>", "eval", renpy.python.new_compile_flags, 1)
+            bc = compile(s, "<string>", "eval", renpy.python.new_compile_flags, True)
             return eval(bc, renpy.store.__dict__)
         except Exception:
             ll.error('could not parse string')

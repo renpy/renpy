@@ -291,6 +291,14 @@ Layeredimage takes the following properties:
     A function that is used instead of `layeredimage.format_function` to format
     the image information into a displayable.
 
+`attribute_function`
+    A function or callable that is used to tweak what attributes end up being
+    displayed. It is called with a set of attributes supplied to the image, and
+    should return the set of attributes that should be used to select layers.
+    It can be used to express complex dependencies between attributes, or to
+    select attributes at random. See the bottom of the page for more information
+    about when and how this is called.
+
 :ref:`transform properties <transform-properties>`
     If present, these are used to construct a :func:`Transform` that is applied
     to the displayable.
@@ -527,7 +535,7 @@ Each layer must have a displayable given. It can also be given these properties:
 The ``if`` statement is transformed to a :func:`ConditionSwitch` when the
 ``layeredimage`` statement runs.
 
-.. var: layeredimage.predict_all = None
+.. var:: layeredimage.predict_all = None
 
     Sets the value of `predict_all` for the ConditionSwitches produced
     by layered image if statements.

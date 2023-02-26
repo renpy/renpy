@@ -65,9 +65,13 @@ def clear_capture_focus(name="default"):
     :doc: other
 
     Clear the captured focus with `name`.
+    If `name` is None, clear all captured focuses.
     """
 
-    focus_storage.pop(name, None)
+    if name is None:
+        focus_storage.clear()
+    else:
+        focus_storage.pop(name, None)
 
 
 def get_focus_rect(name="default"):

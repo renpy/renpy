@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -516,7 +516,7 @@ init -1100:
 
                 text _("This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"):
                     xalign 0.5
-                    text_align 0.5
+                    textalign 0.5
 
                 hbox:
                     xalign 0.5
@@ -548,7 +548,7 @@ init -1100:
 
                 text prompt:
                     xalign 0.5
-                    text_align 0.5
+                    textalign 0.5
 
                 input:
                     id "input"
@@ -556,7 +556,7 @@ init -1100:
 
                 text _("This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."):
                     xalign 0.5
-                    text_align 0.5
+                    textalign 0.5
 
                 textbutton _("Cancel"):
                     action Return("")
@@ -592,7 +592,7 @@ init -1100:
 
                 text _("You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."):
                     xalign 0.5
-                    text_align 0.5
+                    textalign 0.5
 
                 textbutton _("Continue"):
                     action Return(True)

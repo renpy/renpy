@@ -36,10 +36,20 @@ relevant style properties::
     screen big_hello_world:
         text "Hello, World" size 40
 
-Ren'Py supports style inheritance, with each style having a single
-parent. If a style property is not defined in a style, the value of the
-property is inherited from the closest parent: its grandparent, or another
-ancestor.
+Individual styles exist to gather properties so they can be applied to
+displayables together. For example, these two texts will appear the same::
+
+    image big one = Text("Hello, World", size=40, color="#f00")
+    image big two = Text("Hello, World", style="big_red")
+
+    style big_red:
+        size 40
+        color "#f00"
+
+Each style has a set of properties, and one parent. When a given style is applied
+to a given displayable, each style property (among those taken by the
+displayable) will be looked for among the style's properties. If it's not found,
+it is searched in the parent style, and then in the parent's parent, and so on.
 
 Each displayable takes a property named ``style``, which applies the said style
 to the displayable::
@@ -62,13 +72,13 @@ in its name, the parent is named by removing everything up to and
 including the first underscore. When a style that does not exist is used, and
 the style has an underscore in its name, Ren'Py will create it using the default
 parent. For example, a style named ``my_button`` will inherit from ``button``.
-This inheritance can be changed using the style statement or by calling a method
-on a style object. Otherwise, the style named "default" is used.
+This inheritance can be changed using the style statement or using methods of
+the :class:`Style` class. Otherwise, the style named "default" is used.
 
 Style names beginning with an underscore are reserved for Ren'Py use.
 
 As Ren'Py builds styles on startup, named styles should not be changed
-outside of a style statement or ``init`` block.
+after the :ref:`init-phase`.
 
 During development, the :ref:`style-inspector` can be very useful to check what
 styles and style properties are being used by a displayable.
@@ -168,16 +178,17 @@ on the ``style`` object::
     init python:
         style.big_red = Style(style.default)
 
-Style properties can be set by assigning to the fields of the Style objects. ::
+Style properties can be set by assigning to properties-like fields of the Style
+objects. ::
 
     init python:
         style.big_red.color = "#f00"
         style.big_red.size = 42
 
-.. class:: Style(parent)
+However, the value of a style property cannot be accessed this way, it can only
+be written.
 
-    Creates a new style object. Style properties can be assigned as fields of
-    this object.
+.. class:: Style(parent)
 
     `parent`
         The styles parent. This can be another Style object, or a string.

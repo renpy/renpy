@@ -111,7 +111,7 @@ class Motion(object):
 
         self.filename = filename
 
-        with renpy.loader.load(filename) as f:
+        with renpy.loader.load(filename, directory="images") as f:
             j = json.load(f)
 
         self.duration = j["Meta"]["Duration"]
