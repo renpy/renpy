@@ -12,13 +12,22 @@ initialized, configuration variables will not change. Changing configuration
 variables outside of ``init`` blocks can lead to undefined behavior.
 Configuration variables are not part of the save data.
 
-Configuration variables are often changed in ``init python`` blocks::
+Most configuration variables are easily set using a ``define`` statement::
 
-    init python:
+    define config.rollback_enabled = False
 
-        # Use a widescreen resolution.
-        config.screen_width = 1024
-        config.screen_height = 600
+Dict and list variables can be populated using ``define`` or in an
+``init python`` block::
+
+    define config.preload_fonts += ["OrthodoxHerbertarian.ttf"]
+    define config.adjust_attributes["eileen"] = eileen_adjust_function
+
+    init python hide:
+        def inter_cbk():
+            # this is a terrible callback
+            renpy.notify("Interacting !")
+
+        config.interact_callbacks.append(inter_cbk)
 
 
 Commonly Used
@@ -521,6 +530,12 @@ Occasionally Used
     The user can progress forward through the rollback buffer by
     clicking.
 
+.. var:: config.font_name_map = { }
+
+    This is a map from (font name) to (font filepath/fontgroup). Font names
+    simplify and shorten ``{font}`` tags, and gives them access to the
+    :ref:`fontgroup` feature.
+
 .. var:: config.font_replacement_map = { }
 
     This is a map from (font, bold, italics) to (font, bold, italics),
@@ -715,10 +730,12 @@ Occasionally Used
 
     Otherwise, this should be a dictionary giving the
     mouse animations for various mouse types. Keys used by the default
-    library include "default", "say", "with", "menu", "prompt",
-    "imagemap", "pause", "mainmenu", and "gamemenu". The "default" key
-    should always be present, as it is used when a more specific key
-    is absent.
+    library include ``default``, ``say``, ``with``, ``menu``, ``prompt``,
+    ``imagemap``, ``button``, ``pause``, ``mainmenu``, and 
+    ``gamemenu``. The ``default`` key should always be present, as it is 
+    used when a more specific key is absent. Keys can have an optional 
+    prefix ``pressed_`` to indicate that the cursor will be used when the
+    mouse is pressed.
 
     Each value in the dictionary should be a list of (`image`,
     `xoffset`, `yoffset`) tuples, representing frames.
@@ -739,7 +756,7 @@ Occasionally Used
     The frames are played back at 20Hz, and the animation loops after
     all frames have been shown.
 
-    See :doc:`mouse` for more information.
+    See :doc:`mouse` for more information and examples.
 
 .. var:: config.mouse_displayable = None
 
@@ -1036,6 +1053,37 @@ Occasionally Used
     platform specific, and so this should be set in a platform-specific
     manner. (It may make sense to change this in translations, as well.)
 
+.. var:: config.tts_substitutions = [ ]
+
+    This is a list of (pattern, replacement) pairs that are used to perform
+    substitutions on text before it is passed to the text-to-speech engine,
+    so that the text-to-speech engine can pronounce it correctly.
+
+    Patterns may be either strings or regular expressions, and replacements
+    must be strings.
+
+    If the pattern is a string, it is escaped, then prefixed
+    and suffixed with r'\\b' (to indicate it must begin and end at a word
+    boundary), and then compiled into a regular expression. When the pattern
+    is a string, the replacement is also escaped.
+
+    If the pattern is a regular expression, it is used as-is, and the
+    replacement is not escaped.
+
+    The substitutions are performed in the order they are given. If a substitution
+    matches the string, the match is checked to see if it is in title case,
+    upper case, or lower case ; and if so the corresponding casing is performed
+    on the replacement. Once this is done, the replacement is applied.
+
+    For example::
+
+        define config.tts_substitutions = [
+            ("Ren'Py", "Ren Pie"),
+        ]
+
+    Will cause the string "Ren'Py is pronounced ren'py." to be voiced as if
+    it were "Ren Pie is pronounced ren pie."
+
 .. var:: config.webaudio_required_types = [ "audio/ogg", "audio/mpeg", ... ]
 
     When running on the web platform, Ren'Py will check the browser to
@@ -1286,7 +1334,7 @@ Rarely or Internally Used
 
     These are layers which do not get automatically added to scenes.
     They are always treated as :var:`sticky <config.sticky_layers>` and
-    intended for use with the :ref:`Layer` displayable for embedding.
+    intended for use with the :class:`Layer` displayable for embedding.
 
 .. var:: config.fade_music = 0.0
 

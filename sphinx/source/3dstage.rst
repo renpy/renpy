@@ -91,7 +91,7 @@ though it's possible that you'll want to include a default camera position, as
 described below. 
 
 Alternatively, you can provide a specific layer name to enable the 3D stage only
-for that layer.
+for that layer. ::
 
     # Enabling the 3D stage for the background layer.
     camera background:

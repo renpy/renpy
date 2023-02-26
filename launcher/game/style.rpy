@@ -402,7 +402,7 @@ style l_alternate is l_default:
 style l_alternate_text is l_default:
     size size(14)
     font light_font()
-    text_align 1.0
+    textalign 1.0
 
 style l_small_button is l_button
 
@@ -488,7 +488,7 @@ style l_info_button is l_button:
     xmargin 50
 
 style l_info_button_text is l_button_text:
-    text_align 0.5
+    textalign 0.5
     layout "subtitle"
 
 # Progress bar.

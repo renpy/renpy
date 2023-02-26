@@ -1,4 +1,4 @@
-################################################################################
+﻿################################################################################
 # Stats screen.
 #
 # This displays RPG-like statistics.
@@ -76,7 +76,7 @@ default stat_chutzpah = 75
 # These styles are used to style the various stats.
 style stat_text is default:
     min_width 200
-    text_align 1.0
+    textalign 1.0
     yalign 0.5
 
 style stat_hbox is hbox:

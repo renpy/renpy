@@ -260,7 +260,7 @@ def playable(filename, channel="music"):
 
     filename, _, _ = c.split_filename(filename, False)
 
-    return renpy.loader.loadable(filename)
+    return renpy.loader.loadable(filename, directory="audio")
 
 
 def stop(channel="music", fadeout=None):

@@ -292,7 +292,7 @@ class Analysis(object):
         return rv
 
     def push_control(self, const=True, loop=False, imagemap=False):
-        self.control = Control(self.control.const and const, loop, self.imagemap or imagemap)
+        self.control = Control(self.control.const and const, loop, self.control.imagemap or imagemap)
         self.control_stack.append(self.control) # type: ignore
 
     def pop_control(self):

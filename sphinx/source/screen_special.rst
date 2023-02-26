@@ -367,10 +367,14 @@ Here's a very simple ctc screen::
 
         zorder 100
 
-        text _("Click to Continue"):
-            size 12
+        hbox:
             xalign 0.98
             yalign 0.98
+
+            add arg
+
+            text _("Click to Continue"):
+                size 12
 
 
 
@@ -755,7 +759,7 @@ If no ``confirm`` screen is present, ``yesno_prompt`` is used instead.
                 spacing 25
 
                 text _(message):
-                    text_align 0.5
+                    textalign 0.5
                     xalign 0.5
 
                 hbox:

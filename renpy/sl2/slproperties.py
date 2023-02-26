@@ -98,6 +98,7 @@ text_property_names = [
     "slow_cps_multiplier",
     "slow_abortable",
     "strikethrough",
+    "textalign",
     "text_align",
     "text_y_fudge",
     "underline",

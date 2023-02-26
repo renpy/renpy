@@ -1449,6 +1449,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
+            f.untransformed_layer = d
 
             rv = f
 
@@ -1477,6 +1478,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
+            f.untransformed_layer = d
 
             rv = f
 
@@ -2639,7 +2641,7 @@ class Interface(object):
         else:
             draws = self.get_draw_constructors()
 
-        for name, draw in draws:
+        for name, draw in draws: #type: ignore
             renpy.display.log.write("")
             renpy.display.log.write("Initializing {0} renderer:".format(name))
             if draw.init(virtual_size):
@@ -3040,20 +3042,17 @@ class Interface(object):
         name to a Fixed containing that layer.
         """
 
-        raw = { }
         rv = { }
 
         for layer in layers:
-            raw[layer] = d = scene_lists.make_layer(layer, self.layer_properties[layer])
+            d = scene_lists.make_layer(layer, self.layer_properties[layer])
             rv[layer] = scene_lists.transform_layer(layer, d)
 
         root = renpy.display.layout.MultiBox(layout='fixed')
         root.layers = { }
-        root.raw_layers = { }
 
         for layer in renpy.config.layers:
             root.layers[layer] = rv[layer]
-            root.raw_layers[layer] = raw[layer]
             root.add(rv[layer])
 
         rv[None] = root
@@ -3134,13 +3133,27 @@ class Interface(object):
 
     def get_mouse_name(self, cache_only=False, interaction=True):
 
-        mouse_kind = renpy.display.focus.get_mouse() # type: str
+        mouse_kind = renpy.display.focus.get_mouse() # str|None
 
         if interaction and (mouse_kind is None):
             mouse_kind = self.mouse
 
-        if cache_only and (mouse_kind not in self.cursor_cache):
-            mouse_kind = 'default'
+        if pygame.mouse.get_pressed()[0]:
+            mouse_kind = "pressed_" + mouse_kind 
+
+        if cache_only and (mouse_kind not in self.cursor_cache): # type: ignore
+            # if the mouse_kind cursor is not in cache, use a replacement
+            # if pressed_ is in the cursor name, we'll try to use pressed_default
+            # or the non-pressed cursor if we have it in cache
+            # otherwise we'll use the default cursor
+            if mouse_kind.startswith("pressed_") and ("pressed_default" in self.cursor_cache):
+                # if a generic pressed_default cursor is defined, use it
+                mouse_kind = "pressed_default"
+            elif mouse_kind.startswith("pressed_") and (mouse_kind[8:] in self.cursor_cache):
+                # otherwise use the non-pressed cursor if we have it in cache
+                mouse_kind = mouse_kind[8:]
+            else:
+                mouse_kind = 'default'
 
         if mouse_kind == 'default':
             mouse_kind = getattr(renpy.store, 'default_mouse', 'default')
@@ -3777,7 +3790,6 @@ class Interface(object):
         # The root widget of all of the layers.
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
         layers_root.layers = { }
-        layers_root.raw_layers = scene[None].raw_layers
 
         def add_layer(where, layer):
 
@@ -3817,7 +3829,6 @@ class Interface(object):
 
             old_root = renpy.display.layout.MultiBox(layout='fixed')
             old_root.layers = { }
-            old_root.raw_layers = self.transition_from[None].raw_layers
 
             for layer in renpy.config.layers:
                 d = self.transition_from[None].layers[layer]
@@ -4328,7 +4339,7 @@ class Interface(object):
                     if ev.state & 2:
                         self.keyboard_focused = ev.gain
 
-                        if not renpy.game.preferences.audio_when_unfocused:
+                        if not renpy.game.preferences.audio_when_unfocused and not renpy.emscripten:
                             if not ev.gain:
                                 renpy.audio.audio.pause_all()
                             else:
@@ -4336,7 +4347,7 @@ class Interface(object):
 
                     # If the window becomes inactive as a result of this event
                     # pause the audio according to preference
-                    if not renpy.game.preferences.audio_when_minimized:
+                    if not renpy.game.preferences.audio_when_minimized and not renpy.emscripten:
                         if not pygame.display.get_active() and not self.audio_paused:
                             renpy.audio.audio.pause_all()
                             self.audio_paused = True

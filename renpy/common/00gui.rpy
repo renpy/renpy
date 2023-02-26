@@ -351,7 +351,7 @@ init -1150 python in gui:
         :propref:`xalign`
             To gui.kind_text_xalign, if it exists.
 
-        :propref:`text_align`
+        :propref:`textalign`
             To gui.kind_text_xalign, if it exists.
 
         :propref:`layout`
@@ -413,6 +413,7 @@ init -1150 python in gui:
             if xalign is not None:
                 rv["xalign"] = xalign
                 rv["text_align"] = xalign
+                rv["textalign"] = xalign
 
                 if (xalign > 0) and (xalign < 1):
                     rv["layout"] = "subtitle"

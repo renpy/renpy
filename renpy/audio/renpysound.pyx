@@ -351,9 +351,15 @@ NODROP_VIDEO = 1
 # The video will be played, allowing framedrops.
 DROP_VIDEO = 2
 
-def set_video(channel, video):
+def set_video(channel, video, loop=False):
     """
     Sets a flag that determines if this channel will attempt to decode video.
+
+    `video`
+        One of `NO_VIDEO`, `NODROP_VIDEO`, or `DROP_VIDEO`.
+
+    `loop`
+        If true, the video file will loop.
     """
 
     if video == NODROP_VIDEO:
@@ -430,5 +436,8 @@ def sample_surfaces(rgb, rgba):
     rgba_surface = rgb
 
     RPS_sample_surfaces(rgb, rgba)
+
+# Is this the webaudio module?
+is_webaudio = False
 
 # When changing this API, change webaudio.py, too!

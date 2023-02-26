@@ -66,16 +66,19 @@ preserved across the reload. This means that if one of those statements is
 changed, it is necessary to rollback and re-execute the statement to see its
 new effect.
 
+.. _style-inspector:
+
 Shift+I Style Inspecting
 ------------------------
 
 When :var:`config.developer` is true, pressing Shift+I will cause style
 inspection to occur. This will display a list of displayables underneath the
-mouse. For each displayable, it will display the type, the style used, and the
-size it is being rendered at.
+mouse, in the order they are drawn to the screen (that is, the last displayable
+is the one on top of the others). For each displayable, it will display the
+type, the style used, and the size it is being rendered at.
 
-Clicking on the style name will display where the style properties used by the
-displayable are taken from.
+Clicking on the style name will display the styles the displayable inherits
+from, and the properties each style contributes to the final displayable.
 
 > Fast Skipping
 ---------------

@@ -1,4 +1,4 @@
-init python:
+﻿init python:
     import os
 
     autotest = False
@@ -138,14 +138,14 @@ screen text1:
             language "korean-with-spaces"
             layout "subtitle"
             xalign 0.5
-            text_align 0.5
+            textalign 0.5
 
         text "ビジュアルノベル、ヴィジュアルノベル（visual novel）とは、コンピュータゲームの一ジャンルである。ビジュアルノベルそれ自体もアドベンチャーゲームの一種に分類される。ノベルゲームやサウンドノベルと呼ばれることもある。":
             font JAPANESE
 
-        text "Min-width & Text_align":
+        text "Min-width & Textalign":
             min_width 400
-            text_align 1.0
+            textalign 1.0
 
         text "This will be typed out slowly.":
             slow_cps 40

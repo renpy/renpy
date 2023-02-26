@@ -1,4 +1,4 @@
-default evil = False
+﻿default evil = False
 
 layeredimage augustina:
 

@@ -513,31 +513,40 @@ def MoveTransition(delay, old_widget=None, new_widget=None, enter=None, leave=No
 
             rv = renpy.display.layout.MultiBox(layout='fixed')
 
-            rv.raw_layers = { }
             rv.layers = { }
 
             for layer in renpy.config.layers:
 
-                f = new.layers[layer]
-                d = new.raw_layers[layer]
+                d = merge_slide(old.layers[layer], new.layers[layer], merge_slide)
 
-                if (isinstance(d, renpy.display.layout.MultiBox)
-                    and layer in layers
-                    and d.scene_list is not None):
+                rv.layers[layer] = d
+                rv.add(d, True, True)
 
-                    d = merge_slide(old.raw_layers[layer], new.raw_layers[layer], merge_slide)
+            return rv
 
-                    adjust = renpy.display.layout.AdjustTimes(d, None, None)
-                    f = renpy.game.context().scene_lists.transform_layer(layer, adjust)
+        # Unpack old if needs be.
+        old = old.untransformed_layer or old
 
-                    if f is adjust:
-                        f = d
-                    else:
-                        f = renpy.display.layout.MatchTimes(f, adjust)
+        # If we're dealing with a wrapped layer widget, merge the raw
+        # children then re-apply the transform.
+        if new.untransformed_layer:
+            rv = new
 
-                rv.raw_layers[layer] = d
-                rv.layers[layer] = f
-                rv.add(f, True, True)
+            new = new.untransformed_layer
+            layer = new.layer_name
+
+            if (isinstance(new, renpy.display.layout.MultiBox) and
+                layer in layers and new.scene_list is not None):
+
+                d = merge_slide(old, new, merge_slide)
+
+                adjust = renpy.display.layout.AdjustTimes(d, None, None)
+                rv = renpy.game.context().scene_lists.transform_layer(layer, adjust)
+
+                if rv is adjust:
+                    rv = d
+                else:
+                    rv = renpy.display.layout.MatchTimes(rv, adjust)
 
             return rv
 

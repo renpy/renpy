@@ -24,8 +24,13 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy
 import emscripten # type: ignore
+import pygame
 from json import dumps
 
+import renpy.audio.renpysound as renpysound
+
+# True if the browser only supports video decoding (not audio)
+video_only = False
 
 def call(function, *args):
     """
@@ -52,7 +57,60 @@ def call_str(function, *args):
 
     return rv
 
+# Set of channel IDs that are not video channels
+audio_channels = set()
 
+def set_movie_channel(channel, movie):
+    if video_only and not movie:
+        audio_channels.add(channel)
+
+renpysound.set_movie_channel = set_movie_channel # type: ignore
+
+# Map of renpysound functions that have been replaced with webaudio functions
+renpysound_funcs = {}
+
+def proxy_with_channel(func):
+    """
+    Call the webaudio function instead of the renpysound function for audio channels if browser
+    supports audio decoding.
+    Always call the webaudio function instead of the renpysound function for video channels.
+    """
+
+    def hook(channel, *args, **kwargs):
+        if video_only and channel in audio_channels:
+            return renpysound_funcs[func.__name__](channel, *args, **kwargs)
+
+        return func(channel, *args, **kwargs)
+
+    if func.__name__ not in renpysound_funcs:
+        renpysound_funcs[func.__name__] = getattr(renpysound, func.__name__)
+    setattr(renpysound, func.__name__, hook)
+
+    return func
+
+def proxy_call_both(func):
+    """
+    Call renpysound function followed by webaudio function if browser does not support
+    audio decoding.
+    Only call the webaudio function if browser supports audio decoding.
+    """
+
+    def hook(*args, **kwargs):
+        if video_only:
+            ret1 = renpysound_funcs[func.__name__](*args, **kwargs)
+            ret2 = func(*args, **kwargs)
+            # Combine both return value (for init() only)
+            return ret1 and ret2
+
+        return func(*args, **kwargs)
+
+    if func.__name__ not in renpysound_funcs:
+        renpysound_funcs[func.__name__] = getattr(renpysound, func.__name__)
+    setattr(renpysound, func.__name__, hook)
+
+    return func
+
+@proxy_with_channel
 def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
     """
     Plays `file` on `channel`. This clears the playing and queued samples and
@@ -82,7 +140,8 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     """
 
     try:
-        file = file.name
+        if not isinstance(file, basestring):
+            file = file.name
     except Exception:
         return
 
@@ -90,6 +149,7 @@ def play(channel, file, name, paused=False, fadein=0, tight=False, start=0, end=
     call("queue", channel, file, name, paused, fadein, tight, start, end, relative_volume)
 
 
+@proxy_with_channel
 def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_volume=1.0):
     """
     Queues `file` on `channel` to play when the current file ends. If no file is
@@ -99,13 +159,15 @@ def queue(channel, file, name, fadein=0, tight=False, start=0, end=0, relative_v
     """
 
     try:
-        file = file.name
+        if not isinstance(file, basestring):
+            file = file.name
     except Exception:
         return
 
     call("queue", channel, file, name, False, fadein, tight, start, end, relative_volume)
 
 
+@proxy_with_channel
 def stop(channel):
     """
     Immediately stops `channel`, and unqueues any queued audio file.
@@ -114,6 +176,7 @@ def stop(channel):
     call("stop", channel)
 
 
+@proxy_with_channel
 def dequeue(channel, even_tight=False):
     """
     Dequeues the queued sound file.
@@ -126,6 +189,7 @@ def dequeue(channel, even_tight=False):
     call("dequeue", channel, even_tight)
 
 
+@proxy_with_channel
 def queue_depth(channel):
     """
     Returns the queue depth of the channel. 0 if no file is playing, 1 if
@@ -136,6 +200,7 @@ def queue_depth(channel):
     return emscripten.run_script_int("renpyAudio.queue_depth({})".format(channel))
 
 
+@proxy_with_channel
 def playing_name(channel):
     """
     Returns the `name`  argument of the playing sound. This was passed into
@@ -150,6 +215,7 @@ def playing_name(channel):
     return None
 
 
+@proxy_with_channel
 def pause(channel):
     """
     Pauses `channel`.
@@ -158,6 +224,7 @@ def pause(channel):
     call("pause", channel)
 
 
+@proxy_with_channel
 def unpause(channel):
     """
     Unpauses `channel`.
@@ -166,6 +233,7 @@ def unpause(channel):
     call("unpause", channel)
 
 
+@proxy_call_both
 def unpause_all_at_start():
     """
     Unpauses all channels that are paused.
@@ -174,6 +242,7 @@ def unpause_all_at_start():
     call("unpauseAllAtStart")
 
 
+@proxy_with_channel
 def fadeout(channel, delay):
     """
     Fades out `channel` over `delay` seconds.
@@ -182,6 +251,7 @@ def fadeout(channel, delay):
     call("fadeout", channel, delay)
 
 
+@proxy_with_channel
 def busy(channel):
     """
     Returns true if `channel` is currently playing something, and false
@@ -191,6 +261,7 @@ def busy(channel):
     return queue_depth(channel) > 0
 
 
+@proxy_with_channel
 def get_pos(channel):
     """
     Returns the position of the audio file playing in `channel`. Returns None
@@ -205,6 +276,7 @@ def get_pos(channel):
         return None
 
 
+@proxy_with_channel
 def get_duration(channel):
     """
     Returns the duration of the audio file playing in `channel`, or None if no
@@ -219,6 +291,7 @@ def get_duration(channel):
         return None
 
 
+@proxy_with_channel
 def set_volume(channel, volume):
     """
     Sets the primary volume for `channel` to `volume`, a number between
@@ -229,6 +302,7 @@ def set_volume(channel, volume):
     call("set_volume", channel, volume)
 
 
+@proxy_with_channel
 def set_pan(channel, pan, delay):
     """
     Sets the pan for channel.
@@ -246,6 +320,7 @@ def set_pan(channel, pan, delay):
     call("set_pan", channel, pan, delay)
 
 
+@proxy_with_channel
 def set_secondary_volume(channel, volume, delay):
     """
     Sets the secondary volume for channel. This is linear, and is multiplied
@@ -259,6 +334,7 @@ def set_secondary_volume(channel, volume, delay):
     call("set_secondary_volume", channel, volume, delay)
 
 
+@proxy_with_channel
 def get_volume(channel):
     """
     Gets the primary volume associated with `channel`.
@@ -267,21 +343,55 @@ def get_volume(channel):
     return call_int("get_volume", channel)
 
 
+@proxy_with_channel
 def video_ready(channel):
     """
     Returns true if the video playing on `channel` has a frame ready for
     presentation.
     """
 
-    return False
+    if not video_supported():
+        return False
 
+    return call_int("video_ready", channel)
 
+channel_size = {}
+
+@proxy_with_channel
 def read_video(channel):
     """
-    Returns the frame of video playing on `channel`. This should be returned
-    as an SDL surface with 2px of padding on all sides.
+    Returns the frame of video playing on `channel`. This is returned as a GLTexture.
     """
 
+    if not video_supported():
+        return None
+
+    video_size = channel_size.get(channel)
+    if video_size is None:
+        info = call_str("get_video_size", channel)
+        if len(info) == 0:
+            # Video dimension not ready yet
+            return None
+        video_size = [int(s) for s in info.split('x')]
+        channel_size[channel] = video_size
+
+    # Generate a new texture and pass it to JS
+    tex = renpy.gl2.gl2texture.Texture(video_size, renpy.display.draw.texture_loader, generate=True)
+
+    res = call_int("read_video", channel, tex.get_number(), *video_size)
+    if res == 0:
+        return tex
+
+    if res > 0:
+        # No new video frame available
+        return None
+
+    if res == -1:
+        # Video size has changed, try again but fetch new size first
+        del channel_size[channel]
+        return read_video(channel)
+
+    # Other errors happened
     return None
 
 
@@ -295,13 +405,22 @@ NODROP_VIDEO = 1
 DROP_VIDEO = 2
 
 
-def set_video(channel, video):
+@proxy_with_channel
+def set_video(channel, video, loop=False):
     """
     Sets a flag that determines if this channel will attempt to decode video.
     """
 
-    return
+    if video != renpysound.NO_VIDEO and not video_supported():
+        import sys
+        print('Warning: video playback is not supported on this browser', file=sys.stderr)
 
+    call("set_video", channel, video, loop)
+
+def video_supported():
+    # Video only work with OpenGL v2 renderers (should be supported since WebGL v1,
+    # but it falls back to OpenGL v1 on some configs)
+    return renpy.session["renderer"] in ('gl2', 'gles2')
 
 loaded = False
 
@@ -319,6 +438,7 @@ def load_script():
     loaded = True
 
 
+@proxy_call_both
 def init(freq, stereo, samples, status=False, equal_mono=False):
     """
     Initializes the audio system with the given parameters. The parameter are
@@ -344,24 +464,28 @@ def init(freq, stereo, samples, status=False, equal_mono=False):
     return True
 
 
+@proxy_call_both
 def quit(): # @ReservedAssignment
     """
     De-initializes the audio system.
     """
 
 
+@proxy_call_both
 def periodic():
     """
     Called periodically (at 20 Hz).
     """
 
 
+@proxy_call_both
 def advance_time():
     """
     Called to advance time at the start of a frame.
     """
 
 
+@proxy_call_both
 def sample_surfaces(rgb, rgba):
     """
     Called to provide sample surfaces to the display system. The surfaces

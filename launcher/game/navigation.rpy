@@ -249,7 +249,7 @@ screen navigation:
                         if persistent.navigation == "todo":
 
                             text _("No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."):
-                                text_align 0.5
+                                textalign 0.5
                                 xalign 0.5
                                 yalign 0.5
 
@@ -279,4 +279,3 @@ label navigation_loop:
 label navigation_refresh:
     $ project.current.update_dump(True)
     jump navigation_loop
-

@@ -687,6 +687,9 @@ def change_language(language, force=False):
     # Rebuild the styles.
     renpy.style.rebuild() # @UndefinedVariable
 
+    # Re-init tts.
+    renpy.display.tts.init()
+
     for i in renpy.config.translate_clean_stores:
         renpy.python.reset_store_changes(i)
 
@@ -697,6 +700,7 @@ def change_language(language, force=False):
         renpy.exports.block_rollback()
 
         old_language = language
+
 
 
 def check_language():
@@ -718,10 +722,12 @@ def check_language():
             node = renpy.game.script.translator.lookup_translate(tid) # @UndefinedVariable
 
             if node is not None:
-                # This is necessary for the menu-with-say case. ADVCharachter needs
+                # This is necessary for the menu-with-say case. ADVCharacter needs
                 # identifier to set deferred_translate_identifier again, but EndTranslation
                 # has already set translate_identifier to None.
                 ctx.translate_identifier = tid
+
+                renpy.game.log.forward = [ ]
 
                 raise renpy.game.JumpException(node.name)
 

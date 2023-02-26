@@ -24,7 +24,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Any
+from typing import Any, Literal
 
 import renpy
 
@@ -279,7 +279,7 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
     def handle_who():
         if who:
             if image:
-                renpy.ui.add(renpy.display.im.image(who, loose=True, **props["who"]))
+                renpy.ui.add(renpy.display.im.image(who, loose=True, **props["who"])) #type: ignore
             else:
                 renpy.ui.text(who, **who_args)
 
@@ -348,14 +348,14 @@ def show_display_say(who, what, who_args={}, what_args={}, window_args={},
         renpy.ui.window(**merge_style('say_who_window', who_window_properties))
         handle_who()
 
-    renpy.ui.window(**props["window"])
+    renpy.ui.window(**props["window"]) #type: ignore
     # Opens the say_vbox.
     renpy.ui.vbox(**merge_style('say_vbox', say_vbox_properties))
 
     if not two_window:
         handle_who()
 
-    rv = renpy.ui.text(what, **props["what"])
+    rv = renpy.ui.text(what, **props["what"]) #type: ignore
 
     # Closes the say_vbox.
     renpy.ui.close()
@@ -376,8 +376,9 @@ class SlowDone(object):
     delay = None
     ctc_kwargs = { }
     last_pause = True
+    no_wait=False
 
-    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause): # @ReservedAssignment
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause, no_wait):
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
@@ -387,6 +388,7 @@ class SlowDone(object):
         self.delay = delay
         self.ctc_kwargs = ctc_kwargs
         self.last_pause = last_pause
+        self.no_wait = no_wait
 
     def __call__(self):
 
@@ -407,7 +409,7 @@ class SlowDone(object):
                 renpy.exports.restart_interaction()
 
         if self.delay is not None:
-            renpy.ui.pausebehavior(self.delay, True, voice=self.last_pause)
+            renpy.ui.pausebehavior(self.delay, True, voice=self.last_pause and not self.no_wait, self_voicing=self.last_pause)
             renpy.exports.restart_interaction()
 
         for c in self.callback:
@@ -546,9 +548,6 @@ def display_say(
             # True if the is the last pause in a line of dialogue.
             last_pause = (i == len(pause_start) - 1)
 
-            if dtt.no_wait:
-                last_pause = False
-
             # If we're going to do an interaction, then saybehavior needs
             # to be here.
             if advance:
@@ -601,7 +600,7 @@ def display_say(
                 c("show", interact=interact, type=type, **cb_args)
 
             # Create the callback that is called when the slow text is done.
-            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause)
+            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause, dtt.no_wait)
 
             # Show the text.
             if multiple:
@@ -771,7 +770,7 @@ class ADVCharacter(object):
             self,
             name=NotSet,
             kind=None,
-            **properties): # type: (str|None|renpy.object.Sentinel, None|str|ADVCharacter, Any) -> None
+            **properties): # type: (str|None|renpy.object.Sentinel, Literal[False]|None|ADVCharacter, Any) -> None
 
         if kind is None:
             kind = renpy.store.adv
@@ -788,11 +787,11 @@ class ADVCharacter(object):
                 return getattr(kind, n)
 
         # Similar, but it grabs the value out of kind.display_args instead.
-        def d(n):
+        def d(n): # type (str) -> Any
             if n in properties:
                 return properties.pop(n)
             else:
-                return kind.display_args[n]
+                return kind.display_args[n] # type: ignore
 
         self.name = v('name')
         self.who_prefix = v('who_prefix')
@@ -814,7 +813,7 @@ class ADVCharacter(object):
             if "image" in properties:
                 self.image_tag = properties.pop("image")
             else:
-                self.image_tag = kind.image_tag
+                self.image_tag = kind.image_tag # type: ignore
         else:
             self.image_tag = None
 
@@ -1584,10 +1583,9 @@ def Character(name=NotSet, kind=None, **properties):
         ``"nestled"``, the indicator is displayed as part of the text
         being shown, immediately after the last character. ``"nestled-close"`` is
         similar, except a break is not allowed between the text and the CTC
-        indicator. If ``"fixed"``,
-        the indicator is added to the screen, and its position is
-        controlled by the position style properties.
-
+        indicator. If ``"fixed"``, a new screen containing the CTC indicator is shown,
+        and the position style properties of the CTC displayable are used
+        to position the CTC indicator.
 
     **Screens.**
     The display of dialogue uses a :ref:`screen <screens>`. These arguments
@@ -1610,8 +1608,8 @@ def Character(name=NotSet, kind=None, **properties):
 
     **Styling Text and Windows.**
     Keyword arguments beginning with ``who_``, ``what_``, and
-    ``window_`` have their prefix stripped, and are used to :ref:`style
-    <styles>` the character name, the spoken text, and the window
+    ``window_`` have their prefix stripped, and are used to :doc:`style
+    <style>` the character name, the spoken text, and the window
     containing both, respectively.
 
     For example, if a character is given the keyword argument

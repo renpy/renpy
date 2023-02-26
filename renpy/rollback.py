@@ -392,8 +392,8 @@ class Rollback(renpy.object.Object):
 
         rng.pushback(self.random)
 
-        renpy.game.contexts.pop()
-        renpy.game.contexts.append(self.context)
+        self.rollback_control()
+
 
     def rollback_control(self):
         """
@@ -401,8 +401,7 @@ class Rollback(renpy.object.Object):
         the data information intact.
         """
 
-        renpy.game.contexts.pop()
-        renpy.game.contexts.append(self.context)
+        renpy.game.contexts = renpy.game.contexts[:-1] + [ self.context ]
 
 
 class RollbackLog(renpy.object.Object):
@@ -847,7 +846,7 @@ class RollbackLog(renpy.object.Object):
             and so on.
 
         `current_label`
-            A lable that is called when control returns to the current statement,
+            A label that is called when control returns to the current statement,
             after rollback. (At most one of `current_label` and `label` can be
             provided.)
         """

@@ -79,9 +79,6 @@ init python in director:
     # The maximum height of viewports containing scrolling information.
     viewport_height = 280
 
-    # Is the director enabled? Used by the tutorial to protect itself.
-    enable = True
-
     state = renpy.session.get("director", None)
 
     # A list of statements we find too uninteresting to present to the
@@ -704,7 +701,7 @@ init python in director:
                 if not config.developer:
                     return None
 
-                if not enable:
+                if not getattr(store, "_director_enable", True):
                     renpy.notify(_("The interactive director is not enabled here."))
                     return None
 
@@ -1550,7 +1547,7 @@ screen director_lines(state):
                     text "[line_pos]":
                         xpos (gui._scale(300) - 10)
                         xanchor 1.0
-                        text_align 1.0
+                        textalign 1.0
                         style "director_text"
 
                     if change_action:

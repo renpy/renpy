@@ -100,7 +100,7 @@ init -1500:
         outlines [ (absolute(3), "#000", absolute(0), absolute(0)) ]
         size gui._scale(55)
         min_width gui._scale(55)
-        text_align 0.5
+        textalign 0.5
 
     screen _touch_keyboard:
         zorder 1100

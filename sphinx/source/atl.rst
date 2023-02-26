@@ -1139,10 +1139,9 @@ both horizontal and vertical positions.
     :type: boolean
     :default: True
 
-
     Normally, when a displayable or screen with the same tag or name as one
     that is hiding is shown, the hiding displayable or screen is removed,
-    cancelling the hide transform. If this0 property is False in the hide
+    cancelling the hide transform. If this property is False in the hide
     transform, this cancellation will not occur, and the hide transform
     will proceed to completion.
 
@@ -1273,7 +1272,7 @@ The following events can be triggered automatically:
     another screen. This happens in rare but possible cases, such as when
     the game is loaded and when styles or translations change.
 
-``hover``, ``idle``, ``selected_hover``, ``selected_idle``
+``hover``, ``idle``, ``selected_hover``, ``selected_idle``, ``insensitive``, ``selected_insensitive``
    Triggered when button containing this transform, or a button contained
    by this transform, enters the named state.
 

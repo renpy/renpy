@@ -1,5 +1,5 @@
-# Disable the director until the director example enables it.
-default director.enable = False
+﻿# Disable the director until the director example enables it.
+default _director_enable = False
 
 python early hide:
 

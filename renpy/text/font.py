@@ -276,7 +276,7 @@ class MudgeFont(ImageFont):
         surf = renpy.display.im.Image(self.filename).load(unscaled=True)
 
         # Parse the xml file.
-        with renpy.loader.load(self.xml) as f:
+        with renpy.loader.load(self.xml, directory="fonts") as f:
             tree = etree.fromstring(f.read())
 
         height = 0
@@ -376,7 +376,7 @@ class BMFont(ImageFont):
 
         pages = { }
 
-        with renpy.loader.load(self.filename) as f:
+        with renpy.loader.load(self.filename, directory="fonts") as f:
             for l in f:
 
                 l = l.decode("utf-8")
@@ -634,7 +634,7 @@ def load_face(fn):
     font_file = None
 
     try:
-        font_file = renpy.loader.load(fn)
+        font_file = renpy.loader.load(fn, directory="fonts")
     except IOError:
 
         if (not renpy.config.developer) or renpy.config.allow_sysfonts:
@@ -798,6 +798,9 @@ class FontGroup(object):
         chained together.
         """
 
+        if font in renpy.config.font_name_map:
+            raise Exception("FontGroup do not accept font aliases.")
+
         if start is None:
 
             if isinstance(font, FontGroup):
@@ -875,7 +878,8 @@ class FontGroup(object):
 
     def segment(self, s):
         """
-        Segments `s` into fonts. Generates (font, string) tuples.
+        Segments the `s` string into substrings, each having only one font.
+        Generates (font, string) tuples.
         """
 
         mark = 0
@@ -888,7 +892,7 @@ class FontGroup(object):
             s = [ ord(i) for i in s ]
             s = "".join(chr(self.char_map.get(i, i)) for i in s)
 
-        for i, c in enumerate(s):
+        for c in s:
 
             n = ord(c)
 

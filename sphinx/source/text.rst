@@ -138,7 +138,7 @@ It should be noted that:
 - the order in which the flags are given does not change the result : ``!cl``
   will do just the same as ``!lc``.
 - Supplementarly exclamation marks will be ignored, and will not circumvent
-  the previuous rule : ``!l!c`` will do the same as ``!c!l`` or ``!cl``.
+  the previous rule : ``!l!c`` will do the same as ``!c!l`` or ``!cl``.
 
 The transformations are done in the following order:
 
@@ -444,6 +444,9 @@ Text tags that only apply to dialogue are:
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
 
+    If present, the {fast} tag will cause voice to be sustained from
+    the previous line.
+
 .. text-tag:: nw
 
     The no-wait tag is a self-closing tag that causes the current line
@@ -454,7 +457,7 @@ Text tags that only apply to dialogue are:
         show trebuchet
         g "Looks like they're{fast} playing with their trebuchet again."
 
-    The no-wait tag will wait for voice and self-voicing to complete before
+    The no-wait tag will wait for self-voicing to complete before
     advancing.
 
 .. text-tag:: p
@@ -673,6 +676,9 @@ font. When accessing a collection, use the 0-based font index,
 followed by an at-sign and the file name. For example, "0\@font.ttc" is
 the first font in a collection, "1\@font.ttc" the second, and so on.
 
+When looking for a font files, if the file is not found, Ren'Py will search
+in the ``game/fonts`` directory. For example, when looking for test.ttf, Ren'Py
+will first search for ``game/test.ttf``, and then for ``game/fonts/test.ttf``.
 
 Font Replacement
 ----------------
@@ -690,6 +696,21 @@ download the oblique font from the web)::
         config.font_replacement_map["DejaVuSans.ttf", False, True] = ("DejaVuSans-Oblique.ttf", False, False)
 
 This mapping can improve the look of italic text.
+
+Font names and aliases
+----------------------
+
+The :var:`config.font_name_map` variable is used to give names
+or aliases to fonts. This allows two things : first, to make dialogues
+using the ``{font}`` tag shorter and easier to use, and second, to
+enable :ref:`fontgroup` to be used by these tags. ::
+
+    define config.font_name_map["jap"] = "electroharmonix.ttf"
+    define config.font_name_map["tjap"] = FontGroup().add("OrthodoxHerbertarian.ttf", "A", "Z").add("electroharmonix.ttf", None, None)
+
+    label yamato:
+        e "Sorry, what does {font=jap}Black holes and revelations{/font} mean ?"
+        y "You pronounce it {font=tjap}Black Holes And Revelations{/font}." # the capital letters appear in OrthodoxHerbertarian
 
 Image-Based Fonts
 -----------------
@@ -716,6 +737,8 @@ BMFont use is::
         ebf "Finally, Ren'Py supports BMFonts."
 
 
+.. _fontgroup:
+
 Font Groups
 -----------
 
@@ -736,6 +759,10 @@ For example::
          font FontGroup().add("english.ttf", 0x0020, 0x007f).add("japanese.ttf", 0x0000, 0xffff)
 
 .. include:: inc/font_group
+
+Note that while FontGroups can be given a name using :var:`config.font_name_map`,
+a FontGroup only takes filepaths as fonts, and does not recognize names or aliases
+defined using that variable.
 
 
 .. _text-displayables:

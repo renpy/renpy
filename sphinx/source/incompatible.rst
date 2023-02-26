@@ -19,6 +19,28 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**Keymap** The :doc:`keymap <keymap>` has changed substantially, which means that
+if your game changes the default keymap - usually a bad idea - it
+will need to be updated to reflect the new keysyms.
+
+
+**File Search** Ren'Py will now only look for image files in game/images,
+rather than all files. To look for all files in game/images, use::
+
+    define config.search_prefixes += [ "images/" ]
+
+
+**Android** Android has been changed so that the ``android.keystore`` file and
+``bundle.keystore`` file are expected to be found in the project's base
+directory, and not in the rapt directory. This allows projects to be
+built with different keys, and helps ensure the same keys are used
+with multiple Android versions.
+
+The android configuration file has been renamed from ``.android.json`` to
+``android.json``. Ren'Py will automatically create the new file if the old
+exists.
+
+
 **Dialogue history** Dialogue is now present in the history list
 (and hence the history screen) during the statement in which the
 dialogue is shown. Previously, it was only present at the end of the

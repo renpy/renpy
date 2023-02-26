@@ -181,7 +181,8 @@ class TextSegment(object):
         if source is not None:
             self.antialias = source.antialias
             self.vertical = source.vertical
-            self.font = source.font
+            font = source.font
+            self.font = renpy.config.font_name_map.get(font, font)
             self.size = source.size
             self.bold = source.bold
             self.italic = source.italic
@@ -215,7 +216,8 @@ class TextSegment(object):
 
         self.antialias = style.antialias
         self.vertical = style.vertical
-        self.font = style.font
+        font = style.font
+        self.font = renpy.config.font_name_map.get(font, font)
         self.size = style.size
         self.bold = style.bold
         self.italic = style.italic
@@ -1181,6 +1183,7 @@ class Layout(object):
                     push().take_style(style, self)
 
                 elif tag == "font":
+                    value = renpy.config.font_name_map.get(value, value)
                     push().font = value
 
                 elif tag == "size":
@@ -1629,7 +1632,7 @@ class Text(renpy.display.core.Displayable):
         # Sets the text we're showing, and performs substitutions.
         self.set_text(text, scope, substitute) # type: ignore
 
-        if renpy.game.less_updates or renpy.game.preferences.self_voicing:
+        if renpy.game.less_updates:
             slow = False
 
         # True if we're using slow text mode.
@@ -2028,17 +2031,6 @@ class Text(renpy.display.core.Displayable):
         if hyperlink_focus and not default:
             return hyperlink_focus(None)
 
-    def call_slow_done(self, st):
-        """
-        Called when slow is finished.
-        """
-
-        self.slow = False
-
-        if self.slow_done:
-            self.slow_done()
-            self.slow_done = None
-
     def hyperlink_sensitive(self, target):
         """
         Returns true of the hyperlink is sensitive, False otherwise.
@@ -2056,11 +2048,28 @@ class Text(renpy.display.core.Displayable):
         Space, Enter, or Click ends slow, if it's enabled.
         """
 
+        if (self.slow_done is not None) and not self.slow:
+
+            if ev.type == renpy.display.core.TIMEEVENT and ev.modal:
+                renpy.game.interface.timeout(0.05)
+                return
+
+            try:
+                self.slow_done()
+            finally:
+                self.slow_done = None
+
         if self.slow and renpy.display.behavior.map_event(ev, "dismiss") and self.style.slow_abortable:
 
             for i in slow_text:
                 if i.slow:
-                    i.call_slow_done(st)
+                    i.slow = False
+
+                if i.slow_done is not None:
+                    try:
+                        i.slow_done()
+                    finally:
+                        i.slow_done = None
 
             raise renpy.display.core.IgnoreEvent()
 
@@ -2305,7 +2314,8 @@ class Text(renpy.display.core.Displayable):
             if redraw is not None:
                 renpy.display.render.redraw(self, max(redraw, 0))
             else:
-                self.call_slow_done(st)
+                self.slow = False
+                renpy.game.interface.timeout(0)
 
         rv.forward = layout.forward
         rv.reverse = layout.reverse

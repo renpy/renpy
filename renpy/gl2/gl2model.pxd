@@ -29,7 +29,7 @@ cdef class GL2Model:
 
     # The cached_texture that comes from this model. (This is
     # a Texture.)
-    cdef object cached_texture
+    cdef public object cached_texture
 
     cpdef GL2Model copy(GL2Model self)
     cpdef subsurface(GL2Model self, t)

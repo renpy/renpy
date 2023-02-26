@@ -527,21 +527,29 @@ def _find_image(layer, key, name, what):
     Finds an image to show.
     """
 
+    # If a specific image is requested, use it.
+    if what is not None:
+
+        if isinstance(what, basestring):
+            what = tuple(what.split())
+
+        return name, what
+
     if renpy.config.image_attributes:
 
-        new_what = renpy.game.context().images.apply_attributes(layer, key, name)
-        if new_what is not None:
-            what = new_what
-            name = (key,) + new_what[1:]
-            return name, what
+        new_image = renpy.game.context().images.apply_attributes(layer, key, name)
+        if new_image is not None:
+            image = new_image
+            name = (key,) + new_image[1:]
+            return name, new_image
 
-    f = renpy.config.adjust_attributes.get(what[0], None) or renpy.config.adjust_attributes.get(None, None)
+    f = renpy.config.adjust_attributes.get(name[0], None) or renpy.config.adjust_attributes.get(None, None)
     if f is not None:
-        new_what = f(what)
-        name = (key,) + new_what[1:]
-        return name, new_what
+        new_image = f(name)
+        name = (key,) + new_image[1:]
+        return name, new_image
 
-    return name, what
+    return name, name
 
 
 def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
@@ -569,11 +577,6 @@ def predict_show(name, layer=None, what=None, tag=None, at_list=[ ]):
     key = tag or name[0]
 
     layer = default_layer(layer, key)
-
-    if what is None:
-        what = name
-    elif isinstance(what, basestring):
-        what = tuple(what.split())
 
     if isinstance(what, renpy.display.core.Displayable):
         base = img = what
@@ -667,6 +670,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         The equivalent of the ``behind`` property.
 
     ::
+
         show a
         $ renpy.show("a")
 
@@ -709,11 +713,6 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if tt is not None:
             at_list = renpy.easy.to_list(tt, copy=True)
 
-    if what is None:
-        what = name
-    elif isinstance(what, basestring):
-        what = tuple(what.split())
-
     if isinstance(what, renpy.display.core.Displayable):
 
         if renpy.config.wrap_shown_transforms and isinstance(what, renpy.display.motion.Transform):
@@ -742,7 +741,7 @@ def show(name, at_list=[ ], layer=None, what=None, zorder=None, tag=None, behind
         if isinstance(i, renpy.display.motion.Transform):
             img = i(child=img)
         else:
-            img = i(img)
+            img = i(img) # type: ignore
 
         # Mark the newly created images unique.
         img._unique()
@@ -1527,10 +1526,10 @@ def imagemap(ground, selected, hotspots, unselected=None, overlays=False,
     return rv
 
 
-def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=True):
+def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=None):
     """
     :doc: se_pause
-    :args: (delay=None, *, hard=False, predict=False, modal=False)
+    :args: (delay=None, *, hard=False, predict=False, modal=None)
 
     Causes Ren'Py to pause. Returns true if the user clicked to end the pause,
     or false if the pause timed out or was skipped.
@@ -1569,7 +1568,7 @@ def pause(delay=None, music=None, with_none=None, hard=False, predict=False, che
 
     `modal`
         If True or None, the pause will not end when a modal screen is being displayed.
-        If false, the pause will end while a modal screen is being displayed.
+        If False, the pause will end while a modal screen is being displayed.
     """
 
     if renpy.config.skipping == "fast":
@@ -2190,16 +2189,21 @@ def get_game_runtime():
 
 
 @renpy_pure
-def loadable(filename):
+def loadable(filename, directory=None):
     """
     :doc: file
 
     Returns True if the given filename is loadable, meaning that it
     can be loaded from the disk or from inside an archive. Returns
     False if this is not the case.
+
+    `directory`
+        If not None, a directory to search in if the file is not found
+        in the game directory. This will be prepended to filename, and
+        the search tried again.
     """
 
-    return renpy.loader.loadable(filename)
+    return renpy.loader.loadable(filename, directory=directory)
 
 
 @renpy_pure
@@ -2547,13 +2551,13 @@ def mark_image_unseen(name):
         del renpy.game.persistent._seen_images[name] # type: ignore
 
 
-def open_file(fn, encoding=None): # @ReservedAssignment
+def open_file(fn, encoding=None, directory=None): # @ReservedAssignment
     """
     :doc: file
 
     Returns a read-only file-like object that accesses the file named `fn`. The file is
-    accessed using Ren'Py's standard search method, and may reside in an RPA archive.
-    or as an Android asset.
+    accessed using Ren'Py's standard search method, and may reside in the game directory,
+    in an RPA archive, or as an Android asset.
 
     The object supports a wide subset of the fields and methods found on Python's
     standard file object, opened in binary mode. (Basically, all of the methods that
@@ -2563,9 +2567,14 @@ def open_file(fn, encoding=None): # @ReservedAssignment
         If given, the file is open in text mode with the given encoding.
         If None, the default, the encoding is taken from :var:`config.open_file_encoding`.
         If False, the file is opened in binary mode.
+
+    `directory`
+        If not None, a directory to search in if the file is not found
+        in the game directory. This will be prepended to filename, and
+        the search tried again.
     """
 
-    rv = renpy.loader.load(fn)
+    rv = renpy.loader.load(fn, directory=directory)
 
     if encoding is None:
         encoding = renpy.config.open_file_encoding
@@ -3098,6 +3107,17 @@ render = renpy.display.render.render
 IgnoreEvent = renpy.display.core.IgnoreEvent
 redraw = renpy.display.render.redraw
 
+def is_pixel_opaque(d, width, height, st, at, x, y):
+    """
+    :doc: udd_utility
+
+    Returns whether the pixel at (x, y) is opaque when this displayable
+    is rendered by ``renpy.render(d, width, height, st, at)``.
+    """
+
+    # Uses the caching features of renpy.render, as opposed to d.render.
+    return bool(render(renpy.easy.displayable(d), width, height, st, at).is_pixel_opaque(x, y))
+
 
 class Displayable(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
     pass
@@ -3607,7 +3627,7 @@ def reset_physical_size():
 
 
 @renpy_pure
-def fsencode(s, force=False):
+def fsencode(s, force=False): # type: (str, bool) -> str
     """
     :doc: file_rare
     :name: renpy.fsencode
@@ -3622,11 +3642,11 @@ def fsencode(s, force=False):
         return s
 
     fsencoding = sys.getfilesystemencoding() or "utf-8"
-    return s.encode(fsencoding)
+    return s.encode(fsencoding) # type: ignore
 
 
 @renpy_pure
-def fsdecode(s):
+def fsdecode(s): # type: (bytes|str) -> str
     """
     :doc: file_rare
     :name: renpy.fsdecode

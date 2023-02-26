@@ -21,7 +21,7 @@
 
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
-
+from typing import Any
 
 import codecs
 import time
@@ -312,7 +312,7 @@ def image_exists(name, expression, tag, precise=True):
 check_file_cache = { }
 
 
-def check_file(what, fn):
+def check_file(what, fn, directory=None):
 
     present = check_file_cache.get(fn, None)
     if present is True:
@@ -321,7 +321,7 @@ def check_file(what, fn):
         report("%s uses file '%s', which is not loadable.", what.capitalize(), fn)
         return
 
-    if not renpy.loader.loadable(fn):
+    if not renpy.loader.loadable(fn, directory=directory):
         report("%s uses file '%s', which is not loadable.", what.capitalize(), fn)
         check_file_cache[fn] = False
         return
@@ -345,7 +345,7 @@ def check_displayable(what, d):
         pass
 
     for fn in files:
-        check_file(what, fn)
+        check_file(what, fn, directory="images")
 
 
 # Lints ast.Image nodes.
@@ -681,9 +681,9 @@ def check_style(name, s):
             if k.endswith("font"):
                 if isinstance(v, renpy.text.font.FontGroup):
                     for f in set(v.map.values()):
-                        check_file(name, f)
+                        check_file(name, f, directory="fonts")
                 else:
-                    check_file(name, v)
+                    check_file(name, v, directory="images")
 
             if isinstance(v, renpy.display.core.Displayable):
                 check_style_property_displayable(name, k, v)
@@ -838,7 +838,7 @@ def check_unreachables(all_nodes):
             add_block(node.block)
 
     while to_check:
-        node = to_check.pop()
+        node = to_check.pop() # type: Any
         unreachable.remove(node)
 
         if isinstance(node, renpy.ast.While):
@@ -894,6 +894,23 @@ def check_unreachables(all_nodes):
                                                                                                plural_prefix="lines ")))
 
 
+def check_orphan_translations(none_lang_identifiers, translation_identifiers):
+    faulty = collections.defaultdict(list) # filename : [linenumbers]
+    for id, nodes in translation_identifiers.items():
+        if id not in none_lang_identifiers:
+            for node in nodes:
+                faulty[node.filename].append("{} (id {})".format(node.linenumber, id))
+
+    for filename, linenumbers in faulty.items():
+        # if len(linenumbers) > 10:
+        #     linenumbers = linenumbers[:9]
+        #     linenumbers.append("others")
+        report("{} : this file contains orphan translations at {}.".format(filename,
+                                                                           humanize_listing(linenumbers,
+                                                                                            singular_prefix="line ",
+                                                                                            plural_prefix="lines ")))
+
+
 def lint():
     """
     The master lint function, that's responsible for staging all of the
@@ -946,6 +963,9 @@ def lint():
     image_count = 0
 
     global report_node
+
+    none_language_ids = set()
+    translated_ids = collections.defaultdict(list) # id : [nodes]
 
     for node in all_stmts:
         if isinstance(node, (renpy.ast.Show, renpy.ast.Scene)):
@@ -1005,6 +1025,10 @@ def lint():
 
         elif isinstance(node, renpy.ast.Translate):
             language = node.language
+            if language is None:
+                none_language_ids.add(node.identifier)
+            else:
+                translated_ids[node.identifier].append(node)
 
         elif isinstance(node, renpy.ast.EndTranslate):
             language = None
@@ -1029,6 +1053,7 @@ def lint():
     check_styles()
     check_filename_encodings()
     check_unreachables(all_stmts)
+    check_orphan_translations(none_language_ids, translated_ids)
 
     for f in renpy.config.lint_hooks:
         f()

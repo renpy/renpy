@@ -255,6 +255,7 @@ class Cache(object):
     def get(self, image, predict=False, texture=False, render=False):
 
         def make_render(ce):
+            bounds = ce.bounds[:2]
 
             oversample = image.get_oversample() or .001
 
@@ -264,10 +265,12 @@ class Cache(object):
                 rv = renpy.display.render.Render(ce.width * inv_oversample, ce.height * inv_oversample)
                 rv.forward = renpy.display.matrix.Matrix2D(oversample, 0, 0, oversample)
                 rv.reverse = renpy.display.matrix.Matrix2D(inv_oversample, 0, 0, inv_oversample)
+
+                bounds = tuple(round(el / oversample) for el in bounds)
             else:
                 rv = renpy.display.render.Render(ce.width, ce.height)
 
-            rv.blit(ce.texture, ce.bounds[:2])
+            rv.blit(ce.texture, bounds)
 
             if image.pixel_perfect:
                 rv.add_property("pixel_perfect", True)
@@ -324,7 +327,11 @@ class Cache(object):
 
             if optimize_bounds:
                 bounds = tuple(surf.get_bounding_rect())
-                bounds = expands_bounds(bounds, size, renpy.config.expand_texture_bounds)
+                bounds = expand_bounds(bounds, size, renpy.config.expand_texture_bounds)
+
+                if image.oversample > 1:
+                    bounds = ensure_bounds_divide_evenly(bounds, image.oversample)
+
                 w = bounds[2]
                 h = bounds[3]
             else:
@@ -362,7 +369,14 @@ class Cache(object):
 
                 ce.texture = renpy.display.draw.load_texture(texsurf)
 
+                # This was loaded while predicting images for immediate use,
+                # so get it onto the GPU.
+                if not predict and renpy.display.draw is not None:
+                    while renpy.display.draw.ready_one_texture():
+                        pass
+
             if not predict:
+
                 if render:
                     return make_render(ce)
                 else:
@@ -706,11 +720,8 @@ class Image(ImageBase):
                 try:
                     oversample = float(i)
                     properties.setdefault('oversample', oversample)
-                    continue
                 except Exception:
-                    pass
-
-                raise Exception("Unknown image modifier %r in %r." % (i, filename))
+                    raise Exception("Unknown image modifier %r in %r." % (i, filename))
 
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
@@ -737,7 +748,7 @@ class Image(ImageBase):
         try:
 
             try:
-                filelike = renpy.loader.load(self.filename)
+                filelike = renpy.loader.load(self.filename, directory="images")
                 filename = self.filename
                 force_size = None
             except renpy.webloader.DownloadNeeded as e:
@@ -763,7 +774,7 @@ class Image(ImageBase):
                 width = int(width * renpy.display.draw.draw_per_virt)
                 height = int(height * renpy.display.draw.draw_per_virt)
 
-                filelike = renpy.loader.load(self.filename)
+                filelike = renpy.loader.load(self.filename, directory="images")
 
                 with filelike as f:
                     surf = renpy.display.pgrender.load_image(filelike, filename, size=(width, height))
@@ -787,11 +798,9 @@ class Image(ImageBase):
                 else:
                     return Image("_missing_image.png").load()
 
-            raise e
-
     def predict_files(self):
 
-        if renpy.loader.loadable(self.filename):
+        if renpy.loader.loadable(self.filename, directory="images"):
             return [ self.filename ]
         else:
             if renpy.config.missing_image_callback:
@@ -891,6 +900,9 @@ class Composite(ImageBase):
         self.positions = args[0::2]
         self.images = [ image(i) for i in args[1::2] ]
 
+        # Only supports all the images having the same oversample factor
+        self.oversample = self.images[0].get_oversample()
+
     def get_hash(self):
         rv = 0
 
@@ -906,10 +918,13 @@ class Composite(ImageBase):
         else:
             size = cache.get(self.images[0]).get_size()
 
+        os = self.oversample
+        size = [s*os for s in size]
+
         rv = renpy.display.pgrender.surface(size, True)
 
         for pos, im in zip(self.positions, self.images):
-            rv.blit(cache.get(im), pos)
+            rv.blit(cache.get(im), [p*os for p in pos])
 
         return rv
 
@@ -944,6 +959,7 @@ class Scale(ImageBase):
         super(Scale, self).__init__(im, width, height, bilinear, **properties)
 
         self.image = im
+        self.oversample = im.get_oversample()
         self.width = int(width)
         self.height = int(height)
         self.bilinear = bilinear
@@ -954,17 +970,18 @@ class Scale(ImageBase):
     def load(self):
 
         child = cache.get(self.image)
+        os = self.oversample
 
         if self.bilinear:
             try:
                 renpy.display.render.blit_lock.acquire()
-                rv = renpy.display.scale.smoothscale(child, (self.width, self.height))
+                rv = renpy.display.scale.smoothscale(child, (self.width*os, self.height*os))
             finally:
                 renpy.display.render.blit_lock.release()
         else:
             try:
                 renpy.display.render.blit_lock.acquire()
-                rv = renpy.display.pgrender.transform_scale(child, (self.width, self.height))
+                rv = renpy.display.pgrender.transform_scale(child, (self.width*os, self.height*os))
             finally:
                 renpy.display.render.blit_lock.release()
 
@@ -1002,6 +1019,7 @@ class FactorScale(ImageBase):
         super(FactorScale, self).__init__(im, width, height, bilinear, **properties)
 
         self.image = im
+        self.oversample = im.get_oversample()
         self.width = width
         self.height = height
         self.bilinear = bilinear
@@ -1063,6 +1081,7 @@ class Flip(ImageBase):
         super(Flip, self).__init__(im, horizontal, vertical, **properties)
 
         self.image = im
+        self.oversample = im.get_oversample()
         self.horizontal = horizontal
         self.vertical = vertical
 
@@ -1105,6 +1124,7 @@ class Rotozoom(ImageBase):
         super(Rotozoom, self).__init__(im, angle, zoom, **properties)
 
         self.image = im
+        self.oversample = im.get_oversample()
         self.angle = angle
         self.zoom = zoom
 
@@ -1152,6 +1172,7 @@ class Crop(ImageBase):
         super(Crop, self).__init__(im, x, y, w, h, **properties)
 
         self.image = im
+        self.oversample = im.get_oversample()
         self.x = x
         self.y = y
         self.w = w
@@ -1161,8 +1182,9 @@ class Crop(ImageBase):
         return self.image.get_hash()
 
     def load(self):
-        return cache.get(self.image).subsurface((self.x, self.y,
-                                                 self.w, self.h))
+        os = self.oversample
+        return cache.get(self.image).subsurface((self.x*os, self.y*os,
+                                                 self.w*os, self.h*os))
 
     def predict_files(self):
         return self.image.predict_files()
@@ -1212,6 +1234,7 @@ class Map(ImageBase):
         super(Map, self).__init__(im, rmap, gmap, bmap, amap, force_alpha, **properties)
 
         self.image = im
+        self.oversample = im.get_oversample()
         self.rmap = rmap
         self.gmap = gmap
         self.bmap = bmap
@@ -1257,6 +1280,7 @@ class Twocolor(ImageBase):
         super(Twocolor, self).__init__(im, white, black, force_alpha, **properties)
 
         self.image = im
+        self.oversample = im.get_oversample()
         self.white = white
         self.black = black
 
@@ -1295,6 +1319,7 @@ class Recolor(ImageBase):
         super(Recolor, self).__init__(im, rmul, gmul, bmul, amul, force_alpha, **properties)
 
         self.image = im
+        self.oversample = im.get_oversample()
         self.rmul = rmul + 1
         self.gmul = gmul + 1
         self.bmul = bmul + 1
@@ -1344,6 +1369,7 @@ class Blur(ImageBase):
         super(Blur, self).__init__(im, xrad, yrad, **properties)
 
         self.image = im
+        self.oversample = im.get_oversample()
         self.rx = xrad
         self.ry = xrad if yrad is None else yrad
 
@@ -1357,7 +1383,7 @@ class Blur(ImageBase):
         ws = renpy.display.pgrender.surface(surf.get_size(), True)
         rv = renpy.display.pgrender.surface(surf.get_size(), True)
 
-        renpy.display.module.blur(surf, ws, rv, self.rx, self.ry)
+        renpy.display.module.blur(surf, ws, rv, self.rx*self.oversample, self.ry*self.oversample)
 
         return rv
 
@@ -1408,6 +1434,7 @@ class MatrixColor(ImageBase):
         super(MatrixColor, self).__init__(im, matrix, **properties)
 
         self.image = im
+        self.oversample = im.get_oversample()
         self.matrix = matrix
 
     def get_hash(self):
@@ -1831,6 +1858,7 @@ class Tile(ImageBase):
 
         super(Tile, self).__init__(im, size, **properties)
         self.image = im
+        self.oversample = im.get_oversample()
         self.size = size
 
     def get_hash(self):
@@ -1842,6 +1870,10 @@ class Tile(ImageBase):
 
         if size is None:
             size = (renpy.config.screen_width, renpy.config.screen_height)
+
+        os = self.oversample
+
+        size = [round(v*os) for v in size]
 
         surf = cache.get(self.image)
 
@@ -1875,6 +1907,8 @@ class AlphaMask(ImageBase):
 
     Note that this takes different arguments from :func:`AlphaMask`,
     which uses the mask's alpha channel.
+
+    The two images need to have the same size, and the same oversampling factor.
     """
 
     def __init__(self, base, mask, **properties):
@@ -1882,6 +1916,9 @@ class AlphaMask(ImageBase):
 
         self.base = image(base)
         self.mask = image(mask)
+
+        # The two images already need to be the same size, they now also need the same oversample.
+        self.oversample = self.base.get_oversample()
 
     def get_hash(self):
         return self.base.get_hash() + self.mask.get_hash()
@@ -1967,7 +2004,7 @@ def image(arg, loose=False, **properties):
         raise Exception("Could not construct image from argument.")
 
 
-def expands_bounds(bounds, size, amount):
+def expand_bounds(bounds, size, amount):
     """
     This expands the rectangle bounds by amount, while ensure it fits inside size.
     """
@@ -1981,6 +2018,28 @@ def expands_bounds(bounds, size, amount):
     y1 = min(sy, y + h + amount)
 
     return (x0, y0, x1 - x0, y1 - y0)
+
+
+def ensure_bounds_divide_evenly(bounds, n):
+    """
+    This ensures that the bounds is divisible by n, by expanding the bounds
+    if necessary.
+    """
+
+    x, y, w, h = bounds
+
+    xmodulo = x % n
+    ymodulo = y % n
+
+    if xmodulo:
+        x -= xmodulo
+        w += xmodulo
+
+    if ymodulo:
+        y -= ymodulo
+        h += ymodulo
+
+    return (x, y, w, h)
 
 
 def load_image(im):

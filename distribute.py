@@ -17,10 +17,10 @@ import time
 import collections
 
 try:
-    # reload is built-in in Python 2, in importlib in Python 3
-    reload # type: ignore
-except NameError:
     from importlib import reload
+except ImportError:
+    pass
+
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 

@@ -62,7 +62,7 @@ init -1500 python:
 
     # Set up nvl mode styles.
     style.nvl_label.minwidth = 150
-    style.nvl_label.text_align = 1.0
+    style.nvl_label.textalign = 1.0
 
     style.nvl_window.background = "#0008"
     style.nvl_window.yfill = True
@@ -351,6 +351,8 @@ init -1500 python:
 
         def do_display(self, who, what, multiple=None, **display_args):
 
+            renpy.translation.check_language()
+
             page = self.clear or nvl_clear_next()
 
             if config.nvl_page_ctc and page:
@@ -361,8 +363,10 @@ init -1500 python:
                 if page:
                     checkpoint = True
                 else:
-                    if renpy.roll_forward_info() is not None:
-                        renpy.checkpoint(renpy.roll_forward_info(), hard=False)
+                    rfi = renpy.roll_forward_info()
+
+                    if rfi is not None:
+                        renpy.checkpoint(rfi, keep_rollback=True, hard=False)
                         return
 
                     checkpoint = False

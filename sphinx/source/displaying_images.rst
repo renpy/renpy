@@ -123,6 +123,9 @@ example, all of these files will define the image ``eileen happy``::
     game/images/Eileen Happy.jpg
     game/images/eileen/eileen happy.png
 
+When an image filename is given, and the image is not found, the images directory
+is searched.
+
 .. _oversampling:
 
 Oversampling

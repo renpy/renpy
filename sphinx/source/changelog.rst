@@ -13,6 +13,26 @@ Changelog (Ren'Py 7.x-)
 Web
 ---
 
+The web platform now fully supports playing videos through the :class:`Movie`
+displayable, when it used to only support :func:`renpy.movie_cutscene`.
+
+Android
+--------
+
+Android has been changed so that the ``android.keystore`` file and
+``bundle.keystore`` file are expected to be found in the project's base
+directory, and not in the rapt directory. This allows projects to be
+built with different keys, and helps ensure the same keys are used
+with multiple Android versions.
+
+When the new "Generate Keys" button is pressed, if old keystore files
+exist, Ren'Py will offer to copy the old files into the project.
+
+The android configuration file has been renamed from ``.android.json`` to
+``android.json``. Ren'Py will automatically create the new file if the old
+exists.
+
+
 Other Platforms
 ---------------
 
@@ -73,7 +93,7 @@ These releases add support for two new image formats:
 
 * SVG files are a vector graphics format used on the web. Ren'Py supports a
   SVG files containing a large subset of SVGs  capability. (Notably, Ren'Py
-  does not support text in SVG files.) Ren'Py ill automatically oversample
+  does not support text in SVG files.) Ren'Py will automatically oversample
   (or undersample) SVGs when the game is scaled, to ensure the SVGs remain
   sharp at any resolution, similar to the way it oversamples text. This makes
   svgs a reasonable choice for interface elemnts that need to remain sharp.
@@ -81,7 +101,10 @@ These releases add support for two new image formats:
 This release of Ren'Py also adds support for oversampling raster images,
 like PNG, JPEG, WebP, and AVIF. For these images, oversampling is done
 by including an @ and number in the filename. For example, "eileen happy@2.png"
-will be oversampled by a factor of 2.
+will be oversampled by a factor of 2. This allows for easier ways of making a
+remastered version of a game with minimal changes to the code. Image
+manipulators, which are now obsolete but common in older games, support
+oversampled images.
 
 For raster images, oversampling causes the image file to be loaded at full
 resolution, but treated as if it was smaller by the oversampling factor. For
@@ -92,6 +115,16 @@ all of the image data is available to keep the image sharp.
 Image oversampling can also be used with the new :var:`config.physical_width`
 and :var:`config.physical_height` variables to upgrade the resolution of
 a game without having to adjust the game's layout.
+
+AV1 Video
+---------
+
+Ren'Py now supports the modern AV1 video format. AV1 is supported in
+WEBM and MKV containers. AV1 videos should be about 30% smaller than
+the equivalent quality movie encoded with VP9, the previous best codec.
+
+Note that the newer AV1 format requires more CPU to decode. It's possible
+that some hardware that plays VP9 fluidly will struggle with AV1.
 
 Mixer Volume Changes
 --------------------
@@ -199,6 +232,23 @@ ruby text. For example::
 
     e "【【This is not | ruby text.】"
 
+Accessibility
+-------------
+
+The new :var:`config.tts_substitutions` variable allows the game to
+provide substitution rules for self-voicing. That is meant to allow
+the creator to control pronunciation of words that might be mispronounced
+by the text to speech engine.
+
+For example::
+
+        define config.tts_substitutions = [
+            ("Ren'Py", "Ren Pie"),
+        ]
+
+Will cause the word "Ren'Py" to be pronounced as "Ren Pie" whenever
+self-voicing speaks it.
+
 Save Token Security
 -------------------
 
@@ -226,14 +276,19 @@ for end-users to be warned about the security issues when possible.
 New Features
 ------------
 
+Ren'Py will now search for audio files in the ``game/audio`` directory,
+and font files in the ``game/fonts`` directory, if not found in the game
+directory. Images will still be searched for in the ``game/images`` directory,
+but other files will not be found there.
+
 A new tool, accessible through the developer (Shift+D) menu, allows
 persistent data to be viewed.
 
 The interactive director can now create a statement that removes an
 attribute from an image.
 
-The ``show screen``, ``hide screen``, and ``call screen`` statements now
-can now take ``expression``, ``as``, ``onlayer``, ``zorder``, and ``with``
+The ``show screen``, ``hide screen``, and ``call screen`` statements can
+now take ``expression``, ``as``, ``onlayer``, ``zorder``, and ``with``
 clauses, which have the same meaning as the corresponding clauses in the
 ``show`` and ``hide`` statements.
 
@@ -317,20 +372,46 @@ cleared of all the attributes attached to it. The previous way to do this was
 to hide and show the image again, which had the consequence of also resetting
 the placement of the image on the screen. It is not the case with this function.
 
+The new ``config.check_conflicting_properties`` variable, which is disabled
+in existing games but enabled in newly created games, enables you to check for
+conflicting style or transform properties being set concurrently. This is
+dangerous as the resulting behavior is undefined and may vary between platforms
+and versions of Ren'Py.
+
+The new :var:`config.font_name_map` variable allows you to name font files or
+:ref:`fontgroup`, so that it becomes easier to use them in {font} tags.
+Previously, there was no way to use a fontgroup in a {font} tag.
+
+The :class:`Scroll` Action now takes a `delay` parameter, so that the scrolling
+is animated over a short period of time.
+
+The new :var:`preferences.audio_when_unfocused` preference now enables the audio
+of the game to be paused when the player switches to another window.
+
+The screens' ``for`` loops now support the ``continue`` and ``break`` statements.
+
+Disabling Dialogue's :ref:`monologue-mode` is now possible using the
+``rpy monologue none`` statement at the beginning of the file it should apply to.
+
 Other Changes
 -------------
+
+The {nw} tag will wait for self-voicing to complete, when self-voicing
+is enabled.
+
+The ``selected_insensitive`` style prefix will now be generated, and
+``selected`` and ``selected_insensitive`` events will be given to
+transforms when appropriate.
+
+Displayables with an `id` property can now be given the `prefer_screen_to_id`
+property, which controls if properties supplied by the screen override
+the properties supplied by the displayable identifier. The default remains
+that the displayable identifier overrides the screen.
 
 The ``fadein`` clause can be used when queuing an audio track.
 
 Ren'Py will limit calls to BOverlayNeedsPresent on Steam Deck, preventing
 a freezing issue.
-
-Grids are now, by default, allowed to be underfull.
-
-It's now explicitly document that closing text tags is not required. The
-following should always be valid.::
-
-    "{b}This is bold."
 
 Dialogue is now present in the history list (and hence the history screen)
 during the statement in which the dialogue is shown. Previously, it was only
@@ -359,8 +440,15 @@ The `execute_init` argument to :func:`renpy.register_statement` now respects
 the `init_priority` argument. Previously, all `execute_init` function ran
 at init priority 0.
 
-The config.label_callback variable has been renamed to :var`config.label_callbacks`,
+The config.label_callback variable has been renamed to :var:`config.label_callbacks`,
 and now takes a list of callback functions.
+
+A number of documented functions, classes and Actions have seen their signatures
+(meaning the arguments they take) corrected in the documentation, making them
+safer to use.
+
+When Ren'Py used to normalize every whitespaces into standard spaces, it now
+supports non-standard spaces such as \\u3000, the full-width ideographic space.
 
 
 .. _renpy-7.5.3:

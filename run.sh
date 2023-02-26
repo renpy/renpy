@@ -20,8 +20,8 @@ if [ -n "$RENPY_VIRTUAL_ENV" ] ; then
     . "$RENPY_VIRTUAL_ENV/bin/activate"
 fi
 
-if [ -z "$PYTHONPATH" -a -z "$VIRTUAL_ENV" ] ; then
-    echo Neither PYTHONPATH nor VIRTUAL_ENV is set.
+if [ -z "$VIRTUAL_ENV" ] ; then
+    echo Please install into a virtualenv.
     exit 1
 fi
 
@@ -29,6 +29,7 @@ PY_VERSION=$(python -c 'import sys; print(sys.version_info.major)')
 
 if [ $PY_VERSION != "2" ]; then
     BUILD_J="-j $(nproc)"
+    ADAPT_TO_SETUPTOOLS="--old-and-unmanageable"
 fi
 
 ROOT="$(dirname $(realpath $0))"
@@ -36,15 +37,9 @@ ROOT="$(dirname $(realpath $0))"
 setup () {
     pushd $1 >/dev/null
 
-    if [ -n "$PYTHONPATH" ]; then
-        try python setup.py $QUIET \
-            build -b build/lib.$variant -t build/tmp.$variant $BUILD_J \
-            $RENPY_BUILD_ARGS install_lib -d "$PYTHONPATH"
-    else
-        try python setup.py $QUIET \
-            build -b build/lib.$variant -t build/tmp.$variant $BUILD_J \
-            $RENPY_BUILD_ARGS install
-    fi
+    try python setup.py $QUIET \
+        build -b build/lib.$variant -t build/tmp.$variant $BUILD_J \
+        $RENPY_BUILD_ARGS install $ADAPT_TO_SETUPTOOLS
 
     popd >/dev/null
 }

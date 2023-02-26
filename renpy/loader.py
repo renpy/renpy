@@ -784,7 +784,7 @@ def check_name(name):
             raise Exception("Filenames may not contain relative directories like '.' and '..': %r" % name)
 
 
-def get_prefixes(tl=True):
+def get_prefixes(tl=True, directory=None):
     """
     Returns a list of prefixes to search for files.
     """
@@ -803,10 +803,17 @@ def get_prefixes(tl=True):
 
         rv.append(prefix)
 
+    if directory is not None:
+
+        if language is not None:
+            rv.append(renpy.config.tl_directory + "/" + language + "/" + directory + "/")
+
+        rv.append(directory + "/")
+
     return rv
 
 
-def load(name, tl=True):
+def load(name, directory=None, tl=True):
 
     if renpy.display.predict.predicting: # @UndefinedVariable
         if threading.current_thread().name == "MainThread":
@@ -818,7 +825,7 @@ def load(name, tl=True):
 
     name = re.sub(r'/+', '/', name).lstrip('/')
 
-    for p in get_prefixes(tl):
+    for p in get_prefixes(directory=directory, tl=tl):
         rv = load_core(p + name)
         if rv is not None:
             return rv
@@ -862,14 +869,14 @@ def loadable_core(name):
     return False
 
 
-def loadable(name):
+def loadable(name, directory=None):
 
     name = name.lstrip('/')
 
     if (renpy.config.loadable_callback is not None) and renpy.config.loadable_callback(name):
         return True
 
-    for p in get_prefixes():
+    for p in get_prefixes(directory=directory):
         if loadable_core(p + name):
             return True
 
@@ -948,7 +955,7 @@ class RenpyImporter(object):
     def __init__(self, prefix=""):
         self.prefix = prefix
 
-    def translate(self, fullname, prefix=None): # type: (str, Optional[str]) -> str
+    def translate(self, fullname, prefix=None): # type: (str, Optional[str]) -> str|None
 
         if prefix is None:
             prefix = self.prefix

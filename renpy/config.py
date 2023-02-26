@@ -358,7 +358,7 @@ auto_save_extra_info = None
 
 # The directory (underneath ~/RenPy, ~/Library/RenPy, or ~/.renpy) where the
 # game-specific data is saved.
-save_directory = None # type: str
+save_directory = None # type: str|None
 
 # These are used to deal with the case where a picture is missing.
 missing_scene = None
@@ -656,7 +656,7 @@ after_replay_callback = None
 wrap_shown_transforms = True
 
 # A list of prefixes Ren'Py will search for assets.
-search_prefixes = [ "", "images/" ]
+search_prefixes = [ "" ]
 
 # Should Ren'Py clear the database of code lines?
 clear_lines = True
@@ -1273,6 +1273,12 @@ modal_blocks_timer = False
 # The range, in decibels, of the volume mixers.
 volume_db_range = 60
 
+# An alias -> font map.
+font_name_map = {}
+
+# Do we treat float values for spacing as relative values ?
+relative_spacing = True
+
 # Autosave callback.
 autosave_callback = None
 
@@ -1340,8 +1346,20 @@ viewport_inertia_time_constant = 0.325
 # run.
 after_default_callbacks = [ ]
 
+# Are parsing errors raised when conflicting transform or style properties are
+# set simultaneously?
+# Set to True in the default GUI.
+check_conflicting_properties = False
+
 # A list of extra save directories. Strings giving the full paths.
 extra_savedirs = [ ]
+
+# The text-to-speech dictionary. A list of [ (RegeEx|String, String) ] pairs.
+tts_substitutions = [ ]
+
+# The base URL where unpacked web videos can be found.
+web_video_base = "./game"
+
 
 del os
 del collections

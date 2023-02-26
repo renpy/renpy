@@ -27,6 +27,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 import renpy
 
+import collections
 import hashlib
 import os
 import difflib
@@ -629,122 +630,141 @@ class Script(object):
 
     def load_file(self, dir, fn): # @ReservedAssignment
 
-        if fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith("_ren.py"):
+        # Used to only find the deferred parse errors from this file.
+        old_deferred_parse_errors = renpy.parser.deferred_parse_errors
+        renpy.parser.deferred_parse_errors = collections.defaultdict(list)
 
-            if not dir:
-                raise Exception("Cannot load rpy/rpym/ren.py file %s from inside an archive." % fn)
+        try:
 
-            base, _, game = dir.rpartition("/")
-            olddir = base + "/old-" + game
+            if fn.endswith(".rpy") or fn.endswith(".rpym") or fn.endswith("_ren.py"):
 
-            fullfn = dir + "/" + fn
+                if not dir:
+                    raise Exception("Cannot load rpy/rpym/ren.py file %s from inside an archive." % fn)
 
-            if fn.endswith("_ren.py"):
-                rpycfn = fullfn[:-7] + ".rpyc"
-                oldrpycfn = olddir + "/" + fn[:-7] + ".rpyc"
-            else:
-                rpycfn = fullfn + "c"
-                oldrpycfn = olddir + "/" + fn + "c"
+                base, _, game = dir.rpartition("/")
+                olddir = base + "/old-" + game
 
-            stmts = renpy.parser.parse(fullfn)
+                fullfn = dir + "/" + fn
 
-            data = { }
-            data['version'] = script_version
-            data['key'] = self.key or 'unlocked'
+                if fn.endswith("_ren.py"):
+                    rpycfn = fullfn[:-7] + ".rpyc"
+                    oldrpycfn = olddir + "/" + fn[:-7] + ".rpyc"
+                else:
+                    rpycfn = fullfn + "c"
+                    oldrpycfn = olddir + "/" + fn + "c"
 
-            if stmts is None:
-                return data, [ ]
+                stmts = renpy.parser.parse(fullfn)
 
-            used_names = set()
+                data = { }
+                data['version'] = script_version
+                data['key'] = self.key or 'unlocked'
+                data['deferred_parse_errors'] = renpy.parser.deferred_parse_errors
 
-            for mergefn in [ oldrpycfn, rpycfn ]:
+                if stmts is None:
+                    return data, [ ]
 
-                # See if we have a corresponding .rpyc file. If so, then
-                # we want to try to upgrade our .rpy file with it.
-                try:
-                    self.record_pycode = False
+                used_names = set()
 
-                    with open(mergefn, "rb") as rpycf:
-                        bindata = self.read_rpyc_data(rpycf, 1)
+                for mergefn in [ oldrpycfn, rpycfn ]:
 
-                    if bindata is not None:
-                        old_data, old_stmts = loads(bindata)
-                        self.merge_names(old_stmts, stmts, used_names)
-
-                        del old_data
-                        del old_stmts
-                except Exception:
-                    pass
-                finally:
-                    self.record_pycode = True
-
-            self.assign_names(stmts, renpy.lexer.elide_filename(fullfn))
-
-            pickle_data_before_static_transforms = dumps((data, stmts))
-
-            self.static_transforms(stmts)
-
-            pickle_data_after_static_transforms = dumps((data, stmts))
-
-            if not renpy.macapp:
-                try:
-                    with open(rpycfn, "wb") as f:
-                        self.write_rpyc_header(f)
-                        self.write_rpyc_data(f, 1, pickle_data_before_static_transforms)
-                        self.write_rpyc_data(f, 2, pickle_data_after_static_transforms)
-
-                        with open(fullfn, "rb") as fullf:
-                            rpydigest = hashlib.md5(fullf.read()).digest()
-
-                        self.write_rpyc_md5(f, rpydigest)
-                except Exception:
-                    import traceback
-                    traceback.print_exc()
-
-            self.loaded_rpy = True
-
-        elif fn.endswith(".rpyc") or fn.endswith(".rpymc"):
-
-            data = None
-            stmts = None
-
-            with renpy.loader.load(fn, tl=False) as f:
-                for slot in [ 2, 1 ]:
+                    # See if we have a corresponding .rpyc file. If so, then
+                    # we want to try to upgrade our .rpy file with it.
                     try:
-                        bindata = self.read_rpyc_data(f, slot)
+                        self.record_pycode = False
 
-                        if bindata:
-                            data, stmts = loads(bindata)
-                            break
+                        with open(mergefn, "rb") as rpycf:
+                            bindata = self.read_rpyc_data(rpycf, 1)
 
+                        if bindata is not None:
+                            old_data, old_stmts = loads(bindata)
+                            self.merge_names(old_stmts, stmts, used_names)
+
+                            del old_data
+                            del old_stmts
                     except Exception:
                         pass
+                    finally:
+                        self.record_pycode = True
 
-                    f.seek(0)
+                self.assign_names(stmts, renpy.lexer.elide_filename(fullfn))
 
-                else:
-                    return None, None
+                pickle_data_before_static_transforms = dumps((data, stmts))
 
-                if data is None:
-                    print("Failed to load", fn)
-                    return None, None
+                self.static_transforms(stmts)
 
-                if not isinstance(data, dict):
-                    return None, None
+                pickle_data_after_static_transforms = dumps((data, stmts))
 
-                if self.key and data.get('key', 'unlocked') != self.key:
-                    return None, None
+                if not renpy.macapp:
+                    try:
+                        with open(rpycfn, "wb") as f:
+                            self.write_rpyc_header(f)
+                            self.write_rpyc_data(f, 1, pickle_data_before_static_transforms)
+                            self.write_rpyc_data(f, 2, pickle_data_after_static_transforms)
 
-                if data['version'] != script_version:
-                    return None, None
+                            with open(fullfn, "rb") as fullf:
+                                rpydigest = hashlib.md5(fullf.read()).digest()
 
-                if slot < 2:
-                    self.static_transforms(stmts)
+                            self.write_rpyc_md5(f, rpydigest)
+                    except Exception:
+                        import traceback
+                        traceback.print_exc()
 
-        else:
-            return None, None
+                self.loaded_rpy = True
 
-        return data, stmts
+            elif fn.endswith(".rpyc") or fn.endswith(".rpymc"):
+
+                data = None
+                stmts = None
+
+                with renpy.loader.load(fn, tl=False) as f:
+                    for slot in [ 2, 1 ]:
+                        try:
+                            bindata = self.read_rpyc_data(f, slot)
+
+                            if bindata:
+                                data, stmts = loads(bindata)
+                                break
+
+                        except Exception:
+                            pass
+
+                        f.seek(0)
+
+                    else:
+                        return None, None
+
+                    if data is None:
+                        print("Failed to load", fn)
+                        return None, None
+
+                    if not isinstance(data, dict):
+                        return None, None
+
+                    if self.key and data.get('key', 'unlocked') != self.key:
+                        return None, None
+
+                    if data['version'] != script_version:
+                        return None, None
+
+                    if slot < 2:
+                        self.static_transforms(stmts)
+
+                    renpy.parser.deferred_parse_errors = data.get('deferred_parse_errors', None) or collections.defaultdict(list)
+
+            else:
+                return None, None
+
+            return data, stmts
+
+        finally:
+
+            # Restore the deferred parse errors.
+            for k, v in renpy.parser.deferred_parse_errors.items():
+                old_deferred_parse_errors[k].extend(v)
+
+            renpy.parser.deferred_parse_errors = old_deferred_parse_errors
+
+
 
     def load_appropriate_file(self, compiled, source_extensions, dir, fn, initcode): # @ReservedAssignment
         data = None

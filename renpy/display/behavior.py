@@ -556,13 +556,15 @@ class PauseBehavior(renpy.display.layout.Null):
 
     voice = False
     modal = False
+    self_voice = False
 
-    def __init__(self, delay, result=False, voice=False, modal=None, **properties):
+    def __init__(self, delay, result=False, voice=False, self_voicing=False, modal=None, **properties):
         super(PauseBehavior, self).__init__(**properties)
 
         self.delay = delay
         self.result = result
         self.voice = voice
+        self.self_voicing = self_voicing
         self.modal = (renpy.config.modal_blocks_pause) if (modal is None) else modal
 
     def event(self, ev, x, y, st):
@@ -575,8 +577,13 @@ class PauseBehavior(renpy.display.layout.Null):
 
             if st >= self.delay:
 
+                if self.self_voicing and renpy.config.nw_voice:
+                    if renpy.display.tts.is_active() or not renpy.config.afm_callback():
+                        renpy.game.interface.timeout(0.05)
+                        return
+
                 if self.voice and renpy.config.nw_voice:
-                    if (not renpy.config.afm_callback()) or renpy.display.tts.is_active():
+                    if not renpy.config.afm_callback():
                         renpy.game.interface.timeout(0.05)
                         return
 
@@ -1026,7 +1033,6 @@ class Button(renpy.display.layout.Window):
                     clicked = self.action
                 else:
                     clicked = None
-                    role = ''
 
             else:
                 role = ''
@@ -1044,6 +1050,11 @@ class Button(renpy.display.layout.Window):
                 self.set_style_prefix(self.role + "idle_", True)
                 self.focusable = True
             else:
+                self.set_transform_event(self.role + "insensitive")
+
+                if self.child:
+                    self.child.set_transform_event(self.role + "insensitive")
+
                 self.set_style_prefix(self.role + "insensitive_", True)
                 self.focusable = False
 
@@ -1783,16 +1794,19 @@ class Adjustment(renpy.object.Object):
     force_step = False
 
     # The amplitude of the inertia.
-    inertia_amplitude = None # type: float|None
+    animation_amplitude = None # type: float|None
 
     # The target value of the inertia.
-    inertia_target = None # type: float|None
+    animation_target = None # type: float|None
 
     # The time the inertia started
-    inertia_start = None # type: float|None
+    animation_start = None # type: float|None
 
     # The time constant of the inertia.
-    inertia_time_constant = None # type: float|None
+    animation_delay = None # type: float|None
+
+    # The warper applied to the animation.
+    animation_warper = None # type (float) -> float|None
 
     def __init__(self, range=1, value=0, step=None, page=None, changed=None, adjustable=None, ranged=None, force_step=False): # type: (int|float|None, int|float|None, int|float|None, int|float|None, Callable|None, bool|None, Callable|None, bool) -> None
         """
@@ -1874,7 +1888,7 @@ class Adjustment(renpy.object.Object):
     def round_value(self, value, release):
         # Prevent deadlock border points
         if value <= 0:
-            return type(self._value)(0)
+            return type(self._value)(0) # type: ignore
         elif value >= self._range:
             return self._range
 
@@ -1884,11 +1898,11 @@ class Adjustment(renpy.object.Object):
         if (not release) and self.force_step == "release":
             return value
 
-        return type(self._value)(self.step * round(float(value) / self.step))
+        return type(self._value)(self.step * round(float(value) / self.step)) # type: ignore
 
     def get_value(self):
         if self._value <= 0:
-            return type(self._value)(0)
+            return type(self._value)(0) # type: ignore
         if self._value >= self._range: # type: ignore
             return self._range
 
@@ -1969,34 +1983,57 @@ class Adjustment(renpy.object.Object):
         for d in adj_registered.setdefault(self, [ ]):
             renpy.display.render.invalidate(d)
 
-    def inertia(self, amplitude, time_constant, st):
+    def inertia_warper(self, done):
+        return 1.0 - math.exp(-done * 6)
+
+    def animate(self, amplitude, delay, warper):
         if not amplitude or not self._range:
-            self.end_animation(True)
+            self.end_animation()
         else:
-            self.inertia_amplitude = amplitude
-            self.inertia_target = self._value + amplitude
-            self.inertia_time_constant = time_constant
-            self.inertia_start = st
+            self.animation_amplitude = amplitude
+            self.animation_target = self._value + amplitude
 
-    def end_animation(self, always=False):
-        if always or self.inertia_target is not None:
-            self.inertia_amplitude = None
-            self.inertia_target = None
-            self.inertia_start = None
-            self.inertia_time_constant = None
+            self.animation_delay = delay
+            self.animation_start = None
+            self.animation_warper = warper
+            self.update()
 
-            value = self.round_value(self._value, release=True)
-            self.change(value, end_animation=False)
+    def inertia(self, amplitude, time_constant, st):
+        self.animate(amplitude, time_constant * 6.0, self.inertia_warper)
+        self.periodic(st)
 
-    def animate(self, st):
+    def end_animation(self, instantly=False):
+        if self.animation_target is not None or instantly:
+            value = self.animation_target
 
-        if self.inertia_target is None:
+            self.animation_amplitude = None
+            self.animation_target = None
+            self.animation_start = None
+            self.animation_delay = None
+            self.animation_warper = None
+
+            if not instantly:
+                self.change(value, end_animation=False)
+
+    def periodic(self, st):
+
+        if self.animation_target is None:
             return
 
-        value = self.inertia_target - self.inertia_amplitude * math.exp(-(st - self.inertia_start) / self.inertia_time_constant)
+        if self.animation_start is None:
+            self.animation_start = st
+
+        done = (st - self.animation_start) / self.animation_delay
+        done = self.animation_warper(done)
+
+        value = self.animation_target - self.animation_amplitude * (1.0 - done)
+
         self.change(value, end_animation=False)
 
-        if st > self.inertia_start + self.inertia_time_constant * 6:
+        if value < 0 or value > self._range:
+            self.end_animation(instantly=True)
+            return 0
+        elif st > self.animation_start + self.animation_delay: # type: ignore
             self.end_animation()
             return None
         else:

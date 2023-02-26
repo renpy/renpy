@@ -1072,9 +1072,7 @@ class Label(Node):
 
         values = apply_arguments(self.parameters, renpy.store._args, renpy.store._kwargs)
 
-        for k, v in values.items():
-            renpy.exports.dynamic(k)
-            setattr(renpy.store, k, v)
+        renpy.exports.dynamic(**values)
 
         renpy.store._args = None
         renpy.store._kwargs = None
@@ -2393,6 +2391,7 @@ EARLY_CONFIG = {
     "name",
     "version",
     "save_token_keys",
+    "check_conflicting_properties",
 }
 
 define_statements = [ ]
