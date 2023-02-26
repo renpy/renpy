@@ -89,7 +89,7 @@ init -1600 python:
         input_down = [ 'any_K_DOWN', 'any_KP_DOWN' ],
         input_delete = [ 'any_K_DELETE', 'any_KP_DELETE' ],
         input_home = [ 'K_HOME', 'KP_HOME', 'meta_K_LEFT' ],
-        input_end = [ 'K_END', 'KP_HOME', 'meta_K_RIGHT' ],
+        input_end = [ 'K_END', 'KP_END', 'meta_K_RIGHT' ],
         input_copy = [ 'ctrl_noshift_K_INSERT', 'ctrl_noshift_K_c', 'meta_noshift_K_c' ],
         input_paste = [ 'shift_K_INSERT', 'ctrl_noshift_K_v', 'meta_noshift_K_v' ],
         input_jump_word_left = [ 'osctrl_K_LEFT', 'osctrl_KP_LEFT' ],
