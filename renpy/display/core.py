@@ -3139,7 +3139,7 @@ class Interface(object):
             mouse_kind = self.mouse
 
         if pygame.mouse.get_pressed()[0]:
-            mouse_kind = "pressed_" + mouse_kind 
+            mouse_kind = "pressed_" + mouse_kind
 
         if cache_only and (mouse_kind not in self.cursor_cache): # type: ignore
             # if the mouse_kind cursor is not in cache, use a replacement
@@ -4266,7 +4266,7 @@ class Interface(object):
                     # also change the keymap.
 
                     if pygame.key.get_mods() & pygame.KMOD_GUI:
-                        pygame.key.set_mods(0)
+                        pygame.key.set_mods(pygame.key.get_mods() & (pygame.KMOD_NUM | pygame.KMOD_CAPS))
 
                     continue
 
@@ -4357,7 +4357,7 @@ class Interface(object):
                             renpy.audio.audio.unpause_all()
                             self.audio_paused = False
 
-                    pygame.key.set_mods(0)
+                    pygame.key.set_mods(pygame.key.get_mods() & (pygame.KMOD_NUM | pygame.KMOD_CAPS))
 
                 # This returns the event location. It also updates the
                 # mouse state as necessary.
