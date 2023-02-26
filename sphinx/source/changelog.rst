@@ -390,6 +390,9 @@ of the game to be paused when the player switches to another window.
 
 The screens' ``for`` loops now support the ``continue`` and ``break`` statements.
 
+Disabling Dialogue's :ref:`monologue-mode` is now possible using the
+``rpy monologue none`` statement at the beginning of the file it should apply to.
+
 Other Changes
 -------------
 
