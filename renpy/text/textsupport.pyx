@@ -1122,10 +1122,10 @@ def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w,
     for l in lines:
         end = l.y + l.height
 
-        l.y += int(dy * l.y / h)
+        l.y += <short> int(dy * l.y / h)
         end += int(dy * end / h)
 
-        l.height = end - l.y
+        l.height = <short> (end - l.y)
 
 def offset_glyphs(list glyphs, short x, short y):
     cdef Glyph g
