@@ -379,6 +379,10 @@ If you'd like to omit the spaces between the blocks, write
 ``rpy monologue single`` at the top level of the file, before the first
 monologue line.
 
+If you'd like to disable this instead, and have all the lines you write between
+triple quotes be displayed as a single message, conserving line breaks, you can
+do it with ``rpy monologue none``.
+
 
 Python Equivalents
 ------------------
