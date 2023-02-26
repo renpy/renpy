@@ -105,9 +105,9 @@ else:
 version_only = ".".join(str(i) for i in version_tuple)
 
 if not official:
-    version_only += "u"
+    version_only += "+unofficial"
 elif nightly:
-    version_only += "n"
+    version_only += "+nightly"
 
 # A verbose string giving the version.
 version = "Ren'Py " + version_only
