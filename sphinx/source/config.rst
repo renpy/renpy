@@ -730,10 +730,12 @@ Occasionally Used
 
     Otherwise, this should be a dictionary giving the
     mouse animations for various mouse types. Keys used by the default
-    library include "default", "say", "with", "menu", "prompt",
-    "imagemap", "pause", "mainmenu", and "gamemenu". The "default" key
-    should always be present, as it is used when a more specific key
-    is absent.
+    library include ``default``, ``say``, ``with``, ``menu``, ``prompt``,
+    ``imagemap``, ``button``, ``pause``, ``mainmenu``, and 
+    ``gamemenu``. The ``default`` key should always be present, as it is 
+    used when a more specific key is absent. Keys can have an optional 
+    prefix ``pressed_`` to indicate that the cursor will be used when the
+    mouse is pressed.
 
     Each value in the dictionary should be a list of (`image`,
     `xoffset`, `yoffset`) tuples, representing frames.
@@ -754,7 +756,7 @@ Occasionally Used
     The frames are played back at 20Hz, and the animation loops after
     all frames have been shown.
 
-    See :doc:`mouse` for more information.
+    See :doc:`mouse` for more information and examples.
 
 .. var:: config.mouse_displayable = None
 
