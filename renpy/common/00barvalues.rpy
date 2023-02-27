@@ -210,6 +210,7 @@ init -1500 python:
     class FieldValue(BarValue, FieldEquality):
         """
         :doc: value
+        :args: (self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False)
 
         A bar value that allows the user to adjust the value of a field
         on an object.
@@ -241,11 +242,12 @@ init -1500 python:
         offset = 0
         action = None
         force_step = False
+        kind = "field"
 
         identity_fields = [ 'object', ]
         equality_fields = [ 'range', 'max_is_zero', 'style', 'offset', 'step', 'action', 'force_step', 'field' ]
 
-        def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False):
+        def __init__(self, object, field, range, max_is_zero=False, style="bar", offset=0, step=None, action=None, force_step=False, kind="field"):
             self.object = object
             self.field = field
             self.range = range
@@ -253,6 +255,7 @@ init -1500 python:
             self.style = style
             self.offset = offset
             self.force_step = force_step
+            self.kind = kind
 
             if step is None:
                 if isinstance(range, float):
@@ -273,14 +276,14 @@ init -1500 python:
 
             value += self.offset
 
-            setattr(self.object, self.field, value)
+            _set_field(self.object, self.field, value, "field")
             renpy.restart_interaction()
 
             return renpy.run(self.action)
 
         def get_adjustment(self):
 
-            value = getattr(self.object, self.field)
+            value = _get_field(self.object, self.field, "field")
 
             value -= self.offset
 
@@ -310,7 +313,9 @@ init -1500 python:
         in the default store.
 
         `variable`
-            A string giving the name of the variable to adjust.
+            The `variable` parameter must be a string, and can be a simple name like "strength", or
+            one with dots separating the variable from fields, like "hero.strength"
+            or "persistent.show_cutscenes".
         `range`
             The range to adjust over.
         `max_is_zero`
@@ -331,7 +336,7 @@ init -1500 python:
             If not None, an action to call when the field has changed.
         """
 
-        return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step, action=action, force_step=force_step)
+        return FieldValue(store, variable, range, max_is_zero=max_is_zero, style=style, offset=offset, step=step, action=action, force_step=force_step, kind="variable")
 
     @renpy.pure
     class ScreenVariableValue(BarValue, FieldEquality):

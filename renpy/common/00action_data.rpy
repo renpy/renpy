@@ -26,7 +26,7 @@ init -1600 python:
 
     __FieldNotFound = object()
 
-    def __get_field(obj, name, kind):
+    def _get_field(obj, name, kind):
 
         if not name:
             return obj
@@ -40,11 +40,11 @@ init -1600 python:
 
         return rv
 
-    def __set_field(obj, name, value, kind):
+    def _set_field(obj, name, value, kind):
         fields, _, attr = name.rpartition(".")
 
         try:
-            obj = __get_field(obj, fields, kind)
+            obj = _get_field(obj, fields, kind)
             setattr(obj, attr, value)
         except Exception:
             raise NameError("The {} {} does not exist.".format(kind, name))
@@ -72,11 +72,11 @@ init -1600 python:
             self.kind = kind
 
         def __call__(self):
-            __set_field(self.object, self.field, self.value, self.kind)
+            _set_field(self.object, self.field, self.value, self.kind)
             renpy.restart_interaction()
 
         def get_selected(self):
-            return __get_field(self.object, self.field, self.kind) == self.value
+            return _get_field(self.object, self.field, self.kind) == self.value
 
     @renpy.pure
     def SetVariable(name, value):
@@ -214,7 +214,7 @@ init -1600 python:
             self.kind = kind
 
         def __call__(self):
-            value = __get_field(self.object, self.field, self.kind)
+            value = _get_field(self.object, self.field, self.kind)
 
             if self.true_value is not None:
                 value = (value == self.true_value)
@@ -227,11 +227,11 @@ init -1600 python:
                 else:
                     value = self.false_value
 
-            __set_field(self.object, self.field, value, self.kind)
+            _set_field(self.object, self.field, value, self.kind)
             renpy.restart_interaction()
 
         def get_selected(self):
-            rv = __get_field(self.object, self.field, self.kind)
+            rv = _get_field(self.object, self.field, self.kind)
 
             if self.true_value is not None:
                 rv = (rv == self.true_value)
