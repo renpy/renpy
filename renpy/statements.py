@@ -177,6 +177,16 @@ def register(
         other times.
 
         This is called with a single argument, the object returned from parse.
+
+    .. warning::
+
+        Using the empty string as the name to redefine the say statement is
+        usually a bad idea. That is because when replacing a Ren'Py native
+        statement, its behavior depends on the :doc:`statement_equivalents`. In
+        the case of the say statement, these equivalents do not support the `id`
+        and translation systems. As a result, a game redefining the default
+        statement will not be able to use these features (short of
+        reimplementing them entirely).
     """
 
     name = tuple(name.split())
