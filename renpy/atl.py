@@ -473,7 +473,7 @@ class ATLTransformBase(renpy.object.Object):
             child = child._duplicate(_args)
 
         # Create a new ATL Transform.
-        parameters = renpy.ast.ParameterInfo([ ], positional, None, None)
+        parameters = renpy.ast.ParameterInfo.legacy([ ], positional, None, None)
 
         rv = renpy.display.motion.ATLTransform(
             atl=self.atl,

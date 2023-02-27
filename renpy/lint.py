@@ -702,7 +702,7 @@ def check_label(node):
 
     if pi is not None:
 
-        for i, _ in pi.parameters:
+        for i in pi.parameters:
             add_arg(i)
 
         add_arg(pi.extrapos)

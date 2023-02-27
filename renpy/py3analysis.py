@@ -583,7 +583,7 @@ class Analysis(object):
 
         # As we have parameters, analyze with those parameters.
 
-        for name, _default in parameters.parameters:
+        for name in parameters.parameters:
             self.mark_not_constant(name)
 
         if parameters.extrapos is not None:

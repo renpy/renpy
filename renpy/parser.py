@@ -26,6 +26,7 @@ from __future__ import division, absolute_import, with_statement, print_function
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
 import collections
+from inspect import Parameter
 import time
 
 import renpy
@@ -343,48 +344,36 @@ def parse_parameters(l):
         return None
 
     # Result list of parameters, by (name, default value) pairs
-    parameters = [ ]
+    parameters = collections.OrderedDict()
 
-    positional = [ ]
+    # Encountered a slash
+    got_slash = False
 
-    # Name of parameter that is starred
-    extrapos = None
+    # Encountered a star or a *args
+    now_kwonly = False
 
-    # Name of parameter that is double starred
-    extrakw = None
+    kind = Parameter.POSITIONAL_OR_KEYWORD
 
-    # Name of parameter that is last positional-only
-    last_posonly = None
+    # Got a lone * and no parameter after it
+    missing_kwonly = False
 
-    # Name of parameter that is first keyword-only
-    first_kwonly = None
+    # Encountered a defaulted parameter
+    now_default = False
 
-    add_positional = True
+    def name_parsed(name):
+        if name in parameters:
+            l.error("duplicate argument {}".format(name))
 
-    pending_kwonly = False
-
-    has_default = False
-
-    names = set()
-    def name_parsed(name, value):
-        if name in names:
-            l.error("duplicate argument '%s'" % name)
-        else:
-            names.add(name)
-
-    while True:
-
-        if l.match(r'\)'):
-            break
+    while not l.match(r'\)'):
 
         if l.match(r'\*\*'):
 
             extrakw = l.require(l.name)
+            name_parsed(extrakw)
+            parameters[extrakw] = Parameter(extrakw, Parameter.VAR_KEYWORD)
 
             if l.match(r'='):
-                l.error("var-keyword argument cannot have default value")
-
-            name_parsed(extrakw, None)
+                l.error("var-keyword argument cannot have a default value")
 
             # Allow trailing comma
             l.match(r',')
@@ -397,73 +386,78 @@ def parse_parameters(l):
 
         elif l.match(r'\*'):
 
-            if first_kwonly or pending_kwonly:
+            if now_kwonly:
                 l.error("* may appear only once")
 
-            add_positional = False
+            now_kwonly = True
+            kind = Parameter.KEYWORD_ONLY
 
-            pending_kwonly = True
+            # we can have defaulted pos-or-kw and then a required kw-only
+            now_default = False
 
             extrapos = l.name()
 
             if extrapos is not None:
-                if l.match(r'='):
-                    l.error("var-positional argument cannot have default value")
 
-                name_parsed(extrapos, None)
+                name_parsed(extrapos)
+                parameters[extrapos] = Parameter(extrapos, Parameter.VAR_POSITIONAL)
+
+                if l.match(r'='):
+                    l.error("var-positional argument cannot have a default value")
+
+            else:
+                missing_kwonly = True
 
         elif l.match(r'/\*'):
             l.error("expected comma between / and *")
 
         elif l.match('/'):
 
-            if first_kwonly or pending_kwonly:
+            if now_kwonly:
                 l.error("/ must be ahead of *")
 
-            elif last_posonly is not None:
+            elif got_slash:
                 l.error("/ may appear only once")
 
             elif not parameters:
                 l.error("at least one argument must precede /")
 
-            last_posonly = parameters[-1][0]
+            # All previous parameters are actually positional-only
+            parameters = collections.OrderedDict((k, p.replace(kind=p.POSITIONAL_ONLY)) for k, p in parameters.items())
+
+            got_slash = True
 
         else:
 
             name = l.require(l.name)
 
-            if pending_kwonly:
-                pending_kwonly = False
-                first_kwonly = name
+            missing_kwonly = False
 
-            default = None
+            default = Parameter.empty
 
             if l.match(r'='):
                 l.skip_whitespace()
                 default = l.delimited_python("),").strip()
-                has_default = True
+                now_default = True
 
                 if not default:
                     l.error("empty parameter default")
 
-            elif first_kwonly is None and has_default:
+            elif now_default:
                 l.error("non-default argument follows default argument")
 
-            name_parsed(name, default)
-            parameters.append((name, default))
-
-            if add_positional:
-                positional.append(name)
+            name_parsed(name)
+            parameters[name] = Parameter(name, kind=kind, default=default)
 
         if l.match(r'\)'):
             break
 
         l.require(r',')
 
-    if pending_kwonly and extrapos is None:
+    if missing_kwonly:
         l.error("named arguments must follow bare *")
 
-    return renpy.ast.ParameterInfo(parameters, positional, extrapos, extrakw, last_posonly, first_kwonly)
+    return renpy.ast.ParameterInfo(parameters.values())
 
 
 def parse_arguments(l):
