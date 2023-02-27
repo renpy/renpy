@@ -26,6 +26,9 @@ import renpy
 
 include "linebreak.pxi"
 
+cdef short to_short(n):
+    return <short> min(n, 32767)
+
 cdef class Glyph:
 
     def __cinit__(self):
@@ -1109,10 +1112,10 @@ def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w,
 
     for g in glyphs:
 
-        x_offset = <short> (dx * g.x / w)
+        x_offset = to_short(dx * g.x / w)
 
         g.x += x_offset
-        g.y += <short> (dy * g.y / h)
+        g.y += to_short(dy * g.y / h)
 
         if x_offset > old_x_offset:
             g.delta_x_offset = x_offset - old_x_offset
@@ -1122,10 +1125,13 @@ def tweak_glyph_spacing(list glyphs, list lines, double dx, double dy, double w,
     for l in lines:
         end = l.y + l.height
 
-        l.y += <short> int(dy * l.y / h)
-        end += int(dy * end / h)
+        if end > 32767:
+            break
 
-        l.height = <short> (end - l.y)
+        l.y = to_short(l.y + int(dy * l.y / h))
+        end = end + to_short(int(dy * end / h))
+
+        l.height = to_short(end - l.y)
 
 def offset_glyphs(list glyphs, short x, short y):
     cdef Glyph g
@@ -1136,5 +1142,3 @@ def offset_glyphs(list glyphs, short x, short y):
     for g in glyphs:
         g.x += x
         g.y += y
-
-"This exists to force a recompile for Ren'Py 8.0.2 and 7.5.2."
