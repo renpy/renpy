@@ -106,3 +106,12 @@ Pause
 The equivalent of the :ref:`pause-statement` is the :func:`renpy.pause` function.
 
 .. include:: inc/se_pause
+
+Layeredimage
+============
+
+The :ref:`layeredimage-statement` statement has Python equivalents. The group
+statement does not: the name of the group is supplied to :class:`Attribute`,
+and the ``auto`` feature can be implemented using :func:`renpy.list_images`.
+
+.. include:: inc/li
