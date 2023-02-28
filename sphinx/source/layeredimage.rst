@@ -20,8 +20,6 @@ specific language. The :func:`LayeredImage` object is its Python alternative,
 it's not a :doc:`displayable <displayables>` but can be assigned to an image
 statement and used like one.
 
-The bottom of this page contains advice and examples of use.
-
 Defining Layered Images
 =======================
 
@@ -83,8 +81,8 @@ properties.
     A transform or list of transforms that are applied to the layered image.
 
 :ref:`transform properties <transform-properties>`
-    If given, these are used to construct a :func:`Transform` that is applied
-    to the displayable.
+    If given, these are used to construct a transform that is applied to the
+    displayable.
 
 `offer_screen`
     If this is True, the layeredimage will place its children, and size its
@@ -442,11 +440,13 @@ statement to the on-screen display.
 - If a :var:`config.default_attribute_callbacks` function exists and if its
   trigger conditions are met, it is called and potentially adds attributes to
   the set.
-- The two previous stages are not specific to layeredimages, because it is only
-  after this stage that renpy determines which image or layeredimage
-  will be called to display. For that reason, the given set of attributes must
-  lead to one, and only one, defined image (or layeredimage, Live2D...), using
-  the behavior described in the :ref:`show statement section <show-statement>`.
+
+The previous stages are not specific to layeredimages, because it is only after
+this stage that renpy determines which image or layeredimage will be called to
+display. For that reason, the given set of attributes must lead to one, and only
+one, defined image (or layeredimage, Live2D...), using the behavior described in
+the :ref:`show statement section <show-statement>`.
+
 - Then, the provided attributes are combined with the attributes defined in the
   layeredimage, discarding some previously shown attributes and conserving
   others. This is also the point when unrecognized attributes are detected and
@@ -509,7 +509,7 @@ If you want a sprite to be always visible, use either the ``always`` clause or
 the ``attribute x default`` syntax. ``always`` will require you to provide the
 displayable explicitly (automatic attribution using the
 :ref:`pattern <layeredimage-pattern>` will not be available), but ``attribute``
-will spend the "x" attribute name which will then be reserved for that
+will spend the "x" attribute name which will always be active for that
 layeredimage.
 
 If you want it to appear depending on the attributes being passed to the
