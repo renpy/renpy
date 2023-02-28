@@ -267,12 +267,13 @@ class Context(object):
     def __ne__(self, other):
         return not (self == other)
 
-# This is intended to be subclassed by ATLTransform. It takes care of
-# managing ATL execution, which allows ATLTransform itself to not care
-# much about the contents of this file.
-
 
 class ATLTransformBase(renpy.object.Object):
+    """
+    This is intended to be subclassed by ATLTransform. It takes care of
+    managing ATL execution, which allows ATLTransform itself to not care
+    much about the contents of this file.
+    """
 
     # Compatibility with older saves.
     parameters = renpy.ast.EMPTY_PARAMETERS
@@ -422,8 +423,9 @@ class ATLTransformBase(renpy.object.Object):
 
         context = self.context.context.copy()
 
-        for k, v in self.parameters.parameters:
-            if v is not None:
+        for k, p in self.parameters.parameters.items():
+            v = p.default
+            if v not in (None, p.empty):
                 context[k] = renpy.python.py_eval(v)
 
         positional = list(self.parameters.positional)
