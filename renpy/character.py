@@ -602,6 +602,24 @@ def display_say(
             # Create the callback that is called when the slow text is done.
             slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause, dtt.no_wait)
 
+            # Predict extend statements, and add them to the text so that re-layout
+            # is not required.
+            if renpy.config.scry_extend:
+
+                extend_text = ""
+
+                scry = renpy.exports.scry().next()
+
+                while scry:
+                    if scry.extend_text is renpy.ast.DoesNotExtend:
+                        break
+                    elif scry.extend_text is not None:
+                        extend_text += scry.extend_text
+
+                    scry = scry.next()
+
+                what_string += extend_text
+
             # Show the text.
             if multiple:
                 what_text = show_function(who, what_string, multiple=multiple)
@@ -615,20 +633,6 @@ def display_say(
                 afm_text_queue = [ what_text ]
             else:
                 afm_text_queue.append(what_text)
-
-
-            # Text that will always be extended onto the current text.
-            extend_text = ""
-
-            scry = renpy.exports.scry().next()
-
-            while scry:
-                if scry.extend_text is renpy.ast.DoesNotExtend:
-                    break
-                elif scry.extend_text is not None:
-                    extend_text += scry.extend_text
-
-                scry = scry.next()
 
             if interact or what_string or (what_ctc is not None) or (behavior and afm):
 

@@ -575,6 +575,10 @@ while not getting in the way of mouse users.
 Other Improvements
 ------------------
 
+Ren'Py will now predict dialogue followed by the :ref:`extend <extend>` special
+character, and if it can prove that the extend will always occur, will take the
+extended text into account when determining line breaking and spacing.
+
 There have been many copyedits and other improvements to Ren'Py's documentation.
 
 The console has been improved to display more Python 3 types.

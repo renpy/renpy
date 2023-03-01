@@ -1360,6 +1360,9 @@ tts_substitutions = [ ]
 # The base URL where unpacked web videos can be found.
 web_video_base = "./game"
 
+# Used to disable scrying extend, if someone runs into a problem with it.
+scry_extend = True
+
 
 del os
 del collections

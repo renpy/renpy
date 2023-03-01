@@ -266,6 +266,7 @@ init -1100 python:
             config.lenticular_bracket_ruby = False
             config.preserve_volume_when_muted = True
             config.history_current_dialogue = False
+            config.scry_extend = False
 
             if version > (6, 99, 5):
                 config.search_prefixes.append("images/")
@@ -288,7 +289,6 @@ init -1100 python:
             store.iap._constant = True
             store.layeredimage._constant = True
             store.updater._constant = True
-
 
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.

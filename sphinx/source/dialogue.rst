@@ -46,7 +46,8 @@ giving a character name, or a Character object. In the latter case,
 the character object is used to control how the dialogue is shown.
 
 The final form consists of a string and a with clause which has a
-transition. In this case, the string is shown and a screen is shaken
+transition. In this case, th
+e string is shown and a screen is shaken
 at the same time.
 
 
@@ -222,6 +223,8 @@ them can be a problem.
     A character that causes what it says to be displayed centered
     in vertically oriented text, in the middle of the screen,
     outside of any window.
+
+.. _extend:
 
 ``extend``
      A character that causes the last character to speak to say a line
