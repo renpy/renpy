@@ -616,6 +616,20 @@ def display_say(
             else:
                 afm_text_queue.append(what_text)
 
+
+            # Text that will always be extended onto the current text.
+            extend_text = ""
+
+            scry = renpy.exports.scry().next()
+
+            while scry:
+                if scry.extend_text is renpy.ast.DoesNotExtend:
+                    break
+                elif scry.extend_text is not None:
+                    extend_text += scry.extend_text
+
+                scry = scry.next()
+
             if interact or what_string or (what_ctc is not None) or (behavior and afm):
 
                 if not isinstance(what_text, renpy.text.text.Text): # @UndefinedVariable

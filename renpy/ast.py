@@ -528,6 +528,9 @@ def chain_block(block, next): # @ReservedAssignment
     block[-1].chain(next)
 
 
+DoesNotExtend = renpy.object.Sentinel("DoesNotExtend")
+
+
 class Scry(object):
     """
     This is used to store information about the future, if we know it. Unlike
@@ -540,6 +543,10 @@ class Scry(object):
     say = False # type: bool|None
     menu_with_caption = False # type: bool|None
     who = None # type: str|None
+
+    # Text that will be added to the current say statment by a call to
+    # extend.
+    extend_text = None # type: str|None|renpy.object.Sentinel
 
     # By default, all attributes are None.
     def __getattr__(self, name):
@@ -964,9 +971,10 @@ class Say(Node):
         rv.say = True
 
         if self.interact:
-            renpy.exports.scry_say(who, rv)
+            renpy.exports.scry_say(who, self.what, rv)
         else:
             rv.interacts = False # type: ignore
+            rv.extend_text = DoesNotExtend
 
         return rv
 

@@ -202,6 +202,11 @@ init -1700 python:
 
     extend.record_say = False
 
+    def _extend_get_extend_text(what):
+        return config.extend_interjection + what
+
+    extend.get_extend_text = _extend_get_extend_text
+
 
     ##########################################################################
     # Skip indicator

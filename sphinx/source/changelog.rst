@@ -242,9 +242,9 @@ by the text to speech engine.
 
 For example::
 
-        define config.tts_substitutions = [
-            ("Ren'Py", "Ren Pie"),
-        ]
+    define config.tts_substitutions = [
+        ("Ren'Py", "Ren Pie"),
+    ]
 
 Will cause the word "Ren'Py" to be pronounced as "Ren Pie" whenever
 self-voicing speaks it.

@@ -1403,7 +1403,7 @@ def predict_say(who, what):
         predict(what)
 
 
-def scry_say(who, scry):
+def scry_say(who, what, scry):
     """
     :undocumented:
 
@@ -1415,6 +1415,11 @@ def scry_say(who, scry):
         scry.interacts = who.will_interact()
     except Exception:
         scry.interacts = True
+
+    try:
+        scry.extend_text = who.get_extend_text(what)
+    except Exception:
+        scry.extend_text = renpy.ast.DoesNotExtend
 
 
 def say(who, what, *args, **kwargs):
