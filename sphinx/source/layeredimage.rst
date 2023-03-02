@@ -12,8 +12,8 @@ To address this use case, Ren'Py introduces a way of defining an image
 consisting of multiple sprites, organized in layers. (For the purpose of this,
 consider layers to be the layers in a paint program like Photoshop or the GIMP,
 and not the layers used elsewhere in Ren'Py.) Elements of these layers can be
-selected by attributes provided to the image, or by conditions that are
-evaluated at runtime.
+selected by :ref:`attributes <concept-image>` provided to the image, or by
+conditions that are evaluated at runtime.
 
 These images can be declared using the ``layeredimage`` statement, using a
 specific language. The :func:`LayeredImage` object is its Python alternative,
@@ -44,6 +44,16 @@ practical sense, is technically correct and outlines the layeredimage syntax::
         group face auto:
             pos (100, 100)
             attribute neutral default
+
+    label start:
+        show augustina # displaying dress and neutral
+        aug "I like this dress."
+
+        show augustina happy # auto-defined in the auto group
+        aug "But what I like even more..."
+
+        show augustina uniform -happy # uniform replaces dress, neutral replaces happy
+        aug "Is this uniform !"
 
 .. _layeredimage-statement:
 
