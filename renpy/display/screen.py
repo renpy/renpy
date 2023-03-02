@@ -1056,32 +1056,32 @@ def get_screen(name, layer=None):
     """
     :doc: screens
 
-    Returns the ScreenDisplayable with the given `name` on `layer`. `name`
-    is first interpreted as a tag name, and then as a screen name. If the
-    screen is not showing, returns None.
+    Returns information about the screen with the given `name` on `layer`.
+    `name` is first interpreted as a tag name, and then as a screen name.
+    If the screen is not showing, returns None.
 
     This can also take a list of names, in which case the first screen
     that is showing is returned.
 
-    This function can be used to check if a screen is showing::
+    This function can be used to check whether a screen is showing::
 
         if renpy.get_screen("say"):
             text "The say screen is showing."
         else:
             text "The say screen is hidden."
 
-    The ScreenDisplayable objects returned by this function have the
+    The objects returned by this function have the
     following documented fields:
 
-    .. attribute:: ScreenDisplayable.layer
+    .. attribute:: layer
 
         The layer the screen is being displayed on.
 
-    .. attribute:: ScreenDisplayable.name
+    .. attribute:: name
 
         The name of the screen.
 
-    .. attribute:: ScreenDisplayable.zorder
+    .. attribute:: zorder
 
         The zorder the screen is being displayed at.
     """
@@ -1128,7 +1128,7 @@ def has_screen(name):
 
 def get_screen_roll_forward(screen_name):
     """
-    Given a screeen name, determines if roll forward is enable for the
+    Given a screen name, determines if roll forward is enable for the
     screen.
     """
 
@@ -1369,10 +1369,10 @@ def current_screen(): # type: () -> ScreenDisplayable|None
     :doc: screens
     :name: renpy.current_screen
 
-    Returns the ScreenDisplayable corresponding to the screen currently being
+    Returns information about the screen currently being
     updated, rendered, or processed.
 
-    See :func:`get_screen` for documented fields on ScreenDisplayable.
+    See :func:`get_screen` for documented fields on the returned object.
     """
 
     if _current_screen and _current_screen.copied_from:
