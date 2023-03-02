@@ -602,11 +602,11 @@ def display_say(
             # Create the callback that is called when the slow text is done.
             slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause, dtt.no_wait)
 
+            extend_text = ""
+
             # Predict extend statements, and add them to the text so that re-layout
             # is not required.
             if renpy.config.scry_extend:
-
-                extend_text = ""
 
                 scry = renpy.exports.scry().next()
 
@@ -617,8 +617,6 @@ def display_say(
                         extend_text += scry.extend_text
 
                     scry = scry.next()
-
-                what_string += extend_text
 
             # Show the text.
             if multiple:
@@ -653,6 +651,9 @@ def display_say(
                         what_text.set_last_ctc([ u"\ufeff", ctc, ])
 
                 if what_text.text[0] == what_string:
+
+                    if extend_text:
+                        what_text.text[0] += extend_text
 
                     # Update the properties of the what_text widget.
                     what_text.start = start
