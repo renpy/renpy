@@ -501,8 +501,7 @@ def set_pan(pan, delay, channel="music"):
         The amount of time it takes for the panning to occur.
 
     `channel`
-        The channel the panning takes place on. This can be a sound or a music
-        channel. Often, this is channel 7, the default music channel.
+        The channel the panning takes place on, defaulting to the music channel.
     """
 
     try:
