@@ -40,11 +40,44 @@ in Python.
 
 Screens are updated at the start of each interaction, and each time an
 interaction is restarted. Note that a ``with None`` statement does not
-cause an interaction to happen, and hence won't update a screen.
+cause an interaction to happen, and hence won't update a screen. A
+``with Pause(0)`` will be enough to trigger one, if necessary.
 
-A screen has a scope associated with it, giving values to some
-variables. When a variable is accessed by a screen, it's first looked
-up in the scope, and then looked up as a global variable.
+A screen has a scope associated with it, giving values to some variables. There are different kinds
+of variables, in screens, which are resolved as shown in the following list:
+
+- First are local variables. These only exist in a screen that is being included in another with
+  the :ref:`use <sl-use>` statement instead of being shown (or called) on its own. They are very
+  similar with screen variables (see below), and created the same way, except that local variables
+  can only be accessed by the used screen. Those are set using :class:`SetLocalVariable`, among
+  other actions, or by a python block or line in the used screen. Actions such as
+  :class:`SetScreenVariable` will *not work* on local variables.
+    - Local parameters are the parameters taken by the used screen. They live in the same scope as
+      local variables, and follow the same behavior and constraints as screen parameters - see
+      below.
+- If a name cannot be resolved among local variables - or if we are not in a screen being
+  :ref:`used <sl-use>` by another - the name is searched for in screen variables. These are
+  variables created with the in-screen :ref:`sl-default` or :ref:`sl-python` statements, in the
+  top-level screen. Screen variables can be set through the :class:`SetScreenVariable` action,
+  among others, or by a python block or line in the top-level screen, or any used screen if no
+  local variable has the same name.
+    - Screen parameters (that is, values defined and passed through the parentheses of the screen
+      statement) live in the same scope as screen variables (that is, they can't have the same
+      name), but they can't be set or edited through actions, since they will be reset to their
+      original value at arbitrary times, including every time an action is executed. So, if their
+      value were edited through the :class:`SetScreenVariable` action (or any other action really),
+      it would be reset immediately afterwards. This is also the case for variables defined in
+      in-screen python blocks, since these blocks are executed at arbitrary times, as opposed to
+      the in-screen :ref:`default <sl-default>` statement which executes only at the time the
+      screen gets shown.
+- In last resort, a variable name is looked for in the general store, where all of Ren'Py's global
+  variables are. Such variables can be set through the :class:`SetVariable` action, among others.
+
+.. note::
+
+    If you want an action to set a variable inside a screen, and you want that screen to be
+    sometimes shown directly and sometimes used inside another, use :class:`SetLocalVariable`. It
+    will be far less efficient, but it will work in both cases.
 
 **Screens must not cause side effects that are visible from
 outside the screen.** Ren'Py will run a screen multiple times, as

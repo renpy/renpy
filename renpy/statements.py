@@ -107,7 +107,9 @@ def register(
 
         The function should return either a string giving a label to jump to,
         the second argument to transfer control into the block, or None to
-        continue to the statement after this one.
+        continue to the statement after this one. It can also return the result
+        of :meth:`Lexer.renpy_statement` or :meth:`Lexer.renpy_block` when
+        called in the `parse` function.
 
     `label`
         This is a function that is called to determine the label of this
@@ -175,6 +177,16 @@ def register(
         other times.
 
         This is called with a single argument, the object returned from parse.
+
+    .. warning::
+
+        Using the empty string as the name to redefine the say statement is
+        usually a bad idea. That is because when replacing a Ren'Py native
+        statement, its behavior depends on the :doc:`statement_equivalents`. In
+        the case of the say statement, these equivalents do not support the `id`
+        and translation systems. As a result, a game redefining the default
+        statement will not be able to use these features (short of
+        reimplementing them entirely).
     """
 
     name = tuple(name.split())

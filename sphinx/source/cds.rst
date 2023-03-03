@@ -1,5 +1,3 @@
-.. _cds:
-
 Creator-Defined Statements
 ==========================
 
@@ -9,9 +7,7 @@ is not supported by the current syntax.
 
 CDS can be more flexible than the direct Python code equivalent.
 
-For example, picking a line of dialogue at random:
-
-::
+For example, picking a line of dialogue at random::
 
     label introduction:
         python:
@@ -34,9 +30,7 @@ Using a CDS allows you to:
 
 - Give you addition information during :ref:`lint` (If at runtime an error was ignored you can have a report here).
 
-For example, the above behaviour, but written as a CDS:
-
-::
+For example, the above behaviour, but written as a CDS::
 
     python early:
         def parse_random(lexer):
@@ -69,9 +63,7 @@ For example, the above behaviour, but written as a CDS:
         )
 
 
-``random`` is now available as a statement:
-
-::
+``random`` is now available as a statement::
 
     label introduction:
         random:
@@ -311,7 +303,8 @@ A custom statement's parse function takes an instance of a Lexer object.
 
         When called, this parses the current line as a Ren'Py script statement,
         generating an error if this is not possible. This method returns
-        an opaque object that can be returned from get_next() or passed
+        an opaque object that can be returned from the `next` function passed to
+        :func:`renpy.register_statement`, or passed
         to :func:`renpy.jump` or :func:`renpy.call`. This object should
         not be stored except as part of the parse result of the statement.
 
@@ -331,7 +324,6 @@ A custom statement's parse function takes an instance of a Lexer object.
         case that you'd like to parse the subblock of the current
         statement, the correct way to do that is::
 
-
             def mystatement_parse(l):
 
                 l.require(':')
@@ -347,7 +339,6 @@ A custom statement's parse function takes an instance of a Lexer object.
             is equivalent to a block with a single ``pass`` statement.)
 
             If False, an empty block triggers an error.
-
 
     .. method:: catch_error()
 
