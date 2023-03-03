@@ -3139,17 +3139,17 @@ class Interface(object):
             mouse_kind = self.mouse
 
         if pygame.mouse.get_pressed()[0]:
-            mouse_kind = "pressed_" + mouse_kind
+            mouse_kind = "pressed_" + mouse_kind # type: ignore
 
         if cache_only and (mouse_kind not in self.cursor_cache): # type: ignore
             # if the mouse_kind cursor is not in cache, use a replacement
             # if pressed_ is in the cursor name, we'll try to use pressed_default
             # or the non-pressed cursor if we have it in cache
             # otherwise we'll use the default cursor
-            if mouse_kind.startswith("pressed_") and ("pressed_default" in self.cursor_cache):
+            if mouse_kind.startswith("pressed_") and ("pressed_default" in self.cursor_cache): # type: ignore
                 # if a generic pressed_default cursor is defined, use it
                 mouse_kind = "pressed_default"
-            elif mouse_kind.startswith("pressed_") and (mouse_kind[8:] in self.cursor_cache):
+            elif mouse_kind.startswith("pressed_") and (mouse_kind[8:] in self.cursor_cache): # type: ignore
                 # otherwise use the non-pressed cursor if we have it in cache
                 mouse_kind = mouse_kind[8:]
             else:
