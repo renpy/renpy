@@ -1,310 +1,98 @@
+==============
 Layered Images
 ==============
 
 When a sprite-set gets to a certain level of complexity, defining every
-possible combination may become unwieldy. For example, a sprite with
+possible combination may become unwieldy. For example, a character with
 4 outfits, 4 hairstyles, and 6 emotions already has 96 possible
 combinations. Creating static images for each possible combination would
 consume a lot of disk space and programmer time.
 
-To address this use case, Ren'Py has a way of defining an image consisting
-of multiple layers. (For the purpose of this, consider layers to be the layers
-in a paint program like Photoshop or the GIMP, and not the layers used elsewhere
-in Ren'Py.) Layers can be shown unconditionally, or can be selected
-by attributes provided to the image or conditions that are evaluated at
-runtime.
+To address this use case, Ren'Py introduces a way of defining an image
+consisting of multiple sprites, organized in layers. (For the purpose of this,
+consider layers to be the layers in a paint program like Photoshop or the GIMP,
+and not the layers used elsewhere in Ren'Py.) Elements of these layers can be
+selected by :ref:`attributes <concept-image>` provided to the image, or by
+conditions that are evaluated at runtime.
 
-To make defining layered images easier, Ren'Py has the ``layeredimage`` statement,
-which introduces a domain-specific language that lets you define a layered
-image. There's also the :func:`LayeredImage` object, which isn't an image
-but can be assigned to an image statement and used like one.
-
+These images can be declared using the ``layeredimage`` statement, using a
+specific language. The :func:`LayeredImage` object is its Python alternative,
+it's not a :doc:`displayable <displayables>` but can be assigned to an image
+statement and used like one.
 
 Defining Layered Images
------------------------
+=======================
 
-The layered image domain-specific language consists of only a few statements,
-one of which is also a script language statement to introduce the image,
-followed by statements to introduce the layers and groups of layers.
-
-To introduce the language, here's a layered image that uses the
-available features, with things that could be implied instead
-explicitly given. ::
+The language used to define layered images consists of only a few statements,
+to introduce the layers. Here is an example which, while not making much
+practical sense, is technically correct and outlines the layeredimage syntax::
 
     layeredimage augustina:
+        zoom 1.4
+        at recolor_transform
 
         always:
             "augustina_base"
 
-        group outfit:
-
-            attribute dress:
-                "augustina_outfit_dress"
-
-            attribute jeans:
-                "augustina_outfit_jeans"
-
-        group eyes:
-
-            attribute open default:
-                "augustina_eyes_open"
-                default True
-
-            attribute wink:
-                "augustina_eyes_wink"
-
-        group eyebrows:
-
-            attribute normal default:
-                "augustina_eyebrows_normal"
-
-            attribute oneup:
-                "augustina_eyebrows_oneup"
-
-        group mouth:
-
-            pos (100, 100)
-
-            attribute smile default:
-                "augustina_mouth_smile"
-
-            attribute happy:
-                "augustina_mouth_happy"
-
-        if evil:
-            "augustina_glasses_evil"
-        else:
-            "augustina_glasses"
-
-
-That is a large amount of script, but it's very regular, and below
-we'll show how to simplify it.
-
-First off, the ``layeredimage`` statement introduces a layered image
-with the name of the sprite. This statement is part of the Ren'Py
-script language, and runs at init time.
-
-The block of a layered image can contain always, group, and if
-statements. A ``group`` statement can take attributes. The ``always`` and ``if``
-statements must be supplied displayables, while the attribute statement
-can optionally be supplied one. All statements can be supplied properties.
-
-The ``always`` statement declares a layer that is always displayed, like the
-background of a sprite.
-
-The ``group`` statement introduces a group of attributes, where only one of
-the attributes can be displayed at a time. So this layered image can only
-have one outfit, and one post for each of the eyes, eyebrows, and mouth.
-Properties given to the group are passed on to the attributes, and a group
-can automatically declare attributes.
-
-The ``attribute`` statement introduces a layer that is displayed if an attribute
-is supplied to the image. For example, "augustina_outfit_dress" is only
-displayed if if the "dress" attribute is supplied. If given the ``default``
-keyword, the attribute is displayed if no conflicting attributes are
-provided; in this example, "augustina_eyes_open" is displayed unless the
-unless the "wink" attribute is given.
-
-Finally, the ``if`` statement adds a layer that selects between displayables
-using a Python statement. This is evaluated constantly, and the first
-condition that evaluates to true is the one that's displayed.
-
-Properties consist of a property name and a simple expression, and
-can be given to each layer. Some properties change the functioning of
-a statement. If one or more :ref:`transform properties <transform-properties>` are
-given, a :func:`Transform` is created that wraps the display. The at property
-can be given a transform or list of transforms that also wrap the displayable.
-For example, the pos property here creates a transform that moves the top-left
-corner of each mouth image.
-
-The resulting image is the size of the bounding box of all the layers, so
-it probably makes sense to have one layer the full size of the image, which
-no other layer goes outside of. The first layer is in the back of the image,
-while the last is in front – in this example, the glasses will be on top of
-the other layers. It's recommended to avoid properties that assume the size
-of the containing image, like :propref:`xcenter` and :propref:`xalign`, as
-these properties do not work well the when the image size is not known.
-
-Groups and attributes may appear more than once in a layered image, with
-all of the layers with an attribute being displayed.
-
-With the exception of the condition in an ``if`` statement, all Python
-expressions are evaluated at init time.
-
-
-Using an Layered Image
-----------------------
-
-To use this (but not other) layered images, the evil variable must be given
-a value, for example with::
-
-    default evil = True
-
-Then the layered image can be shown like any other image. Almost certainly,
-one of the outfits should be given – while Ren'Py doesn't enforce this,
-this image requires one::
-
-    show augustina jeans
-
-While a sprite is being shown, additional attributes will be added to
-those already showing provided they do not conflict. (This is the case
-in all of Ren'Py when an image being shown does not match one that's
-already defined, something that is never the case with a layered image.) So, ::
-
-    show augustina wink
-
-Will activate the layers associated with the wink attribute. We could stop
-winking with::
-
-    show augustina open
-
-As the open eyes conflict with the winking eyes. Or we could simply remove
-the wink attribute using::
-
-    show augustina -wink
-
-Which would display the layer with the open attribute, as it is the
-default.
-
-Layered images can also be used with the scene statement.
-
-
-
-Automatic Attributes
---------------------
-
-There's a lot of repetition our first example, when it comes to the
-attribute names and the displayables that define the attribute. To
-save you from having to do a lot of redundant typing, Ren'Py can
-automatically determine a displayable name from the image name, group name,
-and attribute name. This is done by combining the names with underscores.
-
-When doing this, you can also take advantage of another feature of
-attributes – it's possible to add any properties to the first line and
-omit the block entirely.
-
-Here's our example of having done that::
-
-    layeredimage augustina:
-
-        always:
-            "augustina_base"
+        attribute base2 default
 
         group outfit:
-            attribute dress
-            attribute jeans
+            attribute dress default:
+                "augustina_dress"
+            attribute uniform
 
-        group eyes:
-            attribute open default
-            attribute wink
-
-        group eyebrows:
-            attribute normal default
-            attribute oneup
-
-        group mouth:
+        group face auto:
             pos (100, 100)
-            attribute smile default
-            attribute happy
+            attribute neutral default
 
-        if evil:
-            "augustina_glasses_evil"
-        else:
-            "augustina_glasses"
+    label start:
+        show augustina # displaying dress and neutral
+        aug "I like this dress."
 
-This example is equivalent to the first one (as we gave the same names for
-the displayables in the first example). For example, the dress attribute in
-the outfit group uses "augustina_outfit_dress" for the displayable, a
-displayable that references the image with  that name.
+        show augustina happy # auto-defined in the auto group
+        aug "But what I like even more..."
 
-It's possible to go even further than this, by automatically defining the
-attributes in a group. This is done by giving a group the `auto` keyword,
-which causes the group to search for defined
-images that would match the pattern, then define the attribute if it does
-not already exist.
-
-As with ``attribute``, properties can be placed on the first line of the
-group and the block omitted. The displayable and properties of the
-always statement can be put on the first line the same way.
-
-Here's an example of the final form::
-
-    layeredimage augustina:
-
-        always "augustina_base"
-
-        group outfit auto
-
-        group eyes auto:
-            attribute open default
-
-        group eyebrows auto:
-            attribute normal default
-
-        group mouth auto:
-            pos (100, 100)
-            attribute smile default
-
-        if evil:
-            "augustina_glasses_evil"
-        else:
-            "augustina_glasses"
-
-
-This is about as simply as we can define that image, without changing
-what we define. The savings with auto-definition increases as we have
-more attributes per group. We could also save lines if we didn't need
-default attributes. In that case, all of the groups could be written on
-single lines.
-
-There's no way to omit the displayables from the ``always`` or ``if`` statements,
-so this is as short as it gets – but with a few more images with proper
-names, it's possible to use this to define thousands or even millions
-of combinations of layers.
-
-
-Statement Reference
--------------------
-
-Note that with the exception of the conditions in the ``if`` statement, all expressions are
-evaluated at init time, when the layered image is first defined.
+        show augustina uniform -happy # uniform replaces dress, neutral replaces happy
+        aug "Is this uniform !"
 
 .. _layeredimage-statement:
 
 Layeredimage
-^^^^^^^^^^^^
+------------
 
-The ``layeredimage`` statement is a statement in the Ren'Py script language
-that introduces a layered image. It starts with an image name, and takes
-a block that can contain attribute, group, and if statements.
-
-Layeredimage takes the following properties:
+The ``layeredimage`` statements opens the show. Like the
+:ref:`atl-image-statement`, it takes an image name and opens a block, although
+what's in the block differs greatly. The statement is part of the Ren'Py script
+language, and runs at :ref:`init time <init-phase>`. Inside the block will fit
+the statements described further down, as well as the following optional
+properties.
 
 `image_format`
     When a given image is a string, and this is supplied, the image name
     is interpolated into `image_format` to make an image file. For example,
     "sprites/eileen/{image}.png" will look for the image in a subdirectory
-    of sprites. (This is not used by auto groups, which look for images and
-    not image files.)
+    of sprites. (This is not used by auto groups, which look for defined images
+    and not for image files.)
 
 `format_function`
-    A function that is used instead of `layeredimage.format_function` to format
-    the image information into a displayable.
+    A function that is used instead of :func:`layeredimage.format_function` to
+    format the image information into a displayable, during the image definition
+    at init time.
 
 `attribute_function`
     A function or callable that is used to tweak what attributes end up being
     displayed. It is called with a set of attributes supplied to the image, and
     should return the set of attributes that should be used to select layers.
     It can be used to express complex dependencies between attributes, or to
-    select attributes at random. See the bottom of the page for more information
-    about when and how this is called.
-
-:ref:`transform properties <transform-properties>`
-    If present, these are used to construct a :func:`Transform` that is applied
-    to the displayable.
+    select attributes at random. See :ref:`attribute-selection-process` for more
+    information about when and how this is called.
 
 `at`
     A transform or list of transforms that are applied to the layered image.
+
+:ref:`transform properties <transform-properties>`
+    If given, these are used to construct a transform that is applied to the
+    displayable.
 
 `offer_screen`
     If this is True, the layeredimage will place its children, and size its
@@ -317,28 +105,122 @@ Layeredimage takes the following properties:
     If None, the default, falls back to :var:`config.layeredimage_offer_screen`,
     which defaults to True.
 
+Always
+------
+
+The ``always`` statement declares an image that is always shown inside the
+layeredimage, and which will not be attached to an attribute. It
+must be supplied a displayable, and can also take properties. Both can
+be placed on the same line or inside a block.
+
+The ``always`` statement takes the following properties:
+
+`if_all`
+    A string or list of strings giving the names of attributes. If this is
+    given, this layer is only displayed if all of the named attributes
+    are present.
+
+`if_any`
+    A string or list of strings giving the names of attributes. If this is
+    given, this layer is only displayed if any of the named attributes
+    are present.
+
+`if_not`
+    A string or list of strings giving the names of attributes. If this is
+    given, this layer is only displayed if none of the named attributes are
+    present.
+
+:ref:`transform properties <transform-properties>`
+    If given, these are used to construct a transform that is applied
+    to the displayable.
+
+`at`
+    A transform or list of transforms that are applied to the provided
+    displayable.
+
+If
+^^
+
+The ``if`` statement (or more fully the if-elif-else statement) allows you
+to supply one or more conditions that are evaluated at runtime. Each
+condition is associated with a displayable, with the first true condition
+being the one that is shown. If no condition is true, the ``else`` layer
+is shown if given.
+
+A more complete example of an ``if`` statement might look like::
+
+    if glasses == "evil":
+        "augustina_glasses_evil"
+    elif glasses == "normal":
+        "augustina_glasses"
+    elif glasses == "funky":
+        "augustina_glasses_clown"
+    else:
+        "augustina_nose_mark"
+
+Each clause must be given a displayable. It can also be given these properties:
+
+`if_all`
+    A string or list of strings giving the names of attributes. If this is
+    given, this condition is only considered if all of the named attributes
+    are present.
+
+`if_any`
+    A string or list of strings giving the names of attributes. If this is
+    given, this condition is only considered if any of the named attributes
+    are present.
+
+`if_not`
+    A string or list of strings giving the names of attributes. If this is
+    given, this condition is only considered if none of the named attributes are
+    present.
+
+:ref:`transform properties <transform-properties>`
+    If present, these are used to construct a transform that is applied
+    to the displayable.
+
+`at`
+    A transform or list of transforms that are applied to the displayable.
+
+The ``if`` statement is transformed to a :func:`ConditionSwitch` when the
+``layeredimage`` statement runs.
+
+.. var:: layeredimage.predict_all = None
+
+    Sets the value of `predict_all` for the ConditionSwitches produced
+    by layeredimages' ``if`` statements.
+
+When ``predict_all`` is not true, changing the condition of the if statement
+should be avoided while the layered image is shown or about to be shown,
+as it would lead to an unpredicted image load. It's intended for use for
+character customization options that don't change often.
+
 Attribute
-^^^^^^^^^
+---------
 
-The ``attribute`` statement adds a layer that is displayed when the given
-attribute is used to display the image. The same attribute name can be used
-in multiple layers, with all layers corresponding to the attribute being shown
-(the `if_all`, `if_any`, and `if_not` properties can tweak this).
+The ``attribute`` statement adds a displayable that is part of the resulting
+image when the given attribute is used to display it. For example, using the
+previous example, calling ``show augustina dress`` will cause the
+"augustina_dress" to be shown as part of the "augustina" image.
 
-An attribute takes an attribute name. It can also take two keywords.
-The ``default`` keyword indicates that the attribute should be present
-by default if no attribute in its group conflicts. The ``null`` keyword
-prevents Ren'Py from automatically searching for a displayable corresponding
-to this attribute, which is useful to have an attribute that is intended solely
-for use with `if_all`, `if_any`, or `if_not`.
+An ``attribute`` clause takes an attribute name, which is one word. It can also
+take two keywords. The ``default`` keyword indicates that the attribute should
+be present by default unless an attribute in the same group is called. The
+``null`` keyword prevents this clause from getting attached a displayable, which
+can be useful for bookkeeping and to build conditional display conditions using
+`if_all`, `if_any`, `if_not`, `attribute_function`,
+:var:`config.adjust_attributes` or :var:`config.default_attributes`.
+
+The same attribute name
+can be used in multiple ``attribute`` clauses (and in auto-defined attributes as
+part of ``auto`` groups, more about that later), with all the corresponding
+displayables being shown at the same time (the `if_all`, `if_any`, and `if_not`
+properties can tweak this).
 
 If the displayable is not explicitely given, it will be computed from the name
 of the layeredimage, the group (if any), the group's variant (if any), and the
-attribute, by replacing all spaces with underscores and using underscores to
-combine everything together. So if we have an image named "augustina", the
-group "eyes", no group variant, and the attribute "closed", the image
-"augustina_eyes_closed" will be used. (The layered image's format function is
-used to do this, defaulting to :func:`layeredimage.format_function`.)
+attribute. See the :ref:`pattern <layeredimage-pattern>` section for more
+details.
 
 The attribute statement takes the following properties:
 
@@ -356,7 +238,6 @@ The attribute statement takes the following properties:
     A string or list of strings giving the names of attributes. If this is
     present, this layer is only displayed if none of the named attributes are
     present.
-
 
 :ref:`transform properties <transform-properties>`
     If present, these are used to construct a transform that is applied
@@ -382,33 +263,44 @@ still be part of the attributes list, which means the ``c`` attribute will still
 display.
 
 Group
-^^^^^
+-----
 
-The ``group`` statement groups together alternative layers. When an attribute is
-inside a group, and unless the group is ``multiple``, it is an error to include any
-of the other attributes in that group. (But it's fine for several attributes
-to have same name, even within the same group.)
+The ``group`` statement groups attributes together, making them mutually
+exclusive. Unless the group is ``multiple``, when attributes `a` and `b` are in
+the same group, it is an error to include both of the attributes at the same
+time, with ``show eileen a b`` for example. In the same example, calling
+attribute `a` will hide attribute `b`, and vice versa. However, note that it's
+fine for several ``attribute`` clauses to be passed the same name, *even within
+the same group*. In that case, they will be considered as one attribute
+containing several sprites - more about that at the end of this section.
 
-The ``group`` statement takes a name. The name isn't used for very much, but is
-used to generate the default names of attributes inside the group. That is not the
-case for ``multiple`` groups for which the name doesn't have any use or impact.
+The ``group`` statement takes a name. The name isn't used for very much, except
+to generate the default names of attributes inside the group. That is not the
+case for ``multiple`` groups in which the name doesn't have any use or impact.
 
 The name may be followed by the ``auto`` keyword. If it's present, after any
 attributes in the group have been declared, Ren'Py will scan its list of images
-for those that match the group's pattern (see below). Any images that are found
-that do not correspond to declared attributes are then added to the group as if
-declared with the attribute statement.
+for those that match the group's pattern (see :ref:`below <layeredimage-pattern>`).
+Any images that are found, except those corresponding to explicitly declared
+attributes, are then added to the group as if declared using the ``attribute``
+statement inside the group's block.
 
-This can be followed by the ``multiple`` keyword. If present, more than one
-member of the group can be selected at the same time. This is useful to have
-a group auto-define multiple attributes that are not exclusive, or to apply the
-same properties to a set of attributes at once.
-This conflicts with the ``default`` keyword being given to one of the attributes.
+This can be followed by the ``multiple`` keyword. If present, no incompatibility
+is applied to the attributes declared inside the block. This is useful to have a
+group auto-define multiple attributes that are not exclusive, or to apply the
+same properties to a set of attributes at once. This conflicts with the
+``default`` keyword being given to one of the attributes. Note that ``multiple``
+groups are very different from other, normal groups, and that most of what's
+true about groups doesn't apply to them.
 
-Properties can then be declared on the first line of the group, and it can
-take a block that contains properties and attributes.
+After these optional keywords, properties can then be declared on the first line
+of the group, and it can take a block containing properties and attributes.
 
-There are two properties that are specific to groups.
+The group statement takes the properties ``attribute`` does - such as
+``if_any``, ``at`` and so on. Properties supplied to the group are passed to
+the attributes inside the group, unless overridden by the same property of the
+attribute itself. In addition, there are two properties which are specific to
+groups:
 
 `variant`
     If given, this should be a string. If present, it adds an element that becomes
@@ -416,17 +308,28 @@ There are two properties that are specific to groups.
     for images when automatically defining attributes in ``auto`` groups.
 
 `prefix`
-    If given, this is a prefix that is concatenated using an underscore with
-    the manually or automatically defined attribute names. So if prefix is
-    "leftarm", and the attribute name "hip" is encountered, the attribute
-    "leftarm_hip" is defined instead.
+    If given, this is a prefix that is concatenated using an underscore with the
+    manually or automatically defined attribute names. So if prefix is "leftarm",
+    and the attribute name "hip" is encountered, ``show eileen leftarm_hip``
+    will display it.
 
-The group statement also takes the same properties ``attribute`` does. Properties
-supplied to the group are passed to the attributes inside the group, unless
-overridden by the same property of the attribute itself.
+An attribute may also be part of several groups, in which case the attribute is
+incompatible with every other attribute in every group it's part of. This can be
+useful for example for a `dress` attribute, to make it hide both any top and any
+pants that may be showing when it gets displayed::
 
-Several ``group`` blocks with the same name being defined in the same layeredimage
-are considered to be different parts of a single group. For example::
+    layeredimage eileen:
+        attribute base default
+        group bottom:
+            attribute jeans default
+            attribute dress null
+        group top:
+            attribute shirt default
+            attribute dress
+
+When several ``group`` blocks with the same name are defined in the same
+layeredimage, they are considered to be different parts of a single group. For
+example::
 
     layeredimage eileen sitting:
         attribute base default
@@ -440,199 +343,63 @@ are considered to be different parts of a single group. For example::
             attribute holding_margarita
             attribute mixed
 
-In our example, the ``eileen_sitting_arms_behind_mixed.png`` will contain her left
-arm behind the table, and ``eileen_sitting_arms_infront_mixed.png`` will contain
-her right arm on the table. When calling ``show eileen sitting mixed``, the two
-images will be shown at the same time, respectively behind and in front of the table.
+In this example, ``eileen_sitting_arms_behind_mixed.png`` will contain her
+left arm behind the table, and ``eileen_sitting_arms_infront_mixed.png`` will
+contain her right arm on the table. When calling ``show eileen sitting mixed``,
+the two images will be shown at the same time, respectively behind and in front
+of the table. In this example, the `on_hips` attribute is incompatible with the
+`on_table` attribute, because even though they are not declared in the same
+block, they are both in the same group.
 
-**Pattern.** The image pattern used consists of:
+.. _layeredimage-pattern:
 
-* The name of the image, with spaces replaced with underscores.
-* The name of the group, if the group is not ``multiple``.
+Pattern and format function
+===========================
+
+The pattern, used to find images for attributes when they are not explicitly
+given one, consists of:
+
+* The name of the layeredimage, with spaces replaced with underscores.
+* The name of the group, if any and if the group is not ``multiple``.
 * The name of the variant, if there is one.
 * The name of the attribute.
 
-all combined with underscores. For example, if we have a layered image with
-the name "augustina work", and the group "eyes", this will match images
-that match the pattern augustina_work_eyes\_\ `attribute`. With a `variant`
-of `blue`, it would match the pattern augustina_work_eyes_blue\_\ `attribute`.
+all combined with underscores. For example, if we have a layered image with the
+name "augustina work", and the group "eyes", this will match images that match
+the pattern augustina_work_eyes\_\ `attribute`. With a `variant` of `blue`, it
+would match the pattern augustina_work_eyes_blue\_\ `attribute`. In the
+following example::
 
+    layeredimage augustina work:
+        group eyes variant "blue":
+            attribute closed
 
-Always
-^^^^^^
+The attribute is linked to the image ``"augustina_work_eyes_blue_closed"``. That
+can resolve to an image file named "augustina_work_eyes_blue_closed.png", but it
+can also be defined explicitly using the :ref:`image-statement` for example.
 
-The ``always`` statement declares a layer that is always shown. It
-must be supplied a displayable, and can take properties also. Both can
-be placed on the same line or inside a block.
+If you want a ``multiple`` group's name to be included in the pattern, you can
+use the following syntax::
 
-The always statement takes the following properties:
+    group addons multiple variant "addons"
 
-`if_all`
-    A string or list of strings giving the names of attributes. If this is
-    present, this layer is only displayed if all of the named attributes
-    are present.
-
-`if_any`
-    A string or list of strings giving the names of attributes. If this is
-    present, this layer is only displayed if any of the named attributes
-    are present.
-
-`if_not`
-    A string or list of strings giving the names of attributes. If this is
-    present, this layer is only displayed if none of the named attributes are
-    present.
-
-:ref:`transform properties <transform-properties>`
-    If present, these are used to construct a transform that is applied
-    to the layer.
-
-`at`
-    A transform or list of transforms that are applied to the layer.
-
-If
-^^
-
-The ``if`` statement (or more fully the if-elif-else statement) allows you
-to supply one or more conditions that are evaluated at runtime. Each
-condition is associated with a layer, with the first true condition
-being the one that is shown. If no condition is true, the ``else`` layer
-is shown if present.
-
-A more complete example of an ``if`` statement might look like::
-
-    if glasses == "evil":
-        "augustina_glasses_evil"
-    elif glasses == "normal":
-        "augustina_glasses"
-    else:
-        "augustina_nose_mark"
-
-Each layer must have a displayable given. It can also be given these properties:
-
-`if_all`
-    A string or list of strings giving the names of attributes. If this is
-    present, this condition is only considered if all of the named attributes
-    are present.
-
-`if_any`
-    A string or list of strings giving the names of attributes. If this is
-    present, this condition is only considered if any of the named attributes
-    are present.
-
-`if_not`
-    A string or list of strings giving the names of attributes. If this is
-    present, this condition is only considered if none of the named attributes are
-    present.
-
-
-:ref:`transform properties <transform-properties>`
-    If present, these are used to construct a transform that is applied
-    to the layer.
-
-`at`
-    A transform or list of transforms that are applied to the layer.
-
-The ``if`` statement is transformed to a :func:`ConditionSwitch` when the
-``layeredimage`` statement runs.
-
-.. var:: layeredimage.predict_all = None
-
-    Sets the value of `predict_all` for the ConditionSwitches produced
-    by layered image if statements.
-
-When ``predict_all`` is not true, changing the condition of the if statement
-should be avoided while the layered image is shown or about to be shown,
-as it would lead to an unpredicted image load. It's intended for use for
-character customization options that change rarely.
-
-Poses
------
-
-It's possible to have a character that has sprites in multiple poses,
-where everything – or at least everything of interest – is different.
-For example, if a character has standing and sitting poses, all the image
-parts will be in different places.
-
-In that case, it makes sense to define multiple layered images for the same
-image tag. The ``layeredimage`` statement makes this possible by allowing
-you to include attributes as part of the image name. So we can have::
-
-    layeredimage augustina sitting:
-        ...
-
-    layeredimage augustina standing:
-        ...
-
-This is especially useful when using a layered image to compose a side
-image, where the side images of different characters will have nothing
-to do with each other. ::
-
-    layeredimage side eileen:
-        ...
-
-    layeredimage side lucy:
-        ...
-
-
-Advice
-------
-
-**Use underscores in image names.**
-By default, Ren'Py's layered images use underscores to separate sections
-of image names. It might be tempting to use images with spaces between
-sections, but that could lead to problems later on.
-
-Ren'Py has a rule that if you show an image with the exact name as one
-that's being shown, it's shown instead. This can bypass the layered image
-you defined and show the layer directly, which can lead to weird problems
-like a pair of eyes floating in space.
-
-By having each layer have a different tag from the main image, this is no
-longer a problem.
-
-**Cropping layers isn't necessary.**
-Ren'Py optimizes images by cropping them to the bounding box of the
-non-transparent pixels before loading them into RAM. As a result, assuming
-the images are being predicted properly, it generally won't improve
-performance or image size much to crop the images yourself.
-
-**Layered images shouldn't use data that changes at runtime.**
-With the exception of the condition inside an if statement, all of the
-expressions in a layered images are run at init time. The layered image
-will not pick up changes in variables that occur after the game starts.
-(However, expressions in ATL transforms will be run each time the image
-is show, as with other ATL transforms.)
-
-
-
-Python
-------
-
-Of course, the ``layeredimage`` statements have a Python equivalents. The
-group statement does not – the group is supplied to ``attribute``, and the
-auto functionality can be implemented using :func:`renpy.list_images`.
-
-.. include:: inc/li
-
-:func:`layeredimage.format_function` is a function that is used to format attributes
-and displayables into image files. It's supplied so you can see how it's
-documented, and the arguments it takes if you want to supply your own
-`format_function` to replace it.
+All of the pattern behavior can be changed using a `format_function`:
+:func:`layeredimage.format_function` is the function used under the hood to
+implement the behavior described above. You can see what arguments it takes, in
+case you want to supply your own `format_function` to replace it.
 
 .. include:: inc/li_ff
 
 Proxying Layered Images
------------------------
+=======================
 
-Sometimes, it's necessary to proxy a layered image, to use the same
-layered image in multiple places. One reason for this would be to have
-the same sprite at multiple sizes, while another would be to use it as
-a side image.
+Sometimes, it can be useful (and even necessary) to proxy a layered image, to
+use the same layered image in multiple places. One reason for this would be to
+have a transformed version of a given layeredimage, while another would be to
+use it as a side image.
 
 The :func:`LayeredImageProxy` object does this, taking one layered image and
-duplicating it somewhere else.
-
-For example::
+duplicating it somewhere else. For example::
 
     image dupe = LayeredImageProxy("augustina")
 
@@ -642,42 +409,129 @@ image, like this::
 
     image side augustina = LayeredImageProxy("augustina", Transform(crop=(0, 0, 362, 362), xoffset=-80))
 
+See the difference::
+
+    image sepia_augustina_one = Transform("augustina", matrixcolor=SepiaMatrix())
+    image sepia_augustina_two = LayeredImageProxy("augustina", Transform(matrixcolor=SepiaMatrix()))
+
+``sepia_augustina_one`` will be a sepia version of the *original version* of the
+"augustina" layeredimage, in other words what's shown when you don't provide it
+any attribute. On the contrary, ``sepia_augustina_two`` will take any attribute
+"augustina" does, and then apply the sepia effect onto the result. If you can do
+this::
+
+    show augustina happy eyes_blue dress
+
+then::
+
+    show sepia_augustina_one happy eyes_blue dress
+    # won't work, because Transform doesn't take attributes
+
+    show sepia_augustina_two happy eyes_blue dress
+    # will work, and show "augustina happy eyes_blue dress" in sepia effect
+
 .. include:: inc/li_proxy
 
-Selecting attributes to display
--------------------------------
+.. _attribute-selection-process:
 
-Several factors influence what gets displayed following a given ``show`` instruction.
-To provide more clarity as to what happens in which order, this section showcases
-the life of a set of attributes, from the show instruction to the on-screen display.
+Selecting attributes to display
+===============================
+
+Several factors influence what gets displayed following a given
+:ref:`show-statement`. To provide more clarity as to what happens in which
+order, this section showcases the life of a set of attributes, from the show
+statement to the on-screen display.
 
 - The ``show`` statement provides the initial set of attributes, following the
   image tag.
 - If a :var:`config.adjust_attributes` function exists to match
   the image tag, it is called, and returns a potentially different set of
   attributes. If so, it replaces the former set, which is forgotten.
-- If a :var:`config.default_attribute_callbacks` function exists and if its trigger
-  conditions are met, it is called and potentially adds attributes to the set.
-- The two previous stages are not specific to layeredimages, because it is only
-  after this stage that renpy determines which image or layeredimage
-  will be called to display. For that reason, the given set of attributes must
-  lead to one, and only one, defined image (or layeredimage, Live2D...), using
-  the behavior described in the :ref:`show statement section<show-statement>`.
+- If a :var:`config.default_attribute_callbacks` function exists and if its
+  trigger conditions are met, it is called and potentially adds attributes to
+  the set.
+
+The previous stages are not specific to layeredimages, because it is only after
+this stage that renpy determines which image or layeredimage will be called to
+display. For that reason, the given set of attributes must lead to one, and only
+one, defined image (or layeredimage, Live2D...), using the behavior described in
+the :ref:`show statement section <show-statement>`.
+
 - Then, the provided attributes are combined with the attributes defined in the
-  layeredimage, discarding some previously shown attributes and conserving others.
-  This is also the point where unrecognized attributes are detected and related
-  errors are raised. If no such error is raised, the new attributes, along with
-  those which were not discarded, will be recognized by renpy as the set of
-  attributes associated with that image tag. This computing takes some of the
-  incompatibility constraints into account, but not all. For instance
+  layeredimage, discarding some previously shown attributes and conserving
+  others. This is also the point when unrecognized attributes are detected and
+  related errors are raised. If no such error is raised, the new attributes,
+  along with those which were not discarded, will be recognized by renpy as the
+  set of attributes associated with that image tag. This computing takes some
+  of the incompatibility constraints into account, but not all. For instance
   incompatibilities due to attributes being in the same non-multiple group will
   trigger at this point in time, but the if_any/if_all/if_not clauses will not.
   That's why an attribute called but negated by such a clause will be considered
-  active by renpy, and will for example become visible without having to be called
-  again if at some point the condition of the if\_x clause is no longer fulfilled.
-- If an attribute_function has been provided to the layeredimage, it is called
-  with the set of remaining attributes. It returns a potentially different set of
-  attributes.
+  active by renpy, and will for example become visible without having to be
+  called again, if at some point the condition of the if\_x clause is no longer
+  fulfilled.
+- If an ``attribute_function`` has been provided to the layeredimage, it is
+  called with the set of remaining attributes. It returns a potentially
+  different set of attributes.
 - This set is once again confronted with the incompatibility constraints of the
-  layeredimage, this time in full. That is the final stage, and remaining attributes
-  are called into display.
+  layeredimage, this time in full. That is the final stage, and remaining
+  attributes are called into display.
+
+Advice
+======
+
+**Use underscores in image filenames.**
+
+By default, Ren'Py's layered images use underscores to separate sections
+of image names. It might be tempting to use images with spaces between
+sections, but that could lead to problems later on.
+
+Ren'Py has a rule that if you show an image with the exact name as one
+that's being shown, it's shown instead. This can bypass the layered image
+you defined and show the sprite directly on its own, which can lead to weird problems
+like a pair of eyes floating in space.
+
+By having each sprite have a different tag from the main image, this is no
+longer a problem.
+
+
+**Cropping layers isn't necessary.**
+
+Ren'Py optimizes images by cropping them to the bounding box of the
+non-transparent pixels before loading them into RAM. As a result, assuming
+the images are being predicted properly, it generally won't improve
+performance or image size much to crop the images yourself.
+
+
+**Layered images shouldn't use data that changes at runtime.**
+
+Note that with the exception of the conditions in the ``if`` statement, all
+expressions written in a ``layeredimage`` block are evaluated at init time, when
+the layered image is first defined. This is not the case for ATL transforms for
+example, or for anything occurring in :var:`config.adjust_attributes`,
+:var:`config.default_attributes` or ``attribute_function``, but it is the case
+for ``format_function`` which is also only called at layeredimage definition.
+
+
+**Choosing what syntax to use**
+
+If you want a sprite to be always visible, use either the ``always`` clause or
+the ``attribute x default`` syntax. ``always`` will require you to provide the
+displayable explicitly (automatic attribution using the
+:ref:`pattern <layeredimage-pattern>` will not be available), but ``attribute``
+will spend the "x" attribute name which will always be active for that
+layeredimage.
+
+If you want it to appear depending on the attributes being passed to the
+layeredimage at the moment of the ``show`` statement, for example
+``show eileen happy`` instead of ``show eileen jeans``, use the ``attribute``
+statement, in or out of a ``group`` block (or implicitly defined in an ``auto``
+group).
+
+If you want it to appear depending on a python variable or condition, use the
+``if`` statement.
+
+If you want it to depend on both (for example for ``show eileen ribbon`` to show
+either a blue or red ribbon depending on a variable, but no ribbon appearing
+unless you ask for it with the ``ribbon`` attribute), declare all versions as
+attributes and use a dedicated :var:`config.adjust_attributes` function.

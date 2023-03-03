@@ -1081,7 +1081,7 @@ python early in layeredimage:
         another layered image.
 
         `name`
-            A string giving the name of the layered image to proxy to.
+            A string giving the name of the layeredimage to proxy to.
 
         `transform`
             If given, a transform or list of transforms that are applied to the
