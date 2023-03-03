@@ -618,6 +618,9 @@ def display_say(
 
                     scry = scry.next()
 
+                if extend_text:
+                    extend_text = "{done}" + extend_text
+
             # Show the text.
             if multiple:
                 what_text = show_function(who, what_string, multiple=multiple)
