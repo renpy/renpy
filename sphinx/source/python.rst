@@ -147,7 +147,8 @@ Define Statement
 ----------------
 
 The ``define`` statement sets a single variable to a value at init time.
-For example::
+The variable is treated as constant, and should not be changed after
+being set. For example::
 
     define e = Character("Eileen")
 
