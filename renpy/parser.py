@@ -1686,11 +1686,6 @@ def release_deferred_errors():
         """
         parse_errors.extend(pop(queue))
 
-    print(deferred_parse_errors)
-    if deferred_parse_errors:
-        import traceback
-        traceback.print_stack()
-
     # Unconditionally releases the deferred_test queue.
     release("deferred_test")
 
