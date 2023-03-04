@@ -575,6 +575,9 @@ while not getting in the way of mouse users.
 Other Improvements
 ------------------
 
+Ren'Py will now warn when encoutering an explicit ``translate None`` statement
+that does not translate strings, styles, or python.
+
 Ren'Py will now predict dialogue followed by the :ref:`extend <extend>` special
 character, and if it can prove that the extend will always occur, will take the
 extended text into account when determining line breaking and spacing.

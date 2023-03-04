@@ -19,6 +19,22 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**Translate None** Ren'Py will now produce an error when encountering an explicit
+``translate None`` statement that does not translate strings, styles, or python.
+These should be rare, in practice. The recommended change is to replace::
+
+    translate None start_abcd1234:
+        e "This is a test"
+
+with::
+
+    e "This is a test" id start_abcd1234
+
+This change can also be reverted with::
+
+    define config.check_translate_none = False
+
+
 **Keymap** The :doc:`keymap <keymap>` has changed substantially, which means that
 if your game changes the default keymap - usually a bad idea - it
 will need to be updated to reflect the new keysyms.
