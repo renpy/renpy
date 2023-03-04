@@ -1363,6 +1363,12 @@ web_video_base = "./game"
 # Used to disable scrying extend, if someone runs into a problem with it.
 scry_extend = True
 
+# Should Ren'Py check for duplicate translate None statements?
+check_translate_none = True
+
+# Like developer, but available at the end of python early blocks.
+early_developer = False
+
 
 del os
 del collections

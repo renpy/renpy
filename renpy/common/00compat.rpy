@@ -302,12 +302,14 @@ python early hide:
         script_version = ast.literal_eval(script_version)
 
         config.early_script_version = script_version
+        config.early_developer = not script_version
 
         if script_version <= (7, 2, 2):
             config.keyword_after_python = True
 
     except Exception:
         config.early_script_version = None
+        config.early_developer = True
         pass
 
 

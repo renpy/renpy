@@ -2400,6 +2400,7 @@ EARLY_CONFIG = {
     "version",
     "save_token_keys",
     "check_conflicting_properties",
+    "check_translate_none",
 }
 
 define_statements = [ ]

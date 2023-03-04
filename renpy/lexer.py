@@ -131,6 +131,9 @@ class ParseError(Exception):
     def __unicode__(self):
         return self.message
 
+    def defer(self, queue):
+        renpy.parser.deferred_parse_errors[queue].append(self.message)
+
 # Something to hold the expected line number.
 
 
@@ -798,7 +801,7 @@ class Lexer(object):
         if (self.line == -1) and self.block:
             self.filename, self.number, self.text, self.subblock = self.block[0]
 
-        renpy.parser.deferred_parse_errors[queue].append(ParseError(self.filename, self.number, msg, self.text, self.pos).message)
+        ParseError(self.filename, self.number, msg, self.text, self.pos).defer(queue)
 
     def eol(self):
         """

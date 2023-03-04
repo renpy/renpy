@@ -1299,6 +1299,7 @@ def translate_strings(init_loc, language, l):
 
     return ast.Init(init_loc, block, l.init_offset)
 
+translate_none_files = set()
 
 @statement("translate")
 def translate_statement(l, loc):
@@ -1337,6 +1338,10 @@ def translate_statement(l, loc):
 
     l.require(':')
     l.expect_eol()
+
+    if language is None and (loc[0] not in translate_none_files):
+        l.deferred_error("check_translate_none", "The `translate None` statement (without style or python) is not allowed. Use say with id instead. (https://www.renpy.org/doc/html/translation.html#tips)")
+        translate_none_files.add(loc[0])
 
     l.expect_block("translate statement")
 
@@ -1681,6 +1686,11 @@ def release_deferred_errors():
         """
         parse_errors.extend(pop(queue))
 
+    print(deferred_parse_errors)
+    if deferred_parse_errors:
+        import traceback
+        traceback.print_stack()
+
     # Unconditionally releases the deferred_test queue.
     release("deferred_test")
 
@@ -1691,6 +1701,16 @@ def release_deferred_errors():
         release("check_conflicting_properties")
     else:
         pop("check_conflicting_properties")
+
+    if renpy.config.early_developer and renpy.config.check_translate_none:
+        release("check_translate_none")
+    else:
+        pop("check_translate_none")
+
+    if renpy.config.early_developer:
+        release("duplicate_id")
+    else:
+        pop("duplicate_id")
 
     if deferred_parse_errors:
         raise Exception("Unknown deferred error label(s) : {}".format(tuple(deferred_parse_errors)))
