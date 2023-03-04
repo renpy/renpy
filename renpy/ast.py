@@ -398,9 +398,9 @@ class PyExpr(str):
 
     def __new__(cls, s, filename, linenumber, py=3):
         self = str.__new__(cls, s)
-        self.filename = filename
-        self.linenumber = linenumber
-        self.py = py
+        self.filename = filename # type: ignore
+        self.linenumber = linenumber # type: ignore
+        self.py = py # type: ignore
 
         # Queue the string for precompilation.
         if self and (renpy.game.script.all_pyexpr is not None):
