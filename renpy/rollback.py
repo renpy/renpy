@@ -89,7 +89,7 @@ class NoRollback(SlottedNoRollback):
 
 class AlwaysRollback(renpy.revertable.RevertableObject):
     """
-    This is a revertible object that always participates in rollback.
+    This is a revertable object that always participates in rollback.
     It's used when a revertable object is created by an object that
     doesn't participate in the rollback system.
     """
@@ -133,6 +133,9 @@ def reached(obj, reachable, wait):
         nosave = getattr(obj, "nosave", None)
 
         if nosave is not None:
+
+            nosave = getattr(obj, "noreach", nosave)
+
             for k, v in vars(obj).items():
                 if k not in nosave:
                     reached(v, reachable, wait)
