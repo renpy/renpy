@@ -278,8 +278,6 @@ init python:
 
 
         with interface.nolinks():
-            print(rapt_interface, dist, p.path)
-            time.sleep(3)
             rapt.build.build(rapt_interface, dist, p.path, bundle=bundle, install=install, launch=launch, finished=finished, permissions=p.dump['build']['android_permissions'])
 
 
