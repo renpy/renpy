@@ -29,9 +29,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string.h>
 #include <pygame_sdl2/pygame_sdl2.h>
 
-#define MAXVOLUME 16384
-
-
 SDL_mutex *name_mutex;
 
 #ifdef __EMSCRIPTEN__
@@ -100,95 +97,106 @@ static const char *error_msg = NULL;
 /* Have we been initialized? */
 static int initialized = 0;
 
+
+struct Interpolate {
+    /* The number of samples that are finished so far. */
+    unsigned int done;
+
+    /* The duration of the interpolation, in samples. */
+    unsigned int duration;
+
+    /* The starting value. */
+    float start;
+
+    /* The ending value. */
+    float end;
+};
+
+void init_interpolate(struct Interpolate *i, float value) {
+    i->done = 0;
+    i->duration = 0;
+    i->start = value;
+    i->end = value;
+}
+
+static inline float lerp(float start, float end, float done) {
+    return start + (end - start) * done;
+}
+
+static inline float get_interpolate(struct Interpolate *i) {
+    if (i->done >= i->duration) {
+        return i->end;
+    } else {
+        return lerp(i->start, i->end, (float) i->done / (float) i->duration);
+    }
+}
+
 /*
  * This structure represents a channel the system knows about
  * and can play from.
  */
 struct Channel {
 
-    /* The currently playing sample, NULL if this sample isn't playing
+    /* The currently playing stream, NULL if this sample isn't playing
        anything. */
     struct MediaState *playing;
 
-    /* The name of the playing music. */
+    /* The name of the playing stream. */
     char *playing_name;
 
-    /* The number of ms to take to fade in the playing sample. */
+    /* The number of ms to take to fade in the playing stream. */
     int playing_fadein;
 
-    /* Is the playing sample tight? */
+    /* Is the playing stream tight? */
     int playing_tight;
 
-    /* The start time of the playing sample, in ms. */
+    /* The start time of the playing stream, in ms. */
     int playing_start_ms;
 
-    /* The relative volume of the playing sample. */
+    /* The relative volume of the playing stream. */
     float playing_relative_volume;
 
-    /* The queued up sample. */
+    /* The queued up stream. */
     struct MediaState *queued;
 
-    /* The name of the queued up sample. */
+    /* The name of the queued up stream. */
     char *queued_name;
 
-    /* The number of ms to take to fade in the queued sample. */
+    /* The number of ms to take to fade in the queued stream. */
     int queued_fadein;
 
-    /* Is the queued sample tight? */
+    /* Is the queued stream tight? */
     int queued_tight;
 
-    /* The start time of the queued sample, in ms. */
+    /* The start time of the queued stream, in ms. */
     int queued_start_ms;
 
-    /* The relative volume of the queued sample. */
+    /* The relative volume of the queued stream. */
     float queued_relative_volume;
 
     /* Is this channel paused? */
     int paused;
 
-    /* The volume of the channel. */
-    int volume;
+    /* The user set mixer volume. */
+    float mixer_volume;
 
-    /* The position (in bytes) that this channel has queued to. */
+    /* The channel specific volume. */
+    struct Interpolate secondary_volume;
+
+    /* The position (in samples) that this channel has queued to. */
     int pos;
 
-    /*
-     * The number of bytes for each step of fade.
-     * 0 when no fade is in progress.
-     */
-    int fade_step_len;
+    /* Information about the current fading. */
+    struct Interpolate fade;
 
-    /* How many bytes we are into the current fade step. */
-    int fade_off;
+    /* The number of samples in which we'll stop. */
+    int stop_samples;
 
-    /* The current fade volume. */
-    int fade_vol;
-
-    /* The change in fade_vol for each step. */
-    int fade_delta;
-
-    /* The number of bytes in which we'll stop. */
-    int stop_bytes;
-
-    /* The event posted to the queue when we finish a track. */
+    /* The event posted to the queue when we finish the playing stream. */
     int event;
 
-    /* The pan being applied to the current channel. */
-    float pan_start;
-    float pan_end;
-
-    /* The length of the current pan, in samples. */
-    unsigned int pan_length;
-
-    /* The number of samples we've finished in the current pan. */
-    unsigned int pan_done;
-
-    /* These are used like in pan, above. Unlike the volume parameter,
-       the voulme set here is persisted between sessions. */
-    float vol2_start;
-    float vol2_end;
-    unsigned int vol2_length;
-    unsigned int vol2_done;
+    /* The pan of the channel. */
+    struct Interpolate pan;
 
     /* This is set to 1 if this is a movie channel with dropping, 2 if it's a
      * video channel without dropping. */
@@ -218,50 +226,15 @@ struct Channel *channels = NULL;
  */
 SDL_AudioSpec audio_spec;
 
-
-static float interpolate_pan(struct Channel *c) {
-    float done;
-
-    if (c->pan_done > c->pan_length) {
-        c->pan_length = 0;
-    }
-
-    if (c->pan_length == 0) {
-        return c->pan_end;
-    }
-
-    done = 1.0 * c->pan_done / c->pan_length;
-
-    return c->pan_start + done * (c->pan_end - c->pan_start);
-
+static int ms_to_samples(int ms) {
+    return ((long long) ms) * audio_spec.freq / 1000;
 }
 
-static float interpolate_vol2(struct Channel *c) {
-    float done;
-
-    if (c->vol2_done > c->vol2_length) {
-        c->vol2_length = 0;
-    }
-
-    if (c->vol2_length == 0) {
-        return c->vol2_end;
-    }
-
-    done = 1.0 * c->vol2_done / c->vol2_length;
-
-    return c->vol2_start + done * (c->vol2_end - c->vol2_start);
+static int samples_to_ms(int samples) {
+    return ((long long) samples) * 1000 / audio_spec.freq;
 }
 
-static int ms_to_bytes(int ms) {
-    return ((long long) ms) * audio_spec.freq * audio_spec.channels * 2 / 1000;
-}
-
-static int bytes_to_ms(int bytes) {
-    return ((long long) bytes) * 1000 / (audio_spec.freq * audio_spec.channels * 2);
-}
-
-static void start_sample(struct Channel* c, int reset_fade) {
-    int fade_steps;
+static void start_stream(struct Channel* c, int reset_fade) {
 
     if (!c) return;
 
@@ -269,106 +242,24 @@ static void start_sample(struct Channel* c, int reset_fade) {
 
     if (reset_fade) {
 
-        if (c->playing_fadein == 0) {
-            c->fade_step_len = 0;
-        } else {
-            fade_steps = c->volume;
-            c->fade_delta = 1;
-            c->fade_off = 0;
-            c->fade_vol = 0;
+        c->fade.start = 0;
+        c->fade.end = 1.0;
+        c->fade.done = 0;
+        c->fade.duration = ms_to_samples(c->playing_fadein);
 
-            if (fade_steps) {
-                while (c->fade_delta < c->volume) {
-                    c->fade_step_len = c->fade_delta * ms_to_bytes(c->playing_fadein) / fade_steps;
-                    c->fade_step_len &= ~0x7; // Even sample.
-
-                    if (c->fade_step_len != 0) {
-                        break;
-                    }
-
-                    c->fade_delta *= 2;
-                }
-            } else {
-                c->fade_step_len = 0;
-            }
-        }
-
-        c->stop_bytes = -1;
+        c->stop_samples = -1;
     }
 }
 
-static void free_sample(struct MediaState *ss) {
+static void free_stream(struct MediaState *ss) {
     media_close(ss);
 }
+
 
 #define MAX_SHORT (32767)
 #define MIN_SHORT (-32768)
 
-// Actually mixes the audio.
-static void mixaudio(Uint8 *dst, Uint8 *src, int length, int volume) {
-    int i;
-    short *sdst = (short *) dst;
-    short *ssrc = (short *) src;
 
-    for (i = 0; i < length / 2; i++) {
-        int sound = *sdst + (volume * *ssrc) / MAXVOLUME;
-        if (sound > MAX_SHORT) {
-            sound = MAX_SHORT;
-        }
-        if (sound < MIN_SHORT) {
-            sound = MIN_SHORT;
-        }
-
-        *sdst++ = (short) sound;
-        ssrc++;
-    }
-}
-
-
-// Mixes the audio, while performing fading.
-static void fade_mixaudio(struct Channel *c,
-                          Uint8 *dst, Uint8 *src, int length) {
-
-    while (length) {
-
-        // No fade case.
-        if (c->fade_step_len == 0) {
-            mixaudio(dst, src, length, c->volume);
-            return;
-        }
-
-        // Fading, but we have some space left in the current step.
-        if (c->fade_off < c->fade_step_len) {
-            int l = min(c->fade_step_len - c->fade_off, length);
-
-            mixaudio(dst, src, l, c->fade_vol);
-
-            length -= l;
-            dst += l;
-            src += l;
-            c->fade_off += l;
-            continue;
-        }
-
-        // Otherwise, we have no space left in the current fade step.
-        // Go to the next step.
-        c->fade_off = 0;
-        c->fade_vol += c->fade_delta;
-
-        // Don't stop on a fadeout.
-        if (c->fade_vol <= 0) {
-            c->fade_vol = 0;
-        }
-
-        // Stop on a fadein.
-        if (c->fade_vol >= c->volume) {
-            c->fade_vol = c->volume;
-            c->fade_step_len = 0;
-        }
-    }
-
-    return;
-}
 
 static void post_event(struct Channel *c) {
     if (! c->event) {
@@ -381,65 +272,31 @@ static void post_event(struct Channel *c) {
     SDL_PushEvent(&e);
 }
 
-/* This handels panning and vol2 manipulations. */
-static void pan_audio(struct Channel *c, Uint8 *stream, int length) {
-    int i;
-    short *sample = (short *) stream;
-    length /= 4;
 
-    float pan;
-    float vol2;
-    int left = 256;
-    int right = 256;
+static inline void mix_sample(struct Channel *c, short left_in, short right_in, float *left_out, float *right_out) {
 
+    float left = left_in / 1.0 / -MIN_SHORT;
+    float right = right_in / 1.0 / -MIN_SHORT;
 
-    for (i = 0; i < length; i++) {
-
-        if ((i & 0x1f) == 0) {
-            pan = interpolate_pan(c);
-            vol2 = interpolate_vol2(c) * c->playing_relative_volume;
-
-            // If nothing to do, skip 32 samples.
-            if (pan == 0.0 && vol2 == 1.0) {
-                i += 31;
-                c->pan_done += 32;
-                c->vol2_done += 32;
-                sample += 32 * 2;
-                continue;
-            }
-
-            vol2 *= 256.0;
-
-            if (pan < 0) {
-                left = (int) vol2;
-                right = (int) (vol2 * (1.0 + pan));
-            } else {
-                left = (int) (vol2 * (1.0 - pan));
-                right = (int) vol2;
-            }
-        }
-
-
-        *sample = (short) ((*sample * left) >> 8);
-        sample++;
-        *sample = (short) ((*sample * right) >> 8);
-        sample++;
-
-        c->pan_done += 1;
-        c->vol2_done += 1;
-    }
-
+    *left_out += left;
+    *right_out += right;
 }
 
 static void callback(void *userdata, Uint8 *stream, int length) {
 
-    int channel = 0;
+    // Convert the length to samples.
+    length /= 4;
 
-    memset(stream, 0, length);
+    float mix_buffer[length * 2];
+    short stream_buffer[length * 2];
 
-    for (channel = 0; channel < num_channels; channel++) {
+    memset(mix_buffer, 0, length * 2 * sizeof(float));
 
+    for (int channel = 0; channel < num_channels; channel++) {
+
+        // The number of samples that have been mixed.
         int mixed = 0;
+
         struct Channel *c = &channels[channel];
 
         if (! c->playing) {
@@ -451,38 +308,19 @@ static void callback(void *userdata, Uint8 *stream, int length) {
         }
 
         while (mixed < length && c->playing) {
+
+            // How much do we have left to mix on this channel?
             int mixleft = length - mixed;
-            Uint8 buffer[mixleft];
-            int bytes;
+
+            // The number of samples that we read.
+            int read_length;
 
             // Decode some amount of data.
+            read_length = media_read_audio(c->playing, (Uint8 *) stream_buffer, mixleft * 2 * sizeof(short));
+            read_length /= (2 * sizeof(short));
 
-            bytes = media_read_audio(c->playing, buffer, mixleft);
-
-            // We have some data in the buffer.
-            if (c->stop_bytes && bytes) {
-
-                if (c->stop_bytes != -1)
-                    bytes = min(c->stop_bytes, bytes);
-
-                pan_audio(c, buffer, bytes);
-                fade_mixaudio(c, &stream[mixed], buffer, bytes);
-
-                mixed += bytes;
-
-                if (c->stop_bytes != -1)
-                    c->stop_bytes -= bytes;
-
-                c->pos += bytes;
-
-                continue;
-            }
-
-            // Otherwise, no data is left in the buffer. Check why,
-            // and act accordingly.
-
-            // Skip to the next sample.
-            if (c->stop_bytes == 0 || bytes == 0) {
+            // If we're done with this stream, skip to the next.
+            if (c->stop_samples == 0 || read_length == 0) {
 
                 int old_tight = c->playing_tight;
                 struct Dying *d;
@@ -518,15 +356,53 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
                 UNLOCK_NAME()
 
-                start_sample(c, ! old_tight);
+                start_stream(c, ! old_tight);
 
                 continue;
+            }
+
+            // We have some data in the buffer, so mix it.
+            while (c->stop_samples && read_length) {
+
+                mix_sample(c, stream_buffer[mixed * 2], stream_buffer[mixed * 2 + 1], &mix_buffer[mixed * 2], &mix_buffer[mixed * 2 + 1]);
+
+                if (c->stop_samples > 0) {
+                    c->stop_samples--;
+                }
+
+                read_length--;
+                c->pos++;
+                mixed += 1;
             }
         }
 
     }
 
+    // Actually output the sound.
+    for (int i = 0; i < length; i++) {
+        int left = mix_buffer[i * 2] * MAX_SHORT;
+        int right = mix_buffer[i * 2 + 1] * MAX_SHORT;
+
+        if (left > MAX_SHORT) {
+            left = MAX_SHORT;
+        }
+        if (left < MIN_SHORT) {
+            left = MIN_SHORT;
+        }
+        if (right > MAX_SHORT) {
+            right = MAX_SHORT;
+        }
+        if (right < MIN_SHORT) {
+            right = MIN_SHORT;
+        }
+
+        ((short *) stream)[i * 2] = left;
+        ((short *) stream)[i * 2 + 1] = right;
+    }
+
+
 }
+
 
 /*
  * Checks that the given channel is in range. Returns 0 if it is,
@@ -555,11 +431,13 @@ static int check_channel(int c) {
 
         	memset(&channels[i], 0, sizeof(struct Channel));
 
-            channels[i].volume = MAXVOLUME;
+            channels[i].mixer_volume = 1.0;
             channels[i].paused = 1;
             channels[i].event = 0;
-            channels[i].vol2_start = 1.0;
-            channels[i].vol2_end = 1.0;
+
+            init_interpolate(&channels[i].fade, 1.0);
+            init_interpolate(&channels[i].secondary_volume, 1.0);
+            init_interpolate(&channels[i].pan, 0.0);
         }
 
         num_channels = c + 1;
@@ -570,10 +448,10 @@ static int check_channel(int c) {
 
 
 /*
- * Loads the provided sample. Returns the sample on success, NULL on
+ * Loads the provided stream. Returns the stream on success, NULL on
  * failure.
  */
-struct MediaState *load_sample(SDL_RWops *rw, const char *ext, double start, double end, int video) {
+struct MediaState *load_stream(SDL_RWops *rw, const char *ext, double start, double end, int video) {
     struct MediaState *rv;
     rv = media_open(rw, ext);
     if (rv == NULL)
@@ -605,7 +483,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
 
     /* Free playing and queued samples. */
     if (c->playing) {
-        free_sample(c->playing);
+        free_stream(c->playing);
         c->playing = NULL;
         free(c->playing_name);
         c->playing_name = NULL;
@@ -615,7 +493,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
     }
 
     if (c->queued) {
-        free_sample(c->queued);
+        free_stream(c->queued);
         c->queued = NULL;
         free(c->queued_name);
         c->queued_name = NULL;
@@ -626,7 +504,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
 
     /* Allocate playing sample. */
 
-    c->playing = load_sample(rw, ext, start, end, c->video);
+    c->playing = load_stream(rw, ext, start, end, c->video);
 
     if (! c->playing) {
         UNLOCK_AUDIO();
@@ -642,7 +520,7 @@ void RPS_play(int channel, SDL_RWops *rw, const char *ext, const char *name, int
 
     c->paused = paused;
 
-    start_sample(c, 1);
+    start_stream(c, 1);
 
     UNLOCK_AUDIO();
 
@@ -670,7 +548,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
     /* Free queued sample. */
 
     if (c->queued) {
-        free_sample(c->queued);
+        free_stream(c->queued);
         c->queued = NULL;
         free(c->queued_name);
         c->queued_name = NULL;
@@ -678,7 +556,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
     }
 
     /* Allocate queued sample. */
-    c->queued = load_sample(rw, ext, start, end, c->video);
+    c->queued = load_stream(rw, ext, start, end, c->video);
 
     if (! c->queued) {
         UNLOCK_AUDIO();
@@ -722,7 +600,7 @@ void RPS_stop(int channel) {
 
     /* Free playing and queued samples. */
     if (c->playing) {
-        free_sample(c->playing);
+        free_stream(c->playing);
         c->playing = NULL;
         free(c->playing_name);
         c->playing_name = NULL;
@@ -731,7 +609,7 @@ void RPS_stop(int channel) {
     }
 
     if (c->queued) {
-        free_sample(c->queued);
+        free_stream(c->queued);
         c->queued = NULL;
         free(c->queued_name);
         c->queued_name = NULL;
@@ -765,7 +643,7 @@ void RPS_dequeue(int channel, int even_tight) {
     LOCK_AUDIO();
 
     if (c->queued && (! c->playing_tight || even_tight)) {
-        free_sample(c->queued);
+        free_stream(c->queued);
         c->queued = NULL;
         free(c->queued_name);
         c->queued_name = NULL;
@@ -842,7 +720,6 @@ PyObject *RPS_playing_name(int channel) {
  */
 void RPS_fadeout(int channel, int ms) {
 
-    int fade_steps;
     struct Channel *c;
 
     if (check_channel(channel)) {
@@ -854,34 +731,19 @@ void RPS_fadeout(int channel, int ms) {
     LOCK_AUDIO();
 
     if (ms == 0) {
-        c->stop_bytes = 0;
+        c->stop_samples = 0;
         UNLOCK_AUDIO();
 
         error(SUCCESS);
         return;
     }
 
-    fade_steps = c->volume;
-    c->fade_delta = -1;
-    c->fade_off = 0;
-    c->fade_vol = c->volume;
+    c->fade.done = 0;
+    c->fade.duration = ms_to_samples(ms);
+    c->fade.start = get_interpolate(&c->fade);
+    c->fade.end = 0.0;
 
-    if (fade_steps) {
-        while (-c->fade_delta < c->volume) {
-            c->fade_step_len = -c->fade_delta * ms_to_bytes(ms) / fade_steps;
-            c->fade_step_len &= ~0x7; // Even sample.
-
-            if (c->fade_step_len != 0) {
-                break;
-            }
-
-            c->fade_delta *= 2;
-        }
-    } else {
-        c->fade_step_len = 0;
-    }
-
-    c->stop_bytes = c->fade_step_len * c->volume / -c->fade_delta;
+    c->stop_samples = ms_to_samples(ms);
     c->queued_tight = 0;
 
     if (!c->queued) {
@@ -958,7 +820,7 @@ int RPS_get_pos(int channel) {
     LOCK_NAME();
 
     if (c->playing) {
-        rv = bytes_to_ms(c->pos) + c->playing_start_ms;
+        rv = samples_to_ms(c->pos) + c->playing_start_ms;
     } else {
         rv = -1;
     }
@@ -1016,8 +878,7 @@ void RPS_set_endevent(int channel, int event) {
 }
 
 /*
- * This sets the natural volume of the channel. (This may not take
- * effect immediately if a fadeout is going on.)
+ * This sets the mixer volume of the channel.
  */
 void RPS_set_volume(int channel, float volume) {
     struct Channel *c;
@@ -1027,56 +888,13 @@ void RPS_set_volume(int channel, float volume) {
     }
 
     c = &channels[channel];
-
-    int old_volume = c->volume;
-    int new_volume = (int) (volume * MAXVOLUME);
-
-    c->volume = new_volume;
-
-    if (old_volume == 0) {
-        c->fade_step_len = 0;
-    } else if (new_volume == 0) {
-        c->fade_step_len = 0;
-    } else if (c->fade_step_len) {
-
-        if (c->fade_delta > 0) {
-            int fade_samples_remaining = c->fade_step_len * (old_volume - c->fade_vol);
-            c->fade_vol = new_volume * c->fade_vol / old_volume;
-
-            if (new_volume <= c->fade_vol) {
-                c->fade_step_len = 0;
-            } else {
-                c->fade_step_len = fade_samples_remaining / (new_volume - c->fade_vol);
-                c->fade_step_len &= ~0x7; // Even sample.
-                c->fade_delta = 1;
-            }
-        }
-
-        if (c->fade_delta < 0) {
-            int fade_samples_remaining = c->fade_step_len * c->fade_vol;
-            c->fade_vol = new_volume * c->fade_vol / old_volume;
-
-            if (c->fade_vol <= 0) {
-                c->fade_step_len = 0;
-            } else {
-                c->fade_step_len = fade_samples_remaining /  c->fade_vol;
-                c->fade_step_len &= ~0x7; // Even sample.
-                c->fade_delta = -1;
-            }
-        }
-    }
-
-    if (c->fade_step_len == 0) {
-        c->fade_vol = new_volume;
-    }
+    c->mixer_volume = volume;
 
     error(SUCCESS);
 }
 
 
 float RPS_get_volume(int channel) {
-
-    float rv;
 
     struct Channel *c;
 
@@ -1086,10 +904,8 @@ float RPS_get_volume(int channel) {
 
     c = &channels[channel];
 
-    rv = 1.0 * c->volume / MAXVOLUME;
-
     error(SUCCESS);
-    return rv;
+    return c->mixer_volume;
 }
 
 /*
@@ -1107,10 +923,10 @@ void RPS_set_pan(int channel, float pan, float delay) {
 
     LOCK_AUDIO();
 
-    c->pan_start = interpolate_pan(c);
-    c->pan_end = pan;
-    c->pan_length = (int) (audio_spec.freq * delay);
-    c->pan_done = 0;
+    c->pan.start = get_interpolate(&c->pan);
+    c->pan.end = pan;
+    c->pan.done = 0;
+    c->pan.duration = ms_to_samples(delay * 1000);
 
     UNLOCK_AUDIO();
 
@@ -1131,10 +947,10 @@ void RPS_set_secondary_volume(int channel, float vol2, float delay) {
 
     LOCK_AUDIO();
 
-    c->vol2_start = interpolate_vol2(c);
-    c->vol2_end = vol2;
-    c->vol2_length = (int) (audio_spec.freq * delay);
-    c->vol2_done = 0;
+    c->secondary_volume.start = get_interpolate(&c->secondary_volume);
+    c->secondary_volume.end = vol2;;
+    c->secondary_volume.done = 0;
+    c->secondary_volume.duration = ms_to_samples(delay * 1000);
 
     UNLOCK_AUDIO();
 
@@ -1147,7 +963,7 @@ PyObject *RPS_read_video(int channel) {
 
     if (check_channel(channel)) {
         Py_INCREF(Py_None);
-    	return Py_None;
+        return Py_None;
     }
 
     c = &channels[channel];
@@ -1161,10 +977,10 @@ PyObject *RPS_read_video(int channel) {
     error(SUCCESS);
 
     if (surf) {
-    	return PySurface_New(surf);
+        return PySurface_New(surf);
     } else {
         Py_INCREF(Py_None);
-    	return Py_None;
+        return Py_None;
     }
 
 }
@@ -1174,15 +990,15 @@ int RPS_video_ready(int channel) {
     int rv;
 
     if (check_channel(channel)) {
-    	return 1;
+        return 1;
     }
 
     c = &channels[channel];
 
     if (c->playing) {
-    	rv = media_video_ready(c->playing);
+        rv = media_video_ready(c->playing);
     } else {
-    	rv = 1;
+        rv = 1;
     }
 
     error(SUCCESS);
@@ -1197,7 +1013,7 @@ void RPS_set_video(int channel, int video) {
 	struct Channel *c;
 
 	if (check_channel(channel)) {
-    	return;
+        return;
     }
 
     c = &channels[channel];
