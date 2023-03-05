@@ -62,12 +62,14 @@ practical sense, is technically correct and outlines the layeredimage syntax::
 Layeredimage
 ------------
 
-The ``layeredimage`` statements opens the show. Like the
+The ``layeredimage`` statements opens the show. The statement is part of the
+Ren'Py script language, and runs at :ref:`init time <init-phase>`. Like the
 :ref:`atl-image-statement`, it takes an image name and opens a block, although
-what's in the block differs greatly. The statement is part of the Ren'Py script
-language, and runs at :ref:`init time <init-phase>`. Inside the block will fit
-the statements described further down, as well as the following optional
-properties.
+what's in the block differs greatly. The image name may contain spaces, just
+like any other image name in Ren'Py.
+
+Inside the block will fit the statements described further down, as well as the
+following optional properties.
 
 `image_format`
     When a given image is a string, and this is supplied, the image name
