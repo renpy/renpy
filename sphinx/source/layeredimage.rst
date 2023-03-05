@@ -219,7 +219,7 @@ part of ``auto`` groups, more about that later), with all the corresponding
 displayables being shown at the same time (the `if_all`, `if_any`, and `if_not`
 properties can tweak this).
 
-If the displayable is not explicitely given, it will be computed from the name
+If the displayable is not explicitly given, it will be computed from the name
 of the layeredimage, the group (if any), the group's variant (if any), and the
 attribute. See the :ref:`pattern <layeredimage-pattern>` section for more
 details.
@@ -285,7 +285,8 @@ attributes in the group have been declared, Ren'Py will scan its list of images
 for those that match the group's pattern (see :ref:`below <layeredimage-pattern>`).
 Any images that are found, except those corresponding to explicitly declared
 attributes, are then added to the group as if declared using the ``attribute``
-statement inside the group's block.
+statement inside the group's block. See the :ref:`layeredimage-examples` section
+for a practical demo.
 
 This can be followed by the ``multiple`` keyword. If present, no incompatibility
 is applied to the attributes declared inside the block. This is useful to have a
@@ -543,6 +544,65 @@ attributes and use a dedicated :var:`config.adjust_attributes` function.
 
 Examples
 ========
+
+**Pattern and auto groups**
+
+From the following files in the images/ directory (or one of its subfolders) and
+written code:
+
+.. a code-block and not a ::, because it's not proper renpy syntax
+
+.. code-block:: none
+
+    francis_base.png
+    francis_face_neutral.png
+    francis_face_angry.png
+    francis_face_happy.png
+    francis_face_very_happy.png
+    francis_face annoyed.png
+    francis_supersad.png
+
+::
+
+    layeredimage francis:
+        attribute base default
+        group face auto
+            attribute neutral default
+        attribute supersad:
+            Solid("#00c3", xysize=(100, 100))
+
+The ``francis`` layeredimage will declare the (defaulted) ``base`` attribute,
+and associate it the "francis_base" (auto-defined) image using the
+:ref:`pattern <layeredimage-pattern>` : the layeredimage name ("francis"), the
+group name (none here), the variant name (none here) and the attribute name
+("base"), separated with underscores.
+
+Then, in the ``face`` group, the explicit ``neutral`` attribute gets associated
+the "francis_face_neutral" image, following the same pattern but using "face"
+as the group name and "neutral" as the attribute name.
+
+After all explicit attributes receive their images, ``face`` being an ``auto``
+group, existing images (auto-defined or not) are scanned for a match with the
+pattern. Here, three are found : "francis_face_angry", "francis_face_happy" and
+"francis_face_very_happy". They are associated with the ``angry``, ``happy`` and
+``very_happy`` attributes respectively, using the same pattern as before. No
+``annoyed`` attribute is defined however, since the "francis_face annoyed" image
+contains a space where the pattern expected an underscore.
+
+Finally, the ``supersad`` attribute is declared, but since a displayable is
+explicitly provided, the pattern does not look for a matching image.
+
+The "francis_supersad" and "francis_face annoyed" images get auto-defined from
+the filename as part of Ren'Py's ordinary :ref:`protocol <images-directory>`,
+but these sprites don't find a match with any attribute or auto group, so they
+end up not being used in the ``francis`` layeredimage.
+
+As you can see, using the pattern to associate images to attributes and using
+auto groups shrinks the code considerably. The same layeredimage would have
+taken 13 lines if everything was declared explicitly (try it!), and this syntax
+allows for geometric growth of the sprite set - adding any number of new faces
+wouldn't require any change to the code, for example.
+
 
 **Dynamism in attributes**
 
