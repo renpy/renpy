@@ -251,8 +251,8 @@ The attribute statement takes the following properties:
     A transform or list of transforms that are applied to the layer.
 
 The `if_*` clauses' test is based upon the list of attributes of the resulting
-image, as explained :ref:`here <concept-image>`, but it **does not *change* that
-list.** ::
+image, as explained :ref:`here <concept-image>`, but it **does not change** that
+list. ::
 
     layeredimage eileen:
         attribute a
