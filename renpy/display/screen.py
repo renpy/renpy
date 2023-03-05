@@ -320,6 +320,24 @@ class ScreenDisplayable(renpy.display.layout.Container):
         'copied_from'
         ]
 
+    noreach = [
+        'screen',
+        # 'child' needs to be reachable to keep the screen roll-backable.
+        'children',
+        'transforms',
+        'widgets',
+        'base_widgets',
+        'old_widgets',
+        'hidden_widgets',
+        'old_transforms',
+        'cache',
+        'miss_cache',
+        'profile',
+        'phase',
+        'use_cache'
+        'copied_from'
+    ]
+
     restarting = False
     hiding = False
     transient = False
