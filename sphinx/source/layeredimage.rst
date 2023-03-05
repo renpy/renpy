@@ -20,6 +20,8 @@ specific language. The :func:`LayeredImage` object is its Python alternative,
 it's not a :doc:`displayable <displayables>` but can be assigned to an image
 statement and used like one.
 
+The bottom of this page contains advice and examples of use.
+
 Defining Layered Images
 =======================
 
@@ -535,3 +537,33 @@ If you want it to depend on both (for example for ``show eileen ribbon`` to show
 either a blue or red ribbon depending on a variable, but no ribbon appearing
 unless you ask for it with the ``ribbon`` attribute), declare all versions as
 attributes and use a dedicated :var:`config.adjust_attributes` function.
+
+
+.. _layeredimage-examples:
+
+Examples
+========
+
+**Dynamism in attributes**
+
+Here is an example for defining attributes depending on variables (as mentioned
+in the Advice section)::
+
+    layeredimage eileen:
+        attribute base default
+        group outfit auto
+        group ribbon prefix "ribbon":
+            attribute red
+            attribute blue
+
+    default eileen_ribbon_color = "red"
+
+    init python:
+        def eileen_adjuster(names):
+            atts = set(names[1:])
+            if "ribbon" in atts:
+                atts.remove("ribbon")
+                atts.add("ribbon_" + eileen_ribbon_color)
+            return names[0], *atts
+
+    define config.adjust_attributes["eileen"] = eileen_adjuster
