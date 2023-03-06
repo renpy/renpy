@@ -139,22 +139,29 @@ static inline float get_interpolate(struct Interpolate *i) {
     }
 }
 
+
+// The power corresponding to a magnitude of 0.0.
+#define MIN_POWER 0.0
+
+// The power corresponding to a magnitude of 1.0.
+#define MAX_POWER 10.0
+
 /**
  * This interpolates a logarithmic power level to a magnitude.
  *
  * The units of the log power level are odd, to make things faster - it's
- * log2f(power * 1024) / 10
+ * log2f(power) + 10, to make calculations faster.
  */
 static inline float get_interpolate_power(struct Interpolate *i) {
 
     float log_power = get_interpolate(i);
 
-    if (log_power == 0.0) {
+    if (log_power == MIN_POWER) {
         return 0;
-    } else if (log_power == 1.0) {
+    } else if (log_power == MAX_POWER) {
         return 1.0;
     } else {
-        return powf(2, log_power * 10) / 1024;
+        return powf(2, log_power - 10);
     }
 }
 
@@ -163,11 +170,11 @@ static inline float get_interpolate_power(struct Interpolate *i) {
  */
 static inline float log_power(float power) {
     if (power <= 0.0) {
-        return 0;
+        return MIN_POWER;
     } else if (power >= 1.0) {
-        return 1.0;
+        return MAX_POWER;
     } else {
-        return log2f(power * 1024) / 10;
+        return log2f(power) + 10;
     }
 }
 
@@ -283,8 +290,8 @@ static void start_stream(struct Channel* c, int reset_fade) {
 
     if (reset_fade) {
 
-        c->fade.start = 0;
-        c->fade.end = 1.0;
+        c->fade.start = MIN_POWER;
+        c->fade.end = MAX_POWER;
         c->fade.done = 0;
         c->fade.duration = ms_to_samples(c->playing_fadein);
 
@@ -484,8 +491,8 @@ static int check_channel(int c) {
             channels[i].paused = 1;
             channels[i].event = 0;
 
-            init_interpolate(&channels[i].fade, 1.0);
-            init_interpolate(&channels[i].secondary_volume, 1.0);
+            init_interpolate(&channels[i].fade, MAX_POWER);
+            init_interpolate(&channels[i].secondary_volume, MAX_POWER);
             init_interpolate(&channels[i].pan, 0.0);
         }
 
@@ -788,7 +795,7 @@ void RPS_fadeout(int channel, int ms) {
     }
 
     c->fade.start = get_interpolate(&c->fade);
-    c->fade.end = 0.0;
+    c->fade.end = MIN_POWER;
     c->fade.done = 0;
     c->fade.duration = ms_to_samples(ms);
 
