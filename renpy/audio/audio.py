@@ -692,6 +692,9 @@ class Channel(object):
             else:
                 self.loop = [ ]
 
+        with periodic_condition:
+            periodic_condition.notify()
+
     def get_playing(self):
 
         if not pcm_ok:
