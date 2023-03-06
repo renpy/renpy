@@ -424,21 +424,20 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
                 UNLOCK_NAME()
 
-                start_stream(c, ! old_tight);
+                start_stream(c, !old_tight);
 
                 continue;
             }
 
             // We have some data in the buffer, so mix it.
-            while (c->stop_samples && read_length) {
+            for (int i = 0; (i < read_length) && c->stop_samples; i++) {
 
-                mix_sample(c, stream_buffer[mixed * 2], stream_buffer[mixed * 2 + 1], &mix_buffer[mixed * 2], &mix_buffer[mixed * 2 + 1]);
+                mix_sample(c, stream_buffer[i * 2], stream_buffer[i * 2 + 1], &mix_buffer[mixed * 2], &mix_buffer[mixed * 2 + 1]);
 
                 if (c->stop_samples > 0) {
                     c->stop_samples--;
                 }
 
-                read_length--;
                 c->pos++;
                 mixed += 1;
             }
@@ -529,7 +528,7 @@ struct MediaState *load_stream(SDL_RWops *rw, const char *ext, double start, dou
     media_start_end(rv, start, end);
 
     if (video) {
-    	media_want_video(rv, video);
+        media_want_video(rv, video);
     }
 
     media_start(rv);
@@ -611,6 +610,8 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
         return;
     }
 
+    MediaState *ms = load_stream(rw, ext, start, end, c->video);
+
     LOCK_AUDIO();
 
     /* Free queued sample. */
@@ -624,7 +625,7 @@ void RPS_queue(int channel, SDL_RWops *rw, const char *ext, const char *name, in
     }
 
     /* Allocate queued sample. */
-    c->queued = load_stream(rw, ext, start, end, c->video);
+    c->queued = ms;
 
     if (! c->queued) {
         UNLOCK_AUDIO();
@@ -798,8 +799,27 @@ void RPS_fadeout(int channel, int ms) {
 
     LOCK_AUDIO();
 
+    if (c->queued) {
+
+        float position = samples_to_ms(c->pos) / 1000.0 + c->playing_start_ms;
+        float duration = media_duration(c->playing);
+
+        // If the fadeout will fit into the current file, dequeue the next file, so
+        // that the next track will begin playing immediately.
+        if ((position + ms / 1000.0 < duration) || (! c->playing_tight) || (ms <= 32)) {
+                free_stream(c->queued);
+                c->queued = NULL;
+                free(c->queued_name);
+                c->queued_name = NULL;
+                c->queued_start_ms = 0;
+                c->queued_relative_volume = 1.0;
+        }
+    }
+
+
     if (ms == 0) {
         c->stop_samples = 0;
+        c->playing_tight = 0;
         UNLOCK_AUDIO();
 
         error(SUCCESS);
