@@ -320,6 +320,9 @@ static void post_event(struct Channel *c) {
     SDL_PushEvent(&e);
 }
 
+#define PI 3.14159265358979323846
+#define ZERO_PAN 0.7071067811865476 // cos(PI / 4) and sin(PI / 4)
+
 
 static inline void mix_sample(struct Channel *c, short left_in, short right_in, float *left_out, float *right_out) {
 
@@ -330,9 +333,18 @@ static inline void mix_sample(struct Channel *c, short left_in, short right_in, 
     float left = left_in / 1.0 / -MIN_SHORT;
     float right = right_in / 1.0 / -MIN_SHORT;
 
-    float volume = get_interpolate_power(&c->fade) * get_interpolate_power(&c->secondary_volume) * c->playing_relative_volume * c->mixer_volume;
+    float pan = get_interpolate(&c->pan);
 
-    // TODO: Pan.
+    if (pan == 0.0) {
+        left *= ZERO_PAN;
+        right *= ZERO_PAN;
+    } else {
+        float theta = PI * (pan + 1) / 4;
+        left *= cosf(theta);
+        right *= sinf(theta);
+    }
+
+    float volume = get_interpolate_power(&c->fade) * get_interpolate_power(&c->secondary_volume) * c->playing_relative_volume * c->mixer_volume;
 
     *left_out += left * volume;
     *right_out += right * volume;
