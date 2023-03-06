@@ -112,6 +112,8 @@ struct Interpolate {
     float end;
 };
 
+
+
 void init_interpolate(struct Interpolate *i, float value) {
     i->done = 0;
     i->duration = 0;
@@ -123,6 +125,12 @@ static inline float lerp(float start, float end, float done) {
     return start + (end - start) * done;
 }
 
+static inline void tick_interpolate(struct Interpolate *i) {
+    if (i->done < i->duration) {
+        i->done += 1;
+    }
+}
+
 static inline float get_interpolate(struct Interpolate *i) {
     if (i->done >= i->duration) {
         return i->end;
@@ -130,6 +138,39 @@ static inline float get_interpolate(struct Interpolate *i) {
         return lerp(i->start, i->end, (float) i->done / (float) i->duration);
     }
 }
+
+/**
+ * This interpolates a logarithmic power level to a magnitude.
+ *
+ * The units of the log power level are odd, to make things faster - it's
+ * log2f(power * 1024) / 10
+ */
+static inline float get_interpolate_power(struct Interpolate *i) {
+
+    float log_power = get_interpolate(i);
+
+    if (log_power == 0.0) {
+        return 0;
+    } else if (log_power == 1.0) {
+        return 1.0;
+    } else {
+        return powf(2, log_power * 10) / 1024;
+    }
+}
+
+/**
+ * This converts a magnitude to a logarithmic power level.
+ */
+static inline float log_power(float power) {
+    if (power <= 0.0) {
+        return 0;
+    } else if (power >= 1.0) {
+        return 1.0;
+    } else {
+        return log2f(power * 1024) / 10;
+    }
+}
+
 
 /*
  * This structure represents a channel the system knows about
@@ -275,11 +316,19 @@ static void post_event(struct Channel *c) {
 
 static inline void mix_sample(struct Channel *c, short left_in, short right_in, float *left_out, float *right_out) {
 
+    tick_interpolate(&c->fade);
+    tick_interpolate(&c->secondary_volume);
+    tick_interpolate(&c->pan);
+
     float left = left_in / 1.0 / -MIN_SHORT;
     float right = right_in / 1.0 / -MIN_SHORT;
 
-    *left_out += left;
-    *right_out += right;
+    float volume = get_interpolate_power(&c->fade) * get_interpolate_power(&c->secondary_volume) * c->playing_relative_volume * c->mixer_volume;
+
+    // TODO: Pan.
+
+    *left_out += left * volume;
+    *right_out += right * volume;
 }
 
 static void callback(void *userdata, Uint8 *stream, int length) {
@@ -738,10 +787,10 @@ void RPS_fadeout(int channel, int ms) {
         return;
     }
 
-    c->fade.done = 0;
-    c->fade.duration = ms_to_samples(ms);
     c->fade.start = get_interpolate(&c->fade);
     c->fade.end = 0.0;
+    c->fade.done = 0;
+    c->fade.duration = ms_to_samples(ms);
 
     c->stop_samples = ms_to_samples(ms);
     c->queued_tight = 0;
@@ -948,7 +997,7 @@ void RPS_set_secondary_volume(int channel, float vol2, float delay) {
     LOCK_AUDIO();
 
     c->secondary_volume.start = get_interpolate(&c->secondary_volume);
-    c->secondary_volume.end = vol2;;
+    c->secondary_volume.end = log_power(vol2);
     c->secondary_volume.done = 0;
     c->secondary_volume.duration = ms_to_samples(delay * 1000);
 
