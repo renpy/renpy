@@ -139,7 +139,8 @@ mouse = None
 sound_sample_rate = 48000
 
 # The amount of time music is faded out between tracks.
-fade_music = 0.0
+# Despite the name, this works for all audio, not just music.
+fade_music = 0.001
 
 # Should the at list be sticky?
 sticky_positions = False

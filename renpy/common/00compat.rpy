@@ -267,6 +267,7 @@ init -1100 python:
             config.preserve_volume_when_muted = True
             config.history_current_dialogue = False
             config.scry_extend = False
+            config.fade_music = 0.0
 
             if version > (6, 99, 5):
                 config.search_prefixes.append("images/")
