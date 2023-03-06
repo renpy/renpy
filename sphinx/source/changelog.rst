@@ -81,6 +81,7 @@ As detached layers don't participate in scene building in the same way as
 typical layers, they are defined directly in :var:`config.detached_layers`
 rather than through :func:`add_layer`, and are inherently sticky.
 
+
 New Image Formats and Image Oversampling
 ----------------------------------------
 
@@ -116,6 +117,7 @@ Image oversampling can also be used with the new :var:`config.physical_width`
 and :var:`config.physical_height` variables to upgrade the resolution of
 a game without having to adjust the game's layout.
 
+
 AV1 Video
 ---------
 
@@ -126,26 +128,35 @@ the equivalent quality movie encoded with VP9, the previous best codec.
 Note that the newer AV1 format requires more CPU to decode. It's possible
 that some hardware that plays VP9 fluidly will struggle with AV1.
 
-Mixer Volume Changes
---------------------
 
-Ren'Py has changed how mixer volumes are represented. Internally, the mixer
-volumes are stored as number between 0.0 and 1.0. This number is multiplied
-with the samples to produce the voltage supplied to the speakers or headphones,
-and hence the square of this determines the power.
+Audio
+-----
 
-Mixers now work in decibels (power), similar to the way the volume controls
+Mixer now work on power in decibels, similar to the way the volume controls
 on audio equipment and computers work. An empty mixer slider represents -60 dB
 below the maximum volume, while a full bar represents 0 dB, the full volume.
+This makes the mixers more dynamic. Previously, the volume slider had to be
+very near the bottom before it had an effect. Now, the volume increases and
+decreases match the way people perceive loudness.
 
 Variables that control the default mixer volumes, such as :var:`config.default_music_volume`,
 :var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` now work on a scale
 where 0.0 is -60 dB, and 1.0 is 0 dB. :func:`SetCharacterVolume` works in a similar way,
 as do the new :func:`preferences.set_mixer` and :func:`preferences.get_mixer` functions.
 
-The advantage of this change is that it makes the volumes sliders much more dynamic.
-Previously, the volume slider had to be very near the bottom before it had an effect.
-Now, the volume increases and decreases match the way people perceive loudness.
+The audio fadein and fadeout functions also work using power. This ensures that
+the fade is apparent over the course of the entire fadeout or fadein, rather
+than only at the end. The audio fading implementation has also been rewritten
+to allow fades of very short lengths. Previously, fading would produce errors
+if the fade time was too short.
+
+The :var:`config.fadeout_audio` variable (renamed from config.fade_music) controls
+the default fadeout used when stopping audio, or changing audio using ``play``. (It
+is not used by ``queue``). The default value is now 0.016 seconds, which eliminates
+popping sounds that occured when audio was stopped abruptly.
+
+Audio panning (:func:`renpy.music.set_pan`) is now constant-power, so that
+panning audio should not change the volume.
 
 
 Draggable Viewports
@@ -232,6 +243,7 @@ ruby text. For example::
 
     e "【【This is not | ruby text.】"
 
+
 Accessibility
 -------------
 
@@ -248,6 +260,7 @@ For example::
 
 Will cause the word "Ren'Py" to be pronounced as "Ren Pie" whenever
 self-voicing speaks it.
+
 
 Save Token Security
 -------------------
@@ -272,6 +285,7 @@ prompting during upgrades to Ren'Py 8.1/7.6 or later.
 
 There is intentionally no way to disable this feature, as it's important
 for end-users to be warned about the security issues when possible.
+
 
 New Features
 ------------
@@ -392,6 +406,7 @@ The screens' ``for`` loops now support the ``continue`` and ``break`` statements
 
 Disabling Dialogue's :ref:`monologue-mode` is now possible using the
 ``rpy monologue none`` statement at the beginning of the file it should apply to.
+
 
 Other Changes
 -------------

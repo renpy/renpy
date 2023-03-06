@@ -19,6 +19,13 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**Audio Fadeout** When audio is stopped or changed using ``play``, there is now
+a default fadeout of 0.016 seconds, to prevent pops. This is controlled by
+the :var:`config.fadeout_audio` variable. To disable the fadeout::
+
+    define config.fadeout_audio = 0.0
+
+
 **Translate None** Ren'Py will now produce an error when encountering an explicit
 ``translate None`` statement that does not translate strings, styles, or python.
 These should be rare, in practice. The recommended change is to replace::
