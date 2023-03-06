@@ -267,7 +267,7 @@ init -1100 python:
             config.preserve_volume_when_muted = True
             config.history_current_dialogue = False
             config.scry_extend = False
-            config.fade_music = 0.0
+            config.fadeout_audio = 0.0
 
             if version > (6, 99, 5):
                 config.search_prefixes.append("images/")
@@ -416,3 +416,6 @@ init 1100 python hide:
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
         config.default_afm_enable = None
+
+    if config.fade_music is not None:
+        config.fadeout_audio = config.fade_music

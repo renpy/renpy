@@ -138,9 +138,12 @@ mouse = None
 # The default sound playback sample rate.
 sound_sample_rate = 48000
 
-# The amount of time music is faded out between tracks.
-# Despite the name, this works for all audio, not just music.
-fade_music = 0.001
+# The default fadeout used when playing or stopping audio.
+fadeout_audio = 0.016
+
+# The old name of config.fadeout_audio. Kept for compatibility, and yused
+# in 00compat.rpy.
+fade_music = None
 
 # Should the at list be sticky?
 sticky_positions = False

@@ -731,9 +731,9 @@ Occasionally Used
     Otherwise, this should be a dictionary giving the
     mouse animations for various mouse types. Keys used by the default
     library include ``default``, ``say``, ``with``, ``menu``, ``prompt``,
-    ``imagemap``, ``button``, ``pause``, ``mainmenu``, and 
-    ``gamemenu``. The ``default`` key should always be present, as it is 
-    used when a more specific key is absent. Keys can have an optional 
+    ``imagemap``, ``button``, ``pause``, ``mainmenu``, and
+    ``gamemenu``. The ``default`` key should always be present, as it is
+    used when a more specific key is absent. Keys can have an optional
     prefix ``pressed_`` to indicate that the cursor will be used when the
     mouse is pressed.
 
@@ -1335,11 +1335,15 @@ Rarely or Internally Used
     They are always treated as :var:`sticky <config.sticky_layers>` and
     intended for use with the :class:`Layer` displayable for embedding.
 
-.. var:: config.fade_music = 0.0
+.. var:: config.fadeout_audio = 0.016
 
-    This is the amount of time in seconds to spend fading the old
-    track out before a new music track starts. This should probably be
-    fairly short, so the wrong music doesn't play for too long.
+    The default audio fadeout time that's used to fade out audio, when
+    audio is stopped with the ``stop`` statement or :func:`renpy.music.stop`,
+    or when a new audio track is started with the ``play`` statement or
+    :func:`renpy.music.play`. This is not used when queued audio beings.
+
+    A short fadeout is the default to prevent clicks and pops when
+    audio is stopped or changed.
 
 .. var:: config.fast_skipping = False
 
