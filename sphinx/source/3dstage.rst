@@ -88,7 +88,7 @@ default. This is usually done with::
         perspective True
 
 though it's possible that you'll want to include a default camera position, as
-described below. 
+described below.
 
 Alternatively, you can provide a specific layer name to enable the 3D stage only
 for that layer. ::
@@ -302,8 +302,6 @@ Transform Properties
 
 The following transform properties are used by the 3D Stage.
 
-    :tpref:`perspective`, :tpref:`poi`, :tpref:`orientation`, :tpref:`xrotate`, :tpref:`yrotate`, :tpref:`zrotate`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
-
 .. transform-property:: matrixanchor
 
     :type: (position, position)
@@ -318,55 +316,61 @@ The following transform properties are used by the 3D Stage.
 
 .. transform-property:: poi
 
-    :type: (float, float, float)
+    :type: (float, float, float) or None
     :default: None
 
-    This gives the position of the point of interest. the camera or an image
-    are rotated then face that point evenif that pos or zpos are changed.
+    This gives the position of the point of interest. The camera or the
+    displayable being transformed are rotated to face the point of interest,
+    even if the position of the camera or the displayable is changed.
+
+    If this is None, no point-of-interest rotation is applied.
 
 .. transform-property:: orientation
 
-    :type: (float, float, float)
+    :type: (float, float, float) or None
     :default: None
 
-    This rotates an image or the camera without change these position. Only the
-    camera rotates in z, y, x order for convenience.
+    This rotates the camera or the displayable. The three values are the
+    x, y, and z rotations, in degrees. The rotations are applied in x, y, z
+    order for displayables, and z, y, x order for the camera.
 
-    The difference between orientation and xrotate, yrotate or zrotate are the
-    way of interpolation.  orientation rotates through the shortest root.
+    When interpolation is used with orientation, the shortest path is taken
+    between the old and new orientations.
+
+    If this is None, no orientation is applied.
 
 .. transform-property:: xrotate
 
-    :type: float
+    :type: float or None
     :default: None
 
-    This rotates an image or the camera without change these position. Only the
-    camera rotates in z, y, x order for convenience.
+    This rotates the camera or the displayable around the x axis. The value is
+    the rotation, in degrees. Rotations are applied to displayables in x, y, z
+    order. Rotations are applied to the camera in z, y, x order.
 
-    The difference between orientation and xrotate, yrotate or zrotate are the
-    way of interpolation.  orientation rotates through the shortest root.
+    If this is None, no x-axis rotation is applied.
 
 .. transform-property:: yrotate
 
-    :type: float
+    :type: float or None
     :default: None
 
-    This rotates an image or the camera without change these position. Only the
-    camera rotates in z, y, x order for convenience.
+    This rotates the camera or the displayable around the y axis. The value is
+    the rotation, in degrees. Rotations are applied to displayables in x, y, z
+    order. Rotations are applied to the camera in z, y, x order.
 
-    The difference between orientation and xrotate, yrotate or zrotate are the
-    way of interpolation.  orientation rotates through the shortest root.
+    If this is None, no y-axis rotation is applied.
 
 .. transform-property:: zrotate
 
-    :type: float
+    :type: float or None
     :default: None
 
-    This rotates an image or the camera without change these position. Only the
-    camera rotates in z, y, x order for convenience.
+    This rotates the camera or the displayable around the z axis. The value is
+    the rotation, in degrees. Rotations are applied to displayables in x, y, z
+    order. Rotations are applied to the camera in z, y, x order.
 
-    The difference between orientation and xrotate, yrotate or zrotate are the
-    way of interpolation.  orientation rotates through the shortest root.
+    If this is None, no z-axis rotation is applied.
 
 .. transform-property:: matrixtransform
 
