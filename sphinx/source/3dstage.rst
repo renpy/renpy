@@ -302,7 +302,7 @@ Transform Properties
 
 The following transform properties are used by the 3D Stage.
 
-    :tpref:`perspective`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
+    :tpref:`perspective`, :tpref:`poi`, :tpref:`orientation`, :tpref:`xrotate`, :tpref:`yrotate`, :tpref:`zrotate`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
 
 .. transform-property:: matrixanchor
 
@@ -313,8 +313,60 @@ The following transform properties are used by the 3D Stage.
     variables are floats, this is relative to the size of the child, otherwise
     it's absolute pixels.
 
-    This sets the location of the (0, 0, 0) point that matrixtransform applies
-    its transform to.
+    This sets the location of the (0, 0, 0) point that poi, orientation,
+    xrotate, yrotate, zrotate and matrixtransform applie its transform to.
+
+.. transform-property:: poi
+
+    :type: (float, float, float)
+    :default: None
+
+    This gives the position of the point of interest. the camera or an image
+    are rotated then face that point evenif that pos or zpos are changed.
+
+.. transform-property:: orientation
+
+    :type: (float, float, float)
+    :default: None
+
+    This rotates an image or the camera without change these position. Only the
+    camera rotates in z, y, x order for convenience.
+
+    The difference between orientation and xrotate, yrotate or zrotate are the
+    way of interpolation.  orientation rotates through the shortest root.
+
+.. transform-property:: xrotate
+
+    :type: float
+    :default: None
+
+    This rotates an image or the camera without change these position. Only the
+    camera rotates in z, y, x order for convenience.
+
+    The difference between orientation and xrotate, yrotate or zrotate are the
+    way of interpolation.  orientation rotates through the shortest root.
+
+.. transform-property:: yrotate
+
+    :type: float
+    :default: None
+
+    This rotates an image or the camera without change these position. Only the
+    camera rotates in z, y, x order for convenience.
+
+    The difference between orientation and xrotate, yrotate or zrotate are the
+    way of interpolation.  orientation rotates through the shortest root.
+
+.. transform-property:: zrotate
+
+    :type: float
+    :default: None
+
+    This rotates an image or the camera without change these position. Only the
+    camera rotates in z, y, x order for convenience.
+
+    The difference between orientation and xrotate, yrotate or zrotate are the
+    way of interpolation.  orientation rotates through the shortest root.
 
 .. transform-property:: matrixtransform
 

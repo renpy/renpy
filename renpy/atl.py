@@ -1327,7 +1327,17 @@ class Interpolation(Statement):
 
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.items():
-            value = interpolate(complete, old, new, PROPERTIES[k])
+            if k == "orientation":
+                if old is None:
+                    old = (0.0, 0.0, 0.0)
+                if new is not None:
+                    value = renpy.display.accelerator.quaternion_slerp(complete, old, new)
+                elif complete >= 1:
+                    value = None
+                else:
+                    value = old
+            else:
+                value = interpolate(complete, old, new, PROPERTIES[k])
 
             setattr(trans.state, k, value)
 
@@ -1979,6 +1989,8 @@ def parse_atl(l):
                         knots.append(ll.require(ll.simple_expression))
 
                     if knots:
+                        if prop == "orientation":
+                            raise Exception("Orientation doesn't support spline.")
                         knots.append(expr)
                         rm.add_spline(prop, knots)
                     else:

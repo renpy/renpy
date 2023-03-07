@@ -54,6 +54,124 @@ def nogil_copy(src, dest):
         SDL_UpperBlit(src_surf, NULL, dest_surf, NULL)
 
 ################################################################################
+# Interpolate Orientation
+################################################################################
+
+
+def quaternion_slerp(complete, old, new):
+    """
+    Interpolate orientation angle.
+    """
+
+    if old == new:
+        return new
+
+    #select the shorten root
+    old_x, old_y, old_z = old
+    old_x = old_x % 360
+    old_y = old_y % 360
+    old_z = old_z % 360
+    new_x, new_y, new_z = new
+    new_x = new_x % 360
+    new_y = new_y % 360
+    new_z = new_z % 360
+    if new_x - old_x > 180:
+        new_x = new_x - 360
+    if new_y - old_y > 180:
+        new_y = new_y - 360
+    if new_z - old_z > 180:
+        new_z = new_z - 360
+
+
+    #z-y-x Euler angles to quaternion conversion
+    #https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+    old_x_div_2 = math.radians(old_x) * 0.5
+    old_y_div_2 = math.radians(old_y) * 0.5
+    old_z_div_2 = math.radians(old_z) * 0.5
+    cx = math.cos(old_x_div_2)
+    sx = math.sin(old_x_div_2)
+    cy = math.cos(old_y_div_2)
+    sy = math.sin(old_y_div_2)
+    cz = math.cos(old_z_div_2)
+    sz = math.sin(old_z_div_2)
+
+    old_q_x = sx * cy * cz - cx * sy * sz
+    old_q_y = cx * sy * cz + sx * cy * sz
+    old_q_z = cx * cy * sz - sx * sy * cz
+    old_q_w = cx * cy * cz + sx * sy * sz
+
+    new_x_div_2 = math.radians(new_x) * 0.5
+    new_y_div_2 = math.radians(new_y) * 0.5
+    new_z_div_2 = math.radians(new_z) * 0.5
+    cx = math.cos(new_x_div_2)
+    sx = math.sin(new_x_div_2)
+    cy = math.cos(new_y_div_2)
+    sy = math.sin(new_y_div_2)
+    cz = math.cos(new_z_div_2)
+    sz = math.sin(new_z_div_2)
+
+    new_q_x = sx * cy * cz - cx * sy * sz
+    new_q_y = cx * sy * cz + sx * cy * sz
+    new_q_z = cx * cy * sz - sx * sy * cz
+    new_q_w = cx * cy * cz + sx * sy * sz
+
+
+    #calculate new quaternion between old and new.
+    old_q_mul_new_q = (old_q_x * new_q_x + old_q_y * new_q_y + old_q_z * new_q_z + old_q_w * new_q_w)
+    dot = old_q_mul_new_q
+    if dot > 1.0:
+        dot = 1.0
+    elif dot < -1.0:
+        dot = -1.0
+    theta = abs(math.acos(dot))
+
+    st = math.sin(theta)
+
+    sut = math.sin(theta * complete)
+    sout = math.sin(theta * (1 - complete))
+
+    coeff1 = sout / st
+    coeff2 = sut / st
+
+    q_x = coeff1 * old_q_x + coeff2 * new_q_x
+    q_y = coeff1 * old_q_y + coeff2 * new_q_y
+    q_z = coeff1 * old_q_z + coeff2 * new_q_z
+    q_w = coeff1 * old_q_w + coeff2 * new_q_w
+
+
+    #Quaternion to z-y-x Euler angles conversion
+    #https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+    sinx_cosp = 2 * (q_w * q_x + q_y * q_z)
+    cosx_cosp = 1 - 2 * (q_x * q_x + q_y * q_y)
+    siny = 2 * (q_w * q_y - q_z * q_x)
+    sinz_cosp1 = 2 * (q_x * q_y - q_w * q_z)
+    cosz_cosp1 = 1 - 2 * (q_x * q_x + q_z * q_z)
+    sinz_cosp2 = 2 * (q_w * q_z + q_x * q_y)
+    cosz_cosp2 = 1 - 2 * (q_y * q_y + q_z * q_z)
+
+    if siny >= 1:
+        x = 0
+        y = math.pi/2
+        z = math.atan2(sinz_cosp1, cosz_cosp1)
+    elif siny <= -1:
+        x = 0
+        y = -math.pi/2
+        z = math.atan2(sinz_cosp1, cosz_cosp1)
+    else:
+        x = math.atan2(sinx_cosp, cosx_cosp)
+        if siny > 1.0:
+            siny = 1.0
+        elif siny < -1.0:
+            siny = -1.0
+        y = math.asin(siny)
+        z = math.atan2(sinz_cosp2, cosz_cosp2)
+    x = math.degrees(x) % 360
+    y = math.degrees(y) % 360
+    z = math.degrees(z) % 360
+
+    return (x, y, z)
+
+################################################################################
 # Transform render function
 ################################################################################
 
@@ -499,6 +617,106 @@ def transform_render(self, widtho, heighto, st, at):
 
         self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
 
+        poi = False
+        if state.poi is not None:
+            poi = True
+
+        orientation = False
+        if state.orientation is not None:
+            orientation = True
+
+        xyz_rotate = False
+        if state.xrotate or state.yrotate or state.zrotate:
+            xyz_rotate = True
+
+        if poi:
+            start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
+            if isinstance(state.poi, tuple) and len(state.poi) == 3:
+                end_pos = state.poi
+            # elif state.poi == "camera":
+            #     raise Exception("Can't direct camera to camera")
+            else:
+                raise Exception("poi transform property should be the tuple as (x, y, z) format.")
+            a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
+
+            #cameras is rotated in z, y, x order.
+            #It is because rotating stage in x, y, z order means rotating a camera in z, y, x order.
+            #rotating around z axis isn't rotating around the center of the screen when rotating camera in x, y, z order.
+            v_len = math.sqrt(a**2 + b**2 + c**2)
+            if v_len == 0:
+                xpoi = ypoi = zpoi = 0
+            else:
+                a = a / v_len
+                b = b / v_len
+                c = c / v_len
+
+                sin_ypoi = -a
+                if sin_ypoi > 1.0:
+                    sin_ypoi = 1.0
+                elif sin_ypoi < -1.0:
+                    sin_ypoi = -1.0
+                ypoi = math.asin(sin_ypoi)
+                if c == 0:
+                    if abs(a) == 1:
+                        xpoi = 0
+                    else:
+                        sin_xpoi = b / math.cos(ypoi)
+                        if sin_xpoi > 1.0:
+                            sin_xpoi = 1.0
+                        elif sin_xpoi < -1.0:
+                            sin_xpoi = -1.0
+                        xpoi = math.asin(sin_xpoi)
+                else:
+                    xpoi = math.atan(-b/c)
+
+                if c > 0:
+                    ypoi = math.pi - ypoi
+
+                if xpoi != 0.0 and ypoi != 0.0:
+                    if xpoi == math.pi / 2 or xpoi == - math.pi / 2:
+                        if -math.sin(xpoi) * math.sin(ypoi) > 0.0:
+                            zpoi = math.pi / 2
+                        else:
+                            zpoi = - math.pi / 2
+                    else:
+                        zpoi = math.atan(-(math.sin(xpoi) * math.sin(ypoi)) / math.cos(xpoi))
+                else:
+                    zpoi = 0
+
+                xpoi = math.degrees(xpoi)
+                ypoi = math.degrees(ypoi)
+                zpoi = math.degrees(zpoi)
+
+        if orientation:
+            xorientation, yorientation, zorientation = state.orientation
+
+        if xyz_rotate:
+            if state.xrotate is None:
+                xrotate = 0
+            else:
+                xrotate = state.xrotate
+            if state.yrotate is None:
+                yrotate = 0
+            else:
+                yrotate = state.yrotate
+            if state.zrotate is None:
+                zrotate = 0
+            else:
+                zrotate = state.zrotate
+
+        if poi or orientation or xyz_rotate:
+            m = Matrix.offset(-width / 2, -height / 2, -z11)
+        if poi:
+            m = Matrix.rotate(-xpoi, -ypoi, -zpoi) * m
+        if orientation:
+            m = Matrix.rotate(-xorientation, -yorientation, -zorientation) * m
+        if xyz_rotate:
+            m = Matrix.rotate(-xrotate, -yrotate, -zrotate) * m
+        if poi or orientation or xyz_rotate:
+            m = Matrix.offset(width / 2, height / 2, z11) * m
+
+            self.reverse = m * self.reverse
+
         if rotate is not None:
             m = Matrix.offset(-width / 2, -height / 2, 0.0)
             m = Matrix.rotate(0, 0, -rotate) * m
@@ -506,8 +724,111 @@ def transform_render(self, widtho, heighto, st, at):
 
             self.reverse = m * self.reverse
 
-    elif state.zpos:
-        self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
+    else:
+
+        poi = False
+        if state.poi is not None:
+            poi = True
+
+        orientation = False
+        if state.orientation is not None:
+            orientation = True
+
+        xyz_rotate = False
+        if state.xrotate or state.yrotate or state.zrotate:
+            xyz_rotate = True
+
+        if poi or orientation or xyz_rotate:
+            if state.matrixanchor is None:
+
+                manchorx = width / 2.0
+                manchory = height / 2.0
+
+            else:
+                manchorx, manchory = state.matrixanchor
+
+                if type(manchorx) is float:
+                    manchorx *= width
+                if type(manchory) is float:
+                    manchory *= height
+
+            m = Matrix.offset(-manchorx, -manchory, 0.0)
+
+        if poi:
+            placement = self.get_placement()
+            xplacement, yplacement = renpy.display.core.place(widtho, heighto, width, height, placement)
+            start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
+
+            if isinstance(state.poi, tuple) and len(state.poi) == 3:
+                end_pos = state.poi
+            # elif state.poi == "camera":
+            #     pass
+            else:
+                raise Exception("poi transform property should be the tuple as (x, y, z) format.")
+            a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
+            v_len = math.sqrt(a**2 + b**2 + c**2)
+            if v_len == 0:
+                xpoi = ypoi = 0
+            else:
+                a = a / v_len
+                b = b / v_len
+                c = c / v_len
+
+                sin_xpoi = -b
+                if sin_xpoi > 1.0:
+                    sin_xpoi = 1.0
+                elif sin_xpoi < -1.0:
+                    sin_xpoi = -1.0
+                xpoi = math.asin(sin_xpoi)
+                if c == 0:
+                    if abs(b) == 1:
+                        ypoi = 0
+                    else:
+                        sin_ypoi = a / math.cos(xpoi)
+                        if sin_ypoi > 1.0:
+                            sin_ypoi = 1.0
+                        elif sin_ypoi < -1.0:
+                            sin_ypoi = -1.0
+                        ypoi = math.asin(sin_ypoi)
+                else:
+                    ypoi = math.atan(a/c)
+
+                if c < 0:
+                    ypoi += math.pi
+
+                xpoi = math.degrees(xpoi)
+                ypoi = math.degrees(ypoi)
+
+        if orientation:
+            xorientation, yorientation, zorientation = state.orientation
+
+        if xyz_rotate:
+            if state.xrotate is None:
+                xrotate = 0
+            else:
+                xrotate = state.xrotate
+            if state.yrotate is None:
+                yrotate = 0
+            else:
+                yrotate = state.yrotate
+            if state.zrotate is None:
+                zrotate = 0
+            else:
+                zrotate = state.zrotate
+
+        if poi:
+            m = Matrix.rotate(xpoi, ypoi, 0) * m
+        if orientation:
+            m = Matrix.rotate(xorientation, yorientation, zorientation) * m
+        if xyz_rotate:
+            m = Matrix.rotate(xrotate, yrotate, zrotate) * m
+        if poi or orientation or xyz_rotate:
+            m = Matrix.offset(manchorx, manchory, 0.0) * m
+
+            self.reverse = m * self.reverse
+
+        if state.zpos:
+            self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
 
     mt = state.matrixtransform
 
