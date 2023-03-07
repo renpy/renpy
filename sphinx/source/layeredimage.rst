@@ -20,6 +20,8 @@ specific language. The :func:`LayeredImage` object is its Python alternative,
 it's not a :doc:`displayable <displayables>` but can be assigned to an image
 statement and used like one.
 
+The bottom of this page contains advice and examples of use.
+
 Defining Layered Images
 =======================
 
@@ -60,12 +62,14 @@ practical sense, is technically correct and outlines the layeredimage syntax::
 Layeredimage
 ------------
 
-The ``layeredimage`` statements opens the show. Like the
+The ``layeredimage`` statements opens the show. The statement is part of the
+Ren'Py script language, and runs at :ref:`init time <init-phase>`. Like the
 :ref:`atl-image-statement`, it takes an image name and opens a block, although
-what's in the block differs greatly. The statement is part of the Ren'Py script
-language, and runs at :ref:`init time <init-phase>`. Inside the block will fit
-the statements described further down, as well as the following optional
-properties.
+what's in the block differs greatly. The image name may contain spaces, just
+like any other image name in Ren'Py.
+
+Inside the block will fit the statements described further down, as well as the
+following optional properties.
 
 `image_format`
     When a given image is a string, and this is supplied, the image name
@@ -217,7 +221,7 @@ part of ``auto`` groups, more about that later), with all the corresponding
 displayables being shown at the same time (the `if_all`, `if_any`, and `if_not`
 properties can tweak this).
 
-If the displayable is not explicitely given, it will be computed from the name
+If the displayable is not explicitly given, it will be computed from the name
 of the layeredimage, the group (if any), the group's variant (if any), and the
 attribute. See the :ref:`pattern <layeredimage-pattern>` section for more
 details.
@@ -247,8 +251,8 @@ The attribute statement takes the following properties:
     A transform or list of transforms that are applied to the layer.
 
 The `if_*` clauses' test is based upon the list of attributes of the resulting
-image, as explained :ref:`here <concept-image>`, but it **does not *change* that
-list.** ::
+image, as explained :ref:`here <concept-image>`, but it **does not change** that
+list. ::
 
     layeredimage eileen:
         attribute a
@@ -283,7 +287,8 @@ attributes in the group have been declared, Ren'Py will scan its list of images
 for those that match the group's pattern (see :ref:`below <layeredimage-pattern>`).
 Any images that are found, except those corresponding to explicitly declared
 attributes, are then added to the group as if declared using the ``attribute``
-statement inside the group's block.
+statement inside the group's block. See the :ref:`layeredimage-examples` section
+for a practical demo.
 
 This can be followed by the ``multiple`` keyword. If present, no incompatibility
 is applied to the attributes declared inside the block. This is useful to have a
@@ -535,3 +540,92 @@ If you want it to depend on both (for example for ``show eileen ribbon`` to show
 either a blue or red ribbon depending on a variable, but no ribbon appearing
 unless you ask for it with the ``ribbon`` attribute), declare all versions as
 attributes and use a dedicated :var:`config.adjust_attributes` function.
+
+
+.. _layeredimage-examples:
+
+Examples
+========
+
+**Pattern and auto groups**
+
+From the following files in the images/ directory (or one of its subfolders) and
+written code:
+
+.. a code-block and not a ::, because it's not proper renpy syntax
+
+.. code-block:: none
+
+    francis_base.png
+    francis_face_neutral.png
+    francis_face_angry.png
+    francis_face_happy.png
+    francis_face_very_happy.png
+    francis_face annoyed.png
+    francis_supersad.png
+
+::
+
+    layeredimage francis:
+        attribute base default
+        group face auto
+            attribute neutral default
+        attribute supersad:
+            Solid("#00c3", xysize=(100, 100))
+
+The ``francis`` layeredimage will declare the (defaulted) ``base`` attribute,
+and associate it the "francis_base" (auto-defined) image using the
+:ref:`pattern <layeredimage-pattern>` : the layeredimage name ("francis"), the
+group name (none here), the variant name (none here) and the attribute name
+("base"), separated with underscores.
+
+Then, in the ``face`` group, the explicit ``neutral`` attribute gets associated
+the "francis_face_neutral" image, following the same pattern but using "face"
+as the group name and "neutral" as the attribute name.
+
+After all explicit attributes receive their images, ``face`` being an ``auto``
+group, existing images (auto-defined or not) are scanned for a match with the
+pattern. Here, three are found : "francis_face_angry", "francis_face_happy" and
+"francis_face_very_happy". They are associated with the ``angry``, ``happy`` and
+``very_happy`` attributes respectively, using the same pattern as before. No
+``annoyed`` attribute is defined however, since the "francis_face annoyed" image
+contains a space where the pattern expected an underscore.
+
+Finally, the ``supersad`` attribute is declared, but since a displayable is
+explicitly provided, the pattern does not look for a matching image.
+
+The "francis_supersad" and "francis_face annoyed" images get auto-defined from
+the filename as part of Ren'Py's ordinary :ref:`protocol <images-directory>`,
+but these sprites don't find a match with any attribute or auto group, so they
+end up not being used in the ``francis`` layeredimage.
+
+As you can see, using the pattern to associate images to attributes and using
+auto groups shrinks the code considerably. The same layeredimage would have
+taken 13 lines if everything was declared explicitly (try it!), and this syntax
+allows for geometric growth of the sprite set - adding any number of new faces
+wouldn't require any change to the code, for example.
+
+
+**Dynamism in attributes**
+
+Here is an example for defining attributes depending on variables (as mentioned
+in the Advice section)::
+
+    layeredimage eileen:
+        attribute base default
+        group outfit auto
+        group ribbon prefix "ribbon":
+            attribute red
+            attribute blue
+
+    default eileen_ribbon_color = "red"
+
+    init python:
+        def eileen_adjuster(names):
+            atts = set(names[1:])
+            if "ribbon" in atts:
+                atts.remove("ribbon")
+                atts.add("ribbon_" + eileen_ribbon_color)
+            return names[0], *atts
+
+    define config.adjust_attributes["eileen"] = eileen_adjuster
