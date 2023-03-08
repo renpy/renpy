@@ -778,7 +778,7 @@ cdef class Render:
     def __setstate__(self, state): #@DuplicatedSignature
         return
 
-    cpdef int _blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
+    cpdef int blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
         """
         Blits `source` (a Render, Surface, or GL2Model) to this Render, offset by
         xo and yo.
@@ -786,7 +786,8 @@ cdef class Render:
         If `focus` is true, then focuses are added from the child to the
         parent.
 
-        The elements of `pos` are interpreted as a number of pixels, whatever their type.
+        The elements of `pos` are interpreted as a ``position`` :
+        int and absolute are numbers of pixels, pure-float is relative to the size of this render.
         """
 
         if source is self:
@@ -797,6 +798,11 @@ cdef class Render:
                 source = renpy.display.draw.load_texture(source)
 
         (xo, yo) = pos
+
+        if type(xo) is float:
+            xo = renpy.display.core.absolute(xo * self.width)
+        if type(yo) is float:
+            yo = renpy.display.core.absolute(yo * self.height)
 
         if index is None:
             self.children.append((source, xo, yo, focus, main))
@@ -809,33 +815,21 @@ cdef class Render:
 
         return 0
 
-    cpdef int blit(Render self, source, tuple pos, *args, **kwargs):
+    cpdef int integer_blit(Render self, source, tuple pos, *args, **kwargs):
         """
-        An proxy for _blit than blits on integer pixel boundaries.
-        """
-
-        (xo, yo) = pos
-
-        xo = int(xo)
-        yo = int(yo)
-
-        return self._blit(source, (xo, yo), *args, **kwargs)
-
-    cpdef int subpixel_blit(Render self, source, tuple pos, *args, **kwargs):
-        """
-        An proxy for _blit than blits at fractional pixel boundaries.
+        An proxy for _blit that blits on integer pixel boundaries.
         """
 
         (xo, yo) = pos
 
-        xo = float(xo)
-        yo = float(yo)
+        xo = round(xo)
+        yo = round(yo)
 
         return self._blit(source, (xo, yo), *args, **kwargs)
 
     cpdef int absolute_blit(Render self, source, tuple pos, *args, **kwargs):
         """
-        An proxy for _blit than blits at fractional pixel boundaries.
+        An proxy for _blit that blits at fractional pixel boundaries.
         """
 
         (xo, yo) = pos
@@ -844,6 +838,8 @@ cdef class Render:
         yo = renpy.display.core.absolute(yo)
 
         return self._blit(source, (xo, yo), *args, **kwargs)
+
+    subpixel_blit = absolute_blit # legacy
 
 
     def get_size(self):
