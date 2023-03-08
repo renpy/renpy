@@ -580,8 +580,8 @@ class Frame(renpy.display.core.Displayable):
         return rv
 
     def visit(self):
-        rv = [ ]
-        self.style._visit_frame(rv)
+        rv = [ self.image ]
+        self.style._visit_frame(rv.append)
         return rv
 
 
