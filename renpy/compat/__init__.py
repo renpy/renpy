@@ -180,6 +180,18 @@ if PY2:
     add_attribute(io.TextIOWrapper, "write", types.MethodType(text_write, None, io.TextIOWrapper)) # type: ignore
 
 ################################################################################
+# Chance the default for subprocess.Popen.
+if PY2:
+    import subprocess
+    class Popen(subprocess.Popen):
+        def __init__(self, *args, **kwargs):
+            kwargs.setdefault("close_fds", True)
+            super(Popen, self).__init__(*args, **kwargs)
+
+    subprocess.Popen = Popen
+
+
+################################################################################
 # Export functions.
 
 __all__ = [ "PY2", "open", "basestring", "str", "pystr", "range",
