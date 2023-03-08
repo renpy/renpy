@@ -2469,3 +2469,9 @@ class Layer(AdjustTimes):
 
         seen.add(id_d)
         d.visit_all(callback, seen)
+
+    def per_interact(self):
+        if renpy.game.interface and renpy.game.interface.take_layer_displayable:
+            renpy.game.interface.take_layer_displayable(self)
+
+        super(Layer, self).per_interact()

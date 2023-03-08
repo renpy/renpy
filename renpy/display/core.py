@@ -3613,6 +3613,9 @@ class Interface(object):
         else:
             renpy.plog(1, "end idle_frame (inexpensive)")
 
+    # This gets assigned below.
+    take_layer_displayable = None
+
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,
@@ -3896,22 +3899,28 @@ class Interface(object):
         # caused by an exception propagating through this function.
         try:
 
-            # Insert layers into Layer displayables.
-            def per_interact(i):
-                if isinstance(i, renpy.display.layout.Layer):
-                    if i.layer in scene:
-                        i.layers = layer_transitions
-                        add_layer(i, i.layer)
-                        del i.layers
-                    else:
-                        i.add(null)
+            # Call per-interaction code for all displayables.
+            def take_layer_displayable(ld):
+                """
+                This is called by a layer displayable to add the layer's
+                contents to the layer displayable.
+                """
 
-                i.per_interact()
+                if ld.layer in scene:
+                    ld.layers = layer_transitions
+                    add_layer(ld, ld.layer)
+                    del ld.layers
+                else:
+                    ld.add(null)
 
-            # Call per-interaction code for all widgets.
+            self.take_layer_displayable = take_layer_displayable
+
             renpy.display.behavior.input_pre_per_interact()
-            root_widget.visit_all(per_interact)
+            root_widget.visit_all(lambda d : d.per_interact())
             renpy.display.behavior.input_post_per_interact()
+
+            self.take_layer_displayable = None
+
 
             # Consolidate static and layer transitions for later processing.
             if layer_transitions:
