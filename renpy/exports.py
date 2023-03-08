@@ -1447,7 +1447,7 @@ def say(who, what, *args, **kwargs):
 
         e "Hello, world."
         $ renpy.say(e, "Hello, world.")
-        $ e("Hello, world.")
+        $ e("Hello, world.") # when e is not a string
     """
 
     if renpy.config.old_substitutions:

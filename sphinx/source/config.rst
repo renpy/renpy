@@ -941,13 +941,14 @@ Occasionally Used
 
     If not None, this should be a function that takes the speaking character,
     followed by positional and keyword arguments. It's called whenever a
-    say statement occurs with the arguments to that say statement. This
-    always includes an interact argument, and can include others provided
-    in the say statement.
+    say statement occurs, even when the statement doesn't explicitly pass
+    arguments. The arguments passed to the callback always include an `interact`
+    argument, and include the others provided in the say statement (if any).
 
     This should return a pair, containing a tuple of positional arguments
     (almost always empty), and a dictionary of keyword arguments (almost
-    always with at least `interact` in it).
+    always with at least `interact` in it). Those will replace the arguments
+    passed to the callback.
 
     For example::
 
