@@ -822,7 +822,7 @@ cdef class Render:
 
     cpdef int absolute_blit(Render self, source, tuple pos, *args, **kwargs):
         """
-        An proxy for _blit that blits at fractional pixel boundaries.
+        An proxy for blit that blits at fractional pixel boundaries.
         """
 
         (xo, yo) = pos
@@ -830,7 +830,7 @@ cdef class Render:
         xo = renpy.display.core.absolute(xo)
         yo = renpy.display.core.absolute(yo)
 
-        return self._blit(source, (xo, yo), *args, **kwargs)
+        return self.blit(source, (xo, yo), *args, **kwargs)
 
     subpixel_blit = absolute_blit # legacy
 
