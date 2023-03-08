@@ -799,10 +799,15 @@ cdef class Render:
 
         (xo, yo) = pos
 
-        if type(xo) is float:
-            xo = renpy.display.core.absolute(xo * self.width)
-        if type(yo) is float:
-            yo = renpy.display.core.absolute(yo * self.height)
+        if renpy.config.int_render_blit:
+            xo = int(xo)
+            yo = int(yo)
+        else:
+            if type(xo) is float:
+                xo *= self.width
+            if type(yo) is float:
+                yo *= self.height
+            # no need to convert to absolute
 
         if index is None:
             self.children.append((source, xo, yo, focus, main))
@@ -814,18 +819,6 @@ cdef class Render:
             source.parents.add(self)
 
         return 0
-
-    cpdef int integer_blit(Render self, source, tuple pos, *args, **kwargs):
-        """
-        An proxy for _blit that blits on integer pixel boundaries.
-        """
-
-        (xo, yo) = pos
-
-        xo = round(xo)
-        yo = round(yo)
-
-        return self._blit(source, (xo, yo), *args, **kwargs)
 
     cpdef int absolute_blit(Render self, source, tuple pos, *args, **kwargs):
         """

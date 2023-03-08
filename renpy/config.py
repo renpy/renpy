@@ -1373,6 +1373,9 @@ check_translate_none = True
 # Like developer, but available at the end of python early blocks.
 early_developer = False
 
+# Does Render.blit round down its pos parameter ?
+int_render_blit = False
+
 
 del os
 del collections
