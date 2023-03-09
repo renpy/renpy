@@ -470,7 +470,7 @@ def translate_command():
     ap.add_argument("--empty", help="Produce empty strings while generating translations.", dest="empty", action="store_true")
     ap.add_argument("--count", help="Instead of generating files, print a count of missing translations.", dest="count", action="store_true")
     ap.add_argument("--min-priority", help="Translate strings with more than this priority.", dest="min_priority", default=0, type=int)
-    ap.add_argument("--max-priority", help="Translate strings with more than this priority.", dest="max_priority", default=0, type=int)
+    ap.add_argument("--max-priority", help="Translate strings with less than this priority.", dest="max_priority", default=0, type=int)
     ap.add_argument("--strings-only", help="Only translate strings (not dialogue).", dest="strings_only", default=False, action="store_true")
     ap.add_argument("--common-only", help="Only translate string from the common code.", dest="common_only", default=False, action="store_true")
     ap.add_argument("--no-todo", help="Do not include the TODO flag.", dest="todo", default=True, action="store_false")
