@@ -93,7 +93,7 @@ send a character to a location::
                 dragged detective_dragged
                 xpos 100 ypos 100
 
-                ad "ivy.png"
+                add "ivy.png"
             drag:
                 drag_name "Zack"
                 droppable False
