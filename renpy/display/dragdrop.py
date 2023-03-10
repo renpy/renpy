@@ -471,8 +471,8 @@ class Drag(renpy.display.core.Displayable, renpy.revertable.RevertableObject):
         Changes the child of this drag to `d`.
         """
 
-        d.per_interact()
         self.child = renpy.easy.displayable(d)
+        self.child.per_interact()
         renpy.display.render.invalidate(self)
 
     def top(self):

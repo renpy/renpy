@@ -89,28 +89,33 @@ send a character to a location::
             # Our detectives.
             drag:
                 drag_name "Ivy"
-                child "ivy.png"
                 droppable False
                 dragged detective_dragged
                 xpos 100 ypos 100
+
+                ad "ivy.png"
             drag:
                 drag_name "Zack"
-                child "zack.png"
                 droppable False
                 dragged detective_dragged
                 xpos 150 ypos 100
 
+                add "zack.png"
+
             # The cities they can go to.
             drag:
                 drag_name "London"
-                child "london.png"
                 draggable False
                 xpos 450 ypos 140
+
+                add "london.png"
+
             drag:
                 drag_name "Paris"
                 draggable False
-                child "paris.png"
                 xpos 500 ypos 280
+
+                add "paris.png"
 
     label send_detective:
         "We need to investigate! Who should we send, and where should they go?"
