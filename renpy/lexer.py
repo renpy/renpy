@@ -178,6 +178,10 @@ lllword = re.compile(r'__(\w+)|\w+| +|.', re.S)
 def munge_filename(fn):
     # The prefix that's used when __ is found in the file.
     rv = os.path.basename(fn)
+
+    if rv.endswith("_ren.py"):
+        rv = rv[:-7]
+
     rv = os.path.splitext(rv)[0]
     rv = rv.replace(" ", "_")
 
