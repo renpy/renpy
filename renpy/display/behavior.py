@@ -1287,7 +1287,7 @@ def input_post_per_interact():
     global input_value_active
 
     for i in input_values:
-        if i is current_input_value:
+        if i == current_input_value:
             break
 
     else:
@@ -1298,7 +1298,7 @@ def input_post_per_interact():
 
     for i in inputs:
 
-        editable = (i.value is current_input_value) and input_value_active and i.value.editable
+        editable = (i.value == current_input_value) and input_value_active and i.value.editable
 
         content = i.value.get_text()
 
