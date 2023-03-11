@@ -465,6 +465,10 @@ safer to use.
 When Ren'Py used to normalize every whitespaces into standard spaces, it now
 supports non-standard spaces such as \\u3000, the full-width ideographic space.
 
+:meth:`renpy.Render.blit` now takes :ref:`positions <style-property-values>`
+for its `pos` parameter, allowing one to pass values relative to the size of
+the Render.
+
 
 .. _renpy-7.5.3:
 .. _renpy-8.0.3:

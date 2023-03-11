@@ -257,9 +257,11 @@ the implicit `self` parameter.
             The render object to draw.
 
         `pos`
-            The location to draw into. This is an (x, y) tuple
-            with the coordinates being pixels relative to the
-            upper-left corner of the target render.
+            The location to draw into. This is an (x, y) tuple of
+            :ref:`positions <style-property-values>` : integers and
+            ``absolute``\ s are a number of pixels relative to the upper-left
+            corner of the target render, and floats are interpreted as a
+            fraction of the width or height of the target render.
 
         `main`
             A keyword-only parameter. If true, `source` will be displayed

@@ -786,7 +786,8 @@ cdef class Render:
         If `focus` is true, then focuses are added from the child to the
         parent.
 
-        This will only blit on integer pixel boundaries.
+        The elements of `pos` are interpreted as a ``position`` :
+        int and absolute are numbers of pixels, pure-float is relative to the size of this render.
         """
 
         if source is self:
@@ -798,8 +799,15 @@ cdef class Render:
 
         (xo, yo) = pos
 
-        xo = int(xo)
-        yo = int(yo)
+        if renpy.config.int_render_blit:
+            xo = int(xo)
+            yo = int(yo)
+        else:
+            if type(xo) is float:
+                xo *= self.width
+            if type(yo) is float:
+                yo *= self.height
+            # no need to convert to absolute
 
         if index is None:
             self.children.append((source, xo, yo, focus, main))
@@ -812,73 +820,19 @@ cdef class Render:
 
         return 0
 
-    cpdef int subpixel_blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
+    cpdef int absolute_blit(Render self, source, tuple pos, *args, **kwargs):
         """
-        Blits `source` (a Render, Surface, or GL2Model) to this Render, offset by
-        xo and yo.
-
-        If `focus` is true, then focuses are added from the child to the
-        parent.
-
-        This blits at fractional pixel boundaries.
+        An proxy for blit that blits at fractional pixel boundaries.
         """
-
-        if source is self:
-            raise Exception("Blitting to self.")
-
-        if models:
-            if isinstance(source, pygame.Surface):
-                source = renpy.display.draw.load_texture(source)
-
-        (xo, yo) = pos
-
-        xo = float(xo)
-        yo = float(yo)
-
-        if index is None:
-            self.children.append((source, xo, yo, focus, main))
-        else:
-            self.children.insert(index, (source, xo, yo, focus, main))
-
-        if isinstance(source, Render):
-            self.depends_on_list.append(source)
-            source.parents.add(self)
-
-        return 0
-
-    cpdef int absolute_blit(Render self, source, tuple pos, object focus=True, object main=True, object index=None):
-        """
-        Blits `source` (a Render or Surface) to this Render, offset by
-        xo and yo.
-
-        If `focus` is true, then focuses are added from the child to the
-        parent.
-
-        This blits at fractional pixel boundaries.
-        """
-
-        if source is self:
-            raise Exception("Blitting to self.")
-
-        if models:
-            if isinstance(source, pygame.Surface):
-                source = renpy.display.draw.load_texture(source)
 
         (xo, yo) = pos
 
         xo = renpy.display.core.absolute(xo)
         yo = renpy.display.core.absolute(yo)
 
-        if index is None:
-            self.children.append((source, xo, yo, focus, main))
-        else:
-            self.children.insert(index, (source, xo, yo, focus, main))
+        return self.blit(source, (xo, yo), *args, **kwargs)
 
-        if isinstance(source, Render):
-            self.depends_on_list.append(source)
-            source.parents.add(self)
-
-        return 0
+    subpixel_blit = absolute_blit # legacy
 
 
     def get_size(self):

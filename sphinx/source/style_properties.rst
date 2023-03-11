@@ -94,6 +94,8 @@ text.::
          selected_color "#ff0"
 
 
+.. _style-property-values:
+
 Style Property Values
 =====================
 

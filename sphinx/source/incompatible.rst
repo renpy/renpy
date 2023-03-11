@@ -139,6 +139,11 @@ Alternatively, you can determine new default volumes for :var:`config.default_mu
 :var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` variables. If any
 of these is 0.0 or 1.0, it can be left unchanged.
 
+**Render.blit** : this method now takes :ref:`positions <style-property-values>` as `pos` values,
+and will not round them down to integers. To revert to the old behavior::
+
+    define config.int_render_blit = True
+
 
 .. _incompatible-8.0.2:
 .. _incompatible-7.5.2:
