@@ -1373,6 +1373,9 @@ check_translate_none = True
 # Like developer, but available at the end of python early blocks.
 early_developer = False
 
+# A function that returns the autosave prefix.
+autosave_prefix_callback = None
+
 
 del os
 del collections

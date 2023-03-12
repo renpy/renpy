@@ -329,6 +329,12 @@ Occasionally Used
     ::
         define config.autosave_callback = Notify("Autosaved.")
 
+.. var:: config.autosave_prefix_callback = None
+
+    If not None, this is a function that is called with no arguments, and
+    return the prefix of autosave files. The default prefix used is "auto-",
+    which means the autosave slots will be "auto-1", "auto-2", etc.
+
 .. var:: config.autosave_slots = 10
 
     The number of slots used by autosaves.
@@ -520,6 +526,35 @@ Occasionally Used
 
     If not None, this is a sound file that is played when exiting the
     game menu.
+
+.. var:: config.file_slotname_callback = None
+
+    If not None, this is a function that is used by the :ref:`file actions <file-actions>`
+    to convert a page and name into a slot name that can be passed to
+    the :ref:`save functions <save-functions>`.
+
+    `page`
+        This is a string containing the name of the page that is being
+        accessed. This is a string, usually containing a number, but it
+        also may contain special values like "quick" or "auto".
+
+    `name`
+        The is a string that contains the name of the slot on the page.
+        It may also contain a regular expression pattern
+        (like r'\d+'), in which  case the same pattern should be included
+        in the result.
+
+    The default behavior is equivalent to::
+
+        def file_slotname_callback(page, name):
+            return page + "-" + name
+
+        config.file_slotname_callback = file_slotname_callback
+
+    One use of this is to allow the the game to apply a prefix to
+    save files.
+
+    See also :var:`config.autosave_prefix_callback`.
 
 .. var:: config.fix_rollback_without_choice = False
 

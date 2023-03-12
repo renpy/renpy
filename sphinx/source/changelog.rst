@@ -286,14 +286,24 @@ prompting during upgrades to Ren'Py 8.1/7.6 or later.
 There is intentionally no way to disable this feature, as it's important
 for end-users to be warned about the security issues when possible.
 
-
-New Features
-------------
+New Search Paths
+----------------
 
 Ren'Py will now search for audio files in the ``game/audio`` directory,
 and font files in the ``game/fonts`` directory, if not found in the game
 directory. Images will still be searched for in the ``game/images`` directory,
 but other files will not be found there.
+
+
+New Features
+------------
+
+The new :var:`config.file_slotname_callback` variable allows the
+developer to customize how file slot names are generated. One
+application of this is allow the developer to apply a prefix to
+save slots (for example, to select between dlc and non-dlc saves).
+The new :var:`autosave_prefix_callback` allows a similar prefix to
+be given to autosaves.
 
 A new tool, accessible through the developer (Shift+D) menu, allows
 persistent data to be viewed.

@@ -43,6 +43,8 @@ or game menus.
 
 .. include:: inc/menu_action
 
+.. _file-actions:
+
 File Actions
 ------------
 
@@ -57,6 +59,9 @@ take the `name` and `page` arguments.
     The page that this action acts on. This is one of "auto",
     "quick", or a positive integer. If None, the page is determined
     automatically, based on a persistent page number.
+
+These are converted to a slot name using :var:`config.file_slotname_callback`,
+if it's set.
 
 .. include:: inc/file_action
 

@@ -452,11 +452,16 @@ def autosave_thread_function(take_screenshot):
     global autosave_counter
     global did_autosave
 
+    if renpy.config.autosave_prefix_callback:
+        prefix = renpy.config.autosave_prefix_callback()
+    else:
+        prefix = "auto-"
+
     try:
 
         try:
 
-            cycle_saves("auto-", renpy.config.autosave_slots)
+            cycle_saves(prefix, renpy.config.autosave_slots)
 
             if renpy.config.auto_save_extra_info:
                 extra_info = renpy.config.auto_save_extra_info()
@@ -466,7 +471,7 @@ def autosave_thread_function(take_screenshot):
             if take_screenshot:
                 renpy.exports.take_screenshot(background=True)
 
-            save("auto-1", mutate_flag=True, extra_info=extra_info)
+            save(prefix + "1", mutate_flag=True, extra_info=extra_info)
             autosave_counter = 0
 
             did_autosave = True
@@ -561,12 +566,17 @@ def force_autosave(take_screenshot=False, block=False):
         else:
             extra_info = ""
 
-        cycle_saves("auto-", renpy.config.autosave_slots)
+        if renpy.config.autosave_prefix_callback:
+            prefix = renpy.config.autosave_prefix_callback()
+        else:
+            prefix = "auto-"
+
+        cycle_saves(prefix, renpy.config.autosave_slots)
 
         if take_screenshot:
             renpy.exports.take_screenshot()
 
-        save("auto-1", extra_info=extra_info)
+        save(prefix + "1", extra_info=extra_info)
 
         return
 
