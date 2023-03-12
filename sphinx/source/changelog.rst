@@ -411,6 +411,8 @@ Disabling Dialogue's :ref:`monologue-mode` is now possible using the
 Other Changes
 -------------
 
+Local variables (prefixed with __) may now be used in f-strings.
+
 The {nw} tag will wait for self-voicing to complete, when self-voicing
 is enabled.
 
