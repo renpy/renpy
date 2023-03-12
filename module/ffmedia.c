@@ -835,7 +835,7 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		ms->video_decode_frame->height,
 		get_pixel_format(rgba_surface),
 
-		SWS_POINT,
+		SWS_BILINEAR,
 
 		NULL,
 		NULL,
