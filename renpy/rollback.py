@@ -759,6 +759,8 @@ class RollbackLog(renpy.object.Object):
         """
 
         self.rollback_limit = 0
+        if self.current is not None:
+            self.current.not_greedy = True
         renpy.game.context().force_checkpoint = True
 
         if purge:
@@ -897,7 +899,7 @@ class RollbackLog(renpy.object.Object):
         force_checkpoint = False
 
         # Try to rollback to just after the previous checkpoint.
-        while greedy and self.log and (self.rollback_limit > 0):
+        while greedy and self.log:
 
             rb = self.log[-1]
 
