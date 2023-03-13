@@ -263,6 +263,7 @@ name_blacklist = {
     "renpy.webloader.queue_lock",
     "renpy.persistent.MP_instances",
     "renpy.exports.sdl_dll",
+    "renpy.sl2.slast.serial",
     }
 
 class Backup(_object):
