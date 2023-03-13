@@ -361,13 +361,12 @@ Utility Functions and Classes
     elapsed.
 
     When the displayable is redrawn, which can happen before that time,
-    any pending redraw order will be forgotten. For example, if you
-    call ``renpy.redraw(this, 7)``, and 3 seconds later, ``this``
-    gets redrawn (because one of its children available through the
-    :func:`Displayable.visit` method calls for an update, if it's an ATL
-    animation for example), then unless you call ``renpy.redraw`` again
-    in the :func:`Displayable.render` method, ``this`` won't be redrawn
-    4 additional seconds later.
+    any pending redraw order will be forgotten. For example, if you call
+    ``renpy.redraw(this, 7)``, and 3 seconds later, ``this`` gets redrawn
+    (for any reason, for example because one of its children is an ATL
+    animation and calls for an update), then unless you call
+    ``renpy.redraw`` again in the :func:`Displayable.render` method,
+    ``this`` won't be redrawn 4 additional seconds later.
 
     On the plus side, given that redraw orders are not saved as part of
     save data, accounting for this behavior will likely also avoid
