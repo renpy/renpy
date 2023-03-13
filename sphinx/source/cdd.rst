@@ -360,6 +360,19 @@ Utility Functions and Classes
     Causes the displayable `d` to be redrawn after `when` seconds have
     elapsed.
 
+    When the displayable is redrawn, which can happen before that time,
+    any pending redraw order will be forgotten. For example, if you
+    call ``renpy.redraw(this, 7)``, and 3 seconds later, ``this``
+    gets redrawn (because one of its children available through the
+    :func:`Displayable.visit` method calls for an update, if it's an ATL
+    animation for example), then unless you call ``renpy.redraw`` again
+    in the :func:`Displayable.render` method, ``this`` won't be redrawn
+    4 additional seconds later.
+
+    On the plus side, given that redraw orders are not saved as part of
+    save data, accounting for this behavior will likely also avoid
+    glitches after save/load cycles.
+
 .. exception:: renpy.IgnoreEvent
 
     This is an exception that, if raised, causes Ren'Py to ignore the
