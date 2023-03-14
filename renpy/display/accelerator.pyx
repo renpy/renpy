@@ -618,7 +618,7 @@ def transform_render(self, widtho, heighto, st, at):
         self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
 
         poi = False
-        if state.poi is not None:
+        if state.poi is not None or state.poi_is is not None:
             poi = True
 
         orientation = False
@@ -631,12 +631,40 @@ def transform_render(self, widtho, heighto, st, at):
 
         if poi:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
-            if isinstance(state.poi, tuple) and len(state.poi) == 3:
-                end_pos = state.poi
-            # elif state.poi == "camera":
-            #     raise Exception("Can't direct camera to camera")
+            if state.poi_is:
+                if "@" in state.poi_is:
+                    tag, layer = state.poi_is.split("@")
+                else:
+                    layer = "master"
+                    tag = state.poi_is
+                if tag == "camera":
+                    sle = renpy.game.context().scene_lists
+                    d = sle.camera_transform[layer]
+                    end_perspective = d.perspective
+                    if end_perspective is True:
+                        end_perspective = renpy.config.perspective
+                    elif end_perspective is False:
+                        end_perspective = None
+                    elif isinstance(end_perspective, (int, float)):
+                        end_perspective = (renpy.config.perspective[0], end_perspective, renpy.config.perspective[2])
+                    if end_perspective:
+                        end_z11 = end_perspective[1]
+                        
+                    end_placement = (d.xpos, d.ypos, None, None, d.xoffset, d.yoffset, True)
+                    end_xplacement, end_yplacement = renpy.display.core.place(widtho, heighto, None, None, end_placement)
+                    end_pos = (end_xplacement + widtho / 2, end_yplacement + heighto / 2, d.zpos + end_z11)
+                else:
+                    sle = renpy.game.context().scene_lists
+                    d = sle.get_displayable_by_tag(layer, tag)
+                    end_pos = renpy.exports.get_placement(d)
+                    end_placement = (end_pos.xpos, end_pos.ypos, None, None, end_pos.xoffset, end_pos.yoffset, True)
+                    end_xplacement, end_yplacement = renpy.display.core.place(width, height, None, None, end_placement)
+                    end_pos = (end_xplacement, end_yplacement, d.zpos)
             else:
-                raise Exception("poi transform property should be the tuple as (x, y, z) format.")
+                if isinstance(state.poi, tuple) and len(state.poi) == 3:
+                    end_pos = state.poi
+                else:
+                    raise Exception("poi transform property should be the tuple as (x, y, z) format.")
             a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
 
             #cameras is rotated in z, y, x order.
@@ -727,7 +755,7 @@ def transform_render(self, widtho, heighto, st, at):
     else:
 
         poi = False
-        if state.poi is not None:
+        if state.poi is not None or state.poi_is is not None:
             poi = True
 
         orientation = False
@@ -759,12 +787,40 @@ def transform_render(self, widtho, heighto, st, at):
             xplacement, yplacement = renpy.display.core.place(widtho, heighto, width, height, placement)
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
-            if isinstance(state.poi, tuple) and len(state.poi) == 3:
-                end_pos = state.poi
-            # elif state.poi == "camera":
-            #     pass
+            if state.poi_is:
+                if "@" in state.poi_is:
+                    tag, layer = state.poi_is.split("@")
+                else:
+                    layer = "master"
+                    tag = state.poi_is
+                if tag == "camera":
+                    sle = renpy.game.context().scene_lists
+                    d = sle.camera_transform[layer]
+                    end_perspective = d.perspective
+                    if end_perspective is True:
+                        end_perspective = renpy.config.perspective
+                    elif end_perspective is False:
+                        end_perspective = None
+                    elif isinstance(end_perspective, (int, float)):
+                        end_perspective = (renpy.config.perspective[0], end_perspective, renpy.config.perspective[2])
+                    if end_perspective:
+                        end_z11 = end_perspective[1]
+                        
+                    end_placement = (d.xpos, d.ypos, None, None, d.xoffset, d.yoffset, True)
+                    end_xplacement, end_yplacement = renpy.display.core.place(widtho, heighto, None, None, end_placement)
+                    end_pos = (end_xplacement + widtho / 2, end_yplacement + heighto / 2, d.zpos + end_z11)
+                else:
+                    sle = renpy.game.context().scene_lists
+                    d = sle.get_displayable_by_tag(layer, tag)
+                    end_pos = renpy.exports.get_placement(d)
+                    end_placement = (end_pos.xpos, end_pos.ypos, None, None, end_pos.xoffset, end_pos.yoffset, True)
+                    end_xplacement, end_yplacement = renpy.display.core.place(widtho, heighto, None, None, end_placement)
+                    end_pos = (end_xplacement, end_yplacement, d.zpos)
             else:
-                raise Exception("poi transform property should be the tuple as (x, y, z) format.")
+                if isinstance(state.poi, tuple) and len(state.poi) == 3:
+                    end_pos = state.poi
+                else:
+                    raise Exception("poi transform property should be the tuple as (x, y, z) format.")
             a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
             v_len = math.sqrt(a**2 + b**2 + c**2)
             if v_len == 0:

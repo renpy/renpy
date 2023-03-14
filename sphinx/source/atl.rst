@@ -1167,7 +1167,7 @@ These properties are applied in the following order:
 #. crop, corner1, corner2
 #. xysize, size, maxsize
 #. zoom, xzoom, yzoom
-#. poi
+#. poi, poi_is
 #. orientation
 #. xrotate, yrotate, zrotate
 #. rotate
