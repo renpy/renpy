@@ -2336,8 +2336,6 @@ class Interface(object):
 
         self.started = True
 
-        print("B")
-
         self.set_mode()
 
         # Load the image fonts.
