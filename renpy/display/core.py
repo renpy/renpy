@@ -2336,6 +2336,8 @@ class Interface(object):
 
         self.started = True
 
+        print("B")
+
         self.set_mode()
 
         # Load the image fonts.
@@ -2450,6 +2452,9 @@ class Interface(object):
                 square_im = renpy.display.pgrender.surface_unscaled((imax, imax), True)
                 square_im.blit(im, ((imax - iw) // 2, (imax - ih) // 2))
                 im = square_im
+
+                if im.get_size()[0] > 1024:
+                    im = renpy.display.scale.smoothscale(im, (1024, 1024))
 
                 pygame.display.set_icon(im)
             except renpy.webloader.DownloadNeeded:
