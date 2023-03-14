@@ -416,8 +416,10 @@ def redraw(d, when):
     """
     :doc: udd_utility
 
-    Causes the displayable `d` to be redrawn after `when` seconds have
-    elapsed.
+    Causes the displayable `d` to be redrawn (the render method called)
+    when `when` seconds have elapsed. The displayable may be redrawn before
+    that time (for example, when a child is redrawn), in which case a pending
+    redraw is forgotten.
     """
 
     if not renpy.game.interface:
