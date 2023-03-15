@@ -244,8 +244,7 @@ typedef struct MediaState {
 	/* Video Stuff ***********************************************************/
 
 	/* Software rescaling context. */
-	struct SwsContext *sws_yuv;
-	struct SwsContext *sws_rgb;
+	struct SwsContext *sws;
 
 	/* A queue of decoded video frames. */
 	SurfaceQueueEntry *surface_queue; // Lock
@@ -299,12 +298,8 @@ static void deallocate(MediaState *ms) {
 		av_free(sqe);
 	}
 
-	if (ms->sws_yuv) {
-		sws_freeContext(ms->sws_yuv);
-	}
-
-	if (ms->sws_rgb) {
-		sws_freeContext(ms->sws_rgb);
+	if (ms->sws) {
+		sws_freeContext(ms->sws);
 	}
 
 	if (ms->video_decode_frame) {
@@ -829,8 +824,8 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 
 	SDL_Surface *sample = rgba_surface;
 
-	ms->sws_yuv = sws_getCachedContext(
-		ms->sws_yuv,
+	ms->sws = sws_getCachedContext(
+		ms->sws,
 
 		ms->video_decode_frame->width,
 		ms->video_decode_frame->height,
@@ -838,35 +833,16 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 
 		ms->video_decode_frame->width,
 		ms->video_decode_frame->height,
-		AV_PIX_FMT_YUV444P,
-
-		SWS_BICUBIC,
-
-		NULL,
-		NULL,
-		NULL
-		);
-
-
-	ms->sws_rgb = sws_getCachedContext(
-		ms->sws_rgb,
-
-		ms->video_decode_frame->width,
-		ms->video_decode_frame->height,
-		AV_PIX_FMT_YUV444P,
-
-		ms->video_decode_frame->width,
-		ms->video_decode_frame->height,
 		get_pixel_format(rgba_surface),
 
-		SWS_BICUBIC,
+		SWS_BILINEAR,
 
 		NULL,
 		NULL,
 		NULL
 		);
 
-	if (!ms->sws_yuv || !ms->sws_rgb) {
+	if (!ms->sws) {
 		ms->video_finished = 1;
 		return NULL;
 	}
@@ -899,31 +875,12 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 	rv->next = NULL;
 	rv->pts = pts;
 
-	AVFrame *yuv_frame = av_frame_alloc();
-
-	if (!yuv_frame) {
-		av_free(rv);
-		return NULL;
-	}
-
-	yuv_frame->width = ms->video_decode_frame->width;
-	yuv_frame->height = ms->video_decode_frame->height;
-	yuv_frame->format = AV_PIX_FMT_YUV444P;
-
-	ret = av_frame_get_buffer(yuv_frame, 0);
-
-	if (ret) {
-		av_free(rv);
-		av_frame_free(&yuv_frame);
-		return NULL;
-	}
-
-	uint8_t *rgb_pixels = (uint8_t *) rv->pixels;
-	uint8_t *rgb_data[] = { &rgb_pixels[FRAME_PADDING * rv->pitch + FRAME_PADDING * sample->format->BytesPerPixel] };
-	int rgb_linesize[] = { rv->pitch };
+	uint8_t *surf_pixels = (uint8_t *) rv->pixels;
+	uint8_t *surf_data[] = { &surf_pixels[FRAME_PADDING * rv->pitch + FRAME_PADDING * sample->format->BytesPerPixel] };
+	int surf_linesize[] = { rv->pitch };
 
 	sws_scale(
-		ms->sws_yuv,
+		ms->sws,
 
 		(const uint8_t * const *) ms->video_decode_frame->data,
 		ms->video_decode_frame->linesize,
@@ -931,24 +888,9 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		0,
 		ms->video_decode_frame->height,
 
-		(uint8_t * const *) yuv_frame->data,
-		yuv_frame->linesize
+		surf_data,
+		surf_linesize
 		);
-
-	sws_scale(
-		ms->sws_rgb,
-
-		(const uint8_t * const *) yuv_frame->data,
-		yuv_frame->linesize,
-
-		0,
-		ms->video_decode_frame->height,
-
-		(uint8_t * const *) rgb_data,
-		rgb_linesize
-		);
-
-	av_frame_free(&yuv_frame);
 
 	return rv;
 }
