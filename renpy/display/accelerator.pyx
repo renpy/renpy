@@ -635,8 +635,8 @@ def transform_render(self, widtho, heighto, st, at):
                 if "@" in state.poi_is:
                     tag, layer = state.poi_is.split("@")
                 else:
-                    layer = "master"
                     tag = state.poi_is
+                    layer = renpy.exports.default_layer(None, tag)
                 if tag == "camera":
                     sle = renpy.game.context().scene_lists
                     d = sle.camera_transform[layer]
@@ -791,8 +791,8 @@ def transform_render(self, widtho, heighto, st, at):
                 if "@" in state.poi_is:
                     tag, layer = state.poi_is.split("@")
                 else:
-                    layer = "master"
                     tag = state.poi_is
+                    layer = renpy.exports.default_layer(None, tag)
                 if tag == "camera":
                     sle = renpy.game.context().scene_lists
                     d = sle.camera_transform[layer]

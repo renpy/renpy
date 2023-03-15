@@ -337,8 +337,8 @@ The following transform properties are used by the 3D Stage.
     camera, even if the position of the camera or the displayable is changed.
 
     If this is not None. this is string giving the displayable tag or camera.
-    That format is "tag@layer" or "tag". If layer is not given, default is
-    "master".  If tag is "camera", it means the camera
+    That format is "tag@layer" or "tag". If layer is not given, the default
+    layer for that tag is used. If tag is "camera", it means the camera
 
     poi_is has priority over poi.
 
