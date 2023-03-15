@@ -121,7 +121,7 @@ def save_dump(roots, log):
                 reduction = o.__reduce_ex__(2)
             except Exception:
                 reduction = [ ]
-                o_repr = "BAD REDUCTION " + o_repr
+                o_repr_cache[ido] = "BAD REDUCTION " + o_repr
 
             if isinstance(reduction, basestring):
                 o_repr_cache[ido] = o.__module__ + '.' + reduction
