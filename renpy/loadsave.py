@@ -86,6 +86,14 @@ def save_dump(roots, log):
             else:
                 o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
 
+        elif isinstance(o, types.FunctionType):
+            if PY2:
+                name = o.__name__
+            else:
+                name = o.__qualname__ or o.__name__
+
+            o_repr = o.__module__ + '.' + name
+
         elif isinstance(o, object):
             o_repr = "<{0}>".format(type(o).__name__)
 
@@ -114,6 +122,9 @@ def save_dump(roots, log):
 
         elif isinstance(o, types.MethodType):
             size = 1 + visit(o.__self__, path + ".im_self")
+
+        elif isinstance(o, types.FunctionType):
+            size = 1
 
         else:
 
