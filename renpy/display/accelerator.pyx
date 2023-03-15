@@ -663,7 +663,7 @@ def transform_render(self, widtho, heighto, st, at):
             elif isinstance(state.poi, tuple) and len(state.poi) == 3:
                 end_pos = state.poi
             else:
-                raise Exception("poi transform property should be the tuple as (x, y, z) or "tag@layer" format.")
+                raise Exception("poi transform property should be the tuple as (x, y, z) or 'tag@layer' format.")
 
             a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
             #cameras is rotated in z, y, x order.
@@ -818,7 +818,7 @@ def transform_render(self, widtho, heighto, st, at):
             elif isinstance(state.poi, tuple) and len(state.poi) == 3:
                 end_pos = state.poi
             else:
-                raise Exception("poi transform property should be the tuple as (x, y, z) or "tag@layer" format.")
+                raise Exception("poi transform property should be the tuple as (x, y, z) or 'tag@layer' format.")
 
             a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
             v_len = math.sqrt(a**2 + b**2 + c**2)
