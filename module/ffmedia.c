@@ -824,27 +824,33 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 
 	SDL_Surface *sample = rgba_surface;
 
-	ms->sws = sws_getCachedContext(
-		ms->sws,
+	if (ms->sws == NULL) {
+		ms->sws = sws_getContext(
+			ms->video_decode_frame->width,
+			ms->video_decode_frame->height,
+			ms->video_decode_frame->format,
 
-		ms->video_decode_frame->width,
-		ms->video_decode_frame->height,
-		ms->video_decode_frame->format,
+			ms->video_decode_frame->width,
+			ms->video_decode_frame->height,
+			get_pixel_format(sample),
 
-		ms->video_decode_frame->width,
-		ms->video_decode_frame->height,
-		get_pixel_format(rgba_surface),
+			SWS_POINT | SWS_FULL_CHR_H_INP | SWS_FULL_CHR_H_INT,
 
-		SWS_BILINEAR,
+			NULL,
+			NULL,
+			NULL
+			);
 
-		NULL,
-		NULL,
-		NULL
-		);
 
-	if (!ms->sws) {
-		ms->video_finished = 1;
-		return NULL;
+		if (!ms->sws) {
+			ms->video_finished = 1;
+			return NULL;
+		}
+
+		sws_setColorspaceDetails(ms->sws,
+			sws_getCoefficients(SWS_CS_ITU709),0,
+			sws_getCoefficients(SWS_CS_ITU709),0,
+			0, 1 << 16, 1 << 16);
 	}
 
 	SurfaceQueueEntry *rv = av_malloc(sizeof(SurfaceQueueEntry));
