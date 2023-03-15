@@ -1258,6 +1258,11 @@ class ADVCharacter(object):
         if not isinstance(what, basestring):
             raise Exception("Character expects its what argument to be a string, got %r." % (what,))
 
+        if renpy.store._side_image_attributes_reset:
+            renpy.store._side_image_attributes = None
+            renpy.store._side_image_attributes_reset = False
+
+
         # Figure out multiple and final. Multiple is None if this is not a multiple
         # dialogue, or a step and the total number of steps in a multiple interaction.
 
