@@ -316,7 +316,7 @@ The following transform properties are used by the 3D Stage.
 
 .. transform-property:: poi
 
-    :type: (float, float, float) or None
+    :type: (float, float, float), str or None
     :default: None
 
     This gives the position of the point of interest. The camera or the
@@ -325,22 +325,11 @@ The following transform properties are used by the 3D Stage.
 
     If this is None, no point-of-interest rotation is applied.
 
-    If poi_is is given, this has no effect.
-
-.. transform-property:: poi_is
-
-    :type: str or None
-    :default: None
-
-    This gives the displayable or camera as the point of interest. The camera
-    or the displayable being transformed are rotated to face the displayable or
-    camera, even if the position of the camera or the displayable is changed.
-
-    If this is not None. this is string giving the displayable tag or camera.
-    That format is "tag@layer" or "tag". If layer is not given, the default
-    layer for that tag is used. If tag is "camera", it means the camera
-
-    poi_is has priority over poi.
+    If this is not None, this is a 3-tuple or string. (x, y, z) format tuple
+    represents the position of the point of interest. A string gives the
+    displayable tag or camera. that format is "tag@layer" or "tag". If layer is
+    not given, the default layer for that tag is used. If tag is "camera", it
+    means the camera
 
     Note poi_is isn't updated automatically. so, you should write like below if
     you want it is updated::

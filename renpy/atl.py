@@ -1349,6 +1349,11 @@ class Interpolation(Statement):
                     value = None
                 else:
                     value = old
+            elif k == "poi" and isinstance(new, tuple) and not isinstance(old, tuple):
+                if complete >= 1.0:
+                    value = new
+                else:
+                    value = old
             else:
                 value = interpolate(complete, old, new, PROPERTIES[k])
 

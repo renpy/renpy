@@ -618,7 +618,7 @@ def transform_render(self, widtho, heighto, st, at):
         self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
 
         poi = False
-        if state.poi is not None or state.poi_is is not None:
+        if state.poi is not None:
             poi = True
 
         orientation = False
@@ -631,11 +631,11 @@ def transform_render(self, widtho, heighto, st, at):
 
         if poi:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
-            if state.poi_is:
-                if "@" in state.poi_is:
-                    tag, layer = state.poi_is.split("@")
+            if isinstance(state.poi, basestring):
+                if "@" in state.poi:
+                    tag, layer = state.poi.split("@")
                 else:
-                    tag = state.poi_is
+                    tag = state.poi
                     layer = renpy.exports.default_layer(None, tag)
                 if tag == "camera":
                     sle = renpy.game.context().scene_lists
@@ -660,13 +660,12 @@ def transform_render(self, widtho, heighto, st, at):
                     end_placement = (end_pos.xpos, end_pos.ypos, None, None, end_pos.xoffset, end_pos.yoffset, True)
                     end_xplacement, end_yplacement = renpy.display.core.place(width, height, None, None, end_placement)
                     end_pos = (end_xplacement, end_yplacement, d.zpos)
+            elif isinstance(state.poi, tuple) and len(state.poi) == 3:
+                end_pos = state.poi
             else:
-                if isinstance(state.poi, tuple) and len(state.poi) == 3:
-                    end_pos = state.poi
-                else:
-                    raise Exception("poi transform property should be the tuple as (x, y, z) format.")
-            a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
+                raise Exception("poi transform property should be the tuple as (x, y, z) or "tag@layer" format.")
 
+            a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
             #cameras is rotated in z, y, x order.
             #It is because rotating stage in x, y, z order means rotating a camera in z, y, x order.
             #rotating around z axis isn't rotating around the center of the screen when rotating camera in x, y, z order.
@@ -755,7 +754,7 @@ def transform_render(self, widtho, heighto, st, at):
     else:
 
         poi = False
-        if state.poi is not None or state.poi_is is not None:
+        if state.poi is not None:
             poi = True
 
         orientation = False
@@ -787,11 +786,11 @@ def transform_render(self, widtho, heighto, st, at):
             xplacement, yplacement = renpy.display.core.place(widtho, heighto, width, height, placement)
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
-            if state.poi_is:
-                if "@" in state.poi_is:
-                    tag, layer = state.poi_is.split("@")
+            if isinstance(state.poi, basestring):
+                if "@" in state.poi:
+                    tag, layer = state.poi.split("@")
                 else:
-                    tag = state.poi_is
+                    tag = state.poi
                     layer = renpy.exports.default_layer(None, tag)
                 if tag == "camera":
                     sle = renpy.game.context().scene_lists
@@ -816,11 +815,11 @@ def transform_render(self, widtho, heighto, st, at):
                     end_placement = (end_pos.xpos, end_pos.ypos, None, None, end_pos.xoffset, end_pos.yoffset, True)
                     end_xplacement, end_yplacement = renpy.display.core.place(widtho, heighto, None, None, end_placement)
                     end_pos = (end_xplacement, end_yplacement, d.zpos)
+            elif isinstance(state.poi, tuple) and len(state.poi) == 3:
+                end_pos = state.poi
             else:
-                if isinstance(state.poi, tuple) and len(state.poi) == 3:
-                    end_pos = state.poi
-                else:
-                    raise Exception("poi transform property should be the tuple as (x, y, z) format.")
+                raise Exception("poi transform property should be the tuple as (x, y, z) or "tag@layer" format.")
+
             a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
             v_len = math.sqrt(a**2 + b**2 + c**2)
             if v_len == 0:
