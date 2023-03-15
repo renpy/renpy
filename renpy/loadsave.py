@@ -40,7 +40,7 @@ import sys
 import renpy
 from json import dumps as json_dumps
 
-from renpy.compat.pickle import dump, loads
+from renpy.compat.pickle import PROTOCOL, dump, loads
 
 
 # This is used as a quick and dirty way of versioning savegame
@@ -118,7 +118,7 @@ def save_dump(roots, log):
         else:
 
             try:
-                reduction = o.__reduce_ex__(2)
+                reduction = o.__reduce_ex__(PROTOCOL)
             except Exception:
                 reduction = [ ]
                 o_repr_cache[ido] = "BAD REDUCTION " + o_repr
