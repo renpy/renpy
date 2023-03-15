@@ -123,39 +123,44 @@ def save_dump(roots, log):
                 reduction = [ ]
                 o_repr = "BAD REDUCTION " + o_repr
 
-            # Gets an element from the reduction, or o if we don't have
-            # such an element.
-            def get(idx, default):
-                if idx < len(reduction) and reduction[idx] is not None:
-                    return reduction[idx]
-                else:
-                    return default
+            if isinstance(reduction, basestring):
+                o_repr_cache[ido] = o.__module__ + '.' + reduction
+                size = 1
 
-            # An estimate of the size of the object, in arbitrary units. (These units are about 20-25 bytes on
-            # my computer.)
-            size = 1
-
-            state = get(2, { })
-            if isinstance(state, dict):
-                for k, v in state.items():
-                    size += 2
-                    size += visit(v, path + "." + k)
             else:
-                size += visit(state, path + ".__getstate__()")
+                # Gets an element from the reduction, or o if we don't have
+                # such an element.
+                def get(idx, default):
+                    if idx < len(reduction) and reduction[idx] is not None:
+                        return reduction[idx]
+                    else:
+                        return default
 
-            for i, oo in enumerate(get(3, [])): # type: ignore
-                size += 1
-                size += visit(oo, "{0}[{1}]".format(path, i))
+                # An estimate of the size of the object, in arbitrary units.
+                # (These units are about 20-25 bytes on my computer.)
+                size = 1
 
-            for i in get(4, []): # type: ignore
+                state = get(2, { })
+                if isinstance(state, dict):
+                    for k, v in state.items():
+                        size += 2
+                        size += visit(v, path + "." + k)
+                else:
+                    size += visit(state, path + ".__getstate__()")
 
-                if len(i) != 2:
-                    continue
+                for i, oo in enumerate(get(3, [])): # type: ignore
+                    size += 1
+                    size += visit(oo, "{0}[{1}]".format(path, i))
 
-                k, v = i
+                for i in get(4, []): # type: ignore
 
-                size += 2
-                size += visit(v, "{0}[{1!r}]".format(path, k))
+                    if len(i) != 2:
+                        continue
+
+                    k, v = i
+
+                    size += 2
+                    size += visit(v, "{0}[{1!r}]".format(path, k))
 
         f.write("{0: 7d} {1} = {2}\n".format(size, path, o_repr_cache[ido]))
 
