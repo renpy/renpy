@@ -610,16 +610,16 @@ def transform_render(self, widtho, heighto, st, at):
     else:
         self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
+    poi = state.point_to
+    if not (isinstance(poi, tuple) and len(poi) == 3):
+        raise Exception("poi transform property should be the tuple as (x, y, z) format.")
+
     # xpos and ypos.
     if perspective:
         placement = (state.xpos, state.ypos, state.xanchor, state.yanchor, state.xoffset, state.yoffset, True)
         xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
 
         self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
-
-        poi = False
-        if state.poi is not None:
-            poi = True
 
         orientation = False
         if state.orientation is not None:
@@ -631,10 +631,7 @@ def transform_render(self, widtho, heighto, st, at):
 
         if poi:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
-            end_pos = state.poi
-            if not (isinstance(end_pos, tuple) and len(end_pos) == 3):
-                raise Exception("poi transform property should be the tuple as (x, y, z) format.")
-            a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
+            a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
 
             #cameras is rotated in z, y, x order.
             #It is because rotating stage in x, y, z order means rotating a camera in z, y, x order.
@@ -706,10 +703,6 @@ def transform_render(self, widtho, heighto, st, at):
 
     else:
 
-        poi = False
-        if state.poi is not None:
-            poi = True
-
         orientation = False
         if state.orientation is not None:
             orientation = True
@@ -739,10 +732,7 @@ def transform_render(self, widtho, heighto, st, at):
             xplacement, yplacement = renpy.display.core.place(widtho, heighto, width, height, placement)
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
-            end_pos = state.poi
-            if not (isinstance(end_pos, tuple) and len(end_pos) == 3):
-                raise Exception("poi transform property should be the tuple as (x, y, z) format.")
-            a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
+            a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
             v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
             if v_len == 0:
                 xpoi = ypoi = 0

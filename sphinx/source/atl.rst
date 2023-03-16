@@ -1148,7 +1148,7 @@ both horizontal and vertical positions.
 There are also several sets of transform properties that are documented elsewhere:
 
 3D Stage properties:
-    :tpref:`perspective`, :tpref:`poi`, :tpref:`orientation`, :tpref:`xrotate`, :tpref:`yrotate`, :tpref:`zrotate`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
+    :tpref:`perspective`, :tpref:`point_to`, :tpref:`orientation`, :tpref:`xrotate`, :tpref:`yrotate`, :tpref:`zrotate`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
 
 Model-based rendering properties:
     :tpref:`blend`, :tpref:`mesh`, :tpref:`mesh_pad`, :tpref:`shader`
@@ -1167,7 +1167,7 @@ These properties are applied in the following order:
 #. crop, corner1, corner2
 #. xysize, size, maxsize
 #. zoom, xzoom, yzoom
-#. poi
+#. point_to
 #. orientation
 #. xrotate, yrotate, zrotate
 #. rotate
