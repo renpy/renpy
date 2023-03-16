@@ -610,24 +610,24 @@ def transform_render(self, widtho, heighto, st, at):
     else:
         self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
+    point_to = False
+    if state.point_to is not None:
+        point_to = True
+
+    orientation = False
+    if state.orientation is not None:
+        orientation = True
+
+    xyz_rotate = False
+    if state.xrotate or state.yrotate or state.zrotate:
+        xyz_rotate = True
+
     # xpos and ypos.
     if perspective:
         placement = (state.xpos, state.ypos, state.xanchor, state.yanchor, state.xoffset, state.yoffset, True)
         xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
 
         self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
-
-        point_to = False
-        if state.point_to is not None:
-            point_to = True
-
-        orientation = False
-        if state.orientation is not None:
-            orientation = True
-
-        xyz_rotate = False
-        if state.xrotate or state.yrotate or state.zrotate:
-            xyz_rotate = True
 
         if point_to:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
@@ -752,18 +752,6 @@ def transform_render(self, widtho, heighto, st, at):
             self.reverse = m * self.reverse
 
     else:
-
-        point_to = False
-        if state.point_to is not None:
-            point_to = True
-
-        orientation = False
-        if state.orientation is not None:
-            orientation = True
-
-        xyz_rotate = False
-        if state.xrotate or state.yrotate or state.zrotate:
-            xyz_rotate = True
 
         if point_to or orientation or xyz_rotate:
             if state.matrixanchor is None:
