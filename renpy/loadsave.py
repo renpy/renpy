@@ -40,7 +40,7 @@ import sys
 import renpy
 from json import dumps as json_dumps
 
-from renpy.compat.pickle import dump, loads
+from renpy.compat.pickle import PROTOCOL, dump, loads
 
 
 # This is used as a quick and dirty way of versioning savegame
@@ -86,6 +86,14 @@ def save_dump(roots, log):
             else:
                 o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
 
+        elif isinstance(o, types.FunctionType):
+            if PY2:
+                name = o.__name__
+            else:
+                name = o.__qualname__ or o.__name__
+
+            o_repr = o.__module__ + '.' + name
+
         elif isinstance(o, object):
             o_repr = "<{0}>".format(type(o).__name__)
 
@@ -115,47 +123,55 @@ def save_dump(roots, log):
         elif isinstance(o, types.MethodType):
             size = 1 + visit(o.__self__, path + ".im_self")
 
+        elif isinstance(o, types.FunctionType):
+            size = 1
+
         else:
 
             try:
-                reduction = o.__reduce_ex__(2)
+                reduction = o.__reduce_ex__(PROTOCOL)
             except Exception:
                 reduction = [ ]
-                o_repr = "BAD REDUCTION " + o_repr
+                o_repr_cache[ido] = "BAD REDUCTION " + o_repr
 
-            # Gets an element from the reduction, or o if we don't have
-            # such an element.
-            def get(idx, default):
-                if idx < len(reduction) and reduction[idx] is not None:
-                    return reduction[idx]
-                else:
-                    return default
+            if isinstance(reduction, basestring):
+                o_repr_cache[ido] = o.__module__ + '.' + reduction
+                size = 1
 
-            # An estimate of the size of the object, in arbitrary units. (These units are about 20-25 bytes on
-            # my computer.)
-            size = 1
-
-            state = get(2, { })
-            if isinstance(state, dict):
-                for k, v in state.items():
-                    size += 2
-                    size += visit(v, path + "." + k)
             else:
-                size += visit(state, path + ".__getstate__()")
+                # Gets an element from the reduction, or o if we don't have
+                # such an element.
+                def get(idx, default):
+                    if idx < len(reduction) and reduction[idx] is not None:
+                        return reduction[idx]
+                    else:
+                        return default
 
-            for i, oo in enumerate(get(3, [])): # type: ignore
-                size += 1
-                size += visit(oo, "{0}[{1}]".format(path, i))
+                # An estimate of the size of the object, in arbitrary units.
+                # (These units are about 20-25 bytes on my computer.)
+                size = 1
 
-            for i in get(4, []): # type: ignore
+                state = get(2, { })
+                if isinstance(state, dict):
+                    for k, v in state.items():
+                        size += 2
+                        size += visit(v, path + "." + k)
+                else:
+                    size += visit(state, path + ".__getstate__()")
 
-                if len(i) != 2:
-                    continue
+                for i, oo in enumerate(get(3, [])): # type: ignore
+                    size += 1
+                    size += visit(oo, "{0}[{1}]".format(path, i))
 
-                k, v = i
+                for i in get(4, []): # type: ignore
 
-                size += 2
-                size += visit(v, "{0}[{1!r}]".format(path, k))
+                    if len(i) != 2:
+                        continue
+
+                    k, v = i
+
+                    size += 2
+                    size += visit(v, "{0}[{1!r}]".format(path, k))
 
         f.write("{0: 7d} {1} = {2}\n".format(size, path, o_repr_cache[ido]))
 
