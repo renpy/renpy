@@ -1,5 +1,3 @@
-.. _testcases:
-
 =====================
 Integrated test suite
 =====================
