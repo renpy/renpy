@@ -500,3 +500,32 @@ init -1600 python:
                     self.set.add(self.value)
 
             renpy.restart_interaction()
+
+    @renpy.pure
+    def NextVariable(name, values, backward=False, **kwargs):
+        """
+        :doc: data_action
+
+        Causes the variable called `name` to be set to the next value in
+        the `values` list.
+
+        The `name` argument must be a string, and can be a simple name like "strength", or
+        one with dots separating the variable from fields, like "hero.strength"
+        or "persistent.show_cutscenes".
+        """
+        value = __get_field(store, name, kind="variable")
+
+        if value in values:
+            i = values.index(value)
+
+            if not backward:
+                i += 1
+            else:
+                i -= 1
+
+            value = values[i % len(values)]
+        else:
+            value = values[0]
+
+        return SetField(store, name, value, kind="variable", **kwargs)
+
