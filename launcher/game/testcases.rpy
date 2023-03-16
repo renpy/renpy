@@ -1,9 +1,31 @@
 ﻿init python:
-    TEST_PROJECTS = u"/tmp/renpy-moé"
-    import shutil
+    def finally_callback():
+        print("finally "*100)
+    whether = renpy.is_in_test()
 
+define config.end_testcase_callbacks += [finally_callback]
 
 testcase default:
+    python hide:
+        renpy.watch("renpy.is_in_test()")
+        renpy.watch("waitch")
+        renpy.watch("whether")
+        waitch = 5
+    "preferences"
+    "theme"
+    "dEfAuLt theme"
+    "theme"
+    "dark the"
+    "return"
+    # exit
+    "quit"
+
+
+init python:
+    TEST_PROJECTS = "/tmp/renpy-moé"
+    import shutil
+
+testcase old_default:
 
     call new_project
     call translate_project
