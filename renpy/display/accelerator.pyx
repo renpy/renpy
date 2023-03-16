@@ -636,8 +636,11 @@ def transform_render(self, widtho, heighto, st, at):
                     tag, layer = state.point_to.split("@")
                 else:
                     tag = state.point_to
-                    layer = renpy.exports.default_layer(None, tag)
-                if not tag:
+                    if tag == "camera":
+                        layer = "master"
+                    else:
+                        layer = renpy.exports.default_layer(None, tag)
+                if tag == "camera":
                     sle = renpy.game.context().scene_lists
                     d = sle.camera_transform[layer]
                     end_perspective = d.perspective
@@ -779,8 +782,11 @@ def transform_render(self, widtho, heighto, st, at):
                     tag, layer = state.point_to.split("@")
                 else:
                     tag = state.point_to
-                    layer = renpy.exports.default_layer(None, tag)
-                if not tag:
+                    if tag == "camera":
+                        layer = "master"
+                    else:
+                        layer = renpy.exports.default_layer(None, tag)
+                if tag == "camera":
                     sle = renpy.game.context().scene_lists
                     d = sle.camera_transform[layer]
                     end_perspective = d.perspective

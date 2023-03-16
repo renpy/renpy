@@ -328,14 +328,16 @@ The following transform properties are used by the 3D Stage.
     If this is not None, this is a 3-tuple or string. (x, y, z) format tuple
     represents the position of the point of interest. A string gives the
     displayable tag or camera. that format is "tag@layer" or "tag". If layer is
-    not given, the default layer for that tag is used. If tag is "camera", it
-    means the camera
+    not given, the default layer for that tag is used.
+
+    The exception is when the tag is "camera", it means the camera. If layer is
+    not given, the default layer is "master".
 
     Note point_to isn't updated automatically. so, you should write like below if
     you want it is updated::
 
         show eileen happy at center:
-            point_to "camera"
+            point_to "camera@master"
             0
             repeat
 
