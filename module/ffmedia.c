@@ -848,8 +848,8 @@ static SurfaceQueueEntry *decode_video_frame(MediaState *ms) {
 		}
 
 		sws_setColorspaceDetails(ms->sws,
-			sws_getCoefficients(SWS_CS_ITU709),0,
-			sws_getCoefficients(SWS_CS_ITU709),0,
+			sws_getCoefficients(SWS_CS_DEFAULT), 0,
+			sws_getCoefficients(SWS_CS_DEFAULT), 0,
 			0, 1 << 16, 1 << 16);
 	}
 
