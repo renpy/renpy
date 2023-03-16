@@ -631,16 +631,16 @@ def transform_render(self, widtho, heighto, st, at):
 
         if point_to:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
-            if isinstance(state.point_to, basestring):
-                if "@" in state.point_to:
-                    tag, layer = state.point_to.split("@")
+            if not isinstance(state.point_to, tuple) or len(state.point_to) != 3:
+                if isinstance(state.point_to, tuple):
+                    tag, layer = state.point_to
                 else:
                     tag = state.point_to
-                    if tag == "camera":
+                    if tag is True:
                         layer = "master"
                     else:
                         layer = renpy.exports.default_layer(None, tag)
-                if tag == "camera":
+                if tag is True:
                     sle = renpy.game.context().scene_lists
                     d = sle.camera_transform[layer]
                     end_perspective = d.perspective
@@ -777,16 +777,16 @@ def transform_render(self, widtho, heighto, st, at):
             xplacement, yplacement = renpy.display.core.place(widtho, heighto, width, height, placement)
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
-            if isinstance(state.point_to, basestring):
-                if "@" in state.point_to:
-                    tag, layer = state.point_to.split("@")
+            if not isinstance(state.point_to, tuple) or len(state.point_to) != 3:
+                if isinstance(state.point_to, tuple):
+                    tag, layer = state.point_to
                 else:
                     tag = state.point_to
-                    if tag == "camera":
+                    if tag is True:
                         layer = "master"
                     else:
                         layer = renpy.exports.default_layer(None, tag)
-                if tag == "camera":
+                if tag is True:
                     sle = renpy.game.context().scene_lists
                     d = sle.camera_transform[layer]
                     end_perspective = d.perspective

@@ -1349,7 +1349,8 @@ class Interpolation(Statement):
                     value = None
                 else:
                     value = old
-            elif k == "point_to" and isinstance(new, tuple) and not isinstance(old, tuple):
+            elif k == "point_to" and isinstance(new, tuple) and (len(new) != 3
+                     or (not isinstance(old, tuple) or len(old  != 3))):
                 if complete >= 1.0:
                     value = new
                 else:
