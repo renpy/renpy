@@ -296,7 +296,7 @@ def transform_render(self, widtho, heighto, st, at):
     elif isinstance(perspective, (int, float)):
         perspective = (renpy.config.perspective[0], perspective, renpy.config.perspective[2])
 
-    # Set the z11 distance.
+    # Set the z11 distance (might seem useless, is not).
     old_z11 = z11
 
     if perspective:
@@ -631,40 +631,29 @@ def transform_render(self, widtho, heighto, st, at):
 
         if poi:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
-            if isinstance(state.poi, tuple) and len(state.poi) == 3:
-                end_pos = state.poi
-            # elif state.poi == "camera":
-            #     raise Exception("Can't direct camera to camera")
-            else:
+            end_pos = state.poi
+            if not (isinstance(end_pos, tuple) and len(end_pos) == 3):
                 raise Exception("poi transform property should be the tuple as (x, y, z) format.")
             a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
 
             #cameras is rotated in z, y, x order.
             #It is because rotating stage in x, y, z order means rotating a camera in z, y, x order.
             #rotating around z axis isn't rotating around the center of the screen when rotating camera in x, y, z order.
-            v_len = math.sqrt(a**2 + b**2 + c**2)
+            v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
             if v_len == 0:
                 xpoi = ypoi = zpoi = 0
             else:
-                a = a / v_len
-                b = b / v_len
-                c = c / v_len
+                a /= v_len
+                b /= v_len
+                c /= v_len
 
-                sin_ypoi = -a
-                if sin_ypoi > 1.0:
-                    sin_ypoi = 1.0
-                elif sin_ypoi < -1.0:
-                    sin_ypoi = -1.0
+                sin_ypoi = min(1., max(-a, -1.))
                 ypoi = math.asin(sin_ypoi)
                 if c == 0:
                     if abs(a) == 1:
                         xpoi = 0
                     else:
-                        sin_xpoi = b / math.cos(ypoi)
-                        if sin_xpoi > 1.0:
-                            sin_xpoi = 1.0
-                        elif sin_xpoi < -1.0:
-                            sin_xpoi = -1.0
+                        sin_xpoi = min(1., max(b / math.cos(ypoi), -1.))
                         xpoi = math.asin(sin_xpoi)
                 else:
                     xpoi = math.atan(-b/c)
@@ -691,18 +680,9 @@ def transform_render(self, widtho, heighto, st, at):
             xorientation, yorientation, zorientation = state.orientation
 
         if xyz_rotate:
-            if state.xrotate is None:
-                xrotate = 0
-            else:
-                xrotate = state.xrotate
-            if state.yrotate is None:
-                yrotate = 0
-            else:
-                yrotate = state.yrotate
-            if state.zrotate is None:
-                zrotate = 0
-            else:
-                zrotate = state.zrotate
+            xrotate = state.xrotate or 0
+            yrotate = state.yrotate or 0
+            zrotate = state.zrotate or 0
 
         if poi or orientation or xyz_rotate:
             m = Matrix.offset(-width / 2, -height / 2, -z11)
@@ -759,36 +739,25 @@ def transform_render(self, widtho, heighto, st, at):
             xplacement, yplacement = renpy.display.core.place(widtho, heighto, width, height, placement)
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
-            if isinstance(state.poi, tuple) and len(state.poi) == 3:
-                end_pos = state.poi
-            # elif state.poi == "camera":
-            #     pass
-            else:
+            end_pos = state.poi
+            if not (isinstance(end_pos, tuple) and len(end_pos) == 3):
                 raise Exception("poi transform property should be the tuple as (x, y, z) format.")
             a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
-            v_len = math.sqrt(a**2 + b**2 + c**2)
+            v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
             if v_len == 0:
                 xpoi = ypoi = 0
             else:
-                a = a / v_len
-                b = b / v_len
-                c = c / v_len
+                a /= v_len
+                b /= v_len
+                c /= v_len
 
-                sin_xpoi = -b
-                if sin_xpoi > 1.0:
-                    sin_xpoi = 1.0
-                elif sin_xpoi < -1.0:
-                    sin_xpoi = -1.0
+                sin_xpoi = min(1., min(-b, -1.))
                 xpoi = math.asin(sin_xpoi)
                 if c == 0:
                     if abs(b) == 1:
                         ypoi = 0
                     else:
-                        sin_ypoi = a / math.cos(xpoi)
-                        if sin_ypoi > 1.0:
-                            sin_ypoi = 1.0
-                        elif sin_ypoi < -1.0:
-                            sin_ypoi = -1.0
+                        sin_ypoi = min(1., max(a / math.cos(xpoi), -1.))
                         ypoi = math.asin(sin_ypoi)
                 else:
                     ypoi = math.atan(a/c)
@@ -803,18 +772,9 @@ def transform_render(self, widtho, heighto, st, at):
             xorientation, yorientation, zorientation = state.orientation
 
         if xyz_rotate:
-            if state.xrotate is None:
-                xrotate = 0
-            else:
-                xrotate = state.xrotate
-            if state.yrotate is None:
-                yrotate = 0
-            else:
-                yrotate = state.yrotate
-            if state.zrotate is None:
-                zrotate = 0
-            else:
-                zrotate = state.zrotate
+            xrotate = state.xrotate or 0
+            yrotate = state.yrotate or 0
+            zrotate = state.zrotate or 0
 
         if poi:
             m = Matrix.rotate(xpoi, ypoi, 0) * m
