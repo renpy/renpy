@@ -617,9 +617,9 @@ def transform_render(self, widtho, heighto, st, at):
 
         self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
 
-        poi = False
-        if state.poi is not None:
-            poi = True
+        point_to = False
+        if state.point_to is not None:
+            point_to = True
 
         orientation = False
         if state.orientation is not None:
@@ -629,15 +629,15 @@ def transform_render(self, widtho, heighto, st, at):
         if state.xrotate or state.yrotate or state.zrotate:
             xyz_rotate = True
 
-        if poi:
+        if point_to:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
-            if isinstance(state.poi, basestring):
-                if "@" in state.poi:
-                    tag, layer = state.poi.split("@")
+            if isinstance(state.point_to, basestring):
+                if "@" in state.point_to:
+                    tag, layer = state.point_to.split("@")
                 else:
-                    tag = state.poi
+                    tag = state.point_to
                     layer = renpy.exports.default_layer(None, tag)
-                if tag == "camera":
+                if not tag:
                     sle = renpy.game.context().scene_lists
                     d = sle.camera_transform[layer]
                     end_perspective = d.perspective
@@ -660,10 +660,10 @@ def transform_render(self, widtho, heighto, st, at):
                     end_placement = (end_pos.xpos, end_pos.ypos, None, None, end_pos.xoffset, end_pos.yoffset, True)
                     end_xplacement, end_yplacement = renpy.display.core.place(width, height, None, None, end_placement)
                     end_pos = (end_xplacement, end_yplacement, d.zpos)
-            elif isinstance(state.poi, tuple) and len(state.poi) == 3:
-                end_pos = state.poi
+            elif isinstance(state.point_to, tuple) and len(state.point_to) == 3:
+                end_pos = state.point_to
             else:
-                raise Exception("poi transform property should be the tuple as (x, y, z) or 'tag@layer' format.")
+                raise Exception("point_to transform property should be the tuple as (x, y, z) or 'tag@layer' format.")
 
             a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
             #cameras is rotated in z, y, x order.
@@ -671,48 +671,48 @@ def transform_render(self, widtho, heighto, st, at):
             #rotating around z axis isn't rotating around the center of the screen when rotating camera in x, y, z order.
             v_len = math.sqrt(a**2 + b**2 + c**2)
             if v_len == 0:
-                xpoi = ypoi = zpoi = 0
+                xpoint_to = ypoint_to = zpoint_to = 0
             else:
                 a = a / v_len
                 b = b / v_len
                 c = c / v_len
 
-                sin_ypoi = -a
-                if sin_ypoi > 1.0:
-                    sin_ypoi = 1.0
-                elif sin_ypoi < -1.0:
-                    sin_ypoi = -1.0
-                ypoi = math.asin(sin_ypoi)
+                sin_ypoint_to = -a
+                if sin_ypoint_to > 1.0:
+                    sin_ypoint_to = 1.0
+                elif sin_ypoint_to < -1.0:
+                    sin_ypoint_to = -1.0
+                ypoint_to = math.asin(sin_ypoint_to)
                 if c == 0:
                     if abs(a) == 1:
-                        xpoi = 0
+                        xpoint_to = 0
                     else:
-                        sin_xpoi = b / math.cos(ypoi)
-                        if sin_xpoi > 1.0:
-                            sin_xpoi = 1.0
-                        elif sin_xpoi < -1.0:
-                            sin_xpoi = -1.0
-                        xpoi = math.asin(sin_xpoi)
+                        sin_xpoint_to = b / math.cos(ypoint_to)
+                        if sin_xpoint_to > 1.0:
+                            sin_xpoint_to = 1.0
+                        elif sin_xpoint_to < -1.0:
+                            sin_xpoint_to = -1.0
+                        xpoint_to = math.asin(sin_xpoint_to)
                 else:
-                    xpoi = math.atan(-b/c)
+                    xpoint_to = math.atan(-b/c)
 
                 if c > 0:
-                    ypoi = math.pi - ypoi
+                    ypoint_to = math.pi - ypoint_to
 
-                if xpoi != 0.0 and ypoi != 0.0:
-                    if xpoi == math.pi / 2 or xpoi == - math.pi / 2:
-                        if -math.sin(xpoi) * math.sin(ypoi) > 0.0:
-                            zpoi = math.pi / 2
+                if xpoint_to != 0.0 and ypoint_to != 0.0:
+                    if xpoint_to == math.pi / 2 or xpoint_to == - math.pi / 2:
+                        if -math.sin(xpoint_to) * math.sin(ypoint_to) > 0.0:
+                            zpoint_to = math.pi / 2
                         else:
-                            zpoi = - math.pi / 2
+                            zpoint_to = - math.pi / 2
                     else:
-                        zpoi = math.atan(-(math.sin(xpoi) * math.sin(ypoi)) / math.cos(xpoi))
+                        zpoint_to = math.atan(-(math.sin(xpoint_to) * math.sin(ypoint_to)) / math.cos(xpoint_to))
                 else:
-                    zpoi = 0
+                    zpoint_to = 0
 
-                xpoi = math.degrees(xpoi)
-                ypoi = math.degrees(ypoi)
-                zpoi = math.degrees(zpoi)
+                xpoint_to = math.degrees(xpoint_to)
+                ypoint_to = math.degrees(ypoint_to)
+                zpoint_to = math.degrees(zpoint_to)
 
         if orientation:
             xorientation, yorientation, zorientation = state.orientation
@@ -731,15 +731,15 @@ def transform_render(self, widtho, heighto, st, at):
             else:
                 zrotate = state.zrotate
 
-        if poi or orientation or xyz_rotate:
+        if point_to or orientation or xyz_rotate:
             m = Matrix.offset(-width / 2, -height / 2, -z11)
-        if poi:
-            m = Matrix.rotate(-xpoi, -ypoi, -zpoi) * m
+        if point_to:
+            m = Matrix.rotate(-xpoint_to, -ypoint_to, -zpoint_to) * m
         if orientation:
             m = Matrix.rotate(-xorientation, -yorientation, -zorientation) * m
         if xyz_rotate:
             m = Matrix.rotate(-xrotate, -yrotate, -zrotate) * m
-        if poi or orientation or xyz_rotate:
+        if point_to or orientation or xyz_rotate:
             m = Matrix.offset(width / 2, height / 2, z11) * m
 
             self.reverse = m * self.reverse
@@ -753,9 +753,9 @@ def transform_render(self, widtho, heighto, st, at):
 
     else:
 
-        poi = False
-        if state.poi is not None:
-            poi = True
+        point_to = False
+        if state.point_to is not None:
+            point_to = True
 
         orientation = False
         if state.orientation is not None:
@@ -765,7 +765,7 @@ def transform_render(self, widtho, heighto, st, at):
         if state.xrotate or state.yrotate or state.zrotate:
             xyz_rotate = True
 
-        if poi or orientation or xyz_rotate:
+        if point_to or orientation or xyz_rotate:
             if state.matrixanchor is None:
 
                 manchorx = width / 2.0
@@ -781,18 +781,18 @@ def transform_render(self, widtho, heighto, st, at):
 
             m = Matrix.offset(-manchorx, -manchory, 0.0)
 
-        if poi:
+        if point_to:
             placement = self.get_placement()
             xplacement, yplacement = renpy.display.core.place(widtho, heighto, width, height, placement)
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
-            if isinstance(state.poi, basestring):
-                if "@" in state.poi:
-                    tag, layer = state.poi.split("@")
+            if isinstance(state.point_to, basestring):
+                if "@" in state.point_to:
+                    tag, layer = state.point_to.split("@")
                 else:
-                    tag = state.poi
+                    tag = state.point_to
                     layer = renpy.exports.default_layer(None, tag)
-                if tag == "camera":
+                if not tag:
                     sle = renpy.game.context().scene_lists
                     d = sle.camera_transform[layer]
                     end_perspective = d.perspective
@@ -815,44 +815,44 @@ def transform_render(self, widtho, heighto, st, at):
                     end_placement = (end_pos.xpos, end_pos.ypos, None, None, end_pos.xoffset, end_pos.yoffset, True)
                     end_xplacement, end_yplacement = renpy.display.core.place(widtho, heighto, None, None, end_placement)
                     end_pos = (end_xplacement, end_yplacement, d.zpos)
-            elif isinstance(state.poi, tuple) and len(state.poi) == 3:
-                end_pos = state.poi
+            elif isinstance(state.point_to, tuple) and len(state.point_to) == 3:
+                end_pos = state.point_to
             else:
-                raise Exception("poi transform property should be the tuple as (x, y, z) or 'tag@layer' format.")
+                raise Exception("point_to transform property should be the tuple as (x, y, z) or 'tag@layer' format.")
 
             a, b, c = ( float(e - s) for s, e in zip(start_pos, end_pos) )
             v_len = math.sqrt(a**2 + b**2 + c**2)
             if v_len == 0:
-                xpoi = ypoi = 0
+                xpoint_to = ypoint_to = 0
             else:
                 a = a / v_len
                 b = b / v_len
                 c = c / v_len
 
-                sin_xpoi = -b
-                if sin_xpoi > 1.0:
-                    sin_xpoi = 1.0
-                elif sin_xpoi < -1.0:
-                    sin_xpoi = -1.0
-                xpoi = math.asin(sin_xpoi)
+                sin_xpoint_to = -b
+                if sin_xpoint_to > 1.0:
+                    sin_xpoint_to = 1.0
+                elif sin_xpoint_to < -1.0:
+                    sin_xpoint_to = -1.0
+                xpoint_to = math.asin(sin_xpoint_to)
                 if c == 0:
                     if abs(b) == 1:
-                        ypoi = 0
+                        ypoint_to = 0
                     else:
-                        sin_ypoi = a / math.cos(xpoi)
-                        if sin_ypoi > 1.0:
-                            sin_ypoi = 1.0
-                        elif sin_ypoi < -1.0:
-                            sin_ypoi = -1.0
-                        ypoi = math.asin(sin_ypoi)
+                        sin_ypoint_to = a / math.cos(xpoint_to)
+                        if sin_ypoint_to > 1.0:
+                            sin_ypoint_to = 1.0
+                        elif sin_ypoint_to < -1.0:
+                            sin_ypoint_to = -1.0
+                        ypoint_to = math.asin(sin_ypoint_to)
                 else:
-                    ypoi = math.atan(a/c)
+                    ypoint_to = math.atan(a/c)
 
                 if c < 0:
-                    ypoi += math.pi
+                    ypoint_to += math.pi
 
-                xpoi = math.degrees(xpoi)
-                ypoi = math.degrees(ypoi)
+                xpoint_to = math.degrees(xpoint_to)
+                ypoint_to = math.degrees(ypoint_to)
 
         if orientation:
             xorientation, yorientation, zorientation = state.orientation
@@ -871,13 +871,13 @@ def transform_render(self, widtho, heighto, st, at):
             else:
                 zrotate = state.zrotate
 
-        if poi:
-            m = Matrix.rotate(xpoi, ypoi, 0) * m
+        if point_to:
+            m = Matrix.rotate(xpoint_to, ypoint_to, 0) * m
         if orientation:
             m = Matrix.rotate(xorientation, yorientation, zorientation) * m
         if xyz_rotate:
             m = Matrix.rotate(xrotate, yrotate, zrotate) * m
-        if poi or orientation or xyz_rotate:
+        if point_to or orientation or xyz_rotate:
             m = Matrix.offset(manchorx, manchory, 0.0) * m
 
             self.reverse = m * self.reverse

@@ -314,7 +314,7 @@ The following transform properties are used by the 3D Stage.
     This sets the location of the (0, 0, 0) point that poi, orientation,
     xrotate, yrotate, zrotate and matrixtransform applie its transform to.
 
-.. transform-property:: poi
+.. transform-property:: point_to
 
     :type: (float, float, float), str or None
     :default: None
@@ -331,11 +331,11 @@ The following transform properties are used by the 3D Stage.
     not given, the default layer for that tag is used. If tag is "camera", it
     means the camera
 
-    Note poi_is isn't updated automatically. so, you should write like below if
+    Note point_to isn't updated automatically. so, you should write like below if
     you want it is updated::
 
         show eileen happy at center:
-            poi_is "camera"
+            point_to "camera"
             0
             repeat
 
