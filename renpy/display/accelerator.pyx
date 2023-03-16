@@ -611,7 +611,7 @@ def transform_render(self, widtho, heighto, st, at):
         self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
     poi = state.point_to
-    if not (isinstance(poi, tuple) and len(poi) == 3):
+    if poi and not (isinstance(poi, tuple) and len(poi) == 3):
         raise Exception("The point_to transform property should be a 3-tuple (x, y, z).")
 
     # xpos and ypos.
