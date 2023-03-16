@@ -612,7 +612,7 @@ def transform_render(self, widtho, heighto, st, at):
 
     poi = state.point_to
     if not (isinstance(poi, tuple) and len(poi) == 3):
-        raise Exception("poi transform property should be the tuple as (x, y, z) format.")
+        raise Exception("The point_to transform property should be a 3-tuple (x, y, z).")
 
     # xpos and ypos.
     if perspective:
