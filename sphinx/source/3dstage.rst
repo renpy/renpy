@@ -311,16 +311,16 @@ The following transform properties are used by the 3D Stage.
     variables are floats, this is relative to the size of the child, otherwise
     it's absolute pixels.
 
-    This sets the location of the (0, 0, 0) point that poi, orientation,
-    xrotate, yrotate, zrotate and matrixtransform applie its transform to.
+    This sets the location of the (0, 0, 0) point that point_to, orientation,
+    xrotate, yrotate, zrotate and matrixtransform apply their transforms to.
 
-.. transform-property:: poi
+.. transform-property:: point_to
 
     :type: (float, float, float) or None
     :default: None
 
-    This gives the position of the point of interest. The camera or the
-    displayable being transformed are rotated to face the point of interest,
+    This gives a position to which to point. The camera or the
+    displayable being transformed are rotated to face that point,
     even if the position of the camera or the displayable is changed.
 
     If this is None, no point-of-interest rotation is applied.
