@@ -159,14 +159,6 @@ This is basically an inline while loop. ::
     "ask her right"
     click until "It's an interactive book."
 
-pass statement
---------------
-
-Does not do anything. It's a no-op, allowing for empty testcases. ::
-
-    testcase not_yet_implemented:
-        pass
-
 exit statement
 --------------
 
@@ -192,6 +184,16 @@ or ``until`` test statements, or they can simply be given on their own (see
 above).
 
 .. for each one, say what makes it ready
+
+pass clause
+--------------
+
+Does not do anything. It's a no-op, allowing for empty testcases. ::
+
+    testcase not_yet_implemented:
+        pass
+
+It is always ready.
 
 click clause
 ---------------
@@ -407,15 +409,16 @@ containing clauses linked with these operators can be provided in lieu of a
 single clause. That expression must always be enclosed in parentheses.
 
 The readiness of a boolean clause expression is the computation of the readiness
-of the clauses it contains: ``(not a)`` is ready if and when ``a`` is not ready,
-``(a and b)`` is ready when both ``a`` and ``b`` are ready, and ``(a or b)`` is
-ready when either ``a`` or ``b`` is ready.
+of the clauses it contains:
+- ``(not a)`` is ready if and when ``a`` is not ready
+- ``(a and b)`` is ready when both ``a`` and ``b`` are ready
+- ``(a or b)`` is ready when either ``a`` or ``b`` is ready.
 
 What happens when boolean clause operations execute is a little more complex.
 When executed:
-- ``not`` just executes its clause.
+- ``not`` just executes its clause. (TODO: maybe it shouldn't do anything)
 - ``and`` executes both clauses if both are ready, and the left one otherwise.
-- ``or`` executes its ready clause(s), if any, and the right one otherwise.
+- ``or`` executes its ready clause(s), if any, and the right one otherwise. (TODO : maybe it should execute the ready clause if only one is, and the right one otherwise)
 
 More information can be found in the python documentation
 `regarding these operators <https://docs.python.org/3/reference/expressions.html#boolean-operations>`__
