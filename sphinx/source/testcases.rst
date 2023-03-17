@@ -206,7 +206,8 @@ properties:
 - ``pos`` specifies where to click, as a pair of x/y coordinates. Coordinates
   are taken relative to the screen. Floats between 0.0 and 1.0 are supported as
   a fraction of the screen size in either dimension. ``absolute`` and other
-  means of expressing positions are not currently supported.
+  means of expressing positions are not supported, since you can't move the
+  mouse to a subpixel-precise position.
 
 .. ``always`` is not documented because useless in the case of the click clause by itself
 
