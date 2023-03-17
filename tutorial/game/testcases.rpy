@@ -1,4 +1,4 @@
-testcase player_experience:
+﻿testcase player_experience:
     scroll "Bar" until "Player Experience"
     click until "Yes."
 
