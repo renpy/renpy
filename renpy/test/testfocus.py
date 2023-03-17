@@ -83,7 +83,7 @@ def relative_position(x, posx, width):
         else:
             x = posx
 
-    return int(x)
+    return x
 
 
 def find_position(f, position):
@@ -106,8 +106,8 @@ def find_position(f, position):
 
     if f is None:
         return (
-            relative_position(x, posx, renpy.config.screen_width),
-            relative_position(y, posy, renpy.config.screen_height),
+            int(relative_position(x, posx, renpy.config.screen_width)),
+            int(relative_position(y, posy, renpy.config.screen_height)),
             )
 
     orig_f = f
@@ -120,13 +120,10 @@ def find_position(f, position):
         f.w = renpy.config.screen_width
         f.h = renpy.config.screen_height
 
-    x = relative_position(x-f.x, posx, f.w) + f.x
-    y = relative_position(y-f.y, posy, f.h) + f.y
+    x = int(relative_position(x-f.x, posx, f.w) + f.x)
+    y = int(relative_position(y-f.y, posy, f.h) + f.y)
 
     for _i in range(renpy.test.testast._test.focus_trials):
-
-        x = int(x)
-        y = int(y)
 
         nf = renpy.display.render.focus_at_point(x, y)
 
