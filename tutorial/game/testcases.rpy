@@ -1,4 +1,3 @@
-﻿
 testcase player_experience:
     scroll "Bar" until "Player Experience"
     click until "Yes."
@@ -218,8 +217,10 @@ testcase out_of_game:
     pause .5
 
     "Save"
+    pause .5
+
     "Save Slot 1"
-    "Yes"
+    ("Yes" or pass)
 
     "Load"
     pause .5
@@ -294,6 +295,3 @@ testcase default:
     "That's enough for now."
     click until "Quit"
     pause .5
-
-
-
