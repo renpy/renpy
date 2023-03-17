@@ -774,8 +774,8 @@ def transform_render(self, widtho, heighto, st, at):
                     if end_perspective:
                         end_z11 = end_perspective[1]
                         
-                    end_placement = (d.xpos, d.ypos, None, None, d.xoffset, d.yoffset, True)
-                    end_xplacement, end_yplacement = renpy.display.core.place(widtho, heighto, None, None, end_placement)
+                    end_placement = (d.xpos, d.ypos, d.xanchor, d.yanchor, d.xoffset, d.yoffset, True)
+                    end_xplacement, end_yplacement = renpy.display.core.place(widtho, heighto, widtho, heighto, end_placement)
                     poi = (end_xplacement + widtho / 2, end_yplacement + heighto / 2, d.zpos + end_z11)
 
             if poi:
