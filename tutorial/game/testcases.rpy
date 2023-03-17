@@ -197,6 +197,9 @@ testcase translations:
     click until label tutorials
 
 
+init python:
+    import time
+
 testcase out_of_game:
     "Back"
     "Back"
@@ -208,6 +211,8 @@ testcase out_of_game:
     $ _preferences.self_voicing = False
     $ _preferences.afm_time = 1
 
+
+    $ testvar = time.time()
 
     "Auto"
     scroll "Bar" until "Player Experience"
@@ -222,11 +227,15 @@ testcase out_of_game:
     "Save Slot 1"
     ("Yes" or pass)
 
+    $ testvar = "value not comparable with a number"
+
     "Load"
     pause .5
 
     "Load Slot 1"
     "Yes"
+
+    assert eval (time.time() - testvar < 15)
 
     "Prefs"
     pause .5
