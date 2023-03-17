@@ -38,7 +38,8 @@ def find_focus(pattern):
     If `pattern` could not be found, returns None.
     """
 
-    pattern = pattern.casefold()
+    if pattern is not None:
+        pattern = pattern.casefold()
 
     def match(f):
 
