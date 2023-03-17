@@ -171,6 +171,9 @@ def parse_clause(l, loc):
         pattern = l.require(l.string)
         return testast.Scroll(loc, pattern)
 
+    elif l.keyword("pass"):
+        return testast.Pass(loc)
+
     else:
         target = l.string()
         if target:
@@ -226,9 +229,6 @@ def parse_statement(l, loc):
     elif l.keyword('call'):
         target = l.require(l.name)
         return testast.Call(loc, target)
-
-    elif l.keyword("pass"):
-        return testast.Pass(loc)
 
     elif l.keyword('exit'):
         return testast.Exit(loc)

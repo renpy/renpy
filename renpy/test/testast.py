@@ -393,6 +393,11 @@ class Eval(Clause):
         self.evaluated = True
         return rv
 
+class Pass(Clause):
+    __slots__ = ()
+    def execute(self, state, t):
+        return None
+
 
 ################################################################################
 # Boolean proxy clauses
@@ -497,11 +502,6 @@ class Or(Binary):
 
 ################################################################################
 # Non-clause statements.
-
-class Pass(Node):
-    __slots__ = ()
-    def execute(self, state, t):
-        return None
 
 class Until(Node):
     """
