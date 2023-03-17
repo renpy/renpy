@@ -78,8 +78,8 @@ def find_focus(pattern):
 
 def relative_position(x, posx, width):
     if posx is not None:
-        if isinstance(posx, float):
-            x = int(posx * (width - 1))
+        if type(posx) is float:
+            x = posx * (width - 1)
         else:
             x = posx
 
