@@ -389,8 +389,9 @@ class Eval(Clause):
         return None
 
     def ready(self):
+        rv = bool(renpy.python.py_eval(self.expr))
         self.evaluated = True
-        return bool(renpy.python.py_eval(self.expr))
+        return rv
 
 
 ################################################################################
