@@ -38,6 +38,8 @@ def find_focus(pattern):
     If `pattern` could not be found, returns None.
     """
 
+    pattern = pattern.casefold()
+
     def match(f):
 
         if pattern is None:
@@ -54,27 +56,24 @@ def find_focus(pattern):
         else:
             t = f.widget._tts_all()
 
-        if pattern.lower() in t.lower():
+        if pattern in t.casefold():
             return t
         else:
             return None
 
-    # A list of alt_text, focus pairs.
-    matching = [ ]
+    # {focus : (len(alt), alt)}
+    matching = {}
 
     for f in renpy.display.focus.focus_list:
 
         alt = match(f)
 
         if alt is not None:
-            matching.append((alt, f))
-
-    if not matching:
-        return None
+            matching[f] = (len(alt), alt)
 
     # This gets the matching displayable with the shortest alt text, which
     # is likely what we want.
-    return min(matching, key=lambda a : (len(a[0]), a[0]))[1]
+    return min(matching, key=matching.get, default=None) # type: ignore
 
 
 def relative_position(x, posx, width):
