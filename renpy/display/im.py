@@ -384,14 +384,9 @@ class Cache(object):
                         pass
 
             if not predict:
-
-                if render:
-                    return make_render(ce)
-                else:
-                    rv = ce.texture
+                rv = ce.texture
             else:
                 rv = None
-
         else:
             rv = ce.surf
 
@@ -402,11 +397,14 @@ class Cache(object):
 
             ce.surf = None
 
+        if texture and render and not predict:
+            return make_render(ce)
+
         if (ce.surf is None) and (ce.texture is None):
             with self.lock:
                 self.kill(ce)
 
-        # Done... return the surface.
+        # Done. Return the surface or texture.
         return rv
 
     # This kills off a given cache entry.
