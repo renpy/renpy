@@ -1365,6 +1365,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
     edit_text = u""
     value = None
     shown = False
+    multiline = False
 
     st = 0
 
@@ -1384,6 +1385,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                  value=None,
                  copypaste=False,
                  caret_blink=None,
+                 multiline=False,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
@@ -1411,6 +1413,8 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
 
         self.editable = editable
         self.pixel_width = pixel_width
+
+        self.multiline = multiline
 
         caretprops = { 'color' : None }
 
@@ -1578,6 +1582,14 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                 content = self.content[0:self.caret_pos - 1] + self.content[self.caret_pos:l]
                 self.caret_pos -= 1
                 self.update_text(content, self.editable)
+
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+
+        elif self.multiline and map_event(ev, 'input_next_line'):
+            content = self.content[:self.caret_pos] + '\n' + self.content[self.caret_pos:]
+            self.caret_pos += 1
+            self.update_text(content, self.editable)
 
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()

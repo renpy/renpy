@@ -813,6 +813,11 @@ The input statement takes no parameters, and the following properties:
     If not False, the blinking period of the default caret.
     Overrides :var:`config.input_caret_blink`.
 
+`multiline`
+    If true, it becomes possible to move caret on the next line
+    using keyboard (Shift+Enter by default,
+    can be changed by modifying config.keymap['input_next_line']).
+
 
 It also takes:
 
