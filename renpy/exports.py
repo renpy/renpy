@@ -867,7 +867,7 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
     return rv
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, copypaste=True, **kwargs): # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, copypaste=True, multiline=False, **kwargs): # @ReservedAssignment
     """
     :doc: input
 
@@ -907,6 +907,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     `copypaste`
         When true, copying from and pasting to this input is allowed.
 
+    `multiline`
+        When true, move caret to next line is allowed.
+
     If :var:`config.disable_input` is True, this function only returns
     `default`.
 
@@ -943,7 +946,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     if has_screen(screen):
         widget_properties = { }
-        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width, mask=mask, copypaste=copypaste)
+        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width, mask=mask, copypaste=copypaste, multiline=multiline)
 
         show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **show_properties)
 
