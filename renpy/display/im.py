@@ -71,7 +71,15 @@ class CacheEntry(object):
             rv += self.width * self.height
 
         if self.texture is not None:
-            rv += self.bounds[2] * self.bounds[3]
+
+            has_mipmaps = getattr(self.texture, "has_mipmaps", None)
+
+            if has_mipmaps and has_mipmaps():
+                mipmap_multiplier = 1.34
+            else:
+                mipmap_multiplier = 1.0
+
+            rv += int(self.bounds[2] * self.bounds[3] * mipmap_multiplier)
 
         return rv
 

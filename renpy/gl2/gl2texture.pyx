@@ -288,6 +288,9 @@ cdef class GLTexture(GL2Model):
                 0.0, 0.0, 1.0, 1.0,
                 )
 
+    def has_mipmaps(self):
+        return self.properties.get("mipmap", True)
+
     def get_number(GLTexture self):
         return self.number if renpy.emscripten else None
 
