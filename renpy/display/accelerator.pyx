@@ -773,6 +773,8 @@ def transform_render(self, widtho, heighto, st, at):
                         end_perspective = (renpy.config.perspective[0], end_perspective, renpy.config.perspective[2])
                     if end_perspective:
                         end_z11 = end_perspective[1]
+                    else:
+                        end_z11 = old_z11
                         
                     end_placement = (d.xpos, d.ypos, d.xanchor, d.yanchor, d.xoffset, d.yoffset, True)
                     end_xplacement, end_yplacement = renpy.display.core.place(widtho, heighto, widtho, heighto, end_placement)
@@ -788,7 +790,7 @@ def transform_render(self, widtho, heighto, st, at):
                     b /= v_len
                     c /= v_len
 
-                    sin_xpoi = min(1., min(-b, -1.))
+                    sin_xpoi = min(1., max(-b, -1.))
                     xpoi = math.asin(sin_xpoi)
                     if c == 0:
                         if abs(b) == 1:
