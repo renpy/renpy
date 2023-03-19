@@ -84,7 +84,8 @@ controllers = { }
 axis_positions = {}
 
 # The axis threshold.
-THRESHOLD = (32768 // 2)
+THRESHOLD = 4096 + 4096
+ZERO_THRESHOLD = 4096
 
 # Should we ignore events?
 ignore = False
@@ -254,21 +255,28 @@ def event(ev):
 
     elif ev.type == CONTROLLERAXISMOTION:
 
-        if ev.value > THRESHOLD:
-            pos = "pos"
-        elif ev.value < -THRESHOLD:
-            pos = "neg"
-        else:
-            pos = "zero"
+        pygame_sdl2.event.pump()
+        events = [ ev ] + pygame.event.get(CONTROLLERAXISMOTION)
 
-        old_pos = axis_positions.get((ev.which, ev.axis), None)
+        for ev in events:
 
-        if pos == old_pos:
-            return None
+            old_pos = axis_positions.get((ev.which, ev.axis), None)
 
-        axis_positions[(ev.which, ev.axis)] = pos
+            if ev.value > THRESHOLD:
+                pos = "pos"
+            elif ev.value < -THRESHOLD:
+                pos = "neg"
+            elif abs(ev.value) < ZERO_THRESHOLD:
+                pos = "zero"
+            else:
+                pos = old_pos
 
-        controller_event(get_string_for_axis(ev.axis), pos)
+            if pos == old_pos:
+                continue
+
+            axis_positions[(ev.which, ev.axis)] = pos
+
+            controller_event(get_string_for_axis(ev.axis), pos)
 
         return None
 
