@@ -355,6 +355,9 @@ class SLBlock(SLNode):
     # RawBlock from parse or None if not present.
     atl_transform = None
 
+    # The actual transform created from the atl transform.
+    transform = None
+
     def __init__(self, loc):
         SLNode.__init__(self, loc)
 
@@ -439,6 +442,9 @@ class SLBlock(SLNode):
             const = self.atl_transform.constant
             self.constant = min(self.constant, const)
 
+            self.transform = renpy.display.transform.ATLTransform(self.atl_transform)
+            renpy.atl.compile_queue.append(self.transform)
+
         was_last_keyword = False
         for i in self.children:
             if i.has_keyword:
@@ -485,6 +491,7 @@ class SLBlock(SLNode):
 
         if self.atl_transform is not None:
             transform = ATLTransform(self.atl_transform, context=context.scope)
+            transform.parent_transform = self.transform # type: ignore
             context.keywords["at"] = transform
 
         style_prefix = context.keywords.pop("style_prefix", NotGiven)
