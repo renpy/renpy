@@ -611,8 +611,8 @@ def transform_render(self, widtho, heighto, st, at):
         self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
     poi = state.point_to
-    if poi and (not (isinstance(poi, tuple) and (len(poi) == 3 or len(poi) == 2)) and not (not isinstance(poi, tuple) and isinstance(poi, (basestring, bool)))):
-        raise Exception("The point_to transform property should be a 3-tuple (x, y, z), 2-tuple ('tag', 'layer'), (True, 'layer'), 'tag' or True.")
+    if poi and (not (isinstance(poi, tuple) and len(poi) == 3) and not (not isinstance(poi, tuple) and isinstance(poi, (basestring, bool)))):
+        raise Exception("The point_to transform property should be a 3-tuple (x, y, z), 'tag' or True.")
 
     # xpos and ypos.
     if perspective:
@@ -631,15 +631,12 @@ def transform_render(self, widtho, heighto, st, at):
 
         if poi:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
-            if not isinstance(poi, tuple) or len(poi) != 3:
-                if isinstance(poi, tuple):
-                    tag, layer = poi
-                else:
-                    tag = poi
-                    if tag is not True:
-                        layer = renpy.exports.default_layer(None, tag)
+            if not isinstance(poi, tuple):
+                tag = poi
                 if tag is True:
                     raise Exception("The point_to transform property for camera should not be True")
+                else:
+                    layer = renpy.exports.default_layer(None, tag)
                 sle = renpy.game.context().scene_lists
                 d = sle.get_displayable_by_tag(layer, tag)
                 if d is None:
@@ -751,14 +748,12 @@ def transform_render(self, widtho, heighto, st, at):
             placement = self.get_placement()
             xplacement, yplacement = renpy.display.core.place(widtho, heighto, width, height, placement)
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
-            if not isinstance(poi, tuple) or len(poi) != 3:
-                if isinstance(poi, tuple):
-                    tag, layer = poi
-                else:
-                    tag = poi
-                    layer = "master"
+            if not isinstance(poi, tuple):
+                tag = poi
                 if isinstance(tag, basestring):
                     raise Exception("The point_to transform property for displayable should not be str")
+                else:
+                    layer = "master"
                 sle = renpy.game.context().scene_lists
                 d = sle.camera_transform[layer]
                 if d is None:
