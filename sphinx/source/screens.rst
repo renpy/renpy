@@ -265,6 +265,20 @@ All user interface statements take the following common properties:
     a transform wraps a textbutton that is added to the vbox, this
     second transform is not given events.
 
+    It's possible for a single statement to have both an `at` property
+    and an ``at transform``. The property must come first, and is
+    applied first.
+
+        screen title():
+            add "title background":
+                at sepia
+
+            text "The Title of the Game":
+                at sepia, truecenter
+                at transform:
+                    alpha 0.0
+                    linear 0.5 alpha 1.0
+
 `default_focus`
     If given and true, the displayable is focused by default. When
     multiple displayables have this, the values are compared and the

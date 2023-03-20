@@ -282,21 +282,28 @@ class Parser(object):
                 else:
                     l.error('%r is not a keyword argument or valid child of the %s statement.' % (name, self.name))
 
-            if name in seen_keywords:
-                l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
-            incomprop = check_incompatible_props(name, seen_keywords)
-            if incomprop:
-                l.deferred_error("check_conflicting_properties", 'keyword argument {!r} is incompatible with {!r}.'.format(name, incomprop))
-
-            seen_keywords.add(name)
-
             if name == "at" and block and l.keyword("transform"):
+
+                if target.atl_transform is not None:
+                    l.error("More than one 'at transform' block is given.")
+
                 l.require(":")
                 l.expect_eol()
                 l.expect_block("ATL block")
                 expr = renpy.atl.parse_atl(l.subblock_lexer())
                 target.atl_transform = expr
                 return
+
+            if name in seen_keywords:
+                l.error('keyword argument %r appears more than once in a %s statement.' % (name, self.name))
+            incomprop = check_incompatible_props(name, seen_keywords)
+            if incomprop:
+                l.deferred_error("check_conflicting_properties", 'keyword argument {!r} is incompatible with {!r}.'.format(name, incomprop))
+
+            if name == "at" and target.atl_transform:
+                l.error("The 'at' property must occur before the 'at transform' block.")
+
+            seen_keywords.add(name)
 
             expr = l.comma_expression()
             if expr is None:

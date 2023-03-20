@@ -421,6 +421,10 @@ Disabling Dialogue's :ref:`monologue-mode` is now possible using the
 Other Changes
 -------------
 
+It's now possible for a screen language statement to have both an
+`at` property and an ``at transform`` block, provided the property
+comes first.
+
 Local variables (prefixed with __) may now be used in f-strings.
 
 The {nw} tag will wait for self-voicing to complete, when self-voicing

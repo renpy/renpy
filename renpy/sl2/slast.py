@@ -492,7 +492,17 @@ class SLBlock(SLNode):
         if self.atl_transform is not None:
             transform = ATLTransform(self.atl_transform, context=context.scope)
             transform.parent_transform = self.transform # type: ignore
-            context.keywords["at"] = transform
+
+            if "at" in context.keywords:
+                try:
+                    at_list = list(context.keywords["at"])
+                except TypeError:
+                    at_list = [ context.keywords["at"] ]
+
+                at_list.append(transform)
+                context.keywords["at"] = at_list
+            else:
+                context.keywords["at"] = transform
 
         style_prefix = context.keywords.pop("style_prefix", NotGiven)
 
