@@ -611,8 +611,6 @@ def transform_render(self, widtho, heighto, st, at):
         self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
     poi = state.point_to
-    if poi and (not (isinstance(poi, tuple) and len(poi) == 3) and not (not isinstance(poi, tuple) and isinstance(poi, (basestring, bool)))):
-        raise Exception("The point_to transform property should be a 3-tuple (x, y, z), 'tag' or True.")
 
     orientation = state.orientation
     if orientation:
@@ -634,64 +632,47 @@ def transform_render(self, widtho, heighto, st, at):
 
         if poi:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
-            if not isinstance(poi, tuple):
-                tag = poi
-                if tag is True:
-                    raise Exception("The point_to transform property for camera should not be True")
-                else:
-                    layer = renpy.exports.default_layer(None, tag)
-                sle = renpy.game.context().scene_lists
-                d = sle.get_displayable_by_tag(layer, tag)
-                if d is None:
-                    poi = None
-                else:
-                    d_pos = renpy.exports.get_placement(d)
-                    end_placement = (d_pos.xpos, d_pos.ypos, None, None, d_pos.xoffset, d_pos.yoffset, True)
-                    end_xplacement, end_yplacement = renpy.display.core.place(width, height, None, None, end_placement)
-                    poi = (end_xplacement, end_yplacement, d.zpos)
+            a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
 
-            if poi:
-                a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
+            #cameras is rotated in z, y, x order.
+            #It is because rotating stage in x, y, z order means rotating a camera in z, y, x order.
+            #rotating around z axis isn't rotating around the center of the screen when rotating camera in x, y, z order.
+            v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
+            if v_len == 0:
+                xpoi = ypoi = zpoi = 0
+            else:
+                a /= v_len
+                b /= v_len
+                c /= v_len
 
-                #cameras is rotated in z, y, x order.
-                #It is because rotating stage in x, y, z order means rotating a camera in z, y, x order.
-                #rotating around z axis isn't rotating around the center of the screen when rotating camera in x, y, z order.
-                v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
-                if v_len == 0:
-                    xpoi = ypoi = zpoi = 0
-                else:
-                    a /= v_len
-                    b /= v_len
-                    c /= v_len
-
-                    sin_ypoi = min(1., max(-a, -1.))
-                    ypoi = math.asin(sin_ypoi)
-                    if c == 0:
-                        if abs(a) == 1:
-                            xpoi = 0
-                        else:
-                            sin_xpoi = min(1., max(b / math.cos(ypoi), -1.))
-                            xpoi = math.asin(sin_xpoi)
+                sin_ypoi = min(1., max(-a, -1.))
+                ypoi = math.asin(sin_ypoi)
+                if c == 0:
+                    if abs(a) == 1:
+                        xpoi = 0
                     else:
-                        xpoi = math.atan(-b/c)
+                        sin_xpoi = min(1., max(b / math.cos(ypoi), -1.))
+                        xpoi = math.asin(sin_xpoi)
+                else:
+                    xpoi = math.atan(-b/c)
 
-                    if c > 0:
-                        ypoi = math.pi - ypoi
+                if c > 0:
+                    ypoi = math.pi - ypoi
 
-                    if xpoi != 0.0 and ypoi != 0.0:
-                        if xpoi == math.pi / 2 or xpoi == - math.pi / 2:
-                            if -math.sin(xpoi) * math.sin(ypoi) > 0.0:
-                                zpoi = math.pi / 2
-                            else:
-                                zpoi = - math.pi / 2
+                if xpoi != 0.0 and ypoi != 0.0:
+                    if xpoi == math.pi / 2 or xpoi == - math.pi / 2:
+                        if -math.sin(xpoi) * math.sin(ypoi) > 0.0:
+                            zpoi = math.pi / 2
                         else:
-                            zpoi = math.atan(-(math.sin(xpoi) * math.sin(ypoi)) / math.cos(xpoi))
+                            zpoi = - math.pi / 2
                     else:
-                        zpoi = 0
+                        zpoi = math.atan(-(math.sin(xpoi) * math.sin(ypoi)) / math.cos(xpoi))
+                else:
+                    zpoi = 0
 
-                    xpoi = math.degrees(xpoi)
-                    ypoi = math.degrees(ypoi)
-                    zpoi = math.degrees(zpoi)
+                xpoi = math.degrees(xpoi)
+                ypoi = math.degrees(ypoi)
+                zpoi = math.degrees(zpoi)
 
         if poi or orientation or xyz_rotate:
             m = Matrix.offset(-width / 2, -height / 2, -z11)
@@ -735,59 +716,32 @@ def transform_render(self, widtho, heighto, st, at):
             placement = self.get_placement()
             xplacement, yplacement = renpy.display.core.place(widtho, heighto, width, height, placement)
             start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
-            if not isinstance(poi, tuple):
-                tag = poi
-                if isinstance(tag, basestring):
-                    raise Exception("The point_to transform property for displayable should not be str")
-                else:
-                    layer = "master"
-                sle = renpy.game.context().scene_lists
-                d = sle.camera_transform[layer]
-                if d is None:
-                    poi = None
-                else:
-                    end_perspective = d.perspective
-                    if end_perspective is True:
-                        end_perspective = renpy.config.perspective
-                    elif end_perspective is False:
-                        end_perspective = None
-                    elif isinstance(end_perspective, (int, float)):
-                        end_perspective = (renpy.config.perspective[0], end_perspective, renpy.config.perspective[2])
-                    if end_perspective:
-                        end_z11 = end_perspective[1]
+
+            a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
+            v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
+            if v_len == 0:
+                xpoi = ypoi = 0
+            else:
+                a /= v_len
+                b /= v_len
+                c /= v_len
+
+                sin_xpoi = min(1., max(-b, -1.))
+                xpoi = math.asin(sin_xpoi)
+                if c == 0:
+                    if abs(b) == 1:
+                        ypoi = 0
                     else:
-                        end_z11 = old_z11
-                        
-                    end_placement = (d.xpos, d.ypos, d.xanchor, d.yanchor, d.xoffset, d.yoffset, True)
-                    end_xplacement, end_yplacement = renpy.display.core.place(widtho, heighto, widtho, heighto, end_placement)
-                    poi = (end_xplacement + widtho / 2, end_yplacement + heighto / 2, d.zpos + end_z11)
-
-            if poi:
-                a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
-                v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
-                if v_len == 0:
-                    xpoi = ypoi = 0
+                        sin_ypoi = min(1., max(a / math.cos(xpoi), -1.))
+                        ypoi = math.asin(sin_ypoi)
                 else:
-                    a /= v_len
-                    b /= v_len
-                    c /= v_len
+                    ypoi = math.atan(a/c)
 
-                    sin_xpoi = min(1., max(-b, -1.))
-                    xpoi = math.asin(sin_xpoi)
-                    if c == 0:
-                        if abs(b) == 1:
-                            ypoi = 0
-                        else:
-                            sin_ypoi = min(1., max(a / math.cos(xpoi), -1.))
-                            ypoi = math.asin(sin_ypoi)
-                    else:
-                        ypoi = math.atan(a/c)
+                if c < 0:
+                    ypoi += math.pi
 
-                    if c < 0:
-                        ypoi += math.pi
-
-                    xpoi = math.degrees(xpoi)
-                    ypoi = math.degrees(ypoi)
+                xpoi = math.degrees(xpoi)
+                ypoi = math.degrees(ypoi)
 
         if poi:
             m = Matrix.rotate(xpoi, ypoi, 0) * m
@@ -921,3 +875,4 @@ def transform_render(self, widtho, heighto, st, at):
     self.render_size = (width, height)
 
     return rv
+

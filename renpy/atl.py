@@ -247,6 +247,45 @@ def compile_all():
     compile_queue = [ ]
 
 
+def get_point_to_pos(point_to, state):
+
+    poi = point_to
+    if isinstance(poi, tuple) and len(point_to) == 3:
+        return poi
+
+    if poi and not isinstance(poi, bool):
+        raise Exception("The point_to transform property should be a 3-tuple (x, y, z), 'tag' or True.")
+
+    if poi is True:
+        if state.perspective
+            raise Exception("The point_to transform property for camera should not be True")
+        layer = "master"
+        sle = renpy.game.context().scene_lists
+        d = sle.camera_transform[layer]
+        if d is None:
+            poi = None
+        else:
+            perspective = d.perspective
+            if perspective is True:
+                perspective = renpy.config.perspective
+            elif perspective is False:
+                perspective = None
+            elif isinstance(perspective, (int, float)):
+                perspective = (renpy.config.perspective[0], perspective, renpy.config.perspective[2])
+            if perspective:
+                z11 = perspective[1]
+                width = renpy.config.screen_width
+                height = renpy.config.screen_height
+
+                placement = (d.xpos, d.ypos, d.xanchor, d.yanchor, d.xoffset, d.yoffset, True)
+                xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
+                poi = (xplacement + width / 2, yplacement + height / 2, d.zpos + z11)
+            else:
+                poi = None
+
+    return poi
+
+
 # This is the context used when compiling an ATL statement. It stores the
 # scopes that are used to evaluate the various expressions in the statement,
 # and has a method to do the evaluation and return a result.
@@ -1349,15 +1388,19 @@ class Interpolation(Statement):
                     value = None
                 else:
                     value = old
-            elif k == "point_to" and not (isinstance(new, tuple) and isinstance(old, tuple)):
-                if complete >= 1.0:
-                    value = new
-                else:
-                    value = old
-            else:
+            elif k != "point_to":
                 value = interpolate(complete, old, new, PROPERTIES[k])
 
-            setattr(trans.state, k, value)
+            if k != "point_to":
+                setattr(trans.state, k, value)
+
+        if "point_to" in linear:
+            old, new = linear["point_to"]
+            old = get_point_to_pos(old, trans.state)
+            new = get_point_to_pos(new, trans.state)
+            value = interpolate(complete, old, new, PROPERTIES["point_to"])
+            setattr(trans.state, "point_to", value)
+
 
         # Handle the revolution.
         if revolution is not None:
@@ -2084,3 +2127,4 @@ def parse_atl(l):
         old = new
 
     return RawBlock(block_loc, merged, animation)
+
