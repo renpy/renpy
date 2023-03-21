@@ -3687,11 +3687,13 @@ class Interface(object):
         self.suppress_transition = False
 
         # Figure out transitions.
-        if suppress_transition:
+        if suppress_transition or renpy.game.after_rollback:
             self.ongoing_transition.clear()
             self.transition_from.clear()
             self.transition_time.clear()
-        else:
+
+        if not suppress_transition:
+
             for k, t in self.transition.items():
                 if k not in self.old_scene:
                     continue
