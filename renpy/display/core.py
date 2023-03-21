@@ -2360,6 +2360,7 @@ class Interface(object):
             cursors = { }
 
             for key, cursor_list in renpy.config.mouse.items():
+
                 l = [ ]
 
                 for i in cursor_list:
@@ -2372,6 +2373,9 @@ class Interface(object):
                     l.append(cursors[i])
 
                 self.cursor_cache[key] = l
+
+            if ("default" not in self.cursor_cache) and (None in self.cursor_cache):
+                self.cursor_cache["default"] = self.cursor_cache[None]
 
         s = "Total time until interface ready: {}s.".format(time.time() - import_time)
 
@@ -3140,6 +3144,9 @@ class Interface(object):
 
         if interaction and (mouse_kind is None):
             mouse_kind = self.mouse
+
+        if mouse_kind is None:
+            mouse_kind = "default"
 
         if pygame.mouse.get_pressed()[0]:
             mouse_kind = "pressed_" + mouse_kind # type: ignore
