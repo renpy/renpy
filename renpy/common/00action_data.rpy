@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -57,13 +57,13 @@ init -1600 python in _action_mixins:
     from collections.abc import Mapping, Sequence # only for instance checks
     from renpy.store import _get_field, _set_field, __FieldNotFound
 
-    # Type-1 mixins : manage how the data is accessed
+    # Accessor mixins : manage how the data is accessed
     # defines a __call__ which gets the value to set from the value_to_set() method
     # defines a current_value() method which returns the current value of the accessed data or raise __FieldNotFound
     # may define the `kind` class attribute, which is used in error messages
     class Field:
         """
-        A type-1 mixin class for Actions setting a field on an object.
+        An Accessor mixin class for Actions setting a field on an object.
         """
 
         kind = "field"
@@ -80,25 +80,25 @@ init -1600 python in _action_mixins:
         def current_value(self):
             return _get_field(self.object, self.field_name, self.kind)
 
-    class GlobalVariable(Field):
+    class Variable(Field):
         """
-        A type-1 mixin class for Actions setting a global variable.
+        An Accessor mixin class for Actions setting a global variable.
         """
 
         kind = "global variable"
 
         def __init__(self, variable_name, *args, **kwargs):
-            super(GlobalVariable, self).__init__(object=store, field_name=variable_name, *args, **kwargs)
+            super(Variable, self).__init__(object=store, field_name=variable_name, *args, **kwargs)
 
-    class Index:
+    class Dict:
         """
-        A type-1 mixin class for Actions setting an index on a sequence or a key on a mapping.
+        An Accessor mixin class for Actions setting an index on a sequence or a key on a mapping.
         """
 
         kind = "key/index"
 
         def __init__(self, indexable, key, *args, **kwargs):
-            super(Index, self).__init__(*args, **kwargs)
+            super(Dict, self).__init__(*args, **kwargs)
             self.indexable = indexable
             self.key = key
 
@@ -118,7 +118,7 @@ init -1600 python in _action_mixins:
 
     class ScreenVariable:
         """
-        A type-1 mixin class for Actions setting a screen variable.
+        An Accessor mixin class for Actions setting a screen variable.
         """
 
         kind = "screen variable"
@@ -145,9 +145,9 @@ init -1600 python in _action_mixins:
 
             raise __FieldNotFound(self.kind, self.name)
 
-    class LocalVariable(Index):
+    class LocalVariable(Dict):
         """
-        A type-1 mixin class for Actions setting a local variable.
+        An Accessor mixin class for Actions setting a local variable.
         """
 
         kind = "local variable"
@@ -157,18 +157,18 @@ init -1600 python in _action_mixins:
                                                 key=variable_name,
                                                 *args, **kwargs)
 
-    # Type-2 mixins : manage what value gets written
+    # Manager mixins : manage what value gets written
     # inherits Action ? not for the moment
     # defines a value_to_set() method which returns the value to be set
     # may define get_selected and such methods
     # both of these may call the current_value() method
-    class SingleSetter:
+    class Set:
         """
-        A type-2 mixin class for Actions setting a single value
+        A Manager mixin class for Actions setting a single value
         """
 
         def __init__(self, value, *args, **kwargs):
-            super(SingleSetter, self).__init__(*args, **kwargs)
+            super(Set, self).__init__(*args, **kwargs)
             self.value = value
 
         def value_to_set(self):
@@ -184,13 +184,13 @@ init -1600 python in _action_mixins:
             else:
                 return val == self.value
 
-    class Toggler:
+    class Toggle:
         """
-        A type-2 mixin class for Actions toggling between two values.
+        A Manager mixin class for Actions toggling between two values.
         """
 
         def __init__(self, true_value=None, false_value=None, *args, **kwargs):
-            super(Toggler, self).__init__(*args, **kwargs)
+            super(Toggle, self).__init__(*args, **kwargs)
             self.true_value = true_value
             self.false_value = false_value
 
@@ -220,15 +220,15 @@ init -1600 python in _action_mixins:
 
             return bool(val)
 
-    class Cycler:
+    class Cycle:
         """
-        A type-2 mixin class for Actions cycling through a list of values.
+        A Manager mixin class for Actions cycling through a list of values.
 
         Warning : the provided values must not be duplicated, otherwise some values can never be set.
         """
 
         def __init__(self, values, *args, **kwargs):
-            super(Cycler, self).__init__(*args, **kwargs)
+            super(Cycle, self).__init__(*args, **kwargs)
 
             if kwargs.get("reverse", False):
                 values = values[::-1]
