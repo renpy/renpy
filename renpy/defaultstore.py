@@ -163,7 +163,8 @@ ShowingSwitch = renpy.display.layout.ShowingSwitch
 AlphaMask = renpy.display.layout.AlphaMask
 Layer = renpy.display.layout.Layer
 
-Transform = renpy.display.motion.Transform
+Transform = renpy.display.transform.Transform
+Camera = renpy.display.transform.Camera
 
 Animation = anim.Animation
 Movie = renpy.display.video.Movie

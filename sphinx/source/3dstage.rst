@@ -316,7 +316,7 @@ The following transform properties are used by the 3D Stage.
 
 .. transform-property:: point_to
 
-    :type: (float, float, float), True or None
+    :type: (float, float, float), Camera, or None
     :default: None
 
     This gives a position to which to point. The camera or the
@@ -325,19 +325,20 @@ The following transform properties are used by the 3D Stage.
 
     If this is None, no point-of-interest rotation is applied.
 
-    If this is not None, this is a 3-tuple or True. (x, y, z)
-    format tuple represents the position of the point of interest. 
-
-    True means camera as the point of interest.
+    If this is not None, this is a 3-tuple or an instance of :ref:`Camera`.
+    An (x, y, z) format tuple represents the position of the point of interest.
+    An instance of Camera means to point at the camera.
 
     Note point_to isn't updated automatically. so, you should write like below if
     you want it is updated::
 
         # eileen always faces to the camera.
         show eileen happy at center:
-            point_to True
+            point_to Camera()
             0
             repeat
+
+    .. include:: inc/point_to_camera
 
 .. transform-property:: orientation
 

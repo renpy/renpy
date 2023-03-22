@@ -182,12 +182,12 @@ def get_poi(state):
     if isinstance(point_to, tuple) and len(point_to) == 3:
         return point_to
 
-    if point_to is True:
+    if isinstance(point_to, renpy.display.transform.Camera):
 
         if state.perspective:
             raise Exception("The point_to transform property for camera should not be True.")
 
-        layer = "master"
+        layer = point_to.layer
         sle = renpy.game.context().scene_lists
 
         d = sle.camera_transform.get(layer, None)

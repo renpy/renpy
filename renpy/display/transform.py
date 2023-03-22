@@ -34,6 +34,22 @@ from renpy.display.layout import Container
 from renpy.display.accelerator import transform_render
 from renpy.atl import position, any_object, bool_or_none, float_or_none, matrix, mesh
 
+
+class Camera(renpy.object.Object):
+    """
+    :doc: point_to_camera
+
+    Instances of this class can be used with point_to to point
+    at the location of the camera for a particular layer.
+
+    `layer`
+        The name of the layer.
+    """
+
+    def __init__(self, layer="master"):
+        self.layer = layer
+
+
 # The null object that's used if we don't have a defined child.
 null = None
 
