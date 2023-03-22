@@ -325,7 +325,7 @@ The following transform properties are used by the 3D Stage.
 
     If this is None, no point-of-interest rotation is applied.
 
-    If this is not None, this is a 3-tuple or an instance of :ref:`Camera`.
+    If this is not None, this is a 3-tuple or an instance of :func:`Camera`.
     An (x, y, z) format tuple represents the position of the point of interest.
     An instance of Camera means to point at the camera.
 
