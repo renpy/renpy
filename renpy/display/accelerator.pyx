@@ -611,8 +611,17 @@ def transform_render(self, widtho, heighto, st, at):
         self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
     poi = state.point_to
-    if poi and not (isinstance(poi, tuple) and len(poi) == 3):
-        raise Exception("The point_to transform property should be a 3-tuple (x, y, z).")
+
+    orientation = state.orientation
+    if orientation:
+        xorientation, yorientation, zorientation = orientation
+
+    xyz_rotate = False
+    if state.xrotate or state.yrotate or state.zrotate:
+        xyz_rotate = True
+        xrotate = state.xrotate or 0
+        yrotate = state.yrotate or 0
+        zrotate = state.zrotate or 0
 
     # xpos and ypos.
     if perspective:
@@ -620,14 +629,6 @@ def transform_render(self, widtho, heighto, st, at):
         xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
 
         self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
-
-        orientation = False
-        if state.orientation is not None:
-            orientation = True
-
-        xyz_rotate = False
-        if state.xrotate or state.yrotate or state.zrotate:
-            xyz_rotate = True
 
         if poi:
             start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
@@ -673,14 +674,6 @@ def transform_render(self, widtho, heighto, st, at):
                 ypoi = math.degrees(ypoi)
                 zpoi = math.degrees(zpoi)
 
-        if orientation:
-            xorientation, yorientation, zorientation = state.orientation
-
-        if xyz_rotate:
-            xrotate = state.xrotate or 0
-            yrotate = state.yrotate or 0
-            zrotate = state.zrotate or 0
-
         if poi or orientation or xyz_rotate:
             m = Matrix.offset(-width / 2, -height / 2, -z11)
         if poi:
@@ -702,14 +695,6 @@ def transform_render(self, widtho, heighto, st, at):
             self.reverse = m * self.reverse
 
     else:
-
-        orientation = False
-        if state.orientation is not None:
-            orientation = True
-
-        xyz_rotate = False
-        if state.xrotate or state.yrotate or state.zrotate:
-            xyz_rotate = True
 
         if poi or orientation or xyz_rotate:
             if state.matrixanchor is None:
@@ -741,7 +726,7 @@ def transform_render(self, widtho, heighto, st, at):
                 b /= v_len
                 c /= v_len
 
-                sin_xpoi = min(1., min(-b, -1.))
+                sin_xpoi = min(1., max(-b, -1.))
                 xpoi = math.asin(sin_xpoi)
                 if c == 0:
                     if abs(b) == 1:
@@ -757,14 +742,6 @@ def transform_render(self, widtho, heighto, st, at):
 
                 xpoi = math.degrees(xpoi)
                 ypoi = math.degrees(ypoi)
-
-        if orientation:
-            xorientation, yorientation, zorientation = state.orientation
-
-        if xyz_rotate:
-            xrotate = state.xrotate or 0
-            yrotate = state.yrotate or 0
-            zrotate = state.zrotate or 0
 
         if poi:
             m = Matrix.rotate(xpoi, ypoi, 0) * m
@@ -898,3 +875,4 @@ def transform_render(self, widtho, heighto, st, at):
     self.render_size = (width, height)
 
     return rv
+
