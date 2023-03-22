@@ -55,30 +55,37 @@ init -1600 python:
 init -1600 python in _action_mixins:
 
     from collections.abc import Mapping, Sequence # only for instance checks
-    from renpy.store import _get_field, _set_field, __FieldNotFound
+    import sys
+    from renpy.store import Action, FieldEquality, _get_field, _set_field, __FieldNotFound
+
+    Accessor = Manager = python_object
+    # clarify the role of each class without adding to the mro
+    # and without putting things between RevertableObject and python_object, in the mro
 
     # Accessor mixins : manage how the data is accessed
     # defines a __call__ which gets the value to set from the value_to_set() method
     # defines a current_value() method which returns the current value of the accessed data or raise __FieldNotFound
     # may define the `kind` class attribute, which is used in error messages
-    class Field:
+    class Field(Accessor):
         """
         An Accessor mixin class for Actions setting a field on an object.
         """
 
+        identity_fields = ("object",)
+        equality_fields = ("field",)
         kind = "field"
 
-        def __init__(self, object, field_name, *args, **kwargs):
+        def __init__(self, object, field, *args, **kwargs):
             super(Field, self).__init__(*args, **kwargs)
             self.object = object
-            self.field_name = field_name
+            self.field = field
 
         def __call__(self):
-            _set_field(self.object, self.field_name, self.value_to_set(), self.kind)
+            _set_field(self.object, self.field, self.value_to_set(), self.kind)
             renpy.restart_interaction()
 
         def current_value(self):
-            return _get_field(self.object, self.field_name, self.kind)
+            return _get_field(self.object, self.field, self.kind)
 
     class Variable(Field):
         """
@@ -87,45 +94,49 @@ init -1600 python in _action_mixins:
 
         kind = "global variable"
 
-        def __init__(self, variable_name, *args, **kwargs):
-            super(Variable, self).__init__(object=store, field_name=variable_name, *args, **kwargs)
+        def __init__(self, name, *args, **kwargs):
+            super(Variable, self).__init__(object=store, field=name, *args, **kwargs)
 
-    class Dict:
+    class Dict(Accessor):
         """
         An Accessor mixin class for Actions setting an index on a sequence or a key on a mapping.
         """
 
+        identity_fields = ("dict",)
+        equality_fields = ("key",)
         kind = "key/index"
 
-        def __init__(self, indexable, key, *args, **kwargs):
+        def __init__(self, dict, key, *args, **kwargs):
             super(Dict, self).__init__(*args, **kwargs)
-            self.indexable = indexable
+            self.dict = dict
             self.key = key
 
         def __call__(self):
-            self.indexable[self.key] = self.value_to_set()
+            self.dict[self.key] = self.value_to_set()
             renpy.restart_interaction()
 
         def current_value(self):
             key = self.key
             try:
-                return self.indexable[key]
+                return self.dict[key]
             except (KeyError, IndexError) as e:
                 if PY2:
                     raise __FieldNotFound(self.kind, key)
                 else:
                     raise __FieldNotFound(self.kind, key) from e
 
-    class ScreenVariable:
+    class ScreenVariable(Accessor):
         """
         An Accessor mixin class for Actions setting a screen variable.
         """
 
+        identity_fields = ()
+        equality_fields = ("name",)
         kind = "screen variable"
 
-        def __init__(self, variable_name, *args, **kwargs):
+        def __init__(self, name, *args, **kwargs):
             super(ScreenVariable, self).__init__(*args, **kwargs)
-            self.variable_name = variable_name
+            self.name = name
 
         def __call__(self):
             cs = renpy.current_screen()
@@ -133,7 +144,7 @@ init -1600 python in _action_mixins:
             if cs is None:
                 return
 
-            cs.scope[self.variable_name] = self.value_to_set()
+            cs.scope[self.name] = self.value_to_set()
             renpy.restart_interaction()
 
         def current_value(self):
@@ -152,20 +163,22 @@ init -1600 python in _action_mixins:
 
         kind = "local variable"
 
-        def __init__(self, variable_name, *args, **kwargs):
-            super(LocalVariable, self).__init__(indexable=sys._getframe(1).f_locals,
-                                                key=variable_name,
+        def __init__(self, name, *args, **kwargs):
+            super(LocalVariable, self).__init__(dict=sys._getframe(1).f_locals,
+                                                key=name,
                                                 *args, **kwargs)
 
     # Manager mixins : manage what value gets written
-    # inherits Action ? not for the moment
     # defines a value_to_set() method which returns the value to be set
     # may define get_selected and such methods
     # both of these may call the current_value() method
-    class Set:
+    class Set(Manager):
         """
         A Manager mixin class for Actions setting a single value
         """
+
+        identity_fields = ()
+        equality_fields = ("value",)
 
         def __init__(self, value, *args, **kwargs):
             super(Set, self).__init__(*args, **kwargs)
@@ -184,10 +197,13 @@ init -1600 python in _action_mixins:
             else:
                 return val == self.value
 
-    class Toggle:
+    class Toggle(Manager):
         """
         A Manager mixin class for Actions toggling between two values.
         """
+
+        identity_fields = ()
+        equality_fields = ("true_value", "false_value")
 
         def __init__(self, true_value=None, false_value=None, *args, **kwargs):
             super(Toggle, self).__init__(*args, **kwargs)
@@ -220,12 +236,15 @@ init -1600 python in _action_mixins:
 
             return bool(val)
 
-    class Cycle:
+    class Cycle(Manager):
         """
         A Manager mixin class for Actions cycling through a list of values.
 
         Warning : the provided values must not be duplicated, otherwise some values can never be set.
         """
+
+        identity_fields = ()
+        equality_fields = ("values", "loop")
 
         def __init__(self, values, *args, **kwargs):
             super(Cycle, self).__init__(*args, **kwargs)
