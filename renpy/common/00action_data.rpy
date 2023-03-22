@@ -21,10 +21,12 @@
 
 init -1600 python:
 
-    ##########################################################################
-    # Functions that set variables or fields.
-
-    __FieldNotFound = object()
+    class __FieldNotFound(Exception):
+        def __init__(self, kind=None, name=None):
+            if kind and name:
+                super(__FieldNotFound, self).__init__("The {} {!r} does not exist.".format(kind, name))
+            else:
+                super(__FieldNotFound, self).__init__()
 
     def _get_field(obj, name, kind):
 
@@ -36,7 +38,7 @@ init -1600 python:
         for i in name.split("."):
             rv = getattr(rv, i, __FieldNotFound)
             if rv is __FieldNotFound:
-                raise NameError("The {} {} does not exist.".format(kind, name))
+                raise __FieldNotFound(kind, name)
 
         return rv
 
@@ -47,7 +49,216 @@ init -1600 python:
             obj = _get_field(obj, fields, kind)
             setattr(obj, attr, value)
         except Exception:
-            raise NameError("The {} {} does not exist.".format(kind, name))
+            raise __FieldNotFound(kind, name)
+
+
+init -1600 python in _action_mixins:
+
+    from collections.abc import Mapping, Sequence # only for instance checks
+    from renpy.store import _get_field, _set_field, __FieldNotFound
+
+    # Type-1 mixins : manage how the data is accessed
+    # defines a __call__ which gets the value to set from the value_to_set() method
+    # defines a current_value() method which returns the current value of the accessed data or raise __FieldNotFound
+    # may define the `kind` class attribute, which is used in error messages
+    class Field:
+        """
+        A type-1 mixin class for Actions setting a field on an object.
+        """
+
+        kind = "field"
+
+        def __init__(self, object, field_name, *args, **kwargs):
+            super(Field, self).__init__(*args, **kwargs)
+            self.object = object
+            self.field_name = field_name
+
+        def __call__(self):
+            _set_field(self.object, self.field_name, self.value_to_set(), self.kind)
+            renpy.restart_interaction()
+
+        def current_value(self):
+            return _get_field(self.object, self.field_name, self.kind)
+
+    class GlobalVariable(Field):
+        """
+        A type-1 mixin class for Actions setting a global variable.
+        """
+
+        kind = "global variable"
+
+        def __init__(self, variable_name, *args, **kwargs):
+            super(GlobalVariable, self).__init__(object=store, field_name=variable_name, *args, **kwargs)
+
+    class Index:
+        """
+        A type-1 mixin class for Actions setting an index on a sequence or a key on a mapping.
+        """
+
+        kind = "key/index"
+
+        def __init__(self, indexable, key, *args, **kwargs):
+            super(Index, self).__init__(*args, **kwargs)
+            self.indexable = indexable
+            self.key = key
+
+        def __call__(self):
+            self.indexable[self.key] = self.value_to_set()
+            renpy.restart_interaction()
+
+        def current_value(self):
+            key = self.key
+            try:
+                return self.indexable[key]
+            except (KeyError, IndexError) as e:
+                if PY2:
+                    raise __FieldNotFound(self.kind, key)
+                else:
+                    raise __FieldNotFound(self.kind, key) from e
+
+    class ScreenVariable:
+        """
+        A type-1 mixin class for Actions setting a screen variable.
+        """
+
+        kind = "screen variable"
+
+        def __init__(self, variable_name, *args, **kwargs):
+            super(ScreenVariable, self).__init__(*args, **kwargs)
+            self.variable_name = variable_name
+
+        def __call__(self):
+            cs = renpy.current_screen()
+
+            if cs is None:
+                return
+
+            cs.scope[self.variable_name] = self.value_to_set()
+            renpy.restart_interaction()
+
+        def current_value(self):
+            cs = renpy.current_screen()
+
+            if cs is not None:
+                if self.name in cs.scope:
+                    return cs.scope[self.name]
+
+            raise __FieldNotFound(self.kind, self.name)
+
+    class LocalVariable(Index):
+        """
+        A type-1 mixin class for Actions setting a local variable.
+        """
+
+        kind = "local variable"
+
+        def __init__(self, variable_name, *args, **kwargs):
+            super(LocalVariable, self).__init__(indexable=sys._getframe(1).f_locals,
+                                                key=variable_name,
+                                                *args, **kwargs)
+
+    # Type-2 mixins : manage what value gets written
+    # inherits Action ? not for the moment
+    # defines a value_to_set() method which returns the value to be set
+    # may define get_selected and such methods
+    # both of these may call the current_value() method
+    class SingleSetter:
+        """
+        A type-2 mixin class for Actions setting a single value
+        """
+
+        def __init__(self, value, *args, **kwargs):
+            super(SingleSetter, self).__init__(*args, **kwargs)
+            self.value = value
+
+        def value_to_set(self):
+            return self.value
+
+        def get_selected(self):
+            # the only one to catch the exception,
+            # because the only one of the three not to require the field to be already set
+            try:
+                val = self.current_value()
+            except __FieldNotFound:
+                return False
+            else:
+                return val == self.value
+
+    class Toggler:
+        """
+        A type-2 mixin class for Actions toggling between two values.
+        """
+
+        def __init__(self, true_value=None, false_value=None, *args, **kwargs):
+            super(Toggler, self).__init__(*args, **kwargs)
+            self.true_value = true_value
+            self.false_value = false_value
+
+        def value_to_set(self):
+            value = self.current_value()
+
+            tv = self.true_value
+            if tv is not None:
+                value = (value == tv)
+
+            value = not value
+
+            if tv is not None:
+                if value:
+                    return tv
+                else:
+                    return self.false_value
+
+            return value
+
+        def get_selected(self):
+            val = self.current_value()
+
+            tv = self.true_value
+            if tv is not None:
+                return val == tv
+
+            return bool(val)
+
+    class Cycler:
+        """
+        A type-2 mixin class for Actions cycling through a list of values.
+        """
+
+        def __init__(self, values, *args, **kwargs):
+            super(Cycler, self).__init__(*args, **kwargs)
+
+            if kwargs.get("reverse", False):
+                values = values[::-1]
+                # the reversed builtin returns a non-indexable iterator
+                # and we only support sequences anyway - iterators are not picklable
+            self.loop = kwargs.get("loop", True)
+
+            self.values = renpy.easy.to_tuple(values)
+
+        def value_to_set(self):
+            values = self.values
+
+            if self.current_value() in values:
+                idx = values.index(value) + 1
+
+                lnv = len(values)
+                if self.loop and idx >= lnv:
+                    idx -= lnv
+
+            else:
+                idx = 0
+
+            return values[idx]
+
+        def get_selected(self):
+            return self.current_value() == self.value_to_set()
+
+
+init -1600 python:
+
+    ##########################################################################
+    # Functions that set variables or fields.
 
     @renpy.pure
     class SetField(Action, FieldEquality):
