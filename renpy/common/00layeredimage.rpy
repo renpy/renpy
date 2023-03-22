@@ -438,7 +438,7 @@ python early in layeredimage:
 
     class Always(Layer):
         """
-        :doc: li
+        :undocumented:
         :name: Always
 
         This is used for a displayable that is always shown.
@@ -515,11 +515,14 @@ python early in layeredimage:
         displayables associated with those attribute.
 
         `attributes`
-            This must be a list of Attribute objects. Each Attribute object
+            This must be a list of Attribute, Condition, ConditionGroup or
+            :func:`renpy.Displayable` objects. Each one
             reflects a displayable that may or may not be displayed as part
             of the image. The items in this list are in back-to-front order,
             with the first item further from the viewer and the last
             closest.
+            Passing a displayable directly is the equivalent of the `always`
+            layeredimage statement.
 
         `at`
             A transform or list of transforms that are applied to the displayable
