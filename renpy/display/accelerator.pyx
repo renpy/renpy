@@ -171,6 +171,53 @@ def quaternion_slerp(complete, old, new):
 
     return (x, y, z)
 
+
+def get_poi(state):
+    """
+    For the given state, return the poi - the point that point_to looks at.
+    """
+
+    point_to = state.point_to
+
+    if isinstance(point_to, tuple) and len(point_to) == 3:
+        return point_to
+
+    if point_to is True:
+
+        if state.perspective:
+            raise Exception("The point_to transform property for camera should not be True.")
+
+        layer = "master"
+        sle = renpy.game.context().scene_lists
+
+        d = sle.camera_transform.get(layer, None)
+
+        if not isinstance(d, renpy.display.motion.Transform):
+            return None
+
+        perspective = d.perspective
+
+        if perspective is True:
+            perspective = renpy.config.perspective
+
+        elif isinstance(perspective, (int, float)):
+            perspective = (renpy.config.perspective[0], perspective, renpy.config.perspective[2])
+
+        if not perspective:
+            return None
+
+        z11 = perspective[1]
+        width = renpy.config.screen_width
+        height = renpy.config.screen_height
+
+        placement = (d.xpos, d.ypos, d.xanchor, d.yanchor, d.xoffset, d.yoffset, True)
+        xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
+
+        return (xplacement + width / 2, yplacement + height / 2, d.zpos + z11)
+
+    raise Exception("The point_to transform property should be None, a 3-tuple (x, y, z), or True.")
+
+
 ################################################################################
 # Transform render function
 ################################################################################
@@ -610,7 +657,10 @@ def transform_render(self, widtho, heighto, st, at):
     else:
         self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
-    poi = state.point_to
+    if state.point_to is not None:
+        poi = get_poi(state)
+    else:
+        poi = None
 
     orientation = state.orientation
     if orientation:
@@ -875,4 +925,3 @@ def transform_render(self, widtho, heighto, st, at):
     self.render_size = (width, height)
 
     return rv
-
