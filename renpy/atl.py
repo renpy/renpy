@@ -1446,7 +1446,8 @@ class Interpolation(Statement):
 
             else:
                 value = interpolate(complete, old, new, PROPERTIES[k])
-                setattr(trans.state, k, value)
+
+            setattr(trans.state, k, value)
 
         # Handle the revolution.
         if revolution is not None:
