@@ -223,6 +223,8 @@ init -1600 python in _action_mixins:
     class Cycler:
         """
         A type-2 mixin class for Actions cycling through a list of values.
+
+        Warning : the provided values must not be duplicated, otherwise some values can never be set.
         """
 
         def __init__(self, values, *args, **kwargs):
@@ -238,8 +240,9 @@ init -1600 python in _action_mixins:
 
         def value_to_set(self):
             values = self.values
+            value = self.current_value()
 
-            if self.current_value() in values:
+            if value in values:
                 idx = values.index(value) + 1
 
                 lnv = len(values)
@@ -251,8 +254,16 @@ init -1600 python in _action_mixins:
 
             return values[idx]
 
-        def get_selected(self):
-            return self.current_value() == self.value_to_set()
+        def get_sensitive(self):
+            if not self.loop:
+                values = self.values
+                value = self.current_value()
+                if value in self.values:
+                    idx = values.index(value)+1
+                    if idx >= len(values):
+                        return False
+
+            return True
 
 
 init -1600 python:
