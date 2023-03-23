@@ -41,20 +41,15 @@ init -1600 python:
 
     def _set_field(obj, name, value, kind):
         fields, _, attr = name.rpartition(".")
+        obj = _get_field(obj, fields, kind)
 
         try:
-            obj = _get_field(obj, fields, kind)
             setattr(obj, attr, value)
         except Exception:
             raise __FieldNotFound(kind, name)
 
 
-init -1600 python in _action_mixins:
-
-    from collections.abc import Mapping, Sequence # only for instance checks
-    import sys
-    from renpy.store import Action, FieldEquality, _get_field, _set_field, __FieldNotFound
-    import store
+init -1600 python hide:
 
     Accessor = Manager = python_object
     # clarify the role of each class without adding to the mro
@@ -117,7 +112,7 @@ init -1600 python in _action_mixins:
             key = self.key
             try:
                 return self.dict[key]
-            except (KeyError, IndexError) as e:
+            except LookupError as e:
                 if PY2:
                     raise __FieldNotFound(self.kind, key)
                 else:
@@ -282,31 +277,17 @@ init -1600 python in _action_mixins:
 
             return True
 
-
-    def generate_subclass(accessor, manager, write=True):
-        name = manager.__name__ + accessor.__name__
-        clsdict = python_dict(identity_fields = manager.identity_fields + accessor.identity_fields,
-                              equality_fields = manager.equality_fields + accessor.equality_fields,)
-
-        cls = type(name, (accessor, manager, Action, FieldEquality), clsdict)
-
-        fglobals = sys._getframe(1).f_globals
-        cls.__module__ = fglobals["__name__"]
-
-        if accessor is not LocalVariable:
-            renpy.pure(name)
-        if write:
-            fglobals[name] = cls
-
-        return cls
-
-
-init -1600 python hide:
-    from store._action_mixins import Field, Variable, Dict, ScreenVariable, LocalVariable, Set, Toggle, Cycle, generate_subclass
-
     for accessor in (Field, Variable, Dict, ScreenVariable, LocalVariable):
         for manager in (Set, Toggle, Cycle):
-            generate_subclass(accessor, manager)
+            name = manager.__name__ + accessor.__name__
+            clsdict = python_dict(identity_fields = manager.identity_fields + accessor.identity_fields,
+                                  equality_fields = manager.equality_fields + accessor.equality_fields,)
+
+            cls = type(name, (accessor, manager, Action, FieldEquality), clsdict)
+
+            if accessor is not LocalVariable:
+                renpy.pure(name)
+            setattr(store, name, cls)
 
 
 init -1600 python:
