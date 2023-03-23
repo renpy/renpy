@@ -1149,7 +1149,7 @@ cdef class GL2DrawingContext:
         """
 
         cdef float halfwidth
-        cdef float halfheigh
+        cdef float halfheight
 
         # This is the equivalent of projecting (0, 0, 0, 1), and getting x and y.
         cdef float sx = transform.xdw
@@ -1174,9 +1174,6 @@ cdef class GL2DrawingContext:
 
         if model.reverse is not IDENTITY:
              transform = transform * model.reverse
-
-        if properties["pixel_perfect"]:
-            transform = self.correct_pixel_perfect(transform)
 
         # If a clip polygon is in place, clip the mesh with it.
         if clip_polygon is not None:
@@ -1271,10 +1268,13 @@ cdef class GL2DrawingContext:
 
         has_reverse = (r.reverse is not None) and (r.reverse is not IDENTITY)
 
+        if r.properties and r.properties.get("pixel_perfect", False) and properties["pixel_perfect"] is None:
+            transform = self.correct_pixel_perfect(transform)
+
         if has_reverse or r.properties:
             properties = self.merge_properties(properties, r.properties)
 
-        if has_reverse and (properties["pixel_perfect"] is None):
+        if has_reverse:
             properties["pixel_perfect"] = False
 
         if r.shaders is not None:
