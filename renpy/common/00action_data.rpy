@@ -52,6 +52,17 @@ init -1600 python:
         except Exception:
             raise __SetFieldError(kind, name)
 
+    # never raised outside of this file, always excepted by return (in __call__) or return False (in get_selected)
+    class __NoCurrentScreen(Exception): pass
+
+    # never raised outside of this file, always excepted by return (in __call__) or return False (in get_selected)
+    class __ScreenVariableNameError(KeyError): pass
+
+    # when Dict fails to retrieve the index/key
+    class __LookupError(LookupError):
+        def __init__(self, kind=None, name=None):
+            super(__LookupError, self).__init__("The {} {!r} does not exist.".format(kind, name))
+
 
 init -1600 python hide:
 
@@ -115,12 +126,12 @@ init -1600 python hide:
         def current_value(self):
             key = self.key
             try:
-                return self.dict[key]
+                return self.dict[self.key]
             except LookupError as e:
                 if PY2:
-                    raise __FieldNotFound(self.kind, key)
+                    raise __LookupError(self.kind, key)
                 else:
-                    raise __FieldNotFound(self.kind, key) from e
+                    raise __LookupError(self.kind, key) from e
 
     class ScreenVariable(Accessor):
         """
@@ -135,7 +146,7 @@ init -1600 python hide:
             super(ScreenVariable, self).__init__(*args, **kwargs)
             self.name = name
 
-        def __call__(self):
+        def __call__(self): # prevents NoCurrentScreen (even though it doesn't explicitly catches it)
             cs = renpy.current_screen()
 
             if cs is None:
@@ -146,12 +157,14 @@ init -1600 python hide:
 
         def current_value(self):
             cs = renpy.current_screen()
+            if cs is None:
+                raise __NoCurrentScreen
 
-            if cs is not None:
-                if self.name in cs.scope:
-                    return cs.scope[self.name]
+            rv = cs.scope.get(self.name, __ScreenVariableNameError)
+            if rv is __ScreenVariableNameError:
+                raise __ScreenVariableNameError(self.name)
 
-            raise __FieldNotFound(self.kind, self.name)
+            return rv
 
     class LocalVariable(Dict):
         """
@@ -185,14 +198,12 @@ init -1600 python hide:
             return self.value
 
         def get_selected(self):
-            # the only one to catch the exception,
-            # because the only one of the three not to require the field to be already set
             try:
                 val = self.current_value()
-            except __FieldNotFound:
+            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError): # __FieldNotFound ?
                 return False
-            else:
-                return val == self.value
+
+            return val == self.value
 
     class Toggle(Manager):
         """
@@ -225,7 +236,10 @@ init -1600 python hide:
             return value
 
         def get_selected(self):
-            val = self.current_value()
+            try:
+                val = self.current_value()
+            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError): # __FieldNotFound ?
+                return False
 
             tv = self.true_value
             if tv is not None:
@@ -271,15 +285,22 @@ init -1600 python hide:
             return values[idx]
 
         def get_sensitive(self):
-            if not self.loop:
-                values = self.values
+            if self.loop:
+                return True
+
+            try:
                 value = self.current_value()
-                if value in self.values:
-                    idx = values.index(value)+1
-                    if idx >= len(values):
-                        return False
+            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError): # __FieldNotFound ?
+                return True
+
+            values = self.values
+            if value in values:
+                idx = values.index(value)+1
+                if idx >= len(values):
+                    return False
 
             return True
+
 
     for accessor in (Field, Variable, Dict, ScreenVariable, LocalVariable):
         for manager in (Set, Toggle, Cycle):
