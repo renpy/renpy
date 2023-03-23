@@ -96,7 +96,7 @@ init -1600 python in _action_mixins:
         kind = "global variable"
 
         def __init__(self, name, *args, **kwargs):
-            super(Variable, self).__init__(object=store, field=name, *args, **kwargs)
+            super(Variable, self).__init__(store, name, *args, **kwargs)
 
     class Dict(Accessor):
         """
@@ -165,8 +165,8 @@ init -1600 python in _action_mixins:
         kind = "local variable"
 
         def __init__(self, name, *args, **kwargs):
-            super(LocalVariable, self).__init__(dict=sys._getframe(1).f_locals,
-                                                key=name,
+            super(LocalVariable, self).__init__(sys._getframe(1).f_locals,
+                                                name,
                                                 *args, **kwargs)
 
     # Manager mixins : manage what value gets written
