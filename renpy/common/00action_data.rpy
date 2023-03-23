@@ -39,6 +39,10 @@ init -1600 python:
 
         return rv
 
+    class __SetFieldError(Exception):
+        def __init__(self, kind=None, name=None):
+            super(__SetFieldError, self).__init__("The {} {!r} cannot be set.".format(kind, name))
+
     def _set_field(obj, name, value, kind):
         fields, _, attr = name.rpartition(".")
         obj = _get_field(obj, fields, kind)
@@ -46,7 +50,7 @@ init -1600 python:
         try:
             setattr(obj, attr, value)
         except Exception:
-            raise __FieldNotFound(kind, name)
+            raise __SetFieldError(kind, name)
 
 
 init -1600 python hide:
