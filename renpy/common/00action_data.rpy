@@ -23,10 +23,7 @@ init -1600 python:
 
     class __FieldNotFound(Exception):
         def __init__(self, kind=None, name=None):
-            if kind and name:
-                super(__FieldNotFound, self).__init__("The {} {!r} does not exist.".format(kind, name))
-            else:
-                super(__FieldNotFound, self).__init__()
+            super(__FieldNotFound, self).__init__("The {} {!r} does not exist.".format(kind, name))
 
     def _get_field(obj, name, kind):
 
@@ -297,14 +294,13 @@ init -1600 python in _action_mixins:
         cls.__module__ = fglobals["__name__"]
 
         if accessor is not LocalVariable:
-            renpy.pure(cls)
+            renpy.pure(name)
         if write:
             fglobals[name] = cls
 
         return cls
 
 
-# label redefine_data_actions:
 init -1600 python hide:
     from store._action_mixins import Field, Variable, Dict, ScreenVariable, LocalVariable, Set, Toggle, Cycle, generate_subclass
 
