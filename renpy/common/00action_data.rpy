@@ -57,6 +57,7 @@ init -1600 python in _action_mixins:
     from collections.abc import Mapping, Sequence # only for instance checks
     import sys
     from renpy.store import Action, FieldEquality, _get_field, _set_field, __FieldNotFound
+    import store
 
     Accessor = Manager = python_object
     # clarify the role of each class without adding to the mro
