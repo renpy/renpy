@@ -291,13 +291,41 @@ init -1600 python hide:
             try:
                 value = self.current_value()
             except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError): # __FieldNotFound ?
-                return True
+                return False
 
             values = self.values
             if value in values:
                 idx = values.index(value)+1
                 if idx >= len(values):
                     return False
+
+            return True
+
+    class Increment(Manager):
+        """
+        A Manager mixin class for Actions incrementing a value by a set amount.
+        """
+
+        identity_fields = ()
+        equality_fields = ("amount",)
+
+        def __init__(self, amount=1, *args, **kwargs):
+            super(Increment, self).__init__(*args, **kwargs)
+            self.amount = amount
+
+        def value_to_set(self):
+            return self.current_value() + self.amount
+
+        def get_sensitive(self):
+            try:
+                value = self.current_value()
+            except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError): # __FieldNotFound ?
+                return False
+
+            try:
+                value + self.amount
+            except Exception:
+                return False
 
             return True
 
