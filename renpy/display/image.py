@@ -1006,7 +1006,8 @@ class ShownImageInfo(renpy.object.Object):
 
             if ca:
                 ca_required = [ i for i in required if i not in attrs ]
-                ca_optional = [ i for i in optional if i not in attrs ]
+                ca_optional = [ i for i in optional if i not in attrs if i not in required ]
+
                 newattrs = ca(tag, ca_required, ca_optional)
 
                 if newattrs is None:
