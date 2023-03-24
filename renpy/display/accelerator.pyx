@@ -232,127 +232,60 @@ z11 = 0.0
 # This file contains implementations of methods of classes that
 # are found in other files, for performance reasons.
 
-def transform_render(self, widtho, heighto, st, at):
+def make_mesh(cr, state):
+    """
+    Makes a mesh out a render.
 
-    cdef double rxdx, rxdy, rydx, rydy
-    cdef double cosa, sina
-    cdef double xo, px
-    cdef double yo, py
-    cdef float zoom, xzoom, yzoom
-    cdef double cw, ch, nw, nh
-    cdef Render rv, cr, tcr
-    cdef double angle
-    cdef double alpha
-    cdef double width = widtho
-    cdef double height = heighto
-    cdef double cwidth
-    cdef double cheight
-    cdef int xtile, ytile
-    cdef int i, j
+    `cr`
+        The render to convert to a mesh.
 
-    global z11
+    `blur`
+        If not None, the amount of blur to apply to the mesh.
+    """
 
+    mr = Render(cr.width, cr.height)
 
-    def make_mesh(cr):
+    mesh = state.mesh
+    blur = state.blur
+    mesh_pad = state.mesh_pad
 
-        mr = Render(cr.width, cr.height)
+    if state.mesh_pad:
 
-        mesh_pad = state.mesh_pad
-
-        if state.mesh_pad:
-
-            if len(mesh_pad) == 4:
-                pad_left, pad_top, pad_right, pad_bottom = mesh_pad
-            else:
-                pad_right, pad_bottom = mesh_pad
-                pad_left = 0
-                pad_top = 0
-
-            padded = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
-            padded.blit(cr, (pad_left, pad_top))
-
-            cr = padded
-
-        mr.blit(cr, (0, 0))
-
-        mr.operation = renpy.display.render.FLATTEN
-        mr.add_shader("renpy.texture")
-
-        if isinstance(mesh, tuple):
-            mesh_width, mesh_height = mesh
-
-            mr.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
-                mesh_width, mesh_height,
-                0.0, 0.0, cr.width, cr.height,
-                0.0, 0.0, 1.0, 1.0)
+        if len(mesh_pad) == 4:
+            pad_left, pad_top, pad_right, pad_bottom = mesh_pad
         else:
-            mr.mesh = True
+            pad_right, pad_bottom = mesh_pad
+            pad_left = 0
+            pad_top = 0
 
-        if blur is not None:
-            mr.add_shader("-renpy.texture")
-            mr.add_shader("renpy.blur")
-            mr.add_uniform("u_renpy_blur_log2", math.log(blur, 2))
+        padded = Render(cr.width + pad_left + pad_right, cr.height + pad_top + pad_bottom)
+        padded.blit(cr, (pad_left, pad_top))
 
-        return mr
+        cr = padded
 
+    mr.blit(cr, (0, 0))
 
-    # Should we perform clipping?
-    clipping = False
+    mr.operation = renpy.display.render.FLATTEN
+    mr.add_shader("renpy.texture")
 
-    # Prevent time from ticking backwards, as can happen if we replace a
-    # transform but keep its state.
-    if st + self.st_offset <= self.st:
-        self.st_offset = self.st - st
-    if at + self.at_offset <= self.at:
-        self.at_offset = self.at - at
+    if isinstance(mesh, tuple):
+        mesh_width, mesh_height = mesh
 
-    self.st = st = st + self.st_offset
-    self.at = at = at + self.at_offset
+        mr.mesh = renpy.gl2.gl2mesh2.Mesh2.texture_grid_mesh(
+            mesh_width, mesh_height,
+            0.0, 0.0, cr.width, cr.height,
+            0.0, 0.0, 1.0, 1.0)
+    else:
+        mr.mesh = True
 
-    # Update the state.
-    self.update_state()
+    if blur is not None:
+        mr.add_shader("-renpy.texture")
+        mr.add_shader("renpy.blur")
+        mr.add_uniform("u_renpy_blur_log2", math.log(blur, 2))
 
-    # Render the child.
-    child = self.child
+    return mr
 
-    if child is None:
-        child = renpy.display.transform.get_null()
-
-    state = self.state
-
-    xsize = state.xsize
-    ysize = state.ysize
-    fit = state.fit
-
-    if xsize is not None:
-        if (type(xsize) is float) and renpy.config.relative_transform_size:
-            xsize *= widtho
-        widtho = xsize
-    if ysize is not None:
-        if (type(ysize) is float) and renpy.config.relative_transform_size:
-            ysize *= heighto
-        heighto = ysize
-
-    # Figure out the perspective.
-    perspective = state.perspective
-
-    if perspective is True:
-        perspective = renpy.config.perspective
-    elif perspective is False:
-        perspective = None
-    elif isinstance(perspective, (int, float)):
-        perspective = (renpy.config.perspective[0], perspective, renpy.config.perspective[2])
-
-    # Set the z11 distance (might seem useless, is not).
-    old_z11 = z11
-
-    if perspective:
-        z11 = perspective[1]
-
-    cr = render(child, widtho, heighto, st - self.child_st_base, at)
-
-    # Reset the z11 distance.
-    z11 = old_z11
+def tile_and_pan(cr, state):
 
     cwidth = cr.width
     cheight = cr.height
@@ -405,31 +338,13 @@ def transform_render(self, widtho, heighto, st, at):
 
         cr = tcr
 
-    mesh = state.mesh
-    blur = state.blur or None
+    return cr
 
-    if (blur is not None) and (not mesh):
-        mesh = True
-
-    if mesh and not perspective:
-        mr = cr = make_mesh(cr)
-
-    # The width and height of the child.
-    width = cr.width
-    height = cr.height
-
-    self.child_size = width, height
-
-    # The reverse matrix.
-    rxdx = 1
-    rxdy = 0
-    rydx = 0
-    rydy = 1
+def cropping(cr, state, width, height):
 
     xo = 0
     yo = 0
-
-    # Cropping.
+    clipping = False
 
     crop = state.crop
 
@@ -492,6 +407,110 @@ def transform_render(self, widtho, heighto, st, at):
             xo = -negative_xo
             yo = -negative_yo
             clipping = True
+
+    return (cr, xo, yo, clipping)
+
+
+def transform_render(self, widtho, heighto, st, at):
+
+    cdef double rxdx, rxdy, rydx, rydy
+    cdef double cosa, sina
+    cdef double xo, px
+    cdef double yo, py
+    cdef float zoom, xzoom, yzoom
+    cdef double cw, ch, nw, nh
+    cdef Render rv, cr, tcr
+    cdef double angle
+    cdef double alpha
+    cdef double width = widtho
+    cdef double height = heighto
+    cdef double cwidth
+    cdef double cheight
+    cdef int xtile, ytile
+    cdef int i, j
+
+    global z11
+
+    # Prevent time from ticking backwards, as can happen if we replace a
+    # transform but keep its state.
+    if st + self.st_offset <= self.st:
+        self.st_offset = self.st - st
+    if at + self.at_offset <= self.at:
+        self.at_offset = self.at - at
+
+    self.st = st = st + self.st_offset
+    self.at = at = at + self.at_offset
+
+    # Update the state.
+    self.update_state()
+
+    # Render the child.
+    child = self.child
+
+    if child is None:
+        child = renpy.display.transform.get_null()
+
+    state = self.state
+
+    xsize = state.xsize
+    ysize = state.ysize
+    fit = state.fit
+
+    if xsize is not None:
+        if (type(xsize) is float) and renpy.config.relative_transform_size:
+            xsize *= widtho
+        widtho = xsize
+    if ysize is not None:
+        if (type(ysize) is float) and renpy.config.relative_transform_size:
+            ysize *= heighto
+        heighto = ysize
+
+    # Figure out the perspective.
+    perspective = state.perspective
+
+    if perspective is True:
+        perspective = renpy.config.perspective
+    elif perspective is False:
+        perspective = None
+    elif isinstance(perspective, (int, float)):
+        perspective = (renpy.config.perspective[0], perspective, renpy.config.perspective[2])
+
+    # Set the z11 distance (might seem useless, is not).
+    old_z11 = z11
+
+    if perspective:
+        z11 = perspective[1]
+
+    cr = render(child, widtho, heighto, st - self.child_st_base, at)
+
+    # Reset the z11 distance.
+    z11 = old_z11
+
+    cr = tile_and_pan(cr, state)
+
+    mesh = state.mesh or (True if state.blur else None)
+
+    if mesh and not perspective:
+        mr = cr = make_mesh(cr, state)
+
+    # The width and height of the child.
+    width = cr.width
+    height = cr.height
+
+    self.child_size = width, height
+
+    # The reverse matrix.
+    rxdx = 1
+    rxdy = 0
+    rydx = 0
+    rydy = 1
+
+    xo = 0
+    yo = 0
+
+    # Cropping.
+    cr, xo, yo, clipping = cropping(cr, state, width, height)
+
 
     # Size.
     if (width != 0) and (height != 0):
@@ -866,7 +885,7 @@ def transform_render(self, widtho, heighto, st, at):
         rv.blit(cr, pos)
 
     if mesh and perspective:
-        mr = rv = make_mesh(rv)
+        mr = rv = make_mesh(rv, state)
 
     # Nearest neighbor.
     rv.nearest = state.nearest
