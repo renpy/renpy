@@ -22,12 +22,71 @@
 
 from __future__ import print_function
 
-import math
+from libc.math cimport sin, cos, atan2, asin, acos
 
-def euler_slerp(complete, old, new):
+DEF pi = 3.14159265358979323846
+
+cdef double radians(double degrees):
+    return degrees * pi / 180.0
+
+
+cdef double degrees(double radians):
+    return radians * 180.0 / pi
+
+
+def euler_slerp(double complete, old, new):
     """
     Use quaternions to interpolate between two euler angles.
     """
+
+    cdef double coeff1
+    cdef double coeff2
+    cdef double cosx_cosp
+    cdef double cosz_cosp1
+    cdef double cosz_cosp2
+    cdef double cx
+    cdef double cy
+    cdef double cz
+    cdef double dot
+    cdef double new_q_w
+    cdef double new_q_x
+    cdef double new_q_y
+    cdef double new_q_z
+    cdef double new_x
+    cdef double new_x_div_2
+    cdef double new_y
+    cdef double new_y_div_2
+    cdef double new_z
+    cdef double new_z_div_2
+    cdef double old_q_mul_new_q
+    cdef double old_q_w
+    cdef double old_q_x
+    cdef double old_q_y
+    cdef double old_q_z
+    cdef double old_x
+    cdef double old_x_div_2
+    cdef double old_y
+    cdef double old_y_div_2
+    cdef double old_z
+    cdef double old_z_div_2
+    cdef double q_w
+    cdef double q_x
+    cdef double q_y
+    cdef double q_z
+    cdef double sinx_cosp
+    cdef double siny
+    cdef double sinz_cosp1
+    cdef double sinz_cosp2
+    cdef double sout
+    cdef double st
+    cdef double sut
+    cdef double sx
+    cdef double sy
+    cdef double sz
+    cdef double theta
+    cdef double x
+    cdef double y
+    cdef double z
 
     if old == new:
         return new
@@ -51,30 +110,30 @@ def euler_slerp(complete, old, new):
 
     #z-y-x Euler angles to quaternion conversion
     #https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-    old_x_div_2 = math.radians(old_x) * 0.5
-    old_y_div_2 = math.radians(old_y) * 0.5
-    old_z_div_2 = math.radians(old_z) * 0.5
-    cx = math.cos(old_x_div_2)
-    sx = math.sin(old_x_div_2)
-    cy = math.cos(old_y_div_2)
-    sy = math.sin(old_y_div_2)
-    cz = math.cos(old_z_div_2)
-    sz = math.sin(old_z_div_2)
+    old_x_div_2 = radians(old_x) * 0.5
+    old_y_div_2 = radians(old_y) * 0.5
+    old_z_div_2 = radians(old_z) * 0.5
+    cx = cos(old_x_div_2)
+    sx = sin(old_x_div_2)
+    cy = cos(old_y_div_2)
+    sy = sin(old_y_div_2)
+    cz = cos(old_z_div_2)
+    sz = sin(old_z_div_2)
 
     old_q_x = sx * cy * cz - cx * sy * sz
     old_q_y = cx * sy * cz + sx * cy * sz
     old_q_z = cx * cy * sz - sx * sy * cz
     old_q_w = cx * cy * cz + sx * sy * sz
 
-    new_x_div_2 = math.radians(new_x) * 0.5
-    new_y_div_2 = math.radians(new_y) * 0.5
-    new_z_div_2 = math.radians(new_z) * 0.5
-    cx = math.cos(new_x_div_2)
-    sx = math.sin(new_x_div_2)
-    cy = math.cos(new_y_div_2)
-    sy = math.sin(new_y_div_2)
-    cz = math.cos(new_z_div_2)
-    sz = math.sin(new_z_div_2)
+    new_x_div_2 = radians(new_x) * 0.5
+    new_y_div_2 = radians(new_y) * 0.5
+    new_z_div_2 = radians(new_z) * 0.5
+    cx = cos(new_x_div_2)
+    sx = sin(new_x_div_2)
+    cy = cos(new_y_div_2)
+    sy = sin(new_y_div_2)
+    cz = cos(new_z_div_2)
+    sz = sin(new_z_div_2)
 
     new_q_x = sx * cy * cz - cx * sy * sz
     new_q_y = cx * sy * cz + sx * cy * sz
@@ -89,12 +148,12 @@ def euler_slerp(complete, old, new):
         dot = 1.0
     elif dot < -1.0:
         dot = -1.0
-    theta = abs(math.acos(dot))
+    theta = abs(acos(dot))
 
-    st = math.sin(theta)
+    st = sin(theta)
 
-    sut = math.sin(theta * complete)
-    sout = math.sin(theta * (1 - complete))
+    sut = sin(theta * complete)
+    sout = sin(theta * (1 - complete))
 
     coeff1 = sout / st
     coeff2 = sut / st
@@ -117,22 +176,22 @@ def euler_slerp(complete, old, new):
 
     if siny >= 1:
         x = 0
-        y = math.pi/2
-        z = math.atan2(sinz_cosp1, cosz_cosp1)
+        y = pi/2
+        z = atan2(sinz_cosp1, cosz_cosp1)
     elif siny <= -1:
         x = 0
-        y = -math.pi/2
-        z = math.atan2(sinz_cosp1, cosz_cosp1)
+        y = -pi/2
+        z = atan2(sinz_cosp1, cosz_cosp1)
     else:
-        x = math.atan2(sinx_cosp, cosx_cosp)
+        x = atan2(sinx_cosp, cosx_cosp)
         if siny > 1.0:
             siny = 1.0
         elif siny < -1.0:
             siny = -1.0
-        y = math.asin(siny)
-        z = math.atan2(sinz_cosp2, cosz_cosp2)
-    x = math.degrees(x) % 360
-    y = math.degrees(y) % 360
-    z = math.degrees(z) % 360
+        y = asin(siny)
+        z = atan2(sinz_cosp2, cosz_cosp2)
+    x = degrees(x) % 360
+    y = degrees(y) % 360
+    z = degrees(z) % 360
 
     return (x, y, z)
