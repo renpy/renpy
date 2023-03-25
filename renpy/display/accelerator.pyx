@@ -250,18 +250,46 @@ class RenderTransform:
         self.transform = transform
         self.state = transform.state
 
-    def make_mesh(self, Render cr, state):
+        # The original width and heigh given to the render.
+        self.widtho = 0
+        self.heighto = 0
+
+        # The perspective.
+        self.perspective = None
+
+        # The child render.
+        self.cr = None # type: renpy.display.render.Render|None
+
+        # If self.make_mesh was called, mr is the render of the mesh that
+        # it created.
+        self.mr = None # type: renpy.display.render.Render|None
+
+        # The width and height of the child render.
+        self.width = 0
+        self.height = 0
+
+        # The xsize and ysize the displayable should be scaled to.
+        self.xsize = None # type: float|None
+        self.ysize = None # type: float|None
+
+        # The x and y offsets the child render will be placed at.
+        self.xo = 0
+        self.yo = 0
+
+        # If true, the child will be clipped.
+        self.clipping = False
+
+        # The reverse transform.
+        self.reverse = None # type: renpy.display.render.Matrix|None
+
+
+    def make_mesh(self, cr):
         """
         Creates a mesh from the given render. It handles the mesh, mesh_pad,
         and blur properties.
-
-        `cr`
-            The (child) render to convert to a mesh.
-
-        `blur`
-            If not None, the amount of blur to apply to the mesh.
         """
 
+        # The render we're going to return.
         mr = Render(cr.width, cr.height)
 
         mesh = self.state.mesh
@@ -302,17 +330,15 @@ class RenderTransform:
             mr.add_shader("renpy.blur")
             mr.add_uniform("u_renpy_blur_log2", math.log(blur, 2))
 
+        self.mr = mr
         return mr
 
-    def tile_and_pan(self, cr):
+    def tile_and_pan(self):
         """
         This handles the xtile, ytile, xpan, and ypan properties.
-
-        `cr`
-            The render to tile and pan.
-
-        Returns a render that is the tiled and panned version of `cr`.
         """
+
+        cr = self.cr
 
         cwidth = cr.width
         cheight = cr.height
@@ -365,12 +391,16 @@ class RenderTransform:
 
             cr = tcr
 
-        return cr
+        self.cr = cr
 
-    def cropping(self, cr, width, height):
+    def cropping(self):
+        """
+        Handles cropping, crop_relative, and corner1/corner2.
         """
 
-        """
+        cr = self.cr
+        width = self.width
+        height = self.height
 
         xo = 0
         yo = 0
@@ -429,101 +459,66 @@ class RenderTransform:
                 clipcr.yclipping = True
                 cr = clipcr
             else:
-                xo = -negative_xo
-                yo = -negative_yo
-                clipping = True
+                self.xo = -negative_xo
+                self.yo = -negative_yo
+                self.clipping = True
 
-        return (cr, xo, yo, clipping)
+        self.cr = cr
+        self.width = width
+        self.height = height
 
+    def render_child(self, st, at):
+        """
+        Determines the size of the child, and renders it.
+        """
 
-    def render(self, widtho, heighto, st, at):
-
-        # cdef double rxdx, rxdy, rydx, rydy
-        # cdef double cosa, sina
-        # cdef double xo, px
-        # cdef double yo, py
-        # cdef float zoom, xzoom, yzoom
-        # cdef double cw, ch, nw, nh
-        # cdef Render rv, cr, tcr
-        # cdef double angle
-        # cdef double alpha
-        # cdef double width = widtho
-        # cdef double height = heighto
-        # cdef double cwidth
-        # cdef double cheight
-        # cdef int xtile, ytile
-        # cdef int i, j
-
-        global z11
-
-        transform = self.transform
         state = self.state
 
         # Render the child.
-        child = transform.child
+        child = self.transform.child
 
         if child is None:
             child = renpy.display.transform.get_null()
 
         xsize = state.xsize
         ysize = state.ysize
-        fit = state.fit
 
         if xsize is not None:
             if (type(xsize) is float) and renpy.config.relative_transform_size:
-                xsize *= widtho
-            widtho = xsize
+                xsize *= self.widtho
+            self.widtho = xsize
+
         if ysize is not None:
             if (type(ysize) is float) and renpy.config.relative_transform_size:
-                ysize *= heighto
-            heighto = ysize
+                ysize *= self.heighto
+            self.heighto = ysize
 
-        # Figure out the perspective.
-        perspective = state.perspective
+        self.cr = render(child, self.widtho, self.heighto, st - self.transform.child_st_base, at)
+        self.xsize = xsize
+        self.ysize = ysize
 
-        if perspective is True:
-            perspective = renpy.config.perspective
-        elif perspective is False:
-            perspective = None
-        elif isinstance(perspective, (int, float)):
-            perspective = (renpy.config.perspective[0], perspective, renpy.config.perspective[2])
 
-        # Set the z11 distance (might seem useless, is not).
-        old_z11 = z11
+    def size_zoom_rotate(self):
 
-        if perspective:
-            z11 = perspective[1]
+        xo = self.xo
+        yo = self.yo
 
-        cr = render(child, widtho, heighto, st - transform.child_st_base, at)
+        width = self.width
+        height = self.height
 
-        # Reset the z11 distance.
-        z11 = old_z11
+        state = self.state
 
-        cr = self.tile_and_pan(cr)
+        xsize = self.xsize
+        ysize = self.ysize
 
-        mesh = state.mesh or (True if state.blur else None)
+        fit = self.state.fit
 
-        if mesh and not perspective:
-            mr = cr = self.make_mesh(cr)
-
-        # The width and height of the child.
-        width = cr.width
-        height = cr.height
-
-        transform.child_size = width, height
-
-        # The reverse matrix.
+        # The reverse matrix used by the zoom and rotate properties.
+        # (This can probably become a Matrix at some point.)
         rxdx = 1
         rxdy = 0
         rydx = 0
         rydy = 1
-
-        xo = 0
-        yo = 0
-
-        # Cropping.
-        cr, xo, yo, clipping = self.cropping(cr, width, height)
-
 
         # Size.
         if (width != 0) and (height != 0):
@@ -541,7 +536,7 @@ class RenderTransform:
                 scale.append(ysize / height)
 
             if fit and not scale:
-                scale = [widtho / width, heighto / height]
+                scale = [ self.widtho / width, self.heighto / height]
 
             if fit is None:
                 fit = 'fill'
@@ -614,10 +609,9 @@ class RenderTransform:
             if yzoom < 0:
                 yo += height
 
-
         # Rotation.
         rotate = state.rotate
-        if (rotate is not None) and (not perspective):
+        if (rotate is not None) and (not self.perspective):
 
             cw = width
             ch = height
@@ -669,25 +663,28 @@ class RenderTransform:
             xo += width / 2.0
             yo += height / 2.0
 
-        rv = Render(width, height)
-
-        if state.matrixcolor:
-            matrix = state.matrixcolor
-
-            if callable(matrix):
-                matrix = matrix(None, 1.0)
-
-            if not isinstance(matrix, renpy.display.matrix.Matrix):
-                raise Exception("matrixcolor requires a Matrix (not im.matrix, got %r)" % (matrix,))
-
-            rv.add_shader("renpy.matrixcolor")
-            rv.add_uniform("u_renpy_matrixcolor", matrix)
+        self.height = height
+        self.width = width
+        self.yo = yo
+        self.xo = xo
 
         # Default case - no transformation matrix.
         if rxdx == 1 and rxdy == 0 and rydx == 0 and rydy == 1:
-            transform.reverse = IDENTITY
+            self.reverse = IDENTITY
         else:
-            transform.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
+            self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
+
+    def camera_matrix_operations(self):
+        """
+        Performs the matric operations for the camera.
+        """
+
+        z11 = self.perspective[1]
+
+        state = self.state
+
+        width = self.width
+        height = self.height
 
         if state.point_to is not None:
             poi = get_poi(state)
@@ -705,12 +702,10 @@ class RenderTransform:
             yrotate = state.yrotate or 0
             zrotate = state.zrotate or 0
 
-        # xpos and ypos.
-        if perspective:
             placement = (state.xpos, state.ypos, state.xanchor, state.yanchor, state.xoffset, state.yoffset, True)
             xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
 
-            transform.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * transform.reverse
+            self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
 
             if poi:
                 start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
@@ -767,16 +762,40 @@ class RenderTransform:
             if poi or orientation or xyz_rotate:
                 m = Matrix.offset(width / 2, height / 2, z11) * m
 
-                transform.reverse = m * transform.reverse
+                self.reverse = m * self.reverse
 
-            if rotate is not None:
+            if state.rotate is not None:
                 m = Matrix.offset(-width / 2, -height / 2, 0.0)
-                m = Matrix.rotate(0, 0, -rotate) * m
+                m = Matrix.rotate(0, 0, -state.rotate) * m
                 m = Matrix.offset(width / 2, height / 2, 0.0) * m
 
-                transform.reverse = m * transform.reverse
+                self.reverse = m * self.reverse
 
+    def matrix_operations(self):
+        """
+        Performs the matric operations for non-camera displayables.
+        """
+
+        state = self.state
+
+        width = self.width
+        height = self.height
+
+        if state.point_to is not None:
+            poi = get_poi(state)
         else:
+            poi = None
+
+        orientation = state.orientation
+        if orientation:
+            xorientation, yorientation, zorientation = orientation
+
+        xyz_rotate = False
+        if state.xrotate or state.yrotate or state.zrotate:
+            xyz_rotate = True
+            xrotate = state.xrotate or 0
+            yrotate = state.yrotate or 0
+            zrotate = state.zrotate or 0
 
             if poi or orientation or xyz_rotate:
                 if state.matrixanchor is None:
@@ -795,8 +814,8 @@ class RenderTransform:
                 m = Matrix.offset(-manchorx, -manchory, 0.0)
 
             if poi:
-                placement = transform.get_placement()
-                xplacement, yplacement = renpy.display.core.place(widtho, heighto, width, height, placement)
+                placement = self.transform.get_placement()
+                xplacement, yplacement = renpy.display.core.place(self.widtho, self.heighto, width, height, placement)
                 start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
                 a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
@@ -834,14 +853,20 @@ class RenderTransform:
             if poi or orientation or xyz_rotate:
                 m = Matrix.offset(manchorx, manchory, 0.0) * m
 
-                transform.reverse = m * transform.reverse
+                self.reverse = m * self.reverse
 
             if state.zpos:
-                transform.reverse = Matrix.offset(0, 0, state.zpos) * transform.reverse
+                self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
+
+    def matrix_transform(self):
+        """
+        Handles the matrixtransform property.
+        """
+
+        state = self.state
 
         mt = state.matrixtransform
 
-        # matrixtransform
         if mt is not None:
 
             if callable(mt):
@@ -852,53 +877,60 @@ class RenderTransform:
 
             if state.matrixanchor is None:
 
-                manchorx = width / 2.0
-                manchory = height / 2.0
+                manchorx = self.width / 2.0
+                manchory = self.height / 2.0
 
             else:
                 manchorx, manchory = state.matrixanchor
 
                 if type(manchorx) is float:
-                    manchorx *= width
+                    manchorx *= self.width
                 if type(manchory) is float:
-                    manchory *= height
+                    manchory *= self.height
 
             m = Matrix.offset(-manchorx, -manchory, 0.0)
             m = mt * m
             m = Matrix.offset(manchorx, manchory, 0.0) * m
 
-            transform.reverse = m * transform.reverse
+            self.reverse = m * self.reverse
+
+    def zzoom(self):
+        """
+        Handles the zzoom property.
+        """
+
+        state = self.state
+        width = self.width
+        height = self.height
 
         if state.zzoom and z11:
             zzoom = (z11 - state.zpos) / z11
 
-            m = Matrix.offset(-width / 2, -height / 2, 0.0)
+            m = Matrix.offset(width / 2, -height / 2, 0.0)
             m = Matrix.scale(zzoom, zzoom, 1) * m
             m = Matrix.offset(width / 2, height / 2, 0.0) * m
 
-            transform.reverse = m * transform.reverse
+            self.reverse = m * self.reverse
 
-        # perspective
-        if perspective:
-            near, z11, far = perspective
-            transform.reverse = Matrix.perspective(width, height, near, z11, far) * transform.reverse
+    def final_render(self, rv):
+        """
+        Apply properties to the final render.
+        """
 
-        # Set the forward matrix.
-        if transform.reverse is not IDENTITY:
-            rv.reverse = transform.reverse
-            transform.forward = rv.forward = transform.reverse.inverse()
-        else:
-            transform.forward = IDENTITY
+        state = self.state
 
-        pos = (xo, yo)
+        # Matrixcolor.
+        if state.matrixcolor:
+            matrix = state.matrixcolor
 
-        if state.subpixel:
-            rv.subpixel_blit(cr, pos)
-        else:
-            rv.blit(cr, pos)
+            if callable(matrix):
+                matrix = matrix(None, 1.0)
 
-        if mesh and perspective:
-            mr = rv = self.make_mesh(rv)
+            if not isinstance(matrix, renpy.display.matrix.Matrix):
+                raise Exception("matrixcolor requires a Matrix (not im.matrix, got %r)" % (matrix,))
+
+            rv.add_shader("renpy.matrixcolor")
+            rv.add_uniform("u_renpy_matrixcolor", matrix)
 
         # Nearest neighbor.
         rv.nearest = state.nearest
@@ -944,16 +976,125 @@ class RenderTransform:
             value = getattr(state, name, None)
 
             if value is not None:
-                if mesh:
-                    mr.add_property(name[3:], value)
+                if self.mr:
+                    self.mr.add_property(name[3:], value)
                 else:
                     rv.add_property(name[3:], value)
 
+    def render(self, widtho, heighto, st, at):
+
+        # cdef double rxdx, rxdy, rydx, rydy
+        # cdef double cosa, sina
+        # cdef double xo, px
+        # cdef double yo, py
+        # cdef float zoom, xzoom, yzoom
+        # cdef double cw, ch, nw, nh
+        # cdef Render rv, cr, tcr
+        # cdef double angle
+        # cdef double alpha
+        # cdef double width = widtho
+        # cdef double height = heighto
+        # cdef double cwidth
+        # cdef double cheight
+        # cdef int xtile, ytile
+        # cdef int i, j
+
+        global z11
+
+        self.widtho = widtho
+        self.heighto = heighto
+
+        transform = self.transform
+        state = self.state
+
+        # Figure out the perspective.
+        perspective = state.perspective
+
+        if perspective is True:
+            perspective = renpy.config.perspective
+        elif perspective is False:
+            perspective = None
+        elif isinstance(perspective, (int, float)):
+            perspective = (renpy.config.perspective[0], perspective, renpy.config.perspective[2])
+
+        self.perspective = perspective
+
+        # Set the z11 distance, so it can be used elsewhere.
+        old_z11 = z11
+
+        if perspective:
+            z11 = perspective[1]
+
+        # Actually render the child.
+        self.render_child(st, at)
+
+        # Reset the z11 distance.
+        z11 = old_z11
+
+        # Tiling and panning.
+        self.tile_and_pan()
+
+        mesh = state.mesh or (True if state.blur else None)
+
+        if mesh and not perspective:
+            self.cr = self.make_mesh()
+
+        # The width and height of the child.
+        self.width = self.cr.width
+        self.height = self.cr.height
+
+        transform.child_size = self.width, self.height
+
+        # Cropping.
+        self.cropping()
+
+        # Size, zoom, and rotate.
+        self.size_zoom_rotate()
+
+        # Other matrix transformations.
+        if perspective:
+            self.camera_matrix_operations()
+        else:
+            self.matrix_operations()
+
+        self.matrix_transform()
+
+        self.zzoom()
+
+        # The final render. (Unless we mesh it.)
+        rv = Render(self.width, self.height)
+
+        # perspective
+        if perspective:
+            near, z_one_one, far = perspective
+            self.reverse = Matrix.perspective(self.width, self.height, near, z_one_one, far) * self.reverse
+
+        # Apply the matrices to the transform.
+        transform.reverse = self.reverse
+
+        if transform.reverse is not IDENTITY:
+            rv.reverse = transform.reverse
+            transform.forward = rv.forward = transform.reverse.inverse()
+        else:
+            transform.forward = IDENTITY
+
+        pos = (self.xo, self.yo)
+
+        if state.subpixel:
+            rv.subpixel_blit(self.cr, pos)
+        else:
+            rv.blit(self.cr, pos)
+
+        if mesh and perspective:
+            rv = self.make_mesh(rv)
+
+        self.final_render(rv)
+
         # Clipping.
-        rv.xclipping = clipping
-        rv.yclipping = clipping
+        rv.xclipping = self.clipping
+        rv.yclipping = self.clipping
 
         transform.offsets = [ pos ]
-        transform.render_size = (width, height)
+        transform.render_size = (self.width, self.height)
 
         return rv
