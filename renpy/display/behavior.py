@@ -1115,6 +1115,9 @@ class Button(renpy.display.layout.Window):
 
                 renpy.game.interface.timeout(renpy.config.longpress_duration)
 
+            elif ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
+                self.longpress_start = None
+
             if self.longpress_start is not None:
                 if math.hypot(x - self.longpress_x, y - self.longpress_y) > renpy.config.longpress_radius:
                     self.longpress_start = None
