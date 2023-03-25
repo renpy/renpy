@@ -31,7 +31,7 @@ import types # @UnresolvedImport
 
 import renpy
 from renpy.display.layout import Container
-from renpy.display.accelerator import transform_render
+from renpy.display.accelerator import RenderTransform
 from renpy.atl import position, any_object, bool_or_none, float_or_none, matrix, mesh
 
 
@@ -766,7 +766,21 @@ class Transform(Container):
 
     # The render method is now defined in accelerator.pyx.
     def render(self, width, height, st, at):
-        return transform_render(self, width, height, st, at)
+
+        # Prevent time from ticking backwards, as can happen if we replace a
+        # transform but keep its state.
+        if st + self.st_offset <= self.st:
+            self.st_offset = self.st - st
+        if at + self.at_offset <= self.at:
+            self.at_offset = self.at - at
+
+        self.st = st = st + self.st_offset
+        self.at = at = at + self.at_offset
+
+        # Update the state.
+        self.update_state()
+
+        return RenderTransform(self).render(width, height, st, at)
 
     def event(self, ev, x, y, st):
 

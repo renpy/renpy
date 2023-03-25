@@ -247,7 +247,7 @@ def bilinear_scale(src, dst, sx=0, sy=0, sw=None, sh=None, dx=0, dy=0, dw=None, 
     _renpy.bilinear(src, dst, sx, sy, sw, sh, dx, dy, dw, dh, precise=precise)
 
 
-transform = _renpy.transform
+self = _renpy.transform
 
 # Note: Blend requires all surfaces to be the same size.
 blend = _renpy.blend
