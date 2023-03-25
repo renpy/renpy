@@ -124,10 +124,34 @@ def relative(n, base, limit):
     else:
         return min(int(n * base), limit)
 
-class RenderTransform:
+cdef class RenderTransform:
     """
     This class is used to render Transforms.
     """
+
+    cdef object transform
+    cdef object state
+
+    cdef object widtho
+    cdef object heighto
+
+    cdef object perspective
+
+    cdef Render cr
+    cdef Render mr
+
+    cdef object width
+    cdef object height
+
+    cdef object xsize
+    cdef object ysize
+
+    cdef object xo
+    cdef object yo
+
+    cdef object clipping
+
+    cdef Matrix reverse
 
     def __init__(self, transform): # type: (renpy.display.transform.Transform) -> None
         self.transform = transform
@@ -165,11 +189,11 @@ class RenderTransform:
         # The reverse transform.
         self.reverse = None # type: renpy.display.render.Matrix|None
 
-
-    def make_mesh(self, cr):
+    cdef make_mesh(self, cr):
         """
-        Creates a mesh from the given render. It handles the mesh, mesh_pad,
-        and blur properties.
+        Creates a mesh from the given render.
+
+        Handles the mesh, mesh_pad, and blur properties.
         """
 
         # The render we're going to return.
@@ -216,7 +240,7 @@ class RenderTransform:
         self.mr = mr
         return mr
 
-    def tile_and_pan(self):
+    cdef tile_and_pan(self):
         """
         This handles the xtile, ytile, xpan, and ypan properties.
         """
@@ -276,7 +300,7 @@ class RenderTransform:
 
         self.cr = cr
 
-    def cropping(self):
+    cdef cropping(self):
         """
         Handles cropping, crop_relative, and corner1/corner2.
         """
@@ -295,7 +319,6 @@ class RenderTransform:
 
         if crop_relative is None:
             crop_relative = renpy.config.crop_relative_default
-
 
         if crop is not None:
 
@@ -350,9 +373,11 @@ class RenderTransform:
         self.width = width
         self.height = height
 
-    def render_child(self, st, at):
+    cdef render_child(self, st, at):
         """
-        Determines the size of the child, and renders it.
+        Renders the child.
+
+        Handles the xsize and ysize properties.
         """
 
         state = self.state
@@ -380,8 +405,38 @@ class RenderTransform:
         self.xsize = xsize
         self.ysize = ysize
 
+    cdef size_zoom_rotate(self):
+        """
+        Handles size, zoom, and fit properties. Handles the rotate property
+        of non-camera displayables.
+        """
 
-    def size_zoom_rotate(self):
+        cdef double cw
+        cdef double ch
+        cdef double width
+        cdef double height
+        cdef double sina
+        cdef double angle
+        cdef double cosa
+        cdef double nh
+        cdef double nw
+        cdef double px
+        cdef double py
+        cdef double rxdx
+        cdef double rxdy
+        cdef double rydx
+        cdef double rydy
+        cdef double x2
+        cdef double x3
+        cdef double x4
+        cdef double xo
+        cdef double y2
+        cdef double y3
+        cdef double y4
+        cdef double yo
+        cdef double xzoom
+        cdef double yzoom
+        cdef double zoom
 
         xo = self.xo
         yo = self.yo
@@ -557,10 +612,13 @@ class RenderTransform:
         else:
             self.reverse = Matrix2D(rxdx, rxdy, rydx, rydy)
 
-    def camera_matrix_operations(self):
+    cdef camera_matrix_operations(self):
         """
-        Performs the matric operations for the camera.
+        Handles the poi, orientation, rotate, and zpos properties
+        of cameras.
         """
+
+        cdef Matrix m
 
         z11 = self.perspective[1]
 
@@ -654,10 +712,13 @@ class RenderTransform:
 
                 self.reverse = m * self.reverse
 
-    def matrix_operations(self):
+    cdef matrix_operations(self):
         """
-        Performs the matric operations for non-camera displayables.
+        Handles the poi, orientation, x/y/z/rotate, and zpos properties
+        of non-cameras. (Rotate is handled above.)
         """
+
+        cdef Matrix m
 
         state = self.state
 
@@ -741,10 +802,12 @@ class RenderTransform:
             if state.zpos:
                 self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
 
-    def matrix_transform(self):
+    cdef matrix_transform(self):
         """
-        Handles the matrixtransform property.
+        Handles the matrixtransform and matrixanchor properties.
         """
+
+        cdef Matrix m, mt
 
         state = self.state
 
@@ -777,10 +840,12 @@ class RenderTransform:
 
             self.reverse = m * self.reverse
 
-    def zzoom(self):
+    cdef zzoom(self):
         """
         Handles the zzoom property.
         """
+
+        cdef Matrix m
 
         state = self.state
         width = self.width
@@ -795,9 +860,18 @@ class RenderTransform:
 
             self.reverse = m * self.reverse
 
-    def final_render(self, rv):
+    cdef final_render(self, rv):
         """
-        Apply properties to the final render.
+        Apply properties to the final render:
+
+        * matrixcolor
+        * nearest
+        * blend
+        * alpha
+        * additive
+        * shader
+        * uniforms
+        * gl properties
         """
 
         state = self.state
@@ -866,22 +940,6 @@ class RenderTransform:
 
     def render(self, widtho, heighto, st, at):
 
-        # cdef double rxdx, rxdy, rydx, rydy
-        # cdef double cosa, sina
-        # cdef double xo, px
-        # cdef double yo, py
-        # cdef float zoom, xzoom, yzoom
-        # cdef double cw, ch, nw, nh
-        # cdef Render rv, cr, tcr
-        # cdef double angle
-        # cdef double alpha
-        # cdef double width = widtho
-        # cdef double height = heighto
-        # cdef double cwidth
-        # cdef double cheight
-        # cdef int xtile, ytile
-        # cdef int i, j
-
         global z11
 
         self.widtho = widtho
@@ -920,7 +978,7 @@ class RenderTransform:
         mesh = state.mesh or (True if state.blur else None)
 
         if mesh and not perspective:
-            self.cr = self.make_mesh()
+            self.cr = self.make_mesh(self.cr)
 
         # The width and height of the child.
         self.width = self.cr.width
