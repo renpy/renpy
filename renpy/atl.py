@@ -1438,7 +1438,7 @@ class Interpolation(Statement):
                 if old is None:
                     old = (0.0, 0.0, 0.0)
                 if new is not None:
-                    value = renpy.display.accelerator.quaternion_slerp(complete, old, new)
+                    value = renpy.display.quaternion.euler_slerp(complete, old, new)
                 elif complete >= 1:
                     value = None
                 else:

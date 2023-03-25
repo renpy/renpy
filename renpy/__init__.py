@@ -515,6 +515,7 @@ def import_all():
     import renpy.display.tts
     import renpy.display.gesture
     import renpy.display.model
+    import renpy.display.quaternion
 
     import renpy.display.error
 

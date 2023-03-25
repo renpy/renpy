@@ -165,6 +165,7 @@ for p in generate_styles.prefixes:
 cython("renpy.display.matrix")
 cython("renpy.display.render", libs=[ 'z', 'm' ])
 cython("renpy.display.accelerator", libs=sdl + [ 'z', 'm' ])
+cython("renpy.display.quaternion", libs=[ 'm' ])
 
 cython("renpy.uguu.gl", libs=sdl)
 cython("renpy.uguu.uguu", libs=sdl)
