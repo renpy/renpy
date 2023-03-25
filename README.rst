@@ -112,7 +112,7 @@ link in a nightly build, or compile the modules as described above. You'll
 also need the `Sphinx <https://www.sphinx-doc.org>`_ documentation generator.
 If you have pip working, install Sphinx using::
 
-    pip install -U sphinx sphinx-bootstrap-theme
+    pip install -U sphinx sphinx-bootstrap-theme sphinx_rtd_theme sphinx_rtd_dark_mode
 
 Once Sphinx is installed, change into the ``sphinx`` directory inside the
 Ren'Py checkout and run::
