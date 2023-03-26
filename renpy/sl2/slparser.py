@@ -282,7 +282,7 @@ class Parser(object):
                 else:
                     l.error('%r is not a keyword argument or valid child of the %s statement.' % (name, self.name))
 
-            if name == "at" and block and l.keyword("transform"):
+            if name == "at" and l.keyword("transform"):
 
                 if target.atl_transform is not None:
                     l.error("More than one 'at transform' block is given.")
@@ -337,7 +337,8 @@ class Parser(object):
                     break
 
                 if l.eol():
-                    l.expect_noblock(self.name)
+                    if not target.atl_transform:
+                        l.expect_noblock(self.name)
                     block = False
                     break
 
