@@ -302,10 +302,10 @@ init -1600 python:
             renpy.restart_interaction()
 
         def get_selected(self):
-            if self.key not in self.dict:
+            try:
+                rv = self.dict[self.key]
+            except (KeyError, IndexError):
                 return False
-
-            rv = self.dict[self.key]
 
             if self.true_value is not None:
                 rv = (rv == self.true_value)
