@@ -421,6 +421,14 @@ Disabling Dialogue's :ref:`monologue-mode` is now possible using the
 Other Changes
 -------------
 
+A screen language displayable can now have ``at transform`` on the
+first line::
+
+    text "Spinny text" at transform:
+        rotate 0.0
+        linear 2.0 rotate 360.0
+        repeat
+
 It's now possible for a screen language statement to have both an
 `at` property and an ``at transform`` block, provided the property
 comes first.
