@@ -272,6 +272,7 @@ class Context(object):
 
     def __init__(self, context):
         self.context = context
+        self.captured = { }
 
     def eval(self, expr): # @ReservedAssignment
         return renpy.python.py_eval(expr, locals=self.context)
@@ -285,7 +286,24 @@ class Context(object):
     def __ne__(self, other):
         return not (self == other)
 
-    def variables_equal(self, other, variables):
+    def capture(self, variables):
+        """
+        Captures the variables in `variables` from the context, and
+        from the globals.
+        """
+
+        if self.context is None:
+            return
+
+        for i in variables:
+            value = self.context.get(i, NotInContext)
+            if value is NotInContext:
+                value = renpy.store.__dict__.get(i, NotInContext)
+
+            if value is not NotInContext:
+                self.captured[i] = value
+
+    def variables_equal(self, other):
         """
         Returns true if the variables in `variables` are equal in
         this context and `other`. False if they are not equal.
@@ -294,13 +312,7 @@ class Context(object):
         """
 
         try:
-
-            for i in variables:
-                if self.context.get(i, NotInContext) != other.context.get(i, NotInContext):
-                    return False
-
-            return True
-
+            return self.captured == other.captured
         except Exception:
             return True
 
@@ -337,6 +349,9 @@ class ATLTransformBase(renpy.object.Object):
 
         # The context in which execution occurs.
         self.context = Context(context)
+
+        if atl and atl.constant != GLOBAL_CONST:
+            self.context.capture(atl.find_loaded_variables())
 
         # The code after it has been compiled into a block.
         self.block = None
@@ -428,7 +443,7 @@ class ATLTransformBase(renpy.object.Object):
         # a way that would affect the execution of the ATL.
 
         if t.atl.constant != GLOBAL_CONST:
-            if not self.context.variables_equal(t.context, t.atl.find_loaded_variables()):
+            if not self.context.variables_equal(t.context):
                 return
 
         self.done = t.done
