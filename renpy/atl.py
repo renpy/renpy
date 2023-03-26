@@ -293,7 +293,12 @@ class Context(object):
         Returns True if any variable cannot be compared.
         """
 
+
         try:
+
+            if renpy.config.at_transform_compare_full_context:
+                if self.context != other.context:
+                    return False
 
             for i in variables:
                 if self.context.get(i, NotInContext) != other.context.get(i, NotInContext):

@@ -268,6 +268,7 @@ init -1100 python:
             config.history_current_dialogue = False
             config.scry_extend = False
             config.fadeout_audio = 0.0
+            config.at_transform_compare_full_context = True
 
             if version > (6, 99, 5):
                 config.search_prefixes.append("images/")

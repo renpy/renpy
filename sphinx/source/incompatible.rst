@@ -19,6 +19,7 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+
 **Audio Fadeout** When audio is stopped or changed using ``play``, there is now
 a default fadeout of 0.016 seconds, to prevent pops. This is controlled by
 the :var:`config.fadeout_audio` variable. To disable the fadeout::
@@ -138,6 +139,30 @@ by volume ** 2, use::
 Alternatively, you can determine new default volumes for :var:`config.default_music_volume`,
 :var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` variables. If any
 of these is 0.0 or 1.0, it can be left unchanged.
+
+**At Transform and Global Variables** An at transform block that uses a global variable
+is not re-evaluated when the variable changes. This matches the behavior
+for ATL that is not in screens.
+
+The recommended fix is to capture the global variable into a local, by changing::
+
+    screen test():
+        test "Test":
+            at transform:
+                xpos global_xpos
+
+to::
+
+    screen test():
+        $ local_xpos = global_xpos
+
+        test "Test":
+            at transform:
+                xpos local_xpos
+
+This change can be reverted with::
+
+    define config.at_transform_compare_full_context = True
 
 
 .. _incompatible-8.0.2:
