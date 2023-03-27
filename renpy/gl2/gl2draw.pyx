@@ -611,11 +611,14 @@ cdef class GL2Draw:
 
         # Generate the framebuffer.
         glGenFramebuffers(1, &self.fbo)
+        glGenFramebuffers(1, &self.fbo_1px)
 
         glGenRenderbuffers(1, &self.color_renderbuffer)
+        glGenRenderbuffers(1, &self.color_renderbuffer_1px)
 
         if renpy.config.depth_size:
             glGenRenderbuffers(1, &self.depth_renderbuffer)
+            glGenRenderbuffers(1, &self.depth_renderbuffer_1px)
 
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size)
         glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max_renderbuffer_size)
@@ -642,6 +645,7 @@ cdef class GL2Draw:
         self.texture_loader.max_texture_width = width
         self.texture_loader.max_texture_height = height
 
+        # Full-size fbo.
         self.change_fbo(self.fbo)
 
         glBindRenderbuffer(GL_RENDERBUFFER, self.color_renderbuffer)
@@ -672,6 +676,37 @@ cdef class GL2Draw:
                 GL_RENDERBUFFER,
                 self.depth_renderbuffer)
 
+        # 1px fbo.
+        self.change_fbo(self.fbo_1px)
+
+        glBindRenderbuffer(GL_RENDERBUFFER, self.color_renderbuffer_1px)
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8,  1, 1)
+
+        glFramebufferRenderbuffer(
+            GL_FRAMEBUFFER,
+            GL_COLOR_ATTACHMENT0,
+            GL_RENDERBUFFER,
+            self.color_renderbuffer_1px)
+
+        if renpy.config.depth_size:
+
+            glBindRenderbuffer(GL_RENDERBUFFER, self.depth_renderbuffer_1px)
+
+            if self.gles:
+                if renpy.config.depth_size >= 24:
+                    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1, 1)
+                else:
+                    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 1, 1)
+
+            else:
+                glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1, 1)
+
+            glFramebufferRenderbuffer(
+                GL_FRAMEBUFFER,
+                GL_DEPTH_ATTACHMENT,
+                GL_RENDERBUFFER,
+                self.depth_renderbuffer_1px)
+
         glBindRenderbuffer(GL_RENDERBUFFER, default_renderbuffer)
         self.change_fbo(self.default_fbo)
 
@@ -680,11 +715,19 @@ cdef class GL2Draw:
 
         self.change_fbo(self.default_fbo)
 
+        # Full-size fbo.
         glDeleteFramebuffers(1, &self.fbo)
         glDeleteRenderbuffers(1, &self.color_renderbuffer)
 
         if renpy.config.depth_size:
             glDeleteRenderbuffers(1, &self.depth_renderbuffer)
+
+        # 1px fbo.
+        glDeleteFramebuffers(1, &self.fbo_1px)
+        glDeleteRenderbuffers(1, &self.color_renderbuffer_1px)
+
+        if renpy.config.depth_size:
+            glDeleteRenderbuffers(1, &self.depth_renderbuffer_1px)
 
 
     def can_block(self):
@@ -940,7 +983,7 @@ cdef class GL2Draw:
         self.load_all_textures(what)
 
         # Switch to the right FBO, and the right viewport.
-        self.change_fbo(self.fbo)
+        self.change_fbo(self.fbo_1px)
 
         # Set up the viewport.
         glViewport(0, 0, 1, 1)
