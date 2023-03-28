@@ -2392,6 +2392,7 @@ class Interface(object):
         pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
+        pygame.display.hint("SDL_IME_SHOW_UI", "1")
 
         if renpy.config.mouse_focus_clickthrough:
             pygame.display.hint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1")
