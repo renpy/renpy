@@ -298,6 +298,12 @@ but other files will not be found there.
 New Features
 ------------
 
+:class:`Movie` can now take a `group` argument. If the Movie is
+in a group, and it has started up, and another Movie in the same
+group had displayed in the prior frame, the Movie will display the
+last image of the old Movie. This is intended to allow movie sprites
+to switch from one to the other seamlessly.
+
 The new :var:`config.file_slotname_callback` variable allows the
 developer to customize how file slot names are generated. One
 application of this is allow the developer to apply a prefix to
