@@ -2382,6 +2382,10 @@ class Interface(object):
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
 
+        for i in renpy.config.display_start_callbacks:
+            i()
+
+
     def post_init(self):
         """
         This is called after display init, but before the window is created.

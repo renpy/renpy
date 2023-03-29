@@ -1379,6 +1379,10 @@ autosave_prefix_callback = None
 # Compatibility for c492f2f8e6de57b2740fa5d00566f445124caaba.
 at_transform_compare_full_context = False
 
+# A list of callbacks when the display starts.
+display_start_callbacks = [ ]
+
+
 del os
 del collections
 
