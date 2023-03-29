@@ -1382,6 +1382,9 @@ at_transform_compare_full_context = False
 # A list of callbacks when the display starts.
 display_start_callbacks = [ ]
 
+# If not None, the size of the sound buffer, in bytes.
+sound_buffer_size = None
+
 
 del os
 del collections

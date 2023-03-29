@@ -785,6 +785,7 @@ class Channel(object):
 
         return renpysound.video_ready(self.number)
 
+
 # Use unconditional imports so these files get compiled during the build
 # process.
 
@@ -987,6 +988,9 @@ def init():
             # Large buffer (and latency) as compromise to avoid sound jittering
             bufsize = 8192 # works for me
             # bufsize = 16384  # jitter/silence right after starting a sound
+
+        if renpy.config.sound_buffer_size is not None:
+            bufsize = renpy.config.sound_buffer_size
 
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
