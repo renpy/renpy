@@ -419,7 +419,7 @@ class WrapFormattedValue(ast.NodeTransformer):
 
         name = name[2:]
 
-        if "__" in name:
+        if (not name) or ("__" in name):
             return node
 
         prefix = renpy.lexer.munge_filename(compile_filename)
