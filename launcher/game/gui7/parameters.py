@@ -67,8 +67,8 @@ class GuiParameters(object):
         if light:
 
             self.selected_color = Color("#555555")
-            self.idle_color = Color("#aaaaaa")
-            self.idle_small_color = Color("#888888")
+            self.idle_color = Color("#707070")
+            self.idle_small_color = Color("#606060")
             self.text_color = Color("#404040")
             self.choice_color = Color("#cccccc")
 
