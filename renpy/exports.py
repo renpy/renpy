@@ -75,7 +75,7 @@ from renpy.display.image import image_exists, image_exists as has_image, list_im
 from renpy.display.image import get_available_image_tags, get_available_image_attributes, check_image_attributes, get_ordered_image_attributes
 from renpy.display.image import get_registered_image
 
-from renpy.display.im import load_surface, load_image
+from renpy.display.im import load_surface, load_image, load_rgba
 
 from renpy.curry import curry, partial
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop

@@ -2069,6 +2069,21 @@ def load_surface(im):
 
     return cache.get(image(im))
 
+def load_rgba(data, size):
+    """
+    :name: renpy.load_rgba
+    :doc: udd_utility
+
+    Loads the image data `bytes` into a texture of size `size`, and return it.
+
+    `data`
+        Should be a bytes object containing the image data in RGBA8888 order.
+    """
+
+    surf = renpy.display.pgrender.surface(size, True)
+    surf.from_data(data)
+    return renpy.display.draw.load_texture(surf)
+
 
 def reset_module():
     print("Resetting cache.")
