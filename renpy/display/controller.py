@@ -84,8 +84,8 @@ controllers = { }
 axis_positions = {}
 
 # The axis threshold.
-THRESHOLD = 4096 + 4096
-ZERO_THRESHOLD = 4096
+THRESHOLD = 8192 + 4096
+ZERO_THRESHOLD = 8192
 
 # Should we ignore events?
 ignore = False
