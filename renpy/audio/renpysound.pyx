@@ -50,6 +50,8 @@ or is stopped.
 
 from __future__ import print_function
 
+from libc.stdint cimport uintptr_t
+
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
 
@@ -84,6 +86,7 @@ cdef extern from "renpysound_core.h":
     void RPS_periodic()
     char *RPS_get_error()
 
+    void (*RPS_generate_audio_c_function)(float *stream, int length)
 
 def check_error():
     """
@@ -418,6 +421,24 @@ def advance_time():
 
 
     RPS_advance_time()
+
+def set_generate_audio_c_function(fn):
+    """
+    This can be use to set a C function that totally replaces the Ren'Py
+    audio system.
+
+    The function is expected to have the signature void (*)(short *buf, int samples,
+    and fill buf with samples samples of audio, where each sample consists of two
+    shorts.
+    """
+
+    global RPS_generate_audio_c_function
+
+    if not isinstance(fn, int):
+        import ctypes
+        fn = ctypes.cast(fn, ctypes.c_void_p).value
+
+    RPS_generate_audio_c_function = <void (*)(float *, int)> <uintptr_t> fn
 
 # Store the sample surfaces so they stay alive.
 rgb_surface = None

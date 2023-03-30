@@ -350,6 +350,13 @@ static inline void mix_sample(struct Channel *c, short left_in, short right_in, 
     *right_out += right * volume;
 }
 
+
+/** If not NULL, this can be replaced with a function that will be called
+    to generate audio. The functtio is called with a consistion of 2*length
+    shorts, and should fill the buffer with audio data. */
+void (*RPS_generate_audio_c_function)(float *stream, int length) = NULL;
+
+
 static void callback(void *userdata, Uint8 *stream, int length) {
 
     // Convert the length to samples.
@@ -359,6 +366,10 @@ static void callback(void *userdata, Uint8 *stream, int length) {
     short stream_buffer[length * 2];
 
     memset(mix_buffer, 0, length * 2 * sizeof(float));
+
+    if (RPS_generate_audio_c_function) {
+        RPS_generate_audio_c_function(mix_buffer, length);
+    }
 
     for (int channel = 0; channel < num_channels; channel++) {
 
