@@ -91,7 +91,7 @@ if PY2:
     version_tuple = VersionTuple(7, 6, 0, vc_version)
 
     # The name of this version.
-    version_name = "TBD"
+    version_name = "To Boldly Go"
 
 else:
 
@@ -99,7 +99,7 @@ else:
     version_tuple = VersionTuple(8, 1, 0, vc_version)
 
     # The name of this version.
-    version_name = "TBD"
+    version_name = "Where No One Has Gone Before"
 
 # A string giving the version number only (8.0.1.123), with a suffix if needed.
 version_only = ".".join(str(i) for i in version_tuple)
