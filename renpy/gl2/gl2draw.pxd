@@ -47,6 +47,7 @@ cdef class GL2Draw:
     cdef tuple default_clip
     cdef float dpi_scale
     cdef object shader_cache
+    cdef bint ever_set_position
 
     cdef public tuple clip_rtt_box
 

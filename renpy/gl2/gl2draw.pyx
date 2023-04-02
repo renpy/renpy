@@ -121,6 +121,9 @@ cdef class GL2Draw:
         # The shader cache,
         self.shader_cache = None
 
+        # Has the position of this window ever been set?
+        self.ever_set_position = False
+
     def get_texture_size(self):
         """
         Returns the amount of memory locked up in textures.
@@ -142,7 +145,7 @@ cdef class GL2Draw:
         if old_surface is not None:
             maximized = old_surface.get_flags() & pygame.WINDOW_MAXIMIZED
         else:
-            maximized = False
+            maximized = renpy.game.preferences.maximized
 
         # Information about the virtual size.
         vwidth, vheight = self.virtual_size
@@ -370,6 +373,10 @@ cdef class GL2Draw:
                 self.window = None
 
         if self.window is None:
+
+            if renpy.game.preferences.maximized:
+                window_flags |= pygame.WINDOW_MAXIMIZED
+
             try:
                 renpy.display.log.write("Windowed mode.")
                 self.window = pygame.display.set_mode((pwidth, pheight), window_flags)
@@ -440,21 +447,34 @@ cdef class GL2Draw:
         # Are we in fullscreen mode?
         fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
 
+        # Are we maximized?
+        maximized = bool(pygame.display.get_window().get_window_flags() & pygame.WINDOW_MAXIMIZED)
+
+        # See if we've ever set the screen position, and if not, center the window.
+        if not fullscreen and not maximized:
+            if not self.ever_set_position:
+                self.ever_set_position = True
+                pygame.display.get_window().set_position((pygame.WINDOWPOS_CENTERED, pygame.WINDOWPOS_CENTERED))
+
         # Get the size of the created screen.
         pwidth, pheight = renpy.display.core.get_size()
-
-        renpy.game.preferences.fullscreen = fullscreen
-        renpy.game.interface.fullscreen = fullscreen
 
         vwidth, vheight = self.virtual_size
 
         self.physical_size = (pwidth, pheight)
         self.drawable_size = pygame.display.get_drawable_size()
 
-        if not fullscreen:
-            renpy.game.preferences.physical_size = self.get_physical_size()
-
         renpy.display.log.write("Screen sizes: virtual=%r physical=%r drawable=%r" % (self.virtual_size, self.physical_size, self.drawable_size))
+
+        # Update the preferences.
+        renpy.game.preferences.fullscreen = fullscreen
+        renpy.game.interface.fullscreen = fullscreen
+
+        if not fullscreen:
+            renpy.game.preferences.maximized = maximized
+
+        if not fullscreen and not maximized:
+            renpy.game.preferences.physical_size = self.get_physical_size()
 
         if renpy.config.adjust_view_size is not None:
             view_width, view_height = renpy.config.adjust_view_size(pwidth, pheight)
@@ -542,8 +562,12 @@ cdef class GL2Draw:
         width = max(width, 256)
         height = max(height, 256)
 
-        pygame.display.get_window().restore()
-        pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen)
+        if pygame.display.get_window().get_window_flags() & pygame.WINDOW_FULLSCREEN:
+            maximized = renpy.game.preferences.maximized
+        else:
+            maximized = False
+
+        pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen, maximized=maximized)
 
     def update(self, force=False):
         """

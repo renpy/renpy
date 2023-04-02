@@ -427,6 +427,10 @@ Disabling Dialogue's :ref:`monologue-mode` is now possible using the
 Other Changes
 -------------
 
+The maximized window state is now stored int preferences, and if a
+game was maximized when it shut down it will be maximized again when
+started again.
+
 A screen language displayable can now have ``at transform`` on the
 first line::
 

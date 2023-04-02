@@ -182,6 +182,9 @@ Preference("web_cache_preload", False)
 # Should the voice continue to play after the user enters the game menu.
 Preference("voice_after_game_menu", False)
 
+# Should the game be maximized?
+Preference("maximized", False)
+
 class Preferences(renpy.object.Object):
     """
     Stores preferences that will one day be persisted.
@@ -232,6 +235,7 @@ class Preferences(renpy.object.Object):
         audio_when_unfocused = True
         web_cache_preload = False
         voice_after_game_menu = False
+        maximized = False
 
     def init(self):
         """
