@@ -449,14 +449,15 @@ class Transform(Container):
                  focus=None,
                  default=False,
                  _args=None,
-                 alt=None,
 
                  **kwargs):
+
+        properties = {k: kwargs.pop(k) for k in style_properties if k in kwargs}
 
         self.kwargs = kwargs
         self.style_arg = style
 
-        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args, alt=alt)
+        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args, **properties)
 
         self.function = function
 
@@ -976,6 +977,9 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
     def _repr_info(self):
         return repr((self.child, self.atl.loc))
 
+
+# Names of style properties that should be sent to the parent.
+style_properties = {'alt'}
 
 # Names of transform properties, and if the property should be handled with
 # diff2 or diff4.
