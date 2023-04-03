@@ -302,6 +302,12 @@ class Context(object):
 
             for i in variables:
                 if self.context.get(i, NotInContext) != other.context.get(i, NotInContext):
+
+                    # Ignore the arguments given to ATL Transitions, which
+                    # will change each time an interaction restarts. (See #4167.)
+                    if i in ("new_widget", "old_widget"):
+                        continue
+
                     return False
 
             return True
