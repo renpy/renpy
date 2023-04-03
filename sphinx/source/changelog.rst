@@ -261,6 +261,8 @@ For example::
 Will cause the word "Ren'Py" to be pronounced as "Ren Pie" whenever
 self-voicing speaks it.
 
+Self-voicing now respects the voice volume mixer.
+
 
 Save Token Security
 -------------------
