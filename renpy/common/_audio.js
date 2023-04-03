@@ -287,7 +287,7 @@ let video_start = (c) => {
     //TODO?         c.playing.source.stop(context.currentTime + p.fadeout);
     //TODO?     } catch (e) {
     //TODO?     }
-    //TODO? 
+    //TODO?
     //TODO? }
 
     setValue(c.relative_volume.gain, p.relative_volume);
@@ -702,10 +702,13 @@ renpyAudio.set_pan = (channel, pan, delay) => {
     linearRampToValue(control, control.value, pan, delay);
 };
 
-renpyAudio.tts = (s) => {
-    console.log("tts: " + s);
+renpyAudio.tts = (s, v) => {
+    console.log("tts:", s, "volume:", v);
+
+    v = v || 1.0;
 
     let u = new SpeechSynthesisUtterance(s);
+    u.volume = v;
     speechSynthesis.cancel();
     speechSynthesis.speak(u);
 };
