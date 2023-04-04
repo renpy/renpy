@@ -266,7 +266,7 @@ All user interface statements take the following common properties:
 
     It's possible for a single statement to have both an `at` property
     and an ``at transform``. The property must come first, and is
-    applied first.
+    applied first. ::
 
         screen title():
             add "title background":
