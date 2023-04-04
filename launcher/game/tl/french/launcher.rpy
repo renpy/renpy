@@ -41,7 +41,7 @@
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."
-    new "RAPT a été installé, mais vous devez installer le kit de développement Android pour pouvoir compiler les paquets Android. Choisissez « installer le kit de développement et créer les clés » pour cela."
+    new "RAPT a été installé, mais vous devez installer le kit de développement Android pour pouvoir compiler les paquets Android, avec « Installer le SDK »."
 
     # android.rpy:33
     old "RAPT has been installed, but a key hasn't been configured. Please create a new key, or restore android.keystore."
@@ -65,11 +65,11 @@
 
     # android.rpy:39
     old "Attempts to emulate a televison-based Android console, like the OUYA or Fire TV.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
-    new "Tentative d’émulation d'une console télé basée sur Android, comme OUYA ou Fire TV.\n\n Le contrôleur est émulé par les touches fléchées, le bouton select par la touche Entrée, le bouton menu par la touche Echap, et le bouton retour par la touche PageUp."
+    new "Tentative d’émulation d'une console télé basée sur Android, comme OUYA ou Fire TV.\n\nLa manette est émulée par les touches fléchées, le bouton select par la touche Entrée, le bouton menu par la touche Echap, et le bouton retour par la touche PageUp."
 
     # android.rpy:41
     old "Downloads and installs the Android SDK and supporting packages. Optionally, generates the keys required to sign the package."
-    new "Télécharge et installe le kit de développement Android et les paquets supportés. Optionnellement, génère les clés requises pour signer le paquet."
+    new "Télécharge et installe le kit de développement Android et les paquets requis. Optionnellement, génère les clés requises pour signer le paquet."
 
     # android.rpy:42
     old "Configures the package name, version, and other information about this project."
@@ -2086,3 +2086,47 @@
     # game/web.rpy:484
     old "Creating package..."
     new "Création du package..."
+
+    # game/android.rpy:37
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    new "RAPT a été installé, mais aucune clé n’a été configurée. Veuillez générer de nouvelles clés, ou copier android.keystore and bundle.keystore dans le dossier racine du projet."
+
+    # game/android.rpy:44
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new "Tentative d’émulation d'une console télé basée sur Android.\n\nLa manette est émulée par les touches fléchées, le bouton select par la touche Entrée, le bouton menu par la touche Echap, et le bouton retour par la touche PageUp."
+
+    # game/android.rpy:46
+    old "Downloads and installs the Android SDK and supporting packages."
+    new "Télécharge et installe le kit de développement Android et les paquets requis."
+
+    # game/android.rpy:47
+    old "Generates the keys required to sign the package."
+    new "Génère les clés requises pour signer le package."
+
+    # game/android.rpy:381
+    old "Install SDK"
+    new "Installer le SDK"
+
+    # game/android.rpy:385
+    old "Generate Keys"
+    new "Générer les clés"
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    new "Combien de RAM (in GB) voulez-vous allouer à Gradle ?\nEntrez un nombre entier positif."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    new "La taille de RAM ne doit contenir que des chiffres et être positive."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    new "J'ai trouvé un fichier android.keystore dans le dossier \"rapt\". Voulez-vous l'utiliser ?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    new "\n\nRépondre \"Non\" empêchera la création de clés."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    new "J'ai trouvé un fichier bundle.keystore dans le dossier \"rapt\". Voulez-vous l'utiliser ?"

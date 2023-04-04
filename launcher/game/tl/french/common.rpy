@@ -897,3 +897,11 @@ translate french strings:
     # renpy/common/00webvideo.rpy:5
     old "Touch to play the video."
     new "Touchez pour jouer la vidéo."
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    new "Cette sauvegarde a été créée sur un autre appareil. Des faux fichiers de sauvegarde peuvent être utilisés pour endommager votre ordinateur. Faites-vous confiance au créateur de cette sauvegarde et à tous ceux qui auraient pu modifier le fichier ?"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    new "Faites-vous confiance à l'appareil sur lequel cette sauvegarde a été créée ? Vous ne devriez dire oui que si vous en êtes l'unique utilisateur ."

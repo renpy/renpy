@@ -731,3 +731,11 @@
     # gui/game/screens.rpy:1404
     old "## https://www.renpy.org/doc/html/screen_special.html#bubble"
     new "## https://www.renpy.org/doc/html/screen_special.html#bubble"
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    new "Uploader Sync"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    new "Télécharger Sync"

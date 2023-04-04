@@ -78,7 +78,7 @@
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ image prédite (bon){/color}\n{color=#fcc}✘ image prédite (mauvais){/color}\n{color=#fff}Glissez pour bouger.{/color}"
+    new "\n{color=#cfc}✔ image prédite (bien){/color}\n{color=#fcc}✘ image non prédite (pas bien){/color}\n{color=#fff}Glissez pour déplacer.{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
