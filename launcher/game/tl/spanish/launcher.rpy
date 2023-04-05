@@ -2072,3 +2072,47 @@ translate spanish strings:
     # game/web.rpy:484
     old "Creating package..."
     new "Creando paquete..."
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    new "RAPT ha sido instalado, pero no se ha configurado una clave. Por favor, genera nuevas claves, o copia android.keystore y bundle.keystore al directorio base."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    new "Intenta emular una consola Android basada en televisión.\n\nLa entrada del controlador se asigna a las teclas de flecha, Enter se asigna al botón de selección, Escape se asigna al botón de menú y PageUp se asigna al botón de retroceso."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    new "Descarga e instala el SDK de Android y los paquetes de soporte."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    new "Genera las claves necesarias para firmar el paquete."
+
+    # game/android.rpy:383
+    old "Install SDK"
+    new "Instalar SDK"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    new "Generar claves"
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    new "¿Cuánta RAM (en GB) quiere asignar a Gradle?\nDebe ser un número entero positivo."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    new "El tamaño de la RAM debe contener sólo números y ser positivo."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    new "He encontrado un archivo android.keystore en el directorio rapt. ¿Quieres usar este archivo?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    new "\n\nDecir 'No' impedirá la creación de claves."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    new "He encontrado un archivo bundle.keystore en el directorio rapt. ¿Quieres usar este archivo?"
