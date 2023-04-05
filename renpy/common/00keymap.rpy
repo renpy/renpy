@@ -297,7 +297,7 @@ init -1600 python:
         dest = config.renpy_base
 
         if renpy.macapp:
-            dest = os.path.expanduser(b"~/Desktop")
+            dest = os.path.expanduser("~/Desktop")
 
         pattern = renpy.store._screenshot_pattern or config.screenshot_pattern
 
