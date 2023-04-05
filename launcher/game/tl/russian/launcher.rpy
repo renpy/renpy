@@ -40,8 +40,8 @@
     new "Чтобы построить Android-пакет, пожалуйста, загрузите RAPT, разархивируйте его, и поместите в директорию Ren'Py. Затем перезагрузите лаунчер Ren'Py."
 
     # android.rpy:31
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Чтобы построить Android-пакеты на Windows требуется 64-битный инструментарий разработки Java 8. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Чтобы построить Android-пакеты на Windows требуется 64-битный инструментарий разработки Java 8. JDK отличен от JRE, и возможно, у вас есть Java без JDK.\n\nПожалуйста, {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}загрузите и установите JDK{/a}, и перезапустите лаунчер Ren'Py."
 
     # android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

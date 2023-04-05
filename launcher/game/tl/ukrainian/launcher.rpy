@@ -38,8 +38,8 @@ translate ukrainian strings:
     new "Щоб створити пакети Android, завантажте RAPT, розархівуйте його та помістіть у каталог Ren'Py. Потім перезапустіть лаунчер Ren'Py."
 
     # game/android.rpy:35
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Для створення пакетів Android у Windows потрібен 64-розрядний/x64 Java 8 Development Kit. JDK відрізняється від JRE, тому можливо, що у вас є Java без JDK.\n\nБудь ласка, {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}завантажте та встановіть JDK{/a}, а потім перезапустіть лаунчер Ren'Py."
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Для створення пакетів Android у Windows потрібен 64-розрядний/x64 Java 8 Development Kit. JDK відрізняється від JRE, тому можливо, що у вас є Java без JDK.\n\nБудь ласка, {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}завантажте та встановіть JDK{/a}, а потім перезапустіть лаунчер Ren'Py."
 
     # game/android.rpy:36
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

@@ -40,8 +40,8 @@
     new "Aby zbudować pakiet dla Androida, pobierz RAPT, rozpakuj i umieść w katalogu Ren'Py. Następnie uruchom ponownie program Ren'py."
 
     # game/android.rpy:31
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Tworzenie pakietów dla systemu Android w systemie Windows wymaga pakietu 64-bit/x64 Java Development Kit. JDK różni się od JRE, istnieje możliwość, że posiadasz Javę bez JDK.\n\n{a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}Pobierz i zainstaluj JDK{/a}, a następnie uruchom ponownie program Ren'py."
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Tworzenie pakietów dla systemu Android w systemie Windows wymaga pakietu 64-bit/x64 Java Development Kit. JDK różni się od JRE, istnieje możliwość, że posiadasz Javę bez JDK.\n\n{a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}Pobierz i zainstaluj JDK{/a}, a następnie uruchom ponownie program Ren'py."
 
     # game/android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

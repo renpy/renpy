@@ -1192,8 +1192,8 @@
     new "Le nom de fichier ne peut pas être vide."
 
     # game/android.rpy:31
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "Un kit de développement Java 8 64-bit/x64 est requis pour construire des paquets Android depuis Windows. Le JDK est différent du JRE, donc il est possible d'avoir Java sans avoir le JDK.\n\n{a=https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot}Téléchargez et installez le JDK{/a}, puis redémarrez Ren'Py."
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "Un kit de développement Java [JDK_REQUIREMENT] 64-bit/x64 est requis pour construire des paquets Android depuis Windows. Le JDK est différent du JRE, donc il est possible d'avoir Java sans avoir le JDK.\n\n{a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}Téléchargez et installez le JDK{/a}, puis redémarrez Ren'Py."
 
     # game/android.rpy:50
     old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
