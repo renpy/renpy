@@ -1357,7 +1357,6 @@ def style_statement(l, loc):
 
     # Parse priority and name.
     name = l.require(l.word)
-    parent = None
 
     rv = ast.Style(loc, name)
 
@@ -1366,7 +1365,7 @@ def style_statement(l, loc):
     def parse_clause(l):
 
         if l.keyword("is"):
-            if parent is not None:
+            if rv.parent is not None:
                 l.error("parent clause appears twice.")
 
             rv.parent = l.require(l.word) # type: ignore

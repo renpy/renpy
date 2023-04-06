@@ -502,6 +502,7 @@ class Movie(renpy.display.core.Displayable):
     def _hide(self, st, at, event):
         if event == "hide":
             reset_channels.add(self.channel)
+            print(self)
 
     def render(self, width, height, st, at):
 
@@ -514,6 +515,9 @@ class Movie(renpy.display.core.Displayable):
         not_playing = not playing
 
         if self.channel in reset_channels:
+            not_playing = False
+
+        if self.group is not None and self.group in group_texture:
             not_playing = False
 
         if (self.image is not None) and not_playing:
