@@ -10,6 +10,16 @@ Changelog (Ren'Py 7.x-)
 8.1 / 7.6
 =========
 
+Pending Deprecations
+--------------------
+
+The original OpenGL renderer will be removed in Ren'Py 8.2 and Ren'Py 7.6.
+If your game sets :var:`config.gl2` to ``False``, you should set it to ``True``,
+and make sure your game runs well. If it doesn't, please report any issues.
+
+Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1
+is released.
+
 Web
 ---
 
