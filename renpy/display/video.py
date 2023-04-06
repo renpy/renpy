@@ -496,12 +496,18 @@ class Movie(renpy.display.core.Displayable):
         if (self.channel == "movie") and (renpy.config.hw_video) and renpy.mobile:
             raise Exception("Movie(channel='movie') doesn't work on mobile when config.hw_video is true. (Use a different channel argument.)")
 
+    def _handles_event(self, event):
+        return event == "hide"
+
+    def _hide(self, st, at, event):
+        if event == "hide":
+            reset_channels.add(self.channel)
+
     def render(self, width, height, st, at):
 
         if self._play and not (renpy.game.preferences.video_image_fallback is True):
             if channel_movie.get(self.channel, None) is not self:
                 channel_movie[self.channel] = self
-                reset_channels.add(self.channel)
 
         playing = renpy.audio.music.get_playing(self.channel)
 
