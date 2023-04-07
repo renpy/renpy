@@ -2065,14 +2065,12 @@ class SLUse(SLNode):
 
             ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
 
-            if use_id in ctx.old_use_cache:
-                ctx.updating = ctx.updating and True
-
             ctx.new_use_cache[use_id] = ctx.new_cache
 
         else:
 
             ctx.old_cache = context.old_cache.get(self.serial, None) or { }
+
 
         if not isinstance(ctx.old_cache, dict):
             ctx.old_cache = { }
@@ -2353,9 +2351,6 @@ class SLCustomUse(SLNode):
             use_id = (self.target, id)
 
             ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
-
-            if use_id in ctx.old_use_cache:
-                ctx.updating = ctx.updating and True
 
             ctx.new_use_cache[use_id] = ctx.new_cache
 
