@@ -643,74 +643,79 @@ cdef class RenderTransform:
             yrotate = state.yrotate or 0
             zrotate = state.zrotate or 0
 
-            placement = (state.xpos, state.ypos, state.xanchor, state.yanchor, state.xoffset, state.yoffset, True)
-            xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
+        placement = (state.xpos, state.ypos, state.xanchor, state.yanchor, state.xoffset, state.yoffset, True)
+        xplacement, yplacement = renpy.display.core.place(width, height, width, height, placement)
 
+        if poi:
+            start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
+            a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
+
+            #cameras is rotated in z, y, x order.
+            #It is because rotating stage in x, y, z order means rotating a camera in z, y, x order.
+            #rotating around z axis isn't rotating around the center of the screen when rotating camera in x, y, z order.
+            v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
+            if v_len == 0:
+                xpoi = ypoi = zpoi = 0
+            else:
+                a /= v_len
+                b /= v_len
+                c /= v_len
+
+                sin_ypoi = min(1., max(-a, -1.))
+                ypoi = math.asin(sin_ypoi)
+                if c == 0:
+                    if abs(a) == 1:
+                        xpoi = 0
+                    else:
+                        sin_xpoi = min(1., max(b / math.cos(ypoi), -1.))
+                        xpoi = math.asin(sin_xpoi)
+                else:
+                    xpoi = math.atan(-b/c)
+
+                if c > 0:
+                    ypoi = math.pi - ypoi
+
+                if xpoi != 0.0 and ypoi != 0.0:
+                    if xpoi == math.pi / 2 or xpoi == - math.pi / 2:
+                        if -math.sin(xpoi) * math.sin(ypoi) > 0.0:
+                            zpoi = math.pi / 2
+                        else:
+                            zpoi = - math.pi / 2
+                    else:
+                        zpoi = math.atan(-(math.sin(xpoi) * math.sin(ypoi)) / math.cos(xpoi))
+                else:
+                    zpoi = 0
+
+                xpoi = math.degrees(xpoi)
+                ypoi = math.degrees(ypoi)
+                zpoi = math.degrees(zpoi)
+
+        if poi or orientation or xyz_rotate:
+            m = Matrix.offset(-width / 2, -height / 2, -z11)
+
+        if poi:
+            m = Matrix.rotate(-xpoi, -ypoi, -zpoi) * m
+
+        if orientation:
+            m = Matrix.rotate(-xorientation, -yorientation, -zorientation) * m
+
+        if xyz_rotate:
+            m = Matrix.rotate(-xrotate, -yrotate, -zrotate) * m
+
+        if poi or orientation or xyz_rotate:
+            m = Matrix.offset(width / 2, height / 2, z11) * m
+
+            self.reverse = m * self.reverse
+
+        if xplacement or yplacement or state.zpos:
             self.reverse = Matrix.offset(-xplacement, -yplacement, -state.zpos) * self.reverse
 
-            if poi:
-                start_pos = (xplacement + width / 2, yplacement + height / 2, state.zpos + z11)
-                a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
+        if state.rotate is not None:
+            m = Matrix.offset(-width / 2, -height / 2, 0.0)
+            m = Matrix.rotate(0, 0, -state.rotate) * m
+            m = Matrix.offset(width / 2, height / 2, 0.0) * m
 
-                #cameras is rotated in z, y, x order.
-                #It is because rotating stage in x, y, z order means rotating a camera in z, y, x order.
-                #rotating around z axis isn't rotating around the center of the screen when rotating camera in x, y, z order.
-                v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
-                if v_len == 0:
-                    xpoi = ypoi = zpoi = 0
-                else:
-                    a /= v_len
-                    b /= v_len
-                    c /= v_len
-
-                    sin_ypoi = min(1., max(-a, -1.))
-                    ypoi = math.asin(sin_ypoi)
-                    if c == 0:
-                        if abs(a) == 1:
-                            xpoi = 0
-                        else:
-                            sin_xpoi = min(1., max(b / math.cos(ypoi), -1.))
-                            xpoi = math.asin(sin_xpoi)
-                    else:
-                        xpoi = math.atan(-b/c)
-
-                    if c > 0:
-                        ypoi = math.pi - ypoi
-
-                    if xpoi != 0.0 and ypoi != 0.0:
-                        if xpoi == math.pi / 2 or xpoi == - math.pi / 2:
-                            if -math.sin(xpoi) * math.sin(ypoi) > 0.0:
-                                zpoi = math.pi / 2
-                            else:
-                                zpoi = - math.pi / 2
-                        else:
-                            zpoi = math.atan(-(math.sin(xpoi) * math.sin(ypoi)) / math.cos(xpoi))
-                    else:
-                        zpoi = 0
-
-                    xpoi = math.degrees(xpoi)
-                    ypoi = math.degrees(ypoi)
-                    zpoi = math.degrees(zpoi)
-
-            if poi or orientation or xyz_rotate:
-                m = Matrix.offset(-width / 2, -height / 2, -z11)
-            if poi:
-                m = Matrix.rotate(-xpoi, -ypoi, -zpoi) * m
-            if orientation:
-                m = Matrix.rotate(-xorientation, -yorientation, -zorientation) * m
-            if xyz_rotate:
-                m = Matrix.rotate(-xrotate, -yrotate, -zrotate) * m
-            if poi or orientation or xyz_rotate:
-                m = Matrix.offset(width / 2, height / 2, z11) * m
-
-                self.reverse = m * self.reverse
-
-            if state.rotate is not None:
-                m = Matrix.offset(-width / 2, -height / 2, 0.0)
-                m = Matrix.rotate(0, 0, -state.rotate) * m
-                m = Matrix.offset(width / 2, height / 2, 0.0) * m
-
-                self.reverse = m * self.reverse
+            self.reverse = m * self.reverse
 
     cdef matrix_operations(self):
         """
@@ -741,66 +746,67 @@ cdef class RenderTransform:
             yrotate = state.yrotate or 0
             zrotate = state.zrotate or 0
 
-            if poi or orientation or xyz_rotate:
-                if state.matrixanchor is None:
+        if poi or orientation or xyz_rotate:
+            if state.matrixanchor is None:
 
-                    manchorx = width / 2.0
-                    manchory = height / 2.0
+                manchorx = width / 2.0
+                manchory = height / 2.0
 
-                else:
-                    manchorx, manchory = state.matrixanchor
+            else:
+                manchorx, manchory = state.matrixanchor
 
-                    if type(manchorx) is float:
-                        manchorx *= width
-                    if type(manchory) is float:
-                        manchory *= height
+                if type(manchorx) is float:
+                    manchorx *= width
+                if type(manchory) is float:
+                    manchory *= height
 
-                m = Matrix.offset(-manchorx, -manchory, 0.0)
+            m = Matrix.offset(-manchorx, -manchory, 0.0)
 
-            if poi:
-                placement = self.transform.get_placement()
-                xplacement, yplacement = renpy.display.core.place(self.widtho, self.heighto, width, height, placement)
-                start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
+        if poi:
+            placement = self.transform.get_placement()
+            xplacement, yplacement = renpy.display.core.place(self.widtho, self.heighto, width, height, placement)
+            start_pos = (xplacement + manchorx, yplacement + manchory, state.zpos)
 
-                a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
-                v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
-                if v_len == 0:
-                    xpoi = ypoi = 0
-                else:
-                    a /= v_len
-                    b /= v_len
-                    c /= v_len
+            a, b, c = ( float(e - s) for s, e in zip(start_pos, poi) )
+            v_len = math.sqrt(a**2 + b**2 + c**2) # math.hypot is better in py3.8+
+            if v_len == 0:
+                xpoi = ypoi = 0
+            else:
+                a /= v_len
+                b /= v_len
+                c /= v_len
 
-                    sin_xpoi = min(1., max(-b, -1.))
-                    xpoi = math.asin(sin_xpoi)
-                    if c == 0:
-                        if abs(b) == 1:
-                            ypoi = 0
-                        else:
-                            sin_ypoi = min(1., max(a / math.cos(xpoi), -1.))
-                            ypoi = math.asin(sin_ypoi)
+                sin_xpoi = min(1., max(-b, -1.))
+                xpoi = math.asin(sin_xpoi)
+                if c == 0:
+                    if abs(b) == 1:
+                        ypoi = 0
                     else:
-                        ypoi = math.atan(a/c)
+                        sin_ypoi = min(1., max(a / math.cos(xpoi), -1.))
+                        ypoi = math.asin(sin_ypoi)
+                else:
+                    ypoi = math.atan(a/c)
 
-                    if c < 0:
-                        ypoi += math.pi
+                if c < 0:
+                    ypoi += math.pi
 
-                    xpoi = math.degrees(xpoi)
-                    ypoi = math.degrees(ypoi)
+                xpoi = math.degrees(xpoi)
+                ypoi = math.degrees(ypoi)
 
-            if poi:
-                m = Matrix.rotate(xpoi, ypoi, 0) * m
-            if orientation:
-                m = Matrix.rotate(xorientation, yorientation, zorientation) * m
-            if xyz_rotate:
-                m = Matrix.rotate(xrotate, yrotate, zrotate) * m
-            if poi or orientation or xyz_rotate:
-                m = Matrix.offset(manchorx, manchory, 0.0) * m
+        if poi:
+            m = Matrix.rotate(xpoi, ypoi, 0) * m
+        if orientation:
+            m = Matrix.rotate(xorientation, yorientation, zorientation) * m
+        if xyz_rotate:
+            m = Matrix.rotate(xrotate, yrotate, zrotate) * m
 
-                self.reverse = m * self.reverse
+        if poi or orientation or xyz_rotate:
+            m = Matrix.offset(manchorx, manchory, 0.0) * m
 
-            if state.zpos:
-                self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
+            self.reverse = m * self.reverse
+
+        if state.zpos:
+            self.reverse = Matrix.offset(0, 0, state.zpos) * self.reverse
 
     cdef matrix_transform(self):
         """
