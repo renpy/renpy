@@ -2066,7 +2066,7 @@ class SLUse(SLNode):
             ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
 
             if use_id in ctx.old_use_cache:
-                ctx.updating = True
+                ctx.updating = ctx.updating and True
 
             ctx.new_use_cache[use_id] = ctx.new_cache
 
@@ -2093,11 +2093,15 @@ class SLUse(SLNode):
             args = [ ]
             kwargs = { }
 
+        if ctx.updating:
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+        else:
+            scope = { }
+
         # Apply the arguments to the parameters (if present) or to the scope of the used screen.
         if ast.parameters is not None:
             new_scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.update(new_scope)
 
         else:
@@ -2105,13 +2109,14 @@ class SLUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.clear()
             scope.update(context.scope)
             scope.update(kwargs)
 
         scope["_scope"] = scope
-        ctx.new_cache["scope"] = scope
+
+        if not ctx.predicting:
+            ctx.new_cache["scope"] = scope
 
         # Run the child screen.
         ctx.scope = scope
@@ -2350,7 +2355,7 @@ class SLCustomUse(SLNode):
             ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
 
             if use_id in ctx.old_use_cache:
-                ctx.updating = True
+                ctx.updating = ctx.updating and True
 
             ctx.new_use_cache[use_id] = ctx.new_cache
 
@@ -2365,11 +2370,15 @@ class SLCustomUse(SLNode):
 
         ast = self.ast
 
+        if ctx.updating:
+            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+        else:
+            scope = { }
+
         # Apply the arguments to the parameters (if present) or to the scope of the used screen.
         if ast.parameters is not None:
             new_scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.update(new_scope)
 
         else:
@@ -2377,13 +2386,14 @@ class SLCustomUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.clear()
             scope.update(context.scope)
             scope.update(kwargs)
 
         scope["_scope"] = scope
-        ctx.new_cache["scope"] = scope
+
+        if not ctx.predicting:
+            ctx.new_cache["scope"] = scope
 
         # Run the child screen.
         ctx.scope = scope
