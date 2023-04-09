@@ -484,7 +484,7 @@ class ImageReference(renpy.display.core.Displayable):
 
     def _handles_event(self, event):
         if self.target is None:
-            return False
+            self.find_target()
 
         return self.target._handles_event(event)
 
@@ -745,7 +745,7 @@ class DynamicImage(renpy.display.core.Displayable):
 
     def _handles_event(self, event):
         if self.target is None:
-            return False
+            self.find_target()
 
         return self.target._handles_event(event)
 

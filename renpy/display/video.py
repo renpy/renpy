@@ -497,12 +497,11 @@ class Movie(renpy.display.core.Displayable):
             raise Exception("Movie(channel='movie') doesn't work on mobile when config.hw_video is true. (Use a different channel argument.)")
 
     def _handles_event(self, event):
-        return event == "hide"
+        return event == "show"
 
-    def _hide(self, st, at, event):
-        if event == "hide":
+    def set_transform_event(self, event):
+        if event == "show":
             reset_channels.add(self.channel)
-            print(self)
 
     def render(self, width, height, st, at):
 
