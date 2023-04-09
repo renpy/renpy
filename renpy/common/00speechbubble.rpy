@@ -62,6 +62,11 @@ init -1050 python in bubble:
     # The property group names, in order.
     properties_order = [ "default" ]
 
+    # A map from property name to the (left, top, right, bottom) number of pixels
+    # areas with that property are expanded by. If a property is not in this
+    # map, None is tried.
+    expand_area = { }
+
     # This is set to the JSONDB object that stores the bubble database,
     # or None if the databse doesn't exist yet.
     db = None
@@ -134,6 +139,29 @@ init -1050 python in bubble:
                 "properties" : properties_order[0]
             }
 
+        def expand_area(self, area, properties_key):
+            """
+            This is called to expand the area of a bubble. It is given the
+            area, and the properties key, and returns a new area.
+            """
+
+            x, y, w, h = area
+
+            expand = expand_area.get(properties_key, None) or expand_area.get(None, None)
+
+            if expand is None:
+                return area
+
+            left, top, right, bottom = expand
+
+            x = x - left
+            y = y - top
+            w = w + left + right
+            h = h + top + bottom
+
+            return (x, y, w, h)
+
+
         def do_show(self, who, what, multiple=None, extra_properties=None):
 
             if extra_properties is None:
@@ -157,7 +185,7 @@ init -1050 python in bubble:
             properties_key = tag_properties[image_tag]["properties"]
 
             extra_properties.update(properties.get(properties_key, { }))
-            extra_properties[area_property] = tag_properties[image_tag]["area"]
+            extra_properties[area_property] = self.expand_area(tag_properties[image_tag]["area"], properties_key)
 
             return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, extra_properties=extra_properties)
 
