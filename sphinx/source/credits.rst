@@ -196,6 +196,7 @@ the omission in future versions.
 * Saamkhaih Kyakya
 * SahabandhSthabara
 * Saltome
+* Sandra "Maxi" Molina
 * Sapphi
 * Scout
 * Sergey Musiyenko
