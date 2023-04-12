@@ -27,7 +27,7 @@ default bubble.tag_properties = { }
 # on the screen now.
 default bubble.current_dialogue = [ ]
 
-init -1050 python in bubble:
+init -1150 python in bubble:
 
     from store import config, ADVCharacter, Character, JSONDB, Action, Frame, NoRollback
 
@@ -72,6 +72,17 @@ init -1050 python in bubble:
     # This is not used directly, but is used by the default screens.rpy, and
     # so should not be set.
     frame = None
+
+    class ToggleShown(Action):
+        def __call__(self):
+            if not active and not shown.value:
+                return
+
+            shown.value = not shown.value
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            return shown.value
 
     def scene_callback(layer):
         global tag_properties

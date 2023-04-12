@@ -54,6 +54,7 @@ init -1600 python:
         choose_renderer = ['alt_K_g', 'shift_K_g' ],
         progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
         accessibility = [ 'K_a' ],
+        bubble_editor = [ 'alt_K_b', 'shift_K_b' ],
 
         # Accessibility.
         self_voicing = [ 'alt_K_v', 'K_v' ],
@@ -416,8 +417,7 @@ screen _progress:
 
 init -1100 python:
 
-    # The default keymap. We might also want to put some of this into
-    # the launcher.
+    # The default keymap.
     _default_keymap = renpy.Keymap(
         rollback = renpy.rollback,
         screenshot = _screenshot,
@@ -444,6 +444,7 @@ init -1100 python:
         director = director.Start(),
         performance = ToggleScreen("_performance"),
         accessibility = ToggleScreen("_accessibility"),
+        bubble_editor = bubble.ToggleShown(),
         )
 
     config.underlay = [ _default_keymap ]
