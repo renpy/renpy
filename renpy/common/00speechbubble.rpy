@@ -47,7 +47,7 @@ init -1050 python in bubble:
 
     # The default window area rectangle. This is expressed as squares, where units
     # are defined by the rows and columns.
-    default_area = (0, 18, 24, 6)
+    default_area = (15, 1, 8, 5)
 
     # The property that the area is supplied as.
     area_property = "window_area"
@@ -55,12 +55,10 @@ init -1050 python in bubble:
     # Additional properties that the player can use to customize the bubble.
     # This is a map from a property name to a list of choices that are cycled
     # through.
-    properties = {
-        "default" : { }
-    }
+    properties = { }
 
     # The property group names, in order.
-    properties_order = [ "default" ]
+    properties_order = [ ]
 
     # A map from property name to the (left, top, right, bottom) number of pixels
     # areas with that property are expanded by. If a property is not in this
@@ -68,9 +66,12 @@ init -1050 python in bubble:
     expand_area = { }
 
     # This is set to the JSONDB object that stores the bubble database,
-    # or None if the databse doesn't exist yet.
+    # or None if the database doesn't exist yet.
     db = None
 
+    # This is not used directly, but is used by the default screens.rpy, and
+    # so should not be set.
+    frame = None
 
     def scene_callback(layer):
         global tag_properties
@@ -121,6 +122,9 @@ init -1050 python in bubble:
             This is responsible for creating a reasonable set of bubble properties
             for the given image tag.
             """
+
+            if not properties_order:
+                raise Exception("A speech bubble is being used, but bubble.properties has not been set.")
 
             rv = { }
 
