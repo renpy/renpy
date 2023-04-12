@@ -76,6 +76,9 @@ vsync = True
 # A list of frame end times, used for the same purpose.
 frame_times = [ ]
 
+# The default position of the window.
+default_position = (pygame.WINDOWPOS_CENTERED, pygame.WINDOWPOS_CENTERED)
+
 cdef class GL2Draw:
 
     def __init__(self, name):
@@ -454,7 +457,7 @@ cdef class GL2Draw:
         if not fullscreen and not maximized:
             if not self.ever_set_position:
                 self.ever_set_position = True
-                pygame.display.get_window().set_position((pygame.WINDOWPOS_CENTERED, pygame.WINDOWPOS_CENTERED))
+                pygame.display.get_window().set_position(default_position)
 
         # Get the size of the created screen.
         pwidth, pheight = renpy.display.core.get_size()
@@ -591,6 +594,18 @@ cdef class GL2Draw:
         """
         Called when terminating the use of the OpenGL context.
         """
+
+        global default_position
+
+        # Are we in fullscreen mode?
+        fullscreen = bool(pygame.display.get_window().get_window_flags() & (pygame.WINDOW_FULLSCREEN_DESKTOP | pygame.WINDOW_FULLSCREEN))
+
+        # Are we maximized?
+        maximized = bool(pygame.display.get_window().get_window_flags() & pygame.WINDOW_MAXIMIZED)
+
+        # See if we've ever set the screen position, and if not, center the window.
+        if not fullscreen and not maximized:
+            default_position = pygame.display.get_position()
 
         self.kill_textures()
 

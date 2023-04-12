@@ -264,6 +264,7 @@ name_blacklist = {
     "renpy.persistent.MP_instances",
     "renpy.exports.sdl_dll",
     "renpy.sl2.slast.serial",
+    "renpy.gl2.gl2draw.default_position",
     }
 
 class Backup(_object):
