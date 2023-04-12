@@ -1505,6 +1505,9 @@ def Character(name=NotSet, kind=None, **properties):
         be used to define a template character, and then copy that
         character with changes.
 
+        This can also be a namespace, in which case the 'character'
+        variable in the namespace is used as the kind.
+
     **Linked Image.**
     An image tag may be associated with a Character. This allows a
     say statement involving this character to display an image with
@@ -1657,6 +1660,8 @@ def Character(name=NotSet, kind=None, **properties):
 
     if kind is None:
         kind = renpy.store.adv
+
+    kind = getattr(kind, "character", kind)
 
     return type(kind)(name, kind=kind, **properties)
 
