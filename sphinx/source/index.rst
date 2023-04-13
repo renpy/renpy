@@ -91,6 +91,7 @@ To find out more about Ren'Py, please visit the Ren'Py home page:
    :caption: Other Functionality
 
    nvl_mode
+   bubble
    input
    side_image
    rooms

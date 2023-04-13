@@ -1409,12 +1409,12 @@ style nvl_button_text:
 
 ## Bubble screen ###############################################################
 ##
-## The Bubble screen is used to display dialogue to the player when using
-## speech bubbles. The Bubble screen takes the same parameters as the say
+## The bubble screen is used to display dialogue to the player when using
+## speech bubbles. The bubble screen takes the same parameters as the say
 ## screen, must create a displayable with the id of "what", and can create
 ## displayables with the "namebox", "who", and "window" ids.
 ##
-## https://www.renpy.org/doc/html/screen_special.html#bubble
+## https://www.renpy.org/doc/html/bubble.html#bubble-screen
 
 screen bubble(who, what):
     style_prefix "bubble"

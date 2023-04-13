@@ -10,45 +10,29 @@ Changelog (Ren'Py 7.x-)
 8.1 / 7.6
 =========
 
-Pending Deprecations
---------------------
+..
 
-The original OpenGL renderer will be removed 1 year after Ren'Py 8.1 is released.
-If your game sets :var:`config.gl2` to ``False``, you should set it to ``True``,
-and make sure your game runs well. If it doesn't, please report any issues.
-When reporting issues, please determine the hardware (device and GPU),
-os and driver versions, and year of manufacture.
+  Pending Deprecations
+  --------------------
 
-Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1
-is released.
+  The original OpenGL renderer will be removed 1 year after Ren'Py 8.1 is released.
+  If your game sets :var:`config.gl2` to ``False``, you should set it to ``True``,
+  and make sure your game runs well. If it doesn't, please report any issues.
+  When reporting issues, please determine the hardware (device and GPU),
+  os and driver versions, and year of manufacture.
 
-Web
----
+  Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1
+  is released.
 
-The web platform now fully supports playing videos through the :class:`Movie`
-displayable, when it used to only support :func:`renpy.movie_cutscene`.
+Speech Bubble Dialogue
+----------------------
 
-Android
---------
-
-Android has been changed so that the ``android.keystore`` file and
-``bundle.keystore`` file are expected to be found in the project's base
-directory, and not in the rapt directory. This allows projects to be
-built with different keys, and helps ensure the same keys are used
-with multiple Android versions.
-
-When the new "Generate Keys" button is pressed, if old keystore files
-exist, Ren'Py will offer to copy the old files into the project.
-
-The android configuration file has been renamed from ``.android.json`` to
-``android.json``. Ren'Py will automatically create the new file if the old
-exists.
-
+Ren'Py now includes a new :doc:`bubble` dialogue system. This is a comprehensive
+system that allows dialogue to be displayed in comic-like speech bubbles, and
+includes an interactive editor that allows the speech bubbles to be
+repositions, and the look of a bubble to be changed interactively.
 
 Other Platforms
----------------
-
-Bubble Dialogue
 ---------------
 
 Sticky Layers
@@ -75,7 +59,6 @@ The default for this feature is for the ``master`` layer to be sticky, as
 well as any layers created with :func:`renpy.add_layer` unless passed
 the new parameter ``sticky=False``.
 
-
 Detached Layers & Layer Displayable
 -----------------------------------
 
@@ -92,7 +75,6 @@ reflections or several TV showing the same channel.
 As detached layers don't participate in scene building in the same way as
 typical layers, they are defined directly in :var:`config.detached_layers`
 rather than through :func:`add_layer`, and are inherently sticky.
-
 
 New Image Formats and Image Oversampling
 ----------------------------------------
@@ -129,7 +111,6 @@ Image oversampling can also be used with the new :var:`config.physical_width`
 and :var:`config.physical_height` variables to upgrade the resolution of
 a game without having to adjust the game's layout.
 
-
 AV1 Video
 ---------
 
@@ -139,7 +120,6 @@ the equivalent quality movie encoded with VP9, the previous best codec.
 
 Note that the newer AV1 format requires more CPU to decode. It's possible
 that some hardware that plays VP9 fluidly will struggle with AV1.
-
 
 Audio
 -----
@@ -170,7 +150,6 @@ popping sounds that occured when audio was stopped abruptly.
 Audio panning (:func:`renpy.music.set_pan`) is now constant-power, so that
 panning audio should not change the volume.
 
-
 Draggable Viewports
 -------------------
 
@@ -181,7 +160,6 @@ and switch focus to the viewport, allowing the viewport to move.
 The `draggable` property of :ref:`viewports <sl-viewport>` and :ref:`vpgrids <sl-vpgrid>`
 can now take a :ref:`screen variant <screen-variants>` like "touch", in which
 case the viewport will only be draggable if touch is enabled.
-
 
 \_ren.py Files - Ren'Py in Python
 ---------------------------------
@@ -203,7 +181,6 @@ is equivalent to::
 
 The purpose of this new format is to allow Python-heavy script files to be edited
 with Python-specific tools, while still running as Ren'Py script.
-
 
 Constant Stores
 ---------------
@@ -235,7 +212,6 @@ The following stores are declared to be constant by default:
 Variables in a constant store can be updated during the init phase, but should
 not change after the init phase finishes.
 
-
 Lenticular Bracket Ruby Text
 -----------------------------
 
@@ -255,7 +231,6 @@ ruby text. For example::
 
     e "【【This is not | ruby text.】"
 
-
 Accessibility
 -------------
 
@@ -274,7 +249,6 @@ Will cause the word "Ren'Py" to be pronounced as "Ren Pie" whenever
 self-voicing speaks it.
 
 Self-voicing now respects the voice volume mixer.
-
 
 Save Token Security
 -------------------
@@ -300,6 +274,28 @@ prompting during upgrades to Ren'Py 8.1/7.6 or later.
 There is intentionally no way to disable this feature, as it's important
 for end-users to be warned about the security issues when possible.
 
+Web
+---
+
+The web platform now fully supports playing videos through the :class:`Movie`
+displayable, when it used to only support :func:`renpy.movie_cutscene`.
+
+Android
+--------
+
+Android has been changed so that the ``android.keystore`` file and
+``bundle.keystore`` file are expected to be found in the project's base
+directory, and not in the rapt directory. This allows projects to be
+built with different keys, and helps ensure the same keys are used
+with multiple Android versions.
+
+When the new "Generate Keys" button is pressed, if old keystore files
+exist, Ren'Py will offer to copy the old files into the project.
+
+The android configuration file has been renamed from ``.android.json`` to
+``android.json``. Ren'Py will automatically create the new file if the old
+exists.
+
 New Search Paths
 ----------------
 
@@ -307,7 +303,6 @@ Ren'Py will now search for audio files in the ``game/audio`` directory,
 and font files in the ``game/fonts`` directory, if not found in the game
 directory. Images will still be searched for in the ``game/images`` directory,
 but other files will not be found there.
-
 
 New Features
 ------------
@@ -436,7 +431,6 @@ The screens' ``for`` loops now support the ``continue`` and ``break`` statements
 
 Disabling Dialogue's :ref:`monologue-mode` is now possible using the
 ``rpy monologue none`` statement at the beginning of the file it should apply to.
-
 
 Other Changes
 -------------

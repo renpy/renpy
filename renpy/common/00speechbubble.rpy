@@ -41,7 +41,8 @@ init -1150 python in bubble:
     # The path to the json file the bubble database is stored in.
     db_filename = "bubble.json"
 
-    # The number of rows and columns in the bubble database.
+    # The number of rows and columns in the grid that is used to position
+    # speech bubbles.
     cols = 24
     rows = 24
 

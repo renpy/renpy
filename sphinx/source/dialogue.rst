@@ -438,6 +438,14 @@ character in a namespace without conflicting with the say statement::
         $ naomi.money += 50
         naomi "Thanks ! I knew you would value my class-[naomi.engineering] engineering skills."
 
+Alternative Presentations
+-------------------------
+
+:doc:`nvl_mode` : a mode that displays dialogue over the entire screen.
+
+:doc:`bubble` : a mode that displays dialogue in speech bubbles that can be
+positioned interactively.
+
 See Also
 --------
 
