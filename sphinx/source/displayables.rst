@@ -108,6 +108,29 @@ there is significant overhead, as a rule of thumb, each pixel in the
 image cache consumes 4 bytes of main memory and 4 bytes of video
 memory.
 
+SVG Images
+----------
+
+Ren'Py supports many SVG images, using the SVG support built into
+the SVG2_image library. Some unsupported features include:
+
+* Text elements are ignored. If the text is convered into a path, it will
+  be rendered.
+* Embedded bitmaps are ignored.
+* Scripts are ignored.
+* Animations are ignored.
+
+It's recommended to convert everything in an SVG image that will not
+render properly into paths.
+
+Ren'Py will render SVG images as if the virtual screen was 96dpi.
+If the window is enlarged or shrunk, the SVG image will be scaled
+up or down, respectively, and :ref:`oversampling <oversampling>` will
+be used to ensture the image is rendered at the correct virtual
+size.
+
+This ensures the SVG will be rendered sharp if it is not scaled.
+
 Image-Like Displayables
 -----------------------
 
