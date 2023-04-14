@@ -435,6 +435,18 @@ Disabling Dialogue's :ref:`monologue-mode` is now possible using the
 Other Changes
 -------------
 
+Triple quote strings can now be used in most places a single
+quoted string can. Most notably, this allows triple quoted strings
+to be used in screens. For example, you can use::
+
+    screen example():
+        text """\
+    line 1
+    line 2
+    line 3"""
+
+to create three lines in one text displayable.
+
 The maximized window state is now stored int preferences, and if a
 game was maximized when it shut down it will be maximized again when
 started again.
