@@ -11,7 +11,6 @@ Changelog (Ren'Py 7.x-)
 =========
 
 ..
-
   Pending Deprecations
   --------------------
 
