@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -415,8 +415,8 @@ init -1500 python:
 
         `locked`
             If true, this action is insensitive and will not do anything when triggered.
-            If false, it is sensitive. If None, the action is sensitive if the
-            label has not been seen in any playthrough.
+            If false, it will behave normally. If None, it will be locked if the label
+            has not been seen in any playthrough.
         """
 
         def __init__(self, label, scope={}, locked=None):
@@ -426,7 +426,7 @@ init -1500 python:
 
         def __call__(self):
 
-            if self.locked:
+            if not self.get_sensitive():
                 return
 
             if config.enter_replay_transition:
