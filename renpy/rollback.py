@@ -751,6 +751,7 @@ class RollbackLog(renpy.object.Object):
         """
 
         self.checkpointing_suspended = flag
+        self.current.not_greedy = True
 
     def block(self, purge=False):
         """
