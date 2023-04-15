@@ -1147,15 +1147,14 @@ class Lexer(object):
         old_pos = self.pos
 
 
-        # Modifiers.
-        self.match(r'[urf]*')
-
         # Delimiter.
-        delim = self.match(r'"""|\'\'\'|"|\'')
+        start = self.match(r'[urfURF]*("""|\'\'\'|"|\')')
 
-        if not delim:
+        if not start:
             self.pos = old_pos
             return False
+
+        delim = start.lstrip('urfURF')
 
         # String contents.
         while True:
