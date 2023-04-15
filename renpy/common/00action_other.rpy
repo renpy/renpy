@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -414,8 +414,9 @@ init -1500 python:
             when entering the replay.
 
         `locked`
-            If true, this replay is locked. If false, it is unlocked. If None, the
-            replay is locked if the label has not been seen in any playthrough.
+            If true, this action is insensitive and will not do anything when triggered.
+            If false, it is sensitive. If None, the action is sensitive if the
+            label has not been seen in any playthrough.
         """
 
         def __init__(self, label, scope={}, locked=None):
