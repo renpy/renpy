@@ -414,8 +414,9 @@ init -1500 python:
             when entering the replay.
 
         `locked`
-            If true, this replay is locked. If false, it is unlocked. If None, the
-            replay is locked if the label has not been seen in any playthrough.
+            If true, this action is insensitive and will not do anything when triggered.
+            If false, it will behave normally. If None, it will be locked if the label
+            has not been seen in any playthrough.
         """
 
         def __init__(self, label, scope={}, locked=None):
@@ -425,7 +426,7 @@ init -1500 python:
 
         def __call__(self):
 
-            if self.locked:
+            if not self.get_sensitive():
                 return
 
             if config.enter_replay_transition:
