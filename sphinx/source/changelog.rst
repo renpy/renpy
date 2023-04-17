@@ -434,6 +434,9 @@ Disabling Dialogue's :ref:`monologue-mode` is now possible using the
 Other Changes
 -------------
 
+It's possible to configure the channels used to upload to itch.io
+using the :var:`build.itch_channels` variable.
+
 Triple quote strings can now be used in most places a single
 quoted string can. Most notably, this allows triple quoted strings
 to be used in screens. For example, you can use::

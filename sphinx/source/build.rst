@@ -400,6 +400,21 @@ The following variables provide further control of the build process:
     click "Build distributions", "Upload to itch.io" to cause an upload
     to occur.
 
+.. var:: build.itch_channels = { ... }
+
+    This maps a filename pattern (such as "\*-win.zip") to a string giving
+    the itch channel the file should be uploaded to. This defaults to::
+
+        {
+            "*-all.zip" : "win-osx-linux",
+            "*-market.zip" : "win-osx-linux",
+            "*-pc.zip" : "win-linux",
+            "*-win.zip" : "win",
+            "*-mac.zip" : "osx",
+            "*-linux.tar.bz2" : "linux",
+            "*-release.apk" : "android",
+        }
+
 .. var:: build.mac_info_plist = { }
 
     This is a dictionary mapping strings to strings, that can be used to
