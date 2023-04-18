@@ -752,6 +752,7 @@ class RollbackLog(renpy.object.Object):
 
         self.checkpointing_suspended = flag
         self.current.not_greedy = True
+        renpy.game.contexts[0].force_checkpoint = True
 
     def block(self, purge=False):
         """
