@@ -57,6 +57,7 @@ def register(
         predict_all=True,
         predict_next=None,
         execute_default=None,
+        reachable=None,
 ):
     """
     :doc: statement_register
@@ -178,6 +179,33 @@ def register(
 
         This is called with a single argument, the object returned from parse.
 
+    `reachable`
+        This is a function that is called to allow this statement to
+        customize how it participates in lint's reachability analysis.
+
+        By default, a statement's custom block, sub-parse blocks created
+        with Lexer.renpy_block(), and the statement after the statement
+        are reachable if the statement itself is reachable. The statement
+        is also reachable if it has a label function.
+
+        This can be customized by providing a reachable function. This is
+        a function that takes four arguments:
+
+        * A boolean that is true if the statement is reachable.
+        * The label of the statement. (Here, labels are strings.)
+        * The label of the next statement, or None if there is no next statement.
+        * If block is set to "script", the label of the first statement in the block,
+          or None if there is no block.
+
+        It's expected to return a set of labels and SubParse objects that
+        are reachable from this statement. (It may also return None in the
+        set, which is ignored.)
+
+        This function may be called multiple times with both value of is_reachable,
+        to allow the statement to customize its behavior based on whether it's
+        reachable or not. (For example, the next statement may only be reachable
+        if this statement is.)
+
     .. warning::
 
         Using the empty string as the name to redefine the say statement is
@@ -211,6 +239,7 @@ def register(
         predict_all=predict_all,
         predict_next=predict_next,
         execute_default=execute_default,
+        reachable=reachable,
     )
 
     if block not in [True, False, "script", "possible" ]:

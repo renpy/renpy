@@ -820,17 +820,50 @@ def report_character_stats(charastats):
 
 
 def check_unreachables(all_nodes):
-    all_nodes = [node for node in all_nodes if not common(node)]
-
-    unreachable = set(all_nodes)
-
-    to_check = {node for node in all_nodes if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)) or isinstance(node, renpy.ast.Translate) and node.language is not None}
-    # reachable nodes whose children haven't yet been checked
 
     def add_block(block):
         next = block[0]
         if next in unreachable:
             to_check.add(next)
+
+    def add_names(names):
+        for name in names:
+
+            if name is None:
+                continue
+
+            if isinstance(name, renpy.lexer.SubParse):
+                if name.block:
+                    add_block(name.block)
+                continue
+
+            node = renpy.game.script.lookup(name)
+
+            if node is None:
+                continue
+
+            if node in unreachable:
+                to_check.add(node)
+
+    # All nodes, outside of common.
+    all_nodes = [node for node in all_nodes if not common(node)]
+
+    # Unreachable nodes - this set shrinks as nodes become reachable.
+    unreachable = set(all_nodes)
+
+    # The worklist of reachable nodes that haven't been checked yet.
+    to_check = set()
+
+    for node in all_nodes:
+        if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)):
+            to_check.add(node)
+
+        if isinstance(node, renpy.ast.Translate):
+            if node.language is not None:
+                to_check.add(node)
+
+        if isinstance(node, renpy.ast.UserStatement):
+            add_names(node.reachable(False))
 
     for node in all_nodes:
         if isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
@@ -865,11 +898,8 @@ def check_unreachables(all_nodes):
                 add_block(block)
 
         elif isinstance(node, renpy.ast.UserStatement):
-            if node.code_block is not None:
-                add_block(node.code_block)
-
-            for i in node.subparses:
-                add_block(i.block)
+            add_names(node.reachable(True))
+            continue
 
         next = node.next
         if next in unreachable:

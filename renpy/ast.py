@@ -2321,6 +2321,43 @@ class UserStatement(Node):
 
         return False
 
+    def reachable(self, is_reachable):
+        """
+        This is used by lint to find statements reachable from or through
+        this statement.
+        """
+
+        rv = self.call(
+            "reachable",
+            is_reachable,
+            self.name,
+            self.next.name if self.next is not None else None,
+            self.code_block[0].name if self.code_block else None,
+            )
+
+        if rv is None:
+
+            rv = set()
+
+            if self.call("label"):
+                rv.add(self.name)
+
+            if is_reachable:
+
+                if self.code_block:
+                    rv.add(self.code_block[0].name)
+
+                for i in self.subparses:
+                    if i.block:
+                        rv.add(i.block[0].name)
+
+                if self.next:
+                    rv.add(self.next.name)
+
+        return rv
+
+
+
 
 class PostUserStatement(Node):
 
