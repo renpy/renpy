@@ -2341,6 +2341,7 @@ class UserStatement(Node):
 
             if self.call("label"):
                 rv.add(self.name)
+                is_reachable = True
 
             if is_reachable:
 
@@ -2355,9 +2356,6 @@ class UserStatement(Node):
                     rv.add(self.next.name)
 
         return rv
-
-
-
 
 class PostUserStatement(Node):
 

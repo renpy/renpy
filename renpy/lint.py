@@ -832,6 +832,9 @@ def check_unreachables(all_nodes):
             if name is None:
                 continue
 
+            if name is True:
+                continue
+
             if isinstance(name, renpy.lexer.SubParse):
                 if name.block:
                     add_block(name.block)
@@ -851,6 +854,10 @@ def check_unreachables(all_nodes):
     # Unreachable nodes - this set shrinks as nodes become reachable.
     unreachable = set(all_nodes)
 
+    # Weakly reachable nodes - nodes that are reachable, but don't imply
+    # that nodes
+    weakly_reachable = set()
+
     # The worklist of reachable nodes that haven't been checked yet.
     to_check = set()
 
@@ -863,7 +870,12 @@ def check_unreachables(all_nodes):
                 to_check.add(node)
 
         if isinstance(node, renpy.ast.UserStatement):
-            add_names(node.reachable(False))
+            reach = node.reachable(False)
+
+            if True in reach:
+                weakly_reachable.add(node)
+
+            add_names(reach)
 
     for node in all_nodes:
         if isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
@@ -904,6 +916,8 @@ def check_unreachables(all_nodes):
         next = node.next
         if next in unreachable:
             to_check.add(next)
+
+    unreachable -= weakly_reachable
 
     locations = sorted(set((node.filename, node.linenumber) for node in unreachable if not isinstance(node, (renpy.ast.Return, renpy.ast.EndTranslate, renpy.ast.Init, renpy.ast.TranslateBlock))))
     # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes

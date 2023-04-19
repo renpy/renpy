@@ -197,9 +197,13 @@ def register(
         * If block is set to "script", the label of the first statement in the block,
           or None if there is no block.
 
-        It's expected to return a set of labels and SubParse objects that
-        are reachable from this statement. (It may also return None in the
-        set, which is ignored.)
+        It's expected to return a set that may contain:
+
+        * A label or subparse object of a statement that is reachable.
+        * True, to indicate that this statement should not be reported by lint,
+          but is not intrinsically reachable. (It will become reachable if it
+          is reported reachable by another statement.)
+        * None, which is ignored.
 
         This function may be called multiple times with both value of is_reachable,
         to allow the statement to customize its behavior based on whether it's

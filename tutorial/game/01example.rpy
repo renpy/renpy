@@ -260,7 +260,7 @@
         if is_reachable:
             return { this, next, block }
         else:
-            return { this, block }
+            return { True, block }
 
     renpy.register_statement(
         "example",
