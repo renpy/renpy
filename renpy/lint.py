@@ -854,8 +854,8 @@ def check_unreachables(all_nodes):
     # Unreachable nodes - this set shrinks as nodes become reachable.
     unreachable = set(all_nodes)
 
-    # Weakly reachable nodes - nodes that are reachable, but don't imply
-    # that nodes
+    # Weakly reachable nodes - nodes that are reachable, but don't
+    # make their next reachable.
     weakly_reachable = set()
 
     # The worklist of reachable nodes that haven't been checked yet.
@@ -865,22 +865,30 @@ def check_unreachables(all_nodes):
         if isinstance(node, (renpy.ast.EarlyPython, renpy.ast.Label)):
             to_check.add(node)
 
-        if isinstance(node, renpy.ast.Translate):
+        elif isinstance(node, renpy.ast.Translate):
             if node.language is not None:
                 to_check.add(node)
 
-        if isinstance(node, renpy.ast.UserStatement):
+        elif isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
+            # the block of these ones is always reachable, but their next is reachable only if they are themselves reachable
+            add_block(node.block)
+            weakly_reachable.add(node)
+            # Init and TranslateBlock nodes are meant to be unreachable, but we had to check them
+            # because if they are reachable, what follows them is too and must not be flagged as unreachable
+
+        elif isinstance(node, (renpy.ast.Return, renpy.ast.EndTranslate)):
+            weakly_reachable.add(node)
+            # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes
+            # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place,
+            # and EndTranslate nodes from explicit translate blocks are naturally unreachable
+
+        elif isinstance(node, renpy.ast.UserStatement):
             reach = node.reachable(False)
 
             if True in reach:
                 weakly_reachable.add(node)
 
             add_names(reach)
-
-    for node in all_nodes:
-        if isinstance(node, (renpy.ast.Init, renpy.ast.TranslateBlock)):
-            # the block of these ones is always reachable, but their next is reachable only if they are themselves reachable
-            add_block(node.block)
 
     while to_check:
         node = to_check.pop() # type: Any
@@ -917,12 +925,7 @@ def check_unreachables(all_nodes):
         if next in unreachable:
             to_check.add(next)
 
-    unreachable -= weakly_reachable
-
-    locations = sorted(set((node.filename, node.linenumber) for node in unreachable if not isinstance(node, (renpy.ast.Return, renpy.ast.EndTranslate, renpy.ast.Init, renpy.ast.TranslateBlock))))
-    # the auto-generated Return at the end of every file is hard to segregate from the other Return nodes, so we don't check Return nodes
-    # EndTranslate nodes can't be manually created, so it makes no sense to show them to the user in the first place, and EndTranslate nodes from explicit translate blocks are naturally unreachable
-    # Init and TranslateBlock nodes are meant to be unreachable, but we had to check them because if they are reachable, what follows them is too and must not be flagged as unreachable
+    locations = sorted(set((node.filename, node.linenumber) for node in (unreachable - weakly_reachable)))
 
     locadict = collections.defaultdict(list)
     for filename, linenumber in locations:
