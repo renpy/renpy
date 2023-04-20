@@ -383,8 +383,11 @@ cdef class Live2DModel:
             0, 0, 0, 1, ])
 
         rv = Render(w, h)
+
         renders = [ ]
         raw_renders = [ ]
+        mask_renders = [ ]
+
 
         for 0 <= i < self.drawable_count:
 
@@ -396,6 +399,23 @@ cdef class Live2DModel:
 
             mesh.triangles = self.drawable_index_counts[i] // 3
             memcpy(mesh.triangle, self.drawable_indices[i],  sizeof(unsigned short) * mesh.triangles * 3)
+
+            tex = textures[self.drawable_texture_indices[i]]
+
+            # Create a render that can be used as a mask.
+            mr = Render(ppu * 2, ppu * 2)
+            mr.reverse = reverse
+            mr.forward = forward
+            mr.mesh = mesh
+
+            for s in shaders:
+                mr.add_shader(s)
+
+            mr.blit(tex, (0, 0))
+
+            mask_renders.append(mr)
+
+            # Create the render that is actually drawn.
             r = Render(ppu * 2, ppu * 2)
             r.reverse = reverse
             r.forward = forward
@@ -404,7 +424,7 @@ cdef class Live2DModel:
             for s in shaders:
                 r.add_shader(s)
 
-            r.blit(textures[self.drawable_texture_indices[i]], (0, 0))
+            r.blit(tex, (0, 0))
 
             raw_renders.append(r)
 
@@ -419,14 +439,9 @@ cdef class Live2DModel:
 
                 if alpha != 1.0:
 
-                    ar = renpy.display.render.Render(r.width, r.height)
-                    ar.blit(r, (0, 0))
-
-                    ar.add_shader("renpy.alpha")
-                    ar.add_uniform("u_renpy_alpha", alpha)
-                    ar.add_uniform("u_renpy_over", 1.0)
-
-                    r = ar
+                    r.add_shader("renpy.alpha")
+                    r.add_uniform("u_renpy_alpha", alpha)
+                    r.add_uniform("u_renpy_over", 1.0)
 
                 renders.append((self.drawable_render_orders[i], r))
 
@@ -441,7 +456,7 @@ cdef class Live2DModel:
             r = raw_renders[i]
 
             if self.drawable_mask_counts[i] == 1:
-                m = raw_renders[self.drawable_masks[i][0]]
+                m = mask_renders[self.drawable_masks[i][0]]
             else:
 
                 key = [ ]
@@ -457,7 +472,7 @@ cdef class Live2DModel:
                     m = renpy.display.render.Render(ppu * 2, ppu * 2)
 
                     for j in key:
-                        m.blit(raw_renders[j], (0, 0))
+                        m.blit(mask_renders[j], (0, 0))
 
                     multi_masks[key] = m
 
