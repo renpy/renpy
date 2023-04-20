@@ -32,7 +32,7 @@ import weakref
 
 import renpy
 
-from renpy.compat.pickle import dump, dumps, loads
+from renpy.compat.pickle import dump, persistent_dumps, loads
 
 # The class that's used to hold the persistent data.
 
@@ -223,6 +223,8 @@ def load(filename):
     return persistent
 
 
+safe_types = None # type: set[type] | None
+
 def init():
     """
     Loads the persistent data from disk.
@@ -230,6 +232,13 @@ def init():
     This performs the initial load of persistent data from the local
     disk, so that we can configure the savelocation system.
     """
+
+    global safe_types
+    safe_types = set()
+    for sd in renpy.python.store_dicts.values():
+        for v in sd.values():
+            if isinstance(v, type):
+                safe_types.add(v)
 
     filename = os.path.join(renpy.config.savedir, "persistent.new") # type: ignore
     persistent = load(filename)
@@ -413,7 +422,7 @@ def save():
         return
 
     try:
-        data = dumps(renpy.game.persistent)
+        data = persistent_dumps(renpy.game.persistent)
         compressed = zlib.compress(data, 3)
         compressed += renpy.savetoken.sign_data(data).encode("utf-8")
         renpy.loadsave.location.save_persistent(compressed)
