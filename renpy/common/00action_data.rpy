@@ -25,7 +25,7 @@ init -1600 python:
 
     class __FieldNotFound(Exception):
         def __init__(self, kind=None, name=None):
-            super(__FieldNotFound, self).__init__("The {} {!r} does not exist.".format(kind, name))
+            super(__FieldNotFound, self).__init__("The {!r} {} does not exist.".format(name, kind))
 
     def _get_field(obj, name, kind):
 
@@ -43,7 +43,7 @@ init -1600 python:
 
     class __SetFieldError(Exception):
         def __init__(self, kind=None, name=None):
-            super(__SetFieldError, self).__init__("The {} {!r} cannot be set.".format(kind, name))
+            super(__SetFieldError, self).__init__("The {!r} {} cannot be set.".format(name, kind))
 
     def _set_field(obj, name, value, kind):
         fields, _, attr = name.rpartition(".")
@@ -63,14 +63,14 @@ init -1600 python:
     # when Dict fails to retrieve the index/key
     class __LookupError(LookupError):
         def __init__(self, kind=None, name=None):
-            super(__LookupError, self).__init__("The {} {!r} does not exist.".format(kind, name))
+            super(__LookupError, self).__init__("The {!r} {} does not exist.".format(name, kind))
 
 
 init -1600 python hide:
 
     Accessor = Manager = python_object
     # clarify the role of each class without adding to the mro
-    # and without putting things between RevertableObject and python_object, in the mro
+    # and without having ancestors placed between RevertableObject and python_object in the mro
 
     # Accessor mixins : manage how the data is accessed
     # defines a __call__ which gets the value to set from the value_to_set() method
@@ -114,7 +114,7 @@ init -1600 python hide:
 
         identity_fields = ("dict",)
         equality_fields = ("key",)
-        kind = "key/index"
+        kind = "key or index"
 
         def __init__(self, dict, key, *args, **kwargs):
             super(Dict, self).__init__(*args, **kwargs)
