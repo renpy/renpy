@@ -306,6 +306,9 @@ but other files will not be found there.
 New Features
 ------------
 
+The new :ref:`areapicker <sl-areapicker>` displayable provides a
+way for tools to let the player select an area on the screen.
+
 :class:`Movie` can now take a `group` argument. If the Movie is
 in a group, and it has started up, and another Movie in the same
 group had displayed in the prior frame, the Movie will display the

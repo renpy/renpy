@@ -1803,15 +1803,74 @@ properties.
 
 The advanced displayable statements are:
 
-``drag``
-    Creates a :class:`Drag`. A drag can be given an optional child,
-    or the :propref:`child` style property can be used to supply the child,
-    and its focused variants. Drags also take the :propref:`focus_mask`
-    style property.
+.. sl-areapicker:
 
-``draggroup``
-    Creates a :class:`DragGroup`. A drag group may have zero or more
-    drags as its children.
+Areapicker
+----------
+
+Intended for use in development tools, this lets the user select a
+rectangular area on the screen. It takes the following properties:
+
+`cols`
+    If not None, the defaut, this divides the screen up into a grid
+    with this many columns.
+
+`rows`
+    If not None, the defaut, this divides the screen up into a grid
+    with this many rows.
+
+`position`
+    If not None, the default, this is a function called with the
+    x and y coordinates of the location the user first clicked,
+    rounded to the grid.
+
+`changed`
+    This is called with the rectangle, an (x, y, width, height) tuple,
+    whenever the user changes the selected area.
+
+`finished`
+    This is called with the rectangle, an (x, y, width, height) tuple,
+    when the user finishes selecting an area.
+
+`persist`
+    If true, the child will be shown in the selected area when the
+    selection is complete. If false, the default, the child will be
+    hidden once the selection is complete.
+
+It takes the following group of properties:
+
+* :ref:`Common Properties <common-properties>`
+
+An areapicker takes one child. The child is displayed on the screen in the
+selected area.
+
+Drag
+----
+
+Creates a :class:`Drag` that can be dragged around the screen. With the
+acception of `d`, which is supplied by the screen language, this takes
+all properties defined in that class.
+
+It also takes the following properties:
+
+* :ref:`Common Properties <common-properties>`
+* The :propref:`hover_sound` and :propref:`activate_sound` style
+  properties
+* The :propref:`focus_mask` style_property.
+
+A drag takes one child, or the :propref:`child` style property can be
+used to supply the child and its focused variants.
+
+Draggroup
+---------
+
+Creates a :class:`DragGroup`.  This takes the same properties as :class:`DragGroup`,
+and also takes the following properties:
+
+* :ref:`Common Properties <common-properties>`
+
+A drag group may have zero or more drags as its children. It may also have
+non-drags as children, in which case it functions like fixed.
 
 
 .. _sl-has:
