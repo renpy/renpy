@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -333,10 +333,22 @@ init -1600 python hide:
 
 
     for accessor in (Field, Variable, Dict, ScreenVariable, LocalVariable):
-        for manager in (Set, Toggle, Cycle):
+        for manager in (Set, Toggle, Cycle, Increment):
             name = manager.__name__ + accessor.__name__
             doc = ":doc: generated_data_action"
-            # TODO : manage the signature for each action using :args: ...
+
+            if not PY2:
+                from inspect import signature, Signature
+
+                params = []
+                for bas in (accessor, manager):
+                    sig = signature(bas.__init__)
+                    for k, param in enumerate(sig.parameters.values()):
+                        if k and (param.kind not in (param.VAR_POSITIONAL, param.VAR_KEYWORD)):
+                            params.append(param)
+
+                doc += "\n:args: " + str(Signature(parameters=params))
+
             clsdict = python_dict(identity_fields=manager.identity_fields + accessor.identity_fields,
                                   equality_fields=manager.equality_fields + accessor.equality_fields,
                                   __doc__=doc,
