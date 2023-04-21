@@ -21,6 +21,8 @@
 
 init -1600 python:
 
+    __Sentinel = object()
+
     class __FieldNotFound(Exception):
         def __init__(self, kind=None, name=None):
             super(__FieldNotFound, self).__init__("The {} {!r} does not exist.".format(kind, name))
@@ -33,8 +35,8 @@ init -1600 python:
         rv = obj
 
         for i in name.split("."):
-            rv = getattr(rv, i, __FieldNotFound)
-            if rv is __FieldNotFound:
+            rv = getattr(rv, i, __Sentinel)
+            if rv is __Sentinel:
                 raise __FieldNotFound(kind, name)
 
         return rv
