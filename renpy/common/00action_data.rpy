@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -339,7 +339,7 @@ init -1600 python hide:
             # TODO : manage the signature for each action using :args: ...
             clsdict = python_dict(identity_fields=manager.identity_fields + accessor.identity_fields,
                                   equality_fields=manager.equality_fields + accessor.equality_fields,
-                                  doc=doc,
+                                  __doc__=doc,
                                   )
 
             cls = type(name, (accessor, manager, Action, FieldEquality), clsdict)
