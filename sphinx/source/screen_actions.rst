@@ -67,14 +67,14 @@ will be. Their behavior is relatively simple to grasp:
 - The *X*\ Dict actions change the value of the key `key` in the dictionary `dict` : they change
   ``dict[key]``. This also works with lists.
 
-- The Set\ *Y* actions simply set the value of the target to the passed `value`. Note that this has nothing
+* The Set\ *Y* actions simply set the value of the target to the passed `value`. Note that this has nothing
   to do with ``set``, which is a builtin type in Python. ``target = value``
-- The Toggle\ *Y* actions invert the boolean value of their target, between `true_value` (if given and not
+* The Toggle\ *Y* actions invert the boolean value of their target, between `true_value` (if given and not
   None) and `false_value` (same). When `true_value` and `false_value` are both None, ``target = not target``
-- The Cycle\ *Y* actions cycle through the provided `values`, which must be a non-empty sequence (a list,
+* The Cycle\ *Y* actions cycle through the provided `values`, which must be a non-empty sequence (a list,
   tuple or range). If the target's value is not in the sequence at the time the action runs, it is set to
   the first value in the sequence.
-- The Increment\ *Y* actions add `amount` to their target, which defaults to 1 but may be of any type
+* The Increment\ *Y* actions add `amount` to their target, which defaults to 1 but may be of any type
   compatible with the target. ``target = target + amount``
 
 .. include:: inc/generated_data_action
