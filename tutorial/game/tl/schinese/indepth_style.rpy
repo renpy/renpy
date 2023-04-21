@@ -332,20 +332,20 @@ translate schinese style_text_5a0c2c02:
 # game/indepth_style.rpy:443
 translate schinese style_text_430c1959:
 
-    # e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e "text_align属性控制文本可视组件中多行文本的位置。例如，0.5表示居中。"
+    # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "textalign属性控制文本可视组件中多行文本的位置。例如，0.5表示居中。"
 
 # game/indepth_style.rpy:445
 translate schinese style_text_19aa0833:
 
-    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e "它不会改变文本可视组件本身的位置。为此，通常需要将text_align和xalign设置为相同的值。"
+    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value."
+    e "它不会改变文本可视组件本身的位置。为此，通常需要将textalign和xalign设置为相同的值。"
 
 # game/indepth_style.rpy:455
 translate schinese style_text_efc3c392:
 
-    # e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
-    e "当text_align和xalign都设置为1.0时，文本将正确右对齐。"
+    # e "When both textalign and xalign are set to 1.0, the text is properly right-justified."
+    e "当textalign和xalign都设置为1.0时，文本将正确右对齐。"
 
 # game/indepth_style.rpy:464
 translate schinese style_text_43be63b9:
