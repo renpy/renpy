@@ -189,12 +189,14 @@ def register(
         is also reachable if it has a label function.
 
         This can be customized by providing a reachable function. This is
-        a function that takes four arguments:
+        a function that takes five arguments (in the following, a "label"
+        may be a string or an opaque object):
 
+        * The object returned by the parse function.
         * A boolean that is true if the statement is reachable.
-        * The label of the statement. (Here, labels are strings.)
+        * The label of the statement.
         * The label of the next statement, or None if there is no next statement.
-        * If block is set to "script", the label of the first statement in the block,
+        * If `block` is set to "script", the label of the first statement in the block,
           or None if there is no block.
 
         It's expected to return a set that may contain:
