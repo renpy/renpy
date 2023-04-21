@@ -65,6 +65,11 @@ if it's set.
 
 .. include:: inc/file_action
 
+Sync Actions
+------------
+
+.. include:: sync
+
 
 .. _audio-actions:
 

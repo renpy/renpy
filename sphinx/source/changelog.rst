@@ -23,6 +23,22 @@ Changelog (Ren'Py 7.x-)
   Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1
   is released.
 
+Ren'Py Sync
+-----------
+
+Ren'Py Sync is a new feature that makes it easier to move save files between
+devices, using a server that is run as part of the Ren'Py project. For
+example, when a player has to leave, they can click "Upload Sync" on their
+computer to upload the saves and get a short code. They can then choose
+"Download Sync" on the copy of their game on their phone, enter the code,
+and keep playing as they travel.
+
+Ren'Py Sync is designed with privacy in mind - the saves are encrypted, and
+only a hash of the game title is sent to the server.
+
+Ren'Py Sync is enabled by the new :class:`UploadSync` and :class:`DownloadSync`
+actions.
+
 Speech Bubble Dialogue
 ----------------------
 
