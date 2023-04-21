@@ -322,6 +322,11 @@ but other files will not be found there.
 New Features
 ------------
 
+The new :ref:`JSONDB <jsondb>` system allows a developer to
+store data in a JSON file that can be saved alongside the
+game script. For example, a JSONDB is used to store the
+speech bubble information.
+
 The new :ref:`areapicker <sl-areapicker>` displayable provides a
 way for tools to let the player select an area on the screen.
 
