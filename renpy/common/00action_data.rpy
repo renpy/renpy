@@ -335,8 +335,12 @@ init -1600 python hide:
     for accessor in (Field, Variable, Dict, ScreenVariable, LocalVariable):
         for manager in (Set, Toggle, Cycle):
             name = manager.__name__ + accessor.__name__
-            clsdict = python_dict(identity_fields = manager.identity_fields + accessor.identity_fields,
-                                  equality_fields = manager.equality_fields + accessor.equality_fields,)
+            doc = ":doc: generated_data_action"
+            # TODO : manage the signature for each action using :args: ...
+            clsdict = python_dict(identity_fields=manager.identity_fields + accessor.identity_fields,
+                                  equality_fields=manager.equality_fields + accessor.equality_fields,
+                                  doc=doc,
+                                  )
 
             cls = type(name, (accessor, manager, Action, FieldEquality), clsdict)
 

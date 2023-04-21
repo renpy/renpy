@@ -31,7 +31,56 @@ These are actions that manage screens, interaction results, and control flow.
 Data Actions
 ------------
 
-These set or toggle data.
+A number of these actions, encompassing the most usual cases, follow a simple
+pattern shown in the following table:
+
++----------------+---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+| Managers       |                                                                          Accessors                                                            |
++                +---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+|                | Variable                  | ScreenVariable                  | LocalVariable                  | Field                  | Dict                  |
++================+===========================+=================================+================================+========================+=======================+
+| Set            | :func:`SetVariable`       | :func:`SetScreenVariable`       | :func:`SetLocalVariable`       | :func:`SetField`       | :func:`SetDict`       |
++----------------+---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+| Toggle         | :func:`ToggleVariable`    | :func:`ToggleScreenVariable`    | :func:`ToggleLocalVariable`    | :func:`ToggleField`    | :func:`ToggleDict`    |
++----------------+---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+| Cycle          | :func:`CycleVariable`     | :func:`CycleScreenVariable`     | :func:`CycleLocalVariable`     | :func:`CycleField`     | :func:`CycleDict`     |
++----------------+---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+| Increment      | :func:`IncrementVariable` | :func:`IncrementScreenVariable` | :func:`IncrementLocalVariable` | :func:`IncrementField` | :func:`IncrementDict` |
++----------------+---------------------------+---------------------------------+--------------------------------+------------------------+-----------------------+
+
+The accessors determine the target whose value will change, and the manager determines what the new value
+will be. Their behavior is relatively simple to grasp:
+
+- The *X*\ Variable actions change the value of the global variable called `name`, found in the general
+  store. The `name` argument must be a string, and can be a simple name like "strength", or one with dots
+  separating the variable from fields, like "hero.strength" or "persistent.show_cutscenes".
+- The *X*\ ScreenVariable actions change the value of the variable called `name`, associated with the
+  current top-level screen. In a `use`\ d screen, this action sets the variable in the context of the
+  screen containing all the `use`\ d one(s).
+- The *X*\ LocalVariable actions change the value of the variable called `name`, taken locally to the
+  screen it's in. This action is only useful in a screen that has been `use`\ d by another screen (for more
+  information, see :ref:`sl-use`). In all other cases, the *X*\ ScreenVariable actions should be preferred,
+  as yielding better performance and allowing more of the screen to be cached. The *X*\ LocalVariable
+  actions must be created in the context that the variable is set in - it can't be passed in from somewhere
+  else.
+- The *X*\ Field actions change the value of the field called `field` of the object `object`.
+- The *X*\ Dict actions change the value of the key `key` in the dictionary `dict` : they change
+  ``dict[key]``. This also works with lists.
+
+- The Set\ *Y* actions simply set the value of the target to the passed `value`. Note that this has nothing
+  to do with ``set``, which is a builtin type in Python. ``target = value``
+- The Toggle\ *Y* actions invert the boolean value of their target, between `true_value` (if given and not
+  None) and `false_value` (same). When `true_value` and `false_value` are both None, ``target = not target``
+- The Cycle\ *Y* actions cycle through the provided `values`, which must be a non-empty sequence (a list,
+  tuple or range). If the target's value is not in the sequence at the time the action runs, it is set to
+  the first value in the sequence.
+- The Increment\ *Y* actions add `amount` to their target, which defaults to 1 but may be of any type
+  compatible with the target. ``target = target + amount``
+
+.. include:: inc/generated_data_action
+
+These other data actions do not follow the pattern above. Some of them are related to the ``set`` type,
+not to be confused with the Set\ *Y* actions above.
 
 .. include:: inc/data_action
 
