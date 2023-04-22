@@ -51,36 +51,45 @@ pattern shown in the following table:
 The accessors determine the target whose value will change, and the manager determines what the new value
 will be. Their behavior is relatively simple to grasp:
 
-- The *X*\ Variable actions change the value of the global variable called `name`, found in the general
+- The :abbr:`-Variable (SetVariable, ToggleVariable, CycleVariable, IncrementVariable)`
+  actions change the value of the global variable called `name`, found in the general
   store. The `name` argument must be a string, and can be a simple name like "strength", or one with dots
   separating the variable from fields, like "hero.strength" or "persistent.show_cutscenes".
-- The *X*\ ScreenVariable actions change the value of the variable called `name`, associated with the
+- The :abbr:`-ScreenVariable (SetScreenVariable, ToggleScreenVariable, CycleScreenVariable, IncrementScreenVariable)`
+  actions change the value of the variable called `name`, associated with the
   current top-level screen. In a `use`\ d screen, this action sets the variable in the context of the
   screen containing all the `use`\ d one(s).
-- The *X*\ LocalVariable actions change the value of the variable called `name`, taken locally to the
+- The :abbr:`-LocalVariable (SetLocalVariable, ToggleLocalVariable, CycleLocalVariable, IncrementLocalVariable)`
+  actions change the value of the variable called `name`, taken locally to the
   screen it's in. This action is only useful in a screen that has been `use`\ d by another screen (for more
-  information, see :ref:`sl-use`). In all other cases, the *X*\ ScreenVariable actions should be preferred,
-  as yielding better performance and allowing more of the screen to be cached. The *X*\ LocalVariable
+  information, see :ref:`sl-use`). In all other cases, the -ScreenVariable actions should be preferred,
+  as yielding better performance and allowing more of the screen to be cached. The -LocalVariable
   actions must be created in the context that the variable is set in - it can't be passed in from somewhere
   else.
-- The *X*\ Field actions change the value of the field called `field` of the object `object`.
-- The *X*\ Dict actions change the value of the key `key` in the dictionary `dict` : they change
+- The :abbr:`-Field (SetField, ToggleField, CycleField, IncrementField)`
+  actions change the value of the field called `field` of the object `object`.
+- The :abbr:`-Dict (SetDict, ToggleDict, CycleDict, IncrementDict)`
+  actions change the value of the key `key` in the dictionary `dict` : they change
   ``dict[key]``. This also works with lists.
 
-* The Set\ *Y* actions simply set the value of the target to the passed `value`. Note that this has nothing
+* The :abbr:`Set- (SetVariable, SetScreenVariable, SetLocalVariable, SetField, SetDict)`
+  actions simply set the value of the target to the passed `value`. Note that this has nothing
   to do with ``set``, which is a builtin type in Python. ``target = value``
-* The Toggle\ *Y* actions invert the boolean value of their target, between `true_value` (if given and not
+* The :abbr:`Toggle- (ToggleVariable, ToggleScreenVariable, ToggleLocalVariable, ToggleField, ToggleDict)`
+  actions invert the boolean value of their target, between `true_value` (if given and not
   None) and `false_value` (same). When `true_value` and `false_value` are both None, ``target = not target``
-* The Cycle\ *Y* actions cycle through the provided `values`, which must be a non-empty sequence (a list,
+* The :abbr:`Cycle- (CycleVariable, CycleScreenVariable, CycleLocalVariable, CycleField, CycleDict)`
+  actions cycle through the provided `values`, which must be a non-empty sequence (a list,
   tuple or range). If the target's value is not in the sequence at the time the action runs, it is set to
   the first value in the sequence.
-* The Increment\ *Y* actions add `amount` to their target, which defaults to 1 but may be of any type
+* The :abbr:`Increment- (IncrementVariable, IncrementScreenVariable, IncrementLocalVariable, IncrementField, IncrementDict)`
+  actions add `amount` to their target, which defaults to 1 but may be of any type
   compatible with the target. ``target = target + amount``
 
 .. include:: inc/generated_data_action
 
 These other data actions do not follow the pattern above. Some of them are related to the ``set`` type,
-not to be confused with the Set\ *Y* actions above.
+not to be confused with the Set- actions above.
 
 .. include:: inc/data_action
 
