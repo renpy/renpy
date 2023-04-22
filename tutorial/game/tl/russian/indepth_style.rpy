@@ -333,19 +333,19 @@ translate russian style_text_5a0c2c02:
 # game/indepth_style.rpy:443
 translate russian style_text_430c1959:
 
-    # e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e "Параметр text_align контролирует выравнивание текста по горизонтали по всему объекту. Например, 0.5 означает, что выравнивание у нас идёт по центру."
+    # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "Параметр textalign контролирует выравнивание текста по горизонтали по всему объекту. Например, 0.5 означает, что выравнивание у нас идёт по центру."
 
 # game/indepth_style.rpy:445
 translate russian style_text_19aa0833:
 
-    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e "Но он не изменяет саму позицию текстового объекта. Для этого вам потребуется привести text_align вместе с xalign к одному значению."
+    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value."
+    e "Но он не изменяет саму позицию текстового объекта. Для этого вам потребуется привести textalign вместе с xalign к одному значению."
 
 # game/indepth_style.rpy:455
 translate russian style_text_efc3c392:
 
-    # e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
+    # e "When both textalign and xalign are set to 1.0, the text is properly right-justified."
     e "Когда оба параметры были установлены на 1.0, текст стал выровнен по правой стороне."
 
 # game/indepth_style.rpy:464
@@ -807,4 +807,3 @@ translate russian strings:
     # indepth_style.rpy:886
     old "Sixth Child"
     new "Шестой"
-

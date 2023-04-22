@@ -19,6 +19,10 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**Texture Memory** Ren'Py now accounts for texture memory more precisely.
+In general, games can raise :var:`config.image_cache_size_mb` by 33%, and
+use the same amount of memory.
+
 
 **Audio Fadeout** When audio is stopped or changed using ``play``, there is now
 a default fadeout of 0.016 seconds, to prevent pops. This is controlled by

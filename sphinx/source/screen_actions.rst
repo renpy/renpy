@@ -126,7 +126,7 @@ if it's set.
 Sync Actions
 ------------
 
-.. include:: sync
+.. include:: inc/sync
 
 
 .. _audio-actions:

@@ -23,6 +23,14 @@ Changelog (Ren'Py 7.x-)
   Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1
   is released.
 
+Documentation and Improvements and Fixes
+----------------------------------------
+
+There have been many documentation improvements and fixes, many of which
+are not in the changelog.
+
+The documentation now has a new theme.
+
 Ren'Py Sync
 -----------
 
@@ -47,8 +55,51 @@ system that allows dialogue to be displayed in comic-like speech bubbles, and
 includes an interactive editor that allows the speech bubbles to be
 repositions, and the look of a bubble to be changed interactively.
 
-Other Platforms
----------------
+Platform Improvements
+---------------------
+
+Web
+^^^
+
+Ren'Py 8.1 can now be used to create games that run inside the web
+browser. When running inside the web browser, Ren'Py used Python 3.11
+(3.9 is used on all other platforms).
+
+Ren'Py can be used to create progressive web apps that run inside the
+browser. Depending on the browser and platforms, it may be possible to
+install a web game on a device in a manner similar to a native application.
+Other platforms allow pinning a web app to the home screen.
+
+There is a new :func:`Preference`, "web cache preload". If enabled,
+the game will download all game data to the device from the web server.
+When online, the game will check the downloaded data, and only download
+newer data if required. When offline, the game will use the downloaded
+data.
+
+Ren'Py can now play back movies on the web platform. Only movies that
+the browser supports can be played.
+
+Macintosh
+^^^^^^^^^
+
+On the Macintosh, Ren'Py now uses a universal binary that can run natively
+on both Intel and Apple Silicon processors.
+
+Android
+^^^^^^^
+
+Android has been changed so that the ``android.keystore`` file and
+``bundle.keystore`` file are expected to be found in the project's base
+directory, and not in the rapt directory. This allows projects to be
+built with different keys, and helps ensure the same keys are used
+with multiple Android versions.
+
+When the new "Generate Keys" button is pressed, if old keystore files
+exist, Ren'Py will offer to copy the old files into the project.
+
+The android configuration file has been renamed from ``.android.json`` to
+``android.json``. Ren'Py will automatically create the new file if the old
+exists.
 
 Sticky Layers
 -------------
@@ -289,28 +340,6 @@ prompting during upgrades to Ren'Py 8.1/7.6 or later.
 There is intentionally no way to disable this feature, as it's important
 for end-users to be warned about the security issues when possible.
 
-Web
----
-
-The web platform now fully supports playing videos through the :class:`Movie`
-displayable, when it used to only support :func:`renpy.movie_cutscene`.
-
-Android
---------
-
-Android has been changed so that the ``android.keystore`` file and
-``bundle.keystore`` file are expected to be found in the project's base
-directory, and not in the rapt directory. This allows projects to be
-built with different keys, and helps ensure the same keys are used
-with multiple Android versions.
-
-When the new "Generate Keys" button is pressed, if old keystore files
-exist, Ren'Py will offer to copy the old files into the project.
-
-The android configuration file has been renamed from ``.android.json`` to
-``android.json``. Ren'Py will automatically create the new file if the old
-exists.
-
 New Search Paths
 ----------------
 
@@ -319,8 +348,29 @@ and font files in the ``game/fonts`` directory, if not found in the game
 directory. Images will still be searched for in the ``game/images`` directory,
 but other files will not be found there.
 
-New Features
-------------
+New 3D Stage Properties
+-----------------------
+
+There are several new properties that affect the 3D Stage:
+
+:tpref:`point_to`
+    Selects the point that the camera is looking at, or has a sprite
+    point at a point or the camera.
+
+:tpref:`xrotate`, :tpref:`yrotate`, :tpref:`zrotate`
+    Rotates a sprite or the camera around the given axis.
+
+:tpref:`orientation`
+    Rotates a sprite or the camera around all three axes at once,
+    using the shortest path on a sphere.
+
+
+
+More New Features
+-----------------
+
+The :ref:`input <sl-input>` displayable can now take multiline
+input.
 
 The new :ref:`JSONDB <jsondb>` system allows a developer to
 store data in a JSON file that can be saved alongside the
@@ -457,6 +507,16 @@ Disabling Dialogue's :ref:`monologue-mode` is now possible using the
 
 Other Changes
 -------------
+
+Ren'Py will now produce errors when a screen sets two conflicting
+properties, like :propref:`align`, and :propref:`xalign`. Previously,
+the behavior of this was undefined.
+
+Lint will now check your game for statements that can never be reached,
+and will report the statements.
+
+Lint will now check your game for translations that are no longer being
+used, and report those.
 
 It's possible to configure the channels used to upload to itch.io
 using the :var:`build.itch_channels` variable.

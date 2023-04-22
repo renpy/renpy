@@ -333,20 +333,20 @@ translate ukrainian style_text_5a0c2c02:
 # game/indepth_style.rpy:443
 translate ukrainian style_text_430c1959:
 
-    # e "The text_align property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
-    e "Властивість text_align керує розташуванням кількох рядків тексту в тексті, що відображається. Наприклад, 0,5 означає по центру."
+    # e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "Властивість textalign керує розташуванням кількох рядків тексту в тексті, що відображається. Наприклад, 0,5 означає по центру."
 
 # game/indepth_style.rpy:445
 translate ukrainian style_text_19aa0833:
 
-    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the text_align and xalign to the same value."
-    e "Це не змінює позицію самого відображуваного тексту. Для цього вам часто потрібно встановити те саме значення для text_align і xalign."
+    # e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value."
+    e "Це не змінює позицію самого відображуваного тексту. Для цього вам часто потрібно встановити те саме значення для textalign і xalign."
 
 # game/indepth_style.rpy:455
 translate ukrainian style_text_efc3c392:
 
-    # e "When both text_align and xalign are set to 1.0, the text is properly right-justified."
-    e "Якщо як text_align, так і xalign встановлено значення 1.0, текст правильно вирівнюється по правому краю."
+    # e "When both textalign and xalign are set to 1.0, the text is properly right-justified."
+    e "Якщо як textalign, так і xalign встановлено значення 1.0, текст правильно вирівнюється по правому краю."
 
 # game/indepth_style.rpy:464
 translate ukrainian style_text_43be63b9:
@@ -807,4 +807,3 @@ translate ukrainian strings:
     # game/indepth_style.rpy:884
     old "Sixth Child"
     new "Шостий дочірний"
-

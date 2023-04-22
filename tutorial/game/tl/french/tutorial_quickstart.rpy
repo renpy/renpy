@@ -384,10 +384,10 @@ translate french tutorial_images_a5e7eb24:
     e "La déclaration 'show' ajoute une image au dessus de toutes les images déjà à l’écran."
 
 # game/tutorial_quickstart.rpy:248
-translate french tutorial_images_2fc7baee:
+translate french tutorial_images_86e11de2:
 
-    # e "If there was already an image with the same tag, the new image is used to replace the old one."
-    e "S’il y avait déjà une image avec la même étiquette, le même tag, une nouvelle image remplacerait l’ancienne."
+    # e "If there is already an image with the same tag, the new image is used to replace the old one."
+    e "Si une image a déjà le même tag, la nouvelle image remplace l'ancienne."
 
 # game/tutorial_quickstart.rpy:250
 translate french tutorial_images_802825f2:
@@ -618,10 +618,10 @@ translate french tutorial_music_3555b640:
     e "Les sons sont stockés dans des fichiers sons. Ren’Py supporte les formats Opus, Ogg Vorbis et mp3."
 
 # game/tutorial_quickstart.rpy:449
-translate french tutorial_music_a776b6ad:
+translate french tutorial_music_a2ffbe9b:
 
     # e "Let's check out some of the commands that can affect the music channel."
-    e "Regardons ensemble quelques commandes qui affectent le canal musical (music channel)."
+    e "Allons voir quelques commandes qui s'appliquent à la piste de musique."
 
 # game/tutorial_quickstart.rpy:454
 translate french tutorial_music_8b606a55:
@@ -860,15 +860,3 @@ translate french strings:
     # tutorial_quickstart.rpy:591
     old "Guy Shy"
     new "Homme timide"
-
-# game/tutorial_quickstart.rpy:248
-translate french tutorial_images_86e11de2:
-
-    # e "If there is already an image with the same tag, the new image is used to replace the old one."
-    e "Si une image a déjà le même tag, la nouvelle image remplace l'ancienne."
-
-# game/tutorial_quickstart.rpy:449
-translate french tutorial_music_a2ffbe9b:
-
-    # e "Let's check out some of the commands that can affect the music channel."
-    e "Allons voir quelques commandes qui s'appliquent à la piste de musique."
