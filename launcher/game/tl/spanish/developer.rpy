@@ -211,7 +211,7 @@
     # renpy/common/00console.rpy:784
     old "stack: print the return stack"
     new "stack: imprime la pila de retorno"
-    
+
     # renpy/common/00console.rpy:781
     old "help: show this help\n help <expr>: show signature and documentation of <expr>"
     new "help: muestra esta ayuda\n help <expr>: muestra la firma y la documentación de <expr>"

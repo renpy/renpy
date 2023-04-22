@@ -680,7 +680,7 @@ translate spanish strings:
     # gui/game/screens.rpy:1049
     old "Opens the accessibility menu."
     new "Abre el menú de accesibilidad."
-    
+
     # gui/game/screens.rpy:1397
     old "## Bubble screen"
     new "## Pantalla de globos"
