@@ -10,26 +10,13 @@ Changelog (Ren'Py 7.x-)
 8.1 / 7.6
 =========
 
-..
-  Pending Deprecations
-  --------------------
-
-  The original OpenGL renderer will be removed 1 year after Ren'Py 8.1 is released.
-  If your game sets :var:`config.gl2` to ``False``, you should set it to ``True``,
-  and make sure your game runs well. If it doesn't, please report any issues.
-  When reporting issues, please determine the hardware (device and GPU),
-  os and driver versions, and year of manufacture.
-
-  Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1
-  is released.
-
-Documentation and Improvements and Fixes
-----------------------------------------
+Documentation Improvements and Fixes
+------------------------------------
 
 There have been many documentation improvements and fixes, many of which
 are not in the changelog.
 
-The documentation now has a new theme.
+The documentation now has a new theme, including a dark mode.
 
 Ren'Py Sync
 -----------
@@ -65,7 +52,7 @@ Ren'Py 8.1 can now be used to create games that run inside the web
 browser. When running inside the web browser, Ren'Py used Python 3.11
 (3.9 is used on all other platforms).
 
-Ren'Py can be used to create progressive web apps that run inside the
+On Ren'Py 8.1, Ren'Py can be used to create progressive web apps that run inside the
 browser. Depending on the browser and platforms, it may be possible to
 install a web game on a device in a manner similar to a native application.
 Other platforms allow pinning a web app to the home screen.
@@ -602,7 +589,7 @@ A number of documented functions, classes and Actions have seen their signatures
 (meaning the arguments they take) corrected in the documentation, making them
 safer to use.
 
-When Ren'Py used to normalize every whitespaces into standard spaces, it now
+Ren'Py used to normalize all whitespace to standard spaces, and now
 supports non-standard spaces such as \\u3000, the full-width ideographic space.
 
 
