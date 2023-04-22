@@ -132,6 +132,7 @@ renpy_pure("unelide_filename")
 renpy_pure("known_languages")
 renpy_pure("check_text_tags")
 renpy_pure("filter_text_tags")
+renpy_pure("split_properties")
 
 import time
 import sys
