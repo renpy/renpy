@@ -609,14 +609,17 @@ def display_say(
             if renpy.config.scry_extend:
 
                 scry = renpy.exports.scry().next()
+                scry_count = 0
 
-                while scry:
+
+                while scry and scry_count < 64:
                     if scry.extend_text is renpy.ast.DoesNotExtend:
                         break
                     elif scry.extend_text is not None:
                         extend_text += scry.extend_text
 
                     scry = scry.next()
+                    scry_count += 1
 
                 if extend_text:
                     extend_text = "{done}" + extend_text
