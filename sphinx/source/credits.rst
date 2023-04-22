@@ -239,10 +239,12 @@ the omission in future versions.
 * William Tumeo
 * Winter Wolves
 * Xavi-Mat
+* Xareyli
 * Xela
 * Zedraxlo
 * Zhangning
 * Zigmut
+* ねゆんせ
 * 琴梨梨
 
 And your lead developer,
