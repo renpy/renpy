@@ -1803,7 +1803,7 @@ properties.
 
 The advanced displayable statements are:
 
-.. sl-areapicker:
+.. _sl-areapicker:
 
 Areapicker
 ----------

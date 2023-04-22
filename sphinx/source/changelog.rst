@@ -55,6 +55,52 @@ system that allows dialogue to be displayed in comic-like speech bubbles, and
 includes an interactive editor that allows the speech bubbles to be
 repositions, and the look of a bubble to be changed interactively.
 
+Platform Improvements
+---------------------
+
+Web
+^^^
+
+Ren'Py 8.1 can now be used to create games that run inside the web
+browser. When running inside the web browser, Ren'Py used Python 3.11
+(3.9 is used on all other platforms).
+
+Ren'Py can be used to create progressive web apps that run inside the
+browser. Depending on the browser and platforms, it may be possible to
+install a web game on a device in a manner similar to a native application.
+Other platforms allow pinning a web app to the home screen.
+
+There is a new :func:`Preference`, "web cache preload". If enabled,
+the game will download all game data to the device from the web server.
+When online, the game will check the downloaded data, and only download
+newer data if required. When offline, the game will use the downloaded
+data.
+
+Ren'Py can now play back movies on the web platform. Only movies that
+the browser supports can be played.
+
+Macintosh
+^^^^^^^^^
+
+On the Macintosh, Ren'Py now uses a universal binary that can run natively
+on both Intel and Apple Silicon processors.
+
+Android
+^^^^^^^
+
+Android has been changed so that the ``android.keystore`` file and
+``bundle.keystore`` file are expected to be found in the project's base
+directory, and not in the rapt directory. This allows projects to be
+built with different keys, and helps ensure the same keys are used
+with multiple Android versions.
+
+When the new "Generate Keys" button is pressed, if old keystore files
+exist, Ren'Py will offer to copy the old files into the project.
+
+The android configuration file has been renamed from ``.android.json`` to
+``android.json``. Ren'Py will automatically create the new file if the old
+exists.
+
 Sticky Layers
 -------------
 
@@ -319,52 +365,6 @@ There are several new properties that affect the 3D Stage:
     using the shortest path on a sphere.
 
 
-Platforms
----------
-
-Web
-^^^
-
-Ren'Py 8.1 can now be used to create games that run inside the web
-browser. When running inside the web browser, Ren'Py used Python 3.11
-(3.9 is used on all other platforms).
-
-Ren'Py can be used to create progressive web apps that run inside the
-browser. Depending on the browser and platforms, it may be possible to
-install a web game on a device in a manner similar to a native application.
-Other platforms allow pinning a web app to the home screen.
-
-There is a new :function:`Preference`, "web cache preload". If enabled,
-the game will download all game data to the device from the web server.
-When online, the game will check the downloaded data, and only download
-newer data if required. When offline, the game will use the downloaded
-data.
-
-
-Ren'Py can now play back movies on the web platform. Only movies that
-the browser supports can be played.
-
-Macintosh
-^^^^^^^^^
-
-On the Macintosh, Ren'Py now uses a universal binary that can run natively
-on both Intel and Apple Silicon processors.
-
-Android
-^^^^^^^
-
-Android has been changed so that the ``android.keystore`` file and
-``bundle.keystore`` file are expected to be found in the project's base
-directory, and not in the rapt directory. This allows projects to be
-built with different keys, and helps ensure the same keys are used
-with multiple Android versions.
-
-When the new "Generate Keys" button is pressed, if old keystore files
-exist, Ren'Py will offer to copy the old files into the project.
-
-The android configuration file has been renamed from ``.android.json`` to
-``android.json``. Ren'Py will automatically create the new file if the old
-exists.
 
 More New Features
 -----------------
