@@ -10,7 +10,7 @@
 
     # _developer/developer.rpym:45
     old "Reload Game (Shift+R)"
-    new "Reiniciar juego (Shift+R)"
+    new "Reiniciar juego (Mayús+R)"
 
     # _developer/developer.rpym:47
     old "Console (Shift+O)"
@@ -223,3 +223,8 @@
     # renpy/common/_developer/developer.rpym:51
     old "Persistent Viewer"
     new "Visor de datos persistentes"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    new "Editor de burbujas de diálogo (Mayús+B)"
+    
