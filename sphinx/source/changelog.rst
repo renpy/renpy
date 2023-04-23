@@ -222,7 +222,7 @@ in a valid Python file. For example::
 
     """renpy
     init python:
-    """"
+    """
 
     flag = True
 
