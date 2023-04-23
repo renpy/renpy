@@ -700,3 +700,12 @@ translate spanish strings:
     # gui/game/screens.rpy:680
     old "Download Sync"
     new "Descargar Sync"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    new "## La pantalla de burbujas se utiliza para mostrar el diálogo al jugador cuando se utilizan burbujas de diálogo. La pantalla de burbujas toma los mismos parámetros que la pantalla \"say\", debe crear un visualizable con el id de \"what\", y puede crear visualizables con los ids \"namebox\", \"who\", y \"window\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    
