@@ -80,7 +80,7 @@ def load(fn):
         elif exception.rtype == 'video':
             # Video files are downloaded by the browser, so return
             # the file name instead of a file-like object
-            return 'url:' + renpy.config.web_video_base + "/" + fn
+            return 'url:' + renpy.config.web_video_base + "/" + exception.relpath
 
         # temporary 1s placeholder, will retry loading when looping:
         rv = open(os.path.join(renpy.config.commondir, '_dl_silence.ogg'), 'rb') # type: ignore
