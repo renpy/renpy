@@ -724,13 +724,13 @@
     old "## Bubble screen"
     new "## Screen des bulles"
 
-    # gui/game/screens.rpy:1399
-    old "## The Bubble screen is used to display dialogue to the player when using speech bubbles. The Bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The Bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
     new "## Le screen des bulles est utilisé pour afficher des dialogues en utilisant des bulles. Ce screen prend les mêmes paramètres que le screen say, doit prévoir un displayable avec l'id \"what\", et peut créer des displayables avec les ids \"namebox\", \"who\", et \"window\"."
 
-    # gui/game/screens.rpy:1404
-    old "## https://www.renpy.org/doc/html/screen_special.html#bubble"
-    new "## https://www.renpy.org/doc/html/screen_special.html#bubble"
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
 
     # gui/game/screens.rpy:676
     old "Upload Sync"

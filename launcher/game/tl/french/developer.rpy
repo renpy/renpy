@@ -207,3 +207,7 @@
     # renpy/common/00console.rpy:784
     old "stack: print the return stack"
     new "stack : affiche la pile de retour"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    new "Éditeur de bulles de dialogue (Shift+B)"
