@@ -260,13 +260,13 @@ init -1600 python hide:
         equality_fields = ("values", "loop")
 
         def __init__(self, values, *args, **kwargs):
-            super(Cycle, self).__init__(*args, **kwargs)
-
-            if kwargs.get("reverse", False):
+            if kwargs.pop("reverse", False):
                 values = values[::-1]
                 # the reversed builtin returns a non-indexable iterator
                 # and we only support sequences anyway - iterators are not picklable
-            self.loop = kwargs.get("loop", True)
+            self.loop = kwargs.pop("loop", True)
+
+            super(Cycle, self).__init__(*args, **kwargs)
 
             self.values = renpy.easy.to_tuple(values)
 
