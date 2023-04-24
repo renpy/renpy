@@ -233,7 +233,7 @@ init -1100 python in _sync:
                 return None
 
 
-        def download_content(hashed, url):
+        def download_content(url):
             import emscripten
             import time
             import os
