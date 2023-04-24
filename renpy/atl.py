@@ -293,7 +293,6 @@ class Context(object):
         Returns True if any variable cannot be compared.
         """
 
-
         try:
 
             if renpy.config.at_transform_compare_full_context:
@@ -336,9 +335,16 @@ class ATLTransformBase(renpy.object.Object):
     def __init__(self, atl, context, parameters):
 
         # The constructor will be called by atltransform.
-
         if parameters is None:
             parameters = ATLTransformBase.parameters
+        else:
+
+            # Apply the default parameters.
+            context = context.copy()
+
+            for k, v in parameters.parameters:
+                if v is not None:
+                    context[k] = renpy.python.py_eval(v, locals=context)
 
         # The parameters that we take.
         self.parameters = parameters
@@ -391,6 +397,7 @@ class ATLTransformBase(renpy.object.Object):
 
         if renpy.game.context().init_phase:
             compile_queue.append(self)
+
 
     def _handles_event(self, event):
 
@@ -469,10 +476,6 @@ class ATLTransformBase(renpy.object.Object):
         _args = kwargs.pop("_args", None)
 
         context = self.context.context.copy()
-
-        for k, v in self.parameters.parameters:
-            if v is not None:
-                context[k] = renpy.python.py_eval(v)
 
         positional = list(self.parameters.positional)
         args = list(args)
