@@ -28,7 +28,7 @@ locations.
 
 Pressing the properties buttons will select between sets of properties
 associated with the speech bubble. For the default speech bubble, the
-different properties control the positionm of the speech bubble tail.
+different properties control the position of the speech bubble tail.
 
 Once you've changed the area or properties for a character (or group of
 characters with the same image tage), those properties remain set until
@@ -42,12 +42,13 @@ clicking on a button will prevent the current line from setting the value.
 Tips
 ----
 
-The speech bubbles use the same identifiers used by the translation system.
-These identifiers can change if:
+The speech bubbles use the same identifiers used by the translation system,
+see the :ref:`Translation Tips <translation-tips>` for more information
+about them. These identifiers can change if:
 
 * The text of a line changes.
-* A second line with the same text inside the same label is added or removed.
-* The label before the line is added or removes (however, adding or removing
+* Another line with the same text inside the same label is added or removed.
+* A label before the line is added or removed (however, adding or removing
   a label with the ``hide`` clause will not change the translation identifier).
 
 If you edit a scene, it's suggested that you replay through it to make sure
@@ -57,7 +58,7 @@ the changes did not affect speech bubble placement.
 Configuration Variables
 -----------------------
 
-The speech bubble system is controlled by variables in th ``bubble`` namespace,
+The speech bubble system is controlled by variables in the ``bubble`` namespace,
 and by the ``bubble`` screen and its associated styles.
 
 The ``bubble`` namespace contains the following variables:
@@ -89,8 +90,8 @@ The ``bubble`` namespace contains the following variables:
 
     These are properties, apart from the area, that can be used to customize
     the speech bubble. This is a map from the name of a set of proprerties
-    to a dictionary of properties and values. These properties supersede the properties given
-    the character, and are then supplied to the ``bubble`` screen.
+    to a dictionary of properties and values. These properties supersede those
+    given to the character, and are then supplied to the ``bubble`` screen.
 
     This uses the same prefixing system as :func:`Character` does. Properties
     beginning with ``window_`` have the prefix removed, and are passed to the

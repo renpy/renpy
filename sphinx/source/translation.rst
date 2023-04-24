@@ -203,6 +203,8 @@ into::
         $ latin_points = to_roman_numerals(points)
         e "Ouyay oredscay [latin_points] ointspay!"
 
+.. _translation-tips:
+
 Tips
 ----
 
