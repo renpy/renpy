@@ -142,11 +142,11 @@ displayable in the x and y axes. Of course, transforms can also be used. ::
 If you try this, you'll see an empty space around the background. That's
 because by moving it back, it becomes smaller, and doesn't fill the screen.
 Ren'Py has an easy way of fixing this problem - :tpref:`zzoom`. Setting
-the tpref:`zzoom` property to True will scale an image by the amount it was shrunk
+the :tpref:`zzoom` property to True will scale an image by the amount it was shrunk
 due to having a negative zpos. It's useful for backgrounds. ::
 
     transform zbg:
-        zpos -100 zzoom False
+        zpos -100 zzoom True
 
 It's also possible to use ATL to vary zpos, just like you would xpos and
 ypos. ::
