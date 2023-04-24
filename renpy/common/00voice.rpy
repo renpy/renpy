@@ -183,7 +183,7 @@ init -1500 python:
         if volume is None:
             return _CharacterVolumeValue(voice_tag)
         else:
-            if config.quadratic_volume:
+            if config.quadratic_volumes:
                 return SetDict(persistent._character_volume, voice_tag, volume ** 2)
             else:
                 return SetDict(persistent._character_volume, voice_tag, volume)
