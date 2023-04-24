@@ -138,7 +138,7 @@ the store can be set to non-constant with (for example)::
 and 1.0 is 0 dB (power). To use the old format, where the samples were multiplied
 by volume ** 2, use::
 
-    define config.quadratic_volume = True
+    define config.quadratic_volumes = True
 
 Alternatively, you can determine new default volumes for :var:`config.default_music_volume`,
 :var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` variables. If any
