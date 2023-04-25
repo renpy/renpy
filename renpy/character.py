@@ -24,7 +24,7 @@
 from __future__ import division, absolute_import, with_statement, print_function, unicode_literals
 from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, round, str, tobytes, unicode # *
 
-from typing import Any
+from typing import Any, Literal
 
 import renpy
 
@@ -376,8 +376,9 @@ class SlowDone(object):
     delay = None
     ctc_kwargs = { }
     last_pause = True
+    no_wait=False
 
-    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause): # @ReservedAssignment
+    def __init__(self, ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause, no_wait):
         self.ctc = ctc
         self.ctc_position = ctc_position
         self.callback = callback
@@ -387,6 +388,7 @@ class SlowDone(object):
         self.delay = delay
         self.ctc_kwargs = ctc_kwargs
         self.last_pause = last_pause
+        self.no_wait = no_wait
 
     def __call__(self):
 
@@ -407,7 +409,7 @@ class SlowDone(object):
                 renpy.exports.restart_interaction()
 
         if self.delay is not None:
-            renpy.ui.pausebehavior(self.delay, True, voice=self.last_pause)
+            renpy.ui.pausebehavior(self.delay, True, voice=self.last_pause and not self.no_wait, self_voicing=self.last_pause)
             renpy.exports.restart_interaction()
 
         for c in self.callback:
@@ -546,9 +548,6 @@ def display_say(
             # True if the is the last pause in a line of dialogue.
             last_pause = (i == len(pause_start) - 1)
 
-            if dtt.no_wait:
-                last_pause = False
-
             # If we're going to do an interaction, then saybehavior needs
             # to be here.
             if advance:
@@ -601,7 +600,29 @@ def display_say(
                 c("show", interact=interact, type=type, **cb_args)
 
             # Create the callback that is called when the slow text is done.
-            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause)
+            slow_done = SlowDone(what_ctc, ctc_position, callback, interact, type, cb_args, delay, ctc_kwargs, last_pause, dtt.no_wait)
+
+            extend_text = ""
+
+            # Predict extend statements, and add them to the text so that re-layout
+            # is not required.
+            if renpy.config.scry_extend:
+
+                scry = renpy.exports.scry().next()
+                scry_count = 0
+
+
+                while scry and scry_count < 64:
+                    if scry.extend_text is renpy.ast.DoesNotExtend:
+                        break
+                    elif scry.extend_text is not None:
+                        extend_text += scry.extend_text
+
+                    scry = scry.next()
+                    scry_count += 1
+
+                if extend_text:
+                    extend_text = "{done}" + extend_text
 
             # Show the text.
             if multiple:
@@ -636,6 +657,9 @@ def display_say(
                         what_text.set_last_ctc([ u"\ufeff", ctc, ])
 
                 if what_text.text[0] == what_string:
+
+                    if extend_text:
+                        what_text.text[0] += extend_text
 
                     # Update the properties of the what_text widget.
                     what_text.start = start
@@ -771,7 +795,7 @@ class ADVCharacter(object):
             self,
             name=NotSet,
             kind=None,
-            **properties): # type: (str|None|renpy.object.Sentinel, None|str|ADVCharacter, Any) -> None
+            **properties): # type: (str|None|renpy.object.Sentinel, Literal[False]|None|ADVCharacter, Any) -> None
 
         if kind is None:
             kind = renpy.store.adv
@@ -788,11 +812,11 @@ class ADVCharacter(object):
                 return getattr(kind, n)
 
         # Similar, but it grabs the value out of kind.display_args instead.
-        def d(n):
+        def d(n): # type (str) -> Any
             if n in properties:
                 return properties.pop(n)
             else:
-                return kind.display_args[n]
+                return kind.display_args[n] # type: ignore
 
         self.name = v('name')
         self.who_prefix = v('who_prefix')
@@ -814,7 +838,7 @@ class ADVCharacter(object):
             if "image" in properties:
                 self.image_tag = properties.pop("image")
             else:
-                self.image_tag = kind.image_tag
+                self.image_tag = kind.image_tag # type: ignore
         else:
             self.image_tag = None
 
@@ -1237,6 +1261,11 @@ class ADVCharacter(object):
         if not isinstance(what, basestring):
             raise Exception("Character expects its what argument to be a string, got %r." % (what,))
 
+        if renpy.store._side_image_attributes_reset:
+            renpy.store._side_image_attributes = None
+            renpy.store._side_image_attributes_reset = False
+
+
         # Figure out multiple and final. Multiple is None if this is not a multiple
         # dialogue, or a step and the total number of steps in a multiple interaction.
 
@@ -1479,6 +1508,9 @@ def Character(name=NotSet, kind=None, **properties):
         be used to define a template character, and then copy that
         character with changes.
 
+        This can also be a namespace, in which case the 'character'
+        variable in the namespace is used as the kind.
+
     **Linked Image.**
     An image tag may be associated with a Character. This allows a
     say statement involving this character to display an image with
@@ -1631,6 +1663,8 @@ def Character(name=NotSet, kind=None, **properties):
 
     if kind is None:
         kind = renpy.store.adv
+
+    kind = getattr(kind, "character", kind)
 
     return type(kind)(name, kind=kind, **properties)
 

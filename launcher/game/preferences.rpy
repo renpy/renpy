@@ -248,8 +248,8 @@ screen preferences():
                             add HALF_SPACER
 
                             textbutton _("Default theme") style "l_checkbox" action [SetField(persistent, "theme", None), RestartAtPreferences() ]
-                            textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark", None), RestartAtPreferences()]
-                            textbutton _("Custom theme") style "l_checkbox" action [SetField(persistent, "theme", "custom", None), RestartAtPreferences()]
+                            textbutton _("Dark theme") style "l_checkbox" action [SetField(persistent, "theme", "dark"), RestartAtPreferences()]
+                            textbutton _("Custom theme") style "l_checkbox" action [SetField(persistent, "theme", "custom"), RestartAtPreferences()]
 
                             add SPACER
 

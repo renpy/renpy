@@ -329,6 +329,12 @@ Occasionally Used
     ::
         define config.autosave_callback = Notify("Autosaved.")
 
+.. var:: config.autosave_prefix_callback = None
+
+    If not None, this is a function that is called with no arguments, and
+    return the prefix of autosave files. The default prefix used is "auto-",
+    which means the autosave slots will be "auto-1", "auto-2", etc.
+
 .. var:: config.autosave_slots = 10
 
     The number of slots used by autosaves.
@@ -520,6 +526,35 @@ Occasionally Used
 
     If not None, this is a sound file that is played when exiting the
     game menu.
+
+.. var:: config.file_slotname_callback = None
+
+    If not None, this is a function that is used by the :ref:`file actions <file-actions>`
+    to convert a page and name into a slot name that can be passed to
+    the :ref:`save functions <save-functions>`.
+
+    `page`
+        This is a string containing the name of the page that is being
+        accessed. This is a string, usually containing a number, but it
+        also may contain special values like "quick" or "auto".
+
+    `name`
+        The is a string that contains the name of the slot on the page.
+        It may also contain a regular expression pattern
+        (like r'\d+'), in which  case the same pattern should be included
+        in the result.
+
+    The default behavior is equivalent to::
+
+        def file_slotname_callback(page, name):
+            return page + "-" + name
+
+        config.file_slotname_callback = file_slotname_callback
+
+    One use of this is to allow the the game to apply a prefix to
+    save files.
+
+    See also :var:`config.autosave_prefix_callback`.
 
 .. var:: config.fix_rollback_without_choice = False
 
@@ -730,10 +765,12 @@ Occasionally Used
 
     Otherwise, this should be a dictionary giving the
     mouse animations for various mouse types. Keys used by the default
-    library include "default", "say", "with", "menu", "prompt",
-    "imagemap", "pause", "mainmenu", and "gamemenu". The "default" key
-    should always be present, as it is used when a more specific key
-    is absent.
+    library include ``default``, ``say``, ``with``, ``menu``, ``prompt``,
+    ``imagemap``, ``button``, ``pause``, ``mainmenu``, and
+    ``gamemenu``. The ``default`` key should always be present, as it is
+    used when a more specific key is absent. Keys can have an optional
+    prefix ``pressed_`` to indicate that the cursor will be used when the
+    mouse is pressed.
 
     Each value in the dictionary should be a list of (`image`,
     `xoffset`, `yoffset`) tuples, representing frames.
@@ -754,7 +791,7 @@ Occasionally Used
     The frames are played back at 20Hz, and the animation loops after
     all frames have been shown.
 
-    See :doc:`mouse` for more information.
+    See :doc:`mouse` for more information and examples.
 
 .. var:: config.mouse_displayable = None
 
@@ -939,13 +976,14 @@ Occasionally Used
 
     If not None, this should be a function that takes the speaking character,
     followed by positional and keyword arguments. It's called whenever a
-    say statement occurs with the arguments to that say statement. This
-    always includes an interact argument, and can include others provided
-    in the say statement.
+    say statement occurs, even when the statement doesn't explicitly pass
+    arguments. The arguments passed to the callback always include an `interact`
+    argument, and include the others provided in the say statement (if any).
 
     This should return a pair, containing a tuple of positional arguments
     (almost always empty), and a dictionary of keyword arguments (almost
-    always with at least `interact` in it).
+    always with at least `interact` in it). Those will replace the arguments
+    passed to the callback.
 
     For example::
 
@@ -1333,11 +1371,22 @@ Rarely or Internally Used
     They are always treated as :var:`sticky <config.sticky_layers>` and
     intended for use with the :class:`Layer` displayable for embedding.
 
-.. var:: config.fade_music = 0.0
+.. var:: config.display_start_callbacks = [ ]
 
-    This is the amount of time in seconds to spend fading the old
-    track out before a new music track starts. This should probably be
-    fairly short, so the wrong music doesn't play for too long.
+    This contains a list of functions that are called after Ren'Py
+    displays a window, but before the first frame is rendered. The
+    main use of this is to allow libraries to gain access to resources
+    that need an initializd gui, like OpenGL functions.
+
+.. var:: config.fadeout_audio = 0.016
+
+    The default audio fadeout time that's used to fade out audio, when
+    audio is stopped with the ``stop`` statement or :func:`renpy.music.stop`,
+    or when a new audio track is started with the ``play`` statement or
+    :func:`renpy.music.play`. This is not used when queued audio beings.
+
+    A short fadeout is the default to prevent clicks and pops when
+    audio is stopped or changed.
 
 .. var:: config.fast_skipping = False
 

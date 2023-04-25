@@ -398,9 +398,9 @@ class PyExpr(str):
 
     def __new__(cls, s, filename, linenumber, py=3):
         self = str.__new__(cls, s)
-        self.filename = filename
-        self.linenumber = linenumber
-        self.py = py
+        self.filename = filename # type: ignore
+        self.linenumber = linenumber # type: ignore
+        self.py = py # type: ignore
 
         # Queue the string for precompilation.
         if self and (renpy.game.script.all_pyexpr is not None):
@@ -528,6 +528,9 @@ def chain_block(block, next): # @ReservedAssignment
     block[-1].chain(next)
 
 
+DoesNotExtend = renpy.object.Sentinel("DoesNotExtend")
+
+
 class Scry(object):
     """
     This is used to store information about the future, if we know it. Unlike
@@ -540,6 +543,10 @@ class Scry(object):
     say = False # type: bool|None
     menu_with_caption = False # type: bool|None
     who = None # type: str|None
+
+    # Text that will be added to the current say statment by a call to
+    # extend.
+    extend_text = None # type: str|None|renpy.object.Sentinel
 
     # By default, all attributes are None.
     def __getattr__(self, name):
@@ -964,9 +971,10 @@ class Say(Node):
         rv.say = True
 
         if self.interact:
-            renpy.exports.scry_say(who, rv)
+            renpy.exports.scry_say(who, self.what, rv)
         else:
             rv.interacts = False # type: ignore
+            rv.extend_text = DoesNotExtend
 
         return rv
 
@@ -2313,6 +2321,41 @@ class UserStatement(Node):
 
         return False
 
+    def reachable(self, is_reachable):
+        """
+        This is used by lint to find statements reachable from or through
+        this statement.
+        """
+
+        rv = self.call(
+            "reachable",
+            is_reachable,
+            self.name,
+            self.next.name if self.next is not None else None,
+            self.code_block[0].name if self.code_block else None,
+            )
+
+        if rv is None:
+
+            rv = set()
+
+            if self.call("label"):
+                rv.add(self.name)
+                is_reachable = True
+
+            if is_reachable:
+
+                if self.code_block:
+                    rv.add(self.code_block[0].name)
+
+                for i in self.subparses:
+                    if i.block:
+                        rv.add(i.block[0].name)
+
+                if self.next:
+                    rv.add(self.next.name)
+
+        return rv
 
 class PostUserStatement(Node):
 
@@ -2392,6 +2435,7 @@ EARLY_CONFIG = {
     "version",
     "save_token_keys",
     "check_conflicting_properties",
+    "check_translate_none",
 }
 
 define_statements = [ ]

@@ -126,7 +126,7 @@ def interpolate(t, a, b, type): # @ReservedAssignment
     """
 
     # Deal with booleans, nones, etc.
-    if b is None or isinstance(b, (bool, basestring, renpy.display.matrix.Matrix)):
+    if b is None or isinstance(b, (bool, basestring, renpy.display.matrix.Matrix, renpy.display.transform.Camera)):
         if t >= 1.0:
             return b
         else:
@@ -228,7 +228,7 @@ def get_catmull_rom_value(t, p_1, p0, p1, p2):
         +(t - 1) * t * t * p2) / 2)
 
 
-# A list of atl transforms that may need to be compile.
+# A list of atl transforms that may need to be compiled.
 compile_queue = [ ]
 
 
@@ -241,10 +241,28 @@ def compile_all():
     global compile_queue
 
     for i in compile_queue:
+
+        i.atl.find_loaded_variables()
+
         if i.atl.constant == GLOBAL_CONST:
             i.compile()
 
     compile_queue = [ ]
+
+def find_loaded_variables(expr):
+    """
+    Returns the set of variables that are loaded by the given expression.
+    """
+
+    if expr is None:
+        return set()
+
+    ast = renpy.pyanalysis.ccache.ast_eval(expr)
+    return renpy.python.find_loaded_variables(ast)
+
+
+# Used to indicate that a variable is not in the context.
+NotInContext = renpy.object.Sentinel("NotInContext")
 
 
 # This is the context used when compiling an ATL statement. It stores the
@@ -267,6 +285,36 @@ class Context(object):
     def __ne__(self, other):
         return not (self == other)
 
+    def variables_equal(self, other, variables):
+        """
+        Returns true if the variables in `variables` are equal in
+        this context and `other`. False if they are not equal.
+
+        Returns True if any variable cannot be compared.
+        """
+
+        try:
+
+            if renpy.config.at_transform_compare_full_context:
+                if self.context != other.context:
+                    return False
+
+            for i in variables:
+                if self.context.get(i, NotInContext) != other.context.get(i, NotInContext):
+
+                    # Ignore the arguments given to ATL Transitions, which
+                    # will change each time an interaction restarts. (See #4167.)
+                    if i in ("new_widget", "old_widget"):
+                        continue
+
+                    return False
+
+            return True
+
+        except Exception:
+            return True
+
+
 # This is intended to be subclassed by ATLTransform. It takes care of
 # managing ATL execution, which allows ATLTransform itself to not care
 # much about the contents of this file.
@@ -287,9 +335,16 @@ class ATLTransformBase(renpy.object.Object):
     def __init__(self, atl, context, parameters):
 
         # The constructor will be called by atltransform.
-
         if parameters is None:
             parameters = ATLTransformBase.parameters
+        else:
+
+            # Apply the default parameters.
+            context = context.copy()
+
+            for k, v in parameters.parameters:
+                if v is not None:
+                    context[k] = renpy.python.py_eval(v, locals=context)
 
         # The parameters that we take.
         self.parameters = parameters
@@ -343,6 +398,7 @@ class ATLTransformBase(renpy.object.Object):
         if renpy.game.context().init_phase:
             compile_queue.append(self)
 
+
     def _handles_event(self, event):
 
         if (event == "replaced") and (self.atl_state is None):
@@ -386,13 +442,12 @@ class ATLTransformBase(renpy.object.Object):
         elif t.atl is not self.atl:
             return
 
-        # Important to do it this way, so we use __eq__. The exception handling
-        # optimistically assumes that uncomparable objects are the same.
-        try:
-            if not (t.context == self.context):
+        # Only take the execution state if the contexts haven't changed in
+        # a way that would affect the execution of the ATL.
+
+        if t.atl.constant != GLOBAL_CONST:
+            if not self.context.variables_equal(t.context, t.atl.find_loaded_variables()):
                 return
-        except Exception:
-            pass
 
         self.done = t.done
         self.block = t.block
@@ -421,10 +476,6 @@ class ATLTransformBase(renpy.object.Object):
         _args = kwargs.pop("_args", None)
 
         context = self.context.context.copy()
-
-        for k, v in self.parameters.parameters:
-            if v is not None:
-                context[k] = renpy.python.py_eval(v)
 
         positional = list(self.parameters.positional)
         args = list(args)
@@ -649,6 +700,13 @@ class RawStatement(object):
 
         self.constant = NOT_CONST
 
+    def find_loaded_variables(self):
+        """
+        Returns the set of variables that are loaded by this statement.
+        """
+
+        raise Exception("find_loaded_variables not implemented.")
+
 # The base class for compiled ATL Statements.
 
 
@@ -705,6 +763,11 @@ class RawBlock(RawStatement):
     # If this block uses only constant values we can once compile it
     # and use this value for all ATLTransform that use us as an atl.
     compiled_block = None
+
+    # If this is the outermost ATL of a parse, a set giving the variables
+    # that are loaded by this block.
+    loaded_variable_cache = None
+
 
     def __init__(self, loc, statements, animation):
 
@@ -766,6 +829,20 @@ class RawBlock(RawStatement):
             constant = min(constant, i.constant)
 
         self.constant = constant
+
+    def find_loaded_variables(self):
+
+        if self.loaded_variable_cache is not None:
+            return self.loaded_variable_cache
+
+        variables = set()
+
+        for i in self.statements:
+            variables.update(i.find_loaded_variables())
+
+        self.loaded_variable_cache = variables
+
+        return variables
 
 
 # A compiled ATL block.
@@ -1087,6 +1164,26 @@ class RawMultipurpose(RawStatement):
 
         self.constant = constant
 
+    def find_loaded_variables(self):
+        rv = set()
+
+        rv.update(find_loaded_variables(self.warp_function))
+        rv.update(find_loaded_variables(self.duration))
+        rv.update(find_loaded_variables(self.circles))
+
+        for _name, expr in self.properties:
+            rv.update(find_loaded_variables(expr))
+
+        for _name, exprs in self.splines:
+            for expr in exprs:
+                rv.update(find_loaded_variables(expr))
+
+        for expr, withexpr in self.expressions:
+            rv.update(find_loaded_variables(expr))
+            rv.update(find_loaded_variables(withexpr))
+
+        return rv
+
     def predict(self, ctx):
 
         for i, _j in self.expressions:
@@ -1122,6 +1219,9 @@ class RawContainsExpr(RawStatement):
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.expression)
 
+    def find_loaded_variables(self):
+        return find_loaded_variables(self.expression)
+
 
 # This allows us to have multiple ATL transforms as children.
 class RawChild(RawStatement):
@@ -1155,6 +1255,14 @@ class RawChild(RawStatement):
             constant = min(constant, i.constant)
 
         self.constant = constant
+
+    def find_loaded_variables(self):
+        rv = set()
+
+        for i in self.children:
+            rv.update(i.find_loaded_variables())
+
+        return rv
 
 
 # This changes the child of this statement, optionally with a transition.
@@ -1244,6 +1352,7 @@ class Interpolation(Statement):
             newts.take_state(trans.state)
 
             has_angle = False
+            has_radius = False
 
             for k, v in self.properties:
                 setattr(newts, k, v)
@@ -1251,6 +1360,9 @@ class Interpolation(Statement):
                 if k == "angle":
                     newts.last_angle = v
                     has_angle = True
+
+                elif k == "radius":
+                    has_radius = True
 
             # Now, the things we change linearly are in the difference
             # between the new and old states.
@@ -1262,7 +1374,7 @@ class Interpolation(Statement):
             revdir = self.revolution
             circles = self.circles
 
-            if (revdir or (has_angle and renpy.config.automatic_polar_motion)) and (newts.xaround is not None):
+            if (revdir or ((has_angle or has_radius) and renpy.config.automatic_polar_motion)) and (newts.xaround is not None):
 
                 # Remove various irrelevant motions.
                 for i in [ 'xpos', 'ypos',
@@ -1302,13 +1414,22 @@ class Interpolation(Statement):
 
                         startangle += circles * 360
 
+                    if has_radius:
+                        linear["radius"] = (startradius, endradius)
+
                     # Store the revolution.
-                    revolution = (startangle, endangle, startradius, endradius)
+                    if has_angle:
+                        revolution = (startangle, endangle)
 
                 else:
 
-                    last_angle = trans.state.last_angle or trans.state.angle
-                    revolution = (last_angle, newts.last_angle, trans.state.radius, newts.radius)
+                    if has_angle:
+                        last_angle = trans.state.last_angle or trans.state.angle
+                        revolution = (last_angle, newts.last_angle)
+
+                    if has_radius:
+                        linear["radius"] = (trans.state.radius, newts.radius)
+
 
             # Figure out the splines.
             for name, values in self.splines:
@@ -1327,19 +1448,28 @@ class Interpolation(Statement):
 
         # Linearly interpolate between the things in linear.
         for k, (old, new) in linear.items():
-            value = interpolate(complete, old, new, PROPERTIES[k])
+            if k == "orientation":
+                if old is None:
+                    old = (0.0, 0.0, 0.0)
+                if new is not None:
+                    value = renpy.display.quaternion.euler_slerp(complete, old, new)
+                elif complete >= 1:
+                    value = None
+                else:
+                    value = old
+
+            else:
+                value = interpolate(complete, old, new, PROPERTIES[k])
 
             setattr(trans.state, k, value)
 
         # Handle the revolution.
         if revolution is not None:
-            startangle, endangle, startradius, endradius = revolution
+            startangle, endangle = revolution[:2]
 
             angle = interpolate(complete, startangle, endangle, float)
             trans.state.last_angle = angle
             trans.state.angle = angle
-
-            trans.state.radius = interpolate(complete, startradius, endradius, float)
 
         # Handle any splines we might have.
         for name, values in splines:
@@ -1378,6 +1508,8 @@ class RawRepeat(RawStatement):
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.repeats)
 
+    def find_loaded_variables(self):
+        return find_loaded_variables(self.repeats)
 
 class Repeat(Statement):
 
@@ -1415,6 +1547,14 @@ class RawParallel(RawStatement):
             constant = min(constant, i.constant)
 
         self.constant = constant
+
+    def find_loaded_variables(self):
+        rv = set()
+
+        for i in self.blocks:
+            rv.update(i.find_loaded_variables())
+
+        return rv
 
 
 class Parallel(Statement):
@@ -1496,6 +1636,15 @@ class RawChoice(RawStatement):
 
         self.constant = constant
 
+    def find_loaded_variables(self):
+        rv = set()
+
+        for chance, block in self.choices:
+            rv.update(find_loaded_variables(chance))
+            rv.update(block.find_loaded_variables())
+
+        return rv
+
 
 class Choice(Statement):
 
@@ -1565,6 +1714,9 @@ class RawTime(RawStatement):
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.time)
 
+    def find_loaded_variables(self):
+        return find_loaded_variables(self.time)
+
 
 class Time(Statement):
 
@@ -1611,6 +1763,14 @@ class RawOn(RawStatement):
             constant = min(constant, block.constant)
 
         self.constant = constant
+
+    def find_loaded_variables(self):
+        rv = set()
+
+        for block in self.handlers.values():
+            rv.update(block.find_loaded_variables())
+
+        return rv
 
 
 class On(Statement):
@@ -1721,6 +1881,9 @@ class RawEvent(RawStatement):
     def mark_constant(self, analysis):
         self.constant = GLOBAL_CONST
 
+    def find_loaded_variables(self):
+        return set()
+
 
 class Event(Statement):
 
@@ -1746,6 +1909,9 @@ class RawFunction(RawStatement):
 
     def mark_constant(self, analysis):
         self.constant = analysis.is_constant_expr(self.expr)
+
+    def find_loaded_variables(self):
+        return find_loaded_variables(self.expr)
 
 
 class Function(Statement):
@@ -1979,6 +2145,8 @@ def parse_atl(l):
                         knots.append(ll.require(ll.simple_expression))
 
                     if knots:
+                        if prop == "orientation":
+                            raise Exception("Orientation doesn't support spline.")
                         knots.append(expr)
                         rm.add_spline(prop, knots)
                     else:

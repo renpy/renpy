@@ -414,10 +414,7 @@ def redraw_time():
 
 def redraw(d, when):
     """
-    :doc: udd_utility
-
-    Causes the displayable `d` to be redrawn after `when` seconds have
-    elapsed.
+    Documented in cdd.rst.
     """
 
     if not renpy.game.interface:

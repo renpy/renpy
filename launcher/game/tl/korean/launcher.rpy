@@ -36,8 +36,8 @@
     new "안드로이드 패키지를 만드려면, RAPT 파일을 내려받고 렌파이 디렉터리 안에 압축 해제하세요. 그다음 렌파이를 재시작하세요."
 
     # game/android.rpy:31
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "윈도우에서 안드로이드 패키지를 만드려면 64비트 JDK가 필요합니다. JDK는 JRE와 다르므로 PC에 JDK가 없는 자바가 설치되어 있을 수 있습니다.\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK를 내려받아 설치한 뒤{/a}, 렌파이를 재시작해주세요."
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "윈도우에서 안드로이드 패키지를 만드려면 64비트 JDK가 필요합니다. JDK는 JRE와 다르므로 PC에 JDK가 없는 자바가 설치되어 있을 수 있습니다.\n\n{a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}JDK를 내려받아 설치한 뒤{/a}, 렌파이를 재시작해주세요."
 
     # game/android.rpy:32
     old "RAPT has been installed, but you'll need to install the Android SDK before you can build Android packages. Choose Install SDK to do this."

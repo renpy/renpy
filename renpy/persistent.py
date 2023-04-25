@@ -424,13 +424,8 @@ def save():
     global persistent_mtime
 
     # Prevent updates just after save
-    mtime = persistent_mtime
-
     for mtime, _data in renpy.loadsave.location.load_persistent():
-        if mtime <= persistent_mtime:
-            continue
-
-    persistent_mtime = mtime
+        persistent_mtime = max(persistent_mtime, mtime)
 
 
 
@@ -518,7 +513,10 @@ def MultiPersistent(name, save_on_quit=False):
     if rv is not None:
         return rv
 
-    if renpy.android or renpy.ios:
+    if "RENPY_MULTIPERSISTENT" in os.environ:
+        files = [ renpy.exports.fsdecode(os.environ["RENPY_MULTIPERSISTENT"]) ]
+
+    elif renpy.android or renpy.ios:
         # Due to the security policy of mobile devices, we store MultiPersistent
         # in the same place as common persistent.
         # This is better than not working at all.
@@ -540,16 +538,12 @@ def MultiPersistent(name, save_on_quit=False):
     else:
         files = [ os.path.expanduser("~/.renpy/persistent") ]
 
-    if "RENPY_MULTIPERSISTENT" in os.environ:
-        files = [ renpy.exports.fsdecode(os.environ["RENPY_MULTIPERSISTENT"]) ]
-
     # Make the new persistent directory, why not?
     try:
         os.makedirs(files[-1]) # type: ignore
     except Exception:
         pass
 
-    fn = "" # prevent a warning from happening.
     data = None
 
     # Find the first file that actually exists. Otherwise, use the last
@@ -570,10 +564,10 @@ def MultiPersistent(name, save_on_quit=False):
         try:
             rv = loads(data)
         except Exception:
-            renpy.display.log.write("Loading MultiPersistent at %r:" % fn)
+            renpy.display.log.write("Loading MultiPersistent at %r:" % fn) # type: ignore
             renpy.display.log.exception()
 
-    rv._filename = fn
+    rv._filename = fn # type: ignore
     rv._name = name
     rv._save_on_quit = save_on_quit
 

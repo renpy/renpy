@@ -36,11 +36,11 @@ cdef class Glyph:
     cdef:
 
         # The x and y coordinates of the placed character.
-        public short x, y
+        public int x, y
 
         # The change in the amount this character was shifted to the right
         # when adjusting placement.
-        public short delta_x_offset
+        public int delta_x_offset
 
         # The character we use.
         public unsigned int character
@@ -54,8 +54,8 @@ cdef class Glyph:
         public ruby_t ruby
 
         # The ascent and spacing of the font.
-        public short ascent
-        public short line_spacing
+        public int ascent
+        public int line_spacing
 
         # The width and advance of the font.
         public float width
@@ -76,10 +76,10 @@ cdef class Line:
     cdef:
 
         # The y coordinate of this line.
-        public short y
+        public int y
 
         # The height of this line.
-        public short height
+        public int height
 
         # The list of glyphs on this line.
         public list glyphs

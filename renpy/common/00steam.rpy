@@ -362,7 +362,7 @@ init -1499 python in _renpysteam:
         Activates the Steam overlay, and opens the web page at `url`.
         """
 
-        steamapi.SteamFriends().ActivateGameOverlayToWebPage(url.encode("utf-8"))
+        steamapi.SteamFriends().ActivateGameOverlayToWebPage(url.encode("utf-8"), steamapi.k_EActivateGameOverlayToWebPageMode_Default)
 
     def activate_overlay_to_store(appid, flag=None):
         """

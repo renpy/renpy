@@ -19,6 +19,34 @@ such changes only take effect when the GUI is regenerated.
 8.1.0 / 7.6.0
 -------------
 
+**Texture Memory** Ren'Py now accounts for texture memory more precisely.
+In general, games can raise :var:`config.image_cache_size_mb` by 33%, and
+use the same amount of memory.
+
+
+**Audio Fadeout** When audio is stopped or changed using ``play``, there is now
+a default fadeout of 0.016 seconds, to prevent pops. This is controlled by
+the :var:`config.fadeout_audio` variable. To disable the fadeout::
+
+    define config.fadeout_audio = 0.0
+
+
+**Translate None** Ren'Py will now produce an error when encountering an explicit
+``translate None`` statement that does not translate strings, styles, or python.
+These should be rare, in practice. The recommended change is to replace::
+
+    translate None start_abcd1234:
+        e "This is a test"
+
+with::
+
+    e "This is a test" id start_abcd1234
+
+This change can also be reverted with::
+
+    define config.check_translate_none = False
+
+
 **Keymap** The :doc:`keymap <keymap>` has changed substantially, which means that
 if your game changes the default keymap - usually a bad idea - it
 will need to be updated to reflect the new keysyms.
@@ -110,11 +138,35 @@ the store can be set to non-constant with (for example)::
 and 1.0 is 0 dB (power). To use the old format, where the samples were multiplied
 by volume ** 2, use::
 
-    define config.quadratic_volume = True
+    define config.quadratic_volumes = True
 
 Alternatively, you can determine new default volumes for :var:`config.default_music_volume`,
 :var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` variables. If any
 of these is 0.0 or 1.0, it can be left unchanged.
+
+**At Transform and Global Variables** An at transform block that uses a global variable
+is not re-evaluated when the variable changes. This matches the behavior
+for ATL that is not in screens.
+
+The recommended fix is to capture the global variable into a local, by changing::
+
+    screen test():
+        test "Test":
+            at transform:
+                xpos global_xpos
+
+to::
+
+    screen test():
+        $ local_xpos = global_xpos
+
+        test "Test":
+            at transform:
+                xpos local_xpos
+
+This change can be reverted with::
+
+    define config.at_transform_compare_full_context = True
 
 
 .. _incompatible-8.0.2:

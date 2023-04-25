@@ -556,13 +556,15 @@ class PauseBehavior(renpy.display.layout.Null):
 
     voice = False
     modal = False
+    self_voice = False
 
-    def __init__(self, delay, result=False, voice=False, modal=None, **properties):
+    def __init__(self, delay, result=False, voice=False, self_voicing=False, modal=None, **properties):
         super(PauseBehavior, self).__init__(**properties)
 
         self.delay = delay
         self.result = result
         self.voice = voice
+        self.self_voicing = self_voicing
         self.modal = (renpy.config.modal_blocks_pause) if (modal is None) else modal
 
     def event(self, ev, x, y, st):
@@ -575,8 +577,13 @@ class PauseBehavior(renpy.display.layout.Null):
 
             if st >= self.delay:
 
+                if self.self_voicing and renpy.config.nw_voice:
+                    if renpy.display.tts.is_active() or not renpy.config.afm_callback():
+                        renpy.game.interface.timeout(0.05)
+                        return
+
                 if self.voice and renpy.config.nw_voice:
-                    if (not renpy.config.afm_callback()) or renpy.display.tts.is_active():
+                    if not renpy.config.afm_callback():
                         renpy.game.interface.timeout(0.05)
                         return
 
@@ -1109,7 +1116,9 @@ class Button(renpy.display.layout.Window):
                 renpy.game.interface.timeout(renpy.config.longpress_duration)
 
             if self.longpress_start is not None:
-                if math.hypot(x - self.longpress_x, y - self.longpress_y) > renpy.config.longpress_radius:
+                if ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
+                    self.longpress_start = None
+                elif math.hypot(x - self.longpress_x, y - self.longpress_y) > renpy.config.longpress_radius:
                     self.longpress_start = None
                 elif st >= (self.longpress_start + renpy.config.longpress_duration):
                     renpy.exports.vibrate(renpy.config.longpress_vibrate)
@@ -1280,7 +1289,7 @@ def input_post_per_interact():
     global input_value_active
 
     for i in input_values:
-        if i is current_input_value:
+        if i == current_input_value:
             break
 
     else:
@@ -1291,7 +1300,7 @@ def input_post_per_interact():
 
     for i in inputs:
 
-        editable = (i.value is current_input_value) and input_value_active and i.value.editable
+        editable = (i.value == current_input_value) and input_value_active and i.value.editable
 
         content = i.value.get_text()
 
@@ -1358,6 +1367,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
     edit_text = u""
     value = None
     shown = False
+    multiline = False
 
     st = 0
 
@@ -1377,6 +1387,7 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                  value=None,
                  copypaste=False,
                  caret_blink=None,
+                 multiline=False,
                  **properties):
 
         super(Input, self).__init__("", style=style, replaces=replaces, substitute=False, **properties)
@@ -1404,6 +1415,8 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
 
         self.editable = editable
         self.pixel_width = pixel_width
+
+        self.multiline = multiline
 
         caretprops = { 'color' : None }
 
@@ -1571,6 +1584,14 @@ class Input(renpy.text.text.Text): # @UndefinedVariable
                 content = self.content[0:self.caret_pos - 1] + self.content[self.caret_pos:l]
                 self.caret_pos -= 1
                 self.update_text(content, self.editable)
+
+            renpy.display.render.redraw(self, 0)
+            raise renpy.display.core.IgnoreEvent()
+
+        elif self.multiline and map_event(ev, 'input_next_line'):
+            content = self.content[:self.caret_pos] + '\n' + self.content[self.caret_pos:]
+            self.caret_pos += 1
+            self.update_text(content, self.editable)
 
             renpy.display.render.redraw(self, 0)
             raise renpy.display.core.IgnoreEvent()
@@ -1881,7 +1902,7 @@ class Adjustment(renpy.object.Object):
     def round_value(self, value, release):
         # Prevent deadlock border points
         if value <= 0:
-            return type(self._value)(0)
+            return type(self._value)(0) # type: ignore
         elif value >= self._range:
             return self._range
 
@@ -1891,11 +1912,11 @@ class Adjustment(renpy.object.Object):
         if (not release) and self.force_step == "release":
             return value
 
-        return type(self._value)(self.step * round(float(value) / self.step))
+        return type(self._value)(self.step * round(float(value) / self.step)) # type: ignore
 
     def get_value(self):
         if self._value <= 0:
-            return type(self._value)(0)
+            return type(self._value)(0) # type: ignore
         if self._value >= self._range: # type: ignore
             return self._range
 

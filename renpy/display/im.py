@@ -71,7 +71,15 @@ class CacheEntry(object):
             rv += self.width * self.height
 
         if self.texture is not None:
-            rv += self.bounds[2] * self.bounds[3]
+
+            has_mipmaps = getattr(self.texture, "has_mipmaps", None)
+
+            if has_mipmaps and has_mipmaps():
+                mipmap_multiplier = 1.34
+            else:
+                mipmap_multiplier = 1.0
+
+            rv += int(self.bounds[2] * self.bounds[3] * mipmap_multiplier)
 
         return rv
 
@@ -376,14 +384,9 @@ class Cache(object):
                         pass
 
             if not predict:
-
-                if render:
-                    return make_render(ce)
-                else:
-                    rv = ce.texture
+                rv = ce.texture
             else:
                 rv = None
-
         else:
             rv = ce.surf
 
@@ -394,11 +397,14 @@ class Cache(object):
 
             ce.surf = None
 
+        if texture and render and not predict:
+            return make_render(ce)
+
         if (ce.surf is None) and (ce.texture is None):
             with self.lock:
                 self.kill(ce)
 
-        # Done... return the surface.
+        # Done. Return the surface or texture.
         return rv
 
     # This kills off a given cache entry.
@@ -716,12 +722,12 @@ class Image(ImageBase):
             base = filename.rpartition(".")[0]
             extras = base.partition("@")[2].split(",")
 
-            try:
-                for i in extras:
+            for i in extras:
+                try:
                     oversample = float(i)
                     properties.setdefault('oversample', oversample)
-            except Exception:
-                raise Exception("Unknown image modifier %r in %r." % (i, filename))
+                except Exception:
+                    raise Exception("Unknown image modifier %r in %r." % (i, filename))
 
         super(Image, self).__init__(filename, **properties)
         self.filename = filename
@@ -2062,6 +2068,21 @@ def load_surface(im):
     """
 
     return cache.get(image(im))
+
+def load_rgba(data, size):
+    """
+    :name: renpy.load_rgba
+    :doc: udd_utility
+
+    Loads the image data `bytes` into a texture of size `size`, and return it.
+
+    `data`
+        Should be a bytes object containing the image data in RGBA8888 order.
+    """
+
+    surf = renpy.display.pgrender.surface(size, True)
+    surf.from_data(data)
+    return renpy.display.draw.load_texture(surf)
 
 
 def reset_module():

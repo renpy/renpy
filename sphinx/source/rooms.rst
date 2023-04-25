@@ -289,7 +289,8 @@ difference between the two modes are:
   menu. If a game is in progress when replay is called, game state is
   preserved.
 
-* Saving is disabled while in replay mode.
+* Saving is disabled while in replay mode. Reloading, which requires
+  saving, is also disabled.
 
 * While in replay mode, a call to :func:`renpy.end_replay` will end
   the replay. In normal mode, end_replay does nothing.

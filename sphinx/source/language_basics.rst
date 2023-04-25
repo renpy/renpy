@@ -188,11 +188,6 @@ Ren'Py statements are made of a few basic parts.
 
         When a name begins with two underscores (__) but doesn't end with two
         underscores, it is changed to a file-specific version of that name.
-        However, these don't work inside
-        `f-strings <https://docs.python.org/3/tutorial/inputoutput.html#formatted-string-literals>`__,
-        you need to use the
-        `format method <https://docs.python.org/3/tutorial/inputoutput.html#the-string-format-method>`__
-        instead.
 
 :dfn:`Image Name`
     An :dfn:`image name` consists of one or more components, separated by

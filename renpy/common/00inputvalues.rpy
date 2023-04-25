@@ -124,6 +124,10 @@ init -1510 python:
         `variable`
             A string giving the name of the variable to update.
 
+            The `variable` parameter must be a string, and can be a simple name like "strength", or
+            one with dots separating the variable from fields, like "hero.strength"
+            or "persistent.show_cutscenes".
+
         `default`
             If true, this input can be editable by default.
 
@@ -142,10 +146,10 @@ init -1510 python:
             self.returnable = returnable
 
         def get_text(self):
-            return globals()[self.variable]
+            return _get_field(store, self.variable, "variable")
 
         def set_text(self, s):
-            globals()[self.variable] = s
+            _set_field(store, self.variable, s, "variable")
             renpy.restart_interaction()
 
     class ScreenVariableInputValue(InputValue, FieldEquality):
@@ -214,10 +218,10 @@ init -1510 python:
             self.returnable = returnable
 
         def get_text(self):
-            return getattr(self.object, self.field)
+            return _get_field(self.object, self.field, "field")
 
         def set_text(self, s):
-            setattr(self.object, self.field, s)
+            _set_field(self.object, self.field, s, "field")
             renpy.restart_interaction()
 
     @renpy.pure

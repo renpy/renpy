@@ -1449,7 +1449,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
-            f.raw_child = d
+            f.untransformed_layer = d
 
             rv = f
 
@@ -1478,7 +1478,7 @@ class SceneLists(renpy.object.Object):
             f = renpy.display.layout.MultiBox(layout='fixed')
             f.add(rv, time, time)
             f.layer_name = layer
-            f.raw_child = d
+            f.untransformed_layer = d
 
             rv = f
 
@@ -2017,9 +2017,6 @@ class Interface(object):
 
         self.old_scene = { }
         self.transition = { }
-        self.ongoing_transition = { }
-        self.transition_time = { }
-        self.transition_from = { }
         self.suppress_transition = False
         self.quick_quit = False
         self.force_redraw = False
@@ -2075,6 +2072,22 @@ class Interface(object):
 
         # Is our audio paused?
         self.audio_paused = False
+
+        # Transition-related:
+
+        # A map from layer (or None for the root) to the uninstantiate
+        # transition object that's on that layer.
+        self.ongoing_transition = { }
+
+        # The same, but for the transition after it's been called with the
+        # old and new displayables.
+        self.instantiated_transition = { }
+
+        # The time an ongoing transition started.
+        self.transition_time = { }
+
+        # The displayable that an ongoing transition is transitioning from.
+        self.transition_from = { }
 
         # Init layers.
         init_layers()
@@ -2360,6 +2373,7 @@ class Interface(object):
             cursors = { }
 
             for key, cursor_list in renpy.config.mouse.items():
+
                 l = [ ]
 
                 for i in cursor_list:
@@ -2373,10 +2387,17 @@ class Interface(object):
 
                 self.cursor_cache[key] = l
 
+            if ("default" not in self.cursor_cache) and (None in self.cursor_cache):
+                self.cursor_cache["default"] = self.cursor_cache[None]
+
         s = "Total time until interface ready: {}s.".format(time.time() - import_time)
 
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
+
+        for i in renpy.config.display_start_callbacks:
+            i()
+
 
     def post_init(self):
         """
@@ -2388,6 +2409,7 @@ class Interface(object):
         pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
+        pygame.display.hint("SDL_IME_SHOW_UI", "1")
 
         if renpy.config.mouse_focus_clickthrough:
             pygame.display.hint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1")
@@ -2450,6 +2472,9 @@ class Interface(object):
                 square_im = renpy.display.pgrender.surface_unscaled((imax, imax), True)
                 square_im.blit(im, ((imax - iw) // 2, (imax - ih) // 2))
                 im = square_im
+
+                if im.get_size()[0] > 1024:
+                    im = renpy.display.scale.smoothscale(im, (1024, 1024))
 
                 pygame.display.set_icon(im)
             except renpy.webloader.DownloadNeeded:
@@ -2919,6 +2944,7 @@ class Interface(object):
         for l in layers:
             if l is None:
                 self.ongoing_transition.pop(None, None)
+                self.instantiated_transition.pop(None, None)
                 self.transition_time.pop(None, None)
                 self.transition_from.pop(None, None)
                 continue
@@ -2928,6 +2954,7 @@ class Interface(object):
 
             if (self.frame_time - start) >= delay:
                 self.ongoing_transition.pop(l, None)
+                self.instantiated_transition.pop(l, None)
                 self.transition_time.pop(l, None)
                 self.transition_from.pop(l, None)
 
@@ -3133,13 +3160,30 @@ class Interface(object):
 
     def get_mouse_name(self, cache_only=False, interaction=True):
 
-        mouse_kind = renpy.display.focus.get_mouse() # type: str
+        mouse_kind = renpy.display.focus.get_mouse() # str|None
 
         if interaction and (mouse_kind is None):
             mouse_kind = self.mouse
 
-        if cache_only and (mouse_kind not in self.cursor_cache):
-            mouse_kind = 'default'
+        if mouse_kind is None:
+            mouse_kind = "default"
+
+        if pygame.mouse.get_pressed()[0]:
+            mouse_kind = "pressed_" + mouse_kind # type: ignore
+
+        if cache_only and (mouse_kind not in self.cursor_cache): # type: ignore
+            # if the mouse_kind cursor is not in cache, use a replacement
+            # if pressed_ is in the cursor name, we'll try to use pressed_default
+            # or the non-pressed cursor if we have it in cache
+            # otherwise we'll use the default cursor
+            if mouse_kind.startswith("pressed_") and ("pressed_default" in self.cursor_cache): # type: ignore
+                # if a generic pressed_default cursor is defined, use it
+                mouse_kind = "pressed_default"
+            elif mouse_kind.startswith("pressed_") and (mouse_kind[8:] in self.cursor_cache): # type: ignore
+                # otherwise use the non-pressed cursor if we have it in cache
+                mouse_kind = mouse_kind[8:]
+            else:
+                mouse_kind = 'default'
 
         if mouse_kind == 'default':
             mouse_kind = getattr(renpy.store, 'default_mouse', 'default')
@@ -3314,6 +3358,7 @@ class Interface(object):
 
         # Stop ongoing transitions.
         self.ongoing_transition.clear()
+        self.instantiated_transition.clear()
         self.transition_from.clear()
         self.transition_time.clear()
 
@@ -3599,6 +3644,9 @@ class Interface(object):
         else:
             renpy.plog(1, "end idle_frame (inexpensive)")
 
+    # This gets assigned below.
+    take_layer_displayable = None
+
     def interact_core(self,
                       show_mouse=True,
                       trans_pause=False,
@@ -3660,11 +3708,14 @@ class Interface(object):
         self.suppress_transition = False
 
         # Figure out transitions.
-        if suppress_transition:
+        if suppress_transition or renpy.game.after_rollback:
             self.ongoing_transition.clear()
+            self.instantiated_transition.clear()
             self.transition_from.clear()
             self.transition_time.clear()
-        else:
+
+        if not suppress_transition:
+
             for k, t in self.transition.items():
                 if k not in self.old_scene:
                     continue
@@ -3777,6 +3828,29 @@ class Interface(object):
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
         layers_root.layers = { }
 
+        def instantiate_transition(layer, old_d, new_d):
+            """
+            Create a transition that will be used to transition `layer` (which
+            can be None) to `d`.
+            """
+
+            old_trans = self.instantiated_transition.get(layer, None)
+
+            trans = self.ongoing_transition[layer](
+                old_widget=old_d,
+                new_widget=new_d)
+
+            if not isinstance(trans, Displayable):
+                raise Exception("Expected transition to be a displayable, not a %r" % trans)
+
+            if isinstance(trans, renpy.display.transform.Transform) and isinstance(old_trans, renpy.display.transform.Transform):
+                trans.take_state(old_trans)
+                trans.take_execution_state(old_trans)
+
+            self.instantiated_transition[layer] = trans
+
+            return trans
+
         def add_layer(where, layer):
 
             scene_layer = scene[layer]
@@ -3785,12 +3859,7 @@ class Interface(object):
             if (self.ongoing_transition.get(layer, None) and
                     not suppress_transition):
 
-                trans = self.ongoing_transition[layer](
-                    old_widget=self.transition_from[layer],
-                    new_widget=scene_layer)
-
-                if not isinstance(trans, Displayable):
-                    raise Exception("Expected transition to be a displayable, not a %r" % trans)
+                trans = instantiate_transition(layer, self.transition_from[layer], scene_layer)
 
                 transition_time = self.transition_time.get(layer, None)
 
@@ -3821,9 +3890,7 @@ class Interface(object):
                 old_root.layers[layer] = d
                 old_root.add(d)
 
-            trans = self.ongoing_transition[None](
-                old_widget=old_root,
-                new_widget=layers_root)
+            trans = instantiate_transition(None, old_root, layers_root)
 
             if not isinstance(trans, Displayable):
                 raise Exception("Expected transition to be a displayable, not a %r" % trans)
@@ -3882,22 +3949,28 @@ class Interface(object):
         # caused by an exception propagating through this function.
         try:
 
-            # Insert layers into Layer displayables.
-            def per_interact(i):
-                if isinstance(i, renpy.display.layout.Layer):
-                    if i.layer in scene:
-                        i.layers = layer_transitions
-                        add_layer(i, i.layer)
-                        del i.layers
-                    else:
-                        i.add(null)
+            # Call per-interaction code for all displayables.
+            def take_layer_displayable(ld):
+                """
+                This is called by a layer displayable to add the layer's
+                contents to the layer displayable.
+                """
 
-                i.per_interact()
+                if ld.layer in scene:
+                    ld.layers = layer_transitions
+                    add_layer(ld, ld.layer)
+                    del ld.layers
+                else:
+                    ld.add(null)
 
-            # Call per-interaction code for all widgets.
+            self.take_layer_displayable = take_layer_displayable
+
             renpy.display.behavior.input_pre_per_interact()
-            root_widget.visit_all(per_interact)
+            root_widget.visit_all(lambda d : d.per_interact())
             renpy.display.behavior.input_post_per_interact()
+
+            self.take_layer_displayable = None
+
 
             # Consolidate static and layer transitions for later processing.
             if layer_transitions:
@@ -4252,7 +4325,7 @@ class Interface(object):
                     # also change the keymap.
 
                     if pygame.key.get_mods() & pygame.KMOD_GUI:
-                        pygame.key.set_mods(0)
+                        pygame.key.set_mods(pygame.key.get_mods() & (pygame.KMOD_NUM | pygame.KMOD_CAPS))
 
                     continue
 
@@ -4343,7 +4416,7 @@ class Interface(object):
                             renpy.audio.audio.unpause_all()
                             self.audio_paused = False
 
-                    pygame.key.set_mods(0)
+                    pygame.key.set_mods(pygame.key.get_mods() & (pygame.KMOD_NUM | pygame.KMOD_CAPS))
 
                 # This returns the event location. It also updates the
                 # mouse state as necessary.

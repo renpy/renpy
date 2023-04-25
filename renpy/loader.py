@@ -955,7 +955,7 @@ class RenpyImporter(object):
     def __init__(self, prefix=""):
         self.prefix = prefix
 
-    def translate(self, fullname, prefix=None): # type: (str, Optional[str]) -> str
+    def translate(self, fullname, prefix=None): # type: (str, Optional[str]) -> str|None
 
         if prefix is None:
             prefix = self.prefix

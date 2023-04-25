@@ -24,7 +24,7 @@ import renpy.exports as renpy
 from renpy.minstore import _dict, _object
 
 """renpy
-init -1100 python:
+init -1200 python:
 """
 
 class _JSONDBDict(_dict):

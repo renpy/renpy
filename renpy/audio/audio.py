@@ -80,7 +80,7 @@ def load(fn):
         elif exception.rtype == 'video':
             # Video files are downloaded by the browser, so return
             # the file name instead of a file-like object
-            return 'url:' + renpy.config.web_video_base + "/" + fn
+            return 'url:' + renpy.config.web_video_base + "/" + exception.relpath
 
         # temporary 1s placeholder, will retry loading when looping:
         rv = open(os.path.join(renpy.config.commondir, '_dl_silence.ogg'), 'rb') # type: ignore
@@ -113,14 +113,14 @@ class AudioData(str):
 
     def __new__(cls, data, filename):
         rv = str.__new__(cls, filename)
-        rv.data = data
+        rv.data = data # type: ignore
         return rv
 
     def __init__(self, data, filename):
         pass
 
     def __reduce__(self):
-        return(AudioData, (self.data, str(self)))
+        return(AudioData, (self.data, str(self))) # type: ignore
 
 
 class QueueEntry(object):
@@ -297,8 +297,8 @@ class Channel(object):
             else:
                 self.movie = renpy.audio.renpysound.NODROP_VIDEO
 
-            if getattr(renpysound, 'is_webaudio', False):
-                renpysound.set_movie_channel(self.number, True)
+            if renpysound.is_webaudio:
+                renpysound.set_movie_channel(self.number, True) # type: ignore
         else:
             self.movie = renpy.audio.renpysound.NO_VIDEO
 
@@ -523,7 +523,7 @@ class Channel(object):
                     continue
 
                 if isinstance(topq.filename, AudioData):
-                    topf = io.BytesIO(topq.filename.data)
+                    topf = io.BytesIO(topq.filename.data) # type: ignore
                 else:
                     topf = load(filename)
                     if topf is AudioNotReady:
@@ -531,11 +531,11 @@ class Channel(object):
                         self.queue.insert(0, topq)
                         break
 
-                if renpysound.is_webaudio and self.movie != renpy.audio.renpysound.NO_VIDEO:
+                if self.movie != renpy.audio.renpysound.NO_VIDEO:
                     # Let the browser handle the video loop if any
                     renpysound.set_video(self.number, self.movie, loop=(len(self.loop) == 1))
                 else:
-                    renpysound.set_video(self.number, self.movie)
+                    renpysound.set_video(self.number, self.movie, loop=False)
 
                 if depth == 0:
                     renpysound.play(self.number, topf, topq.filename, paused=self.synchro_start, fadein=topq.fadein, tight=topq.tight, start=start, end=end, relative_volume=topq.relative_volume) # type:ignore
@@ -692,6 +692,9 @@ class Channel(object):
             else:
                 self.loop = [ ]
 
+        with periodic_condition:
+            periodic_condition.notify()
+
     def get_playing(self):
 
         if not pcm_ok:
@@ -781,6 +784,7 @@ class Channel(object):
             return 1
 
         return renpysound.video_ready(self.number)
+
 
 # Use unconditional imports so these files get compiled during the build
 # process.
@@ -962,10 +966,10 @@ def init():
         mix_ok = False
         return
 
-    renpysound.is_webaudio = False
     if renpy.emscripten and renpy.config.webaudio:
         # Importing webaudio hooks all public functions of renpysound
         import renpy.audio.webaudio as webaudio
+
         renpysound.is_webaudio = True
 
         if webaudio.can_play_types(renpy.config.webaudio_required_types):
@@ -984,6 +988,9 @@ def init():
             # Large buffer (and latency) as compromise to avoid sound jittering
             bufsize = 8192 # works for me
             # bufsize = 16384  # jitter/silence right after starting a sound
+
+        if renpy.config.sound_buffer_size is not None:
+            bufsize = renpy.config.sound_buffer_size
 
         if 'RENPY_SOUND_BUFSIZE' in os.environ:
             bufsize = int(os.environ['RENPY_SOUND_BUFSIZE'])
@@ -1233,7 +1240,7 @@ def interact():
 
                 if c.loop:
                     if not filenames or c.get_playing() not in filenames:
-                        c.fadeout(renpy.config.context_fadeout_music or renpy.config.fade_music)
+                        c.fadeout(max(renpy.config.context_fadeout_music, renpy.config.fadeout_audio))
 
                 if filenames:
                     c.enqueue(filenames, loop=True, synchro_start=False, tight=tight, fadein=renpy.config.context_fadein_music, relative_volume=ctx.last_relative_volume)

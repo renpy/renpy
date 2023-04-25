@@ -619,8 +619,3 @@ label tutorial_input:
         e "Variable interpolation also works with other variables. Here, the answer is [answer] and the flag is [flag]."
 
     return
-
-
-
-
-

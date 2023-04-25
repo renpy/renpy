@@ -250,14 +250,14 @@ init -1100 python:
             config.atl_function_always_blocks = True
 
         if version <= (7, 4, 11):
-            config.timer_blocks_pause = False
+            config.modal_blocks_timer = False
             config.modal_blocks_pause = False
         elif _compat_versions(version, (7, 5, 1), (8, 0, 1)):
-            config.timer_blocks_pause = True
+            config.modal_blocks_timer = True
             config.modal_blocks_pause = False
         elif _compat_versions(version, (7, 5, 2), (8, 0, 2)):
             config.modal_blocks_pause = True
-            config.timer_blocks_pause = True
+            config.modal_blocks_timer = True
 
         if _compat_versions(version, (7, 5, 3), (8, 0, 3)):
             config.quadratic_volumes = True
@@ -266,6 +266,9 @@ init -1100 python:
             config.lenticular_bracket_ruby = False
             config.preserve_volume_when_muted = True
             config.history_current_dialogue = False
+            config.scry_extend = False
+            config.fadeout_audio = 0.0
+            config.at_transform_compare_full_context = True
 
             if version > (6, 99, 5):
                 config.search_prefixes.append("images/")
@@ -289,7 +292,6 @@ init -1100 python:
             store.layeredimage._constant = True
             store.updater._constant = True
 
-
     # The version of Ren'Py this script is intended for, or
     # None if it's intended for the current version.
     config.script_version = None
@@ -302,12 +304,14 @@ python early hide:
         script_version = ast.literal_eval(script_version)
 
         config.early_script_version = script_version
+        config.early_developer = not script_version
 
         if script_version <= (7, 2, 2):
             config.keyword_after_python = True
 
     except Exception:
         config.early_script_version = None
+        config.early_developer = True
         pass
 
 
@@ -413,3 +417,6 @@ init 1100 python hide:
         config.has_quicksave = False
         config.quit_action = ui.gamemenus("_confirm_quit")
         config.default_afm_enable = None
+
+    if config.fade_music is not None:
+        config.fadeout_audio = config.fade_music

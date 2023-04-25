@@ -208,8 +208,23 @@ documented = collections.defaultdict(list)
 # This keeps all objectsd we see alive, to prevent duplicates in documented.
 documented_list = [ ]
 
+def getdoc(o):
+    """
+    Returns the docstring for `o`, but unlike inspect.getdoc, does not get
+    values from base classes if absent (and it's faster too).
+    Will still get the inherited docstring for a non-overridden method in a
+    subclass (because the method object is the same as the base classe's).
+    """
+
+    doc = getattr(o, "__doc__", None)
+
+    if not doc:
+        return None
+
+    return inspect.cleandoc(doc)
+
 # The docstring for object.__init__ - which we don't want to pass for one of our classes's
-objinidoc = inspect.getdoc(object.__init__)
+objinidoc = getdoc(object.__init__)
 
 
 def scan(name, o, prefix="", inclass=False):
@@ -232,8 +247,8 @@ def scan(name, o, prefix="", inclass=False):
     # The formatted arguments.
     args = None
 
-    # Get the function's docstring.
-    doc = inspect.getdoc(o)
+    # Get the callable's docstring.
+    doc = getdoc(o)
 
     if not doc:
         return
@@ -283,7 +298,7 @@ def scan(name, o, prefix="", inclass=False):
             if not init:
                 return
 
-            init_doc = inspect.getdoc(init)
+            init_doc = getdoc(init)
 
             if init_doc and (init_doc != objinidoc):
                 lines.append("")

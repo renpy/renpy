@@ -31,8 +31,24 @@ import types # @UnresolvedImport
 
 import renpy
 from renpy.display.layout import Container
-from renpy.display.accelerator import transform_render
+from renpy.display.accelerator import RenderTransform
 from renpy.atl import position, any_object, bool_or_none, float_or_none, matrix, mesh
+
+
+class Camera(renpy.object.Object):
+    """
+    :doc: point_to_camera
+
+    Instances of this class can be used with point_to to point
+    at the location of the camera for a particular layer.
+
+    `layer`
+        The name of the layer.
+    """
+
+    def __init__(self, layer="master"):
+        self.layer = layer
+
 
 # The null object that's used if we don't have a defined child.
 null = None
@@ -433,14 +449,15 @@ class Transform(Container):
                  focus=None,
                  default=False,
                  _args=None,
-                 alt=None,
 
                  **kwargs):
+
+        properties = {k: kwargs.pop(k) for k in style_properties if k in kwargs}
 
         self.kwargs = kwargs
         self.style_arg = style
 
-        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args, alt=alt)
+        super(Transform, self).__init__(style=style, focus=focus, default=default, _args=_args, **properties)
 
         self.function = function
 
@@ -750,7 +767,21 @@ class Transform(Container):
 
     # The render method is now defined in accelerator.pyx.
     def render(self, width, height, st, at):
-        return transform_render(self, width, height, st, at)
+
+        # Prevent time from ticking backwards, as can happen if we replace a
+        # transform but keep its state.
+        if st + self.st_offset <= self.st:
+            self.st_offset = self.st - st
+        if at + self.at_offset <= self.at:
+            self.at_offset = self.at - at
+
+        self.st = st = st + self.st_offset
+        self.at = at = at + self.at_offset
+
+        # Update the state.
+        self.update_state()
+
+        return RenderTransform(self).render(width, height, st, at)
 
     def event(self, ev, x, y, st):
 
@@ -947,6 +978,9 @@ class ATLTransform(renpy.atl.ATLTransformBase, Transform):
         return repr((self.child, self.atl.loc))
 
 
+# Names of style properties that should be sent to the parent.
+style_properties = {'alt'}
+
 # Names of transform properties, and if the property should be handled with
 # diff2 or diff4.
 all_properties = set()
@@ -1025,6 +1059,11 @@ add_property("nearest", bool_or_none, None)
 add_property("perspective", any_object, None)
 add_property("rotate", float, None)
 add_property("rotate_pad", bool, True)
+add_property("point_to", any_object, None)
+add_property("orientation", (float, float, float), None)
+add_property("xrotate", float, None)
+add_property("yrotate", float, None)
+add_property("zrotate", float, None)
 add_property("shader", any_object, None, diff=None)
 add_property("show_cancels_hide", bool, True)
 add_property("subpixel", bool, False)

@@ -311,9 +311,13 @@ python early in layeredimage:
         :doc: li
         :name: Condition
 
-        This is used to represent a layer of an LayeredImage that
-        is controlled by a condition. When the condition is true,
-        the layer is displayed. Otherwise, nothing is displayed.
+        When the condition is true, the layer is displayed. Otherwise, nothing
+        is displayed.
+
+        This is used to implement a single ``if``, ``elif`` **or** ``else``
+        layeredimage statement (for ``else``, `condition` should be "True").
+        Several Conditions can then be passed to a :class:`ConditionGroup` to
+        emulate a full if/elif/else statement.
 
         `condition`
             This should be a string giving a Python condition that determines
@@ -328,20 +332,19 @@ python early in layeredimage:
             if all of these are showing.
 
         `if_any`
-            An attribute or list of attributes. If not empty, the condition is only evaluated
-            if any of these are showing.
+            An attribute or list of attributes. If not empty, the condition is
+            only evaluated if any of these are showing.
 
         `if_not`
             An attribute or list of attributes. The condition is only evaluated
             if none of these are showing.
 
         `at`
-            A transform or list of transforms that are applied to the
-            image.
+            A transform or list of transforms that are applied to the image.
 
-        Other keyword arguments are interpreted as transform properties. If
-        any are present, a transform is created that wraps the image. (For
-        example, pos=(100, 200) can be used to offset the image by 100 pixels
+        Other keyword arguments are interpreted as transform properties. If any
+        is present, a transform is created that wraps the image. (For example,
+        pos=(100, 200) can be used to offset the image by 100 pixels
         horizontally and 200 vertically.)
         """
 
@@ -388,7 +391,13 @@ python early in layeredimage:
 
     class ConditionGroup(Layer):
         """
-        Combines a list of conditions into a single ConditionSwitch.
+        :doc: li
+        :name: ConditionGroup
+
+        Takes a list of :class:`Condition` to combine them into a single
+        :func:`ConditionSwitch`.
+
+        Implements the if/elif/else statement.
         """
 
         def __init__(self, conditions):
@@ -429,7 +438,7 @@ python early in layeredimage:
 
     class Always(Layer):
         """
-        :doc: li
+        :undocumented:
         :name: Always
 
         This is used for a displayable that is always shown.
@@ -457,7 +466,6 @@ python early in layeredimage:
             An attribute or list of attributes. The displayable is only shown
             if none of these are showing.
         """
-
 
         def __init__(self, image, **kwargs):
 
@@ -507,11 +515,14 @@ python early in layeredimage:
         displayables associated with those attribute.
 
         `attributes`
-            This must be a list of Attribute objects. Each Attribute object
+            This must be a list of Attribute, Condition, ConditionGroup or
+            :func:`renpy.Displayable` objects. Each one
             reflects a displayable that may or may not be displayed as part
             of the image. The items in this list are in back-to-front order,
             with the first item further from the viewer and the last
             closest.
+            Passing a displayable directly is the equivalent of the `always`
+            layeredimage statement.
 
         `at`
             A transform or list of transforms that are applied to the displayable
@@ -1081,7 +1092,7 @@ python early in layeredimage:
         another layered image.
 
         `name`
-            A string giving the name of the layered image to proxy to.
+            A string giving the name of the layeredimage to proxy to.
 
         `transform`
             If given, a transform or list of transforms that are applied to the

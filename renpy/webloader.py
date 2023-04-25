@@ -177,6 +177,7 @@ def enqueue(relpath, rtype, data):
     global queue
 
     with queue_lock:
+        voice_count = 0
         for rr in queue:
             # de-dup same .data/image_filename
             # don't de-dup same .relpath (different .data == different cache entry)
@@ -189,9 +190,12 @@ def enqueue(relpath, rtype, data):
             elif rr.rtype == rtype == 'voice':
                 if rr.relpath == relpath:
                     return
-                if len([True for rr in queue if rr.type == 'voice']) > renpy.config.predict_statements:
-                    # don't stack skipped dialogs
-                    return
+                voice_count += 1
+
+        if voice_count > renpy.config.predict_statements:
+            # don't stack skipped dialogs
+            return
+
         queue.append(ReloadRequest(relpath, rtype, data))
 
 

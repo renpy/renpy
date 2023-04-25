@@ -57,6 +57,7 @@ def register(
         predict_all=True,
         predict_next=None,
         execute_default=None,
+        reachable=None,
 ):
     """
     :doc: statement_register
@@ -107,7 +108,9 @@ def register(
 
         The function should return either a string giving a label to jump to,
         the second argument to transfer control into the block, or None to
-        continue to the statement after this one.
+        continue to the statement after this one. It can also return the result
+        of :meth:`Lexer.renpy_statement` or :meth:`Lexer.renpy_block` when
+        called in the `parse` function.
 
     `label`
         This is a function that is called to determine the label of this
@@ -175,6 +178,49 @@ def register(
         other times.
 
         This is called with a single argument, the object returned from parse.
+
+    `reachable`
+        This is a function that is called to allow this statement to
+        customize how it participates in lint's reachability analysis.
+
+        By default, a statement's custom block, sub-parse blocks created
+        with Lexer.renpy_block(), and the statement after the statement
+        are reachable if the statement itself is reachable. The statement
+        is also reachable if it has a label function.
+
+        This can be customized by providing a reachable function. This is
+        a function that takes five arguments (in the following, a "label"
+        may be a string or an opaque object):
+
+        * The object returned by the parse function.
+        * A boolean that is true if the statement is reachable.
+        * The label of the statement.
+        * The label of the next statement, or None if there is no next statement.
+        * If `block` is set to "script", the label of the first statement in the block,
+          or None if there is no block.
+
+        It's expected to return a set that may contain:
+
+        * A label or subparse object of a statement that is reachable.
+        * True, to indicate that this statement should not be reported by lint,
+          but is not intrinsically reachable. (It will become reachable if it
+          is reported reachable by another statement.)
+        * None, which is ignored.
+
+        This function may be called multiple times with both value of is_reachable,
+        to allow the statement to customize its behavior based on whether it's
+        reachable or not. (For example, the next statement may only be reachable
+        if this statement is.)
+
+    .. warning::
+
+        Using the empty string as the name to redefine the say statement is
+        usually a bad idea. That is because when replacing a Ren'Py native
+        statement, its behavior depends on the :doc:`statement_equivalents`. In
+        the case of the say statement, these equivalents do not support the `id`
+        and translation systems. As a result, a game redefining the default
+        statement will not be able to use these features (short of
+        reimplementing them entirely).
     """
 
     name = tuple(name.split())
@@ -199,6 +245,7 @@ def register(
         predict_all=predict_all,
         predict_next=predict_next,
         execute_default=execute_default,
+        reachable=reachable,
     )
 
     if block not in [True, False, "script", "possible" ]:

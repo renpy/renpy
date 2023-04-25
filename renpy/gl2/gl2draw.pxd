@@ -47,6 +47,7 @@ cdef class GL2Draw:
     cdef tuple default_clip
     cdef float dpi_scale
     cdef object shader_cache
+    cdef bint ever_set_position
 
     cdef public tuple clip_rtt_box
 
@@ -72,6 +73,15 @@ cdef class GL2Draw:
 
     # The framebuffer object used for offscreen rendering.
     cdef GLuint fbo
+
+    # The color texture object used for pixel tests (1x1).
+    cdef GLuint color_renderbuffer_1px
+
+    # The depth renderbuffer object used for pixel tests. (1x1)
+    cdef GLuint depth_renderbuffer_1px
+
+    # The framebuffer object used for pixel tests (1x1)
+    cdef GLuint fbo_1px
 
     # The texture_loader singleton.
     cdef public TextureLoader texture_loader

@@ -129,6 +129,8 @@ init -1500 python:
 
     config.predict_file_pages = True
 
+    config.file_slotname_callback = None
+
     def __slotname(name, page=None, slot=False):
 
         if slot:
@@ -151,7 +153,13 @@ init -1500 python:
             except ValueError:
                 pass
 
-        return str(page) + "-" + str(name)
+        page = str(page)
+        name = str(name)
+
+        if config.file_slotname_callback is not None:
+            return config.file_slotname_callback(page, name)
+        else:
+            return page + "-" + name
 
     def __newest_slot():
         """
@@ -566,7 +574,7 @@ init -1500 python:
 
         page = unicode(page)
 
-        for i in renpy.list_slots(page + "-"):
+        for i in renpy.list_slots(__slotname(page, r'\d+')):
             renpy.predict(renpy.slot_screenshot(i))
 
     @renpy.pure

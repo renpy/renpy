@@ -366,6 +366,9 @@ def main():
     choose_variants()
     renpy.display.touch = "touch" in renpy.config.variants
 
+    if (renpy.android or renpy.ios) and not renpy.config.log_to_stdout:
+        print("Version:", renpy.version)
+
     log_clock("Early init.")
 
     # Note the game directory.

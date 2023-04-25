@@ -639,6 +639,11 @@ class AlphaDissolve(Transition):
         super(AlphaDissolve, self).__init__(delay, **properties)
 
         self.control = renpy.display.layout.Fixed()
+
+        control = renpy.easy.displayable(control)
+        if control._duplicatable:
+            control = control._duplicate(self._args)
+
         self.control.add(control)
 
         self.old_widget = renpy.easy.displayable(old_widget)

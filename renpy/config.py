@@ -97,7 +97,7 @@ savedir = None
 image_cache_size = None
 
 # The size of the image cache, in megabytes.
-image_cache_size_mb = 300
+image_cache_size_mb = 400
 
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
@@ -138,8 +138,12 @@ mouse = None
 # The default sound playback sample rate.
 sound_sample_rate = 48000
 
-# The amount of time music is faded out between tracks.
-fade_music = 0.0
+# The default fadeout used when playing or stopping audio.
+fadeout_audio = 0.016
+
+# The old name of config.fadeout_audio. Kept for compatibility, and yused
+# in 00compat.rpy.
+fade_music = None
 
 # Should the at list be sticky?
 sticky_positions = False
@@ -358,7 +362,7 @@ auto_save_extra_info = None
 
 # The directory (underneath ~/RenPy, ~/Library/RenPy, or ~/.renpy) where the
 # game-specific data is saved.
-save_directory = None # type: str
+save_directory = None # type: str|None
 
 # These are used to deal with the case where a picture is missing.
 missing_scene = None
@@ -1359,6 +1363,27 @@ tts_substitutions = [ ]
 
 # The base URL where unpacked web videos can be found.
 web_video_base = "./game"
+
+# Used to disable scrying extend, if someone runs into a problem with it.
+scry_extend = True
+
+# Should Ren'Py check for duplicate translate None statements?
+check_translate_none = True
+
+# Like developer, but available at the end of python early blocks.
+early_developer = False
+
+# A function that returns the autosave prefix.
+autosave_prefix_callback = None
+
+# Compatibility for c492f2f8e6de57b2740fa5d00566f445124caaba.
+at_transform_compare_full_context = False
+
+# A list of callbacks when the display starts.
+display_start_callbacks = [ ]
+
+# If not None, the size of the sound buffer, in bytes.
+sound_buffer_size = None
 
 
 del os

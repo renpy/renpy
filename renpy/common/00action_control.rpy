@@ -40,8 +40,8 @@ init -1500 python:
         """
         :doc: control_action
 
-        Causes the current interaction to return the supplied value, which
-        must not be None. This is often used with menus and imagemaps, to
+        Causes the current interaction to return the supplied non-None value.
+        This is often used with menus and imagemaps, to
         select what the return value of the interaction is. If the screen
         was called using the ``call screen`` statement, the return value
         is placed in the `_return` variable.

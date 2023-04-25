@@ -624,6 +624,8 @@ class MultiBox(Container):
     _camera_list = None # type: list|None
     layers = None # type: dict|None
 
+    layer_name = None # type: str|None
+    untransformed_layer = None # type: renpy.display.layout.MultiBox|None
 
     def __init__(self, spacing=None, layout=None, style='default', **properties):
 
@@ -693,7 +695,7 @@ class MultiBox(Container):
 
             for layer in renpy.config.layers:
                 old_d = self.layers[layer]
-                old_d = getattr(old_d, 'raw_child', old_d)
+                old_d = old_d.untransformed_layer or old_d
 
                 new_d = old_d._in_current_store()
 
@@ -2431,6 +2433,9 @@ class Layer(AdjustTimes):
         anything exceeding the bounds will be trimmed.
     """
 
+    # Used to store layer_transitions when processing this layer.
+    layers = { }
+
     def __init__(self, layer, **properties):
         self.layer = layer
         self._clipping = properties.pop('clipping', True)
@@ -2464,3 +2469,9 @@ class Layer(AdjustTimes):
 
         seen.add(id_d)
         d.visit_all(callback, seen)
+
+    def per_interact(self):
+        if renpy.game.interface and renpy.game.interface.take_layer_displayable:
+            renpy.game.interface.take_layer_displayable(self)
+
+        super(Layer, self).per_interact()

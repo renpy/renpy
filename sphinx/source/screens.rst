@@ -40,11 +40,48 @@ in Python.
 
 Screens are updated at the start of each interaction, and each time an
 interaction is restarted. Note that a ``with None`` statement does not
-cause an interaction to happen, and hence won't update a screen.
+cause an interaction to happen, and hence won't update a screen. A
+``with Pause(0)`` will be enough to trigger one, if necessary.
 
-A screen has a scope associated with it, giving values to some
-variables. When a variable is accessed by a screen, it's first looked
-up in the scope, and then looked up as a global variable.
+A screen has a scope associated with it, giving values to some variables. There are different kinds
+of variables, in screens, which are resolved as shown in the following list:
+
+- First are local variables. These only exist in a screen that is being included in another with
+  the :ref:`use <sl-use>` statement instead of being shown (or called) on its own. They are very
+  similar with screen variables (see below), and created the same way, except that local variables
+  can only be accessed by the used screen. Those are set using :class:`SetLocalVariable`, among
+  other actions, or by a python block or line in the used screen. Actions such as
+  :class:`SetScreenVariable` will *not work* on local variables.
+
+  - Local parameters are the parameters taken by the used screen. They live in the same scope as
+    local variables, and follow the same behavior and constraints as screen parameters - see
+    below.
+
+- If a name cannot be resolved among local variables - or if we are not in a screen being
+  :ref:`used <sl-use>` by another - the name is searched for in screen variables. These are
+  variables created with the in-screen :ref:`sl-default` or :ref:`sl-python` statements, in the
+  top-level screen. Screen variables can be set through the :class:`SetScreenVariable` action,
+  among others, or by a python block or line in the top-level screen, or any used screen if no
+  local variable has the same name.
+
+  - Screen parameters (that is, values defined and passed through the parentheses of the screen
+    statement) live in the same scope as screen variables (that is, they can't have the same
+    name), but they can't be set or edited through actions, since they will be reset to their
+    original value at arbitrary times, including every time an action is executed. So, if their
+    value were edited through the :class:`SetScreenVariable` action (or any other action really),
+    it would be reset immediately afterwards. This is also the case for variables defined in
+    in-screen python blocks, since these blocks are executed at arbitrary times, as opposed to
+    the in-screen :ref:`default <sl-default>` statement which executes only at the time the
+    screen gets shown.
+
+- In last resort, a variable name is looked for in the general store, where all of Ren'Py's global
+  variables are. Such variables can be set through the :class:`SetVariable` action, among others.
+
+.. note::
+
+    If you want an action to set a variable inside a screen, and you want that screen to be
+    sometimes shown directly and sometimes used inside another, use :class:`SetLocalVariable`. It
+    will be far less efficient, but it will work in both cases.
 
 **Screens must not cause side effects that are visible from
 outside the screen.** Ren'Py will run a screen multiple times, as
@@ -214,10 +251,9 @@ All user interface statements take the following common properties:
 
         screen hello_title():
             text "Hello." at hello_t
-            text "Hello.":
-                at transform:
-                    align (0.2, 0.5) alpha 0.0
-                    linear 0.5 alpha 1.0
+            text "Hello." at transform:
+                align (0.2, 0.5) alpha 0.0
+                linear 0.5 alpha 1.0
 
     This transforms are used to wrap this displayable. The show, hide,
     replace, and replaced external events are delivered to a transform
@@ -227,6 +263,20 @@ All user interface statements take the following common properties:
     to the screen, then events are delivered to that transform. But if
     a transform wraps a textbutton that is added to the vbox, this
     second transform is not given events.
+
+    It's possible for a single statement to have both an `at` property
+    and an ``at transform``. The property must come first, and is
+    applied first. ::
+
+        screen title():
+            add "title background":
+                at sepia
+
+            text "The Title of the Game":
+                at sepia, truecenter
+                at transform:
+                    alpha 0.0
+                    linear 0.5 alpha 1.0
 
 `default_focus`
     If given and true, the displayable is focused by default. When
@@ -775,6 +825,11 @@ The input statement takes no parameters, and the following properties:
 `caret_blink`
     If not False, the blinking period of the default caret.
     Overrides :var:`config.input_caret_blink`.
+
+`multiline`
+    If true, it becomes possible to move caret on the next line
+    using keyboard (Shift+Enter by default,
+    can be changed by modifying config.keymap['input_next_line']).
 
 
 It also takes:
@@ -1748,15 +1803,74 @@ properties.
 
 The advanced displayable statements are:
 
-``drag``
-    Creates a :class:`Drag`. A drag can be given an optional child,
-    or the :propref:`child` style property can be used to supply the child,
-    and its focused variants. Drags also take the :propref:`focus_mask`
-    style property.
+.. _sl-areapicker:
 
-``draggroup``
-    Creates a :class:`DragGroup`. A drag group may have zero or more
-    drags as its children.
+Areapicker
+----------
+
+Intended for use in development tools, this lets the user select a
+rectangular area on the screen. It takes the following properties:
+
+`cols`
+    If not None, the defaut, this divides the screen up into a grid
+    with this many columns.
+
+`rows`
+    If not None, the defaut, this divides the screen up into a grid
+    with this many rows.
+
+`position`
+    If not None, the default, this is a function called with the
+    x and y coordinates of the location the user first clicked,
+    rounded to the grid.
+
+`changed`
+    This is called with the rectangle, an (x, y, width, height) tuple,
+    whenever the user changes the selected area.
+
+`finished`
+    This is called with the rectangle, an (x, y, width, height) tuple,
+    when the user finishes selecting an area.
+
+`persist`
+    If true, the child will be shown in the selected area when the
+    selection is complete. If false, the default, the child will be
+    hidden once the selection is complete.
+
+It takes the following group of properties:
+
+* :ref:`Common Properties <common-properties>`
+
+An areapicker takes one child. The child is displayed on the screen in the
+selected area.
+
+Drag
+----
+
+Creates a :class:`Drag` that can be dragged around the screen. With the
+acception of `d`, which is supplied by the screen language, this takes
+all properties defined in that class.
+
+It also takes the following properties:
+
+* :ref:`Common Properties <common-properties>`
+* The :propref:`hover_sound` and :propref:`activate_sound` style
+  properties
+* The :propref:`focus_mask` style_property.
+
+A drag takes one child, or the :propref:`child` style property can be
+used to supply the child and its focused variants.
+
+Draggroup
+---------
+
+Creates a :class:`DragGroup`.  This takes the same properties as :class:`DragGroup`,
+and also takes the following properties:
+
+* :ref:`Common Properties <common-properties>`
+
+A drag group may have zero or more drags as its children. It may also have
+non-drags as children, in which case it functions like fixed.
 
 
 .. _sl-has:

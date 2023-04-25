@@ -53,7 +53,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
-        fadeout time is taken from config.fade_music. This is ignored if
+        fadeout time is taken from config.fadeout_audio. This is ignored if
         the channel is paused when the music is played.
 
     `synchro_start`
@@ -114,7 +114,7 @@ def play(filenames, channel="music", loop=None, fadeout=None, synchro_start=Fals
             c.dequeue()
 
             if fadeout is None:
-                fadeout = renpy.config.fade_music
+                fadeout = renpy.config.fadeout_audio
 
             if if_changed and c.get_playing() in filenames:
                 fadein = 0
@@ -269,7 +269,7 @@ def stop(channel="music", fadeout=None):
 
     This stops the music that is currently playing, and dequeues all
     queued music. If fadeout is None, the music is faded out for the
-    time given in config.fade_music, otherwise it is faded for fadeout
+    time given in config.fadeout_audio, otherwise it is faded for fadeout
     seconds.
 
     This sets the last queued file to None.
@@ -279,7 +279,7 @@ def stop(channel="music", fadeout=None):
 
     `fadeout`
         If not None, this is a time in seconds to fade for. Otherwise the
-        fadeout time is taken from config.fade_music. This is ignored if
+        fadeout time is taken from config.fadeout_audio. This is ignored if
         the channel is paused.
 
 
@@ -298,7 +298,7 @@ def stop(channel="music", fadeout=None):
             ctx = c.copy_context()
 
             if fadeout is None:
-                fadeout = renpy.config.fade_music
+                fadeout = renpy.config.fadeout_audio
 
             c.fadeout(fadeout)
 
@@ -501,8 +501,7 @@ def set_pan(pan, delay, channel="music"):
         The amount of time it takes for the panning to occur.
 
     `channel`
-        The channel the panning takes place on. This can be a sound or a music
-        channel. Often, this is channel 7, the default music channel.
+        The channel the panning takes place on, defaulting to the music channel.
     """
 
     try:

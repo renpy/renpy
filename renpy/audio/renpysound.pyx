@@ -50,6 +50,8 @@ or is stopped.
 
 from __future__ import print_function
 
+from libc.stdint cimport uintptr_t
+
 from pygame_sdl2 cimport *
 import_pygame_sdl2()
 
@@ -84,6 +86,7 @@ cdef extern from "renpysound_core.h":
     void RPS_periodic()
     char *RPS_get_error()
 
+    void (*RPS_generate_audio_c_function)(float *stream, int length)
 
 def check_error():
     """
@@ -351,9 +354,15 @@ NODROP_VIDEO = 1
 # The video will be played, allowing framedrops.
 DROP_VIDEO = 2
 
-def set_video(channel, video):
+def set_video(channel, video, loop=False):
     """
     Sets a flag that determines if this channel will attempt to decode video.
+
+    `video`
+        One of `NO_VIDEO`, `NODROP_VIDEO`, or `DROP_VIDEO`.
+
+    `loop`
+        If true, the video file will loop.
     """
 
     if video == NODROP_VIDEO:
@@ -413,6 +422,24 @@ def advance_time():
 
     RPS_advance_time()
 
+def set_generate_audio_c_function(fn):
+    """
+    This can be use to set a C function that totally replaces the Ren'Py
+    audio system.
+
+    The function is expected to have the signature void (*)(short *buf, int samples,
+    and fill buf with samples samples of audio, where each sample consists of two
+    shorts.
+    """
+
+    global RPS_generate_audio_c_function
+
+    if not isinstance(fn, int):
+        import ctypes
+        fn = ctypes.cast(fn, ctypes.c_void_p).value
+
+    RPS_generate_audio_c_function = <void (*)(float *, int)> <uintptr_t> fn
+
 # Store the sample surfaces so they stay alive.
 rgb_surface = None
 rgba_surface = None
@@ -430,5 +457,8 @@ def sample_surfaces(rgb, rgba):
     rgba_surface = rgb
 
     RPS_sample_surfaces(rgb, rgba)
+
+# Is this the webaudio module?
+is_webaudio = False
 
 # When changing this API, change webaudio.py, too!

@@ -163,10 +163,11 @@ class ScriptTranslator(object):
                 if n.language is None:
                     if n.identifier in self.default_translates:
                         old_node = self.default_translates[n.identifier]
-                        raise Exception("Line with id %s appeared twice, at %s:%d and %s:%d." %
-                                          (n.identifier,
-                                           old_node.filename, old_node.linenumber,
-                                           n.filename, n.linenumber))
+
+                        renpy.lexer.ParseError(n.filename, n.linenumber, "Line with id %s appears twice. The other line is %s:%d" % (
+                                    n.identifier,
+                                    old_node.filename, old_node.linenumber)
+                                    ).defer("duplicate_id")
 
                     self.default_translates[n.identifier] = n
                     self.file_translates[filename].append((label, n))
@@ -645,6 +646,15 @@ def new_change_language(tl, language):
 
     renpy.config.init_system_styles()
 
+def clean_data():
+    """
+    This cleans out data that's dependent on the language.
+    """
+
+    renpy.store._history_list = renpy.store.list() # type: ignore
+    renpy.store.nvl_list = renpy.store.list() # type: ignore
+    renpy.game.log.forward = [ ]
+
 
 def change_language(language, force=False):
     """
@@ -657,8 +667,7 @@ def change_language(language, force=False):
     global old_language
 
     if old_language != language:
-        renpy.store._history_list = renpy.store.list() # type: ignore
-        renpy.store.nvl_list = renpy.store.list() # type: ignore
+        clean_data()
 
     renpy.game.preferences.language = language
     if old_language == language and not force:
@@ -727,7 +736,7 @@ def check_language():
                 # has already set translate_identifier to None.
                 ctx.translate_identifier = tid
 
-                renpy.game.log.forward = [ ]
+                clean_data()
 
                 raise renpy.game.JumpException(node.name)
 
