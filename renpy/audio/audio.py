@@ -448,6 +448,9 @@ class Channel(object):
         # mixer is muted.
         force_stop = self.context.force_stop or (renpy.game.preferences.mute.get(self.mixer, False) and self.stop_on_mute)
 
+        if global_pause and not self.loop:
+            force_stop = True
+
         if self.playing and force_stop:
             renpysound.stop(self.number)
             self.playing = False
@@ -467,6 +470,9 @@ class Channel(object):
         # per call, to prevent memory leaks with really short sound
         # files. So this loop will only execute once, in practice.
         while True:
+
+            if global_pause:
+                break
 
             if self._number is not None:
                 depth = renpysound.queue_depth(self.number)
