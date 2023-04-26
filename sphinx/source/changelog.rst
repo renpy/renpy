@@ -140,7 +140,7 @@ These releases add support for two new image formats:
   sacrificing image quality.
 
 * SVG files are a vector graphics format used on the web. Ren'Py supports a
-  SVG files containing a large subset of SVGs  capability. (Notably, Ren'Py
+  SVG files containing a subset of SVGs  capability. (Notably, Ren'Py
   does not support text in SVG files.) Ren'Py will automatically oversample
   (or undersample) SVGs when the game is scaled, to ensure the SVGs remain
   sharp at any resolution, similar to the way it oversamples text. This makes
