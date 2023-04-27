@@ -492,6 +492,8 @@ init -1400 python hide:
 
         `no`
             An action that is run when the user chooses no.
+
+        See :func:`Confirm` for an equivalent Action.
         """
         if config.confirm_screen and renpy.has_screen('confirm'):
             screen = "confirm"
