@@ -30,7 +30,7 @@ init -1500 python:
         "load" : "(not _in_replay)",
         }
 
-    NoTransition = renpy.object.Sentinel("NoTransition")
+    NoShowTransition = renpy.object.Sentinel("NoShowTransition")
 
     @renpy.pure
     class ShowMenu(Action, DictEquality):
@@ -68,7 +68,7 @@ init -1500 python:
 
         def __init__(self, screen=None, *args, **kwargs):
             self.screen = screen
-            self.transition = kwargs.pop("_transition", NoTransition)
+            self.transition = kwargs.pop("_transition", NoShowTransition)
             self.args = args
             self.kwargs = kwargs
 
@@ -92,7 +92,7 @@ init -1500 python:
 
                 if renpy.has_screen(screen):
 
-                    if self.transition is NoTransition:
+                    if self.transition is NoShowTransition:
                         renpy.transition(config.intra_transition)
                     else:
                         renpy.transition(self.transition)
@@ -100,7 +100,7 @@ init -1500 python:
                     renpy.restart_interaction()
 
                 elif renpy.has_label(screen):
-                    if self.transition is NoTransition:
+                    if self.transition is NoShowTransition:
                         renpy.transition(config.intra_transition)
                     else:
                         renpy.transition(self.transition)
