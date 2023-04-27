@@ -97,6 +97,9 @@ static const char *error_msg = NULL;
 /* Have we been initialized? */
 static int initialized = 0;
 
+/** Should fades be linear rather than logarithmic? */
+static int linear_fades = 0;
+
 
 struct Interpolate {
     /* The number of samples that are finished so far. */
@@ -111,7 +114,6 @@ struct Interpolate {
     /* The ending value. */
     float end;
 };
-
 
 
 void init_interpolate(struct Interpolate *i, float value) {
@@ -155,6 +157,10 @@ static inline float get_interpolate(struct Interpolate *i) {
 static inline float get_interpolate_power(struct Interpolate *i) {
 
     float log_power = get_interpolate(i);
+
+    if (linear_fades) {
+        return log_power / MAX_POWER;
+    }
 
     if (log_power == MIN_POWER) {
         return 0;
@@ -1125,7 +1131,7 @@ void RPS_set_video(int channel, int video) {
  * Initializes the sound to the given frequencies, channels, and
  * sample buffer size.
  */
-void RPS_init(int freq, int stereo, int samples, int status, int equal_mono) {
+void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int linear_fades_) {
 
     if (initialized) {
         return;
@@ -1161,6 +1167,8 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono) {
     media_init(audio_spec.freq, status, equal_mono);
 
     SDL_PauseAudio(0);
+
+    linear_fades = linear_fades_;
 
     initialized = 1;
 

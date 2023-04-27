@@ -1385,6 +1385,8 @@ display_start_callbacks = [ ]
 # If not None, the size of the sound buffer, in bytes.
 sound_buffer_size = None
 
+# If true, fades will be linear rather than logarithmic.
+linear_fades = False
 
 del os
 del collections

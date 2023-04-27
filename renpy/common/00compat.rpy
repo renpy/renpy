@@ -269,6 +269,7 @@ init -1100 python:
             config.scry_extend = False
             config.fadeout_audio = 0.0
             config.at_transform_compare_full_context = True
+            config.linear_fades = True
 
             if version > (6, 99, 5):
                 config.search_prefixes.append("images/")

@@ -30,6 +30,11 @@ the :var:`config.fadeout_audio` variable. To disable the fadeout::
 
     define config.fadeout_audio = 0.0
 
+Fading is now logarithmic, which sounds smoother to the human ear as it matches
+the way ears perceive sound. To revert to the old linear fades::
+
+    define config.linear_fades = True
+
 
 **Translate None** Ren'Py will now produce an error when encountering an explicit
 ``translate None`` statement that does not translate strings, styles, or python.
