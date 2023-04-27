@@ -1,4 +1,4 @@
-# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -165,18 +165,17 @@ init -1400 python hide:
                unhovered=None,
                index=None,
                **properties):
-
         """
-         label - The label of this button. Will be translated if necessary.
-         type - The type of this button. Used to generate the appropriate styles.
-         selected - Determines if this button should be selected.
-         enabled - Determines if this button should be enabled.
-         clicked - A function that is run when the button is clicked.
-         hovered - A function that is run when the button is hovered.
-         unhovered - A function that is run when the button is unhovered.
-         index - A style index. If None, label is used.
-         size_group - The size_group used by this button.
-         """
+        label - The label of this button. Will be translated if necessary.
+        type - The type of this button. Used to generate the appropriate styles.
+        selected - Determines if this button should be selected.
+        enabled - Determines if this button should be enabled.
+        clicked - A function that is run when the button is clicked.
+        hovered - A function that is run when the button is hovered.
+        unhovered - A function that is run when the button is unhovered.
+        index - A style index. If None, label is used.
+        size_group - The size_group used by this button.
+        """
 
         if not enabled:
             clicked = None
@@ -479,21 +478,21 @@ init -1400 python hide:
     @layout
     def yesno_screen(message, yes=None, no=None):
         """
-         :doc: other
+        :doc: other
 
-         This causes the a yes/no prompt screen with the given message
-         to be displayed. The screen will be hidden when the user hits
-         yes or no.
+        This causes the a yes/no prompt screen with the given message
+        to be displayed. The screen will be hidden when the user hits
+        yes or no.
 
-         `message`
-             The message that will be displayed.
+        `message`
+            The message that will be displayed.
 
-         `yes`
-             An action that is run when the user chooses yes.
+        `yes`
+            An action that is run when the user chooses yes.
 
-         `no`
-             An action that is run when the user chooses no.
-         """
+        `no`
+            An action that is run when the user chooses no.
+        """
         if config.confirm_screen and renpy.has_screen('confirm'):
             screen = "confirm"
         elif renpy.has_screen("yesno_prompt"):
@@ -534,4 +533,3 @@ init -1400 python hide:
         return save_name
 
     config.auto_save_extra_info = __auto_save_extra_info
-
