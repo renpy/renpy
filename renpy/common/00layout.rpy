@@ -477,24 +477,8 @@ init -1400 python hide:
 
     @layout
     def yesno_screen(message, yes=None, no=None):
-        """
-        :doc: other
+        # :undocumented: for renpy.confirm
 
-        This causes the a yes/no prompt screen with the given message
-        to be displayed. The screen will be hidden when the user hits
-        yes or no.
-
-        `message`
-            The message that will be displayed.
-
-        `yes`
-            An action that is run when the user chooses yes.
-
-        `no`
-            An action that is run when the user chooses no.
-
-        See :func:`Confirm` for an equivalent Action.
-        """
         if config.confirm_screen and renpy.has_screen('confirm'):
             screen = "confirm"
         elif renpy.has_screen("yesno_prompt"):

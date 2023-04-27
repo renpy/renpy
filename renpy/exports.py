@@ -4480,3 +4480,25 @@ def request_permission(permission):
         return False
 
     return get_sdl_dll().SDL_AndroidRequestPermission(permission.encode("utf-8")) # type: ignore
+
+
+def confirm(message, yes=None, no=None):
+    """
+    :doc: other
+
+    This causes the a yes/no prompt screen with the given message
+    to be displayed. The screen will be hidden when the user hits
+    yes or no.
+
+    `message`
+        The message that will be displayed.
+
+    `yes`
+        An action that is run when the user chooses yes.
+
+    `no`
+        An action that is run when the user chooses no.
+
+    See :func:`Confirm` for an equivalent Action.
+    """
+    return renpy.store.layout.yesno_screen(message, yes=yes, no=no)
