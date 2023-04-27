@@ -737,6 +737,8 @@ user. It takes the following parameters:
 Until Ren'Py 6.99.10, this screen was known as the ``yesno_prompt`` screen.
 If no ``confirm`` screen is present, ``yesno_prompt`` is used instead.
 
+This screen will also be called by the :func:`layout.yesno_screen` and the :func:`Confirm` action.
+
 ::
 
     screen confirm(message, yes_action, no_action):
