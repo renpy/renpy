@@ -1,4 +1,4 @@
-﻿# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2023 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -522,14 +522,12 @@ init -1400 python hide:
 
             renpy.restart_interaction()
 
-            return
-
-        if renpy.invoke_in_new_context(layout.invoke_yesno_prompt, None, message):
+        elif renpy.invoke_in_new_context(layout.invoke_yesno_prompt, None, message):
             if yes is not None:
-                yes()
+                renpy.run(yes)
         else:
             if no is not None:
-                no()
+                renpy.run(no)
 
 
     def __auto_save_extra_info():
