@@ -65,14 +65,45 @@ def get_null():
 
 # Convert a position from cartesian to polar coordinates.
 
-
-def cartesian_to_polar(x, y, xaround, yaround):
+def cartesian_to_polar(x, y, xaround, yaround, available_width, available_height):
     """
     Converts cartesian coordinates to polar coordinates.
     """
 
+    tx = type(x)
+    ty = type(y)
+
+    if not available_width:
+        available_width = renpy.config.screen_width
+
+    if not available_height:
+        available_height = renpy.config.screen_height
+
+    if type(xaround) is float:
+        xaround = int(xaround * available_width)
+
+    if type(yaround) is float:
+        yaround = int(yaround * available_height)
+
+    if tx is float:
+        x = x * available_width
+
+    if ty is float:
+        y = y * available_height
+
     dx = x - xaround
     dy = y - yaround
+
+
+
+    if tx is float:
+        if available_width:
+            dx /= available_width
+        else:
+            dx = x
+
+    if ty is float:
+        dy /= available_height
 
     radius = math.hypot(dx, dy)
     angle = math.atan2(dx, -dy) / math.pi * 180
@@ -80,23 +111,51 @@ def cartesian_to_polar(x, y, xaround, yaround):
     if angle < 0:
         angle += 360
 
+    radius = tx(radius)
+
+    print("AR", angle, radius)
+
     return angle, radius
 
 
-def polar_to_cartesian(angle, radius, xaround, yaround):
+def polar_to_cartesian(angle, radius, xaround, yaround, available_width, available_height):
     """
-    Converts polart coordinates to cartesian coordinates.
+    Converts polar coordinates to cartesian coordinates.
     """
+
+    tr = type(radius)
+
+    if not available_width:
+        available_width = renpy.config.screen_width
+
+    if not available_height:
+        available_height = renpy.config.screen_height
+
+    if type(xaround) is float:
+        xaround = int(xaround * available_width)
+
+    if type(yaround) is float:
+        yaround = int(yaround * available_height)
 
     angle = angle * math.pi / 180
 
     dx = radius * math.sin(angle)
     dy = -radius * math.cos(angle)
 
-    x = type(xaround)(xaround + dx)
-    y = type(yaround)(yaround + dy)
+    x = xaround + dx
+    y = yaround + dy
+
+    if tr is float:
+        x /= available_width
+        y /= available_height
+
+    x = tr(x)
+    y = tr(y)
+
+    print("XY", x, y)
 
     return x, y
+
 
 
 def first_not_none(*args):
@@ -116,6 +175,9 @@ class TransformState(renpy.object.Object):
 
     last_angle = None
     last_events = True
+
+    available_width = 0
+    available_height = 0
 
     def __init__(self):
 
@@ -253,34 +315,36 @@ class TransformState(renpy.object.Object):
     def get_angle(self):
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-        angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
-        return angle
+        angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround, self.available_width, self.available_height)
+        return angle or self.last_angle or 0
 
     def get_radius(self):
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-        _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
+        _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround, self.available_width, self.available_height)
         return radius
 
     def set_angle(self, value):
+        self.last_angle = 0
+
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-        _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
+        _angle, radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround, self.available_width, self.available_height)
         angle = value
-        self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
+        self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround, self.available_width, self.available_height)
 
         if self.xanchoraround:
-            self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
+            self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround, self.available_width, self.available_height)
 
     def set_radius(self, value):
         xpos = first_not_none(self.xpos, self.inherited_xpos, 0)
         ypos = first_not_none(self.ypos, self.inherited_ypos, 0)
-        angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround)
+        angle, _radius = cartesian_to_polar(xpos, ypos, self.xaround, self.yaround, self.available_width, self.available_height)
         radius = value
-        self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
+        self.xpos, self.ypos = polar_to_cartesian(angle, radius, self.xaround, self.yaround, self.available_width, self.available_height)
 
         if self.xanchoraround:
-            self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround)
+            self.xanchor, self.yanchor = polar_to_cartesian(angle, radius, self.xaround, self.yaround, self.available_width, self.available_height)
 
     angle = property(get_angle, set_angle)
     radius = property(get_radius, set_radius)
@@ -1111,7 +1175,7 @@ ALIASES = {
     "around" : (position, position),
     "offset" : (int, int),
     "pos" : (position, position),
-    "radius" : float,
+    "radius" : position,
     "size" : (int, int),
     "xalign" : float,
     "xcenter" : position,

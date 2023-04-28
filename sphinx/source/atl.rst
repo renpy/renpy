@@ -926,6 +926,8 @@ both horizontal and vertical positions.
     the upper-left of the containing area. Setting the center using
     this allows for circular motion in position mode.
 
+    This should be set before :tpref:`angle` or :tpref:`radius`.
+
 .. transform-property:: alignaround
 
     :type: (float, float)
@@ -934,6 +936,8 @@ both horizontal and vertical positions.
     If not None, specifies the polar coordinate center, relative to
     the upper-left of the containing area. Setting the center using
     this allows for circular motion in align mode.
+
+    This should be set before :tpref:`angle` or :tpref:`radius`.
 
 .. transform-property:: angle
 

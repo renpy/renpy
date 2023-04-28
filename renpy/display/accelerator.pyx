@@ -951,6 +951,9 @@ cdef class RenderTransform:
         self.widtho = widtho
         self.heighto = heighto
 
+        self.state.available_width = widtho
+        self.state.available_height = heighto
+
         transform = self.transform
         state = self.state
 
