@@ -12,6 +12,20 @@ features.
 Incompatible changes to the GUI are documented at :ref:`gui-changes`, as
 such changes only take effect when the GUI is regenerated.
 
+Pending Deprecations
+--------------------
+
+These are changes that will take effect in a future version of Ren'Py.
+
+Support for Python 2 and Ren'Py 7 will be dropped 1 year after Ren'Py 8.1 is
+released, in May 2024.
+
+The original OpenGL renderer will be removed 1 year after Ren'Py 8.1 is
+released, in May 2024. If your game sets config.gl2 to False, you should
+set it to True, and make sure your game runs well. If it doesn't, please
+report any issues. When reporting issues, please determine the hardware
+(device and GPU), os and driver versions, and year of manufacture.
+
 
 .. _incompatible-8.1.0:
 .. _incompatible-7.6.0:
