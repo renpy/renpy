@@ -70,9 +70,10 @@ init -1150 python in bubble:
     # or None if the database doesn't exist yet.
     db = None
 
-    # This is not used directly, but is used by the default screens.rpy, and
+    # These are not used directly, but are used by the default screens.rpy, and
     # so should not be set.
     frame = None
+    thoughtframe = None
 
     class ToggleShown(Action):
         def __call__(self):
