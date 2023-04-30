@@ -360,7 +360,8 @@ for Native R6_2 or later.
 
 Live2D is now supported on x86_64 Android.
 
-
+The new Live2D.blend_opacity method makes it possible for a
+Live2D update_function to change the opacity of the Live2D model.
 
 More New Features
 -----------------

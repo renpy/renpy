@@ -349,6 +349,27 @@ cdef class Live2DModel:
 
         self.parameter_values[parameter.index] = old + weight * (value - old)
 
+    def blend_opacity(self, name, blend, value, weight=1.0)
+
+        part = self.parts.get(name, None)
+
+        if part is None:
+            for i in self.opacity_groups.get(name, [ ]):
+                self.blend_opacity(i, blend, value, weight=weight)
+            return
+
+        old = self.part_opacities[part.index]
+
+        if blend == "Multiply":
+            value = old * value
+        elif blend == "Add":
+            value = old + value
+        elif blend == "Overwrite":
+            value = value
+
+        self.part_opacities[part.index] = old + weight * (value - old)
+
+
     def get_size(self):
         return (self.pixel_size.X, self.pixel_size.Y)
 
