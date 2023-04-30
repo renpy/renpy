@@ -349,7 +349,7 @@ cdef class Live2DModel:
 
         self.parameter_values[parameter.index] = old + weight * (value - old)
 
-    def blend_opacity(self, name, blend, value, weight=1.0)
+    def blend_opacity(self, name, blend, value, weight=1.0):
 
         part = self.parts.get(name, None)
 
