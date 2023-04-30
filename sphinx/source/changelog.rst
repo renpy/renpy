@@ -42,6 +42,9 @@ system that allows dialogue to be displayed in comic-like speech bubbles, and
 includes an interactive editor that allows the speech bubbles to be
 repositions, and the look of a bubble to be changed interactively.
 
+Adding bubble support to an existing game requires adding files and script
+to the game. The bubble documentation includes the required changes.
+
 Platform Improvements
 ---------------------
 

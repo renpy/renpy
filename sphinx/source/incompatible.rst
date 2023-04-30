@@ -33,6 +33,11 @@ report any issues. When reporting issues, please determine the hardware
 8.1.0 / 7.6.0
 -------------
 
+**Speech Bubbles** Adding bubble support to an existing game requires
+adding files and script to the game. The :doc:`bubble` documentation
+includes the required changes.
+
+
 **Live2D** Ren'Py now requires Live2D Cubism 4 SDK for Native R6_2 or later.
 It may refuse to run if an older version is used.
 
