@@ -351,12 +351,19 @@ There are several new properties that affect the 3D Stage:
     Rotates a sprite or the camera around all three axes at once,
     using the shortest path on a sphere.
 
-More New Features
------------------
+Live2D
+------
 
 Ren'Py now supports the new features found in Live2D Cubism Editor
 4.2. To support these features, it should be run with Cubism 4 Sdk
 for Native R6_2 or later.
+
+Live2D is now supported on x86_64 Android.
+
+
+
+More New Features
+-----------------
 
 The :ref:`input <sl-input>` displayable can now take multiline
 input.
