@@ -33,6 +33,10 @@ report any issues. When reporting issues, please determine the hardware
 8.1.0 / 7.6.0
 -------------
 
+**Live2D** Ren'Py now requires Live2D Cubism 4 SDK for Native R6_2 or later.
+It may refuse to run if an older version is used.
+
+
 **Texture Memory** Ren'Py now accounts for texture memory more precisely.
 In general, games can raise :var:`config.image_cache_size_mb` by 33%, and
 use the same amount of memory.
