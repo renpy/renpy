@@ -227,9 +227,9 @@ init -1500 python:
          * Preference("audio when unfocused", "disable") - Disable sounds playing when the window is not in focus.
          * Preference("audio when unfocused", "toggle") - Toggle sounds playing when the window is not in focus.
 
-         * Preference("web preload cache", "enable") - Will cause the web cache to be preloaded.
-         * Preference("web preload cache", "disable") - Will cause the web cache to not be preloaded, and preloaded data to be deleted.
-         * Preference("web preload cache", "toggle") - Will toggle the web cache preload state.
+         * Preference("web cache preload", "enable") - Will cause the web cache to be preloaded.
+         * Preference("web cache preload", "disable") - Will cause the web cache to not be preloaded, and preloaded data to be deleted.
+         * Preference("web cache preload", "toggle") - Will toggle the web cache preload state.
 
          * Preference("voice after game menu", "enable") - Will cause the voice to continue being played when entering the game  menu.
          * Preference("voice after game menu", "disable") - Will cause the voice to stop being played when entering the game menu.
