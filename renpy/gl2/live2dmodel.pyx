@@ -76,6 +76,12 @@ cdef extern from "Live2DCubismCore.h":
         float X
         float Y
 
+    ctypedef struct csmVector4:
+        float R
+        float G
+        float B
+        float A
+
     ctypedef void (__stdcall *csmLogFunction)(const char* message)
 
 include "live2dcsm.pxi"
