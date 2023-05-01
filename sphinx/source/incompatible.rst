@@ -92,6 +92,10 @@ directory, and not in the rapt directory. This allows projects to be
 built with different keys, and helps ensure the same keys are used
 with multiple Android versions.
 
+If you'd like to use your own keys, configure your game, edit ``android.json``
+to set update_keystores to false, and then edit ``local.properties`` and
+``bundle.properties`` in ``rapt/project`` to point to your own keystore files.
+
 The android configuration file has been renamed from ``.android.json`` to
 ``android.json``. Ren'Py will automatically create the new file if the old
 exists.
