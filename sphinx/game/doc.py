@@ -127,7 +127,7 @@ def sl2_regexps():
         names, style = k
 
         if len(prefixes) > 1:
-            part1 = "(?:" + "|".join(prefixes) + ")"
+            part1 = "(?:" + "|".join(sorted(prefixes)) + ")"
         else:
             part1 = tuple(prefixes)[0]
 
