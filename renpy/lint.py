@@ -376,8 +376,8 @@ def check_show(node, precise):
 
     layer = renpy.exports.default_layer(layer, tag or name)
 
-    if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
-        report("Uses layer '%s', which is not in config.layers.", layer)
+    if layer not in renpy.display.core.layers:
+        report("Uses layer '%s', which is not defined.", layer)
 
     image_exists(name, expression, tag, precise=precise)
 
@@ -404,8 +404,8 @@ def check_hide(node):
 
     layer = renpy.exports.default_layer(layer, tag)
 
-    if layer not in renpy.config.layers and layer not in renpy.config.top_layers:
-        report("Uses layer '%s', which is not in config.layers.", layer)
+    if layer not in renpy.display.core.layers:
+        report("Uses layer '%s', which is not defined.", layer)
 
     if tag not in image_prefixes:
         report("The image tag '%s' is not the prefix of a declared image, nor was it used in a show statement before this hide statement.", tag)
