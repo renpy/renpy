@@ -355,6 +355,7 @@ init python:
 
     build.classify_renpy("gui/game/gui/", "source")
     build.classify_renpy("gui/game/gui/bubble.png", "source")
+    build.classify_renpy("gui/game/gui/thoughtbubble.png", "source")
     build.classify_renpy("gui/game/gui/*", None)
 
     source_and_binary("launcher", py=False)
