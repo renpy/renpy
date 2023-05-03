@@ -53,14 +53,13 @@ init -1500 python:
     # If not None, the default value of emphasize_audio.
     config.default_emphasize_audio = False
 
-    # If not None, the default value of set_volume (music)
-    config.default_music_volume = 1.0
+    # For compatibility with old versions.
+    config.default_music_volume = None
+    config.default_sfx_volume = None
+    config.default_voice_volume = None
 
-    # If not None, the default value of set_volume (sfx)
-    config.default_sfx_volume = 1.0
-
-    # If not None, the default value of set_volume (voice)
-    config.default_voice_volume = 1.0
+    # The dictionary of default values of mixers (e.g. main, music, sfx, voice).
+    config.default_mixer_volume = {}
 
     # If True, the default volumes are considered to be quadratic.
     config.quadratic_volumes = False
@@ -128,9 +127,17 @@ init 1500 python hide:
         if config.default_emphasize_audio is not None:
             _preferences.emphasize_audio = config.default_emphasize_audio
 
-        _preferences.set_volume('music', vol(config.default_music_volume))
-        _preferences.set_volume('sfx', vol(config.default_sfx_volume))
-        _preferences.set_volume('voice', vol(config.default_voice_volume))
+        if config.default_music_volume is not None:
+            _preferences.set_volume('music', vol(config.default_music_volume))
+
+        if config.default_sfx_volume is not None:
+            _preferences.set_volume('sfx', vol(config.default_sfx_volume))
+
+        if config.default_voice_volume is not None:
+            _preferences.set_volume('voice', vol(config.default_voice_volume))
+
+        for m in config.default_mixer_volume:
+            _preferences.set_volume(m, vol(config.default_mixer_volume[m]))
 
     # Use default_afm_enable to decide if we use the afm_enable
     # preference.
