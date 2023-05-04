@@ -179,6 +179,11 @@ static inline float get_interpolate_power(struct Interpolate *i) {
  * This converts a magnitude to a logarithmic power level.
  */
 static inline float log_power(float power) {
+
+    if (linear_fades) {
+        return power * MAX_POWER;
+    }
+
     if (power <= 0.0) {
         return MIN_POWER;
     } else if (power >= 1.0) {
