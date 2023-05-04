@@ -333,6 +333,21 @@ class RevertableDict(dict):
         def has_key(self, key):
             return (key in self)
 
+        # https://peps.python.org/pep-0584 methods
+        def __or__(self, other):
+            rv = RevertableDict(self)
+            rv.update(other)
+            return rv
+
+        def __ror__(self, other):
+            rv = RevertableDict(other)
+            rv.update(self)
+            return rv
+
+        def __ior__(self, other):
+            self.update(other)
+            return self
+
     def copy(self):
         rv = RevertableDict()
         rv.update(self)
