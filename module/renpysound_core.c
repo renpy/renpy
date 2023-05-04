@@ -145,14 +145,18 @@ static inline float get_interpolate(struct Interpolate *i) {
 // The power corresponding to a magnitude of 0.0.
 #define MIN_POWER 0.0
 
-// The power corresponding to a magnitude of 1.0.
-#define MAX_POWER 10.0
+// The power corresponding to a magnitude of 1.0. This controls the
+// range in dB that fades happen over. The formula for this is
+// fade_range_in_db = 20 * math.log10(2 ** MAX_POWER).
+//
+// The default of 7 corresponds to a 42.14 dB range.
+#define MAX_POWER 7
 
 /**
  * This interpolates a logarithmic power level to a magnitude.
  *
  * The units of the log power level are odd, to make things faster - it's
- * log2f(power) + 10, to make calculations faster.
+ * log2f(power) + MAX_POWER, to make calculations faster.
  */
 static inline float get_interpolate_power(struct Interpolate *i) {
 
@@ -167,7 +171,7 @@ static inline float get_interpolate_power(struct Interpolate *i) {
     } else if (log_power == MAX_POWER) {
         return 1.0;
     } else {
-        return powf(2, log_power - 10);
+        return powf(2, log_power - MAX_POWER);
     }
 }
 
@@ -180,7 +184,7 @@ static inline float log_power(float power) {
     } else if (power >= 1.0) {
         return MAX_POWER;
     } else {
-        return log2f(power) + 10;
+        return log2f(power) + MAX_POWER;
     }
 }
 
