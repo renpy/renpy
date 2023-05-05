@@ -203,9 +203,9 @@ class RevertableList(list):
         @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             l = method(*args, **kwargs) # type: ignore
-            if l == NotImplemented:
-                return l
-            return RevertableList(l)
+            if type(l) is list:
+                return RevertableList(l)
+            return l
 
         return newmethod
 
