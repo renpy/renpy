@@ -149,8 +149,8 @@ static inline float get_interpolate(struct Interpolate *i) {
 // range in dB that fades happen over. The formula for this is
 // fade_range_in_db = 20 * math.log10(2 ** MAX_POWER).
 //
-// The default of 7 corresponds to a 42.14 dB range.
-#define MAX_POWER 7
+// The 6 corresponds to a 36.12 dB range.
+#define MAX_POWER 6
 
 /**
  * This interpolates a logarithmic power level to a magnitude.
