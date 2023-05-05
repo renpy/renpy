@@ -203,6 +203,8 @@ class RevertableList(list):
         @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             l = method(*args, **kwargs) # type: ignore
+            if l == NotImplemented:
+                return l
             return RevertableList(l)
 
         return newmethod
@@ -222,10 +224,9 @@ class RevertableList(list):
             return rv
 
     def __mul__(self, other):
-        if not isinstance(other, int):
-            raise TypeError("can't multiply sequence by non-int of type '{}'.".format(type(other).__name__))
-
-        return RevertableList(list.__mul__(self, other))
+        if isinstance(other, int):
+            return RevertableList(list.__mul__(self, other))
+        return NotImplemented
 
     __rmul__ = __mul__ # type: ignore
 
@@ -335,11 +336,15 @@ class RevertableDict(dict):
 
         # https://peps.python.org/pep-0584 methods
         def __or__(self, other):
+            if not isinstance(other, dict):
+                return NotImplemented
             rv = RevertableDict(self)
             rv.update(other)
             return rv
 
         def __ror__(self, other):
+            if not isinstance(other, dict):
+                return NotImplemented
             rv = RevertableDict(other)
             rv.update(self)
             return rv
