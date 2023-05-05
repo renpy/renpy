@@ -265,6 +265,16 @@ struct Channel {
      * video channel without dropping. */
     int video;
 
+    /**
+     * Was this playing the last time we checked?
+     */
+    int last_playing;
+
+    /**
+     * The last volume.
+     */
+    float last_volume;
+
 };
 
 struct Dying {
@@ -359,10 +369,17 @@ static inline void mix_sample(struct Channel *c, short left_in, short right_in, 
         right *= sinf(theta);
     }
 
-    float volume = get_interpolate_power(&c->fade) * get_interpolate_power(&c->secondary_volume) * c->playing_relative_volume * c->mixer_volume;
+    float target_volume = get_interpolate_power(&c->fade) * get_interpolate_power(&c->secondary_volume) * c->playing_relative_volume * c->mixer_volume;
+    float volume = c->last_volume + .01 * (target_volume - c->last_volume);
+
+    if (!c->last_playing) {
+        volume = target_volume;
+    }
 
     *left_out += left * volume;
     *right_out += right * volume;
+
+    c->last_volume = volume;
 }
 
 
@@ -393,11 +410,8 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
         struct Channel *c = &channels[channel];
 
-        if (! c->playing) {
-            continue;
-        }
-
-        if (c->paused) {
+        if (! c->playing || c->paused) {
+            c->last_playing = 0;
             continue;
         }
 
@@ -467,8 +481,10 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 c->pos++;
                 mixed += 1;
             }
+
         }
 
+        c->last_playing = 1;
     }
 
     // Actually output the sound.
@@ -852,10 +868,17 @@ void RPS_fadeout(int channel, int ms) {
         return;
     }
 
-    c->fade.start = get_interpolate(&c->fade);
-    c->fade.end = MIN_POWER;
-    c->fade.done = 0;
-    c->fade.duration = ms_to_samples(ms);
+    if (ms > 16) {
+        c->fade.start = get_interpolate(&c->fade);
+        c->fade.end = MIN_POWER;
+        c->fade.done = 0;
+        c->fade.duration = ms_to_samples(ms - 16);
+    } else {
+        c->fade.start = MIN_POWER;
+        c->fade.end = MIN_POWER;
+        c->fade.done = 1;
+        c->fade.duration = 1;
+    }
 
     c->stop_samples = ms_to_samples(ms);
     c->queued_tight = 0;
