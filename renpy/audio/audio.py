@@ -1062,8 +1062,12 @@ def quit(): # @ReservedAssignment
 
     for c in all_channels:
         c.dequeue()
-        c.fadeout(0)
+        c.fadeout(renpy.config.fadeout_audio)
         c.unpause()
+
+    periodic_pass()
+
+    for c in all_channels:
 
         c.queue = [ ]
         c.loop = [ ]
@@ -1071,8 +1075,6 @@ def quit(): # @ReservedAssignment
         c.playing_midi = False
         c.wait_stop = False
         c.synchro_start = False
-
-    renpysound.quit()
 
     pcm_ok = None
     mix_ok = None
