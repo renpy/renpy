@@ -586,20 +586,20 @@ class Movie(renpy.display.core.Displayable):
                     default_play_callback(old, self)
 
             else:
-                renpy.audio.music.stop(channel=self.channel)
+                renpy.audio.music.stop(channel=self.channel, fadeout=0)
 
                 if self.mask:
-                    renpy.audio.music.stop(channel=self.mask_channel) # type: ignore
+                    renpy.audio.music.stop(channel=self.mask_channel, fadeout=0) # type: ignore
 
     def stop(self):
 
         if self._play:
             if renpy.audio.music.channel_defined(self.channel):
-                renpy.audio.music.stop(channel=self.channel)
+                renpy.audio.music.stop(channel=self.channel, fadeout=0)
 
             if self.mask:
                 if renpy.audio.music.channel_defined(self.mask_channel):
-                    renpy.audio.music.stop(channel=self.mask_channel) # type: ignore
+                    renpy.audio.music.stop(channel=self.mask_channel, fadeout=0) # type: ignore
 
     def per_interact(self):
         displayable_channels[(self.channel, self.mask_channel)].append(self)
