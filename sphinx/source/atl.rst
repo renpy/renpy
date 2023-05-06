@@ -907,16 +907,6 @@ both horizontal and vertical positions.
     an opaque surface. (Complex operations, like viewport, :func:`Flatten`, :func:`Frame`,
     and certain transitions may cause problems with additive blending.)
 
-    .. warning::
-
-        Additive blending is only supported by hardware-based renderers, such
-        as the OpenGL and DirectX/ANGLE renderers. The software renderer will
-        draw additive images incorrectly.
-
-        Once the graphics system has started, ``renpy.get_renderer_info()["additive"]``
-        will be true if additive blending is supported.
-
-
 .. transform-property:: around
 
     :type: (position, position)
