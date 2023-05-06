@@ -180,7 +180,8 @@ init -1700 python:
 
     class _Extend(object):
 
-        def __call__(what, interact=True, *args, **kwargs):
+        def get_who(self):
+
             who = _last_say_who
             who = renpy.eval_who(who)
 
@@ -188,6 +189,11 @@ init -1700 python:
                 who = narrator
             elif isinstance(who, basestring):
                 who = Character(who, kind=name_only)
+
+            return who
+
+        def __call__(self, what, interact=True, *args, **kwargs):
+            who = self.get_who()
 
             # This ensures extend works even with NVL mode.
             who.do_extend()
@@ -206,6 +212,11 @@ init -1700 python:
 
         def get_extend_text(self, what):
             return config.extend_interjection + what
+
+        @property
+        def statement_name(self):
+            who = self.get_who()
+            return getattr(who, "statement_name", "say")
 
     extend = _Extend()
 
