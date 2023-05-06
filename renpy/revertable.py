@@ -203,6 +203,8 @@ class RevertableList(list):
         @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             l = method(*args, **kwargs) # type: ignore
+            if l is NotImplemented:
+                return l
             return RevertableList(l)
 
         return newmethod
@@ -210,6 +212,8 @@ class RevertableList(list):
     __add__ = wrapper(list.__add__) # type: ignore
     if PY2:
         __getslice__ = wrapper(list.__getslice__) # type: ignore
+    __mul__ = wrapper(list.__mul__) # type: ignore
+    __rmul__ = wrapper(list.__rmul__) # type: ignore
 
     del wrapper
 
@@ -220,14 +224,6 @@ class RevertableList(list):
             return RevertableList(rv)
         else:
             return rv
-
-    def __mul__(self, other):
-        if not isinstance(other, int):
-            raise TypeError("can't multiply sequence by non-int of type '{}'.".format(type(other).__name__))
-
-        return RevertableList(list.__mul__(self, other))
-
-    __rmul__ = __mul__ # type: ignore
 
     def copy(self):
         return self[:]
