@@ -679,7 +679,11 @@ class Live2D(renpy.display.core.Displayable):
                 break
 
         # Choose all possible nonexclusive attributes.
-        for i in sorted(list(attributes) + list(optional)):
+        for i in sorted(list(attributes)):
+            if i in common.nonexclusive:
+                rv.append(i)
+
+        for i in sorted(list(optional)):
             if i in common.nonexclusive:
                 rv.append(i)
 
