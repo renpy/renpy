@@ -203,9 +203,7 @@ class RevertableList(list):
         @_method_wrapper(method)
         def newmethod(*args, **kwargs):
             l = method(*args, **kwargs) # type: ignore
-            if type(l) is list:
-                return RevertableList(l)
-            return l
+            return RevertableList(l)
 
         return newmethod
 
@@ -224,9 +222,10 @@ class RevertableList(list):
             return rv
 
     def __mul__(self, other):
-        if isinstance(other, int):
-            return RevertableList(list.__mul__(self, other))
-        return NotImplemented
+        if not isinstance(other, int):
+            raise TypeError("can't multiply sequence by non-int of type '{}'.".format(type(other).__name__))
+
+        return RevertableList(list.__mul__(self, other))
 
     __rmul__ = __mul__ # type: ignore
 
