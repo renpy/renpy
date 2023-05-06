@@ -671,12 +671,15 @@ def main():
                 finally:
                     restart = (renpy.config.end_game_transition, "_invoke_main_menu", "_main_menu")
 
+            except renpy.game.QuitException:
+
+                renpy.audio.audio.fadeout_all()
+                raise
+
             except game.FullRestartException as e:
                 restart = e.reason
 
             finally:
-
-                renpy.audio.audio.fadeout_all()
 
                 renpy.persistent.update(True)
                 renpy.persistent.save_on_quit_MP()
