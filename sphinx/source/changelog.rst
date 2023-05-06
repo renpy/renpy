@@ -181,7 +181,7 @@ Audio
 -----
 
 Mixer now work on power in decibels, similar to the way the volume controls
-on audio equipment and computers work. An empty mixer slider represents -60 dB
+on audio equipment and computers work. An empty mixer slider represents -40 dB
 below the maximum volume, while a full bar represents 0 dB, the full volume.
 This makes the mixers more dynamic. Previously, the volume slider had to be
 very near the bottom before it had an effect. Now, the volume increases and
@@ -189,7 +189,7 @@ decreases match the way people perceive loudness.
 
 Variables that control the default mixer volumes, such as :var:`config.default_music_volume`,
 :var:`config.default_sfx_volume`, and :var:`config.default_voice_volume` now work on a scale
-where 0.0 is -60 dB, and 1.0 is 0 dB. :func:`SetCharacterVolume` works in a similar way,
+where 0.0 is -40 dB, and 1.0 is 0 dB. :func:`SetCharacterVolume` works in a similar way,
 as do the new :func:`preferences.set_mixer` and :func:`preferences.get_mixer` functions.
 
 The audio fadein and fadeout functions also work using power. This ensures that

@@ -195,13 +195,13 @@ See :ref:`volume` for more details about mixers.
         are "main", "music", "sfx", and "voice" ("main" being a special mixer).
 
     `volume`
-        A number between 0.0 and 1.0, where 0.0 is -60 dB (power), and 1.0 is 0 dB
+        A number between 0.0 and 1.0, where 0.0 is -40 dB (power), and 1.0 is 0 dB
         (power).
 
 .. function:: preferences.get_mixer(mixer)
 
     Gets the volume for `mixer`. If the mixer is muted, this returns
-    0.0. The is returns a number between 0.0 and 1.0, where 0.0 is -60 dB
+    0.0. The is returns a number between 0.0 and 1.0, where 0.0 is -40 dB
     (power) and 1.0 is 0 dB (power).
 
 .. function:: preferences.set_mute(mixer, mute)

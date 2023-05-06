@@ -1275,7 +1275,7 @@ modal_blocks_pause = True
 modal_blocks_timer = False
 
 # The range, in decibels, of the volume mixers.
-volume_db_range = 60
+volume_db_range = 40
 
 # An alias -> font map.
 font_name_map = {}
@@ -1384,6 +1384,9 @@ display_start_callbacks = [ ]
 
 # If not None, the size of the sound buffer, in bytes.
 sound_buffer_size = None
+
+# If True, the default volumes are considered to be quadratic.
+quadratic_volumes = False
 
 # If true, fades will be linear rather than logarithmic.
 linear_fades = False

@@ -166,7 +166,7 @@ the store can be set to non-constant with (for example)::
 
     define audio._constant = False
 
-**Mixer volumes** now must be specified using a new format, where 0.0 is -60 dB (power)
+**Mixer volumes** now must be specified using a new format, where 0.0 is -40 dB (power)
 and 1.0 is 0 dB (power). To use the old format, where the samples were multiplied
 by volume ** 2, use::
 

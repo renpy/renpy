@@ -62,9 +62,6 @@ init -1500 python:
     # If not None, the default value of set_volume (voice)
     config.default_voice_volume = 1.0
 
-    # If True, the default volumes are considered to be quadratic.
-    config.quadratic_volumes = False
-
 init 1500 python hide:
 
     def vol(n):

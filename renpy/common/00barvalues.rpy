@@ -463,22 +463,39 @@ init -1500 python:
             if value == 0:
                 value = 0
             else:
-                value = 1.0 * value - config.volume_db_range
-                value = pow(10, value / 20)
+                if config.quadratic_volumes:
+                    value = value ** 2
+                else:
+                    value = 1.0 * value - config.volume_db_range
+                    value = pow(10, value / 20)
 
             self.set_volume(value)
 
             renpy.restart_interaction()
 
-        def get_adjustment(self):
+        def get_mixer(self):
             import math
 
             value = self.get_volume()
 
-            if config.volume_db_range is not None:
-                if value > 0:
+            if value > 0:
+                if config.quadratic_volumes:
+                    value = math.sqrt(value)
+                else:
                     value = math.log10(value) * 20 + config.volume_db_range
+            else:
+                value = 0
 
+            return value
+
+        def get_adjustment(self):
+            import math
+
+            value = self.get_mixer()
+
+            if config.quadratic_volumes:
+                range = 1.0
+            else:
                 range = config.volume_db_range * 1.0
 
             return ui.adjustment(

@@ -290,7 +290,6 @@ class Preferences(renpy.object.Object):
 
         return self.volumes[mixer]
 
-
     def set_mixer(self, mixer, volume):
         if volume > 0:
             volume = renpy.config.volume_db_range * volume - renpy.config.volume_db_range
