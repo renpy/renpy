@@ -318,6 +318,8 @@ You may be using a system install of python. Please run {0}.sh,
         if renpy.display.draw: # type: ignore
             renpy.display.draw.quit() # type: ignore
 
+        renpy.audio.audio.quit()
+
         # Prevent subprocess from throwing errors while trying to run it's
         # __del__ method during shutdown.
         if not renpy.emscripten:
