@@ -193,7 +193,7 @@ class RevertableList(list):
     append = mutator(list.append)
     extend = mutator(list.extend)
     insert = mutator(list.insert)
-    pop = mutator(list.pop) # type: ignore
+    pop = mutator(list.pop)
     remove = mutator(list.remove)
     reverse = mutator(list.reverse)
     sort = mutator(list.sort)
@@ -229,7 +229,7 @@ class RevertableList(list):
         return self[:]
 
     def clear(self):
-        self[:] = []
+        del self[:]
 
     def _clean(self):
         """
