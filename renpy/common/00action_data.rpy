@@ -287,6 +287,10 @@ init -1600 python hide:
             return values[idx]
 
         def get_sensitive(self):
+            values = self.values
+            if not values:
+                return False
+
             if self.loop:
                 return True
 
@@ -295,7 +299,6 @@ init -1600 python hide:
             except (__LookupError, __NoCurrentScreen, __ScreenVariableNameError): # __FieldNotFound ?
                 return False
 
-            values = self.values
             if value in values:
                 idx = values.index(value)+1
                 if idx >= len(values):
