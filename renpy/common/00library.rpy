@@ -178,34 +178,36 @@ init -1700 python:
 
     config.extend_interjection = "{fast}"
 
-    def extend(what, interact=True, *args, **kwargs):
-        who = _last_say_who
-        who = renpy.eval_who(who)
+    class _Extend(object):
 
-        if who is None:
-            who = narrator
-        elif isinstance(who, basestring):
-            who = Character(who, kind=name_only)
+        def __call__(what, interact=True, *args, **kwargs):
+            who = _last_say_who
+            who = renpy.eval_who(who)
 
-        # This ensures extend works even with NVL mode.
-        who.do_extend()
+            if who is None:
+                who = narrator
+            elif isinstance(who, basestring):
+                who = Character(who, kind=name_only)
 
-        what = _last_say_what + config.extend_interjection + _last_raw_what
+            # This ensures extend works even with NVL mode.
+            who.do_extend()
 
-        args = args + _last_say_args
-        kw = dict(_last_say_kwargs)
-        kw.update(kwargs)
-        kw["interact"] = interact and kw.get("interact", True)
+            what = _last_say_what + config.extend_interjection + _last_raw_what
 
-        renpy.exports.say(who, what, *args, **kw)
-        store._last_say_what = what
+            args = args + _last_say_args
+            kw = dict(_last_say_kwargs)
+            kw.update(kwargs)
+            kw["interact"] = interact and kw.get("interact", True)
 
-    extend.record_say = False
+            renpy.exports.say(who, what, *args, **kw)
+            store._last_say_what = what
 
-    def _extend_get_extend_text(what):
-        return config.extend_interjection + what
+        record_say = False
 
-    extend.get_extend_text = _extend_get_extend_text
+        def get_extend_text(self, what):
+            return config.extend_interjection + what
+
+    extend = _Extend()
 
 
     ##########################################################################
