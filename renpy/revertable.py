@@ -335,11 +335,15 @@ class RevertableDict(dict):
 
         # https://peps.python.org/pep-0584 methods
         def __or__(self, other):
+            if not isinstance(other, dict):
+                return NotImplemented
             rv = RevertableDict(self)
             rv.update(other)
             return rv
 
         def __ror__(self, other):
+            if not isinstance(other, dict):
+                return NotImplemented
             rv = RevertableDict(other)
             rv.update(self)
             return rv
