@@ -88,7 +88,7 @@ def mutator(method):
 
         global mutate_flag
 
-        mutated = renpy.game.log.mutated # @UndefinedVariable
+        mutated = renpy.game.log.mutated
 
         if id(self) not in mutated:
             mutated[id(self)] = (weakref.ref(self), self._clean())
@@ -467,11 +467,11 @@ class RevertableObject(object):
 
     def __init_subclass__(cls):
         if renpy.config.developer and "__slots__" in cls.__dict__:
-            raise TypeError("Classes with __slots__ do not support rollback."
+            raise TypeError("Classes with __slots__ do not support rollback. "
                             "To create a class with slots, inherit from python_object instead.")
 
-    __setattr__ = mutator(object.__setattr__) # type: ignore
-    __delattr__ = mutator(object.__delattr__) # type: ignore
+    __setattr__ = mutator(object.__setattr__)
+    __delattr__ = mutator(object.__delattr__)
 
     def _clean(self):
         return self.__dict__.copy()
@@ -537,7 +537,7 @@ class RollbackRandom(random.Random):
     sample = list_wrapper(random.Random.sample)
 
     getrandbits = checkpointing(mutator(random.Random.getrandbits))
-    seed = checkpointing(mutator(random.Random.seed)) # type: ignore
+    seed = checkpointing(mutator(random.Random.seed))
     random = checkpointing(mutator(random.Random.random))
 
     def Random(self, seed=None):
