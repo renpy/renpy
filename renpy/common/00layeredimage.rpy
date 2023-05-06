@@ -1,4 +1,4 @@
-﻿init offset = -100
+init offset = -100
 
 python early in layeredimage:
 
@@ -516,7 +516,7 @@ python early in layeredimage:
 
         `attributes`
             This must be a list of Attribute, Condition, ConditionGroup or
-            :func:`renpy.Displayable` objects. Each one
+            :doc:`displayable <displayables>` objects. Each one
             reflects a displayable that may or may not be displayed as part
             of the image. The items in this list are in back-to-front order,
             with the first item further from the viewer and the last
@@ -616,6 +616,16 @@ python early in layeredimage:
                 image_format=self.image_format)
 
         def add(self, a):
+            """
+            :doc: li
+
+            `a`
+                An Attribute, Condition, ConditionGroup or :doc:`displayable <displayables>`
+                object.
+
+            This method adds the provided layer to the list of layers of the layeredimage,
+            as if it had been passed in the `attributes` argument to the constructor.
+            """
 
             if not isinstance(a, Layer):
                 a = Always(a)
