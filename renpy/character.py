@@ -460,6 +460,7 @@ def display_say(
             final = interact
         else:
             final = False
+            interact = False
 
     if not final:
         advance = False
