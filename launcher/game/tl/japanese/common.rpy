@@ -343,31 +343,38 @@ translate japanese strings:
 
     # 00director.rpy:1469
     old "(statement)"
-    new "(statement)"
+    # Automatic translation.
+    new "ね"
 
     # 00director.rpy:1470
     old "(tag)"
-    new "(tag)"
+    # Automatic translation.
+    new "(タグ)"
 
     # 00director.rpy:1471
     old "(attributes)"
-    new "(attributes)"
+    # Automatic translation.
+    new "(属性)"
 
     # 00director.rpy:1472
     old "(transform)"
-    new "(transform)"
+    # Automatic translation.
+    new "(へんじる）"
 
     # 00director.rpy:1497
     old "(transition)"
-    new "(transition)"
+    # Automatic translation.
+    new "(移行)"
 
     # 00director.rpy:1509
     old "(channel)"
-    new "(channel)"
+    # Automatic translation.
+    new "(チャンネル)"
 
     # 00director.rpy:1510
     old "(filename)"
-    new "(filename)"
+    # Automatic translation.
+    new "(ファイル名)"
 
     # 00director.rpy:1535
     old "Change"
@@ -431,7 +438,8 @@ translate japanese strings:
 
     # _developer\developer.rpym:569
     old "{size_mb:,.1f} MB in {count} textures."
-    new "{size_mb:,.1f} MB in {count} textures."
+    # Automatic translation.
+    new "{size_mb:,.1f} MB を のテクスチャで表示します。{count} "
 
     # 00action_file.rpy:344
     old "Save slot %s: [text]"
@@ -603,7 +611,8 @@ translate japanese strings:
 
     # 00preferences.rpy:337
     old "voice sustain"
-    new "voice sustain"
+    # Automatic translation.
+    new "音声サステイン"
 
     # 00preferences.rpy:346
     old "self voicing"
@@ -699,7 +708,8 @@ translate japanese strings:
 
     # renpy/common/00accessibility.rpy:88
     old "Opendyslexic"
-    new "Opendyslexic"
+    # Automatic translation.
+    new "オープンディスレクシア"
 
     # renpy/common/00accessibility.rpy:94
     old "Text Size Scaling"
@@ -755,7 +765,8 @@ translate japanese strings:
 
     # renpy/common/_developer/developer.rpym:90
     old "[name] [attributes] (hidden)"
-    new "[name] [attributes] (hidden)"
+    # Automatic translation.
+    new "[name] [attributes] (隠)"
 
     # renpy/common/_developer/developer.rpym:94
     old "[name] [attributes]"
@@ -808,4 +819,142 @@ translate japanese strings:
     # renpy/common/00preferences.rpy:531
     old "mute main"
     new "メインをミュート"
+
+
+translate japanese strings:
+
+    # renpy/common/00director.rpy:1745
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    # Automatic translation.
+    new "クリックすると属性が切り替わり、右クリックすると負の属性が切り替わります。"
+
+    # renpy/common/00director.rpy:1768
+    old "Click to set transform, right click to add to transform list."
+    # Automatic translation.
+    new "クリックでトランスフォームを設定し、右クリックでトランスフォームリストに追加します。"
+
+    # renpy/common/00director.rpy:1789
+    old "Click to set, right click to add to behind list."
+    # Automatic translation.
+    new "クリックで設定、右クリックでビハインドリストに追加します。"
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    # Automatic translation.
+    new "この保存ファイルは、別のデバイスで作成されたものです。悪意を持って作成された保存ファイルは、あなたのコンピューターに害を及ぼす可能性があります。この保存ファイルの作成者と、ファイルを変更した可能性のあるすべての人を信用しますか？"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    # Automatic translation.
+    new "保存が作成されたデバイスを信頼しますか？あなたがそのデバイスの唯一のユーザーである場合のみ、「はい」を選択する必要があります。"
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    # Automatic translation.
+    new "暈け音"
+
+    # renpy/common/00preferences.rpy:537
+    old "web cache preload"
+    # Automatic translation.
+    new "ウェブキャッシュ・プリロード"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    # Automatic translation.
+    new "ゲームメニュー後の音声"
+
+    # renpy/common/00speechbubble.rpy:344
+    old "Speech Bubble Editor"
+    # Automatic translation.
+    new "スピーチバブルエディター"
+
+    # renpy/common/00speechbubble.rpy:349
+    old "(hide)"
+    # Automatic translation.
+    new "皮"
+
+    # renpy/common/00sync.rpy:70
+    old "Sync downloaded."
+    # Automatic translation.
+    new "シンクをダウンロードしました。"
+
+    # renpy/common/00sync.rpy:190
+    old "Could not connect to the Ren'Py Sync server."
+    # Automatic translation.
+    new "Ren'Py Syncサーバーに接続できませんでした。"
+
+    # renpy/common/00sync.rpy:192
+    old "The Ren'Py Sync server timed out."
+    # Automatic translation.
+    new "Ren'Py Syncサーバーがタイムアウトした。"
+
+    # renpy/common/00sync.rpy:194
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    # Automatic translation.
+    new "Ren'Py Syncサーバーへの接続中に不明なエラーが発生しました。"
+
+    # renpy/common/00sync.rpy:267
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    # Automatic translation.
+    new "Ren'Py Syncサーバーに、このシンクのコピーがありません。同期IDが無効であるか、タイムアウトした可能性があります。"
+
+    # renpy/common/00sync.rpy:409
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    # Automatic translation.
+    new "生成したシンクIDを入力してください。\n自分で作成したものでない同期IDは絶対に入力しないでください。"
+
+    # renpy/common/00sync.rpy:428
+    old "The sync ID is not in the correct format."
+    # Automatic translation.
+    new "シンクIDが正しい形式でない。"
+
+    # renpy/common/00sync.rpy:448
+    old "The sync could not be decrypted."
+    # Automatic translation.
+    new "同期を復号化することができませんでした。"
+
+    # renpy/common/00sync.rpy:471
+    old "The sync belongs to a different game."
+    # Automatic translation.
+    new "同期は別のゲームに所属しています。"
+
+    # renpy/common/00sync.rpy:476
+    old "The sync contains a file with an invalid name."
+    # Automatic translation.
+    new "シンクに不正な名前のファイルが含まれています。"
+
+    # renpy/common/00sync.rpy:529
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    # Automatic translation.
+    new "これは、{a=https://sync.renpy.org}Ren'Py Sync Server{/a} にセーブをアップロードします。\n続けますか？"
+
+    # renpy/common/00sync.rpy:558
+    old "Enter Sync ID"
+    # Automatic translation.
+    new "シンクIDを入力する"
+
+    # renpy/common/00sync.rpy:569
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    # Automatic translation.
+    new "これは、{a=https://sync.renpy.org}Ren'Py Sync Server{/a} に連絡します。"
+
+    # renpy/common/00sync.rpy:596
+    old "Sync Success"
+    # Automatic translation.
+    new "シンクサクセス"
+
+    # renpy/common/00sync.rpy:599
+    old "The Sync ID is:"
+    # Automatic translation.
+    new "シンクIDは"
+
+    # renpy/common/00sync.rpy:605
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    # Automatic translation.
+    new "このIDを使って、保存したものを別の端末でダウンロードすることができます。\nこのシンクは1時間後に期限切れとなります。\nRen'Py Sync は{a=https://www.renpy.org/sponsors.html}Ren'Py のスポンサー{/a} によってサポートされています。"
+
+    # renpy/common/00sync.rpy:631
+    old "Sync Error"
+    # Automatic translation.
+    new "シンクエラー"
 

@@ -201,3 +201,26 @@ translate japanese strings:
     old "stack: print the return stack"
     new "stack: リターンスタックの出力"
 
+
+translate japanese strings:
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    # Automatic translation.
+    new "永続的なビューア"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    # Automatic translation.
+    new "スピーチバブルエディター（Shift+B）"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    # Automatic translation.
+    new "help: この助け舟を見せる\n help <expr>: <expr>の署名とドキュメントを表示する"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    # Automatic translation.
+    new "ヘルプでは、文書化されていない機能が表示されることがあります。その場合は、その関数または\nを使用したいクラスは、ドキュメントを参照してください。\n\n"
+
