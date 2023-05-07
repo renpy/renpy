@@ -170,11 +170,13 @@
 
     # game/android.rpy:401
     old "Play Bundle"
-    new "Play Bundle"
+    # Automatic translation.
+    new "播放捆绑"
 
     # game/android.rpy:406
     old "Universal APK"
-    new "Universal APK"
+    # Automatic translation.
+    new "通用APK"
 
     # game/android.rpy:413
     old "Build Package"
@@ -198,7 +200,8 @@
 
     # game/android.rpy:452
     old "Logcat"
-    new "Logcat"
+    # Automatic translation.
+    new "洛克特"
 
     # game/android.rpy:456
     old "List Devices"
@@ -498,7 +501,8 @@
 
     # game/choose_theme.rpy:371
     old "Planetarium"
-    new "Planetarium"
+    # Automatic translation.
+    new "天文馆"
 
     # game/choose_theme.rpy:426
     old "Choose Theme"
@@ -674,7 +678,8 @@
 
     # game/editor.rpy:162
     old "Visual Studio Code"
-    new "Visual Studio Code"
+    # Automatic translation.
+    new "Visual Studio代码"
 
     # game/editor.rpy:162
     old "Up to 110 MB download required."
@@ -686,7 +691,8 @@
 
     # game/editor.rpy:187
     old "Atom"
-    new "Atom"
+    # Automatic translation.
+    new "原子"
 
     # game/editor.rpy:187
     old "Up to 150 MB download required."
@@ -778,7 +784,8 @@
 
     # game/front_page.rpy:133
     old "The Question"
-    new "The Question"
+    # Automatic translation.
+    new "问题"
 
     # game/front_page.rpy:149
     old "Active Project"
@@ -790,23 +797,28 @@
 
     # game/front_page.rpy:162
     old "game"
-    new "game"
+    # Automatic translation.
+    new "游戏"
 
     # game/front_page.rpy:163
     old "base"
-    new "base"
+    # Automatic translation.
+    new "基础"
 
     # game/front_page.rpy:164
     old "images"
-    new "images"
+    # Automatic translation.
+    new "图像"
 
     # game/front_page.rpy:165
     old "audio"
-    new "audio"
+    # Automatic translation.
+    new "音频"
 
     # game/front_page.rpy:166
     old "gui"
-    new "gui"
+    # Automatic translation.
+    new "圭臬"
 
     # game/front_page.rpy:171
     old "Edit File"
@@ -854,7 +866,8 @@
 
     # game/front_page.rpy:218
     old "iOS"
-    new "iOS"
+    # Automatic translation.
+    new "基础设施"
 
     # game/front_page.rpy:219
     old "Web"
@@ -1134,11 +1147,13 @@
 
     # game/ios.rpy:298
     old "iPhone"
-    new "iPhone"
+    # Automatic translation.
+    new "笔记本电脑"
 
     # game/ios.rpy:302
     old "iPad"
-    new "iPad"
+    # Automatic translation.
+    new "笔记本电脑"
 
     # game/ios.rpy:322
     old "Select Xcode Projects Directory"
@@ -1811,3 +1826,100 @@
     # game/web.rpy:348
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "在打包网页应用之前，您需要先下载 Ren'Py 网页支持包 RenPyWeb。您希望现在下载 RenPyWeb 吗？"
+
+translate schinese strings:
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "RAPT已经安装，但还没有配置密钥。请生成新的密钥，或将android.keystore和bundle.keystore复制到基本目录中。"
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "试图模拟一个基于电视的安卓控制台。\n\n控制器的输入被映射到方向键上，回车键被映射到选择按钮上，Escape被映射到菜单按钮上，而PageUp被映射到返回按钮上。"
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "下载并安装Android SDK和支持包。"
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "生成签署软件包所需的密钥。"
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "安装SDK"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "生成钥匙"
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "你想给Gradle分配多少内存（GB）？\n这必须是一个正的整数。"
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "RAM大小必须只包含数字，并且是正数。"
+
+    # game/androidstrings.rpy:38
+    old "Which app store would you like to support in-app purchasing through?"
+    # Automatic translation.
+    new "你希望通过哪个应用商店支持应用内购买？"
+
+    # game/androidstrings.rpy:39
+    old "Google Play."
+    # Automatic translation.
+    new "谷歌游戏。"
+
+    # game/androidstrings.rpy:40
+    old "Amazon App Store."
+    # Automatic translation.
+    new "亚马逊应用商店。"
+
+    # game/androidstrings.rpy:41
+    old "Both, in one app."
+    # Automatic translation.
+    new "两者都是，在一个应用程序中。"
+
+    # game/androidstrings.rpy:42
+    old "Neither."
+    # Automatic translation.
+    new "也没有。"
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "我在rapt目录中发现了一个android.keystore文件。你想使用这个文件吗？"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\n说 \"不 \"将阻止钥匙的创建。"
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "我在rapt目录中发现了一个bundle.keystore文件。你想使用这个文件吗？"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "林特检查你的游戏是否有潜在的错误，并给你统计。"
+
+    # game/web.rpy:485
+    old "Creating package..."
+    # Automatic translation.
+    new "创建包..."
+

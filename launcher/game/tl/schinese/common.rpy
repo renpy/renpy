@@ -14,39 +14,48 @@
 
     # renpy/common/00accessibility.rpy:32
     old "bar"
-    new "bar"
+    # Automatic translation.
+    new "吧台"
 
     # renpy/common/00accessibility.rpy:33
     old "selected"
-    new "selected"
+    # Automatic translation.
+    new "选定的"
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
-    new "viewport"
+    # Automatic translation.
+    new "视口"
 
     # renpy/common/00accessibility.rpy:35
     old "horizontal scroll"
-    new "horizontal scroll"
+    # Automatic translation.
+    new "横向滚动"
 
     # renpy/common/00accessibility.rpy:36
     old "vertical scroll"
-    new "vertical scroll"
+    # Automatic translation.
+    new "垂直滚动"
 
     # renpy/common/00accessibility.rpy:37
     old "activate"
-    new "activate"
+    # Automatic translation.
+    new "激活"
 
     # renpy/common/00accessibility.rpy:38
     old "deactivate"
-    new "deactivate"
+    # Automatic translation.
+    new "停用"
 
     # renpy/common/00accessibility.rpy:39
     old "increase"
-    new "increase"
+    # Automatic translation.
+    new "增加"
 
     # renpy/common/00accessibility.rpy:40
     old "decrease"
-    new "decrease"
+    # Automatic translation.
+    new "减少"
 
     # renpy/common/00accessibility.rpy:138
     old "Font Override"
@@ -62,7 +71,8 @@
 
     # renpy/common/00accessibility.rpy:150
     old "Opendyslexic"
-    new "Opendyslexic"
+    # Automatic translation.
+    new "开放性阅读"
 
     # renpy/common/00accessibility.rpy:156
     old "Text Size Scaling"
@@ -342,31 +352,38 @@
 
     # renpy/common/00director.rpy:1561
     old "(statement)"
-    new "(statement)"
+    # Automatic translation.
+    new "(声明)"
 
     # renpy/common/00director.rpy:1562
     old "(tag)"
-    new "(tag)"
+    # Automatic translation.
+    new "(标签)"
 
     # renpy/common/00director.rpy:1563
     old "(attributes)"
-    new "(attributes)"
+    # Automatic translation.
+    new "(属性)"
 
     # renpy/common/00director.rpy:1564
     old "(transform)"
-    new "(transform)"
+    # Automatic translation.
+    new "(改造)"
 
     # renpy/common/00director.rpy:1589
     old "(transition)"
-    new "(transition)"
+    # Automatic translation.
+    new "(过渡)"
 
     # renpy/common/00director.rpy:1601
     old "(channel)"
-    new "(channel)"
+    # Automatic translation.
+    new "(频道)"
 
     # renpy/common/00director.rpy:1602
     old "(filename)"
-    new "(filename)"
+    # Automatic translation.
+    new "(文件名)"
 
     # renpy/common/00director.rpy:1631
     old "Change"
@@ -474,67 +491,83 @@
 
     # renpy/common/00preferences.rpy:263
     old "display"
-    new "display"
+    # Automatic translation.
+    new "展示"
 
     # renpy/common/00preferences.rpy:275
     old "transitions"
-    new "transitions"
+    # Automatic translation.
+    new "过渡"
 
     # renpy/common/00preferences.rpy:284
     old "skip transitions"
-    new "skip transitions"
+    # Automatic translation.
+    new "跳过过渡期"
 
     # renpy/common/00preferences.rpy:286
     old "video sprites"
-    new "video sprites"
+    # Automatic translation.
+    new "视频精灵"
 
     # renpy/common/00preferences.rpy:295
     old "show empty window"
-    new "show empty window"
+    # Automatic translation.
+    new "显示空窗口"
 
     # renpy/common/00preferences.rpy:304
     old "text speed"
-    new "text speed"
+    # Automatic translation.
+    new "文字速度"
 
     # renpy/common/00preferences.rpy:312
     old "joystick"
-    new "joystick"
+    # Automatic translation.
+    new "操纵杆"
 
     # renpy/common/00preferences.rpy:312
     old "joystick..."
-    new "joystick..."
+    # Automatic translation.
+    new "操纵杆..."
 
     # renpy/common/00preferences.rpy:319
     old "skip"
-    new "skip"
+    # Automatic translation.
+    new "跳过"
 
     # renpy/common/00preferences.rpy:322
     old "skip unseen [text]"
-    new "skip unseen [text]"
+    # Automatic translation.
+    new "跳过未见的[text]"
 
     # renpy/common/00preferences.rpy:327
     old "skip unseen text"
-    new "skip unseen text"
+    # Automatic translation.
+    new "跳过未看到的文本"
 
     # renpy/common/00preferences.rpy:329
     old "begin skipping"
-    new "begin skipping"
+    # Automatic translation.
+    new "开始跳伞"
 
     # renpy/common/00preferences.rpy:333
     old "after choices"
-    new "after choices"
+    # Automatic translation.
+    new "选择之后"
 
     # renpy/common/00preferences.rpy:340
     old "skip after choices"
-    new "skip after choices"
+    # Automatic translation.
+    new "选择后跳过"
 
     # renpy/common/00preferences.rpy:342
     old "auto-forward time"
-    new "auto-forward time"
+    # Automatic translation.
+    new "自动转发时间"
 
     # renpy/common/00preferences.rpy:356
     old "auto-forward"
-    new "auto-forward"
+    # Automatic translation.
+    new "自动转发"
 
     # renpy/common/00preferences.rpy:363
     old "Auto forward"
@@ -542,31 +575,38 @@
 
     # renpy/common/00preferences.rpy:366
     old "auto-forward after click"
-    new "auto-forward after click"
+    # Automatic translation.
+    new "点击后自动转发"
 
     # renpy/common/00preferences.rpy:375
     old "automatic move"
-    new "automatic move"
+    # Automatic translation.
+    new "自动移动"
 
     # renpy/common/00preferences.rpy:384
     old "wait for voice"
-    new "wait for voice"
+    # Automatic translation.
+    new "等待声音"
 
     # renpy/common/00preferences.rpy:393
     old "voice sustain"
-    new "voice sustain"
+    # Automatic translation.
+    new "语音持续"
 
     # renpy/common/00preferences.rpy:402
     old "self voicing"
-    new "self voicing"
+    # Automatic translation.
+    new "自言自语"
 
     # renpy/common/00preferences.rpy:411
     old "self voicing volume drop"
-    new "self voicing volume drop"
+    # Automatic translation.
+    new "自我发声的音量下降"
 
     # renpy/common/00preferences.rpy:419
     old "clipboard voicing"
-    new "clipboard voicing"
+    # Automatic translation.
+    new "剪贴板配音"
 
     # renpy/common/00preferences.rpy:428
     old "debug voicing"
@@ -574,91 +614,113 @@
 
     # renpy/common/00preferences.rpy:437
     old "emphasize audio"
-    new "emphasize audio"
+    # Automatic translation.
+    new "强调音频"
 
     # renpy/common/00preferences.rpy:446
     old "rollback side"
-    new "rollback side"
+    # Automatic translation.
+    new "回滚方"
 
     # renpy/common/00preferences.rpy:456
     old "gl powersave"
-    new "gl powersave"
+    # Automatic translation.
+    new "拯救生命的力量"
 
     # renpy/common/00preferences.rpy:462
     old "gl framerate"
-    new "gl framerate"
+    # Automatic translation.
+    new "帧速率"
 
     # renpy/common/00preferences.rpy:465
     old "gl tearing"
-    new "gl tearing"
+    # Automatic translation.
+    new "潸然泪下"
 
     # renpy/common/00preferences.rpy:468
     old "font transform"
-    new "font transform"
+    # Automatic translation.
+    new "字体转换"
 
     # renpy/common/00preferences.rpy:471
     old "font size"
-    new "font size"
+    # Automatic translation.
+    new "字体大小"
 
     # renpy/common/00preferences.rpy:479
     old "font line spacing"
-    new "font line spacing"
+    # Automatic translation.
+    new "字体行距"
 
     # renpy/common/00preferences.rpy:487
     old "system cursor"
-    new "system cursor"
+    # Automatic translation.
+    new "系统光标"
 
     # renpy/common/00preferences.rpy:496
     old "renderer menu"
-    new "renderer menu"
+    # Automatic translation.
+    new "渲染器菜单"
 
     # renpy/common/00preferences.rpy:499
     old "accessibility menu"
-    new "accessibility menu"
+    # Automatic translation.
+    new "无障碍菜单"
 
     # renpy/common/00preferences.rpy:502
     old "high contrast text"
-    new "high contrast text"
+    # Automatic translation.
+    new "高对比度文本"
 
     # renpy/common/00preferences.rpy:511
     old "audio when minimized"
-    new "audio when minimized"
+    # Automatic translation.
+    new "最小化时的音频"
 
     # renpy/common/00preferences.rpy:531
     old "main volume"
-    new "main volume"
+    # Automatic translation.
+    new "主卷"
 
     # renpy/common/00preferences.rpy:532
     old "music volume"
-    new "music volume"
+    # Automatic translation.
+    new "音量"
 
     # renpy/common/00preferences.rpy:533
     old "sound volume"
-    new "sound volume"
+    # Automatic translation.
+    new "音量"
 
     # renpy/common/00preferences.rpy:534
     old "voice volume"
-    new "voice volume"
+    # Automatic translation.
+    new "音量"
 
     # renpy/common/00preferences.rpy:535
     old "mute main"
-    new "mute main"
+    # Automatic translation.
+    new "静音主"
 
     # renpy/common/00preferences.rpy:536
     old "mute music"
-    new "mute music"
+    # Automatic translation.
+    new "静音音乐"
 
     # renpy/common/00preferences.rpy:537
     old "mute sound"
-    new "mute sound"
+    # Automatic translation.
+    new "静音"
 
     # renpy/common/00preferences.rpy:538
     old "mute voice"
-    new "mute voice"
+    # Automatic translation.
+    new "喑哑的声音"
 
     # renpy/common/00preferences.rpy:539
     old "mute all"
-    new "mute all"
+    # Automatic translation.
+    new "全部静音"
 
     # renpy/common/00preferences.rpy:620
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
@@ -830,7 +892,8 @@
 
     # renpy/common/_developer/inspector.rpym:185
     old "<repr() failed>"
-    new "<repr() failed>"
+    # Automatic translation.
+    new "<repr()失败>。"
 
     # renpy/common/_layout/classic_load_save.rpym:170
     old "a"
@@ -935,3 +998,141 @@
     # renpy/common/00gallery.rpy:650
     old "return"
     new "返回"
+
+translate schinese strings:
+
+    # renpy/common/00director.rpy:1745
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    # Automatic translation.
+    new "点击切换属性，右击切换负面属性。"
+
+    # renpy/common/00director.rpy:1768
+    old "Click to set transform, right click to add to transform list."
+    # Automatic translation.
+    new "点击设置变换，右击添加到变换列表。"
+
+    # renpy/common/00director.rpy:1789
+    old "Click to set, right click to add to behind list."
+    # Automatic translation.
+    new "点击设置，右击添加到后面的列表。"
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    # Automatic translation.
+    new "这个保存文件是在不同的设备上创建的。恶意构建的保存文件会损害你的计算机。你相信这个保存文件的创建者和所有可能改变该文件的人吗？"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    # Automatic translation.
+    new "你是否信任创建保存的设备？只有当你是该设备的唯一用户时，你才应该选择是。"
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    # Automatic translation.
+    new "无焦点时的音频"
+
+    # renpy/common/00preferences.rpy:537
+    old "web cache preload"
+    # Automatic translation.
+    new "网络高速缓存预加载"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    # Automatic translation.
+    new "游戏菜单后的语音"
+
+    # renpy/common/00speechbubble.rpy:344
+    old "Speech Bubble Editor"
+    # Automatic translation.
+    new "语音泡编辑"
+
+    # renpy/common/00speechbubble.rpy:349
+    old "(hide)"
+    # Automatic translation.
+    new "(隐藏)"
+
+    # renpy/common/00sync.rpy:70
+    old "Sync downloaded."
+    # Automatic translation.
+    new "同步下载。"
+
+    # renpy/common/00sync.rpy:190
+    old "Could not connect to the Ren'Py Sync server."
+    # Automatic translation.
+    new "无法连接到Ren Py Sync服务器。"
+
+    # renpy/common/00sync.rpy:192
+    old "The Ren'Py Sync server timed out."
+    # Automatic translation.
+    new "Ren'Py Sync服务器超时了。"
+
+    # renpy/common/00sync.rpy:194
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    # Automatic translation.
+    new "在连接到Ren Py Sync服务器时发生了一个未知的错误。"
+
+    # renpy/common/00sync.rpy:267
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    # Automatic translation.
+    new "Ren'Py Sync服务器没有这个同步的副本。同步ID可能是无效的，也可能是超时了。"
+
+    # renpy/common/00sync.rpy:409
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    # Automatic translation.
+    new "请输入你生成的同步ID。\n永远不要输入不是你自己创建的同步ID。"
+
+    # renpy/common/00sync.rpy:428
+    old "The sync ID is not in the correct format."
+    # Automatic translation.
+    new "同步ID的格式不正确。"
+
+    # renpy/common/00sync.rpy:448
+    old "The sync could not be decrypted."
+    # Automatic translation.
+    new "同步不能被解密。"
+
+    # renpy/common/00sync.rpy:471
+    old "The sync belongs to a different game."
+    # Automatic translation.
+    new "同步属于一个不同的游戏。"
+
+    # renpy/common/00sync.rpy:476
+    old "The sync contains a file with an invalid name."
+    # Automatic translation.
+    new "同步包含一个名称无效的文件。"
+
+    # renpy/common/00sync.rpy:529
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    # Automatic translation.
+    new "这将把你的保存上传到{a=https://sync.renpy.org}Ren Py Sync Server{/a} 。\n你想继续吗？"
+
+    # renpy/common/00sync.rpy:558
+    old "Enter Sync ID"
+    # Automatic translation.
+    new "输入同步ID"
+
+    # renpy/common/00sync.rpy:569
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    # Automatic translation.
+    new "这将联系{a=https://sync.renpy.org}Ren'Py Sync Server{/a} 。"
+
+    # renpy/common/00sync.rpy:596
+    old "Sync Success"
+    # Automatic translation.
+    new "同步成功"
+
+    # renpy/common/00sync.rpy:599
+    old "The Sync ID is:"
+    # Automatic translation.
+    new "同步ID是："
+
+    # renpy/common/00sync.rpy:605
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    # Automatic translation.
+    new "你可以使用这个ID在另一个设备上下载你的保存。\n这种同步将在一小时后失效。\nRen'Py Sync是由{a=https://www.renpy.org/sponsors.html}Ren'Py的赞助商{/a} 。"
+
+    # renpy/common/00sync.rpy:631
+    old "Sync Error"
+    # Automatic translation.
+    new "同步错误"
+
