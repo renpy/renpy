@@ -447,7 +447,8 @@ translate russian strings:
 
     # screens.rpy:1004
     old "Enter"
-    new "Enter"
+    # Automatic translation.
+    new "Войти"
 
     # screens.rpy:1005
     old "Advances dialogue and activates the interface."
@@ -487,7 +488,8 @@ translate russian strings:
 
     # screens.rpy:1024
     old "Tab"
-    new "Tab"
+    # Automatic translation.
+    new "Вкладка"
 
     # screens.rpy:1025
     old "Toggles dialogue skipping."
@@ -495,7 +497,8 @@ translate russian strings:
 
     # screens.rpy:1028
     old "Page Up"
-    new "Page Up"
+    # Automatic translation.
+    new "Страница вверху"
 
     # screens.rpy:1029
     old "Rolls back to earlier dialogue."
@@ -503,7 +506,8 @@ translate russian strings:
 
     # screens.rpy:1032
     old "Page Down"
-    new "Page Down"
+    # Automatic translation.
+    new "Страница вниз"
 
     # screens.rpy:1033
     old "Rolls forward to later dialogue."
@@ -559,7 +563,8 @@ translate russian strings:
 
     # screens.rpy:1091
     old "Start, Guide"
-    new "Start, Guide"
+    # Automatic translation.
+    new "Начало, Руководство"
 
     # screens.rpy:1095
     old "Y/Top Button"
@@ -676,3 +681,30 @@ translate russian strings:
     # gui/game/screens.rpy:1049
     old "Opens the accessibility menu."
     new "Открывает меню специальных возможностей."
+
+translate russian strings:
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "Синхронизация загрузки"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "Скачать Sync"
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    # Automatic translation.
+    new "## Пузырьковый экран"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## Экран пузырьков используется для отображения диалога игроку при использовании речевых пузырьков. Экран пузырьков принимает те же параметры, что и экран say, должен создать отображаемый объект с id \"what\", и может создавать отображаемые объекты с id \"namebox\", \"who\" и \"window\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+
