@@ -59,11 +59,13 @@ translate german strings:
 
     # _developer/developer.rpym:412
     old "Rectangle copied to clipboard."
-    new "Rectangle copied to clipboard."
+    # Automatic translation.
+    new "Rechteck in die Zwischenablage kopiert."
 
     # _developer/developer.rpym:415
     old "Position copied to clipboard."
-    new "Position copied to clipboard."
+    # Automatic translation.
+    new "Position in die Zwischenablage kopiert."
 
     # _developer/developer.rpym:524
     old "✔ "
@@ -75,7 +77,8 @@ translate german strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    # Automatic translation.
+    new "\n{color=#cfc}✔ vorhergesagtes Bild (gut){/color}\n{color=#fcc}✘ unvorhergesehenes Bild (schlecht){/color}\n{color=#fff}Zum Verschieben ziehen.{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
@@ -91,7 +94,8 @@ translate german strings:
 
     # _developer/inspector.rpym:71
     old "Location"
-    new "Location"
+    # Automatic translation.
+    new "Standort"
 
     # _developer/inspector.rpym:122
     old "Inspecting Styles of [displayable_name!q]"
@@ -176,4 +180,111 @@ translate german strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <label>: springt zum Label"
+
+
+translate german strings:
+
+    # renpy/common/_developer/developer.rpym:43
+    old "Interactive Director (D)"
+    # Automatic translation.
+    new "Interaktiver Direktor (D)"
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    # Automatic translation.
+    new "Dauerhafter Betrachter"
+
+    # renpy/common/_developer/developer.rpym:59
+    old "Show Image Load Log (F4)"
+    # Automatic translation.
+    new "Bildladeprotokoll anzeigen (F4)"
+
+    # renpy/common/_developer/developer.rpym:62
+    old "Hide Image Load Log (F4)"
+    # Automatic translation.
+    new "Bildladeprotokoll ausblenden (F4)"
+
+    # renpy/common/_developer/developer.rpym:65
+    old "Image Attributes"
+    # Automatic translation.
+    new "Bild-Attribute"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    # Automatic translation.
+    new "Sprechblasen-Editor (Umschalt+B)"
+
+    # renpy/common/_developer/developer.rpym:97
+    old "[name] [attributes] (hidden)"
+    # Automatic translation.
+    new "[name] [attributes] (versteckt)"
+
+    # renpy/common/_developer/developer.rpym:101
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:162
+    old "Hide deleted"
+    # Automatic translation.
+    new "Ausblenden gelöscht"
+
+    # renpy/common/_developer/developer.rpym:162
+    old "Show deleted"
+    # Automatic translation.
+    new "Anzeigen gelöscht"
+
+    # renpy/common/_developer/developer.rpym:389
+    old "Type to filter: "
+    # Automatic translation.
+    new "Typ zum Filtern: "
+
+    # renpy/common/_developer/developer.rpym:507
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    # Automatic translation.
+    new "Texturen: [tex_count] ([tex_size_mb:.1f] MB)"
+
+    # renpy/common/_developer/developer.rpym:511
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    # Automatic translation.
+    new "Bild-Cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    # Automatic translation.
+    new "help: diese Hilfe anzeigen\n help <expr>: Signatur und Dokumentation von <expr> anzeigen"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    # Automatic translation.
+    new "Die Hilfe kann undokumentierte Funktionen anzeigen. Bitte prüfen Sie, ob die Funktion oder\nKlasse, die Sie verwenden möchten, dokumentiert ist.\n\n"
+
+    # renpy/common/00console.rpy:854
+    old "stack: print the return stack"
+    # Automatic translation.
+    new "stack: den Rückgabestapel drucken"
+
+    # renpy/common/00console.rpy:908
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    # Automatic translation.
+    new "watch <expression>: einen Python-Ausdruck beobachten\n watch short: macht die Darstellung der nachverfolgten Ausdrücke kurz (Standard)\n watch long: macht die Darstellung von verfolgten Ausdrücken wie folgt"
+
+    # renpy/common/00console.rpy:1028
+    old "short: Shorten the representation of objects on the console (default)."
+    # Automatic translation.
+    new "short: Verkürzt die Darstellung von Objekten auf der Konsole (Standard)."
+
+    # renpy/common/00console.rpy:1032
+    old "long: Print the full representation of objects on the console."
+    # Automatic translation.
+    new "long: Gibt die vollständige Darstellung der Objekte auf der Konsole aus."
+
+    # renpy/common/00console.rpy:1036
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    # Automatic translation.
+    new "escape: Ermöglicht das Escaping von Unicode-Symbolen in Unicode-Strings."
+
+    # renpy/common/00console.rpy:1040
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    # Automatic translation.
+    new "unescape: Deaktiviert das Escaping von Unicode-Symbolen in Unicode-Zeichenfolgen und druckt sie so, wie sie sind (Voreinstellung)."
 
