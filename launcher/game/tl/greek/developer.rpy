@@ -75,7 +75,8 @@ translate greek strings:
 
     # _developer/developer.rpym:532
     old "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
-    new "\n{color=#cfc}✔ predicted image (good){/color}\n{color=#fcc}✘ unpredicted image (bad){/color}\n{color=#fff}Drag to move.{/color}"
+    # Automatic translation.
+    new "\n{color=#cfc}✔ προβλεπόμενη εικόνα (καλή){/color}\n{color=#fcc}✘ απρόβλεπτη εικόνα (κακή){/color}\n{color=#fff}Σύρετε για να μετακινηθείτε.{/color}"
 
     # _developer/inspector.rpym:38
     old "Displayable Inspector"
@@ -176,4 +177,111 @@ translate greek strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <label>: μεταπηδάει την εκτέλεση κώδικα στην ετικέτα label"
+
+
+translate greek strings:
+
+    # renpy/common/_developer/developer.rpym:43
+    old "Interactive Director (D)"
+    # Automatic translation.
+    new "Διευθυντής διαδραστικότητας (D)"
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    # Automatic translation.
+    new "Επίμονη προβολή"
+
+    # renpy/common/_developer/developer.rpym:59
+    old "Show Image Load Log (F4)"
+    # Automatic translation.
+    new "Εμφάνιση αρχείου καταγραφής φόρτωσης εικόνας (F4)"
+
+    # renpy/common/_developer/developer.rpym:62
+    old "Hide Image Load Log (F4)"
+    # Automatic translation.
+    new "Απόκρυψη αρχείου καταγραφής φόρτωσης εικόνας (F4)"
+
+    # renpy/common/_developer/developer.rpym:65
+    old "Image Attributes"
+    # Automatic translation.
+    new "Χαρακτηριστικά εικόνας"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    # Automatic translation.
+    new "Επεξεργαστής φυσαλίδων ομιλίας (Shift+B)"
+
+    # renpy/common/_developer/developer.rpym:97
+    old "[name] [attributes] (hidden)"
+    # Automatic translation.
+    new "[name] [attributes] (κρυφό)"
+
+    # renpy/common/_developer/developer.rpym:101
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:162
+    old "Hide deleted"
+    # Automatic translation.
+    new "Απόκρυψη διαγράφεται"
+
+    # renpy/common/_developer/developer.rpym:162
+    old "Show deleted"
+    # Automatic translation.
+    new "Εμφάνιση διαγράφεται"
+
+    # renpy/common/_developer/developer.rpym:389
+    old "Type to filter: "
+    # Automatic translation.
+    new "Τύπος για φιλτράρισμα: "
+
+    # renpy/common/_developer/developer.rpym:507
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    # Automatic translation.
+    new "Υφές: [tex_count] ([tex_size_mb:.1f] MB)"
+
+    # renpy/common/_developer/developer.rpym:511
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    # Automatic translation.
+    new "Κρυφή μνήμη εικόνων: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    # Automatic translation.
+    new "help: δείξτε αυτή τη βοήθεια\n help <expr>: Εμφάνιση της υπογραφής και της τεκμηρίωσης της <expr>"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    # Automatic translation.
+    new "Η βοήθεια μπορεί να εμφανίζει μη τεκμηριωμένες λειτουργίες. Ελέγξτε ότι η λειτουργία ή η\nκλάση που θέλετε να χρησιμοποιήσετε είναι τεκμηριωμένη.\n\n"
+
+    # renpy/common/00console.rpy:854
+    old "stack: print the return stack"
+    # Automatic translation.
+    new "stack: εκτύπωση της στοίβας επιστροφής"
+
+    # renpy/common/00console.rpy:908
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    # Automatic translation.
+    new "watch <expression>: παρακολουθήστε μια έκφραση python\n watch short: κάνει την αναπαράσταση των ανιχνευόμενων εκφράσεων σύντομη (προεπιλογή)\n watch long: κάνει την αναπαράσταση των ιχνηλατημένων εκφράσεων όπως είναι"
+
+    # renpy/common/00console.rpy:1028
+    old "short: Shorten the representation of objects on the console (default)."
+    # Automatic translation.
+    new "short: Συντομεύει την αναπαράσταση των αντικειμένων στην κονσόλα (προεπιλογή)."
+
+    # renpy/common/00console.rpy:1032
+    old "long: Print the full representation of objects on the console."
+    # Automatic translation.
+    new "long: Εκτύπωση της πλήρους αναπαράστασης των αντικειμένων στην κονσόλα."
+
+    # renpy/common/00console.rpy:1036
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    # Automatic translation.
+    new "escape: Ενεργοποιεί τη διαφυγή συμβόλων unicode σε συμβολοσειρές unicode."
+
+    # renpy/common/00console.rpy:1040
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    # Automatic translation.
+    new "unescape: Απενεργοποιεί τη διαφυγή των συμβόλων unicode σε συμβολοσειρές unicode και την εκτύπωση ως έχει (προεπιλογή)."
 
