@@ -130,7 +130,8 @@
 
     # 00console.rpy:403
     old "commands:\n"
-    new "commands:\n"
+    # Automatic translation.
+    new "명령을 실행합니다:\n"
 
     # 00console.rpy:413
     old " <renpy script statement>: run the statement\n"
@@ -183,3 +184,46 @@
      # 00console.rpy:690
     old "long: Print the full representation of objects on the console."
     new "long: 콘솔에서 오브젝트를 모두 표시한다."
+
+translate korean strings:
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    # Automatic translation.
+    new "영구 뷰어"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    # Automatic translation.
+    new "말풍선 편집기(Shift+B)"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    # Automatic translation.
+    new "help: 이 도움말 표시\n help <expr>: <EXPR>의 서명 및 문서 표시"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    # Automatic translation.
+    new "도움말에 문서화되지 않은 기능이 표시될 수 있습니다. 해당 기능이나\n클래스가 문서화되어 있습니다.\n\n"
+
+    # renpy/common/00console.rpy:854
+    old "stack: print the return stack"
+    # Automatic translation.
+    new "stack: 반환 스택 인쇄"
+
+    # renpy/common/00console.rpy:908
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    # Automatic translation.
+    new "watch <expression>: 파이썬 표현식 보기\n watch short: 는 추적된 표현식을 짧게 표현합니다(기본값).\n watch long: 는 추적된 표현식을 있는 그대로 표현합니다."
+
+    # renpy/common/00console.rpy:1036
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    # Automatic translation.
+    new "escape: 유니코드 문자열에서 유니코드 기호를 이스케이프 처리할 수 있습니다."
+
+    # renpy/common/00console.rpy:1040
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    # Automatic translation.
+    new "unescape: 유니코드 문자열에서 유니코드 기호의 이스케이핑을 비활성화하고 그대로 인쇄합니다(기본값)."
+
