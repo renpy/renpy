@@ -443,7 +443,8 @@ translate polish strings:
 
     # gui/game/screens.rpy:1004
     old "Enter"
-    new "Enter"
+    # Automatic translation.
+    new "Wejdź na stronę"
 
     # gui/game/screens.rpy:1005
     old "Advances dialogue and activates the interface."
@@ -467,7 +468,8 @@ translate polish strings:
 
     # gui/game/screens.rpy:1016
     old "Escape"
-    new "Escape"
+    # Automatic translation.
+    new "Ucieczka"
 
     # gui/game/screens.rpy:1017
     old "Accesses the game menu."
@@ -483,7 +485,8 @@ translate polish strings:
 
     # gui/game/screens.rpy:1024
     old "Tab"
-    new "Tab"
+    # Automatic translation.
+    new "Zakładka"
 
     # gui/game/screens.rpy:1025
     old "Toggles dialogue skipping."
@@ -491,7 +494,8 @@ translate polish strings:
 
     # gui/game/screens.rpy:1028
     old "Page Up"
-    new "Page Up"
+    # Automatic translation.
+    new "Strona w górę"
 
     # gui/game/screens.rpy:1029
     old "Rolls back to earlier dialogue."
@@ -499,7 +503,8 @@ translate polish strings:
 
     # gui/game/screens.rpy:1032
     old "Page Down"
-    new "Page Down"
+    # Automatic translation.
+    new "Strona w dół"
 
     # gui/game/screens.rpy:1033
     old "Rolls forward to later dialogue."
@@ -555,7 +560,8 @@ translate polish strings:
 
     # gui/game/screens.rpy:1091
     old "Start, Guide"
-    new "Start, Guide"
+    # Automatic translation.
+    new "Start, Przewodnik"
 
     # gui/game/screens.rpy:1095
     old "Y/Top Button"
@@ -668,4 +674,41 @@ translate polish strings:
     # gui/game/screens.rpy:1433
     old "Menu"
     new "Menu"
+
+
+translate polish strings:
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "Synchronizacja wysyłania"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "Pobierz Sync"
+
+    # gui/game/screens.rpy:1049
+    old "Opens the accessibility menu."
+    # Automatic translation.
+    new "Otwiera menu dostępności."
+
+    # gui/game/screens.rpy:1320
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    # Automatic translation.
+    new "## Wyświetli menu, jeżeli jest podane. Menu może być wyświetlone nieprawidłowo, jeżeli config.narrator_menu jest ustawione na True."
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    # Automatic translation.
+    new "# Bubble screen"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## Ekran bąbelkowy jest używany do wyświetlania graczowi dialogu, gdy używa się bąbelków mowy. Ekran bąbelkowy przyjmuje te same parametry co ekran say, musi tworzyć displayable o id \"what\", oraz może tworzyć displayable o id \"namebox\", \"who\", oraz \"window\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
 
