@@ -432,3 +432,11 @@ translate ukrainian strings:
     # gui/game/gui.rpy:461
     old "## NVL-mode."
     new "## NVL-режим."
+
+translate ukrainian strings:
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    # Automatic translation.
+    new "## Увімкнути перевірку на невірні або нестабільні властивості в екранах або перетвореннях"
+

@@ -139,7 +139,8 @@ translate ukrainian strings:
 
     # game/android.rpy:335
     old "Android: [project.current.display_name!q]"
-    new "Android: [project.current.display_name!q]"
+    # Automatic translation.
+    new "Андроїд: [project.current.display_name!q]"
 
     # game/android.rpy:355
     old "Emulation:"
@@ -675,7 +676,8 @@ translate ukrainian strings:
 
     # game/editor.rpy:169
     old "Visual Studio Code"
-    new "Visual Studio Code"
+    # Automatic translation.
+    new "Код Visual Studio"
 
     # game/editor.rpy:169
     old "Up to 110 MB download required."
@@ -727,7 +729,8 @@ translate ukrainian strings:
 
     # game/editor.rpy:245
     old "None"
-    new "None"
+    # Automatic translation.
+    new "Ні."
 
     # game/editor.rpy:245
     old "Prevents Ren'Py from opening a text editor."
@@ -767,7 +770,8 @@ translate ukrainian strings:
 
     # game/front_page.rpy:114
     old "[p.name!q] (template)"
-    new "[p.name!q] (template)"
+    # Automatic translation.
+    new "[p.name!q] (шаблон)"
 
     # game/front_page.rpy:116
     old "Select project [text]."
@@ -1263,7 +1267,8 @@ translate ukrainian strings:
 
     # game/navigation.rpy:204
     old "TODOs"
-    new "TODOs"
+    # Automatic translation.
+    new "Список справ"
 
     # game/navigation.rpy:243
     old "+ Add script file"
@@ -1812,3 +1817,98 @@ translate ukrainian strings:
     # game/web.rpy:348
     old "Before packaging web apps, you'll need to download RenPyWeb, Ren'Py's web support. Would you like to download RenPyWeb now?"
     new "Перш ніж створювати пакети веб-програм, вам потрібно буде завантажити RenPyWeb, веб-підтримку Ren'Py. Бажаєте завантажити RenPyWeb зараз?"
+
+translate ukrainian strings:
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "RAPT встановлено, але ключ не налаштовано. Згенеруйте нові ключі або скопіюйте android.keystore та bundle.keystore до базового каталогу."
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "Спроби емулювати телевізійну Android-приставку на базі телевізора.\n\nКлавішам зі стрілками відповідає ввід контролера, клавіші Enter - кнопка вибору, Escape - кнопка меню, а кнопка PageUp - кнопка \"Назад\"."
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "Завантажує та встановлює Android SDK та пакети підтримки."
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "Генерує ключі, необхідні для підписання пакунка."
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "Інсталяція SDK"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "Згенеруйте ключі"
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "Скільки оперативної пам'яті (в ГБ) потрібно виділити Gradle?\nЦе має бути додатне ціле число."
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "Розмір оперативної пам'яті повинен містити тільки числа і бути додатнім."
+
+    # game/androidstrings.rpy:38
+    old "Which app store would you like to support in-app purchasing through?"
+    # Automatic translation.
+    new "Через який магазин додатків ви хотіли б підтримувати внутрішні покупки?"
+
+    # game/androidstrings.rpy:39
+    old "Google Play."
+    new "Google Play."
+
+    # game/androidstrings.rpy:40
+    old "Amazon App Store."
+    new "Amazon App Store."
+
+    # game/androidstrings.rpy:41
+    old "Both, in one app."
+    # Automatic translation.
+    new "І те, і інше в одному додатку."
+
+    # game/androidstrings.rpy:42
+    old "Neither."
+    # Automatic translation.
+    new "Ні те, ні інше."
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Я знайшов файл android.keystore у каталозі rapt. Ви хочете використовувати цей файл?"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\nЯкщо ви скажете \"Ні\", то не зможете створити ключ."
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "Я знайшов файл bundle.keystore у каталозі rapt. Ви хочете використовувати цей файл?"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    new "(DLC)"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "Lint перевіряє вашу гру на наявність потенційних помилок і надає статистику."
+
+    # game/web.rpy:485
+    old "Creating package..."
+    # Automatic translation.
+    new "Створення пакету..."
+

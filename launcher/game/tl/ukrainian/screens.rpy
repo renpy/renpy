@@ -423,7 +423,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:991
     old "Enter"
-    new "Enter"
+    # Automatic translation.
+    new "Увійдіть"
 
     # gui/game/screens.rpy:992
     old "Advances dialogue and activates the interface."
@@ -431,7 +432,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:995
     old "Space"
-    new "Space"
+    # Automatic translation.
+    new "Простір"
 
     # gui/game/screens.rpy:996
     old "Advances dialogue without selecting choices."
@@ -447,7 +449,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1003
     old "Escape"
-    new "Escape"
+    # Automatic translation.
+    new "Втеча"
 
     # gui/game/screens.rpy:1004
     old "Accesses the game menu."
@@ -463,7 +466,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1011
     old "Tab"
-    new "Tab"
+    # Automatic translation.
+    new "Вкладка"
 
     # gui/game/screens.rpy:1012
     old "Toggles dialogue skipping."
@@ -471,7 +475,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1015
     old "Page Up"
-    new "Page Up"
+    # Automatic translation.
+    new "Перегорнути сторінку."
 
     # gui/game/screens.rpy:1016
     old "Rolls back to earlier dialogue."
@@ -479,7 +484,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1019
     old "Page Down"
-    new "Page Down"
+    # Automatic translation.
+    new "Перегорнути сторінку вниз."
 
     # gui/game/screens.rpy:1020
     old "Rolls forward to later dialogue."
@@ -652,4 +658,31 @@ translate ukrainian strings:
     # gui/game/screens.rpy:1424
     old "Menu"
     new "Меню"
+
+
+translate ukrainian strings:
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "Завантажити Синхронізація"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "Завантажити Синхронізація"
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    # Automatic translation.
+    new "## Бульбашковий екран"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## Екран бульбашок використовується для показу діалогу гравцеві під час використання мовних бульбашок. Екран бульбашок має ті самі параметри, що й екран промови, повинен створювати елемент відображення з ідентифікатором \"what\", а також може створювати елементи відображення з ідентифікаторами \"namebox\", \"who\" та \"window\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
 
