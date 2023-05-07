@@ -40,8 +40,7 @@
 
     # game/front_page.rpy:157
     old "game"
-    # Automatic translation.
-    new "jogo"
+    new "game"
 
     # game/front_page.rpy:158
     old "base"

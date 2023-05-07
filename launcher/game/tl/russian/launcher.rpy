@@ -721,18 +721,15 @@
 
     # front_page.rpy:195
     old "game"
-    # Automatic translation.
-    new "игра"
+    new "game"
 
     # front_page.rpy:196
     old "base"
-    # Automatic translation.
-    new "база"
+    new "base"
 
     # front_page.rpy:197
     old "images"
-    # Automatic translation.
-    new "изображения"
+    new "images"
 
     # front_page.rpy:198
     old "gui"

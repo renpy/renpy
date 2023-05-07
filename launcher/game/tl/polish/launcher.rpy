@@ -714,18 +714,15 @@
 
     # game/front_page.rpy:195
     old "game"
-    # Automatic translation.
-    new "gra"
+    new "game"
 
     # game/front_page.rpy:196
     old "base"
-    # Automatic translation.
-    new "baza"
+    new "base"
 
     # game/front_page.rpy:197
     old "images"
-    # Automatic translation.
-    new "zdjęcia"
+    new "images"
 
     # game/front_page.rpy:198
     old "audio"

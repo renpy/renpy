@@ -717,18 +717,15 @@
 
     # front_page.rpy:195
     old "game"
-    # Automatic translation.
-    new "oyun"
+    new "game"
 
     # front_page.rpy:196
     old "base"
-    # Automatic translation.
-    new "taban"
+    new "base"
 
     # front_page.rpy:197
     old "images"
-    # Automatic translation.
-    new "görüntüler"
+    new "images"
 
     # front_page.rpy:198
     old "gui"
@@ -1814,8 +1811,7 @@ translate turkish strings:
 
     # game/front_page.rpy:165
     old "audio"
-    # Automatic translation.
-    new "ses"
+    new "audio"
 
     # game/front_page.rpy:219
     old "Web"

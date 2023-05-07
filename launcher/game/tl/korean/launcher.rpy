@@ -721,8 +721,7 @@
 
     # game/front_page.rpy:195
     old "game"
-    # Automatic translation.
-    new "게임"
+    new "game"
 
     # game/front_page.rpy:196
     old "base"
@@ -730,13 +729,11 @@
 
     # game/front_page.rpy:197
     old "images"
-    # Automatic translation.
-    new "이미지"
+    new "images"
 
     # game/front_page.rpy:198
     old "audio"
-    # Automatic translation.
-    new "오디오"
+    new "audio"
 
     # game/front_page.rpy:199
     old "gui"

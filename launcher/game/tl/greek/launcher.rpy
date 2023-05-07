@@ -1827,8 +1827,7 @@ translate greek strings:
 
     # game/front_page.rpy:165
     old "audio"
-    # Automatic translation.
-    new "ήχος"
+    new "audio"
 
     # game/front_page.rpy:182
     old "Open project"

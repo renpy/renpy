@@ -452,8 +452,7 @@
 
     # front_page.rpy:195
     old "game"
-    # Automatic translation.
-    new "gioco"
+    new "game"
 
     # front_page.rpy:196
     old "base"
@@ -461,8 +460,7 @@
 
     # front_page.rpy:197
     old "images"
-    # Automatic translation.
-    new "immagini"
+    new "images"
 
     # front_page.rpy:198
     old "gui"

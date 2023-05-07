@@ -482,8 +482,7 @@
 
     # front_page.rpy:197
     old "images"
-    # Automatic translation.
-    new "Bilder"
+    new "images"
 
     # front_page.rpy:198
     old "gui"
@@ -1779,8 +1778,7 @@
 
     # game/front_page.rpy:165
     old "audio"
-    # Automatic translation.
-    new "Audio"
+    new "audio"
 
     # game/front_page.rpy:182
     old "Open project"

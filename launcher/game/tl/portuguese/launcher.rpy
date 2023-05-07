@@ -626,13 +626,11 @@ translate portuguese strings:
 
     # game/front_page.rpy:164
     old "images"
-    # Automatic translation.
-    new "imagens"
+    new "images"
 
     # game/front_page.rpy:165
     old "audio"
-    # Automatic translation.
-    new "áudio"
+    new "audio"
 
     # game/front_page.rpy:166
     old "gui"

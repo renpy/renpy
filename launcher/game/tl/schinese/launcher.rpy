@@ -797,28 +797,23 @@
 
     # game/front_page.rpy:162
     old "game"
-    # Automatic translation.
-    new "游戏"
+    new "game"
 
     # game/front_page.rpy:163
     old "base"
-    # Automatic translation.
-    new "基础"
+    new "base"
 
     # game/front_page.rpy:164
     old "images"
-    # Automatic translation.
-    new "图像"
+    new "images"
 
     # game/front_page.rpy:165
     old "audio"
-    # Automatic translation.
-    new "音频"
+    new "audio"
 
     # game/front_page.rpy:166
     old "gui"
-    # Automatic translation.
-    new "圭臬"
+    new "gui"
 
     # game/front_page.rpy:171
     old "Edit File"

@@ -450,8 +450,7 @@
 
     # front_page.rpy:195
     old "game"
-    # Automatic translation.
-    new "jeu"
+    new "game"
 
     # front_page.rpy:196
     old "base"

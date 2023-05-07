@@ -456,23 +456,19 @@
 
     # front_page.rpy:195
     old "game"
-    # Automatic translation.
-    new "ゲーム"
+    new "game"
 
     # front_page.rpy:196
     old "base"
-    # Automatic translation.
-    new "ベース"
+    new "base"
 
     # front_page.rpy:197
     old "images"
-    # Automatic translation.
-    new "イメージ"
+    new "images"
 
     # front_page.rpy:198
     old "gui"
-    # Automatic translation.
-    new "グイ"
+    new "gui"
 
     # front_page.rpy:204
     old "Edit File"
@@ -1631,8 +1627,7 @@
 
     # game/front_page.rpy:198
     old "audio"
-    # Automatic translation.
-    new "オーディオ"
+    new "audio"
 
     # game/gui7.rpy:429
     old "creating a new project"
