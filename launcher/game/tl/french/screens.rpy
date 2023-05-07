@@ -34,7 +34,8 @@
 
     # screens.rpy:174
     old "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
-    new "## This screen must create an input displayable with id \"input\" to accept the various input parameters."
+    # Automatic translation.
+    new "## Cet écran doit créer une entrée affichable avec l'identifiant \"input\" pour accepter les différents paramètres d'entrée."
 
     # screens.rpy:177
     old "## http://www.renpy.org/doc/html/screen_special.html#input"
@@ -54,7 +55,8 @@
 
     # screens.rpy:221
     old "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
-    new "## When this is true, menu captions will be spoken by the narrator. When false, menu captions will be displayed as empty buttons."
+    # Automatic translation.
+    new "## Lorsque cette option est activée, les sous-titres du menu sont prononcés par le narrateur. Si cette valeur est fausse, les légendes du menu seront affichées sous forme de boutons vides."
 
     # screens.rpy:244
     old "## Quick Menu screen"
@@ -162,7 +164,8 @@
 
     # screens.rpy:369
     old "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
-    new "## The use statement includes another screen inside this one. The actual contents of the main menu are in the navigation screen."
+    # Automatic translation.
+    new "## La déclaration d'utilisation inclut un autre écran à l'intérieur de celui-ci. Le contenu actuel du menu principal se trouve dans l'écran de navigation."
 
     # screens.rpy:413
     old "## Game Menu screen"
@@ -170,11 +173,13 @@
 
     # screens.rpy:415
     old "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
-    new "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
+    # Automatic translation.
+    new "## Ceci présente la structure commune de base d'un écran de menu de jeu. Il est appelé par le titre de l'écran et affiche l'arrière-plan, le titre et la navigation."
 
     # screens.rpy:418
     old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    # Automatic translation.
+    new "## Le paramètre de défilement peut être Aucun, ou l'un des paramètres \"viewport\" ou \"vpgrid\". Lorsque cet écran est destiné à être utilisé avec un ou plusieurs enfants, qui sont transclus (placés) à l'intérieur de l'écran."
 
     # screens.rpy:476
     old "Return"
@@ -446,7 +451,8 @@
 
     # screens.rpy:1023
     old "Tab"
-    new "Tab"
+    # Automatic translation.
+    new "Onglet"
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."
@@ -526,7 +532,8 @@
 
     # screens.rpy:1089
     old "Start, Guide"
-    new "Start, Guide"
+    # Automatic translation.
+    new "Démarrage, guide"
 
     # screens.rpy:1090
     old "Access the game menu."
@@ -739,3 +746,11 @@
     # gui/game/screens.rpy:680
     old "Download Sync"
     new "Télécharger Sync"
+
+translate french strings:
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## L'écran à bulles est utilisé pour afficher le dialogue au joueur lors de l'utilisation de bulles de dialogue. L'écran à bulles prend les mêmes paramètres que l'écran say, doit créer un objet affichable avec l'identifiant \"what\", et peut créer des objets affichables avec les identifiants \"namebox\", \"who\", et \"window\"."
+

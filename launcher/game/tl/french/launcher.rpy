@@ -209,7 +209,8 @@
 
     # choose_theme.rpy:370
     old "Planetarium"
-    new "Planetarium"
+    # Automatic translation.
+    new "Planétarium"
 
     # choose_theme.rpy:425
     old "Choose Theme"
@@ -449,7 +450,8 @@
 
     # front_page.rpy:195
     old "game"
-    new "game"
+    # Automatic translation.
+    new "jeu"
 
     # front_page.rpy:196
     old "base"
@@ -793,7 +795,8 @@
 
     # navigation.rpy:197
     old "labels"
-    new "labels"
+    # Automatic translation.
+    new "étiquettes"
 
     # navigation.rpy:198
     old "defines"
@@ -1129,7 +1132,8 @@
 
     # updater.rpy:126
     old "Nightly"
-    new "Nightly"
+    # Automatic translation.
+    new "Tous les soirs"
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
@@ -1797,11 +1801,13 @@
 
     # game/android.rpy:384
     old "Play Bundle"
-    new "Play Bundle"
+    # Automatic translation.
+    new "Jouer à l'offre groupée"
 
     # game/android.rpy:388
     old "Universal APK"
-    new "Universal APK"
+    # Automatic translation.
+    new "Universel APK"
 
     # game/android.rpy:445
     old "Wi-Fi Debugging Pair"
@@ -1957,7 +1963,8 @@
 
     # game/editor.rpy:162
     old "Visual Studio Code"
-    new "Visual Studio Code"
+    # Automatic translation.
+    new "Code Visual Studio"
 
     # game/editor.rpy:162
     old "Up to 110 MB download required."
@@ -1969,7 +1976,8 @@
 
     # game/editor.rpy:187
     old "Atom"
-    new "Atom"
+    # Automatic translation.
+    new "Atome"
 
     # game/editor.rpy:200
     old "jEdit"
@@ -2061,11 +2069,13 @@
 
     # game/updater.rpy:77
     old "Nightly (Ren'Py 8, Python 3)"
-    new "Nightly (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "Tous les soirs (Ren'Py 8, Python 3)"
 
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
-    new "Nightly (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "Tous les soirs (Ren'Py 7, Python 2)"
 
     # game/preferences.rpy:327
     old "{#in language font}Welcome! Please choose a language"

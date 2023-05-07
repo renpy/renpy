@@ -346,7 +346,8 @@
 
     # renpy/common/00accessibility.rpy:88
     old "Opendyslexic"
-    new "Opendyslexic"
+    # Automatic translation.
+    new "Opendyslexique"
 
     # renpy/common/00accessibility.rpy:94
     old "Text Size Scaling"
@@ -390,7 +391,8 @@
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
-    new "viewport"
+    # Automatic translation.
+    new "fenêtre"
 
     # renpy/common/00accessibility.rpy:35
     old "horizontal scroll"
@@ -486,7 +488,8 @@
 
     # renpy/common/00director.rpy:1561
     old "(statement)"
-    new "(statement)"
+    # Automatic translation.
+    new "(déclaration)"
 
     # renpy/common/00director.rpy:1562
     old "(tag)"
@@ -498,7 +501,8 @@
 
     # renpy/common/00director.rpy:1564
     old "(transform)"
-    new "(transform)"
+    # Automatic translation.
+    new "(transformer)"
 
     # renpy/common/00director.rpy:1589
     old "(transition)"
@@ -506,7 +510,8 @@
 
     # renpy/common/00director.rpy:1601
     old "(channel)"
-    new "(channel)"
+    # Automatic translation.
+    new "(canal)"
 
     # renpy/common/00director.rpy:1602
     old "(filename)"
@@ -678,7 +683,8 @@
 
     # renpy/common/00preferences.rpy:442
     old "gl tearing"
-    new "gl tearing"
+    # Automatic translation.
+    new "déchirure du verre"
 
     # renpy/common/00preferences.rpy:445
     old "font transform"
