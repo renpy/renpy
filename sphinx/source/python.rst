@@ -356,6 +356,14 @@ The following stores are declared constant by default::
     updater
 
 
+.. _jsondb:
+
+JSONDB
+------
+
+.. include:: inc/jsondb
+
+
 .. _python-modules:
 
 First and Third-Party Python Modules and Packages

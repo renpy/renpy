@@ -355,6 +355,9 @@ class SLBlock(SLNode):
     # RawBlock from parse or None if not present.
     atl_transform = None
 
+    # The actual transform created from the atl transform.
+    transform = None
+
     def __init__(self, loc):
         SLNode.__init__(self, loc)
 
@@ -439,6 +442,9 @@ class SLBlock(SLNode):
             const = self.atl_transform.constant
             self.constant = min(self.constant, const)
 
+            self.transform = renpy.display.transform.ATLTransform(self.atl_transform)
+            renpy.atl.compile_queue.append(self.transform)
+
         was_last_keyword = False
         for i in self.children:
             if i.has_keyword:
@@ -485,7 +491,18 @@ class SLBlock(SLNode):
 
         if self.atl_transform is not None:
             transform = ATLTransform(self.atl_transform, context=context.scope)
-            context.keywords["at"] = transform
+            transform.parent_transform = self.transform # type: ignore
+
+            if "at" in context.keywords:
+                try:
+                    at_list = list(context.keywords["at"])
+                except TypeError:
+                    at_list = [ context.keywords["at"] ]
+
+                at_list.append(transform)
+                context.keywords["at"] = at_list
+            else:
+                context.keywords["at"] = transform
 
         style_prefix = context.keywords.pop("style_prefix", NotGiven)
 
@@ -2048,14 +2065,12 @@ class SLUse(SLNode):
 
             ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
 
-            if use_id in ctx.old_use_cache:
-                ctx.updating = True
-
             ctx.new_use_cache[use_id] = ctx.new_cache
 
         else:
 
             ctx.old_cache = context.old_cache.get(self.serial, None) or { }
+
 
         if not isinstance(ctx.old_cache, dict):
             ctx.old_cache = { }
@@ -2076,11 +2091,14 @@ class SLUse(SLNode):
             args = [ ]
             kwargs = { }
 
+        scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+        if not ctx.updating:
+            scope.clear()
+
         # Apply the arguments to the parameters (if present) or to the scope of the used screen.
         if ast.parameters is not None:
             new_scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.update(new_scope)
 
         else:
@@ -2088,7 +2106,6 @@ class SLUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.clear()
             scope.update(context.scope)
             scope.update(kwargs)
@@ -2332,9 +2349,6 @@ class SLCustomUse(SLNode):
 
             ctx.old_cache = context.old_use_cache.get(use_id, None) or context.old_cache.get(self.serial, None) or { }
 
-            if use_id in ctx.old_use_cache:
-                ctx.updating = True
-
             ctx.new_use_cache[use_id] = ctx.new_cache
 
         else:
@@ -2348,11 +2362,14 @@ class SLCustomUse(SLNode):
 
         ast = self.ast
 
+        scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
+        if not ctx.updating:
+            scope.clear()
+
         # Apply the arguments to the parameters (if present) or to the scope of the used screen.
         if ast.parameters is not None:
             new_scope = ast.parameters.apply(args, kwargs, ignore_errors=context.predicting)
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.update(new_scope)
 
         else:
@@ -2360,7 +2377,6 @@ class SLCustomUse(SLNode):
             if args:
                 raise Exception("Screen {} does not take positional arguments. ({} given)".format(self.target, len(args)))
 
-            scope = ctx.old_cache.get("scope", None) or ctx.miss_cache.get("scope", None) or { }
             scope.clear()
             scope.update(context.scope)
             scope.update(kwargs)

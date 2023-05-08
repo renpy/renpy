@@ -67,7 +67,7 @@ screen _developer:
 
                 if bubble.active:
 
-                    textbutton _("Speech Bubble Editor"):
+                    textbutton _("Speech Bubble Editor (Shift+B)"):
                         action [ SetField(bubble.shown, "value", True), Hide("_developer") ]
 
         hbox:

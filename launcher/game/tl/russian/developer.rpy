@@ -88,3 +88,26 @@ translate russian strings:
     # renpy/common/00console.rpy:784
     old "stack: print the return stack"
     new "stack: выводит стэк возврата (return stack)"
+
+translate russian strings:
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    # Automatic translation.
+    new "Постоянный просмотрщик"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    # Automatic translation.
+    new "Редактор речевых пузырьков (Shift+B)"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    # Automatic translation.
+    new "help: покажите эту помощь\n help <expr>: показать подпись и документацию <expr"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    # Automatic translation.
+    new "В справке могут отображаться недокументированные функции. Пожалуйста, проверьте, что функция или\nкласс, который вы хотите использовать, документирован.\n\n"
+

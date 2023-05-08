@@ -355,6 +355,7 @@ init python:
 
     build.classify_renpy("gui/game/gui/", "source")
     build.classify_renpy("gui/game/gui/bubble.png", "source")
+    build.classify_renpy("gui/game/gui/thoughtbubble.png", "source")
     build.classify_renpy("gui/game/gui/*", None)
 
     source_and_binary("launcher", py=False)
@@ -449,3 +450,6 @@ python early:
 # Since the launcher can be run directly or can be run from the SDK directory,
 # uneliding files needs to be handled slightly differently.
 define config.alternate_unelide_path = os.path.join(config.basedir, "launcher")
+
+# Disable skipping.
+define config.allow_skipping = False

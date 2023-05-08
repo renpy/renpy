@@ -141,195 +141,191 @@ translate piglatin strings:
     old "Language"
     new "Anguagelay"
 
-    # game/screens.rpy:777
-    old " "
-    new " "
-
-    # game/screens.rpy:797
+    # game/screens.rpy:798
     old "Text Speed"
     new "Exttay Peedsay"
 
-    # game/screens.rpy:801
+    # game/screens.rpy:802
     old "Auto-Forward Time"
     new "Utoaay-Orwardfay Imetay"
 
-    # game/screens.rpy:808
+    # game/screens.rpy:809
     old "Music Volume"
     new "Usicmay Olumevay"
 
-    # game/screens.rpy:815
+    # game/screens.rpy:816
     old "Sound Volume"
     new "Oundsay Olumevay"
 
-    # game/screens.rpy:821
+    # game/screens.rpy:822
     old "Test"
     new "Esttay"
 
-    # game/screens.rpy:825
+    # game/screens.rpy:826
     old "Voice Volume"
     new "Oicevay Olumevay"
 
-    # game/screens.rpy:836
+    # game/screens.rpy:837
     old "Mute All"
     new "Utemay Llaay"
 
-    # game/screens.rpy:955
+    # game/screens.rpy:956
     old "The dialogue history is empty."
     new "Hetay ialogueday istoryhay isay emptyay."
 
-    # game/screens.rpy:1021
+    # game/screens.rpy:1022
     old "Keyboard"
     new "Eyboardkay"
 
-    # game/screens.rpy:1022
+    # game/screens.rpy:1023
     old "Mouse"
     new "Ousemay"
 
-    # game/screens.rpy:1025
+    # game/screens.rpy:1026
     old "Gamepad"
     new "Amepadgay"
 
-    # game/screens.rpy:1038
+    # game/screens.rpy:1039
     old "Enter"
     new "Ntereay"
 
-    # game/screens.rpy:1039
+    # game/screens.rpy:1040
     old "Advances dialogue and activates the interface."
     new "Dvancesaay ialogueday anday activatesay hetay interfaceay."
 
-    # game/screens.rpy:1042
+    # game/screens.rpy:1043
     old "Space"
     new "Pacesay"
 
-    # game/screens.rpy:1043
+    # game/screens.rpy:1044
     old "Advances dialogue without selecting choices."
     new "Dvancesaay ialogueday ithoutway electingsay oiceschay."
 
-    # game/screens.rpy:1046
+    # game/screens.rpy:1047
     old "Arrow Keys"
     new "Rrowaay Eyskay"
 
-    # game/screens.rpy:1047
+    # game/screens.rpy:1048
     old "Navigate the interface."
     new "Avigatenay hetay interfaceay."
 
-    # game/screens.rpy:1050
+    # game/screens.rpy:1051
     old "Escape"
     new "Scapeeay"
 
-    # game/screens.rpy:1051
+    # game/screens.rpy:1052
     old "Accesses the game menu."
     new "Ccessesaay hetay amegay enumay."
 
-    # game/screens.rpy:1054
+    # game/screens.rpy:1055
     old "Ctrl"
     new "Trlcay"
 
-    # game/screens.rpy:1055
+    # game/screens.rpy:1056
     old "Skips dialogue while held down."
     new "Kipssay ialogueday hileway eldhay ownday."
 
-    # game/screens.rpy:1058
+    # game/screens.rpy:1059
     old "Tab"
     new "Abtay"
 
-    # game/screens.rpy:1059
+    # game/screens.rpy:1060
     old "Toggles dialogue skipping."
     new "Ogglestay ialogueday kippingsay."
 
-    # game/screens.rpy:1062
+    # game/screens.rpy:1063
     old "Page Up"
     new "Agepay Puay"
 
-    # game/screens.rpy:1063
+    # game/screens.rpy:1064
     old "Rolls back to earlier dialogue."
     new "Ollsray ackbay otay earlieray ialogueday."
 
-    # game/screens.rpy:1066
+    # game/screens.rpy:1067
     old "Page Down"
     new "Agepay Ownday"
 
-    # game/screens.rpy:1067
+    # game/screens.rpy:1068
     old "Rolls forward to later dialogue."
     new "Ollsray orwardfay otay aterlay ialogueday."
 
-    # game/screens.rpy:1071
+    # game/screens.rpy:1072
     old "Hides the user interface."
     new "Ideshay hetay useray interfaceay."
 
-    # game/screens.rpy:1075
+    # game/screens.rpy:1076
     old "Takes a screenshot."
     new "Akestay aay creenshotsay."
 
-    # game/screens.rpy:1079
+    # game/screens.rpy:1080
     old "Toggles assistive {a=https://www.renpy.org/l/voicing}self-voicing{/a}."
     new "Ogglestay assistiveay {a=https://www.renpy.org/l/voicing}elfsay-oicingvay{/a}."
 
-    # game/screens.rpy:1083
+    # game/screens.rpy:1084
     old "Opens the accessibility menu."
     new "Pensoay hetay accessibilityay enumay."
 
-    # game/screens.rpy:1089
+    # game/screens.rpy:1090
     old "Left Click"
     new "Eftlay Lickcay"
 
-    # game/screens.rpy:1093
+    # game/screens.rpy:1094
     old "Middle Click"
     new "Iddlemay Lickcay"
 
-    # game/screens.rpy:1097
+    # game/screens.rpy:1098
     old "Right Click"
     new "Ightray Lickcay"
 
-    # game/screens.rpy:1101
+    # game/screens.rpy:1102
     old "Mouse Wheel Up\nClick Rollback Side"
     new "Ousemay Heelway Puay\nLickcay Ollbackray Idesay"
 
-    # game/screens.rpy:1105
+    # game/screens.rpy:1106
     old "Mouse Wheel Down"
     new "Ousemay Heelway Ownday"
 
-    # game/screens.rpy:1112
+    # game/screens.rpy:1113
     old "Right Trigger\nA/Bottom Button"
     new "Ightray Riggertay\nAay/Ottombay Uttonbay"
 
-    # game/screens.rpy:1116
+    # game/screens.rpy:1117
     old "Left Trigger\nLeft Shoulder"
     new "Eftlay Riggertay\nEftlay Houldersay"
 
-    # game/screens.rpy:1120
+    # game/screens.rpy:1121
     old "Right Shoulder"
     new "Ightray Houldersay"
 
-    # game/screens.rpy:1124
+    # game/screens.rpy:1125
     old "D-Pad, Sticks"
     new "Day-Adpay, Tickssay"
 
-    # game/screens.rpy:1128
+    # game/screens.rpy:1129
     old "Start, Guide"
     new "Tartsay, Uidegay"
 
-    # game/screens.rpy:1132
+    # game/screens.rpy:1133
     old "Y/Top Button"
     new "Yay/Optay Uttonbay"
 
-    # game/screens.rpy:1135
+    # game/screens.rpy:1136
     old "Calibrate"
     new "Alibratecay"
 
-    # game/screens.rpy:1200
+    # game/screens.rpy:1201
     old "Yes"
     new "Esyay"
 
-    # game/screens.rpy:1201
+    # game/screens.rpy:1202
     old "No"
     new "Onay"
 
-    # game/screens.rpy:1247
+    # game/screens.rpy:1248
     old "Skipping"
     new "Kippingsay"
 
-    # game/screens.rpy:1468
+    # game/screens.rpy:1469
     old "Menu"
     new "Enumay"
 

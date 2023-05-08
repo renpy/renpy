@@ -250,14 +250,14 @@ init -1100 python:
             config.atl_function_always_blocks = True
 
         if version <= (7, 4, 11):
-            config.timer_blocks_pause = False
+            config.modal_blocks_timer = False
             config.modal_blocks_pause = False
         elif _compat_versions(version, (7, 5, 1), (8, 0, 1)):
-            config.timer_blocks_pause = True
+            config.modal_blocks_timer = True
             config.modal_blocks_pause = False
         elif _compat_versions(version, (7, 5, 2), (8, 0, 2)):
             config.modal_blocks_pause = True
-            config.timer_blocks_pause = True
+            config.modal_blocks_timer = True
 
         if _compat_versions(version, (7, 5, 3), (8, 0, 3)):
             config.quadratic_volumes = True
@@ -268,6 +268,8 @@ init -1100 python:
             config.history_current_dialogue = False
             config.scry_extend = False
             config.fadeout_audio = 0.0
+            config.at_transform_compare_full_context = True
+            config.linear_fades = True
 
             if version > (6, 99, 5):
                 config.search_prefixes.append("images/")

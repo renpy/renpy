@@ -142,11 +142,11 @@ displayable in the x and y axes. Of course, transforms can also be used. ::
 If you try this, you'll see an empty space around the background. That's
 because by moving it back, it becomes smaller, and doesn't fill the screen.
 Ren'Py has an easy way of fixing this problem - :tpref:`zzoom`. Setting
-the tpref:`zzoom` property to True will scale an image by the amount it was shrunk
+the :tpref:`zzoom` property to True will scale an image by the amount it was shrunk
 due to having a negative zpos. It's useful for backgrounds. ::
 
     transform zbg:
-        zpos -100 zzoom False
+        zpos -100 zzoom True
 
 It's also possible to use ATL to vary zpos, just like you would xpos and
 ypos. ::
@@ -311,19 +311,34 @@ The following transform properties are used by the 3D Stage.
     variables are floats, this is relative to the size of the child, otherwise
     it's absolute pixels.
 
-    This sets the location of the (0, 0, 0) point that poi, orientation,
-    xrotate, yrotate, zrotate and matrixtransform applie its transform to.
+    This sets the location of the (0, 0, 0) point that point_to, orientation,
+    xrotate, yrotate, zrotate and matrixtransform apply their transforms to.
 
-.. transform-property:: poi
+.. transform-property:: point_to
 
-    :type: (float, float, float) or None
+    :type: (float, float, float), Camera, or None
     :default: None
 
-    This gives the position of the point of interest. The camera or the
-    displayable being transformed are rotated to face the point of interest,
+    This gives a position to which to point. The camera or the
+    displayable being transformed are rotated to face that point,
     even if the position of the camera or the displayable is changed.
 
     If this is None, no point-of-interest rotation is applied.
+
+    If this is not None, this is a 3-tuple or an instance of :func:`Camera`.
+    An (x, y, z) format tuple represents the position of the point of interest.
+    An instance of Camera means to point at the camera.
+
+    Note point_to isn't updated automatically. so, you should write like below if
+    you want it is updated::
+
+        # eileen always faces to the camera.
+        show eileen happy at center:
+            point_to Camera()
+            0
+            repeat
+
+    .. include:: inc/point_to_camera
 
 .. transform-property:: orientation
 

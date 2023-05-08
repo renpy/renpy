@@ -193,7 +193,7 @@ translate japanese strings:
     new "## このスクリーンは、様々なゲームメニューの基本的な共通構造をレイアウトします。各ゲームメニュースクリーンによって呼び出され、背景・現在のスクリーンタイトル・ナビゲーションを表示します。"
 
     # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
     new "## scroll パラメーターは None 、\"viewport\" 、\"vpgrid\" のいずれかをとります。呼び出し親のスクリーンのコンテンツは、このスクリーンの中の transclude の部分に配置されます。"
 
     # screens.rpy:435
@@ -222,7 +222,8 @@ translate japanese strings:
 
     # screens.rpy:561
     old "Version [config.version!t]\n"
-    new "Version [config.version!t]\n"
+    # Automatic translation.
+    new "バージョン[config.version!t]\n"
 
     # screens.rpy:563
     old "## gui.about is usually set in options.rpy."
@@ -438,7 +439,8 @@ translate japanese strings:
 
     # screens.rpy:1003
     old "Enter"
-    new "Enter"
+    # Automatic translation.
+    new "エンター"
 
     # screens.rpy:1004
     old "Advances dialogue and activates the interface."
@@ -446,7 +448,8 @@ translate japanese strings:
 
     # screens.rpy:1007
     old "Space"
-    new "Space"
+    # Automatic translation.
+    new "スペース"
 
     # screens.rpy:1008
     old "Advances dialogue without selecting choices."
@@ -462,7 +465,8 @@ translate japanese strings:
 
     # screens.rpy:1015
     old "Escape"
-    new "Escape"
+    # Automatic translation.
+    new "エスケープ"
 
     # screens.rpy:1016
     old "Accesses the game menu."
@@ -486,7 +490,8 @@ translate japanese strings:
 
     # screens.rpy:1027
     old "Page Up"
-    new "Page Up"
+    # Automatic translation.
+    new "ページアップ"
 
     # screens.rpy:1028
     old "Rolls back to earlier dialogue."
@@ -494,7 +499,8 @@ translate japanese strings:
 
     # screens.rpy:1031
     old "Page Down"
-    new "Page Down"
+    # Automatic translation.
+    new "ページダウン"
 
     # screens.rpy:1032
     old "Rolls forward to later dialogue."
@@ -681,7 +687,8 @@ translate japanese strings:
 
     # screens.rpy:916
     old "## This determines what tags are allowed to be displayed on the history screen."
-    new "## This determines what tags are allowed to be displayed on the history screen."
+    # Automatic translation.
+    new "## 履歴画面に表示できるタグを決定します。"
 
     # screens.rpy:1132
     old "## https://www.renpy.org/doc/html/screen_special.html#confirm"
@@ -703,3 +710,29 @@ translate japanese strings:
     old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
     new "## 指定されれば選択肢を表示します。config.narrator_menuがTrueだと、メニューは正常に表示されないでしょう。"
 
+
+translate japanese strings:
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "アップロード・シンク"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "シンクのダウンロード"
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    # Automatic translation.
+    new "## バブルスクリーン"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## バブルスクリーンは、スピーチバブルを使用する際に、プレイヤーにダイアログを表示するために使用されます。バブルスクリーンはセイスクリーンと同じパラメータを持ち、idが \"what \"のdisplayableを作成しなければならず、idが \"namebox\", \"who\", \"window \"のdisplayableを作成可能である。"
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"

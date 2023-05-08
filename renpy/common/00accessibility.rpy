@@ -212,11 +212,21 @@ screen _accessibility():
 
                     null height 10
 
+                    label _("Voice Volume")
+
+                    null height 10
+
+                    bar value Preference("voice volume")
+
+                    null height 10
+
                     label _("Self-Voicing Volume Drop")
 
                     null height 10
 
                     bar value Preference("self voicing volume drop")
+
+
 
 
         vbox:

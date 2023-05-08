@@ -193,3 +193,31 @@ translate finnish strings:
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## Kauttaviivan erottama käyttäjänimi ja itch.io-projektinimi."
 
+
+translate finnish strings:
+
+    # gui/game/options.rpy:31
+    old "## Text that is placed on the game's about screen. Place the text between the triple-quotes, and leave a blank line between paragraphs."
+    # Automatic translation.
+    new "## Teksti, joka sijoitetaan pelin about-näyttöön. Sijoita teksti kolmoislauseiden väliin ja jätä kappaleiden väliin tyhjä rivi."
+
+    # gui/game/options.rpy:47
+    old "## These three variables control, among other things, which mixers are shown to the player by default. Setting one of these to False will hide the appropriate mixer."
+    # Automatic translation.
+    new "## Nämä kolme muuttujaa säätelevät muun muassa sitä, mitkä mikserit näytetään pelaajalle oletusarvoisesti. Jonkin näistä muuttujista asettaminen Falseen piilottaa kyseisen mikserin."
+
+    # gui/game/options.rpy:82
+    old "## Between screens of the game menu."
+    # Automatic translation.
+    new "## Pelivalikon näyttöjen välillä."
+
+    # gui/game/options.rpy:152
+    old "## Icon"
+    # Automatic translation.
+    new "## Kuvake"
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    # Automatic translation.
+    new "## Google Play -lisenssiavain tarvitaan sovelluksen sisäisten ostojen tekemiseen. Se löytyy Google Play -kehittäjäkonsolista kohdasta \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+

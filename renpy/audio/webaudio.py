@@ -439,24 +439,11 @@ def load_script():
 
 
 @proxy_call_both
-def init(freq, stereo, samples, status=False, equal_mono=False):
+def init(freq, stereo, samples, status=False, equal_mono=False, linear_fades=False):
     """
-    Initializes the audio system with the given parameters. The parameter are
+    Initializes the audio system with the given parameters. The parameters are
     just informational - the audio system should be able to play all supported
     files.
-
-    `freq`
-        The sample frequency to play back at.
-
-    `stereo`
-        Should we play in stereo (generally true).
-
-    `samples`
-        The length of the sample buffer.
-
-    `status`
-        If true, the sound system will print errors out to the console.
-    `
     """
 
     load_script()

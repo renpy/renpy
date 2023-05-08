@@ -95,9 +95,7 @@ label install_live2d:
 
             (r".*/Core/dll/android/(armeabi-v7a/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
             (r".*/Core/dll/android/(arm64-v8a/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
-
-            # This doesn't exist yet.
-            # (r".*/Core/dll/android/(x86_64/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
+            (r".*/Core/dll/android/(x86_64/libLive2DCubismCore.so)", r"rapt/prototype/renpyandroid/src/main/jniLibs/\1"),
         ]
 
         install_from_zip("Live2D Cubism SDK for Native", "CubismSdkForNative-4-*.zip", patterns)

@@ -105,7 +105,7 @@ class ShaderPart(object):
                 used.add(m.group(0))
 
         for l in variables.split("\n"):
-            l = l.strip(' ;')
+            l = l.partition("//")[0].strip(' ;')
 
             a = l.split()
             if not a:

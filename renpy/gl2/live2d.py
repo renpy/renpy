@@ -124,6 +124,14 @@ def init():
         gl_FragColor = color * (1.0 - mask.a);
     """)
 
+    register_shader("live2d.colors", variables="""
+        uniform vec4 u_multiply;
+        uniform vec4 u_screen;
+    """, fragment_250="""
+        gl_FragColor.rgb = gl_FragColor.rgb * u_multiply.rgb;
+        gl_FragColor.rgb = (gl_FragColor.rgb + u_screen.rgb * gl_FragColor.a) - (gl_FragColor.rgb * u_screen.rgb);
+    """)
+
     register_shader("live2d.flip_texture", variables="""
         varying vec2 v_tex_coord;
     """, vertex_250="""
@@ -671,7 +679,11 @@ class Live2D(renpy.display.core.Displayable):
                 break
 
         # Choose all possible nonexclusive attributes.
-        for i in list(attributes) + list(optional):
+        for i in sorted(list(attributes)):
+            if i in common.nonexclusive:
+                rv.append(i)
+
+        for i in sorted(list(optional)):
             if i in common.nonexclusive:
                 rv.append(i)
 

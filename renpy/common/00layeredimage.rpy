@@ -1,4 +1,4 @@
-﻿init offset = -100
+init offset = -100
 
 python early in layeredimage:
 
@@ -10,6 +10,9 @@ python early in layeredimage:
 
     # The properties for attribute layers.
     LAYER_PROPERTIES = [ "if_all", "if_any", "if_not", "at" ] + ATL_PROPERTIES
+
+    # The properties passed to the Fixed wrapping the layeredimage.
+    FIXED_PROPERTIES = renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names
 
     # This is the default value for predict_all given to conditions.
     predict_all = False
@@ -438,7 +441,7 @@ python early in layeredimage:
 
     class Always(Layer):
         """
-        :doc: li
+        :undocumented:
         :name: Always
 
         This is used for a displayable that is always shown.
@@ -515,11 +518,14 @@ python early in layeredimage:
         displayables associated with those attribute.
 
         `attributes`
-            This must be a list of Attribute objects. Each Attribute object
+            This must be a list of Attribute, Condition, ConditionGroup or
+            :doc:`displayable <displayables>` objects. Each one
             reflects a displayable that may or may not be displayed as part
             of the image. The items in this list are in back-to-front order,
             with the first item further from the viewer and the last
             closest.
+            Passing a displayable directly is the equivalent of the `always`
+            layeredimage statement.
 
         `at`
             A transform or list of transforms that are applied to the displayable
@@ -593,7 +599,7 @@ python early in layeredimage:
             kwargs.setdefault("xfit", True)
             kwargs.setdefault("yfit", True)
 
-            self.transform_args = {k : kwargs.pop(k) for k, v in list(kwargs.items()) if k not in (renpy.sl2.slproperties.position_property_names + renpy.sl2.slproperties.box_property_names)}
+            self.transform_args = {k : kwargs.pop(k) for k, v in list(kwargs.items()) if k not in FIXED_PROPERTIES}
             self.fixed_args = kwargs
 
         def format(self, what, attribute=None, group=None, variant=None, image=None):
@@ -613,6 +619,16 @@ python early in layeredimage:
                 image_format=self.image_format)
 
         def add(self, a):
+            """
+            :doc: li
+
+            `a`
+                An Attribute, Condition, ConditionGroup or :doc:`displayable <displayables>`
+                object.
+
+            This method adds the provided layer to the list of layers of the layeredimage,
+            as if it had been passed in the `attributes` argument to the constructor.
+            """
 
             if not isinstance(a, Layer):
                 a = Always(a)

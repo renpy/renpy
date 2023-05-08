@@ -97,32 +97,14 @@ label itch:
         files = [ ]
 
         for fn in os.listdir(destination):
-            fn = os.path.join(destination, fn)
 
-            if fn.endswith("-all.zip"):
-                channel = "win-osx-linux"
-
-            elif fn.endswith("-market.zip"):
-                channel = "win-osx-linux"
-
-            elif fn.endswith("-pc.zip"):
-                channel = "win-linux"
-
-            elif fn.endswith("-win.zip"):
-                channel = "win"
-
-            elif fn.endswith("-mac.zip"):
-                channel = "osx"
-
-            elif fn.endswith("-linux.tar.bz2"):
-                channel = "linux"
-
-            elif fn.endswith("-release.apk"):
-                channel = "android"
-
+            for pattern, channel in reversed(build['itch_channels']):
+                if fnmatch.fnmatch(fn, pattern):
+                    break
             else:
                 continue
 
+            fn = os.path.join(destination, fn)
             files.append((fn, channel))
 
         if not os.path.exists(destination):

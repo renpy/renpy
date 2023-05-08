@@ -97,6 +97,9 @@ static const char *error_msg = NULL;
 /* Have we been initialized? */
 static int initialized = 0;
 
+/** Should fades be linear rather than logarithmic? */
+static int linear_fades = 0;
+
 
 struct Interpolate {
     /* The number of samples that are finished so far. */
@@ -111,7 +114,6 @@ struct Interpolate {
     /* The ending value. */
     float end;
 };
-
 
 
 void init_interpolate(struct Interpolate *i, float value) {
@@ -143,25 +145,33 @@ static inline float get_interpolate(struct Interpolate *i) {
 // The power corresponding to a magnitude of 0.0.
 #define MIN_POWER 0.0
 
-// The power corresponding to a magnitude of 1.0.
-#define MAX_POWER 10.0
+// The power corresponding to a magnitude of 1.0. This controls the
+// range in dB that fades happen over. The formula for this is
+// fade_range_in_db = 20 * math.log10(2 ** MAX_POWER).
+//
+// The 6 corresponds to a 36.12 dB range.
+#define MAX_POWER 6
 
 /**
  * This interpolates a logarithmic power level to a magnitude.
  *
  * The units of the log power level are odd, to make things faster - it's
- * log2f(power) + 10, to make calculations faster.
+ * log2f(power) + MAX_POWER, to make calculations faster.
  */
 static inline float get_interpolate_power(struct Interpolate *i) {
 
     float log_power = get_interpolate(i);
+
+    if (linear_fades) {
+        return log_power / MAX_POWER;
+    }
 
     if (log_power == MIN_POWER) {
         return 0;
     } else if (log_power == MAX_POWER) {
         return 1.0;
     } else {
-        return powf(2, log_power - 10);
+        return powf(2, log_power - MAX_POWER);
     }
 }
 
@@ -169,12 +179,17 @@ static inline float get_interpolate_power(struct Interpolate *i) {
  * This converts a magnitude to a logarithmic power level.
  */
 static inline float log_power(float power) {
+
+    if (linear_fades) {
+        return power * MAX_POWER;
+    }
+
     if (power <= 0.0) {
         return MIN_POWER;
     } else if (power >= 1.0) {
         return MAX_POWER;
     } else {
-        return log2f(power) + 10;
+        return log2f(power) + MAX_POWER;
     }
 }
 
@@ -249,6 +264,16 @@ struct Channel {
     /* This is set to 1 if this is a movie channel with dropping, 2 if it's a
      * video channel without dropping. */
     int video;
+
+    /**
+     * Was this playing the last time we checked?
+     */
+    int last_playing;
+
+    /**
+     * The last volume.
+     */
+    float last_volume;
 
 };
 
@@ -344,11 +369,25 @@ static inline void mix_sample(struct Channel *c, short left_in, short right_in, 
         right *= sinf(theta);
     }
 
-    float volume = get_interpolate_power(&c->fade) * get_interpolate_power(&c->secondary_volume) * c->playing_relative_volume * c->mixer_volume;
+    float target_volume = get_interpolate_power(&c->fade) * get_interpolate_power(&c->secondary_volume) * c->playing_relative_volume * c->mixer_volume;
+    float volume = c->last_volume + .01 * (target_volume - c->last_volume);
+
+    if (!c->last_playing) {
+        volume = target_volume;
+    }
 
     *left_out += left * volume;
     *right_out += right * volume;
+
+    c->last_volume = volume;
 }
+
+
+/** If not NULL, this can be replaced with a function that will be called
+    to generate audio. The functtio is called with a consistion of 2*length
+    shorts, and should fill the buffer with audio data. */
+void (*RPS_generate_audio_c_function)(float *stream, int length) = NULL;
+
 
 static void callback(void *userdata, Uint8 *stream, int length) {
 
@@ -360,6 +399,10 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
     memset(mix_buffer, 0, length * 2 * sizeof(float));
 
+    if (RPS_generate_audio_c_function) {
+        RPS_generate_audio_c_function(mix_buffer, length);
+    }
+
     for (int channel = 0; channel < num_channels; channel++) {
 
         // The number of samples that have been mixed.
@@ -367,11 +410,8 @@ static void callback(void *userdata, Uint8 *stream, int length) {
 
         struct Channel *c = &channels[channel];
 
-        if (! c->playing) {
-            continue;
-        }
-
-        if (c->paused) {
+        if (! c->playing || c->paused) {
+            c->last_playing = 0;
             continue;
         }
 
@@ -441,8 +481,10 @@ static void callback(void *userdata, Uint8 *stream, int length) {
                 c->pos++;
                 mixed += 1;
             }
+
         }
 
+        c->last_playing = 1;
     }
 
     // Actually output the sound.
@@ -826,10 +868,17 @@ void RPS_fadeout(int channel, int ms) {
         return;
     }
 
-    c->fade.start = get_interpolate(&c->fade);
-    c->fade.end = MIN_POWER;
-    c->fade.done = 0;
-    c->fade.duration = ms_to_samples(ms);
+    if (ms > 16) {
+        c->fade.start = get_interpolate(&c->fade);
+        c->fade.end = MIN_POWER;
+        c->fade.done = 0;
+        c->fade.duration = ms_to_samples(ms - 16);
+    } else {
+        c->fade.start = MIN_POWER;
+        c->fade.end = MIN_POWER;
+        c->fade.done = 1;
+        c->fade.duration = 1;
+    }
 
     c->stop_samples = ms_to_samples(ms);
     c->queued_tight = 0;
@@ -1114,7 +1163,7 @@ void RPS_set_video(int channel, int video) {
  * Initializes the sound to the given frequencies, channels, and
  * sample buffer size.
  */
-void RPS_init(int freq, int stereo, int samples, int status, int equal_mono) {
+void RPS_init(int freq, int stereo, int samples, int status, int equal_mono, int linear_fades_) {
 
     if (initialized) {
         return;
@@ -1150,6 +1199,8 @@ void RPS_init(int freq, int stereo, int samples, int status, int equal_mono) {
     media_init(audio_spec.freq, status, equal_mono);
 
     SDL_PauseAudio(0);
+
+    linear_fades = linear_fades_;
 
     initialized = 1;
 

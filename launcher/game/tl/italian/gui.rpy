@@ -327,7 +327,8 @@ translate italian strings:
 
     # gui.rpy:331
     old "## History"
-    new "## History"
+    # Automatic translation.
+    new "## Storia"
 
     # gui.rpy:333
     old "## The history screen displays dialogue that the player has already dismissed."
@@ -432,4 +433,42 @@ translate italian strings:
     # gui.rpy:405
     old "## Mobile devices"
     new "## Dispositivi mobili"
+
+
+translate italian strings:
+
+    # gui/game/gui.rpy:5
+    old "## The init offset statement causes the initialization statements in this file to run before init statements in any other file."
+    # Automatic translation.
+    new "## L'istruzione init offset fa sì che le istruzioni di inizializzazione in questo file vengano eseguite prima delle istruzioni di init in qualsiasi altro file."
+
+    # gui/game/gui.rpy:14
+    old "## Enable checks for invalid or unstable properties in screens or transforms"
+    # Automatic translation.
+    new "## Abilita i controlli per le proprietà non valide o instabili nelle schermate o nelle trasformazioni"
+
+    # gui/game/gui.rpy:278
+    old "## The position of the main menu text."
+    # Automatic translation.
+    new "## La posizione del testo del menu principale."
+
+    # gui/game/gui.rpy:287
+    old "## Generic frames."
+    # Automatic translation.
+    new "## Cornici generiche."
+
+    # gui/game/gui.rpy:307
+    old "## The default GUI only uses sliders and vertical scrollbars. All of the other bars are only used in creator-written screens."
+    # Automatic translation.
+    new "## L'interfaccia grafica predefinita utilizza solo i cursori e le barre di scorrimento verticali. Tutte le altre barre sono utilizzate solo nelle schermate scritte dal creatore."
+
+    # gui/game/gui.rpy:368
+    old "## The maximum number of NVL-mode entries Ren'Py will display. When more entries than this are to be show, the oldest entry will be removed."
+    # Automatic translation.
+    new "## Il numero massimo di voci in modalità NVL che Ren'Py visualizzerà. Se devono essere visualizzate più voci di questa, la voce più vecchia verrà rimossa."
+
+    # gui/game/gui.rpy:446
+    old "## Change the size and spacing of various things."
+    # Automatic translation.
+    new "## Cambia la dimensione e la spaziatura di vari elementi."
 

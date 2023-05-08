@@ -907,16 +907,6 @@ both horizontal and vertical positions.
     an opaque surface. (Complex operations, like viewport, :func:`Flatten`, :func:`Frame`,
     and certain transitions may cause problems with additive blending.)
 
-    .. warning::
-
-        Additive blending is only supported by hardware-based renderers, such
-        as the OpenGL and DirectX/ANGLE renderers. The software renderer will
-        draw additive images incorrectly.
-
-        Once the graphics system has started, ``renpy.get_renderer_info()["additive"]``
-        will be true if additive blending is supported.
-
-
 .. transform-property:: around
 
     :type: (position, position)
@@ -926,6 +916,8 @@ both horizontal and vertical positions.
     the upper-left of the containing area. Setting the center using
     this allows for circular motion in position mode.
 
+    This should be set before :tpref:`angle` or :tpref:`radius`.
+
 .. transform-property:: alignaround
 
     :type: (float, float)
@@ -934,6 +926,8 @@ both horizontal and vertical positions.
     If not None, specifies the polar coordinate center, relative to
     the upper-left of the containing area. Setting the center using
     this allows for circular motion in align mode.
+
+    This should be set before :tpref:`angle` or :tpref:`radius`.
 
 .. transform-property:: angle
 
@@ -1148,7 +1142,7 @@ both horizontal and vertical positions.
 There are also several sets of transform properties that are documented elsewhere:
 
 3D Stage properties:
-    :tpref:`perspective`, :tpref:`poi`, :tpref:`orientation`, :tpref:`xrotate`, :tpref:`yrotate`, :tpref:`zrotate`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
+    :tpref:`perspective`, :tpref:`point_to`, :tpref:`orientation`, :tpref:`xrotate`, :tpref:`yrotate`, :tpref:`zrotate`, :tpref:`matrixanchor`, :tpref:`matrixtransform`, :tpref:`zpos`, :tpref:`zzoom`
 
 Model-based rendering properties:
     :tpref:`blend`, :tpref:`mesh`, :tpref:`mesh_pad`, :tpref:`shader`
@@ -1167,7 +1161,7 @@ These properties are applied in the following order:
 #. crop, corner1, corner2
 #. xysize, size, maxsize
 #. zoom, xzoom, yzoom
-#. poi
+#. point_to
 #. orientation
 #. xrotate, yrotate, zrotate
 #. rotate

@@ -195,3 +195,11 @@
     # gui/game/options.rpy:210
     old "## The username and project name associated with an itch.io project, separated by a slash."
     new "## 与 itch.io 项目相关的用户名和项目名，以 / 分隔。"
+
+translate schinese strings:
+
+    # gui/game/options.rpy:203
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    # Automatic translation.
+    new "##执行应用内购买需要一个Google Play许可证密钥。它可以在Google Play开发者控制台的 \"Monetize\" > \"Monetization Setup\" > \"Licensing \"下找到。"
+

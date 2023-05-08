@@ -99,7 +99,8 @@ translate indonesian strings:
 
     # _developer/inspector.rpym:139
     old "displayable:"
-    new "displayable:"
+    # Automatic translation.
+    new "dapat ditampilkan:"
 
     # _developer/inspector.rpym:145
     old "        (no properties affect the displayable)"
@@ -111,7 +112,8 @@ translate indonesian strings:
 
     # _developer/inspector.rpym:185
     old "<repr() failed>"
-    new "<repr() failed>"
+    # Automatic translation.
+    new "<repr() gagal"
 
     # 00console.rpy:182
     old "Press <esc> to exit console. Type help for help.\n"
@@ -176,3 +178,105 @@ translate indonesian strings:
     # 00console.rpy:536
     old "jump <label>: jumps to label"
     new "jump <label>: lompat ke label"
+
+translate indonesian strings:
+
+    # renpy/common/_developer/developer.rpym:51
+    old "Persistent Viewer"
+    # Automatic translation.
+    new "Penampil Persisten"
+
+    # renpy/common/_developer/developer.rpym:59
+    old "Show Image Load Log (F4)"
+    # Automatic translation.
+    new "Tampilkan Log Pemuatan Gambar (F4)"
+
+    # renpy/common/_developer/developer.rpym:62
+    old "Hide Image Load Log (F4)"
+    # Automatic translation.
+    new "Sembunyikan Log Pemuatan Gambar (F4)"
+
+    # renpy/common/_developer/developer.rpym:65
+    old "Image Attributes"
+    # Automatic translation.
+    new "Atribut Gambar"
+
+    # renpy/common/_developer/developer.rpym:70
+    old "Speech Bubble Editor (Shift+B)"
+    # Automatic translation.
+    new "Editor Gelembung Ucapan (Shift+B)"
+
+    # renpy/common/_developer/developer.rpym:97
+    old "[name] [attributes] (hidden)"
+    # Automatic translation.
+    new "[name] [attributes] (disembunyikan)"
+
+    # renpy/common/_developer/developer.rpym:101
+    old "[name] [attributes]"
+    new "[name] [attributes]"
+
+    # renpy/common/_developer/developer.rpym:162
+    old "Hide deleted"
+    # Automatic translation.
+    new "Sembunyikan dihapus"
+
+    # renpy/common/_developer/developer.rpym:162
+    old "Show deleted"
+    # Automatic translation.
+    new "Tampilkan dihapus"
+
+    # renpy/common/_developer/developer.rpym:389
+    old "Type to filter: "
+    # Automatic translation.
+    new "Ketik untuk memfilter: "
+
+    # renpy/common/_developer/developer.rpym:507
+    old "Textures: [tex_count] ([tex_size_mb:.1f] MB)"
+    # Automatic translation.
+    new "Tekstur: [tex_count] ([tex_size_mb:.1f] MB)"
+
+    # renpy/common/_developer/developer.rpym:511
+    old "Image cache: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+    # Automatic translation.
+    new "Tembolok gambar: [cache_pct:.1f]% ([cache_size_mb:.1f] MB)"
+
+    # renpy/common/00console.rpy:789
+    old "help: show this help\n help <expr>: show signature and documentation of <expr>"
+    # Automatic translation.
+    new "help: tunjukkan bantuan ini\n help <expr>: tampilkan tanda tangan dan dokumentasi dari <expr"
+
+    # renpy/common/00console.rpy:813
+    old "Help may display undocumented functions. Please check that the function or\nclass you want to use is documented.\n\n"
+    # Automatic translation.
+    new "Bantuan mungkin menampilkan fungsi yang tidak terdokumentasi. Harap periksa apakah fungsi atau\nkelas yang ingin Anda gunakan didokumentasikan.\n\n"
+
+    # renpy/common/00console.rpy:854
+    old "stack: print the return stack"
+    # Automatic translation.
+    new "stack: mencetak tumpukan balik"
+
+    # renpy/common/00console.rpy:908
+    old "watch <expression>: watch a python expression\n watch short: makes the representation of traced expressions short (default)\n watch long: makes the representation of traced expressions as is"
+    # Automatic translation.
+    new "watch <expression>: menonton ekspresi ular piton\n watch short: membuat representasi ekspresi yang ditelusuri menjadi pendek (default)\n watch long: membuat representasi ekspresi yang ditelusuri seperti apa adanya"
+
+    # renpy/common/00console.rpy:1028
+    old "short: Shorten the representation of objects on the console (default)."
+    # Automatic translation.
+    new "short: Mempersingkat representasi objek pada konsol (default)."
+
+    # renpy/common/00console.rpy:1032
+    old "long: Print the full representation of objects on the console."
+    # Automatic translation.
+    new "long: Mencetak representasi penuh objek pada konsol."
+
+    # renpy/common/00console.rpy:1036
+    old "escape: Enables escaping of unicode symbols in unicode strings."
+    # Automatic translation.
+    new "escape: Memungkinkan keluarnya simbol unicode dalam string unicode."
+
+    # renpy/common/00console.rpy:1040
+    old "unescape: Disables escaping of unicode symbols in unicode strings and print it as is (default)."
+    # Automatic translation.
+    new "unescape: Menonaktifkan pelarian simbol unicode dalam string unicode dan mencetaknya apa adanya (default)."
+

@@ -225,3 +225,66 @@ translate turkish strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "errors.txt dosyasını Discord'da kullanmak üzere Markdown olarak panoya kopyalar."
 
+
+translate turkish strings:
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    # Automatic translation.
+    new "Force GL Oluşturucu"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    # Automatic translation.
+    new "Açı Oluşturucuyu Zorla"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    # Automatic translation.
+    new "GLES Oluşturucuyu Zorla"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    # Automatic translation.
+    new "Force GL2 Oluşturucu"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    # Automatic translation.
+    new "ANGLE2 Oluşturucuyu Zorla"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    # Automatic translation.
+    new "GLES2 Oluşturucuyu Zorla"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    # Automatic translation.
+    new "Etkinleştir (Blok Listesi Yok)"
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    # Automatic translation.
+    new "Bu oyun, başlatılamayan GL2'nin kullanılmasını gerektirir."
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    # Automatic translation.
+    new "{a=edit:1:log.txt}log.txt{/a} dosyası, bilgisayarınızda neyin yanlış olduğunu belirlemenize yardımcı olacak bilgiler içerebilir."
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    # Automatic translation.
+    new "Bunun nasıl düzeltileceği hakkında daha fazla ayrıntı {a=[url]}belgelerinde{/a} bulunabilir."
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    # Automatic translation.
+    new "İşleme seçeneklerini değiştirme"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    # Automatic translation.
+    new "'[control!s]' [kind] düğmesine basın veya hareket ettirin."
+

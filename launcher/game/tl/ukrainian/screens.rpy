@@ -194,8 +194,8 @@ translate ukrainian strings:
     new "## Це описує базову структуру екрана меню гри. Він викликається за допомогою заголовка екрана та відображає фон, заголовок і навігацію."
 
     # gui/game/screens.rpy:411
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## Параметр прокручування може бути None або одним із \"viewport\" чи \"vpgrid\". Коли цей екран призначений для використання з одним або декількома об'єктами, які включені (розміщені) всередині нього."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## Параметр прокручування може бути None або одним із \"viewport\" чи \"vpgrid\". Цей екран призначений для використання з одним або декількома об'єктами, які включені (розміщені) всередині нього."
 
     # gui/game/screens.rpy:429
     old "## Reserve space for the navigation section."
@@ -423,7 +423,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:991
     old "Enter"
-    new "Enter"
+    # Automatic translation.
+    new "Увійдіть"
 
     # gui/game/screens.rpy:992
     old "Advances dialogue and activates the interface."
@@ -431,7 +432,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:995
     old "Space"
-    new "Space"
+    # Automatic translation.
+    new "Простір"
 
     # gui/game/screens.rpy:996
     old "Advances dialogue without selecting choices."
@@ -447,7 +449,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1003
     old "Escape"
-    new "Escape"
+    # Automatic translation.
+    new "Втеча"
 
     # gui/game/screens.rpy:1004
     old "Accesses the game menu."
@@ -471,7 +474,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1015
     old "Page Up"
-    new "Page Up"
+    # Automatic translation.
+    new "Перегорнути сторінку."
 
     # gui/game/screens.rpy:1016
     old "Rolls back to earlier dialogue."
@@ -479,7 +483,8 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1019
     old "Page Down"
-    new "Page Down"
+    # Automatic translation.
+    new "Перегорнути сторінку вниз."
 
     # gui/game/screens.rpy:1020
     old "Rolls forward to later dialogue."
@@ -653,3 +658,29 @@ translate ukrainian strings:
     old "Menu"
     new "Меню"
 
+
+translate ukrainian strings:
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "Завантажити Синхронізація"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "Завантажити Синхронізація"
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    # Automatic translation.
+    new "## Бульбашковий екран"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## Екран бульбашок використовується для показу діалогу гравцеві під час використання мовних бульбашок. Екран бульбашок має ті самі параметри, що й екран промови, повинен створювати елемент відображення з ідентифікатором \"what\", а також може створювати елементи відображення з ідентифікаторами \"namebox\", \"who\" та \"window\"."
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"

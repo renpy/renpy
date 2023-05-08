@@ -27,7 +27,7 @@ default bubble.tag_properties = { }
 # on the screen now.
 default bubble.current_dialogue = [ ]
 
-init -1050 python in bubble:
+init -1150 python in bubble:
 
     from store import config, ADVCharacter, Character, JSONDB, Action, Frame, NoRollback
 
@@ -41,13 +41,14 @@ init -1050 python in bubble:
     # The path to the json file the bubble database is stored in.
     db_filename = "bubble.json"
 
-    # The number of rows and columns in the bubble database.
+    # The number of rows and columns in the grid that is used to position
+    # speech bubbles.
     cols = 24
     rows = 24
 
     # The default window area rectangle. This is expressed as squares, where units
     # are defined by the rows and columns.
-    default_area = (0, 18, 24, 6)
+    default_area = (15, 1, 8, 5)
 
     # The property that the area is supplied as.
     area_property = "window_area"
@@ -55,17 +56,35 @@ init -1050 python in bubble:
     # Additional properties that the player can use to customize the bubble.
     # This is a map from a property name to a list of choices that are cycled
     # through.
-    properties = {
-        "default" : { }
-    }
+    properties = { }
 
     # The property group names, in order.
-    properties_order = [ "default" ]
+    properties_order = [ ]
+
+    # A map from property name to the (left, top, right, bottom) number of pixels
+    # areas with that property are expanded by. If a property is not in this
+    # map, None is tried.
+    expand_area = { }
 
     # This is set to the JSONDB object that stores the bubble database,
-    # or None if the databse doesn't exist yet.
+    # or None if the database doesn't exist yet.
     db = None
 
+    # These are not used directly, but are used by the default screens.rpy, and
+    # so should not be set.
+    frame = None
+    thoughtframe = None
+
+    class ToggleShown(Action):
+        def __call__(self):
+            if not active and not shown.value:
+                return
+
+            shown.value = not shown.value
+            renpy.restart_interaction()
+
+        def get_selected(self):
+            return shown.value
 
     def scene_callback(layer):
         global tag_properties
@@ -117,6 +136,9 @@ init -1050 python in bubble:
             for the given image tag.
             """
 
+            if not properties_order:
+                raise Exception("A speech bubble is being used, but bubble.properties has not been set.")
+
             rv = { }
 
             xgrid = config.screen_width / cols
@@ -133,6 +155,29 @@ init -1050 python in bubble:
                 "area" : default_area_rect,
                 "properties" : properties_order[0]
             }
+
+        def expand_area(self, area, properties_key):
+            """
+            This is called to expand the area of a bubble. It is given the
+            area, and the properties key, and returns a new area.
+            """
+
+            x, y, w, h = area
+
+            expand = expand_area.get(properties_key, None) or expand_area.get(None, None)
+
+            if expand is None:
+                return area
+
+            left, top, right, bottom = expand
+
+            x = x - left
+            y = y - top
+            w = w + left + right
+            h = h + top + bottom
+
+            return (x, y, w, h)
+
 
         def do_show(self, who, what, multiple=None, extra_properties=None):
 
@@ -157,7 +202,7 @@ init -1050 python in bubble:
             properties_key = tag_properties[image_tag]["properties"]
 
             extra_properties.update(properties.get(properties_key, { }))
-            extra_properties[area_property] = tag_properties[image_tag]["area"]
+            extra_properties[area_property] = self.expand_area(tag_properties[image_tag]["area"], properties_key)
 
             return super(BubbleCharacter, self).do_show(who, what, multiple=multiple, extra_properties=extra_properties)
 

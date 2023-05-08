@@ -440,9 +440,9 @@ label style_text:
 
     show screen text("center_text")
 
-    e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered."
+    e "The textalign property controls the positioning of multiple lines of text inside the text displayable. For example, 0.5 means centered." id style_text_430c1959
 
-    e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value."
+    e "It doesn't change the position of the text displayable itself. For that, you'll often want to set the textalign and xalign to the same value." id style_text_19aa0833
 
 
     example:
@@ -452,7 +452,7 @@ label style_text:
 
     show screen text("right_text")
 
-    e "When both textalign and xalign are set to 1.0, the text is properly right-justified."
+    e "When both textalign and xalign are set to 1.0, the text is properly right-justified." id style_text_efc3c392
 
 
     example:

@@ -44,6 +44,12 @@ init -1100 python:
     config.sync_server = "https://sync.renpy.org"
 
     class UploadSync(Action):
+        """
+        :doc: sync
+
+        This action begins the process of uploading the most recent
+        saves to the Ren'Py Sync server.
+        """
 
         def __call__(self):
             renpy.invoke_in_new_context(_sync.upload)
@@ -52,6 +58,12 @@ init -1100 python:
             return config.has_sync
 
     class DownloadSync(Action):
+        """
+        :doc: sync
+
+        This action begins the process of downloading a Sync from the
+        Ren'Py Sync server.
+        """
 
         def __call__(self):
             if renpy.invoke_in_new_context(_sync.download):
@@ -221,7 +233,7 @@ init -1100 python in _sync:
                 return None
 
 
-        def download_content(hashed, url):
+        def download_content(url):
             import emscripten
             import time
             import os

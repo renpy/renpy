@@ -20,7 +20,7 @@ label start:
 
 define config.rtl = True
 
-define gui.text_align = 1.0
+define gui.textalign = 1.0
 define gui.button_text_xalign = 1.0
 define gui.prompt_text_xalign = 1.0
 define gui.navigation_xpos = 240

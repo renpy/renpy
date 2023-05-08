@@ -75,7 +75,7 @@ from renpy.display.image import image_exists, image_exists as has_image, list_im
 from renpy.display.image import get_available_image_tags, get_available_image_attributes, check_image_attributes, get_ordered_image_attributes
 from renpy.display.image import get_registered_image
 
-from renpy.display.im import load_surface, load_image
+from renpy.display.im import load_surface, load_image, load_rgba
 
 from renpy.curry import curry, partial
 from renpy.display.video import movie_start_fullscreen, movie_start_displayable, movie_stop
@@ -132,6 +132,7 @@ renpy_pure("unelide_filename")
 renpy_pure("known_languages")
 renpy_pure("check_text_tags")
 renpy_pure("filter_text_tags")
+renpy_pure("split_properties")
 
 import time
 import sys
@@ -867,7 +868,7 @@ def web_input(prompt, default='', allow=None, exclude='{}', length=None, mask=Fa
     return rv
 
 
-def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, copypaste=True, **kwargs): # @ReservedAssignment
+def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=None, pixel_width=None, screen="input", mask=None, copypaste=True, multiline=False, **kwargs): # @ReservedAssignment
     """
     :doc: input
 
@@ -907,6 +908,9 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
     `copypaste`
         When true, copying from and pasting to this input is allowed.
 
+    `multiline`
+        When true, move caret to next line is allowed.
+
     If :var:`config.disable_input` is True, this function only returns
     `default`.
 
@@ -943,7 +947,7 @@ def input(prompt, default='', allow=None, exclude='{}', length=None, with_none=N
 
     if has_screen(screen):
         widget_properties = { }
-        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width, mask=mask, copypaste=copypaste)
+        widget_properties["input"] = dict(default=default, length=length, allow=allow, exclude=exclude, editable=not fixed, pixel_width=pixel_width, mask=mask, copypaste=copypaste, multiline=multiline)
 
         show_screen(screen, _transient=True, _widget_properties=widget_properties, prompt=prompt, **show_properties)
 

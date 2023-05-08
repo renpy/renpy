@@ -109,7 +109,8 @@
 
     # android.rpy:304
     old "Android: [project.current.name!q]"
-    new "Android: [project.current.name!q]"
+    # Automatic translation.
+    new "Androidです：[project.current.name!q]"
 
     # android.rpy:324
     old "Emulation:"
@@ -117,15 +118,18 @@
 
     # android.rpy:333
     old "Phone"
-    new "Phone"
+    # Automatic translation.
+    new "電話番号"
 
     # android.rpy:337
     old "Tablet"
-    new "Tablet"
+    # Automatic translation.
+    new "タブレット"
 
     # android.rpy:341
     old "Television"
-    new "Television"
+    # Automatic translation.
+    new "テレビジョン"
 
     # android.rpy:353
     old "Build:"
@@ -165,7 +169,8 @@
 
     # android.rpy:404
     old "Logcat"
-    new "Logcat"
+    # Automatic translation.
+    new "ログキャット"
 
     # android.rpy:437
     old "Before packaging Android apps, you'll need to download RAPT, the Ren'Py Android Packaging Tool. Would you like to download RAPT now?"
@@ -433,11 +438,13 @@
 
     # front_page.rpy:165
     old "Tutorial"
-    new "Tutorial"
+    # Automatic translation.
+    new "チュートリアル"
 
     # front_page.rpy:166
     old "The Question"
-    new "The Question"
+    # Automatic translation.
+    new "ザ・クエスチョン"
 
     # front_page.rpy:182
     old "Active Project"
@@ -497,11 +504,13 @@
 
     # front_page.rpy:253
     old "Android"
-    new "Android"
+    # Automatic translation.
+    new "アンドロイド"
 
     # front_page.rpy:254
     old "iOS"
-    new "iOS"
+    # Automatic translation.
+    new "アイオーエス"
 
     # front_page.rpy:255
     old "Generate Translations"
@@ -689,15 +698,18 @@
 
     # ios.rpy:211
     old "iOS: [project.current.name!q]"
-    new "iOS: [project.current.name!q]"
+    # Automatic translation.
+    new "iOSです：[project.current.name!q]"
 
     # ios.rpy:240
     old "iPhone"
-    new "iPhone"
+    # Automatic translation.
+    new "アイフォン"
 
     # ios.rpy:244
     old "iPad"
-    new "iPad"
+    # Automatic translation.
+    new "アイパッド"
 
     # ios.rpy:264
     old "Select Xcode Projects Directory"
@@ -725,7 +737,8 @@
 
     # ios.rpy:354
     old "XCODE PROJECTS DIRECTORY"
-    new "XCODE PROJECTS DIRECTORY"
+    # Automatic translation.
+    new "xcodeプロジェクトディレクトリ"
 
     # ios.rpy:354
     old "Please choose the Xcode Projects Directory using the directory chooser.\n{b}The directory chooser may have opened behind this window.{/b}"
@@ -1105,7 +1118,8 @@
 
     # updater.rpy:91
     old "Release"
-    new "Release"
+    # Automatic translation.
+    new "リリース"
 
     # updater.rpy:97
     old "{b}Recommended.{/b} The version of Ren'Py that should be used in all newly-released games."
@@ -1113,7 +1127,8 @@
 
     # updater.rpy:102
     old "Prerelease"
-    new "Prerelease"
+    # Automatic translation.
+    new "プレリリース"
 
     # updater.rpy:108
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1121,7 +1136,8 @@
 
     # updater.rpy:114
     old "Experimental"
-    new "Experimental"
+    # Automatic translation.
+    new "実験的"
 
     # updater.rpy:120
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
@@ -1129,7 +1145,8 @@
 
     # updater.rpy:126
     old "Nightly"
-    new "Nightly"
+    # Automatic translation.
+    new "夜間"
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
@@ -1201,7 +1218,8 @@
 
     # android.rpy:304
     old "Android: [project.current.display_name!q]"
-    new "Android: [project.current.display_name!q]"
+    # Automatic translation.
+    new "Androidです：[project.current.display_name!q]"
 
     # distribute_gui.rpy:157
     old "Build Distributions: [project.current.display_name!q]"
@@ -1213,7 +1231,8 @@
 
     # ios.rpy:211
     old "iOS: [project.current.display_name!q]"
-    new "iOS: [project.current.display_name!q]"
+    # Automatic translation.
+    new "iOSです：[project.current.display_name!q]"
 
     # navigation.rpy:168
     old "Navigate: [project.current.display_name!q]"
@@ -1305,7 +1324,8 @@
 
     # editor.rpy:338
     old "Edit [text]."
-    new "Edit [text]."
+    # Automatic translation.
+    new "[text] を編集します。"
 
     # front_page.rpy:215
     old "Open project"
@@ -1320,8 +1340,8 @@
     new "ファイル名が与えられていません。"
 
     # game/android.rpy:31
-    old "A 64-bit/x64 Java 8 Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}download and install the JDK{/a}, then restart the Ren'Py launcher."
-    new "ウィンドウズでアンドロイドパッケージをビルドするには、 64-bit/x64 Java 8 Development Kit が必要になります。 JDK は JRE とは違うもので、Java には含まれていません。\n\n{a=http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html}JDK{/a}をダンロード、インストールしてから Ren'Py ランチャーを再起動してください。"
+    old "A 64-bit/x64 Java [JDK_REQUIREMENT] Development Kit is required to build Android packages on Windows. The JDK is different from the JRE, so it's possible you have Java without having the JDK.\n\nPlease {a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}download and install the JDK{/a}, then restart the Ren'Py launcher."
+    new "ウィンドウズでアンドロイドパッケージをビルドするには、 64-bit/x64 Java 8 Development Kit が必要になります。 JDK は JRE とは違うもので、Java には含まれていません。\n\n{a=https://www.renpy.org/jdk/[JDK_REQUIREMENT]}JDK{/a}をダンロード、インストールしてから Ren'Py ランチャーを再起動してください。"
 
     # game/android.rpy:50
     old "Selects the Debug build, which can be accessed through Android Studio. Changing between debug and release builds requires an uninstall from your device."
@@ -1597,11 +1617,13 @@
 
     # game/front_page.rpy:252
     old "Web"
-    new "Web"
+    # Automatic translation.
+    new "ウェブ"
 
     # game/front_page.rpy:252
     old "(Beta)"
-    new "(Beta)"
+    # Automatic translation.
+    new "(ベータ)"
 
     # game/front_page.rpy:198
     old "audio"
@@ -1649,7 +1671,8 @@
 
     # game/web.rpy:118
     old "Web: [project.current.display_name!q]"
-    new "Web: [project.current.display_name!q]"
+    # Automatic translation.
+    new "ウェブ[project.current.display_name!q]"
 
     # game/web.rpy:148
     old "Build Web Application"
@@ -1677,7 +1700,8 @@
 
     # game/web.rpy:164
     old "Beuc's Patreon"
-    new "Beuc's Patreon"
+    # Automatic translation.
+    new "Beucのパトロン"
 
     # game/web.rpy:182
     old "Ren'Py web applications require the entire game to be downloaded to the player's computer before it can start."
@@ -1997,7 +2021,8 @@
 
     # game/editor.rpy:220
     old "Visual Studio Code (System)"
-    new "Visual Studio Code (System)"
+    # Automatic translation.
+    new "Visual Studio Code（システム）"
 
     # game/editor.rpy:220
     old "Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."
@@ -2065,27 +2090,33 @@
 
     # game/updater.rpy:64
     old "Release (Ren'Py 8, Python 3)"
-    new "Release (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "リリース（Ren'Py 8、Python 3）"
 
     # game/updater.rpy:65
     old "Release (Ren'Py 7, Python 2)"
-    new "Release (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "リリース（Ren'Py 7、Python 2）"
 
     # game/updater.rpy:69
     old "Prerelease (Ren'Py 8, Python 3)"
-    new "Prerelease (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "プレリリース（Ren'Py 8、Python 3）"
 
     # game/updater.rpy:70
     old "Prerelease (Ren'Py 7, Python 2)"
-    new "Prerelease (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "プレリリース（Ren'Py 7、Python 2）"
 
     # game/updater.rpy:77
     old "Nightly (Ren'Py 8, Python 3)"
-    new "Nightly (Ren'Py 8, Python 3)"
+    # Automatic translation.
+    new "ナイトリー（Ren'Py 8、Python 3）"
 
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
-    new "Nightly (Ren'Py 7, Python 2)"
+    # Automatic translation.
+    new "ナイトリー（Ren'Py 7、Python 2）"
 
     # game/web.rpy:344
     old "This feature is not supported in Ren'Py 8."
@@ -2094,4 +2125,76 @@
     # game/web.rpy:344
     old "We will restore support in a future release of Ren'Py 8. Until then, please use Ren'Py 7 for web support."
     new "Ren'Py 8 の将来のリリースでサポートを復活させます。それまではRen'Py 7 をウェブプラットフォームに使用ください。"
+
+translate japanese strings:
+
+    # game/android.rpy:39
+    old "RAPT has been installed, but a key hasn't been configured. Please generate new keys, or copy android.keystore and bundle.keystore to the base directory."
+    # Automatic translation.
+    new "RAPTはインストールされましたが、キーが設定されていません。新しい鍵を生成するか、android.keystoreとbundle.keystoreをベースディレクトリにコピーしてください。"
+
+    # game/android.rpy:46
+    old "Attempts to emulate a televison-based Android console.\n\nController input is mapped to the arrow keys, Enter is mapped to the select button, Escape is mapped to the menu button, and PageUp is mapped to the back button."
+    # Automatic translation.
+    new "テレヴィジョンベースのAndroidコンソールのエミュレーションを試みる。\n\nコントローラー入力は矢印キーに、Enterはセレクトボタンに、Escapeはメニューボタンに、PageUpはバックボタンにマッピングされています。"
+
+    # game/android.rpy:48
+    old "Downloads and installs the Android SDK and supporting packages."
+    # Automatic translation.
+    new "Android SDKとサポートパッケージのダウンロードとインストールを行います。"
+
+    # game/android.rpy:49
+    old "Generates the keys required to sign the package."
+    # Automatic translation.
+    new "パッケージの署名に必要なキーを生成します。"
+
+    # game/android.rpy:383
+    old "Install SDK"
+    # Automatic translation.
+    new "SDKのインストール"
+
+    # game/android.rpy:387
+    old "Generate Keys"
+    # Automatic translation.
+    new "鍵の生成"
+
+    # game/androidstrings.rpy:32
+    old "How much RAM (in GB) do you want to allocate to Gradle?\nThis must be a positive integer number."
+    # Automatic translation.
+    new "Gradleに割り当てるRAMの量（GB）は？\n正の整数値である必要があります。"
+
+    # game/androidstrings.rpy:33
+    old "The RAM size must contain only numbers and be positive."
+    # Automatic translation.
+    new "RAMサイズは、数字のみを含み、正の値でなければならない。"
+
+    # game/androidstrings.rpy:63
+    old "I found an android.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "raptディレクトリにandroid.keystoreファイルが見つかりました。このファイルを使用しますか？"
+
+    # game/androidstrings.rpy:66
+    old "\n\nSaying 'No' will prevent key creation."
+    # Automatic translation.
+    new "\n\nいいえ」と答えると、キーが作成できなくなります。"
+
+    # game/androidstrings.rpy:69
+    old "I found a bundle.keystore file in the rapt directory. Do you want to use this file?"
+    # Automatic translation.
+    new "raptディレクトリにbundle.keystoreファイルがありました。このファイルを使用しますか？"
+
+    # game/distribute_gui.rpy:231
+    old "(DLC)"
+    # Automatic translation.
+    new "(DLC)の"
+
+    # game/project.rpy:46
+    old "Lint checks your game for potential mistakes, and gives you statistics."
+    # Automatic translation.
+    new "Lintは、あなたのゲームに潜在的なミスがないかをチェックし、統計情報を提供します。"
+
+    # game/web.rpy:485
+    old "Creating package..."
+    # Automatic translation.
+    new "パッケージの作成..."
 

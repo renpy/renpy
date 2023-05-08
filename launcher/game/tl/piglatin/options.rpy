@@ -190,8 +190,8 @@ translate piglatin strings:
     new "## Ilesfay atchingmay ocumentationday atternspay areay uplicatedday inay aay acmay appay uildbay, osay heytay appearay inay othbay hetay appay anday hetay ipzay ilefay."
 
     # gui/game/options.rpy:203
-    old "## A Google Play license key is required to download expansion files and perform in-app purchases. It can be found on the \"Services & APIs\" page of the Google Play developer console."
-    new "## Aay Ooglegay Laypay icenselay eykay isay equiredray otay ownloadday expansionay ilesfay anday erformpay inay-appay urchasespay. Tiay ancay ebay oundfay onay hetay \"Ervicessay & Pisaay\" agepay ofay hetay Ooglegay Laypay eveloperday onsolecay."
+    old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
+    new "## Aay Ooglegay Laypay icenselay eykay isay equiredray otay erformpay inay-appay urchasespay. Tiay ancay ebay oundfay inay hetay Ooglegay Laypay eveloperday onsolecay, underay \"Onetizemay\" > \"Onetizationmay Etupsay\" > \"Icensinglay\"."
 
     # gui/game/options.rpy:210
     old "## The username and project name associated with an itch.io project, separated by a slash."

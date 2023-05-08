@@ -2017,9 +2017,6 @@ class Interface(object):
 
         self.old_scene = { }
         self.transition = { }
-        self.ongoing_transition = { }
-        self.transition_time = { }
-        self.transition_from = { }
         self.suppress_transition = False
         self.quick_quit = False
         self.force_redraw = False
@@ -2075,6 +2072,22 @@ class Interface(object):
 
         # Is our audio paused?
         self.audio_paused = False
+
+        # Transition-related:
+
+        # A map from layer (or None for the root) to the uninstantiate
+        # transition object that's on that layer.
+        self.ongoing_transition = { }
+
+        # The same, but for the transition after it's been called with the
+        # old and new displayables.
+        self.instantiated_transition = { }
+
+        # The time an ongoing transition started.
+        self.transition_time = { }
+
+        # The displayable that an ongoing transition is transitioning from.
+        self.transition_from = { }
 
         # Init layers.
         init_layers()
@@ -2360,6 +2373,7 @@ class Interface(object):
             cursors = { }
 
             for key, cursor_list in renpy.config.mouse.items():
+
                 l = [ ]
 
                 for i in cursor_list:
@@ -2373,10 +2387,17 @@ class Interface(object):
 
                 self.cursor_cache[key] = l
 
+            if ("default" not in self.cursor_cache) and (None in self.cursor_cache):
+                self.cursor_cache["default"] = self.cursor_cache[None]
+
         s = "Total time until interface ready: {}s.".format(time.time() - import_time)
 
         if renpy.android and not renpy.config.log_to_stdout:
             print(s)
+
+        for i in renpy.config.display_start_callbacks:
+            i()
+
 
     def post_init(self):
         """
@@ -2388,6 +2409,7 @@ class Interface(object):
         pygame.display.hint("SDL_TOUCH_MOUSE_EVENTS", "1")
         pygame.display.hint("SDL_MOUSE_TOUCH_EVENTS", "0")
         pygame.display.hint("SDL_EMSCRIPTEN_ASYNCIFY", "0")
+        pygame.display.hint("SDL_IME_SHOW_UI", "1")
 
         if renpy.config.mouse_focus_clickthrough:
             pygame.display.hint("SDL_MOUSE_FOCUS_CLICKTHROUGH", "1")
@@ -2922,6 +2944,7 @@ class Interface(object):
         for l in layers:
             if l is None:
                 self.ongoing_transition.pop(None, None)
+                self.instantiated_transition.pop(None, None)
                 self.transition_time.pop(None, None)
                 self.transition_from.pop(None, None)
                 continue
@@ -2931,6 +2954,7 @@ class Interface(object):
 
             if (self.frame_time - start) >= delay:
                 self.ongoing_transition.pop(l, None)
+                self.instantiated_transition.pop(l, None)
                 self.transition_time.pop(l, None)
                 self.transition_from.pop(l, None)
 
@@ -3141,6 +3165,9 @@ class Interface(object):
         if interaction and (mouse_kind is None):
             mouse_kind = self.mouse
 
+        if mouse_kind is None:
+            mouse_kind = "default"
+
         if pygame.mouse.get_pressed()[0]:
             mouse_kind = "pressed_" + mouse_kind # type: ignore
 
@@ -3331,6 +3358,7 @@ class Interface(object):
 
         # Stop ongoing transitions.
         self.ongoing_transition.clear()
+        self.instantiated_transition.clear()
         self.transition_from.clear()
         self.transition_time.clear()
 
@@ -3680,11 +3708,14 @@ class Interface(object):
         self.suppress_transition = False
 
         # Figure out transitions.
-        if suppress_transition:
+        if suppress_transition or renpy.game.after_rollback:
             self.ongoing_transition.clear()
+            self.instantiated_transition.clear()
             self.transition_from.clear()
             self.transition_time.clear()
-        else:
+
+        if not suppress_transition:
+
             for k, t in self.transition.items():
                 if k not in self.old_scene:
                     continue
@@ -3797,6 +3828,29 @@ class Interface(object):
         layers_root = renpy.display.layout.MultiBox(layout='fixed')
         layers_root.layers = { }
 
+        def instantiate_transition(layer, old_d, new_d):
+            """
+            Create a transition that will be used to transition `layer` (which
+            can be None) to `d`.
+            """
+
+            old_trans = self.instantiated_transition.get(layer, None)
+
+            trans = self.ongoing_transition[layer](
+                old_widget=old_d,
+                new_widget=new_d)
+
+            if not isinstance(trans, Displayable):
+                raise Exception("Expected transition to be a displayable, not a %r" % trans)
+
+            if isinstance(trans, renpy.display.transform.Transform) and isinstance(old_trans, renpy.display.transform.Transform):
+                trans.take_state(old_trans)
+                trans.take_execution_state(old_trans)
+
+            self.instantiated_transition[layer] = trans
+
+            return trans
+
         def add_layer(where, layer):
 
             scene_layer = scene[layer]
@@ -3805,12 +3859,7 @@ class Interface(object):
             if (self.ongoing_transition.get(layer, None) and
                     not suppress_transition):
 
-                trans = self.ongoing_transition[layer](
-                    old_widget=self.transition_from[layer],
-                    new_widget=scene_layer)
-
-                if not isinstance(trans, Displayable):
-                    raise Exception("Expected transition to be a displayable, not a %r" % trans)
+                trans = instantiate_transition(layer, self.transition_from[layer], scene_layer)
 
                 transition_time = self.transition_time.get(layer, None)
 
@@ -3841,9 +3890,7 @@ class Interface(object):
                 old_root.layers[layer] = d
                 old_root.add(d)
 
-            trans = self.ongoing_transition[None](
-                old_widget=old_root,
-                new_widget=layers_root)
+            trans = instantiate_transition(None, old_root, layers_root)
 
             if not isinstance(trans, Displayable):
                 raise Exception("Expected transition to be a displayable, not a %r" % trans)

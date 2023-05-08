@@ -171,23 +171,23 @@ translate french strings:
 
     # 00action_file.rpy:539
     old "File page auto"
-    new "File page auto"
+    new "Page auto"
 
     # 00action_file.rpy:541
     old "File page quick"
-    new "File page quick"
+    new "Page rapide"
 
     # 00action_file.rpy:543
     old "File page [text]"
-    new "File page [text]"
+    new "Page [text]"
 
     # 00action_file.rpy:733
     old "Next file page."
-    new "Next file page."
+    new "Page suivante."
 
     # 00action_file.rpy:797
     old "Previous file page."
-    new "Previous file page."
+    new "Page précédente."
 
     # 00action_file.rpy:858
     old "Quick save complete."
@@ -359,11 +359,11 @@ translate french strings:
 
     # 00library.rpy:150
     old "bar"
-    new "bar"
+    new "barre"
 
     # 00library.rpy:151
     old "selected"
-    new "selected"
+    new "sélectionné"
 
     # 00library.rpy:152
     old "viewport"
@@ -403,7 +403,7 @@ translate french strings:
 
     # 00preferences.rpy:207
     old "display"
-    new "display"
+    new "affichage"
 
     # 00preferences.rpy:219
     old "transitions"
@@ -411,19 +411,19 @@ translate french strings:
 
     # 00preferences.rpy:228
     old "skip transitions"
-    new "skip transitions"
+    new "passer les transitions"
 
     # 00preferences.rpy:230
     old "video sprites"
-    new "video sprites"
+    new "sprites vidéo"
 
     # 00preferences.rpy:239
     old "show empty window"
-    new "show empty window"
+    new "afficher fenêtre vide"
 
     # 00preferences.rpy:248
     old "text speed"
-    new "text speed"
+    new "vitesse du texte"
 
     # 00preferences.rpy:256
     old "joystick"
@@ -435,83 +435,83 @@ translate french strings:
 
     # 00preferences.rpy:263
     old "skip"
-    new "skip"
+    new "passer"
 
     # 00preferences.rpy:266
     old "skip unseen [text]"
-    new "skip unseen [text]"
+    new "passer [text] non lus"
 
     # 00preferences.rpy:271
     old "skip unseen text"
-    new "skip unseen text"
+    new "passer le texte non lu"
 
     # 00preferences.rpy:273
     old "begin skipping"
-    new "begin skipping"
+    new "commencer à passer"
 
     # 00preferences.rpy:277
     old "after choices"
-    new "after choices"
+    new "après les choix"
 
     # 00preferences.rpy:284
     old "skip after choices"
-    new "skip after choices"
+    new "passer après les choix"
 
     # 00preferences.rpy:286
     old "auto-forward time"
-    new "auto-forward time"
+    new "avancée du temps automatique"
 
     # 00preferences.rpy:300
     old "auto-forward"
-    new "auto-forward"
+    new "avancée automatique"
 
     # 00preferences.rpy:307
     old "Auto forward"
-    new "Auto forward"
+    new "Avancée automatique"
 
     # 00preferences.rpy:310
     old "auto-forward after click"
-    new "auto-forward after click"
+    new "avancée automatique après un clic"
 
     # 00preferences.rpy:319
     old "automatic move"
-    new "automatic move"
+    new "mouvement automatique"
 
     # 00preferences.rpy:328
     old "wait for voice"
-    new "wait for voice"
+    new "attendre la voix"
 
     # 00preferences.rpy:337
     old "voice sustain"
-    new "voice sustain"
+    new "maintien de la voix"
 
     # 00preferences.rpy:346
     old "self voicing"
-    new "self voicing"
+    new "lecture vocale"
 
     # 00preferences.rpy:355
     old "clipboard voicing"
-    new "clipboard voicing"
+    new "voix par presse-papier"
 
     # 00preferences.rpy:364
     old "debug voicing"
-    new "debug voicing"
+    new "voix de debug"
 
     # 00preferences.rpy:373
     old "emphasize audio"
-    new "emphasize audio"
+    new "mise en valeur de l'audio"
 
     # 00preferences.rpy:382
     old "rollback side"
-    new "rollback side"
+    new "côté de rollback"
 
     # 00preferences.rpy:392
     old "gl powersave"
-    new "gl powersave"
+    new "gl économie d'énergie"
 
     # 00preferences.rpy:398
     old "gl framerate"
-    new "gl framerate"
+    new "gl images par seconde"
 
     # 00preferences.rpy:401
     old "gl tearing"
@@ -519,11 +519,11 @@ translate french strings:
 
     # 00preferences.rpy:413
     old "music volume"
-    new "music volume"
+    new "volume de la musique"
 
     # 00preferences.rpy:414
     old "sound volume"
-    new "sound volume"
+    new "volume du son"
 
     # 00preferences.rpy:415
     old "voice volume"
@@ -531,18 +531,18 @@ translate french strings:
 
     # 00preferences.rpy:416
     old "mute music"
-    new "mute music"
+    new "couper la musique"
     # 00preferences.rpy:417
     old "mute sound"
-    new "mute sound"
+    new "couper le son"
 
     # 00preferences.rpy:418
     old "mute voice"
-    new "mute voice"
+    new "couper les voix"
 
     # 00preferences.rpy:419
     old "mute all"
-    new "mute all"
+    new "couper tout"
 
     # 00preferences.rpy:500
     old "Clipboard voicing enabled. Press 'shift+C' to disable."
@@ -1083,15 +1083,15 @@ translate french strings:
 
     # renpy/common/00preferences.rpy:430
     old "font transform"
-    new "font transform"
+    new "apparence de la police"
 
     # renpy/common/00preferences.rpy:433
     old "font size"
-    new "font size"
+    new "taille de police"
 
     # renpy/common/00preferences.rpy:441
     old "font line spacing"
-    new "font line spacing"
+    new "taille d'espaces"
 
     # renpy/common/_errorhandling.rpym:542
     old "Copy BBCode"
@@ -1117,3 +1117,210 @@ translate french strings:
     old "Copies the errors.txt file to the clipboard as Markdown for Discord."
     new "Copie le fichier errors.txt dans le presse-papier au format Markdown pour Discord."
 
+    # renpy/common/00accessibility.rpy:180
+    old "High Contrast Text"
+    new "Texte en contraste élevé (surbrillance)"
+
+    # renpy/common/00accessibility.rpy:223
+    old "Self-Voicing Volume Drop"
+    new "Baisse de volume pendant la lecture vocale"
+
+    # renpy/common/00accessibility.rpy:234
+    old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
+    new "Les options de ce menu ont pour objectif d'augmenter l'accessibilité. Elles peuvent ne pas fonctionner sur tous les jeux, et certaines combinations d'options peuvent rendre le jeu injouable. Le problème ne vient pas du jeu ou du moteur. Pour de meilleurs résultats en changeant la police, essayez de maintenir le texte de la même taille qu'avant."
+
+    # renpy/common/00action_other.rpy:719
+    old "Open [text] directory."
+    new "Ouvrir le répertoire [text]."
+
+    # renpy/common/00director.rpy:1745
+    old "Click to toggle attribute, right click to toggle negative attribute."
+    new "Clic pour (dés)activer des attributs, clic droit pour (dés)activer les suppressions d'attributs."
+
+    # renpy/common/00director.rpy:1768
+    old "Click to set transform, right click to add to transform list."
+    new "Clic pour ajouter un transform, clic droit pour ajouter une liste de transforms."
+
+    # renpy/common/00director.rpy:1789
+    old "Click to set, right click to add to behind list."
+    new "Click to set, right click to add to behind list."
+
+    # renpy/common/00gui.rpy:456
+    old "This save was created on a different device. Maliciously constructed save files can harm your computer. Do you trust this save's creator and everyone who could have changed the file?"
+    new "Cette sauvegarde a été créée sur un autre appareil. Des faux fichiers de sauvegarde peuvent être utilisés pour endommager votre ordinateur. Faites-vous confiance au créateur de cette sauvegarde et à tous ceux qui auraient pu modifier le fichier ?"
+
+    # renpy/common/00gui.rpy:457
+    old "Do you trust the device the save was created on? You should only choose yes if you are the device's sole user."
+    new "Faites-vous confiance à l'appareil sur lequel cette sauvegarde a été créée ? Vous ne devriez dire oui que si vous en êtes l'unique utilisateur ."
+
+    # renpy/common/00preferences.rpy:419
+    old "self voicing volume drop"
+    new "baisse de volume pendant la lecture vocale"
+
+    # renpy/common/00preferences.rpy:495
+    old "system cursor"
+    new "curseur système"
+
+    # renpy/common/00preferences.rpy:504
+    old "renderer menu"
+    new "menu de rendu"
+
+    # renpy/common/00preferences.rpy:507
+    old "accessibility menu"
+    new "menu d'accessibilité"
+
+    # renpy/common/00preferences.rpy:510
+    old "high contrast text"
+    new "texte en contraste élevé"
+
+    # renpy/common/00preferences.rpy:519
+    old "audio when minimized"
+    new "audio quand minimisé"
+
+    # renpy/common/00preferences.rpy:528
+    old "audio when unfocused"
+    new "audio lors de la perte de focus"
+
+    # renpy/common/00preferences.rpy:537
+    old "web cache preload"
+    new "préchargement du cache web cache"
+
+    # renpy/common/00preferences.rpy:552
+    old "voice after game menu"
+    new "voix dans le menu de jeu"
+
+    # renpy/common/00preferences.rpy:571
+    old "main volume"
+    new "volume principal"
+
+    # renpy/common/00preferences.rpy:575
+    old "mute main"
+    new "sourdine générale"
+
+    # renpy/common/00speechbubble.rpy:343
+    old "Speech Bubble Editor"
+    new "Éditeur de bulles de dialogue"
+
+    # renpy/common/00speechbubble.rpy:348
+    old "(hide)"
+    new "(masquer)"
+
+    # renpy/common/00sync.rpy:70
+    old "Sync downloaded."
+    new "Sync téléchargé."
+
+    # renpy/common/00sync.rpy:190
+    old "Could not connect to the Ren'Py Sync server."
+    new "Échec de la connexion au serveur Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:192
+    old "The Ren'Py Sync server timed out."
+    new "Le serveur Ren'Py Sync a mis trop de temps à répondre."
+
+    # renpy/common/00sync.rpy:194
+    old "An unknown error occurred while connecting to the Ren'Py Sync server."
+    new "Une erreur inconnue est arrivée lors de la connexion au serveur Ren'Py Sync."
+
+    # renpy/common/00sync.rpy:267
+    old "The Ren'Py Sync server does not have a copy of this sync. The sync ID may be invalid, or it may have timed out."
+    new "Le serveur Ren'Py Sync ne reconnaît pas ce code sync. l'ID est peut-être invalide, ou il peut avoir expiré."
+
+    # renpy/common/00sync.rpy:409
+    old "Please enter the sync ID you generated.\nNever enter a sync ID you didn't create yourself."
+    new "Entrez l'ID sync que vous avez généré.\nN'entrez jamais un ID sync que vous n'avez pas généré vous-même."
+
+    # renpy/common/00sync.rpy:428
+    old "The sync ID is not in the correct format."
+    new "L'ID sync n'est pas dans un format correct."
+
+    # renpy/common/00sync.rpy:448
+    old "The sync could not be decrypted."
+    new "Le sync n'a pas pu être déchiffré."
+
+    # renpy/common/00sync.rpy:471
+    old "The sync belongs to a different game."
+    new "Le sync correspond à un autre jeu."
+
+    # renpy/common/00sync.rpy:476
+    old "The sync contains a file with an invalid name."
+    new "Le sync contient un fichier ayant un nom invalide."
+
+    # renpy/common/00sync.rpy:529
+    old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
+    new "Vos sauvegardes vont être téléchargées sur le {a=https://sync.renpy.org}serveur Ren'Py Sync{/a}.\nVoulez-vous continuer ?"
+
+    # renpy/common/00sync.rpy:558
+    old "Enter Sync ID"
+    new "Entrez l'ID Sync"
+
+    # renpy/common/00sync.rpy:569
+    old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
+    new "Ceci va contacter le {a=https://sync.renpy.org}serveur Ren'Py Sync{/a}."
+
+    # renpy/common/00sync.rpy:596
+    old "Sync Success"
+    new "Sync réussi"
+
+    # renpy/common/00sync.rpy:599
+    old "The Sync ID is:"
+    new "L'ID Sync est :"
+
+    # renpy/common/00sync.rpy:605
+    old "You can use this ID to download your save on another device.\nThis sync will expire in an hour.\nRen'Py Sync is supported by {a=https://www.renpy.org/sponsors.html}Ren'Py's Sponsors{/a}."
+    new "Vous pouvez utiliser cet ID pour transférer votre sauvegarde sur un autre appareil.\nCe sync expirera dans une heure.\nRen'Py Sync is soutenu par les {a=https://www.renpy.org/sponsors.html}Sponsors de Ren'Py's{/a}."
+
+    # renpy/common/00sync.rpy:609
+    old "Continue"
+    new "Continuer"
+
+    # renpy/common/00sync.rpy:631
+    old "Sync Error"
+    new "Erreur de Sync"
+
+    # renpy/common/00gltest.rpy:100
+    old "Force GL Renderer"
+    new "Forcer le moteur de rendu GL"
+
+    # renpy/common/00gltest.rpy:105
+    old "Force ANGLE Renderer"
+    new "Forcer le moteur de rendu ANGLE"
+
+    # renpy/common/00gltest.rpy:110
+    old "Force GLES Renderer"
+    new "Forcer le moteur de rendu GLES"
+
+    # renpy/common/00gltest.rpy:116
+    old "Force GL2 Renderer"
+    new "Forcer le moteur de rendu GL2"
+
+    # renpy/common/00gltest.rpy:121
+    old "Force ANGLE2 Renderer"
+    new "Forcer le moteur de rendu ANGLE2"
+
+    # renpy/common/00gltest.rpy:126
+    old "Force GLES2 Renderer"
+    new "Forcer le moteur de rendu GLES2"
+
+    # renpy/common/00gltest.rpy:136
+    old "Enable (No Blocklist)"
+    new "Activer (Sans Blocklist)"
+
+    # renpy/common/00gltest.rpy:249
+    old "This game requires use of GL2 that can't be initialised."
+    new "Ce jeu nécessite l'usage de GL2, qui ne peut pas être initialisé."
+
+    # renpy/common/00gltest.rpy:259
+    old "The {a=edit:1:log.txt}log.txt{/a} file may contain information to help you determine what is wrong with your computer."
+    new "Le fichier {a=edit:1:log.txt}log.txt{/a} peut contenir des informations pour vous aider à déterminer ce qui ne va pas avec votre ordinateur."
+
+    # renpy/common/00gltest.rpy:264
+    old "More details on how to fix this can be found in the {a=[url]}documentation{/a}."
+    new "Plus de détails sur comment réparer ça dans la {a=[url]}documentation{/a}."
+
+    # renpy/common/00gltest.rpy:281
+    old "Change render options"
+    new "Changer les options de rendu"
+
+    # renpy/common/00gamepad.rpy:58
+    old "Press or move the '[control!s]' [kind]."
+    new "Appuyez sur le [kind] '[control!s]'."

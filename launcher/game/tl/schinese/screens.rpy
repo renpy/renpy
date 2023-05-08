@@ -322,7 +322,8 @@
 
     # gui/game/screens.rpy:728
     old "Fullscreen"
-    new ""
+    # Automatic translation.
+    new "全屏"
 
     # gui/game/screens.rpy:733
     old "Unseen Text"
@@ -454,7 +455,8 @@
 
     # gui/game/screens.rpy:1007
     old "Ctrl"
-    new "Ctrl"
+    # Automatic translation.
+    new "键盘"
 
     # gui/game/screens.rpy:1008
     old "Skips dialogue while held down."
@@ -470,7 +472,8 @@
 
     # gui/game/screens.rpy:1015
     old "Page Up"
-    new "Page Up"
+    # Automatic translation.
+    new "上一页"
 
     # gui/game/screens.rpy:1016
     old "Rolls back to earlier dialogue."
@@ -478,7 +481,8 @@
 
     # gui/game/screens.rpy:1019
     old "Page Down"
-    new "Page Down"
+    # Automatic translation.
+    new "下一页"
 
     # gui/game/screens.rpy:1020
     old "Rolls forward to later dialogue."
@@ -651,3 +655,42 @@
     # gui/game/screens.rpy:1424
     old "Menu"
     new "菜单"
+
+translate schinese strings:
+
+    # gui/game/screens.rpy:676
+    old "Upload Sync"
+    # Automatic translation.
+    new "上传同步"
+
+    # gui/game/screens.rpy:680
+    old "Download Sync"
+    # Automatic translation.
+    new "下载同步器"
+
+    # gui/game/screens.rpy:1320
+    old "## Displays the menu, if given. The menu may be displayed incorrectly if config.narrator_menu is set to True."
+    # Automatic translation.
+    new "## 显示菜单，如果给定的话。如果config.narrator_menu被设置为True，菜单可能会被错误地显示。"
+
+    # gui/game/screens.rpy:1410
+    old "## Bubble screen"
+    # Automatic translation.
+    new "## 泡沫屏幕"
+
+    # gui/game/screens.rpy:1412
+    old "## The bubble screen is used to display dialogue to the player when using speech bubbles. The bubble screen takes the same parameters as the say screen, must create a displayable with the id of \"what\", and can create displayables with the \"namebox\", \"who\", and \"window\" ids."
+    # Automatic translation.
+    new "## 泡泡屏幕用于在使用语音泡泡时向玩家显示对话。泡泡屏的参数与say屏相同，必须创建一个id为 \"what \"的可显示文件，并且可以创建id为 \"namebox\"、\"who \"和 \"window \"的可显示文件。"
+
+    # gui/game/screens.rpy:1417
+    old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+    new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+
+translate schinese strings:
+
+    # gui/game/screens.rpy:411
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    # Automatic translation.
+    new "##滚动参数可以是无，或者是 \"viewport \"或 \"vpgrid \"中的一个。这个屏幕旨在与一个或多个孩子一起使用，这些孩子被反括（放置）在它里面。"
+

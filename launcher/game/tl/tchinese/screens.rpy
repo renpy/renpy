@@ -174,8 +174,8 @@ translate tchinese strings:
     new "## This lays out the basic common structure of a game menu screen. It's called with the screen title, and displays the background, title, and navigation."
 
     # screens.rpy:418
-    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
-    new "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". When this screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    new "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
 
     # screens.rpy:476
     old "Return"
