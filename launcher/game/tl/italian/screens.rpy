@@ -459,8 +459,7 @@ translate italian strings:
 
     # screens.rpy:1023
     old "Tab"
-    # Automatic translation.
-    new "Scheda"
+    new "Tab"
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."

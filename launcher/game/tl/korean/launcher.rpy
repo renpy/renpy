@@ -1950,8 +1950,7 @@ translate korean strings:
 
     # game/editor.rpy:211
     old "jEdit"
-    # Automatic translation.
-    new "j편집"
+    new "jEdit"
 
     # game/editor.rpy:220
     old "Visual Studio Code (System)"

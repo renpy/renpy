@@ -527,8 +527,7 @@ translate portuguese strings:
 
     # gui/game/screens.rpy:1024
     old "Tab"
-    # Automatic translation.
-    new "Guia"
+    new "Tab"
 
     # gui/game/screens.rpy:1025
     old "Toggles dialogue skipping."

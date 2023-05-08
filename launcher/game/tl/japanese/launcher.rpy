@@ -2013,13 +2013,11 @@
 
     # game/editor.rpy:196
     old "Atom"
-    # Automatic translation.
-    new "アトム"
+    new "Atom"
 
     # game/editor.rpy:211
     old "jEdit"
-    # Automatic translation.
-    new "ジェイエディット"
+    new "jEdit"
 
     # game/editor.rpy:220
     old "Visual Studio Code (System)"

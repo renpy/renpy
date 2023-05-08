@@ -464,8 +464,7 @@
 
     # gui/game/screens.rpy:1011
     old "Tab"
-    # Automatic translation.
-    new "标签"
+    new "Tab"
 
     # gui/game/screens.rpy:1012
     old "Toggles dialogue skipping."

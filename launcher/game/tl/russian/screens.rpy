@@ -488,8 +488,7 @@ translate russian strings:
 
     # screens.rpy:1024
     old "Tab"
-    # Automatic translation.
-    new "Вкладка"
+    new "Tab"
 
     # screens.rpy:1025
     old "Toggles dialogue skipping."

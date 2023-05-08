@@ -514,8 +514,7 @@ translate german strings:
 
     # screens.rpy:1023
     old "Tab"
-    # Automatic translation.
-    new "Registerkarte"
+    new "Tab"
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."

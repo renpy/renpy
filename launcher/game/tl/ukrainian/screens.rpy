@@ -466,8 +466,7 @@ translate ukrainian strings:
 
     # gui/game/screens.rpy:1011
     old "Tab"
-    # Automatic translation.
-    new "Вкладка"
+    new "Tab"
 
     # gui/game/screens.rpy:1012
     old "Toggles dialogue skipping."

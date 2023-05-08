@@ -482,8 +482,7 @@ translate japanese strings:
 
     # screens.rpy:1023
     old "Tab"
-    # Automatic translation.
-    new "タブ"
+    new "Tab"
 
     # screens.rpy:1024
     old "Toggles dialogue skipping."

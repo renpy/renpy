@@ -688,8 +688,7 @@
 
     # game/editor.rpy:187
     old "Atom"
-    # Automatic translation.
-    new "原子"
+    new "Atom"
 
     # game/editor.rpy:187
     old "Up to 150 MB download required."

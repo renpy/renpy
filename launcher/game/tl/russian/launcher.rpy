@@ -1914,8 +1914,7 @@
 
     # game/editor.rpy:187
     old "Atom"
-    # Automatic translation.
-    new "Атом"
+    new "Atom"
 
     # game/editor.rpy:200
     old "jEdit"

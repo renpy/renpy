@@ -6,6 +6,28 @@ import argparse
 import ast
 import re
 
+BLOCKLIST = """
+Opendyslexic
+game
+base
+images
+audio
+gui
+(transform)
+(transition)
+gl tearing
+Tearing
+labels
+Play Bundle
+Universal APK
+Visual Studio Code
+Atom
+jEdit
+Tab
+"""
+
+BLOCKLIST = set(i.strip() for i in BLOCKLIST.split("\n") if i.strip())
+
 if "DEEPL_TOKEN" not in os.environ:
     raise Exception("Please set the DEEPL_TOKEN environment variable to your DeepL API key.")
 
@@ -95,7 +117,7 @@ def translate(s, lang, source_fn):
     if s.startswith("## http"):
         return s
 
-    if s in [ "game", "base", "images", "audio", "gui" ]:
+    if s in BLOCKLIST:
         return s
 
     if "00console" in source_fn:

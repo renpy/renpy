@@ -1747,8 +1747,7 @@ translate italian strings:
 
     # game/editor.rpy:196
     old "Atom"
-    # Automatic translation.
-    new "Atomo"
+    new "Atom"
 
     # game/editor.rpy:196
     old "Up to 150 MB download required."
