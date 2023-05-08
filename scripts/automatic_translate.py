@@ -114,6 +114,9 @@ def translate(s, lang, source_fn):
     if "APPDATA" in s:
         return s
 
+    if "$HOME" in s:
+        return s
+
     if s.startswith("## http"):
         return s
 

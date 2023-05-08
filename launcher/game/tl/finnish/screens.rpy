@@ -766,3 +766,11 @@ translate finnish strings:
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
 
+
+translate finnish strings:
+
+    # gui/game/screens.rpy:411
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    # Automatic translation.
+    new "## Selausparametri voi olla None tai jokin seuraavista: \"viewport\" tai \"vpgrid\". Tämä ruutu on tarkoitettu käytettäväksi yhden tai useamman lapsen kanssa, jotka siirretään (sijoitetaan) sen sisään."
+

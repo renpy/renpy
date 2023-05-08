@@ -219,3 +219,10 @@ translate japanese strings:
     old "## A Google Play license key is required to perform in-app purchases. It can be found in the Google Play developer console, under \"Monetize\" > \"Monetization Setup\" > \"Licensing\"."
     # Automatic translation.
     new "## アプリ内課金を行うには、Google Playのライセンスキーが必要です。Google Play開発者コンソールの「マネタイズ」→「マネタイズ設定」→「ライセンス」で確認することができます。"
+
+translate japanese strings:
+
+    # gui/game/options.rpy:140
+    old "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
+    new "## Windows: %APPDATA\\RenPy\\<config.save_directory>"
+

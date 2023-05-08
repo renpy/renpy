@@ -762,3 +762,11 @@ translate portuguese strings:
     # gui/game/screens.rpy:1526
     old "Menu"
     new "Menu"
+
+translate portuguese strings:
+
+    # gui/game/screens.rpy:411
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    # Automatic translation.
+    new "## O parâmetro de rolagem pode ser Nenhum ou um dos parâmetros \"viewport\" ou \"vpgrid\". Essa tela deve ser usada com um ou mais filhos, que são transcluídos (colocados) dentro dela."
+

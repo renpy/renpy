@@ -870,3 +870,11 @@ translate german strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+
+translate german strings:
+
+    # gui/game/screens.rpy:411
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    # Automatic translation.
+    new "## Der Parameter scroll kann None oder einer der Parameter \"viewport\" oder \"vpgrid\" sein. Dieser Bildschirm soll mit einem oder mehreren Kindern verwendet werden, die in ihn eingeschlossen (platziert) werden."
+

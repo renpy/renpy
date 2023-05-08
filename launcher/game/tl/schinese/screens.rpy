@@ -686,3 +686,11 @@ translate schinese strings:
     # gui/game/screens.rpy:1417
     old "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
     new "## https://www.renpy.org/doc/html/bubble.html#bubble-screen"
+
+translate schinese strings:
+
+    # gui/game/screens.rpy:411
+    old "## The scroll parameter can be None, or one of \"viewport\" or \"vpgrid\". This screen is intended to be used with one or more children, which are transcluded (placed) inside it."
+    # Automatic translation.
+    new "##滚动参数可以是无，或者是 \"viewport \"或 \"vpgrid \"中的一个。这个屏幕旨在与一个或多个孩子一起使用，这些孩子被反括（放置）在它里面。"
+
