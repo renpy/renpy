@@ -1130,8 +1130,7 @@
 
     # updater.rpy:126
     old "Nightly"
-    # Automatic translation.
-    new "Tous les soirs"
+    new "Journalière"
 
     # updater.rpy:132
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
@@ -1971,8 +1970,7 @@
 
     # game/editor.rpy:187
     old "Atom"
-    # Automatic translation.
-    new "Atome"
+    new "Atom"
 
     # game/editor.rpy:200
     old "jEdit"
@@ -2064,13 +2062,11 @@
 
     # game/updater.rpy:77
     old "Nightly (Ren'Py 8, Python 3)"
-    # Automatic translation.
-    new "Tous les soirs (Ren'Py 8, Python 3)"
+    new "Journalière (Ren'Py 8, Python 3)"
 
     # game/updater.rpy:78
     old "Nightly (Ren'Py 7, Python 2)"
-    # Automatic translation.
-    new "Tous les soirs (Ren'Py 7, Python 2)"
+    new "Journalière (Ren'Py 7, Python 2)"
 
     # game/preferences.rpy:327
     old "{#in language font}Welcome! Please choose a language"

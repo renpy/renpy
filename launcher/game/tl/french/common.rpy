@@ -390,8 +390,7 @@
 
     # renpy/common/00accessibility.rpy:34
     old "viewport"
-    # Automatic translation.
-    new "fenêtre"
+    new "fenêtre déroulante"
 
     # renpy/common/00accessibility.rpy:35
     old "horizontal scroll"
@@ -487,8 +486,7 @@
 
     # renpy/common/00director.rpy:1561
     old "(statement)"
-    # Automatic translation.
-    new "(déclaration)"
+    new "(instruction)"
 
     # renpy/common/00director.rpy:1562
     old "(tag)"
