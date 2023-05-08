@@ -1028,3 +1028,4 @@ translate russian strings:
     # renpy/common/00sync.rpy:631
     old "Sync Error"
     new "Ошибка при синхронизации"
+    
